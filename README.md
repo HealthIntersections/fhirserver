@@ -43,13 +43,14 @@ System Pre-requisites
 * if there is no command, nothing will happen - the server will terminate
 
 Commands
-"-help" - this document
-"-setup" - install the various required tables in the nominated database
-"-install 'name'" - set the fhir server to run as a service against the nominated ini file as the given service name. Default service name is "fhir-server'
-"-start 'name'" - start the named fhir service 
-"-stop 'name'" - stop the name fhir service
-"-debug" - just run the service in debug mode
-"-snomed 'dir'" - update the snomed cache from the nominated directory - either RF1 or RF2 supported
-"-loinc 'file'" - update the loinc cache from the given filename (access database)
+
+- `-help` - this document
+- `setup` - install the various required tables in the nominated database
+- `install 'name'` - set the fhir server to run as a service against the nominated ini file as the given service name. Default service name is "fhir-server'
+- `-start 'name'` - start the named fhir service 
+- `-stop 'name'` - stop the name fhir service
+- `-debug` - just run the service in debug mode
+- `-snomed 'dir'` - update the snomed cache from the nominated directory - either RF1 or RF2 supported
+- `-loinc 'file'` - update the loinc cache from the given filename (access database)
 
 
