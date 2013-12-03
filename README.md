@@ -24,8 +24,10 @@ This is pascal code that compoiles under Delphi XE+ (any edition, personal will 
 Support for Free Pascal(/Lazarus) would be good, but requires substantial work to deal with the 
 difference between delphi and FPC unicode implementations.
 
-Compiling should be simple: open the file Server\FHIRServer.dproj in your version of delphi, and 
-compile. 
+Compiling should be simple:
+* get a copy of IndySoap (http://sourceforge.net/projects/indysoap/), and add the source directory to your delphi path
+* open the file Server\FHIRServer.dproj in your version of delphi, and compile
+
 
 The Server uses the pascal reference implementation released with the specification. 
 It is simply copied into place using the file copy_fhir.bat, and committed with the

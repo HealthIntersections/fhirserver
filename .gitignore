@@ -1,5 +1,6 @@
 *.dcu
 *.~*~
+*.~*
 *.local
 *.identcache
 __history
@@ -7,4 +8,5 @@ __history
 *.map
 *.exe
 *.dll
+*.dsk
 bin/*
