@@ -1111,7 +1111,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsEncounter : Array[TSearchParamsEncounter] of TSearchParamsEncounter = ( spEncounter__id, spEncounter_Fulfills, spEncounter_Identifier, spEncounter_Indication, spEncounter_Length, spEncounter_Start, spEncounter_Status, spEncounter_Subject, spEncounter_Location, spEncounter_Location_period);
+  CHECK_TSearchParamsEncounter : Array[TSearchParamsEncounter] of TSearchParamsEncounter = ( spEncounter__id, spEncounter_Fulfills, spEncounter_Identifier, spEncounter_Indication, spEncounter_Length, spEncounter_Location, spEncounter_Location_period, spEncounter_Start, spEncounter_Status, spEncounter_Subject);
 
 
 procedure TFhirIndexManager.buildIndexesEncounter;

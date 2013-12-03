@@ -54,5 +54,7 @@ Commands
 - `-debug` - just run the service in debug mode
 - `-snomed 'dir'` - update the snomed cache from the nominated directory - either RF1 or RF2 supported
 - `-loinc 'file'` - update the loinc cache from the given filename (access database)
+- '-mount' - install the database
+- '-unmount' - uninstall the database
 
 

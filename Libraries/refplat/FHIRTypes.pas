@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 3, 2013 08:01+1100
+// FHIR v0.12 generated Tue, Dec 3, 2013 14:43+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -150,20 +150,6 @@ Type
     NameUseOld, {@enum.value NameUseOld This name is no longer in use (or was never correct, but retained for records). }
     NameUseMaiden); {@enum.value NameUseMaiden A name used prior to marriage. Marriage naming customs vary greatly around the world. This name use is for use by applications that collect and store "maiden" names. Though the concept of maiden name is often gender specific, the use of this term is not gender specific. The use of this term does not imply any particular history for a person's name, nor should the maiden name be determined algorithmically. }
   TFhirNameUseList = set of TFhirNameUse;
-
-  {@Enum TFhirActivityDefinitionCategory
-    High-level categorization of the type of activity in a protocol.
-  }
-  TFhirActivityDefinitionCategory = (
-    ActivityDefinitionCategoryNull,  {@enum.value ActivityDefinitionCategoryNull Value is missing from Instance }
-    ActivityDefinitionCategoryDiet, {@enum.value ActivityDefinitionCategoryDiet To consume food of a specified nature. }
-    ActivityDefinitionCategoryDrug, {@enum.value ActivityDefinitionCategoryDrug To consume/receive a drug, vaccine or other product. }
-    ActivityDefinitionCategoryEncounter, {@enum.value ActivityDefinitionCategoryEncounter To meet or communicate with the patient (in-patient, out-patient, phone call, etc.). }
-    ActivityDefinitionCategoryObservation, {@enum.value ActivityDefinitionCategoryObservation To capture information about a patient (vitals, labs, diagnostic images, etc.). }
-    ActivityDefinitionCategoryProcedure, {@enum.value ActivityDefinitionCategoryProcedure To modify the patient in some way (surgery, physiotherapy, education, counseling, etc.). }
-    ActivityDefinitionCategorySupply, {@enum.value ActivityDefinitionCategorySupply To provide something to the patient (medication, medical supply, etc.). }
-    ActivityDefinitionCategoryOther); {@enum.value ActivityDefinitionCategoryOther Some other form of action. }
-  TFhirActivityDefinitionCategoryList = set of TFhirActivityDefinitionCategory;
 
   {@Enum TFhirReactionSeverity
     The severity of an adverse reaction.
@@ -888,30 +874,6 @@ Type
     ExtensionContextExtension); {@enum.value ExtensionContextExtension The context is a particular extension from a particular profile.  Expressed as uri#name, where uri identifies the profile and #name identifies the extension code. }
   TFhirExtensionContextList = set of TFhirExtensionContext;
 
-  {@Enum TFhirProtocolType
-    High-level categorization of the protocol
-  }
-  TFhirProtocolType = (
-    ProtocolTypeNull,  {@enum.value ProtocolTypeNull Value is missing from Instance }
-    ProtocolTypeCondition, {@enum.value ProtocolTypeCondition The protocol describes the steps to manage a particular health condition including monitoring, treatment, mitigation and/or follow-up. }
-    ProtocolTypeDevice, {@enum.value ProtocolTypeDevice The protocol describes the appropriate use of a particular device (medical device, software, etc.). }
-    ProtocolTypeDrug, {@enum.value ProtocolTypeDrug The protocol describes the appropriate use of a particular medication including indications for use, dosages, treatment cycles, etc. }
-    ProtocolTypeStudy); {@enum.value ProtocolTypeStudy The protocol describes the set of steps to occur for study subjects enrolled in an interventional study. }
-  TFhirProtocolTypeList = set of TFhirProtocolType;
-
-  {@Enum TFhirProtocolStatus
-    The lifecycle status of a Protocol
-  }
-  TFhirProtocolStatus = (
-    ProtocolStatusNull,  {@enum.value ProtocolStatusNull Value is missing from Instance }
-    ProtocolStatusDraft, {@enum.value ProtocolStatusDraft This protocol is still under development. }
-    ProtocolStatusTesting, {@enum.value ProtocolStatusTesting This protocol was authored for testing purposes (or education/evaluation/marketing). }
-    ProtocolStatusReview, {@enum.value ProtocolStatusReview This protocol is undergoing review to check that it is ready for production use. }
-    ProtocolStatusProduction, {@enum.value ProtocolStatusProduction This protocol is ready for use in production systems. }
-    ProtocolStatusWithdrawn, {@enum.value ProtocolStatusWithdrawn This protocol has been withdrawn and should no longer be used. }
-    ProtocolStatusSuperseded); {@enum.value ProtocolStatusSuperseded This protocol has been replaced and a different protocol should be used in its place. }
-  TFhirProtocolStatusList = set of TFhirProtocolStatus;
-
   {@Enum TFhirProvenanceEntityRole
     How an entity was used in an activity
   }
@@ -1055,16 +1017,6 @@ Type
     HierarchicalRelationshipTypeChild); {@enum.value HierarchicalRelationshipTypeChild The target resource is the child of the focal specimen resource. }
   TFhirHierarchicalRelationshipTypeList = set of TFhirHierarchicalRelationshipType;
 
-  {@Enum TFhirStudyTreatmentRole
-    How is a treatment used in the study
-  }
-  TFhirStudyTreatmentRole = (
-    StudyTreatmentRoleNull,  {@enum.value StudyTreatmentRoleNull Value is missing from Instance }
-    StudyTreatmentRoleInvestigational, {@enum.value StudyTreatmentRoleInvestigational  }
-    StudyTreatmentRoleComparative, {@enum.value StudyTreatmentRoleComparative  }
-    StudyTreatmentRoleCurrent); {@enum.value StudyTreatmentRoleCurrent  }
-  TFhirStudyTreatmentRoleList = set of TFhirStudyTreatmentRole;
-
   {@Enum TFhirFilterOperator
     The kind of operation to perform as part of a property based filter
   }
@@ -1141,8 +1093,6 @@ Type
   TFhirAddressList = class;
   TFhirHumanName = class;
   TFhirHumanNameList = class;
-  TFhirActivityDefinition = class;
-  TFhirActivityDefinitionList = class;
 
   {@Class TFhirElement : TFHIRBase
     Base Element Definition - extensions, ids
@@ -5270,173 +5220,6 @@ P.O. Box number, delivery hints, and similar address information.
   End;
 
 
-  {@Class TFhirActivityDefinition : TFhirType
-    Used as part of care plans, protocols and other resources that describe.
-  }
-  {!.Net HL7Connect.Fhir.ActivityDefinition}
-  TFhirActivityDefinition = class (TFhirType)
-  private
-    FCategory : TFhirEnum;
-    FCode : TFhirCodeableConcept;
-    FTiming : TFhirType;
-    FLocation : TFhirResourceReference{TFhirLocation};
-    FperformerList : TFhirResourceReferenceList{Resource};
-    FProduct : TFhirResourceReference{Resource};
-    FQuantity : TFhirQuantity;
-    FDetails : TFhirString;
-    Procedure SetCategory(value : TFhirEnum);
-    Function GetCategoryST : TFhirActivityDefinitionCategory;
-    Procedure SetCategoryST(value : TFhirActivityDefinitionCategory);
-    Procedure SetCode(value : TFhirCodeableConcept);
-    Procedure SetTiming(value : TFhirType);
-    Procedure SetLocation(value : TFhirResourceReference{TFhirLocation});
-    Procedure SetProduct(value : TFhirResourceReference{Resource});
-    Procedure SetQuantity(value : TFhirQuantity);
-    Procedure SetDetails(value : TFhirString);
-    Function GetDetailsST : String;
-    Procedure SetDetailsST(value : String);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirActivityDefinition; overload;
-    function Clone : TFhirActivityDefinition; overload;
-    {!script show}
-  published
-    {@member category
-      High-level categorization of the type of activity.
-    }
-    property category : TFhirEnum read FCategory write SetCategory;
-    {@member categoryST
-      Typed access to High-level categorization of the type of activity.
-    }
-    property categoryST : TFhirActivityDefinitionCategory read GetCategoryST write SetCategoryST;
-
-    {@member code
-      Detailed description of the type of activity.  E.g. What lab test, what procedure, what kind of encounter.
-    }
-    property code : TFhirCodeableConcept read FCode write SetCode;
-
-    {@member timing
-      The period, timing or frequency upon which the described activity is to occur.
-    }
-    property timing : TFhirType read FTiming write SetTiming;
-
-    {@member location
-      Identifies the facility where the activity will occur.  E.g. home, hospital, specific clinic, etc.
-    }
-    property location : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
-
-    {@member performerList
-      Identifies who's expected to be involved in the activity.
-    }
-    property performerList : TFhirResourceReferenceList{Resource} read FPerformerList;
-
-    {@member product
-      Identifies the food, drug or other product being consumed or supplied in the activity.
-    }
-    property product : TFhirResourceReference{Resource} read FProduct write SetProduct;
-
-    {@member quantity
-      Identifies the quantity expected to be consumed at once (per dose, per meal, etc.).
-    }
-    property quantity : TFhirQuantity read FQuantity write SetQuantity;
-
-    {@member details
-      This provides a textual description of constraints on the activity occurrence, including relation to other activities.  It may also include objectives, pre-conditions and end-conditions.  Finally, it may convey specifics about the activity such as body site, method, route, etc.
-    }
-    property details : TFhirString read FDetails write SetDetails;
-    {@member detailsST
-      Typed access to This provides a textual description of constraints on the activity occurrence, including relation to other activities.  It may also include objectives, pre-conditions and end-conditions.  Finally, it may convey specifics about the activity such as body site, method, route, etc.
-    }
-    property detailsST : String read GetDetailsST write SetDetailsST;
-
-  end;
-
-
-  {@Class TFhirActivityDefinitionList
-    A list of FhirActivityDefinition
-  }
-  {!.Net HL7Connect.Fhir.ActivityDefinitionList}
-  TFhirActivityDefinitionList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirActivityDefinition;
-    procedure SetItemN(index : Integer; value : TFhirActivityDefinition);
-  public
-    {!script hide}
-    function Link : TFhirActivityDefinitionList; Overload;
-    function Clone : TFhirActivityDefinitionList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirActivityDefinition to the end of the list.
-    }
-    function Append : TFhirActivityDefinition;
-
-    
-    {@member AddItem
-      Add an already existing FhirActivityDefinition to the end of the list.
-    }
-    procedure AddItem(value : TFhirActivityDefinition);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirActivityDefinition) : Integer;
-    
-
-    {@member Insert
-      Insert FhirActivityDefinition before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirActivityDefinition;
-    
-
-    {@member InsertItem
-       Insert an existing FhirActivityDefinition before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirActivityDefinition);
-    
-    {@member Item
-       Get the iIndexth FhirActivityDefinition. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirActivityDefinition. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirActivityDefinition);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirActivityDefinition;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirActivityDefinitions[index : Integer] : TFhirActivityDefinition read GetItemN write SetItemN; default;
-  End;
-
-
   TFhirAge = TFhirQuantity;
 
   TFhirCount = TFhirQuantity;
@@ -5457,7 +5240,6 @@ Const
   CODES_TFhirContactUse : Array[TFhirContactUse] of String = ('', 'home', 'work', 'temp', 'old', 'mobile');
   CODES_TFhirAddressUse : Array[TFhirAddressUse] of String = ('', 'home', 'work', 'temp', 'old');
   CODES_TFhirNameUse : Array[TFhirNameUse] of String = ('', 'usual', 'official', 'temp', 'nickname', 'anonymous', 'old', 'maiden');
-  CODES_TFhirActivityDefinitionCategory : Array[TFhirActivityDefinitionCategory] of String = ('', 'diet', 'drug', 'encounter', 'observation', 'procedure', 'supply', 'other');
   CODES_TFhirReactionSeverity : Array[TFhirReactionSeverity] of String = ('', 'severe', 'serious', 'moderate', 'minor');
   CODES_TFhirExposureType : Array[TFhirExposureType] of String = ('', 'drugadmin', 'immuniz', 'coincidental');
   CODES_TFhirCausalityExpectation : Array[TFhirCausalityExpectation] of String = ('', 'likely', 'unlikely', 'confirmed', 'unknown');
@@ -5516,8 +5298,6 @@ Const
   CODES_TFhirConstraintSeverity : Array[TFhirConstraintSeverity] of String = ('', 'error', 'warning');
   CODES_TFhirBindingConformance : Array[TFhirBindingConformance] of String = ('', 'required', 'preferred', 'example');
   CODES_TFhirExtensionContext : Array[TFhirExtensionContext] of String = ('', 'resource', 'datatype', 'mapping', 'extension');
-  CODES_TFhirProtocolType : Array[TFhirProtocolType] of String = ('', 'condition', 'device', 'drug', 'study');
-  CODES_TFhirProtocolStatus : Array[TFhirProtocolStatus] of String = ('', 'draft', 'testing', 'review', 'production', 'withdrawn', 'superseded');
   CODES_TFhirProvenanceEntityRole : Array[TFhirProvenanceEntityRole] of String = ('', 'derivation', 'revision', 'quotation', 'source');
   CODES_TFhirQueryOutcome : Array[TFhirQueryOutcome] of String = ('', 'ok', 'limited', 'refused', 'error');
   CODES_TFhirQuestionnaireStatus : Array[TFhirQuestionnaireStatus] of String = ('', 'draft', 'published', 'retired', 'in progress', 'completed', 'amended');
@@ -5528,7 +5308,6 @@ Const
   CODES_TFhirObjectRole : Array[TFhirObjectRole] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24');
   CODES_TFhirObjectLifecycle : Array[TFhirObjectLifecycle] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15');
   CODES_TFhirHierarchicalRelationshipType : Array[TFhirHierarchicalRelationshipType] of String = ('', 'parent', 'child');
-  CODES_TFhirStudyTreatmentRole : Array[TFhirStudyTreatmentRole] of String = ('', 'investigational', 'comparative', 'current');
   CODES_TFhirFilterOperator : Array[TFhirFilterOperator] of String = ('', '=', 'is-a', 'is-not-a', 'regex');
 
 Function TFhirNarrativeStatusListAsInteger(aSet : TFhirNarrativeStatusList) : Integer; overload;
@@ -5549,8 +5328,6 @@ Function TFhirAddressUseListAsInteger(aSet : TFhirAddressUseList) : Integer; ove
 Function IntegerAsTFhirAddressUseList(i : integer) : TFhirAddressUseList; overload;
 Function TFhirNameUseListAsInteger(aSet : TFhirNameUseList) : Integer; overload;
 Function IntegerAsTFhirNameUseList(i : integer) : TFhirNameUseList; overload;
-Function TFhirActivityDefinitionCategoryListAsInteger(aSet : TFhirActivityDefinitionCategoryList) : Integer; overload;
-Function IntegerAsTFhirActivityDefinitionCategoryList(i : integer) : TFhirActivityDefinitionCategoryList; overload;
 Function TFhirReactionSeverityListAsInteger(aSet : TFhirReactionSeverityList) : Integer; overload;
 Function IntegerAsTFhirReactionSeverityList(i : integer) : TFhirReactionSeverityList; overload;
 Function TFhirExposureTypeListAsInteger(aSet : TFhirExposureTypeList) : Integer; overload;
@@ -5667,10 +5444,6 @@ Function TFhirBindingConformanceListAsInteger(aSet : TFhirBindingConformanceList
 Function IntegerAsTFhirBindingConformanceList(i : integer) : TFhirBindingConformanceList; overload;
 Function TFhirExtensionContextListAsInteger(aSet : TFhirExtensionContextList) : Integer; overload;
 Function IntegerAsTFhirExtensionContextList(i : integer) : TFhirExtensionContextList; overload;
-Function TFhirProtocolTypeListAsInteger(aSet : TFhirProtocolTypeList) : Integer; overload;
-Function IntegerAsTFhirProtocolTypeList(i : integer) : TFhirProtocolTypeList; overload;
-Function TFhirProtocolStatusListAsInteger(aSet : TFhirProtocolStatusList) : Integer; overload;
-Function IntegerAsTFhirProtocolStatusList(i : integer) : TFhirProtocolStatusList; overload;
 Function TFhirProvenanceEntityRoleListAsInteger(aSet : TFhirProvenanceEntityRoleList) : Integer; overload;
 Function IntegerAsTFhirProvenanceEntityRoleList(i : integer) : TFhirProvenanceEntityRoleList; overload;
 Function TFhirQueryOutcomeListAsInteger(aSet : TFhirQueryOutcomeList) : Integer; overload;
@@ -5691,8 +5464,6 @@ Function TFhirObjectLifecycleListAsInteger(aSet : TFhirObjectLifecycleList) : In
 Function IntegerAsTFhirObjectLifecycleList(i : integer) : TFhirObjectLifecycleList; overload;
 Function TFhirHierarchicalRelationshipTypeListAsInteger(aSet : TFhirHierarchicalRelationshipTypeList) : Integer; overload;
 Function IntegerAsTFhirHierarchicalRelationshipTypeList(i : integer) : TFhirHierarchicalRelationshipTypeList; overload;
-Function TFhirStudyTreatmentRoleListAsInteger(aSet : TFhirStudyTreatmentRoleList) : Integer; overload;
-Function IntegerAsTFhirStudyTreatmentRoleList(i : integer) : TFhirStudyTreatmentRoleList; overload;
 Function TFhirFilterOperatorListAsInteger(aSet : TFhirFilterOperatorList) : Integer; overload;
 Function IntegerAsTFhirFilterOperatorList(i : integer) : TFhirFilterOperatorList; overload;
 
@@ -11892,281 +11663,6 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-function TFhirActivityDefinitionCategoryListAsInteger(aSet : TFhirActivityDefinitionCategoryList) : Integer;
-var
-  a : TFhirActivityDefinitionCategory;
-begin
-  result := 0;
-  for a := low(TFhirActivityDefinitionCategory) to high(TFhirActivityDefinitionCategory) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirActivityDefinitionCategoryList(i : Integer) : TFhirActivityDefinitionCategoryList;
-var
-  aLoop : TFhirActivityDefinitionCategory;
-begin
-  result := [];
-  for aLoop := low(TFhirActivityDefinitionCategory) to high(TFhirActivityDefinitionCategory) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-{ TFhirActivityDefinition }
-
-constructor TFhirActivityDefinition.Create;
-begin
-  inherited;
-  FPerformerList := TFhirResourceReferenceList{Resource}.Create;
-end;
-
-destructor TFhirActivityDefinition.Destroy;
-begin
-  FCategory.free;
-  FCode.free;
-  FTiming.free;
-  FLocation.free;
-  FPerformerList.Free;
-  FProduct.free;
-  FQuantity.free;
-  FDetails.free;
-  inherited;
-end;
-
-procedure TFhirActivityDefinition.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  FCategory := TFhirActivityDefinition(oSource).FCategory.Link;
-  code := TFhirActivityDefinition(oSource).code.Clone;
-  timing := TFhirActivityDefinition(oSource).timing.Clone;
-  location := TFhirActivityDefinition(oSource).location.Clone;
-  FPerformerList.Assign(TFhirActivityDefinition(oSource).FPerformerList);
-  product := TFhirActivityDefinition(oSource).product.Clone;
-  quantity := TFhirActivityDefinition(oSource).quantity.Clone;
-  details := TFhirActivityDefinition(oSource).details.Clone;
-end;
-
-procedure TFhirActivityDefinition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'category') Then
-     list.add(FCategory.Link);
-  if (child_name = 'code') Then
-     list.add(Code.Link);
-  if (child_name = 'timing') Then
-     list.add(Timing.Link);
-  if (child_name = 'location') Then
-     list.add(Location.Link);
-  if (child_name = 'performer') Then
-     list.addAll(FPerformerList);
-  if (child_name = 'product') Then
-     list.add(Product.Link);
-  if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
-  if (child_name = 'details') Then
-     list.add(Details.Link);
-end;
-
-procedure TFhirActivityDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'category', 'code', FCategory.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', FCode.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'timing[x]', 'CodeableConcept|Schedule', FTiming.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'location', 'Resource(Location)', FLocation.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Resource(Practitioner|Organization|RelatedPerson|Patient)', FPerformerList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'product', 'Resource(Medication|Substance)', FProduct.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', FQuantity.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'details', 'string', FDetails.Link.Link));{2}
-end;
-
-function TFhirActivityDefinition.Link : TFhirActivityDefinition;
-begin
-  result := TFhirActivityDefinition(inherited Link);
-end;
-
-function TFhirActivityDefinition.Clone : TFhirActivityDefinition;
-begin
-  result := TFhirActivityDefinition(inherited Clone);
-end;
-
-{ TFhirActivityDefinition }
-
-Procedure TFhirActivityDefinition.SetCategory(value : TFhirEnum);
-begin
-  FCategory.free;
-  FCategory := value;
-end;
-
-Function TFhirActivityDefinition.GetCategoryST : TFhirActivityDefinitionCategory;
-begin
-  if FCategory = nil then
-    result := TFhirActivityDefinitionCategory(0)
-  else
-    result := TFhirActivityDefinitionCategory(StringArrayIndexOf(CODES_TFhirActivityDefinitionCategory, Category.value));
-end;
-
-Procedure TFhirActivityDefinition.SetCategoryST(value : TFhirActivityDefinitionCategory);
-begin
-  if ord(value) = 0 then
-    Category := nil
-  else
-    Category := TFhirEnum.create(CODES_TFhirActivityDefinitionCategory[value]);
-end;
-
-Procedure TFhirActivityDefinition.SetCode(value : TFhirCodeableConcept);
-begin
-  FCode.free;
-  FCode := value;
-end;
-
-Procedure TFhirActivityDefinition.SetTiming(value : TFhirType);
-begin
-  FTiming.free;
-  FTiming := value;
-end;
-
-Procedure TFhirActivityDefinition.SetLocation(value : TFhirResourceReference{TFhirLocation});
-begin
-  FLocation.free;
-  FLocation := value;
-end;
-
-Procedure TFhirActivityDefinition.SetProduct(value : TFhirResourceReference{Resource});
-begin
-  FProduct.free;
-  FProduct := value;
-end;
-
-Procedure TFhirActivityDefinition.SetQuantity(value : TFhirQuantity);
-begin
-  FQuantity.free;
-  FQuantity := value;
-end;
-
-Procedure TFhirActivityDefinition.SetDetails(value : TFhirString);
-begin
-  FDetails.free;
-  FDetails := value;
-end;
-
-Function TFhirActivityDefinition.GetDetailsST : String;
-begin
-  if FDetails = nil then
-    result := ''
-  else
-    result := Details.value;
-end;
-
-Procedure TFhirActivityDefinition.SetDetailsST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDetails = nil then
-      FDetails := TFhirString.create;
-    FDetails.value := value
-  end
-  else if FDetails <> nil then
-    FDetails.value := '';
-end;
-
-
-{ TFhirActivityDefinitionList }
-procedure TFhirActivityDefinitionList.AddItem(value: TFhirActivityDefinition);
-begin
-  assert(value.ClassName = 'TFhirActivityDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirActivityDefinition');
-  add(value);
-end;
-
-
-function TFhirActivityDefinitionList.Append: TFhirActivityDefinition;
-begin
-  result := TFhirActivityDefinition.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirActivityDefinitionList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirActivityDefinitionList.Clone: TFhirActivityDefinitionList;
-begin
-  result := TFhirActivityDefinitionList(inherited Clone);
-end;
-
-function TFhirActivityDefinitionList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirActivityDefinitionList.GetItemN(index: Integer): TFhirActivityDefinition;
-begin
-  result := TFhirActivityDefinition(ObjectByIndex[index]);
-end;
-
-function TFhirActivityDefinitionList.IndexOf(value: TFhirActivityDefinition): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirActivityDefinitionList.Insert(index: Integer): TFhirActivityDefinition;
-begin
-  result := TFhirActivityDefinition.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirActivityDefinitionList.InsertItem(index: Integer; value: TFhirActivityDefinition);
-begin
-  assert(value is TFhirActivityDefinition);
-  Inherited Insert(index, value);
-end;
-
-function TFhirActivityDefinitionList.Item(index: Integer): TFhirActivityDefinition;
-begin
-  result := TFhirActivityDefinition(ObjectByIndex[index]);
-end;
-
-function TFhirActivityDefinitionList.Link: TFhirActivityDefinitionList;
-begin
-  result := TFhirActivityDefinitionList(inherited Link);
-end;
-
-procedure TFhirActivityDefinitionList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirActivityDefinitionList.SetItemByIndex(index: Integer; value: TFhirActivityDefinition);
-begin
-  assert(value is TFhirActivityDefinition);
-  FhirActivityDefinitions[index] := value;
-end;
-
-procedure TFhirActivityDefinitionList.SetItemN(index: Integer; value: TFhirActivityDefinition);
-begin
-  assert(value is TFhirActivityDefinition);
-  ObjectByIndex[index] := value;
-end;
-
 function TFhirReactionSeverityListAsInteger(aSet : TFhirReactionSeverityList) : Integer;
 var
   a : TFhirReactionSeverity;
@@ -13733,60 +13229,6 @@ begin
  end;
 
 
-function TFhirProtocolTypeListAsInteger(aSet : TFhirProtocolTypeList) : Integer;
-var
-  a : TFhirProtocolType;
-begin
-  result := 0;
-  for a := low(TFhirProtocolType) to high(TFhirProtocolType) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirProtocolTypeList(i : Integer) : TFhirProtocolTypeList;
-var
-  aLoop : TFhirProtocolType;
-begin
-  result := [];
-  for aLoop := low(TFhirProtocolType) to high(TFhirProtocolType) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirProtocolStatusListAsInteger(aSet : TFhirProtocolStatusList) : Integer;
-var
-  a : TFhirProtocolStatus;
-begin
-  result := 0;
-  for a := low(TFhirProtocolStatus) to high(TFhirProtocolStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirProtocolStatusList(i : Integer) : TFhirProtocolStatusList;
-var
-  aLoop : TFhirProtocolStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirProtocolStatus) to high(TFhirProtocolStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirProvenanceEntityRoleListAsInteger(aSet : TFhirProvenanceEntityRoleList) : Integer;
 var
   a : TFhirProvenanceEntityRole;
@@ -14049,33 +13491,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirHierarchicalRelationshipType) to high(TFhirHierarchicalRelationshipType) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirStudyTreatmentRoleListAsInteger(aSet : TFhirStudyTreatmentRoleList) : Integer;
-var
-  a : TFhirStudyTreatmentRole;
-begin
-  result := 0;
-  for a := low(TFhirStudyTreatmentRole) to high(TFhirStudyTreatmentRole) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirStudyTreatmentRoleList(i : Integer) : TFhirStudyTreatmentRoleList;
-var
-  aLoop : TFhirStudyTreatmentRole;
-begin
-  result := [];
-  for aLoop := low(TFhirStudyTreatmentRole) to high(TFhirStudyTreatmentRole) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

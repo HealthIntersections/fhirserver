@@ -31,7 +31,7 @@ unit FHIRParser;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 3, 2013 08:01+1100
+// FHIR v0.12 generated Tue, Dec 3, 2013 14:43+1100
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
@@ -79,7 +79,6 @@ Type
     function ParseContact(element : IXmlDomElement; path : string) : TFhirContact;
     function ParseAddress(element : IXmlDomElement; path : string) : TFhirAddress;
     function ParseHumanName(element : IXmlDomElement; path : string) : TFhirHumanName;
-    function ParseActivityDefinition(element : IXmlDomElement; path : string) : TFhirActivityDefinition;
     function ParseAge(element : IXmlDomElement; path : string) : TFhirAge;
     function ParseCount(element : IXmlDomElement; path : string) : TFhirCount;
     function ParseMoney(element : IXmlDomElement; path : string) : TFhirMoney;
@@ -218,13 +217,6 @@ Type
     function ParseProfileStructureElementDefinitionMapping(element : IXmlDomElement; path : string) : TFhirProfileStructureElementDefinitionMapping;
     function ParseProfileExtensionDefn(element : IXmlDomElement; path : string) : TFhirProfileExtensionDefn;
     function ParseProfile(element : IXmlDomElement; path : string) : TFhirProfile;
-    function ParseProtocolStep(element : IXmlDomElement; path : string) : TFhirProtocolStep;
-    function ParseProtocolStepPrecondition(element : IXmlDomElement; path : string) : TFhirProtocolStepPrecondition;
-    function ParseProtocolStepPreconditionCondition(element : IXmlDomElement; path : string) : TFhirProtocolStepPreconditionCondition;
-    function ParseProtocolStepActivity(element : IXmlDomElement; path : string) : TFhirProtocolStepActivity;
-    function ParseProtocolStepActivityComponent(element : IXmlDomElement; path : string) : TFhirProtocolStepActivityComponent;
-    function ParseProtocolStepNext(element : IXmlDomElement; path : string) : TFhirProtocolStepNext;
-    function ParseProtocol(element : IXmlDomElement; path : string) : TFhirProtocol;
     function ParseProvenanceAgent(element : IXmlDomElement; path : string) : TFhirProvenanceAgent;
     function ParseProvenanceEntity(element : IXmlDomElement; path : string) : TFhirProvenanceEntity;
     function ParseProvenance(element : IXmlDomElement; path : string) : TFhirProvenance;
@@ -246,9 +238,6 @@ Type
     function ParseSpecimenTreatment(element : IXmlDomElement; path : string) : TFhirSpecimenTreatment;
     function ParseSpecimenContainer(element : IXmlDomElement; path : string) : TFhirSpecimenContainer;
     function ParseSpecimen(element : IXmlDomElement; path : string) : TFhirSpecimen;
-    function ParseStudyTreatment(element : IXmlDomElement; path : string) : TFhirStudyTreatment;
-    function ParseStudyIntervention(element : IXmlDomElement; path : string) : TFhirStudyIntervention;
-    function ParseStudy(element : IXmlDomElement; path : string) : TFhirStudy;
     function ParseSubstanceInstance(element : IXmlDomElement; path : string) : TFhirSubstanceInstance;
     function ParseSubstanceIngredient(element : IXmlDomElement; path : string) : TFhirSubstanceIngredient;
     function ParseSubstance(element : IXmlDomElement; path : string) : TFhirSubstance;
@@ -306,7 +295,6 @@ Type
     procedure ComposeContact(xml : TXmlBuilder; name : string; elem : TFhirContact);
     procedure ComposeAddress(xml : TXmlBuilder; name : string; elem : TFhirAddress);
     procedure ComposeHumanName(xml : TXmlBuilder; name : string; elem : TFhirHumanName);
-    procedure ComposeActivityDefinition(xml : TXmlBuilder; name : string; elem : TFhirActivityDefinition);
     procedure ComposeAge(xml : TXmlBuilder; name : string; elem : TFhirAge);
     procedure ComposeCount(xml : TXmlBuilder; name : string; elem : TFhirCount);
     procedure ComposeMoney(xml : TXmlBuilder; name : string; elem : TFhirMoney);
@@ -445,13 +433,6 @@ Type
     procedure ComposeProfileStructureElementDefinitionMapping(xml : TXmlBuilder; name : string; elem : TFhirProfileStructureElementDefinitionMapping);
     procedure ComposeProfileExtensionDefn(xml : TXmlBuilder; name : string; elem : TFhirProfileExtensionDefn);
     procedure ComposeProfile(xml : TXmlBuilder; name : string; elem : TFhirProfile);
-    procedure ComposeProtocolStep(xml : TXmlBuilder; name : string; elem : TFhirProtocolStep);
-    procedure ComposeProtocolStepPrecondition(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepPrecondition);
-    procedure ComposeProtocolStepPreconditionCondition(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepPreconditionCondition);
-    procedure ComposeProtocolStepActivity(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepActivity);
-    procedure ComposeProtocolStepActivityComponent(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepActivityComponent);
-    procedure ComposeProtocolStepNext(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepNext);
-    procedure ComposeProtocol(xml : TXmlBuilder; name : string; elem : TFhirProtocol);
     procedure ComposeProvenanceAgent(xml : TXmlBuilder; name : string; elem : TFhirProvenanceAgent);
     procedure ComposeProvenanceEntity(xml : TXmlBuilder; name : string; elem : TFhirProvenanceEntity);
     procedure ComposeProvenance(xml : TXmlBuilder; name : string; elem : TFhirProvenance);
@@ -473,9 +454,6 @@ Type
     procedure ComposeSpecimenTreatment(xml : TXmlBuilder; name : string; elem : TFhirSpecimenTreatment);
     procedure ComposeSpecimenContainer(xml : TXmlBuilder; name : string; elem : TFhirSpecimenContainer);
     procedure ComposeSpecimen(xml : TXmlBuilder; name : string; elem : TFhirSpecimen);
-    procedure ComposeStudyTreatment(xml : TXmlBuilder; name : string; elem : TFhirStudyTreatment);
-    procedure ComposeStudyIntervention(xml : TXmlBuilder; name : string; elem : TFhirStudyIntervention);
-    procedure ComposeStudy(xml : TXmlBuilder; name : string; elem : TFhirStudy);
     procedure ComposeSubstanceInstance(xml : TXmlBuilder; name : string; elem : TFhirSubstanceInstance);
     procedure ComposeSubstanceIngredient(xml : TXmlBuilder; name : string; elem : TFhirSubstanceIngredient);
     procedure ComposeSubstance(xml : TXmlBuilder; name : string; elem : TFhirSubstance);
@@ -562,8 +540,6 @@ Type
     procedure ParseAddress(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseHumanName(jsn : TJsonObject) : TFhirHumanName; overload;
     procedure ParseHumanName(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseActivityDefinition(jsn : TJsonObject) : TFhirActivityDefinition; overload;
-    procedure ParseActivityDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAge(jsn : TJsonObject) : TFhirAge; overload;
     function ParseCount(jsn : TJsonObject) : TFhirCount; overload;
     function ParseMoney(jsn : TJsonObject) : TFhirMoney; overload;
@@ -834,20 +810,6 @@ Type
     procedure ParseProfileExtensionDefn(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProfile(jsn : TJsonObject) : TFhirProfile; overload; {b|}
     procedure ParseProfile(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProtocolStep(jsn : TJsonObject) : TFhirProtocolStep; overload; {b\}
-    procedure ParseProtocolStep(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProtocolStepPrecondition(jsn : TJsonObject) : TFhirProtocolStepPrecondition; overload; {b\}
-    procedure ParseProtocolStepPrecondition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProtocolStepPreconditionCondition(jsn : TJsonObject) : TFhirProtocolStepPreconditionCondition; overload; {b\}
-    procedure ParseProtocolStepPreconditionCondition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProtocolStepActivity(jsn : TJsonObject) : TFhirProtocolStepActivity; overload; {b\}
-    procedure ParseProtocolStepActivity(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProtocolStepActivityComponent(jsn : TJsonObject) : TFhirProtocolStepActivityComponent; overload; {b\}
-    procedure ParseProtocolStepActivityComponent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProtocolStepNext(jsn : TJsonObject) : TFhirProtocolStepNext; overload; {b\}
-    procedure ParseProtocolStepNext(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProtocol(jsn : TJsonObject) : TFhirProtocol; overload; {b|}
-    procedure ParseProtocol(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProvenanceAgent(jsn : TJsonObject) : TFhirProvenanceAgent; overload; {b\}
     procedure ParseProvenanceAgent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProvenanceEntity(jsn : TJsonObject) : TFhirProvenanceEntity; overload; {b\}
@@ -890,12 +852,6 @@ Type
     procedure ParseSpecimenContainer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSpecimen(jsn : TJsonObject) : TFhirSpecimen; overload; {b|}
     procedure ParseSpecimen(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseStudyTreatment(jsn : TJsonObject) : TFhirStudyTreatment; overload; {b\}
-    procedure ParseStudyTreatment(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseStudyIntervention(jsn : TJsonObject) : TFhirStudyIntervention; overload; {b\}
-    procedure ParseStudyIntervention(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseStudy(jsn : TJsonObject) : TFhirStudy; overload; {b|}
-    procedure ParseStudy(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSubstanceInstance(jsn : TJsonObject) : TFhirSubstanceInstance; overload; {b\}
     procedure ParseSubstanceInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSubstanceIngredient(jsn : TJsonObject) : TFhirSubstanceIngredient; overload; {b\}
@@ -978,7 +934,6 @@ Type
     procedure ComposeContact(json : TJSONWriter; name : string; elem : TFhirContact);
     procedure ComposeAddress(json : TJSONWriter; name : string; elem : TFhirAddress);
     procedure ComposeHumanName(json : TJSONWriter; name : string; elem : TFhirHumanName);
-    procedure ComposeActivityDefinition(json : TJSONWriter; name : string; elem : TFhirActivityDefinition);
     procedure ComposeAge(json : TJSONWriter; name : string; elem : TFhirAge);
     procedure ComposeCount(json : TJSONWriter; name : string; elem : TFhirCount);
     procedure ComposeMoney(json : TJSONWriter; name : string; elem : TFhirMoney);
@@ -1117,13 +1072,6 @@ Type
     procedure ComposeProfileStructureElementDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirProfileStructureElementDefinitionMapping);
     procedure ComposeProfileExtensionDefn(json : TJSONWriter; name : string; elem : TFhirProfileExtensionDefn);
     procedure ComposeProfile(json : TJSONWriter; name : string; elem : TFhirProfile);
-    procedure ComposeProtocolStep(json : TJSONWriter; name : string; elem : TFhirProtocolStep);
-    procedure ComposeProtocolStepPrecondition(json : TJSONWriter; name : string; elem : TFhirProtocolStepPrecondition);
-    procedure ComposeProtocolStepPreconditionCondition(json : TJSONWriter; name : string; elem : TFhirProtocolStepPreconditionCondition);
-    procedure ComposeProtocolStepActivity(json : TJSONWriter; name : string; elem : TFhirProtocolStepActivity);
-    procedure ComposeProtocolStepActivityComponent(json : TJSONWriter; name : string; elem : TFhirProtocolStepActivityComponent);
-    procedure ComposeProtocolStepNext(json : TJSONWriter; name : string; elem : TFhirProtocolStepNext);
-    procedure ComposeProtocol(json : TJSONWriter; name : string; elem : TFhirProtocol);
     procedure ComposeProvenanceAgent(json : TJSONWriter; name : string; elem : TFhirProvenanceAgent);
     procedure ComposeProvenanceEntity(json : TJSONWriter; name : string; elem : TFhirProvenanceEntity);
     procedure ComposeProvenance(json : TJSONWriter; name : string; elem : TFhirProvenance);
@@ -1145,9 +1093,6 @@ Type
     procedure ComposeSpecimenTreatment(json : TJSONWriter; name : string; elem : TFhirSpecimenTreatment);
     procedure ComposeSpecimenContainer(json : TJSONWriter; name : string; elem : TFhirSpecimenContainer);
     procedure ComposeSpecimen(json : TJSONWriter; name : string; elem : TFhirSpecimen);
-    procedure ComposeStudyTreatment(json : TJSONWriter; name : string; elem : TFhirStudyTreatment);
-    procedure ComposeStudyIntervention(json : TJSONWriter; name : string; elem : TFhirStudyIntervention);
-    procedure ComposeStudy(json : TJSONWriter; name : string; elem : TFhirStudy);
     procedure ComposeSubstanceInstance(json : TJSONWriter; name : string; elem : TFhirSubstanceInstance);
     procedure ComposeSubstanceIngredient(json : TJSONWriter; name : string; elem : TFhirSubstanceIngredient);
     procedure ComposeSubstance(json : TJSONWriter; name : string; elem : TFhirSubstance);
@@ -2576,8 +2521,6 @@ begin
         result.value := ParseAddress(child, path+'/valueAddress') {f}
       else if (child.baseName = 'valueHumanName') then
         result.value := ParseHumanName(child, path+'/valueHumanName') {f}
-      else if (child.baseName = 'valueActivityDefinition') then
-        result.value := ParseActivityDefinition(child, path+'/valueActivityDefinition') {f}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -2651,9 +2594,7 @@ begin
   else if (elem.value is TFhirAddress) {9} then
     ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
   else if (elem.value is TFhirHumanName) {9} then
-    ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value))
-  else if (elem.value is TFhirActivityDefinition) {9} then
-    ComposeActivityDefinition(xml, 'valueActivityDefinition', TFhirActivityDefinition(elem.value));
+    ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value));
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -2724,8 +2665,6 @@ begin
         result.value := ParseAddress(jsn.vObj['valueAddress']);
     if jsn.has('valueHumanName') {a9} then
         result.value := ParseHumanName(jsn.vObj['valueHumanName']);
-    if jsn.has('valueActivityDefinition') {a9} then
-        result.value := ParseActivityDefinition(jsn.vObj['valueActivityDefinition']);
     result.link;
   finally
     result.free;
@@ -2832,9 +2771,7 @@ begin
   else if (elem.value is TFhirAddress) then
     ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
   else if (elem.value is TFhirHumanName) then
-    ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value))
-  else if (elem.value is TFhirActivityDefinition) then
-    ComposeActivityDefinition(json, 'valueActivityDefinition', TFhirActivityDefinition(elem.value));
+    ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value));
   json.finishObject;
 end;
 
@@ -4357,136 +4294,6 @@ begin
     end;
   end;
   ComposePeriod(json, 'period', elem.period); {a}
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseActivityDefinition(element : IXmlDomElement; path : string) : TFhirActivityDefinition;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirActivityDefinition.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'category') then
-        result.category := ParseEnum(CODES_TFhirActivityDefinitionCategory, path+'/category', child)
-      else if (child.baseName = 'code') then
-        result.code := ParseCodeableConcept(child, path+'/code') {b}
-      else if (child.baseName = 'timingCodeableConcept') then
-        result.timing := ParseCodeableConcept(child, path+'/timingCodeableConcept')
-      else if (child.baseName = 'timingSchedule') then
-        result.timing := ParseSchedule(child, path+'/timingSchedule')
-      else if (child.baseName = 'location') then
-        result.location := ParseResourceReference{TFhirLocation}(child, path+'/location') {b}
-      else if (child.baseName = 'performer') then
-        result.performerList.Add(ParseResourceReference{Resource}(child, path+'/performer'))
-      else if (child.baseName = 'product') then
-        result.product := ParseResourceReference{Resource}(child, path+'/product') {b}
-      else if (child.baseName = 'quantity') then
-        result.quantity := ParseQuantity(child, path+'/quantity') {b}
-      else if (child.baseName = 'details') then
-        result.details := ParseString(child, path+'/details') {b}
-      else if Not ParseElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeActivityDefinition(xml : TXmlBuilder; name : string; elem : TFhirActivityDefinition);
-var
-  i : integer;
-  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeElementChildren(xml, elem);
-  ComposeEnum(xml, 'category', elem.Category, CODES_TFhirActivityDefinitionCategory);
-  ComposeCodeableConcept(xml, 'code', elem.code);
-  if (elem.timing is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(xml, 'timingCodeableConcept', TFhirCodeableConcept(elem.timing))
-  else if (elem.timing is TFhirSchedule) {6} then
-    ComposeSchedule(xml, 'timingSchedule', TFhirSchedule(elem.timing));
-  ComposeResourceReference{TFhirLocation}(xml, 'location', elem.location);
-  for i := 0 to elem.performerList.Count - 1 do
-    ComposeResourceReference{Resource}(xml, 'performer', elem.performerList[i]);
-  ComposeResourceReference{Resource}(xml, 'product', elem.product);
-  ComposeQuantity(xml, 'quantity', elem.quantity);
-  ComposeString(xml, 'details', elem.details);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseActivityDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseActivityDefinition(jsn));
-end;
-
-function TFHIRJsonParser.ParseActivityDefinition(jsn : TJsonObject) : TFhirActivityDefinition;
-begin
-  result := TFhirActivityDefinition.create;
-  try
-    ParseElementProperties(jsn, result);
-    if jsn.has('category') or jsn.has('_category')  then
-      result.category := parseEnum(jsn['category'], jsn.vObj['_category'], CODES_TFhirActivityDefinitionCategory);
-    if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
-    if jsn.has('timingCodeableConcept') {a4} then
-      result.timing := ParseCodeableConcept(jsn.vObj['timingCodeableConcept']);
-    if jsn.has('timingSchedule') {a4} then
-      result.timing := ParseSchedule(jsn.vObj['timingSchedule']);
-    if jsn.has('location') then
-        result.location := ParseResourceReference{TFhirLocation}(jsn.vObj['location']);{q}
-    if jsn.has('performer') then
-      iterateArray(jsn.vArr['performer'], result.performerList, parseResourceReference{Resource});
-    if jsn.has('product') then
-        result.product := ParseResourceReference{Resource}(jsn.vObj['product']);{q}
-    if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
-    if jsn.has('details') or jsn.has('_details') then
-        result.details := ParseString(jsn['details'], jsn.vObj['_details']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeActivityDefinition(json : TJSONWriter; name : string; elem : TFhirActivityDefinition);
-var
-  i : integer;  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeElementProperties(json, elem);
-  ComposeEnumValue(json, 'category', elem.Category, CODES_TFhirActivityDefinitionCategory, false);
-  ComposeEnumProps(json, 'category', elem.Category, CODES_TFhirActivityDefinitionCategory, false);
-  ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if (elem.timing is TFhirCodeableConcept) then 
-    ComposeCodeableConcept(json, 'timingCodeableConcept', TFhirCodeableConcept(elem.timing)) 
-  else if (elem.timing is TFhirSchedule) then 
-    ComposeSchedule(json, 'timingSchedule', TFhirSchedule(elem.timing)) ;
-  ComposeResourceReference{TFhirLocation}(json, 'location', elem.location); {a}
-  if elem.performerList.Count > 0 then
-  begin
-    json.valueArray('performer');
-    for i := 0 to elem.performerList.Count - 1 do
-      ComposeResourceReference{Resource}(json, '',elem.performerList[i]); {z - Resource(Practitioner|Organization|RelatedPerson|Patient)}
-    json.FinishArray;
-  end;
-  ComposeResourceReference{Resource}(json, 'product', elem.product); {a}
-  ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  ComposeStringValue(json, 'details', elem.details, false);
-  ComposeStringProps(json, 'details', elem.details, false);
   json.finishObject;
 end;
 
@@ -18854,8 +18661,6 @@ begin
         result.value := ParseAddress(child, path+'/valueAddress') {f}
       else if (child.baseName = 'valueHumanName') then
         result.value := ParseHumanName(child, path+'/valueHumanName') {f}
-      else if (child.baseName = 'valueActivityDefinition') then
-        result.value := ParseActivityDefinition(child, path+'/valueActivityDefinition') {f}
       else if (child.baseName = 'exampleInteger') then
         result.example := ParseInteger(child, path+'.exampleInteger') {c}
       else if (child.baseName = 'exampleDateTime') then
@@ -18910,8 +18715,6 @@ begin
         result.example := ParseAddress(child, path+'/exampleAddress') {f}
       else if (child.baseName = 'exampleHumanName') then
         result.example := ParseHumanName(child, path+'/exampleHumanName') {f}
-      else if (child.baseName = 'exampleActivityDefinition') then
-        result.example := ParseActivityDefinition(child, path+'/exampleActivityDefinition') {f}
       else if (child.baseName = 'maxLength') then
         result.maxLength := ParseInteger(child, path+'/maxLength') {b}
       else if (child.baseName = 'condition') then
@@ -19012,9 +18815,7 @@ begin
   else if (elem.value is TFhirAddress) {9} then
     ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
   else if (elem.value is TFhirHumanName) {9} then
-    ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value))
-  else if (elem.value is TFhirActivityDefinition) {9} then
-    ComposeActivityDefinition(xml, 'valueActivityDefinition', TFhirActivityDefinition(elem.value));
+    ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value));
   if (elem.example is TFhirInteger) {1} then
     ComposeInteger(xml, 'exampleInteger', TFhirInteger(elem.example))
   else if (elem.example is TFhirDateTime) {1} then
@@ -19068,9 +18869,7 @@ begin
   else if (elem.example is TFhirAddress) {9} then
     ComposeAddress(xml, 'exampleAddress', TFhirAddress(elem.example))
   else if (elem.example is TFhirHumanName) {9} then
-    ComposeHumanName(xml, 'exampleHumanName', TFhirHumanName(elem.example))
-  else if (elem.example is TFhirActivityDefinition) {9} then
-    ComposeActivityDefinition(xml, 'exampleActivityDefinition', TFhirActivityDefinition(elem.example));
+    ComposeHumanName(xml, 'exampleHumanName', TFhirHumanName(elem.example));
   ComposeInteger(xml, 'maxLength', elem.maxLength);
   for i := 0 to elem.conditionList.Count - 1 do
     ComposeId(xml, 'condition', elem.conditionList[i]);
@@ -19167,8 +18966,6 @@ begin
         result.value := ParseAddress(jsn.vObj['valueAddress']);
     if jsn.has('valueHumanName') {a9} then
         result.value := ParseHumanName(jsn.vObj['valueHumanName']);
-    if jsn.has('valueActivityDefinition') {a9} then
-        result.value := ParseActivityDefinition(jsn.vObj['valueActivityDefinition']);
     if jsn.has('exampleInteger') or jsn.has('_exampleInteger') then
         result.example := ParseInteger(jsn['exampleInteger'], jsn.vObj['_exampleInteger']);
     if jsn.has('exampleDateTime') or jsn.has('_exampleDateTime') then
@@ -19223,8 +19020,6 @@ begin
         result.example := ParseAddress(jsn.vObj['exampleAddress']);
     if jsn.has('exampleHumanName') {a9} then
         result.example := ParseHumanName(jsn.vObj['exampleHumanName']);
-    if jsn.has('exampleActivityDefinition') {a9} then
-        result.example := ParseActivityDefinition(jsn.vObj['exampleActivityDefinition']);
     if jsn.has('maxLength') or jsn.has('_maxLength') then
         result.maxLength := ParseInteger(jsn['maxLength'], jsn.vObj['_maxLength']);{q}
       if jsn.has('condition') or jsn.has('_condition') then
@@ -19384,9 +19179,7 @@ begin
   else if (elem.value is TFhirAddress) then
     ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
   else if (elem.value is TFhirHumanName) then
-    ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value))
-  else if (elem.value is TFhirActivityDefinition) then
-    ComposeActivityDefinition(json, 'valueActivityDefinition', TFhirActivityDefinition(elem.value));
+    ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value));
   if (elem.example is TFhirInteger) then
   begin
     ComposeIntegerValue(json, 'exampleInteger', TFhirInteger(elem.example), false);
@@ -19479,9 +19272,7 @@ begin
   else if (elem.example is TFhirAddress) then
     ComposeAddress(json, 'exampleAddress', TFhirAddress(elem.example))
   else if (elem.example is TFhirHumanName) then
-    ComposeHumanName(json, 'exampleHumanName', TFhirHumanName(elem.example))
-  else if (elem.example is TFhirActivityDefinition) then
-    ComposeActivityDefinition(json, 'exampleActivityDefinition', TFhirActivityDefinition(elem.example));
+    ComposeHumanName(json, 'exampleHumanName', TFhirHumanName(elem.example));
   ComposeIntegerValue(json, 'maxLength', elem.maxLength, false);
   ComposeIntegerProps(json, 'maxLength', elem.maxLength, false);
   if elem.conditionList.Count > 0 then
@@ -20201,754 +19992,6 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseProtocolStep(element : IXmlDomElement; path : string) : TFhirProtocolStep;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirProtocolStep.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'name') then
-        result.name := ParseString(child, path+'/name') {b}
-      else if (child.baseName = 'description') then
-        result.description := ParseString(child, path+'/description') {b}
-      else if (child.baseName = 'duration') then
-        result.duration := ParseQuantity(child, path+'/duration') {b}
-      else if (child.baseName = 'precondition') then
-        result.precondition := ParseProtocolStepPrecondition(child, path+'/precondition') {b}
-      else if (child.baseName = 'exit') then
-        result.exit := ParseProtocolStepPrecondition(child, path+'/exit') {b}
-      else if (child.baseName = 'firstActivity') then
-        result.firstActivity := ParseString(child, path+'/firstActivity') {b}
-      else if (child.baseName = 'activity') then
-        result.activityList.Add(ParseProtocolStepActivity(child, path+'/activity'))
-      else if (child.baseName = 'next') then
-        result.nextList.Add(ParseProtocolStepNext(child, path+'/next'))
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeProtocolStep(xml : TXmlBuilder; name : string; elem : TFhirProtocolStep);
-var
-  i : integer;
-  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.name);
-  ComposeString(xml, 'description', elem.description);
-  ComposeQuantity(xml, 'duration', elem.duration);
-  ComposeProtocolStepPrecondition(xml, 'precondition', elem.precondition);
-  ComposeProtocolStepPrecondition(xml, 'exit', elem.exit);
-  ComposeString(xml, 'firstActivity', elem.firstActivity);
-  for i := 0 to elem.activityList.Count - 1 do
-    ComposeProtocolStepActivity(xml, 'activity', elem.activityList[i]);
-  for i := 0 to elem.nextList.Count - 1 do
-    ComposeProtocolStepNext(xml, 'next', elem.nextList[i]);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseProtocolStep(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProtocolStep(jsn));
-end;
-
-function TFHIRJsonParser.ParseProtocolStep(jsn : TJsonObject) : TFhirProtocolStep;
-begin
-  result := TFhirProtocolStep.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('name') or jsn.has('_name') then
-        result.name := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.description := ParseString(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('duration') then
-        result.duration := ParseQuantity(jsn.vObj['duration']);{q}
-    if jsn.has('precondition') then
-        result.precondition := ParseProtocolStepPrecondition(jsn.vObj['precondition']);{q}
-    if jsn.has('exit') then
-        result.exit := ParseProtocolStepPrecondition(jsn.vObj['exit']);{q}
-    if jsn.has('firstActivity') or jsn.has('_firstActivity') then
-        result.firstActivity := ParseString(jsn['firstActivity'], jsn.vObj['_firstActivity']);{q}
-    if jsn.has('activity') then
-      iterateArray(jsn.vArr['activity'], result.activityList, parseProtocolStepActivity);
-    if jsn.has('next') then
-      iterateArray(jsn.vArr['next'], result.nextList, parseProtocolStepNext);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeProtocolStep(json : TJSONWriter; name : string; elem : TFhirProtocolStep);
-var
-  i : integer;  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.name, false);
-  ComposeStringProps(json, 'name', elem.name, false);
-  ComposeStringValue(json, 'description', elem.description, false);
-  ComposeStringProps(json, 'description', elem.description, false);
-  ComposeQuantity(json, 'duration', elem.duration); {a}
-  ComposeProtocolStepPrecondition(json, 'precondition', elem.precondition); {a}
-  ComposeProtocolStepPrecondition(json, 'exit', elem.exit); {a}
-  ComposeStringValue(json, 'firstActivity', elem.firstActivity, false);
-  ComposeStringProps(json, 'firstActivity', elem.firstActivity, false);
-  if elem.activityList.Count > 0 then
-  begin
-    json.valueArray('activity');
-    for i := 0 to elem.activityList.Count - 1 do
-      ComposeProtocolStepActivity(json, '',elem.activityList[i]); {z - }
-    json.FinishArray;
-  end;
-  if elem.nextList.Count > 0 then
-  begin
-    json.valueArray('next');
-    for i := 0 to elem.nextList.Count - 1 do
-      ComposeProtocolStepNext(json, '',elem.nextList[i]); {z - }
-    json.FinishArray;
-  end;
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseProtocolStepPrecondition(element : IXmlDomElement; path : string) : TFhirProtocolStepPrecondition;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirProtocolStepPrecondition.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'description') then
-        result.description := ParseString(child, path+'/description') {b}
-      else if (child.baseName = 'condition') then
-        result.condition := ParseProtocolStepPreconditionCondition(child, path+'/condition') {b}
-      else if (child.baseName = 'intersection') then
-        result.intersectionList.Add(ParseProtocolStepPrecondition(child, path+'/intersection'))
-      else if (child.baseName = 'union') then
-        result.unionList.Add(ParseProtocolStepPrecondition(child, path+'/union'))
-      else if (child.baseName = 'exclude') then
-        result.excludeList.Add(ParseProtocolStepPrecondition(child, path+'/exclude'))
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeProtocolStepPrecondition(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepPrecondition);
-var
-  i : integer;
-  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'description', elem.description);
-  ComposeProtocolStepPreconditionCondition(xml, 'condition', elem.condition);
-  for i := 0 to elem.intersectionList.Count - 1 do
-    ComposeProtocolStepPrecondition(xml, 'intersection', elem.intersectionList[i]);
-  for i := 0 to elem.unionList.Count - 1 do
-    ComposeProtocolStepPrecondition(xml, 'union', elem.unionList[i]);
-  for i := 0 to elem.excludeList.Count - 1 do
-    ComposeProtocolStepPrecondition(xml, 'exclude', elem.excludeList[i]);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseProtocolStepPrecondition(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProtocolStepPrecondition(jsn));
-end;
-
-function TFHIRJsonParser.ParseProtocolStepPrecondition(jsn : TJsonObject) : TFhirProtocolStepPrecondition;
-begin
-  result := TFhirProtocolStepPrecondition.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('description') or jsn.has('_description') then
-        result.description := ParseString(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('condition') then
-        result.condition := ParseProtocolStepPreconditionCondition(jsn.vObj['condition']);{q}
-    if jsn.has('intersection') then
-      iterateArray(jsn.vArr['intersection'], result.intersectionList, parseProtocolStepPrecondition);
-    if jsn.has('union') then
-      iterateArray(jsn.vArr['union'], result.unionList, parseProtocolStepPrecondition);
-    if jsn.has('exclude') then
-      iterateArray(jsn.vArr['exclude'], result.excludeList, parseProtocolStepPrecondition);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeProtocolStepPrecondition(json : TJSONWriter; name : string; elem : TFhirProtocolStepPrecondition);
-var
-  i : integer;  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'description', elem.description, false);
-  ComposeStringProps(json, 'description', elem.description, false);
-  ComposeProtocolStepPreconditionCondition(json, 'condition', elem.condition); {a}
-  if elem.intersectionList.Count > 0 then
-  begin
-    json.valueArray('intersection');
-    for i := 0 to elem.intersectionList.Count - 1 do
-      ComposeProtocolStepPrecondition(json, '',elem.intersectionList[i]); {z - @Protocol.step.precondition}
-    json.FinishArray;
-  end;
-  if elem.unionList.Count > 0 then
-  begin
-    json.valueArray('union');
-    for i := 0 to elem.unionList.Count - 1 do
-      ComposeProtocolStepPrecondition(json, '',elem.unionList[i]); {z - @Protocol.step.precondition}
-    json.FinishArray;
-  end;
-  if elem.excludeList.Count > 0 then
-  begin
-    json.valueArray('exclude');
-    for i := 0 to elem.excludeList.Count - 1 do
-      ComposeProtocolStepPrecondition(json, '',elem.excludeList[i]); {z - @Protocol.step.precondition}
-    json.FinishArray;
-  end;
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseProtocolStepPreconditionCondition(element : IXmlDomElement; path : string) : TFhirProtocolStepPreconditionCondition;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirProtocolStepPreconditionCondition.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'type') then
-        result.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.baseName = 'valueCodeableConcept') then
-        result.value := ParseCodeableConcept(child, path+'/valueCodeableConcept')
-      else if (child.baseName = 'valueBoolean') then
-        result.value := ParseBoolean(child, path+'/valueBoolean')
-      else if (child.baseName = 'valueQuantity') then
-        result.value := ParseQuantity(child, path+'/valueQuantity')
-      else if (child.baseName = 'valueRange') then
-        result.value := ParseRange(child, path+'/valueRange')
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeProtocolStepPreconditionCondition(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepPreconditionCondition);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'type', elem.type_);
-  if (elem.value is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(xml, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
-  else if (elem.value is TFhirBoolean) {6} then
-    ComposeBoolean(xml, 'valueBoolean', TFhirBoolean(elem.value))
-  else if (elem.value is TFhirQuantity) {6} then
-    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
-  else if (elem.value is TFhirRange) {6} then
-    ComposeRange(xml, 'valueRange', TFhirRange(elem.value));
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseProtocolStepPreconditionCondition(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProtocolStepPreconditionCondition(jsn));
-end;
-
-function TFHIRJsonParser.ParseProtocolStepPreconditionCondition(jsn : TJsonObject) : TFhirProtocolStepPreconditionCondition;
-begin
-  result := TFhirProtocolStepPreconditionCondition.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
-    if jsn.has('valueCodeableConcept') {a4} then
-      result.value := ParseCodeableConcept(jsn.vObj['valueCodeableConcept']);
-    if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-      result.value := parseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
-    if jsn.has('valueQuantity') {a4} then
-      result.value := ParseQuantity(jsn.vObj['valueQuantity']);
-    if jsn.has('valueRange') {a4} then
-      result.value := ParseRange(jsn.vObj['valueRange']);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeProtocolStepPreconditionCondition(json : TJSONWriter; name : string; elem : TFhirProtocolStepPreconditionCondition);
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (elem.value is TFhirCodeableConcept) then 
-    ComposeCodeableConcept(json, 'valueCodeableConcept', TFhirCodeableConcept(elem.value)) 
-  else if (elem.value is TFhirBoolean) then 
-  begin
-    ComposeBooleanValue(json, 'valueBoolean', TFhirBoolean(elem.value), false);
-    ComposeBooleanProps(json, 'valueBoolean', TFhirBoolean(elem.value), false);
-  end
-  else if (elem.value is TFhirQuantity) then 
-    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value)) 
-  else if (elem.value is TFhirRange) then 
-    ComposeRange(json, 'valueRange', TFhirRange(elem.value)) ;
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseProtocolStepActivity(element : IXmlDomElement; path : string) : TFhirProtocolStepActivity;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirProtocolStepActivity.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'alternative') then
-        result.alternativeList.Add(ParseString(child, path+'/alternative'))
-      else if (child.baseName = 'component') then
-        result.componentList.Add(ParseProtocolStepActivityComponent(child, path+'/component'))
-      else if (child.baseName = 'following') then
-        result.followingList.Add(ParseString(child, path+'/following'))
-      else if (child.baseName = 'wait') then
-        result.wait := ParseQuantity(child, path+'/wait') {b}
-      else if (child.baseName = 'detail') then
-        result.detail := ParseActivityDefinition(child, path+'/detail') {b}
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeProtocolStepActivity(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepActivity);
-var
-  i : integer;
-  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  for i := 0 to elem.alternativeList.Count - 1 do
-    ComposeString(xml, 'alternative', elem.alternativeList[i]);
-  for i := 0 to elem.componentList.Count - 1 do
-    ComposeProtocolStepActivityComponent(xml, 'component', elem.componentList[i]);
-  for i := 0 to elem.followingList.Count - 1 do
-    ComposeString(xml, 'following', elem.followingList[i]);
-  ComposeQuantity(xml, 'wait', elem.wait);
-  ComposeActivityDefinition(xml, 'detail', elem.detail);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseProtocolStepActivity(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProtocolStepActivity(jsn));
-end;
-
-function TFHIRJsonParser.ParseProtocolStepActivity(jsn : TJsonObject) : TFhirProtocolStepActivity;
-begin
-  result := TFhirProtocolStepActivity.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-      if jsn.has('alternative') or jsn.has('_alternative') then
-      iteratePrimitiveArray(jsn.vArr['alternative'], jsn.vArr['_alternative'], result.alternativeList, parseString);
-    if jsn.has('component') then
-      iterateArray(jsn.vArr['component'], result.componentList, parseProtocolStepActivityComponent);
-      if jsn.has('following') or jsn.has('_following') then
-      iteratePrimitiveArray(jsn.vArr['following'], jsn.vArr['_following'], result.followingList, parseString);
-    if jsn.has('wait') then
-        result.wait := ParseQuantity(jsn.vObj['wait']);{q}
-    if jsn.has('detail') then
-        result.detail := ParseActivityDefinition(jsn.vObj['detail']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeProtocolStepActivity(json : TJSONWriter; name : string; elem : TFhirProtocolStepActivity);
-var
-  i : integer;  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if elem.alternativeList.Count > 0 then
-  begin
-    json.valueArray('alternative');
-    ext := false;
-    for i := 0 to elem.alternativeList.Count - 1 do
-    begin
-      ext := ext or ((elem.alternativeList[i].xmlid <> '') or (elem.alternativeList[i].hasExtensions));
-      ComposeStringValue(json, '',elem.alternativeList[i], true);
-    end;
-    json.FinishArray;
-    if ext then
-    begin
-      json.valueArray('_alternative');
-      for i := 0 to elem.alternativeList.Count - 1 do
-        ComposeStringProps(json, '',elem.alternativeList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if elem.componentList.Count > 0 then
-  begin
-    json.valueArray('component');
-    for i := 0 to elem.componentList.Count - 1 do
-      ComposeProtocolStepActivityComponent(json, '',elem.componentList[i]); {z - }
-    json.FinishArray;
-  end;
-  if elem.followingList.Count > 0 then
-  begin
-    json.valueArray('following');
-    ext := false;
-    for i := 0 to elem.followingList.Count - 1 do
-    begin
-      ext := ext or ((elem.followingList[i].xmlid <> '') or (elem.followingList[i].hasExtensions));
-      ComposeStringValue(json, '',elem.followingList[i], true);
-    end;
-    json.FinishArray;
-    if ext then
-    begin
-      json.valueArray('_following');
-      for i := 0 to elem.followingList.Count - 1 do
-        ComposeStringProps(json, '',elem.followingList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  ComposeQuantity(json, 'wait', elem.wait); {a}
-  ComposeActivityDefinition(json, 'detail', elem.detail); {a}
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseProtocolStepActivityComponent(element : IXmlDomElement; path : string) : TFhirProtocolStepActivityComponent;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirProtocolStepActivityComponent.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'sequence') then
-        result.sequence := ParseInteger(child, path+'/sequence') {b}
-      else if (child.baseName = 'activity') then
-        result.activity := ParseString(child, path+'/activity') {b}
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeProtocolStepActivityComponent(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepActivityComponent);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeInteger(xml, 'sequence', elem.sequence);
-  ComposeString(xml, 'activity', elem.activity);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseProtocolStepActivityComponent(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProtocolStepActivityComponent(jsn));
-end;
-
-function TFHIRJsonParser.ParseProtocolStepActivityComponent(jsn : TJsonObject) : TFhirProtocolStepActivityComponent;
-begin
-  result := TFhirProtocolStepActivityComponent.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('sequence') or jsn.has('_sequence') then
-        result.sequence := ParseInteger(jsn['sequence'], jsn.vObj['_sequence']);{q}
-    if jsn.has('activity') or jsn.has('_activity') then
-        result.activity := ParseString(jsn['activity'], jsn.vObj['_activity']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeProtocolStepActivityComponent(json : TJSONWriter; name : string; elem : TFhirProtocolStepActivityComponent);
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeIntegerValue(json, 'sequence', elem.sequence, false);
-  ComposeIntegerProps(json, 'sequence', elem.sequence, false);
-  ComposeStringValue(json, 'activity', elem.activity, false);
-  ComposeStringProps(json, 'activity', elem.activity, false);
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseProtocolStepNext(element : IXmlDomElement; path : string) : TFhirProtocolStepNext;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirProtocolStepNext.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'description') then
-        result.description := ParseString(child, path+'/description') {b}
-      else if (child.baseName = 'reference') then
-        result.reference := ParseString(child, path+'/reference') {b}
-      else if (child.baseName = 'condition') then
-        result.condition := ParseProtocolStepPrecondition(child, path+'/condition') {b}
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeProtocolStepNext(xml : TXmlBuilder; name : string; elem : TFhirProtocolStepNext);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'description', elem.description);
-  ComposeString(xml, 'reference', elem.reference);
-  ComposeProtocolStepPrecondition(xml, 'condition', elem.condition);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseProtocolStepNext(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProtocolStepNext(jsn));
-end;
-
-function TFHIRJsonParser.ParseProtocolStepNext(jsn : TJsonObject) : TFhirProtocolStepNext;
-begin
-  result := TFhirProtocolStepNext.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('description') or jsn.has('_description') then
-        result.description := ParseString(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('reference') or jsn.has('_reference') then
-        result.reference := ParseString(jsn['reference'], jsn.vObj['_reference']);{q}
-    if jsn.has('condition') then
-        result.condition := ParseProtocolStepPrecondition(jsn.vObj['condition']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeProtocolStepNext(json : TJSONWriter; name : string; elem : TFhirProtocolStepNext);
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'description', elem.description, false);
-  ComposeStringProps(json, 'description', elem.description, false);
-  ComposeStringValue(json, 'reference', elem.reference, false);
-  ComposeStringProps(json, 'reference', elem.reference, false);
-  ComposeProtocolStepPrecondition(json, 'condition', elem.condition); {a}
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseProtocol(element : IXmlDomElement; path : string) : TFhirProtocol;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirProtocol.create;
-  try
-    parseResourceAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'title') then
-        result.title := ParseString(child, path+'/title') {b}
-      else if (child.baseName = 'type') then
-        result.type_ := ParseEnum(CODES_TFhirProtocolType, path+'/type', child)
-      else if (child.baseName = 'status') then
-        result.status := ParseEnum(CODES_TFhirProtocolStatus, path+'/status', child)
-      else if (child.baseName = 'author') then
-        result.author := ParseResourceReference{TFhirOrganization}(child, path+'/author') {b}
-      else if (child.baseName = 'purpose') then
-        result.purpose := ParseString(child, path+'/purpose') {b}
-      else if (child.baseName = 'subject') then
-        result.subject := ParseResourceReference{Resource}(child, path+'/subject') {b}
-      else if (child.baseName = 'group') then
-        result.group := ParseResourceReference{TFhirGroup}(child, path+'/group') {b}
-      else if (child.baseName = 'step') then
-        result.stepList.Add(ParseProtocolStep(child, path+'/step'))
-      else if Not ParseResourceChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeProtocol(xml : TXmlBuilder; name : string; elem : TFhirProtocol);
-var
-  i : integer;
-  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  composeResourceAttributes(xml, elem);
-  xml.open(name);
-  composeResourceChildren(xml, elem);
-  ComposeString(xml, 'title', elem.title);
-  ComposeEnum(xml, 'type', elem.Type_, CODES_TFhirProtocolType);
-  ComposeEnum(xml, 'status', elem.Status, CODES_TFhirProtocolStatus);
-  ComposeResourceReference{TFhirOrganization}(xml, 'author', elem.author);
-  ComposeString(xml, 'purpose', elem.purpose);
-  ComposeResourceReference{Resource}(xml, 'subject', elem.subject);
-  ComposeResourceReference{TFhirGroup}(xml, 'group', elem.group);
-  for i := 0 to elem.stepList.Count - 1 do
-    ComposeProtocolStep(xml, 'step', elem.stepList[i]);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseProtocol(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProtocol(jsn));
-end;
-
-function TFHIRJsonParser.ParseProtocol(jsn : TJsonObject) : TFhirProtocol;
-begin
-  result := TFhirProtocol.create;
-  try
-    ParseResourceProperties(jsn, result);
-    if jsn.has('title') or jsn.has('_title') then
-        result.title := ParseString(jsn['title'], jsn.vObj['_title']);{q}
-    if jsn.has('type') or jsn.has('_type')  then
-      result.type_ := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirProtocolType);
-    if jsn.has('status') or jsn.has('_status')  then
-      result.status := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirProtocolStatus);
-    if jsn.has('author') then
-        result.author := ParseResourceReference{TFhirOrganization}(jsn.vObj['author']);{q}
-    if jsn.has('purpose') or jsn.has('_purpose') then
-        result.purpose := ParseString(jsn['purpose'], jsn.vObj['_purpose']);{q}
-    if jsn.has('subject') then
-        result.subject := ParseResourceReference{Resource}(jsn.vObj['subject']);{q}
-    if jsn.has('group') then
-        result.group := ParseResourceReference{TFhirGroup}(jsn.vObj['group']);{q}
-    if jsn.has('step') then
-      iterateArray(jsn.vArr['step'], result.stepList, parseProtocolStep);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeProtocol(json : TJSONWriter; name : string; elem : TFhirProtocol);
-var
-  i : integer;  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  ComposeResourceProperties(json, elem);
-  ComposeStringValue(json, 'title', elem.title, false);
-  ComposeStringProps(json, 'title', elem.title, false);
-  ComposeEnumValue(json, 'type', elem.Type_, CODES_TFhirProtocolType, false);
-  ComposeEnumProps(json, 'type', elem.Type_, CODES_TFhirProtocolType, false);
-  ComposeEnumValue(json, 'status', elem.Status, CODES_TFhirProtocolStatus, false);
-  ComposeEnumProps(json, 'status', elem.Status, CODES_TFhirProtocolStatus, false);
-  ComposeResourceReference{TFhirOrganization}(json, 'author', elem.author); {a}
-  ComposeStringValue(json, 'purpose', elem.purpose, false);
-  ComposeStringProps(json, 'purpose', elem.purpose, false);
-  ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
-  ComposeResourceReference{TFhirGroup}(json, 'group', elem.group); {a}
-  if elem.stepList.Count > 0 then
-  begin
-    json.valueArray('step');
-    for i := 0 to elem.stepList.Count - 1 do
-      ComposeProtocolStep(json, '',elem.stepList[i]); {z - }
-    json.FinishArray;
-  end;
-end;
-
 function TFHIRXmlParser.ParseProvenanceAgent(element : IXmlDomElement; path : string) : TFhirProvenanceAgent;
 var
   child : IXMLDOMElement;
@@ -21617,8 +20660,6 @@ begin
         result.data := ParseAddress(child, path+'/dataAddress') {f}
       else if (child.baseName = 'dataHumanName') then
         result.data := ParseHumanName(child, path+'/dataHumanName') {f}
-      else if (child.baseName = 'dataActivityDefinition') then
-        result.data := ParseActivityDefinition(child, path+'/dataActivityDefinition') {f}
       else if (child.baseName = 'remarks') then
         result.remarks := ParseString(child, path+'/remarks') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -21718,9 +20759,7 @@ begin
   else if (elem.data is TFhirAddress) {9} then
     ComposeAddress(xml, 'dataAddress', TFhirAddress(elem.data))
   else if (elem.data is TFhirHumanName) {9} then
-    ComposeHumanName(xml, 'dataHumanName', TFhirHumanName(elem.data))
-  else if (elem.data is TFhirActivityDefinition) {9} then
-    ComposeActivityDefinition(xml, 'dataActivityDefinition', TFhirActivityDefinition(elem.data));
+    ComposeHumanName(xml, 'dataHumanName', TFhirHumanName(elem.data));
   ComposeString(xml, 'remarks', elem.remarks);
   closeOutElement(xml, elem);
   xml.close(name);
@@ -21814,8 +20853,6 @@ begin
         result.data := ParseAddress(jsn.vObj['dataAddress']);
     if jsn.has('dataHumanName') {a9} then
         result.data := ParseHumanName(jsn.vObj['dataHumanName']);
-    if jsn.has('dataActivityDefinition') {a9} then
-        result.data := ParseActivityDefinition(jsn.vObj['dataActivityDefinition']);
     if jsn.has('remarks') or jsn.has('_remarks') then
         result.remarks := ParseString(jsn['remarks'], jsn.vObj['_remarks']);{q}
     result.link;
@@ -21976,9 +21013,7 @@ begin
   else if (elem.data is TFhirAddress) then
     ComposeAddress(json, 'dataAddress', TFhirAddress(elem.data))
   else if (elem.data is TFhirHumanName) then
-    ComposeHumanName(json, 'dataHumanName', TFhirHumanName(elem.data))
-  else if (elem.data is TFhirActivityDefinition) then
-    ComposeActivityDefinition(json, 'dataActivityDefinition', TFhirActivityDefinition(elem.data));
+    ComposeHumanName(json, 'dataHumanName', TFhirHumanName(elem.data));
   ComposeStringValue(json, 'remarks', elem.remarks, false);
   ComposeStringProps(json, 'remarks', elem.remarks, false);
   json.finishObject;
@@ -23618,437 +22653,6 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseStudyTreatment(element : IXmlDomElement; path : string) : TFhirStudyTreatment;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirStudyTreatment.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'role') then
-        result.role := ParseEnum(CODES_TFhirStudyTreatmentRole, path+'/role', child)
-      else if (child.baseName = 'detail') then
-        result.detail := ParseActivityDefinition(child, path+'/detail') {b}
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeStudyTreatment(xml : TXmlBuilder; name : string; elem : TFhirStudyTreatment);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'role', elem.Role, CODES_TFhirStudyTreatmentRole);
-  ComposeActivityDefinition(xml, 'detail', elem.detail);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseStudyTreatment(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseStudyTreatment(jsn));
-end;
-
-function TFHIRJsonParser.ParseStudyTreatment(jsn : TJsonObject) : TFhirStudyTreatment;
-begin
-  result := TFhirStudyTreatment.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('role') or jsn.has('_role')  then
-      result.role := parseEnum(jsn['role'], jsn.vObj['_role'], CODES_TFhirStudyTreatmentRole);
-    if jsn.has('detail') then
-        result.detail := ParseActivityDefinition(jsn.vObj['detail']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeStudyTreatment(json : TJSONWriter; name : string; elem : TFhirStudyTreatment);
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'role', elem.Role, CODES_TFhirStudyTreatmentRole, false);
-  ComposeEnumProps(json, 'role', elem.Role, CODES_TFhirStudyTreatmentRole, false);
-  ComposeActivityDefinition(json, 'detail', elem.detail); {a}
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseStudyIntervention(element : IXmlDomElement; path : string) : TFhirStudyIntervention;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirStudyIntervention.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'type') then
-        result.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.baseName = 'model') then
-        result.model := ParseCodeableConcept(child, path+'/model') {b}
-      else if (child.baseName = 'randomized') then
-        result.randomized := ParseBoolean(child, path+'/randomized') {b}
-      else if (child.baseName = 'blindingScheme') then
-        result.blindingScheme := ParseCodeableConcept(child, path+'/blindingScheme') {b}
-      else if (child.baseName = 'randomizationQuotientRatio') then
-        result.randomizationQuotient := ParseRatio(child, path+'/randomizationQuotientRatio')
-      else if (child.baseName = 'randomizationQuotientString') then
-        result.randomizationQuotient := ParseString(child, path+'/randomizationQuotientString')
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeStudyIntervention(xml : TXmlBuilder; name : string; elem : TFhirStudyIntervention);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'type', elem.type_);
-  ComposeCodeableConcept(xml, 'model', elem.model);
-  ComposeBoolean(xml, 'randomized', elem.randomized);
-  ComposeCodeableConcept(xml, 'blindingScheme', elem.blindingScheme);
-  if (elem.randomizationQuotient is TFhirRatio) {6} then
-    ComposeRatio(xml, 'randomizationQuotientRatio', TFhirRatio(elem.randomizationQuotient))
-  else if (elem.randomizationQuotient is TFhirString) {6} then
-    ComposeString(xml, 'randomizationQuotientString', TFhirString(elem.randomizationQuotient));
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseStudyIntervention(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseStudyIntervention(jsn));
-end;
-
-function TFHIRJsonParser.ParseStudyIntervention(jsn : TJsonObject) : TFhirStudyIntervention;
-begin
-  result := TFhirStudyIntervention.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
-    if jsn.has('model') then
-        result.model := ParseCodeableConcept(jsn.vObj['model']);{q}
-    if jsn.has('randomized') or jsn.has('_randomized') then
-        result.randomized := ParseBoolean(jsn['randomized'], jsn.vObj['_randomized']);{q}
-    if jsn.has('blindingScheme') then
-        result.blindingScheme := ParseCodeableConcept(jsn.vObj['blindingScheme']);{q}
-    if jsn.has('randomizationQuotientRatio') {a4} then
-      result.randomizationQuotient := ParseRatio(jsn.vObj['randomizationQuotientRatio']);
-    if jsn.has('randomizationQuotientString') or jsn.has('_randomizationQuotientString') then
-      result.randomizationQuotient := parseString(jsn['randomizationQuotientString'], jsn.vObj['_randomizationQuotientString']);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeStudyIntervention(json : TJSONWriter; name : string; elem : TFhirStudyIntervention);
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  ComposeCodeableConcept(json, 'model', elem.model); {a}
-  ComposeBooleanValue(json, 'randomized', elem.randomized, false);
-  ComposeBooleanProps(json, 'randomized', elem.randomized, false);
-  ComposeCodeableConcept(json, 'blindingScheme', elem.blindingScheme); {a}
-  if (elem.randomizationQuotient is TFhirRatio) then 
-    ComposeRatio(json, 'randomizationQuotientRatio', TFhirRatio(elem.randomizationQuotient)) 
-  else if (elem.randomizationQuotient is TFhirString) then 
-  begin
-    ComposeStringValue(json, 'randomizationQuotientString', TFhirString(elem.randomizationQuotient), false);
-    ComposeStringProps(json, 'randomizationQuotientString', TFhirString(elem.randomizationQuotient), false);
-  end;
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseStudy(element : IXmlDomElement; path : string) : TFhirStudy;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirStudy.create;
-  try
-    parseResourceAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'identifier') then
-        result.identifierList.Add(ParseIdentifier(child, path+'/identifier'))
-      else if (child.baseName = 'sponsor') then
-        result.sponsor := ParseString(child, path+'/sponsor') {b}
-      else if (child.baseName = 'title') then
-        result.title := ParseString(child, path+'/title') {b}
-      else if (child.baseName = 'description') then
-        result.description := ParseString(child, path+'/description') {b}
-      else if (child.baseName = 'type') then
-        result.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.baseName = 'condition') then
-        result.conditionList.Add(ParseCodeableConcept(child, path+'/condition'))
-      else if (child.baseName = 'treatment') then
-        result.treatmentList.Add(ParseStudyTreatment(child, path+'/treatment'))
-      else if (child.baseName = 'controlType') then
-        result.controlTypeList.Add(ParseCodeableConcept(child, path+'/controlType'))
-      else if (child.baseName = 'objective') then
-        result.objectiveList.Add(ParseString(child, path+'/objective'))
-      else if (child.baseName = 'outcomeMeasure') then
-        result.outcomeMeasureList.Add(ParseString(child, path+'/outcomeMeasure'))
-      else if (child.baseName = 'eligibility') then
-        result.eligibilityList.Add(ParseResourceReference{TFhirGroup}(child, path+'/eligibility'))
-      else if (child.baseName = 'period') then
-        result.period := ParsePeriod(child, path+'/period') {b}
-      else if (child.baseName = 'duration') then
-        result.duration := ParseQuantity(child, path+'/duration') {b}
-      else if (child.baseName = 'plannedEnrollment') then
-        result.plannedEnrollment := ParseInteger(child, path+'/plannedEnrollment') {b}
-      else if (child.baseName = 'intervention') then
-        result.intervention := ParseStudyIntervention(child, path+'/intervention') {b}
-      else if (child.baseName = 'protocol') then
-        result.protocolList.Add(ParseResourceReference{TFhirProtocol}(child, path+'/protocol'))
-      else if (child.baseName = 'dataStructure') then
-        result.dataStructure := ParseResourceReference{TFhirProfile}(child, path+'/dataStructure') {b}
-      else if (child.baseName = 'data') then
-        result.dataList.Add(ParseResourceReference{Resource}(child, path+'/data'))
-      else if Not ParseResourceChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeStudy(xml : TXmlBuilder; name : string; elem : TFhirStudy);
-var
-  i : integer;
-  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  composeResourceAttributes(xml, elem);
-  xml.open(name);
-  composeResourceChildren(xml, elem);
-  for i := 0 to elem.identifierList.Count - 1 do
-    ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeString(xml, 'sponsor', elem.sponsor);
-  ComposeString(xml, 'title', elem.title);
-  ComposeString(xml, 'description', elem.description);
-  ComposeCodeableConcept(xml, 'type', elem.type_);
-  for i := 0 to elem.conditionList.Count - 1 do
-    ComposeCodeableConcept(xml, 'condition', elem.conditionList[i]);
-  for i := 0 to elem.treatmentList.Count - 1 do
-    ComposeStudyTreatment(xml, 'treatment', elem.treatmentList[i]);
-  for i := 0 to elem.controlTypeList.Count - 1 do
-    ComposeCodeableConcept(xml, 'controlType', elem.controlTypeList[i]);
-  for i := 0 to elem.objectiveList.Count - 1 do
-    ComposeString(xml, 'objective', elem.objectiveList[i]);
-  for i := 0 to elem.outcomeMeasureList.Count - 1 do
-    ComposeString(xml, 'outcomeMeasure', elem.outcomeMeasureList[i]);
-  for i := 0 to elem.eligibilityList.Count - 1 do
-    ComposeResourceReference{TFhirGroup}(xml, 'eligibility', elem.eligibilityList[i]);
-  ComposePeriod(xml, 'period', elem.period);
-  ComposeQuantity(xml, 'duration', elem.duration);
-  ComposeInteger(xml, 'plannedEnrollment', elem.plannedEnrollment);
-  ComposeStudyIntervention(xml, 'intervention', elem.intervention);
-  for i := 0 to elem.protocolList.Count - 1 do
-    ComposeResourceReference{TFhirProtocol}(xml, 'protocol', elem.protocolList[i]);
-  ComposeResourceReference{TFhirProfile}(xml, 'dataStructure', elem.dataStructure);
-  for i := 0 to elem.dataList.Count - 1 do
-    ComposeResourceReference{Resource}(xml, 'data', elem.dataList[i]);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseStudy(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseStudy(jsn));
-end;
-
-function TFHIRJsonParser.ParseStudy(jsn : TJsonObject) : TFhirStudy;
-begin
-  result := TFhirStudy.create;
-  try
-    ParseResourceProperties(jsn, result);
-    if jsn.has('identifier') then
-      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('sponsor') or jsn.has('_sponsor') then
-        result.sponsor := ParseString(jsn['sponsor'], jsn.vObj['_sponsor']);{q}
-    if jsn.has('title') or jsn.has('_title') then
-        result.title := ParseString(jsn['title'], jsn.vObj['_title']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.description := ParseString(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
-    if jsn.has('condition') then
-      iterateArray(jsn.vArr['condition'], result.conditionList, parseCodeableConcept);
-    if jsn.has('treatment') then
-      iterateArray(jsn.vArr['treatment'], result.treatmentList, parseStudyTreatment);
-    if jsn.has('controlType') then
-      iterateArray(jsn.vArr['controlType'], result.controlTypeList, parseCodeableConcept);
-      if jsn.has('objective') or jsn.has('_objective') then
-      iteratePrimitiveArray(jsn.vArr['objective'], jsn.vArr['_objective'], result.objectiveList, parseString);
-      if jsn.has('outcomeMeasure') or jsn.has('_outcomeMeasure') then
-      iteratePrimitiveArray(jsn.vArr['outcomeMeasure'], jsn.vArr['_outcomeMeasure'], result.outcomeMeasureList, parseString);
-    if jsn.has('eligibility') then
-      iterateArray(jsn.vArr['eligibility'], result.eligibilityList, parseResourceReference{TFhirGroup});
-    if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
-    if jsn.has('duration') then
-        result.duration := ParseQuantity(jsn.vObj['duration']);{q}
-    if jsn.has('plannedEnrollment') or jsn.has('_plannedEnrollment') then
-        result.plannedEnrollment := ParseInteger(jsn['plannedEnrollment'], jsn.vObj['_plannedEnrollment']);{q}
-    if jsn.has('intervention') then
-        result.intervention := ParseStudyIntervention(jsn.vObj['intervention']);{q}
-    if jsn.has('protocol') then
-      iterateArray(jsn.vArr['protocol'], result.protocolList, parseResourceReference{TFhirProtocol});
-    if jsn.has('dataStructure') then
-        result.dataStructure := ParseResourceReference{TFhirProfile}(jsn.vObj['dataStructure']);{q}
-    if jsn.has('data') then
-      iterateArray(jsn.vArr['data'], result.dataList, parseResourceReference{Resource});
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeStudy(json : TJSONWriter; name : string; elem : TFhirStudy);
-var
-  i : integer;  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  ComposeResourceProperties(json, elem);
-  if elem.identifierList.Count > 0 then
-  begin
-    json.valueArray('identifier');
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
-    json.FinishArray;
-  end;
-  ComposeStringValue(json, 'sponsor', elem.sponsor, false);
-  ComposeStringProps(json, 'sponsor', elem.sponsor, false);
-  ComposeStringValue(json, 'title', elem.title, false);
-  ComposeStringProps(json, 'title', elem.title, false);
-  ComposeStringValue(json, 'description', elem.description, false);
-  ComposeStringProps(json, 'description', elem.description, false);
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if elem.conditionList.Count > 0 then
-  begin
-    json.valueArray('condition');
-    for i := 0 to elem.conditionList.Count - 1 do
-      ComposeCodeableConcept(json, '',elem.conditionList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if elem.treatmentList.Count > 0 then
-  begin
-    json.valueArray('treatment');
-    for i := 0 to elem.treatmentList.Count - 1 do
-      ComposeStudyTreatment(json, '',elem.treatmentList[i]); {z - }
-    json.FinishArray;
-  end;
-  if elem.controlTypeList.Count > 0 then
-  begin
-    json.valueArray('controlType');
-    for i := 0 to elem.controlTypeList.Count - 1 do
-      ComposeCodeableConcept(json, '',elem.controlTypeList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if elem.objectiveList.Count > 0 then
-  begin
-    json.valueArray('objective');
-    ext := false;
-    for i := 0 to elem.objectiveList.Count - 1 do
-    begin
-      ext := ext or ((elem.objectiveList[i].xmlid <> '') or (elem.objectiveList[i].hasExtensions));
-      ComposeStringValue(json, '',elem.objectiveList[i], true);
-    end;
-    json.FinishArray;
-    if ext then
-    begin
-      json.valueArray('_objective');
-      for i := 0 to elem.objectiveList.Count - 1 do
-        ComposeStringProps(json, '',elem.objectiveList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if elem.outcomeMeasureList.Count > 0 then
-  begin
-    json.valueArray('outcomeMeasure');
-    ext := false;
-    for i := 0 to elem.outcomeMeasureList.Count - 1 do
-    begin
-      ext := ext or ((elem.outcomeMeasureList[i].xmlid <> '') or (elem.outcomeMeasureList[i].hasExtensions));
-      ComposeStringValue(json, '',elem.outcomeMeasureList[i], true);
-    end;
-    json.FinishArray;
-    if ext then
-    begin
-      json.valueArray('_outcomeMeasure');
-      for i := 0 to elem.outcomeMeasureList.Count - 1 do
-        ComposeStringProps(json, '',elem.outcomeMeasureList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if elem.eligibilityList.Count > 0 then
-  begin
-    json.valueArray('eligibility');
-    for i := 0 to elem.eligibilityList.Count - 1 do
-      ComposeResourceReference{TFhirGroup}(json, '',elem.eligibilityList[i]); {z - Resource(Group)}
-    json.FinishArray;
-  end;
-  ComposePeriod(json, 'period', elem.period); {a}
-  ComposeQuantity(json, 'duration', elem.duration); {a}
-  ComposeIntegerValue(json, 'plannedEnrollment', elem.plannedEnrollment, false);
-  ComposeIntegerProps(json, 'plannedEnrollment', elem.plannedEnrollment, false);
-  ComposeStudyIntervention(json, 'intervention', elem.intervention); {a}
-  if elem.protocolList.Count > 0 then
-  begin
-    json.valueArray('protocol');
-    for i := 0 to elem.protocolList.Count - 1 do
-      ComposeResourceReference{TFhirProtocol}(json, '',elem.protocolList[i]); {z - Resource(Protocol)}
-    json.FinishArray;
-  end;
-  ComposeResourceReference{TFhirProfile}(json, 'dataStructure', elem.dataStructure); {a}
-  if elem.dataList.Count > 0 then
-  begin
-    json.valueArray('data');
-    for i := 0 to elem.dataList.Count - 1 do
-      ComposeResourceReference{Resource}(json, '',elem.dataList[i]); {z - Resource(Any)}
-    json.FinishArray;
-  end;
-end;
-
 function TFHIRXmlParser.ParseSubstanceInstance(element : IXmlDomElement; path : string) : TFhirSubstanceInstance;
 var
   child : IXMLDOMElement;
@@ -25480,8 +24084,6 @@ begin
     result := ParseProcedure(element, path+'/Procedure')
   else if element.baseName = 'Profile' Then
     result := ParseProfile(element, path+'/Profile')
-  else if element.baseName = 'Protocol' Then
-    result := ParseProtocol(element, path+'/Protocol')
   else if element.baseName = 'Provenance' Then
     result := ParseProvenance(element, path+'/Provenance')
   else if element.baseName = 'Query' Then
@@ -25494,8 +24096,6 @@ begin
     result := ParseSecurityEvent(element, path+'/SecurityEvent')
   else if element.baseName = 'Specimen' Then
     result := ParseSpecimen(element, path+'/Specimen')
-  else if element.baseName = 'Study' Then
-    result := ParseStudy(element, path+'/Study')
   else if element.baseName = 'Substance' Then
     result := ParseSubstance(element, path+'/Substance')
   else if element.baseName = 'Supply' Then
@@ -25552,14 +24152,12 @@ begin
     frtPractitioner: ComposePractitioner(xml, 'Practitioner', TFhirPractitioner(resource));
     frtProcedure: ComposeProcedure(xml, 'Procedure', TFhirProcedure(resource));
     frtProfile: ComposeProfile(xml, 'Profile', TFhirProfile(resource));
-    frtProtocol: ComposeProtocol(xml, 'Protocol', TFhirProtocol(resource));
     frtProvenance: ComposeProvenance(xml, 'Provenance', TFhirProvenance(resource));
     frtQuery: ComposeQuery(xml, 'Query', TFhirQuery(resource));
     frtQuestionnaire: ComposeQuestionnaire(xml, 'Questionnaire', TFhirQuestionnaire(resource));
     frtRelatedPerson: ComposeRelatedPerson(xml, 'RelatedPerson', TFhirRelatedPerson(resource));
     frtSecurityEvent: ComposeSecurityEvent(xml, 'SecurityEvent', TFhirSecurityEvent(resource));
     frtSpecimen: ComposeSpecimen(xml, 'Specimen', TFhirSpecimen(resource));
-    frtStudy: ComposeStudy(xml, 'Study', TFhirStudy(resource));
     frtSubstance: ComposeSubstance(xml, 'Substance', TFhirSubstance(resource));
     frtSupply: ComposeSupply(xml, 'Supply', TFhirSupply(resource));
     frtValueSet: ComposeValueSet(xml, 'ValueSet', TFhirValueSet(resource));
@@ -25652,8 +24250,6 @@ begin
     result := ParseProcedure(jsn)
   else if s = 'Profile' Then
     result := ParseProfile(jsn)
-  else if s = 'Protocol' Then
-    result := ParseProtocol(jsn)
   else if s = 'Provenance' Then
     result := ParseProvenance(jsn)
   else if s = 'Query' Then
@@ -25666,8 +24262,6 @@ begin
     result := ParseSecurityEvent(jsn)
   else if s = 'Specimen' Then
     result := ParseSpecimen(jsn)
-  else if s = 'Study' Then
-    result := ParseStudy(jsn)
   else if s = 'Substance' Then
     result := ParseSubstance(jsn)
   else if s = 'Supply' Then
@@ -25725,14 +24319,12 @@ begin
     frtPractitioner: ComposePractitioner(json, 'Practitioner', TFhirPractitioner(resource));
     frtProcedure: ComposeProcedure(json, 'Procedure', TFhirProcedure(resource));
     frtProfile: ComposeProfile(json, 'Profile', TFhirProfile(resource));
-    frtProtocol: ComposeProtocol(json, 'Protocol', TFhirProtocol(resource));
     frtProvenance: ComposeProvenance(json, 'Provenance', TFhirProvenance(resource));
     frtQuery: ComposeQuery(json, 'Query', TFhirQuery(resource));
     frtQuestionnaire: ComposeQuestionnaire(json, 'Questionnaire', TFhirQuestionnaire(resource));
     frtRelatedPerson: ComposeRelatedPerson(json, 'RelatedPerson', TFhirRelatedPerson(resource));
     frtSecurityEvent: ComposeSecurityEvent(json, 'SecurityEvent', TFhirSecurityEvent(resource));
     frtSpecimen: ComposeSpecimen(json, 'Specimen', TFhirSpecimen(resource));
-    frtStudy: ComposeStudy(json, 'Study', TFhirStudy(resource));
     frtSubstance: ComposeSubstance(json, 'Substance', TFhirSubstance(resource));
     frtSupply: ComposeSupply(json, 'Supply', TFhirSupply(resource));
     frtValueSet: ComposeValueSet(json, 'ValueSet', TFhirValueSet(resource));

@@ -82,7 +82,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <Debugger_RunParams>-debug -ini C:\work\com.healthintersections.fhir\exec\fhir.ini</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>

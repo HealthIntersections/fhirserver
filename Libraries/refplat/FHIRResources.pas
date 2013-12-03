@@ -36,7 +36,7 @@ unit FHIRResources;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 3, 2013 08:01+1100
+// FHIR v0.12 generated Tue, Dec 3, 2013 14:43+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -88,14 +88,12 @@ Related resources tie this event to the authorizing prescription, and the specif
     frtPractitioner, {@enum.value Demographics and qualification information for an individual who is directly or indirectly involved in the provisioning of healthcare. }
     frtProcedure, {@enum.value An action that is performed on a patient. This can be a physical 'thing' like an operation, or less invasive like counseling or hypnotherapy. }
     frtProfile, {@enum.value A Resource Profile - a statement of use of one or more FHIR Resources.  It may include constraints on Resources and Data Types, Terminology Binding Statements and Extension Definitions. }
-    frtProtocol, {@enum.value A definition of behaviors to be taken in particular circumstances, often including conditions, options and other decision points. }
     frtProvenance, {@enum.value Provenance information that describes the activity that lead to the creation of a set of resources. This information can be used to help determine their reliability or trace where the information in them came from. The focus of the provenance resource is record keeping, audit and traceability, and not explicit statements of clinical significance. }
     frtQuery, {@enum.value A description of a query with a set of parameters. }
     frtQuestionnaire, {@enum.value A structured set of questions and their answers. The Questionnaire may contain questions, answers or both. The questions may be ordered and grouped into coherent subsets, corresponding to the structure of the grouping of the underlying questions. }
     frtRelatedPerson, {@enum.value Information about a person that is involved in the care for a patient, but who is not the target of healthcare, nor has a formal responsibility in the care process. }
     frtSecurityEvent, {@enum.value A record of an event made for purposes of maintaining a security log. Typical uses include detection of intrusion attempts and monitoring for inappropriate usage. }
     frtSpecimen, {@enum.value Sample for analysis. }
-    frtStudy, {@enum.value Research study. }
     frtSubstance, {@enum.value A homogeneous material with a definite composition used in healthcare. }
     frtSupply, {@enum.value A supply -  request and provision. }
     frtValueSet, {@enum.value A value set specifies a set of codes drawn from one or more code systems. }
@@ -647,13 +645,6 @@ Related resources tie this event to the authorizing prescription, and the specif
     spProfile_Valueset, {@enum.value spProfile_Valueset A vocabulary binding code }
     spProfile_Version); {@enum.value spProfile_Version The version identifier of the profile }
 
-  {@Enum TSearchParamsProtocol
-    Search Parameters for Protocol
-  }
-  TSearchParamsProtocol = (
-    spProtocol__id, {@enum.value spProtocol__id The logical resource id associated with the resource (must be supported by all servers) }
-    spProtocol_Subject); {@enum.value spProtocol_Subject Protocols with specified subject }
-
   {@Enum TSearchParamsProvenance
     Search Parameters for Provenance
   }
@@ -727,12 +718,6 @@ Related resources tie this event to the authorizing prescription, and the specif
   TSearchParamsSpecimen = (
     spSpecimen__id, {@enum.value spSpecimen__id The logical resource id associated with the resource (must be supported by all servers) }
     spSpecimen_Subject); {@enum.value spSpecimen_Subject The subject of the specimen }
-
-  {@Enum TSearchParamsStudy
-    Search Parameters for Study
-  }
-  TSearchParamsStudy = (
-    spStudy__id); {@enum.value spStudy__id The logical resource id associated with the resource (must be supported by all servers) }
 
   {@Enum TSearchParamsSubstance
     Search Parameters for Substance
@@ -817,14 +802,12 @@ Type
   TFhirPractitioner = class;
   TFhirProcedure = class;
   TFhirProfile = class;
-  TFhirProtocol = class;
   TFhirProvenance = class;
   TFhirQuery = class;
   TFhirQuestionnaire = class;
   TFhirRelatedPerson = class;
   TFhirSecurityEvent = class;
   TFhirSpecimen = class;
-  TFhirStudy = class;
   TFhirSubstance = class;
   TFhirSupply = class;
   TFhirValueSet = class;
@@ -5563,108 +5546,6 @@ Use only if isNegated is set to TRUE.
   end;
 
 
-  {@Class TFhirProtocol : TFhirResource
-    A definition of behaviors to be taken in particular circumstances, often including conditions, options and other decision points.
-  }
-  {!.Net HL7Connect.Fhir.Protocol}
-  TFhirProtocol = class (TFhirResource)
-  private
-    FTitle : TFhirString;
-    FType_ : TFhirEnum;
-    FStatus : TFhirEnum;
-    FAuthor : TFhirResourceReference{TFhirOrganization};
-    FPurpose : TFhirString;
-    FSubject : TFhirResourceReference{Resource};
-    FGroup : TFhirResourceReference{TFhirGroup};
-    FstepList : TFhirProtocolStepList;
-    Procedure SetTitle(value : TFhirString);
-    Function GetTitleST : String;
-    Procedure SetTitleST(value : String);
-    Procedure SetType_(value : TFhirEnum);
-    Function GetType_ST : TFhirProtocolType;
-    Procedure SetType_ST(value : TFhirProtocolType);
-    Procedure SetStatus(value : TFhirEnum);
-    Function GetStatusST : TFhirProtocolStatus;
-    Procedure SetStatusST(value : TFhirProtocolStatus);
-    Procedure SetAuthor(value : TFhirResourceReference{TFhirOrganization});
-    Procedure SetPurpose(value : TFhirString);
-    Function GetPurposeST : String;
-    Procedure SetPurposeST(value : String);
-    Procedure SetSubject(value : TFhirResourceReference{Resource});
-    Procedure SetGroup(value : TFhirResourceReference{TFhirGroup});
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-    Function GetHasASummary : Boolean; Override;
-    function GetResourceType : TFhirResourceType; override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProtocol; overload;
-    function Clone : TFhirProtocol; overload;
-    {!script show}
-  published
-    {@member title
-      Name of protocol.
-    }
-    property title : TFhirString read FTitle write SetTitle;
-    {@member titleST
-      Typed access to Name of protocol.
-    }
-    property titleST : String read GetTitleST write SetTitleST;
-
-    {@member type_
-      condition | device | drug | study.
-    }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to condition | device | drug | study.
-    }
-    property type_ST : TFhirProtocolType read GetType_ST write SetType_ST;
-
-    {@member status
-      draft | testing | review | production +.
-    }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to draft | testing | review | production +.
-    }
-    property statusST : TFhirProtocolStatus read GetStatusST write SetStatusST;
-
-    {@member author
-      Who wrote protocol?.
-    }
-    property author : TFhirResourceReference{TFhirOrganization} read FAuthor write SetAuthor;
-
-    {@member purpose
-      When is protocol to be used?.
-    }
-    property purpose : TFhirString read FPurpose write SetPurpose;
-    {@member purposeST
-      Typed access to When is protocol to be used?.
-    }
-    property purposeST : String read GetPurposeST write SetPurposeST;
-
-    {@member subject
-      What does protocol deal with?.
-    }
-    property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
-
-    {@member group
-      To whom does Protocol apply?.
-    }
-    property group : TFhirResourceReference{TFhirGroup} read FGroup write SetGroup;
-
-    {@member stepList
-      What's done as part of protocol.
-    }
-    property stepList : TFhirProtocolStepList read FStepList;
-
-  end;
-
-
   {@Class TFhirProvenance : TFhirResource
     Provenance information that describes the activity that lead to the creation of a set of resources. This information can be used to help determine their reliability or trace where the information in them came from. The focus of the provenance resource is record keeping, audit and traceability, and not explicit statements of clinical significance.
   }
@@ -6119,170 +6000,6 @@ Use only if isNegated is set to TRUE.
       The container holding the specimen. May be recursive; ie blood in tube in tray in rack.
     }
     property containerList : TFhirSpecimenContainerList read FContainerList;
-
-  end;
-
-
-  {@Class TFhirStudy : TFhirResource
-    Research study.
-  }
-  {!.Net HL7Connect.Fhir.Study}
-  TFhirStudy = class (TFhirResource)
-  private
-    FidentifierList : TFhirIdentifierList;
-    FSponsor : TFhirString;
-    FTitle : TFhirString;
-    FDescription : TFhirString;
-    FType_ : TFhirCodeableConcept;
-    FconditionList : TFhirCodeableConceptList;
-    FtreatmentList : TFhirStudyTreatmentList;
-    FcontrolTypeList : TFhirCodeableConceptList;
-    FobjectiveList : TFhirStringList;
-    FoutcomeMeasureList : TFhirStringList;
-    FeligibilityList : TFhirResourceReferenceList{TFhirGroup};
-    FPeriod : TFhirPeriod;
-    FDuration : TFhirQuantity;
-    FPlannedEnrollment : TFhirInteger;
-    FIntervention : TFhirStudyIntervention;
-    FprotocolList : TFhirResourceReferenceList{TFhirProtocol};
-    FDataStructure : TFhirResourceReference{TFhirProfile};
-    FdataList : TFhirResourceReferenceList{Resource};
-    Procedure SetSponsor(value : TFhirString);
-    Function GetSponsorST : String;
-    Procedure SetSponsorST(value : String);
-    Procedure SetTitle(value : TFhirString);
-    Function GetTitleST : String;
-    Procedure SetTitleST(value : String);
-    Procedure SetDescription(value : TFhirString);
-    Function GetDescriptionST : String;
-    Procedure SetDescriptionST(value : String);
-    Procedure SetType_(value : TFhirCodeableConcept);
-    Procedure SetPeriod(value : TFhirPeriod);
-    Procedure SetDuration(value : TFhirQuantity);
-    Procedure SetPlannedEnrollment(value : TFhirInteger);
-    Function GetPlannedEnrollmentST : String;
-    Procedure SetPlannedEnrollmentST(value : String);
-    Procedure SetIntervention(value : TFhirStudyIntervention);
-    Procedure SetDataStructure(value : TFhirResourceReference{TFhirProfile});
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-    Function GetHasASummary : Boolean; Override;
-    function GetResourceType : TFhirResourceType; override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirStudy; overload;
-    function Clone : TFhirStudy; overload;
-    {!script show}
-  published
-    {@member identifierList
-      Id for study.
-    }
-    property identifierList : TFhirIdentifierList read FIdentifierList;
-
-    {@member sponsor
-      Who's responsible?.
-    }
-    property sponsor : TFhirString read FSponsor write SetSponsor;
-    {@member sponsorST
-      Typed access to Who's responsible?.
-    }
-    property sponsorST : String read GetSponsorST write SetSponsorST;
-
-    {@member title
-      Name of study.
-    }
-    property title : TFhirString read FTitle write SetTitle;
-    {@member titleST
-      Typed access to Name of study.
-    }
-    property titleST : String read GetTitleST write SetTitleST;
-
-    {@member description
-      Description of study.
-    }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
-      Typed access to Description of study.
-    }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
-
-    {@member type_
-      interventional | observational | expanded access.
-    }
-    property type_ : TFhirCodeableConcept read FType_ write SetType_;
-
-    {@member conditionList
-      Condition(s) addressed.
-    }
-    property conditionList : TFhirCodeableConceptList read FConditionList;
-
-    {@member treatmentList
-      Focal treatments for study.
-    }
-    property treatmentList : TFhirStudyTreatmentList read FTreatmentList;
-
-    {@member controlTypeList
-      placebo | active | historical | uncontrolled | dose comparison.
-    }
-    property controlTypeList : TFhirCodeableConceptList read FControlTypeList;
-
-    {@member objectiveList
-      Describes the desired state that will exist if the study achieves what it intends.  Objectives should be listed in order of importantance with primary objective first.
-    }
-    property objectiveList : TFhirStringList read FObjectiveList;
-
-    {@member outcomeMeasureList
-      How will we know if it's accomplished?.
-    }
-    property outcomeMeasureList : TFhirStringList read FOutcomeMeasureList;
-
-    {@member eligibilityList
-      Describes the group or groups that.
-    }
-    property eligibilityList : TFhirResourceReferenceList{TFhirGroup} read FEligibilityList;
-
-    {@member period
-      When will/did study begin & end.
-    }
-    property period : TFhirPeriod read FPeriod write SetPeriod;
-
-    {@member duration
-      How long it will run.
-    }
-    property duration : TFhirQuantity read FDuration write SetDuration;
-
-    {@member plannedEnrollment
-      Intended # of subjects.
-    }
-    property plannedEnrollment : TFhirInteger read FPlannedEnrollment write SetPlannedEnrollment;
-    {@member plannedEnrollmentST
-      Typed access to Intended # of subjects.
-    }
-    property plannedEnrollmentST : String read GetPlannedEnrollmentST write SetPlannedEnrollmentST;
-
-    {@member intervention
-      Information for interventional studies.
-    }
-    property intervention : TFhirStudyIntervention read FIntervention write SetIntervention;
-
-    {@member protocolList
-      What steps are to be followed for participants in study?.
-    }
-    property protocolList : TFhirResourceReferenceList{TFhirProtocol} read FProtocolList;
-
-    {@member dataStructure
-      What data is submitted.
-    }
-    property dataStructure : TFhirResourceReference{TFhirProfile} read FDataStructure write SetDataStructure;
-
-    {@member dataList
-      Data collected during study.
-    }
-    property dataList : TFhirResourceReferenceList{Resource} read FDataList;
 
   end;
 
@@ -6827,11 +6544,6 @@ Use only if isNegated is set to TRUE.
     }
     {!script nolink}
     function newHumanName : TFhirHumanName;
-    {@member newActivityDefinition
-      create a new ActivityDefinition
-    }
-    {!script nolink}
-    function newActivityDefinition : TFhirActivityDefinition;
     {@member newAdverseReactionSymptom
       create a new symptom
     }
@@ -7492,41 +7204,6 @@ Use only if isNegated is set to TRUE.
     }
     {!script nolink}
     function newProfile : TFhirProfile;
-    {@member newProtocolStep
-      create a new step
-    }
-    {!script nolink}
-    function newProtocolStep : TFhirProtocolStep;
-    {@member newProtocolStepPrecondition
-      create a new precondition
-    }
-    {!script nolink}
-    function newProtocolStepPrecondition : TFhirProtocolStepPrecondition;
-    {@member newProtocolStepPreconditionCondition
-      create a new condition
-    }
-    {!script nolink}
-    function newProtocolStepPreconditionCondition : TFhirProtocolStepPreconditionCondition;
-    {@member newProtocolStepActivity
-      create a new activity
-    }
-    {!script nolink}
-    function newProtocolStepActivity : TFhirProtocolStepActivity;
-    {@member newProtocolStepActivityComponent
-      create a new component
-    }
-    {!script nolink}
-    function newProtocolStepActivityComponent : TFhirProtocolStepActivityComponent;
-    {@member newProtocolStepNext
-      create a new next
-    }
-    {!script nolink}
-    function newProtocolStepNext : TFhirProtocolStepNext;
-    {@member newProtocol
-      create a new Protocol
-    }
-    {!script nolink}
-    function newProtocol : TFhirProtocol;
     {@member newProvenanceAgent
       create a new agent
     }
@@ -7632,21 +7309,6 @@ Use only if isNegated is set to TRUE.
     }
     {!script nolink}
     function newSpecimen : TFhirSpecimen;
-    {@member newStudyTreatment
-      create a new treatment
-    }
-    {!script nolink}
-    function newStudyTreatment : TFhirStudyTreatment;
-    {@member newStudyIntervention
-      create a new intervention
-    }
-    {!script nolink}
-    function newStudyIntervention : TFhirStudyIntervention;
-    {@member newStudy
-      create a new Study
-    }
-    {!script nolink}
-    function newStudy : TFhirStudy;
     {@member newSubstanceInstance
       create a new instance
     }
@@ -16487,211 +16149,6 @@ begin
 end;
 
 
-{ TFhirProtocol }
-
-constructor TFhirProtocol.Create;
-begin
-  inherited;
-  FStepList := TFhirProtocolStepList.Create;
-end;
-
-destructor TFhirProtocol.Destroy;
-begin
-  FTitle.free;
-  FType_.free;
-  FStatus.free;
-  FAuthor.free;
-  FPurpose.free;
-  FSubject.free;
-  FGroup.free;
-  FStepList.Free;
-  inherited;
-end;
-
-function TFhirProtocol.GetResourceType : TFhirResourceType;
-begin
-  result := frtProtocol;
-end;
-
-function TFhirProtocol.GetHasASummary : Boolean;
-begin
-  result := false;
-end;
-
-procedure TFhirProtocol.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  title := TFhirProtocol(oSource).title.Clone;
-  FType_ := TFhirProtocol(oSource).FType_.Link;
-  FStatus := TFhirProtocol(oSource).FStatus.Link;
-  author := TFhirProtocol(oSource).author.Clone;
-  purpose := TFhirProtocol(oSource).purpose.Clone;
-  subject := TFhirProtocol(oSource).subject.Clone;
-  group := TFhirProtocol(oSource).group.Clone;
-  FStepList.Assign(TFhirProtocol(oSource).FStepList);
-end;
-
-procedure TFhirProtocol.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'title') Then
-     list.add(Title.Link);
-  if (child_name = 'type_') Then
-     list.add(FType_.Link);
-  if (child_name = 'status') Then
-     list.add(FStatus.Link);
-  if (child_name = 'author') Then
-     list.add(Author.Link);
-  if (child_name = 'purpose') Then
-     list.add(Purpose.Link);
-  if (child_name = 'subject') Then
-     list.add(Subject.Link);
-  if (child_name = 'group') Then
-     list.add(Group.Link);
-  if (child_name = 'step') Then
-     list.addAll(FStepList);
-end;
-
-procedure TFhirProtocol.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'title', 'string', FTitle.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'code', FType_.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Organization)', FAuthor.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'purpose', 'string', FPurpose.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Condition|Device|Medication)', FSubject.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'group', 'Resource(Group)', FGroup.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'step', '', FStepList.Link)){3};
-end;
-
-function TFhirProtocol.Link : TFhirProtocol;
-begin
-  result := TFhirProtocol(inherited Link);
-end;
-
-function TFhirProtocol.Clone : TFhirProtocol;
-begin
-  result := TFhirProtocol(inherited Clone);
-end;
-
-{ TFhirProtocol }
-
-Procedure TFhirProtocol.SetTitle(value : TFhirString);
-begin
-  FTitle.free;
-  FTitle := value;
-end;
-
-Function TFhirProtocol.GetTitleST : String;
-begin
-  if FTitle = nil then
-    result := ''
-  else
-    result := Title.value;
-end;
-
-Procedure TFhirProtocol.SetTitleST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FTitle = nil then
-      FTitle := TFhirString.create;
-    FTitle.value := value
-  end
-  else if FTitle <> nil then
-    FTitle.value := '';
-end;
-
-Procedure TFhirProtocol.SetType_(value : TFhirEnum);
-begin
-  FType_.free;
-  FType_ := value;
-end;
-
-Function TFhirProtocol.GetType_ST : TFhirProtocolType;
-begin
-  if FType_ = nil then
-    result := TFhirProtocolType(0)
-  else
-    result := TFhirProtocolType(StringArrayIndexOf(CODES_TFhirProtocolType, Type_.value));
-end;
-
-Procedure TFhirProtocol.SetType_ST(value : TFhirProtocolType);
-begin
-  if ord(value) = 0 then
-    Type_ := nil
-  else
-    Type_ := TFhirEnum.create(CODES_TFhirProtocolType[value]);
-end;
-
-Procedure TFhirProtocol.SetStatus(value : TFhirEnum);
-begin
-  FStatus.free;
-  FStatus := value;
-end;
-
-Function TFhirProtocol.GetStatusST : TFhirProtocolStatus;
-begin
-  if FStatus = nil then
-    result := TFhirProtocolStatus(0)
-  else
-    result := TFhirProtocolStatus(StringArrayIndexOf(CODES_TFhirProtocolStatus, Status.value));
-end;
-
-Procedure TFhirProtocol.SetStatusST(value : TFhirProtocolStatus);
-begin
-  if ord(value) = 0 then
-    Status := nil
-  else
-    Status := TFhirEnum.create(CODES_TFhirProtocolStatus[value]);
-end;
-
-Procedure TFhirProtocol.SetAuthor(value : TFhirResourceReference{TFhirOrganization});
-begin
-  FAuthor.free;
-  FAuthor := value;
-end;
-
-Procedure TFhirProtocol.SetPurpose(value : TFhirString);
-begin
-  FPurpose.free;
-  FPurpose := value;
-end;
-
-Function TFhirProtocol.GetPurposeST : String;
-begin
-  if FPurpose = nil then
-    result := ''
-  else
-    result := Purpose.value;
-end;
-
-Procedure TFhirProtocol.SetPurposeST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FPurpose = nil then
-      FPurpose := TFhirString.create;
-    FPurpose.value := value
-  end
-  else if FPurpose <> nil then
-    FPurpose.value := '';
-end;
-
-Procedure TFhirProtocol.SetSubject(value : TFhirResourceReference{Resource});
-begin
-  FSubject.free;
-  FSubject := value;
-end;
-
-Procedure TFhirProtocol.SetGroup(value : TFhirResourceReference{TFhirGroup});
-begin
-  FGroup.free;
-  FGroup := value;
-end;
-
-
 { TFhirProvenance }
 
 constructor TFhirProvenance.Create;
@@ -17493,289 +16950,6 @@ Procedure TFhirSpecimen.SetCollection(value : TFhirSpecimenCollection);
 begin
   FCollection.free;
   FCollection := value;
-end;
-
-
-{ TFhirStudy }
-
-constructor TFhirStudy.Create;
-begin
-  inherited;
-  FIdentifierList := TFhirIdentifierList.Create;
-  FConditionList := TFhirCodeableConceptList.Create;
-  FTreatmentList := TFhirStudyTreatmentList.Create;
-  FControlTypeList := TFhirCodeableConceptList.Create;
-  FObjectiveList := TFhirStringList.Create;
-  FOutcomeMeasureList := TFhirStringList.Create;
-  FEligibilityList := TFhirResourceReferenceList{TFhirGroup}.Create;
-  FProtocolList := TFhirResourceReferenceList{TFhirProtocol}.Create;
-  FDataList := TFhirResourceReferenceList{Resource}.Create;
-end;
-
-destructor TFhirStudy.Destroy;
-begin
-  FIdentifierList.Free;
-  FSponsor.free;
-  FTitle.free;
-  FDescription.free;
-  FType_.free;
-  FConditionList.Free;
-  FTreatmentList.Free;
-  FControlTypeList.Free;
-  FObjectiveList.Free;
-  FOutcomeMeasureList.Free;
-  FEligibilityList.Free;
-  FPeriod.free;
-  FDuration.free;
-  FPlannedEnrollment.free;
-  FIntervention.free;
-  FProtocolList.Free;
-  FDataStructure.free;
-  FDataList.Free;
-  inherited;
-end;
-
-function TFhirStudy.GetResourceType : TFhirResourceType;
-begin
-  result := frtStudy;
-end;
-
-function TFhirStudy.GetHasASummary : Boolean;
-begin
-  result := false;
-end;
-
-procedure TFhirStudy.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  FIdentifierList.Assign(TFhirStudy(oSource).FIdentifierList);
-  sponsor := TFhirStudy(oSource).sponsor.Clone;
-  title := TFhirStudy(oSource).title.Clone;
-  description := TFhirStudy(oSource).description.Clone;
-  type_ := TFhirStudy(oSource).type_.Clone;
-  FConditionList.Assign(TFhirStudy(oSource).FConditionList);
-  FTreatmentList.Assign(TFhirStudy(oSource).FTreatmentList);
-  FControlTypeList.Assign(TFhirStudy(oSource).FControlTypeList);
-  FObjectiveList.Assign(TFhirStudy(oSource).FObjectiveList);
-  FOutcomeMeasureList.Assign(TFhirStudy(oSource).FOutcomeMeasureList);
-  FEligibilityList.Assign(TFhirStudy(oSource).FEligibilityList);
-  period := TFhirStudy(oSource).period.Clone;
-  duration := TFhirStudy(oSource).duration.Clone;
-  plannedEnrollment := TFhirStudy(oSource).plannedEnrollment.Clone;
-  intervention := TFhirStudy(oSource).intervention.Clone;
-  FProtocolList.Assign(TFhirStudy(oSource).FProtocolList);
-  dataStructure := TFhirStudy(oSource).dataStructure.Clone;
-  FDataList.Assign(TFhirStudy(oSource).FDataList);
-end;
-
-procedure TFhirStudy.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'identifier') Then
-     list.addAll(FIdentifierList);
-  if (child_name = 'sponsor') Then
-     list.add(Sponsor.Link);
-  if (child_name = 'title') Then
-     list.add(Title.Link);
-  if (child_name = 'description') Then
-     list.add(Description.Link);
-  if (child_name = 'type_') Then
-     list.add(Type_.Link);
-  if (child_name = 'condition') Then
-     list.addAll(FConditionList);
-  if (child_name = 'treatment') Then
-     list.addAll(FTreatmentList);
-  if (child_name = 'controlType') Then
-     list.addAll(FControlTypeList);
-  if (child_name = 'objective') Then
-     list.addAll(FObjectiveList);
-  if (child_name = 'outcomeMeasure') Then
-     list.addAll(FOutcomeMeasureList);
-  if (child_name = 'eligibility') Then
-     list.addAll(FEligibilityList);
-  if (child_name = 'period') Then
-     list.add(Period.Link);
-  if (child_name = 'duration') Then
-     list.add(Duration.Link);
-  if (child_name = 'plannedEnrollment') Then
-     list.add(PlannedEnrollment.Link);
-  if (child_name = 'intervention') Then
-     list.add(Intervention.Link);
-  if (child_name = 'protocol') Then
-     list.addAll(FProtocolList);
-  if (child_name = 'dataStructure') Then
-     list.add(DataStructure.Link);
-  if (child_name = 'data') Then
-     list.addAll(FDataList);
-end;
-
-procedure TFhirStudy.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'sponsor', 'string', FSponsor.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'title', 'string', FTitle.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', FDescription.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'condition', 'CodeableConcept', FConditionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'treatment', '', FTreatmentList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'controlType', 'CodeableConcept', FControlTypeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'objective', 'string', FObjectiveList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'outcomeMeasure', 'string', FOutcomeMeasureList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'eligibility', 'Resource(Group)', FEligibilityList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'duration', 'Duration', FDuration.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'plannedEnrollment', 'integer', FPlannedEnrollment.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'intervention', '', FIntervention.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'protocol', 'Resource(Protocol)', FProtocolList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'dataStructure', 'Resource(Profile)', FDataStructure.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'data', 'Resource(Any)', FDataList.Link)){3};
-end;
-
-function TFhirStudy.Link : TFhirStudy;
-begin
-  result := TFhirStudy(inherited Link);
-end;
-
-function TFhirStudy.Clone : TFhirStudy;
-begin
-  result := TFhirStudy(inherited Clone);
-end;
-
-{ TFhirStudy }
-
-Procedure TFhirStudy.SetSponsor(value : TFhirString);
-begin
-  FSponsor.free;
-  FSponsor := value;
-end;
-
-Function TFhirStudy.GetSponsorST : String;
-begin
-  if FSponsor = nil then
-    result := ''
-  else
-    result := Sponsor.value;
-end;
-
-Procedure TFhirStudy.SetSponsorST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FSponsor = nil then
-      FSponsor := TFhirString.create;
-    FSponsor.value := value
-  end
-  else if FSponsor <> nil then
-    FSponsor.value := '';
-end;
-
-Procedure TFhirStudy.SetTitle(value : TFhirString);
-begin
-  FTitle.free;
-  FTitle := value;
-end;
-
-Function TFhirStudy.GetTitleST : String;
-begin
-  if FTitle = nil then
-    result := ''
-  else
-    result := Title.value;
-end;
-
-Procedure TFhirStudy.SetTitleST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FTitle = nil then
-      FTitle := TFhirString.create;
-    FTitle.value := value
-  end
-  else if FTitle <> nil then
-    FTitle.value := '';
-end;
-
-Procedure TFhirStudy.SetDescription(value : TFhirString);
-begin
-  FDescription.free;
-  FDescription := value;
-end;
-
-Function TFhirStudy.GetDescriptionST : String;
-begin
-  if FDescription = nil then
-    result := ''
-  else
-    result := Description.value;
-end;
-
-Procedure TFhirStudy.SetDescriptionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDescription = nil then
-      FDescription := TFhirString.create;
-    FDescription.value := value
-  end
-  else if FDescription <> nil then
-    FDescription.value := '';
-end;
-
-Procedure TFhirStudy.SetType_(value : TFhirCodeableConcept);
-begin
-  FType_.free;
-  FType_ := value;
-end;
-
-Procedure TFhirStudy.SetPeriod(value : TFhirPeriod);
-begin
-  FPeriod.free;
-  FPeriod := value;
-end;
-
-Procedure TFhirStudy.SetDuration(value : TFhirQuantity);
-begin
-  FDuration.free;
-  FDuration := value;
-end;
-
-Procedure TFhirStudy.SetPlannedEnrollment(value : TFhirInteger);
-begin
-  FPlannedEnrollment.free;
-  FPlannedEnrollment := value;
-end;
-
-Function TFhirStudy.GetPlannedEnrollmentST : String;
-begin
-  if FPlannedEnrollment = nil then
-    result := ''
-  else
-    result := PlannedEnrollment.value;
-end;
-
-Procedure TFhirStudy.SetPlannedEnrollmentST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FPlannedEnrollment = nil then
-      FPlannedEnrollment := TFhirInteger.create;
-    FPlannedEnrollment.value := value
-  end
-  else if FPlannedEnrollment <> nil then
-    FPlannedEnrollment.value := '';
-end;
-
-Procedure TFhirStudy.SetIntervention(value : TFhirStudyIntervention);
-begin
-  FIntervention.free;
-  FIntervention := value;
-end;
-
-Procedure TFhirStudy.SetDataStructure(value : TFhirResourceReference{TFhirProfile});
-begin
-  FDataStructure.free;
-  FDataStructure := value;
 end;
 
 
@@ -18654,11 +17828,6 @@ begin
   result := TFhirHumanName.create;
 end;
 
-function TFhirResourceFactory.newActivityDefinition : TFhirActivityDefinition;
-begin
-  result := TFhirActivityDefinition.create;
-end;
-
 function TFhirResourceFactory.newAdverseReactionSymptom : TFhirAdverseReactionSymptom;
 begin
   result := TFhirAdverseReactionSymptom.create;
@@ -19319,41 +18488,6 @@ begin
   result := TFhirProfile.create;
 end;
 
-function TFhirResourceFactory.newProtocolStep : TFhirProtocolStep;
-begin
-  result := TFhirProtocolStep.create;
-end;
-
-function TFhirResourceFactory.newProtocolStepPrecondition : TFhirProtocolStepPrecondition;
-begin
-  result := TFhirProtocolStepPrecondition.create;
-end;
-
-function TFhirResourceFactory.newProtocolStepPreconditionCondition : TFhirProtocolStepPreconditionCondition;
-begin
-  result := TFhirProtocolStepPreconditionCondition.create;
-end;
-
-function TFhirResourceFactory.newProtocolStepActivity : TFhirProtocolStepActivity;
-begin
-  result := TFhirProtocolStepActivity.create;
-end;
-
-function TFhirResourceFactory.newProtocolStepActivityComponent : TFhirProtocolStepActivityComponent;
-begin
-  result := TFhirProtocolStepActivityComponent.create;
-end;
-
-function TFhirResourceFactory.newProtocolStepNext : TFhirProtocolStepNext;
-begin
-  result := TFhirProtocolStepNext.create;
-end;
-
-function TFhirResourceFactory.newProtocol : TFhirProtocol;
-begin
-  result := TFhirProtocol.create;
-end;
-
 function TFhirResourceFactory.newProvenanceAgent : TFhirProvenanceAgent;
 begin
   result := TFhirProvenanceAgent.create;
@@ -19457,21 +18591,6 @@ end;
 function TFhirResourceFactory.newSpecimen : TFhirSpecimen;
 begin
   result := TFhirSpecimen.create;
-end;
-
-function TFhirResourceFactory.newStudyTreatment : TFhirStudyTreatment;
-begin
-  result := TFhirStudyTreatment.create;
-end;
-
-function TFhirResourceFactory.newStudyIntervention : TFhirStudyIntervention;
-begin
-  result := TFhirStudyIntervention.create;
-end;
-
-function TFhirResourceFactory.newStudy : TFhirStudy;
-begin
-  result := TFhirStudy.create;
 end;
 
 function TFhirResourceFactory.newSubstanceInstance : TFhirSubstanceInstance;
