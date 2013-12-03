@@ -3,6 +3,7 @@ fhirserver
 
 Reference Implementation Server for the FHIR Specification
 
+
 Basic Information
 -----------------
 This is the code for the reference FHIR server that runs at http://fhir.healthintersections.com.au and other places. 
@@ -18,11 +19,12 @@ large repositories efficiently.
 Compiling 
 ---------
 
-This is pascal code that compoiles under Delphi XE+ (any edition, personal will do). 
+This is pascal code that compoiles under Delphi XE+ (any edition, personal will do).
+ 
 Support for Free Pascal(/Lazarus) would be good, but requires substantial work to deal with the 
 difference between delphi and FPC unicode implementations.
 
-Compiling should be simple: open the file FHIRServer.dproj in your version of delphi, and 
+Compiling should be simple: open the file Server\FHIRServer.dproj in your version of delphi, and 
 compile. 
 
 The Server uses the pascal reference implementation released with the specification. 
