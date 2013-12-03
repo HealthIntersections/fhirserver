@@ -25,9 +25,6 @@
 
 unit ZLibEx;
 
-{!!}
-{0.00-001  27 Aug 03 09:53  [18372]  User: Callan Hodgskin   Commented out unused routine}
-
 interface
 
 uses
