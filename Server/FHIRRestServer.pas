@@ -290,6 +290,7 @@ Destructor TFhirWebServer.Destroy;
 Begin
   FIni.Free;
   FFhirStore.CloseAll;
+  FFhirStore.Free;
   FLoginTokens.Free;
   FLock.Free;
   Inherited;

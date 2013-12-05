@@ -434,6 +434,7 @@ begin
   FSessions.free;
   FTags.Free;
   FLock.Free;
+  FValidator.Free;
   inherited;
 end;
 

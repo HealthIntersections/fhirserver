@@ -136,6 +136,7 @@ end;
 procedure TFHIRService.DoStop;
 begin
   try
+    writeln('stop: '+StopReason);
     StopRestServer;
     UnloadTerminologies;
   except
@@ -213,6 +214,7 @@ var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
 begin
+  Writeln('mount database');
   conn := FDb.GetConnection('setup');
   try
     db := TFHIRDatabaseInstaller.create(conn);
@@ -222,9 +224,11 @@ begin
       db.free;
     end;
     conn.Release;
+    Writeln('done');
   except
      on e:exception do
      begin
+       Writeln('Error: '+e.Message);
        conn.Error(e);
        raise;
      end;
@@ -236,6 +240,7 @@ var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
 begin
+  Writeln('unmount database');
   conn := FDb.GetConnection('setup');
   try
     db := TFHIRDatabaseInstaller.create(conn);
@@ -245,9 +250,11 @@ begin
       db.free;
     end;
     conn.Release;
+    Writeln('done');
   except
      on e:exception do
      begin
+       Writeln('Error: '+e.Message);
        conn.Error(e);
        raise;
      end;
