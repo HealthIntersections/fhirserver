@@ -4,27 +4,27 @@ Unit FHIRValidator;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -32,7 +32,7 @@ interface
 
 uses
   ActiveX, ComObj, SysUtils, Dialogs,
-  kCritSct, StringSupport,
+  kCritSct, StringSupport, IdGlobal,
   AdvObjects, AdvStringObjectMatches, AdvFiles, AdvZipReaders, AdvZipParts,
   AdvMemories, AdvVclStreams, AdvBuffers, AdvNameBuffers,
   IdSoapXml, IdSoapMsXml, AltovaXMLLib_TLB, MsXmlParser, IdUri,
@@ -62,6 +62,8 @@ type
 
   TFHIRValidator = class (TAdvObject)
   private
+    FSchematronSource : String;
+
     FTypes : TAdvStringObjectMatch; // TFHIRProfile
     FValueSets : TAdvStringObjectMatch; // TFHIRValueSet
     FCodeSystems : TAdvStringObjectMatch; // TFHIRValueSet
@@ -118,6 +120,7 @@ type
     destructor Destroy; override;
     Property suppressLoincSnomedMessages : boolean read FsuppressLoincSnomedMessages write FsuppressLoincSnomedMessages;
     procedure LoadFromDefinitions(filename : string);
+    Property SchematronSource : String read FSchematronSource write FSchematronSource;
 
     function AcquireContext : TFHIRValidatorContext;
     procedure YieldContext(context : TFHIRValidatorContext);
@@ -513,12 +516,9 @@ procedure TFHIRValidator.checkResourceReference(op : TFhirOperationOutcome; path
 var
   t, r, e : String;
 begin
-  t := getNamedChildValue(element,  'type');
   r := getNamedChildValue(element,  'reference');
   if (r <> '') then
   begin
-    rule(op, 'InstanceValidator', 'code-unknown', path, (t <> '') and (StringArrayIndexOfSensitive(CODES_TFhirResourceType, t) > -1),
-        'The Resource Type code "'+t+'" is not valid');
     e := refError(r);
     rule(op, 'InstanceValidator', 'value', path, e = '', 'The Resource reference "'+r+'" is not valid: '+e);
   end;
@@ -568,7 +568,7 @@ begin
                 warning(op, 'InstanceValidator', 'code-unknown', path, check.check(system, code), 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.nameST+' ('+vs.IdentifierST+')');
               Except
                 on e : Exception do
-                  if StringFind(e.Message, 'unable to find value set http://snomed.info/id') > 0 then
+                  if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
                     hint(op, 'InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Snomed value set - not validated')
                   else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
                     hint(op, 'InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
@@ -604,7 +604,7 @@ begin
       end;
     end;
   end
-  else if StringStartsWith(system, 'http://snomed.info/id') then
+  else if StringStartsWith(system, 'http://snomed.info/sct') then
   begin
     if warning(op, 'InstanceValidator', 'code-unknown', path, GSnomeds.DefaultDefinition.IsValidTerm(code), 'The SNOMED-CT term "'+code+'" is unknown') then
     begin
@@ -719,7 +719,7 @@ begin
               warning(op, 'InstanceValidator', 'code-unknown', path, found, 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.nameST+' ('+vs.IdentifierST+')');
         Except
           on e : Exception do
-            if StringFind(e.Message, 'unable to find value set http://snomed.info/id') > 0 then
+            if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
               hint(op, 'InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Snomed value set - not validated')
             else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
               hint(op, 'InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
@@ -825,6 +825,7 @@ var
   xml : TFHIRXmlParser;
   v : Variant;
 begin
+
   // read the zip, loading the resources we need
   b := TAdvBuffer.create;
   try
@@ -1142,6 +1143,7 @@ var
   xslt2: AltovaXMLLib_TLB.XSLT2;
   src : String;
   app : AltovaXMLLib_TLB.Application;
+  tmp : String;
 begin
   if context <> nil then
     app := context.FxmlApp
@@ -1151,7 +1153,7 @@ begin
   xslt2 := App.XSLT2;
   src := FSources.GetByName(name).AsUnicode;
   xslt2.InputXMLFromText := src;
-  xslt2.XSLFileName := 'todo'; //?+'data\iso_svrl_for_xslt2.xsl';
+  xslt2.XSLFileName := IncludeTrailingPathDelimiter(FSchematronSource)+'iso_svrl_for_xslt2.xsl';
   src := xslt2.ExecuteAndGetResultAsString;
   xslt2 := App.XSLT2;
   xslt2.InputXMLFromText := source;

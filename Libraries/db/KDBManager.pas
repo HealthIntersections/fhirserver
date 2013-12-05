@@ -840,15 +840,17 @@ procedure TKDBConnection.BindBlobFromString(AParamName, AParamValue: String);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.BindBinaryFromString';
 var
   LMem: TMemoryStream;
+  b : TBytes;
 begin
   assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   assert(AParamName <> '', ASSERT_LOCATION+': name is not valid');
 
+  TEncoding.UTF8.GetBytes(AParamValue);
   LMem := TIdMemoryStream.Create;
   KeepBoundObj(AParamName, lMem);
   if AParamValue <> '' then
     begin
-    LMem.Write(AParamValue[1], length(AParamValue));
+    LMem.Write(b[0], length(b));
     LMem.position := 0;
     end;
   BindBlob(AParamName, LMem);

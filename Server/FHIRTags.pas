@@ -36,6 +36,7 @@ uses
 const
   TAG_FHIR_SCHEME = 'http://hl7.org/fhir/tag';
   TAG_FHIR_SCHEME_PROFILE = 'http://hl7.org/fhir/tag/profile';
+  TAG_FHIR_SCHEME_SECURITY = 'http://hl7.org/fhir/tag/security';
 
   TAG_READONLY = 'http://hl7.org/fhir/tags/connectathon4/read-only';
 

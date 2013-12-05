@@ -75,6 +75,7 @@ type
     property StopReason: String read FStopReason;
     procedure Stop(AReason : String; ATellUser : boolean = true);
     procedure Execute;
+    Property DisplayName : String read FDisplayName;
   end;
 
 var

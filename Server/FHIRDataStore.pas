@@ -4,27 +4,27 @@ unit FHIRDataStore;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -49,8 +49,13 @@ Type
   private
     FKey : integer;
     FLabel : String;
+    FScheme: String;
+    FTerm: String;
+    function combine : String;
   public
     property Key : integer read FKey write FKey;
+    property Scheme : String read FScheme write FScheme;
+    property Term : String read FTerm write FTerm;
     property Label_ : String read FLabel write FLabel;
   end;
 
@@ -108,7 +113,7 @@ Type
     procedure CloseFhirSession(key: integer);
 
   public
-    constructor Create(DB : TKDBManager; SourceFolder : String);
+    constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String);
     Destructor Destroy; Override;
     Function Link : TFHIRDataStore; virtual;
     procedure CloseAll;
@@ -132,7 +137,7 @@ Type
     procedure SeeResource(key : Integer; id : string; resource : TFHIRResource);
     procedure DelistValueSet(key : Integer);
     procedure DropResource(key : Integer; id : string; aType : TFhirResourceType);
-    function KeyForTag(uri : String) : Integer;
+    function KeyForTag(scheme, term : String) : Integer;
     Property Validator : TFHIRValidator read FValidator;
     function GetTagByKey(key : integer): TFhirTag;
     function expandVS(vs : TFHIRValueSet) : TFHIRValueSet;
@@ -150,7 +155,12 @@ implementation
 uses
   FHIROperation;
 
+function TagCombine(scheme, term : String): String;
+begin
+  result := scheme+#1+term;
+end;
 { TFHIRRepository }
+
 
 procedure TFHIRDataStore.CloseAll;
 var
@@ -170,7 +180,7 @@ begin
   end;
 end;
 
-constructor TFHIRDataStore.Create(DB : TKDBManager; SourceFolder : String);
+constructor TFHIRDataStore.Create(DB : TKDBManager; SourceFolder, WebFolder : String);
 var
   i : integer;
   conn : TKDBConnection;
@@ -199,16 +209,18 @@ begin
     FLastCompartmentKey := conn.CountSQL('select max(ResourceCompartmentKey) from Compartments');
     conn.execSQL('Update Sessions set Closed = '+DBGetDate(conn.Owner.Platform)+' where Closed = null');
 
-    conn.SQL := 'Select TagKey, URI, Label from Tags';
+    conn.SQL := 'Select TagKey, SchemeUri, TermURI, Label from Tags';
     conn.Prepare;
     conn.Execute;
     while conn.FetchNext do
     begin
       tag := TFhirTag.create;
       try
-        tag.Name := conn.ColStringByName['URI'];
+        tag.Term := conn.ColStringByName['TermURI'];
+        tag.Scheme := conn.ColStringByName['SchemeURI'];
         tag.Label_ := conn.ColStringByName['Label'];
         tag.Key := conn.ColIntegerByName['TagKey'];
+        tag.Name := tag.combine;
         FTags.add(tag.Link);
       finally
         tag.free;
@@ -278,6 +290,7 @@ begin
   FUserLogins.Forced := true;
   LoadExistingResources;
   FValidator := TFHIRValidator.create;
+  FValidator.SchematronSource := WebFolder;
   FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)+'validation.zip');
 end;
 
@@ -561,13 +574,13 @@ begin
   end;
 end;
 
-function TFHIRDataStore.KeyForTag(uri: String): Integer;
+function TFHIRDataStore.KeyForTag(scheme, term: String): Integer;
 var
   i : integer;
 begin
   FLock.Lock('KeyForTag');
   try
-    i := FTags.IndexByName(uri);
+    i := FTags.IndexByName(TagCombine(scheme, term));
     if i = -1 then
       result := -1 // nothing will match
     else
@@ -704,7 +717,7 @@ var
 begin
   FLock.Lock('RegisterTag');
   try
-    i := FTags.IndexByName(Tag.term);
+    i := FTags.IndexByName(TagCombine(Tag.scheme, Tag.term));
     if i > -1 then
     begin
       tag.TagKey := TFhirTag(FTags[i]).Key;
@@ -715,8 +728,10 @@ begin
     begin
       t := TFhirTag.create;
       try
-        t.Name := tag.term;
+        t.Scheme := tag.scheme;
+        t.Term := tag.term;
         t.Label_ := tag.label_;
+        t.Name := t.combine;
         inc(FLastTagKey);
         t.key := FLastTagKey;
         registerTag(t);
@@ -738,10 +753,11 @@ var
 begin
   conn := FDB.GetConnection('fhir');
   try
-    conn.SQL := 'insert into Tags (TagKey, URI, Label) values (:k, :u, :l)';
+    conn.SQL := 'insert into Tags (TagKey, SchemeUri, TermUri, Label) values (:k, :s, :u, :l)';
     conn.Prepare;
     conn.BindInteger('k', tag.Key);
-    conn.BindString('u', tag.Name);
+    conn.BindString('s', tag.Scheme);
+    conn.BindString('u', tag.Term);
     conn.BindString('l', tag.Label_);
     conn.Execute;
     conn.terminate;
@@ -902,6 +918,7 @@ begin
         storage.Request := request.Link;
         storage.Response := response.link;
         storage.Connection := FDB.GetConnection('fhir');
+        storage.PreCheck;
         storage.Connection.StartTransact;
         try
           storage.Execute;
@@ -979,7 +996,7 @@ begin
         // todo: read other patient compartments
         conn := FDB.GetConnection('fhir');
         try
-          conn.sql := 'select Id from Ids where MostRecent in (select ResourceVersionKey from VersionTags where TagKey in (select TagKey from Tags where Uri = ''http://fhir.org/connectathon4/patient-compartment-user/'+SQLWrapString(user.login)+'''))';
+          conn.sql := 'select Id from Ids where MostRecent in (select ResourceVersionKey from VersionTags where TagKey in (select TagKey from Tags where Scheme = '''+FHIR_TAG_SCHEME+''' and Uri = ''http://fhir.org/connectathon4/patient-compartment-user/'+SQLWrapString(user.login)+'''))';
           conn.Prepare;
           conn.Execute;
           while conn.FetchNext do
@@ -1109,5 +1126,12 @@ begin
 end;
 
 
+
+{ TFhirTag }
+
+function TFhirTag.combine: String;
+begin
+  result := TagCombine(scheme, term);
+end;
 
 end.

@@ -21,7 +21,7 @@ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
 IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
 INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
@@ -42,6 +42,7 @@ Uses
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdSoapMime, IdCookie,
+  IdSoapTestingUtils,
 
   fhirbase,
   FHIRTypes,
@@ -92,14 +93,14 @@ Type
     FHost : String;
     FSpecPath : String;
     FAltPath : String;
-
-
+    FName : String;
     FPlainServer : TIdHTTPServer;
     FSSLServer : TIdHTTPServer;
     FIOHandler: TIdServerIOHandlerSSLOpenSSL;
 
     FClientLock : TCriticalSection;
     FClients : TAdvObjectList;
+    FClientCount : Integer;
 
     FFhirStore : TFHIRDataStore;
     FFacebookLike : boolean;
@@ -117,7 +118,10 @@ Type
 
     function BuildCompartmentList(user : TFHIRUserStructure) : String;
 
+    function SpecFile(path : String) : String;
+    function AltFile(path : String) : String;
     Procedure ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path : String);
+    Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; named, path : String);
     Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
     Procedure ReadTags(header : String; Request : TFHIRRequest); overload;
     Function ProcessOAuthLogin(path, url, ip : String; request : TFHIRRequest; response : TFHIRResponse; var msg : String; secure : boolean) : Boolean;
@@ -144,8 +148,10 @@ Type
       var aFormat: TFHIRFormat; var redirect: boolean; formparams: String; bAuth, secure : Boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
+    Function WebDesc : String;
+    function EndPointDesc : String;
   Public
-    Constructor Create(ini : TFileName; db : TKDBManager);
+    Constructor Create(ini : TFileName; db : TKDBManager; Name : String);
     Destructor Destroy; Override;
 
     Procedure Start;
@@ -205,14 +211,38 @@ End;
 
 { TFhirWebServer }
 
-Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager);
+Function ProcessPath(base, path : String): string;
+var
+  s : String;
+begin
+  base := base.Substring(0, base.Length-1);
+  if path.StartsWith('..\') then
+  begin
+    s := base;
+    while path.StartsWith('..\') do
+    begin
+      path := path.Substring(3);
+      s := ExtractFilePath(s);
+      s := s.Substring(0, s.Length-1);
+    end;
+    result := IncludeTrailingPathDelimiter(s)+IncludeTrailingPathDelimiter(path);
+  end
+  else
+    result := IncludeTrailingPathDelimiter(path);
+end;
+
+Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String);
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
+  FName := Name;
   FIni := TIniFile.Create(ini);
   FLoginTokens := TStringList.create;
   writeln('Load & Cache Store');
-  FFhirStore := TFHIRDataStore.Create(db, FIni.ReadString('fhir', 'source', ''));
+  FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
+  FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
+
+  FFhirStore := TFHIRDataStore.Create(db, FSpecPath, FAltPath);
 
   // Basei Web server configuration
   FBasePath := FIni.ReadString('web', 'base', '');
@@ -222,8 +252,7 @@ Begin
   FCertFile := FIni.ReadString('web', 'certname', '');
   FSSLPassword := FIni.ReadString('web', 'certpword', '');
   FHost := FIni.ReadString('web', 'host', '');
-  FSpecPath := FIni.ReadString('fhir', 'source', '');
-  FAltPath := FIni.ReadString('fhir', 'other', '');
+
 
   // OAuth Configuration
   FHL7Appid := FIni.ReadString('hl7.org', 'app-id', '');
@@ -269,11 +298,32 @@ End;
 procedure TFhirWebServer.DoConnect(AContext: TIdContext);
 begin
   CoInitialize(nil);
+  FLock.Lock;
+  try
+    inc(FClientCount);
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 procedure TFhirWebServer.DoDisconnect(AContext: TIdContext);
 begin
+  FLock.Lock;
+  try
+    dec(FClientCount);
+  finally
+    FLock.Unlock;
+  end;
   CoUninitialize;
+end;
+
+function TFhirWebServer.EndPointDesc: String;
+begin
+  result := '';
+  if FBasePath <> '' then
+    result := result + ' <li><a href="'+FBasePath+'">Unsecured access at '+FBasePath+'</a> - direct access with no security considerations</li>'#13#10;
+  if FSecurePath <> '' then
+    result := result + ' <li><a href="'+FSecurePath+'">Secured access at '+FSecurePath+'</a> - Login required</li>'#13#10;
 end;
 
 Procedure TFhirWebServer.Start;
@@ -297,6 +347,7 @@ Begin
     FPlainServer.KeepAlive := False;
     FPlainServer.OnCreatePostStream := CreatePostStream;
     FPlainServer.OnCommandGet := PlainRequest;
+    FPlainServer.OnCommandOther := PlainRequest;
     FPlainServer.OnConnect := DoConnect;
     FPlainServer.OnDisconnect := DoDisconnect;
     FPlainServer.Active := True;
@@ -320,6 +371,7 @@ Begin
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
     FIOHandler.OnGetPassword := SSLPassword;
     FSSLServer.OnCommandGet := SecureRequest;
+    FSSLServer.OnCommandOther := SecureRequest;
     FSSLServer.OnConnect := DoConnect;
     FSSLServer.OnDisconnect := DoDisconnect;
     FSSLServer.Active := True;
@@ -340,6 +392,16 @@ Begin
     FreeAndNil(FPlainServer);
   end;
 End;
+
+function TFhirWebServer.WebDesc: String;
+begin
+  if (FPort = 0) then
+    result := 'HTTPS is supported on Port '+inttostr(FSSLPort)+'.'
+  else if FSSLPort = 0 then
+    result := 'HTTP is supported on Port '+inttostr(FPort)+'.'
+  else
+    result := 'HTTPS is supported on Port '+inttostr(FSSLPort)+'. HTTP is supported on Port '+inttostr(FPort)+'.'
+end;
 
 Procedure TFhirWebServer.CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
 Begin
@@ -372,14 +434,20 @@ end;
 
 Procedure TFhirWebServer.PlainRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 begin
-  if ARequestInfo.Document.StartsWith(FBasePath, false) then
+  if FileExists(SpecFile(ARequestInfo.Document)) then
+    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, SpecFile(ARequestInfo.Document))
+  else if FileExists(AltFile(ARequestInfo.Document)) then
+    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, AltFile(ARequestInfo.Document))
+  else if FileExists(FAltPath+ExtractFileName(ARequestInfo.Document.replace('/', '\'))) then
+    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, FAltPath+ExtractFileName(ARequestInfo.Document.replace('/', '\')))
+  else if FileExists(FSpecPath+ExtractFileName(ARequestInfo.Document.replace('/', '\'))) then
+    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, FSpecPath+ExtractFileName(ARequestInfo.Document.replace('/', '\')))
+  else if ARequestInfo.Document.StartsWith(FBasePath, false) then
     HandleRequest(AContext, ARequestInfo, AResponseInfo, false, false, FBasePath)
   else if ARequestInfo.Document.StartsWith(FSecurePath, false) then
     HandleRequest(AContext, ARequestInfo, AResponseInfo, false, true, FSecurePath)
-  else if FileExists(IncludeTrailingPathDelimiter(FSpecPath)+ARequestInfo.Document) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, FSpecPath+ARequestInfo.Document.Replace('/', '\'))
-  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+ARequestInfo.Document) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, FAltPath+ARequestInfo.Document.Replace('/', '\'))
+  else if ARequestInfo.Document = '/' then
+    ReturnProcessedFile(AResponseInfo, '/hompage.html', AltFile('/homepage.html'))
   else
   begin
     AResponseInfo.ResponseNo := 404;
@@ -388,16 +456,37 @@ begin
   end;
 end;
 
+function TFhirWebServer.SpecFile(path : String) : String;
+begin
+  if path.StartsWith('/') then
+    result := FSpecPath+path.Substring(1).Replace('/', '\')
+  else
+    result := '';
+end;
+
+function TFhirWebServer.AltFile(path : String) : String;
+begin
+  if path.StartsWith('/') then
+    result := FAltPath+path.Substring(1).Replace('/', '\')
+  else
+    result := '';
+end;
+
+
 Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 begin
-  if ARequestInfo.Document.StartsWith(FBasePath, false) then
+  if FileExists(SpecFile(ARequestInfo.Document)) then
+    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, SpecFile(ARequestInfo.Document))
+  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+ARequestInfo.Document) then
+    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, IncludeTrailingPathDelimiter(FAltPath)+ARequestInfo.Document)
+  else if FileExists(AltFile(ExtractFileName(ARequestInfo.Document))) then
+    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, AltFile(ExtractFileName(ARequestInfo.Document)))
+  else if ARequestInfo.Document.StartsWith(FBasePath, false) then
     HandleRequest(AContext, ARequestInfo, AResponseInfo, true, false, FBasePath)
   else if ARequestInfo.Document.StartsWith(FSecurePath, false) then
     HandleRequest(AContext, ARequestInfo, AResponseInfo, true, true, FSecurePath)
-  else if FileExists(IncludeTrailingPathDelimiter(FSpecPath)+ARequestInfo.Document) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, IncludeTrailingPathDelimiter(FSpecPath)+ARequestInfo.Document)
-  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+ARequestInfo.Document) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, IncludeTrailingPathDelimiter(FAltPath)+ARequestInfo.Document)
+  else if ARequestInfo.Document = '/' then
+    ReturnProcessedFile(AResponseInfo, '/hompage.html', AltFile('/homepage.html'))
   else
   begin
     AResponseInfo.ResponseNo := 404;
@@ -447,8 +536,14 @@ Begin
 
       if s.StartsWith('multipart/form-data', true) then
         oStream := extractFileData(ARequestInfo.PostStream, ARequestInfo.ContentType, 'file', sContentType, formparams)
+      else if ARequestInfo.PostStream <> nil then
+      begin
+        oStream := TMemoryStream.create;
+        oStream.CopyFrom(ARequestInfo.PostStream, ARequestInfo.PostStream.Size);
+        oStream.Position := 0;
+      end
       else
-        oStream := TStringStream.create(ARequestInfo.UnparsedParams);
+        oStream := TStringStream.Create(ARequestInfo.UnparsedParams);
       try
         AResponseInfo.RawHeaders.add('Access-Control-Allow-Origin: *');
         AResponseInfo.Expires := Now - 1; //don't want anyone caching anything
@@ -833,7 +928,7 @@ Begin
           p.free;
         end;
       end
-      else if (sType = 'search') then
+      else if (sType = '_search') then
       begin
         oRequest.CommandType := fcmdSearch;
         if (sCommand <> 'GET') and (sCommand <> 'POST') then
@@ -860,8 +955,8 @@ Begin
         else if not StringStartsWith(sId, '_', true) Then
         begin
           // operations on a resource
-          CheckId(lang, copy(sId, 2, $FF));
-          oRequest.Id := copy(sId, 2, $FF);
+          CheckId(lang, sId);
+          oRequest.Id := sId;
           sId := NextSegment(sUrl);
           if (sId = '') Then
           begin
@@ -1076,7 +1171,9 @@ begin
               if pos('(', rdr.parts[i].Name) > 0 Then
                 e.id := 'http://hl7.org/fhir/'+LOWERCASE_CODES_TFHIRResourceType[p.resource.ResourceType]+'/@'+GetStringCell(GetStringCell(rdr.parts[i].Name, 1, '('), 0, ')')
               else if rdr.parts[i].Name.EndsWith('.profile.xml') then
-                e.id := 'http://hl7.org/fhir/'+LOWERCASE_CODES_TFHIRResourceType[p.resource.ResourceType]+'/@'+copy(rdr.parts[i].Name, 1, length(rdr.parts[i].Name) - 12);
+                e.id := 'http://hl7.org/fhir/'+LOWERCASE_CODES_TFHIRResourceType[p.resource.ResourceType]+'/@'+copy(rdr.parts[i].Name, 1, length(rdr.parts[i].Name) - 12)
+              else
+                e.id := NewGuidURN;
               e.resource := p.resource.Link;
               e.summary := TFhirXHtmlNode.create;
               e.summary.Name := 'div';
@@ -1216,6 +1313,7 @@ begin
     store.Request := request.Link;
     store.Response := response.Link;
     store.Connection := FFhirStore.DB.GetConnection('Operation');
+    store.precheck;
     try
       store.Connection.StartTransact;
       try
@@ -1313,7 +1411,7 @@ var
   b : TStringBuilder;
 begin
   for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
-    if COMPARTMENT_PARAM_NAMES[frtPatient, a] <> '' then
+    if (comps = '') or (COMPARTMENT_PARAM_NAMES[frtPatient, a] <> '') then
       counts[a] := 0
     else
       counts[a] := -1;
@@ -1384,8 +1482,8 @@ begin
   '<hr/>'#13#10+
   ''#13#10+
   '<p>System Operations:</p><ul><li> <a href="'+sBaseUrl+'/metadata">Conformance Profile</a> (or <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> or <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10+
-  '<li><a class="tag" href="'+sBaseUrl+'/tags">Tags</a> used on this system</li><li><a href="'+sBaseUrl+'/search">General Search</a> (the form''s a bit weird, but the API is useful)</li>'+
-  '<li><a href="'+sBaseUrl+'/history">Full History</a> (History of all resources)</li>'+#13#10+
+  '<li><a class="tag" href="'+sBaseUrl+'/_tags">Tags</a> used on this system</li><li><a href="'+sBaseUrl+'/_search">General Search</a> (the form''s a bit weird, but the API is useful)</li>'+
+  '<li><a href="'+sBaseUrl+'/_history">Full History</a> (History of all resources)</li>'+#13#10+
   '<li><a href="#upload">Upload Operations</a></li>'+#13#10+
   '</ul>'+#13#10+
   ''#13#10+
@@ -1423,9 +1521,9 @@ begin
 
         b.Append('<td style="border-left: 1px solid grey"/>');
 
-        if (i + names.count div 2) < names.count then
+        if (i + names.count div 2) + 1 < names.count then
         begin
-          a := TFHIRResourceType(StringArrayIndexOfSensitive(CODES_TFHIRResourceType, names[i + names.count div 2]));
+          a := TFHIRResourceType(StringArrayIndexOfSensitive(CODES_TFHIRResourceType, names[1 + i + names.count div 2]));
           b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseUrl, counts[a], true, true));
         end;
 
@@ -1847,6 +1945,22 @@ begin
   end;
 end;
 
+
+procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; named, path: String);
+var
+  s : String;
+  b : TBytesStream;
+begin
+  writeln('script: '+named);
+  s := FileToString(path, TEncoding.UTF8);
+  s := s.Replace('[%id%]', FName, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION, [rfReplaceAll]);
+  s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
+  s := s.Replace('[%endpoints%]', EndPointDesc, [rfReplaceAll]);
+  response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));
+  response.FreeContentStream := true;
+  response.ContentType := 'text/html';
+end;
 
 procedure TFhirWebServer.ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path: String);
 begin

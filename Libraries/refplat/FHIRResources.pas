@@ -36,7 +36,7 @@ unit FHIRResources;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 3, 2013 14:43+1100
+// FHIR v0.12 generated Wed, Dec 4, 2013 13:54+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -298,7 +298,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     spDocumentManifest_Status, {@enum.value spDocumentManifest_Status current | superceded | entered in error }
     spDocumentManifest_Subject, {@enum.value spDocumentManifest_Subject The subject of the set of documents }
     spDocumentManifest_Supersedes, {@enum.value spDocumentManifest_Supersedes If this document manifest replaces another }
-    spDocumentManifest_Type); {@enum.value spDocumentManifest_Type What kind of document set this is (LOINC if possible) }
+    spDocumentManifest_Type); {@enum.value spDocumentManifest_Type What kind of document set this is }
 
   {@Enum TSearchParamsDocumentReference
     Search Parameters for DocumentReference
@@ -315,7 +315,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     spDocumentReference_Event, {@enum.value spDocumentReference_Event Main Clinical Acts Documented }
     spDocumentReference_Facility, {@enum.value spDocumentReference_Facility Kind of facility where patient was seen }
     spDocumentReference_Format, {@enum.value spDocumentReference_Format Format of the document }
-    spDocumentReference_Identifier, {@enum.value spDocumentReference_Identifier Other identifiers for the document }
+    spDocumentReference_Identifier, {@enum.value spDocumentReference_Identifier Master Version Specific Identifier }
     spDocumentReference_Indexed, {@enum.value spDocumentReference_Indexed When this document reference created }
     spDocumentReference_Language, {@enum.value spDocumentReference_Language Primary language of the document }
     spDocumentReference_Location, {@enum.value spDocumentReference_Location Where to access the document }
@@ -333,13 +333,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsEncounter = (
     spEncounter__id, {@enum.value spEncounter__id The logical resource id associated with the resource (must be supported by all servers) }
-    spEncounter_Fulfills, {@enum.value spEncounter_Fulfills The appointment that scheduled this encounter }
+    spEncounter_Date, {@enum.value spEncounter_Date A date within the period the Encounter lasted }
     spEncounter_Identifier, {@enum.value spEncounter_Identifier Identifier(s) by which this encounter is known }
     spEncounter_Indication, {@enum.value spEncounter_Indication Reason the encounter takes place (resource) }
     spEncounter_Length, {@enum.value spEncounter_Length Length of encounter in days }
     spEncounter_Location, {@enum.value spEncounter_Location The location the encounter takes place }
     spEncounter_Location_period, {@enum.value spEncounter_Location_period Time period during which the patient was present at the location }
-    spEncounter_Start, {@enum.value spEncounter_Start The date and time the encounter starts }
     spEncounter_Status, {@enum.value spEncounter_Status planned | in progress | onleave | finished | cancelled }
     spEncounter_Subject); {@enum.value spEncounter_Subject The patient present at the encounter }
 
@@ -421,12 +420,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsLocation = (
     spLocation__id, {@enum.value spLocation__id The logical resource id associated with the resource (must be supported by all servers) }
-    spLocation_Active, {@enum.value spLocation_Active Whether to search for active or inactive locations }
     spLocation_Address, {@enum.value spLocation_Address A (part of the) address of the location }
     spLocation_Name, {@enum.value spLocation_Name A (portion of the) name of the location }
     spLocation_Near, {@enum.value spLocation_Near The coordinates expressed as [lat],[long] (using KML, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency) }
     spLocation_Near_distance, {@enum.value spLocation_Near_distance A distance quantity to limit the near search to locations within a specific distance }
     spLocation_Partof, {@enum.value spLocation_Partof The location of which this location is a part }
+    spLocation_Status, {@enum.value spLocation_Status Searches for locations with a specific kind of status }
     spLocation_Type); {@enum.value spLocation_Type A code for the type of location }
 
   {@Enum TSearchParamsMedia
@@ -2443,7 +2442,8 @@ Type
   {!.Net HL7Connect.Fhir.DocumentManifest}
   TFhirDocumentManifest = class (TFhirResource)
   private
-    FIdentifier : TFhirIdentifier;
+    FMasterIdentifier : TFhirIdentifier;
+    FidentifierList : TFhirIdentifierList;
     FsubjectList : TFhirResourceReferenceList{Resource};
     FrecipientList : TFhirResourceReferenceList{Resource};
     FType_ : TFhirCodeableConcept;
@@ -2455,7 +2455,7 @@ Type
     FDescription : TFhirString;
     FConfidentiality : TFhirCodeableConcept;
     FcontentList : TFhirResourceReferenceList{Resource};
-    Procedure SetIdentifier(value : TFhirIdentifier);
+    Procedure SetMasterIdentifier(value : TFhirIdentifier);
     Procedure SetType_(value : TFhirCodeableConcept);
     Procedure SetCreated(value : TFhirDateTime);
     Function GetCreatedST : TDateAndTime;
@@ -2485,10 +2485,15 @@ Type
     function Clone : TFhirDocumentManifest; overload;
     {!script show}
   published
-    {@member identifier
-      A single identifier that identifies this manifest. Principally used to refer to the manifest in non-FHIR contexts.
+    {@member masterIdentifier
+      A single identifier that uniquely identifies this manifest. Principally used to refer to the manifest in non-FHIR contexts.
     }
-    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property masterIdentifier : TFhirIdentifier read FMasterIdentifier write SetMasterIdentifier;
+
+    {@member identifierList
+      Other identifiers associated with the document, including version independent, source record and workflow related identifiers.
+    }
+    property identifierList : TFhirIdentifierList read FIdentifierList;
 
     {@member subjectList
       Who or what the set of documents is about. The documents can be about a person, (patient or healthcare practitioner), a device (I.e. machine) or even a group of subjects (such as a document about a herd of farm animals, or a set of patients that share a common exposure). If the documents cross more than one subject, then more than one subjecti allowed here (unusual use case).
@@ -2823,8 +2828,7 @@ Type
     Ftype_List : TFhirCodeableConceptList;
     FSubject : TFhirResourceReference{TFhirPatient};
     FparticipantList : TFhirEncounterParticipantList;
-    FFulfills : TFhirResourceReference{TFhirAppointment};
-    FStart : TFhirDateTime;
+    FPeriod : TFhirPeriod;
     FLength : TFhirQuantity;
     FReason : TFhirCodeableConcept;
     FIndication : TFhirResourceReference{Resource};
@@ -2840,10 +2844,7 @@ Type
     Function GetClass_ST : TFhirEncounterClass;
     Procedure SetClass_ST(value : TFhirEncounterClass);
     Procedure SetSubject(value : TFhirResourceReference{TFhirPatient});
-    Procedure SetFulfills(value : TFhirResourceReference{TFhirAppointment});
-    Procedure SetStart(value : TFhirDateTime);
-    Function GetStartST : TDateAndTime;
-    Procedure SetStartST(value : TDateAndTime);
+    Procedure SetPeriod(value : TFhirPeriod);
     Procedure SetLength(value : TFhirQuantity);
     Procedure SetReason(value : TFhirCodeableConcept);
     Procedure SetIndication(value : TFhirResourceReference{Resource});
@@ -2903,19 +2904,10 @@ Type
     }
     property participantList : TFhirEncounterParticipantList read FParticipantList;
 
-    {@member fulfills
-      The appointment that scheduled this encounter.
+    {@member period
+      The start and end time of the encounter.
     }
-    property fulfills : TFhirResourceReference{TFhirAppointment} read FFulfills write SetFulfills;
-
-    {@member start
-      The date and time the encounter starts, e.g. the patient arrives.
-    }
-    property start : TFhirDateTime read FStart write SetStart;
-    {@member startST
-      Typed access to The date and time the encounter starts, e.g. the patient arrives.
-    }
-    property startST : TDateAndTime read GetStartST write SetStartST;
+    property period : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member length
       Quantity of time the encounter lasted. This excludes the time during leaves of absence.
@@ -3617,7 +3609,7 @@ Type
     FPhysicalType : TFhirCodeableConcept;
     FPosition : TFhirLocationPosition;
     FManagingOrganization : TFhirResourceReference{TFhirOrganization};
-    FActive : TFhirBoolean;
+    FStatus : TFhirEnum;
     FPartOf : TFhirResourceReference{TFhirLocation};
     FMode : TFhirEnum;
     Procedure SetName(value : TFhirString);
@@ -3632,9 +3624,9 @@ Type
     Procedure SetPhysicalType(value : TFhirCodeableConcept);
     Procedure SetPosition(value : TFhirLocationPosition);
     Procedure SetManagingOrganization(value : TFhirResourceReference{TFhirOrganization});
-    Procedure SetActive(value : TFhirBoolean);
-    Function GetActiveST : Boolean;
-    Procedure SetActiveST(value : Boolean);
+    Procedure SetStatus(value : TFhirEnum);
+    Function GetStatusST : TFhirLocationStatus;
+    Procedure SetStatusST(value : TFhirLocationStatus);
     Procedure SetPartOf(value : TFhirResourceReference{TFhirLocation});
     Procedure SetMode(value : TFhirEnum);
     Function GetModeST : TFhirLocationMode;
@@ -3701,14 +3693,14 @@ Type
     }
     property managingOrganization : TFhirResourceReference{TFhirOrganization} read FManagingOrganization write SetManagingOrganization;
 
-    {@member active
-      Whether the location is still used to provide services.
+    {@member status
+      active | suspended | inactive.
     }
-    property active : TFhirBoolean read FActive write SetActive;
-    {@member activeST
-      Typed access to Whether the location is still used to provide services.
+    property status : TFhirEnum read FStatus write SetStatus;
+    {@member statusST
+      Typed access to active | suspended | inactive.
     }
-    property activeST : Boolean read GetActiveST write SetActiveST;
+    property statusST : TFhirLocationStatus read GetStatusST write SetStatusST;
 
     {@member partOf
       Another Location which this Location is physically part of.
@@ -4855,6 +4847,7 @@ Use only if isNegated is set to TRUE.
     FaddressList : TFhirAddressList;
     FPartOf : TFhirResourceReference{TFhirOrganization};
     FcontactList : TFhirOrganizationContactList;
+    FlocationList : TFhirResourceReferenceList{TFhirLocation};
     FActive : TFhirBoolean;
     Procedure SetName(value : TFhirString);
     Function GetNameST : String;
@@ -4916,6 +4909,11 @@ Use only if isNegated is set to TRUE.
       Contact for the organization for a certain purpose.
     }
     property contactList : TFhirOrganizationContactList read FContactList;
+
+    {@member locationList
+      Location(s) the organization uses to provide services.
+    }
+    property locationList : TFhirResourceReferenceList{TFhirLocation} read FLocationList;
 
     {@member active
       Whether the organization's record is still in active use.
@@ -5148,6 +5146,7 @@ Use only if isNegated is set to TRUE.
     FroleList : TFhirCodeableConceptList;
     FspecialtyList : TFhirCodeableConceptList;
     FPeriod : TFhirPeriod;
+    FlocationList : TFhirResourceReferenceList{TFhirLocation};
     FqualificationList : TFhirPractitionerQualificationList;
     FcommunicationList : TFhirCodeableConceptList;
     Procedure SetName(value : TFhirHumanName);
@@ -5217,7 +5216,7 @@ Use only if isNegated is set to TRUE.
     property organization : TFhirResourceReference{TFhirOrganization} read FOrganization write SetOrganization;
 
     {@member roleList
-      The way in which the person represents the organization - what role do they have?.
+      Roles which this practitioner is authorized perform for the organization.
     }
     property roleList : TFhirCodeableConceptList read FRoleList;
 
@@ -5227,9 +5226,14 @@ Use only if isNegated is set to TRUE.
     property specialtyList : TFhirCodeableConceptList read FSpecialtyList;
 
     {@member period
-      The period during which the person is authorized to perform the service.
+      The period during which the person is authorized to act as a practitioner in these role(s) for the organization.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+
+    {@member locationList
+      The location(s) at which this practitioner provides care.
+    }
+    property locationList : TFhirResourceReferenceList{TFhirLocation} read FLocationList;
 
     {@member qualificationList
       Qualifications relevant to the provided service.
@@ -5703,8 +5707,7 @@ Use only if isNegated is set to TRUE.
     FName : TFhirCodeableConcept;
     FidentifierList : TFhirIdentifierList;
     FEncounter : TFhirResourceReference{TFhirEncounter};
-    FquestionList : TFhirQuestionnaireQuestionList;
-    FgroupList : TFhirQuestionnaireGroupList;
+    FGroup : TFhirQuestionnaireGroup;
     Procedure SetStatus(value : TFhirEnum);
     Function GetStatusST : TFhirQuestionnaireStatus;
     Procedure SetStatusST(value : TFhirQuestionnaireStatus);
@@ -5716,6 +5719,7 @@ Use only if isNegated is set to TRUE.
     Procedure SetSource(value : TFhirResourceReference{Resource});
     Procedure SetName(value : TFhirCodeableConcept);
     Procedure SetEncounter(value : TFhirResourceReference{TFhirEncounter});
+    Procedure SetGroup(value : TFhirQuestionnaireGroup);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -5778,15 +5782,10 @@ Use only if isNegated is set to TRUE.
     }
     property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
 
-    {@member questionList
-      Answers to questions on a questionnaire.
-    }
-    property questionList : TFhirQuestionnaireQuestionList read FQuestionList;
-
-    {@member groupList
+    {@member group
       A group of questions to a possibly similarly grouped set of question in the questionnaire.
     }
-    property groupList : TFhirQuestionnaireGroupList read FGroupList;
+    property group : TFhirQuestionnaireGroup read FGroup write SetGroup;
 
   end;
 
@@ -7229,16 +7228,16 @@ Use only if isNegated is set to TRUE.
     }
     {!script nolink}
     function newQuery : TFhirQuery;
-    {@member newQuestionnaireQuestion
-      create a new question
-    }
-    {!script nolink}
-    function newQuestionnaireQuestion : TFhirQuestionnaireQuestion;
     {@member newQuestionnaireGroup
       create a new group
     }
     {!script nolink}
     function newQuestionnaireGroup : TFhirQuestionnaireGroup;
+    {@member newQuestionnaireGroupQuestion
+      create a new question
+    }
+    {!script nolink}
+    function newQuestionnaireGroupQuestion : TFhirQuestionnaireGroupQuestion;
     {@member newQuestionnaire
       create a new Questionnaire
     }
@@ -10366,6 +10365,7 @@ end;
 constructor TFhirDocumentManifest.Create;
 begin
   inherited;
+  FIdentifierList := TFhirIdentifierList.Create;
   FSubjectList := TFhirResourceReferenceList{Resource}.Create;
   FRecipientList := TFhirResourceReferenceList{Resource}.Create;
   FAuthorList := TFhirResourceReferenceList{Resource}.Create;
@@ -10374,7 +10374,8 @@ end;
 
 destructor TFhirDocumentManifest.Destroy;
 begin
-  FIdentifier.free;
+  FMasterIdentifier.free;
+  FIdentifierList.Free;
   FSubjectList.Free;
   FRecipientList.Free;
   FType_.free;
@@ -10402,7 +10403,8 @@ end;
 procedure TFhirDocumentManifest.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirDocumentManifest(oSource).identifier.Clone;
+  masterIdentifier := TFhirDocumentManifest(oSource).masterIdentifier.Clone;
+  FIdentifierList.Assign(TFhirDocumentManifest(oSource).FIdentifierList);
   FSubjectList.Assign(TFhirDocumentManifest(oSource).FSubjectList);
   FRecipientList.Assign(TFhirDocumentManifest(oSource).FRecipientList);
   type_ := TFhirDocumentManifest(oSource).type_.Clone;
@@ -10419,8 +10421,10 @@ end;
 procedure TFhirDocumentManifest.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
+  if (child_name = 'masterIdentifier') Then
+     list.add(MasterIdentifier.Link);
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.addAll(FIdentifierList);
   if (child_name = 'subject') Then
      list.addAll(FSubjectList);
   if (child_name = 'recipient') Then
@@ -10448,7 +10452,8 @@ end;
 procedure TFhirDocumentManifest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifier.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'masterIdentifier', 'Identifier', FMasterIdentifier.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient|Practitioner|Group|Device)', FSubjectList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'recipient', 'Resource(Patient|Practitioner|Organization)', FRecipientList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link.Link));{2}
@@ -10474,10 +10479,10 @@ end;
 
 { TFhirDocumentManifest }
 
-Procedure TFhirDocumentManifest.SetIdentifier(value : TFhirIdentifier);
+Procedure TFhirDocumentManifest.SetMasterIdentifier(value : TFhirIdentifier);
 begin
-  FIdentifier.free;
-  FIdentifier := value;
+  FMasterIdentifier.free;
+  FMasterIdentifier := value;
 end;
 
 Procedure TFhirDocumentManifest.SetType_(value : TFhirCodeableConcept);
@@ -11108,8 +11113,7 @@ begin
   FType_List.Free;
   FSubject.free;
   FParticipantList.Free;
-  FFulfills.free;
-  FStart.free;
+  FPeriod.free;
   FLength.free;
   FReason.free;
   FIndication.free;
@@ -11140,8 +11144,7 @@ begin
   FType_List.Assign(TFhirEncounter(oSource).FType_List);
   subject := TFhirEncounter(oSource).subject.Clone;
   FParticipantList.Assign(TFhirEncounter(oSource).FParticipantList);
-  fulfills := TFhirEncounter(oSource).fulfills.Clone;
-  start := TFhirEncounter(oSource).start.Clone;
+  period := TFhirEncounter(oSource).period.Clone;
   length := TFhirEncounter(oSource).length.Clone;
   reason := TFhirEncounter(oSource).reason.Clone;
   indication := TFhirEncounter(oSource).indication.Clone;
@@ -11167,10 +11170,8 @@ begin
      list.add(Subject.Link);
   if (child_name = 'participant') Then
      list.addAll(FParticipantList);
-  if (child_name = 'fulfills') Then
-     list.add(Fulfills.Link);
-  if (child_name = 'start') Then
-     list.add(Start.Link);
+  if (child_name = 'period') Then
+     list.add(Period.Link);
   if (child_name = 'length') Then
      list.add(Length.Link);
   if (child_name = 'reason') Then
@@ -11198,8 +11199,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_List.Link)){3};
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient)', FSubject.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'participant', '', FParticipantList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'fulfills', 'Resource(Appointment)', FFulfills.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'start', 'dateTime', FStart.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'length', 'Duration', FLength.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', FReason.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'indication', 'Resource(Any)', FIndication.Link.Link));{2}
@@ -11272,36 +11272,10 @@ begin
   FSubject := value;
 end;
 
-Procedure TFhirEncounter.SetFulfills(value : TFhirResourceReference{TFhirAppointment});
+Procedure TFhirEncounter.SetPeriod(value : TFhirPeriod);
 begin
-  FFulfills.free;
-  FFulfills := value;
-end;
-
-Procedure TFhirEncounter.SetStart(value : TFhirDateTime);
-begin
-  FStart.free;
-  FStart := value;
-end;
-
-Function TFhirEncounter.GetStartST : TDateAndTime;
-begin
-  if FStart = nil then
-    result := nil
-  else
-    result := Start.value;
-end;
-
-Procedure TFhirEncounter.SetStartST(value : TDateAndTime);
-begin
-  if value <> nil then
-  begin
-    if FStart = nil then
-      FStart := TFhirDateTime.create;
-    FStart.value := value
-  end
-  else if FStart <> nil then
-    FStart.value := nil;
+  FPeriod.free;
+  FPeriod := value;
 end;
 
 Procedure TFhirEncounter.SetLength(value : TFhirQuantity);
@@ -12608,7 +12582,7 @@ begin
   FPhysicalType.free;
   FPosition.free;
   FManagingOrganization.free;
-  FActive.free;
+  FStatus.free;
   FPartOf.free;
   FMode.free;
   inherited;
@@ -12635,7 +12609,7 @@ begin
   physicalType := TFhirLocation(oSource).physicalType.Clone;
   position := TFhirLocation(oSource).position.Clone;
   managingOrganization := TFhirLocation(oSource).managingOrganization.Clone;
-  active := TFhirLocation(oSource).active.Clone;
+  FStatus := TFhirLocation(oSource).FStatus.Link;
   partOf := TFhirLocation(oSource).partOf.Clone;
   FMode := TFhirLocation(oSource).FMode.Link;
 end;
@@ -12659,8 +12633,8 @@ begin
      list.add(Position.Link);
   if (child_name = 'managingOrganization') Then
      list.add(ManagingOrganization.Link);
-  if (child_name = 'active') Then
-     list.add(Active.Link);
+  if (child_name = 'status') Then
+     list.add(FStatus.Link);
   if (child_name = 'partOf') Then
      list.add(PartOf.Link);
   if (child_name = 'mode') Then
@@ -12678,7 +12652,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'physicalType', 'CodeableConcept', FPhysicalType.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'position', '', FPosition.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Resource(Organization)', FManagingOrganization.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', FActive.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
   oList.add(TFHIRProperty.create(self, 'partOf', 'Resource(Location)', FPartOf.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'mode', 'code', FMode.Link));{1}
 end;
@@ -12783,25 +12757,26 @@ begin
   FManagingOrganization := value;
 end;
 
-Procedure TFhirLocation.SetActive(value : TFhirBoolean);
+Procedure TFhirLocation.SetStatus(value : TFhirEnum);
 begin
-  FActive.free;
-  FActive := value;
+  FStatus.free;
+  FStatus := value;
 end;
 
-Function TFhirLocation.GetActiveST : Boolean;
+Function TFhirLocation.GetStatusST : TFhirLocationStatus;
 begin
-  if FActive = nil then
-    result := false
+  if FStatus = nil then
+    result := TFhirLocationStatus(0)
   else
-    result := Active.value;
+    result := TFhirLocationStatus(StringArrayIndexOf(CODES_TFhirLocationStatus, Status.value));
 end;
 
-Procedure TFhirLocation.SetActiveST(value : Boolean);
+Procedure TFhirLocation.SetStatusST(value : TFhirLocationStatus);
 begin
-  if FActive = nil then
-    FActive := TFhirBoolean.create;
-  FActive.value := value
+  if ord(value) = 0 then
+    Status := nil
+  else
+    Status := TFhirEnum.create(CODES_TFhirLocationStatus[value]);
 end;
 
 Procedure TFhirLocation.SetPartOf(value : TFhirResourceReference{TFhirLocation});
@@ -14907,6 +14882,7 @@ begin
   FTelecomList := TFhirContactList.Create;
   FAddressList := TFhirAddressList.Create;
   FContactList := TFhirOrganizationContactList.Create;
+  FLocationList := TFhirResourceReferenceList{TFhirLocation}.Create;
 end;
 
 destructor TFhirOrganization.Destroy;
@@ -14918,6 +14894,7 @@ begin
   FAddressList.Free;
   FPartOf.free;
   FContactList.Free;
+  FLocationList.Free;
   FActive.free;
   inherited;
 end;
@@ -14942,6 +14919,7 @@ begin
   FAddressList.Assign(TFhirOrganization(oSource).FAddressList);
   partOf := TFhirOrganization(oSource).partOf.Clone;
   FContactList.Assign(TFhirOrganization(oSource).FContactList);
+  FLocationList.Assign(TFhirOrganization(oSource).FLocationList);
   active := TFhirOrganization(oSource).active.Clone;
 end;
 
@@ -14962,6 +14940,8 @@ begin
      list.add(PartOf.Link);
   if (child_name = 'contact') Then
      list.addAll(FContactList);
+  if (child_name = 'location') Then
+     list.addAll(FLocationList);
   if (child_name = 'active') Then
      list.add(Active.Link);
 end;
@@ -14976,6 +14956,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'address', 'Address', FAddressList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'partOf', 'Resource(Organization)', FPartOf.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'contact', '', FContactList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'location', 'Resource(Location)', FLocationList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'active', 'boolean', FActive.Link.Link));{2}
 end;
 
@@ -15402,6 +15383,7 @@ begin
   FPhotoList := TFhirAttachmentList.Create;
   FRoleList := TFhirCodeableConceptList.Create;
   FSpecialtyList := TFhirCodeableConceptList.Create;
+  FLocationList := TFhirResourceReferenceList{TFhirLocation}.Create;
   FQualificationList := TFhirPractitionerQualificationList.Create;
   FCommunicationList := TFhirCodeableConceptList.Create;
 end;
@@ -15419,6 +15401,7 @@ begin
   FRoleList.Free;
   FSpecialtyList.Free;
   FPeriod.free;
+  FLocationList.Free;
   FQualificationList.Free;
   FCommunicationList.Free;
   inherited;
@@ -15448,6 +15431,7 @@ begin
   FRoleList.Assign(TFhirPractitioner(oSource).FRoleList);
   FSpecialtyList.Assign(TFhirPractitioner(oSource).FSpecialtyList);
   period := TFhirPractitioner(oSource).period.Clone;
+  FLocationList.Assign(TFhirPractitioner(oSource).FLocationList);
   FQualificationList.Assign(TFhirPractitioner(oSource).FQualificationList);
   FCommunicationList.Assign(TFhirPractitioner(oSource).FCommunicationList);
 end;
@@ -15477,6 +15461,8 @@ begin
      list.addAll(FSpecialtyList);
   if (child_name = 'period') Then
      list.add(Period.Link);
+  if (child_name = 'location') Then
+     list.addAll(FLocationList);
   if (child_name = 'qualification') Then
      list.addAll(FQualificationList);
   if (child_name = 'communication') Then
@@ -15497,6 +15483,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'role', 'CodeableConcept', FRoleList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', FSpecialtyList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'location', 'Resource(Location)', FLocationList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'qualification', '', FQualificationList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'communication', 'CodeableConcept', FCommunicationList.Link)){3};
 end;
@@ -16422,8 +16409,6 @@ constructor TFhirQuestionnaire.Create;
 begin
   inherited;
   FIdentifierList := TFhirIdentifierList.Create;
-  FQuestionList := TFhirQuestionnaireQuestionList.Create;
-  FGroupList := TFhirQuestionnaireGroupList.Create;
 end;
 
 destructor TFhirQuestionnaire.Destroy;
@@ -16436,8 +16421,7 @@ begin
   FName.free;
   FIdentifierList.Free;
   FEncounter.free;
-  FQuestionList.Free;
-  FGroupList.Free;
+  FGroup.free;
   inherited;
 end;
 
@@ -16462,8 +16446,7 @@ begin
   name := TFhirQuestionnaire(oSource).name.Clone;
   FIdentifierList.Assign(TFhirQuestionnaire(oSource).FIdentifierList);
   encounter := TFhirQuestionnaire(oSource).encounter.Clone;
-  FQuestionList.Assign(TFhirQuestionnaire(oSource).FQuestionList);
-  FGroupList.Assign(TFhirQuestionnaire(oSource).FGroupList);
+  group := TFhirQuestionnaire(oSource).group.Clone;
 end;
 
 procedure TFhirQuestionnaire.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -16485,10 +16468,8 @@ begin
      list.addAll(FIdentifierList);
   if (child_name = 'encounter') Then
      list.add(Encounter.Link);
-  if (child_name = 'question') Then
-     list.addAll(FQuestionList);
   if (child_name = 'group') Then
-     list.addAll(FGroupList);
+     list.add(Group.Link);
 end;
 
 procedure TFhirQuestionnaire.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -16502,8 +16483,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'name', 'CodeableConcept', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'encounter', 'Resource(Encounter)', FEncounter.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'question', '', FQuestionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'group', '', FGroupList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'group', '', FGroup.Link.Link));{2}
 end;
 
 function TFhirQuestionnaire.Link : TFhirQuestionnaire;
@@ -16594,6 +16574,12 @@ Procedure TFhirQuestionnaire.SetEncounter(value : TFhirResourceReference{TFhirEn
 begin
   FEncounter.free;
   FEncounter := value;
+end;
+
+Procedure TFhirQuestionnaire.SetGroup(value : TFhirQuestionnaireGroup);
+begin
+  FGroup.free;
+  FGroup := value;
 end;
 
 
@@ -18513,14 +18499,14 @@ begin
   result := TFhirQuery.create;
 end;
 
-function TFhirResourceFactory.newQuestionnaireQuestion : TFhirQuestionnaireQuestion;
-begin
-  result := TFhirQuestionnaireQuestion.create;
-end;
-
 function TFhirResourceFactory.newQuestionnaireGroup : TFhirQuestionnaireGroup;
 begin
   result := TFhirQuestionnaireGroup.create;
+end;
+
+function TFhirResourceFactory.newQuestionnaireGroupQuestion : TFhirQuestionnaireGroupQuestion;
+begin
+  result := TFhirQuestionnaireGroupQuestion.create;
 end;
 
 function TFhirResourceFactory.newQuestionnaire : TFhirQuestionnaire;

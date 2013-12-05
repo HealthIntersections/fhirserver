@@ -130,6 +130,7 @@ begin
     on e : Exception do
       Writeln(e.Message);
   end;
+  writeln('started');
 end;
 
 procedure TFHIRService.DoStop;
@@ -172,9 +173,9 @@ begin
   FWebSource := FIni.ReadString('fhir', 'source', '');
   writeln('Using FHIR Specification at '+FWebSource);
 
-  if not FileExists(IncludeTrailingPathDelimiter(FWebSource)+'version.ini') then
+  if not FileExists(IncludeTrailingPathDelimiter(FWebSource)+'version.info') then
     raise Exception.Create('FHIR Publication not found at '+FWebSource);
-  ini := TIniFile.Create(IncludeTrailingPathDelimiter(FWebSource)+'version.ini');
+  ini := TIniFile.Create(IncludeTrailingPathDelimiter(FWebSource)+'version.info');
   try
     s := ini.ReadString('FHIR', 'version', '');
     if s <> FHIR_GENERATED_VERSION then
@@ -203,7 +204,7 @@ end;
 
 procedure TFHIRService.InitialiseRestServer;
 begin
-  FWebServer := TFhirWebServer.create(FIni.FileName, FDb);
+  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName);
   FWebServer.Start;
 end;
 

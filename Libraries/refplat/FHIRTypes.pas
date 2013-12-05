@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 3, 2013 14:43+1100
+// FHIR v0.12 generated Wed, Dec 4, 2013 13:54+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -658,6 +658,16 @@ Type
     ListModeSnapshot, {@enum.value ListModeSnapshot This list was prepared as a snapshot. It should not be assumed to be current. }
     ListModeChanges); {@enum.value ListModeChanges The list is prepared as a statement of changes that have been made or recommended. }
   TFhirListModeList = set of TFhirListMode;
+
+  {@Enum TFhirLocationStatus
+    Indicates whether the location is still in use
+  }
+  TFhirLocationStatus = (
+    LocationStatusNull,  {@enum.value LocationStatusNull Value is missing from Instance }
+    LocationStatusActive, {@enum.value LocationStatusActive The location is operational. }
+    LocationStatusSuspended, {@enum.value LocationStatusSuspended The location is temporarily closed. }
+    LocationStatusInactive); {@enum.value LocationStatusInactive The location is no longer used. }
+  TFhirLocationStatusList = set of TFhirLocationStatus;
 
   {@Enum TFhirLocationMode
     Indicates whether a resource instance represents a specific location or a class of locations
@@ -5278,6 +5288,7 @@ Const
   CODES_TFhirModality : Array[TFhirModality] of String = ('', 'AR', 'AU', 'BDUS', 'BI', 'BMD', 'CR', 'CT', 'DG', 'DX', 'ECG', 'EPS', 'ES', 'GM', 'HC', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'KO', 'LEN', 'LS', 'MG', 'MR', 'NM', 'OAM', 'OCT', 'OP', 'OPM', 'OPT', 'OPV', 'OT', 'PR', 'PT', 'PX', 'REG', 'RF', 'RG', 'RTDOSE', 'RTIMAGE', 'RTPLAN', 'RTRECORD', 'RTSTRUCT', 'SEG', 'SM', 'SMR', 'SR', 'SRF', 'TG', 'US', 'VA', 'XA', 'XC');
   CODES_TFhirImmunizationForecastStatus : Array[TFhirImmunizationForecastStatus] of String = ('', 'DUE');
   CODES_TFhirListMode : Array[TFhirListMode] of String = ('', 'working', 'snapshot', 'changes');
+  CODES_TFhirLocationStatus : Array[TFhirLocationStatus] of String = ('', 'active', 'suspended', 'inactive');
   CODES_TFhirLocationMode : Array[TFhirLocationMode] of String = ('', 'instance', 'kind');
   CODES_TFhirMediaType : Array[TFhirMediaType] of String = ('', 'photo', 'video', 'audio');
   CODES_TFhirMedicationKind : Array[TFhirMedicationKind] of String = ('', 'product', 'package');
@@ -5404,6 +5415,8 @@ Function TFhirImmunizationForecastStatusListAsInteger(aSet : TFhirImmunizationFo
 Function IntegerAsTFhirImmunizationForecastStatusList(i : integer) : TFhirImmunizationForecastStatusList; overload;
 Function TFhirListModeListAsInteger(aSet : TFhirListModeList) : Integer; overload;
 Function IntegerAsTFhirListModeList(i : integer) : TFhirListModeList; overload;
+Function TFhirLocationStatusListAsInteger(aSet : TFhirLocationStatusList) : Integer; overload;
+Function IntegerAsTFhirLocationStatusList(i : integer) : TFhirLocationStatusList; overload;
 Function TFhirLocationModeListAsInteger(aSet : TFhirLocationModeList) : Integer; overload;
 Function IntegerAsTFhirLocationModeList(i : integer) : TFhirLocationModeList; overload;
 Function TFhirMediaTypeListAsInteger(aSet : TFhirMediaTypeList) : Integer; overload;
@@ -12681,6 +12694,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirListMode) to high(TFhirListMode) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirLocationStatusListAsInteger(aSet : TFhirLocationStatusList) : Integer;
+var
+  a : TFhirLocationStatus;
+begin
+  result := 0;
+  for a := low(TFhirLocationStatus) to high(TFhirLocationStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirLocationStatusList(i : Integer) : TFhirLocationStatusList;
+var
+  aLoop : TFhirLocationStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirLocationStatus) to high(TFhirLocationStatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

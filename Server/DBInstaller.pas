@@ -102,10 +102,24 @@ procedure TFHIRDatabaseInstaller.CreateResourceTags;
 begin
   FConn.ExecSQL('CREATE TABLE Tags( '+#13#10+
        ' TagKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
-       ' Uri nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' SchemeUri nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' TermUri nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Label nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Tags', 'TagKey')+') '+CreateTableInfo(FConn.owner.platform));
-  FConn.ExecSQL('Create INDEX SK_Tags_Uri ON Tags (Uri)');
+  FConn.ExecSQL('Create INDEX SK_Tags_Uri ON Tags (SchemeUri, TermUri)');
+  // pre-registering common tags
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (1, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#U'', ''Confidentiality = none'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (2, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#L'', ''Confidentiality = Low'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (3, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#M'', ''Confidentiality = Moderate'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (4, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#N'', ''Confidentiality = Normal'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (5, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#R'', ''Confidentiality = Restricted'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (6, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#V'', ''Confidentiality = Very Restricted'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (7, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#CEL'', ''Celebrity / VIP'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (8, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#EMP'', ''Employee / Staff member'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (9, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#TABOO'', ''Patient/Carer Only'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (10, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#DEMO'', ''Contact/Employment Confidential'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (11, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#DIA'', ''Diagnosis is/would be Confidential'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (12, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#ORCON'', ''Author only'')');
 end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceTypes;

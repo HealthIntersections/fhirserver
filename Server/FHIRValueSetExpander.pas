@@ -226,7 +226,7 @@ begin
   system := cset.systemST;
   if (system = 'http://loinc.org') then
     result := TLoincProvider.create
-  else if system = 'http://snomed.info/id' then
+  else if system = 'http://snomed.info/sct' then
     result := TSnomedProvider.create
   else if system = 'http://unitsofmeasure.org' then
     result := TUcumProvider.create
@@ -814,7 +814,7 @@ end;
 
 function TSnomedProvider.system: String;
 begin
-  result := 'http://snomed.info/id';
+  result := 'http://snomed.info/sct';
 end;
 
 function TSnomedProvider.TotalCount: integer;

@@ -33,7 +33,7 @@ unit FHIRComponents;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 3, 2013 14:43+1100
+// FHIR v0.12 generated Wed, Dec 4, 2013 13:54+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -231,10 +231,10 @@ Type
   TFhirProvenanceEntityList = class;
   TFhirQueryResponse = class;
   TFhirQueryResponseList = class;
-  TFhirQuestionnaireQuestion = class;
-  TFhirQuestionnaireQuestionList = class;
   TFhirQuestionnaireGroup = class;
   TFhirQuestionnaireGroupList = class;
+  TFhirQuestionnaireGroupQuestion = class;
+  TFhirQuestionnaireGroupQuestionList = class;
   TFhirSecurityEventEvent = class;
   TFhirSecurityEventEventList = class;
   TFhirSecurityEventParticipant = class;
@@ -13675,166 +13675,6 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   End;
 
 
-  {@Class TFhirQuestionnaireQuestion : TFhirElement
-    Answers to questions on a questionnaire.
-  }
-  {!.Net HL7Connect.Fhir.QuestionnaireQuestion}
-  TFhirQuestionnaireQuestion = class (TFhirBackboneElement)
-  private
-    FName : TFhirCodeableConcept;
-    FText : TFhirString;
-    FAnswer : TFhirType;
-    FchoiceList : TFhirCodingList;
-    FOptions : TFhirType;
-    FData : TFhirType;
-    FRemarks : TFhirString;
-    Procedure SetName(value : TFhirCodeableConcept);
-    Procedure SetText(value : TFhirString);
-    Function GetTextST : String;
-    Procedure SetTextST(value : String);
-    Procedure SetAnswer(value : TFhirType);
-    Procedure SetOptions(value : TFhirType);
-    Procedure SetData(value : TFhirType);
-    Procedure SetRemarks(value : TFhirString);
-    Function GetRemarksST : String;
-    Procedure SetRemarksST(value : String);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirQuestionnaireQuestion; overload;
-    function Clone : TFhirQuestionnaireQuestion; overload;
-    {!script show}
-  published
-    {@member name
-      Structured name for the question.
-    }
-    property name : TFhirCodeableConcept read FName write SetName;
-
-    {@member text
-      Text of the question as it may appear on screen or on a form.
-    }
-    property text : TFhirString read FText write SetText;
-    {@member textST
-      Typed access to Text of the question as it may appear on screen or on a form.
-    }
-    property textST : String read GetTextST write SetTextST;
-
-    {@member answer
-      Single-valued answer to the question.
-    }
-    property answer : TFhirType read FAnswer write SetAnswer;
-
-    {@member choiceList
-      One of more selections from the list of options.
-    }
-    property choiceList : TFhirCodingList read FChoiceList;
-
-    {@member options
-      Reference to a valueset containing the possible options.
-    }
-    property options : TFhirType read FOptions write SetOptions;
-
-    {@member data
-      Structured answer in the form of a FHIR Resource or datatype.
-    }
-    property data : TFhirType read FData write SetData;
-
-    {@member remarks
-      The remark contains information about the answer given. This is additional information about the answer the author wishes to convey, but should not be used to contain information that is part of the answer itself.
-    }
-    property remarks : TFhirString read FRemarks write SetRemarks;
-    {@member remarksST
-      Typed access to The remark contains information about the answer given. This is additional information about the answer the author wishes to convey, but should not be used to contain information that is part of the answer itself.
-    }
-    property remarksST : String read GetRemarksST write SetRemarksST;
-
-  end;
-
-
-  {@Class TFhirQuestionnaireQuestionList
-    A list of FhirQuestionnaireQuestion
-  }
-  {!.Net HL7Connect.Fhir.QuestionnaireQuestionList}
-  TFhirQuestionnaireQuestionList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirQuestionnaireQuestion;
-    procedure SetItemN(index : Integer; value : TFhirQuestionnaireQuestion);
-  public
-    {!script hide}
-    function Link : TFhirQuestionnaireQuestionList; Overload;
-    function Clone : TFhirQuestionnaireQuestionList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirQuestionnaireQuestion to the end of the list.
-    }
-    function Append : TFhirQuestionnaireQuestion;
-
-    
-    {@member AddItem
-      Add an already existing FhirQuestionnaireQuestion to the end of the list.
-    }
-    procedure AddItem(value : TFhirQuestionnaireQuestion);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirQuestionnaireQuestion) : Integer;
-    
-
-    {@member Insert
-      Insert FhirQuestionnaireQuestion before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirQuestionnaireQuestion;
-    
-
-    {@member InsertItem
-       Insert an existing FhirQuestionnaireQuestion before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirQuestionnaireQuestion);
-    
-    {@member Item
-       Get the iIndexth FhirQuestionnaireQuestion. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirQuestionnaireQuestion. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirQuestionnaireQuestion);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirQuestionnaireQuestion;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirQuestionnaireQuestions[index : Integer] : TFhirQuestionnaireQuestion read GetItemN write SetItemN; default;
-  End;
-
-
   {@Class TFhirQuestionnaireGroup : TFhirElement
     A group of questions to a possibly similarly grouped set of question in the questionnaire.
   }
@@ -13844,9 +13684,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     FName : TFhirCodeableConcept;
     FHeader : TFhirString;
     FText : TFhirString;
+    FOrdered : TFhirBoolean;
     FSubject : TFhirResourceReference{Resource};
-    FquestionList : TFhirQuestionnaireQuestionList;
     FgroupList : TFhirQuestionnaireGroupList;
+    FquestionList : TFhirQuestionnaireGroupQuestionList;
     Procedure SetName(value : TFhirCodeableConcept);
     Procedure SetHeader(value : TFhirString);
     Function GetHeaderST : String;
@@ -13854,6 +13695,9 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     Procedure SetText(value : TFhirString);
     Function GetTextST : String;
     Procedure SetTextST(value : String);
+    Procedure SetOrdered(value : TFhirBoolean);
+    Function GetOrderedST : Boolean;
+    Procedure SetOrderedST(value : Boolean);
     Procedure SetSubject(value : TFhirResourceReference{Resource});
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
@@ -13890,20 +13734,29 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property textST : String read GetTextST write SetTextST;
 
+    {@member ordered
+      Whether the contents of this group have a meaningful order.
+    }
+    property ordered : TFhirBoolean read FOrdered write SetOrdered;
+    {@member orderedST
+      Typed access to Whether the contents of this group have a meaningful order.
+    }
+    property orderedST : Boolean read GetOrderedST write SetOrderedST;
+
     {@member subject
       More specific subject this section's answers are about, details the subject given in Questionnaire.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
-    {@member questionList
-      Set of questions within this group.
-    }
-    property questionList : TFhirQuestionnaireQuestionList read FQuestionList;
-
     {@member groupList
       A sub-group within a group.
     }
     property groupList : TFhirQuestionnaireGroupList read FGroupList;
+
+    {@member questionList
+      Set of questions within this group.
+    }
+    property questionList : TFhirQuestionnaireGroupQuestionList read FQuestionList;
 
   end;
 
@@ -13984,6 +13837,172 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     procedure ClearItems;
     
     Property FhirQuestionnaireGroups[index : Integer] : TFhirQuestionnaireGroup read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirQuestionnaireGroupQuestion : TFhirElement
+    Set of questions within this group.
+  }
+  {!.Net HL7Connect.Fhir.QuestionnaireGroupQuestion}
+  TFhirQuestionnaireGroupQuestion = class (TFhirBackboneElement)
+  private
+    FName : TFhirCodeableConcept;
+    FText : TFhirString;
+    FAnswer : TFhirType;
+    FchoiceList : TFhirCodingList;
+    FOptions : TFhirResourceReference{TFhirValueSet};
+    FData : TFhirType;
+    FRemarks : TFhirString;
+    FgroupList : TFhirQuestionnaireGroupList;
+    Procedure SetName(value : TFhirCodeableConcept);
+    Procedure SetText(value : TFhirString);
+    Function GetTextST : String;
+    Procedure SetTextST(value : String);
+    Procedure SetAnswer(value : TFhirType);
+    Procedure SetOptions(value : TFhirResourceReference{TFhirValueSet});
+    Procedure SetData(value : TFhirType);
+    Procedure SetRemarks(value : TFhirString);
+    Function GetRemarksST : String;
+    Procedure SetRemarksST(value : String);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirQuestionnaireGroupQuestion; overload;
+    function Clone : TFhirQuestionnaireGroupQuestion; overload;
+    {!script show}
+  published
+    {@member name
+      Structured name for the question that identifies this question within the Questionnaire or Group.
+    }
+    property name : TFhirCodeableConcept read FName write SetName;
+
+    {@member text
+      Text of the question as it may appear on screen or on a form.
+    }
+    property text : TFhirString read FText write SetText;
+    {@member textST
+      Typed access to Text of the question as it may appear on screen or on a form.
+    }
+    property textST : String read GetTextST write SetTextST;
+
+    {@member answer
+      Single-valued answer to the question.
+    }
+    property answer : TFhirType read FAnswer write SetAnswer;
+
+    {@member choiceList
+      Selections made by the user from the list of options.
+    }
+    property choiceList : TFhirCodingList read FChoiceList;
+
+    {@member options
+      Reference to a valueset containing the possible options.
+    }
+    property options : TFhirResourceReference{TFhirValueSet} read FOptions write SetOptions;
+
+    {@member data
+      Structured answer in the form of a FHIR Resource or datatype.
+    }
+    property data : TFhirType read FData write SetData;
+
+    {@member remarks
+      The remark contains information about the answer given. This is additional information about the answer the author wishes to convey, but should not be used to contain information that is part of the answer itself.
+    }
+    property remarks : TFhirString read FRemarks write SetRemarks;
+    {@member remarksST
+      Typed access to The remark contains information about the answer given. This is additional information about the answer the author wishes to convey, but should not be used to contain information that is part of the answer itself.
+    }
+    property remarksST : String read GetRemarksST write SetRemarksST;
+
+    {@member groupList
+      Nested group, containing nested question for this question.
+    }
+    property groupList : TFhirQuestionnaireGroupList read FGroupList;
+
+  end;
+
+
+  {@Class TFhirQuestionnaireGroupQuestionList
+    A list of FhirQuestionnaireGroupQuestion
+  }
+  {!.Net HL7Connect.Fhir.QuestionnaireGroupQuestionList}
+  TFhirQuestionnaireGroupQuestionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirQuestionnaireGroupQuestion;
+    procedure SetItemN(index : Integer; value : TFhirQuestionnaireGroupQuestion);
+  public
+    {!script hide}
+    function Link : TFhirQuestionnaireGroupQuestionList; Overload;
+    function Clone : TFhirQuestionnaireGroupQuestionList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirQuestionnaireGroupQuestion to the end of the list.
+    }
+    function Append : TFhirQuestionnaireGroupQuestion;
+
+    
+    {@member AddItem
+      Add an already existing FhirQuestionnaireGroupQuestion to the end of the list.
+    }
+    procedure AddItem(value : TFhirQuestionnaireGroupQuestion);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirQuestionnaireGroupQuestion) : Integer;
+    
+
+    {@member Insert
+      Insert FhirQuestionnaireGroupQuestion before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirQuestionnaireGroupQuestion;
+    
+
+    {@member InsertItem
+       Insert an existing FhirQuestionnaireGroupQuestion before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirQuestionnaireGroupQuestion);
+    
+    {@member Item
+       Get the iIndexth FhirQuestionnaireGroupQuestion. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirQuestionnaireGroupQuestion. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirQuestionnaireGroupQuestion);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirQuestionnaireGroupQuestion;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirQuestionnaireGroupQuestions[index : Integer] : TFhirQuestionnaireGroupQuestion read GetItemN write SetItemN; default;
   End;
 
 
@@ -36501,254 +36520,13 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirQuestionnaireQuestion }
-
-constructor TFhirQuestionnaireQuestion.Create;
-begin
-  inherited;
-  FChoiceList := TFhirCodingList.Create;
-end;
-
-destructor TFhirQuestionnaireQuestion.Destroy;
-begin
-  FName.free;
-  FText.free;
-  FAnswer.free;
-  FChoiceList.Free;
-  FOptions.free;
-  FData.free;
-  FRemarks.free;
-  inherited;
-end;
-
-procedure TFhirQuestionnaireQuestion.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  name := TFhirQuestionnaireQuestion(oSource).name.Clone;
-  text := TFhirQuestionnaireQuestion(oSource).text.Clone;
-  answer := TFhirQuestionnaireQuestion(oSource).answer.Clone;
-  FChoiceList.Assign(TFhirQuestionnaireQuestion(oSource).FChoiceList);
-  options := TFhirQuestionnaireQuestion(oSource).options.Clone;
-  data := TFhirQuestionnaireQuestion(oSource).data.Clone;
-  remarks := TFhirQuestionnaireQuestion(oSource).remarks.Clone;
-end;
-
-procedure TFhirQuestionnaireQuestion.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'name') Then
-     list.add(Name.Link);
-  if (child_name = 'text') Then
-     list.add(Text.Link);
-  if (child_name = 'answer') Then
-     list.add(Answer.Link);
-  if (child_name = 'choice') Then
-     list.addAll(FChoiceList);
-  if (child_name = 'options') Then
-     list.add(Options.Link);
-  if (child_name = 'data') Then
-     list.add(Data.Link);
-  if (child_name = 'remarks') Then
-     list.add(Remarks.Link);
-end;
-
-procedure TFhirQuestionnaireQuestion.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'CodeableConcept', FName.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'answer[x]', 'decimal|integer|boolean|date|string|dateTime|instant', FAnswer.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'choice', 'Coding', FChoiceList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'options[x]', 'uri|Resource(ValueSet)', FOptions.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'data[x]', '*', FData.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'remarks', 'string', FRemarks.Link.Link));{2}
-end;
-
-function TFhirQuestionnaireQuestion.Link : TFhirQuestionnaireQuestion;
-begin
-  result := TFhirQuestionnaireQuestion(inherited Link);
-end;
-
-function TFhirQuestionnaireQuestion.Clone : TFhirQuestionnaireQuestion;
-begin
-  result := TFhirQuestionnaireQuestion(inherited Clone);
-end;
-
-{ TFhirQuestionnaireQuestion }
-
-Procedure TFhirQuestionnaireQuestion.SetName(value : TFhirCodeableConcept);
-begin
-  FName.free;
-  FName := value;
-end;
-
-Procedure TFhirQuestionnaireQuestion.SetText(value : TFhirString);
-begin
-  FText.free;
-  FText := value;
-end;
-
-Function TFhirQuestionnaireQuestion.GetTextST : String;
-begin
-  if FText = nil then
-    result := ''
-  else
-    result := Text.value;
-end;
-
-Procedure TFhirQuestionnaireQuestion.SetTextST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FText = nil then
-      FText := TFhirString.create;
-    FText.value := value
-  end
-  else if FText <> nil then
-    FText.value := '';
-end;
-
-Procedure TFhirQuestionnaireQuestion.SetAnswer(value : TFhirType);
-begin
-  FAnswer.free;
-  FAnswer := value;
-end;
-
-Procedure TFhirQuestionnaireQuestion.SetOptions(value : TFhirType);
-begin
-  FOptions.free;
-  FOptions := value;
-end;
-
-Procedure TFhirQuestionnaireQuestion.SetData(value : TFhirType);
-begin
-  FData.free;
-  FData := value;
-end;
-
-Procedure TFhirQuestionnaireQuestion.SetRemarks(value : TFhirString);
-begin
-  FRemarks.free;
-  FRemarks := value;
-end;
-
-Function TFhirQuestionnaireQuestion.GetRemarksST : String;
-begin
-  if FRemarks = nil then
-    result := ''
-  else
-    result := Remarks.value;
-end;
-
-Procedure TFhirQuestionnaireQuestion.SetRemarksST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FRemarks = nil then
-      FRemarks := TFhirString.create;
-    FRemarks.value := value
-  end
-  else if FRemarks <> nil then
-    FRemarks.value := '';
-end;
-
-
-{ TFhirQuestionnaireQuestionList }
-procedure TFhirQuestionnaireQuestionList.AddItem(value: TFhirQuestionnaireQuestion);
-begin
-  assert(value.ClassName = 'TFhirQuestionnaireQuestion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireQuestion');
-  add(value);
-end;
-
-
-function TFhirQuestionnaireQuestionList.Append: TFhirQuestionnaireQuestion;
-begin
-  result := TFhirQuestionnaireQuestion.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirQuestionnaireQuestionList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirQuestionnaireQuestionList.Clone: TFhirQuestionnaireQuestionList;
-begin
-  result := TFhirQuestionnaireQuestionList(inherited Clone);
-end;
-
-function TFhirQuestionnaireQuestionList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirQuestionnaireQuestionList.GetItemN(index: Integer): TFhirQuestionnaireQuestion;
-begin
-  result := TFhirQuestionnaireQuestion(ObjectByIndex[index]);
-end;
-
-function TFhirQuestionnaireQuestionList.IndexOf(value: TFhirQuestionnaireQuestion): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirQuestionnaireQuestionList.Insert(index: Integer): TFhirQuestionnaireQuestion;
-begin
-  result := TFhirQuestionnaireQuestion.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirQuestionnaireQuestionList.InsertItem(index: Integer; value: TFhirQuestionnaireQuestion);
-begin
-  assert(value is TFhirQuestionnaireQuestion);
-  Inherited Insert(index, value);
-end;
-
-function TFhirQuestionnaireQuestionList.Item(index: Integer): TFhirQuestionnaireQuestion;
-begin
-  result := TFhirQuestionnaireQuestion(ObjectByIndex[index]);
-end;
-
-function TFhirQuestionnaireQuestionList.Link: TFhirQuestionnaireQuestionList;
-begin
-  result := TFhirQuestionnaireQuestionList(inherited Link);
-end;
-
-procedure TFhirQuestionnaireQuestionList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirQuestionnaireQuestionList.SetItemByIndex(index: Integer; value: TFhirQuestionnaireQuestion);
-begin
-  assert(value is TFhirQuestionnaireQuestion);
-  FhirQuestionnaireQuestions[index] := value;
-end;
-
-procedure TFhirQuestionnaireQuestionList.SetItemN(index: Integer; value: TFhirQuestionnaireQuestion);
-begin
-  assert(value is TFhirQuestionnaireQuestion);
-  ObjectByIndex[index] := value;
-end;
-
 { TFhirQuestionnaireGroup }
 
 constructor TFhirQuestionnaireGroup.Create;
 begin
   inherited;
-  FQuestionList := TFhirQuestionnaireQuestionList.Create;
   FGroupList := TFhirQuestionnaireGroupList.Create;
+  FQuestionList := TFhirQuestionnaireGroupQuestionList.Create;
 end;
 
 destructor TFhirQuestionnaireGroup.Destroy;
@@ -36756,9 +36534,10 @@ begin
   FName.free;
   FHeader.free;
   FText.free;
+  FOrdered.free;
   FSubject.free;
-  FQuestionList.Free;
   FGroupList.Free;
+  FQuestionList.Free;
   inherited;
 end;
 
@@ -36768,9 +36547,10 @@ begin
   name := TFhirQuestionnaireGroup(oSource).name.Clone;
   header := TFhirQuestionnaireGroup(oSource).header.Clone;
   text := TFhirQuestionnaireGroup(oSource).text.Clone;
+  ordered := TFhirQuestionnaireGroup(oSource).ordered.Clone;
   subject := TFhirQuestionnaireGroup(oSource).subject.Clone;
-  FQuestionList.Assign(TFhirQuestionnaireGroup(oSource).FQuestionList);
   FGroupList.Assign(TFhirQuestionnaireGroup(oSource).FGroupList);
+  FQuestionList.Assign(TFhirQuestionnaireGroup(oSource).FQuestionList);
 end;
 
 procedure TFhirQuestionnaireGroup.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -36782,12 +36562,14 @@ begin
      list.add(Header.Link);
   if (child_name = 'text') Then
      list.add(Text.Link);
+  if (child_name = 'ordered') Then
+     list.add(Ordered.Link);
   if (child_name = 'subject') Then
      list.add(Subject.Link);
-  if (child_name = 'question') Then
-     list.addAll(FQuestionList);
   if (child_name = 'group') Then
      list.addAll(FGroupList);
+  if (child_name = 'question') Then
+     list.addAll(FQuestionList);
 end;
 
 procedure TFhirQuestionnaireGroup.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -36796,9 +36578,10 @@ begin
   oList.add(TFHIRProperty.create(self, 'name', 'CodeableConcept', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'header', 'string', FHeader.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'ordered', 'boolean', FOrdered.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Any)', FSubject.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'question', '@Questionnaire.question', FQuestionList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'group', '@Questionnaire.group', FGroupList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'question', '', FQuestionList.Link)){3};
 end;
 
 function TFhirQuestionnaireGroup.Link : TFhirQuestionnaireGroup;
@@ -36869,6 +36652,27 @@ begin
   end
   else if FText <> nil then
     FText.value := '';
+end;
+
+Procedure TFhirQuestionnaireGroup.SetOrdered(value : TFhirBoolean);
+begin
+  FOrdered.free;
+  FOrdered := value;
+end;
+
+Function TFhirQuestionnaireGroup.GetOrderedST : Boolean;
+begin
+  if FOrdered = nil then
+    result := false
+  else
+    result := Ordered.value;
+end;
+
+Procedure TFhirQuestionnaireGroup.SetOrderedST(value : Boolean);
+begin
+  if FOrdered = nil then
+    FOrdered := TFhirBoolean.create;
+  FOrdered.value := value
 end;
 
 Procedure TFhirQuestionnaireGroup.SetSubject(value : TFhirResourceReference{Resource});
@@ -36964,6 +36768,253 @@ end;
 procedure TFhirQuestionnaireGroupList.SetItemN(index: Integer; value: TFhirQuestionnaireGroup);
 begin
   assert(value is TFhirQuestionnaireGroup);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirQuestionnaireGroupQuestion }
+
+constructor TFhirQuestionnaireGroupQuestion.Create;
+begin
+  inherited;
+  FChoiceList := TFhirCodingList.Create;
+  FGroupList := TFhirQuestionnaireGroupList.Create;
+end;
+
+destructor TFhirQuestionnaireGroupQuestion.Destroy;
+begin
+  FName.free;
+  FText.free;
+  FAnswer.free;
+  FChoiceList.Free;
+  FOptions.free;
+  FData.free;
+  FRemarks.free;
+  FGroupList.Free;
+  inherited;
+end;
+
+procedure TFhirQuestionnaireGroupQuestion.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  name := TFhirQuestionnaireGroupQuestion(oSource).name.Clone;
+  text := TFhirQuestionnaireGroupQuestion(oSource).text.Clone;
+  answer := TFhirQuestionnaireGroupQuestion(oSource).answer.Clone;
+  FChoiceList.Assign(TFhirQuestionnaireGroupQuestion(oSource).FChoiceList);
+  options := TFhirQuestionnaireGroupQuestion(oSource).options.Clone;
+  data := TFhirQuestionnaireGroupQuestion(oSource).data.Clone;
+  remarks := TFhirQuestionnaireGroupQuestion(oSource).remarks.Clone;
+  FGroupList.Assign(TFhirQuestionnaireGroupQuestion(oSource).FGroupList);
+end;
+
+procedure TFhirQuestionnaireGroupQuestion.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'name') Then
+     list.add(Name.Link);
+  if (child_name = 'text') Then
+     list.add(Text.Link);
+  if (child_name = 'answer') Then
+     list.add(Answer.Link);
+  if (child_name = 'choice') Then
+     list.addAll(FChoiceList);
+  if (child_name = 'options') Then
+     list.add(Options.Link);
+  if (child_name = 'data') Then
+     list.add(Data.Link);
+  if (child_name = 'remarks') Then
+     list.add(Remarks.Link);
+  if (child_name = 'group') Then
+     list.addAll(FGroupList);
+end;
+
+procedure TFhirQuestionnaireGroupQuestion.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'name', 'CodeableConcept', FName.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'answer[x]', 'decimal|integer|boolean|date|string|dateTime|instant', FAnswer.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'choice', 'Coding', FChoiceList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'options', 'Resource(ValueSet)', FOptions.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'data[x]', '*', FData.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'remarks', 'string', FRemarks.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'group', '@Questionnaire.group', FGroupList.Link)){3};
+end;
+
+function TFhirQuestionnaireGroupQuestion.Link : TFhirQuestionnaireGroupQuestion;
+begin
+  result := TFhirQuestionnaireGroupQuestion(inherited Link);
+end;
+
+function TFhirQuestionnaireGroupQuestion.Clone : TFhirQuestionnaireGroupQuestion;
+begin
+  result := TFhirQuestionnaireGroupQuestion(inherited Clone);
+end;
+
+{ TFhirQuestionnaireGroupQuestion }
+
+Procedure TFhirQuestionnaireGroupQuestion.SetName(value : TFhirCodeableConcept);
+begin
+  FName.free;
+  FName := value;
+end;
+
+Procedure TFhirQuestionnaireGroupQuestion.SetText(value : TFhirString);
+begin
+  FText.free;
+  FText := value;
+end;
+
+Function TFhirQuestionnaireGroupQuestion.GetTextST : String;
+begin
+  if FText = nil then
+    result := ''
+  else
+    result := Text.value;
+end;
+
+Procedure TFhirQuestionnaireGroupQuestion.SetTextST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FText = nil then
+      FText := TFhirString.create;
+    FText.value := value
+  end
+  else if FText <> nil then
+    FText.value := '';
+end;
+
+Procedure TFhirQuestionnaireGroupQuestion.SetAnswer(value : TFhirType);
+begin
+  FAnswer.free;
+  FAnswer := value;
+end;
+
+Procedure TFhirQuestionnaireGroupQuestion.SetOptions(value : TFhirResourceReference{TFhirValueSet});
+begin
+  FOptions.free;
+  FOptions := value;
+end;
+
+Procedure TFhirQuestionnaireGroupQuestion.SetData(value : TFhirType);
+begin
+  FData.free;
+  FData := value;
+end;
+
+Procedure TFhirQuestionnaireGroupQuestion.SetRemarks(value : TFhirString);
+begin
+  FRemarks.free;
+  FRemarks := value;
+end;
+
+Function TFhirQuestionnaireGroupQuestion.GetRemarksST : String;
+begin
+  if FRemarks = nil then
+    result := ''
+  else
+    result := Remarks.value;
+end;
+
+Procedure TFhirQuestionnaireGroupQuestion.SetRemarksST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FRemarks = nil then
+      FRemarks := TFhirString.create;
+    FRemarks.value := value
+  end
+  else if FRemarks <> nil then
+    FRemarks.value := '';
+end;
+
+
+{ TFhirQuestionnaireGroupQuestionList }
+procedure TFhirQuestionnaireGroupQuestionList.AddItem(value: TFhirQuestionnaireGroupQuestion);
+begin
+  assert(value.ClassName = 'TFhirQuestionnaireGroupQuestion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireGroupQuestion');
+  add(value);
+end;
+
+
+function TFhirQuestionnaireGroupQuestionList.Append: TFhirQuestionnaireGroupQuestion;
+begin
+  result := TFhirQuestionnaireGroupQuestion.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirQuestionnaireGroupQuestionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirQuestionnaireGroupQuestionList.Clone: TFhirQuestionnaireGroupQuestionList;
+begin
+  result := TFhirQuestionnaireGroupQuestionList(inherited Clone);
+end;
+
+function TFhirQuestionnaireGroupQuestionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirQuestionnaireGroupQuestionList.GetItemN(index: Integer): TFhirQuestionnaireGroupQuestion;
+begin
+  result := TFhirQuestionnaireGroupQuestion(ObjectByIndex[index]);
+end;
+
+function TFhirQuestionnaireGroupQuestionList.IndexOf(value: TFhirQuestionnaireGroupQuestion): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirQuestionnaireGroupQuestionList.Insert(index: Integer): TFhirQuestionnaireGroupQuestion;
+begin
+  result := TFhirQuestionnaireGroupQuestion.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirQuestionnaireGroupQuestionList.InsertItem(index: Integer; value: TFhirQuestionnaireGroupQuestion);
+begin
+  assert(value is TFhirQuestionnaireGroupQuestion);
+  Inherited Insert(index, value);
+end;
+
+function TFhirQuestionnaireGroupQuestionList.Item(index: Integer): TFhirQuestionnaireGroupQuestion;
+begin
+  result := TFhirQuestionnaireGroupQuestion(ObjectByIndex[index]);
+end;
+
+function TFhirQuestionnaireGroupQuestionList.Link: TFhirQuestionnaireGroupQuestionList;
+begin
+  result := TFhirQuestionnaireGroupQuestionList(inherited Link);
+end;
+
+procedure TFhirQuestionnaireGroupQuestionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirQuestionnaireGroupQuestionList.SetItemByIndex(index: Integer; value: TFhirQuestionnaireGroupQuestion);
+begin
+  assert(value is TFhirQuestionnaireGroupQuestion);
+  FhirQuestionnaireGroupQuestions[index] := value;
+end;
+
+procedure TFhirQuestionnaireGroupQuestionList.SetItemN(index: Integer; value: TFhirQuestionnaireGroupQuestion);
+begin
+  assert(value is TFhirQuestionnaireGroupQuestion);
   ObjectByIndex[index] := value;
 end;
 

@@ -10,7 +10,7 @@ are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright notice, this 
    list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
  * Neither the name of HL7 nor the names of its contributors may be used to 
    endorse or promote products derived from this software without specific 
@@ -21,9 +21,9 @@ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
 IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
 INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 POSSIBILITY OF SUCH DAMAGE.
 }
@@ -251,7 +251,7 @@ begin
     entry.title := title;
     entry.links.AddValue(link, 'self');
     entry.updated := TDateAndTime.CreateUTC(updated);
-    entry.id := base+LOWERCASE_CODES_TFHIRResourceType[resource.resourceType]+'/@'+sId;
+    entry.id := base+CODES_TFHIRResourceType[resource.resourceType]+'/'+sId;
     entry.published_ := nowUTC;
     entry.authorName := author;
     entry.resource := resource.Link;
@@ -287,13 +287,13 @@ begin
 
   tags := TFHIRAtomCategoryList.create;
   try
-    tags.decode(FConnection.ColMemoryByName['Tags']);
+    tags.decodeJson(FConnection.ColMemoryByName['Tags']);
     if sType = 'Binary' then
     begin
       binary := LoadBinaryResource(FConnection.ColMemoryByName['Content']);
       try
         result := AddResourceToFeed(feed, sId, sType, 'Binary "'+sId+'" '+GetFhirMessage('NAME_VERSION', lang)+' "'+FConnection.ColStringByName['VersionId']+'"',
-                      request.baseUrl+lowercase(sType)+'/@'+sId+'/history/@'+FConnection.ColStringByName['VersionId'],
+                      request.baseUrl+lowercase(sType)+'/'+sId+'/_history/'+FConnection.ColStringByName['VersionId'],
                       FConnection.ColStringByName['Name'], base, TSToDateTime(FConnection.ColTimeStampByName['StatedDate']), binary, originalId, tags, wantSummary);
       finally
         binary.free;
@@ -309,7 +309,7 @@ begin
       parser := MakeParser(lang, ffXml, stream);
       try
         result := AddResourceToFeed(feed, sId, sType, GetFhirMessage(CODES_TFhirResourceType[parser.resource.resourceType], lang)+' "'+sId+'" '+GetFhirMessage('NAME_VERSION', lang)+' "'+FConnection.ColStringByName['VersionId']+'"',
-                      request.baseUrl+LOWERCASE_CODES_TFhirResourceType[parser.resource.resourceType]+'/@'+sId+'/history/@'+FConnection.ColStringByName['VersionId'],
+                      request.baseUrl+CODES_TFhirResourceType[parser.resource.resourceType]+'/'+sId+'/_history/'+FConnection.ColStringByName['VersionId'],
                       FConnection.ColStringByName['Name'], base, TSToDateTime(FConnection.ColTimeStampByName['StatedDate']), parser.resource, originalId, tags, wantSummary);
       finally
         parser.Free;
@@ -529,12 +529,12 @@ begin
             '<td>--</td>')
           else
             html.append('<tr><td>'+CODES_TFHIRResourceType[a]+'</td>'+
-            '<td><a href="'+request.baseUrl+'profile/@'+lowercase(CODES_TFHIRResourceType[a])+'?format=text/html">@'+lowercase(CODES_TFHIRResourceType[a])+'</a></td>');
+            '<td><a href="'+request.baseUrl+'profile/'+lowercase(CODES_TFHIRResourceType[a])+'?format=text/html">'+lowercase(CODES_TFHIRResourceType[a])+'</a></td>');
           res := TFhirConformanceRestResource.create;
           try
             res.type_ := TFhirCode.create(CODES_TFHIRResourceType[a]);
             if a <> frtBinary then
-              res.profile := FFactory.makeReference(request.baseUrl+'Profile/@'+lowercase(CODES_TFHIRResourceType[a]));
+              res.profile := FFactory.makeReference(request.baseUrl+'Profile/'+lowercase(CODES_TFHIRResourceType[a]));
             if a <> frtMessageHeader Then
             begin
               html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td><td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
@@ -641,7 +641,7 @@ begin
 
     if ok and FValidate and not upload and (request.Session <> nil) then
     begin
-      if not ExecuteValidation(context, request, response, 'Create Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/@'+request.Id+' ('+request.originalId+')') then
+      if not ExecuteValidation(context, request, response, 'Create Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/'+request.Id+' ('+request.originalId+')') then
         ok := false
       else
         response.Resource := nil;
@@ -691,14 +691,14 @@ begin
           if request.Resource <> nil then
           begin
             FConnection.BindInteger('f', 2);
-            FConnection.BindBlobFromBytes('tb', tags.encodeUTF8);
+            FConnection.BindBlobFromBytes('tb', tags.json);
             FConnection.BindBlobFromBytes('cb', EncodeResource(request.Resource));
             FConnection.BindBlobFromBytes('sb', EncodeResourceSummary(request.Resource));
           end
           else
           begin
             FConnection.BindInteger('f', 1);
-            FConnection.BindBlobFromBytes('tb', tags.encodeUTF8);
+            FConnection.BindBlobFromBytes('tb', tags.json);
             FConnection.BindBlobFromBytes('cb', EncodeFeed(request.Feed));
             FConnection.BindNull('sb');
             Raise Exception.Create('not supported at this time');
@@ -715,8 +715,8 @@ begin
           FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
         response.HTTPCode := 201;
         response.Message := 'Created';
-        response.ContentLocation := request.baseUrl+LOWERCASE_CODES_TFhirResourceType[request.ResourceType]+'/@'+sId+'/history/@1';
-        response.Location := request.baseUrl+LOWERCASE_CODES_TFhirResourceType[request.ResourceType]+'/@'+sId+'/history/@1';
+        response.ContentLocation := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+sId+'/_history/1';
+        response.Location := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+sId+'/_history/1';
         response.Resource := FFactory.makeSuccessfulOperation;  // don't need to return anything, but we return this anyway
         response.categories.CopyTags(tags);
       finally
@@ -786,7 +786,7 @@ begin
           else
             FConnection.BindInteger('s', request.Session.Key);
           FConnection.BindInteger('f', 0);
-          FConnection.BindBlobFromString('c', tags.encode);
+          FConnection.BindBlobFromBytes('c', tags.json);
           FConnection.Execute;
         finally
           FConnection.Terminate;
@@ -853,7 +853,7 @@ begin
                'from Versions, Ids, Sessions '+
                'where Versions.ResourceKey = '+inttostr(resourceKey)+' '+cmp+' and Versions.ResourceKey = Ids.ResourceKey and Versions.SessionKey = Sessions.SessionKey';
             feed.title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [CODES_TFHIRResourceType[request.ResourceType]+' '+GetFhirMessage('NAME_RESOURCE', lang)+' '+request.Id]);
-            base := request.baseUrl+''+LOWERCASE_CODES_TFhirResourceType[request.ResourceType]+'/@'+request.id+'/history?';
+            base := request.baseUrl+''+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/_history?';
           end;
         fcmdHistoryType :
           begin
@@ -865,7 +865,7 @@ begin
               FConnection.SQL := 'Select Ids.Id, VersionId, ResourceTypeKey, StatedDate, Sessions.Name, OriginalId, Deleted, Tags, Content from Versions, Ids, Sessions '+
               'where Ids.ResourceTypeKey = '+inttostr(FRepository.ResConfig[request.ResourceType].key)+' '+cmp+' and Ids.MostRecent = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey';
               feed.title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [CODES_TFHIRResourceType[request.ResourceType]]);
-              base := request.baseUrl+''+LOWERCASE_CODES_TFhirResourceType[request.ResourceType]+'/history?';
+              base := request.baseUrl+''+CODES_TFhirResourceType[request.ResourceType]+'/_history?';
             end;
           end;
         fcmdHistorySystem :
@@ -873,7 +873,7 @@ begin
             FConnection.SQL := 'Select Ids.Id, VersionId, ResourceTypeKey, StatedDate, Sessions.Name, OriginalId, Deleted, Tags, Content from Versions, Ids, Sessions '+
               'where Ids.MostRecent = Versions.ResourceVersionKey '+cmp+' and Versions.SessionKey = Sessions.SessionKey';
             feed.title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)]);
-            base := request.baseUrl+'history?';
+            base := request.baseUrl+'_history?';
           end;
       else
         FConnection.SQL := '';
@@ -972,7 +972,7 @@ begin
             response.versionId := FConnection.GetColStringByName('VersionId');
             response.originalId := originalId;
             response.LastModifiedDate := TSToDateTime(FConnection.ColTimeStampByName['StatedDate']);
-            response.ContentLocation := request.baseUrl+LOWERCASE_CODES_TFhirResourceType[request.ResourceType]+'/@'+request.id+'/history/@'+response.versionId;
+            response.ContentLocation := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/_history/'+response.versionId;
             processBlob(Response, false);
           end;
         finally
@@ -1056,11 +1056,11 @@ begin
     begin
       bHandled := true;
       if modifier = 'partial' then
-        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey in (Select TagKey from Tags where Uri like '''+SQLWrapString(value)+'%'')))'
+        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey in (Select TagKey from Tags where SchemeUri = '''+FHIR_TAG_SCHEME+''' and TermUri like '''+SQLWrapString(value)+'%'')))'
       else if modifier = 'text' then
         result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where Label like ''%'+SQLWrapString(value)+'%''))'
       else if modifier = '' then
-        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey = '''+intToStr(FRepository.KeyForTag(value))+'''))'
+        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey = '''+intToStr(FRepository.KeyForTag(FHIR_TAG_SCHEME, value))+'''))'
       else
         raise exception.create('modifier "'+modifier+'" not handled on tag');
     end
@@ -1381,7 +1381,7 @@ begin
             feed.SearchOffset := offset;
             feed.SearchCount := count;
             feed.sql := sql;
-            base := AppendForwardSlash(Request.baseUrl)+LOWERCASE_CODES_TFhirResourceType[request.ResourceType]+'/search?';
+            base := AppendForwardSlash(Request.baseUrl)+CODES_TFhirResourceType[request.ResourceType]+'/_search?';
             if response.Format <> ffAsIs then
               base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
             feed.links.AddValue(base+link, 'self');
@@ -1493,7 +1493,7 @@ begin
 
     if ok and FValidate and not upload then
     begin
-      if not ExecuteValidation(context, request, response, 'Update Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/@'+request.Id) then
+      if not ExecuteValidation(context, request, response, 'Update Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/'+request.Id) then
         ok := false
       else
         response.Resource := nil;
@@ -1521,10 +1521,9 @@ begin
         s := request.contentLocation;
         if not check(response, s <> '', 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang)) or
            not check(response, StringStartsWith(s, request.baseUrl), 412, lang, GetFhirMessage('MSG_VERSION_AWARE_URL', lang)) or
-           not check(response, StringCount(s, '@') = 2, 412, lang, GetFhirMessage('MSG_VERSION_AWARE_URL', lang)) or
-           not check(response, IsId(copy(s, pos('/history/@', s) + 10, $FFFF)), 412, lang, GetFhirMessage('MSG_VERSION_AWARE_URL', lang)) then
+           not check(response, IsId(copy(s, pos('/_history/', s) + 10, $FFFF)), 412, lang, GetFhirMessage('MSG_VERSION_AWARE_URL', lang)) then
           exit;
-        s := copy(s, pos('/history/@', s) + 10, $FFFF);
+        s := copy(s, pos('/_history/', s) + 10, $FFFF);
         if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s])) then
           ok := false;
       end;
@@ -1561,14 +1560,14 @@ begin
           if request.Resource <> nil then
           begin
             FConnection.BindInteger('f', 2);
-            FConnection.BindBlobFromBytes('tb', tags.encodeUTF8);
+            FConnection.BindBlobFromBytes('tb', tags.json);
             FConnection.BindBlobFromBytes('cb', EncodeResource(request.Resource));
             FConnection.BindBlobFromBytes('sb', EncodeResourceSummary(request.Resource));
           end
           else
           begin
             FConnection.BindInteger('f', 1);
-            FConnection.BindBlobFromBytes('tb', tags.encodeUTF8);
+            FConnection.BindBlobFromBytes('tb', tags.json);
             FConnection.BindBlobFromBytes('cb', EncodeFeed(request.Feed));
             FConnection.BindNull('sb');
           end;
@@ -1593,7 +1592,7 @@ begin
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.Resource := FFactory.makeSuccessfulOperation; // don't need to return anything, but we return this anyway
-      response.ContentLocation := request.baseUrl+LOWERCASE_CODES_TFhirResourceType[request.ResourceType]+'/@'+request.Id+'/history/@'+inttostr(nvid);
+      response.ContentLocation := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.Id+'/_history/'+inttostr(nvid);
     end;
     AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), request.CommandType, response.httpCode, '', response.message);
   except
@@ -1624,7 +1623,7 @@ begin
       if request.categories[i].scheme = TAG_FHIR_SCHEME_PROFILE then
         profileId := request.categories[i].term;
 
-    if StringStartsWith(ProfileId, 'http://localhost/profile/@') then
+    if StringStartsWith(ProfileId, 'http://localhost/profile/') then
       profile := GetProfileById(copy(ProfileId, 27, $FF))
     else if StringStartsWith(ProfileId, request.baseUrl) then
       profile := GetProfileById(copy(ProfileId, length(request.baseUrl), $FF));
@@ -1766,7 +1765,7 @@ begin
     end;
   end
   else if response <> nil then
-    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.id]));
+    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [CODES_TFHIRResourceType[request.ResourceType]+'/'+request.id]));
   FConnection.terminate;
 end;
 
@@ -1892,11 +1891,11 @@ TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.lang)+
 '</p>'#13#10;
 if Request.DefaultSearch then
 s := s +
-'<form action="'+LOWERCASE_CODES_TFhirResourceType[request.ResourceType]+'/search" method="GET">'#13#10+
+'<form action="'+CODES_TFhirResourceType[request.ResourceType]+'/_search" method="GET">'#13#10+
 '<table class="lines">'#13#10
 else
 s := s +
-'<form action="search" method="GET">'#13#10+
+'<form action="_search" method="GET">'#13#10+
 '<table class="lines">'#13#10;
 
   if request.ResourceType = frtNull then
@@ -2117,11 +2116,11 @@ Function IsTypeAndId(s : String; var id : String):Boolean;
 var
   l, r : String;
 begin
-  StringSplit(s, '/@', l, r);
+  StringSplit(s, '/', l, r);
   id := r;
   if (l <> '') and (l[1] = '/') then
     delete(l, 1, 1);
-  result := (StringArrayIndexOfSensitive(LOWERCASE_CODES_TFHIRResourceType, l) > -1) and IsId(r);
+  result := (StringArrayIndexOfSensitive(CODES_TFHIRResourceType, l) > -1) and IsId(r);
 end;
 
 Function TFhirOperation.ResolveSearchId(atype : TFHIRResourceType; params : String) : String;
@@ -2190,8 +2189,8 @@ begin
   id := TFHIRTransactionEntry.create;
   try
     id.Name := entry.id;
-//    if id.name = '' then
-//      raise Exception.create(GetFhirMessage('MSG_TRANSACTION_MISSING_ID', lang));
+    if id.name = '' then
+      raise Exception.create(GetFhirMessage('MSG_TRANSACTION_MISSING_ID', lang));
     id.ResType := CODES_TFHIRResourceType[entry.resource.ResourceType];
     if ids.ExistsByName(id.Name) then
       raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.Name]));
@@ -2206,8 +2205,8 @@ begin
       id.id := copy(entry.id, length(request.baseUrl)+1, $FFFF);
       id.originalId := '';
     end
-    else if entry.id.StartsWith(AppendForwardSlash(request.baseUrl)+LOWERCASE_CODES_TFHIRResourceType[entry.resource.ResourceType]+'/'+'search?', true) or
-      entry.id.StartsWith('http://localhost/'+LOWERCASE_CODES_TFHIRResourceType[entry.resource.ResourceType]+'/'+'search?', true)  then
+    else if entry.id.StartsWith(AppendForwardSlash(request.baseUrl)+CODES_TFHIRResourceType[entry.resource.ResourceType]+'/_search?', true) or
+      entry.id.StartsWith('http://localhost/'+CODES_TFHIRResourceType[entry.resource.ResourceType]+'/_search?', true)  then
     begin
       id.id := ResolveSearchId(entry.resource.ResourceType, copy(entry.id, pos('?', entry.id)+1, $FFF));
     end
@@ -2293,7 +2292,7 @@ begin
       s := node.Attributes.Get('href');
       j := ids.IndexByName(s);
       if (j > -1) then
-        node.Attributes.SetValue('href', base+ids[j].resType+'/@'+ids[j].id)
+        node.Attributes.SetValue('href', base+ids[j].resType+'/'+ids[j].id)
       else if s.StartsWith('cid:', true) then
         Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
     end;
@@ -2302,7 +2301,7 @@ begin
       s := node.Attributes.Get('src');
       j := ids.IndexByName(s);
       if (j > -1) then
-        node.Attributes.SetValue('src', base+ids[j].resType+'/@'+ids[j].id)
+        node.Attributes.SetValue('src', base+ids[j].resType+'/'+ids[j].id)
       else if s.StartsWith('cid:', true) then
         Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
     end;
@@ -2328,18 +2327,15 @@ begin
     begin
       ref := refs[i];
       j := ids.IndexByName(ref.referenceST);
-      raise Exception.Create('todo');
-      if (j = -1) And IsId(ref.referenceST) then
-        j := ids.IndexByName(request.baseUrl+lowercase('??')+'/'+ref.referenceST);
       k := 0;
       while (j = -1) and (k < FRepository.Bases.Count - 1) do
       begin
-        j := ids.IndexByName(FRepository.Bases[k]+lowercase('??')+'/'+ref.referenceST);
+        j := ids.IndexByName(FRepository.Bases[k]+ref.referenceST);
         inc(k);
       end;
       if (j <> -1) then
       begin
-        ref.referenceST :=  lowercase('??')+'/@'+ids[j].id; // todo: make local?
+        ref.referenceST :=  ids[j].resType+'/'+ids[j].id; // todo: make local?
       end;
     end;
   finally
@@ -2353,7 +2349,7 @@ begin
       attachment := attachments[i];
       j := ids.IndexByName(attachment.urlST);
       if (j > -1) then
-        attachment.urlST := lowercase(ids[j].resType)+'/@'+ids[j].id
+        attachment.urlST := lowercase(ids[j].resType)+'/'+ids[j].id
       else if attachment.urlST.StartsWith('cid:', true) then
         Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.urlST]));
     end;
@@ -2365,7 +2361,7 @@ begin
     extension := entry.resource.extensionList[i];
     j := ids.IndexByName(extension.urlST);
     if (j > -1) then
-      extension.url := TFhirUri.create(base+ids[j].resType+'/@'+ids[j].id)
+      extension.url := TFhirUri.create(base+ids[j].resType+'/'+ids[j].id)
     else if extension.urlST.StartsWith('cid:', true) then
       Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [extension.urlST]));
   end;
@@ -2374,7 +2370,7 @@ begin
   begin
     j := ids.IndexByName(TFhirDocumentReference(entry.resource).locationST);
     if (j > -1) then
-      TFhirDocumentReference(entry.resource).locationST := base+ids[j].resType+'/@'+ids[j].id
+      TFhirDocumentReference(entry.resource).locationST := base+ids[j].resType+'/'+ids[j].id
     else if TFhirDocumentReference(entry.resource).locationST.StartsWith('cid:', true) then
       Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [TFhirDocumentReference(entry.resource).locationST]));
   end;
@@ -2409,9 +2405,9 @@ begin
     ne := TFHIRAtomEntry.create;
     try
       // server assigned id
-      ne.id := request.baseUrl+LOWERCASE_CODES_TFHIRResourceType[response.resource.resourceType]+'/@'+request.id;
+      ne.id := request.baseUrl+CODES_TFHIRResourceType[response.resource.resourceType]+'/'+request.id;
       // specific version reference
-      ne.links['self'] := request.baseUrl+'@'+LOWERCASE_CODES_TFHIRResourceType[response.resource.resourceType]+'/'+request.id+'/history/@'+request.SubId;
+      ne.links['self'] := request.baseUrl+CODES_TFHIRResourceType[response.resource.resourceType]+'/'+request.id+'/_history/'+request.SubId;
       // client assigned id
       ne.links['related'] := entry.id;
       // original id supported by this server, not part of the spec:
@@ -2517,7 +2513,7 @@ begin
     begin
       if request.Feed <> nil then
       begin
-        if request.Feed.hasTag('http://hl7.org/fhir/tag/message') then
+        if request.Feed.hasTag(FHIR_TAG_SCHEME, 'http://hl7.org/fhir/tag/message') then
         begin
           if (request.feed.entries.Count = 0) or not (request.feed.entries[0].resource is TFhirMessageHeader) then
             raise Exception.Create('Invalid Message - first resource must be message header');
@@ -2534,7 +2530,7 @@ begin
           response.Feed.addEntry('Message Response', resp.timestampST, NewGuidURN, NewGuidURN, resp);
           ProcessMessage(request, msg, resp, response.Feed);
         end
-        else if request.Feed.hasTag('http://hl7.org/fhir/tag/document') then
+        else if request.Feed.hasTag(FHIR_TAG_SCHEME, 'http://hl7.org/fhir/tag/document') then
           Raise Exception.create('Document Handling not implemented yet')
         else
           Raise Exception.create('Unknown content for mailbox');
@@ -2667,7 +2663,7 @@ begin
     response.resource := LoadBinaryResource(FConnection.ColMemoryByName['Content'])
   else
   begin
-    response.categories.decode(FConnection.ColMemoryByName['Tags']);
+    response.categories.DecodeJson(FConnection.ColMemoryByName['Tags']);
     if wantSummary then
       stream := FConnection.ColMemoryByName['Summary']
     else
@@ -2698,10 +2694,10 @@ begin
     else
       lbl := t.Label_;
 
-    if not tags.HasTag(t.Name) then
-      tags.AddValue(FHIR_TAG_SCHEME, t.Name, lbl).TagKey := t.Key
-    else if tags.GetTag(t.Name).Label_ = '' then
-      tags.GetTag(t.Name).Label_ := lbl;
+    if not tags.HasTag(t.Scheme, t.Term) then
+      tags.AddValue(t.Scheme, t.Term, lbl).TagKey := t.Key
+    else if tags.GetTag(t.Scheme, t.Term).Label_ = '' then
+      tags.GetTag(t.Scheme, t.Term).Label_ := lbl;
   end;
   FConnection.Terminate;
 end;
@@ -2716,7 +2712,7 @@ var
   tags : TFHIRAtomCategoryList;
   cnt, cat, t, sum : String;
   ok : boolean;
-  stream : TStringStream;
+  stream, s : TMemoryStream;
   parser : TFHIRParser;
 begin
   try
@@ -2749,13 +2745,14 @@ begin
       try
         LoadTags(tags, ResourceKey);
         for i := 0 to request.categories.Count - 1 do
-          if (request.categories[i].scheme = FHIR_TAG_SCHEME) and (tags.HasTag(request.categories[i].term, n)) then
+          if (tags.HasTag(request.categories[i].scheme, request.categories[i].term, n)) then
             tags.DeleteByIndex(n);
+        tags.Clear;
         t := request.categories.AsHeader;
 
         FConnection.SQL := 'update Versions set Tags = :cnt where ResourceVersionKey = '+inttostr(resourceVersionKey);
         FConnection.Prepare;
-        FConnection.BindBlobFromString('cnt', tags.encode);
+        FConnection.BindBlobFromBytes('cnt', tags.Json);
         FConnection.Execute;
         FConnection.Terminate;
 
@@ -2765,8 +2762,18 @@ begin
         if resourceVersionKey = currentResourceVersionKey then
         begin
           // changing the tags might change the indexing
-          stream := TStringStream.create(cnt);
+          stream := TMemoryStream.Create;
           try
+            FConnection.SQL := 'Select Content from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
+            FConnection.prepare;
+            FConnection.Execute;
+            if not FConnection.FetchNext then
+              raise Exception.Create('Internal Error fetching current content');
+            s := FConnection.ColMemoryByName['Content'];
+            s.Position := 0;
+            stream.CopyFrom(s, s.Size);
+            stream.Position := 0;
+            FConnection.Terminate;
             parser := MakeParser('en', ffXml, stream);
             try
               FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
@@ -2805,31 +2812,31 @@ begin
     ok := true;
     if request.ResourceType = frtNull then
     begin
-    // well, this operations is always allowed?
-      FConnection.sql := 'Select Uri, Label from Tags order by Uri'
+    // well, this operation is always allowed?
+      FConnection.sql := 'Select SchemeUri, TermUri, Label from Tags order by SchemeUri, TermUri'
     end
     else if request.Id = '' then
     begin
       if not check(response, FRepository.ResConfig[request.ResourceType].Supported, 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
         ok := false
       else
-        FConnection.sql := 'Select Uri, Label from Tags where TagKey in (Select TagKey from Versions where Deleted = 0 and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(FRepository.ResConfig[request.ResourceType].Key)+')) order by Uri'
+        FConnection.sql := 'Select SchemeUri, TermUri, Label from Tags where TagKey in (Select TagKey from Versions where Deleted = 0 and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(FRepository.ResConfig[request.ResourceType].Key)+')) order by SchemeUri, TermUri'
     end
     else if request.SubId = '' then
     begin
       if not check(response, opAllowed(request.ResourceType, fcmdRead), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
          Ok := false
       else
-        FConnection.sql := 'Select Uri, VersionTags.Label from Tags, VersionTags '+
-        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where Deleted = 0 and ResourceVersionKey in (select MostRecent from Ids where Id = :id)) order by Uri'
+        FConnection.sql := 'Select SchemeUri, TermUri, VersionTags.Label from Tags, VersionTags '+
+        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where Deleted = 0 and ResourceVersionKey in (select MostRecent from Ids where Id = :id)) order by SchemeUri, TermUri'
     end
     else
     begin
       if not check(response, opAllowed(request.ResourceType, fcmdVersionRead), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
         ok := false
       else
-        FConnection.sql := 'Select Uri, VersionTags.Label from Tags, VersionTags '+
-        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where VersionId = :vid and Deleted = 0 and ResourceKey in (select ResourceKey from Ids where Id = :id)) order by Uri';
+        FConnection.sql := 'Select SchemeUri, TermUri, VersionTags.Label from Tags, VersionTags '+
+        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where VersionId = :vid and Deleted = 0 and ResourceKey in (select ResourceKey from Ids where Id = :id)) order by SchemeUri, TermUri';
     end;
 
     if ok then
@@ -2846,8 +2853,8 @@ begin
       begin
         tag := TFHIRAtomCategory.create;
         try
-          tag.scheme := FHIR_TAG_SCHEME;
-          tag.term := FConnection.ColStringByName['Uri'];
+          tag.scheme := FConnection.ColStringByName['SchemeUri'];
+          tag.term := FConnection.ColStringByName['TermUri'];
           tag.label_ := FConnection.ColStringByName['Label'];
           response.Categories.add(tag.Link);
         finally
@@ -2877,10 +2884,9 @@ var
   originalId : String;
   i : integer;
   tags : TFHIRAtomCategoryList;
-  cnt, cat, sum : String;
   t : string;
   ok : boolean;
-  stream : TStringStream;
+  stream, s : TMemoryStream;
   parser : TFHIRParser;
 begin
   try
@@ -2919,7 +2925,7 @@ begin
 
         FConnection.SQL := 'update Versions set Tags = :cnt where ResourceVersionKey = '+inttostr(resourceVersionKey);
         FConnection.Prepare;
-        FConnection.BindBlobFromString('cnt', tags.encode);
+        FConnection.BindBlobFromBytes('cnt', tags.Json);
         FConnection.Execute;
         FConnection.Terminate;
 
@@ -2929,9 +2935,18 @@ begin
 
         if resourceVersionKey = currentResourceVersionKey then
         begin
-          // changing the tags might change the indexing
-          stream := TStringStream.create(cnt);
+          stream := TMemoryStream.Create;
           try
+            FConnection.SQL := 'Select Content from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
+            FConnection.prepare;
+            FConnection.Execute;
+            if not FConnection.FetchNext then
+              raise Exception.Create('Internal Error fetching current content');
+            s := FConnection.ColMemoryByName['Content'];
+            s.Position := 0;
+            stream.CopyFrom(s, s.Size);
+            stream.Position := 0;
+            FConnection.Terminate;
             parser := MakeParser('en', ffXml, stream);
             try
               FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
@@ -3128,7 +3143,7 @@ begin
     begin
       inc := result.compose.includeList.append;
       if (s = 'snomed') then
-        inc.systemST := 'http://snomed.info/id'
+        inc.systemST := 'http://snomed.info/sct'
       else if (s = 'loinc') then
         inc.systemST := 'http://loinc.org'
       else
@@ -3236,9 +3251,9 @@ begin
       o := se.object_List.Append;
       o.reference := TFhirResourceReference.create;
       if ver <> '' then
-        o.reference.referenceST := LOWERCASE_CODES_TFHIRResourceType[resourceType]+'/@'+id+'/history/@'+ver
+        o.reference.referenceST := CODES_TFHIRResourceType[resourceType]+'/'+id+'/_history/'+ver
       else if id <> '' then
-        o.reference.referenceST := LOWERCASE_CODES_TFHIRResourceType[resourceType]+'/@'+id;
+        o.reference.referenceST := CODES_TFHIRResourceType[resourceType]+'/'+id;
       o.type_ST := ObjectType2;
       case op of
         fcmdMailbox :        o.lifecycleST := ObjectLifecycle6;
@@ -3353,7 +3368,7 @@ begin
       begin
         tags := TFHIRAtomCategoryList.create;
         try
-          tags.decode(Connection.ColMemoryByName['Tags']);
+          tags.DecodeJson(Connection.ColMemoryByName['Tags']);
           parser := MakeParser('en', ffXml, Connection.ColMemoryByName['Content']);
           try
             r := parser.resource;
@@ -3583,7 +3598,7 @@ begin
         svc.rateST := '0.8';
         svc.benefitST := floatToStr(0.8 * StrToFloat(claim.serviceList[i].instanceST));
       end;
-      id := request.BaseURL+'/remittance/@'+MessageCreateResource(context, request, rem);
+      id := request.BaseURL+'/remittance/'+MessageCreateResource(context, request, rem);
       outgoing.dataList.add(FFactory.makeReference(id));
       utc := NowUTC;
       try
@@ -3655,13 +3670,13 @@ begin
   try
     entry.title := GetFhirMessage('NAME_RESOURCE', lang)+' '+sId+' '+GetFhirMessage('NAME_VERSION', lang)+' '+FConnection.ColStringByName['VersionId']+' ('+GetFhirMessage('NAME_DELETED', lang)+')';
     entry.deleted := true;
-    entry.links['self'] := request.baseUrl+lowercase(sType)+'/@'+sId+'/history/@'+FConnection.ColStringByName['VersionId'];
+    entry.links['self'] := request.baseUrl+lowercase(sType)+'/'+sId+'/_history/'+FConnection.ColStringByName['VersionId'];
     entry.updated := TDateAndTime.CreateUTC(TSToDateTime(FConnection.ColTimeStampByName['StatedDate']));
-    entry.id := base+'@'+sId;
+    entry.id := base+sId;
     entry.published_ := NowUTC;
     entry.authorName := FConnection.ColStringByName['Name'];
     entry.originalId := originalId;
-    entry.categories.decode(FConnection.ColMemoryByName['Tgs']);
+    entry.categories.decodeJson(FConnection.ColMemoryByName['Tags']);
     feed.entries.add(entry.Link);
     result := entry;
   finally
@@ -3725,9 +3740,6 @@ begin
   StringSplit(id, '/', st, si);
   if (length(si) = 0) then
     exit;
-  if (si[1] <> '@') then
-    exit;
-  System.delete(si, 1, 1);
 
   i := IndexOf(st);
   if i = -1 then

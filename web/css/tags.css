@@ -1,0 +1,74 @@
+a.tag {
+ color: #3E6D8E;
+ background-color: #E0EAF1;
+ border-bottom: 1px solid #b3cee1;
+ border-right: 1px solid #b3cee1;
+ padding: 3px 4px 3px 4px;
+ margin: 2px 2px 2px 0;
+ text-decoration: none;
+ font-size: 90%;
+ line-height: 2.4;
+ white-space: nowrap;
+}
+
+a.tag-profile {
+ color: #3E6D8E;
+ background-color: #98FB98;
+ border-bottom: 1px solid #b3cee1;
+ border-right: 1px solid #b3cee1;
+ padding: 3px 4px 3px 4px;
+ margin: 2px 2px 2px 0;
+ text-decoration: none;
+ font-size: 90%;
+ line-height: 2.4;
+ white-space: nowrap;
+}
+
+a.tag-security {
+ color: #3E6D8E;
+ background-color: #FF6347;
+ border-bottom: 1px solid #b3cee1;
+ border-right: 1px solid #b3cee1;
+ padding: 3px 4px 3px 4px;
+ margin: 2px 2px 2px 0;
+ text-decoration: none;
+ font-size: 90%;
+ line-height: 2.4;
+ white-space: nowrap;
+}
+
+a.tag-delete {
+ color: #3E6D8E;
+ background-color: #f9d1cb;
+ border-bottom: 1px solid #b3cee1;
+ border-right: 1px solid #b3cee1;
+ padding: 0px 4px 0px 4px;
+ margin: 0px 2px 0px 0;
+ 
+ text-decoration: none;
+ font-size: 90%;
+ line-height: 2.4;
+ white-space: nowrap;
+}
+
+div.fhir-tag-form {
+ background-color: Lemonchiffon; 
+ border-bottom: 1px solid #778899;
+ border-right: 1px solid #778899;
+ padding: 10px 10px 0px 10px;
+ margin: 0px 0px 0px 0px;
+ position: fixed;
+ width: 520px;
+ top: 0;
+ left: 0;
+ opacity: 1.0;
+ z-order: 50;
+}
+
+.combo {position:relative;width:310px;text-align:left;padding:0;margin:0;}
+.combo * {padding:0;margin:0;}
+.combo label {display:block;float:left;width:92px;text-align:right;}
+.combo input {width:300px; background-color:#cfc;height:1.5em;z-index:50;}
+.combo ul {padding:1px;border:2px solid #ccc;width: 300px;background-color:#cfc;position:absolute;right:3px;top:1.8em;display:none;z-index:51;}
+.combo li {display:block; width: 100%;}
+

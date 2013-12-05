@@ -207,10 +207,12 @@ Type
     procedure BuildIndexValuesCondition(key : integer; id : string; resource : TFhirCondition);
     procedure BuildIndexValuesConformance(key : integer; id : string; resource : TFhirConformance);
     procedure BuildIndexValuesDevice(key : integer; id : string; resource : TFhirDevice);
+    procedure BuildIndexValuesDeviceObservationReport(key : integer; id : string; resource : TFhirDeviceObservationReport);
     procedure BuildIndexValuesDiagnosticOrder(key : integer; id : string; resource : TFhirDiagnosticOrder);
     procedure BuildIndexValuesDiagnosticReport(key : integer; id : string; resource : TFhirDiagnosticReport);
     procedure BuildIndexValuesComposition(key : integer; id : string; resource : TFhirComposition);
     procedure BuildIndexValuesDocumentReference(key : integer; id : string; resource : TFhirDocumentReference);
+    procedure BuildIndexValuesDocumentManifest(key : integer; id : string; resource : TFhirDocumentManifest);
     procedure BuildIndexValuesEncounter(key : integer; id : string; resource : TFhirEncounter);
     procedure buildIndexValuesFamilyHistory(key : integer; id : string; resource : TFhirFamilyHistory);
     procedure BuildIndexValuesGroup(key : integer; id : string; resource : TFhirGroup);
@@ -242,6 +244,7 @@ Type
     procedure buildIndexValuesSpecimen(key : integer; id : string; resource : TFhirSpecimen);
     procedure buildIndexValuesSubstance(key : integer; id : string; resource : TFhirSubstance);
     procedure BuildIndexValuesValueSet(key : integer; id : string; resource : TFhirValueSet);
+    procedure BuildIndexValuesConceptMap(key : integer; id : string; resource : TFhirConceptMap);
     procedure BuildIndexValuesRelatedPerson(key : integer; id : string; resource : TFhirRelatedPerson);
     procedure BuildIndexValuesSupply(key : integer; id : string; resource : TFhirSupply);
     procedure BuildIndexValuesOther(key : integer; id : string; resource : TFhirOther);
@@ -252,10 +255,12 @@ Type
     procedure buildIndexesCarePlan;
     procedure buildIndexesConformance;
     procedure buildIndexesDevice;
+    procedure buildIndexesDeviceObservationReport;
     procedure buildIndexesDiagnosticReport;
     procedure buildIndexesDiagnosticOrder;
     procedure buildIndexesComposition;
     procedure buildIndexesDocumentReference;
+    procedure buildIndexesDocumentManifest;
     procedure buildIndexesFamilyHistory;
     procedure buildIndexesEncounter;
     procedure buildIndexesGroup;
@@ -286,6 +291,7 @@ Type
     procedure buildIndexesQuestionnaire;
     procedure buildIndexesSecurityEvent;
     procedure buildIndexesValueSet;
+    procedure BuildIndexesConceptMap;
     procedure buildIndexesSpecimen;
     procedure buildIndexesSubstance;
     procedure buildIndexesBinary();
@@ -491,10 +497,12 @@ begin
   buildIndexesCarePlan;
   buildIndexesConformance;
   buildIndexesDevice;
+  buildIndexesDeviceObservationReport;
   buildIndexesDiagnosticReport;
   buildIndexesDiagnosticOrder;
   buildIndexesComposition;
   buildIndexesDocumentReference;
+  buildIndexesDocumentManifest;
   buildIndexesFamilyHistory;
   buildIndexesGroup;
   buildIndexesImagingStudy;
@@ -526,6 +534,7 @@ begin
   buildIndexesSpecimen;
   buildIndexesSubstance;
   buildIndexesValueSet;
+  buildIndexesConceptMap;
   buildIndexesEncounter;
   BuildIndexesRelatedPerson;
   BuildIndexesSupply;
@@ -544,10 +553,12 @@ begin
     frtCarePlan : buildIndexValuesCarePlan(key, id, TFhirCarePlan(resource));
     frtConformance : buildIndexValuesConformance(key, id, TFhirConformance(resource));
     frtDevice : buildIndexValuesDevice(key, id, TFhirDevice(resource));
+    frtDeviceObservationReport : buildIndexValuesDeviceObservationReport(key, id, TFhirDeviceObservationReport(resource));
     frtDiagnosticReport : buildIndexValuesDiagnosticReport(key, id, TFhirDiagnosticReport(resource));
     frtDiagnosticOrder : buildIndexValuesDiagnosticOrder(key, id, TFhirDiagnosticOrder(resource));
     frtComposition : buildIndexValuesComposition(key, id, TFhirComposition(resource));
     frtDocumentReference : buildIndexValuesDocumentReference(key, id, TFhirDocumentReference(resource));
+    frtDocumentManifest : buildIndexValuesDocumentManifest(key, id, TFhirDocumentManifest(resource));
     frtFamilyHistory : buildIndexValuesFamilyHistory(key, id, TFhirFamilyHistory(resource));
     frtGroup : buildIndexValuesGroup(key, id, TFhirGroup(resource));
     frtImagingStudy : buildIndexValuesImagingStudy(key, id, TFhirImagingStudy(resource));
@@ -579,6 +590,7 @@ begin
     frtSpecimen : buildIndexValuesSpecimen(key, id, TFhirSpecimen(resource));
     frtSubstance : buildIndexValuesSubstance(key, id, TFhirSubstance(resource));
     frtValueSet : buildIndexValuesValueSet(key, id, TFhirValueSet(resource));
+    frtConceptMap : buildIndexValuesConceptMap(key, id, TFhirConceptMap(resource));
     frtEncounter : buildIndexValuesEncounter(key, id, TFhirEncounter(resource));
     frtRelatedPerson : buildIndexValuesRelatedPerson(key, id, TFhirRelatedPerson(resource));
     frtSupply : buildIndexValuesSupply(key, id, TFhirSupply(resource));
@@ -1021,7 +1033,6 @@ begin
   if ndx.SearchType <> SearchParamTypeReference then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Contact');
 
-  raise Exception.Create('todo - fix this up, and below');
   ref := FSpaces.ResolveSpace('');
   if (length(value.referenceST) > INDEX_ENTRY_LENGTH) then
     raise exception.create('resource url too long for indexing: '+value.referenceST);
@@ -1111,7 +1122,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsEncounter : Array[TSearchParamsEncounter] of TSearchParamsEncounter = ( spEncounter__id, spEncounter_Fulfills, spEncounter_Identifier, spEncounter_Indication, spEncounter_Length, spEncounter_Location, spEncounter_Location_period, spEncounter_Start, spEncounter_Status, spEncounter_Subject);
+  CHECK_TSearchParamsEncounter : Array[TSearchParamsEncounter] of TSearchParamsEncounter = ( spEncounter__id, spEncounter_Date, spEncounter_Identifier, spEncounter_Indication, spEncounter_Length, spEncounter_Location, spEncounter_Location_period, spEncounter_Status, spEncounter_Subject);
 
 
 procedure TFhirIndexManager.buildIndexesEncounter;
@@ -1132,29 +1143,21 @@ begin
   index(frtEncounter, key, resource, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
   index(frtEncounter, key, resource.status, 'status');
+  index(frtEncounter, key, resource.period, 'date');
   index(frtEncounter, key, resource.length, 'length');
   index(frtEncounter, key, resource, resource.indication, 'indication');
   for i := 0 to resource.identifierList.count - 1 do
     index(frtEncounter, key, resource.identifierList[i], 'identifier');
-  index(frtEncounter, key, resource, resource.fulfills, 'fulfills');
   for i := 0 to resource.locationList.count - 1 do
   begin
     index(frtEncounter, key, resource, resource.locationList[i].location, 'location');
     index(frtEncounter, key, resource.locationList[i].period, 'location-period');
   end;
-
-{
-  index(frtEncounter, key, resource, resource.contact, 'contact');
-  index(frtEncounter, key, resource, resource.responsible, 'responsible');
-  index(frtEncounter, key, resource.period, 'period');  <---
-  index(frtEncounter, key, resource.setting, 'setting');
-  index(frtEncounter, key, resource.state, 'state');
-}
-// todo: spEncounter_Length, spEncounter_Start,
 end;
 
 Const
-  CHECK_TSearchParamsLocation : Array[TSearchParamsLocation] of TSearchParamsLocation = ( spLocation__id, spLocation_Active, spLocation_Address, spLocation_Name, spLocation_Near, spLocation_Near_distance, spLocation_Partof, spLocation_Type);
+  CHECK_TSearchParamsLocation : Array[TSearchParamsLocation] of TSearchParamsLocation = ( spLocation__id, spLocation_Address, spLocation_Name, spLocation_Near, spLocation_Near_distance, spLocation_Partof, spLocation_Status, spLocation_Type);
+
 
 procedure TFhirIndexManager.buildIndexesLocation;
 var
@@ -1171,9 +1174,9 @@ procedure TFhirIndexManager.buildIndexValuesLocation(key: integer; id : String; 
 var
   i : integer;
 begin
-  index(frtLocation, key, resource.activeST, 'active');
   index(frtLocation, key, resource.address, 'address');
   index(frtLocation, key, resource.Name, 'name');
+  index(frtLocation, key, resource.status, 'status');
   index(frtLocation, key, resource.type_, 'type');
   index(frtLocation, key, resource, resource.partOf, 'partof');
   if resource.position <> nil then
@@ -1181,6 +1184,7 @@ begin
     if (resource.position.longitude <> nil) and (resource.position.latitude <> nil) then
       index(frtLocation, key, resource.position.longitudeST, resource.position.latitudeST, 'near');
   end
+//    spLocation_Near_distance, {@enum.value spLocation_Near_distance A distance quantity to limit the near search to locations within a specific distance }
 end;
 
 Const
@@ -1268,6 +1272,7 @@ begin
     index(frtDocumentReference, key, resource.context.period, 'period');
   end;
   index(frtDocumentReference, key, resource.format, 'format');
+  index(frtDocumentReference, key, resource.masterIdentifier, 'identifier');
   for i := 0 to resource.identifierList.count - 1 do
     index(frtDocumentReference, key, resource.identifierList[i], 'identifier');
   index(frtDocumentReference, key, resource.indexed, 'indexed');
@@ -1277,13 +1282,50 @@ begin
   index(frtDocumentReference, key, resource.status, 'status');
   index(frtDocumentReference, key, resource, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
-  for i := 0 to resource.relatesToList.Count do
+  for i := 0 to resource.relatesToList.Count - 1 do
   begin
     index(frtDocumentReference, key, resource, resource.relatesToList[i].target, 'relatesTo');
     index(frtDocumentReference, key, resource.relatesToList[i].code, 'relation');
   end;
   index(frtDocumentReference, key, resource.type_, 'type');
   index(frtDocumentReference, key, resource.class_, 'class');
+end;
+
+Const
+  CHECK_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of TSearchParamsDocumentManifest = ( spDocumentManifest__id, spDocumentManifest_Author, spDocumentManifest_Confidentiality, spDocumentManifest_Content, spDocumentManifest_Created, spDocumentManifest_Description, spDocumentManifest_Identifier, spDocumentManifest_Recipient, spDocumentManifest_Status, spDocumentManifest_Subject, spDocumentManifest_Supersedes, spDocumentManifest_Type);
+
+procedure TFhirIndexManager.buildIndexesDocumentManifest;
+var
+  a : TSearchParamsDocumentManifest;
+begin
+  for a := low(TSearchParamsDocumentManifest) to high(TSearchParamsDocumentManifest) do
+  begin
+    assert(CHECK_TSearchParamsDocumentManifest[a] = a);
+    indexes.add(frtDocumentManifest, CODES_TSearchParamsDocumentManifest[a], DESC_TSearchParamsDocumentManifest[a], TYPES_TSearchParamsDocumentManifest[a], TARGETS_TSearchParamsDocumentManifest[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.BuildIndexValuesDocumentManifest(key: integer;id : String; resource: TFhirDocumentManifest);
+var
+  i : integer;
+begin
+  for i := 0 to resource.authorList.count - 1 do
+    index(frtDocumentManifest, key, resource, resource.authorList[i], 'author');
+  index(frtDocumentManifest, key, resource.confidentiality, 'confidentiality');
+  index(frtDocumentManifest, key, resource.created, 'created');
+  index(frtDocumentManifest, key, resource.description, 'description');
+  index(frtDocumentManifest, key, resource.masterIdentifier, 'identifier');
+  for i := 0 to resource.identifierList.count - 1 do
+    index(frtDocumentManifest, key, resource.identifierList[i], 'identifier');
+  index(frtDocumentManifest, key, resource.status, 'status');
+  for i := 0 to resource.subjectList.count - 1 do
+    index(frtDocumentManifest, key, resource, resource.subjectList[i], 'subject');
+  index(frtDocumentManifest, key, resource, resource.supercedes, 'supercedes');
+  index(frtDocumentManifest, key, resource.type_, 'type');
+  for i := 0 to resource.recipientList.count - 1 do
+    index(frtDocumentManifest, key, resource, resource.recipientList[i], 'recipient');
+  for i := 0 to resource.contentList.count - 1 do
+    index(frtDocumentManifest, key, resource, resource.contentList[i], 'content');
 end;
 
 procedure TFhirIndexManager.index(aType: TFhirResourceType; key: integer; value: TFhirEnumList; name: String);
@@ -1407,7 +1449,7 @@ begin
     index(frtSubstance, key, resource.instance.identifier, 'identifier');
     index(frtSubstance, key, resource.instance.expiry, 'expiry');
   end;
-  for i := 0 to resource.ingredientList.count do
+  for i := 0 to resource.ingredientList.count - 1 do
   begin
 // todo    index(frtSubstance, key, resource.ingredientList[i].quantity, 'quantity');
     index(frtSubstance, key, resource, resource.ingredientList[i].substance, 'substance');
@@ -1956,7 +1998,7 @@ begin
   for i := 0 to resource.StructureList.count - 1 do
   begin
     index(frtProfile, key, resource.StructureList[i].type_, 'type');
-    for j := 0 to resource.structureList[i].elementList.Count do
+    for j := 0 to resource.structureList[i].elementList.Count - 1 do
       if (resource.structureList[i].elementList[j].definition <> nil) and
         (resource.structureList[i].elementList[j].definition.binding <> nil) then
         if resource.structureList[i].elementList[j].definition.binding.reference is TFhirUri then
@@ -1966,10 +2008,6 @@ begin
   end;
   for i := 0 to resource.ExtensionDefnList.count - 1 do
     index(frtProfile, key, resource.ExtensionDefnList[i].code, 'extension');
-  for i := 0 to resource.StructureList.count - 1 do
-  begin
-    index(frtProfile, key, resource.StructureList[i].type_, 'resource');
-  end;
 end;
 
 Const
@@ -2011,7 +2049,7 @@ begin
       index(frtPatient, key, resource.communicationList[i], 'language');
     index(frtPatient, key, resource.birthDate, 'birthdate');
 
-  for i := 0 to resource.careProviderList.count do
+  for i := 0 to resource.careProviderList.count - 1 do
     index(frtPatient, key, resource, resource.careProviderList[i], 'Provider');
 
   index(frtPatient, key, resource.activeST, 'active');
@@ -2081,6 +2119,44 @@ begin
 
   for i := 0 to resource.codedDiagnosisList.Count - 1 Do
     index(frtDiagnosticReport, key, resource.codedDiagnosisList[i], 'code');
+end;
+
+Const
+  CHECK_TSearchParamsDeviceObservationReport : Array[TSearchParamsDeviceObservationReport] of TSearchParamsDeviceObservationReport = ( spDeviceObservationReport__id,  spDeviceObservationReport_Channel, spDeviceObservationReport_Code, spDeviceObservationReport_Observation, spDeviceObservationReport_Source, spDeviceObservationReport_Subject);
+
+procedure TFhirIndexManager.buildIndexesDeviceObservationReport;
+var
+  a : TSearchParamsDeviceObservationReport;
+begin
+  for a := low(TSearchParamsDeviceObservationReport) to high(TSearchParamsDeviceObservationReport) do
+  begin
+    assert(CHECK_TSearchParamsDeviceObservationReport[a] = a);
+    indexes.add(frtDeviceObservationReport, CODES_TSearchParamsDeviceObservationReport[a], DESC_TSearchParamsDeviceObservationReport[a], TYPES_TSearchParamsDeviceObservationReport[a], TARGETS_TSearchParamsDeviceObservationReport[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesDeviceObservationReport(key : integer; id : String; resource: TFhirDeviceObservationReport);
+var
+  i, j, k : integer;
+  vmd : TFhirDeviceObservationReportVirtualDevice;
+  chan : TFhirDeviceObservationReportVirtualDeviceChannel;
+begin
+  index(frtDeviceObservationReport, key, resource, resource.source, 'source');
+  index(frtDeviceObservationReport, key, resource, resource.subject, 'subject');
+  patientCompartment(key, resource.subject);
+
+  for i := 0 to resource.virtualDeviceList.Count - 1 do
+  begin
+    vmd := resource.virtualDeviceList[i];
+    index(frtDeviceObservationReport, key, vmd.code, 'code');
+    for j := 0 to vmd.channelList.Count - 1 do
+    begin
+      chan := vmd.channelList[j];
+      index(frtDeviceObservationReport, key, chan.code, 'channel');
+      for k := 0 to chan.metricList.Count - 1 do
+        index(frtDeviceObservationReport, key, resource, chan.metricList[k].observation, 'observation');
+    end;
+  end;
 end;
 
 Const
@@ -2186,6 +2262,37 @@ begin
 end;
 
 const
+  CHECK_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of TSearchParamsConceptMap = ( spConceptMap__id, spConceptMap_Date, spConceptMap_Description, spConceptMap_Identifier, spConceptMap_Name, spConceptMap_Publisher, spConceptMap_Source, spConceptMap_Status, spConceptMap_System, spConceptMap_Target, spConceptMap_Version);
+
+procedure TFhirIndexManager.buildIndexesConceptMap;
+var
+  a : TSearchParamsConceptMap;
+begin
+  for a := low(TSearchParamsConceptMap) to high(TSearchParamsConceptMap) do
+  begin
+    assert(CHECK_TSearchParamsConceptMap[a] = a);
+    indexes.add(frtConceptMap, CODES_TSearchParamsConceptMap[a], DESC_TSearchParamsConceptMap[a], TYPES_TSearchParamsConceptMap[a], TARGETS_TSearchParamsConceptMap[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesConceptMap(key : integer; id : String; resource: TFhirConceptMap);
+var
+  i : integer;
+begin
+  index(frtConceptMap, key, resource.identifier, 'identifier');
+  index(frtConceptMap, key, resource.version, 'version');
+  index(frtConceptMap, key, resource.name, 'name');
+  index(frtConceptMap, key, resource.status, 'status');
+  index(frtConceptMap, key, resource.date, 'date');
+  index(frtConceptMap, key, resource.publisher, 'publisher');
+  index(frtConceptMap, key, resource.description, 'description');
+  index(frtConceptMap, key, resource, resource.source, 'source');
+  index(frtConceptMap, key, resource, resource.target, 'target');
+  for i := 0 to resource.conceptList.count - 1 do
+    index(frtConceptMap, key, resource.conceptList[i].system, 'system');
+end;
+
+const
   CHECK_TSearchParamsDevice : Array[TSearchParamsDevice] of TSearchParamsDevice = ( spDevice__id, spDevice_Identifier, spDevice_Location, spDevice_Manufacturer, spDevice_Model, spDevice_Organization, spDevice_Patient, spDevice_Type, spDevice_Udi);
 
 procedure TFhirIndexManager.buildIndexesDevice;
@@ -2203,7 +2310,7 @@ procedure TFhirIndexManager.buildIndexValuesDevice(key : integer; id : String; r
 var
   i : integer;
 begin
-  for i  := 0 to resource.identifierList.count do
+  for i  := 0 to resource.identifierList.count - 1 do
     index(frtDevice, key, resource.identifierList[i], 'identifier');
   index(frtDevice, key, resource.udi, 'udi');
   index(frtDevice, key, resource, resource.location, 'location');
