@@ -82,7 +82,9 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini</Debugger_RunParams>
+        <Icon_MainIcon>fhir.ico</Icon_MainIcon>
+        <DCC_DebugDCUs>false</DCC_DebugDCUs>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot;</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
@@ -149,7 +151,7 @@
         <DCCReference Include="..\Libraries\Support\AdvSignals.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvSynchronizationRegistries.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvTimeControllers.pas"/>
-        <DCCReference Include="..\Libraries\Support\AdvIntegerMatches.pas"/>
+        <DCCReference Include="..\Libraries\support\AdvInt64Matches.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvLargeIntegerMatches.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvStringLargeIntegerMatches.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvStringLists.pas"/>
@@ -253,7 +255,11 @@
         <DCCReference Include="..\Libraries\db\OdbcImplementation.pas"/>
         <DCCReference Include="..\Libraries\Support\CurrencySupport.pas"/>
         <DCCReference Include="FHIRDataStore.pas"/>
+        <DCCReference Include="..\Libraries\snomed\SnomedImporter.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvProfilers.pas"/>
+        <DCCReference Include="..\Libraries\support\AnsiStringBuilder.pas"/>
+        <DCCReference Include="..\Libraries\support\AdvIntegerMatches.pas"/>
+        <DCCReference Include="..\Libraries\snomed\SnomedPublisher.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

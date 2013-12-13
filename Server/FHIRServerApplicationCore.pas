@@ -32,7 +32,8 @@ interface
 
 Uses
   SysUtils, IniFiles, ActiveX, ComObj,
-  SystemService,
+  SystemService, SystemSupport,
+  SnomedImporter, SnomedServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   FHIRRestServer, DBInstaller, FHIRConstants;
 
@@ -70,6 +71,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
+  dir : String;
   svc : TFHIRService;
 begin
   CoInitialize(nil);
@@ -93,6 +95,10 @@ begin
       svc.InstallDatabase
     else if FindCmdLineSwitch('unmount') then
       svc.UninstallDatabase
+    else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
+      svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+    else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
+      svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
 //    procedure ReIndex;
 //    procedure clear(types : String);
     else
@@ -194,13 +200,23 @@ begin
 end;
 
 procedure TFHIRService.LoadTerminologies;
+var
+  sf : String;
 begin
-  { todo }
+  sf := FIni.ReadString('snomed', 'cache', '');
+  if FileExists(sf) then
+  begin
+    write('Load Snomed');
+    GSnomeds := TSnomedServiceList.Create;
+    GSnomeds.DefaultDefinition := TSnomedServices.Create;
+    GSnomeds.DefaultDefinition.Load(sf);
+    writeln(' - done');
+  end;
 end;
 
 procedure TFHIRService.UnloadTerminologies;
 begin
-  { todo }
+  GSnomeds.Free;
 end;
 
 procedure TFHIRService.InitialiseRestServer;

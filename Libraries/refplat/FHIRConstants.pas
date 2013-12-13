@@ -34,7 +34,7 @@ unit FHIRConstants;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 4, 2013 13:54+1100
+// FHIR v0.12 generated Wed, Dec 11, 2013 22:29+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
@@ -614,7 +614,7 @@ Const
   TARGETS_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of TFhirResourceTypeSet = ([], [frtDevice, frtPractitioner], [], [frtMedia, frtDocumentReference], [], [], [], [frtOrganization, frtPatient, frtPractitioner], [], [frtDevice, frtPatient, frtPractitioner, frtGroup], [frtDocumentManifest], []);
   CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_id', 'authenticator', 'author', 'class', 'confidentiality', 'created', 'custodian', 'description', 'event', 'facility', 'format', 'identifier', 'indexed', 'language', 'location', 'period', 'relatesto', 'relation', 'relationship', 'size', 'status', 'subject', 'type');
   DESC_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'Document Authenticator',
+     'Who/What authenticated the document',
      'Who/what authored the document',
      'Categorisation of Document',
      'Sensitivity of source document',
@@ -623,10 +623,10 @@ Const
      'Human-readable description (title)',
      'Main Clinical Acts Documented',
      'Kind of facility where patient was seen',
-     'Format of the document',
+     'Format/content rules for the document',
      'Master Version Specific Identifier',
      'When this document reference created',
-     'Primary language of the document',
+     'The marked primary language for the document',
      'Where to access the document',
      'Time of service that is being documented',
      'Target of the relationship',
@@ -634,7 +634,7 @@ Const
      'Combination of relation and relatesTo',
      'Size of the document in bytes',
      'current | superceded | entered in error',
-     'The subject of the document',
+     'Who|what is the subject of the document',
      'What kind of document this is (LOINC if possible)');
   TYPES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeReference,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeDate,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeComposite,  SearchParamTypeNumber,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
 //  CHECK_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of TSearchParamsDocumentReference = ( spDocumentReference__id,  spDocumentReference_Authenticator,  spDocumentReference_Author,  spDocumentReference_Class,  spDocumentReference_Confidentiality,  spDocumentReference_Created,  spDocumentReference_Custodian,  spDocumentReference_Description,  spDocumentReference_Event,  spDocumentReference_Facility,  spDocumentReference_Format,  spDocumentReference_Identifier,  spDocumentReference_Indexed,  spDocumentReference_Language,  spDocumentReference_Location,  spDocumentReference_Period,  spDocumentReference_Relatesto,  spDocumentReference_Relation,  spDocumentReference_Relationship,  spDocumentReference_Size,  spDocumentReference_Status,  spDocumentReference_Subject,  spDocumentReference_Type);
@@ -782,7 +782,7 @@ Const
      'When the list was prepared',
      'Why list is empty',
      'Actual entry',
-     'Source of the list',
+     'Who/what defined the list contents',
      'If all resources have the same subject');
   TYPES_TSearchParamsList : Array[TSearchParamsList] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeReference);
 //  CHECK_TSearchParamsList : Array[TSearchParamsList] of TSearchParamsList = ( spList__id,  spList_Code,  spList_Date,  spList_Empty_reason,  spList_Item,  spList_Source,  spList_Subject);
@@ -794,26 +794,28 @@ Const
      'source: [frtDevice, frtPatient, frtPractitioner]',
      'subject: [frtDevice, frtLocation, frtPatient, frtGroup]');
   TARGETS_TSearchParamsList : Array[TSearchParamsList] of TFhirResourceTypeSet = ([], [], [], [], ALL_RESOURCE_TYPES, [frtDevice, frtPatient, frtPractitioner], [frtDevice, frtLocation, frtPatient, frtGroup]);
-  CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_id', 'address', 'name', 'near', 'near-distance', 'partof', 'status', 'type');
+  CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_id', 'address', 'identifier', 'name', 'near', 'near-distance', 'partof', 'status', 'type');
   DESC_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'A (part of the) address of the location',
+     'Unique code or number identifying the location to its users',
      'A (portion of the) name of the location',
      'The coordinates expressed as [lat],[long] (using KML, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency)',
      'A distance quantity to limit the near search to locations within a specific distance',
      'The location of which this location is a part',
      'Searches for locations with a specific kind of status',
      'A code for the type of location');
-  TYPES_TSearchParamsLocation : Array[TSearchParamsLocation] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken);
-//  CHECK_TSearchParamsLocation : Array[TSearchParamsLocation] of TSearchParamsLocation = ( spLocation__id,  spLocation_Address,  spLocation_Name,  spLocation_Near,  spLocation_Near_distance,  spLocation_Partof,  spLocation_Status,  spLocation_Type);
+  TYPES_TSearchParamsLocation : Array[TSearchParamsLocation] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken);
+//  CHECK_TSearchParamsLocation : Array[TSearchParamsLocation] of TSearchParamsLocation = ( spLocation__id,  spLocation_Address,  spLocation_Identifier,  spLocation_Name,  spLocation_Near,  spLocation_Near_distance,  spLocation_Partof,  spLocation_Status,  spLocation_Type);
   PATHS_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_id: []',
      'address: []',
+     'identifier: []',
      'name: []',
      'near: []',
      'near-distance: []',
      'partof: [frtLocation]',
      'status: []',
      'type: []');
-  TARGETS_TSearchParamsLocation : Array[TSearchParamsLocation] of TFhirResourceTypeSet = ([], [], [], [], [], [frtLocation], [], []);
+  TARGETS_TSearchParamsLocation : Array[TSearchParamsLocation] of TFhirResourceTypeSet = ([], [], [], [], [], [], [frtLocation], [], []);
   CODES_TSearchParamsMedia : Array[TSearchParamsMedia] of String = ('_id', 'date', 'identifier', 'operator', 'subject', 'subtype', 'type', 'view');
   DESC_TSearchParamsMedia : Array[TSearchParamsMedia] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'When the media was taken/recorded (end)',
@@ -836,7 +838,7 @@ Const
   TARGETS_TSearchParamsMedia : Array[TSearchParamsMedia] of TFhirResourceTypeSet = ([], [], [], [frtPractitioner], [frtSpecimen, frtDevice, frtPatient, frtPractitioner, frtGroup], [], [], []);
   CODES_TSearchParamsMedication : Array[TSearchParamsMedication] of String = ('_id', 'code', 'container', 'content', 'form', 'ingredient', 'manufacturer', 'name');
   DESC_TSearchParamsMedication : Array[TSearchParamsMedication] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'References to std. medication terminologies',
+     'Codes that identify this medication',
      'Kind of container',
      'A product in the package',
      'Powder | tablets | carton etc',
@@ -946,28 +948,30 @@ Const
 //  CHECK_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of TSearchParamsMessageHeader = ( spMessageHeader__id);
   PATHS_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_id: []');
   TARGETS_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of TFhirResourceTypeSet = ([]);
-  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_id', 'date', 'name', 'name-value', 'performer', 'reliability', 'status', 'subject', 'value');
+  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_id', 'date', 'name', 'name-value', 'performer', 'reliability', 'specimen', 'status', 'subject', 'value');
   DESC_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'Obtained date/time. If the obtained element is a period, a date that falls in the period',
-     'The name of the observation type or component type',
+     'The name of the observation type',
      'Both name and value',
      'Who/what performed the observation',
      'The reliability of the observation',
+     'Specimen used for this observation',
      'The status of the observation',
      'The subject that the observation is about',
      'The code or value of a result');
-  TYPES_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeComposite,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
-//  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id,  spObservation_Date,  spObservation_Name,  spObservation_Name_value,  spObservation_Performer,  spObservation_Reliability,  spObservation_Status,  spObservation_Subject,  spObservation_Value);
+  TYPES_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeComposite,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
+//  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id,  spObservation_Date,  spObservation_Name,  spObservation_Name_value,  spObservation_Performer,  spObservation_Reliability,  spObservation_Specimen,  spObservation_Status,  spObservation_Subject,  spObservation_Value);
   PATHS_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_id: []',
      'date: []',
      'name: []',
      'name-value: []',
      'performer: [frtDevice, frtOrganization, frtPractitioner]',
      'reliability: []',
+     'specimen: [frtSpecimen]',
      'status: []',
-     'subject: [frtDevice, frtPatient, frtGroup]',
+     'subject: [frtDevice, frtLocation, frtPatient, frtGroup]',
      'value: []');
-  TARGETS_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirResourceTypeSet = ([], [], [], [], [frtDevice, frtOrganization, frtPractitioner], [], [], [frtDevice, frtPatient, frtGroup], []);
+  TARGETS_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirResourceTypeSet = ([], [], [], [], [frtDevice, frtOrganization, frtPractitioner], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup], []);
   CODES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('_id');
   DESC_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('The logical resource id associated with the resource (must be supported by all servers)');
   TYPES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of TFhirSearchParamType = ( SearchParamTypeToken);
@@ -1146,11 +1150,11 @@ Const
   TARGETS_TSearchParamsProfile : Array[TSearchParamsProfile] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [frtValueSet], []);
   CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_id', 'end', 'location', 'party', 'partytype', 'start', 'target');
   DESC_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'The end of the period, if not ongoing',
+     'End time with inclusive boundary, if not ongoing',
      'Where the activity occurred, if relevant',
      'Identity of agent (urn or url)',
      'e.g. Resource | Person | Application | Record | Document +',
-     'The start of the period',
+     'Starting time with inclusive boundary',
      'Target resource(s) (usually version specific)');
   TYPES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeReference);
 //  CHECK_TSearchParamsProvenance : Array[TSearchParamsProvenance] of TSearchParamsProvenance = ( spProvenance__id,  spProvenance_End,  spProvenance_Location,  spProvenance_Party,  spProvenance_Partytype,  spProvenance_Start,  spProvenance_Target);
@@ -1226,8 +1230,8 @@ Const
      'Specific instance of resource (e.g. versioned)',
      'Logical source location within the enterprise',
      'The id of source where event originated',
-     'Sub-type of event',
-     'Type of event',
+     'More specific type/id for the event',
+     'Type/identifier of event',
      'Unique identifier for the user');
   TYPES_TSearchParamsSecurityEvent : Array[TSearchParamsSecurityEvent] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken);
 //  CHECK_TSearchParamsSecurityEvent : Array[TSearchParamsSecurityEvent] of TSearchParamsSecurityEvent = ( spSecurityEvent__id,  spSecurityEvent_Action,  spSecurityEvent_Address,  spSecurityEvent_Altid,  spSecurityEvent_Date,  spSecurityEvent_Desc,  spSecurityEvent_Identity,  spSecurityEvent_Name,  spSecurityEvent_Object_type,  spSecurityEvent_Patientid,  spSecurityEvent_Reference,  spSecurityEvent_Site,  spSecurityEvent_Source,  spSecurityEvent_Subtype,  spSecurityEvent_Type,  spSecurityEvent_User);
@@ -1322,9 +1326,9 @@ Const
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], []);
   FHIR_GENERATED_VERSION = '0.12';
 
-  FHIR_GENERATED_REVISION = '2003';
+  FHIR_GENERATED_REVISION = '2032';
 
-  FHIR_GENERATED_DATE = '20131204135416';
+  FHIR_GENERATED_DATE = '20131211222927';
 
 
 

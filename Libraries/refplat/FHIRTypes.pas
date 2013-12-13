@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 4, 2013 13:54+1100
+// FHIR v0.12 generated Wed, Dec 11, 2013 22:29+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -3757,12 +3757,12 @@ Type
     {!script show}
   published
     {@member numerator
-      The numerator.
+      The value of the numerator.
     }
     property numerator : TFhirQuantity read FNumerator write SetNumerator;
 
     {@member denominator
-      The denominator.
+      The value of the denominator.
     }
     property denominator : TFhirQuantity read FDenominator write SetDenominator;
 

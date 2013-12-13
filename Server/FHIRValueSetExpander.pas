@@ -656,7 +656,8 @@ var
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;
   outboundIndex : Cardinal;
-  iWork, iWork2, iWork3 : Cardinal;
+  iWork, iWork2, iWork3, iWork4, iWork5, iWork6, refsets : Cardinal;
+  date : TSnomedDate;
   Inbounds : TCardinalArray;
 begin
   SetLength(inbounds, 0);
@@ -664,12 +665,12 @@ begin
     result := 1
   else
   begin
-    FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex);
+    FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
     Inbounds := FSnomed.Refs.GetReferences(InboundIndex);
     result := 0;
     For i := 0 to High(Inbounds) Do
     Begin
-      FSnomed.Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, Flags, Group);
+      FSnomed.Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Flags, Group);
       if iWork3 = FSnomed.Is_a_Index Then
         inc(result);
     End;
@@ -683,11 +684,12 @@ var
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;
-  outboundIndex : Cardinal;
+  outboundIndex, refsets : Cardinal;
   Inbounds : TCardinalArray;
+  date : TSnomedDate;
 begin
   SetLength(inbounds, 0);
-  FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex);
+  FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   result := inttostr(identity);
 end;
 
@@ -700,8 +702,9 @@ var
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;
   outboundIndex : Cardinal;
-  iWork, iWork2, iWork3 : Cardinal;
+  iWork, iWork2, iWork3, iWork4, iWork5, iWork6, refsets : Cardinal;
   Inbounds : TCardinalArray;
+  date : TSnomedDate;
 begin
   result := nil;
   SetLength(inbounds, 0);
@@ -709,12 +712,12 @@ begin
     result := TCodeSystemProviderContext(FSnomed.Is_a_Index)
   else
   begin
-    FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex);
+    FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
     Inbounds := FSnomed.Refs.GetReferences(InboundIndex);
     c := -1;
     For i := 0 to High(Inbounds) Do
     Begin
-      FSnomed.Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, Flags, Group);
+      FSnomed.Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Flags, Group);
       if iWork3 = FSnomed.Is_a_Index Then
       begin
         inc(c);
@@ -738,13 +741,14 @@ Function TSnomedProvider.GetFSN(iDescriptions : TCardinalArray) : String;
 var
   iLoop : Integer;
   iid : int64;
-  iString, iDummy : Cardinal;
+  iString, iDummy, module, refsets, kind : Cardinal;
   iFlag : Byte;
+  date : TSnomedDate;
 begin
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
   Begin
-    FSnomed.Desc.GetDescription(iDescriptions[iLoop], iString, iId, iDummy, iFlag);
+    FSnomed.Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy, module, kind, refsets, iFlag);
     if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE = VAL_DESC_FullySpecifiedName shl 4) Then
       result := FSnomed.Strings.GetEntry(iString);
   End;
@@ -755,14 +759,15 @@ Function TSnomedProvider.GetPN(iDescriptions : TCardinalArray) : String;
 var
   iLoop : Integer;
   iid : int64;
-  iString, iDummy : Cardinal;
+  iString, iDummy, module, refsets, kind : Cardinal;
+  date : TSnomedDate;
   iFlag : Byte;
 begin
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
   Begin
-    FSnomed.Desc.GetDescription(iDescriptions[iLoop], iString, iId, iDummy, iFlag);
-    if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE = VAL_DESC_Preferred shl 4) Then
+    FSnomed.Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy, module, kind, refsets, iFlag);
+    if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
       result := FSnomed.Strings.GetEntry(iString);
   End;
   if result = '' Then
@@ -776,10 +781,11 @@ var
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;
-  outboundIndex : Cardinal;
+  outboundIndex, refsets : Cardinal;
+  date : TSnomedDate;
   Descriptions : TCardinalArray;
 begin
-  FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex);
+  FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);
   result := getPn(Descriptions);
 end;

@@ -33,7 +33,7 @@ unit FHIRComponents;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 4, 2013 13:54+1100
+// FHIR v0.12 generated Wed, Dec 11, 2013 22:29+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -185,8 +185,6 @@ Type
   TFhirMessageHeaderDestinationList = class;
   TFhirObservationReferenceRange = class;
   TFhirObservationReferenceRangeList = class;
-  TFhirObservationComponent = class;
-  TFhirObservationComponentList = class;
   TFhirOperationOutcomeIssue = class;
   TFhirOperationOutcomeIssueList = class;
   TFhirOrderWhen = class;
@@ -5708,7 +5706,7 @@ Type
     property admitSource : TFhirCodeableConcept read FAdmitSource write SetAdmitSource;
 
     {@member period
-      Period of hospitalization.
+      Period during which the patient was admitted.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
 
@@ -5748,11 +5746,11 @@ Type
     property dischargeDiagnosis : TFhirResourceReference{Resource} read FDischargeDiagnosis write SetDischargeDiagnosis;
 
     {@member reAdmission
-      Is readmission?.
+      Is this hospitalization a readmission?.
     }
     property reAdmission : TFhirBoolean read FReAdmission write SetReAdmission;
     {@member reAdmissionST
-      Typed access to Is readmission?.
+      Typed access to Is this hospitalization a readmission?.
     }
     property reAdmissionST : Boolean read GetReAdmissionST write SetReAdmissionST;
 
@@ -5861,7 +5859,7 @@ Type
     {!script show}
   published
     {@member bed
-      Bed.
+      The bed that is assigned to the patient.
     }
     property bed : TFhirResourceReference{TFhirLocation} read FBed write SetBed;
 
@@ -6769,11 +6767,11 @@ Type
     property sopclassST : String read GetSopclassST write SetSopclassST;
 
     {@member type_
-      Type of instance (0004,1430).
+      Type of instance (image etc) (0004,1430).
     }
     property type_ : TFhirString read FType_ write SetType_;
     {@member type_ST
-      Typed access to Type of instance (0004,1430).
+      Typed access to Type of instance (image etc) (0004,1430).
     }
     property type_ST : String read GetType_ST write SetType_ST;
 
@@ -10242,10 +10240,14 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   {!.Net HL7Connect.Fhir.ObservationReferenceRange}
   TFhirObservationReferenceRange = class (TFhirBackboneElement)
   private
+    FLow : TFhirQuantity;
+    FHigh : TFhirQuantity;
     FMeaning : TFhirCodeableConcept;
-    FRange : TFhirType;
+    FAge : TFhirPeriod;
+    Procedure SetLow(value : TFhirQuantity);
+    Procedure SetHigh(value : TFhirQuantity);
     Procedure SetMeaning(value : TFhirCodeableConcept);
-    Procedure SetRange(value : TFhirType);
+    Procedure SetAge(value : TFhirPeriod);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -10258,15 +10260,25 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function Clone : TFhirObservationReferenceRange; overload;
     {!script show}
   published
+    {@member low
+      The value of the low bound of the reference range. If this is omitted, the low bound of the reference range is assumed to be meaningless. E.g. <2.3.
+    }
+    property low : TFhirQuantity read FLow write SetLow;
+
+    {@member high
+      The value of the high bound of the reference range. If this is omitted, the high bound of the reference range is assumed to be meaningless. E.g. >5.
+    }
+    property high : TFhirQuantity read FHigh write SetHigh;
+
     {@member meaning
       Code for the meaning of the reference range.
     }
     property meaning : TFhirCodeableConcept read FMeaning write SetMeaning;
 
-    {@member range
-      Actual value of the reference range.  May be a quantity (<20mg/L), a range (10-20 umol/L), or some text.
+    {@member age
+      The age at which this reference range is applicable. This is a neonatal age (e.g. number of weeks at term) if the meaning says so.
     }
-    property range : TFhirType read FRange write SetRange;
+    property age : TFhirPeriod read FAge write SetAge;
 
   end;
 
@@ -10347,120 +10359,6 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     procedure ClearItems;
     
     Property FhirObservationReferenceRanges[index : Integer] : TFhirObservationReferenceRange read GetItemN write SetItemN; default;
-  End;
-
-
-  {@Class TFhirObservationComponent : TFhirElement
-    Component observation.
-  }
-  {!.Net HL7Connect.Fhir.ObservationComponent}
-  TFhirObservationComponent = class (TFhirBackboneElement)
-  private
-    FName : TFhirCodeableConcept;
-    FValue : TFhirType;
-    Procedure SetName(value : TFhirCodeableConcept);
-    Procedure SetValue(value : TFhirType);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirObservationComponent; overload;
-    function Clone : TFhirObservationComponent; overload;
-    {!script show}
-  published
-    {@member name
-      Identifies what type of sub-observation was performed.
-    }
-    property name : TFhirCodeableConcept read FName write SetName;
-
-    {@member value
-      The information determined as a result of making the sub-observation.
-    }
-    property value : TFhirType read FValue write SetValue;
-
-  end;
-
-
-  {@Class TFhirObservationComponentList
-    A list of FhirObservationComponent
-  }
-  {!.Net HL7Connect.Fhir.ObservationComponentList}
-  TFhirObservationComponentList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirObservationComponent;
-    procedure SetItemN(index : Integer; value : TFhirObservationComponent);
-  public
-    {!script hide}
-    function Link : TFhirObservationComponentList; Overload;
-    function Clone : TFhirObservationComponentList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirObservationComponent to the end of the list.
-    }
-    function Append : TFhirObservationComponent;
-
-    
-    {@member AddItem
-      Add an already existing FhirObservationComponent to the end of the list.
-    }
-    procedure AddItem(value : TFhirObservationComponent);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirObservationComponent) : Integer;
-    
-
-    {@member Insert
-      Insert FhirObservationComponent before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirObservationComponent;
-    
-
-    {@member InsertItem
-       Insert an existing FhirObservationComponent before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirObservationComponent);
-    
-    {@member Item
-       Get the iIndexth FhirObservationComponent. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirObservationComponent. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirObservationComponent);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirObservationComponent;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirObservationComponents[index : Integer] : TFhirObservationComponent read GetItemN write SetItemN; default;
   End;
 
 
@@ -11233,7 +11131,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
 
 
   {@Class TFhirPractitionerQualification : TFhirElement
-    Qualifications relevant to the provided service.
+    Qualifications obtained by training and certification.
   }
   {!.Net HL7Connect.Fhir.PractitionerQualification}
   TFhirPractitionerQualification = class (TFhirBackboneElement)
@@ -13717,11 +13615,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     property name : TFhirCodeableConcept read FName write SetName;
 
     {@member header
-      Header for the group, used for display purposes.
+      Text that is displayed above the contents of the group.
     }
     property header : TFhirString read FHeader write SetHeader;
     {@member headerST
-      Typed access to Header for the group, used for display purposes.
+      Typed access to Text that is displayed above the contents of the group.
     }
     property headerST : String read GetHeaderST write SetHeaderST;
 
@@ -13882,11 +13780,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     property name : TFhirCodeableConcept read FName write SetName;
 
     {@member text
-      Text of the question as it may appear on screen or on a form.
+      Text of the question as it is shown to the user.
     }
     property text : TFhirString read FText write SetText;
     {@member textST
-      Typed access to Text of the question as it may appear on screen or on a form.
+      Typed access to Text of the question as it is shown to the user.
     }
     property textST : String read GetTextST write SetTextST;
 
@@ -31369,32 +31267,42 @@ end;
 
 destructor TFhirObservationReferenceRange.Destroy;
 begin
+  FLow.free;
+  FHigh.free;
   FMeaning.free;
-  FRange.free;
+  FAge.free;
   inherited;
 end;
 
 procedure TFhirObservationReferenceRange.Assign(oSource : TAdvObject);
 begin
   inherited;
+  low := TFhirObservationReferenceRange(oSource).low.Clone;
+  high := TFhirObservationReferenceRange(oSource).high.Clone;
   meaning := TFhirObservationReferenceRange(oSource).meaning.Clone;
-  range := TFhirObservationReferenceRange(oSource).range.Clone;
+  age := TFhirObservationReferenceRange(oSource).age.Clone;
 end;
 
 procedure TFhirObservationReferenceRange.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
+  if (child_name = 'low') Then
+     list.add(Low.Link);
+  if (child_name = 'high') Then
+     list.add(High.Link);
   if (child_name = 'meaning') Then
      list.add(Meaning.Link);
-  if (child_name = 'range') Then
-     list.add(Range.Link);
+  if (child_name = 'age') Then
+     list.add(Age.Link);
 end;
 
 procedure TFhirObservationReferenceRange.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
+  oList.add(TFHIRProperty.create(self, 'low', 'Quantity', FLow.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'high', 'Quantity', FHigh.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'meaning', 'CodeableConcept', FMeaning.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'range[x]', 'Quantity|Range|string', FRange.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'age', 'Period', FAge.Link.Link));{2}
 end;
 
 function TFhirObservationReferenceRange.Link : TFhirObservationReferenceRange;
@@ -31409,16 +31317,28 @@ end;
 
 { TFhirObservationReferenceRange }
 
+Procedure TFhirObservationReferenceRange.SetLow(value : TFhirQuantity);
+begin
+  FLow.free;
+  FLow := value;
+end;
+
+Procedure TFhirObservationReferenceRange.SetHigh(value : TFhirQuantity);
+begin
+  FHigh.free;
+  FHigh := value;
+end;
+
 Procedure TFhirObservationReferenceRange.SetMeaning(value : TFhirCodeableConcept);
 begin
   FMeaning.free;
   FMeaning := value;
 end;
 
-Procedure TFhirObservationReferenceRange.SetRange(value : TFhirType);
+Procedure TFhirObservationReferenceRange.SetAge(value : TFhirPeriod);
 begin
-  FRange.free;
-  FRange := value;
+  FAge.free;
+  FAge := value;
 end;
 
 
@@ -31508,157 +31428,6 @@ end;
 procedure TFhirObservationReferenceRangeList.SetItemN(index: Integer; value: TFhirObservationReferenceRange);
 begin
   assert(value is TFhirObservationReferenceRange);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirObservationComponent }
-
-constructor TFhirObservationComponent.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirObservationComponent.Destroy;
-begin
-  FName.free;
-  FValue.free;
-  inherited;
-end;
-
-procedure TFhirObservationComponent.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  name := TFhirObservationComponent(oSource).name.Clone;
-  value := TFhirObservationComponent(oSource).value.Clone;
-end;
-
-procedure TFhirObservationComponent.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'name') Then
-     list.add(Name.Link);
-  if (child_name = 'value') Then
-     list.add(Value.Link);
-end;
-
-procedure TFhirObservationComponent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'CodeableConcept', FName.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'Quantity|CodeableConcept|Attachment|Ratio|Period|SampledData|string', FValue.Link.Link));{2}
-end;
-
-function TFhirObservationComponent.Link : TFhirObservationComponent;
-begin
-  result := TFhirObservationComponent(inherited Link);
-end;
-
-function TFhirObservationComponent.Clone : TFhirObservationComponent;
-begin
-  result := TFhirObservationComponent(inherited Clone);
-end;
-
-{ TFhirObservationComponent }
-
-Procedure TFhirObservationComponent.SetName(value : TFhirCodeableConcept);
-begin
-  FName.free;
-  FName := value;
-end;
-
-Procedure TFhirObservationComponent.SetValue(value : TFhirType);
-begin
-  FValue.free;
-  FValue := value;
-end;
-
-
-{ TFhirObservationComponentList }
-procedure TFhirObservationComponentList.AddItem(value: TFhirObservationComponent);
-begin
-  assert(value.ClassName = 'TFhirObservationComponent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservationComponent');
-  add(value);
-end;
-
-
-function TFhirObservationComponentList.Append: TFhirObservationComponent;
-begin
-  result := TFhirObservationComponent.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirObservationComponentList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirObservationComponentList.Clone: TFhirObservationComponentList;
-begin
-  result := TFhirObservationComponentList(inherited Clone);
-end;
-
-function TFhirObservationComponentList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirObservationComponentList.GetItemN(index: Integer): TFhirObservationComponent;
-begin
-  result := TFhirObservationComponent(ObjectByIndex[index]);
-end;
-
-function TFhirObservationComponentList.IndexOf(value: TFhirObservationComponent): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirObservationComponentList.Insert(index: Integer): TFhirObservationComponent;
-begin
-  result := TFhirObservationComponent.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirObservationComponentList.InsertItem(index: Integer; value: TFhirObservationComponent);
-begin
-  assert(value is TFhirObservationComponent);
-  Inherited Insert(index, value);
-end;
-
-function TFhirObservationComponentList.Item(index: Integer): TFhirObservationComponent;
-begin
-  result := TFhirObservationComponent(ObjectByIndex[index]);
-end;
-
-function TFhirObservationComponentList.Link: TFhirObservationComponentList;
-begin
-  result := TFhirObservationComponentList(inherited Link);
-end;
-
-procedure TFhirObservationComponentList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirObservationComponentList.SetItemByIndex(index: Integer; value: TFhirObservationComponent);
-begin
-  assert(value is TFhirObservationComponent);
-  FhirObservationComponents[index] := value;
-end;
-
-procedure TFhirObservationComponentList.SetItemN(index: Integer; value: TFhirObservationComponent);
-begin
-  assert(value is TFhirObservationComponent);
   ObjectByIndex[index] := value;
 end;
 

@@ -1,30 +1,29 @@
 program FHIRServer;
-
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -39,6 +38,8 @@ TODO:
  - change the way that primitive types are represented
  -
 }
+
+
 uses
   FastMM4 in '..\Libraries\FMM\FastMM4.pas',
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
@@ -84,7 +85,7 @@ uses
   AdvSignals in '..\Libraries\Support\AdvSignals.pas',
   AdvSynchronizationRegistries in '..\Libraries\Support\AdvSynchronizationRegistries.pas',
   AdvTimeControllers in '..\Libraries\Support\AdvTimeControllers.pas',
-  AdvIntegerMatches in '..\Libraries\Support\AdvIntegerMatches.pas',
+  AdvInt64Matches in '..\Libraries\support\AdvInt64Matches.pas',
   AdvLargeIntegerMatches in '..\Libraries\Support\AdvLargeIntegerMatches.pas',
   AdvStringLargeIntegerMatches in '..\Libraries\Support\AdvStringLargeIntegerMatches.pas',
   AdvStringLists in '..\Libraries\Support\AdvStringLists.pas',
@@ -188,7 +189,11 @@ uses
   OdbcImplementation in '..\Libraries\db\OdbcImplementation.pas',
   CurrencySupport in '..\Libraries\Support\CurrencySupport.pas',
   FHIRDataStore in 'FHIRDataStore.pas',
-  AdvProfilers in '..\Libraries\Support\AdvProfilers.pas';
+  SnomedImporter in '..\Libraries\snomed\SnomedImporter.pas',
+  AdvProfilers in '..\Libraries\Support\AdvProfilers.pas',
+  AnsiStringBuilder in '..\Libraries\support\AnsiStringBuilder.pas',
+  AdvIntegerMatches in '..\Libraries\support\AdvIntegerMatches.pas',
+  SnomedPublisher in '..\Libraries\snomed\SnomedPublisher.pas';
 
 begin
   try

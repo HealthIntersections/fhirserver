@@ -1156,7 +1156,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsLocation : Array[TSearchParamsLocation] of TSearchParamsLocation = ( spLocation__id, spLocation_Address, spLocation_Name, spLocation_Near, spLocation_Near_distance, spLocation_Partof, spLocation_Status, spLocation_Type);
+  CHECK_TSearchParamsLocation : Array[TSearchParamsLocation] of TSearchParamsLocation = ( spLocation__id, spLocation_Address, spLocation_Identifier, spLocation_Name, spLocation_Near, spLocation_Near_distance, spLocation_Partof, spLocation_Status, spLocation_Type);
 
 
 procedure TFhirIndexManager.buildIndexesLocation;
@@ -1178,6 +1178,7 @@ begin
   index(frtLocation, key, resource.Name, 'name');
   index(frtLocation, key, resource.status, 'status');
   index(frtLocation, key, resource.type_, 'type');
+  index(frtLocation, key, resource.identifier, 'identifier');
   index(frtLocation, key, resource, resource.partOf, 'partof');
   if resource.position <> nil then
   begin
@@ -1271,7 +1272,8 @@ begin
     index(frtDocumentReference, key, resource.context.facilityType, 'facility');
     index(frtDocumentReference, key, resource.context.period, 'period');
   end;
-  index(frtDocumentReference, key, resource.format, 'format');
+  for i := 0 to resource.formatList.count - 1 do
+    index(frtDocumentReference, key, resource.formatList[i], 'format');
   index(frtDocumentReference, key, resource.masterIdentifier, 'identifier');
   for i := 0 to resource.identifierList.count - 1 do
     index(frtDocumentReference, key, resource.identifierList[i], 'identifier');
@@ -1923,7 +1925,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id,  spObservation_Date, spObservation_Name, spObservation_Name_value, spObservation_Performer, spObservation_Reliability, spObservation_Status, spObservation_Subject, spObservation_Value);
+  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id, spObservation_Date, spObservation_Name, spObservation_Name_value, spObservation_Performer, spObservation_Reliability, spObservation_Specimen, spObservation_Status, spObservation_Subject, spObservation_Value);
 
 procedure TFhirIndexManager.buildIndexesObservation;
 var
@@ -1938,7 +1940,6 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesObservation(key : integer;  id : String; resource: TFhirObservation);
 var
-  component : TFhirObservationComponent;
   i : integer;
   procedure indexValue(v : TFhirElement; n : String);
   begin
@@ -1958,14 +1959,10 @@ begin
     index(frtObservation, key, TFhirDateTime(resource.applies), 'date');
   index(frtObservation, key, resource.status, 'status');
   index(frtObservation, key, resource.reliability, 'reliability');
-  index(frtObservation, key, resource, resource.performer, 'performer');
+  for i := 0 to resource.performerList.Count - 1 Do
+    index(frtObservation, key, resource, resource.performerList[i], 'performer');
+  index(frtObservation, key, resource, resource.specimen, 'specimen');
   indexValue(resource.value, 'value');
-  for i := 0 to resource.componentList.Count - 1 Do
-  begin
-    component := resource.componentList[i];
-    index(frtObservation, key, component.name, 'name');
-    indexValue(component.value, 'value');
-  end;
 end;
 
 Const

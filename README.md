@@ -52,7 +52,7 @@ Commands
 - `-start 'name'` - start the named fhir service 
 - `-stop 'name'` - stop the name fhir service
 - `-debug` - just run the service in debug mode
-- `-snomed 'dir'` - update the snomed cache from the nominated directory - either RF1 or RF2 supported
+- `-snomed 'dir'` - update the snomed cache from the nominated directory - either RF1 or RF2 supported (RF2 use a snapshot only). note: the import can take 30-60 minutes
 - `-loinc 'file'` - update the loinc cache from the given filename (access database)
 - `-mount` - install the database
 - `-unmount` - uninstall the database

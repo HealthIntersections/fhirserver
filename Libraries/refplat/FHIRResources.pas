@@ -36,7 +36,7 @@ unit FHIRResources;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 4, 2013 13:54+1100
+// FHIR v0.12 generated Wed, Dec 11, 2013 22:29+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -305,7 +305,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsDocumentReference = (
     spDocumentReference__id, {@enum.value spDocumentReference__id The logical resource id associated with the resource (must be supported by all servers) }
-    spDocumentReference_Authenticator, {@enum.value spDocumentReference_Authenticator Document Authenticator }
+    spDocumentReference_Authenticator, {@enum.value spDocumentReference_Authenticator Who/What authenticated the document }
     spDocumentReference_Author, {@enum.value spDocumentReference_Author Who/what authored the document }
     spDocumentReference_Class, {@enum.value spDocumentReference_Class Categorisation of Document }
     spDocumentReference_Confidentiality, {@enum.value spDocumentReference_Confidentiality Sensitivity of source document }
@@ -314,10 +314,10 @@ Related resources tie this event to the authorizing prescription, and the specif
     spDocumentReference_Description, {@enum.value spDocumentReference_Description Human-readable description (title) }
     spDocumentReference_Event, {@enum.value spDocumentReference_Event Main Clinical Acts Documented }
     spDocumentReference_Facility, {@enum.value spDocumentReference_Facility Kind of facility where patient was seen }
-    spDocumentReference_Format, {@enum.value spDocumentReference_Format Format of the document }
+    spDocumentReference_Format, {@enum.value spDocumentReference_Format Format/content rules for the document }
     spDocumentReference_Identifier, {@enum.value spDocumentReference_Identifier Master Version Specific Identifier }
     spDocumentReference_Indexed, {@enum.value spDocumentReference_Indexed When this document reference created }
-    spDocumentReference_Language, {@enum.value spDocumentReference_Language Primary language of the document }
+    spDocumentReference_Language, {@enum.value spDocumentReference_Language The marked primary language for the document }
     spDocumentReference_Location, {@enum.value spDocumentReference_Location Where to access the document }
     spDocumentReference_Period, {@enum.value spDocumentReference_Period Time of service that is being documented }
     spDocumentReference_Relatesto, {@enum.value spDocumentReference_Relatesto Target of the relationship }
@@ -325,7 +325,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     spDocumentReference_Relationship, {@enum.value spDocumentReference_Relationship Combination of relation and relatesTo }
     spDocumentReference_Size, {@enum.value spDocumentReference_Size Size of the document in bytes }
     spDocumentReference_Status, {@enum.value spDocumentReference_Status current | superceded | entered in error }
-    spDocumentReference_Subject, {@enum.value spDocumentReference_Subject The subject of the document }
+    spDocumentReference_Subject, {@enum.value spDocumentReference_Subject Who|what is the subject of the document }
     spDocumentReference_Type); {@enum.value spDocumentReference_Type What kind of document this is (LOINC if possible) }
 
   {@Enum TSearchParamsEncounter
@@ -412,7 +412,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     spList_Date, {@enum.value spList_Date When the list was prepared }
     spList_Empty_reason, {@enum.value spList_Empty_reason Why list is empty }
     spList_Item, {@enum.value spList_Item Actual entry }
-    spList_Source, {@enum.value spList_Source Source of the list }
+    spList_Source, {@enum.value spList_Source Who/what defined the list contents }
     spList_Subject); {@enum.value spList_Subject If all resources have the same subject }
 
   {@Enum TSearchParamsLocation
@@ -421,6 +421,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   TSearchParamsLocation = (
     spLocation__id, {@enum.value spLocation__id The logical resource id associated with the resource (must be supported by all servers) }
     spLocation_Address, {@enum.value spLocation_Address A (part of the) address of the location }
+    spLocation_Identifier, {@enum.value spLocation_Identifier Unique code or number identifying the location to its users }
     spLocation_Name, {@enum.value spLocation_Name A (portion of the) name of the location }
     spLocation_Near, {@enum.value spLocation_Near The coordinates expressed as [lat],[long] (using KML, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency) }
     spLocation_Near_distance, {@enum.value spLocation_Near_distance A distance quantity to limit the near search to locations within a specific distance }
@@ -446,7 +447,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsMedication = (
     spMedication__id, {@enum.value spMedication__id The logical resource id associated with the resource (must be supported by all servers) }
-    spMedication_Code, {@enum.value spMedication_Code References to std. medication terminologies }
+    spMedication_Code, {@enum.value spMedication_Code Codes that identify this medication }
     spMedication_Container, {@enum.value spMedication_Container Kind of container }
     spMedication_Content, {@enum.value spMedication_Content A product in the package }
     spMedication_Form, {@enum.value spMedication_Form Powder | tablets | carton etc }
@@ -521,10 +522,11 @@ Related resources tie this event to the authorizing prescription, and the specif
   TSearchParamsObservation = (
     spObservation__id, {@enum.value spObservation__id The logical resource id associated with the resource (must be supported by all servers) }
     spObservation_Date, {@enum.value spObservation_Date Obtained date/time. If the obtained element is a period, a date that falls in the period }
-    spObservation_Name, {@enum.value spObservation_Name The name of the observation type or component type }
+    spObservation_Name, {@enum.value spObservation_Name The name of the observation type }
     spObservation_Name_value, {@enum.value spObservation_Name_value Both name and value }
     spObservation_Performer, {@enum.value spObservation_Performer Who/what performed the observation }
     spObservation_Reliability, {@enum.value spObservation_Reliability The reliability of the observation }
+    spObservation_Specimen, {@enum.value spObservation_Specimen Specimen used for this observation }
     spObservation_Status, {@enum.value spObservation_Status The status of the observation }
     spObservation_Subject, {@enum.value spObservation_Subject The subject that the observation is about }
     spObservation_Value); {@enum.value spObservation_Value The code or value of a result }
@@ -649,11 +651,11 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsProvenance = (
     spProvenance__id, {@enum.value spProvenance__id The logical resource id associated with the resource (must be supported by all servers) }
-    spProvenance_End, {@enum.value spProvenance_End The end of the period, if not ongoing }
+    spProvenance_End, {@enum.value spProvenance_End End time with inclusive boundary, if not ongoing }
     spProvenance_Location, {@enum.value spProvenance_Location Where the activity occurred, if relevant }
     spProvenance_Party, {@enum.value spProvenance_Party Identity of agent (urn or url) }
     spProvenance_Partytype, {@enum.value spProvenance_Partytype e.g. Resource | Person | Application | Record | Document + }
-    spProvenance_Start, {@enum.value spProvenance_Start The start of the period }
+    spProvenance_Start, {@enum.value spProvenance_Start Starting time with inclusive boundary }
     spProvenance_Target); {@enum.value spProvenance_Target Target resource(s) (usually version specific) }
 
   {@Enum TSearchParamsQuery
@@ -707,8 +709,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     spSecurityEvent_Reference, {@enum.value spSecurityEvent_Reference Specific instance of resource (e.g. versioned) }
     spSecurityEvent_Site, {@enum.value spSecurityEvent_Site Logical source location within the enterprise }
     spSecurityEvent_Source, {@enum.value spSecurityEvent_Source The id of source where event originated }
-    spSecurityEvent_Subtype, {@enum.value spSecurityEvent_Subtype Sub-type of event }
-    spSecurityEvent_Type, {@enum.value spSecurityEvent_Type Type of event }
+    spSecurityEvent_Subtype, {@enum.value spSecurityEvent_Subtype More specific type/id for the event }
+    spSecurityEvent_Type, {@enum.value spSecurityEvent_Type Type/identifier of event }
     spSecurityEvent_User); {@enum.value spSecurityEvent_User Unique identifier for the user }
 
   {@Enum TSearchParamsSpecimen
@@ -2593,7 +2595,7 @@ Type
     FconfidentialityList : TFhirCodeableConceptList;
     FPrimaryLanguage : TFhirCode;
     FMimeType : TFhirCode;
-    FFormat : TFhirCodeableConcept;
+    FformatList : TFhirUriList;
     FSize : TFhirInteger;
     FHash : TFhirString;
     FLocation : TFhirUri;
@@ -2627,7 +2629,6 @@ Type
     Procedure SetMimeType(value : TFhirCode);
     Function GetMimeTypeST : String;
     Procedure SetMimeTypeST(value : String);
-    Procedure SetFormat(value : TFhirCodeableConcept);
     Procedure SetSize(value : TFhirInteger);
     Function GetSizeST : String;
     Procedure SetSizeST(value : String);
@@ -2771,10 +2772,10 @@ Type
     }
     property mimeTypeST : String read GetMimeTypeST write SetMimeTypeST;
 
-    {@member format
-      The format of the document. This is used when the mimeType of the document does not provide enough differentiating information (typically, when the mime type of the document is text/xml).
+    {@member formatList
+      An identifier that identifies that the format and content of the document conforms to additional rules beyond the base format indicated in the mimeType.
     }
-    property format : TFhirCodeableConcept read FFormat write SetFormat;
+    property formatList : TFhirUriList read FFormatList;
 
     {@member size
       The size of the source document this reference refers to in bytes.
@@ -3601,6 +3602,7 @@ Type
   {!.Net HL7Connect.Fhir.Location}
   TFhirLocation = class (TFhirResource)
   private
+    FIdentifier : TFhirIdentifier;
     FName : TFhirString;
     FDescription : TFhirString;
     FType_ : TFhirCodeableConcept;
@@ -3612,6 +3614,7 @@ Type
     FStatus : TFhirEnum;
     FPartOf : TFhirResourceReference{TFhirLocation};
     FMode : TFhirEnum;
+    Procedure SetIdentifier(value : TFhirIdentifier);
     Procedure SetName(value : TFhirString);
     Function GetNameST : String;
     Procedure SetNameST(value : String);
@@ -3645,12 +3648,17 @@ Type
     function Clone : TFhirLocation; overload;
     {!script show}
   published
+    {@member identifier
+      Unique code or number identifying the location to its users.
+    }
+    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+
     {@member name
-      Name of the location which identifies it to its users.
+      Name of the location as used by humans. Needs not be unique.
     }
     property name : TFhirString read FName write SetName;
     {@member nameST
-      Typed access to Name of the location which identifies it to its users.
+      Typed access to Name of the location as used by humans. Needs not be unique.
     }
     property nameST : String read GetNameST write SetNameST;
 
@@ -3915,16 +3923,16 @@ Type
     {!script show}
   published
     {@member name
-      The common name of the medication.
+      The common/commercial name of the medication absent information such as strength, form, etc.  E.g. Acetaminophen, Tylenol 3, etc.  The fully coordinated name is communicated as the display of Medication.code.
     }
     property name : TFhirString read FName write SetName;
     {@member nameST
-      Typed access to The common name of the medication.
+      Typed access to The common/commercial name of the medication absent information such as strength, form, etc.  E.g. Acetaminophen, Tylenol 3, etc.  The fully coordinated name is communicated as the display of Medication.code.
     }
     property nameST : String read GetNameST write SetNameST;
 
     {@member code
-      References to codes for this medication in standard medication terminologies, drug dictionaries, etc.
+      A code (or set of codes) that identify this medication.   Usage note: This could be a standard drug code such as a drug regulator code, RxNorm code, SNOMED code, etc. It could also be a local formulary code, optionally with translations to the standard drug codes.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
 
@@ -4487,9 +4495,9 @@ Use only if isNegated is set to TRUE.
     FMethod : TFhirCodeableConcept;
     FIdentifier : TFhirIdentifier;
     FSubject : TFhirResourceReference{Resource};
-    FPerformer : TFhirResourceReference{Resource};
+    FSpecimen : TFhirResourceReference{TFhirSpecimen};
+    FperformerList : TFhirResourceReferenceList{Resource};
     FreferenceRangeList : TFhirObservationReferenceRangeList;
-    FcomponentList : TFhirObservationComponentList;
     Procedure SetName(value : TFhirCodeableConcept);
     Procedure SetValue(value : TFhirType);
     Procedure SetInterpretation(value : TFhirCodeableConcept);
@@ -4510,7 +4518,7 @@ Use only if isNegated is set to TRUE.
     Procedure SetMethod(value : TFhirCodeableConcept);
     Procedure SetIdentifier(value : TFhirIdentifier);
     Procedure SetSubject(value : TFhirResourceReference{Resource});
-    Procedure SetPerformer(value : TFhirResourceReference{Resource});
+    Procedure SetSpecimen(value : TFhirResourceReference{TFhirSpecimen});
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -4526,7 +4534,7 @@ Use only if isNegated is set to TRUE.
     {!script show}
   published
     {@member name
-      Identifies what type of observation was performed. Sometimes called code.
+      Describes what was observed. Sometimes called this is called the observation "code".
     }
     property name : TFhirCodeableConcept read FName write SetName;
 
@@ -4601,20 +4609,20 @@ Use only if isNegated is set to TRUE.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
-    {@member performer
+    {@member specimen
+      The specimen that was used when this observation was made.
+    }
+    property specimen : TFhirResourceReference{TFhirSpecimen} read FSpecimen write SetSpecimen;
+
+    {@member performerList
       Who was responsible for asserting the observed value as "true".
     }
-    property performer : TFhirResourceReference{Resource} read FPerformer write SetPerformer;
+    property performerList : TFhirResourceReferenceList{Resource} read FPerformerList;
 
     {@member referenceRangeList
       Guidance on how to interpret the value by comparison to a normal or recommended range.
     }
     property referenceRangeList : TFhirObservationReferenceRangeList read FReferenceRangeList;
-
-    {@member componentList
-      Component observation.
-    }
-    property componentList : TFhirObservationComponentList read FComponentList;
 
   end;
 
@@ -5236,7 +5244,7 @@ Use only if isNegated is set to TRUE.
     property locationList : TFhirResourceReferenceList{TFhirLocation} read FLocationList;
 
     {@member qualificationList
-      Qualifications relevant to the provided service.
+      Qualifications obtained by training and certification.
     }
     property qualificationList : TFhirPractitionerQualificationList read FQualificationList;
 
@@ -7053,11 +7061,6 @@ Use only if isNegated is set to TRUE.
     }
     {!script nolink}
     function newObservationReferenceRange : TFhirObservationReferenceRange;
-    {@member newObservationComponent
-      create a new component
-    }
-    {!script nolink}
-    function newObservationComponent : TFhirObservationComponent;
     {@member newObservation
       create a new Observation
     }
@@ -10613,6 +10616,7 @@ begin
   FAuthorList := TFhirResourceReferenceList{Resource}.Create;
   FRelatesToList := TFhirDocumentReferenceRelatesToList.Create;
   FConfidentialityList := TFhirCodeableConceptList.Create;
+  FFormatList := TFhirUriList.Create;
 end;
 
 destructor TFhirDocumentReference.Destroy;
@@ -10635,7 +10639,7 @@ begin
   FConfidentialityList.Free;
   FPrimaryLanguage.free;
   FMimeType.free;
-  FFormat.free;
+  FFormatList.Free;
   FSize.free;
   FHash.free;
   FLocation.free;
@@ -10675,7 +10679,7 @@ begin
   FConfidentialityList.Assign(TFhirDocumentReference(oSource).FConfidentialityList);
   primaryLanguage := TFhirDocumentReference(oSource).primaryLanguage.Clone;
   mimeType := TFhirDocumentReference(oSource).mimeType.Clone;
-  format := TFhirDocumentReference(oSource).format.Clone;
+  FFormatList.Assign(TFhirDocumentReference(oSource).FFormatList);
   size := TFhirDocumentReference(oSource).size.Clone;
   hash := TFhirDocumentReference(oSource).hash.Clone;
   location := TFhirDocumentReference(oSource).location.Clone;
@@ -10723,7 +10727,7 @@ begin
   if (child_name = 'mimeType') Then
      list.add(MimeType.Link);
   if (child_name = 'format') Then
-     list.add(Format.Link);
+     list.addAll(FFormatList);
   if (child_name = 'size') Then
      list.add(Size.Link);
   if (child_name = 'hash') Then
@@ -10757,7 +10761,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'confidentiality', 'CodeableConcept', FConfidentialityList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'primaryLanguage', 'code', FPrimaryLanguage.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'mimeType', 'code', FMimeType.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'format', 'CodeableConcept', FFormat.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'format', 'uri', FFormatList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'size', 'integer', FSize.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'hash', 'string', FHash.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'location', 'uri', FLocation.Link.Link));{2}
@@ -10995,12 +10999,6 @@ begin
   end
   else if FMimeType <> nil then
     FMimeType.value := '';
-end;
-
-Procedure TFhirDocumentReference.SetFormat(value : TFhirCodeableConcept);
-begin
-  FFormat.free;
-  FFormat := value;
 end;
 
 Procedure TFhirDocumentReference.SetSize(value : TFhirInteger);
@@ -12574,6 +12572,7 @@ end;
 
 destructor TFhirLocation.Destroy;
 begin
+  FIdentifier.free;
   FName.free;
   FDescription.free;
   FType_.free;
@@ -12601,6 +12600,7 @@ end;
 procedure TFhirLocation.Assign(oSource : TAdvObject);
 begin
   inherited;
+  identifier := TFhirLocation(oSource).identifier.Clone;
   name := TFhirLocation(oSource).name.Clone;
   description := TFhirLocation(oSource).description.Clone;
   type_ := TFhirLocation(oSource).type_.Clone;
@@ -12617,6 +12617,8 @@ end;
 procedure TFhirLocation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
+  if (child_name = 'identifier') Then
+     list.add(Identifier.Link);
   if (child_name = 'name') Then
      list.add(Name.Link);
   if (child_name = 'description') Then
@@ -12644,6 +12646,7 @@ end;
 procedure TFhirLocation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifier.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'description', 'string', FDescription.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link.Link));{2}
@@ -12668,6 +12671,12 @@ begin
 end;
 
 { TFhirLocation }
+
+Procedure TFhirLocation.SetIdentifier(value : TFhirIdentifier);
+begin
+  FIdentifier.free;
+  FIdentifier := value;
+end;
 
 Procedure TFhirLocation.SetName(value : TFhirString);
 begin
@@ -14183,8 +14192,8 @@ end;
 constructor TFhirObservation.Create;
 begin
   inherited;
+  FPerformerList := TFhirResourceReferenceList{Resource}.Create;
   FReferenceRangeList := TFhirObservationReferenceRangeList.Create;
-  FComponentList := TFhirObservationComponentList.Create;
 end;
 
 destructor TFhirObservation.Destroy;
@@ -14201,9 +14210,9 @@ begin
   FMethod.free;
   FIdentifier.free;
   FSubject.free;
-  FPerformer.free;
+  FSpecimen.free;
+  FPerformerList.Free;
   FReferenceRangeList.Free;
-  FComponentList.Free;
   inherited;
 end;
 
@@ -14232,9 +14241,9 @@ begin
   method := TFhirObservation(oSource).method.Clone;
   identifier := TFhirObservation(oSource).identifier.Clone;
   subject := TFhirObservation(oSource).subject.Clone;
-  performer := TFhirObservation(oSource).performer.Clone;
+  specimen := TFhirObservation(oSource).specimen.Clone;
+  FPerformerList.Assign(TFhirObservation(oSource).FPerformerList);
   FReferenceRangeList.Assign(TFhirObservation(oSource).FReferenceRangeList);
-  FComponentList.Assign(TFhirObservation(oSource).FComponentList);
 end;
 
 procedure TFhirObservation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -14264,12 +14273,12 @@ begin
      list.add(Identifier.Link);
   if (child_name = 'subject') Then
      list.add(Subject.Link);
+  if (child_name = 'specimen') Then
+     list.add(Specimen.Link);
   if (child_name = 'performer') Then
-     list.add(Performer.Link);
+     list.addAll(FPerformerList);
   if (child_name = 'referenceRange') Then
      list.addAll(FReferenceRangeList);
-  if (child_name = 'component') Then
-     list.addAll(FComponentList);
 end;
 
 procedure TFhirObservation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -14286,10 +14295,10 @@ begin
   oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', FBodySite.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', FMethod.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifier.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient|Group|Device)', FSubject.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Resource(Practitioner|Device|Organization)', FPerformer.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient|Group|Device|Location)', FSubject.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'specimen', 'Resource(Specimen)', FSpecimen.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'performer', 'Resource(Practitioner|Device|Organization)', FPerformerList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'referenceRange', '', FReferenceRangeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'component', '', FComponentList.Link)){3};
 end;
 
 function TFhirObservation.Link : TFhirObservation;
@@ -14448,10 +14457,10 @@ begin
   FSubject := value;
 end;
 
-Procedure TFhirObservation.SetPerformer(value : TFhirResourceReference{Resource});
+Procedure TFhirObservation.SetSpecimen(value : TFhirResourceReference{TFhirSpecimen});
 begin
-  FPerformer.free;
-  FPerformer := value;
+  FSpecimen.free;
+  FSpecimen := value;
 end;
 
 
@@ -18322,11 +18331,6 @@ end;
 function TFhirResourceFactory.newObservationReferenceRange : TFhirObservationReferenceRange;
 begin
   result := TFhirObservationReferenceRange.create;
-end;
-
-function TFhirResourceFactory.newObservationComponent : TFhirObservationComponent;
-begin
-  result := TFhirObservationComponent.create;
 end;
 
 function TFhirResourceFactory.newObservation : TFhirObservation;

@@ -4,27 +4,27 @@ Unit FHIRRestServer;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -43,6 +43,8 @@ Uses
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdSoapMime, IdCookie,
   IdSoapTestingUtils,
+
+  SnomedServices, SnomedPublisher,
 
   fhirbase,
   FHIRTypes,
@@ -136,6 +138,7 @@ Type
     Procedure SecureRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; AResponseInfo: TIdHTTPResponseInfo);
+    Procedure HandleSnomedRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     function extractFileData(const request : TStream; const contentType, name: String; var sContentType : String; var params : String): TStream;
     Procedure StartServer;
     Procedure StopServer;
@@ -449,6 +452,8 @@ begin
     HandleRequest(AContext, ARequestInfo, AResponseInfo, false, true, FSecurePath)
   else if ARequestInfo.Document = '/' then
     ReturnProcessedFile(AResponseInfo, '/hompage.html', AltFile('/homepage.html'))
+  else if ARequestInfo.Document.StartsWith('/snomed') and (GSnomeds <> nil) then
+    HandleSnomedRequest(AContext, ARequestInfo, AResponseInfo)
   else
   begin
     AResponseInfo.ResponseNo := 404;
@@ -648,6 +653,63 @@ Begin
     end;
   finally
     session.free;
+  end;
+end;
+
+procedure TFhirWebServer.HandleSnomedRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+var
+  code : String;
+  pub : TSnomedPublisher;
+  html : THtmlPublisher;
+begin
+  if ARequestInfo.Document.StartsWith('/snomed/tool/') then // FHIR build process support
+  begin
+    AResponseInfo.ContentType := 'text/xml';
+
+    code := ARequestInfo.Document.Substring(13);
+    writeln('Snomed: '+code);
+    try
+      AResponseInfo.ContentText := '<snomed display="'+GSnomeds.DefaultDefinition.GetDisplayName(code, '')+'" version="'+GSnomeds.DefaultDefinition.Version+'"/>';
+      AResponseInfo.ResponseNo := 200;
+    except
+      on e:exception do
+      begin
+        AResponseInfo.ResponseNo := 500;
+        AResponseInfo.ContentText := '<snomed error="'+EncodeXML(e.Message)+'" version="'+GSnomeds.DefaultDefinition.Version+'"/>';
+      end;
+    end;
+  end
+  else if ARequestInfo.Document.StartsWith('/snomed/doco/')  then
+  begin
+    code := ARequestInfo.UnparsedParams;
+    writeln('Snomed Doco: '+code);
+
+    try
+      html := THtmlPublisher.Create;
+      pub := TSnomedPublisher.create(GSnomeds.DefaultDefinition);
+      try
+        html.BaseURL := '/snomed/doco/';
+        html.Lang := ARequestInfo.AcceptLanguage;
+        pub.PublishDict(code, '/snomed/doco/', html);
+        AResponseInfo.ContentText := html.output;
+        AResponseInfo.ResponseNo := 200;
+      finally
+        html.free;
+        pub.free;
+      end;
+    except
+      on e:exception do
+      begin
+        AResponseInfo.ResponseNo := 500;
+        AResponseInfo.ContentText := 'error:'+EncodeXML(e.Message);
+      end;
+    end;
+  end
+  else
+  begin
+    AResponseInfo.ResponseNo := 404;
+    AResponseInfo.ContentText := 'Document '+ARequestInfo.Document+' not found';
+    writeln('miss: '+ARequestInfo.Document);
   end;
 end;
 
