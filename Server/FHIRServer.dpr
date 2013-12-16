@@ -193,7 +193,8 @@ uses
   AdvProfilers in '..\Libraries\Support\AdvProfilers.pas',
   AnsiStringBuilder in '..\Libraries\support\AnsiStringBuilder.pas',
   AdvIntegerMatches in '..\Libraries\support\AdvIntegerMatches.pas',
-  SnomedPublisher in '..\Libraries\snomed\SnomedPublisher.pas';
+  SnomedPublisher in '..\Libraries\snomed\SnomedPublisher.pas',
+  SnomedExprssions in '..\Libraries\snomed\SnomedExprssions.pas';
 
 begin
   try

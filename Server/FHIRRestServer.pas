@@ -44,7 +44,7 @@ Uses
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdSoapMime, IdCookie,
   IdSoapTestingUtils,
 
-  SnomedServices, SnomedPublisher,
+  SnomedServices, SnomedPublisher, SnomedExprssions,
 
   fhirbase,
   FHIRTypes,
@@ -139,6 +139,7 @@ Type
     Procedure HandleRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; AResponseInfo: TIdHTTPResponseInfo);
     Procedure HandleSnomedRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    function processSnomedForTool(snomed : TSnomedServices; code : String) : String;
     function extractFileData(const request : TStream; const contentType, name: String; var sContentType : String; var params : String): TStream;
     Procedure StartServer;
     Procedure StopServer;
@@ -551,7 +552,7 @@ Begin
       else
         oStream := TStringStream.Create(ARequestInfo.UnparsedParams);
       try
-        AResponseInfo.RawHeaders.add('Access-Control-Allow-Origin: *');
+        AResponseInfo.CustomHeaders.add('Access-Control-Allow-Origin: *');
         AResponseInfo.Expires := Now - 1; //don't want anyone caching anything
         oResponse := TFHIRResponse.Create;
         Try
@@ -591,8 +592,8 @@ Begin
             begin
               AResponseInfo.ResponseNo := 200;
               AResponseInfo.ContentType := 'text/html';
-              AResponseInfo.RawHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
-              AResponseInfo.RawHeaders.add('Access-Control-Request-Method: GET, POST, PUT, DELETE');
+              AResponseInfo.CustomHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
+              AResponseInfo.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, DELETE');
               AResponseInfo.FreeContentStream := true;
               AResponseInfo.ContentStream := StringToUTFStream('OK');
             end
@@ -611,15 +612,15 @@ Begin
               end;
               ProcessOutput(oRequest, oResponse, AResponseInfo);
               if ARequestInfo.RawHeaders.Values['Origin'] <> '' then
-                AResponseInfo.RawHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
+                AResponseInfo.CustomHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
               AResponseInfo.ETag := oResponse.versionId;
               AResponseInfo.LastModified := oResponse.lastModifiedDate; // todo: timezone
               if oResponse.Categories.count > 0 then
-                AResponseInfo.RawHeaders.add('Category: '+ oResponse.Categories.AsHeader);
+                AResponseInfo.CustomHeaders.add('Category: '+ oResponse.Categories.AsHeader);
               if oResponse.originalId <> '' then
-                AResponseInfo.RawHeaders.add('X-Original-Location: '+oResponse.originalId);
+                AResponseInfo.CustomHeaders.add('X-Original-Location: '+oResponse.originalId);
               if oResponse.ContentLocation <> '' then
-                AResponseInfo.RawHeaders.add('Content-Location: '+oResponse.ContentLocation);
+                AResponseInfo.CustomHeaders.add('Content-Location: '+oResponse.ContentLocation);
               if oResponse.Location <> '' then
                 AResponseInfo.Location := oResponse.Location;
             end;
@@ -656,26 +657,75 @@ Begin
   end;
 end;
 
+function TFhirWebServer.processSnomedForTool(snomed : TSnomedServices; code : String) : String;
+var
+  sl : TStringList;
+  s : String;
+  id : int64;
+  exp : TSnomedExpression;
+begin
+  writeln('Snomed: '+code);
+  if StringIsInteger64(code) then
+  begin
+    if snomed.IsValidConcept(code) then
+    begin
+      result := '<snomed version="'+snomed.Version+'" type="concept" concept="'+code+'" display="'+EncodeXml(snomed.GetDisplayName(code, ''))+'">';
+      sl := TStringList.Create;
+      try
+        snomed.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
+        for s in sl do
+          result := result + '<display value="'+EncodeXML(s)+'"/>';
+      finally
+        sl.free;
+      end;
+      result := result + '</snomed>';
+    end
+    else if snomed.IsValidDescription(code, id, s) then
+    begin
+      result := '<snomed version="'+snomed.Version+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+EncodeXml(s)+'">';
+      sl := TStringList.Create;
+      try
+        snomed.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
+        for s in sl do
+          result := result + '<display value="'+EncodeXML(s)+'"/>';
+      finally
+        sl.free;
+      end;
+      result := result + '</snomed>';
+    end
+
+  end
+  else
+  begin
+    exp := TSnomedExpressionParser.Parse(snomed, code);
+    try
+      result := '<snomed version="'+snomed.Version+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(TSnomedExpressionParser.Render(snomed, exp, sroMinimal))+'" expressionMax="'+
+      EncodeXml(TSnomedExpressionParser.Render(snomed, exp, sroReplaceAll))+'" display="'+EncodeXml(TSnomedExpressionParser.Display(snomed, exp))+'" ok="true"/>';
+    finally
+      exp.Free;
+    end;
+  end;
+end;
+
 procedure TFhirWebServer.HandleSnomedRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 var
   code : String;
   pub : TSnomedPublisher;
   html : THtmlPublisher;
+  snomed : TSnomedServices;
 begin
+  snomed := GSnomeds.DefaultDefinition;
   if ARequestInfo.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin
     AResponseInfo.ContentType := 'text/xml';
-
-    code := ARequestInfo.Document.Substring(13);
-    writeln('Snomed: '+code);
     try
-      AResponseInfo.ContentText := '<snomed display="'+GSnomeds.DefaultDefinition.GetDisplayName(code, '')+'" version="'+GSnomeds.DefaultDefinition.Version+'"/>';
+      AResponseInfo.ContentText := processSnomedForTool(snomed, ARequestInfo.Document.Substring(13));
       AResponseInfo.ResponseNo := 200;
     except
-      on e:exception do
+      on e : Exception do
       begin
         AResponseInfo.ResponseNo := 500;
-        AResponseInfo.ContentText := '<snomed error="'+EncodeXML(e.Message)+'" version="'+GSnomeds.DefaultDefinition.Version+'"/>';
+        AResponseInfo.ContentText := '<snomed version="'+snomed.Version+'" type="error" message="'+EncodeXML(e.Message)+'"/>';
       end;
     end;
   end
@@ -686,7 +736,7 @@ begin
 
     try
       html := THtmlPublisher.Create;
-      pub := TSnomedPublisher.create(GSnomeds.DefaultDefinition);
+      pub := TSnomedPublisher.create(snomed);
       try
         html.BaseURL := '/snomed/doco/';
         html.Lang := ARequestInfo.AcceptLanguage;

@@ -26,6 +26,7 @@ difference between delphi and FPC unicode implementations.
 
 Compiling should be simple:
 * get a copy of IndySoap (http://sourceforge.net/projects/indysoap/), and add the source directory to your delphi path
+** Note: you don't need to install indysoap, just have it in your source path 
 * open the file Server\FHIRServer.dproj in your version of delphi, and compile
 
 
@@ -56,5 +57,7 @@ Commands
 - `-loinc 'file'` - update the loinc cache from the given filename (access database)
 - `-mount` - install the database
 - `-unmount` - uninstall the database
+- `-remount` - uninstall and then install the database
+- `-tests` - run the automated tests. Needs a local mssql database called "fhir-test" with trusted access
 
 

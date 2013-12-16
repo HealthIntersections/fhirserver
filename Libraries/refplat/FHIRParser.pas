@@ -31,7 +31,7 @@ unit FHIRParser;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 11, 2013 22:29+1100
+// FHIR v0.12 generated Sun, Dec 15, 2013 15:55+1100
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
@@ -11592,7 +11592,7 @@ begin
   begin
     json.valueArray('member');
     for i := 0 to elem.memberList.Count - 1 do
-      ComposeResourceReference{Resource}(json, '',elem.memberList[i]); {z - Resource(Patient|Practitioner|Device|Medication)}
+      ComposeResourceReference{Resource}(json, '',elem.memberList[i]); {z - Resource(Patient|Practitioner|Device|Medication|Substance)}
     json.FinishArray;
   end;
 end;

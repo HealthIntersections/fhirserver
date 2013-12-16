@@ -40,6 +40,10 @@ Type
   TFHIRDatabaseInstaller = class (TAdvObject)
   private
     FConn : TKDBConnection;
+    FDoAudit: boolean;
+    FTransactions: boolean;
+    FBases: TStringList;
+    FSupportSystemHistory: boolean;
     procedure CreateResourceCompartments;
     procedure CreateResourceConfig;
     procedure CreateResourceIndexEntries;
@@ -57,6 +61,11 @@ Type
     procedure DefineResourceSpaces;
   public
     Constructor create(conn : TKDBConnection);
+    Destructor Destroy; override;
+    Property Transactions : boolean read FTransactions write FTransactions;
+    Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
+    Property DoAudit : boolean read FDoAudit write FDoAudit;
+    Property  Bases : TStringList read FBases;
     procedure Install;
     Procedure Uninstall;
 
@@ -78,6 +87,10 @@ End;
 constructor TFHIRDatabaseInstaller.create(conn: TKDBConnection);
 begin
   inherited Create;
+  FBases := TStringList.Create;
+  FDoAudit := true;
+  FTransactions := true;
+  FSupportSystemHistory := true;
   FConn := conn;
 end;
 
@@ -158,16 +171,30 @@ Begin
       '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)');
 End;
 
+FUnction BooleanToInt(b : boolean) : String;
+begin
+  if b then
+    result := '1'
+  else
+    result := '0';
+end;
+
 procedure TFHIRDatabaseInstaller.CreateResourceConfig;
+var
+  i: Integer;
 Begin
   FConn.ExecSQL('CREATE TABLE Config( '+#13#10+
        ' ConfigKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' Value nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_Config_ConfigKey ON Config (ConfigKey)');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (1, ''1'')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (2, ''http://hl7.org/fhir'')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, ''1'')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (4, ''1'')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (1, '''+BooleanToInt(FTransactions)+''')');
+  if FBases.Count = 0 then
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (2, ''http://hl7.org/fhir'')')
+  else for i := 0 to FBases.Count - 1 do
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (2, '''+FBases[i]+''')');
+
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+BooleanToInt(FSupportSystemHistory)+''')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (4, '''+BooleanToInt(FDoAudit)+''')');
 
 End;
 
@@ -312,6 +339,12 @@ End;
 procedure TFHIRDatabaseInstaller.DefineResourceSpaces;
 begin
   FConn.ExecSQL('insert into Spaces select ResourceTypeKey as SpaceKey, ResourceName as Space from Types');
+end;
+
+destructor TFHIRDatabaseInstaller.Destroy;
+begin
+  FBases.Free;
+  inherited;
 end;
 
 procedure TFHIRDatabaseInstaller.DefineIndexes;

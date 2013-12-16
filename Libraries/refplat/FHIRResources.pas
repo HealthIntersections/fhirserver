@@ -36,7 +36,7 @@ unit FHIRResources;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 11, 2013 22:29+1100
+// FHIR v0.12 generated Sun, Dec 15, 2013 15:55+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -11499,7 +11499,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'quantity', 'integer', FQuantity.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'characteristic', '', FCharacteristicList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'member', 'Resource(Patient|Practitioner|Device|Medication)', FMemberList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'member', 'Resource(Patient|Practitioner|Device|Medication|Substance)', FMemberList.Link)){3};
 end;
 
 function TFhirGroup.Link : TFhirGroup;

@@ -34,7 +34,7 @@ unit FHIRConstants;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 11, 2013 22:29+1100
+// FHIR v0.12 generated Sun, Dec 15, 2013 15:55+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
@@ -712,10 +712,10 @@ Const
      'code: []',
      'exclude: []',
      'identifier: []',
-     'member: [frtMedication, frtDevice, frtPatient, frtPractitioner]',
+     'member: [frtMedication, frtDevice, frtPatient, frtSubstance, frtPractitioner]',
      'type: []',
      'value: []');
-  TARGETS_TSearchParamsGroup : Array[TSearchParamsGroup] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [frtMedication, frtDevice, frtPatient, frtPractitioner], [], []);
+  TARGETS_TSearchParamsGroup : Array[TSearchParamsGroup] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [frtMedication, frtDevice, frtPatient, frtSubstance, frtPractitioner], [], []);
   CODES_TSearchParamsImagingStudy : Array[TSearchParamsImagingStudy] of String = ('_id', 'accession', 'bodysite', 'date', 'dicom-class', 'modality', 'series', 'size', 'study', 'subject', 'uid');
   DESC_TSearchParamsImagingStudy : Array[TSearchParamsImagingStudy] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The accession id for the image',
@@ -1326,9 +1326,9 @@ Const
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], []);
   FHIR_GENERATED_VERSION = '0.12';
 
-  FHIR_GENERATED_REVISION = '2032';
+  FHIR_GENERATED_REVISION = '2036';
 
-  FHIR_GENERATED_DATE = '20131211222927';
+  FHIR_GENERATED_DATE = '20131215155518';
 
 
 

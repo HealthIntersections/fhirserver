@@ -606,7 +606,7 @@ begin
   end
   else if StringStartsWith(system, 'http://snomed.info/sct') then
   begin
-    if warning(op, 'InstanceValidator', 'code-unknown', path, GSnomeds.DefaultDefinition.IsValidTerm(code), 'The SNOMED-CT term "'+code+'" is unknown') then
+    if warning(op, 'InstanceValidator', 'code-unknown', path, GSnomeds.DefaultDefinition.IsValidConcept(code), 'The SNOMED-CT term "'+code+'" is unknown') then
     begin
       d := GSnomeds.DefaultDefinition.GetDisplayName(code, '');
       result := warning(op, 'InstanceValidator', 'code-unknown', path, (display = '') or (display = d), 'Display for SNOMED-CT term "'+code+'" should be "'+d+'"');

@@ -52,6 +52,7 @@ Uses
 Const
   SNOMED_CACHE_VERSION = '8';
   IS_A_MAGIC : int64 = 116680003;
+  ALL_DISPLAY_NAMES = $FF;
 
 type
   Int64Array = Array of Int64;
@@ -412,9 +413,13 @@ operations
     Function Subsumes(Const sParent, sChild : AnsiString) : Boolean; Overload;
     function Subsumes(iParent, iChild: Cardinal): Boolean; Overload;
     Function Search(iRoot : Int64; sText : AnsiString; iLang : Cardinal; bInactive : Boolean) : TMatchArray;
-    Function IsValidTerm(Const sTerm : AnsiString):Boolean;
+    Function IsValidConcept(Const sTerm : AnsiString):Boolean;
+    Function IsValidDescription(Const sTerm : AnsiString; var concept : int64; var description : String):Boolean;
     Function GetDisplayName(Const sTerm, sLangSet : AnsiString) : AnsiString; Overload;
     Function GetDisplayName(Const iConcept, iLang : Cardinal) : AnsiString; Overload;
+    Procedure ListDisplayNames(list : TStringList; Const sTerm, sLangSet : AnsiString; FlagMask : Byte); Overload;
+    Procedure ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
+
     Function GetConceptId(Const iConcept : Cardinal) : AnsiString; Overload;
     Procedure GetMatchInfo(iConcept : Cardinal; var sTerm, sFSN, sPreferred : AnsiString);
     Function GetConceptRefSet(iConcept : Cardinal; bByName : Boolean; var iMembers : cardinal) : Cardinal;
@@ -1285,6 +1290,8 @@ var
   iDesc, iDummy, module, kind, refsets : Cardinal;
   date : TSnomedDate;
   aMembers : TSnomedReferenceSetMemberArray;
+  iList : TCardinalArray;
+  v : String;
 begin
   SetLength(aMembers, 0);
   result := '';
@@ -1295,9 +1302,42 @@ begin
   For iLoop := 0 to High(descs) Do
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
-    if (result = '') or (Flags and (VAL_DESC_Preferred shl 4) > 0) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iDummy))) Then
+    if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iDummy))) Then
       result := Strings.GetEntry(iDesc);
   End;
+  // ok, didn't find an active preferred term in the language of preference. Let's try for any term in the language
+  if (result = '') and (iLang <> 0) then
+    For iLoop := 0 to High(descs) Do
+    Begin
+      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
+      if (Flags and MASK_DESC_STATUS = FLAG_Active) And (FindMember(aMembers, descs[iLoop], iDummy)) Then
+        result := Strings.GetEntry(iDesc);
+    End;
+  // if we still haven't found, then any preferred term
+  if (result = '') then
+    For iLoop := 0 to High(descs) Do
+    Begin
+      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy,  module, kind, refsets, Flags);
+      if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
+        result := Strings.GetEntry(iDesc);
+    End;
+  // still not found? well, we'll pick the shortest description that's in any value set
+  if result = '' then // ok,
+    For iLoop := Low(descs) To High(descs) Do
+    Begin
+      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy,  module, kind, refsets, Flags);
+      iList := Refs.GetReferences(refsets);
+      v := Strings.GetEntry(iDesc);
+      if ((result = '') or (length(result) > length(v))) and (Flags and MASK_DESC_STATUS = FLAG_Active) And (Length(iList) > 0) Then
+        result := v;
+    End;
+  if result = '' Then // ok, give up. and use the FSN
+    For iLoop := Low(descs) To High(descs) Do
+    Begin
+      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy,  module, kind, refsets, Flags);
+      if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_FullySpecifiedName]) Then
+        result := Strings.GetEntry(iDesc);
+    End;
 end;
 
 function TSnomedServices.GetDisplayName(const sTerm, sLangSet: AnsiString): AnsiString;
@@ -1310,6 +1350,38 @@ begin
   result := GetDisplayName(iTerm, iLang);
 end;
 
+Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte);
+var
+  aMembers : TSnomedReferenceSetMemberArray;
+  iLoop : integer;
+  Identity, iID2 : int64;
+  Flags : Byte;
+  Parents, Descriptions, Inbounds, outbounds, refsets : Cardinal;
+  Descs : TCardinalArray;
+  iDesc, iDummy, module, kind : Cardinal;
+  date : TSnomedDate;
+begin
+  if iLang <> 0 then
+    aMembers := FRefSetMembers.GetMembers(iLang);
+  Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
+  Descs := Refs.GetReferences(Descriptions);
+  For iLoop := 0 to High(descs) Do
+  Begin
+    Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
+    if ((Flags and flagMask > 0) or (flagMask = $FF))  And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iDummy))) Then
+      list.add(Strings.GetEntry(iDesc));
+  End;
+end;
+
+Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const sTerm, sLangSet : AnsiString; FlagMask : Byte);
+var
+  iTerm, iLang : Cardinal;
+begin
+  iLang := CheckLangSet(sLangSet);
+  if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
+    raise Exception.Create('Concept '+sTerm+' not found');
+  ListDisplayNames(list, iTerm, iLang, flagmask);
+end;
 
 procedure TSnomedServices.GetMatchInfo(iConcept: Cardinal; var sTerm, sFSN, sPreferred: AnsiString);
 var
@@ -1474,6 +1546,7 @@ function TSnomedServices.CheckLangSet(sTerm: AnsiString): Cardinal;
 var
   iId  : Int64;
 begin
+  result := 0;
   if sTerm <> '' Then
   Begin
     if StringIsId(sterm, iId) And Concept.FindConcept(iId, result) Then
@@ -1481,8 +1554,6 @@ begin
     if result = 0 Then
       Raise Exception.Create('Unable to resolve the language reference set '+sTerm);
   End
-  else
-    result := 0;
 end;
 
 function TSnomedServices.GetConceptId(const iConcept : Cardinal): AnsiString;
@@ -1504,11 +1575,27 @@ begin
     result := StrToInt64(s);
 end;
 
-function TSnomedServices.IsValidTerm(const sTerm: AnsiString): Boolean;
+function TSnomedServices.IsValidConcept(const sTerm: AnsiString): Boolean;
 var
   iTerm : Cardinal;
 begin
   result := Concept.FindConcept(StringToId(sTerm), iTerm);
+end;
+
+function TSnomedServices.IsValidDescription(const sTerm: AnsiString; var concept: int64; var description: String): Boolean;
+var
+  iTerm, desc, cId, module, kind, refsets : Cardinal;
+  flags : Byte;
+  id : int64;
+  date : TSnomedDate;
+begin
+  result := DescRef.FindDescription(StringToId(sTerm), iTerm);
+  if result then
+  begin
+    FDesc.GetDescription(iTerm, desc, id, date, cId, module, kind, refsets, flags);
+    concept := FConcept.getConceptId(cId);
+    description := FStrings.GetEntry(desc);
+  end;
 end;
 
 { TSnomedRelationshipList }

@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 11, 2013 22:29+1100
+// FHIR v0.12 generated Sun, Dec 15, 2013 15:55+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -522,6 +522,7 @@ Type
     GroupTypeNull,  {@enum.value GroupTypeNull Value is missing from Instance }
     GroupTypePerson, {@enum.value GroupTypePerson Group contains "person" Patient resources. }
     GroupTypeAnimal, {@enum.value GroupTypeAnimal Group contains "animal" Patient resources. }
+    GroupTypePractitioner, {@enum.value GroupTypePractitioner Group contains healthcare practitioner resources. }
     GroupTypeDevice, {@enum.value GroupTypeDevice Group contains Device resources. }
     GroupTypeMedication, {@enum.value GroupTypeMedication Group contains Medication resources. }
     GroupTypeSubstance); {@enum.value GroupTypeSubstance Group contains Substance resources. }
@@ -5282,7 +5283,7 @@ Const
   CODES_TFhirDocumentRelationshipType : Array[TFhirDocumentRelationshipType] of String = ('', 'replaces', 'transforms', 'signs', 'appends');
   CODES_TFhirEncounterState : Array[TFhirEncounterState] of String = ('', 'planned', 'in progress', 'onleave', 'finished', 'cancelled');
   CODES_TFhirEncounterClass : Array[TFhirEncounterClass] of String = ('', 'inpatient', 'outpatient', 'ambulatory', 'emergency', 'home', 'field', 'daytime', 'virtual');
-  CODES_TFhirGroupType : Array[TFhirGroupType] of String = ('', 'person', 'animal', 'device', 'medication', 'substance');
+  CODES_TFhirGroupType : Array[TFhirGroupType] of String = ('', 'person', 'animal', 'practitioner', 'device', 'medication', 'substance');
   CODES_TFhirImagingModality : Array[TFhirImagingModality] of String = ('', 'AR', 'BMD', 'BDUS', 'EPS', 'CR', 'CT', 'DX', 'ECG', 'ES', 'XC', 'GM', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'LEN', 'MR', 'MG', 'NM', 'OAM', 'OCT', 'OPM', 'OP', 'OPR', 'OPT', 'OPV', 'PX', 'PT', 'RF', 'RG', 'SM', 'SRF', 'US', 'VA', 'XA');
   CODES_TFhirInstanceAvailability : Array[TFhirInstanceAvailability] of String = ('', 'ONLINE', 'OFFLINE', 'NEARLINE', 'UNAVAILABLE');
   CODES_TFhirModality : Array[TFhirModality] of String = ('', 'AR', 'AU', 'BDUS', 'BI', 'BMD', 'CR', 'CT', 'DG', 'DX', 'ECG', 'EPS', 'ES', 'GM', 'HC', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'KO', 'LEN', 'LS', 'MG', 'MR', 'NM', 'OAM', 'OCT', 'OP', 'OPM', 'OPT', 'OPV', 'OT', 'PR', 'PT', 'PX', 'REG', 'RF', 'RG', 'RTDOSE', 'RTIMAGE', 'RTPLAN', 'RTRECORD', 'RTSTRUCT', 'SEG', 'SM', 'SMR', 'SR', 'SRF', 'TG', 'US', 'VA', 'XA', 'XC');

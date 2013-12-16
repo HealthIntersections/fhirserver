@@ -24,7 +24,7 @@ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, B
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -1006,12 +1006,26 @@ begin
   FEntries.add(key, ndx, 0, value.value, '', 0, ndx.SearchType);
 end;
 
+// todo: this doesn't yet handle version references
+function isLocalTypeReference(url : String; var type_, id : String) : boolean;
+var
+  i : TFhirResourceType;
+begin
+  result := false;
+  for i := Low(CODES_TFhirResourceType) to High(CODES_TFhirResourceType) do
+    if url.StartsWith(CODES_TFhirResourceType[i]+'/') and IsId(url.Substring(url.IndexOf('/')+1)) then
+      result := true;
+  if result then
+    StringSplit(url, '/', type_, id);
+end;
+
+
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key : integer; resource : TFhirResource; value: TFhirResourceReference; name: String);
 var
   ndx : TFhirIndex;
   ref, i : integer;
   target : integer;
-  id : String;
+  type_, id : String;
   contained : TFhirResource;
   url : String;
 begin
@@ -1033,7 +1047,6 @@ begin
   if ndx.SearchType <> SearchParamTypeReference then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Contact');
 
-  ref := FSpaces.ResolveSpace('');
   if (length(value.referenceST) > INDEX_ENTRY_LENGTH) then
     raise exception.create('resource url too long for indexing: '+value.referenceST);
 
@@ -1047,6 +1060,7 @@ begin
   if StringStartsWith(value.referenceST, '#') then
   begin
     contained := FindContainedResource(resource, value);
+    ref := FSpaces.ResolveSpace(CODES_TFhirResourceType[contained.ResourceType]);
     if (contained = nil) then
       raise exception.create('Unable to find internal reference to contained resource: "'+value.referenceST+'"');
     id := FHIRGuidToString(CreateGuid);
@@ -1068,16 +1082,16 @@ begin
       if StringStartsWith(url, FBases[i]+'/') then
         url := copy(Url, length(FBases[i])+2, $FFFF);
     end;
-    if StringStartsWith(url, '??') then
+    if isLocalTypeReference(url, type_, id) then
     begin
-      id := GetStringCell(copy(url, length('??/')+1, $FF), 0, '/');
+      ref := FSpaces.ResolveSpace(type_);
       FSpaces.FDB.sql := 'Select ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
       FSpaces.FDB.Prepare;
-      FSpaces.FDB.BindString('t', '??');
+      FSpaces.FDB.BindString('t', type_);
       FSpaces.FDB.BindString('id', id);
       FSpaces.FDB.Execute;
       if FSpaces.FDB.FetchNext then
-        target := FSpaces.FDB.ColIntegerByName['ResourceKey'];
+        target := FSpaces.FDB.ColIntegerByName['ResourceKey']; // otherwise we try and link it up if we ever see the resource that this refers to
       FSpaces.FDB.Terminate;
     end;
   end;

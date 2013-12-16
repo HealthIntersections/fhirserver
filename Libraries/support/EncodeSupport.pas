@@ -427,6 +427,13 @@ Begin
         Inc(iLoop, 4);
       End;
 
+      '"':
+      Begin
+        Delete(Result, iLoop, 1);
+        Insert('&quot;', Result, iLoop);
+        Inc(iLoop, 4);
+      End;
+
       '>':
       Begin
         Delete(Result, iLoop, 1);
