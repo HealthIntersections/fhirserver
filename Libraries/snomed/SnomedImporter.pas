@@ -116,7 +116,6 @@ Type
 
     FStatus: Integer;
     FKey: Integer;
-    FOldSource: AnsiString;
     FDirectoryReferenceSets: String;
     FRF2: boolean;
     FStart : TDateTime;
@@ -152,8 +151,8 @@ Type
     function readDate(s: String): TSnomedDate;
     procedure QuickSortPairsByName(var a: TSnomedReferenceSetMemberArray);
   public
-    Constructor Create;
-    Destructor Destroy;
+    Constructor Create; override;
+    Destructor Destroy; override;
     procedure Go;
     Property FileNameConcept : String read FFilenameConcept write FFilenameConcept;
     Property FileNameRelationship : String read FFilenameRelationship write FFilenameRelationship;
@@ -191,7 +190,6 @@ end;
 procedure AnalyseDirectory(dir : String; imp : TSnomedImporter);
 var
   sr: TSearchRec;
-  i : integer;
   s : String;
 begin
   if FindFirst(IncludeTrailingPathDelimiter(dir) + '*.*', faAnyFile, sr) = 0 then
@@ -227,7 +225,6 @@ end;
 procedure AnalyseDirectoryRF2(dir : String; imp : TSnomedImporter);
 var
   sr: TSearchRec;
-  i : integer;
   s : String;
 begin
   if FindFirst(IncludeTrailingPathDelimiter(dir) + '*.*', faAnyFile, sr) = 0 then
@@ -381,8 +378,6 @@ End;
 Procedure TSnomedImporter.ImportSnomed;
 var
   oSvc : TSnomedServices;
-  newkey : Integer;
-  iStatus : Integer;
   active, inactive : Int64Array;
 begin
   FStart := now;
@@ -503,7 +498,6 @@ var
   iLast : Integer;
   iModule : integer;
   iTerm : int64;
-  iConceptOffset : integer;
   iEntry : Integer;
 
   oConcept : TConcept;
@@ -1771,11 +1765,10 @@ var
   iId, iTime, iActive, iModule, iRefSetId, iRefComp, iCursor : Integer;
   sActive, sRefSetId, sRefComp : AnsiString;
 
-  iTermRef, iRefsetRef, iValueRef : Cardinal;
+  iTermRef, iRefsetRef : Cardinal;
 
   bDesc : byte;
 
-  ssRefSetId : AnsiString;
   refset : TRefSet;
 
   Function Next(ch : AnsiChar) : integer;
@@ -1834,7 +1827,6 @@ end;
 Procedure TSnomedImporter.CloseReferenceSets;
 var
   i : integer;
-  iMembers : Cardinal;
   RefSet : TRefSet;
 begin
   for i := 0 to Frefsets.Count - 1  do

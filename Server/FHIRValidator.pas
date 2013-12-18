@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  ActiveX, ComObj, SysUtils, Dialogs,
+  ActiveX, ComObj, SysUtils,
   kCritSct, StringSupport, IdGlobal,
   AdvObjects, AdvStringObjectMatches, AdvFiles, AdvZipReaders, AdvZipParts,
   AdvMemories, AdvVclStreams, AdvBuffers, AdvNameBuffers,

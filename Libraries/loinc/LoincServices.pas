@@ -4,42 +4,37 @@ unit LoincServices;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
 Interface
 
 Uses
-  SysUtils,
-  Classes,
-  StringSupport,
-  FileSupport,
-  AdvStringBuilders,
-  AdvObjects,
-  AdvObjectLists,
-  regexpr,
-  YuStemmer;
+  SysUtils, Classes,
+  StringSupport, FileSupport,
+  AdvStringBuilders, AdvObjects, AdvObjectLists,
+  AnsiStringBuilder, regexpr, YuStemmer;
 
 {axes
 
@@ -76,7 +71,7 @@ type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
     Public
       Function GetEntry(iIndex : Cardinal):AnsiString;
 
@@ -105,7 +100,7 @@ Type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
@@ -121,7 +116,7 @@ Type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var reference : Cardinal);
       Function Count : Integer;
@@ -138,12 +133,12 @@ Type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
     Public
       Function GetWords(iIndex : Cardinal) : TWordArray;
       Function GetCardinals(iIndex : Cardinal) : TCardinalArray;
-      Function Getlength(iIndex : Cardinal) : Word;
-      
+      Function Getlength(iIndex : Cardinal) : Cardinal;
+
       Procedure StartBuild;
       Function AddWords(Const a : TWordArray) : Cardinal;
       Function AddCardinals(Const a : TCardinalArray) : Cardinal;
@@ -155,7 +150,7 @@ Type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
     Public
       Procedure GetConcept(iIndex : Word; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
 
@@ -201,7 +196,7 @@ Type
       FCodeLength : Cardinal;
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
     Public
       Function FindCode(sCode : String; var iIndex : Cardinal) : Boolean;
 
@@ -255,6 +250,7 @@ Type
     Function GetPropertyId(aType : TLoincPropertyType; const sName : String) : Word;
     Function GetPropertyCodes(iProp : Word) : TCardinalArray;
     Function GetConceptName(iConcept : Word): String;
+    Function IsCode(sCode : String): Boolean;
 
     Property Desc : TLoincStrings read FDesc;
     Property Refs : TLOINCReferences read FRefs;
@@ -333,7 +329,7 @@ end;
 
 procedure TLoincStrings.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 { TLOINCReferences }
@@ -341,16 +337,16 @@ end;
 Function TLOINCReferences.GetWords(iIndex: Cardinal) : TWordArray;
 var
   i : integer;
-  w : word;
+  lw : Cardinal;
 begin
   if (iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC list');
   if Byte(FMaster[iIndex]) <> 0 Then
     Raise exception.Create('not a word list');
   inc(iIndex);
-  move(FMaster[iIndex], w, 2);
-  SetLength(Result, w);
-  inc(iIndex, 2);
+  move(FMaster[iIndex], lw, 4);
+  SetLength(Result, lw);
+  inc(iIndex, 4);
   for i := 0 to Length(result)-1 Do
   Begin
     move(FMaster[iIndex], result[i], 2);
@@ -361,16 +357,16 @@ end;
 Function TLOINCReferences.GetCardinals(iIndex: Cardinal) : TCardinalArray;
 var
   i : integer;
-  w : word;
+  lw : cardinal;
 begin
   if (iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC list');
   if Byte(FMaster[iIndex]) <> 1 Then
     Raise exception.Create('not a cardinal list');
   inc(iIndex);
-  move(FMaster[iIndex], w, 2);
-  SetLength(Result, w);
-  inc(iIndex, 2);
+  move(FMaster[iIndex], lw, 4);
+  SetLength(Result, lw);
+  inc(iIndex, 4);
   for i := 0 to Length(result)-1 Do
   Begin
     move(FMaster[iIndex], result[i], 4);
@@ -386,7 +382,7 @@ Begin
     raise exception.Create('LOINC reference list too long');
   result := FBuilder.Length + 1;
   FBuilder.Append(Chr(0));// for words
-  FBuilder.AddWordAsBytes(length(a));
+  FBuilder.AddCardinalAsBytes(length(a));
   for iLoop := Low(a) to High(a) Do
     FBuilder.AddWordAsBytes(a[iLoop]);
 End;
@@ -395,11 +391,9 @@ Function TLOINCReferences.AddCardinals(Const a : TCardinalArray) : Cardinal;
 var
   iLoop : Integer;
 Begin
-  if Length(a) > 65535 Then
-    raise exception.Create('LOINC referece list too long');
   result := FBuilder.Length + 1;
   FBuilder.Append(Chr(1));// for Cardinals
-  FBuilder.AddWordAsBytes(length(a));
+  FBuilder.AddCardinalAsBytes(length(a));
   for iLoop := Low(a) to High(a) Do
     FBuilder.AddCardinalAsBytes(a[iLoop]);
 End;
@@ -413,15 +407,15 @@ end;
 
 procedure TLOINCReferences.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
-function TLOINCReferences.Getlength(iIndex: Cardinal): Word;
+function TLOINCReferences.Getlength(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC list');
   inc(iIndex); // skip type marker
-  move(FMaster[iIndex], result, 2);
+  move(FMaster[iIndex], result, 4);
 end;
 
 { TLOINCConcepts }
@@ -452,7 +446,7 @@ end;
 
 procedure TLOINCConcepts.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 
@@ -460,7 +454,7 @@ end;
 
 procedure TLOINCCodeList.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 
@@ -689,6 +683,13 @@ begin
   End;
 end;
 
+
+function TLOINCServices.IsCode(sCode: String): Boolean;
+var
+  iIndex : Cardinal;
+begin
+  result := Code.FindCode(sCode, iIndex);
+end;
 
 function TLOINCServices.Link: TLOINCServices;
 begin
@@ -1110,7 +1111,7 @@ end;
 
 procedure TLoincWords.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 { TLoincStems }
@@ -1153,7 +1154,7 @@ end;
 
 procedure TLoincStems.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 function TLoincServices.FindStem(s: String; var index: Integer): Boolean;

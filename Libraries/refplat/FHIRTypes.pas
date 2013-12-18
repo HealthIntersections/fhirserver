@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v0.12 generated Sun, Dec 15, 2013 15:55+1100
+// FHIR v0.12 generated Wed, Dec 18, 2013 15:06+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -1036,7 +1036,9 @@ Type
     FilterOperatorEqual, {@enum.value FilterOperatorEqual The property value has the concept specified by the value. }
     FilterOperatorIsA, {@enum.value FilterOperatorIsA The property value has a concept that has an is-a relationship with the value. }
     FilterOperatorIsNotA, {@enum.value FilterOperatorIsNotA The property value has a concept that does not have an is-a relationship with the value. }
-    FilterOperatorRegex); {@enum.value FilterOperatorRegex The property value representation matches the regex specified in the value. }
+    FilterOperatorRegex, {@enum.value FilterOperatorRegex The property value representation matches the regex specified in the value. }
+    FilterOperatorIn, {@enum.value FilterOperatorIn The property value is in the set of codes or concepts identified by the value. }
+    FilterOperatorNotIn); {@enum.value FilterOperatorNotIn The property value is not in the set of codes or concepts identified by the value. }
   TFhirFilterOperatorList = set of TFhirFilterOperator;
 
 Type
@@ -5320,7 +5322,7 @@ Const
   CODES_TFhirObjectRole : Array[TFhirObjectRole] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24');
   CODES_TFhirObjectLifecycle : Array[TFhirObjectLifecycle] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15');
   CODES_TFhirHierarchicalRelationshipType : Array[TFhirHierarchicalRelationshipType] of String = ('', 'parent', 'child');
-  CODES_TFhirFilterOperator : Array[TFhirFilterOperator] of String = ('', '=', 'is-a', 'is-not-a', 'regex');
+  CODES_TFhirFilterOperator : Array[TFhirFilterOperator] of String = ('', '=', 'is-a', 'is-not-a', 'regex', 'in', 'not in');
 
 Function TFhirNarrativeStatusListAsInteger(aSet : TFhirNarrativeStatusList) : Integer; overload;
 Function IntegerAsTFhirNarrativeStatusList(i : integer) : TFhirNarrativeStatusList; overload;
@@ -5981,7 +5983,7 @@ end;
 procedure TFhirDateTime.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirDateTime(oSource).Value;
+  FValue := TFhirDateTime(oSource).Value.Link;
 end;
 
 function TFhirDateTime.Link : TFhirDateTime;
@@ -6120,7 +6122,7 @@ end;
 procedure TFhirDate.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirDate(oSource).Value;
+  FValue := TFhirDate(oSource).Value.Link;
 end;
 
 function TFhirDate.Link : TFhirDate;
@@ -6944,7 +6946,7 @@ end;
 procedure TFhirInstant.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirInstant(oSource).Value;
+  FValue := TFhirInstant(oSource).Value.Link;
 end;
 
 function TFhirInstant.Link : TFhirInstant;

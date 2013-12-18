@@ -40,11 +40,13 @@ uses
   LoincServices, SnomedServices;
 
 const
-  UPPER_LIMIT = 20000;
+  UPPER_LIMIT = 10000;
+  // won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
+
 
 Type
-  TCodeSystemProviderContext = TObject;
-  TCodeSystemProviderFilterContext = TObject;
+  TCodeSystemProviderContext = TAdvObject;
+  TCodeSystemProviderFilterContext = TAdvObject;
 
   TCodeSystemProvider = {abstract} class (TAdvObject)
   public
@@ -59,10 +61,12 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
     function Display(context : TCodeSystemProviderContext) : string; virtual; abstract;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean;
+
     function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; virtual; abstract;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; virtual; abstract;
     function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; virtual; abstract;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; virtual; abstract;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); virtual; abstract;
   end;
 
@@ -85,6 +89,7 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
   end;
 
@@ -93,6 +98,9 @@ Type
     FSnomed: TSnomedServices;
     function GetPN(iDescriptions: TCardinalArray): String;
     function GetFSN(iDescriptions: TCardinalArray): String;
+    function buildValueSet(id : String) : TFhirValueSet;
+    function filterIn(id : Int64): TCodeSystemProviderFilterContext;
+    function filterIsA(id : Int64): TCodeSystemProviderFilterContext;
   public
     constructor create; override;
     function TotalCount : integer; override;
@@ -110,6 +118,7 @@ Type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
   end;
 
   TUcumProvider = class (TCodeSystemProvider)
@@ -128,6 +137,7 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
   end;
 
@@ -150,6 +160,7 @@ Type
     function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; override;
     function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
@@ -191,6 +202,7 @@ Type
     destructor destroy; override;
 
     function expand(source : TFHIRValueSet) : TFHIRValueSet;
+    function isKnownValueSet(id : String; out vs : TFHIRValueSet): Boolean;
   end;
 
   TValueSetChecker = class (TValueSetWorker)
@@ -286,8 +298,6 @@ begin
     if (source.compose <> nil) then
       handleCompose(list, map, source.compose);
 
-    if (map.Count > UPPER_LIMIT) then
-      raise Exception.create('Value set size of '+inttostr(map.count)+' exceeds upper limit of '+inttostr(UPPER_LIMIT));
 
     for i := 0 to list.count - 1 do
     begin
@@ -365,6 +375,9 @@ var
   n : TFHIRValueSetExpansionContains;
   s : String;
 begin
+    if (map.Count > UPPER_LIMIT) then
+      raise Exception.create('Value set size of '+inttostr(map.count)+' exceeds upper limit of '+inttostr(UPPER_LIMIT));
+
   n := TFHIRValueSetExpansionContains.create;
   try
     n.SystemST := system;
@@ -421,8 +434,9 @@ var
   cs : TCodeSystemProvider;
   i, j : integer;
   fc : TFhirValueSetComposeIncludeFilter;
-  ctxt : TCodeSystemProviderFilterContext;
   c : TCodeSystemProviderContext;
+  filters : Array of TCodeSystemProviderFilterContext;
+  ok : boolean;
 begin
   cs := getCodeSystemProvider(cset);
   try
@@ -437,30 +451,49 @@ begin
     for i := 0 to cset.codeList.count - 1 do
       addCode(list, map, cs.system, cset.codeList[i].value, cs.getDisplay(cset.codeList[i].value));
 
-    for i := 0 to cset.filterList.count - 1 do
+    if cset.filterList.Count > 0 then
     begin
-      fc := cset.filterList[i];
-      if ('concept' = fc.property_ST) and (fc.OpST = FilterOperatorIsA) then
-        addCodeAndDescendents(list, map, cs, cs.locate(fc.valueST))
-      else
+      SetLength(filters, cset.filterList.count);
+      for i := 0 to cset.filterList.count - 1 do
       begin
-        ctxt := cs.filter(fc.property_ST, fc.OpST, fc.valueST);
-        if ctxt = nil then
+        fc := cset.filterList[i];
+        filters[i] := cs.filter(fc.property_ST, fc.OpST, fc.valueST);
+        if filters[i] = nil then
           raise Exception.create('The filter "'+fc.property_ST +' '+ CODES_TFhirFilterOperator[fc.OpST]+ ' '+fc.valueST+'" was not understood in the context of '+cs.system);
-        try
-          for j := 0 to cs.FilterCount(ctxt) - 1 do
-          begin
-            c := cs.FilterConcept(ctxt, j);
-            addCode(list, map, cs.system, cs.code(c), cs.display(c));
-          end;
-        finally
-          cs.close(ctxt);
-        end;
       end;
+
+      for j := 0 to cs.FilterCount(filters[0]) - 1 do
+      begin
+        c := cs.FilterConcept(filters[0], j);
+        ok := true;
+        for i := 1 to length(filters) - 1 do
+          ok := ok and cs.InFilter(filters[i], c);
+        if ok then
+          addCode(list, map, cs.system, cs.code(c), cs.display(c));
+      end;
+      for i := 0 to cset.filterList.count - 1 do
+        cs.Close(cset.filterList[i]);
     end;
   finally
     cs.free;
   end;
+end;
+
+function TFHIRValueSetExpander.isKnownValueSet(id: String; out vs: TFHIRValueSet): Boolean;
+var
+  svc : TSnomedProvider;
+begin
+  vs := nil;
+  if id.StartsWith('http://snomed.info/') then
+  begin
+    svc := TSnomedProvider.Create;
+    try
+      vs := svc.buildValueSet(id);
+    finally
+      svc.Free;
+    end;
+  end;
+  result := vs <> nil;
 end;
 
 procedure TFHIRValueSetExpander.excludeCodes(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude);
@@ -561,6 +594,11 @@ type
     function HasChild(v : integer) : boolean;
   end;
 
+function TLoincProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+begin
+  result := THolder(ctxt).HasChild(integer(concept));
+end;
+
 function THolder.HasChild(v : integer) : boolean;
 var
   i : integer;
@@ -620,7 +658,7 @@ end;
 
 function TLoincProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
 begin
-  result := TObject(THolder(ctxt).children[ndx]);
+  result := TAdvObject(THolder(ctxt).children[ndx]);
 end;
 
 function TLoincProvider.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
@@ -646,6 +684,60 @@ begin
 end;
 
 { TSnomedProvider }
+
+function TSnomedProvider.buildValueSet(id : String): TFhirValueSet;
+var
+  inc : TFhirValueSetComposeInclude;
+  filt :  TFhirValueSetComposeIncludeFilter;
+begin
+  if id.StartsWith('http://snomed.info/sct/') And FSnomed.ReferenceSetExists(id.Substring(23)) then
+  begin
+    result := TFhirValueSet.Create;
+    try
+      result.identifierST := id;
+      result.versionST := FSnomed.Version;
+      result.nameST := 'SNOMED CT Reference Set '+id.Substring(23);
+      result.descriptionST := FSnomed.GetDisplayName(id.Substring(23), '');
+      result.statusST := ValuesetStatusActive;
+      result.dateST := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.systemST := 'http://snomed.info/sct';
+      filt := inc.filterList.Append;
+      filt.property_ST := 'concept';
+      filt.opST := FilterOperatorIn;
+      filt.valueST := id.Substring(23);
+      result.link;
+    finally
+      result.free;
+    end;
+  end
+  else if id.StartsWith('http://snomed.info/id/') And FSnomed.ConceptExists(id.Substring(22)) then
+  begin
+    result := TFhirValueSet.Create;
+    try
+      result.identifierST := id;
+      result.versionST := FSnomed.Version;
+      result.nameST := 'SNOMED CT Concept '+id.Substring(22)+' and descendents';
+      result.descriptionST := 'All Snomed CT concepts for '+FSnomed.GetDisplayName(id.Substring(22), '');
+      result.statusST := ValuesetStatusActive;
+      result.dateST := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.systemST := 'http://snomed.info/sct';
+      filt := inc.filterList.Append;
+      filt.property_ST := 'concept';
+      filt.opST := FilterOperatorIsA;
+      filt.valueST := id.Substring(22);
+      result.link;
+    finally
+      result.free;
+    end;
+  end
+  else
+    result := nil;
+
+end;
 
 function TSnomedProvider.ChildCount(context: TCodeSystemProviderContext): integer;
 var
@@ -775,24 +867,13 @@ begin
 End;
 
 function TSnomedProvider.Display(context: TCodeSystemProviderContext): string;
-var
-  Identity : int64;
-  Flags : Byte;
-  ParentIndex : Cardinal;
-  DescriptionIndex : Cardinal;
-  InboundIndex : Cardinal;
-  outboundIndex, refsets : Cardinal;
-  date : TSnomedDate;
-  Descriptions : TCardinalArray;
 begin
-  FSnomed.Concept.GetConcept(Cardinal(context), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
-  Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);
-  result := getPn(Descriptions);
+  result := FSnomed.GetDisplayName(Cardinal(context), 0);
 end;
 
 function TSnomedProvider.getDisplay(code: String): String;
 var
-  ctxt : TObject;
+  ctxt : TAdvObject;
 begin
   ctxt := locate(code);
   if (ctxt = nil) then
@@ -828,32 +909,92 @@ begin
   result := FSnomed.Concept.Count;
 end;
 
+type
+  TSnomedFilterContext = class (TCodeSystemProviderFilterContext)
+    members : TSnomedReferenceSetMemberArray;
+    descendents : TCardinalArray;
+  end;
+
 procedure TSnomedProvider.Close(ctxt: TCodeSystemProviderFilterContext);
 begin
-  raise Exception.Create('to do');
+  TSnomedFilterContext(ctxt).free;
+end;
+
+function TSnomedProvider.filterIsA(id : Int64): TCodeSystemProviderFilterContext;
+var
+  res : TSnomedFilterContext;
+  index : cardinal;
+begin
+  res := TSnomedFilterContext.Create;
+  try
+    if not FSnomed.Concept.FindConcept(id, index) then
+      raise Exception.Create('The Snomed Concept '+inttostr(id)+' was not known');
+    res.descendents := FSnomed.GetConceptDescendents(index);
+    result := TSnomedFilterContext(res.link);
+  finally
+    res.Free;
+  end;
+end;
+
+function TSnomedProvider.filterIn(id : Int64): TCodeSystemProviderFilterContext;
+var
+  res : TSnomedFilterContext;
+  index, members : cardinal;
+begin
+  res := TSnomedFilterContext.Create;
+  try
+    if not FSnomed.Concept.FindConcept(id, index) then
+      raise Exception.Create('The Snomed Concept '+inttostr(id)+' was not known');
+    if FSnomed.GetConceptRefSet(index, true, members) = 0 then
+      raise Exception.Create('The Snomed Concept '+inttostr(id)+' is not a reference set');
+    res.members := FSnomed.RefSetMembers.GetMembers(members);
+    result := TSnomedFilterContext(res.link);
+  finally
+    res.Free;
+  end;
 end;
 
 function TSnomedProvider.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+var
+  id : Int64;
 begin
   result := nil;
+  if (prop = 'concept') and FSnomed.StringIsId(value, id) then
+    if op = FilterOperatorIsA then
+      result := filterIsA(id)
+    else if op = FilterOperatorIn then
+      result := filterIn(id);
 end;
 
 function TSnomedProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
 begin
-  result := nil;
-  raise Exception.Create('to do');
+  if Length(TSnomedFilterContext(ctxt).members) > 0 then
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).Members[ndx].Ref)
+  else
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).descendents[ndx]);
+end;
+
+function TSnomedProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+var
+  index : integer;
+begin
+  if Length(TSnomedFilterContext(ctxt).members) > 0 then
+    result := FindMember(TSnomedFilterContext(ctxt).Members, Cardinal(concept), index)
+  else
+    result := FindCardinalInArray(TSnomedFilterContext(ctxt).descendents, Cardinal(concept), index)
 end;
 
 function TSnomedProvider.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
 begin
-  result := 0;
-  raise Exception.Create('to do');
+  if Length(TSnomedFilterContext(ctxt).members) > 0 then
+    result := Length(TSnomedFilterContext(ctxt).members)
+  else
+    result := Length(TSnomedFilterContext(ctxt).descendents);
 end;
 
 function TSnomedProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
 begin
-  result := nil;
-  raise Exception.Create('to do');
+//  result := TSnomedFilterContext(ctxt).Members[;
 end;
 
 function TSnomedProvider.locateIsA(code, parent: String): TCodeSystemProviderContext;
@@ -862,7 +1003,7 @@ var
 begin
   if FSnomed.Concept.FindConcept(FSnomed.StringToId(parent), ip) And
        FSnomed.Concept.FindConcept(FSnomed.StringToId(code), ic) And FSnomed.Subsumes(ip, ic) then
-    result := TObject(ic)
+    result := TAdvObject(ic)
   else
     result := nil;
 end;
@@ -896,6 +1037,12 @@ end;
 function TUcumProvider.getDisplay(code: String): String;
 begin
   result := '';
+  raise Exception.Create('to do');
+end;
+
+function TUcumProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+begin
+  result := false;
   raise Exception.Create('to do');
 end;
 
@@ -995,6 +1142,11 @@ begin
     result := TFhirValueSetDefineConcept(context).displayST;
 end;
 
+function TValueSetProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+begin
+  raise Exception.create('called in error');
+end;
+
 function TValueSetProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
   result := (TFhirValueSetDefineConcept(context).abstract = nil) or not TFhirValueSetDefineConcept(context).abstractST;
@@ -1002,7 +1154,7 @@ end;
 
 function TValueSetProvider.getDisplay(code: String): String;
 var
-  ctxt : TObject;
+  ctxt : TAdvObject;
 begin
   ctxt := locate(code);
   if (ctxt = nil) then

@@ -194,7 +194,11 @@ uses
   AnsiStringBuilder in '..\Libraries\support\AnsiStringBuilder.pas',
   AdvIntegerMatches in '..\Libraries\support\AdvIntegerMatches.pas',
   SnomedPublisher in '..\Libraries\snomed\SnomedPublisher.pas',
-  SnomedExprssions in '..\Libraries\snomed\SnomedExprssions.pas';
+  SnomedExpressions in '..\Libraries\snomed\SnomedExpressions.pas',
+  FhirServerTests in 'FhirServerTests.pas',
+  HTMLPublisher in '..\Libraries\support\HTMLPublisher.pas',
+  LoincImporter in '..\Libraries\loinc\LoincImporter.pas',
+  LoincPublisher in '..\Libraries\loinc\LoincPublisher.pas';
 
 begin
   try
@@ -204,3 +208,5 @@ begin
       Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
+
+

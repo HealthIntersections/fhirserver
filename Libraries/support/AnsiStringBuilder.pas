@@ -91,6 +91,7 @@ type
   TAnsiCharSet = set of AnsiChar;
 
 Function AnsiStringSplit(Const sValue : AnsiString; Const aDelimiters : TAnsiCharSet; Var sLeft, sRight: AnsiString) : Boolean;
+Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiChar; APadLeft: Boolean): AnsiString;
 
 Implementation
 
@@ -425,6 +426,23 @@ Begin
   sLeft := sA;
   sRight := sB;
 End;
+
+
+function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiChar; APadLeft: Boolean): AnsiString;
+begin
+  if Length(AStr) >= AWidth then
+    Result := AStr
+  else
+    begin
+    SetLength(Result, AWidth);
+    FillChar(Result[1], AWidth, APadChar);
+    if AStr <> '' then
+      if APadLeft then
+        Move(AStr[1], Result[(AWidth - Length(AStr)) + 1], Length(AStr))
+      else
+        Move(AStr[1], Result[1], Length(AStr))
+    end;
+end;
 
 
 End.

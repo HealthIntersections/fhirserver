@@ -37,14 +37,15 @@ Uses
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams,
 
-  kCritSct, ParseMap, TextUtilities, KDBManager,
+  kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher,
   DCPsha256,
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdSoapMime, IdCookie,
   IdSoapTestingUtils,
 
-  SnomedServices, SnomedPublisher, SnomedExprssions,
+  SnomedServices, SnomedPublisher, SnomedExpressions,
+  LoincServices, LoincPublisher,
 
   fhirbase,
   FHIRTypes,
@@ -100,8 +101,6 @@ Type
     FSSLServer : TIdHTTPServer;
     FIOHandler: TIdServerIOHandlerSSLOpenSSL;
 
-    FClientLock : TCriticalSection;
-    FClients : TAdvObjectList;
     FClientCount : Integer;
 
     FFhirStore : TFHIRDataStore;
@@ -138,6 +137,7 @@ Type
     Procedure SecureRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; AResponseInfo: TIdHTTPResponseInfo);
+    Procedure HandleLoincRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     Procedure HandleSnomedRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     function processSnomedForTool(snomed : TSnomedServices; code : String) : String;
     function extractFileData(const request : TStream; const contentType, name: String; var sContentType : String; var params : String): TStream;
@@ -242,12 +242,12 @@ Begin
   FName := Name;
   FIni := TIniFile.Create(ini);
   FLoginTokens := TStringList.create;
-  writeln('Load & Cache Store');
+  write('Load & Cache Store: ');
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
 
   FFhirStore := TFHIRDataStore.Create(db, FSpecPath, FAltPath);
-
+  writeln(inttostr(FFhirStore.TotalResourceCount)+' resources');
   // Basei Web server configuration
   FBasePath := FIni.ReadString('web', 'base', '');
   FSecurePath := FIni.ReadString('web', 'secure', '');
@@ -420,7 +420,7 @@ begin
   if (Length(id) > 36) then
     Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [id]), HTTP_ERR_BAD_REQUEST);
   for i := 1 to length(id) do
-    if not (id[i] in ['a'..'z', '0'..'9', 'A'..'Z', '.', '-']) then
+    if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-']) then
       Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_INVALID', lang), [id, id[i]]), HTTP_ERR_BAD_REQUEST);
 end;
 
@@ -455,6 +455,8 @@ begin
     ReturnProcessedFile(AResponseInfo, '/hompage.html', AltFile('/homepage.html'))
   else if ARequestInfo.Document.StartsWith('/snomed') and (GSnomeds <> nil) then
     HandleSnomedRequest(AContext, ARequestInfo, AResponseInfo)
+  else if ARequestInfo.Document.StartsWith('/loinc') and (GLOINCs <> nil) then
+    HandleLoincRequest(AContext, ARequestInfo, AResponseInfo)
   else
   begin
     AResponseInfo.ResponseNo := 404;
@@ -507,13 +509,10 @@ var
   sHost : string;
   oRequest : TFHIRRequest;
   oResponse : TFHIRResponse;
-  sContent : String;
   sCookie : string;
   sContentType : String;
-  sType : String;
   oStream : TStream;
   sDoc : String;
-  profileparam : String;
   s : String;
   aFormat : TFHIRFormat;
   lang : String;
@@ -592,7 +591,7 @@ Begin
             begin
               AResponseInfo.ResponseNo := 200;
               AResponseInfo.ContentType := 'text/html';
-              AResponseInfo.CustomHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
+// no - just use *              AResponseInfo.CustomHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
               AResponseInfo.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, DELETE');
               AResponseInfo.FreeContentStream := true;
               AResponseInfo.ContentStream := StringToUTFStream('OK');
@@ -611,8 +610,8 @@ Begin
                   raise;
               end;
               ProcessOutput(oRequest, oResponse, AResponseInfo);
-              if ARequestInfo.RawHeaders.Values['Origin'] <> '' then
-                AResponseInfo.CustomHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
+// no - just use *              if ARequestInfo.RawHeaders.Values['Origin'] <> '' then
+//                 AResponseInfo.CustomHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
               AResponseInfo.ETag := oResponse.versionId;
               AResponseInfo.LastModified := oResponse.lastModifiedDate; // todo: timezone
               if oResponse.Categories.count > 0 then
@@ -741,6 +740,48 @@ begin
         html.BaseURL := '/snomed/doco/';
         html.Lang := ARequestInfo.AcceptLanguage;
         pub.PublishDict(code, '/snomed/doco/', html);
+        AResponseInfo.ContentText := html.output;
+        AResponseInfo.ResponseNo := 200;
+      finally
+        html.free;
+        pub.free;
+      end;
+    except
+      on e:exception do
+      begin
+        AResponseInfo.ResponseNo := 500;
+        AResponseInfo.ContentText := 'error:'+EncodeXML(e.Message);
+      end;
+    end;
+  end
+  else
+  begin
+    AResponseInfo.ResponseNo := 404;
+    AResponseInfo.ContentText := 'Document '+ARequestInfo.Document+' not found';
+    writeln('miss: '+ARequestInfo.Document);
+  end;
+end;
+
+procedure TFhirWebServer.HandleLoincRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+var
+  code : String;
+  pub : TLoincPublisher;
+  html : THtmlPublisher;
+  loinc : TLoincServices;
+begin
+  loinc := GLoincs.DefaultService;
+  if ARequestInfo.Document.StartsWith('/loinc/doco/')  then
+  begin
+    code := ARequestInfo.UnparsedParams;
+    writeln('Loinc Doco: '+code);
+
+    try
+      html := THtmlPublisher.Create;
+      pub := TLoincPublisher.create(loinc);
+      try
+        html.BaseURL := '/loinc/doco/';
+        html.Lang := ARequestInfo.AcceptLanguage;
+        pub.PublishDict(code, '/loinc/doco/', html);
         AResponseInfo.ContentText := html.output;
         AResponseInfo.ResponseNo := 200;
       finally
@@ -1419,7 +1460,6 @@ end;
 procedure TFhirWebServer.ProcessRequest(request: TFHIRRequest; response: TFHIRResponse);
 var
   store : TFhirOperation;
-  conn : TKDBConnection;
 begin
   store := TFhirOperation.Create(request.Lang, FFhirStore.Link);
   try
@@ -1519,7 +1559,7 @@ var
   s : String;
   names : TStringList;
   profiles : TAdvStringMatch;
-  i, j, k : integer;
+  i, j : integer;
   cmp : String;
   b : TStringBuilder;
 begin
@@ -2062,7 +2102,6 @@ end;
 procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; named, path: String);
 var
   s : String;
-  b : TBytesStream;
 begin
   writeln('script: '+named);
   s := FileToString(path, TEncoding.UTF8);
@@ -2120,7 +2159,6 @@ function TFhirWebServer.BuildCompartmentList(user: TFHIRUserStructure): String;
   end;
 var
   i : integer;
-  list : TStringList;
 begin
   result := ''''+tail(user.resource.patientList[0])+'''';
   for i := 1 to user.resource.patientList.count - 1 do

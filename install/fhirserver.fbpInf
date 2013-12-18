@@ -2,7 +2,12 @@
   <watches/>
   <collapsedNodes></collapsedNodes>
   <breakpoints></breakpoints>
-  <actions/>
+  <actions>
+    <action id="{72C9D6E0-492C-43F7-8D8F-09F2677C9A85}">
+      <Description>Compile the Server</Description>
+      <BuildVersion>0</BuildVersion>
+    </action>
+  </actions>
   <propertysets/>
   <variables/>
   <properties>
@@ -10,8 +15,8 @@
     <Notes>
       <![CDATA[]]>
     </Notes>
-    <LastBuildRun>00:00:00</LastBuildRun>
-    <LastBuildStart>15/12/2013 4:17:04 PM</LastBuildStart>
-    <LastBuildState>False</LastBuildState>
+    <LastBuildRun>00:03:01</LastBuildRun>
+    <LastBuildStart>17/12/2013 5:04:53 PM</LastBuildStart>
+    <LastBuildState>True</LastBuildState>
   </properties>
 </project>

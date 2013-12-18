@@ -182,6 +182,7 @@ Type
     Public
       function Count : Cardinal;
       Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : Int64; var date : TSnomedDate; var concept, module, kind, refsets : Cardinal; var iFlags : Byte);
+      function ConceptByIndex(iIndex : Cardinal) : cardinal;
 
 
       Procedure StartBuild;
@@ -382,7 +383,6 @@ operations
     FStems : TSnomedStems;
     FVersion : String;
     FLoaded: Boolean;
-    FKey: integer;
 
   //  Function FindWord(s : String; var index : Integer) : Boolean;
     Function FindStem(s : AnsiString; var index : Integer) : Boolean;
@@ -393,6 +393,12 @@ operations
     Procedure Load(Const sFilename : String);
     Procedure Save(Const sFilename : String);
 
+    // helper functions
+    Function StringToId(Const s : String) : Int64;
+    Function StringToIdOrZero(Const s : AnsiString) : Int64;
+    Function StringIsId(Const s : AnsiString; var iId : Int64) : Boolean;
+
+    // direct access to the raw data
     Property Strings : TSnomedStrings read FStrings;
     Property Words : TSnomedWords Read FWords;
     Property Stems : TSnomedStems Read FStems;
@@ -404,32 +410,34 @@ operations
     Property RefSetMembers : TSnomedReferenceSetMembers read FRefsetMembers;
     Property DescRef : TSnomedDescriptionIndex read FDescRef;
 
+    // low level access for service providers
     Property ActiveRoots : Int64Array read FActiveRoots write FActiveRoots;
     Property InactiveRoots : Int64Array read FInActiveRoots write FInActiveRoots;
     Property Is_a_Index : Cardinal read FIs_a_Index write FIs_a_Index;
-    Function StringToId(Const s : AnsiString) : Int64;
-    Function StringToIdOrZero(Const s : AnsiString) : Int64;
-    Function StringIsId(Const s : AnsiString; var iId : Int64) : Boolean;
-    Function Subsumes(Const sParent, sChild : AnsiString) : Boolean; Overload;
     function Subsumes(iParent, iChild: Cardinal): Boolean; Overload;
-    Function Search(iRoot : Int64; sText : AnsiString; iLang : Cardinal; bInactive : Boolean) : TMatchArray;
-    Function IsValidConcept(Const sTerm : AnsiString):Boolean;
-    Function IsValidDescription(Const sTerm : AnsiString; var concept : int64; var description : String):Boolean;
-    Function GetDisplayName(Const sTerm, sLangSet : AnsiString) : AnsiString; Overload;
     Function GetDisplayName(Const iConcept, iLang : Cardinal) : AnsiString; Overload;
-    Procedure ListDisplayNames(list : TStringList; Const sTerm, sLangSet : AnsiString; FlagMask : Byte); Overload;
     Procedure ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
-
     Function GetConceptId(Const iConcept : Cardinal) : AnsiString; Overload;
     Procedure GetMatchInfo(iConcept : Cardinal; var sTerm, sFSN, sPreferred : AnsiString);
     Function GetConceptRefSet(iConcept : Cardinal; bByName : Boolean; var iMembers : cardinal) : Cardinal;
     Function GetDescRefsets(iDesc : Cardinal) : TCardinalArray;
     Function GetConceptRefsets(iDesc : Cardinal) : TCardinalArray;
     Function CheckLangSet(sTerm : AnsiString) : Cardinal;
+    function GetConceptDescendents(index : Cardinal) : TCardinalArray;
 
+    // simplified interface for consumers
+    Function ConceptExists(conceptId : String) : Boolean;
+    Function Subsumes(Const sParent, sChild : AnsiString) : Boolean; Overload;
+    Function Search(iRoot : Int64; sText : AnsiString; iLang : Cardinal; bInactive : Boolean) : TMatchArray;
+    Function IsValidConcept(Const sTerm : String):Boolean;
+    Function IsValidDescription(Const sTerm : AnsiString; var concept : int64; var description : String):Boolean;
+    Function GetDisplayName(Const sTerm, sLangSet : AnsiString) : AnsiString; Overload;
+    Procedure ListDisplayNames(list : TStringList; Const sTerm, sLangSet : AnsiString; FlagMask : Byte); Overload;
+    function ReferenceSetExists(sid : String) : Boolean;
+
+    // status stuff
     Property Loaded : Boolean read FLoaded write FLoaded;
     Property Version : String read FVersion write FVersion;
-    Property Key : integer read FKey write FKey;
   End;
 
   TSnomedServiceList = class (TAdvObjectList)
@@ -442,7 +450,6 @@ operations
   Public
     Destructor Destroy; Override;
 
-    Function GetByKey(sKey : AnsiString) : TSnomedServices;
     Function GetDefinitionByName(sName : AnsiString) : TSnomedServices;
 
     Property DefaultDefinition : TSnomedServices Read FDefinition write SetDefinition;
@@ -466,7 +473,8 @@ members
   attribute - cardinal (0r 0 is one is not specified)
 
 }
-function FindMember(aMembers : TSnomedReferenceSetMemberArray; iRef : Cardinal; var iIndex: Cardinal): boolean;
+function FindMember(aMembers : TSnomedReferenceSetMemberArray; iRef : Cardinal; var iIndex: integer): boolean;
+function FindCardinalInArray(a : TCardinalArray; iValue : Cardinal; var iIndex : Integer):Boolean;
 
 Implementation
 
@@ -526,6 +534,8 @@ begin
       Raise Exception.Create('Wrong length index getting Snomed list');
     move(FMaster[iIndex], c, 4);
     SetLength(Result, c);
+    if (iIndex + 4 + length(result) * 4 > FLength) then
+      Raise Exception.Create('Wrong length index getting Snomed list (2)');
     inc(iIndex, 4);
     for i := 0 to Length(result)-1 Do
     Begin
@@ -595,6 +605,13 @@ begin
   FBuilder.AddCardinalAsBytes(kind);
   FBuilder.AddWordAsBytes(date);
   FBuilder.AddCardinalAsBytes(0); // refsets
+end;
+
+function TSnomedDescriptions.ConceptByIndex(iIndex: Cardinal): cardinal;
+begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index getting snomed Desc Details');
+  Move(FMaster[iIndex+13], result, 4);
 end;
 
 function TSnomedDescriptions.Count: Cardinal;
@@ -931,6 +948,15 @@ begin
   Loaded := true;
 end;
 
+function TSnomedServices.ReferenceSetExists(sid: String): Boolean;
+var
+  index, members : Cardinal;
+begin
+  result := FConcept.FindConcept(StringToId(sid), index);
+  if result then
+    result := GetConceptRefSet(index, true, members) > 0;
+end;
+
 procedure TSnomedServices.Save(const sFilename: String);
 var
   oFile : Tfilestream;
@@ -986,7 +1012,7 @@ Begin
   Begin
     I := (L + H) Shr 1;
 
-    If a[i] > iValue Then
+    If a[i] < iValue Then
       L := I + 1
     Else
     Begin
@@ -1241,14 +1267,29 @@ var
   iParent : Cardinal;
   iChild : Cardinal;
 begin
-  Result := Concept.FindConcept(StringToId(sParent), iParent) And
-    Concept.FindConcept(StringToId(sChild), iChild);
-  if Result Then
-    result := Subsumes(iParent, iChild);
+  Result := Concept.FindConcept(StringToId(sParent), iParent);
+  if not result then
+  begin
+    result := DescRef.FindDescription(StringToId(sParent), iParent);
+    if result then
+      iParent := Desc.ConceptByIndex(iParent);
+  end;
+  if result then
+  begin
+    Result := Concept.FindConcept(StringToId(sChild), iChild);
+    if not result then
+    begin
+      result := DescRef.FindDescription(StringToId(sChild), iChild);
+      if result then
+        iChild := Desc.ConceptByIndex(iChild);
+    end;
+    if Result Then
+      result := Subsumes(iParent, iChild);
+  end;
 end;
 
 
-function FindMember(aMembers : TSnomedReferenceSetMemberArray; iRef : Cardinal; var iIndex: Cardinal): boolean;
+function FindMember(aMembers : TSnomedReferenceSetMemberArray; iRef : Cardinal; var iIndex: integer): boolean;
 var
   L, H, I: Integer;
   c : Int64;
@@ -1288,6 +1329,7 @@ var
   Inbounds : Cardinal;
   outbounds : Cardinal;
   iDesc, iDummy, module, kind, refsets : Cardinal;
+  iInt : integer;
   date : TSnomedDate;
   aMembers : TSnomedReferenceSetMemberArray;
   iList : TCardinalArray;
@@ -1302,7 +1344,7 @@ begin
   For iLoop := 0 to High(descs) Do
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
-    if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iDummy))) Then
+    if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iint))) Then
       result := Strings.GetEntry(iDesc);
   End;
   // ok, didn't find an active preferred term in the language of preference. Let's try for any term in the language
@@ -1310,7 +1352,7 @@ begin
     For iLoop := 0 to High(descs) Do
     Begin
       Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
-      if (Flags and MASK_DESC_STATUS = FLAG_Active) And (FindMember(aMembers, descs[iLoop], iDummy)) Then
+      if (Flags and MASK_DESC_STATUS = FLAG_Active) And (FindMember(aMembers, descs[iLoop], iInt)) Then
         result := Strings.GetEntry(iDesc);
     End;
   // if we still haven't found, then any preferred term
@@ -1359,6 +1401,7 @@ var
   Parents, Descriptions, Inbounds, outbounds, refsets : Cardinal;
   Descs : TCardinalArray;
   iDesc, iDummy, module, kind : Cardinal;
+  iInt : Integer;
   date : TSnomedDate;
 begin
   if iLang <> 0 then
@@ -1368,7 +1411,7 @@ begin
   For iLoop := 0 to High(descs) Do
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
-    if ((Flags and flagMask > 0) or (flagMask = $FF))  And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iDummy))) Then
+    if ((Flags and flagMask > 0) or (flagMask = $FF))  And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
       list.add(Strings.GetEntry(iDesc));
   End;
 end;
@@ -1438,6 +1481,13 @@ begin
   index := L;
 end;
     }
+function TSnomedServices.ConceptExists(conceptId: String): Boolean;
+var
+  i : cardinal;
+begin
+  result := FConcept.FindConcept(StringToIdOrZero(conceptId), i);
+end;
+
 function TSnomedServices.FindStem(s: AnsiString; var index: Integer): Boolean;
 var
   L, H, I, c: Integer;
@@ -1494,7 +1544,7 @@ var
   iDefinition, iMembersByRef, iMembersByName: Cardinal;
   bDescSet : Boolean;
   aMembers : TSnomedReferenceSetMemberArray;
-  iDummy : Cardinal;
+  iDummy : Integer;
 begin
   SetLength(result, 0);
   SetLength(aMembers, 0);
@@ -1515,7 +1565,7 @@ var
   i : integer;
   iDefinition, iMembersByRef, iMembersByName: Cardinal;
   aMembers : TSnomedReferenceSetMemberArray;
-  iDummy : Cardinal;
+  iDummy : Integer;
 begin
   SetLength(result, 0);
   SetLength(aMembers, 0);
@@ -1537,7 +1587,7 @@ begin
   result := iId > -1;
 end;
 
-function TSnomedServices.StringToId(const s: AnsiString): Int64;
+function TSnomedServices.StringToId(const s: String): Int64;
 begin
   result := StrToInt64(s);
 end;
@@ -1554,6 +1604,11 @@ begin
     if result = 0 Then
       Raise Exception.Create('Unable to resolve the language reference set '+sTerm);
   End
+end;
+
+function TSnomedServices.GetConceptDescendents(index: Cardinal): TCardinalArray;
+begin
+  result := FRefs.GetReferences(FConcept.GetAllDesc(index));
 end;
 
 function TSnomedServices.GetConceptId(const iConcept : Cardinal): AnsiString;
@@ -1575,7 +1630,7 @@ begin
     result := StrToInt64(s);
 end;
 
-function TSnomedServices.IsValidConcept(const sTerm: AnsiString): Boolean;
+function TSnomedServices.IsValidConcept(const sTerm: String): Boolean;
 var
   iTerm : Cardinal;
 begin
@@ -1734,23 +1789,6 @@ destructor TSnomedServiceList.Destroy;
 begin
   FDefinition.Free;
   inherited;
-end;
-
-function TSnomedServiceList.GetByKey(sKey: AnsiString): TSnomedServices;
-var
-  i, k : integer;
-begin
-  Result := nil;
-  i := 0;
-  k := StrToIntDef(sKey, 0);
-  While (i < Count) and (result = nil) do
-  Begin
-    if Definition[i].Key = k then
-      result := Definition[i];
-    inc(i);
-  End;
-  if result = nil then
-    result := DefaultDefinition;
 end;
 
 function TSnomedServiceList.GetDefinition(iIndex: Integer): TSnomedServices;

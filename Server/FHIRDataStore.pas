@@ -104,12 +104,12 @@ Type
     FDoAudit : Boolean;
     FSupportSystemHistory : Boolean;
     FBases : TStringList;
+    FTotalResourceCount: integer;
 
     procedure Sweep;
     procedure LoadExistingResources;
     procedure SaveSecurityEvent(se : TFhirSecurityEvent);
     procedure RecordFhirSession(session: TFhirSession);
-    function FhirRepositoryExists(const sName: String): boolean;
     procedure CloseFhirSession(key: integer);
 
   public
@@ -147,6 +147,8 @@ Type
     Property DoAudit : Boolean read FDoAudit;
     Property SupportSystemHistory : Boolean read FSupportSystemHistory;
     Property Bases : TStringList read FBases;
+    Property TotalResourceCount : integer read FTotalResourceCount;
+    Property ValuesetExpander : TFHIRValueSetExpander read FValuesetExpander;
   end;
 
 
@@ -397,28 +399,6 @@ begin
     end;
   end;
 
-end;
-
-
-function TFHIRDataStore.FhirRepositoryExists(const sName : String): boolean;
-var
-  conn : TKDBConnection;
-begin
-  conn := FDB.GetConnection('fhir');
-  try
-    conn.sql := 'Select IDName, IDValue from gwConfiguration where IDName like ''fhir-repos-%'' and IDValue = '''+SQLWrapString(sName)+'''';
-    conn.Prepare;
-    conn.Execute;
-    result := conn.FetchNext;
-    conn.terminate;
-    conn.Release;
-  except
-    on e:exception do
-    begin
-      conn.Error(e);
-      raise;
-    end;
-  end;
 end;
 
 
@@ -1085,10 +1065,10 @@ end;
 procedure TFHIRDataStore.LoadExistingResources;
 var
   conn : TKDBConnection;
-  cnt, cat : String;
   parser : TFHIRParser;
   stream : TStream;
   mem : TMemoryStream;
+  i : integer;
 begin
   conn := FDB.GetConnection('fhir');
   try
@@ -1098,9 +1078,11 @@ begin
       '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''Profile'' or Types.ResourceName = ''User'') and not Versions.Deleted = 1';
     conn.Prepare;
     try
+      i := 0;
       conn.execute;
       while conn.FetchNext do
       begin
+        inc(i);
         mem := conn.ColMemoryByName['Content'];
         mem.position := 0;
         mem.SaveToFile('c:\temp\text.xml');
@@ -1117,6 +1099,7 @@ begin
       conn.terminate;
     end;
     conn.Release;
+    FTotalResourceCount := i;
   except
     on e:exception do
     begin

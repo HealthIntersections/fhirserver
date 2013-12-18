@@ -31,7 +31,7 @@ unit FHIRParser;
 
 interface
 
-// FHIR v0.12 generated Sun, Dec 15, 2013 15:55+1100
+// FHIR v0.12 generated Wed, Dec 18, 2013 15:06+1100
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
@@ -5953,7 +5953,7 @@ begin
   begin
     json.valueArray('author');
     for i := 0 to elem.authorList.Count - 1 do
-      ComposeResourceReference{Resource}(json, '',elem.authorList[i]); {z - Resource(Practitioner|Device)}
+      ComposeResourceReference{Resource}(json, '',elem.authorList[i]); {z - Resource(Practitioner|Device|Patient|RelatedPerson)}
     json.FinishArray;
   end;
   if elem.attesterList.Count > 0 then
@@ -9801,7 +9801,7 @@ begin
   begin
     json.valueArray('author');
     for i := 0 to elem.authorList.Count - 1 do
-      ComposeResourceReference{Resource}(json, '',elem.authorList[i]); {z - Resource(Practitioner|Device)}
+      ComposeResourceReference{Resource}(json, '',elem.authorList[i]); {z - Resource(Practitioner|Device|Patient|RelatedPerson)}
     json.FinishArray;
   end;
   ComposeDateTimeValue(json, 'created', elem.created, false);
@@ -10342,7 +10342,7 @@ begin
   begin
     json.valueArray('author');
     for i := 0 to elem.authorList.Count - 1 do
-      ComposeResourceReference{Resource}(json, '',elem.authorList[i]); {z - Resource(Practitioner|Device)}
+      ComposeResourceReference{Resource}(json, '',elem.authorList[i]); {z - Resource(Practitioner|Device|Patient|RelatedPerson)}
     json.FinishArray;
   end;
   ComposeResourceReference{TFhirOrganization}(json, 'custodian', elem.custodian); {a}

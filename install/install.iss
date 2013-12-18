@@ -70,7 +70,7 @@ Source: "C:\work\fhirserver\install\readme.txt";                      DestDir: "
 Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "{app}";            Flags: ignoreversion;
 
 ; Executable file
-Source: "C:\work\fhirserver\Server\Win32\Debug\FHIRServer.exe";       DestDir: "{app}";            Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\FHIRServer.exe";       DestDir: "{app}";            Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
 
@@ -79,24 +79,27 @@ Source: "C:\work\fhirserver\web\*.*";                                 DestDir: "
 Source: "C:\work\org.hl7.fhir\build\publish\*.*";                     DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs; 
 
 ; Terminology resources
-Source: "C:\HL7Connect\v2\Deploy\RunTime\Data\ucum.cache";            DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\HL7Connect\v2\Deploy\RunTime\Data\dicom.cache";           DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\ucum.cache";                       DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\dicom.cache";                      DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\loinc.cache";                      DestDir: "{commonappdata}\FHIRServer"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
-Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\libssl32.dll";      DestDir: "{app}\ssl";      Flags: ignoreversion
-Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\libeay32.dll";      DestDir: "{app}\ssl";      Flags: ignoreversion
-Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\openssl.exe";       DestDir: "{app}\ssl";      Flags: ignoreversion
-Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\openssl.cnf";       DestDir: "{app}\ssl"
+Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\libssl32.dll";           DestDir: "{app}\ssl";      Flags: ignoreversion
+Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\libeay32.dll";           DestDir: "{app}\ssl";      Flags: ignoreversion
+Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\openssl.exe";            DestDir: "{app}\ssl";      Flags: ignoreversion
+Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\openssl.cnf";            DestDir: "{app}\ssl"
 
 [INI]
-Filename: "{app}\fhirserver.ini"; Section: "fhir"; Key: "source"; String: "{app}\spec"
-Filename: "{app}\fhirserver.ini"; Section: "fhir"; Key: "other";  String: "{app}\web"
-Filename: "{app}\fhirserver.ini"; Section: "web";  Key: "http";   String: "22513"
+Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "source"; String: "{app}\spec"
+Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "other";  String: "{app}\web"
+Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc.cache"
+Filename: "{app}\fhirserver.ini"; Section: "ucum"; Key: "cache";  String: "{commonappdata}\FHIRServer\ucum.cache"
+Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
 
 [Icons]
-Name: "{group}\FHIR Server";                             Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    
-Name: "{group}\Ini File";                             Filename: "{app}\fhirserver.ini";         
-Name: "{group}\FHIR Specification";                      Filename: "{app}\web\index.html";         
+Name: "{group}\FHIR Server";        Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    
+Name: "{group}\Ini File";           Filename: "{app}\fhirserver.ini";         
+Name: "{group}\FHIR Specification"; Filename: "{app}\web\index.html";         
 
 [Code]
 const

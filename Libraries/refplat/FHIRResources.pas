@@ -36,7 +36,7 @@ unit FHIRResources;
 
 interface
 
-// FHIR v0.12 generated Sun, Dec 15, 2013 15:55+1100
+// FHIR v0.12 generated Wed, Dec 18, 2013 15:06+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -600,9 +600,10 @@ Related resources tie this event to the authorizing prescription, and the specif
     spPatient_Given, {@enum.value spPatient_Given A portion of the given name of the patient }
     spPatient_Identifier, {@enum.value spPatient_Identifier A patient identifier }
     spPatient_Language, {@enum.value spPatient_Language Language code (irrespective of use value) }
+    spPatient_Link, {@enum.value spPatient_Link All patients linked to the given patient }
     spPatient_Name, {@enum.value spPatient_Name A portion of either family or given name of the patient }
     spPatient_Phonetic, {@enum.value spPatient_Phonetic A portion of either family or given name using some kind of phonetic matching algorithm }
-    spPatient_Provider, {@enum.value spPatient_Provider The identity of the organization at which this person is a patient }
+    spPatient_Provider, {@enum.value spPatient_Provider The organization at which this person is a patient }
     spPatient_Telecom); {@enum.value spPatient_Telecom The value in any kind of telecom details of the patient }
 
   {@Enum TSearchParamsPractitioner
@@ -8325,7 +8326,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
   oList.add(TFHIRProperty.create(self, 'confidentiality', 'Coding', FConfidentiality.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient|Practitioner|Group|Device|Location)', FSubject.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner|Device)', FAuthorList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner|Device|Patient|RelatedPerson)', FAuthorList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'attester', '', FAttesterList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'custodian', 'Resource(Organization)', FCustodian.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'event', '', FEvent.Link.Link));{2}
@@ -10460,7 +10461,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient|Practitioner|Group|Device)', FSubjectList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'recipient', 'Resource(Patient|Practitioner|Organization)', FRecipientList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner|Device)', FAuthorList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner|Device|Patient|RelatedPerson)', FAuthorList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'created', 'dateTime', FCreated.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'source', 'uri', FSource.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
@@ -10748,7 +10749,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient|Practitioner|Group|Device)', FSubject.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'class', 'CodeableConcept', FClass_.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner|Device)', FAuthorList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner|Device|Patient|RelatedPerson)', FAuthorList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'custodian', 'Resource(Organization)', FCustodian.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'policyManager', 'uri', FPolicyManager.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'authenticator', 'Resource(Practitioner|Organization)', FAuthenticator.Link.Link));{2}

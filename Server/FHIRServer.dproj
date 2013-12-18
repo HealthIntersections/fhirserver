@@ -90,7 +90,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
@@ -111,6 +111,8 @@
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB</Debugger_RunParams>
         <Manifest_File>None</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
@@ -272,7 +274,11 @@
         <DCCReference Include="..\Libraries\support\AnsiStringBuilder.pas"/>
         <DCCReference Include="..\Libraries\support\AdvIntegerMatches.pas"/>
         <DCCReference Include="..\Libraries\snomed\SnomedPublisher.pas"/>
-        <DCCReference Include="..\Libraries\snomed\SnomedExprssions.pas"/>
+        <DCCReference Include="..\Libraries\snomed\SnomedExpressions.pas"/>
+        <DCCReference Include="FhirServerTests.pas"/>
+        <DCCReference Include="..\Libraries\support\HTMLPublisher.pas"/>
+        <DCCReference Include="..\Libraries\loinc\LoincImporter.pas"/>
+        <DCCReference Include="..\Libraries\loinc\LoincPublisher.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

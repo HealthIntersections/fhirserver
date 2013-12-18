@@ -720,6 +720,7 @@ Begin
   End;
 End;
 
+
 Function StringIsInteger64(Const sValue : String) : Boolean;
 Var
   iValue : Int64;

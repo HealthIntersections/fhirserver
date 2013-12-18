@@ -6,9 +6,8 @@ unit KDBUtils;
 interface
 
 uses
-  DB,
-  IdSoapDateTime,
-  KDate,
+  Classes, DB, Contnrs,
+  IdSoapDateTime, KDate,
   KDBManager;
 
 const

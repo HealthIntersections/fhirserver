@@ -2022,7 +2022,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsPatient : Array[TSearchParamsPatient] of TSearchParamsPatient = ( spPatient__id,  spPatient_Active,  spPatient_Address,  spPatient_Animal_breed,  spPatient_Animal_species,  spPatient_Birthdate,  spPatient_Family,  spPatient_Gender,  spPatient_Given,  spPatient_Identifier,  spPatient_Language,  spPatient_Name,  spPatient_Phonetic,  spPatient_Provider,  spPatient_Telecom);
+  CHECK_TSearchParamsPatient : Array[TSearchParamsPatient] of TSearchParamsPatient = ( spPatient__id,  spPatient_Active, spPatient_Address, spPatient_Animal_breed, spPatient_Animal_species, spPatient_Birthdate, spPatient_Family, spPatient_Gender, spPatient_Given, spPatient_Identifier, spPatient_Language, spPatient_Link, spPatient_Name, spPatient_Phonetic, spPatient_Provider, spPatient_Telecom);
 
 procedure TFhirIndexManager.buildIndexesPatient;
 var
@@ -2061,7 +2061,10 @@ begin
     index(frtPatient, key, resource.birthDate, 'birthdate');
 
   for i := 0 to resource.careProviderList.count - 1 do
-    index(frtPatient, key, resource, resource.careProviderList[i], 'Provider');
+    index(frtPatient, key, resource, resource.careProviderList[i], 'provider');
+
+  for i := 0 to resource.link_List.count - 1 do
+    index(frtPatient, key, resource, resource.link_List[i].other, 'link');
 
   index(frtPatient, key, resource.activeST, 'active');
 

@@ -6,16 +6,10 @@ unit KDBOdbcExpress;
 interface
 
 uses
-  Classes,
-  IniFiles,
+  Classes, Contnrs, IniFiles,
   AdvObjects, StringSupport,
-  KDate,
-  KDBDialects,
-  KDBManager,
-  KSettings,
-  OdbcExtras,
-  OdbcHeaders,
-  OdbcCore;
+  KDate, KDBDialects, KDBManager, KSettings,
+  OdbcExtras, OdbcHeaders, OdbcCore;
 
 type
   TOdbcConnection = class (TKDBConnection)

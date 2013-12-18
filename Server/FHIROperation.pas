@@ -128,11 +128,11 @@ type
     procedure ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
     Function ProcessParam(types : TFHIRResourceTypeSet; code : String; abbrev : TAbbreviationServer; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean; var wantSummary : boolean) : String;
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
-    function GetValueSetById(id : String) : TFHIRValueSet;
+    function GetValueSetById(id, base : String) : TFHIRValueSet;
     function GetProfileById(id : String) : TFHIRProfile;
     function GetValueSetByIdentity(id : String) : TFHIRValueSet;
     function constructValueSet(params : TParseMap; var used : String) : TFhirValueset;
-    procedure ProcessValueSetExpansion(params : TParseMap; feed : TFHIRAtomFeed; includes : TReferenceList);
+    procedure ProcessValueSetExpansion(params : TParseMap; feed : TFHIRAtomFeed; includes : TReferenceList; base : String);
 
     function FindResource(aType : TFHIRResourceType; sId : String; bAllowDeleted : boolean; var resourceKey : integer; var originalId : String; response: TFHIRResponse; compartments : String): boolean;
     function FindResourceVersion(aType : TFHIRResourceType; sId, sVersionId : String; bAllowDeleted : boolean; var resourceVersionKey : integer; response: TFHIRResponse): boolean;
@@ -1371,7 +1371,7 @@ begin
           feed.fhirBaseUrl := request.baseUrl;
           feed.isSearch := true;
           if (request.ResourceType = frtValueSet) and (request.Parameters.GetVar('_query') = 'expand') then
-            ProcessValueSetExpansion(request.parameters, feed, includes) // need to set feed title, self link, search total. may add includes
+            ProcessValueSetExpansion(request.parameters, feed, includes, request.baseUrl) // need to set feed title, self link, search total. may add includes
           else
           begin
             if not FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], id, link, sql, total, wantSummary) then
@@ -2995,7 +2995,7 @@ begin
 end;
 
 // need to set feed title, self link, search total. may add includes
-procedure TFhirOperation.ProcessValueSetExpansion(params: TParseMap; feed: TFHIRAtomFeed; includes: TReferenceList);
+procedure TFhirOperation.ProcessValueSetExpansion(params: TParseMap; feed: TFHIRAtomFeed; includes: TReferenceList; base : String);
 var
   src : TFhirValueset;
   dst : TFhirValueset;
@@ -3007,12 +3007,13 @@ begin
   try
     if params.VarExists('_id') then
     begin
-      src := GetValueSetById(params.getvar('_id'));
+      src := GetValueSetById(params.getvar('_id'), base);
       used := used+'&_id='+params.getvar('_id')
     end
     else if params.VarExists('identity') then
     begin
-      src := GetValueSetByIdentity(params.getvar('identity'));
+      if not FRepository.ValuesetExpander.isKnownValueSet(params.getvar('identity'), src) then
+        src := GetValueSetByIdentity(params.getvar('identity'));
       used := used+'&identity='+params.getvar('identity')
     end
     else
@@ -3030,20 +3031,25 @@ begin
   finally
     src.free;
   end;
-  // either we get passed:
-  //  _id= - the local id of the resource
-  // identity = the formal id of the value set
-  // or enough information to build a value set
-
 end;
 
-function TFhirOperation.GetValueSetById(id: String): TFHIRValueSet;
+function TFhirOperation.GetValueSetById(id, base: String): TFHIRValueSet;
 var
   resourceKey : integer;
   originalId : String;
   cnt, cat : String;
   parser : TFHIRParser;
+  b : String;
+  s : TMemoryStream;
 begin
+  if id.StartsWith(base) then
+    id := id.Substring(base.Length)
+  else for b in FRepository.Bases do
+    if id.StartsWith(b) then
+      id := id.Substring(b.Length);
+  if id.startsWith('ValueSet/') then
+    id := id.Substring(9);
+
   if (length(request.id) <= 36) and FindResource(frtValueSet, id, false, resourceKey, originalId, nil, '') then
   begin
     FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
@@ -3051,7 +3057,9 @@ begin
     try
       FConnection.Execute;
       FConnection.FetchNext;
-      parser := MakeParser(lang, ffXml, FConnection.ColMemoryByName['Content']);
+      s := FConnection.ColMemoryByName['Content'];
+      s.position := 0;
+      parser := MakeParser(lang, ffXml, s);
       try
         result := parser.resource.Link as TFHIRValueSet;
       finally
@@ -3068,16 +3076,19 @@ end;
 function TFhirOperation.GetValueSetByIdentity(id: String): TFHIRValueSet;
 var
   cnt, cat : String;
-  stream : TStringStream;
+  stream : TMemoryStream;
   parser : TFHIRParser;
 begin
-  FConnection.SQL := 'Select * from Versions where ResourceKey in (select ResourceKey from gwrIndexEntries where IndexKey in (Select IndexKey from gwrIndexes where name = ''identifier'') and Value = :id) order by ResourceVersionKey desc';
+  FConnection.SQL := 'Select * from Versions where ResourceKey in (select ResourceKey from IndexEntries where IndexKey in (Select IndexKey from Indexes where name = ''identifier'') and Value = :id) order by ResourceVersionKey desc';
   FConnection.Prepare;
   try
     FConnection.BindString('id', id);
     FConnection.Execute;
-    FConnection.FetchNext;
-    parser := MakeParser(lang, ffXml, FConnection.ColMemoryByName['Content']);
+    if not FConnection.FetchNext then
+      raise Exception.create('Unknown Value Set '+id);
+    stream := FConnection.ColMemoryByName['Content'];
+    stream.position := 0;
+    parser := MakeParser(lang, ffXml, stream);
     try
       result := parser.resource.Link as TFHIRValueSet;
       try
