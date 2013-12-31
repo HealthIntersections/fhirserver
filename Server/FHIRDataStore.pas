@@ -36,7 +36,8 @@ uses
   AdvNames, AdvIntegerObjectMatches, AdvObjects, AdvStringObjectMatches, AdvStringMatches,
   KDBManager, KDBDialects,
   FHIRAtomFeed, FHIRResources, FHIRBase, FHIRTypes, FHIRComponents, FHIRParser, FHIRParserBase, FHIRConstants,
-  FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, FHIRUtilities;
+  FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, FHIRUtilities,
+  TerminologyServer;
 
 const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -80,6 +81,7 @@ Type
   TFHIRDataStore = class (TAdvObject)
   private
     FDB : TKDBManager;
+    FTerminologyServer : TTerminologyServer;
     FSourceFolder : String; // fodler in which the FHIR specification itself is found
     FSessions : TStringList;
     FTags : TAdvNameList;
@@ -93,8 +95,6 @@ Type
     FLastResourceKey : Integer;
     FLastEntryKey : Integer;
     FLastCompartmentKey : Integer;
-    FValuesetExpander : TFHIRValueSetExpander;
-    FValueSetTracker : TAdvStringObjectMatch;
     FProfiles : TAdvStringMatch;
     FUserIds : TAdvStringObjectMatch;
     FUserLogins : TAdvStringObjectMatch;
@@ -113,7 +113,7 @@ Type
     procedure CloseFhirSession(key: integer);
 
   public
-    constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String);
+    constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer);
     Destructor Destroy; Override;
     Function Link : TFHIRDataStore; virtual;
     procedure CloseAll;
@@ -135,12 +135,10 @@ Type
     procedure RegisterTag(tag : TFHIRAtomCategory; conn : TKDBConnection); overload;
     procedure registerTag(tag: TFhirTag); overload;
     procedure SeeResource(key : Integer; id : string; resource : TFHIRResource);
-    procedure DelistValueSet(key : Integer);
     procedure DropResource(key : Integer; id : string; aType : TFhirResourceType);
     function KeyForTag(scheme, term : String) : Integer;
     Property Validator : TFHIRValidator read FValidator;
     function GetTagByKey(key : integer): TFhirTag;
-    function expandVS(vs : TFHIRValueSet) : TFHIRValueSet;
     Property DB : TKDBManager read FDB;
     Property ResConfig : TConfigArray read FResConfig;
     Property SupportTransaction : Boolean read FSupportTransaction;
@@ -148,7 +146,7 @@ Type
     Property SupportSystemHistory : Boolean read FSupportSystemHistory;
     Property Bases : TStringList read FBases;
     Property TotalResourceCount : integer read FTotalResourceCount;
-    Property ValuesetExpander : TFHIRValueSetExpander read FValuesetExpander;
+    Property TerminologyServer : TTerminologyServer read FTerminologyServer;
   end;
 
 
@@ -182,7 +180,7 @@ begin
   end;
 end;
 
-constructor TFHIRDataStore.Create(DB : TKDBManager; SourceFolder, WebFolder : String);
+constructor TFHIRDataStore.Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer);
 var
   i : integer;
   conn : TKDBConnection;
@@ -280,20 +278,21 @@ begin
     FTagsBykey.Add(TFhirTag(FTags[i]).Key, FTags[i].Link);
 
   // the expander is tied to what's on the system
-  FValuesetExpander := TFHIRValueSetExpander.create;
-  FValuesetExpander.ValueSets := TAdvStringObjectMatch.create;
-  FValuesetExpander.CodeSystems := TAdvStringObjectMatch.create;
-  FValueSetTracker := TAdvStringObjectMatch.create;
+  FTerminologyServer := terminologyServer;
   FProfiles := TAdvStringMatch.create;
   FProfiles.Forced := true;
   FUserIds := TAdvStringObjectMatch.create;
+  FUserIds.PreventDuplicates;
   FUserIds.Forced := true;
   FUserLogins := TAdvStringObjectMatch.create;
+  FUserLogins.PreventDuplicates;
   FUserLogins.Forced := true;
-  LoadExistingResources;
   FValidator := TFHIRValidator.create;
   FValidator.SchematronSource := WebFolder;
+  FValidator.TerminologyServer := terminologyServer.Link;
+  // the order here is important: specification resources must be loaded prior to stored resources
   FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)+'validation.zip');
+  LoadExistingResources;
 end;
 
 function TFHIRDataStore.CreateImplicitSession(clientInfo: String): TFhirSession;
@@ -408,13 +407,12 @@ begin
   FUserIds.free;
   FUserLogins.free;
   FProfiles.free;
-  FValueSetTracker.Free;
-  FValuesetExpander.Free;
   FTagsByKey.free;
   FSessions.free;
   FTags.Free;
   FLock.Free;
   FValidator.Free;
+  FTerminologyServer.Free;
   inherited;
 end;
 
@@ -784,43 +782,14 @@ begin
 end;
 
 
-procedure TFHIRDataStore.DelistValueSet(key: Integer);
-var
-  vs : TFHIRValueSet;
-begin
-  FLock.Lock('DelistValueSet');
-  try
-    if FValueSetTracker.ExistsByKey(inttostr(key)) then
-    begin
-      vs := FValueSetTracker.Matches[inttostr(key)] as TFhirValueSet;
-      if (vs.define <> nil) then
-        FValuesetExpander.CodeSystems.DeleteByKey(vs.define.systemST);
-      if (vs.identifierST <> '') then
-      FValuesetExpander.ValueSets.DeleteByKey(vs.identifierST);
-      FValueSetTracker.DeleteByKey(inttostr(key));
-    end;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
 procedure TFHIRDataStore.SeeResource(key : Integer; id : string; resource : TFHIRResource);
 var
-  vs : TFHIRValueSet;
   profile : TFhirProfile;
-  user : TFHIRUser;
 begin
   FLock.Lock('SeeResource');
   try
-    if resource.ResourceType = frtValueSet then
-    begin
-      vs := resource as TFHIRValueSet;
-      FValueSetTracker.add(inttostr(key), vs.link);
-      if (vs.define <> nil) then
-        FValuesetExpander.CodeSystems.add(vs.define.systemST, vs.link);
-      if (vs.identifierST <> '') then
-        FValuesetExpander.ValueSets.add(vs.identifierST, vs.link);
-    end
+    if resource.ResourceType in [frtValueSet, frtConceptMap] then
+      TerminologyServer.SeeTerminologyResource(Codes_TFHIRResourceType[resource.ResourceType]+'/'+id, key, resource)
     else if resource.ResourceType = frtProfile then
     begin
       profile := resource as TFhirProfile;
@@ -838,21 +807,11 @@ begin
 end;
 
 procedure TFHIRDataStore.DropResource(key : Integer; id : string; aType : TFhirResourceType);
-var
-  vs : TFHIRValueSet;
-  user : TFHIRUser;
 begin
   FLock.Lock('DropResource');
   try
-    if (aType = frtValueSet) and (FValueSetTracker.ExistsByKey(inttostr(key)))  then
-    begin
-      vs := FValueSetTracker.Matches[inttostr(key)] as TFHIRValueSet;
-      if (vs.define <> nil) then
-        FValuesetExpander.CodeSystems.DeleteByKey(vs.define.systemST);
-      if (vs.identifierST <> '') then
-        FValuesetExpander.ValueSets.DeleteByKey(vs.identifierST);
-      FValueSetTracker.DeleteByKey(inttostr(key));
-    end
+    if aType in [frtValueSet, frtConceptMap] then
+      TerminologyServer.DropTerminologyResource(key, Codes_TFHIRResourceType[aType]+'/'+id, aType)
     else if aType = frtProfile then
     begin
       FProfiles.DeleteByKey(id);
@@ -868,16 +827,6 @@ begin
   end;
 end;
 
-
-function TFHIRDataStore.expandVS(vs: TFHIRValueSet): TFHIRValueSet;
-begin
-  FLock.Lock('expandVS');
-  try
-    result := FValuesetExpander.expand(vs);
-  finally
-    FLock.Unlock;
-  end;
-end;
 
 procedure TFHIRDataStore.SaveSecurityEvent(se: TFhirSecurityEvent);
 var
@@ -948,8 +897,6 @@ begin
 end;
 
 function TFHIRDataStore.GetFhirUser(namespace, name: String): TFHIRUser;
-var
-  user : TFHIRUser;
 begin
   FLock.Enter;
   try
@@ -1066,7 +1013,6 @@ procedure TFHIRDataStore.LoadExistingResources;
 var
   conn : TKDBConnection;
   parser : TFHIRParser;
-  stream : TStream;
   mem : TMemoryStream;
   i : integer;
 begin
@@ -1075,7 +1021,7 @@ begin
     conn.SQL := 'select Ids.ResourceKey, Ids.Id, Content from Ids, Types, Versions where '+
       'Versions.ResourceVersionKey = Ids.MostRecent and '+
       'Ids.ResourceTypeKey = Types.ResourceTypeKey and '+
-      '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''Profile'' or Types.ResourceName = ''User'') and not Versions.Deleted = 1';
+      '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''ConceptMap'' or Types.ResourceName = ''Profile'' or Types.ResourceName = ''User'') and not Versions.Deleted = 1';
     conn.Prepare;
     try
       i := 0;

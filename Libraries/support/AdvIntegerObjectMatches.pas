@@ -217,7 +217,7 @@ Procedure TAdvIntegerObjectMatch.InternalEmpty(iIndex, iLength : Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(Integer(FItemArray) + (iIndex * SizeOf(TAdvIntegerObjectMatchItem))), (iLength * SizeOf(TAdvIntegerObjectMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FItemArray) + (iIndex * SizeOf(TAdvIntegerObjectMatchItem))), (iLength * SizeOf(TAdvIntegerObjectMatchItem)));
 End;  
 
 
@@ -330,7 +330,7 @@ Procedure TAdvIntegerObjectMatch.InternalInsert(iIndex : Integer);
 Begin 
   Inherited;
 
-  Pointer(FItemArray^[iIndex].Key) := Nil;
+  Integer(FItemArray^[iIndex].Key) := 0;
   Pointer(FItemArray^[iIndex].Value) := Nil;
 End;  
 

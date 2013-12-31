@@ -199,7 +199,7 @@ Procedure TAdvInt64Match.InternalEmpty(iIndex, iLength: Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(Integer(FMatches) + (iIndex * SizeOf(TAdvInt64MatchItem))), (iLength * SizeOf(TAdvInt64MatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatches) + (iIndex * SizeOf(TAdvInt64MatchItem))), (iLength * SizeOf(TAdvInt64MatchItem)));
 End;  
 
 

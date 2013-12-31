@@ -116,7 +116,7 @@ Procedure TAdvMethodList.InternalEmpty(iIndex, iLength: Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(Integer(FMethodArray) + (iIndex * SizeOf(TAdvMethodItem))), (iLength * SizeOf(TAdvMethodItem)));
+  MemoryZero(Pointer(NativeUInt(FMethodArray) + (iIndex * SizeOf(TAdvMethodItem))), (iLength * SizeOf(TAdvMethodItem)));
 End;  
 
 

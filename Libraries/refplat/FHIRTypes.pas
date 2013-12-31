@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 18, 2013 15:06+1100
+// FHIR v0.12 generated Tue, Dec 31, 2013 11:31+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -314,7 +314,9 @@ Type
     ConceptEquivalenceEqual, {@enum.value ConceptEquivalenceEqual The definitions of the concepts are exactly the same (i.e. only grammatical differences) and structural implications of meaning are identifical or irrelevant (i.e. intensionally identical). }
     ConceptEquivalenceEquivalent, {@enum.value ConceptEquivalenceEquivalent The definitions of the concepts mean the same thing (including when structural implications of meaning are considered) (i.e. extensionally identical). }
     ConceptEquivalenceWider, {@enum.value ConceptEquivalenceWider The target mapping is wider in meaning than the source concept. }
+    ConceptEquivalenceSubsumes, {@enum.value ConceptEquivalenceSubsumes The target mapping subsumes the meaning of the source concept (e.g. the source is-a target). }
     ConceptEquivalenceNarrower, {@enum.value ConceptEquivalenceNarrower The target mapping is narrower in meaning that the source concept. The sense in which the mapping is narrower SHALL be described in the comments in this case, and applications should be careful when atempting to use these mappings operationally. }
+    ConceptEquivalenceSpecialises, {@enum.value ConceptEquivalenceSpecialises The target mapping specialises the meaning of the source concept (e.g. the target is-a source). }
     ConceptEquivalenceInexact, {@enum.value ConceptEquivalenceInexact The target mapping overlaps with the source concept, but both source and target cover additional meaning. The sense in which the mapping is narrower SHALL be described in the comments in this case, and applications should be careful when atempting to use these mappings operationally. }
     ConceptEquivalenceUnmatched, {@enum.value ConceptEquivalenceUnmatched There is no match for this concept in the destination concept system. }
     ConceptEquivalenceDisjoint); {@enum.value ConceptEquivalenceDisjoint This is an explicit assertion that there is no mapping between the source and target concept. }
@@ -437,7 +439,7 @@ Type
     DiagnosticOrderStatusInProgress, {@enum.value DiagnosticOrderStatusInProgress The work to fulfill the order is happening. }
     DiagnosticOrderStatusReview, {@enum.value DiagnosticOrderStatusReview The work is complete, and the outcomes are being reviewed for approval. }
     DiagnosticOrderStatusCompleted, {@enum.value DiagnosticOrderStatusCompleted The work has been complete, the report(s) released, and no further work is planned. }
-    DiagnosticOrderStatusOnHold, {@enum.value DiagnosticOrderStatusOnHold The request has been held by originating system/user request. }
+    DiagnosticOrderStatusSuspended, {@enum.value DiagnosticOrderStatusSuspended The request has been held by originating system/user request. }
     DiagnosticOrderStatusRejected, {@enum.value DiagnosticOrderStatusRejected The receiving system has declined to fulfill the request. }
     DiagnosticOrderStatusFailed); {@enum.value DiagnosticOrderStatusFailed The diagnostic investigation was attempted, but due to some procedural error, it could not be completed. }
   TFhirDiagnosticOrderStatusList = set of TFhirDiagnosticOrderStatus;
@@ -447,9 +449,10 @@ Type
   }
   TFhirDiagnosticOrderPriority = (
     DiagnosticOrderPriorityNull,  {@enum.value DiagnosticOrderPriorityNull Value is missing from Instance }
-    DiagnosticOrderPriorityNormal, {@enum.value DiagnosticOrderPriorityNormal The order has no particular priority with it. }
+    DiagnosticOrderPriorityRoutine, {@enum.value DiagnosticOrderPriorityRoutine The order has a normal priority. }
     DiagnosticOrderPriorityUrgent, {@enum.value DiagnosticOrderPriorityUrgent The order should be urgently. }
-    DiagnosticOrderPriorityStat); {@enum.value DiagnosticOrderPriorityStat The order is time-critical. }
+    DiagnosticOrderPriorityStat, {@enum.value DiagnosticOrderPriorityStat The order is time-critical. }
+    DiagnosticOrderPriorityAsap); {@enum.value DiagnosticOrderPriorityAsap The order should be acted on as soon as possible. }
   TFhirDiagnosticOrderPriorityList = set of TFhirDiagnosticOrderPriority;
 
   {@Enum TFhirDiagnosticReportStatus
@@ -642,14 +645,6 @@ Type
     ModalityXC); {@enum.value ModalityXC  }
   TFhirModalityList = set of TFhirModality;
 
-  {@Enum TFhirImmunizationForecastStatus
-    The patient's status with respect to a vaccination protocol
-  }
-  TFhirImmunizationForecastStatus = (
-    ImmunizationForecastStatusNull,  {@enum.value ImmunizationForecastStatusNull Value is missing from Instance }
-    ImmunizationForecastStatusDUE); {@enum.value ImmunizationForecastStatusDUE This immunization is due to be given now. }
-  TFhirImmunizationForecastStatusList = set of TFhirImmunizationForecastStatus;
-
   {@Enum TFhirListMode
     The processing mode that applies to this list
   }
@@ -794,6 +789,7 @@ Type
     OrderOutcomeCodeError, {@enum.value OrderOutcomeCodeError The order was unable to be processed because of a technical error (i.e. unexpected error). }
     OrderOutcomeCodeAccepted, {@enum.value OrderOutcomeCodeAccepted The order has been accepted, and work is in progress. }
     OrderOutcomeCodeCancelled, {@enum.value OrderOutcomeCodeCancelled Processing the order was halted at the initiators request. }
+    OrderOutcomeCodeReplaced, {@enum.value OrderOutcomeCodeReplaced The order has been cancelled and replaced by another. }
     OrderOutcomeCodeAborted, {@enum.value OrderOutcomeCodeAborted Processing the order was stopped because of some workflow/business logic reason. }
     OrderOutcomeCodeComplete); {@enum.value OrderOutcomeCodeComplete The order has been completed. }
   TFhirOrderOutcomeCodeList = set of TFhirOrderOutcomeCode;
@@ -1027,6 +1023,28 @@ Type
     HierarchicalRelationshipTypeParent, {@enum.value HierarchicalRelationshipTypeParent The target resource is the parent of the focal specimen resource. }
     HierarchicalRelationshipTypeChild); {@enum.value HierarchicalRelationshipTypeChild The target resource is the child of the focal specimen resource. }
   TFhirHierarchicalRelationshipTypeList = set of TFhirHierarchicalRelationshipType;
+
+  {@Enum TFhirValuesetSupplyStatus
+    Status of the supply
+  }
+  TFhirValuesetSupplyStatus = (
+    ValuesetSupplyStatusNull,  {@enum.value ValuesetSupplyStatusNull Value is missing from Instance }
+    ValuesetSupplyStatusRequested, {@enum.value ValuesetSupplyStatusRequested Supply has been requested, but not dispensed. }
+    ValuesetSupplyStatusDispensed, {@enum.value ValuesetSupplyStatusDispensed Supply is part of a pharmacy order and has been dispensed. }
+    ValuesetSupplyStatusReceived, {@enum.value ValuesetSupplyStatusReceived Supply has been received by the requestor. }
+    ValuesetSupplyStatusFailed, {@enum.value ValuesetSupplyStatusFailed The supply will not be completed because the supplier was unable or unwilling to supply the item. }
+    ValuesetSupplyStatusCancelled); {@enum.value ValuesetSupplyStatusCancelled The orderer of the supply cancelled the request. }
+  TFhirValuesetSupplyStatusList = set of TFhirValuesetSupplyStatus;
+
+  {@Enum TFhirValuesetSupplyDispenseStatus
+    Status of the dispense
+  }
+  TFhirValuesetSupplyDispenseStatus = (
+    ValuesetSupplyDispenseStatusNull,  {@enum.value ValuesetSupplyDispenseStatusNull Value is missing from Instance }
+    ValuesetSupplyDispenseStatusInProgress, {@enum.value ValuesetSupplyDispenseStatusInProgress Supply has been requested, but not dispensed. }
+    ValuesetSupplyDispenseStatusDispensed, {@enum.value ValuesetSupplyDispenseStatusDispensed Supply is part of a pharmacy order and has been dispensed. }
+    ValuesetSupplyDispenseStatusAbandoned); {@enum.value ValuesetSupplyDispenseStatusAbandoned Dispensing was not completed. }
+  TFhirValuesetSupplyDispenseStatusList = set of TFhirValuesetSupplyDispenseStatus;
 
   {@Enum TFhirFilterOperator
     The kind of operation to perform as part of a property based filter
@@ -5267,7 +5285,7 @@ Const
   CODES_TFhirCompositionStatus : Array[TFhirCompositionStatus] of String = ('', 'preliminary', 'final', 'appended', 'amended', 'entered in error');
   CODES_TFhirCompositionAttestationMode : Array[TFhirCompositionAttestationMode] of String = ('', 'personal', 'professional', 'legal', 'official');
   CODES_TFhirValuesetStatus : Array[TFhirValuesetStatus] of String = ('', 'draft', 'active', 'retired');
-  CODES_TFhirConceptEquivalence : Array[TFhirConceptEquivalence] of String = ('', 'equal', 'equivalent', 'wider', 'narrower', 'inexact', 'unmatched', 'disjoint');
+  CODES_TFhirConceptEquivalence : Array[TFhirConceptEquivalence] of String = ('', 'equal', 'equivalent', 'wider', 'subsumes', 'narrower', 'specialises', 'inexact', 'unmatched', 'disjoint');
   CODES_TFhirConditionStatus : Array[TFhirConditionStatus] of String = ('', 'provisional', 'working', 'confirmed', 'refuted');
   CODES_TFhirConditionRelationshipType : Array[TFhirConditionRelationshipType] of String = ('', 'due-to', 'following');
   CODES_TFhirConformanceStatementStatus : Array[TFhirConformanceStatementStatus] of String = ('', 'draft', 'active', 'retired');
@@ -5278,8 +5296,8 @@ Const
   CODES_TFhirMessageSignificanceCategory : Array[TFhirMessageSignificanceCategory] of String = ('', 'Consequence', 'Currency', 'Notification');
   CODES_TFhirMessageConformanceEventMode : Array[TFhirMessageConformanceEventMode] of String = ('', 'sender', 'receiver');
   CODES_TFhirDocumentMode : Array[TFhirDocumentMode] of String = ('', 'producer', 'consumer');
-  CODES_TFhirDiagnosticOrderStatus : Array[TFhirDiagnosticOrderStatus] of String = ('', 'requested', 'received', 'accepted', 'in progress', 'review', 'completed', 'on hold', 'rejected', 'failed');
-  CODES_TFhirDiagnosticOrderPriority : Array[TFhirDiagnosticOrderPriority] of String = ('', 'normal', 'urgent', 'stat');
+  CODES_TFhirDiagnosticOrderStatus : Array[TFhirDiagnosticOrderStatus] of String = ('', 'requested', 'received', 'accepted', 'in progress', 'review', 'completed', 'suspended', 'rejected', 'failed');
+  CODES_TFhirDiagnosticOrderPriority : Array[TFhirDiagnosticOrderPriority] of String = ('', 'routine', 'urgent', 'stat', 'asap');
   CODES_TFhirDiagnosticReportStatus : Array[TFhirDiagnosticReportStatus] of String = ('', 'registered', 'partial', 'final', 'corrected', 'amended', 'appended', 'cancelled', 'entered in error');
   CODES_TFhirDocumentReferenceStatus : Array[TFhirDocumentReferenceStatus] of String = ('', 'current', 'superceded', 'entered in error');
   CODES_TFhirDocumentRelationshipType : Array[TFhirDocumentRelationshipType] of String = ('', 'replaces', 'transforms', 'signs', 'appends');
@@ -5289,7 +5307,6 @@ Const
   CODES_TFhirImagingModality : Array[TFhirImagingModality] of String = ('', 'AR', 'BMD', 'BDUS', 'EPS', 'CR', 'CT', 'DX', 'ECG', 'ES', 'XC', 'GM', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'LEN', 'MR', 'MG', 'NM', 'OAM', 'OCT', 'OPM', 'OP', 'OPR', 'OPT', 'OPV', 'PX', 'PT', 'RF', 'RG', 'SM', 'SRF', 'US', 'VA', 'XA');
   CODES_TFhirInstanceAvailability : Array[TFhirInstanceAvailability] of String = ('', 'ONLINE', 'OFFLINE', 'NEARLINE', 'UNAVAILABLE');
   CODES_TFhirModality : Array[TFhirModality] of String = ('', 'AR', 'AU', 'BDUS', 'BI', 'BMD', 'CR', 'CT', 'DG', 'DX', 'ECG', 'EPS', 'ES', 'GM', 'HC', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'KO', 'LEN', 'LS', 'MG', 'MR', 'NM', 'OAM', 'OCT', 'OP', 'OPM', 'OPT', 'OPV', 'OT', 'PR', 'PT', 'PX', 'REG', 'RF', 'RG', 'RTDOSE', 'RTIMAGE', 'RTPLAN', 'RTRECORD', 'RTSTRUCT', 'SEG', 'SM', 'SMR', 'SR', 'SRF', 'TG', 'US', 'VA', 'XA', 'XC');
-  CODES_TFhirImmunizationForecastStatus : Array[TFhirImmunizationForecastStatus] of String = ('', 'DUE');
   CODES_TFhirListMode : Array[TFhirListMode] of String = ('', 'working', 'snapshot', 'changes');
   CODES_TFhirLocationStatus : Array[TFhirLocationStatus] of String = ('', 'active', 'suspended', 'inactive');
   CODES_TFhirLocationMode : Array[TFhirLocationMode] of String = ('', 'instance', 'kind');
@@ -5302,7 +5319,7 @@ Const
   CODES_TFhirObservationStatus : Array[TFhirObservationStatus] of String = ('', 'registered', 'preliminary', 'final', 'amended', 'cancelled', 'entered in error');
   CODES_TFhirObservationReliability : Array[TFhirObservationReliability] of String = ('', 'ok', 'ongoing', 'early', 'questionable', 'calibrating', 'error', 'unknown');
   CODES_TFhirIssueSeverity : Array[TFhirIssueSeverity] of String = ('', 'fatal', 'error', 'warning', 'information');
-  CODES_TFhirOrderOutcomeCode : Array[TFhirOrderOutcomeCode] of String = ('', 'pending', 'review', 'rejected', 'error', 'accepted', 'cancelled', 'aborted', 'complete');
+  CODES_TFhirOrderOutcomeCode : Array[TFhirOrderOutcomeCode] of String = ('', 'pending', 'review', 'rejected', 'error', 'accepted', 'cancelled', 'replaced', 'aborted', 'complete');
   CODES_TFhirLinkType : Array[TFhirLinkType] of String = ('', 'replace', 'refer', 'seealso');
   CODES_TFhirProcedureRelationshipType : Array[TFhirProcedureRelationshipType] of String = ('', 'caused-by', 'because-of');
   CODES_TFhirResourceProfileStatus : Array[TFhirResourceProfileStatus] of String = ('', 'draft', 'active', 'retired');
@@ -5322,6 +5339,8 @@ Const
   CODES_TFhirObjectRole : Array[TFhirObjectRole] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24');
   CODES_TFhirObjectLifecycle : Array[TFhirObjectLifecycle] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15');
   CODES_TFhirHierarchicalRelationshipType : Array[TFhirHierarchicalRelationshipType] of String = ('', 'parent', 'child');
+  CODES_TFhirValuesetSupplyStatus : Array[TFhirValuesetSupplyStatus] of String = ('', 'requested', 'dispensed', 'received', 'failed', 'cancelled');
+  CODES_TFhirValuesetSupplyDispenseStatus : Array[TFhirValuesetSupplyDispenseStatus] of String = ('', 'in progress', 'dispensed', 'abandoned');
   CODES_TFhirFilterOperator : Array[TFhirFilterOperator] of String = ('', '=', 'is-a', 'is-not-a', 'regex', 'in', 'not in');
 
 Function TFhirNarrativeStatusListAsInteger(aSet : TFhirNarrativeStatusList) : Integer; overload;
@@ -5414,8 +5433,6 @@ Function TFhirInstanceAvailabilityListAsInteger(aSet : TFhirInstanceAvailability
 Function IntegerAsTFhirInstanceAvailabilityList(i : integer) : TFhirInstanceAvailabilityList; overload;
 Function TFhirModalityListAsInteger(aSet : TFhirModalityList) : Integer; overload;
 Function IntegerAsTFhirModalityList(i : integer) : TFhirModalityList; overload;
-Function TFhirImmunizationForecastStatusListAsInteger(aSet : TFhirImmunizationForecastStatusList) : Integer; overload;
-Function IntegerAsTFhirImmunizationForecastStatusList(i : integer) : TFhirImmunizationForecastStatusList; overload;
 Function TFhirListModeListAsInteger(aSet : TFhirListModeList) : Integer; overload;
 Function IntegerAsTFhirListModeList(i : integer) : TFhirListModeList; overload;
 Function TFhirLocationStatusListAsInteger(aSet : TFhirLocationStatusList) : Integer; overload;
@@ -5480,6 +5497,10 @@ Function TFhirObjectLifecycleListAsInteger(aSet : TFhirObjectLifecycleList) : In
 Function IntegerAsTFhirObjectLifecycleList(i : integer) : TFhirObjectLifecycleList; overload;
 Function TFhirHierarchicalRelationshipTypeListAsInteger(aSet : TFhirHierarchicalRelationshipTypeList) : Integer; overload;
 Function IntegerAsTFhirHierarchicalRelationshipTypeList(i : integer) : TFhirHierarchicalRelationshipTypeList; overload;
+Function TFhirValuesetSupplyStatusListAsInteger(aSet : TFhirValuesetSupplyStatusList) : Integer; overload;
+Function IntegerAsTFhirValuesetSupplyStatusList(i : integer) : TFhirValuesetSupplyStatusList; overload;
+Function TFhirValuesetSupplyDispenseStatusListAsInteger(aSet : TFhirValuesetSupplyDispenseStatusList) : Integer; overload;
+Function IntegerAsTFhirValuesetSupplyDispenseStatusList(i : integer) : TFhirValuesetSupplyDispenseStatusList; overload;
 Function TFhirFilterOperatorListAsInteger(aSet : TFhirFilterOperatorList) : Integer; overload;
 Function IntegerAsTFhirFilterOperatorList(i : integer) : TFhirFilterOperatorList; overload;
 
@@ -12651,33 +12672,6 @@ begin
  end;
 
 
-function TFhirImmunizationForecastStatusListAsInteger(aSet : TFhirImmunizationForecastStatusList) : Integer;
-var
-  a : TFhirImmunizationForecastStatus;
-begin
-  result := 0;
-  for a := low(TFhirImmunizationForecastStatus) to high(TFhirImmunizationForecastStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirImmunizationForecastStatusList(i : Integer) : TFhirImmunizationForecastStatusList;
-var
-  aLoop : TFhirImmunizationForecastStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirImmunizationForecastStatus) to high(TFhirImmunizationForecastStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirListModeListAsInteger(aSet : TFhirListModeList) : Integer;
 var
   a : TFhirListMode;
@@ -13534,6 +13528,60 @@ var
 begin
   result := [];
   for aLoop := low(TFhirHierarchicalRelationshipType) to high(TFhirHierarchicalRelationshipType) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirValuesetSupplyStatusListAsInteger(aSet : TFhirValuesetSupplyStatusList) : Integer;
+var
+  a : TFhirValuesetSupplyStatus;
+begin
+  result := 0;
+  for a := low(TFhirValuesetSupplyStatus) to high(TFhirValuesetSupplyStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirValuesetSupplyStatusList(i : Integer) : TFhirValuesetSupplyStatusList;
+var
+  aLoop : TFhirValuesetSupplyStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirValuesetSupplyStatus) to high(TFhirValuesetSupplyStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirValuesetSupplyDispenseStatusListAsInteger(aSet : TFhirValuesetSupplyDispenseStatusList) : Integer;
+var
+  a : TFhirValuesetSupplyDispenseStatus;
+begin
+  result := 0;
+  for a := low(TFhirValuesetSupplyDispenseStatus) to high(TFhirValuesetSupplyDispenseStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirValuesetSupplyDispenseStatusList(i : Integer) : TFhirValuesetSupplyDispenseStatusList;
+var
+  aLoop : TFhirValuesetSupplyDispenseStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirValuesetSupplyDispenseStatus) to high(TFhirValuesetSupplyDispenseStatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

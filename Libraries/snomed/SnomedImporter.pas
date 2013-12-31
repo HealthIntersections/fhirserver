@@ -369,7 +369,7 @@ var
 Begin
   result := '';
   for i := 1 to length(sName) Do
-    if (sName[i] in ['a'..'z', '_', '-', 'A'..'Z', '0'..'9']) Then
+    if CharInSet(sName[i], ['a'..'z', '_', '-', 'A'..'Z', '0'..'9']) Then
       result := result + sName[i];
   if result = '' then
     result := inttostr(newkey);

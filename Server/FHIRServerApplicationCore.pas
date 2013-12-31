@@ -31,11 +31,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, IniFiles, ActiveX, ComObj,
+  SysUtils, Classes, IniFiles, ActiveX, ComObj,
   SystemService, SystemSupport,
   SnomedImporter, SnomedServices, SnomedExpressions,
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
+  TerminologyServer,
   FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests;
 
 Type
@@ -44,8 +45,11 @@ Type
     TestMode : Boolean;
     FIni : TIniFile;
     FDb : TKDBManager;
+    FTerminologyServer : TTerminologyServer;
     FWebServer : TFhirWebServer;
     FWebSource : String;
+    FNotServing : boolean;
+
     procedure ConnectToDatabase;
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
@@ -62,6 +66,7 @@ Type
     Destructor Destroy; override;
 
     procedure ExecuteTests;
+    procedure Load(fn : String);
     procedure InstallDatabase;
     procedure UnInstallDatabase;
   end;
@@ -75,7 +80,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
-  dir : String;
+  dir, fn : String;
   svc : TFHIRService;
 begin
   CoInitialize(nil);
@@ -101,8 +106,12 @@ begin
       svc.UninstallDatabase
     else if FindCmdLineSwitch('remount') then
     begin
+      svc.FNotServing := true;
       svc.UninstallDatabase;
-      svc.InstallDatabase
+      svc.InstallDatabase;
+      if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
+        svc.Load(fn);
+
     end
     else if FindCmdLineSwitch('tests') then
       svc.ExecuteTests
@@ -202,6 +211,7 @@ begin
       UnInstallDatabase;
     InstallDatabase;
     LoadTerminologies;
+    tests.TerminologyServer := FTerminologyServer.Link;
     tests.executeBefore;
 
     CanStart;
@@ -271,40 +281,40 @@ begin
   FDB.Free;
 end;
 
-procedure TFHIRService.LoadTerminologies;
+procedure TFHIRService.Load(fn: String);
 var
-  fn : String;
+  f : TFileStream;
 begin
-  fn := FIni.ReadString('snomed', 'cache', '');
-  if FileExists(fn) then
-  begin
-    write('Load Snomed');
-    GSnomeds := TSnomedServiceList.Create;
-    GSnomeds.DefaultDefinition := TSnomedServices.Create;
-    GSnomeds.DefaultDefinition.Load(fn);
-    writeln(' - done');
+  if FDb = nil then
+    ConnectToDatabase;
+  CanStart;
+  writeln('Load database from '+fn);
+  f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+  try
+    FWebServer.Transaction(f);
+  finally
+    f.Free;
   end;
-  fn := FIni.ReadString('loinc', 'cache', '');
-  if FileExists(fn) then
-  begin
-    write('Load Loinc');
-    GLoincs := TLoincServiceList.Create;
-    GLoincs.DefaultService := TLoincServices.Create;
-    GLoincs.DefaultService.Load(fn);
-    writeln(' - done');
-  end;
+  writeln('done');
+
+  DoStop;
+end;
+
+procedure TFHIRService.LoadTerminologies;
+begin
+  FTerminologyServer := TTerminologyServer.create;
+  FTerminologyServer.load(FIni);
 end;
 
 procedure TFHIRService.UnloadTerminologies;
 begin
-  GSnomeds.Free;
-  GLOINCs.Free;
+  FTerminologyServer.Free;
 end;
 
 procedure TFHIRService.InitialiseRestServer;
 begin
-  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName);
-  FWebServer.Start;
+  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer.Link);
+  FWebServer.Start(not FNotServing);
 end;
 
 procedure TFHIRService.InstallDatabase;

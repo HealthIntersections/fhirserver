@@ -253,7 +253,7 @@ Begin
     pTarget^ := EncodeBase64((iData Shr 8) And $3F);
     Inc(pTarget);
 
-    pSource := Pointer(Integer(pSource) + 3);
+    pSource := Pointer(NativeUInt(pSource) + 3);
   End;
 
   iTarget := SignedMod(iCount, 3);
@@ -549,7 +549,7 @@ Begin
       Result[iLoop] := '%';
       Inc(iLoop);
 
-      System.Insert(EncodeHexadecimal(Byte(cValue)), Result, iLoop);
+      System.Insert(string(EncodeHexadecimal(Byte(cValue))), Result, iLoop);
       Inc(iLoop);
     End;
 

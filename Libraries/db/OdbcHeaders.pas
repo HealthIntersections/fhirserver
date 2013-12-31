@@ -75,6 +75,17 @@ Type
   SQLBIGINTPtr=^SQLBIGINT;
   SQLUBIGINTPtr=^SQLUBIGINT;
 
+  {$IFDEF WIN64}
+  SQLSETPOSIROW = NativeUInt;
+  {$ELSE}
+  SQLSETPOSIROW = SQLUSMALLINT;
+  {$ENDIF}
+  // 64bit support - see http://msdn.microsoft.com/en-us/library/ms716287(v=vs.85).aspx
+  SQLLEN = NativeInt;
+  SQLLENPtr = ^SQLLEN;
+  SQLULEN = NativeUInt;
+  SQLULENPtr = ^SQLULEN;
+
   { function return type }
   SQLRETURN=SQLSMALLINT;
 

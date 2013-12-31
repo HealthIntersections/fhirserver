@@ -47,7 +47,7 @@ type
     FHndErr : Cardinal;
   public
     Constructor create(AMachine : String = ''); { default = local }
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure Install(ASystemName, ADisplayName, AExecutable : String);
     procedure ListServices(AList : TStringList);
   end;
@@ -65,7 +65,7 @@ type
     procedure SetAutoStart(const Value: Boolean);
   public
     Constructor create(AServiceManager : TServiceManagerHandle; AName : string);
-    destructor destroy; override;
+    destructor Destroy; override;
     function ServiceIsRunning : boolean;
     procedure Query;
     procedure SendMessageToService(AMsg : Integer);

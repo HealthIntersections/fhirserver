@@ -24,6 +24,7 @@ Type
 
     procedure Line;
 
+    procedure Heading(level : integer; text : String);
     procedure StartParagraph;
     procedure EndParagraph;
     procedure AddParagraph(text : String = '');
@@ -191,6 +192,13 @@ begin
   '<body>'#13#10+
   TFHIRXhtmlComposer.Header(nil, BaseURL, Lang)+
   '<h1>'+s+'</h1>'#13#10);
+end;
+
+procedure THtmlPublisher.Heading(level: integer; text: String);
+begin
+  FBuilder.Append('<h'+inttostr(level)+'>');
+  AddTextPlain(text);
+  FBuilder.Append('</h'+inttostr(level)+'>');
 end;
 
 procedure THtmlPublisher.hiddenInput(name, value: String);

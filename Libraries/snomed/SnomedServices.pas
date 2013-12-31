@@ -40,14 +40,12 @@ The content loads and works extremely quickly.
 }
 
 Uses
-  SysUtils,
-  Classes,
+  SysUtils, Classes,
   StringSupport, FileSupport,
-  AnsiStringBuilder,
-  AdvStringLists,
-  YuStemmer,
-  AdvObjectLists,
-  AdvObjects;
+  AdvStringLists, AdvObjectLists, AdvObjects,
+  AnsiStringBuilder, YuStemmer, DateAndTime,
+  FHIRTypes, FHIRComponents, FHIRResources,
+  TerminologyServices;
 
 Const
   SNOMED_CACHE_VERSION = '8';
@@ -365,7 +363,15 @@ operations
 *)
 //  TSnomedReferenceSet = class;
 
-  TSnomedServices = class (TAdvObject)
+  TSnomedFilterContext = class (TCodeSystemProviderFilterContext)
+  private
+    matches : TMatchArray;
+    members : TSnomedReferenceSetMemberArray;
+    descendents : TCardinalArray;
+  end;
+
+
+  TSnomedServices = class (TCodeSystemProvider)
   Private
     FActiveRoots : Int64Array;
     FInactiveRoots : Int64Array;
@@ -383,6 +389,11 @@ operations
     FStems : TSnomedStems;
     FVersion : String;
     FLoaded: Boolean;
+
+    function GetPN(iDescriptions: TCardinalArray): String;
+    function GetFSN(iDescriptions: TCardinalArray): String;
+    function filterIn(id : Int64): TCodeSystemProviderFilterContext;
+    function filterIsA(id : Int64): TCodeSystemProviderFilterContext;
 
   //  Function FindWord(s : String; var index : Integer) : Boolean;
     Function FindStem(s : AnsiString; var index : Integer) : Boolean;
@@ -428,7 +439,7 @@ operations
     // simplified interface for consumers
     Function ConceptExists(conceptId : String) : Boolean;
     Function Subsumes(Const sParent, sChild : AnsiString) : Boolean; Overload;
-    Function Search(iRoot : Int64; sText : AnsiString; iLang : Cardinal; bInactive : Boolean) : TMatchArray;
+    Function Search(iRoot : Int64; sText : AnsiString; iLang : Cardinal; bInactive : Boolean) : TMatchArray; overload;
     Function IsValidConcept(Const sTerm : String):Boolean;
     Function IsValidDescription(Const sTerm : AnsiString; var concept : int64; var description : String):Boolean;
     Function GetDisplayName(Const sTerm, sLangSet : AnsiString) : AnsiString; Overload;
@@ -438,6 +449,28 @@ operations
     // status stuff
     Property Loaded : Boolean read FLoaded write FLoaded;
     Property Version : String read FVersion write FVersion;
+
+
+    // generic terminology server interface
+    function TotalCount : integer; override;
+    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
+    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function system : String; override;
+    function getDisplay(code : String):String; override;
+    function locate(code : String) : TCodeSystemProviderContext; override;
+    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
+    function Code(context : TCodeSystemProviderContext) : string; override;
+    function Display(context : TCodeSystemProviderContext) : string; override;
+    procedure Displays(code : String; list : TStringList); override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; override;
+    function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; override;
+    function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
+    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function buildValueSet(id : String) : TFhirValueSet;
+    function searchFilter(filter : TSearchFilterText) : TCodeSystemProviderFilterContext; overload; override;
   End;
 
   TSnomedServiceList = class (TAdvObjectList)
@@ -457,9 +490,6 @@ operations
 
     Property Definition[iIndex : Integer] : TSnomedServices read GetDefinition; Default;
   End;
-
-var
-  GSnomeds : TSnomedServiceList;
 
 
 {
@@ -524,7 +554,7 @@ var
   i : integer;
   c : Cardinal;
 begin
-  if iIndex = MAGIC_NO_CHILDREN then
+  if (iIndex = MAGIC_NO_CHILDREN) or (iIndex = 0) then
     result := nil
   Else
   Begin
@@ -931,7 +961,7 @@ begin
       FRefSetMembers.FMaster := oread.ReadString;
       FRefSetMembers.FLength := Length(FRefSetMembers.FMaster);
       FDescRef.FMaster := oread.ReadString;
-      FDescRef.FLength := Length(FRel.FMaster);
+      FDescRef.FLength := Length(FDescRef.FMaster);
       FIs_a_Index := oread.ReadInteger;
       SetLength(FInactiveRoots, oRead.ReadInteger);
       for i := 0 to Length(FInactiveRoots) - 1 Do
@@ -1000,6 +1030,19 @@ begin
   End;
 end;
 
+function TSnomedServices.SearchFilter(filter : TSearchFilterText): TCodeSystemProviderFilterContext;
+var
+  res : TSnomedFilterContext;
+begin
+  res := TSnomedFilterContext.Create;
+  try
+    res.matches := Search(0, filter.filter, 0, false);
+    result := res.Link;
+  finally
+    res.Free;
+  end;
+end;
+
 function FindCardinalInArray(a : TCardinalArray; iValue : Cardinal; var iIndex : Integer):Boolean;
 Var
   L, H, I : Integer;
@@ -1034,8 +1077,13 @@ var
   iAllDesc : TCardinalArray;
   iIndex : integer;
 Begin
-  iAllDesc := FRefs.GetReferences(FConcept.GetAllDesc(iParent));
-  result := FindCardinalInArray(iAllDesc, iChild, iIndex);
+  if iParent = iChild then
+    result := true
+  else
+  begin
+    iAllDesc := FRefs.GetReferences(FConcept.GetAllDesc(iParent));
+    result := FindCardinalInArray(iAllDesc, iChild, iIndex);
+  end;
 End;
 
 type
@@ -1542,7 +1590,6 @@ function TSnomedServices.GetDescRefsets(iDesc: Cardinal): TCardinalArray;
 var
   i : integer;
   iDefinition, iMembersByRef, iMembersByName: Cardinal;
-  bDescSet : Boolean;
   aMembers : TSnomedReferenceSetMemberArray;
   iDummy : Integer;
 begin
@@ -1624,10 +1671,10 @@ end;
 
 function TSnomedServices.StringToIdOrZero(const s: AnsiString): Int64;
 begin
-  if s = '' then
-    result := 0
+  if StringIsInteger64(s) then
+    result := StrToInt64(s)
   Else
-    result := StrToInt64(s);
+    result := 0;
 end;
 
 function TSnomedServices.IsValidConcept(const sTerm: String): Boolean;
@@ -1859,13 +1906,13 @@ begin
   result := 0;
   For i := 0 to Count - 1 Do
   begin
-    Move(FMaster[i * 13 + 1], v, 4);
+    Move(FMaster[i * 12 + 1], v, 4);
     if v = iIndex Then
     Begin
       if bByName Then
-        Move(FMaster[i * 13 + 9], result, 4)
+        Move(FMaster[i * 12 + 9], result, 4)
       Else
-        Move(FMaster[i * 13 + 5], result, 4);
+        Move(FMaster[i * 12 + 5], result, 4);
       exit;
     End;
   End;
@@ -1997,5 +2044,333 @@ procedure TSnomedReferenceSetMembers.StartBuild;
 begin
   FBuilder := TAnsiStringBuilder.Create;
 end;
+
+function TSnomedServices.buildValueSet(id : String): TFhirValueSet;
+var
+  inc : TFhirValueSetComposeInclude;
+  filt :  TFhirValueSetComposeIncludeFilter;
+begin
+  if id.StartsWith('http://snomed.info/sct/') And ReferenceSetExists(id.Substring(23)) then
+  begin
+    result := TFhirValueSet.Create;
+    try
+      result.identifierST := id;
+      result.versionST := Version;
+      result.nameST := 'SNOMED CT Reference Set '+id.Substring(23);
+      result.descriptionST := GetDisplayName(id.Substring(23), '');
+      result.statusST := ValuesetStatusActive;
+      result.dateST := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.systemST := 'http://snomed.info/sct';
+      filt := inc.filterList.Append;
+      filt.property_ST := 'concept';
+      filt.opST := FilterOperatorIn;
+      filt.valueST := id.Substring(23);
+      result.link;
+    finally
+      result.free;
+    end;
+  end
+  else if id.StartsWith('http://snomed.info/id/') And ConceptExists(id.Substring(22)) then
+  begin
+    result := TFhirValueSet.Create;
+    try
+      result.identifierST := id;
+      result.versionST := Version;
+      result.nameST := 'SNOMED CT Concept '+id.Substring(22)+' and descendents';
+      result.descriptionST := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(22), '');
+      result.statusST := ValuesetStatusActive;
+      result.dateST := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.systemST := 'http://snomed.info/sct';
+      filt := inc.filterList.Append;
+      filt.property_ST := 'concept';
+      filt.opST := FilterOperatorIsA;
+      filt.valueST := id.Substring(22);
+      result.link;
+    finally
+      result.free;
+    end;
+  end
+  else
+    result := nil;
+
+end;
+
+function TSnomedServices.ChildCount(context: TCodeSystemProviderContext): integer;
+var
+  i : integer;
+  Identity : int64;
+  Flags, Group : Byte;
+  ParentIndex : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex : Cardinal;
+  outboundIndex : Cardinal;
+  iWork, iWork2, iWork3, iWork4, iWork5, iWork6, refsets : Cardinal;
+  date : TSnomedDate;
+  Inbounds : TCardinalArray;
+begin
+  SetLength(inbounds, 0);
+  if (context = nil) then
+    result := 1
+  else
+  begin
+    Concept.GetConcept(Cardinal(context), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+    Inbounds := Refs.GetReferences(InboundIndex);
+    result := 0;
+    For i := 0 to High(Inbounds) Do
+    Begin
+      Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Flags, Group);
+      if iWork3 = Is_a_Index Then
+        inc(result);
+    End;
+  end;
+end;
+
+function TSnomedServices.Code(context: TCodeSystemProviderContext): string;
+var
+  Identity : int64;
+  Flags : Byte;
+  ParentIndex : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex : Cardinal;
+  outboundIndex, refsets : Cardinal;
+  Inbounds : TCardinalArray;
+  date : TSnomedDate;
+begin
+  SetLength(inbounds, 0);
+  Concept.GetConcept(Cardinal(context), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+  result := inttostr(identity);
+end;
+
+function TSnomedServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+var
+  i, c : integer;
+  Identity : int64;
+  Flags, Group : Byte;
+  ParentIndex : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex : Cardinal;
+  outboundIndex : Cardinal;
+  iWork, iWork2, iWork3, iWork4, iWork5, iWork6, refsets : Cardinal;
+  Inbounds : TCardinalArray;
+  date : TSnomedDate;
+begin
+  result := nil;
+  SetLength(inbounds, 0);
+  if (context = nil) then
+    result := TCodeSystemProviderContext(Is_a_Index)
+  else
+  begin
+    Concept.GetConcept(Cardinal(context), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+    Inbounds := Refs.GetReferences(InboundIndex);
+    c := -1;
+    For i := 0 to High(Inbounds) Do
+    Begin
+      Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Flags, Group);
+      if iWork3 = Is_a_Index Then
+      begin
+        inc(c);
+        if (c = ndx) then
+        begin
+          result := TCodeSystemProviderContext(iWork);
+          exit;
+        end;
+      end;
+    End;
+  end;
+end;
+
+
+Function TSnomedServices.GetFSN(iDescriptions : TCardinalArray) : String;
+var
+  iLoop : Integer;
+  iid : int64;
+  iString, iDummy, module, refsets, kind : Cardinal;
+  iFlag : Byte;
+  date : TSnomedDate;
+begin
+  result := '';
+  For iLoop := Low(iDescriptions) To High(iDescriptions) Do
+  Begin
+    Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy, module, kind, refsets, iFlag);
+    if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE = VAL_DESC_FullySpecifiedName shl 4) Then
+      result := Strings.GetEntry(iString);
+  End;
+End;
+
+
+Function TSnomedServices.GetPN(iDescriptions : TCardinalArray) : String;
+var
+  iLoop : Integer;
+  iid : int64;
+  iString, iDummy, module, refsets, kind : Cardinal;
+  date : TSnomedDate;
+  iFlag : Byte;
+begin
+  result := '';
+  For iLoop := Low(iDescriptions) To High(iDescriptions) Do
+  Begin
+    Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy, module, kind, refsets, iFlag);
+    if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
+      result := Strings.GetEntry(iString);
+  End;
+  if result = '' Then
+    result := GetFSN(iDescriptions);
+End;
+
+function TSnomedServices.Display(context: TCodeSystemProviderContext): string;
+begin
+  result := GetDisplayName(Cardinal(context), 0);
+end;
+
+procedure TSnomedServices.Displays(code: String; list: TStringList);
+var
+  ctxt : TAdvObject;
+begin
+  ctxt := locate(code);
+  if (ctxt = nil) then
+    raise Exception.create('Unable to find '+code+' in '+system)
+  else
+    ListDisplayNames(list, Cardinal(ctxt), 0, $FF);
+end;
+
+function TSnomedServices.getDisplay(code: String): String;
+var
+  ctxt : TAdvObject;
+begin
+  ctxt := locate(code);
+  if (ctxt = nil) then
+    raise Exception.create('Unable to find '+code+' in '+system)
+  else
+    result := Display(ctxt);
+end;
+
+function TSnomedServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
+begin
+  result := false; // snomed don't do abstract?
+end;
+
+function TSnomedServices.locate(code: String): TCodeSystemProviderContext;
+var
+  iId : Int64;
+  index : cardinal;
+begin
+  iId := StrToInt64Def(code, -1);
+  if Concept.FindConcept(iId, index) Then
+    result := TCodeSystemProviderContext(index)
+  else
+    raise exception.create('unable to find code '+code+' in '+system);
+end;
+
+function TSnomedServices.system: String;
+begin
+  result := 'http://snomed.info/sct';
+end;
+
+function TSnomedServices.TotalCount: integer;
+begin
+  result := Concept.Count;
+end;
+
+procedure TSnomedServices.Close(ctxt: TCodeSystemProviderFilterContext);
+begin
+  TSnomedFilterContext(ctxt).free;
+end;
+
+function TSnomedServices.filterIsA(id : Int64): TCodeSystemProviderFilterContext;
+var
+  res : TSnomedFilterContext;
+  index : cardinal;
+begin
+  res := TSnomedFilterContext.Create;
+  try
+    if not Concept.FindConcept(id, index) then
+      raise Exception.Create('The Snomed Concept '+inttostr(id)+' was not known');
+    res.descendents := GetConceptDescendents(index);
+    result := TSnomedFilterContext(res.link);
+  finally
+    res.Free;
+  end;
+end;
+
+function TSnomedServices.filterIn(id : Int64): TCodeSystemProviderFilterContext;
+var
+  res : TSnomedFilterContext;
+  index, members : cardinal;
+begin
+  res := TSnomedFilterContext.Create;
+  try
+    if not Concept.FindConcept(id, index) then
+      raise Exception.Create('The Snomed Concept '+inttostr(id)+' was not known');
+    if GetConceptRefSet(index, false, members) = 0 then
+      raise Exception.Create('The Snomed Concept '+inttostr(id)+' is not a reference set');
+    res.members := RefSetMembers.GetMembers(members);
+    result := TSnomedFilterContext(res.link);
+  finally
+    res.Free;
+  end;
+end;
+
+function TSnomedServices.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+var
+  id : Int64;
+begin
+  result := nil;
+  if (prop = 'concept') and StringIsId(value, id) then
+    if op = FilterOperatorIsA then
+      result := filterIsA(id)
+    else if op = FilterOperatorIn then
+      result := filterIn(id);
+end;
+
+function TSnomedServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
+begin
+  if Length(TSnomedFilterContext(ctxt).matches) > 0 then
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).Matches[ndx].index)
+  else if Length(TSnomedFilterContext(ctxt).members) > 0 then
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).Members[ndx].Ref)
+  else
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).descendents[ndx]);
+end;
+
+function TSnomedServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+var
+  index : integer;
+begin
+  if Length(TSnomedFilterContext(ctxt).members) > 0 then
+    result := FindMember(TSnomedFilterContext(ctxt).Members, Cardinal(concept), index)
+  else
+    result := FindCardinalInArray(TSnomedFilterContext(ctxt).descendents, Cardinal(concept), index)
+end;
+
+function TSnomedServices.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  if Length(TSnomedFilterContext(ctxt).matches) > 0 then
+    result := Length(TSnomedFilterContext(ctxt).matches)
+  else if Length(TSnomedFilterContext(ctxt).members) > 0 then
+    result := Length(TSnomedFilterContext(ctxt).members)
+  else
+    result := Length(TSnomedFilterContext(ctxt).descendents);
+end;
+
+function TSnomedServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+begin
+//  result := TSnomedFilterContext(ctxt).Members[;
+end;
+
+function TSnomedServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
+var
+  ic, ip : Cardinal;
+begin
+  if Concept.FindConcept(StringToIdOrZero(parent), ip) And
+       Concept.FindConcept(StringToIdOrZero(code), ic) And Subsumes(ip, ic) then
+    result := TAdvObject(ic)
+  else
+    result := nil;
+end;
+
 
 End.

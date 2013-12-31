@@ -35,8 +35,8 @@ TSQLBindCol = function (
   AColumnNumber: SQLUSMALLINT;
   ATargetType: SQLSMALLINT;
   ATargetValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; stdcall;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; stdcall;
 
 TSQLBindParameter = function (
   AStatementHandle: SQLHSTMT;
@@ -44,11 +44,11 @@ TSQLBindParameter = function (
   AInputOutputType: SQLSMALLINT;
   AValueType: SQLSMALLINT;
   AParameterType: SQLSMALLINT;
-  AColumnSize: SQLUINTEGER;
+  AColumnSize: SQLULEN;
   ADecimalDigits: SQLSMALLINT;
   AParameterValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; stdcall;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; stdcall;
 
 TSQLBrowseConnect = function (
   AConnectionHandle: SQLHDBC;
@@ -75,7 +75,7 @@ TSQLColAttribute = function (
   ACharacterAttribute: SQLPOINTER;
   ABufferLength: SQLSMALLINT;
   AStringLength: SQLSMALLINTPtr;
-  ANumericAttribute: SQLPOINTER): SQLRETURN; stdcall;
+  ANumericAttribute: SQLLENPtr): SQLRETURN; stdcall;
 
 TSQLColumnPrivileges = function (
   AStatementHandle: SQLHSTMT;
@@ -129,7 +129,7 @@ TSQLDescribeCol = function (
   ABufferLength: SQLSMALLINT;
   ANameLength: SQLSMALLINTPtr;
   ADataType: SQLSMALLINTPtr;
-  AColumnSize: SQLUINTEGERPtr;
+  AColumnSize: SQLULENPtr;
   ADecimalDigits: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; stdcall;
 
@@ -137,7 +137,7 @@ TSQLDescribeParam = function (
   AStatementHandle: SQLHSTMT;
   AParameterNumber: SQLUSMALLINT;
   ADataType: SQLSMALLINTPtr;
-  AParameterSize: SQLUINTEGERPtr;
+  AParameterSize: SQLULENPtr;
   ADecimalDigits: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; stdcall;
 
@@ -183,7 +183,7 @@ TSQLFetch = function (
 TSQLFetchScroll = function (
   AStatementHandle: SQLHSTMT;
   AFetchOrientation: SQLSMALLINT;
-  AFetchOffset: SQLINTEGER): SQLRETURN; stdcall;
+  AFetchOffset: SQLLEN): SQLRETURN; stdcall;
 
 TSQLForeignKeys = function (
   AStatementHandle: SQLHSTMT;
@@ -226,8 +226,8 @@ TSQLGetData = function (
   AColumnNumber: SQLUSMALLINT;
   ATargetType: SQLSMALLINT;
   ATargetValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; stdcall;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; stdcall;
 
 TSQLGetDescField = function (
   ADescriptorHandle: SQLHDESC;
@@ -245,7 +245,7 @@ TSQLGetDescRec = function (
   AStringLength: SQLSMALLINTPtr;
   AType: SQLSMALLINTPtr;
   ASubType: SQLSMALLINTPtr;
-  ALength: SQLINTEGERPtr;
+  ALength: SQLLENPtr;
   APrecision: SQLSMALLINTPtr;
   AScale: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; stdcall;
@@ -359,11 +359,11 @@ TSQLProcedures = function (
 TSQLPutData = function (
   AStatementHandle: SQLHSTMT;
   AData: SQLPOINTER;
-  AStrLen_or_Ind: SQLINTEGER): SQLRETURN; stdcall;
+  AStrLen_or_Ind: SQLLEN): SQLRETURN; stdcall;
 
 TSQLRowCount = function (
   AStatementHandle: SQLHSTMT;
-  ARowCount: SQLINTEGERPtr): SQLRETURN; stdcall;
+  ARowCount: SQLULENPtr): SQLRETURN; stdcall;
 
 TSQLSetConnectAttr = function (
   AConnectionHandle: SQLHDBC;
@@ -388,12 +388,12 @@ TSQLSetDescRec = function (
   ARecNumber: SQLSMALLINT;
   AType: SQLSMALLINT;
   ASubType: SQLSMALLINT;
-  ALength: SQLINTEGER;
+  ALength: SQLLEN;
   APrecision: SQLSMALLINT;
   AScale: SQLSMALLINT;
   AData: SQLPOINTER;
-  AStringLength: SQLINTEGERPtr;
-  AIndicator: SQLINTEGERPtr): SQLRETURN; stdcall;
+  AStringLength: SQLLENPtr;
+  AIndicator: SQLLENPtr): SQLRETURN; stdcall;
 
 TSQLSetEnvAttr = function (
   AEnvironmentHandle: SQLHENV;
@@ -403,7 +403,7 @@ TSQLSetEnvAttr = function (
 
 TSQLSetPos = function (
   AStatementHandle: SQLHSTMT;
-  ARowNumber: SQLUSMALLINT;
+  ARowNumber: SQLSETPOSIROW;
   AOperation: SQLUSMALLINT;
   ALockType: SQLUSMALLINT): SQLRETURN; stdcall;
 
@@ -597,8 +597,8 @@ function SQLBindCol(
   AColumnNumber: SQLUSMALLINT;
   ATargetType: SQLSMALLINT;
   ATargetValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; stdcall;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; stdcall;
 
 function SQLBindParameter(
   AStatementHandle: SQLHSTMT;
@@ -606,11 +606,11 @@ function SQLBindParameter(
   AInputOutputType: SQLSMALLINT;
   AValueType: SQLSMALLINT;
   AParameterType: SQLSMALLINT;
-  AColumnSize: SQLUINTEGER;
+  AColumnSize: SQLULEN;
   ADecimalDigits: SQLSMALLINT;
   AParameterValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; stdcall;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; stdcall;
 
 function SQLBrowseConnect(
   AConnectionHandle: SQLHDBC;
@@ -637,7 +637,7 @@ function SQLColAttribute(
   ACharacterAttribute: SQLPOINTER;
   ABufferLength: SQLSMALLINT;
   AStringLength: SQLSMALLINTPtr;
-  ANumericAttribute: SQLPOINTER): SQLRETURN; stdcall;
+  ANumericAttribute: SQLLENPtr): SQLRETURN; stdcall;
 
 function SQLColumnPrivileges(
   AStatementHandle: SQLHSTMT;
@@ -691,7 +691,7 @@ function SQLDescribeCol(
   ABufferLength: SQLSMALLINT;
   ANameLength: SQLSMALLINTPtr;
   ADataType: SQLSMALLINTPtr;
-  AColumnSize: SQLUINTEGERPtr;
+  AColumnSize: SQLULENPtr;
   ADecimalDigits: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; stdcall;
 
@@ -699,7 +699,7 @@ function SQLDescribeParam(
   AStatementHandle: SQLHSTMT;
   AParameterNumber: SQLUSMALLINT;
   ADataType: SQLSMALLINTPtr;
-  AParameterSize: SQLUINTEGERPtr;
+  AParameterSize: SQLULENPtr;
   ADecimalDigits: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; stdcall;
 
@@ -745,7 +745,7 @@ function SQLFetch(
 function SQLFetchScroll(
   AStatementHandle: SQLHSTMT;
   AFetchOrientation: SQLSMALLINT;
-  AFetchOffset: SQLINTEGER): SQLRETURN; stdcall;
+  AFetchOffset: SQLLEN): SQLRETURN; stdcall;
 
 function SQLForeignKeys(
   AStatementHandle: SQLHSTMT;
@@ -788,8 +788,8 @@ function SQLGetData(
   AColumnNumber: SQLUSMALLINT;
   ATargetType: SQLSMALLINT;
   ATargetValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; stdcall;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; stdcall;
 
 function SQLGetDescField(
   ADescriptorHandle: SQLHDESC;
@@ -807,7 +807,7 @@ function SQLGetDescRec(
   AStringLength: SQLSMALLINTPtr;
   AType: SQLSMALLINTPtr;
   ASubType: SQLSMALLINTPtr;
-  ALength: SQLINTEGERPtr;
+  ALength: SQLLENPtr;
   APrecision: SQLSMALLINTPtr;
   AScale: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; stdcall;
@@ -921,11 +921,11 @@ function SQLProcedures(
 function SQLPutData(
   AStatementHandle: SQLHSTMT;
   AData: SQLPOINTER;
-  AStrLen_or_Ind: SQLINTEGER): SQLRETURN; stdcall;
+  AStrLen_or_Ind: SQLLEN): SQLRETURN; stdcall;
 
 function SQLRowCount(
   AStatementHandle: SQLHSTMT;
-  ARowCount: SQLINTEGERPtr): SQLRETURN; stdcall;
+  ARowCount: SQLULENPtr): SQLRETURN; stdcall;
 
 function SQLSetConnectAttr(
   AConnectionHandle: SQLHDBC;
@@ -950,12 +950,12 @@ function SQLSetDescRec(
   ARecNumber: SQLSMALLINT;
   AType: SQLSMALLINT;
   ASubType: SQLSMALLINT;
-  ALength: SQLINTEGER;
+  ALength: SQLLEN;
   APrecision: SQLSMALLINT;
   AScale: SQLSMALLINT;
   AData: SQLPOINTER;
-  AStringLength: SQLINTEGERPtr;
-  AIndicator: SQLINTEGERPtr): SQLRETURN; stdcall;
+  AStringLength: SQLLENPtr;
+  AIndicator: SQLLENPtr): SQLRETURN; stdcall;
 
 function SQLSetEnvAttr(
   AEnvironmentHandle: SQLHENV;
@@ -965,7 +965,7 @@ function SQLSetEnvAttr(
 
 function SQLSetPos(
   AStatementHandle: SQLHSTMT;
-  ARowNumber: SQLUSMALLINT;
+  ARowNumber: SQLSETPOSIROW;
   AOperation: SQLUSMALLINT;
   ALockType: SQLUSMALLINT): SQLRETURN; stdcall;
 
@@ -1380,8 +1380,8 @@ function SQLBindCol(
   AColumnNumber: SQLUSMALLINT;
   ATargetType: SQLSMALLINT;
   ATargetValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN;
 begin
   LoadODBCDLL;
 
@@ -1403,11 +1403,11 @@ function SQLBindParameter(
   AInputOutputType: SQLSMALLINT;
   AValueType: SQLSMALLINT;
   AParameterType: SQLSMALLINT;
-  AColumnSize: SQLUINTEGER;
+  AColumnSize: SQLULEN;
   ADecimalDigits: SQLSMALLINT;
   AParameterValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN;
 begin
   LoadODBCDLL;
 
@@ -1494,7 +1494,7 @@ function SQLColAttribute(
   ACharacterAttribute: SQLPOINTER;
   ABufferLength: SQLSMALLINT;
   AStringLength: SQLSMALLINTPtr;
-  ANumericAttribute: SQLPOINTER): SQLRETURN;
+  ANumericAttribute: SQLLENPtr): SQLRETURN;
 begin
   LoadODBCDLL;
 
@@ -1638,7 +1638,7 @@ function SQLDescribeCol(
   ABufferLength: SQLSMALLINT;
   ANameLength: SQLSMALLINTPtr;
   ADataType: SQLSMALLINTPtr;
-  AColumnSize: SQLUINTEGERPtr;
+  AColumnSize: SQLULENPtr;
   ADecimalDigits: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN;
 begin
@@ -1663,7 +1663,7 @@ function SQLDescribeParam(
   AStatementHandle: SQLHSTMT;
   AParameterNumber: SQLUSMALLINT;
   ADataType: SQLSMALLINTPtr;
-  AParameterSize: SQLUINTEGERPtr;
+  AParameterSize: SQLULENPtr;
   ADecimalDigits: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN;
 begin
@@ -1804,7 +1804,7 @@ end;
 function SQLFetchScroll(
   AStatementHandle: SQLHSTMT;
   AFetchOrientation: SQLSMALLINT;
-  AFetchOffset: SQLINTEGER): SQLRETURN;
+  AFetchOffset: SQLLEN): SQLRETURN;
 begin
   LoadODBCDLL;
 
@@ -1924,8 +1924,8 @@ function SQLGetData(
   AColumnNumber: SQLUSMALLINT;
   ATargetType: SQLSMALLINT;
   ATargetValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN;
 begin
   LoadODBCDLL;
 
@@ -1971,7 +1971,7 @@ function SQLGetDescRec(
   AStringLength: SQLSMALLINTPtr;
   AType: SQLSMALLINTPtr;
   ASubType: SQLSMALLINTPtr;
-  ALength: SQLINTEGERPtr;
+  ALength: SQLLENPtr;
   APrecision: SQLSMALLINTPtr;
   AScale: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN;
@@ -2306,7 +2306,7 @@ end;
 function SQLPutData(
   AStatementHandle: SQLHSTMT;
   AData: SQLPOINTER;
-  AStrLen_or_Ind: SQLINTEGER): SQLRETURN;
+  AStrLen_or_Ind: SQLLEN): SQLRETURN;
 begin
   LoadODBCDLL;
 
@@ -2321,7 +2321,7 @@ end;
 
 function SQLRowCount(
   AStatementHandle: SQLHSTMT;
-  ARowCount: SQLINTEGERPtr): SQLRETURN;
+  ARowCount: SQLULENPtr): SQLRETURN;
 begin
   LoadODBCDLL;
 
@@ -2392,12 +2392,12 @@ function SQLSetDescRec(
   ARecNumber: SQLSMALLINT;
   AType: SQLSMALLINT;
   ASubType: SQLSMALLINT;
-  ALength: SQLINTEGER;
+  ALength: SQLLEN;
   APrecision: SQLSMALLINT;
   AScale: SQLSMALLINT;
   AData: SQLPOINTER;
-  AStringLength: SQLINTEGERPtr;
-  AIndicator: SQLINTEGERPtr): SQLRETURN;
+  AStringLength: SQLLENPtr;
+  AIndicator: SQLLENPtr): SQLRETURN;
 begin
   LoadODBCDLL;
 
@@ -2437,7 +2437,7 @@ end;
 
 function SQLSetPos(
   AStatementHandle: SQLHSTMT;
-  ARowNumber: SQLUSMALLINT;
+  ARowNumber: SQLSETPOSIROW;
   AOperation: SQLUSMALLINT;
   ALockType: SQLUSMALLINT): SQLRETURN;
 begin
@@ -3002,8 +3002,8 @@ function SQLBindCol(
   AColumnNumber: SQLUSMALLINT;
   ATargetType: SQLSMALLINT;
   ATargetValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; external ODBCDLL;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; external ODBCDLL;
 
 //function SQLBindParam
 
@@ -3013,11 +3013,11 @@ function SQLBindParameter(
   AInputOutputType: SQLSMALLINT;
   AValueType: SQLSMALLINT;
   AParameterType: SQLSMALLINT;
-  AColumnSize: SQLUINTEGER;
+  AColumnSize: SQLULEN;
   ADecimalDigits: SQLSMALLINT;
   AParameterValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; external ODBCDLL;
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; external ODBCDLL;
 
 function SQLBrowseConnect(
   AConnectionHandle: SQLHDBC;
@@ -3044,7 +3044,7 @@ function SQLColAttribute(
   ACharacterAttribute: SQLPOINTER;
   ABufferLength: SQLSMALLINT;
   AStringLength: SQLSMALLINTPtr;
-  ANumericAttribute: SQLPOINTER): SQLRETURN; external ODBCDLL;
+  ANumericAttribute: SQLLENPtr): SQLRETURN; external ODBCDLL;
 
 //function SQLColAttributes
 
@@ -3100,7 +3100,7 @@ function SQLDescribeCol(
   ABufferLength: SQLSMALLINT;
   ANameLength: SQLSMALLINTPtr;
   ADataType: SQLSMALLINTPtr;
-  AColumnSize: SQLUINTEGERPtr;
+  AColumnSize: SQLULENPtr;
   ADecimalDigits: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; external ODBCDLL;
 
@@ -3108,7 +3108,7 @@ function SQLDescribeParam(
   AStatementHandle: SQLHSTMT;
   AParameterNumber: SQLUSMALLINT;
   ADataType: SQLSMALLINTPtr;
-  AParameterSize: SQLUINTEGERPtr;
+  AParameterSize: SQLULENPtr;
   ADecimalDigits: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; external ODBCDLL;
 
@@ -3158,7 +3158,7 @@ function SQLFetch(
 function SQLFetchScroll(
   AStatementHandle: SQLHSTMT;
   AFetchOrientation: SQLSMALLINT;
-  AFetchOffset: SQLINTEGER): SQLRETURN; external ODBCDLL;
+  AFetchOffset: SQLLEN): SQLRETURN; external ODBCDLL;
 
 function SQLForeignKeys(
   AStatementHandle: SQLHSTMT;
@@ -3207,9 +3207,9 @@ function SQLGetData(
   AColumnNumber: SQLUSMALLINT;
   ATargetType: SQLSMALLINT;
   ATargetValue: SQLPOINTER;
-  ABufferLength: SQLINTEGER;
-  AStrLen_or_Ind: SQLINTEGERPtr): SQLRETURN; external ODBCDLL;
-
+  ABufferLength: SQLLEN;
+  AStrLen_or_Ind: SQLLENPtr): SQLRETURN; external ODBCDLL;
+                        1
 function SQLGetDescField(
   ADescriptorHandle: SQLHDESC;
   ARecNumber: SQLSMALLINT;
@@ -3226,7 +3226,7 @@ function SQLGetDescRec(
   AStringLength: SQLSMALLINTPtr;
   AType: SQLSMALLINTPtr;
   ASubType: SQLSMALLINTPtr;
-  ALength: SQLINTEGERPtr;
+  ALength: SQLLENPtr;
   APrecision: SQLSMALLINTPtr;
   AScale: SQLSMALLINTPtr;
   ANullable: SQLSMALLINTPtr): SQLRETURN; external ODBCDLL;
@@ -3344,11 +3344,11 @@ function SQLProcedures(
 function SQLPutData(
   AStatementHandle: SQLHSTMT;
   AData: SQLPOINTER;
-  AStrLen_or_Ind: SQLINTEGER): SQLRETURN; external ODBCDLL;
+  AStrLen_or_Ind: SQLLEN): SQLRETURN; external ODBCDLL;
 
 function SQLRowCount(
   AStatementHandle: SQLHSTMT;
-  ARowCount: SQLINTEGERPtr): SQLRETURN; external ODBCDLL;
+  ARowCount: SQLULENPtr): SQLRETURN; external ODBCDLL;
 
 function SQLSetConnectAttr(
   AConnectionHandle: SQLHDBC;
@@ -3375,12 +3375,12 @@ function SQLSetDescRec(
   ARecNumber: SQLSMALLINT;
   AType: SQLSMALLINT;
   ASubType: SQLSMALLINT;
-  ALength: SQLINTEGER;
+  ALength: SQLLEN;
   APrecision: SQLSMALLINT;
   AScale: SQLSMALLINT;
   AData: SQLPOINTER;
-  AStringLength: SQLINTEGERPtr;
-  AIndicator: SQLINTEGERPtr): SQLRETURN; external ODBCDLL;
+  AStringLength: SQLLENPtr;
+  AIndicator: SQLLENPtr): SQLRETURN; external ODBCDLL;
 
 function SQLSetEnvAttr(
   AEnvironmentHandle: SQLHENV;
@@ -3392,7 +3392,7 @@ function SQLSetEnvAttr(
 
 function SQLSetPos(
   AStatementHandle: SQLHSTMT;
-  ARowNumber: SQLUSMALLINT;
+  ARowNumber: SQLSETPOSIROW;
   AOperation: SQLUSMALLINT;
   ALockType: SQLUSMALLINT): SQLRETURN; external ODBCDLL;
 

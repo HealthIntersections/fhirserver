@@ -226,9 +226,9 @@ var
   iCount : integer;
 Begin
   iRefs := nil;
-  if FLoinc.Code.FindCode(sCode, iIndex) Then
+  if FLoinc.CodeList.FindCode(sCode, iIndex) Then
   Begin
-    FLoinc.Code.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    FLoinc.CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     assert(sCode = sCode1);
     html.Header('LOINC Code '+sCode+' : '+FLoinc.Desc.GetEntry(iDescription));
     html.StartTable(true);
@@ -484,7 +484,7 @@ begin
         html.StartTableCell;
         b := true;
       End;
-      FLoinc.Code.GetInformation(aCodes[i], sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      FLoinc.CodeList.GetInformation(aCodes[i], sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
       html.StartParagraph;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
@@ -549,7 +549,7 @@ begin
     html.EndTableCell;
     html.StartTableCell;
     html.StartList;
-    iTotal := FLoinc.Code.Count;
+    iTotal := FLoinc.CodeList.Count;
     For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
     Begin
       if not b And ((i - iStart) / Min(MAX_ROWS, iTotal) >= 0.5) Then
@@ -560,7 +560,7 @@ begin
         html.StartList;
         b := true;
       End;
-      FLoinc.Code.GetInformation(i, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      FLoinc.CodeList.GetInformation(i, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
       html.StartListItem;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
@@ -670,7 +670,7 @@ begin
 
   For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
   Begin
-    FLoinc.Code.GetInformation(a[i].index, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    FLoinc.CodeList.GetInformation(a[i].index, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
 
     html.StartTableRow;
     html.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);

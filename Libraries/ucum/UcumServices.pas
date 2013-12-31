@@ -31,23 +31,11 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils,
-  Classes,
-  AdvBinaryFilers,
-  MathSupport,
-  FileSupport,
-  AdvFiles,
-  AdvFactories,
-  DecimalSupport,
-  AdvPersistents,
-  AdvPersistentLists,
-  AdvStringLists,
-  AdvObjectLists,
-  AdvObjects,
-  UcumHandlers,
-  UcumValidators,
-  UcumExpressions,
-  Ucum;
+  SysUtils, Classes,
+  MathSupport, FileSupport,
+  AdvBinaryFilers, AdvFiles, AdvFactories, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
+  DecimalSupport, UcumHandlers, UcumValidators, UcumExpressions, Ucum,
+  TerminologyServices;
 
 Type
   TUcumPair = class (TAdvObject)
@@ -63,7 +51,7 @@ Type
     Property UnitCode : String read FUnitCode write FUnitCode;
   End;
 
-  TUcumServices = class (TadvObject)
+  TUcumServices = class (TCodeSystemProvider)
   Private
     FModel : TUcumModel;
     FHandlers : TUcumRegistry;
@@ -95,7 +83,7 @@ Type
      * @param isRegex
      * @return
      *)
-    Function search(kind : TConceptKind; text : String; isRegex : Boolean) : TUcumConceptList;
+    Function search(kind : TConceptKind; text : String; isRegex : Boolean) : TUcumConceptList; overload;
 
     (*
      * return a list of the defined types of units in this UCUM version
@@ -202,6 +190,25 @@ Type
     Procedure Save(Const sFilename : String);
 
     Property Loaded : Boolean read FLoaded write FLoaded;
+
+    function TotalCount : integer; override;
+    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
+    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function system : String; override;
+    function getDisplay(code : String):String; override;
+    function locate(code : String) : TCodeSystemProviderContext; override;
+    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
+    function Code(context : TCodeSystemProviderContext) : string; override;
+    function Display(context : TCodeSystemProviderContext) : string; override;
+    procedure Displays(code : String; list : TStringList); override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; override;
+    function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; override;
+    function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
+    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function searchFilter(filter : TSearchFilterText) : TCodeSystemProviderFilterContext; overload; override;
   End;
 
   TUcumServiceList = class (TAdvObjectList)
@@ -220,9 +227,6 @@ Type
     Property DefaultDefinition : TUcumServices Read FDefinition write SetDefinition;
     Property Definition[iIndex : Integer] : TUcumServices read GetDefinition; Default;
   End;
-
-var
-  GUcums : TUcumServiceList;
 
 Implementation
 
@@ -486,6 +490,12 @@ begin
   End;
 end;
 
+function TUcumServices.searchFilter(filter : TSearchFilterText): TCodeSystemProviderFilterContext;
+begin
+  result := nil;
+  raise Exception.Create('to do');
+end;
+
 function TUcumServices.Validate(code: String): String;
 begin
   if (code <> '') Then
@@ -694,6 +704,106 @@ begin
   FDefinition := Value;
 end;
 
+
+function TUcumServices.ChildCount(context: TCodeSystemProviderContext): integer;
+begin
+  result := 0;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.Code(context: TCodeSystemProviderContext): string;
+begin
+  result := '';
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+begin
+  result := nil;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.Display(context: TCodeSystemProviderContext): string;
+begin
+  result := '';
+  raise Exception.Create('to do');
+end;
+
+procedure TUcumServices.Displays(code: String; list: TStringList);
+begin
+  list.Add(getDisplay(code));
+end;
+
+function TUcumServices.getDisplay(code: String): String;
+begin
+  result := '';
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+begin
+  result := false;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
+begin
+  result := false;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.locate(code: String): TCodeSystemProviderContext;
+begin
+  result := nil;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.system: String;
+begin
+  result := '';
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.TotalCount: integer;
+begin
+  result := 0;
+  raise Exception.Create('to do');
+end;
+
+procedure TUcumServices.Close(ctxt: TCodeSystemProviderFilterContext);
+begin
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+begin
+  result := nil;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
+begin
+  result := nil;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := 0;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+begin
+  result := nil;
+  raise Exception.Create('to do');
+end;
+
+function TUcumServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
+begin
+  result := nil;
+  raise Exception.Create('to do');
+end;
 
 End.
 

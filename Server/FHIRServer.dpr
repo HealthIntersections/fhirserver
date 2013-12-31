@@ -39,6 +39,14 @@ TODO:
  -
 }
 
+{
+bug list:
+
+
+build:
+validator jar not in validation pack
+
+}
 
 uses
   FastMM4 in '..\Libraries\FMM\FastMM4.pas',
@@ -110,9 +118,7 @@ uses
   AdvZipDeclarations in '..\Libraries\Support\AdvZipDeclarations.pas',
   AdvZipUtilities in '..\Libraries\Support\AdvZipUtilities.pas',
   AdvZipWorkers in '..\Libraries\Support\AdvZipWorkers.pas',
-  ZLibEx in '..\Libraries\Support\ZLibEx.pas',
   GUIDSupport in '..\Libraries\Support\GUIDSupport.pas',
-  bignum in '..\Libraries\Support\bignum.pas',
   FHIRBase in '..\Libraries\refplat\FHIRBase.pas',
   DecimalSupport in '..\Libraries\Support\DecimalSupport.pas',
   DateAndTime in '..\Libraries\Support\DateAndTime.pas',
@@ -198,7 +204,25 @@ uses
   FhirServerTests in 'FhirServerTests.pas',
   HTMLPublisher in '..\Libraries\support\HTMLPublisher.pas',
   LoincImporter in '..\Libraries\loinc\LoincImporter.pas',
-  LoincPublisher in '..\Libraries\loinc\LoincPublisher.pas';
+  LoincPublisher in '..\Libraries\loinc\LoincPublisher.pas',
+  TerminologyServer in 'TerminologyServer.pas',
+  TerminologyServerStore in 'TerminologyServerStore.pas',
+  TerminologyServices in '..\Libraries\TerminologyServices.pas',
+  FHIRValueSetChecker in 'FHIRValueSetChecker.pas',
+  TerminologyWebServer in 'TerminologyWebServer.pas',
+  IdSoapConsts in 'C:\HL7Connect\indysoap\source\IdSoapConsts.pas',
+  IdSoapClasses in 'C:\HL7Connect\indysoap\source\IdSoapClasses.pas',
+  IdSoapDebug in 'C:\HL7Connect\indysoap\source\IdSoapDebug.pas',
+  IdSoapResourceStrings in 'C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas',
+  IdSoapTracker in 'C:\HL7Connect\indysoap\source\IdSoapTracker.pas',
+  IdSoapUtilities in 'C:\HL7Connect\indysoap\source\IdSoapUtilities.pas',
+  IdSoapExceptions in 'C:\HL7Connect\indysoap\source\IdSoapExceptions.pas',
+  IdSoapMsXml in 'C:\HL7Connect\indysoap\source\IdSoapMsXml.pas',
+  IdSoapXML in 'C:\HL7Connect\indysoap\source\IdSoapXML.pas',
+  IdSoapComponent in 'C:\HL7Connect\indysoap\source\IdSoapComponent.pas',
+  IdSoapNamespaces in 'C:\HL7Connect\indysoap\source\IdSoapNamespaces.pas',
+  IdSoapMime in 'C:\HL7Connect\indysoap\source\IdSoapMime.pas',
+  IdSoapBase64 in 'C:\HL7Connect\indysoap\source\IdSoapBase64.pas';
 
 begin
   try

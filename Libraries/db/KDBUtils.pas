@@ -7,8 +7,8 @@ interface
 
 uses
   Classes, DB, Contnrs,
-  IdSoapDateTime, KDate,
-  KDBManager;
+  {$IFDEF WIN32} IdSoapDateTime, {$ENDIF}
+  KDate, KDBManager;
 
 const
   {$IFDEF VER170}
@@ -140,12 +140,13 @@ const
     );
   {$ENDIF}
 
-
+{$IFDEF WIN32}
 function IdSoapDateTimeToTimeStamp(AValue : TIdSoapDateTime):TTimeStamp;
 function TimeStampToIdSoapDateTime(AValue : TTimeStamp):TIdSoapDateTime;
 
 procedure BindIdSoapDateTime(AConn : TKDBConnection; AName: String; AValue: TIdSoapDateTime);
 Function ColIdSoapDateTime(AConn : TKDBConnection; AName: String): TIdSoapDateTime;
+{$ENDIF}
 
 procedure PopulateDBTableMetaData(ADB : TDataSet; ATable : TKDBTable);
 function FetchIndexMetaData(AIndexDef : TIndexDef) : TKDBIndex;
@@ -156,6 +157,7 @@ uses
   SysUtils,
   StringSupport;
 
+{$IFDEF WIN32}
 function IdSoapDateTimeToTimeStamp(AValue : TIdSoapDateTime):kdate.TTimeStamp;
 begin
   if not Assigned(AValue) then
@@ -219,6 +221,8 @@ begin
     result := TimeStampToIdSoapDateTime(AConn.ColTimeStampByName[AName]);
     end;
 end;
+{$ENDIF}
+
 
 function FetchColumnMetaData(AField : TField):TKDBColumn;
 begin

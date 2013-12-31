@@ -164,7 +164,7 @@ Procedure TAdvIntegerList.InternalEmpty(iIndex, iLength : Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(Integer(FIntegerArray) + (iIndex * SizeOf(TAdvIntegerListItem))), (iLength * SizeOf(TAdvIntegerListItem)));
+  MemoryZero(Pointer(NativeUInt(FIntegerArray) + (iIndex * SizeOf(TAdvIntegerListItem))), (iLength * SizeOf(TAdvIntegerListItem)));
 End;  
 
 

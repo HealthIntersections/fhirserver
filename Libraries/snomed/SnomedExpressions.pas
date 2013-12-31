@@ -622,23 +622,27 @@ begin
       b.Append('+');
     Render(b, expr.concepts[i], option);
   end;
-  for i := 0 to expr.refinements.Count - 1 do
+  if (expr.refinements.Count > 0) or (expr.refinementGroups.Count > 0) then
   begin
-    if (i > 0) then
-      b.Append(',');
-    Render(b, expr.refinements[i], option);
-  end;
-  for j := 0 to expr.refinementGroups.Count - 1 do
-  begin
-    b.Append('{');
-    for i := 0 to expr.refinementGroups[j].refinements.Count - 1 do
+    b.Append(':');
+    for i := 0 to expr.refinements.Count - 1 do
     begin
       if (i > 0) then
         b.Append(',');
-      Render(b, expr.refinementGroups[j].refinements[i], option);
+      Render(b, expr.refinements[i], option);
     end;
+    for j := 0 to expr.refinementGroups.Count - 1 do
+    begin
+      b.Append('{');
+      for i := 0 to expr.refinementGroups[j].refinements.Count - 1 do
+      begin
+        if (i > 0) then
+          b.Append(',');
+        Render(b, expr.refinementGroups[j].refinements[i], option);
+      end;
 
-    b.Append('}');
+      b.Append('}');
+    end;
   end;
 end;
 

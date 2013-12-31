@@ -1,7 +1,6 @@
-{! 1 !}
 {-------------------------------------------------------------------------------
  
- Copyright (c) 1999-2010 Ralf Junker, The Delphi Inspiration
+ Copyright (c) 1999-2013 Ralf Junker, The Delphi Inspiration
  Internet: http://www.yunqa.de/delphi/
  E-Mail:   delphi@yunqa.de
 
@@ -9,7 +8,9 @@
 
 unit YuStemmer;
 
-{$I DI.inc}
+{$I DICompilers.inc}
+{$A+}
+{$Z+}
 
 interface
 
@@ -421,19 +422,54 @@ implementation
 
 type
 
+  C___int8 = System.ShortInt;
+  C___int16 = System.SmallInt;
+  C___int32 = System.Integer;
+  C___int64 = System.Int64;
+
+  C___uint8 = System.Byte;
+  C___uint16 = System.Word;
+  C___uint32 = System.Cardinal;
+  C___uint64 = System.{$IFDEF SUPPORTS_UINT64}UInt64{$ELSE}Int64{$ENDIF};
+
   C_char = System.AnsiChar;
+
   C_char_ptr = System.PAnsiChar;
   C_char_ptr_ptr = ^C_char_ptr;
-  C_char_ptr_array = packed array[0..MaxInt div SizeOf(C_char_ptr) - 1] of C_char_ptr;
+  C_char_ptr_array = array[0..MaxInt div SizeOf(C_char_ptr) - 1] of C_char_ptr;
   C_char_ptr_array_ptr = ^C_char_ptr_array;
+  C_char_num = System.ShortInt;
+
+  C_char_num_ptr = ^C_char_num;
   C_double = System.Double;
   C_double_ptr = ^C_double;
   C_float = System.Single;
   C_float_ptr = ^C_float;
   C_int = System.Integer;
   C_int_ptr = ^C_int;
+  C_int_array = array[0..MaxInt div SizeOf(C_int) - 1] of C_int;
+  C_int_array_ptr = ^C_int_array;
+
+  C_int8_t = C___int8;
+
+  C_int8_t_ptr = ^C_int8_t;
+
+  C_int16_t = C___int16;
+
+  C_int16_t_ptr = ^C_int16_t;
+
+  C_int32_t = C___int32;
+
+  C_int32_t_ptr = ^C_int32_t;
+
+  C_int64_t = C___int64;
+
+  C_int64_t_ptr = ^C_int64_t;
+
   C_long = System.Integer;
   C_long_ptr = ^C_long;
+  C_long_long = System.Int64;
+  C_long_long_ptr = ^C_long_long;
   C_long_int = System.Integer;
   C_long_int_ptr = C_long_int;
   C_short = System.SmallInt;
@@ -448,28 +484,64 @@ type
   C_signed_short = System.SmallInt;
   C_unsigned = System.Cardinal;
   C_unsigned_ptr = ^C_unsigned;
-  C_unsigned_char = System.Byte;
-  C_unsigned_char_array = packed array[0..MaxInt div SizeOf(C_unsigned_char) - 1] of C_unsigned_char;
+  C_unsigned_char = System.AnsiChar;
+
+  C_unsigned_char_ptr = System.PAnsiChar;
+  C_unsigned_char_ptr_ptr = ^C_unsigned_char_ptr;
+  C_unsigned_char_array = array[0..MaxInt div SizeOf(C_unsigned_char) - 1] of C_unsigned_char;
   C_unsigned_char_array_ptr = ^C_unsigned_char_array;
-  C_unsigned_char_ptr = ^C_unsigned_char;
-  C_unsigned_char_ptr_array = packed array[0..MaxInt div SizeOf(C_unsigned_char_ptr) - 1] of C_unsigned_char_ptr;
+  C_unsigned_char_ptr_array = array[0..MaxInt div SizeOf(C_unsigned_char_ptr) - 1] of C_unsigned_char_ptr;
   C_unsigned_char_ptr_array_ptr = ^C_unsigned_char_ptr_array;
+  C_unsigned_char_num = System.Byte;
+
+  C_unsigned_char_num_ptr = ^C_unsigned_char_num;
   C_unsigned_int = System.Cardinal;
   C_unsigned_int_ptr = ^C_unsigned_int;
+  C_unsigned___int64 = C___uint64;
   C_unsigned_long = System.Cardinal;
+  C_unsigned_long_int = System.Integer;
+  C_unsigned_long_long = System.{$IFDEF SUPPORTS_UINT64}UInt64{$ELSE}Int64{$ENDIF};
   C_unsigned_long_ptr = ^C_unsigned_long;
   C_unsigned_short = System.Word;
   C_unsigned_short_ptr = ^C_unsigned_short;
+  C_unsigned_short_int = System.Word;
+  C_unsigned_short_int_ptr = ^C_unsigned_short_int;
 
-  C_size_t = C_unsigned;
+  C_errno_t = C_int;
+
+  C_size_t = {$IFDEF CPUX64}C_unsigned___int64{$ELSE}C_unsigned_int{$ENDIF};
+  C_size_t_ptr = ^C_size_t;
+
+  C_uint8_t = C___uint8;
+
+  C_uint8_t_ptr = ^C_uint8_t;
+
+  C_uint16_t = C___uint16;
+
+  C_uint16_t_ptr = ^C_uint16_t;
+
+  C_uint32_t = C___uint32;
+
+  C_uint32_t_ptr = ^C_uint32_t;
+
+  C_uint64_t = C___uint64;
+
+  C_uint64_t_ptr = ^C_uint64_t;
 
   C_void_ptr = System.Pointer;
   C_void_ptr_ptr = ^C_void_ptr;
+  C_void_ptr_array = array[0..MaxInt div SizeOf(C_void_ptr) - 1] of C_void_ptr;
+  C_void_ptr_array_ptr = ^C_void_ptr_array;
+
   C_wchar_t = System.WideChar;
 
   C_wint_t = C_wchar_t;
 
   C_wchar_t_ptr = System.PWideChar;
+
+{$IFDEF MSWINDOWS}
+
+{$ENDIF MSWINDOWS}
 
 type
   symbol_ptr = C_char_ptr;
@@ -1297,26 +1369,6 @@ begin
   FClose := turkish_utf_16_close_env;
 end;
 
-  {$Z1}
-
-function calloc(NElem: Cardinal; elsize: Cardinal): Pointer;
-begin
-  GetMem(Result, NElem * elsize);
-  FillChar(Result^, NElem * elsize, 0);
-end;
-
-procedure Free(Block: C_void_ptr);
-var
-  MemMgr: System.{$IFDEF COMPILER_10_UP}TMemoryManagerEx{$ELSE}TMemoryManager{$ENDIF};
-begin
-
-  if Assigned(Block) then
-    begin
-      GetMemoryManager(MemMgr);
-      MemMgr.FreeMem(Block);
-    end;
-end;
-
 function malloc(Size: C_size_t): C_void_ptr;
 var
   MemMgr: System.{$IFDEF COMPILER_10_UP}TMemoryManagerEx{$ELSE}TMemoryManager{$ENDIF};
@@ -1329,6 +1381,39 @@ begin
     end
   else
     Result := nil;
+end;
+
+function calloc(NElem: C_size_t; elsize: C_size_t): C_void_ptr;
+var
+  lBytes: C_size_t;
+  MemMgr: System.{$IFDEF COMPILER_10_UP}TMemoryManagerEx{$ELSE}TMemoryManager{$ENDIF};
+begin
+  lBytes := NElem * elsize;
+  if lBytes > 0 then
+    begin
+
+      GetMemoryManager(MemMgr);
+      {$IFDEF COMPILER_10_UP}
+      Result := MemMgr.AllocMem(lBytes);
+      {$ELSE COMPILER_10_UP}
+      Result := MemMgr.GetMem(lBytes);
+      FillChar(Result^, lBytes, 0);
+      {$ENDIF COMPILER_10_UP}
+    end
+  else
+    Result := nil;
+end;
+
+procedure Free(Block: C_void_ptr);
+var
+  MemMgr: System.{$IFDEF COMPILER_10_UP}TMemoryManagerEx{$ELSE}TMemoryManager{$ENDIF};
+begin
+
+  if Assigned(Block) then
+    begin
+      GetMemoryManager(MemMgr);
+      MemMgr.FreeMem(Block);
+    end;
 end;
 
 function MemCmp(const s1: C_void_ptr; const s2: C_void_ptr; n: C_size_t): C_int;
@@ -1379,7 +1464,7 @@ begin
   Result := 0;
 end;
 
-function memmove(Dest: C_void_ptr; Src: C_void_ptr; const n: C_size_t): C_void_ptr;
+function memmove(Dest: C_void_ptr; const Src: C_void_ptr; n: C_size_t): C_void_ptr;
 begin
   Result := Dest;
   Move(Src^, Result^, n);
@@ -1407,78 +1492,82 @@ begin
     Result := malloc(Size);
 end;
 
-{$L obj\stem_danish_iso_8859_1}
-{$L obj\stem_danish_utf_8}
-{$L obj\stem_danish_utf_16}
+{$IFDEF MSWINDOWS}
 
-{$L obj\stem_dutch_iso_8859_1}
-{$L obj\stem_dutch_utf_8}
-{$L obj\stem_dutch_utf_16}
+{$ENDIF MSWINDOWS}
 
-{$L obj\stem_english_iso_8859_1}
-{$L obj\stem_english_utf_8}
-{$L obj\stem_english_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_danish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_danish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_danish_utf_8}{$ELSE}{$L stemmer_win32\stem_danish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_danish_utf_16}{$ELSE}{$L stemmer_win32\stem_danish_utf_16}{$ENDIF}
 
-{$L obj\stem_finnish_iso_8859_1}
-{$L obj\stem_finnish_utf_8}
-{$L obj\stem_finnish_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_dutch_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_dutch_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_dutch_utf_8}{$ELSE}{$L stemmer_win32\stem_dutch_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_dutch_utf_16}{$ELSE}{$L stemmer_win32\stem_dutch_utf_16}{$ENDIF}
 
-{$L obj\stem_french_iso_8859_1}
-{$L obj\stem_french_utf_8}
-{$L obj\stem_french_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_english_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_english_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_english_utf_8}{$ELSE}{$L stemmer_win32\stem_english_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_english_utf_16}{$ELSE}{$L stemmer_win32\stem_english_utf_16}{$ENDIF}
 
-{$L obj\stem_german_iso_8859_1}
-{$L obj\stem_german_utf_8}
-{$L obj\stem_german_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_finnish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_finnish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_finnish_utf_8}{$ELSE}{$L stemmer_win32\stem_finnish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_finnish_utf_16}{$ELSE}{$L stemmer_win32\stem_finnish_utf_16}{$ENDIF}
 
-{$L obj\stem_german2_iso_8859_1}
-{$L obj\stem_german2_utf_8}
-{$L obj\stem_german2_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_french_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_french_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_french_utf_8}{$ELSE}{$L stemmer_win32\stem_french_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_french_utf_16}{$ELSE}{$L stemmer_win32\stem_french_utf_16}{$ENDIF}
 
-{$L obj\stem_hungarian_iso_8859_1}
-{$L obj\stem_hungarian_utf_8}
-{$L obj\stem_hungarian_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_german_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_german_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_german_utf_8}{$ELSE}{$L stemmer_win32\stem_german_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_german_utf_16}{$ELSE}{$L stemmer_win32\stem_german_utf_16}{$ENDIF}
 
-{$L obj\stem_italian_iso_8859_1}
-{$L obj\stem_italian_utf_8}
-{$L obj\stem_italian_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_german2_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_german2_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_german2_utf_8}{$ELSE}{$L stemmer_win32\stem_german2_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_german2_utf_16}{$ELSE}{$L stemmer_win32\stem_german2_utf_16}{$ENDIF}
 
-{$L obj\stem_norwegian_iso_8859_1}
-{$L obj\stem_norwegian_utf_8}
-{$L obj\stem_norwegian_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_hungarian_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_hungarian_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_hungarian_utf_8}{$ELSE}{$L stemmer_win32\stem_hungarian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_hungarian_utf_16}{$ELSE}{$L stemmer_win32\stem_hungarian_utf_16}{$ENDIF}
 
-{$L obj\stem_porter_iso_8859_1}
-{$L obj\stem_porter_utf_8}
-{$L obj\stem_porter_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_italian_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_italian_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_italian_utf_8}{$ELSE}{$L stemmer_win32\stem_italian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_italian_utf_16}{$ELSE}{$L stemmer_win32\stem_italian_utf_16}{$ENDIF}
 
-{$L obj\stem_portuguese_iso_8859_1}
-{$L obj\stem_portuguese_utf_8}
-{$L obj\stem_portuguese_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_norwegian_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_norwegian_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_norwegian_utf_8}{$ELSE}{$L stemmer_win32\stem_norwegian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_norwegian_utf_16}{$ELSE}{$L stemmer_win32\stem_norwegian_utf_16}{$ENDIF}
 
-{$L obj\stem_romanian_iso_8859_2}
-{$L obj\stem_romanian_utf_8}
-{$L obj\stem_romanian_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_porter_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_porter_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_porter_utf_8}{$ELSE}{$L stemmer_win32\stem_porter_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_porter_utf_16}{$ELSE}{$L stemmer_win32\stem_porter_utf_16}{$ENDIF}
 
-{$L obj\stem_russian_KOI8_R}
-{$L obj\stem_russian_utf_8}
-{$L obj\stem_russian_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_portuguese_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_portuguese_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_portuguese_utf_8}{$ELSE}{$L stemmer_win32\stem_portuguese_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_portuguese_utf_16}{$ELSE}{$L stemmer_win32\stem_portuguese_utf_16}{$ENDIF}
 
-{$L obj\stem_spanish_iso_8859_1}
-{$L obj\stem_spanish_utf_8}
-{$L obj\stem_spanish_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_romanian_iso_8859_2}{$ELSE}{$L stemmer_win32\stem_romanian_iso_8859_2}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_romanian_utf_8}{$ELSE}{$L stemmer_win32\stem_romanian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_romanian_utf_16}{$ELSE}{$L stemmer_win32\stem_romanian_utf_16}{$ENDIF}
 
-{$L obj\stem_swedish_iso_8859_1}
-{$L obj\stem_swedish_utf_8}
-{$L obj\stem_swedish_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_russian_KOI8_R}{$ELSE}{$L stemmer_win32\stem_russian_KOI8_R}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_russian_utf_8}{$ELSE}{$L stemmer_win32\stem_russian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_russian_utf_16}{$ELSE}{$L stemmer_win32\stem_russian_utf_16}{$ENDIF}
 
-{$L obj\stem_turkish_utf_8}
-{$L obj\stem_turkish_utf_16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_spanish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_spanish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_spanish_utf_8}{$ELSE}{$L stemmer_win32\stem_spanish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_spanish_utf_16}{$ELSE}{$L stemmer_win32\stem_spanish_utf_16}{$ENDIF}
 
-{$L obj\api}
-{$L obj\utilities}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_swedish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_swedish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_swedish_utf_8}{$ELSE}{$L stemmer_win32\stem_swedish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_swedish_utf_16}{$ELSE}{$L stemmer_win32\stem_swedish_utf_16}{$ENDIF}
 
-{$L obj\api16}
-{$L obj\utilities16}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_turkish_utf_8}{$ELSE}{$L stemmer_win32\stem_turkish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\stem_turkish_utf_16}{$ELSE}{$L stemmer_win32\stem_turkish_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\api}{$ELSE}{$L stemmer_win32\api}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\utilities}{$ELSE}{$L stemmer_win32\utilities}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\api16}{$ELSE}{$L stemmer_win32\api16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\utilities16}{$ELSE}{$L stemmer_win32\utilities16}{$ENDIF}
 
 end.
 

@@ -157,15 +157,19 @@ type
     Property Current : TFHIRProperty read GetCurrent;
   End;
 
-
+  {$M+}
   TFHIRObject = class (TAdvObject)
+  private
+    FTag : TAdvObject;
+    procedure SetTag(const Value: TAdvObject);
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); virtual;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Virtual;
   public
-    Destructor destroy; override;
+    Destructor Destroy; override;
     function createIterator(bInheritedProperties : Boolean) : TFHIRPropertyIterator;
     Function PerformQuery(xpath : String):TFHIRObjectList;
+    property Tag : TAdvObject read FTag write SetTag;
   end;
 
   TFHIRObjectList = class (TAdvObjectList)
@@ -1313,6 +1317,7 @@ end;
 
 destructor TFHIRObject.destroy;
 begin
+  FTag.Free;
   inherited;
 end;
 
@@ -1339,6 +1344,12 @@ begin
   finally
     qry.free;
   end;
+end;
+
+procedure TFHIRObject.SetTag(const Value: TAdvObject);
+begin
+  FTag.Free;
+  FTag := Value;
 end;
 
 { TFHIRObjectText }

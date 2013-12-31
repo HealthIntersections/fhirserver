@@ -33,7 +33,7 @@ unit FHIRComponents;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 18, 2013 15:06+1100
+// FHIR v0.12 generated Tue, Dec 31, 2013 11:31+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -59,6 +59,8 @@ Type
   TFhirCompositionSectionList = class;
   TFhirConceptMapConcept = class;
   TFhirConceptMapConceptList = class;
+  TFhirConceptMapConceptDependsOn = class;
+  TFhirConceptMapConceptDependsOnList = class;
   TFhirConceptMapConceptMap = class;
   TFhirConceptMapConceptMapList = class;
   TFhirConditionStage = class;
@@ -105,10 +107,10 @@ Type
   TFhirDiagnosticOrderEventList = class;
   TFhirDiagnosticOrderItem = class;
   TFhirDiagnosticOrderItemList = class;
-  TFhirDiagnosticReportRequestDetail = class;
-  TFhirDiagnosticReportRequestDetailList = class;
   TFhirDiagnosticReportResults = class;
   TFhirDiagnosticReportResultsList = class;
+  TFhirDiagnosticReportImage = class;
+  TFhirDiagnosticReportImageList = class;
   TFhirDocumentReferenceRelatesTo = class;
   TFhirDocumentReferenceRelatesToList = class;
   TFhirDocumentReferenceService = class;
@@ -147,8 +149,6 @@ Type
   TFhirImmunizationRecommendationRecommendationDateCriterionList = class;
   TFhirImmunizationRecommendationRecommendationProtocol = class;
   TFhirImmunizationRecommendationRecommendationProtocolList = class;
-  TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport = class;
-  TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList = class;
   TFhirListEntry = class;
   TFhirListEntryList = class;
   TFhirLocationPosition = class;
@@ -400,16 +400,16 @@ Type
   {!.Net HL7Connect.Fhir.AdverseReactionExposure}
   TFhirAdverseReactionExposure = class (TFhirBackboneElement)
   private
-    FExposureDate : TFhirDateTime;
-    FExposureType : TFhirEnum;
+    FDate : TFhirDateTime;
+    FType_ : TFhirEnum;
     FCausalityExpectation : TFhirEnum;
     FSubstance : TFhirResourceReference{TFhirSubstance};
-    Procedure SetExposureDate(value : TFhirDateTime);
-    Function GetExposureDateST : TDateAndTime;
-    Procedure SetExposureDateST(value : TDateAndTime);
-    Procedure SetExposureType(value : TFhirEnum);
-    Function GetExposureTypeST : TFhirExposureType;
-    Procedure SetExposureTypeST(value : TFhirExposureType);
+    Procedure SetDate(value : TFhirDateTime);
+    Function GetDateST : TDateAndTime;
+    Procedure SetDateST(value : TDateAndTime);
+    Procedure SetType_(value : TFhirEnum);
+    Function GetType_ST : TFhirExposureType;
+    Procedure SetType_ST(value : TFhirExposureType);
     Procedure SetCausalityExpectation(value : TFhirEnum);
     Function GetCausalityExpectationST : TFhirCausalityExpectation;
     Procedure SetCausalityExpectationST(value : TFhirCausalityExpectation);
@@ -426,23 +426,23 @@ Type
     function Clone : TFhirAdverseReactionExposure; overload;
     {!script show}
   published
-    {@member exposureDate
-      When the exposure occurred.
+    {@member date
+      Identifies the initial date of the exposure that is suspected to be related to the reaction.
     }
-    property exposureDate : TFhirDateTime read FExposureDate write SetExposureDate;
-    {@member exposureDateST
-      Typed access to When the exposure occurred.
+    property date : TFhirDateTime read FDate write SetDate;
+    {@member dateST
+      Typed access to Identifies the initial date of the exposure that is suspected to be related to the reaction.
     }
-    property exposureDateST : TDateAndTime read GetExposureDateST write SetExposureDateST;
+    property dateST : TDateAndTime read GetDateST write SetDateST;
 
-    {@member exposureType
+    {@member type_
       The type of exposure: Drug Administration, Immunization, Coincidental.
     }
-    property exposureType : TFhirEnum read FExposureType write SetExposureType;
-    {@member exposureTypeST
+    property type_ : TFhirEnum read FType_ write SetType_;
+    {@member type_ST
       Typed access to The type of exposure: Drug Administration, Immunization, Coincidental.
     }
-    property exposureTypeST : TFhirExposureType read GetExposureTypeST write SetExposureTypeST;
+    property type_ST : TFhirExposureType read GetType_ST write SetType_ST;
 
     {@member causalityExpectation
       A statement of how confident that the recorder was that this exposure caused the reaction.
@@ -454,7 +454,7 @@ Type
     property causalityExpectationST : TFhirCausalityExpectation read GetCausalityExpectationST write SetCausalityExpectationST;
 
     {@member substance
-      Substance(s) that is presumed to have caused the adverse reaction.
+      Substance that is presumed to have caused the adverse reaction.
     }
     property substance : TFhirResourceReference{TFhirSubstance} read FSubstance write SetSubstance;
 
@@ -1516,19 +1516,15 @@ Type
 
 
   {@Class TFhirConceptMapConcept : TFhirElement
-    Mappings for a concept.
+    Mappings for a concept from the source valueset.
   }
   {!.Net HL7Connect.Fhir.ConceptMapConcept}
   TFhirConceptMapConcept = class (TFhirBackboneElement)
   private
-    FName : TFhirString;
     FSystem : TFhirUri;
     FCode : TFhirCode;
+    FdependsOnList : TFhirConceptMapConceptDependsOnList;
     FmapList : TFhirConceptMapConceptMapList;
-    FconceptList : TFhirConceptMapConceptList;
-    Procedure SetName(value : TFhirString);
-    Function GetNameST : String;
-    Procedure SetNameST(value : String);
     Procedure SetSystem(value : TFhirUri);
     Function GetSystemST : String;
     Procedure SetSystemST(value : String);
@@ -1547,15 +1543,6 @@ Type
     function Clone : TFhirConceptMapConcept; overload;
     {!script show}
   published
-    {@member name
-      Name for this concept (if just a group).
-    }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
-      Typed access to Name for this concept (if just a group).
-    }
-    property nameST : String read GetNameST write SetNameST;
-
     {@member system
       System that defines the concept being mapped.
     }
@@ -1574,15 +1561,15 @@ Type
     }
     property codeST : String read GetCodeST write SetCodeST;
 
+    {@member dependsOnList
+      A set of additional dependencies for this mapping to hold. This mapping is only applicable if the specified concept can be resolved, and it has the specified value.
+    }
+    property dependsOnList : TFhirConceptMapConceptDependsOnList read FDependsOnList;
+
     {@member mapList
-      Targets mapped to this concept.
+      A concept from the target value set that this concept maps to.
     }
     property mapList : TFhirConceptMapConceptMapList read FMapList;
-
-    {@member conceptList
-      Mappings for sub concepts.
-    }
-    property conceptList : TFhirConceptMapConceptList read FConceptList;
 
   end;
 
@@ -1666,20 +1653,160 @@ Type
   End;
 
 
+  {@Class TFhirConceptMapConceptDependsOn : TFhirElement
+    A set of additional dependencies for this mapping to hold. This mapping is only applicable if the specified concept can be resolved, and it has the specified value.
+  }
+  {!.Net HL7Connect.Fhir.ConceptMapConceptDependsOn}
+  TFhirConceptMapConceptDependsOn = class (TFhirBackboneElement)
+  private
+    FConcept : TFhirUri;
+    FSystem : TFhirUri;
+    FCode : TFhirCode;
+    Procedure SetConcept(value : TFhirUri);
+    Function GetConceptST : String;
+    Procedure SetConceptST(value : String);
+    Procedure SetSystem(value : TFhirUri);
+    Function GetSystemST : String;
+    Procedure SetSystemST(value : String);
+    Procedure SetCode(value : TFhirCode);
+    Function GetCodeST : String;
+    Procedure SetCodeST(value : String);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirConceptMapConceptDependsOn; overload;
+    function Clone : TFhirConceptMapConceptDependsOn; overload;
+    {!script show}
+  published
+    {@member concept
+      A reference to a specific concept that holds a coded value. This can be an element in a FHIR resource, or a specific reference to a data element in a different specification (e.g. v2) or a general reference to a kind of data field, or a reference to a value set with an appropriately narrow definition.
+    }
+    property concept : TFhirUri read FConcept write SetConcept;
+    {@member conceptST
+      Typed access to A reference to a specific concept that holds a coded value. This can be an element in a FHIR resource, or a specific reference to a data element in a different specification (e.g. v2) or a general reference to a kind of data field, or a reference to a value set with an appropriately narrow definition.
+    }
+    property conceptST : String read GetConceptST write SetConceptST;
+
+    {@member system
+      System for a concept in the referenced concept.
+    }
+    property system : TFhirUri read FSystem write SetSystem;
+    {@member systemST
+      Typed access to System for a concept in the referenced concept.
+    }
+    property systemST : String read GetSystemST write SetSystemST;
+
+    {@member code
+      Code for a concept in the referenced concept.
+    }
+    property code : TFhirCode read FCode write SetCode;
+    {@member codeST
+      Typed access to Code for a concept in the referenced concept.
+    }
+    property codeST : String read GetCodeST write SetCodeST;
+
+  end;
+
+
+  {@Class TFhirConceptMapConceptDependsOnList
+    A list of FhirConceptMapConceptDependsOn
+  }
+  {!.Net HL7Connect.Fhir.ConceptMapConceptDependsOnList}
+  TFhirConceptMapConceptDependsOnList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirConceptMapConceptDependsOn;
+    procedure SetItemN(index : Integer; value : TFhirConceptMapConceptDependsOn);
+  public
+    {!script hide}
+    function Link : TFhirConceptMapConceptDependsOnList; Overload;
+    function Clone : TFhirConceptMapConceptDependsOnList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirConceptMapConceptDependsOn to the end of the list.
+    }
+    function Append : TFhirConceptMapConceptDependsOn;
+
+    
+    {@member AddItem
+      Add an already existing FhirConceptMapConceptDependsOn to the end of the list.
+    }
+    procedure AddItem(value : TFhirConceptMapConceptDependsOn);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirConceptMapConceptDependsOn) : Integer;
+    
+
+    {@member Insert
+      Insert FhirConceptMapConceptDependsOn before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirConceptMapConceptDependsOn;
+    
+
+    {@member InsertItem
+       Insert an existing FhirConceptMapConceptDependsOn before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirConceptMapConceptDependsOn);
+    
+    {@member Item
+       Get the iIndexth FhirConceptMapConceptDependsOn. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirConceptMapConceptDependsOn. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirConceptMapConceptDependsOn);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirConceptMapConceptDependsOn;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirConceptMapConceptDependsOns[index : Integer] : TFhirConceptMapConceptDependsOn read GetItemN write SetItemN; default;
+  End;
+
+
   {@Class TFhirConceptMapConceptMap : TFhirElement
-    Targets mapped to this concept.
+    A concept from the target value set that this concept maps to.
   }
   {!.Net HL7Connect.Fhir.ConceptMapConceptMap}
   TFhirConceptMapConceptMap = class (TFhirBackboneElement)
   private
     FSystem : TFhirUri;
-    FCode : TFhirString;
+    FCode : TFhirCode;
     FEquivalence : TFhirEnum;
     FComments : TFhirString;
+    FproductList : TFhirConceptMapConceptDependsOnList;
     Procedure SetSystem(value : TFhirUri);
     Function GetSystemST : String;
     Procedure SetSystemST(value : String);
-    Procedure SetCode(value : TFhirString);
+    Procedure SetCode(value : TFhirCode);
     Function GetCodeST : String;
     Procedure SetCodeST(value : String);
     Procedure SetEquivalence(value : TFhirEnum);
@@ -1701,29 +1828,29 @@ Type
     {!script show}
   published
     {@member system
-      If this code is not for use as a real concept.
+      System of the target.
     }
     property system : TFhirUri read FSystem write SetSystem;
     {@member systemST
-      Typed access to If this code is not for use as a real concept.
+      Typed access to System of the target.
     }
     property systemST : String read GetSystemST write SetSystemST;
 
     {@member code
-      Text to Display to the user.
+      Code that identifies the target concept.
     }
-    property code : TFhirString read FCode write SetCode;
+    property code : TFhirCode read FCode write SetCode;
     {@member codeST
-      Typed access to Text to Display to the user.
+      Typed access to Code that identifies the target concept.
     }
     property codeST : String read GetCodeST write SetCodeST;
 
     {@member equivalence
-      equal | equivalent | wider | narrower | inexact | unmatched | disjoint.
+      equal | equivalent | wider | subsumes | narrower | specialises | inexact | unmatched | disjoint.
     }
     property equivalence : TFhirEnum read FEquivalence write SetEquivalence;
     {@member equivalenceST
-      Typed access to equal | equivalent | wider | narrower | inexact | unmatched | disjoint.
+      Typed access to equal | equivalent | wider | subsumes | narrower | specialises | inexact | unmatched | disjoint.
     }
     property equivalenceST : TFhirConceptEquivalence read GetEquivalenceST write SetEquivalenceST;
 
@@ -1735,6 +1862,11 @@ Type
       Typed access to Description of status/issues in mapping.
     }
     property commentsST : String read GetCommentsST write SetCommentsST;
+
+    {@member productList
+      A set of additional outcomes from this mapping to other value sets. To properly execute this mapping, the specified value set must be mapped to some data element or source that is in context. The mapping may still be useful without a place for the additional data elements, but the equivalence cannot be relied on.
+    }
+    property productList : TFhirConceptMapConceptDependsOnList read FProductList;
 
   end;
 
@@ -4493,20 +4625,22 @@ Type
 
 
   {@Class TFhirDiagnosticOrderEvent : TFhirElement
-    A summary of the events of interest that have occurred as the request is processed.
+    A summary of the events of interest that have occurred as the request is processed. E.g. when the order was made, various processing steps (specimens received), when it was completed.
   }
   {!.Net HL7Connect.Fhir.DiagnosticOrderEvent}
   TFhirDiagnosticOrderEvent = class (TFhirBackboneElement)
   private
     FStatus : TFhirEnum;
-    FDate : TFhirDateTime;
+    FDescription : TFhirCodeableConcept;
+    FDateTime : TFhirDateTime;
     FActor : TFhirResourceReference{Resource};
     Procedure SetStatus(value : TFhirEnum);
     Function GetStatusST : TFhirDiagnosticOrderStatus;
     Procedure SetStatusST(value : TFhirDiagnosticOrderStatus);
-    Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Procedure SetDescription(value : TFhirCodeableConcept);
+    Procedure SetDateTime(value : TFhirDateTime);
+    Function GetDateTimeST : TDateAndTime;
+    Procedure SetDateTimeST(value : TDateAndTime);
     Procedure SetActor(value : TFhirResourceReference{Resource});
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
@@ -4529,14 +4663,19 @@ Type
     }
     property statusST : TFhirDiagnosticOrderStatus read GetStatusST write SetStatusST;
 
-    {@member date
+    {@member description
+      Additional information about the event that occurred - e.g. if the status remained unchanged.
+    }
+    property description : TFhirCodeableConcept read FDescription write SetDescription;
+
+    {@member dateTime
       The date/time at which the event occurred.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    property dateTime : TFhirDateTime read FDateTime write SetDateTime;
+    {@member dateTimeST
       Typed access to The date/time at which the event occurred.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property dateTimeST : TDateAndTime read GetDateTimeST write SetDateTimeST;
 
     {@member actor
       The person who was responsible for performing or recording the action.
@@ -4654,7 +4793,7 @@ Type
     {!script show}
   published
     {@member code
-      A code that identifies a particular diagnostic investigation that has been requested.
+      A code that identifies a particular diagnostic investigation, or panel of investigations, that have been requested.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
 
@@ -4761,160 +4900,6 @@ Type
     procedure ClearItems;
     
     Property FhirDiagnosticOrderItems[index : Integer] : TFhirDiagnosticOrderItem read GetItemN write SetItemN; default;
-  End;
-
-
-  {@Class TFhirDiagnosticReportRequestDetail : TFhirElement
-    Details concerning a single pathology test requested.
-  }
-  {!.Net HL7Connect.Fhir.DiagnosticReportRequestDetail}
-  TFhirDiagnosticReportRequestDetail = class (TFhirBackboneElement)
-  private
-    FEncounter : TFhirResourceReference{TFhirEncounter};
-    FRequestOrderId : TFhirIdentifier;
-    FReceiverOrderId : TFhirIdentifier;
-    FrequestTestList : TFhirCodeableConceptList;
-    FBodySite : TFhirCodeableConcept;
-    FRequester : TFhirResourceReference{Resource};
-    FClinicalInfo : TFhirString;
-    Procedure SetEncounter(value : TFhirResourceReference{TFhirEncounter});
-    Procedure SetRequestOrderId(value : TFhirIdentifier);
-    Procedure SetReceiverOrderId(value : TFhirIdentifier);
-    Procedure SetBodySite(value : TFhirCodeableConcept);
-    Procedure SetRequester(value : TFhirResourceReference{Resource});
-    Procedure SetClinicalInfo(value : TFhirString);
-    Function GetClinicalInfoST : String;
-    Procedure SetClinicalInfoST(value : String);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirDiagnosticReportRequestDetail; overload;
-    function Clone : TFhirDiagnosticReportRequestDetail; overload;
-    {!script show}
-  published
-    {@member encounter
-      The encounter that this diagnostic investigation is associated with.
-    }
-    property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
-
-    {@member requestOrderId
-      The local ID assigned to the order by the order requester.
-    }
-    property requestOrderId : TFhirIdentifier read FRequestOrderId write SetRequestOrderId;
-
-    {@member receiverOrderId
-      The local ID assigned to the test order by the diagnostic service provider.
-    }
-    property receiverOrderId : TFhirIdentifier read FReceiverOrderId write SetReceiverOrderId;
-
-    {@member requestTestList
-      Identification of pathology test requested,.
-    }
-    property requestTestList : TFhirCodeableConceptList read FRequestTestList;
-
-    {@member bodySite
-      Anatomical location where the request test should be performed.
-    }
-    property bodySite : TFhirCodeableConcept read FBodySite write SetBodySite;
-
-    {@member requester
-      Details of the clinician or organization requesting the diagnostic service.
-    }
-    property requester : TFhirResourceReference{Resource} read FRequester write SetRequester;
-
-    {@member clinicalInfo
-      Details of the clinical information provided to the diagnostic service along with the original request.
-    }
-    property clinicalInfo : TFhirString read FClinicalInfo write SetClinicalInfo;
-    {@member clinicalInfoST
-      Typed access to Details of the clinical information provided to the diagnostic service along with the original request.
-    }
-    property clinicalInfoST : String read GetClinicalInfoST write SetClinicalInfoST;
-
-  end;
-
-
-  {@Class TFhirDiagnosticReportRequestDetailList
-    A list of FhirDiagnosticReportRequestDetail
-  }
-  {!.Net HL7Connect.Fhir.DiagnosticReportRequestDetailList}
-  TFhirDiagnosticReportRequestDetailList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirDiagnosticReportRequestDetail;
-    procedure SetItemN(index : Integer; value : TFhirDiagnosticReportRequestDetail);
-  public
-    {!script hide}
-    function Link : TFhirDiagnosticReportRequestDetailList; Overload;
-    function Clone : TFhirDiagnosticReportRequestDetailList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirDiagnosticReportRequestDetail to the end of the list.
-    }
-    function Append : TFhirDiagnosticReportRequestDetail;
-
-    
-    {@member AddItem
-      Add an already existing FhirDiagnosticReportRequestDetail to the end of the list.
-    }
-    procedure AddItem(value : TFhirDiagnosticReportRequestDetail);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirDiagnosticReportRequestDetail) : Integer;
-    
-
-    {@member Insert
-      Insert FhirDiagnosticReportRequestDetail before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirDiagnosticReportRequestDetail;
-    
-
-    {@member InsertItem
-       Insert an existing FhirDiagnosticReportRequestDetail before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirDiagnosticReportRequestDetail);
-    
-    {@member Item
-       Get the iIndexth FhirDiagnosticReportRequestDetail. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirDiagnosticReportRequestDetail. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirDiagnosticReportRequestDetail);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirDiagnosticReportRequestDetail;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirDiagnosticReportRequestDetails[index : Integer] : TFhirDiagnosticReportRequestDetail read GetItemN write SetItemN; default;
   End;
 
 
@@ -5041,6 +5026,126 @@ Type
     procedure ClearItems;
     
     Property FhirDiagnosticReportResults[index : Integer] : TFhirDiagnosticReportResults read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirDiagnosticReportImage : TFhirElement
+    A list of key images associated with this report. The images are generally created during the diagnostic process, and may be directly of the patient, or of treated specimens (i.e. slides of interest).
+  }
+  {!.Net HL7Connect.Fhir.DiagnosticReportImage}
+  TFhirDiagnosticReportImage = class (TFhirBackboneElement)
+  private
+    FComment : TFhirString;
+    FLink_ : TFhirResourceReference{TFhirMedia};
+    Procedure SetComment(value : TFhirString);
+    Function GetCommentST : String;
+    Procedure SetCommentST(value : String);
+    Procedure SetLink_(value : TFhirResourceReference{TFhirMedia});
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirDiagnosticReportImage; overload;
+    function Clone : TFhirDiagnosticReportImage; overload;
+    {!script show}
+  published
+    {@member comment
+      A comment about the image. Typically, this is used to provide an explanation for why the image is included, or to draw the viewers attention to important features.
+    }
+    property comment : TFhirString read FComment write SetComment;
+    {@member commentST
+      Typed access to A comment about the image. Typically, this is used to provide an explanation for why the image is included, or to draw the viewers attention to important features.
+    }
+    property commentST : String read GetCommentST write SetCommentST;
+
+    {@member link_
+      Reference to the image source.
+    }
+    property link_ : TFhirResourceReference{TFhirMedia} read FLink_ write SetLink_;
+
+  end;
+
+
+  {@Class TFhirDiagnosticReportImageList
+    A list of FhirDiagnosticReportImage
+  }
+  {!.Net HL7Connect.Fhir.DiagnosticReportImageList}
+  TFhirDiagnosticReportImageList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirDiagnosticReportImage;
+    procedure SetItemN(index : Integer; value : TFhirDiagnosticReportImage);
+  public
+    {!script hide}
+    function Link : TFhirDiagnosticReportImageList; Overload;
+    function Clone : TFhirDiagnosticReportImageList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirDiagnosticReportImage to the end of the list.
+    }
+    function Append : TFhirDiagnosticReportImage;
+
+    
+    {@member AddItem
+      Add an already existing FhirDiagnosticReportImage to the end of the list.
+    }
+    procedure AddItem(value : TFhirDiagnosticReportImage);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirDiagnosticReportImage) : Integer;
+    
+
+    {@member Insert
+      Insert FhirDiagnosticReportImage before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirDiagnosticReportImage;
+    
+
+    {@member InsertItem
+       Insert an existing FhirDiagnosticReportImage before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirDiagnosticReportImage);
+    
+    {@member Item
+       Get the iIndexth FhirDiagnosticReportImage. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirDiagnosticReportImage. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirDiagnosticReportImage);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirDiagnosticReportImage;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirDiagnosticReportImages[index : Integer] : TFhirDiagnosticReportImage read GetItemN write SetItemN; default;
   End;
 
 
@@ -7126,7 +7231,7 @@ Type
 
 
   {@Class TFhirImmunizationVaccinationProtocol : TFhirElement
-    Contains information about the protocol under which the vaccine was administered.
+    Contains information about the protocol(s) under which the vaccine was administered.
   }
   {!.Net HL7Connect.Fhir.ImmunizationVaccinationProtocol}
   TFhirImmunizationVaccinationProtocol = class (TFhirBackboneElement)
@@ -7311,25 +7416,22 @@ Type
   {!.Net HL7Connect.Fhir.ImmunizationRecommendationRecommendation}
   TFhirImmunizationRecommendationRecommendation = class (TFhirBackboneElement)
   private
-    FRecommendationDate : TFhirDateTime;
+    FDate : TFhirDateTime;
     FVaccineType : TFhirCodeableConcept;
     FDoseNumber : TFhirInteger;
-    FForecastStatus : TFhirEnum;
+    FForecastStatus : TFhirCodeableConcept;
     FdateCriterionList : TFhirImmunizationRecommendationRecommendationDateCriterionList;
     FProtocol : TFhirImmunizationRecommendationRecommendationProtocol;
     FsupportingImmunizationList : TFhirResourceReferenceList{TFhirImmunization};
-    FsupportingAdverseEventReportList : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList;
-    FsupportingPatientObservationList : TFhirResourceReferenceList{TFhirObservation};
-    Procedure SetRecommendationDate(value : TFhirDateTime);
-    Function GetRecommendationDateST : TDateAndTime;
-    Procedure SetRecommendationDateST(value : TDateAndTime);
+    FsupportingPatientInformationList : TFhirResourceReferenceList{Resource};
+    Procedure SetDate(value : TFhirDateTime);
+    Function GetDateST : TDateAndTime;
+    Procedure SetDateST(value : TDateAndTime);
     Procedure SetVaccineType(value : TFhirCodeableConcept);
     Procedure SetDoseNumber(value : TFhirInteger);
     Function GetDoseNumberST : String;
     Procedure SetDoseNumberST(value : String);
-    Procedure SetForecastStatus(value : TFhirEnum);
-    Function GetForecastStatusST : TFhirImmunizationForecastStatus;
-    Procedure SetForecastStatusST(value : TFhirImmunizationForecastStatus);
+    Procedure SetForecastStatus(value : TFhirCodeableConcept);
     Procedure SetProtocol(value : TFhirImmunizationRecommendationRecommendationProtocol);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
@@ -7343,14 +7445,14 @@ Type
     function Clone : TFhirImmunizationRecommendationRecommendation; overload;
     {!script show}
   published
-    {@member recommendationDate
-      The date of the immunization recommendation.
+    {@member date
+      The date the immunization recommendation was created.
     }
-    property recommendationDate : TFhirDateTime read FRecommendationDate write SetRecommendationDate;
-    {@member recommendationDateST
-      Typed access to The date of the immunization recommendation.
+    property date : TFhirDateTime read FDate write SetDate;
+    {@member dateST
+      Typed access to The date the immunization recommendation was created.
     }
-    property recommendationDateST : TDateAndTime read GetRecommendationDateST write SetRecommendationDateST;
+    property dateST : TDateAndTime read GetDateST write SetDateST;
 
     {@member vaccineType
       Vaccine that pertains to the recommendation.
@@ -7358,25 +7460,21 @@ Type
     property vaccineType : TFhirCodeableConcept read FVaccineType write SetVaccineType;
 
     {@member doseNumber
-      Recommended dose number.
+      This indicates the next recommended dose number (e.g. dose 2 is the next recommended dose).
     }
     property doseNumber : TFhirInteger read FDoseNumber write SetDoseNumber;
     {@member doseNumberST
-      Typed access to Recommended dose number.
+      Typed access to This indicates the next recommended dose number (e.g. dose 2 is the next recommended dose).
     }
     property doseNumberST : String read GetDoseNumberST write SetDoseNumberST;
 
     {@member forecastStatus
       Vaccine administration status.
     }
-    property forecastStatus : TFhirEnum read FForecastStatus write SetForecastStatus;
-    {@member forecastStatusST
-      Typed access to Vaccine administration status.
-    }
-    property forecastStatusST : TFhirImmunizationForecastStatus read GetForecastStatusST write SetForecastStatusST;
+    property forecastStatus : TFhirCodeableConcept read FForecastStatus write SetForecastStatus;
 
     {@member dateCriterionList
-      Vaccine date recommentations - e.g. earliest date to administer, latest date to administer, etc.
+      Vaccine date recommendations - e.g. earliest date to administer, latest date to administer, etc.
     }
     property dateCriterionList : TFhirImmunizationRecommendationRecommendationDateCriterionList read FDateCriterionList;
 
@@ -7390,15 +7488,10 @@ Type
     }
     property supportingImmunizationList : TFhirResourceReferenceList{TFhirImmunization} read FSupportingImmunizationList;
 
-    {@member supportingAdverseEventReportList
-      Adverse event report information that supports the status and recommendation.
+    {@member supportingPatientInformationList
+      Patient Information that supports the status and recommendation.  This includes patient obersvations, advserse reactions and allergy/intolerance information.
     }
-    property supportingAdverseEventReportList : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList read FSupportingAdverseEventReportList;
-
-    {@member supportingPatientObservationList
-      Patient observation that supports the status and recommendation.
-    }
-    property supportingPatientObservationList : TFhirResourceReferenceList{TFhirObservation} read FSupportingPatientObservationList;
+    property supportingPatientInformationList : TFhirResourceReferenceList{Resource} read FSupportingPatientInformationList;
 
   end;
 
@@ -7483,7 +7576,7 @@ Type
 
 
   {@Class TFhirImmunizationRecommendationRecommendationDateCriterion : TFhirElement
-    Vaccine date recommentations - e.g. earliest date to administer, latest date to administer, etc.
+    Vaccine date recommendations - e.g. earliest date to administer, latest date to administer, etc.
   }
   {!.Net HL7Connect.Fhir.ImmunizationRecommendationRecommendationDateCriterion}
   TFhirImmunizationRecommendationRecommendationDateCriterion = class (TFhirBackboneElement)
@@ -7635,11 +7728,11 @@ Type
     {!script show}
   published
     {@member doseSequence
-      Nominal position in a series.
+      Indicates the nominal position in a series of the next dose.  This is the recommended dose number as per a specified protocol.
     }
     property doseSequence : TFhirInteger read FDoseSequence write SetDoseSequence;
     {@member doseSequenceST
-      Typed access to Nominal position in a series.
+      Typed access to Indicates the nominal position in a series of the next dose.  This is the recommended dose number as per a specified protocol.
     }
     property doseSequenceST : String read GetDoseSequenceST write SetDoseSequenceST;
 
@@ -7745,151 +7838,6 @@ Type
     procedure ClearItems;
     
     Property FhirImmunizationRecommendationRecommendationProtocols[index : Integer] : TFhirImmunizationRecommendationRecommendationProtocol read GetItemN write SetItemN; default;
-  End;
-
-
-  {@Class TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport : TFhirElement
-    Adverse event report information that supports the status and recommendation.
-  }
-  {!.Net HL7Connect.Fhir.ImmunizationRecommendationRecommendationSupportingAdverseEventReport}
-  TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport = class (TFhirBackboneElement)
-  private
-    FidentifierList : TFhirIdList;
-    FReportType : TFhirCodeableConcept;
-    FReportDate : TFhirDateTime;
-    FText : TFhirString;
-    FreactionList : TFhirResourceReferenceList{TFhirAdverseReaction};
-    Procedure SetReportType(value : TFhirCodeableConcept);
-    Procedure SetReportDate(value : TFhirDateTime);
-    Function GetReportDateST : TDateAndTime;
-    Procedure SetReportDateST(value : TDateAndTime);
-    Procedure SetText(value : TFhirString);
-    Function GetTextST : String;
-    Procedure SetTextST(value : String);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport; overload;
-    function Clone : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport; overload;
-    {!script show}
-  published
-    {@member identifierList
-      Unique identifier of the adverse event report.
-    }
-    property identifierList : TFhirIdList read FIdentifierList;
-
-    {@member reportType
-      Advers event report classification.
-    }
-    property reportType : TFhirCodeableConcept read FReportType write SetReportType;
-
-    {@member reportDate
-      The date of the adverse event report.
-    }
-    property reportDate : TFhirDateTime read FReportDate write SetReportDate;
-    {@member reportDateST
-      Typed access to The date of the adverse event report.
-    }
-    property reportDateST : TDateAndTime read GetReportDateST write SetReportDateST;
-
-    {@member text
-      The content of the adverse event report.
-    }
-    property text : TFhirString read FText write SetText;
-    {@member textST
-      Typed access to The content of the adverse event report.
-    }
-    property textST : String read GetTextST write SetTextST;
-
-    {@member reactionList
-      The documented reaction described in the adverse event report.
-    }
-    property reactionList : TFhirResourceReferenceList{TFhirAdverseReaction} read FReactionList;
-
-  end;
-
-
-  {@Class TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList
-    A list of FhirImmunizationRecommendationRecommendationSupportingAdverseEventReport
-  }
-  {!.Net HL7Connect.Fhir.ImmunizationRecommendationRecommendationSupportingAdverseEventReportList}
-  TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-    procedure SetItemN(index : Integer; value : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-  public
-    {!script hide}
-    function Link : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList; Overload;
-    function Clone : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirImmunizationRecommendationRecommendationSupportingAdverseEventReport to the end of the list.
-    }
-    function Append : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-
-    
-    {@member AddItem
-      Add an already existing FhirImmunizationRecommendationRecommendationSupportingAdverseEventReport to the end of the list.
-    }
-    procedure AddItem(value : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport) : Integer;
-    
-
-    {@member Insert
-      Insert FhirImmunizationRecommendationRecommendationSupportingAdverseEventReport before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-    
-
-    {@member InsertItem
-       Insert an existing FhirImmunizationRecommendationRecommendationSupportingAdverseEventReport before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-    
-    {@member Item
-       Get the iIndexth FhirImmunizationRecommendationRecommendationSupportingAdverseEventReport. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirImmunizationRecommendationRecommendationSupportingAdverseEventReport. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirImmunizationRecommendationRecommendationSupportingAdverseEventReports[index : Integer] : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport read GetItemN write SetItemN; default;
   End;
 
 
@@ -8172,7 +8120,7 @@ Type
 
 
   {@Class TFhirMedicationProduct : TFhirElement
-    If is a product.
+    Information that only applies to products (not packages).
   }
   {!.Net HL7Connect.Fhir.MedicationProduct}
   TFhirMedicationProduct = class (TFhirBackboneElement)
@@ -8198,7 +8146,7 @@ Type
     property form : TFhirCodeableConcept read FForm write SetForm;
 
     {@member ingredientList
-      The ingredients of the medication.
+      Identifies a particular constituent of interest in the product.
     }
     property ingredientList : TFhirMedicationProductIngredientList read FIngredientList;
 
@@ -8285,7 +8233,7 @@ Type
 
 
   {@Class TFhirMedicationProductIngredient : TFhirElement
-    The ingredients of the medication.
+    Identifies a particular constituent of interest in the product.
   }
   {!.Net HL7Connect.Fhir.MedicationProductIngredient}
   TFhirMedicationProductIngredient = class (TFhirBackboneElement)
@@ -8399,7 +8347,7 @@ Type
 
 
   {@Class TFhirMedicationPackage : TFhirElement
-    Specifies Ingredient / Product / Package.
+    Information that only applies to packages (not products).
   }
   {!.Net HL7Connect.Fhir.MedicationPackage}
   TFhirMedicationPackage = class (TFhirBackboneElement)
@@ -8534,7 +8482,7 @@ Type
     {!script show}
   published
     {@member item
-      The product that is in the package.
+      Identifies one of the items in the package.
     }
     property item : TFhirResourceReference{TFhirMedication} read FItem write SetItem;
 
@@ -8626,12 +8574,13 @@ Type
 
 
   {@Class TFhirMedicationAdministrationDosage : TFhirElement
-    Indicates how the medication is to be used by the patient.
+    Provides details of how the medication was administered.
   }
   {!.Net HL7Connect.Fhir.MedicationAdministrationDosage}
   TFhirMedicationAdministrationDosage = class (TFhirBackboneElement)
   private
     FTiming : TFhirSchedule;
+    FAsNeeded : TFhirType;
     FSite : TFhirCodeableConcept;
     FRoute : TFhirCodeableConcept;
     FMethod : TFhirCodeableConcept;
@@ -8639,6 +8588,7 @@ Type
     FRate : TFhirRatio;
     FMaxDosePerPeriod : TFhirRatio;
     Procedure SetTiming(value : TFhirSchedule);
+    Procedure SetAsNeeded(value : TFhirType);
     Procedure SetSite(value : TFhirCodeableConcept);
     Procedure SetRoute(value : TFhirCodeableConcept);
     Procedure SetMethod(value : TFhirCodeableConcept);
@@ -8662,35 +8612,40 @@ Type
     }
     property timing : TFhirSchedule read FTiming write SetTiming;
 
+    {@member asNeeded
+      If set to true or if specified as a CodeableConcept, indicates that the medication is only taken when needed within the specified schedule rather than at every scheduled dose.  If a CodeableConcept is present, it indicates the pre-condition for taking the Medication.
+    }
+    property asNeeded : TFhirType read FAsNeeded write SetAsNeeded;
+
     {@member site
-      A coded specification of the anatomic site where the medication first enters the body.
+      A coded specification of the anatomic site where the medication first entered the body.  E.g. "left arm".
     }
     property site : TFhirCodeableConcept read FSite write SetSite;
 
     {@member route
-      A code specifying the route or physiological path of administration of a therapeutic agent into or onto a subject.
+      A code specifying the route or physiological path of administration of a therapeutic agent into or onto the patient.   E.g. topical, intravenous, etc.
     }
     property route : TFhirCodeableConcept read FRoute write SetRoute;
 
     {@member method
-      A coded value indicating the method by which the medication is introduced into or onto the body. Most commonly used for injections.  Examples:  Slow Push; Deep IV.
+      A coded value indicating the method by which the medication was introduced into or onto the body. Most commonly used for injections.  Examples:  Slow Push; Deep IV.
 
 Terminologies used often pre-coordinate this term with the route and or form of administration.
     }
     property method : TFhirCodeableConcept read FMethod write SetMethod;
 
     {@member quantity
-      The amount of themedication given at one administration event.   Use this value when the administration is essentially an instantaneous event such as a swallowing a tablet or giving an injection.
+      The amount of the medication given at one administration event.   Use this value when the administration is essentially an instantaneous event such as a swallowing a tablet or giving an injection.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member rate
-      Identifies the speed with which the medication is introduced into the patient. Typically the rate for an infusion e.g. 200ml in 2 hours.  May also expressed as a rate per unit of time such as 100ml per hour - the duration is then not specified, or is specified in the quantity.
+      Identifies the speed with which the medication was introduced into the patient. Typically the rate for an infusion e.g. 200ml in 2 hours.  May also expressed as a rate per unit of time such as 100ml per hour - the duration is then not specified, or is specified in the quantity.
     }
     property rate : TFhirRatio read FRate write SetRate;
 
     {@member maxDosePerPeriod
-      The maximum total quantity of a therapeutic substance that my be administered to a subject over the period of time. E.g. 1000mg in 24 hours.
+      The maximum total quantity of a therapeutic substance that was administered to the patient over the specified period of time. E.g. 1000mg in 24 hours.
     }
     property maxDosePerPeriod : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
 
@@ -8958,6 +8913,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   private
     FAdditionalInstructions : TFhirCodeableConcept;
     FTiming : TFhirType;
+    FAsNeeded : TFhirType;
     FSite : TFhirCodeableConcept;
     FRoute : TFhirCodeableConcept;
     FMethod : TFhirCodeableConcept;
@@ -8966,6 +8922,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     FMaxDosePerPeriod : TFhirRatio;
     Procedure SetAdditionalInstructions(value : TFhirCodeableConcept);
     Procedure SetTiming(value : TFhirType);
+    Procedure SetAsNeeded(value : TFhirType);
     Procedure SetSite(value : TFhirCodeableConcept);
     Procedure SetRoute(value : TFhirCodeableConcept);
     Procedure SetMethod(value : TFhirCodeableConcept);
@@ -8993,6 +8950,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       The timing schedule for giving the medication to the patient.  The Schedule data type allows many different expressions, for example.  "Every  8 hours"; "Three times a day"; "1/2 an hour before breakfast for 10 days from 23-Dec 2011:";  "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
     }
     property timing : TFhirType read FTiming write SetTiming;
+
+    {@member asNeeded
+      If set to true or if specified as a CodeableConcept, indicates that the medication is only taken when needed within the specified schedule rather than at every scheduled dose.  If a CodeableConcept is present, it indicates the pre-condition for taking the Medication.
+    }
+    property asNeeded : TFhirType read FAsNeeded write SetAsNeeded;
 
     {@member site
       A coded specification of the anatomic site where the medication first enters the body.
@@ -9233,20 +9195,22 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   {!.Net HL7Connect.Fhir.MedicationPrescriptionDosageInstruction}
   TFhirMedicationPrescriptionDosageInstruction = class (TFhirBackboneElement)
   private
-    FDosageInstructionsText : TFhirString;
+    FText : TFhirString;
     FAdditionalInstructions : TFhirCodeableConcept;
     FTiming : TFhirType;
+    FAsNeeded : TFhirType;
     FSite : TFhirCodeableConcept;
     FRoute : TFhirCodeableConcept;
     FMethod : TFhirCodeableConcept;
     FDoseQuantity : TFhirQuantity;
     FRate : TFhirRatio;
     FMaxDosePerPeriod : TFhirRatio;
-    Procedure SetDosageInstructionsText(value : TFhirString);
-    Function GetDosageInstructionsTextST : String;
-    Procedure SetDosageInstructionsTextST(value : String);
+    Procedure SetText(value : TFhirString);
+    Function GetTextST : String;
+    Procedure SetTextST(value : String);
     Procedure SetAdditionalInstructions(value : TFhirCodeableConcept);
     Procedure SetTiming(value : TFhirType);
+    Procedure SetAsNeeded(value : TFhirType);
     Procedure SetSite(value : TFhirCodeableConcept);
     Procedure SetRoute(value : TFhirCodeableConcept);
     Procedure SetMethod(value : TFhirCodeableConcept);
@@ -9265,14 +9229,14 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function Clone : TFhirMedicationPrescriptionDosageInstruction; overload;
     {!script show}
   published
-    {@member dosageInstructionsText
+    {@member text
       Free text dosage instructions for cases where the instructions are too complex to code.
     }
-    property dosageInstructionsText : TFhirString read FDosageInstructionsText write SetDosageInstructionsText;
-    {@member dosageInstructionsTextST
+    property text : TFhirString read FText write SetText;
+    {@member textST
       Typed access to Free text dosage instructions for cases where the instructions are too complex to code.
     }
-    property dosageInstructionsTextST : String read GetDosageInstructionsTextST write SetDosageInstructionsTextST;
+    property textST : String read GetTextST write SetTextST;
 
     {@member additionalInstructions
       Additional instructions such as "Swallow with plenty of water" which may or may not be coded.
@@ -9283,6 +9247,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       The timing schedule for giving the medication to the patient.  The Schedule data type allows many different expressions, for example.  "Every  8 hours"; "Three times a day"; "1/2 an hour before breakfast for 10 days from 23-Dec 2011:";  "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
     }
     property timing : TFhirType read FTiming write SetTiming;
+
+    {@member asNeeded
+      If set to true or if specified as a CodeableConcept, indicates that the medication is only taken when needed within the specified schedule rather than at every scheduled dose.  If a CodeableConcept is present, it indicates the pre-condition for taking the Medication.
+    }
+    property asNeeded : TFhirType read FAsNeeded write SetAsNeeded;
 
     {@member site
       A coded specification of the anatomic site where the medication first enters the body.
@@ -9659,12 +9628,13 @@ In some situations, this attribute may be used instead of quantity to identify t
 
 
   {@Class TFhirMedicationStatementDosage : TFhirElement
-    Indicates how the medication is to be used by the patient.
+    Indicates how the medication is/was used by the patient.
   }
   {!.Net HL7Connect.Fhir.MedicationStatementDosage}
   TFhirMedicationStatementDosage = class (TFhirBackboneElement)
   private
     FTiming : TFhirSchedule;
+    FAsNeeded : TFhirType;
     FSite : TFhirCodeableConcept;
     FRoute : TFhirCodeableConcept;
     FMethod : TFhirCodeableConcept;
@@ -9672,6 +9642,7 @@ In some situations, this attribute may be used instead of quantity to identify t
     FRate : TFhirRatio;
     FMaxDosePerPeriod : TFhirRatio;
     Procedure SetTiming(value : TFhirSchedule);
+    Procedure SetAsNeeded(value : TFhirType);
     Procedure SetSite(value : TFhirCodeableConcept);
     Procedure SetRoute(value : TFhirCodeableConcept);
     Procedure SetMethod(value : TFhirCodeableConcept);
@@ -9694,6 +9665,11 @@ In some situations, this attribute may be used instead of quantity to identify t
       The timing schedule for giving the medication to the patient.  The Schedule data type allows many different expressions, for example.  "Every  8 hours"; "Three times a day"; "1/2 an hour before breakfast for 10 days from 23-Dec 2011:";  "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
     }
     property timing : TFhirSchedule read FTiming write SetTiming;
+
+    {@member asNeeded
+      If set to true or if specified as a CodeableConcept, indicates that the medication is only taken when needed within the specified schedule rather than at every scheduled dose.  If a CodeableConcept is present, it indicates the pre-condition for taking the Medication.
+    }
+    property asNeeded : TFhirType read FAsNeeded write SetAsNeeded;
 
     {@member site
       A coded specification of the anatomic site where the medication first enters the body.
@@ -14964,14 +14940,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   private
     FCollector : TFhirResourceReference{TFhirPractitioner};
     FcommentList : TFhirStringList;
-    FCollectedTime : TFhirDateTime;
+    FCollected : TFhirType;
     FQuantity : TFhirQuantity;
     FMethod : TFhirCodeableConcept;
     FSourceSite : TFhirCodeableConcept;
     Procedure SetCollector(value : TFhirResourceReference{TFhirPractitioner});
-    Procedure SetCollectedTime(value : TFhirDateTime);
-    Function GetCollectedTimeST : TDateAndTime;
-    Procedure SetCollectedTimeST(value : TDateAndTime);
+    Procedure SetCollected(value : TFhirType);
     Procedure SetQuantity(value : TFhirQuantity);
     Procedure SetMethod(value : TFhirCodeableConcept);
     Procedure SetSourceSite(value : TFhirCodeableConcept);
@@ -14997,14 +14971,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property commentList : TFhirStringList read FCommentList;
 
-    {@member collectedTime
+    {@member collected
       Time when specimen was collected from subject - the physiologically relevant time.
     }
-    property collectedTime : TFhirDateTime read FCollectedTime write SetCollectedTime;
-    {@member collectedTimeST
-      Typed access to Time when specimen was collected from subject - the physiologically relevant time.
-    }
-    property collectedTimeST : TDateAndTime read GetCollectedTimeST write SetCollectedTimeST;
+    property collected : TFhirType read FCollected write SetCollected;
 
     {@member quantity
       The quantity of specimen collected; for instance the volume of a blood sample, or the physical measurement of an anatomic pathology sample.
@@ -15017,7 +14987,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     property method : TFhirCodeableConcept read FMethod write SetMethod;
 
     {@member sourceSite
-      Anatomical location from which the specimen should be collected (if subject is a patient).
+      Anatomical location from which the specimen should be collected (if subject is a patient). This element is not used for environmental specimens.
     }
     property sourceSite : TFhirCodeableConcept read FSourceSite write SetSourceSite;
 
@@ -15261,7 +15231,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script show}
   published
     {@member identifierList
-      Id for container. There may be muliple; a manufacturer's bar code, lab assigned identifier, etc.
+      Id for container. There may be multiple; a manufacturer's bar code, lab assigned identifier, etc. The container ID may differ from the specimen id in some circumstances.
     }
     property identifierList : TFhirIdentifierList read FIdentifierList;
 
@@ -15624,7 +15594,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   TFhirSupplyDispense = class (TFhirBackboneElement)
   private
     FIdentifier : TFhirIdentifier;
-    FStatus : TFhirCode;
+    FStatus : TFhirEnum;
     FType_ : TFhirCodeableConcept;
     FQuantity : TFhirQuantity;
     FSuppliedItem : TFhirResourceReference{Resource};
@@ -15634,9 +15604,9 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     FDestination : TFhirResourceReference{TFhirLocation};
     FreceiverList : TFhirResourceReferenceList{TFhirPractitioner};
     Procedure SetIdentifier(value : TFhirIdentifier);
-    Procedure SetStatus(value : TFhirCode);
-    Function GetStatusST : String;
-    Procedure SetStatusST(value : String);
+    Procedure SetStatus(value : TFhirEnum);
+    Function GetStatusST : TFhirValuesetSupplyDispenseStatus;
+    Procedure SetStatusST(value : TFhirValuesetSupplyDispenseStatus);
     Procedure SetType_(value : TFhirCodeableConcept);
     Procedure SetQuantity(value : TFhirQuantity);
     Procedure SetSuppliedItem(value : TFhirResourceReference{Resource});
@@ -15657,18 +15627,18 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script show}
   published
     {@member identifier
-      Identifier assigned by the dispensing facility.   This is an identifier assigned outside FHIR.
+      Identifier assigned by the dispensing facility when the dispense occurs.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member status
       A code specifying the state of the dispense event.
     }
-    property status : TFhirCode read FStatus write SetStatus;
+    property status : TFhirEnum read FStatus write SetStatus;
     {@member statusST
       Typed access to A code specifying the state of the dispense event.
     }
-    property statusST : String read GetStatusST write SetStatusST;
+    property statusST : TFhirValuesetSupplyDispenseStatus read GetStatusST write SetStatusST;
 
     {@member type_
       Indicates the type of dispensing event that is performed. Examples include: Trial Fill, Completion of Trial, Partial Fill, Emergency Fill, Samples, etc.
@@ -15696,7 +15666,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     property whenPrepared : TFhirPeriod read FWhenPrepared write SetWhenPrepared;
 
     {@member whenHandedOver
-      The time the dispense event occurred.
+      The time the dispensed item was sent or handed to the patient (or agent).
     }
     property whenHandedOver : TFhirPeriod read FWhenHandedOver write SetWhenHandedOver;
 
@@ -16939,8 +16909,8 @@ end;
 
 destructor TFhirAdverseReactionExposure.Destroy;
 begin
-  FExposureDate.free;
-  FExposureType.free;
+  FDate.free;
+  FType_.free;
   FCausalityExpectation.free;
   FSubstance.free;
   inherited;
@@ -16949,8 +16919,8 @@ end;
 procedure TFhirAdverseReactionExposure.Assign(oSource : TAdvObject);
 begin
   inherited;
-  exposureDate := TFhirAdverseReactionExposure(oSource).exposureDate.Clone;
-  FExposureType := TFhirAdverseReactionExposure(oSource).FExposureType.Link;
+  date := TFhirAdverseReactionExposure(oSource).date.Clone;
+  FType_ := TFhirAdverseReactionExposure(oSource).FType_.Link;
   FCausalityExpectation := TFhirAdverseReactionExposure(oSource).FCausalityExpectation.Link;
   substance := TFhirAdverseReactionExposure(oSource).substance.Clone;
 end;
@@ -16958,10 +16928,10 @@ end;
 procedure TFhirAdverseReactionExposure.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
-  if (child_name = 'exposureDate') Then
-     list.add(ExposureDate.Link);
-  if (child_name = 'exposureType') Then
-     list.add(FExposureType.Link);
+  if (child_name = 'date') Then
+     list.add(Date.Link);
+  if (child_name = 'type_') Then
+     list.add(FType_.Link);
   if (child_name = 'causalityExpectation') Then
      list.add(FCausalityExpectation.Link);
   if (child_name = 'substance') Then
@@ -16971,8 +16941,8 @@ end;
 procedure TFhirAdverseReactionExposure.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'exposureDate', 'dateTime', FExposureDate.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'exposureType', 'code', FExposureType.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', FDate.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'type', 'code', FType_.Link));{1}
   oList.add(TFHIRProperty.create(self, 'causalityExpectation', 'code', FCausalityExpectation.Link));{1}
   oList.add(TFHIRProperty.create(self, 'substance', 'Resource(Substance)', FSubstance.Link.Link));{2}
 end;
@@ -16989,52 +16959,52 @@ end;
 
 { TFhirAdverseReactionExposure }
 
-Procedure TFhirAdverseReactionExposure.SetExposureDate(value : TFhirDateTime);
+Procedure TFhirAdverseReactionExposure.SetDate(value : TFhirDateTime);
 begin
-  FExposureDate.free;
-  FExposureDate := value;
+  FDate.free;
+  FDate := value;
 end;
 
-Function TFhirAdverseReactionExposure.GetExposureDateST : TDateAndTime;
+Function TFhirAdverseReactionExposure.GetDateST : TDateAndTime;
 begin
-  if FExposureDate = nil then
+  if FDate = nil then
     result := nil
   else
-    result := ExposureDate.value;
+    result := Date.value;
 end;
 
-Procedure TFhirAdverseReactionExposure.SetExposureDateST(value : TDateAndTime);
+Procedure TFhirAdverseReactionExposure.SetDateST(value : TDateAndTime);
 begin
   if value <> nil then
   begin
-    if FExposureDate = nil then
-      FExposureDate := TFhirDateTime.create;
-    FExposureDate.value := value
+    if FDate = nil then
+      FDate := TFhirDateTime.create;
+    FDate.value := value
   end
-  else if FExposureDate <> nil then
-    FExposureDate.value := nil;
+  else if FDate <> nil then
+    FDate.value := nil;
 end;
 
-Procedure TFhirAdverseReactionExposure.SetExposureType(value : TFhirEnum);
+Procedure TFhirAdverseReactionExposure.SetType_(value : TFhirEnum);
 begin
-  FExposureType.free;
-  FExposureType := value;
+  FType_.free;
+  FType_ := value;
 end;
 
-Function TFhirAdverseReactionExposure.GetExposureTypeST : TFhirExposureType;
+Function TFhirAdverseReactionExposure.GetType_ST : TFhirExposureType;
 begin
-  if FExposureType = nil then
+  if FType_ = nil then
     result := TFhirExposureType(0)
   else
-    result := TFhirExposureType(StringArrayIndexOf(CODES_TFhirExposureType, ExposureType.value));
+    result := TFhirExposureType(StringArrayIndexOf(CODES_TFhirExposureType, Type_.value));
 end;
 
-Procedure TFhirAdverseReactionExposure.SetExposureTypeST(value : TFhirExposureType);
+Procedure TFhirAdverseReactionExposure.SetType_ST(value : TFhirExposureType);
 begin
   if ord(value) = 0 then
-    ExposureType := nil
+    Type_ := nil
   else
-    ExposureType := TFhirEnum.create(CODES_TFhirExposureType[value]);
+    Type_ := TFhirEnum.create(CODES_TFhirExposureType[value]);
 end;
 
 Procedure TFhirAdverseReactionExposure.SetCausalityExpectation(value : TFhirEnum);
@@ -18555,53 +18525,48 @@ end;
 constructor TFhirConceptMapConcept.Create;
 begin
   inherited;
+  FDependsOnList := TFhirConceptMapConceptDependsOnList.Create;
   FMapList := TFhirConceptMapConceptMapList.Create;
-  FConceptList := TFhirConceptMapConceptList.Create;
 end;
 
 destructor TFhirConceptMapConcept.Destroy;
 begin
-  FName.free;
   FSystem.free;
   FCode.free;
+  FDependsOnList.Free;
   FMapList.Free;
-  FConceptList.Free;
   inherited;
 end;
 
 procedure TFhirConceptMapConcept.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirConceptMapConcept(oSource).name.Clone;
   system := TFhirConceptMapConcept(oSource).system.Clone;
   code := TFhirConceptMapConcept(oSource).code.Clone;
+  FDependsOnList.Assign(TFhirConceptMapConcept(oSource).FDependsOnList);
   FMapList.Assign(TFhirConceptMapConcept(oSource).FMapList);
-  FConceptList.Assign(TFhirConceptMapConcept(oSource).FConceptList);
 end;
 
 procedure TFhirConceptMapConcept.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
-  if (child_name = 'name') Then
-     list.add(Name.Link);
   if (child_name = 'system') Then
      list.add(System.Link);
   if (child_name = 'code') Then
      list.add(Code.Link);
+  if (child_name = 'dependsOn') Then
+     list.addAll(FDependsOnList);
   if (child_name = 'map') Then
      list.addAll(FMapList);
-  if (child_name = 'concept') Then
-     list.addAll(FConceptList);
 end;
 
 procedure TFhirConceptMapConcept.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'dependsOn', '', FDependsOnList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'map', '', FMapList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'concept', '@ConceptMap.concept', FConceptList.Link)){3};
 end;
 
 function TFhirConceptMapConcept.Link : TFhirConceptMapConcept;
@@ -18615,32 +18580,6 @@ begin
 end;
 
 { TFhirConceptMapConcept }
-
-Procedure TFhirConceptMapConcept.SetName(value : TFhirString);
-begin
-  FName.free;
-  FName := value;
-end;
-
-Function TFhirConceptMapConcept.GetNameST : String;
-begin
-  if FName = nil then
-    result := ''
-  else
-    result := Name.value;
-end;
-
-Procedure TFhirConceptMapConcept.SetNameST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FName = nil then
-      FName := TFhirString.create;
-    FName.value := value
-  end
-  else if FName <> nil then
-    FName.value := '';
-end;
 
 Procedure TFhirConceptMapConcept.SetSystem(value : TFhirUri);
 begin
@@ -18784,11 +18723,234 @@ begin
   ObjectByIndex[index] := value;
 end;
 
+{ TFhirConceptMapConceptDependsOn }
+
+constructor TFhirConceptMapConceptDependsOn.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirConceptMapConceptDependsOn.Destroy;
+begin
+  FConcept.free;
+  FSystem.free;
+  FCode.free;
+  inherited;
+end;
+
+procedure TFhirConceptMapConceptDependsOn.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  concept := TFhirConceptMapConceptDependsOn(oSource).concept.Clone;
+  system := TFhirConceptMapConceptDependsOn(oSource).system.Clone;
+  code := TFhirConceptMapConceptDependsOn(oSource).code.Clone;
+end;
+
+procedure TFhirConceptMapConceptDependsOn.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'concept') Then
+     list.add(Concept.Link);
+  if (child_name = 'system') Then
+     list.add(System.Link);
+  if (child_name = 'code') Then
+     list.add(Code.Link);
+end;
+
+procedure TFhirConceptMapConceptDependsOn.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'concept', 'uri', FConcept.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link.Link));{2}
+end;
+
+function TFhirConceptMapConceptDependsOn.Link : TFhirConceptMapConceptDependsOn;
+begin
+  result := TFhirConceptMapConceptDependsOn(inherited Link);
+end;
+
+function TFhirConceptMapConceptDependsOn.Clone : TFhirConceptMapConceptDependsOn;
+begin
+  result := TFhirConceptMapConceptDependsOn(inherited Clone);
+end;
+
+{ TFhirConceptMapConceptDependsOn }
+
+Procedure TFhirConceptMapConceptDependsOn.SetConcept(value : TFhirUri);
+begin
+  FConcept.free;
+  FConcept := value;
+end;
+
+Function TFhirConceptMapConceptDependsOn.GetConceptST : String;
+begin
+  if FConcept = nil then
+    result := ''
+  else
+    result := Concept.value;
+end;
+
+Procedure TFhirConceptMapConceptDependsOn.SetConceptST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FConcept = nil then
+      FConcept := TFhirUri.create;
+    FConcept.value := value
+  end
+  else if FConcept <> nil then
+    FConcept.value := '';
+end;
+
+Procedure TFhirConceptMapConceptDependsOn.SetSystem(value : TFhirUri);
+begin
+  FSystem.free;
+  FSystem := value;
+end;
+
+Function TFhirConceptMapConceptDependsOn.GetSystemST : String;
+begin
+  if FSystem = nil then
+    result := ''
+  else
+    result := System.value;
+end;
+
+Procedure TFhirConceptMapConceptDependsOn.SetSystemST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FSystem = nil then
+      FSystem := TFhirUri.create;
+    FSystem.value := value
+  end
+  else if FSystem <> nil then
+    FSystem.value := '';
+end;
+
+Procedure TFhirConceptMapConceptDependsOn.SetCode(value : TFhirCode);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+Function TFhirConceptMapConceptDependsOn.GetCodeST : String;
+begin
+  if FCode = nil then
+    result := ''
+  else
+    result := Code.value;
+end;
+
+Procedure TFhirConceptMapConceptDependsOn.SetCodeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCode = nil then
+      FCode := TFhirCode.create;
+    FCode.value := value
+  end
+  else if FCode <> nil then
+    FCode.value := '';
+end;
+
+
+{ TFhirConceptMapConceptDependsOnList }
+procedure TFhirConceptMapConceptDependsOnList.AddItem(value: TFhirConceptMapConceptDependsOn);
+begin
+  assert(value.ClassName = 'TFhirConceptMapConceptDependsOn', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapConceptDependsOn');
+  add(value);
+end;
+
+
+function TFhirConceptMapConceptDependsOnList.Append: TFhirConceptMapConceptDependsOn;
+begin
+  result := TFhirConceptMapConceptDependsOn.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirConceptMapConceptDependsOnList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirConceptMapConceptDependsOnList.Clone: TFhirConceptMapConceptDependsOnList;
+begin
+  result := TFhirConceptMapConceptDependsOnList(inherited Clone);
+end;
+
+function TFhirConceptMapConceptDependsOnList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirConceptMapConceptDependsOnList.GetItemN(index: Integer): TFhirConceptMapConceptDependsOn;
+begin
+  result := TFhirConceptMapConceptDependsOn(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMapConceptDependsOnList.IndexOf(value: TFhirConceptMapConceptDependsOn): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirConceptMapConceptDependsOnList.Insert(index: Integer): TFhirConceptMapConceptDependsOn;
+begin
+  result := TFhirConceptMapConceptDependsOn.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirConceptMapConceptDependsOnList.InsertItem(index: Integer; value: TFhirConceptMapConceptDependsOn);
+begin
+  assert(value is TFhirConceptMapConceptDependsOn);
+  Inherited Insert(index, value);
+end;
+
+function TFhirConceptMapConceptDependsOnList.Item(index: Integer): TFhirConceptMapConceptDependsOn;
+begin
+  result := TFhirConceptMapConceptDependsOn(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMapConceptDependsOnList.Link: TFhirConceptMapConceptDependsOnList;
+begin
+  result := TFhirConceptMapConceptDependsOnList(inherited Link);
+end;
+
+procedure TFhirConceptMapConceptDependsOnList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirConceptMapConceptDependsOnList.SetItemByIndex(index: Integer; value: TFhirConceptMapConceptDependsOn);
+begin
+  assert(value is TFhirConceptMapConceptDependsOn);
+  FhirConceptMapConceptDependsOns[index] := value;
+end;
+
+procedure TFhirConceptMapConceptDependsOnList.SetItemN(index: Integer; value: TFhirConceptMapConceptDependsOn);
+begin
+  assert(value is TFhirConceptMapConceptDependsOn);
+  ObjectByIndex[index] := value;
+end;
+
 { TFhirConceptMapConceptMap }
 
 constructor TFhirConceptMapConceptMap.Create;
 begin
   inherited;
+  FProductList := TFhirConceptMapConceptDependsOnList.Create;
 end;
 
 destructor TFhirConceptMapConceptMap.Destroy;
@@ -18797,6 +18959,7 @@ begin
   FCode.free;
   FEquivalence.free;
   FComments.free;
+  FProductList.Free;
   inherited;
 end;
 
@@ -18807,6 +18970,7 @@ begin
   code := TFhirConceptMapConceptMap(oSource).code.Clone;
   FEquivalence := TFhirConceptMapConceptMap(oSource).FEquivalence.Link;
   comments := TFhirConceptMapConceptMap(oSource).comments.Clone;
+  FProductList.Assign(TFhirConceptMapConceptMap(oSource).FProductList);
 end;
 
 procedure TFhirConceptMapConceptMap.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -18820,15 +18984,18 @@ begin
      list.add(FEquivalence.Link);
   if (child_name = 'comments') Then
      list.add(Comments.Link);
+  if (child_name = 'product') Then
+     list.addAll(FProductList);
 end;
 
 procedure TFhirConceptMapConceptMap.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'string', FCode.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'equivalence', 'code', FEquivalence.Link));{1}
   oList.add(TFHIRProperty.create(self, 'comments', 'string', FComments.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'product', '@ConceptMap.concept.dependsOn', FProductList.Link)){3};
 end;
 
 function TFhirConceptMapConceptMap.Link : TFhirConceptMapConceptMap;
@@ -18869,7 +19036,7 @@ begin
     FSystem.value := '';
 end;
 
-Procedure TFhirConceptMapConceptMap.SetCode(value : TFhirString);
+Procedure TFhirConceptMapConceptMap.SetCode(value : TFhirCode);
 begin
   FCode.free;
   FCode := value;
@@ -18888,7 +19055,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirString.create;
+      FCode := TFhirCode.create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -22954,7 +23121,8 @@ end;
 destructor TFhirDiagnosticOrderEvent.Destroy;
 begin
   FStatus.free;
-  FDate.free;
+  FDescription.free;
+  FDateTime.free;
   FActor.free;
   inherited;
 end;
@@ -22963,7 +23131,8 @@ procedure TFhirDiagnosticOrderEvent.Assign(oSource : TAdvObject);
 begin
   inherited;
   FStatus := TFhirDiagnosticOrderEvent(oSource).FStatus.Link;
-  date := TFhirDiagnosticOrderEvent(oSource).date.Clone;
+  description := TFhirDiagnosticOrderEvent(oSource).description.Clone;
+  dateTime := TFhirDiagnosticOrderEvent(oSource).dateTime.Clone;
   actor := TFhirDiagnosticOrderEvent(oSource).actor.Clone;
 end;
 
@@ -22972,8 +23141,10 @@ begin
   inherited;
   if (child_name = 'status') Then
      list.add(FStatus.Link);
-  if (child_name = 'date') Then
-     list.add(Date.Link);
+  if (child_name = 'description') Then
+     list.add(Description.Link);
+  if (child_name = 'dateTime') Then
+     list.add(DateTime.Link);
   if (child_name = 'actor') Then
      list.add(Actor.Link);
 end;
@@ -22982,7 +23153,8 @@ procedure TFhirDiagnosticOrderEvent.ListProperties(oList: TFHIRPropertyList; bIn
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', FDate.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'description', 'CodeableConcept', FDescription.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'dateTime', 'dateTime', FDateTime.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'actor', 'Resource(Practitioner|Device)', FActor.Link.Link));{2}
 end;
 
@@ -23020,30 +23192,36 @@ begin
     Status := TFhirEnum.create(CODES_TFhirDiagnosticOrderStatus[value]);
 end;
 
-Procedure TFhirDiagnosticOrderEvent.SetDate(value : TFhirDateTime);
+Procedure TFhirDiagnosticOrderEvent.SetDescription(value : TFhirCodeableConcept);
 begin
-  FDate.free;
-  FDate := value;
+  FDescription.free;
+  FDescription := value;
 end;
 
-Function TFhirDiagnosticOrderEvent.GetDateST : TDateAndTime;
+Procedure TFhirDiagnosticOrderEvent.SetDateTime(value : TFhirDateTime);
 begin
-  if FDate = nil then
+  FDateTime.free;
+  FDateTime := value;
+end;
+
+Function TFhirDiagnosticOrderEvent.GetDateTimeST : TDateAndTime;
+begin
+  if FDateTime = nil then
     result := nil
   else
-    result := Date.value;
+    result := DateTime.value;
 end;
 
-Procedure TFhirDiagnosticOrderEvent.SetDateST(value : TDateAndTime);
+Procedure TFhirDiagnosticOrderEvent.SetDateTimeST(value : TDateAndTime);
 begin
   if value <> nil then
   begin
-    if FDate = nil then
-      FDate := TFhirDateTime.create;
-    FDate.value := value
+    if FDateTime = nil then
+      FDateTime := TFhirDateTime.create;
+    FDateTime.value := value
   end
-  else if FDate <> nil then
-    FDate.value := nil;
+  else if FDateTime <> nil then
+    FDateTime.value := nil;
 end;
 
 Procedure TFhirDiagnosticOrderEvent.SetActor(value : TFhirResourceReference{Resource});
@@ -23332,227 +23510,6 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirDiagnosticReportRequestDetail }
-
-constructor TFhirDiagnosticReportRequestDetail.Create;
-begin
-  inherited;
-  FRequestTestList := TFhirCodeableConceptList.Create;
-end;
-
-destructor TFhirDiagnosticReportRequestDetail.Destroy;
-begin
-  FEncounter.free;
-  FRequestOrderId.free;
-  FReceiverOrderId.free;
-  FRequestTestList.Free;
-  FBodySite.free;
-  FRequester.free;
-  FClinicalInfo.free;
-  inherited;
-end;
-
-procedure TFhirDiagnosticReportRequestDetail.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  encounter := TFhirDiagnosticReportRequestDetail(oSource).encounter.Clone;
-  requestOrderId := TFhirDiagnosticReportRequestDetail(oSource).requestOrderId.Clone;
-  receiverOrderId := TFhirDiagnosticReportRequestDetail(oSource).receiverOrderId.Clone;
-  FRequestTestList.Assign(TFhirDiagnosticReportRequestDetail(oSource).FRequestTestList);
-  bodySite := TFhirDiagnosticReportRequestDetail(oSource).bodySite.Clone;
-  requester := TFhirDiagnosticReportRequestDetail(oSource).requester.Clone;
-  clinicalInfo := TFhirDiagnosticReportRequestDetail(oSource).clinicalInfo.Clone;
-end;
-
-procedure TFhirDiagnosticReportRequestDetail.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'encounter') Then
-     list.add(Encounter.Link);
-  if (child_name = 'requestOrderId') Then
-     list.add(RequestOrderId.Link);
-  if (child_name = 'receiverOrderId') Then
-     list.add(ReceiverOrderId.Link);
-  if (child_name = 'requestTest') Then
-     list.addAll(FRequestTestList);
-  if (child_name = 'bodySite') Then
-     list.add(BodySite.Link);
-  if (child_name = 'requester') Then
-     list.add(Requester.Link);
-  if (child_name = 'clinicalInfo') Then
-     list.add(ClinicalInfo.Link);
-end;
-
-procedure TFhirDiagnosticReportRequestDetail.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Resource(Encounter)', FEncounter.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'requestOrderId', 'Identifier', FRequestOrderId.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'receiverOrderId', 'Identifier', FReceiverOrderId.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'requestTest', 'CodeableConcept', FRequestTestList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', FBodySite.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'requester', 'Resource(Organization|Practitioner)', FRequester.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'clinicalInfo', 'string', FClinicalInfo.Link.Link));{2}
-end;
-
-function TFhirDiagnosticReportRequestDetail.Link : TFhirDiagnosticReportRequestDetail;
-begin
-  result := TFhirDiagnosticReportRequestDetail(inherited Link);
-end;
-
-function TFhirDiagnosticReportRequestDetail.Clone : TFhirDiagnosticReportRequestDetail;
-begin
-  result := TFhirDiagnosticReportRequestDetail(inherited Clone);
-end;
-
-{ TFhirDiagnosticReportRequestDetail }
-
-Procedure TFhirDiagnosticReportRequestDetail.SetEncounter(value : TFhirResourceReference{TFhirEncounter});
-begin
-  FEncounter.free;
-  FEncounter := value;
-end;
-
-Procedure TFhirDiagnosticReportRequestDetail.SetRequestOrderId(value : TFhirIdentifier);
-begin
-  FRequestOrderId.free;
-  FRequestOrderId := value;
-end;
-
-Procedure TFhirDiagnosticReportRequestDetail.SetReceiverOrderId(value : TFhirIdentifier);
-begin
-  FReceiverOrderId.free;
-  FReceiverOrderId := value;
-end;
-
-Procedure TFhirDiagnosticReportRequestDetail.SetBodySite(value : TFhirCodeableConcept);
-begin
-  FBodySite.free;
-  FBodySite := value;
-end;
-
-Procedure TFhirDiagnosticReportRequestDetail.SetRequester(value : TFhirResourceReference{Resource});
-begin
-  FRequester.free;
-  FRequester := value;
-end;
-
-Procedure TFhirDiagnosticReportRequestDetail.SetClinicalInfo(value : TFhirString);
-begin
-  FClinicalInfo.free;
-  FClinicalInfo := value;
-end;
-
-Function TFhirDiagnosticReportRequestDetail.GetClinicalInfoST : String;
-begin
-  if FClinicalInfo = nil then
-    result := ''
-  else
-    result := ClinicalInfo.value;
-end;
-
-Procedure TFhirDiagnosticReportRequestDetail.SetClinicalInfoST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FClinicalInfo = nil then
-      FClinicalInfo := TFhirString.create;
-    FClinicalInfo.value := value
-  end
-  else if FClinicalInfo <> nil then
-    FClinicalInfo.value := '';
-end;
-
-
-{ TFhirDiagnosticReportRequestDetailList }
-procedure TFhirDiagnosticReportRequestDetailList.AddItem(value: TFhirDiagnosticReportRequestDetail);
-begin
-  assert(value.ClassName = 'TFhirDiagnosticReportRequestDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDiagnosticReportRequestDetail');
-  add(value);
-end;
-
-
-function TFhirDiagnosticReportRequestDetailList.Append: TFhirDiagnosticReportRequestDetail;
-begin
-  result := TFhirDiagnosticReportRequestDetail.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirDiagnosticReportRequestDetailList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirDiagnosticReportRequestDetailList.Clone: TFhirDiagnosticReportRequestDetailList;
-begin
-  result := TFhirDiagnosticReportRequestDetailList(inherited Clone);
-end;
-
-function TFhirDiagnosticReportRequestDetailList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirDiagnosticReportRequestDetailList.GetItemN(index: Integer): TFhirDiagnosticReportRequestDetail;
-begin
-  result := TFhirDiagnosticReportRequestDetail(ObjectByIndex[index]);
-end;
-
-function TFhirDiagnosticReportRequestDetailList.IndexOf(value: TFhirDiagnosticReportRequestDetail): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirDiagnosticReportRequestDetailList.Insert(index: Integer): TFhirDiagnosticReportRequestDetail;
-begin
-  result := TFhirDiagnosticReportRequestDetail.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirDiagnosticReportRequestDetailList.InsertItem(index: Integer; value: TFhirDiagnosticReportRequestDetail);
-begin
-  assert(value is TFhirDiagnosticReportRequestDetail);
-  Inherited Insert(index, value);
-end;
-
-function TFhirDiagnosticReportRequestDetailList.Item(index: Integer): TFhirDiagnosticReportRequestDetail;
-begin
-  result := TFhirDiagnosticReportRequestDetail(ObjectByIndex[index]);
-end;
-
-function TFhirDiagnosticReportRequestDetailList.Link: TFhirDiagnosticReportRequestDetailList;
-begin
-  result := TFhirDiagnosticReportRequestDetailList(inherited Link);
-end;
-
-procedure TFhirDiagnosticReportRequestDetailList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirDiagnosticReportRequestDetailList.SetItemByIndex(index: Integer; value: TFhirDiagnosticReportRequestDetail);
-begin
-  assert(value is TFhirDiagnosticReportRequestDetail);
-  FhirDiagnosticReportRequestDetails[index] := value;
-end;
-
-procedure TFhirDiagnosticReportRequestDetailList.SetItemN(index: Integer; value: TFhirDiagnosticReportRequestDetail);
-begin
-  assert(value is TFhirDiagnosticReportRequestDetail);
-  ObjectByIndex[index] := value;
-end;
-
 { TFhirDiagnosticReportResults }
 
 constructor TFhirDiagnosticReportResults.Create;
@@ -23713,6 +23670,177 @@ end;
 procedure TFhirDiagnosticReportResultsList.SetItemN(index: Integer; value: TFhirDiagnosticReportResults);
 begin
   assert(value is TFhirDiagnosticReportResults);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirDiagnosticReportImage }
+
+constructor TFhirDiagnosticReportImage.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirDiagnosticReportImage.Destroy;
+begin
+  FComment.free;
+  FLink_.free;
+  inherited;
+end;
+
+procedure TFhirDiagnosticReportImage.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  comment := TFhirDiagnosticReportImage(oSource).comment.Clone;
+  link_ := TFhirDiagnosticReportImage(oSource).link_.Clone;
+end;
+
+procedure TFhirDiagnosticReportImage.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'comment') Then
+     list.add(Comment.Link);
+  if (child_name = 'link_') Then
+     list.add(Link_.Link);
+end;
+
+procedure TFhirDiagnosticReportImage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', FComment.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'link', 'Resource(Media)', FLink_.Link.Link));{2}
+end;
+
+function TFhirDiagnosticReportImage.Link : TFhirDiagnosticReportImage;
+begin
+  result := TFhirDiagnosticReportImage(inherited Link);
+end;
+
+function TFhirDiagnosticReportImage.Clone : TFhirDiagnosticReportImage;
+begin
+  result := TFhirDiagnosticReportImage(inherited Clone);
+end;
+
+{ TFhirDiagnosticReportImage }
+
+Procedure TFhirDiagnosticReportImage.SetComment(value : TFhirString);
+begin
+  FComment.free;
+  FComment := value;
+end;
+
+Function TFhirDiagnosticReportImage.GetCommentST : String;
+begin
+  if FComment = nil then
+    result := ''
+  else
+    result := Comment.value;
+end;
+
+Procedure TFhirDiagnosticReportImage.SetCommentST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FComment = nil then
+      FComment := TFhirString.create;
+    FComment.value := value
+  end
+  else if FComment <> nil then
+    FComment.value := '';
+end;
+
+Procedure TFhirDiagnosticReportImage.SetLink_(value : TFhirResourceReference{TFhirMedia});
+begin
+  FLink_.free;
+  FLink_ := value;
+end;
+
+
+{ TFhirDiagnosticReportImageList }
+procedure TFhirDiagnosticReportImageList.AddItem(value: TFhirDiagnosticReportImage);
+begin
+  assert(value.ClassName = 'TFhirDiagnosticReportImage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDiagnosticReportImage');
+  add(value);
+end;
+
+
+function TFhirDiagnosticReportImageList.Append: TFhirDiagnosticReportImage;
+begin
+  result := TFhirDiagnosticReportImage.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirDiagnosticReportImageList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirDiagnosticReportImageList.Clone: TFhirDiagnosticReportImageList;
+begin
+  result := TFhirDiagnosticReportImageList(inherited Clone);
+end;
+
+function TFhirDiagnosticReportImageList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirDiagnosticReportImageList.GetItemN(index: Integer): TFhirDiagnosticReportImage;
+begin
+  result := TFhirDiagnosticReportImage(ObjectByIndex[index]);
+end;
+
+function TFhirDiagnosticReportImageList.IndexOf(value: TFhirDiagnosticReportImage): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirDiagnosticReportImageList.Insert(index: Integer): TFhirDiagnosticReportImage;
+begin
+  result := TFhirDiagnosticReportImage.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirDiagnosticReportImageList.InsertItem(index: Integer; value: TFhirDiagnosticReportImage);
+begin
+  assert(value is TFhirDiagnosticReportImage);
+  Inherited Insert(index, value);
+end;
+
+function TFhirDiagnosticReportImageList.Item(index: Integer): TFhirDiagnosticReportImage;
+begin
+  result := TFhirDiagnosticReportImage(ObjectByIndex[index]);
+end;
+
+function TFhirDiagnosticReportImageList.Link: TFhirDiagnosticReportImageList;
+begin
+  result := TFhirDiagnosticReportImageList(inherited Link);
+end;
+
+procedure TFhirDiagnosticReportImageList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirDiagnosticReportImageList.SetItemByIndex(index: Integer; value: TFhirDiagnosticReportImage);
+begin
+  assert(value is TFhirDiagnosticReportImage);
+  FhirDiagnosticReportImages[index] := value;
+end;
+
+procedure TFhirDiagnosticReportImageList.SetItemN(index: Integer; value: TFhirDiagnosticReportImage);
+begin
+  assert(value is TFhirDiagnosticReportImage);
   ObjectByIndex[index] := value;
 end;
 
@@ -27071,73 +27199,67 @@ begin
   inherited;
   FDateCriterionList := TFhirImmunizationRecommendationRecommendationDateCriterionList.Create;
   FSupportingImmunizationList := TFhirResourceReferenceList{TFhirImmunization}.Create;
-  FSupportingAdverseEventReportList := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.Create;
-  FSupportingPatientObservationList := TFhirResourceReferenceList{TFhirObservation}.Create;
+  FSupportingPatientInformationList := TFhirResourceReferenceList{Resource}.Create;
 end;
 
 destructor TFhirImmunizationRecommendationRecommendation.Destroy;
 begin
-  FRecommendationDate.free;
+  FDate.free;
   FVaccineType.free;
   FDoseNumber.free;
   FForecastStatus.free;
   FDateCriterionList.Free;
   FProtocol.free;
   FSupportingImmunizationList.Free;
-  FSupportingAdverseEventReportList.Free;
-  FSupportingPatientObservationList.Free;
+  FSupportingPatientInformationList.Free;
   inherited;
 end;
 
 procedure TFhirImmunizationRecommendationRecommendation.Assign(oSource : TAdvObject);
 begin
   inherited;
-  recommendationDate := TFhirImmunizationRecommendationRecommendation(oSource).recommendationDate.Clone;
+  date := TFhirImmunizationRecommendationRecommendation(oSource).date.Clone;
   vaccineType := TFhirImmunizationRecommendationRecommendation(oSource).vaccineType.Clone;
   doseNumber := TFhirImmunizationRecommendationRecommendation(oSource).doseNumber.Clone;
-  FForecastStatus := TFhirImmunizationRecommendationRecommendation(oSource).FForecastStatus.Link;
+  forecastStatus := TFhirImmunizationRecommendationRecommendation(oSource).forecastStatus.Clone;
   FDateCriterionList.Assign(TFhirImmunizationRecommendationRecommendation(oSource).FDateCriterionList);
   protocol := TFhirImmunizationRecommendationRecommendation(oSource).protocol.Clone;
   FSupportingImmunizationList.Assign(TFhirImmunizationRecommendationRecommendation(oSource).FSupportingImmunizationList);
-  FSupportingAdverseEventReportList.Assign(TFhirImmunizationRecommendationRecommendation(oSource).FSupportingAdverseEventReportList);
-  FSupportingPatientObservationList.Assign(TFhirImmunizationRecommendationRecommendation(oSource).FSupportingPatientObservationList);
+  FSupportingPatientInformationList.Assign(TFhirImmunizationRecommendationRecommendation(oSource).FSupportingPatientInformationList);
 end;
 
 procedure TFhirImmunizationRecommendationRecommendation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
-  if (child_name = 'recommendationDate') Then
-     list.add(RecommendationDate.Link);
+  if (child_name = 'date') Then
+     list.add(Date.Link);
   if (child_name = 'vaccineType') Then
      list.add(VaccineType.Link);
   if (child_name = 'doseNumber') Then
      list.add(DoseNumber.Link);
   if (child_name = 'forecastStatus') Then
-     list.add(FForecastStatus.Link);
+     list.add(ForecastStatus.Link);
   if (child_name = 'dateCriterion') Then
      list.addAll(FDateCriterionList);
   if (child_name = 'protocol') Then
      list.add(Protocol.Link);
   if (child_name = 'supportingImmunization') Then
      list.addAll(FSupportingImmunizationList);
-  if (child_name = 'supportingAdverseEventReport') Then
-     list.addAll(FSupportingAdverseEventReportList);
-  if (child_name = 'supportingPatientObservation') Then
-     list.addAll(FSupportingPatientObservationList);
+  if (child_name = 'supportingPatientInformation') Then
+     list.addAll(FSupportingPatientInformationList);
 end;
 
 procedure TFhirImmunizationRecommendationRecommendation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'recommendationDate', 'dateTime', FRecommendationDate.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', FDate.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'vaccineType', 'CodeableConcept', FVaccineType.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'doseNumber', 'integer', FDoseNumber.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'forecastStatus', 'code', FForecastStatus.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'forecastStatus', 'CodeableConcept', FForecastStatus.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'dateCriterion', '', FDateCriterionList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'protocol', '', FProtocol.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'supportingImmunization', 'Resource(Immunization)', FSupportingImmunizationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'supportingAdverseEventReport', '', FSupportingAdverseEventReportList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'supportingPatientObservation', 'Resource(Observation)', FSupportingPatientObservationList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'supportingPatientInformation', 'Resource(Observation|AdverseReaction|AllergyIntolerance)', FSupportingPatientInformationList.Link)){3};
 end;
 
 function TFhirImmunizationRecommendationRecommendation.Link : TFhirImmunizationRecommendationRecommendation;
@@ -27152,30 +27274,30 @@ end;
 
 { TFhirImmunizationRecommendationRecommendation }
 
-Procedure TFhirImmunizationRecommendationRecommendation.SetRecommendationDate(value : TFhirDateTime);
+Procedure TFhirImmunizationRecommendationRecommendation.SetDate(value : TFhirDateTime);
 begin
-  FRecommendationDate.free;
-  FRecommendationDate := value;
+  FDate.free;
+  FDate := value;
 end;
 
-Function TFhirImmunizationRecommendationRecommendation.GetRecommendationDateST : TDateAndTime;
+Function TFhirImmunizationRecommendationRecommendation.GetDateST : TDateAndTime;
 begin
-  if FRecommendationDate = nil then
+  if FDate = nil then
     result := nil
   else
-    result := RecommendationDate.value;
+    result := Date.value;
 end;
 
-Procedure TFhirImmunizationRecommendationRecommendation.SetRecommendationDateST(value : TDateAndTime);
+Procedure TFhirImmunizationRecommendationRecommendation.SetDateST(value : TDateAndTime);
 begin
   if value <> nil then
   begin
-    if FRecommendationDate = nil then
-      FRecommendationDate := TFhirDateTime.create;
-    FRecommendationDate.value := value
+    if FDate = nil then
+      FDate := TFhirDateTime.create;
+    FDate.value := value
   end
-  else if FRecommendationDate <> nil then
-    FRecommendationDate.value := nil;
+  else if FDate <> nil then
+    FDate.value := nil;
 end;
 
 Procedure TFhirImmunizationRecommendationRecommendation.SetVaccineType(value : TFhirCodeableConcept);
@@ -27210,26 +27332,10 @@ begin
     FDoseNumber.value := '';
 end;
 
-Procedure TFhirImmunizationRecommendationRecommendation.SetForecastStatus(value : TFhirEnum);
+Procedure TFhirImmunizationRecommendationRecommendation.SetForecastStatus(value : TFhirCodeableConcept);
 begin
   FForecastStatus.free;
   FForecastStatus := value;
-end;
-
-Function TFhirImmunizationRecommendationRecommendation.GetForecastStatusST : TFhirImmunizationForecastStatus;
-begin
-  if FForecastStatus = nil then
-    result := TFhirImmunizationForecastStatus(0)
-  else
-    result := TFhirImmunizationForecastStatus(StringArrayIndexOf(CODES_TFhirImmunizationForecastStatus, ForecastStatus.value));
-end;
-
-Procedure TFhirImmunizationRecommendationRecommendation.SetForecastStatusST(value : TFhirImmunizationForecastStatus);
-begin
-  if ord(value) = 0 then
-    ForecastStatus := nil
-  else
-    ForecastStatus := TFhirEnum.create(CODES_TFhirImmunizationForecastStatus[value]);
 end;
 
 Procedure TFhirImmunizationRecommendationRecommendation.SetProtocol(value : TFhirImmunizationRecommendationRecommendationProtocol);
@@ -27729,220 +27835,6 @@ end;
 procedure TFhirImmunizationRecommendationRecommendationProtocolList.SetItemN(index: Integer; value: TFhirImmunizationRecommendationRecommendationProtocol);
 begin
   assert(value is TFhirImmunizationRecommendationRecommendationProtocol);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport }
-
-constructor TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.Create;
-begin
-  inherited;
-  FIdentifierList := TFhirIdList.Create;
-  FReactionList := TFhirResourceReferenceList{TFhirAdverseReaction}.Create;
-end;
-
-destructor TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.Destroy;
-begin
-  FIdentifierList.Free;
-  FReportType.free;
-  FReportDate.free;
-  FText.free;
-  FReactionList.Free;
-  inherited;
-end;
-
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  FIdentifierList.Assign(TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(oSource).FIdentifierList);
-  reportType := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(oSource).reportType.Clone;
-  reportDate := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(oSource).reportDate.Clone;
-  text := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(oSource).text.Clone;
-  FReactionList.Assign(TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(oSource).FReactionList);
-end;
-
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'identifier') Then
-     list.addAll(FIdentifierList);
-  if (child_name = 'reportType') Then
-     list.add(ReportType.Link);
-  if (child_name = 'reportDate') Then
-     list.add(ReportDate.Link);
-  if (child_name = 'text') Then
-     list.add(Text.Link);
-  if (child_name = 'reaction') Then
-     list.addAll(FReactionList);
-end;
-
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'id', FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reportType', 'CodeableConcept', FReportType.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reportDate', 'dateTime', FReportDate.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reaction', 'Resource(AdverseReaction)', FReactionList.Link)){3};
-end;
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.Link : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-begin
-  result := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(inherited Link);
-end;
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.Clone : TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-begin
-  result := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(inherited Clone);
-end;
-
-{ TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport }
-
-Procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.SetReportType(value : TFhirCodeableConcept);
-begin
-  FReportType.free;
-  FReportType := value;
-end;
-
-Procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.SetReportDate(value : TFhirDateTime);
-begin
-  FReportDate.free;
-  FReportDate := value;
-end;
-
-Function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.GetReportDateST : TDateAndTime;
-begin
-  if FReportDate = nil then
-    result := nil
-  else
-    result := ReportDate.value;
-end;
-
-Procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.SetReportDateST(value : TDateAndTime);
-begin
-  if value <> nil then
-  begin
-    if FReportDate = nil then
-      FReportDate := TFhirDateTime.create;
-    FReportDate.value := value
-  end
-  else if FReportDate <> nil then
-    FReportDate.value := nil;
-end;
-
-Procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.SetText(value : TFhirString);
-begin
-  FText.free;
-  FText := value;
-end;
-
-Function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.GetTextST : String;
-begin
-  if FText = nil then
-    result := ''
-  else
-    result := Text.value;
-end;
-
-Procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.SetTextST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FText = nil then
-      FText := TFhirString.create;
-    FText.value := value
-  end
-  else if FText <> nil then
-    FText.value := '';
-end;
-
-
-{ TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList }
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.AddItem(value: TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-begin
-  assert(value.ClassName = 'TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport');
-  add(value);
-end;
-
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.Append: TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-begin
-  result := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.Clone: TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList;
-begin
-  result := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList(inherited Clone);
-end;
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.GetItemN(index: Integer): TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-begin
-  result := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(ObjectByIndex[index]);
-end;
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.IndexOf(value: TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.Insert(index: Integer): TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-begin
-  result := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.InsertItem(index: Integer; value: TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-begin
-  assert(value is TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-  Inherited Insert(index, value);
-end;
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.Item(index: Integer): TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport;
-begin
-  result := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport(ObjectByIndex[index]);
-end;
-
-function TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.Link: TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList;
-begin
-  result := TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList(inherited Link);
-end;
-
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.SetItemByIndex(index: Integer; value: TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-begin
-  assert(value is TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-  FhirImmunizationRecommendationRecommendationSupportingAdverseEventReports[index] := value;
-end;
-
-procedure TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReportList.SetItemN(index: Integer; value: TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
-begin
-  assert(value is TFhirImmunizationRecommendationRecommendationSupportingAdverseEventReport);
   ObjectByIndex[index] := value;
 end;
 
@@ -28975,6 +28867,7 @@ end;
 destructor TFhirMedicationAdministrationDosage.Destroy;
 begin
   FTiming.free;
+  FAsNeeded.free;
   FSite.free;
   FRoute.free;
   FMethod.free;
@@ -28988,6 +28881,7 @@ procedure TFhirMedicationAdministrationDosage.Assign(oSource : TAdvObject);
 begin
   inherited;
   timing := TFhirMedicationAdministrationDosage(oSource).timing.Clone;
+  asNeeded := TFhirMedicationAdministrationDosage(oSource).asNeeded.Clone;
   site := TFhirMedicationAdministrationDosage(oSource).site.Clone;
   route := TFhirMedicationAdministrationDosage(oSource).route.Clone;
   method := TFhirMedicationAdministrationDosage(oSource).method.Clone;
@@ -29001,6 +28895,8 @@ begin
   inherited;
   if (child_name = 'timing') Then
      list.add(Timing.Link);
+  if (child_name = 'asNeeded') Then
+     list.add(AsNeeded.Link);
   if (child_name = 'site') Then
      list.add(Site.Link);
   if (child_name = 'route') Then
@@ -29019,6 +28915,7 @@ procedure TFhirMedicationAdministrationDosage.ListProperties(oList: TFHIRPropert
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'timing', 'Schedule', FTiming.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'asNeeded[x]', 'boolean|CodeableConcept', FAsNeeded.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'site', 'CodeableConcept', FSite.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', FRoute.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', FMethod.Link.Link));{2}
@@ -29043,6 +28940,12 @@ Procedure TFhirMedicationAdministrationDosage.SetTiming(value : TFhirSchedule);
 begin
   FTiming.free;
   FTiming := value;
+end;
+
+Procedure TFhirMedicationAdministrationDosage.SetAsNeeded(value : TFhirType);
+begin
+  FAsNeeded.free;
+  FAsNeeded := value;
 end;
 
 Procedure TFhirMedicationAdministrationDosage.SetSite(value : TFhirCodeableConcept);
@@ -29427,6 +29330,7 @@ destructor TFhirMedicationDispenseDispenseDosage.Destroy;
 begin
   FAdditionalInstructions.free;
   FTiming.free;
+  FAsNeeded.free;
   FSite.free;
   FRoute.free;
   FMethod.free;
@@ -29441,6 +29345,7 @@ begin
   inherited;
   additionalInstructions := TFhirMedicationDispenseDispenseDosage(oSource).additionalInstructions.Clone;
   timing := TFhirMedicationDispenseDispenseDosage(oSource).timing.Clone;
+  asNeeded := TFhirMedicationDispenseDispenseDosage(oSource).asNeeded.Clone;
   site := TFhirMedicationDispenseDispenseDosage(oSource).site.Clone;
   route := TFhirMedicationDispenseDispenseDosage(oSource).route.Clone;
   method := TFhirMedicationDispenseDispenseDosage(oSource).method.Clone;
@@ -29456,6 +29361,8 @@ begin
      list.add(AdditionalInstructions.Link);
   if (child_name = 'timing') Then
      list.add(Timing.Link);
+  if (child_name = 'asNeeded') Then
+     list.add(AsNeeded.Link);
   if (child_name = 'site') Then
      list.add(Site.Link);
   if (child_name = 'route') Then
@@ -29475,6 +29382,7 @@ begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'additionalInstructions', 'CodeableConcept', FAdditionalInstructions.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'timing[x]', 'dateTime|Period|Schedule', FTiming.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'asNeeded[x]', 'boolean|CodeableConcept', FAsNeeded.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'site', 'CodeableConcept', FSite.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', FRoute.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', FMethod.Link.Link));{2}
@@ -29505,6 +29413,12 @@ Procedure TFhirMedicationDispenseDispenseDosage.SetTiming(value : TFhirType);
 begin
   FTiming.free;
   FTiming := value;
+end;
+
+Procedure TFhirMedicationDispenseDispenseDosage.SetAsNeeded(value : TFhirType);
+begin
+  FAsNeeded.free;
+  FAsNeeded := value;
 end;
 
 Procedure TFhirMedicationDispenseDispenseDosage.SetSite(value : TFhirCodeableConcept);
@@ -29794,9 +29708,10 @@ end;
 
 destructor TFhirMedicationPrescriptionDosageInstruction.Destroy;
 begin
-  FDosageInstructionsText.free;
+  FText.free;
   FAdditionalInstructions.free;
   FTiming.free;
+  FAsNeeded.free;
   FSite.free;
   FRoute.free;
   FMethod.free;
@@ -29809,9 +29724,10 @@ end;
 procedure TFhirMedicationPrescriptionDosageInstruction.Assign(oSource : TAdvObject);
 begin
   inherited;
-  dosageInstructionsText := TFhirMedicationPrescriptionDosageInstruction(oSource).dosageInstructionsText.Clone;
+  text := TFhirMedicationPrescriptionDosageInstruction(oSource).text.Clone;
   additionalInstructions := TFhirMedicationPrescriptionDosageInstruction(oSource).additionalInstructions.Clone;
   timing := TFhirMedicationPrescriptionDosageInstruction(oSource).timing.Clone;
+  asNeeded := TFhirMedicationPrescriptionDosageInstruction(oSource).asNeeded.Clone;
   site := TFhirMedicationPrescriptionDosageInstruction(oSource).site.Clone;
   route := TFhirMedicationPrescriptionDosageInstruction(oSource).route.Clone;
   method := TFhirMedicationPrescriptionDosageInstruction(oSource).method.Clone;
@@ -29823,12 +29739,14 @@ end;
 procedure TFhirMedicationPrescriptionDosageInstruction.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
-  if (child_name = 'dosageInstructionsText') Then
-     list.add(DosageInstructionsText.Link);
+  if (child_name = 'text') Then
+     list.add(Text.Link);
   if (child_name = 'additionalInstructions') Then
      list.add(AdditionalInstructions.Link);
   if (child_name = 'timing') Then
      list.add(Timing.Link);
+  if (child_name = 'asNeeded') Then
+     list.add(AsNeeded.Link);
   if (child_name = 'site') Then
      list.add(Site.Link);
   if (child_name = 'route') Then
@@ -29846,9 +29764,10 @@ end;
 procedure TFhirMedicationPrescriptionDosageInstruction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'dosageInstructionsText', 'string', FDosageInstructionsText.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'additionalInstructions', 'CodeableConcept', FAdditionalInstructions.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'timing[x]', 'dateTime|Period|Schedule', FTiming.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'asNeeded[x]', 'boolean|CodeableConcept', FAsNeeded.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'site', 'CodeableConcept', FSite.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', FRoute.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', FMethod.Link.Link));{2}
@@ -29869,30 +29788,30 @@ end;
 
 { TFhirMedicationPrescriptionDosageInstruction }
 
-Procedure TFhirMedicationPrescriptionDosageInstruction.SetDosageInstructionsText(value : TFhirString);
+Procedure TFhirMedicationPrescriptionDosageInstruction.SetText(value : TFhirString);
 begin
-  FDosageInstructionsText.free;
-  FDosageInstructionsText := value;
+  FText.free;
+  FText := value;
 end;
 
-Function TFhirMedicationPrescriptionDosageInstruction.GetDosageInstructionsTextST : String;
+Function TFhirMedicationPrescriptionDosageInstruction.GetTextST : String;
 begin
-  if FDosageInstructionsText = nil then
+  if FText = nil then
     result := ''
   else
-    result := DosageInstructionsText.value;
+    result := Text.value;
 end;
 
-Procedure TFhirMedicationPrescriptionDosageInstruction.SetDosageInstructionsTextST(value : String);
+Procedure TFhirMedicationPrescriptionDosageInstruction.SetTextST(value : String);
 begin
   if value <> '' then
   begin
-    if FDosageInstructionsText = nil then
-      FDosageInstructionsText := TFhirString.create;
-    FDosageInstructionsText.value := value
+    if FText = nil then
+      FText := TFhirString.create;
+    FText.value := value
   end
-  else if FDosageInstructionsText <> nil then
-    FDosageInstructionsText.value := '';
+  else if FText <> nil then
+    FText.value := '';
 end;
 
 Procedure TFhirMedicationPrescriptionDosageInstruction.SetAdditionalInstructions(value : TFhirCodeableConcept);
@@ -29905,6 +29824,12 @@ Procedure TFhirMedicationPrescriptionDosageInstruction.SetTiming(value : TFhirTy
 begin
   FTiming.free;
   FTiming := value;
+end;
+
+Procedure TFhirMedicationPrescriptionDosageInstruction.SetAsNeeded(value : TFhirType);
+begin
+  FAsNeeded.free;
+  FAsNeeded := value;
 end;
 
 Procedure TFhirMedicationPrescriptionDosageInstruction.SetSite(value : TFhirCodeableConcept);
@@ -30398,6 +30323,7 @@ end;
 destructor TFhirMedicationStatementDosage.Destroy;
 begin
   FTiming.free;
+  FAsNeeded.free;
   FSite.free;
   FRoute.free;
   FMethod.free;
@@ -30411,6 +30337,7 @@ procedure TFhirMedicationStatementDosage.Assign(oSource : TAdvObject);
 begin
   inherited;
   timing := TFhirMedicationStatementDosage(oSource).timing.Clone;
+  asNeeded := TFhirMedicationStatementDosage(oSource).asNeeded.Clone;
   site := TFhirMedicationStatementDosage(oSource).site.Clone;
   route := TFhirMedicationStatementDosage(oSource).route.Clone;
   method := TFhirMedicationStatementDosage(oSource).method.Clone;
@@ -30424,6 +30351,8 @@ begin
   inherited;
   if (child_name = 'timing') Then
      list.add(Timing.Link);
+  if (child_name = 'asNeeded') Then
+     list.add(AsNeeded.Link);
   if (child_name = 'site') Then
      list.add(Site.Link);
   if (child_name = 'route') Then
@@ -30442,6 +30371,7 @@ procedure TFhirMedicationStatementDosage.ListProperties(oList: TFHIRPropertyList
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'timing', 'Schedule', FTiming.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'asNeeded[x]', 'boolean|CodeableConcept', FAsNeeded.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'site', 'CodeableConcept', FSite.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', FRoute.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', FMethod.Link.Link));{2}
@@ -30466,6 +30396,12 @@ Procedure TFhirMedicationStatementDosage.SetTiming(value : TFhirSchedule);
 begin
   FTiming.free;
   FTiming := value;
+end;
+
+Procedure TFhirMedicationStatementDosage.SetAsNeeded(value : TFhirType);
+begin
+  FAsNeeded.free;
+  FAsNeeded := value;
 end;
 
 Procedure TFhirMedicationStatementDosage.SetSite(value : TFhirCodeableConcept);
@@ -38427,7 +38363,7 @@ destructor TFhirSpecimenCollection.Destroy;
 begin
   FCollector.free;
   FCommentList.Free;
-  FCollectedTime.free;
+  FCollected.free;
   FQuantity.free;
   FMethod.free;
   FSourceSite.free;
@@ -38439,7 +38375,7 @@ begin
   inherited;
   collector := TFhirSpecimenCollection(oSource).collector.Clone;
   FCommentList.Assign(TFhirSpecimenCollection(oSource).FCommentList);
-  collectedTime := TFhirSpecimenCollection(oSource).collectedTime.Clone;
+  collected := TFhirSpecimenCollection(oSource).collected.Clone;
   quantity := TFhirSpecimenCollection(oSource).quantity.Clone;
   method := TFhirSpecimenCollection(oSource).method.Clone;
   sourceSite := TFhirSpecimenCollection(oSource).sourceSite.Clone;
@@ -38452,8 +38388,8 @@ begin
      list.add(Collector.Link);
   if (child_name = 'comment') Then
      list.addAll(FCommentList);
-  if (child_name = 'collectedTime') Then
-     list.add(CollectedTime.Link);
+  if (child_name = 'collected') Then
+     list.add(Collected.Link);
   if (child_name = 'quantity') Then
      list.add(Quantity.Link);
   if (child_name = 'method') Then
@@ -38467,7 +38403,7 @@ begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'collector', 'Resource(Practitioner)', FCollector.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'comment', 'string', FCommentList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'collectedTime', 'dateTime', FCollectedTime.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'collected[x]', 'dateTime|Period', FCollected.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', FQuantity.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', FMethod.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'sourceSite', 'CodeableConcept', FSourceSite.Link.Link));{2}
@@ -38491,30 +38427,10 @@ begin
   FCollector := value;
 end;
 
-Procedure TFhirSpecimenCollection.SetCollectedTime(value : TFhirDateTime);
+Procedure TFhirSpecimenCollection.SetCollected(value : TFhirType);
 begin
-  FCollectedTime.free;
-  FCollectedTime := value;
-end;
-
-Function TFhirSpecimenCollection.GetCollectedTimeST : TDateAndTime;
-begin
-  if FCollectedTime = nil then
-    result := nil
-  else
-    result := CollectedTime.value;
-end;
-
-Procedure TFhirSpecimenCollection.SetCollectedTimeST(value : TDateAndTime);
-begin
-  if value <> nil then
-  begin
-    if FCollectedTime = nil then
-      FCollectedTime := TFhirDateTime.create;
-    FCollectedTime.value := value
-  end
-  else if FCollectedTime <> nil then
-    FCollectedTime.value := nil;
+  FCollected.free;
+  FCollected := value;
 end;
 
 Procedure TFhirSpecimenCollection.SetQuantity(value : TFhirQuantity);
@@ -39372,7 +39288,7 @@ procedure TFhirSupplyDispense.Assign(oSource : TAdvObject);
 begin
   inherited;
   identifier := TFhirSupplyDispense(oSource).identifier.Clone;
-  status := TFhirSupplyDispense(oSource).status.Clone;
+  FStatus := TFhirSupplyDispense(oSource).FStatus.Link;
   type_ := TFhirSupplyDispense(oSource).type_.Clone;
   quantity := TFhirSupplyDispense(oSource).quantity.Clone;
   suppliedItem := TFhirSupplyDispense(oSource).suppliedItem.Clone;
@@ -39389,7 +39305,7 @@ begin
   if (child_name = 'identifier') Then
      list.add(Identifier.Link);
   if (child_name = 'status') Then
-     list.add(Status.Link);
+     list.add(FStatus.Link);
   if (child_name = 'type_') Then
      list.add(Type_.Link);
   if (child_name = 'quantity') Then
@@ -39412,7 +39328,7 @@ procedure TFhirSupplyDispense.ListProperties(oList: TFHIRPropertyList; bInherite
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifier.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', FQuantity.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'suppliedItem', 'Resource(Medication|Substance|Device)', FSuppliedItem.Link.Link));{2}
@@ -39441,30 +39357,26 @@ begin
   FIdentifier := value;
 end;
 
-Procedure TFhirSupplyDispense.SetStatus(value : TFhirCode);
+Procedure TFhirSupplyDispense.SetStatus(value : TFhirEnum);
 begin
   FStatus.free;
   FStatus := value;
 end;
 
-Function TFhirSupplyDispense.GetStatusST : String;
+Function TFhirSupplyDispense.GetStatusST : TFhirValuesetSupplyDispenseStatus;
 begin
   if FStatus = nil then
-    result := ''
+    result := TFhirValuesetSupplyDispenseStatus(0)
   else
-    result := Status.value;
+    result := TFhirValuesetSupplyDispenseStatus(StringArrayIndexOf(CODES_TFhirValuesetSupplyDispenseStatus, Status.value));
 end;
 
-Procedure TFhirSupplyDispense.SetStatusST(value : String);
+Procedure TFhirSupplyDispense.SetStatusST(value : TFhirValuesetSupplyDispenseStatus);
 begin
-  if value <> '' then
-  begin
-    if FStatus = nil then
-      FStatus := TFhirCode.create;
-    FStatus.value := value
-  end
-  else if FStatus <> nil then
-    FStatus.value := '';
+  if ord(value) = 0 then
+    Status := nil
+  else
+    Status := TFhirEnum.create(CODES_TFhirValuesetSupplyDispenseStatus[value]);
 end;
 
 Procedure TFhirSupplyDispense.SetType_(value : TFhirCodeableConcept);

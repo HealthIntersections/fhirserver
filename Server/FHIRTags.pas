@@ -39,6 +39,7 @@ const
   TAG_FHIR_SCHEME_SECURITY = 'http://hl7.org/fhir/tag/security';
 
   TAG_READONLY = 'http://hl7.org/fhir/tags/connectathon4/read-only';
+  TAG_SUMMARY = 'http://healthintersections.com.au/fhir/tags/summary';
 
   USER_SCHEME_IMPLICIT = 'http://healthintersections.com.au/fhir/user/implicit';
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =

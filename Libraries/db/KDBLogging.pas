@@ -33,7 +33,7 @@ type
     function Report(AExceptions : Boolean; AFormat : TKDBReportFormat; APrefix : String = '') : String; Overload;
   public
     constructor create(AUsage : String);
-    destructor destroy; override;
+    destructor Destroy; override;
   end;
 
   TKDBLogger = class (TAdvObject)

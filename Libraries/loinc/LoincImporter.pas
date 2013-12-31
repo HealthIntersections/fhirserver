@@ -521,7 +521,7 @@ begin
     FStemList.Sorted := true;
     Fdesc := oSvc.Desc;
     Fdesc.StartBuild;
-    FCode := oSvc.Code;
+    FCode := oSvc.CodeList;
     FCode.StartBuild;
     FRefs := oSvc.Refs;
     FRefs.StartBuild;

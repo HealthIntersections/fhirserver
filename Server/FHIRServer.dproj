@@ -6,8 +6,8 @@
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win32</Platform>
-        <TargetedPlatforms>1</TargetedPlatforms>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -35,6 +35,12 @@
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
         <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
         <CfgParent>Cfg_1</CfgParent>
         <Cfg_1>true</Cfg_1>
         <Base>true</Base>
@@ -77,6 +83,9 @@
         <DCC_UsePackage>esbpcs_base_db_rt_d17;esbpcs_base_rt_d17;fs17;frx17;bindcompfmx;DBXSqliteDriver;vcldbx;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;TeeDB;bindcomp;inetdb;esbpcs_xtras_db_rt_d17;vclib;inetdbbde;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;Tee;esbpcs_calcs_rt_d17;esbpcs_dates_rt_d17;DataSnapProviderClient;xmlrtl;svnui;ibxpress;DbxCommonDriver;DBXSybaseASEDriver;vclimg;esbpcs_stats_rt_d17;IndyProtocols;dbxcds;DBXMySQLDriver;DatasnapConnectorsFreePascal;MetropolisUILiveTile;esbpcs_calcs_db_rt_d17;esbpcs_xtras_rt_d17;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;FMXTee;TeeUI;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;vclribbon;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;Intraweb;fmxase;vcl;IndyCore;DataSnapConnectors;esbpcs_stats_db_rt_d17;IndyIPCommon;CloudService;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;FmxTeeUI;inet;fsDB17;fmxobj;frxDB17;CodeSiteExpressPkg;esbpcs_dates_db_rt_d17;vclx;frxe17;inetdbxpress;webdsnap;svn;DBXSybaseASADriver;fmxdae;bdertl;dbexpress;adortl;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_UsePackage>bindcompfmx;DBXSqliteDriver;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;bindcomp;inetdb;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;DataSnapProviderClient;xmlrtl;DbxCommonDriver;DBXSybaseASEDriver;vclimg;IndyProtocols;dbxcds;DBXMySQLDriver;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;fmxase;vcl;IndyCore;IndyIPCommon;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;inet;fmxobj;vclx;inetdbxpress;webdsnap;DBXSybaseASADriver;fmxdae;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -90,7 +99,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -remount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot;</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
@@ -100,6 +109,13 @@
         <Manifest_File>None</Manifest_File>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units\</DCC_DcuOutput>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <DCC_DebugDCUs>false</DCC_DebugDCUs>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot;</Debugger_RunParams>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>None</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -190,9 +206,7 @@
         <DCCReference Include="..\Libraries\Support\AdvZipDeclarations.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvZipUtilities.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvZipWorkers.pas"/>
-        <DCCReference Include="..\Libraries\Support\ZLibEx.pas"/>
         <DCCReference Include="..\Libraries\Support\GUIDSupport.pas"/>
-        <DCCReference Include="..\Libraries\Support\bignum.pas"/>
         <DCCReference Include="..\Libraries\refplat\FHIRBase.pas"/>
         <DCCReference Include="..\Libraries\Support\DecimalSupport.pas"/>
         <DCCReference Include="..\Libraries\Support\DateAndTime.pas"/>
@@ -279,6 +293,24 @@
         <DCCReference Include="..\Libraries\support\HTMLPublisher.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincImporter.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincPublisher.pas"/>
+        <DCCReference Include="TerminologyServer.pas"/>
+        <DCCReference Include="TerminologyServerStore.pas"/>
+        <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
+        <DCCReference Include="FHIRValueSetChecker.pas"/>
+        <DCCReference Include="TerminologyWebServer.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapConsts.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapClasses.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapDebug.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapTracker.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapUtilities.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapExceptions.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapMsXml.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapXML.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapComponent.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapNamespaces.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapMime.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapBase64.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -532,7 +564,7 @@
             <Platforms>
                 <Platform value="OSX32">False</Platform>
                 <Platform value="Win32">True</Platform>
-                <Platform value="Win64">False</Platform>
+                <Platform value="Win64">True</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
