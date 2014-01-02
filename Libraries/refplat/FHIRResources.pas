@@ -36,7 +36,7 @@ unit FHIRResources;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 31, 2013 11:31+1100
+// FHIR v0.12 generated Thu, Jan 2, 2014 12:33+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -94,7 +94,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     frtRelatedPerson, {@enum.value Information about a person that is involved in the care for a patient, but who is not the target of healthcare, nor has a formal responsibility in the care process. }
     frtSecurityEvent, {@enum.value A record of an event made for purposes of maintaining a security log. Typical uses include detection of intrusion attempts and monitoring for inappropriate usage. }
     frtSpecimen, {@enum.value Sample for analysis. }
-    frtSubstance, {@enum.value A homogeneous material with a definite composition used in healthcare. }
+    frtSubstance, {@enum.value A homogeneous material with a definite composition. }
     frtSupply, {@enum.value A supply - a  request for something, and provision of what is supplied. }
     frtValueSet, {@enum.value A value set specifies a set of codes drawn from one or more code systems. }
     frtBinary); {@enum.value Binary Resource }
@@ -273,11 +273,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     spDiagnosticReport_Date, {@enum.value spDiagnosticReport_Date The clinically relevant time of the report }
     spDiagnosticReport_Diagnosis, {@enum.value spDiagnosticReport_Diagnosis A coded diagnosis on the report }
     spDiagnosticReport_Group, {@enum.value spDiagnosticReport_Group Name /code of a group in the report }
+    spDiagnosticReport_Identifier, {@enum.value spDiagnosticReport_Identifier An identifier for the report }
     spDiagnosticReport_Image, {@enum.value spDiagnosticReport_Image Reference to the image source }
     spDiagnosticReport_Issued, {@enum.value spDiagnosticReport_Issued When the report was issued }
     spDiagnosticReport_Name, {@enum.value spDiagnosticReport_Name The name of the report (e.g. the code for the report as a whole, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result) }
     spDiagnosticReport_Performer, {@enum.value spDiagnosticReport_Performer Who was the source of the report (organization) }
-    spDiagnosticReport_Reportid, {@enum.value spDiagnosticReport_Reportid An identifier for the report }
     spDiagnosticReport_Request, {@enum.value spDiagnosticReport_Request What was requested }
     spDiagnosticReport_Result, {@enum.value spDiagnosticReport_Result Link to an atomic result (observation resource) }
     spDiagnosticReport_Service, {@enum.value spDiagnosticReport_Service Which diagnostic discipline/department created the report }
@@ -754,7 +754,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     spSupply_Dispensestatus, {@enum.value spSupply_Dispensestatus in progress | dispensed | abandoned }
     spSupply_Identifier, {@enum.value spSupply_Identifier Unique identifier }
     spSupply_Kind, {@enum.value spSupply_Kind The kind of supply (central, non-stock, etc) }
-    spSupply_Patient, {@enum.value spSupply_Patient Patient }
+    spSupply_Patient, {@enum.value spSupply_Patient Patient for whom the item is supplied }
     spSupply_Status, {@enum.value spSupply_Status requested | dispensed | received | failed | cancelled }
     spSupply_Supplier); {@enum.value spSupply_Supplier Dispenser }
 
@@ -2339,7 +2339,7 @@ Type
     FIssued : TFhirDateTime;
     FSubject : TFhirResourceReference{Resource};
     FPerformer : TFhirResourceReference{Resource};
-    FReportId : TFhirIdentifier;
+    FIdentifier : TFhirIdentifier;
     FrequestDetailList : TFhirResourceReferenceList{TFhirDiagnosticOrder};
     FServiceCategory : TFhirCodeableConcept;
     FDiagnostic : TFhirType;
@@ -2357,7 +2357,7 @@ Type
     Procedure SetIssuedST(value : TDateAndTime);
     Procedure SetSubject(value : TFhirResourceReference{Resource});
     Procedure SetPerformer(value : TFhirResourceReference{Resource});
-    Procedure SetReportId(value : TFhirIdentifier);
+    Procedure SetIdentifier(value : TFhirIdentifier);
     Procedure SetServiceCategory(value : TFhirCodeableConcept);
     Procedure SetDiagnostic(value : TFhirType);
     Procedure SetResults(value : TFhirDiagnosticReportResults);
@@ -2406,10 +2406,10 @@ Type
     }
     property performer : TFhirResourceReference{Resource} read FPerformer write SetPerformer;
 
-    {@member reportId
+    {@member identifier
       The local ID assigned to the report by the order filler, usually by the Information System of the diagnostic service provider.
     }
-    property reportId : TFhirIdentifier read FReportId write SetReportId;
+    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member requestDetailList
       Details concerning a test requested.
@@ -6021,7 +6021,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     property identifierList : TFhirIdentifierList read FIdentifierList;
 
     {@member type_
-      The type of the specimen.
+      Kind of material that forms the specimen.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
 
@@ -6036,7 +6036,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member accessionIdentifier
-      The identifier(s) assigned by the lab when accessioning specimen(s). This is not necessarily the same as the specimen identifier, depending on local lab procedures.
+      The identifier assigned by the lab when accessioning specimen(s). This is not necessarily the same as the specimen identifier, depending on local lab procedures.
     }
     property accessionIdentifier : TFhirIdentifier read FAccessionIdentifier write SetAccessionIdentifier;
 
@@ -6060,7 +6060,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     property treatmentList : TFhirSpecimenTreatmentList read FTreatmentList;
 
     {@member containerList
-      The container holding the specimen. May be recursive; ie blood in tube in tray in rack.
+      The container holding the specimen.  The recursive nature of containers; ie blood in tube in tray in rack is not addressed here.
     }
     property containerList : TFhirSpecimenContainerList read FContainerList;
 
@@ -6068,7 +6068,7 @@ Related resources tie this event to the authorizing prescription, and the specif
 
 
   {@Class TFhirSubstance : TFhirResource
-    A homogeneous material with a definite composition used in healthcare.
+    A homogeneous material with a definite composition.
   }
   {!.Net HL7Connect.Fhir.Substance}
   TFhirSubstance = class (TFhirResource)
@@ -10207,7 +10207,7 @@ begin
   FIssued.free;
   FSubject.free;
   FPerformer.free;
-  FReportId.free;
+  FIdentifier.free;
   FRequestDetailList.Free;
   FServiceCategory.free;
   FDiagnostic.free;
@@ -10237,7 +10237,7 @@ begin
   issued := TFhirDiagnosticReport(oSource).issued.Clone;
   subject := TFhirDiagnosticReport(oSource).subject.Clone;
   performer := TFhirDiagnosticReport(oSource).performer.Clone;
-  reportId := TFhirDiagnosticReport(oSource).reportId.Clone;
+  identifier := TFhirDiagnosticReport(oSource).identifier.Clone;
   FRequestDetailList.Assign(TFhirDiagnosticReport(oSource).FRequestDetailList);
   serviceCategory := TFhirDiagnosticReport(oSource).serviceCategory.Clone;
   diagnostic := TFhirDiagnosticReport(oSource).diagnostic.Clone;
@@ -10260,8 +10260,8 @@ begin
      list.add(Subject.Link);
   if (child_name = 'performer') Then
      list.add(Performer.Link);
-  if (child_name = 'reportId') Then
-     list.add(ReportId.Link);
+  if (child_name = 'identifier') Then
+     list.add(Identifier.Link);
   if (child_name = 'requestDetail') Then
      list.addAll(FRequestDetailList);
   if (child_name = 'serviceCategory') Then
@@ -10289,7 +10289,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'issued', 'dateTime', FIssued.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient|Group|Device|Location)', FSubject.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'performer', 'Resource(Practitioner|Organization)', FPerformer.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reportId', 'Identifier', FReportId.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifier.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'requestDetail', 'Resource(DiagnosticOrder)', FRequestDetailList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'serviceCategory', 'CodeableConcept', FServiceCategory.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'diagnostic[x]', 'dateTime|Period', FDiagnostic.Link.Link));{2}
@@ -10373,10 +10373,10 @@ begin
   FPerformer := value;
 end;
 
-Procedure TFhirDiagnosticReport.SetReportId(value : TFhirIdentifier);
+Procedure TFhirDiagnosticReport.SetIdentifier(value : TFhirIdentifier);
 begin
-  FReportId.free;
-  FReportId := value;
+  FIdentifier.free;
+  FIdentifier := value;
 end;
 
 Procedure TFhirDiagnosticReport.SetServiceCategory(value : TFhirCodeableConcept);

@@ -176,7 +176,6 @@ Type
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirUri; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirEnum; name : String); overload;
 //    procedure index(aType : TFhirResourceType; key : integer; value : TFhirEnumList; name : String); overload;
-//    procedure index(aType : TFhirResourceType; key : integer; value : TFhirDecimal; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirInteger; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirBoolean; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : Boolean; name : String); overload;
@@ -190,6 +189,7 @@ Type
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirSchedule; name : String); overload;
 
     // complexes
+    procedure index(aType : TFhirResourceType; key : integer; value : TFhirRatio; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirQuantity; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirCoding; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirCodeableConcept; name : String); overload;
@@ -973,6 +973,11 @@ begin
   FEntries.add(key, ndx, ref, value.value.value, '', 0, ndx.SearchType);
 end;
 
+procedure TFhirIndexManager.index(aType: TFhirResourceType; key: integer; value: TFhirRatio; name: String);
+begin
+  // don't have a clue what to do here
+end;
+
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key : integer; value: TFhirHumanName; name, phoneticName: String);
 var
   i : integer;
@@ -1453,7 +1458,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsSubstance : Array[TSearchParamsSubstance] of TSearchParamsSubstance = ( spSubstance__id, spSubstance_Expiry, spSubstance_Identifier, spSubstance_Quantity, spSubstance_Status, spSubstance_Substance, spSubstance_Type);
+  CHECK_TSearchParamsSubstance : Array[TSearchParamsSubstance] of TSearchParamsSubstance = ( spSubstance__id, spSubstance_Expiry, spSubstance_Identifier, spSubstance_Quantity, spSubstance_Substance, spSubstance_Type);
 
 
 procedure TFhirIndexManager.buildIndexesSubstance;
@@ -1472,7 +1477,6 @@ var
   i : integer;
 begin
   index(frtSubstance, key, resource.type_, 'type');
-  index(frtSubstance, key, resource.status, 'status');
   if resource.instance <> nil then
   begin
     index(frtSubstance, key, resource.instance.identifier, 'identifier');
@@ -1480,7 +1484,7 @@ begin
   end;
   for i := 0 to resource.ingredientList.count - 1 do
   begin
-// todo    index(frtSubstance, key, resource.ingredientList[i].quantity, 'quantity');
+    index(frtSubstance, key, resource.ingredientList[i].quantity, 'quantity');
     index(frtSubstance, key, resource, resource.ingredientList[i].substance, 'substance');
   end;
 end;
@@ -1530,7 +1534,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsSupply : Array[TSearchParamsSupply] of TSearchParamsSupply = ( spSupply__id, spSupply_Dispenseid, spSupply_Dispensestatus, spSupply_Identifier, spSupply_Name, spSupply_Patient, spSupply_Status, spSupply_Supplier);
+  CHECK_TSearchParamsSupply : Array[TSearchParamsSupply] of TSearchParamsSupply = ( spSupply__id, spSupply_Dispenseid, spSupply_Dispensestatus, spSupply_Identifier, spSupply_Kind, spSupply_Patient, spSupply_Status, spSupply_Supplier);
 
 procedure TFhirIndexManager.buildIndexesSupply;
 var
@@ -1548,7 +1552,7 @@ var
   i : integer;
 begin
   index(frtSupply, key, resource.identifier, 'identifier');
-  index(frtSupply, key, resource.name, 'name');
+  index(frtSupply, key, resource.kind, 'kind');
   index(frtSupply, key, resource.status, 'status');
   index(frtSupply, key, resource, resource.patient, 'patient');
   patientCompartment(key, resource.patient);
@@ -2090,7 +2094,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TSearchParamsDiagnosticReport = ( spDiagnosticReport__id, spDiagnosticReport_Date, spDiagnosticReport_Diagnosis, spDiagnosticReport_Group, spDiagnosticReport_Image, spDiagnosticReport_Issued, spDiagnosticReport_Name, spDiagnosticReport_Performer, spDiagnosticReport_Reportid, spDiagnosticReport_Request, spDiagnosticReport_Result, spDiagnosticReport_Service, spDiagnosticReport_Specimen, spDiagnosticReport_Status, spDiagnosticReport_Subject);
+  CHECK_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TSearchParamsDiagnosticReport = ( spDiagnosticReport__id, spDiagnosticReport_Date, spDiagnosticReport_Diagnosis, spDiagnosticReport_Group, spDiagnosticReport_Identifier, spDiagnosticReport_Image, spDiagnosticReport_Issued, spDiagnosticReport_Name, spDiagnosticReport_Performer, spDiagnosticReport_Request, spDiagnosticReport_Result, spDiagnosticReport_Service, spDiagnosticReport_Specimen, spDiagnosticReport_Status, spDiagnosticReport_Subject);
 
 procedure TFhirIndexManager.buildIndexesDiagnosticReport;
 var
@@ -2119,7 +2123,7 @@ var
   i, j, k : integer;
 begin
   index(frtDiagnosticReport, key, resource.status, 'status');
-  index(frtDiagnosticReport, key, resource.reportId, 'reportid');
+  index(frtDiagnosticReport, key, resource.identifier, 'identifier');
   for k := 0 to resource.RequestDetailList.count - 1 do
     index(frtDiagnosticReport, key, resource, resource.requestDetailList[k], 'request');
 
@@ -2131,7 +2135,7 @@ begin
   patientCompartment(key, resource.subject);
   index(frtDiagnosticReport, key, resource, resource.performer, 'performer');
   index(frtDiagnosticReport, key, resource.issued, 'issued');
-  index(frtDiagnosticReport, key, resource.reportId, 'identifier');
+  index(frtDiagnosticReport, key, resource.identifier, 'identifier');
   index(frtDiagnosticReport, key, resource.serviceCategory, 'service');
   if resource.diagnostic is TFhirPeriod then
     index(frtDiagnosticReport, key, TFhirPeriod(resource.diagnostic), 'date')
@@ -2186,7 +2190,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of TSearchParamsDiagnosticOrder = ( spDiagnosticOrder__id, spDiagnosticOrder_Actor, spDiagnosticOrder_Bodysite, spDiagnosticOrder_Code, spDiagnosticOrder_Date, spDiagnosticOrder_Encounter, spDiagnosticOrder_Identifier, spDiagnosticOrder_Item_date, spDiagnosticOrder_Item_past_status, spDiagnosticOrder_Item_status, spDiagnosticOrder_Item_status_date, spDiagnosticOrder_Orderer, spDiagnosticOrder_Past_status, spDiagnosticOrder_Specimen, spDiagnosticOrder_Status, spDiagnosticOrder_Status_date, spDiagnosticOrder_Subject);
+  CHECK_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of TSearchParamsDiagnosticOrder = ( spDiagnosticOrder__id, spDiagnosticOrder_Actor, spDiagnosticOrder_Bodysite, spDiagnosticOrder_Code, spDiagnosticOrder_Encounter, spDiagnosticOrder_Event_date, spDiagnosticOrder_Event_status, spDiagnosticOrder_Event_status_date, spDiagnosticOrder_Identifier, spDiagnosticOrder_Item_date, spDiagnosticOrder_Item_past_status, spDiagnosticOrder_Item_status, spDiagnosticOrder_Item_status_date, spDiagnosticOrder_Orderer, spDiagnosticOrder_Specimen, spDiagnosticOrder_Status, spDiagnosticOrder_Subject);
 
 
 procedure TFhirIndexManager.buildIndexesDiagnosticOrder;
@@ -2217,8 +2221,8 @@ begin
   for j := 0 to resource.eventList.count - 1 do
   begin
     index(frtDiagnosticOrder, key, resource, resource.eventList[j].actor, 'actor');
-    index(frtDiagnosticOrder, key, resource.eventList[j].status, 'past-status');
-    index(frtDiagnosticOrder, key, resource.eventList[j].date, 'date');
+    index(frtDiagnosticOrder, key, resource.eventList[j].status, 'event-status');
+    index(frtDiagnosticOrder, key, resource.eventList[j].dateTime, 'event-date');
   end;
 
   for k := 0 to resource.itemList.count - 1 do
@@ -2227,11 +2231,12 @@ begin
     for i := 0 to resource.itemList[k].specimenList.Count - 1 do
       index(frtDiagnosticOrder, key, resource, resource.itemList[k].specimenList[i], 'specimen');
     index(frtDiagnosticOrder, key, resource.itemList[k].bodySite, 'bodysite');
+    index(frtDiagnosticOrder, key, resource.itemList[k].status, 'item-status');
     for j := 0 to resource.itemList[k].eventList.count - 1 do
     begin
       index(frtDiagnosticOrder, key, resource, resource.itemList[k].eventList[j].actor, 'actor');
       index(frtDiagnosticOrder, key, resource.itemList[k].eventList[j].status, 'item-past-status');
-      index(frtDiagnosticOrder, key, resource.itemList[k].eventList[j].date, 'item-date');
+      index(frtDiagnosticOrder, key, resource.itemList[k].eventList[j].dateTime, 'item-date');
     end;
   end;
 end;
@@ -2322,7 +2327,7 @@ begin
     for j := 0 to resource.conceptList[i].mapList.Count - 1 do
     begin
       index(frtConceptMap, key, resource.conceptList[i].mapList[j].system, 'system');
-      for k := 0 to resource.conceptList[i].mapList[k].productList.Count - 1 do
+      for k := 0 to resource.conceptList[i].mapList[j].productList.Count - 1 do
         index(frtConceptMap, key, resource.conceptList[i].mapList[j].productList[k].concept, 'dependson');
     end;
   end;
@@ -2789,7 +2794,7 @@ begin
 end;
 
 const
-  CHECK_TSearchParamsImmunization : Array[TSearchParamsImmunization] of TSearchParamsImmunization = ( spImmunization__id, spImmunization_Date, spImmunization_Location, spImmunization_Lot_number, spImmunization_Manufacturer, spImmunization_Performer, spImmunization_Refusal_reason, spImmunization_Requester, spImmunization_Subject, spImmunization_Vaccine_type);
+  CHECK_TSearchParamsImmunization : Array[TSearchParamsImmunization] of TSearchParamsImmunization = ( spImmunization__id, spImmunization_Date, spImmunization_Dose_sequence, spImmunization_Identifier, spImmunization_Location, spImmunization_Lot_number, spImmunization_Manufacturer, spImmunization_Performer, spImmunization_Reaction, spImmunization_Reaction_date, spImmunization_Reason, spImmunization_Refusal_reason, spImmunization_Refused, spImmunization_Requester, spImmunization_Subject, spImmunization_Vaccine_type);
 
 
 procedure TFhirIndexManager.buildIndexesImmunization;
@@ -2813,15 +2818,26 @@ begin
   begin
     for i := 0 to resource.explanation.refusalReasonList.count - 1 do
       index(frtImmunization, key, resource.explanation.refusalReasonList[i], 'refusal-reason');
+    for i := 0 to resource.explanation.reasonList.count - 1 do
+      index(frtImmunization, key, resource.explanation.reasonList[i], 'reason');
   end;
+  for i := 0 to resource.identifierList.count - 1 do
+      index(frtImmunization, key, resource.identifierList[i], 'identifier');
   index(frtImmunization, key, resource.lotNumber, 'lot-number');
+  index(frtImmunization, key, resource.refusedIndicator, 'refused');
   index(frtImmunization, key, resource, resource.manufacturer, 'manufacturer');
   index(frtImmunization, key, resource, resource.location, 'location');
   index(frtImmunization, key, resource, resource.performer, 'performer');
   index(frtImmunization, key, resource, resource.requester, 'requester');
   index(frtImmunization, key, resource, resource.subject, 'subject');
+  for i := 0 to resource.reactionList.count - 1 do
+  begin
+    index(frtImmunization, key, resource, resource.reactionList[i].detail, 'reaction');
+    index(frtImmunization, key, resource.reactionList[i].date, 'reaction-date');
+  end;
+  for i := 0 to resource.vaccinationProtocolList.count - 1 do
+    index(frtImmunization, key, resource.vaccinationProtocolList[i].doseSequence, 'dose-sequence');
   patientCompartment(key, resource.subject);
-
 end;
 
 const
@@ -2859,7 +2875,7 @@ begin
 end;
 
 const
-  CHECK_TSearchParamsOrderResponse : Array[TSearchParamsOrderResponse] of TSearchParamsOrderResponse = ( spOrderResponse__id,  spOrderResponse_Authority,  spOrderResponse_Code,  spOrderResponse_Cost,  spOrderResponse_Date,  spOrderResponse_Fulfillment,  spOrderResponse_Request,  spOrderResponse_Who);
+  CHECK_TSearchParamsOrderResponse : Array[TSearchParamsOrderResponse] of TSearchParamsOrderResponse = ( spOrderResponse__id, spOrderResponse_Code, spOrderResponse_Date, spOrderResponse_Fulfillment, spOrderResponse_Request, spOrderResponse_Who);
 
 
 procedure TFhirIndexManager.buildIndexesOrderResponse;
@@ -2880,8 +2896,6 @@ begin
   index(frtOrderResponse, key, resource, resource.request, 'request');
   index(frtOrderResponse, key, resource.date, 'date');
   index(frtOrderResponse, key, resource, resource.who, 'who');
-  index(frtOrderResponse, key, resource, resource.authority, 'authority');
-  index(frtOrderResponse, key, resource.cost, 'cost');
   index(frtOrderResponse, key, resource.code, 'code');
   for i := 0 to resource.fulfillmentList.count - 1 do
     index(frtOrderResponse, key, resource, resource.fulfillmentList[i], 'fulfillment');
@@ -2981,7 +2995,7 @@ begin
 end;
 
 const
-  CHECK_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of TSearchParamsImmunizationRecommendation = ( spImmunizationRecommendation__id, spImmunizationRecommendation_Subject, spImmunizationRecommendation_Vaccine_type);
+  CHECK_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of TSearchParamsImmunizationRecommendation = ( spImmunizationRecommendation__id, spImmunizationRecommendation_Date, spImmunizationRecommendation_Dose_number, spImmunizationRecommendation_Dose_sequence, spImmunizationRecommendation_Identifier, spImmunizationRecommendation_Information, spImmunizationRecommendation_Status, spImmunizationRecommendation_Subject, spImmunizationRecommendation_Support, spImmunizationRecommendation_Vaccine_type);
 
 procedure TFhirIndexManager.buildIndexesImmunizationRecommendation;
 var
@@ -2996,12 +3010,27 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesImmunizationRecommendation(key: integer; id : String; resource: TFhirImmunizationRecommendation);
 var
-  i : integer;
+  i,j  : integer;
 begin
-  index(frtProcedure, key, resource, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
+
+  index(frtImmunizationRecommendation, key, resource, resource.subject, 'subject');
+  for i := 0 to resource.identifierList.count - 1 do
+    index(frtImmunizationRecommendation, key, resource.identifierList[i], 'identifier');
+
   for i := 0 to resource.recommendationList.count - 1 do
-  index(frtProcedure, key, resource.recommendationList[i].vaccineType, 'vaccine-type');
+  begin
+    index(frtImmunizationRecommendation, key, resource.recommendationList[i].date, 'date');
+    index(frtImmunizationRecommendation, key, resource.recommendationList[i].vaccineType, 'vaccine-type');
+    index(frtImmunizationRecommendation, key, resource.recommendationList[i].doseNumber, 'dose-number');
+    index(frtImmunizationRecommendation, key, resource.recommendationList[i].forecastStatus, 'status');
+    if resource.recommendationList[i].protocol <> nil then
+      index(frtImmunizationRecommendation, key, resource.recommendationList[i].protocol.doseSequence, 'dose-sequence');
+    for j := 0 to resource.recommendationList[i].supportingPatientInformationList.Count - 1 do
+      index(frtImmunizationRecommendation, key, resource, resource.recommendationList[i].supportingPatientInformationList[j], 'information');
+    for j := 0 to resource.recommendationList[i].supportingImmunizationList.Count - 1 do
+      index(frtImmunizationRecommendation, key, resource, resource.recommendationList[i].supportingImmunizationList[j], 'support');
+  end;
 end;
 
 

@@ -167,7 +167,7 @@ begin
     exp := TFHIRValueSetExpander.create(self.Link);
     try
       result := exp.expand(vs, textFilter, dependencies);
-      if (dependencies.Count > 0) then
+      if (dependencies.Count > 0) and (cacheId <> '') then
       begin
         FLock.Lock('expandVS.2');
         try

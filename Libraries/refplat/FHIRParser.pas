@@ -31,7 +31,7 @@ unit FHIRParser;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 31, 2013 11:31+1100
+// FHIR v0.12 generated Thu, Jan 2, 2014 12:33+1100
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
@@ -9509,8 +9509,8 @@ begin
         result.subject := ParseResourceReference{Resource}(child, path+'/subject') {b}
       else if (child.baseName = 'performer') then
         result.performer := ParseResourceReference{Resource}(child, path+'/performer') {b}
-      else if (child.baseName = 'reportId') then
-        result.reportId := ParseIdentifier(child, path+'/reportId') {b}
+      else if (child.baseName = 'identifier') then
+        result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'requestDetail') then
         result.requestDetailList.Add(ParseResourceReference{TFhirDiagnosticOrder}(child, path+'/requestDetail'))
       else if (child.baseName = 'serviceCategory') then
@@ -9556,7 +9556,7 @@ begin
   ComposeDateTime(xml, 'issued', elem.issued);
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);
   ComposeResourceReference{Resource}(xml, 'performer', elem.performer);
-  ComposeIdentifier(xml, 'reportId', elem.reportId);
+  ComposeIdentifier(xml, 'identifier', elem.identifier);
   if not SummaryOnly then
     for i := 0 to elem.requestDetailList.Count - 1 do
       ComposeResourceReference{TFhirDiagnosticOrder}(xml, 'requestDetail', elem.requestDetailList[i]);
@@ -9602,8 +9602,8 @@ begin
         result.subject := ParseResourceReference{Resource}(jsn.vObj['subject']);{q}
     if jsn.has('performer') then
         result.performer := ParseResourceReference{Resource}(jsn.vObj['performer']);{q}
-    if jsn.has('reportId') then
-        result.reportId := ParseIdentifier(jsn.vObj['reportId']);{q}
+    if jsn.has('identifier') then
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('requestDetail') then
       iterateArray(jsn.vArr['requestDetail'], result.requestDetailList, parseResourceReference{TFhirDiagnosticOrder});
     if jsn.has('serviceCategory') then
@@ -9643,7 +9643,7 @@ begin
   ComposeDateTimeProps(json, 'issued', elem.issued, false);
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{Resource}(json, 'performer', elem.performer); {a}
-  ComposeIdentifier(json, 'reportId', elem.reportId); {a}
+  ComposeIdentifier(json, 'identifier', elem.identifier); {a}
   if not SummaryOnly and (elem.requestDetailList.Count > 0) then
   begin
     json.valueArray('requestDetail');

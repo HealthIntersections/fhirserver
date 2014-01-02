@@ -87,7 +87,7 @@ Type
     FPort : Integer;
     FSSLPort : Integer;
     FCertFile : String;
-    FSSLPassword : AnsiString;
+    FSSLPassword : String;
 //    FBaseURL : String;
 //    FProxy : String;
     FBasePath : String;
@@ -141,7 +141,7 @@ Type
     Procedure StartServer(active : boolean);
     Procedure StopServer;
     Function ProcessZip(lang : String; oStream : TStream) : TFHIRAtomFeed;
-    procedure SSLPassword(var Password: AnsiString);
+    procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String);
     Function MakeLoginToken(path : String; provider : TFHIRAuthProvider) : String;
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse);
@@ -1228,7 +1228,7 @@ begin
 end;
 
 
-procedure TFhirWebServer.SSLPassword(var Password: AnsiString);
+procedure TFhirWebServer.SSLPassword(var Password: String);
 begin
   Password := FSSLPassword;
 end;
@@ -1685,7 +1685,7 @@ begin
           sContent := BytesAsString(StreamToBytes(oPart.Content));
           result := TStringStream.create(StreamToBytes(oPart.Content)); // trim
           if StringStartsWith(sContent, '<', false) then
-            sContentType := 'text/xml'
+            sContentType := 'application/xml'
           else if StringStartsWith(sContent, '{', false) then
             sContentType := 'application/json'
           else

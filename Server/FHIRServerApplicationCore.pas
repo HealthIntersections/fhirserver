@@ -175,7 +175,8 @@ begin
   try
     if FDb = nil then
       ConnectToDatabase;
-    LoadTerminologies;
+    if FTerminologyServer = nil then
+      LoadTerminologies;
     InitialiseRestServer;
     result := true;
   except
@@ -201,33 +202,42 @@ procedure TFHIRService.ExecuteTests;
 var
   tests : TFhirServerTests;
 begin
-  TestMode := true;
-  tests := TFhirServerTests.Create;
   try
-    tests.ini := FIni;
-    if FDb = nil then
-      ConnectToDatabase;
-    if dbExists then
+    TestMode := true;
+    tests := TFhirServerTests.Create;
+    try
+      tests.ini := FIni;
+      if FDb = nil then
+        ConnectToDatabase;
+      if dbExists then
+        UnInstallDatabase;
+      InstallDatabase;
+      LoadTerminologies;
+      tests.TerminologyServer := FTerminologyServer.Link;
+      tests.executeBefore;
+
+      CanStart;
+      tests.executeRound1;
+      DoStop;
+
+      CanStart;
+      tests.executeRound2;
+      DoStop;
+
+      UnloadTerminologies;
       UnInstallDatabase;
-    InstallDatabase;
-    LoadTerminologies;
-    tests.TerminologyServer := FTerminologyServer.Link;
-    tests.executeBefore;
 
-    CanStart;
-    tests.executeRound1;
-    DoStop;
-
-    CanStart;
-    tests.executeRound2;
-    DoStop;
-
-    UnloadTerminologies;
-    UnInstallDatabase;
-
-    tests.executeAfter; // final tests - these go on for a very long time,
-  finally
-    tests.Free;
+      tests.executeAfter; // final tests - these go on for a very long time,
+    finally
+      tests.Free;
+    end;
+    ExitCode := 0;
+  except
+    on e: Exception do
+    begin
+      writeln(e.Message);
+      ExitCode := 1;
+    end;
   end;
 end;
 
@@ -309,11 +319,12 @@ end;
 procedure TFHIRService.UnloadTerminologies;
 begin
   FTerminologyServer.Free;
+  FTerminologyServer := nil;
 end;
 
 procedure TFHIRService.InitialiseRestServer;
 begin
-  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer.Link);
+  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer);
   FWebServer.Start(not FNotServing);
 end;
 

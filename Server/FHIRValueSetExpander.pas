@@ -177,7 +177,7 @@ var
   s : String;
 begin
     if (map.Count > UPPER_LIMIT) then
-      raise Exception.create('Value set size of '+inttostr(map.count)+' exceeds upper limit of '+inttostr(UPPER_LIMIT));
+      raise Exception.create('Too many codes to display (>'+inttostr(UPPER_LIMIT)+')');
 
   n := TFHIRValueSetExpansionContains.create;
   try

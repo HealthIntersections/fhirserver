@@ -33,7 +33,7 @@ unit FHIRComponents;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 31, 2013 11:31+1100
+// FHIR v0.12 generated Thu, Jan 2, 2014 12:33+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -15113,7 +15113,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     property procedure_ : TFhirCodeableConcept read FProcedure_ write SetProcedure_;
 
     {@member additiveList
-      Specimen additive.
+      Material used in processing step.
     }
     property additiveList : TFhirResourceReferenceList{TFhirSubstance} read FAdditiveList;
 
@@ -15200,7 +15200,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
 
 
   {@Class TFhirSpecimenContainer : TFhirElement
-    The container holding the specimen. May be recursive; ie blood in tube in tray in rack.
+    The container holding the specimen.  The recursive nature of containers; ie blood in tube in tray in rack is not addressed here.
   }
   {!.Net HL7Connect.Fhir.SpecimenContainer}
   TFhirSpecimenContainer = class (TFhirBackboneElement)
@@ -15250,7 +15250,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member capacity
-      The capacity (volume or other measure the container may contain.
+      The capacity (volume or other measure) the container may contain.
     }
     property capacity : TFhirQuantity read FCapacity write SetCapacity;
 

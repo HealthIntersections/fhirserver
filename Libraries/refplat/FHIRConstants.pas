@@ -34,7 +34,7 @@ unit FHIRConstants;
 
 interface
 
-// FHIR v0.12 generated Tue, Dec 31, 2013 11:31+1100
+// FHIR v0.12 generated Thu, Jan 2, 2014 12:33+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
@@ -554,40 +554,40 @@ Const
      'status: []',
      'subject: [frtDevice, frtLocation, frtPatient, frtGroup]');
   TARGETS_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of TFhirResourceTypeSet = ([], [frtDevice, frtPractitioner], [], [], [frtEncounter], [], [], [], [], [], [], [], [], [frtPractitioner], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup]);
-  CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_id', 'date', 'diagnosis', 'group', 'image', 'issued', 'name', 'performer', 'reportid', 'request', 'result', 'service', 'specimen', 'status', 'subject');
+  CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_id', 'date', 'diagnosis', 'group', 'identifier', 'image', 'issued', 'name', 'performer', 'request', 'result', 'service', 'specimen', 'status', 'subject');
   DESC_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The clinically relevant time of the report',
      'A coded diagnosis on the report',
      'Name /code of a group in the report',
+     'An identifier for the report',
      'Reference to the image source',
      'When the report was issued',
      'The name of the report (e.g. the code for the report as a whole, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result)',
      'Who was the source of the report (organization)',
-     'An identifier for the report',
      'What was requested',
      'Link to an atomic result (observation resource)',
      'Which diagnostic discipline/department created the report',
      'The specimen details',
      'The status of the report',
      'The subject of the report');
-  TYPES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference);
-//  CHECK_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TSearchParamsDiagnosticReport = ( spDiagnosticReport__id,  spDiagnosticReport_Date,  spDiagnosticReport_Diagnosis,  spDiagnosticReport_Group,  spDiagnosticReport_Image,  spDiagnosticReport_Issued,  spDiagnosticReport_Name,  spDiagnosticReport_Performer,  spDiagnosticReport_Reportid,  spDiagnosticReport_Request,  spDiagnosticReport_Result,  spDiagnosticReport_Service,  spDiagnosticReport_Specimen,  spDiagnosticReport_Status,  spDiagnosticReport_Subject);
+  TYPES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference);
+//  CHECK_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TSearchParamsDiagnosticReport = ( spDiagnosticReport__id,  spDiagnosticReport_Date,  spDiagnosticReport_Diagnosis,  spDiagnosticReport_Group,  spDiagnosticReport_Identifier,  spDiagnosticReport_Image,  spDiagnosticReport_Issued,  spDiagnosticReport_Name,  spDiagnosticReport_Performer,  spDiagnosticReport_Request,  spDiagnosticReport_Result,  spDiagnosticReport_Service,  spDiagnosticReport_Specimen,  spDiagnosticReport_Status,  spDiagnosticReport_Subject);
   PATHS_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_id: []',
      'date: []',
      'diagnosis: []',
      'group: []',
+     'identifier: []',
      'image: [frtMedia]',
      'issued: []',
      'name: []',
      'performer: [frtOrganization, frtPractitioner]',
-     'reportid: []',
      'request: [frtDiagnosticOrder]',
      'result: [frtObservation]',
      'service: []',
      'specimen: [frtSpecimen]',
      'status: []',
      'subject: [frtDevice, frtLocation, frtPatient, frtGroup]');
-  TARGETS_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TFhirResourceTypeSet = ([], [], [], [], [frtMedia], [], [], [frtOrganization, frtPractitioner], [], [frtDiagnosticOrder], [frtObservation], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup]);
+  TARGETS_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TFhirResourceTypeSet = ([], [], [], [], [], [frtMedia], [], [], [frtOrganization, frtPractitioner], [frtDiagnosticOrder], [frtObservation], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup]);
   CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_id', 'author', 'confidentiality', 'content', 'created', 'description', 'identifier', 'recipient', 'status', 'subject', 'supersedes', 'type');
   DESC_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'Who/what authored the document',
@@ -1310,7 +1310,7 @@ Const
      'in progress | dispensed | abandoned',
      'Unique identifier',
      'The kind of supply (central, non-stock, etc)',
-     'Patient',
+     'Patient for whom the item is supplied',
      'requested | dispensed | received | failed | cancelled',
      'Dispenser');
   TYPES_TSearchParamsSupply : Array[TSearchParamsSupply] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference);
@@ -1352,9 +1352,9 @@ Const
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], []);
   FHIR_GENERATED_VERSION = '0.12';
 
-  FHIR_GENERATED_REVISION = '2107';
+  FHIR_GENERATED_REVISION = '2115';
 
-  FHIR_GENERATED_DATE = '20131231113150';
+  FHIR_GENERATED_DATE = '20140102123334';
 
 
 
