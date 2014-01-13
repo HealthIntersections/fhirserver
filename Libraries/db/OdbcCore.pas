@@ -2496,58 +2496,6 @@ Begin
   FError.Free;
 End;
 
-Function THenv.Init: Boolean;
-Var
-  LConnectionPooling, AConnectionPooling: SQLUINTEGER;
-Begin
-  Log(1, 'THenv.Init');
-
-  If FActive Then
-  Begin
-    Init:= FActive;
-    Exit;
-  End;
-
-  If FConnectionPooling <> cpDefault Then
-  Begin
-    { Set Connection Pooling }
-    AConnectionPooling:= SQL_CP_OFF;
-    Case FConnectionPooling Of
-      cpOff:
-        AConnectionPooling:= SQL_CP_OFF;
-      cpOnePerDriver:
-        AConnectionPooling:= SQL_CP_ONE_PER_DRIVER;
-      cpOnePerEnv:
-        AConnectionPooling:= SQL_CP_ONE_PER_HENV;
-    End;
-
-    FRetCode:= SQLGetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, @LConnectionPooling, 0, Nil);
-    If FError.Success(FRetCode) And (LConnectionPooling <> AConnectionPooling) Then
-    Begin
-      FRetCode:= SQLSetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, Pointer(AConnectionPooling), 0);
-      If Not FError.Success(FRetCode) Then
-        FError.RaiseError(Self, FRetCode);
-    End;
-  End;
-
-  { Create Handle }
-  FRetCode:= SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), @FHenv);
-  If Not FError.Success(FRetCode) Then
-    FError.RaiseError(Self, FRetCode);
-
-  { Set ODBC Version }
-  FRetCode:= SQLSetEnvAttr(FHenv, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0);
-  If Not FError.Success(FRetCode) Then
-    FError.RaiseError(Self, FRetCode);
-
-  { Set Active Field }
-  FActive:= True;
-
-  Result:= FActive;
-
-  Inherited Init;
-End;
-
 Function THenv.Terminate: Boolean;
 Begin
   Log(1, 'THenv.Terminate');
@@ -8903,6 +8851,61 @@ Begin
   FSkipByPosition:= ASkipByPosition;
 
   UnPrepareHstmts;
+End;
+
+// this is lst so it's optimisation setting doesn't change anything else
+
+{$OPTIMIZATION OFF}
+Function THenv.Init: Boolean;
+Var
+  LConnectionPooling, AConnectionPooling: SQLUINTEGER;
+Begin
+  Log(1, 'THenv.Init');
+
+  If FActive Then
+  Begin
+    Init:= FActive;
+    Exit;
+  End;
+
+  If FConnectionPooling <> cpDefault Then
+  Begin
+    { Set Connection Pooling }
+    AConnectionPooling:= SQL_CP_OFF;
+    Case FConnectionPooling Of
+      cpOff:
+        AConnectionPooling:= SQL_CP_OFF;
+      cpOnePerDriver:
+        AConnectionPooling:= SQL_CP_ONE_PER_DRIVER;
+      cpOnePerEnv:
+        AConnectionPooling:= SQL_CP_ONE_PER_HENV;
+    End;
+
+    FRetCode:= SQLGetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, @LConnectionPooling, 0, Nil);
+    If FError.Success(FRetCode) And (LConnectionPooling <> AConnectionPooling) Then
+    Begin
+      FRetCode:= SQLSetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, Pointer(AConnectionPooling), 0);
+      If Not FError.Success(FRetCode) Then
+        FError.RaiseError(Self, FRetCode);
+    End;
+  End;
+
+  { Create Handle }
+  FRetCode:= SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), @FHenv);
+  If Not FError.Success(FRetCode) Then
+    FError.RaiseError(Self, FRetCode);
+
+  { Set ODBC Version }
+  FRetCode:= SQLSetEnvAttr(FHenv, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0);
+  If Not FError.Success(FRetCode) Then
+    FError.RaiseError(Self, FRetCode);
+
+  { Set Active Field }
+  FActive:= True;
+
+  Result:= FActive;
+
+  Inherited Init;
 End;
 
 Initialization

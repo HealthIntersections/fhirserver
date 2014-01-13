@@ -575,6 +575,7 @@ Begin
         oStream := TStringStream.Create(request.UnparsedParams);
       try
         response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+        response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location');
         response.Expires := Now - 1; //don't want anyone caching anything
         oResponse := TFHIRResponse.Create;
         Try

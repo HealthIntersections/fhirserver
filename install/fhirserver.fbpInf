@@ -4,7 +4,11 @@
   <breakpoints></breakpoints>
   <actions>
     <action id="{72C9D6E0-492C-43F7-8D8F-09F2677C9A85}">
-      <Description>Compile the Server</Description>
+      <Description>Compile the Server (32)</Description>
+      <BuildVersion>0</BuildVersion>
+    </action>
+    <action id="{19BA12C1-B170-4D83-8D6E-9F5455C5AC51}">
+      <Description>Compile the Server (64)</Description>
       <BuildVersion>0</BuildVersion>
     </action>
   </actions>
@@ -15,8 +19,8 @@
     <Notes>
       <![CDATA[]]>
     </Notes>
-    <LastBuildRun>00:03:01</LastBuildRun>
-    <LastBuildStart>17/12/2013 5:04:53 PM</LastBuildStart>
+    <LastBuildRun>00:22:14</LastBuildRun>
+    <LastBuildStart>14/01/2014 12:10:07 AM</LastBuildStart>
     <LastBuildState>True</LastBuildState>
   </properties>
 </project>

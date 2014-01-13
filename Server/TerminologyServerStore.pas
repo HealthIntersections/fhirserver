@@ -542,9 +542,12 @@ begin
   list.Add(getDisplay(code));
 end;
 
-function TValueSetProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+function TValueSetProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext): Boolean;
+var
+  c : TFhirValueSetDefineConcept;
 begin
-  raise Exception.create('called in error');
+  c := TFhirValueSetDefineConcept(ctxt);
+  result := (ctxt = concept) or (filterLocate(ctxt, TFhirValueSetDefineConcept(concept).codeST) <> nil);
 end;
 
 function TValueSetProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -634,13 +637,23 @@ end;
 
 procedure TValueSetProvider.Close(ctxt: TCodeSystemProviderFilterContext);
 begin
-  // nothing to do
+  ctxt.Free;
 end;
 
 function TValueSetProvider.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+var
+  code : TCodeSystemProviderContext;
 begin
-  result := nil;
-  // no know uses at the moment
+  if (op = FilterOperatorIsA) and (prop = 'concept') then
+  begin
+    code := doLocate(FVs.define.conceptList, value);
+    if code = nil then
+      raise Exception.Create('Unable to locate code '+value)
+    else
+      result := code.Link;
+  end
+  else
+    result := nil;
 end;
 
 procedure TValueSetProvider.FilterCodes(dest, source: TFhirValueSetDefineConceptList; filter : TSearchFilterText);
@@ -657,19 +670,52 @@ begin
   end;
 end;
 
+function FindConceptByIndex(context : TFhirValueSetDefineConcept; var index : integer) : TFhirValueSetDefineConcept;
+var
+  i : integer;
+begin
+  if index = 0 then
+    result := context
+  else
+  begin
+    i := 0;
+    result := nil;
+    while (result = nil) and (index >= 0) and (i < context.conceptList.Count) do
+    begin
+      dec(index);
+      result := FindConceptByIndex(context.conceptList[i], index);
+      inc(i);
+    end;
+  end;
+end;
+
 function TValueSetProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
 begin
-  raise Exception.create('called in error');
+  result := FindConceptByIndex(TFhirValueSetDefineConcept(ctxt), ndx);
+  if result = nil then
+    raise Exception.Create('Index exceeds concepts in filter');
 end;
 
 function TValueSetProvider.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
+var
+  i : integer;
+  c : TFhirValueSetDefineConcept;
 begin
-  raise Exception.create('called in error');
+  c := TFhirValueSetDefineConcept(ctxt);
+  result := 1;
+  for i := 0 to c.conceptList.Count - 1 do
+    inc(result, FilterCount(c.conceptList[i]));
 end;
 
 function TValueSetProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+var
+  c : TFhirValueSetDefineConcept;
 begin
-  raise Exception.create('called in error');
+  c := TFhirValueSetDefineConcept(ctxt);
+  if (c.codeST = code) then
+    result := c
+  else
+    doLocate(c.conceptList, code);
 end;
 
 function TValueSetProvider.locateIsA(code, parent: String): TCodeSystemProviderContext;

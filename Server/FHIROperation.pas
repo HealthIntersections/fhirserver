@@ -537,6 +537,13 @@ begin
     oConf.text := TFhirNarrative.create;
     oConf.text.statusST := NarrativeStatusGenerated;
 
+    if FRepository.TerminologyServer.Loinc <> nil then
+      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', TFhirUri.Create('http://loinc.org'));
+    if FRepository.TerminologyServer.Snomed <> nil then
+      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', TFhirUri.Create('http://snomed.info/sct'));
+    if FRepository.TerminologyServer.Ucum <> nil then
+      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', TFhirUri.Create('http://unitsofmeasure.org'));
+
     html := TAdvStringBuilder.Create;
     try
       html.append('<div><div id="div-cnt" class="content"><h2>FHIR Reference Server Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+' released '+RELEASE_DATE+'. '+

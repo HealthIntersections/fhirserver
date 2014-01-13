@@ -14,6 +14,9 @@ OutputDir=C:\work\fhirserver\install\build
 OutputBaseFilename=FHIRServer_Install_0.10.0001
 Compression=lzma2/ultra64
 
+; 64 bit
+ArchitecturesInstallIn64BitMode=x64
+
 ; we will be creating a service so we do need this privilege
 PrivilegesRequired=admin
 AllowUNCPath=no
@@ -70,7 +73,8 @@ Source: "C:\work\fhirserver\install\readme.txt";                      DestDir: "
 Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "{app}";            Flags: ignoreversion;
 
 ; Executable file
-Source: "C:\work\fhirserver\Exec\FHIRServer.exe";       DestDir: "{app}";            Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\FHIRServer32.exe";       DestDir: "{app}";            Flags: ignoreversion 32bit
+Source: "C:\work\fhirserver\Exec\FHIRServer64.exe";       DestDir: "{app}";            Flags: ignoreversion 64bit
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
 
