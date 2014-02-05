@@ -249,6 +249,10 @@ Type
     procedure BuildIndexValuesRelatedPerson(key : integer; id : string; resource : TFhirRelatedPerson);
     procedure BuildIndexValuesSupply(key : integer; id : string; resource : TFhirSupply);
     procedure BuildIndexValuesOther(key : integer; id : string; resource : TFhirOther);
+    procedure BuildIndexValuesAppointment(key : integer; id : string; resource : TFhirAppointment);
+    procedure BuildIndexValuesAppointmentResponse(key : integer; id : string; resource : TFhirAppointmentResponse);
+    procedure BuildIndexValuesSlot(key : integer; id : string; resource : TFhirSlot);
+    procedure BuildIndexValuesAvailability(key : integer; id : string; resource : TFhirAvailability);
 
     procedure buildIndexesAdverseReaction;
     procedure buildIndexesAlert;
@@ -299,6 +303,10 @@ Type
     procedure BuildIndexesRelatedPerson;
     procedure BuildIndexesSupply;
     procedure BuildIndexesOther;
+    procedure BuildIndexesAppointment;
+    procedure BuildIndexesAppointmentResponse;
+    procedure BuildIndexesSlot;
+    procedure BuildIndexesAvailability;
 
     procedure processCompartmentTags(key : integer; id: String; tags : TFHIRAtomCategoryList);
     procedure processUnCompartmentTags(key : integer; id: String; tags : TFHIRAtomCategoryList);
@@ -543,6 +551,10 @@ begin
   BuildIndexesRelatedPerson;
   BuildIndexesSupply;
   BuildIndexesOther;
+  BuildIndexesAppointment;
+  BuildIndexesAppointmentResponse;
+  BuildIndexesSlot;
+  BuildIndexesAvailability;
 
   buildIndexesBinary;
 end;
@@ -599,6 +611,10 @@ begin
     frtRelatedPerson : buildIndexValuesRelatedPerson(key, id, TFhirRelatedPerson(resource));
     frtSupply : buildIndexValuesSupply(key, id, TFhirSupply(resource));
     frtOther : buildIndexValuesOther(key, id, TFhirOther(resource));
+    frtAppointment : buildIndexValuesAppointment(key, id, TFhirAppointment(resource));
+    frtAppointmentResponse : buildIndexValuesAppointmentResponse(key, id, TFhirAppointmentResponse(resource));
+    frtSlot : buildIndexValuesSlot(key, id, TFhirSlot(resource));
+    frtAvailability : buildIndexValuesAvailability(key, id, TFhirAvailability(resource));
   else
     raise Exception.create('resource type indexing not implemented yet for '+CODES_TFhirResourceType[resource.ResourceType]);
   end;
@@ -2377,6 +2393,7 @@ begin
   end;
 end;
 
+
 procedure TFhirIndexManager.buildIndexValuesSecurityEvent(key : integer; id : String; resource: TFhirSecurityEvent);
 var
   i : integer;
@@ -3031,6 +3048,110 @@ begin
     for j := 0 to resource.recommendationList[i].supportingImmunizationList.Count - 1 do
       index(frtImmunizationRecommendation, key, resource, resource.recommendationList[i].supportingImmunizationList[j], 'support');
   end;
+end;
+
+Const
+  CHECK_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TSearchParamsAppointment = ( spAppointment__id, spAppointment_Date, spAppointment_Partstatus, spAppointment_Status, spAppointment_Subject);
+
+procedure TFhirIndexManager.buildIndexesAppointment;
+var
+  a : TSearchParamsAppointment;
+begin
+  for a := low(TSearchParamsAppointment) to high(TSearchParamsAppointment) do
+  begin
+    assert(CHECK_TSearchParamsAppointment[a] = a);
+    indexes.add(frtAppointment, CODES_TSearchParamsAppointment[a], DESC_TSearchParamsAppointment[a], TYPES_TSearchParamsAppointment[a], TARGETS_TSearchParamsAppointment[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesAppointment(key: integer; id : String; resource: TFhirAppointment);
+var
+  i, j : integer;
+begin
+  index(frtAppointment, key, resource.start, 'date');
+  index(frtAppointment, key, resource.status, 'status');
+  for i := 0 to resource.participantList.Count - 1 do
+  begin
+    index(frtAppointment, key, resource.participantList[i].status, 'partstatus');
+    for j := 0 to resource.participantList[i].individualList.Count - 1 do
+    begin
+      index(frtAppointment, key, resource, resource.participantList[i].individualList[j], 'subject');
+//      if resource.participantList[i].individualList[j] is patient... then
+//        patientCompartment(key, resource.subject);
+    end;
+  end;
+end;
+
+
+Const
+  CHECK_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of TSearchParamsAppointmentResponse = ( spAppointmentResponse__id, spAppointmentResponse_Appointment, spAppointmentResponse_Partstatus, spAppointmentResponse_Subject);
+
+
+procedure TFhirIndexManager.buildIndexesAppointmentResponse;
+var
+  a : TSearchParamsAppointmentResponse;
+begin
+  for a := low(TSearchParamsAppointmentResponse) to high(TSearchParamsAppointmentResponse) do
+  begin
+    assert(CHECK_TSearchParamsAppointmentResponse[a] = a);
+    indexes.add(frtAppointmentResponse, CODES_TSearchParamsAppointmentResponse[a], DESC_TSearchParamsAppointmentResponse[a], TYPES_TSearchParamsAppointmentResponse[a], TARGETS_TSearchParamsAppointmentResponse[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesAppointmentResponse(key: integer; id : String; resource: TFhirAppointmentResponse);
+var
+  i : integer;
+begin
+  index(frtAppointmentResponse, key, resource, resource.appointment, 'appointment');
+  index(frtAppointmentResponse, key, resource.participantStatus, 'partstatus');
+  for i := 0 to resource.individualList.Count - 1 do
+  begin
+    index(frtAppointmentResponse, key, resource, resource.individualList[i], 'subject');
+    patientCompartment(key, resource.individualList[i]);
+  end;
+end;
+
+Const
+  CHECK_TSearchParamsSlot : Array[TSearchParamsSlot] of TSearchParamsSlot = ( spSlot__id, spSlot_Availability, spSlot_Fbtype, spSlot_Slottype, spSlot_Start);
+
+procedure TFhirIndexManager.buildIndexesSlot;
+var
+  a : TSearchParamsSlot;
+begin
+  for a := low(TSearchParamsSlot) to high(TSearchParamsSlot) do
+  begin
+    assert(CHECK_TSearchParamsSlot[a] = a);
+    indexes.add(frtSlot, CODES_TSearchParamsSlot[a], DESC_TSearchParamsSlot[a], TYPES_TSearchParamsSlot[a], TARGETS_TSearchParamsSlot[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesSlot(key: integer; id : String; resource: TFhirSlot);
+begin
+  index(frtSlot, key, resource, resource.availability, 'availability');
+  index(frtSlot, key, resource.freeBusyType, 'fbtype');
+  index(frtSlot, key, resource.type_, 'slottype');
+  index(frtSlot, key, resource.start, 'start');
+end;
+
+
+Const
+  CHECK_TSearchParamsAvailability : Array[TSearchParamsAvailability] of TSearchParamsAvailability = ( spAvailability__id, spAvailability_Individual, spAvailability_Slottype);
+
+procedure TFhirIndexManager.buildIndexesAvailability;
+var
+  a : TSearchParamsAvailability;
+begin
+  for a := low(TSearchParamsAvailability) to high(TSearchParamsAvailability) do
+  begin
+    assert(CHECK_TSearchParamsAvailability[a] = a);
+    indexes.add(frtAvailability, CODES_TSearchParamsAvailability[a], DESC_TSearchParamsAvailability[a], TYPES_TSearchParamsAvailability[a], TARGETS_TSearchParamsAvailability[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesAvailability(key: integer; id : String; resource: TFhirAvailability);
+begin
+  index(frtAvailability, key, resource, resource.individual, 'individual');
+  index(frtAvailability, key, resource.type_, 'slottype');
 end;
 
 

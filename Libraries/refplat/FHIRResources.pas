@@ -36,7 +36,7 @@ unit FHIRResources;
 
 interface
 
-// FHIR v0.12 generated Thu, Jan 2, 2014 12:33+1100
+// FHIR v0.12 generated Wed, Jan 15, 2014 14:09+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -50,6 +50,9 @@ Type
     frtAdverseReaction, {@enum.value Records an unexpected reaction suspected to be related to the exposure of the reaction subject to a substance. }
     frtAlert, {@enum.value Prospective warnings of potential issues when providing care to the patient. }
     frtAllergyIntolerance, {@enum.value Indicates the patient has a susceptability to an an adverse reaction upon exposure to a specified substance. }
+    frtAppointment, {@enum.value A scheduled appointment for a patient and/or practitioner(s) where a service may take place. }
+    frtAppointmentResponse, {@enum.value A scheduled appointment for a patient and/or practitioner(s) where a service may take place. }
+    frtAvailability, {@enum.value (informative) A container for slot(s) of time that may be available for booking appointments. }
     frtCarePlan, {@enum.value Describes the intention of how one or more practitioners intend to deliver care for a particular patient for a period of time, possibly limited to care for a specific condition or set of conditions. }
     frtComposition, {@enum.value A set of healthcare-related information that is assembled together into a single logical document that provides a single coherent statement of meaning, establishes its own context and that has clinical attestation with regard to who is making the statement. }
     frtConceptMap, {@enum.value A statement of relationships from one set of concepts to one or more other concept systems. }
@@ -93,6 +96,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     frtQuestionnaire, {@enum.value A structured set of questions and their answers. The Questionnaire may contain questions, answers or both. The questions may be ordered and grouped into coherent subsets, corresponding to the structure of the grouping of the underlying questions. }
     frtRelatedPerson, {@enum.value Information about a person that is involved in the care for a patient, but who is not the target of healthcare, nor has a formal responsibility in the care process. }
     frtSecurityEvent, {@enum.value A record of an event made for purposes of maintaining a security log. Typical uses include detection of intrusion attempts and monitoring for inappropriate usage. }
+    frtSlot, {@enum.value (informative) A slot of time that may be available for booking appointments. }
     frtSpecimen, {@enum.value Sample for analysis. }
     frtSubstance, {@enum.value A homogeneous material with a definite composition. }
     frtSupply, {@enum.value A supply - a  request for something, and provision of what is supplied. }
@@ -128,6 +132,33 @@ Related resources tie this event to the authorizing prescription, and the specif
     spAllergyIntolerance_Subject, {@enum.value spAllergyIntolerance_Subject The subject that the sensitivity is about }
     spAllergyIntolerance_Substance, {@enum.value spAllergyIntolerance_Substance The name or code of the substance that produces the sensitivity }
     spAllergyIntolerance_Type); {@enum.value spAllergyIntolerance_Type The type of sensitivity }
+
+  {@Enum TSearchParamsAppointment
+    Search Parameters for Appointment
+  }
+  TSearchParamsAppointment = (
+    spAppointment__id, {@enum.value spAppointment__id The logical resource id associated with the resource (must be supported by all servers) }
+    spAppointment_Date, {@enum.value spAppointment_Date Appointment date/time. }
+    spAppointment_Partstatus, {@enum.value spAppointment_Partstatus The Participation status of the subject, or other participant on the appointment }
+    spAppointment_Status, {@enum.value spAppointment_Status The overall status of the appointment }
+    spAppointment_Subject); {@enum.value spAppointment_Subject The subject that the sensitivity is about }
+
+  {@Enum TSearchParamsAppointmentResponse
+    Search Parameters for AppointmentResponse
+  }
+  TSearchParamsAppointmentResponse = (
+    spAppointmentResponse__id, {@enum.value spAppointmentResponse__id The logical resource id associated with the resource (must be supported by all servers) }
+    spAppointmentResponse_Appointment, {@enum.value spAppointmentResponse_Appointment The appointment that the response is attached to }
+    spAppointmentResponse_Partstatus, {@enum.value spAppointmentResponse_Partstatus The overall status of the appointment }
+    spAppointmentResponse_Subject); {@enum.value spAppointmentResponse_Subject The subject that the appointment response replies for }
+
+  {@Enum TSearchParamsAvailability
+    Search Parameters for Availability
+  }
+  TSearchParamsAvailability = (
+    spAvailability__id, {@enum.value spAvailability__id The logical resource id associated with the resource (must be supported by all servers) }
+    spAvailability_Individual, {@enum.value spAvailability_Individual The individual to find an availability for }
+    spAvailability_Slottype); {@enum.value spAvailability_Slottype The type of appointments that can be booked into associated slot(s) }
 
   {@Enum TSearchParamsCarePlan
     Search Parameters for CarePlan
@@ -727,6 +758,16 @@ Related resources tie this event to the authorizing prescription, and the specif
     spSecurityEvent_Type, {@enum.value spSecurityEvent_Type Type/identifier of event }
     spSecurityEvent_User); {@enum.value spSecurityEvent_User Unique identifier for the user }
 
+  {@Enum TSearchParamsSlot
+    Search Parameters for Slot
+  }
+  TSearchParamsSlot = (
+    spSlot__id, {@enum.value spSlot__id The logical resource id associated with the resource (must be supported by all servers) }
+    spSlot_Availability, {@enum.value spSlot_Availability The Availability Resource that we are seeking a slot within }
+    spSlot_Fbtype, {@enum.value spSlot_Fbtype The free/busy status of the appointment }
+    spSlot_Slottype, {@enum.value spSlot_Slottype The type of appointments that can be booked into the slot }
+    spSlot_Start); {@enum.value spSlot_Start Appointment date/time. }
+
   {@Enum TSearchParamsSpecimen
     Search Parameters for Specimen
   }
@@ -780,6 +821,9 @@ Type
   TFhirAdverseReaction = class;
   TFhirAlert = class;
   TFhirAllergyIntolerance = class;
+  TFhirAppointment = class;
+  TFhirAppointmentResponse = class;
+  TFhirAvailability = class;
   TFhirCarePlan = class;
   TFhirComposition = class;
   TFhirConceptMap = class;
@@ -821,6 +865,7 @@ Type
   TFhirQuestionnaire = class;
   TFhirRelatedPerson = class;
   TFhirSecurityEvent = class;
+  TFhirSlot = class;
   TFhirSpecimen = class;
   TFhirSubstance = class;
   TFhirSupply = class;
@@ -1234,6 +1279,402 @@ Type
       Observations that confirm or refute the sensitivity.
     }
     property sensitivityTestList : TFhirResourceReferenceList{TFhirObservation} read FSensitivityTestList;
+
+  end;
+
+
+  {@Class TFhirAppointment : TFhirResource
+    A scheduled appointment for a patient and/or practitioner(s) where a service may take place.
+  }
+  {!.Net HL7Connect.Fhir.Appointment}
+  TFhirAppointment = class (TFhirResource)
+  private
+    FidentifierList : TFhirIdentifierList;
+    FPriority : TFhirInteger;
+    FStatus : TFhirCode;
+    FDescription : TFhirString;
+    FStart : TFhirInstant;
+    FEnd_ : TFhirInstant;
+    FSchedule : TFhirSchedule;
+    FTimezone : TFhirString;
+    FslotList : TFhirResourceReferenceList{TFhirSlot};
+    FLocation : TFhirResourceReference{TFhirLocation};
+    FComment : TFhirString;
+    FOrder : TFhirResourceReference{TFhirOrder};
+    FparticipantList : TFhirAppointmentParticipantList;
+    FRecorder : TFhirResourceReference{Resource};
+    FRecordedDate : TFhirDateTime;
+    Procedure SetPriority(value : TFhirInteger);
+    Function GetPriorityST : String;
+    Procedure SetPriorityST(value : String);
+    Procedure SetStatus(value : TFhirCode);
+    Function GetStatusST : String;
+    Procedure SetStatusST(value : String);
+    Procedure SetDescription(value : TFhirString);
+    Function GetDescriptionST : String;
+    Procedure SetDescriptionST(value : String);
+    Procedure SetStart(value : TFhirInstant);
+    Function GetStartST : TDateAndTime;
+    Procedure SetStartST(value : TDateAndTime);
+    Procedure SetEnd_(value : TFhirInstant);
+    Function GetEnd_ST : TDateAndTime;
+    Procedure SetEnd_ST(value : TDateAndTime);
+    Procedure SetSchedule(value : TFhirSchedule);
+    Procedure SetTimezone(value : TFhirString);
+    Function GetTimezoneST : String;
+    Procedure SetTimezoneST(value : String);
+    Procedure SetLocation(value : TFhirResourceReference{TFhirLocation});
+    Procedure SetComment(value : TFhirString);
+    Function GetCommentST : String;
+    Procedure SetCommentST(value : String);
+    Procedure SetOrder(value : TFhirResourceReference{TFhirOrder});
+    Procedure SetRecorder(value : TFhirResourceReference{Resource});
+    Procedure SetRecordedDate(value : TFhirDateTime);
+    Function GetRecordedDateST : TDateAndTime;
+    Procedure SetRecordedDateST(value : TDateAndTime);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    Function GetHasASummary : Boolean; Override;
+    function GetResourceType : TFhirResourceType; override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirAppointment; overload;
+    function Clone : TFhirAppointment; overload;
+    {!script show}
+  published
+    {@member identifierList
+      This records identifiers associated with this appointment concern that are defined by business processed and/ or used to refer to it when a direct URL refernce to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
+    }
+    property identifierList : TFhirIdentifierList read FIdentifierList;
+
+    {@member priority
+      The priority of the appointment. Can be used to make informed decisions if needing to re-prioritize appointments. (The iCal Standard specifies 0 as undefined, 1 as highest, 9 as lowest priority) (Need to change back to CodeableConcept).
+    }
+    property priority : TFhirInteger read FPriority write SetPriority;
+    {@member priorityST
+      Typed access to The priority of the appointment. Can be used to make informed decisions if needing to re-prioritize appointments. (The iCal Standard specifies 0 as undefined, 1 as highest, 9 as lowest priority) (Need to change back to CodeableConcept).
+    }
+    property priorityST : String read GetPriorityST write SetPriorityST;
+
+    {@member status
+      Each of the participants has their own participation status which indicates their involvement in the process, however this status indicates the shared status.
+    }
+    property status : TFhirCode read FStatus write SetStatus;
+    {@member statusST
+      Typed access to Each of the participants has their own participation status which indicates their involvement in the process, however this status indicates the shared status.
+    }
+    property statusST : String read GetStatusST write SetStatusST;
+
+    {@member description
+      The brief description of the appointment as would be shown on a subject line in a meeting request, or appointment list. Detailed or expanded information should be put in the comment field.
+    }
+    property description : TFhirString read FDescription write SetDescription;
+    {@member descriptionST
+      Typed access to The brief description of the appointment as would be shown on a subject line in a meeting request, or appointment list. Detailed or expanded information should be put in the comment field.
+    }
+    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+
+    {@member start
+      Date/Time that the appointment is to take place.
+    }
+    property start : TFhirInstant read FStart write SetStart;
+    {@member startST
+      Typed access to Date/Time that the appointment is to take place.
+    }
+    property startST : TDateAndTime read GetStartST write SetStartST;
+
+    {@member end_
+      Date/Time that the appointment is to conclude.
+    }
+    property end_ : TFhirInstant read FEnd_ write SetEnd_;
+    {@member end_ST
+      Typed access to Date/Time that the appointment is to conclude.
+    }
+    property end_ST : TDateAndTime read GetEnd_ST write SetEnd_ST;
+
+    {@member schedule
+      The recurrence schedule for the appointment. The end date in the schedule marks the end of the recurrence(s), not the end of an individual appointment.
+    }
+    property schedule : TFhirSchedule read FSchedule write SetSchedule;
+
+    {@member timezone
+      The timezone should be a value referenced from a timezone database.
+    }
+    property timezone : TFhirString read FTimezone write SetTimezone;
+    {@member timezoneST
+      Typed access to The timezone should be a value referenced from a timezone database.
+    }
+    property timezoneST : String read GetTimezoneST write SetTimezoneST;
+
+    {@member slotList
+      The slot that this appointment is filling. If provided then the schedule will not be provided as slots are not recursive, and the start/end values MUST be the same as from the slot.
+    }
+    property slotList : TFhirResourceReferenceList{TFhirSlot} read FSlotList;
+
+    {@member location
+      The primary location that this appointment is to take place.
+    }
+    property location : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
+
+    {@member comment
+      Additional comments about the appointment.
+    }
+    property comment : TFhirString read FComment write SetComment;
+    {@member commentST
+      Typed access to Additional comments about the appointment.
+    }
+    property commentST : String read GetCommentST write SetCommentST;
+
+    {@member order
+      An Order that lead to the creation of this appointment.
+    }
+    property order : TFhirResourceReference{TFhirOrder} read FOrder write SetOrder;
+
+    {@member participantList
+      List of participants involved in the appointment.
+    }
+    property participantList : TFhirAppointmentParticipantList read FParticipantList;
+
+    {@member recorder
+      Who recorded the appointment.
+    }
+    property recorder : TFhirResourceReference{Resource} read FRecorder write SetRecorder;
+
+    {@member recordedDate
+      Date when the sensitivity was recorded.
+    }
+    property recordedDate : TFhirDateTime read FRecordedDate write SetRecordedDate;
+    {@member recordedDateST
+      Typed access to Date when the sensitivity was recorded.
+    }
+    property recordedDateST : TDateAndTime read GetRecordedDateST write SetRecordedDateST;
+
+  end;
+
+
+  {@Class TFhirAppointmentResponse : TFhirResource
+    A scheduled appointment for a patient and/or practitioner(s) where a service may take place.
+  }
+  {!.Net HL7Connect.Fhir.AppointmentResponse}
+  TFhirAppointmentResponse = class (TFhirResource)
+  private
+    FidentifierList : TFhirIdentifierList;
+    FAppointment : TFhirResourceReference{TFhirAppointment};
+    FparticipantTypeList : TFhirCodeableConceptList;
+    FindividualList : TFhirResourceReferenceList{Resource};
+    FParticipantStatus : TFhirEnum;
+    FComment : TFhirString;
+    FStart : TFhirInstant;
+    FEnd_ : TFhirInstant;
+    FSchedule : TFhirSchedule;
+    FTimezone : TFhirString;
+    FRecorder : TFhirResourceReference{Resource};
+    FRecordedDate : TFhirDateTime;
+    Procedure SetAppointment(value : TFhirResourceReference{TFhirAppointment});
+    Procedure SetParticipantStatus(value : TFhirEnum);
+    Function GetParticipantStatusST : TFhirParticipantstatus;
+    Procedure SetParticipantStatusST(value : TFhirParticipantstatus);
+    Procedure SetComment(value : TFhirString);
+    Function GetCommentST : String;
+    Procedure SetCommentST(value : String);
+    Procedure SetStart(value : TFhirInstant);
+    Function GetStartST : TDateAndTime;
+    Procedure SetStartST(value : TDateAndTime);
+    Procedure SetEnd_(value : TFhirInstant);
+    Function GetEnd_ST : TDateAndTime;
+    Procedure SetEnd_ST(value : TDateAndTime);
+    Procedure SetSchedule(value : TFhirSchedule);
+    Procedure SetTimezone(value : TFhirString);
+    Function GetTimezoneST : String;
+    Procedure SetTimezoneST(value : String);
+    Procedure SetRecorder(value : TFhirResourceReference{Resource});
+    Procedure SetRecordedDate(value : TFhirDateTime);
+    Function GetRecordedDateST : TDateAndTime;
+    Procedure SetRecordedDateST(value : TDateAndTime);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    Function GetHasASummary : Boolean; Override;
+    function GetResourceType : TFhirResourceType; override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirAppointmentResponse; overload;
+    function Clone : TFhirAppointmentResponse; overload;
+    {!script show}
+  published
+    {@member identifierList
+      This records identifiers associated with this appointment concern that are defined by business processed and/ or used to refer to it when a direct URL refernce to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
+    }
+    property identifierList : TFhirIdentifierList read FIdentifierList;
+
+    {@member appointment
+      Parent appointment that this response is replying to.
+    }
+    property appointment : TFhirResourceReference{TFhirAppointment} read FAppointment write SetAppointment;
+
+    {@member participantTypeList
+      Role of participant in the appointment.
+    }
+    property participantTypeList : TFhirCodeableConceptList read FParticipantTypeList;
+
+    {@member individualList
+      A Person of device that is participating in the appointment.
+    }
+    property individualList : TFhirResourceReferenceList{Resource} read FIndividualList;
+
+    {@member participantStatus
+      Participation status of the Patient.
+    }
+    property participantStatus : TFhirEnum read FParticipantStatus write SetParticipantStatus;
+    {@member participantStatusST
+      Typed access to Participation status of the Patient.
+    }
+    property participantStatusST : TFhirParticipantstatus read GetParticipantStatusST write SetParticipantStatusST;
+
+    {@member comment
+      Additional comments about the appointment.
+    }
+    property comment : TFhirString read FComment write SetComment;
+    {@member commentST
+      Typed access to Additional comments about the appointment.
+    }
+    property commentST : String read GetCommentST write SetCommentST;
+
+    {@member start
+      Date/Time that the appointment is to take place.
+    }
+    property start : TFhirInstant read FStart write SetStart;
+    {@member startST
+      Typed access to Date/Time that the appointment is to take place.
+    }
+    property startST : TDateAndTime read GetStartST write SetStartST;
+
+    {@member end_
+      Date/Time that the appointment is to conclude.
+    }
+    property end_ : TFhirInstant read FEnd_ write SetEnd_;
+    {@member end_ST
+      Typed access to Date/Time that the appointment is to conclude.
+    }
+    property end_ST : TDateAndTime read GetEnd_ST write SetEnd_ST;
+
+    {@member schedule
+      The recurrence schedule for the appointment. The end date in the schedule marks the end of the recurrence(s), not the end of an individual appointment.
+    }
+    property schedule : TFhirSchedule read FSchedule write SetSchedule;
+
+    {@member timezone
+      The timezone should be a value referenced from a timezone database.
+    }
+    property timezone : TFhirString read FTimezone write SetTimezone;
+    {@member timezoneST
+      Typed access to The timezone should be a value referenced from a timezone database.
+    }
+    property timezoneST : String read GetTimezoneST write SetTimezoneST;
+
+    {@member recorder
+      Who recorded the appointment response.
+    }
+    property recorder : TFhirResourceReference{Resource} read FRecorder write SetRecorder;
+
+    {@member recordedDate
+      Date when the response was recorded or last updated.
+    }
+    property recordedDate : TFhirDateTime read FRecordedDate write SetRecordedDate;
+    {@member recordedDateST
+      Typed access to Date when the response was recorded or last updated.
+    }
+    property recordedDateST : TDateAndTime read GetRecordedDateST write SetRecordedDateST;
+
+  end;
+
+
+  {@Class TFhirAvailability : TFhirResource
+    (informative) A container for slot(s) of time that may be available for booking appointments.
+  }
+  {!.Net HL7Connect.Fhir.Availability}
+  TFhirAvailability = class (TFhirResource)
+  private
+    FidentifierList : TFhirIdentifierList;
+    FType_ : TFhirCodeableConcept;
+    FIndividual : TFhirResourceReference{Resource};
+    FPeriod : TFhirPeriod;
+    FComment : TFhirString;
+    FAuthor : TFhirResourceReference{Resource};
+    FAuthorDate : TFhirDateTime;
+    Procedure SetType_(value : TFhirCodeableConcept);
+    Procedure SetIndividual(value : TFhirResourceReference{Resource});
+    Procedure SetPeriod(value : TFhirPeriod);
+    Procedure SetComment(value : TFhirString);
+    Function GetCommentST : String;
+    Procedure SetCommentST(value : String);
+    Procedure SetAuthor(value : TFhirResourceReference{Resource});
+    Procedure SetAuthorDate(value : TFhirDateTime);
+    Function GetAuthorDateST : TDateAndTime;
+    Procedure SetAuthorDateST(value : TDateAndTime);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    Function GetHasASummary : Boolean; Override;
+    function GetResourceType : TFhirResourceType; override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirAvailability; overload;
+    function Clone : TFhirAvailability; overload;
+    {!script show}
+  published
+    {@member identifierList
+      External Ids for this item.
+    }
+    property identifierList : TFhirIdentifierList read FIdentifierList;
+
+    {@member type_
+      The type of appointments that can be booked into slots attached to this availability resource (ideally this would be an identifiable service - which is at a location, rather than the location itself) - change to CodeableConcept.
+    }
+    property type_ : TFhirCodeableConcept read FType_ write SetType_;
+
+    {@member individual
+      The type of resource this availability resource is providing availability information for.
+    }
+    property individual : TFhirResourceReference{Resource} read FIndividual write SetIndividual;
+
+    {@member period
+      The period of time that the slots that are attached to this availability resource cover (even if none exist).
+    }
+    property period : TFhirPeriod read FPeriod write SetPeriod;
+
+    {@member comment
+      Comments on the availability to describe any extended information. Such as custom constraints on the slot(s) that may be associated.
+    }
+    property comment : TFhirString read FComment write SetComment;
+    {@member commentST
+      Typed access to Comments on the availability to describe any extended information. Such as custom constraints on the slot(s) that may be associated.
+    }
+    property commentST : String read GetCommentST write SetCommentST;
+
+    {@member author
+      Who authored the availability.
+    }
+    property author : TFhirResourceReference{Resource} read FAuthor write SetAuthor;
+
+    {@member authorDate
+      When this availability was created, or last revised.
+    }
+    property authorDate : TFhirDateTime read FAuthorDate write SetAuthorDate;
+    {@member authorDateST
+      Typed access to When this availability was created, or last revised.
+    }
+    property authorDateST : TDateAndTime read GetAuthorDateST write SetAuthorDateST;
 
   end;
 
@@ -5979,6 +6420,121 @@ Related resources tie this event to the authorizing prescription, and the specif
   end;
 
 
+  {@Class TFhirSlot : TFhirResource
+    (informative) A slot of time that may be available for booking appointments.
+  }
+  {!.Net HL7Connect.Fhir.Slot}
+  TFhirSlot = class (TFhirResource)
+  private
+    FidentifierList : TFhirIdentifierList;
+    FType_ : TFhirCodeableConcept;
+    FAvailability : TFhirResourceReference{TFhirAvailability};
+    FFreeBusyType : TFhirEnum;
+    FStart : TFhirInstant;
+    FEnd_ : TFhirInstant;
+    FComment : TFhirString;
+    FAuthor : TFhirResourceReference{Resource};
+    FAuthorDate : TFhirDateTime;
+    Procedure SetType_(value : TFhirCodeableConcept);
+    Procedure SetAvailability(value : TFhirResourceReference{TFhirAvailability});
+    Procedure SetFreeBusyType(value : TFhirEnum);
+    Function GetFreeBusyTypeST : TFhirSlotstatus;
+    Procedure SetFreeBusyTypeST(value : TFhirSlotstatus);
+    Procedure SetStart(value : TFhirInstant);
+    Function GetStartST : TDateAndTime;
+    Procedure SetStartST(value : TDateAndTime);
+    Procedure SetEnd_(value : TFhirInstant);
+    Function GetEnd_ST : TDateAndTime;
+    Procedure SetEnd_ST(value : TDateAndTime);
+    Procedure SetComment(value : TFhirString);
+    Function GetCommentST : String;
+    Procedure SetCommentST(value : String);
+    Procedure SetAuthor(value : TFhirResourceReference{Resource});
+    Procedure SetAuthorDate(value : TFhirDateTime);
+    Function GetAuthorDateST : TDateAndTime;
+    Procedure SetAuthorDateST(value : TDateAndTime);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    Function GetHasASummary : Boolean; Override;
+    function GetResourceType : TFhirResourceType; override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirSlot; overload;
+    function Clone : TFhirSlot; overload;
+    {!script show}
+  published
+    {@member identifierList
+      External Ids for this item.
+    }
+    property identifierList : TFhirIdentifierList read FIdentifierList;
+
+    {@member type_
+      The type of appointments that can be booked into this slot (ideally this would be an identifiable service - which is at a location, rather than the location itself). If provided then this overrides the value provided on the availability resource.
+    }
+    property type_ : TFhirCodeableConcept read FType_ write SetType_;
+
+    {@member availability
+      The availability resource that this slot defines an interval of status information.
+    }
+    property availability : TFhirResourceReference{TFhirAvailability} read FAvailability write SetAvailability;
+
+    {@member freeBusyType
+      BUSY | FREE | BUSY-UNAVAILABLE | BUSY-TENTATIVE.
+    }
+    property freeBusyType : TFhirEnum read FFreeBusyType write SetFreeBusyType;
+    {@member freeBusyTypeST
+      Typed access to BUSY | FREE | BUSY-UNAVAILABLE | BUSY-TENTATIVE.
+    }
+    property freeBusyTypeST : TFhirSlotstatus read GetFreeBusyTypeST write SetFreeBusyTypeST;
+
+    {@member start
+      Date/Time that the slot is to begin.
+    }
+    property start : TFhirInstant read FStart write SetStart;
+    {@member startST
+      Typed access to Date/Time that the slot is to begin.
+    }
+    property startST : TDateAndTime read GetStartST write SetStartST;
+
+    {@member end_
+      Date/Time that the slot is to conclude.
+    }
+    property end_ : TFhirInstant read FEnd_ write SetEnd_;
+    {@member end_ST
+      Typed access to Date/Time that the slot is to conclude.
+    }
+    property end_ST : TDateAndTime read GetEnd_ST write SetEnd_ST;
+
+    {@member comment
+      Comments on the slot to describe any extended information. Such as custom constraints on the slot.
+    }
+    property comment : TFhirString read FComment write SetComment;
+    {@member commentST
+      Typed access to Comments on the slot to describe any extended information. Such as custom constraints on the slot.
+    }
+    property commentST : String read GetCommentST write SetCommentST;
+
+    {@member author
+      Who authored the slot.
+    }
+    property author : TFhirResourceReference{Resource} read FAuthor write SetAuthor;
+
+    {@member authorDate
+      When this slot was created, or last revised.
+    }
+    property authorDate : TFhirDateTime read FAuthorDate write SetAuthorDate;
+    {@member authorDateST
+      Typed access to When this slot was created, or last revised.
+    }
+    property authorDateST : TDateAndTime read GetAuthorDateST write SetAuthorDateST;
+
+  end;
+
+
   {@Class TFhirSpecimen : TFhirResource
     Sample for analysis.
   }
@@ -6625,6 +7181,26 @@ Related resources tie this event to the authorizing prescription, and the specif
     }
     {!script nolink}
     function newAllergyIntolerance : TFhirAllergyIntolerance;
+    {@member newAppointmentParticipant
+      create a new participant
+    }
+    {!script nolink}
+    function newAppointmentParticipant : TFhirAppointmentParticipant;
+    {@member newAppointment
+      create a new Appointment
+    }
+    {!script nolink}
+    function newAppointment : TFhirAppointment;
+    {@member newAppointmentResponse
+      create a new AppointmentResponse
+    }
+    {!script nolink}
+    function newAppointmentResponse : TFhirAppointmentResponse;
+    {@member newAvailability
+      create a new Availability
+    }
+    {!script nolink}
+    function newAvailability : TFhirAvailability;
     {@member newCarePlanParticipant
       create a new participant
     }
@@ -7335,6 +7911,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     }
     {!script nolink}
     function newSecurityEvent : TFhirSecurityEvent;
+    {@member newSlot
+      create a new Slot
+    }
+    {!script nolink}
+    function newSlot : TFhirSlot;
     {@member newSpecimenSource
       create a new source
     }
@@ -8084,6 +8665,811 @@ Procedure TFhirAllergyIntolerance.SetSubstance(value : TFhirResourceReference{TF
 begin
   FSubstance.free;
   FSubstance := value;
+end;
+
+
+{ TFhirAppointment }
+
+constructor TFhirAppointment.Create;
+begin
+  inherited;
+  FIdentifierList := TFhirIdentifierList.Create;
+  FSlotList := TFhirResourceReferenceList{TFhirSlot}.Create;
+  FParticipantList := TFhirAppointmentParticipantList.Create;
+end;
+
+destructor TFhirAppointment.Destroy;
+begin
+  FIdentifierList.Free;
+  FPriority.free;
+  FStatus.free;
+  FDescription.free;
+  FStart.free;
+  FEnd_.free;
+  FSchedule.free;
+  FTimezone.free;
+  FSlotList.Free;
+  FLocation.free;
+  FComment.free;
+  FOrder.free;
+  FParticipantList.Free;
+  FRecorder.free;
+  FRecordedDate.free;
+  inherited;
+end;
+
+function TFhirAppointment.GetResourceType : TFhirResourceType;
+begin
+  result := frtAppointment;
+end;
+
+function TFhirAppointment.GetHasASummary : Boolean;
+begin
+  result := false;
+end;
+
+procedure TFhirAppointment.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FIdentifierList.Assign(TFhirAppointment(oSource).FIdentifierList);
+  priority := TFhirAppointment(oSource).priority.Clone;
+  status := TFhirAppointment(oSource).status.Clone;
+  description := TFhirAppointment(oSource).description.Clone;
+  start := TFhirAppointment(oSource).start.Clone;
+  end_ := TFhirAppointment(oSource).end_.Clone;
+  schedule := TFhirAppointment(oSource).schedule.Clone;
+  timezone := TFhirAppointment(oSource).timezone.Clone;
+  FSlotList.Assign(TFhirAppointment(oSource).FSlotList);
+  location := TFhirAppointment(oSource).location.Clone;
+  comment := TFhirAppointment(oSource).comment.Clone;
+  order := TFhirAppointment(oSource).order.Clone;
+  FParticipantList.Assign(TFhirAppointment(oSource).FParticipantList);
+  recorder := TFhirAppointment(oSource).recorder.Clone;
+  recordedDate := TFhirAppointment(oSource).recordedDate.Clone;
+end;
+
+procedure TFhirAppointment.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'identifier') Then
+     list.addAll(FIdentifierList);
+  if (child_name = 'priority') Then
+     list.add(Priority.Link);
+  if (child_name = 'status') Then
+     list.add(Status.Link);
+  if (child_name = 'description') Then
+     list.add(Description.Link);
+  if (child_name = 'start') Then
+     list.add(Start.Link);
+  if (child_name = 'end_') Then
+     list.add(End_.Link);
+  if (child_name = 'schedule') Then
+     list.add(Schedule.Link);
+  if (child_name = 'timezone') Then
+     list.add(Timezone.Link);
+  if (child_name = 'slot') Then
+     list.addAll(FSlotList);
+  if (child_name = 'location') Then
+     list.add(Location.Link);
+  if (child_name = 'comment') Then
+     list.add(Comment.Link);
+  if (child_name = 'order') Then
+     list.add(Order.Link);
+  if (child_name = 'participant') Then
+     list.addAll(FParticipantList);
+  if (child_name = 'recorder') Then
+     list.add(Recorder.Link);
+  if (child_name = 'recordedDate') Then
+     list.add(RecordedDate.Link);
+end;
+
+procedure TFhirAppointment.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'priority', 'integer', FPriority.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'description', 'string', FDescription.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'start', 'instant', FStart.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'end', 'instant', FEnd_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'schedule', 'Schedule', FSchedule.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'timezone', 'string', FTimezone.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'slot', 'Resource(Slot)', FSlotList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'location', 'Resource(Location)', FLocation.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', FComment.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'order', 'Resource(Order)', FOrder.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'participant', '', FParticipantList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'recorder', 'Resource(Practitioner|Patient|RelatedPerson)', FRecorder.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'recordedDate', 'dateTime', FRecordedDate.Link.Link));{2}
+end;
+
+function TFhirAppointment.Link : TFhirAppointment;
+begin
+  result := TFhirAppointment(inherited Link);
+end;
+
+function TFhirAppointment.Clone : TFhirAppointment;
+begin
+  result := TFhirAppointment(inherited Clone);
+end;
+
+{ TFhirAppointment }
+
+Procedure TFhirAppointment.SetPriority(value : TFhirInteger);
+begin
+  FPriority.free;
+  FPriority := value;
+end;
+
+Function TFhirAppointment.GetPriorityST : String;
+begin
+  if FPriority = nil then
+    result := ''
+  else
+    result := Priority.value;
+end;
+
+Procedure TFhirAppointment.SetPriorityST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPriority = nil then
+      FPriority := TFhirInteger.create;
+    FPriority.value := value
+  end
+  else if FPriority <> nil then
+    FPriority.value := '';
+end;
+
+Procedure TFhirAppointment.SetStatus(value : TFhirCode);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+Function TFhirAppointment.GetStatusST : String;
+begin
+  if FStatus = nil then
+    result := ''
+  else
+    result := Status.value;
+end;
+
+Procedure TFhirAppointment.SetStatusST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FStatus = nil then
+      FStatus := TFhirCode.create;
+    FStatus.value := value
+  end
+  else if FStatus <> nil then
+    FStatus.value := '';
+end;
+
+Procedure TFhirAppointment.SetDescription(value : TFhirString);
+begin
+  FDescription.free;
+  FDescription := value;
+end;
+
+Function TFhirAppointment.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := Description.value;
+end;
+
+Procedure TFhirAppointment.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirString.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+Procedure TFhirAppointment.SetStart(value : TFhirInstant);
+begin
+  FStart.free;
+  FStart := value;
+end;
+
+Function TFhirAppointment.GetStartST : TDateAndTime;
+begin
+  if FStart = nil then
+    result := nil
+  else
+    result := Start.value;
+end;
+
+Procedure TFhirAppointment.SetStartST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FStart = nil then
+      FStart := TFhirInstant.create;
+    FStart.value := value
+  end
+  else if FStart <> nil then
+    FStart.value := nil;
+end;
+
+Procedure TFhirAppointment.SetEnd_(value : TFhirInstant);
+begin
+  FEnd_.free;
+  FEnd_ := value;
+end;
+
+Function TFhirAppointment.GetEnd_ST : TDateAndTime;
+begin
+  if FEnd_ = nil then
+    result := nil
+  else
+    result := End_.value;
+end;
+
+Procedure TFhirAppointment.SetEnd_ST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FEnd_ = nil then
+      FEnd_ := TFhirInstant.create;
+    FEnd_.value := value
+  end
+  else if FEnd_ <> nil then
+    FEnd_.value := nil;
+end;
+
+Procedure TFhirAppointment.SetSchedule(value : TFhirSchedule);
+begin
+  FSchedule.free;
+  FSchedule := value;
+end;
+
+Procedure TFhirAppointment.SetTimezone(value : TFhirString);
+begin
+  FTimezone.free;
+  FTimezone := value;
+end;
+
+Function TFhirAppointment.GetTimezoneST : String;
+begin
+  if FTimezone = nil then
+    result := ''
+  else
+    result := Timezone.value;
+end;
+
+Procedure TFhirAppointment.SetTimezoneST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTimezone = nil then
+      FTimezone := TFhirString.create;
+    FTimezone.value := value
+  end
+  else if FTimezone <> nil then
+    FTimezone.value := '';
+end;
+
+Procedure TFhirAppointment.SetLocation(value : TFhirResourceReference{TFhirLocation});
+begin
+  FLocation.free;
+  FLocation := value;
+end;
+
+Procedure TFhirAppointment.SetComment(value : TFhirString);
+begin
+  FComment.free;
+  FComment := value;
+end;
+
+Function TFhirAppointment.GetCommentST : String;
+begin
+  if FComment = nil then
+    result := ''
+  else
+    result := Comment.value;
+end;
+
+Procedure TFhirAppointment.SetCommentST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FComment = nil then
+      FComment := TFhirString.create;
+    FComment.value := value
+  end
+  else if FComment <> nil then
+    FComment.value := '';
+end;
+
+Procedure TFhirAppointment.SetOrder(value : TFhirResourceReference{TFhirOrder});
+begin
+  FOrder.free;
+  FOrder := value;
+end;
+
+Procedure TFhirAppointment.SetRecorder(value : TFhirResourceReference{Resource});
+begin
+  FRecorder.free;
+  FRecorder := value;
+end;
+
+Procedure TFhirAppointment.SetRecordedDate(value : TFhirDateTime);
+begin
+  FRecordedDate.free;
+  FRecordedDate := value;
+end;
+
+Function TFhirAppointment.GetRecordedDateST : TDateAndTime;
+begin
+  if FRecordedDate = nil then
+    result := nil
+  else
+    result := RecordedDate.value;
+end;
+
+Procedure TFhirAppointment.SetRecordedDateST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FRecordedDate = nil then
+      FRecordedDate := TFhirDateTime.create;
+    FRecordedDate.value := value
+  end
+  else if FRecordedDate <> nil then
+    FRecordedDate.value := nil;
+end;
+
+
+{ TFhirAppointmentResponse }
+
+constructor TFhirAppointmentResponse.Create;
+begin
+  inherited;
+  FIdentifierList := TFhirIdentifierList.Create;
+  FParticipantTypeList := TFhirCodeableConceptList.Create;
+  FIndividualList := TFhirResourceReferenceList{Resource}.Create;
+end;
+
+destructor TFhirAppointmentResponse.Destroy;
+begin
+  FIdentifierList.Free;
+  FAppointment.free;
+  FParticipantTypeList.Free;
+  FIndividualList.Free;
+  FParticipantStatus.free;
+  FComment.free;
+  FStart.free;
+  FEnd_.free;
+  FSchedule.free;
+  FTimezone.free;
+  FRecorder.free;
+  FRecordedDate.free;
+  inherited;
+end;
+
+function TFhirAppointmentResponse.GetResourceType : TFhirResourceType;
+begin
+  result := frtAppointmentResponse;
+end;
+
+function TFhirAppointmentResponse.GetHasASummary : Boolean;
+begin
+  result := false;
+end;
+
+procedure TFhirAppointmentResponse.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FIdentifierList.Assign(TFhirAppointmentResponse(oSource).FIdentifierList);
+  appointment := TFhirAppointmentResponse(oSource).appointment.Clone;
+  FParticipantTypeList.Assign(TFhirAppointmentResponse(oSource).FParticipantTypeList);
+  FIndividualList.Assign(TFhirAppointmentResponse(oSource).FIndividualList);
+  FParticipantStatus := TFhirAppointmentResponse(oSource).FParticipantStatus.Link;
+  comment := TFhirAppointmentResponse(oSource).comment.Clone;
+  start := TFhirAppointmentResponse(oSource).start.Clone;
+  end_ := TFhirAppointmentResponse(oSource).end_.Clone;
+  schedule := TFhirAppointmentResponse(oSource).schedule.Clone;
+  timezone := TFhirAppointmentResponse(oSource).timezone.Clone;
+  recorder := TFhirAppointmentResponse(oSource).recorder.Clone;
+  recordedDate := TFhirAppointmentResponse(oSource).recordedDate.Clone;
+end;
+
+procedure TFhirAppointmentResponse.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'identifier') Then
+     list.addAll(FIdentifierList);
+  if (child_name = 'appointment') Then
+     list.add(Appointment.Link);
+  if (child_name = 'participantType') Then
+     list.addAll(FParticipantTypeList);
+  if (child_name = 'individual') Then
+     list.addAll(FIndividualList);
+  if (child_name = 'participantStatus') Then
+     list.add(FParticipantStatus.Link);
+  if (child_name = 'comment') Then
+     list.add(Comment.Link);
+  if (child_name = 'start') Then
+     list.add(Start.Link);
+  if (child_name = 'end_') Then
+     list.add(End_.Link);
+  if (child_name = 'schedule') Then
+     list.add(Schedule.Link);
+  if (child_name = 'timezone') Then
+     list.add(Timezone.Link);
+  if (child_name = 'recorder') Then
+     list.add(Recorder.Link);
+  if (child_name = 'recordedDate') Then
+     list.add(RecordedDate.Link);
+end;
+
+procedure TFhirAppointmentResponse.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'appointment', 'Resource(Appointment)', FAppointment.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'participantType', 'CodeableConcept', FParticipantTypeList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'individual', 'Resource(Practitioner|Patient|RelatedPerson|Device)', FIndividualList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'participantStatus', 'code', FParticipantStatus.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', FComment.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'start', 'instant', FStart.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'end', 'instant', FEnd_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'schedule', 'Schedule', FSchedule.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'timezone', 'string', FTimezone.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'recorder', 'Resource(Practitioner|Patient|RelatedPerson)', FRecorder.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'recordedDate', 'dateTime', FRecordedDate.Link.Link));{2}
+end;
+
+function TFhirAppointmentResponse.Link : TFhirAppointmentResponse;
+begin
+  result := TFhirAppointmentResponse(inherited Link);
+end;
+
+function TFhirAppointmentResponse.Clone : TFhirAppointmentResponse;
+begin
+  result := TFhirAppointmentResponse(inherited Clone);
+end;
+
+{ TFhirAppointmentResponse }
+
+Procedure TFhirAppointmentResponse.SetAppointment(value : TFhirResourceReference{TFhirAppointment});
+begin
+  FAppointment.free;
+  FAppointment := value;
+end;
+
+Procedure TFhirAppointmentResponse.SetParticipantStatus(value : TFhirEnum);
+begin
+  FParticipantStatus.free;
+  FParticipantStatus := value;
+end;
+
+Function TFhirAppointmentResponse.GetParticipantStatusST : TFhirParticipantstatus;
+begin
+  if FParticipantStatus = nil then
+    result := TFhirParticipantstatus(0)
+  else
+    result := TFhirParticipantstatus(StringArrayIndexOf(CODES_TFhirParticipantstatus, ParticipantStatus.value));
+end;
+
+Procedure TFhirAppointmentResponse.SetParticipantStatusST(value : TFhirParticipantstatus);
+begin
+  if ord(value) = 0 then
+    ParticipantStatus := nil
+  else
+    ParticipantStatus := TFhirEnum.create(CODES_TFhirParticipantstatus[value]);
+end;
+
+Procedure TFhirAppointmentResponse.SetComment(value : TFhirString);
+begin
+  FComment.free;
+  FComment := value;
+end;
+
+Function TFhirAppointmentResponse.GetCommentST : String;
+begin
+  if FComment = nil then
+    result := ''
+  else
+    result := Comment.value;
+end;
+
+Procedure TFhirAppointmentResponse.SetCommentST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FComment = nil then
+      FComment := TFhirString.create;
+    FComment.value := value
+  end
+  else if FComment <> nil then
+    FComment.value := '';
+end;
+
+Procedure TFhirAppointmentResponse.SetStart(value : TFhirInstant);
+begin
+  FStart.free;
+  FStart := value;
+end;
+
+Function TFhirAppointmentResponse.GetStartST : TDateAndTime;
+begin
+  if FStart = nil then
+    result := nil
+  else
+    result := Start.value;
+end;
+
+Procedure TFhirAppointmentResponse.SetStartST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FStart = nil then
+      FStart := TFhirInstant.create;
+    FStart.value := value
+  end
+  else if FStart <> nil then
+    FStart.value := nil;
+end;
+
+Procedure TFhirAppointmentResponse.SetEnd_(value : TFhirInstant);
+begin
+  FEnd_.free;
+  FEnd_ := value;
+end;
+
+Function TFhirAppointmentResponse.GetEnd_ST : TDateAndTime;
+begin
+  if FEnd_ = nil then
+    result := nil
+  else
+    result := End_.value;
+end;
+
+Procedure TFhirAppointmentResponse.SetEnd_ST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FEnd_ = nil then
+      FEnd_ := TFhirInstant.create;
+    FEnd_.value := value
+  end
+  else if FEnd_ <> nil then
+    FEnd_.value := nil;
+end;
+
+Procedure TFhirAppointmentResponse.SetSchedule(value : TFhirSchedule);
+begin
+  FSchedule.free;
+  FSchedule := value;
+end;
+
+Procedure TFhirAppointmentResponse.SetTimezone(value : TFhirString);
+begin
+  FTimezone.free;
+  FTimezone := value;
+end;
+
+Function TFhirAppointmentResponse.GetTimezoneST : String;
+begin
+  if FTimezone = nil then
+    result := ''
+  else
+    result := Timezone.value;
+end;
+
+Procedure TFhirAppointmentResponse.SetTimezoneST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTimezone = nil then
+      FTimezone := TFhirString.create;
+    FTimezone.value := value
+  end
+  else if FTimezone <> nil then
+    FTimezone.value := '';
+end;
+
+Procedure TFhirAppointmentResponse.SetRecorder(value : TFhirResourceReference{Resource});
+begin
+  FRecorder.free;
+  FRecorder := value;
+end;
+
+Procedure TFhirAppointmentResponse.SetRecordedDate(value : TFhirDateTime);
+begin
+  FRecordedDate.free;
+  FRecordedDate := value;
+end;
+
+Function TFhirAppointmentResponse.GetRecordedDateST : TDateAndTime;
+begin
+  if FRecordedDate = nil then
+    result := nil
+  else
+    result := RecordedDate.value;
+end;
+
+Procedure TFhirAppointmentResponse.SetRecordedDateST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FRecordedDate = nil then
+      FRecordedDate := TFhirDateTime.create;
+    FRecordedDate.value := value
+  end
+  else if FRecordedDate <> nil then
+    FRecordedDate.value := nil;
+end;
+
+
+{ TFhirAvailability }
+
+constructor TFhirAvailability.Create;
+begin
+  inherited;
+  FIdentifierList := TFhirIdentifierList.Create;
+end;
+
+destructor TFhirAvailability.Destroy;
+begin
+  FIdentifierList.Free;
+  FType_.free;
+  FIndividual.free;
+  FPeriod.free;
+  FComment.free;
+  FAuthor.free;
+  FAuthorDate.free;
+  inherited;
+end;
+
+function TFhirAvailability.GetResourceType : TFhirResourceType;
+begin
+  result := frtAvailability;
+end;
+
+function TFhirAvailability.GetHasASummary : Boolean;
+begin
+  result := false;
+end;
+
+procedure TFhirAvailability.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FIdentifierList.Assign(TFhirAvailability(oSource).FIdentifierList);
+  type_ := TFhirAvailability(oSource).type_.Clone;
+  individual := TFhirAvailability(oSource).individual.Clone;
+  period := TFhirAvailability(oSource).period.Clone;
+  comment := TFhirAvailability(oSource).comment.Clone;
+  author := TFhirAvailability(oSource).author.Clone;
+  authorDate := TFhirAvailability(oSource).authorDate.Clone;
+end;
+
+procedure TFhirAvailability.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'identifier') Then
+     list.addAll(FIdentifierList);
+  if (child_name = 'type_') Then
+     list.add(Type_.Link);
+  if (child_name = 'individual') Then
+     list.add(Individual.Link);
+  if (child_name = 'period') Then
+     list.add(Period.Link);
+  if (child_name = 'comment') Then
+     list.add(Comment.Link);
+  if (child_name = 'author') Then
+     list.add(Author.Link);
+  if (child_name = 'authorDate') Then
+     list.add(AuthorDate.Link);
+end;
+
+procedure TFhirAvailability.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'individual', 'Resource(Location|Practitioner|Device|Patient|RelatedPerson)', FIndividual.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', FComment.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner|Patient|RelatedPerson)', FAuthor.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'authorDate', 'dateTime', FAuthorDate.Link.Link));{2}
+end;
+
+function TFhirAvailability.Link : TFhirAvailability;
+begin
+  result := TFhirAvailability(inherited Link);
+end;
+
+function TFhirAvailability.Clone : TFhirAvailability;
+begin
+  result := TFhirAvailability(inherited Clone);
+end;
+
+{ TFhirAvailability }
+
+Procedure TFhirAvailability.SetType_(value : TFhirCodeableConcept);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+Procedure TFhirAvailability.SetIndividual(value : TFhirResourceReference{Resource});
+begin
+  FIndividual.free;
+  FIndividual := value;
+end;
+
+Procedure TFhirAvailability.SetPeriod(value : TFhirPeriod);
+begin
+  FPeriod.free;
+  FPeriod := value;
+end;
+
+Procedure TFhirAvailability.SetComment(value : TFhirString);
+begin
+  FComment.free;
+  FComment := value;
+end;
+
+Function TFhirAvailability.GetCommentST : String;
+begin
+  if FComment = nil then
+    result := ''
+  else
+    result := Comment.value;
+end;
+
+Procedure TFhirAvailability.SetCommentST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FComment = nil then
+      FComment := TFhirString.create;
+    FComment.value := value
+  end
+  else if FComment <> nil then
+    FComment.value := '';
+end;
+
+Procedure TFhirAvailability.SetAuthor(value : TFhirResourceReference{Resource});
+begin
+  FAuthor.free;
+  FAuthor := value;
+end;
+
+Procedure TFhirAvailability.SetAuthorDate(value : TFhirDateTime);
+begin
+  FAuthorDate.free;
+  FAuthorDate := value;
+end;
+
+Function TFhirAvailability.GetAuthorDateST : TDateAndTime;
+begin
+  if FAuthorDate = nil then
+    result := nil
+  else
+    result := AuthorDate.value;
+end;
+
+Procedure TFhirAvailability.SetAuthorDateST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FAuthorDate = nil then
+      FAuthorDate := TFhirDateTime.create;
+    FAuthorDate.value := value
+  end
+  else if FAuthorDate <> nil then
+    FAuthorDate.value := nil;
 end;
 
 
@@ -16891,6 +18277,246 @@ begin
 end;
 
 
+{ TFhirSlot }
+
+constructor TFhirSlot.Create;
+begin
+  inherited;
+  FIdentifierList := TFhirIdentifierList.Create;
+end;
+
+destructor TFhirSlot.Destroy;
+begin
+  FIdentifierList.Free;
+  FType_.free;
+  FAvailability.free;
+  FFreeBusyType.free;
+  FStart.free;
+  FEnd_.free;
+  FComment.free;
+  FAuthor.free;
+  FAuthorDate.free;
+  inherited;
+end;
+
+function TFhirSlot.GetResourceType : TFhirResourceType;
+begin
+  result := frtSlot;
+end;
+
+function TFhirSlot.GetHasASummary : Boolean;
+begin
+  result := false;
+end;
+
+procedure TFhirSlot.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FIdentifierList.Assign(TFhirSlot(oSource).FIdentifierList);
+  type_ := TFhirSlot(oSource).type_.Clone;
+  availability := TFhirSlot(oSource).availability.Clone;
+  FFreeBusyType := TFhirSlot(oSource).FFreeBusyType.Link;
+  start := TFhirSlot(oSource).start.Clone;
+  end_ := TFhirSlot(oSource).end_.Clone;
+  comment := TFhirSlot(oSource).comment.Clone;
+  author := TFhirSlot(oSource).author.Clone;
+  authorDate := TFhirSlot(oSource).authorDate.Clone;
+end;
+
+procedure TFhirSlot.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'identifier') Then
+     list.addAll(FIdentifierList);
+  if (child_name = 'type_') Then
+     list.add(Type_.Link);
+  if (child_name = 'availability') Then
+     list.add(Availability.Link);
+  if (child_name = 'freeBusyType') Then
+     list.add(FFreeBusyType.Link);
+  if (child_name = 'start') Then
+     list.add(Start.Link);
+  if (child_name = 'end_') Then
+     list.add(End_.Link);
+  if (child_name = 'comment') Then
+     list.add(Comment.Link);
+  if (child_name = 'author') Then
+     list.add(Author.Link);
+  if (child_name = 'authorDate') Then
+     list.add(AuthorDate.Link);
+end;
+
+procedure TFhirSlot.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'availability', 'Resource(Availability)', FAvailability.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'freeBusyType', 'code', FFreeBusyType.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'start', 'instant', FStart.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'end', 'instant', FEnd_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', FComment.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner|Patient|RelatedPerson)', FAuthor.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'authorDate', 'dateTime', FAuthorDate.Link.Link));{2}
+end;
+
+function TFhirSlot.Link : TFhirSlot;
+begin
+  result := TFhirSlot(inherited Link);
+end;
+
+function TFhirSlot.Clone : TFhirSlot;
+begin
+  result := TFhirSlot(inherited Clone);
+end;
+
+{ TFhirSlot }
+
+Procedure TFhirSlot.SetType_(value : TFhirCodeableConcept);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+Procedure TFhirSlot.SetAvailability(value : TFhirResourceReference{TFhirAvailability});
+begin
+  FAvailability.free;
+  FAvailability := value;
+end;
+
+Procedure TFhirSlot.SetFreeBusyType(value : TFhirEnum);
+begin
+  FFreeBusyType.free;
+  FFreeBusyType := value;
+end;
+
+Function TFhirSlot.GetFreeBusyTypeST : TFhirSlotstatus;
+begin
+  if FFreeBusyType = nil then
+    result := TFhirSlotstatus(0)
+  else
+    result := TFhirSlotstatus(StringArrayIndexOf(CODES_TFhirSlotstatus, FreeBusyType.value));
+end;
+
+Procedure TFhirSlot.SetFreeBusyTypeST(value : TFhirSlotstatus);
+begin
+  if ord(value) = 0 then
+    FreeBusyType := nil
+  else
+    FreeBusyType := TFhirEnum.create(CODES_TFhirSlotstatus[value]);
+end;
+
+Procedure TFhirSlot.SetStart(value : TFhirInstant);
+begin
+  FStart.free;
+  FStart := value;
+end;
+
+Function TFhirSlot.GetStartST : TDateAndTime;
+begin
+  if FStart = nil then
+    result := nil
+  else
+    result := Start.value;
+end;
+
+Procedure TFhirSlot.SetStartST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FStart = nil then
+      FStart := TFhirInstant.create;
+    FStart.value := value
+  end
+  else if FStart <> nil then
+    FStart.value := nil;
+end;
+
+Procedure TFhirSlot.SetEnd_(value : TFhirInstant);
+begin
+  FEnd_.free;
+  FEnd_ := value;
+end;
+
+Function TFhirSlot.GetEnd_ST : TDateAndTime;
+begin
+  if FEnd_ = nil then
+    result := nil
+  else
+    result := End_.value;
+end;
+
+Procedure TFhirSlot.SetEnd_ST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FEnd_ = nil then
+      FEnd_ := TFhirInstant.create;
+    FEnd_.value := value
+  end
+  else if FEnd_ <> nil then
+    FEnd_.value := nil;
+end;
+
+Procedure TFhirSlot.SetComment(value : TFhirString);
+begin
+  FComment.free;
+  FComment := value;
+end;
+
+Function TFhirSlot.GetCommentST : String;
+begin
+  if FComment = nil then
+    result := ''
+  else
+    result := Comment.value;
+end;
+
+Procedure TFhirSlot.SetCommentST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FComment = nil then
+      FComment := TFhirString.create;
+    FComment.value := value
+  end
+  else if FComment <> nil then
+    FComment.value := '';
+end;
+
+Procedure TFhirSlot.SetAuthor(value : TFhirResourceReference{Resource});
+begin
+  FAuthor.free;
+  FAuthor := value;
+end;
+
+Procedure TFhirSlot.SetAuthorDate(value : TFhirDateTime);
+begin
+  FAuthorDate.free;
+  FAuthorDate := value;
+end;
+
+Function TFhirSlot.GetAuthorDateST : TDateAndTime;
+begin
+  if FAuthorDate = nil then
+    result := nil
+  else
+    result := AuthorDate.value;
+end;
+
+Procedure TFhirSlot.SetAuthorDateST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FAuthorDate = nil then
+      FAuthorDate := TFhirDateTime.create;
+    FAuthorDate.value := value
+  end
+  else if FAuthorDate <> nil then
+    FAuthorDate.value := nil;
+end;
+
+
 { TFhirSpecimen }
 
 constructor TFhirSpecimen.Create;
@@ -17925,6 +19551,26 @@ begin
   result := TFhirAllergyIntolerance.create;
 end;
 
+function TFhirResourceFactory.newAppointmentParticipant : TFhirAppointmentParticipant;
+begin
+  result := TFhirAppointmentParticipant.create;
+end;
+
+function TFhirResourceFactory.newAppointment : TFhirAppointment;
+begin
+  result := TFhirAppointment.create;
+end;
+
+function TFhirResourceFactory.newAppointmentResponse : TFhirAppointmentResponse;
+begin
+  result := TFhirAppointmentResponse.create;
+end;
+
+function TFhirResourceFactory.newAvailability : TFhirAvailability;
+begin
+  result := TFhirAvailability.create;
+end;
+
 function TFhirResourceFactory.newCarePlanParticipant : TFhirCarePlanParticipant;
 begin
   result := TFhirCarePlanParticipant.create;
@@ -18633,6 +20279,11 @@ end;
 function TFhirResourceFactory.newSecurityEvent : TFhirSecurityEvent;
 begin
   result := TFhirSecurityEvent.create;
+end;
+
+function TFhirResourceFactory.newSlot : TFhirSlot;
+begin
+  result := TFhirSlot.create;
 end;
 
 function TFhirResourceFactory.newSpecimenSource : TFhirSpecimenSource;

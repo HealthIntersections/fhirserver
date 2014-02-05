@@ -845,13 +845,11 @@ begin
     try
       storage := TFhirOperation.create('en', self.Link);
       try
-        storage.Request := request.Link;
-        storage.Response := response.link;
         storage.Connection := FDB.GetConnection('fhir');
-        storage.PreCheck;
+        storage.PreCheck(request, response);
         storage.Connection.StartTransact;
         try
-          storage.Execute;
+          storage.Execute(request, response);
           storage.Connection.Commit;
           storage.Connection.Release;
         except
@@ -1013,7 +1011,7 @@ procedure TFHIRDataStore.LoadExistingResources;
 var
   conn : TKDBConnection;
   parser : TFHIRParser;
-  mem : TMemoryStream;
+  mem : TBytes;
   i : integer;
 begin
   conn := FDB.GetConnection('fhir');
@@ -1029,10 +1027,7 @@ begin
       while conn.FetchNext do
       begin
         inc(i);
-        mem := conn.ColMemoryByName['Content'];
-        mem.position := 0;
-        mem.SaveToFile('c:\temp\text.xml');
-        mem.position := 0;
+        mem := ZDecompressBytes(conn.ColBlobByName['Content']);
 
         parser := MakeParser('en', ffXml, mem);
         try

@@ -6,7 +6,7 @@ unit KDBOdbcExpress;
 interface
 
 uses
-  Classes, Contnrs, IniFiles,
+  SysUtils, Classes, Contnrs, IniFiles,
   AdvObjects, StringSupport,
   KDate, KDBDialects, KDBManager, KSettings,
   OdbcExtras, OdbcHeaders, OdbcCore;
@@ -35,6 +35,7 @@ type
     function GetColInt64V(ACol: Word): Int64; Override;
     function GetColDoubleV(ACol: Word): Double; Override;
     function GetColMemoryV(ACol: Word): TMemoryStream; Override;
+    function GetColBlobV(ACol: Word): TBytes; Override;
     function GetColNullV(ACol: Word): Boolean; Override;
     function GetColTimestampV(ACol: Word): TTimestamp; Override;
     function GetColTypeV(ACol: Word): TKDBColumnType; Override;
@@ -65,8 +66,8 @@ type
     Function TableSizeV(sName : String):int64; Override;
     function SupportsSizingV : Boolean; Override;
   Public
-    constructor create(AOwner : TKDBManager; AHdbc : THdbc; AStmt : THstmt);
-    destructor destroy; override;
+    constructor Create(AOwner : TKDBManager; AHdbc : THdbc; AStmt : THstmt);
+    destructor Destroy; override;
   end;
 
   TOdbcExpressConnManBase = {Abstract} class (TKDBManager)
@@ -126,8 +127,7 @@ implementation
 
 uses
   IdSoapClasses,
-  IdSoapUtilities,
-  SysUtils;
+  IdSoapUtilities;
 
 const
   ASSERT_UNIT = 'KDBOdbcExpress';
@@ -160,6 +160,23 @@ begin
     FStmt.Terminate;
     FASAMode := iLevel;
     end;
+end;
+
+function TOdbcConnection.GetColBlobV(ACol: Word): TBytes;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColBlob';
+var
+  mem : TMemoryStream;
+begin
+  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
+  mem := FStmt.ColMemory[ACol];
+  if (mem = nil) or (mem.size = 0) then
+    setLength(result, 0)
+  else
+  begin
+    setLength(result, mem.size);
+    mem.position := 0;
+    mem.read(result[0], mem.size);
+  end;
 end;
 
 function TOdbcConnection.GetColCountV: Integer;

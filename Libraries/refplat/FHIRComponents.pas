@@ -33,7 +33,7 @@ unit FHIRComponents;
 
 interface
 
-// FHIR v0.12 generated Thu, Jan 2, 2014 12:33+1100
+// FHIR v0.12 generated Wed, Jan 15, 2014 14:09+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -43,6 +43,8 @@ Type
   TFhirAdverseReactionSymptomList = class;
   TFhirAdverseReactionExposure = class;
   TFhirAdverseReactionExposureList = class;
+  TFhirAppointmentParticipant = class;
+  TFhirAppointmentParticipantList = class;
   TFhirCarePlanParticipant = class;
   TFhirCarePlanParticipantList = class;
   TFhirCarePlanGoal = class;
@@ -537,6 +539,150 @@ Type
     procedure ClearItems;
     
     Property FhirAdverseReactionExposures[index : Integer] : TFhirAdverseReactionExposure read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirAppointmentParticipant : TFhirElement
+    List of participants involved in the appointment.
+  }
+  {!.Net HL7Connect.Fhir.AppointmentParticipant}
+  TFhirAppointmentParticipant = class (TFhirBackboneElement)
+  private
+    Ftype_List : TFhirCodeableConceptList;
+    FindividualList : TFhirResourceReferenceList{Resource};
+    FRequired : TFhirEnum;
+    FStatus : TFhirEnum;
+    FobservationList : TFhirResourceReferenceList{TFhirObservation};
+    Procedure SetRequired(value : TFhirEnum);
+    Function GetRequiredST : TFhirParticipantrequired;
+    Procedure SetRequiredST(value : TFhirParticipantrequired);
+    Procedure SetStatus(value : TFhirEnum);
+    Function GetStatusST : TFhirParticipationstatus;
+    Procedure SetStatusST(value : TFhirParticipationstatus);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirAppointmentParticipant; overload;
+    function Clone : TFhirAppointmentParticipant; overload;
+    {!script show}
+  published
+    {@member type_List
+      Role of participant in the appointment.
+    }
+    property type_List : TFhirCodeableConceptList read FType_List;
+
+    {@member individualList
+      A Person of device that is participating in the appointment.
+    }
+    property individualList : TFhirResourceReferenceList{Resource} read FIndividualList;
+
+    {@member required
+      Is this participant required to be present at the meeting. This covers a use-case where 2 doctors need to meet to discuss the results for a specific patient, and the patient is not required to be present.
+    }
+    property required : TFhirEnum read FRequired write SetRequired;
+    {@member requiredST
+      Typed access to Is this participant required to be present at the meeting. This covers a use-case where 2 doctors need to meet to discuss the results for a specific patient, and the patient is not required to be present.
+    }
+    property requiredST : TFhirParticipantrequired read GetRequiredST write SetRequiredST;
+
+    {@member status
+      Participation status of the Patient.
+    }
+    property status : TFhirEnum read FStatus write SetStatus;
+    {@member statusST
+      Typed access to Participation status of the Patient.
+    }
+    property statusST : TFhirParticipationstatus read GetStatusST write SetStatusST;
+
+    {@member observationList
+      Observations that lead to the creation of this appointment. (Is this 80%).
+    }
+    property observationList : TFhirResourceReferenceList{TFhirObservation} read FObservationList;
+
+  end;
+
+
+  {@Class TFhirAppointmentParticipantList
+    A list of FhirAppointmentParticipant
+  }
+  {!.Net HL7Connect.Fhir.AppointmentParticipantList}
+  TFhirAppointmentParticipantList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirAppointmentParticipant;
+    procedure SetItemN(index : Integer; value : TFhirAppointmentParticipant);
+  public
+    {!script hide}
+    function Link : TFhirAppointmentParticipantList; Overload;
+    function Clone : TFhirAppointmentParticipantList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirAppointmentParticipant to the end of the list.
+    }
+    function Append : TFhirAppointmentParticipant;
+
+    
+    {@member AddItem
+      Add an already existing FhirAppointmentParticipant to the end of the list.
+    }
+    procedure AddItem(value : TFhirAppointmentParticipant);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirAppointmentParticipant) : Integer;
+    
+
+    {@member Insert
+      Insert FhirAppointmentParticipant before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirAppointmentParticipant;
+    
+
+    {@member InsertItem
+       Insert an existing FhirAppointmentParticipant before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirAppointmentParticipant);
+    
+    {@member Item
+       Get the iIndexth FhirAppointmentParticipant. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirAppointmentParticipant. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirAppointmentParticipant);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirAppointmentParticipant;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirAppointmentParticipants[index : Integer] : TFhirAppointmentParticipant read GetItemN write SetItemN; default;
   End;
 
 
@@ -17122,6 +17268,207 @@ end;
 procedure TFhirAdverseReactionExposureList.SetItemN(index: Integer; value: TFhirAdverseReactionExposure);
 begin
   assert(value is TFhirAdverseReactionExposure);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirAppointmentParticipant }
+
+constructor TFhirAppointmentParticipant.Create;
+begin
+  inherited;
+  FType_List := TFhirCodeableConceptList.Create;
+  FIndividualList := TFhirResourceReferenceList{Resource}.Create;
+  FObservationList := TFhirResourceReferenceList{TFhirObservation}.Create;
+end;
+
+destructor TFhirAppointmentParticipant.Destroy;
+begin
+  FType_List.Free;
+  FIndividualList.Free;
+  FRequired.free;
+  FStatus.free;
+  FObservationList.Free;
+  inherited;
+end;
+
+procedure TFhirAppointmentParticipant.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FType_List.Assign(TFhirAppointmentParticipant(oSource).FType_List);
+  FIndividualList.Assign(TFhirAppointmentParticipant(oSource).FIndividualList);
+  FRequired := TFhirAppointmentParticipant(oSource).FRequired.Link;
+  FStatus := TFhirAppointmentParticipant(oSource).FStatus.Link;
+  FObservationList.Assign(TFhirAppointmentParticipant(oSource).FObservationList);
+end;
+
+procedure TFhirAppointmentParticipant.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'type_') Then
+     list.addAll(FType_List);
+  if (child_name = 'individual') Then
+     list.addAll(FIndividualList);
+  if (child_name = 'required') Then
+     list.add(FRequired.Link);
+  if (child_name = 'status') Then
+     list.add(FStatus.Link);
+  if (child_name = 'observation') Then
+     list.addAll(FObservationList);
+end;
+
+procedure TFhirAppointmentParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_List.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'individual', 'Resource(Practitioner|Patient|RelatedPerson|Device)', FIndividualList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'required', 'code', FRequired.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'observation', 'Resource(Observation)', FObservationList.Link)){3};
+end;
+
+function TFhirAppointmentParticipant.Link : TFhirAppointmentParticipant;
+begin
+  result := TFhirAppointmentParticipant(inherited Link);
+end;
+
+function TFhirAppointmentParticipant.Clone : TFhirAppointmentParticipant;
+begin
+  result := TFhirAppointmentParticipant(inherited Clone);
+end;
+
+{ TFhirAppointmentParticipant }
+
+Procedure TFhirAppointmentParticipant.SetRequired(value : TFhirEnum);
+begin
+  FRequired.free;
+  FRequired := value;
+end;
+
+Function TFhirAppointmentParticipant.GetRequiredST : TFhirParticipantrequired;
+begin
+  if FRequired = nil then
+    result := TFhirParticipantrequired(0)
+  else
+    result := TFhirParticipantrequired(StringArrayIndexOf(CODES_TFhirParticipantrequired, Required.value));
+end;
+
+Procedure TFhirAppointmentParticipant.SetRequiredST(value : TFhirParticipantrequired);
+begin
+  if ord(value) = 0 then
+    Required := nil
+  else
+    Required := TFhirEnum.create(CODES_TFhirParticipantrequired[value]);
+end;
+
+Procedure TFhirAppointmentParticipant.SetStatus(value : TFhirEnum);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+Function TFhirAppointmentParticipant.GetStatusST : TFhirParticipationstatus;
+begin
+  if FStatus = nil then
+    result := TFhirParticipationstatus(0)
+  else
+    result := TFhirParticipationstatus(StringArrayIndexOf(CODES_TFhirParticipationstatus, Status.value));
+end;
+
+Procedure TFhirAppointmentParticipant.SetStatusST(value : TFhirParticipationstatus);
+begin
+  if ord(value) = 0 then
+    Status := nil
+  else
+    Status := TFhirEnum.create(CODES_TFhirParticipationstatus[value]);
+end;
+
+
+{ TFhirAppointmentParticipantList }
+procedure TFhirAppointmentParticipantList.AddItem(value: TFhirAppointmentParticipant);
+begin
+  assert(value.ClassName = 'TFhirAppointmentParticipant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAppointmentParticipant');
+  add(value);
+end;
+
+
+function TFhirAppointmentParticipantList.Append: TFhirAppointmentParticipant;
+begin
+  result := TFhirAppointmentParticipant.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirAppointmentParticipantList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirAppointmentParticipantList.Clone: TFhirAppointmentParticipantList;
+begin
+  result := TFhirAppointmentParticipantList(inherited Clone);
+end;
+
+function TFhirAppointmentParticipantList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirAppointmentParticipantList.GetItemN(index: Integer): TFhirAppointmentParticipant;
+begin
+  result := TFhirAppointmentParticipant(ObjectByIndex[index]);
+end;
+
+function TFhirAppointmentParticipantList.IndexOf(value: TFhirAppointmentParticipant): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirAppointmentParticipantList.Insert(index: Integer): TFhirAppointmentParticipant;
+begin
+  result := TFhirAppointmentParticipant.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirAppointmentParticipantList.InsertItem(index: Integer; value: TFhirAppointmentParticipant);
+begin
+  assert(value is TFhirAppointmentParticipant);
+  Inherited Insert(index, value);
+end;
+
+function TFhirAppointmentParticipantList.Item(index: Integer): TFhirAppointmentParticipant;
+begin
+  result := TFhirAppointmentParticipant(ObjectByIndex[index]);
+end;
+
+function TFhirAppointmentParticipantList.Link: TFhirAppointmentParticipantList;
+begin
+  result := TFhirAppointmentParticipantList(inherited Link);
+end;
+
+procedure TFhirAppointmentParticipantList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirAppointmentParticipantList.SetItemByIndex(index: Integer; value: TFhirAppointmentParticipant);
+begin
+  assert(value is TFhirAppointmentParticipant);
+  FhirAppointmentParticipants[index] := value;
+end;
+
+procedure TFhirAppointmentParticipantList.SetItemN(index: Integer; value: TFhirAppointmentParticipant);
+begin
+  assert(value is TFhirAppointmentParticipant);
   ObjectByIndex[index] := value;
 end;
 

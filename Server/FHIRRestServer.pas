@@ -575,6 +575,7 @@ Begin
         oStream := TStringStream.Create(request.UnparsedParams);
       try
         response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+        response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
         response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location');
         response.Expires := Now - 1; //don't want anyone caching anything
         oResponse := TFHIRResponse.Create;
@@ -942,7 +943,7 @@ Begin
         else if sType = 'metadata.json' then
           oResponse.format := ffJson
       end
-      else if (sType = 'mailbox') then
+      else if (sType = 'Mailbox') then
       begin
         oRequest.CommandType := fcmdMailbox;
         ForceMethod('POST');
@@ -1341,14 +1342,12 @@ begin
   writeln('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source);
   store := TFhirOperation.Create(request.Lang, FFhirStore.Link);
   try
-    store.Request := request.Link;
-    store.Response := response.Link;
     store.Connection := FFhirStore.DB.GetConnection('Operation');
-    store.precheck;
+    store.precheck(request, response);
     try
       store.Connection.StartTransact;
       try
-        store.Execute;
+        store.Execute(request, response);
         store.Connection.Commit;
       except
         store.Connection.Rollback;
@@ -1995,6 +1994,7 @@ end;
 procedure TFhirWebServer.ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path: String);
 begin
   writeln('file: '+stated);
+  response.Expires := now + 1;
   response.ContentStream := TFileStream.Create(path, fmOpenRead);
   response.FreeContentStream := true;
   response.ContentType := GetMimeTypeForExt(ExtractFileExt(path));

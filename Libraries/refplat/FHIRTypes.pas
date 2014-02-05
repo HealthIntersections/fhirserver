@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v0.12 generated Thu, Jan 2, 2014 12:33+1100
+// FHIR v0.12 generated Wed, Jan 15, 2014 14:09+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -224,6 +224,42 @@ Type
     SensitivitystatusRefuted, {@enum.value SensitivitystatusRefuted The sensitivity has been shown to never have existed. }
     SensitivitystatusResolved); {@enum.value SensitivitystatusResolved The sensitivity used to exist but no longer does. }
   TFhirSensitivitystatusList = set of TFhirSensitivitystatus;
+
+  {@Enum TFhirParticipantrequired
+    Is the Participant required to attend the appointment
+  }
+  TFhirParticipantrequired = (
+    ParticipantrequiredNull,  {@enum.value ParticipantrequiredNull Value is missing from Instance }
+    ParticipantrequiredRequired, {@enum.value ParticipantrequiredRequired The participant is required to attend the appointment. }
+    ParticipantrequiredOptional, {@enum.value ParticipantrequiredOptional The participant may optionally attend the appointment. }
+    ParticipantrequiredInformationOnly); {@enum.value ParticipantrequiredInformationOnly The participant is not required to attend the appointment (appointment is about them, not for them). }
+  TFhirParticipantrequiredList = set of TFhirParticipantrequired;
+
+  {@Enum TFhirParticipationstatus
+    The Participation status of an appointment
+  }
+  TFhirParticipationstatus = (
+    ParticipationstatusNull,  {@enum.value ParticipationstatusNull Value is missing from Instance }
+    ParticipationstatusAccepted, {@enum.value ParticipationstatusAccepted The participant has accepted the appointment. }
+    ParticipationstatusDeclined, {@enum.value ParticipationstatusDeclined The participant has declined the appointment. }
+    ParticipationstatusTentative, {@enum.value ParticipationstatusTentative The participant has tentative the appointment. }
+    ParticipationstatusInProcess, {@enum.value ParticipationstatusInProcess The participant has in-process the appointment. }
+    ParticipationstatusCompleted, {@enum.value ParticipationstatusCompleted The participant has completed the appointment. }
+    ParticipationstatusNeedsAction); {@enum.value ParticipationstatusNeedsAction The participant has needs-action the appointment. }
+  TFhirParticipationstatusList = set of TFhirParticipationstatus;
+
+  {@Enum TFhirParticipantstatus
+    The Participation status of an appointment
+  }
+  TFhirParticipantstatus = (
+    ParticipantstatusNull,  {@enum.value ParticipantstatusNull Value is missing from Instance }
+    ParticipantstatusAccepted, {@enum.value ParticipantstatusAccepted The participant has accepted the appointment. }
+    ParticipantstatusDeclined, {@enum.value ParticipantstatusDeclined The participant has declined the appointment. }
+    ParticipantstatusTentative, {@enum.value ParticipantstatusTentative The participant has tentative the appointment. }
+    ParticipantstatusInProcess, {@enum.value ParticipantstatusInProcess The participant has in-process the appointment. }
+    ParticipantstatusCompleted, {@enum.value ParticipantstatusCompleted The participant has completed the appointment. }
+    ParticipantstatusNeedsAction); {@enum.value ParticipantstatusNeedsAction The participant has needs-action the appointment. }
+  TFhirParticipantstatusList = set of TFhirParticipantstatus;
 
   {@Enum TFhirCarePlanStatus
     Indicates whether the plan is currently being acted upon, represents future intentions or is now just historical record.
@@ -1014,6 +1050,17 @@ Type
     ObjectLifecycle14, {@enum.value ObjectLifecycle14 Logical deletion. }
     ObjectLifecycle15); {@enum.value ObjectLifecycle15 Permanent erasure / Physical destruction. }
   TFhirObjectLifecycleList = set of TFhirObjectLifecycle;
+
+  {@Enum TFhirSlotstatus
+    The free/busy status of an appointment
+  }
+  TFhirSlotstatus = (
+    SlotstatusNull,  {@enum.value SlotstatusNull Value is missing from Instance }
+    SlotstatusBUSY, {@enum.value SlotstatusBUSY Indicates that the time interval is busy because one  or more events have been scheduled for that interval. }
+    SlotstatusFREE, {@enum.value SlotstatusFREE Indicates that the time interval is free for scheduling. }
+    SlotstatusBUSYUNAVAILABLE, {@enum.value SlotstatusBUSYUNAVAILABLE Indicates that the time interval is busy and that the interval can not be scheduled. }
+    SlotstatusBUSYTENTATIVE); {@enum.value SlotstatusBUSYTENTATIVE Indicates that the time interval is busy because one or more events have been tentatively scheduled for that interval. }
+  TFhirSlotstatusList = set of TFhirSlotstatus;
 
   {@Enum TFhirHierarchicalRelationshipType
     Type indicating if this is a parent or child relationship
@@ -5278,6 +5325,9 @@ Const
   CODES_TFhirCriticality : Array[TFhirCriticality] of String = ('', 'fatal', 'high', 'medium', 'low');
   CODES_TFhirSensitivitytype : Array[TFhirSensitivitytype] of String = ('', 'allergy', 'intolerance', 'unknown');
   CODES_TFhirSensitivitystatus : Array[TFhirSensitivitystatus] of String = ('', 'suspected', 'confirmed', 'refuted', 'resolved');
+  CODES_TFhirParticipantrequired : Array[TFhirParticipantrequired] of String = ('', 'required', 'optional', 'information-only');
+  CODES_TFhirParticipationstatus : Array[TFhirParticipationstatus] of String = ('', 'accepted', 'declined', 'tentative', 'in-process', 'completed', 'needs-action');
+  CODES_TFhirParticipantstatus : Array[TFhirParticipantstatus] of String = ('', 'accepted', 'declined', 'tentative', 'in-process', 'completed', 'needs-action');
   CODES_TFhirCarePlanStatus : Array[TFhirCarePlanStatus] of String = ('', 'planned', 'active', 'completed');
   CODES_TFhirCarePlanGoalStatus : Array[TFhirCarePlanGoalStatus] of String = ('', 'in progress', 'achieved', 'sustaining', 'cancelled');
   CODES_TFhirCarePlanActivityStatus : Array[TFhirCarePlanActivityStatus] of String = ('', 'not started', 'scheduled', 'in progress', 'on hold', 'completed', 'cancelled');
@@ -5338,6 +5388,7 @@ Const
   CODES_TFhirObjectType : Array[TFhirObjectType] of String = ('', '1', '2', '3', '4');
   CODES_TFhirObjectRole : Array[TFhirObjectRole] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24');
   CODES_TFhirObjectLifecycle : Array[TFhirObjectLifecycle] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15');
+  CODES_TFhirSlotstatus : Array[TFhirSlotstatus] of String = ('', 'BUSY', 'FREE', 'BUSY-UNAVAILABLE', 'BUSY-TENTATIVE');
   CODES_TFhirHierarchicalRelationshipType : Array[TFhirHierarchicalRelationshipType] of String = ('', 'parent', 'child');
   CODES_TFhirValuesetSupplyStatus : Array[TFhirValuesetSupplyStatus] of String = ('', 'requested', 'dispensed', 'received', 'failed', 'cancelled');
   CODES_TFhirValuesetSupplyDispenseStatus : Array[TFhirValuesetSupplyDispenseStatus] of String = ('', 'in progress', 'dispensed', 'abandoned');
@@ -5375,6 +5426,12 @@ Function TFhirSensitivitytypeListAsInteger(aSet : TFhirSensitivitytypeList) : In
 Function IntegerAsTFhirSensitivitytypeList(i : integer) : TFhirSensitivitytypeList; overload;
 Function TFhirSensitivitystatusListAsInteger(aSet : TFhirSensitivitystatusList) : Integer; overload;
 Function IntegerAsTFhirSensitivitystatusList(i : integer) : TFhirSensitivitystatusList; overload;
+Function TFhirParticipantrequiredListAsInteger(aSet : TFhirParticipantrequiredList) : Integer; overload;
+Function IntegerAsTFhirParticipantrequiredList(i : integer) : TFhirParticipantrequiredList; overload;
+Function TFhirParticipationstatusListAsInteger(aSet : TFhirParticipationstatusList) : Integer; overload;
+Function IntegerAsTFhirParticipationstatusList(i : integer) : TFhirParticipationstatusList; overload;
+Function TFhirParticipantstatusListAsInteger(aSet : TFhirParticipantstatusList) : Integer; overload;
+Function IntegerAsTFhirParticipantstatusList(i : integer) : TFhirParticipantstatusList; overload;
 Function TFhirCarePlanStatusListAsInteger(aSet : TFhirCarePlanStatusList) : Integer; overload;
 Function IntegerAsTFhirCarePlanStatusList(i : integer) : TFhirCarePlanStatusList; overload;
 Function TFhirCarePlanGoalStatusListAsInteger(aSet : TFhirCarePlanGoalStatusList) : Integer; overload;
@@ -5495,6 +5552,8 @@ Function TFhirObjectRoleListAsInteger(aSet : TFhirObjectRoleList) : Integer; ove
 Function IntegerAsTFhirObjectRoleList(i : integer) : TFhirObjectRoleList; overload;
 Function TFhirObjectLifecycleListAsInteger(aSet : TFhirObjectLifecycleList) : Integer; overload;
 Function IntegerAsTFhirObjectLifecycleList(i : integer) : TFhirObjectLifecycleList; overload;
+Function TFhirSlotstatusListAsInteger(aSet : TFhirSlotstatusList) : Integer; overload;
+Function IntegerAsTFhirSlotstatusList(i : integer) : TFhirSlotstatusList; overload;
 Function TFhirHierarchicalRelationshipTypeListAsInteger(aSet : TFhirHierarchicalRelationshipTypeList) : Integer; overload;
 Function IntegerAsTFhirHierarchicalRelationshipTypeList(i : integer) : TFhirHierarchicalRelationshipTypeList; overload;
 Function TFhirValuesetSupplyStatusListAsInteger(aSet : TFhirValuesetSupplyStatusList) : Integer; overload;
@@ -11889,6 +11948,87 @@ begin
  end;
 
 
+function TFhirParticipantrequiredListAsInteger(aSet : TFhirParticipantrequiredList) : Integer;
+var
+  a : TFhirParticipantrequired;
+begin
+  result := 0;
+  for a := low(TFhirParticipantrequired) to high(TFhirParticipantrequired) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirParticipantrequiredList(i : Integer) : TFhirParticipantrequiredList;
+var
+  aLoop : TFhirParticipantrequired;
+begin
+  result := [];
+  for aLoop := low(TFhirParticipantrequired) to high(TFhirParticipantrequired) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirParticipationstatusListAsInteger(aSet : TFhirParticipationstatusList) : Integer;
+var
+  a : TFhirParticipationstatus;
+begin
+  result := 0;
+  for a := low(TFhirParticipationstatus) to high(TFhirParticipationstatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirParticipationstatusList(i : Integer) : TFhirParticipationstatusList;
+var
+  aLoop : TFhirParticipationstatus;
+begin
+  result := [];
+  for aLoop := low(TFhirParticipationstatus) to high(TFhirParticipationstatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirParticipantstatusListAsInteger(aSet : TFhirParticipantstatusList) : Integer;
+var
+  a : TFhirParticipantstatus;
+begin
+  result := 0;
+  for a := low(TFhirParticipantstatus) to high(TFhirParticipantstatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirParticipantstatusList(i : Integer) : TFhirParticipantstatusList;
+var
+  aLoop : TFhirParticipantstatus;
+begin
+  result := [];
+  for aLoop := low(TFhirParticipantstatus) to high(TFhirParticipantstatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirCarePlanStatusListAsInteger(aSet : TFhirCarePlanStatusList) : Integer;
 var
   a : TFhirCarePlanStatus;
@@ -13501,6 +13641,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirObjectLifecycle) to high(TFhirObjectLifecycle) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirSlotstatusListAsInteger(aSet : TFhirSlotstatusList) : Integer;
+var
+  a : TFhirSlotstatus;
+begin
+  result := 0;
+  for a := low(TFhirSlotstatus) to high(TFhirSlotstatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirSlotstatusList(i : Integer) : TFhirSlotstatusList;
+var
+  aLoop : TFhirSlotstatus;
+begin
+  result := [];
+  for aLoop := low(TFhirSlotstatus) to high(TFhirSlotstatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
