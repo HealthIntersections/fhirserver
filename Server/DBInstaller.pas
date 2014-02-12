@@ -59,6 +59,8 @@ Type
     procedure CreateResourceVersionsTags;
     procedure DefineIndexes;
     procedure DefineResourceSpaces;
+    procedure DoPostTransactionInstall;
+    procedure DoPostTransactionUnInstall;
   public
     Constructor create(conn : TKDBConnection);
     Destructor Destroy; override;
@@ -321,9 +323,11 @@ Begin
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' MasterResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' SpaceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' Value nchar(128) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' Value2 nchar(128) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Value nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Value2 nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Target '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Extension nchar(5) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Xhtml '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_IndexEntries', 'EntryKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'IndexKey', 'Indexes', 'IndexKey', 'FK_IndexEntry_IndexKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_IndexEntry_ResKey'));
@@ -347,6 +351,20 @@ begin
   inherited;
 end;
 
+procedure TFHIRDatabaseInstaller.DoPostTransactionInstall;
+begin
+  FConn.ExecSQL('CREATE FULLTEXT CATALOG FHIR as DEFAULT');
+  FConn.ExecSQL('Create FULLTEXT INDEX on IndexEntries (Xhtml TYPE COLUMN Extension) KEY INDEX PK_IndexEntries');
+end;
+
+procedure TFHIRDatabaseInstaller.DoPostTransactionUnInstall;
+begin
+  try
+    FConn.ExecSQL('DROP FULLTEXT CATALOG FHIR');
+  except
+  end;
+end;
+
 procedure TFHIRDatabaseInstaller.DefineIndexes;
 var
   m : TFHIRIndexManager;
@@ -354,6 +372,16 @@ var
   names : TStringList;
 begin
   k := 1;
+
+  // general indexes
+  FConn.Sql := 'insert into Indexes (IndexKey, Name) values (:k, :d)';
+  FConn.prepare;
+  FConn.bindInteger('k', k);
+  FConn.bindString('d', NARRATIVE_INDEX_NAME);
+  FConn.execute;
+  inc(k);
+  FConn.terminate;
+
   m := TFHIRIndexManager.create(nil);
   names := TStringList.Create;
   try
@@ -403,36 +431,59 @@ begin
     FConn.Rollback;
     raise;
   end;
+  DoPostTransactionInstall;
 end;
 
 procedure TFHIRDatabaseInstaller.Uninstall;
+var
+  meta : TKDBMetaData;
 begin
-  FConn.StartTransact;
+  meta := FConn.FetchMetaData;
   try
-    if FConn.owner.platform = kdbMySQL then
-      FConn.execsql('ALTER TABLE Ids DROP FOREIGN KEY FK_ResCurrent_VersionKey')
-    else
-      FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
+    FConn.StartTransact;
+    try
+      if meta.hasTable('Ids') then
+        if FConn.owner.platform = kdbMySQL then
+          FConn.execsql('ALTER TABLE Ids DROP FOREIGN KEY FK_ResCurrent_VersionKey')
+        else
+          FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
 
-    FConn.DropTable('SearchEntries');
-    FConn.DropTable('Searches');
-    FConn.DropTable('IndexEntries');
-    FConn.DropTable('Indexes');
-    FConn.DropTable('Spaces');
+      if meta.hasTable('SearchEntries') then
+        FConn.DropTable('SearchEntries');
+      if meta.hasTable('Searches') then
+        FConn.DropTable('Searches');
+      if meta.hasTable('IndexEntries') then
+        FConn.DropTable('IndexEntries');
+      if meta.hasTable('Indexes') then
+        FConn.DropTable('Indexes');
+      if meta.hasTable('Spaces') then
+        FConn.DropTable('Spaces');
 
-    FConn.DropTable('VersionTags');
-    FConn.DropTable('Versions');
-    FConn.DropTable('Compartments');
-    FConn.DropTable('Ids');
-    FConn.DropTable('Config');
-    FConn.DropTable('Types');
-    FConn.DropTable('Tags');
-    FConn.DropTable('Sessions');
-    FConn.Commit;
-  except
-    FConn.Rollback;
-    raise;
+      if meta.hasTable('VersionTags') then
+        FConn.DropTable('VersionTags');
+      if meta.hasTable('Versions') then
+        FConn.DropTable('Versions');
+      if meta.hasTable('Compartments') then
+        FConn.DropTable('Compartments');
+      if meta.hasTable('Ids') then
+        FConn.DropTable('Ids');
+      if meta.hasTable('Config') then
+        FConn.DropTable('Config');
+      if meta.hasTable('Types') then
+        FConn.DropTable('Types');
+      if meta.hasTable('Tags') then
+        FConn.DropTable('Tags');
+      if meta.hasTable('Sessions') then
+        FConn.DropTable('Sessions');
+      FConn.Commit;
+    except
+      FConn.Rollback;
+      raise;
+    end;
+  finally
+    meta.free;
   end;
+  DoPostTransactionUnInstall;
 end;
 
 end.

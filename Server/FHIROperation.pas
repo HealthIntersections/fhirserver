@@ -45,7 +45,7 @@ uses
   DateSupport, StringSupport, EncodeSupport, GuidSupport, BytesSupport,
   KDBManager, KDBDialects,
   AdvObjects, AdvIntegerObjectMatches, AdvMemories, AdvBuffers, AdvVclStreams, AdvStringObjectMatches, AdvStringMatches,
-  AdvStringBuilders, AdvObjectLists, AdvNames,
+  AdvStringBuilders, AdvObjectLists, AdvNames, AdvXmlBuilders,
 
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, FHIRAtomFeed, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore;
@@ -53,6 +53,7 @@ uses
 const
   SEARCH_PARAM_NAME_ID = 'search-id';
   SEARCH_PARAM_NAME_OFFSET = 'search-offset';
+  SEARCH_PARAM_NAME_TEXT = '_text';
   SEARCH_PARAM_NAME_COUNT = '_count';
   SEARCH_PARAM_NAME_SORT = 'search-sort';
   SEARCH_PARAM_NAME_SUMMARY = '_summary';
@@ -289,7 +290,7 @@ begin
       if (att.modeST * [CompositionAttestationModeProfessional, CompositionAttestationModeLegal] <> []) then
         ref.authenticator := att.party.Clone; // which means that last one is the one
     end;
-    ref.createdST := comp.instantST.Clone;
+    ref.createdST := comp.dateST.Clone;
     ref.indexedST := NowUTC;
     ref.statusST := DocumentReferenceStatusCurrent;
     ref.docStatus := FFactory.makeCodeableConcept(FFactory.makeCoding('http://hl7.org/fhir/composition-status', comp.status.value, comp.status.value), '');
@@ -1148,6 +1149,10 @@ begin
   begin
     bHandled := true;
     wantSummary := true;
+  end
+  else if (name = '_text') then
+  begin
+    result := '(IndexKey = '+inttostr(FIndexer.NarrativeIndex)+' and CONTAINS(Xhtml, '''+SQLWrapString(value)+'''))';
   end
   else if pos('.', name) > 0 then
   begin
@@ -2143,6 +2148,7 @@ s := s +
 
   s := s +
 '<tr><td colspan="2"><hr/></td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_TEXT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_TEXT+'"></td><td> '+GetFhirMessage('SEARCH_REC_TEXT_COMMENT', lang)+'</td></tr>'#13#10+
 '<tr><td align="right">'+GetFhirMessage('SEARCH_REC_OFFSET', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_OFFSET+'"></td><td> '+GetFhirMessage('SEARCH_REC_OFFSET_COMMENT', lang)+'</td></tr>'#13#10+
 '<tr><td align="right">'+GetFhirMessage('SEARCH_REC_COUNT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_COUNT+'"></td><td> '+StringFormat(GetFhirMessage('SEARCH_REC_COUNT_COMMENT', lang), [SEARCH_PAGE_LIMIT])+'</td></tr>'#13#10+
 '<tr><td align="right">'+GetFhirMessage('SEARCH_SORT_BY', lang)+'</td><td><select size="1" name="'+SEARCH_PARAM_NAME_SORT+'">'+#13#10+

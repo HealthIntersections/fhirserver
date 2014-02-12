@@ -208,6 +208,8 @@ type
     property Tables : TKDBTables read FTables;
     property Procedures : TStringList read FProcedures;
     property SupportsProcedures : Boolean read FSupportsProcedures write FSupportsProcedures;
+
+    function HasTable(name : String) : boolean;
   end;
 
   TKDBManager = class;
@@ -2089,6 +2091,16 @@ begin
   inherited;
 end;
 
+
+function TKDBMetaData.HasTable(name: String): boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := 0 to Tables.Count - 1 do
+    if Tables.GetByIndex(i).Name = name then
+      result := true;
+end;
 
 { TKDBObjectList }
 

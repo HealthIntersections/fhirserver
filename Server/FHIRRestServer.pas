@@ -73,6 +73,18 @@ Type
     Property Msg : String read FMsg;
   end;
 
+  TFhirWebServer = class;
+
+  TFhirServerMaintenanceThread = class (TThread)
+  private
+    FServer : TFhirWebServer;
+    FLastSweep : TDateTime;
+  protected
+    procedure Execute; override;
+  public
+    constructor create(server : TFHIRWebServer);
+  end;
+
   TFhirLoginToken = Class (TAdvObject)
   private
     FProvider : TFHIRAuthProvider;
@@ -114,6 +126,7 @@ Type
     FHL7Appid : String;
     FHL7AppSecret : String;
     FTerminologyWebServer : TTerminologyWebServer;
+    FThread : TFhirServerMaintenanceThread;
 
     function OAuthPath(secure : boolean):String;
 
@@ -334,10 +347,12 @@ end;
 Procedure TFhirWebServer.Start(active : boolean);
 Begin
   StartServer(active);
+  FThread := TFhirServerMaintenanceThread.create(self);
 End;
 
 Procedure TFhirWebServer.Stop;
 Begin
+  FThread.Terminate;
   StopServer;
 End;
 
@@ -2043,6 +2058,31 @@ begin
     result := result+', '''+tail(user.resource.patientList[i])+'''';
   for i := 0 to user.TaggedCompartments.count - 1 do
     result := result+', '''+user.TaggedCompartments[i]+'''';
+end;
+
+{ TFhirServerMaintenanceThread }
+
+constructor TFhirServerMaintenanceThread.create(server: TFHIRWebServer);
+begin
+  FreeOnTerminate := true;
+  FServer := server;
+  FLastSweep := now;
+  inherited Create;
+end;
+
+procedure TFhirServerMaintenanceThread.Execute;
+begin
+  repeat
+    sleep(10);
+    if FLastSweep < now - DATETIME_MINUTE_ONE then
+    begin
+      try
+        FServer.FFhirStore.Sweep;
+      except
+      end;
+      FLastSweep := now;
+    end;
+  until Terminated;
 end;
 
 End.

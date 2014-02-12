@@ -17,13 +17,13 @@ are permitted provided that the following conditions are met:
    prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
@@ -37,14 +37,15 @@ outstanding search issues:
 }
 uses
   SysUtils, Classes,
-  AdvObjects, AdvObjectLists, AdvNames,
+  AdvObjects, AdvObjectLists, AdvNames, AdvXmlBuilders,
   EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport,
   KDBManager,
-  FHIRBase, FhirSupport, FHIRResources, FHIRComponents, FHIRConstants, FHIRAtomFeed, FHIRTypes, FHIRTags, FHIRUtilities,
+  FHIRBase, FhirSupport, FHIRResources, FHIRComponents, FHIRConstants, FHIRAtomFeed, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser,
   UcumServices;
 
 Const
   INDEX_ENTRY_LENGTH = 128;
+  NARRATIVE_INDEX_NAME = '_text';
 
 Type
   TKeyType = (ktResource, ktEntries, ktCompartment);
@@ -157,9 +158,12 @@ Type
     FPatientCompartments : TFhirCompartmentEntryList;
     FEntries : TFhirIndexEntryList;
     FMasterKey : Integer;
+    FNarrativeIndex : Integer;
     FBases : TStringList;
 
     procedure ReconcileIndexes;
+
+    function EncodeXhtml(r : TFhirResource) : TBytes;
 
     procedure buildIndexes;
     procedure buildIndexValues(key : integer; id : String; resource : TFhirResource);
@@ -191,6 +195,7 @@ Type
     // complexes
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirRatio; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirQuantity; name : String); overload;
+    procedure index(aType : TFhirResourceType; key : integer; value : TFhirSampledData; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirCoding; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirCodeableConcept; name : String); overload;
     procedure index(aType : TFhirResourceType; key : integer; value : TFhirIdentifier; name : String); overload;
@@ -249,10 +254,6 @@ Type
     procedure BuildIndexValuesRelatedPerson(key : integer; id : string; resource : TFhirRelatedPerson);
     procedure BuildIndexValuesSupply(key : integer; id : string; resource : TFhirSupply);
     procedure BuildIndexValuesOther(key : integer; id : string; resource : TFhirOther);
-    procedure BuildIndexValuesAppointment(key : integer; id : string; resource : TFhirAppointment);
-    procedure BuildIndexValuesAppointmentResponse(key : integer; id : string; resource : TFhirAppointmentResponse);
-    procedure BuildIndexValuesSlot(key : integer; id : string; resource : TFhirSlot);
-    procedure BuildIndexValuesAvailability(key : integer; id : string; resource : TFhirAvailability);
 
     procedure buildIndexesAdverseReaction;
     procedure buildIndexesAlert;
@@ -303,10 +304,6 @@ Type
     procedure BuildIndexesRelatedPerson;
     procedure BuildIndexesSupply;
     procedure BuildIndexesOther;
-    procedure BuildIndexesAppointment;
-    procedure BuildIndexesAppointmentResponse;
-    procedure BuildIndexesSlot;
-    procedure BuildIndexesAvailability;
 
     procedure processCompartmentTags(key : integer; id: String; tags : TFHIRAtomCategoryList);
     procedure processUnCompartmentTags(key : integer; id: String; tags : TFHIRAtomCategoryList);
@@ -323,6 +320,7 @@ Type
     Function GetTypeByName(types : TFhirResourceTypeSet; name : String) : TFhirSearchParamType;
     Function GetTargetsByName(types : TFhirResourceTypeSet; name : String) : TFhirResourceTypeSet;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
+    Property NarrativeIndex : integer read FNarrativeIndex;
   end;
 
 implementation
@@ -426,6 +424,7 @@ var
 begin
   case type_ of
     SearchParamTypeNumber : ; // nothing
+    SearchParamTypeQuantity : ; // nothing
     SearchParamTypeString :
       begin
         value1 := removeCaseAndAccents(value1);
@@ -551,10 +550,6 @@ begin
   BuildIndexesRelatedPerson;
   BuildIndexesSupply;
   BuildIndexesOther;
-  BuildIndexesAppointment;
-  BuildIndexesAppointmentResponse;
-  BuildIndexesSlot;
-  BuildIndexesAvailability;
 
   buildIndexesBinary;
 end;
@@ -611,15 +606,58 @@ begin
     frtRelatedPerson : buildIndexValuesRelatedPerson(key, id, TFhirRelatedPerson(resource));
     frtSupply : buildIndexValuesSupply(key, id, TFhirSupply(resource));
     frtOther : buildIndexValuesOther(key, id, TFhirOther(resource));
-    frtAppointment : buildIndexValuesAppointment(key, id, TFhirAppointment(resource));
-    frtAppointmentResponse : buildIndexValuesAppointmentResponse(key, id, TFhirAppointmentResponse(resource));
-    frtSlot : buildIndexValuesSlot(key, id, TFhirSlot(resource));
-    frtAvailability : buildIndexValuesAvailability(key, id, TFhirAvailability(resource));
   else
     raise Exception.create('resource type indexing not implemented yet for '+CODES_TFhirResourceType[resource.ResourceType]);
   end;
 end;
 
+
+function TFhirIndexManager.EncodeXhtml(r: TFhirResource): TBytes;
+var
+  b : TBytesStream;
+  x, body : TFhirXHtmlNode;
+  xc : TAdvXmlBuilder;
+  fc : TFHIRXmlComposer;
+begin
+  b :=  TBytesStream.Create;
+  try
+    if r.ResourceType <> frtBinary then
+    begin
+      x := TFhirXHtmlNode.Create;
+      try
+        x.NodeType := fhntElement;
+        x.Name := 'html';
+        x.AddChild('head').AddChild('title').AddText(CODES_TFhirResourceType[r.ResourceType]);
+        body := x.AddChild('body');
+        if (r.language = nil) then
+          body.SetAttribute('lang', 'en')
+        else
+          body.SetAttribute('lang', r.language.value);
+        if (r.text <> nil) and (r.text.div_ <> nil) then
+          body.ChildNodes.Add(r.text.div_.Link);
+        xc := TAdvXmlBuilder.Create;
+        try
+          xc.Start;
+          fc := TFHIRXmlComposer.Create('en');
+          try
+            fc.ComposeXHtmlNode(xc, 'html', x);
+          finally
+            fc.Free;
+          end;
+          xc.Finish;
+          xc.Build(b);
+        finally
+          xc.Free;
+        end;
+      finally
+        x.Free;
+      end;
+    end;
+    result := copy(b.Bytes, 0, b.size); // don't compress, sql server has to read it.
+  finally
+    b.free;
+  end;
+end;
 
 
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key : integer; value: TFhirString; name: String);
@@ -660,6 +698,8 @@ begin
     for i := 0 to FIndexes.Count - 1 Do
       if SameText(FIndexes[i].Name, FSpaces.FDb.ColStringByName['Name']) then
         FIndexes[i].key := FSpaces.FDb.ColIntegerByName['IndexKey'];
+    if FSpaces.FDb.ColStringByName['Name'] = NARRATIVE_INDEX_NAME then
+      FNarrativeIndex := FSpaces.FDb.ColIntegerByName['IndexKey'];
   end;
   FSpaces.FDb.terminate;
 end;
@@ -689,6 +729,16 @@ begin
   processCompartmentTags(key, id, tags);
   buildIndexValues(key, id, resource);
   processUnCompartmentTags(key, id, tags);
+
+  FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, Extension, Xhtml) values (:k, :i, :r, ''html'', :xb)';
+  FSpaces.FDB.prepare;
+  FSpaces.FDB.BindInteger('k', FKeyEvent(ktEntries));
+  FSpaces.FDB.BindInteger('i', FNarrativeIndex);
+  FSpaces.FDB.BindInteger('r', key);
+  FSpaces.FDB.BindBlobFromBytes('xb', EncodeXhtml(resource));
+  FSpaces.FDB.execute;
+  FSpaces.FDB.terminate;
+
 
   FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, MasterResourceKey, SpaceKey, Value, Value2, target) values (:k, :i, :r, :m, :s, :v, :v2, :t)';
   FSpaces.FDB.prepare;
@@ -868,7 +918,7 @@ begin
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join: "'+name+'"');
-  if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber]) then
+  if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber, SearchParamTypeQuantity]) then
     raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing quantity');
 
   v := ComparatorPrefix(value.valueST, value.comparatorST);
@@ -987,6 +1037,11 @@ begin
   if (length(value.value.value) > INDEX_ENTRY_LENGTH) then
     raise exception.create('contact value too long for indexing: '+value.value.value);
   FEntries.add(key, ndx, ref, value.value.value, '', 0, ndx.SearchType);
+end;
+
+procedure TFhirIndexManager.index(aType: TFhirResourceType; key: integer; value: TFhirSampledData; name: String);
+begin
+ // todo
 end;
 
 procedure TFhirIndexManager.index(aType: TFhirResourceType; key: integer; value: TFhirRatio; name: String);
@@ -1788,7 +1843,7 @@ end;
 { TFhirCompositionIndexManager }
 
 Const
-  CHECK_TSearchParamsComposition : Array[TSearchParamsComposition] of TSearchParamsComposition = ( spComposition__id, spComposition_Attester, spComposition_Author, spComposition_Class, spComposition_Context, spComposition_Identifier, spComposition_Instant, spComposition_Section_content, spComposition_Section_type, spComposition_Subject, spComposition_Type);
+  CHECK_TSearchParamsComposition : Array[TSearchParamsComposition] of TSearchParamsComposition = ( spComposition__id, spComposition_Attester, spComposition_Author, spComposition_Class, spComposition_Context, spComposition_Date, spComposition_Identifier, spComposition_Section_content, spComposition_Section_type, spComposition_Subject, spComposition_Type);
 
 procedure TFhirIndexManager.buildIndexesComposition;
 var
@@ -1814,7 +1869,7 @@ procedure TFhirIndexManager.buildIndexValuesComposition(key : integer; id : Stri
 var
   i : integer;
 begin
-  index(frtComposition, key, resource.instant, 'instant');
+  index(frtComposition, key, resource.date, 'date');
   index(frtComposition, key, resource.identifier, 'identifier');
   index(frtComposition, key, resource, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
@@ -1972,7 +2027,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id, spObservation_Date, spObservation_Name, spObservation_Name_value, spObservation_Performer, spObservation_Reliability, spObservation_Specimen, spObservation_Status, spObservation_Subject, spObservation_Value);
+  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id, spObservation_Date, spObservation_Name,   spObservation_Name_value_x, spObservation_Performer, spObservation_Related, spObservation_Related_target, spObservation_Related_type, spObservation_Reliability, spObservation_Specimen, spObservation_Status, spObservation_Subject, spObservation_Value_concept, spObservation_Value_date, spObservation_Value_quantity, spObservation_Value_string);
 
 procedure TFhirIndexManager.buildIndexesObservation;
 var
@@ -1988,16 +2043,6 @@ end;
 procedure TFhirIndexManager.buildIndexValuesObservation(key : integer;  id : String; resource: TFhirObservation);
 var
   i : integer;
-  procedure indexValue(v : TFhirElement; n : String);
-  begin
-    if v is TFhirQuantity then
-      index(frtObservation, key, TFhirQuantity(v), n)
-    else if v is TFhirCodeableConcept then
-      index(frtObservation, key, TFhirCodeableConcept(v), n)
-    else if v is TFhirString then
-      index(frtObservation, key, TFhirString(v).value, n);
-    // todo: Attachment|Ratio|Choice|Period|
-  end;
 begin
   index(frtObservation, key, resource.name, 'name');
   index(frtObservation, key, resource, resource.subject, 'subject');
@@ -2009,7 +2054,25 @@ begin
   for i := 0 to resource.performerList.Count - 1 Do
     index(frtObservation, key, resource, resource.performerList[i], 'performer');
   index(frtObservation, key, resource, resource.specimen, 'specimen');
-  indexValue(resource.value, 'value');
+
+  if resource.value is TFhirQuantity then
+    index(frtObservation, key, TFhirQuantity(resource.value), 'value-quantity')
+  else if resource.value is TFhirSampledData then
+    index(frtObservation, key, TFhirSampledData(resource.value), 'value-quantity')
+  else if resource.value is TFhirRatio then
+    index(frtObservation, key, TFhirRatio(resource.value), 'value-quantity')
+  else if resource.value is TFhirCodeableConcept then
+    index(frtObservation, key, TFhirCodeableConcept(resource.value), 'value-concept')
+  else if resource.value is TFhirPeriod then
+    index(frtObservation, key, TFhirPeriod(resource.value), 'value-date')
+  else if resource.value is TFhirString then
+    index(frtObservation, key, TFhirString(resource.value).value, 'value-string');
+
+  for i := 0 to resource.relatedList.Count - 1 Do
+  begin
+    index(frtObservation, key, resource.relatedList[i].type_, 'related-type');
+    index(frtObservation, key, resource, resource.relatedList[i].target, 'related-target');
+  end;
 end;
 
 Const
@@ -2110,7 +2173,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TSearchParamsDiagnosticReport = ( spDiagnosticReport__id, spDiagnosticReport_Date, spDiagnosticReport_Diagnosis, spDiagnosticReport_Group, spDiagnosticReport_Identifier, spDiagnosticReport_Image, spDiagnosticReport_Issued, spDiagnosticReport_Name, spDiagnosticReport_Performer, spDiagnosticReport_Request, spDiagnosticReport_Result, spDiagnosticReport_Service, spDiagnosticReport_Specimen, spDiagnosticReport_Status, spDiagnosticReport_Subject);
+  CHECK_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TSearchParamsDiagnosticReport = ( spDiagnosticReport__id, spDiagnosticReport_Date, spDiagnosticReport_Diagnosis, spDiagnosticReport_Identifier, spDiagnosticReport_Image, spDiagnosticReport_Issued, spDiagnosticReport_Name, spDiagnosticReport_Performer, spDiagnosticReport_Request, spDiagnosticReport_Result, spDiagnosticReport_Service, spDiagnosticReport_Specimen, spDiagnosticReport_Status, spDiagnosticReport_Subject);
 
 procedure TFhirIndexManager.buildIndexesDiagnosticReport;
 var
@@ -2124,7 +2187,7 @@ begin
 end;
 
 procedure TFhirIndexManager.buildIndexValuesDiagnosticReport(key : integer; id : String; resource: TFhirDiagnosticReport);
-  procedure IndexGroup(group : TFhirDiagnosticReportResults);
+{  procedure IndexGroup(group : TFhirDiagnosticReportResults);
   var
     i : integer;
   begin
@@ -2134,7 +2197,7 @@ procedure TFhirIndexManager.buildIndexValuesDiagnosticReport(key : integer; id :
       index(frtDiagnosticReport, key, resource, group.resultList[i], 'result');
     for i := 0 to group.groupList.count - 1 do
       IndexGroup(group.groupList[i]);
-  end;
+  end;}
 var
   i, j, k : integer;
 begin
@@ -2143,9 +2206,9 @@ begin
   for k := 0 to resource.RequestDetailList.count - 1 do
     index(frtDiagnosticReport, key, resource, resource.requestDetailList[k], 'request');
 
-  index(frtDiagnosticReport, key, resource.results.name, 'name');
-  for j := 0 to resource.results.groupList.count - 1 do
-    IndexGroup(resource.results.groupList[j]);
+  index(frtDiagnosticReport, key, resource.name, 'name');
+  for j := 0 to resource.resultList.count - 1 do
+    index(frtDiagnosticReport, key, resource, resource.resultList[j], 'result');
 
   index(frtDiagnosticReport, key, resource, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
@@ -2158,8 +2221,8 @@ begin
   else
     index(frtDiagnosticReport, key, TFhirDateTime(resource.diagnostic), 'date');
 
-//  for i := 0 to resource.specimenList.Count - 1 Do
-//    index(frtDiagnosticReport, key, resource.specimenList[i], 'specimen');
+  for i := 0 to resource.specimenList.Count - 1 Do
+    index(frtDiagnosticReport, key, resource, resource.specimenList[i], 'specimen');
 
   for i := 0 to resource.imageList.Count - 1 Do
     index(frtDiagnosticReport, key, resource, resource.imageList[i].link_, 'image');
@@ -3050,6 +3113,7 @@ begin
   end;
 end;
 
+(*
 Const
   CHECK_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TSearchParamsAppointment = ( spAppointment__id, spAppointment_Date, spAppointment_Partstatus, spAppointment_Status, spAppointment_Subject);
 
@@ -3153,6 +3217,7 @@ begin
   index(frtAvailability, key, resource, resource.individual, 'individual');
   index(frtAvailability, key, resource.type_, 'slottype');
 end;
+*)
 
 
 { TFhirCompartmentEntryList }

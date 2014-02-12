@@ -34,19 +34,16 @@ unit FHIRConstants;
 
 interface
 
-// FHIR v0.12 generated Wed, Jan 15, 2014 14:09+1100
+// FHIR v0.80 generated Mon, Feb 3, 2014 23:47+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
 
 Const
-  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'AdverseReaction', 'Alert', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'Availability', 'CarePlan', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Device', 'DeviceObservationReport', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'Encounter', 'FamilyHistory', 'Group', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationPrescription', 'MedicationStatement', 'MessageHeader', 'Observation', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Other', 'Patient', 'Practitioner', 'Procedure', 'Profile', 'Provenance', 'Query', 'Questionnaire', 'RelatedPerson', 'SecurityEvent', 'Slot', 'Specimen', 'Substance', 'Supply', 'ValueSet', 'Binary');
+  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'AdverseReaction', 'Alert', 'AllergyIntolerance', 'CarePlan', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Device', 'DeviceObservationReport', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'Encounter', 'FamilyHistory', 'Group', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationPrescription', 'MedicationStatement', 'MessageHeader', 'Observation', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Other', 'Patient', 'Practitioner', 'Procedure', 'Profile', 'Provenance', 'Query', 'Questionnaire', 'RelatedPerson', 'SecurityEvent', 'Specimen', 'Substance', 'Supply', 'ValueSet', 'Binary');
   PLURAL_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'adversereactions',
      'alerts',
      'allergyintolerances',
-     'appointments',
-     'appointmentresponses',
-     'availabilities',
      'careplans',
      'compositions',
      'conceptmaps',
@@ -88,7 +85,6 @@ Const
      'questionnaires',
      'relatedpeople',
      'securityevents',
-     'slots',
      'specimen',
      'substances',
      'supplies',
@@ -97,9 +93,6 @@ Const
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'adversereaction',
      'alert',
      'allergyintolerance',
-     'appointment',
-     'appointmentresponse',
-     'availability',
      'careplan',
      'composition',
      'conceptmap',
@@ -141,7 +134,6 @@ Const
      'questionnaire',
      'relatedperson',
      'securityevent',
-     'slot',
      'specimen',
      'substance',
      'supply',
@@ -150,9 +142,6 @@ Const
   CLASSES_TFhirResourceType : Array[TFhirResourceType] of TFhirResourceClass = (nil, TFhirAdverseReaction,
      TFhirAlert,
      TFhirAllergyIntolerance,
-     TFhirAppointment,
-     TFhirAppointmentResponse,
-     TFhirAvailability,
      TFhirCarePlan,
      TFhirComposition,
      TFhirConceptMap,
@@ -194,7 +183,6 @@ Const
      TFhirQuestionnaire,
      TFhirRelatedPerson,
      TFhirSecurityEvent,
-     TFhirSlot,
      TFhirSpecimen,
      TFhirSubstance,
      TFhirSupply,
@@ -203,9 +191,6 @@ Const
   ALL_RESOURCE_TYPES = [frtAdverseReaction,
      frtAlert,
      frtAllergyIntolerance,
-     frtAppointment,
-     frtAppointmentResponse,
-     frtAvailability,
      frtCarePlan,
      frtComposition,
      frtConceptMap,
@@ -247,7 +232,6 @@ Const
      frtQuestionnaire,
      frtRelatedPerson,
      frtSecurityEvent,
-     frtSlot,
      frtSpecimen,
      frtSubstance,
      frtSupply,
@@ -255,60 +239,56 @@ Const
      frtBinary];
 
 
-  COMPARTMENT_PARAM_NAMES : Array[TFhirResourceType, TFhirResourceType] of String = (('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', 'subject', 'subject', 'subject', 'subject', 'recorder | individual', 'individual | author', 'subject', 'subject', '', 'subject', '', '', 'subject', 'subject', 'subject', 'subject', 'subject', 'subject', 'subject', '', 'subject', 'subject', 'subject', 'subject', '', 'subject', '', 'patient', 'patient', 'patient', 'patient', '', 'subject', '', 'subject', 'request.subject', '', 'patient', '{def}', '', 'subject', '', 'target.subject | target.patient', '', 'subject', 'patient', 'reference.subject | reference.patient', 'author', 'subject', '', 'patient', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''));
+  COMPARTMENT_PARAM_NAMES : Array[TFhirResourceType, TFhirResourceType] of String = (('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', 'subject', 'subject', 'subject', 'subject', 'subject', '', 'subject', '', '', 'subject', 'subject', 'subject', 'subject', 'subject', 'subject', 'subject', '', 'subject', 'subject', 'subject', 'subject', '', 'subject', '', 'patient', 'patient', 'patient', 'patient', '', 'subject', '', 'subject', 'request.subject', '', 'patient', '{def}', '', 'subject', '', 'target.subject | target.patient', '', 'subject', 'patient', 'reference.subject | reference.patient', 'subject', '', 'patient', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+     ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''));
 
   CODES_TSearchParamsAdverseReaction : Array[TSearchParamsAdverseReaction] of String = ('_id', 'date', 'subject', 'substance', 'symptom');
   DESC_TSearchParamsAdverseReaction : Array[TSearchParamsAdverseReaction] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
@@ -350,42 +330,6 @@ Const
      'substance: [frtSubstance]',
      'type: []');
   TARGETS_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of TFhirResourceTypeSet = ([], [], [frtPatient, frtPractitioner], [], [frtPatient], [frtSubstance], []);
-  CODES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_id', 'date', 'partstatus', 'status', 'subject');
-  DESC_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'Appointment date/time.',
-     'The Participation status of the subject, or other participant on the appointment',
-     'The overall status of the appointment',
-     'The subject that the sensitivity is about');
-  TYPES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeReference);
-//  CHECK_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TSearchParamsAppointment = ( spAppointment__id,  spAppointment_Date,  spAppointment_Partstatus,  spAppointment_Status,  spAppointment_Subject);
-  PATHS_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_id: []',
-     'date: []',
-     'partstatus: []',
-     'status: []',
-     'subject: [frtDevice, frtPatient, frtPractitioner, frtRelatedPerson]');
-  TARGETS_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TFhirResourceTypeSet = ([], [], [], [], [frtDevice, frtPatient, frtPractitioner, frtRelatedPerson]);
-  CODES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_id', 'appointment', 'partstatus', 'subject');
-  DESC_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'The appointment that the response is attached to',
-     'The overall status of the appointment',
-     'The subject that the appointment response replies for');
-  TYPES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeString,  SearchParamTypeReference);
-//  CHECK_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of TSearchParamsAppointmentResponse = ( spAppointmentResponse__id,  spAppointmentResponse_Appointment,  spAppointmentResponse_Partstatus,  spAppointmentResponse_Subject);
-  PATHS_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_id: []',
-     'appointment: [frtAppointment]',
-     'partstatus: []',
-     'subject: [frtDevice, frtPatient, frtPractitioner, frtRelatedPerson]');
-  TARGETS_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of TFhirResourceTypeSet = ([], [frtAppointment], [], [frtDevice, frtPatient, frtPractitioner, frtRelatedPerson]);
-  CODES_TSearchParamsAvailability : Array[TSearchParamsAvailability] of String = ('_id', 'individual', 'slottype');
-  DESC_TSearchParamsAvailability : Array[TSearchParamsAvailability] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'The individual to find an availability for',
-     'The type of appointments that can be booked into associated slot(s)');
-  TYPES_TSearchParamsAvailability : Array[TSearchParamsAvailability] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
-//  CHECK_TSearchParamsAvailability : Array[TSearchParamsAvailability] of TSearchParamsAvailability = ( spAvailability__id,  spAvailability_Individual,  spAvailability_Slottype);
-  PATHS_TSearchParamsAvailability : Array[TSearchParamsAvailability] of String = ('_id: []',
-     'individual: [frtDevice, frtPatient, frtLocation, frtPractitioner, frtRelatedPerson]',
-     'slottype: []');
-  TARGETS_TSearchParamsAvailability : Array[TSearchParamsAvailability] of TFhirResourceTypeSet = ([], [frtDevice, frtPatient, frtLocation, frtPractitioner, frtRelatedPerson], []);
   CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_id', 'activitycode', 'activitydate', 'activitydetail', 'condition', 'date', 'participant', 'patient');
   DESC_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'Detail type of activity',
@@ -406,27 +350,27 @@ Const
      'participant: [frtOrganization, frtPatient, frtPractitioner, frtRelatedPerson]',
      'patient: [frtPatient]');
   TARGETS_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of TFhirResourceTypeSet = ([], [], [], [frtMedicationPrescription, frtEncounter, frtProcedure, frtDiagnosticOrder], [frtCondition], [], [frtOrganization, frtPatient, frtPractitioner, frtRelatedPerson], [frtPatient]);
-  CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_id', 'attester', 'author', 'class', 'context', 'identifier', 'instant', 'section-content', 'section-type', 'subject', 'type');
+  CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_id', 'attester', 'author', 'class', 'context', 'date', 'identifier', 'section-content', 'section-type', 'subject', 'type');
   DESC_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'Who attested the composition',
-     'Who/what authored the composition',
-     'Categorisation of Composition',
+     'Who and/or what authored the composition',
+     'Categorization of Composition',
      'Code(s) that apply to the event being documented',
-     'Logical identifier of composition (version-independent)',
      'Composition editing time',
+     'Logical identifier of composition (version-independent)',
      'The actual data for the section',
      'Classification of section (recommended)',
-     'Who/what the composition is about',
+     'Who and/or what the composition is about',
      'Kind of composition (LOINC if possible)');
-  TYPES_TSearchParamsComposition : Array[TSearchParamsComposition] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
-//  CHECK_TSearchParamsComposition : Array[TSearchParamsComposition] of TSearchParamsComposition = ( spComposition__id,  spComposition_Attester,  spComposition_Author,  spComposition_Class,  spComposition_Context,  spComposition_Identifier,  spComposition_Instant,  spComposition_Section_content,  spComposition_Section_type,  spComposition_Subject,  spComposition_Type);
+  TYPES_TSearchParamsComposition : Array[TSearchParamsComposition] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
+//  CHECK_TSearchParamsComposition : Array[TSearchParamsComposition] of TSearchParamsComposition = ( spComposition__id,  spComposition_Attester,  spComposition_Author,  spComposition_Class,  spComposition_Context,  spComposition_Date,  spComposition_Identifier,  spComposition_Section_content,  spComposition_Section_type,  spComposition_Subject,  spComposition_Type);
   PATHS_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_id: []',
      'attester: [frtOrganization, frtPatient, frtPractitioner]',
      'author: [frtDevice, frtPatient, frtPractitioner, frtRelatedPerson]',
      'class: []',
      'context: []',
+     'date: []',
      'identifier: []',
-     'instant: []',
      'section-content: ALL_RESOURCE_TYPES',
      'section-type: []',
      'subject: [frtDevice, frtLocation, frtPatient, frtPractitioner, frtGroup]',
@@ -537,11 +481,11 @@ Const
   CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_id', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'type', 'udi');
   DESC_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'Instance id from manufacturer, owner and others',
-     'Where the resource is found',
+     'A location, where the resource is found',
      'The manufacturer of the device',
      'The model of the device',
      'The organization responsible for the device',
-     'If the resource is affixed to a person',
+     'Patient information, if the resource is affixed to a person',
      'The type of the device',
      'FDA Mandated Unique Device Identifier');
   TYPES_TSearchParamsDevice : Array[TSearchParamsDevice] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeString,  SearchParamTypeString,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeString);
@@ -589,7 +533,7 @@ Const
      'Who ordered the test',
      'If the whole order relates to specific specimens',
      'requested | received | accepted | in progress | review | completed | suspended | rejected | failed',
-     'Who/what test is about');
+     'Who and/or what test is about');
   TYPES_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeComposite,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeComposite,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference);
 //  CHECK_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of TSearchParamsDiagnosticOrder = ( spDiagnosticOrder__id,  spDiagnosticOrder_Actor,  spDiagnosticOrder_Bodysite,  spDiagnosticOrder_Code,  spDiagnosticOrder_Encounter,  spDiagnosticOrder_Event_date,  spDiagnosticOrder_Event_status,  spDiagnosticOrder_Event_status_date,  spDiagnosticOrder_Identifier,  spDiagnosticOrder_Item_date,  spDiagnosticOrder_Item_past_status,  spDiagnosticOrder_Item_status,  spDiagnosticOrder_Item_status_date,  spDiagnosticOrder_Orderer,  spDiagnosticOrder_Specimen,  spDiagnosticOrder_Status,  spDiagnosticOrder_Subject);
   PATHS_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of String = ('_id: []',
@@ -610,11 +554,10 @@ Const
      'status: []',
      'subject: [frtDevice, frtLocation, frtPatient, frtGroup]');
   TARGETS_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of TFhirResourceTypeSet = ([], [frtDevice, frtPractitioner], [], [], [frtEncounter], [], [], [], [], [], [], [], [], [frtPractitioner], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup]);
-  CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_id', 'date', 'diagnosis', 'group', 'identifier', 'image', 'issued', 'name', 'performer', 'request', 'result', 'service', 'specimen', 'status', 'subject');
+  CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_id', 'date', 'diagnosis', 'identifier', 'image', 'issued', 'name', 'performer', 'request', 'result', 'service', 'specimen', 'status', 'subject');
   DESC_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The clinically relevant time of the report',
      'A coded diagnosis on the report',
-     'Name /code of a group in the report',
      'An identifier for the report',
      'Reference to the image source',
      'When the report was issued',
@@ -626,12 +569,11 @@ Const
      'The specimen details',
      'The status of the report',
      'The subject of the report');
-  TYPES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference);
-//  CHECK_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TSearchParamsDiagnosticReport = ( spDiagnosticReport__id,  spDiagnosticReport_Date,  spDiagnosticReport_Diagnosis,  spDiagnosticReport_Group,  spDiagnosticReport_Identifier,  spDiagnosticReport_Image,  spDiagnosticReport_Issued,  spDiagnosticReport_Name,  spDiagnosticReport_Performer,  spDiagnosticReport_Request,  spDiagnosticReport_Result,  spDiagnosticReport_Service,  spDiagnosticReport_Specimen,  spDiagnosticReport_Status,  spDiagnosticReport_Subject);
+  TYPES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference);
+//  CHECK_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TSearchParamsDiagnosticReport = ( spDiagnosticReport__id,  spDiagnosticReport_Date,  spDiagnosticReport_Diagnosis,  spDiagnosticReport_Identifier,  spDiagnosticReport_Image,  spDiagnosticReport_Issued,  spDiagnosticReport_Name,  spDiagnosticReport_Performer,  spDiagnosticReport_Request,  spDiagnosticReport_Result,  spDiagnosticReport_Service,  spDiagnosticReport_Specimen,  spDiagnosticReport_Status,  spDiagnosticReport_Subject);
   PATHS_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_id: []',
      'date: []',
      'diagnosis: []',
-     'group: []',
      'identifier: []',
      'image: [frtMedia]',
      'issued: []',
@@ -643,10 +585,10 @@ Const
      'specimen: [frtSpecimen]',
      'status: []',
      'subject: [frtDevice, frtLocation, frtPatient, frtGroup]');
-  TARGETS_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TFhirResourceTypeSet = ([], [], [], [], [], [frtMedia], [], [], [frtOrganization, frtPractitioner], [frtDiagnosticOrder], [frtObservation], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup]);
+  TARGETS_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of TFhirResourceTypeSet = ([], [], [], [], [frtMedia], [], [], [frtOrganization, frtPractitioner], [frtDiagnosticOrder], [frtObservation], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup]);
   CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_id', 'author', 'confidentiality', 'content', 'created', 'description', 'identifier', 'recipient', 'status', 'subject', 'supersedes', 'type');
   DESC_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'Who/what authored the document',
+     'Who and/or what authored the document',
      'Sensitivity of set of documents',
      'Contents of this set of documents',
      'When this document manifest created',
@@ -675,8 +617,8 @@ Const
   CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_id', 'authenticator', 'author', 'class', 'confidentiality', 'created', 'custodian', 'description', 'event', 'facility', 'format', 'identifier', 'indexed', 'language', 'location', 'period', 'relatesto', 'relation', 'relationship', 'size', 'status', 'subject', 'type');
   DESC_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'Who/What authenticated the document',
-     'Who/what authored the document',
-     'Categorisation of Document',
+     'Who and/or what authored the document',
+     'Categorization of Document',
      'Sensitivity of source document',
      'Document creation time',
      'Org which maintains the document',
@@ -728,7 +670,7 @@ Const
      'Identifier(s) by which this encounter is known',
      'Reason the encounter takes place (resource)',
      'Length of encounter in days',
-     'The location the encounter takes place',
+     'Location the encounter takes place',
      'Time period during which the patient was present at the location',
      'planned | in progress | onleave | finished | cancelled',
      'The patient present at the encounter');
@@ -868,7 +810,7 @@ Const
      'When the list was prepared',
      'Why list is empty',
      'Actual entry',
-     'Who/what defined the list contents',
+     'Who and/or what defined the list contents',
      'If all resources have the same subject');
   TYPES_TSearchParamsList : Array[TSearchParamsList] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeReference);
 //  CHECK_TSearchParamsList : Array[TSearchParamsList] of TSearchParamsList = ( spList__id,  spList_Code,  spList_Date,  spList_Empty_reason,  spList_Item,  spList_Source,  spList_Subject);
@@ -974,7 +916,7 @@ Const
      'Returns dispenses of this medicine',
      'The identity of a patient to list dispenses  for',
      'The identity of a prescription to list dispenses from',
-     'Return all dispenses with the specified responsibel party',
+     'Return all dispenses with the specified responsible party',
      'Status of the dispense',
      'Return all dispenses of a specific type',
      'Date when medication handed over to patient (outpatient setting), or supplied to ward or clinic (inpatient setting)',
@@ -1034,30 +976,42 @@ Const
 //  CHECK_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of TSearchParamsMessageHeader = ( spMessageHeader__id);
   PATHS_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_id: []');
   TARGETS_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of TFhirResourceTypeSet = ([]);
-  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_id', 'date', 'name', 'name-value', 'performer', 'reliability', 'specimen', 'status', 'subject', 'value');
+  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_id', 'date', 'name', 'name-value-[x]', 'performer', 'related', 'related-target', 'related-type', 'reliability', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
   DESC_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'Obtained date/time. If the obtained element is a period, a date that falls in the period',
      'The name of the observation type',
-     'Both name and value',
-     'Who/what performed the observation',
+     'Both name and one of the value parameters',
+     'Who and/or what performed the observation',
+     'Related Observations - search on related-type and related-target together',
+     'Observation that is related to this one',
+     'has-component | has-member | derived-from | sequel-to | replaces | qualified-by | interfered-by',
      'The reliability of the observation',
      'Specimen used for this observation',
      'The status of the observation',
      'The subject that the observation is about',
-     'The code or value of a result');
-  TYPES_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeComposite,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
-//  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id,  spObservation_Date,  spObservation_Name,  spObservation_Name_value,  spObservation_Performer,  spObservation_Reliability,  spObservation_Specimen,  spObservation_Status,  spObservation_Subject,  spObservation_Value);
+     'The value of the observation, if the value is a CodeableConcept',
+     'The value of the observation, if the value is a Period',
+     'The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)',
+     'The value of the observation, if the value is a string, and also searches in CodeableConcept.text');
+  TYPES_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeComposite,  SearchParamTypeReference,  SearchParamTypeComposite,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeQuantity,  SearchParamTypeString);
+//  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id,  spObservation_Date,  spObservation_Name,  spObservation_Name_value_[x],  spObservation_Performer,  spObservation_Related,  spObservation_Related_target,  spObservation_Related_type,  spObservation_Reliability,  spObservation_Specimen,  spObservation_Status,  spObservation_Subject,  spObservation_Value_concept,  spObservation_Value_date,  spObservation_Value_quantity,  spObservation_Value_string);
   PATHS_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_id: []',
      'date: []',
      'name: []',
-     'name-value: []',
+     'name-value-[x]: []',
      'performer: [frtDevice, frtOrganization, frtPractitioner]',
+     'related: []',
+     'related-target: [frtObservation]',
+     'related-type: []',
      'reliability: []',
      'specimen: [frtSpecimen]',
      'status: []',
      'subject: [frtDevice, frtLocation, frtPatient, frtGroup]',
-     'value: []');
-  TARGETS_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirResourceTypeSet = ([], [], [], [], [frtDevice, frtOrganization, frtPractitioner], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup], []);
+     'value-concept: []',
+     'value-date: []',
+     'value-quantity: []',
+     'value-string: []');
+  TARGETS_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirResourceTypeSet = ([], [], [], [], [frtDevice, frtOrganization, frtPractitioner], [], [frtObservation], [], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup], [], [], [], []);
   CODES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('_id');
   DESC_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('The logical resource id associated with the resource (must be supported by all servers)');
   TYPES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of TFhirSearchParamType = ( SearchParamTypeToken);
@@ -1336,20 +1290,6 @@ Const
      'type: []',
      'user: []');
   TARGETS_TSearchParamsSecurityEvent : Array[TSearchParamsSecurityEvent] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], ALL_RESOURCE_TYPES, [], [], [], [], []);
-  CODES_TSearchParamsSlot : Array[TSearchParamsSlot] of String = ('_id', 'availability', 'fbtype', 'slottype', 'start');
-  DESC_TSearchParamsSlot : Array[TSearchParamsSlot] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'The Availability Resource that we are seeking a slot within',
-     'The free/busy status of the appointment',
-     'The type of appointments that can be booked into the slot',
-     'Appointment date/time.');
-  TYPES_TSearchParamsSlot : Array[TSearchParamsSlot] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate);
-//  CHECK_TSearchParamsSlot : Array[TSearchParamsSlot] of TSearchParamsSlot = ( spSlot__id,  spSlot_Availability,  spSlot_Fbtype,  spSlot_Slottype,  spSlot_Start);
-  PATHS_TSearchParamsSlot : Array[TSearchParamsSlot] of String = ('_id: []',
-     'availability: [frtAvailability]',
-     'fbtype: []',
-     'slottype: []',
-     'start: []');
-  TARGETS_TSearchParamsSlot : Array[TSearchParamsSlot] of TFhirResourceTypeSet = ([], [frtAvailability], [], [], []);
   CODES_TSearchParamsSpecimen : Array[TSearchParamsSpecimen] of String = ('_id', 'subject');
   DESC_TSearchParamsSpecimen : Array[TSearchParamsSpecimen] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The subject of the specimen');
@@ -1420,11 +1360,11 @@ Const
      'system: []',
      'version: []');
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], []);
-  FHIR_GENERATED_VERSION = '0.12';
+  FHIR_GENERATED_VERSION = '0.80';
 
-  FHIR_GENERATED_REVISION = '2143';
+  FHIR_GENERATED_REVISION = '2286';
 
-  FHIR_GENERATED_DATE = '20140115140945';
+  FHIR_GENERATED_DATE = '20140203234711';
 
 
 

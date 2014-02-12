@@ -106,7 +106,6 @@ Type
     FBases : TStringList;
     FTotalResourceCount: integer;
 
-    procedure Sweep;
     procedure LoadExistingResources;
     procedure SaveSecurityEvent(se : TFhirSecurityEvent);
     procedure RecordFhirSession(session: TFhirSession);
@@ -147,6 +146,7 @@ Type
     Property Bases : TStringList read FBases;
     Property TotalResourceCount : integer read FTotalResourceCount;
     Property TerminologyServer : TTerminologyServer read FTerminologyServer;
+    procedure Sweep;
   end;
 
 
