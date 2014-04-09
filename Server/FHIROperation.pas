@@ -48,7 +48,8 @@ uses
   AdvStringBuilders, AdvObjectLists, AdvNames, AdvXmlBuilders,
 
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, FHIRAtomFeed, FHIRParserBase,
-  FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore;
+  FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore,
+  FHIRServerConstants;
 
 const
   SEARCH_PARAM_NAME_ID = 'search-id';
@@ -67,6 +68,7 @@ const
 
 type
 
+  TDateOperation = (dopEqual, dopLess, dopLessEqual, dopGreater, dopGreaterEqual);
 
   TCreateIdState = (idNoNew, idMaybeNew, idIsNew);
 
@@ -78,6 +80,7 @@ type
     new : boolean;
     deleted : Boolean;
     resType : String;
+    html : String;
     function summary : string;
   end;
 
@@ -88,6 +91,7 @@ type
     function ExistsByTypeAndId(entry : TFHIRTransactionEntry):boolean;
     Function GetByName(oName : String) : TFHIRTransactionEntry; Overload;
     Property entries[iIndex : Integer] : TFHIRTransactionEntry Read GetEntry; Default;
+    function IndexByHtml(name : String) : integer; Overload;
   end;
 
   TReferenceList = class (TStringList)
@@ -120,9 +124,9 @@ type
     function opAllowed(resource : TFHIRResourceType; command : TFHIRCommandType) : Boolean;
 
     function FindSavedSearch(const sId : String; var key, link, sql : String; var total : Integer; var wantSummary : boolean): boolean;
-    function BuildSearchResultSet(typekey : integer; aType : TFHIRResourceType; params : TParseMap; compartments, compartmentId : String; var link, sql : String; var total : Integer; var wantSummary : boolean):String;
-    procedure ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
-    Function ProcessParam(types : TFHIRResourceTypeSet; code : String; abbrev : TAbbreviationServer; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean; var wantSummary : boolean) : String;
+    function BuildSearchResultSet(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; var wantSummary : boolean):String;
+    procedure ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
+    Function ProcessParam(types : TFHIRResourceTypeSet; code : String; abbrev : TAbbreviationServer; name : String; baseURL, value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean; var wantSummary : boolean) : String;
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
     function GetValueSetById(request: TFHIRRequest; id, base : String) : TFHIRValueSet;
     function GetProfileById(request: TFHIRRequest; id : String) : TFHIRProfile;
@@ -139,12 +143,13 @@ type
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
     function GetNewResourceId(aType : TFHIRResourceType; var id : string; var key : integer):Boolean;
     function AddNewResourceId(aType : TFHIRResourceType; id : string; var resourceKey : integer) : Boolean;
-    Procedure CollectIncludes(includes : TReferenceList; resource : TFHIRResource; xpath : String);
+    Procedure CollectIncludes(includes : TReferenceList; resource : TFHIRResource; path : String);
+    Procedure CollectReverseIncludes(includes : TReferenceList; keys : TStringList; types : String; feed : TFHIRAtomFeed; request : TFHIRRequest; wantsummary : boolean);
     Function TypeForKey(key : integer):TFHIRResourceType;
     Procedure LoadTags(tags : TFHIRAtomCategoryList; ResourceKey : integer);
     procedure CommitTags(tags : TFHIRAtomCategoryList; key : integer);
     Procedure ProcessBlob(request: TFHIRRequest; response : TFHIRResponse; wantSummary : boolean);
-    Function ResolveSearchId(atype : TFHIRResourceType; params : String) : String;
+    Function ResolveSearchId(atype : TFHIRResourceType; baseURL, params : String) : String;
     procedure ScanId(request : TFHIRRequest; entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList);
     procedure ConfirmId(entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList);
     procedure adjustReferences(base : String; entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList);
@@ -192,7 +197,7 @@ type
     Property Repository : TFHIRDataStore read FRepository;
 
     // internal utility functions
-//    procedure addParam(srch : TConformanceRestResourceSearch; html : TAdvStringBuilder; n, d : String; t : TSearchParamType; r : TSearchRepeatBehavior);
+    procedure addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamType; tgts : TFhirResourceTypeSet);
     function AddResourceToFeed(feed: TFHIRAtomFeed; sId, sType, title, link, author, base : String; updated : TDateTime; resource : TFHIRResource; originalId : String; tags : TFHIRAtomCategoryList; bIncomplete : boolean) : TFHIRAtomEntry; overload;
     function AddResourceToFeed(feed : TFHIRAtomFeed; sId, sType, base : String; originalId : String; WantSummary : Boolean) : TFHIRAtomEntry; overload;
     function AddDeletedResourceToFeed(request: TFHIRRequest; feed : TFHIRAtomFeed; sId, sType, base : String; originalId : String) : TFHIRAtomEntry;
@@ -418,7 +423,7 @@ begin
       else
         blob := ZDecompressBytes(FConnection.ColBlobByName['Content']);
 
-      parser := MakeParser(lang, ffXml, blob);
+      parser := MakeParser(lang, ffXml, blob, xppDrop);
       try
         result := AddResourceToFeed(feed, sId, sType, GetFhirMessage(CODES_TFhirResourceType[parser.resource.resourceType], lang)+' "'+sId+'" '+GetFhirMessage('NAME_VERSION', lang)+' "'+FConnection.ColStringByName['VersionId']+'"',
                       base+CODES_TFhirResourceType[parser.resource.resourceType]+'/'+sId+'/_history/'+FConnection.ColStringByName['VersionId'],
@@ -601,24 +606,28 @@ begin
     Raise Exception.Create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
   End;
 end;
-{
-procedure TFhirStorage.addParam(srch : TConformanceRestResourceSearch; html : TAdvStringBuilder; n, d : String; t : TSearchParamType; r : TSearchRepeatBehavior);
+
+procedure TFhirOperation.addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamType; tgts : TFhirResourceTypeSet);
 var
-  param : TConformanceRestResourceSearchParam;
+  param : TFhirConformanceRestResourceSearchParam;
+  a : TFhirResourceType;
 begin
-  param := TConformanceRestResourceSearchParam.create;
+  param := TFhirConformanceRestResourceSearchParam.create;
   try
-    param.name := TFHIRString.create(n);
-    param.documentation := TFHIRString.create(d);
-    param.type_ := t;
-    param.repeats := r;
-    srch.ParamList.add(param.link);
+    param.nameST := n;
+    param.definitionST := url;
+    param.documentationST := d;
+    param.type_ST := t;
+    for a := Low(TFhirResourceType) to High(TFhirResourceType) do
+      if a in tgts then
+        param.targetList.Append.value := CODES_TFhirResourceType[a];
+    srch.add(param.link);
   finally
     param.free;
   end;
-  html.append('<li>'+n+' : '+FormatTextToHTML(d)+'</li>');
+//  html.append('<li>'+n+' : '+FormatTextToHTML(d)+'</li>');
 end;
-}
+
 
 procedure TFhirOperation.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
 var
@@ -626,17 +635,43 @@ var
   res : TFhirConformanceRestResource;
   a : TFHIRResourceType;
   html : TAdvStringBuilder;
+  c : TFhirContact;
+  i : integer;
 begin
   try
     response.HTTPCode := 200;
     oConf := TFhirConformance.Create;
     response.Resource := oConf;
-    oConf.date := TFhirDateTime.create(TDateAndTime.CreateUTC(UniversalDateTime));
+    if FRepository.FormalURL <> '' then
+      oConf.identifierST := AppendForwardSlash(FRepository.FormalURL)+'_metadata'
+    else
+      oConf.identifierST := 'http://fhir.healthintersections.com.au/open/_metadata';
+    oConf.versionST := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+    oConf.nameST := 'Health Intersections FHIR Server Conformance Statement';
     oConf.publisherST := 'Health Intersections'; //
+    c := oConf.telecomList.Append;
+    c.systemST := ContactSystemUrl;
+    c.valueST := 'http://healthintersections.com.au/';
+    oConf.descriptionST := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
+    oConf.statusST := ConformanceStatementStatusActive;
+    oConf.experimentalST := false;
+    oConf.date := TFhirDateTime.create(TDateAndTime.CreateUTC(UniversalDateTime));
     oConf.software := TFhirConformanceSoftware.Create;
     oConf.software.name := TFhirString.create('Reference Server');
-    oConf.software.version := TFhirString.create(FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION);
-    oConf.software.releaseDate := TFhirDateTime.create(TDateAndTime.createHL7(RELEASE_DATE));
+    oConf.software.versionST := SERVER_VERSION;
+    oConf.software.releaseDate := TFhirDateTime.create(TDateAndTime.createHL7(SERVER_RELEASE_DATE));
+    if FRepository.FormalURL <> '' then
+    begin
+      oConf.implementation_ := TFhirConformanceImplementation.Create;
+      oConf.implementation_.descriptionST := 'FHIR Server running at '+FRepository.FormalURL;
+      oConf.implementation_.urlST := FRepository.FormalURL;
+    end;
+
+    oConf.acceptUnknownST := true;
+    oConf.formatList.Append.value := 'application/xml+fhir';
+    oConf.formatList.Append.value := 'application/json+fhir';
+
+
     oConf.fhirVersionST := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
     oConf.restList.add(TFhirConformanceRest.Create);
     oConf.restList[0].modeST := RestfulConformanceModeServer;
@@ -655,7 +690,7 @@ begin
       html.append('<div><div id="div-cnt" class="content"><h2>FHIR Reference Server Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+' released '+RELEASE_DATE+'. '+
        'RESTful server based on FHIR '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
 
-      for a := Low(TFHIRResourceType) to High(TFHIRResourceType) do
+      for a := TFHIRResourceType(1)  to High(TFHIRResourceType) do
       begin
         if FRepository.ResConfig[a].Supported and (a <> frtMessageHeader) then
         begin
@@ -718,18 +753,25 @@ begin
               end
               else
                 html.append('<td></td>');
-              // yet to do    res.validate := FConnection.ColIntegerByName['cmdValidate'] > 0;
-  {seraching - to move elsewhere
-                res.search := TConformanceRestResourceSearch.create;
-                res.search.documentation := TFHIRString.create('Implemented as per the specification');
-                html.append('<br/>search</td><td><ul>');
-                for i := 0 to ndx(a).Indexes.count - 1 do
-                  addParam(res.search, html, ndx(a).Indexes[i].Name, ndx(a).Indexes[i].Description, ndx(a).Indexes[i].SearchType, ndx(a).Indexes[i].RepeatBehavior);
-                addParam(res.search, html, 'originalId', 'Original Id if one was provided when the resource was created', SearchParamTypeToken, tsrbSingle);
-                html.append('</ul>');                                                                                                                               }
-  //            end;
+//                html.append('<br/>search</td><td><ul>');
+              for i := 0 to FIndexer.Indexes.count - 1 do
+                if (FIndexer.Indexes[i].ResourceType = a) then
+                  addParam(res.searchParamList, html, FIndexer.Indexes[i].Name, 'http://hl7.org/fhir/'+CODES_TFhirResourceType[a], FIndexer.Indexes[i].Description, FIndexer.Indexes[i].SearchType, FIndexer.Indexes[i].TargetTypes);
+              addParam(res.searchParamList, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
+              addParam(res.searchParamList, html, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', SearchParamTypeString, []);
+              addParam(res.searchParamList, html, '_profile', 'http://hl7.org/fhir/search', 'Search for resources that conform to a profile', SearchParamTypeReference, []);
+              addParam(res.searchParamList, html, '_security', 'http://hl7.org/fhir/search', 'Search for resources that have a particular security tag', SearchParamTypeReference, []);
+              addParam(res.searchParamList, html, '_sort', 'http://hl7.org/fhir/search', 'Specify one or more other parameters to use as the sort order', SearchParamTypeToken, []);
+              addParam(res.searchParamList, html, '_count', 'http://hl7.org/fhir/search', 'Number of records to return', SearchParamTypeNumber, []);
+              addParam(res.searchParamList, html, '_ummary', 'http://hl7.org/fhir/search', 'Return just a summary for resources that define a summary view', SearchParamTypeNumber, []);
+              addParam(res.searchParamList, html, '_include', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that matching resources refer to', SearchParamTypeToken, ALL_RESOURCE_TYPES);
+              addParam(res.searchParamList, html, '_reverseInclude', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that refer to matching resources (this is trialing an extension to the specification)', SearchParamTypeToken, ALL_RESOURCE_TYPES);
+              if a in [frtValueSet, frtConceptMap] then
+                addParam(res.searchParamList, html, '_query', 'http://hl7.org/fhir/search', 'Specified Named Query', SearchParamTypeToken, []);
+//              html.append('</ul>');                                                                                                                               }
             end;
             html.append('</tr>');
+
 
               //<th>Search/Updates Params</th>
               // html.append('n : offset<br/>');
@@ -743,7 +785,7 @@ begin
       end;
       FConnection.Terminate;
       html.append('</table></div></div>');
-      oConf.text.div_ := ParseXhtml(lang, html.asString);
+      oConf.text.div_ := ParseXhtml(lang, html.asString, xppReject);
     finally
       html.free;
     end;
@@ -1125,8 +1167,22 @@ begin
   end;
 end;
 
+function findPrefix(var value : String; subst : String) : boolean;
+begin
+  result := value.StartsWith(subst);
+  if result then
+    value := value.Substring(subst.Length);
+end;
 
-Function TFhirOperation.processParam(types : TFHIRResourceTypeSet; code : String; abbrev : TAbbreviationServer; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean; var wantSummary : boolean) : String;
+procedure SplitByCommas(value : String; list : TStringList);
+var
+  s : String;
+begin
+  for s in value.Split([',']) do
+    list.add(s);
+end;
+
+Function TFhirOperation.processParam(types : TFHIRResourceTypeSet; code : String; abbrev : TAbbreviationServer; name : String; baseURL, value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean; var wantSummary : boolean) : String;
 var
   key, i : integer;
   left, right, op, modifier : String;
@@ -1137,6 +1193,8 @@ var
   date : TDateAndTime;
   a : TFHIRResourceType;
   type_ : TFhirSearchParamType;
+  parts : TArray<string>;
+  dop : TDateOperation;
 begin
   date := nil;
   result := '';
@@ -1145,7 +1203,9 @@ begin
   if (value = '') then
     exit;
 
-  if (name = '_summary') and (value = 'true') then
+  if (name = '_include') or (name = '_reverseInclude') then
+    bHandled := true
+  else if (name = '_summary') and (value = 'true') then
   begin
     bHandled := true;
     wantSummary := true;
@@ -1160,7 +1220,7 @@ begin
     if (pos(':', left) > 0) then
     begin
       StringSplit(left, ':', left, modifier);
-      if not StringArrayExistsSensitive(CODES_TFHIRResourceType, modifier) then
+      if not StringArrayExistsInSensitive(CODES_TFHIRResourceType, modifier) then
         raise Exception.create(StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [modifier]));
       a := TFHIRResourceType(StringArrayIndexOfSensitive(CODES_TFHIRResourceType, modifier));
       types := [a];
@@ -1173,9 +1233,9 @@ begin
     f := true;
     sc := abbrev.next;
     if modifier <> '' then
-      result := result + '(IndexKey = '+inttostr(Key)+' and target in (select ResourceKey from IndexEntries where (ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(FRepository.ResConfig[a].key)+')) and ('+processParam(FIndexer.GetTargetsByName(types, left), sc, abbrev, right, lowercase(value), true, f, bHandled, dummy)+')))'
+      result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where (ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(FRepository.ResConfig[a].key)+')) and ('+processParam(FIndexer.GetTargetsByName(types, left), sc, abbrev, right, baseURL, lowercase(value), true, f, bHandled, dummy)+')))'
     else
-      result := result + '(IndexKey = '+inttostr(Key)+' and target in (select ResourceKey from IndexEntries where '+processParam(FIndexer.GetTargetsByName(types, left), sc, abbrev, right, lowercase(value), true, f, bHandled, dummy)+'))';
+      result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where '+processParam(FIndexer.GetTargetsByName(types, left), sc, abbrev, right, baseURL, lowercase(value), true, f, bHandled, dummy)+'))';
     bHandled := true;
   end
   else
@@ -1213,15 +1273,15 @@ begin
         begin
           bHandled := true;
           if StrToBoolDef(value, false) then
-            result := result + '((Select count(*) from IndexEntries where IndexKey = '+inttostr(Key)+' and '+code+'.ResourceKey = z.ResourceKey) = 0)'
+            result := result + '((Select count(*) from IndexEntries where IndexKey = '+inttostr(Key)+' /*'+name+'*/ and '+code+'.ResourceKey = z.ResourceKey) = 0)'
           else
-            result := result + '((Select count(*) from IndexEntries where IndexKey = '+inttostr(Key)+' and '+code+'.ResourceKey = z.ResourceKey) > 0)';
+            result := result + '((Select count(*) from IndexEntries where IndexKey = '+inttostr(Key)+' /*'+name+'*/ and '+code+'.ResourceKey = z.ResourceKey) > 0)';
         end
         else
         begin
           ts := TStringlist.create;
           try
-            ts.CommaText := value;
+            SplitByCommas(value, ts);
             if (ts.count > 1) then
               result := '(';
             for i := 0 to ts.count - 1 do
@@ -1235,17 +1295,27 @@ begin
               case type_ of
                 SearchParamTypeDate:
                   begin
+                    if modifier <> '' then
+                      raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name+':'+modifier]));
+                    dop := dopEqual;
+                    if findPrefix(value, '<=') then
+                      dop := dopLessEqual
+                    else if findPrefix(value, '<') then
+                      dop := dopLess
+                    else if findPrefix(value, '>=') then
+                      dop := dopGreaterEqual
+                    else if findPrefix(value, '>') then
+                      dop := dopGreater;
                     CheckDateFormat(value);
                     date := TDateAndTime.CreateXML(value);
                     try
-                      if modifier = '' then
-                        result := result + '(IndexKey = '+inttostr(Key)+' and Value >= '''+date.AsUTCDateTimeMinHL7+''' and Value2 <= '''+date.AsUTCDateTimeMaxHL7+''')'
-                      else if modifier = 'before' then
-                        result := result + '(IndexKey = '+inttostr(Key)+' and Value <= '''+date.AsUTCDateTimeMaxHL7+''')'
-                      else if modifier = 'after' then
-                        result := result + '(IndexKey = '+inttostr(Key)+' and Value2 >= '''+date.AsUTCDateTimeMinHL7+''')'
-                      else
-                        raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]));
+                      case dop of
+                        dopEqual:        result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value >= '''+date.AsUTCDateTimeMinHL7+''' and Value2 <= '''+date.AsUTCDateTimeMaxHL7+''')';
+                        dopLess:         result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value <= '''+date.AsUTCDateTimeMinHL7+''')';
+                        dopLessEqual:    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value <= '''+date.AsUTCDateTimeMaxHL7+''')';
+                        dopGreater:      result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 >= '''+date.AsUTCDateTimeMaxHL7+''')';
+                        dopGreaterEqual: result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 >= '''+date.AsUTCDateTimeMinHL7+''')';
+                      end;
                     finally
                       date.free;
                       date := nil;
@@ -1267,37 +1337,82 @@ begin
                     end
                     else
                       raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]));
-                    result := result + '(IndexKey = '+inttostr(Key)+' and Value '+pfx+sqlwrapString(value)+sfx+')';
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value '+pfx+sqlwrapString(value)+sfx+')';
                   end;
                 SearchParamTypeToken:
                   begin
                   // _id is a special case
-                  if (name = '_id') or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
-                    result := result + '(IndexKey = '+inttostr(Key)+' and Value = '''+sqlwrapString(value)+''')'
+                  if (name = '_id') then
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
                   else if modifier = 'text' then
-                    result := result + '(IndexKey = '+inttostr(Key)+' and Value2 like ''%'+sqlwrapString(value)+'%'')'
-                  else if (modifier = 'code') or ((modifier = '') and (pos('/', value) > 0)) then
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like ''%'+sqlwrapString(value)+'%'')'
+                  else if value.Contains('|') then
                   begin
-                    StringSplitRight(value, '/', left, right);
-                    result := result + '(IndexKey = '+inttostr(Key)+' and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(left)+''') and Value = '''+sqlwrapString(right)+''')';
+                    StringSplit(value, '|', left, right);
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(left)+''') and Value = '''+sqlwrapString(right)+''')';
                   end
-                  else if modifier = 'anyns' then
-                    result :=  result + '(IndexKey = '+inttostr(Key)+' and Value = '''+sqlwrapString(value)+''')'
                   else
-                    raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]))
+                    result :=  result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
+//
+//                  !
+//                  // _id is a special case
+//                  if (name = '_id') or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
+//                    result := result + '(IndexKey = '+inttostr(Key)+' and Value = '''+sqlwrapString(value)+''')'
+//                  else
+//                  else if (modifier = 'code') or ((modifier = '') and (pos('/', value) > 0)) then
+//                  begin
+//                    StringSplitRight(value, '/', left, right);
+//                    result := result + '(IndexKey = '+inttostr(Key)+' and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(left)+''') and Value = '''+sqlwrapString(right)+''')';
+//                  end
+//                  else if modifier = 'anyns' then
+//                    result :=  result + '(IndexKey = '+inttostr(Key)+' and Value = '''+sqlwrapString(value)+''')'
+//                  else
+//                    raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]))
                   end;
                 SearchParamTypeReference :
                   begin
                   // _id is a special case
                   if (name = '_id') or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
-                    result := result + '(IndexKey = '+inttostr(Key)+' and Value = '''+sqlwrapString(value)+''')'
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
                   else if modifier = 'text' then
-                    result := result + '(IndexKey = '+inttostr(Key)+' and Value2 like ''%'+sqlwrapString(value)+'%'')'
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like ''%'+sqlwrapString(value)+'%'')'
                   else if (modifier = 'anyns') or (modifier = '') then
-                    result :=  result + '(IndexKey = '+inttostr(Key)+' and Value = '''+sqlwrapString(value)+''')'
+                  begin
+                    if IsId(value) then
+                      result :=  result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
+                    else if value.StartsWith(baseUrl) then
+                    begin
+                      parts := value.Substring(baseURL.Length).Split(['/']);
+                      if Length(parts) = 2 then
+                      begin
+                        result :=  result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(parts[0])+''')  and Value = '''+sqlwrapString(parts[1])+''')'
+                      end
+                      else
+                        raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]))
+                    end
+                    else
+                      raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]))
+                  end
                   else
-                    raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]))
+                  begin
+                    if IsId(value) then
+                      result :=  result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(modifier)+''') and Value = '''+sqlwrapString(value)+''')'
+                    else if value.StartsWith(baseUrl) then
+                    begin
+                      parts := value.Substring(baseURL.Length).Split(['/']);
+                      if Length(parts) = 2 then
+                      begin
+                        result :=  result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(parts[0])+''') and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(modifier)+''')  and Value = '''+sqlwrapString(parts[1])+''')'
+                      end
+                      else
+                        raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]))
+                    end
+                    else
+                      raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]))
+                  end
                   end;
+                SearchParamTypeQuantity :
+                  raise exception.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
               else
                 raise exception.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
               end;
@@ -1312,7 +1427,7 @@ begin
                   op := '>='
                 else
                   op := '=';
-                result := result + '(IndexKey = '+inttostr(Key)+' and Value '+op+' '''+sqlwrapString(value)+''')';
+                result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value '+op+' '''+sqlwrapString(value)+''')';
               end
       }
             end;
@@ -1364,7 +1479,7 @@ begin
   end;
 end;
 
-function TFhirOperation.BuildSearchResultSet(typekey : integer; aType : TFHIRResourceType; params : TParseMap; compartments, compartmentId : String; var link, sql : String; var total : Integer; var wantSummary : boolean):String;
+function TFhirOperation.BuildSearchResultSet(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; var wantSummary : boolean):String;
 var
   id : string;
 begin
@@ -1375,7 +1490,7 @@ begin
     raise exception.create('no defined queries are implemented at this time');
   end
   else
-    ProcessDefaultSearch(typekey, aType, params, compartments, compartmentId, id, result, link, sql, total, wantSummary);
+    ProcessDefaultSearch(typekey, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, wantSummary);
 end;
 
 function booleanToSQL(b : boolean): string;
@@ -1386,7 +1501,7 @@ begin
     result := '0';
 end;
 
-procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
+procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
 var
   s, ss : String;
   first : boolean;
@@ -1426,7 +1541,7 @@ begin
       for j := 0 to ts.count - 1 do
       begin
         handled := false;
-        s := s + processParam([aType], code, abbrev, params.VarName(i), lowercase(ts[j]), false, first, handled, wantSummary);
+        s := s + processParam([aType], code, abbrev, params.VarName(i), baseURL, lowercase(ts[j]), false, first, handled, wantSummary);
         if handled then
           link := link + '&'+params.VarName(i)+'='+EncodeMIME(ts[j]);
       end;
@@ -1476,6 +1591,7 @@ var
   key : integer;
   offset, count : integer;
   ok, wantsummary : boolean;
+  keys : TStringList;
 begin
   try
     ok := true;
@@ -1506,6 +1622,7 @@ begin
       begin
         feed := TFHIRAtomFeed.Create;
         includes := TReferenceList.create;
+        keys := TStringList.Create;
         try
           feed.fhirBaseUrl := request.baseUrl;
           feed.isSearch := true;
@@ -1522,7 +1639,7 @@ begin
             if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], id, link, sql, total, wantSummary) then
               link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
             else
-              id := BuildSearchResultSet(key, request.resourceType, request.Parameters, request.compartments, request.compartmentId, link, sql, total, wantSummary);
+              id := BuildSearchResultSet(key, request.resourceType, request.Parameters, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, wantSummary);
 
             feed.SearchTotal := total;
             feed.SearchOffset := offset;
@@ -1555,7 +1672,7 @@ begin
               feed.links.AddValue(base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(total - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count), 'last');
             end;
 
-            FConnection.SQL := 'Select Ids.Id, VersionId, StatedDate, Name, originalId, Tags, Content, Summary from Versions, Ids, Sessions, SearchEntries '+
+            FConnection.SQL := 'Select Ids.ResourceKey, Ids.Id, VersionId, StatedDate, Name, originalId, Tags, Content, Summary from Versions, Ids, Sessions, SearchEntries '+
                 'where Ids.MostRecent = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id+' '+
                 'order by SortValue ASC';
             FConnection.Prepare;
@@ -1569,6 +1686,8 @@ begin
                 if (i > offset) then
                 begin
                   entry := AddResourceToFeed(feed, '', CODES_TFHIRResourceType[request.ResourceType], request.baseUrl, FConnection.colstringByName['originalId'], wantsummary);
+                  keys.Add(FConnection.ColStringByName['ResourceKey']);
+
                   if request.Parameters.VarExists('_include') then
                     CollectIncludes(includes, entry.resource, request.Parameters.GetVar('_include'));
                   inc(t);
@@ -1584,6 +1703,10 @@ begin
             else
               feed.title := StringFormat(GetFhirMessage('MSG_SEARCH_RESULTS', lang), [CODES_TFHIRResourceType[request.resourceType]]);
           end;
+          // process reverse includes
+          if request.Parameters.VarExists('_reverseInclude') then
+            CollectReverseIncludes(includes, keys, request.Parameters.GetVar('_reverseInclude'), feed, request, wantsummary);
+
           //now, add the includes
           if includes.Count > 0 then
           begin
@@ -1609,6 +1732,7 @@ begin
           response.Feed := feed.Link;
         finally
           includes.free;
+          keys.Free;
           feed.Free;
         end;
       end;
@@ -2284,7 +2408,7 @@ begin
   result := (StringArrayIndexOfSensitive(CODES_TFHIRResourceType, l) > -1) and IsId(r);
 end;
 
-Function TFhirOperation.ResolveSearchId(atype : TFHIRResourceType; params : String) : String;
+Function TFhirOperation.ResolveSearchId(atype : TFHIRResourceType; baseURL, params : String) : String;
 var
   p : TParseMap;
   key, i , j: integer;
@@ -2312,7 +2436,7 @@ begin
         if ts[j] = '' then
           ts.delete(j);
       for j := ts.count - 1 downto 0 do
-        s := s + processParam([aType], code, abbrev, p.VarName(i), lowercase(ts[j]), false, first, h, wantSummary);
+        s := s + processParam([aType], code, abbrev, p.VarName(i), baseURL, lowercase(ts[j]), false, first, h, wantSummary);
     end;
     if s = '' then
       raise Exception.create(StringFormat(GetFhirMessage('SEARCH_NONE', lang), [CODES_TFHIRResourceType[aType], params]));
@@ -2356,6 +2480,7 @@ begin
     if ids.ExistsByName(id.Name) then
       raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.Name]));
     ids.add(id.link);
+    id.html := entry.links.Rel['html'];
 
     // processing the id
     if IsId(entry.id) then // this is actually illegal...
@@ -2369,7 +2494,7 @@ begin
     else if entry.id.StartsWith(AppendForwardSlash(request.baseUrl)+CODES_TFHIRResourceType[entry.resource.ResourceType]+'/_search?', true) or
       entry.id.StartsWith('http://localhost/'+CODES_TFHIRResourceType[entry.resource.ResourceType]+'/_search?', true)  then
     begin
-      id.id := ResolveSearchId(entry.resource.ResourceType, copy(entry.id, pos('?', entry.id)+1, $FFF));
+      id.id := ResolveSearchId(entry.resource.ResourceType, request.baseUrl, copy(entry.id, pos('?', entry.id)+1, $FFF));
     end
     else if entry.id.StartsWith('cid:', true) then
     begin
@@ -2452,6 +2577,9 @@ begin
     begin
       s := node.Attributes.Get('href');
       j := ids.IndexByName(s);
+      if (j = -1) and (s.endsWith('html')) then
+        j := ids.IndexByHtml(s);
+
       if (j > -1) then
         node.Attributes.SetValue('href', base+ids[j].resType+'/'+ids[j].id)
       else if s.StartsWith('cid:', true) then
@@ -2716,15 +2844,15 @@ begin
   end;
 end;
 
-procedure TFhirOperation.CollectIncludes(includes: TReferenceList; resource: TFHIRResource; xpath: String);
+procedure TFhirOperation.CollectIncludes(includes: TReferenceList; resource: TFHIRResource; path: String);
 var
   s : String;
   matches : TFHIRObjectList;
   i : integer;
 begin
-  while xpath <> '' do
+  while path <> '' do
   begin
-    StringSplit(xpath, ';', s, xpath);
+    StringSplit(path, ';', s, path);
     matches := resource.PerformQuery(s);
     try
       for i := 0 to matches.count - 1 do
@@ -2734,6 +2862,49 @@ begin
       matches.free;
     end;
   end;
+end;
+
+
+procedure TFhirOperation.CollectReverseIncludes(includes: TReferenceList; keys: TStringList; types: String; feed : TFHIRAtomFeed; request : TFHIRRequest; wantsummary : boolean);
+var
+  entry : TFHIRAtomEntry;
+  s : string;
+  rt : TStringList;
+begin
+  if types = '*' then
+    FConnection.sql := 'Select Ids.Id, VersionId, StatedDate, Name, originalId, Tags, Content, Summary from Versions, Ids, Sessions '+#13#10+ // standard search
+        'where Ids.MostRecent = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey and '+ // link tables
+        'Ids.ResourceKey in (select ResourceKey from IndexEntries where target in ('+keys.CommaText+'))'
+  else
+  begin
+    rt := TStringList.create;
+    try
+      while (types <> '') do
+      begin
+        StringSplit(types, ';', s, types);
+        rt.add(inttostr(FRepository.ResourceTypeKeyForName(s)));
+      end;
+
+      FConnection.sql := 'Select Ids.Id, VersionId, StatedDate, Name, originalId, Tags, Content, Summary from Versions, Ids, Sessions '+#13#10+ // standard search
+        'where Ids.MostRecent = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey and '+ // link tables
+        'Ids.ResourceKey in (select ResourceKey from IndexEntries where target in ('+keys.CommaText+') and ResourceKey in (select ResourceKey from Ids where ResourceTypeKey in ('+rt.commaText+')))';
+    finally
+      rt.free;
+    end;
+  end;
+  FConnection.Prepare;
+  try
+    FConnection.Execute;
+    while FConnection.FetchNext do
+    Begin
+      entry := AddResourceToFeed(feed, '', CODES_TFHIRResourceType[request.ResourceType], request.baseUrl, FConnection.colstringByName['originalId'], wantsummary);
+      if request.Parameters.VarExists('_include') then
+        CollectIncludes(includes, entry.resource, request.Parameters.GetVar('_include'));
+    end;
+  finally
+    FConnection.Terminate;
+  end;
+
 end;
 
 function TFhirOperation.LoadBinaryResource(stream: TMemoryStream): TFhirBinary;
@@ -2754,7 +2925,7 @@ begin
     result.ContentType := ct;
     result.text :=  TFhirNarrative.create;
     result.text.statusST := NarrativeStatusGenerated;
-    result.text.div_ := ParseXhtml(lang, '<div>'+GetFhirMessage('NAME_BINARY', lang)+' ('+result.ContentType+', '+DescribeBytes(result.Content.Size)+')</div>');
+    result.text.div_ := ParseXhtml(lang, '<div>'+GetFhirMessage('NAME_BINARY', lang)+' ('+result.ContentType+', '+DescribeBytes(result.Content.Size)+')</div>', xppReject);
     result.Link;
   finally
     result.free;
@@ -2837,7 +3008,7 @@ begin
     else
       blob := ZDecompressBytes(FConnection.ColBlobByName['Content']);
 
-    parser := MakeParser(lang, ffXml, blob);
+    parser := MakeParser(lang, ffXml, blob, xppDrop);
     try
       response.Resource := parser.resource.Link;
     finally
@@ -2987,7 +3158,7 @@ begin
             stream.CopyFrom(s, s.Size);
             stream.Position := 0;
             FConnection.Terminate;
-            parser := MakeParser('en', ffXml, stream);
+            parser := MakeParser('en', ffXml, stream, xppDrop);
             try
               FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
             finally
@@ -3160,7 +3331,7 @@ begin
             stream.CopyFrom(s, s.Size);
             stream.Position := 0;
             FConnection.Terminate;
-            parser := MakeParser('en', ffXml, stream);
+            parser := MakeParser('en', ffXml, stream, xppDrop);
             try
               FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
             finally
@@ -3333,7 +3504,7 @@ begin
       begin
         s := FConnection.ColMemoryByName['Content'];
         s.position := 0;
-        parser := MakeParser(lang, ffXml, s);
+        parser := MakeParser(lang, ffXml, s, xppDrop);
         try
           result := parser.resource.Link as TFHIRValueSet;
         finally
@@ -3364,7 +3535,7 @@ begin
       raise Exception.create('Unknown Value Set '+id);
     stream := FConnection.ColMemoryByName['Content'];
     stream.position := 0;
-    parser := MakeParser(lang, ffXml, stream);
+    parser := MakeParser(lang, ffXml, stream, xppDrop);
     try
       result := parser.resource.Link as TFHIRValueSet;
       try
@@ -3673,7 +3844,7 @@ begin
         tags := TFHIRAtomCategoryList.create;
         try
           tags.DecodeJson(Connection.ColMemoryByName['Tags']);
-          parser := MakeParser('en', ffXml, Connection.ColMemoryByName['Content']);
+          parser := MakeParser('en', ffXml, Connection.ColMemoryByName['Content'], xppDrop);
           try
             r := parser.resource;
             FConnection.terminate;
@@ -3760,7 +3931,7 @@ begin
     try
       FConnection.Execute;
       FConnection.FetchNext;
-      parser := MakeParser(lang, ffXml, FConnection.ColMemoryByName['Content']);
+      parser := MakeParser(lang, ffXml, FConnection.ColMemoryByName['Content'], xppDrop);
       try
         result := parser.resource.Link as TFHIRProfile;
       finally
@@ -4078,6 +4249,20 @@ end;
 function TFHIRTransactionEntryList.GetEntry(iIndex: Integer): TFHIRTransactionEntry;
 begin
   result := TFHIRTransactionEntry(ObjectByIndex[iIndex]);
+end;
+
+function TFHIRTransactionEntryList.IndexByHtml(name: String): integer;
+var
+  i : integer;
+begin
+  result := -1;
+  i := 0;
+  while (result = -1) and (i < Count) do
+  begin
+    if (GetEntry(i).html = name) then
+      result := i;
+    inc(i);
+  end;
 end;
 
 { TFHIRTransactionEntry }

@@ -32,15 +32,19 @@ POSSIBILITY OF SUCH DAMAGE.
 {$R *.res}
 
 {
-TODO:
- - update way references are found a bundle
- - update several methods around processing references (check transactions)
- - change the way that primitive types are represented
- -
-}
+todo for connectathon:
+* questionnaire in web interface
+* questionnaire conversion based on concept map
+* review searching conformance
 
-{
 bug list:
+
+When we delete a resource on your server, all version-specific reads are coming back as "gone", not just the deleted version
+
+http://fhir.healthintersections.com.au/open/Patient/C82E147E-6E80-4AF6-97CD-94C4294A3A75/_history
+[10:30:12 AM] Lloyd McKenzie: Atom feed shows <totalResluts>0
+[10:30:57 AM] Lloyd McKenzie: Also, the contained elements declare a <content type="text/xml"/> instead of "application/xml+fhir"
+
 
 
 build:
@@ -222,7 +226,8 @@ uses
   IdSoapComponent in 'C:\HL7Connect\indysoap\source\IdSoapComponent.pas',
   IdSoapNamespaces in 'C:\HL7Connect\indysoap\source\IdSoapNamespaces.pas',
   IdSoapMime in 'C:\HL7Connect\indysoap\source\IdSoapMime.pas',
-  IdSoapBase64 in 'C:\HL7Connect\indysoap\source\IdSoapBase64.pas';
+  IdSoapBase64 in 'C:\HL7Connect\indysoap\source\IdSoapBase64.pas',
+  FHIRServerConstants in 'FHIRServerConstants.pas';
 
 begin
   try

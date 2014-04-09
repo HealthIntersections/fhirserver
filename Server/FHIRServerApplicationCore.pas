@@ -37,7 +37,8 @@ Uses
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
-  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests;
+  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests,
+  FHIRServerConstants;
 
 Type
   TFHIRService = class (TSystemService)

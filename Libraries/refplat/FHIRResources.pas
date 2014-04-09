@@ -36,7 +36,7 @@ unit FHIRResources;
 
 interface
 
-// FHIR v0.80 generated Mon, Feb 3, 2014 23:47+1100
+// FHIR v0.80 generated Sat, Apr 5, 2014 22:52+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -105,6 +105,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsAdverseReaction = (
     spAdverseReaction__id, {@enum.value spAdverseReaction__id The logical resource id associated with the resource (must be supported by all servers) }
+    spAdverseReaction__language, {@enum.value spAdverseReaction__language The language of the resource }
     spAdverseReaction_Date, {@enum.value spAdverseReaction_Date The date of the reaction }
     spAdverseReaction_Subject, {@enum.value spAdverseReaction_Subject The subject that the sensitivity is about }
     spAdverseReaction_Substance, {@enum.value spAdverseReaction_Substance The name or code of the substance that produces the sensitivity }
@@ -115,6 +116,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsAlert = (
     spAlert__id, {@enum.value spAlert__id The logical resource id associated with the resource (must be supported by all servers) }
+    spAlert__language, {@enum.value spAlert__language The language of the resource }
     spAlert_Subject); {@enum.value spAlert_Subject The identity of a subject to list alerts for }
 
   {@Enum TSearchParamsAllergyIntolerance
@@ -122,6 +124,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsAllergyIntolerance = (
     spAllergyIntolerance__id, {@enum.value spAllergyIntolerance__id The logical resource id associated with the resource (must be supported by all servers) }
+    spAllergyIntolerance__language, {@enum.value spAllergyIntolerance__language The language of the resource }
     spAllergyIntolerance_Date, {@enum.value spAllergyIntolerance_Date Recorded date/time. }
     spAllergyIntolerance_Recorder, {@enum.value spAllergyIntolerance_Recorder Who recorded the sensitivity }
     spAllergyIntolerance_Status, {@enum.value spAllergyIntolerance_Status The status of the sensitivity }
@@ -134,6 +137,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsCarePlan = (
     spCarePlan__id, {@enum.value spCarePlan__id The logical resource id associated with the resource (must be supported by all servers) }
+    spCarePlan__language, {@enum.value spCarePlan__language The language of the resource }
     spCarePlan_Activitycode, {@enum.value spCarePlan_Activitycode Detail type of activity }
     spCarePlan_Activitydate, {@enum.value spCarePlan_Activitydate Specified date occurs within period specified by CarePlan.activity.timingSchedule }
     spCarePlan_Activitydetail, {@enum.value spCarePlan_Activitydetail Activity details defined in specific resource }
@@ -147,6 +151,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsComposition = (
     spComposition__id, {@enum.value spComposition__id The logical resource id associated with the resource (must be supported by all servers) }
+    spComposition__language, {@enum.value spComposition__language The language of the resource }
     spComposition_Attester, {@enum.value spComposition_Attester Who attested the composition }
     spComposition_Author, {@enum.value spComposition_Author Who and/or what authored the composition }
     spComposition_Class, {@enum.value spComposition_Class Categorization of Composition }
@@ -163,6 +168,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsConceptMap = (
     spConceptMap__id, {@enum.value spConceptMap__id The logical resource id associated with the resource (must be supported by all servers) }
+    spConceptMap__language, {@enum.value spConceptMap__language The language of the resource }
     spConceptMap_Date, {@enum.value spConceptMap_Date The concept map publication date }
     spConceptMap_Dependson, {@enum.value spConceptMap_Dependson Reference to element/field/valueset provides the context }
     spConceptMap_Description, {@enum.value spConceptMap_Description Text search in the description of the concept map }
@@ -181,6 +187,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsCondition = (
     spCondition__id, {@enum.value spCondition__id The logical resource id associated with the resource (must be supported by all servers) }
+    spCondition__language, {@enum.value spCondition__language The language of the resource }
     spCondition_Asserter, {@enum.value spCondition_Asserter Person who asserts this condition }
     spCondition_Category, {@enum.value spCondition_Category The category of the condition }
     spCondition_Code, {@enum.value spCondition_Code Code for the condition }
@@ -201,6 +208,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsConformance = (
     spConformance__id, {@enum.value spConformance__id The logical resource id associated with the resource (must be supported by all servers) }
+    spConformance__language, {@enum.value spConformance__language The language of the resource }
     spConformance_Date, {@enum.value spConformance_Date The conformance statement publication date }
     spConformance_Description, {@enum.value spConformance_Description Text search in the description of the conformance statement }
     spConformance_Event, {@enum.value spConformance_Event Event code in a conformance statement }
@@ -223,6 +231,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsDevice = (
     spDevice__id, {@enum.value spDevice__id The logical resource id associated with the resource (must be supported by all servers) }
+    spDevice__language, {@enum.value spDevice__language The language of the resource }
     spDevice_Identifier, {@enum.value spDevice_Identifier Instance id from manufacturer, owner and others }
     spDevice_Location, {@enum.value spDevice_Location A location, where the resource is found }
     spDevice_Manufacturer, {@enum.value spDevice_Manufacturer The manufacturer of the device }
@@ -237,6 +246,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsDeviceObservationReport = (
     spDeviceObservationReport__id, {@enum.value spDeviceObservationReport__id The logical resource id associated with the resource (must be supported by all servers) }
+    spDeviceObservationReport__language, {@enum.value spDeviceObservationReport__language The language of the resource }
     spDeviceObservationReport_Channel, {@enum.value spDeviceObservationReport_Channel The channel code }
     spDeviceObservationReport_Code, {@enum.value spDeviceObservationReport_Code The compatment code }
     spDeviceObservationReport_Observation, {@enum.value spDeviceObservationReport_Observation The data for the metric }
@@ -248,6 +258,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsDiagnosticOrder = (
     spDiagnosticOrder__id, {@enum.value spDiagnosticOrder__id The logical resource id associated with the resource (must be supported by all servers) }
+    spDiagnosticOrder__language, {@enum.value spDiagnosticOrder__language The language of the resource }
     spDiagnosticOrder_Actor, {@enum.value spDiagnosticOrder_Actor Who recorded or did this }
     spDiagnosticOrder_Bodysite, {@enum.value spDiagnosticOrder_Bodysite Location of requested test (if applicable) }
     spDiagnosticOrder_Code, {@enum.value spDiagnosticOrder_Code Code to indicate the item (test or panel) being ordered }
@@ -270,6 +281,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsDiagnosticReport = (
     spDiagnosticReport__id, {@enum.value spDiagnosticReport__id The logical resource id associated with the resource (must be supported by all servers) }
+    spDiagnosticReport__language, {@enum.value spDiagnosticReport__language The language of the resource }
     spDiagnosticReport_Date, {@enum.value spDiagnosticReport_Date The clinically relevant time of the report }
     spDiagnosticReport_Diagnosis, {@enum.value spDiagnosticReport_Diagnosis A coded diagnosis on the report }
     spDiagnosticReport_Identifier, {@enum.value spDiagnosticReport_Identifier An identifier for the report }
@@ -289,6 +301,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsDocumentManifest = (
     spDocumentManifest__id, {@enum.value spDocumentManifest__id The logical resource id associated with the resource (must be supported by all servers) }
+    spDocumentManifest__language, {@enum.value spDocumentManifest__language The language of the resource }
     spDocumentManifest_Author, {@enum.value spDocumentManifest_Author Who and/or what authored the document }
     spDocumentManifest_Confidentiality, {@enum.value spDocumentManifest_Confidentiality Sensitivity of set of documents }
     spDocumentManifest_Content, {@enum.value spDocumentManifest_Content Contents of this set of documents }
@@ -306,6 +319,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsDocumentReference = (
     spDocumentReference__id, {@enum.value spDocumentReference__id The logical resource id associated with the resource (must be supported by all servers) }
+    spDocumentReference__language, {@enum.value spDocumentReference__language The language of the resource }
     spDocumentReference_Authenticator, {@enum.value spDocumentReference_Authenticator Who/What authenticated the document }
     spDocumentReference_Author, {@enum.value spDocumentReference_Author Who and/or what authored the document }
     spDocumentReference_Class, {@enum.value spDocumentReference_Class Categorization of Document }
@@ -334,6 +348,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsEncounter = (
     spEncounter__id, {@enum.value spEncounter__id The logical resource id associated with the resource (must be supported by all servers) }
+    spEncounter__language, {@enum.value spEncounter__language The language of the resource }
     spEncounter_Date, {@enum.value spEncounter_Date A date within the period the Encounter lasted }
     spEncounter_Identifier, {@enum.value spEncounter_Identifier Identifier(s) by which this encounter is known }
     spEncounter_Indication, {@enum.value spEncounter_Indication Reason the encounter takes place (resource) }
@@ -348,6 +363,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsFamilyHistory = (
     spFamilyHistory__id, {@enum.value spFamilyHistory__id The logical resource id associated with the resource (must be supported by all servers) }
+    spFamilyHistory__language, {@enum.value spFamilyHistory__language The language of the resource }
     spFamilyHistory_Subject); {@enum.value spFamilyHistory_Subject The identity of a subject to list family history items for }
 
   {@Enum TSearchParamsGroup
@@ -355,6 +371,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsGroup = (
     spGroup__id, {@enum.value spGroup__id The logical resource id associated with the resource (must be supported by all servers) }
+    spGroup__language, {@enum.value spGroup__language The language of the resource }
     spGroup_Actual, {@enum.value spGroup_Actual Descriptive or actual }
     spGroup_Characteristic, {@enum.value spGroup_Characteristic Kind of characteristic }
     spGroup_Characteristic_value, {@enum.value spGroup_Characteristic_value A composite of both characteristic and value }
@@ -370,6 +387,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsImagingStudy = (
     spImagingStudy__id, {@enum.value spImagingStudy__id The logical resource id associated with the resource (must be supported by all servers) }
+    spImagingStudy__language, {@enum.value spImagingStudy__language The language of the resource }
     spImagingStudy_Accession, {@enum.value spImagingStudy_Accession The accession id for the image }
     spImagingStudy_Bodysite, {@enum.value spImagingStudy_Bodysite Body part examined (Map from 0018,0015) }
     spImagingStudy_Date, {@enum.value spImagingStudy_Date The date the study was done was taken }
@@ -386,6 +404,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsImmunization = (
     spImmunization__id, {@enum.value spImmunization__id The logical resource id associated with the resource (must be supported by all servers) }
+    spImmunization__language, {@enum.value spImmunization__language The language of the resource }
     spImmunization_Date, {@enum.value spImmunization_Date Vaccination  Administration / Refusal Date }
     spImmunization_Dose_sequence, {@enum.value spImmunization_Dose_sequence What dose number within series? }
     spImmunization_Identifier, {@enum.value spImmunization_Identifier Business identifier }
@@ -407,6 +426,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsImmunizationRecommendation = (
     spImmunizationRecommendation__id, {@enum.value spImmunizationRecommendation__id The logical resource id associated with the resource (must be supported by all servers) }
+    spImmunizationRecommendation__language, {@enum.value spImmunizationRecommendation__language The language of the resource }
     spImmunizationRecommendation_Date, {@enum.value spImmunizationRecommendation_Date Date recommendation created }
     spImmunizationRecommendation_Dose_number, {@enum.value spImmunizationRecommendation_Dose_number Recommended dose number }
     spImmunizationRecommendation_Dose_sequence, {@enum.value spImmunizationRecommendation_Dose_sequence Number of dose within sequence }
@@ -422,6 +442,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsList = (
     spList__id, {@enum.value spList__id The logical resource id associated with the resource (must be supported by all servers) }
+    spList__language, {@enum.value spList__language The language of the resource }
     spList_Code, {@enum.value spList_Code What the purpose of this list is }
     spList_Date, {@enum.value spList_Date When the list was prepared }
     spList_Empty_reason, {@enum.value spList_Empty_reason Why list is empty }
@@ -434,6 +455,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsLocation = (
     spLocation__id, {@enum.value spLocation__id The logical resource id associated with the resource (must be supported by all servers) }
+    spLocation__language, {@enum.value spLocation__language The language of the resource }
     spLocation_Address, {@enum.value spLocation_Address A (part of the) address of the location }
     spLocation_Identifier, {@enum.value spLocation_Identifier Unique code or number identifying the location to its users }
     spLocation_Name, {@enum.value spLocation_Name A (portion of the) name of the location }
@@ -448,6 +470,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsMedia = (
     spMedia__id, {@enum.value spMedia__id The logical resource id associated with the resource (must be supported by all servers) }
+    spMedia__language, {@enum.value spMedia__language The language of the resource }
     spMedia_Date, {@enum.value spMedia_Date When the media was taken/recorded (end) }
     spMedia_Identifier, {@enum.value spMedia_Identifier Identifier(s) for the image }
     spMedia_Operator, {@enum.value spMedia_Operator The person who generated the image }
@@ -461,6 +484,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsMedication = (
     spMedication__id, {@enum.value spMedication__id The logical resource id associated with the resource (must be supported by all servers) }
+    spMedication__language, {@enum.value spMedication__language The language of the resource }
     spMedication_Code, {@enum.value spMedication_Code Codes that identify this medication }
     spMedication_Container, {@enum.value spMedication_Container E.g. box, vial, blister-pack }
     spMedication_Content, {@enum.value spMedication_Content A product in the package }
@@ -474,6 +498,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsMedicationAdministration = (
     spMedicationAdministration__id, {@enum.value spMedicationAdministration__id The logical resource id associated with the resource (must be supported by all servers) }
+    spMedicationAdministration__language, {@enum.value spMedicationAdministration__language The language of the resource }
     spMedicationAdministration_Device, {@enum.value spMedicationAdministration_Device Return administrations with this administration device identity }
     spMedicationAdministration_Encounter, {@enum.value spMedicationAdministration_Encounter Return administrations that share this encounter }
     spMedicationAdministration_Identifier, {@enum.value spMedicationAdministration_Identifier Return administrations with this external identity }
@@ -489,6 +514,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsMedicationDispense = (
     spMedicationDispense__id, {@enum.value spMedicationDispense__id The logical resource id associated with the resource (must be supported by all servers) }
+    spMedicationDispense__language, {@enum.value spMedicationDispense__language The language of the resource }
     spMedicationDispense_Destination, {@enum.value spMedicationDispense_Destination Return dispenses that should be sent to a secific destination }
     spMedicationDispense_Dispenser, {@enum.value spMedicationDispense_Dispenser Return all dispenses performed by a specific indiividual }
     spMedicationDispense_Identifier, {@enum.value spMedicationDispense_Identifier Return dispenses with this external identity }
@@ -506,6 +532,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsMedicationPrescription = (
     spMedicationPrescription__id, {@enum.value spMedicationPrescription__id The logical resource id associated with the resource (must be supported by all servers) }
+    spMedicationPrescription__language, {@enum.value spMedicationPrescription__language The language of the resource }
     spMedicationPrescription_Datewritten, {@enum.value spMedicationPrescription_Datewritten Return prescriptions written on this date }
     spMedicationPrescription_Encounter, {@enum.value spMedicationPrescription_Encounter Return prescriptions with this encounter identity }
     spMedicationPrescription_Identifier, {@enum.value spMedicationPrescription_Identifier Return prescriptions with this external identity }
@@ -518,6 +545,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsMedicationStatement = (
     spMedicationStatement__id, {@enum.value spMedicationStatement__id The logical resource id associated with the resource (must be supported by all servers) }
+    spMedicationStatement__language, {@enum.value spMedicationStatement__language The language of the resource }
     spMedicationStatement_Device, {@enum.value spMedicationStatement_Device Return administrations with this administration device identity }
     spMedicationStatement_Identifier, {@enum.value spMedicationStatement_Identifier Return administrations with this external identity }
     spMedicationStatement_Medication, {@enum.value spMedicationStatement_Medication Code for medicine or text in medicine name }
@@ -528,13 +556,15 @@ Related resources tie this event to the authorizing prescription, and the specif
     Search Parameters for MessageHeader
   }
   TSearchParamsMessageHeader = (
-    spMessageHeader__id); {@enum.value spMessageHeader__id The logical resource id associated with the resource (must be supported by all servers) }
+    spMessageHeader__id, {@enum.value spMessageHeader__id The logical resource id associated with the resource (must be supported by all servers) }
+    spMessageHeader__language); {@enum.value spMessageHeader__language The language of the resource }
 
   {@Enum TSearchParamsObservation
     Search Parameters for Observation
   }
   TSearchParamsObservation = (
     spObservation__id, {@enum.value spObservation__id The logical resource id associated with the resource (must be supported by all servers) }
+    spObservation__language, {@enum.value spObservation__language The language of the resource }
     spObservation_Date, {@enum.value spObservation_Date Obtained date/time. If the obtained element is a period, a date that falls in the period }
     spObservation_Name, {@enum.value spObservation_Name The name of the observation type }
     spObservation_Name_value_x, {@enum.value spObservation_Name_value_[x] Both name and one of the value parameters }
@@ -555,13 +585,15 @@ Related resources tie this event to the authorizing prescription, and the specif
     Search Parameters for OperationOutcome
   }
   TSearchParamsOperationOutcome = (
-    spOperationOutcome__id); {@enum.value spOperationOutcome__id The logical resource id associated with the resource (must be supported by all servers) }
+    spOperationOutcome__id, {@enum.value spOperationOutcome__id The logical resource id associated with the resource (must be supported by all servers) }
+    spOperationOutcome__language); {@enum.value spOperationOutcome__language The language of the resource }
 
   {@Enum TSearchParamsOrder
     Search Parameters for Order
   }
   TSearchParamsOrder = (
     spOrder__id, {@enum.value spOrder__id The logical resource id associated with the resource (must be supported by all servers) }
+    spOrder__language, {@enum.value spOrder__language The language of the resource }
     spOrder_Authority, {@enum.value spOrder_Authority If required by policy }
     spOrder_Date, {@enum.value spOrder_Date When the order was made }
     spOrder_Detail, {@enum.value spOrder_Detail What action is being ordered }
@@ -576,6 +608,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsOrderResponse = (
     spOrderResponse__id, {@enum.value spOrderResponse__id The logical resource id associated with the resource (must be supported by all servers) }
+    spOrderResponse__language, {@enum.value spOrderResponse__language The language of the resource }
     spOrderResponse_Code, {@enum.value spOrderResponse_Code pending | review | rejected | error | accepted | cancelled | replaced | aborted | complete }
     spOrderResponse_Date, {@enum.value spOrderResponse_Date When the response was made }
     spOrderResponse_Fulfillment, {@enum.value spOrderResponse_Fulfillment Details of the outcome of performing the order }
@@ -587,6 +620,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsOrganization = (
     spOrganization__id, {@enum.value spOrganization__id The logical resource id associated with the resource (must be supported by all servers) }
+    spOrganization__language, {@enum.value spOrganization__language The language of the resource }
     spOrganization_Active, {@enum.value spOrganization_Active Whether the organization's record is active }
     spOrganization_Identifier, {@enum.value spOrganization_Identifier Any identifier for the organization (not the accreditation issuer's identifier) }
     spOrganization_Name, {@enum.value spOrganization_Name A portion of the organization's name }
@@ -599,6 +633,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsOther = (
     spOther__id, {@enum.value spOther__id The logical resource id associated with the resource (must be supported by all servers) }
+    spOther__language, {@enum.value spOther__language The language of the resource }
     spOther_Code, {@enum.value spOther_Code Kind of Resource }
     spOther_Created, {@enum.value spOther_Created When created }
     spOther_Subject); {@enum.value spOther_Subject Identifies the }
@@ -608,6 +643,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsPatient = (
     spPatient__id, {@enum.value spPatient__id The logical resource id associated with the resource (must be supported by all servers) }
+    spPatient__language, {@enum.value spPatient__language The language of the resource }
     spPatient_Active, {@enum.value spPatient_Active Whether the patient record is active }
     spPatient_Address, {@enum.value spPatient_Address An address in any kind of address/part of the patient }
     spPatient_Animal_breed, {@enum.value spPatient_Animal_breed The breed for animal patients }
@@ -629,6 +665,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsPractitioner = (
     spPractitioner__id, {@enum.value spPractitioner__id The logical resource id associated with the resource (must be supported by all servers) }
+    spPractitioner__language, {@enum.value spPractitioner__language The language of the resource }
     spPractitioner_Address, {@enum.value spPractitioner_Address An address in any kind of address/part }
     spPractitioner_Family, {@enum.value spPractitioner_Family A portion of the family name }
     spPractitioner_Gender, {@enum.value spPractitioner_Gender Gender of the practitioner }
@@ -644,6 +681,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsProcedure = (
     spProcedure__id, {@enum.value spProcedure__id The logical resource id associated with the resource (must be supported by all servers) }
+    spProcedure__language, {@enum.value spProcedure__language The language of the resource }
     spProcedure_Date, {@enum.value spProcedure_Date The date the procedure was performed on }
     spProcedure_Subject, {@enum.value spProcedure_Subject The identity of a patient to list procedures  for }
     spProcedure_Type); {@enum.value spProcedure_Type Type of procedure }
@@ -653,6 +691,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsProfile = (
     spProfile__id, {@enum.value spProfile__id The logical resource id associated with the resource (must be supported by all servers) }
+    spProfile__language, {@enum.value spProfile__language The language of the resource }
     spProfile_Code, {@enum.value spProfile_Code A code for the profile in the format uri::code (server may choose to do subsumption) }
     spProfile_Date, {@enum.value spProfile_Date The profile publication date }
     spProfile_Description, {@enum.value spProfile_Description Text search in the description of the profile }
@@ -670,6 +709,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsProvenance = (
     spProvenance__id, {@enum.value spProvenance__id The logical resource id associated with the resource (must be supported by all servers) }
+    spProvenance__language, {@enum.value spProvenance__language The language of the resource }
     spProvenance_End, {@enum.value spProvenance_End End time with inclusive boundary, if not ongoing }
     spProvenance_Location, {@enum.value spProvenance_Location Where the activity occurred, if relevant }
     spProvenance_Party, {@enum.value spProvenance_Party Identity of agent (urn or url) }
@@ -682,6 +722,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsQuery = (
     spQuery__id, {@enum.value spQuery__id The logical resource id associated with the resource (must be supported by all servers) }
+    spQuery__language, {@enum.value spQuery__language The language of the resource }
     spQuery_Identifier, {@enum.value spQuery_Identifier Links query and its response(s) }
     spQuery_Response); {@enum.value spQuery_Response Links response to source query }
 
@@ -690,6 +731,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsQuestionnaire = (
     spQuestionnaire__id, {@enum.value spQuestionnaire__id The logical resource id associated with the resource (must be supported by all servers) }
+    spQuestionnaire__language, {@enum.value spQuestionnaire__language The language of the resource }
     spQuestionnaire_Author, {@enum.value spQuestionnaire_Author The author of the questionnaire }
     spQuestionnaire_Authored, {@enum.value spQuestionnaire_Authored When the questionnaire was authored }
     spQuestionnaire_Encounter, {@enum.value spQuestionnaire_Encounter Encounter during which questionnaire was authored }
@@ -703,6 +745,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsRelatedPerson = (
     spRelatedPerson__id, {@enum.value spRelatedPerson__id The logical resource id associated with the resource (must be supported by all servers) }
+    spRelatedPerson__language, {@enum.value spRelatedPerson__language The language of the resource }
     spRelatedPerson_Address, {@enum.value spRelatedPerson_Address An address in any kind of address/part }
     spRelatedPerson_Gender, {@enum.value spRelatedPerson_Gender Gender of the person }
     spRelatedPerson_Identifier, {@enum.value spRelatedPerson_Identifier A patient Identifier }
@@ -716,6 +759,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsSecurityEvent = (
     spSecurityEvent__id, {@enum.value spSecurityEvent__id The logical resource id associated with the resource (must be supported by all servers) }
+    spSecurityEvent__language, {@enum.value spSecurityEvent__language The language of the resource }
     spSecurityEvent_Action, {@enum.value spSecurityEvent_Action Type of action performed during the event }
     spSecurityEvent_Address, {@enum.value spSecurityEvent_Address Identifier for the network access point of the user device }
     spSecurityEvent_Altid, {@enum.value spSecurityEvent_Altid Alternative User id e.g. authentication }
@@ -737,6 +781,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsSpecimen = (
     spSpecimen__id, {@enum.value spSpecimen__id The logical resource id associated with the resource (must be supported by all servers) }
+    spSpecimen__language, {@enum.value spSpecimen__language The language of the resource }
     spSpecimen_Subject); {@enum.value spSpecimen_Subject The subject of the specimen }
 
   {@Enum TSearchParamsSubstance
@@ -744,6 +789,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsSubstance = (
     spSubstance__id, {@enum.value spSubstance__id The logical resource id associated with the resource (must be supported by all servers) }
+    spSubstance__language, {@enum.value spSubstance__language The language of the resource }
     spSubstance_Expiry, {@enum.value spSubstance_Expiry When no longer valid to use }
     spSubstance_Identifier, {@enum.value spSubstance_Identifier Identifier of the package/container }
     spSubstance_Quantity, {@enum.value spSubstance_Quantity Amount of substance in the package }
@@ -755,6 +801,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsSupply = (
     spSupply__id, {@enum.value spSupply__id The logical resource id associated with the resource (must be supported by all servers) }
+    spSupply__language, {@enum.value spSupply__language The language of the resource }
     spSupply_Dispenseid, {@enum.value spSupply_Dispenseid External identifier }
     spSupply_Dispensestatus, {@enum.value spSupply_Dispensestatus in progress | dispensed | abandoned }
     spSupply_Identifier, {@enum.value spSupply_Identifier Unique identifier }
@@ -768,6 +815,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   }
   TSearchParamsValueSet = (
     spValueSet__id, {@enum.value spValueSet__id The logical resource id associated with the resource (must be supported by all servers) }
+    spValueSet__language, {@enum.value spValueSet__language The language of the resource }
     spValueSet_Code, {@enum.value spValueSet_Code A code defined in the value set }
     spValueSet_Date, {@enum.value spValueSet_Date The value set publication date }
     spValueSet_Description, {@enum.value spValueSet_Description Text search in the description of the value set }

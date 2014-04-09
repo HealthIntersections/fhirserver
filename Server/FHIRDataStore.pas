@@ -105,6 +105,7 @@ Type
     FSupportSystemHistory : Boolean;
     FBases : TStringList;
     FTotalResourceCount: integer;
+    FFormalURL: String;
 
     procedure LoadExistingResources;
     procedure SaveSecurityEvent(se : TFhirSecurityEvent);
@@ -147,6 +148,8 @@ Type
     Property TotalResourceCount : integer read FTotalResourceCount;
     Property TerminologyServer : TTerminologyServer read FTerminologyServer;
     procedure Sweep;
+    property FormalURL : String read FFormalURL write FFormalURL;
+    function ResourceTypeKeyForName(name : String) : integer;
   end;
 
 
@@ -751,6 +754,16 @@ begin
 end;
 
 
+function TFHIRDataStore.ResourceTypeKeyForName(name: String): integer;
+var
+  i : integer;
+begin
+  i := StringArrayIndexOfSensitive(CODES_TFhirResourceType, name);
+  if i < 1 then
+    raise Exception.Create('Unknown Resource Type '''+name+'''');
+  result := FResConfig[TFhirResourceType(i)].key;
+end;
+
 procedure TFHIRDataStore.Sweep;
 var
   key, i : integer;
@@ -1029,7 +1042,7 @@ begin
         inc(i);
         mem := ZDecompressBytes(conn.ColBlobByName['Content']);
 
-        parser := MakeParser('en', ffXml, mem);
+        parser := MakeParser('en', ffXml, mem, xppDrop);
         try
           SeeResource(conn.colIntegerByName['ResourceKey'], conn.colStringByName['Id'], parser.resource);
         finally

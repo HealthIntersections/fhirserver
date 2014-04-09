@@ -98,6 +98,9 @@ Type
 
   TFHIRAuthProvider = (apNone, apCustom, apFacebook, apGoogle, apHL7);
 
+
+  TFHIRXhtmlParserPolicy = (xppAllow, xppDrop, xppReject);
+
 Const
   FHIR_NS = 'http://hl7.org/fhir';
   FHIR_TAG_SCHEME = 'http://hl7.org/fhir/tag';
@@ -168,7 +171,7 @@ type
   public
     Destructor Destroy; override;
     function createIterator(bInheritedProperties : Boolean) : TFHIRPropertyIterator;
-    Function PerformQuery(xpath : String):TFHIRObjectList;
+    Function PerformQuery(path : String):TFHIRObjectList;
     property Tag : TAdvObject read FTag write SetTag;
   end;
 
@@ -427,7 +430,7 @@ Uses
 type
   TFHIRQueryProcessor = class (TAdvObject)
   private
-    FXPath: String;
+    FPath: String;
     FResults: TFHIRObjectList;
     FSource: TFHIRObjectList;
   public
@@ -435,7 +438,7 @@ type
     destructor Destroy; Override;
 
     property source : TFHIRObjectList read FSource;
-    property xpath : String read FXPath write FXPath;
+    property path : String read FPath write FPath;
     procedure execute;
     property results : TFHIRObjectList read FResults;
   end;
@@ -1331,14 +1334,14 @@ begin
   // nothing to add here
 end;
 
-function TFHIRObject.PerformQuery(xpath: String): TFHIRObjectList;
+function TFHIRObject.PerformQuery(path: String): TFHIRObjectList;
 var
   qry : TFHIRQueryProcessor;
 begin
   qry := TFHIRQueryProcessor.create;
   try
     qry.source.Add(self.Link);
-    qry.xpath := xpath;
+    qry.path := path;
     qry.execute;
     result := qry.results.Link;
   finally
@@ -1401,17 +1404,13 @@ var
   i : integer;
   first : boolean;
 begin
-  src := FXPath;
+  src := FPath;
   first := true;
   while (src <> '') do
   begin
-    StringSplit(src, '/', seg, src);
-    if (pos(':', seg) > 0) then
-      seg := copy(seg, pos(':', seg)+1, $FFF)
-    else if (pos('.', seg) > 0) then
-      seg := copy(seg, pos('.', seg)+1, $FFF);
+    StringSplit(src, '.', seg, src);
     if (not IsValidIdent(seg)) Then
-      raise exception.create('unable to parse xpath "'+FXPath+'"');
+      raise exception.create('unable to parse path "'+FPath+'"');
     FResults.clear;
     if first then
       for i := 0 to FSource.count - 1 Do
