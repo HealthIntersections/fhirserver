@@ -14,3 +14,5 @@ bin/*
 *.rdp
 
 
+*.bak
+web/QuestionnaireToHTML.xslt

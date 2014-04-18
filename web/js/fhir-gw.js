@@ -99,9 +99,9 @@ function commitTag()
     alert("no URI - a URI must be provided");
   else if (term.match("^[^\s]+([\s]+[^\s]+)*$")) {
     if (!label)
-      json = "{ \"_type\" : \"TagList\", \"category\" : [{ \"term\" : \""+term+"\", \"scheme\" : \""+scheme+"\" }] }";
+      json = "{ \"resourceType\" : \"TagList\", \"category\" : [{ \"term\" : \""+term+"\", \"scheme\" : \""+scheme+"\" }] }";
     else
-      json = "{ \"_type\" : \"TagList\", \"category\" : [{ \"term\" : \""+term+"\", \"label\" : \""+label+"\", \"scheme\" : \""+scheme+"\" }] }";
+      json = "{ \"resourceType\" : \"TagList\", \"category\" : [{ \"term\" : \""+term+"\", \"label\" : \""+label+"\", \"scheme\" : \""+scheme+"\" }] }";
     sendTag(json);
   } else
     alert("The URI Format is invalid");  
@@ -178,13 +178,13 @@ function success(data)
 function deleteTag(target, scheme, term)
 {
   tgt = target;
-  json = "{ \"_type\" : \"TagList\", \"category\" : [{ \"term\" : \""+term+"\", \"scheme\" : \""+scheme+"\" }] }";
+  json = "{ \"resourceType\" : \"TagList\", \"category\" : [{ \"term\" : \""+term+"\", \"scheme\" : \""+scheme+"\" }] }";
   try
   {
     $.ajax({
       url: tgt,
       cache: false,
-      type: "delete",
+      type: "POST",
       data: json,
       dataType: "json",
       contentType: "application/json; charset=utf-8",

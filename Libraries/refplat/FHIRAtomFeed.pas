@@ -195,7 +195,7 @@ type
     Function GetItemN(index : Integer) : TFHIRAtomCategory;
     Property ItemN[index : Integer] : TFHIRAtomCategory read GetItemN write SetItemN; default;
     Property Json : TBytes read GetJson write SetJson;
-    procedure DecodeJson(stream : TStream);
+    procedure DecodeJson(bytes : TBytes);
     Procedure CopyTags(other : TFHIRAtomCategoryList);
     function HasTag(schemeUri, tagUri : string):Boolean; overload;
     function HasTag(schemeUri, tagUri : string; var n : integer):Boolean; overload;
@@ -929,10 +929,12 @@ begin
   result := Inherited Count;
 end;
 
-procedure TFHIRAtomCategoryList.DecodeJson(stream: TStream);
+procedure TFHIRAtomCategoryList.DecodeJson(bytes: TBytes);
 begin
-  stream.Position := 0;
-  SetJson(TJSONParser.Parse(stream));
+  if length(bytes) = 0 then
+    clear
+  else
+    SetJson(TJSONParser.Parse(bytes));
 end;
 
 function TFHIRAtomCategoryList.GetItemN(index: Integer): TFHIRAtomCategory;

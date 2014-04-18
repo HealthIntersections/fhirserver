@@ -723,8 +723,10 @@ begin
 //  if (resource.language <> nil) then
     index(resource.ResourceType, key, resource.language, 'language');
   FMasterKey := key;
-  FSpaces.FDB.ExecSQL('delete from Compartments where MasterResourceKey = '+inttostr(key));
-  FSpaces.FDB.ExecSQL('delete from indexEntries where MasterResourceKey = '+inttostr(key));
+  FSpaces.FDB.ExecSQL('delete from Compartments where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
+  FSpaces.FDB.ExecSQL('delete from IndexEntries where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
+  FSpaces.FDB.ExecSQL('delete from IndexEntries where Target in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
+  FSpaces.FDB.ExecSQL('delete from SearchEntries where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
   FSpaces.FDB.ExecSQL('delete from Ids where MasterResourceKey = '+inttostr(key));
   FPatientCompartments.Clear;
 
@@ -1678,7 +1680,7 @@ begin
     exit; // what to do in this case?
   if not StringStartsWith(reference.referenceST, 'Patient/') then
     exit; // what to do in this case?
-  sid := copy(reference.referenceST, 10, $FF);
+  sid := copy(reference.referenceST, 9, $FF);
   if (pos('/', sid) > 0) then
     sid := copy(sid, 1, pos('/', sid) - 1);
   patientCompartment(key, 'Patient', sid);

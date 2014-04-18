@@ -88,10 +88,9 @@ Source: "C:\ProgramData\FHIRServer\dicom.cache";                      DestDir: "
 Source: "C:\ProgramData\FHIRServer\loinc.cache";                      DestDir: "{commonappdata}\FHIRServer"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
-Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\libssl32.dll";           DestDir: "{app}\ssl";      Flags: ignoreversion
-Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\libeay32.dll";           DestDir: "{app}\ssl";      Flags: ignoreversion
-Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\openssl.exe";            DestDir: "{app}\ssl";      Flags: ignoreversion
-Source: "C:\HL7Connect\v2\Deploy\RunTime\SSL\openssl.cnf";            DestDir: "{app}\ssl"
+Source: "C:\work\fhirserver\Exec\ssleay32.dll";           DestDir: "{app}\ssl";      Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\libeay32.dll";           DestDir: "{app}\ssl";      Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\openssl.exe";            DestDir: "{app}\ssl";      Flags: ignoreversion
 
 [INI]
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "source"; String: "{app}\spec"

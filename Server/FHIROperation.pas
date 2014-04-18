@@ -401,7 +401,7 @@ begin
 
   tags := TFHIRAtomCategoryList.create;
   try
-    tags.decodeJson(FConnection.ColMemoryByName['Tags']);
+    tags.decodeJson(FConnection.ColBlobByName['Tags']);
     if sType = 'Binary' then
     begin
       binary := LoadBinaryResource(FConnection.ColMemoryByName['Content']);
@@ -1107,6 +1107,8 @@ begin
         feed.id := 'urn:uuid:'+FhirGUIDToString(CreateGUID);
         feed.links.rel['self'] := base + '&_offset='+inttostr(offset)+'&_count='+inttostr(count);
         feed.links.rel['first'] := base + '&_offset=0&_count='+inttostr(count);
+        feed.SearchOffset := offset;
+        feed.SearchCount := count;
         feed.sql := FConnection.sql;
         response.HTTPCode := 200;
         response.Message := 'OK';
@@ -1976,7 +1978,7 @@ begin
     NotFound(request, response);
     if check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
     begin
-      if (length(request.id) <= 36) and (length(request.subid) <= 36) and FindResource(request.ResourceType, request.Id, false, resourceKey, originalId, request, response, request.compartments) then
+      if (length(request.id) <= 36) and (length(request.subid) <= 36) and FindResource(request.ResourceType, request.Id, true, resourceKey, originalId, request, response, request.compartments) then
       begin
         VersionNotFound(request, response);
         FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' and VersionId = :v';
@@ -2503,7 +2505,7 @@ begin
     else if entry.id.StartsWith('urn:uuid:', true) and IsGuid(copy(entry.id, 10, $FFFF)) then
     begin
       // todo: do we care if GUIDs aren't allowed?
-      id.id := copy(entry.id, 10, $FFFF);
+      id.id := copy(entry.id, 10, $FFFF).ToLower;
       id.originalId := '';
     end
     else
@@ -2949,6 +2951,8 @@ begin
     fcmdCreate : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdCreate;
     fcmdConformanceStmt : result := true;
     fcmdUpload, fcmdTransaction : result := FRepository.SupportTransaction;
+    fcmdUpdateTags : result := true;
+    fcmdDeleteTags : result := true;
   else
     result := false;
   end;
@@ -3002,7 +3006,7 @@ begin
     response.resource := LoadBinaryResource(FConnection.ColMemoryByName['Content'])
   else
   begin
-    response.categories.DecodeJson(FConnection.ColMemoryByName['Tags']);
+    response.categories.DecodeJson(FConnection.ColBlobByName['Tags']);
     if wantSummary then
       blob := ZDecompressBytes(FConnection.ColBlobByName['Summary'])
     else
@@ -3096,12 +3100,12 @@ var
   tags : TFHIRAtomCategoryList;
   t : String;
   ok : boolean;
-  stream, s : TMemoryStream;
+  blob : TBytes;
   parser : TFHIRParser;
 begin
   try
     ok := true;
-    if not check(response, opAllowed(request.ResourceType, fcmdUpdate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if not check(response, opAllowed(request.ResourceType, fcmdDeleteTags), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
       ok := false;
     if ok then
       NotFound(request, response);
@@ -3146,26 +3150,18 @@ begin
         if resourceVersionKey = currentResourceVersionKey then
         begin
           // changing the tags might change the indexing
-          stream := TMemoryStream.Create;
+          FConnection.SQL := 'Select Content from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
+          FConnection.prepare;
+          FConnection.Execute;
+          if not FConnection.FetchNext then
+            raise Exception.Create('Internal Error fetching current content');
+          blob := ZDecompressBytes(FConnection.ColBlobByName['Content']);
+          FConnection.Terminate;
+          parser := MakeParser('en', ffXml, blob, xppDrop);
           try
-            FConnection.SQL := 'Select Content from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
-            FConnection.prepare;
-            FConnection.Execute;
-            if not FConnection.FetchNext then
-              raise Exception.Create('Internal Error fetching current content');
-            s := FConnection.ColMemoryByName['Content'];
-            s.Position := 0;
-            stream.CopyFrom(s, s.Size);
-            stream.Position := 0;
-            FConnection.Terminate;
-            parser := MakeParser('en', ffXml, stream, xppDrop);
-            try
-              FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
-            finally
-              parser.free;
-            end;
+            FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
           finally
-            stream.free;
+            parser.free;
           end;
         end;
 
@@ -3270,12 +3266,12 @@ var
   tags : TFHIRAtomCategoryList;
   t : string;
   ok : boolean;
-  stream, s : TMemoryStream;
+  blob : TBytes;
   parser : TFHIRParser;
 begin
   try
     ok := true;
-    if not check(response, opAllowed(request.ResourceType, fcmdUpdate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if not check(response, opAllowed(request.ResourceType, fcmdUpdateTags), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
       ok := false;
     if ok then
       NotFound(request, response);
@@ -3315,30 +3311,22 @@ begin
 
         FConnection.ExecSQL('delete from VersionTags where ResourceVersionKey = '+inttostr(resourceVersionKey));
         CommitTags(tags, resourceVersionKey);
-        response.categories.CopyTags(tags);
+//        response.categories.CopyTags(tags);
 
         if resourceVersionKey = currentResourceVersionKey then
         begin
-          stream := TMemoryStream.Create;
+          FConnection.SQL := 'Select Content from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
+          FConnection.prepare;
+          FConnection.Execute;
+          if not FConnection.FetchNext then
+            raise Exception.Create('Internal Error fetching current content');
+          blob := ZDecompressBytes(FConnection.ColBlobByName['Content']);
+          FConnection.Terminate;
+          parser := MakeParser('en', ffXml, blob, xppDrop);
           try
-            FConnection.SQL := 'Select Content from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
-            FConnection.prepare;
-            FConnection.Execute;
-            if not FConnection.FetchNext then
-              raise Exception.Create('Internal Error fetching current content');
-            s := FConnection.ColMemoryByName['Content'];
-            s.Position := 0;
-            stream.CopyFrom(s, s.Size);
-            stream.Position := 0;
-            FConnection.Terminate;
-            parser := MakeParser('en', ffXml, stream, xppDrop);
-            try
-              FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
-            finally
-              parser.free;
-            end;
+            FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
           finally
-            stream.free;
+            parser.free;
           end;
         end;
       finally
@@ -3843,7 +3831,7 @@ begin
       begin
         tags := TFHIRAtomCategoryList.create;
         try
-          tags.DecodeJson(Connection.ColMemoryByName['Tags']);
+          tags.DecodeJson(Connection.ColBlobByName['Tags']);
           parser := MakeParser('en', ffXml, Connection.ColMemoryByName['Content'], xppDrop);
           try
             r := parser.resource;
@@ -4139,7 +4127,7 @@ begin
     entry.published_ := NowUTC;
     entry.authorName := FConnection.ColStringByName['Name'];
     entry.originalId := originalId;
-    entry.categories.decodeJson(FConnection.ColMemoryByName['Tags']);
+    entry.categories.decodeJson(FConnection.ColBlobByName['Tags']);
     feed.entries.add(entry.Link);
     result := entry;
   finally

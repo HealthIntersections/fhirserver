@@ -39,17 +39,26 @@ todo for connectathon:
 
 bug list:
 
-When we delete a resource on your server, all version-specific reads are coming back as "gone", not just the deleted version
-
 http://fhir.healthintersections.com.au/open/Patient/C82E147E-6E80-4AF6-97CD-94C4294A3A75/_history
 [10:30:12 AM] Lloyd McKenzie: Atom feed shows <totalResluts>0
-[10:30:57 AM] Lloyd McKenzie: Also, the contained elements declare a <content type="text/xml"/> instead of "application/xml+fhir"
-
+[10:30:57 AM] Lloyd McKenzie: Also, the contained elements declare a <content type="text/xml"/> instead of ""
 
 
 build:
 validator jar not in validation pack
 
+
+Change record:
+  19-April 2014
+    * add Questionnaire web interface (Lloyd's transform)
+    * fix bug indexing patient compartment
+  18-April 2014
+    * pick up tags on PUT/POST and handle them properly
+    * fix tag functionality in Web UI
+    * reject unknown attributes
+    * fix problem where you couldn't vread an old version of a resource that is currently deleted
+    * fix compartment searches looking for plural name instead of singular name e.g.http://hl7connect.healthintersections.com.au/open/Patient/1053/Observation[s]
+    * fix mime type on content element in atom feed
 }
 
 uses

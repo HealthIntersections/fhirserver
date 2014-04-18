@@ -696,7 +696,7 @@ begin
   v := CreateOLEObject(GMsXmlProgId_SCHEMA);
   FCache := IUnknown(TVarData(v).VDispatch) as IXMLDOMSchemaCollection;
   FCache.add('http://www.w3.org/XML/1998/namespace', loadDoc('xml.xsd'));
-  FCache.add('http://www.w3.org/1999/xhtml', loadDoc('xhtml1-strict.xsd'));
+  FCache.add('http://www.w3.org/1999/xhtml', loadDoc('fhir-xhtml.xsd'));
   FCache.add('http://www.w3.org/2000/09/xmldsig#', loadDoc('xmldsig-core-schema.xsd'));
   FCache.add('http://hl7.org/fhir', loadDoc('fhir-single.xsd'));
   FCache.add('http://purl.org/atompub/tombstones/1.0', loadDoc('tombstone.xsd'));
