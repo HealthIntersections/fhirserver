@@ -567,7 +567,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     spObservation__language, {@enum.value spObservation__language The language of the resource }
     spObservation_Date, {@enum.value spObservation_Date Obtained date/time. If the obtained element is a period, a date that falls in the period }
     spObservation_Name, {@enum.value spObservation_Name The name of the observation type }
-    spObservation_Name_value_x, {@enum.value spObservation_Name_value_[x] Both name and one of the value parameters }
+    spObservation_Name_value_[x], {@enum.value spObservation_Name_value_[x] Both name and one of the value parameters }
     spObservation_Performer, {@enum.value spObservation_Performer Who and/or what performed the observation }
     spObservation_Related, {@enum.value spObservation_Related Related Observations - search on related-type and related-target together }
     spObservation_Related_target, {@enum.value spObservation_Related_target Observation that is related to this one }

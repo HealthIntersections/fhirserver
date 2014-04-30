@@ -3,6 +3,7 @@ unit FhirServerTests;
 interface
 
 uses
+  SysUtils,
   IniFiles,
   AdvObjects,
   TerminologyServer;
@@ -18,6 +19,7 @@ Type
     destructor Destroy; override;
     property  ini : TIniFile read FIni write FIni;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
+    procedure executeLibrary; // library functionality to test
     procedure executeBefore; // before server is started
     procedure executeRound1;  // initial state - all loaded, but empty
     procedure executeRound2;  // 2nd cycle: after everything is loaded
@@ -27,13 +29,21 @@ Type
 implementation
 
 uses
-  SnomedServices, SnomedExpressions;
+  SnomedServices, SnomedExpressions,
+  DecimalTests, UcumTests;
 
 { TFhirServerTests }
 
 procedure TFhirServerTests.executeBefore;
 begin
   TestSnomedExpressions;
+end;
+
+procedure TFhirServerTests.executeLibrary;
+begin
+  TDecimalTests.runTests;
+  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
+  WriteLn('Library tests Passed');
 end;
 
 procedure TFhirServerTests.executeRound1;

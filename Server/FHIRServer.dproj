@@ -119,7 +119,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -remount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -tests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot;</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -328,6 +328,8 @@
         <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapMime.pas"/>
         <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapBase64.pas"/>
         <DCCReference Include="FHIRServerConstants.pas"/>
+        <DCCReference Include="..\Libraries\tests\DecimalTests.pas"/>
+        <DCCReference Include="..\Libraries\tests\UcumTests.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

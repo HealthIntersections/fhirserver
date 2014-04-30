@@ -236,7 +236,9 @@ uses
   IdSoapNamespaces in 'C:\HL7Connect\indysoap\source\IdSoapNamespaces.pas',
   IdSoapMime in 'C:\HL7Connect\indysoap\source\IdSoapMime.pas',
   IdSoapBase64 in 'C:\HL7Connect\indysoap\source\IdSoapBase64.pas',
-  FHIRServerConstants in 'FHIRServerConstants.pas';
+  FHIRServerConstants in 'FHIRServerConstants.pas',
+  DecimalTests in '..\Libraries\tests\DecimalTests.pas',
+  UcumTests in '..\Libraries\tests\UcumTests.pas';
 
 begin
   try

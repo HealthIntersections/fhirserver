@@ -324,7 +324,7 @@ begin
       feed := ParseFeed(root)
     else if root.namespaceURI = FHIR_NS Then
     begin
-      if (root.nodeName = 'taglist') then
+      if SameText(root.nodeName, 'TagList') then
         ParseTags(root)
       else
         resource := ParseResource(root, '')
@@ -354,7 +354,7 @@ begin
     s := obj['resourceType'];
     if s = 'Bundle' then
       feed := ParseFeed(obj)
-    else if s = 'TagList' then
+    else if SameText(s, 'TagList') then
       ParseTags(obj)
     else
       resource := ParseResource(obj);
@@ -736,7 +736,7 @@ end;
 
 function TFHIRXmlComposerBase.MimeType: String;
 begin
-  result := 'application/xml+fhir; charset=UTF-8';
+  result := 'text/xml+fhir; charset=UTF-8';
 end;
 
 procedure TFHIRXmlComposerBase.commentsStart(xml: TXmlBuilder; value: TFhirBase);
@@ -786,7 +786,7 @@ begin
     xml.Start;
     if FComment <> '' then
       xml.Comment(FComment);
-    xml.Open('TagList');
+    xml.Open('Taglist');
     for i := 0 to oTags.Count - 1 do
     begin
       xml.AddAttribute('scheme', oTags[i].scheme);
@@ -796,7 +796,7 @@ begin
       xml.Tag('category');
     end;
 
-    xml.Close('TagList');
+    xml.Close('Taglist');
     xml.Finish;
     xml.Build(stream);
   finally
@@ -914,7 +914,7 @@ begin
     json.Start;
     json.value('resourceType', 'Bundle');
     ComposeAtomBase(json, oFeed);
-    if oFeed.isSearch then
+    if oFeed.isSearch and ((oFeed.SearchTotal > 0) or (oFeed.entries.Count = 0)) then
       Prop(json, 'totalResults', inttostr(oFeed.SearchTotal));
     json.ValueArray('entry');
     for i := 0 to oFeed.entries.count - 1 Do
@@ -1480,7 +1480,7 @@ begin
   xml.Open('feed');
   ComposeAtomBase(xml, feed);
 
-  if (feed.isSearch) then
+  if (feed.isSearch) and ((feed.SearchTotal > 0) or (feed.entries.Count = 0)) then
   begin
     xml.Namespace := 'http://a9.com/-/spec/opensearch/1.1/';
     xml.TagText('totalResults', inttostr(feed.SearchTotal));
@@ -1543,7 +1543,8 @@ begin
     end;
     if entry.resource <> nil then
     begin
-      xml.AddAttribute('type', 'application/xml+fhir');
+//      xml.AddAttribute('type', 'application/xml+fhir');
+      xml.AddAttribute('type', 'text/xml');
       xml.Open('content');
       xml.Namespace := FHIR_NS;
       if entry.resource is TFhirBinary then
@@ -2054,7 +2055,7 @@ end;
 
 function TFHIRComposer.ResourceMediaType: String;
 begin
-  result := 'application/xml+fhir; charset=UTF-8';
+  result := 'text/xml+fhir; charset=UTF-8';
 end;
 
 function URLTail(s : String):String;
@@ -2456,7 +2457,7 @@ procedure TFHIRXmlParserBase.ParseTags(element: IXMLDOMElement);
 var
   child : IXMLDOMElement;
 begin
-  if element.baseName <> 'taglist' then
+  if not sameText(element.baseName, 'taglist') then
     Raise Exception.create(StringFormat(GetFhirMessage('MSG_CANT_PARSE_ROOT', lang), [element.baseName]));
 
   FTags := TFHIRAtomCategoryList.create;
@@ -2466,7 +2467,7 @@ begin
     if (child.baseName = 'category') then
       FTags.AddValue(TMsXmlParser.GetAttribute(child, 'scheme'), TMsXmlParser.GetAttribute(child, 'term'), TMsXmlParser.GetAttribute(child, 'label'))
     else
-       UnknownContent(child, 'taglist');
+       UnknownContent(child, 'TagList');
     child := NextSibling(child);
   end;
 end;

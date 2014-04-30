@@ -4,27 +4,27 @@ unit UcumServices;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -32,6 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes,
+  IdSoapMsXml,
   MathSupport, FileSupport,
   AdvBinaryFilers, AdvFiles, AdvFactories, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
   DecimalSupport, UcumHandlers, UcumValidators, UcumExpressions, Ucum,
@@ -59,6 +60,13 @@ Type
     FKey: Integer;
     FName: String;
     FPath: String;
+
+    Function ParseDecimal(context : TSmartDecimalContext; S,s1 : String):TSmartDecimal;
+    Function ParsePrefix(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumPrefix;
+    Function ParseBaseUnit(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumBaseUnit;
+    Function ParseUnit(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumDefinedUnit;
+    Function GetPropertyIndex(const sName : String):Integer;
+
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -186,6 +194,8 @@ Type
      *)
     Function multiply(o1, o2 : TUcumPair) : TUcumPair;
 
+    // load from ucum-essence.xml
+    Procedure Import(Const sFilename : String);
     Procedure Load(Const sFilename : String);
     Procedure Save(Const sFilename : String);
 
@@ -231,7 +241,8 @@ Type
 Implementation
 
 Uses
- UcumSearch;
+  MsXmlParser,
+  UcumSearch;
  
 { TUcumServices }
 
@@ -276,7 +287,6 @@ begin
     dst := nil;
     oConv := TUcumConverter.Create(FModel.Link, FHandlers.Link);
     try
-      result := oConv.Context.Value(Value);
       Term := TUcumExpressionParser.Parse(FModel, sourceUnit);
       src := oConv.convert(term);
       term.Free;
@@ -286,7 +296,7 @@ begin
       d := TUcumExpressionComposer.compose(dst.Unit_);
       if s <> d then
         raise Exception.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
-      t := result.Multiply(src.Value);
+      t := value.Multiply(src.Value);
       result := t.Divide(dst.Value);
     Finally
       term.Free;
@@ -294,8 +304,8 @@ begin
       dst.Free;
       oConv.Free;
     End;
+    result.Link;
   End;
-  result.Link;
 end;
 
 constructor TUcumServices.Create;
@@ -332,7 +342,7 @@ begin
         if value.Value = nil then
           result := TUcumPair.Create(nil, TUcumExpressionComposer.Compose(c.Unit_))
         else
-          result := TUcumPair.Create(value.Value.Multiply(c.Value), TUcumExpressionComposer.Compose(c.Unit_))
+          result := TUcumPair.Create(value.Value.Multiply(c.Value).Link, TUcumExpressionComposer.Compose(c.Unit_))
       Finally
         c.Free;
       End;
@@ -441,13 +451,12 @@ var
 begin
   res := TUcumPair.Create(nil, '');
   Try
-    res.value := o1.value.Multiply(o2.Value);
+    res.value := o1.value.Multiply(o2.Value).Link;
     res.FUnitCode := o1.FUnitCode +'.'+o2.UnitCode;
     result := getCanonicalForm(res);
   Finally
     res.Free;
   End;
-
 end;
 
 procedure TUcumServices.Save(const sFilename: String);
@@ -740,6 +749,54 @@ begin
   raise Exception.Create('to do');
 end;
 
+procedure TUcumServices.Import(const sFilename: String);
+var
+  oParser : TMsXmlParser;
+  oXml : IXMLDomDocument2;
+  oElem : IXMLDOMElement;
+  oErrors : TAdvStringList;
+  context : TSmartDecimalContext;
+begin
+  context := TSmartDecimalContext.create;
+  try
+    oParser := TMsXmlParser.Create;
+    try
+      oXml := oParser.Parse(sFilename);
+    Finally
+      oParser.Free;
+    End;
+    if oXml.documentElement.nodeName <> 'root' Then
+      raise exception.create('Invalid ucum essence file');
+    FModel.Clear;
+    FModel.Version := TMsXmlParser.GetAttribute(oXml.documentElement, 'version');
+    FModel.RevisionDate := TMsXmlParser.GetAttribute(oXml.documentElement, 'revision-date');
+    FModel.RevisionDate := copy(FModel.RevisionDate, 8, length(FModel.RevisionDate)-9);
+    oElem := TMsXmlParser.FirstChild(oXml.documentElement);
+    while (oElem <> nil) Do
+    Begin
+     if oElem.NodeName = 'prefix' Then
+       FModel.prefixes.Add(ParsePrefix(context, oElem))
+     Else if oElem.NodeName = 'base-unit' Then
+       FModel.baseUnits.Add(ParseBaseUnit(context, oElem))
+     Else if oElem.NodeName = 'unit' Then
+       FModel.definedUnits.Add(ParseUnit(context, oElem))
+     else
+       raise exception.create('unrecognised element '+oElem.nodename);
+      oElem := TMsXmlParser.NextSibling(oElem);
+    End;
+    oErrors := TAdvStringList.Create;
+    Try
+      Validate(oErrors);
+      if oErrors.Count > 0 then
+        raise exception.create(oErrors.asText);
+    Finally
+      oErrors.Free;
+    End;
+  finally
+    context.Free;
+  end;
+end;
+
 function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
   result := false;
@@ -804,6 +861,128 @@ begin
   result := nil;
   raise Exception.Create('to do');
 end;
+
+function TUcumServices.ParseDecimal(context : TSmartDecimalContext; S,s1: String): TSmartDecimal;
+begin
+  if s = '' then
+    result := context.One
+  Else
+    result := context.Value(s);
+end;
+
+Function TUcumServices.ParsePrefix(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumPrefix;
+var
+  oChild : IXMLDOMElement;
+  s : String;
+Begin
+  result := TUcumPrefix.Create;
+  try
+    result.code := TMsXmlParser.GetAttribute(oElem, 'Code');
+    result.codeUC := TMsXmlParser.GetAttribute(oElem, 'CODE');
+    oChild := TMsXmlParser.FirstChild(oElem);
+    while oChild <> nil do
+    Begin
+      if oChild.nodeName = 'name' Then
+        result.names.Add(TMsXmlParser.TextContent(oChild, ttAsIs))
+      else if oChild.nodeName = 'printSymbol' Then
+        result.printSymbol := TMsXmlParser.TextContent(oChild, ttAsIs)
+      else if oChild.nodeName = 'value' Then
+      begin
+        s := TmsXmlParser.GetAttribute(oChild, 'value');
+        result.value := ParseDecimal(context, s, result.Code).Link;
+        result.value.Precision := 24; // arbitrarily high. even when an integer, these numbers are precise
+        if s[2] = 'e' Then
+          result.Text := '10^'+Copy(s, 3, $FF)
+        else
+          result.Text := s;
+      End
+      else
+        raise exception.Create('unknown element in prefix: '+oChild.NodeName);
+      oChild := TMsXmlParser.NextSibling(oChild);
+    End;
+    result.Link;
+  Finally
+    result.Free;
+  End;
+End;
+
+Function TUcumServices.ParseBaseUnit(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumBaseUnit;
+var
+  oChild : IXMLDOMElement;
+  s : String;
+Begin
+  result := TUcumBaseUnit.Create;
+  try
+    result.code := TMsXmlParser.GetAttribute(oElem, 'Code');
+    result.codeUC := TMsXmlParser.GetAttribute(oElem, 'CODE');
+    s := TMsXmlParser.GetAttribute(oElem, 'dim');
+    if s <> '' Then
+      result.dim := s[1];
+    oChild := TMsXmlParser.FirstChild(oElem);
+    while oChild <> nil do
+    Begin
+      if oChild.nodeName = 'name' Then
+        result.names.Add(TMsXmlParser.TextContent(oChild, ttAsIs))
+      else if oChild.nodeName = 'printSymbol' Then
+        result.printSymbol := TMsXmlParser.TextContent(oChild, ttAsIs)
+      else if oChild.nodeName = 'property' Then
+        result.PropertyType := GetPropertyIndex(TMsXmlParser.TextContent(oChild, ttAsIs))
+      else
+        raise exception.Create('unknown element in base unit: '+oChild.NodeName);
+      oChild := TMsXmlParser.NextSibling(oChild);
+    End;
+    result.Link;
+  Finally
+    result.Free;
+  End;
+End;
+
+Function TUcumServices.ParseUnit(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumDefinedUnit;
+var
+  oChild : IXMLDOMElement;
+Begin
+  result := TUcumDefinedUnit.Create;
+  try
+    result.code := TMsXmlParser.GetAttribute(oElem, 'Code');
+    result.codeUC := TMsXmlParser.GetAttribute(oElem, 'CODE');
+    result.metric := TMsXmlParser.GetAttribute(oElem, 'isMetric') = 'yes';
+    result.isSpecial := TMsXmlParser.GetAttribute(oElem, 'isSpecial') = 'yes';
+    result.class_ := TMsXmlParser.GetAttribute(oElem, 'class');
+    oChild := TMsXmlParser.FirstChild(oElem);
+    while oChild <> nil do
+    Begin
+      if oChild.nodeName = 'name' Then
+        result.names.Add(TMsXmlParser.TextContent(oChild, ttAsIs))
+      else if oChild.nodeName = 'printSymbol' Then
+        result.printSymbol := TMsXmlParser.TextContent(oChild, ttAsIs)
+      else if oChild.nodeName = 'property' Then
+        result.PropertyType := GetPropertyIndex(TMsXmlParser.TextContent(oChild, ttAsIs))
+      else if oChild.nodeName = 'value' Then
+      begin
+        result.value.unit_ := TMsXmlParser.GetAttribute(oChild, 'Unit');
+        result.value.unitUC := TMsXmlParser.GetAttribute(oChild, 'UNIT');
+        result.value.value := ParseDecimal(Context, TmsXmlParser.GetAttribute(oChild, 'value'), result.value.unit_).Link;
+        result.value.text := TMsXmlParser.TextContent(oChild, ttAsIs);
+      End
+      else
+        raise exception.Create('unknown element in unit: '+oChild.NodeName);
+      oChild := TMsXmlParser.NextSibling(oChild);
+    End;
+    result.Link;
+  Finally
+    result.Free;
+  End;
+End;
+
+
+function TUcumServices.GetPropertyIndex(const sName: String): Integer;
+begin
+  result :=  FModel.Properties.IndexByName(sName);
+  if result = -1 then
+    result := FModel.Properties.AddByName(sName);
+end;
+
+
 
 End.
 

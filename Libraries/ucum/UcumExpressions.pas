@@ -904,7 +904,7 @@ begin
         End
         Else
         Begin
-          result.Value := Result.Value.Multiply(t.Value);
+          result.Value := Result.Value.Multiply(t.Value).Link;
           if (t.Unit_ <> Nil) Then
             Result.Unit_.setTermCheckOp(t.Unit_.Link)
           else
@@ -1164,7 +1164,7 @@ Begin
   oBldr := TAdvStringBuilder.Create;
   Try
     composeTerm(oBldr, oTerm);
-    result := obldr.ToString();
+    result := obldr.AsString;
   Finally
     oBldr.Free;
   End;

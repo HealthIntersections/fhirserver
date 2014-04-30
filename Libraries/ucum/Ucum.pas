@@ -132,13 +132,13 @@ type
 
   TUcumBaseUnit = class (TUcumUnit)
   private
-    Fdim : AnsiChar;
+    Fdim : Char;
   protected
     Function GetKind : TConceptKind; Override;
   public
     function Link : TUcumBaseUnit; Overload;
     Procedure Define(oFiler : TAdvFiler); Override;
-    Property dim : AnsiChar read FDim write FDim;
+    Property dim : Char read FDim write FDim;
   End;
 
   TUcumBaseUnitList = class (TAdvPersistentList)
@@ -318,7 +318,7 @@ end;
 procedure TUcumBaseUnit.Define(oFiler: TAdvFiler);
 begin
   inherited;
-  oFiler['dim'].DefineString(Fdim);
+  oFiler['dim'].DefineChar(Fdim);
 
 end;
 

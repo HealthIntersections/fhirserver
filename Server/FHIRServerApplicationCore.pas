@@ -208,6 +208,7 @@ begin
     tests := TFhirServerTests.Create;
     try
       tests.ini := FIni;
+      tests.executeLibrary;
       if FDb = nil then
         ConnectToDatabase;
       if dbExists then
