@@ -31,14 +31,14 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  ActiveX, ComObj, SysUtils, Dialogs,
+  ActiveX, ComObj, SysUtils,
   kCritSct, StringSupport, IdGlobal,
   AdvObjects, AdvStringObjectMatches, AdvFiles, AdvZipReaders, AdvZipParts,
   AdvMemories, AdvVclStreams, AdvBuffers, AdvNameBuffers,
   IdSoapXml, IdSoapMsXml, AltovaXMLLib_TLB, MsXmlParser, IdUri,
   FHIRParser, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources, FHIRAtomFeed,
-  FHIRUtilities, FHIRValueSetExpander, FHIRConstants,
-  LoincServices, SnomedServices, UcumServices;
+  FHIRUtilities, FHIRValueSetExpander, FHIRConstants, FHIRValueSetChecker,
+  TerminologyServer;
 
 type
   TChildIterator = class (TAdvObject)
@@ -63,17 +63,14 @@ type
   TFHIRValidator = class (TAdvObject)
   private
     FSchematronSource : String;
+    FTerminologyServer : TTerminologyServer;
 
     FTypes : TAdvStringObjectMatch; // TFHIRProfile
-    FValueSets : TAdvStringObjectMatch; // TFHIRValueSet
-    FCodeSystems : TAdvStringObjectMatch; // TFHIRValueSet
     FSources : TAdvNameBufferList;
     FCache : IXMLDOMSchemaCollection;
     FsuppressLoincSnomedMessages: boolean;
     FChecks : TAdvStringObjectMatch; // TValueSetChecker
 
-
-    Function MakeChecker(vs : TFHIRValueSet) : TValueSetChecker;
 
     procedure validateAtomEntry(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; specifiedprofile : TFhirProfile);
     procedure validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFhirProfile);
@@ -94,19 +91,12 @@ type
     procedure checkIdentifier(path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
     procedure checkQuantity(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
     procedure checkCoding(op : TFhirOperationOutcome; profile : TFHIRProfile; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
-    function checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string; context : TFHIRProfileStructureElement) : boolean;
-    function getCodeDefinition(c : TFHIRValueSetDefineConcept; code : string) : TFHIRValueSetDefineConcept; overload;
-    function getCodeDefinition(vs : TFHIRValueSet; code : string) : TFHIRValueSetDefineConcept; overload;
-    function getValueSet(system : string) : TFHIRValueSet;
     procedure checkCodeableConcept(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; profile : TFHIRProfile; context : TFHIRProfileStructureElement);
-    function resolveBindingReference(ref : TFHIRType) : TFHIRValueSet;
+    function resolveBindingReference(ref : TFHIRType) : TValueSetChecker;
     function describeReference(ref : TFHIRType) : String;
     function codeInExpansion(list: TFHIRValueSetExpansionContainsList; system, code : string) : Boolean;
 
 
-    function rule(op : TFhirOperationOutcome; source, typeCode, path : string; test : boolean; msg : string) : boolean;
-    function warning(op : TFhirOperationOutcome; source, typeCode, path : string; test : boolean; msg : string) : boolean;
-    function hint(op : TFhirOperationOutcome; source, typeCode, path : string; test : boolean; msg : string) : boolean;
     procedure Load(feed : TFHIRAtomFeed);
     function LoadFile(name : String; isFree : boolean = false) : IXMLDomDocument2;
     function LoadDoc(name : String; isFree : boolean = false) : IXMLDomDocument2;
@@ -115,9 +105,11 @@ type
     procedure processSchematron(op : TFhirOperationOutcome; source : String);
     procedure executeSchematron(context : TFHIRValidatorContext; op : TFhirOperationOutcome; source, name : String);
     function transform(op: TFhirOperationOutcome; source: IXMLDOMDocument2; transform: IXSLTemplate): IXMLDOMDocument2;
+    procedure SetTerminologyServer(const Value: TTerminologyServer);
   public
     constructor Create; override;
     destructor Destroy; override;
+    Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
     Property suppressLoincSnomedMessages : boolean read FsuppressLoincSnomedMessages write FsuppressLoincSnomedMessages;
     procedure LoadFromDefinitions(filename : string);
     Property SchematronSource : String read FSchematronSource write FSchematronSource;
@@ -126,8 +118,6 @@ type
     procedure YieldContext(context : TFHIRValidatorContext);
     Function validateInstance(context : TFHIRValidatorContext; elem : TIdSoapXmlElement; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome; overload;
     Function validateInstance(context : TFHIRValidatorContext; source : TAdvBuffer; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome; overload;
-    Property ValueSets : TAdvStringObjectMatch read FValueSets;
-    Property CodeSystems : TAdvStringObjectMatch read FCodeSystems;
   end;
 
 implementation
@@ -221,7 +211,7 @@ begin
   else
   begin
     s := getStructureForType(elem.Name, p, specifiedprofile);
-    if (rule(op, 'InstanceValidator', 'invalid', elem.Name, s <> nil, 'Unknown Resource Type '+elem.Name)) then
+    if (op.error('InstanceValidator', 'invalid', elem.Name, s <> nil, 'Unknown Resource Type '+elem.Name)) then
       validateElement(op, p, s, path+'/f:'+elem.Name, s.elementList[0], nil, nil, elem);
   end;
 end;
@@ -321,14 +311,14 @@ begin
             else
             begin
               r := getStructureForType(type_, p, nil);
-              if (rule(op, 'InstanceValidator', 'structure', ci.path, r <> nil, 'Unknown type_ '+type_)) then
+              if (op.error('InstanceValidator', 'structure', ci.path, r <> nil, 'Unknown type_ '+type_)) then
                 validateElement(op, p, r, ci.path, r.elementList[0], profile, child, ci.element);
             end;
           end;
         end
         else
         begin
-          if (rule(op,'InstanceValidator', 'structure', path, child <> nil, 'Unrecognised Content '+ci.name)) then
+          if (op.error('InstanceValidator', 'structure', path, child <> nil, 'Unrecognised Content '+ci.name)) then
             validateElement(op, profile, structure, ci.path, child, nil, nil, ci.element);
         end;
       end;
@@ -471,8 +461,8 @@ begin
   // for now. nothing to check
   if (type_ = 'uri') then
   begin
-    rule(op, 'InstanceValidator', 'invalid', path,  not StringStartsWith(e.getAttribute('', 'value'), 'oid:'), 'URI values cannot start with oid: (use urn:oid:)');
-    rule(op, 'InstanceValidator', 'invalid', path, not StringStartsWith(e.getAttribute('', 'value'), 'uuid:'), 'URI values cannot start with uuid: (use urn:uuid:)');
+    op.error('InstanceValidator', 'invalid', path,  not StringStartsWith(e.getAttribute('', 'value'), 'oid:'), 'URI values cannot start with oid: (use urn:oid:)');
+    op.error('InstanceValidator', 'invalid', path, not StringStartsWith(e.getAttribute('', 'value'), 'uuid:'), 'URI values cannot start with uuid: (use urn:uuid:)');
   end;
 end;
 
@@ -514,13 +504,13 @@ end;
 
 procedure TFHIRValidator.checkResourceReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
 var
-  t, r, e : String;
+  r, e : String;
 begin
   r := getNamedChildValue(element,  'reference');
   if (r <> '') then
   begin
     e := refError(r);
-    rule(op, 'InstanceValidator', 'value', path, e = '', 'The Resource reference "'+r+'" is not valid: '+e);
+    op.error('InstanceValidator', 'value', path, e = '', 'The Resource reference "'+r+'" is not valid: '+e);
   end;
 end;
 
@@ -537,143 +527,49 @@ begin
   system := getNamedChildValue(element,  'system');
   units := getNamedChildValue(element,  'units');
   if (system <> '') and (code <> '') then
-    checkCode(op, path, code, system, units, context);
+    FTerminologyServer.checkCode(op, path, code, system, units, context);
 end;
 
 procedure TFHIRValidator.checkCoding(op : TFhirOperationOutcome; profile : TFHIRProfile; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
 var
   code, system, display :string;
   binding : TFhirProfileStructureElementDefinitionBinding;
-  vs : TFhirValueSet;
-  check : TValueSetChecker;
+  vsc : TValueSetChecker;
 begin
   code := getNamedChildValue(element,  'code');
   system := getNamedChildValue(element,  'system');
   display := getNamedChildValue(element,  'display');
   if (system <> '') and (code <> '') then
-    if checkCode(op, path, code, system, display, context) then
+    if FTerminologyServer.checkCode(op, path, code, system, display, context) then
     begin
       if (context <> nil) and (context.definition.binding <> nil) then
       begin
         binding := context.definition.binding;
-        if warning(op, 'InstanceValidator', 'code-unknown', path, binding <> nil, 'Binding not provided') then
+        if op.warning('InstanceValidator', 'code-unknown', path, binding <> nil, 'Binding not provided') then
         begin
           if binding.reference is TFhirResourceReference then
           begin
-            vs := resolveBindingReference(binding.Reference);
-            if (warning(op, 'InstanceValidator', 'code-unknown', path, vs <> nil, 'ValueSet '+describeReference(binding.Reference)+' not found')) then
-            begin
+            vsc := resolveBindingReference(binding.Reference);
+            try
               try
-                check := makeChecker(vs);
-                warning(op, 'InstanceValidator', 'code-unknown', path, check.check(system, code), 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.nameST+' ('+vs.IdentifierST+')');
+                if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.Reference)+' not found')) then
+                  op.warning('InstanceValidator', 'code-unknown', path, vsc.check(system, code), 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.nameST+' ('+vsc.id+')');
               Except
                 on e : Exception do
                   if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
-                    hint(op, 'InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Snomed value set - not validated')
+                    op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Snomed value set - not validated')
                   else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
-                    hint(op, 'InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
+                    op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
                   else
-                    warning(op, 'InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vs.IdentifierST+' for '+context.Definition.Binding.nameST+': '+e.Message);
+                    op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vsc.id+' for '+context.Definition.Binding.nameST+': '+e.Message);
               end;
+            finally
+              vsc.Free;
             end;
           end;
         end;
       end;
     end;
-end;
-
-function TFHIRValidator.checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string; context : TFHIRProfileStructureElement) : boolean;
-var
-  vs : TFhirValueSet;
-  def : TFhirValueSetDefineConcept;
-  d : String;
-begin
-  result := false;
-  if StringStartsWith(system, 'http://hl7.org/fhir') then
-  begin
-    if (system = 'http://hl7.org/fhir/sid/icd-10') then
-      result := true// nothing for now....
-    else
-    begin
-      vs := getValueSet(system);
-      if warning(op, 'InstanceValidator', 'code-unknown', path, vs <> nil, 'Unknown Code System '+system) then
-      begin
-        def := getCodeDefinition(vs, code);
-        if (warning(op, 'InstanceValidator', 'code-unknown', path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
-            result := warning(op, 'InstanceValidator', 'code-unknown', path, (display = '') or (display = def.DisplayST), 'Display for '+system+' code "'+code+'" should be "'+def.DisplayST+'"');
-      end;
-    end;
-  end
-  else if StringStartsWith(system, 'http://snomed.info/sct') then
-  begin
-    if warning(op, 'InstanceValidator', 'code-unknown', path, GSnomeds.DefaultDefinition.IsValidTerm(code), 'The SNOMED-CT term "'+code+'" is unknown') then
-    begin
-      d := GSnomeds.DefaultDefinition.GetDisplayName(code, '');
-      result := warning(op, 'InstanceValidator', 'code-unknown', path, (display = '') or (display = d), 'Display for SNOMED-CT term "'+code+'" should be "'+d+'"');
-    end;
-  end
-  else if StringStartsWith(system, 'http://loinc.org') then
-  begin
-    d := gLoincs.DefaultService.GetDisplayByName(code);
-    if warning(op, 'InstanceValidator', 'code-unknown', path, d <> '', 'The LOINC code "'+code+'" is unknown') then
-      result := warning(op, 'InstanceValidator', 'code-unknown', path, (display = '') or (display = d), 'Display for Loinc Code "'+code+'" should be "'+d+'"');
-  end
-  else if StringStartsWith(system, 'http://unitsofmeasure.org') then
-  begin
-    d := GUcums.DefaultDefinition.validate(code);
-    result := warning(op, 'InstanceValidator', 'code-unknown', path, d = '', 'The UCUM code "'+code+'" is not valid: '+d);
-    // we don't make rules about display for UCUM.
-  end
-  else
-    result := true;
-end;
-
-function TFHIRValidator.getCodeDefinition(c : TFHIRValueSetDefineConcept; code : string) : TFHIRValueSetDefineConcept;
-var
-  i : integer;
-  g : TFHIRValueSetDefineConcept;
-  r : TFHIRValueSetDefineConcept;
-begin
-  result := nil;
-  if (code = c.CodeST) then
-    result := c;
-  for i := 0 to c.conceptList.Count - 1 do
-  begin
-    g := c.conceptList[i];
-    r := getCodeDefinition(g, code);
-    if (r <> nil) then
-    begin
-      result := r;
-      exit;
-    end;
-  end;
-end;
-
-function TFHIRValidator.getCodeDefinition(vs : TFHIRValueSet; code : string) : TFHIRValueSetDefineConcept; 
-var
-  i : integer;
-  c : TFHIRValueSetDefineConcept;
-  r : TFHIRValueSetDefineConcept;
-begin
-  result := nil;
-  for i := 0 to vs.define.conceptList.Count - 1 do
-  begin
-    c := vs.define.conceptList[i];
-    r := getCodeDefinition(c, code);
-    if (r <> nil) then
-    begin
-      result := r;
-      exit;
-    end;
-  end;
-end;
-
-function TFHIRValidator.getValueSet(system : string) : TFHIRValueSet;
-begin
-  if FCodeSystems.ExistsByKey(system) then
-    result := FCodeSystems.matches[system] as TFHIRValueSet
-  else
-    result := nil;
 end;
 
 procedure TFHIRValidator.checkCodeableConcept(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; profile : TFHIRProfile; context : TFHIRProfileStructureElement);
@@ -682,137 +578,58 @@ var
   found, any : boolean;
   c : TIdSoapXmlElement;
   system, code : String;
-  vs : TFHIRValueSet;
-  check : TValueSetChecker;
+  vsc : TValueSetChecker;
 begin
   if (context <> nil) and (context.definition.binding <> nil) then
   begin
     binding := context.definition.binding;
     if binding.reference is TFhirResourceReference then
     begin
-      vs := resolveBindingReference(binding.Reference);
-      if (warning(op, 'InstanceValidator', 'code-unknown', path, vs <> nil, 'ValueSet '+describeReference(binding.Reference)+' not found')) then
-      begin
-        try
-          check := MakeCHecker(vs);
-          found := false;
-          any := false;
-          c := element.FirstChild;
-          while (c <> nil) do
-          begin
-            if (c.NodeName = 'coding') then
+      vsc := resolveBindingReference(binding.Reference);
+      try
+        if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.Reference)+' not found')) then
+        begin
+          try
+            found := false;
+            any := false;
+            c := element.FirstChild;
+            while (c <> nil) do
             begin
-              any := true;
-              system := getNamedChildValue(c, 'system');
-              code := getNamedChildValue(c, 'code');
-              if (system <> '') and (code <> '') then
-                found := found or check.check(system, code);
+              if (c.NodeName = 'coding') then
+              begin
+                any := true;
+                system := getNamedChildValue(c, 'system');
+                code := getNamedChildValue(c, 'code');
+                if (system <> '') and (code <> '') then
+                  found := found or vsc.check(system, code);
+              end;
+              c := c.nextSibling;
             end;
-            c := c.nextSibling;
+            if not any and (binding.ConformanceST = BindingConformanceRequired) then
+              op.warning('InstanceValidator', 'code-unknown', path, false, 'No code provided, and value set '+context.Definition.Binding.nameST+' ('+vsc.id+') is required');
+            if (any) then
+              if (binding.ConformanceST = BindingConformanceExample) then
+                op.hint('InstanceValidator', 'code-unknown', path, found, 'None of the codes are in the example value set '+context.Definition.Binding.nameST+' ('+vsc.id+')')
+              else
+                op.warning('InstanceValidator', 'code-unknown', path, found, 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.nameST+' ('+vsc.id+')');
+          Except
+            on e : Exception do
+              if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
+                op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Snomed value set - not validated')
+              else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
+                op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
+              else
+                op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vsc.id+' for '+context.Definition.Binding.nameST+': '+e.Message);
           end;
-          if not any and (binding.ConformanceST = BindingConformanceRequired) then
-            warning(op, 'InstanceValidator', 'code-unknown', path, false, 'No code provided, and value set '+context.Definition.Binding.nameST+' ('+vs.IdentifierST+') is required');
-          if (any) then
-            if (binding.ConformanceST = BindingConformanceExample) then
-              hint(op, 'InstanceValidator', 'code-unknown', path, found, 'None of the codes are in the example value set '+context.Definition.Binding.nameST+' ('+vs.IdentifierST+')')
-            else
-              warning(op, 'InstanceValidator', 'code-unknown', path, found, 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.nameST+' ('+vs.IdentifierST+')');
-        Except
-          on e : Exception do
-            if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
-              hint(op, 'InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Snomed value set - not validated')
-            else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
-              hint(op, 'InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
-            else
-              warning(op, 'InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vs.IdentifierST+' for '+context.Definition.Binding.nameST+': '+e.Message);
         end;
+      finally
+        vsc.free;
       end;
     end;
   end;
   // todo: check primary
 end;
 
-
-function TFHIRValidator.rule(op: TFhirOperationOutcome; source, typeCode, path: string; test: boolean; msg: string): boolean;
-var
-  issue : TFhirOperationOutcomeIssue;
-  ex : TFhirExtension;
-begin
-  if not test then
-  begin
-    issue := TFhirOperationOutcomeIssue.create;
-    try
-      issue.severityST := IssueSeverityError;
-      issue.type_ := TFhirCoding.create;
-      issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
-      issue.type_.codeST := typeCode;
-      issue.detailsST := msg;
-      issue.locationList.Append.value := path;
-      ex := issue.ExtensionList.Append;
-      ex.urlST := 'http://hl7.org/fhir/tools#issue-source';
-      ex.value := TFhirCode.create;
-      TFhirCode(ex.value).value := source;
-      op.issueList.add(issue.link);
-    finally
-      issue.free;
-    end;
-  end;
-  result := test;
-end;
-
-function TFHIRValidator.warning(op: TFhirOperationOutcome; source, typeCode, path: string; test: boolean; msg: string): boolean;
-var
-  issue : TFhirOperationOutcomeIssue;
-  ex : TFhirExtension;
-begin
-  if not test then
-  begin
-    issue := TFhirOperationOutcomeIssue.create;
-    try
-      issue.severityST := IssueSeverityWarning;
-      issue.type_ := TFhirCoding.create;
-      issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
-      issue.type_.codeST := typeCode;
-      issue.detailsST := msg;
-      issue.locationList.Append.value := path;
-      ex := issue.ExtensionList.Append;
-      ex.urlST := 'http://hl7.org/fhir/tools#issue-source';
-      ex.value := TFhirCode.create;
-      TFhirCode(ex.value).value := source;
-      op.issueList.add(issue.link);
-    finally
-      issue.free;
-    end;
-  end;
-  result := test;
-end;
-
-function TFHIRValidator.hint(op: TFhirOperationOutcome; source, typeCode, path: string; test: boolean; msg: string): boolean;
-var
-  issue : TFhirOperationOutcomeIssue;
-  ex : TFhirExtension;
-begin
-  if not test then
-  begin
-    issue := TFhirOperationOutcomeIssue.create;
-    try
-      issue.severityST := IssueSeverityInformation;
-      issue.type_ := TFhirCoding.create;
-      issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
-      issue.type_.codeST := typeCode;
-      issue.detailsST := msg;
-      issue.locationList.Append.value := path;
-      ex := issue.ExtensionList.Append;
-      ex.urlST := 'http://hl7.org/fhir/tools#issue-source';
-      ex.value := TFhirCode.create;
-      TFhirCode(ex.value).value := source;
-      op.issueList.add(issue.link);
-    finally
-      issue.free;
-    end;
-  end;
-  result := test;
-end;
 
 procedure TFHIRValidator.LoadFromDefinitions(filename: string);
 var
@@ -879,7 +696,7 @@ begin
   v := CreateOLEObject(GMsXmlProgId_SCHEMA);
   FCache := IUnknown(TVarData(v).VDispatch) as IXMLDOMSchemaCollection;
   FCache.add('http://www.w3.org/XML/1998/namespace', loadDoc('xml.xsd'));
-  FCache.add('http://www.w3.org/1999/xhtml', loadDoc('xhtml1-strict.xsd'));
+  FCache.add('http://www.w3.org/1999/xhtml', loadDoc('fhir-xhtml.xsd'));
   FCache.add('http://www.w3.org/2000/09/xmldsig#', loadDoc('xmldsig-core-schema.xsd'));
   FCache.add('http://hl7.org/fhir', loadDoc('fhir-single.xsd'));
   FCache.add('http://purl.org/atompub/tombstones/1.0', loadDoc('tombstone.xsd'));
@@ -894,7 +711,6 @@ var
   i : integer;
   r : TFhirResource;
   p : TFhirProfile;
-  vs : TFhirValueSet;
 begin
   for i := 0 to feed.entries.count - 1 do
   begin
@@ -907,13 +723,8 @@ begin
       else
         FTypes.add(LowerCase(p.StructureList[0].Type_ST), p.link);
     end
-    else if (r is TFhirValueSet) then
-    begin
-      vs := r as TFhirValueSet;
-      FValuesets.add(vs.IdentifierST, vs.link);
-      if (vs.Define <> nil) then
-        FCodesystems.add(vs.Define.SystemST, vs.link);
-    end;
+    else if (r.ResourceType in [frtValueSet, frtConceptMap]) then
+      FTerminologyServer.SeeSpecificationResource(feed.entries[i].id, r);
   end;
 end;
 
@@ -998,7 +809,7 @@ begin
       load;
       if dom.Root = nil then
       begin
-        rule(result, 'Schema', 'invalid', 'line '+inttostr(dom.ParseError.line)+', Col '+inttostr(dom.ParseError.linepos), false, dom.ParseError.reason);
+        result.error('Schema', 'invalid', 'line '+inttostr(dom.ParseError.line)+', Col '+inttostr(dom.ParseError.linepos), false, dom.ParseError.reason);
         dom.schemas := nil;
         try
           load;
@@ -1050,10 +861,10 @@ constructor TFHIRValidator.Create;
 begin
   inherited;
   FTypes := TAdvStringObjectMatch.create;
-  FValueSets := TAdvStringObjectMatch.create;
-  FCodeSystems := TAdvStringObjectMatch.create;
+  FTypes.PreventDuplicates;
   FSources := TAdvNameBufferList.create;
   FChecks := TAdvStringObjectMatch.create;
+  FChecks.PreventDuplicates;
 end;
 
 destructor TFHIRValidator.Destroy;
@@ -1061,8 +872,7 @@ begin
   FSources.Free;
   FChecks.Free;
   FTypes.Free;
-  FValueSets.Free;
-  FCodeSystems.Free;
+  FTerminologyServer.Free;
   inherited;
 end;
 
@@ -1125,7 +935,7 @@ begin
     getErrorInfo(0, err);
     err.GetSource(src);
     err.GetDescription(desc);
-    rule(op, 'schematron', 'exception', src, false, desc);
+    op.error('schematron', 'exception', src, false, desc);
   end
   else
   begin
@@ -1133,7 +943,7 @@ begin
     xml := LoadMsXMLDomV;
     result := IUnknown(TVarData(xml).VDispatch) as IXMLDomDocument2;
     result.async := false;
-    if not rule(op, 'schematron', 'exception', '??', result.loadXML(src), 'Unable to parse result of transform') then
+    if not op.error('schematron', 'exception', '??', result.loadXML(src), 'Unable to parse result of transform') then
       result := nil;
   end;
 end;
@@ -1143,7 +953,6 @@ var
   xslt2: AltovaXMLLib_TLB.XSLT2;
   src : String;
   app : AltovaXMLLib_TLB.Application;
-  tmp : String;
 begin
   if context <> nil then
     app := context.FxmlApp
@@ -1161,15 +970,20 @@ begin
   processSchematron(op, xslt2.ExecuteAndGetResultAsString);
 end;
 
-
-function TFHIRValidator.resolveBindingReference(ref: TFHIRType): TFHIRValueSet;
+function TFHIRValidator.resolveBindingReference(ref: TFHIRType): TValueSetChecker;
 begin
   if (ref is TFHIRUri) then
-    result := FValuesets.matches[TFHIRUri(ref).value] as TFHIRValueSet
+    result := FTerminologyServer.MakeChecker(TFHIRUri(ref).value)
   else if (ref is TFHIRResourceReference) then
-    result := FValuesets.matches[TFHIRResourceReference(ref).reference.value] as TFHIRValueSet
+    result := FTerminologyServer.MakeChecker(TFHIRResourceReference(ref).reference.value)
   else
     result := nil;
+end;
+
+procedure TFHIRValidator.SetTerminologyServer(const Value: TTerminologyServer);
+begin
+  FTerminologyServer.Free;
+  FTerminologyServer := Value;
 end;
 
 function TFHIRValidator.describeReference(ref: TFHIRType): String;
@@ -1195,25 +1009,6 @@ begin
     begin
       result := true;
       exit;
-    end;
-  end;
-end;
-
-function TFHIRValidator.MakeChecker(vs : TFhirValueSet): TValueSetChecker;
-begin
-  if Fchecks.ExistsByKey(vs.identifierST) then
-    result := FChecks.matches[vs.identifierST] as TValueSetChecker
-  else
-  begin
-    result := TValueSetChecker.create;
-    try
-      result.ValueSets := ValueSets.Link;
-      result.CodeSystems := CodeSystems.Link;
-      result.prepare(vs);
-
-      FChecks.add(vs.identifierST, result.Link);
-    finally
-      result.Free;
     end;
   end;
 end;

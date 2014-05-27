@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /snomed/doco/
+Disallow: /secure/
+Disallow: /open/
+

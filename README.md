@@ -26,6 +26,7 @@ difference between delphi and FPC unicode implementations.
 
 Compiling should be simple:
 * get a copy of IndySoap (http://sourceforge.net/projects/indysoap/), and add the source directory to your delphi path
+** Note: you don't need to install indysoap, just have it in your source path 
 * open the file Server\FHIRServer.dproj in your version of delphi, and compile
 
 
@@ -52,9 +53,11 @@ Commands
 - `-start 'name'` - start the named fhir service 
 - `-stop 'name'` - stop the name fhir service
 - `-debug` - just run the service in debug mode
-- `-snomed 'dir'` - update the snomed cache from the nominated directory - either RF1 or RF2 supported
+- `-snomed 'dir'` - update the snomed cache from the nominated directory - either RF1 or RF2 supported (RF2 use a snapshot only). note: the import can take 30-60 minutes
 - `-loinc 'file'` - update the loinc cache from the given filename (access database)
 - `-mount` - install the database
 - `-unmount` - uninstall the database
+- `-remount` - uninstall and then install the database
+- `-tests` - run the automated tests. Needs a local mssql database called "fhir-test" with trusted access
 
 

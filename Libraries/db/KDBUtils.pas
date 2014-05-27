@@ -6,10 +6,9 @@ unit KDBUtils;
 interface
 
 uses
-  DB,
-  IdSoapDateTime,
-  KDate,
-  KDBManager;
+  Classes, DB, Contnrs,
+  {$IFDEF WIN32} IdSoapDateTime, {$ENDIF}
+  KDate, KDBManager;
 
 const
   {$IFDEF VER170}
@@ -141,12 +140,44 @@ const
     );
   {$ENDIF}
 
+  {$IFDEF VER260}
+  ColTypeMap: array[TFieldType] of TKDBColumnType =
+    ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
+    {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
+    {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
+    {ftFloat}       ctFloat,      {ftCurrency}     ctFloat,
+    {ftBCD}         ctFloat,      {ftDate}         ctDateTime,
+    {ftTime}        ctDateTime,   {ftDateTime}     ctDateTime,
+    {ftBytes}       ctBlob,       {ftVarBytes}     ctBlob,
+    {ftAutoInc}     ctInteger,    {ftBlob}         ctBlob,
+    {ftMemo}        ctBlob,       {ftGraphic}      ctBlob,
+    {ftFmtMemo}     ctBlob,       {ftParadoxOle}   ctBlob,
+    {ftDBaseOle}    ctBlob,       {ftTypedBinary}  ctUnknown,
+    {ftCursor}      ctUnknown,    {ftFixedChar}    ctChar,
+    {ftWideString}  ctChar,       {ftLargeint}     ctInt64,
+    {ftADT}         ctUnknown,    {ftArray}        ctUnknown,
+    {ftReference}   ctUnknown,    {ftDataSet}      ctBlob,
+    {ftOraBlob}     ctBlob,       {ftOraClob}      ctBlob,
+    {ftVariant}     ctUnknown,    {ftInterface}    ctUnknown,
+    {ftIDispatch}   ctUnknown,    {ftGuid}         ctUnknown,
+    {ftTimeStamp}    ctUnknown,   {ftFMTBcd}      ctUnknown,
+    {ftFixedWideChar}ctChar,      {ftWideMemo}    ctUnknown,
+    {ftOraTimeStamp} ctUnknown,   {ftOraInterval} ctUnknown,
+    {ftLongWord}     ctInteger,   {ftShortint}    ctInteger,
+    {ftByte}         ctInteger,   {ftExtended}    ctFloat,
+    {ftConnection}   ctUnknown,   {ftParams}      ctUnknown,
+    {ftStream}       ctUnknown,   {ftTimeStampOffset} ctUnknown,
+    {ftObject}       ctUnknown,   {ftSingle{}     ctFloat
+    );
+  {$ENDIF}
 
+{$IFDEF WIN32}
 function IdSoapDateTimeToTimeStamp(AValue : TIdSoapDateTime):TTimeStamp;
 function TimeStampToIdSoapDateTime(AValue : TTimeStamp):TIdSoapDateTime;
 
 procedure BindIdSoapDateTime(AConn : TKDBConnection; AName: String; AValue: TIdSoapDateTime);
 Function ColIdSoapDateTime(AConn : TKDBConnection; AName: String): TIdSoapDateTime;
+{$ENDIF}
 
 procedure PopulateDBTableMetaData(ADB : TDataSet; ATable : TKDBTable);
 function FetchIndexMetaData(AIndexDef : TIndexDef) : TKDBIndex;
@@ -157,6 +188,7 @@ uses
   SysUtils,
   StringSupport;
 
+{$IFDEF WIN32}
 function IdSoapDateTimeToTimeStamp(AValue : TIdSoapDateTime):kdate.TTimeStamp;
 begin
   if not Assigned(AValue) then
@@ -220,6 +252,8 @@ begin
     result := TimeStampToIdSoapDateTime(AConn.ColTimeStampByName[AName]);
     end;
 end;
+{$ENDIF}
+
 
 function FetchColumnMetaData(AField : TField):TKDBColumn;
 begin

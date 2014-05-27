@@ -3,6 +3,45 @@
 // Compiler Version Information
 //------------------------------------------------------------------------------
 
+
+(*
+
+- Feature Directives
+
+  The features directives are used to test if the compiler supports specific
+  features, such as method overloading, and adjust the sources accordingly. Use
+  of these directives is preferred over the use of the DELPHI and COMPILER
+  directives.
+
+  Directive                      Description
+  ------------------------------------------------------------------------------
+
+  DEPRECATED_SYSUTILS_ANSISTRINGS  AnsiString functions from SysUtils are deprecated and moved to System.AnsiStrings (D18+)
+
+  HAS_UNIT_RTLCONSTS               Unit RTLConsts exists (D6+/BCB6+/FPC)
+  HAS_UNIT_TYPES                   Unit Types exists (D6+/BCB6+/FPC)
+  HAS_UNITSCOPE                    Unit scope names are prepended to unit names in the VCL-FMX-RTL libraries.
+  HAS_UNIT_SYSTEM_UITYPES          Unit System.UITypes is available (D16+)
+  HAS_UNIT_VARIANTS                Unit Variants exists (D6+/BCB6+/FPC)
+
+  SUPPORTS_COMPILETIME_MESSAGES    Compiler supports the MESSAGE directive
+  SUPPORTS_DEFAULTPARAMS           Compiler supports default parameters (D4+/BCB4+)
+  SUPPORTS_DEPRECATED              Compiler supports the deprecated directive (D6+/BCB6+)
+  SUPPORTS_DEPRECATED_WARNINGS     Compiler supports deprecated warnings (D6+/BCB6+)
+  SUPPORTS_DEPRECATED_TYPES        Compiler supports deprecated warnings following type declarations (??? TODO ???)
+  SUPPORTS_ENUMVALUE               Compiler supports assigning ordinalities to values of enums (D6+/BCB6+)
+  SUPPORTS_FOR_IN                  Compiler supports for in loops (D9+)
+  SUPPORTS_INLINE                  Compiler supports the inline directive (D9+/FPC)
+  SUPPORTS_INT64                   Compiler supports the Int64 type (D4+/BCB4+)
+  SUPPORTS_LONGWORD                Compiler supports the LongWord type (unsigned 32 bit) (D4+/BCB4+)
+  SUPPORTS_OVERLOAD                Compiler supports overloading (D4+/BCB4+)
+  SUPPORTS_PLATFORM                Compiler supports the platform directive (D6+/BCB6+)
+  SUPPORTS_UINT64                  Compiler supports the unsigned UInt64 type (DX9+/DXE+)
+  SUPPORTS_UNICODE_STRING          Compiler supports UnicodeString (D12+)
+  SUPPORTS_VARARGS                 Compiler supports varargs (D6+/BCB6+)
+
+*)
+
 {$IFDEF FPC}
 
 //------------------------------------------------------------------------------
@@ -12,18 +51,24 @@
   {$MODE DELPHI}
   {$ASMMODE Intel}
 
+  {$DEFINE HAS_UNIT_RTLCONSTS}
+
   {$DEFINE SUPPORTS_DEFAULTPARAMS}
   {$DEFINE SUPPORTS_DEPRECATED}
   {$DEFINE SUPPORTS_DEPRECATED_WARNINGS}
   {$DEFINE SUPPORTS_ENUMVALUE}
+  {$DEFINE SUPPORTS_FOR_IN}
   {$DEFINE SUPPORTS_INT64}
+  {$DEFINE SUPPORTS_LONGWORD}
   {$DEFINE SUPPORTS_OVERLOAD}
+  {$DEFINE SUPPORTS_UNICODE_STRING} // FPC has UnicodeString like Unicode Delphi 2009.
   {$DEFINE SUPPORTS_VARARGS}
+
 
 {$ELSE FPC}
 
   //------------------------------------------------------------------------------
-  // Borland / CodeGear compilers
+  // Borland / CodeGear / Embarcadero compilers
   //------------------------------------------------------------------------------
 
   {$IFDEF Win32}
@@ -34,161 +79,175 @@
 
   // VERXXX to COMPILER_X, DELPHI_X and BCB_X mappings
 
-  {$IFDEF MSWINDOWS}
+  {$IFDEF VER80}
+    {$DEFINE DELPHI}
+    {$DEFINE DELPHI_1}
+    {$DEFINE COMPILER_1}
+  {$ENDIF}
 
-    {$IFDEF VER80}
+  {$IFDEF VER90}
+    {$DEFINE DELPHI}
+    {$DEFINE DELPHI_2}
+    {$DEFINE COMPILER_2}
+  {$ENDIF}
+
+  {$IFDEF VER93}
+    {$DEFINE BCB}
+    {$DEFINE BCB_1}
+    {$DEFINE COMPILER_2} // C++ Builder v1 compiler is really v2
+  {$ENDIF}
+
+  {$IFDEF VER100}
+    {$DEFINE DELPHI}
+    {$DEFINE DELPHI_3}
+    {$DEFINE COMPILER_3}
+  {$ENDIF}
+
+  {$IFDEF VER110}
+    {$DEFINE BCB}
+    {$DEFINE BCB_3}
+    {$DEFINE COMPILER_35}
+  {$ENDIF}
+
+  {$IFDEF VER125}
+    {$DEFINE BCB}
+    {$DEFINE BCB_4}
+    {$DEFINE COMPILER_4}
+  {$ENDIF}
+
+  {$IFDEF VER120}
+    {$DEFINE DELPHI}
+    {$DEFINE DELPHI_4}
+    {$DEFINE COMPILER_4}
+  {$ENDIF}
+
+  {$IFDEF VER130}
+    {$IFDEF BCB}
+      {$DEFINE BCB_5}
+    {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_1}
-      {$DEFINE COMPILER_1}
+      {$DEFINE DELPHI_5}
     {$ENDIF}
+    {$DEFINE COMPILER_5}
+  {$ENDIF}
 
-    {$IFDEF VER90}
+  {$IFDEF VER140}
+    {$IFDEF BCB}
+      {$DEFINE BCB_6}
+    {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_2}
-      {$DEFINE COMPILER_2}
+      {$DEFINE DELPHI_6}
     {$ENDIF}
+    {$DEFINE COMPILER_6}
+  {$ENDIF}
 
-    {$IFDEF VER93}
-      {$DEFINE BCB}
-      {$DEFINE BCB_1}
-      {$DEFINE COMPILER_2} // C++ Builder v1 compiler is really v2
-    {$ENDIF}
+  {$IFDEF VER150}
+    {$DEFINE DELPHI}
+    {$DEFINE DELPHI_7}
+    {$DEFINE COMPILER_7}
+  {$ENDIF}
 
-    {$IFDEF VER100}
-      {$DEFINE DELPHI}
-      {$DEFINE DELPHI_3}
-      {$DEFINE COMPILER_3}
-    {$ENDIF}
+  {$IFDEF VER160}
+    {$DEFINE DELPHI}
+    {$DEFINE DELPHI_8}
+    {$DEFINE COMPILER_8}
+  {$ENDIF}
 
-    {$IFDEF VER110}
-      {$DEFINE BCB}
-      {$DEFINE BCB_3}
-      {$DEFINE COMPILER_35}
-    {$ENDIF}
+  {$IFDEF VER170} // BDS 3, Delphi 2005
+    {$DEFINE DELPHI}
+    {$DEFINE DELPHI_9}
+    {$DEFINE COMPILER_9}
+  {$ENDIF}
 
-    {$IFDEF VER125}
-      {$DEFINE BCB}
-      {$DEFINE BCB_4}
-      {$DEFINE COMPILER_4}
-    {$ENDIF}
-
-    {$IFDEF VER120}
-      {$DEFINE DELPHI}
-      {$DEFINE DELPHI_4}
-      {$DEFINE COMPILER_4}
-    {$ENDIF}
-
-    {$IFDEF VER130}
+  {$IFDEF VER180}
+    {$IFDEF VER185} // RAD Studio 5, Delphi 2007
       {$IFDEF BCB}
-        {$DEFINE BCB_5}
+        {$DEFINE BCB_11}
       {$ELSE}
         {$DEFINE DELPHI}
-        {$DEFINE DELPHI_5}
+        {$DEFINE DELPHI_11}
       {$ENDIF}
-      {$DEFINE COMPILER_5}
-    {$ENDIF}
-
-    {$IFDEF VER140}
+      {$DEFINE COMPILER_11}
+    {$ELSE VER180} // RAD Studio 4, Delphi 2006
       {$IFDEF BCB}
-        {$DEFINE BCB_6}
+        {$DEFINE BCB_10}
       {$ELSE}
         {$DEFINE DELPHI}
-        {$DEFINE DELPHI_6}
+        {$DEFINE DELPHI_10}
       {$ENDIF}
-      {$DEFINE COMPILER_6}
+      {$DEFINE COMPILER_10}
     {$ENDIF}
+  {$ENDIF}
 
-    {$IFDEF VER150}
+  {$IFDEF VER200} // RAD Studio 2009
+    {$IFDEF BCB}
+      {$DEFINE BCB_12}
+    {$ELSE}
+       {$DEFINE DELPHI}
+       {$DEFINE DELPHI_12}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_12}
+  {$ENDIF VER200}
+
+  {$IFDEF VER210} // RAD Studio 2010
+    {$IFDEF BCB}
+      {$DEFINE BCB_14}
+    {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_7}
-      {$DEFINE COMPILER_7}
-    {$ENDIF}
+      {$DEFINE DELPHI_14}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_14}
+  {$ENDIF VER210}
 
-    {$IFDEF VER160}
+  {$IFDEF VER220} // RAD Studio XE
+    {$IFDEF BCB}
+      {$DEFINE BCB_15}
+    {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_8}
-      {$DEFINE COMPILER_8}
-    {$ENDIF}
+      {$DEFINE DELPHI_15}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_15}
+  {$ENDIF VER220}
 
-    {$IFDEF VER170} // BDS 3, Delphi 2005
+  {$IFDEF VER230} // RAD Studio XE2
+    {$IFDEF BCB}
+      {$DEFINE BCB_16}
+    {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_9}
-      {$DEFINE COMPILER_9}
-    {$ENDIF}
+      {$DEFINE DELPHI_16}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_16}
+  {$ENDIF VER230}
 
-    {$IFDEF VER180} // RAD Studio 5, Delphi 2007
-      {$IFDEF VER185}
-        {$IFDEF BCB}
-          {$DEFINE BCB_11}
-        {$ELSE}
-          {$DEFINE DELPHI}
-          {$DEFINE DELPHI_11}
-        {$ENDIF}
-        {$DEFINE COMPILER_11}
-      {$ELSE VER180}
-        {$IFDEF BCB}
-          {$DEFINE BCB_10}
-        {$ELSE}
-          {$DEFINE DELPHI}
-          {$DEFINE DELPHI_10}
-        {$ENDIF}
-        {$DEFINE COMPILER_10}
-      {$ENDIF}
-    {$ENDIF}
+  {$IFDEF VER240} // RAD Studio XE3
+    {$IFDEF BCB}
+      {$DEFINE BCB_17}
+    {$ELSE}
+      {$DEFINE DELPHI}
+      {$DEFINE DELPHI_17}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_17}
+  {$ENDIF VER240}
 
-    {$IFDEF VER200} // RAD Studio 2009
-      {$IFDEF BCB}
-        {$DEFINE BCB_12}
-      {$ELSE}
-         {$DEFINE DELPHI}
-         {$DEFINE DELPHI_12}
-      {$ENDIF BCB}
-      {$DEFINE COMPILER_12}
-    {$ENDIF VER200}
+  {$IFDEF VER250} // RAD Studio XE4
+    {$IFDEF BCB}
+      {$DEFINE BCB_18}
+    {$ELSE}
+      {$DEFINE DELPHI}
+      {$DEFINE DELPHI_18}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_18}
+  {$ENDIF VER250}
 
-    {$IFDEF VER210} // RAD Studio 2010
-      {$IFDEF BCB}
-        {$DEFINE BCB_14}
-      {$ELSE}
-        {$DEFINE DELPHI}
-        {$DEFINE DELPHI_14}
-      {$ENDIF BCB}
-      {$DEFINE COMPILER_14}
-    {$ENDIF VER210}
-
-    {$IFDEF VER220} // RAD Studio XE
-      {$IFDEF BCB}
-        {$DEFINE BCB_15}
-      {$ELSE}
-        {$DEFINE DELPHI}
-        {$DEFINE DELPHI_15}
-      {$ENDIF BCB}
-      {$DEFINE COMPILER_15}
-    {$ENDIF VER220}
-
-    {$IFDEF VER230} // RAD Studio XE2
-      {$IFDEF BCB}
-        {$DEFINE BCB_16}
-      {$ELSE}
-        {$DEFINE DELPHI}
-        {$DEFINE DELPHI_16}
-      {$ENDIF BCB}
-      {$DEFINE COMPILER_16}
-    {$ENDIF VER230}
-
-    {$IFDEF VER240} // RAD Studio XE2
-      {$IFDEF BCB}
-        {$DEFINE BCB_16}
-      {$ELSE}
-        {$DEFINE DELPHI}
-        {$DEFINE DELPHI_16}
-        {$DEFINE DELPHI_17}
-      {$ENDIF BCB}
-      {$DEFINE COMPILER_16}
-      {$DEFINE COMPILER_17}
-    {$ENDIF VER230}
-
-  {$ENDIF WINDOWS}
+  {$IFDEF VER260} // RAD Studio XE5
+    {$IFDEF BCB}
+      {$DEFINE BCB_19}
+    {$ELSE}
+      {$DEFINE DELPHI}
+      {$DEFINE DELPHI_19}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_19}
+  {$ENDIF VER260}
 
   // CLR - DotNet
 
@@ -218,13 +277,13 @@
       {$DEFINE COMPILER_6}
     {$ENDIF}
 
-    // KYLIXX_UP from KYLIXX mappings                                               }
+    // KYLIXX_UP from KYLIXX mappings
 
     {$IFDEF KYLIX_3} {$DEFINE KYLIX_3_UP} {$ENDIF}
     {$IFDEF KYLIX_2} {$DEFINE KYLIX_2_UP} {$ENDIF}
     {$IFDEF KYLIX_1} {$DEFINE KYLIX_1_UP} {$ENDIF}
 
-    // KYLIX_X_UP from KYLIX_X_UP mappings                                            }
+    // KYLIX_X_UP from KYLIX_X_UP mappings
 
     {$IFDEF KYLIX_3_UP} {$DEFINE KYLIX_2_UP} {$ENDIF}
     {$IFDEF KYLIX_2_UP} {$DEFINE KYLIX_1_UP} {$ENDIF}
@@ -233,6 +292,9 @@
 
   // DELPHI_X_UP from DELPHI_X mappings
 
+  {$IFDEF DELPHI_19} {$DEFINE DELPHI_19_UP} {$ENDIF}
+  {$IFDEF DELPHI_18} {$DEFINE DELPHI_18_UP} {$ENDIF}
+  {$IFDEF DELPHI_17} {$DEFINE DELPHI_17_UP} {$ENDIF}
   {$IFDEF DELPHI_16} {$DEFINE DELPHI_16_UP} {$ENDIF}
   {$IFDEF DELPHI_15} {$DEFINE DELPHI_15_UP} {$ENDIF}
   {$IFDEF DELPHI_14} {$DEFINE DELPHI_14_UP} {$ENDIF}
@@ -251,6 +313,9 @@
 
   // DELPHI_X_UP from DELPHI_X_UP mappings
 
+  {$IFDEF DELPHI_19_UP} {$DEFINE DELPHI_18_UP} {$ENDIF}
+  {$IFDEF DELPHI_18_UP} {$DEFINE DELPHI_17_UP} {$ENDIF}
+  {$IFDEF DELPHI_17_UP} {$DEFINE DELPHI_16_UP} {$ENDIF}
   {$IFDEF DELPHI_16_UP} {$DEFINE DELPHI_15_UP} {$ENDIF}
   {$IFDEF DELPHI_15_UP} {$DEFINE DELPHI_14_UP} {$ENDIF}
   {$IFDEF DELPHI_14_UP} {$DEFINE DELPHI_12_UP} {$ENDIF}
@@ -268,6 +333,10 @@
 
   // BCB_X_UP from BCB_X mappings
 
+  {$IFDEF BCB_19} {$DEFINE BCB_19_UP} {$ENDIF}
+  {$IFDEF BCB_18} {$DEFINE BCB_18_UP} {$ENDIF}
+  {$IFDEF BCB_17} {$DEFINE BCB_17_UP} {$ENDIF}
+  {$IFDEF BCB_16} {$DEFINE BCB_16_UP} {$ENDIF}
   {$IFDEF BCB_15} {$DEFINE BCB_15_UP} {$ENDIF}
   {$IFDEF BCB_14} {$DEFINE BCB_14_UP} {$ENDIF}
   {$IFDEF BCB_12} {$DEFINE BCB_12_UP} {$ENDIF}
@@ -281,6 +350,10 @@
 
   // BCBX_UP from BCBX_UP mappings
 
+  {$IFDEF BCB_19_UP} {$DEFINE BCB_18_UP} {$ENDIF}
+  {$IFDEF BCB_18_UP} {$DEFINE BCB_17_UP} {$ENDIF}
+  {$IFDEF BCB_17_UP} {$DEFINE BCB_16_UP} {$ENDIF}
+  {$IFDEF BCB_16_UP} {$DEFINE BCB_15_UP} {$ENDIF}
   {$IFDEF BCB_15_UP} {$DEFINE BCB_14_UP} {$ENDIF}
   {$IFDEF BCB_14_UP} {$DEFINE BCB_12_UP} {$ENDIF}
   {$IFDEF BCB_12_UP} {$DEFINE BCB_11_UP} {$ENDIF}
@@ -293,6 +366,9 @@
 
   // COMPILER_X_UP from COMPILER_X mappings
 
+  {$IFDEF COMPILER_19} {$DEFINE COMPILER_19_UP} {$ENDIF}
+  {$IFDEF COMPILER_18} {$DEFINE COMPILER_18_UP} {$ENDIF}
+  {$IFDEF COMPILER_17} {$DEFINE COMPILER_17_UP} {$ENDIF}
   {$IFDEF COMPILER_16} {$DEFINE COMPILER_16_UP} {$ENDIF}
   {$IFDEF COMPILER_15} {$DEFINE COMPILER_15_UP} {$ENDIF}
   {$IFDEF COMPILER_14} {$DEFINE COMPILER_14_UP} {$ENDIF}
@@ -312,6 +388,9 @@
 
   // COMPIlER_X_UP from COMPILER_X_UP mappings
 
+  {$IFDEF COMPILER_19_UP} {$DEFINE COMPILER_18_UP} {$ENDIF}
+  {$IFDEF COMPILER_18_UP} {$DEFINE COMPILER_17_UP} {$ENDIF}
+  {$IFDEF COMPILER_17_UP} {$DEFINE COMPILER_16_UP} {$ENDIF}
   {$IFDEF COMPILER_16_UP} {$DEFINE COMPILER_15_UP} {$ENDIF}
   {$IFDEF COMPILER_15_UP} {$DEFINE COMPILER_14_UP} {$ENDIF}
   {$IFDEF COMPILER_14_UP} {$DEFINE COMPILER_12_UP} {$ENDIF}
@@ -333,19 +412,71 @@
   {$IFDEF COMPILER_4_UP}
     {$DEFINE SUPPORTS_DEFAULTPARAMS}
     {$DEFINE SUPPORTS_INT64}
+    {$DEFINE SUPPORTS_LONGWORD}
     {$DEFINE SUPPORTS_OVERLOAD}
   {$ENDIF COMPILER_4_UP}
 
+  {$IFDEF COMPILER_5_UP}
+  {$ENDIF COMPILER_5_UP}
+
   {$IFDEF COMPILER_6_UP}
+    {$DEFINE HAS_UNIT_RTLCONSTS}
+    {$DEFINE HAS_UNIT_TYPES}
+    {$DEFINE HAS_UNIT_VARIANTS}
+    {$DEFINE SUPPORTS_COMPILETIME_MESSAGES}
     {$DEFINE SUPPORTS_DEPRECATED}
     {$DEFINE SUPPORTS_DEPRECATED_WARNINGS}
     {$DEFINE SUPPORTS_ENUMVALUE}
+    {$DEFINE SUPPORTS_PLATFORM}
     {$DEFINE SUPPORTS_VARARGS}
   {$ENDIF COMPILER_6_UP}
 
+  {$IFDEF COMPILER_7_UP}
+  {$ENDIF COMPILER_7_UP}
+
   {$IFDEF COMPILER_9_UP}
+    {$DEFINE SUPPORTS_DEPRECATED_TYPES}
+    {$DEFINE SUPPORTS_FOR_IN}
     {$DEFINE SUPPORTS_INLINE}
+    {$DEFINE SUPPORTS_UINT64}
   {$ENDIF COMPILER_9_UP}
+
+  {$IFDEF COMPILER_10_UP}
+  {$ENDIF COMPILER_10_UP}
+
+  {$IFDEF COMPILER_11_UP}
+  {$ENDIF COMPILER_11_UP}
+
+  {$IFDEF COMPILER_12_UP}
+    {$DEFINE HAS_UNIT_ANSISTRINGS}
+    {$IFNDEF CLR}
+      {$DEFINE SUPPORTS_UNICODE_STRING}
+    {$ENDIF CLR}
+  {$ENDIF COMPILER_12_UP}
+
+  {$IFDEF COMPILER_15_UP}
+  {$ENDIF COMPILER_15_UP}
+
+  {$IFDEF COMPILER_16_UP}
+    {$DEFINE HAS_UNITSCOPE}
+    {$DEFINE HAS_UNIT_SYSTEM_UITYPES}
+  {$ENDIF COMPILER_16_UP}
+
+  {$IFDEF COMPILER_17_UP}
+  {$ENDIF COMPILER_17_UP}
+
+  {$IFDEF COMPILER_18_UP}
+    {$DEFINE DEPRECATED_SYSUTILS_ANSISTRINGS}
+  {$ENDIF COMPILER_18_UP}
+
+  { Test for 64 bit compiler. }
+  {$IFDEF CPUX64}
+    {$DEFINE CPU64} // Compiler target is 64 bit, rather than 32 bit.
+  {$ELSE CPUX64}
+    { Assume 32-bit compiler by default. }
+    {$DEFINE CPUX86} // CPU is an Intel 386 or later on any platform.
+    {$DEFINE CPU32} // Compiler target is 32 bit, rather than 64 bit.
+  {$ENDIF CPUX64}
 
 {$ENDIF FPC}
 
@@ -422,7 +553,6 @@
 (* C++ Builder requires this if you use Delphi components in run-time packages. *)
 
 {$IFDEF COMPILER_6_UP}
-  {$DEFINE HAS_UNIT_VARIANTS}
   {$WARN SYMBOL_PLATFORM OFF}
   {$WARN UNIT_PLATFORM OFF}
 {$ENDIF}

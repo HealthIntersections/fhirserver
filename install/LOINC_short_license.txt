@@ -1,0 +1,8 @@
+This product includes all or a portion of the LOINC® table, LOINC panels and forms file, and/or LOINC hierarchies file, or is derived from one or more of the foregoing, subject to a license from Regenstrief Institute, Inc.  Your use of the LOINC table, LOINC codes, LOINC panels and forms file, and LOINC hierarchies file also is subject to this license, a copy of which is available at http://loinc.org/terms-of-use.  The current complete LOINC table, LOINC Users' Guide, LOINC panels and forms file, and LOINC hierarchies file are available for download at http://loinc.org.  
+
+The LOINC table and LOINC codes are copyright © 1995-2010, Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee.  The LOINC panels and forms file and LOINC hierarchies file are copyright © 1995-2010, Regenstrief Institute, Inc. 
+All rights reserved.  
+
+THE LOINC TABLE (IN ALL FORMATS), LOINC PANELS AND FORMS FILE, AND LOINC HIERARCHIES ARE PROVIDED "AS IS."  ANY EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. 
+
+LOINC® is a registered United States trademark of Regenstrief Institute, Inc. 

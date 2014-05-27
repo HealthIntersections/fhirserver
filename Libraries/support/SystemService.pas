@@ -179,7 +179,9 @@ Begin
       ExceptProc := NIL;
       ErrorProc := NIL;
       {$IFNDEF LINUX}
+        {$IFNDEF WIN64}
       SetRaiseList(NIL);
+        {$ENDIF}
       {$ENDIF}
       LibModuleList := NIL;
       ModuleUnloadList := NIL;
@@ -188,11 +190,13 @@ Begin
       TerminateProcess(GetCurrentProcess, 0);
       {$ENDIF}
 
+        {$IFNDEF WIN64}
       // what - still here? Surely not
       while True do
         asm
         pop eax;
         end;
+        {$ENDIF}
 
     finally
       // we don't believe you could ever get here. but if we do,

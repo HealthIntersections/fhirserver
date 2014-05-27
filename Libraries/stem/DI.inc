@@ -72,10 +72,6 @@
 
 {$ENDIF CLR}
 
-{$IFDEF USE_DIICONV}
-{$DEFINE USE_DIIC}
-{$ENDIF}
-
 {$IFDEF USE_DICONVERTERS}
 {$DEFINE USE_DIIC}
 {$ENDIF}
@@ -97,25 +93,20 @@
 { ---------------------------------------------------------------------------- }
 
 {.$DEFINE DI_No_RegEx_Component}// Default: Off
-{ If DI_No_Pcre_Component is defined, TDIPcre inherites from TObject
-  instead of TComponent. Enabling DI_No_Pcre_Component creates smaller
+{ If DI_No_RegEx_Component is defined, TDIRegEx inherites from TObject
+  instead of TComponent. Enabling DI_No_RegEx_Component creates smaller
   executable files, even more so if Classes.pas is not used. This can be
   useful for console applications or CGI / ISAPI DLLs.
 
-  This option is only available for the DIPcre source code. }
+  This option is only available for the DIRegEx source code. }
 
-{$IFDEF DI_No_Pcre_Component}
-{$DEFINE DI_No_RegEx_Component}
-{$ENDIF DI_No_Pcre_Component}
-{ Legacy / Backwards compatibility. }
-
-{.$DEFINE DI_No_Pcre_Range_Checking}// Default: Off
-{ Defining DI_No_Pcre_Range_Checking will suppress generation of code which
+{.$DEFINE DI_No_RegEx_Range_Checking}// Default: Off
+{ Defining DI_No_RegEx_Range_Checking will suppress generation of code which
   checks for ranges errors. No error messages will be thrown in case of
-  violations. Enabeling DI_No_Pcre_Range_Checking generates faster and smaller
+  violations. Enabeling DI_No_RegEx_Range_Checking generates faster and smaller
   code.
 
-  This option is only available for the DIPcre source code. }
+  This option is only available for the DIRegEx source code. }
 
 { ---------------------------------------------------------------------------- }
 { DIUnicode                                                                    }

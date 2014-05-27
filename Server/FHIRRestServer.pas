@@ -4,45 +4,47 @@ Unit FHIRRestServer;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
 Interface
 
 Uses
-  SysUtils, Classes, IniFiles, ActiveX,
+  SysUtils, Classes, IniFiles, ActiveX, AltovaXMLLib_TLB, 
 
   EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport,
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams,
 
-  kCritSct, ParseMap, TextUtilities, KDBManager,
+  kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher,
   DCPsha256,
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdSoapMime, IdCookie,
-  IdSoapTestingUtils,
+
+  TerminologyServer, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
+  TerminologyWebServer,
 
   fhirbase,
   FHIRTypes,
@@ -69,6 +71,18 @@ Type
   public
     Constructor Create(Const sSender, sMethod, sReason, sMsg : String; aStatus : word); Overload; Virtual;
     Property Msg : String read FMsg;
+  end;
+
+  TFhirWebServer = class;
+
+  TFhirServerMaintenanceThread = class (TThread)
+  private
+    FServer : TFhirWebServer;
+    FLastSweep : TDateTime;
+  protected
+    procedure Execute; override;
+  public
+    constructor create(server : TFHIRWebServer);
   end;
 
   TFhirLoginToken = Class (TAdvObject)
@@ -98,8 +112,6 @@ Type
     FSSLServer : TIdHTTPServer;
     FIOHandler: TIdServerIOHandlerSSLOpenSSL;
 
-    FClientLock : TCriticalSection;
-    FClients : TAdvObjectList;
     FClientCount : Integer;
 
     FFhirStore : TFHIRDataStore;
@@ -113,10 +125,17 @@ Type
     FAppSecrets : String;
     FHL7Appid : String;
     FHL7AppSecret : String;
-
+    FTerminologyWebServer : TTerminologyWebServer;
+    FThread : TFhirServerMaintenanceThread;
+    
     function OAuthPath(secure : boolean):String;
 
     function BuildCompartmentList(user : TFHIRUserStructure) : String;
+
+    function GetResource(session : TFhirSession; rtype : TFhirResourceType; lang, id, ver : String) : TFhirResource;
+    function transform(resource : TFhirResource; lang, xslt : String) : string;
+    procedure HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse);
+    procedure HandleWebQuestionnaire(request : TFHIRRequest; response : TFHIRResponse);
 
     function SpecFile(path : String) : String;
     function AltFile(path : String) : String;
@@ -132,30 +151,31 @@ Type
     Function BuildFhirAuthenticationPage(lang, host, path, msg : String; secure : boolean) : String;
     Function BuildFhirUploadPage(lang, host, sBaseURL : String; aType : TFHIRResourceType; session : TFhirSession) : String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
-    Procedure PlainRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
-    Procedure SecureRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
-    Procedure HandleRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
-    Procedure ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; AResponseInfo: TIdHTTPResponseInfo);
+    Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
+    Procedure ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; response: TIdHTTPResponseInfo; relativeReferenceAdjustment : integer);
     function extractFileData(const request : TStream; const contentType, name: String; var sContentType : String; var params : String): TStream;
-    Procedure StartServer;
+    Procedure StartServer(active : boolean);
     Procedure StopServer;
     Function ProcessZip(lang : String; oStream : TStream) : TFHIRAtomFeed;
-    procedure SSLPassword(var Password: AnsiString);
-    procedure SendError(AResponseInfo: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String);
+    procedure SSLPassword(var Password: String);
+    procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer);
     Function MakeLoginToken(path : String; provider : TFHIRAuthProvider) : String;
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse);
-    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sCookie: String; oPostStream: TStream; oResponse: TFHIRResponse;
-      var aFormat: TFHIRFormat; var redirect: boolean; formparams: String; bAuth, secure : Boolean): TFHIRRequest;
+    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sCookie: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; formparams: String; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc : String;
     function EndPointDesc : String;
+    procedure GetWebUILink(resource : TFhirResource; base, id, ver : String; var link, text : String);
   Public
-    Constructor Create(ini : TFileName; db : TKDBManager; Name : String);
+    Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
     Destructor Destroy; Override;
 
-    Procedure Start;
+    Procedure Start(active : boolean);
     Procedure Stop;
+    Procedure Transaction(stream : TStream);
   End;
 
 Implementation
@@ -231,19 +251,32 @@ begin
     result := IncludeTrailingPathDelimiter(path);
 end;
 
-Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String);
+Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
+var
+  s : String;
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
   FName := Name;
   FIni := TIniFile.Create(ini);
   FLoginTokens := TStringList.create;
-  writeln('Load & Cache Store');
+  write('Load & Cache Store: ');
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
 
-  FFhirStore := TFHIRDataStore.Create(db, FSpecPath, FAltPath);
+  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link);
 
+  FFhirStore := TFHIRDataStore.Create(db, FSpecPath, FAltPath, terminologyServer);
+  if FIni.ReadString('web', 'host', '') <> '' then
+  begin
+    if FIni.ReadString('web', 'base', '') <> '' then
+      s := FIni.ReadString('web', 'base', '')
+    else
+      s := FIni.ReadString('web', 'secure', '');
+
+    FFhirStore.FormalURL := AppendForwardSlash(FIni.ReadString('web', 'host', '')) + s;
+  end;
+  writeln(inttostr(FFhirStore.TotalResourceCount)+' resources');
   // Basei Web server configuration
   FBasePath := FIni.ReadString('web', 'base', '');
   FSecurePath := FIni.ReadString('web', 'secure', '');
@@ -288,6 +321,7 @@ End;
 
 Destructor TFhirWebServer.Destroy;
 Begin
+  FTerminologyWebServer.free;
   FIni.Free;
   FFhirStore.CloseAll;
   FFhirStore.Free;
@@ -327,17 +361,19 @@ begin
     result := result + ' <li><a href="'+FSecurePath+'">Secured access at '+FSecurePath+'</a> - Login required</li>'#13#10;
 end;
 
-Procedure TFhirWebServer.Start;
+Procedure TFhirWebServer.Start(active : boolean);
 Begin
-  StartServer;
+  StartServer(active);
+  FThread := TFhirServerMaintenanceThread.create(self);
 End;
 
 Procedure TFhirWebServer.Stop;
 Begin
+  FThread.Terminate;
   StopServer;
 End;
 
-Procedure TFhirWebServer.StartServer;
+Procedure TFhirWebServer.StartServer(active : boolean);
 Begin
   if FPort > 0 then
   begin
@@ -351,7 +387,7 @@ Begin
     FPlainServer.OnCommandOther := PlainRequest;
     FPlainServer.OnConnect := DoConnect;
     FPlainServer.OnDisconnect := DoDisconnect;
-    FPlainServer.Active := True;
+    FPlainServer.Active := active;
   end;
   if FSSLPort > 0 then
   begin
@@ -375,7 +411,7 @@ Begin
     FSSLServer.OnCommandOther := SecureRequest;
     FSSLServer.OnConnect := DoConnect;
     FSSLServer.OnDisconnect := DoDisconnect;
-    FSSLServer.Active := True;
+    FSSLServer.Active := active;
   end;
 end;
 
@@ -393,6 +429,29 @@ Begin
     FreeAndNil(FPlainServer);
   end;
 End;
+
+procedure TFhirWebServer.Transaction(stream: TStream);
+var
+  req : TFHIRRequest;
+  resp : TFHIRResponse;
+begin
+  req := TFHIRRequest.Create;
+  try
+    req.CommandType := fcmdTransaction;
+    req.Feed := ProcessZip('en', stream);
+    req.session := FFhirStore.CreateImplicitSession('service');
+    req.LoadParams('');
+    resp := TFHIRResponse.Create;
+    try
+      ProcessRequest(req, resp);
+    finally
+      resp.Free;
+    end;
+  finally
+    req.Free;
+  end;
+
+end;
 
 function TFhirWebServer.WebDesc: String;
 begin
@@ -416,15 +475,15 @@ begin
   if (Length(id) > 36) then
     Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [id]), HTTP_ERR_BAD_REQUEST);
   for i := 1 to length(id) do
-    if not (id[i] in ['a'..'z', '0'..'9', 'A'..'Z', '.', '-']) then
+    if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-']) then
       Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_INVALID', lang), [id, id[i]]), HTTP_ERR_BAD_REQUEST);
 end;
 
-procedure setCookie(AResponseInfo: TIdHTTPResponseInfo; const cookiename, cookieval, domain, path: String; expiry: TDateTime; secure: Boolean);
+procedure setCookie(response: TIdHTTPResponseInfo; const cookiename, cookieval, domain, path: String; expiry: TDateTime; secure: Boolean);
 var
   cookie: TIdCookie;
 begin
-  cookie := AResponseInfo.Cookies.Add;
+  cookie := response.Cookies.Add;
   cookie.CookieName := cookiename;
   cookie.Value := cookieval;
   cookie.Domain := domain;
@@ -433,27 +492,29 @@ begin
   cookie.Secure := secure;
 end;
 
-Procedure TFhirWebServer.PlainRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+Procedure TFhirWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 begin
-  if FileExists(SpecFile(ARequestInfo.Document)) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, SpecFile(ARequestInfo.Document))
-  else if FileExists(AltFile(ARequestInfo.Document)) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, AltFile(ARequestInfo.Document))
-  else if FileExists(FAltPath+ExtractFileName(ARequestInfo.Document.replace('/', '\'))) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, FAltPath+ExtractFileName(ARequestInfo.Document.replace('/', '\')))
-  else if FileExists(FSpecPath+ExtractFileName(ARequestInfo.Document.replace('/', '\'))) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, FSpecPath+ExtractFileName(ARequestInfo.Document.replace('/', '\')))
-  else if ARequestInfo.Document.StartsWith(FBasePath, false) then
-    HandleRequest(AContext, ARequestInfo, AResponseInfo, false, false, FBasePath)
-  else if ARequestInfo.Document.StartsWith(FSecurePath, false) then
-    HandleRequest(AContext, ARequestInfo, AResponseInfo, false, true, FSecurePath)
-  else if ARequestInfo.Document = '/' then
-    ReturnProcessedFile(AResponseInfo, '/hompage.html', AltFile('/homepage.html'))
+  if FileExists(SpecFile(request.Document)) then
+    ReturnSpecFile(response, request.Document, SpecFile(request.Document))
+  else if FileExists(AltFile(request.Document)) then
+    ReturnSpecFile(response, request.Document, AltFile(request.Document))
+//  else if FileExists(FAltPath+ExtractFileName(request.Document.replace('/', '\'))) then
+//    ReturnSpecFile(response, request.Document, FAltPath+ExtractFileName(request.Document.replace('/', '\')))
+//  else if FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
+//    ReturnSpecFile(response, request.Document, FSpecPath+ExtractFileName(request.Document.replace('/', '\')))
+  else if request.Document.StartsWith(FBasePath, false) then
+    HandleRequest(AContext, request, response, false, false, FBasePath)
+  else if request.Document.StartsWith(FSecurePath, false) then
+    HandleRequest(AContext, request, response, false, true, FSecurePath)
+  else if request.Document = '/' then
+    ReturnProcessedFile(response, '/hompage.html', AltFile('/homepage.html'))
+  else if FTerminologyWebServer.handlesRequest(request.Document) then
+    FTerminologyWebServer.Process(AContext, request, response)
   else
   begin
-    AResponseInfo.ResponseNo := 404;
-    AResponseInfo.ContentText := 'Document '+ARequestInfo.Document+' not found';
-    writeln('miss: '+ARequestInfo.Document);
+    response.ResponseNo := 404;
+    response.ContentText := 'Document '+request.Document+' not found';
+    writeln('miss: '+request.Document);
   end;
 end;
 
@@ -474,40 +535,39 @@ begin
 end;
 
 
-Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 begin
-  if FileExists(SpecFile(ARequestInfo.Document)) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, SpecFile(ARequestInfo.Document))
-  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+ARequestInfo.Document) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, IncludeTrailingPathDelimiter(FAltPath)+ARequestInfo.Document)
-  else if FileExists(AltFile(ExtractFileName(ARequestInfo.Document))) then
-    ReturnSpecFile(AResponseInfo, ARequestInfo.Document, AltFile(ExtractFileName(ARequestInfo.Document)))
-  else if ARequestInfo.Document.StartsWith(FBasePath, false) then
-    HandleRequest(AContext, ARequestInfo, AResponseInfo, true, false, FBasePath)
-  else if ARequestInfo.Document.StartsWith(FSecurePath, false) then
-    HandleRequest(AContext, ARequestInfo, AResponseInfo, true, true, FSecurePath)
-  else if ARequestInfo.Document = '/' then
-    ReturnProcessedFile(AResponseInfo, '/hompage.html', AltFile('/homepage.html'))
+  if FileExists(SpecFile(request.Document)) then
+    ReturnSpecFile(response, request.Document, SpecFile(request.Document))
+  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+request.Document) then
+    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FAltPath)+request.Document)
+  else if FileExists(AltFile(ExtractFileName(request.Document))) then
+    ReturnSpecFile(response, request.Document, AltFile(ExtractFileName(request.Document)))
+  else if request.Document.StartsWith(FBasePath, false) then
+    HandleRequest(AContext, request, response, true, false, FBasePath)
+  else if request.Document.StartsWith(FSecurePath, false) then
+    HandleRequest(AContext, request, response, true, true, FSecurePath)
+  else if FTerminologyWebServer.handlesRequest(request.Document) then
+    FTerminologyWebServer.Process(AContext, request, response)
+  else if request.Document = '/' then
+    ReturnProcessedFile(response, '/hompage.html', AltFile('/homepage.html'))
   else
   begin
-    AResponseInfo.ResponseNo := 404;
-    AResponseInfo.ContentText := 'Document '+ARequestInfo.Document+' not found';
-    writeln('miss: '+ARequestInfo.Document);
+    response.ResponseNo := 404;
+    response.ContentText := 'Document '+request.Document+' not found';
+    writeln('miss: '+request.Document);
   end;
 end;
 
-Procedure TFhirWebServer.HandleRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
+Procedure TFhirWebServer.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
 var
   sHost : string;
   oRequest : TFHIRRequest;
   oResponse : TFHIRResponse;
-  sContent : String;
   sCookie : string;
   sContentType : String;
-  sType : String;
   oStream : TStream;
   sDoc : String;
-  profileparam : String;
   s : String;
   aFormat : TFHIRFormat;
   lang : String;
@@ -515,86 +575,92 @@ var
   session : TFhirSession;
   redirect : Boolean;
   formparams : String;
+  relativeReferenceAdjustment : integer;
 Begin
   Session := nil;
   try
       if ssl then
-        sHost := 'https://'+ARequestInfo.Host
+        sHost := 'https://'+request.Host
       else
-        sHost := 'http://'+ARequestInfo.Host;
-      lang := ARequestInfo.AcceptLanguage;
-      s := ARequestInfo.ContentType;
+        sHost := 'http://'+request.Host;
+      lang := request.AcceptLanguage;
+      s := request.ContentType;
       if pos(';', s) > 0 then
         s := copy(s, 1, pos(';', s) - 1); //only read up to the first ';'
-      if (SameText(s, 'application/x-www-form-urlencoded') or SameText(ARequestInfo.Command, 'get') or SameText(ARequestInfo.Command, 'options')) and (ARequestInfo.UnparsedParams <> '') then
-        sDoc := ARequestInfo.Document +'?'+ ARequestInfo.UnparsedParams
+      if (SameText(s, 'application/x-www-form-urlencoded') or SameText(request.Command, 'get') or SameText(request.Command, 'options')) and (request.UnparsedParams <> '') then
+        sDoc := request.Document +'?'+ request.UnparsedParams
       else
-        sDoc := ARequestInfo.Document;
+        sDoc := request.Document;
       try
-        sContentType := ARequestInfo.ContentType;
+        sContentType := request.ContentType;
       if sContentType = '' then
-        sContentType := ARequestInfo.Accept;
+        sContentType := request.Accept;
 
       if s.StartsWith('multipart/form-data', true) then
-        oStream := extractFileData(ARequestInfo.PostStream, ARequestInfo.ContentType, 'file', sContentType, formparams)
-      else if ARequestInfo.PostStream <> nil then
+        oStream := extractFileData(request.PostStream, request.ContentType, 'file', sContentType, formparams)
+      else if request.PostStream <> nil then
       begin
         oStream := TMemoryStream.create;
-        oStream.CopyFrom(ARequestInfo.PostStream, ARequestInfo.PostStream.Size);
+        oStream.CopyFrom(request.PostStream, request.PostStream.Size);
         oStream.Position := 0;
       end
       else
-        oStream := TStringStream.Create(ARequestInfo.UnparsedParams);
+        oStream := TStringStream.Create(request.UnparsedParams);
       try
-        AResponseInfo.RawHeaders.add('Access-Control-Allow-Origin: *');
-        AResponseInfo.Expires := Now - 1; //don't want anyone caching anything
+        response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+        response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+        response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location');
+        response.Expires := Now - 1; //don't want anyone caching anything
         oResponse := TFHIRResponse.Create;
         Try
-          if ARequestInfo.Cookies.Cookie[FHIR_COOKIE_NAME, FHost] <> nil then
-            sCookie := ARequestInfo.Cookies.Cookie[FHIR_COOKIE_NAME, FHost].CookieText;
+          if request.Cookies.Cookie[FHIR_COOKIE_NAME, FHost] <> nil then
+            sCookie := request.Cookies.Cookie[FHIR_COOKIE_NAME, FHost].CookieText;
 
-          oRequest := BuildRequest(lang, path, sHost, ARequestInfo.CustomHeaders.Values['Origin'], ARequestInfo.RemoteIP, ARequestInfo.CustomHeaders.Values['content-location'],
-             ARequestInfo.Command, sDoc, sContentType, ARequestInfo.Accept, sCookie, oStream, oResponse, aFormat, redirect, formparams, secure, ssl);
+          oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP, request.CustomHeaders.Values['content-location'],
+             request.Command, sDoc, sContentType, request.Accept, sCookie, oStream, oResponse, aFormat, redirect, formparams, secure, ssl, relativeReferenceAdjustment);
           try
-            ReadTags(ARequestInfo.CustomHeaders.Values['Categories'], oRequest);
+            ReadTags(request.RawHeaders.Values['Category'], oRequest);
             session := oRequest.Session.Link;
             if redirect then
             begin
               if oRequest.Session <> nil then
               begin
-                setCookie(AResponseInfo, FHIR_COOKIE_NAME, oRequest.Session.Cookie, '' {oCtxt.Host}, '/'{sPath + FBaseURL}, oRequest.Session.Expires, false {oCtxt.IsSSL});
-                AResponseInfo.Redirect(oRequest.Session.OriginalUrl);
+                setCookie(response, FHIR_COOKIE_NAME, oRequest.Session.Cookie, '' {oCtxt.Host}, '/'{sPath + FBaseURL}, oRequest.Session.Expires, false {oCtxt.IsSSL});
+                response.Redirect(oRequest.Session.OriginalUrl);
               end
               else
-                AResponseInfo.Redirect(oRequest.baseUrl);
+                response.Redirect(oRequest.baseUrl);
             end
             else if oRequest.CommandType = fcmdUnknown then
             begin
-              AResponseInfo.ResponseNo := 200;
-              AResponseInfo.ContentType := 'text/html';
-              AResponseInfo.FreeContentStream := true;
-              AResponseInfo.ContentStream := StringToUTFStream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session));
+              response.ResponseNo := 200;
+              response.ContentType := 'text/html';
+              response.FreeContentStream := true;
+              response.ContentStream := StringToUTFStream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session));
             end
             else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) and (oRequest.Feed = nil) Then
             begin
-              AResponseInfo.ResponseNo := 200;
-              AResponseInfo.ContentType := 'text/html';
-              AResponseInfo.FreeContentStream := true;
-              AResponseInfo.ContentStream := StringToUTFStream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceType, oRequest.Session));
+              response.ResponseNo := 200;
+              response.ContentType := 'text/html';
+              response.FreeContentStream := true;
+              response.ContentStream := StringToUTFStream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceType, oRequest.Session));
             end
             else if (oRequest.CommandType = fcmdConformanceStmt) and (oRequest.ResourceType <> frtNull) then
             begin
-              AResponseInfo.ResponseNo := 200;
-              AResponseInfo.ContentType := 'text/html';
-              AResponseInfo.RawHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
-              AResponseInfo.RawHeaders.add('Access-Control-Request-Method: GET, POST, PUT, DELETE');
-              AResponseInfo.FreeContentStream := true;
-              AResponseInfo.ContentStream := StringToUTFStream('OK');
+              response.ResponseNo := 200;
+              response.ContentType := 'text/html';
+// no - just use *              response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
+              response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, DELETE');
+              response.FreeContentStream := true;
+              response.ContentStream := StringToUTFStream('OK');
             end
-            else
+            else 
             begin
               try
-                ProcessRequest(oRequest, oResponse);
+                if oRequest.CommandType = fcmdWebUI then
+                  HandleWebUIRequest(oRequest, oResponse)
+                else
+                  ProcessRequest(oRequest, oResponse);
               except
                 on e : EAbort do
                 begin
@@ -604,21 +670,21 @@ Begin
                 on e : Exception do
                   raise;
               end;
-              ProcessOutput(oRequest, oResponse, AResponseInfo);
-              if ARequestInfo.RawHeaders.Values['Origin'] <> '' then
-                AResponseInfo.RawHeaders.add('Access-Control-Allow-Origin: '+ARequestInfo.RawHeaders.Values['Origin']);
-              AResponseInfo.ETag := oResponse.versionId;
-              AResponseInfo.LastModified := oResponse.lastModifiedDate; // todo: timezone
+              ProcessOutput(oRequest, oResponse, response, relativeReferenceAdjustment);
+// no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
+//                 response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
+              response.ETag := oResponse.versionId;
+              response.LastModified := oResponse.lastModifiedDate; // todo: timezone
               if oResponse.Categories.count > 0 then
-                AResponseInfo.RawHeaders.add('Category: '+ oResponse.Categories.AsHeader);
+                response.CustomHeaders.add('Category: '+ oResponse.Categories.AsHeader);
               if oResponse.originalId <> '' then
-                AResponseInfo.RawHeaders.add('X-Original-Location: '+oResponse.originalId);
+                response.CustomHeaders.add('X-Original-Location: '+oResponse.originalId);
               if oResponse.ContentLocation <> '' then
-                AResponseInfo.RawHeaders.add('Content-Location: '+oResponse.ContentLocation);
+                response.CustomHeaders.add('Content-Location: '+oResponse.ContentLocation);
               if oResponse.Location <> '' then
-                AResponseInfo.Location := oResponse.Location;
+                response.Location := oResponse.Location;
             end;
-            AResponseInfo.WriteContent;
+            response.WriteContent;
           finally
             oRequest.Free;
           end;
@@ -633,38 +699,69 @@ Begin
       begin
         if aFormat = ffXhtml then
         begin
-          AResponseInfo.ResponseNo := 200;
-          AResponseInfo.ContentType := 'text/html';
-          AResponseInfo.FreeContentStream := true;
-          AResponseInfo.ContentStream := StringToUTFStream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, e.Msg, ssl));
+          response.ResponseNo := 200;
+          response.ContentType := 'text/html';
+          response.FreeContentStream := true;
+          response.ContentStream := StringToUTFStream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, e.Msg, ssl));
         end
         else
-          SendError(AResponseInfo, e.Status, aFormat, lang, e.Message, sPath, session, true, sPath + sDoc);
+          SendError(response, e.Status, aFormat, lang, e.Message, sPath, session, true, sPath + sDoc, relativeReferenceAdjustment);
       end;
       on e: ERestfulException do
-        SendError(AResponseInfo, e.Status, aFormat, lang, e.Message, sPath, session, false, path);
+        SendError(response, e.Status, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment);
       on e: Exception do
-        SendError(AResponseInfo, HTTP_ERR_INTERNAL, aFormat, lang, e.Message, sPath, session, false, path);
+        SendError(response, HTTP_ERR_INTERNAL, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment);
     end;
   finally
     session.free;
   end;
 end;
 
-procedure TFhirWebServer.SendError(AResponseInfo: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String);
+procedure TFhirWebServer.HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse);
+var
+  id, ver : String;
+  questionnaire : TFHIRQuestionnaire;
+  s : String;
+begin
+   // get the right questionnaire
+  StringSplit(request.Id.Substring(14), '/', id, ver);
+  questionnaire := GetResource(request.Session, frtQuestionnaire, request.Lang, id, ver) as TFHirQuestionnaire;
+  try
+    // convert to xhtml 
+    s := transform(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt');
+    // insert page headers:
+    s := s.Replace('</title>', '</title>'+#13#10+TFHIRXhtmlComposer.PageLinks);
+    s := s.Replace('<body>', '<body>'+#13#10+TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang));
+    s := s.Replace('</body>', TFHIRXhtmlComposer.Footer(request.baseUrl)+#13#10+'</body>');
+    response.Body := s;
+    response.ContentType := 'text/html';
+  finally
+    questionnaire.free;
+  end;
+end;
+
+procedure TFhirWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  if request.Id.StartsWith('Questionnaire/') then
+    HandleWebQuestionnaire(request, response)
+  else
+    raise Exception.Create('Unknown request');
+end;
+
+procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer);
 var
   issue : TFhirOperationOutcome;
   report :  TFhirOperationOutcomeIssue;
   oComp : TFHIRComposer;
   e : TFhirExtension;
 begin
-  AResponseInfo.ResponseNo := status;
-  AResponseInfo.FreeContentStream := true;
+  response.ResponseNo := status;
+  response.FreeContentStream := true;
 
   if format = ffAsIs then
   begin
-    AResponseInfo.ContentType := 'text/plain';
-    AResponseInfo.ContentStream := StringToUTFStream(message);
+    response.ContentType := 'text/plain';
+    response.ContentStream := StringToUTFStream(message);
   end
   else
   begin
@@ -672,7 +769,7 @@ begin
     try
       issue.text := TFhirNarrative.create;
       issue.text.statusST := NarrativeStatusGenerated;
-      issue.text.div_ := ParseXhtml(lang, '<div><p>'+FormatTextToXML(message)+'</p></div>');
+      issue.text.div_ := ParseXhtml(lang, '<div><p>'+FormatTextToXML(message)+'</p></div>', xppReject);
       if addLogins then
       begin
         if FHL7Appid <> '' then
@@ -697,7 +794,7 @@ begin
       report := issue.issueList.Append;
       report.severityST := IssueSeverityError;
       report.details := TFHIRString.create(message);
-      AResponseInfo.ContentStream := TMemoryStream.Create;
+      response.ContentStream := TMemoryStream.Create;
       oComp := nil;
       case format of
         ffXml: oComp := TFHIRXmlComposer.Create(lang);
@@ -706,13 +803,14 @@ begin
           oComp := TFHIRXhtmlComposer.Create(lang);
           TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(url);
           TFHIRXhtmlComposer(oComp).Session := Session.Link;
+          TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           end;
         ffJson: oComp := TFHIRJsonComposer.Create(lang);
       end;
       try
-        AResponseInfo.ContentType := oComp.MimeType;
-        oComp.Compose(AResponseInfo.ContentStream, '', '', issue, false);
-        AResponseInfo.ContentStream.Position := 0;
+        response.ContentType := oComp.MimeType;
+        oComp.Compose(response.ContentStream, '', '', issue, false);
+        response.ContentStream.Position := 0;
       finally
         oComp.free;
       end;
@@ -720,11 +818,11 @@ begin
       issue.free;
     end;
   end;
-  AResponseInfo.WriteContent;
+  response.WriteContent;
 end;
 
 
-Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sCookie : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat; var redirect : boolean; formparams : String; bAuth, secure : Boolean) : TFHIRRequest;
+Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sCookie : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat; var redirect : boolean; formparams : String; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer) : TFHIRRequest;
 Var
   sURL, sId, sType, msg : String;
   aResourceType : TFHIRResourceType;
@@ -743,6 +841,7 @@ Var
     end
     else
     begin
+      inc(relativeReferenceAdjustment);
       result := copy(url, 1, i-1);
       url := copy(url, i + 1, $FFF);
     end;
@@ -759,6 +858,7 @@ var
   p : TParseMap;
   s : String;
 Begin
+  relativeReferenceAdjustment := 0;
   Result := nil;
   oRequest := TFHIRRequest.Create;
   try
@@ -791,14 +891,15 @@ Begin
       sUrl := copy(sURL, 1, i-1);
     end;
     if sUrl.StartsWith('/') then
-     sUrl := sUrl.Substring(1);
-
+      sUrl := sUrl.Substring(1);
+    if formparams <> '' then
+      oRequest.LoadParams(formparams);
 
     if (sCommand <> 'GET') then
     begin
       if oRequest.Parameters.VarExists('_format') then
         sContentType := oRequest.Parameters.GetVar('_format');
-      if StringStartsWithInsensitive(sContentType, 'application/json') or StringStartsWithInsensitive(sContentType, 'application/fhir+json') or StringStartsWithInsensitive(sContentType, 'application/json+fhir') or StringStartsWithInsensitive(sContentType, 'json') Then
+      if StringStartsWithInsensitive(sContentType, 'application/json') or StringStartsWithInsensitive(sContentType, 'application/fhir+json') or StringStartsWithInsensitive(sContentType, 'application/json+fhir') or StringStartsWithInsensitive(sContentType, 'json') or StringStartsWithInsensitive(sContentType, 'text/json') Then
         oRequest.PostFormat := ffJson
       else if StringStartsWithInsensitive(sContentType, 'text/html') or StringStartsWithInsensitive(sContentType, 'html') or StringStartsWithInsensitive(sContentType, 'application/x-zip-compressed') or StringStartsWithInsensitive(sContentType, 'application/zip') Then
         oRequest.PostFormat := ffXhtml
@@ -856,6 +957,7 @@ Begin
     else
       oRequest.session := FFhirStore.CreateImplicitSession(sClient);
 
+    relativeReferenceAdjustment := 0;
     if not redirect then
     begin
       sType := NextSegment(sURL);
@@ -891,6 +993,13 @@ Begin
           oRequest.CommandType := fcmdUnknown;
         end
       end
+      else if (sType = '_web') then // special
+      begin
+        ForceMethod('GET');
+        oRequest.CommandType := fcmdWebUI;
+        oRequest.id := sUrl;
+        sUrl := '';
+      end
       else if (sType = '_tags') then
       begin
         ForceMethod('GET');
@@ -912,7 +1021,7 @@ Begin
         else if sType = 'metadata.json' then
           oResponse.format := ffJson
       end
-      else if (sType = 'mailbox') then
+      else if (sType = 'Mailbox') then
       begin
         oRequest.CommandType := fcmdMailbox;
         ForceMethod('POST');
@@ -982,8 +1091,8 @@ Begin
             end
             else if not StringStartsWith(sId, '_', true) Then
             begin
-              CheckId(lang, copy(sId, 2, $FF));
-              oRequest.SubId := copy(sId, 2, $FF);
+              CheckId(lang, sId);
+              oRequest.SubId := sId;
               sId := NextSegment(sURL);
               if sid = '' then
               begin
@@ -992,12 +1101,22 @@ Begin
               end
               else if (sid = '_tags') then
               begin
-                if sCommand = 'GET' Then
-                  oRequest.CommandType := fcmdGetTags
-                else if sCommand = 'POST' Then
-                  oRequest.CommandType := fcmdUpdateTags
-                else if sCommand = 'DELETE' Then
-                  oRequest.CommandType := fcmdDeleteTags
+                sId := NextSegment(sURL);
+                if sId = '' then
+                begin
+                  if sCommand = 'GET' Then
+                    oRequest.CommandType := fcmdGetTags
+                  else if sCommand = 'POST' Then
+                    oRequest.CommandType := fcmdUpdateTags
+//                  else if sCommand = 'DELETE' Then
+//                    oRequest.CommandType := fcmdDeleteTags
+                  else
+                    raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sResource, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN);
+                end else if sId = '_delete' then
+                begin
+                  ForceMethod('POST');
+                  oRequest.CommandType := fcmdDeleteTags;
+                end
                 else
                   raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sResource, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN);
               end
@@ -1018,9 +1137,9 @@ Begin
             else
               raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sResource, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN);
           end
-          else if StringArrayExistsSensitive(PLURAL_CODES_TFhirResourceType, sId) then
+          else if StringArrayExistsInSensitive(CODES_TFhirResourceType, sId) then
           begin
-            aResourceType := TFHIRResourceType(StringArrayIndexOfSensitive(PLURAL_CODES_TFhirResourceType, sId));
+            aResourceType := TFHIRResourceType(StringArrayIndexOfInSensitive(CODES_TFhirResourceType, sId));
             if (COMPARTMENT_PARAM_NAMES[oRequest.ResourceType, aResourceType] <> '') then
             begin
               if oRequest.ResourceType <> frtPatient then
@@ -1078,7 +1197,7 @@ Begin
       if (oRequest.Session <> nil) and (oRequest.Session.User <> nil) and (oRequest.Session.user.resource.PatientList.Count > 0) then
         oRequest.compartments := BuildCompartmentList(oRequest.Session.user);
 
-      if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdValidate, fcmdCreate, fcmdMailbox]) or ((oRequest.CommandType = fcmdUpload) and (oPostStream.Size > 0)) Then
+      if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdValidate, fcmdCreate, fcmdMailbox]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI]) and (sCommand = 'POST') and (oPostStream.Size > 0)) Then
       begin
         oRequest.CopyPost(oPostStream);
         if (sContentType = 'application/x-zip-compressed') or (sContentType = 'application/zip') then
@@ -1096,7 +1215,7 @@ Begin
           end
           else
             try
-              parser := MakeParser(lang, oRequest.PostFormat, oPostStream);
+              parser := MakeParser(lang, oRequest.PostFormat, oPostStream, xppReject);
               try
                 oRequest.Resource := parser.resource.Link;
                 oRequest.Feed := parser.feed.Link;
@@ -1121,7 +1240,7 @@ Begin
       end
       else if (oRequest.CommandType in [fcmdUpdateTags, fcmdDeleteTags]) then
       begin
-        parser := MakeParser(lang, oRequest.PostFormat, oPostStream);
+        parser := MakeParser(lang, oRequest.PostFormat, oPostStream, xppDrop);
         try
           oRequest.categories.AddAll(parser.Tags);
         finally
@@ -1170,9 +1289,12 @@ begin
             e := TFHIRAtomEntry.create;
             try
               if pos('(', rdr.parts[i].Name) > 0 Then
-                e.id := 'http://hl7.org/fhir/'+LOWERCASE_CODES_TFHIRResourceType[p.resource.ResourceType]+'/@'+GetStringCell(GetStringCell(rdr.parts[i].Name, 1, '('), 0, ')')
+              begin
+                e.id := 'http://hl7.org/fhir/'+CODES_TFHIRResourceType[p.resource.ResourceType]+'/'+GetStringCell(GetStringCell(rdr.parts[i].Name, 1, '('), 0, ')');
+                e.links.Rel['html'] := rdr.parts[i].Name.Substring(0, rdr.parts[i].Name.IndexOf('('))+'.html';
+              end
               else if rdr.parts[i].Name.EndsWith('.profile.xml') then
-                e.id := 'http://hl7.org/fhir/'+LOWERCASE_CODES_TFHIRResourceType[p.resource.ResourceType]+'/@'+copy(rdr.parts[i].Name, 1, length(rdr.parts[i].Name) - 12)
+                e.id := 'http://hl7.org/fhir/'+CODES_TFHIRResourceType[p.resource.ResourceType]+'/'+copy(rdr.parts[i].Name, 1, length(rdr.parts[i].Name) - 12)
               else
                 e.id := NewGuidURN;
               e.resource := p.resource.Link;
@@ -1199,19 +1321,19 @@ begin
 end;
 
 
-procedure TFhirWebServer.SSLPassword(var Password: AnsiString);
+procedure TFhirWebServer.SSLPassword(var Password: String);
 begin
   Password := FSSLPassword;
 end;
 
-Procedure TFhirWebServer.ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; AResponseInfo: TIdHTTPResponseInfo);
+Procedure TFhirWebServer.ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; response: TIdHTTPResponseInfo; relativeReferenceAdjustment : integer);
 var
   oComp : TFHIRComposer;
   b : TBytes;
 begin
-  AResponseInfo.ResponseNo := oResponse.HTTPCode;
-  AResponseInfo.ContentType := oResponse.ContentType;
-  AResponseInfo.ContentStream := TMemoryStream.Create;
+  response.ResponseNo := oResponse.HTTPCode;
+  response.ContentType := oResponse.ContentType;
+  response.ContentStream := TMemoryStream.Create;
   if oresponse.feed <> nil then
   begin
     if oResponse.Format = ffxhtml then
@@ -1219,20 +1341,22 @@ begin
       oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
       TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
       TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
-      AResponseInfo.ContentType := oComp.MimeType;
+      TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
+      TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
+      response.ContentType := oComp.MimeType;
     end
     else if oResponse.format = ffJson then
     begin
       oComp := TFHIRJsonComposer.Create(oRequest.lang);
-      AResponseInfo.ContentType := oComp.MimeType;
+      response.ContentType := oComp.MimeType;
     end
     else
     begin
       oComp := TFHIRXmlComposer.Create(oRequest.lang);
-      AResponseInfo.ContentType := 'application/atom+xml; charset=UTF-8';
+      response.ContentType := 'application/atom+xml; charset=UTF-8';
     end;
     try
-      oComp.Compose(AResponseInfo.ContentStream, oResponse.Feed, false);
+      oComp.Compose(response.ContentStream, oResponse.Feed, false);
     finally
       oComp.Free;
     end;
@@ -1241,8 +1365,8 @@ begin
   Begin
     if oResponse.Resource is TFhirBinary then
     begin
-      TFhirBinary(oResponse.Resource).Content.SaveToStream(AResponseInfo.ContentStream);
-      AResponseInfo.ContentType := TFhirBinary(oResponse.Resource).ContentType;
+      TFhirBinary(oResponse.Resource).Content.SaveToStream(response.ContentStream);
+      response.ContentType := TFhirBinary(oResponse.Resource).ContentType;
     end
     else
     begin
@@ -1254,6 +1378,8 @@ begin
         TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
         TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
         TFHIRXhtmlComposer(oComp).Tags := oResponse.categories.Link;
+        TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
+        TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
       end
       else if oResponse.Format = ffXml then
         oComp := TFHIRXmlComposer.Create(oRequest.lang)
@@ -1262,8 +1388,8 @@ begin
       else
         oComp := TFHIRXmlComposer.Create(oRequest.lang);
       try
-        AResponseInfo.ContentType := oComp.MimeType;
-        oComp.Compose(AResponseInfo.ContentStream, oRequest.id, oRequest.subId, oResponse.resource, false);
+        response.ContentType := oComp.MimeType;
+        oComp.Compose(response.ContentStream, oRequest.id, oRequest.subId, oResponse.resource, false);
       finally
         oComp.Free;
       end;
@@ -1276,49 +1402,49 @@ begin
       oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
       TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
       TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
-      AResponseInfo.ContentType := oComp.MimeType;
+      TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
+      TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
+      response.ContentType := oComp.MimeType;
     end
     else if oResponse.format = ffJson then
     begin
       oComp := TFHIRJsonComposer.Create(oRequest.lang);
-      AResponseInfo.ContentType := oComp.MimeType;
+      response.ContentType := oComp.MimeType;
     end
     else
     begin
       oComp := TFHIRXmlComposer.Create(oRequest.lang);
-      AResponseInfo.ContentType := oComp.MimeType;
+      response.ContentType := oComp.MimeType;
     end;
     try
-      oComp.Compose(AResponseInfo.ContentStream, oRequest.ResourceType, oRequest.Id, oRequest.SubId, oResponse.Categories, false);
+      oComp.Compose(response.ContentStream, oRequest.ResourceType, oRequest.Id, oRequest.SubId, oResponse.Categories, false);
     finally
       oComp.Free;
     end;
   end
   else
   begin
-    if AResponseInfo.ContentType = '' then
-      AResponseInfo.ContentType := 'text/plain';
+    if response.ContentType = '' then
+      response.ContentType := 'text/plain';
     b := TEncoding.UTF8.GetBytes(oResponse.Body);
-    AResponseInfo.ContentStream.write(b, length(b));
+    response.ContentStream.write(b, length(b));
   end;
-  AResponseInfo.ContentStream.Position := 0;
+  response.ContentStream.Position := 0;
 end;
 
 procedure TFhirWebServer.ProcessRequest(request: TFHIRRequest; response: TFHIRResponse);
 var
   store : TFhirOperation;
-  conn : TKDBConnection;
 begin
+  writeln('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source);
   store := TFhirOperation.Create(request.Lang, FFhirStore.Link);
   try
-    store.Request := request.Link;
-    store.Response := response.Link;
     store.Connection := FFhirStore.DB.GetConnection('Operation');
-    store.precheck;
+    store.precheck(request, response);
     try
       store.Connection.StartTransact;
       try
-        store.Execute;
+        store.Execute(request, response);
         store.Connection.Commit;
       except
         store.Connection.Rollback;
@@ -1407,7 +1533,7 @@ var
   s : String;
   names : TStringList;
   profiles : TAdvStringMatch;
-  i, j, k : integer;
+  i, j : integer;
   cmp : String;
   b : TStringBuilder;
 begin
@@ -1656,7 +1782,7 @@ begin
           sContent := BytesAsString(StreamToBytes(oPart.Content));
           result := TStringStream.create(StreamToBytes(oPart.Content)); // trim
           if StringStartsWith(sContent, '<', false) then
-            sContentType := 'text/xml'
+            sContentType := 'application/xml'
           else if StringStartsWith(sContent, '{', false) then
             sContentType := 'application/json'
           else
@@ -1671,6 +1797,55 @@ begin
   end;
   if result = nil then
     raise exception.create('unable to process input');
+end;
+
+function TFhirWebServer.GetResource(session : TFhirSession; rtype: TFhirResourceType; lang, id, ver: String): TFhirResource;
+var
+  request : TFHIRRequest;
+  response : TFHIRResponse;
+begin
+  request := TFHIRRequest.create;
+  response := TFHIRResponse.Create;
+  try
+    request.Session := session.link;
+    request.ResourceType := rType;
+    request.Lang := lang;
+    request.Id := id;
+    request.LoadParams('');
+    if (ver = '') then 
+      request.CommandType := fcmdRead
+    else
+    begin
+      request.CommandType := fcmdVersionRead;
+      request.SubId := ver;
+    end;
+    ProcessRequest(request, response);
+    if response.Resource <> nil then
+      result := response.resource.link
+    else
+      raise Exception.Create('Unable to find resource '+CODES_TFhirResourceType[rtype]+'/'+id+'/'+ver);
+  finally
+    response.free;
+    request.Free;
+  end;
+end;
+
+procedure TFhirWebServer.GetWebUILink(resource: TFhirResource; base, id, ver: String; var link, text: String);
+var
+  tail : String;
+begin
+  link := '';
+  if (resource <> nil) and (id <> '') then
+  begin
+    tail := id;
+    if ver <> '' then
+      tail := tail + '/' + ver;
+    if resource.ResourceType = frtQuestionnaire then
+    begin
+      link := FBasePath+'/_web/Questionnaire/'+tail;
+      text := 'Try out the Questionnaire as a web form';
+    end;
+  end;
 end;
 
 function TFhirWebServer.MakeLoginToken(path : String; provider : TFHIRAuthProvider): String;
@@ -1950,7 +2125,6 @@ end;
 procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; named, path: String);
 var
   s : String;
-  b : TBytesStream;
 begin
   writeln('script: '+named);
   s := FileToString(path, TEncoding.UTF8);
@@ -1966,6 +2140,7 @@ end;
 procedure TFhirWebServer.ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path: String);
 begin
   writeln('file: '+stated);
+  response.Expires := now + 1;
   response.ContentStream := TFileStream.Create(path, fmOpenRead);
   response.FreeContentStream := true;
   response.ContentType := GetMimeTypeForExt(ExtractFileExt(path));
@@ -2008,7 +2183,6 @@ function TFhirWebServer.BuildCompartmentList(user: TFHIRUserStructure): String;
   end;
 var
   i : integer;
-  list : TStringList;
 begin
   result := ''''+tail(user.resource.patientList[0])+'''';
   for i := 1 to user.resource.patientList.count - 1 do
@@ -2016,6 +2190,62 @@ begin
   for i := 0 to user.TaggedCompartments.count - 1 do
     result := result+', '''+user.TaggedCompartments[i]+'''';
 end;
+
+{ TFhirServerMaintenanceThread }
+
+constructor TFhirServerMaintenanceThread.create(server: TFHIRWebServer);
+begin
+  FreeOnTerminate := true;
+  FServer := server;
+  FLastSweep := now;
+  inherited Create;
+end;
+
+procedure TFhirServerMaintenanceThread.Execute;
+begin
+  repeat
+    sleep(10);
+    if FLastSweep < now - DATETIME_MINUTE_ONE then
+    begin
+      try
+        FServer.FFhirStore.Sweep;
+      except
+      end;
+      FLastSweep := now;
+    end;
+  until Terminated;
+end;
+
+function TFhirWebServer.transform(resource: TFhirResource; lang, xslt: String): string;
+var
+  xslt2: AltovaXMLLib_TLB.XSLT2;
+  xml : TFHIRXmlComposer;
+  b : TBytesStream;
+  s : String;
+  AltovaXml : AltovaXMLLib_TLB.Application;
+begin
+  b := TBytesStream.Create(nil);
+  try
+    xml := TFHIRXmlComposer.Create(lang);
+    try
+      xml.Compose(b, '', '', resource, false);
+    finally
+      xml.Free;
+    end;
+    s := TEncoding.UTF8.GetString(b.Bytes);
+  finally
+    b.free;
+  end;
+
+  AltovaXml := AltovaXMLLib_TLB.CoApplication.Create;
+  xslt2 := AltovaXml.XSLT2;
+  xslt2.InputXMLFromText := s;
+  xslt2.XSLFileName := xslt;
+  result := xslt2.ExecuteAndGetResultAsString;
+  xslt2 := nil;
+  AltovaXml := nil;
+end;
+
 
 End.
 

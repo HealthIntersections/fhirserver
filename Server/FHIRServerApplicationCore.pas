@@ -31,18 +31,26 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, IniFiles, ActiveX, ComObj,
-  SystemService,
+  SysUtils, Classes, IniFiles, ActiveX, ComObj,
+  SystemService, SystemSupport,
+  SnomedImporter, SnomedServices, SnomedExpressions,
+  LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
-  FHIRRestServer, DBInstaller, FHIRConstants;
+  TerminologyServer,
+  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests,
+  FHIRServerConstants;
 
 Type
   TFHIRService = class (TSystemService)
   private
+    TestMode : Boolean;
     FIni : TIniFile;
     FDb : TKDBManager;
+    FTerminologyServer : TTerminologyServer;
     FWebServer : TFhirWebServer;
     FWebSource : String;
+    FNotServing : boolean;
+
     procedure ConnectToDatabase;
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
@@ -50,6 +58,7 @@ Type
     procedure UnloadTerminologies;
     procedure CloseDatabase;
     procedure CheckWebSource;
+    function dbExists : Boolean;
   protected
     function CanStart : boolean; Override;
     procedure DoStop; Override;
@@ -57,6 +66,8 @@ Type
     Constructor Create(const ASystemName, ADisplayName, AIniName: String);
     Destructor Destroy; override;
 
+    procedure ExecuteTests;
+    procedure Load(fn : String);
     procedure InstallDatabase;
     procedure UnInstallDatabase;
   end;
@@ -70,6 +81,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
+  dir, fn : String;
   svc : TFHIRService;
 begin
   CoInitialize(nil);
@@ -93,6 +105,23 @@ begin
       svc.InstallDatabase
     else if FindCmdLineSwitch('unmount') then
       svc.UninstallDatabase
+    else if FindCmdLineSwitch('remount') then
+    begin
+      svc.FNotServing := true;
+      svc.UninstallDatabase;
+      svc.InstallDatabase;
+      if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
+        svc.Load(fn);
+
+    end
+    else if FindCmdLineSwitch('tests') then
+      svc.ExecuteTests
+    else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
+      svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+    else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
+      svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+    else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) then
+      svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
 //    procedure ReIndex;
 //    procedure clear(types : String);
     else
@@ -108,8 +137,30 @@ constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName: Strin
 begin
   inherited create(ASystemName, ADisplayName);
   FIni := TIniFile.Create(AIniName);
-  ConnectToDatabase;
   CheckWebSource;
+end;
+
+function TFHIRService.dbExists: Boolean;
+var
+  conn : TKDBConnection;
+  meta : TKDBMetaData;
+begin
+  conn := FDb.GetConnection('test');
+  try
+    meta := conn.FetchMetaData;
+    try
+      result := meta.Tables.Table['Config'] <> nil;
+    finally
+      meta.free;
+    end;
+    conn.Release;
+  except
+    on e:exception do
+    begin
+      conn.Error(e);
+      result := false;
+    end;
+  end;
 end;
 
 destructor TFHIRService.Destroy;
@@ -123,7 +174,10 @@ function TFHIRService.CanStart: boolean;
 begin
   result := false;
   try
-    LoadTerminologies;
+    if FDb = nil then
+      ConnectToDatabase;
+    if FTerminologyServer = nil then
+      LoadTerminologies;
     InitialiseRestServer;
     result := true;
   except
@@ -145,9 +199,55 @@ begin
   end;
 end;
 
+procedure TFHIRService.ExecuteTests;
+var
+  tests : TFhirServerTests;
+begin
+  try
+    TestMode := true;
+    tests := TFhirServerTests.Create;
+    try
+      tests.ini := FIni;
+      tests.executeLibrary;
+      if FDb = nil then
+        ConnectToDatabase;
+      if dbExists then
+        UnInstallDatabase;
+      InstallDatabase;
+      LoadTerminologies;
+      tests.TerminologyServer := FTerminologyServer.Link;
+      tests.executeBefore;
+
+      CanStart;
+      tests.executeRound1;
+      DoStop;
+
+      CanStart;
+      tests.executeRound2;
+      DoStop;
+
+      UnloadTerminologies;
+      UnInstallDatabase;
+
+      tests.executeAfter; // final tests - these go on for a very long time,
+    finally
+      tests.Free;
+    end;
+    ExitCode := 0;
+  except
+    on e: Exception do
+    begin
+      writeln(e.Message);
+      ExitCode := 1;
+    end;
+  end;
+end;
+
 Procedure TFHIRService.ConnectToDatabase;
 begin
-  if FIni.ReadString('database', 'type', '') = 'mssql' then
+  if TestMode then
+    FDb := TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0', '(local)', 'fhir-test', '', '')
+  else if FIni.ReadString('database', 'type', '') = 'mssql' then
   begin
     Writeln('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+FIni.ReadString('database', 'database', ''));
     FDb := TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
@@ -193,20 +293,41 @@ begin
   FDB.Free;
 end;
 
+procedure TFHIRService.Load(fn: String);
+var
+  f : TFileStream;
+begin
+  if FDb = nil then
+    ConnectToDatabase;
+  CanStart;
+  writeln('Load database from '+fn);
+  f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+  try
+    FWebServer.Transaction(f);
+  finally
+    f.Free;
+  end;
+  writeln('done');
+
+  DoStop;
+end;
+
 procedure TFHIRService.LoadTerminologies;
 begin
-  { todo }
+  FTerminologyServer := TTerminologyServer.create;
+  FTerminologyServer.load(FIni);
 end;
 
 procedure TFHIRService.UnloadTerminologies;
 begin
-  { todo }
+  FTerminologyServer.Free;
+  FTerminologyServer := nil;
 end;
 
 procedure TFHIRService.InitialiseRestServer;
 begin
-  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName);
-  FWebServer.Start;
+  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer);
+  FWebServer.Start(not FNotServing);
 end;
 
 procedure TFHIRService.InstallDatabase;
@@ -214,6 +335,8 @@ var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
 begin
+  if FDb = nil then
+    ConnectToDatabase;
   Writeln('mount database');
   conn := FDb.GetConnection('setup');
   try
@@ -240,6 +363,8 @@ var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
 begin
+  if FDb = nil then
+    ConnectToDatabase;
   Writeln('unmount database');
   conn := FDb.GetConnection('setup');
   try

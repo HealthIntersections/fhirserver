@@ -4,42 +4,38 @@ unit LoincServices;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
 Interface
 
 Uses
-  SysUtils,
-  Classes,
-  StringSupport,
-  FileSupport,
-  AdvStringBuilders,
-  AdvObjects,
-  AdvObjectLists,
-  regexpr,
-  YuStemmer;
+  SysUtils, Classes,
+  StringSupport, FileSupport,
+  AdvStringBuilders, AdvObjects, AdvObjectLists,
+  AnsiStringBuilder, regexpr, YuStemmer,
+  FHIRTypes, TerminologyServices;
 
 {axes
 
@@ -76,7 +72,7 @@ type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
     Public
       Function GetEntry(iIndex : Cardinal):AnsiString;
 
@@ -105,7 +101,7 @@ Type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
@@ -121,7 +117,7 @@ Type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var reference : Cardinal);
       Function Count : Integer;
@@ -138,12 +134,12 @@ Type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
     Public
       Function GetWords(iIndex : Cardinal) : TWordArray;
       Function GetCardinals(iIndex : Cardinal) : TCardinalArray;
-      Function Getlength(iIndex : Cardinal) : Word;
-      
+      Function Getlength(iIndex : Cardinal) : Cardinal;
+
       Procedure StartBuild;
       Function AddWords(Const a : TWordArray) : Cardinal;
       Function AddCardinals(Const a : TCardinalArray) : Cardinal;
@@ -155,7 +151,7 @@ Type
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
     Public
       Procedure GetConcept(iIndex : Word; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
 
@@ -201,7 +197,7 @@ Type
       FCodeLength : Cardinal;
       FMaster : AnsiString;
       FLength : Cardinal;
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TAnsiStringBuilder;
     Public
       Function FindCode(sCode : String; var iIndex : Cardinal) : Boolean;
 
@@ -228,7 +224,13 @@ Type
 
   TLoincPropertyIds = Array [TLoincPropertyType] of Word;
 
-  TLOINCServices = class (TAdvObject)
+  THolder = class (TAdvObject)
+  private
+    Children : LoincServices.TCardinalArray;
+    function HasChild(v : integer) : boolean;
+  end;
+
+  TLOINCServices = class (TCodeSystemProvider)
   Private
     FDesc : TLoincStrings;
     FCode : TLOINCCodeList;
@@ -251,15 +253,17 @@ Type
     Procedure Load(Const sFilename : String);
     Procedure Save(Const sFilename : String);
     Function GetDisplayByName(Const sCode : String) : String;
-    Function Search(sText : String) : TMatchArray;
+    procedure GetDisplaysByName(Const sCode : String; list : TStringList);
+    Function Search(sText : String) : TMatchArray; overload;
     Function GetPropertyId(aType : TLoincPropertyType; const sName : String) : Word;
     Function GetPropertyCodes(iProp : Word) : TCardinalArray;
     Function GetConceptName(iConcept : Word): String;
+    Function IsCode(sCode : String): Boolean;
 
     Property Desc : TLoincStrings read FDesc;
     Property Refs : TLOINCReferences read FRefs;
     Property Concepts : TLOINCConcepts read FConcepts;
-    Property Code : TLOINCCodeList read FCode;
+    Property CodeList : TLOINCCodeList read FCode;
     Property Words : TLoincWords read FWords;
     Property Stems : TLoincStems read FStems;
 
@@ -268,6 +272,25 @@ Type
     Property Version : String read FVersion write FVersion;
     Property Properties : TLoincPropertyIds read FProperties Write FProperties;
     Property Key : integer read FKey write FKey;
+
+    function TotalCount : integer; override;
+    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
+    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function system : String; override;
+    function getDisplay(code : String):String; override;
+    function locate(code : String) : TCodeSystemProviderContext; override;
+    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
+    function Code(context : TCodeSystemProviderContext) : string; override;
+    function Display(context : TCodeSystemProviderContext) : string; override;
+    procedure Displays(code : String; list : TStringList); override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; override;
+    function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; override;
+    function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
+    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function searchFilter(filter : TSearchFilterText) : TCodeSystemProviderFilterContext; overload; override;
   End;
 
   TLOINCServiceList = class (TAdvObjectList)
@@ -285,14 +308,13 @@ Type
     Function GetServiceByName(sName : String) : TLOINCServices;
 
     Function HasDefaultService : Boolean;
-    
+
     Property DefaultService : TLOINCServices Read GetDefinition write SetDefinition;
 
     Property Service[i : integer] : TLOINCServices read GetService; Default;
   End;
 
-var
-  GLOINCs : TLOINCServiceList;
+
 
 Implementation
 
@@ -333,7 +355,7 @@ end;
 
 procedure TLoincStrings.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 { TLOINCReferences }
@@ -341,16 +363,16 @@ end;
 Function TLOINCReferences.GetWords(iIndex: Cardinal) : TWordArray;
 var
   i : integer;
-  w : word;
+  lw : Cardinal;
 begin
   if (iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC list');
   if Byte(FMaster[iIndex]) <> 0 Then
     Raise exception.Create('not a word list');
   inc(iIndex);
-  move(FMaster[iIndex], w, 2);
-  SetLength(Result, w);
-  inc(iIndex, 2);
+  move(FMaster[iIndex], lw, 4);
+  SetLength(Result, lw);
+  inc(iIndex, 4);
   for i := 0 to Length(result)-1 Do
   Begin
     move(FMaster[iIndex], result[i], 2);
@@ -361,16 +383,16 @@ end;
 Function TLOINCReferences.GetCardinals(iIndex: Cardinal) : TCardinalArray;
 var
   i : integer;
-  w : word;
+  lw : cardinal;
 begin
   if (iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC list');
   if Byte(FMaster[iIndex]) <> 1 Then
     Raise exception.Create('not a cardinal list');
   inc(iIndex);
-  move(FMaster[iIndex], w, 2);
-  SetLength(Result, w);
-  inc(iIndex, 2);
+  move(FMaster[iIndex], lw, 4);
+  SetLength(Result, lw);
+  inc(iIndex, 4);
   for i := 0 to Length(result)-1 Do
   Begin
     move(FMaster[iIndex], result[i], 4);
@@ -386,7 +408,7 @@ Begin
     raise exception.Create('LOINC reference list too long');
   result := FBuilder.Length + 1;
   FBuilder.Append(Chr(0));// for words
-  FBuilder.AddWordAsBytes(length(a));
+  FBuilder.AddCardinalAsBytes(length(a));
   for iLoop := Low(a) to High(a) Do
     FBuilder.AddWordAsBytes(a[iLoop]);
 End;
@@ -395,11 +417,9 @@ Function TLOINCReferences.AddCardinals(Const a : TCardinalArray) : Cardinal;
 var
   iLoop : Integer;
 Begin
-  if Length(a) > 65535 Then
-    raise exception.Create('LOINC referece list too long');
   result := FBuilder.Length + 1;
   FBuilder.Append(Chr(1));// for Cardinals
-  FBuilder.AddWordAsBytes(length(a));
+  FBuilder.AddCardinalAsBytes(length(a));
   for iLoop := Low(a) to High(a) Do
     FBuilder.AddCardinalAsBytes(a[iLoop]);
 End;
@@ -413,15 +433,15 @@ end;
 
 procedure TLOINCReferences.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
-function TLOINCReferences.Getlength(iIndex: Cardinal): Word;
+function TLOINCReferences.Getlength(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC list');
   inc(iIndex); // skip type marker
-  move(FMaster[iIndex], result, 2);
+  move(FMaster[iIndex], result, 4);
 end;
 
 { TLOINCConcepts }
@@ -452,7 +472,7 @@ end;
 
 procedure TLOINCConcepts.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 
@@ -460,7 +480,7 @@ end;
 
 procedure TLOINCCodeList.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 
@@ -626,6 +646,28 @@ begin
   result := Desc.GetEntry(iName);
 end;
 
+procedure TLOINCServices.GetDisplaysByName(Const sCode : String; list : TStringList);
+var
+  iIndex : Cardinal;
+  iDescription, iStems, iOtherNames : Cardinal;
+  sCode1 : String;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iFlags : Byte;
+  names : TCardinalArray;
+  name : Cardinal;
+begin
+  if CodeList.FindCode(sCode, iIndex) then
+  Begin
+    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    assert(sCode = sCode1);
+    list.Add(Desc.GetEntry(iDescription));
+    names := FRefs.GetCardinals(iOtherNames);
+    for name in names do
+      list.Add(Desc.GetEntry(name));
+  End
+end;
+
+
 function TLOINCServices.GetDisplayByName(const sCode: String): String;
 var
   iIndex : Cardinal;
@@ -634,9 +676,9 @@ var
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
 begin
-  if Code.FindCode(sCode, iIndex) then
+  if CodeList.FindCode(sCode, iIndex) then
   Begin
-    Code.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     assert(sCode = sCode1);
     result := Desc.GetEntry(iDescription)
   End
@@ -689,6 +731,13 @@ begin
   End;
 end;
 
+
+function TLOINCServices.IsCode(sCode: String): Boolean;
+var
+  iIndex : Cardinal;
+begin
+  result := CodeList.FindCode(sCode, iIndex);
+end;
 
 function TLOINCServices.Link: TLOINCServices;
 begin
@@ -766,6 +815,20 @@ begin
   Finally
     oFile.Free;
   End;
+end;
+
+function TLOINCServices.SearchFilter(filter : TSearchFilterText): TCodeSystemProviderFilterContext;
+var
+  matches : TMatchArray;
+  children : TCardinalArray;
+  i : integer;
+begin
+  matches := Search(filter.filter);
+  setLength(children, length(matches));
+  for i := 0 to Length(matches) - 1 do
+    children[i] := matches[i].index;
+  result := THolder.Create;
+  THolder(result).Children := children;
 end;
 
 type
@@ -897,7 +960,7 @@ function TLOINCServices.Search(sText: String): TMatchArray;
 //  oReg : TRegExpr;
 //  bIncl : Boolean;
   Begin
-    Code.GetInformation(iCodeIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(iCodeIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     r1 := 0;
     Desc := Refs.GetCardinals(iStems);
     For i := 0 to length(words) - 1 do
@@ -1110,7 +1173,7 @@ end;
 
 procedure TLoincWords.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 { TLoincStems }
@@ -1153,7 +1216,7 @@ end;
 
 procedure TLoincStems.StartBuild;
 begin
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TAnsiStringBuilder.Create;
 end;
 
 function TLoincServices.FindStem(s: String; var index: Integer): Boolean;
@@ -1178,6 +1241,169 @@ begin
     end;
   end;
   index := L;
+end;
+
+
+function TLoincServices.ChildCount(context: TCodeSystemProviderContext): integer;
+begin
+  // no children in loinc
+  if context = nil then
+    result := TotalCount
+  else
+    result := 0;
+end;
+
+function TLoincServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+begin
+  if (context = nil) then
+    result := TCodeSystemProviderContext(ndx)
+  else
+    raise exception.create('shouldn''t be here');
+end;
+
+function TLoincServices.Code(context: TCodeSystemProviderContext): string;
+var
+  iDescription, iStems, iOtherNames : Cardinal;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iFlags : Byte;
+begin
+  CodeList.GetInformation(integer(context), result, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+end;
+
+function TLoincServices.Display(context: TCodeSystemProviderContext): string;
+var
+  iDescription, iStems, iOtherNames : Cardinal;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iFlags : Byte;
+begin
+  CodeList.GetInformation(integer(context), result, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+  result := Desc.GetEntry(iDescription)
+end;
+
+procedure TLoincServices.Displays(code: String; list: TStringList);
+begin
+  GetDisplaysByName(code, list);
+end;
+
+function TLoincServices.getDisplay(code: String): String;
+begin
+  result := GetDisplayByName(code);
+  if result = '' then
+    raise Exception.create('unable to find '+code+' in '+system);
+end;
+
+function TLoincServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
+begin
+  result := false; // loinc don't do abstract
+end;
+
+function TLoincServices.locate(code: String): TCodeSystemProviderContext;
+var
+  i : Cardinal;
+begin
+  if CodeList.FindCode(code, i) then
+    result := TCodeSystemProviderContext(i)
+  else
+    result := nil;//raise Exception.create('unable to find '+code+' in '+system);
+end;
+
+function TLoincServices.system: String;
+begin
+  result := 'http://loinc.org';;
+end;
+
+function TLoincServices.TotalCount: integer;
+begin
+  result := CodeList.Count;
+end;
+
+function TLoincServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+begin
+  result := THolder(ctxt).HasChild(integer(concept));
+end;
+
+function THolder.HasChild(v : integer) : boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := 0 to Length(Children) - 1 do
+    if (Cardinal(v) = Children[i]) then
+    begin
+      result := true;
+      exit;
+    end;
+end;
+
+procedure TLoincServices.Close(ctxt: TCodeSystemProviderFilterContext);
+begin
+  THolder(ctxt).free;
+end;
+
+function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+var
+  ok : boolean;
+  id : word;
+  aChildren : LoincServices.TCardinalArray;
+  iChildren : Cardinal;
+  iCodes : Cardinal;
+  iName : Cardinal;
+begin
+  SetLength(aChildren, 0);
+  id := 0;
+  if op = FilterOperatorEqual then
+  begin
+    ok := true;
+    if prop = 'SCALE_TYP' then
+      id := GetPropertyId(lptScales, value)
+    else if prop = 'CLASSTYPE' then
+      id := GetPropertyId(lptClasses, value)
+    else
+      ok := false;
+  end
+  else
+    ok := false;
+
+  if not ok then
+    result := nil
+  else
+  begin
+    aChildren := nil;
+    if (id <> 0) then
+    begin
+      Concepts.GetConcept(id, iName, iChildren, iCodes);
+      aChildren := Refs.GetCardinals(iCodes);
+    end;
+    result := THolder.create;
+    THolder(result).Children := aChildren;
+  end;
+end;
+
+function TLoincServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
+begin
+  result := TAdvObject(THolder(ctxt).children[ndx]);
+end;
+
+function TLoincServices.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := length(THolder(ctxt).children);
+end;
+
+function TLoincServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
+begin
+  result := nil; // cause loinc don't do subsumption
+end;
+
+function TLoincServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+var
+  i : Cardinal;
+  holder : THolder;
+begin
+  holder := THolder(ctxt);
+  if CodeList.FindCode(code, i) and holder.hasChild(i) then
+    result := TCodeSystemProviderContext(i)
+  else
+    result := nil;
 end;
 
 

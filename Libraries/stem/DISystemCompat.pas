@@ -1,7 +1,6 @@
-{! 1 !}
 {-------------------------------------------------------------------------------
  
- Copyright (c) 1999-2010 Ralf Junker, The Delphi Inspiration
+ Copyright (c) 1999-2013 Ralf Junker, The Delphi Inspiration
  Internet: http://www.yunqa.de/delphi/
  E-Mail:   delphi@yunqa.de
 
@@ -17,8 +16,7 @@ interface
 
 type
 
-  UnicodeString = WideString;
-  PUnicodeString = ^UnicodeString;
+  RawByteString = AnsiString;
 
   {$ELSE FPC}
 
@@ -27,28 +25,38 @@ uses
   Windows;
 {$ENDIF COMPILER_6_UP}
 
-{$IFNDEF COMPILER_12_UP}
+{$IFNDEF COMPILER_3_UP}
 
 type
 
-  RawByteString = AnsiString;
-  PRawByteString = ^RawByteString;
+  PByte = ^Byte;
 
-  UnicodeString = WideString;
-  PUnicodeString = ^UnicodeString;
+  {$ENDIF ~COMPILER_3_UP}
 
-function StringRefCount(const s: RawByteString): Integer; overload; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}
-function StringRefCount(const s: UnicodeString): Integer; overload; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}
+  {$IFNDEF COMPILER_4_UP}
 
-function Utf8ToString(const s: RawByteString): UnicodeString; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}overload;
-function Utf8ToString(const s: PAnsiChar): UnicodeString; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}overload;
+type
 
-function UTF8ToUnicodeString(const s: RawByteString): UnicodeString; overload;
-function UTF8ToUnicodeString(const s: PAnsiChar): UnicodeString; overload;
+  Int64 = packed record
+    i1, i2: Integer;
+  end;
+  PInt64 = ^Int64;
+
+  {$ENDIF ~COMPILER_4_UP}
+
+  {$IFNDEF COMPILER_5_UP}
+
+procedure FreeAndNil(var Obj);
+
+{$ENDIF ~COMPILER_5_UP}
 
 {$IFNDEF COMPILER_6_UP}
 
 type
+
+  TMethod = record
+    Code, Data: Pointer;
+  end;
 
   PBoolean = ^Boolean;
   PCardinal = ^Cardinal;
@@ -63,12 +71,18 @@ type
   Utf8String = type AnsiString;
   PUtf8String = ^Utf8String;
 
-  TMethod = record
-    Code, Data: Pointer;
-  end;
+  IntegerArray = array[0..MaxInt div SizeOf(Integer) - 1] of Integer;
+  PIntegerArray = ^IntegerArray;
 
-  TPointerArray = array[0..MaxInt div SizeOf(PPointer) - 1] of PPointer;
+  TPointerArray = array[0..MaxInt div SizeOf(Pointer) - 1] of Pointer;
   PPointerArray = ^TPointerArray;
+
+  TIntegerDynArray = array of Integer;
+  TInt64DynArray = array of Int64;
+
+  UCS4Char = type LongWord;
+  PUCS4Char = ^UCS4Char;
+  UCS4String = array of UCS4Char;
 
 function UnicodeToUtf8(
   Dest: PAnsiChar;
@@ -93,31 +107,90 @@ function Utf8ToUnicode(
   Source: PChar;
   SourceBytes: Cardinal): Cardinal; overload;
 
-{$IFNDEF COMPILER_5_UP}
+{$ENDIF ~COMPILER_6_UP}
 
-procedure FreeAndNil(var Obj);
+{$IFNDEF COMPILER_7_UP}
 
-{$IFNDEF COMPILER_4_UP}
+const
 
-type
+  faSymLink = $00000400{$IFDEF SUPPORTS_PLATFORM}platform{$ENDIF};
 
-  Int64 = packed record
-    i1, i2: Integer;
-  end;
-  PInt64 = ^Int64;
+  {$ENDIF ~COMPILER_7_UP}
 
-  {$IFNDEF COMPILER_3_UP}
+  {$IFNDEF COMPILER_9_UP}
 
 type
 
-  PByte = ^Byte;
+  UInt64 = 0..High(Int64);
 
-  {$ENDIF !COMPILER_4_UP}
+  {$ENDIF ~COMPILE_9_UP}
 
-  {$ENDIF !COMPILER_4_UP}
-  {$ENDIF !COMPILER_5_UP}
-  {$ENDIF !COMPILER_6_UP}
-  {$ENDIF !COMPILER_12_UP}
+  {$IFNDEF COMPILER_12_UP}
+
+type
+
+  NativeInt = Integer;
+
+  RawByteString = AnsiString;
+  PRawByteString = ^RawByteString;
+
+  UnicodeString = WideString;
+  PUnicodeString = ^UnicodeString;
+
+function StringRefCount(const s: RawByteString): Integer; overload; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}
+function StringRefCount(const s: UnicodeString): Integer; overload; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}
+
+function Utf8ToString(const s: RawByteString): UnicodeString; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}overload;
+function Utf8ToString(const s: PAnsiChar): UnicodeString; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}overload;
+
+function UTF8ToUnicodeString(const s: RawByteString): UnicodeString; overload;
+function UTF8ToUnicodeString(const s: PAnsiChar): UnicodeString; overload;
+
+{$ENDIF ~COMPILER_12_UP}
+
+{$IFNDEF COMPILER_14_UP}
+
+type
+
+  NativeUInt = Cardinal;
+
+  {$IFDEF MSWINDOWS}
+const
+  INVALID_FILE_ATTRIBUTES = Cardinal($FFFFFFFF);
+  {$ENDIF MSWINDOWS]
+
+    { Converts a UCS-4 encoded string to a Unicode string.
+
+      Call UCS4StringToUnicodeString to convert a UCS-4 encoded string to Unicode.
+      S is a string that contains UCS-4 encoded characters. The result of the
+      function is the corresponding Unicode (UTF-16) string value.
+
+      <<name>> assumes that s contains a terminating null character and
+      converts ##Length(s) - 1## characters. }
+function UCS4StringToUnicodeString(
+  const s: UCS4String): UnicodeString;
+
+{$ENDIF ~COMPILER_14_UP}
+
+{$IFNDEF COMPILER_15_UP}
+
+function IsRelativePath(
+  const Path: string): Boolean; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}
+
+function IsRelativePathA(
+  const Path: RawByteString): Boolean;
+
+function IsRelativePathW(
+  const Path: UnicodeString): Boolean;
+
+{$ENDIF ~COMPILER_15_UP}
+
+{$IFNDEF COMPILER_17_UP}
+
+type
+  MarshaledAString = PAnsiChar;
+
+  {$ENDIF ~COMPILER_17_UP}
 
   {$ENDIF FPC}
 
@@ -134,78 +207,24 @@ type
   PPUtf8CharArray = ^TPUtf8CharArray;
   PPPUtf8CharArray = ^PPUtf8CharArray;
 
-function CompareMem(p1, p2: Pointer; Length: Integer): Boolean;
-
 implementation
 
 {$IFDEF FPC}
 
 {$ELSE FPC}
 
-{$IFNDEF COMPILER_12_UP}
+{$IFNDEF COMPILER_5_UP}
 
-function StringRefCount(const s: RawByteString): Integer;
-begin
-  Result := Integer(s);
-  if Result <> 0 then
-    Result := PInteger(Result - 8)^;
-end;
-
-function StringRefCount(const s: UnicodeString): Integer;
-begin
-  Result := Integer(s);
-  if Result <> 0 then
-    Result := PInteger(Result - 8)^;
-end;
-
-function Utf8ToString(const s: RawByteString): UnicodeString;
-begin
-  Result := UTF8ToUnicodeString(s);
-end;
-
-function Utf8ToString(const s: PAnsiChar): UnicodeString;
-begin
-  Result := UTF8ToUnicodeString(s);
-end;
-
-function UTF8ToUnicodeString(const s: RawByteString): UnicodeString;
+procedure FreeAndNil(var Obj);
 var
-  l: Cardinal;
+  Temp: TObject;
 begin
-  l := Length(s);
-  if l > 0 then
-    begin
-      SetString(Result, nil, l);
-      l := Utf8ToUnicode(Pointer(Result), l + 1, Pointer(s), l);
-      if l > 0 then
-        begin
-          SetLength(Result, l - 1);
-          Exit;
-        end;
-    end;
-  Result := '';
+  Temp := TObject(Obj);
+  Pointer(Obj) := nil;
+  Temp.Free;
 end;
 
-function UTF8ToUnicodeString(const s: PAnsiChar): UnicodeString; overload;
-var
-  l: Integer;
-begin
-  l := 0;
-  if Assigned(s) then
-    while s[l] <> #0 do
-      Inc(l);
-  if l > 0 then
-    begin
-      SetString(Result, nil, l);
-      l := Utf8ToUnicode(Pointer(Result), l + 1, s, l);
-      if l > 0 then
-        begin
-          SetLength(Result, l - 1);
-          Exit;
-        end;
-    end;
-  Result := '';
-end;
+{$ENDIF ~COMPILER_5_UP}
 
 {$IFNDEF COMPILER_6_UP}
 
@@ -214,7 +233,7 @@ var
   Len: Cardinal;
 begin
   Len := 0;
-  if Source <> nil then
+  if Assigned(Source) then
     while Source[Len] <> #0 do
       Inc(Len);
   Result := UnicodeToUtf8(Dest, MaxBytes, Source, Len);
@@ -396,94 +415,140 @@ begin
   Result := Count + 1;
 end;
 
-{$IFNDEF COMPILER_5_UP}
+{$ENDIF ~COMPILER_6_UP}
 
-procedure FreeAndNil(var Obj);
-var
-  Temp: TObject;
+{$IFNDEF COMPILER_12_UP}
+
+function StringRefCount(const s: RawByteString): Integer;
 begin
-  Temp := TObject(Obj);
-  Pointer(Obj) := nil;
-  Temp.Free;
+  Result := Integer(s);
+  if Result <> 0 then
+    Result := PInteger(Result - 8)^;
 end;
 
-{$ENDIF !COMPILER_5_UP}
-{$ENDIF !COMPILER_6_UP}
-{$ENDIF !COMPILER_12_UP}
+function StringRefCount(const s: UnicodeString): Integer;
+begin
+  Result := Integer(s);
+  if Result <> 0 then
+    Result := PInteger(Result - 8)^;
+end;
+
+function Utf8ToString(const s: RawByteString): UnicodeString;
+begin
+  Result := UTF8ToUnicodeString(s);
+end;
+
+function Utf8ToString(const s: PAnsiChar): UnicodeString;
+begin
+  Result := UTF8ToUnicodeString(s);
+end;
+
+function UTF8ToUnicodeString(const s: RawByteString): UnicodeString;
+var
+  l: Cardinal;
+begin
+  l := Length(s);
+  if l > 0 then
+    begin
+      SetString(Result, nil, l);
+      l := Utf8ToUnicode(Pointer(Result), l + 1, Pointer(s), l);
+
+      if (l > 0){$IFNDEF COMPILER_12_UP} and (l <> Cardinal(-1)){$ENDIF} then
+        begin
+          SetLength(Result, l - 1);
+          Exit;
+        end;
+    end;
+  Result := '';
+end;
+
+function UTF8ToUnicodeString(const s: PAnsiChar): UnicodeString; overload;
+var
+  l: Integer;
+begin
+  l := 0;
+  if Assigned(s) then
+    while s[l] <> #0 do
+      Inc(l);
+  if l > 0 then
+    begin
+      SetString(Result, nil, l);
+      l := Utf8ToUnicode(Pointer(Result), l + 1, s, l);
+      if l > 0 then
+        begin
+          SetLength(Result, l - 1);
+          Exit;
+        end;
+    end;
+  Result := '';
+end;
+
+{$ENDIF ~COMPILER_12_UP}
+
+{$IFNDEF COMPILER_14_UP}
+
+function UCS4StringToUnicodeString(const s: UCS4String): UnicodeString;
+var
+  c: UCS4Char;
+  i, l: NativeInt;
+  p: PWideChar;
+begin
+  l := Length(s) - 1;
+  for i := Low(s) to High(s) - 1 do
+    if s[i] >= $10000 then
+      Inc(l);
+
+  SetString(Result, nil, l);
+  p := Pointer(Result);
+
+  for i := Low(s) to High(s) - 1 do
+    begin
+      c := s[i];
+      if c < $10000 then
+        begin
+          p[0] := WideChar(c);
+          Inc(p);
+        end
+      else
+        begin
+          Dec(c, $10000);
+          p[0] := WideChar($D800 + c shr 10);
+          p[1] := WideChar($DC00 + c and $3FF);
+          Inc(p, 2);
+        end;
+    end;
+end;
+
+{$ENDIF ~COMPILER_14_UP}
+
+{$IFNDEF COMPILER_15_UP}
+
+function IsRelativePath(const Path: string): Boolean;
+begin
+  Result := {$IFDEF UNICODE}IsRelativePathW{$ELSE}IsRelativePathA{$ENDIF}(Path);
+end;
+
+function IsRelativePathA(const Path: RawByteString): Boolean;
+var
+  l: Integer;
+begin
+  l := Length(Path);
+  Result := (l > 0) and (Path[1] <> '/')
+    {$IFDEF MSWINDOWS} and (l > 1) and (Path[2] <> ':'){$ENDIF MSWINDOWS};
+end;
+
+function IsRelativePathW(const Path: UnicodeString): Boolean;
+var
+  l: Integer;
+begin
+  l := Length(Path);
+  Result := (l > 0) and (Path[1] <> '/')
+    {$IFDEF MSWINDOWS} and (l > 1) and (Path[2] <> ':'){$ENDIF MSWINDOWS};
+end;
+
+{$ENDIF ~COMPILER_15_UP}
 
 {$ENDIF FPC}
-
-function CompareMem(p1, p2: Pointer; Length: Integer): Boolean;
-asm
-
-  sub ecx, 8
-  jl @VerySmallCompare
-
-  push ebx
-
-  mov ebx, [eax]
-  cmp ebx, [edx]
-  je @FirstFourMatches
-@InitialMismatch:
-  xor eax, eax
-  pop ebx
-  ret
-@FirstFourMatches:
-
-  add eax, ecx
-  add edx, ecx
-
-  mov ebx, [eax]
-  cmp ebx, [edx]
-  jne @InitialMismatch
-
-  mov ebx, [eax + 4]
-  cmp ebx, [edx + 4]
-  jne @InitialMismatch
-
-  sub ecx, 4
-  jle @InitialMatch
-
-  push esi
-
-  neg ecx
-  add ecx, eax
-  and ecx, -4
-  sub ecx, eax
-
-@CompareLoop:
-  mov ebx, [eax + ecx]
-  mov esi, [eax + ecx + 4]
-  xor ebx, [edx + ecx]
-  xor esi, [edx + ecx + 4]
-  or ebx, esi
-  jnz @LargeMismatch
-  add ecx, 8
-  jl @CompareLoop
-  pop esi
-@InitialMatch:
-  pop ebx
-@MatchSmall:
-  mov al, True
-  ret
-@VerySmallCompare:
-  add ecx, 8
-  jle @MatchSmall
-@SmallLoop:
-  mov ch, [eax]
-  xor ch, [edx]
-  jnz @MismatchSmall
-  add eax, 1
-  add edx, 1
-  sub cl, 1
-  jnz @SmallLoop
-  jmp @MatchSmall
-@LargeMismatch:
-  pop esi
-  pop ebx
-@MismatchSmall:
-  xor eax, eax
-end;
 
 end.
 

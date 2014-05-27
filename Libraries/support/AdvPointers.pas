@@ -122,7 +122,7 @@ Procedure TAdvPointerList.InternalEmpty(iIndex, iLength: Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(Integer(FPointerArray) + (iIndex * SizeOf(TPointerItem))), (iLength * SizeOf(TPointerItem)));
+  MemoryZero(Pointer(NativeUInt(FPointerArray) + (iIndex * SizeOf(TPointerItem))), (iLength * SizeOf(TPointerItem)));
 End;  
 
 

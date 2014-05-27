@@ -33,7 +33,7 @@ type
     function Report(AExceptions : Boolean; AFormat : TKDBReportFormat; APrefix : String = '') : String; Overload;
   public
     constructor create(AUsage : String);
-    destructor destroy; override;
+    destructor Destroy; override;
   end;
 
   TKDBLogger = class (TAdvObject)
@@ -43,8 +43,8 @@ type
     FLock : TCriticalSection;
     function GetLogEntry(AUsage : String) : TKDBLogEntry;
   public
-    Constructor create;
-    destructor destroy; override;
+    Constructor Create; override;
+    destructor Destroy; override;
     procedure RecordUsage(AUsage : String; AWhenStarted : TDateTime; ARowCount, APrepareCount : integer; AException : Exception; AErrMsg : string);
     function Report(AFormat : TKDBReportFormat) : String; Overload;
     function InteractiveReport(AParam : String; APrefix : String) : string;

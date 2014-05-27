@@ -11,4 +11,8 @@ __history
 *.dsk
 bin/*
 *.local.ini
+*.rdp
 
+
+*.bak
+web/QuestionnaireToHTML.xslt

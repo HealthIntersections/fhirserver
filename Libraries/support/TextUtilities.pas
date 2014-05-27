@@ -39,6 +39,8 @@ function FormatXMLToHTML(AStr : String):String;
 
 function StringToUTFStream(value : String):TStream;
 
+function FileToString(filename : String; {$IFDEF UNICODE}encoding : TEncoding; {$ENDIF}AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
+
 implementation
 
 uses
@@ -86,7 +88,7 @@ begin
           end;
         else
           begin
-          if AStr[i] in [' '..'~'] then
+          if CharInSet(AStr[i], [' '..'~']) then
             b.Append(AStr[i])
           else
             b.Append('&#' + IntToStr(Ord(AStr[i])) + ';');
@@ -133,7 +135,7 @@ begin
         end;
       else
         begin
-        if AStr[i] in [' '..'~'] then
+        if CharInSet(AStr[i], [' '..'~']) then
           Result := Result + AStr[i]
         else
           Result := Result + '&#' + IntToStr(Ord(AStr[i])) + ';';
@@ -147,7 +149,6 @@ function FormatXMLToHTML(AStr : String):String;
 var
   LIsNewLine: Boolean;
   I: Integer;
-  LLen: Integer;
   LInAmp : Boolean;
   LInTag : boolean;
   LInAttr : Boolean;
@@ -224,7 +225,7 @@ begin
           end;
         else
           begin
-          if AStr[i] in [' '..'~'] then
+          if CharINSet(AStr[i], [' '..'~']) then
             b.Append(AStr[i])
           else
             b.Append('&#' + IntToStr(Ord(AStr[i])) + ';');
@@ -238,6 +239,27 @@ begin
   end;
 end;
 
+
+function FileToString(filename : String; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
+var
+  LFileStream: TFilestream;
+  bytes : TBytes;
+begin
+  if FileExists(filename) then
+    begin
+    LFileStream := TFileStream.Create(filename, aShareMode);
+    try
+      SetLength(bytes, LFileStream.Size);
+      if LFileStream.Size > 0 then
+        LFileStream.Read(bytes[0], LFileStream.size);
+    finally
+      LFileStream.Free;
+    end;
+      result := encoding.GetString(bytes);
+    end
+  else
+    raise Exception.Create('File "' + filename + '" not found');
+end;
 
 function StringToUTFStream(value : String):TStream;
 begin

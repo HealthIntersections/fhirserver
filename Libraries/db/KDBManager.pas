@@ -131,7 +131,7 @@ type
     FColumns: TStringList;
   public
     constructor create;
-    destructor destroy; override;
+    destructor Destroy; override;
     property Name : String read FName write FName;
     property Unique : Boolean read FUnique write FUnique;
     property Columns : TStringList read FColumns;
@@ -177,7 +177,7 @@ type
 
   public
     constructor create;
-    destructor destroy; override;
+    destructor Destroy; override;
     property Columns : TKDBColumns read FColumns;
     property Indexes : TKDBIndexes read FIndexes;
     Property Relationships : TKDBRelationships read FRelationships;
@@ -203,11 +203,13 @@ type
     FSupportsProcedures : Boolean;
   public
     constructor create;
-    destructor destroy; override;
+    destructor Destroy; override;
 
     property Tables : TKDBTables read FTables;
     property Procedures : TStringList read FProcedures;
     property SupportsProcedures : Boolean read FSupportsProcedures write FSupportsProcedures;
+
+    function HasTable(name : String) : boolean;
   end;
 
   TKDBManager = class;
@@ -279,6 +281,7 @@ type
     function GetColInt64V(ACol: Word): Int64; Virtual; Abstract;
     function GetColDoubleV(ACol: Word): Double; Virtual; Abstract;
     function GetColMemoryV(ACol: Word): TMemoryStream; Virtual; Abstract;
+    function GetColBlobV(ACol: Word): TBytes; Virtual; Abstract;
     function GetColNullV(ACol: Word): Boolean; Virtual; Abstract;
     function GetColTimestampV(ACol: Word): KDate.TTimestamp; Virtual; Abstract;
     function GetColTypeV(ACol: Word): TKDBColumnType; Virtual; Abstract;
@@ -344,6 +347,7 @@ type
     function GetColInt64(ACol: Integer): Int64;
     function GetColDouble(ACol: Integer): Double;
     function GetColMemory(ACol: Integer): TMemoryStream;
+    function GetColBlob(ACol: Integer): TBytes;
     function GetColNull(ACol: Integer): Boolean;
     function GetColTimestamp(ACol: Integer): KDate.TTimestamp;
     function GetColDateAndTime(ACol: Integer): TDateAndTime;
@@ -352,6 +356,7 @@ type
 
     function GetColStringByName(AName: String): String;
     function GetColMemoryByName(AName: String): TMemoryStream;
+    function GetColBlobByName(AName: String): TBytes;
     function GetColIntegerByName(AName: String): Integer;
     function GetColInt64ByName(AName: String): Int64;
     function GetColDoubleByName(AName: String): Double;
@@ -629,6 +634,10 @@ type
     Get Column ACol(index) as a blob
     }
     property ColMemory    [ACol: Integer]: TMemoryStream Read GetColMemory;
+    {@member ColMemory
+    Get Column ACol(index) as a blob
+    }
+    property ColBlob    [ACol: Integer]: TBytes Read GetColBlob;
     {@member ColTimestamp
     Get Column ACol(index) as a TTimestamp
     }
@@ -664,6 +673,9 @@ type
     {@member ColMemoryByName
       Get Column "AName" as a Blob}
     property ColMemoryByName    [AName: String]: TMemoryStream Read GetColMemoryByName;
+    {@member ColMemoryByName
+      Get Column "AName" as a Blob}
+    property ColBlobByName    [AName: String]: TBytes Read GetColBlobByName;
     {@member ColTimeStampByName
       Get Column "AName" as a TTimeStamp}
     property ColTimeStampByName [AName: String]: KDate.TTimeStamp Read GetColTimeStampByName;
@@ -761,7 +773,7 @@ type
     function GetConnManByName(s : String):TKDBManager;
   public
     constructor create;
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure Lock;
     procedure UnLock;
     property ConnMan[i : Integer]:TKDBManager read GetConnMan;
@@ -1311,6 +1323,18 @@ end;
 function TKDBConnection.FetchMetaData: TKDBMetaData;
 begin
   result := FetchMetaDataV;
+end;
+
+function TKDBConnection.GetColBlob(ACol: Integer): TBytes;
+begin
+  result := GetColBlobV(ACol);
+end;
+
+function TKDBConnection.GetColBlobByName(AName: String): TBytes;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColBlobByName';
+begin
+  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
+  result := GetColBlob(ColByName(AName));
 end;
 
 function TKDBConnection.GetColCount: Integer;
@@ -2067,6 +2091,16 @@ begin
   inherited;
 end;
 
+
+function TKDBMetaData.HasTable(name: String): boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := 0 to Tables.Count - 1 do
+    if Tables.GetByIndex(i).Name = name then
+      result := true;
+end;
 
 { TKDBObjectList }
 

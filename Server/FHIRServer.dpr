@@ -1,30 +1,29 @@
 program FHIRServer;
-
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -33,12 +32,35 @@ POSSIBILITY OF SUCH DAMAGE.
 {$R *.res}
 
 {
-TODO:
- - update way references are found a bundle
- - update several methods around processing references (check transactions)
- - change the way that primitive types are represented
- -
+todo for connectathon:
+* questionnaire in web interface
+* questionnaire conversion based on concept map
+* review searching conformance
+
+bug list:
+
+http://fhir.healthintersections.com.au/open/Patient/C82E147E-6E80-4AF6-97CD-94C4294A3A75/_history
+[10:30:12 AM] Lloyd McKenzie: Atom feed shows <totalResluts>0
+[10:30:57 AM] Lloyd McKenzie: Also, the contained elements declare a <content type="text/xml"/> instead of ""
+
+
+build:
+validator jar not in validation pack
+
+
+Change record:
+  19-April 2014
+    * add Questionnaire web interface (Lloyd's transform)
+    * fix bug indexing patient compartment
+  18-April 2014
+    * pick up tags on PUT/POST and handle them properly
+    * fix tag functionality in Web UI
+    * reject unknown attributes
+    * fix problem where you couldn't vread an old version of a resource that is currently deleted
+    * fix compartment searches looking for plural name instead of singular name e.g.http://hl7connect.healthintersections.com.au/open/Patient/1053/Observation[s]
+    * fix mime type on content element in atom feed
 }
+
 uses
   FastMM4 in '..\Libraries\FMM\FastMM4.pas',
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
@@ -84,7 +106,7 @@ uses
   AdvSignals in '..\Libraries\Support\AdvSignals.pas',
   AdvSynchronizationRegistries in '..\Libraries\Support\AdvSynchronizationRegistries.pas',
   AdvTimeControllers in '..\Libraries\Support\AdvTimeControllers.pas',
-  AdvIntegerMatches in '..\Libraries\Support\AdvIntegerMatches.pas',
+  AdvInt64Matches in '..\Libraries\support\AdvInt64Matches.pas',
   AdvLargeIntegerMatches in '..\Libraries\Support\AdvLargeIntegerMatches.pas',
   AdvStringLargeIntegerMatches in '..\Libraries\Support\AdvStringLargeIntegerMatches.pas',
   AdvStringLists in '..\Libraries\Support\AdvStringLists.pas',
@@ -109,9 +131,7 @@ uses
   AdvZipDeclarations in '..\Libraries\Support\AdvZipDeclarations.pas',
   AdvZipUtilities in '..\Libraries\Support\AdvZipUtilities.pas',
   AdvZipWorkers in '..\Libraries\Support\AdvZipWorkers.pas',
-  ZLibEx in '..\Libraries\Support\ZLibEx.pas',
   GUIDSupport in '..\Libraries\Support\GUIDSupport.pas',
-  bignum in '..\Libraries\Support\bignum.pas',
   FHIRBase in '..\Libraries\refplat\FHIRBase.pas',
   DecimalSupport in '..\Libraries\Support\DecimalSupport.pas',
   DateAndTime in '..\Libraries\Support\DateAndTime.pas',
@@ -188,7 +208,37 @@ uses
   OdbcImplementation in '..\Libraries\db\OdbcImplementation.pas',
   CurrencySupport in '..\Libraries\Support\CurrencySupport.pas',
   FHIRDataStore in 'FHIRDataStore.pas',
-  AdvProfilers in '..\Libraries\Support\AdvProfilers.pas';
+  SnomedImporter in '..\Libraries\snomed\SnomedImporter.pas',
+  AdvProfilers in '..\Libraries\Support\AdvProfilers.pas',
+  AnsiStringBuilder in '..\Libraries\support\AnsiStringBuilder.pas',
+  AdvIntegerMatches in '..\Libraries\support\AdvIntegerMatches.pas',
+  SnomedPublisher in '..\Libraries\snomed\SnomedPublisher.pas',
+  SnomedExpressions in '..\Libraries\snomed\SnomedExpressions.pas',
+  FhirServerTests in 'FhirServerTests.pas',
+  HTMLPublisher in '..\Libraries\support\HTMLPublisher.pas',
+  LoincImporter in '..\Libraries\loinc\LoincImporter.pas',
+  LoincPublisher in '..\Libraries\loinc\LoincPublisher.pas',
+  TerminologyServer in 'TerminologyServer.pas',
+  TerminologyServerStore in 'TerminologyServerStore.pas',
+  TerminologyServices in '..\Libraries\TerminologyServices.pas',
+  FHIRValueSetChecker in 'FHIRValueSetChecker.pas',
+  TerminologyWebServer in 'TerminologyWebServer.pas',
+  IdSoapConsts in 'C:\HL7Connect\indysoap\source\IdSoapConsts.pas',
+  IdSoapClasses in 'C:\HL7Connect\indysoap\source\IdSoapClasses.pas',
+  IdSoapDebug in 'C:\HL7Connect\indysoap\source\IdSoapDebug.pas',
+  IdSoapResourceStrings in 'C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas',
+  IdSoapTracker in 'C:\HL7Connect\indysoap\source\IdSoapTracker.pas',
+  IdSoapUtilities in 'C:\HL7Connect\indysoap\source\IdSoapUtilities.pas',
+  IdSoapExceptions in 'C:\HL7Connect\indysoap\source\IdSoapExceptions.pas',
+  IdSoapMsXml in 'C:\HL7Connect\indysoap\source\IdSoapMsXml.pas',
+  IdSoapXML in 'C:\HL7Connect\indysoap\source\IdSoapXML.pas',
+  IdSoapComponent in 'C:\HL7Connect\indysoap\source\IdSoapComponent.pas',
+  IdSoapNamespaces in 'C:\HL7Connect\indysoap\source\IdSoapNamespaces.pas',
+  IdSoapMime in 'C:\HL7Connect\indysoap\source\IdSoapMime.pas',
+  IdSoapBase64 in 'C:\HL7Connect\indysoap\source\IdSoapBase64.pas',
+  FHIRServerConstants in 'FHIRServerConstants.pas',
+  DecimalTests in '..\Libraries\tests\DecimalTests.pas',
+  UcumTests in '..\Libraries\tests\UcumTests.pas';
 
 begin
   try
@@ -198,3 +248,5 @@ begin
       Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
+
+

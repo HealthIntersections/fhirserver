@@ -38,6 +38,7 @@ uses
   DateSupport,
 
   TextUtilities,
+  ZLib,
 
   FHIRSupport,
   FHIRParserBase,
@@ -59,9 +60,10 @@ function GetEmailAddress(contacts : TFhirContactList):String;
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
-function MakeParser(lang : String; aFormat: TFHIRFormat; oContent: TStream): TFHIRParser;
+function MakeParser(lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 Function FhirGUIDToString(aGuid : TGuid):String;
-function ParseXhtml(lang : String; content : String):TFhirXHtmlNode;
+function ParseXhtml(lang : String; content : String; policy : TFHIRXhtmlParserPolicy):TFhirXHtmlNode;
 function geTFhirResourceNarrativeAsText(resource : TFhirResource) : String;
 function IsId(s : String) : boolean;
 procedure listReferences(resource : TFhirResource; list : TFhirResourceReferenceList);
@@ -92,6 +94,44 @@ procedure BuildNarrative(vs : TFhirValueSet); overload;
 
 Function removeCaseAndAccents(s : String) : String;
 
+type
+  TFHIRElementHelper = class helper for TFHIRElement
+  public
+    procedure addExtension(url : String; t : TFhirType);
+    function hasExtension(url : String) : boolean;
+    function getExtension(url : String) : Integer;
+    function getExtensionString(url : String) : String;
+    procedure removeExtension(url : String);
+    procedure setExtensionString(url, value : String);
+  end;
+
+  TFHIRConformanceHelper = class helper (TFHIRElementHelper) for TFHIRConformance
+  public
+    function rest(type_ : TFhirResourceType) : TFhirConformanceRestResource;
+  end;
+
+  TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirConformanceRestResource
+  public
+    function operation(type_ : TFhirTypeRestfulOperation) : TFhirConformanceRestResourceOperation;
+  end;
+
+  TFhirContactListHelper = class helper for TFhirContactList
+  public
+    function system(type_ : TFhirContactSystem) : String;
+    procedure setSystem(type_ : TFhirContactSystem; value : String);
+  end;
+
+  TFHIROperationOutcomeHelper = class helper (TFHIRElementHelper) for TFhirOperationOutcome
+  public
+    function rule(level : TFhirIssueSeverity; source, typeCode, path : string; test : boolean; msg : string) : boolean;
+    function error(source, typeCode, path : string; test : boolean; msg : string) : boolean;
+    function warning(source, typeCode, path : string; test : boolean; msg : string) : boolean;
+    function hint(source, typeCode, path : string; test : boolean; msg : string) : boolean;
+  end;
+
+function ZCompressBytes(const s: TBytes): TBytes;
+function ZDecompressBytes(const s: TBytes): TBytes;
+
 implementation
 
 
@@ -111,7 +151,19 @@ begin
 
 end;
 
-function MakeParser(lang : String; aFormat: TFHIRFormat; oContent: TStream): TFHIRParser;
+function MakeParser(lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
+var
+  mem : TBytesStream;
+begin
+  mem := TBytesStream.Create(content);
+  try
+    result := MakeParser(lang, aformat, mem, policy);
+  finally
+    mem.Free;
+  end;
+end;
+
+function MakeParser(lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
   if aFormat = ffJSON Then
     result := TFHIRJsonParser.Create(lang)
@@ -121,6 +173,7 @@ begin
     result := TFHIRXmlParser.Create(lang);
   try
     result.source := oContent;
+    result.ParserPolicy := policy;
     result.Parse;
     result.Link;
   finally
@@ -167,12 +220,13 @@ Begin
 End;
 
 
-function ParseXhtml(lang : String; content : String):TFhirXHtmlNode;
+function ParseXhtml(lang : String; content : String; policy : TFHIRXhtmlParserPolicy):TFhirXHtmlNode;
 var
   parser : TFHIRXmlParser;
 begin
   parser := TFHIRXmlParser.create(lang);
   try
+    parser.ParserPolicy := policy;
     parser.source := TStringStream.Create(content);
     result := parser.ParseHtml;
   finally
@@ -193,7 +247,7 @@ begin
   result := length(s) in [1..36];
   if result then
     for i := 1 to length(s) do
-      result := result and (s[i] in ['0'..'9', 'a'..'z', 'A'..'Z', '-', '.']);
+      result := result and CharInset(s[i], ['0'..'9', 'a'..'z', 'A'..'Z', '-', '.']);
 end;
 
 procedure iterateReferences(node : TFHIRObject; list : TFhirResourceReferenceList);
@@ -439,7 +493,7 @@ begin
   try
     outcome.text := TFhirNarrative.create;
     outcome.text.statusST := NarrativeStatusGenerated;
-    outcome.text.div_ := ParseXhtml(lang, '<div><p>'+FormatTextToHTML(message)+'</p></div>');
+    outcome.text.div_ := ParseXhtml(lang, '<div><p>'+FormatTextToHTML(message)+'</p></div>', xppReject);
     report := outcome.issueList.Append;
     report.severityST := issueSeverityError;
     report.details := TFHIRString.create(message);
@@ -664,7 +718,7 @@ begin
   p := x.addTag('p');
   p.addText(vs.DescriptionST);
   p := x.addTag('p');
-  p.addText('This value set is an expansion, and includes the follow terms in the expansion');
+  p.addText('This value set is an expansion, and includes the following terms in the expansion');
   t := x.addTag('table');
   addTableHeaderRowExpansion(t);
   for i := 0 to vs.expansion.containsList.Count - 1 do
@@ -883,6 +937,271 @@ Function removeCaseAndAccents(s : String) : String;
 begin
   result := lowercase(s);
 end;
+
+{ TFHIROperationOutcomeHelper }
+
+
+function TFHIROperationOutcomeHelper.error(source, typeCode, path: string; test: boolean; msg: string): boolean;
+var
+  issue : TFhirOperationOutcomeIssue;
+  ex : TFhirExtension;
+begin
+  if not test then
+  begin
+    issue := TFhirOperationOutcomeIssue.create;
+    try
+      issue.severityST := IssueSeverityError;
+      issue.type_ := TFhirCoding.create;
+      issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
+      issue.type_.codeST := typeCode;
+      issue.detailsST := msg;
+      issue.locationList.Append.value := path;
+      ex := issue.ExtensionList.Append;
+      ex.urlST := 'http://hl7.org/fhir/tools#issue-source';
+      ex.value := TFhirCode.create;
+      TFhirCode(ex.value).value := source;
+      self.issueList.add(issue.link);
+    finally
+      issue.free;
+    end;
+  end;
+  result := test;
+end;
+
+function TFHIROperationOutcomeHelper.hint(source, typeCode, path: string; test: boolean; msg: string): boolean;
+var
+  issue : TFhirOperationOutcomeIssue;
+  ex : TFhirExtension;
+begin
+  if not test then
+  begin
+    issue := TFhirOperationOutcomeIssue.create;
+    try
+      issue.severityST := IssueSeverityInformation;
+      issue.type_ := TFhirCoding.create;
+      issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
+      issue.type_.codeST := typeCode;
+      issue.detailsST := msg;
+      issue.locationList.Append.value := path;
+      ex := issue.ExtensionList.Append;
+      ex.urlST := 'http://hl7.org/fhir/tools#issue-source';
+      ex.value := TFhirCode.create;
+      TFhirCode(ex.value).value := source;
+      self.issueList.add(issue.link);
+    finally
+      issue.free;
+    end;
+  end;
+  result := test;
+end;
+
+function TFHIROperationOutcomeHelper.rule(level: TFhirIssueSeverity; source, typeCode, path: string; test: boolean; msg: string): boolean;
+var
+  issue : TFhirOperationOutcomeIssue;
+  ex : TFhirExtension;
+begin
+  if not test then
+  begin
+    issue := TFhirOperationOutcomeIssue.create;
+    try
+      issue.severityST := level;
+      issue.type_ := TFhirCoding.create;
+      issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
+      issue.type_.codeST := typeCode;
+      issue.detailsST := msg;
+      issue.locationList.Append.value := path;
+      ex := issue.ExtensionList.Append;
+      ex.urlST := 'http://hl7.org/fhir/tools#issue-source';
+      ex.value := TFhirCode.create;
+      TFhirCode(ex.value).value := source;
+      self.issueList.add(issue.link);
+    finally
+      issue.free;
+    end;
+  end;
+  result := test;
+end;
+
+function TFHIROperationOutcomeHelper.warning(source, typeCode, path: string; test: boolean; msg: string): boolean;
+var
+  issue : TFhirOperationOutcomeIssue;
+  ex : TFhirExtension;
+begin
+  if not test then
+  begin
+    issue := TFhirOperationOutcomeIssue.create;
+    try
+      issue.severityST := IssueSeverityWarning;
+      issue.type_ := TFhirCoding.create;
+      issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
+      issue.type_.codeST := typeCode;
+      issue.detailsST := msg;
+      issue.locationList.Append.value := path;
+      ex := issue.ExtensionList.Append;
+      ex.urlST := 'http://hl7.org/fhir/tools#issue-source';
+      ex.value := TFhirCode.create;
+      TFhirCode(ex.value).value := source;
+      self.issueList.add(issue.link);
+    finally
+      issue.free;
+    end;
+  end;
+  result := test;
+end;
+
+{ TFHIRElementHelper }
+
+procedure TFHIRElementHelper.addExtension(url: String; t: TFhirType);
+var
+  ex : TFhirExtension;
+begin
+  ex := self.ExtensionList.Append;
+  ex.urlST := url;
+  ex.value := t; // nolink here (done outside)
+end;
+
+function TFHIRElementHelper.getExtension(url: String): Integer;
+var
+  i : integer;
+begin
+  result := -1;
+  for i := 0 to self.ExtensionList.Count -1 do
+    if self.ExtensionList[i].urlST = url then
+      result := i;
+end;
+
+function TFHIRElementHelper.getExtensionString(url: String): String;
+var
+  ndx : Integer;
+begin
+  ndx := getExtension(url);
+  if (ndx = -1) then
+    result := ''
+  else if (self.ExtensionList.Item(ndx).value is TFhirString) then
+    result := TFhirString(self.ExtensionList.Item(ndx).value).value
+  else if (self.ExtensionList.Item(ndx).value is TFhirCode) then
+    result := TFhirCode(self.ExtensionList.Item(ndx).value).value
+  else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
+    result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+  else
+    result := '';
+end;
+
+function TFHIRElementHelper.hasExtension(url: String): boolean;
+begin
+  result := getExtension(url) > -1;
+end;
+
+procedure TFHIRElementHelper.removeExtension(url: String);
+var
+  ndx : integer;
+begin
+  ndx := getExtension(url);
+  while ndx > -1 do
+  begin
+    Self.ExtensionList.DeleteByIndex(ndx);
+    ndx := getExtension(url);
+  end;
+
+end;
+
+procedure TFHIRElementHelper.setExtensionString(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.urlST := url;
+  ext.value := TFhirString.Create(value);
+end;
+
+{ TFHIRConformanceHelper }
+
+function TFHIRConformanceHelper.rest(type_: TFhirResourceType): TFhirConformanceRestResource;
+var
+  i : integer;
+  j : integer;
+begin
+  result := nil;
+  for I := 0 to self.restlist.count - 1 do
+    if self.restlist[i].modeST = RestfulConformanceModeServer then
+      for j := 0 to self.restlist[i].resourceList.count - 1 do
+        if self.restlist[i].resourceList[j].type_ST = CODES_TFhirResourceType[type_] then
+        begin
+          result := self.restlist[i].resourceList[j];
+          exit;
+        end;
+end;
+
+{ TFhirConformanceRestResourceHelper }
+
+function TFhirConformanceRestResourceHelper.operation(type_: TFhirTypeRestfulOperation): TFhirConformanceRestResourceOperation;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to self.operationList.count - 1 do
+    if (self.operationList[i].codeST = type_) then
+      result := self.operationList[i];
+
+
+
+end;
+
+{ TFhirValueSetHelper }
+
+
+{ TFhirContactListHelper }
+
+procedure TFhirContactListHelper.setSystem(type_: TFhirContactSystem; value: String);
+var
+  i : integer;
+  c : TFhirContact;
+begin
+  for i := 0 to self.Count - 1 do
+    if Item(i).systemST = type_ then
+    begin
+      Item(i).valueST := value;
+      exit;
+    end;
+  c := self.Append;
+  c.systemST := type_;
+  c.valueST := value;
+end;
+
+function TFhirContactListHelper.system(type_: TFhirContactSystem): String;
+var
+  i : integer;
+begin
+  result := '';
+  for i := 0 to self.Count - 1 do
+    if Item(i).systemST = type_ then
+      result := Item(i).valueST;
+end;
+
+
+function ZCompressBytes(const s: TBytes): TBytes;
+begin
+  ZCompress(s, result);
+end;
+
+function ZDecompressBytes(const s: TBytes): TBytes;
+var
+  buffer: Pointer;
+  size  : Integer;
+begin
+  {$IFDEF WIN64}
+  ZDecompress(s, result);
+  {$ELSE}
+  ZDecompress(Pointer(s[0]),Length(s),buffer,size);
+
+  SetLength(result,size);
+  Move(buffer^,result[0],size);
+
+  FreeMem(buffer);
+  {$ENDIF}
+end;
+
 
 end.
 

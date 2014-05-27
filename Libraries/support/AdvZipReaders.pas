@@ -49,7 +49,7 @@ Uses
   AdvZipUtilities,
   AdvZipWorkers,
 
-  ZLibEx;
+  ZLib;
 
 Type
   TAdvZipReader = Class (TAdvZipWorker)

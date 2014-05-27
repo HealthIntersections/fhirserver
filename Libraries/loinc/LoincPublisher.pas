@@ -31,19 +31,12 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  classes,
-  Math,
-  AdvObjects,
-  SysUtils,
-  WordProcessorDocuments,
-  WordProcessorEntities,
-  AdvStringMatches,
-  AdvExclusiveCriticalSections,
-  HL7V2DocumentPublishers,
-  gwLOINC;
+  SysUtils, Classes, Math,
+  AdvObjects, AdvStringMatches, AdvExclusiveCriticalSections,
+  HTMLPublisher, LOINCServices;
 
 Const
-  MAX_ROWS = 200;
+  MAX_ROWS = 50;
 
 Type
   TloincPublisher = class (TAdvObject)
@@ -54,20 +47,20 @@ Type
 
     function GetConceptDesc(iConcept : Word):String;
 
-    Procedure PublishCode(Const sPrefix, sCode : String; oBuilder : THL7V2DocumentPublisher);
-    Procedure PublishCodes(Const sPrefix : String; iStart : Integer; oBuilder : THL7V2DocumentPublisher);
-    Procedure PublishConcept(bRoot : Boolean; Const sPrefix, sId : String; iStart : Integer; oBuilder : THL7V2DocumentPublisher);
-    Procedure PublishHome(Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
-    Procedure PublishSearch(Const sPrefix, sText : String; iStart: Integer; oBuilder : THL7V2DocumentPublisher);
+    Procedure PublishCode(Const sPrefix, sCode : String; html : THTMLPublisher);
+    Procedure PublishCodes(Const sPrefix : String; iStart : Integer; html : THTMLPublisher);
+    Procedure PublishConcept(bRoot : Boolean; Const sPrefix, sId : String; iStart : Integer; html : THTMLPublisher);
+    Procedure PublishHome(Const sPrefix : String; html : THTMLPublisher);
+    Procedure PublishSearch(Const sPrefix, sText : String; iStart: Integer; html : THTMLPublisher);
 
 
     Procedure ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
-    Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
+    Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher);
   Public
     Constructor Create(oLoinc : TLoincServices);
     Destructor Destroy; Override;
-    Procedure PublishDict(Const sPath, sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
-    Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
+    Procedure PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher); Overload; Virtual;
+    Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;
   End;
 
 Implementation
@@ -76,7 +69,7 @@ Uses
   EncodeSupport,
   StringSupport;
 
-Procedure TloincPublisher.PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
+Procedure TloincPublisher.PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher);
 Var
   sURL : String;
   sId : String;
@@ -84,18 +77,21 @@ Begin
   sURL := sPrefix +'?type=loinc&';
   sId := oMap.Matches['id'];
   If sId <> '' Then
-    PublishConcept(false, sURL, sId, StrToIntDef(oMap.Matches['start'], 0), oBuilder)
+    PublishConcept(false, sURL, sId, StrToIntDef(oMap.Matches['start'], 0), html)
   else if oMap.ExistsByKey('srch') then
-    PublishSearch(sURL, oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), oBuilder)
+    if FLoinc.IsCode(oMap.Matches['srch']) then
+      PublishCode(sURL, oMap.Matches['srch'], html)
+    else
+      PublishSearch(sURL, oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), html)
   else
   Begin
     sId := oMap.Matches['code'];
     If sId = '' Then
-      PublishHome(sURL, oBuilder)
+      PublishHome(sURL, html)
     else If sId = '*' Then
-      PublishCodes(sURL, StrToIntDef(oMap.Matches['start'], 0), oBuilder)
+      PublishCodes(sURL, StrToIntDef(oMap.Matches['start'], 0), html)
     else
-      PublishCode(sURL, sId, oBuilder);
+      PublishCode(sURL, sId, html);
   End;
 End;
 
@@ -105,25 +101,28 @@ Var
   sLeft, sRight : String;
   sName, sValue : String;
 Begin
-  Stringsplit(sPath, '?', sLeft, sRight);
+  if sPath.Contains('?') then
+    Stringsplit(sPath, '?', sLeft, sRight)
+  else
+    sRight := sPath;
   oMap.Forced := True;
   While sRight <> '' Do
   Begin
     StringSplit(sRight, '&', sLeft, sRight);
     StringSplit(sLeft, '=', sName, sValue);
-    oMap.Matches[DecodePercent(sName)] := DecodePercent(sValue);
+    oMap.Matches[sName] := sValue;
   End;
 End;
 
 
-Procedure TloincPublisher.PublishDict(Const sPath, sPrefix : String; oBuilder : THL7V2DocumentPublisher);
+Procedure TloincPublisher.PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher);
 Var
   oMap : TAdvStringMatch;
 Begin
   oMap := TAdvStringMatch.Create;
   Try
     ProcessMap(sPath, oMap);
-    PublishDict(oMap, sPrefix, oBuilder);
+    PublishDict(oMap, sPrefix, html);
   Finally
     oMap.Free;
   End;
@@ -131,67 +130,71 @@ End;
 
 
 
-procedure TloincPublisher.PublishDict(oMap: TAdvStringMatch; const sPrefix: String; oBuilder: THL7V2DocumentPublisher);
+procedure TloincPublisher.PublishDict(oMap: TAdvStringMatch; const sPrefix: String; html: THTMLPublisher);
 begin
   Try
-    PublishDictInternal(oMap, sPrefix, oBuilder);
+    PublishDictInternal(oMap, sPrefix, html);
   Except
     On e:Exception Do
       Begin
-      oBuilder.Title := 'Exception: '+e.Message;
-      oBuilder.AddParagraph(e.Message);
+      html.AddParagraph(e.Message);
       End;
   End;
 end;
 
-procedure TloincPublisher.PublishHome(const sPrefix: String; oBuilder: THL7V2DocumentPublisher);
+procedure TloincPublisher.PublishHome(const sPrefix: String; html: THTMLPublisher);
 var
   i : Integer;
 Begin
-  oBuilder.AddTitle('LOINC Definitions');
+  html.Header('LOINC Definitions');
   if not FLOINC.Loaded then
   Begin
-    oBuilder.StartParagraph;
-    oBuilder.AddText('LOINC is not loaded', true, false);
-    oBuilder.EndParagraph;
+    html.StartParagraph;
+    html.AddText('LOINC is not loaded', true, false);
+    html.EndParagraph;
   End
   Else
   Begin
-    oBuilder.StartParagraph;
-    oBuilder.AddText('LOINC Axes', true, false);
-    oBuilder.EndParagraph;
-    PublishConcept(true, sPrefix, inttostr(FLoinc.root), 0, oBuilder);
-    oBuilder.AddParagraph;
+    html.StartParagraph;
+    html.AddText('LOINC Axes', true, false);
+    html.EndParagraph;
+    PublishConcept(true, sPrefix, inttostr(FLoinc.root), 0, html);
+    html.AddParagraph;
 
-    oBuilder.StartParagraph;
-    oBuilder.AddText('LOINC Codes', true, false);
-    oBuilder.EndParagraph;
+    html.StartParagraph;
+    html.AddText('LOINC Codes', true, false);
+    html.EndParagraph;
 
-    oBuilder.StartTable.BorderPolicy := BorderPolicyNone;
-    oBuilder.StartTableRow;
-    oBuilder.StartTableCell;
-    oBuilder.AddParagraph(' ');
-    oBuilder.EndTableCell;
-    oBuilder.StartTableCell;
-    oBuilder.ParaURL('Enter a Code', sPrefix+'code=??&caption=Pick A LOINC Code&prompt=Code');
-    oBuilder.ParaURL('Browse All Codes', sPrefix+'code=*');
-    oBuilder.ParaURL('Search', sPrefix+'srch=??&caption=Search LOINC Codes&prompt=Text');
-    oBuilder.AddParagraph('');
+    html.Line;
+
+    html.StartForm('GET', sPrefix);
+    html.StartParagraph;
+    html.AddTextPlain('Search: ');
+    html.textInput('srch');
+    html.submit('Go');
+    html.endForm;
+
+    html.ParaURL('Browse All Codes', sPrefix+'code=*');
+    html.AddParagraph('');
     Lock.Lock;
     Try
       if FSearchCache.Count <> 0 Then
       Begin
-        oBuilder.AddParagraph('Past Searches:');
+        html.AddParagraph('Past Searches:');
+        html.StartList;
         For i := 0 to FSearchCache.Count - 1 Do
-          oBuilder.ParaURL('Search for "'+FSearchCache[i]+'"', sPrefix+'srch='+FSearchCache[i]+'&caption=Search LOINC Codes&prompt=Text').Format.ListType := WPSParagraphListTypeBullets;
+        begin
+          html.StartListItem;
+          html.URL('Search for "'+FSearchCache[i]+'"', sPrefix+'srch='+FSearchCache[i]+'&caption=Search LOINC Codes&prompt=Text');
+          html.EndListItem;
+        end;
+        html.EndList;
       End;
     Finally
       Lock.UnLock;
     End;
-    oBuilder.EndTableCell;
-    oBuilder.EndTableRow;
-    oBuilder.EndTable;
   End;
+  html.Done;
 End;
 
 
@@ -211,7 +214,7 @@ Begin
 End;
 
 
-procedure TloincPublisher.PublishCode(const sPrefix, sCode: String; oBuilder: THL7V2DocumentPublisher);
+procedure TloincPublisher.PublishCode(const sPrefix, sCode: String; html: THTMLPublisher);
 var
   iIndex : Cardinal;
   iDescription, iOtherNames, iStems : Cardinal;
@@ -223,164 +226,165 @@ var
   iCount : integer;
 Begin
   iRefs := nil;
-  if FLoinc.Code.FindCode(sCode, iIndex) Then
+  if FLoinc.CodeList.FindCode(sCode, iIndex) Then
   Begin
-    FLoinc.Code.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    FLoinc.CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     assert(sCode = sCode1);
-    oBuilder.AddTitle('LOINC Code '+sCode+' : '+FLoinc.Desc.GetEntry(iDescription));
-    oBuilder.StartTable;
+    html.Header('LOINC Code '+sCode+' : '+FLoinc.Desc.GetEntry(iDescription));
+    html.StartTable(true);
     iCount := 0;
     if iComponent <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('Component');
-      oBuilder.AddTableCell(GetConceptDesc(iComponent));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('Component');
+      html.AddTableCell(GetConceptDesc(iComponent));
+      html.EndTableRow;
     End;
     if iProperty <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('Property');
-      oBuilder.AddTableCell(GetConceptDesc(iProperty));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('Property');
+      html.AddTableCell(GetConceptDesc(iProperty));
+      html.EndTableRow;
     End;
     if iTimeAspect <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('Time Aspect');
-      oBuilder.AddTableCell(GetConceptDesc(iTimeAspect));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('Time Aspect');
+      html.AddTableCell(GetConceptDesc(iTimeAspect));
+      html.EndTableRow;
     End;
     if iSystem <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('System');
-      oBuilder.AddTableCell(GetConceptDesc(iSystem));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('System');
+      html.AddTableCell(GetConceptDesc(iSystem));
+      html.EndTableRow;
     End;
     if iScale <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('Scale');
-      oBuilder.AddTableCell(GetConceptDesc(iScale));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('Scale');
+      html.AddTableCell(GetConceptDesc(iScale));
+      html.EndTableRow;
     End;
     if iMethod <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('Method');
-      oBuilder.AddTableCell(GetConceptDesc(iMethod));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('Method');
+      html.AddTableCell(GetConceptDesc(iMethod));
+      html.EndTableRow;
     End;
     if iClass <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('Class');
-      oBuilder.AddTableCell(GetConceptDesc(iClass));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('Class');
+      html.AddTableCell(GetConceptDesc(iClass));
+      html.EndTableRow;
     End;
     if iv2dt <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('v2 Data Type');
-      oBuilder.AddTableCell(GetConceptDesc(iv2dt));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('v2 Data Type');
+      html.AddTableCell(GetConceptDesc(iv2dt));
+      html.EndTableRow;
     End;
     if iv3dt <> 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('v3 Data Type');
-      oBuilder.AddTableCell(GetConceptDesc(iv3dt));
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('v3 Data Type');
+      html.AddTableCell(GetConceptDesc(iv3dt));
+      html.EndTableRow;
     End;
 
     inc(iCount);
-    oBuilder.StartRowFlip(iCount);
-    oBuilder.AddTableCell('Type');
+    html.StartRowFlip(iCount);
+    html.AddTableCell('Type');
     if iFlags and FLAGS_CLIN > 0 Then
-      oBuilder.AddTableCell('Clinical')
+      html.AddTableCell('Clinical')
     Else if iFlags and FLAGS_ATT > 0 Then
-      oBuilder.AddTableCell('Attachment')
+      html.AddTableCell('Attachment')
     Else if iFlags and FLAGS_SURV > 0 Then
-      oBuilder.AddTableCell('Survey')
+      html.AddTableCell('Survey')
     Else
-      oBuilder.AddTableCell('Lab');
-    oBuilder.EndTableRow;
+      html.AddTableCell('Lab');
+    html.EndTableRow;
 
     inc(iCount);
-    oBuilder.StartRowFlip(iCount);
-    oBuilder.AddTableCell('Status');
+    html.StartRowFlip(iCount);
+    html.AddTableCell('Status');
     if iFlags and FLAGS_HOLD > 0 Then
-      oBuilder.AddTableCell('Not yet final')
+      html.AddTableCell('Not yet final')
     Else
-      oBuilder.AddTableCell('Final');
-    oBuilder.EndTableRow;
+      html.AddTableCell('Final');
+    html.EndTableRow;
 
     if iFlags and FLAGS_ROOT > 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('Root');
-      oBuilder.AddTableCell('This is a root of a set');
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('Root');
+      html.AddTableCell('This is a root of a set');
+      html.EndTableRow;
     End;
 
     if iFlags and FLAGS_UNITS > 0 Then
     Begin
       inc(iCount);
-      oBuilder.StartRowFlip(iCount);
-      oBuilder.AddTableCell('Units');
-      oBuilder.AddTableCell('Units are required');
-      oBuilder.EndTableRow;
+      html.StartRowFlip(iCount);
+      html.AddTableCell('Units');
+      html.AddTableCell('Units are required');
+      html.EndTableRow;
     End;
 
     inc(iCount);
-    oBuilder.StartRowFlip(iCount);
-    oBuilder.AddTableCell('Order/Obs Status');
+    html.StartRowFlip(iCount);
+    html.AddTableCell('Order/Obs Status');
     if (iFlags and FLAGS_ORDER> 0 ) and (iFlags and FLAGS_OBS> 0 ) Then
-      oBuilder.AddTableCell('Both')
+      html.AddTableCell('Both')
     Else if iFlags and FLAGS_ORDER > 0 Then
-      oBuilder.AddTableCell('Order')
+      html.AddTableCell('Order')
     Else if iFlags and FLAGS_OBS > 0 Then
-      oBuilder.AddTableCell('Observation')
+      html.AddTableCell('Observation')
     Else
-      oBuilder.AddTableCell('');
-    oBuilder.EndTableRow;
+      html.AddTableCell('');
+    html.EndTableRow;
 
-    oBuilder.EndTable;
+    html.EndTable;
 
-    oBuilder.AddParagraph('');
+    html.AddParagraph('');
     if iOtherNames <> 0 Then
     Begin
-      oBuilder.StartParagraph;
-      oBuilder.AddText('Other Names', true, false);
-      oBuilder.EndParagraph;
+      html.StartParagraph;
+      html.AddText('Other Names', true, false);
+      html.EndParagraph;
       iRefs := FLoinc.Refs.GetCardinals(iOtherNames);
-      oBuilder.StartTable;
+      html.StartTable(true);
       for i := Low(iRefs) To High(iRefs) Do
         if iRefs[i] <> 0 Then
         begin
-          oBuilder.StartRowFlip(i);
-          oBuilder.AddTableCell(FLoinc.desc.GetEntry(iRefs[i]));
-          oBuilder.EndTableRow;
+          html.StartRowFlip(i);
+          html.AddTableCell(FLoinc.desc.GetEntry(iRefs[i]));
+          html.EndTableRow;
         End;
-      oBuilder.EndTable;
+      html.EndTable;
     End;
+    html.done;
   End
   Else
-    oBuilder.AddParagraph('Unable to find code '+sCode);
+    html.AddParagraph('Unable to find code '+sCode);
 end;
 
-procedure TloincPublisher.PublishConcept(bRoot : Boolean; const sPrefix, sId: String; iStart : Integer; oBuilder: THL7V2DocumentPublisher);
+procedure TloincPublisher.PublishConcept(bRoot : Boolean; const sPrefix, sId: String; iStart : Integer; html: THTMLPublisher);
 var
   aChildren : TWordArray;
   aCodes : TCardinalArray;
@@ -389,7 +393,7 @@ var
   iCodes : Cardinal;
   i : Integer;
   iDummy : Cardinal;
-  b2, b3, b4 : Boolean;
+  b : Boolean;
 
   iDescription, iOtherNames, iStems : Cardinal;
   sCode1 : String;
@@ -401,220 +405,196 @@ begin
   aCodes := nil;
   FLoinc.Concepts.GetConcept(StrToInt(sId), iName, iChildren, iCodes);
   if Not bRoot then
-    oBuilder.AddTitle('LOINC Concept '+FLoinc.Desc.GetEntry(iName));
+    html.Header('LOINC Concept '+FLoinc.Desc.GetEntry(iName));
 
-  b2 := false;
-  b3 := false;
-  b4 := false;
+  b := false;
+
   if iChildren <> 0 Then
   begin
     aChildren := FLoinc.Refs.GetWords(iChildren);
-    oBuilder.StartTable.BorderPolicy := BorderPolicyNone;
-    oBuilder.StartTableRow;
-    oBuilder.StartTableCell;
-    oBuilder.AddParagraph(' ');
-    oBuilder.EndTableCell;
-    oBuilder.StartTableCell;
+    html.StartTable(false, 'bare');
+    html.StartTableRow;
+    html.StartTableCell;
+    html.AddParagraph(' ');
+    html.EndTableCell;
+    html.StartTableCell;
+    html.StartList;
     For i := iStart to Min(iStart+MAX_ROWS, High(aChildren)) Do
     Begin
-      if not b2 And (Length(aChildren) > 20) And ((i - iStart) / Min(MAX_ROWS, Length(aChildren)) > 0.25) Then
+      if not b And (Length(aChildren) > 20) And ((i - iStart) / Min(MAX_ROWS, Length(aChildren)) >= 0.5) Then
       Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b2 := true;
-      End;
-      if not b3 And (Length(aChildren) > 20) And ((i - iStart) / Min(MAX_ROWS, Length(aChildren)) > 0.5) Then
-      Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b3 := true;
-      End;
-      if not b4 And (Length(aChildren) > 20) And ((i - iStart) / Min(MAX_ROWS, Length(aChildren)) > 0.750) Then
-      Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b4 := true;
+        html.EndList;
+        html.EndTableCell;
+        html.StartTableCell;
+        html.StartList;
+        b := true;
       End;
       FLoinc.Concepts.GetConcept(aChildren[i], iName, iChildren, iDummy);
-      oBuilder.ParaURL(FLoinc.Desc.GetEntry(iName), sPrefix + 'id='+inttostr(aChildren[i]));
+      html.StartListItem;
+      html.URL(FLoinc.Desc.GetEntry(iName), sPrefix + 'id='+inttostr(aChildren[i]));
+      html.EndListItem;
     End;
-    oBuilder.EndTableCell;
-    oBuilder.EndTableRow;
-    oBuilder.EndTable;
+    html.EndList;
+    html.EndTableCell;
+    html.EndTableRow;
+    html.EndTable;
     if (iStart > 0) or (iStart+MAX_ROWS < High(aChildren)) Then
     Begin
-      oBuilder.StartParagraph;
+      html.StartParagraph;
       if iStart > 0 Then
       Begin
-        oBuilder.URL('Start', sPrefix+'id='+sId);
-        oBuilder.AddTextPlain(' ');
+        html.URL('Start', sPrefix+'id='+sId);
+        html.AddTextPlain(' ');
       End;
       if iStart > MAX_ROWS Then
       Begin
-        oBuilder.URL('Previous', sPrefix+'id='+sId+'&start='+inttostr(iStart - MAX_ROWS));
-        oBuilder.AddTextPlain(' ');
+        html.URL('Previous', sPrefix+'id='+sId+'&start='+inttostr(iStart - MAX_ROWS));
+        html.AddTextPlain(' ');
       End;
-      oBuilder.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(High(aChildren) div MAX_ROWS + 1), true, false);
+      html.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(High(aChildren) div MAX_ROWS + 1), true, false);
       if (iStart+MAX_ROWS < High(aChildren)) And (iStart + MAX_ROWS <  MAX_ROWS * (High(aChildren) div MAX_ROWS)) Then
       Begin
-        oBuilder.AddTextPlain(' ');
-        oBuilder.URL('Next', sPrefix+'id='+sId+'&start='+inttostr(iStart + MAX_ROWS));
+        html.AddTextPlain(' ');
+        html.URL('Next', sPrefix+'id='+sId+'&start='+inttostr(iStart + MAX_ROWS));
       End;
       if (iStart+MAX_ROWS < High(aChildren)) Then
       Begin
-        oBuilder.AddTextPlain(' ');
-        oBuilder.URL('End', sPrefix+'id='+sId+'&start='+inttostr(MAX_ROWS * (High(aChildren) div MAX_ROWS)));
+        html.AddTextPlain(' ');
+        html.URL('End', sPrefix+'id='+sId+'&start='+inttostr(MAX_ROWS * (High(aChildren) div MAX_ROWS)));
       End;
-      oBuilder.EndParagraph;
+      html.EndParagraph;
     End;
   End;
 
-  b2 := false;
-  b3 := false;
-  b4 := false;
+  b := false;
   if iCodes <> 0 Then
   begin
     aCodes := FLoinc.Refs.GetCardinals(iCodes);
-    oBuilder.StartTable.BorderPolicy := BorderPolicyNone;
-    oBuilder.StartTableRow;
-    oBuilder.StartTableCell;
-    oBuilder.AddParagraph(' ');
-    oBuilder.EndTableCell;
-    oBuilder.StartTableCell;
+    html.StartTable(false);
+    html.StartTableRow;
+    html.StartTableCell;
+    html.AddParagraph(' ');
+    html.EndTableCell;
+    html.StartTableCell;
     For i := iStart to Min(iStart+MAX_ROWS, High(aCodes)) Do
     Begin
-      if not b2 And (Length(aCodes) > 20) And ((i - iStart) / Min(MAX_ROWS, Length(aCodes)) > 0.25) Then
+      if not b And (Length(aCodes) > 20) And ((i - iStart) / Min(MAX_ROWS, Length(aCodes)) >= 0.5) Then
       Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b2 := true;
+        html.EndTableCell;
+        html.StartTableCell;
+        b := true;
       End;
-      if not b3 And (Length(aCodes) > 20) And ((i - iStart) / Min(MAX_ROWS, Length(aCodes)) > 0.5) Then
-      Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b3 := true;
-      End;
-      if not b4 And (Length(aCodes) > 20) And ((i - iStart) / Min(MAX_ROWS, Length(aCodes)) > 0.750) Then
-      Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b4 := true;
-      End;
-      FLoinc.Code.GetInformation(aCodes[i], sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
-      oBuilder.StartParagraph;
-      oBuilder.URL(sCode1, sPrefix + 'code='+sCode1);
-      oBuilder.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
-      oBuilder.EndParagraph;
+      FLoinc.CodeList.GetInformation(aCodes[i], sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      html.StartParagraph;
+      html.URL(sCode1, sPrefix + 'code='+sCode1);
+      html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
+      html.EndParagraph;
     End;
-    oBuilder.EndTableCell;
-    oBuilder.EndTableRow;
-    oBuilder.EndTable;
+    html.EndTableCell;
+    html.EndTableRow;
+    html.EndTable;
     if (iStart > 0) or (iStart+MAX_ROWS < High(aCodes)) Then
     Begin
-      oBuilder.StartParagraph;
+      html.StartParagraph;
       if iStart > 0 Then
       Begin
-        oBuilder.URL('Start', sPrefix+'id='+sId);
-        oBuilder.AddTextPlain(' ');
+        html.URL('Start', sPrefix+'id='+sId);
+        html.AddTextPlain(' ');
       End;
       if iStart > MAX_ROWS Then
       Begin
-        oBuilder.URL('Previous', sPrefix+'id='+sId+'&start='+inttostr(iStart - MAX_ROWS));
-        oBuilder.AddTextPlain(' ');
+        html.URL('Previous', sPrefix+'id='+sId+'&start='+inttostr(iStart - MAX_ROWS));
+        html.AddTextPlain(' ');
       End;
-      oBuilder.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(High(aCodes) div MAX_ROWS + 1), true, false);
+      html.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(High(aCodes) div MAX_ROWS + 1), true, false);
       if (iStart+MAX_ROWS < High(aCodes)) And (iStart + MAX_ROWS <  MAX_ROWS * (High(aCodes) div MAX_ROWS)) Then
       Begin
-        oBuilder.AddTextPlain(' ');
-        oBuilder.URL('Next', sPrefix+'id='+sId+'&start='+inttostr(iStart + MAX_ROWS));
+        html.AddTextPlain(' ');
+        html.URL('Next', sPrefix+'id='+sId+'&start='+inttostr(iStart + MAX_ROWS));
       End;
       if (iStart+MAX_ROWS < High(aCodes)) Then
       Begin
-        oBuilder.AddTextPlain(' ');
-        oBuilder.URL('End', sPrefix+'id='+sId+'&start='+inttostr(MAX_ROWS * (High(aCodes) div MAX_ROWS)));
+        html.AddTextPlain(' ');
+        html.URL('End', sPrefix+'id='+sId+'&start='+inttostr(MAX_ROWS * (High(aCodes) div MAX_ROWS)));
       End;
-      oBuilder.EndParagraph;
+      html.EndParagraph;
     End;
   End;
+  if not bRoot then
+    html.done;
 end;
 
-procedure TloincPublisher.PublishCodes(const sPrefix: String; iStart: Integer; oBuilder: THL7V2DocumentPublisher);
+procedure TloincPublisher.PublishCodes(const sPrefix: String; iStart: Integer; html: THTMLPublisher);
 var
   i : Integer;
   iTotal : Integer;
-  b2, b3, b4 : Boolean;
+  b : Boolean;
 
   iDescription, iOtherNames, iStems : Cardinal;
   sCode1 : String;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
 begin
-  b2 := false;
-  b3 := false;
-  b4 := false;
+  b := false;
 
-    oBuilder.StartTable.BorderPolicy := BorderPolicyNone;
-    oBuilder.StartTableRow;
-    oBuilder.StartTableCell;
-    oBuilder.AddParagraph(' ');
-    oBuilder.EndTableCell;
-    oBuilder.StartTableCell;
-    iTotal := FLoinc.Code.Count;
+  if iStart = 0 then
+    html.header('All Loinc Codes')
+  else
+    html.header('All Loinc Codes (offset = '+inttostr(iStart)+')');
+
+    html.StartTable(false);
+    html.StartTableRow;
+    html.StartTableCell;
+    html.AddParagraph(' ');
+    html.EndTableCell;
+    html.StartTableCell;
+    html.StartList;
+    iTotal := FLoinc.CodeList.Count;
     For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
     Begin
-      if not b2 And ((i - iStart) / Min(MAX_ROWS, iTotal) > 0.25) Then
+      if not b And ((i - iStart) / Min(MAX_ROWS, iTotal) >= 0.5) Then
       Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b2 := true;
+        html.EndList;
+        html.EndTableCell;
+        html.StartTableCell;
+        html.StartList;
+        b := true;
       End;
-      if not b3 And ((i - iStart) / Min(MAX_ROWS, iTotal) > 0.5) Then
-      Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b3 := true;
-      End;
-      if not b4 And ((i - iStart) / Min(MAX_ROWS, iTotal) > 0.750) Then
-      Begin
-        oBuilder.EndTableCell;
-        oBuilder.StartTableCell;
-        b4 := true;
-      End;
-      FLoinc.Code.GetInformation(i, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
-      oBuilder.StartParagraph;
-      oBuilder.URL(sCode1, sPrefix + 'code='+sCode1);
-      oBuilder.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
-      oBuilder.EndParagraph;
+      FLoinc.CodeList.GetInformation(i, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      html.StartListItem;
+      html.URL(sCode1, sPrefix + 'code='+sCode1);
+      html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
+      html.EndListItem;
     End;
-    oBuilder.EndTableCell;
-    oBuilder.EndTableRow;
-    oBuilder.EndTable;
+    html.EndList;
+    html.EndTableCell;
+    html.EndTableRow;
+    html.EndTable;
     if (iStart > 0) or (iStart+MAX_ROWS < iTotal) Then
     Begin
-      oBuilder.StartParagraph;
+      html.StartParagraph;
       if iStart > 0 Then
       Begin
-        oBuilder.URL('Start', sPrefix+'code=*');
-        oBuilder.AddTextPlain(' ');
+        html.URL('Start', sPrefix+'code=*');
+        html.AddTextPlain(' ');
       End;
       if iStart > MAX_ROWS Then
       Begin
-        oBuilder.URL('Previous', sPrefix+'code=*&start='+inttostr(iStart - MAX_ROWS));
-        oBuilder.AddTextPlain(' ');
+        html.URL('Previous', sPrefix+'code=*&start='+inttostr(iStart - MAX_ROWS));
+        html.AddTextPlain(' ');
       End;
-      oBuilder.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(iTotal div MAX_ROWS + 1), true, false);
+      html.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(iTotal div MAX_ROWS + 1), true, false);
       if (iStart+MAX_ROWS < iTotal) And (iStart + MAX_ROWS <  MAX_ROWS * (iTotal div MAX_ROWS)) Then
       Begin
-        oBuilder.AddTextPlain(' ');
-        oBuilder.URL('Next', sPrefix+'code=*&start='+inttostr(iStart + MAX_ROWS));
+        html.AddTextPlain(' ');
+        html.URL('Next', sPrefix+'code=*&start='+inttostr(iStart + MAX_ROWS));
       End;
       if (iStart+MAX_ROWS < iTotal) Then
       Begin
-        oBuilder.AddTextPlain(' ');
-        oBuilder.URL('End', sPrefix+'code=*&start='+inttostr(MAX_ROWS * (iTotal div MAX_ROWS)));
+        html.AddTextPlain(' ');
+        html.URL('End', sPrefix+'code=*&start='+inttostr(MAX_ROWS * (iTotal div MAX_ROWS)));
       End;
-      oBuilder.EndParagraph;
+      html.EndParagraph;
     End;
 end;
 
@@ -644,7 +624,7 @@ Type
     a : TMatchArray;
   End;
 
-procedure TloincPublisher.PublishSearch(const sPrefix, sText: String; iStart: Integer; oBuilder: THL7V2DocumentPublisher);
+procedure TloincPublisher.PublishSearch(const sPrefix, sText: String; iStart: Integer; html: THTMLPublisher);
 var
   a : TMatchArray;
   i : integer;
@@ -671,66 +651,68 @@ begin
   Finally
     Lock.Unlock;
   End;                        
-  oBuilder.StartTable.BorderPolicy := BorderPolicyNone;
-  oBuilder.StartTableRow;
-  oBuilder.AddTableCell('Code');
-  oBuilder.AddTableCell('Description');
-  oBuilder.AddTableCell('Component');
-  oBuilder.AddTableCell('Property');
-  oBuilder.AddTableCell('Time Aspect');
-  oBuilder.AddTableCell('System');
-  oBuilder.AddTableCell('Scale');
-  oBuilder.AddTableCell('Method');
-  oBuilder.AddTableCell('Class');
-  oBuilder.AddTableCell('Rating');
-  oBuilder.EndTableRow;
+  html.Header('Search LOINC for '+sText);
+  html.StartTable(false);
+  html.StartTableRow;
+  html.AddTableCell('Code');
+  html.AddTableCell('Description');
+  html.AddTableCell('Component');
+  html.AddTableCell('Property');
+  html.AddTableCell('Time Aspect');
+  html.AddTableCell('System');
+  html.AddTableCell('Scale');
+  html.AddTableCell('Method');
+  html.AddTableCell('Class');
+  html.AddTableCell('Rating');
+  html.EndTableRow;
   iTotal := Length(a)-1;
 
 
   For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
   Begin
-    FLoinc.Code.GetInformation(a[i].index, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    FLoinc.CodeList.GetInformation(a[i].index, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
 
-    oBuilder.StartTableRow;
-    oBuilder.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);
-    oBuilder.AddTableCell(FLoinc.Desc.GetEntry(iDescription));
-    oBuilder.AddTableCell(GetConceptDesc(iComponent));
-    oBuilder.AddTableCell(GetConceptDesc(iProperty));
-    oBuilder.AddTableCell(GetConceptDesc(iTimeAspect));
-    oBuilder.AddTableCell(GetConceptDesc(iSystem));
-    oBuilder.AddTableCell(GetConceptDesc(iScale));
-    oBuilder.AddTableCell(GetConceptDesc(iMethod));
-    oBuilder.AddTableCell(GetConceptDesc(iClass));
-    oBuilder.AddTableCell(RealToString(a[i].Priority));
-    oBuilder.EndTableRow;
+    html.StartTableRow;
+    html.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);
+    html.AddTableCell(FLoinc.Desc.GetEntry(iDescription));
+    html.AddTableCell(GetConceptDesc(iComponent));
+    html.AddTableCell(GetConceptDesc(iProperty));
+    html.AddTableCell(GetConceptDesc(iTimeAspect));
+    html.AddTableCell(GetConceptDesc(iSystem));
+    html.AddTableCell(GetConceptDesc(iScale));
+    html.AddTableCell(GetConceptDesc(iMethod));
+    html.AddTableCell(GetConceptDesc(iClass));
+    html.AddTableCell(RealToString(a[i].Priority));
+    html.EndTableRow;
     End;
-  oBuilder.EndTable;
+  html.EndTable;
   if (iStart > 0) or (iStart+MAX_ROWS < iTotal) Then
   Begin
-    oBuilder.StartParagraph;
+    html.StartParagraph;
     if iStart > 0 Then
     Begin
-      oBuilder.URL('Start', sPrefix+'srch='+sText);
-      oBuilder.AddTextPlain(' ');
+      html.URL('Start', sPrefix+'srch='+sText);
+      html.AddTextPlain(' ');
     End;
     if iStart > MAX_ROWS Then
     Begin
-      oBuilder.URL('Previous', sPrefix+'srch='+sText+'&start='+inttostr(iStart - MAX_ROWS));
-      oBuilder.AddTextPlain(' ');
+      html.URL('Previous', sPrefix+'srch='+sText+'&start='+inttostr(iStart - MAX_ROWS));
+      html.AddTextPlain(' ');
     End;
-    oBuilder.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(iTotal div MAX_ROWS + 1), true, false);
+    html.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(iTotal div MAX_ROWS + 1), true, false);
     if (iStart+MAX_ROWS < iTotal) And (iStart + MAX_ROWS <  MAX_ROWS * (iTotal div MAX_ROWS)) Then
     Begin
-      oBuilder.AddTextPlain(' ');
-      oBuilder.URL('Next', sPrefix+'srch='+sText+'&start='+inttostr(iStart + MAX_ROWS));
+      html.AddTextPlain(' ');
+      html.URL('Next', sPrefix+'srch='+sText+'&start='+inttostr(iStart + MAX_ROWS));
     End;
     if (iStart+MAX_ROWS < iTotal) Then
     Begin
-      oBuilder.AddTextPlain(' ');
-      oBuilder.URL('End', sPrefix+'srch='+sText+'&start='+inttostr(MAX_ROWS * (iTotal div MAX_ROWS)));
+      html.AddTextPlain(' ');
+      html.URL('End', sPrefix+'srch='+sText+'&start='+inttostr(MAX_ROWS * (iTotal div MAX_ROWS)));
     End;
-    oBuilder.EndParagraph;
+    html.EndParagraph;
   End;
+  html.done;
 end;
 
 End.

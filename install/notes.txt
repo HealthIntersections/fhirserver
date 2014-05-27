@@ -1,0 +1,17 @@
+build:
+
+copy latest fhir code
+build
+execute tests
+compress and sign executable
+build install 
+upload to health intersections
+
+install
+- ini file
+- web directory
+- publish directory
+- executable 
+- short cut
+
+ 

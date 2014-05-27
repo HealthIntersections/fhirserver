@@ -1,13 +1,13 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{C47C4B65-DCBD-4C70-AAF5-FED96EAAD0F7}</ProjectGuid>
-        <ProjectVersion>14.4</ProjectVersion>
+        <ProjectVersion>15.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win32</Platform>
-        <TargetedPlatforms>1</TargetedPlatforms>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -39,6 +39,12 @@
         <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
@@ -46,6 +52,18 @@
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='OSX32' and '$(Cfg_2)'=='true') or '$(Cfg_2_OSX32)'!=''">
         <Cfg_2_OSX32>true</Cfg_2_OSX32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win64)'!=''">
+        <Cfg_2_Win64>true</Cfg_2_Win64>
         <CfgParent>Cfg_2</CfgParent>
         <Cfg_2>true</Cfg_2>
         <Base>true</Base>
@@ -71,6 +89,9 @@
         <DCC_UsePackage>esbpcs_base_db_rt_d17;esbpcs_base_rt_d17;fs17;frx17;bindcompfmx;DBXSqliteDriver;vcldbx;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;TeeDB;bindcomp;inetdb;esbpcs_xtras_db_rt_d17;vclib;inetdbbde;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;Tee;esbpcs_calcs_rt_d17;esbpcs_dates_rt_d17;DataSnapProviderClient;xmlrtl;svnui;ibxpress;DbxCommonDriver;DBXSybaseASEDriver;vclimg;esbpcs_stats_rt_d17;IndyProtocols;dbxcds;DBXMySQLDriver;DatasnapConnectorsFreePascal;MetropolisUILiveTile;esbpcs_calcs_db_rt_d17;esbpcs_xtras_rt_d17;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;FMXTee;TeeUI;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;vclribbon;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;Intraweb;fmxase;vcl;IndyCore;DataSnapConnectors;esbpcs_stats_db_rt_d17;IndyIPCommon;CloudService;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;FmxTeeUI;inet;fsDB17;fmxobj;frxDB17;CodeSiteExpressPkg;esbpcs_dates_db_rt_d17;vclx;frxe17;inetdbxpress;webdsnap;svn;DBXSybaseASADriver;fmxdae;bdertl;dbexpress;adortl;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_UsePackage>bindcompfmx;DBXSqliteDriver;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;bindcomp;inetdb;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;DataSnapProviderClient;xmlrtl;DbxCommonDriver;DBXSybaseASEDriver;vclimg;IndyProtocols;dbxcds;DBXMySQLDriver;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;fmxase;vcl;IndyCore;IndyIPCommon;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;inet;fmxobj;vclx;inetdbxpress;webdsnap;DBXSybaseASADriver;fmxdae;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -82,7 +103,9 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini</Debugger_RunParams>
+        <DCC_DebugDCUs>false</DCC_DebugDCUs>
+        <Icon_MainIcon>fhir.ico</Icon_MainIcon>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -remount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot;</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
@@ -93,14 +116,39 @@
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units\</DCC_DcuOutput>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -tests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot;</Debugger_RunParams>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>None</Manifest_File>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-        <DCC_DebugInformation>false</DCC_DebugInformation>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_OSX32)'!=''">
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB</Debugger_RunParams>
+        <Manifest_File>None</Manifest_File>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
+        <Icon_MainIcon>fhir.ico</Icon_MainIcon>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
+        <DCC_LocalDebugSymbols>true</DCC_LocalDebugSymbols>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>None</Manifest_File>
+        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
+        <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
+        <Debugger_RunParams>-tests -ini C:\work\fhirserver\Exec\fhir.local.ini</Debugger_RunParams>
+        <DCC_Optimize>false</DCC_Optimize>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -149,7 +197,7 @@
         <DCCReference Include="..\Libraries\Support\AdvSignals.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvSynchronizationRegistries.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvTimeControllers.pas"/>
-        <DCCReference Include="..\Libraries\Support\AdvIntegerMatches.pas"/>
+        <DCCReference Include="..\Libraries\support\AdvInt64Matches.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvLargeIntegerMatches.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvStringLargeIntegerMatches.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvStringLists.pas"/>
@@ -174,9 +222,7 @@
         <DCCReference Include="..\Libraries\Support\AdvZipDeclarations.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvZipUtilities.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvZipWorkers.pas"/>
-        <DCCReference Include="..\Libraries\Support\ZLibEx.pas"/>
         <DCCReference Include="..\Libraries\Support\GUIDSupport.pas"/>
-        <DCCReference Include="..\Libraries\Support\bignum.pas"/>
         <DCCReference Include="..\Libraries\refplat\FHIRBase.pas"/>
         <DCCReference Include="..\Libraries\Support\DecimalSupport.pas"/>
         <DCCReference Include="..\Libraries\Support\DateAndTime.pas"/>
@@ -253,7 +299,37 @@
         <DCCReference Include="..\Libraries\db\OdbcImplementation.pas"/>
         <DCCReference Include="..\Libraries\Support\CurrencySupport.pas"/>
         <DCCReference Include="FHIRDataStore.pas"/>
+        <DCCReference Include="..\Libraries\snomed\SnomedImporter.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvProfilers.pas"/>
+        <DCCReference Include="..\Libraries\support\AnsiStringBuilder.pas"/>
+        <DCCReference Include="..\Libraries\support\AdvIntegerMatches.pas"/>
+        <DCCReference Include="..\Libraries\snomed\SnomedPublisher.pas"/>
+        <DCCReference Include="..\Libraries\snomed\SnomedExpressions.pas"/>
+        <DCCReference Include="FhirServerTests.pas"/>
+        <DCCReference Include="..\Libraries\support\HTMLPublisher.pas"/>
+        <DCCReference Include="..\Libraries\loinc\LoincImporter.pas"/>
+        <DCCReference Include="..\Libraries\loinc\LoincPublisher.pas"/>
+        <DCCReference Include="TerminologyServer.pas"/>
+        <DCCReference Include="TerminologyServerStore.pas"/>
+        <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
+        <DCCReference Include="FHIRValueSetChecker.pas"/>
+        <DCCReference Include="TerminologyWebServer.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapConsts.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapClasses.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapDebug.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapTracker.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapUtilities.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapExceptions.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapMsXml.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapXML.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapComponent.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapNamespaces.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapMime.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapBase64.pas"/>
+        <DCCReference Include="FHIRServerConstants.pas"/>
+        <DCCReference Include="..\Libraries\tests\DecimalTests.pas"/>
+        <DCCReference Include="..\Libraries\tests\UcumTests.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -311,19 +387,208 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k170.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp170.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp190.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment/>
+            <Deployment>
+                <DeployFile LocalName="Win32\Debug\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>FHIRServer.rsm</RemoteName>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32"/>
+                </DeployFile>
+                <DeployClass Required="true" Name="DependencyPackage">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch2048">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXInfoPList"/>
+                <DeployClass Name="ProjectiOSDeviceInfoPList"/>
+                <DeployClass Name="iPad_Launch1024">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSResource">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSSimulatorInfoPList"/>
+                <DeployClass Name="ProjectOSXEntitlements"/>
+                <DeployClass Name="iPhone_Launch640">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXResource">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch320">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch768">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Required="true" Name="ProjectOutput">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="File">
+                    <Platform Name="iOSDevice">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DebugSymbols">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyFramework">
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.framework</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSEntitlements">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch1536">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AdditionalDebugSymbols">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <ProjectRoot Platform="iOSDevice" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+            </Deployment>
             <Platforms>
                 <Platform value="OSX32">False</Platform>
                 <Platform value="Win32">True</Platform>
-                <Platform value="Win64">False</Platform>
+                <Platform value="Win64">True</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
     <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
     <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
 </Project>

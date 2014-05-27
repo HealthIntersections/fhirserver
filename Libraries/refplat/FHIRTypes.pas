@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v0.12 generated Wed, Dec 4, 2013 13:54+1100
+// FHIR v0.80 generated Fri, Apr 18, 2014 22:46+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -62,7 +62,7 @@ Type
   TFhirQuantityComparatorList = set of TFhirQuantityComparator;
 
   {@Enum TFhirIdentifierUse
-    Identifies the use for this identifier, if known
+    Identifies the purpose for this identifier, if known
   }
   TFhirIdentifierUse = (
     IdentifierUseNull,  {@enum.value IdentifierUseNull Value is missing from Instance }
@@ -278,10 +278,10 @@ Type
   }
   TFhirCompositionStatus = (
     CompositionStatusNull,  {@enum.value CompositionStatusNull Value is missing from Instance }
-    CompositionStatusPreliminary, {@enum.value CompositionStatusPreliminary This is an preliminary composition or document (also known as initial or interim). The content may be incomplete or unverified. }
+    CompositionStatusPreliminary, {@enum.value CompositionStatusPreliminary This is a preliminary composition or document (also known as initial or interim). The content may be incomplete or unverified. }
     CompositionStatusFinal, {@enum.value CompositionStatusFinal The composition or document is complete and verified by an appropriate person, and no further work is planned. }
-    CompositionStatusAppended, {@enum.value CompositionStatusAppended The composition or document has been modified subsequent to being released as "final", and is complete and verified by an authorised person. The modifications added new information to the composition or document, but did not revise existing content. }
-    CompositionStatusAmended, {@enum.value CompositionStatusAmended The composition or document has been modified subsequent to being released as "final", and is complete and verified by an authorised person. }
+    CompositionStatusAppended, {@enum.value CompositionStatusAppended The composition or document has been modified subsequent to being released as "final", and is complete and verified by an authorized person. The modifications added new information to the composition or document, but did not revise existing content. }
+    CompositionStatusAmended, {@enum.value CompositionStatusAmended The composition or document has been modified subsequent to being released as "final", and is complete and verified by an authorized person. }
     CompositionStatusEnteredInError); {@enum.value CompositionStatusEnteredInError The composition or document was originally created/issued in error, and this is an amendment that marks that the entire series should not be considered as valid. }
   TFhirCompositionStatusList = set of TFhirCompositionStatus;
 
@@ -297,7 +297,7 @@ Type
   TFhirCompositionAttestationModeList = set of TFhirCompositionAttestationMode;
 
   {@Enum TFhirValuesetStatus
-    The lifecycle status of a Value Set
+    The lifecycle status of a Value Set or Concept Map
   }
   TFhirValuesetStatus = (
     ValuesetStatusNull,  {@enum.value ValuesetStatusNull Value is missing from Instance }
@@ -314,7 +314,9 @@ Type
     ConceptEquivalenceEqual, {@enum.value ConceptEquivalenceEqual The definitions of the concepts are exactly the same (i.e. only grammatical differences) and structural implications of meaning are identifical or irrelevant (i.e. intensionally identical). }
     ConceptEquivalenceEquivalent, {@enum.value ConceptEquivalenceEquivalent The definitions of the concepts mean the same thing (including when structural implications of meaning are considered) (i.e. extensionally identical). }
     ConceptEquivalenceWider, {@enum.value ConceptEquivalenceWider The target mapping is wider in meaning than the source concept. }
+    ConceptEquivalenceSubsumes, {@enum.value ConceptEquivalenceSubsumes The target mapping subsumes the meaning of the source concept (e.g. the source is-a target). }
     ConceptEquivalenceNarrower, {@enum.value ConceptEquivalenceNarrower The target mapping is narrower in meaning that the source concept. The sense in which the mapping is narrower SHALL be described in the comments in this case, and applications should be careful when atempting to use these mappings operationally. }
+    ConceptEquivalenceSpecialises, {@enum.value ConceptEquivalenceSpecialises The target mapping specialises the meaning of the source concept (e.g. the target is-a source). }
     ConceptEquivalenceInexact, {@enum.value ConceptEquivalenceInexact The target mapping overlaps with the source concept, but both source and target cover additional meaning. The sense in which the mapping is narrower SHALL be described in the comments in this case, and applications should be careful when atempting to use these mappings operationally. }
     ConceptEquivalenceUnmatched, {@enum.value ConceptEquivalenceUnmatched There is no match for this concept in the destination concept system. }
     ConceptEquivalenceDisjoint); {@enum.value ConceptEquivalenceDisjoint This is an explicit assertion that there is no mapping between the source and target concept. }
@@ -380,12 +382,13 @@ Type
   }
   TFhirSearchParamType = (
     SearchParamTypeNull,  {@enum.value SearchParamTypeNull Value is missing from Instance }
-    SearchParamTypeNumber, {@enum.value SearchParamTypeNumber Search parameter SHALL be a number (an whole number, or a decimal). }
+    SearchParamTypeNumber, {@enum.value SearchParamTypeNumber Search parameter SHALL be a number (a whole number, or a decimal). }
     SearchParamTypeDate, {@enum.value SearchParamTypeDate Search parameter is on a date/time. The date format is the standard XML format, though other formats may be supported. }
     SearchParamTypeString, {@enum.value SearchParamTypeString Search parameter is a simple string, like a name part. Search is case-insensitive and accent-insensitive. May match just the start of a string. String parameters may contain spaces. }
     SearchParamTypeToken, {@enum.value SearchParamTypeToken Search parameter on a coded element or identifier. May be used to search through the text, displayname, code and code/codesystem (for codes) and label, system and key (for identifier). Its value is either a string or a pair of namespace and value, separated by a "|", depending on the modifier used. }
     SearchParamTypeReference, {@enum.value SearchParamTypeReference A reference to another resource. }
-    SearchParamTypeComposite); {@enum.value SearchParamTypeComposite A composite search parameter that combines a search on two values together. }
+    SearchParamTypeComposite, {@enum.value SearchParamTypeComposite A composite search parameter that combines a search on two values together. }
+    SearchParamTypeQuantity); {@enum.value SearchParamTypeQuantity A search parameter that searches on a quantity. }
   TFhirSearchParamTypeList = set of TFhirSearchParamType;
 
   {@Enum TFhirSystemRestfulOperation
@@ -437,7 +440,7 @@ Type
     DiagnosticOrderStatusInProgress, {@enum.value DiagnosticOrderStatusInProgress The work to fulfill the order is happening. }
     DiagnosticOrderStatusReview, {@enum.value DiagnosticOrderStatusReview The work is complete, and the outcomes are being reviewed for approval. }
     DiagnosticOrderStatusCompleted, {@enum.value DiagnosticOrderStatusCompleted The work has been complete, the report(s) released, and no further work is planned. }
-    DiagnosticOrderStatusOnHold, {@enum.value DiagnosticOrderStatusOnHold The request has been held by originating system/user request. }
+    DiagnosticOrderStatusSuspended, {@enum.value DiagnosticOrderStatusSuspended The request has been held by originating system/user request. }
     DiagnosticOrderStatusRejected, {@enum.value DiagnosticOrderStatusRejected The receiving system has declined to fulfill the request. }
     DiagnosticOrderStatusFailed); {@enum.value DiagnosticOrderStatusFailed The diagnostic investigation was attempted, but due to some procedural error, it could not be completed. }
   TFhirDiagnosticOrderStatusList = set of TFhirDiagnosticOrderStatus;
@@ -447,9 +450,10 @@ Type
   }
   TFhirDiagnosticOrderPriority = (
     DiagnosticOrderPriorityNull,  {@enum.value DiagnosticOrderPriorityNull Value is missing from Instance }
-    DiagnosticOrderPriorityNormal, {@enum.value DiagnosticOrderPriorityNormal The order has no particular priority with it. }
+    DiagnosticOrderPriorityRoutine, {@enum.value DiagnosticOrderPriorityRoutine The order has a normal priority. }
     DiagnosticOrderPriorityUrgent, {@enum.value DiagnosticOrderPriorityUrgent The order should be urgently. }
-    DiagnosticOrderPriorityStat); {@enum.value DiagnosticOrderPriorityStat The order is time-critical. }
+    DiagnosticOrderPriorityStat, {@enum.value DiagnosticOrderPriorityStat The order is time-critical. }
+    DiagnosticOrderPriorityAsap); {@enum.value DiagnosticOrderPriorityAsap The order should be acted on as soon as possible. }
   TFhirDiagnosticOrderPriorityList = set of TFhirDiagnosticOrderPriority;
 
   {@Enum TFhirDiagnosticReportStatus
@@ -459,10 +463,10 @@ Type
     DiagnosticReportStatusNull,  {@enum.value DiagnosticReportStatusNull Value is missing from Instance }
     DiagnosticReportStatusRegistered, {@enum.value DiagnosticReportStatusRegistered The existence of the report is registered, but there is nothing yet available. }
     DiagnosticReportStatusPartial, {@enum.value DiagnosticReportStatusPartial This is a partial (e.g. initial, interim or preliminary) report: data in the report may be incomplete or unverified. }
-    DiagnosticReportStatusFinal, {@enum.value DiagnosticReportStatusFinal The report is complete and verified by an authorised person. }
-    DiagnosticReportStatusCorrected, {@enum.value DiagnosticReportStatusCorrected The report has been modified subsequent to being Final, and is complete and verified by an authorised person. }
-    DiagnosticReportStatusAmended, {@enum.value DiagnosticReportStatusAmended The report has been modified subsequent to being Final, and is complete and verified by an authorised person, and data has been changed. }
-    DiagnosticReportStatusAppended, {@enum.value DiagnosticReportStatusAppended The report has been modified subsequent to being Final, and is complete and verified by an authorised person. New content has been added, but existing content hasn't changed. }
+    DiagnosticReportStatusFinal, {@enum.value DiagnosticReportStatusFinal The report is complete and verified by an authorized person. }
+    DiagnosticReportStatusCorrected, {@enum.value DiagnosticReportStatusCorrected The report has been modified subsequent to being Final, and is complete and verified by an authorized person. }
+    DiagnosticReportStatusAmended, {@enum.value DiagnosticReportStatusAmended The report has been modified subsequent to being Final, and is complete and verified by an authorized person, and data has been changed. }
+    DiagnosticReportStatusAppended, {@enum.value DiagnosticReportStatusAppended The report has been modified subsequent to being Final, and is complete and verified by an authorized person. New content has been added, but existing content hasn't changed. }
     DiagnosticReportStatusCancelled, {@enum.value DiagnosticReportStatusCancelled The report is unavailable because the measurement was not started or not completed (also sometimes called "aborted"). }
     DiagnosticReportStatusEnteredInError); {@enum.value DiagnosticReportStatusEnteredInError The report has been withdrawn following previous Final release. }
   TFhirDiagnosticReportStatusList = set of TFhirDiagnosticReportStatus;
@@ -522,6 +526,7 @@ Type
     GroupTypeNull,  {@enum.value GroupTypeNull Value is missing from Instance }
     GroupTypePerson, {@enum.value GroupTypePerson Group contains "person" Patient resources. }
     GroupTypeAnimal, {@enum.value GroupTypeAnimal Group contains "animal" Patient resources. }
+    GroupTypePractitioner, {@enum.value GroupTypePractitioner Group contains healthcare practitioner resources. }
     GroupTypeDevice, {@enum.value GroupTypeDevice Group contains Device resources. }
     GroupTypeMedication, {@enum.value GroupTypeMedication Group contains Medication resources. }
     GroupTypeSubstance); {@enum.value GroupTypeSubstance Group contains Substance resources. }
@@ -641,14 +646,6 @@ Type
     ModalityXC); {@enum.value ModalityXC  }
   TFhirModalityList = set of TFhirModality;
 
-  {@Enum TFhirImmunizationForecastStatus
-    The patient's status with respect to a vaccination protocol
-  }
-  TFhirImmunizationForecastStatus = (
-    ImmunizationForecastStatusNull,  {@enum.value ImmunizationForecastStatusNull Value is missing from Instance }
-    ImmunizationForecastStatusDUE); {@enum.value ImmunizationForecastStatusDUE This immunization is due to be given now. }
-  TFhirImmunizationForecastStatusList = set of TFhirImmunizationForecastStatus;
-
   {@Enum TFhirListMode
     The processing mode that applies to this list
   }
@@ -751,8 +748,8 @@ Type
     ObservationStatusNull,  {@enum.value ObservationStatusNull Value is missing from Instance }
     ObservationStatusRegistered, {@enum.value ObservationStatusRegistered The existence of the observation is registered, but there is no result yet available. }
     ObservationStatusPreliminary, {@enum.value ObservationStatusPreliminary This is an initial or interim observation: data may be incomplete or unverified. }
-    ObservationStatusFinal, {@enum.value ObservationStatusFinal The observation is complete and verified by an authorised person. }
-    ObservationStatusAmended, {@enum.value ObservationStatusAmended The observation has been modified subsequent to being Final, and is complete and verified by an authorised person. }
+    ObservationStatusFinal, {@enum.value ObservationStatusFinal The observation is complete and verified by an authorized person. }
+    ObservationStatusAmended, {@enum.value ObservationStatusAmended The observation has been modified subsequent to being Final, and is complete and verified by an authorized person. }
     ObservationStatusCancelled, {@enum.value ObservationStatusCancelled The observation is unavailable because the measurement was not started or not completed (also sometimes called "aborted"). }
     ObservationStatusEnteredInError); {@enum.value ObservationStatusEnteredInError The observation has been withdrawn following previous Final release. }
   TFhirObservationStatusList = set of TFhirObservationStatus;
@@ -770,6 +767,20 @@ Type
     ObservationReliabilityError, {@enum.value ObservationReliabilityError The observation could not be completed because of an error. }
     ObservationReliabilityUnknown); {@enum.value ObservationReliabilityUnknown No observation value was available. }
   TFhirObservationReliabilityList = set of TFhirObservationReliability;
+
+  {@Enum TFhirObservationRelationshiptypes
+    Codes specifying how two observations are related
+  }
+  TFhirObservationRelationshiptypes = (
+    ObservationRelationshiptypesNull,  {@enum.value ObservationRelationshiptypesNull Value is missing from Instance }
+    ObservationRelationshiptypesHasComponent, {@enum.value ObservationRelationshiptypesHasComponent The target observation is a component of this observation (e.g. Systolic and Diastolic Blood Pressure). }
+    ObservationRelationshiptypesHasMember, {@enum.value ObservationRelationshiptypesHasMember This observation is a group observation (e.g. a battery, a panel of tests, a set of vital sign measurements) that includes the target as a member of the group. }
+    ObservationRelationshiptypesDerivedFrom, {@enum.value ObservationRelationshiptypesDerivedFrom The target observation is part of the information from which this observation value is derived (e.g. calculated anion gap, Apgar score). }
+    ObservationRelationshiptypesSequelTo, {@enum.value ObservationRelationshiptypesSequelTo This observation follows the target observation (e.g. timed tests such as Glucose Tolerance Test). }
+    ObservationRelationshiptypesReplaces, {@enum.value ObservationRelationshiptypesReplaces This observation replaces a previous observation (i.e. a revised value). The target observation is now obsolete. }
+    ObservationRelationshiptypesQualifiedBy, {@enum.value ObservationRelationshiptypesQualifiedBy The value of the target observation qualifies (refines) the semantics of the source observation (e.g. a lipaemia measure target from a plasma measure). }
+    ObservationRelationshiptypesInterferedBy); {@enum.value ObservationRelationshiptypesInterferedBy The value of the target observation interferes (degardes quality, or prevents valid observation) with the semantics of the source observation (e.g. a hemolysis measure target from a plasma potassium measure which has no value). }
+  TFhirObservationRelationshiptypesList = set of TFhirObservationRelationshiptypes;
 
   {@Enum TFhirIssueSeverity
     How the issue affects the success of the action
@@ -793,6 +804,7 @@ Type
     OrderOutcomeCodeError, {@enum.value OrderOutcomeCodeError The order was unable to be processed because of a technical error (i.e. unexpected error). }
     OrderOutcomeCodeAccepted, {@enum.value OrderOutcomeCodeAccepted The order has been accepted, and work is in progress. }
     OrderOutcomeCodeCancelled, {@enum.value OrderOutcomeCodeCancelled Processing the order was halted at the initiators request. }
+    OrderOutcomeCodeReplaced, {@enum.value OrderOutcomeCodeReplaced The order has been cancelled and replaced by another. }
     OrderOutcomeCodeAborted, {@enum.value OrderOutcomeCodeAborted Processing the order was stopped because of some workflow/business logic reason. }
     OrderOutcomeCodeComplete); {@enum.value OrderOutcomeCodeComplete The order has been completed. }
   TFhirOrderOutcomeCodeList = set of TFhirOrderOutcomeCode;
@@ -880,7 +892,7 @@ Type
     ExtensionContextNull,  {@enum.value ExtensionContextNull Value is missing from Instance }
     ExtensionContextResource, {@enum.value ExtensionContextResource The context is all elements matching a particular resource element path. }
     ExtensionContextDatatype, {@enum.value ExtensionContextDatatype The context is all nodes matching a particular data type element path (root or repeating element) or all elements referencing a particular primitive data type (expressed as the datatype name). }
-    ExtensionContextMapping, {@enum.value ExtensionContextMapping The context is all nodes whose mapping to a specified reference model corresponds to a particular mapping structure.  The context identifies the mapping target. The mapping should clearly identify where such an extension could be used, though this. }
+    ExtensionContextMapping, {@enum.value ExtensionContextMapping The context is all nodes whose mapping to a specified reference model corresponds to a particular mapping structure.  The context identifies the mapping target. The mapping should clearly identify where such an extension could be used. }
     ExtensionContextExtension); {@enum.value ExtensionContextExtension The context is a particular extension from a particular profile.  Expressed as uri#name, where uri identifies the profile and #name identifies the extension code. }
   TFhirExtensionContextList = set of TFhirExtensionContext;
 
@@ -1027,15 +1039,39 @@ Type
     HierarchicalRelationshipTypeChild); {@enum.value HierarchicalRelationshipTypeChild The target resource is the child of the focal specimen resource. }
   TFhirHierarchicalRelationshipTypeList = set of TFhirHierarchicalRelationshipType;
 
+  {@Enum TFhirValuesetSupplyStatus
+    Status of the supply
+  }
+  TFhirValuesetSupplyStatus = (
+    ValuesetSupplyStatusNull,  {@enum.value ValuesetSupplyStatusNull Value is missing from Instance }
+    ValuesetSupplyStatusRequested, {@enum.value ValuesetSupplyStatusRequested Supply has been requested, but not dispensed. }
+    ValuesetSupplyStatusDispensed, {@enum.value ValuesetSupplyStatusDispensed Supply is part of a pharmacy order and has been dispensed. }
+    ValuesetSupplyStatusReceived, {@enum.value ValuesetSupplyStatusReceived Supply has been received by the requestor. }
+    ValuesetSupplyStatusFailed, {@enum.value ValuesetSupplyStatusFailed The supply will not be completed because the supplier was unable or unwilling to supply the item. }
+    ValuesetSupplyStatusCancelled); {@enum.value ValuesetSupplyStatusCancelled The orderer of the supply cancelled the request. }
+  TFhirValuesetSupplyStatusList = set of TFhirValuesetSupplyStatus;
+
+  {@Enum TFhirValuesetSupplyDispenseStatus
+    Status of the dispense
+  }
+  TFhirValuesetSupplyDispenseStatus = (
+    ValuesetSupplyDispenseStatusNull,  {@enum.value ValuesetSupplyDispenseStatusNull Value is missing from Instance }
+    ValuesetSupplyDispenseStatusInProgress, {@enum.value ValuesetSupplyDispenseStatusInProgress Supply has been requested, but not dispensed. }
+    ValuesetSupplyDispenseStatusDispensed, {@enum.value ValuesetSupplyDispenseStatusDispensed Supply is part of a pharmacy order and has been dispensed. }
+    ValuesetSupplyDispenseStatusAbandoned); {@enum.value ValuesetSupplyDispenseStatusAbandoned Dispensing was not completed. }
+  TFhirValuesetSupplyDispenseStatusList = set of TFhirValuesetSupplyDispenseStatus;
+
   {@Enum TFhirFilterOperator
-    The kind of operation to perform as part of a property based filter
+    The kind of operation to perform as a part of a property based filter
   }
   TFhirFilterOperator = (
     FilterOperatorNull,  {@enum.value FilterOperatorNull Value is missing from Instance }
     FilterOperatorEqual, {@enum.value FilterOperatorEqual The property value has the concept specified by the value. }
     FilterOperatorIsA, {@enum.value FilterOperatorIsA The property value has a concept that has an is-a relationship with the value. }
     FilterOperatorIsNotA, {@enum.value FilterOperatorIsNotA The property value has a concept that does not have an is-a relationship with the value. }
-    FilterOperatorRegex); {@enum.value FilterOperatorRegex The property value representation matches the regex specified in the value. }
+    FilterOperatorRegex, {@enum.value FilterOperatorRegex The property value representation matches the regex specified in the value. }
+    FilterOperatorIn, {@enum.value FilterOperatorIn The property value is in the set of codes or concepts identified by the value. }
+    FilterOperatorNotIn); {@enum.value FilterOperatorNotIn The property value is not in the set of codes or concepts identified by the value. }
   TFhirFilterOperatorList = set of TFhirFilterOperator;
 
 Type
@@ -2967,7 +3003,7 @@ Type
 
 
   {@Class TFhirPeriod : TFhirType
-    A time period defined by a start and end time.
+    A time period defined by a start and end date and optionally time.
   }
   {!.Net HL7Connect.Fhir.Period}
   TFhirPeriod = class (TFhirType)
@@ -3002,11 +3038,11 @@ Type
     property startST : TDateAndTime read GetStartST write SetStartST;
 
     {@member end_
-      The end of the period. If the high is missing, it means that the period is ongoing.
+      The end of the period. If the end of the period is missing, it means that the period is ongoing.
     }
     property end_ : TFhirDateTime read FEnd_ write SetEnd_;
     {@member end_ST
-      Typed access to The end of the period. If the high is missing, it means that the period is ongoing.
+      Typed access to The end of the period. If the end of the period is missing, it means that the period is ongoing.
     }
     property end_ST : TDateAndTime read GetEnd_ST write SetEnd_ST;
 
@@ -3142,11 +3178,11 @@ Type
     property systemST : String read GetSystemST write SetSystemST;
 
     {@member version
-      The version of the code system which was used when choosing this code. Note that a well-maintained code system does not need the version reported, because the meaning of codes is consistent across versions. However this cannot consistently be assured. and when it is not, the version SHOULD be exchanged.
+      The version of the code system which was used when choosing this code. Note that a well-maintained code system does not need the version reported, because the meaning of codes is consistent across versions. However this cannot consistently be assured. and When the meaning is not guaranteed to be consistent, the version SHOULD be exchanged.
     }
     property version : TFhirString read FVersion write SetVersion;
     {@member versionST
-      Typed access to The version of the code system which was used when choosing this code. Note that a well-maintained code system does not need the version reported, because the meaning of codes is consistent across versions. However this cannot consistently be assured. and when it is not, the version SHOULD be exchanged.
+      Typed access to The version of the code system which was used when choosing this code. Note that a well-maintained code system does not need the version reported, because the meaning of codes is consistent across versions. However this cannot consistently be assured. and When the meaning is not guaranteed to be consistent, the version SHOULD be exchanged.
     }
     property versionST : String read GetVersionST write SetVersionST;
 
@@ -3160,20 +3196,20 @@ Type
     property codeST : String read GetCodeST write SetCodeST;
 
     {@member display
-      A representation of the meaning of the code in the system, following the rules laid out by the system.
+      A representation of the meaning of the code in the system, following the rules of the system.
     }
     property display : TFhirString read FDisplay write SetDisplay;
     {@member displayST
-      Typed access to A representation of the meaning of the code in the system, following the rules laid out by the system.
+      Typed access to A representation of the meaning of the code in the system, following the rules of the system.
     }
     property displayST : String read GetDisplayST write SetDisplayST;
 
     {@member primary
-      Indicates that this code was chosen by a user directly - i.e. off a pick list of available codes.
+      Indicates that this code was chosen by a user directly - i.e. off a pick list of available items (codes or displays).
     }
     property primary : TFhirBoolean read FPrimary write SetPrimary;
     {@member primaryST
-      Typed access to Indicates that this code was chosen by a user directly - i.e. off a pick list of available codes.
+      Typed access to Indicates that this code was chosen by a user directly - i.e. off a pick list of available items (codes or displays).
     }
     property primaryST : Boolean read GetPrimaryST write SetPrimaryST;
 
@@ -3735,7 +3771,7 @@ Type
 
 
   {@Class TFhirRatio : TFhirType
-    A ratio of two Quantity values - a numerator and a denominator.
+    A relationship of two Quantity values - expressed as a numerator and a denominator.
   }
   {!.Net HL7Connect.Fhir.Ratio}
   TFhirRatio = class (TFhirType)
@@ -3757,12 +3793,12 @@ Type
     {!script show}
   published
     {@member numerator
-      The numerator.
+      The value of the numerator.
     }
     property numerator : TFhirQuantity read FNumerator write SetNumerator;
 
     {@member denominator
-      The denominator.
+      The value of the denominator.
     }
     property denominator : TFhirQuantity read FDenominator write SetDenominator;
 
@@ -3934,20 +3970,20 @@ Type
     property upperLimitST : String read GetUpperLimitST write SetUpperLimitST;
 
     {@member dimensions
-      The Number of sample points at each time point. If this value is greater than one, then the dimensions will be interlaced - all the sample points for a point in time will be recorded at once.
+      The number of sample points at each time point. If this value is greater than one, then the dimensions will be interlaced - all the sample points for a point in time will be recorded at once.
     }
     property dimensions : TFhirInteger read FDimensions write SetDimensions;
     {@member dimensionsST
-      Typed access to The Number of sample points at each time point. If this value is greater than one, then the dimensions will be interlaced - all the sample points for a point in time will be recorded at once.
+      Typed access to The number of sample points at each time point. If this value is greater than one, then the dimensions will be interlaced - all the sample points for a point in time will be recorded at once.
     }
     property dimensionsST : String read GetDimensionsST write SetDimensionsST;
 
     {@member data
-      A series of data points separated by a single space (character u20). The special values "E" (error), "L" (below detection limit) and "U" (above detection limit) can also be used.
+      A series of data points which are decimal values separated by a single space (character u20). The special values "E" (error), "L" (below detection limit) and "U" (above detection limit) can also be used in place of a decimal value.
     }
     property data : TFhirString read FData write SetData;
     {@member dataST
-      Typed access to A series of data points separated by a single space (character u20). The special values "E" (error), "L" (below detection limit) and "U" (above detection limit) can also be used.
+      Typed access to A series of data points which are decimal values separated by a single space (character u20). The special values "E" (error), "L" (below detection limit) and "U" (above detection limit) can also be used in place of a decimal value.
     }
     property dataST : String read GetDataST write SetDataST;
 
@@ -4188,11 +4224,11 @@ Type
     property codingList : TFhirCodingList read FCodingList;
 
     {@member text
-      A human language representation of the concept as seen/selected/uttered by the user who entered the data and/or which represents the intended meaning of the user or concept.
+      A human language representation of the concept as seen/selected/uttered by the user who entered the data and/or which represents the intended meaning of the user.
     }
     property text : TFhirString read FText write SetText;
     {@member textST
-      Typed access to A human language representation of the concept as seen/selected/uttered by the user who entered the data and/or which represents the intended meaning of the user or concept.
+      Typed access to A human language representation of the concept as seen/selected/uttered by the user who entered the data and/or which represents the intended meaning of the user.
     }
     property textST : String read GetTextST write SetTextST;
 
@@ -4317,20 +4353,20 @@ Type
     {!script show}
   published
     {@member use
-      The use of this identifier.
+      The purpose of this identifier.
     }
     property use : TFhirEnum read FUse write SetUse;
     {@member useST
-      Typed access to The use of this identifier.
+      Typed access to The purpose of this identifier.
     }
     property useST : TFhirIdentifierUse read GetUseST write SetUseST;
 
     {@member label_
-      A label for the identifier that can be displayed to a human so they can recognize the identifier.
+      A text string for the identifier that can be displayed to a human so they can recognize the identifier.
     }
     property label_ : TFhirString read FLabel_ write SetLabel_;
     {@member label_ST
-      Typed access to A label for the identifier that can be displayed to a human so they can recognize the identifier.
+      Typed access to A text string for the identifier that can be displayed to a human so they can recognize the identifier.
     }
     property label_ST : String read GetLabel_ST write SetLabel_ST;
 
@@ -4353,7 +4389,7 @@ Type
     property valueST : String read GetValueST write SetValueST;
 
     {@member period
-      Time period during which identifier was valid for use.
+      Time period during which identifier is/was valid for use.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
 
@@ -4496,11 +4532,11 @@ Type
     property frequencyST : String read GetFrequencyST write SetFrequencyST;
 
     {@member when
-      Identifies the occurrence of daily life that determine timing.
+      Identifies the occurrence of daily life that determines timing.
     }
     property when : TFhirEnum read FWhen write SetWhen;
     {@member whenST
-      Typed access to Identifies the occurrence of daily life that determine timing.
+      Typed access to Identifies the occurrence of daily life that determines timing.
     }
     property whenST : TFhirEventTiming read GetWhenST write SetWhenST;
 
@@ -4532,11 +4568,11 @@ Type
     property countST : String read GetCountST write SetCountST;
 
     {@member end_
-      When to stop repeats.
+      When to stop repeating the schedule.
     }
     property end_ : TFhirDateTime read FEnd_ write SetEnd_;
     {@member end_ST
-      Typed access to When to stop repeats.
+      Typed access to When to stop repeating the schedule.
     }
     property end_ST : TDateAndTime read GetEnd_ST write SetEnd_ST;
 
@@ -4623,7 +4659,7 @@ Type
 
 
   {@Class TFhirSchedule : TFhirType
-    A schedule that specifies an event that may occur multiple times. Schedules are not used for recording when things did happen, but when they are expected or requested to occur.
+    Specifies an event that may occur multiple times. Schedules are used for to reord when things are expected or requested to occur.
   }
   {!.Net HL7Connect.Fhir.Schedule}
   TFhirSchedule = class (TFhirType)
@@ -4736,7 +4772,7 @@ Type
 
 
   {@Class TFhirContact : TFhirType
-    All kinds of technology mediated contact details for a person or organisation, including telephone, email, etc.
+    All kinds of technology mediated contact details for a person or organization, including telephone, email, etc.
   }
   {!.Net HL7Connect.Fhir.Contact}
   TFhirContact = class (TFhirType)
@@ -4786,11 +4822,11 @@ Type
     property valueST : String read GetValueST write SetValueST;
 
     {@member use
-      Identifies the context for the address.
+      Identifies the purpose for the address.
     }
     property use : TFhirEnum read FUse write SetUse;
     {@member useST
-      Typed access to Identifies the context for the address.
+      Typed access to Identifies the purpose for the address.
     }
     property useST : TFhirContactUse read GetUseST write SetUseST;
 
@@ -4882,7 +4918,7 @@ Type
 
 
   {@Class TFhirAddress : TFhirType
-    There is a variety of postal address formats defined around the world. This format defines a superset that is the basis for addresses all around the world.
+    There is a variety of postal address formats defined around the world. This format defines a superset that is the basis for all addresses around the world.
   }
   {!.Net HL7Connect.Fhir.Address}
   TFhirAddress = class (TFhirType)
@@ -4927,11 +4963,11 @@ Type
     {!script show}
   published
     {@member use
-      The use of this address.
+      The purpose of this address.
     }
     property use : TFhirEnum read FUse write SetUse;
     {@member useST
-      Typed access to The use of this address.
+      Typed access to The purpose of this address.
     }
     property useST : TFhirAddressUse read GetUseST write SetUseST;
 
@@ -4978,11 +5014,11 @@ P.O. Box number, delivery hints, and similar address information.
     property zipST : String read GetZipST write SetZipST;
 
     {@member country
-      Country. ISO 3166 3 letter codes can be used in place of a full country name.
+      Country - a nation as commonly understood or generally accepted.
     }
     property country : TFhirString read FCountry write SetCountry;
     {@member countryST
-      Typed access to Country. ISO 3166 3 letter codes can be used in place of a full country name.
+      Typed access to Country - a nation as commonly understood or generally accepted.
     }
     property countryST : String read GetCountryST write SetCountryST;
 
@@ -5124,22 +5160,22 @@ P.O. Box number, delivery hints, and similar address information.
     property textST : String read GetTextST write SetTextST;
 
     {@member familyList
-      Family name, this is the name that links to the genealogy. In some cultures (e.g. Eritrea) the family name of a son is the first name of his father.
+      The part of a name that links to the genealogy. In some cultures (e.g. Eritrea) the family name of a son is the first name of his father.
     }
     property familyList : TFhirStringList read FFamilyList;
 
     {@member givenList
-      Given name. NOTE: Not to be called "first name" since given names do not always come first.
+      Given name.
     }
     property givenList : TFhirStringList read FGivenList;
 
     {@member prefixList
-      Part of the name that is acquired as a title due to academic, legal, employment or nobility status, etc. and that comes at the start of the name.
+      Part of the name that is acquired as a title due to academic, legal, employment or nobility status, etc. and that appears at the start of the name.
     }
     property prefixList : TFhirStringList read FPrefixList;
 
     {@member suffixList
-      Part of the name that is acquired as a title due to academic, legal, employment or nobility status, etc. and that comes at the end of the name.
+      Part of the name that is acquired as a title due to academic, legal, employment or nobility status, etc. and that appears at the end of the name.
     }
     property suffixList : TFhirStringList read FSuffixList;
 
@@ -5264,29 +5300,28 @@ Const
   CODES_TFhirCompositionStatus : Array[TFhirCompositionStatus] of String = ('', 'preliminary', 'final', 'appended', 'amended', 'entered in error');
   CODES_TFhirCompositionAttestationMode : Array[TFhirCompositionAttestationMode] of String = ('', 'personal', 'professional', 'legal', 'official');
   CODES_TFhirValuesetStatus : Array[TFhirValuesetStatus] of String = ('', 'draft', 'active', 'retired');
-  CODES_TFhirConceptEquivalence : Array[TFhirConceptEquivalence] of String = ('', 'equal', 'equivalent', 'wider', 'narrower', 'inexact', 'unmatched', 'disjoint');
+  CODES_TFhirConceptEquivalence : Array[TFhirConceptEquivalence] of String = ('', 'equal', 'equivalent', 'wider', 'subsumes', 'narrower', 'specialises', 'inexact', 'unmatched', 'disjoint');
   CODES_TFhirConditionStatus : Array[TFhirConditionStatus] of String = ('', 'provisional', 'working', 'confirmed', 'refuted');
   CODES_TFhirConditionRelationshipType : Array[TFhirConditionRelationshipType] of String = ('', 'due-to', 'following');
   CODES_TFhirConformanceStatementStatus : Array[TFhirConformanceStatementStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TFhirRestfulConformanceMode : Array[TFhirRestfulConformanceMode] of String = ('', 'client', 'server');
   CODES_TFhirTypeRestfulOperation : Array[TFhirTypeRestfulOperation] of String = ('', 'read', 'vread', 'update', 'delete', 'history-instance', 'validate', 'history-type', 'create', 'search-type');
-  CODES_TFhirSearchParamType : Array[TFhirSearchParamType] of String = ('', 'number', 'date', 'string', 'token', 'reference', 'composite');
+  CODES_TFhirSearchParamType : Array[TFhirSearchParamType] of String = ('', 'number', 'date', 'string', 'token', 'reference', 'composite', 'quantity');
   CODES_TFhirSystemRestfulOperation : Array[TFhirSystemRestfulOperation] of String = ('', 'transaction', 'search-system', 'history-system');
   CODES_TFhirMessageSignificanceCategory : Array[TFhirMessageSignificanceCategory] of String = ('', 'Consequence', 'Currency', 'Notification');
   CODES_TFhirMessageConformanceEventMode : Array[TFhirMessageConformanceEventMode] of String = ('', 'sender', 'receiver');
   CODES_TFhirDocumentMode : Array[TFhirDocumentMode] of String = ('', 'producer', 'consumer');
-  CODES_TFhirDiagnosticOrderStatus : Array[TFhirDiagnosticOrderStatus] of String = ('', 'requested', 'received', 'accepted', 'in progress', 'review', 'completed', 'on hold', 'rejected', 'failed');
-  CODES_TFhirDiagnosticOrderPriority : Array[TFhirDiagnosticOrderPriority] of String = ('', 'normal', 'urgent', 'stat');
+  CODES_TFhirDiagnosticOrderStatus : Array[TFhirDiagnosticOrderStatus] of String = ('', 'requested', 'received', 'accepted', 'in progress', 'review', 'completed', 'suspended', 'rejected', 'failed');
+  CODES_TFhirDiagnosticOrderPriority : Array[TFhirDiagnosticOrderPriority] of String = ('', 'routine', 'urgent', 'stat', 'asap');
   CODES_TFhirDiagnosticReportStatus : Array[TFhirDiagnosticReportStatus] of String = ('', 'registered', 'partial', 'final', 'corrected', 'amended', 'appended', 'cancelled', 'entered in error');
   CODES_TFhirDocumentReferenceStatus : Array[TFhirDocumentReferenceStatus] of String = ('', 'current', 'superceded', 'entered in error');
   CODES_TFhirDocumentRelationshipType : Array[TFhirDocumentRelationshipType] of String = ('', 'replaces', 'transforms', 'signs', 'appends');
   CODES_TFhirEncounterState : Array[TFhirEncounterState] of String = ('', 'planned', 'in progress', 'onleave', 'finished', 'cancelled');
   CODES_TFhirEncounterClass : Array[TFhirEncounterClass] of String = ('', 'inpatient', 'outpatient', 'ambulatory', 'emergency', 'home', 'field', 'daytime', 'virtual');
-  CODES_TFhirGroupType : Array[TFhirGroupType] of String = ('', 'person', 'animal', 'device', 'medication', 'substance');
+  CODES_TFhirGroupType : Array[TFhirGroupType] of String = ('', 'person', 'animal', 'practitioner', 'device', 'medication', 'substance');
   CODES_TFhirImagingModality : Array[TFhirImagingModality] of String = ('', 'AR', 'BMD', 'BDUS', 'EPS', 'CR', 'CT', 'DX', 'ECG', 'ES', 'XC', 'GM', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'LEN', 'MR', 'MG', 'NM', 'OAM', 'OCT', 'OPM', 'OP', 'OPR', 'OPT', 'OPV', 'PX', 'PT', 'RF', 'RG', 'SM', 'SRF', 'US', 'VA', 'XA');
   CODES_TFhirInstanceAvailability : Array[TFhirInstanceAvailability] of String = ('', 'ONLINE', 'OFFLINE', 'NEARLINE', 'UNAVAILABLE');
   CODES_TFhirModality : Array[TFhirModality] of String = ('', 'AR', 'AU', 'BDUS', 'BI', 'BMD', 'CR', 'CT', 'DG', 'DX', 'ECG', 'EPS', 'ES', 'GM', 'HC', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'KO', 'LEN', 'LS', 'MG', 'MR', 'NM', 'OAM', 'OCT', 'OP', 'OPM', 'OPT', 'OPV', 'OT', 'PR', 'PT', 'PX', 'REG', 'RF', 'RG', 'RTDOSE', 'RTIMAGE', 'RTPLAN', 'RTRECORD', 'RTSTRUCT', 'SEG', 'SM', 'SMR', 'SR', 'SRF', 'TG', 'US', 'VA', 'XA', 'XC');
-  CODES_TFhirImmunizationForecastStatus : Array[TFhirImmunizationForecastStatus] of String = ('', 'DUE');
   CODES_TFhirListMode : Array[TFhirListMode] of String = ('', 'working', 'snapshot', 'changes');
   CODES_TFhirLocationStatus : Array[TFhirLocationStatus] of String = ('', 'active', 'suspended', 'inactive');
   CODES_TFhirLocationMode : Array[TFhirLocationMode] of String = ('', 'instance', 'kind');
@@ -5298,8 +5333,9 @@ Const
   CODES_TFhirResponseCode : Array[TFhirResponseCode] of String = ('', 'ok', 'transient-error', 'fatal-error');
   CODES_TFhirObservationStatus : Array[TFhirObservationStatus] of String = ('', 'registered', 'preliminary', 'final', 'amended', 'cancelled', 'entered in error');
   CODES_TFhirObservationReliability : Array[TFhirObservationReliability] of String = ('', 'ok', 'ongoing', 'early', 'questionable', 'calibrating', 'error', 'unknown');
+  CODES_TFhirObservationRelationshiptypes : Array[TFhirObservationRelationshiptypes] of String = ('', 'has-component', 'has-member', 'derived-from', 'sequel-to', 'replaces', 'qualified-by', 'interfered-by');
   CODES_TFhirIssueSeverity : Array[TFhirIssueSeverity] of String = ('', 'fatal', 'error', 'warning', 'information');
-  CODES_TFhirOrderOutcomeCode : Array[TFhirOrderOutcomeCode] of String = ('', 'pending', 'review', 'rejected', 'error', 'accepted', 'cancelled', 'aborted', 'complete');
+  CODES_TFhirOrderOutcomeCode : Array[TFhirOrderOutcomeCode] of String = ('', 'pending', 'review', 'rejected', 'error', 'accepted', 'cancelled', 'replaced', 'aborted', 'complete');
   CODES_TFhirLinkType : Array[TFhirLinkType] of String = ('', 'replace', 'refer', 'seealso');
   CODES_TFhirProcedureRelationshipType : Array[TFhirProcedureRelationshipType] of String = ('', 'caused-by', 'because-of');
   CODES_TFhirResourceProfileStatus : Array[TFhirResourceProfileStatus] of String = ('', 'draft', 'active', 'retired');
@@ -5319,7 +5355,9 @@ Const
   CODES_TFhirObjectRole : Array[TFhirObjectRole] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24');
   CODES_TFhirObjectLifecycle : Array[TFhirObjectLifecycle] of String = ('', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15');
   CODES_TFhirHierarchicalRelationshipType : Array[TFhirHierarchicalRelationshipType] of String = ('', 'parent', 'child');
-  CODES_TFhirFilterOperator : Array[TFhirFilterOperator] of String = ('', '=', 'is-a', 'is-not-a', 'regex');
+  CODES_TFhirValuesetSupplyStatus : Array[TFhirValuesetSupplyStatus] of String = ('', 'requested', 'dispensed', 'received', 'failed', 'cancelled');
+  CODES_TFhirValuesetSupplyDispenseStatus : Array[TFhirValuesetSupplyDispenseStatus] of String = ('', 'in progress', 'dispensed', 'abandoned');
+  CODES_TFhirFilterOperator : Array[TFhirFilterOperator] of String = ('', '=', 'is-a', 'is-not-a', 'regex', 'in', 'not in');
 
 Function TFhirNarrativeStatusListAsInteger(aSet : TFhirNarrativeStatusList) : Integer; overload;
 Function IntegerAsTFhirNarrativeStatusList(i : integer) : TFhirNarrativeStatusList; overload;
@@ -5411,8 +5449,6 @@ Function TFhirInstanceAvailabilityListAsInteger(aSet : TFhirInstanceAvailability
 Function IntegerAsTFhirInstanceAvailabilityList(i : integer) : TFhirInstanceAvailabilityList; overload;
 Function TFhirModalityListAsInteger(aSet : TFhirModalityList) : Integer; overload;
 Function IntegerAsTFhirModalityList(i : integer) : TFhirModalityList; overload;
-Function TFhirImmunizationForecastStatusListAsInteger(aSet : TFhirImmunizationForecastStatusList) : Integer; overload;
-Function IntegerAsTFhirImmunizationForecastStatusList(i : integer) : TFhirImmunizationForecastStatusList; overload;
 Function TFhirListModeListAsInteger(aSet : TFhirListModeList) : Integer; overload;
 Function IntegerAsTFhirListModeList(i : integer) : TFhirListModeList; overload;
 Function TFhirLocationStatusListAsInteger(aSet : TFhirLocationStatusList) : Integer; overload;
@@ -5435,6 +5471,8 @@ Function TFhirObservationStatusListAsInteger(aSet : TFhirObservationStatusList) 
 Function IntegerAsTFhirObservationStatusList(i : integer) : TFhirObservationStatusList; overload;
 Function TFhirObservationReliabilityListAsInteger(aSet : TFhirObservationReliabilityList) : Integer; overload;
 Function IntegerAsTFhirObservationReliabilityList(i : integer) : TFhirObservationReliabilityList; overload;
+Function TFhirObservationRelationshiptypesListAsInteger(aSet : TFhirObservationRelationshiptypesList) : Integer; overload;
+Function IntegerAsTFhirObservationRelationshiptypesList(i : integer) : TFhirObservationRelationshiptypesList; overload;
 Function TFhirIssueSeverityListAsInteger(aSet : TFhirIssueSeverityList) : Integer; overload;
 Function IntegerAsTFhirIssueSeverityList(i : integer) : TFhirIssueSeverityList; overload;
 Function TFhirOrderOutcomeCodeListAsInteger(aSet : TFhirOrderOutcomeCodeList) : Integer; overload;
@@ -5477,6 +5515,10 @@ Function TFhirObjectLifecycleListAsInteger(aSet : TFhirObjectLifecycleList) : In
 Function IntegerAsTFhirObjectLifecycleList(i : integer) : TFhirObjectLifecycleList; overload;
 Function TFhirHierarchicalRelationshipTypeListAsInteger(aSet : TFhirHierarchicalRelationshipTypeList) : Integer; overload;
 Function IntegerAsTFhirHierarchicalRelationshipTypeList(i : integer) : TFhirHierarchicalRelationshipTypeList; overload;
+Function TFhirValuesetSupplyStatusListAsInteger(aSet : TFhirValuesetSupplyStatusList) : Integer; overload;
+Function IntegerAsTFhirValuesetSupplyStatusList(i : integer) : TFhirValuesetSupplyStatusList; overload;
+Function TFhirValuesetSupplyDispenseStatusListAsInteger(aSet : TFhirValuesetSupplyDispenseStatusList) : Integer; overload;
+Function IntegerAsTFhirValuesetSupplyDispenseStatusList(i : integer) : TFhirValuesetSupplyDispenseStatusList; overload;
 Function TFhirFilterOperatorListAsInteger(aSet : TFhirFilterOperatorList) : Integer; overload;
 Function IntegerAsTFhirFilterOperatorList(i : integer) : TFhirFilterOperatorList; overload;
 
@@ -5980,7 +6022,7 @@ end;
 procedure TFhirDateTime.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirDateTime(oSource).Value;
+  FValue := TFhirDateTime(oSource).Value.Link;
 end;
 
 function TFhirDateTime.Link : TFhirDateTime;
@@ -6119,7 +6161,7 @@ end;
 procedure TFhirDate.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirDate(oSource).Value;
+  FValue := TFhirDate(oSource).Value.Link;
 end;
 
 function TFhirDate.Link : TFhirDate;
@@ -6943,7 +6985,7 @@ end;
 procedure TFhirInstant.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirInstant(oSource).Value;
+  FValue := TFhirInstant(oSource).Value.Link;
 end;
 
 function TFhirInstant.Link : TFhirInstant;
@@ -12648,33 +12690,6 @@ begin
  end;
 
 
-function TFhirImmunizationForecastStatusListAsInteger(aSet : TFhirImmunizationForecastStatusList) : Integer;
-var
-  a : TFhirImmunizationForecastStatus;
-begin
-  result := 0;
-  for a := low(TFhirImmunizationForecastStatus) to high(TFhirImmunizationForecastStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirImmunizationForecastStatusList(i : Integer) : TFhirImmunizationForecastStatusList;
-var
-  aLoop : TFhirImmunizationForecastStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirImmunizationForecastStatus) to high(TFhirImmunizationForecastStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirListModeListAsInteger(aSet : TFhirListModeList) : Integer;
 var
   a : TFhirListMode;
@@ -12964,6 +12979,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirObservationReliability) to high(TFhirObservationReliability) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirObservationRelationshiptypesListAsInteger(aSet : TFhirObservationRelationshiptypesList) : Integer;
+var
+  a : TFhirObservationRelationshiptypes;
+begin
+  result := 0;
+  for a := low(TFhirObservationRelationshiptypes) to high(TFhirObservationRelationshiptypes) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirObservationRelationshiptypesList(i : Integer) : TFhirObservationRelationshiptypesList;
+var
+  aLoop : TFhirObservationRelationshiptypes;
+begin
+  result := [];
+  for aLoop := low(TFhirObservationRelationshiptypes) to high(TFhirObservationRelationshiptypes) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -13531,6 +13573,60 @@ var
 begin
   result := [];
   for aLoop := low(TFhirHierarchicalRelationshipType) to high(TFhirHierarchicalRelationshipType) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirValuesetSupplyStatusListAsInteger(aSet : TFhirValuesetSupplyStatusList) : Integer;
+var
+  a : TFhirValuesetSupplyStatus;
+begin
+  result := 0;
+  for a := low(TFhirValuesetSupplyStatus) to high(TFhirValuesetSupplyStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirValuesetSupplyStatusList(i : Integer) : TFhirValuesetSupplyStatusList;
+var
+  aLoop : TFhirValuesetSupplyStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirValuesetSupplyStatus) to high(TFhirValuesetSupplyStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirValuesetSupplyDispenseStatusListAsInteger(aSet : TFhirValuesetSupplyDispenseStatusList) : Integer;
+var
+  a : TFhirValuesetSupplyDispenseStatus;
+begin
+  result := 0;
+  for a := low(TFhirValuesetSupplyDispenseStatus) to high(TFhirValuesetSupplyDispenseStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirValuesetSupplyDispenseStatusList(i : Integer) : TFhirValuesetSupplyDispenseStatusList;
+var
+  aLoop : TFhirValuesetSupplyDispenseStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirValuesetSupplyDispenseStatus) to high(TFhirValuesetSupplyDispenseStatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

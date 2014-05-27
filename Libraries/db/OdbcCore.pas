@@ -454,7 +454,7 @@ Type
   TCommonRec = Record
     Next: TCommonPtr;
     FValue: SQLPOINTER;
-    FSize: SQLINTEGERPtr;
+    FSize: SQLLENPtr;
   End;
 
   { TParamPtr }
@@ -462,7 +462,7 @@ Type
   TParamRec = Record
     Next: TParamPtr;
     FValue: SQLPOINTER;
-    FSize: SQLINTEGERPtr;
+    FSize: SQLLENPtr;
     FType: SQLSMALLINT;
     FSql: SQLSMALLINT;
 
@@ -488,7 +488,7 @@ Type
   TColRec = Record
     Next: TColPtr;
     FValue: SQLPOINTER;
-    FSize: SQLINTEGERPtr;
+    FSize: SQLLENPtr;
     FType: SQLSMALLINT;
     FSql: SQLSMALLINT;
 
@@ -554,7 +554,7 @@ Type
     FBlobs: Boolean;
     FColumnsBound: Boolean;
     FBindBookmarks: Boolean;
-    FBookmarkSize: SQLINTEGER;
+    FBookmarkSize: SQLLEN;
     FPrepared: Boolean;
     FExecuted: Boolean;
     FParamType: SQLSMALLINT;
@@ -616,7 +616,7 @@ Type
                             ParamType: SQLSMALLINT;
                             ParamValue: SQLPOINTER;
                             SqlType: SQLSMALLINT;
-                            ParameterSize: SQLUINTEGER;
+                            ParameterSize: SQLULEN;
                             DecimalDigits: SQLSMALLINT;
                             Nullable: SQLSMALLINT;
                             Bulk: Integer);
@@ -731,7 +731,7 @@ Type
     Function GetColCount: SQLSMALLINT;
     Function GetRowCount: SQLINTEGER;
     Function GetRowsFetched: SQLUINTEGER;
-    Function GetRowsAffected: SQLINTEGER;
+    Function GetRowsAffected: SQLULEN;
     Procedure SetConcurrencyType(AConcurrencyType: SQLUINTEGER);
     Procedure SetCursorType(ACursorType: SQLUINTEGER);
     Procedure SetRowSetSize(ARowSetSize: SQLUINTEGER);
@@ -1021,7 +1021,7 @@ Type
     Function DoRowCount: Integer; Virtual;
     Procedure DescribeParam(Param: SQLUSMALLINT;
                             Var SqlType: SQLSMALLINT;
-                            Var ParameterSize: SQLUINTEGER;
+                            Var ParameterSize: SQLULEN;
                             Var DecimalDigits: SQLSMALLINT;
                             Var Nullable: SQLSMALLINT;
                             Core: Boolean);
@@ -1278,13 +1278,13 @@ Type
     Property ParamNames: TStringList Read GetParamNames;
     Property ColNames: TStringList Read GetColNames;
     Property Bookmark: SQLPOINTER Read GetBookmark Write SetBookmark;
-    Property BookmarkSize: SQLINTEGER Read FBookmarkSize;
+    Property BookmarkSize: SQLLEN Read FBookmarkSize;
     Property QueryTimeOut: SQLUINTEGER Read GetQueryTimeOut Write SetQueryTimeOut;
     Property MaxRows: SQLUINTEGER Read GetMaxRows Write SetMaxRows;
     Property ColCount: SQLSMALLINT Read GetColCount;
     Property RowCount: SQLINTEGER Read GetRowCount;
     Property RowsFetched: SQLUINTEGER Read GetRowsFetched;
-    Property RowsAffected: SQLINTEGER Read GetRowsAffected;
+    Property RowsAffected: SQLULEN Read GetRowsAffected;
 
     Property ColString[Col: SQLUSMALLINT]: String Read GetColString Write SetColString;
     Property ColSingle[Col: SQLUSMALLINT]: Single Read GetColSingle Write SetColSingle;
@@ -1986,7 +1986,7 @@ End;
 Function OffsetPointer(P: Pointer;
                        Ofs: LongInt): Pointer;
 Begin
-  Result:= Pointer(LongInt(P)+Ofs);
+  Result:= Pointer(NativeUInt(P)+Ofs);
 End;
 
 Function OffsetRow(P: Pointer;
@@ -2496,58 +2496,6 @@ Begin
   FError.Free;
 End;
 
-Function THenv.Init: Boolean;
-Var
-  LConnectionPooling, AConnectionPooling: SQLUINTEGER;
-Begin
-  Log(1, 'THenv.Init');
-
-  If FActive Then
-  Begin
-    Init:= FActive;
-    Exit;
-  End;
-
-  If FConnectionPooling <> cpDefault Then
-  Begin
-    { Set Connection Pooling }
-    AConnectionPooling:= SQL_CP_OFF;
-    Case FConnectionPooling Of
-      cpOff:
-        AConnectionPooling:= SQL_CP_OFF;
-      cpOnePerDriver:
-        AConnectionPooling:= SQL_CP_ONE_PER_DRIVER;
-      cpOnePerEnv:
-        AConnectionPooling:= SQL_CP_ONE_PER_HENV;
-    End;
-
-    FRetCode:= SQLGetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, @LConnectionPooling, 0, Nil);
-    If FError.Success(FRetCode) And (LConnectionPooling <> AConnectionPooling) Then
-    Begin
-      FRetCode:= SQLSetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, Pointer(AConnectionPooling), 0);
-      If Not FError.Success(FRetCode) Then
-        FError.RaiseError(Self, FRetCode);
-    End;
-  End;
-
-  { Create Handle }
-  FRetCode:= SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), @FHenv);
-  If Not FError.Success(FRetCode) Then
-    FError.RaiseError(Self, FRetCode);
-
-  { Set ODBC Version }
-  FRetCode:= SQLSetEnvAttr(FHenv, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0);
-  If Not FError.Success(FRetCode) Then
-    FError.RaiseError(Self, FRetCode);
-
-  { Set Active Field }
-  FActive:= True;
-
-  Result:= FActive;
-
-  Inherited Init;
-End;
-
 Function THenv.Terminate: Boolean;
 Begin
   Log(1, 'THenv.Terminate');
@@ -2635,7 +2583,7 @@ End;
 
 Procedure THdbc.SetCursorLib(ACursorLib: SQLUINTEGER);
 Var
-  LCursorLib: SQLUINTEGER;
+  LCursorLib: SQLULEN;
 Begin
   Log(1, 'THdbc.SetCursorLib');
 
@@ -4029,7 +3977,7 @@ End;
 
 Function THstmt.GetBookmark: SQLPOINTER;
 Var
-  StringLength: SQLINTEGER;
+  StringLength: SQLLEN;
 Begin
   Log(1, 'THstmt.GetBookmark');
 
@@ -4598,13 +4546,17 @@ Begin
   Result:= FNumRows;
 End;
 
-Function THstmt.GetRowsAffected: SQLINTEGER;
+Function THstmt.GetRowsAffected: SQLULEN;
 Begin
   Log(1, 'THstmt.NumRowsAffected');
 
   FRetCode:= SQLRowCount(FHstmt, @Result);
   If Not GlobalHenv.Error.Success(FRetCode) Then
     GlobalHenv.Error.RaiseError(Self, FRetCode);
+  {$IFDEF WIN64}
+  if result = $FFFFFFFFFFFFFFFF then
+    result := 0;
+  {$ENDIF}
 End;
 
 Function THstmt.ParseSQL: String;
@@ -4783,14 +4735,14 @@ Procedure THstmt.BindParamMain(Param: SQLUSMALLINT;
                                ParamType: SQLSMALLINT;
                                ParamValue: SQLPOINTER;
                                SqlType: SQLSMALLINT;
-                               ParameterSize: SQLUINTEGER;
+                               ParameterSize: SQLULEN;
                                DecimalDigits: SQLSMALLINT;
                                Nullable: SQLSMALLINT;
                                Bulk: Integer);
 Var
   i: Integer;
   temp: TParamPtr;
-  BufferLength: SQLINTEGER;
+  BufferLength: SQLLEN;
   ParamName: String;
 
   Function BlobPlacementByParts: Boolean;
@@ -4947,7 +4899,7 @@ End;
 
 Procedure THstmt.DescribeParam(Param: SQLUSMALLINT;
                                Var SqlType: SQLSMALLINT;
-                               Var ParameterSize: SQLUINTEGER;
+                               Var ParameterSize: SQLULEN;
                                Var DecimalDigits: SQLSMALLINT;
                                Var Nullable: SQLSMALLINT;
                                Core: Boolean);
@@ -5010,7 +4962,7 @@ Procedure THstmt.BindParam(Param: SQLUSMALLINT;
                            ParamValue: SQLPOINTER);
 Var
   SqlType: SQLSMALLINT;
-  ParameterSize: SQLUINTEGER;
+  ParameterSize: SQLULEN;
   DecimalDigits: SQLSMALLINT;
   Nullable: SQLSMALLINT;
 Begin
@@ -5027,7 +4979,7 @@ Procedure THstmt.BindParam(Param: SQLUSMALLINT;
                            ParamValue: SQLPOINTER;
                            SqlType: SQLSMALLINT);
 Var
-  ParameterSize: SQLUINTEGER;
+  ParameterSize: SQLULEN;
   DecimalDigits: SQLSMALLINT;
   Nullable: SQLSMALLINT;
 Begin
@@ -5043,7 +4995,7 @@ Procedure THstmt.BindParamCore(Param: SQLUSMALLINT;
                                ParamValue: SQLPOINTER;
                                SqlType: SQLSMALLINT);
 Var
-  ParameterSize: SQLUINTEGER;
+  ParameterSize: SQLULEN;
   DecimalDigits: SQLSMALLINT;
   Nullable: SQLSMALLINT;
 Begin
@@ -5060,7 +5012,7 @@ Procedure THstmt.BindParams(Param: SQLUSMALLINT;
                             Bulk: Integer);
 Var
   SqlType: SQLSMALLINT;
-  ParameterSize: SQLUINTEGER;
+  ParameterSize: SQLULEN;
   DecimalDigits: SQLSMALLINT;
   Nullable: SQLSMALLINT;
 Begin
@@ -5711,7 +5663,7 @@ Function THstmt.ColAttrString(Col: SQLUSMALLINT;
                               FieldIdentifier: SQLUSMALLINT): String;
 Var
   CharAttr: NullString;
-  NumAttr: SQLINTEGER;
+  NumAttr: SQLLEN;
   StringLength: SQLSMALLINT;
 Begin
   FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, @CharAttr, SizeOf(CharAttr), @StringLength, @NumAttr);
@@ -5725,7 +5677,7 @@ Function THstmt.ColAttrInteger(Col: SQLUSMALLINT;
                                FieldIdentifier: SQLUSMALLINT): SQLINTEGER;
 Var
   CharAttr: NullString;
-  NumAttr: SQLINTEGER;
+  NumAttr: SQLLEN;
   StringLength: SQLSMALLINT;
 Begin
   FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, @CharAttr, SizeOf(NumAttr), @StringLength, @NumAttr);
@@ -5755,12 +5707,12 @@ Var
   icol: SQLUSMALLINT;
   CType: SQLSMALLINT;
   SqlValue: SQLPOINTER;
-  BufferLength: SQLINTEGER;
+  BufferLength: SQLLEN;
 
   ColumnName: NullString;
   NameLength: SQLSMALLINT;
   SqlType: SQLSMALLINT;
-  ColumnSize: SQLUINTEGER;
+  ColumnSize: SQLULEN;
   DecimalDigits: SQLSMALLINT;
   Nullable: SQLSMALLINT;
 Begin
@@ -6007,7 +5959,7 @@ Var
   icol: SQLUSMALLINT;
   tempCol: TColPtr;
   LongDataLen: String;
-  BufferLength: SQLINTEGER;
+  BufferLength: SQLLEN;
 Begin
   tempCol:= ColRec(1);
   For icol:= 1 To ColCount Do
@@ -6046,12 +5998,12 @@ Function THstmt.FetchCol(Col: SQLUSMALLINT;
                          ColType: SQLSMALLINT;
                          ColStream: TStream): SQLINTEGER;
 Var
-  ColSize: SQLINTEGER;
+  ColSize: SQLLEN;
   Buffer: Pointer;
   BSize: LongInt;
-  TotalSize: LongInt;
+  TotalSize: SQLLEN;
   GCursor: LongInt;
-  temp: SQLINTEGER;
+  temp: SQLLEN;
 Begin
   GetMem(Buffer, FBlobSize+1);
 
@@ -6163,7 +6115,7 @@ End;
 
 Procedure THstmt.DataAtExecution(FList: TCommonPtr);
 Var
-  BSize: LongInt;
+  BSize: SQLLEN;
   temp: TCommonPtr;
   PSize: LongInt;
   PValue: Pointer;
@@ -6432,7 +6384,7 @@ End;
 Procedure THstmt.DetermineTargetTable;
 Var
   CharAttr: NullString;
-  NumAttr: SQLINTEGER;
+  NumAttr: SQLLEN;
   StringLength: SQLSMALLINT;
   Loc: Integer;
 Begin
@@ -8899,6 +8851,61 @@ Begin
   FSkipByPosition:= ASkipByPosition;
 
   UnPrepareHstmts;
+End;
+
+// this is lst so it's optimisation setting doesn't change anything else
+
+{$OPTIMIZATION OFF}
+Function THenv.Init: Boolean;
+Var
+  LConnectionPooling, AConnectionPooling: SQLUINTEGER;
+Begin
+  Log(1, 'THenv.Init');
+
+  If FActive Then
+  Begin
+    Init:= FActive;
+    Exit;
+  End;
+
+  If FConnectionPooling <> cpDefault Then
+  Begin
+    { Set Connection Pooling }
+    AConnectionPooling:= SQL_CP_OFF;
+    Case FConnectionPooling Of
+      cpOff:
+        AConnectionPooling:= SQL_CP_OFF;
+      cpOnePerDriver:
+        AConnectionPooling:= SQL_CP_ONE_PER_DRIVER;
+      cpOnePerEnv:
+        AConnectionPooling:= SQL_CP_ONE_PER_HENV;
+    End;
+
+    FRetCode:= SQLGetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, @LConnectionPooling, 0, Nil);
+    If FError.Success(FRetCode) And (LConnectionPooling <> AConnectionPooling) Then
+    Begin
+      FRetCode:= SQLSetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, Pointer(AConnectionPooling), 0);
+      If Not FError.Success(FRetCode) Then
+        FError.RaiseError(Self, FRetCode);
+    End;
+  End;
+
+  { Create Handle }
+  FRetCode:= SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), @FHenv);
+  If Not FError.Success(FRetCode) Then
+    FError.RaiseError(Self, FRetCode);
+
+  { Set ODBC Version }
+  FRetCode:= SQLSetEnvAttr(FHenv, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0);
+  If Not FError.Success(FRetCode) Then
+    FError.RaiseError(Self, FRetCode);
+
+  { Set Active Field }
+  FActive:= True;
+
+  Result:= FActive;
+
+  Inherited Init;
 End;
 
 Initialization
