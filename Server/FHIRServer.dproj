@@ -117,9 +117,10 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <DCC_Define>FHIR-DSTU;$(DCC_Define)</DCC_Define>
         <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -tests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot;</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -223,35 +224,36 @@
         <DCCReference Include="..\Libraries\Support\AdvZipUtilities.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvZipWorkers.pas"/>
         <DCCReference Include="..\Libraries\Support\GUIDSupport.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRBase.pas"/>
         <DCCReference Include="..\Libraries\Support\DecimalSupport.pas"/>
         <DCCReference Include="..\Libraries\Support\DateAndTime.pas"/>
         <DCCReference Include="..\Libraries\Support\KDate.pas"/>
         <DCCReference Include="..\Libraries\Support\HL7V2DateSupport.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRTypes.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRResources.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRComponents.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRParser.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRParserBase.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRConstants.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRSupport.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRAtomFeed.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRBase.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRTypes.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRResources.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRComponents.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRParser.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRParserBase.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRConstants.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRSupport.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRAtomFeed.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRLang.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRUtilities.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRClient.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dev\FHIRBase.pas"/>
         <DCCReference Include="..\Libraries\Support\MsXmlParser.pas"/>
         <DCCReference Include="..\Libraries\Support\XMLBuilder.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvWinInetClients.pas"/>
         <DCCReference Include="..\Libraries\Support\MsXmlBuilder.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvXmlBuilders.pas"/>
         <DCCReference Include="..\Libraries\Support\JSON.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRLang.pas"/>
         <DCCReference Include="..\Libraries\Support\AfsResourceVolumes.pas"/>
         <DCCReference Include="..\Libraries\Support\AfsVolumes.pas"/>
         <DCCReference Include="..\Libraries\Support\AfsStreamManagers.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvObjectMatches.pas"/>
         <DCCReference Include="..\Libraries\Support\RegExpr.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRUtilities.pas"/>
         <DCCReference Include="..\Libraries\Support\TextUtilities.pas"/>
         <DCCReference Include="FHIRTags.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRClient.pas"/>
         <DCCReference Include="FHIROperation.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvIntegerObjectMatches.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvStringObjectMatches.pas"/>
@@ -330,6 +332,8 @@
         <DCCReference Include="FHIRServerConstants.pas"/>
         <DCCReference Include="..\Libraries\tests\DecimalTests.pas"/>
         <DCCReference Include="..\Libraries\tests\UcumTests.pas"/>
+        <DCCReference Include="FHIRServerUtilities.pas"/>
+        <DCCReference Include="SearchProcessor.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -387,7 +391,6 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp190.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>

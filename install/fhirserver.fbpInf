@@ -11,6 +11,14 @@
       <Description>Compile the Server (64)</Description>
       <BuildVersion>0</BuildVersion>
     </action>
+    <action id="{66EC5DEF-36FE-49DF-8A20-6825D30CF9A4}">
+      <Description>Compile the Server (32)</Description>
+      <BuildVersion>0</BuildVersion>
+    </action>
+    <action id="{FC0D9CF9-73CA-4A5F-9D58-6583CF3EC915}">
+      <Description>Compile the Server (64)</Description>
+      <BuildVersion>0</BuildVersion>
+    </action>
   </actions>
   <propertysets/>
   <variables/>
@@ -19,8 +27,8 @@
     <Notes>
       <![CDATA[]]>
     </Notes>
-    <LastBuildRun>00:23:04</LastBuildRun>
-    <LastBuildStart>19/04/2014 8:36:42 AM</LastBuildStart>
+    <LastBuildRun>00:38:19</LastBuildRun>
+    <LastBuildStart>28/05/2014 8:09:27 AM</LastBuildStart>
     <LastBuildState>True</LastBuildState>
   </properties>
 </project>

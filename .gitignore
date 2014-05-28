@@ -16,3 +16,12 @@ bin/*
 
 *.bak
 web/QuestionnaireToHTML.xslt
+*.rsm
+*.rsm
+*.rsm
+Exec/auth.ini
+Exec/local.healthintersections.com.au.key
+Exec/ssl.crt
+Exec/local.healthintersections.com.au.crt
+Exec/ssl.key
+Server/Win64/Debug/FHIRServer.rsm

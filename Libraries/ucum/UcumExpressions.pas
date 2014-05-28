@@ -710,7 +710,7 @@ begin
   Inherited Create;
   Fmodel := oModel;
   Fhandlers := ohandlers;
-  FContext := TSmartDecimalContext.create;
+  FContext := oModel.Context.Link;
   FOne := TUcumFactor.Create(1);
 end;
 
@@ -884,6 +884,7 @@ begin
   result := TUcumCanonical.Create();
   Try
     result.FValue := FContext.value(1).Link;
+    result.FValue.Precision := 24; // there's no question about that precision
     result.FUnit := TUcumTerm.Create;
     if (oTerm.Component <> nil) Then
       Result.Unit_.Component := convertComp(Result, oTerm.Component);

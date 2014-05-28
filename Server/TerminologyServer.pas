@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, IniFiles,
   AdvObjects, AdvStringObjectMatches, AdvStringLists,
   FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
-  TerminologyServices, SnomedServices, LoincServices,
+  TerminologyServices, SnomedServices, LoincServices, UcumServices,
   FHIRValueSetChecker,
   TerminologyServerStore;
 
@@ -82,7 +82,7 @@ begin
   fn := ini.ReadString('snomed', 'cache', '');
   if fn <> '' then
   begin
-    write('Load Snomed');
+    write('Load Snomed from '+fn);
     Snomed := TSnomedServices.Create;
     Snomed.Load(fn);
     writeln(' - done');
@@ -90,9 +90,17 @@ begin
   fn := ini.ReadString('loinc', 'cache', '');
   if fn <> '' then
   begin
-    write('Load Loinc');
+    write('Load Loinc from '+fn);
     Loinc := TLoincServices.Create;
     Loinc.Load(fn);
+    writeln(' - done');
+  end;
+  fn := ini.ReadString('ucum', 'source', '');
+  if fn <> '' then
+  begin
+    write('Load Ucum from '+fn);
+    Ucum := TUcumServices.Create;
+    Ucum.Import(fn);
     writeln(' - done');
   end;
 end;
@@ -409,13 +417,13 @@ begin
               begin
                 map := maps[j];
                 if (map.equivalenceST in [ConceptEquivalenceEqual, ConceptEquivalenceEquivalent, ConceptEquivalenceWider, ConceptEquivalenceInexact]) and
-                  (not isCs {if we'rea value set mapping, we'll just run with all the maps) } or (map.systemST = dest)) then
+                  (not isCs {if we'rea value set mapping, we'll just run with all the maps) } or (map.{$IFDEF FHIR-DSTU}systemST{$ELSE}codeSystemST{$ENDIF} = dest)) then
                 begin
                   ok := true;
                   c := cc.codingList.Append;
-                  c.system := map.system.Clone;
+                  c.system := map.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF}.Clone;
                   c.code := map.code.Clone;
-                  c.displayST := getDisplayForCode(map.systemST, map.codeST);
+                  c.displayST := getDisplayForCode(map.{$IFDEF FHIR-DSTU}systemST{$ELSE}codeSystemST{$ENDIF}, map.codeST);
                   if map.commentsST <> '' then
                     result.hint('terminology-server', 'mapping', '', false, 'Mapping from "'+coding.systemST+'"/"'+coding.codeST+'" to "'+c.systemST+'"/"'+c.codeST+'": '+map.commentsST)
                 end;

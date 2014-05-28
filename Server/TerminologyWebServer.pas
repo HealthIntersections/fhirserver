@@ -17,10 +17,10 @@ Type
     Procedure HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure BuildCsByName(html : THtmlPublisher);
-    Procedure BuildCsByURL(html : THtmlPublisher);
-    Procedure BuildVsByName(html : THtmlPublisher);
-    Procedure BuildVsByURL(html : THtmlPublisher);
+    Procedure BuildCsByName(html : THtmlPublisher; id : String);
+    Procedure BuildCsByURL(html : THtmlPublisher; id : String);
+    Procedure BuildVsByName(html : THtmlPublisher; id : String);
+    Procedure BuildVsByURL(html : THtmlPublisher; id : String);
     function processSnomedForTool(code : String) : String;
   public
     constructor create(server : TTerminologyServer); overload;
@@ -31,6 +31,10 @@ Type
   end;
 
 implementation
+
+uses
+  FHIRParser,
+  FHIRResources;
 
 { TTerminologyWebServer }
 
@@ -59,6 +63,16 @@ begin
 
 end;
 
+function GetId(url, prefix : string) : String;
+begin
+  if length(url) <= length(prefix) then
+    result := ''
+  else
+    result := url.Substring(length(prefix)+1);
+end;
+
+
+
 procedure TTerminologyWebServer.HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   html : THtmlPublisher;
@@ -69,16 +83,16 @@ begin
   try
     html := THtmlPublisher.Create;
     try
-      html.BaseURL := '/tx';
+      html.BaseURL := '';
       html.Lang := request.AcceptLanguage;
       if request.Document.StartsWith('/tx/vs-name') then
-        BuildVsByName(html)
+        BuildVsByName(html, getId(request.Document, '/tx/vs-name'))
       else if request.Document.StartsWith('/tx/vs-uri') then
-        BuildVsByURL(html)
+        BuildVsByURL(html, getId(request.Document, '/tx/vs-uri'))
       else if request.Document.StartsWith('/tx/cs-name') then
-        BuildCsByName(html)
+        BuildCsByName(html, getId(request.Document, '/tx/vs-name'))
       else if request.Document.StartsWith('/tx/cs-uri') then
-        BuildCsByURL(html)
+        BuildCsByURL(html, getId(request.Document, '/tx/vs-uri'))
       else
       begin
         writeln('Tx Server home page');
@@ -116,19 +130,20 @@ begin
   end;
 end;
 
-Procedure TTerminologyWebServer.BuildCsByName(html : THtmlPublisher);
+Procedure TTerminologyWebServer.BuildCsByName(html : THtmlPublisher; id : String);
 var
   list : TAdvStringMatch;
   ts : TStringList;
   i: Integer;
 begin
-  writeln('Tx: CS By Name');
-  html.Header('Terminology Server');
-  html.Heading(2, 'CodeSystems');
-  html.StartList;
+  writeln('Tx: CS By Name '+Id);
   ts := TStringList.Create;
   list := FServer.GetCodeSystemList;
   try
+    html.Header('Terminology Server');
+    html.Heading(2, 'CodeSystems');
+    html.StartList;
+
     for i := 0 to list.Count - 1 do
       ts.AddObject(list.ValueByIndex[i], TObject(i));
     ts.sort;
@@ -145,19 +160,19 @@ begin
   html.EndList;
 end;
 
-Procedure TTerminologyWebServer.BuildCsByURL(html : THtmlPublisher);
+Procedure TTerminologyWebServer.BuildCsByURL(html : THtmlPublisher; id : String);
 var
   list : TAdvStringMatch;
   ts : TStringList;
   i: Integer;
 begin
-  writeln('Tx: CS By URL');
-  html.Header('Terminology Server');
-  html.Heading(2, 'Code Systems (by URL)');
-  html.StartList;
+  writeln('Tx: CS By URL '+Id);
   ts := TStringList.Create;
   list := FServer.GetCodeSystemList;
   try
+    html.Header('Terminology Server');
+    html.Heading(2, 'Code Systems (by URL)');
+    html.StartList;
     for i := 0 to list.Count - 1 do
       ts.AddObject(list.KeyByIndex[i], TObject(i));
     ts.sort;
@@ -175,19 +190,19 @@ begin
   html.EndList;
 end;
 
-Procedure TTerminologyWebServer.BuildVsByName(html : THtmlPublisher);
+Procedure TTerminologyWebServer.BuildVsByName(html : THtmlPublisher; id : String);
 var
   list : TAdvStringMatch;
   ts : TStringList;
   i: Integer;
 begin
-  writeln('Tx: VS By Name');
-  html.Header('Terminology Server');
-  html.Heading(2, 'Value Sets (By Name)');
-  html.StartList;
+  writeln('Tx: VS By Name '+Id);
   ts := TStringList.Create;
   list := FServer.GetValueSetList;
   try
+    html.Header('Terminology Server');
+    html.Heading(2, 'Value Sets (By Name)');
+    html.StartList;
     for i := 0 to list.Count - 1 do
       ts.AddObject(list.ValueByIndex[i], TObject(i));
     ts.sort;
@@ -204,32 +219,58 @@ begin
   html.EndList;
 end;
 
-Procedure TTerminologyWebServer.BuildVsByURL(html : THtmlPublisher);
+Procedure TTerminologyWebServer.BuildVsByURL(html : THtmlPublisher; id : String);
 var
   list : TAdvStringMatch;
   ts : TStringList;
   i: Integer;
+  vs : TFHIRValueSet;
+  xml : TFHIRXmlComposer;
+  s : TStringStream;
 begin
-  writeln('Tx: VS By URL');
+  writeln('Tx: VS By URL '+Id);
   html.Header('Terminology Server');
   html.Heading(2, 'Value Sets (By URL)');
-  html.StartList;
-  ts := TStringList.Create;
-  list := FServer.GetValueSetList;
-  try
-    for i := 0 to list.Count - 1 do
-      ts.AddObject(list.KeyByIndex[i], TObject(i));
-    ts.sort;
-    for i := 0 to ts.Count - 1 do
+  if (id <> '') then
+  begin
+    vs := FServer.getValueSetByUrl(id);
+    if (vs.text <> nil) and (vs.text.div_ <> nil) then
     begin
-      html.StartListItem;
-      html.URL(ts[i], 'tx/vs/'+ts[i]);
-      html.AddTextPlain(': '+list.ValueByIndex[Integer(ts.Objects[i])]);
-      html.EndListItem;
+      html.writeXhtml(vs.text.div_);
+      html.Line;
     end;
-  finally
-    list.Free;
-    ts.Free;
+    s := TStringStream.Create;
+    xml := TFHIRXmlComposer.Create('en');
+    try
+      xml.Compose(s, '', '', vs, true);
+      html.startPre;
+      html.AddTextPlain(s.DataString);
+      html.endPre;
+    finally
+      xml.Free;
+      s.Free;
+    end;
+  end
+  else
+  begin
+    ts := TStringList.Create;
+    list := FServer.GetValueSetList;
+    try
+      html.StartList;
+      for i := 0 to list.Count - 1 do
+        ts.AddObject(list.KeyByIndex[i], TObject(i));
+      ts.sort;
+      for i := 0 to ts.Count - 1 do
+      begin
+        html.StartListItem;
+        html.URL(ts[i], 'vs-uri/'+EncodeMime(ts[i]));
+        html.AddTextPlain(': '+list.ValueByIndex[Integer(ts.Objects[i])]);
+        html.EndListItem;
+      end;
+    finally
+      list.Free;
+      ts.Free;
+    end;
   end;
   html.EndList;
 end;

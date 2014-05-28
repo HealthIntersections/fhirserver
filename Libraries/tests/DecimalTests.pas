@@ -26,6 +26,8 @@ Type
     procedure TestInteger(i : integer);
     procedure TestCardinal(i : cardinal);
     procedure TestInt64(i : int64);
+    procedure TestRoundTrip(n1, n2, n3, t : String);
+    procedure TestBoundsCase(v, low, high, ilow, ihigh : String);
   Published
     Class procedure runTests;
 
@@ -33,6 +35,7 @@ Type
     Procedure TestStringSupport;
     Procedure TestAddition;
     Procedure TestMultiplication;
+    Procedure TestBounds;
   End;
 
 Implementation
@@ -209,6 +212,7 @@ begin
     this.TestStringSupport;
     this.TestAddition;
     this.TestMultiplication;
+    this.TestBounds;
   finally
     this.free;
   end;
@@ -288,7 +292,9 @@ begin
   TestDivide('127', '4', '31.75');
   TestDivide('10', '10', '1');
   TestDivide('1', '1', '1');
-  TestDivide('10', '3', '3.3');
+  TestDivide('1', '3', '0.333333333333333333333333');
+  TestDivide('1.0', '3', '0.33');
+  TestDivide('10', '3', '3.33333333333333333333333');
   TestDivide('10.0', '3', '3.33');
   TestDivide('10.00', '3', '3.333');
   TestDivide('10.00', '3.0', '3.3');
@@ -297,7 +303,7 @@ begin
   TestDivide('100001', '10', '10000.1');
   TestDivide('100', '10', '10');
   TestDivide('1', '10', '0.1');
-  TestDivide('1', '15', '0.067');
+  TestDivide('1', '15', '0.0666666666666666666666667');
   TestDivide('1.0', '15', '0.067');
   TestDivide('1.00', '15.0', '0.0667');
   TestDivide('1', '0.1', '10');
@@ -337,11 +343,12 @@ begin
   TestMultiply('2.0', '2.0', '4.0');
   TestMultiply('2.00', '2.0', '4.0');
 
-  TestDivide('10',  '3', '3.3');
   TestDivide('10.0',  '3', '3.33');
   TestDivide('10.00',  '3', '3.333');
   TestDivide('10.00',  '3.0', '3.3');
   TestDivide('10',  '3.0', '3.3');
+
+  TestRoundTrip('1','60', '60', '1');
 end;
 
 procedure TDecimalTests.TestMultiply(s1, s2, s3: String);
@@ -358,6 +365,24 @@ begin
   Finally
     ctxt.Free;
   End;
+end;
+
+procedure TDecimalTests.TestRoundTrip(n1, n2, n3, t: String);
+var
+  ctxt : TSmartDecimalContext;
+  o1, o2, o3, o4: TSmartDecimal;
+begin
+  ctxt := TSmartDecimalContext.create;
+  try
+    o1 := ctxt.Value(n1);
+    o2 := ctxt.Value(n2);
+    o3 := o1.Divide(o2);
+    o4 := o3.Multiply(ctxt.Value(n3));
+    check(o4.AsDecimal = t);
+  Finally
+    ctxt.Free;
+  End;
+
 end;
 
 procedure TDecimalTests.TestDivide(s1, s2, s3: String);
@@ -447,6 +472,33 @@ begin
   TestInt64(High(Cardinal));
   TestInt64(High(int64));
   TestInt64(Low(int64));
+end;
+
+procedure TDecimalTests.TestBounds;
+begin
+  TestBoundsCase('1',      '0.5',   '1.5',  '0.999999999999999999999999',   '1.00000000000000000000001');
+  TestBoundsCase('1.0',   '0.95',  '1.05',  '0.999999999999999999999999',   '1.00000000000000000000001');
+  TestBoundsCase('1.00', '0.995', '1.005',  '0.999999999999999999999999',   '1.00000000000000000000001');
+  TestBoundsCase('0',     '-0.5',   '0.5', '-0.000000000000000000000001',   '0.000000000000000000000001');
+  TestBoundsCase('0.0',  '-0.05',  '0.05', '-0.000000000000000000000001',   '0.000000000000000000000001');
+  TestBoundsCase('-1',    '-1.5',  '-0.5', '-1.000000000000000000000001',  '-0.99999999999999999999999');
+end;
+
+procedure TDecimalTests.TestBoundsCase(v, low, high, ilow, ihigh : String);
+var
+  ctxt : TSmartDecimalContext;
+  o1: TSmartDecimal;
+begin
+  ctxt := TSmartDecimalContext.create;
+  try
+    o1 := ctxt.Value(v);
+    check(o1.upperBound.AsDecimal = high);
+    check(o1.lowerBound.AsDecimal = low);
+//    check(o1.immediateUpperBound.AsDecimal = ihigh);
+//    check(o1.immediateLowerBound.AsDecimal = ilow);
+  Finally
+    ctxt.Free;
+  End;
 end;
 
 procedure TDecimalTests.TestInteger(i: integer);

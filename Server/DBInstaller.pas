@@ -57,6 +57,9 @@ Type
     procedure CreateResourceTypes;
     procedure CreateResourceVersions;
     procedure CreateResourceVersionsTags;
+    procedure CreateSubscriptionQueue;
+    procedure CreateNotificationQueue;
+    procedure CreateOAuthLogins;
     procedure DefineIndexes;
     procedure DefineResourceSpaces;
     procedure DoPostTransactionInstall;
@@ -200,6 +203,39 @@ Begin
 
 End;
 
+procedure TFHIRDatabaseInstaller.CreateNotificationQueue;
+begin
+  FConn.ExecSQL('CREATE TABLE NotificationQueue ( '+#13#10+
+       ' NotificationQueueKey '+   DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' SubscriptionKey '+        DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ResourceVersionKey '+ DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Entered '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' LastTry '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' ErrorCount int                                          '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' Abandoned '+     DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' Handled '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_NotificationQueue', 'NotificationQueueKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'NotificationQueue', 'SubscriptionKey','Ids', 'ResourceKey', 'FK_NotificationQ_SubVerKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'NotificationQueue', 'ResourceVersionKey',    'Versions', 'ResourceVersionKey', 'FK_NotificationQ_ResVerKey'));
+  FConn.ExecSQL('Create INDEX SK_NotificationQueue_Reload ON NotificationQueue (Handled)');
+end;
+
+procedure TFHIRDatabaseInstaller.CreateOAuthLogins;
+begin
+  FConn.ExecSQL('CREATE TABLE OAuthLogins( '+#13#10+
+       ' Id nchar(36) NOT NULL, '+#13#10+
+       ' Client nchar(12) NOT NULL, '+#13#10+
+       ' Scope nchar(255) NOT NULL, '+#13#10+
+       ' Redirect nchar(255) NOT NULL, '+#13#10+
+       ' ClientState nchar(255) NOT NULL, '+#13#10+
+       ' Status int NOT NULL, '+#13#10+
+       ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
+       ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_OAuthLogins', 'Id')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'OAuthLogins', 'SessionKey', 'Sessions', 'SessionKey', 'FK_OUathLogins_SessionKey'));
+end;
+
+
 procedure TFHIRDatabaseInstaller.CreateResourceCompartments;
 begin
   FConn.ExecSQL('CREATE TABLE Compartments( '+#13#10+
@@ -295,6 +331,8 @@ Begin
        ' Summary int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Date '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Type int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Title '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Base '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Link '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' SqlCode '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Searches', 'SearchKey')+') '+CreateTableInfo(FConn.owner.platform));
@@ -308,12 +346,28 @@ Begin
   FConn.ExecSQL('CREATE TABLE SearchEntries( '+#13#10+
        ' SearchKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SortValue nchar(50) '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Search_ResKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_Search_ResVerKey'));
 End;
+
+procedure TFHIRDatabaseInstaller.CreateSubscriptionQueue;
+begin
+  FConn.ExecSQL('CREATE TABLE SubscriptionQueue ( '+#13#10+
+       ' SubscriptionQueueKey '+   DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ResourceKey '+        DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ResourceVersionKey '+ DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Entered '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Handled '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_SubscriptionQueue', 'SubscriptionQueueKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'SubscriptionQueue', 'ResourceKey',        'Ids', 'ResourceKey',             'FK_SubscriptionQ_ResKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'SubscriptionQueue', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_SubscriptionQ_ResVerKey'));
+  FConn.ExecSQL('Create INDEX SK_SubscriptionsQueue_Reload ON SubscriptionQueue (Handled)');
+end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceIndexEntries;
 Begin
@@ -425,6 +479,8 @@ begin
     CreateResourceIndexEntries;
     CreateResourceSearches;
     CreateResourceSearchEntries;
+    CreateSubscriptionQueue;
+    CreateNotificationQueue;
 
     DefineResourceSpaces;
     DefineIndexes;
@@ -450,6 +506,10 @@ begin
         else
           FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
 
+      if meta.hasTable('NotificationQueue') then
+        FConn.DropTable('NotificationQueue');
+      if meta.hasTable('SubscriptionQueue') then
+        FConn.DropTable('SubscriptionQueue');
       if meta.hasTable('SearchEntries') then
         FConn.DropTable('SearchEntries');
       if meta.hasTable('Searches') then

@@ -857,7 +857,7 @@ begin
   assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   assert(AParamName <> '', ASSERT_LOCATION+': name is not valid');
 
-  TEncoding.UTF8.GetBytes(AParamValue);
+  b := TEncoding.UTF8.GetBytes(AParamValue);
   LMem := TIdMemoryStream.Create;
   KeepBoundObj(AParamName, lMem);
   if AParamValue <> '' then

@@ -31,24 +31,26 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$R *.res}
 
+
 {
-todo for connectathon:
-* questionnaire in web interface
-* questionnaire conversion based on concept map
-* review searching conformance
 
 bug list:
+ * multiple duplicate tags
+ * Try dereferencing http://hl7.org/fhir/questionnaire-extensions#answerFormat -- 404
+    Our URLs for extensions are broken
+    They should all be http://hl7.org/fhir/Profile/someid#extension
 
-http://fhir.healthintersections.com.au/open/Patient/C82E147E-6E80-4AF6-97CD-94C4294A3A75/_history
-[10:30:12 AM] Lloyd McKenzie: Atom feed shows <totalResluts>0
-[10:30:57 AM] Lloyd McKenzie: Also, the contained elements declare a <content type="text/xml"/> instead of ""
-
-
-build:
-validator jar not in validation pack
+build validator jar not in validation pack
 
 
-Change record:
+Change record:\
+  3-May 2015
+    * fix string searching - case and accent insensitive
+
+  2-May 2014
+    * fix search / last
+    * rebuild history to work like search (modify search tables too)
+
   19-April 2014
     * add Questionnaire web interface (Lloyd's transform)
     * fix bug indexing patient compartment
@@ -64,6 +66,7 @@ Change record:
 uses
   FastMM4 in '..\Libraries\FMM\FastMM4.pas',
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
+  Windows,
   System.SysUtils,
   FHIRServerApplicationCore in 'FHIRServerApplicationCore.pas',
   FHIRRestServer in 'FHIRRestServer.pas',
@@ -132,35 +135,52 @@ uses
   AdvZipUtilities in '..\Libraries\Support\AdvZipUtilities.pas',
   AdvZipWorkers in '..\Libraries\Support\AdvZipWorkers.pas',
   GUIDSupport in '..\Libraries\Support\GUIDSupport.pas',
-  FHIRBase in '..\Libraries\refplat\FHIRBase.pas',
   DecimalSupport in '..\Libraries\Support\DecimalSupport.pas',
   DateAndTime in '..\Libraries\Support\DateAndTime.pas',
   KDate in '..\Libraries\Support\KDate.pas',
   HL7V2DateSupport in '..\Libraries\Support\HL7V2DateSupport.pas',
-  FHIRTypes in '..\Libraries\refplat\FHIRTypes.pas',
-  FHIRResources in '..\Libraries\refplat\FHIRResources.pas',
-  FHIRComponents in '..\Libraries\refplat\FHIRComponents.pas',
-  FHIRParser in '..\Libraries\refplat\FHIRParser.pas',
-  FHIRParserBase in '..\Libraries\refplat\FHIRParserBase.pas',
-  FHIRConstants in '..\Libraries\refplat\FHIRConstants.pas',
-  FHIRSupport in '..\Libraries\refplat\FHIRSupport.pas',
-  FHIRAtomFeed in '..\Libraries\refplat\FHIRAtomFeed.pas',
+  {$IFDEF FHIR-DSTU}
+  FHIRBase in '..\Libraries\refplat-dstu\FHIRBase.pas',
+  FHIRTypes in '..\Libraries\refplat-dstu\FHIRTypes.pas',
+  FHIRResources in '..\Libraries\refplat-dstu\FHIRResources.pas',
+  FHIRComponents in '..\Libraries\refplat-dstu\FHIRComponents.pas',
+  FHIRParser in '..\Libraries\refplat-dstu\FHIRParser.pas',
+  FHIRParserBase in '..\Libraries\refplat-dstu\FHIRParserBase.pas',
+  FHIRConstants in '..\Libraries\refplat-dstu\FHIRConstants.pas',
+  FHIRSupport in '..\Libraries\refplat-dstu\FHIRSupport.pas',
+  FHIRAtomFeed in '..\Libraries\refplat-dstu\FHIRAtomFeed.pas',
+  FHIRLang in '..\Libraries\refplat-dstu\FHIRLang.pas',
+  FHIRUtilities in '..\Libraries\refplat-dstu\FHIRUtilities.pas',
+  FHIRClient in '..\Libraries\refplat-dstu\FHIRClient.pas',
+  {$ELSE}
+  FHIRBase in '..\Libraries\refplat-dev\FHIRBase.pas',
+  FHIRTypes in '..\Libraries\refplat-dev\FHIRTypes.pas',
+  FHIRResources in '..\Libraries\refplat-dev\FHIRResources.pas',
+  FHIRComponents in '..\Libraries\refplat-dev\FHIRComponents.pas',
+  FHIRParser in '..\Libraries\refplat-dev\FHIRParser.pas',
+  FHIRParserBase in '..\Libraries\refplat-dev\FHIRParserBase.pas',
+  FHIRConstants in '..\Libraries\refplat-dev\FHIRConstants.pas',
+  FHIRSupport in '..\Libraries\refplat-dev\FHIRSupport.pas',
+  FHIRAtomFeed in '..\Libraries\refplat-dev\FHIRAtomFeed.pas',
+  FHIRLang in '..\Libraries\refplat-dev\FHIRLang.pas',
+  FHIRUtilities in '..\Libraries\refplat-dev\FHIRUtilities.pas',
+  FHIRClient in '..\Libraries\refplat-dev\FHIRClient.pas',
+
+  FHIRSubscriptionManager in 'FHIRSubscriptionManager.pas',
+  {$ENDIF }
   MsXmlParser in '..\Libraries\Support\MsXmlParser.pas',
   XMLBuilder in '..\Libraries\Support\XMLBuilder.pas',
   AdvWinInetClients in '..\Libraries\Support\AdvWinInetClients.pas',
   MsXmlBuilder in '..\Libraries\Support\MsXmlBuilder.pas',
   AdvXmlBuilders in '..\Libraries\Support\AdvXmlBuilders.pas',
   JSON in '..\Libraries\Support\JSON.pas',
-  FHIRLang in '..\Libraries\refplat\FHIRLang.pas',
   AfsResourceVolumes in '..\Libraries\Support\AfsResourceVolumes.pas',
   AfsVolumes in '..\Libraries\Support\AfsVolumes.pas',
   AfsStreamManagers in '..\Libraries\Support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\Libraries\Support\AdvObjectMatches.pas',
   RegExpr in '..\Libraries\Support\RegExpr.pas',
-  FHIRUtilities in '..\Libraries\refplat\FHIRUtilities.pas',
   TextUtilities in '..\Libraries\Support\TextUtilities.pas',
   FHIRTags in 'FHIRTags.pas',
-  FHIRClient in '..\Libraries\refplat\FHIRClient.pas',
   FHIROperation in 'FHIROperation.pas',
   AdvIntegerObjectMatches in '..\Libraries\Support\AdvIntegerObjectMatches.pas',
   AdvStringObjectMatches in '..\Libraries\Support\AdvStringObjectMatches.pas',
@@ -238,10 +258,17 @@ uses
   IdSoapBase64 in 'C:\HL7Connect\indysoap\source\IdSoapBase64.pas',
   FHIRServerConstants in 'FHIRServerConstants.pas',
   DecimalTests in '..\Libraries\tests\DecimalTests.pas',
-  UcumTests in '..\Libraries\tests\UcumTests.pas';
+  UcumTests in '..\Libraries\tests\UcumTests.pas',
+  FHIRServerUtilities in 'FHIRServerUtilities.pas',
+  SearchProcessor in 'SearchProcessor.pas';
 
 begin
   try
+    {$IFDEF FHIR-DSTU}
+    SetConsoleTitle('FHIR Server (DSTU)');
+    {$ELSE}
+    SetConsoleTitle('FHIR Server (Dev)');
+    {$ENDIF}
     ExecuteFhirServer;
   except
     on E: Exception do

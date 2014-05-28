@@ -31,12 +31,13 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
-  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport,
-  AdvNames, AdvIntegerObjectMatches, AdvObjects, AdvStringObjectMatches, AdvStringMatches,
+  SysUtils, Classes, IniFiles,
+  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, ParseMap,
+  AdvNames, AdvIntegerObjectMatches, AdvObjects, AdvStringObjectMatches, AdvStringMatches, AdvExclusiveCriticalSections,
   KDBManager, KDBDialects,
   FHIRAtomFeed, FHIRResources, FHIRBase, FHIRTypes, FHIRComponents, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, FHIRUtilities,
+  {$IFNDEF FHIR-DSTU} FHIRSubscriptionManager, {$ENDIF}
   TerminologyServer;
 
 const
@@ -82,7 +83,7 @@ Type
   private
     FDB : TKDBManager;
     FTerminologyServer : TTerminologyServer;
-    FSourceFolder : String; // fodler in which the FHIR specification itself is found
+    FSourceFolder : String; // folder in which the FHIR specification itself is found
     FSessions : TStringList;
     FTags : TAdvNameList;
     FTagsByKey : TAdvIntegerObjectMatch;
@@ -106,21 +107,28 @@ Type
     FBases : TStringList;
     FTotalResourceCount: integer;
     FFormalURL: String;
+    {$IFNDEF FHIR-DSTU}
+    FSubscriptionManager : TSubscriptionManager;
+    {$ENDIF}
 
-    procedure LoadExistingResources;
+    procedure LoadExistingResources(conn : TKDBConnection);
     procedure SaveSecurityEvent(se : TFhirSecurityEvent);
     procedure RecordFhirSession(session: TFhirSession);
     procedure CloseFhirSession(key: integer);
 
+    procedure DoExecuteOperation(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean);
+    function DoExecuteSearch (typekey : integer; compartmentId, compartments : String; params : TParseMap; conn : TKDBConnection): String;
+    function getTypeForKey(key : integer) : TFhirResourceType;
   public
-    constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer);
+    constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile);
     Destructor Destroy; Override;
     Function Link : TFHIRDataStore; virtual;
     procedure CloseAll;
     function GetSession(sCookie : String; var session : TFhirSession; var check : boolean) : boolean;
+    function GetSessionByToken(outerToken : String; var session : TFhirSession) : boolean;
     Function CreateImplicitSession(clientInfo : String) : TFhirSession;
     Procedure EndSession(sCookie, ip : String);
-    function RegisterSession(provider: TFHIRAuthProvider; token, id, name, email, original, expires, ip: String): TFhirSession;
+    function RegisterSession(provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
     procedure MarkSessionChecked(sCookie, sName : String);
     function ProfilesAsOptionList : String;
     function GetFhirUser(namespace, name :String) : TFHIRUser;
@@ -134,8 +142,8 @@ Type
     Function GetNextKey(keytype : TKeyType): Integer;
     procedure RegisterTag(tag : TFHIRAtomCategory; conn : TKDBConnection); overload;
     procedure registerTag(tag: TFhirTag); overload;
-    procedure SeeResource(key : Integer; id : string; resource : TFHIRResource);
-    procedure DropResource(key : Integer; id : string; aType : TFhirResourceType);
+    procedure SeeResource(key, vkey : Integer; id : string; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFhirSession);
+    procedure DropResource(key, vkey : Integer; id : string; aType : TFhirResourceType; indexer : TFhirIndexManager);
     function KeyForTag(scheme, term : String) : Integer;
     Property Validator : TFHIRValidator read FValidator;
     function GetTagByKey(key : integer): TFhirTag;
@@ -150,13 +158,15 @@ Type
     procedure Sweep;
     property FormalURL : String read FFormalURL write FFormalURL;
     function ResourceTypeKeyForName(name : String) : integer;
+    procedure ProcessSubscriptions;
+    function DefaultRights : String;
   end;
 
 
 implementation
 
 uses
-  FHIROperation;
+  FHIROperation, SearchProcessor;
 
 function TagCombine(scheme, term : String): String;
 begin
@@ -183,7 +193,7 @@ begin
   end;
 end;
 
-constructor TFHIRDataStore.Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer);
+constructor TFHIRDataStore.Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile);
 var
   i : integer;
   conn : TKDBConnection;
@@ -200,6 +210,18 @@ begin
   FSessions := TStringList.create;
   FTags := TAdvNameList.Create;
   FLock := TCriticalSection.Create('fhir-store');
+  {$IFNDEF FHIR-DSTU}
+  FSubscriptionManager := TSubscriptionManager.Create;
+  FSubscriptionManager.dataBase := FDB;
+  FSubscriptionManager.SMTPHost := ini.ReadString('email', 'Host', '');
+  FSubscriptionManager.SMTPPort := ini.ReadString('email', 'Port' ,'');
+  FSubscriptionManager.SMTPUsername := ini.readString('email', 'Username' ,'');
+  FSubscriptionManager.SMTPPassword := ini.readString('email', 'Password' ,'');
+  FSubscriptionManager.SMTPUseTLS := ini.ReadBool('email', 'Secure', false);
+  FSubscriptionManager.SMTPSender := ini.readString('email', 'Sender' ,'');
+  FSubscriptionManager.OnExecuteOperation := DoExecuteOperation;
+  FSubscriptionManager.OnExecuteSearch := DoExecuteSearch;
+  {$ENDIF}
   conn := FDB.GetConnection('setup');
   try
     FLastSessionKey := conn.CountSQL('Select max(SessionKey) from Sessions');
@@ -267,6 +289,30 @@ begin
     end;
     conn.Terminate;
 
+    FTags.SortedByName;
+    FTagsByKey := TAdvIntegerObjectMatch.create;
+    for i := 0 to FTags.count - 1 do
+      FTagsBykey.Add(TFhirTag(FTags[i]).Key, FTags[i].Link);
+
+    // the expander is tied to what's on the system
+    FTerminologyServer := terminologyServer;
+    FProfiles := TAdvStringMatch.create;
+    FProfiles.Forced := true;
+    FUserIds := TAdvStringObjectMatch.create;
+    FUserIds.PreventDuplicates;
+    FUserIds.Forced := true;
+    FUserLogins := TAdvStringObjectMatch.create;
+    FUserLogins.PreventDuplicates;
+    FUserLogins.Forced := true;
+    FValidator := TFHIRValidator.create;
+    FValidator.SchematronSource := WebFolder;
+    FValidator.TerminologyServer := terminologyServer.Link;
+    // the order here is important: specification resources must be loaded prior to stored resources
+    FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)+'validation.zip');
+    LoadExistingResources(Conn);
+    {$IFNDEF FHIR-DSTU}
+    FSubscriptionManager.LoadQueue(Conn);
+    {$ENDIF}
     conn.Release;
   except
     on e:exception do
@@ -275,27 +321,6 @@ begin
       raise;
     end;
   end;
-  FTags.SortedByName;
-  FTagsByKey := TAdvIntegerObjectMatch.create;
-  for i := 0 to FTags.count - 1 do
-    FTagsBykey.Add(TFhirTag(FTags[i]).Key, FTags[i].Link);
-
-  // the expander is tied to what's on the system
-  FTerminologyServer := terminologyServer;
-  FProfiles := TAdvStringMatch.create;
-  FProfiles.Forced := true;
-  FUserIds := TAdvStringObjectMatch.create;
-  FUserIds.PreventDuplicates;
-  FUserIds.Forced := true;
-  FUserLogins := TAdvStringObjectMatch.create;
-  FUserLogins.PreventDuplicates;
-  FUserLogins.Forced := true;
-  FValidator := TFHIRValidator.create;
-  FValidator.SchematronSource := WebFolder;
-  FValidator.TerminologyServer := terminologyServer.Link;
-  // the order here is important: specification resources must be loaded prior to stored resources
-  FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)+'validation.zip');
-  LoadExistingResources;
 end;
 
 function TFHIRDataStore.CreateImplicitSession(clientInfo: String): TFhirSession;
@@ -404,6 +429,11 @@ begin
 end;
 
 
+function TFHIRDataStore.DefaultRights: String;
+begin
+  result := 'read,write,user';
+end;
+
 destructor TFHIRDataStore.Destroy;
 begin
   FBases.free;
@@ -413,11 +443,74 @@ begin
   FTagsByKey.free;
   FSessions.free;
   FTags.Free;
+  {$IFNDEF FHIR-DSTU}
+  FSubscriptionManager.Free;
+  {$ENDIF}
   FLock.Free;
   FValidator.Free;
   FTerminologyServer.Free;
   inherited;
 end;
+
+procedure TFHIRDataStore.DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession : boolean);
+var
+  storage : TFhirOperation;
+begin
+  if bWantSession then
+    request.Session := CreateImplicitSession('server');
+  storage := TFhirOperation.create('en', self.Link);
+  try
+    storage.Connection := FDB.GetConnection('fhir');
+    storage.PreCheck(request, response);
+    storage.Connection.StartTransact;
+    try
+      storage.Execute(request, response);
+      storage.Connection.Commit;
+      storage.Connection.Release;
+    except
+      on e : exception do
+      begin
+        storage.Connection.Rollback;
+        storage.Connection.Error(e);
+        raise;
+      end;
+    end;
+  finally
+    storage.Free;
+  end;
+end;
+
+function TFHIRDataStore.DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn : TKDBConnection): String;
+var
+  sp : TSearchProcessor;
+  spaces : TFHIRIndexSpaces;
+begin
+  spaces := TFHIRIndexSpaces.Create(conn);
+  try
+    sp := TSearchProcessor.create;
+    try
+      sp.typekey := typekey;
+      sp.type_ := getTypeForKey(typeKey);
+      sp.compartmentId := compartmentId;
+      sp.compartments := compartments;
+      sp.baseURL := FFormalURL; // todo: what?
+      sp.lang := 'en';
+      sp.params := params;
+      sp.indexer := TFhirIndexManager.Create(spaces);
+      sp.Indexer.Ucum := TerminologyServer.Ucum.Link;
+      sp.Indexer.Bases := Bases;
+      sp.Indexer.KeyEvent := GetNextKey;
+      sp.repository := self.Link;
+      sp.build;
+      result := sp.filter;
+    finally
+      sp.free;
+    end;
+  finally
+    spaces.Free;
+  end;
+end;
+
 
 procedure TFHIRDataStore.EndSession(sCookie, ip: String);
 var
@@ -439,6 +532,7 @@ begin
         se := TFhirSecurityEvent.create;
         try
           se.event := TFhirSecurityEventEvent.create;
+          se.event.type_ := TFhirCodeableConcept.create;
           c := se.event.type_.codingList.Append;
           c.codeST := '110114';
           c.systemST := 'http://nema.org/dicom/dcid';
@@ -523,6 +617,7 @@ begin
     if result then
     begin
       session := TFhirSession(FSessions.Objects[i]);
+      session.useCount := session.useCount + 1;
       if session.Expires > UniversalDateTime then
       begin
         session.link;
@@ -546,6 +641,27 @@ begin
     CloseFhirSession(key);
 end;
 
+function TFHIRDataStore.GetSessionByToken(outerToken : String; var session: TFhirSession): boolean;
+var
+  key, i : integer;
+begin
+  result := false;
+  session := nil;
+  FLock.Lock('GetSessionByToken');
+  try
+    for i := 0 to FSessions.count - 1 do
+      if TFhirSession(FSessions.Objects[i]).Outertoken = outerToken then
+      begin
+        result := true;
+        session := TFhirSession(FSessions.Objects[i]).Link;
+        session.useCount := session.useCount + 1;
+        break;
+      end;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 function TFHIRDataStore.GetTagByKey(key: integer): TFhirTag;
 begin
   FLock.Lock('GetTagByKey');
@@ -556,15 +672,36 @@ begin
   end;
 end;
 
+function TFHIRDataStore.getTypeForKey(key: integer): TFhirResourceType;
+var
+  a : TFHIRResourceType;
+begin
+  result := frtNull;
+  for a := Low(FResConfig) to High(FResConfig) do
+    if FResConfig[a].key = key then
+    begin
+      result := a;
+      exit;
+    end;
+end;
+
 function TFHIRDataStore.KeyForTag(scheme, term: String): Integer;
 var
   i : integer;
+  p : String;
+  s : string;
 begin
   FLock.Lock('KeyForTag');
   try
-    i := FTags.IndexByName(TagCombine(scheme, term));
+    p := TagCombine(scheme, term);
+    i := FTags.IndexByName(p);
     if i = -1 then
-      result := -1 // nothing will match
+    begin
+      for i := 0 to FTags.count - 1 do
+        s := s + FTags[i].Name+#13#10;
+      writeln(s);
+      result := -1; // nothing will match
+    end
     else
       result := TFhirTag(FTags[i]).Key;
   finally
@@ -615,7 +752,7 @@ begin
   end;
 end;
 
-function TFHIRDataStore.RegisterSession(provider : TFHIRAuthProvider; token, id, name, email, original, expires, ip: String): TFhirSession;
+function TFHIRDataStore.RegisterSession(provider : TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
 var
   session : TFhirSession;
   se : TFhirSecurityEvent;
@@ -624,18 +761,27 @@ var
 begin
   session := TFhirSession.create;
   try
-    inc(FLastSessionKey);
-    session.Key := FLastSessionKey;
-    session.Token := token;
+    session.InnerToken := innerToken;
+    session.OuterToken := outerToken;
     session.Id := id;
     session.Name := name;
-    session.Expires := UniversalDateTime + DATETIME_SECOND_ONE * StrToInt(expires);
+    session.Expires := LocalDateTime + DATETIME_SECOND_ONE * StrToInt(expires);
     session.Cookie := OAUTH_SESSION_PREFIX + copy(GUIDToString(CreateGuid), 2, 36);
     session.Provider := provider;
     session.originalUrl := original;
     session.email := email;
     session.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
     session.User := GetFhirUserStructure(USER_SCHEME_PROVIDER[provider], id);
+    session.rights.commaText := rights;
+
+    FLock.Lock('RegisterSession');
+    try
+      inc(FLastSessionKey);
+      session.Key := FLastSessionKey;
+      FSessions.AddObject(session.Cookie, session.Link);
+    finally
+      FLock.Unlock;
+    end;
 
     se := TFhirSecurityEvent.create;
     try
@@ -678,12 +824,6 @@ begin
       se.free;
     end;
 
-    FLock.Lock('RegisterSession');
-    try
-      FSessions.AddObject(session.Cookie, session.Link);
-    finally
-      FLock.Unlock;
-    end;
     result := session.Link as TFhirSession;
   finally
     session.free;
@@ -795,7 +935,7 @@ begin
 end;
 
 
-procedure TFHIRDataStore.SeeResource(key : Integer; id : string; resource : TFHIRResource);
+procedure TFHIRDataStore.SeeResource(key, vkey : Integer; id : string; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFhirSession);
 var
   profile : TFhirProfile;
 begin
@@ -807,19 +947,22 @@ begin
     begin
       profile := resource as TFhirProfile;
       FProfiles.matches[id] := profile.nameST;
-    end
+    end;
 {    else if resource.ResourceType = frtUser then
     begin
       user := resource as TFhirUser;
       FUserIds.matches[id] := user.link;
       FUserLogins.matches[user.providerST+#1+user.loginST] := user.link;
     end;}
+    {$IFNDEF FHIR-DSTU}
+    FSubscriptionManager.SeeResource(key, vkey, id, resource, conn, reload, session);
+    {$ENDIF}
   finally
     FLock.Unlock;
   end;
 end;
 
-procedure TFHIRDataStore.DropResource(key : Integer; id : string; aType : TFhirResourceType);
+procedure TFHIRDataStore.DropResource(key, vkey : Integer; id : string; aType : TFhirResourceType; indexer : TFhirIndexManager);
 begin
   FLock.Lock('DropResource');
   try
@@ -828,13 +971,16 @@ begin
     else if aType = frtProfile then
     begin
       FProfiles.DeleteByKey(id);
-    end
+    end;
 {    else if aType = frtUser then
     begin
       user := FUserIds.Matches[id] as TFHIRUser;
       FUserLogins.DeleteByKey(user.providerST+#1+user.loginST);
       FUserIds.DeleteByKey(id);
     end;}
+    {$IFNDEF FHIR-DSTU}
+    FSubscriptionManager.DropResource(key, vkey);
+    {$ENDIF}
   finally
     FLock.Unlock;
   end;
@@ -845,7 +991,6 @@ procedure TFHIRDataStore.SaveSecurityEvent(se: TFhirSecurityEvent);
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
-  storage : TFhirOperation;
 begin
   request := TFHIRRequest.create;
   try
@@ -856,32 +1001,20 @@ begin
     request.Session := nil;
     response := TFHIRResponse.create;
     try
-      storage := TFhirOperation.create('en', self.Link);
-      try
-        storage.Connection := FDB.GetConnection('fhir');
-        storage.PreCheck(request, response);
-        storage.Connection.StartTransact;
-        try
-          storage.Execute(request, response);
-          storage.Connection.Commit;
-          storage.Connection.Release;
-        except
-          on e : exception do
-          begin
-            storage.Connection.Rollback;
-            storage.Connection.Error(e);
-            raise;
-          end;
-        end;
-      finally
-        storage.Free;
-      end;
+      DoExecuteOperation(request, response, false);
     finally
       response.free;
     end;
   finally
     request.free;
   end;
+end;
+
+procedure TFHIRDataStore.ProcessSubscriptions;
+begin
+  {$IFNDEF FHIR-DSTU}
+  FSubscriptionManager.Process;
+  {$ENDIF}
 end;
 
 function TFHIRDataStore.ProfilesAsOptionList: String;
@@ -1020,20 +1153,20 @@ begin
   result := TFHIRDataStore(Inherited Link);
 end;
 
-procedure TFHIRDataStore.LoadExistingResources;
+procedure TFHIRDataStore.LoadExistingResources(conn : TKDBConnection);
 var
-  conn : TKDBConnection;
   parser : TFHIRParser;
   mem : TBytes;
   i : integer;
+  cback : TKDBConnection;
 begin
-  conn := FDB.GetConnection('fhir');
+  conn.SQL := 'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Content from Ids, Types, Versions where '+
+    'Versions.ResourceVersionKey = Ids.MostRecent and '+
+    'Ids.ResourceTypeKey = Types.ResourceTypeKey and '+
+    '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''ConceptMap'' or Types.ResourceName = ''Profile'' or Types.ResourceName = ''User''or Types.ResourceName = ''Subscription'') and not Versions.Deleted = 1';
+  conn.Prepare;
   try
-    conn.SQL := 'select Ids.ResourceKey, Ids.Id, Content from Ids, Types, Versions where '+
-      'Versions.ResourceVersionKey = Ids.MostRecent and '+
-      'Ids.ResourceTypeKey = Types.ResourceTypeKey and '+
-      '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''ConceptMap'' or Types.ResourceName = ''Profile'' or Types.ResourceName = ''User'') and not Versions.Deleted = 1';
-    conn.Prepare;
+    cback := FDB.GetConnection('load2');
     try
       i := 0;
       conn.execute;
@@ -1044,25 +1177,24 @@ begin
 
         parser := MakeParser('en', ffXml, mem, xppDrop);
         try
-          SeeResource(conn.colIntegerByName['ResourceKey'], conn.colStringByName['Id'], parser.resource);
+          SeeResource(conn.colIntegerByName['ResourceKey'], conn.colIntegerByName['ResourceVersionKey'], conn.colStringByName['Id'], parser.resource, cback, true, nil);
         finally
           parser.free;
         end;
       end;
-    finally
-      conn.terminate;
+      cback.Release;
+    except
+      on e : Exception do
+      begin
+        cback.Error(e);
+        raise;
+      end;
     end;
-    conn.Release;
-    FTotalResourceCount := i;
-  except
-    on e:exception do
-    begin
-      conn.Error(e);
-      raise;
-    end;
+  finally
+    conn.terminate;
   end;
+  FTotalResourceCount := i;
 end;
-
 
 
 { TFhirTag }

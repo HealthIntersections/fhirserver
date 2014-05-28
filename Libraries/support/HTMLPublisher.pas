@@ -6,7 +6,9 @@ uses
   SysUtils,
   EncodeSupport,
   AdvObjects,
-  FHIRParserBase, FHIRConstants; // todo: really need to sort out how XHTML template is done
+  FHIRBase,
+  FHIRParserBase,
+  FHIRConstants; // todo: really need to sort out how XHTML template is done
 
 Type
 
@@ -23,6 +25,8 @@ Type
     procedure Done;
 
     procedure Line;
+    procedure StartPre;
+    procedure endPre;
 
     procedure Heading(level : integer; text : String);
     procedure StartParagraph;
@@ -57,7 +61,7 @@ Type
     procedure hiddenInput(name, value : String);
     procedure Submit(name : String);
     procedure EndForm;
-
+    procedure writeXhtml(node : TFhirXHtmlNode);
     procedure Spacer;
 
     function output : String;
@@ -160,6 +164,11 @@ begin
   FBuilder.Append('<p>'#13#10);
 end;
 
+procedure THtmlPublisher.endPre;
+begin
+  FBuilder.Append('<pre>'#13#10);
+end;
+
 procedure THtmlPublisher.EndTable;
 begin
   FBuilder.Append('</table>'#13#10);
@@ -205,6 +214,7 @@ procedure THtmlPublisher.hiddenInput(name, value: String);
 begin
   FBuilder.Append('<input type="hidden" name="'+name+'" value="'+value+'"/>');
 end;
+
 
 procedure THtmlPublisher.Line;
 begin
@@ -256,6 +266,11 @@ begin
   FBuilder.Append('<p>');
 end;
 
+procedure THtmlPublisher.StartPre;
+begin
+  FBuilder.Append('<pre>'#13#10);
+end;
+
 procedure THtmlPublisher.StartRowFlip(i: integer);
 begin
   FBuilder.Append('<tr>')
@@ -296,6 +311,33 @@ begin
   FBuilder.Append('<a href="'+url+'">');
   AddTextPlain(text);
   FBuilder.Append('</a>');
+end;
+
+procedure THtmlPublisher.writeXhtml(node: TFhirXHtmlNode);
+var
+  i : integer;
+begin
+  case node.NodeType of
+    fhntElement, fhntDocument:
+      begin
+        FBuilder.Append('<'+node.Name);
+        for i := 0 to node.Attributes.Count - 1 do
+          FBuilder.Append(' '+node.Attributes[i].Name+'="'+EncodeXML(node.Attributes[i].value)+'"');
+        if node.ChildNodes.Count = 0 then
+          FBuilder.Append('/>')
+        else
+        begin
+          FBuilder.Append('>');
+          for i := 0 to node.ChildNodes.Count - 1 do
+            writeXhtml(node.ChildNodes[i]);
+          FBuilder.Append('</'+node.Name+'>');
+        end;
+      end;
+    fhntText:
+      AddTextPlain(node.Content);
+    fhntComment:
+      FBuilder.Append('<!-- '+EncodeXML(node.Content)+' -->');
+  end;
 end;
 
 end.

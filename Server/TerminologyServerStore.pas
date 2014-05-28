@@ -6,11 +6,18 @@ uses
   SysUtils, Classes, kCritSct,
   StringSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvStringMatches,
-  FHIRTypes, FHIRComponents, FHIRResources,
+  FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
   TerminologyServices, LoincServices, UCUMServices, SnomedServices,
   YuStemmer;
 
 Type
+  {$IFNDEF FHIR-DSTU}
+  TFhirConceptMapConceptList = TFhirConceptMapElementList;
+  TFhirConceptMapConceptMapList = TFhirConceptMapElementMapList;
+  TFhirConceptMapConcept = TFhirConceptMapElement;
+  TFhirConceptMapConceptMap = TFhirConceptMapElementMap;
+  {$ENDIF}
+
   TLoadedConceptMap = class (TAdvObject)
   private
     FSource: TFhirValueSet;
@@ -245,8 +252,8 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := TFhirConceptMap(resource).Link;
-        cm.Source := getValueSetByUrl(cm.Resource.source.referenceST);
-        cm.Target := getValueSetByUrl(cm.Resource.target.referenceST);
+        cm.Source := getValueSetByUrl(TFhirResourceReference(cm.Resource.source).referenceST);
+        cm.Target := getValueSetByUrl(TFhirResourceReference(cm.Resource.target).referenceST);
         FConceptMaps.Matches[cm.Resource.identifierST] := cm.Link;
         FBaseConceptMaps.Matches[cm.Resource.identifierST] := cm.Link;
       finally
@@ -283,8 +290,8 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := TFhirConceptMap(resource).Link;
-        cm.Source := getValueSetByUrl(cm.Resource.source.referenceST);
-        cm.Target := getValueSetByUrl(cm.Resource.target.referenceST);
+        cm.Source := getValueSetByUrl(TFhirResourceReference(cm.Resource.source).referenceST);
+        cm.Target := getValueSetByUrl(TFhirResourceReference(cm.Resource.target).referenceST);
         FConceptMaps.Matches[cm.Resource.identifierST] := cm.Link;
         FConceptMapsByKey.Matches[inttostr(key)] := cm.Link;
       finally
@@ -357,12 +364,12 @@ begin
   for i := 0 to FConceptMaps.Count - 1 do
   begin
     cm := TLoadedConceptMap(FConceptMaps.Values[i]);
-    cm.Source := getValueSetByUrl(cm.Resource.source.referenceST);
+    cm.Source := getValueSetByUrl(TFhirResourceReference(cm.Resource.source).referenceST);
     if (cm.Source = nil) then
-      cm.Source := getValueSetByIdentifier(cm.Resource.source.referenceST);
-    cm.Target := getValueSetByUrl(cm.Resource.target.referenceST);
+      cm.Source := getValueSetByIdentifier(TFhirResourceReference(cm.Resource.source).referenceST);
+    cm.Target := getValueSetByUrl(TFhirResourceReference(cm.Resource.target).referenceST);
     if (cm.Target = nil) then
-      cm.Target := getValueSetByIdentifier(cm.Resource.target.referenceST);
+      cm.Target := getValueSetByIdentifier(TFhirResourceReference(cm.Resource.target).referenceST);
   end;
 end;
 
@@ -469,13 +476,20 @@ begin
 end;
 
 function TTerminologyServerStore.getValueSetByUrl(url : String) : TFHIRValueSet;
+var
+  i : integer;
 begin
   FLock.Lock('getValueSetByUrl');
   try
     if FValueSetsByUrl.ExistsByKey(url) then
       result := FValueSetsByUrl.GetValueByKey(url).Link as TFhirValueSet
     else
+    begin
       result := nil;
+      for i := 0 to FValueSetsByUrl.Count - 1 do
+        if (result = nil) and (TFHirValueSet(FValueSetsByUrl.ValueByIndex[i]).identifierST = url) then
+          result := FValueSetsByUrl.ValueByIndex[i].Link as TFhirValueSet;
+    end;
   finally
     FLock.Unlock;
   end;
@@ -755,7 +769,7 @@ begin
   for i := 0 to list.Count - 1 do
   begin
     c := list[i];
-    if (c.systemST = system) and (c.codeST = code) then
+    if (c.{$IFDEF FHIR-DSTU}systemST{$ELSE}codeSystemST{$ENDIF} = system) and (c.codeST = code) then
     begin
       maps := c.mapList.Link;
       result := true;

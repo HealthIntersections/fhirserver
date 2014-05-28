@@ -34,10 +34,10 @@ uses
   SysUtils, Classes;
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
-Function FacebookGetDetails(token : String; var id, name, error : String) : boolean;
+Function FacebookGetDetails(token : String; var id, name, email, error : String) : boolean;
 
 Function GoogleCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
-Function GoogleGetDetails(token, key : String; var id, name, error : String) : boolean;
+Function GoogleGetDetails(token, key : String; var id, name, email, error : String) : boolean;
 
 implementation
 
@@ -81,7 +81,7 @@ var
   http: TIdHTTP;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   post, resp : TBytesStream;
-  prsr : TJSONParser;
+  json : TJSONObject;
 begin
   result := false;
   try
@@ -105,19 +105,15 @@ begin
           try
             http.Post('https://accounts.google.com/o/oauth2/token', post, resp);
             resp.position := 0;
-            prsr := TJSONParser.create(resp);
+            resp.SaveToFile('c:\temp\google.json');
+            resp.position := 0;
+            json := TJSONParser.Parse(resp);
             try
-              while (token = '') or (expires = '') do
-              begin
-                if prsr.ItemName = 'access_token' then
-                  token := prsr.ItemValue
-                else if prsr.ItemName = 'expires_in' then
-                  expires := prsr.ItemValue;
-                prsr.next;
-              end;
+              token := json.vStr['access_token'];
+              expires := json.vStr['expires_in'];
               result := true;
             finally
-              prsr.free;
+              json.free;
             end;
           finally
             resp.free;
@@ -138,11 +134,10 @@ begin
 end;
 
 
-Function FacebookGetDetails(token : String; var id, name, error : String) : boolean;
+Function FacebookGetDetails(token : String; var id, name, email, error : String) : boolean;
 var
   fetch : TgwInternetFetcher;
-  json : TAdvMemoryStream;
-  prsr : TJSONParser;
+  json : TJSONObject;
 begin
   result := false;
   try
@@ -150,22 +145,11 @@ begin
     try
       fetch.URL := 'https://graph.facebook.com/me?access_token='+token;
       fetch.Fetch;
-      json := TAdvMemoryStream.create;
+      json := TJSONParser.Parse(fetch.Buffer.AsBytes);
       try
-        json.Buffer := fetch.Buffer.link;
-        prsr := TJSONParser.create(json);
-        try
-          while (id = '') or (name = '') do
-          begin
-            if prsr.ItemName = 'id' then
-              id := prsr.ItemValue
-            else if prsr.ItemName = 'name' then
-              name := prsr.ItemValue;
-            prsr.next;
-          end;
-        finally
-          prsr.free;
-        end;
+        id := json.vStr['id'];
+        name := json.vStr['name'];
+        email := json.vStr['email'];
       finally
         json.free;
       end;
@@ -180,11 +164,10 @@ begin
 end;
 
 
-Function GoogleGetDetails(token, key : String; var id, name, error : String) : boolean;
+Function GoogleGetDetails(token, key : String; var id, name, email, error : String) : boolean;
 var
   fetch : TgwInternetFetcher;
-  json : TAdvMemoryStream;
-  prsr : TJSONParser;
+  json : TJSONObject;
 begin
   result := false;
   try
@@ -192,22 +175,11 @@ begin
     try
       fetch.URL := 'https://www.googleapis.com/plus/v1/people/me?access_token='+token+'&key='+key;
       fetch.Fetch;
-      json := TAdvMemoryStream.create;
+      json := TJSONParser.Parse(fetch.Buffer.AsBytes);
       try
-        json.Buffer := fetch.Buffer.link;
-        prsr := TJSONParser.create(json);
-        try
-          while (id = '') or (name = '') do
-          begin
-            if prsr.ItemName = 'id' then
-              id := prsr.ItemValue
-            else if prsr.ItemName = 'displayName' then
-              name := prsr.ItemValue;
-            prsr.next;
-          end;
-        finally
-          prsr.free;
-        end;
+        id := json.vStr['id'];
+        name := json.vStr['displayName'];
+        email := json.vStr['email'];
       finally
         json.free;
       end;

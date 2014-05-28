@@ -23,7 +23,7 @@ IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
 INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 POSSIBILITY OF SUCH DAMAGE.
 }
@@ -42,7 +42,7 @@ Uses
   AdvPersistents;
 
 Const
-  INTEGER_PRECISION = 100;
+  INTEGER_PRECISION = 24;
 
 Type
   TSmartDecimal = class;
@@ -54,6 +54,8 @@ Type
   private
   public
     Procedure BeforeDestruction; Override;
+
+    function Link : TSmartDecimalContext; overload;
 
     Function Value(value : String) : TSmartDecimal; Overload;
     {!script hide}
@@ -218,6 +220,26 @@ Type
       Precision is lost in this representation.
     }
     Function AsInt64 : Int64;
+
+    {@member upperBound
+      the upper bound given the imprecision. for example, if the value is 1,0, then the upper bound is 1.05.
+    }
+    Function upperBound : TSmartDecimal;
+
+    {@member lowerBound
+      the lower bound given the imprecision. for example, if the value is 1,0, then the upper bound is 1.05.
+    }
+    Function lowerBound : TSmartDecimal;
+
+    {@member immediateUpperBound
+      the upper bound given the face value. for example, if the value is 1,0, then the upper bound is 1.000000000000000000000000001.
+    }
+    Function immediateUpperBound : TSmartDecimal;
+
+    {@member immediateLowerBound
+      the immediate lower bound given the face value. for example, if the value is 1,0, then the upper bound is 0.99999999999999999999999999999999.
+    }
+    Function immediateLowerBound : TSmartDecimal;
   published
     {@member IsScientific
       whether to use a scientific representation (i.e. 1e10). This value
@@ -325,6 +347,17 @@ begin
     if not CharInSet(s[i], ['0', '.']) then
       result := IntegerMin(result, i);
 end;
+
+Function AllZerosButLast(s : String; iStart : integer):Boolean;
+var
+  i : integer;
+begin
+  result := iStart < length(s) - 1;
+  for i := iStart to length(s) - 1 Do
+    if s[i] <> '0' then
+      result := false;
+end;
+
 
 Function AllZeros(s : String; iStart : integer):Boolean;
 var
@@ -572,7 +605,9 @@ Begin
     result := nil
   Else if (self.isZero) or (oOther.IsZero) then
     result := FContext.Zero
-  Else
+  else if oOther.isOne then
+    result := self.Link
+  else
   Begin
     iMax := IntegerMax(FDecimal, oOther.FDecimal);
     s1 := StringMultiply('0', iMax - FDecimal+1) + FDigits;
@@ -639,7 +674,7 @@ Begin
     end;
 
     if IsWholeNumber and oOther.IsWholeNumber Then
-      iPrec := IntegerMax(length(FDigits), length(oOther.FDigits))
+      iPrec := INTEGER_PRECISION
     else if IsWholeNumber then
       iPrec := oOther.FPrecision
     else if oOther.IsWholeNumber then
@@ -734,6 +769,8 @@ Begin
     result := FContext.Zero
   else if oOther.IsZero then
     raise Exception.create('Attempt to divide '+asString+' by zero')
+  else if oOther.isOne then
+    result := self.Link
   else
   Begin
     s := '0'+oOther.FDigits;
@@ -806,7 +843,7 @@ Begin
     Else
     Begin
       if IsWholeNumber and oOther.IsWholeNumber Then
-        iPrec := IntegerMax(length(FDigits), length(oOther.FDigits))
+        iPrec := INTEGER_PRECISION
       else if IsWholeNumber then
         iPrec := IntegerMax(oOther.FPrecision, length(r) - d)
       else if oOther.IsWholeNumber then
@@ -1011,6 +1048,60 @@ begin
   result := FContext = other.FContext;
 end;
 
+function TSmartDecimal.immediateLowerBound: TSmartDecimal;
+var
+  i : integer;
+begin
+  if IsZero then
+  begin
+    result := immediateUpperBound;
+    result.FNegative := true;
+  end
+  else
+  begin
+    result := FContext.Value(AsDecimal);
+    inc(result.FPrecision);
+    if FNegative then
+    result.FDigits := result.FDigits + StringMultiply('0', 25 - length(result.FDigits) - result.FDecimal)+'1'
+    else
+    begin
+      i := length(result.FDigits);
+      result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+      while (i > 0) and (result.FDigits[i] < '0') do
+      begin
+        result.FDigits[i] := '9';
+        dec(i);
+        result.FDigits[i] := char(ord(result.FDigits[i]) - 1)
+      end;
+      assert(i > 0);
+    result.FDigits := result.FDigits + StringMultiply('9', 24 - length(result.FDigits))+'9'
+    end;
+  end;
+end;
+
+function TSmartDecimal.immediateUpperBound: TSmartDecimal;
+var
+  i : integer;
+begin
+  result := FContext.Value(AsDecimal);
+  inc(result.FPrecision);
+  if not FNegative then
+    result.FDigits := result.FDigits + StringMultiply('0', 25 - length(result.FDigits) - result.FDecimal)+'1'
+  else
+  begin
+    i := length(result.FDigits);
+    result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+    while (i > 1) and (result.FDigits[i] < '0') do
+    begin
+      result.FDigits[i] := '0';
+      dec(i);
+      result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+    end;
+    assert(i > 0);
+    result.FDigits := result.FDigits + StringMultiply('0', 24 - length(result.FDigits))+'9'
+  end;
+end;
+
 Function TSmartDecimal.GetValueDecimal: String;
 begin
   result := FDigits;
@@ -1024,6 +1115,8 @@ begin
         insert('.', result, FDecimal)
     Else
       result := result + stringMultiply('0', FDecimal - length(result)-1);
+  if (FPrecision = INTEGER_PRECISION) and result.Contains('.') and (AllZerosButLast(result, pos('.', result)+1)) then
+    result := copy(result, 1, pos('.', result)-1);
   if FNegative and not AllZeros(result, 1) then
     result := '-' + result;
 end;
@@ -1134,6 +1227,29 @@ begin
   end;
 end;
 
+function TSmartDecimal.upperBound: TSmartDecimal;
+var
+  i : integer;
+begin
+  result := FContext.Value(AsDecimal);
+  inc(result.FPrecision);
+  if not FNegative then
+    result.FDigits := result.FDigits + '5'
+  else
+  begin
+    i := length(result.FDigits);
+    result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+    while (i > 1) and (result.FDigits[i] < '0') do
+    begin
+      result.FDigits[i] := '0';
+      dec(i);
+      result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+    end;
+    assert(i > 0);
+    result.FDigits := result.FDigits + '5'
+  end;
+end;
+
 Function TSmartDecimal.AsCardinal: Cardinal;
 var
   r : Int64;
@@ -1239,7 +1355,6 @@ begin
   result := Value(0);
 end;
 
-
 Function TSmartDecimalContext.FromActiveX(oX: tagDEC): TSmartDecimal;
 var
   r2_32, r1, r2, r3 : TSmartDecimal;
@@ -1260,6 +1375,34 @@ begin
   result := r3;
 end;
 
+function TSmartDecimalContext.Link: TSmartDecimalContext;
+begin
+  result := TSmartDecimalContext(inherited Link);
+end;
+
+function round(prefix, s : String; i : integer) : String;
+begin
+  result := s;
+  if s.Length > i then
+  begin
+    result := copy(result, 1, i);
+    if (s[i+1]) >= '5' then
+      result[i] := chr(ord(result[i])+1);
+    while (i > 0) and  (result[i] > '9') do
+    begin
+      result[i] := '0';
+      dec(i);
+      result[i] := chr(ord(result[i])+1);
+    end;
+  end;
+  if i = 0 then
+  begin
+    result := copy(prefix, 1, length(prefix)-1) +'1' + result;
+  end
+  else
+    result := prefix + result;
+end;
+
 Function TSmartDecimalContext.Compares(oOne, oTwo: TSmartDecimal): Integer;
 var
   iMax : Integer;
@@ -1276,8 +1419,8 @@ Begin
     else
     begin
       iMax := IntegerMax(oOne.FDecimal, oTwo.FDecimal);
-      s1 := StringMultiply('0', iMax - oOne.FDecimal+1) + oOne.FDigits;
-      s2 := StringMultiply('0', iMax - oTwo.FDecimal+1) + oTwo.FDigits;
+      s1 := round('0'+StringMultiply('0', iMax - oOne.FDecimal+1), oOne.FDigits, oOne.FPrecision);
+      s2 := round('0'+StringMultiply('0', iMax - oTwo.FDecimal+1), oTwo.FDigits, oTwo.FPrecision);
       if Length(s1) < length(s2) then
         s1 := s1 + StringMultiply('0', length(s2) - length(s1))
       else if Length(s2) < length(s1) then
@@ -1293,6 +1436,37 @@ end;
 function TSmartDecimal.Link: TSmartDecimal;
 begin
   result := TSmartDecimal(Inherited Link);
+end;
+
+function TSmartDecimal.lowerBound: TSmartDecimal;
+var
+  i : integer;
+begin
+  if IsZero then
+  begin
+    result := upperBound;
+    result.FNegative := true;
+  end
+  else
+  begin
+    result := FContext.Value(AsDecimal);
+    inc(result.FPrecision);
+    if FNegative then
+      result.FDigits := result.FDigits + '5'
+    else
+    begin
+      i := length(result.FDigits);
+      result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+      while (i > 0) and (result.FDigits[i] < '0') do
+      begin
+        result.FDigits[i] := '9';
+        dec(i);
+        result.FDigits[i] := char(ord(result.FDigits[i]) - 1)
+      end;
+      assert(i > 0);
+      result.FDigits := result.FDigits + '5';
+    end;
+  end;
 end;
 
 class function TSmartDecimal.Compares(oOne, oTwo: TSmartDecimal): Integer;

@@ -87,17 +87,26 @@ begin
   CoInitialize(nil);
   if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
   begin
-    if FileExists(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.local.ini') then
-      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.local.ini'
+    if FileExists(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.local.ini') then
+      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.local.ini'
     else
-      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.ini';
+      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.ini';
   end;
-  writeln('FHIR Service. Using ini file '+iniName);
 
   if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
     svcName := 'fhirserver';
   if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
     dispName := 'FHIR Server';
+  {$IFDEF FHIR-DSTU}
+  writeln('FHIR Service (DSTU). Using ini file '+iniName);
+  dispName := dispName + ' (DSTU)';
+  {$ELSE}
+  iniName := iniName.replace('.dstu', '.dev');
+  writeln('FHIR Service (DEV). Using ini file '+iniName);
+  dispName := dispName + ' (DEV)';
+  {$ENDIF}
+
+
 
   svc := TFHIRService.Create(svcName, dispName, iniName);
   try
@@ -297,6 +306,9 @@ procedure TFHIRService.Load(fn: String);
 var
   f : TFileStream;
 begin
+  {$IFNDEF FHIR-DSTU}
+  fn := fn.Replace('.dstu', '');
+  {$ENDIF}
   if FDb = nil then
     ConnectToDatabase;
   CanStart;

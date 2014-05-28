@@ -61,10 +61,10 @@ Type
     FName: String;
     FPath: String;
 
-    Function ParseDecimal(context : TSmartDecimalContext; S,s1 : String):TSmartDecimal;
-    Function ParsePrefix(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumPrefix;
-    Function ParseBaseUnit(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumBaseUnit;
-    Function ParseUnit(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumDefinedUnit;
+    Function ParseDecimal(S,s1 : String):TSmartDecimal;
+    Function ParsePrefix(oElem : IXMLDOMElement):TUcumPrefix;
+    Function ParseBaseUnit(oElem : IXMLDOMElement):TUcumBaseUnit;
+    Function ParseUnit(oElem : IXMLDOMElement):TUcumDefinedUnit;
     Function GetPropertyIndex(const sName : String):Integer;
 
   public
@@ -297,14 +297,13 @@ begin
       if s <> d then
         raise Exception.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
       t := value.Multiply(src.Value);
-      result := t.Divide(dst.Value);
+      result := t.Divide(dst.Value).link;
     Finally
       term.Free;
       src.Free;
       dst.Free;
       oConv.Free;
     End;
-    result.Link;
   End;
 end;
 
@@ -755,46 +754,40 @@ var
   oXml : IXMLDomDocument2;
   oElem : IXMLDOMElement;
   oErrors : TAdvStringList;
-  context : TSmartDecimalContext;
 begin
-  context := TSmartDecimalContext.create;
+  oParser := TMsXmlParser.Create;
   try
-    oParser := TMsXmlParser.Create;
-    try
-      oXml := oParser.Parse(sFilename);
-    Finally
-      oParser.Free;
-    End;
-    if oXml.documentElement.nodeName <> 'root' Then
-      raise exception.create('Invalid ucum essence file');
-    FModel.Clear;
-    FModel.Version := TMsXmlParser.GetAttribute(oXml.documentElement, 'version');
-    FModel.RevisionDate := TMsXmlParser.GetAttribute(oXml.documentElement, 'revision-date');
-    FModel.RevisionDate := copy(FModel.RevisionDate, 8, length(FModel.RevisionDate)-9);
-    oElem := TMsXmlParser.FirstChild(oXml.documentElement);
-    while (oElem <> nil) Do
-    Begin
-     if oElem.NodeName = 'prefix' Then
-       FModel.prefixes.Add(ParsePrefix(context, oElem))
-     Else if oElem.NodeName = 'base-unit' Then
-       FModel.baseUnits.Add(ParseBaseUnit(context, oElem))
-     Else if oElem.NodeName = 'unit' Then
-       FModel.definedUnits.Add(ParseUnit(context, oElem))
-     else
-       raise exception.create('unrecognised element '+oElem.nodename);
-      oElem := TMsXmlParser.NextSibling(oElem);
-    End;
-    oErrors := TAdvStringList.Create;
-    Try
-      Validate(oErrors);
-      if oErrors.Count > 0 then
-        raise exception.create(oErrors.asText);
-    Finally
-      oErrors.Free;
-    End;
-  finally
-    context.Free;
-  end;
+    oXml := oParser.Parse(sFilename);
+  Finally
+    oParser.Free;
+  End;
+  if oXml.documentElement.nodeName <> 'root' Then
+    raise exception.create('Invalid ucum essence file');
+  FModel.Clear;
+  FModel.Version := TMsXmlParser.GetAttribute(oXml.documentElement, 'version');
+  FModel.RevisionDate := TMsXmlParser.GetAttribute(oXml.documentElement, 'revision-date');
+  FModel.RevisionDate := copy(FModel.RevisionDate, 8, length(FModel.RevisionDate)-9);
+  oElem := TMsXmlParser.FirstChild(oXml.documentElement);
+  while (oElem <> nil) Do
+  Begin
+   if oElem.NodeName = 'prefix' Then
+     FModel.prefixes.Add(ParsePrefix(oElem))
+   Else if oElem.NodeName = 'base-unit' Then
+     FModel.baseUnits.Add(ParseBaseUnit(oElem))
+   Else if oElem.NodeName = 'unit' Then
+     FModel.definedUnits.Add(ParseUnit(oElem))
+   else
+     raise exception.create('unrecognised element '+oElem.nodename);
+    oElem := TMsXmlParser.NextSibling(oElem);
+  End;
+  oErrors := TAdvStringList.Create;
+  Try
+    Validate(oErrors);
+    if oErrors.Count > 0 then
+      raise exception.create(oErrors.asText);
+  Finally
+    oErrors.Free;
+  End;
 end;
 
 function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
@@ -862,15 +855,15 @@ begin
   raise Exception.Create('to do');
 end;
 
-function TUcumServices.ParseDecimal(context : TSmartDecimalContext; S,s1: String): TSmartDecimal;
+function TUcumServices.ParseDecimal(s, s1: String): TSmartDecimal;
 begin
   if s = '' then
-    result := context.One
+    result := FModel.context.One
   Else
-    result := context.Value(s);
+    result := FModel.context.Value(s);
 end;
 
-Function TUcumServices.ParsePrefix(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumPrefix;
+Function TUcumServices.ParsePrefix(oElem : IXMLDOMElement):TUcumPrefix;
 var
   oChild : IXMLDOMElement;
   s : String;
@@ -889,7 +882,7 @@ Begin
       else if oChild.nodeName = 'value' Then
       begin
         s := TmsXmlParser.GetAttribute(oChild, 'value');
-        result.value := ParseDecimal(context, s, result.Code).Link;
+        result.value := ParseDecimal(s, result.Code).Link;
         result.value.Precision := 24; // arbitrarily high. even when an integer, these numbers are precise
         if s[2] = 'e' Then
           result.Text := '10^'+Copy(s, 3, $FF)
@@ -906,7 +899,7 @@ Begin
   End;
 End;
 
-Function TUcumServices.ParseBaseUnit(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumBaseUnit;
+Function TUcumServices.ParseBaseUnit(oElem : IXMLDOMElement):TUcumBaseUnit;
 var
   oChild : IXMLDOMElement;
   s : String;
@@ -937,7 +930,7 @@ Begin
   End;
 End;
 
-Function TUcumServices.ParseUnit(context : TSmartDecimalContext; oElem : IXMLDOMElement):TUcumDefinedUnit;
+Function TUcumServices.ParseUnit(oElem : IXMLDOMElement):TUcumDefinedUnit;
 var
   oChild : IXMLDOMElement;
 Begin
@@ -961,7 +954,9 @@ Begin
       begin
         result.value.unit_ := TMsXmlParser.GetAttribute(oChild, 'Unit');
         result.value.unitUC := TMsXmlParser.GetAttribute(oChild, 'UNIT');
-        result.value.value := ParseDecimal(Context, TmsXmlParser.GetAttribute(oChild, 'value'), result.value.unit_).Link;
+        result.value.value := ParseDecimal(TmsXmlParser.GetAttribute(oChild, 'value'), result.value.unit_).Link;
+        if result.value.value.IsWholeNumber then
+          result.value.value.Precision := 24;
         result.value.text := TMsXmlParser.TextContent(oChild, ttAsIs);
       End
       else

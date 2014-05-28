@@ -204,6 +204,7 @@ type
 
   TUcumModel = class (TAdvPersistent)
   private
+    FContext : TSmartDecimalContext;
     FProperties : TUcumPropertyList;
     Fprefixes : TUcumPrefixList;
     FbaseUnits : TUcumBaseUnitList;
@@ -220,13 +221,14 @@ type
     Procedure clear;
 
     Function GetUnit(sCode : String) : TUcumUnit;
-    
+
     Property prefixes : TUcumPrefixList read Fprefixes;
     Property baseUnits : TUcumBaseUnitList read FbaseUnits;
     Property definedUnits : TUcumDefinedUnitList read FdefinedUnits;
     Property Version : String read FVersion write FVersion;
     Property RevisionDate : String read FRevisionDate write FRevisionDate;
-    Property Properties : TUcumPropertyList read FProperties; 
+    Property Properties : TUcumPropertyList read FProperties;
+    Property Context : TSmartDecimalContext read FContext;
   End;
 
 const
@@ -482,6 +484,7 @@ end;
 constructor TUcumModel.Create;
 begin
   inherited;
+  FContext := TSmartDecimalContext.Create;
   Fprefixes := TUcumPrefixList.Create;
   FbaseUnits := TUcumBaseUnitList.Create;
   FdefinedUnits := TUcumDefinedUnitList.Create;
@@ -512,6 +515,7 @@ begin
   FbaseUnits.Free;
   FdefinedUnits.Free;
   FProperties.Free;
+  FContext.Free;
   inherited;
 end;
 
