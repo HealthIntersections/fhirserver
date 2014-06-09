@@ -97,7 +97,7 @@ Source: "C:\work\fhirserver\Exec\ssleay32.dll";                              Des
 Source: "C:\work\fhirserver\Exec\libeay32.dll";                              DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\openssl.exe";                               DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestName: "libeay64.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
 
 [INI]

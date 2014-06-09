@@ -90,6 +90,8 @@ Welcome [%username%]. What rights you want the [%client%] to have?
   <input type="submit"/>
 </form>
 <!--
+
+Grahame:
 Choices:
 
   patient list 
@@ -112,6 +114,21 @@ Choices:
 
   audit
     - Audit trail entries are always created
+    
+Josh:
+
+"do things as the user"
+ - everything the user can do                   user/*.*
+ - read everything the user can read            user/*.read
+ - [type]/[read|write]                          user/Appointment.write
+
+"do things about a specific patient"
+ - read/write everything                        patient/*.*
+ - read everything                              patient/*.read
+ - [type]/[read|write]                          patient/Condition.read
+
+The idea is that a highly-privileged user looking at Patient 123 in an app shouldn't have to grant permission to any other patient records, if it's a one-patient app.
+
     
 -->    
 

@@ -230,7 +230,12 @@ begin
        ' ClientState nchar(255) NOT NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
        ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
+       ' DateSignedIn '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
+       ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
+       ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL '+#13#10+
+       ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
+       ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_OAuthLogins', 'Id')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'OAuthLogins', 'SessionKey', 'Sessions', 'SessionKey', 'FK_OUathLogins_SessionKey'));
 end;

@@ -87,6 +87,7 @@ type
     function asSql : String;
   end;
 
+  TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirConformance) of object;
 
   TFhirOperation = class (TAdvObject)
   private
@@ -97,9 +98,11 @@ type
     FLang : String;
     FTestServer : Boolean;
     FValidate: boolean;
+    FOwnerName : String;
 
     FSpaces: TFHIRIndexSpaces;
     FAudits : TFhirResourceList;
+    FOnPopulateConformance : TPopulateConformanceEvent;
 
     function opAllowed(resource : TFHIRResourceType; command : TFHIRCommandType) : Boolean;
 
@@ -199,6 +202,8 @@ type
     property lang : String read FLang write FLang;
     Property Validate : boolean read FValidate write FValidate;
     Property TestServer : boolean read FTestServer write FTestServer;
+    Property OwnerName : String read FOwnerName write FOwnerName;
+    Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
   end;
 
 
@@ -658,6 +663,8 @@ begin
       oConf.implementation_.descriptionST := 'FHIR Server running at '+FRepository.FormalURL;
       oConf.implementation_.urlST := FRepository.FormalURL;
     end;
+    if assigned(FOnPopulateConformance) then
+      FOnPopulateConformance(self, oConf);
 
     oConf.acceptUnknownST := true;
     oConf.formatList.Append.value := 'application/xml+fhir';
@@ -676,6 +683,8 @@ begin
       oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', TFhirUri.Create('http://snomed.info/sct'));
     if FRepository.TerminologyServer.Ucum <> nil then
       oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', TFhirUri.Create('http://unitsofmeasure.org'));
+    if assigned(FOnPopulateConformance) then
+      FOnPopulateConformance(self, oConf);
 
     html := TAdvStringBuilder.Create;
     try
@@ -2118,7 +2127,7 @@ begin
     ''#13#10+
     '  &copy; HL7.org 2011-2013'#13#10+
     '  &nbsp;'#13#10+
-    '  HL7Connect FHIR '+GetFhirMessage('NAME_IMPLEMENTATION', lang)+#13#10+
+    '  '+FOwnerName+' FHIR '+GetFhirMessage('NAME_IMPLEMENTATION', lang)+#13#10+
     '  &nbsp;'#13#10+
     '  '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+#13#10;
 
@@ -3414,7 +3423,7 @@ begin
 
     se.source := TFhirSecurityEventSource.create;
     se.source.siteST := 'Cloud';
-    se.source.identifierST := 'HL7Connect';
+    se.source.identifierST := FOwnerName;
     c := se.source.type_List.Append;
     c.codeST := '3';
     c.displayST := 'Web Server';
@@ -3720,7 +3729,7 @@ begin
     result.source := TFhirMessageHeaderSource.create;
     result.source.endpointST := request.baseUrl+'/mailbox';
     result.source.nameST := 'Health Intersections';
-    result.source.softwareST := 'HL7Connect';
+    result.source.softwareST := FOwnerName;
     result.source.versionST := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
     result.source.contact := FFactory.makeContact('email', 'grahame@healthintersections.com.au', '');
     result.link;

@@ -38,7 +38,7 @@ Uses
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects,
-  DCPsha256, JSON,
+  DCPsha256, JSON, libeay32,
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdSoapMime, IdCookie,
@@ -102,6 +102,8 @@ Type
     FPlainServer : TIdHTTPServer;
     FSSLServer : TIdHTTPServer;
     FIOHandler: TIdServerIOHandlerSSLOpenSSL;
+    FOwnerName : String;
+    FAdminEmail : String;
 
     FClientCount : Integer;
 
@@ -113,6 +115,8 @@ Type
     FAuthServer : TAuth2Server;
 
     function OAuthPath(secure : boolean):String;
+    procedure PopulateConformanceAuth(rest: TFhirConformanceRest);
+    procedure PopulateConformance(sender : TObject; conf : TFhirConformance);
 
     function BuildCompartmentList(user : TFHIRUserStructure) : String;
 
@@ -136,6 +140,7 @@ Type
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
+    Procedure HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; response: TIdHTTPResponseInfo; relativeReferenceAdjustment : integer; pretty, gzip : boolean);
     function extractFileData(const request : TStream; const contentType, name: String; var sContentType : String; var params : String): TStream;
     Procedure StartServer(active : boolean);
@@ -157,6 +162,7 @@ Type
     Procedure Start(active : boolean);
     Procedure Stop;
     Procedure Transaction(stream : TStream);
+
   End;
 
 Implementation
@@ -244,10 +250,17 @@ Begin
   write('Load & Cache Store: ');
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
+  FOwnerName := Fini.readString('admin', 'ownername', '');
+  if FOwnerName = '' then
+    FOwnerName := 'Health Intersections';
+  FAdminEmail := Fini.readString('admin', 'email', '');
+  if FAdminEmail = '' then
+    raise Exception.Create('Ad admin email is required');
 
   FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link);
 
   FFhirStore := TFHIRDataStore.Create(db, FSpecPath, FAltPath, terminologyServer, FINi);
+  FFhirStore.ownername := FOwnerName;
   if FIni.ReadString('web', 'host', '') <> '' then
   begin
     if FIni.ReadString('web', 'base', '') <> '' then
@@ -273,6 +286,10 @@ Begin
   FAuthServer := TAuth2Server.Create(FIni.readString('web', 'clients', ''), FAltPath, FHost, inttostr(FSSLPort));
   FAuthServer.FHIRStore := FFhirStore.Link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
+  FAuthServer.SSLCert := FCertFile;
+  FAuthServer.SSLPassword := FSSLPassword;
+  FAuthServer.AdminEmail := FAdminEmail;
+
 
   if (FPort <> 0) and (FSSLPort <> 0) then
     writeln('Web Server: http = '+inttostr(FPort)+', https = '+inttostr(FSSLPort))
@@ -301,8 +318,11 @@ Begin
   FTerminologyWebServer.free;
   FIni.Free;
   FAuthServer.Free;
-  FFhirStore.CloseAll;
-  FFhirStore.Free;
+  if FFhirStore <> nil then
+  begin
+    FFhirStore.CloseAll;
+    FFhirStore.Free;
+  end;
   FLock.Free;
   Inherited;
 End;
@@ -384,6 +404,7 @@ Begin
     FIOHandler.SSLOptions.Method := sslvSSLv3;
     FIOHandler.SSLOptions.CertFile := FCertFile;
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
+    FIOHandler.SSLOptions.CipherList := 'RC4+SHA1+RSA';
     FIOHandler.OnGetPassword := SSLPassword;
     FSSLServer.OnCommandGet := SecureRequest;
     FSSLServer.OnCommandOther := SecureRequest;
@@ -391,6 +412,7 @@ Begin
     FSSLServer.OnDisconnect := DoDisconnect;
     FSSLServer.OnParseAuthentication := ParseAuthenticationHeader;
     FSSLServer.Active := active;
+    LoadEAYExtensions;
   end;
 end;
 
@@ -401,6 +423,7 @@ Begin
     FSSLServer.Active := False;
     FreeAndNil(FSSLServer);
     FreeAndNil(FIOHandler);
+    UnloadEAYExtensions;
   end;
   if FPlainServer <> nil then
   begin
@@ -477,10 +500,14 @@ begin
 //    ReturnSpecFile(response, request.Document, FAltPath+ExtractFileName(request.Document.replace('/', '\')))
 //  else if FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
 //    ReturnSpecFile(response, request.Document, FSpecPath+ExtractFileName(request.Document.replace('/', '\')))
+  else if request.document = FBasePath+'/.well-known/openid-configuration' then
+    HandleDiscoveryRedirect(AContext, request, response)
+  else if request.document = '/.well-known/openid-configuration' then
+    FAuthServer.HandleDiscovery(AContext, request, response)
   else if request.Document.StartsWith(FBasePath, false) then
     HandleRequest(AContext, request, response, false, false, FBasePath)
   else if request.Document.StartsWith(FSecurePath, false) then
-    HandleRequest(AContext, request, response, false, true, FSecurePath)
+    HandleRequest(AContext, request, response, false, false, FBasePath)
   else if request.Document = '/' then
     ReturnProcessedFile(response, '/homepage.html', AltFile('/homepage.html'))
   else if FTerminologyWebServer.handlesRequest(request.Document) then
@@ -491,6 +518,38 @@ begin
     response.ContentText := 'Document '+request.Document+' not found';
     writeln('miss: '+request.Document);
   end;
+end;
+
+procedure TFhirWebServer.PopulateConformanceAuth(rest: TFhirConformanceRest);
+var
+  c : TFHIRCoding;
+begin
+  if rest.security = nil then
+    rest.security := TFhirConformanceRestSecurity.Create;
+  rest.security.corsST := true;
+  if FAuthServer <> nil then
+  begin
+    c := rest.security.serviceList.Append.codingList.Append;
+    c.systemST := 'http://hl7.org/fhir/restful-security-service';
+    c.codeST := 'OAuth2';
+    rest.security.descriptionST := 'This server implements OAuth2 for login';
+
+    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oidc-discovery', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURL)+FAuthServer.AuthPath+'/discovery'));
+    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oauth2-hooks-registration', TFhirUri.Create('mailto:'+FAdminEmail));
+    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oauth2-hooks-authorize', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURL)+FAuthServer.AuthPath));
+    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oauth2-hooks-token', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURL)+FAuthServer.TokenPath));
+  end;
+end;
+
+procedure TFhirWebServer.PopulateConformance(sender: TObject; conf: TFhirConformance);
+var
+  i : integer;
+begin
+  for i := 0 to conf.restList.Count - 1 do
+    PopulateConformanceAuth(conf.restList[i]);
+
+
+
 end;
 
 function TFhirWebServer.SpecFile(path : String) : String;
@@ -514,10 +573,16 @@ Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPReq
 begin
   if FileExists(SpecFile(request.Document)) then
     ReturnSpecFile(response, request.Document, SpecFile(request.Document))
-  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+request.Document) then
-    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FAltPath)+request.Document)
-  else if FileExists(AltFile(ExtractFileName(request.Document))) then
-    ReturnSpecFile(response, request.Document, AltFile(ExtractFileName(request.Document)))
+  else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
+    ReturnProcessedFile(response, request.Document, ChangeFileExt(AltFile(request.Document), '.html'))
+//  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+request.Document) then
+//    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FAltPath)+request.Document)
+//  else if FileExists(AltFile(ExtractFileName(request.Document))) then
+//    ReturnSpecFile(response, request.Document, AltFile(ExtractFileName(request.Document)))
+  else if request.document = FBasePath+'/.well-known/openid-configuration' then
+    HandleDiscoveryRedirect(AContext, request, response)
+  else if request.document = '/.well-known/openid-configuration' then
+    FAuthServer.HandleDiscovery(AContext, request, response)
   else if request.Document.StartsWith(FBasePath, false) then
     HandleRequest(AContext, request, response, true, false, FBasePath)
   else if request.Document.StartsWith(FSecurePath, false) then
@@ -533,6 +598,22 @@ begin
     response.ResponseNo := 404;
     response.ContentText := 'Document '+request.Document+' not found';
     writeln('miss: '+request.Document);
+  end;
+end;
+
+procedure TFhirWebServer.HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+begin
+  if FAuthServer = nil then
+  begin
+    response.ResponseNo := 404;
+    response.ResponseText := 'Not Found';
+    response.ContentText := 'This server does not support authentication';
+  end
+  else
+  begin
+    response.ResponseNo := 301;
+    response.ResponseText := 'Moved Permanently';
+    response.Location := FAuthServer.BasePath+'/discovery';
   end;
 end;
 
@@ -624,21 +705,21 @@ Begin
             else if oRequest.CommandType = fcmdUnknown then
             begin
               response.ResponseNo := 200;
-              response.ContentType := 'text/html';
+              response.ContentType := 'text/html; charset=UTF-8';
               response.FreeContentStream := true;
               response.ContentStream := StringToUTFStream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session));
             end
             else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) and (oRequest.Feed = nil) Then
             begin
               response.ResponseNo := 200;
-              response.ContentType := 'text/html';
+              response.ContentType := 'text/html; charset=UTF-8';
               response.FreeContentStream := true;
               response.ContentStream := StringToUTFStream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceType, oRequest.Session));
             end
             else if (oRequest.CommandType = fcmdConformanceStmt) and (oRequest.ResourceType <> frtNull) then
             begin
               response.ResponseNo := 200;
-              response.ContentType := 'text/html';
+              response.ContentType := 'text/html; charset=UTF-8';
 // no - just use *              response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
               response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, DELETE');
               response.FreeContentStream := true;
@@ -690,7 +771,7 @@ Begin
         if aFormat = ffXhtml then
         begin
           response.ResponseNo := 200;
-          response.ContentType := 'text/html';
+          response.ContentType := 'text/html; charset=UTF-8';
           response.FreeContentStream := true;
           response.ContentStream := StringToUTFStream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, e.Msg, ssl));
         end
@@ -717,14 +798,14 @@ begin
   StringSplit(request.Id.Substring(14), '/', id, ver);
   questionnaire := GetResource(request.Session, frtQuestionnaire, request.Lang, id, ver) as TFHirQuestionnaire;
   try
-    // convert to xhtml 
+    // convert to xhtml
     s := transform(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt');
     // insert page headers:
     s := s.Replace('</title>', '</title>'+#13#10+TFHIRXhtmlComposer.PageLinks);
     s := s.Replace('<body>', '<body>'+#13#10+TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang));
     s := s.Replace('</body>', TFHIRXhtmlComposer.Footer(request.baseUrl)+#13#10+'</body>');
-    response.Body := s;
-    response.ContentType := 'text/html';
+    response.body := s;
+    response.ContentType := 'text/html; charset=UTF-8';
   finally
     questionnaire.free;
   end;
@@ -1473,6 +1554,8 @@ begin
   writeln('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source);
   store := TFhirOperation.Create(request.Lang, FFhirStore.Link);
   try
+    store.OwnerName := FOwnerName;
+    store.OnPopulateConformance := PopulateConformance;
     store.Connection := FFhirStore.DB.GetConnection('Operation');
     store.precheck(request, response);
     try
@@ -1519,7 +1602,7 @@ FHIR_JS+
 '<body>'#13#10+
 ''#13#10+
 TFHIRXhtmlComposer.Header(nil, FBasePath, lang)+
-'<h2>HL7Connect '+GetFhirMessage('NAME_SERVER', lang)+'</h2>'#13#10;
+'<h2>'+FOwnerName+' '+GetFhirMessage('NAME_SERVER', lang)+'</h2>'#13#10;
 
 
 
@@ -1610,7 +1693,7 @@ begin
   TFHIRXhtmlComposer.Header(Session, sBaseURL, lang));
 
   b.Append(
-  '<h2>HL7Connect '+GetFhirMessage('NAME_SERVER', lang)+'</h2>'#13#10);
+  '<h2>'+FOwnerName+' '+GetFhirMessage('NAME_SERVER', lang)+'</h2>'#13#10);
 
     if session <> nil then
       b.Append('<p>Welcome '+FormatTextToXml(session.Name)+'</p>'#13#10);
@@ -1729,7 +1812,7 @@ FHIR_JS+
 ''#13#10+
 '  &copy; HL7.org 2011-2013'#13#10+
 '  &nbsp;'#13#10+
-'  <a href="http://www.hl7connect.com">HL7Connect</a> '+GetFhirMessage('NAME_SERVER', lang)+''#13#10+
+'  '+FOwnerName+' '+GetFhirMessage('NAME_SERVER', lang)+''#13#10+
 '  &nbsp;'#13#10+
 '  FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+''#13#10;
 
@@ -1910,7 +1993,7 @@ var
   id, name, email, msg : String;
 begin
   if session.provider = apGoogle then
-    result := GoogleGetDetails(session.InnerToken, FAuthServer.GoogleAppKey, id, name, email, msg)
+    result := GoogleGetDetails(session.InnerToken, FAuthServer.GoogleAppKey, '', id, name, email, msg)
   else if session.provider = apFacebook then
     result := FacebookGetDetails(session.InnerToken, id, name, email, msg)
   else
@@ -1973,7 +2056,15 @@ begin
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
-  s := s.Replace('[%host%]', FHost, [rfReplaceAll]);
+  s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
+  if FPort = 80 then
+    s := s.Replace('[%host%]', FHost, [rfReplaceAll])
+  else
+    s := s.Replace('[%host%]', FHost+':'+inttostr(FPort), [rfReplaceAll]);
+  if FSSLPort = 443 then
+    s := s.Replace('[%securehost%]', FHost, [rfReplaceAll])
+  else
+    s := s.Replace('[%securehost%]', FHost+':'+inttostr(FSSLPort), [rfReplaceAll]);
   s := s.Replace('[%endpoints%]', EndPointDesc, [rfReplaceAll]);
   if variables <> nil then
     for n in variables.Keys do
@@ -1981,7 +2072,7 @@ begin
 
   response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));
   response.FreeContentStream := true;
-  response.ContentType := 'text/html';
+  response.ContentType := 'text/html; charset=UTF-8';
 end;
 
 procedure TFhirWebServer.ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path: String);

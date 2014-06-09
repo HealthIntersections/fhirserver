@@ -4,27 +4,27 @@ unit FacebookSupport;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -36,8 +36,8 @@ uses
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 Function FacebookGetDetails(token : String; var id, name, email, error : String) : boolean;
 
-Function GoogleCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
-Function GoogleGetDetails(token, key : String; var id, name, email, error : String) : boolean;
+Function GoogleCheckLogin(id, secret, url, code : String; var token, expires, jwt, error : String) : boolean;
+Function GoogleGetDetails(token, key, jwtsrc : String; var id, name, email, error : String) : boolean;
 
 implementation
 
@@ -45,7 +45,7 @@ uses
   InternetFetcher,
   IdHTTP, IdSSLOpenSSL,
   AdvMemories,
-  json, ParseMap;
+  json, jwt, ParseMap;
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 var
@@ -76,7 +76,7 @@ begin
 end;
 
 
-Function GoogleCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
+Function GoogleCheckLogin(id, secret, url, code : String; var token, expires, jwt, error : String) : boolean;
 var
   http: TIdHTTP;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
@@ -105,12 +105,11 @@ begin
           try
             http.Post('https://accounts.google.com/o/oauth2/token', post, resp);
             resp.position := 0;
-            resp.SaveToFile('c:\temp\google.json');
-            resp.position := 0;
             json := TJSONParser.Parse(resp);
             try
               token := json.vStr['access_token'];
               expires := json.vStr['expires_in'];
+              jwt := json.vStr['id_token'];
               result := true;
             finally
               json.free;
@@ -164,10 +163,11 @@ begin
 end;
 
 
-Function GoogleGetDetails(token, key : String; var id, name, email, error : String) : boolean;
+Function GoogleGetDetails(token, key, jwtsrc : String; var id, name, email, error : String) : boolean;
 var
   fetch : TgwInternetFetcher;
   json : TJSONObject;
+  jwt : TJWT;
 begin
   result := false;
   try
@@ -186,6 +186,20 @@ begin
       result := true;
     finally
       fetch.free;
+    end;
+    if (jwtsrc <>'') and ((email = '') or (id = '') or (name = '')) then
+    begin
+      jwt := TJWTUtils.unpack(jwtsrc, false, nil);
+      try
+        if (email = '') then
+          email := jwt.email;
+        if (id = '') then
+          id := jwt.subject;
+        if (name = '') then
+          name := jwt.name;
+      finally
+        jwt.Free;
+      end;
     end;
   except
     on e:exception do

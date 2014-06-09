@@ -1,5 +1,7 @@
 unit AuthServer;
 
+// to convert .crt to .pem openssl x509 -in mycert.crt -out mycert.pem -outform PEM
+
 interface
 
 uses
@@ -11,7 +13,7 @@ uses
 
   ParseMap, KDBManager, KDBDialects, KCritSct,
 
-  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, JSON,
+  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, JSON, JWT,
 
   FacebookSupport,
 
@@ -41,6 +43,8 @@ type
     FFilePath : String;
     FSSLPort : String;
     FHost : String;
+    FSSLCert : String;
+    FSSLPassword : String;
 
     FFacebookAppid : String;
     FFacebookAppSecret : String;
@@ -51,6 +55,7 @@ type
     FAppSecrets : String;
     FHL7Appid : String;
     FHL7AppSecret : String;
+    FAdminEmail : String;
 
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -58,6 +63,7 @@ type
     Procedure HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     function checkNotEmpty(v, n: String): String;
     function isAllowedRedirect(client_id, redirect_uri: String): boolean;
     procedure SetFhirStore(const Value: TFHIRDataStore);
@@ -70,6 +76,7 @@ type
     Destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure HandleDiscovery(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 
     procedure setCookie(response: TIdHTTPResponseInfo; const cookiename, cookieval, domain, path: String; expiry: TDateTime; secure: Boolean);
 
@@ -81,7 +88,13 @@ type
     property GoogleAppKey : String read FGoogleAppKey;
     property HL7Appid : String read FHL7Appid;
     function MakeLoginToken(path: String; provider: TFHIRAuthProvider): String;
+    property SSLCert : String read FSSLCert write FSSLCert;
+    property SSLPassword : String read FSSLPassword write FSSLPassword;
+    property AdminEmail : String read FAdminEmail write FAdminEmail;
 
+    function AuthPath : String;
+    function BasePath : String;
+    function TokenPath : String;
   end;
 
 
@@ -118,6 +131,14 @@ begin
   inherited;
 end;
 
+
+function TAuth2Server.BasePath: String;
+begin
+  if FSSLPort = '443' then
+    result := 'https://'+FHost+'/oauth2'
+  else
+    result := 'https://'+FHost+':'+FSSLPort+'/oauth2';
+end;
 
 function TAuth2Server.MakeLoginToken(path : String; provider : TFHIRAuthProvider): String;
 var
@@ -207,6 +228,11 @@ begin
   FFhirStore := Value;
 end;
 
+function TAuth2Server.TokenPath: String;
+begin
+ result := '/oauth2/token';
+end;
+
 procedure TAuth2Server.HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap; response: TIdHTTPResponseInfo);
 var
   client_id : String;
@@ -254,7 +280,7 @@ end;
 
 procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  id, client_id, name : String;
+  id, client_id, name, authurl: String;
   conn : TKDBConnection;
   variables : TDictionary<String,String>;
   c : integer;
@@ -269,6 +295,11 @@ begin
     FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
   if session = nil then
     raise Exception.Create('User Session not found');
+
+  if FSSLPort = '443' then
+    authurl := 'https://'+FHost+'/oauth2'
+  else
+    authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2';
 
   try
     conn := FFhirStore.DB.GetConnection('OAuth2');
@@ -295,9 +326,27 @@ begin
           if params.getVar('user') = '1' then
             rights.Add('user');
 
-          conn.SQL := 'Update OAuthLogins set Status = 3, DateChosen = '+DBGetDate(conn.Owner.Platform)+', Rights = :r where Id = '''+SQLWrapString(Session.OuterToken)+'''';
+          session.JWT := TJWT.Create;
+          session.jwt.header['kid'] := authurl+'/auth_key'; // cause we'll sign with our SSL certificate
+          session.jwt.issuer := FHost;
+          session.jwt.expires := session.Expires;
+          session.jwt.issuedAt := now;
+          session.jwt.id := FHost+'/sessions/'+inttostr(Session.Key);
+
+          if params.getVar('user') = '1' then
+          begin
+          // if user rights granted
+            session.jwt.subject := Names_TFHIRAuthProvider[session.Provider]+':'+session.id;
+            session.jwt.name := session.Name;
+            if session.Email <> '' then
+              session.jwt.email := session.Email;
+          end;
+          session.JWTPacked := TJWTUtils.rsa_pack(session.jwt, jwt_hmac_rsa256, ChangeFileExt(FSSLCert, '.key'), FSSLPassword);
+
+          conn.SQL := 'Update OAuthLogins set Status = 3, DateChosen = '+DBGetDate(conn.Owner.Platform)+', Rights = :r, Jwt = :jwt where Id = '''+SQLWrapString(Session.OuterToken)+'''';
           conn.prepare;
           conn.BindBlobFromString('r', rights.CommaText);
+          conn.BindBlobFromString('jwt', session.JWTPacked);
           conn.Execute;
           conn.Terminate;
 
@@ -331,10 +380,64 @@ begin
   end;
 end;
 
+procedure TAuth2Server.HandleDiscovery(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  obj :  TJsonObject;
+begin
+  obj := TJsonObject.create;
+  try
+    obj['issuer'] := FHost;
+    obj['authorization_endpoint'] := BasePath+'/auth';
+    obj['token_endpoint'] := BasePath+'/token';
+    obj['jwks_uri'] :=  BasePath+'/auth_key';
+    obj['registration_endpoint'] := 'mailto:'+FAdminEmail;
+    obj.arr['scopes_supported'] := TJsonArray.create.add('read').add('write').add('user');
+
+    obj['subject_types_supported'] := 'public';
+    obj.arr['id_token_signing_alg_values_supported'] := TJsonArray.create.add('RS256');
+    obj.arr['response_types_supported'] := TJsonArray.create.add('id_token');
+    if FSSLPort = '443' then
+      obj['service_documentation'] :=  'https://'+FHost+'/local.hts'
+    else
+      obj['service_documentation'] :=  'https://'+FHost+':'+FSSLPort+'/local.hts';
+    response.ResponseNo := 200;
+    response.ResponseText := 'OK';
+    response.ContentType := 'application/json';
+    response.ContentText := TJSONWriter.writeStr(obj, true);
+  finally
+    obj.free;
+  end;
+
+end;
+
+procedure TAuth2Server.HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+var
+  jwk : TJWK;
+  authurl : String;
+begin
+  if FSSLPort = '443' then
+    authurl := 'https://'+FHost+'/oauth2'
+  else
+    authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2';
+
+
+  jwk := TJWTUtils.loadKeyFromCert(FSSLCert);
+  try
+    jwk.obj['alg'] := 'RS256';
+    jwk.obj['use'] := 'sig';
+    jwk.obj['kid'] := authurl+'/auth_key';
+
+    response.ContentType := 'application/json';
+    response.ContentText := TJSONWriter.writeStr(jwk.obj, true);
+  finally
+    jwk.free;
+  end;
+end;
+
 procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   conn : TKDBConnection;
-  id, username, password, domain, state : String;
+  id, username, password, domain, state, jwt : String;
   authurl, token, expires, msg, uid, name, email : String;
   session : TFhirSession;
   provider : TFHIRAuthProvider;
@@ -401,9 +504,9 @@ begin
 
       if provider = apGoogle then
       begin
-        ok := GoogleCheckLogin(FGoogleAppid, FGoogleAppSecret, authurl, params.GetVar('code'), token, expires, msg);
+        ok := GoogleCheckLogin(FGoogleAppid, FGoogleAppSecret, authurl, params.GetVar('code'), token, expires, jwt, msg);
         if ok then
-          ok := GoogleGetDetails(token, FGoogleAppKey, uid, name, email, msg);
+          ok := GoogleGetDetails(token, FGoogleAppKey, jwt, uid, name, email, msg);
       end
       else
       begin
@@ -451,6 +554,10 @@ begin
       HandleTokenData(AContext, request, params, response)
     else if (request.Document = '/oauth2/auth_skype') then
       HandleSkype(AContext, request, params, response)
+    else if (request.Document = '/oauth2/auth_key') then
+      HandleKey(AContext, request, params, response)
+    else if (request.Document = '/oauth2/discovery') then
+      HandleDiscovery(AContext, request, response)
     else
       raise Exception.Create('Invalid URL');
   finally
@@ -560,6 +667,8 @@ begin
           if conn.ColStringByName['Redirect'] <> uri then
             raise Exception.Create('Mismatch between claimed and actual redirection URIs');
           conn.terminate;
+
+
           conn.ExecSQL('Update OAuthLogins set Status = 4, DateTokenAccessed = '+DBGetDate(conn.owner.platform)+' where Id = '''+session.OuterToken+'''');
 
           json := TJsonWriter.create;
@@ -569,6 +678,7 @@ begin
             json.Value('access_token', session.Cookie);
             json.Value('token_type', 'Bearer');
             json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
+            json.Value('id_token', session.JWTPacked);
             json.Finish;
           finally
             json.Free;
@@ -691,6 +801,11 @@ begin
   end;
 end;
 
+
+function TAuth2Server.AuthPath: String;
+begin
+  result := '/oauth2/auth';
+end;
 
 function TAuth2Server.BuildLoginList(id : String): String;
 var

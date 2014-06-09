@@ -68,6 +68,7 @@ uses
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
   Windows,
   System.SysUtils,
+  IdSSLOpenSSLHeaders,
   FHIRServerApplicationCore in 'FHIRServerApplicationCore.pas',
   FHIRRestServer in 'FHIRRestServer.pas',
   EncodeSupport in '..\Libraries\Support\EncodeSupport.pas',
@@ -165,9 +166,8 @@ uses
   FHIRLang in '..\Libraries\refplat-dev\FHIRLang.pas',
   FHIRUtilities in '..\Libraries\refplat-dev\FHIRUtilities.pas',
   FHIRClient in '..\Libraries\refplat-dev\FHIRClient.pas',
-
-  FHIRSubscriptionManager in 'FHIRSubscriptionManager.pas',
   {$ENDIF }
+
   MsXmlParser in '..\Libraries\Support\MsXmlParser.pas',
   XMLBuilder in '..\Libraries\Support\XMLBuilder.pas',
   AdvWinInetClients in '..\Libraries\Support\AdvWinInetClients.pas',
@@ -260,9 +260,14 @@ uses
   DecimalTests in '..\Libraries\tests\DecimalTests.pas',
   UcumTests in '..\Libraries\tests\UcumTests.pas',
   FHIRServerUtilities in 'FHIRServerUtilities.pas',
-  SearchProcessor in 'SearchProcessor.pas';
+  SearchProcessor in 'SearchProcessor.pas',
+  JWTTests in '..\Libraries\security\JWTTests.pas',
+  JWT in '..\Libraries\security\JWT.pas',
+  HMAC in '..\Libraries\security\HMAC.pas',
+  libeay32 in '..\Libraries\security\libeay32.pas';
 
 begin
+  IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
     {$IFDEF FHIR-DSTU}
     SetConsoleTitle('FHIR Server (DSTU)');

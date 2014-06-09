@@ -334,6 +334,10 @@
         <DCCReference Include="..\Libraries\tests\UcumTests.pas"/>
         <DCCReference Include="FHIRServerUtilities.pas"/>
         <DCCReference Include="SearchProcessor.pas"/>
+        <DCCReference Include="..\Libraries\security\JWTTests.pas"/>
+        <DCCReference Include="..\Libraries\security\JWT.pas"/>
+        <DCCReference Include="..\Libraries\security\HMAC.pas"/>
+        <DCCReference Include="..\Libraries\security\libeay32.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

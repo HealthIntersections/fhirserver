@@ -88,7 +88,16 @@ Some of these extensions are candidates for migrating to the <a href="index.html
 <h2>OAuth2 Documentation</h2>
 
 <p>
-This server implements <a href="http://tools.ietf.org/html/rfc6749#section-5.2">OAuth2</a>. The implementation is based on the Google implementation as much as possible - the main difference is that OpenID Connect is not supported.
+This server implements <a href="http://tools.ietf.org/html/rfc6749#section-5.2">OAuth2</a>. The implementation is based on the Google implementation as much as possible. The main differences:
+</p>
+<ul>
+ <li>this server supports multiple different identifiers, and this is reflected in the structure of the user identifier</li>
+ <li>This server only returns user identification details if the user allows this (scope = 'user')</li>
+</ul>
+
+</p>
+<p>
+The openID discovery document for this server is available at <a href="https://[%securehost%]/.well-known/openid-configuration">https://[%securehost%]/.well-known/openid-configuration</a>.
 </p>
 
 <h3>Step 1: Authorization</h3>
@@ -133,7 +142,8 @@ The server then responds with the following json:
   {
     "access_token" : "[the token to use as the access token when using the API]",
     "token_type" : "Bearer",
-    "expires_in" : "[integer # seconds for which the session is valid]"
+    "expires_in" : "[integer # seconds for which the session is valid]",
+    "id_token" : "JWT (Open ID Connect User Token)"
   }
 </pre>
 <p>

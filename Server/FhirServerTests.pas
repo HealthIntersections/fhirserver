@@ -30,7 +30,7 @@ implementation
 
 uses
   SnomedServices, SnomedExpressions,
-  DecimalTests, UcumTests;
+  DecimalTests, UcumTests, JWTTests;
 
 { TFhirServerTests }
 
@@ -42,6 +42,7 @@ end;
 procedure TFhirServerTests.executeLibrary;
 begin
   TDecimalTests.runTests;
+  TJWTTests.runTests;
   TUcumTests.runTests(ExtractFilePath(FIni.FileName));
   WriteLn('Library tests Passed');
 end;

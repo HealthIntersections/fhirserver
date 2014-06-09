@@ -107,6 +107,7 @@ Type
     FBases : TStringList;
     FTotalResourceCount: integer;
     FFormalURL: String;
+    FOwnerName: String;
     {$IFNDEF FHIR-DSTU}
     FSubscriptionManager : TSubscriptionManager;
     {$ENDIF}
@@ -160,6 +161,7 @@ Type
     function ResourceTypeKeyForName(name : String) : integer;
     procedure ProcessSubscriptions;
     function DefaultRights : String;
+    Property OwnerName : String read FOwnerName write FOwnerName;
   end;
 
 
@@ -370,7 +372,7 @@ begin
           se.event.dateTimeST := NowUTC;
           se.source := TFhirSecurityEventSource.create;
           se.source.siteST := 'Cloud';
-          se.source.identifierST := 'HL7Connect';
+          se.source.identifierST := FOwnerName;
           c := se.source.type_List.Append;
           c.codeST := '3';
           c.displayST := 'Web Server';
@@ -460,6 +462,7 @@ begin
     request.Session := CreateImplicitSession('server');
   storage := TFhirOperation.create('en', self.Link);
   try
+    storage.OwnerName := OwnerName;
     storage.Connection := FDB.GetConnection('fhir');
     storage.PreCheck(request, response);
     storage.Connection.StartTransact;
@@ -546,7 +549,7 @@ begin
           se.event.dateTimeST := NowUTC;
           se.source := TFhirSecurityEventSource.create;
           se.source.siteST := 'Cloud';
-          se.source.identifierST := 'HL7Connect';
+          se.source.identifierST := ''+FOwnerName+'';
           c := se.source.type_List.Append;
           c.codeST := '3';
           c.displayST := 'Web Server';
@@ -800,7 +803,7 @@ begin
       se.event.dateTimeST := NowUTC;
       se.source := TFhirSecurityEventSource.create;
       se.source.siteST := 'Cloud';
-      se.source.identifierST := 'HL7Connect';
+      se.source.identifierST := ''+FOwnerName+'';
       c := se.source.type_List.Append;
       c.codeST := '3';
       c.displayST := 'Web Server';
