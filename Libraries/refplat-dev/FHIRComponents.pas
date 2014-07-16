@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.2.1 generated Fri, May 16, 2014 11:44+1000
+// FHIR v0.2.1 generated Thu, Jul 17, 2014 03:20+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -58,10 +58,6 @@ Type
   TFhirCarePlanActivityList = class;
   TFhirCarePlanActivitySimple = class;
   TFhirCarePlanActivitySimpleList = class;
-  TFhirCommonDataElementBinding = class;
-  TFhirCommonDataElementBindingList = class;
-  TFhirCommonDataElementMapping = class;
-  TFhirCommonDataElementMappingList = class;
   TFhirCompositionAttester = class;
   TFhirCompositionAttesterList = class;
   TFhirCompositionEvent = class;
@@ -108,6 +104,10 @@ Type
   TFhirConformanceMessagingEventList = class;
   TFhirConformanceDocument = class;
   TFhirConformanceDocumentList = class;
+  TFhirDataElementBinding = class;
+  TFhirDataElementBindingList = class;
+  TFhirDataElementMapping = class;
+  TFhirDataElementMappingList = class;
   TFhirDeviceObservationReportVirtualDevice = class;
   TFhirDeviceObservationReportVirtualDeviceList = class;
   TFhirDeviceObservationReportVirtualDeviceChannel = class;
@@ -222,20 +222,22 @@ Type
   TFhirProfileMappingList = class;
   TFhirProfileStructure = class;
   TFhirProfileStructureList = class;
-  TFhirProfileStructureElement = class;
-  TFhirProfileStructureElementList = class;
-  TFhirProfileStructureElementSlicing = class;
-  TFhirProfileStructureElementSlicingList = class;
-  TFhirProfileStructureElementDefinition = class;
-  TFhirProfileStructureElementDefinitionList = class;
-  TFhirProfileStructureElementDefinitionType = class;
-  TFhirProfileStructureElementDefinitionTypeList = class;
-  TFhirProfileStructureElementDefinitionConstraint = class;
-  TFhirProfileStructureElementDefinitionConstraintList = class;
-  TFhirProfileStructureElementDefinitionBinding = class;
-  TFhirProfileStructureElementDefinitionBindingList = class;
-  TFhirProfileStructureElementDefinitionMapping = class;
-  TFhirProfileStructureElementDefinitionMappingList = class;
+  TFhirProfileStructureSnapshot = class;
+  TFhirProfileStructureSnapshotList = class;
+  TFhirProfileStructureSnapshotElement = class;
+  TFhirProfileStructureSnapshotElementList = class;
+  TFhirProfileStructureSnapshotElementSlicing = class;
+  TFhirProfileStructureSnapshotElementSlicingList = class;
+  TFhirProfileStructureSnapshotElementDefinition = class;
+  TFhirProfileStructureSnapshotElementDefinitionList = class;
+  TFhirProfileStructureSnapshotElementDefinitionType = class;
+  TFhirProfileStructureSnapshotElementDefinitionTypeList = class;
+  TFhirProfileStructureSnapshotElementDefinitionConstraint = class;
+  TFhirProfileStructureSnapshotElementDefinitionConstraintList = class;
+  TFhirProfileStructureSnapshotElementDefinitionBinding = class;
+  TFhirProfileStructureSnapshotElementDefinitionBindingList = class;
+  TFhirProfileStructureSnapshotElementDefinitionMapping = class;
+  TFhirProfileStructureSnapshotElementDefinitionMappingList = class;
   TFhirProfileStructureSearchParam = class;
   TFhirProfileStructureSearchParamList = class;
   TFhirProfileExtensionDefn = class;
@@ -1303,304 +1305,6 @@ Type
     procedure ClearItems;
     
     Property FhirCarePlanActivitySimples[index : Integer] : TFhirCarePlanActivitySimple read GetItemN write SetItemN; default;
-  End;
-
-
-  {@Class TFhirCommonDataElementBinding : TFhirElement
-    Binds to a value set if this element is coded (code, Coding, CodeableConcept).
-  }
-  {!.Net HL7Connect.Fhir.CommonDataElementBinding}
-  TFhirCommonDataElementBinding = class (TFhirBackboneElement)
-  private
-    FIsExtensible : TFhirBoolean;
-    FConformance : TFhirEnum;
-    FDescription : TFhirString;
-    FReference : TFhirResourceReference{TFhirValueSet};
-    Procedure SetIsExtensible(value : TFhirBoolean);
-    Function GetIsExtensibleST : Boolean;
-    Procedure SetIsExtensibleST(value : Boolean);
-    Procedure SetConformance(value : TFhirEnum);
-    Function GetConformanceST : TFhirBindingConformance;
-    Procedure SetConformanceST(value : TFhirBindingConformance);
-    Procedure SetDescription(value : TFhirString);
-    Function GetDescriptionST : String;
-    Procedure SetDescriptionST(value : String);
-    Procedure SetReference(value : TFhirResourceReference{TFhirValueSet});
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirCommonDataElementBinding; overload;
-    function Clone : TFhirCommonDataElementBinding; overload;
-    {!script show}
-  published
-    {@member isExtensible
-      If true, then conformant systems may use additional codes or (where the data type permits) text alone to convey concepts not covered by the set of codes identified in the binding.  If false, then conformant systems are constrained to the provided codes alone.
-    }
-    property isExtensible : TFhirBoolean read FIsExtensible write SetIsExtensible;
-    {@member isExtensibleST
-      Typed access to If true, then conformant systems may use additional codes or (where the data type permits) text alone to convey concepts not covered by the set of codes identified in the binding.  If false, then conformant systems are constrained to the provided codes alone.
-    }
-    property isExtensibleST : Boolean read GetIsExtensibleST write SetIsExtensibleST;
-
-    {@member conformance
-      Indicates the degree of conformance expectations associated with this binding.
-    }
-    property conformance : TFhirEnum read FConformance write SetConformance;
-    {@member conformanceST
-      Typed access to Indicates the degree of conformance expectations associated with this binding.
-    }
-    property conformanceST : TFhirBindingConformance read GetConformanceST write SetConformanceST;
-
-    {@member description
-      Describes the intended use of this particular set of codes.
-    }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
-      Typed access to Describes the intended use of this particular set of codes.
-    }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
-
-    {@member reference
-      Points to the value set that identifies the set of codes to be used.
-    }
-    property reference : TFhirResourceReference{TFhirValueSet} read FReference write SetReference;
-
-  end;
-
-
-  {@Class TFhirCommonDataElementBindingList
-    A list of FhirCommonDataElementBinding
-  }
-  {!.Net HL7Connect.Fhir.CommonDataElementBindingList}
-  TFhirCommonDataElementBindingList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirCommonDataElementBinding;
-    procedure SetItemN(index : Integer; value : TFhirCommonDataElementBinding);
-  public
-    {!script hide}
-    function Link : TFhirCommonDataElementBindingList; Overload;
-    function Clone : TFhirCommonDataElementBindingList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirCommonDataElementBinding to the end of the list.
-    }
-    function Append : TFhirCommonDataElementBinding;
-
-    
-    {@member AddItem
-      Add an already existing FhirCommonDataElementBinding to the end of the list.
-    }
-    procedure AddItem(value : TFhirCommonDataElementBinding);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirCommonDataElementBinding) : Integer;
-    
-
-    {@member Insert
-      Insert FhirCommonDataElementBinding before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirCommonDataElementBinding;
-    
-
-    {@member InsertItem
-       Insert an existing FhirCommonDataElementBinding before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirCommonDataElementBinding);
-    
-    {@member Item
-       Get the iIndexth FhirCommonDataElementBinding. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirCommonDataElementBinding. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirCommonDataElementBinding);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirCommonDataElementBinding;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirCommonDataElementBindings[index : Integer] : TFhirCommonDataElementBinding read GetItemN write SetItemN; default;
-  End;
-
-
-  {@Class TFhirCommonDataElementMapping : TFhirElement
-    Identifies a concept from an external specification that roughly corresponds to this element.
-  }
-  {!.Net HL7Connect.Fhir.CommonDataElementMapping}
-  TFhirCommonDataElementMapping = class (TFhirBackboneElement)
-  private
-    FUri : TFhirUri;
-    FName : TFhirString;
-    FComments : TFhirString;
-    FMap : TFhirString;
-    Procedure SetUri(value : TFhirUri);
-    Function GetUriST : String;
-    Procedure SetUriST(value : String);
-    Procedure SetName(value : TFhirString);
-    Function GetNameST : String;
-    Procedure SetNameST(value : String);
-    Procedure SetComments(value : TFhirString);
-    Function GetCommentsST : String;
-    Procedure SetCommentsST(value : String);
-    Procedure SetMap(value : TFhirString);
-    Function GetMapST : String;
-    Procedure SetMapST(value : String);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirCommonDataElementMapping; overload;
-    function Clone : TFhirCommonDataElementMapping; overload;
-    {!script show}
-  published
-    {@member uri
-      A URI that identifies the specification that this mapping is expressed to.
-    }
-    property uri : TFhirUri read FUri write SetUri;
-    {@member uriST
-      Typed access to A URI that identifies the specification that this mapping is expressed to.
-    }
-    property uriST : String read GetUriST write SetUriST;
-
-    {@member name
-      A name for the specification that is being mapped to.
-    }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
-      Typed access to A name for the specification that is being mapped to.
-    }
-    property nameST : String read GetNameST write SetNameST;
-
-    {@member comments
-      Comments about this mapping, including version notes, issues, scope limitations, and other important notes for usage.
-    }
-    property comments : TFhirString read FComments write SetComments;
-    {@member commentsST
-      Typed access to Comments about this mapping, including version notes, issues, scope limitations, and other important notes for usage.
-    }
-    property commentsST : String read GetCommentsST write SetCommentsST;
-
-    {@member map
-      Expresses what part of the target specification corresponds to this element.
-    }
-    property map : TFhirString read FMap write SetMap;
-    {@member mapST
-      Typed access to Expresses what part of the target specification corresponds to this element.
-    }
-    property mapST : String read GetMapST write SetMapST;
-
-  end;
-
-
-  {@Class TFhirCommonDataElementMappingList
-    A list of FhirCommonDataElementMapping
-  }
-  {!.Net HL7Connect.Fhir.CommonDataElementMappingList}
-  TFhirCommonDataElementMappingList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirCommonDataElementMapping;
-    procedure SetItemN(index : Integer; value : TFhirCommonDataElementMapping);
-  public
-    {!script hide}
-    function Link : TFhirCommonDataElementMappingList; Overload;
-    function Clone : TFhirCommonDataElementMappingList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirCommonDataElementMapping to the end of the list.
-    }
-    function Append : TFhirCommonDataElementMapping;
-
-    
-    {@member AddItem
-      Add an already existing FhirCommonDataElementMapping to the end of the list.
-    }
-    procedure AddItem(value : TFhirCommonDataElementMapping);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirCommonDataElementMapping) : Integer;
-    
-
-    {@member Insert
-      Insert FhirCommonDataElementMapping before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirCommonDataElementMapping;
-    
-
-    {@member InsertItem
-       Insert an existing FhirCommonDataElementMapping before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirCommonDataElementMapping);
-    
-    {@member Item
-       Get the iIndexth FhirCommonDataElementMapping. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirCommonDataElementMapping. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirCommonDataElementMapping);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirCommonDataElementMapping;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirCommonDataElementMappings[index : Integer] : TFhirCommonDataElementMapping read GetItemN write SetItemN; default;
   End;
 
 
@@ -4767,6 +4471,304 @@ Type
     procedure ClearItems;
     
     Property FhirConformanceDocuments[index : Integer] : TFhirConformanceDocument read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirDataElementBinding : TFhirElement
+    Binds to a value set if this element is coded (code, Coding, CodeableConcept).
+  }
+  {!.Net HL7Connect.Fhir.DataElementBinding}
+  TFhirDataElementBinding = class (TFhirBackboneElement)
+  private
+    FIsExtensible : TFhirBoolean;
+    FConformance : TFhirEnum;
+    FDescription : TFhirString;
+    FValueSet : TFhirResourceReference{TFhirValueSet};
+    Procedure SetIsExtensible(value : TFhirBoolean);
+    Function GetIsExtensibleST : Boolean;
+    Procedure SetIsExtensibleST(value : Boolean);
+    Procedure SetConformance(value : TFhirEnum);
+    Function GetConformanceST : TFhirBindingConformance;
+    Procedure SetConformanceST(value : TFhirBindingConformance);
+    Procedure SetDescription(value : TFhirString);
+    Function GetDescriptionST : String;
+    Procedure SetDescriptionST(value : String);
+    Procedure SetValueSet(value : TFhirResourceReference{TFhirValueSet});
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirDataElementBinding; overload;
+    function Clone : TFhirDataElementBinding; overload;
+    {!script show}
+  published
+    {@member isExtensible
+      If true, then conformant systems may use additional codes or (where the data type permits) text alone to convey concepts not covered by the set of codes identified in the binding.  If false, then conformant systems are constrained to the provided codes alone.
+    }
+    property isExtensible : TFhirBoolean read FIsExtensible write SetIsExtensible;
+    {@member isExtensibleST
+      Typed access to If true, then conformant systems may use additional codes or (where the data type permits) text alone to convey concepts not covered by the set of codes identified in the binding.  If false, then conformant systems are constrained to the provided codes alone.
+    }
+    property isExtensibleST : Boolean read GetIsExtensibleST write SetIsExtensibleST;
+
+    {@member conformance
+      Indicates the degree of conformance expectations associated with this binding.
+    }
+    property conformance : TFhirEnum read FConformance write SetConformance;
+    {@member conformanceST
+      Typed access to Indicates the degree of conformance expectations associated with this binding.
+    }
+    property conformanceST : TFhirBindingConformance read GetConformanceST write SetConformanceST;
+
+    {@member description
+      Describes the intended use of this particular set of codes.
+    }
+    property description : TFhirString read FDescription write SetDescription;
+    {@member descriptionST
+      Typed access to Describes the intended use of this particular set of codes.
+    }
+    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+
+    {@member valueSet
+      Points to the value set that identifies the set of codes to be used.
+    }
+    property valueSet : TFhirResourceReference{TFhirValueSet} read FValueSet write SetValueSet;
+
+  end;
+
+
+  {@Class TFhirDataElementBindingList
+    A list of FhirDataElementBinding
+  }
+  {!.Net HL7Connect.Fhir.DataElementBindingList}
+  TFhirDataElementBindingList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirDataElementBinding;
+    procedure SetItemN(index : Integer; value : TFhirDataElementBinding);
+  public
+    {!script hide}
+    function Link : TFhirDataElementBindingList; Overload;
+    function Clone : TFhirDataElementBindingList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirDataElementBinding to the end of the list.
+    }
+    function Append : TFhirDataElementBinding;
+
+    
+    {@member AddItem
+      Add an already existing FhirDataElementBinding to the end of the list.
+    }
+    procedure AddItem(value : TFhirDataElementBinding);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirDataElementBinding) : Integer;
+    
+
+    {@member Insert
+      Insert FhirDataElementBinding before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirDataElementBinding;
+    
+
+    {@member InsertItem
+       Insert an existing FhirDataElementBinding before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirDataElementBinding);
+    
+    {@member Item
+       Get the iIndexth FhirDataElementBinding. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirDataElementBinding. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirDataElementBinding);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirDataElementBinding;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirDataElementBindings[index : Integer] : TFhirDataElementBinding read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirDataElementMapping : TFhirElement
+    Identifies a concept from an external specification that roughly corresponds to this element.
+  }
+  {!.Net HL7Connect.Fhir.DataElementMapping}
+  TFhirDataElementMapping = class (TFhirBackboneElement)
+  private
+    FUri : TFhirUri;
+    FName : TFhirString;
+    FComments : TFhirString;
+    FMap : TFhirString;
+    Procedure SetUri(value : TFhirUri);
+    Function GetUriST : String;
+    Procedure SetUriST(value : String);
+    Procedure SetName(value : TFhirString);
+    Function GetNameST : String;
+    Procedure SetNameST(value : String);
+    Procedure SetComments(value : TFhirString);
+    Function GetCommentsST : String;
+    Procedure SetCommentsST(value : String);
+    Procedure SetMap(value : TFhirString);
+    Function GetMapST : String;
+    Procedure SetMapST(value : String);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirDataElementMapping; overload;
+    function Clone : TFhirDataElementMapping; overload;
+    {!script show}
+  published
+    {@member uri
+      A URI that identifies the specification that this mapping is expressed to.
+    }
+    property uri : TFhirUri read FUri write SetUri;
+    {@member uriST
+      Typed access to A URI that identifies the specification that this mapping is expressed to.
+    }
+    property uriST : String read GetUriST write SetUriST;
+
+    {@member name
+      A name for the specification that is being mapped to.
+    }
+    property name : TFhirString read FName write SetName;
+    {@member nameST
+      Typed access to A name for the specification that is being mapped to.
+    }
+    property nameST : String read GetNameST write SetNameST;
+
+    {@member comments
+      Comments about this mapping, including version notes, issues, scope limitations, and other important notes for usage.
+    }
+    property comments : TFhirString read FComments write SetComments;
+    {@member commentsST
+      Typed access to Comments about this mapping, including version notes, issues, scope limitations, and other important notes for usage.
+    }
+    property commentsST : String read GetCommentsST write SetCommentsST;
+
+    {@member map
+      Expresses what part of the target specification corresponds to this element.
+    }
+    property map : TFhirString read FMap write SetMap;
+    {@member mapST
+      Typed access to Expresses what part of the target specification corresponds to this element.
+    }
+    property mapST : String read GetMapST write SetMapST;
+
+  end;
+
+
+  {@Class TFhirDataElementMappingList
+    A list of FhirDataElementMapping
+  }
+  {!.Net HL7Connect.Fhir.DataElementMappingList}
+  TFhirDataElementMappingList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirDataElementMapping;
+    procedure SetItemN(index : Integer; value : TFhirDataElementMapping);
+  public
+    {!script hide}
+    function Link : TFhirDataElementMappingList; Overload;
+    function Clone : TFhirDataElementMappingList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirDataElementMapping to the end of the list.
+    }
+    function Append : TFhirDataElementMapping;
+
+    
+    {@member AddItem
+      Add an already existing FhirDataElementMapping to the end of the list.
+    }
+    procedure AddItem(value : TFhirDataElementMapping);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirDataElementMapping) : Integer;
+    
+
+    {@member Insert
+      Insert FhirDataElementMapping before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirDataElementMapping;
+    
+
+    {@member InsertItem
+       Insert an existing FhirDataElementMapping before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirDataElementMapping);
+    
+    {@member Item
+       Get the iIndexth FhirDataElementMapping. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirDataElementMapping. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirDataElementMapping);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirDataElementMapping;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirDataElementMappings[index : Integer] : TFhirDataElementMapping read GetItemN write SetItemN; default;
   End;
 
 
@@ -10844,10 +10846,14 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     FHigh : TFhirQuantity;
     FMeaning : TFhirCodeableConcept;
     FAge : TFhirRange;
+    FText : TFhirString;
     Procedure SetLow(value : TFhirQuantity);
     Procedure SetHigh(value : TFhirQuantity);
     Procedure SetMeaning(value : TFhirCodeableConcept);
     Procedure SetAge(value : TFhirRange);
+    Procedure SetText(value : TFhirString);
+    Function GetTextST : String;
+    Procedure SetTextST(value : String);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -10879,6 +10885,15 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       The age at which this reference range is applicable. This is a neonatal age (e.g. number of weeks at term) if the meaning says so.
     }
     property age : TFhirRange read FAge write SetAge;
+
+    {@member text
+      Text based reference range in an observation which may be used when a quantitative range is not appropriate for an observation.  An example would be a reference value of "Negative" or a list or table of 'normals'.
+    }
+    property text : TFhirString read FText write SetText;
+    {@member textST
+      Typed access to Text based reference range in an observation which may be used when a quantitative range is not appropriate for an observation.  An example would be a reference value of "Negative" or a list or table of 'normals'.
+    }
+    property textST : String read GetTextST write SetTextST;
 
   end;
 
@@ -12364,14 +12379,19 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   TFhirProfileStructure = class (TFhirBackboneElement)
   private
     FType_ : TFhirCode;
+    FBase : TFhirUri;
     FName : TFhirString;
     FPublish : TFhirBoolean;
     FPurpose : TFhirString;
-    FelementList : TFhirProfileStructureElementList;
+    FSnapshot : TFhirProfileStructureSnapshot;
+    FDifferential : TFhirProfileStructureSnapshot;
     FsearchParamList : TFhirProfileStructureSearchParamList;
     Procedure SetType_(value : TFhirCode);
     Function GetType_ST : String;
     Procedure SetType_ST(value : String);
+    Procedure SetBase(value : TFhirUri);
+    Function GetBaseST : String;
+    Procedure SetBaseST(value : String);
     Procedure SetName(value : TFhirString);
     Function GetNameST : String;
     Procedure SetNameST(value : String);
@@ -12381,6 +12401,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     Procedure SetPurpose(value : TFhirString);
     Function GetPurposeST : String;
     Procedure SetPurposeST(value : String);
+    Procedure SetSnapshot(value : TFhirProfileStructureSnapshot);
+    Procedure SetDifferential(value : TFhirProfileStructureSnapshot);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -12402,12 +12424,21 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property type_ST : String read GetType_ST write SetType_ST;
 
+    {@member base
+      The structure that is the base on which this set of constraints is derived from.
+    }
+    property base : TFhirUri read FBase write SetBase;
+    {@member baseST
+      Typed access to The structure that is the base on which this set of constraints is derived from.
+    }
+    property baseST : String read GetBaseST write SetBaseST;
+
     {@member name
-      The name of this resource constraint statement (to refer to it from other resource constraints - from Profile.structure.element.definition.type.profile).
+      The name of this resource constraint statement (to refer to it from other resource constraints - from Profile.structure.snapshot.element.definition.type.profile).
     }
     property name : TFhirString read FName write SetName;
     {@member nameST
-      Typed access to The name of this resource constraint statement (to refer to it from other resource constraints - from Profile.structure.element.definition.type.profile).
+      Typed access to The name of this resource constraint statement (to refer to it from other resource constraints - from Profile.structure.snapshot.element.definition.type.profile).
     }
     property nameST : String read GetNameST write SetNameST;
 
@@ -12429,10 +12460,15 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property purposeST : String read GetPurposeST write SetPurposeST;
 
-    {@member elementList
-      Captures constraints on each element within the resource.
+    {@member snapshot
+      A snapshot view is expressed in a stand alone form that can be used and interpreted without considering the base profile.
     }
-    property elementList : TFhirProfileStructureElementList read FElementList;
+    property snapshot : TFhirProfileStructureSnapshot read FSnapshot write SetSnapshot;
+
+    {@member differential
+      A differential view is expressed relative to the base profile - a statement of differences that it applies.
+    }
+    property differential : TFhirProfileStructureSnapshot read FDifferential write SetDifferential;
 
     {@member searchParamList
       Additional search parameters for implementations to support and/or make use of.
@@ -12521,27 +12557,13 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   End;
 
 
-  {@Class TFhirProfileStructureElement : TFhirElement
-    Captures constraints on each element within the resource.
+  {@Class TFhirProfileStructureSnapshot : TFhirElement
+    A snapshot view is expressed in a stand alone form that can be used and interpreted without considering the base profile.
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElement}
-  TFhirProfileStructureElement = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshot}
+  TFhirProfileStructureSnapshot = class (TFhirBackboneElement)
   private
-    FPath : TFhirString;
-    FRepresentation : TFhirEnumList;
-    FName : TFhirString;
-    FSlicing : TFhirProfileStructureElementSlicing;
-    FDefinition : TFhirProfileStructureElementDefinition;
-    Procedure SetPath(value : TFhirString);
-    Function GetPathST : String;
-    Procedure SetPathST(value : String);
-    Function GetRepresentationST : TFhirPropertyRepresentationList;
-    Procedure SetRepresentationST(value : TFhirPropertyRepresentationList);
-    Procedure SetName(value : TFhirString);
-    Function GetNameST : String;
-    Procedure SetNameST(value : String);
-    Procedure SetSlicing(value : TFhirProfileStructureElementSlicing);
-    Procedure SetDefinition(value : TFhirProfileStructureElementDefinition);
+    FelementList : TFhirProfileStructureSnapshotElementList;
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -12550,8 +12572,128 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProfileStructureElement; overload;
-    function Clone : TFhirProfileStructureElement; overload;
+    function Link : TFhirProfileStructureSnapshot; overload;
+    function Clone : TFhirProfileStructureSnapshot; overload;
+    {!script show}
+  published
+    {@member elementList
+    Captures constraints on each element within the resource.
+  }
+    property elementList : TFhirProfileStructureSnapshotElementList read FElementList;
+
+  end;
+
+
+  {@Class TFhirProfileStructureSnapshotList
+    A list of FhirProfileStructureSnapshot
+  }
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotList}
+  TFhirProfileStructureSnapshotList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirProfileStructureSnapshot;
+    procedure SetItemN(index : Integer; value : TFhirProfileStructureSnapshot);
+  public
+    {!script hide}
+    function Link : TFhirProfileStructureSnapshotList; Overload;
+    function Clone : TFhirProfileStructureSnapshotList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirProfileStructureSnapshot to the end of the list.
+    }
+    function Append : TFhirProfileStructureSnapshot;
+
+    
+    {@member AddItem
+      Add an already existing FhirProfileStructureSnapshot to the end of the list.
+    }
+    procedure AddItem(value : TFhirProfileStructureSnapshot);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirProfileStructureSnapshot) : Integer;
+    
+
+    {@member Insert
+      Insert FhirProfileStructureSnapshot before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirProfileStructureSnapshot;
+    
+
+    {@member InsertItem
+       Insert an existing FhirProfileStructureSnapshot before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirProfileStructureSnapshot);
+    
+    {@member Item
+       Get the iIndexth FhirProfileStructureSnapshot. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirProfileStructureSnapshot. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureSnapshot);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirProfileStructureSnapshot;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirProfileStructureSnapshots[index : Integer] : TFhirProfileStructureSnapshot read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirProfileStructureSnapshotElement : TFhirElement
+    Captures constraints on each element within the resource.
+  }
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElement}
+  TFhirProfileStructureSnapshotElement = class (TFhirBackboneElement)
+  private
+    FPath : TFhirString;
+    FRepresentation : TFhirEnumList;
+    FName : TFhirString;
+    FSlicing : TFhirProfileStructureSnapshotElementSlicing;
+    FDefinition : TFhirProfileStructureSnapshotElementDefinition;
+    Procedure SetPath(value : TFhirString);
+    Function GetPathST : String;
+    Procedure SetPathST(value : String);
+    Function GetRepresentationST : TFhirPropertyRepresentationList;
+    Procedure SetRepresentationST(value : TFhirPropertyRepresentationList);
+    Procedure SetName(value : TFhirString);
+    Function GetNameST : String;
+    Procedure SetNameST(value : String);
+    Procedure SetSlicing(value : TFhirProfileStructureSnapshotElementSlicing);
+    Procedure SetDefinition(value : TFhirProfileStructureSnapshotElementDefinition);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirProfileStructureSnapshotElement; overload;
+    function Clone : TFhirProfileStructureSnapshotElement; overload;
     {!script show}
   published
     {@member path
@@ -12572,52 +12714,52 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property representationST : TFhirPropertyRepresentationList read GetRepresentationST write SetRepresentationST;
     {@member name
-      The name of this element definition (to refer to it from other element definitions using Profile.structure.element.definition.nameReference). This is a unique name referring to a specific set of constraints applied to this element. One use of this is to provide a name to different slices of the same element.
+      The name of this element definition (to refer to it from other element definitions using Profile.structure.snapshot.element.definition.nameReference). This is a unique name referring to a specific set of constraints applied to this element. One use of this is to provide a name to different slices of the same element.
     }
     property name : TFhirString read FName write SetName;
     {@member nameST
-      Typed access to The name of this element definition (to refer to it from other element definitions using Profile.structure.element.definition.nameReference). This is a unique name referring to a specific set of constraints applied to this element. One use of this is to provide a name to different slices of the same element.
+      Typed access to The name of this element definition (to refer to it from other element definitions using Profile.structure.snapshot.element.definition.nameReference). This is a unique name referring to a specific set of constraints applied to this element. One use of this is to provide a name to different slices of the same element.
     }
     property nameST : String read GetNameST write SetNameST;
 
     {@member slicing
       Indicates that the element is sliced into a set of alternative definitions (there are multiple definitions on a single element in the base resource). The set of slices is any elements that come after this in the element sequence that have the same path, until a shorter path occurs (the shorter path terminates the set).
     }
-    property slicing : TFhirProfileStructureElementSlicing read FSlicing write SetSlicing;
+    property slicing : TFhirProfileStructureSnapshotElementSlicing read FSlicing write SetSlicing;
 
     {@member definition
       Definition of the content of the element to provide a more specific definition than that contained for the element in the base resource.
     }
-    property definition : TFhirProfileStructureElementDefinition read FDefinition write SetDefinition;
+    property definition : TFhirProfileStructureSnapshotElementDefinition read FDefinition write SetDefinition;
 
   end;
 
 
-  {@Class TFhirProfileStructureElementList
-    A list of FhirProfileStructureElement
+  {@Class TFhirProfileStructureSnapshotElementList
+    A list of FhirProfileStructureSnapshotElement
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementList}
-  TFhirProfileStructureElementList = class (TFHIRObjectList)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementList}
+  TFhirProfileStructureSnapshotElementList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirProfileStructureElement;
-    procedure SetItemN(index : Integer; value : TFhirProfileStructureElement);
+    function GetItemN(index : Integer) : TFhirProfileStructureSnapshotElement;
+    procedure SetItemN(index : Integer; value : TFhirProfileStructureSnapshotElement);
   public
     {!script hide}
-    function Link : TFhirProfileStructureElementList; Overload;
-    function Clone : TFhirProfileStructureElementList; Overload;
+    function Link : TFhirProfileStructureSnapshotElementList; Overload;
+    function Clone : TFhirProfileStructureSnapshotElementList; Overload;
     {!script show}
     
 
     {@member Append
-      Add a FhirProfileStructureElement to the end of the list.
+      Add a FhirProfileStructureSnapshotElement to the end of the list.
     }
-    function Append : TFhirProfileStructureElement;
+    function Append : TFhirProfileStructureSnapshotElement;
 
     
     {@member AddItem
-      Add an already existing FhirProfileStructureElement to the end of the list.
+      Add an already existing FhirProfileStructureSnapshotElement to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElement);
+    procedure AddItem(value : TFhirProfileStructureSnapshotElement);
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -12626,33 +12768,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    function IndexOf(value : TFhirProfileStructureElement) : Integer;
+    function IndexOf(value : TFhirProfileStructureSnapshotElement) : Integer;
     
 
     {@member Insert
-      Insert FhirProfileStructureElement before the designated index (0 = first item)
+      Insert FhirProfileStructureSnapshotElement before the designated index (0 = first item)
     }
-    function Insert(index : Integer) : TFhirProfileStructureElement;
+    function Insert(index : Integer) : TFhirProfileStructureSnapshotElement;
     
 
     {@member InsertItem
-       Insert an existing FhirProfileStructureElement before the designated index (0 = first item)
+       Insert an existing FhirProfileStructureSnapshotElement before the designated index (0 = first item)
     }
-    procedure InsertItem(index : Integer; value : TFhirProfileStructureElement);
+    procedure InsertItem(index : Integer; value : TFhirProfileStructureSnapshotElement);
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElement. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElement. (0 = first item)
     }
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElement. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElement. (0 = first item)
     }
-    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureElement);
+    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureSnapshotElement);
     
     {@member Count
       The number of items in the collection
     }
-    function Item(index : Integer) : TFhirProfileStructureElement;
+    function Item(index : Integer) : TFhirProfileStructureSnapshotElement;
     
     {@member Count
       The number of items in the collection
@@ -12668,15 +12810,15 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     procedure ClearItems;
     
-    Property FhirProfileStructureElements[index : Integer] : TFhirProfileStructureElement read GetItemN write SetItemN; default;
+    Property FhirProfileStructureSnapshotElements[index : Integer] : TFhirProfileStructureSnapshotElement read GetItemN write SetItemN; default;
   End;
 
 
-  {@Class TFhirProfileStructureElementSlicing : TFhirElement
+  {@Class TFhirProfileStructureSnapshotElementSlicing : TFhirElement
     Indicates that the element is sliced into a set of alternative definitions (there are multiple definitions on a single element in the base resource). The set of slices is any elements that come after this in the element sequence that have the same path, until a shorter path occurs (the shorter path terminates the set).
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementSlicing}
-  TFhirProfileStructureElementSlicing = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementSlicing}
+  TFhirProfileStructureSnapshotElementSlicing = class (TFhirBackboneElement)
   private
     FDiscriminator : TFhirId;
     FOrdered : TFhirBoolean;
@@ -12698,8 +12840,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProfileStructureElementSlicing; overload;
-    function Clone : TFhirProfileStructureElementSlicing; overload;
+    function Link : TFhirProfileStructureSnapshotElementSlicing; overload;
+    function Clone : TFhirProfileStructureSnapshotElementSlicing; overload;
     {!script show}
   published
     {@member discriminator
@@ -12732,31 +12874,31 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   end;
 
 
-  {@Class TFhirProfileStructureElementSlicingList
-    A list of FhirProfileStructureElementSlicing
+  {@Class TFhirProfileStructureSnapshotElementSlicingList
+    A list of FhirProfileStructureSnapshotElementSlicing
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementSlicingList}
-  TFhirProfileStructureElementSlicingList = class (TFHIRObjectList)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementSlicingList}
+  TFhirProfileStructureSnapshotElementSlicingList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirProfileStructureElementSlicing;
-    procedure SetItemN(index : Integer; value : TFhirProfileStructureElementSlicing);
+    function GetItemN(index : Integer) : TFhirProfileStructureSnapshotElementSlicing;
+    procedure SetItemN(index : Integer; value : TFhirProfileStructureSnapshotElementSlicing);
   public
     {!script hide}
-    function Link : TFhirProfileStructureElementSlicingList; Overload;
-    function Clone : TFhirProfileStructureElementSlicingList; Overload;
+    function Link : TFhirProfileStructureSnapshotElementSlicingList; Overload;
+    function Clone : TFhirProfileStructureSnapshotElementSlicingList; Overload;
     {!script show}
     
 
     {@member Append
-      Add a FhirProfileStructureElementSlicing to the end of the list.
+      Add a FhirProfileStructureSnapshotElementSlicing to the end of the list.
     }
-    function Append : TFhirProfileStructureElementSlicing;
+    function Append : TFhirProfileStructureSnapshotElementSlicing;
 
     
     {@member AddItem
-      Add an already existing FhirProfileStructureElementSlicing to the end of the list.
+      Add an already existing FhirProfileStructureSnapshotElementSlicing to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementSlicing);
+    procedure AddItem(value : TFhirProfileStructureSnapshotElementSlicing);
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -12765,33 +12907,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    function IndexOf(value : TFhirProfileStructureElementSlicing) : Integer;
+    function IndexOf(value : TFhirProfileStructureSnapshotElementSlicing) : Integer;
     
 
     {@member Insert
-      Insert FhirProfileStructureElementSlicing before the designated index (0 = first item)
+      Insert FhirProfileStructureSnapshotElementSlicing before the designated index (0 = first item)
     }
-    function Insert(index : Integer) : TFhirProfileStructureElementSlicing;
+    function Insert(index : Integer) : TFhirProfileStructureSnapshotElementSlicing;
     
 
     {@member InsertItem
-       Insert an existing FhirProfileStructureElementSlicing before the designated index (0 = first item)
+       Insert an existing FhirProfileStructureSnapshotElementSlicing before the designated index (0 = first item)
     }
-    procedure InsertItem(index : Integer; value : TFhirProfileStructureElementSlicing);
+    procedure InsertItem(index : Integer; value : TFhirProfileStructureSnapshotElementSlicing);
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementSlicing. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementSlicing. (0 = first item)
     }
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementSlicing. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementSlicing. (0 = first item)
     }
-    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureElementSlicing);
+    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureSnapshotElementSlicing);
     
     {@member Count
       The number of items in the collection
     }
-    function Item(index : Integer) : TFhirProfileStructureElementSlicing;
+    function Item(index : Integer) : TFhirProfileStructureSnapshotElementSlicing;
     
     {@member Count
       The number of items in the collection
@@ -12807,15 +12949,15 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     procedure ClearItems;
     
-    Property FhirProfileStructureElementSlicings[index : Integer] : TFhirProfileStructureElementSlicing read GetItemN write SetItemN; default;
+    Property FhirProfileStructureSnapshotElementSlicings[index : Integer] : TFhirProfileStructureSnapshotElementSlicing read GetItemN write SetItemN; default;
   End;
 
 
-  {@Class TFhirProfileStructureElementDefinition : TFhirElement
+  {@Class TFhirProfileStructureSnapshotElementDefinition : TFhirElement
     Definition of the content of the element to provide a more specific definition than that contained for the element in the base resource.
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinition}
-  TFhirProfileStructureElementDefinition = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinition}
+  TFhirProfileStructureSnapshotElementDefinition = class (TFhirBackboneElement)
   private
     FShort : TFhirString;
     FFormal : TFhirString;
@@ -12824,17 +12966,17 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     FsynonymList : TFhirStringList;
     FMin : TFhirInteger;
     FMax : TFhirString;
-    Ftype_List : TFhirProfileStructureElementDefinitionTypeList;
+    Ftype_List : TFhirProfileStructureSnapshotElementDefinitionTypeList;
     FNameReference : TFhirString;
     FValue : TFhirType;
     FExample : TFhirType;
     FMaxLength : TFhirInteger;
     FconditionList : TFhirIdList;
-    FconstraintList : TFhirProfileStructureElementDefinitionConstraintList;
+    FconstraintList : TFhirProfileStructureSnapshotElementDefinitionConstraintList;
     FMustSupport : TFhirBoolean;
     FIsModifier : TFhirBoolean;
-    FBinding : TFhirProfileStructureElementDefinitionBinding;
-    FmappingList : TFhirProfileStructureElementDefinitionMappingList;
+    FBinding : TFhirProfileStructureSnapshotElementDefinitionBinding;
+    FmappingList : TFhirProfileStructureSnapshotElementDefinitionMappingList;
     Procedure SetShort(value : TFhirString);
     Function GetShortST : String;
     Procedure SetShortST(value : String);
@@ -12867,7 +13009,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     Procedure SetIsModifier(value : TFhirBoolean);
     Function GetIsModifierST : Boolean;
     Procedure SetIsModifierST(value : Boolean);
-    Procedure SetBinding(value : TFhirProfileStructureElementDefinitionBinding);
+    Procedure SetBinding(value : TFhirProfileStructureSnapshotElementDefinitionBinding);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -12876,8 +13018,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProfileStructureElementDefinition; overload;
-    function Clone : TFhirProfileStructureElementDefinition; overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinition; overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinition; overload;
     {!script show}
   published
     {@member short
@@ -12942,7 +13084,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member type_List
       The data type or resource that the value of this element is permitted to be.
     }
-    property type_List : TFhirProfileStructureElementDefinitionTypeList read FType_List;
+    property type_List : TFhirProfileStructureSnapshotElementDefinitionTypeList read FType_List;
 
     {@member nameReference
       Identifies the name of a slice defined elsewhere in the profile whose constraints should be applied to the current element.
@@ -12980,7 +13122,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member constraintList
       Formal constraints such as co-occurrence and other constraints that can be computationally evaluated within the context of the instance.
     }
-    property constraintList : TFhirProfileStructureElementDefinitionConstraintList read FConstraintList;
+    property constraintList : TFhirProfileStructureSnapshotElementDefinitionConstraintList read FConstraintList;
 
     {@member mustSupport
       If true, conformant resource authors SHALL be capable of providing a value for the element and resource consumers SHALL be capable of extracting and doing something useful with the data element.  If false, the element may be ignored and not supported.
@@ -13003,41 +13145,41 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member binding
       Binds to a value set if this element is coded (code, Coding, CodeableConcept).
     }
-    property binding : TFhirProfileStructureElementDefinitionBinding read FBinding write SetBinding;
+    property binding : TFhirProfileStructureSnapshotElementDefinitionBinding read FBinding write SetBinding;
 
     {@member mappingList
       Identifies a concept from an external specification that roughly corresponds to this element.
     }
-    property mappingList : TFhirProfileStructureElementDefinitionMappingList read FMappingList;
+    property mappingList : TFhirProfileStructureSnapshotElementDefinitionMappingList read FMappingList;
 
   end;
 
 
-  {@Class TFhirProfileStructureElementDefinitionList
-    A list of FhirProfileStructureElementDefinition
+  {@Class TFhirProfileStructureSnapshotElementDefinitionList
+    A list of FhirProfileStructureSnapshotElementDefinition
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionList}
-  TFhirProfileStructureElementDefinitionList = class (TFHIRObjectList)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionList}
+  TFhirProfileStructureSnapshotElementDefinitionList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirProfileStructureElementDefinition;
-    procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinition);
+    function GetItemN(index : Integer) : TFhirProfileStructureSnapshotElementDefinition;
+    procedure SetItemN(index : Integer; value : TFhirProfileStructureSnapshotElementDefinition);
   public
     {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionList; Overload;
-    function Clone : TFhirProfileStructureElementDefinitionList; Overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionList; Overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionList; Overload;
     {!script show}
     
 
     {@member Append
-      Add a FhirProfileStructureElementDefinition to the end of the list.
+      Add a FhirProfileStructureSnapshotElementDefinition to the end of the list.
     }
-    function Append : TFhirProfileStructureElementDefinition;
+    function Append : TFhirProfileStructureSnapshotElementDefinition;
 
     
     {@member AddItem
-      Add an already existing FhirProfileStructureElementDefinition to the end of the list.
+      Add an already existing FhirProfileStructureSnapshotElementDefinition to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinition);
+    procedure AddItem(value : TFhirProfileStructureSnapshotElementDefinition);
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13046,33 +13188,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    function IndexOf(value : TFhirProfileStructureElementDefinition) : Integer;
+    function IndexOf(value : TFhirProfileStructureSnapshotElementDefinition) : Integer;
     
 
     {@member Insert
-      Insert FhirProfileStructureElementDefinition before the designated index (0 = first item)
+      Insert FhirProfileStructureSnapshotElementDefinition before the designated index (0 = first item)
     }
-    function Insert(index : Integer) : TFhirProfileStructureElementDefinition;
+    function Insert(index : Integer) : TFhirProfileStructureSnapshotElementDefinition;
     
 
     {@member InsertItem
-       Insert an existing FhirProfileStructureElementDefinition before the designated index (0 = first item)
+       Insert an existing FhirProfileStructureSnapshotElementDefinition before the designated index (0 = first item)
     }
-    procedure InsertItem(index : Integer; value : TFhirProfileStructureElementDefinition);
+    procedure InsertItem(index : Integer; value : TFhirProfileStructureSnapshotElementDefinition);
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinition. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinition. (0 = first item)
     }
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinition. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinition. (0 = first item)
     }
-    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureElementDefinition);
+    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureSnapshotElementDefinition);
     
     {@member Count
       The number of items in the collection
     }
-    function Item(index : Integer) : TFhirProfileStructureElementDefinition;
+    function Item(index : Integer) : TFhirProfileStructureSnapshotElementDefinition;
     
     {@member Count
       The number of items in the collection
@@ -13088,15 +13230,15 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     procedure ClearItems;
     
-    Property FhirProfileStructureElementDefinitions[index : Integer] : TFhirProfileStructureElementDefinition read GetItemN write SetItemN; default;
+    Property FhirProfileStructureSnapshotElementDefinitions[index : Integer] : TFhirProfileStructureSnapshotElementDefinition read GetItemN write SetItemN; default;
   End;
 
 
-  {@Class TFhirProfileStructureElementDefinitionType : TFhirElement
+  {@Class TFhirProfileStructureSnapshotElementDefinitionType : TFhirElement
     The data type or resource that the value of this element is permitted to be.
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionType}
-  TFhirProfileStructureElementDefinitionType = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionType}
+  TFhirProfileStructureSnapshotElementDefinitionType = class (TFhirBackboneElement)
   private
     FCode : TFhirCode;
     FProfile : TFhirUri;
@@ -13117,8 +13259,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProfileStructureElementDefinitionType; overload;
-    function Clone : TFhirProfileStructureElementDefinitionType; overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionType; overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionType; overload;
     {!script show}
   published
     {@member code
@@ -13150,31 +13292,31 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   end;
 
 
-  {@Class TFhirProfileStructureElementDefinitionTypeList
-    A list of FhirProfileStructureElementDefinitionType
+  {@Class TFhirProfileStructureSnapshotElementDefinitionTypeList
+    A list of FhirProfileStructureSnapshotElementDefinitionType
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionTypeList}
-  TFhirProfileStructureElementDefinitionTypeList = class (TFHIRObjectList)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionTypeList}
+  TFhirProfileStructureSnapshotElementDefinitionTypeList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirProfileStructureElementDefinitionType;
-    procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinitionType);
+    function GetItemN(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionType;
+    procedure SetItemN(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionType);
   public
     {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionTypeList; Overload;
-    function Clone : TFhirProfileStructureElementDefinitionTypeList; Overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionTypeList; Overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionTypeList; Overload;
     {!script show}
     
 
     {@member Append
-      Add a FhirProfileStructureElementDefinitionType to the end of the list.
+      Add a FhirProfileStructureSnapshotElementDefinitionType to the end of the list.
     }
-    function Append : TFhirProfileStructureElementDefinitionType;
+    function Append : TFhirProfileStructureSnapshotElementDefinitionType;
 
     
     {@member AddItem
-      Add an already existing FhirProfileStructureElementDefinitionType to the end of the list.
+      Add an already existing FhirProfileStructureSnapshotElementDefinitionType to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinitionType);
+    procedure AddItem(value : TFhirProfileStructureSnapshotElementDefinitionType);
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13183,33 +13325,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    function IndexOf(value : TFhirProfileStructureElementDefinitionType) : Integer;
+    function IndexOf(value : TFhirProfileStructureSnapshotElementDefinitionType) : Integer;
     
 
     {@member Insert
-      Insert FhirProfileStructureElementDefinitionType before the designated index (0 = first item)
+      Insert FhirProfileStructureSnapshotElementDefinitionType before the designated index (0 = first item)
     }
-    function Insert(index : Integer) : TFhirProfileStructureElementDefinitionType;
+    function Insert(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionType;
     
 
     {@member InsertItem
-       Insert an existing FhirProfileStructureElementDefinitionType before the designated index (0 = first item)
+       Insert an existing FhirProfileStructureSnapshotElementDefinitionType before the designated index (0 = first item)
     }
-    procedure InsertItem(index : Integer; value : TFhirProfileStructureElementDefinitionType);
+    procedure InsertItem(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionType);
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinitionType. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinitionType. (0 = first item)
     }
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinitionType. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinitionType. (0 = first item)
     }
-    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureElementDefinitionType);
+    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionType);
     
     {@member Count
       The number of items in the collection
     }
-    function Item(index : Integer) : TFhirProfileStructureElementDefinitionType;
+    function Item(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionType;
     
     {@member Count
       The number of items in the collection
@@ -13225,15 +13367,15 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     procedure ClearItems;
     
-    Property FhirProfileStructureElementDefinitionTypes[index : Integer] : TFhirProfileStructureElementDefinitionType read GetItemN write SetItemN; default;
+    Property FhirProfileStructureSnapshotElementDefinitionTypes[index : Integer] : TFhirProfileStructureSnapshotElementDefinitionType read GetItemN write SetItemN; default;
   End;
 
 
-  {@Class TFhirProfileStructureElementDefinitionConstraint : TFhirElement
+  {@Class TFhirProfileStructureSnapshotElementDefinitionConstraint : TFhirElement
     Formal constraints such as co-occurrence and other constraints that can be computationally evaluated within the context of the instance.
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionConstraint}
-  TFhirProfileStructureElementDefinitionConstraint = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionConstraint}
+  TFhirProfileStructureSnapshotElementDefinitionConstraint = class (TFhirBackboneElement)
   private
     FKey : TFhirId;
     FName : TFhirString;
@@ -13263,8 +13405,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProfileStructureElementDefinitionConstraint; overload;
-    function Clone : TFhirProfileStructureElementDefinitionConstraint; overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionConstraint; overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionConstraint; overload;
     {!script show}
   published
     {@member key
@@ -13315,31 +13457,31 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   end;
 
 
-  {@Class TFhirProfileStructureElementDefinitionConstraintList
-    A list of FhirProfileStructureElementDefinitionConstraint
+  {@Class TFhirProfileStructureSnapshotElementDefinitionConstraintList
+    A list of FhirProfileStructureSnapshotElementDefinitionConstraint
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionConstraintList}
-  TFhirProfileStructureElementDefinitionConstraintList = class (TFHIRObjectList)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionConstraintList}
+  TFhirProfileStructureSnapshotElementDefinitionConstraintList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirProfileStructureElementDefinitionConstraint;
-    procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinitionConstraint);
+    function GetItemN(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionConstraint;
+    procedure SetItemN(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionConstraint);
   public
     {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionConstraintList; Overload;
-    function Clone : TFhirProfileStructureElementDefinitionConstraintList; Overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionConstraintList; Overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionConstraintList; Overload;
     {!script show}
     
 
     {@member Append
-      Add a FhirProfileStructureElementDefinitionConstraint to the end of the list.
+      Add a FhirProfileStructureSnapshotElementDefinitionConstraint to the end of the list.
     }
-    function Append : TFhirProfileStructureElementDefinitionConstraint;
+    function Append : TFhirProfileStructureSnapshotElementDefinitionConstraint;
 
     
     {@member AddItem
-      Add an already existing FhirProfileStructureElementDefinitionConstraint to the end of the list.
+      Add an already existing FhirProfileStructureSnapshotElementDefinitionConstraint to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinitionConstraint);
+    procedure AddItem(value : TFhirProfileStructureSnapshotElementDefinitionConstraint);
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13348,33 +13490,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    function IndexOf(value : TFhirProfileStructureElementDefinitionConstraint) : Integer;
+    function IndexOf(value : TFhirProfileStructureSnapshotElementDefinitionConstraint) : Integer;
     
 
     {@member Insert
-      Insert FhirProfileStructureElementDefinitionConstraint before the designated index (0 = first item)
+      Insert FhirProfileStructureSnapshotElementDefinitionConstraint before the designated index (0 = first item)
     }
-    function Insert(index : Integer) : TFhirProfileStructureElementDefinitionConstraint;
+    function Insert(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionConstraint;
     
 
     {@member InsertItem
-       Insert an existing FhirProfileStructureElementDefinitionConstraint before the designated index (0 = first item)
+       Insert an existing FhirProfileStructureSnapshotElementDefinitionConstraint before the designated index (0 = first item)
     }
-    procedure InsertItem(index : Integer; value : TFhirProfileStructureElementDefinitionConstraint);
+    procedure InsertItem(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionConstraint);
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinitionConstraint. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinitionConstraint. (0 = first item)
     }
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinitionConstraint. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinitionConstraint. (0 = first item)
     }
-    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureElementDefinitionConstraint);
+    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionConstraint);
     
     {@member Count
       The number of items in the collection
     }
-    function Item(index : Integer) : TFhirProfileStructureElementDefinitionConstraint;
+    function Item(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionConstraint;
     
     {@member Count
       The number of items in the collection
@@ -13390,15 +13532,15 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     procedure ClearItems;
     
-    Property FhirProfileStructureElementDefinitionConstraints[index : Integer] : TFhirProfileStructureElementDefinitionConstraint read GetItemN write SetItemN; default;
+    Property FhirProfileStructureSnapshotElementDefinitionConstraints[index : Integer] : TFhirProfileStructureSnapshotElementDefinitionConstraint read GetItemN write SetItemN; default;
   End;
 
 
-  {@Class TFhirProfileStructureElementDefinitionBinding : TFhirElement
+  {@Class TFhirProfileStructureSnapshotElementDefinitionBinding : TFhirElement
     Binds to a value set if this element is coded (code, Coding, CodeableConcept).
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionBinding}
-  TFhirProfileStructureElementDefinitionBinding = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionBinding}
+  TFhirProfileStructureSnapshotElementDefinitionBinding = class (TFhirBackboneElement)
   private
     FName : TFhirString;
     FIsExtensible : TFhirBoolean;
@@ -13426,8 +13568,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProfileStructureElementDefinitionBinding; overload;
-    function Clone : TFhirProfileStructureElementDefinitionBinding; overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionBinding; overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionBinding; overload;
     {!script show}
   published
     {@member name
@@ -13474,31 +13616,31 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   end;
 
 
-  {@Class TFhirProfileStructureElementDefinitionBindingList
-    A list of FhirProfileStructureElementDefinitionBinding
+  {@Class TFhirProfileStructureSnapshotElementDefinitionBindingList
+    A list of FhirProfileStructureSnapshotElementDefinitionBinding
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionBindingList}
-  TFhirProfileStructureElementDefinitionBindingList = class (TFHIRObjectList)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionBindingList}
+  TFhirProfileStructureSnapshotElementDefinitionBindingList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirProfileStructureElementDefinitionBinding;
-    procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinitionBinding);
+    function GetItemN(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionBinding;
+    procedure SetItemN(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionBinding);
   public
     {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionBindingList; Overload;
-    function Clone : TFhirProfileStructureElementDefinitionBindingList; Overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionBindingList; Overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionBindingList; Overload;
     {!script show}
     
 
     {@member Append
-      Add a FhirProfileStructureElementDefinitionBinding to the end of the list.
+      Add a FhirProfileStructureSnapshotElementDefinitionBinding to the end of the list.
     }
-    function Append : TFhirProfileStructureElementDefinitionBinding;
+    function Append : TFhirProfileStructureSnapshotElementDefinitionBinding;
 
     
     {@member AddItem
-      Add an already existing FhirProfileStructureElementDefinitionBinding to the end of the list.
+      Add an already existing FhirProfileStructureSnapshotElementDefinitionBinding to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinitionBinding);
+    procedure AddItem(value : TFhirProfileStructureSnapshotElementDefinitionBinding);
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13507,33 +13649,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    function IndexOf(value : TFhirProfileStructureElementDefinitionBinding) : Integer;
+    function IndexOf(value : TFhirProfileStructureSnapshotElementDefinitionBinding) : Integer;
     
 
     {@member Insert
-      Insert FhirProfileStructureElementDefinitionBinding before the designated index (0 = first item)
+      Insert FhirProfileStructureSnapshotElementDefinitionBinding before the designated index (0 = first item)
     }
-    function Insert(index : Integer) : TFhirProfileStructureElementDefinitionBinding;
+    function Insert(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionBinding;
     
 
     {@member InsertItem
-       Insert an existing FhirProfileStructureElementDefinitionBinding before the designated index (0 = first item)
+       Insert an existing FhirProfileStructureSnapshotElementDefinitionBinding before the designated index (0 = first item)
     }
-    procedure InsertItem(index : Integer; value : TFhirProfileStructureElementDefinitionBinding);
+    procedure InsertItem(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionBinding);
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinitionBinding. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinitionBinding. (0 = first item)
     }
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinitionBinding. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinitionBinding. (0 = first item)
     }
-    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureElementDefinitionBinding);
+    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionBinding);
     
     {@member Count
       The number of items in the collection
     }
-    function Item(index : Integer) : TFhirProfileStructureElementDefinitionBinding;
+    function Item(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionBinding;
     
     {@member Count
       The number of items in the collection
@@ -13549,15 +13691,15 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     procedure ClearItems;
     
-    Property FhirProfileStructureElementDefinitionBindings[index : Integer] : TFhirProfileStructureElementDefinitionBinding read GetItemN write SetItemN; default;
+    Property FhirProfileStructureSnapshotElementDefinitionBindings[index : Integer] : TFhirProfileStructureSnapshotElementDefinitionBinding read GetItemN write SetItemN; default;
   End;
 
 
-  {@Class TFhirProfileStructureElementDefinitionMapping : TFhirElement
+  {@Class TFhirProfileStructureSnapshotElementDefinitionMapping : TFhirElement
     Identifies a concept from an external specification that roughly corresponds to this element.
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionMapping}
-  TFhirProfileStructureElementDefinitionMapping = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionMapping}
+  TFhirProfileStructureSnapshotElementDefinitionMapping = class (TFhirBackboneElement)
   private
     FIdentity : TFhirId;
     FMap : TFhirString;
@@ -13575,8 +13717,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProfileStructureElementDefinitionMapping; overload;
-    function Clone : TFhirProfileStructureElementDefinitionMapping; overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionMapping; overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionMapping; overload;
     {!script show}
   published
     {@member identity
@@ -13600,31 +13742,31 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   end;
 
 
-  {@Class TFhirProfileStructureElementDefinitionMappingList
-    A list of FhirProfileStructureElementDefinitionMapping
+  {@Class TFhirProfileStructureSnapshotElementDefinitionMappingList
+    A list of FhirProfileStructureSnapshotElementDefinitionMapping
   }
-  {!.Net HL7Connect.Fhir.ProfileStructureElementDefinitionMappingList}
-  TFhirProfileStructureElementDefinitionMappingList = class (TFHIRObjectList)
+  {!.Net HL7Connect.Fhir.ProfileStructureSnapshotElementDefinitionMappingList}
+  TFhirProfileStructureSnapshotElementDefinitionMappingList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirProfileStructureElementDefinitionMapping;
-    procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinitionMapping);
+    function GetItemN(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionMapping;
+    procedure SetItemN(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionMapping);
   public
     {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionMappingList; Overload;
-    function Clone : TFhirProfileStructureElementDefinitionMappingList; Overload;
+    function Link : TFhirProfileStructureSnapshotElementDefinitionMappingList; Overload;
+    function Clone : TFhirProfileStructureSnapshotElementDefinitionMappingList; Overload;
     {!script show}
     
 
     {@member Append
-      Add a FhirProfileStructureElementDefinitionMapping to the end of the list.
+      Add a FhirProfileStructureSnapshotElementDefinitionMapping to the end of the list.
     }
-    function Append : TFhirProfileStructureElementDefinitionMapping;
+    function Append : TFhirProfileStructureSnapshotElementDefinitionMapping;
 
     
     {@member AddItem
-      Add an already existing FhirProfileStructureElementDefinitionMapping to the end of the list.
+      Add an already existing FhirProfileStructureSnapshotElementDefinitionMapping to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinitionMapping);
+    procedure AddItem(value : TFhirProfileStructureSnapshotElementDefinitionMapping);
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13633,33 +13775,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    function IndexOf(value : TFhirProfileStructureElementDefinitionMapping) : Integer;
+    function IndexOf(value : TFhirProfileStructureSnapshotElementDefinitionMapping) : Integer;
     
 
     {@member Insert
-      Insert FhirProfileStructureElementDefinitionMapping before the designated index (0 = first item)
+      Insert FhirProfileStructureSnapshotElementDefinitionMapping before the designated index (0 = first item)
     }
-    function Insert(index : Integer) : TFhirProfileStructureElementDefinitionMapping;
+    function Insert(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionMapping;
     
 
     {@member InsertItem
-       Insert an existing FhirProfileStructureElementDefinitionMapping before the designated index (0 = first item)
+       Insert an existing FhirProfileStructureSnapshotElementDefinitionMapping before the designated index (0 = first item)
     }
-    procedure InsertItem(index : Integer; value : TFhirProfileStructureElementDefinitionMapping);
+    procedure InsertItem(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionMapping);
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinitionMapping. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinitionMapping. (0 = first item)
     }
     
     {@member Item
-       Get the iIndexth FhirProfileStructureElementDefinitionMapping. (0 = first item)
+       Get the iIndexth FhirProfileStructureSnapshotElementDefinitionMapping. (0 = first item)
     }
-    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureElementDefinitionMapping);
+    procedure SetItemByIndex(index : Integer; value : TFhirProfileStructureSnapshotElementDefinitionMapping);
     
     {@member Count
       The number of items in the collection
     }
-    function Item(index : Integer) : TFhirProfileStructureElementDefinitionMapping;
+    function Item(index : Integer) : TFhirProfileStructureSnapshotElementDefinitionMapping;
     
     {@member Count
       The number of items in the collection
@@ -13675,7 +13817,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     procedure ClearItems;
     
-    Property FhirProfileStructureElementDefinitionMappings[index : Integer] : TFhirProfileStructureElementDefinitionMapping read GetItemN write SetItemN; default;
+    Property FhirProfileStructureSnapshotElementDefinitionMappings[index : Integer] : TFhirProfileStructureSnapshotElementDefinitionMapping read GetItemN write SetItemN; default;
   End;
 
 
@@ -13847,7 +13989,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     FDisplay : TFhirString;
     FContextType : TFhirEnum;
     FcontextList : TFhirStringList;
-    FDefinition : TFhirProfileStructureElementDefinition;
+    FelementList : TFhirProfileStructureSnapshotElementList;
     Procedure SetCode(value : TFhirCode);
     Function GetCodeST : String;
     Procedure SetCodeST(value : String);
@@ -13857,7 +13999,6 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     Procedure SetContextType(value : TFhirEnum);
     Function GetContextTypeST : TFhirExtensionContext;
     Procedure SetContextTypeST(value : TFhirExtensionContext);
-    Procedure SetDefinition(value : TFhirProfileStructureElementDefinition);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -13902,10 +14043,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property contextList : TFhirStringList read FContextList;
 
-    {@member definition
+    {@member elementList
       Definition of the extension and its content.
     }
-    property definition : TFhirProfileStructureElementDefinition read FDefinition write SetDefinition;
+    property elementList : TFhirProfileStructureSnapshotElementList read FElementList;
 
   end;
 
@@ -19530,7 +19671,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'prohibited', 'boolean', FProhibited.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'actionResulting', 'Resource(Any)', FActionResultingList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'notes', 'string', FNotes.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'detail', 'Resource(Procedure|MedicationPrescription|DiagnosticOrder|Encounter)', FDetail.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'detail', 'Resource(Procedure|MedicationPrescription|DiagnosticOrder|Encounter|Supply)', FDetail.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'simple', '', FSimple.Link.Link));{2}
 end;
 
@@ -19973,483 +20114,6 @@ end;
 procedure TFhirCarePlanActivitySimpleList.SetItemN(index: Integer; value: TFhirCarePlanActivitySimple);
 begin
   assert(value is TFhirCarePlanActivitySimple);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirCommonDataElementBinding }
-
-constructor TFhirCommonDataElementBinding.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirCommonDataElementBinding.Destroy;
-begin
-  FIsExtensible.free;
-  FConformance.free;
-  FDescription.free;
-  FReference.free;
-  inherited;
-end;
-
-procedure TFhirCommonDataElementBinding.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  isExtensible := TFhirCommonDataElementBinding(oSource).isExtensible.Clone;
-  FConformance := TFhirCommonDataElementBinding(oSource).FConformance.Link;
-  description := TFhirCommonDataElementBinding(oSource).description.Clone;
-  reference := TFhirCommonDataElementBinding(oSource).reference.Clone;
-end;
-
-procedure TFhirCommonDataElementBinding.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'isExtensible') Then
-     list.add(IsExtensible.Link);
-  if (child_name = 'conformance') Then
-     list.add(FConformance.Link);
-  if (child_name = 'description') Then
-     list.add(Description.Link);
-  if (child_name = 'reference') Then
-     list.add(Reference.Link);
-end;
-
-procedure TFhirCommonDataElementBinding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'isExtensible', 'boolean', FIsExtensible.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'conformance', 'code', FConformance.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', FDescription.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reference', 'Resource(ValueSet)', FReference.Link.Link));{2}
-end;
-
-function TFhirCommonDataElementBinding.Link : TFhirCommonDataElementBinding;
-begin
-  result := TFhirCommonDataElementBinding(inherited Link);
-end;
-
-function TFhirCommonDataElementBinding.Clone : TFhirCommonDataElementBinding;
-begin
-  result := TFhirCommonDataElementBinding(inherited Clone);
-end;
-
-{ TFhirCommonDataElementBinding }
-
-Procedure TFhirCommonDataElementBinding.SetIsExtensible(value : TFhirBoolean);
-begin
-  FIsExtensible.free;
-  FIsExtensible := value;
-end;
-
-Function TFhirCommonDataElementBinding.GetIsExtensibleST : Boolean;
-begin
-  if FIsExtensible = nil then
-    result := false
-  else
-    result := IsExtensible.value;
-end;
-
-Procedure TFhirCommonDataElementBinding.SetIsExtensibleST(value : Boolean);
-begin
-  if FIsExtensible = nil then
-    FIsExtensible := TFhirBoolean.create;
-  FIsExtensible.value := value
-end;
-
-Procedure TFhirCommonDataElementBinding.SetConformance(value : TFhirEnum);
-begin
-  FConformance.free;
-  FConformance := value;
-end;
-
-Function TFhirCommonDataElementBinding.GetConformanceST : TFhirBindingConformance;
-begin
-  if FConformance = nil then
-    result := TFhirBindingConformance(0)
-  else
-    result := TFhirBindingConformance(StringArrayIndexOf(CODES_TFhirBindingConformance, Conformance.value));
-end;
-
-Procedure TFhirCommonDataElementBinding.SetConformanceST(value : TFhirBindingConformance);
-begin
-  if ord(value) = 0 then
-    Conformance := nil
-  else
-    Conformance := TFhirEnum.create(CODES_TFhirBindingConformance[value]);
-end;
-
-Procedure TFhirCommonDataElementBinding.SetDescription(value : TFhirString);
-begin
-  FDescription.free;
-  FDescription := value;
-end;
-
-Function TFhirCommonDataElementBinding.GetDescriptionST : String;
-begin
-  if FDescription = nil then
-    result := ''
-  else
-    result := Description.value;
-end;
-
-Procedure TFhirCommonDataElementBinding.SetDescriptionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDescription = nil then
-      FDescription := TFhirString.create;
-    FDescription.value := value
-  end
-  else if FDescription <> nil then
-    FDescription.value := '';
-end;
-
-Procedure TFhirCommonDataElementBinding.SetReference(value : TFhirResourceReference{TFhirValueSet});
-begin
-  FReference.free;
-  FReference := value;
-end;
-
-
-{ TFhirCommonDataElementBindingList }
-procedure TFhirCommonDataElementBindingList.AddItem(value: TFhirCommonDataElementBinding);
-begin
-  assert(value.ClassName = 'TFhirCommonDataElementBinding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCommonDataElementBinding');
-  add(value);
-end;
-
-
-function TFhirCommonDataElementBindingList.Append: TFhirCommonDataElementBinding;
-begin
-  result := TFhirCommonDataElementBinding.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirCommonDataElementBindingList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirCommonDataElementBindingList.Clone: TFhirCommonDataElementBindingList;
-begin
-  result := TFhirCommonDataElementBindingList(inherited Clone);
-end;
-
-function TFhirCommonDataElementBindingList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirCommonDataElementBindingList.GetItemN(index: Integer): TFhirCommonDataElementBinding;
-begin
-  result := TFhirCommonDataElementBinding(ObjectByIndex[index]);
-end;
-
-function TFhirCommonDataElementBindingList.IndexOf(value: TFhirCommonDataElementBinding): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirCommonDataElementBindingList.Insert(index: Integer): TFhirCommonDataElementBinding;
-begin
-  result := TFhirCommonDataElementBinding.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirCommonDataElementBindingList.InsertItem(index: Integer; value: TFhirCommonDataElementBinding);
-begin
-  assert(value is TFhirCommonDataElementBinding);
-  Inherited Insert(index, value);
-end;
-
-function TFhirCommonDataElementBindingList.Item(index: Integer): TFhirCommonDataElementBinding;
-begin
-  result := TFhirCommonDataElementBinding(ObjectByIndex[index]);
-end;
-
-function TFhirCommonDataElementBindingList.Link: TFhirCommonDataElementBindingList;
-begin
-  result := TFhirCommonDataElementBindingList(inherited Link);
-end;
-
-procedure TFhirCommonDataElementBindingList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirCommonDataElementBindingList.SetItemByIndex(index: Integer; value: TFhirCommonDataElementBinding);
-begin
-  assert(value is TFhirCommonDataElementBinding);
-  FhirCommonDataElementBindings[index] := value;
-end;
-
-procedure TFhirCommonDataElementBindingList.SetItemN(index: Integer; value: TFhirCommonDataElementBinding);
-begin
-  assert(value is TFhirCommonDataElementBinding);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirCommonDataElementMapping }
-
-constructor TFhirCommonDataElementMapping.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirCommonDataElementMapping.Destroy;
-begin
-  FUri.free;
-  FName.free;
-  FComments.free;
-  FMap.free;
-  inherited;
-end;
-
-procedure TFhirCommonDataElementMapping.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  uri := TFhirCommonDataElementMapping(oSource).uri.Clone;
-  name := TFhirCommonDataElementMapping(oSource).name.Clone;
-  comments := TFhirCommonDataElementMapping(oSource).comments.Clone;
-  map := TFhirCommonDataElementMapping(oSource).map.Clone;
-end;
-
-procedure TFhirCommonDataElementMapping.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'uri') Then
-     list.add(Uri.Link);
-  if (child_name = 'name') Then
-     list.add(Name.Link);
-  if (child_name = 'comments') Then
-     list.add(Comments.Link);
-  if (child_name = 'map') Then
-     list.add(Map.Link);
-end;
-
-procedure TFhirCommonDataElementMapping.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'uri', 'uri', FUri.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'comments', 'string', FComments.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'map', 'string', FMap.Link.Link));{2}
-end;
-
-function TFhirCommonDataElementMapping.Link : TFhirCommonDataElementMapping;
-begin
-  result := TFhirCommonDataElementMapping(inherited Link);
-end;
-
-function TFhirCommonDataElementMapping.Clone : TFhirCommonDataElementMapping;
-begin
-  result := TFhirCommonDataElementMapping(inherited Clone);
-end;
-
-{ TFhirCommonDataElementMapping }
-
-Procedure TFhirCommonDataElementMapping.SetUri(value : TFhirUri);
-begin
-  FUri.free;
-  FUri := value;
-end;
-
-Function TFhirCommonDataElementMapping.GetUriST : String;
-begin
-  if FUri = nil then
-    result := ''
-  else
-    result := Uri.value;
-end;
-
-Procedure TFhirCommonDataElementMapping.SetUriST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FUri = nil then
-      FUri := TFhirUri.create;
-    FUri.value := value
-  end
-  else if FUri <> nil then
-    FUri.value := '';
-end;
-
-Procedure TFhirCommonDataElementMapping.SetName(value : TFhirString);
-begin
-  FName.free;
-  FName := value;
-end;
-
-Function TFhirCommonDataElementMapping.GetNameST : String;
-begin
-  if FName = nil then
-    result := ''
-  else
-    result := Name.value;
-end;
-
-Procedure TFhirCommonDataElementMapping.SetNameST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FName = nil then
-      FName := TFhirString.create;
-    FName.value := value
-  end
-  else if FName <> nil then
-    FName.value := '';
-end;
-
-Procedure TFhirCommonDataElementMapping.SetComments(value : TFhirString);
-begin
-  FComments.free;
-  FComments := value;
-end;
-
-Function TFhirCommonDataElementMapping.GetCommentsST : String;
-begin
-  if FComments = nil then
-    result := ''
-  else
-    result := Comments.value;
-end;
-
-Procedure TFhirCommonDataElementMapping.SetCommentsST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FComments = nil then
-      FComments := TFhirString.create;
-    FComments.value := value
-  end
-  else if FComments <> nil then
-    FComments.value := '';
-end;
-
-Procedure TFhirCommonDataElementMapping.SetMap(value : TFhirString);
-begin
-  FMap.free;
-  FMap := value;
-end;
-
-Function TFhirCommonDataElementMapping.GetMapST : String;
-begin
-  if FMap = nil then
-    result := ''
-  else
-    result := Map.value;
-end;
-
-Procedure TFhirCommonDataElementMapping.SetMapST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FMap = nil then
-      FMap := TFhirString.create;
-    FMap.value := value
-  end
-  else if FMap <> nil then
-    FMap.value := '';
-end;
-
-
-{ TFhirCommonDataElementMappingList }
-procedure TFhirCommonDataElementMappingList.AddItem(value: TFhirCommonDataElementMapping);
-begin
-  assert(value.ClassName = 'TFhirCommonDataElementMapping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCommonDataElementMapping');
-  add(value);
-end;
-
-
-function TFhirCommonDataElementMappingList.Append: TFhirCommonDataElementMapping;
-begin
-  result := TFhirCommonDataElementMapping.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirCommonDataElementMappingList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirCommonDataElementMappingList.Clone: TFhirCommonDataElementMappingList;
-begin
-  result := TFhirCommonDataElementMappingList(inherited Clone);
-end;
-
-function TFhirCommonDataElementMappingList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirCommonDataElementMappingList.GetItemN(index: Integer): TFhirCommonDataElementMapping;
-begin
-  result := TFhirCommonDataElementMapping(ObjectByIndex[index]);
-end;
-
-function TFhirCommonDataElementMappingList.IndexOf(value: TFhirCommonDataElementMapping): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirCommonDataElementMappingList.Insert(index: Integer): TFhirCommonDataElementMapping;
-begin
-  result := TFhirCommonDataElementMapping.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirCommonDataElementMappingList.InsertItem(index: Integer; value: TFhirCommonDataElementMapping);
-begin
-  assert(value is TFhirCommonDataElementMapping);
-  Inherited Insert(index, value);
-end;
-
-function TFhirCommonDataElementMappingList.Item(index: Integer): TFhirCommonDataElementMapping;
-begin
-  result := TFhirCommonDataElementMapping(ObjectByIndex[index]);
-end;
-
-function TFhirCommonDataElementMappingList.Link: TFhirCommonDataElementMappingList;
-begin
-  result := TFhirCommonDataElementMappingList(inherited Link);
-end;
-
-procedure TFhirCommonDataElementMappingList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirCommonDataElementMappingList.SetItemByIndex(index: Integer; value: TFhirCommonDataElementMapping);
-begin
-  assert(value is TFhirCommonDataElementMapping);
-  FhirCommonDataElementMappings[index] := value;
-end;
-
-procedure TFhirCommonDataElementMappingList.SetItemN(index: Integer; value: TFhirCommonDataElementMapping);
-begin
-  assert(value is TFhirCommonDataElementMapping);
   ObjectByIndex[index] := value;
 end;
 
@@ -25154,6 +24818,483 @@ end;
 procedure TFhirConformanceDocumentList.SetItemN(index: Integer; value: TFhirConformanceDocument);
 begin
   assert(value is TFhirConformanceDocument);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirDataElementBinding }
+
+constructor TFhirDataElementBinding.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirDataElementBinding.Destroy;
+begin
+  FIsExtensible.free;
+  FConformance.free;
+  FDescription.free;
+  FValueSet.free;
+  inherited;
+end;
+
+procedure TFhirDataElementBinding.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  isExtensible := TFhirDataElementBinding(oSource).isExtensible.Clone;
+  FConformance := TFhirDataElementBinding(oSource).FConformance.Link;
+  description := TFhirDataElementBinding(oSource).description.Clone;
+  valueSet := TFhirDataElementBinding(oSource).valueSet.Clone;
+end;
+
+procedure TFhirDataElementBinding.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'isExtensible') Then
+     list.add(IsExtensible.Link);
+  if (child_name = 'conformance') Then
+     list.add(FConformance.Link);
+  if (child_name = 'description') Then
+     list.add(Description.Link);
+  if (child_name = 'valueSet') Then
+     list.add(ValueSet.Link);
+end;
+
+procedure TFhirDataElementBinding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'isExtensible', 'boolean', FIsExtensible.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'conformance', 'code', FConformance.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'description', 'string', FDescription.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'valueSet', 'Resource(ValueSet)', FValueSet.Link.Link));{2}
+end;
+
+function TFhirDataElementBinding.Link : TFhirDataElementBinding;
+begin
+  result := TFhirDataElementBinding(inherited Link);
+end;
+
+function TFhirDataElementBinding.Clone : TFhirDataElementBinding;
+begin
+  result := TFhirDataElementBinding(inherited Clone);
+end;
+
+{ TFhirDataElementBinding }
+
+Procedure TFhirDataElementBinding.SetIsExtensible(value : TFhirBoolean);
+begin
+  FIsExtensible.free;
+  FIsExtensible := value;
+end;
+
+Function TFhirDataElementBinding.GetIsExtensibleST : Boolean;
+begin
+  if FIsExtensible = nil then
+    result := false
+  else
+    result := IsExtensible.value;
+end;
+
+Procedure TFhirDataElementBinding.SetIsExtensibleST(value : Boolean);
+begin
+  if FIsExtensible = nil then
+    FIsExtensible := TFhirBoolean.create;
+  FIsExtensible.value := value
+end;
+
+Procedure TFhirDataElementBinding.SetConformance(value : TFhirEnum);
+begin
+  FConformance.free;
+  FConformance := value;
+end;
+
+Function TFhirDataElementBinding.GetConformanceST : TFhirBindingConformance;
+begin
+  if FConformance = nil then
+    result := TFhirBindingConformance(0)
+  else
+    result := TFhirBindingConformance(StringArrayIndexOf(CODES_TFhirBindingConformance, Conformance.value));
+end;
+
+Procedure TFhirDataElementBinding.SetConformanceST(value : TFhirBindingConformance);
+begin
+  if ord(value) = 0 then
+    Conformance := nil
+  else
+    Conformance := TFhirEnum.create(CODES_TFhirBindingConformance[value]);
+end;
+
+Procedure TFhirDataElementBinding.SetDescription(value : TFhirString);
+begin
+  FDescription.free;
+  FDescription := value;
+end;
+
+Function TFhirDataElementBinding.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := Description.value;
+end;
+
+Procedure TFhirDataElementBinding.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirString.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+Procedure TFhirDataElementBinding.SetValueSet(value : TFhirResourceReference{TFhirValueSet});
+begin
+  FValueSet.free;
+  FValueSet := value;
+end;
+
+
+{ TFhirDataElementBindingList }
+procedure TFhirDataElementBindingList.AddItem(value: TFhirDataElementBinding);
+begin
+  assert(value.ClassName = 'TFhirDataElementBinding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataElementBinding');
+  add(value);
+end;
+
+
+function TFhirDataElementBindingList.Append: TFhirDataElementBinding;
+begin
+  result := TFhirDataElementBinding.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirDataElementBindingList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirDataElementBindingList.Clone: TFhirDataElementBindingList;
+begin
+  result := TFhirDataElementBindingList(inherited Clone);
+end;
+
+function TFhirDataElementBindingList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirDataElementBindingList.GetItemN(index: Integer): TFhirDataElementBinding;
+begin
+  result := TFhirDataElementBinding(ObjectByIndex[index]);
+end;
+
+function TFhirDataElementBindingList.IndexOf(value: TFhirDataElementBinding): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirDataElementBindingList.Insert(index: Integer): TFhirDataElementBinding;
+begin
+  result := TFhirDataElementBinding.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirDataElementBindingList.InsertItem(index: Integer; value: TFhirDataElementBinding);
+begin
+  assert(value is TFhirDataElementBinding);
+  Inherited Insert(index, value);
+end;
+
+function TFhirDataElementBindingList.Item(index: Integer): TFhirDataElementBinding;
+begin
+  result := TFhirDataElementBinding(ObjectByIndex[index]);
+end;
+
+function TFhirDataElementBindingList.Link: TFhirDataElementBindingList;
+begin
+  result := TFhirDataElementBindingList(inherited Link);
+end;
+
+procedure TFhirDataElementBindingList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirDataElementBindingList.SetItemByIndex(index: Integer; value: TFhirDataElementBinding);
+begin
+  assert(value is TFhirDataElementBinding);
+  FhirDataElementBindings[index] := value;
+end;
+
+procedure TFhirDataElementBindingList.SetItemN(index: Integer; value: TFhirDataElementBinding);
+begin
+  assert(value is TFhirDataElementBinding);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirDataElementMapping }
+
+constructor TFhirDataElementMapping.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirDataElementMapping.Destroy;
+begin
+  FUri.free;
+  FName.free;
+  FComments.free;
+  FMap.free;
+  inherited;
+end;
+
+procedure TFhirDataElementMapping.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  uri := TFhirDataElementMapping(oSource).uri.Clone;
+  name := TFhirDataElementMapping(oSource).name.Clone;
+  comments := TFhirDataElementMapping(oSource).comments.Clone;
+  map := TFhirDataElementMapping(oSource).map.Clone;
+end;
+
+procedure TFhirDataElementMapping.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'uri') Then
+     list.add(Uri.Link);
+  if (child_name = 'name') Then
+     list.add(Name.Link);
+  if (child_name = 'comments') Then
+     list.add(Comments.Link);
+  if (child_name = 'map') Then
+     list.add(Map.Link);
+end;
+
+procedure TFhirDataElementMapping.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'uri', 'uri', FUri.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'comments', 'string', FComments.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'map', 'string', FMap.Link.Link));{2}
+end;
+
+function TFhirDataElementMapping.Link : TFhirDataElementMapping;
+begin
+  result := TFhirDataElementMapping(inherited Link);
+end;
+
+function TFhirDataElementMapping.Clone : TFhirDataElementMapping;
+begin
+  result := TFhirDataElementMapping(inherited Clone);
+end;
+
+{ TFhirDataElementMapping }
+
+Procedure TFhirDataElementMapping.SetUri(value : TFhirUri);
+begin
+  FUri.free;
+  FUri := value;
+end;
+
+Function TFhirDataElementMapping.GetUriST : String;
+begin
+  if FUri = nil then
+    result := ''
+  else
+    result := Uri.value;
+end;
+
+Procedure TFhirDataElementMapping.SetUriST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUri = nil then
+      FUri := TFhirUri.create;
+    FUri.value := value
+  end
+  else if FUri <> nil then
+    FUri.value := '';
+end;
+
+Procedure TFhirDataElementMapping.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+Function TFhirDataElementMapping.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := Name.value;
+end;
+
+Procedure TFhirDataElementMapping.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+Procedure TFhirDataElementMapping.SetComments(value : TFhirString);
+begin
+  FComments.free;
+  FComments := value;
+end;
+
+Function TFhirDataElementMapping.GetCommentsST : String;
+begin
+  if FComments = nil then
+    result := ''
+  else
+    result := Comments.value;
+end;
+
+Procedure TFhirDataElementMapping.SetCommentsST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FComments = nil then
+      FComments := TFhirString.create;
+    FComments.value := value
+  end
+  else if FComments <> nil then
+    FComments.value := '';
+end;
+
+Procedure TFhirDataElementMapping.SetMap(value : TFhirString);
+begin
+  FMap.free;
+  FMap := value;
+end;
+
+Function TFhirDataElementMapping.GetMapST : String;
+begin
+  if FMap = nil then
+    result := ''
+  else
+    result := Map.value;
+end;
+
+Procedure TFhirDataElementMapping.SetMapST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FMap = nil then
+      FMap := TFhirString.create;
+    FMap.value := value
+  end
+  else if FMap <> nil then
+    FMap.value := '';
+end;
+
+
+{ TFhirDataElementMappingList }
+procedure TFhirDataElementMappingList.AddItem(value: TFhirDataElementMapping);
+begin
+  assert(value.ClassName = 'TFhirDataElementMapping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataElementMapping');
+  add(value);
+end;
+
+
+function TFhirDataElementMappingList.Append: TFhirDataElementMapping;
+begin
+  result := TFhirDataElementMapping.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirDataElementMappingList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirDataElementMappingList.Clone: TFhirDataElementMappingList;
+begin
+  result := TFhirDataElementMappingList(inherited Clone);
+end;
+
+function TFhirDataElementMappingList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirDataElementMappingList.GetItemN(index: Integer): TFhirDataElementMapping;
+begin
+  result := TFhirDataElementMapping(ObjectByIndex[index]);
+end;
+
+function TFhirDataElementMappingList.IndexOf(value: TFhirDataElementMapping): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirDataElementMappingList.Insert(index: Integer): TFhirDataElementMapping;
+begin
+  result := TFhirDataElementMapping.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirDataElementMappingList.InsertItem(index: Integer; value: TFhirDataElementMapping);
+begin
+  assert(value is TFhirDataElementMapping);
+  Inherited Insert(index, value);
+end;
+
+function TFhirDataElementMappingList.Item(index: Integer): TFhirDataElementMapping;
+begin
+  result := TFhirDataElementMapping(ObjectByIndex[index]);
+end;
+
+function TFhirDataElementMappingList.Link: TFhirDataElementMappingList;
+begin
+  result := TFhirDataElementMappingList(inherited Link);
+end;
+
+procedure TFhirDataElementMappingList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirDataElementMappingList.SetItemByIndex(index: Integer; value: TFhirDataElementMapping);
+begin
+  assert(value is TFhirDataElementMapping);
+  FhirDataElementMappings[index] := value;
+end;
+
+procedure TFhirDataElementMappingList.SetItemN(index: Integer; value: TFhirDataElementMapping);
+begin
+  assert(value is TFhirDataElementMapping);
   ObjectByIndex[index] := value;
 end;
 
@@ -33932,6 +34073,7 @@ begin
   FHigh.free;
   FMeaning.free;
   FAge.free;
+  FText.free;
   inherited;
 end;
 
@@ -33942,6 +34084,7 @@ begin
   high := TFhirObservationReferenceRange(oSource).high.Clone;
   meaning := TFhirObservationReferenceRange(oSource).meaning.Clone;
   age := TFhirObservationReferenceRange(oSource).age.Clone;
+  text := TFhirObservationReferenceRange(oSource).text.Clone;
 end;
 
 procedure TFhirObservationReferenceRange.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -33955,6 +34098,8 @@ begin
      list.add(Meaning.Link);
   if (child_name = 'age') Then
      list.add(Age.Link);
+  if (child_name = 'text') Then
+     list.add(Text.Link);
 end;
 
 procedure TFhirObservationReferenceRange.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -33964,6 +34109,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'high', 'Quantity', FHigh.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'meaning', 'CodeableConcept', FMeaning.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'age', 'Range', FAge.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
 end;
 
 function TFhirObservationReferenceRange.Link : TFhirObservationReferenceRange;
@@ -34000,6 +34146,32 @@ Procedure TFhirObservationReferenceRange.SetAge(value : TFhirRange);
 begin
   FAge.free;
   FAge := value;
+end;
+
+Procedure TFhirObservationReferenceRange.SetText(value : TFhirString);
+begin
+  FText.free;
+  FText := value;
+end;
+
+Function TFhirObservationReferenceRange.GetTextST : String;
+begin
+  if FText = nil then
+    result := ''
+  else
+    result := Text.value;
+end;
+
+Procedure TFhirObservationReferenceRange.SetTextST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FText = nil then
+      FText := TFhirString.create;
+    FText.value := value
+  end
+  else if FText <> nil then
+    FText.value := '';
 end;
 
 
@@ -36045,17 +36217,18 @@ end;
 constructor TFhirProfileStructure.Create;
 begin
   inherited;
-  FElementList := TFhirProfileStructureElementList.Create;
   FSearchParamList := TFhirProfileStructureSearchParamList.Create;
 end;
 
 destructor TFhirProfileStructure.Destroy;
 begin
   FType_.free;
+  FBase.free;
   FName.free;
   FPublish.free;
   FPurpose.free;
-  FElementList.Free;
+  FSnapshot.free;
+  FDifferential.free;
   FSearchParamList.Free;
   inherited;
 end;
@@ -36064,10 +36237,12 @@ procedure TFhirProfileStructure.Assign(oSource : TAdvObject);
 begin
   inherited;
   type_ := TFhirProfileStructure(oSource).type_.Clone;
+  base := TFhirProfileStructure(oSource).base.Clone;
   name := TFhirProfileStructure(oSource).name.Clone;
   publish := TFhirProfileStructure(oSource).publish.Clone;
   purpose := TFhirProfileStructure(oSource).purpose.Clone;
-  FElementList.Assign(TFhirProfileStructure(oSource).FElementList);
+  snapshot := TFhirProfileStructure(oSource).snapshot.Clone;
+  differential := TFhirProfileStructure(oSource).differential.Clone;
   FSearchParamList.Assign(TFhirProfileStructure(oSource).FSearchParamList);
 end;
 
@@ -36076,14 +36251,18 @@ begin
   inherited;
   if (child_name = 'type_') Then
      list.add(Type_.Link);
+  if (child_name = 'base') Then
+     list.add(Base.Link);
   if (child_name = 'name') Then
      list.add(Name.Link);
   if (child_name = 'publish') Then
      list.add(Publish.Link);
   if (child_name = 'purpose') Then
      list.add(Purpose.Link);
-  if (child_name = 'element') Then
-     list.addAll(FElementList);
+  if (child_name = 'snapshot') Then
+     list.add(Snapshot.Link);
+  if (child_name = 'differential') Then
+     list.add(Differential.Link);
   if (child_name = 'searchParam') Then
      list.addAll(FSearchParamList);
 end;
@@ -36092,10 +36271,12 @@ procedure TFhirProfileStructure.ListProperties(oList: TFHIRPropertyList; bInheri
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'type', 'code', FType_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'base', 'uri', FBase.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'publish', 'boolean', FPublish.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'purpose', 'string', FPurpose.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'element', '', FElementList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'snapshot', '', FSnapshot.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'differential', '@Profile.structure.snapshot', FDifferential.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'searchParam', '', FSearchParamList.Link)){3};
 end;
 
@@ -36135,6 +36316,32 @@ begin
   end
   else if FType_ <> nil then
     FType_.value := '';
+end;
+
+Procedure TFhirProfileStructure.SetBase(value : TFhirUri);
+begin
+  FBase.free;
+  FBase := value;
+end;
+
+Function TFhirProfileStructure.GetBaseST : String;
+begin
+  if FBase = nil then
+    result := ''
+  else
+    result := Base.value;
+end;
+
+Procedure TFhirProfileStructure.SetBaseST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FBase = nil then
+      FBase := TFhirUri.create;
+    FBase.value := value
+  end
+  else if FBase <> nil then
+    FBase.value := '';
 end;
 
 Procedure TFhirProfileStructure.SetName(value : TFhirString);
@@ -36208,6 +36415,18 @@ begin
   end
   else if FPurpose <> nil then
     FPurpose.value := '';
+end;
+
+Procedure TFhirProfileStructure.SetSnapshot(value : TFhirProfileStructureSnapshot);
+begin
+  FSnapshot.free;
+  FSnapshot := value;
+end;
+
+Procedure TFhirProfileStructure.SetDifferential(value : TFhirProfileStructureSnapshot);
+begin
+  FDifferential.free;
+  FDifferential := value;
 end;
 
 
@@ -36300,15 +36519,150 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirProfileStructureElement }
+{ TFhirProfileStructureSnapshot }
 
-constructor TFhirProfileStructureElement.Create;
+constructor TFhirProfileStructureSnapshot.Create;
+begin
+  inherited;
+  FElementList := TFhirProfileStructureSnapshotElementList.Create;
+end;
+
+destructor TFhirProfileStructureSnapshot.Destroy;
+begin
+  FElementList.Free;
+  inherited;
+end;
+
+procedure TFhirProfileStructureSnapshot.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FElementList.Assign(TFhirProfileStructureSnapshot(oSource).FElementList);
+end;
+
+procedure TFhirProfileStructureSnapshot.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'element') Then
+     list.addAll(FElementList);
+end;
+
+procedure TFhirProfileStructureSnapshot.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'element', '', FElementList.Link)){3};
+end;
+
+function TFhirProfileStructureSnapshot.Link : TFhirProfileStructureSnapshot;
+begin
+  result := TFhirProfileStructureSnapshot(inherited Link);
+end;
+
+function TFhirProfileStructureSnapshot.Clone : TFhirProfileStructureSnapshot;
+begin
+  result := TFhirProfileStructureSnapshot(inherited Clone);
+end;
+
+{ TFhirProfileStructureSnapshot }
+
+
+{ TFhirProfileStructureSnapshotList }
+procedure TFhirProfileStructureSnapshotList.AddItem(value: TFhirProfileStructureSnapshot);
+begin
+  assert(value.ClassName = 'TFhirProfileStructureSnapshot', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureSnapshot');
+  add(value);
+end;
+
+
+function TFhirProfileStructureSnapshotList.Append: TFhirProfileStructureSnapshot;
+begin
+  result := TFhirProfileStructureSnapshot.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirProfileStructureSnapshotList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirProfileStructureSnapshotList.Clone: TFhirProfileStructureSnapshotList;
+begin
+  result := TFhirProfileStructureSnapshotList(inherited Clone);
+end;
+
+function TFhirProfileStructureSnapshotList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirProfileStructureSnapshotList.GetItemN(index: Integer): TFhirProfileStructureSnapshot;
+begin
+  result := TFhirProfileStructureSnapshot(ObjectByIndex[index]);
+end;
+
+function TFhirProfileStructureSnapshotList.IndexOf(value: TFhirProfileStructureSnapshot): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirProfileStructureSnapshotList.Insert(index: Integer): TFhirProfileStructureSnapshot;
+begin
+  result := TFhirProfileStructureSnapshot.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirProfileStructureSnapshotList.InsertItem(index: Integer; value: TFhirProfileStructureSnapshot);
+begin
+  assert(value is TFhirProfileStructureSnapshot);
+  Inherited Insert(index, value);
+end;
+
+function TFhirProfileStructureSnapshotList.Item(index: Integer): TFhirProfileStructureSnapshot;
+begin
+  result := TFhirProfileStructureSnapshot(ObjectByIndex[index]);
+end;
+
+function TFhirProfileStructureSnapshotList.Link: TFhirProfileStructureSnapshotList;
+begin
+  result := TFhirProfileStructureSnapshotList(inherited Link);
+end;
+
+procedure TFhirProfileStructureSnapshotList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirProfileStructureSnapshotList.SetItemByIndex(index: Integer; value: TFhirProfileStructureSnapshot);
+begin
+  assert(value is TFhirProfileStructureSnapshot);
+  FhirProfileStructureSnapshots[index] := value;
+end;
+
+procedure TFhirProfileStructureSnapshotList.SetItemN(index: Integer; value: TFhirProfileStructureSnapshot);
+begin
+  assert(value is TFhirProfileStructureSnapshot);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirProfileStructureSnapshotElement }
+
+constructor TFhirProfileStructureSnapshotElement.Create;
 begin
   inherited;
   FRepresentation := TFHIREnumList.Create;
 end;
 
-destructor TFhirProfileStructureElement.Destroy;
+destructor TFhirProfileStructureSnapshotElement.Destroy;
 begin
   FPath.free;
   FRepresentation.Free;
@@ -36318,17 +36672,17 @@ begin
   inherited;
 end;
 
-procedure TFhirProfileStructureElement.Assign(oSource : TAdvObject);
+procedure TFhirProfileStructureSnapshotElement.Assign(oSource : TAdvObject);
 begin
   inherited;
-  path := TFhirProfileStructureElement(oSource).path.Clone;
-  FRepresentation.Assign(TFhirProfileStructureElement(oSource).FRepresentation);
-  name := TFhirProfileStructureElement(oSource).name.Clone;
-  slicing := TFhirProfileStructureElement(oSource).slicing.Clone;
-  definition := TFhirProfileStructureElement(oSource).definition.Clone;
+  path := TFhirProfileStructureSnapshotElement(oSource).path.Clone;
+  FRepresentation.Assign(TFhirProfileStructureSnapshotElement(oSource).FRepresentation);
+  name := TFhirProfileStructureSnapshotElement(oSource).name.Clone;
+  slicing := TFhirProfileStructureSnapshotElement(oSource).slicing.Clone;
+  definition := TFhirProfileStructureSnapshotElement(oSource).definition.Clone;
 end;
 
-procedure TFhirProfileStructureElement.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirProfileStructureSnapshotElement.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'path') Then
@@ -36343,7 +36697,7 @@ begin
      list.add(Definition.Link);
 end;
 
-procedure TFhirProfileStructureElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirProfileStructureSnapshotElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'path', 'string', FPath.Link.Link));{2}
@@ -36353,25 +36707,25 @@ begin
   oList.add(TFHIRProperty.create(self, 'definition', '', FDefinition.Link.Link));{2}
 end;
 
-function TFhirProfileStructureElement.Link : TFhirProfileStructureElement;
+function TFhirProfileStructureSnapshotElement.Link : TFhirProfileStructureSnapshotElement;
 begin
-  result := TFhirProfileStructureElement(inherited Link);
+  result := TFhirProfileStructureSnapshotElement(inherited Link);
 end;
 
-function TFhirProfileStructureElement.Clone : TFhirProfileStructureElement;
+function TFhirProfileStructureSnapshotElement.Clone : TFhirProfileStructureSnapshotElement;
 begin
-  result := TFhirProfileStructureElement(inherited Clone);
+  result := TFhirProfileStructureSnapshotElement(inherited Clone);
 end;
 
-{ TFhirProfileStructureElement }
+{ TFhirProfileStructureSnapshotElement }
 
-Procedure TFhirProfileStructureElement.SetPath(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElement.SetPath(value : TFhirString);
 begin
   FPath.free;
   FPath := value;
 end;
 
-Function TFhirProfileStructureElement.GetPathST : String;
+Function TFhirProfileStructureSnapshotElement.GetPathST : String;
 begin
   if FPath = nil then
     result := ''
@@ -36379,7 +36733,7 @@ begin
     result := Path.value;
 end;
 
-Procedure TFhirProfileStructureElement.SetPathST(value : String);
+Procedure TFhirProfileStructureSnapshotElement.SetPathST(value : String);
 begin
   if value <> '' then
   begin
@@ -36391,7 +36745,7 @@ begin
     FPath.value := '';
 end;
 
-Function TFhirProfileStructureElement.GetRepresentationST : TFhirPropertyRepresentationList;
+Function TFhirProfileStructureSnapshotElement.GetRepresentationST : TFhirPropertyRepresentationList;
   var i : integer;
 begin
   result := [];
@@ -36399,7 +36753,7 @@ begin
     result := result + [TFhirPropertyRepresentation(StringArrayIndexOf(CODES_TFhirPropertyRepresentation, representation[i].value))];
 end;
 
-Procedure TFhirProfileStructureElement.SetRepresentationST(value : TFhirPropertyRepresentationList);
+Procedure TFhirProfileStructureSnapshotElement.SetRepresentationST(value : TFhirPropertyRepresentationList);
 var a : TFhirPropertyRepresentation;
 begin
   representation.clear;
@@ -36408,13 +36762,13 @@ begin
       representation.add(TFhirEnum.create(CODES_TFhirPropertyRepresentation[a]));
 end;
 
-Procedure TFhirProfileStructureElement.SetName(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElement.SetName(value : TFhirString);
 begin
   FName.free;
   FName := value;
 end;
 
-Function TFhirProfileStructureElement.GetNameST : String;
+Function TFhirProfileStructureSnapshotElement.GetNameST : String;
 begin
   if FName = nil then
     result := ''
@@ -36422,7 +36776,7 @@ begin
     result := Name.value;
 end;
 
-Procedure TFhirProfileStructureElement.SetNameST(value : String);
+Procedure TFhirProfileStructureSnapshotElement.SetNameST(value : String);
 begin
   if value <> '' then
   begin
@@ -36434,30 +36788,30 @@ begin
     FName.value := '';
 end;
 
-Procedure TFhirProfileStructureElement.SetSlicing(value : TFhirProfileStructureElementSlicing);
+Procedure TFhirProfileStructureSnapshotElement.SetSlicing(value : TFhirProfileStructureSnapshotElementSlicing);
 begin
   FSlicing.free;
   FSlicing := value;
 end;
 
-Procedure TFhirProfileStructureElement.SetDefinition(value : TFhirProfileStructureElementDefinition);
+Procedure TFhirProfileStructureSnapshotElement.SetDefinition(value : TFhirProfileStructureSnapshotElementDefinition);
 begin
   FDefinition.free;
   FDefinition := value;
 end;
 
 
-{ TFhirProfileStructureElementList }
-procedure TFhirProfileStructureElementList.AddItem(value: TFhirProfileStructureElement);
+{ TFhirProfileStructureSnapshotElementList }
+procedure TFhirProfileStructureSnapshotElementList.AddItem(value: TFhirProfileStructureSnapshotElement);
 begin
-  assert(value.ClassName = 'TFhirProfileStructureElement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureElement');
+  assert(value.ClassName = 'TFhirProfileStructureSnapshotElement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureSnapshotElement');
   add(value);
 end;
 
 
-function TFhirProfileStructureElementList.Append: TFhirProfileStructureElement;
+function TFhirProfileStructureSnapshotElementList.Append: TFhirProfileStructureSnapshotElement;
 begin
-  result := TFhirProfileStructureElement.create;
+  result := TFhirProfileStructureSnapshotElement.create;
   try
     add(result.Link);
   finally
@@ -36466,35 +36820,35 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementList.ClearItems;
+procedure TFhirProfileStructureSnapshotElementList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirProfileStructureElementList.Clone: TFhirProfileStructureElementList;
+function TFhirProfileStructureSnapshotElementList.Clone: TFhirProfileStructureSnapshotElementList;
 begin
-  result := TFhirProfileStructureElementList(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementList(inherited Clone);
 end;
 
-function TFhirProfileStructureElementList.Count: Integer;
+function TFhirProfileStructureSnapshotElementList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirProfileStructureElementList.GetItemN(index: Integer): TFhirProfileStructureElement;
+function TFhirProfileStructureSnapshotElementList.GetItemN(index: Integer): TFhirProfileStructureSnapshotElement;
 begin
-  result := TFhirProfileStructureElement(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElement(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementList.IndexOf(value: TFhirProfileStructureElement): Integer;
+function TFhirProfileStructureSnapshotElementList.IndexOf(value: TFhirProfileStructureSnapshotElement): Integer;
 begin
   result := IndexByReference(value);
 end;
 
 
-function TFhirProfileStructureElementList.Insert(index: Integer): TFhirProfileStructureElement;
+function TFhirProfileStructureSnapshotElementList.Insert(index: Integer): TFhirProfileStructureSnapshotElement;
 begin
-  result := TFhirProfileStructureElement.create;
+  result := TFhirProfileStructureSnapshotElement.create;
   try
     inherited insert(index, result);
   finally
@@ -36503,47 +36857,47 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementList.InsertItem(index: Integer; value: TFhirProfileStructureElement);
+procedure TFhirProfileStructureSnapshotElementList.InsertItem(index: Integer; value: TFhirProfileStructureSnapshotElement);
 begin
-  assert(value is TFhirProfileStructureElement);
+  assert(value is TFhirProfileStructureSnapshotElement);
   Inherited Insert(index, value);
 end;
 
-function TFhirProfileStructureElementList.Item(index: Integer): TFhirProfileStructureElement;
+function TFhirProfileStructureSnapshotElementList.Item(index: Integer): TFhirProfileStructureSnapshotElement;
 begin
-  result := TFhirProfileStructureElement(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElement(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementList.Link: TFhirProfileStructureElementList;
+function TFhirProfileStructureSnapshotElementList.Link: TFhirProfileStructureSnapshotElementList;
 begin
-  result := TFhirProfileStructureElementList(inherited Link);
+  result := TFhirProfileStructureSnapshotElementList(inherited Link);
 end;
 
-procedure TFhirProfileStructureElementList.Remove(index: Integer);
+procedure TFhirProfileStructureSnapshotElementList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirProfileStructureElementList.SetItemByIndex(index: Integer; value: TFhirProfileStructureElement);
+procedure TFhirProfileStructureSnapshotElementList.SetItemByIndex(index: Integer; value: TFhirProfileStructureSnapshotElement);
 begin
-  assert(value is TFhirProfileStructureElement);
-  FhirProfileStructureElements[index] := value;
+  assert(value is TFhirProfileStructureSnapshotElement);
+  FhirProfileStructureSnapshotElements[index] := value;
 end;
 
-procedure TFhirProfileStructureElementList.SetItemN(index: Integer; value: TFhirProfileStructureElement);
+procedure TFhirProfileStructureSnapshotElementList.SetItemN(index: Integer; value: TFhirProfileStructureSnapshotElement);
 begin
-  assert(value is TFhirProfileStructureElement);
+  assert(value is TFhirProfileStructureSnapshotElement);
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirProfileStructureElementSlicing }
+{ TFhirProfileStructureSnapshotElementSlicing }
 
-constructor TFhirProfileStructureElementSlicing.Create;
+constructor TFhirProfileStructureSnapshotElementSlicing.Create;
 begin
   inherited;
 end;
 
-destructor TFhirProfileStructureElementSlicing.Destroy;
+destructor TFhirProfileStructureSnapshotElementSlicing.Destroy;
 begin
   FDiscriminator.free;
   FOrdered.free;
@@ -36551,15 +36905,15 @@ begin
   inherited;
 end;
 
-procedure TFhirProfileStructureElementSlicing.Assign(oSource : TAdvObject);
+procedure TFhirProfileStructureSnapshotElementSlicing.Assign(oSource : TAdvObject);
 begin
   inherited;
-  discriminator := TFhirProfileStructureElementSlicing(oSource).discriminator.Clone;
-  ordered := TFhirProfileStructureElementSlicing(oSource).ordered.Clone;
-  FRules := TFhirProfileStructureElementSlicing(oSource).FRules.Link;
+  discriminator := TFhirProfileStructureSnapshotElementSlicing(oSource).discriminator.Clone;
+  ordered := TFhirProfileStructureSnapshotElementSlicing(oSource).ordered.Clone;
+  FRules := TFhirProfileStructureSnapshotElementSlicing(oSource).FRules.Link;
 end;
 
-procedure TFhirProfileStructureElementSlicing.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirProfileStructureSnapshotElementSlicing.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'discriminator') Then
@@ -36570,7 +36924,7 @@ begin
      list.add(FRules.Link);
 end;
 
-procedure TFhirProfileStructureElementSlicing.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirProfileStructureSnapshotElementSlicing.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'discriminator', 'id', FDiscriminator.Link.Link));{2}
@@ -36578,25 +36932,25 @@ begin
   oList.add(TFHIRProperty.create(self, 'rules', 'code', FRules.Link));{1}
 end;
 
-function TFhirProfileStructureElementSlicing.Link : TFhirProfileStructureElementSlicing;
+function TFhirProfileStructureSnapshotElementSlicing.Link : TFhirProfileStructureSnapshotElementSlicing;
 begin
-  result := TFhirProfileStructureElementSlicing(inherited Link);
+  result := TFhirProfileStructureSnapshotElementSlicing(inherited Link);
 end;
 
-function TFhirProfileStructureElementSlicing.Clone : TFhirProfileStructureElementSlicing;
+function TFhirProfileStructureSnapshotElementSlicing.Clone : TFhirProfileStructureSnapshotElementSlicing;
 begin
-  result := TFhirProfileStructureElementSlicing(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementSlicing(inherited Clone);
 end;
 
-{ TFhirProfileStructureElementSlicing }
+{ TFhirProfileStructureSnapshotElementSlicing }
 
-Procedure TFhirProfileStructureElementSlicing.SetDiscriminator(value : TFhirId);
+Procedure TFhirProfileStructureSnapshotElementSlicing.SetDiscriminator(value : TFhirId);
 begin
   FDiscriminator.free;
   FDiscriminator := value;
 end;
 
-Function TFhirProfileStructureElementSlicing.GetDiscriminatorST : String;
+Function TFhirProfileStructureSnapshotElementSlicing.GetDiscriminatorST : String;
 begin
   if FDiscriminator = nil then
     result := ''
@@ -36604,7 +36958,7 @@ begin
     result := Discriminator.value;
 end;
 
-Procedure TFhirProfileStructureElementSlicing.SetDiscriminatorST(value : String);
+Procedure TFhirProfileStructureSnapshotElementSlicing.SetDiscriminatorST(value : String);
 begin
   if value <> '' then
   begin
@@ -36616,13 +36970,13 @@ begin
     FDiscriminator.value := '';
 end;
 
-Procedure TFhirProfileStructureElementSlicing.SetOrdered(value : TFhirBoolean);
+Procedure TFhirProfileStructureSnapshotElementSlicing.SetOrdered(value : TFhirBoolean);
 begin
   FOrdered.free;
   FOrdered := value;
 end;
 
-Function TFhirProfileStructureElementSlicing.GetOrderedST : Boolean;
+Function TFhirProfileStructureSnapshotElementSlicing.GetOrderedST : Boolean;
 begin
   if FOrdered = nil then
     result := false
@@ -36630,20 +36984,20 @@ begin
     result := Ordered.value;
 end;
 
-Procedure TFhirProfileStructureElementSlicing.SetOrderedST(value : Boolean);
+Procedure TFhirProfileStructureSnapshotElementSlicing.SetOrderedST(value : Boolean);
 begin
   if FOrdered = nil then
     FOrdered := TFhirBoolean.create;
   FOrdered.value := value
 end;
 
-Procedure TFhirProfileStructureElementSlicing.SetRules(value : TFhirEnum);
+Procedure TFhirProfileStructureSnapshotElementSlicing.SetRules(value : TFhirEnum);
 begin
   FRules.free;
   FRules := value;
 end;
 
-Function TFhirProfileStructureElementSlicing.GetRulesST : TFhirResourceSlicingRules;
+Function TFhirProfileStructureSnapshotElementSlicing.GetRulesST : TFhirResourceSlicingRules;
 begin
   if FRules = nil then
     result := TFhirResourceSlicingRules(0)
@@ -36651,7 +37005,7 @@ begin
     result := TFhirResourceSlicingRules(StringArrayIndexOf(CODES_TFhirResourceSlicingRules, Rules.value));
 end;
 
-Procedure TFhirProfileStructureElementSlicing.SetRulesST(value : TFhirResourceSlicingRules);
+Procedure TFhirProfileStructureSnapshotElementSlicing.SetRulesST(value : TFhirResourceSlicingRules);
 begin
   if ord(value) = 0 then
     Rules := nil
@@ -36660,17 +37014,17 @@ begin
 end;
 
 
-{ TFhirProfileStructureElementSlicingList }
-procedure TFhirProfileStructureElementSlicingList.AddItem(value: TFhirProfileStructureElementSlicing);
+{ TFhirProfileStructureSnapshotElementSlicingList }
+procedure TFhirProfileStructureSnapshotElementSlicingList.AddItem(value: TFhirProfileStructureSnapshotElementSlicing);
 begin
-  assert(value.ClassName = 'TFhirProfileStructureElementSlicing', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureElementSlicing');
+  assert(value.ClassName = 'TFhirProfileStructureSnapshotElementSlicing', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureSnapshotElementSlicing');
   add(value);
 end;
 
 
-function TFhirProfileStructureElementSlicingList.Append: TFhirProfileStructureElementSlicing;
+function TFhirProfileStructureSnapshotElementSlicingList.Append: TFhirProfileStructureSnapshotElementSlicing;
 begin
-  result := TFhirProfileStructureElementSlicing.create;
+  result := TFhirProfileStructureSnapshotElementSlicing.create;
   try
     add(result.Link);
   finally
@@ -36679,35 +37033,35 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementSlicingList.ClearItems;
+procedure TFhirProfileStructureSnapshotElementSlicingList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirProfileStructureElementSlicingList.Clone: TFhirProfileStructureElementSlicingList;
+function TFhirProfileStructureSnapshotElementSlicingList.Clone: TFhirProfileStructureSnapshotElementSlicingList;
 begin
-  result := TFhirProfileStructureElementSlicingList(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementSlicingList(inherited Clone);
 end;
 
-function TFhirProfileStructureElementSlicingList.Count: Integer;
+function TFhirProfileStructureSnapshotElementSlicingList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirProfileStructureElementSlicingList.GetItemN(index: Integer): TFhirProfileStructureElementSlicing;
+function TFhirProfileStructureSnapshotElementSlicingList.GetItemN(index: Integer): TFhirProfileStructureSnapshotElementSlicing;
 begin
-  result := TFhirProfileStructureElementSlicing(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementSlicing(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementSlicingList.IndexOf(value: TFhirProfileStructureElementSlicing): Integer;
+function TFhirProfileStructureSnapshotElementSlicingList.IndexOf(value: TFhirProfileStructureSnapshotElementSlicing): Integer;
 begin
   result := IndexByReference(value);
 end;
 
 
-function TFhirProfileStructureElementSlicingList.Insert(index: Integer): TFhirProfileStructureElementSlicing;
+function TFhirProfileStructureSnapshotElementSlicingList.Insert(index: Integer): TFhirProfileStructureSnapshotElementSlicing;
 begin
-  result := TFhirProfileStructureElementSlicing.create;
+  result := TFhirProfileStructureSnapshotElementSlicing.create;
   try
     inherited insert(index, result);
   finally
@@ -36716,52 +37070,52 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementSlicingList.InsertItem(index: Integer; value: TFhirProfileStructureElementSlicing);
+procedure TFhirProfileStructureSnapshotElementSlicingList.InsertItem(index: Integer; value: TFhirProfileStructureSnapshotElementSlicing);
 begin
-  assert(value is TFhirProfileStructureElementSlicing);
+  assert(value is TFhirProfileStructureSnapshotElementSlicing);
   Inherited Insert(index, value);
 end;
 
-function TFhirProfileStructureElementSlicingList.Item(index: Integer): TFhirProfileStructureElementSlicing;
+function TFhirProfileStructureSnapshotElementSlicingList.Item(index: Integer): TFhirProfileStructureSnapshotElementSlicing;
 begin
-  result := TFhirProfileStructureElementSlicing(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementSlicing(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementSlicingList.Link: TFhirProfileStructureElementSlicingList;
+function TFhirProfileStructureSnapshotElementSlicingList.Link: TFhirProfileStructureSnapshotElementSlicingList;
 begin
-  result := TFhirProfileStructureElementSlicingList(inherited Link);
+  result := TFhirProfileStructureSnapshotElementSlicingList(inherited Link);
 end;
 
-procedure TFhirProfileStructureElementSlicingList.Remove(index: Integer);
+procedure TFhirProfileStructureSnapshotElementSlicingList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirProfileStructureElementSlicingList.SetItemByIndex(index: Integer; value: TFhirProfileStructureElementSlicing);
+procedure TFhirProfileStructureSnapshotElementSlicingList.SetItemByIndex(index: Integer; value: TFhirProfileStructureSnapshotElementSlicing);
 begin
-  assert(value is TFhirProfileStructureElementSlicing);
-  FhirProfileStructureElementSlicings[index] := value;
+  assert(value is TFhirProfileStructureSnapshotElementSlicing);
+  FhirProfileStructureSnapshotElementSlicings[index] := value;
 end;
 
-procedure TFhirProfileStructureElementSlicingList.SetItemN(index: Integer; value: TFhirProfileStructureElementSlicing);
+procedure TFhirProfileStructureSnapshotElementSlicingList.SetItemN(index: Integer; value: TFhirProfileStructureSnapshotElementSlicing);
 begin
-  assert(value is TFhirProfileStructureElementSlicing);
+  assert(value is TFhirProfileStructureSnapshotElementSlicing);
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirProfileStructureElementDefinition }
+{ TFhirProfileStructureSnapshotElementDefinition }
 
-constructor TFhirProfileStructureElementDefinition.Create;
+constructor TFhirProfileStructureSnapshotElementDefinition.Create;
 begin
   inherited;
   FSynonymList := TFhirStringList.Create;
-  FType_List := TFhirProfileStructureElementDefinitionTypeList.Create;
+  FType_List := TFhirProfileStructureSnapshotElementDefinitionTypeList.Create;
   FConditionList := TFhirIdList.Create;
-  FConstraintList := TFhirProfileStructureElementDefinitionConstraintList.Create;
-  FMappingList := TFhirProfileStructureElementDefinitionMappingList.Create;
+  FConstraintList := TFhirProfileStructureSnapshotElementDefinitionConstraintList.Create;
+  FMappingList := TFhirProfileStructureSnapshotElementDefinitionMappingList.Create;
 end;
 
-destructor TFhirProfileStructureElementDefinition.Destroy;
+destructor TFhirProfileStructureSnapshotElementDefinition.Destroy;
 begin
   FShort.free;
   FFormal.free;
@@ -36784,30 +37138,30 @@ begin
   inherited;
 end;
 
-procedure TFhirProfileStructureElementDefinition.Assign(oSource : TAdvObject);
+procedure TFhirProfileStructureSnapshotElementDefinition.Assign(oSource : TAdvObject);
 begin
   inherited;
-  short := TFhirProfileStructureElementDefinition(oSource).short.Clone;
-  formal := TFhirProfileStructureElementDefinition(oSource).formal.Clone;
-  comments := TFhirProfileStructureElementDefinition(oSource).comments.Clone;
-  requirements := TFhirProfileStructureElementDefinition(oSource).requirements.Clone;
-  FSynonymList.Assign(TFhirProfileStructureElementDefinition(oSource).FSynonymList);
-  min := TFhirProfileStructureElementDefinition(oSource).min.Clone;
-  max := TFhirProfileStructureElementDefinition(oSource).max.Clone;
-  FType_List.Assign(TFhirProfileStructureElementDefinition(oSource).FType_List);
-  nameReference := TFhirProfileStructureElementDefinition(oSource).nameReference.Clone;
-  value := TFhirProfileStructureElementDefinition(oSource).value.Clone;
-  example := TFhirProfileStructureElementDefinition(oSource).example.Clone;
-  maxLength := TFhirProfileStructureElementDefinition(oSource).maxLength.Clone;
-  FConditionList.Assign(TFhirProfileStructureElementDefinition(oSource).FConditionList);
-  FConstraintList.Assign(TFhirProfileStructureElementDefinition(oSource).FConstraintList);
-  mustSupport := TFhirProfileStructureElementDefinition(oSource).mustSupport.Clone;
-  isModifier := TFhirProfileStructureElementDefinition(oSource).isModifier.Clone;
-  binding := TFhirProfileStructureElementDefinition(oSource).binding.Clone;
-  FMappingList.Assign(TFhirProfileStructureElementDefinition(oSource).FMappingList);
+  short := TFhirProfileStructureSnapshotElementDefinition(oSource).short.Clone;
+  formal := TFhirProfileStructureSnapshotElementDefinition(oSource).formal.Clone;
+  comments := TFhirProfileStructureSnapshotElementDefinition(oSource).comments.Clone;
+  requirements := TFhirProfileStructureSnapshotElementDefinition(oSource).requirements.Clone;
+  FSynonymList.Assign(TFhirProfileStructureSnapshotElementDefinition(oSource).FSynonymList);
+  min := TFhirProfileStructureSnapshotElementDefinition(oSource).min.Clone;
+  max := TFhirProfileStructureSnapshotElementDefinition(oSource).max.Clone;
+  FType_List.Assign(TFhirProfileStructureSnapshotElementDefinition(oSource).FType_List);
+  nameReference := TFhirProfileStructureSnapshotElementDefinition(oSource).nameReference.Clone;
+  value := TFhirProfileStructureSnapshotElementDefinition(oSource).value.Clone;
+  example := TFhirProfileStructureSnapshotElementDefinition(oSource).example.Clone;
+  maxLength := TFhirProfileStructureSnapshotElementDefinition(oSource).maxLength.Clone;
+  FConditionList.Assign(TFhirProfileStructureSnapshotElementDefinition(oSource).FConditionList);
+  FConstraintList.Assign(TFhirProfileStructureSnapshotElementDefinition(oSource).FConstraintList);
+  mustSupport := TFhirProfileStructureSnapshotElementDefinition(oSource).mustSupport.Clone;
+  isModifier := TFhirProfileStructureSnapshotElementDefinition(oSource).isModifier.Clone;
+  binding := TFhirProfileStructureSnapshotElementDefinition(oSource).binding.Clone;
+  FMappingList.Assign(TFhirProfileStructureSnapshotElementDefinition(oSource).FMappingList);
 end;
 
-procedure TFhirProfileStructureElementDefinition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirProfileStructureSnapshotElementDefinition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'short') Then
@@ -36848,7 +37202,7 @@ begin
      list.addAll(FMappingList);
 end;
 
-procedure TFhirProfileStructureElementDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirProfileStructureSnapshotElementDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'short', 'string', FShort.Link.Link));{2}
@@ -36871,25 +37225,25 @@ begin
   oList.add(TFHIRProperty.create(self, 'mapping', '', FMappingList.Link)){3};
 end;
 
-function TFhirProfileStructureElementDefinition.Link : TFhirProfileStructureElementDefinition;
+function TFhirProfileStructureSnapshotElementDefinition.Link : TFhirProfileStructureSnapshotElementDefinition;
 begin
-  result := TFhirProfileStructureElementDefinition(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinition(inherited Link);
 end;
 
-function TFhirProfileStructureElementDefinition.Clone : TFhirProfileStructureElementDefinition;
+function TFhirProfileStructureSnapshotElementDefinition.Clone : TFhirProfileStructureSnapshotElementDefinition;
 begin
-  result := TFhirProfileStructureElementDefinition(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinition(inherited Clone);
 end;
 
-{ TFhirProfileStructureElementDefinition }
+{ TFhirProfileStructureSnapshotElementDefinition }
 
-Procedure TFhirProfileStructureElementDefinition.SetShort(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetShort(value : TFhirString);
 begin
   FShort.free;
   FShort := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetShortST : String;
+Function TFhirProfileStructureSnapshotElementDefinition.GetShortST : String;
 begin
   if FShort = nil then
     result := ''
@@ -36897,7 +37251,7 @@ begin
     result := Short.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetShortST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetShortST(value : String);
 begin
   if value <> '' then
   begin
@@ -36909,13 +37263,13 @@ begin
     FShort.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetFormal(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetFormal(value : TFhirString);
 begin
   FFormal.free;
   FFormal := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetFormalST : String;
+Function TFhirProfileStructureSnapshotElementDefinition.GetFormalST : String;
 begin
   if FFormal = nil then
     result := ''
@@ -36923,7 +37277,7 @@ begin
     result := Formal.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetFormalST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetFormalST(value : String);
 begin
   if value <> '' then
   begin
@@ -36935,13 +37289,13 @@ begin
     FFormal.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetComments(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetComments(value : TFhirString);
 begin
   FComments.free;
   FComments := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetCommentsST : String;
+Function TFhirProfileStructureSnapshotElementDefinition.GetCommentsST : String;
 begin
   if FComments = nil then
     result := ''
@@ -36949,7 +37303,7 @@ begin
     result := Comments.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetCommentsST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetCommentsST(value : String);
 begin
   if value <> '' then
   begin
@@ -36961,13 +37315,13 @@ begin
     FComments.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetRequirements(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetRequirements(value : TFhirString);
 begin
   FRequirements.free;
   FRequirements := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetRequirementsST : String;
+Function TFhirProfileStructureSnapshotElementDefinition.GetRequirementsST : String;
 begin
   if FRequirements = nil then
     result := ''
@@ -36975,7 +37329,7 @@ begin
     result := Requirements.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetRequirementsST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetRequirementsST(value : String);
 begin
   if value <> '' then
   begin
@@ -36987,13 +37341,13 @@ begin
     FRequirements.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetMin(value : TFhirInteger);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetMin(value : TFhirInteger);
 begin
   FMin.free;
   FMin := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetMinST : String;
+Function TFhirProfileStructureSnapshotElementDefinition.GetMinST : String;
 begin
   if FMin = nil then
     result := ''
@@ -37001,7 +37355,7 @@ begin
     result := Min.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetMinST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetMinST(value : String);
 begin
   if value <> '' then
   begin
@@ -37013,13 +37367,13 @@ begin
     FMin.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetMax(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetMax(value : TFhirString);
 begin
   FMax.free;
   FMax := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetMaxST : String;
+Function TFhirProfileStructureSnapshotElementDefinition.GetMaxST : String;
 begin
   if FMax = nil then
     result := ''
@@ -37027,7 +37381,7 @@ begin
     result := Max.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetMaxST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetMaxST(value : String);
 begin
   if value <> '' then
   begin
@@ -37039,13 +37393,13 @@ begin
     FMax.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetNameReference(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetNameReference(value : TFhirString);
 begin
   FNameReference.free;
   FNameReference := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetNameReferenceST : String;
+Function TFhirProfileStructureSnapshotElementDefinition.GetNameReferenceST : String;
 begin
   if FNameReference = nil then
     result := ''
@@ -37053,7 +37407,7 @@ begin
     result := NameReference.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetNameReferenceST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetNameReferenceST(value : String);
 begin
   if value <> '' then
   begin
@@ -37065,25 +37419,25 @@ begin
     FNameReference.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetValue(value : TFhirType);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetValue(value : TFhirType);
 begin
   FValue.free;
   FValue := value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetExample(value : TFhirType);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetExample(value : TFhirType);
 begin
   FExample.free;
   FExample := value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetMaxLength(value : TFhirInteger);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetMaxLength(value : TFhirInteger);
 begin
   FMaxLength.free;
   FMaxLength := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetMaxLengthST : String;
+Function TFhirProfileStructureSnapshotElementDefinition.GetMaxLengthST : String;
 begin
   if FMaxLength = nil then
     result := ''
@@ -37091,7 +37445,7 @@ begin
     result := MaxLength.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetMaxLengthST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetMaxLengthST(value : String);
 begin
   if value <> '' then
   begin
@@ -37103,13 +37457,13 @@ begin
     FMaxLength.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetMustSupport(value : TFhirBoolean);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetMustSupport(value : TFhirBoolean);
 begin
   FMustSupport.free;
   FMustSupport := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetMustSupportST : Boolean;
+Function TFhirProfileStructureSnapshotElementDefinition.GetMustSupportST : Boolean;
 begin
   if FMustSupport = nil then
     result := false
@@ -37117,20 +37471,20 @@ begin
     result := MustSupport.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetMustSupportST(value : Boolean);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetMustSupportST(value : Boolean);
 begin
   if FMustSupport = nil then
     FMustSupport := TFhirBoolean.create;
   FMustSupport.value := value
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetIsModifier(value : TFhirBoolean);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetIsModifier(value : TFhirBoolean);
 begin
   FIsModifier.free;
   FIsModifier := value;
 end;
 
-Function TFhirProfileStructureElementDefinition.GetIsModifierST : Boolean;
+Function TFhirProfileStructureSnapshotElementDefinition.GetIsModifierST : Boolean;
 begin
   if FIsModifier = nil then
     result := false
@@ -37138,31 +37492,31 @@ begin
     result := IsModifier.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetIsModifierST(value : Boolean);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetIsModifierST(value : Boolean);
 begin
   if FIsModifier = nil then
     FIsModifier := TFhirBoolean.create;
   FIsModifier.value := value
 end;
 
-Procedure TFhirProfileStructureElementDefinition.SetBinding(value : TFhirProfileStructureElementDefinitionBinding);
+Procedure TFhirProfileStructureSnapshotElementDefinition.SetBinding(value : TFhirProfileStructureSnapshotElementDefinitionBinding);
 begin
   FBinding.free;
   FBinding := value;
 end;
 
 
-{ TFhirProfileStructureElementDefinitionList }
-procedure TFhirProfileStructureElementDefinitionList.AddItem(value: TFhirProfileStructureElementDefinition);
+{ TFhirProfileStructureSnapshotElementDefinitionList }
+procedure TFhirProfileStructureSnapshotElementDefinitionList.AddItem(value: TFhirProfileStructureSnapshotElementDefinition);
 begin
-  assert(value.ClassName = 'TFhirProfileStructureElementDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureElementDefinition');
+  assert(value.ClassName = 'TFhirProfileStructureSnapshotElementDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureSnapshotElementDefinition');
   add(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionList.Append: TFhirProfileStructureElementDefinition;
+function TFhirProfileStructureSnapshotElementDefinitionList.Append: TFhirProfileStructureSnapshotElementDefinition;
 begin
-  result := TFhirProfileStructureElementDefinition.create;
+  result := TFhirProfileStructureSnapshotElementDefinition.create;
   try
     add(result.Link);
   finally
@@ -37171,35 +37525,35 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionList.ClearItems;
+procedure TFhirProfileStructureSnapshotElementDefinitionList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirProfileStructureElementDefinitionList.Clone: TFhirProfileStructureElementDefinitionList;
+function TFhirProfileStructureSnapshotElementDefinitionList.Clone: TFhirProfileStructureSnapshotElementDefinitionList;
 begin
-  result := TFhirProfileStructureElementDefinitionList(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionList(inherited Clone);
 end;
 
-function TFhirProfileStructureElementDefinitionList.Count: Integer;
+function TFhirProfileStructureSnapshotElementDefinitionList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirProfileStructureElementDefinitionList.GetItemN(index: Integer): TFhirProfileStructureElementDefinition;
+function TFhirProfileStructureSnapshotElementDefinitionList.GetItemN(index: Integer): TFhirProfileStructureSnapshotElementDefinition;
 begin
-  result := TFhirProfileStructureElementDefinition(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinition(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionList.IndexOf(value: TFhirProfileStructureElementDefinition): Integer;
+function TFhirProfileStructureSnapshotElementDefinitionList.IndexOf(value: TFhirProfileStructureSnapshotElementDefinition): Integer;
 begin
   result := IndexByReference(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionList.Insert(index: Integer): TFhirProfileStructureElementDefinition;
+function TFhirProfileStructureSnapshotElementDefinitionList.Insert(index: Integer): TFhirProfileStructureSnapshotElementDefinition;
 begin
-  result := TFhirProfileStructureElementDefinition.create;
+  result := TFhirProfileStructureSnapshotElementDefinition.create;
   try
     inherited insert(index, result);
   finally
@@ -37208,48 +37562,48 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionList.InsertItem(index: Integer; value: TFhirProfileStructureElementDefinition);
+procedure TFhirProfileStructureSnapshotElementDefinitionList.InsertItem(index: Integer; value: TFhirProfileStructureSnapshotElementDefinition);
 begin
-  assert(value is TFhirProfileStructureElementDefinition);
+  assert(value is TFhirProfileStructureSnapshotElementDefinition);
   Inherited Insert(index, value);
 end;
 
-function TFhirProfileStructureElementDefinitionList.Item(index: Integer): TFhirProfileStructureElementDefinition;
+function TFhirProfileStructureSnapshotElementDefinitionList.Item(index: Integer): TFhirProfileStructureSnapshotElementDefinition;
 begin
-  result := TFhirProfileStructureElementDefinition(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinition(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionList.Link: TFhirProfileStructureElementDefinitionList;
+function TFhirProfileStructureSnapshotElementDefinitionList.Link: TFhirProfileStructureSnapshotElementDefinitionList;
 begin
-  result := TFhirProfileStructureElementDefinitionList(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionList(inherited Link);
 end;
 
-procedure TFhirProfileStructureElementDefinitionList.Remove(index: Integer);
+procedure TFhirProfileStructureSnapshotElementDefinitionList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirProfileStructureElementDefinitionList.SetItemByIndex(index: Integer; value: TFhirProfileStructureElementDefinition);
+procedure TFhirProfileStructureSnapshotElementDefinitionList.SetItemByIndex(index: Integer; value: TFhirProfileStructureSnapshotElementDefinition);
 begin
-  assert(value is TFhirProfileStructureElementDefinition);
-  FhirProfileStructureElementDefinitions[index] := value;
+  assert(value is TFhirProfileStructureSnapshotElementDefinition);
+  FhirProfileStructureSnapshotElementDefinitions[index] := value;
 end;
 
-procedure TFhirProfileStructureElementDefinitionList.SetItemN(index: Integer; value: TFhirProfileStructureElementDefinition);
+procedure TFhirProfileStructureSnapshotElementDefinitionList.SetItemN(index: Integer; value: TFhirProfileStructureSnapshotElementDefinition);
 begin
-  assert(value is TFhirProfileStructureElementDefinition);
+  assert(value is TFhirProfileStructureSnapshotElementDefinition);
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirProfileStructureElementDefinitionType }
+{ TFhirProfileStructureSnapshotElementDefinitionType }
 
-constructor TFhirProfileStructureElementDefinitionType.Create;
+constructor TFhirProfileStructureSnapshotElementDefinitionType.Create;
 begin
   inherited;
   FAggregation := TFHIREnumList.Create;
 end;
 
-destructor TFhirProfileStructureElementDefinitionType.Destroy;
+destructor TFhirProfileStructureSnapshotElementDefinitionType.Destroy;
 begin
   FCode.free;
   FProfile.free;
@@ -37257,15 +37611,15 @@ begin
   inherited;
 end;
 
-procedure TFhirProfileStructureElementDefinitionType.Assign(oSource : TAdvObject);
+procedure TFhirProfileStructureSnapshotElementDefinitionType.Assign(oSource : TAdvObject);
 begin
   inherited;
-  code := TFhirProfileStructureElementDefinitionType(oSource).code.Clone;
-  profile := TFhirProfileStructureElementDefinitionType(oSource).profile.Clone;
-  FAggregation.Assign(TFhirProfileStructureElementDefinitionType(oSource).FAggregation);
+  code := TFhirProfileStructureSnapshotElementDefinitionType(oSource).code.Clone;
+  profile := TFhirProfileStructureSnapshotElementDefinitionType(oSource).profile.Clone;
+  FAggregation.Assign(TFhirProfileStructureSnapshotElementDefinitionType(oSource).FAggregation);
 end;
 
-procedure TFhirProfileStructureElementDefinitionType.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirProfileStructureSnapshotElementDefinitionType.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'code') Then
@@ -37276,7 +37630,7 @@ begin
      list.addAll(FAggregation);
 end;
 
-procedure TFhirProfileStructureElementDefinitionType.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirProfileStructureSnapshotElementDefinitionType.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link.Link));{2}
@@ -37284,25 +37638,25 @@ begin
   oList.add(TFHIRProperty.create(self, 'aggregation', 'code', FAggregation.Link)){3};
 end;
 
-function TFhirProfileStructureElementDefinitionType.Link : TFhirProfileStructureElementDefinitionType;
+function TFhirProfileStructureSnapshotElementDefinitionType.Link : TFhirProfileStructureSnapshotElementDefinitionType;
 begin
-  result := TFhirProfileStructureElementDefinitionType(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionType(inherited Link);
 end;
 
-function TFhirProfileStructureElementDefinitionType.Clone : TFhirProfileStructureElementDefinitionType;
+function TFhirProfileStructureSnapshotElementDefinitionType.Clone : TFhirProfileStructureSnapshotElementDefinitionType;
 begin
-  result := TFhirProfileStructureElementDefinitionType(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionType(inherited Clone);
 end;
 
-{ TFhirProfileStructureElementDefinitionType }
+{ TFhirProfileStructureSnapshotElementDefinitionType }
 
-Procedure TFhirProfileStructureElementDefinitionType.SetCode(value : TFhirCode);
+Procedure TFhirProfileStructureSnapshotElementDefinitionType.SetCode(value : TFhirCode);
 begin
   FCode.free;
   FCode := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionType.GetCodeST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionType.GetCodeST : String;
 begin
   if FCode = nil then
     result := ''
@@ -37310,7 +37664,7 @@ begin
     result := Code.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionType.SetCodeST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionType.SetCodeST(value : String);
 begin
   if value <> '' then
   begin
@@ -37322,13 +37676,13 @@ begin
     FCode.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinitionType.SetProfile(value : TFhirUri);
+Procedure TFhirProfileStructureSnapshotElementDefinitionType.SetProfile(value : TFhirUri);
 begin
   FProfile.free;
   FProfile := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionType.GetProfileST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionType.GetProfileST : String;
 begin
   if FProfile = nil then
     result := ''
@@ -37336,7 +37690,7 @@ begin
     result := Profile.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionType.SetProfileST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionType.SetProfileST(value : String);
 begin
   if value <> '' then
   begin
@@ -37348,7 +37702,7 @@ begin
     FProfile.value := '';
 end;
 
-Function TFhirProfileStructureElementDefinitionType.GetAggregationST : TFhirResourceAggregationModeList;
+Function TFhirProfileStructureSnapshotElementDefinitionType.GetAggregationST : TFhirResourceAggregationModeList;
   var i : integer;
 begin
   result := [];
@@ -37356,7 +37710,7 @@ begin
     result := result + [TFhirResourceAggregationMode(StringArrayIndexOf(CODES_TFhirResourceAggregationMode, aggregation[i].value))];
 end;
 
-Procedure TFhirProfileStructureElementDefinitionType.SetAggregationST(value : TFhirResourceAggregationModeList);
+Procedure TFhirProfileStructureSnapshotElementDefinitionType.SetAggregationST(value : TFhirResourceAggregationModeList);
 var a : TFhirResourceAggregationMode;
 begin
   aggregation.clear;
@@ -37366,17 +37720,17 @@ begin
 end;
 
 
-{ TFhirProfileStructureElementDefinitionTypeList }
-procedure TFhirProfileStructureElementDefinitionTypeList.AddItem(value: TFhirProfileStructureElementDefinitionType);
+{ TFhirProfileStructureSnapshotElementDefinitionTypeList }
+procedure TFhirProfileStructureSnapshotElementDefinitionTypeList.AddItem(value: TFhirProfileStructureSnapshotElementDefinitionType);
 begin
-  assert(value.ClassName = 'TFhirProfileStructureElementDefinitionType', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureElementDefinitionType');
+  assert(value.ClassName = 'TFhirProfileStructureSnapshotElementDefinitionType', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureSnapshotElementDefinitionType');
   add(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionTypeList.Append: TFhirProfileStructureElementDefinitionType;
+function TFhirProfileStructureSnapshotElementDefinitionTypeList.Append: TFhirProfileStructureSnapshotElementDefinitionType;
 begin
-  result := TFhirProfileStructureElementDefinitionType.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionType.create;
   try
     add(result.Link);
   finally
@@ -37385,35 +37739,35 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionTypeList.ClearItems;
+procedure TFhirProfileStructureSnapshotElementDefinitionTypeList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirProfileStructureElementDefinitionTypeList.Clone: TFhirProfileStructureElementDefinitionTypeList;
+function TFhirProfileStructureSnapshotElementDefinitionTypeList.Clone: TFhirProfileStructureSnapshotElementDefinitionTypeList;
 begin
-  result := TFhirProfileStructureElementDefinitionTypeList(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionTypeList(inherited Clone);
 end;
 
-function TFhirProfileStructureElementDefinitionTypeList.Count: Integer;
+function TFhirProfileStructureSnapshotElementDefinitionTypeList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirProfileStructureElementDefinitionTypeList.GetItemN(index: Integer): TFhirProfileStructureElementDefinitionType;
+function TFhirProfileStructureSnapshotElementDefinitionTypeList.GetItemN(index: Integer): TFhirProfileStructureSnapshotElementDefinitionType;
 begin
-  result := TFhirProfileStructureElementDefinitionType(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinitionType(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionTypeList.IndexOf(value: TFhirProfileStructureElementDefinitionType): Integer;
+function TFhirProfileStructureSnapshotElementDefinitionTypeList.IndexOf(value: TFhirProfileStructureSnapshotElementDefinitionType): Integer;
 begin
   result := IndexByReference(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionTypeList.Insert(index: Integer): TFhirProfileStructureElementDefinitionType;
+function TFhirProfileStructureSnapshotElementDefinitionTypeList.Insert(index: Integer): TFhirProfileStructureSnapshotElementDefinitionType;
 begin
-  result := TFhirProfileStructureElementDefinitionType.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionType.create;
   try
     inherited insert(index, result);
   finally
@@ -37422,47 +37776,47 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionTypeList.InsertItem(index: Integer; value: TFhirProfileStructureElementDefinitionType);
+procedure TFhirProfileStructureSnapshotElementDefinitionTypeList.InsertItem(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionType);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionType);
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionType);
   Inherited Insert(index, value);
 end;
 
-function TFhirProfileStructureElementDefinitionTypeList.Item(index: Integer): TFhirProfileStructureElementDefinitionType;
+function TFhirProfileStructureSnapshotElementDefinitionTypeList.Item(index: Integer): TFhirProfileStructureSnapshotElementDefinitionType;
 begin
-  result := TFhirProfileStructureElementDefinitionType(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinitionType(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionTypeList.Link: TFhirProfileStructureElementDefinitionTypeList;
+function TFhirProfileStructureSnapshotElementDefinitionTypeList.Link: TFhirProfileStructureSnapshotElementDefinitionTypeList;
 begin
-  result := TFhirProfileStructureElementDefinitionTypeList(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionTypeList(inherited Link);
 end;
 
-procedure TFhirProfileStructureElementDefinitionTypeList.Remove(index: Integer);
+procedure TFhirProfileStructureSnapshotElementDefinitionTypeList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirProfileStructureElementDefinitionTypeList.SetItemByIndex(index: Integer; value: TFhirProfileStructureElementDefinitionType);
+procedure TFhirProfileStructureSnapshotElementDefinitionTypeList.SetItemByIndex(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionType);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionType);
-  FhirProfileStructureElementDefinitionTypes[index] := value;
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionType);
+  FhirProfileStructureSnapshotElementDefinitionTypes[index] := value;
 end;
 
-procedure TFhirProfileStructureElementDefinitionTypeList.SetItemN(index: Integer; value: TFhirProfileStructureElementDefinitionType);
+procedure TFhirProfileStructureSnapshotElementDefinitionTypeList.SetItemN(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionType);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionType);
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionType);
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirProfileStructureElementDefinitionConstraint }
+{ TFhirProfileStructureSnapshotElementDefinitionConstraint }
 
-constructor TFhirProfileStructureElementDefinitionConstraint.Create;
+constructor TFhirProfileStructureSnapshotElementDefinitionConstraint.Create;
 begin
   inherited;
 end;
 
-destructor TFhirProfileStructureElementDefinitionConstraint.Destroy;
+destructor TFhirProfileStructureSnapshotElementDefinitionConstraint.Destroy;
 begin
   FKey.free;
   FName.free;
@@ -37472,17 +37826,17 @@ begin
   inherited;
 end;
 
-procedure TFhirProfileStructureElementDefinitionConstraint.Assign(oSource : TAdvObject);
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.Assign(oSource : TAdvObject);
 begin
   inherited;
-  key := TFhirProfileStructureElementDefinitionConstraint(oSource).key.Clone;
-  name := TFhirProfileStructureElementDefinitionConstraint(oSource).name.Clone;
-  FSeverity := TFhirProfileStructureElementDefinitionConstraint(oSource).FSeverity.Link;
-  human := TFhirProfileStructureElementDefinitionConstraint(oSource).human.Clone;
-  xpath := TFhirProfileStructureElementDefinitionConstraint(oSource).xpath.Clone;
+  key := TFhirProfileStructureSnapshotElementDefinitionConstraint(oSource).key.Clone;
+  name := TFhirProfileStructureSnapshotElementDefinitionConstraint(oSource).name.Clone;
+  FSeverity := TFhirProfileStructureSnapshotElementDefinitionConstraint(oSource).FSeverity.Link;
+  human := TFhirProfileStructureSnapshotElementDefinitionConstraint(oSource).human.Clone;
+  xpath := TFhirProfileStructureSnapshotElementDefinitionConstraint(oSource).xpath.Clone;
 end;
 
-procedure TFhirProfileStructureElementDefinitionConstraint.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'key') Then
@@ -37497,7 +37851,7 @@ begin
      list.add(Xpath.Link);
 end;
 
-procedure TFhirProfileStructureElementDefinitionConstraint.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'key', 'id', FKey.Link.Link));{2}
@@ -37507,25 +37861,25 @@ begin
   oList.add(TFHIRProperty.create(self, 'xpath', 'string', FXpath.Link.Link));{2}
 end;
 
-function TFhirProfileStructureElementDefinitionConstraint.Link : TFhirProfileStructureElementDefinitionConstraint;
+function TFhirProfileStructureSnapshotElementDefinitionConstraint.Link : TFhirProfileStructureSnapshotElementDefinitionConstraint;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraint(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraint(inherited Link);
 end;
 
-function TFhirProfileStructureElementDefinitionConstraint.Clone : TFhirProfileStructureElementDefinitionConstraint;
+function TFhirProfileStructureSnapshotElementDefinitionConstraint.Clone : TFhirProfileStructureSnapshotElementDefinitionConstraint;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraint(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraint(inherited Clone);
 end;
 
-{ TFhirProfileStructureElementDefinitionConstraint }
+{ TFhirProfileStructureSnapshotElementDefinitionConstraint }
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetKey(value : TFhirId);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetKey(value : TFhirId);
 begin
   FKey.free;
   FKey := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionConstraint.GetKeyST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionConstraint.GetKeyST : String;
 begin
   if FKey = nil then
     result := ''
@@ -37533,7 +37887,7 @@ begin
     result := Key.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetKeyST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetKeyST(value : String);
 begin
   if value <> '' then
   begin
@@ -37545,13 +37899,13 @@ begin
     FKey.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetName(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetName(value : TFhirString);
 begin
   FName.free;
   FName := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionConstraint.GetNameST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionConstraint.GetNameST : String;
 begin
   if FName = nil then
     result := ''
@@ -37559,7 +37913,7 @@ begin
     result := Name.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetNameST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetNameST(value : String);
 begin
   if value <> '' then
   begin
@@ -37571,13 +37925,13 @@ begin
     FName.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetSeverity(value : TFhirEnum);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetSeverity(value : TFhirEnum);
 begin
   FSeverity.free;
   FSeverity := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionConstraint.GetSeverityST : TFhirConstraintSeverity;
+Function TFhirProfileStructureSnapshotElementDefinitionConstraint.GetSeverityST : TFhirConstraintSeverity;
 begin
   if FSeverity = nil then
     result := TFhirConstraintSeverity(0)
@@ -37585,7 +37939,7 @@ begin
     result := TFhirConstraintSeverity(StringArrayIndexOf(CODES_TFhirConstraintSeverity, Severity.value));
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetSeverityST(value : TFhirConstraintSeverity);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetSeverityST(value : TFhirConstraintSeverity);
 begin
   if ord(value) = 0 then
     Severity := nil
@@ -37593,13 +37947,13 @@ begin
     Severity := TFhirEnum.create(CODES_TFhirConstraintSeverity[value]);
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetHuman(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetHuman(value : TFhirString);
 begin
   FHuman.free;
   FHuman := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionConstraint.GetHumanST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionConstraint.GetHumanST : String;
 begin
   if FHuman = nil then
     result := ''
@@ -37607,7 +37961,7 @@ begin
     result := Human.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetHumanST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetHumanST(value : String);
 begin
   if value <> '' then
   begin
@@ -37619,13 +37973,13 @@ begin
     FHuman.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetXpath(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetXpath(value : TFhirString);
 begin
   FXpath.free;
   FXpath := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionConstraint.GetXpathST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionConstraint.GetXpathST : String;
 begin
   if FXpath = nil then
     result := ''
@@ -37633,7 +37987,7 @@ begin
     result := Xpath.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionConstraint.SetXpathST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionConstraint.SetXpathST(value : String);
 begin
   if value <> '' then
   begin
@@ -37646,17 +38000,17 @@ begin
 end;
 
 
-{ TFhirProfileStructureElementDefinitionConstraintList }
-procedure TFhirProfileStructureElementDefinitionConstraintList.AddItem(value: TFhirProfileStructureElementDefinitionConstraint);
+{ TFhirProfileStructureSnapshotElementDefinitionConstraintList }
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraintList.AddItem(value: TFhirProfileStructureSnapshotElementDefinitionConstraint);
 begin
-  assert(value.ClassName = 'TFhirProfileStructureElementDefinitionConstraint', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureElementDefinitionConstraint');
+  assert(value.ClassName = 'TFhirProfileStructureSnapshotElementDefinitionConstraint', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureSnapshotElementDefinitionConstraint');
   add(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionConstraintList.Append: TFhirProfileStructureElementDefinitionConstraint;
+function TFhirProfileStructureSnapshotElementDefinitionConstraintList.Append: TFhirProfileStructureSnapshotElementDefinitionConstraint;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraint.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraint.create;
   try
     add(result.Link);
   finally
@@ -37665,35 +38019,35 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionConstraintList.ClearItems;
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraintList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirProfileStructureElementDefinitionConstraintList.Clone: TFhirProfileStructureElementDefinitionConstraintList;
+function TFhirProfileStructureSnapshotElementDefinitionConstraintList.Clone: TFhirProfileStructureSnapshotElementDefinitionConstraintList;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraintList(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraintList(inherited Clone);
 end;
 
-function TFhirProfileStructureElementDefinitionConstraintList.Count: Integer;
+function TFhirProfileStructureSnapshotElementDefinitionConstraintList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirProfileStructureElementDefinitionConstraintList.GetItemN(index: Integer): TFhirProfileStructureElementDefinitionConstraint;
+function TFhirProfileStructureSnapshotElementDefinitionConstraintList.GetItemN(index: Integer): TFhirProfileStructureSnapshotElementDefinitionConstraint;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraint(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraint(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionConstraintList.IndexOf(value: TFhirProfileStructureElementDefinitionConstraint): Integer;
+function TFhirProfileStructureSnapshotElementDefinitionConstraintList.IndexOf(value: TFhirProfileStructureSnapshotElementDefinitionConstraint): Integer;
 begin
   result := IndexByReference(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionConstraintList.Insert(index: Integer): TFhirProfileStructureElementDefinitionConstraint;
+function TFhirProfileStructureSnapshotElementDefinitionConstraintList.Insert(index: Integer): TFhirProfileStructureSnapshotElementDefinitionConstraint;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraint.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraint.create;
   try
     inherited insert(index, result);
   finally
@@ -37702,47 +38056,47 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionConstraintList.InsertItem(index: Integer; value: TFhirProfileStructureElementDefinitionConstraint);
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraintList.InsertItem(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionConstraint);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionConstraint);
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionConstraint);
   Inherited Insert(index, value);
 end;
 
-function TFhirProfileStructureElementDefinitionConstraintList.Item(index: Integer): TFhirProfileStructureElementDefinitionConstraint;
+function TFhirProfileStructureSnapshotElementDefinitionConstraintList.Item(index: Integer): TFhirProfileStructureSnapshotElementDefinitionConstraint;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraint(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraint(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionConstraintList.Link: TFhirProfileStructureElementDefinitionConstraintList;
+function TFhirProfileStructureSnapshotElementDefinitionConstraintList.Link: TFhirProfileStructureSnapshotElementDefinitionConstraintList;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraintList(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraintList(inherited Link);
 end;
 
-procedure TFhirProfileStructureElementDefinitionConstraintList.Remove(index: Integer);
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraintList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirProfileStructureElementDefinitionConstraintList.SetItemByIndex(index: Integer; value: TFhirProfileStructureElementDefinitionConstraint);
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraintList.SetItemByIndex(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionConstraint);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionConstraint);
-  FhirProfileStructureElementDefinitionConstraints[index] := value;
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionConstraint);
+  FhirProfileStructureSnapshotElementDefinitionConstraints[index] := value;
 end;
 
-procedure TFhirProfileStructureElementDefinitionConstraintList.SetItemN(index: Integer; value: TFhirProfileStructureElementDefinitionConstraint);
+procedure TFhirProfileStructureSnapshotElementDefinitionConstraintList.SetItemN(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionConstraint);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionConstraint);
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionConstraint);
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirProfileStructureElementDefinitionBinding }
+{ TFhirProfileStructureSnapshotElementDefinitionBinding }
 
-constructor TFhirProfileStructureElementDefinitionBinding.Create;
+constructor TFhirProfileStructureSnapshotElementDefinitionBinding.Create;
 begin
   inherited;
 end;
 
-destructor TFhirProfileStructureElementDefinitionBinding.Destroy;
+destructor TFhirProfileStructureSnapshotElementDefinitionBinding.Destroy;
 begin
   FName.free;
   FIsExtensible.free;
@@ -37752,17 +38106,17 @@ begin
   inherited;
 end;
 
-procedure TFhirProfileStructureElementDefinitionBinding.Assign(oSource : TAdvObject);
+procedure TFhirProfileStructureSnapshotElementDefinitionBinding.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirProfileStructureElementDefinitionBinding(oSource).name.Clone;
-  isExtensible := TFhirProfileStructureElementDefinitionBinding(oSource).isExtensible.Clone;
-  FConformance := TFhirProfileStructureElementDefinitionBinding(oSource).FConformance.Link;
-  description := TFhirProfileStructureElementDefinitionBinding(oSource).description.Clone;
-  reference := TFhirProfileStructureElementDefinitionBinding(oSource).reference.Clone;
+  name := TFhirProfileStructureSnapshotElementDefinitionBinding(oSource).name.Clone;
+  isExtensible := TFhirProfileStructureSnapshotElementDefinitionBinding(oSource).isExtensible.Clone;
+  FConformance := TFhirProfileStructureSnapshotElementDefinitionBinding(oSource).FConformance.Link;
+  description := TFhirProfileStructureSnapshotElementDefinitionBinding(oSource).description.Clone;
+  reference := TFhirProfileStructureSnapshotElementDefinitionBinding(oSource).reference.Clone;
 end;
 
-procedure TFhirProfileStructureElementDefinitionBinding.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirProfileStructureSnapshotElementDefinitionBinding.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'name') Then
@@ -37777,7 +38131,7 @@ begin
      list.add(Reference.Link);
 end;
 
-procedure TFhirProfileStructureElementDefinitionBinding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirProfileStructureSnapshotElementDefinitionBinding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
@@ -37787,25 +38141,25 @@ begin
   oList.add(TFHIRProperty.create(self, 'reference[x]', 'uri|Resource(ValueSet)', FReference.Link.Link));{2}
 end;
 
-function TFhirProfileStructureElementDefinitionBinding.Link : TFhirProfileStructureElementDefinitionBinding;
+function TFhirProfileStructureSnapshotElementDefinitionBinding.Link : TFhirProfileStructureSnapshotElementDefinitionBinding;
 begin
-  result := TFhirProfileStructureElementDefinitionBinding(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionBinding(inherited Link);
 end;
 
-function TFhirProfileStructureElementDefinitionBinding.Clone : TFhirProfileStructureElementDefinitionBinding;
+function TFhirProfileStructureSnapshotElementDefinitionBinding.Clone : TFhirProfileStructureSnapshotElementDefinitionBinding;
 begin
-  result := TFhirProfileStructureElementDefinitionBinding(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionBinding(inherited Clone);
 end;
 
-{ TFhirProfileStructureElementDefinitionBinding }
+{ TFhirProfileStructureSnapshotElementDefinitionBinding }
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetName(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetName(value : TFhirString);
 begin
   FName.free;
   FName := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionBinding.GetNameST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionBinding.GetNameST : String;
 begin
   if FName = nil then
     result := ''
@@ -37813,7 +38167,7 @@ begin
     result := Name.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetNameST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetNameST(value : String);
 begin
   if value <> '' then
   begin
@@ -37825,13 +38179,13 @@ begin
     FName.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetIsExtensible(value : TFhirBoolean);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetIsExtensible(value : TFhirBoolean);
 begin
   FIsExtensible.free;
   FIsExtensible := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionBinding.GetIsExtensibleST : Boolean;
+Function TFhirProfileStructureSnapshotElementDefinitionBinding.GetIsExtensibleST : Boolean;
 begin
   if FIsExtensible = nil then
     result := false
@@ -37839,20 +38193,20 @@ begin
     result := IsExtensible.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetIsExtensibleST(value : Boolean);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetIsExtensibleST(value : Boolean);
 begin
   if FIsExtensible = nil then
     FIsExtensible := TFhirBoolean.create;
   FIsExtensible.value := value
 end;
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetConformance(value : TFhirEnum);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetConformance(value : TFhirEnum);
 begin
   FConformance.free;
   FConformance := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionBinding.GetConformanceST : TFhirBindingConformance;
+Function TFhirProfileStructureSnapshotElementDefinitionBinding.GetConformanceST : TFhirBindingConformance;
 begin
   if FConformance = nil then
     result := TFhirBindingConformance(0)
@@ -37860,7 +38214,7 @@ begin
     result := TFhirBindingConformance(StringArrayIndexOf(CODES_TFhirBindingConformance, Conformance.value));
 end;
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetConformanceST(value : TFhirBindingConformance);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetConformanceST(value : TFhirBindingConformance);
 begin
   if ord(value) = 0 then
     Conformance := nil
@@ -37868,13 +38222,13 @@ begin
     Conformance := TFhirEnum.create(CODES_TFhirBindingConformance[value]);
 end;
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetDescription(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetDescription(value : TFhirString);
 begin
   FDescription.free;
   FDescription := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionBinding.GetDescriptionST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionBinding.GetDescriptionST : String;
 begin
   if FDescription = nil then
     result := ''
@@ -37882,7 +38236,7 @@ begin
     result := Description.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetDescriptionST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetDescriptionST(value : String);
 begin
   if value <> '' then
   begin
@@ -37894,24 +38248,24 @@ begin
     FDescription.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinitionBinding.SetReference(value : TFhirType);
+Procedure TFhirProfileStructureSnapshotElementDefinitionBinding.SetReference(value : TFhirType);
 begin
   FReference.free;
   FReference := value;
 end;
 
 
-{ TFhirProfileStructureElementDefinitionBindingList }
-procedure TFhirProfileStructureElementDefinitionBindingList.AddItem(value: TFhirProfileStructureElementDefinitionBinding);
+{ TFhirProfileStructureSnapshotElementDefinitionBindingList }
+procedure TFhirProfileStructureSnapshotElementDefinitionBindingList.AddItem(value: TFhirProfileStructureSnapshotElementDefinitionBinding);
 begin
-  assert(value.ClassName = 'TFhirProfileStructureElementDefinitionBinding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureElementDefinitionBinding');
+  assert(value.ClassName = 'TFhirProfileStructureSnapshotElementDefinitionBinding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureSnapshotElementDefinitionBinding');
   add(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionBindingList.Append: TFhirProfileStructureElementDefinitionBinding;
+function TFhirProfileStructureSnapshotElementDefinitionBindingList.Append: TFhirProfileStructureSnapshotElementDefinitionBinding;
 begin
-  result := TFhirProfileStructureElementDefinitionBinding.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionBinding.create;
   try
     add(result.Link);
   finally
@@ -37920,35 +38274,35 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionBindingList.ClearItems;
+procedure TFhirProfileStructureSnapshotElementDefinitionBindingList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirProfileStructureElementDefinitionBindingList.Clone: TFhirProfileStructureElementDefinitionBindingList;
+function TFhirProfileStructureSnapshotElementDefinitionBindingList.Clone: TFhirProfileStructureSnapshotElementDefinitionBindingList;
 begin
-  result := TFhirProfileStructureElementDefinitionBindingList(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionBindingList(inherited Clone);
 end;
 
-function TFhirProfileStructureElementDefinitionBindingList.Count: Integer;
+function TFhirProfileStructureSnapshotElementDefinitionBindingList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirProfileStructureElementDefinitionBindingList.GetItemN(index: Integer): TFhirProfileStructureElementDefinitionBinding;
+function TFhirProfileStructureSnapshotElementDefinitionBindingList.GetItemN(index: Integer): TFhirProfileStructureSnapshotElementDefinitionBinding;
 begin
-  result := TFhirProfileStructureElementDefinitionBinding(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinitionBinding(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionBindingList.IndexOf(value: TFhirProfileStructureElementDefinitionBinding): Integer;
+function TFhirProfileStructureSnapshotElementDefinitionBindingList.IndexOf(value: TFhirProfileStructureSnapshotElementDefinitionBinding): Integer;
 begin
   result := IndexByReference(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionBindingList.Insert(index: Integer): TFhirProfileStructureElementDefinitionBinding;
+function TFhirProfileStructureSnapshotElementDefinitionBindingList.Insert(index: Integer): TFhirProfileStructureSnapshotElementDefinitionBinding;
 begin
-  result := TFhirProfileStructureElementDefinitionBinding.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionBinding.create;
   try
     inherited insert(index, result);
   finally
@@ -37957,61 +38311,61 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionBindingList.InsertItem(index: Integer; value: TFhirProfileStructureElementDefinitionBinding);
+procedure TFhirProfileStructureSnapshotElementDefinitionBindingList.InsertItem(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionBinding);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionBinding);
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionBinding);
   Inherited Insert(index, value);
 end;
 
-function TFhirProfileStructureElementDefinitionBindingList.Item(index: Integer): TFhirProfileStructureElementDefinitionBinding;
+function TFhirProfileStructureSnapshotElementDefinitionBindingList.Item(index: Integer): TFhirProfileStructureSnapshotElementDefinitionBinding;
 begin
-  result := TFhirProfileStructureElementDefinitionBinding(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinitionBinding(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionBindingList.Link: TFhirProfileStructureElementDefinitionBindingList;
+function TFhirProfileStructureSnapshotElementDefinitionBindingList.Link: TFhirProfileStructureSnapshotElementDefinitionBindingList;
 begin
-  result := TFhirProfileStructureElementDefinitionBindingList(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionBindingList(inherited Link);
 end;
 
-procedure TFhirProfileStructureElementDefinitionBindingList.Remove(index: Integer);
+procedure TFhirProfileStructureSnapshotElementDefinitionBindingList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirProfileStructureElementDefinitionBindingList.SetItemByIndex(index: Integer; value: TFhirProfileStructureElementDefinitionBinding);
+procedure TFhirProfileStructureSnapshotElementDefinitionBindingList.SetItemByIndex(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionBinding);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionBinding);
-  FhirProfileStructureElementDefinitionBindings[index] := value;
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionBinding);
+  FhirProfileStructureSnapshotElementDefinitionBindings[index] := value;
 end;
 
-procedure TFhirProfileStructureElementDefinitionBindingList.SetItemN(index: Integer; value: TFhirProfileStructureElementDefinitionBinding);
+procedure TFhirProfileStructureSnapshotElementDefinitionBindingList.SetItemN(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionBinding);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionBinding);
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionBinding);
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirProfileStructureElementDefinitionMapping }
+{ TFhirProfileStructureSnapshotElementDefinitionMapping }
 
-constructor TFhirProfileStructureElementDefinitionMapping.Create;
+constructor TFhirProfileStructureSnapshotElementDefinitionMapping.Create;
 begin
   inherited;
 end;
 
-destructor TFhirProfileStructureElementDefinitionMapping.Destroy;
+destructor TFhirProfileStructureSnapshotElementDefinitionMapping.Destroy;
 begin
   FIdentity.free;
   FMap.free;
   inherited;
 end;
 
-procedure TFhirProfileStructureElementDefinitionMapping.Assign(oSource : TAdvObject);
+procedure TFhirProfileStructureSnapshotElementDefinitionMapping.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identity := TFhirProfileStructureElementDefinitionMapping(oSource).identity.Clone;
-  map := TFhirProfileStructureElementDefinitionMapping(oSource).map.Clone;
+  identity := TFhirProfileStructureSnapshotElementDefinitionMapping(oSource).identity.Clone;
+  map := TFhirProfileStructureSnapshotElementDefinitionMapping(oSource).map.Clone;
 end;
 
-procedure TFhirProfileStructureElementDefinitionMapping.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirProfileStructureSnapshotElementDefinitionMapping.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'identity') Then
@@ -38020,32 +38374,32 @@ begin
      list.add(Map.Link);
 end;
 
-procedure TFhirProfileStructureElementDefinitionMapping.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirProfileStructureSnapshotElementDefinitionMapping.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'identity', 'id', FIdentity.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'map', 'string', FMap.Link.Link));{2}
 end;
 
-function TFhirProfileStructureElementDefinitionMapping.Link : TFhirProfileStructureElementDefinitionMapping;
+function TFhirProfileStructureSnapshotElementDefinitionMapping.Link : TFhirProfileStructureSnapshotElementDefinitionMapping;
 begin
-  result := TFhirProfileStructureElementDefinitionMapping(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionMapping(inherited Link);
 end;
 
-function TFhirProfileStructureElementDefinitionMapping.Clone : TFhirProfileStructureElementDefinitionMapping;
+function TFhirProfileStructureSnapshotElementDefinitionMapping.Clone : TFhirProfileStructureSnapshotElementDefinitionMapping;
 begin
-  result := TFhirProfileStructureElementDefinitionMapping(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionMapping(inherited Clone);
 end;
 
-{ TFhirProfileStructureElementDefinitionMapping }
+{ TFhirProfileStructureSnapshotElementDefinitionMapping }
 
-Procedure TFhirProfileStructureElementDefinitionMapping.SetIdentity(value : TFhirId);
+Procedure TFhirProfileStructureSnapshotElementDefinitionMapping.SetIdentity(value : TFhirId);
 begin
   FIdentity.free;
   FIdentity := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionMapping.GetIdentityST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionMapping.GetIdentityST : String;
 begin
   if FIdentity = nil then
     result := ''
@@ -38053,7 +38407,7 @@ begin
     result := Identity.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionMapping.SetIdentityST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionMapping.SetIdentityST(value : String);
 begin
   if value <> '' then
   begin
@@ -38065,13 +38419,13 @@ begin
     FIdentity.value := '';
 end;
 
-Procedure TFhirProfileStructureElementDefinitionMapping.SetMap(value : TFhirString);
+Procedure TFhirProfileStructureSnapshotElementDefinitionMapping.SetMap(value : TFhirString);
 begin
   FMap.free;
   FMap := value;
 end;
 
-Function TFhirProfileStructureElementDefinitionMapping.GetMapST : String;
+Function TFhirProfileStructureSnapshotElementDefinitionMapping.GetMapST : String;
 begin
   if FMap = nil then
     result := ''
@@ -38079,7 +38433,7 @@ begin
     result := Map.value;
 end;
 
-Procedure TFhirProfileStructureElementDefinitionMapping.SetMapST(value : String);
+Procedure TFhirProfileStructureSnapshotElementDefinitionMapping.SetMapST(value : String);
 begin
   if value <> '' then
   begin
@@ -38092,17 +38446,17 @@ begin
 end;
 
 
-{ TFhirProfileStructureElementDefinitionMappingList }
-procedure TFhirProfileStructureElementDefinitionMappingList.AddItem(value: TFhirProfileStructureElementDefinitionMapping);
+{ TFhirProfileStructureSnapshotElementDefinitionMappingList }
+procedure TFhirProfileStructureSnapshotElementDefinitionMappingList.AddItem(value: TFhirProfileStructureSnapshotElementDefinitionMapping);
 begin
-  assert(value.ClassName = 'TFhirProfileStructureElementDefinitionMapping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureElementDefinitionMapping');
+  assert(value.ClassName = 'TFhirProfileStructureSnapshotElementDefinitionMapping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileStructureSnapshotElementDefinitionMapping');
   add(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionMappingList.Append: TFhirProfileStructureElementDefinitionMapping;
+function TFhirProfileStructureSnapshotElementDefinitionMappingList.Append: TFhirProfileStructureSnapshotElementDefinitionMapping;
 begin
-  result := TFhirProfileStructureElementDefinitionMapping.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionMapping.create;
   try
     add(result.Link);
   finally
@@ -38111,35 +38465,35 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionMappingList.ClearItems;
+procedure TFhirProfileStructureSnapshotElementDefinitionMappingList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirProfileStructureElementDefinitionMappingList.Clone: TFhirProfileStructureElementDefinitionMappingList;
+function TFhirProfileStructureSnapshotElementDefinitionMappingList.Clone: TFhirProfileStructureSnapshotElementDefinitionMappingList;
 begin
-  result := TFhirProfileStructureElementDefinitionMappingList(inherited Clone);
+  result := TFhirProfileStructureSnapshotElementDefinitionMappingList(inherited Clone);
 end;
 
-function TFhirProfileStructureElementDefinitionMappingList.Count: Integer;
+function TFhirProfileStructureSnapshotElementDefinitionMappingList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirProfileStructureElementDefinitionMappingList.GetItemN(index: Integer): TFhirProfileStructureElementDefinitionMapping;
+function TFhirProfileStructureSnapshotElementDefinitionMappingList.GetItemN(index: Integer): TFhirProfileStructureSnapshotElementDefinitionMapping;
 begin
-  result := TFhirProfileStructureElementDefinitionMapping(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinitionMapping(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionMappingList.IndexOf(value: TFhirProfileStructureElementDefinitionMapping): Integer;
+function TFhirProfileStructureSnapshotElementDefinitionMappingList.IndexOf(value: TFhirProfileStructureSnapshotElementDefinitionMapping): Integer;
 begin
   result := IndexByReference(value);
 end;
 
 
-function TFhirProfileStructureElementDefinitionMappingList.Insert(index: Integer): TFhirProfileStructureElementDefinitionMapping;
+function TFhirProfileStructureSnapshotElementDefinitionMappingList.Insert(index: Integer): TFhirProfileStructureSnapshotElementDefinitionMapping;
 begin
-  result := TFhirProfileStructureElementDefinitionMapping.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionMapping.create;
   try
     inherited insert(index, result);
   finally
@@ -38148,36 +38502,36 @@ begin
 end;
 
 
-procedure TFhirProfileStructureElementDefinitionMappingList.InsertItem(index: Integer; value: TFhirProfileStructureElementDefinitionMapping);
+procedure TFhirProfileStructureSnapshotElementDefinitionMappingList.InsertItem(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionMapping);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionMapping);
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionMapping);
   Inherited Insert(index, value);
 end;
 
-function TFhirProfileStructureElementDefinitionMappingList.Item(index: Integer): TFhirProfileStructureElementDefinitionMapping;
+function TFhirProfileStructureSnapshotElementDefinitionMappingList.Item(index: Integer): TFhirProfileStructureSnapshotElementDefinitionMapping;
 begin
-  result := TFhirProfileStructureElementDefinitionMapping(ObjectByIndex[index]);
+  result := TFhirProfileStructureSnapshotElementDefinitionMapping(ObjectByIndex[index]);
 end;
 
-function TFhirProfileStructureElementDefinitionMappingList.Link: TFhirProfileStructureElementDefinitionMappingList;
+function TFhirProfileStructureSnapshotElementDefinitionMappingList.Link: TFhirProfileStructureSnapshotElementDefinitionMappingList;
 begin
-  result := TFhirProfileStructureElementDefinitionMappingList(inherited Link);
+  result := TFhirProfileStructureSnapshotElementDefinitionMappingList(inherited Link);
 end;
 
-procedure TFhirProfileStructureElementDefinitionMappingList.Remove(index: Integer);
+procedure TFhirProfileStructureSnapshotElementDefinitionMappingList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirProfileStructureElementDefinitionMappingList.SetItemByIndex(index: Integer; value: TFhirProfileStructureElementDefinitionMapping);
+procedure TFhirProfileStructureSnapshotElementDefinitionMappingList.SetItemByIndex(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionMapping);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionMapping);
-  FhirProfileStructureElementDefinitionMappings[index] := value;
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionMapping);
+  FhirProfileStructureSnapshotElementDefinitionMappings[index] := value;
 end;
 
-procedure TFhirProfileStructureElementDefinitionMappingList.SetItemN(index: Integer; value: TFhirProfileStructureElementDefinitionMapping);
+procedure TFhirProfileStructureSnapshotElementDefinitionMappingList.SetItemN(index: Integer; value: TFhirProfileStructureSnapshotElementDefinitionMapping);
 begin
-  assert(value is TFhirProfileStructureElementDefinitionMapping);
+  assert(value is TFhirProfileStructureSnapshotElementDefinitionMapping);
   ObjectByIndex[index] := value;
 end;
 
@@ -38442,6 +38796,7 @@ constructor TFhirProfileExtensionDefn.Create;
 begin
   inherited;
   FContextList := TFhirStringList.Create;
+  FElementList := TFhirProfileStructureSnapshotElementList.Create;
 end;
 
 destructor TFhirProfileExtensionDefn.Destroy;
@@ -38450,7 +38805,7 @@ begin
   FDisplay.free;
   FContextType.free;
   FContextList.Free;
-  FDefinition.free;
+  FElementList.Free;
   inherited;
 end;
 
@@ -38461,7 +38816,7 @@ begin
   display := TFhirProfileExtensionDefn(oSource).display.Clone;
   FContextType := TFhirProfileExtensionDefn(oSource).FContextType.Link;
   FContextList.Assign(TFhirProfileExtensionDefn(oSource).FContextList);
-  definition := TFhirProfileExtensionDefn(oSource).definition.Clone;
+  FElementList.Assign(TFhirProfileExtensionDefn(oSource).FElementList);
 end;
 
 procedure TFhirProfileExtensionDefn.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -38475,8 +38830,8 @@ begin
      list.add(FContextType.Link);
   if (child_name = 'context') Then
      list.addAll(FContextList);
-  if (child_name = 'definition') Then
-     list.add(Definition.Link);
+  if (child_name = 'element') Then
+     list.addAll(FElementList);
 end;
 
 procedure TFhirProfileExtensionDefn.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -38486,7 +38841,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'display', 'string', FDisplay.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'contextType', 'code', FContextType.Link));{1}
   oList.add(TFHIRProperty.create(self, 'context', 'string', FContextList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'definition', '@Profile.structure.element.definition', FDefinition.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'element', '@Profile.structure.snapshot.element', FElementList.Link)){3};
 end;
 
 function TFhirProfileExtensionDefn.Link : TFhirProfileExtensionDefn;
@@ -38573,12 +38928,6 @@ begin
     ContextType := nil
   else
     ContextType := TFhirEnum.create(CODES_TFhirExtensionContext[value]);
-end;
-
-Procedure TFhirProfileExtensionDefn.SetDefinition(value : TFhirProfileStructureElementDefinition);
-begin
-  FDefinition.free;
-  FDefinition := value;
 end;
 
 
@@ -40637,7 +40986,7 @@ end;
 procedure TFhirQuestionnaireAnswersGroupQuestionAnswer.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'decimal|integer|boolean|date|string|dateTime|instant|Coding', FValue.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'value[x]', '*', FValue.Link.Link));{2}
 end;
 
 function TFhirQuestionnaireAnswersGroupQuestionAnswer.Link : TFhirQuestionnaireAnswersGroupQuestionAnswer;

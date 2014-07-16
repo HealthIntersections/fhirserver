@@ -5,8 +5,9 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   AdvObjects, AdvStringObjectMatches, AdvStringLists,
+  KDBManager, KDBOdbcExpress,
   FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
-  TerminologyServices, SnomedServices, LoincServices, UcumServices,
+  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices,
   FHIRValueSetChecker,
   TerminologyServerStore;
 
@@ -27,7 +28,7 @@ Type
     function Link: TTerminologyServer; overload;
 
     // load external terminology resources (snomed, Loinc)
-    procedure load(ini : TIniFile);
+    procedure load(ini : TIniFile; db : TKDBManager);
 
 
     // functional services
@@ -48,7 +49,7 @@ Type
     function translate(vs : TFHIRValueSet; coding : TFhirCoding; dest : String) : TFhirOperationOutcome; overload;
     Function MakeChecker(uri : string) : TValueSetChecker;
     function getDisplayForCode(system, code : String): String;
-    function checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string; context : TFHIRProfileStructureElement) : boolean;
+    function checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
   end;
 
 implementation
@@ -75,10 +76,17 @@ begin
   inherited;
 end;
 
-procedure TTerminologyServer.load(ini : TIniFile);
+procedure TTerminologyServer.load(ini : TIniFile; db : TKDBManager);
 var
   fn : string;
 begin
+  if ini.ReadString('RxNorm', 'database', '') <> '' then
+  begin
+    write('Connect to RxNorm');
+    RxNorm := TRxNormServices.Create(TKDBOdbcDirect.create('rxnorm', 100, 'SQL Server Native Client 11.0',
+        Ini.ReadString('database', 'server', ''), Ini.ReadString('RxNorm', 'database', ''),
+        Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
+  end;
   fn := ini.ReadString('snomed', 'cache', '');
   if fn <> '' then
   begin
@@ -140,6 +148,9 @@ begin
         FExpansions.DeleteByKey(ts[i]);
     FDependencies.DeleteByKey(id);
   end;
+  for i := FExpansions.Count - 1 downto 0 do
+   if FExpansions.KeyByIndex[i].StartsWith(id+#1) then
+     FExpansions.DeleteByIndex(i);
 end;
 
 function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String): TFHIRValueSet;
@@ -231,7 +242,9 @@ function TTerminologyServer.isKnownValueSet(id: String; out vs: TFHIRValueSet): 
 begin
   vs := nil;
   if id.StartsWith('http://snomed.info/') then
-    vs := Snomed.buildValueSet(id);
+    vs := Snomed.buildValueSet(id)
+  else if id.StartsWith('http://loinc.org/vs/LP') then
+    vs := Loinc.buildValueSet(id);
   result := vs <> nil;
 end;
 
@@ -280,7 +293,7 @@ begin
  end;
 end;
 
-function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string; context : TFHIRProfileStructureElement) : boolean;
+function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
 var
   vs : TFhirValueSet;
   def : TFhirValueSetDefineConcept;
@@ -394,7 +407,7 @@ var
 begin
   result := TFhirOperationOutcome.Create;
   try
-    if checkCode(result, '', coding.codeST, coding.systemST, coding.displayST, nil) then
+    if checkCode(result, '', coding.codeST, coding.systemST, coding.displayST) then
     begin
       cc := TFhirCodeableConcept.Create;
       try

@@ -39,13 +39,13 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.2.1 generated Fri, May 16, 2014 11:44+1000
+// FHIR v0.2.1 generated Thu, Jul 17, 2014 03:20+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
 
 Const
-  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'AdverseReaction', 'Alert', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'Availability', 'CarePlan', 'CommonDataElement', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Device', 'DeviceObservationReport', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'Encounter', 'FamilyHistory', 'Group', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationPrescription', 'MedicationStatement', 'MessageHeader', 'Namespace', 'Observation', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Other', 'Patient', 'Practitioner', 'Procedure', 'Profile', 'Provenance', 'Query', 'Questionnaire', 'QuestionnaireAnswers', 'RelatedPerson', 'SecurityEvent', 'Slot', 'Specimen', 'Subscription', 'Substance', 'Supply', 'ValueSet', 'Binary');
+  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'AdverseReaction', 'Alert', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'Availability', 'CarePlan', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'DataElement', 'Device', 'DeviceObservationReport', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'Encounter', 'FamilyHistory', 'Group', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationPrescription', 'MedicationStatement', 'MessageHeader', 'Namespace', 'Observation', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Other', 'Patient', 'Practitioner', 'Procedure', 'Profile', 'Provenance', 'Query', 'Questionnaire', 'QuestionnaireAnswers', 'RelatedPerson', 'SecurityEvent', 'Slot', 'Specimen', 'Subscription', 'Substance', 'Supply', 'ValueSet', 'Binary');
   PLURAL_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'adversereactions',
      'alerts',
      'allergyintolerances',
@@ -53,11 +53,11 @@ Const
      'appointmentresponses',
      'availabilities',
      'careplans',
-     'commondataelements',
      'compositions',
      'conceptmaps',
      'conditions',
      'conformances',
+     'dataelements',
      'devices',
      'deviceobservationreports',
      'diagnosticorders',
@@ -110,11 +110,11 @@ Const
      'appointmentresponse',
      'availability',
      'careplan',
-     'commondataelement',
      'composition',
      'conceptmap',
      'condition',
      'conformance',
+     'dataelement',
      'device',
      'deviceobservationreport',
      'diagnosticorder',
@@ -167,11 +167,11 @@ Const
      TFhirAppointmentResponse,
      TFhirAvailability,
      TFhirCarePlan,
-     TFhirCommonDataElement,
      TFhirComposition,
      TFhirConceptMap,
      TFhirCondition,
      TFhirConformance,
+     TFhirDataElement,
      TFhirDevice,
      TFhirDeviceObservationReport,
      TFhirDiagnosticOrder,
@@ -224,11 +224,11 @@ Const
      frtAppointmentResponse,
      frtAvailability,
      frtCarePlan,
-     frtCommonDataElement,
      frtComposition,
      frtConceptMap,
      frtCondition,
      frtConformance,
+     frtDataElement,
      frtDevice,
      frtDeviceObservationReport,
      frtDiagnosticOrder,
@@ -317,7 +317,7 @@ Const
      ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
      ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
      ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
-     ('', 'subject', 'subject', 'subject', 'participant.individual', 'recorder | individual', 'individual', 'subject', '', 'subject', '', 'subject', '', '', 'subject', 'subject', 'subject', 'subject', 'subject', 'subject', 'subject', '', 'subject', 'subject', 'subject', 'subject', '', 'subject', '', 'patient', 'patient', 'patient', 'patient', '', '', 'subject', '', 'subject', 'request.subject', '', 'patient', '{def}', '', 'subject', '', 'target.subject | target.patient', '', '', 'subject', 'patient', 'reference.subject | reference.patient', '', 'subject', '', '', 'patient', '', ''),
+     ('', 'subject', 'subject', 'subject', 'participant.individual', 'recorder | individual', 'individual', 'subject', 'subject', '', 'subject', '', '', '', 'subject', 'subject', 'subject', 'subject', 'subject', 'subject', 'subject', '', 'subject', 'subject', 'subject', 'subject', '', 'subject', '', 'patient', 'patient', 'patient', 'patient', '', '', 'subject', '', 'subject', 'request.subject', '', 'patient', '{def}', '', 'subject', '', 'target.subject | target.patient', '', '', 'subject', 'patient', 'reference.subject | reference.patient', '', 'subject', '', '', 'patient', '', ''),
      ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
      ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
      ('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
@@ -441,38 +441,12 @@ Const
      '_language: []',
      'activitycode: []',
      'activitydate: []',
-     'activitydetail: [frtMedicationPrescription, frtEncounter, frtProcedure, frtDiagnosticOrder]',
+     'activitydetail: [frtSupply, frtMedicationPrescription, frtEncounter, frtProcedure, frtDiagnosticOrder]',
      'condition: [frtCondition]',
      'date: []',
      'participant: [frtOrganization, frtPatient, frtPractitioner, frtRelatedPerson]',
      'patient: [frtPatient]');
-  TARGETS_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of TFhirResourceTypeSet = ([], [], [], [], [frtMedicationPrescription, frtEncounter, frtProcedure, frtDiagnosticOrder], [frtCondition], [], [frtOrganization, frtPatient, frtPractitioner, frtRelatedPerson], [frtPatient]);
-  CODES_TSearchParamsCommonDataElement : Array[TSearchParamsCommonDataElement] of String = ('_id', '_language', 'category', 'code', 'date', 'description', 'identifier', 'name', 'publisher', 'status', 'version');
-  DESC_TSearchParamsCommonDataElement : Array[TSearchParamsCommonDataElement] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
-     'The stated language of the resource',
-     'A category assigned to the observation definition (server may choose to do subsumption)',
-     'A code for the observation definition (server may choose to do subsumption)',
-     'The observation definition publication date',
-     'Text search in the description of the observation definition',
-     'The identifier of the observation definition',
-     'Name of the observation definition',
-     'Name of the publisher of the observation definition',
-     'The current status of the observation definition',
-     'The version identifier of the observation definition');
-  TYPES_TSearchParamsCommonDataElement : Array[TSearchParamsCommonDataElement] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken);
-//  CHECK_TSearchParamsCommonDataElement : Array[TSearchParamsCommonDataElement] of TSearchParamsCommonDataElement = ( spCommonDataElement__id,  spCommonDataElement__language,  spCommonDataElement_Category,  spCommonDataElement_Code,  spCommonDataElement_Date,  spCommonDataElement_Description,  spCommonDataElement_Identifier,  spCommonDataElement_Name,  spCommonDataElement_Publisher,  spCommonDataElement_Status,  spCommonDataElement_Version);
-  PATHS_TSearchParamsCommonDataElement : Array[TSearchParamsCommonDataElement] of String = ('_id: []',
-     '_language: []',
-     'category: []',
-     'code: []',
-     'date: []',
-     'description: []',
-     'identifier: []',
-     'name: []',
-     'publisher: []',
-     'status: []',
-     'version: []');
-  TARGETS_TSearchParamsCommonDataElement : Array[TSearchParamsCommonDataElement] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], []);
+  TARGETS_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of TFhirResourceTypeSet = ([], [], [], [], [frtSupply, frtMedicationPrescription, frtEncounter, frtProcedure, frtDiagnosticOrder], [frtCondition], [], [frtOrganization, frtPatient, frtPractitioner, frtRelatedPerson], [frtPatient]);
   CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_id', '_language', 'attester', 'author', 'class', 'context', 'date', 'identifier', 'section-content', 'section-type', 'subject', 'type');
   DESC_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource',
@@ -609,6 +583,32 @@ Const
      'supported-profile: [frtProfile]',
      'version: []');
   TARGETS_TSearchParamsConformance : Array[TSearchParamsConformance] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [frtProfile], [], [], [], [], [], [frtProfile], []);
+  CODES_TSearchParamsDataElement : Array[TSearchParamsDataElement] of String = ('_id', '_language', 'category', 'code', 'date', 'description', 'identifier', 'name', 'publisher', 'status', 'version');
+  DESC_TSearchParamsDataElement : Array[TSearchParamsDataElement] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
+     'The stated language of the resource',
+     'A category assigned to the data element (server may choose to do subsumption)',
+     'A code for the data element (server may choose to do subsumption)',
+     'The data element publication date',
+     'Text search in the description of the data element',
+     'The identifier of the data element',
+     'Name of the data element',
+     'Name of the publisher of the data element',
+     'The current status of the data element',
+     'The version identifier of the data element');
+  TYPES_TSearchParamsDataElement : Array[TSearchParamsDataElement] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeString);
+//  CHECK_TSearchParamsDataElement : Array[TSearchParamsDataElement] of TSearchParamsDataElement = ( spDataElement__id,  spDataElement__language,  spDataElement_Category,  spDataElement_Code,  spDataElement_Date,  spDataElement_Description,  spDataElement_Identifier,  spDataElement_Name,  spDataElement_Publisher,  spDataElement_Status,  spDataElement_Version);
+  PATHS_TSearchParamsDataElement : Array[TSearchParamsDataElement] of String = ('_id: []',
+     '_language: []',
+     'category: []',
+     'code: []',
+     'date: []',
+     'description: []',
+     'identifier: []',
+     'name: []',
+     'publisher: []',
+     'status: []',
+     'version: []');
+  TARGETS_TSearchParamsDataElement : Array[TSearchParamsDataElement] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], []);
   CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_id', '_language', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'type', 'udi');
   DESC_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource',
@@ -831,16 +831,18 @@ Const
      'status: []',
      'subject: [frtPatient]');
   TARGETS_TSearchParamsEncounter : Array[TSearchParamsEncounter] of TFhirResourceTypeSet = ([], [], [], [], ALL_RESOURCE_TYPES, [], [frtLocation], [], [], [frtPatient]);
-  CODES_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of String = ('_id', '_language', 'subject');
+  CODES_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of String = ('_id', '_language', 'date', 'subject');
   DESC_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource',
+     'When history was captured/updated',
      'The identity of a subject to list family history items for');
-  TYPES_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference);
-//  CHECK_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of TSearchParamsFamilyHistory = ( spFamilyHistory__id,  spFamilyHistory__language,  spFamilyHistory_Subject);
+  TYPES_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeReference);
+//  CHECK_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of TSearchParamsFamilyHistory = ( spFamilyHistory__id,  spFamilyHistory__language,  spFamilyHistory_Date,  spFamilyHistory_Subject);
   PATHS_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of String = ('_id: []',
      '_language: []',
+     'date: []',
      'subject: [frtPatient]');
-  TARGETS_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of TFhirResourceTypeSet = ([], [], [frtPatient]);
+  TARGETS_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of TFhirResourceTypeSet = ([], [], [], [frtPatient]);
   CODES_TSearchParamsGroup : Array[TSearchParamsGroup] of String = ('_id', '_language', 'actual', 'characteristic', 'characteristic-value', 'code', 'exclude', 'identifier', 'member', 'type', 'value');
   DESC_TSearchParamsGroup : Array[TSearchParamsGroup] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource',
@@ -1182,7 +1184,7 @@ Const
      'date: []',
      'name: []',
      'name-value-[x]: []',
-     'performer: [frtDevice, frtOrganization, frtPractitioner]',
+     'performer: [frtDevice, frtPatient, frtOrganization, frtPractitioner]',
      'related: []',
      'related-target: [frtObservation]',
      'related-type: []',
@@ -1194,7 +1196,7 @@ Const
      'value-date: []',
      'value-quantity: []',
      'value-string: []');
-  TARGETS_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirResourceTypeSet = ([], [], [], [], [], [frtDevice, frtOrganization, frtPractitioner], [], [frtObservation], [], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup], [], [], [], []);
+  TARGETS_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirResourceTypeSet = ([], [], [], [], [], [frtDevice, frtPatient, frtOrganization, frtPractitioner], [], [frtObservation], [], [], [frtSpecimen], [], [frtDevice, frtLocation, frtPatient, frtGroup], [], [], [], []);
   CODES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('_id', '_language');
   DESC_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource');
@@ -1357,7 +1359,7 @@ Const
      'subject: [frtPatient]',
      'type: []');
   TARGETS_TSearchParamsProcedure : Array[TSearchParamsProcedure] of TFhirResourceTypeSet = ([], [], [], [frtPatient], []);
-  CODES_TSearchParamsProfile : Array[TSearchParamsProfile] of String = ('_id', '_language', 'code', 'date', 'description', 'extension', 'identifier', 'name', 'publisher', 'status', 'type', 'valueset', 'version');
+  CODES_TSearchParamsProfile : Array[TSearchParamsProfile] of String = ('_id', '_language', 'code', 'date', 'description', 'extension', 'identifier', 'name', 'publisher', 'status', 'type', 'url', 'valueset', 'version');
   DESC_TSearchParamsProfile : Array[TSearchParamsProfile] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource',
      'A code for the profile in the format uri::code (server may choose to do subsumption)',
@@ -1369,10 +1371,11 @@ Const
      'Name of the publisher of the profile',
      'The current status of the profile',
      'Type of resource that is constrained in the profile',
+     'Literal URL used to reference this profile',
      'A vocabulary binding code',
      'The version identifier of the profile');
-  TYPES_TSearchParamsProfile : Array[TSearchParamsProfile] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
-//  CHECK_TSearchParamsProfile : Array[TSearchParamsProfile] of TSearchParamsProfile = ( spProfile__id,  spProfile__language,  spProfile_Code,  spProfile_Date,  spProfile_Description,  spProfile_Extension,  spProfile_Identifier,  spProfile_Name,  spProfile_Publisher,  spProfile_Status,  spProfile_Type,  spProfile_Valueset,  spProfile_Version);
+  TYPES_TSearchParamsProfile : Array[TSearchParamsProfile] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
+//  CHECK_TSearchParamsProfile : Array[TSearchParamsProfile] of TSearchParamsProfile = ( spProfile__id,  spProfile__language,  spProfile_Code,  spProfile_Date,  spProfile_Description,  spProfile_Extension,  spProfile_Identifier,  spProfile_Name,  spProfile_Publisher,  spProfile_Status,  spProfile_Type,  spProfile_Url,  spProfile_Valueset,  spProfile_Version);
   PATHS_TSearchParamsProfile : Array[TSearchParamsProfile] of String = ('_id: []',
      '_language: []',
      'code: []',
@@ -1384,9 +1387,10 @@ Const
      'publisher: []',
      'status: []',
      'type: []',
+     'url: []',
      'valueset: [frtValueSet]',
      'version: []');
-  TARGETS_TSearchParamsProfile : Array[TSearchParamsProfile] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [], [frtValueSet], []);
+  TARGETS_TSearchParamsProfile : Array[TSearchParamsProfile] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [], [], [frtValueSet], []);
   CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_id', '_language', 'end', 'location', 'party', 'partytype', 'start', 'target');
   DESC_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource',
@@ -1554,7 +1558,7 @@ Const
      'Rule for server push criteria',
      'Mimetype to send, or blank for no payload',
      'requested | active | error | off',
-     'The term for the tag',
+     'The term that identifies the tag',
      'rest-hook | websocket | email | sms | message',
      'Where the channel points to');
   TYPES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeString);
@@ -1639,9 +1643,9 @@ Const
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [], []);
   FHIR_GENERATED_VERSION = '0.2.1';
 
-  FHIR_GENERATED_REVISION = '2509';
+  FHIR_GENERATED_REVISION = '2638';
 
-  FHIR_GENERATED_DATE = '20140516114434';
+  FHIR_GENERATED_DATE = '20140717032055';
 
 
 

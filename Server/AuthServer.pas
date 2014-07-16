@@ -675,7 +675,7 @@ begin
           try
             json.Stream := buffer.link;
             json.Start;
-            json.Value('access_token', session.Cookie);
+            json.Value('access_token', session.JWTPacked);
             json.Value('token_type', 'Bearer');
             json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
             json.Value('id_token', session.JWTPacked);

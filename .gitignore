@@ -25,3 +25,5 @@ Exec/ssl.crt
 Exec/local.healthintersections.com.au.crt
 Exec/ssl.key
 Server/Win64/Debug/FHIRServer.rsm
+Exec/Temp/HashInfo.txt
+install/fhirserver.fb7lck

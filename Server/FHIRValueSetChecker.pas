@@ -229,20 +229,42 @@ begin
 
 end;
 
+Function FreeAsBoolean(cs : TCodeSystemProvider; ctxt : TCodeSystemProviderContext) : boolean; overload;
+begin
+  result := ctxt <> nil;
+  if result then
+    cs.Close(ctxt);
+end;
+
+Function FreeAsBoolean(cs : TCodeSystemProvider; ctxt : TCodeSystemProviderFilterContext) : boolean; overload;
+begin
+  result := ctxt <> nil;
+  if result then
+    cs.Close(ctxt);
+end;
+
 function TValueSetChecker.checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code: String; displays : TStringList): boolean;
 var
   i : integer;
   fc : TFhirValueSetComposeIncludeFilter;
   ctxt : TCodeSystemProviderFilterContext;
+  loc :  TCodeSystemProviderContext;
+  prep : TCodeSystemProviderFilterPreparationContext;
+  filters : Array of TCodeSystemProviderFilterContext;
 begin
   result := false;
   if (cset.codeList.count = 0) and (cset.filterList.count = 0) then
   begin
-    result := cs.locate(code) <> nil;
-    if result then
-    begin
-      cs.displays(code, displays);
-      exit;
+    loc := cs.locate(code);
+    try
+      result := loc <> nil;
+      if result then
+      begin
+        cs.displays(loc, displays);
+        exit;
+      end;
+    finally
+      cs.Close(loc);
     end;
   end;
 
@@ -254,27 +276,67 @@ begin
       exit;
     end;
 
-  for i := 0 to cset.filterList.count - 1 do
+  if cset.filterList.count > 0 then
   begin
-    fc := cset.filterList[i];
-    if ('concept' = fc.property_ST) and (fc.OpST = FilterOperatorIsA) then
-      result := cs.locateIsA(code, fc.valueST) <> nil
-    else
-    begin
-      ctxt := cs.filter(fc.property_ST, fc.OpST, fc.valueST);
-      try
-        result := cs.filterLocate(ctxt, code) <> nil;
-      finally
-        cs.close(ctxt);
+    SetLength(filters, cset.filterList.count);
+    prep := cs.getPrepContext;
+    try
+      for i := 0 to cset.filterList.count - 1 do
+      begin
+        fc := cset.filterList[i];
+        if ('concept' = fc.property_ST) and (fc.OpST = FilterOperatorIsA) then
+          filters[i] := cs.filter(fc.property_ST, fc.OpST, fc.valueST, prep);
       end;
-    end;
-    if result then
-    begin
-      cs.displays(code, displays);
-      exit;
+      if cs.prepare(prep) then // all are together, just query the first filter
+      begin
+        ctxt := filters[0];
+        loc := cs.filterLocate(ctxt, code);
+        try
+          result := loc <> nil;
+          if result then
+            cs.displays(loc, displays);
+        finally
+          cs.Close(loc);
+        end;
+      end
+      else
+      begin
+        for i := 0 to cset.filterList.count - 1 do
+        begin
+          fc := cset.filterList[i];
+          if ('concept' = fc.property_ST) and (fc.OpST = FilterOperatorIsA) then
+          begin
+            loc := cs.locateIsA(code, fc.valueST);
+            try
+              result := loc <> nil;
+              if result then
+                cs.displays(loc, displays);
+            finally
+              cs.Close(loc);
+            end;
+          end
+          else
+          begin
+            ctxt := filters[i];
+            loc := cs.filterLocate(ctxt, code);
+            try
+              result := loc <> nil;
+              if result then
+                cs.displays(loc, displays);
+            finally
+              cs.Close(loc);
+            end;
+          end;
+          if result then
+            break;
+        end;
+      end;
+    finally
+      for i := 0 to cset.filterList.count - 1 do
+        cs.Close(filters[i]);
+      cs.Close(prep);
     end;
   end;
 end;
-
 
 end.

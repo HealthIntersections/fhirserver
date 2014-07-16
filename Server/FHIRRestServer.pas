@@ -149,7 +149,7 @@ Type
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer);
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse);
-    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sCookie: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; formparams: String; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
+    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; formparams: String; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc : String;
@@ -257,7 +257,17 @@ Begin
   if FAdminEmail = '' then
     raise Exception.Create('Ad admin email is required');
 
-  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link);
+  // Base Web server configuration
+  FBasePath := FIni.ReadString('web', 'base', '');
+  FSecurePath := FIni.ReadString('web', 'secure', '');
+  FPort := FIni.ReadInteger('web', 'http', 0);
+  FSSLPort := FIni.ReadInteger('web', 'https', 0);
+  FCertFile := FIni.ReadString('web', 'certname', '');
+  FSSLPassword := FIni.ReadString('web', 'certpword', '');
+  FHost := FIni.ReadString('web', 'host', '');
+  FFacebookLike := FIni.ReadString('facebook.com', 'like', '') = '1';
+
+  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FBasePath+'/');
 
   FFhirStore := TFHIRDataStore.Create(db, FSpecPath, FAltPath, terminologyServer, FINi);
   FFhirStore.ownername := FOwnerName;
@@ -271,15 +281,7 @@ Begin
     FFhirStore.FormalURL := AppendForwardSlash(FIni.ReadString('web', 'host', '')) + s;
   end;
   writeln(inttostr(FFhirStore.TotalResourceCount)+' resources');
-  // Basei Web server configuration
-  FBasePath := FIni.ReadString('web', 'base', '');
-  FSecurePath := FIni.ReadString('web', 'secure', '');
-  FPort := FIni.ReadInteger('web', 'http', 0);
-  FSSLPort := FIni.ReadInteger('web', 'https', 0);
-  FCertFile := FIni.ReadString('web', 'certname', '');
-  FSSLPassword := FIni.ReadString('web', 'certpword', '');
-  FHost := FIni.ReadString('web', 'host', '');
-  FFacebookLike := FIni.ReadString('facebook.com', 'like', '') = '1';
+
 
   if FIni.readString('web', 'clients', '') = '' then
     raise Exception.Create('No Authorization file found');
@@ -401,10 +403,11 @@ Begin
     FSSLServer.OnCreatePostStream := CreatePostStream;
     FIOHandler := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
-    FIOHandler.SSLOptions.Method := sslvSSLv3;
+    FIOHandler.SSLOptions.Method := sslvSSLv23;
+    FIOHandler.SSLOptions.SSLVersions := [sslvSSLv3, sslvTLSv1_2];
+    FIOHandler.SSLOptions.CipherList := 'ALL:!SSLv2:!DES';
     FIOHandler.SSLOptions.CertFile := FCertFile;
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
-    FIOHandler.SSLOptions.CipherList := 'RC4+SHA1+RSA';
     FIOHandler.OnGetPassword := SSLPassword;
     FSSLServer.OnCommandGet := SecureRequest;
     FSSLServer.OnCommandOther := SecureRequest;
@@ -688,7 +691,7 @@ Begin
           end;
 
           oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP, request.CustomHeaders.Values['content-location'],
-             request.Command, sDoc, sContentType, request.Accept, sCookie, oStream, oResponse, aFormat, redirect, formparams, secure, ssl, relativeReferenceAdjustment, pretty);
+             request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, oStream, oResponse, aFormat, redirect, formparams, secure, ssl, relativeReferenceAdjustment, pretty);
           try
             ReadTags(request.RawHeaders.Values['Category'], oRequest);
             session := oRequest.Session.Link;
@@ -803,7 +806,7 @@ begin
     // insert page headers:
     s := s.Replace('</title>', '</title>'+#13#10+TFHIRXhtmlComposer.PageLinks);
     s := s.Replace('<body>', '<body>'+#13#10+TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang));
-    s := s.Replace('</body>', TFHIRXhtmlComposer.Footer(request.baseUrl)+#13#10+'</body>');
+    s := s.Replace('</body>', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang)+#13#10+'</body>');
     response.body := s;
     response.ContentType := 'text/html; charset=UTF-8';
   finally
@@ -905,7 +908,7 @@ begin
     result := '';
 end;
 
-Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sCookie : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
+Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
    var redirect : boolean; formparams : String; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean) : TFHIRRequest;
 Var
   sURL, sId, sType, msg : String;
@@ -941,6 +944,8 @@ var
   check : boolean;
   p : TParseMap;
   s : String;
+  comp : TIdCompressorZLib;
+  mem : TMemoryStream;
 Begin
   relativeReferenceAdjustment := 0;
   Result := nil;
@@ -1293,7 +1298,22 @@ Begin
         else
         begin
           oRequest.Source := TAdvBuffer.Create;
-          oRequest.Source.LoadFromStream(oPostStream);
+          if sContentEncoding = 'gzip' then
+          begin
+            mem := TMemoryStream.Create;
+            comp := TIdCompressorZLib.Create(nil);
+            try
+              comp.DecompressStream(oPostStream, mem, 0);
+              mem.Position := 0;
+              oRequest.source.LoadFromStream(mem);
+            finally
+              comp.free;
+              mem.free;
+            end;
+          end
+          else
+            oRequest.Source.LoadFromStream(oPostStream);
+
           oPostStream.Position := 0;
           if oRequest.ResourceType = frtBinary then
           begin
@@ -1617,7 +1637,7 @@ result := result +
 '<p><a href="/oauth2/auth?client_id=web&response_type=code&scope=all&redirect_uri='+authurl+'/internal&state='+FAuthServer.MakeLoginToken(path, apGoogle)+'">Login using OAuth</a></p>'+#13#10;
 
 result := result +
-TFHIRXhtmlComposer.Footer(lang);
+TFHIRXhtmlComposer.Footer(lang, lang);
 
 end;
 
@@ -1705,10 +1725,12 @@ begin
   '</p>'#13#10+
   '<hr/>'#13#10+
   ''#13#10+
-  '<p>System Operations:</p><ul><li> <a href="'+sBaseUrl+'/metadata">Conformance Profile</a> (or <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> or <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10+
-  '<li><a class="tag" href="'+sBaseUrl+'/_tags">Tags</a> used on this system</li><li><a href="'+sBaseUrl+'/_search">General Search</a> (the form''s a bit weird, but the API is useful)</li>'+
-  '<li><a href="'+sBaseUrl+'/_history">Full History</a> (History of all resources)</li>'+#13#10+
-  '<li><a href="#upload">Upload Operations</a></li>'+#13#10+
+  '<p>'+GetFhirMessage('SYSTEM_OPERATIONS', lang)+':</p><ul><li> <a href="'+sBaseUrl+'/metadata">'+GetFhirMessage('CONF_PROFILE', lang)+'</a> '+
+   '('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> ('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10+
+  '<li><a class="tag" href="'+sBaseUrl+'/_tags">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>'+
+  '<li><a href="'+sBaseUrl+'/_search">'+GetFhirMessage('GENERAL_SEARCH', lang)+'</a> (the form''s a bit weird, but the API is useful)</li>'+
+  '<li><a href="'+sBaseUrl+'/_history">'+StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)])+'</a> (History of all resources)</li>'+#13#10+
+  '<li><a href="#upload">'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</a></li>'+#13#10+
   '</ul>'+#13#10+
   ''#13#10+
   '<hr/>'#13#10+
@@ -1764,7 +1786,7 @@ begin
   '<p><input type="hidden" name="_format" size="text/html"/><br/>'+#13#10+
   ''+GetFhirMessage('MSG_CONTENT_MESSAGE', lang)+'.<br/><br/>'+#13#10+
   ''+GetFhirMessage('MSG_CONTENT_UPLOAD', lang)+': <br/><input type="file" name="file" size="60"/><br/>'+#13#10+
-  'or just paste your xml or json here:<br/> <textarea name="src" cols="70" rows="5"/>'+#13#10+
+  ''+GetFhirMessage('MSG_CONTENT_PASTE', lang)+':<br/> <textarea name="src" cols="70" rows="5"/>'+#13#10+
   '</textarea><br/><br/>'+#13#10+
   '<table class="none"><tr><td>Operation:</td><td> <select size="1" name="op">'+#13#10+
   ' <option value="transaction">Transaction</option>'+#13#10+
@@ -1777,7 +1799,7 @@ begin
   '</select> (if validating, use the selected profile)</td></tr></table><br/>'+#13#10+
   '<input type="submit" value="'+GetFhirMessage('NAME_UPLOAD', lang)+'"/>'#13#10+
   '</p></form>'#13#10+
-  TFHIRXhtmlComposer.footer(sBaseURL));
+  TFHIRXhtmlComposer.footer(sBaseURL, lang));
   result := b.ToString;
    finally
      b.Free;

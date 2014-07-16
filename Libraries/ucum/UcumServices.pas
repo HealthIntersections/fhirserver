@@ -211,14 +211,16 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(code : String; list : TStringList); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; override;
-    function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; override;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
-    function searchFilter(filter : TSearchFilterText) : TCodeSystemProviderFilterContext; overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
   End;
 
   TUcumServiceList = class (TAdvObjectList)
@@ -498,7 +500,7 @@ begin
   End;
 end;
 
-function TUcumServices.searchFilter(filter : TSearchFilterText): TCodeSystemProviderFilterContext;
+function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   result := nil;
   raise Exception.Create('to do');
@@ -719,6 +721,11 @@ begin
   raise Exception.Create('to do');
 end;
 
+procedure TUcumServices.Close(ctxt: TCodeSystemProviderContext);
+begin
+  // nothing, it's an internal point
+end;
+
 function TUcumServices.Code(context: TCodeSystemProviderContext): string;
 begin
   result := '';
@@ -735,6 +742,11 @@ function TUcumServices.Display(context: TCodeSystemProviderContext): string;
 begin
   result := '';
   raise Exception.Create('to do');
+end;
+
+procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+begin
+  list.Add(Code(context));
 end;
 
 procedure TUcumServices.Displays(code: String; list: TStringList);
@@ -825,21 +837,21 @@ begin
   raise Exception.Create('to do');
 end;
 
-function TUcumServices.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+function TUcumServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   result := nil;
   raise Exception.Create('to do');
 end;
 
-function TUcumServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
+function TUcumServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
   result := nil;
   raise Exception.Create('to do');
 end;
 
-function TUcumServices.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
+function TUcumServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  result := 0;
+  result := false;
   raise Exception.Create('to do');
 end;
 

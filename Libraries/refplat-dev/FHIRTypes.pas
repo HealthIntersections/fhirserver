@@ -17,7 +17,7 @@ unit FHIRTypes;
    * Neither the name of HL7 nor the names of its contributors may be used to 
      endorse or promote products derived from this software without specific 
      prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.2.1 generated Fri, May 16, 2014 11:44+1000
+// FHIR v0.2.1 generated Thu, Jul 17, 2014 03:20+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -314,26 +314,6 @@ Type
     CarePlanActivityCategoryOther); {@enum.value CarePlanActivityCategoryOther Some other form of action. }
   TFhirCarePlanActivityCategoryList = set of TFhirCarePlanActivityCategory;
 
-  {@Enum TFhirResourceObservationDefStatus
-    The lifecycle status of a Resource Observation Definition
-  }
-  TFhirResourceObservationDefStatus = (
-    ResourceObservationDefStatusNull,  {@enum.value ResourceObservationDefStatusNull Value is missing from Instance }
-    ResourceObservationDefStatusDraft, {@enum.value ResourceObservationDefStatusDraft This observation definition is still under development. }
-    ResourceObservationDefStatusActive, {@enum.value ResourceObservationDefStatusActive This observation definition is ready for normal use. }
-    ResourceObservationDefStatusRetired); {@enum.value ResourceObservationDefStatusRetired This observation definition has been deprecated, withdrawn or superseded and should no longer be used. }
-  TFhirResourceObservationDefStatusList = set of TFhirResourceObservationDefStatus;
-
-  {@Enum TFhirBindingConformance
-    Binding conformance for applications
-  }
-  TFhirBindingConformance = (
-    BindingConformanceNull,  {@enum.value BindingConformanceNull Value is missing from Instance }
-    BindingConformanceRequired, {@enum.value BindingConformanceRequired Only codes in the specified set are allowed.  If the binding is extensible, other codes may be used for concepts not covered by the bound set of codes. }
-    BindingConformancePreferred, {@enum.value BindingConformancePreferred For greater interoperability, implementers are strongly encouraged to use the bound set of codes, however alternate codes may be used in derived profiles and implementations if necessary without being considered non-conformant. }
-    BindingConformanceExample); {@enum.value BindingConformanceExample The codes in the set are an example to illustrate the meaning of the field. There is no particular preference for its use nor any assertion that the provided values are sufficient to meet implementation needs. }
-  TFhirBindingConformanceList = set of TFhirBindingConformance;
-
   {@Enum TFhirCompositionStatus
     The workflow/clinical status of the composition
   }
@@ -489,6 +469,26 @@ Type
     DocumentModeProducer, {@enum.value DocumentModeProducer The application produces documents of the specified type. }
     DocumentModeConsumer); {@enum.value DocumentModeConsumer The application consumes documents of the specified type. }
   TFhirDocumentModeList = set of TFhirDocumentMode;
+
+  {@Enum TFhirResourceObservationDefStatus
+    The lifecycle status of a Resource data element
+  }
+  TFhirResourceObservationDefStatus = (
+    ResourceObservationDefStatusNull,  {@enum.value ResourceObservationDefStatusNull Value is missing from Instance }
+    ResourceObservationDefStatusDraft, {@enum.value ResourceObservationDefStatusDraft This data element is still under development. }
+    ResourceObservationDefStatusActive, {@enum.value ResourceObservationDefStatusActive This data element is ready for normal use. }
+    ResourceObservationDefStatusRetired); {@enum.value ResourceObservationDefStatusRetired This data element has been deprecated, withdrawn or superseded and should no longer be used. }
+  TFhirResourceObservationDefStatusList = set of TFhirResourceObservationDefStatus;
+
+  {@Enum TFhirBindingConformance
+    Binding conformance for applications
+  }
+  TFhirBindingConformance = (
+    BindingConformanceNull,  {@enum.value BindingConformanceNull Value is missing from Instance }
+    BindingConformanceRequired, {@enum.value BindingConformanceRequired Only codes in the specified set are allowed.  If the binding is extensible, other codes may be used for concepts not covered by the bound set of codes. }
+    BindingConformancePreferred, {@enum.value BindingConformancePreferred For greater interoperability, implementers are strongly encouraged to use the bound set of codes, however alternate codes may be used in derived profiles and implementations if necessary without being considered non-conformant. }
+    BindingConformanceExample); {@enum.value BindingConformanceExample The codes in the set are an example to illustrate the meaning of the field. There is no particular preference for its use nor any assertion that the provided values are sufficient to meet implementation needs. }
+  TFhirBindingConformanceList = set of TFhirBindingConformance;
 
   {@Enum TFhirDiagnosticOrderStatus
     The status of a diagnostic order
@@ -1023,10 +1023,8 @@ Type
     AnswerFormatText, {@enum.value AnswerFormatText Answer is a long (potentially multi-paragram) free-text entry. }
     AnswerFormatDateTime, {@enum.value AnswerFormatDateTime Answer is a date and time. }
     AnswerFormatInstant, {@enum.value AnswerFormatInstant Answer is a system timestamp. }
-    AnswerFormatSingleChoice, {@enum.value AnswerFormatSingleChoice Answer is a single choice from the options. }
-    AnswerFormatMultipleChoice, {@enum.value AnswerFormatMultipleChoice Answer is one or more choices from the options. }
-    AnswerFormatOpenSingleChoice, {@enum.value AnswerFormatOpenSingleChoice Answer is a single choice from the options or a free-text entry. }
-    AnswerFormatOpenMultipleChoice); {@enum.value AnswerFormatOpenMultipleChoice Answer is one or more choices from the options and/or a free-text entry. }
+    AnswerFormatChoice, {@enum.value AnswerFormatChoice Answer is a choice from a list of options. }
+    AnswerFormatOpenChoice); {@enum.value AnswerFormatOpenChoice Answer is a choice from a list of options or a free-text entry. }
   TFhirAnswerFormatList = set of TFhirAnswerFormat;
 
   {@Enum TFhirQuestionnaireAnswersStatus
@@ -5442,8 +5440,6 @@ Const
   CODES_TFhirCarePlanGoalStatus : Array[TFhirCarePlanGoalStatus] of String = ('', 'in progress', 'achieved', 'sustaining', 'cancelled');
   CODES_TFhirCarePlanActivityStatus : Array[TFhirCarePlanActivityStatus] of String = ('', 'not started', 'scheduled', 'in progress', 'on hold', 'completed', 'cancelled');
   CODES_TFhirCarePlanActivityCategory : Array[TFhirCarePlanActivityCategory] of String = ('', 'diet', 'drug', 'encounter', 'observation', 'procedure', 'supply', 'other');
-  CODES_TFhirResourceObservationDefStatus : Array[TFhirResourceObservationDefStatus] of String = ('', 'draft', 'active', 'retired');
-  CODES_TFhirBindingConformance : Array[TFhirBindingConformance] of String = ('', 'required', 'preferred', 'example');
   CODES_TFhirCompositionStatus : Array[TFhirCompositionStatus] of String = ('', 'preliminary', 'final', 'appended', 'amended', 'entered in error');
   CODES_TFhirCompositionAttestationMode : Array[TFhirCompositionAttestationMode] of String = ('', 'personal', 'professional', 'legal', 'official');
   CODES_TFhirValuesetStatus : Array[TFhirValuesetStatus] of String = ('', 'draft', 'active', 'retired');
@@ -5458,6 +5454,8 @@ Const
   CODES_TFhirMessageSignificanceCategory : Array[TFhirMessageSignificanceCategory] of String = ('', 'Consequence', 'Currency', 'Notification');
   CODES_TFhirMessageConformanceEventMode : Array[TFhirMessageConformanceEventMode] of String = ('', 'sender', 'receiver');
   CODES_TFhirDocumentMode : Array[TFhirDocumentMode] of String = ('', 'producer', 'consumer');
+  CODES_TFhirResourceObservationDefStatus : Array[TFhirResourceObservationDefStatus] of String = ('', 'draft', 'active', 'retired');
+  CODES_TFhirBindingConformance : Array[TFhirBindingConformance] of String = ('', 'required', 'preferred', 'example');
   CODES_TFhirDiagnosticOrderStatus : Array[TFhirDiagnosticOrderStatus] of String = ('', 'requested', 'received', 'accepted', 'in progress', 'review', 'completed', 'suspended', 'rejected', 'failed');
   CODES_TFhirDiagnosticOrderPriority : Array[TFhirDiagnosticOrderPriority] of String = ('', 'routine', 'urgent', 'stat', 'asap');
   CODES_TFhirDiagnosticReportStatus : Array[TFhirDiagnosticReportStatus] of String = ('', 'registered', 'partial', 'final', 'corrected', 'amended', 'appended', 'cancelled', 'entered in error');
@@ -5497,7 +5495,7 @@ Const
   CODES_TFhirProvenanceEntityRole : Array[TFhirProvenanceEntityRole] of String = ('', 'derivation', 'revision', 'quotation', 'source');
   CODES_TFhirQueryOutcome : Array[TFhirQueryOutcome] of String = ('', 'ok', 'limited', 'refused', 'error');
   CODES_TFhirQuestionnaireStatus : Array[TFhirQuestionnaireStatus] of String = ('', 'draft', 'published', 'retired');
-  CODES_TFhirAnswerFormat : Array[TFhirAnswerFormat] of String = ('', 'decimal', 'integer', 'boolean', 'date', 'string', 'text', 'dateTime', 'instant', 'single-choice', 'multiple-choice', 'open-single-choice', 'open-multiple-choice');
+  CODES_TFhirAnswerFormat : Array[TFhirAnswerFormat] of String = ('', 'decimal', 'integer', 'boolean', 'date', 'string', 'text', 'dateTime', 'instant', 'choice', 'open-choice');
   CODES_TFhirQuestionnaireAnswersStatus : Array[TFhirQuestionnaireAnswersStatus] of String = ('', 'in progress', 'completed', 'amended');
   CODES_TFhirSecurityEventAction : Array[TFhirSecurityEventAction] of String = ('', 'C', 'R', 'U', 'D', 'E');
   CODES_TFhirSecurityEventOutcome : Array[TFhirSecurityEventOutcome] of String = ('', '0', '4', '8', '12');
@@ -5559,10 +5557,6 @@ Function TFhirCarePlanActivityStatusListAsInteger(aSet : TFhirCarePlanActivitySt
 Function IntegerAsTFhirCarePlanActivityStatusList(i : integer) : TFhirCarePlanActivityStatusList; overload;
 Function TFhirCarePlanActivityCategoryListAsInteger(aSet : TFhirCarePlanActivityCategoryList) : Integer; overload;
 Function IntegerAsTFhirCarePlanActivityCategoryList(i : integer) : TFhirCarePlanActivityCategoryList; overload;
-Function TFhirResourceObservationDefStatusListAsInteger(aSet : TFhirResourceObservationDefStatusList) : Integer; overload;
-Function IntegerAsTFhirResourceObservationDefStatusList(i : integer) : TFhirResourceObservationDefStatusList; overload;
-Function TFhirBindingConformanceListAsInteger(aSet : TFhirBindingConformanceList) : Integer; overload;
-Function IntegerAsTFhirBindingConformanceList(i : integer) : TFhirBindingConformanceList; overload;
 Function TFhirCompositionStatusListAsInteger(aSet : TFhirCompositionStatusList) : Integer; overload;
 Function IntegerAsTFhirCompositionStatusList(i : integer) : TFhirCompositionStatusList; overload;
 Function TFhirCompositionAttestationModeListAsInteger(aSet : TFhirCompositionAttestationModeList) : Integer; overload;
@@ -5591,6 +5585,10 @@ Function TFhirMessageConformanceEventModeListAsInteger(aSet : TFhirMessageConfor
 Function IntegerAsTFhirMessageConformanceEventModeList(i : integer) : TFhirMessageConformanceEventModeList; overload;
 Function TFhirDocumentModeListAsInteger(aSet : TFhirDocumentModeList) : Integer; overload;
 Function IntegerAsTFhirDocumentModeList(i : integer) : TFhirDocumentModeList; overload;
+Function TFhirResourceObservationDefStatusListAsInteger(aSet : TFhirResourceObservationDefStatusList) : Integer; overload;
+Function IntegerAsTFhirResourceObservationDefStatusList(i : integer) : TFhirResourceObservationDefStatusList; overload;
+Function TFhirBindingConformanceListAsInteger(aSet : TFhirBindingConformanceList) : Integer; overload;
+Function IntegerAsTFhirBindingConformanceList(i : integer) : TFhirBindingConformanceList; overload;
 Function TFhirDiagnosticOrderStatusListAsInteger(aSet : TFhirDiagnosticOrderStatusList) : Integer; overload;
 Function IntegerAsTFhirDiagnosticOrderStatusList(i : integer) : TFhirDiagnosticOrderStatusList; overload;
 Function TFhirDiagnosticOrderPriorityListAsInteger(aSet : TFhirDiagnosticOrderPriorityList) : Integer; overload;
@@ -12274,60 +12272,6 @@ begin
  end;
 
 
-function TFhirResourceObservationDefStatusListAsInteger(aSet : TFhirResourceObservationDefStatusList) : Integer;
-var
-  a : TFhirResourceObservationDefStatus;
-begin
-  result := 0;
-  for a := low(TFhirResourceObservationDefStatus) to high(TFhirResourceObservationDefStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirResourceObservationDefStatusList(i : Integer) : TFhirResourceObservationDefStatusList;
-var
-  aLoop : TFhirResourceObservationDefStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirResourceObservationDefStatus) to high(TFhirResourceObservationDefStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirBindingConformanceListAsInteger(aSet : TFhirBindingConformanceList) : Integer;
-var
-  a : TFhirBindingConformance;
-begin
-  result := 0;
-  for a := low(TFhirBindingConformance) to high(TFhirBindingConformance) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirBindingConformanceList(i : Integer) : TFhirBindingConformanceList;
-var
-  aLoop : TFhirBindingConformance;
-begin
-  result := [];
-  for aLoop := low(TFhirBindingConformance) to high(TFhirBindingConformance) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirCompositionStatusListAsInteger(aSet : TFhirCompositionStatusList) : Integer;
 var
   a : TFhirCompositionStatus;
@@ -12698,6 +12642,60 @@ var
 begin
   result := [];
   for aLoop := low(TFhirDocumentMode) to high(TFhirDocumentMode) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirResourceObservationDefStatusListAsInteger(aSet : TFhirResourceObservationDefStatusList) : Integer;
+var
+  a : TFhirResourceObservationDefStatus;
+begin
+  result := 0;
+  for a := low(TFhirResourceObservationDefStatus) to high(TFhirResourceObservationDefStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirResourceObservationDefStatusList(i : Integer) : TFhirResourceObservationDefStatusList;
+var
+  aLoop : TFhirResourceObservationDefStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirResourceObservationDefStatus) to high(TFhirResourceObservationDefStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirBindingConformanceListAsInteger(aSet : TFhirBindingConformanceList) : Integer;
+var
+  a : TFhirBindingConformance;
+begin
+  result := 0;
+  for a := low(TFhirBindingConformance) to high(TFhirBindingConformance) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirBindingConformanceList(i : Integer) : TFhirBindingConformanceList;
+var
+  aLoop : TFhirBindingConformance;
+begin
+  result := [];
+  for aLoop := low(TFhirBindingConformance) to high(TFhirBindingConformance) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

@@ -28,6 +28,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$APPTYPE CONSOLE}
+{$I FHIR.INC}
 
 {$R *.res}
 
@@ -39,6 +40,9 @@ bug list:
  * Try dereferencing http://hl7.org/fhir/questionnaire-extensions#answerFormat -- 404
     Our URLs for extensions are broken
     They should all be http://hl7.org/fhir/Profile/someid#extension
+
+[2:25:55 PM] Brian Postlethwaite: http://fhir.healthintersections.com.au/open/MedicationStatement/_search?_count=100&patient:Patient._id=163
+ is there a way to issue a query and include _since>= on it?
 
 build validator jar not in validation pack
 
@@ -140,7 +144,6 @@ uses
   DateAndTime in '..\Libraries\Support\DateAndTime.pas',
   KDate in '..\Libraries\Support\KDate.pas',
   HL7V2DateSupport in '..\Libraries\Support\HL7V2DateSupport.pas',
-  {$IFDEF FHIR-DSTU}
   FHIRBase in '..\Libraries\refplat-dstu\FHIRBase.pas',
   FHIRTypes in '..\Libraries\refplat-dstu\FHIRTypes.pas',
   FHIRResources in '..\Libraries\refplat-dstu\FHIRResources.pas',
@@ -153,21 +156,6 @@ uses
   FHIRLang in '..\Libraries\refplat-dstu\FHIRLang.pas',
   FHIRUtilities in '..\Libraries\refplat-dstu\FHIRUtilities.pas',
   FHIRClient in '..\Libraries\refplat-dstu\FHIRClient.pas',
-  {$ELSE}
-  FHIRBase in '..\Libraries\refplat-dev\FHIRBase.pas',
-  FHIRTypes in '..\Libraries\refplat-dev\FHIRTypes.pas',
-  FHIRResources in '..\Libraries\refplat-dev\FHIRResources.pas',
-  FHIRComponents in '..\Libraries\refplat-dev\FHIRComponents.pas',
-  FHIRParser in '..\Libraries\refplat-dev\FHIRParser.pas',
-  FHIRParserBase in '..\Libraries\refplat-dev\FHIRParserBase.pas',
-  FHIRConstants in '..\Libraries\refplat-dev\FHIRConstants.pas',
-  FHIRSupport in '..\Libraries\refplat-dev\FHIRSupport.pas',
-  FHIRAtomFeed in '..\Libraries\refplat-dev\FHIRAtomFeed.pas',
-  FHIRLang in '..\Libraries\refplat-dev\FHIRLang.pas',
-  FHIRUtilities in '..\Libraries\refplat-dev\FHIRUtilities.pas',
-  FHIRClient in '..\Libraries\refplat-dev\FHIRClient.pas',
-  {$ENDIF }
-
   MsXmlParser in '..\Libraries\Support\MsXmlParser.pas',
   XMLBuilder in '..\Libraries\Support\XMLBuilder.pas',
   AdvWinInetClients in '..\Libraries\Support\AdvWinInetClients.pas',
@@ -264,7 +252,9 @@ uses
   JWTTests in '..\Libraries\security\JWTTests.pas',
   JWT in '..\Libraries\security\JWT.pas',
   HMAC in '..\Libraries\security\HMAC.pas',
-  libeay32 in '..\Libraries\security\libeay32.pas';
+  libeay32 in '..\Libraries\security\libeay32.pas',
+  AuthServer in 'AuthServer.pas',
+  RxNormServices in 'RxNormServices.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

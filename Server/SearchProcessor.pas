@@ -111,7 +111,7 @@ begin
       for j := 0 to ts.count - 1 do
       begin
         handled := false;
-        filter := filter + processParam([type_], params.VarName(i), lowercase(ts[j]), false, first, handled);
+        filter := filter + processParam([type_], params.VarName(i), ts[j], false, first, handled);
         if handled then
           link := link + '&'+params.VarName(i)+'='+EncodeMIME(ts[j]);
       end;
@@ -276,6 +276,7 @@ begin
                   end;
                 SearchParamTypeString:
                   begin
+                    value := lowercase(value);
                     if name = 'phonetic' then
                       value := EncodeNYSIIS(value);
                     if (modifier = 'partial') or (modifier = '') then
@@ -294,6 +295,7 @@ begin
                   end;
                 SearchParamTypeToken:
                   begin
+                  value := lowercase(value);
                   // _id is a special case
                   if (name = '_id') then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
@@ -458,9 +460,9 @@ begin
   else if (length(s) > 11) and (s[5] = '-') and (s[8] = '-') and (s[11] = 'T') and
           StringIsCardinal16(copy(s, 1, 4)) and StringIsCardinal16(copy(s, 6, 2)) and StringIsCardinal16(copy(s, 9, 2)) then
   begin
-    if (length(s) = 16) and (s[14] = '-') and StringIsCardinal16(copy(s, 12, 2)) and StringIsCardinal16(copy(s, 15, 2)) then
+    if (length(s) = 16) and (s[14] = ':') and StringIsCardinal16(copy(s, 12, 2)) and StringIsCardinal16(copy(s, 15, 2)) then
       ok := true
-    else if (length(s) = 19) and (s[14] = '-') and (s[17] = '-') and
+    else if (length(s) = 19) and (s[14] = ':') and (s[17] = ':') and
           StringIsCardinal16(copy(s, 12, 2)) and StringIsCardinal16(copy(s, 15, 2)) and StringIsCardinal16(copy(s, 18, 2)) then
       ok := true;
   end;

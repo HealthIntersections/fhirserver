@@ -20,6 +20,7 @@ Type
     FSnomed : TSnomedServices;
     Lock : TAdvExclusiveCriticalSection;
     FSearchCache : TStringList;
+    FFHIRPath : String;
     Function GetFSN(iDescriptions : TCardinalArray) : String;
     Function GetPN(iDescriptions : TCardinalArray) : String;
     Function GetPNForConcept(iIndex : Cardinal) : String;
@@ -42,7 +43,7 @@ Type
     Procedure ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
     Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher);
   Public
-    Constructor Create(oSnomed : TSnomedServices);
+    Constructor Create(oSnomed : TSnomedServices; FHIRPath : String);
     Destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
@@ -114,8 +115,6 @@ Begin
     oMap.Free;
   End;
 End;
-
-
 
 procedure TSnomedPublisher.PublishDict(oMap: TAdvStringMatch; const sPrefix: String; html: THtmlPublisher);
 begin
@@ -762,6 +761,12 @@ Begin
       html.submit('Go');
     end;
     html.endForm;
+    html.StartParagraph;
+    if iRefSet = 0 then
+      html.URL('Expanded Value Set', FFHIRPath+'ValueSet?_query=expand&identifier=http://snomed.info/id/'+sId)
+    else
+      html.URL('Expanded Value Set', FFHIRPath+'ValueSet?_query=expand&identifier=http://snomed.info/sct/'+sId);
+    html.EndParagraph;
     html.Line;
     if not bRoot and (Length(Outbounds) > 0) Then
     Begin
@@ -1447,6 +1452,7 @@ begin
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FSnomed := oSnomed.Link;
+  FFHIRPath := FHIRPath;
 end;
 
 destructor TSnomedPublisher.Destroy;

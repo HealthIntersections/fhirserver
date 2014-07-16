@@ -41,7 +41,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.2.1 generated Fri, May 16, 2014 11:44+1000
+// FHIR v0.2.1 generated Thu, Jul 17, 2014 03:20+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -59,11 +59,11 @@ Type
     frtAppointmentResponse, {@enum.value (informative) A response to a scheduled appointment for a patient and/or practitioner(s). }
     frtAvailability, {@enum.value (informative) A container for slot(s) of time that may be available for booking appointments. }
     frtCarePlan, {@enum.value Describes the intention of how one or more practitioners intend to deliver care for a particular patient for a period of time, possibly limited to care for a specific condition or set of conditions. }
-    frtCommonDataElement, {@enum.value The formal description of a single piece of information that can be gathered and reported. }
     frtComposition, {@enum.value A set of healthcare-related information that is assembled together into a single logical document that provides a single coherent statement of meaning, establishes its own context and that has clinical attestation with regard to who is making the statement. }
     frtConceptMap, {@enum.value A statement of relationships from one set of concepts to one or more other concepts - either code systems or data elements, or classes in class models. }
     frtCondition, {@enum.value Use to record detailed information about conditions, problems or diagnoses recognized by a clinician. There are many uses including: recording a Diagnosis during an Encounter; populating a problem List or a Summary Statement, such as a Discharge Summary. }
     frtConformance, {@enum.value A conformance statement is a set of requirements for a desired implementation or a description of how a target application fulfills those requirements in a particular implementation. }
+    frtDataElement, {@enum.value The formal description of a single piece of information that can be gathered and reported. }
     frtDevice, {@enum.value This resource identifies an instance of a manufactured thing that is used in the provision of healthcare without being substantially changed through that activity. The device may be a machine, an insert, a computer, an application, etc. This includes durable (reusable) medical equipment as well as disposable equipment used for diagnostic, treatment, and research for healthcare and public health. }
     frtDeviceObservationReport, {@enum.value Describes the data produced by a device at a point in time. }
     frtDiagnosticOrder, {@enum.value A request for a diagnostic investigation service to be performed. }
@@ -190,22 +190,6 @@ Related resources tie this event to the authorizing prescription, and the specif
     spCarePlan_Participant, {@enum.value spCarePlan_Participant Who is involved }
     spCarePlan_Patient); {@enum.value spCarePlan_Patient Who care plan is for }
 
-  {@Enum TSearchParamsCommonDataElement
-    Search Parameters for CommonDataElement
-  }
-  TSearchParamsCommonDataElement = (
-    spCommonDataElement__id, {@enum.value spCommonDataElement__id The logical resource id associated with the resource (must be supported by all servers) }
-    spCommonDataElement__language, {@enum.value spCommonDataElement__language The stated language of the resource }
-    spCommonDataElement_Category, {@enum.value spCommonDataElement_Category A category assigned to the observation definition (server may choose to do subsumption) }
-    spCommonDataElement_Code, {@enum.value spCommonDataElement_Code A code for the observation definition (server may choose to do subsumption) }
-    spCommonDataElement_Date, {@enum.value spCommonDataElement_Date The observation definition publication date }
-    spCommonDataElement_Description, {@enum.value spCommonDataElement_Description Text search in the description of the observation definition }
-    spCommonDataElement_Identifier, {@enum.value spCommonDataElement_Identifier The identifier of the observation definition }
-    spCommonDataElement_Name, {@enum.value spCommonDataElement_Name Name of the observation definition }
-    spCommonDataElement_Publisher, {@enum.value spCommonDataElement_Publisher Name of the publisher of the observation definition }
-    spCommonDataElement_Status, {@enum.value spCommonDataElement_Status The current status of the observation definition }
-    spCommonDataElement_Version); {@enum.value spCommonDataElement_Version The version identifier of the observation definition }
-
   {@Enum TSearchParamsComposition
     Search Parameters for Composition
   }
@@ -285,6 +269,22 @@ Related resources tie this event to the authorizing prescription, and the specif
     spConformance_Status, {@enum.value spConformance_Status The current status of the conformance statement }
     spConformance_Supported_profile, {@enum.value spConformance_Supported_profile Profiles supported by the system }
     spConformance_Version); {@enum.value spConformance_Version The version identifier of the conformance statement }
+
+  {@Enum TSearchParamsDataElement
+    Search Parameters for DataElement
+  }
+  TSearchParamsDataElement = (
+    spDataElement__id, {@enum.value spDataElement__id The logical resource id associated with the resource (must be supported by all servers) }
+    spDataElement__language, {@enum.value spDataElement__language The stated language of the resource }
+    spDataElement_Category, {@enum.value spDataElement_Category A category assigned to the data element (server may choose to do subsumption) }
+    spDataElement_Code, {@enum.value spDataElement_Code A code for the data element (server may choose to do subsumption) }
+    spDataElement_Date, {@enum.value spDataElement_Date The data element publication date }
+    spDataElement_Description, {@enum.value spDataElement_Description Text search in the description of the data element }
+    spDataElement_Identifier, {@enum.value spDataElement_Identifier The identifier of the data element }
+    spDataElement_Name, {@enum.value spDataElement_Name Name of the data element }
+    spDataElement_Publisher, {@enum.value spDataElement_Publisher Name of the publisher of the data element }
+    spDataElement_Status, {@enum.value spDataElement_Status The current status of the data element }
+    spDataElement_Version); {@enum.value spDataElement_Version The version identifier of the data element }
 
   {@Enum TSearchParamsDevice
     Search Parameters for Device
@@ -424,6 +424,7 @@ Related resources tie this event to the authorizing prescription, and the specif
   TSearchParamsFamilyHistory = (
     spFamilyHistory__id, {@enum.value spFamilyHistory__id The logical resource id associated with the resource (must be supported by all servers) }
     spFamilyHistory__language, {@enum.value spFamilyHistory__language The stated language of the resource }
+    spFamilyHistory_Date, {@enum.value spFamilyHistory_Date When history was captured/updated }
     spFamilyHistory_Subject); {@enum.value spFamilyHistory_Subject The identity of a subject to list family history items for }
 
   {@Enum TSearchParamsGroup
@@ -768,6 +769,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     spProfile_Publisher, {@enum.value spProfile_Publisher Name of the publisher of the profile }
     spProfile_Status, {@enum.value spProfile_Status The current status of the profile }
     spProfile_Type, {@enum.value spProfile_Type Type of resource that is constrained in the profile }
+    spProfile_Url, {@enum.value spProfile_Url Literal URL used to reference this profile }
     spProfile_Valueset, {@enum.value spProfile_Valueset A vocabulary binding code }
     spProfile_Version); {@enum.value spProfile_Version The version identifier of the profile }
 
@@ -885,7 +887,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     spSubscription_Criteria, {@enum.value spSubscription_Criteria Rule for server push criteria }
     spSubscription_Payload, {@enum.value spSubscription_Payload Mimetype to send, or blank for no payload }
     spSubscription_Status, {@enum.value spSubscription_Status requested | active | error | off }
-    spSubscription_Tag, {@enum.value spSubscription_Tag The term for the tag }
+    spSubscription_Tag, {@enum.value spSubscription_Tag The term that identifies the tag }
     spSubscription_Type, {@enum.value spSubscription_Type rest-hook | websocket | email | sms | message }
     spSubscription_Url); {@enum.value spSubscription_Url Where the channel points to }
 
@@ -942,11 +944,11 @@ Type
   TFhirAppointmentResponse = class;
   TFhirAvailability = class;
   TFhirCarePlan = class;
-  TFhirCommonDataElement = class;
   TFhirComposition = class;
   TFhirConceptMap = class;
   TFhirCondition = class;
   TFhirConformance = class;
+  TFhirDataElement = class;
   TFhirDevice = class;
   TFhirDeviceObservationReport = class;
   TFhirDiagnosticOrder = class;
@@ -1872,236 +1874,6 @@ Type
   end;
 
 
-  {@Class TFhirCommonDataElement : TFhirResource
-    The formal description of a single piece of information that can be gathered and reported.
-  }
-  {!.Net HL7Connect.Fhir.CommonDataElement}
-  TFhirCommonDataElement = class (TFhirResource)
-  private
-    FIdentifier : TFhirString;
-    FVersion : TFhirString;
-    FPublisher : TFhirString;
-    FtelecomList : TFhirContactList;
-    FStatus : TFhirEnum;
-    FDate : TFhirDateTime;
-    FName : TFhirString;
-    FcategoryList : TFhirCodeableConceptList;
-    FcodeList : TFhirCodingList;
-    FQuestion : TFhirString;
-    FDefinition : TFhirString;
-    FComments : TFhirString;
-    FRequirements : TFhirString;
-    FsynonymList : TFhirStringList;
-    FType_ : TFhirCode;
-    FExample : TFhirType;
-    FMaxLength : TFhirInteger;
-    FUnits : TFhirCodeableConcept;
-    FBinding : TFhirCommonDataElementBinding;
-    FmappingList : TFhirCommonDataElementMappingList;
-    Procedure SetIdentifier(value : TFhirString);
-    Function GetIdentifierST : String;
-    Procedure SetIdentifierST(value : String);
-    Procedure SetVersion(value : TFhirString);
-    Function GetVersionST : String;
-    Procedure SetVersionST(value : String);
-    Procedure SetPublisher(value : TFhirString);
-    Function GetPublisherST : String;
-    Procedure SetPublisherST(value : String);
-    Procedure SetStatus(value : TFhirEnum);
-    Function GetStatusST : TFhirResourceObservationDefStatus;
-    Procedure SetStatusST(value : TFhirResourceObservationDefStatus);
-    Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
-    Procedure SetName(value : TFhirString);
-    Function GetNameST : String;
-    Procedure SetNameST(value : String);
-    Procedure SetQuestion(value : TFhirString);
-    Function GetQuestionST : String;
-    Procedure SetQuestionST(value : String);
-    Procedure SetDefinition(value : TFhirString);
-    Function GetDefinitionST : String;
-    Procedure SetDefinitionST(value : String);
-    Procedure SetComments(value : TFhirString);
-    Function GetCommentsST : String;
-    Procedure SetCommentsST(value : String);
-    Procedure SetRequirements(value : TFhirString);
-    Function GetRequirementsST : String;
-    Procedure SetRequirementsST(value : String);
-    Procedure SetType_(value : TFhirCode);
-    Function GetType_ST : String;
-    Procedure SetType_ST(value : String);
-    Procedure SetExample(value : TFhirType);
-    Procedure SetMaxLength(value : TFhirInteger);
-    Function GetMaxLengthST : String;
-    Procedure SetMaxLengthST(value : String);
-    Procedure SetUnits(value : TFhirCodeableConcept);
-    Procedure SetBinding(value : TFhirCommonDataElementBinding);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-    Function GetHasASummary : Boolean; Override;
-    function GetResourceType : TFhirResourceType; override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirCommonDataElement; overload;
-    function Clone : TFhirCommonDataElement; overload;
-    {!script show}
-  published
-    {@member identifier
-      The identifier that is used to identify this observation definition when it is referenced in a Profile, Questionnaire or an instance  (should be globally unique OID, UUID, or URI).
-    }
-    property identifier : TFhirString read FIdentifier write SetIdentifier;
-    {@member identifierST
-      Typed access to The identifier that is used to identify this observation definition when it is referenced in a Profile, Questionnaire or an instance  (should be globally unique OID, UUID, or URI).
-    }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
-
-    {@member version
-      The identifier that is used to identify this version of the observation definition when it is referenced in a Profile, Questionnaire or instance. This is an arbitrary value managed by the definition author manually.
-    }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
-      Typed access to The identifier that is used to identify this version of the observation definition when it is referenced in a Profile, Questionnaire or instance. This is an arbitrary value managed by the definition author manually.
-    }
-    property versionST : String read GetVersionST write SetVersionST;
-
-    {@member publisher
-      Details of the individual or organization who accepts responsibility for publishing the observation definition.
-    }
-    property publisher : TFhirString read FPublisher write SetPublisher;
-    {@member publisherST
-      Typed access to Details of the individual or organization who accepts responsibility for publishing the observation definition.
-    }
-    property publisherST : String read GetPublisherST write SetPublisherST;
-
-    {@member telecomList
-      Contact details to assist a user in finding and communicating with the publisher.
-    }
-    property telecomList : TFhirContactList read FTelecomList;
-
-    {@member status
-      The status of the observation definition.
-    }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of the observation definition.
-    }
-    property statusST : TFhirResourceObservationDefStatus read GetStatusST write SetStatusST;
-
-    {@member date
-      The date that this version of the observation definition was published.
-    }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
-      Typed access to The date that this version of the observation definition was published.
-    }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
-
-    {@member name
-      The term used by humans to refer to the data element.  Should ideally be unique within the context in which the data element is expected to be used.
-    }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
-      Typed access to The term used by humans to refer to the data element.  Should ideally be unique within the context in which the data element is expected to be used.
-    }
-    property nameST : String read GetNameST write SetNameST;
-
-    {@member categoryList
-      A set of terms from external terminologies that may be used to assist with indexing and searching of data element definitions.
-    }
-    property categoryList : TFhirCodeableConceptList read FCategoryList;
-
-    {@member codeList
-      A code assigned to the data eleent within a particular terminology.
-    }
-    property codeList : TFhirCodingList read FCodeList;
-
-    {@member question
-      The default/suggested phrasing to use when prompting a human to capture the data element.
-    }
-    property question : TFhirString read FQuestion write SetQuestion;
-    {@member questionST
-      Typed access to The default/suggested phrasing to use when prompting a human to capture the data element.
-    }
-    property questionST : String read GetQuestionST write SetQuestionST;
-
-    {@member definition
-      Provides a complete explanation of the meaning of the data element for human readability.
-    }
-    property definition : TFhirString read FDefinition write SetDefinition;
-    {@member definitionST
-      Typed access to Provides a complete explanation of the meaning of the data element for human readability.
-    }
-    property definitionST : String read GetDefinitionST write SetDefinitionST;
-
-    {@member comments
-      Comments about the use of the element, including notes about how to use the data properly, exceptions to proper use, etc.
-    }
-    property comments : TFhirString read FComments write SetComments;
-    {@member commentsST
-      Typed access to Comments about the use of the element, including notes about how to use the data properly, exceptions to proper use, etc.
-    }
-    property commentsST : String read GetCommentsST write SetCommentsST;
-
-    {@member requirements
-      Explains why this element is needed and why it's been constrained as it has.
-    }
-    property requirements : TFhirString read FRequirements write SetRequirements;
-    {@member requirementsST
-      Typed access to Explains why this element is needed and why it's been constrained as it has.
-    }
-    property requirementsST : String read GetRequirementsST write SetRequirementsST;
-
-    {@member synonymList
-      Identifies additional names by which this element might also be known.
-    }
-    property synonymList : TFhirStringList read FSynonymList;
-
-    {@member type_
-      The FHIR data type that is the type for this element.
-    }
-    property type_ : TFhirCode read FType_ write SetType_;
-    {@member type_ST
-      Typed access to The FHIR data type that is the type for this element.
-    }
-    property type_ST : String read GetType_ST write SetType_ST;
-
-    {@member example
-      An example value for this element.
-    }
-    property example : TFhirType read FExample write SetExample;
-
-    {@member maxLength
-      Indicates the shortest length that SHALL be supported by conformant instances without truncation.
-    }
-    property maxLength : TFhirInteger read FMaxLength write SetMaxLength;
-    {@member maxLengthST
-      Typed access to Indicates the shortest length that SHALL be supported by conformant instances without truncation.
-    }
-    property maxLengthST : String read GetMaxLengthST write SetMaxLengthST;
-
-    {@member units
-      Identifies the units of measure in which the data element should be captured or expressed.
-    }
-    property units : TFhirCodeableConcept read FUnits write SetUnits;
-
-    {@member binding
-      Binds to a value set if this element is coded (code, Coding, CodeableConcept).
-    }
-    property binding : TFhirCommonDataElementBinding read FBinding write SetBinding;
-
-    {@member mappingList
-      Identifies a concept from an external specification that roughly corresponds to this element.
-    }
-    property mappingList : TFhirCommonDataElementMappingList read FMappingList;
-
-  end;
-
-
   {@Class TFhirComposition : TFhirResource
     A set of healthcare-related information that is assembled together into a single logical document that provides a single coherent statement of meaning, establishes its own context and that has clinical attestation with regard to who is making the statement.
   }
@@ -2759,6 +2531,230 @@ Type
       A document definition.
     }
     property documentList : TFhirConformanceDocumentList read FDocumentList;
+
+  end;
+
+
+  {@Class TFhirDataElement : TFhirResource
+    The formal description of a single piece of information that can be gathered and reported.
+  }
+  {!.Net HL7Connect.Fhir.DataElement}
+  TFhirDataElement = class (TFhirResource)
+  private
+    FIdentifier : TFhirIdentifier;
+    FVersion : TFhirString;
+    FPublisher : TFhirString;
+    FtelecomList : TFhirContactList;
+    FStatus : TFhirEnum;
+    FDate : TFhirDateTime;
+    FName : TFhirString;
+    FcategoryList : TFhirCodeableConceptList;
+    FcodeList : TFhirCodingList;
+    FQuestion : TFhirString;
+    FDefinition : TFhirString;
+    FComments : TFhirString;
+    FRequirements : TFhirString;
+    FsynonymList : TFhirStringList;
+    FType_ : TFhirCode;
+    FExample : TFhirType;
+    FMaxLength : TFhirInteger;
+    FUnits : TFhirCodeableConcept;
+    FBinding : TFhirDataElementBinding;
+    FmappingList : TFhirDataElementMappingList;
+    Procedure SetIdentifier(value : TFhirIdentifier);
+    Procedure SetVersion(value : TFhirString);
+    Function GetVersionST : String;
+    Procedure SetVersionST(value : String);
+    Procedure SetPublisher(value : TFhirString);
+    Function GetPublisherST : String;
+    Procedure SetPublisherST(value : String);
+    Procedure SetStatus(value : TFhirEnum);
+    Function GetStatusST : TFhirResourceObservationDefStatus;
+    Procedure SetStatusST(value : TFhirResourceObservationDefStatus);
+    Procedure SetDate(value : TFhirDateTime);
+    Function GetDateST : TDateAndTime;
+    Procedure SetDateST(value : TDateAndTime);
+    Procedure SetName(value : TFhirString);
+    Function GetNameST : String;
+    Procedure SetNameST(value : String);
+    Procedure SetQuestion(value : TFhirString);
+    Function GetQuestionST : String;
+    Procedure SetQuestionST(value : String);
+    Procedure SetDefinition(value : TFhirString);
+    Function GetDefinitionST : String;
+    Procedure SetDefinitionST(value : String);
+    Procedure SetComments(value : TFhirString);
+    Function GetCommentsST : String;
+    Procedure SetCommentsST(value : String);
+    Procedure SetRequirements(value : TFhirString);
+    Function GetRequirementsST : String;
+    Procedure SetRequirementsST(value : String);
+    Procedure SetType_(value : TFhirCode);
+    Function GetType_ST : String;
+    Procedure SetType_ST(value : String);
+    Procedure SetExample(value : TFhirType);
+    Procedure SetMaxLength(value : TFhirInteger);
+    Function GetMaxLengthST : String;
+    Procedure SetMaxLengthST(value : String);
+    Procedure SetUnits(value : TFhirCodeableConcept);
+    Procedure SetBinding(value : TFhirDataElementBinding);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    Function GetHasASummary : Boolean; Override;
+    function GetResourceType : TFhirResourceType; override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirDataElement; overload;
+    function Clone : TFhirDataElement; overload;
+    {!script show}
+  published
+    {@member identifier
+      The identifier that is used to identify this data element when it is referenced in a Profile, Questionnaire or an instance.
+    }
+    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+
+    {@member version
+      The identifier that is used to identify this version of the data element when it is referenced in a Profile, Questionnaire or instance. This is an arbitrary value managed by the definition author manually.
+    }
+    property version : TFhirString read FVersion write SetVersion;
+    {@member versionST
+      Typed access to The identifier that is used to identify this version of the data element when it is referenced in a Profile, Questionnaire or instance. This is an arbitrary value managed by the definition author manually.
+    }
+    property versionST : String read GetVersionST write SetVersionST;
+
+    {@member publisher
+      Details of the individual or organization who accepts responsibility for publishing the data element.
+    }
+    property publisher : TFhirString read FPublisher write SetPublisher;
+    {@member publisherST
+      Typed access to Details of the individual or organization who accepts responsibility for publishing the data element.
+    }
+    property publisherST : String read GetPublisherST write SetPublisherST;
+
+    {@member telecomList
+      Contact details to assist a user in finding and communicating with the publisher.
+    }
+    property telecomList : TFhirContactList read FTelecomList;
+
+    {@member status
+      The status of the data element.
+    }
+    property status : TFhirEnum read FStatus write SetStatus;
+    {@member statusST
+      Typed access to The status of the data element.
+    }
+    property statusST : TFhirResourceObservationDefStatus read GetStatusST write SetStatusST;
+
+    {@member date
+      The date that this version of the data element was published.
+    }
+    property date : TFhirDateTime read FDate write SetDate;
+    {@member dateST
+      Typed access to The date that this version of the data element was published.
+    }
+    property dateST : TDateAndTime read GetDateST write SetDateST;
+
+    {@member name
+      The term used by humans to refer to the data element.  Should ideally be unique within the context in which the data element is expected to be used.
+    }
+    property name : TFhirString read FName write SetName;
+    {@member nameST
+      Typed access to The term used by humans to refer to the data element.  Should ideally be unique within the context in which the data element is expected to be used.
+    }
+    property nameST : String read GetNameST write SetNameST;
+
+    {@member categoryList
+      A set of terms from external terminologies that may be used to assist with indexing and searching of data element definitions.
+    }
+    property categoryList : TFhirCodeableConceptList read FCategoryList;
+
+    {@member codeList
+      A code that provides the meaning for a data element according to a particular terminology.
+    }
+    property codeList : TFhirCodingList read FCodeList;
+
+    {@member question
+      The default/suggested phrasing to use when prompting a human to capture the data element.
+    }
+    property question : TFhirString read FQuestion write SetQuestion;
+    {@member questionST
+      Typed access to The default/suggested phrasing to use when prompting a human to capture the data element.
+    }
+    property questionST : String read GetQuestionST write SetQuestionST;
+
+    {@member definition
+      Provides a complete explanation of the meaning of the data element for human readability.
+    }
+    property definition : TFhirString read FDefinition write SetDefinition;
+    {@member definitionST
+      Typed access to Provides a complete explanation of the meaning of the data element for human readability.
+    }
+    property definitionST : String read GetDefinitionST write SetDefinitionST;
+
+    {@member comments
+      Comments about the use of the element, including notes about how to use the data properly, exceptions to proper use, etc.
+    }
+    property comments : TFhirString read FComments write SetComments;
+    {@member commentsST
+      Typed access to Comments about the use of the element, including notes about how to use the data properly, exceptions to proper use, etc.
+    }
+    property commentsST : String read GetCommentsST write SetCommentsST;
+
+    {@member requirements
+      Explains why this element is needed and why it's been constrained as it has.
+    }
+    property requirements : TFhirString read FRequirements write SetRequirements;
+    {@member requirementsST
+      Typed access to Explains why this element is needed and why it's been constrained as it has.
+    }
+    property requirementsST : String read GetRequirementsST write SetRequirementsST;
+
+    {@member synonymList
+      Identifies additional names by which this element might also be known.
+    }
+    property synonymList : TFhirStringList read FSynonymList;
+
+    {@member type_
+      The FHIR data type that is the type for this element.
+    }
+    property type_ : TFhirCode read FType_ write SetType_;
+    {@member type_ST
+      Typed access to The FHIR data type that is the type for this element.
+    }
+    property type_ST : String read GetType_ST write SetType_ST;
+
+    {@member example
+      An example value for this element.
+    }
+    property example : TFhirType read FExample write SetExample;
+
+    {@member maxLength
+      Indicates the shortest length that SHALL be supported by conformant instances without truncation.
+    }
+    property maxLength : TFhirInteger read FMaxLength write SetMaxLength;
+    {@member maxLengthST
+      Typed access to Indicates the shortest length that SHALL be supported by conformant instances without truncation.
+    }
+    property maxLengthST : String read GetMaxLengthST write SetMaxLengthST;
+
+    {@member units
+      Identifies the units of measure in which the data element should be captured or expressed.
+    }
+    property units : TFhirCodeableConcept read FUnits write SetUnits;
+
+    {@member binding
+      Binds to a value set if this element is coded (code, Coding, CodeableConcept).
+    }
+    property binding : TFhirDataElementBinding read FBinding write SetBinding;
+
+    {@member mappingList
+      Identifies a concept from an external specification that roughly corresponds to this element.
+    }
+    property mappingList : TFhirDataElementMappingList read FMappingList;
 
   end;
 
@@ -3763,9 +3759,13 @@ Type
   private
     FidentifierList : TFhirIdentifierList;
     FSubject : TFhirResourceReference{TFhirPatient};
+    FDate : TFhirDateTime;
     FNote : TFhirString;
     FrelationList : TFhirFamilyHistoryRelationList;
     Procedure SetSubject(value : TFhirResourceReference{TFhirPatient});
+    Procedure SetDate(value : TFhirDateTime);
+    Function GetDateST : TDateAndTime;
+    Procedure SetDateST(value : TDateAndTime);
     Procedure SetNote(value : TFhirString);
     Function GetNoteST : String;
     Procedure SetNoteST(value : String);
@@ -3792,6 +3792,15 @@ Type
       The person who this history concerns.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+
+    {@member date
+      The date (and possibly time) when the family history was taken.
+    }
+    property date : TFhirDateTime read FDate write SetDate;
+    {@member dateST
+      Typed access to The date (and possibly time) when the family history was taken.
+    }
+    property dateST : TDateAndTime read GetDateST write SetDateST;
 
     {@member note
       Conveys information about family history not specific to individual relations.
@@ -6300,7 +6309,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     property performerList : TFhirProcedurePerformerList read FPerformerList;
 
     {@member date
-      The dates over which the procedure was performed. Allows a period to support complex procedures that span more that one date, and also allows for the length of the procedure to be captured.
+      The dates over which the procedure was performed. Allows a period to support complex procedures that span more than one date, and also allows for the length of the procedure to be captured.
     }
     property date : TFhirPeriod read FDate write SetDate;
 
@@ -6360,7 +6369,8 @@ Related resources tie this event to the authorizing prescription, and the specif
   {!.Net HL7Connect.Fhir.Profile}
   TFhirProfile = class (TFhirResource)
   private
-    FIdentifier : TFhirString;
+    FUrl : TFhirUri;
+    FidentifierList : TFhirIdentifierList;
     FVersion : TFhirString;
     FName : TFhirString;
     FPublisher : TFhirString;
@@ -6376,9 +6386,9 @@ Related resources tie this event to the authorizing prescription, and the specif
     FstructureList : TFhirProfileStructureList;
     FextensionDefnList : TFhirProfileExtensionDefnList;
     FqueryList : TFhirProfileQueryList;
-    Procedure SetIdentifier(value : TFhirString);
-    Function GetIdentifierST : String;
-    Procedure SetIdentifierST(value : String);
+    Procedure SetUrl(value : TFhirUri);
+    Function GetUrlST : String;
+    Procedure SetUrlST(value : String);
     Procedure SetVersion(value : TFhirString);
     Function GetVersionST : String;
     Procedure SetVersionST(value : String);
@@ -6420,14 +6430,19 @@ Related resources tie this event to the authorizing prescription, and the specif
     function Clone : TFhirProfile; overload;
     {!script show}
   published
-    {@member identifier
-      The identifier that is used to identify this profile when it is referenced in a specification, model, design or an instance  (should be globally unique OID, UUID, or URI).
+    {@member url
+      The URL at which this profile is (or will be) published, and which is used to reference this profile in extension urls and tag values in operational FHIR systems.
     }
-    property identifier : TFhirString read FIdentifier write SetIdentifier;
-    {@member identifierST
-      Typed access to The identifier that is used to identify this profile when it is referenced in a specification, model, design or an instance  (should be globally unique OID, UUID, or URI).
+    property url : TFhirUri read FUrl write SetUrl;
+    {@member urlST
+      Typed access to The URL at which this profile is (or will be) published, and which is used to reference this profile in extension urls and tag values in operational FHIR systems.
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property urlST : String read GetUrlST write SetUrlST;
+
+    {@member identifierList
+      Formal identifier that is used to identify this profile when it is represented in other formats, or referenced in a specification, model, design or an instance  (should be globally unique OID, UUID, or URI), (if it's not possible to use the literal URI).
+    }
+    property identifierList : TFhirIdentifierList read FIdentifierList;
 
     {@member version
       The identifier that is used to identify this version of the profile when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
@@ -7539,20 +7554,20 @@ Related resources tie this event to the authorizing prescription, and the specif
     property nameST : String read GetNameST write SetNameST;
 
     {@member purpose
-      This should describe ?the semantic space" to be included in the value set. This can also describe the approach taken to build the value set.
+      This should describe "the semantic space" to be included in the value set. This can also describe the approach taken to build the value set.
     }
     property purpose : TFhirString read FPurpose write SetPurpose;
     {@member purposeST
-      Typed access to This should describe ?the semantic space" to be included in the value set. This can also describe the approach taken to build the value set.
+      Typed access to This should describe "the semantic space" to be included in the value set. This can also describe the approach taken to build the value set.
     }
     property purposeST : String read GetPurposeST write SetPurposeST;
 
     {@member immutable
-      If this is set to ?true?, then no new versions of the content logical definition can be created.  Note: Other metadata might still change.
+      If this is set to 'true', then no new versions of the content logical definition can be created.  Note: Other metadata might still change.
     }
     property immutable : TFhirBoolean read FImmutable write SetImmutable;
     {@member immutableST
-      Typed access to If this is set to ?true?, then no new versions of the content logical definition can be created.  Note: Other metadata might still change.
+      Typed access to If this is set to 'true', then no new versions of the content logical definition can be created.  Note: Other metadata might still change.
     }
     property immutableST : Boolean read GetImmutableST write SetImmutableST;
 
@@ -7948,21 +7963,6 @@ Related resources tie this event to the authorizing prescription, and the specif
     }
     {!script nolink}
     function newCarePlan : TFhirCarePlan;
-    {@member newCommonDataElementBinding
-      create a new binding
-    }
-    {!script nolink}
-    function newCommonDataElementBinding : TFhirCommonDataElementBinding;
-    {@member newCommonDataElementMapping
-      create a new mapping
-    }
-    {!script nolink}
-    function newCommonDataElementMapping : TFhirCommonDataElementMapping;
-    {@member newCommonDataElement
-      create a new CommonDataElement
-    }
-    {!script nolink}
-    function newCommonDataElement : TFhirCommonDataElement;
     {@member newCompositionAttester
       create a new attester
     }
@@ -8098,6 +8098,21 @@ Related resources tie this event to the authorizing prescription, and the specif
     }
     {!script nolink}
     function newConformance : TFhirConformance;
+    {@member newDataElementBinding
+      create a new binding
+    }
+    {!script nolink}
+    function newDataElementBinding : TFhirDataElementBinding;
+    {@member newDataElementMapping
+      create a new mapping
+    }
+    {!script nolink}
+    function newDataElementMapping : TFhirDataElementMapping;
+    {@member newDataElement
+      create a new DataElement
+    }
+    {!script nolink}
+    function newDataElement : TFhirDataElement;
     {@member newDevice
       create a new Device
     }
@@ -8538,41 +8553,46 @@ Related resources tie this event to the authorizing prescription, and the specif
     }
     {!script nolink}
     function newProfileStructure : TFhirProfileStructure;
-    {@member newProfileStructureElement
+    {@member newProfileStructureSnapshot
+      create a new snapshot
+    }
+    {!script nolink}
+    function newProfileStructureSnapshot : TFhirProfileStructureSnapshot;
+    {@member newProfileStructureSnapshotElement
       create a new element
     }
     {!script nolink}
-    function newProfileStructureElement : TFhirProfileStructureElement;
-    {@member newProfileStructureElementSlicing
+    function newProfileStructureSnapshotElement : TFhirProfileStructureSnapshotElement;
+    {@member newProfileStructureSnapshotElementSlicing
       create a new slicing
     }
     {!script nolink}
-    function newProfileStructureElementSlicing : TFhirProfileStructureElementSlicing;
-    {@member newProfileStructureElementDefinition
+    function newProfileStructureSnapshotElementSlicing : TFhirProfileStructureSnapshotElementSlicing;
+    {@member newProfileStructureSnapshotElementDefinition
       create a new definition
     }
     {!script nolink}
-    function newProfileStructureElementDefinition : TFhirProfileStructureElementDefinition;
-    {@member newProfileStructureElementDefinitionType
+    function newProfileStructureSnapshotElementDefinition : TFhirProfileStructureSnapshotElementDefinition;
+    {@member newProfileStructureSnapshotElementDefinitionType
       create a new type
     }
     {!script nolink}
-    function newProfileStructureElementDefinitionType : TFhirProfileStructureElementDefinitionType;
-    {@member newProfileStructureElementDefinitionConstraint
+    function newProfileStructureSnapshotElementDefinitionType : TFhirProfileStructureSnapshotElementDefinitionType;
+    {@member newProfileStructureSnapshotElementDefinitionConstraint
       create a new constraint
     }
     {!script nolink}
-    function newProfileStructureElementDefinitionConstraint : TFhirProfileStructureElementDefinitionConstraint;
-    {@member newProfileStructureElementDefinitionBinding
+    function newProfileStructureSnapshotElementDefinitionConstraint : TFhirProfileStructureSnapshotElementDefinitionConstraint;
+    {@member newProfileStructureSnapshotElementDefinitionBinding
       create a new binding
     }
     {!script nolink}
-    function newProfileStructureElementDefinitionBinding : TFhirProfileStructureElementDefinitionBinding;
-    {@member newProfileStructureElementDefinitionMapping
+    function newProfileStructureSnapshotElementDefinitionBinding : TFhirProfileStructureSnapshotElementDefinitionBinding;
+    {@member newProfileStructureSnapshotElementDefinitionMapping
       create a new mapping
     }
     {!script nolink}
-    function newProfileStructureElementDefinitionMapping : TFhirProfileStructureElementDefinitionMapping;
+    function newProfileStructureSnapshotElementDefinitionMapping : TFhirProfileStructureSnapshotElementDefinitionMapping;
     {@member newProfileStructureSearchParam
       create a new searchParam
     }
@@ -10383,487 +10403,6 @@ begin
 end;
 
 
-{ TFhirCommonDataElement }
-
-constructor TFhirCommonDataElement.Create;
-begin
-  inherited;
-  FTelecomList := TFhirContactList.Create;
-  FCategoryList := TFhirCodeableConceptList.Create;
-  FCodeList := TFhirCodingList.Create;
-  FSynonymList := TFhirStringList.Create;
-  FMappingList := TFhirCommonDataElementMappingList.Create;
-end;
-
-destructor TFhirCommonDataElement.Destroy;
-begin
-  FIdentifier.free;
-  FVersion.free;
-  FPublisher.free;
-  FTelecomList.Free;
-  FStatus.free;
-  FDate.free;
-  FName.free;
-  FCategoryList.Free;
-  FCodeList.Free;
-  FQuestion.free;
-  FDefinition.free;
-  FComments.free;
-  FRequirements.free;
-  FSynonymList.Free;
-  FType_.free;
-  FExample.free;
-  FMaxLength.free;
-  FUnits.free;
-  FBinding.free;
-  FMappingList.Free;
-  inherited;
-end;
-
-function TFhirCommonDataElement.GetResourceType : TFhirResourceType;
-begin
-  result := frtCommonDataElement;
-end;
-
-function TFhirCommonDataElement.GetHasASummary : Boolean;
-begin
-  result := true;
-end;
-
-procedure TFhirCommonDataElement.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  identifier := TFhirCommonDataElement(oSource).identifier.Clone;
-  version := TFhirCommonDataElement(oSource).version.Clone;
-  publisher := TFhirCommonDataElement(oSource).publisher.Clone;
-  FTelecomList.Assign(TFhirCommonDataElement(oSource).FTelecomList);
-  FStatus := TFhirCommonDataElement(oSource).FStatus.Link;
-  date := TFhirCommonDataElement(oSource).date.Clone;
-  name := TFhirCommonDataElement(oSource).name.Clone;
-  FCategoryList.Assign(TFhirCommonDataElement(oSource).FCategoryList);
-  FCodeList.Assign(TFhirCommonDataElement(oSource).FCodeList);
-  question := TFhirCommonDataElement(oSource).question.Clone;
-  definition := TFhirCommonDataElement(oSource).definition.Clone;
-  comments := TFhirCommonDataElement(oSource).comments.Clone;
-  requirements := TFhirCommonDataElement(oSource).requirements.Clone;
-  FSynonymList.Assign(TFhirCommonDataElement(oSource).FSynonymList);
-  type_ := TFhirCommonDataElement(oSource).type_.Clone;
-  example := TFhirCommonDataElement(oSource).example.Clone;
-  maxLength := TFhirCommonDataElement(oSource).maxLength.Clone;
-  units := TFhirCommonDataElement(oSource).units.Clone;
-  binding := TFhirCommonDataElement(oSource).binding.Clone;
-  FMappingList.Assign(TFhirCommonDataElement(oSource).FMappingList);
-end;
-
-procedure TFhirCommonDataElement.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
-  if (child_name = 'version') Then
-     list.add(Version.Link);
-  if (child_name = 'publisher') Then
-     list.add(Publisher.Link);
-  if (child_name = 'telecom') Then
-     list.addAll(FTelecomList);
-  if (child_name = 'status') Then
-     list.add(FStatus.Link);
-  if (child_name = 'date') Then
-     list.add(Date.Link);
-  if (child_name = 'name') Then
-     list.add(Name.Link);
-  if (child_name = 'category') Then
-     list.addAll(FCategoryList);
-  if (child_name = 'code') Then
-     list.addAll(FCodeList);
-  if (child_name = 'question') Then
-     list.add(Question.Link);
-  if (child_name = 'definition') Then
-     list.add(Definition.Link);
-  if (child_name = 'comments') Then
-     list.add(Comments.Link);
-  if (child_name = 'requirements') Then
-     list.add(Requirements.Link);
-  if (child_name = 'synonym') Then
-     list.addAll(FSynonymList);
-  if (child_name = 'type_') Then
-     list.add(Type_.Link);
-  if (child_name = 'example') Then
-     list.add(Example.Link);
-  if (child_name = 'maxLength') Then
-     list.add(MaxLength.Link);
-  if (child_name = 'units') Then
-     list.add(Units.Link);
-  if (child_name = 'binding') Then
-     list.add(Binding.Link);
-  if (child_name = 'mapping') Then
-     list.addAll(FMappingList);
-end;
-
-procedure TFhirCommonDataElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'string', FIdentifier.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'version', 'string', FVersion.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'publisher', 'string', FPublisher.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'telecom', 'Contact', FTelecomList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', FDate.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', FCategoryList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'code', 'Coding', FCodeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'question', 'string', FQuestion.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'definition', 'string', FDefinition.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'comments', 'string', FComments.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'requirements', 'string', FRequirements.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'synonym', 'string', FSynonymList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'type', 'code', FType_.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'example[x]', '*', FExample.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'maxLength', 'integer', FMaxLength.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'units', 'CodeableConcept', FUnits.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'binding', '', FBinding.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'mapping', '', FMappingList.Link)){3};
-end;
-
-function TFhirCommonDataElement.Link : TFhirCommonDataElement;
-begin
-  result := TFhirCommonDataElement(inherited Link);
-end;
-
-function TFhirCommonDataElement.Clone : TFhirCommonDataElement;
-begin
-  result := TFhirCommonDataElement(inherited Clone);
-end;
-
-{ TFhirCommonDataElement }
-
-Procedure TFhirCommonDataElement.SetIdentifier(value : TFhirString);
-begin
-  FIdentifier.free;
-  FIdentifier := value;
-end;
-
-Function TFhirCommonDataElement.GetIdentifierST : String;
-begin
-  if FIdentifier = nil then
-    result := ''
-  else
-    result := Identifier.value;
-end;
-
-Procedure TFhirCommonDataElement.SetIdentifierST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FIdentifier = nil then
-      FIdentifier := TFhirString.create;
-    FIdentifier.value := value
-  end
-  else if FIdentifier <> nil then
-    FIdentifier.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetVersion(value : TFhirString);
-begin
-  FVersion.free;
-  FVersion := value;
-end;
-
-Function TFhirCommonDataElement.GetVersionST : String;
-begin
-  if FVersion = nil then
-    result := ''
-  else
-    result := Version.value;
-end;
-
-Procedure TFhirCommonDataElement.SetVersionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FVersion = nil then
-      FVersion := TFhirString.create;
-    FVersion.value := value
-  end
-  else if FVersion <> nil then
-    FVersion.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetPublisher(value : TFhirString);
-begin
-  FPublisher.free;
-  FPublisher := value;
-end;
-
-Function TFhirCommonDataElement.GetPublisherST : String;
-begin
-  if FPublisher = nil then
-    result := ''
-  else
-    result := Publisher.value;
-end;
-
-Procedure TFhirCommonDataElement.SetPublisherST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FPublisher = nil then
-      FPublisher := TFhirString.create;
-    FPublisher.value := value
-  end
-  else if FPublisher <> nil then
-    FPublisher.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetStatus(value : TFhirEnum);
-begin
-  FStatus.free;
-  FStatus := value;
-end;
-
-Function TFhirCommonDataElement.GetStatusST : TFhirResourceObservationDefStatus;
-begin
-  if FStatus = nil then
-    result := TFhirResourceObservationDefStatus(0)
-  else
-    result := TFhirResourceObservationDefStatus(StringArrayIndexOf(CODES_TFhirResourceObservationDefStatus, Status.value));
-end;
-
-Procedure TFhirCommonDataElement.SetStatusST(value : TFhirResourceObservationDefStatus);
-begin
-  if ord(value) = 0 then
-    Status := nil
-  else
-    Status := TFhirEnum.create(CODES_TFhirResourceObservationDefStatus[value]);
-end;
-
-Procedure TFhirCommonDataElement.SetDate(value : TFhirDateTime);
-begin
-  FDate.free;
-  FDate := value;
-end;
-
-Function TFhirCommonDataElement.GetDateST : TDateAndTime;
-begin
-  if FDate = nil then
-    result := nil
-  else
-    result := Date.value;
-end;
-
-Procedure TFhirCommonDataElement.SetDateST(value : TDateAndTime);
-begin
-  if value <> nil then
-  begin
-    if FDate = nil then
-      FDate := TFhirDateTime.create;
-    FDate.value := value
-  end
-  else if FDate <> nil then
-    FDate.value := nil;
-end;
-
-Procedure TFhirCommonDataElement.SetName(value : TFhirString);
-begin
-  FName.free;
-  FName := value;
-end;
-
-Function TFhirCommonDataElement.GetNameST : String;
-begin
-  if FName = nil then
-    result := ''
-  else
-    result := Name.value;
-end;
-
-Procedure TFhirCommonDataElement.SetNameST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FName = nil then
-      FName := TFhirString.create;
-    FName.value := value
-  end
-  else if FName <> nil then
-    FName.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetQuestion(value : TFhirString);
-begin
-  FQuestion.free;
-  FQuestion := value;
-end;
-
-Function TFhirCommonDataElement.GetQuestionST : String;
-begin
-  if FQuestion = nil then
-    result := ''
-  else
-    result := Question.value;
-end;
-
-Procedure TFhirCommonDataElement.SetQuestionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FQuestion = nil then
-      FQuestion := TFhirString.create;
-    FQuestion.value := value
-  end
-  else if FQuestion <> nil then
-    FQuestion.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetDefinition(value : TFhirString);
-begin
-  FDefinition.free;
-  FDefinition := value;
-end;
-
-Function TFhirCommonDataElement.GetDefinitionST : String;
-begin
-  if FDefinition = nil then
-    result := ''
-  else
-    result := Definition.value;
-end;
-
-Procedure TFhirCommonDataElement.SetDefinitionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDefinition = nil then
-      FDefinition := TFhirString.create;
-    FDefinition.value := value
-  end
-  else if FDefinition <> nil then
-    FDefinition.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetComments(value : TFhirString);
-begin
-  FComments.free;
-  FComments := value;
-end;
-
-Function TFhirCommonDataElement.GetCommentsST : String;
-begin
-  if FComments = nil then
-    result := ''
-  else
-    result := Comments.value;
-end;
-
-Procedure TFhirCommonDataElement.SetCommentsST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FComments = nil then
-      FComments := TFhirString.create;
-    FComments.value := value
-  end
-  else if FComments <> nil then
-    FComments.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetRequirements(value : TFhirString);
-begin
-  FRequirements.free;
-  FRequirements := value;
-end;
-
-Function TFhirCommonDataElement.GetRequirementsST : String;
-begin
-  if FRequirements = nil then
-    result := ''
-  else
-    result := Requirements.value;
-end;
-
-Procedure TFhirCommonDataElement.SetRequirementsST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FRequirements = nil then
-      FRequirements := TFhirString.create;
-    FRequirements.value := value
-  end
-  else if FRequirements <> nil then
-    FRequirements.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetType_(value : TFhirCode);
-begin
-  FType_.free;
-  FType_ := value;
-end;
-
-Function TFhirCommonDataElement.GetType_ST : String;
-begin
-  if FType_ = nil then
-    result := ''
-  else
-    result := Type_.value;
-end;
-
-Procedure TFhirCommonDataElement.SetType_ST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FType_ = nil then
-      FType_ := TFhirCode.create;
-    FType_.value := value
-  end
-  else if FType_ <> nil then
-    FType_.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetExample(value : TFhirType);
-begin
-  FExample.free;
-  FExample := value;
-end;
-
-Procedure TFhirCommonDataElement.SetMaxLength(value : TFhirInteger);
-begin
-  FMaxLength.free;
-  FMaxLength := value;
-end;
-
-Function TFhirCommonDataElement.GetMaxLengthST : String;
-begin
-  if FMaxLength = nil then
-    result := ''
-  else
-    result := MaxLength.value;
-end;
-
-Procedure TFhirCommonDataElement.SetMaxLengthST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FMaxLength = nil then
-      FMaxLength := TFhirInteger.create;
-    FMaxLength.value := value
-  end
-  else if FMaxLength <> nil then
-    FMaxLength.value := '';
-end;
-
-Procedure TFhirCommonDataElement.SetUnits(value : TFhirCodeableConcept);
-begin
-  FUnits.free;
-  FUnits := value;
-end;
-
-Procedure TFhirCommonDataElement.SetBinding(value : TFhirCommonDataElementBinding);
-begin
-  FBinding.free;
-  FBinding := value;
-end;
-
-
 { TFhirComposition }
 
 constructor TFhirComposition.Create;
@@ -11147,7 +10686,7 @@ begin
 end;
 
 procedure TFhirConceptMap.Assign(oSource : TAdvObject);
-begin
+  begin
   inherited;
   identifier := TFhirConceptMap(oSource).identifier.Clone;
   version := TFhirConceptMap(oSource).version.Clone;
@@ -11219,7 +10758,7 @@ begin
 end;
 
 function TFhirConceptMap.Clone : TFhirConceptMap;
-begin
+  begin
   result := TFhirConceptMap(inherited Clone);
 end;
 
@@ -11372,7 +10911,7 @@ end;
 Procedure TFhirConceptMap.SetCopyrightST(value : String);
 begin
   if value <> '' then
-  begin
+begin
     if FCopyright = nil then
       FCopyright := TFhirString.create;
     FCopyright.value := value
@@ -11726,7 +11265,7 @@ end;
 Procedure TFhirCondition.SetNotesST(value : String);
 begin
   if value <> '' then
-  begin
+begin
     if FNotes = nil then
       FNotes := TFhirString.create;
     FNotes.value := value
@@ -11950,7 +11489,7 @@ end;
 Procedure TFhirConformance.SetNameST(value : String);
 begin
   if value <> '' then
-  begin
+begin
     if FName = nil then
       FName := TFhirString.create;
     FName.value := value
@@ -11976,7 +11515,7 @@ end;
 Procedure TFhirConformance.SetPublisherST(value : String);
 begin
   if value <> '' then
-  begin
+begin
     if FPublisher = nil then
       FPublisher := TFhirString.create;
     FPublisher.value := value
@@ -12002,7 +11541,7 @@ end;
 Procedure TFhirConformance.SetDescriptionST(value : String);
 begin
   if value <> '' then
-  begin
+begin
     if FDescription = nil then
       FDescription := TFhirString.create;
     FDescription.value := value
@@ -12071,7 +11610,7 @@ end;
 Procedure TFhirConformance.SetDateST(value : TDateAndTime);
 begin
   if value <> nil then
-  begin
+begin
     if FDate = nil then
       FDate := TFhirDateTime.create;
     FDate.value := value
@@ -12137,6 +11676,467 @@ begin
   if FAcceptUnknown = nil then
     FAcceptUnknown := TFhirBoolean.create;
   FAcceptUnknown.value := value
+end;
+
+
+{ TFhirDataElement }
+
+constructor TFhirDataElement.Create;
+begin
+  inherited;
+  FTelecomList := TFhirContactList.Create;
+  FCategoryList := TFhirCodeableConceptList.Create;
+  FCodeList := TFhirCodingList.Create;
+  FSynonymList := TFhirStringList.Create;
+  FMappingList := TFhirDataElementMappingList.Create;
+end;
+
+destructor TFhirDataElement.Destroy;
+begin
+  FIdentifier.free;
+  FVersion.free;
+  FPublisher.free;
+  FTelecomList.Free;
+  FStatus.free;
+  FDate.free;
+  FName.free;
+  FCategoryList.Free;
+  FCodeList.Free;
+  FQuestion.free;
+  FDefinition.free;
+  FComments.free;
+  FRequirements.free;
+  FSynonymList.Free;
+  FType_.free;
+  FExample.free;
+  FMaxLength.free;
+  FUnits.free;
+  FBinding.free;
+  FMappingList.Free;
+  inherited;
+end;
+
+function TFhirDataElement.GetResourceType : TFhirResourceType;
+begin
+  result := frtDataElement;
+end;
+
+function TFhirDataElement.GetHasASummary : Boolean;
+begin
+  result := true;
+end;
+
+procedure TFhirDataElement.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  identifier := TFhirDataElement(oSource).identifier.Clone;
+  version := TFhirDataElement(oSource).version.Clone;
+  publisher := TFhirDataElement(oSource).publisher.Clone;
+  FTelecomList.Assign(TFhirDataElement(oSource).FTelecomList);
+  FStatus := TFhirDataElement(oSource).FStatus.Link;
+  date := TFhirDataElement(oSource).date.Clone;
+  name := TFhirDataElement(oSource).name.Clone;
+  FCategoryList.Assign(TFhirDataElement(oSource).FCategoryList);
+  FCodeList.Assign(TFhirDataElement(oSource).FCodeList);
+  question := TFhirDataElement(oSource).question.Clone;
+  definition := TFhirDataElement(oSource).definition.Clone;
+  comments := TFhirDataElement(oSource).comments.Clone;
+  requirements := TFhirDataElement(oSource).requirements.Clone;
+  FSynonymList.Assign(TFhirDataElement(oSource).FSynonymList);
+  type_ := TFhirDataElement(oSource).type_.Clone;
+  example := TFhirDataElement(oSource).example.Clone;
+  maxLength := TFhirDataElement(oSource).maxLength.Clone;
+  units := TFhirDataElement(oSource).units.Clone;
+  binding := TFhirDataElement(oSource).binding.Clone;
+  FMappingList.Assign(TFhirDataElement(oSource).FMappingList);
+end;
+
+procedure TFhirDataElement.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'identifier') Then
+     list.add(Identifier.Link);
+  if (child_name = 'version') Then
+     list.add(Version.Link);
+  if (child_name = 'publisher') Then
+     list.add(Publisher.Link);
+  if (child_name = 'telecom') Then
+     list.addAll(FTelecomList);
+  if (child_name = 'status') Then
+     list.add(FStatus.Link);
+  if (child_name = 'date') Then
+     list.add(Date.Link);
+  if (child_name = 'name') Then
+     list.add(Name.Link);
+  if (child_name = 'category') Then
+     list.addAll(FCategoryList);
+  if (child_name = 'code') Then
+     list.addAll(FCodeList);
+  if (child_name = 'question') Then
+     list.add(Question.Link);
+  if (child_name = 'definition') Then
+     list.add(Definition.Link);
+  if (child_name = 'comments') Then
+     list.add(Comments.Link);
+  if (child_name = 'requirements') Then
+     list.add(Requirements.Link);
+  if (child_name = 'synonym') Then
+     list.addAll(FSynonymList);
+  if (child_name = 'type_') Then
+     list.add(Type_.Link);
+  if (child_name = 'example') Then
+     list.add(Example.Link);
+  if (child_name = 'maxLength') Then
+     list.add(MaxLength.Link);
+  if (child_name = 'units') Then
+     list.add(Units.Link);
+  if (child_name = 'binding') Then
+     list.add(Binding.Link);
+  if (child_name = 'mapping') Then
+     list.addAll(FMappingList);
+end;
+
+procedure TFhirDataElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifier.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'version', 'string', FVersion.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'publisher', 'string', FPublisher.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'telecom', 'Contact', FTelecomList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', FDate.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', FCategoryList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'code', 'Coding', FCodeList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'question', 'string', FQuestion.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'definition', 'string', FDefinition.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'comments', 'string', FComments.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'requirements', 'string', FRequirements.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'synonym', 'string', FSynonymList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'type', 'code', FType_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'example[x]', '*', FExample.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'maxLength', 'integer', FMaxLength.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'units', 'CodeableConcept', FUnits.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'binding', '', FBinding.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'mapping', '', FMappingList.Link)){3};
+end;
+
+function TFhirDataElement.Link : TFhirDataElement;
+begin
+  result := TFhirDataElement(inherited Link);
+end;
+
+function TFhirDataElement.Clone : TFhirDataElement;
+begin
+  result := TFhirDataElement(inherited Clone);
+end;
+
+{ TFhirDataElement }
+
+Procedure TFhirDataElement.SetIdentifier(value : TFhirIdentifier);
+begin
+  FIdentifier.free;
+  FIdentifier := value;
+end;
+
+Procedure TFhirDataElement.SetVersion(value : TFhirString);
+begin
+  FVersion.free;
+  FVersion := value;
+end;
+
+Function TFhirDataElement.GetVersionST : String;
+begin
+  if FVersion = nil then
+    result := ''
+  else
+    result := Version.value;
+end;
+
+Procedure TFhirDataElement.SetVersionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FVersion = nil then
+      FVersion := TFhirString.create;
+    FVersion.value := value
+  end
+  else if FVersion <> nil then
+    FVersion.value := '';
+end;
+
+Procedure TFhirDataElement.SetPublisher(value : TFhirString);
+begin
+  FPublisher.free;
+  FPublisher := value;
+end;
+
+Function TFhirDataElement.GetPublisherST : String;
+begin
+  if FPublisher = nil then
+    result := ''
+  else
+    result := Publisher.value;
+end;
+
+Procedure TFhirDataElement.SetPublisherST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPublisher = nil then
+      FPublisher := TFhirString.create;
+    FPublisher.value := value
+  end
+  else if FPublisher <> nil then
+    FPublisher.value := '';
+end;
+
+Procedure TFhirDataElement.SetStatus(value : TFhirEnum);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+Function TFhirDataElement.GetStatusST : TFhirResourceObservationDefStatus;
+begin
+  if FStatus = nil then
+    result := TFhirResourceObservationDefStatus(0)
+  else
+    result := TFhirResourceObservationDefStatus(StringArrayIndexOf(CODES_TFhirResourceObservationDefStatus, Status.value));
+end;
+
+Procedure TFhirDataElement.SetStatusST(value : TFhirResourceObservationDefStatus);
+begin
+  if ord(value) = 0 then
+    Status := nil
+  else
+    Status := TFhirEnum.create(CODES_TFhirResourceObservationDefStatus[value]);
+end;
+
+Procedure TFhirDataElement.SetDate(value : TFhirDateTime);
+begin
+  FDate.free;
+  FDate := value;
+end;
+
+Function TFhirDataElement.GetDateST : TDateAndTime;
+begin
+  if FDate = nil then
+    result := nil
+  else
+    result := Date.value;
+end;
+
+Procedure TFhirDataElement.SetDateST(value : TDateAndTime);
+begin
+  if value <> nil then
+begin
+    if FDate = nil then
+      FDate := TFhirDateTime.create;
+    FDate.value := value
+  end
+  else if FDate <> nil then
+    FDate.value := nil;
+end;
+
+Procedure TFhirDataElement.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+Function TFhirDataElement.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := Name.value;
+end;
+
+Procedure TFhirDataElement.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+Procedure TFhirDataElement.SetQuestion(value : TFhirString);
+begin
+  FQuestion.free;
+  FQuestion := value;
+end;
+
+Function TFhirDataElement.GetQuestionST : String;
+begin
+  if FQuestion = nil then
+    result := ''
+  else
+    result := Question.value;
+end;
+
+Procedure TFhirDataElement.SetQuestionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FQuestion = nil then
+      FQuestion := TFhirString.create;
+    FQuestion.value := value
+  end
+  else if FQuestion <> nil then
+    FQuestion.value := '';
+end;
+
+Procedure TFhirDataElement.SetDefinition(value : TFhirString);
+begin
+  FDefinition.free;
+  FDefinition := value;
+end;
+
+Function TFhirDataElement.GetDefinitionST : String;
+begin
+  if FDefinition = nil then
+    result := ''
+  else
+    result := Definition.value;
+end;
+
+Procedure TFhirDataElement.SetDefinitionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDefinition = nil then
+      FDefinition := TFhirString.create;
+    FDefinition.value := value
+  end
+  else if FDefinition <> nil then
+    FDefinition.value := '';
+end;
+
+Procedure TFhirDataElement.SetComments(value : TFhirString);
+begin
+  FComments.free;
+  FComments := value;
+end;
+
+Function TFhirDataElement.GetCommentsST : String;
+begin
+  if FComments = nil then
+    result := ''
+  else
+    result := Comments.value;
+end;
+
+Procedure TFhirDataElement.SetCommentsST(value : String);
+begin
+  if value <> '' then
+begin
+    if FComments = nil then
+      FComments := TFhirString.create;
+    FComments.value := value
+  end
+  else if FComments <> nil then
+    FComments.value := '';
+end;
+
+Procedure TFhirDataElement.SetRequirements(value : TFhirString);
+begin
+  FRequirements.free;
+  FRequirements := value;
+end;
+
+Function TFhirDataElement.GetRequirementsST : String;
+begin
+  if FRequirements = nil then
+    result := ''
+  else
+    result := Requirements.value;
+end;
+
+Procedure TFhirDataElement.SetRequirementsST(value : String);
+begin
+  if value <> '' then
+begin
+    if FRequirements = nil then
+      FRequirements := TFhirString.create;
+    FRequirements.value := value
+  end
+  else if FRequirements <> nil then
+    FRequirements.value := '';
+end;
+
+Procedure TFhirDataElement.SetType_(value : TFhirCode);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+Function TFhirDataElement.GetType_ST : String;
+begin
+  if FType_ = nil then
+    result := ''
+  else
+    result := Type_.value;
+end;
+
+Procedure TFhirDataElement.SetType_ST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FType_ = nil then
+      FType_ := TFhirCode.create;
+    FType_.value := value
+  end
+  else if FType_ <> nil then
+    FType_.value := '';
+end;
+
+Procedure TFhirDataElement.SetExample(value : TFhirType);
+begin
+  FExample.free;
+  FExample := value;
+end;
+
+Procedure TFhirDataElement.SetMaxLength(value : TFhirInteger);
+begin
+  FMaxLength.free;
+  FMaxLength := value;
+end;
+
+Function TFhirDataElement.GetMaxLengthST : String;
+begin
+  if FMaxLength = nil then
+    result := ''
+  else
+    result := MaxLength.value;
+end;
+
+Procedure TFhirDataElement.SetMaxLengthST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FMaxLength = nil then
+      FMaxLength := TFhirInteger.create;
+    FMaxLength.value := value
+  end
+  else if FMaxLength <> nil then
+    FMaxLength.value := '';
+end;
+
+Procedure TFhirDataElement.SetUnits(value : TFhirCodeableConcept);
+begin
+  FUnits.free;
+  FUnits := value;
+end;
+
+Procedure TFhirDataElement.SetBinding(value : TFhirDataElementBinding);
+begin
+  FBinding.free;
+  FBinding := value;
 end;
 
 
@@ -14002,6 +14002,7 @@ destructor TFhirFamilyHistory.Destroy;
 begin
   FIdentifierList.Free;
   FSubject.free;
+  FDate.free;
   FNote.free;
   FRelationList.Free;
   inherited;
@@ -14022,6 +14023,7 @@ begin
   inherited;
   FIdentifierList.Assign(TFhirFamilyHistory(oSource).FIdentifierList);
   subject := TFhirFamilyHistory(oSource).subject.Clone;
+  date := TFhirFamilyHistory(oSource).date.Clone;
   note := TFhirFamilyHistory(oSource).note.Clone;
   FRelationList.Assign(TFhirFamilyHistory(oSource).FRelationList);
 end;
@@ -14033,6 +14035,8 @@ begin
      list.addAll(FIdentifierList);
   if (child_name = 'subject') Then
      list.add(Subject.Link);
+  if (child_name = 'date') Then
+     list.add(Date.Link);
   if (child_name = 'note') Then
      list.add(Note.Link);
   if (child_name = 'relation') Then
@@ -14044,6 +14048,7 @@ begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient)', FSubject.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', FDate.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'note', 'string', FNote.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'relation', '', FRelationList.Link)){3};
 end;
@@ -14064,6 +14069,32 @@ Procedure TFhirFamilyHistory.SetSubject(value : TFhirResourceReference{TFhirPati
 begin
   FSubject.free;
   FSubject := value;
+end;
+
+Procedure TFhirFamilyHistory.SetDate(value : TFhirDateTime);
+begin
+  FDate.free;
+  FDate := value;
+end;
+
+Function TFhirFamilyHistory.GetDateST : TDateAndTime;
+begin
+  if FDate = nil then
+    result := nil
+  else
+    result := Date.value;
+end;
+
+Procedure TFhirFamilyHistory.SetDateST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FDate = nil then
+      FDate := TFhirDateTime.create;
+    FDate.value := value
+  end
+  else if FDate <> nil then
+    FDate.value := nil;
 end;
 
 Procedure TFhirFamilyHistory.SetNote(value : TFhirString);
@@ -17266,7 +17297,7 @@ procedure TFhirObservation.ListProperties(oList: TFHIRPropertyList; bInheritedPr
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'name', 'CodeableConcept', FName.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'Quantity|CodeableConcept|Attachment|Ratio|Period|SampledData|string', FValue.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'Quantity|CodeableConcept|Attachment|Ratio|dateTime|Period|SampledData|string', FValue.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'interpretation', 'CodeableConcept', FInterpretation.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'comments', 'string', FComments.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'applies[x]', 'dateTime|Period', FApplies.Link.Link));{2}
@@ -17278,7 +17309,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifier.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'subject', 'Resource(Patient|Group|Device|Location)', FSubject.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'specimen', 'Resource(Specimen)', FSpecimen.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Resource(Practitioner|Device|Organization)', FPerformerList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'performer', 'Resource(Practitioner|Device|Organization|Patient)', FPerformerList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'referenceRange', '', FReferenceRangeList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'related', '', FRelatedList.Link)){3};
 end;
@@ -18769,6 +18800,7 @@ end;
 constructor TFhirProfile.Create;
 begin
   inherited;
+  FIdentifierList := TFhirIdentifierList.Create;
   FTelecomList := TFhirContactList.Create;
   FCodeList := TFhirCodingList.Create;
   FMappingList := TFhirProfileMappingList.Create;
@@ -18779,7 +18811,8 @@ end;
 
 destructor TFhirProfile.Destroy;
 begin
-  FIdentifier.free;
+  FUrl.free;
+  FIdentifierList.Free;
   FVersion.free;
   FName.free;
   FPublisher.free;
@@ -18811,7 +18844,8 @@ end;
 procedure TFhirProfile.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirProfile(oSource).identifier.Clone;
+  url := TFhirProfile(oSource).url.Clone;
+  FIdentifierList.Assign(TFhirProfile(oSource).FIdentifierList);
   version := TFhirProfile(oSource).version.Clone;
   name := TFhirProfile(oSource).name.Clone;
   publisher := TFhirProfile(oSource).publisher.Clone;
@@ -18832,8 +18866,10 @@ end;
 procedure TFhirProfile.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
+  if (child_name = 'url') Then
+     list.add(Url.Link);
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.addAll(FIdentifierList);
   if (child_name = 'version') Then
      list.add(Version.Link);
   if (child_name = 'name') Then
@@ -18869,7 +18905,8 @@ end;
 procedure TFhirProfile.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'string', FIdentifier.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'url', 'uri', FUrl.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'version', 'string', FVersion.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'publisher', 'string', FPublisher.Link.Link));{2}
@@ -18899,30 +18936,30 @@ end;
 
 { TFhirProfile }
 
-Procedure TFhirProfile.SetIdentifier(value : TFhirString);
+Procedure TFhirProfile.SetUrl(value : TFhirUri);
 begin
-  FIdentifier.free;
-  FIdentifier := value;
+  FUrl.free;
+  FUrl := value;
 end;
 
-Function TFhirProfile.GetIdentifierST : String;
+Function TFhirProfile.GetUrlST : String;
 begin
-  if FIdentifier = nil then
+  if FUrl = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := Url.value;
 end;
 
-Procedure TFhirProfile.SetIdentifierST(value : String);
+Procedure TFhirProfile.SetUrlST(value : String);
 begin
   if value <> '' then
   begin
-    if FIdentifier = nil then
-      FIdentifier := TFhirString.create;
-    FIdentifier.value := value
+    if FUrl = nil then
+      FUrl := TFhirUri.create;
+    FUrl.value := value
   end
-  else if FIdentifier <> nil then
-    FIdentifier.value := '';
+  else if FUrl <> nil then
+    FUrl.value := '';
 end;
 
 Procedure TFhirProfile.SetVersion(value : TFhirString);
@@ -21632,21 +21669,6 @@ begin
   result := TFhirCarePlan.create;
 end;
 
-function TFhirResourceFactory.newCommonDataElementBinding : TFhirCommonDataElementBinding;
-begin
-  result := TFhirCommonDataElementBinding.create;
-end;
-
-function TFhirResourceFactory.newCommonDataElementMapping : TFhirCommonDataElementMapping;
-begin
-  result := TFhirCommonDataElementMapping.create;
-end;
-
-function TFhirResourceFactory.newCommonDataElement : TFhirCommonDataElement;
-begin
-  result := TFhirCommonDataElement.create;
-end;
-
 function TFhirResourceFactory.newCompositionAttester : TFhirCompositionAttester;
 begin
   result := TFhirCompositionAttester.create;
@@ -21780,6 +21802,21 @@ end;
 function TFhirResourceFactory.newConformance : TFhirConformance;
 begin
   result := TFhirConformance.create;
+end;
+
+function TFhirResourceFactory.newDataElementBinding : TFhirDataElementBinding;
+begin
+  result := TFhirDataElementBinding.create;
+end;
+
+function TFhirResourceFactory.newDataElementMapping : TFhirDataElementMapping;
+begin
+  result := TFhirDataElementMapping.create;
+end;
+
+function TFhirResourceFactory.newDataElement : TFhirDataElement;
+begin
+  result := TFhirDataElement.create;
 end;
 
 function TFhirResourceFactory.newDevice : TFhirDevice;
@@ -22222,39 +22259,44 @@ begin
   result := TFhirProfileStructure.create;
 end;
 
-function TFhirResourceFactory.newProfileStructureElement : TFhirProfileStructureElement;
+function TFhirResourceFactory.newProfileStructureSnapshot : TFhirProfileStructureSnapshot;
 begin
-  result := TFhirProfileStructureElement.create;
+  result := TFhirProfileStructureSnapshot.create;
 end;
 
-function TFhirResourceFactory.newProfileStructureElementSlicing : TFhirProfileStructureElementSlicing;
+function TFhirResourceFactory.newProfileStructureSnapshotElement : TFhirProfileStructureSnapshotElement;
 begin
-  result := TFhirProfileStructureElementSlicing.create;
+  result := TFhirProfileStructureSnapshotElement.create;
 end;
 
-function TFhirResourceFactory.newProfileStructureElementDefinition : TFhirProfileStructureElementDefinition;
+function TFhirResourceFactory.newProfileStructureSnapshotElementSlicing : TFhirProfileStructureSnapshotElementSlicing;
 begin
-  result := TFhirProfileStructureElementDefinition.create;
+  result := TFhirProfileStructureSnapshotElementSlicing.create;
 end;
 
-function TFhirResourceFactory.newProfileStructureElementDefinitionType : TFhirProfileStructureElementDefinitionType;
+function TFhirResourceFactory.newProfileStructureSnapshotElementDefinition : TFhirProfileStructureSnapshotElementDefinition;
 begin
-  result := TFhirProfileStructureElementDefinitionType.create;
+  result := TFhirProfileStructureSnapshotElementDefinition.create;
 end;
 
-function TFhirResourceFactory.newProfileStructureElementDefinitionConstraint : TFhirProfileStructureElementDefinitionConstraint;
+function TFhirResourceFactory.newProfileStructureSnapshotElementDefinitionType : TFhirProfileStructureSnapshotElementDefinitionType;
 begin
-  result := TFhirProfileStructureElementDefinitionConstraint.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionType.create;
 end;
 
-function TFhirResourceFactory.newProfileStructureElementDefinitionBinding : TFhirProfileStructureElementDefinitionBinding;
+function TFhirResourceFactory.newProfileStructureSnapshotElementDefinitionConstraint : TFhirProfileStructureSnapshotElementDefinitionConstraint;
 begin
-  result := TFhirProfileStructureElementDefinitionBinding.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionConstraint.create;
 end;
 
-function TFhirResourceFactory.newProfileStructureElementDefinitionMapping : TFhirProfileStructureElementDefinitionMapping;
+function TFhirResourceFactory.newProfileStructureSnapshotElementDefinitionBinding : TFhirProfileStructureSnapshotElementDefinitionBinding;
 begin
-  result := TFhirProfileStructureElementDefinitionMapping.create;
+  result := TFhirProfileStructureSnapshotElementDefinitionBinding.create;
+end;
+
+function TFhirResourceFactory.newProfileStructureSnapshotElementDefinitionMapping : TFhirProfileStructureSnapshotElementDefinitionMapping;
+begin
+  result := TFhirProfileStructureSnapshotElementDefinitionMapping.create;
 end;
 
 function TFhirResourceFactory.newProfileStructureSearchParam : TFhirProfileStructureSearchParam;

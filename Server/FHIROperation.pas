@@ -1079,9 +1079,15 @@ begin
     FConnection.Prepare;
     try
       if since <> MIN_DATE then
+      begin
         FConnection.BindTimeStamp('since', DateTimeToTS(since));
+        sql := sql + ' /* since = '+FormatDateTime('yyyy:mm:dd hh:nn:ss', since)+'*/';
+      end;
       if prior <> MIN_DATE then
+      begin
         FConnection.BindTimeStamp('prior', DateTimeToTS(prior));
+        sql := sql + ' /* prior = '+FormatDateTime('yyyy:mm:dd hh:nn:ss', prior)+'*/';
+      end;
       FConnection.Execute;
     finally
       FConnection.Terminate;
@@ -1295,7 +1301,7 @@ begin
   result := inttostr(FRepository.NextSearchKey);
   if params.VarExists('_query') then
   begin
-    raise exception.create('no defined queries are implemented at this time');
+    raise exception.create('The query "'+params.getVar('_query')+'" is not known');
   end
   else
     ProcessDefaultSearch(typekey, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, wantSummary);
@@ -2052,7 +2058,7 @@ s := s +
 '</form>'#13#10+
 ''#13#10+
 '<p>'+
-TFHIRXhtmlComposer.Footer(request.baseUrl);
+TFHIRXhtmlComposer.Footer(request.baseUrl, lang);
   response.Body := s;
 end;
 
@@ -2786,7 +2792,7 @@ begin
       feed.SearchTotal := 1;
       op := FRepository.TerminologyServer.translate(src, coding, dest);
       try
-        AddResourceToFeed(feed, NewGuidURN, 'Translation Outcome', 'Translation Outcome', '??', 'Health Intersections', '??base', now, op, '', nil, false);
+        AddResourceToFeed(feed, NewGuidURN, 'Translation Outcome', 'Translation Outcome', '', 'Health Intersections', '??base', now, op, '', nil, false);
       finally
         op.free;
       end;
@@ -3134,7 +3140,7 @@ var
   used : string;
   cacheId : String;
 begin
-  used := '_query=expand';
+  used := 'ValueSet?_query=expand';
 
   src := IdentifyValueset(request, resource, params, base, used, cacheId);
   try
@@ -3143,7 +3149,7 @@ begin
     feed.SearchTotal := 1;
     dst := FRepository.TerminologyServer.expandVS(src, cacheId, params.getVar('filter'));
     try
-      AddResourceToFeed(feed, NewGuidURN, 'ValueSet', feed.title, '??', 'Health Intersections', '??base', now, dst, '', nil, false);
+      AddResourceToFeed(feed, NewGuidURN, 'ValueSet', feed.title, '', 'Health Intersections', '??base', now, dst, '', nil, false);
     finally
       dst.free;
     end;
@@ -3191,7 +3197,7 @@ begin
       else
         op := FRepository.TerminologyServer.validate(src, coding);
       try
-        AddResourceToFeed(feed, NewGuidURN, 'Validation Outcome', 'Validation Outcome', '??', 'Health Intersections', '??base', now, op, '', nil, false);
+        AddResourceToFeed(feed, NewGuidURN, 'Validation Outcome', 'Validation Outcome', '', 'Health Intersections', '??base', now, op, '', nil, false);
       finally
         op.free;
       end;

@@ -7,6 +7,7 @@ uses
   EncodeSupport, StringSupport,
   AdvObjects, AdvStringMatches,
   IdContext, IdCustomHTTPServer,
+  FHIRLang,
   HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions,
   TerminologyServer;
 
@@ -14,6 +15,7 @@ Type
   TTerminologyWebServer = class (TAdvObject)
   private
     FServer : TTerminologyServer;
+    FFHIRPath : String;
     Procedure HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -23,7 +25,7 @@ Type
     Procedure BuildVsByURL(html : THtmlPublisher; id : String);
     function processSnomedForTool(code : String) : String;
   public
-    constructor create(server : TTerminologyServer); overload;
+    constructor create(server : TTerminologyServer; FHIRPath : String); overload;
 
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -38,15 +40,16 @@ uses
 
 { TTerminologyWebServer }
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; FHIRPath : String);
 begin
   create;
   FServer := server;
+  FFHIRPath := FHIRPath;
 end;
 
 function TTerminologyWebServer.HandlesRequest(path: String): boolean;
 begin
-  result := path.StartsWith('/tx') or path.StartsWith('/snomed') or path.StartsWith('/snomed') ;
+  result := path.StartsWith('/tx') or path.StartsWith('/snomed') or path.StartsWith('/loinc') ;
 end;
 
 procedure TTerminologyWebServer.Process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -95,7 +98,7 @@ begin
         BuildCsByURL(html, getId(request.Document, '/tx/vs-uri'))
       else
       begin
-        writeln('Tx Server home page');
+        writeln(''+GetFhirMessage('TERMINOLOGY', request.AcceptLanguage)+' '+GetFhirMessage('SERVER_HOME', request.AcceptLanguage));
         html.Header('Terminology Server');
         html.StartList;
         html.StartListItem;
@@ -302,7 +305,7 @@ begin
 
     try
       html := THtmlPublisher.Create;
-      pub := TSnomedPublisher.create(FServer.Snomed);
+      pub := TSnomedPublisher.create(FServer.Snomed, FFHIRPath);
       try
         html.BaseURL := '/snomed/doco/';
         html.Lang := request.AcceptLanguage;
@@ -343,7 +346,7 @@ begin
 
     try
       html := THtmlPublisher.Create;
-      pub := TLoincPublisher.create(FServer.Loinc);
+      pub := TLoincPublisher.create(FServer.Loinc, FFHIRPath);
       try
         html.BaseURL := '/loinc/doco/';
         html.Lang := request.AcceptLanguage;

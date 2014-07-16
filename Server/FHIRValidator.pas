@@ -38,6 +38,7 @@ uses
   IdSoapXml, IdSoapMsXml, AltovaXMLLib_TLB, MsXmlParser, IdUri,
   FHIRParser, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources, FHIRAtomFeed,
   FHIRUtilities, FHIRValueSetExpander, FHIRConstants, FHIRValueSetChecker,
+  FHIRBridge,
   TerminologyServer;
 
 type
@@ -77,9 +78,9 @@ type
     function getStructureForType(localName : string; var profile : TFHIRProfile; specifiedprofile : TFhirProfile) : TFHIRProfileStructure;
     procedure validateBinary(elem : TIdSoapXmlElement);
     procedure validateTag(path : string; element : TIdSoapXmlElement; onEntry : boolean);
-    procedure validateElement(op : TFhirOperationOutcome; profile : TFHIRProfile; structure : TFHIRProfileStructure; path : string; definition : TFHIRProfileStructureElement; cprofile : TFHIRProfile; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
-    function findElement(structure : TFHIRProfileStructure; name : string) : TFHIRProfileStructureElement;
-    function getChildren(structure : TFHIRProfileStructure; definition : TFHIRProfileStructureElement) : TFhirProfileStructureElementList;
+    procedure validateElement(op : TFhirOperationOutcome; profile : TFHIRProfile; structure : TFHIRProfileStructureHolder; path : string; definition : TFHIRProfileStructureElement; cprofile : TFHIRProfile; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
+    function findElement(structure : TFHIRProfileStructureHolder; name : string) : TFHIRProfileStructureElement;
+    function getChildren(structure : TFHIRProfileStructureHolder; definition : TFHIRProfileStructureElement) : TFhirProfileStructureElementList;
     function getChild(children : TFhirProfileStructureElementList; name : string) : TFHIRProfileStructureElement;
     function getDefinitionByTailNameChoice(children : TFhirProfileStructureElementList; name : string) : TFHIRProfileStructureElement;
     function tail(path : string) : String;
@@ -203,14 +204,14 @@ end;
 
 procedure TFHIRValidator.validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFhirProfile);
 var
-  s : TFHIRProfileStructure;
+  s : TFHIRProfileStructureHolder;
   p : TFHIRProfile;
 begin
   if (elem.Name = 'Binary') then
     validateBinary(elem)
   else
   begin
-    s := getStructureForType(elem.Name, p, specifiedprofile);
+    s := getStructureForType(elem.Name, p, specifiedprofile){$IFNDEF FHIR-DSTU}.snapshot{$ENDIF};
     if (op.error('InstanceValidator', 'invalid', elem.Name, s <> nil, 'Unknown Resource Type '+elem.Name)) then
       validateElement(op, p, s, path+'/f:'+elem.Name, s.elementList[0], nil, nil, elem);
   end;
@@ -243,13 +244,13 @@ begin
   // nothing yet
 end;
 
-procedure TFHIRValidator.validateElement(op : TFhirOperationOutcome; profile : TFHIRProfile; structure : TFHIRProfileStructure; path : string; definition : TFHIRProfileStructureElement; cprofile : TFHIRProfile; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
+procedure TFHIRValidator.validateElement(op : TFhirOperationOutcome; profile : TFHIRProfile; structure : TFHIRProfileStructureHolder; path : string; definition : TFHIRProfileStructureElement; cprofile : TFHIRProfile; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
 var
   children : TFhirProfileStructureElementList;
   ci : TChildIterator;
   child : TFHIRProfileStructureElement;
   type_ : String;
-  r : TFHIRProfileStructure;
+  r : TFHIRProfileStructureHolder;
   p : TFHIRProfile;
 begin
   children := getChildren(structure, definition);
@@ -310,7 +311,7 @@ begin
               validateContains(op, ci.path, child, definition, ci.element)
             else
             begin
-              r := getStructureForType(type_, p, nil);
+              r := getStructureForType(type_, p, nil){$IFNDEF FHIR-DSTU}.snapshot{$ENDIF};
               if (op.error('InstanceValidator', 'structure', ci.path, r <> nil, 'Unknown type_ '+type_)) then
                 validateElement(op, p, r, ci.path, r.elementList[0], profile, child, ci.element);
             end;
@@ -331,7 +332,7 @@ begin
 end;
 
 
-function TFHIRValidator.findElement(structure : TFHIRProfileStructure; name : string) : TFHIRProfileStructureElement;
+function TFHIRValidator.findElement(structure : TFHIRProfileStructureHolder; name : string) : TFHIRProfileStructureElement;
 var
   i : integer;
   c : TFHIRProfileStructureElement;
@@ -349,7 +350,7 @@ begin
 end;
 
 
-function TFHIRValidator.getChildren(structure : TFHIRProfileStructure; definition : TFHIRProfileStructureElement) : TFhirProfileStructureElementList;
+function TFHIRValidator.getChildren(structure : TFHIRProfileStructureHolder; definition : TFHIRProfileStructureElement) : TFhirProfileStructureElementList;
 var
   i : integer;
   e : TFhirProfileStructureElement;
@@ -527,7 +528,7 @@ begin
   system := getNamedChildValue(element,  'system');
   units := getNamedChildValue(element,  'units');
   if (system <> '') and (code <> '') then
-    FTerminologyServer.checkCode(op, path, code, system, units, context);
+    FTerminologyServer.checkCode(op, path, code, system, units);
 end;
 
 procedure TFHIRValidator.checkCoding(op : TFhirOperationOutcome; profile : TFHIRProfile; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
@@ -540,7 +541,7 @@ begin
   system := getNamedChildValue(element,  'system');
   display := getNamedChildValue(element,  'display');
   if (system <> '') and (code <> '') then
-    if FTerminologyServer.checkCode(op, path, code, system, display, context) then
+    if FTerminologyServer.checkCode(op, path, code, system, display) then
     begin
       if (context <> nil) and (context.definition.binding <> nil) then
       begin

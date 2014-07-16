@@ -365,6 +365,7 @@ operations
 
   TSnomedFilterContext = class (TCodeSystemProviderFilterContext)
   private
+    ndx : integer;
     matches : TMatchArray;
     members : TSnomedReferenceSetMemberArray;
     descendents : TCardinalArray;
@@ -462,15 +463,17 @@ operations
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(code : String; list : TStringList); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; override;
-    function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; override;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function buildValueSet(id : String) : TFhirValueSet;
-    function searchFilter(filter : TSearchFilterText) : TCodeSystemProviderFilterContext; overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
   End;
 
   TSnomedServiceList = class (TAdvObjectList)
@@ -1030,7 +1033,7 @@ begin
   End;
 end;
 
-function TSnomedServices.SearchFilter(filter : TSearchFilterText): TCodeSystemProviderFilterContext;
+function TSnomedServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   res : TSnomedFilterContext;
 begin
@@ -2129,6 +2132,11 @@ begin
   end;
 end;
 
+procedure TSnomedServices.Close(ctxt: TCodeSystemProviderContext);
+begin
+  // nothing - it's just a pointer to some memory structure
+end;
+
 function TSnomedServices.Code(context: TCodeSystemProviderContext): string;
 var
   Identity : int64;
@@ -2226,6 +2234,11 @@ begin
   result := GetDisplayName(Cardinal(context), 0);
 end;
 
+procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+begin
+  Displays(Code(context), list);
+end;
+
 procedure TSnomedServices.Displays(code: String; list: TStringList);
 var
   ctxt : TAdvObject;
@@ -2239,13 +2252,17 @@ end;
 
 function TSnomedServices.getDisplay(code: String): String;
 var
-  ctxt : TAdvObject;
+  ctxt : TCodeSystemProviderContext;
 begin
   ctxt := locate(code);
-  if (ctxt = nil) then
-    raise Exception.create('Unable to find '+code+' in '+system)
-  else
-    result := Display(ctxt);
+  try
+    if (ctxt = nil) then
+      raise Exception.create('Unable to find '+code+' in '+system)
+    else
+      result := Display(ctxt);
+  finally
+    Close(ctxt);
+  end;
 end;
 
 function TSnomedServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -2314,7 +2331,7 @@ begin
   end;
 end;
 
-function TSnomedServices.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+function TSnomedServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   id : Int64;
 begin
@@ -2326,14 +2343,14 @@ begin
       result := filterIn(id);
 end;
 
-function TSnomedServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
+function TSnomedServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
   if Length(TSnomedFilterContext(ctxt).matches) > 0 then
-    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).Matches[ndx].index)
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).Matches[TSnomedFilterContext(ctxt).ndx-1].index)
   else if Length(TSnomedFilterContext(ctxt).members) > 0 then
-    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).Members[ndx].Ref)
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).Members[TSnomedFilterContext(ctxt).ndx-1].Ref)
   else
-    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).descendents[ndx]);
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).descendents[TSnomedFilterContext(ctxt).ndx-1]);
 end;
 
 function TSnomedServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
@@ -2346,14 +2363,15 @@ begin
     result := FindCardinalInArray(TSnomedFilterContext(ctxt).descendents, Cardinal(concept), index)
 end;
 
-function TSnomedServices.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
+function TSnomedServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
+  inc(TSnomedFilterContext(ctxt).ndx);
   if Length(TSnomedFilterContext(ctxt).matches) > 0 then
-    result := Length(TSnomedFilterContext(ctxt).matches)
+    result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).matches)
   else if Length(TSnomedFilterContext(ctxt).members) > 0 then
-    result := Length(TSnomedFilterContext(ctxt).members)
+    result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).members)
   else
-    result := Length(TSnomedFilterContext(ctxt).descendents);
+    result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).descendents);
 end;
 
 function TSnomedServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
@@ -2367,7 +2385,7 @@ var
 begin
   if Concept.FindConcept(StringToIdOrZero(parent), ip) And
        Concept.FindConcept(StringToIdOrZero(code), ic) And Subsumes(ip, ic) then
-    result := TAdvObject(ic)
+    result := TCodeSystemProviderContext(ic)
   else
     result := nil;
 end;

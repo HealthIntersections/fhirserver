@@ -35,7 +35,7 @@ Uses
   StringSupport, FileSupport,
   AdvStringBuilders, AdvObjects, AdvObjectLists,
   AnsiStringBuilder, regexpr, YuStemmer,
-  FHIRTypes, TerminologyServices;
+  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
 
 {axes
 
@@ -53,17 +53,20 @@ also:
   order/obs
   v2 & v3 data type
 }
-Const LOINC_CACHE_VERSION = '6';
+Const
+  LOINC_CACHE_VERSION = '7';
+  NO_PARENT = $FFFFFFFF;
 
 Type
   TLoincPropertyType = (lptComponents, lptProperties, lptTimeAspects, lptSystems, lptScales, lptMethods, lptClasses);
 
 type
-  // We store LOINC as four structures.
+  // We store LOINC as five structures.
   //   the first structure is a simply a list of strings which are variable length names - referred to from the other structures
   //   the second structure is a list of lists of word or cardinal references.
   //   the third structure is a list of concepts. each concept has a refernce to a name and a contained list of references which are either children
   //   the fourth structure is the code list - a list of loinc concepts, with codes and references to names and properties
+  //   the fifth structure is the multi-axial heirarchy - parent, children, descendents, concepts, and descendent concepts
 
   // 1. a list of strings
   //   each entry in the AnsiString starts with a byte length, and then the series of characters
@@ -85,6 +88,7 @@ type
   TCardinalArray = array of Cardinal;
   TMatch = record
     index : cardinal;
+    iscode : boolean;
     code : String;
     Priority : Double;
   End;
@@ -112,19 +116,19 @@ Type
       Procedure DoneBuild;
   End;
 
-  // stem word index. Every word is 8 bytes - a 4 byte index into the strings, and a 4 byte index into the references
+  // stem word index. Every word is 4 bytes - a 4 byte index into the strings
   TLoincStems = class (TAdvObject)
     Private
       FMaster : AnsiString;
       FLength : Cardinal;
       FBuilder : TAnsiStringBuilder;
    Public
-      Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var reference : Cardinal);
+      Procedure GetEntry(iIndex : Cardinal; var index : Cardinal);
       Function Count : Integer;
       Function GetString(iIndex : Cardinal) : Cardinal;
 
       Procedure StartBuild;
-      Procedure AddStem(index, reference : Cardinal);
+      Procedure AddStem(index : Cardinal);
       Procedure DoneBuild;
   End;
 
@@ -201,11 +205,11 @@ Type
     Public
       Function FindCode(sCode : String; var iIndex : Cardinal) : Boolean;
 
-      Procedure GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
+      Procedure GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
 
       // we presume that the Codes are registered in order
       Procedure StartBuild;
-      Function AddCode(sCode : String; iDescription, iOtherNames : Cardinal; iv2dt, iv3dt : Word; iFlags : Byte) : Cardinal;
+      Function AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iv2dt, iv3dt : Word; iFlags : Byte) : Cardinal;
       Procedure DoneBuild;
 
       // these need to be called after Done Build
@@ -222,10 +226,45 @@ Type
       Property CodeLength : Cardinal read FCodeLength Write FCodeLength;
   End;
 
+  // 5. the multi-axial heirachy
+  // it is a list of entries
+  // This is the effective logical structure of the AnsiString:
+//  TLOINCEntry = {private} packed record
+//    code : Cardinal;
+//    text : Cardinal;
+//    children : Cardinal;
+//    descendents : Cardinal;
+//    concepts : Cardinal;
+//    descendentconcepts : Cardinal;
+//  End;
+
+  TLOINCHeirarchyEntryList = class (TAdvObject)
+    Private
+      FMaster : AnsiString;
+      FBuilder : TAnsiStringBuilder;
+    Public
+      Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
+      Procedure GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal);
+
+      // we presume that the Codes are registered in order
+      Procedure StartBuild;
+      Function AddEntry(code, text, parent, children, descendents, concepts, descendentConcepts : Cardinal) : Cardinal;
+      Procedure DoneBuild;
+
+      // this needs to be called after Done Build
+      Procedure SetStems(iIndex : Cardinal; iValue : Cardinal);
+
+      Function Count : Integer;
+  End;
+
+  TLoincSubsetId = (lsiNull, lsiAll, lsiOrder, lsiObs, lsiOrderObs, lsiOrderSubset, lsiTypeObservation, lsiTypeClinical, lsiTypeAttachment,
+    lsiTypeSurvey, lsiInternal, lsi3rdParty, lsiActive, lsiDeprecated, lsiDiscouraged, lsiTrial);
+  TLoincSubsets = Array [TLoincSubsetId] of Cardinal;
   TLoincPropertyIds = Array [TLoincPropertyType] of Word;
 
-  THolder = class (TAdvObject)
+  THolder = class (TCodeSystemProviderFilterContext)
   private
+    ndx: integer;
     Children : LoincServices.TCardinalArray;
     function HasChild(v : integer) : boolean;
   end;
@@ -237,14 +276,20 @@ Type
     FRefs : TLOINCReferences;
     FConcepts : TLOINCConcepts;
     FProperties : TLoincPropertyIds;
+    FSubsets : TLoincSubsets;
     FWords : TLoincWords;
     FStems : TLoincStems;
+    FEntries : TLOINCHeirarchyEntryList;
+    FHeirarchyRoots : TCardinalArray;
 
     FRoot : Word;
     FLoaded: Boolean;
     FVersion: String;
     FKey: integer;
     function FindStem(s: String; var index: Integer): Boolean;
+    function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+    function FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
+    function FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -259,6 +304,7 @@ Type
     Function GetPropertyCodes(iProp : Word) : TCardinalArray;
     Function GetConceptName(iConcept : Word): String;
     Function IsCode(sCode : String): Boolean;
+    Function IsMACode(sCode : String): Boolean;
 
     Property Desc : TLoincStrings read FDesc;
     Property Refs : TLOINCReferences read FRefs;
@@ -266,16 +312,21 @@ Type
     Property CodeList : TLOINCCodeList read FCode;
     Property Words : TLoincWords read FWords;
     Property Stems : TLoincStems read FStems;
+    Property Entries : TLOINCHeirarchyEntryList read FEntries;
+
 
     Property Root : Word read FRoot write FRoot;
     Property Loaded : Boolean read FLoaded write FLoaded;
     Property Version : String read FVersion write FVersion;
     Property Properties : TLoincPropertyIds read FProperties Write FProperties;
+    Property HeirarchyRoots : TCardinalArray read FHeirarchyRoots write FHeirarchyRoots;
     Property Key : integer read FKey write FKey;
+    Property Subsets : TLoincSubsets read FSubsets Write FSubsets;
 
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function findMAConcept(code : String) : Cardinal;
     function system : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
@@ -283,14 +334,17 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(code : String; list : TStringList); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; override;
-    function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; override;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure Close(ctxt : TCodeSystemProviderContext); override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
-    function searchFilter(filter : TSearchFilterText) : TCodeSystemProviderFilterContext; overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
+    function buildValueSet(id : String) : TFhirValueSet;
   End;
 
   TLOINCServiceList = class (TAdvObjectList)
@@ -484,10 +538,10 @@ begin
 end;
 
 
-Function TLOINCCodeList.AddCode(sCode : String; iDescription, iOtherNames : Cardinal; iv2dt, iv3dt : Word; iFlags : Byte) : Cardinal;
+Function TLOINCCodeList.AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iv2dt, iv3dt : Word; iFlags : Byte) : Cardinal;
 begin
   Result := FBuilder.Length;
-  Result := Result div (FCodeLength+31);
+  Result := Result div (FCodeLength+35);
   FBuilder.Append(StringPadRight(sCode, ' ', FCodeLength));
 {00}  FBuilder.AddCardinalAsBytes(iDescription);
 {04}  FBuilder.AddCardinalAsBytes(iOtherNames);
@@ -502,41 +556,42 @@ begin
 {24}  FBuilder.AddWordAsbytes(iv3dt);
 {26}  FBuilder.Append(chr(iFlags));
 {27}  FBuilder.AddCardinalAsBytes(0); // stems
+{31}  FBuilder.AddCardinalAsBytes(iEntry);
 end;
 
 Procedure TLOINCCodeList.SetComponent(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+31) +1+FCodeLength+8], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength+35) +1+FCodeLength+8], 2);
 End;
 
 Procedure TLOINCCodeList.SetProperty(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+31)+1+FCodeLength+10], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+10], 2);
 End;
 
 Procedure TLOINCCodeList.SetTimeAspect(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+31)+1+FCodeLength+12], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+12], 2);
 End;
 
 Procedure TLOINCCodeList.SetSystem(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+31)+1+FCodeLength+14], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+14], 2);
 End;
 
 Procedure TLOINCCodeList.SetScale(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+31)+1+FCodeLength+16], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+16], 2);
 End;
 
 Procedure TLOINCCodeList.SetMethod(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+31)+1+FCodeLength+18], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+18], 2);
 End;
 
 Procedure TLOINCCodeList.SetClass(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+31)+1+FCodeLength+20], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+20], 2);
 End;
 
 
@@ -561,11 +616,11 @@ begin
     s := StringPadRight(sCode, ' ', FCodeLength);
     Result := False;
     L := 0;
-    H := (FLength div (FCodeLength+31)) - 1;
+    H := (FLength div (FCodeLength+35)) - 1;
     while L <= H do
     begin
       I := (L + H) shr 1;
-      sF := Copy(FMaster, i*(FCodeLength + 31)+1, FCodeLength);
+      sF := Copy(FMaster, i*(FCodeLength + 35)+1, FCodeLength);
       C := CompareStr(sF, s);
       if C < 0 then L := I + 1 else
       begin
@@ -582,34 +637,35 @@ begin
 end;
 
 
-Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
+Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
 Begin
-  if iIndex > FLength div (FCodeLength+31) - 1 Then
+  if iIndex > FLength div (FCodeLength+35) - 1 Then
     Raise Exception.Create('Attempt to access invalid LOINC index');
-  sCode := trim(Copy(FMaster, iIndex*(FCodeLength+31)+1, FCodeLength));
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+0], iDescription, 4);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+4], iOtherNames, 4);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+8], iComponent, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+10], iProperty, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+12], iTimeAspect, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+14], iSystem, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+16], iScale, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+18], iMethod, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+20], iClass, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+22], iv2dt, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+24], iv3dt, 2);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+26], iFlags, 1);
-  Move(FMaster[(iIndex*(FCodeLength+31))+1+FCodeLength+27], iStems, 4);
+  sCode := trim(Copy(FMaster, iIndex*(FCodeLength+35)+1, FCodeLength));
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+0], iDescription, 4);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+4], iOtherNames, 4);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+8], iComponent, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+10], iProperty, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+12], iTimeAspect, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+14], iSystem, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+16], iScale, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+18], iMethod, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+20], iClass, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+22], iv2dt, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+24], iv3dt, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+26], iFlags, 1);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+27], iStems, 4);
+  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+31], iEntry, 4);
 end;
 
 function TLOINCCodeList.Count: Integer;
 begin
-  result := FLength div (FCodeLength+31);
+  result := FLength div (FCodeLength+35);
 end;
 
 procedure TLOINCCodeList.SetStems(iIndex, iValue: Cardinal);
 begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+31)+1+FCodeLength+27], 4);
+  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+27], 4);
 end;
 
 { TLOINCServices }
@@ -623,10 +679,12 @@ begin
   FConcepts := TLOINCConcepts.Create;
   FWords := TLoincWords.Create;
   FStems := TLoincStems.Create;
+  FEntries := TLOINCHeirarchyEntryList.create;
 end;
 
 destructor TLOINCServices.Destroy;
 begin
+  FEntries.Free;
   FWords.Free;
   FStems.Free;
   FRefs.Free;
@@ -650,6 +708,7 @@ procedure TLOINCServices.GetDisplaysByName(Const sCode : String; list : TStringL
 var
   iIndex : Cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
+  iEntry : Cardinal;
   sCode1 : String;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
@@ -658,7 +717,7 @@ var
 begin
   if CodeList.FindCode(sCode, iIndex) then
   Begin
-    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     assert(sCode = sCode1);
     list.Add(Desc.GetEntry(iDescription));
     names := FRefs.GetCardinals(iOtherNames);
@@ -672,13 +731,14 @@ function TLOINCServices.GetDisplayByName(const sCode: String): String;
 var
   iIndex : Cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
+  iEntry : Cardinal;
   sCode1 : String;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
 begin
   if CodeList.FindCode(sCode, iIndex) then
   Begin
-    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     assert(sCode = sCode1);
     result := Desc.GetEntry(iDescription)
   End
@@ -739,6 +799,13 @@ begin
   result := CodeList.FindCode(sCode, iIndex);
 end;
 
+function TLOINCServices.IsMACode(sCode: String): Boolean;
+var
+  iIndex : Cardinal;
+begin
+  result := Entries.FindCode(sCode, iIndex, FDesc);
+end;
+
 function TLOINCServices.Link: TLOINCServices;
 begin
   result := TLOINCServices(Inherited Link);
@@ -749,6 +816,8 @@ var
   oFile : Tfilestream;
   oread : TReader;
   aLoop : TLoincPropertyType;
+  a : TLoincSubsetId;
+  i, t : integer;
 begin
   oFile := TFileStream.Create(sFilename, fmOpenread);
   try
@@ -769,10 +838,17 @@ begin
       FWords.FLength := Length(FWords.FMaster);
       FStems.FMaster := oRead.ReadString;
       FStems.FLength := Length(FStems.FMaster);
+      FEntries.FMaster := oRead.ReadString;
       FRoot := oRead.ReadInteger;
       FVersion := oRead.ReadString;
       For aLoop := Low(TLoincPropertyType) To High(TLoincPropertyType) Do
         FProperties[aLoop] := oRead.ReadInteger;
+      t := oread.ReadInteger;
+      SetLength(FHeirarchyRoots, t);
+      for i := 0 to t - 1 do
+        FHeirarchyRoots[i] := oread.ReadInteger;
+      For a := Low(TLoincSubsetId) To High(TLoincSubsetId) Do
+        FSubsets[a] := oRead.ReadInteger;
     Finally
       oread.Free;
     End;
@@ -787,6 +863,8 @@ var
   oFile : Tfilestream;
   oWrite : TWriter;
   aLoop : TLoincPropertyType;
+  a : TLoincSubsetId;
+  i : integer;
 begin
   if FileExists(sFilename) Then
   begin
@@ -805,10 +883,16 @@ begin
       oWrite.WriteString(FConcepts.FMaster);
       oWrite.WriteString(FWords.FMaster);
       oWrite.WriteString(FStems.FMaster);
+      oWrite.WriteString(FEntries.FMaster);
       oWrite.writeInteger(FRoot);
       oWrite.WriteString(FVersion);
       For aLoop := Low(TLoincPropertyType) To High(TLoincPropertyType) Do
         oWrite.WriteInteger(FProperties[aLoop]);
+      oWrite.WriteInteger(Length(FHeirarchyRoots));
+      for i := 0 to Length(FHeirarchyRoots) - 1 do
+        oWrite.WriteInteger(FHeirarchyRoots[i]);
+      For a := Low(TLoincSubsetId) To High(TLoincSubsetId) Do
+        oWrite.WriteInteger(FSubsets[a]);
     Finally
       oWrite.Free;
     End;
@@ -817,7 +901,7 @@ begin
   End;
 end;
 
-function TLOINCServices.SearchFilter(filter : TSearchFilterText): TCodeSystemProviderFilterContext;
+function TLOINCServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   matches : TMatchArray;
   children : TCardinalArray;
@@ -919,12 +1003,13 @@ function TLOINCServices.Search(sText: String): TMatchArray;
       End;
   End;
 
-  Procedure AddResult(var iCount : Integer; iindex : cardinal; sId : String; priority : Double);
+  Procedure AddResult(var iCount : Integer; iindex : cardinal; sId : String; priority : Double; bcode : boolean);
   Begin
     if iCount = length(result) then
       SetLength(result, Length(result)+100);
     result[iCount].index := iIndex;
     result[iCount].code := sId;
+    result[iCount].iscode := bcode;
     result[iCount].Priority := priority;
     Inc(iCount);
   End;
@@ -941,26 +1026,14 @@ function TLOINCServices.Search(sText: String): TMatchArray;
   var
     i, j : cardinal;
     r1 : Double;
-{    iDepth : Byte;
-    Identity : int64;
-    Flags : Byte;
-    Parents : Cardinal;
-    Descriptions : Cardinal;
-    Inbounds : Cardinal;
-    outbounds : Cardinal;}
     Desc : TCardinalArray;
-    {iWork : Cardinal;}
-//  iCount : Integer;
-//  i : cardinal;
-  iDescription, iStems, iOtherNames : Cardinal;
-//  s,
-  sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
-  iFlags : Byte;
-//  oReg : TRegExpr;
-//  bIncl : Boolean;
+    iDescription, iStems, iOtherNames : Cardinal;
+    iEntry : Cardinal;
+    sCode1 : String;
+    iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+    iFlags : Byte;
   Begin
-    CodeList.GetInformation(iCodeIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(iCodeIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     r1 := 0;
     Desc := Refs.GetCardinals(iStems);
     For i := 0 to length(words) - 1 do
@@ -972,8 +1045,32 @@ function TLOINCServices.Search(sText: String): TMatchArray;
             assert(FDesc.GetEntry(words[i].stem) <> FDesc.GetEntry(desc[j]));
 
     if r1  > 0 Then
-      AddResult(iCount, iCodeIndex, sCode1, r1);
+      AddResult(iCount, iCodeIndex, sCode1, r1, true);
   End;
+
+  Procedure CheckEntry(const words : TSearchWordArray; var iCount : Integer; index : Integer);
+  var
+    i, j : cardinal;
+    code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+    r1 : Double;
+    Desc : TCardinalArray;
+    iStems : Cardinal;
+  Begin
+    Entries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+    r1 := 0;
+    Desc := Refs.GetCardinals(stems);
+    For i := 0 to length(words) - 1 do
+      if words[i].stem <> 0 Then
+        For j := 0 to length(Desc) - 1 do
+          if (words[i].stem = desc[j]) Then
+            r1 := r1 + 20 + (20 / length(desc))
+          else
+            assert(FDesc.GetEntry(words[i].stem) <> FDesc.GetEntry(desc[j]));
+
+    if r1  > 0 Then
+      AddResult(iCount, index, FDesc.GetEntry(code), 1000000+r1, false); // these always come first
+  End;
+
 var
   iCount : Integer;
   words : TSearchWordArray;
@@ -1012,6 +1109,8 @@ begin
   sText := lowercase(sText);
   for i := 0 to FCode.Count - 1 Do
     CheckCode(words, iCount, i);
+  for i := 0 to FEntries.Count - 1 Do
+    CheckEntry(words, iCount, i);
 
   SetLength(result, iCount);
   QuickSortArray(result);
@@ -1178,15 +1277,14 @@ end;
 
 { TLoincStems }
 
-procedure TLoincStems.AddStem(index: Cardinal; reference : Cardinal);
+procedure TLoincStems.AddStem(index : Cardinal);
 begin
   FBuilder.AddCardinalAsBytes(index);
-  FBuilder.AddCardinalAsBytes(reference);
 end;
 
 function TLoincStems.Count: Integer;
 begin
-  result := FLength div 8;
+  result := FLength div 4;
 end;
 
 procedure TLoincStems.DoneBuild;
@@ -1196,22 +1294,19 @@ begin
   FBuilder.Free;
 end;
 
-procedure TLoincStems.GetEntry(iIndex: Cardinal; var index: Cardinal; var reference: Cardinal);
+procedure TLoincStems.GetEntry(iIndex: Cardinal; var index: Cardinal);
 var
   l : Cardinal;
 begin
-  l := (iIndex * 8) + 1;
-  if l > FLength - 7 Then
+  l := (iIndex * 4) + 1;
+  if l > FLength - 3 Then
     raise Exception.create('invalid index');
   move(FMaster[l], index, 4);
-  move(FMaster[l+4], reference, 4);
 end;
 
 function TLoincStems.GetString(iIndex: Cardinal): Cardinal;
-var
-  f : cardinal;
 begin
-  GetEntry(iIndex, result, f);
+  GetEntry(iIndex, result);
 end;
 
 procedure TLoincStems.StartBuild;
@@ -1244,6 +1339,41 @@ begin
 end;
 
 
+function TLOINCServices.buildValueSet(id: String): TFhirValueSet;
+var
+  index : cardinal;
+  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+  inc : TFhirValueSetComposeInclude;
+  filt :  TFhirValueSetComposeIncludeFilter;
+begin
+  if (id.StartsWith('http://loinc.org/vs/') and FEntries.FindCode(id.Substring(20), index, FDesc)) then
+  begin
+    FEntries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+
+    result := TFhirValueSet.Create;
+    try
+      result.identifierST := id;
+      result.versionST := Version;
+      result.nameST := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
+      result.descriptionST := 'All LOINC codes for '+Desc.GetEntry(text);
+      result.statusST := ValuesetStatusActive;
+      result.dateST := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.systemST := 'http://loinc.org';
+      filt := inc.filterList.Append;
+      filt.property_ST := 'ancestor';
+      filt.opST := FilterOperatorEqual;
+      filt.valueST := id.Substring(20);
+      result.link;
+    finally
+      result.free;
+    end;
+  end
+  else
+    result := nil;
+end;
+
 function TLoincServices.ChildCount(context: TCodeSystemProviderContext): integer;
 begin
   // no children in loinc
@@ -1251,6 +1381,11 @@ begin
     result := TotalCount
   else
     result := 0;
+end;
+
+procedure TLOINCServices.Close(ctxt: TCodeSystemProviderContext);
+begin
+  // nothing, because it's actually a pointer to an integer
 end;
 
 function TLoincServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
@@ -1264,26 +1399,34 @@ end;
 function TLoincServices.Code(context: TCodeSystemProviderContext): string;
 var
   iDescription, iStems, iOtherNames : Cardinal;
+  iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
 begin
-  CodeList.GetInformation(integer(context), result, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+  CodeList.GetInformation(integer(context), result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
 end;
 
 function TLoincServices.Display(context: TCodeSystemProviderContext): string;
 var
   iDescription, iStems, iOtherNames : Cardinal;
+  iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
 begin
-  CodeList.GetInformation(integer(context), result, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+  CodeList.GetInformation(integer(context), result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
   result := Desc.GetEntry(iDescription)
+end;
+
+procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+begin
+  GetDisplaysByName(Code(context), list);
 end;
 
 procedure TLoincServices.Displays(code: String; list: TStringList);
 begin
   GetDisplaysByName(code, list);
 end;
+
 
 function TLoincServices.getDisplay(code: String): String;
 begin
@@ -1309,7 +1452,7 @@ end;
 
 function TLoincServices.system: String;
 begin
-  result := 'http://loinc.org';;
+  result := 'http://loinc.org';
 end;
 
 function TLoincServices.TotalCount: integer;
@@ -1340,53 +1483,174 @@ begin
   THolder(ctxt).free;
 end;
 
-function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
 var
-  ok : boolean;
   id : word;
+  iName, iChildren, iCodes : Cardinal;
   aChildren : LoincServices.TCardinalArray;
-  iChildren : Cardinal;
-  iCodes : Cardinal;
-  iName : Cardinal;
 begin
-  SetLength(aChildren, 0);
-  id := 0;
-  if op = FilterOperatorEqual then
-  begin
-    ok := true;
-    if prop = 'SCALE_TYP' then
-      id := GetPropertyId(lptScales, value)
-    else if prop = 'CLASSTYPE' then
-      id := GetPropertyId(lptClasses, value)
-    else
-      ok := false;
-  end
-  else
-    ok := false;
+  if op <> FilterOperatorEqual then
+    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
 
-  if not ok then
-    result := nil
-  else
-  begin
-    aChildren := nil;
+  result := THolder.create;
+  try
+    id := GetPropertyId(prop, value);
     if (id <> 0) then
     begin
       Concepts.GetConcept(id, iName, iChildren, iCodes);
       aChildren := Refs.GetCardinals(iCodes);
+      THolder(result).Children := aChildren;
     end;
-    result := THolder.create;
-    THolder(result).Children := aChildren;
+    result.link;
+  finally
+    result.free;
   end;
 end;
 
-function TLoincServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
+// this is a rare operation. But even so, is it worth pre-calculating this one on import?
+function TLoincServices.FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
 begin
-  result := TAdvObject(THolder(ctxt).children[ndx]);
+  if op <> FilterOperatorEqual then
+    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
+
+  result := THolder.create;
+  THolder(result).Children := FRefs.GetCardinals(FSubsets[subset]);
 end;
 
-function TLoincServices.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
+Function SubSetForOrderObs(value : String): TLoincSubsetId;
 begin
-  result := length(THolder(ctxt).children);
+  if sameText(value, 'Both') Then
+    result := lsiOrderObs
+  else if sameText(value, 'Observation') Then
+    result := lsiObs
+  else if sameText(value, 'Order') Then
+    result := lsiOrder
+  else
+    result := lsiNull;
+end;
+
+Function SubSetForClassType(value : String): TLoincSubsetId;
+begin
+  if sameText(value, '1') Then
+    result := lsiTypeObservation
+  else if sameText(value, '2') Then
+    result := lsiTypeClinical
+  else if sameText(value, '3') Then
+    result := lsiTypeAttachment
+  else if sameText(value, '4') Then
+    result := lsiTypeSurvey
+  else
+    result := lsiNull;
+end;
+
+Function SubSetForCopyright(value : String): TLoincSubsetId;
+begin
+  if sameText(value, 'LOINC') Then
+    result := lsiInternal
+  else if sameText(value, '3rdParty') Then
+    result := lsi3rdParty
+  else if sameText(value, 'All') Then
+    result := lsiAll
+  else
+    result := lsiNull;
+end;
+
+Function SubSetForStatus(value : String): TLoincSubsetId;
+begin
+  if sameText(value, 'ACTIVE') Then
+    result := lsiActive
+  else if sameText(value, 'DEPRECATED') Then
+    result := lsiDeprecated
+  else if sameText(value, 'DISCOURAGED') Then
+    result := lsiDiscouraged
+  else if sameText(value, 'TRIAL') Then
+    result := lsiTrial
+  else
+    result := lsiNull;
+end;
+
+function TLoincServices.FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive : boolean): TCodeSystemProviderFilterContext;
+var
+  index : Cardinal;
+  aChildren, c : LoincServices.TCardinalArray;
+  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+  s : String;
+begin
+  result := THolder.create;
+  try
+    if (op = FilterOperatorEqual) and (value.Contains(',')) then
+      raise Exception.Create('Value is illegal - no commas');
+    if (not (op in [FilterOperatorEqual, FilterOperatorIn])) then
+      raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
+
+    while (value <> '') do
+    begin
+      StringSplit(value, ',', s, value);
+      if (FEntries.FindCode(s, index, FDesc)) then
+      begin
+        FEntries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+        if transitive then
+          c := Refs.getCardinals(descendentConcepts)
+        else
+          c := Refs.getCardinals(concepts);
+        if (length(c) > 0) then
+        begin
+          setLength(aChildren, length(aChildren) + length(c));
+          move(c[0], aChildren[length(aChildren) - length(c)], length(c)*4);
+        end;
+      end;
+    end;
+
+    THolder(result).Children := aChildren;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+var
+  ok : boolean;
+begin
+  if prop = 'SCALE_TYP' then
+    result := FilterByPropertyId(lptScales, op, value)
+  else if prop = 'CLASS' then
+    result := FilterByPropertyId(lptClasses, op, value)
+  else if prop = 'COMPONENT' then
+    result := FilterByPropertyId(lptComponents, op, value)
+  else if prop = 'PROPERTY' then
+    result := FilterByPropertyId(lptProperties, op, value)
+  else if prop = 'TIME_ASPCT' then
+    result := FilterByPropertyId(lptTimeAspects, op, value)
+  else if prop = 'SYSTEM' then
+    result := FilterByPropertyId(lptSystems, op, value)
+  else if prop = 'METHOD_TYP' then
+    result := FilterByPropertyId(lptMethods, op, value)
+  else if prop = 'ORDER_OBS' then
+    result := FilterBySubset(op, SubSetForOrderObs(value))
+  else if prop = 'CLASSTYPE' then
+    result := FilterBySubset(op, SubSetForClassType(value))
+  else if prop = 'STATUS' then
+    result := FilterBySubset(op, SubSetForStatus(value))
+  else if prop = 'copyright' then
+    result := FilterBySubset(op, SubSetForCopyright(value))
+  else if prop = 'parent' then
+    result := FilterByHeirarchy(op, value, false)
+  else if prop = 'ancestor' then
+    result := FilterByHeirarchy(op, value, true)
+  else
+    result := nil;
+end;
+
+function TLoincServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+begin
+  result := TCodeSystemProviderContext(THolder(ctxt).children[THolder(ctxt).ndx-1]);
+end;
+
+function TLoincServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
+begin
+  inc(THolder(ctxt).ndx);
+  result := THolder(ctxt).ndx <= length(THolder(ctxt).children);
 end;
 
 function TLoincServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
@@ -1406,6 +1670,96 @@ begin
     result := nil;
 end;
 
+
+function TLOINCServices.findMAConcept(code: String): Cardinal;
+begin
+  if not Entries.FindCode(code, result, FDesc) then
+    result := 0;
+end;
+
+{ TLOINCHeirarchyEntryList }
+
+procedure TLOINCHeirarchyEntryList.SetStems(iIndex, iValue: Cardinal);
+begin
+  Move(iValue, FMaster[iIndex*(32)+1+28], 4);
+end;
+
+procedure TLOINCHeirarchyEntryList.StartBuild;
+begin
+  FBuilder := TAnsiStringBuilder.Create;
+end;
+
+function TLOINCHeirarchyEntryList.AddEntry(code, text, parent, children, descendents, concepts, descendentConcepts: Cardinal): Cardinal;
+begin
+  Result := FBuilder.Length div 32;
+  FBuilder.AddCardinalAsBytes(code);
+  FBuilder.AddCardinalAsBytes(text);
+  FBuilder.AddCardinalAsBytes(children);
+  FBuilder.AddCardinalAsBytes(descendents);
+  FBuilder.AddCardinalAsBytes(concepts);
+  FBuilder.AddCardinalAsBytes(descendentConcepts);
+  FBuilder.AddCardinalAsBytes(parent);
+  FBuilder.AddCardinalAsBytes(0); // stems, fill out later
+end;
+
+function TLOINCHeirarchyEntryList.Count: Integer;
+begin
+  result := Length(FMaster) div 32;
+end;
+
+procedure TLOINCHeirarchyEntryList.DoneBuild;
+begin
+  FMaster := FBuilder.AsString;
+  FBuilder.Free;
+end;
+
+function TLOINCHeirarchyEntryList.FindCode(sCode: String; var iIndex: Cardinal; Strings : TLoincStrings): Boolean;
+var
+  L, H, I, d : Cardinal;
+  C: Integer;
+  s : String;
+begin
+  if FMaster = '' Then
+    Result := False
+  Else
+  Begin
+    Result := False;
+    L := 0;
+    H := (Length(FMaster) div (32)) - 1;
+    while L <= H do
+    begin
+      I := (L + H) shr 1;
+      Move(FMaster[i*32+1], d, 4);
+      s := Strings.GetEntry(d);
+      C := CompareStr(s, sCode);
+      if C < 0 then L := I + 1 else
+      begin
+        H := I - 1;
+        if C = 0 then
+        begin
+          Result := True;
+          L := I;
+        end;
+      end;
+    end;
+    iIndex := L;
+  End;
+
+end;
+
+procedure TLOINCHeirarchyEntryList.GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal);
+begin
+  if iIndex > (Length(FMaster) div 32) - 1 Then
+    Raise Exception.Create('Attempt to access invalid LOINC Entry index');
+  Move(FMaster[(iIndex*32)+1+0], code, 4);
+  Move(FMaster[(iIndex*32)+1+4], text, 4);
+  Move(FMaster[(iIndex*32)+1+8], children, 4);
+  Move(FMaster[(iIndex*32)+1+12], descendents, 4);
+  Move(FMaster[(iIndex*32)+1+16], concepts, 4);
+  Move(FMaster[(iIndex*32)+1+20], descendentConcepts, 4);
+  Move(FMaster[(iIndex*32)+1+24], parent, 4);
+  Move(FMaster[(iIndex*32)+1+28], stems, 4);
+end;
 
 End.
 

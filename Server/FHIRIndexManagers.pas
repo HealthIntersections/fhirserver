@@ -41,6 +41,7 @@ uses
   EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport,
   KDBManager,
   FHIRBase, FhirSupport, FHIRResources, FHIRComponents, FHIRConstants, FHIRAtomFeed, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser,
+  FHIRBridge,
   TerminologyServerStore,
   UcumServices;
 
@@ -265,7 +266,7 @@ Type
     procedure BuildIndexValuesAppointment(key : integer; id : string; context : TFhirResource; resource : TFhirAppointment);
     procedure BuildIndexValuesAvailability(key : integer; id : string; context : TFhirResource; resource : TFhirAvailability);
     procedure BuildIndexValuesAppointmentResponse(key : integer; id : string; context : TFhirResource; resource : TFhirAppointmentResponse);
-    procedure BuildIndexValuesCommonDataElement(key : integer; id : string; context : TFhirResource; resource : TFhirCommonDataElement);
+    procedure BuildIndexValuesDataElement(key : integer; id : string; context : TFhirResource; resource : TFhirDataElement);
     procedure BuildIndexValuesNamespace(key : integer; id : string; context : TFhirResource; resource : TFhirNamespace);
     procedure BuildIndexValuesSubscription(key : integer; id : string; context : TFhirResource; resource : TFhirSubscription);
   {$ENDIF}
@@ -325,7 +326,7 @@ Type
     procedure BuildIndexesAppointment;
     procedure BuildIndexesAvailability;
     procedure BuildIndexesAppointmentResponse;
-    procedure BuildIndexesCommonDataElement;
+    procedure BuildIndexesDataElement;
     procedure BuildIndexesNamespace;
     procedure BuildIndexesSubscription;
   {$ENDIF}
@@ -583,7 +584,7 @@ begin
   BuildIndexesAppointment;
   BuildIndexesAvailability;
   BuildIndexesAppointmentResponse;
-  BuildIndexesCommonDataElement;
+  BuildIndexesDataElement;
   BuildIndexesNamespace;
   BuildIndexesSubscription;
   {$ENDIF}
@@ -648,7 +649,7 @@ begin
     frtAppointment : BuildIndexValuesAppointment(key, id, context, TFhirAppointment(resource));
     frtAvailability : BuildIndexValuesAvailability(key, id, context, TFhirAvailability(resource));
     frtAppointmentResponse : BuildIndexValuesAppointmentResponse(key, id, context, TFhirAppointmentResponse(resource));
-    frtCommonDataElement : BuildIndexValuesCommonDataElement(key, id, context, TFhirCommonDataElement(resource));
+    frtDataElement : BuildIndexValuesDataElement(key, id, context, TFhirDataElement(resource));
     frtNamespace : BuildIndexValuesNamespace(key, id, context, TFhirNamespace(resource));
     frtSubscription : BuildIndexValuesSubscription(key, id, context, TFhirSubscription(resource));
     {$ENDIF}
@@ -2184,7 +2185,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsProfile : Array[TSearchParamsProfile] of TSearchParamsProfile = ( spProfile__id,  spProfile__Language,  spProfile_Code, spProfile_Date, spProfile_Description, spProfile_Extension, spProfile_Identifier, spProfile_Name, spProfile_Publisher, spProfile_Status, spProfile_Type, spProfile_Valueset, spProfile_Version);
+  CHECK_TSearchParamsProfile : Array[TSearchParamsProfile] of TSearchParamsProfile = ( spProfile__id,  spProfile__Language, spProfile_Code, spProfile_Date, spProfile_Description, spProfile_Extension, spProfile_Identifier, spProfile_Name, spProfile_Publisher, spProfile_Status, spProfile_Type, {$IFNDEF FHIR-DSTU}spProfile_Url, {$ENDIF}spProfile_Valueset, spProfile_Version);
 
 procedure TFhirIndexManager.buildIndexesProfile;
 var
@@ -2200,12 +2201,26 @@ end;
 procedure TFhirIndexManager.buildIndexValuesProfile(key : integer; id : String; context : TFhirResource; resource: TFhirProfile);
 var
   i, j : integer;
+  procedure indexElement(element : TFHIRProfileStructureElement);
+  begin
+    if (element.definition <> nil) and
+      (element.definition.binding <> nil) then
+      if element.definition.binding.reference is TFhirUri then
+        index(frtProfile, key, TFhirUri(element.definition.binding.reference), 'valueset')
+      else
+        index(context, frtProfile, key, TFhirResourceReference(element.definition.binding.reference), 'valueset');
+  end;
 begin
+  {$IFDEF FHIR-DSTU}
+  index(frtProfile, key, resource.identifier, 'identifier');
+  {$ELSE}
+  index(frtProfile, key, resource.identifierList, 'identifier');
+  index(frtProfile, key, resource.url, 'url');
+  {$ENDIF}
   index(frtProfile, key, resource.name, 'name');
   index(frtProfile, key, resource.date, 'date');
   index(frtProfile, key, resource.description, 'description');
   index(frtProfile, key, resource.status, 'status');
-  index(frtProfile, key, resource.identifier, 'identifier');
   index(frtProfile, key, resource.version, 'version');
   index(frtProfile, key, resource.publisher, 'publisher');
   for i := 0 to resource.CodeList.count - 1 Do
@@ -2213,13 +2228,17 @@ begin
   for i := 0 to resource.StructureList.count - 1 do
   begin
     index(frtProfile, key, resource.StructureList[i].type_, 'type');
+    {$IFDEF FHIR-DSTU}
     for j := 0 to resource.structureList[i].elementList.Count - 1 do
-      if (resource.structureList[i].elementList[j].definition <> nil) and
-        (resource.structureList[i].elementList[j].definition.binding <> nil) then
-        if resource.structureList[i].elementList[j].definition.binding.reference is TFhirUri then
-          index(frtProfile, key, TFhirUri(resource.structureList[i].elementList[j].definition.binding.reference), 'valueset')
-        else
-          index(context, frtProfile, key, TFhirResourceReference(resource.structureList[i].elementList[j].definition.binding.reference), 'valueset');
+      indexElement(resource.structureList[i].elementList[j]);
+    {$ELSE}
+    if resource.structureList[i].snapshot <> nil then
+      for j := 0 to resource.structureList[i].snapshot.elementList.Count - 1 do
+        indexElement(resource.structureList[i].snapshot.elementList[j]);
+    if resource.structureList[i].differential <> nil then
+      for j := 0 to resource.structureList[i].differential.elementList.Count - 1 do
+        indexElement(resource.structureList[i].differential.elementList[j]);
+    {$ENDIF}
   end;
   for i := 0 to resource.ExtensionDefnList.count - 1 do
     index(frtProfile, key, resource.ExtensionDefnList[i].code, 'extension');
@@ -3136,7 +3155,7 @@ begin
 end;
 
 const
-  CHECK_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of TSearchParamsFamilyHistory = ( spFamilyHistory__id,  spFamilyHistory__Language,  spFamilyHistory_Subject);
+  CHECK_TSearchParamsFamilyHistory : Array[TSearchParamsFamilyHistory] of TSearchParamsFamilyHistory = ( spFamilyHistory__id,  spFamilyHistory__Language,  {$IFNDEF FHIR-DSTU}spFamilyHistory_Date, {$ENDIF}spFamilyHistory_Subject);
 
 procedure TFhirIndexManager.buildIndexesFamilyHistory;
 var
@@ -3152,6 +3171,9 @@ end;
 procedure TFhirIndexManager.buildIndexValuesFamilyHistory(key: integer; id : String; context : TFhirResource; resource: TFhirFamilyHistory);
 begin
   index(context, frtFamilyHistory, key, resource.subject, 'subject');
+  {$IFNDEF FHIR-DSTU}
+  index(frtFamilyHistory, key, resource.date, 'date');
+  {$ENDIF}
   patientCompartment(key, resource.subject);
 end;
 
@@ -3433,30 +3455,30 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsCommonDataElement : Array[TSearchParamsCommonDataElement] of TSearchParamsCommonDataElement = (spCommonDataElement__id, spCommonDataElement__language, spCommonDataElement_Category, spCommonDataElement_Code, spCommonDataElement_Date, spCommonDataElement_Description, spCommonDataElement_Identifier, spCommonDataElement_Name, spCommonDataElement_Publisher, spCommonDataElement_Status, spCommonDataElement_Version);
+  CHECK_TSearchParamsDataElement : Array[TSearchParamsDataElement] of TSearchParamsDataElement = (spDataElement__id, spDataElement__language, spDataElement_Category, spDataElement_Code, spDataElement_Date, spDataElement_Description, spDataElement_Identifier, spDataElement_Name, spDataElement_Publisher, spDataElement_Status, spDataElement_Version);
 
-procedure TFhirIndexManager.buildIndexesCommonDataElement;
+procedure TFhirIndexManager.buildIndexesDataElement;
 var
-  a : TSearchParamsCommonDataElement;
+  a : TSearchParamsDataElement;
 begin
-  for a := low(TSearchParamsCommonDataElement) to high(TSearchParamsCommonDataElement) do
+  for a := low(TSearchParamsDataElement) to high(TSearchParamsDataElement) do
   begin
-    assert(CHECK_TSearchParamsCommonDataElement[a] = a);
-    indexes.add(frtCommonDataElement, CODES_TSearchParamsCommonDataElement[a], DESC_TSearchParamsCommonDataElement[a], TYPES_TSearchParamsCommonDataElement[a], TARGETS_TSearchParamsCommonDataElement[a]);
+    assert(CHECK_TSearchParamsDataElement[a] = a);
+    indexes.add(frtDataElement, CODES_TSearchParamsDataElement[a], DESC_TSearchParamsDataElement[a], TYPES_TSearchParamsDataElement[a], TARGETS_TSearchParamsDataElement[a]);
   end;
 end;
 
-procedure TFhirIndexManager.buildIndexValuesCommonDataElement(key: integer; id : String; context : TFhirResource; resource: TFhirCommonDataElement);
+procedure TFhirIndexManager.buildIndexValuesDataElement(key: integer; id : String; context : TFhirResource; resource: TFhirDataElement);
 begin
-  index(frtCommonDataElement, key, resource.categoryList, 'category');
-  index(frtCommonDataElement, key, resource.codeList, 'code');
-  index(frtCommonDataElement, key, resource.date, 'date');
-  index(frtCommonDataElement, key, resource.definition, 'description');
-  index(frtCommonDataElement, key, resource.identifier, 'identifier');
-  index(frtCommonDataElement, key, resource.name, 'name');
-  index(frtCommonDataElement, key, resource.publisher, 'publisher');
-  index(frtCommonDataElement, key, resource.status, 'status');
-  index(frtCommonDataElement, key, resource.version, 'version');
+  index(frtDataElement, key, resource.categoryList, 'category');
+  index(frtDataElement, key, resource.codeList, 'code');
+  index(frtDataElement, key, resource.date, 'date');
+  index(frtDataElement, key, resource.definition, 'description');
+  index(frtDataElement, key, resource.identifier, 'identifier');
+  index(frtDataElement, key, resource.name, 'name');
+  index(frtDataElement, key, resource.publisher, 'publisher');
+  index(frtDataElement, key, resource.status, 'status');
+  index(frtDataElement, key, resource.version, 'version');
 end;
 
 Const

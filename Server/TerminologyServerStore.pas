@@ -7,7 +7,7 @@ uses
   StringSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvStringMatches,
   FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
-  TerminologyServices, LoincServices, UCUMServices, SnomedServices,
+  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices,
   YuStemmer;
 
 Type
@@ -17,6 +17,7 @@ Type
   TFhirConceptMapConcept = TFhirConceptMapElement;
   TFhirConceptMapConceptMap = TFhirConceptMapElementMap;
   {$ENDIF}
+
 
   TLoadedConceptMap = class (TAdvObject)
   private
@@ -37,14 +38,35 @@ Type
     function HasTranslation(system, code : String; out maps : TFhirConceptMapConceptMapList) : boolean; overload;
   end;
 
+  TValueSetProviderContext = class (TCodeSystemProviderContext)
+  private
+    context : TFhirValueSetDefineConcept;
+  public
+    constructor Create(context : TFhirValueSetDefineConcept); overload;
+    destructor Destroy; override;
+  end;
+
+  TValueSetProviderFilterContext = class (TCodeSystemProviderFilterContext)
+  private
+    ndx : integer;
+    total : Integer;
+    context : TFhirValueSetDefineConcept;
+    concepts : TFhirValueSetDefineConceptList;
+  public
+    constructor Create(concepts : TFhirValueSetDefineConceptList); overload;
+    constructor Create(context : TFhirValueSetDefineConcept; total : integer); overload;
+    destructor Destroy; override;
+  end;
+
   TValueSetProvider = class (TCodeSystemProvider)
   private
     FVs : TFhirValueSet;
-    function doLocate(list : TFhirValueSetDefineConceptList; code : String) : TCodeSystemProviderContext;
+    function doLocate(list : TFhirValueSetDefineConceptList; code : String) : TValueSetProviderContext;
     procedure FilterCodes(dest, source : TFhirValueSetDefineConceptList; filter : TSearchFilterText);
+    function FilterCount(ctxt: TFhirValueSetDefineConcept): integer;
   public
-    constructor create(vs : TFHIRValueSet); overload;
-    destructor destroy; override;
+    constructor Create(vs : TFHIRValueSet); overload;
+    destructor Destroy; override;
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -55,14 +77,17 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(code : String; list : TStringList); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String) : TCodeSystemProviderFilterContext; override;
-    function FilterCount(ctxt : TCodeSystemProviderFilterContext) : integer; override;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext; ndx : integer): TCodeSystemProviderContext; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
-    function searchFilter(filter : TSearchFilterText) : TCodeSystemProviderFilterContext; overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
   end;
 
 
@@ -74,6 +99,7 @@ Type
     FLoinc : TLOINCServices;
     FSnomed : TSnomedServices;
     FUcum : TUcumServices;
+    FRxNorm : TRxNormServices;
     FStem : TYuStemmer_8;
 
     FBaseValueSets : TAdvStringObjectMatch; // value sets out of the specification - these can be overriden, but they never go away
@@ -90,6 +116,7 @@ Type
     procedure SetUcum(const Value: TUcumServices);
     procedure UpdateConceptMaps;
     procedure BuildStems(list : TFhirValueSetDefineConceptList);
+    procedure SetRxNorm(const Value: TRxNormServices);
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FConceptMaps : TAdvStringObjectMatch;
@@ -102,6 +129,7 @@ Type
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TSnomedServices read FSnomed write SetSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
+    Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
 
     // maintenance procedures
     procedure SeeSpecificationResource(url : String; resource : TFHIRResource);
@@ -203,6 +231,7 @@ begin
   FSnomed.free;
   FUcum.free;
   FLock.Free;
+  FRxNorm.Free;
   inherited;
 end;
 
@@ -210,6 +239,12 @@ procedure TTerminologyServerStore.SetLoinc(const Value: TLOINCServices);
 begin
   FLoinc.Free;
   FLoinc := Value;
+end;
+
+procedure TTerminologyServerStore.SetRxNorm(const Value: TRxNormServices);
+begin
+  FRxNorm.Free;
+  FRxNorm := Value;
 end;
 
 procedure TTerminologyServerStore.SetSnomed(const Value: TSnomedServices);
@@ -278,6 +313,7 @@ begin
       FValueSetsByIdentifier.Matches[vs.identifierST] := vs.Link;
       FValueSetsByURL.Matches[url] := vs.Link;
       FValueSetsByKey.Matches[inttostr(key)] := vs.Link;
+      invalidateVS(vs.identifierST);
       if (vs.define <> nil) then
       begin
         FCodeSystems.Matches[vs.define.systemST] := vs.Link;
@@ -444,6 +480,8 @@ begin
     result := FLoinc.Link
   else if system = 'http://snomed.info/sct' then
     result := FSnomed.Link
+  else if system = 'http://www.nlm.nih.gov/research/umls/rxnorm' then
+    result := FRxNorm.Link
   else if system = 'http://unitsofmeasure.org' then
     result := FUcum.Link
   else
@@ -533,22 +571,32 @@ begin
   if context = nil then
     result := FVs.define.conceptList.count
   else
-    result := TFhirValueSetDefineConcept(context).conceptList.count;
+    result := TValueSetProviderContext(context).context.conceptList.count;
+end;
+
+procedure TValueSetProvider.Close(ctxt: TCodeSystemProviderContext);
+begin
+  ctxt.Free;
 end;
 
 function TValueSetProvider.Code(context: TCodeSystemProviderContext): string;
 begin
-  result := TFhirValueSetDefineConcept(context).codeST;
+  result := TValueSetProviderContext(context).context.codeST;
 end;
 
 function TValueSetProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin
-  result := TFhirValueSetDefineConcept(context).conceptList[ndx];
+  result := TValueSetProviderContext.create(TValueSetProviderContext(context).context.conceptList[ndx]);
 end;
 
 function TValueSetProvider.Display(context: TCodeSystemProviderContext): string;
 begin
-  result := TFhirValueSetDefineConcept(context).displayST;
+  result := TValueSetProviderContext(context).context.displayST;
+end;
+
+procedure TValueSetProvider.Displays(context: TCodeSystemProviderContext; list: TStringList);
+begin
+  list.Add(Display(context));
 end;
 
 procedure TValueSetProvider.Displays(code: String; list: TStringList);
@@ -560,27 +608,31 @@ function TValueSetProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; conc
 var
   c : TFhirValueSetDefineConcept;
 begin
-  c := TFhirValueSetDefineConcept(ctxt);
-  result := (ctxt = concept) or (filterLocate(ctxt, TFhirValueSetDefineConcept(concept).codeST) <> nil);
+  c := TValueSetProviderFilterContext(ctxt).context;
+  result := (c = TValueSetProviderContext(concept).context) or (filterLocate(ctxt, TValueSetProviderContext(concept).context.codeST) <> nil);
 end;
 
 function TValueSetProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
-  result := (TFhirValueSetDefineConcept(context).abstract = nil) or not TFhirValueSetDefineConcept(context).abstractST;
+  result := (TValueSetProviderContext(context).context.abstract = nil) or not TValueSetProviderContext(context).context.abstractST;
 end;
 
 function TValueSetProvider.getDisplay(code: String): String;
 var
-  ctxt : TAdvObject;
+  ctxt : TCodeSystemProviderContext;
 begin
   ctxt := locate(code);
-  if (ctxt = nil) then
-    raise Exception.create('Unable to find '+code+' in '+system)
-  else
-    result := Display(ctxt);
+  try
+    if (ctxt = nil) then
+      raise Exception.create('Unable to find '+code+' in '+system)
+    else
+      result := Display(ctxt);
+  finally
+    Close(ctxt);
+  end;
 end;
 
-function TValueSetProvider.doLocate(list : TFhirValueSetDefineConceptList; code : String) : TCodeSystemProviderContext;
+function TValueSetProvider.doLocate(list : TFhirValueSetDefineConceptList; code : String) : TValueSetProviderContext;
 var
   i : integer;
   c : TFhirValueSetDefineConcept;
@@ -591,7 +643,7 @@ begin
     c := list[i];
     if (c.codeST = code) then
     begin
-      result := c;
+      result := TValueSetProviderContext.Create(c.Link);
       exit;
     end;
     result := doLocate(c.conceptList, code);
@@ -605,25 +657,17 @@ begin
   result := DoLocate(FVS.define.conceptList, code);
 end;
 
-type
-  TValueSetProviderFilterContext = class (TCodeSystemProviderFilterContext)
-  private
-    concepts : TFhirValueSetDefineConceptList;
-  public
-    destructor Destroy; override;
-  end;
-
-function TValueSetProvider.searchFilter(filter : TSearchFilterText): TCodeSystemProviderFilterContext;
+function TValueSetProvider.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   res : TValueSetProviderFilterContext;
 begin
-  res := TValueSetProviderFilterContext.Create;
+  res := TValueSetProviderFilterContext.Create(TFhirValueSetDefineConceptList.Create);
   try
-    res.concepts := TFhirValueSetDefineConceptList.Create;
     FilterCodes(res.concepts, Fvs.define.conceptList, filter);
-    result.Link;
+    res.total := res.concepts.Count;
+    result := res.Link;
   finally
-    result.Free;
+    res.Free;
   end;
 end;
 
@@ -654,17 +698,21 @@ begin
   ctxt.Free;
 end;
 
-function TValueSetProvider.filter(prop: String; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+function TValueSetProvider.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
-  code : TCodeSystemProviderContext;
+  code : TValueSetProviderContext;
 begin
   if (op = FilterOperatorIsA) and (prop = 'concept') then
   begin
     code := doLocate(FVs.define.conceptList, value);
-    if code = nil then
-      raise Exception.Create('Unable to locate code '+value)
-    else
-      result := code.Link;
+    try
+      if code = nil then
+        raise Exception.Create('Unable to locate code '+value)
+      else
+        result := TValueSetProviderFilterContext.create(code.context.Link, filterCount(code.context));
+    finally
+      Close(code)
+    end;
   end
   else
     result := nil;
@@ -684,12 +732,12 @@ begin
   end;
 end;
 
-function FindConceptByIndex(context : TFhirValueSetDefineConcept; var index : integer) : TFhirValueSetDefineConcept;
+function FindConceptByIndex(context : TFhirValueSetDefineConcept; var index : integer) : TValueSetProviderContext;
 var
   i : integer;
 begin
   if index = 0 then
-    result := context
+    result := TValueSetProviderContext.create(context.Link)
   else
   begin
     i := 0;
@@ -703,46 +751,58 @@ begin
   end;
 end;
 
-function TValueSetProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext; ndx: integer): TCodeSystemProviderContext;
+function TValueSetProvider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  result := FindConceptByIndex(TFhirValueSetDefineConcept(ctxt), ndx);
-  if result = nil then
-    raise Exception.Create('Index exceeds concepts in filter');
+  inc(TValueSetProviderFilterContext(ctxt).ndx);
+  result := TValueSetProviderFilterContext(ctxt).ndx <= TValueSetProviderFilterContext(ctxt).total;
 end;
 
-function TValueSetProvider.FilterCount(ctxt: TCodeSystemProviderFilterContext): integer;
+function TValueSetProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+var
+  ndx : integer;
+begin
+  ndx := TValueSetProviderFilterContext(ctxt).ndx-1;
+  if TValueSetProviderFilterContext(ctxt).concepts <> nil then
+    result := TValueSetProviderContext.Create(TValueSetProviderFilterContext(ctxt).concepts[ndx].Link)
+  else
+  begin
+    result := FindConceptByIndex(TValueSetProviderFilterContext(ctxt).context, ndx);
+    if result = nil then
+      raise Exception.Create('Index exceeds concepts in filter');
+  end;
+end;
+
+function TValueSetProvider.FilterCount(ctxt: TFhirValueSetDefineConcept): integer;
 var
   i : integer;
-  c : TFhirValueSetDefineConcept;
 begin
-  c := TFhirValueSetDefineConcept(ctxt);
   result := 1;
-  for i := 0 to c.conceptList.Count - 1 do
-    inc(result, FilterCount(c.conceptList[i]));
+  for i := 0 to ctxt.conceptList.Count - 1 do
+    inc(result, FilterCount(ctxt.conceptList[i]));
 end;
 
 function TValueSetProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
 var
   c : TFhirValueSetDefineConcept;
 begin
-  c := TFhirValueSetDefineConcept(ctxt);
+  c := TValueSetProviderFilterContext(ctxt).context;
   if (c.codeST = code) then
-    result := c
+    result := TValueSetProviderContext.Create(c.Link)
   else
-    doLocate(c.conceptList, code);
+    result := doLocate(c.conceptList, code);
 end;
 
 function TValueSetProvider.locateIsA(code, parent: String): TCodeSystemProviderContext;
 var
-  p : TFhirValueSetDefineConcept;
+  p : TValueSetProviderContext;
 begin
   result := nil;
-  p := Locate(parent) as TFhirValueSetDefineConcept;
+  p := Locate(parent) as TValueSetProviderContext;
   if (p <> nil) then
-    if (p.codeST = code) then
+    if (p.context.codeST = code) then
       result := p
     else
-      result := doLocate(p.conceptList, code);
+      result := doLocate(p.context.conceptList, code);
 end;
 
 { TLoadedConceptMap }
@@ -798,9 +858,38 @@ end;
 
 { TValueSetProviderFilterContext }
 
+constructor TValueSetProviderFilterContext.Create(concepts: TFhirValueSetDefineConceptList);
+begin
+  inherited Create;
+  self.concepts := concepts;
+  total := self.concepts.Count;
+end;
+
+constructor TValueSetProviderFilterContext.Create(context: TFhirValueSetDefineConcept; total: integer);
+begin
+  inherited Create;
+  self.context := context;
+  self.total := total;
+end;
+
 destructor TValueSetProviderFilterContext.Destroy;
 begin
   concepts.Free;
+  context.Free;
+  inherited;
+end;
+
+{ TValueSetProviderContext }
+
+constructor TValueSetProviderContext.Create(context: TFhirValueSetDefineConcept);
+begin
+  inherited create;
+  self.context := context;
+end;
+
+destructor TValueSetProviderContext.Destroy;
+begin
+  context.Free;
   inherited;
 end;
 

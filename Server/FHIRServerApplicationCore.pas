@@ -33,7 +33,7 @@ interface
 Uses
   SysUtils, Classes, IniFiles, ActiveX, ComObj,
   SystemService, SystemSupport,
-  SnomedImporter, SnomedServices, SnomedExpressions,
+  SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices,
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
@@ -81,7 +81,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
-  dir, fn : String;
+  dir, dir2, fn : String;
   svc : TFHIRService;
 begin
   CoInitialize(nil);
@@ -129,8 +129,14 @@ begin
       svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
     else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
       svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
-    else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) then
-      svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+    else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('mafile', dir2, true, [clstValueNextParam]) then
+      svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, dir2, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+    else if FindCmdLineSwitch('rxstems', dir, true, []) then
+    begin
+      generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
+        svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('RxNorm', 'database', ''),
+        svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
+    end
 //    procedure ReIndex;
 //    procedure clear(types : String);
     else
@@ -290,8 +296,8 @@ begin
     s := ini.ReadString('FHIR', 'version', '');
     if s <> FHIR_GENERATED_VERSION then
       raise Exception.Create('FHIR Publication version mismatch: expected '+FHIR_GENERATED_VERSION+', found "'+ini.ReadString('FHIR', 'version', '')+'"');
-    if ini.ReadString('FHIR', 'revision', '??') <> FHIR_GENERATED_REVISION then
-      raise Exception.Create('FHIR Publication version mismatch: expected '+FHIR_GENERATED_REVISION+', found '+ini.ReadString('FHIR', 'revision', '??'));
+  //  if ini.ReadString('FHIR', 'revision', '??') <> FHIR_GENERATED_REVISION then
+  //    raise Exception.Create('FHIR Publication version mismatch: expected '+FHIR_GENERATED_REVISION+', found '+ini.ReadString('FHIR', 'revision', '??'));
   finally
     ini.Free;
   end;
@@ -327,7 +333,7 @@ end;
 procedure TFHIRService.LoadTerminologies;
 begin
   FTerminologyServer := TTerminologyServer.create;
-  FTerminologyServer.load(FIni);
+  FTerminologyServer.load(FIni, FDb);
 end;
 
 procedure TFHIRService.UnloadTerminologies;

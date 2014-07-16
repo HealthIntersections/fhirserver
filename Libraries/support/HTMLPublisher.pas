@@ -42,7 +42,7 @@ Type
     procedure StartTable(borders : boolean; clss : String = '');
     procedure StartTableRow;
     procedure StartRowFlip(i : integer);
-    procedure StartTableCell;
+    procedure StartTableCell(span : integer = 1);
     procedure EndTableCell;
     procedure EndTableRow;
     procedure EndTable;
@@ -133,7 +133,7 @@ end;
 
 procedure THtmlPublisher.Done;
 begin
-  FBuilder.Append(TFHIRXhtmlComposer.footer(BaseURL));
+  FBuilder.Append(TFHIRXhtmlComposer.footer(BaseURL, lang));
 end;
 
 procedure THtmlPublisher.EndBlockQuote;
@@ -288,7 +288,10 @@ end;
 
 procedure THtmlPublisher.StartTableCell;
 begin
-  FBuilder.Append('<td>')
+  if (span <> 1) then
+    FBuilder.Append('<td colspan="'+inttostr(span)+'">')
+  else
+   FBuilder.Append('<td>')
 end;
 
 procedure THtmlPublisher.StartTableRow;

@@ -105,12 +105,12 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -remount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -loinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.mdb&quot; -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot;</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
         <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <DCC_Define>INDY_V10;$(DCC_Define)</DCC_Define>
+        <DCC_Define>INDY_V10;FHIR-DSTU;$(DCC_Define)</DCC_Define>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units\</DCC_DcuOutput>
@@ -120,7 +120,7 @@
         <DCC_Define>FHIR-DSTU;$(DCC_Define)</DCC_Define>
         <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.mdb&quot; -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -nrxstems</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -240,7 +240,6 @@
         <DCCReference Include="..\Libraries\refplat-dstu\FHIRLang.pas"/>
         <DCCReference Include="..\Libraries\refplat-dstu\FHIRUtilities.pas"/>
         <DCCReference Include="..\Libraries\refplat-dstu\FHIRClient.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRBase.pas"/>
         <DCCReference Include="..\Libraries\Support\MsXmlParser.pas"/>
         <DCCReference Include="..\Libraries\Support\XMLBuilder.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvWinInetClients.pas"/>
@@ -338,6 +337,8 @@
         <DCCReference Include="..\Libraries\security\JWT.pas"/>
         <DCCReference Include="..\Libraries\security\HMAC.pas"/>
         <DCCReference Include="..\Libraries\security\libeay32.pas"/>
+        <DCCReference Include="AuthServer.pas"/>
+        <DCCReference Include="RxNormServices.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -395,6 +396,9 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReports\LibD19\dclfrx19.bpl">File C:\Program Files (x86)\FastReports\LibD19\dclfrx19.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReports\LibD19\dclfrxDB19.bpl">File C:\Program Files (x86)\FastReports\LibD19\dclfrxDB19.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReports\LibD19\dclfrxe19.bpl">File C:\Program Files (x86)\FastReports\LibD19\dclfrxe19.bpl not found</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>

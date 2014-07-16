@@ -240,24 +240,32 @@ var
   filters : Array of TCodeSystemProviderFilterContext;
   ctxt : TCodeSystemProviderFilterContext;
   ok : boolean;
+  prep : TCodeSystemProviderFilterPreparationContext;
+  inner : boolean;
 begin
   cs := FStore.getProvider(cset.systemST);
   try
     if (cset.codeList.count = 0) and (cset.filterList.count = 0) then
     begin
       // special case - add all the code system
-      if cs.TotalCount > UPPER_LIMIT then
-        raise exception.create('code system '+cs.system+' too big to include as a whole');
       if filter.Null then
+      begin
+        if cs.TotalCount > UPPER_LIMIT then
+          raise exception.create('code system '+cs.system+' too big to include as a whole');
         for i := 0 to cs.ChildCount(nil) - 1 do
           addCodeAndDescendents(list, map, cs, cs.getcontext(nil, i))
+      end
       else
       begin
-        ctxt := cs.searchFilter(filter);
+        ctxt := cs.searchFilter(filter, nil);
         try
-          for i := 0 to cs.FilterCount(ctxt) - 1 do
+          i := 0;
+          while cs.FilterMore(ctxt) do
           begin
-            c := cs.FilterConcept(ctxt, j);
+            inc(i);
+            if i > UPPER_LIMIT then
+              raise exception.create('Too many matches to return');
+            c := cs.FilterConcept(ctxt);
             addCode(list, map, cs.system, cs.code(c), cs.display(c));
           end;
         finally
@@ -272,37 +280,44 @@ begin
 
     if cset.filterList.Count > 0 then
     begin
-      if filter.null then
-      begin
-        SetLength(filters, cset.filterList.count);
-        offset := 0;
-      end
-      else
-      begin
-        SetLength(filters, cset.filterList.count+1);
-        offset := 1;
-        filters[0] := cs.searchFilter(filter); // this comes first, because it imposes order
-      end;
+      prep := cs.getPrepContext;
+      try
+        if filter.null then
+        begin
+          SetLength(filters, cset.filterList.count);
+          offset := 0;
+        end
+        else
+        begin
+          SetLength(filters, cset.filterList.count+1);
+          offset := 1;
+          filters[0] := cs.searchFilter(filter, prep); // this comes first, because it imposes order
+        end;
 
-      for i := 0 to cset.filterList.count - 1 do
-      begin
-        fc := cset.filterList[i];
-        filters[i+offset] := cs.filter(fc.property_ST, fc.OpST, fc.valueST);
-        if filters[i+offset] = nil then
-          raise Exception.create('The filter "'+fc.property_ST +' '+ CODES_TFhirFilterOperator[fc.OpST]+ ' '+fc.valueST+'" was not understood in the context of '+cs.system);
-      end;
+        for i := 0 to cset.filterList.count - 1 do
+        begin
+          fc := cset.filterList[i];
+          filters[i+offset] := cs.filter(fc.property_ST, fc.OpST, fc.valueST, prep);
+          if filters[i+offset] = nil then
+            raise Exception.create('The filter "'+fc.property_ST +' '+ CODES_TFhirFilterOperator[fc.OpST]+ ' '+fc.valueST+'" was not understood in the context of '+cs.system);
+        end;
 
-      for j := 0 to cs.FilterCount(filters[0]) - 1 do
-      begin
-        c := cs.FilterConcept(filters[0], j);
-        ok := true;
-        for i := 1 to length(filters) - 1 do
-          ok := ok and cs.InFilter(filters[i], c);
-        if ok then
-          addCode(list, map, cs.system, cs.code(c), cs.display(c));
+        inner := not cs.prepare(prep);
+        While cs.FilterMore(filters[0]) do
+        begin
+          c := cs.FilterConcept(filters[0]);
+          ok := true;
+          if inner then
+            for i := 1 to length(filters) - 1 do
+              ok := ok and cs.InFilter(filters[i], c);
+          if ok then
+            addCode(list, map, cs.system, cs.code(c), cs.display(c));
+        end;
+        for i := 0 to length(filters) - 1 do
+          cs.Close(filters[i]);
+      finally
+        prep.free;
       end;
-      for i := 0 to length(filters) - 1 do
-        cs.Close(filters[i]);
     end;
   finally
     cs.free;

@@ -653,7 +653,7 @@ begin
   FLock.Lock('GetSessionByToken');
   try
     for i := 0 to FSessions.count - 1 do
-      if TFhirSession(FSessions.Objects[i]).Outertoken = outerToken then
+      if (TFhirSession(FSessions.Objects[i]).Outertoken = outerToken) or (TFhirSession(FSessions.Objects[i]).JWTPacked = outerToken) then
       begin
         result := true;
         session := TFhirSession(FSessions.Objects[i]).Link;

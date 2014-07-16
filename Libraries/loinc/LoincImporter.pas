@@ -40,9 +40,14 @@ Const
   FLAG_LONG_COMMON = 1;
   FLAG_LONG_RELATED = 2;
   STEP_COUNT = 1000;
+  
 
 Type
   TLOINCImporter = class;
+
+  THeirarchyEntry = class;
+  THeirarchyEntryList = class;
+  TCodeList = class;
 
   TConcept = class (TAdvName)
   private
@@ -58,12 +63,55 @@ Type
     Function Store(sName : AnsiString; oImp : TLOINCImporter) : Word;
   End;
 
-  TCode =  class (TAdvObject)
+  TDescribed = class  (TAdvObject)
+  private
+    index : Integer;
+    Stems : TAdvIntegerList;
+  public
+    Constructor Create; Override;
+    Destructor Destroy; Override;
+  end;
+  
+  THeirarchyEntry = class (TDescribed)
+  private
+    FCode : String;
+    FText : String;
+    FParent : THeirarchyEntry;
+    FChildren : THeirarchyEntryList;
+    FDescendents : THeirarchyEntryList;
+    FConcepts : TCodeList;
+    FDescendentConcepts : TCodeList;
+  public
+    Constructor Create; Override;
+    Destructor Destroy; Override;
+  End;
+
+  THeirarchyEntryList = class (TAdvObjectList)
+  private
+    function GetEntry(iIndex: Integer): THeirarchyEntry;
+  protected
+    Function ItemClass : TAdvObjectClass; Override;
+    Function CompareByCode(pA, pB: Pointer): Integer; Virtual;
+    Function CompareByText(pA, pB: Pointer): Integer; Virtual;
+    Function FindByCode(entry : THeirarchyEntry; Out iIndex: Integer): Boolean; Overload;
+    Function FindByText(entry : THeirarchyEntry; Out iIndex: Integer): Boolean; Overload;
+  public
+    Procedure SortedByCode;
+    Procedure SortedByText;
+
+    Function getByCode(code : String) : THeirarchyEntry;
+    Function FindByCode(code: String; Out iIndex: Integer): Boolean; Overload;
+    Function getByText(text : String) : THeirarchyEntry;
+    Function FindByText(text: String; Out iIndex: Integer): Boolean; Overload;
+
+    Property Entries[iIndex : Integer] : THeirarchyEntry Read GetEntry; Default;
+  end;
+
+  TCode = class (TDescribed)
   Private
     Code : AnsiString;
     Display : AnsiString;
     Names : Cardinal;
-    Index : Integer;
     Comps : TConcept;
     Props : TConcept;
     Time : TConcept;
@@ -73,12 +121,26 @@ Type
     Class_ : TConcept;
     v2dt, v3dt : Word;
     Flags : byte;
-    Stems : TAdvIntegerList;
+    entry : THeirarchyEntry;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
     Function Compare(pA, pB : Pointer) : Integer;
   End;
+
+  TCodeList = class (TAdvObjectList)
+  private
+    function GetEntry(iIndex: Integer): TCode;
+  protected
+    Function ItemClass : TAdvObjectClass; Override;
+    Function CompareByCode(pA, pB: Pointer): Integer; Virtual;
+    Function FindByCode(entry : TCode; Out iIndex: Integer): Boolean; Overload;
+  public
+    Procedure SortedByCode;
+
+    Function getByCode(code : String) : TCode;
+    Function FindByCode(code: String; Out iIndex: Integer): Boolean; Overload;
+
+    Property Entries[iIndex : Integer] : TCode Read GetEntry; Default;
+  end;
 
   TLoincImporter = class (TAdvObject)
   private
@@ -92,6 +154,7 @@ Type
     FConcepts : TLOINCConcepts;
     FWords : TLoincWords;
     FStems : TLoincStems;
+    FEntries : TLOINCHeirarchyEntryList;
 
     FStrings : TStringList;
     FUnits : TStringList;
@@ -100,23 +163,28 @@ Type
     FStemList : TStringList;
     FStemmer : TYuStemmer_8;
     FOutputFile: String;
+    FMultiAxialFilename: String;
 
-    procedure SeeDesc(sDesc: AnsiString; oCode : TCode; iFlags: Byte);
-    procedure SeeWord(sDesc: AnsiString; oCode : TCode; iFlags: Byte);
+    procedure SeeDesc(sDesc: AnsiString; oObj : TDescribed; iFlags: Byte);
+    procedure SeeWord(sDesc: AnsiString; oObj : TDescribed; iFlags: Byte);
 
     Function AddDescription(Const s : AnsiString):Cardinal;
     Function SeeUnits(Const s : AnsiString):Word;
-    function LoadLOINCDB(o: TKDBConnection; out props : TLoincPropertyIds) : Word;
-    function ReadLOINCDatabase(out props : TLoincPropertyIds) : Word;
+    function LoadLOINCDB(o: TKDBConnection; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
+    function ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
     procedure Progress(msg : String);
+    procedure ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln : string);
+    procedure StoreHeirarchyEntry(entry : THeirarchyEntry);
   public
     procedure ImportLOINC;
+
     Property FileName : String read FFilename write FFilename;
+    Property MultiAxialFilename : String read FMultiAxialFilename write FMultiAxialFilename;
     Property OutputFile : String read FOutputFile write FOutputFile;
     Property Version : String read FVersion write FVersion;
   end;
 
-function importLoinc(filename : String; dest : String) : String;
+function importLoinc(filename, maFilename : String; dest : String) : String;
 
 Implementation
 
@@ -145,7 +213,7 @@ begin
     raise Exception.Create('Unable to read the version from '+txtFile);
 end;
 
-function importLoinc(filename : String; dest : String) : String;
+function importLoinc(filename, maFilename : String; dest : String) : String;
 var
   imp : TLoincImporter;
 begin
@@ -153,6 +221,7 @@ begin
   imp := TLoincImporter.Create;
   try
     imp.Filename := filename;
+    imp.MultiAxialFilename := mafilename;
     imp.Version := DetermineVersion(filename);
     Writeln('Version: '+imp.Version);
     result := IncludeTrailingPathDelimiter(dest)+'loinc.cache';
@@ -183,7 +252,7 @@ Begin
     result := inttostr(newkey);
 End;
 
-procedure TLoincImporter.SeeDesc(sDesc: AnsiString; oCode : TCode; iFlags: Byte);
+procedure TLoincImporter.SeeDesc(sDesc: AnsiString; oObj : TDescribed; iFlags: Byte);
 var
   s : AnsiString;
 begin
@@ -192,11 +261,11 @@ begin
     AnsiStringSplit(sdesc, [#13, #10, ',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='],
       s, sdesc);
     if (s <> '') {And not StringContainsAny(s, ['0'..'9']) And (length(s) > 3)} Then
-      SeeWord(s, oCode, iFlags);
+      SeeWord(s, oObj, iFlags);
   End;
 end;
 
-procedure TLoincImporter.SeeWord(sDesc: AnsiString; oCode : TCode; iFlags: Byte);
+procedure TLoincImporter.SeeWord(sDesc: AnsiString; oObj : TDescribed; iFlags: Byte);
 var
   i, m : integer;
   sStem : AnsiString;
@@ -222,16 +291,55 @@ begin
   End
   Else
     oList := TAdvObjectList(FStemList.Objects[i]);
-  if not oList.ExistsByReference(oCode) Then
-    oList.Add(oCode.Link);
+  if not oList.ExistsByReference(oObj) Then
+    oList.Add(oObj.Link);
 End;
 
 
-Function TLoincImporter.LoadLOINCDB(o : TKDBConnection; out props : TLoincPropertyIds) : Word;
+procedure TLoincImporter.StoreHeirarchyEntry(entry: THeirarchyEntry);
+var
+  parent, children, descendents, concepts, descendentConcepts: Cardinal;
+  refs : TCardinalArray;
+  i : integer;
+begin
+  setLength(refs, entry.FChildren.Count);
+  for i := 0 to entry.FChildren.Count - 1 do
+    refs[i] := entry.FChildren[i].index;
+  children := FRefs.AddCardinals(refs);
+
+  setLength(refs, entry.FDescendents.Count);
+  for i := 0 to entry.FDescendents.Count - 1 do
+    refs[i] := entry.FDescendents[i].index;
+  descendents := FRefs.AddCardinals(refs);
+
+  setLength(refs, entry.FConcepts.Count);
+  entry.FConcepts.SortedByCode;
+  for i := 0 to entry.FConcepts.Count - 1 do
+    refs[i] := TCode(entry.FConcepts[i]).index;
+  concepts := FRefs.AddCardinals(refs);
+
+  setLength(refs, entry.FDescendentConcepts.Count);
+  entry.FDescendentConcepts.SortedByCode;
+  for i := 0 to entry.FDescendentConcepts.Count - 1 do
+    refs[i] := TCode(entry.FDescendentConcepts[i]).index;
+  descendentConcepts := FRefs.AddCardinals(refs);
+
+  if entry.FParent <> nil then
+    parent := entry.FParent.index
+  else
+    parent := NO_PARENT;
+
+  if FEntries.AddEntry(AddDescription(entry.FCode), AddDescription(entry.FText), parent, children, descendents, concepts, descendentConcepts) <> entry.index then
+    raise Exception.Create('Out of order');
+end;
+
+
+Function TLoincImporter.LoadLOINCDB(o : TKDBConnection; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
 var
   iLength : Integer;
   iCount : Integer;
-  oCodes, oTemp : TAdvObjectList;
+  oCodes : TCodeList;
+  oTemp : TAdvObjectList;
   oCode : TCode;
   iLoop : Integer;
   oNames : TAdvStringList;
@@ -243,16 +351,22 @@ var
   oScale : TConceptManager;
   oMethod : TConceptManager;
   oClass : TConceptManager;
+  oHeirarchy : THeirarchyEntryList;
+  oEntry : THeirarchyEntry;
   aConcepts : TWordArray;
+  oSubsets : Array[TLoincSubsetId] of TCodeList;
   i, j : integer;
   iFlag : Byte;
   aCardinals : TCardinalArray;
-  iStem : Cardinal;
+  iStem, e : Cardinal;
+  ma : Text;
+  ln : String;
+  a : TLoincSubsetId;
 begin
   result := 0;
   iLength := 0;
 
-  oCodes := TAdvObjectList.Create;
+  oCodes := TCodeList.Create;
   oComps := TConceptManager.Create;
   oProps := TConceptManager.Create;
   oTime := TConceptManager.Create;
@@ -260,6 +374,7 @@ begin
   oScale := TConceptManager.Create;
   oMethod := TConceptManager.Create;
   oClass := TConceptManager.Create;
+  oHeirarchy := THeirarchyEntryList.Create;
   Try
     oComps.SortedByName;
     oProps.sortedByName;
@@ -268,10 +383,16 @@ begin
     oScale.sortedByName;
     oMethod.sortedByName;
     oClass.sortedByName;
+    for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
+    begin
+      oSubsets[a] := TCodeList.create;
+      oSubsets[a].SortedByCode;
+    end;
+
     iCount := 0;
     Progress('Loading Concepts');
     o.sql := 'Select LOINC_NUM, LONG_COMMON_NAME, COMPONENT, PROPERTY, TIME_ASPCT, SYSTEM, SCALE_TYP, METHOD_TYP, CLASS, RELATEDNAMES2, SHORTNAME, '
-                +'HL7_V2_DATATYPE, HL7_V3_DATATYPE, ORDER_OBS, UNITSREQUIRED, CLASSTYPE from LOINC order by LOINC_NUM';
+                +'HL7_V2_DATATYPE, HL7_V3_DATATYPE, ORDER_OBS, UNITSREQUIRED, CLASSTYPE, STATUS, EXTERNAL_COPYRIGHT_NOTICE from LOINC order by LOINC_NUM';
     o.prepare;
     Try
       o.execute;
@@ -294,35 +415,72 @@ begin
         oCode.Method := oMethod.See(o.ColStringByName['METHOD_TYP'], oCode);
         oCode.Class_ := oClass.See(o.ColStringByName['CLASS'], oCode);
 
+        oSubsets[lsiAll].add(oCode.Link);
         oCode.Flags := 0;
 //        if o.ColIntegerByName['SETROOT'] = 1 Then
 //          oCode.Flags := oCode.Flags + FLAGS_ROOT;
-        if sameText(o.ColStringByName['ORDER_OBS'], 'Both') Then
-          oCode.Flags := oCode.Flags + FLAGS_ORDER + FLAGS_OBS
+        if sameText(o.ColStringByName['ORDER_OBS'], 'Both') Then    
+        begin
+          oCode.Flags := oCode.Flags + FLAGS_ORDER + FLAGS_OBS;
+          oSubsets[lsiOrderObs].add(oCode.Link);
+        end
         else if sameText(o.ColStringByName['ORDER_OBS'], 'Observation') Then
-          oCode.Flags := oCode.Flags + FLAGS_OBS
+        begin
+          oCode.Flags := oCode.Flags + FLAGS_OBS;
+          oSubsets[lsiObs].add(oCode.Link);
+        end
         else if sameText(o.ColStringByName['ORDER_OBS'], 'Order') Then
-          oCode.Flags := oCode.Flags + FLAGS_ORDER
+        begin
+          oCode.Flags := oCode.Flags + FLAGS_ORDER;
+          oSubsets[lsiOrder].add(oCode.Link);
+        end
         else if (o.ColStringByName['ORDER_OBS'] <> '') And (o.ColStringByName['ORDER_OBS'] <> 'Subset') Then
-          Raise exception.create('unknown order/obs '+o.ColStringByName['ORDER_OBS']);
+          Raise exception.create('unknown order/obs '+o.ColStringByName['ORDER_OBS'])
+        else
+          oSubsets[lsiOrderSubset].add(oCode.Link);
+        
         if o.ColStringByName['UNITSREQUIRED'] = 'Y' Then
           oCode.Flags := oCode.Flags + FLAGS_UNITS;
-//        if o.ColStringByName['FINAL'] <> 'Y' Then
-//          oCode.Flags := oCode.Flags + FLAGS_HOLD;
+        if o.ColNullByName['EXTERNAL_COPYRIGHT_NOTICE'] then
+          oSubsets[lsiInternal].add(oCode.Link)
+        else
+          oSubsets[lsi3rdParty].add(oCode.Link);
+        
         case o.ColIntegerByName['CLASSTYPE'] of
-         2: oCode.Flags := oCode.Flags + FLAGS_CLIN;
-         3: oCode.Flags := oCode.Flags + FLAGS_ATT;
-         4: oCode.Flags := oCode.Flags + FLAGS_SURV;
-         1: ;
+         2: begin
+            oCode.Flags := oCode.Flags + FLAGS_CLIN;
+            oSubsets[lsiTypeClinical].add(oCode.Link);
+            end;
+         3: begin
+            oCode.Flags := oCode.Flags + FLAGS_ATT;
+            oSubsets[lsiTypeAttachment].add(oCode.Link);
+            end;
+         4: begin
+            oCode.Flags := oCode.Flags + FLAGS_SURV;
+            oSubsets[lsiTypeSurvey].add(oCode.Link);
+            end;
+         1: begin
+            oSubsets[lsiTypeObservation].add(oCode.Link);
+            end;
         else
           Raise exception.create('unexpected class type '+inttostr(o.ColIntegerByName['CLASSTYPE']));
         End;
+        if SameText(o.ColStringByName['STATUS'], 'Active') then
+          oSubsets[lsiActive].add(oCode.Link)
+        else if SameText(o.ColStringByName['STATUS'], 'Deprecated') then
+          oSubsets[lsiDeprecated].add(oCode.Link)
+        else if SameText(o.ColStringByName['STATUS'], 'Discouraged') then
+          oSubsets[lsiDiscouraged].add(oCode.Link)
+        else if SameText(o.ColStringByName['STATUS'], 'Trial') then
+          oSubsets[lsiTrial].add(oCode.Link)
+        else
+          raise Exception.Create('Unknown LOINC Code status '+o.ColStringByName['STATUS']);
 
         SeeDesc(oCode.Display, oCode, FLAG_LONG_COMMON);
 
         oCode.v2dt := SeeUnits(o.ColStringByName['HL7_V2_DATATYPE']);
         oCode.v3dt := SeeUnits(o.ColStringByName['HL7_V3_DATATYPE']);
-
+           
         oNames := TAdvStringList.Create;
         Try
           oNames.Symbol := ';';
@@ -357,17 +515,37 @@ begin
     Finally
       o.Terminate;
     End;
-
     Progress('Sort Codes');
+    oCodes.SortedByCode;
+
+    // now, process the multi-axial file
+    Progress('Loading Multi-Axial Source');
+    oHeirarchy.SortedByCode;
+    AssignFile(ma, FMultiAxialFilename);
+    Reset(ma);
+    Readln(ma, ln); // skip header
+
+    iCount := 0;
+    while not eof(ma) do
+    begin
+      Readln(ma, ln);
+      ProcessMultiAxialEntry(oHeirarchy, oCodes, ln);
+      if iCount mod STEP_COUNT = 0 then
+        Progress('');
+      inc(iCount);
+    end;
+    for i := 0 to oHeirarchy.Count - 1 do
+      // first, we simply assign them all an index. Then we'll create everything else, and then go and actually store them
+      oHeirarchy[i].index := i;
+
+    Progress('Build Cache');
     For iLoop := 0 to oCodes.Count - 1 Do
     Begin
       oCode := TCode(oCodes[iLoop]);
       oCode.Code := AnsiPadString(oCode.Code, iLength, ' ', false);
     End;
-    oCodes.SortedBy(TCode(oCodes[0]).Compare);
     FCode.CodeLength := iLength;
 
-    Progress('Build Cache');
     For iLoop := 0 to oCodes.Count - 1 Do
     Begin
       if iCount mod STEP_COUNT = 0 then
@@ -375,7 +553,12 @@ begin
       inc(iCount);
       oCode := TCode(oCodes[iLoop]);
       Try
-        oCode.Index := FCode.AddCode(oCode.Code, AddDescription(oCode.Display), oCode.Names, oCode.v2dt, oCode.v3dt, oCode.Flags);
+        if oCode.entry <> nil then
+          e := oCode.entry.index
+        else
+          e := 0;
+          
+        oCode.Index := FCode.AddCode(oCode.Code, AddDescription(oCode.Display), oCode.Names, e, oCode.v2dt, oCode.v3dt, oCode.Flags);
       Except
         on E:Exception Do
         Begin
@@ -403,6 +586,32 @@ begin
     result := FConcepts.AddConcept(AddDescription('LOINC Definitions'), FRefs.AddWords(aConcepts), 0);
     FCode.donebuild;
 
+    Progress('Storing Heirachy');
+    FEntries.StartBuild;
+    iCount := 0;
+    SetLength(roots, 0);
+    for i := 0 to oHeirarchy.Count - 1 do
+    begin
+      if iCount mod STEP_COUNT = 0 then
+        Progress('');
+      inc(iCount);
+      if oHeirarchy[i].FParent = nil then
+      begin
+        SetLength(roots, Length(roots)+1);
+        roots[Length(roots)-1] := oHeirarchy[i].index;
+      end;
+      StoreHeirarchyEntry(oHeirarchy[i]);
+    end;
+    FEntries.DoneBuild;
+
+    for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
+    begin
+      setLength(aCardinals, oSubsets[a].Count);
+      for i := 0 to oSubsets[a].Count - 1 do
+        aCardinals[i] := oSubsets[a][i].Index;
+      subsets[a] := FRefs.AddCardinals(aCardinals);
+    end;
+
     Progress('Processing Words');
     FWords.StartBuild;
     For i := 0 to FWordList.Count - 1 Do
@@ -421,13 +630,10 @@ begin
       if i mod STEP_COUNT = 0 then
         Progress('');
       oTemp := TAdvObjectList(FStemList.Objects[i]);
-      SetLength(aCardinals, oTemp.Count);
-      for j := 0 to oTemp.Count - 1 Do
-        aCardinals[j] := TCode(oTemp[j]).Index;
       iStem := FDesc.AddEntry(FStemList[i]);
-      FStems.AddStem(iStem, FRefs.AddCardinals(aCardinals));
+      FStems.AddStem(iStem);
       for j := 0 to oTemp.Count - 1 Do
-        TCode(oTemp[j]).Stems.Add(iStem);
+        TDescribed(oTemp[j]).Stems.Add(iStem);
       oTemp.Free;
       FStemList.Objects[i] := nil;
     End;
@@ -439,6 +645,14 @@ begin
       for j := 0 to oCode.Stems.Count - 1 do
         aCardinals[j] := oCode.Stems[j];
       FCode.SetStems(oCode.Index, FRefs.AddCardinals(aCardinals));
+    End;
+    For i := 0 to oHeirarchy.Count - 1 Do
+    Begin
+      oEntry := oHeirarchy[i];
+      SetLength(aCardinals, oEntry.Stems.Count);
+      for j := 0 to oEntry.Stems.Count - 1 do
+        aCardinals[j] := oEntry.Stems[j];
+      FEntries.SetStems(oEntry.Index, FRefs.AddCardinals(aCardinals));
     End;
 
     Progress('Cross-Linking');
@@ -466,6 +680,9 @@ begin
 
     TotalConcepts := oCodes.Count;
   Finally
+    for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
+      osubsets[a].free;
+    oHeirarchy.Free;
     oCodes.Free;
     oComps.Free;
     oProps.Free;
@@ -477,7 +694,7 @@ begin
   End;
 End;
 
-Function TLoincImporter.ReadLOINCDatabase(out props : TLoincPropertyIds) : Word;
+Function TLoincImporter.ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
 var
   oLink : TKDBManager;
   o : TKDBConnection;
@@ -491,7 +708,7 @@ Begin
     Try
       o := oLink.GetConnection('load');
       Try
-        result := LoadLOINCDB(o, props);
+        result := LoadLOINCDB(o, props, roots, subsets);
       Finally
         o.Release;
       End;
@@ -510,6 +727,8 @@ var
   props : TLoincPropertyIds;
   newKey : integer;
   i, iStatus : integer;
+  roots : TCardinalArray;
+  subsets : TLoincSubsets;
 begin
   FStart := now;
   FWordList := TStringList.Create;
@@ -529,11 +748,14 @@ begin
     FConcepts.StartBuild;
     FWords := oSvc.Words;
     FStems := oSvc.Stems;
+    FEntries := oSvc.Entries;
 
     Try
-      oSvc.Root := ReadLOINCDatabase(props);
+      oSvc.Root := ReadLOINCDatabase(props, roots, subsets);
       oSvc.Version := Version;
       oSvc.Properties := props;
+      oSvc.HeirarchyRoots := roots;
+      oSvc.Subsets := subsets;
     Finally
       FConcepts.DoneBuild;
       FRefs.DoneBuild;
@@ -552,6 +774,59 @@ begin
     FStemmer.Free;
   End;
 End;
+
+procedure TLoincImporter.ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln: string);
+var
+  PATH_TO_ROOT, SEQUENCE, IMMEDIATE_PARENT, CODE, CODE_TEXT : String;
+  entry, parent : THeirarchyEntry;
+  oCode : TCode;
+begin
+  StringSplit(ln, ',', PATH_TO_ROOT, ln);
+  StringSplit(ln, ',', SEQUENCE, ln);
+  StringSplit(ln, ',', IMMEDIATE_PARENT, ln);
+  StringSplit(ln, ',', CODE, CODE_TEXT);
+
+  if (CODE.StartsWith('LP')) then
+  begin
+    entry := THeirarchyEntry.Create;
+    try
+      entry.FCode := CODE;
+      entry.FText := CODE_TEXT;
+      if (IMMEDIATE_PARENT <> '') then
+      begin
+        entry.FParent := oHeirarchy.getByCode(IMMEDIATE_PARENT);
+        entry.FParent.FChildren.Add(entry.Link);
+        parent := entry.FParent;
+        while (parent <> nil) do
+        begin
+          parent.FDescendents.Add(entry.Link);
+          parent := parent.FParent;
+        end;
+      end;
+      oHeirarchy.Add(entry.Link);
+      SeeDesc(entry.FText, entry, FLAG_LONG_COMMON);
+    finally
+      entry.Free;
+    end;
+  end
+  else
+  begin
+    oCode := oCodes.getByCode(CODE);
+    if (oCode = nil) then
+      raise Exception.Create('Unable to find code '+CODE);
+    oCode.entry := oHeirarchy.getByCode(IMMEDIATE_PARENT);
+    if (oCode.entry = nil) then
+      raise Exception.Create('Unable to find ma code '+IMMEDIATE_PARENT);
+    oCode.entry.FConcepts.Add(oCode.Link);
+    parent := oCode.entry;
+    while (parent <> nil) do
+    begin
+      if not parent.FDescendentConcepts.ExistsByReference(oCode) then
+        parent.FDescendentConcepts.Add(oCode.Link);
+          parent := parent.FParent;
+    end;
+  end;
+end;
 
 procedure TLoincImporter.Progress(msg: String);
 begin
@@ -650,18 +925,183 @@ begin
   End;
 end;
 
-constructor TCode.Create;
+{ THeirarchyEntry }
+
+constructor THeirarchyEntry.Create;
+begin
+  inherited;
+  FChildren := THeirarchyEntryList.create;
+  FDescendents := THeirarchyEntryList.create;
+  FConcepts := TCodeList.Create;
+  FDescendentConcepts := TCodeList.Create;
+end;
+
+destructor THeirarchyEntry.Destroy;
+begin
+  FConcepts.Free;
+  FChildren.free;
+  FDescendents.free;
+  FDescendentConcepts.free;
+  inherited;
+end;
+
+{ THeirarchyEntryList }
+
+function THeirarchyEntryList.CompareByCode(pA, pB: Pointer): Integer;
+begin
+  Result := StringCompare(THeirarchyEntry(pA).FCode, THeirarchyEntry(pB).FCode);
+end;
+
+function THeirarchyEntryList.CompareByText(pA, pB: Pointer): Integer;
+begin
+  Result := StringCompare(THeirarchyEntry(pA).Ftext, THeirarchyEntry(pB).Ftext);
+end;
+
+function THeirarchyEntryList.FindByCode(entry: THeirarchyEntry; out iIndex: Integer): Boolean;
+begin
+  Result := Find(entry, iIndex, CompareByCode);
+end;
+
+function THeirarchyEntryList.FindByCode(code: String; out iIndex: Integer): Boolean;
+Var
+  entry : THeirarchyEntry;
+Begin
+  entry := THeirarchyEntry(ItemNew);
+  Try
+    entry.Fcode := code;
+
+    Result := FindByCode(entry, iIndex);
+  Finally
+    entry.Free;
+  End;
+end;
+
+function THeirarchyEntryList.getByCode(code: String): THeirarchyEntry;
+Var
+  iIndex : Integer;
+Begin
+  If FindByCode(code, iIndex) Then
+    Result := Entries[iIndex]
+  Else
+    Result := Nil;
+end;
+
+function THeirarchyEntryList.FindByText(entry: THeirarchyEntry; out iIndex: Integer): Boolean;
+begin
+  Result := Find(entry, iIndex, CompareByText);
+end;
+
+function THeirarchyEntryList.FindByText(text: String; out iIndex: Integer): Boolean;
+Var
+  entry : THeirarchyEntry;
+Begin
+  entry := THeirarchyEntry(ItemNew);
+  Try
+    entry.Ftext := text;
+
+    Result := FindByText(entry, iIndex);
+  Finally
+    entry.Free;
+  End;
+end;
+
+function THeirarchyEntryList.getByText(text: String): THeirarchyEntry;
+Var
+  iIndex : Integer;
+Begin
+  If FindByText(text, iIndex) Then
+    Result := Entries[iIndex]
+  Else
+    Result := Nil;
+end;
+
+
+function THeirarchyEntryList.GetEntry(iIndex: Integer): THeirarchyEntry;
+begin
+  result := THeirarchyEntry(ObjectByIndex[iIndex]);
+end;
+
+function THeirarchyEntryList.ItemClass: TAdvObjectClass;
+begin
+  result := THeirarchyEntry;
+end;
+
+procedure THeirarchyEntryList.SortedByCode;
+begin
+  SortedBy(CompareByCode);
+end;
+
+procedure THeirarchyEntryList.SortedByText;
+begin
+  SortedBy(CompareByText);
+end;
+
+{ TCodeList }
+
+function TCodeList.CompareByCode(pA, pB: Pointer): Integer;
+begin
+  Result := StringCompare(TCode(pA).Code, TCode(pB).Code);
+end;
+
+function TCodeList.FindByCode(entry: TCode; out iIndex: Integer): Boolean;
+begin
+  Result := Find(entry, iIndex, CompareByCode);
+end;
+
+function TCodeList.FindByCode(code: String; out iIndex: Integer): Boolean;
+Var
+  entry : TCode;
+Begin
+  entry := TCode(ItemNew);
+  Try
+    entry.code := code;
+
+    Result := FindByCode(entry, iIndex);
+  Finally
+    entry.Free;
+  End;
+end;
+
+function TCodeList.getByCode(code: String): TCode;
+Var
+  iIndex : Integer;
+Begin
+  If FindByCode(code, iIndex) Then
+    Result := Entries[iIndex]
+  Else
+    Result := Nil;
+end;
+
+function TCodeList.GetEntry(iIndex: Integer): TCode;
+begin
+  result := TCode(ObjectByIndex[iIndex]);
+end;
+
+function TCodeList.ItemClass: TAdvObjectClass;
+begin
+  result := TCode;
+end;
+
+procedure TCodeList.SortedByCode;
+begin
+  SortedBy(CompareByCode);
+end;
+
+
+{ TDescribed } 
+
+constructor TDescribed.Create;
 begin
   inherited;
   Stems := TAdvIntegerList.Create;
 end;
 
-destructor TCode.Destroy;
+destructor TDescribed.Destroy;
 begin
   Stems.Free;
   inherited;
 end;
 
-End.
 
+End.
 

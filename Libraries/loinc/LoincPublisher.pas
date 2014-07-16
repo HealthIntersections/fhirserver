@@ -4,27 +4,27 @@ unit loincPublisher;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -44,6 +44,7 @@ Type
     Lock : TAdvExclusiveCriticalSection;
     FSearchCache : TStringList;
     FLoinc : TLOINCServices;
+    FFHIRPath : String;
 
     function GetConceptDesc(iConcept : Word):String;
 
@@ -52,12 +53,15 @@ Type
     Procedure PublishConcept(bRoot : Boolean; Const sPrefix, sId : String; iStart : Integer; html : THTMLPublisher);
     Procedure PublishHome(Const sPrefix : String; html : THTMLPublisher);
     Procedure PublishSearch(Const sPrefix, sText : String; iStart: Integer; html : THTMLPublisher);
+    Procedure PublishHeirarchyRoot(Const sPrefix : String; html : THTMLPublisher);
+    Procedure PublishHeirarchyEntry(sCode : String; iStart : Integer; Const sPrefix : String; html : THTMLPublisher);
 
 
     Procedure ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
     Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher);
+    function descLength(i: cardinal): String;
   Public
-    Constructor Create(oLoinc : TLoincServices);
+    Constructor Create(oLoinc : TLoincServices; FHIRPath : String);
     Destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;
@@ -81,10 +85,13 @@ Begin
   else if oMap.ExistsByKey('srch') then
     if FLoinc.IsCode(oMap.Matches['srch']) then
       PublishCode(sURL, oMap.Matches['srch'], html)
+    else if FLoinc.IsMACode(oMap.Matches['srch']) then
+      PublishHeirarchyEntry(oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), sURL, html)
     else
       PublishSearch(sURL, oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), html)
-  else
-  Begin
+  else if oMap.ExistsByKey('macode') then
+    PublishHeirarchyEntry(oMap.Matches['macode'], StrToIntDef(oMap.Matches['start'], 0), sURL, html)
+  else Begin
     sId := oMap.Matches['code'];
     If sId = '' Then
       PublishHome(sURL, html)
@@ -142,6 +149,193 @@ begin
   End;
 end;
 
+function TloincPublisher.descLength(i : cardinal) : String;
+begin
+  if i = 0 then
+    result := '0'
+  else
+    result := IntToStr(Length(FLoinc.Refs.GetCardinals(i)));
+end;
+
+procedure TloincPublisher.PublishHeirarchyEntry(sCode: String; iStart : Integer; const sPrefix: String; html: THTMLPublisher);
+  procedure AddParent(p : Cardinal);
+  var
+    index, code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
+  begin
+    FLoinc.Entries.GetEntry(p, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+    if (parent <> NO_PARENT) then
+    begin
+      AddParent(parent);
+      html.AddTextPlain(' / ');
+    end;
+    html.URL(FLoinc.Desc.GetEntry(text), sPrefix+'macode='+FLoinc.Desc.GetEntry(code));
+  end;
+
+var
+  index, code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
+  s, stext : string;
+  arr : TCardinalArray;
+  i, iTotal : integer;
+  b : boolean;
+  iDescription, iOtherNames, iStems : Cardinal;
+  iEntry : Cardinal;
+  sCode1 : String;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iFlags : Byte;
+begin
+  index := FLoinc.findMAConcept(sCode);
+  if index = 0 then
+    raise Exception.Create('Unknown Malti-axial code '+sCode);
+  FLoinc.Entries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+  stext := FLoinc.Desc.GetEntry(text);
+  arr := FLoinc.Refs.GetCardinals(children);
+  if (length(arr) = 0) then
+  begin
+    html.Header('LOINC Part Concept '+sText+' ('+scode+')');
+    html.StartParagraph;
+    html.addTextPlain('Heirarchy: ');
+    addParent(index);
+    html.EndParagraph;
+  end
+  else
+  begin
+    html.Header('Categories in LOINC Part Concept '+sText+' ('+scode+')');
+    html.StartParagraph;
+    html.addTextPlain('Heirarchy: ');
+    addParent(index);
+    html.EndParagraph;
+
+    html.StartParagraph;
+    html.AddText('', true, false);
+    html.EndParagraph;
+    html.StartTable(true);
+    html.StartTableRow;
+    html.AddTableCell('Code', true);
+    html.AddTableCell('Description', true);
+    html.AddTableCell('Children', true);
+    html.AddTableCell('Concepts', true);
+    if FFHIRPath <> '' then
+      html.AddTableCell('Tools', true);
+    html.EndTableRow;
+
+    for I := 0 to Length(arr) - 1 do
+    begin
+      FLoinc.Entries.GetEntry(arr[i], code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+      html.StartTableRow;
+      html.AddTableCellURL(FLoinc.Desc.GetEntry(code),sPrefix+'macode='+FLoinc.Desc.GetEntry(code));
+      html.AddTableCell(FLoinc.Desc.GetEntry(text));
+      html.AddTableCell(descLength(children));
+      html.AddTableCell(descLength(descendentConcepts));
+      if FFHIRPath <> '' then
+        html.AddTableCellURL('Expanded Value Set', FFHIRPath+'ValueSet?_query=expand&identifier=http://loinc.org/vs/'+FLoinc.Desc.GetEntry(code));
+      html.EndTableRow;
+    end;
+    html.EndTable;
+  end;
+
+  // reset descendentConcepts:
+  FLoinc.Entries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+  arr := FLoinc.Refs.GetCardinals(descendentConcepts);
+  if (length(arr) > 0) then
+  begin
+    html.StartParagraph;
+    html.AddText('LOINC Codes in Category "'+sText+'"', true, false);
+    if FFHIRPath <> '' then
+    begin
+      html.AddTextPlain('. Get this as an ');
+      html.URL('Expanded Value Set', FFHIRPath+'ValueSet?_query=expand&identifier=http://loinc.org/vs/'+scode);
+    end;
+    html.EndParagraph;
+    b := false;
+
+    html.StartTable(false);
+    html.StartTableRow;
+    html.StartTableCell;
+    html.AddParagraph(' ');
+    html.EndTableCell;
+    html.StartTableCell;
+    html.StartList;
+    iTotal := length(arr)-1;
+    For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
+    Begin
+      if not b And ((i - iStart) / Min(MAX_ROWS, iTotal) >= 0.5) Then
+      Begin
+        html.EndList;
+        html.EndTableCell;
+        html.StartTableCell;
+        html.StartList;
+        b := true;
+      End;
+      FLoinc.CodeList.GetInformation(arr[i], sCode1, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      html.StartListItem;
+      html.URL(sCode1, sPrefix + 'code='+sCode1);
+      html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
+      html.EndListItem;
+    End;
+    html.EndList;
+    html.EndTableCell;
+    html.EndTableRow;
+    html.EndTable;
+    if (iStart > 0) or (iStart+MAX_ROWS < iTotal) Then
+    Begin
+      html.StartParagraph;
+      if iStart > 0 Then
+      Begin
+        html.URL('Start', sPrefix+'macode='+sCode);
+        html.AddTextPlain(' ');
+      End;
+      if iStart > MAX_ROWS Then
+      Begin
+        html.URL('Previous', sPrefix+'macode='+sCode+'&start='+inttostr(iStart - MAX_ROWS));
+        html.AddTextPlain(' ');
+      End;
+      html.AddText('Page '+ inttostr((iStart div MAX_ROWS) + 1)+' of '+inttostr(iTotal div MAX_ROWS + 1), true, false);
+      if (iStart+MAX_ROWS < iTotal) And (iStart + MAX_ROWS <  MAX_ROWS * (iTotal div MAX_ROWS)) Then
+      Begin
+        html.AddTextPlain(' ');
+        html.URL('Next', sPrefix+'macode='+sCode+'&start='+inttostr(iStart + MAX_ROWS));
+      End;
+      if (iStart+MAX_ROWS < iTotal) Then
+      Begin
+        html.AddTextPlain(' ');
+        html.URL('End', sPrefix+'macode='+sCode+'&start='+inttostr(MAX_ROWS * (iTotal div MAX_ROWS)));
+      End;
+      html.EndParagraph;
+    End;
+
+  end;
+  html.line;
+  html.ParaURL('LOINC Home', sPrefix);
+  html.Done;
+end;
+
+procedure TloincPublisher.PublishHeirarchyRoot(const sPrefix: String; html: THTMLPublisher);
+var
+  i : integer;
+  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+begin
+  html.StartTable(true);
+  html.StartTableRow;
+  html.AddTableCell('Code', true);
+  html.AddTableCell('Description', true);
+  html.AddTableCell('Children', true);
+  html.AddTableCell('Concepts', true);
+  html.EndTableRow;
+
+  for I := 0 to Length(FLoinc.HeirarchyRoots) - 1 do
+  begin
+    FLoinc.Entries.GetEntry(FLoinc.HeirarchyRoots[i], code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+
+    html.StartTableRow;
+    html.AddTableCellURL(FLoinc.Desc.GetEntry(code),sPrefix+'macode='+FLoinc.Desc.GetEntry(code));
+    html.AddTableCell(FLoinc.Desc.GetEntry(text));
+    html.AddTableCell(descLength(children));
+    html.AddTableCell(descLength(descendentConcepts));
+    html.EndTableRow;
+  end;
+  html.EndTable;
+end;
+
 procedure TloincPublisher.PublishHome(const sPrefix: String; html: THTMLPublisher);
 var
   i : Integer;
@@ -155,27 +349,27 @@ Begin
   End
   Else
   Begin
+    html.StartForm('GET', sPrefix);
+    html.StartParagraph;
+    html.AddTextPlain('Search LOINC: ');
+    html.textInput('srch');
+    html.submit('Go');
+    html.endForm;
+    html.Line;
+    html.ParaURL('Browse All Codes', sPrefix+'code=*');
     html.StartParagraph;
     html.AddText('LOINC Axes', true, false);
     html.EndParagraph;
     PublishConcept(true, sPrefix, inttostr(FLoinc.root), 0, html);
     html.AddParagraph;
 
-    html.StartParagraph;
-    html.AddText('LOINC Codes', true, false);
+    html.AddText('LOINC Heirarchy', true, false);
     html.EndParagraph;
+    PublishHeirarchyRoot(sPrefix, html);
+    html.AddParagraph;
+
 
     html.Line;
-
-    html.StartForm('GET', sPrefix);
-    html.StartParagraph;
-    html.AddTextPlain('Search: ');
-    html.textInput('srch');
-    html.submit('Go');
-    html.endForm;
-
-    html.ParaURL('Browse All Codes', sPrefix+'code=*');
-    html.AddParagraph('');
     Lock.Lock;
     Try
       if FSearchCache.Count <> 0 Then
@@ -219,6 +413,7 @@ var
   iIndex : Cardinal;
   iDescription, iOtherNames, iStems : Cardinal;
   sCode1 : String;
+  iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
   iRefs : TCardinalArray;
@@ -228,7 +423,7 @@ Begin
   iRefs := nil;
   if FLoinc.CodeList.FindCode(sCode, iIndex) Then
   Begin
-    FLoinc.CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    FLoinc.CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     assert(sCode = sCode1);
     html.Header('LOINC Code '+sCode+' : '+FLoinc.Desc.GetEntry(iDescription));
     html.StartTable(true);
@@ -382,6 +577,8 @@ Begin
   End
   Else
     html.AddParagraph('Unable to find code '+sCode);
+  html.line;
+  html.ParaURL('LOINC Home', sPrefix);
 end;
 
 procedure TloincPublisher.PublishConcept(bRoot : Boolean; const sPrefix, sId: String; iStart : Integer; html: THTMLPublisher);
@@ -399,6 +596,7 @@ var
   sCode1 : String;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
+  iEntry : Cardinal;
 
 begin
   aChildren := nil;
@@ -484,7 +682,7 @@ begin
         html.StartTableCell;
         b := true;
       End;
-      FLoinc.CodeList.GetInformation(aCodes[i], sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      FLoinc.CodeList.GetInformation(aCodes[i], sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
       html.StartParagraph;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
@@ -521,7 +719,11 @@ begin
     End;
   End;
   if not bRoot then
+  begin
+    html.line;
+    html.ParaURL('LOINC Home', sPrefix);
     html.done;
+  end;
 end;
 
 procedure TloincPublisher.PublishCodes(const sPrefix: String; iStart: Integer; html: THTMLPublisher);
@@ -531,6 +733,7 @@ var
   b : Boolean;
 
   iDescription, iOtherNames, iStems : Cardinal;
+  iEntry : Cardinal;
   sCode1 : String;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
@@ -560,7 +763,7 @@ begin
         html.StartList;
         b := true;
       End;
-      FLoinc.CodeList.GetInformation(i, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      FLoinc.CodeList.GetInformation(i, sCode1, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
       html.StartListItem;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
@@ -596,6 +799,8 @@ begin
       End;
       html.EndParagraph;
     End;
+  html.line;
+  html.ParaURL('LOINC Home', sPrefix);
 end;
 
 constructor TloincPublisher.Create;
@@ -605,6 +810,7 @@ begin
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FLoinc := oLoinc.Link;
+  FFHIRPath := FHIRPath;
 end;
 
 destructor TloincPublisher.Destroy;
@@ -625,6 +831,19 @@ Type
   End;
 
 procedure TloincPublisher.PublishSearch(const sPrefix, sText: String; iStart: Integer; html: THTMLPublisher);
+  procedure AddParent(p : Cardinal);
+  var
+    index, code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
+  begin
+    FLoinc.Entries.GetEntry(p, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+    if (parent <> NO_PARENT) then
+    begin
+      AddParent(parent);
+      html.AddTextPlain(' / ');
+    end;
+    html.URL(FLoinc.Desc.GetEntry(text), sPrefix+'macode='+FLoinc.Desc.GetEntry(code));
+  end;
+
 var
   a : TMatchArray;
   i : integer;
@@ -633,9 +852,11 @@ var
 //  iDummy : Cardinal;
 
   iDescription, iOtherNames, iStems : Cardinal;
+  iEntry : Cardinal;
   sCode1 : String;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
+  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
 begin
   Lock.Lock;
   Try
@@ -652,6 +873,7 @@ begin
     Lock.Unlock;
   End;                        
   html.Header('Search LOINC for '+sText);
+
   html.StartTable(false);
   html.StartTableRow;
   html.AddTableCell('Code');
@@ -670,19 +892,36 @@ begin
 
   For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
   Begin
-    FLoinc.CodeList.GetInformation(a[i].index, sCode1, iDescription, iOtherNames, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
-
     html.StartTableRow;
-    html.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);
-    html.AddTableCell(FLoinc.Desc.GetEntry(iDescription));
-    html.AddTableCell(GetConceptDesc(iComponent));
-    html.AddTableCell(GetConceptDesc(iProperty));
-    html.AddTableCell(GetConceptDesc(iTimeAspect));
-    html.AddTableCell(GetConceptDesc(iSystem));
-    html.AddTableCell(GetConceptDesc(iScale));
-    html.AddTableCell(GetConceptDesc(iMethod));
-    html.AddTableCell(GetConceptDesc(iClass));
-    html.AddTableCell(RealToString(a[i].Priority));
+    if a[i].iscode then
+    begin
+      FLoinc.CodeList.GetInformation(a[i].index, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      html.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);
+      html.AddTableCell(FLoinc.Desc.GetEntry(iDescription));
+      html.AddTableCell(GetConceptDesc(iComponent));
+      html.AddTableCell(GetConceptDesc(iProperty));
+      html.AddTableCell(GetConceptDesc(iTimeAspect));
+      html.AddTableCell(GetConceptDesc(iSystem));
+      html.AddTableCell(GetConceptDesc(iScale));
+      html.AddTableCell(GetConceptDesc(iMethod));
+      html.AddTableCell(GetConceptDesc(iClass));
+      html.AddTableCell(RealToString(a[i].Priority));
+    end
+    else
+    begin
+      FLoinc.Entries.GetEntry(a[i].index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+      sCode1 := FLoinc.Desc.GetEntry(code);
+      html.AddTableCellURL(sCode1, sPrefix + 'macode='+sCode1);
+      html.AddTableCell(FLoinc.Desc.GetEntry(text));
+      html.StartTableCell(7);
+      html.AddTextPlain('Heirarchy: ');
+      if (parent = NO_PARENT) then
+        html.AddTextPlain('(root)')
+      else
+        AddParent(parent);
+      html.EndTableCell;
+      html.AddTableCell(RealToString(a[i].Priority - 1000000));
+    end;
     html.EndTableRow;
     End;
   html.EndTable;
@@ -712,6 +951,8 @@ begin
     End;
     html.EndParagraph;
   End;
+  html.line;
+  html.ParaURL('LOINC Home', sPrefix);
   html.done;
 end;
 
