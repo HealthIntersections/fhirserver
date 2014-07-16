@@ -689,7 +689,7 @@ begin
     html := TAdvStringBuilder.Create;
     try
       html.append('<div><div id="div-cnt" class="content"><h2>FHIR Reference Server Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+' released '+RELEASE_DATE+'. '+
-       'RESTful server based on FHIR '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
+       'RESTful server based on FHIR '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th><th>Validate</th></tr>'+#13#10);
 
       for a := TFHIRResourceType(1)  to High(TFHIRResourceType) do
       begin
@@ -750,6 +750,13 @@ begin
               if FRepository.ResConfig[a].cmdHistoryInstance then
               begin
                 res.operationList.Append.codeST := TypeRestfulOperationHistoryInstance;
+                html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+              end
+              else
+                html.append('<td></td>');
+              if FRepository.ResConfig[a].cmdValidate then
+              begin
+                res.operationList.Append.codeST := TypeRestfulOperationValidate;
                 html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else

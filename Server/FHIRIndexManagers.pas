@@ -558,10 +558,7 @@ begin
   buildIndexesObservation;
   buildIndexesOrder;
   buildIndexesOrderResponse;
-  buildIndexesOrganization;
-  buildIndexesPatient;
   buildIndexesMedia;
-  buildIndexesPractitioner;
   buildIndexesCondition;
   buildIndexesProcedure;
   buildIndexesProfile;
