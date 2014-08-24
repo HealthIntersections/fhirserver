@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.2.1 generated Thu, Jul 17, 2014 03:20+1000
+// FHIR v0.3.0 generated Fri, Aug 22, 2014 11:59+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -90,20 +90,22 @@ Type
   TFhirConformanceRestSecurityCertificateList = class;
   TFhirConformanceRestResource = class;
   TFhirConformanceRestResourceList = class;
-  TFhirConformanceRestResourceOperation = class;
-  TFhirConformanceRestResourceOperationList = class;
+  TFhirConformanceRestResourceInteraction = class;
+  TFhirConformanceRestResourceInteractionList = class;
   TFhirConformanceRestResourceSearchParam = class;
   TFhirConformanceRestResourceSearchParamList = class;
+  TFhirConformanceRestInteraction = class;
+  TFhirConformanceRestInteractionList = class;
   TFhirConformanceRestOperation = class;
   TFhirConformanceRestOperationList = class;
-  TFhirConformanceRestQuery = class;
-  TFhirConformanceRestQueryList = class;
   TFhirConformanceMessaging = class;
   TFhirConformanceMessagingList = class;
   TFhirConformanceMessagingEvent = class;
   TFhirConformanceMessagingEventList = class;
   TFhirConformanceDocument = class;
   TFhirConformanceDocumentList = class;
+  TFhirContraindicationMitigation = class;
+  TFhirContraindicationMitigationList = class;
   TFhirDataElementBinding = class;
   TFhirDataElementBindingList = class;
   TFhirDataElementMapping = class;
@@ -200,6 +202,8 @@ Type
   TFhirObservationReferenceRangeList = class;
   TFhirObservationRelated = class;
   TFhirObservationRelatedList = class;
+  TFhirOperationDefinitionParameter = class;
+  TFhirOperationDefinitionParameterList = class;
   TFhirOperationOutcomeIssue = class;
   TFhirOperationOutcomeIssueList = class;
   TFhirOrderWhen = class;
@@ -242,8 +246,6 @@ Type
   TFhirProfileStructureSearchParamList = class;
   TFhirProfileExtensionDefn = class;
   TFhirProfileExtensionDefnList = class;
-  TFhirProfileQuery = class;
-  TFhirProfileQueryList = class;
   TFhirProvenanceAgent = class;
   TFhirProvenanceAgentList = class;
   TFhirProvenanceEntity = class;
@@ -260,6 +262,8 @@ Type
   TFhirQuestionnaireAnswersGroupQuestionList = class;
   TFhirQuestionnaireAnswersGroupQuestionAnswer = class;
   TFhirQuestionnaireAnswersGroupQuestionAnswerList = class;
+  TFhirRiskAssessmentPrediction = class;
+  TFhirRiskAssessmentPredictionList = class;
   TFhirSecurityEventEvent = class;
   TFhirSecurityEventEventList = class;
   TFhirSecurityEventParticipant = class;
@@ -578,10 +582,10 @@ Type
   TFhirAppointmentParticipant = class (TFhirBackboneElement)
   private
     Ftype_List : TFhirCodeableConceptList;
-    FIndividual : TFhirResourceReference{Resource};
+    FActor : TFhirResourceReference{Resource};
     FRequired : TFhirEnum;
     FStatus : TFhirEnum;
-    Procedure SetIndividual(value : TFhirResourceReference{Resource});
+    Procedure SetActor(value : TFhirResourceReference{Resource});
     Procedure SetRequired(value : TFhirEnum);
     Function GetRequiredST : TFhirParticipantrequired;
     Procedure SetRequiredST(value : TFhirParticipantrequired);
@@ -605,10 +609,10 @@ Type
     }
     property type_List : TFhirCodeableConceptList read FType_List;
 
-    {@member individual
+    {@member actor
       A Person of device that is participating in the appointment, usually Practitioner, Patient, RelatedPerson or Device.
     }
-    property individual : TFhirResourceReference{Resource} read FIndividual write SetIndividual;
+    property actor : TFhirResourceReference{Resource} read FActor write SetActor;
 
     {@member required
       Is this participant required to be present at the meeting. This covers a use-case where 2 doctors need to meet to discuss the results for a specific patient, and the patient is not required to be present.
@@ -2881,8 +2885,8 @@ Type
     FDocumentation : TFhirString;
     FSecurity : TFhirConformanceRestSecurity;
     FresourceList : TFhirConformanceRestResourceList;
+    FinteractionList : TFhirConformanceRestInteractionList;
     FoperationList : TFhirConformanceRestOperationList;
-    FqueryList : TFhirConformanceRestQueryList;
     FdocumentMailboxList : TFhirUriList;
     Procedure SetMode(value : TFhirEnum);
     Function GetModeST : TFhirRestfulConformanceMode;
@@ -2931,15 +2935,15 @@ Type
     }
     property resourceList : TFhirConformanceRestResourceList read FResourceList;
 
-    {@member operationList
+    {@member interactionList
       A specification of restful operations supported by the system.
     }
-    property operationList : TFhirConformanceRestOperationList read FOperationList;
+    property interactionList : TFhirConformanceRestInteractionList read FInteractionList;
 
-    {@member queryList
-      Definition of a named query and its parameters and their meaning.
+    {@member operationList
+      Definition of an operation or a named query and with it's parameters and their meaning and type.
     }
-    property queryList : TFhirConformanceRestQueryList read FQueryList;
+    property operationList : TFhirConformanceRestOperationList read FOperationList;
 
     {@member documentMailboxList
       A list of profiles that this server implements for accepting documents in the mailbox. If this list is empty, then documents are not accepted. The base specification has the profile identifier "http://hl7.org/fhir/documents/mailbox". Other specifications can declare their own identifier for this purpose.
@@ -3300,7 +3304,7 @@ Type
   private
     FType_ : TFhirCode;
     FProfile : TFhirResourceReference{TFhirProfile};
-    FoperationList : TFhirConformanceRestResourceOperationList;
+    FinteractionList : TFhirConformanceRestResourceInteractionList;
     FReadHistory : TFhirBoolean;
     FUpdateCreate : TFhirBoolean;
     FsearchIncludeList : TFhirStringList;
@@ -3341,10 +3345,10 @@ Type
     }
     property profile : TFhirResourceReference{TFhirProfile} read FProfile write SetProfile;
 
-    {@member operationList
+    {@member interactionList
       Identifies a restful operation supported by the solution.
     }
-    property operationList : TFhirConformanceRestResourceOperationList read FOperationList;
+    property interactionList : TFhirConformanceRestResourceInteractionList read FInteractionList;
 
     {@member readHistory
       A flag for whether the server is able to return past versions as part of the vRead operation.
@@ -3456,17 +3460,17 @@ Type
   End;
 
 
-  {@Class TFhirConformanceRestResourceOperation : TFhirElement
+  {@Class TFhirConformanceRestResourceInteraction : TFhirElement
     Identifies a restful operation supported by the solution.
   }
-  {!.Net HL7Connect.Fhir.ConformanceRestResourceOperation}
-  TFhirConformanceRestResourceOperation = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ConformanceRestResourceInteraction}
+  TFhirConformanceRestResourceInteraction = class (TFhirBackboneElement)
   private
     FCode : TFhirEnum;
     FDocumentation : TFhirString;
     Procedure SetCode(value : TFhirEnum);
-    Function GetCodeST : TFhirTypeRestfulOperation;
-    Procedure SetCodeST(value : TFhirTypeRestfulOperation);
+    Function GetCodeST : TFhirTypeRestfulInteraction;
+    Procedure SetCodeST(value : TFhirTypeRestfulInteraction);
     Procedure SetDocumentation(value : TFhirString);
     Function GetDocumentationST : String;
     Procedure SetDocumentationST(value : String);
@@ -3478,8 +3482,8 @@ Type
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirConformanceRestResourceOperation; overload;
-    function Clone : TFhirConformanceRestResourceOperation; overload;
+    function Link : TFhirConformanceRestResourceInteraction; overload;
+    function Clone : TFhirConformanceRestResourceInteraction; overload;
     {!script show}
   published
     {@member code
@@ -3489,7 +3493,7 @@ Type
     {@member codeST
       Typed access to Coded identifier of the operation, supported by the system resource.
     }
-    property codeST : TFhirTypeRestfulOperation read GetCodeST write SetCodeST;
+    property codeST : TFhirTypeRestfulInteraction read GetCodeST write SetCodeST;
 
     {@member documentation
       Guidance specific to the implementation of this operation, such as 'delete is a logical delete' or 'updates are only allowed with version id' or 'creates permitted from pre-authorized certificates only'.
@@ -3503,31 +3507,31 @@ Type
   end;
 
 
-  {@Class TFhirConformanceRestResourceOperationList
-    A list of FhirConformanceRestResourceOperation
+  {@Class TFhirConformanceRestResourceInteractionList
+    A list of FhirConformanceRestResourceInteraction
   }
-  {!.Net HL7Connect.Fhir.ConformanceRestResourceOperationList}
-  TFhirConformanceRestResourceOperationList = class (TFHIRObjectList)
+  {!.Net HL7Connect.Fhir.ConformanceRestResourceInteractionList}
+  TFhirConformanceRestResourceInteractionList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirConformanceRestResourceOperation;
-    procedure SetItemN(index : Integer; value : TFhirConformanceRestResourceOperation);
+    function GetItemN(index : Integer) : TFhirConformanceRestResourceInteraction;
+    procedure SetItemN(index : Integer; value : TFhirConformanceRestResourceInteraction);
   public
     {!script hide}
-    function Link : TFhirConformanceRestResourceOperationList; Overload;
-    function Clone : TFhirConformanceRestResourceOperationList; Overload;
+    function Link : TFhirConformanceRestResourceInteractionList; Overload;
+    function Clone : TFhirConformanceRestResourceInteractionList; Overload;
     {!script show}
     
 
     {@member Append
-      Add a FhirConformanceRestResourceOperation to the end of the list.
+      Add a FhirConformanceRestResourceInteraction to the end of the list.
     }
-    function Append : TFhirConformanceRestResourceOperation;
+    function Append : TFhirConformanceRestResourceInteraction;
 
     
     {@member AddItem
-      Add an already existing FhirConformanceRestResourceOperation to the end of the list.
+      Add an already existing FhirConformanceRestResourceInteraction to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRestResourceOperation);
+    procedure AddItem(value : TFhirConformanceRestResourceInteraction);
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -3536,33 +3540,33 @@ Type
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    function IndexOf(value : TFhirConformanceRestResourceOperation) : Integer;
+    function IndexOf(value : TFhirConformanceRestResourceInteraction) : Integer;
     
 
     {@member Insert
-      Insert FhirConformanceRestResourceOperation before the designated index (0 = first item)
+      Insert FhirConformanceRestResourceInteraction before the designated index (0 = first item)
     }
-    function Insert(index : Integer) : TFhirConformanceRestResourceOperation;
+    function Insert(index : Integer) : TFhirConformanceRestResourceInteraction;
     
 
     {@member InsertItem
-       Insert an existing FhirConformanceRestResourceOperation before the designated index (0 = first item)
+       Insert an existing FhirConformanceRestResourceInteraction before the designated index (0 = first item)
     }
-    procedure InsertItem(index : Integer; value : TFhirConformanceRestResourceOperation);
+    procedure InsertItem(index : Integer; value : TFhirConformanceRestResourceInteraction);
     
     {@member Item
-       Get the iIndexth FhirConformanceRestResourceOperation. (0 = first item)
+       Get the iIndexth FhirConformanceRestResourceInteraction. (0 = first item)
     }
     
     {@member Item
-       Get the iIndexth FhirConformanceRestResourceOperation. (0 = first item)
+       Get the iIndexth FhirConformanceRestResourceInteraction. (0 = first item)
     }
-    procedure SetItemByIndex(index : Integer; value : TFhirConformanceRestResourceOperation);
+    procedure SetItemByIndex(index : Integer; value : TFhirConformanceRestResourceInteraction);
     
     {@member Count
       The number of items in the collection
     }
-    function Item(index : Integer) : TFhirConformanceRestResourceOperation;
+    function Item(index : Integer) : TFhirConformanceRestResourceInteraction;
     
     {@member Count
       The number of items in the collection
@@ -3578,7 +3582,7 @@ Type
     }
     procedure ClearItems;
     
-    Property FhirConformanceRestResourceOperations[index : Integer] : TFhirConformanceRestResourceOperation read GetItemN write SetItemN; default;
+    Property FhirConformanceRestResourceInteractions[index : Integer] : TFhirConformanceRestResourceInteraction read GetItemN write SetItemN; default;
   End;
 
 
@@ -3746,20 +3750,144 @@ Type
   End;
 
 
-  {@Class TFhirConformanceRestOperation : TFhirElement
+  {@Class TFhirConformanceRestInteraction : TFhirElement
     A specification of restful operations supported by the system.
   }
-  {!.Net HL7Connect.Fhir.ConformanceRestOperation}
-  TFhirConformanceRestOperation = class (TFhirBackboneElement)
+  {!.Net HL7Connect.Fhir.ConformanceRestInteraction}
+  TFhirConformanceRestInteraction = class (TFhirBackboneElement)
   private
     FCode : TFhirEnum;
     FDocumentation : TFhirString;
     Procedure SetCode(value : TFhirEnum);
-    Function GetCodeST : TFhirSystemRestfulOperation;
-    Procedure SetCodeST(value : TFhirSystemRestfulOperation);
+    Function GetCodeST : TFhirSystemRestfulInteraction;
+    Procedure SetCodeST(value : TFhirSystemRestfulInteraction);
     Procedure SetDocumentation(value : TFhirString);
     Function GetDocumentationST : String;
     Procedure SetDocumentationST(value : String);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirConformanceRestInteraction; overload;
+    function Clone : TFhirConformanceRestInteraction; overload;
+    {!script show}
+  published
+    {@member code
+      A coded identifier of the operation, supported by the system.
+    }
+    property code : TFhirEnum read FCode write SetCode;
+    {@member codeST
+      Typed access to A coded identifier of the operation, supported by the system.
+    }
+    property codeST : TFhirSystemRestfulInteraction read GetCodeST write SetCodeST;
+
+    {@member documentation
+      Guidance specific to the implementation of this operation, such as limitations on the kind of transactions allowed, or information about system wide search is implemented.
+    }
+    property documentation : TFhirString read FDocumentation write SetDocumentation;
+    {@member documentationST
+      Typed access to Guidance specific to the implementation of this operation, such as limitations on the kind of transactions allowed, or information about system wide search is implemented.
+    }
+    property documentationST : String read GetDocumentationST write SetDocumentationST;
+
+  end;
+
+
+  {@Class TFhirConformanceRestInteractionList
+    A list of FhirConformanceRestInteraction
+  }
+  {!.Net HL7Connect.Fhir.ConformanceRestInteractionList}
+  TFhirConformanceRestInteractionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirConformanceRestInteraction;
+    procedure SetItemN(index : Integer; value : TFhirConformanceRestInteraction);
+  public
+    {!script hide}
+    function Link : TFhirConformanceRestInteractionList; Overload;
+    function Clone : TFhirConformanceRestInteractionList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirConformanceRestInteraction to the end of the list.
+    }
+    function Append : TFhirConformanceRestInteraction;
+
+    
+    {@member AddItem
+      Add an already existing FhirConformanceRestInteraction to the end of the list.
+    }
+    procedure AddItem(value : TFhirConformanceRestInteraction);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirConformanceRestInteraction) : Integer;
+    
+
+    {@member Insert
+      Insert FhirConformanceRestInteraction before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirConformanceRestInteraction;
+    
+
+    {@member InsertItem
+       Insert an existing FhirConformanceRestInteraction before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirConformanceRestInteraction);
+    
+    {@member Item
+       Get the iIndexth FhirConformanceRestInteraction. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirConformanceRestInteraction. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirConformanceRestInteraction);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirConformanceRestInteraction;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirConformanceRestInteractions[index : Integer] : TFhirConformanceRestInteraction read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirConformanceRestOperation : TFhirElement
+    Definition of an operation or a named query and with it's parameters and their meaning and type.
+  }
+  {!.Net HL7Connect.Fhir.ConformanceRestOperation}
+  TFhirConformanceRestOperation = class (TFhirBackboneElement)
+  private
+    FName : TFhirString;
+    FDefinition : TFhirResourceReference{TFhirOperationDefinition};
+    Procedure SetName(value : TFhirString);
+    Function GetNameST : String;
+    Procedure SetNameST(value : String);
+    Procedure SetDefinition(value : TFhirResourceReference{TFhirOperationDefinition});
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -3772,23 +3900,19 @@ Type
     function Clone : TFhirConformanceRestOperation; overload;
     {!script show}
   published
-    {@member code
-      A coded identifier of the operation, supported by the system.
+    {@member name
+      The name of a query, which is used in the _query parameter when the query is called.
     }
-    property code : TFhirEnum read FCode write SetCode;
-    {@member codeST
-      Typed access to A coded identifier of the operation, supported by the system.
+    property name : TFhirString read FName write SetName;
+    {@member nameST
+      Typed access to The name of a query, which is used in the _query parameter when the query is called.
     }
-    property codeST : TFhirSystemRestfulOperation read GetCodeST write SetCodeST;
+    property nameST : String read GetNameST write SetNameST;
 
-    {@member documentation
-      Guidance specific to the implementation of this operation, such as limitations on the kind of transactions allowed, or information about system wide search is implemented.
+    {@member definition
+      Where the formal definition can be found.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
-      Typed access to Guidance specific to the implementation of this operation, such as limitations on the kind of transactions allowed, or information about system wide search is implemented.
-    }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property definition : TFhirResourceReference{TFhirOperationDefinition} read FDefinition write SetDefinition;
 
   end;
 
@@ -3869,151 +3993,6 @@ Type
     procedure ClearItems;
     
     Property FhirConformanceRestOperations[index : Integer] : TFhirConformanceRestOperation read GetItemN write SetItemN; default;
-  End;
-
-
-  {@Class TFhirConformanceRestQuery : TFhirElement
-    Definition of a named query and its parameters and their meaning.
-  }
-  {!.Net HL7Connect.Fhir.ConformanceRestQuery}
-  TFhirConformanceRestQuery = class (TFhirBackboneElement)
-  private
-    FName : TFhirString;
-    FDefinition : TFhirUri;
-    FDocumentation : TFhirString;
-    FparameterList : TFhirConformanceRestResourceSearchParamList;
-    Procedure SetName(value : TFhirString);
-    Function GetNameST : String;
-    Procedure SetNameST(value : String);
-    Procedure SetDefinition(value : TFhirUri);
-    Function GetDefinitionST : String;
-    Procedure SetDefinitionST(value : String);
-    Procedure SetDocumentation(value : TFhirString);
-    Function GetDocumentationST : String;
-    Procedure SetDocumentationST(value : String);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirConformanceRestQuery; overload;
-    function Clone : TFhirConformanceRestQuery; overload;
-    {!script show}
-  published
-    {@member name
-      The name of a query, which is used in the _query parameter when the query is called.
-    }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
-      Typed access to The name of a query, which is used in the _query parameter when the query is called.
-    }
-    property nameST : String read GetNameST write SetNameST;
-
-    {@member definition
-      Identifies the custom query, defined either in FHIR core or another profile.
-    }
-    property definition : TFhirUri read FDefinition write SetDefinition;
-    {@member definitionST
-      Typed access to Identifies the custom query, defined either in FHIR core or another profile.
-    }
-    property definitionST : String read GetDefinitionST write SetDefinitionST;
-
-    {@member documentation
-      Additional information about how the query functions in this particular implementation.
-    }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
-      Typed access to Additional information about how the query functions in this particular implementation.
-    }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
-
-    {@member parameterList
-      Identifies which of the parameters for the named query are supported.
-    }
-    property parameterList : TFhirConformanceRestResourceSearchParamList read FParameterList;
-
-  end;
-
-
-  {@Class TFhirConformanceRestQueryList
-    A list of FhirConformanceRestQuery
-  }
-  {!.Net HL7Connect.Fhir.ConformanceRestQueryList}
-  TFhirConformanceRestQueryList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirConformanceRestQuery;
-    procedure SetItemN(index : Integer; value : TFhirConformanceRestQuery);
-  public
-    {!script hide}
-    function Link : TFhirConformanceRestQueryList; Overload;
-    function Clone : TFhirConformanceRestQueryList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirConformanceRestQuery to the end of the list.
-    }
-    function Append : TFhirConformanceRestQuery;
-
-    
-    {@member AddItem
-      Add an already existing FhirConformanceRestQuery to the end of the list.
-    }
-    procedure AddItem(value : TFhirConformanceRestQuery);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirConformanceRestQuery) : Integer;
-    
-
-    {@member Insert
-      Insert FhirConformanceRestQuery before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirConformanceRestQuery;
-    
-
-    {@member InsertItem
-       Insert an existing FhirConformanceRestQuery before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirConformanceRestQuery);
-    
-    {@member Item
-       Get the iIndexth FhirConformanceRestQuery. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirConformanceRestQuery. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirConformanceRestQuery);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirConformanceRestQuery;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirConformanceRestQueries[index : Integer] : TFhirConformanceRestQuery read GetItemN write SetItemN; default;
   End;
 
 
@@ -4471,6 +4450,133 @@ Type
     procedure ClearItems;
     
     Property FhirConformanceDocuments[index : Integer] : TFhirConformanceDocument read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirContraindicationMitigation : TFhirElement
+    Indicates an action that has been taken or is committed to to reduce or eliminate the likelihood of the risk identified by the contraindicaiton from manifesting.  Can also reflect an observation of known mitigating factors that may reduce/eliminate the need for any action.
+  }
+  {!.Net HL7Connect.Fhir.ContraindicationMitigation}
+  TFhirContraindicationMitigation = class (TFhirBackboneElement)
+  private
+    FAction : TFhirCodeableConcept;
+    FDate : TFhirDateTime;
+    FAuthor : TFhirResourceReference{TFhirPractitioner};
+    Procedure SetAction(value : TFhirCodeableConcept);
+    Procedure SetDate(value : TFhirDateTime);
+    Function GetDateST : TDateAndTime;
+    Procedure SetDateST(value : TDateAndTime);
+    Procedure SetAuthor(value : TFhirResourceReference{TFhirPractitioner});
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirContraindicationMitigation; overload;
+    function Clone : TFhirContraindicationMitigation; overload;
+    {!script show}
+  published
+    {@member action
+      Describes the action that was taken or the observation that was made that reduces/eliminates the risk associated with the identified contraindication.
+    }
+    property action : TFhirCodeableConcept read FAction write SetAction;
+
+    {@member date
+      Indicates when the mitigating action was documented.
+    }
+    property date : TFhirDateTime read FDate write SetDate;
+    {@member dateST
+      Typed access to Indicates when the mitigating action was documented.
+    }
+    property dateST : TDateAndTime read GetDateST write SetDateST;
+
+    {@member author
+      Identifies the practitioner who determined the mitigation and takes responsibility for the mitigation step occurring.
+    }
+    property author : TFhirResourceReference{TFhirPractitioner} read FAuthor write SetAuthor;
+
+  end;
+
+
+  {@Class TFhirContraindicationMitigationList
+    A list of FhirContraindicationMitigation
+  }
+  {!.Net HL7Connect.Fhir.ContraindicationMitigationList}
+  TFhirContraindicationMitigationList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirContraindicationMitigation;
+    procedure SetItemN(index : Integer; value : TFhirContraindicationMitigation);
+  public
+    {!script hide}
+    function Link : TFhirContraindicationMitigationList; Overload;
+    function Clone : TFhirContraindicationMitigationList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirContraindicationMitigation to the end of the list.
+    }
+    function Append : TFhirContraindicationMitigation;
+
+    
+    {@member AddItem
+      Add an already existing FhirContraindicationMitigation to the end of the list.
+    }
+    procedure AddItem(value : TFhirContraindicationMitigation);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirContraindicationMitigation) : Integer;
+    
+
+    {@member Insert
+      Insert FhirContraindicationMitigation before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirContraindicationMitigation;
+    
+
+    {@member InsertItem
+       Insert an existing FhirContraindicationMitigation before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirContraindicationMitigation);
+    
+    {@member Item
+       Get the iIndexth FhirContraindicationMitigation. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirContraindicationMitigation. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirContraindicationMitigation);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirContraindicationMitigation;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirContraindicationMitigations[index : Integer] : TFhirContraindicationMitigation read GetItemN write SetItemN; default;
   End;
 
 
@@ -6533,6 +6639,7 @@ Type
     FName : TFhirString;
     FRelationship : TFhirCodeableConcept;
     FBorn : TFhirType;
+    FAge : TFhirType;
     FDeceased : TFhirType;
     FNote : TFhirString;
     FconditionList : TFhirFamilyHistoryRelationConditionList;
@@ -6541,6 +6648,7 @@ Type
     Procedure SetNameST(value : String);
     Procedure SetRelationship(value : TFhirCodeableConcept);
     Procedure SetBorn(value : TFhirType);
+    Procedure SetAge(value : TFhirType);
     Procedure SetDeceased(value : TFhirType);
     Procedure SetNote(value : TFhirString);
     Function GetNoteST : String;
@@ -6575,6 +6683,11 @@ Type
       The actual or approximate date of birth of the relative.
     }
     property born : TFhirType read FBorn write SetBorn;
+
+    {@member age
+      The actual or approximate age of the relative at the time the family history is recorded.
+    }
+    property age : TFhirType read FAge write SetAge;
 
     {@member deceased
       If this resource is indicating that the related person is deceased, then an indicator of whether the person is deceased (yes) or not (no) or the age or age range or description of age at death - can be indicated here. If the reason for death is known, then it can be indicated in the outcome code of the condition - in this case the deceased property should still be set.
@@ -11097,6 +11210,185 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   End;
 
 
+  {@Class TFhirOperationDefinitionParameter : TFhirElement
+    Parameters for the operation/query.
+  }
+  {!.Net HL7Connect.Fhir.OperationDefinitionParameter}
+  TFhirOperationDefinitionParameter = class (TFhirBackboneElement)
+  private
+    FName : TFhirCode;
+    FUse : TFhirEnum;
+    FMin : TFhirInteger;
+    FMax : TFhirString;
+    FDocumentation : TFhirString;
+    FType_ : TFhirCoding;
+    FProfile : TFhirResourceReference{TFhirProfile};
+    Procedure SetName(value : TFhirCode);
+    Function GetNameST : String;
+    Procedure SetNameST(value : String);
+    Procedure SetUse(value : TFhirEnum);
+    Function GetUseST : TFhirOperationParameterUse;
+    Procedure SetUseST(value : TFhirOperationParameterUse);
+    Procedure SetMin(value : TFhirInteger);
+    Function GetMinST : String;
+    Procedure SetMinST(value : String);
+    Procedure SetMax(value : TFhirString);
+    Function GetMaxST : String;
+    Procedure SetMaxST(value : String);
+    Procedure SetDocumentation(value : TFhirString);
+    Function GetDocumentationST : String;
+    Procedure SetDocumentationST(value : String);
+    Procedure SetType_(value : TFhirCoding);
+    Procedure SetProfile(value : TFhirResourceReference{TFhirProfile});
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirOperationDefinitionParameter; overload;
+    function Clone : TFhirOperationDefinitionParameter; overload;
+    {!script show}
+  published
+    {@member name
+      The name of used to identify the parameter.
+    }
+    property name : TFhirCode read FName write SetName;
+    {@member nameST
+      Typed access to The name of used to identify the parameter.
+    }
+    property nameST : String read GetNameST write SetNameST;
+
+    {@member use
+      Whether this is an input or an output parameter.
+    }
+    property use : TFhirEnum read FUse write SetUse;
+    {@member useST
+      Typed access to Whether this is an input or an output parameter.
+    }
+    property useST : TFhirOperationParameterUse read GetUseST write SetUseST;
+
+    {@member min
+      The minimum number of times this parameter SHALL appear in the request or response.
+    }
+    property min : TFhirInteger read FMin write SetMin;
+    {@member minST
+      Typed access to The minimum number of times this parameter SHALL appear in the request or response.
+    }
+    property minST : String read GetMinST write SetMinST;
+
+    {@member max
+      The maximum number of times this element is permitted to appear in the request or response.
+    }
+    property max : TFhirString read FMax write SetMax;
+    {@member maxST
+      Typed access to The maximum number of times this element is permitted to appear in the request or response.
+    }
+    property maxST : String read GetMaxST write SetMaxST;
+
+    {@member documentation
+      Describes the meaning or use of this parameter.
+    }
+    property documentation : TFhirString read FDocumentation write SetDocumentation;
+    {@member documentationST
+      Typed access to Describes the meaning or use of this parameter.
+    }
+    property documentationST : String read GetDocumentationST write SetDocumentationST;
+
+    {@member type_
+      The type for this parameter.
+    }
+    property type_ : TFhirCoding read FType_ write SetType_;
+
+    {@member profile
+      A profile the specifies the rules that this parameter must conform to.
+    }
+    property profile : TFhirResourceReference{TFhirProfile} read FProfile write SetProfile;
+
+  end;
+
+
+  {@Class TFhirOperationDefinitionParameterList
+    A list of FhirOperationDefinitionParameter
+  }
+  {!.Net HL7Connect.Fhir.OperationDefinitionParameterList}
+  TFhirOperationDefinitionParameterList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirOperationDefinitionParameter;
+    procedure SetItemN(index : Integer; value : TFhirOperationDefinitionParameter);
+  public
+    {!script hide}
+    function Link : TFhirOperationDefinitionParameterList; Overload;
+    function Clone : TFhirOperationDefinitionParameterList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirOperationDefinitionParameter to the end of the list.
+    }
+    function Append : TFhirOperationDefinitionParameter;
+
+    
+    {@member AddItem
+      Add an already existing FhirOperationDefinitionParameter to the end of the list.
+    }
+    procedure AddItem(value : TFhirOperationDefinitionParameter);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirOperationDefinitionParameter) : Integer;
+    
+
+    {@member Insert
+      Insert FhirOperationDefinitionParameter before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirOperationDefinitionParameter;
+    
+
+    {@member InsertItem
+       Insert an existing FhirOperationDefinitionParameter before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirOperationDefinitionParameter);
+    
+    {@member Item
+       Get the iIndexth FhirOperationDefinitionParameter. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirOperationDefinitionParameter. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirOperationDefinitionParameter);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirOperationDefinitionParameter;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirOperationDefinitionParameters[index : Integer] : TFhirOperationDefinitionParameter read GetItemN write SetItemN; default;
+  End;
+
+
   {@Class TFhirOperationOutcomeIssue : TFhirElement
     An error, warning or information message that results from a system action.
   }
@@ -11360,11 +11652,13 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     FName : TFhirHumanName;
     FtelecomList : TFhirContactList;
     FAddress : TFhirAddress;
-    FGender : TFhirCodeableConcept;
+    FGender : TFhirEnum;
     Procedure SetPurpose(value : TFhirCodeableConcept);
     Procedure SetName(value : TFhirHumanName);
     Procedure SetAddress(value : TFhirAddress);
-    Procedure SetGender(value : TFhirCodeableConcept);
+    Procedure SetGender(value : TFhirEnum);
+    Function GetGenderST : TFhirAdministrativeGender;
+    Procedure SetGenderST(value : TFhirAdministrativeGender);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -11400,7 +11694,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member gender
       Administrative Gender - the gender that the person is considered to have for administration and record keeping purposes.
     }
-    property gender : TFhirCodeableConcept read FGender write SetGender;
+    property gender : TFhirEnum read FGender write SetGender;
+    {@member genderST
+      Typed access to Administrative Gender - the gender that the person is considered to have for administration and record keeping purposes.
+    }
+    property genderST : TFhirAdministrativeGender read GetGenderST write SetGenderST;
 
   end;
 
@@ -11494,11 +11792,13 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     FName : TFhirHumanName;
     FtelecomList : TFhirContactList;
     FAddress : TFhirAddress;
-    FGender : TFhirCodeableConcept;
+    FGender : TFhirEnum;
     FOrganization : TFhirResourceReference{TFhirOrganization};
     Procedure SetName(value : TFhirHumanName);
     Procedure SetAddress(value : TFhirAddress);
-    Procedure SetGender(value : TFhirCodeableConcept);
+    Procedure SetGender(value : TFhirEnum);
+    Function GetGenderST : TFhirAdministrativeGender;
+    Procedure SetGenderST(value : TFhirAdministrativeGender);
     Procedure SetOrganization(value : TFhirResourceReference{TFhirOrganization});
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
@@ -11535,7 +11835,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member gender
       Administrative Gender - the gender that the person is considered to have for administration and record keeping purposes.
     }
-    property gender : TFhirCodeableConcept read FGender write SetGender;
+    property gender : TFhirEnum read FGender write SetGender;
+    {@member genderST
+      Typed access to Administrative Gender - the gender that the person is considered to have for administration and record keeping purposes.
+    }
+    property genderST : TFhirAdministrativeGender read GetGenderST write SetGenderST;
 
     {@member organization
       Organization on behalf of which the contact is acting or for which the contact is working.
@@ -11871,6 +12175,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   {!.Net HL7Connect.Fhir.PractitionerQualification}
   TFhirPractitionerQualification = class (TFhirBackboneElement)
   private
+    FidentifierList : TFhirIdentifierList;
     FCode : TFhirCodeableConcept;
     FPeriod : TFhirPeriod;
     FIssuer : TFhirResourceReference{TFhirOrganization};
@@ -11889,6 +12194,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function Clone : TFhirPractitionerQualification; overload;
     {!script show}
   published
+    {@member identifierList
+      An identifier that applies to this person's qualification in this role.
+    }
+    property identifierList : TFhirIdentifierList read FIdentifierList;
+
     {@member code
       Coded representation of the qualification.
     }
@@ -14130,138 +14440,6 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   End;
 
 
-  {@Class TFhirProfileQuery : TFhirElement
-    Definition of a named query and its parameters and their meaning.
-  }
-  {!.Net HL7Connect.Fhir.ProfileQuery}
-  TFhirProfileQuery = class (TFhirBackboneElement)
-  private
-    FName : TFhirString;
-    FDocumentation : TFhirString;
-    FparameterList : TFhirProfileStructureSearchParamList;
-    Procedure SetName(value : TFhirString);
-    Function GetNameST : String;
-    Procedure SetNameST(value : String);
-    Procedure SetDocumentation(value : TFhirString);
-    Function GetDocumentationST : String;
-    Procedure SetDocumentationST(value : String);
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirProfileQuery; overload;
-    function Clone : TFhirProfileQuery; overload;
-    {!script show}
-  published
-    {@member name
-      The name of a query, which is used in the URI from Conformance statements declaring use of the query.  Typically this will also be the name for the _query parameter when the query is called, though in some cases it may be aliased by a server to avoid collisions.
-    }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
-      Typed access to The name of a query, which is used in the URI from Conformance statements declaring use of the query.  Typically this will also be the name for the _query parameter when the query is called, though in some cases it may be aliased by a server to avoid collisions.
-    }
-    property nameST : String read GetNameST write SetNameST;
-
-    {@member documentation
-      Description of the query - the functionality it offers, and considerations about how it functions and to use it.
-    }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
-      Typed access to Description of the query - the functionality it offers, and considerations about how it functions and to use it.
-    }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
-
-    {@member parameterList
-      A parameter of a named query.
-    }
-    property parameterList : TFhirProfileStructureSearchParamList read FParameterList;
-
-  end;
-
-
-  {@Class TFhirProfileQueryList
-    A list of FhirProfileQuery
-  }
-  {!.Net HL7Connect.Fhir.ProfileQueryList}
-  TFhirProfileQueryList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirProfileQuery;
-    procedure SetItemN(index : Integer; value : TFhirProfileQuery);
-  public
-    {!script hide}
-    function Link : TFhirProfileQueryList; Overload;
-    function Clone : TFhirProfileQueryList; Overload;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirProfileQuery to the end of the list.
-    }
-    function Append : TFhirProfileQuery;
-
-    
-    {@member AddItem
-      Add an already existing FhirProfileQuery to the end of the list.
-    }
-    procedure AddItem(value : TFhirProfileQuery);
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirProfileQuery) : Integer;
-    
-
-    {@member Insert
-      Insert FhirProfileQuery before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirProfileQuery;
-    
-
-    {@member InsertItem
-       Insert an existing FhirProfileQuery before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirProfileQuery);
-    
-    {@member Item
-       Get the iIndexth FhirProfileQuery. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirProfileQuery. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirProfileQuery);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirProfileQuery;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirProfileQueries[index : Integer] : TFhirProfileQuery read GetItemN write SetItemN; default;
-  End;
-
-
   {@Class TFhirProvenanceAgent : TFhirElement
     An agent takes a role in an activity such that the agent can be assigned some degree of responsibility for the activity taking place. An agent can be a person, a piece of software, an inanimate object, an organization, or other entities that may be ascribed responsibility.
   }
@@ -14956,11 +15134,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script show}
   published
     {@member linkId
-      A unique identifiers within the questionnaire allowing linkage to the equivalent group in a QuestionnaireData resource.
+      A unique identifier within the questionnaire allowing linkage to the equivalent group in a [[[QuestionnaireAnswers]]] resource.
     }
     property linkId : TFhirString read FLinkId write SetLinkId;
     {@member linkIdST
-      Typed access to A unique identifiers within the questionnaire allowing linkage to the equivalent group in a QuestionnaireData resource.
+      Typed access to A unique identifier within the questionnaire allowing linkage to the equivalent group in a [[[QuestionnaireAnswers]]] resource.
     }
     property linkIdST : String read GetLinkIdST write SetLinkIdST;
 
@@ -15302,7 +15480,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     property textST : String read GetTextST write SetTextST;
 
     {@member answerList
-      The respondant's answer(s) to the question.
+      The respondent's answer(s) to the question.
     }
     property answerList : TFhirQuestionnaireAnswersGroupQuestionAnswerList read FAnswerList;
 
@@ -15394,7 +15572,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
 
 
   {@Class TFhirQuestionnaireAnswersGroupQuestionAnswer : TFhirElement
-    The respondant's answer(s) to the question.
+    The respondent's answer(s) to the question.
   }
   {!.Net HL7Connect.Fhir.QuestionnaireAnswersGroupQuestionAnswer}
   TFhirQuestionnaireAnswersGroupQuestionAnswer = class (TFhirBackboneElement)
@@ -15497,6 +15675,153 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     procedure ClearItems;
     
     Property FhirQuestionnaireAnswersGroupQuestionAnswers[index : Integer] : TFhirQuestionnaireAnswersGroupQuestionAnswer read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirRiskAssessmentPrediction : TFhirElement
+    Describes the expected outcome for the subject.
+  }
+  {!.Net HL7Connect.Fhir.RiskAssessmentPrediction}
+  TFhirRiskAssessmentPrediction = class (TFhirBackboneElement)
+  private
+    FOutcome : TFhirCodeableConcept;
+    FProbability : TFhirType;
+    FRelativeRisk : TFhirDecimal;
+    FWhen : TFhirType;
+    FRationale : TFhirString;
+    Procedure SetOutcome(value : TFhirCodeableConcept);
+    Procedure SetProbability(value : TFhirType);
+    Procedure SetRelativeRisk(value : TFhirDecimal);
+    Function GetRelativeRiskST : String;
+    Procedure SetRelativeRiskST(value : String);
+    Procedure SetWhen(value : TFhirType);
+    Procedure SetRationale(value : TFhirString);
+    Function GetRationaleST : String;
+    Procedure SetRationaleST(value : String);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirRiskAssessmentPrediction; overload;
+    function Clone : TFhirRiskAssessmentPrediction; overload;
+    {!script show}
+  published
+    {@member outcome
+      One of the potential outcomes for the patient (e.g. remission, death,  a particular condition).
+    }
+    property outcome : TFhirCodeableConcept read FOutcome write SetOutcome;
+
+    {@member probability
+      How likely is the outcome (in the specified timeframe).
+    }
+    property probability : TFhirType read FProbability write SetProbability;
+
+    {@member relativeRisk
+      Indicates the risk for this particular subject (with their specific characteristics) divided by the risk of the population in general.  (Numbers greater than 1 = higher risk than the population, numbers less than 1 = lower risk.).
+    }
+    property relativeRisk : TFhirDecimal read FRelativeRisk write SetRelativeRisk;
+    {@member relativeRiskST
+      Typed access to Indicates the risk for this particular subject (with their specific characteristics) divided by the risk of the population in general.  (Numbers greater than 1 = higher risk than the population, numbers less than 1 = lower risk.).
+    }
+    property relativeRiskST : String read GetRelativeRiskST write SetRelativeRiskST;
+
+    {@member when
+      Indicates the period of time or age range of the subject to which the specified probability applies.
+    }
+    property when : TFhirType read FWhen write SetWhen;
+
+    {@member rationale
+      Additional information explaining the basis for the prediction.
+    }
+    property rationale : TFhirString read FRationale write SetRationale;
+    {@member rationaleST
+      Typed access to Additional information explaining the basis for the prediction.
+    }
+    property rationaleST : String read GetRationaleST write SetRationaleST;
+
+  end;
+
+
+  {@Class TFhirRiskAssessmentPredictionList
+    A list of FhirRiskAssessmentPrediction
+  }
+  {!.Net HL7Connect.Fhir.RiskAssessmentPredictionList}
+  TFhirRiskAssessmentPredictionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirRiskAssessmentPrediction;
+    procedure SetItemN(index : Integer; value : TFhirRiskAssessmentPrediction);
+  public
+    {!script hide}
+    function Link : TFhirRiskAssessmentPredictionList; Overload;
+    function Clone : TFhirRiskAssessmentPredictionList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirRiskAssessmentPrediction to the end of the list.
+    }
+    function Append : TFhirRiskAssessmentPrediction;
+
+    
+    {@member AddItem
+      Add an already existing FhirRiskAssessmentPrediction to the end of the list.
+    }
+    procedure AddItem(value : TFhirRiskAssessmentPrediction);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirRiskAssessmentPrediction) : Integer;
+    
+
+    {@member Insert
+      Insert FhirRiskAssessmentPrediction before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirRiskAssessmentPrediction;
+    
+
+    {@member InsertItem
+       Insert an existing FhirRiskAssessmentPrediction before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirRiskAssessmentPrediction);
+    
+    {@member Item
+       Get the iIndexth FhirRiskAssessmentPrediction. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirRiskAssessmentPrediction. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirRiskAssessmentPrediction);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirRiskAssessmentPrediction;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirRiskAssessmentPredictions[index : Integer] : TFhirRiskAssessmentPrediction read GetItemN write SetItemN; default;
   End;
 
 
@@ -19047,7 +19372,7 @@ end;
 destructor TFhirAppointmentParticipant.Destroy;
 begin
   FType_List.Free;
-  FIndividual.free;
+  FActor.free;
   FRequired.free;
   FStatus.free;
   inherited;
@@ -19057,7 +19382,7 @@ procedure TFhirAppointmentParticipant.Assign(oSource : TAdvObject);
 begin
   inherited;
   FType_List.Assign(TFhirAppointmentParticipant(oSource).FType_List);
-  individual := TFhirAppointmentParticipant(oSource).individual.Clone;
+  actor := TFhirAppointmentParticipant(oSource).actor.Clone;
   FRequired := TFhirAppointmentParticipant(oSource).FRequired.Link;
   FStatus := TFhirAppointmentParticipant(oSource).FStatus.Link;
 end;
@@ -19067,8 +19392,8 @@ begin
   inherited;
   if (child_name = 'type_') Then
      list.addAll(FType_List);
-  if (child_name = 'individual') Then
-     list.add(Individual.Link);
+  if (child_name = 'actor') Then
+     list.add(Actor.Link);
   if (child_name = 'required') Then
      list.add(FRequired.Link);
   if (child_name = 'status') Then
@@ -19079,7 +19404,7 @@ procedure TFhirAppointmentParticipant.ListProperties(oList: TFHIRPropertyList; b
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_List.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'individual', 'Resource(Any)', FIndividual.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'actor', 'Resource(Any)', FActor.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'required', 'code', FRequired.Link));{1}
   oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
 end;
@@ -19096,10 +19421,10 @@ end;
 
 { TFhirAppointmentParticipant }
 
-Procedure TFhirAppointmentParticipant.SetIndividual(value : TFhirResourceReference{Resource});
+Procedure TFhirAppointmentParticipant.SetActor(value : TFhirResourceReference{Resource});
 begin
-  FIndividual.free;
-  FIndividual := value;
+  FActor.free;
+  FActor := value;
 end;
 
 Procedure TFhirAppointmentParticipant.SetRequired(value : TFhirEnum);
@@ -22402,8 +22727,8 @@ constructor TFhirConformanceRest.Create;
 begin
   inherited;
   FResourceList := TFhirConformanceRestResourceList.Create;
+  FInteractionList := TFhirConformanceRestInteractionList.Create;
   FOperationList := TFhirConformanceRestOperationList.Create;
-  FQueryList := TFhirConformanceRestQueryList.Create;
   FDocumentMailboxList := TFhirUriList.Create;
 end;
 
@@ -22413,8 +22738,8 @@ begin
   FDocumentation.free;
   FSecurity.free;
   FResourceList.Free;
+  FInteractionList.Free;
   FOperationList.Free;
-  FQueryList.Free;
   FDocumentMailboxList.Free;
   inherited;
 end;
@@ -22426,8 +22751,8 @@ begin
   documentation := TFhirConformanceRest(oSource).documentation.Clone;
   security := TFhirConformanceRest(oSource).security.Clone;
   FResourceList.Assign(TFhirConformanceRest(oSource).FResourceList);
+  FInteractionList.Assign(TFhirConformanceRest(oSource).FInteractionList);
   FOperationList.Assign(TFhirConformanceRest(oSource).FOperationList);
-  FQueryList.Assign(TFhirConformanceRest(oSource).FQueryList);
   FDocumentMailboxList.Assign(TFhirConformanceRest(oSource).FDocumentMailboxList);
 end;
 
@@ -22442,10 +22767,10 @@ begin
      list.add(Security.Link);
   if (child_name = 'resource') Then
      list.addAll(FResourceList);
+  if (child_name = 'interaction') Then
+     list.addAll(FInteractionList);
   if (child_name = 'operation') Then
      list.addAll(FOperationList);
-  if (child_name = 'query') Then
-     list.addAll(FQueryList);
   if (child_name = 'documentMailbox') Then
      list.addAll(FDocumentMailboxList);
 end;
@@ -22457,8 +22782,8 @@ begin
   oList.add(TFHIRProperty.create(self, 'documentation', 'string', FDocumentation.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'security', '', FSecurity.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'resource', '', FResourceList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'interaction', '', FInteractionList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'operation', '', FOperationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'query', '', FQueryList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'documentMailbox', 'uri', FDocumentMailboxList.Link)){3};
 end;
 
@@ -23012,7 +23337,7 @@ end;
 constructor TFhirConformanceRestResource.Create;
 begin
   inherited;
-  FOperationList := TFhirConformanceRestResourceOperationList.Create;
+  FInteractionList := TFhirConformanceRestResourceInteractionList.Create;
   FSearchIncludeList := TFhirStringList.Create;
   FSearchParamList := TFhirConformanceRestResourceSearchParamList.Create;
 end;
@@ -23021,7 +23346,7 @@ destructor TFhirConformanceRestResource.Destroy;
 begin
   FType_.free;
   FProfile.free;
-  FOperationList.Free;
+  FInteractionList.Free;
   FReadHistory.free;
   FUpdateCreate.free;
   FSearchIncludeList.Free;
@@ -23034,7 +23359,7 @@ begin
   inherited;
   type_ := TFhirConformanceRestResource(oSource).type_.Clone;
   profile := TFhirConformanceRestResource(oSource).profile.Clone;
-  FOperationList.Assign(TFhirConformanceRestResource(oSource).FOperationList);
+  FInteractionList.Assign(TFhirConformanceRestResource(oSource).FInteractionList);
   readHistory := TFhirConformanceRestResource(oSource).readHistory.Clone;
   updateCreate := TFhirConformanceRestResource(oSource).updateCreate.Clone;
   FSearchIncludeList.Assign(TFhirConformanceRestResource(oSource).FSearchIncludeList);
@@ -23048,8 +23373,8 @@ begin
      list.add(Type_.Link);
   if (child_name = 'profile') Then
      list.add(Profile.Link);
-  if (child_name = 'operation') Then
-     list.addAll(FOperationList);
+  if (child_name = 'interaction') Then
+     list.addAll(FInteractionList);
   if (child_name = 'readHistory') Then
      list.add(ReadHistory.Link);
   if (child_name = 'updateCreate') Then
@@ -23065,7 +23390,7 @@ begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'type', 'code', FType_.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'profile', 'Resource(Profile)', FProfile.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'operation', '', FOperationList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'interaction', '', FInteractionList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'readHistory', 'boolean', FReadHistory.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'updateCreate', 'boolean', FUpdateCreate.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'searchInclude', 'string', FSearchIncludeList.Link)){3};
@@ -23248,28 +23573,28 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirConformanceRestResourceOperation }
+{ TFhirConformanceRestResourceInteraction }
 
-constructor TFhirConformanceRestResourceOperation.Create;
+constructor TFhirConformanceRestResourceInteraction.Create;
 begin
   inherited;
 end;
 
-destructor TFhirConformanceRestResourceOperation.Destroy;
+destructor TFhirConformanceRestResourceInteraction.Destroy;
 begin
   FCode.free;
   FDocumentation.free;
   inherited;
 end;
 
-procedure TFhirConformanceRestResourceOperation.Assign(oSource : TAdvObject);
+procedure TFhirConformanceRestResourceInteraction.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FCode := TFhirConformanceRestResourceOperation(oSource).FCode.Link;
-  documentation := TFhirConformanceRestResourceOperation(oSource).documentation.Clone;
+  FCode := TFhirConformanceRestResourceInteraction(oSource).FCode.Link;
+  documentation := TFhirConformanceRestResourceInteraction(oSource).documentation.Clone;
 end;
 
-procedure TFhirConformanceRestResourceOperation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirConformanceRestResourceInteraction.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'code') Then
@@ -23278,54 +23603,54 @@ begin
      list.add(Documentation.Link);
 end;
 
-procedure TFhirConformanceRestResourceOperation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirConformanceRestResourceInteraction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link));{1}
   oList.add(TFHIRProperty.create(self, 'documentation', 'string', FDocumentation.Link.Link));{2}
 end;
 
-function TFhirConformanceRestResourceOperation.Link : TFhirConformanceRestResourceOperation;
+function TFhirConformanceRestResourceInteraction.Link : TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceOperation(inherited Link);
+  result := TFhirConformanceRestResourceInteraction(inherited Link);
 end;
 
-function TFhirConformanceRestResourceOperation.Clone : TFhirConformanceRestResourceOperation;
+function TFhirConformanceRestResourceInteraction.Clone : TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceOperation(inherited Clone);
+  result := TFhirConformanceRestResourceInteraction(inherited Clone);
 end;
 
-{ TFhirConformanceRestResourceOperation }
+{ TFhirConformanceRestResourceInteraction }
 
-Procedure TFhirConformanceRestResourceOperation.SetCode(value : TFhirEnum);
+Procedure TFhirConformanceRestResourceInteraction.SetCode(value : TFhirEnum);
 begin
   FCode.free;
   FCode := value;
 end;
 
-Function TFhirConformanceRestResourceOperation.GetCodeST : TFhirTypeRestfulOperation;
+Function TFhirConformanceRestResourceInteraction.GetCodeST : TFhirTypeRestfulInteraction;
 begin
   if FCode = nil then
-    result := TFhirTypeRestfulOperation(0)
+    result := TFhirTypeRestfulInteraction(0)
   else
-    result := TFhirTypeRestfulOperation(StringArrayIndexOf(CODES_TFhirTypeRestfulOperation, Code.value));
+    result := TFhirTypeRestfulInteraction(StringArrayIndexOf(CODES_TFhirTypeRestfulInteraction, Code.value));
 end;
 
-Procedure TFhirConformanceRestResourceOperation.SetCodeST(value : TFhirTypeRestfulOperation);
+Procedure TFhirConformanceRestResourceInteraction.SetCodeST(value : TFhirTypeRestfulInteraction);
 begin
   if ord(value) = 0 then
     Code := nil
   else
-    Code := TFhirEnum.create(CODES_TFhirTypeRestfulOperation[value]);
+    Code := TFhirEnum.create(CODES_TFhirTypeRestfulInteraction[value]);
 end;
 
-Procedure TFhirConformanceRestResourceOperation.SetDocumentation(value : TFhirString);
+Procedure TFhirConformanceRestResourceInteraction.SetDocumentation(value : TFhirString);
 begin
   FDocumentation.free;
   FDocumentation := value;
 end;
 
-Function TFhirConformanceRestResourceOperation.GetDocumentationST : String;
+Function TFhirConformanceRestResourceInteraction.GetDocumentationST : String;
 begin
   if FDocumentation = nil then
     result := ''
@@ -23333,7 +23658,7 @@ begin
     result := Documentation.value;
 end;
 
-Procedure TFhirConformanceRestResourceOperation.SetDocumentationST(value : String);
+Procedure TFhirConformanceRestResourceInteraction.SetDocumentationST(value : String);
 begin
   if value <> '' then
   begin
@@ -23346,17 +23671,17 @@ begin
 end;
 
 
-{ TFhirConformanceRestResourceOperationList }
-procedure TFhirConformanceRestResourceOperationList.AddItem(value: TFhirConformanceRestResourceOperation);
+{ TFhirConformanceRestResourceInteractionList }
+procedure TFhirConformanceRestResourceInteractionList.AddItem(value: TFhirConformanceRestResourceInteraction);
 begin
-  assert(value.ClassName = 'TFhirConformanceRestResourceOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestResourceOperation');
+  assert(value.ClassName = 'TFhirConformanceRestResourceInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestResourceInteraction');
   add(value);
 end;
 
 
-function TFhirConformanceRestResourceOperationList.Append: TFhirConformanceRestResourceOperation;
+function TFhirConformanceRestResourceInteractionList.Append: TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceOperation.create;
+  result := TFhirConformanceRestResourceInteraction.create;
   try
     add(result.Link);
   finally
@@ -23365,35 +23690,35 @@ begin
 end;
 
 
-procedure TFhirConformanceRestResourceOperationList.ClearItems;
+procedure TFhirConformanceRestResourceInteractionList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirConformanceRestResourceOperationList.Clone: TFhirConformanceRestResourceOperationList;
+function TFhirConformanceRestResourceInteractionList.Clone: TFhirConformanceRestResourceInteractionList;
 begin
-  result := TFhirConformanceRestResourceOperationList(inherited Clone);
+  result := TFhirConformanceRestResourceInteractionList(inherited Clone);
 end;
 
-function TFhirConformanceRestResourceOperationList.Count: Integer;
+function TFhirConformanceRestResourceInteractionList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirConformanceRestResourceOperationList.GetItemN(index: Integer): TFhirConformanceRestResourceOperation;
+function TFhirConformanceRestResourceInteractionList.GetItemN(index: Integer): TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceOperation(ObjectByIndex[index]);
+  result := TFhirConformanceRestResourceInteraction(ObjectByIndex[index]);
 end;
 
-function TFhirConformanceRestResourceOperationList.IndexOf(value: TFhirConformanceRestResourceOperation): Integer;
+function TFhirConformanceRestResourceInteractionList.IndexOf(value: TFhirConformanceRestResourceInteraction): Integer;
 begin
   result := IndexByReference(value);
 end;
 
 
-function TFhirConformanceRestResourceOperationList.Insert(index: Integer): TFhirConformanceRestResourceOperation;
+function TFhirConformanceRestResourceInteractionList.Insert(index: Integer): TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceOperation.create;
+  result := TFhirConformanceRestResourceInteraction.create;
   try
     inherited insert(index, result);
   finally
@@ -23402,36 +23727,36 @@ begin
 end;
 
 
-procedure TFhirConformanceRestResourceOperationList.InsertItem(index: Integer; value: TFhirConformanceRestResourceOperation);
+procedure TFhirConformanceRestResourceInteractionList.InsertItem(index: Integer; value: TFhirConformanceRestResourceInteraction);
 begin
-  assert(value is TFhirConformanceRestResourceOperation);
+  assert(value is TFhirConformanceRestResourceInteraction);
   Inherited Insert(index, value);
 end;
 
-function TFhirConformanceRestResourceOperationList.Item(index: Integer): TFhirConformanceRestResourceOperation;
+function TFhirConformanceRestResourceInteractionList.Item(index: Integer): TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceOperation(ObjectByIndex[index]);
+  result := TFhirConformanceRestResourceInteraction(ObjectByIndex[index]);
 end;
 
-function TFhirConformanceRestResourceOperationList.Link: TFhirConformanceRestResourceOperationList;
+function TFhirConformanceRestResourceInteractionList.Link: TFhirConformanceRestResourceInteractionList;
 begin
-  result := TFhirConformanceRestResourceOperationList(inherited Link);
+  result := TFhirConformanceRestResourceInteractionList(inherited Link);
 end;
 
-procedure TFhirConformanceRestResourceOperationList.Remove(index: Integer);
+procedure TFhirConformanceRestResourceInteractionList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirConformanceRestResourceOperationList.SetItemByIndex(index: Integer; value: TFhirConformanceRestResourceOperation);
+procedure TFhirConformanceRestResourceInteractionList.SetItemByIndex(index: Integer; value: TFhirConformanceRestResourceInteraction);
 begin
-  assert(value is TFhirConformanceRestResourceOperation);
-  FhirConformanceRestResourceOperations[index] := value;
+  assert(value is TFhirConformanceRestResourceInteraction);
+  FhirConformanceRestResourceInteractions[index] := value;
 end;
 
-procedure TFhirConformanceRestResourceOperationList.SetItemN(index: Integer; value: TFhirConformanceRestResourceOperation);
+procedure TFhirConformanceRestResourceInteractionList.SetItemN(index: Integer; value: TFhirConformanceRestResourceInteraction);
 begin
-  assert(value is TFhirConformanceRestResourceOperation);
+  assert(value is TFhirConformanceRestResourceInteraction);
   ObjectByIndex[index] := value;
 end;
 
@@ -23696,6 +24021,193 @@ begin
   ObjectByIndex[index] := value;
 end;
 
+{ TFhirConformanceRestInteraction }
+
+constructor TFhirConformanceRestInteraction.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirConformanceRestInteraction.Destroy;
+begin
+  FCode.free;
+  FDocumentation.free;
+  inherited;
+end;
+
+procedure TFhirConformanceRestInteraction.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FCode := TFhirConformanceRestInteraction(oSource).FCode.Link;
+  documentation := TFhirConformanceRestInteraction(oSource).documentation.Clone;
+end;
+
+procedure TFhirConformanceRestInteraction.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'code') Then
+     list.add(FCode.Link);
+  if (child_name = 'documentation') Then
+     list.add(Documentation.Link);
+end;
+
+procedure TFhirConformanceRestInteraction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'documentation', 'string', FDocumentation.Link.Link));{2}
+end;
+
+function TFhirConformanceRestInteraction.Link : TFhirConformanceRestInteraction;
+begin
+  result := TFhirConformanceRestInteraction(inherited Link);
+end;
+
+function TFhirConformanceRestInteraction.Clone : TFhirConformanceRestInteraction;
+begin
+  result := TFhirConformanceRestInteraction(inherited Clone);
+end;
+
+{ TFhirConformanceRestInteraction }
+
+Procedure TFhirConformanceRestInteraction.SetCode(value : TFhirEnum);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+Function TFhirConformanceRestInteraction.GetCodeST : TFhirSystemRestfulInteraction;
+begin
+  if FCode = nil then
+    result := TFhirSystemRestfulInteraction(0)
+  else
+    result := TFhirSystemRestfulInteraction(StringArrayIndexOf(CODES_TFhirSystemRestfulInteraction, Code.value));
+end;
+
+Procedure TFhirConformanceRestInteraction.SetCodeST(value : TFhirSystemRestfulInteraction);
+begin
+  if ord(value) = 0 then
+    Code := nil
+  else
+    Code := TFhirEnum.create(CODES_TFhirSystemRestfulInteraction[value]);
+end;
+
+Procedure TFhirConformanceRestInteraction.SetDocumentation(value : TFhirString);
+begin
+  FDocumentation.free;
+  FDocumentation := value;
+end;
+
+Function TFhirConformanceRestInteraction.GetDocumentationST : String;
+begin
+  if FDocumentation = nil then
+    result := ''
+  else
+    result := Documentation.value;
+end;
+
+Procedure TFhirConformanceRestInteraction.SetDocumentationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDocumentation = nil then
+      FDocumentation := TFhirString.create;
+    FDocumentation.value := value
+  end
+  else if FDocumentation <> nil then
+    FDocumentation.value := '';
+end;
+
+
+{ TFhirConformanceRestInteractionList }
+procedure TFhirConformanceRestInteractionList.AddItem(value: TFhirConformanceRestInteraction);
+begin
+  assert(value.ClassName = 'TFhirConformanceRestInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestInteraction');
+  add(value);
+end;
+
+
+function TFhirConformanceRestInteractionList.Append: TFhirConformanceRestInteraction;
+begin
+  result := TFhirConformanceRestInteraction.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirConformanceRestInteractionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirConformanceRestInteractionList.Clone: TFhirConformanceRestInteractionList;
+begin
+  result := TFhirConformanceRestInteractionList(inherited Clone);
+end;
+
+function TFhirConformanceRestInteractionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirConformanceRestInteractionList.GetItemN(index: Integer): TFhirConformanceRestInteraction;
+begin
+  result := TFhirConformanceRestInteraction(ObjectByIndex[index]);
+end;
+
+function TFhirConformanceRestInteractionList.IndexOf(value: TFhirConformanceRestInteraction): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirConformanceRestInteractionList.Insert(index: Integer): TFhirConformanceRestInteraction;
+begin
+  result := TFhirConformanceRestInteraction.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirConformanceRestInteractionList.InsertItem(index: Integer; value: TFhirConformanceRestInteraction);
+begin
+  assert(value is TFhirConformanceRestInteraction);
+  Inherited Insert(index, value);
+end;
+
+function TFhirConformanceRestInteractionList.Item(index: Integer): TFhirConformanceRestInteraction;
+begin
+  result := TFhirConformanceRestInteraction(ObjectByIndex[index]);
+end;
+
+function TFhirConformanceRestInteractionList.Link: TFhirConformanceRestInteractionList;
+begin
+  result := TFhirConformanceRestInteractionList(inherited Link);
+end;
+
+procedure TFhirConformanceRestInteractionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirConformanceRestInteractionList.SetItemByIndex(index: Integer; value: TFhirConformanceRestInteraction);
+begin
+  assert(value is TFhirConformanceRestInteraction);
+  FhirConformanceRestInteractions[index] := value;
+end;
+
+procedure TFhirConformanceRestInteractionList.SetItemN(index: Integer; value: TFhirConformanceRestInteraction);
+begin
+  assert(value is TFhirConformanceRestInteraction);
+  ObjectByIndex[index] := value;
+end;
+
 { TFhirConformanceRestOperation }
 
 constructor TFhirConformanceRestOperation.Create;
@@ -23705,32 +24217,32 @@ end;
 
 destructor TFhirConformanceRestOperation.Destroy;
 begin
-  FCode.free;
-  FDocumentation.free;
+  FName.free;
+  FDefinition.free;
   inherited;
 end;
 
 procedure TFhirConformanceRestOperation.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FCode := TFhirConformanceRestOperation(oSource).FCode.Link;
-  documentation := TFhirConformanceRestOperation(oSource).documentation.Clone;
+  name := TFhirConformanceRestOperation(oSource).name.Clone;
+  definition := TFhirConformanceRestOperation(oSource).definition.Clone;
 end;
 
 procedure TFhirConformanceRestOperation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
-  if (child_name = 'code') Then
-     list.add(FCode.Link);
-  if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+  if (child_name = 'name') Then
+     list.add(Name.Link);
+  if (child_name = 'definition') Then
+     list.add(Definition.Link);
 end;
 
 procedure TFhirConformanceRestOperation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'documentation', 'string', FDocumentation.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'definition', 'Resource(OperationDefinition)', FDefinition.Link.Link));{2}
 end;
 
 function TFhirConformanceRestOperation.Link : TFhirConformanceRestOperation;
@@ -23745,52 +24257,36 @@ end;
 
 { TFhirConformanceRestOperation }
 
-Procedure TFhirConformanceRestOperation.SetCode(value : TFhirEnum);
+Procedure TFhirConformanceRestOperation.SetName(value : TFhirString);
 begin
-  FCode.free;
-  FCode := value;
+  FName.free;
+  FName := value;
 end;
 
-Function TFhirConformanceRestOperation.GetCodeST : TFhirSystemRestfulOperation;
+Function TFhirConformanceRestOperation.GetNameST : String;
 begin
-  if FCode = nil then
-    result := TFhirSystemRestfulOperation(0)
-  else
-    result := TFhirSystemRestfulOperation(StringArrayIndexOf(CODES_TFhirSystemRestfulOperation, Code.value));
-end;
-
-Procedure TFhirConformanceRestOperation.SetCodeST(value : TFhirSystemRestfulOperation);
-begin
-  if ord(value) = 0 then
-    Code := nil
-  else
-    Code := TFhirEnum.create(CODES_TFhirSystemRestfulOperation[value]);
-end;
-
-Procedure TFhirConformanceRestOperation.SetDocumentation(value : TFhirString);
-begin
-  FDocumentation.free;
-  FDocumentation := value;
-end;
-
-Function TFhirConformanceRestOperation.GetDocumentationST : String;
-begin
-  if FDocumentation = nil then
+  if FName = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := Name.value;
 end;
 
-Procedure TFhirConformanceRestOperation.SetDocumentationST(value : String);
+Procedure TFhirConformanceRestOperation.SetNameST(value : String);
 begin
   if value <> '' then
   begin
-    if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
-    FDocumentation.value := value
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
   end
-  else if FDocumentation <> nil then
-    FDocumentation.value := '';
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+Procedure TFhirConformanceRestOperation.SetDefinition(value : TFhirResourceReference{TFhirOperationDefinition});
+begin
+  FDefinition.free;
+  FDefinition := value;
 end;
 
 
@@ -23880,234 +24376,6 @@ end;
 procedure TFhirConformanceRestOperationList.SetItemN(index: Integer; value: TFhirConformanceRestOperation);
 begin
   assert(value is TFhirConformanceRestOperation);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirConformanceRestQuery }
-
-constructor TFhirConformanceRestQuery.Create;
-begin
-  inherited;
-  FParameterList := TFhirConformanceRestResourceSearchParamList.Create;
-end;
-
-destructor TFhirConformanceRestQuery.Destroy;
-begin
-  FName.free;
-  FDefinition.free;
-  FDocumentation.free;
-  FParameterList.Free;
-  inherited;
-end;
-
-procedure TFhirConformanceRestQuery.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  name := TFhirConformanceRestQuery(oSource).name.Clone;
-  definition := TFhirConformanceRestQuery(oSource).definition.Clone;
-  documentation := TFhirConformanceRestQuery(oSource).documentation.Clone;
-  FParameterList.Assign(TFhirConformanceRestQuery(oSource).FParameterList);
-end;
-
-procedure TFhirConformanceRestQuery.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'name') Then
-     list.add(Name.Link);
-  if (child_name = 'definition') Then
-     list.add(Definition.Link);
-  if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
-  if (child_name = 'parameter') Then
-     list.addAll(FParameterList);
-end;
-
-procedure TFhirConformanceRestQuery.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'definition', 'uri', FDefinition.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'documentation', 'string', FDocumentation.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'parameter', '@Conformance.rest.resource.searchParam', FParameterList.Link)){3};
-end;
-
-function TFhirConformanceRestQuery.Link : TFhirConformanceRestQuery;
-begin
-  result := TFhirConformanceRestQuery(inherited Link);
-end;
-
-function TFhirConformanceRestQuery.Clone : TFhirConformanceRestQuery;
-begin
-  result := TFhirConformanceRestQuery(inherited Clone);
-end;
-
-{ TFhirConformanceRestQuery }
-
-Procedure TFhirConformanceRestQuery.SetName(value : TFhirString);
-begin
-  FName.free;
-  FName := value;
-end;
-
-Function TFhirConformanceRestQuery.GetNameST : String;
-begin
-  if FName = nil then
-    result := ''
-  else
-    result := Name.value;
-end;
-
-Procedure TFhirConformanceRestQuery.SetNameST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FName = nil then
-      FName := TFhirString.create;
-    FName.value := value
-  end
-  else if FName <> nil then
-    FName.value := '';
-end;
-
-Procedure TFhirConformanceRestQuery.SetDefinition(value : TFhirUri);
-begin
-  FDefinition.free;
-  FDefinition := value;
-end;
-
-Function TFhirConformanceRestQuery.GetDefinitionST : String;
-begin
-  if FDefinition = nil then
-    result := ''
-  else
-    result := Definition.value;
-end;
-
-Procedure TFhirConformanceRestQuery.SetDefinitionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDefinition = nil then
-      FDefinition := TFhirUri.create;
-    FDefinition.value := value
-  end
-  else if FDefinition <> nil then
-    FDefinition.value := '';
-end;
-
-Procedure TFhirConformanceRestQuery.SetDocumentation(value : TFhirString);
-begin
-  FDocumentation.free;
-  FDocumentation := value;
-end;
-
-Function TFhirConformanceRestQuery.GetDocumentationST : String;
-begin
-  if FDocumentation = nil then
-    result := ''
-  else
-    result := Documentation.value;
-end;
-
-Procedure TFhirConformanceRestQuery.SetDocumentationST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
-    FDocumentation.value := value
-  end
-  else if FDocumentation <> nil then
-    FDocumentation.value := '';
-end;
-
-
-{ TFhirConformanceRestQueryList }
-procedure TFhirConformanceRestQueryList.AddItem(value: TFhirConformanceRestQuery);
-begin
-  assert(value.ClassName = 'TFhirConformanceRestQuery', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestQuery');
-  add(value);
-end;
-
-
-function TFhirConformanceRestQueryList.Append: TFhirConformanceRestQuery;
-begin
-  result := TFhirConformanceRestQuery.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirConformanceRestQueryList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirConformanceRestQueryList.Clone: TFhirConformanceRestQueryList;
-begin
-  result := TFhirConformanceRestQueryList(inherited Clone);
-end;
-
-function TFhirConformanceRestQueryList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirConformanceRestQueryList.GetItemN(index: Integer): TFhirConformanceRestQuery;
-begin
-  result := TFhirConformanceRestQuery(ObjectByIndex[index]);
-end;
-
-function TFhirConformanceRestQueryList.IndexOf(value: TFhirConformanceRestQuery): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirConformanceRestQueryList.Insert(index: Integer): TFhirConformanceRestQuery;
-begin
-  result := TFhirConformanceRestQuery.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirConformanceRestQueryList.InsertItem(index: Integer; value: TFhirConformanceRestQuery);
-begin
-  assert(value is TFhirConformanceRestQuery);
-  Inherited Insert(index, value);
-end;
-
-function TFhirConformanceRestQueryList.Item(index: Integer): TFhirConformanceRestQuery;
-begin
-  result := TFhirConformanceRestQuery(ObjectByIndex[index]);
-end;
-
-function TFhirConformanceRestQueryList.Link: TFhirConformanceRestQueryList;
-begin
-  result := TFhirConformanceRestQueryList(inherited Link);
-end;
-
-procedure TFhirConformanceRestQueryList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirConformanceRestQueryList.SetItemByIndex(index: Integer; value: TFhirConformanceRestQuery);
-begin
-  assert(value is TFhirConformanceRestQuery);
-  FhirConformanceRestQueries[index] := value;
-end;
-
-procedure TFhirConformanceRestQueryList.SetItemN(index: Integer; value: TFhirConformanceRestQuery);
-begin
-  assert(value is TFhirConformanceRestQuery);
   ObjectByIndex[index] := value;
 end;
 
@@ -24818,6 +25086,188 @@ end;
 procedure TFhirConformanceDocumentList.SetItemN(index: Integer; value: TFhirConformanceDocument);
 begin
   assert(value is TFhirConformanceDocument);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirContraindicationMitigation }
+
+constructor TFhirContraindicationMitigation.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirContraindicationMitigation.Destroy;
+begin
+  FAction.free;
+  FDate.free;
+  FAuthor.free;
+  inherited;
+end;
+
+procedure TFhirContraindicationMitigation.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  action := TFhirContraindicationMitigation(oSource).action.Clone;
+  date := TFhirContraindicationMitigation(oSource).date.Clone;
+  author := TFhirContraindicationMitigation(oSource).author.Clone;
+end;
+
+procedure TFhirContraindicationMitigation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'action') Then
+     list.add(Action.Link);
+  if (child_name = 'date') Then
+     list.add(Date.Link);
+  if (child_name = 'author') Then
+     list.add(Author.Link);
+end;
+
+procedure TFhirContraindicationMitigation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'action', 'CodeableConcept', FAction.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', FDate.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'author', 'Resource(Practitioner)', FAuthor.Link.Link));{2}
+end;
+
+function TFhirContraindicationMitigation.Link : TFhirContraindicationMitigation;
+begin
+  result := TFhirContraindicationMitigation(inherited Link);
+end;
+
+function TFhirContraindicationMitigation.Clone : TFhirContraindicationMitigation;
+begin
+  result := TFhirContraindicationMitigation(inherited Clone);
+end;
+
+{ TFhirContraindicationMitigation }
+
+Procedure TFhirContraindicationMitigation.SetAction(value : TFhirCodeableConcept);
+begin
+  FAction.free;
+  FAction := value;
+end;
+
+Procedure TFhirContraindicationMitigation.SetDate(value : TFhirDateTime);
+begin
+  FDate.free;
+  FDate := value;
+end;
+
+Function TFhirContraindicationMitigation.GetDateST : TDateAndTime;
+begin
+  if FDate = nil then
+    result := nil
+  else
+    result := Date.value;
+end;
+
+Procedure TFhirContraindicationMitigation.SetDateST(value : TDateAndTime);
+begin
+  if value <> nil then
+  begin
+    if FDate = nil then
+      FDate := TFhirDateTime.create;
+    FDate.value := value
+  end
+  else if FDate <> nil then
+    FDate.value := nil;
+end;
+
+Procedure TFhirContraindicationMitigation.SetAuthor(value : TFhirResourceReference{TFhirPractitioner});
+begin
+  FAuthor.free;
+  FAuthor := value;
+end;
+
+
+{ TFhirContraindicationMitigationList }
+procedure TFhirContraindicationMitigationList.AddItem(value: TFhirContraindicationMitigation);
+begin
+  assert(value.ClassName = 'TFhirContraindicationMitigation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirContraindicationMitigation');
+  add(value);
+end;
+
+
+function TFhirContraindicationMitigationList.Append: TFhirContraindicationMitigation;
+begin
+  result := TFhirContraindicationMitigation.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirContraindicationMitigationList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirContraindicationMitigationList.Clone: TFhirContraindicationMitigationList;
+begin
+  result := TFhirContraindicationMitigationList(inherited Clone);
+end;
+
+function TFhirContraindicationMitigationList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirContraindicationMitigationList.GetItemN(index: Integer): TFhirContraindicationMitigation;
+begin
+  result := TFhirContraindicationMitigation(ObjectByIndex[index]);
+end;
+
+function TFhirContraindicationMitigationList.IndexOf(value: TFhirContraindicationMitigation): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirContraindicationMitigationList.Insert(index: Integer): TFhirContraindicationMitigation;
+begin
+  result := TFhirContraindicationMitigation.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirContraindicationMitigationList.InsertItem(index: Integer; value: TFhirContraindicationMitigation);
+begin
+  assert(value is TFhirContraindicationMitigation);
+  Inherited Insert(index, value);
+end;
+
+function TFhirContraindicationMitigationList.Item(index: Integer): TFhirContraindicationMitigation;
+begin
+  result := TFhirContraindicationMitigation(ObjectByIndex[index]);
+end;
+
+function TFhirContraindicationMitigationList.Link: TFhirContraindicationMitigationList;
+begin
+  result := TFhirContraindicationMitigationList(inherited Link);
+end;
+
+procedure TFhirContraindicationMitigationList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirContraindicationMitigationList.SetItemByIndex(index: Integer; value: TFhirContraindicationMitigation);
+begin
+  assert(value is TFhirContraindicationMitigation);
+  FhirContraindicationMitigations[index] := value;
+end;
+
+procedure TFhirContraindicationMitigationList.SetItemN(index: Integer; value: TFhirContraindicationMitigation);
+begin
+  assert(value is TFhirContraindicationMitigation);
   ObjectByIndex[index] := value;
 end;
 
@@ -27714,6 +28164,7 @@ begin
   FName.free;
   FRelationship.free;
   FBorn.free;
+  FAge.free;
   FDeceased.free;
   FNote.free;
   FConditionList.Free;
@@ -27726,6 +28177,7 @@ begin
   name := TFhirFamilyHistoryRelation(oSource).name.Clone;
   relationship := TFhirFamilyHistoryRelation(oSource).relationship.Clone;
   born := TFhirFamilyHistoryRelation(oSource).born.Clone;
+  age := TFhirFamilyHistoryRelation(oSource).age.Clone;
   deceased := TFhirFamilyHistoryRelation(oSource).deceased.Clone;
   note := TFhirFamilyHistoryRelation(oSource).note.Clone;
   FConditionList.Assign(TFhirFamilyHistoryRelation(oSource).FConditionList);
@@ -27740,6 +28192,8 @@ begin
      list.add(Relationship.Link);
   if (child_name = 'born') Then
      list.add(Born.Link);
+  if (child_name = 'age') Then
+     list.add(Age.Link);
   if (child_name = 'deceased') Then
      list.add(Deceased.Link);
   if (child_name = 'note') Then
@@ -27754,6 +28208,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'relationship', 'CodeableConcept', FRelationship.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'born[x]', 'Period|date|string', FBorn.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'age[x]', 'Age|Range|string', FAge.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'deceased[x]', 'boolean|Age|Range|date|string', FDeceased.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'note', 'string', FNote.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'condition', '', FConditionList.Link)){3};
@@ -27807,6 +28262,12 @@ Procedure TFhirFamilyHistoryRelation.SetBorn(value : TFhirType);
 begin
   FBorn.free;
   FBorn := value;
+end;
+
+Procedure TFhirFamilyHistoryRelation.SetAge(value : TFhirType);
+begin
+  FAge.free;
+  FAge := value;
 end;
 
 Procedure TFhirFamilyHistoryRelation.SetDeceased(value : TFhirType);
@@ -34431,6 +34892,308 @@ begin
   ObjectByIndex[index] := value;
 end;
 
+{ TFhirOperationDefinitionParameter }
+
+constructor TFhirOperationDefinitionParameter.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirOperationDefinitionParameter.Destroy;
+begin
+  FName.free;
+  FUse.free;
+  FMin.free;
+  FMax.free;
+  FDocumentation.free;
+  FType_.free;
+  FProfile.free;
+  inherited;
+end;
+
+procedure TFhirOperationDefinitionParameter.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  name := TFhirOperationDefinitionParameter(oSource).name.Clone;
+  FUse := TFhirOperationDefinitionParameter(oSource).FUse.Link;
+  min := TFhirOperationDefinitionParameter(oSource).min.Clone;
+  max := TFhirOperationDefinitionParameter(oSource).max.Clone;
+  documentation := TFhirOperationDefinitionParameter(oSource).documentation.Clone;
+  type_ := TFhirOperationDefinitionParameter(oSource).type_.Clone;
+  profile := TFhirOperationDefinitionParameter(oSource).profile.Clone;
+end;
+
+procedure TFhirOperationDefinitionParameter.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'name') Then
+     list.add(Name.Link);
+  if (child_name = 'use') Then
+     list.add(FUse.Link);
+  if (child_name = 'min') Then
+     list.add(Min.Link);
+  if (child_name = 'max') Then
+     list.add(Max.Link);
+  if (child_name = 'documentation') Then
+     list.add(Documentation.Link);
+  if (child_name = 'type_') Then
+     list.add(Type_.Link);
+  if (child_name = 'profile') Then
+     list.add(Profile.Link);
+end;
+
+procedure TFhirOperationDefinitionParameter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'name', 'code', FName.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'use', 'code', FUse.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'min', 'integer', FMin.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'max', 'string', FMax.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'documentation', 'string', FDocumentation.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'type', 'Coding', FType_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'profile', 'Resource(Profile)', FProfile.Link.Link));{2}
+end;
+
+function TFhirOperationDefinitionParameter.Link : TFhirOperationDefinitionParameter;
+begin
+  result := TFhirOperationDefinitionParameter(inherited Link);
+end;
+
+function TFhirOperationDefinitionParameter.Clone : TFhirOperationDefinitionParameter;
+begin
+  result := TFhirOperationDefinitionParameter(inherited Clone);
+end;
+
+{ TFhirOperationDefinitionParameter }
+
+Procedure TFhirOperationDefinitionParameter.SetName(value : TFhirCode);
+begin
+  FName.free;
+  FName := value;
+end;
+
+Function TFhirOperationDefinitionParameter.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := Name.value;
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirCode.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetUse(value : TFhirEnum);
+begin
+  FUse.free;
+  FUse := value;
+end;
+
+Function TFhirOperationDefinitionParameter.GetUseST : TFhirOperationParameterUse;
+begin
+  if FUse = nil then
+    result := TFhirOperationParameterUse(0)
+  else
+    result := TFhirOperationParameterUse(StringArrayIndexOf(CODES_TFhirOperationParameterUse, Use.value));
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetUseST(value : TFhirOperationParameterUse);
+begin
+  if ord(value) = 0 then
+    Use := nil
+  else
+    Use := TFhirEnum.create(CODES_TFhirOperationParameterUse[value]);
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetMin(value : TFhirInteger);
+begin
+  FMin.free;
+  FMin := value;
+end;
+
+Function TFhirOperationDefinitionParameter.GetMinST : String;
+begin
+  if FMin = nil then
+    result := ''
+  else
+    result := Min.value;
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetMinST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FMin = nil then
+      FMin := TFhirInteger.create;
+    FMin.value := value
+  end
+  else if FMin <> nil then
+    FMin.value := '';
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetMax(value : TFhirString);
+begin
+  FMax.free;
+  FMax := value;
+end;
+
+Function TFhirOperationDefinitionParameter.GetMaxST : String;
+begin
+  if FMax = nil then
+    result := ''
+  else
+    result := Max.value;
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetMaxST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FMax = nil then
+      FMax := TFhirString.create;
+    FMax.value := value
+  end
+  else if FMax <> nil then
+    FMax.value := '';
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetDocumentation(value : TFhirString);
+begin
+  FDocumentation.free;
+  FDocumentation := value;
+end;
+
+Function TFhirOperationDefinitionParameter.GetDocumentationST : String;
+begin
+  if FDocumentation = nil then
+    result := ''
+  else
+    result := Documentation.value;
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetDocumentationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDocumentation = nil then
+      FDocumentation := TFhirString.create;
+    FDocumentation.value := value
+  end
+  else if FDocumentation <> nil then
+    FDocumentation.value := '';
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetType_(value : TFhirCoding);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+Procedure TFhirOperationDefinitionParameter.SetProfile(value : TFhirResourceReference{TFhirProfile});
+begin
+  FProfile.free;
+  FProfile := value;
+end;
+
+
+{ TFhirOperationDefinitionParameterList }
+procedure TFhirOperationDefinitionParameterList.AddItem(value: TFhirOperationDefinitionParameter);
+begin
+  assert(value.ClassName = 'TFhirOperationDefinitionParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinitionParameter');
+  add(value);
+end;
+
+
+function TFhirOperationDefinitionParameterList.Append: TFhirOperationDefinitionParameter;
+begin
+  result := TFhirOperationDefinitionParameter.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirOperationDefinitionParameterList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirOperationDefinitionParameterList.Clone: TFhirOperationDefinitionParameterList;
+begin
+  result := TFhirOperationDefinitionParameterList(inherited Clone);
+end;
+
+function TFhirOperationDefinitionParameterList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirOperationDefinitionParameterList.GetItemN(index: Integer): TFhirOperationDefinitionParameter;
+begin
+  result := TFhirOperationDefinitionParameter(ObjectByIndex[index]);
+end;
+
+function TFhirOperationDefinitionParameterList.IndexOf(value: TFhirOperationDefinitionParameter): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirOperationDefinitionParameterList.Insert(index: Integer): TFhirOperationDefinitionParameter;
+begin
+  result := TFhirOperationDefinitionParameter.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirOperationDefinitionParameterList.InsertItem(index: Integer; value: TFhirOperationDefinitionParameter);
+begin
+  assert(value is TFhirOperationDefinitionParameter);
+  Inherited Insert(index, value);
+end;
+
+function TFhirOperationDefinitionParameterList.Item(index: Integer): TFhirOperationDefinitionParameter;
+begin
+  result := TFhirOperationDefinitionParameter(ObjectByIndex[index]);
+end;
+
+function TFhirOperationDefinitionParameterList.Link: TFhirOperationDefinitionParameterList;
+begin
+  result := TFhirOperationDefinitionParameterList(inherited Link);
+end;
+
+procedure TFhirOperationDefinitionParameterList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirOperationDefinitionParameterList.SetItemByIndex(index: Integer; value: TFhirOperationDefinitionParameter);
+begin
+  assert(value is TFhirOperationDefinitionParameter);
+  FhirOperationDefinitionParameters[index] := value;
+end;
+
+procedure TFhirOperationDefinitionParameterList.SetItemN(index: Integer; value: TFhirOperationDefinitionParameter);
+begin
+  assert(value is TFhirOperationDefinitionParameter);
+  ObjectByIndex[index] := value;
+end;
+
 { TFhirOperationOutcomeIssue }
 
 constructor TFhirOperationOutcomeIssue.Create;
@@ -34811,7 +35574,7 @@ begin
   name := TFhirOrganizationContact(oSource).name.Clone;
   FTelecomList.Assign(TFhirOrganizationContact(oSource).FTelecomList);
   address := TFhirOrganizationContact(oSource).address.Clone;
-  gender := TFhirOrganizationContact(oSource).gender.Clone;
+  FGender := TFhirOrganizationContact(oSource).FGender.Link;
 end;
 
 procedure TFhirOrganizationContact.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -34826,7 +35589,7 @@ begin
   if (child_name = 'address') Then
      list.add(Address.Link);
   if (child_name = 'gender') Then
-     list.add(Gender.Link);
+     list.add(FGender.Link);
 end;
 
 procedure TFhirOrganizationContact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -34836,7 +35599,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'name', 'HumanName', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'telecom', 'Contact', FTelecomList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'address', 'Address', FAddress.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'gender', 'CodeableConcept', FGender.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'gender', 'code', FGender.Link));{1}
 end;
 
 function TFhirOrganizationContact.Link : TFhirOrganizationContact;
@@ -34869,10 +35632,26 @@ begin
   FAddress := value;
 end;
 
-Procedure TFhirOrganizationContact.SetGender(value : TFhirCodeableConcept);
+Procedure TFhirOrganizationContact.SetGender(value : TFhirEnum);
 begin
   FGender.free;
   FGender := value;
+end;
+
+Function TFhirOrganizationContact.GetGenderST : TFhirAdministrativeGender;
+begin
+  if FGender = nil then
+    result := TFhirAdministrativeGender(0)
+  else
+    result := TFhirAdministrativeGender(StringArrayIndexOf(CODES_TFhirAdministrativeGender, Gender.value));
+end;
+
+Procedure TFhirOrganizationContact.SetGenderST(value : TFhirAdministrativeGender);
+begin
+  if ord(value) = 0 then
+    Gender := nil
+  else
+    Gender := TFhirEnum.create(CODES_TFhirAdministrativeGender[value]);
 end;
 
 
@@ -34992,7 +35771,7 @@ begin
   name := TFhirPatientContact(oSource).name.Clone;
   FTelecomList.Assign(TFhirPatientContact(oSource).FTelecomList);
   address := TFhirPatientContact(oSource).address.Clone;
-  gender := TFhirPatientContact(oSource).gender.Clone;
+  FGender := TFhirPatientContact(oSource).FGender.Link;
   organization := TFhirPatientContact(oSource).organization.Clone;
 end;
 
@@ -35008,7 +35787,7 @@ begin
   if (child_name = 'address') Then
      list.add(Address.Link);
   if (child_name = 'gender') Then
-     list.add(Gender.Link);
+     list.add(FGender.Link);
   if (child_name = 'organization') Then
      list.add(Organization.Link);
 end;
@@ -35020,7 +35799,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'name', 'HumanName', FName.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'telecom', 'Contact', FTelecomList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'address', 'Address', FAddress.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'gender', 'CodeableConcept', FGender.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'gender', 'code', FGender.Link));{1}
   oList.add(TFHIRProperty.create(self, 'organization', 'Resource(Organization)', FOrganization.Link.Link));{2}
 end;
 
@@ -35048,10 +35827,26 @@ begin
   FAddress := value;
 end;
 
-Procedure TFhirPatientContact.SetGender(value : TFhirCodeableConcept);
+Procedure TFhirPatientContact.SetGender(value : TFhirEnum);
 begin
   FGender.free;
   FGender := value;
+end;
+
+Function TFhirPatientContact.GetGenderST : TFhirAdministrativeGender;
+begin
+  if FGender = nil then
+    result := TFhirAdministrativeGender(0)
+  else
+    result := TFhirAdministrativeGender(StringArrayIndexOf(CODES_TFhirAdministrativeGender, Gender.value));
+end;
+
+Procedure TFhirPatientContact.SetGenderST(value : TFhirAdministrativeGender);
+begin
+  if ord(value) = 0 then
+    Gender := nil
+  else
+    Gender := TFhirEnum.create(CODES_TFhirAdministrativeGender[value]);
 end;
 
 Procedure TFhirPatientContact.SetOrganization(value : TFhirResourceReference{TFhirOrganization});
@@ -35484,10 +36279,12 @@ end;
 constructor TFhirPractitionerQualification.Create;
 begin
   inherited;
+  FIdentifierList := TFhirIdentifierList.Create;
 end;
 
 destructor TFhirPractitionerQualification.Destroy;
 begin
+  FIdentifierList.Free;
   FCode.free;
   FPeriod.free;
   FIssuer.free;
@@ -35497,6 +36294,7 @@ end;
 procedure TFhirPractitionerQualification.Assign(oSource : TAdvObject);
 begin
   inherited;
+  FIdentifierList.Assign(TFhirPractitionerQualification(oSource).FIdentifierList);
   code := TFhirPractitionerQualification(oSource).code.Clone;
   period := TFhirPractitionerQualification(oSource).period.Clone;
   issuer := TFhirPractitionerQualification(oSource).issuer.Clone;
@@ -35505,6 +36303,8 @@ end;
 procedure TFhirPractitionerQualification.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
+  if (child_name = 'identifier') Then
+     list.addAll(FIdentifierList);
   if (child_name = 'code') Then
      list.add(Code.Link);
   if (child_name = 'period') Then
@@ -35516,6 +36316,7 @@ end;
 procedure TFhirPractitionerQualification.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', FCode.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'issuer', 'Resource(Organization)', FIssuer.Link.Link));{2}
@@ -39020,203 +39821,6 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirProfileQuery }
-
-constructor TFhirProfileQuery.Create;
-begin
-  inherited;
-  FParameterList := TFhirProfileStructureSearchParamList.Create;
-end;
-
-destructor TFhirProfileQuery.Destroy;
-begin
-  FName.free;
-  FDocumentation.free;
-  FParameterList.Free;
-  inherited;
-end;
-
-procedure TFhirProfileQuery.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  name := TFhirProfileQuery(oSource).name.Clone;
-  documentation := TFhirProfileQuery(oSource).documentation.Clone;
-  FParameterList.Assign(TFhirProfileQuery(oSource).FParameterList);
-end;
-
-procedure TFhirProfileQuery.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'name') Then
-     list.add(Name.Link);
-  if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
-  if (child_name = 'parameter') Then
-     list.addAll(FParameterList);
-end;
-
-procedure TFhirProfileQuery.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', FName.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'documentation', 'string', FDocumentation.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'parameter', '@Profile.structure.searchParam', FParameterList.Link)){3};
-end;
-
-function TFhirProfileQuery.Link : TFhirProfileQuery;
-begin
-  result := TFhirProfileQuery(inherited Link);
-end;
-
-function TFhirProfileQuery.Clone : TFhirProfileQuery;
-begin
-  result := TFhirProfileQuery(inherited Clone);
-end;
-
-{ TFhirProfileQuery }
-
-Procedure TFhirProfileQuery.SetName(value : TFhirString);
-begin
-  FName.free;
-  FName := value;
-end;
-
-Function TFhirProfileQuery.GetNameST : String;
-begin
-  if FName = nil then
-    result := ''
-  else
-    result := Name.value;
-end;
-
-Procedure TFhirProfileQuery.SetNameST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FName = nil then
-      FName := TFhirString.create;
-    FName.value := value
-  end
-  else if FName <> nil then
-    FName.value := '';
-end;
-
-Procedure TFhirProfileQuery.SetDocumentation(value : TFhirString);
-begin
-  FDocumentation.free;
-  FDocumentation := value;
-end;
-
-Function TFhirProfileQuery.GetDocumentationST : String;
-begin
-  if FDocumentation = nil then
-    result := ''
-  else
-    result := Documentation.value;
-end;
-
-Procedure TFhirProfileQuery.SetDocumentationST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
-    FDocumentation.value := value
-  end
-  else if FDocumentation <> nil then
-    FDocumentation.value := '';
-end;
-
-
-{ TFhirProfileQueryList }
-procedure TFhirProfileQueryList.AddItem(value: TFhirProfileQuery);
-begin
-  assert(value.ClassName = 'TFhirProfileQuery', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProfileQuery');
-  add(value);
-end;
-
-
-function TFhirProfileQueryList.Append: TFhirProfileQuery;
-begin
-  result := TFhirProfileQuery.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirProfileQueryList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirProfileQueryList.Clone: TFhirProfileQueryList;
-begin
-  result := TFhirProfileQueryList(inherited Clone);
-end;
-
-function TFhirProfileQueryList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirProfileQueryList.GetItemN(index: Integer): TFhirProfileQuery;
-begin
-  result := TFhirProfileQuery(ObjectByIndex[index]);
-end;
-
-function TFhirProfileQueryList.IndexOf(value: TFhirProfileQuery): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirProfileQueryList.Insert(index: Integer): TFhirProfileQuery;
-begin
-  result := TFhirProfileQuery.create;
-  try
-    inherited insert(index, result);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirProfileQueryList.InsertItem(index: Integer; value: TFhirProfileQuery);
-begin
-  assert(value is TFhirProfileQuery);
-  Inherited Insert(index, value);
-end;
-
-function TFhirProfileQueryList.Item(index: Integer): TFhirProfileQuery;
-begin
-  result := TFhirProfileQuery(ObjectByIndex[index]);
-end;
-
-function TFhirProfileQueryList.Link: TFhirProfileQueryList;
-begin
-  result := TFhirProfileQueryList(inherited Link);
-end;
-
-procedure TFhirProfileQueryList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirProfileQueryList.SetItemByIndex(index: Integer; value: TFhirProfileQuery);
-begin
-  assert(value is TFhirProfileQuery);
-  FhirProfileQueries[index] := value;
-end;
-
-procedure TFhirProfileQueryList.SetItemN(index: Integer; value: TFhirProfileQuery);
-begin
-  assert(value is TFhirProfileQuery);
-  ObjectByIndex[index] := value;
-end;
-
 { TFhirProvenanceAgent }
 
 constructor TFhirProvenanceAgent.Create;
@@ -40986,7 +41590,7 @@ end;
 procedure TFhirQuestionnaireAnswersGroupQuestionAnswer.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'value[x]', '*', FValue.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'boolean|decimal|integer|date|dateTime|instant|time|string|Attachment|Coding|Quantity', FValue.Link.Link));{2}
 end;
 
 function TFhirQuestionnaireAnswersGroupQuestionAnswer.Link : TFhirQuestionnaireAnswersGroupQuestionAnswer;
@@ -41094,6 +41698,230 @@ end;
 procedure TFhirQuestionnaireAnswersGroupQuestionAnswerList.SetItemN(index: Integer; value: TFhirQuestionnaireAnswersGroupQuestionAnswer);
 begin
   assert(value is TFhirQuestionnaireAnswersGroupQuestionAnswer);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirRiskAssessmentPrediction }
+
+constructor TFhirRiskAssessmentPrediction.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirRiskAssessmentPrediction.Destroy;
+begin
+  FOutcome.free;
+  FProbability.free;
+  FRelativeRisk.free;
+  FWhen.free;
+  FRationale.free;
+  inherited;
+end;
+
+procedure TFhirRiskAssessmentPrediction.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  outcome := TFhirRiskAssessmentPrediction(oSource).outcome.Clone;
+  probability := TFhirRiskAssessmentPrediction(oSource).probability.Clone;
+  relativeRisk := TFhirRiskAssessmentPrediction(oSource).relativeRisk.Clone;
+  when := TFhirRiskAssessmentPrediction(oSource).when.Clone;
+  rationale := TFhirRiskAssessmentPrediction(oSource).rationale.Clone;
+end;
+
+procedure TFhirRiskAssessmentPrediction.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'outcome') Then
+     list.add(Outcome.Link);
+  if (child_name = 'probability') Then
+     list.add(Probability.Link);
+  if (child_name = 'relativeRisk') Then
+     list.add(RelativeRisk.Link);
+  if (child_name = 'when') Then
+     list.add(When.Link);
+  if (child_name = 'rationale') Then
+     list.add(Rationale.Link);
+end;
+
+procedure TFhirRiskAssessmentPrediction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'outcome', 'CodeableConcept', FOutcome.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'probability[x]', 'decimal|Range|CodeableConcept', FProbability.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'relativeRisk', 'decimal', FRelativeRisk.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'when[x]', 'Period|Range', FWhen.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'rationale', 'string', FRationale.Link.Link));{2}
+end;
+
+function TFhirRiskAssessmentPrediction.Link : TFhirRiskAssessmentPrediction;
+begin
+  result := TFhirRiskAssessmentPrediction(inherited Link);
+end;
+
+function TFhirRiskAssessmentPrediction.Clone : TFhirRiskAssessmentPrediction;
+begin
+  result := TFhirRiskAssessmentPrediction(inherited Clone);
+end;
+
+{ TFhirRiskAssessmentPrediction }
+
+Procedure TFhirRiskAssessmentPrediction.SetOutcome(value : TFhirCodeableConcept);
+begin
+  FOutcome.free;
+  FOutcome := value;
+end;
+
+Procedure TFhirRiskAssessmentPrediction.SetProbability(value : TFhirType);
+begin
+  FProbability.free;
+  FProbability := value;
+end;
+
+Procedure TFhirRiskAssessmentPrediction.SetRelativeRisk(value : TFhirDecimal);
+begin
+  FRelativeRisk.free;
+  FRelativeRisk := value;
+end;
+
+Function TFhirRiskAssessmentPrediction.GetRelativeRiskST : String;
+begin
+  if FRelativeRisk = nil then
+    result := ''
+  else
+    result := RelativeRisk.value;
+end;
+
+Procedure TFhirRiskAssessmentPrediction.SetRelativeRiskST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FRelativeRisk = nil then
+      FRelativeRisk := TFhirDecimal.create;
+    FRelativeRisk.value := value
+  end
+  else if FRelativeRisk <> nil then
+    FRelativeRisk.value := '';
+end;
+
+Procedure TFhirRiskAssessmentPrediction.SetWhen(value : TFhirType);
+begin
+  FWhen.free;
+  FWhen := value;
+end;
+
+Procedure TFhirRiskAssessmentPrediction.SetRationale(value : TFhirString);
+begin
+  FRationale.free;
+  FRationale := value;
+end;
+
+Function TFhirRiskAssessmentPrediction.GetRationaleST : String;
+begin
+  if FRationale = nil then
+    result := ''
+  else
+    result := Rationale.value;
+end;
+
+Procedure TFhirRiskAssessmentPrediction.SetRationaleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FRationale = nil then
+      FRationale := TFhirString.create;
+    FRationale.value := value
+  end
+  else if FRationale <> nil then
+    FRationale.value := '';
+end;
+
+
+{ TFhirRiskAssessmentPredictionList }
+procedure TFhirRiskAssessmentPredictionList.AddItem(value: TFhirRiskAssessmentPrediction);
+begin
+  assert(value.ClassName = 'TFhirRiskAssessmentPrediction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRiskAssessmentPrediction');
+  add(value);
+end;
+
+
+function TFhirRiskAssessmentPredictionList.Append: TFhirRiskAssessmentPrediction;
+begin
+  result := TFhirRiskAssessmentPrediction.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirRiskAssessmentPredictionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirRiskAssessmentPredictionList.Clone: TFhirRiskAssessmentPredictionList;
+begin
+  result := TFhirRiskAssessmentPredictionList(inherited Clone);
+end;
+
+function TFhirRiskAssessmentPredictionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirRiskAssessmentPredictionList.GetItemN(index: Integer): TFhirRiskAssessmentPrediction;
+begin
+  result := TFhirRiskAssessmentPrediction(ObjectByIndex[index]);
+end;
+
+function TFhirRiskAssessmentPredictionList.IndexOf(value: TFhirRiskAssessmentPrediction): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirRiskAssessmentPredictionList.Insert(index: Integer): TFhirRiskAssessmentPrediction;
+begin
+  result := TFhirRiskAssessmentPrediction.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirRiskAssessmentPredictionList.InsertItem(index: Integer; value: TFhirRiskAssessmentPrediction);
+begin
+  assert(value is TFhirRiskAssessmentPrediction);
+  Inherited Insert(index, value);
+end;
+
+function TFhirRiskAssessmentPredictionList.Item(index: Integer): TFhirRiskAssessmentPrediction;
+begin
+  result := TFhirRiskAssessmentPrediction(ObjectByIndex[index]);
+end;
+
+function TFhirRiskAssessmentPredictionList.Link: TFhirRiskAssessmentPredictionList;
+begin
+  result := TFhirRiskAssessmentPredictionList(inherited Link);
+end;
+
+procedure TFhirRiskAssessmentPredictionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirRiskAssessmentPredictionList.SetItemByIndex(index: Integer; value: TFhirRiskAssessmentPrediction);
+begin
+  assert(value is TFhirRiskAssessmentPrediction);
+  FhirRiskAssessmentPredictions[index] := value;
+end;
+
+procedure TFhirRiskAssessmentPredictionList.SetItemN(index: Integer; value: TFhirRiskAssessmentPrediction);
+begin
+  assert(value is TFhirRiskAssessmentPrediction);
   ObjectByIndex[index] := value;
 end;
 

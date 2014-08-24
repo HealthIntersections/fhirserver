@@ -29,8 +29,8 @@ Type
 implementation
 
 uses
-  SnomedServices, SnomedExpressions,
-  DecimalTests, UcumTests, JWTTests;
+  SnomedServices, SnomedExpressions, SCIMSearch,
+  DecimalTests, UcumTests, JWTTests, TwilioClient;
 
 { TFhirServerTests }
 
@@ -41,6 +41,8 @@ end;
 
 procedure TFhirServerTests.executeLibrary;
 begin
+  // TTwilioClient.RunTests;
+  TSCIMSearchParser.runTests;
   TDecimalTests.runTests;
   TJWTTests.runTests;
   TUcumTests.runTests(ExtractFilePath(FIni.FileName));

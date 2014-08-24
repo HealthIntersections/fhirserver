@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.2.1 generated Thu, Jul 17, 2014 03:20+1000
+// FHIR v0.3.0 generated Fri, Aug 22, 2014 11:59+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -402,21 +402,21 @@ Type
     RestfulConformanceModeServer); {@enum.value RestfulConformanceModeServer The application acts as a client for this resource. }
   TFhirRestfulConformanceModeList = set of TFhirRestfulConformanceMode;
 
-  {@Enum TFhirTypeRestfulOperation
+  {@Enum TFhirTypeRestfulInteraction
     Operations supported by REST at the type or instance level
   }
-  TFhirTypeRestfulOperation = (
-    TypeRestfulOperationNull,  {@enum.value TypeRestfulOperationNull Value is missing from Instance }
-    TypeRestfulOperationRead, {@enum.value TypeRestfulOperationRead  }
-    TypeRestfulOperationVread, {@enum.value TypeRestfulOperationVread  }
-    TypeRestfulOperationUpdate, {@enum.value TypeRestfulOperationUpdate  }
-    TypeRestfulOperationDelete, {@enum.value TypeRestfulOperationDelete  }
-    TypeRestfulOperationHistoryInstance, {@enum.value TypeRestfulOperationHistoryInstance  }
-    TypeRestfulOperationValidate, {@enum.value TypeRestfulOperationValidate  }
-    TypeRestfulOperationHistoryType, {@enum.value TypeRestfulOperationHistoryType  }
-    TypeRestfulOperationCreate, {@enum.value TypeRestfulOperationCreate  }
-    TypeRestfulOperationSearchType); {@enum.value TypeRestfulOperationSearchType  }
-  TFhirTypeRestfulOperationList = set of TFhirTypeRestfulOperation;
+  TFhirTypeRestfulInteraction = (
+    TypeRestfulInteractionNull,  {@enum.value TypeRestfulInteractionNull Value is missing from Instance }
+    TypeRestfulInteractionRead, {@enum.value TypeRestfulInteractionRead  }
+    TypeRestfulInteractionVread, {@enum.value TypeRestfulInteractionVread  }
+    TypeRestfulInteractionUpdate, {@enum.value TypeRestfulInteractionUpdate  }
+    TypeRestfulInteractionDelete, {@enum.value TypeRestfulInteractionDelete  }
+    TypeRestfulInteractionHistoryInstance, {@enum.value TypeRestfulInteractionHistoryInstance  }
+    TypeRestfulInteractionValidate, {@enum.value TypeRestfulInteractionValidate  }
+    TypeRestfulInteractionHistoryType, {@enum.value TypeRestfulInteractionHistoryType  }
+    TypeRestfulInteractionCreate, {@enum.value TypeRestfulInteractionCreate  }
+    TypeRestfulInteractionSearchType); {@enum.value TypeRestfulInteractionSearchType  }
+  TFhirTypeRestfulInteractionList = set of TFhirTypeRestfulInteraction;
 
   {@Enum TFhirSearchParamType
     Data types allowed to be used for search parameters
@@ -432,15 +432,15 @@ Type
     SearchParamTypeQuantity); {@enum.value SearchParamTypeQuantity A search parameter that searches on a quantity. }
   TFhirSearchParamTypeList = set of TFhirSearchParamType;
 
-  {@Enum TFhirSystemRestfulOperation
+  {@Enum TFhirSystemRestfulInteraction
     Operations supported by REST at the system level
   }
-  TFhirSystemRestfulOperation = (
-    SystemRestfulOperationNull,  {@enum.value SystemRestfulOperationNull Value is missing from Instance }
-    SystemRestfulOperationTransaction, {@enum.value SystemRestfulOperationTransaction  }
-    SystemRestfulOperationSearchSystem, {@enum.value SystemRestfulOperationSearchSystem  }
-    SystemRestfulOperationHistorySystem); {@enum.value SystemRestfulOperationHistorySystem  }
-  TFhirSystemRestfulOperationList = set of TFhirSystemRestfulOperation;
+  TFhirSystemRestfulInteraction = (
+    SystemRestfulInteractionNull,  {@enum.value SystemRestfulInteractionNull Value is missing from Instance }
+    SystemRestfulInteractionTransaction, {@enum.value SystemRestfulInteractionTransaction  }
+    SystemRestfulInteractionSearchSystem, {@enum.value SystemRestfulInteractionSearchSystem  }
+    SystemRestfulInteractionHistorySystem); {@enum.value SystemRestfulInteractionHistorySystem  }
+  TFhirSystemRestfulInteractionList = set of TFhirSystemRestfulInteraction;
 
   {@Enum TFhirMessageSignificanceCategory
     The impact of the content of a message
@@ -874,6 +874,34 @@ Type
     ObservationRelationshiptypesInterferedBy); {@enum.value ObservationRelationshiptypesInterferedBy The value of the target observation interferes (degardes quality, or prevents valid observation) with the semantics of the source observation (e.g. a hemolysis measure target from a plasma potassium measure which has no value). }
   TFhirObservationRelationshiptypesList = set of TFhirObservationRelationshiptypes;
 
+  {@Enum TFhirResourceProfileStatus
+    The lifecycle status of a Resource Profile
+  }
+  TFhirResourceProfileStatus = (
+    ResourceProfileStatusNull,  {@enum.value ResourceProfileStatusNull Value is missing from Instance }
+    ResourceProfileStatusDraft, {@enum.value ResourceProfileStatusDraft This profile is still under development. }
+    ResourceProfileStatusActive, {@enum.value ResourceProfileStatusActive This profile is ready for normal use. }
+    ResourceProfileStatusRetired); {@enum.value ResourceProfileStatusRetired This profile has been deprecated, withdrawn or superseded and should no longer be used. }
+  TFhirResourceProfileStatusList = set of TFhirResourceProfileStatus;
+
+  {@Enum TFhirOperationKind
+    Whether an operation is a normal operation or a query
+  }
+  TFhirOperationKind = (
+    OperationKindNull,  {@enum.value OperationKindNull Value is missing from Instance }
+    OperationKindOperation, {@enum.value OperationKindOperation This operation is invoked as an operation. }
+    OperationKindQuery); {@enum.value OperationKindQuery This operation is a named query, invoked using the search mechanism. }
+  TFhirOperationKindList = set of TFhirOperationKind;
+
+  {@Enum TFhirOperationParameterUse
+    Whether an operation parameter is an input or an output parameter
+  }
+  TFhirOperationParameterUse = (
+    OperationParameterUseNull,  {@enum.value OperationParameterUseNull Value is missing from Instance }
+    OperationParameterUseIn, {@enum.value OperationParameterUseIn This is an input parameter. }
+    OperationParameterUseOut); {@enum.value OperationParameterUseOut This is an output parameter. }
+  TFhirOperationParameterUseList = set of TFhirOperationParameterUse;
+
   {@Enum TFhirIssueSeverity
     How the issue affects the success of the action
   }
@@ -901,6 +929,17 @@ Type
     OrderOutcomeCodeComplete); {@enum.value OrderOutcomeCodeComplete The order has been completed. }
   TFhirOrderOutcomeCodeList = set of TFhirOrderOutcomeCode;
 
+  {@Enum TFhirAdministrativeGender
+    The gender of a person used for administrative purposes
+  }
+  TFhirAdministrativeGender = (
+    AdministrativeGenderNull,  {@enum.value AdministrativeGenderNull Value is missing from Instance }
+    AdministrativeGenderM, {@enum.value AdministrativeGenderM Male }
+    AdministrativeGenderF, {@enum.value AdministrativeGenderF Female }
+    AdministrativeGenderO, {@enum.value AdministrativeGenderO Other }
+    AdministrativeGenderU); {@enum.value AdministrativeGenderU Unknown }
+  TFhirAdministrativeGenderList = set of TFhirAdministrativeGender;
+
   {@Enum TFhirLinkType
     The type of link between this patient resource and another patient resource.
   }
@@ -919,16 +958,6 @@ Type
     ProcedureRelationshipTypeCausedBy, {@enum.value ProcedureRelationshipTypeCausedBy This procedure had to be performed because of the related one. }
     ProcedureRelationshipTypeBecauseOf); {@enum.value ProcedureRelationshipTypeBecauseOf This procedure caused the related one to be performed. }
   TFhirProcedureRelationshipTypeList = set of TFhirProcedureRelationshipType;
-
-  {@Enum TFhirResourceProfileStatus
-    The lifecycle status of a Resource Profile
-  }
-  TFhirResourceProfileStatus = (
-    ResourceProfileStatusNull,  {@enum.value ResourceProfileStatusNull Value is missing from Instance }
-    ResourceProfileStatusDraft, {@enum.value ResourceProfileStatusDraft This profile is still under development. }
-    ResourceProfileStatusActive, {@enum.value ResourceProfileStatusActive This profile is ready for normal use. }
-    ResourceProfileStatusRetired); {@enum.value ResourceProfileStatusRetired This profile has been deprecated, withdrawn or superseded and should no longer be used. }
-  TFhirResourceProfileStatusList = set of TFhirResourceProfileStatus;
 
   {@Enum TFhirPropertyRepresentation
     How a property is represented on the wire
@@ -1015,16 +1044,20 @@ Type
   }
   TFhirAnswerFormat = (
     AnswerFormatNull,  {@enum.value AnswerFormatNull Value is missing from Instance }
+    AnswerFormatBoolean, {@enum.value AnswerFormatBoolean Answer is a yes/no answer. }
     AnswerFormatDecimal, {@enum.value AnswerFormatDecimal Answer is a floating point number. }
     AnswerFormatInteger, {@enum.value AnswerFormatInteger Answer is an integer. }
-    AnswerFormatBoolean, {@enum.value AnswerFormatBoolean Answer is a yes/no answer. }
     AnswerFormatDate, {@enum.value AnswerFormatDate Answer is a date. }
-    AnswerFormatString, {@enum.value AnswerFormatString Answer is a short (few words to short sentence) free-text entry. }
-    AnswerFormatText, {@enum.value AnswerFormatText Answer is a long (potentially multi-paragram) free-text entry. }
     AnswerFormatDateTime, {@enum.value AnswerFormatDateTime Answer is a date and time. }
     AnswerFormatInstant, {@enum.value AnswerFormatInstant Answer is a system timestamp. }
+    AnswerFormatTime, {@enum.value AnswerFormatTime Answer is a time independent of date. }
+    AnswerFormatString, {@enum.value AnswerFormatString Answer is a short (few words to short sentence) free-text entry. }
+    AnswerFormatText, {@enum.value AnswerFormatText Answer is a long (potentially multi-paragram) free-text entry. }
     AnswerFormatChoice, {@enum.value AnswerFormatChoice Answer is a choice from a list of options. }
-    AnswerFormatOpenChoice); {@enum.value AnswerFormatOpenChoice Answer is a choice from a list of options or a free-text entry. }
+    AnswerFormatOpenChoice, {@enum.value AnswerFormatOpenChoice Answer is a choice from a list of options or a free-text entry. }
+    AnswerFormatAttachment, {@enum.value AnswerFormatAttachment Answer is binary content such as a image, PDF, etc. }
+    AnswerFormatReference, {@enum.value AnswerFormatReference Answer is a reference to another resource (practitioner, organization, etc.). }
+    AnswerFormatQuantity); {@enum.value AnswerFormatQuantity Answer is a combination of a numeric value and unit. }
   TFhirAnswerFormatList = set of TFhirAnswerFormat;
 
   {@Enum TFhirQuestionnaireAnswersStatus
@@ -1036,6 +1069,19 @@ Type
     QuestionnaireAnswersStatusCompleted, {@enum.value QuestionnaireAnswersStatusCompleted This QuestionnaireAnswers has been filled out with answers, and the current content is regarded as definitive. }
     QuestionnaireAnswersStatusAmended); {@enum.value QuestionnaireAnswersStatusAmended This QuestionnaireAnswers has been filled out with answers, then marked as complete, yet changes or additions have been made to it afterwards. }
   TFhirQuestionnaireAnswersStatusList = set of TFhirQuestionnaireAnswersStatus;
+
+  {@Enum TFhirReferralstatus
+    The status of the referral
+  }
+  TFhirReferralstatus = (
+    ReferralstatusNull,  {@enum.value ReferralstatusNull Value is missing from Instance }
+    ReferralstatusDraft, {@enum.value ReferralstatusDraft A draft referral that has yet to be send. }
+    ReferralstatusSent, {@enum.value ReferralstatusSent The referral has been transmitted, but not yet acknowledged by the recipient. }
+    ReferralstatusActive, {@enum.value ReferralstatusActive The referral has been acknowledged by the recipient, and is in the process of being actioned. }
+    ReferralstatusCancelled, {@enum.value ReferralstatusCancelled The referral has been cancelled without being completed. For example it is no longer needed. }
+    ReferralstatusRefused, {@enum.value ReferralstatusRefused The recipient has declined to accept the referral. }
+    ReferralstatusCompleted); {@enum.value ReferralstatusCompleted The referral has been completely actioned. }
+  TFhirReferralstatusList = set of TFhirReferralstatus;
 
   {@Enum TFhirSecurityEventAction
     Indicator for type of action performed during the event that generated the audit.
@@ -1231,6 +1277,8 @@ Type
   TFhirUriList = class;
   TFhirBase64Binary = class;
   TFhirBase64BinaryList = class;
+  TFhirTime = class;
+  TFhirTimeList = class;
   TFhirString = class;
   TFhirStringList = class;
   TFhirBoolean = class;
@@ -1323,6 +1371,7 @@ Type
     Function Clone : TFhirType; Overload;
     {!script show}
   End;
+  TFHIRTypeClass = class of TFhirType;
   
   {@Class TFhirBackboneElement : TFHIRBase
     Base Element Definition - extensions, ids
@@ -2183,6 +2232,115 @@ Type
   End;
 
 
+  {@Class TFhirTime : TFhirType
+    a complex string - has an xmlId attribute, and a dataAbsentReason.
+    
+    Used where a FHIR element is a string, and may have a dataAbsentReason
+  }
+  {!.Net HL7Connect.Fhir.Time}
+  TFhirTime = class (TFhirType)
+  Private
+    FValue: String;
+    procedure setValue(value: String);
+  protected
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  Public
+    Constructor Create(value : String); overload;
+    Destructor Destroy; override;
+    
+    {!script hide}
+    Function Link : TFhirTime; Overload;
+    Function Clone : TFhirTime; Overload;
+    procedure Assign(oSource : TAdvObject); override;
+    {!script show}
+  Published
+    {@member value
+      The actual value of the time
+    }
+    property value : String read FValue write SetValue;
+  End;    
+
+
+  {@Class TFhirTimeList
+    A list of FhirTime
+  }
+  {!.Net HL7Connect.Fhir.TimeList}
+  TFhirTimeList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirTime;
+    procedure SetItemN(index : Integer; value : TFhirTime);
+  public
+    {!script hide}
+    function Link : TFhirTimeList; Overload;
+    function Clone : TFhirTimeList; Overload;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirTime to the end of the list.
+    }
+    function Append : TFhirTime;
+
+    
+    {@member AddItem
+      Add an already existing FhirTime to the end of the list.
+    }
+    procedure AddItem(value : TFhirTime);
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirTime) : Integer;
+    
+
+    {@member Insert
+      Insert FhirTime before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirTime;
+    
+
+    {@member InsertItem
+       Insert an existing FhirTime before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirTime);
+    
+    {@member Item
+       Get the iIndexth FhirTime. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirTime. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirTime);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirTime;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirTimes[index : Integer] : TFhirTime read GetItemN write SetItemN; default;
+  End;
+
+
   {@Class TFhirString : TFhirType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
@@ -2902,11 +3060,11 @@ Type
   End;
 
 
-  {@Class TFhirExtension : TFHIRElement
+  {@Class TFhirExtension : TFHIRType
     Optional Extensions Element - found in all resources.
   }
   {!.Net HL7Connect.Fhir.Extension}
-  TFhirExtension = class (TFHIRElement)
+  TFhirExtension = class (TFHIRType)
   private
     FUrl : TFhirUri;
     FValue : TFhirType;
@@ -3022,11 +3180,11 @@ Type
   End;
 
 
-  {@Class TFhirNarrative : TFhirElement
+  {@Class TFhirNarrative : TFHIRType
     A human-readable formatted text, including images.
   }
   {!.Net HL7Connect.Fhir.Narrative}
-  TFhirNarrative = class (TFhirElement)
+  TFhirNarrative = class (TFHIRType)
   private
     FStatus : TFhirEnum;
     FDiv_ : TFhirXHtmlNode;
@@ -5448,9 +5606,9 @@ Const
   CODES_TFhirConditionRelationshipType : Array[TFhirConditionRelationshipType] of String = ('', 'due-to', 'following');
   CODES_TFhirConformanceStatementStatus : Array[TFhirConformanceStatementStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TFhirRestfulConformanceMode : Array[TFhirRestfulConformanceMode] of String = ('', 'client', 'server');
-  CODES_TFhirTypeRestfulOperation : Array[TFhirTypeRestfulOperation] of String = ('', 'read', 'vread', 'update', 'delete', 'history-instance', 'validate', 'history-type', 'create', 'search-type');
+  CODES_TFhirTypeRestfulInteraction : Array[TFhirTypeRestfulInteraction] of String = ('', 'read', 'vread', 'update', 'delete', 'history-instance', 'validate', 'history-type', 'create', 'search-type');
   CODES_TFhirSearchParamType : Array[TFhirSearchParamType] of String = ('', 'number', 'date', 'string', 'token', 'reference', 'composite', 'quantity');
-  CODES_TFhirSystemRestfulOperation : Array[TFhirSystemRestfulOperation] of String = ('', 'transaction', 'search-system', 'history-system');
+  CODES_TFhirSystemRestfulInteraction : Array[TFhirSystemRestfulInteraction] of String = ('', 'transaction', 'search-system', 'history-system');
   CODES_TFhirMessageSignificanceCategory : Array[TFhirMessageSignificanceCategory] of String = ('', 'Consequence', 'Currency', 'Notification');
   CODES_TFhirMessageConformanceEventMode : Array[TFhirMessageConformanceEventMode] of String = ('', 'sender', 'receiver');
   CODES_TFhirDocumentMode : Array[TFhirDocumentMode] of String = ('', 'producer', 'consumer');
@@ -5482,11 +5640,14 @@ Const
   CODES_TFhirObservationStatus : Array[TFhirObservationStatus] of String = ('', 'registered', 'preliminary', 'final', 'amended', 'cancelled', 'entered in error');
   CODES_TFhirObservationReliability : Array[TFhirObservationReliability] of String = ('', 'ok', 'ongoing', 'early', 'questionable', 'calibrating', 'error', 'unknown');
   CODES_TFhirObservationRelationshiptypes : Array[TFhirObservationRelationshiptypes] of String = ('', 'has-component', 'has-member', 'derived-from', 'sequel-to', 'replaces', 'qualified-by', 'interfered-by');
+  CODES_TFhirResourceProfileStatus : Array[TFhirResourceProfileStatus] of String = ('', 'draft', 'active', 'retired');
+  CODES_TFhirOperationKind : Array[TFhirOperationKind] of String = ('', 'operation', 'query');
+  CODES_TFhirOperationParameterUse : Array[TFhirOperationParameterUse] of String = ('', 'in', 'out');
   CODES_TFhirIssueSeverity : Array[TFhirIssueSeverity] of String = ('', 'fatal', 'error', 'warning', 'information');
   CODES_TFhirOrderOutcomeCode : Array[TFhirOrderOutcomeCode] of String = ('', 'pending', 'review', 'rejected', 'error', 'accepted', 'cancelled', 'replaced', 'aborted', 'complete');
+  CODES_TFhirAdministrativeGender : Array[TFhirAdministrativeGender] of String = ('', 'M', 'F', 'O', 'U');
   CODES_TFhirLinkType : Array[TFhirLinkType] of String = ('', 'replace', 'refer', 'seealso');
   CODES_TFhirProcedureRelationshipType : Array[TFhirProcedureRelationshipType] of String = ('', 'caused-by', 'because-of');
-  CODES_TFhirResourceProfileStatus : Array[TFhirResourceProfileStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TFhirPropertyRepresentation : Array[TFhirPropertyRepresentation] of String = ('', 'xmlAttr');
   CODES_TFhirResourceSlicingRules : Array[TFhirResourceSlicingRules] of String = ('', 'closed', 'open', 'openAtEnd');
   CODES_TFhirResourceAggregationMode : Array[TFhirResourceAggregationMode] of String = ('', 'contained', 'referenced', 'bundled');
@@ -5495,8 +5656,9 @@ Const
   CODES_TFhirProvenanceEntityRole : Array[TFhirProvenanceEntityRole] of String = ('', 'derivation', 'revision', 'quotation', 'source');
   CODES_TFhirQueryOutcome : Array[TFhirQueryOutcome] of String = ('', 'ok', 'limited', 'refused', 'error');
   CODES_TFhirQuestionnaireStatus : Array[TFhirQuestionnaireStatus] of String = ('', 'draft', 'published', 'retired');
-  CODES_TFhirAnswerFormat : Array[TFhirAnswerFormat] of String = ('', 'decimal', 'integer', 'boolean', 'date', 'string', 'text', 'dateTime', 'instant', 'choice', 'open-choice');
+  CODES_TFhirAnswerFormat : Array[TFhirAnswerFormat] of String = ('', 'boolean', 'decimal', 'integer', 'date', 'dateTime', 'instant', 'time', 'string', 'text', 'choice', 'open-choice', 'attachment', 'reference', 'quantity');
   CODES_TFhirQuestionnaireAnswersStatus : Array[TFhirQuestionnaireAnswersStatus] of String = ('', 'in progress', 'completed', 'amended');
+  CODES_TFhirReferralstatus : Array[TFhirReferralstatus] of String = ('', 'draft', 'sent', 'active', 'cancelled', 'refused', 'completed');
   CODES_TFhirSecurityEventAction : Array[TFhirSecurityEventAction] of String = ('', 'C', 'R', 'U', 'D', 'E');
   CODES_TFhirSecurityEventOutcome : Array[TFhirSecurityEventOutcome] of String = ('', '0', '4', '8', '12');
   CODES_TFhirNetworkType : Array[TFhirNetworkType] of String = ('', '1', '2', '3', '4', '5');
@@ -5573,12 +5735,12 @@ Function TFhirConformanceStatementStatusListAsInteger(aSet : TFhirConformanceSta
 Function IntegerAsTFhirConformanceStatementStatusList(i : integer) : TFhirConformanceStatementStatusList; overload;
 Function TFhirRestfulConformanceModeListAsInteger(aSet : TFhirRestfulConformanceModeList) : Integer; overload;
 Function IntegerAsTFhirRestfulConformanceModeList(i : integer) : TFhirRestfulConformanceModeList; overload;
-Function TFhirTypeRestfulOperationListAsInteger(aSet : TFhirTypeRestfulOperationList) : Integer; overload;
-Function IntegerAsTFhirTypeRestfulOperationList(i : integer) : TFhirTypeRestfulOperationList; overload;
+Function TFhirTypeRestfulInteractionListAsInteger(aSet : TFhirTypeRestfulInteractionList) : Integer; overload;
+Function IntegerAsTFhirTypeRestfulInteractionList(i : integer) : TFhirTypeRestfulInteractionList; overload;
 Function TFhirSearchParamTypeListAsInteger(aSet : TFhirSearchParamTypeList) : Integer; overload;
 Function IntegerAsTFhirSearchParamTypeList(i : integer) : TFhirSearchParamTypeList; overload;
-Function TFhirSystemRestfulOperationListAsInteger(aSet : TFhirSystemRestfulOperationList) : Integer; overload;
-Function IntegerAsTFhirSystemRestfulOperationList(i : integer) : TFhirSystemRestfulOperationList; overload;
+Function TFhirSystemRestfulInteractionListAsInteger(aSet : TFhirSystemRestfulInteractionList) : Integer; overload;
+Function IntegerAsTFhirSystemRestfulInteractionList(i : integer) : TFhirSystemRestfulInteractionList; overload;
 Function TFhirMessageSignificanceCategoryListAsInteger(aSet : TFhirMessageSignificanceCategoryList) : Integer; overload;
 Function IntegerAsTFhirMessageSignificanceCategoryList(i : integer) : TFhirMessageSignificanceCategoryList; overload;
 Function TFhirMessageConformanceEventModeListAsInteger(aSet : TFhirMessageConformanceEventModeList) : Integer; overload;
@@ -5641,16 +5803,22 @@ Function TFhirObservationReliabilityListAsInteger(aSet : TFhirObservationReliabi
 Function IntegerAsTFhirObservationReliabilityList(i : integer) : TFhirObservationReliabilityList; overload;
 Function TFhirObservationRelationshiptypesListAsInteger(aSet : TFhirObservationRelationshiptypesList) : Integer; overload;
 Function IntegerAsTFhirObservationRelationshiptypesList(i : integer) : TFhirObservationRelationshiptypesList; overload;
+Function TFhirResourceProfileStatusListAsInteger(aSet : TFhirResourceProfileStatusList) : Integer; overload;
+Function IntegerAsTFhirResourceProfileStatusList(i : integer) : TFhirResourceProfileStatusList; overload;
+Function TFhirOperationKindListAsInteger(aSet : TFhirOperationKindList) : Integer; overload;
+Function IntegerAsTFhirOperationKindList(i : integer) : TFhirOperationKindList; overload;
+Function TFhirOperationParameterUseListAsInteger(aSet : TFhirOperationParameterUseList) : Integer; overload;
+Function IntegerAsTFhirOperationParameterUseList(i : integer) : TFhirOperationParameterUseList; overload;
 Function TFhirIssueSeverityListAsInteger(aSet : TFhirIssueSeverityList) : Integer; overload;
 Function IntegerAsTFhirIssueSeverityList(i : integer) : TFhirIssueSeverityList; overload;
 Function TFhirOrderOutcomeCodeListAsInteger(aSet : TFhirOrderOutcomeCodeList) : Integer; overload;
 Function IntegerAsTFhirOrderOutcomeCodeList(i : integer) : TFhirOrderOutcomeCodeList; overload;
+Function TFhirAdministrativeGenderListAsInteger(aSet : TFhirAdministrativeGenderList) : Integer; overload;
+Function IntegerAsTFhirAdministrativeGenderList(i : integer) : TFhirAdministrativeGenderList; overload;
 Function TFhirLinkTypeListAsInteger(aSet : TFhirLinkTypeList) : Integer; overload;
 Function IntegerAsTFhirLinkTypeList(i : integer) : TFhirLinkTypeList; overload;
 Function TFhirProcedureRelationshipTypeListAsInteger(aSet : TFhirProcedureRelationshipTypeList) : Integer; overload;
 Function IntegerAsTFhirProcedureRelationshipTypeList(i : integer) : TFhirProcedureRelationshipTypeList; overload;
-Function TFhirResourceProfileStatusListAsInteger(aSet : TFhirResourceProfileStatusList) : Integer; overload;
-Function IntegerAsTFhirResourceProfileStatusList(i : integer) : TFhirResourceProfileStatusList; overload;
 Function TFhirPropertyRepresentationListAsInteger(aSet : TFhirPropertyRepresentationList) : Integer; overload;
 Function IntegerAsTFhirPropertyRepresentationList(i : integer) : TFhirPropertyRepresentationList; overload;
 Function TFhirResourceSlicingRulesListAsInteger(aSet : TFhirResourceSlicingRulesList) : Integer; overload;
@@ -5671,6 +5839,8 @@ Function TFhirAnswerFormatListAsInteger(aSet : TFhirAnswerFormatList) : Integer;
 Function IntegerAsTFhirAnswerFormatList(i : integer) : TFhirAnswerFormatList; overload;
 Function TFhirQuestionnaireAnswersStatusListAsInteger(aSet : TFhirQuestionnaireAnswersStatusList) : Integer; overload;
 Function IntegerAsTFhirQuestionnaireAnswersStatusList(i : integer) : TFhirQuestionnaireAnswersStatusList; overload;
+Function TFhirReferralstatusListAsInteger(aSet : TFhirReferralstatusList) : Integer; overload;
+Function IntegerAsTFhirReferralstatusList(i : integer) : TFhirReferralstatusList; overload;
 Function TFhirSecurityEventActionListAsInteger(aSet : TFhirSecurityEventActionList) : Integer; overload;
 Function IntegerAsTFhirSecurityEventActionList(i : integer) : TFhirSecurityEventActionList; overload;
 Function TFhirSecurityEventOutcomeListAsInteger(aSet : TFhirSecurityEventOutcomeList) : Integer; overload;
@@ -6854,6 +7024,143 @@ end;
 procedure TFhirBase64BinaryList.SetItemN(index: Integer; value: TFhirBase64Binary);
 begin
   assert(value is TFhirBase64Binary);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirTime }
+
+Constructor TFhirTime.Create(value : String);
+begin
+  Create;
+  FValue := value;
+end;
+
+Destructor TFhirTime.Destroy;
+begin
+  inherited;
+end;
+
+procedure TFhirTime.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if child_name = 'value' then
+    list.add(TFHIRObjectText.create(value));
+end;
+
+procedure TFhirTime.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'value', 'time', FValue));
+end;
+
+procedure TFhirTime.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FValue := TFhirTime(oSource).Value;
+end;
+
+function TFhirTime.Link : TFhirTime;
+begin
+  result := TFhirTime(inherited Link);
+end;
+
+function TFhirTime.Clone : TFhirTime;
+begin
+  result := TFhirTime(inherited Clone);
+end;
+
+procedure TFhirTime.setValue(value : String);
+begin
+  FValue := value;
+end;
+
+
+{ TFhirTimeList }
+procedure TFhirTimeList.AddItem(value: TFhirTime);
+begin
+  assert(value.ClassName = 'TFhirTime', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTime');
+  add(value);
+end;
+
+
+function TFhirTimeList.Append: TFhirTime;
+begin
+  result := TFhirTime.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirTimeList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirTimeList.Clone: TFhirTimeList;
+begin
+  result := TFhirTimeList(inherited Clone);
+end;
+
+function TFhirTimeList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirTimeList.GetItemN(index: Integer): TFhirTime;
+begin
+  result := TFhirTime(ObjectByIndex[index]);
+end;
+
+function TFhirTimeList.IndexOf(value: TFhirTime): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirTimeList.Insert(index: Integer): TFhirTime;
+begin
+  result := TFhirTime.create;
+  try
+    inherited insert(index, result);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirTimeList.InsertItem(index: Integer; value: TFhirTime);
+begin
+  assert(value is TFhirTime);
+  Inherited Insert(index, value);
+end;
+
+function TFhirTimeList.Item(index: Integer): TFhirTime;
+begin
+  result := TFhirTime(ObjectByIndex[index]);
+end;
+
+function TFhirTimeList.Link: TFhirTimeList;
+begin
+  result := TFhirTimeList(inherited Link);
+end;
+
+procedure TFhirTimeList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirTimeList.SetItemByIndex(index: Integer; value: TFhirTime);
+begin
+  assert(value is TFhirTime);
+  FhirTimes[index] := value;
+end;
+
+procedure TFhirTimeList.SetItemN(index: Integer; value: TFhirTime);
+begin
+  assert(value is TFhirTime);
   ObjectByIndex[index] := value;
 end;
 
@@ -12488,12 +12795,12 @@ begin
  end;
 
 
-function TFhirTypeRestfulOperationListAsInteger(aSet : TFhirTypeRestfulOperationList) : Integer;
+function TFhirTypeRestfulInteractionListAsInteger(aSet : TFhirTypeRestfulInteractionList) : Integer;
 var
-  a : TFhirTypeRestfulOperation;
+  a : TFhirTypeRestfulInteraction;
 begin
   result := 0;
-  for a := low(TFhirTypeRestfulOperation) to high(TFhirTypeRestfulOperation) do
+  for a := low(TFhirTypeRestfulInteraction) to high(TFhirTypeRestfulInteraction) do
   begin
     assert(ord(a) < 32);
     if a in aSet then
@@ -12501,12 +12808,12 @@ begin
   end;
 end;
 
-function IntegerAsTFhirTypeRestfulOperationList(i : Integer) : TFhirTypeRestfulOperationList;
+function IntegerAsTFhirTypeRestfulInteractionList(i : Integer) : TFhirTypeRestfulInteractionList;
 var
-  aLoop : TFhirTypeRestfulOperation;
+  aLoop : TFhirTypeRestfulInteraction;
 begin
   result := [];
-  for aLoop := low(TFhirTypeRestfulOperation) to high(TFhirTypeRestfulOperation) Do
+  for aLoop := low(TFhirTypeRestfulInteraction) to high(TFhirTypeRestfulInteraction) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -12542,12 +12849,12 @@ begin
  end;
 
 
-function TFhirSystemRestfulOperationListAsInteger(aSet : TFhirSystemRestfulOperationList) : Integer;
+function TFhirSystemRestfulInteractionListAsInteger(aSet : TFhirSystemRestfulInteractionList) : Integer;
 var
-  a : TFhirSystemRestfulOperation;
+  a : TFhirSystemRestfulInteraction;
 begin
   result := 0;
-  for a := low(TFhirSystemRestfulOperation) to high(TFhirSystemRestfulOperation) do
+  for a := low(TFhirSystemRestfulInteraction) to high(TFhirSystemRestfulInteraction) do
   begin
     assert(ord(a) < 32);
     if a in aSet then
@@ -12555,12 +12862,12 @@ begin
   end;
 end;
 
-function IntegerAsTFhirSystemRestfulOperationList(i : Integer) : TFhirSystemRestfulOperationList;
+function IntegerAsTFhirSystemRestfulInteractionList(i : Integer) : TFhirSystemRestfulInteractionList;
 var
-  aLoop : TFhirSystemRestfulOperation;
+  aLoop : TFhirSystemRestfulInteraction;
 begin
   result := [];
-  for aLoop := low(TFhirSystemRestfulOperation) to high(TFhirSystemRestfulOperation) Do
+  for aLoop := low(TFhirSystemRestfulInteraction) to high(TFhirSystemRestfulInteraction) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -13406,6 +13713,87 @@ begin
  end;
 
 
+function TFhirResourceProfileStatusListAsInteger(aSet : TFhirResourceProfileStatusList) : Integer;
+var
+  a : TFhirResourceProfileStatus;
+begin
+  result := 0;
+  for a := low(TFhirResourceProfileStatus) to high(TFhirResourceProfileStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirResourceProfileStatusList(i : Integer) : TFhirResourceProfileStatusList;
+var
+  aLoop : TFhirResourceProfileStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirResourceProfileStatus) to high(TFhirResourceProfileStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirOperationKindListAsInteger(aSet : TFhirOperationKindList) : Integer;
+var
+  a : TFhirOperationKind;
+begin
+  result := 0;
+  for a := low(TFhirOperationKind) to high(TFhirOperationKind) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirOperationKindList(i : Integer) : TFhirOperationKindList;
+var
+  aLoop : TFhirOperationKind;
+begin
+  result := [];
+  for aLoop := low(TFhirOperationKind) to high(TFhirOperationKind) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirOperationParameterUseListAsInteger(aSet : TFhirOperationParameterUseList) : Integer;
+var
+  a : TFhirOperationParameterUse;
+begin
+  result := 0;
+  for a := low(TFhirOperationParameterUse) to high(TFhirOperationParameterUse) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirOperationParameterUseList(i : Integer) : TFhirOperationParameterUseList;
+var
+  aLoop : TFhirOperationParameterUse;
+begin
+  result := [];
+  for aLoop := low(TFhirOperationParameterUse) to high(TFhirOperationParameterUse) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirIssueSeverityListAsInteger(aSet : TFhirIssueSeverityList) : Integer;
 var
   a : TFhirIssueSeverity;
@@ -13460,6 +13848,33 @@ begin
  end;
 
 
+function TFhirAdministrativeGenderListAsInteger(aSet : TFhirAdministrativeGenderList) : Integer;
+var
+  a : TFhirAdministrativeGender;
+begin
+  result := 0;
+  for a := low(TFhirAdministrativeGender) to high(TFhirAdministrativeGender) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirAdministrativeGenderList(i : Integer) : TFhirAdministrativeGenderList;
+var
+  aLoop : TFhirAdministrativeGender;
+begin
+  result := [];
+  for aLoop := low(TFhirAdministrativeGender) to high(TFhirAdministrativeGender) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirLinkTypeListAsInteger(aSet : TFhirLinkTypeList) : Integer;
 var
   a : TFhirLinkType;
@@ -13506,33 +13921,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirProcedureRelationshipType) to high(TFhirProcedureRelationshipType) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirResourceProfileStatusListAsInteger(aSet : TFhirResourceProfileStatusList) : Integer;
-var
-  a : TFhirResourceProfileStatus;
-begin
-  result := 0;
-  for a := low(TFhirResourceProfileStatus) to high(TFhirResourceProfileStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirResourceProfileStatusList(i : Integer) : TFhirResourceProfileStatusList;
-var
-  aLoop : TFhirResourceProfileStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirResourceProfileStatus) to high(TFhirResourceProfileStatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -13803,6 +14191,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirQuestionnaireAnswersStatus) to high(TFhirQuestionnaireAnswersStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirReferralstatusListAsInteger(aSet : TFhirReferralstatusList) : Integer;
+var
+  a : TFhirReferralstatus;
+begin
+  result := 0;
+  for a := low(TFhirReferralstatus) to high(TFhirReferralstatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirReferralstatusList(i : Integer) : TFhirReferralstatusList;
+var
+  aLoop : TFhirReferralstatus;
+begin
+  result := [];
+  for aLoop := low(TFhirReferralstatus) to high(TFhirReferralstatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

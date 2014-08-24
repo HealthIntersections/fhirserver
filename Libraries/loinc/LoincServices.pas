@@ -345,6 +345,8 @@ Type
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
     function buildValueSet(id : String) : TFhirValueSet;
+    function getDefinition(code : String):String; override;
+    function Definition(context : TCodeSystemProviderContext) : string; override;
   End;
 
   TLOINCServiceList = class (TAdvObjectList)
@@ -680,6 +682,11 @@ begin
   FWords := TLoincWords.Create;
   FStems := TLoincStems.Create;
   FEntries := TLOINCHeirarchyEntryList.create;
+end;
+
+function TLOINCServices.Definition(context: TCodeSystemProviderContext): string;
+begin
+  result := '';
 end;
 
 destructor TLOINCServices.Destroy;
@@ -1427,6 +1434,11 @@ begin
   GetDisplaysByName(code, list);
 end;
 
+
+function TLOINCServices.getDefinition(code: String): String;
+begin
+  result := '';
+end;
 
 function TLoincServices.getDisplay(code: String): String;
 begin

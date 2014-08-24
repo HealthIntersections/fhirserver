@@ -3,7 +3,7 @@ unit TerminologyWebServer;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.Generics.Collections,
   EncodeSupport, StringSupport,
   AdvObjects, AdvStringMatches,
   IdContext, IdCustomHTTPServer,
@@ -12,20 +12,25 @@ uses
   TerminologyServer;
 
 Type
+  TReturnProcessFileEvent = procedure (response: TIdHTTPResponseInfo; named, path: String; variables: TDictionary<String, String>) of Object;
+
   TTerminologyWebServer = class (TAdvObject)
   private
     FServer : TTerminologyServer;
     FFHIRPath : String;
+    FWebDir : String;
+    FReturnProcessFileEvent : TReturnProcessFileEvent;
     Procedure HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure BuildCsByName(html : THtmlPublisher; id : String);
     Procedure BuildCsByURL(html : THtmlPublisher; id : String);
     Procedure BuildVsByName(html : THtmlPublisher; id : String);
     Procedure BuildVsByURL(html : THtmlPublisher; id : String);
     function processSnomedForTool(code : String) : String;
   public
-    constructor create(server : TTerminologyServer; FHIRPath : String); overload;
+    constructor create(server : TTerminologyServer; FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
 
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -40,11 +45,13 @@ uses
 
 { TTerminologyWebServer }
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; FHIRPath : String);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
   create;
   FServer := server;
   FFHIRPath := FHIRPath;
+  FWebDir := WebDir;
+  FReturnProcessFileEvent := ReturnProcessFileEvent;
 end;
 
 function TTerminologyWebServer.HandlesRequest(path: String): boolean;
@@ -57,13 +64,14 @@ var
   path : string;
 begin
   path := request.Document;
-  if path.StartsWith('/tx') then
+  if path.StartsWith('/tx/form') then
+    HandleTxForm(AContext, request, response)
+  else if path.StartsWith('/tx') then
     HandleTxRequest(AContext, request, response)
   else if path.StartsWith('/snomed') and (FServer.Snomed <> nil) then
     HandleSnomedRequest(AContext, request, response)
   else if request.Document.StartsWith('/loinc') and (FServer.Loinc <> nil) then
     HandleLoincRequest(AContext, request, response)
-
 end;
 
 function GetId(url, prefix : string) : String;
@@ -75,6 +83,38 @@ begin
 end;
 
 
+
+procedure TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  vs : String;
+  vars : TDictionary<String, String>;
+  list : TAdvStringMatch;
+  ts : TStringList;
+  i : integer;
+begin
+  vars := TDictionary<String, String>.create;
+  try
+    vs := '';
+
+    ts := TStringList.Create;
+    list := FServer.GetValueSetList;
+    try
+      for i := 0 to list.Count - 1 do
+        ts.AddObject(list.ValueByIndex[i], TObject(i));
+      ts.sort;
+      for i := 0 to ts.Count - 1 do
+        vs := vs + ' <option value="'+list.KeyByIndex[Integer(ts.Objects[i])]+'">'+ts[i]+'</option>';
+    finally
+      list.Free;
+      ts.Free;
+    end;
+
+    vars.Add('vslist', vs);
+    FReturnProcessFileEvent(response, '/tx/form', IncludeTrailingPathDelimiter(FWebDir)+'txform.html', vars);
+  finally
+    vars.free;
+  end;
+end;
 
 procedure TTerminologyWebServer.HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
@@ -116,6 +156,10 @@ begin
         html.EndList;
       end;
 
+      html.StartParagraph;
+      html.AddTextPlain('Or try out the ');
+      html.URL('code selection form', '/tx/form');
+      html.EndParagraph;
       html.Done;
       response.ContentText := html.output;
       response.ContentType := 'text/html';
@@ -245,7 +289,7 @@ begin
     s := TStringStream.Create;
     xml := TFHIRXmlComposer.Create('en');
     try
-      xml.Compose(s, '', '', vs, true);
+      xml.Compose(s, '', '', '', vs, true);
       html.startPre;
       html.AddTextPlain(s.DataString);
       html.endPre;

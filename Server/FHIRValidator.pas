@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  ActiveX, ComObj, SysUtils,
+  ActiveX, ComObj, SysUtils, Classes,
   kCritSct, StringSupport, IdGlobal,
   AdvObjects, AdvStringObjectMatches, AdvFiles, AdvZipReaders, AdvZipParts,
   AdvMemories, AdvVclStreams, AdvBuffers, AdvNameBuffers,
@@ -80,7 +80,7 @@ type
     procedure validateTag(path : string; element : TIdSoapXmlElement; onEntry : boolean);
     procedure validateElement(op : TFhirOperationOutcome; profile : TFHIRProfile; structure : TFHIRProfileStructureHolder; path : string; definition : TFHIRProfileStructureElement; cprofile : TFHIRProfile; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
     function findElement(structure : TFHIRProfileStructureHolder; name : string) : TFHIRProfileStructureElement;
-    function getChildren(structure : TFHIRProfileStructureHolder; definition : TFHIRProfileStructureElement) : TFhirProfileStructureElementList;
+    function getChildren(structure : TFHIRProfileStructureHolder; path : String) : TFhirProfileStructureElementList;
     function getChild(children : TFhirProfileStructureElementList; name : string) : TFHIRProfileStructureElement;
     function getDefinitionByTailNameChoice(children : TFhirProfileStructureElementList; name : string) : TFHIRProfileStructureElement;
     function tail(path : string) : String;
@@ -107,6 +107,8 @@ type
     procedure executeSchematron(context : TFHIRValidatorContext; op : TFhirOperationOutcome; source, name : String);
     function transform(op: TFhirOperationOutcome; source: IXMLDOMDocument2; transform: IXSLTemplate): IXMLDOMDocument2;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
+    function getTargetByName(list: TFhirProfileStructureElementList;
+      name: String): TFhirProfileStructureElement;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -118,6 +120,7 @@ type
     function AcquireContext : TFHIRValidatorContext;
     procedure YieldContext(context : TFHIRValidatorContext);
     Function validateInstance(context : TFHIRValidatorContext; elem : TIdSoapXmlElement; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome; overload;
+    Function validateInstance(context : TFHIRValidatorContext; resource : TFhirResource; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome; overload;
     Function validateInstance(context : TFHIRValidatorContext; source : TAdvBuffer; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome; overload;
   end;
 
@@ -253,7 +256,7 @@ var
   r : TFHIRProfileStructureHolder;
   p : TFHIRProfile;
 begin
-  children := getChildren(structure, definition);
+  children := getChildren(structure, definition.pathST);
   try
     ci := TChildIterator.create(path, element);
     try
@@ -332,6 +335,32 @@ begin
 end;
 
 
+function TFHIRValidator.validateInstance(context: TFHIRValidatorContext; resource: TFhirResource; opDesc: String; profile: TFHIRProfile): TFHIROperationOutcome;
+var
+  stream : TBytesStream;
+  xml : TFHIRXmlComposer;
+  buf : TAdvBuffer;
+begin
+  stream := TBytesStream.Create(nil);
+  try
+    xml := TFHIRXmlComposer.Create('en');
+    try
+      xml.Compose(stream, '', '', '', resource, true);
+    finally
+      xml.Free;
+    end;
+    buf := TAdvBuffer.Create;
+    try
+      buf.AsBytes := copy(stream.Bytes, 0, stream.Size);
+      result := validateInstance(context, buf, opDesc, profile);
+    finally
+      buf.Free;
+    end;
+  finally
+    stream.Free;
+  end;
+end;
+
 function TFHIRValidator.findElement(structure : TFHIRProfileStructureHolder; name : string) : TFHIRProfileStructureElement;
 var
   i : integer;
@@ -349,28 +378,63 @@ begin
   end;
 end;
 
+function TFHIRValidator.getTargetByName(list : TFhirProfileStructureElementList; name : String) : TFhirProfileStructureElement;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to list.Count - 1 do
+    if list[i].nameST = name then
+    begin
+      result := list[i];
+      exit;
+    end;
+end;
 
-function TFHIRValidator.getChildren(structure : TFHIRProfileStructureHolder; definition : TFHIRProfileStructureElement) : TFhirProfileStructureElementList;
+function TFHIRValidator.getChildren(structure : TFHIRProfileStructureHolder; path : String) : TFhirProfileStructureElementList;
 var
   i : integer;
   e : TFhirProfileStructureElement;
   tail : string;
+  p : String;
+  res : TFhirProfileStructureElementList;
+  tgt : TFhirProfileStructureElement;
 begin
-  result := TFhirProfileStructureElementList.create;
+  result := nil;
+  res := TFhirProfileStructureElementList.create;
   try
     for i := 0 to structure.elementList.Count - 1 do
     begin
       e := structure.elementList[i];
-      if StringStartsWith(e.PathST, definition.PathST+'.') and (e.PathST <> definition.PathST) then
+      p := e.pathST;
+      if (e.definition <> nil) and (e.definition.nameReferenceST <> '') and path.StartsWith(p) then
       begin
-        tail := copy(e.PathST, length(definition.PathST)+2, $FF);
+        tgt := getTargetByName(structure.elementList, e.definition.nameReferenceST);
+        if (tgt = nil) then
+          raise Exception.Create('Unable to find target for name "'+e.definition.nameReferenceST+'"');
+        // The path we are navigating to is on or below this element, but the element defers its definition to another named part of the structure
+        if (path.length > p.length) then
+          // The path navigates further into the referenced element, so go ahead along the path over there
+          result := getChildren(structure, tgt.pathST+'.'+path.substring(p.length+1))
+        else
+          // The path we are looking for is actually this element, but since it defers it definition, go get the referenced element
+          result := getChildren(structure, tgt.pathST);
+        break;
+      end
+      else if (p.startsWith(path+'.')) then
+      begin
+    	  // The path of the element is a child of the path we're looking for (i.e. the parent),
+    	  // so add this element to the result.
+        tail := copy(e.PathST, length(path)+2, $FF);
+
         if pos('.', tail) = 0 then
-          result.add(e.link);
+          res.add(e.link);
       end;
     end;
-    result.link;
+    if result = nil then
+      result := res.link;
   finally
-    result.free;
+    res.free;
   end;
 end;
 

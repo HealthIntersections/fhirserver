@@ -28,9 +28,9 @@ function combo(id,h,l)
     self.list[i].onclick = function() {
       self.inp.value = this.firstChild.data;  
       d = document.getElementById("fhir-tag-text");
-      for (var i = 0; i < tags.length; i++) { 
-        if (tags[i].term == self.inp.value)
-          d.value = tags[i].label;
+      for (var i = 0; i < codes.length; i++) { 
+        if (codes[i].system+"||"+codes[i].code == self.inp.id)
+          d.value = codes[i].system+"||"+codes[i].code;
       }        
       self.rset(self);
     }

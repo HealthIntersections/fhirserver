@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.2.1 generated Thu, Jul 17, 2014 03:20+1000
+// FHIR v0.3.0 generated Fri, Aug 22, 2014 11:59+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
@@ -56,6 +56,7 @@ Type
     function ParseDecimal(element : IXmlDomElement; path : string) : TFhirDecimal;
     function ParseUri(element : IXmlDomElement; path : string) : TFhirUri;
     function ParseBase64Binary(element : IXmlDomElement; path : string) : TFhirBase64Binary;
+    function ParseTime(element : IXmlDomElement; path : string) : TFhirTime;
     function ParseString(element : IXmlDomElement; path : string) : TFhirString;
     function ParseBoolean(element : IXmlDomElement; path : string) : TFhirBoolean;
     function ParseInstant(element : IXmlDomElement; path : string) : TFhirInstant;
@@ -123,14 +124,16 @@ Type
     function ParseConformanceRestSecurity(element : IXmlDomElement; path : string) : TFhirConformanceRestSecurity;
     function ParseConformanceRestSecurityCertificate(element : IXmlDomElement; path : string) : TFhirConformanceRestSecurityCertificate;
     function ParseConformanceRestResource(element : IXmlDomElement; path : string) : TFhirConformanceRestResource;
-    function ParseConformanceRestResourceOperation(element : IXmlDomElement; path : string) : TFhirConformanceRestResourceOperation;
+    function ParseConformanceRestResourceInteraction(element : IXmlDomElement; path : string) : TFhirConformanceRestResourceInteraction;
     function ParseConformanceRestResourceSearchParam(element : IXmlDomElement; path : string) : TFhirConformanceRestResourceSearchParam;
+    function ParseConformanceRestInteraction(element : IXmlDomElement; path : string) : TFhirConformanceRestInteraction;
     function ParseConformanceRestOperation(element : IXmlDomElement; path : string) : TFhirConformanceRestOperation;
-    function ParseConformanceRestQuery(element : IXmlDomElement; path : string) : TFhirConformanceRestQuery;
     function ParseConformanceMessaging(element : IXmlDomElement; path : string) : TFhirConformanceMessaging;
     function ParseConformanceMessagingEvent(element : IXmlDomElement; path : string) : TFhirConformanceMessagingEvent;
     function ParseConformanceDocument(element : IXmlDomElement; path : string) : TFhirConformanceDocument;
     function ParseConformance(element : IXmlDomElement; path : string) : TFhirConformance;
+    function ParseContraindicationMitigation(element : IXmlDomElement; path : string) : TFhirContraindicationMitigation;
+    function ParseContraindication(element : IXmlDomElement; path : string) : TFhirContraindication;
     function ParseDataElementBinding(element : IXmlDomElement; path : string) : TFhirDataElementBinding;
     function ParseDataElementMapping(element : IXmlDomElement; path : string) : TFhirDataElementMapping;
     function ParseDataElement(element : IXmlDomElement; path : string) : TFhirDataElement;
@@ -203,6 +206,8 @@ Type
     function ParseObservationReferenceRange(element : IXmlDomElement; path : string) : TFhirObservationReferenceRange;
     function ParseObservationRelated(element : IXmlDomElement; path : string) : TFhirObservationRelated;
     function ParseObservation(element : IXmlDomElement; path : string) : TFhirObservation;
+    function ParseOperationDefinitionParameter(element : IXmlDomElement; path : string) : TFhirOperationDefinitionParameter;
+    function ParseOperationDefinition(element : IXmlDomElement; path : string) : TFhirOperationDefinition;
     function ParseOperationOutcomeIssue(element : IXmlDomElement; path : string) : TFhirOperationOutcomeIssue;
     function ParseOperationOutcome(element : IXmlDomElement; path : string) : TFhirOperationOutcome;
     function ParseOrderWhen(element : IXmlDomElement; path : string) : TFhirOrderWhen;
@@ -232,7 +237,6 @@ Type
     function ParseProfileStructureSnapshotElementDefinitionMapping(element : IXmlDomElement; path : string) : TFhirProfileStructureSnapshotElementDefinitionMapping;
     function ParseProfileStructureSearchParam(element : IXmlDomElement; path : string) : TFhirProfileStructureSearchParam;
     function ParseProfileExtensionDefn(element : IXmlDomElement; path : string) : TFhirProfileExtensionDefn;
-    function ParseProfileQuery(element : IXmlDomElement; path : string) : TFhirProfileQuery;
     function ParseProfile(element : IXmlDomElement; path : string) : TFhirProfile;
     function ParseProvenanceAgent(element : IXmlDomElement; path : string) : TFhirProvenanceAgent;
     function ParseProvenanceEntity(element : IXmlDomElement; path : string) : TFhirProvenanceEntity;
@@ -246,7 +250,10 @@ Type
     function ParseQuestionnaireAnswersGroupQuestion(element : IXmlDomElement; path : string) : TFhirQuestionnaireAnswersGroupQuestion;
     function ParseQuestionnaireAnswersGroupQuestionAnswer(element : IXmlDomElement; path : string) : TFhirQuestionnaireAnswersGroupQuestionAnswer;
     function ParseQuestionnaireAnswers(element : IXmlDomElement; path : string) : TFhirQuestionnaireAnswers;
+    function ParseReferralRequest(element : IXmlDomElement; path : string) : TFhirReferralRequest;
     function ParseRelatedPerson(element : IXmlDomElement; path : string) : TFhirRelatedPerson;
+    function ParseRiskAssessmentPrediction(element : IXmlDomElement; path : string) : TFhirRiskAssessmentPrediction;
+    function ParseRiskAssessment(element : IXmlDomElement; path : string) : TFhirRiskAssessment;
     function ParseSecurityEventEvent(element : IXmlDomElement; path : string) : TFhirSecurityEventEvent;
     function ParseSecurityEventParticipant(element : IXmlDomElement; path : string) : TFhirSecurityEventParticipant;
     function ParseSecurityEventParticipantNetwork(element : IXmlDomElement; path : string) : TFhirSecurityEventParticipantNetwork;
@@ -277,6 +284,7 @@ Type
     function ParseValueSetExpansionContains(element : IXmlDomElement; path : string) : TFhirValueSetExpansionContains;
     function ParseValueSet(element : IXmlDomElement; path : string) : TFhirValueSet;
     function ParseResource(element : IxmlDomElement; path : String) : TFhirResource; override;
+    function ParseDataType(element : IXmlDomElement; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
     function ParseFragment(element : IxmlDomElement) : TFhirElement; overload;
   end;
@@ -294,6 +302,7 @@ Type
     Procedure ComposeDecimal(xml : TXmlBuilder; name : String; value : TFhirDecimal);
     Procedure ComposeUri(xml : TXmlBuilder; name : String; value : TFhirUri);
     Procedure ComposeBase64Binary(xml : TXmlBuilder; name : String; value : TFhirBase64Binary);
+    Procedure ComposeTime(xml : TXmlBuilder; name : String; value : TFhirTime);
     Procedure ComposeString(xml : TXmlBuilder; name : String; value : TFhirString);
     Procedure ComposeBoolean(xml : TXmlBuilder; name : String; value : TFhirBoolean);
     Procedure ComposeInstant(xml : TXmlBuilder; name : String; value : TFhirInstant);
@@ -361,14 +370,16 @@ Type
     procedure ComposeConformanceRestSecurity(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestSecurity);
     procedure ComposeConformanceRestSecurityCertificate(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestSecurityCertificate);
     procedure ComposeConformanceRestResource(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestResource);
-    procedure ComposeConformanceRestResourceOperation(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestResourceOperation);
+    procedure ComposeConformanceRestResourceInteraction(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestResourceInteraction);
     procedure ComposeConformanceRestResourceSearchParam(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestResourceSearchParam);
+    procedure ComposeConformanceRestInteraction(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestInteraction);
     procedure ComposeConformanceRestOperation(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestOperation);
-    procedure ComposeConformanceRestQuery(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestQuery);
     procedure ComposeConformanceMessaging(xml : TXmlBuilder; name : string; elem : TFhirConformanceMessaging);
     procedure ComposeConformanceMessagingEvent(xml : TXmlBuilder; name : string; elem : TFhirConformanceMessagingEvent);
     procedure ComposeConformanceDocument(xml : TXmlBuilder; name : string; elem : TFhirConformanceDocument);
     procedure ComposeConformance(xml : TXmlBuilder; name : string; elem : TFhirConformance);
+    procedure ComposeContraindicationMitigation(xml : TXmlBuilder; name : string; elem : TFhirContraindicationMitigation);
+    procedure ComposeContraindication(xml : TXmlBuilder; name : string; elem : TFhirContraindication);
     procedure ComposeDataElementBinding(xml : TXmlBuilder; name : string; elem : TFhirDataElementBinding);
     procedure ComposeDataElementMapping(xml : TXmlBuilder; name : string; elem : TFhirDataElementMapping);
     procedure ComposeDataElement(xml : TXmlBuilder; name : string; elem : TFhirDataElement);
@@ -441,6 +452,8 @@ Type
     procedure ComposeObservationReferenceRange(xml : TXmlBuilder; name : string; elem : TFhirObservationReferenceRange);
     procedure ComposeObservationRelated(xml : TXmlBuilder; name : string; elem : TFhirObservationRelated);
     procedure ComposeObservation(xml : TXmlBuilder; name : string; elem : TFhirObservation);
+    procedure ComposeOperationDefinitionParameter(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinitionParameter);
+    procedure ComposeOperationDefinition(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinition);
     procedure ComposeOperationOutcomeIssue(xml : TXmlBuilder; name : string; elem : TFhirOperationOutcomeIssue);
     procedure ComposeOperationOutcome(xml : TXmlBuilder; name : string; elem : TFhirOperationOutcome);
     procedure ComposeOrderWhen(xml : TXmlBuilder; name : string; elem : TFhirOrderWhen);
@@ -470,7 +483,6 @@ Type
     procedure ComposeProfileStructureSnapshotElementDefinitionMapping(xml : TXmlBuilder; name : string; elem : TFhirProfileStructureSnapshotElementDefinitionMapping);
     procedure ComposeProfileStructureSearchParam(xml : TXmlBuilder; name : string; elem : TFhirProfileStructureSearchParam);
     procedure ComposeProfileExtensionDefn(xml : TXmlBuilder; name : string; elem : TFhirProfileExtensionDefn);
-    procedure ComposeProfileQuery(xml : TXmlBuilder; name : string; elem : TFhirProfileQuery);
     procedure ComposeProfile(xml : TXmlBuilder; name : string; elem : TFhirProfile);
     procedure ComposeProvenanceAgent(xml : TXmlBuilder; name : string; elem : TFhirProvenanceAgent);
     procedure ComposeProvenanceEntity(xml : TXmlBuilder; name : string; elem : TFhirProvenanceEntity);
@@ -484,7 +496,10 @@ Type
     procedure ComposeQuestionnaireAnswersGroupQuestion(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaireAnswersGroupQuestion);
     procedure ComposeQuestionnaireAnswersGroupQuestionAnswer(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaireAnswersGroupQuestionAnswer);
     procedure ComposeQuestionnaireAnswers(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaireAnswers);
+    procedure ComposeReferralRequest(xml : TXmlBuilder; name : string; elem : TFhirReferralRequest);
     procedure ComposeRelatedPerson(xml : TXmlBuilder; name : string; elem : TFhirRelatedPerson);
+    procedure ComposeRiskAssessmentPrediction(xml : TXmlBuilder; name : string; elem : TFhirRiskAssessmentPrediction);
+    procedure ComposeRiskAssessment(xml : TXmlBuilder; name : string; elem : TFhirRiskAssessment);
     procedure ComposeSecurityEventEvent(xml : TXmlBuilder; name : string; elem : TFhirSecurityEventEvent);
     procedure ComposeSecurityEventParticipant(xml : TXmlBuilder; name : string; elem : TFhirSecurityEventParticipant);
     procedure ComposeSecurityEventParticipantNetwork(xml : TXmlBuilder; name : string; elem : TFhirSecurityEventParticipantNetwork);
@@ -514,7 +529,7 @@ Type
     procedure ComposeValueSetExpansion(xml : TXmlBuilder; name : string; elem : TFhirValueSetExpansion);
     procedure ComposeValueSetExpansionContains(xml : TXmlBuilder; name : string; elem : TFhirValueSetExpansionContains);
     procedure ComposeValueSet(xml : TXmlBuilder; name : string; elem : TFhirValueSet);
-    procedure ComposeResource(xml : TXmlBuilder; id, ver : String; resource : TFhirResource); override;
+    procedure ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; resource : TFhirResource); override;
   end;
 
   TFHIRJsonParser = class (TFHIRJsonParserBase)
@@ -536,6 +551,8 @@ Type
     function ParseUri(value : string; jsn : TJsonObject) : TFHIRUri; overload;
     procedure ParseBase64Binary(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseBase64Binary(value : string; jsn : TJsonObject) : TFHIRBase64Binary; overload;
+    procedure ParseTime(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseTime(value : string; jsn : TJsonObject) : TFHIRTime; overload;
     procedure ParseString(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseString(value : string; jsn : TJsonObject) : TFHIRString; overload;
     procedure ParseBoolean(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
@@ -659,14 +676,14 @@ Type
     procedure ParseConformanceRestSecurityCertificate(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseConformanceRestResource(jsn : TJsonObject) : TFhirConformanceRestResource; overload; {b\}
     procedure ParseConformanceRestResource(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseConformanceRestResourceOperation(jsn : TJsonObject) : TFhirConformanceRestResourceOperation; overload; {b\}
-    procedure ParseConformanceRestResourceOperation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseConformanceRestResourceInteraction(jsn : TJsonObject) : TFhirConformanceRestResourceInteraction; overload; {b\}
+    procedure ParseConformanceRestResourceInteraction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseConformanceRestResourceSearchParam(jsn : TJsonObject) : TFhirConformanceRestResourceSearchParam; overload; {b\}
     procedure ParseConformanceRestResourceSearchParam(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseConformanceRestInteraction(jsn : TJsonObject) : TFhirConformanceRestInteraction; overload; {b\}
+    procedure ParseConformanceRestInteraction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseConformanceRestOperation(jsn : TJsonObject) : TFhirConformanceRestOperation; overload; {b\}
     procedure ParseConformanceRestOperation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseConformanceRestQuery(jsn : TJsonObject) : TFhirConformanceRestQuery; overload; {b\}
-    procedure ParseConformanceRestQuery(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseConformanceMessaging(jsn : TJsonObject) : TFhirConformanceMessaging; overload; {b\}
     procedure ParseConformanceMessaging(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseConformanceMessagingEvent(jsn : TJsonObject) : TFhirConformanceMessagingEvent; overload; {b\}
@@ -675,6 +692,10 @@ Type
     procedure ParseConformanceDocument(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseConformance(jsn : TJsonObject) : TFhirConformance; overload; {b|}
     procedure ParseConformance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContraindicationMitigation(jsn : TJsonObject) : TFhirContraindicationMitigation; overload; {b\}
+    procedure ParseContraindicationMitigation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContraindication(jsn : TJsonObject) : TFhirContraindication; overload; {b|}
+    procedure ParseContraindication(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDataElementBinding(jsn : TJsonObject) : TFhirDataElementBinding; overload; {b\}
     procedure ParseDataElementBinding(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDataElementMapping(jsn : TJsonObject) : TFhirDataElementMapping; overload; {b\}
@@ -819,6 +840,10 @@ Type
     procedure ParseObservationRelated(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseObservation(jsn : TJsonObject) : TFhirObservation; overload; {b|}
     procedure ParseObservation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseOperationDefinitionParameter(jsn : TJsonObject) : TFhirOperationDefinitionParameter; overload; {b\}
+    procedure ParseOperationDefinitionParameter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseOperationDefinition(jsn : TJsonObject) : TFhirOperationDefinition; overload; {b|}
+    procedure ParseOperationDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseOperationOutcomeIssue(jsn : TJsonObject) : TFhirOperationOutcomeIssue; overload; {b\}
     procedure ParseOperationOutcomeIssue(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseOperationOutcome(jsn : TJsonObject) : TFhirOperationOutcome; overload; {b|}
@@ -877,8 +902,6 @@ Type
     procedure ParseProfileStructureSearchParam(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProfileExtensionDefn(jsn : TJsonObject) : TFhirProfileExtensionDefn; overload; {b\}
     procedure ParseProfileExtensionDefn(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProfileQuery(jsn : TJsonObject) : TFhirProfileQuery; overload; {b\}
-    procedure ParseProfileQuery(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProfile(jsn : TJsonObject) : TFhirProfile; overload; {b|}
     procedure ParseProfile(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProvenanceAgent(jsn : TJsonObject) : TFhirProvenanceAgent; overload; {b\}
@@ -905,8 +928,14 @@ Type
     procedure ParseQuestionnaireAnswersGroupQuestionAnswer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseQuestionnaireAnswers(jsn : TJsonObject) : TFhirQuestionnaireAnswers; overload; {b|}
     procedure ParseQuestionnaireAnswers(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseReferralRequest(jsn : TJsonObject) : TFhirReferralRequest; overload; {b|}
+    procedure ParseReferralRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseRelatedPerson(jsn : TJsonObject) : TFhirRelatedPerson; overload; {b|}
     procedure ParseRelatedPerson(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseRiskAssessmentPrediction(jsn : TJsonObject) : TFhirRiskAssessmentPrediction; overload; {b\}
+    procedure ParseRiskAssessmentPrediction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseRiskAssessment(jsn : TJsonObject) : TFhirRiskAssessment; overload; {b|}
+    procedure ParseRiskAssessment(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSecurityEventEvent(jsn : TJsonObject) : TFhirSecurityEventEvent; overload; {b\}
     procedure ParseSecurityEventEvent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSecurityEventParticipant(jsn : TJsonObject) : TFhirSecurityEventParticipant; overload; {b\}
@@ -966,6 +995,7 @@ Type
     function ParseValueSet(jsn : TJsonObject) : TFhirValueSet; overload; {b|}
     procedure ParseValueSet(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseResource(jsn : TJsonObject) : TFhirResource; override;
+    function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
     function ParseFragment(jsn : TJsonObject; type_ : String) : TFhirElement;  overload;
   end;
@@ -989,6 +1019,8 @@ Type
     Procedure ComposeUriProps(json : TJSONWriter; name : String; value : TFhirUri; inArray : boolean);
     Procedure ComposeBase64BinaryValue(json : TJSONWriter; name : String; value : TFhirBase64Binary; inArray : boolean);
     Procedure ComposeBase64BinaryProps(json : TJSONWriter; name : String; value : TFhirBase64Binary; inArray : boolean);
+    Procedure ComposeTimeValue(json : TJSONWriter; name : String; value : TFhirTime; inArray : boolean);
+    Procedure ComposeTimeProps(json : TJSONWriter; name : String; value : TFhirTime; inArray : boolean);
     Procedure ComposeStringValue(json : TJSONWriter; name : String; value : TFhirString; inArray : boolean);
     Procedure ComposeStringProps(json : TJSONWriter; name : String; value : TFhirString; inArray : boolean);
     Procedure ComposeBooleanValue(json : TJSONWriter; name : String; value : TFhirBoolean; inArray : boolean);
@@ -1062,14 +1094,16 @@ Type
     procedure ComposeConformanceRestSecurity(json : TJSONWriter; name : string; elem : TFhirConformanceRestSecurity);
     procedure ComposeConformanceRestSecurityCertificate(json : TJSONWriter; name : string; elem : TFhirConformanceRestSecurityCertificate);
     procedure ComposeConformanceRestResource(json : TJSONWriter; name : string; elem : TFhirConformanceRestResource);
-    procedure ComposeConformanceRestResourceOperation(json : TJSONWriter; name : string; elem : TFhirConformanceRestResourceOperation);
+    procedure ComposeConformanceRestResourceInteraction(json : TJSONWriter; name : string; elem : TFhirConformanceRestResourceInteraction);
     procedure ComposeConformanceRestResourceSearchParam(json : TJSONWriter; name : string; elem : TFhirConformanceRestResourceSearchParam);
+    procedure ComposeConformanceRestInteraction(json : TJSONWriter; name : string; elem : TFhirConformanceRestInteraction);
     procedure ComposeConformanceRestOperation(json : TJSONWriter; name : string; elem : TFhirConformanceRestOperation);
-    procedure ComposeConformanceRestQuery(json : TJSONWriter; name : string; elem : TFhirConformanceRestQuery);
     procedure ComposeConformanceMessaging(json : TJSONWriter; name : string; elem : TFhirConformanceMessaging);
     procedure ComposeConformanceMessagingEvent(json : TJSONWriter; name : string; elem : TFhirConformanceMessagingEvent);
     procedure ComposeConformanceDocument(json : TJSONWriter; name : string; elem : TFhirConformanceDocument);
     procedure ComposeConformance(json : TJSONWriter; name : string; elem : TFhirConformance);
+    procedure ComposeContraindicationMitigation(json : TJSONWriter; name : string; elem : TFhirContraindicationMitigation);
+    procedure ComposeContraindication(json : TJSONWriter; name : string; elem : TFhirContraindication);
     procedure ComposeDataElementBinding(json : TJSONWriter; name : string; elem : TFhirDataElementBinding);
     procedure ComposeDataElementMapping(json : TJSONWriter; name : string; elem : TFhirDataElementMapping);
     procedure ComposeDataElement(json : TJSONWriter; name : string; elem : TFhirDataElement);
@@ -1142,6 +1176,8 @@ Type
     procedure ComposeObservationReferenceRange(json : TJSONWriter; name : string; elem : TFhirObservationReferenceRange);
     procedure ComposeObservationRelated(json : TJSONWriter; name : string; elem : TFhirObservationRelated);
     procedure ComposeObservation(json : TJSONWriter; name : string; elem : TFhirObservation);
+    procedure ComposeOperationDefinitionParameter(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameter);
+    procedure ComposeOperationDefinition(json : TJSONWriter; name : string; elem : TFhirOperationDefinition);
     procedure ComposeOperationOutcomeIssue(json : TJSONWriter; name : string; elem : TFhirOperationOutcomeIssue);
     procedure ComposeOperationOutcome(json : TJSONWriter; name : string; elem : TFhirOperationOutcome);
     procedure ComposeOrderWhen(json : TJSONWriter; name : string; elem : TFhirOrderWhen);
@@ -1171,7 +1207,6 @@ Type
     procedure ComposeProfileStructureSnapshotElementDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirProfileStructureSnapshotElementDefinitionMapping);
     procedure ComposeProfileStructureSearchParam(json : TJSONWriter; name : string; elem : TFhirProfileStructureSearchParam);
     procedure ComposeProfileExtensionDefn(json : TJSONWriter; name : string; elem : TFhirProfileExtensionDefn);
-    procedure ComposeProfileQuery(json : TJSONWriter; name : string; elem : TFhirProfileQuery);
     procedure ComposeProfile(json : TJSONWriter; name : string; elem : TFhirProfile);
     procedure ComposeProvenanceAgent(json : TJSONWriter; name : string; elem : TFhirProvenanceAgent);
     procedure ComposeProvenanceEntity(json : TJSONWriter; name : string; elem : TFhirProvenanceEntity);
@@ -1185,7 +1220,10 @@ Type
     procedure ComposeQuestionnaireAnswersGroupQuestion(json : TJSONWriter; name : string; elem : TFhirQuestionnaireAnswersGroupQuestion);
     procedure ComposeQuestionnaireAnswersGroupQuestionAnswer(json : TJSONWriter; name : string; elem : TFhirQuestionnaireAnswersGroupQuestionAnswer);
     procedure ComposeQuestionnaireAnswers(json : TJSONWriter; name : string; elem : TFhirQuestionnaireAnswers);
+    procedure ComposeReferralRequest(json : TJSONWriter; name : string; elem : TFhirReferralRequest);
     procedure ComposeRelatedPerson(json : TJSONWriter; name : string; elem : TFhirRelatedPerson);
+    procedure ComposeRiskAssessmentPrediction(json : TJSONWriter; name : string; elem : TFhirRiskAssessmentPrediction);
+    procedure ComposeRiskAssessment(json : TJSONWriter; name : string; elem : TFhirRiskAssessment);
     procedure ComposeSecurityEventEvent(json : TJSONWriter; name : string; elem : TFhirSecurityEventEvent);
     procedure ComposeSecurityEventParticipant(json : TJSONWriter; name : string; elem : TFhirSecurityEventParticipant);
     procedure ComposeSecurityEventParticipantNetwork(json : TJSONWriter; name : string; elem : TFhirSecurityEventParticipantNetwork);
@@ -1215,7 +1253,7 @@ Type
     procedure ComposeValueSetExpansion(json : TJSONWriter; name : string; elem : TFhirValueSetExpansion);
     procedure ComposeValueSetExpansionContains(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionContains);
     procedure ComposeValueSet(json : TJSONWriter; name : string; elem : TFhirValueSet);
-    procedure ComposeResource(json : TJSONWriter; id, ver : String; resource : TFhirResource); override;
+    procedure ComposeResource(json : TJSONWriter; statedType, id, ver : String; resource : TFhirResource); override;
   end;
 
 
@@ -1893,6 +1931,90 @@ begin
 end;
 
 Procedure TFHIRJsonComposer.ComposeBase64BinaryProps(json : TJSONWriter; name : String; value : TFhirBase64Binary; inArray : boolean);
+begin
+  if (value = nil) or ((value.xmlId = '') and (not value.hasExtensions) and (not value.hasComments)) then
+  begin
+    if inArray then
+      propNull(json, name);
+    exit;
+  end
+  else
+  begin
+    if (inArray) then
+      json.valueObject('')
+    else
+      json.valueObject('_'+name);
+    ComposeElementProperties(json, value);
+    json.finishObject;
+  end;
+end;
+
+function TFHIRXmlParser.ParseTime(element : IXmlDomElement; path : string) : TFhirTime;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirTime.create;
+  try
+    ParseElementAttributes(result, path, element);
+    result.value := GetAttribute(element, 'value');
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if Not ParseElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseTime(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseTime(value, jsn));
+end;
+
+function TFHIRJsonParser.ParseTime(value : string; jsn : TJsonObject) : TFHIRTime;
+begin
+  result := TFhirTime.Create;
+  try
+    result.value := value;
+    if (jsn <> nil) then
+      parseElementProperties(jsn, result);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+Procedure TFHIRXmlComposer.ComposeTime(xml : TXmlBuilder; name : String; value : TFhirTime);
+begin
+  if (value = nil) or (value.value = '') then
+    exit;
+  composeElementAttributes(xml, value);
+  attribute(xml, 'value', value.value);
+  xml.open(name);
+  composeElementChildren(xml, value);
+  closeOutElement(xml, value);
+  xml.close(name);
+end;
+
+Procedure TFHIRJsonComposer.ComposeTimeValue(json : TJSONWriter; name : String; value : TFhirTime; inArray : boolean);
+begin
+  if (value = nil) or (value.value = '') then
+  begin
+    if inArray then
+      propNull(json, name);
+    exit;
+  end
+  else
+    prop(json, name, value.value);
+end;
+
+Procedure TFHIRJsonComposer.ComposeTimeProps(json : TJSONWriter; name : String; value : TFhirTime; inArray : boolean);
 begin
   if (value = nil) or ((value.xmlId = '') and (not value.hasExtensions) and (not value.hasComments)) then
   begin
@@ -2592,6 +2714,8 @@ begin
         result.value := ParseId(child, path+'.valueId') {c}
       else if (child.baseName = 'valueBase64Binary') then
         result.value := ParseBase64Binary(child, path+'.valueBase64Binary') {c}
+      else if (child.baseName = 'valueTime') then
+        result.value := ParseTime(child, path+'.valueTime') {c}
       else if (child.baseName = 'valueOid') then
         result.value := ParseOid(child, path+'.valueOid') {c}
       else if (child.baseName = 'valueString') then
@@ -2666,6 +2790,8 @@ begin
     ComposeId(xml, 'valueId', TFhirId(elem.value))
   else if (elem.value is TFhirBase64Binary) {1} then
     ComposeBase64Binary(xml, 'valueBase64Binary', TFhirBase64Binary(elem.value))
+  else if (elem.value is TFhirTime) {1} then
+    ComposeTime(xml, 'valueTime', TFhirTime(elem.value))
   else if (elem.value is TFhirOid) {1} then
     ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
   else if (elem.value is TFhirString) {1} then
@@ -2736,6 +2862,8 @@ begin
         result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
     if jsn.has('valueBase64Binary') or jsn.has('_valueBase64Binary') then
         result.value := ParseBase64Binary(jsn['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
+    if jsn.has('valueTime') or jsn.has('_valueTime') then
+        result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueOid') or jsn.has('_valueOid') then
         result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
     if jsn.has('valueString') or jsn.has('_valueString') then
@@ -2827,6 +2955,11 @@ begin
   begin
     ComposeBase64BinaryValue(json, 'valueBase64Binary', TFhirBase64Binary(elem.value), false);
     ComposeBase64BinaryProps(json, 'valueBase64Binary', TFhirBase64Binary(elem.value), false)
+  end
+  else if (elem.value is TFhirTime) then
+  begin
+    ComposeTimeValue(json, 'valueTime', TFhirTime(elem.value), false);
+    ComposeTimeProps(json, 'valueTime', TFhirTime(elem.value), false)
   end
   else if (elem.value is TFhirOid) then
   begin
@@ -5047,8 +5180,8 @@ begin
     begin
       if (child.baseName = 'type') then
         result.type_List.Add(ParseCodeableConcept(child, path+'/type'))
-      else if (child.baseName = 'individual') then
-        result.individual := ParseResourceReference{Resource}(child, path+'/individual') {b}
+      else if (child.baseName = 'actor') then
+        result.actor := ParseResourceReference{Resource}(child, path+'/actor') {b}
       else if (child.baseName = 'required') then
         result.required := ParseEnum(CODES_TFhirParticipantrequired, path+'/required', child)
       else if (child.baseName = 'status') then
@@ -5076,7 +5209,7 @@ begin
   composeBackboneElementChildren(xml, elem);
   for i := 0 to elem.type_List.Count - 1 do
     ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
-  ComposeResourceReference{Resource}(xml, 'individual', elem.individual);
+  ComposeResourceReference{Resource}(xml, 'actor', elem.actor);
   ComposeEnum(xml, 'required', elem.Required, CODES_TFhirParticipantrequired);
   ComposeEnum(xml, 'status', elem.Status, CODES_TFhirParticipationstatus);
   closeOutElement(xml, elem);
@@ -5095,8 +5228,8 @@ begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
-    if jsn.has('individual') then
-        result.individual := ParseResourceReference{Resource}(jsn.vObj['individual']);{q}
+    if jsn.has('actor') then
+        result.actor := ParseResourceReference{Resource}(jsn.vObj['actor']);{q}
     if jsn.has('required') or jsn.has('_required')  then
       result.required := parseEnum(jsn['required'], jsn.vObj['_required'], CODES_TFhirParticipantrequired);
     if jsn.has('status') or jsn.has('_status')  then
@@ -5122,7 +5255,7 @@ begin
       ComposeCodeableConcept(json, '',elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  ComposeResourceReference{Resource}(json, 'individual', elem.individual); {a}
+  ComposeResourceReference{Resource}(json, 'actor', elem.actor); {a}
   ComposeEnumValue(json, 'required', elem.Required, CODES_TFhirParticipantrequired, false);
   ComposeEnumProps(json, 'required', elem.Required, CODES_TFhirParticipantrequired, false);
   ComposeEnumValue(json, 'status', elem.Status, CODES_TFhirParticipationstatus, false);
@@ -5468,8 +5601,8 @@ begin
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier'))
       else if (child.baseName = 'type') then
         result.type_List.Add(ParseCodeableConcept(child, path+'/type'))
-      else if (child.baseName = 'individual') then
-        result.individual := ParseResourceReference{Resource}(child, path+'/individual') {b}
+      else if (child.baseName = 'actor') then
+        result.actor := ParseResourceReference{Resource}(child, path+'/actor') {b}
       else if (child.baseName = 'planningHorizon') then
         result.planningHorizon := ParsePeriod(child, path+'/planningHorizon') {b}
       else if (child.baseName = 'comment') then
@@ -5501,7 +5634,7 @@ begin
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   for i := 0 to elem.type_List.Count - 1 do
     ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
-  ComposeResourceReference{Resource}(xml, 'individual', elem.individual);
+  ComposeResourceReference{Resource}(xml, 'actor', elem.actor);
   ComposePeriod(xml, 'planningHorizon', elem.planningHorizon);
   ComposeString(xml, 'comment', elem.comment);
   ComposeDateTime(xml, 'lastModified', elem.lastModified);
@@ -5523,8 +5656,8 @@ begin
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
-    if jsn.has('individual') then
-        result.individual := ParseResourceReference{Resource}(jsn.vObj['individual']);{q}
+    if jsn.has('actor') then
+        result.actor := ParseResourceReference{Resource}(jsn.vObj['actor']);{q}
     if jsn.has('planningHorizon') then
         result.planningHorizon := ParsePeriod(jsn.vObj['planningHorizon']);{q}
     if jsn.has('comment') or jsn.has('_comment') then
@@ -5558,7 +5691,7 @@ begin
       ComposeCodeableConcept(json, '',elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  ComposeResourceReference{Resource}(json, 'individual', elem.individual); {a}
+  ComposeResourceReference{Resource}(json, 'actor', elem.actor); {a}
   ComposePeriod(json, 'planningHorizon', elem.planningHorizon); {a}
   ComposeStringValue(json, 'comment', elem.comment, false);
   ComposeStringProps(json, 'comment', elem.comment, false);
@@ -7816,10 +7949,10 @@ begin
         result.security := ParseConformanceRestSecurity(child, path+'/security') {b}
       else if (child.baseName = 'resource') then
         result.resourceList.Add(ParseConformanceRestResource(child, path+'/resource'))
+      else if (child.baseName = 'interaction') then
+        result.interactionList.Add(ParseConformanceRestInteraction(child, path+'/interaction'))
       else if (child.baseName = 'operation') then
         result.operationList.Add(ParseConformanceRestOperation(child, path+'/operation'))
-      else if (child.baseName = 'query') then
-        result.queryList.Add(ParseConformanceRestQuery(child, path+'/query'))
       else if (child.baseName = 'documentMailbox') then
         result.documentMailboxList.Add(ParseUri(child, path+'/documentMailbox'))
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -7848,10 +7981,10 @@ begin
   ComposeConformanceRestSecurity(xml, 'security', elem.security);
   for i := 0 to elem.resourceList.Count - 1 do
     ComposeConformanceRestResource(xml, 'resource', elem.resourceList[i]);
+  for i := 0 to elem.interactionList.Count - 1 do
+    ComposeConformanceRestInteraction(xml, 'interaction', elem.interactionList[i]);
   for i := 0 to elem.operationList.Count - 1 do
     ComposeConformanceRestOperation(xml, 'operation', elem.operationList[i]);
-  for i := 0 to elem.queryList.Count - 1 do
-    ComposeConformanceRestQuery(xml, 'query', elem.queryList[i]);
   for i := 0 to elem.documentMailboxList.Count - 1 do
     ComposeUri(xml, 'documentMailbox', elem.documentMailboxList[i]);
   closeOutElement(xml, elem);
@@ -7876,10 +8009,10 @@ begin
         result.security := ParseConformanceRestSecurity(jsn.vObj['security']);{q}
     if jsn.has('resource') then
       iterateArray(jsn.vArr['resource'], result.resourceList, parseConformanceRestResource);
+    if jsn.has('interaction') then
+      iterateArray(jsn.vArr['interaction'], result.interactionList, parseConformanceRestInteraction);
     if jsn.has('operation') then
       iterateArray(jsn.vArr['operation'], result.operationList, parseConformanceRestOperation);
-    if jsn.has('query') then
-      iterateArray(jsn.vArr['query'], result.queryList, parseConformanceRestQuery);
       if jsn.has('documentMailbox') or jsn.has('_documentMailbox') then
       iteratePrimitiveArray(jsn.vArr['documentMailbox'], jsn.vArr['_documentMailbox'], result.documentMailboxList, parseUri);
     result.link;
@@ -7909,18 +8042,18 @@ begin
       ComposeConformanceRestResource(json, '',elem.resourceList[i]); {z - }
     json.FinishArray;
   end;
+  if elem.interactionList.Count > 0 then
+  begin
+    json.valueArray('interaction');
+    for i := 0 to elem.interactionList.Count - 1 do
+      ComposeConformanceRestInteraction(json, '',elem.interactionList[i]); {z - }
+    json.FinishArray;
+  end;
   if elem.operationList.Count > 0 then
   begin
     json.valueArray('operation');
     for i := 0 to elem.operationList.Count - 1 do
       ComposeConformanceRestOperation(json, '',elem.operationList[i]); {z - }
-    json.FinishArray;
-  end;
-  if elem.queryList.Count > 0 then
-  begin
-    json.valueArray('query');
-    for i := 0 to elem.queryList.Count - 1 do
-      ComposeConformanceRestQuery(json, '',elem.queryList[i]); {z - }
     json.FinishArray;
   end;
   if elem.documentMailboxList.Count > 0 then
@@ -8132,8 +8265,8 @@ begin
         result.type_ := ParseCode(child, path+'/type') {b}
       else if (child.baseName = 'profile') then
         result.profile := ParseResourceReference{TFhirProfile}(child, path+'/profile') {b}
-      else if (child.baseName = 'operation') then
-        result.operationList.Add(ParseConformanceRestResourceOperation(child, path+'/operation'))
+      else if (child.baseName = 'interaction') then
+        result.interactionList.Add(ParseConformanceRestResourceInteraction(child, path+'/interaction'))
       else if (child.baseName = 'readHistory') then
         result.readHistory := ParseBoolean(child, path+'/readHistory') {b}
       else if (child.baseName = 'updateCreate') then
@@ -8165,8 +8298,8 @@ begin
   composeBackboneElementChildren(xml, elem);
   ComposeCode(xml, 'type', elem.type_);
   ComposeResourceReference{TFhirProfile}(xml, 'profile', elem.profile);
-  for i := 0 to elem.operationList.Count - 1 do
-    ComposeConformanceRestResourceOperation(xml, 'operation', elem.operationList[i]);
+  for i := 0 to elem.interactionList.Count - 1 do
+    ComposeConformanceRestResourceInteraction(xml, 'interaction', elem.interactionList[i]);
   ComposeBoolean(xml, 'readHistory', elem.readHistory);
   ComposeBoolean(xml, 'updateCreate', elem.updateCreate);
   for i := 0 to elem.searchIncludeList.Count - 1 do
@@ -8191,8 +8324,8 @@ begin
         result.type_ := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('profile') then
         result.profile := ParseResourceReference{TFhirProfile}(jsn.vObj['profile']);{q}
-    if jsn.has('operation') then
-      iterateArray(jsn.vArr['operation'], result.operationList, parseConformanceRestResourceOperation);
+    if jsn.has('interaction') then
+      iterateArray(jsn.vArr['interaction'], result.interactionList, parseConformanceRestResourceInteraction);
     if jsn.has('readHistory') or jsn.has('_readHistory') then
         result.readHistory := ParseBoolean(jsn['readHistory'], jsn.vObj['_readHistory']);{q}
     if jsn.has('updateCreate') or jsn.has('_updateCreate') then
@@ -8219,11 +8352,11 @@ begin
   ComposeCodeValue(json, 'type', elem.type_, false);
   ComposeCodeProps(json, 'type', elem.type_, false);
   ComposeResourceReference{TFhirProfile}(json, 'profile', elem.profile); {a}
-  if elem.operationList.Count > 0 then
+  if elem.interactionList.Count > 0 then
   begin
-    json.valueArray('operation');
-    for i := 0 to elem.operationList.Count - 1 do
-      ComposeConformanceRestResourceOperation(json, '',elem.operationList[i]); {z - }
+    json.valueArray('interaction');
+    for i := 0 to elem.interactionList.Count - 1 do
+      ComposeConformanceRestResourceInteraction(json, '',elem.interactionList[i]); {z - }
     json.FinishArray;
   end;
   ComposeBooleanValue(json, 'readHistory', elem.readHistory, false);
@@ -8258,18 +8391,18 @@ begin
   json.finishObject;
 end;
 
-function TFHIRXmlParser.ParseConformanceRestResourceOperation(element : IXmlDomElement; path : string) : TFhirConformanceRestResourceOperation;
+function TFHIRXmlParser.ParseConformanceRestResourceInteraction(element : IXmlDomElement; path : string) : TFhirConformanceRestResourceInteraction;
 var
   child : IXMLDOMElement;
 begin
-  result := TFhirConformanceRestResourceOperation.create;
+  result := TFhirConformanceRestResourceInteraction.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
       if (child.baseName = 'code') then
-        result.code := ParseEnum(CODES_TFhirTypeRestfulOperation, path+'/code', child)
+        result.code := ParseEnum(CODES_TFhirTypeRestfulInteraction, path+'/code', child)
       else if (child.baseName = 'documentation') then
         result.documentation := ParseString(child, path+'/documentation') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -8284,31 +8417,31 @@ begin
   end;
 end;
 
-procedure TFHIRXmlComposer.ComposeConformanceRestResourceOperation(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestResourceOperation);
+procedure TFHIRXmlComposer.ComposeConformanceRestResourceInteraction(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestResourceInteraction);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'code', elem.Code, CODES_TFhirTypeRestfulOperation);
+  ComposeEnum(xml, 'code', elem.Code, CODES_TFhirTypeRestfulInteraction);
   ComposeString(xml, 'documentation', elem.documentation);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRJsonParser.ParseConformanceRestResourceOperation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseConformanceRestResourceInteraction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseConformanceRestResourceOperation(jsn));
+  ctxt.add(ParseConformanceRestResourceInteraction(jsn));
 end;
 
-function TFHIRJsonParser.ParseConformanceRestResourceOperation(jsn : TJsonObject) : TFhirConformanceRestResourceOperation;
+function TFHIRJsonParser.ParseConformanceRestResourceInteraction(jsn : TJsonObject) : TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceOperation.create;
+  result := TFhirConformanceRestResourceInteraction.create;
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.code := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirTypeRestfulOperation);
+      result.code := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirTypeRestfulInteraction);
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentation := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     result.link;
@@ -8317,14 +8450,14 @@ begin
   end;
 end;
 
-procedure TFHIRJsonComposer.ComposeConformanceRestResourceOperation(json : TJSONWriter; name : string; elem : TFhirConformanceRestResourceOperation);
+procedure TFHIRJsonComposer.ComposeConformanceRestResourceInteraction(json : TJSONWriter; name : string; elem : TFhirConformanceRestResourceInteraction);
 begin
   if (elem = nil) then
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'code', elem.Code, CODES_TFhirTypeRestfulOperation, false);
-  ComposeEnumProps(json, 'code', elem.Code, CODES_TFhirTypeRestfulOperation, false);
+  ComposeEnumValue(json, 'code', elem.Code, CODES_TFhirTypeRestfulInteraction, false);
+  ComposeEnumProps(json, 'code', elem.Code, CODES_TFhirTypeRestfulInteraction, false);
   ComposeStringValue(json, 'documentation', elem.documentation, false);
   ComposeStringProps(json, 'documentation', elem.documentation, false);
   json.finishObject;
@@ -8469,6 +8602,78 @@ begin
   json.finishObject;
 end;
 
+function TFHIRXmlParser.ParseConformanceRestInteraction(element : IXmlDomElement; path : string) : TFhirConformanceRestInteraction;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirConformanceRestInteraction.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'code') then
+        result.code := ParseEnum(CODES_TFhirSystemRestfulInteraction, path+'/code', child)
+      else if (child.baseName = 'documentation') then
+        result.documentation := ParseString(child, path+'/documentation') {b}
+      else if Not ParseBackboneElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeConformanceRestInteraction(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestInteraction);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeBackboneElementChildren(xml, elem);
+  ComposeEnum(xml, 'code', elem.Code, CODES_TFhirSystemRestfulInteraction);
+  ComposeString(xml, 'documentation', elem.documentation);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseConformanceRestInteraction(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseConformanceRestInteraction(jsn));
+end;
+
+function TFHIRJsonParser.ParseConformanceRestInteraction(jsn : TJsonObject) : TFhirConformanceRestInteraction;
+begin
+  result := TFhirConformanceRestInteraction.create;
+  try
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('code') or jsn.has('_code')  then
+      result.code := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirSystemRestfulInteraction);
+    if jsn.has('documentation') or jsn.has('_documentation') then
+        result.documentation := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeConformanceRestInteraction(json : TJSONWriter; name : string; elem : TFhirConformanceRestInteraction);
+begin
+  if (elem = nil) then
+    exit;
+  json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeEnumValue(json, 'code', elem.Code, CODES_TFhirSystemRestfulInteraction, false);
+  ComposeEnumProps(json, 'code', elem.Code, CODES_TFhirSystemRestfulInteraction, false);
+  ComposeStringValue(json, 'documentation', elem.documentation, false);
+  ComposeStringProps(json, 'documentation', elem.documentation, false);
+  json.finishObject;
+end;
+
 function TFHIRXmlParser.ParseConformanceRestOperation(element : IXmlDomElement; path : string) : TFhirConformanceRestOperation;
 var
   child : IXMLDOMElement;
@@ -8479,10 +8684,10 @@ begin
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if (child.baseName = 'code') then
-        result.code := ParseEnum(CODES_TFhirSystemRestfulOperation, path+'/code', child)
-      else if (child.baseName = 'documentation') then
-        result.documentation := ParseString(child, path+'/documentation') {b}
+      if (child.baseName = 'name') then
+        result.name := ParseString(child, path+'/name') {b}
+      else if (child.baseName = 'definition') then
+        result.definition := ParseResourceReference{TFhirOperationDefinition}(child, path+'/definition') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -8502,8 +8707,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'code', elem.Code, CODES_TFhirSystemRestfulOperation);
-  ComposeString(xml, 'documentation', elem.documentation);
+  ComposeString(xml, 'name', elem.name);
+  ComposeResourceReference{TFhirOperationDefinition}(xml, 'definition', elem.definition);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -8518,10 +8723,10 @@ begin
   result := TFhirConformanceRestOperation.create;
   try
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('code') or jsn.has('_code')  then
-      result.code := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirSystemRestfulOperation);
-    if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentation := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+    if jsn.has('name') or jsn.has('_name') then
+        result.name := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('definition') then
+        result.definition := ParseResourceReference{TFhirOperationDefinition}(jsn.vObj['definition']);{q}
     result.link;
   finally
     result.free;
@@ -8534,106 +8739,9 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'code', elem.Code, CODES_TFhirSystemRestfulOperation, false);
-  ComposeEnumProps(json, 'code', elem.Code, CODES_TFhirSystemRestfulOperation, false);
-  ComposeStringValue(json, 'documentation', elem.documentation, false);
-  ComposeStringProps(json, 'documentation', elem.documentation, false);
-  json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseConformanceRestQuery(element : IXmlDomElement; path : string) : TFhirConformanceRestQuery;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirConformanceRestQuery.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'name') then
-        result.name := ParseString(child, path+'/name') {b}
-      else if (child.baseName = 'definition') then
-        result.definition := ParseUri(child, path+'/definition') {b}
-      else if (child.baseName = 'documentation') then
-        result.documentation := ParseString(child, path+'/documentation') {b}
-      else if (child.baseName = 'parameter') then
-        result.parameterList.Add(ParseConformanceRestResourceSearchParam(child, path+'/parameter'))
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeConformanceRestQuery(xml : TXmlBuilder; name : string; elem : TFhirConformanceRestQuery);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.name);
-  ComposeUri(xml, 'definition', elem.definition);
-  ComposeString(xml, 'documentation', elem.documentation);
-  for i := 0 to elem.parameterList.Count - 1 do
-    ComposeConformanceRestResourceSearchParam(xml, 'parameter', elem.parameterList[i]);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseConformanceRestQuery(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseConformanceRestQuery(jsn));
-end;
-
-function TFHIRJsonParser.ParseConformanceRestQuery(jsn : TJsonObject) : TFhirConformanceRestQuery;
-begin
-  result := TFhirConformanceRestQuery.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('name') or jsn.has('_name') then
-        result.name := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('definition') or jsn.has('_definition') then
-        result.definition := ParseUri(jsn['definition'], jsn.vObj['_definition']);{q}
-    if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentation := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
-    if jsn.has('parameter') then
-      iterateArray(jsn.vArr['parameter'], result.parameterList, parseConformanceRestResourceSearchParam);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeConformanceRestQuery(json : TJSONWriter; name : string; elem : TFhirConformanceRestQuery);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.name, false);
   ComposeStringProps(json, 'name', elem.name, false);
-  ComposeUriValue(json, 'definition', elem.definition, false);
-  ComposeUriProps(json, 'definition', elem.definition, false);
-  ComposeStringValue(json, 'documentation', elem.documentation, false);
-  ComposeStringProps(json, 'documentation', elem.documentation, false);
-  if elem.parameterList.Count > 0 then
-  begin
-    json.valueArray('parameter');
-    for i := 0 to elem.parameterList.Count - 1 do
-      ComposeConformanceRestResourceSearchParam(json, '',elem.parameterList[i]); {z - @Conformance.rest.resource.searchParam}
-    json.FinishArray;
-  end;
+  ComposeResourceReference{TFhirOperationDefinition}(json, 'definition', elem.definition); {a}
   json.finishObject;
 end;
 
@@ -9169,6 +9277,228 @@ begin
   end;
 end;
 
+function TFHIRXmlParser.ParseContraindicationMitigation(element : IXmlDomElement; path : string) : TFhirContraindicationMitigation;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirContraindicationMitigation.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'action') then
+        result.action := ParseCodeableConcept(child, path+'/action') {b}
+      else if (child.baseName = 'date') then
+        result.date := ParseDateTime(child, path+'/date') {b}
+      else if (child.baseName = 'author') then
+        result.author := ParseResourceReference{TFhirPractitioner}(child, path+'/author') {b}
+      else if Not ParseBackboneElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeContraindicationMitigation(xml : TXmlBuilder; name : string; elem : TFhirContraindicationMitigation);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'action', elem.action);
+  ComposeDateTime(xml, 'date', elem.date);
+  ComposeResourceReference{TFhirPractitioner}(xml, 'author', elem.author);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseContraindicationMitigation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseContraindicationMitigation(jsn));
+end;
+
+function TFHIRJsonParser.ParseContraindicationMitigation(jsn : TJsonObject) : TFhirContraindicationMitigation;
+begin
+  result := TFhirContraindicationMitigation.create;
+  try
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('action') then
+        result.action := ParseCodeableConcept(jsn.vObj['action']);{q}
+    if jsn.has('date') or jsn.has('_date') then
+        result.date := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+    if jsn.has('author') then
+        result.author := ParseResourceReference{TFhirPractitioner}(jsn.vObj['author']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeContraindicationMitigation(json : TJSONWriter; name : string; elem : TFhirContraindicationMitigation);
+begin
+  if (elem = nil) then
+    exit;
+  json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'action', elem.action); {a}
+  ComposeDateTimeValue(json, 'date', elem.date, false);
+  ComposeDateTimeProps(json, 'date', elem.date, false);
+  ComposeResourceReference{TFhirPractitioner}(json, 'author', elem.author); {a}
+  json.finishObject;
+end;
+
+function TFHIRXmlParser.ParseContraindication(element : IXmlDomElement; path : string) : TFhirContraindication;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirContraindication.create;
+  try
+    parseResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'patient') then
+        result.patient := ParseResourceReference{TFhirPatient}(child, path+'/patient') {b}
+      else if (child.baseName = 'category') then
+        result.category := ParseCodeableConcept(child, path+'/category') {b}
+      else if (child.baseName = 'severity') then
+        result.severity := ParseCode(child, path+'/severity') {b}
+      else if (child.baseName = 'implicated') then
+        result.implicatedList.Add(ParseResourceReference{Resource}(child, path+'/implicated'))
+      else if (child.baseName = 'detail') then
+        result.detail := ParseString(child, path+'/detail') {b}
+      else if (child.baseName = 'date') then
+        result.date := ParseDateTime(child, path+'/date') {b}
+      else if (child.baseName = 'author') then
+        result.author := ParseResourceReference{Resource}(child, path+'/author') {b}
+      else if (child.baseName = 'identifier') then
+        result.identifier := ParseIdentifier(child, path+'/identifier') {b}
+      else if (child.baseName = 'reference') then
+        result.reference := ParseUri(child, path+'/reference') {b}
+      else if (child.baseName = 'mitigation') then
+        result.mitigationList.Add(ParseContraindicationMitigation(child, path+'/mitigation'))
+      else if Not ParseResourceChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeContraindication(xml : TXmlBuilder; name : string; elem : TFhirContraindication);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  composeResourceAttributes(xml, elem);
+  xml.open(name);
+  composeResourceChildren(xml, elem);
+  ComposeResourceReference{TFhirPatient}(xml, 'patient', elem.patient);
+  ComposeCodeableConcept(xml, 'category', elem.category);
+  ComposeCode(xml, 'severity', elem.severity);
+  for i := 0 to elem.implicatedList.Count - 1 do
+    ComposeResourceReference{Resource}(xml, 'implicated', elem.implicatedList[i]);
+  if not SummaryOnly then
+    ComposeString(xml, 'detail', elem.detail);
+  ComposeDateTime(xml, 'date', elem.date);
+  ComposeResourceReference{Resource}(xml, 'author', elem.author);
+  ComposeIdentifier(xml, 'identifier', elem.identifier);
+  if not SummaryOnly then
+    ComposeUri(xml, 'reference', elem.reference);
+  if not SummaryOnly then
+    for i := 0 to elem.mitigationList.Count - 1 do
+      ComposeContraindicationMitigation(xml, 'mitigation', elem.mitigationList[i]);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseContraindication(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseContraindication(jsn));
+end;
+
+function TFHIRJsonParser.ParseContraindication(jsn : TJsonObject) : TFhirContraindication;
+begin
+  result := TFhirContraindication.create;
+  try
+    ParseResourceProperties(jsn, result);
+    if jsn.has('patient') then
+        result.patient := ParseResourceReference{TFhirPatient}(jsn.vObj['patient']);{q}
+    if jsn.has('category') then
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+    if jsn.has('severity') or jsn.has('_severity') then
+        result.severity := ParseCode(jsn['severity'], jsn.vObj['_severity']);{q}
+    if jsn.has('implicated') then
+      iterateArray(jsn.vArr['implicated'], result.implicatedList, parseResourceReference{Resource});
+    if jsn.has('detail') or jsn.has('_detail') then
+        result.detail := ParseString(jsn['detail'], jsn.vObj['_detail']);{q}
+    if jsn.has('date') or jsn.has('_date') then
+        result.date := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+    if jsn.has('author') then
+        result.author := ParseResourceReference{Resource}(jsn.vObj['author']);{q}
+    if jsn.has('identifier') then
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+    if jsn.has('reference') or jsn.has('_reference') then
+        result.reference := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
+    if jsn.has('mitigation') then
+      iterateArray(jsn.vArr['mitigation'], result.mitigationList, parseContraindicationMitigation);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeContraindication(json : TJSONWriter; name : string; elem : TFhirContraindication);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeResourceProperties(json, elem);
+  ComposeResourceReference{TFhirPatient}(json, 'patient', elem.patient); {a}
+  ComposeCodeableConcept(json, 'category', elem.category); {a}
+  ComposeCodeValue(json, 'severity', elem.severity, false);
+  ComposeCodeProps(json, 'severity', elem.severity, false);
+  if elem.implicatedList.Count > 0 then
+  begin
+    json.valueArray('implicated');
+    for i := 0 to elem.implicatedList.Count - 1 do
+      ComposeResourceReference{Resource}(json, '',elem.implicatedList[i]); {z - Resource(Any)}
+    json.FinishArray;
+  end;
+  if not SummaryOnly then
+    ComposeStringValue(json, 'detail', elem.detail, false);
+  if not SummaryOnly then
+    ComposeStringProps(json, 'detail', elem.detail, false);
+  ComposeDateTimeValue(json, 'date', elem.date, false);
+  ComposeDateTimeProps(json, 'date', elem.date, false);
+  ComposeResourceReference{Resource}(json, 'author', elem.author); {a}
+  ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  if not SummaryOnly then
+    ComposeUriValue(json, 'reference', elem.reference, false);
+  if not SummaryOnly then
+    ComposeUriProps(json, 'reference', elem.reference, false);
+  if not SummaryOnly and (elem.mitigationList.Count > 0) then
+  begin
+    json.valueArray('mitigation');
+    for i := 0 to elem.mitigationList.Count - 1 do
+      ComposeContraindicationMitigation(json, '',elem.mitigationList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
 function TFHIRXmlParser.ParseDataElementBinding(element : IXmlDomElement; path : string) : TFhirDataElementBinding;
 var
   child : IXMLDOMElement;
@@ -9396,6 +9726,8 @@ begin
         result.example := ParseId(child, path+'.exampleId') {c}
       else if (child.baseName = 'exampleBase64Binary') then
         result.example := ParseBase64Binary(child, path+'.exampleBase64Binary') {c}
+      else if (child.baseName = 'exampleTime') then
+        result.example := ParseTime(child, path+'.exampleTime') {c}
       else if (child.baseName = 'exampleOid') then
         result.example := ParseOid(child, path+'.exampleOid') {c}
       else if (child.baseName = 'exampleString') then
@@ -9503,6 +9835,8 @@ begin
     ComposeId(xml, 'exampleId', TFhirId(elem.example))
   else if Not SummaryOnly and (elem.example is TFhirBase64Binary) {1} then
     ComposeBase64Binary(xml, 'exampleBase64Binary', TFhirBase64Binary(elem.example))
+  else if Not SummaryOnly and (elem.example is TFhirTime) {1} then
+    ComposeTime(xml, 'exampleTime', TFhirTime(elem.example))
   else if Not SummaryOnly and (elem.example is TFhirOid) {1} then
     ComposeOid(xml, 'exampleOid', TFhirOid(elem.example))
   else if Not SummaryOnly and (elem.example is TFhirString) {1} then
@@ -9610,6 +9944,8 @@ begin
         result.example := ParseId(jsn['exampleId'], jsn.vObj['_exampleId']);
     if jsn.has('exampleBase64Binary') or jsn.has('_exampleBase64Binary') then
         result.example := ParseBase64Binary(jsn['exampleBase64Binary'], jsn.vObj['_exampleBase64Binary']);
+    if jsn.has('exampleTime') or jsn.has('_exampleTime') then
+        result.example := ParseTime(jsn['exampleTime'], jsn.vObj['_exampleTime']);
     if jsn.has('exampleOid') or jsn.has('_exampleOid') then
         result.example := ParseOid(jsn['exampleOid'], jsn.vObj['_exampleOid']);
     if jsn.has('exampleString') or jsn.has('_exampleString') then
@@ -9777,6 +10113,11 @@ begin
   begin
     ComposeBase64BinaryValue(json, 'exampleBase64Binary', TFhirBase64Binary(elem.example), false);
     ComposeBase64BinaryProps(json, 'exampleBase64Binary', TFhirBase64Binary(elem.example), false)
+  end
+  else if Not SummaryOnly and (elem.example is TFhirTime) then
+  begin
+    ComposeTimeValue(json, 'exampleTime', TFhirTime(elem.example), false);
+    ComposeTimeProps(json, 'exampleTime', TFhirTime(elem.example), false)
   end
   else if Not SummaryOnly and (elem.example is TFhirOid) then
     begin
@@ -10542,6 +10883,8 @@ begin
         result.encounter := ParseResourceReference{TFhirEncounter}(child, path+'/encounter') {b}
       else if (child.baseName = 'clinicalNotes') then
         result.clinicalNotes := ParseString(child, path+'/clinicalNotes') {b}
+      else if (child.baseName = 'supportingInformation') then
+        result.supportingInformationList.Add(ParseResourceReference{Resource}(child, path+'/supportingInformation'))
       else if (child.baseName = 'specimen') then
         result.specimenList.Add(ParseResourceReference{TFhirSpecimen}(child, path+'/specimen'))
       else if (child.baseName = 'status') then
@@ -10579,6 +10922,8 @@ begin
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeResourceReference{TFhirEncounter}(xml, 'encounter', elem.encounter);
   ComposeString(xml, 'clinicalNotes', elem.clinicalNotes);
+  for i := 0 to elem.supportingInformationList.Count - 1 do
+    ComposeResourceReference{Resource}(xml, 'supportingInformation', elem.supportingInformationList[i]);
   for i := 0 to elem.specimenList.Count - 1 do
     ComposeResourceReference{TFhirSpecimen}(xml, 'specimen', elem.specimenList[i]);
   ComposeEnum(xml, 'status', elem.Status, CODES_TFhirDiagnosticOrderStatus);
@@ -10611,6 +10956,8 @@ begin
         result.encounter := ParseResourceReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
     if jsn.has('clinicalNotes') or jsn.has('_clinicalNotes') then
         result.clinicalNotes := ParseString(jsn['clinicalNotes'], jsn.vObj['_clinicalNotes']);{q}
+    if jsn.has('supportingInformation') then
+      iterateArray(jsn.vArr['supportingInformation'], result.supportingInformationList, parseResourceReference{Resource});
     if jsn.has('specimen') then
       iterateArray(jsn.vArr['specimen'], result.specimenList, parseResourceReference{TFhirSpecimen});
     if jsn.has('status') or jsn.has('_status')  then
@@ -10646,6 +10993,13 @@ begin
   ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
   ComposeStringValue(json, 'clinicalNotes', elem.clinicalNotes, false);
   ComposeStringProps(json, 'clinicalNotes', elem.clinicalNotes, false);
+  if elem.supportingInformationList.Count > 0 then
+  begin
+    json.valueArray('supportingInformation');
+    for i := 0 to elem.supportingInformationList.Count - 1 do
+      ComposeResourceReference{Resource}(json, '',elem.supportingInformationList[i]); {z - Resource(Observation|Condition)}
+    json.FinishArray;
+  end;
   if elem.specimenList.Count > 0 then
   begin
     json.valueArray('specimen');
@@ -12330,6 +12684,12 @@ begin
         result.born := ParseDate(child, path+'/bornDate')
       else if (child.baseName = 'bornString') then
         result.born := ParseString(child, path+'/bornString')
+      else if (child.baseName = 'ageAge') then
+        result.age := ParseAge(child, path+'/ageAge')
+      else if (child.baseName = 'ageRange') then
+        result.age := ParseRange(child, path+'/ageRange')
+      else if (child.baseName = 'ageString') then
+        result.age := ParseString(child, path+'/ageString')
       else if (child.baseName = 'deceasedBoolean') then
         result.deceased := ParseBoolean(child, path+'/deceasedBoolean')
       else if (child.baseName = 'deceasedAge') then
@@ -12373,6 +12733,12 @@ begin
     ComposeDate(xml, 'bornDate', TFhirDate(elem.born))
   else if (elem.born is TFhirString) {6} then
     ComposeString(xml, 'bornString', TFhirString(elem.born));
+  if (elem.age is TFhirQuantity) {6} then
+    ComposeAge(xml, 'ageAge', TFhirQuantity(elem.age))
+  else if (elem.age is TFhirRange) {6} then
+    ComposeRange(xml, 'ageRange', TFhirRange(elem.age))
+  else if (elem.age is TFhirString) {6} then
+    ComposeString(xml, 'ageString', TFhirString(elem.age));
   if (elem.deceased is TFhirBoolean) {6} then
     ComposeBoolean(xml, 'deceasedBoolean', TFhirBoolean(elem.deceased))
   else if (elem.deceased is TFhirQuantity) {6} then
@@ -12410,6 +12776,12 @@ begin
       result.born := parseDate(jsn['bornDate'], jsn.vObj['_bornDate']);
     if jsn.has('bornString') or jsn.has('_bornString') then
       result.born := parseString(jsn['bornString'], jsn.vObj['_bornString']);
+    if jsn.has('ageAge') {a4} then
+      result.age := ParseAge(jsn.vObj['ageAge']);
+    if jsn.has('ageRange') {a4} then
+      result.age := ParseRange(jsn.vObj['ageRange']);
+    if jsn.has('ageString') or jsn.has('_ageString') then
+      result.age := parseString(jsn['ageString'], jsn.vObj['_ageString']);
     if jsn.has('deceasedBoolean') or jsn.has('_deceasedBoolean') then
       result.deceased := parseBoolean(jsn['deceasedBoolean'], jsn.vObj['_deceasedBoolean']);
     if jsn.has('deceasedAge') {a4} then
@@ -12452,6 +12824,15 @@ begin
   begin
     ComposeStringValue(json, 'bornString', TFhirString(elem.born), false);
     ComposeStringProps(json, 'bornString', TFhirString(elem.born), false);
+  end;
+  if (elem.age is TFhirQuantity) then 
+    ComposeAge(json, 'ageAge', TFhirQuantity(elem.age)) 
+  else if (elem.age is TFhirRange) then 
+    ComposeRange(json, 'ageRange', TFhirRange(elem.age)) 
+  else if (elem.age is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'ageString', TFhirString(elem.age), false);
+    ComposeStringProps(json, 'ageString', TFhirString(elem.age), false);
   end;
   if (elem.deceased is TFhirBoolean) then 
   begin
@@ -14559,7 +14940,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifier := ParseIdentifier(child, path+'/identifier') {b}
+        result.identifierList.Add(ParseIdentifier(child, path+'/identifier'))
       else if (child.baseName = 'name') then
         result.name := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'description') then
@@ -14603,7 +14984,8 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeIdentifier(xml, 'identifier', elem.identifier);
+  for i := 0 to elem.identifierList.Count - 1 do
+    ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeString(xml, 'name', elem.name);
   ComposeString(xml, 'description', elem.description);
   ComposeCodeableConcept(xml, 'type', elem.type_);
@@ -14631,7 +15013,7 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('name') or jsn.has('_name') then
         result.name := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -14667,7 +15049,13 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  if elem.identifierList.Count > 0 then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
   ComposeStringValue(json, 'name', elem.name, false);
   ComposeStringProps(json, 'name', elem.name, false);
   ComposeStringValue(json, 'description', elem.description, false);
@@ -17652,6 +18040,8 @@ begin
         result.value := ParseSampledData(child, path+'/valueSampledData')
       else if (child.baseName = 'valueString') then
         result.value := ParseString(child, path+'/valueString')
+      else if (child.baseName = 'valueTime') then
+        result.value := ParseTime(child, path+'/valueTime')
       else if (child.baseName = 'interpretation') then
         result.interpretation := ParseCodeableConcept(child, path+'/interpretation') {b}
       else if (child.baseName = 'comments') then
@@ -17678,6 +18068,8 @@ begin
         result.specimen := ParseResourceReference{TFhirSpecimen}(child, path+'/specimen') {b}
       else if (child.baseName = 'performer') then
         result.performerList.Add(ParseResourceReference{Resource}(child, path+'/performer'))
+      else if (child.baseName = 'encounter') then
+        result.encounter := ParseResourceReference{TFhirEncounter}(child, path+'/encounter') {b}
       else if (child.baseName = 'referenceRange') then
         result.referenceRangeList.Add(ParseObservationReferenceRange(child, path+'/referenceRange'))
       else if (child.baseName = 'related') then
@@ -17719,7 +18111,9 @@ begin
   else if (elem.value is TFhirSampledData) {6} then
     ComposeSampledData(xml, 'valueSampledData', TFhirSampledData(elem.value))
   else if (elem.value is TFhirString) {6} then
-    ComposeString(xml, 'valueString', TFhirString(elem.value));
+    ComposeString(xml, 'valueString', TFhirString(elem.value))
+  else if (elem.value is TFhirTime) {6} then
+    ComposeTime(xml, 'valueTime', TFhirTime(elem.value));
   ComposeCodeableConcept(xml, 'interpretation', elem.interpretation);
   ComposeString(xml, 'comments', elem.comments);
   if (elem.applies is TFhirDateTime) {6} then
@@ -17736,6 +18130,7 @@ begin
   ComposeResourceReference{TFhirSpecimen}(xml, 'specimen', elem.specimen);
   for i := 0 to elem.performerList.Count - 1 do
     ComposeResourceReference{Resource}(xml, 'performer', elem.performerList[i]);
+  ComposeResourceReference{TFhirEncounter}(xml, 'encounter', elem.encounter);
   for i := 0 to elem.referenceRangeList.Count - 1 do
     ComposeObservationReferenceRange(xml, 'referenceRange', elem.referenceRangeList[i]);
   for i := 0 to elem.relatedList.Count - 1 do
@@ -17772,6 +18167,8 @@ begin
       result.value := ParseSampledData(jsn.vObj['valueSampledData']);
     if jsn.has('valueString') or jsn.has('_valueString') then
       result.value := parseString(jsn['valueString'], jsn.vObj['_valueString']);
+    if jsn.has('valueTime') or jsn.has('_valueTime') then
+      result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('interpretation') then
         result.interpretation := ParseCodeableConcept(jsn.vObj['interpretation']);{q}
     if jsn.has('comments') or jsn.has('_comments') then
@@ -17798,6 +18195,8 @@ begin
         result.specimen := ParseResourceReference{TFhirSpecimen}(jsn.vObj['specimen']);{q}
     if jsn.has('performer') then
       iterateArray(jsn.vArr['performer'], result.performerList, parseResourceReference{Resource});
+    if jsn.has('encounter') then
+        result.encounter := ParseResourceReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
     if jsn.has('referenceRange') then
       iterateArray(jsn.vArr['referenceRange'], result.referenceRangeList, parseObservationReferenceRange);
     if jsn.has('related') then
@@ -17837,6 +18236,11 @@ begin
   begin
     ComposeStringValue(json, 'valueString', TFhirString(elem.value), false);
     ComposeStringProps(json, 'valueString', TFhirString(elem.value), false);
+  end
+  else if (elem.value is TFhirTime) then
+  begin
+    ComposeTimeValue(json, 'valueTime', TFhirTime(elem.value), false);
+    ComposeTimeProps(json, 'valueTime', TFhirTime(elem.value), false);
   end;
   ComposeCodeableConcept(json, 'interpretation', elem.interpretation); {a}
   ComposeStringValue(json, 'comments', elem.comments, false);
@@ -17866,6 +18270,7 @@ begin
       ComposeResourceReference{Resource}(json, '',elem.performerList[i]); {z - Resource(Practitioner|Device|Organization|Patient)}
     json.FinishArray;
   end;
+  ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
   if elem.referenceRangeList.Count > 0 then
   begin
     json.valueArray('referenceRange');
@@ -17878,6 +18283,332 @@ begin
     json.valueArray('related');
     for i := 0 to elem.relatedList.Count - 1 do
       ComposeObservationRelated(json, '',elem.relatedList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
+function TFHIRXmlParser.ParseOperationDefinitionParameter(element : IXmlDomElement; path : string) : TFhirOperationDefinitionParameter;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirOperationDefinitionParameter.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'name') then
+        result.name := ParseCode(child, path+'/name') {b}
+      else if (child.baseName = 'use') then
+        result.use := ParseEnum(CODES_TFhirOperationParameterUse, path+'/use', child)
+      else if (child.baseName = 'min') then
+        result.min := ParseInteger(child, path+'/min') {b}
+      else if (child.baseName = 'max') then
+        result.max := ParseString(child, path+'/max') {b}
+      else if (child.baseName = 'documentation') then
+        result.documentation := ParseString(child, path+'/documentation') {b}
+      else if (child.baseName = 'type') then
+        result.type_ := ParseCoding(child, path+'/type') {b}
+      else if (child.baseName = 'profile') then
+        result.profile := ParseResourceReference{TFhirProfile}(child, path+'/profile') {b}
+      else if Not ParseBackboneElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeOperationDefinitionParameter(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinitionParameter);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeBackboneElementChildren(xml, elem);
+  ComposeCode(xml, 'name', elem.name);
+  ComposeEnum(xml, 'use', elem.Use, CODES_TFhirOperationParameterUse);
+  ComposeInteger(xml, 'min', elem.min);
+  ComposeString(xml, 'max', elem.max);
+  ComposeString(xml, 'documentation', elem.documentation);
+  ComposeCoding(xml, 'type', elem.type_);
+  ComposeResourceReference{TFhirProfile}(xml, 'profile', elem.profile);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseOperationDefinitionParameter(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseOperationDefinitionParameter(jsn));
+end;
+
+function TFHIRJsonParser.ParseOperationDefinitionParameter(jsn : TJsonObject) : TFhirOperationDefinitionParameter;
+begin
+  result := TFhirOperationDefinitionParameter.create;
+  try
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('name') or jsn.has('_name') then
+        result.name := ParseCode(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('use') or jsn.has('_use')  then
+      result.use := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUse);
+    if jsn.has('min') or jsn.has('_min') then
+        result.min := ParseInteger(jsn['min'], jsn.vObj['_min']);{q}
+    if jsn.has('max') or jsn.has('_max') then
+        result.max := ParseString(jsn['max'], jsn.vObj['_max']);{q}
+    if jsn.has('documentation') or jsn.has('_documentation') then
+        result.documentation := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+    if jsn.has('type') then
+        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+    if jsn.has('profile') then
+        result.profile := ParseResourceReference{TFhirProfile}(jsn.vObj['profile']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeOperationDefinitionParameter(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameter);
+begin
+  if (elem = nil) then
+    exit;
+  json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeValue(json, 'name', elem.name, false);
+  ComposeCodeProps(json, 'name', elem.name, false);
+  ComposeEnumValue(json, 'use', elem.Use, CODES_TFhirOperationParameterUse, false);
+  ComposeEnumProps(json, 'use', elem.Use, CODES_TFhirOperationParameterUse, false);
+  ComposeIntegerValue(json, 'min', elem.min, false);
+  ComposeIntegerProps(json, 'min', elem.min, false);
+  ComposeStringValue(json, 'max', elem.max, false);
+  ComposeStringProps(json, 'max', elem.max, false);
+  ComposeStringValue(json, 'documentation', elem.documentation, false);
+  ComposeStringProps(json, 'documentation', elem.documentation, false);
+  ComposeCoding(json, 'type', elem.type_); {a}
+  ComposeResourceReference{TFhirProfile}(json, 'profile', elem.profile); {a}
+  json.finishObject;
+end;
+
+function TFHIRXmlParser.ParseOperationDefinition(element : IXmlDomElement; path : string) : TFhirOperationDefinition;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirOperationDefinition.create;
+  try
+    parseResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'identifier') then
+        result.identifier := ParseUri(child, path+'/identifier') {b}
+      else if (child.baseName = 'version') then
+        result.version := ParseString(child, path+'/version') {b}
+      else if (child.baseName = 'title') then
+        result.title := ParseString(child, path+'/title') {b}
+      else if (child.baseName = 'publisher') then
+        result.publisher := ParseString(child, path+'/publisher') {b}
+      else if (child.baseName = 'telecom') then
+        result.telecomList.Add(ParseContact(child, path+'/telecom'))
+      else if (child.baseName = 'description') then
+        result.description := ParseString(child, path+'/description') {b}
+      else if (child.baseName = 'code') then
+        result.codeList.Add(ParseCoding(child, path+'/code'))
+      else if (child.baseName = 'status') then
+        result.status := ParseEnum(CODES_TFhirResourceProfileStatus, path+'/status', child)
+      else if (child.baseName = 'experimental') then
+        result.experimental := ParseBoolean(child, path+'/experimental') {b}
+      else if (child.baseName = 'date') then
+        result.date := ParseDateTime(child, path+'/date') {b}
+      else if (child.baseName = 'kind') then
+        result.kind := ParseEnum(CODES_TFhirOperationKind, path+'/kind', child)
+      else if (child.baseName = 'name') then
+        result.name := ParseCode(child, path+'/name') {b}
+      else if (child.baseName = 'notes') then
+        result.notes := ParseString(child, path+'/notes') {b}
+      else if (child.baseName = 'base') then
+        result.base := ParseResourceReference{TFhirOperationDefinition}(child, path+'/base') {b}
+      else if (child.baseName = 'system') then
+        result.system := ParseBoolean(child, path+'/system') {b}
+      else if (child.baseName = 'type') then
+        result.type_List.Add(ParseCode(child, path+'/type'))
+      else if (child.baseName = 'instance') then
+        result.instance := ParseBoolean(child, path+'/instance') {b}
+      else if (child.baseName = 'parameter') then
+        result.parameterList.Add(ParseOperationDefinitionParameter(child, path+'/parameter'))
+      else if Not ParseResourceChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeOperationDefinition(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinition);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  composeResourceAttributes(xml, elem);
+  xml.open(name);
+  composeResourceChildren(xml, elem);
+  ComposeUri(xml, 'identifier', elem.identifier);
+  ComposeString(xml, 'version', elem.version);
+  ComposeString(xml, 'title', elem.title);
+  ComposeString(xml, 'publisher', elem.publisher);
+  for i := 0 to elem.telecomList.Count - 1 do
+    ComposeContact(xml, 'telecom', elem.telecomList[i]);
+  ComposeString(xml, 'description', elem.description);
+  for i := 0 to elem.codeList.Count - 1 do
+    ComposeCoding(xml, 'code', elem.codeList[i]);
+  ComposeEnum(xml, 'status', elem.Status, CODES_TFhirResourceProfileStatus);
+  ComposeBoolean(xml, 'experimental', elem.experimental);
+  ComposeDateTime(xml, 'date', elem.date);
+  ComposeEnum(xml, 'kind', elem.Kind, CODES_TFhirOperationKind);
+  ComposeCode(xml, 'name', elem.name);
+  ComposeString(xml, 'notes', elem.notes);
+  ComposeResourceReference{TFhirOperationDefinition}(xml, 'base', elem.base);
+  ComposeBoolean(xml, 'system', elem.system);
+  for i := 0 to elem.type_List.Count - 1 do
+    ComposeCode(xml, 'type', elem.type_List[i]);
+  ComposeBoolean(xml, 'instance', elem.instance);
+  for i := 0 to elem.parameterList.Count - 1 do
+    ComposeOperationDefinitionParameter(xml, 'parameter', elem.parameterList[i]);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseOperationDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseOperationDefinition(jsn));
+end;
+
+function TFHIRJsonParser.ParseOperationDefinition(jsn : TJsonObject) : TFhirOperationDefinition;
+begin
+  result := TFhirOperationDefinition.create;
+  try
+    ParseResourceProperties(jsn, result);
+    if jsn.has('identifier') or jsn.has('_identifier') then
+        result.identifier := ParseUri(jsn['identifier'], jsn.vObj['_identifier']);{q}
+    if jsn.has('version') or jsn.has('_version') then
+        result.version := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+    if jsn.has('title') or jsn.has('_title') then
+        result.title := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+    if jsn.has('publisher') or jsn.has('_publisher') then
+        result.publisher := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+    if jsn.has('telecom') then
+      iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
+    if jsn.has('description') or jsn.has('_description') then
+        result.description := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('code') then
+      iterateArray(jsn.vArr['code'], result.codeList, parseCoding);
+    if jsn.has('status') or jsn.has('_status')  then
+      result.status := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirResourceProfileStatus);
+    if jsn.has('experimental') or jsn.has('_experimental') then
+        result.experimental := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+    if jsn.has('date') or jsn.has('_date') then
+        result.date := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+    if jsn.has('kind') or jsn.has('_kind')  then
+      result.kind := parseEnum(jsn['kind'], jsn.vObj['_kind'], CODES_TFhirOperationKind);
+    if jsn.has('name') or jsn.has('_name') then
+        result.name := ParseCode(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('notes') or jsn.has('_notes') then
+        result.notes := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+    if jsn.has('base') then
+        result.base := ParseResourceReference{TFhirOperationDefinition}(jsn.vObj['base']);{q}
+    if jsn.has('system') or jsn.has('_system') then
+        result.system := ParseBoolean(jsn['system'], jsn.vObj['_system']);{q}
+      if jsn.has('type') or jsn.has('_type') then
+      iteratePrimitiveArray(jsn.vArr['type'], jsn.vArr['_type'], result.type_List, parseCode);
+    if jsn.has('instance') or jsn.has('_instance') then
+        result.instance := ParseBoolean(jsn['instance'], jsn.vObj['_instance']);{q}
+    if jsn.has('parameter') then
+      iterateArray(jsn.vArr['parameter'], result.parameterList, parseOperationDefinitionParameter);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeOperationDefinition(json : TJSONWriter; name : string; elem : TFhirOperationDefinition);
+var
+  i : integer;
+  ext : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeResourceProperties(json, elem);
+  ComposeUriValue(json, 'identifier', elem.identifier, false);
+  ComposeUriProps(json, 'identifier', elem.identifier, false);
+  ComposeStringValue(json, 'version', elem.version, false);
+  ComposeStringProps(json, 'version', elem.version, false);
+  ComposeStringValue(json, 'title', elem.title, false);
+  ComposeStringProps(json, 'title', elem.title, false);
+  ComposeStringValue(json, 'publisher', elem.publisher, false);
+  ComposeStringProps(json, 'publisher', elem.publisher, false);
+  if elem.telecomList.Count > 0 then
+  begin
+    json.valueArray('telecom');
+    for i := 0 to elem.telecomList.Count - 1 do
+      ComposeContact(json, '',elem.telecomList[i]); {z - Contact}
+    json.FinishArray;
+  end;
+  ComposeStringValue(json, 'description', elem.description, false);
+  ComposeStringProps(json, 'description', elem.description, false);
+  if elem.codeList.Count > 0 then
+  begin
+    json.valueArray('code');
+    for i := 0 to elem.codeList.Count - 1 do
+      ComposeCoding(json, '',elem.codeList[i]); {z - Coding}
+    json.FinishArray;
+  end;
+  ComposeEnumValue(json, 'status', elem.Status, CODES_TFhirResourceProfileStatus, false);
+  ComposeEnumProps(json, 'status', elem.Status, CODES_TFhirResourceProfileStatus, false);
+  ComposeBooleanValue(json, 'experimental', elem.experimental, false);
+  ComposeBooleanProps(json, 'experimental', elem.experimental, false);
+  ComposeDateTimeValue(json, 'date', elem.date, false);
+  ComposeDateTimeProps(json, 'date', elem.date, false);
+  ComposeEnumValue(json, 'kind', elem.Kind, CODES_TFhirOperationKind, false);
+  ComposeEnumProps(json, 'kind', elem.Kind, CODES_TFhirOperationKind, false);
+  ComposeCodeValue(json, 'name', elem.name, false);
+  ComposeCodeProps(json, 'name', elem.name, false);
+  ComposeStringValue(json, 'notes', elem.notes, false);
+  ComposeStringProps(json, 'notes', elem.notes, false);
+  ComposeResourceReference{TFhirOperationDefinition}(json, 'base', elem.base); {a}
+  ComposeBooleanValue(json, 'system', elem.system, false);
+  ComposeBooleanProps(json, 'system', elem.system, false);
+  if elem.type_List.Count > 0 then
+  begin
+    json.valueArray('type');
+    ext := false;
+    for i := 0 to elem.type_List.Count - 1 do
+    begin
+      ext := ext or ((elem.type_List[i].xmlid <> '') or (elem.type_List[i].hasExtensions));
+      ComposeCodeValue(json, '',elem.type_List[i], true);
+    end;
+    json.FinishArray;
+    if ext then
+    begin
+      json.valueArray('_type');
+      for i := 0 to elem.type_List.Count - 1 do
+        ComposeCodeProps(json, '',elem.type_List[i], true);
+      json.FinishArray;
+    end;
+  end;
+  ComposeBooleanValue(json, 'instance', elem.instance, false);
+  ComposeBooleanProps(json, 'instance', elem.instance, false);
+  if elem.parameterList.Count > 0 then
+  begin
+    json.valueArray('parameter');
+    for i := 0 to elem.parameterList.Count - 1 do
+      ComposeOperationDefinitionParameter(json, '',elem.parameterList[i]); {z - }
     json.FinishArray;
   end;
 end;
@@ -18425,7 +19156,7 @@ begin
       else if (child.baseName = 'address') then
         result.address := ParseAddress(child, path+'/address') {b}
       else if (child.baseName = 'gender') then
-        result.gender := ParseCodeableConcept(child, path+'/gender') {b}
+        result.gender := ParseEnum(CODES_TFhirAdministrativeGender, path+'/gender', child)
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -18452,7 +19183,7 @@ begin
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
   ComposeAddress(xml, 'address', elem.address);
-  ComposeCodeableConcept(xml, 'gender', elem.gender);
+  ComposeEnum(xml, 'gender', elem.Gender, CODES_TFhirAdministrativeGender);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -18475,8 +19206,8 @@ begin
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
     if jsn.has('address') then
         result.address := ParseAddress(jsn.vObj['address']);{q}
-    if jsn.has('gender') then
-        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q}
+    if jsn.has('gender') or jsn.has('_gender')  then
+      result.gender := parseEnum(jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGender);
     result.link;
   finally
     result.free;
@@ -18501,7 +19232,8 @@ begin
     json.FinishArray;
   end;
   ComposeAddress(json, 'address', elem.address); {a}
-  ComposeCodeableConcept(json, 'gender', elem.gender); {a}
+  ComposeEnumValue(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
+  ComposeEnumProps(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
   json.finishObject;
 end;
 
@@ -18773,7 +19505,7 @@ begin
       else if (child.baseName = 'address') then
         result.address := ParseAddress(child, path+'/address') {b}
       else if (child.baseName = 'gender') then
-        result.gender := ParseCodeableConcept(child, path+'/gender') {b}
+        result.gender := ParseEnum(CODES_TFhirAdministrativeGender, path+'/gender', child)
       else if (child.baseName = 'organization') then
         result.organization := ParseResourceReference{TFhirOrganization}(child, path+'/organization') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -18803,7 +19535,7 @@ begin
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
   ComposeAddress(xml, 'address', elem.address);
-  ComposeCodeableConcept(xml, 'gender', elem.gender);
+  ComposeEnum(xml, 'gender', elem.Gender, CODES_TFhirAdministrativeGender);
   ComposeResourceReference{TFhirOrganization}(xml, 'organization', elem.organization);
   closeOutElement(xml, elem);
   xml.close(name);
@@ -18827,8 +19559,8 @@ begin
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
     if jsn.has('address') then
         result.address := ParseAddress(jsn.vObj['address']);{q}
-    if jsn.has('gender') then
-        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q}
+    if jsn.has('gender') or jsn.has('_gender')  then
+      result.gender := parseEnum(jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGender);
     if jsn.has('organization') then
         result.organization := ParseResourceReference{TFhirOrganization}(jsn.vObj['organization']);{q}
     result.link;
@@ -18861,7 +19593,8 @@ begin
     json.FinishArray;
   end;
   ComposeAddress(json, 'address', elem.address); {a}
-  ComposeCodeableConcept(json, 'gender', elem.gender); {a}
+  ComposeEnumValue(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
+  ComposeEnumProps(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
   ComposeResourceReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
   json.finishObject;
 end;
@@ -19030,7 +19763,7 @@ begin
       else if (child.baseName = 'telecom') then
         result.telecomList.Add(ParseContact(child, path+'/telecom'))
       else if (child.baseName = 'gender') then
-        result.gender := ParseCodeableConcept(child, path+'/gender') {b}
+        result.gender := ParseEnum(CODES_TFhirAdministrativeGender, path+'/gender', child)
       else if (child.baseName = 'birthDate') then
         result.birthDate := ParseDateTime(child, path+'/birthDate') {b}
       else if (child.baseName = 'deceasedBoolean') then
@@ -19088,7 +19821,7 @@ begin
     ComposeHumanName(xml, 'name', elem.nameList[i]);
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
-  ComposeCodeableConcept(xml, 'gender', elem.gender);
+  ComposeEnum(xml, 'gender', elem.Gender, CODES_TFhirAdministrativeGender);
   ComposeDateTime(xml, 'birthDate', elem.birthDate);
   if (elem.deceased is TFhirBoolean) {6} then
     ComposeBoolean(xml, 'deceasedBoolean', TFhirBoolean(elem.deceased))
@@ -19138,8 +19871,8 @@ begin
       iterateArray(jsn.vArr['name'], result.nameList, parseHumanName);
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
-    if jsn.has('gender') then
-        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q}
+    if jsn.has('gender') or jsn.has('_gender')  then
+      result.gender := parseEnum(jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGender);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
         result.birthDate := ParseDateTime(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('deceasedBoolean') or jsn.has('_deceasedBoolean') then
@@ -19204,7 +19937,8 @@ begin
       ComposeContact(json, '',elem.telecomList[i]); {z - Contact}
     json.FinishArray;
   end;
-  ComposeCodeableConcept(json, 'gender', elem.gender); {a}
+  ComposeEnumValue(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
+  ComposeEnumProps(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
   ComposeDateTimeValue(json, 'birthDate', elem.birthDate, false);
   ComposeDateTimeProps(json, 'birthDate', elem.birthDate, false);
   if (elem.deceased is TFhirBoolean) then 
@@ -19286,7 +20020,9 @@ begin
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if (child.baseName = 'code') then
+      if (child.baseName = 'identifier') then
+        result.identifierList.Add(ParseIdentifier(child, path+'/identifier'))
+      else if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'period') then
         result.period := ParsePeriod(child, path+'/period') {b}
@@ -19305,12 +20041,16 @@ begin
 end;
 
 procedure TFHIRXmlComposer.ComposePractitionerQualification(xml : TXmlBuilder; name : string; elem : TFhirPractitionerQualification);
+var
+  i : integer;
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
+  for i := 0 to elem.identifierList.Count - 1 do
+    ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeCodeableConcept(xml, 'code', elem.code);
   ComposePeriod(xml, 'period', elem.period);
   ComposeResourceReference{TFhirOrganization}(xml, 'issuer', elem.issuer);
@@ -19328,6 +20068,8 @@ begin
   result := TFhirPractitionerQualification.create;
   try
     ParseBackboneElementProperties(jsn, result);
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('period') then
@@ -19341,11 +20083,20 @@ begin
 end;
 
 procedure TFHIRJsonComposer.ComposePractitionerQualification(json : TJSONWriter; name : string; elem : TFhirPractitionerQualification);
+var
+  i : integer;
 begin
   if (elem = nil) then
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
+  if elem.identifierList.Count > 0 then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   ComposePeriod(json, 'period', elem.period); {a}
   ComposeResourceReference{TFhirOrganization}(json, 'issuer', elem.issuer); {a}
@@ -19369,9 +20120,9 @@ begin
       else if (child.baseName = 'telecom') then
         result.telecomList.Add(ParseContact(child, path+'/telecom'))
       else if (child.baseName = 'address') then
-        result.address := ParseAddress(child, path+'/address') {b}
+        result.addressList.Add(ParseAddress(child, path+'/address'))
       else if (child.baseName = 'gender') then
-        result.gender := ParseCodeableConcept(child, path+'/gender') {b}
+        result.gender := ParseEnum(CODES_TFhirAdministrativeGender, path+'/gender', child)
       else if (child.baseName = 'birthDate') then
         result.birthDate := ParseDateTime(child, path+'/birthDate') {b}
       else if (child.baseName = 'photo') then
@@ -19416,8 +20167,9 @@ begin
   ComposeHumanName(xml, 'name', elem.name);
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
-  ComposeAddress(xml, 'address', elem.address);
-  ComposeCodeableConcept(xml, 'gender', elem.gender);
+  for i := 0 to elem.addressList.Count - 1 do
+    ComposeAddress(xml, 'address', elem.addressList[i]);
+  ComposeEnum(xml, 'gender', elem.Gender, CODES_TFhirAdministrativeGender);
   ComposeDateTime(xml, 'birthDate', elem.birthDate);
   if not SummaryOnly then
     for i := 0 to elem.photoList.Count - 1 do
@@ -19458,9 +20210,9 @@ begin
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
     if jsn.has('address') then
-        result.address := ParseAddress(jsn.vObj['address']);{q}
-    if jsn.has('gender') then
-        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q}
+      iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
+    if jsn.has('gender') or jsn.has('_gender')  then
+      result.gender := parseEnum(jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGender);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
         result.birthDate := ParseDateTime(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('photo') then
@@ -19507,8 +20259,15 @@ begin
       ComposeContact(json, '',elem.telecomList[i]); {z - Contact}
     json.FinishArray;
   end;
-  ComposeAddress(json, 'address', elem.address); {a}
-  ComposeCodeableConcept(json, 'gender', elem.gender); {a}
+  if elem.addressList.Count > 0 then
+  begin
+    json.valueArray('address');
+    for i := 0 to elem.addressList.Count - 1 do
+      ComposeAddress(json, '',elem.addressList[i]); {z - Address}
+    json.FinishArray;
+  end;
+  ComposeEnumValue(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
+  ComposeEnumProps(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
   ComposeDateTimeValue(json, 'birthDate', elem.birthDate, false);
   ComposeDateTimeProps(json, 'birthDate', elem.birthDate, false);
   if not SummaryOnly and (elem.photoList.Count > 0) then
@@ -20422,6 +21181,8 @@ begin
         result.value := ParseId(child, path+'.valueId') {c}
       else if (child.baseName = 'valueBase64Binary') then
         result.value := ParseBase64Binary(child, path+'.valueBase64Binary') {c}
+      else if (child.baseName = 'valueTime') then
+        result.value := ParseTime(child, path+'.valueTime') {c}
       else if (child.baseName = 'valueOid') then
         result.value := ParseOid(child, path+'.valueOid') {c}
       else if (child.baseName = 'valueString') then
@@ -20476,6 +21237,8 @@ begin
         result.example := ParseId(child, path+'.exampleId') {c}
       else if (child.baseName = 'exampleBase64Binary') then
         result.example := ParseBase64Binary(child, path+'.exampleBase64Binary') {c}
+      else if (child.baseName = 'exampleTime') then
+        result.example := ParseTime(child, path+'.exampleTime') {c}
       else if (child.baseName = 'exampleOid') then
         result.example := ParseOid(child, path+'.exampleOid') {c}
       else if (child.baseName = 'exampleString') then
@@ -20576,6 +21339,8 @@ begin
     ComposeId(xml, 'valueId', TFhirId(elem.value))
   else if (elem.value is TFhirBase64Binary) {1} then
     ComposeBase64Binary(xml, 'valueBase64Binary', TFhirBase64Binary(elem.value))
+  else if (elem.value is TFhirTime) {1} then
+    ComposeTime(xml, 'valueTime', TFhirTime(elem.value))
   else if (elem.value is TFhirOid) {1} then
     ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
   else if (elem.value is TFhirString) {1} then
@@ -20630,6 +21395,8 @@ begin
     ComposeId(xml, 'exampleId', TFhirId(elem.example))
   else if (elem.example is TFhirBase64Binary) {1} then
     ComposeBase64Binary(xml, 'exampleBase64Binary', TFhirBase64Binary(elem.example))
+  else if (elem.example is TFhirTime) {1} then
+    ComposeTime(xml, 'exampleTime', TFhirTime(elem.example))
   else if (elem.example is TFhirOid) {1} then
     ComposeOid(xml, 'exampleOid', TFhirOid(elem.example))
   else if (elem.example is TFhirString) {1} then
@@ -20726,6 +21493,8 @@ begin
         result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
     if jsn.has('valueBase64Binary') or jsn.has('_valueBase64Binary') then
         result.value := ParseBase64Binary(jsn['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
+    if jsn.has('valueTime') or jsn.has('_valueTime') then
+        result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueOid') or jsn.has('_valueOid') then
         result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
     if jsn.has('valueString') or jsn.has('_valueString') then
@@ -20780,6 +21549,8 @@ begin
         result.example := ParseId(jsn['exampleId'], jsn.vObj['_exampleId']);
     if jsn.has('exampleBase64Binary') or jsn.has('_exampleBase64Binary') then
         result.example := ParseBase64Binary(jsn['exampleBase64Binary'], jsn.vObj['_exampleBase64Binary']);
+    if jsn.has('exampleTime') or jsn.has('_exampleTime') then
+        result.example := ParseTime(jsn['exampleTime'], jsn.vObj['_exampleTime']);
     if jsn.has('exampleOid') or jsn.has('_exampleOid') then
         result.example := ParseOid(jsn['exampleOid'], jsn.vObj['_exampleOid']);
     if jsn.has('exampleString') or jsn.has('_exampleString') then
@@ -20926,6 +21697,11 @@ begin
     ComposeBase64BinaryValue(json, 'valueBase64Binary', TFhirBase64Binary(elem.value), false);
     ComposeBase64BinaryProps(json, 'valueBase64Binary', TFhirBase64Binary(elem.value), false)
   end
+  else if (elem.value is TFhirTime) then
+  begin
+    ComposeTimeValue(json, 'valueTime', TFhirTime(elem.value), false);
+    ComposeTimeProps(json, 'valueTime', TFhirTime(elem.value), false)
+  end
   else if (elem.value is TFhirOid) then
   begin
     ComposeOidValue(json, 'valueOid', TFhirOid(elem.value), false);
@@ -21018,6 +21794,11 @@ begin
   begin
     ComposeBase64BinaryValue(json, 'exampleBase64Binary', TFhirBase64Binary(elem.example), false);
     ComposeBase64BinaryProps(json, 'exampleBase64Binary', TFhirBase64Binary(elem.example), false)
+  end
+  else if (elem.example is TFhirTime) then
+  begin
+    ComposeTimeValue(json, 'exampleTime', TFhirTime(elem.example), false);
+    ComposeTimeProps(json, 'exampleTime', TFhirTime(elem.example), false)
   end
   else if (elem.example is TFhirOid) then
   begin
@@ -21721,95 +22502,6 @@ begin
   json.finishObject;
 end;
 
-function TFHIRXmlParser.ParseProfileQuery(element : IXmlDomElement; path : string) : TFhirProfileQuery;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirProfileQuery.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'name') then
-        result.name := ParseString(child, path+'/name') {b}
-      else if (child.baseName = 'documentation') then
-        result.documentation := ParseString(child, path+'/documentation') {b}
-      else if (child.baseName = 'parameter') then
-        result.parameterList.Add(ParseProfileStructureSearchParam(child, path+'/parameter'))
-      else if Not ParseBackboneElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeProfileQuery(xml : TXmlBuilder; name : string; elem : TFhirProfileQuery);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.name);
-  ComposeString(xml, 'documentation', elem.documentation);
-  for i := 0 to elem.parameterList.Count - 1 do
-    ComposeProfileStructureSearchParam(xml, 'parameter', elem.parameterList[i]);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseProfileQuery(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProfileQuery(jsn));
-end;
-
-function TFHIRJsonParser.ParseProfileQuery(jsn : TJsonObject) : TFhirProfileQuery;
-begin
-  result := TFhirProfileQuery.create;
-  try
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('name') or jsn.has('_name') then
-        result.name := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentation := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
-    if jsn.has('parameter') then
-      iterateArray(jsn.vArr['parameter'], result.parameterList, parseProfileStructureSearchParam);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeProfileQuery(json : TJSONWriter; name : string; elem : TFhirProfileQuery);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.name, false);
-  ComposeStringProps(json, 'name', elem.name, false);
-  ComposeStringValue(json, 'documentation', elem.documentation, false);
-  ComposeStringProps(json, 'documentation', elem.documentation, false);
-  if elem.parameterList.Count > 0 then
-  begin
-    json.valueArray('parameter');
-    for i := 0 to elem.parameterList.Count - 1 do
-      ComposeProfileStructureSearchParam(json, '',elem.parameterList[i]); {z - @Profile.structure.searchParam}
-    json.FinishArray;
-  end;
-  json.finishObject;
-end;
-
 function TFHIRXmlParser.ParseProfile(element : IXmlDomElement; path : string) : TFhirProfile;
 var
   child : IXMLDOMElement;
@@ -21852,8 +22544,6 @@ begin
         result.structureList.Add(ParseProfileStructure(child, path+'/structure'))
       else if (child.baseName = 'extensionDefn') then
         result.extensionDefnList.Add(ParseProfileExtensionDefn(child, path+'/extensionDefn'))
-      else if (child.baseName = 'query') then
-        result.queryList.Add(ParseProfileQuery(child, path+'/query'))
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -21902,9 +22592,6 @@ begin
   if not SummaryOnly then
     for i := 0 to elem.extensionDefnList.Count - 1 do
       ComposeProfileExtensionDefn(xml, 'extensionDefn', elem.extensionDefnList[i]);
-  if not SummaryOnly then
-    for i := 0 to elem.queryList.Count - 1 do
-      ComposeProfileQuery(xml, 'query', elem.queryList[i]);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -21951,8 +22638,6 @@ begin
       iterateArray(jsn.vArr['structure'], result.structureList, parseProfileStructure);
     if jsn.has('extensionDefn') then
       iterateArray(jsn.vArr['extensionDefn'], result.extensionDefnList, parseProfileExtensionDefn);
-    if jsn.has('query') then
-      iterateArray(jsn.vArr['query'], result.queryList, parseProfileQuery);
     result.link;
   finally
     result.free;
@@ -22030,13 +22715,6 @@ end;
     json.valueArray('extensionDefn');
     for i := 0 to elem.extensionDefnList.Count - 1 do
       ComposeProfileExtensionDefn(json, '',elem.extensionDefnList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not SummaryOnly and (elem.queryList.Count > 0) then
-  begin
-    json.valueArray('query');
-    for i := 0 to elem.queryList.Count - 1 do
-      ComposeProfileQuery(json, '',elem.queryList[i]); {z - }
     json.FinishArray;
   end;
 end;
@@ -23220,60 +23898,28 @@ var
     child := FirstChild(element);
     while (child <> nil) do
   begin
-      if (child.baseName = 'valueInteger') then
-        result.value := ParseInteger(child, path+'.valueInteger') {c}
-      else if (child.baseName = 'valueDateTime') then
-        result.value := ParseDateTime(child, path+'.valueDateTime') {c}
-      else if (child.baseName = 'valueCode') then
-        result.value := ParseCode(child, path+'.valueCode') {c}
-      else if (child.baseName = 'valueDate') then
-        result.value := ParseDate(child, path+'.valueDate') {c}
+      if (child.baseName = 'valueBoolean') then
+        result.value := ParseBoolean(child, path+'/valueBoolean')
       else if (child.baseName = 'valueDecimal') then
-        result.value := ParseDecimal(child, path+'.valueDecimal') {c}
-      else if (child.baseName = 'valueUri') then
-        result.value := ParseUri(child, path+'.valueUri') {c}
-      else if (child.baseName = 'valueId') then
-        result.value := ParseId(child, path+'.valueId') {c}
-      else if (child.baseName = 'valueBase64Binary') then
-        result.value := ParseBase64Binary(child, path+'.valueBase64Binary') {c}
-      else if (child.baseName = 'valueOid') then
-        result.value := ParseOid(child, path+'.valueOid') {c}
-      else if (child.baseName = 'valueString') then
-        result.value := ParseString(child, path+'.valueString') {c}
-      else if (child.baseName = 'valueBoolean') then
-        result.value := ParseBoolean(child, path+'.valueBoolean') {c}
-      else if (child.baseName = 'valueUuid') then
-        result.value := ParseUuid(child, path+'.valueUuid') {c}
+        result.value := ParseDecimal(child, path+'/valueDecimal')
+      else if (child.baseName = 'valueInteger') then
+        result.value := ParseInteger(child, path+'/valueInteger')
+      else if (child.baseName = 'valueDate') then
+        result.value := ParseDate(child, path+'/valueDate')
+      else if (child.baseName = 'valueDateTime') then
+        result.value := ParseDateTime(child, path+'/valueDateTime')
       else if (child.baseName = 'valueInstant') then
-        result.value := ParseInstant(child, path+'.valueInstant') {c}
-      else if (child.baseName = 'valuePeriod') then
-        result.value := ParsePeriod(child, path+'.valuePeriod') {ePeriod}
-      else if (child.baseName = 'valueCoding') then
-        result.value := ParseCoding(child, path+'.valueCoding') {eCoding}
-      else if (child.baseName = 'valueRange') then
-        result.value := ParseRange(child, path+'.valueRange') {eRange}
-      else if (child.baseName = 'valueQuantity') then
-        result.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
+        result.value := ParseInstant(child, path+'/valueInstant')
+      else if (child.baseName = 'valueTime') then
+        result.value := ParseTime(child, path+'/valueTime')
+      else if (child.baseName = 'valueString') then
+        result.value := ParseString(child, path+'/valueString')
       else if (child.baseName = 'valueAttachment') then
-        result.value := ParseAttachment(child, path+'.valueAttachment') {eAttachment}
-      else if (child.baseName = 'valueRatio') then
-        result.value := ParseRatio(child, path+'.valueRatio') {eRatio}
-      else if (child.baseName = 'valueSampledData') then
-        result.value := ParseSampledData(child, path+'.valueSampledData') {eSampledData}
-      else if (child.baseName = 'valueResource') then
-        result.value := ParseResourceReference(child, path+'/valueResource') {e0}
-      else if (child.baseName = 'valueCodeableConcept') then
-        result.value := ParseCodeableConcept(child, path+'.valueCodeableConcept') {eCodeableConcept}
-      else if (child.baseName = 'valueIdentifier') then
-        result.value := ParseIdentifier(child, path+'.valueIdentifier') {eIdentifier}
-      else if (child.baseName = 'valueSchedule') then
-        result.value := ParseSchedule(child, path+'/valueSchedule') {f}
-      else if (child.baseName = 'valueContact') then
-        result.value := ParseContact(child, path+'/valueContact') {f}
-      else if (child.baseName = 'valueAddress') then
-        result.value := ParseAddress(child, path+'/valueAddress') {f}
-      else if (child.baseName = 'valueHumanName') then
-        result.value := ParseHumanName(child, path+'/valueHumanName') {f}
+        result.value := ParseAttachment(child, path+'/valueAttachment')
+      else if (child.baseName = 'valueCoding') then
+        result.value := ParseCoding(child, path+'/valueCoding')
+      else if (child.baseName = 'valueQuantity') then
+        result.value := ParseQuantity(child, path+'/valueQuantity')
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -23293,60 +23939,28 @@ procedure TFHIRXmlComposer.ComposeQuestionnaireAnswersGroupQuestionAnswer(xml : 
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  if (elem.value is TFhirInteger) {1} then
-    ComposeInteger(xml, 'valueInteger', TFhirInteger(elem.value))
-  else if (elem.value is TFhirDateTime) {1} then
-    ComposeDateTime(xml, 'valueDateTime', TFhirDateTime(elem.value))
-  else if (elem.value is TFhirCode) {1} then
-    ComposeCode(xml, 'valueCode', TFhirCode(elem.value))
-  else if (elem.value is TFhirDate) {1} then
-    ComposeDate(xml, 'valueDate', TFhirDate(elem.value))
-  else if (elem.value is TFhirDecimal) {1} then
-    ComposeDecimal(xml, 'valueDecimal', TFhirDecimal(elem.value))
-  else if (elem.value is TFhirUri) {1} then
-    ComposeUri(xml, 'valueUri', TFhirUri(elem.value))
-  else if (elem.value is TFhirId) {1} then
-    ComposeId(xml, 'valueId', TFhirId(elem.value))
-  else if (elem.value is TFhirBase64Binary) {1} then
-    ComposeBase64Binary(xml, 'valueBase64Binary', TFhirBase64Binary(elem.value))
-  else if (elem.value is TFhirOid) {1} then
-    ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
-  else if (elem.value is TFhirString) {1} then
-    ComposeString(xml, 'valueString', TFhirString(elem.value))
-  else if (elem.value is TFhirBoolean) {1} then
+  if (elem.value is TFhirBoolean) {6} then
     ComposeBoolean(xml, 'valueBoolean', TFhirBoolean(elem.value))
-  else if (elem.value is TFhirUuid) {1} then
-    ComposeUuid(xml, 'valueUuid', TFhirUuid(elem.value))
-  else if (elem.value is TFhirInstant) {1} then
+  else if (elem.value is TFhirDecimal) {6} then
+    ComposeDecimal(xml, 'valueDecimal', TFhirDecimal(elem.value))
+  else if (elem.value is TFhirInteger) {6} then
+    ComposeInteger(xml, 'valueInteger', TFhirInteger(elem.value))
+  else if (elem.value is TFhirDate) {6} then
+    ComposeDate(xml, 'valueDate', TFhirDate(elem.value))
+  else if (elem.value is TFhirDateTime) {6} then
+    ComposeDateTime(xml, 'valueDateTime', TFhirDateTime(elem.value))
+  else if (elem.value is TFhirInstant) {6} then
     ComposeInstant(xml, 'valueInstant', TFhirInstant(elem.value))
-  else if (elem.value is TFhirPeriod) {8} then
-    ComposePeriod(xml, 'valuePeriod', TFhirPeriod(elem.value))
-  else if (elem.value is TFhirCoding) {8} then
-    ComposeCoding(xml, 'valueCoding', TFhirCoding(elem.value))
-  else if (elem.value is TFhirRange) {8} then
-    ComposeRange(xml, 'valueRange', TFhirRange(elem.value))
-  else if (elem.value is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
-  else if (elem.value is TFhirAttachment) {8} then
+  else if (elem.value is TFhirTime) {6} then
+    ComposeTime(xml, 'valueTime', TFhirTime(elem.value))
+  else if (elem.value is TFhirString) {6} then
+    ComposeString(xml, 'valueString', TFhirString(elem.value))
+  else if (elem.value is TFhirAttachment) {6} then
     ComposeAttachment(xml, 'valueAttachment', TFhirAttachment(elem.value))
-  else if (elem.value is TFhirRatio) {8} then
-    ComposeRatio(xml, 'valueRatio', TFhirRatio(elem.value))
-  else if (elem.value is TFhirSampledData) {8} then
-    ComposeSampledData(xml, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (elem.value is TFhirResourceReference) {8} then
-    ComposeResourceReference(xml, 'valueResource', TFhirResourceReference(elem.value))
-  else if (elem.value is TFhirCodeableConcept) {8} then
-    ComposeCodeableConcept(xml, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
-  else if (elem.value is TFhirIdentifier) {8} then
-    ComposeIdentifier(xml, 'valueIdentifier', TFhirIdentifier(elem.value))
-  else if (elem.value is TFhirSchedule) {9} then
-    ComposeSchedule(xml, 'valueSchedule', TFhirSchedule(elem.value))
-  else if (elem.value is TFhirContact) {9} then
-    ComposeContact(xml, 'valueContact', TFhirContact(elem.value))
-  else if (elem.value is TFhirAddress) {9} then
-    ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
-  else if (elem.value is TFhirHumanName) {9} then
-    ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value));
+  else if (elem.value is TFhirCoding) {6} then
+    ComposeCoding(xml, 'valueCoding', TFhirCoding(elem.value))
+  else if (elem.value is TFhirQuantity) {6} then
+    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value));
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -23361,60 +23975,28 @@ function TFHIRJsonParser.ParseQuestionnaireAnswersGroupQuestionAnswer(jsn : TJso
   result := TFhirQuestionnaireAnswersGroupQuestionAnswer.create;
   try
     ParseBackboneElementProperties(jsn, result);
+    if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
+      result.value := parseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
+    if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
+      result.value := parseDecimal(jsn['valueDecimal'], jsn.vObj['_valueDecimal']);
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
       result.value := parseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
-    if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
-        result.value := ParseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
-    if jsn.has('valueCode') or jsn.has('_valueCode') then
-        result.value := ParseCode(jsn['valueCode'], jsn.vObj['_valueCode']);
     if jsn.has('valueDate') or jsn.has('_valueDate') then
       result.value := parseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
-    if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
-        result.value := ParseDecimal(jsn['valueDecimal'], jsn.vObj['_valueDecimal']);
-    if jsn.has('valueUri') or jsn.has('_valueUri') then
-        result.value := ParseUri(jsn['valueUri'], jsn.vObj['_valueUri']);
-    if jsn.has('valueId') or jsn.has('_valueId') then
-        result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
-    if jsn.has('valueBase64Binary') or jsn.has('_valueBase64Binary') then
-        result.value := ParseBase64Binary(jsn['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
-    if jsn.has('valueOid') or jsn.has('_valueOid') then
-        result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
-    if jsn.has('valueString') or jsn.has('_valueString') then
-      result.value := parseString(jsn['valueString'], jsn.vObj['_valueString']);
-    if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-        result.value := ParseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
-    if jsn.has('valueUuid') or jsn.has('_valueUuid') then
-        result.value := ParseUuid(jsn['valueUuid'], jsn.vObj['_valueUuid']);
+    if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
+        result.value := ParseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
     if jsn.has('valueInstant') or jsn.has('_valueInstant') then
       result.value := parseInstant(jsn['valueInstant'], jsn.vObj['_valueInstant']);
-    if jsn.has('valuePeriod') {a7} then
-        result.value := ParsePeriod(jsn.vObj['valuePeriod']);
-    if jsn.has('valueCoding') {a7} then
+    if jsn.has('valueTime') or jsn.has('_valueTime') then
+      result.value := parseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
+    if jsn.has('valueString') or jsn.has('_valueString') then
+      result.value := parseString(jsn['valueString'], jsn.vObj['_valueString']);
+    if jsn.has('valueAttachment') {a4} then
+      result.value := ParseAttachment(jsn.vObj['valueAttachment']);
+    if jsn.has('valueCoding') {a4} then
       result.value := ParseCoding(jsn.vObj['valueCoding']);
-    if jsn.has('valueRange') {a7} then
-        result.value := ParseRange(jsn.vObj['valueRange']);
-    if jsn.has('valueQuantity') {a7} then
-        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
-    if jsn.has('valueAttachment') {a7} then
-        result.value := ParseAttachment(jsn.vObj['valueAttachment']);
-    if jsn.has('valueRatio') {a7} then
-        result.value := ParseRatio(jsn.vObj['valueRatio']);
-    if jsn.has('valueSampledData') {a7} then
-        result.value := ParseSampledData(jsn.vObj['valueSampledData']);
-    if jsn.has('valueResource') {a6} then
-        result.value := ParseResourceReference(jsn.vObj['valueResource']);
-    if jsn.has('valueCodeableConcept') {a7} then
-        result.value := ParseCodeableConcept(jsn.vObj['valueCodeableConcept']);
-    if jsn.has('valueIdentifier') {a7} then
-        result.value := ParseIdentifier(jsn.vObj['valueIdentifier']);
-    if jsn.has('valueSchedule') {a9} then
-        result.value := ParseSchedule(jsn.vObj['valueSchedule']);
-    if jsn.has('valueContact') {a9} then
-        result.value := ParseContact(jsn.vObj['valueContact']);
-    if jsn.has('valueAddress') {a9} then
-        result.value := ParseAddress(jsn.vObj['valueAddress']);
-    if jsn.has('valueHumanName') {a9} then
-        result.value := ParseHumanName(jsn.vObj['valueHumanName']);
+    if jsn.has('valueQuantity') {a4} then
+      result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     result.link;
   finally
     result.free;
@@ -23427,99 +24009,52 @@ procedure TFHIRJsonComposer.ComposeQuestionnaireAnswersGroupQuestionAnswer(json 
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if (elem.value is TFhirInteger) then
+  if (elem.value is TFhirBoolean) then 
+  begin
+    ComposeBooleanValue(json, 'valueBoolean', TFhirBoolean(elem.value), false);
+    ComposeBooleanProps(json, 'valueBoolean', TFhirBoolean(elem.value), false);
+  end
+  else if (elem.value is TFhirDecimal) then 
+  begin
+    ComposeDecimalValue(json, 'valueDecimal', TFhirDecimal(elem.value), false);
+    ComposeDecimalProps(json, 'valueDecimal', TFhirDecimal(elem.value), false);
+  end
+  else if (elem.value is TFhirInteger) then 
   begin
     ComposeIntegerValue(json, 'valueInteger', TFhirInteger(elem.value), false);
-    ComposeIntegerProps(json, 'valueInteger', TFhirInteger(elem.value), false)
-  end
-  else if (elem.value is TFhirDateTime) then
-  begin
-    ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
-    ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false)
-  end
-  else if (elem.value is TFhirCode) then
-  begin
-    ComposeCodeValue(json, 'valueCode', TFhirCode(elem.value), false);
-    ComposeCodeProps(json, 'valueCode', TFhirCode(elem.value), false)
+    ComposeIntegerProps(json, 'valueInteger', TFhirInteger(elem.value), false);
   end
   else if (elem.value is TFhirDate) then 
   begin
     ComposeDateValue(json, 'valueDate', TFhirDate(elem.value), false);
-    ComposeDateProps(json, 'valueDate', TFhirDate(elem.value), false)
+    ComposeDateProps(json, 'valueDate', TFhirDate(elem.value), false);
   end
-  else if (elem.value is TFhirDecimal) then
+  else if (elem.value is TFhirDateTime) then 
   begin
-    ComposeDecimalValue(json, 'valueDecimal', TFhirDecimal(elem.value), false);
-    ComposeDecimalProps(json, 'valueDecimal', TFhirDecimal(elem.value), false)
-  end
-  else if (elem.value is TFhirUri) then
-  begin
-    ComposeUriValue(json, 'valueUri', TFhirUri(elem.value), false);
-    ComposeUriProps(json, 'valueUri', TFhirUri(elem.value), false)
-  end
-  else if (elem.value is TFhirId) then
-  begin
-    ComposeIdValue(json, 'valueId', TFhirId(elem.value), false);
-    ComposeIdProps(json, 'valueId', TFhirId(elem.value), false)
-  end
-  else if (elem.value is TFhirBase64Binary) then
-  begin
-    ComposeBase64BinaryValue(json, 'valueBase64Binary', TFhirBase64Binary(elem.value), false);
-    ComposeBase64BinaryProps(json, 'valueBase64Binary', TFhirBase64Binary(elem.value), false)
-  end
-  else if (elem.value is TFhirOid) then
-  begin
-    ComposeOidValue(json, 'valueOid', TFhirOid(elem.value), false);
-    ComposeOidProps(json, 'valueOid', TFhirOid(elem.value), false)
-  end
-  else if (elem.value is TFhirString) then 
-  begin
-    ComposeStringValue(json, 'valueString', TFhirString(elem.value), false);
-    ComposeStringProps(json, 'valueString', TFhirString(elem.value), false)
-  end
-  else if (elem.value is TFhirBoolean) then
-  begin
-    ComposeBooleanValue(json, 'valueBoolean', TFhirBoolean(elem.value), false);
-    ComposeBooleanProps(json, 'valueBoolean', TFhirBoolean(elem.value), false)
-  end
-  else if (elem.value is TFhirUuid) then
-  begin
-    ComposeUuidValue(json, 'valueUuid', TFhirUuid(elem.value), false);
-    ComposeUuidProps(json, 'valueUuid', TFhirUuid(elem.value), false)
+    ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
+    ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false);
   end
   else if (elem.value is TFhirInstant) then 
   begin
     ComposeInstantValue(json, 'valueInstant', TFhirInstant(elem.value), false);
-    ComposeInstantProps(json, 'valueInstant', TFhirInstant(elem.value), false)
+    ComposeInstantProps(json, 'valueInstant', TFhirInstant(elem.value), false);
   end
-  else if (elem.value is TFhirPeriod) then
-    ComposePeriod(json, 'valuePeriod', TFhirPeriod(elem.value))
+  else if (elem.value is TFhirTime) then
+  begin
+    ComposeTimeValue(json, 'valueTime', TFhirTime(elem.value), false);
+    ComposeTimeProps(json, 'valueTime', TFhirTime(elem.value), false);
+  end
+  else if (elem.value is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'valueString', TFhirString(elem.value), false);
+    ComposeStringProps(json, 'valueString', TFhirString(elem.value), false);
+  end
+  else if (elem.value is TFhirAttachment) then 
+    ComposeAttachment(json, 'valueAttachment', TFhirAttachment(elem.value)) 
   else if (elem.value is TFhirCoding) then 
     ComposeCoding(json, 'valueCoding', TFhirCoding(elem.value))
-  else if (elem.value is TFhirRange) then
-    ComposeRange(json, 'valueRange', TFhirRange(elem.value))
   else if (elem.value is TFhirQuantity) then
-    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
-  else if (elem.value is TFhirAttachment) then
-    ComposeAttachment(json, 'valueAttachment', TFhirAttachment(elem.value))
-  else if (elem.value is TFhirRatio) then
-    ComposeRatio(json, 'valueRatio', TFhirRatio(elem.value))
-  else if (elem.value is TFhirSampledData) then
-    ComposeSampledData(json, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (elem.value is TFhirResourceReference) then
-    ComposeResourceReference(json, 'valueResource', TFhirResourceReference(elem.value))
-  else if (elem.value is TFhirCodeableConcept) then
-    ComposeCodeableConcept(json, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
-  else if (elem.value is TFhirIdentifier) then
-    ComposeIdentifier(json, 'valueIdentifier', TFhirIdentifier(elem.value))
-  else if (elem.value is TFhirSchedule) then
-    ComposeSchedule(json, 'valueSchedule', TFhirSchedule(elem.value))
-  else if (elem.value is TFhirContact) then
-    ComposeContact(json, 'valueContact', TFhirContact(elem.value))
-  else if (elem.value is TFhirAddress) then
-    ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
-  else if (elem.value is TFhirHumanName) then
-    ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value));
+    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value)) ;
   json.finishObject;
 end;
 
@@ -23533,7 +24068,9 @@ begin
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if (child.baseName = 'questionnaire') then
+      if (child.baseName = 'identifier') then
+        result.identifier := ParseIdentifier(child, path+'/identifier') {b}
+      else if (child.baseName = 'questionnaire') then
         result.questionnaire := ParseResourceReference{TFhirQuestionnaire}(child, path+'/questionnaire') {b}
       else if (child.baseName = 'status') then
         result.status := ParseEnum(CODES_TFhirQuestionnaireAnswersStatus, path+'/status', child)
@@ -23568,7 +24105,7 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  if not SummaryOnly then
+  ComposeIdentifier(xml, 'identifier', elem.identifier);
     ComposeResourceReference{TFhirQuestionnaire}(xml, 'questionnaire', elem.questionnaire);
   ComposeEnum(xml, 'status', elem.Status, CODES_TFhirQuestionnaireAnswersStatus);
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);
@@ -23592,6 +24129,8 @@ begin
   result := TFhirQuestionnaireAnswers.create;
   try
     ParseResourceProperties(jsn, result);
+    if jsn.has('identifier') then
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('questionnaire') then
         result.questionnaire := ParseResourceReference{TFhirQuestionnaire}(jsn.vObj['questionnaire']);{q}
     if jsn.has('status') or jsn.has('_status')  then
@@ -23619,7 +24158,7 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  if not SummaryOnly then
+  ComposeIdentifier(json, 'identifier', elem.identifier); {a}
     ComposeResourceReference{TFhirQuestionnaire}(json, 'questionnaire', elem.questionnaire); {a}
   ComposeEnumValue(json, 'status', elem.Status, CODES_TFhirQuestionnaireAnswersStatus, false);
   ComposeEnumProps(json, 'status', elem.Status, CODES_TFhirQuestionnaireAnswersStatus, false);
@@ -23631,6 +24170,195 @@ begin
   ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
   if not SummaryOnly then
     ComposeQuestionnaireAnswersGroup(json, 'group', elem.group); {a}
+end;
+
+function TFHIRXmlParser.ParseReferralRequest(element : IXmlDomElement; path : string) : TFhirReferralRequest;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirReferralRequest.create;
+  try
+    parseResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'status') then
+        result.status := ParseEnum(CODES_TFhirReferralstatus, path+'/status', child)
+      else if (child.baseName = 'identifier') then
+        result.identifierList.Add(ParseIdentifier(child, path+'/identifier'))
+      else if (child.baseName = 'type') then
+        result.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.baseName = 'specialty') then
+        result.specialty := ParseCodeableConcept(child, path+'/specialty') {b}
+      else if (child.baseName = 'priority') then
+        result.priority := ParseCodeableConcept(child, path+'/priority') {b}
+      else if (child.baseName = 'subject') then
+        result.subject := ParseResourceReference{TFhirPatient}(child, path+'/subject') {b}
+      else if (child.baseName = 'requester') then
+        result.requester := ParseResourceReference{Resource}(child, path+'/requester') {b}
+      else if (child.baseName = 'recipient') then
+        result.recipientList.Add(ParseResourceReference{Resource}(child, path+'/recipient'))
+      else if (child.baseName = 'encounter') then
+        result.encounter := ParseResourceReference{TFhirEncounter}(child, path+'/encounter') {b}
+      else if (child.baseName = 'dateSent') then
+        result.dateSent := ParseDateTime(child, path+'/dateSent') {b}
+      else if (child.baseName = 'reason') then
+        result.reason := ParseCodeableConcept(child, path+'/reason') {b}
+      else if (child.baseName = 'description') then
+        result.description := ParseString(child, path+'/description') {b}
+      else if (child.baseName = 'serviceRequested') then
+        result.serviceRequestedList.Add(ParseCodeableConcept(child, path+'/serviceRequested'))
+      else if (child.baseName = 'supportingInformation') then
+        result.supportingInformationList.Add(ParseResourceReference{Resource}(child, path+'/supportingInformation'))
+      else if (child.baseName = 'fulfillmentTime') then
+        result.fulfillmentTime := ParsePeriod(child, path+'/fulfillmentTime') {b}
+      else if Not ParseResourceChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeReferralRequest(xml : TXmlBuilder; name : string; elem : TFhirReferralRequest);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  composeResourceAttributes(xml, elem);
+  xml.open(name);
+  composeResourceChildren(xml, elem);
+  ComposeEnum(xml, 'status', elem.Status, CODES_TFhirReferralstatus);
+  if not SummaryOnly then
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  ComposeCodeableConcept(xml, 'type', elem.type_);
+  if not SummaryOnly then
+    ComposeCodeableConcept(xml, 'specialty', elem.specialty);
+  ComposeCodeableConcept(xml, 'priority', elem.priority);
+  ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);
+  ComposeResourceReference{Resource}(xml, 'requester', elem.requester);
+  for i := 0 to elem.recipientList.Count - 1 do
+    ComposeResourceReference{Resource}(xml, 'recipient', elem.recipientList[i]);
+  if not SummaryOnly then
+    ComposeResourceReference{TFhirEncounter}(xml, 'encounter', elem.encounter);
+  ComposeDateTime(xml, 'dateSent', elem.dateSent);
+  ComposeCodeableConcept(xml, 'reason', elem.reason);
+  if not SummaryOnly then
+    ComposeString(xml, 'description', elem.description);
+  for i := 0 to elem.serviceRequestedList.Count - 1 do
+    ComposeCodeableConcept(xml, 'serviceRequested', elem.serviceRequestedList[i]);
+  for i := 0 to elem.supportingInformationList.Count - 1 do
+    ComposeResourceReference{Resource}(xml, 'supportingInformation', elem.supportingInformationList[i]);
+  ComposePeriod(xml, 'fulfillmentTime', elem.fulfillmentTime);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseReferralRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseReferralRequest(jsn));
+end;
+
+function TFHIRJsonParser.ParseReferralRequest(jsn : TJsonObject) : TFhirReferralRequest;
+begin
+  result := TFhirReferralRequest.create;
+  try
+    ParseResourceProperties(jsn, result);
+    if jsn.has('status') or jsn.has('_status')  then
+      result.status := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirReferralstatus);
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+    if jsn.has('specialty') then
+        result.specialty := ParseCodeableConcept(jsn.vObj['specialty']);{q}
+    if jsn.has('priority') then
+        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q}
+    if jsn.has('subject') then
+        result.subject := ParseResourceReference{TFhirPatient}(jsn.vObj['subject']);{q}
+    if jsn.has('requester') then
+        result.requester := ParseResourceReference{Resource}(jsn.vObj['requester']);{q}
+    if jsn.has('recipient') then
+      iterateArray(jsn.vArr['recipient'], result.recipientList, parseResourceReference{Resource});
+    if jsn.has('encounter') then
+        result.encounter := ParseResourceReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+    if jsn.has('dateSent') or jsn.has('_dateSent') then
+        result.dateSent := ParseDateTime(jsn['dateSent'], jsn.vObj['_dateSent']);{q}
+    if jsn.has('reason') then
+        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.description := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('serviceRequested') then
+      iterateArray(jsn.vArr['serviceRequested'], result.serviceRequestedList, parseCodeableConcept);
+    if jsn.has('supportingInformation') then
+      iterateArray(jsn.vArr['supportingInformation'], result.supportingInformationList, parseResourceReference{Resource});
+    if jsn.has('fulfillmentTime') then
+        result.fulfillmentTime := ParsePeriod(jsn.vObj['fulfillmentTime']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeReferralRequest(json : TJSONWriter; name : string; elem : TFhirReferralRequest);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeResourceProperties(json, elem);
+  ComposeEnumValue(json, 'status', elem.Status, CODES_TFhirReferralstatus, false);
+  ComposeEnumProps(json, 'status', elem.Status, CODES_TFhirReferralstatus, false);
+  if not SummaryOnly and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not SummaryOnly then
+    ComposeCodeableConcept(json, 'specialty', elem.specialty); {a}
+  ComposeCodeableConcept(json, 'priority', elem.priority); {a}
+  ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
+  ComposeResourceReference{Resource}(json, 'requester', elem.requester); {a}
+  if elem.recipientList.Count > 0 then
+  begin
+    json.valueArray('recipient');
+    for i := 0 to elem.recipientList.Count - 1 do
+      ComposeResourceReference{Resource}(json, '',elem.recipientList[i]); {z - Resource(Practitioner|Organization)}
+    json.FinishArray;
+  end;
+  if not SummaryOnly then
+    ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
+  ComposeDateTimeValue(json, 'dateSent', elem.dateSent, false);
+  ComposeDateTimeProps(json, 'dateSent', elem.dateSent, false);
+  ComposeCodeableConcept(json, 'reason', elem.reason); {a}
+  if not SummaryOnly then
+    ComposeStringValue(json, 'description', elem.description, false);
+  if not SummaryOnly then
+    ComposeStringProps(json, 'description', elem.description, false);
+  if elem.serviceRequestedList.Count > 0 then
+  begin
+    json.valueArray('serviceRequested');
+    for i := 0 to elem.serviceRequestedList.Count - 1 do
+      ComposeCodeableConcept(json, '',elem.serviceRequestedList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if elem.supportingInformationList.Count > 0 then
+  begin
+    json.valueArray('supportingInformation');
+    for i := 0 to elem.supportingInformationList.Count - 1 do
+      ComposeResourceReference{Resource}(json, '',elem.supportingInformationList[i]); {z - Resource(Any)}
+    json.FinishArray;
+  end;
+  ComposePeriod(json, 'fulfillmentTime', elem.fulfillmentTime); {a}
 end;
 
 function TFHIRXmlParser.ParseRelatedPerson(element : IXmlDomElement; path : string) : TFhirRelatedPerson;
@@ -23654,7 +24382,7 @@ begin
       else if (child.baseName = 'telecom') then
         result.telecomList.Add(ParseContact(child, path+'/telecom'))
       else if (child.baseName = 'gender') then
-        result.gender := ParseCodeableConcept(child, path+'/gender') {b}
+        result.gender := ParseEnum(CODES_TFhirAdministrativeGender, path+'/gender', child)
       else if (child.baseName = 'address') then
         result.address := ParseAddress(child, path+'/address') {b}
       else if (child.baseName = 'photo') then
@@ -23687,7 +24415,7 @@ begin
   ComposeHumanName(xml, 'name', elem.name);
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
-  ComposeCodeableConcept(xml, 'gender', elem.gender);
+  ComposeEnum(xml, 'gender', elem.Gender, CODES_TFhirAdministrativeGender);
   ComposeAddress(xml, 'address', elem.address);
   if not SummaryOnly then
     for i := 0 to elem.photoList.Count - 1 do
@@ -23716,8 +24444,8 @@ begin
         result.name := ParseHumanName(jsn.vObj['name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
-    if jsn.has('gender') then
-        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q}
+    if jsn.has('gender') or jsn.has('_gender')  then
+      result.gender := parseEnum(jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGender);
     if jsn.has('address') then
         result.address := ParseAddress(jsn.vObj['address']);{q}
     if jsn.has('photo') then
@@ -23752,7 +24480,8 @@ begin
       ComposeContact(json, '',elem.telecomList[i]); {z - Contact}
     json.FinishArray;
   end;
-  ComposeCodeableConcept(json, 'gender', elem.gender); {a}
+  ComposeEnumValue(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
+  ComposeEnumProps(json, 'gender', elem.Gender, CODES_TFhirAdministrativeGender, false);
   ComposeAddress(json, 'address', elem.address); {a}
   if not SummaryOnly and (elem.photoList.Count > 0) then
   begin
@@ -23761,6 +24490,262 @@ begin
       ComposeAttachment(json, '',elem.photoList[i]); {z - Attachment}
     json.FinishArray;
   end;
+end;
+
+function TFHIRXmlParser.ParseRiskAssessmentPrediction(element : IXmlDomElement; path : string) : TFhirRiskAssessmentPrediction;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirRiskAssessmentPrediction.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'outcome') then
+        result.outcome := ParseCodeableConcept(child, path+'/outcome') {b}
+      else if (child.baseName = 'probabilityDecimal') then
+        result.probability := ParseDecimal(child, path+'/probabilityDecimal')
+      else if (child.baseName = 'probabilityRange') then
+        result.probability := ParseRange(child, path+'/probabilityRange')
+      else if (child.baseName = 'probabilityCodeableConcept') then
+        result.probability := ParseCodeableConcept(child, path+'/probabilityCodeableConcept')
+      else if (child.baseName = 'relativeRisk') then
+        result.relativeRisk := ParseDecimal(child, path+'/relativeRisk') {b}
+      else if (child.baseName = 'whenPeriod') then
+        result.when := ParsePeriod(child, path+'/whenPeriod')
+      else if (child.baseName = 'whenRange') then
+        result.when := ParseRange(child, path+'/whenRange')
+      else if (child.baseName = 'rationale') then
+        result.rationale := ParseString(child, path+'/rationale') {b}
+      else if Not ParseBackboneElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeRiskAssessmentPrediction(xml : TXmlBuilder; name : string; elem : TFhirRiskAssessmentPrediction);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'outcome', elem.outcome);
+  if (elem.probability is TFhirDecimal) {6} then
+    ComposeDecimal(xml, 'probabilityDecimal', TFhirDecimal(elem.probability))
+  else if (elem.probability is TFhirRange) {6} then
+    ComposeRange(xml, 'probabilityRange', TFhirRange(elem.probability))
+  else if (elem.probability is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'probabilityCodeableConcept', TFhirCodeableConcept(elem.probability));
+  ComposeDecimal(xml, 'relativeRisk', elem.relativeRisk);
+  if (elem.when is TFhirPeriod) {6} then
+    ComposePeriod(xml, 'whenPeriod', TFhirPeriod(elem.when))
+  else if (elem.when is TFhirRange) {6} then
+    ComposeRange(xml, 'whenRange', TFhirRange(elem.when));
+  ComposeString(xml, 'rationale', elem.rationale);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseRiskAssessmentPrediction(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseRiskAssessmentPrediction(jsn));
+end;
+
+function TFHIRJsonParser.ParseRiskAssessmentPrediction(jsn : TJsonObject) : TFhirRiskAssessmentPrediction;
+begin
+  result := TFhirRiskAssessmentPrediction.create;
+  try
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('outcome') then
+        result.outcome := ParseCodeableConcept(jsn.vObj['outcome']);{q}
+    if jsn.has('probabilityDecimal') or jsn.has('_probabilityDecimal') then
+      result.probability := parseDecimal(jsn['probabilityDecimal'], jsn.vObj['_probabilityDecimal']);
+    if jsn.has('probabilityRange') {a4} then
+      result.probability := ParseRange(jsn.vObj['probabilityRange']);
+    if jsn.has('probabilityCodeableConcept') {a4} then
+      result.probability := ParseCodeableConcept(jsn.vObj['probabilityCodeableConcept']);
+    if jsn.has('relativeRisk') or jsn.has('_relativeRisk') then
+        result.relativeRisk := ParseDecimal(jsn['relativeRisk'], jsn.vObj['_relativeRisk']);{q}
+    if jsn.has('whenPeriod') {a4} then
+      result.when := ParsePeriod(jsn.vObj['whenPeriod']);
+    if jsn.has('whenRange') {a4} then
+      result.when := ParseRange(jsn.vObj['whenRange']);
+    if jsn.has('rationale') or jsn.has('_rationale') then
+        result.rationale := ParseString(jsn['rationale'], jsn.vObj['_rationale']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeRiskAssessmentPrediction(json : TJSONWriter; name : string; elem : TFhirRiskAssessmentPrediction);
+begin
+  if (elem = nil) then
+    exit;
+  json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'outcome', elem.outcome); {a}
+  if (elem.probability is TFhirDecimal) then 
+  begin
+    ComposeDecimalValue(json, 'probabilityDecimal', TFhirDecimal(elem.probability), false);
+    ComposeDecimalProps(json, 'probabilityDecimal', TFhirDecimal(elem.probability), false);
+  end
+  else if (elem.probability is TFhirRange) then 
+    ComposeRange(json, 'probabilityRange', TFhirRange(elem.probability)) 
+  else if (elem.probability is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'probabilityCodeableConcept', TFhirCodeableConcept(elem.probability)) ;
+  ComposeDecimalValue(json, 'relativeRisk', elem.relativeRisk, false);
+  ComposeDecimalProps(json, 'relativeRisk', elem.relativeRisk, false);
+  if (elem.when is TFhirPeriod) then 
+    ComposePeriod(json, 'whenPeriod', TFhirPeriod(elem.when)) 
+  else if (elem.when is TFhirRange) then 
+    ComposeRange(json, 'whenRange', TFhirRange(elem.when)) ;
+  ComposeStringValue(json, 'rationale', elem.rationale, false);
+  ComposeStringProps(json, 'rationale', elem.rationale, false);
+  json.finishObject;
+end;
+
+function TFHIRXmlParser.ParseRiskAssessment(element : IXmlDomElement; path : string) : TFhirRiskAssessment;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirRiskAssessment.create;
+  try
+    parseResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'subject') then
+        result.subject := ParseResourceReference{Resource}(child, path+'/subject') {b}
+      else if (child.baseName = 'date') then
+        result.date := ParseDateTime(child, path+'/date') {b}
+      else if (child.baseName = 'condition') then
+        result.condition := ParseResourceReference{TFhirCondition}(child, path+'/condition') {b}
+      else if (child.baseName = 'performer') then
+        result.performer := ParseResourceReference{Resource}(child, path+'/performer') {b}
+      else if (child.baseName = 'identifier') then
+        result.identifier := ParseIdentifier(child, path+'/identifier') {b}
+      else if (child.baseName = 'method') then
+        result.method := ParseCodeableConcept(child, path+'/method') {b}
+      else if (child.baseName = 'basis') then
+        result.basisList.Add(ParseResourceReference{Resource}(child, path+'/basis'))
+      else if (child.baseName = 'prediction') then
+        result.predictionList.Add(ParseRiskAssessmentPrediction(child, path+'/prediction'))
+      else if (child.baseName = 'mitigation') then
+        result.mitigation := ParseString(child, path+'/mitigation') {b}
+      else if Not ParseResourceChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeRiskAssessment(xml : TXmlBuilder; name : string; elem : TFhirRiskAssessment);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  composeResourceAttributes(xml, elem);
+  xml.open(name);
+  composeResourceChildren(xml, elem);
+  ComposeResourceReference{Resource}(xml, 'subject', elem.subject);
+  ComposeDateTime(xml, 'date', elem.date);
+  ComposeResourceReference{TFhirCondition}(xml, 'condition', elem.condition);
+  ComposeResourceReference{Resource}(xml, 'performer', elem.performer);
+  ComposeIdentifier(xml, 'identifier', elem.identifier);
+  ComposeCodeableConcept(xml, 'method', elem.method);
+  if not SummaryOnly then
+    for i := 0 to elem.basisList.Count - 1 do
+      ComposeResourceReference{Resource}(xml, 'basis', elem.basisList[i]);
+  if not SummaryOnly then
+    for i := 0 to elem.predictionList.Count - 1 do
+      ComposeRiskAssessmentPrediction(xml, 'prediction', elem.predictionList[i]);
+  if not SummaryOnly then
+    ComposeString(xml, 'mitigation', elem.mitigation);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseRiskAssessment(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseRiskAssessment(jsn));
+end;
+
+function TFHIRJsonParser.ParseRiskAssessment(jsn : TJsonObject) : TFhirRiskAssessment;
+begin
+  result := TFhirRiskAssessment.create;
+  try
+    ParseResourceProperties(jsn, result);
+    if jsn.has('subject') then
+        result.subject := ParseResourceReference{Resource}(jsn.vObj['subject']);{q}
+    if jsn.has('date') or jsn.has('_date') then
+        result.date := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+    if jsn.has('condition') then
+        result.condition := ParseResourceReference{TFhirCondition}(jsn.vObj['condition']);{q}
+    if jsn.has('performer') then
+        result.performer := ParseResourceReference{Resource}(jsn.vObj['performer']);{q}
+    if jsn.has('identifier') then
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+    if jsn.has('method') then
+        result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
+    if jsn.has('basis') then
+      iterateArray(jsn.vArr['basis'], result.basisList, parseResourceReference{Resource});
+    if jsn.has('prediction') then
+      iterateArray(jsn.vArr['prediction'], result.predictionList, parseRiskAssessmentPrediction);
+    if jsn.has('mitigation') or jsn.has('_mitigation') then
+        result.mitigation := ParseString(jsn['mitigation'], jsn.vObj['_mitigation']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeRiskAssessment(json : TJSONWriter; name : string; elem : TFhirRiskAssessment);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeResourceProperties(json, elem);
+  ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
+  ComposeDateTimeValue(json, 'date', elem.date, false);
+  ComposeDateTimeProps(json, 'date', elem.date, false);
+  ComposeResourceReference{TFhirCondition}(json, 'condition', elem.condition); {a}
+  ComposeResourceReference{Resource}(json, 'performer', elem.performer); {a}
+  ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  ComposeCodeableConcept(json, 'method', elem.method); {a}
+  if not SummaryOnly and (elem.basisList.Count > 0) then
+  begin
+    json.valueArray('basis');
+    for i := 0 to elem.basisList.Count - 1 do
+      ComposeResourceReference{Resource}(json, '',elem.basisList[i]); {z - Resource(Any)}
+    json.FinishArray;
+  end;
+  if not SummaryOnly and (elem.predictionList.Count > 0) then
+  begin
+    json.valueArray('prediction');
+    for i := 0 to elem.predictionList.Count - 1 do
+      ComposeRiskAssessmentPrediction(json, '',elem.predictionList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not SummaryOnly then
+    ComposeStringValue(json, 'mitigation', elem.mitigation, false);
+  if not SummaryOnly then
+    ComposeStringProps(json, 'mitigation', elem.mitigation, false);
 end;
 
 function TFHIRXmlParser.ParseSecurityEventEvent(element : IXmlDomElement; path : string) : TFhirSecurityEventEvent;
@@ -26816,6 +27801,8 @@ begin
     result := ParseCondition(element, path+'/Condition')
   else if element.baseName = 'Conformance' Then
     result := ParseConformance(element, path+'/Conformance')
+  else if element.baseName = 'Contraindication' Then
+    result := ParseContraindication(element, path+'/Contraindication')
   else if element.baseName = 'DataElement' Then
     result := ParseDataElement(element, path+'/DataElement')
   else if element.baseName = 'Device' Then
@@ -26864,6 +27851,8 @@ begin
     result := ParseNamespace(element, path+'/Namespace')
   else if element.baseName = 'Observation' Then
     result := ParseObservation(element, path+'/Observation')
+  else if element.baseName = 'OperationDefinition' Then
+    result := ParseOperationDefinition(element, path+'/OperationDefinition')
   else if element.baseName = 'OperationOutcome' Then
     result := ParseOperationOutcome(element, path+'/OperationOutcome')
   else if element.baseName = 'Order' Then
@@ -26890,8 +27879,12 @@ begin
     result := ParseQuestionnaire(element, path+'/Questionnaire')
   else if element.baseName = 'QuestionnaireAnswers' Then
     result := ParseQuestionnaireAnswers(element, path+'/QuestionnaireAnswers')
+  else if element.baseName = 'ReferralRequest' Then
+    result := ParseReferralRequest(element, path+'/ReferralRequest')
   else if element.baseName = 'RelatedPerson' Then
     result := ParseRelatedPerson(element, path+'/RelatedPerson')
+  else if element.baseName = 'RiskAssessment' Then
+    result := ParseRiskAssessment(element, path+'/RiskAssessment')
   else if element.baseName = 'SecurityEvent' Then
     result := ParseSecurityEvent(element, path+'/SecurityEvent')
   else if element.baseName = 'Slot' Then
@@ -26912,7 +27905,7 @@ begin
     raise Exception.create('Error: the element '+element.baseName+' is not recognised as a valid resource name');
 end;
 
-procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; id, ver : String; resource: TFhirResource);
+procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; resource: TFhirResource);
 begin
   if (resource = nil) Then
     Raise Exception.Create('error - resource is nil');
@@ -26928,6 +27921,7 @@ begin
     frtConceptMap: ComposeConceptMap(xml, 'ConceptMap', TFhirConceptMap(resource));
     frtCondition: ComposeCondition(xml, 'Condition', TFhirCondition(resource));
     frtConformance: ComposeConformance(xml, 'Conformance', TFhirConformance(resource));
+    frtContraindication: ComposeContraindication(xml, 'Contraindication', TFhirContraindication(resource));
     frtDataElement: ComposeDataElement(xml, 'DataElement', TFhirDataElement(resource));
     frtDevice: ComposeDevice(xml, 'Device', TFhirDevice(resource));
     frtDeviceObservationReport: ComposeDeviceObservationReport(xml, 'DeviceObservationReport', TFhirDeviceObservationReport(resource));
@@ -26952,6 +27946,7 @@ begin
     frtMessageHeader: ComposeMessageHeader(xml, 'MessageHeader', TFhirMessageHeader(resource));
     frtNamespace: ComposeNamespace(xml, 'Namespace', TFhirNamespace(resource));
     frtObservation: ComposeObservation(xml, 'Observation', TFhirObservation(resource));
+    frtOperationDefinition: ComposeOperationDefinition(xml, 'OperationDefinition', TFhirOperationDefinition(resource));
     frtOperationOutcome: ComposeOperationOutcome(xml, 'OperationOutcome', TFhirOperationOutcome(resource));
     frtOrder: ComposeOrder(xml, 'Order', TFhirOrder(resource));
     frtOrderResponse: ComposeOrderResponse(xml, 'OrderResponse', TFhirOrderResponse(resource));
@@ -26965,7 +27960,9 @@ begin
     frtQuery: ComposeQuery(xml, 'Query', TFhirQuery(resource));
     frtQuestionnaire: ComposeQuestionnaire(xml, 'Questionnaire', TFhirQuestionnaire(resource));
     frtQuestionnaireAnswers: ComposeQuestionnaireAnswers(xml, 'QuestionnaireAnswers', TFhirQuestionnaireAnswers(resource));
+    frtReferralRequest: ComposeReferralRequest(xml, 'ReferralRequest', TFhirReferralRequest(resource));
     frtRelatedPerson: ComposeRelatedPerson(xml, 'RelatedPerson', TFhirRelatedPerson(resource));
+    frtRiskAssessment: ComposeRiskAssessment(xml, 'RiskAssessment', TFhirRiskAssessment(resource));
     frtSecurityEvent: ComposeSecurityEvent(xml, 'SecurityEvent', TFhirSecurityEvent(resource));
     frtSlot: ComposeSlot(xml, 'Slot', TFhirSlot(resource));
     frtSpecimen: ComposeSpecimen(xml, 'Specimen', TFhirSpecimen(resource));
@@ -27006,6 +28003,8 @@ begin
     result := ParseCondition(jsn)
   else if s = 'Conformance' Then
     result := ParseConformance(jsn)
+  else if s = 'Contraindication' Then
+    result := ParseContraindication(jsn)
   else if s = 'DataElement' Then
     result := ParseDataElement(jsn)
   else if s = 'Device' Then
@@ -27054,6 +28053,8 @@ begin
     result := ParseNamespace(jsn)
   else if s = 'Observation' Then
     result := ParseObservation(jsn)
+  else if s = 'OperationDefinition' Then
+    result := ParseOperationDefinition(jsn)
   else if s = 'OperationOutcome' Then
     result := ParseOperationOutcome(jsn)
   else if s = 'Order' Then
@@ -27080,8 +28081,12 @@ begin
     result := ParseQuestionnaire(jsn)
   else if s = 'QuestionnaireAnswers' Then
     result := ParseQuestionnaireAnswers(jsn)
+  else if s = 'ReferralRequest' Then
+    result := ParseReferralRequest(jsn)
   else if s = 'RelatedPerson' Then
     result := ParseRelatedPerson(jsn)
+  else if s = 'RiskAssessment' Then
+    result := ParseRiskAssessment(jsn)
   else if s = 'SecurityEvent' Then
     result := ParseSecurityEvent(jsn)
   else if s = 'Slot' Then
@@ -27182,7 +28187,85 @@ begin
     raise Exception.create('error: the element '+element.nodeName+' is not a valid fragment name');
 end;
 
-procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; id, ver : String; resource: TFhirResource);
+function TFHIRJsonParser.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType;
+begin
+   if (type_ = TFhirExtension) then
+    result := parseExtension(jsn)
+  else if (type_ = TFhirNarrative) then
+    result := parseNarrative(jsn)
+  else if (type_ = TFhirPeriod) then
+    result := parsePeriod(jsn)
+  else if (type_ = TFhirCoding) then
+    result := parseCoding(jsn)
+  else if (type_ = TFhirRange) then
+    result := parseRange(jsn)
+  else if (type_ = TFhirQuantity) then
+    result := parseQuantity(jsn)
+  else if (type_ = TFhirAttachment) then
+    result := parseAttachment(jsn)
+  else if (type_ = TFhirRatio) then
+    result := parseRatio(jsn)
+  else if (type_ = TFhirSampledData) then
+    result := parseSampledData(jsn)
+  else if (type_ = TFhirResourceReference) then
+    result := parseResourceReference(jsn)
+  else if (type_ = TFhirCodeableConcept) then
+    result := parseCodeableConcept(jsn)
+  else if (type_ = TFhirIdentifier) then
+    result := parseIdentifier(jsn)
+  else if (type_ = TFhirSchedule) then
+    result := parseSchedule(jsn)
+  else if (type_ = TFhirContact) then
+    result := parseContact(jsn)
+  else if (type_ = TFhirAddress) then
+    result := parseAddress(jsn)
+  else if (type_ = TFhirHumanName) then
+    result := parseHumanName(jsn)
+  else
+    raise Exception.create('Unknown Type');
+end;
+
+function TFHIRXmlParser.ParseDataType(element : IXMLDOMElement; name : String; type_ : TFHIRTypeClass) : TFhirType;
+begin
+  if (name <> '') and (name <> element.baseName) then
+    raise Exception.Create('Expected Name mismatch : expected "'+name+'"+, but found "'+element.baseName+'"');
+  if (type_ = TFhirExtension) then
+    result := parseExtension(element, name)
+  else if (type_ = TFhirNarrative) then
+    result := parseNarrative(element, name)
+  else if (type_ = TFhirPeriod) then
+    result := parsePeriod(element, name)
+  else if (type_ = TFhirCoding) then
+    result := parseCoding(element, name)
+  else if (type_ = TFhirRange) then
+    result := parseRange(element, name)
+  else if (type_ = TFhirQuantity) then
+    result := parseQuantity(element, name)
+  else if (type_ = TFhirAttachment) then
+    result := parseAttachment(element, name)
+  else if (type_ = TFhirRatio) then
+    result := parseRatio(element, name)
+  else if (type_ = TFhirSampledData) then
+    result := parseSampledData(element, name)
+  else if (type_ = TFhirResourceReference) then
+    result := parseResourceReference(element, name)
+  else if (type_ = TFhirCodeableConcept) then
+    result := parseCodeableConcept(element, name)
+  else if (type_ = TFhirIdentifier) then
+    result := parseIdentifier(element, name)
+  else if (type_ = TFhirSchedule) then
+    result := parseSchedule(element, name)
+  else if (type_ = TFhirContact) then
+    result := parseContact(element, name)
+  else if (type_ = TFhirAddress) then
+    result := parseAddress(element, name)
+  else if (type_ = TFhirHumanName) then
+    result := parseHumanName(element, name)
+  else
+    raise Exception.create('Unknown Type');
+end;
+
+procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; statedType, id, ver : String; resource: TFhirResource);
 begin
   if (resource = nil) Then
     Raise Exception.Create('error - resource is nil');
@@ -27199,6 +28282,7 @@ begin
     frtConceptMap: ComposeConceptMap(json, 'ConceptMap', TFhirConceptMap(resource));
     frtCondition: ComposeCondition(json, 'Condition', TFhirCondition(resource));
     frtConformance: ComposeConformance(json, 'Conformance', TFhirConformance(resource));
+    frtContraindication: ComposeContraindication(json, 'Contraindication', TFhirContraindication(resource));
     frtDataElement: ComposeDataElement(json, 'DataElement', TFhirDataElement(resource));
     frtDevice: ComposeDevice(json, 'Device', TFhirDevice(resource));
     frtDeviceObservationReport: ComposeDeviceObservationReport(json, 'DeviceObservationReport', TFhirDeviceObservationReport(resource));
@@ -27223,6 +28307,7 @@ begin
     frtMessageHeader: ComposeMessageHeader(json, 'MessageHeader', TFhirMessageHeader(resource));
     frtNamespace: ComposeNamespace(json, 'Namespace', TFhirNamespace(resource));
     frtObservation: ComposeObservation(json, 'Observation', TFhirObservation(resource));
+    frtOperationDefinition: ComposeOperationDefinition(json, 'OperationDefinition', TFhirOperationDefinition(resource));
     frtOperationOutcome: ComposeOperationOutcome(json, 'OperationOutcome', TFhirOperationOutcome(resource));
     frtOrder: ComposeOrder(json, 'Order', TFhirOrder(resource));
     frtOrderResponse: ComposeOrderResponse(json, 'OrderResponse', TFhirOrderResponse(resource));
@@ -27236,7 +28321,9 @@ begin
     frtQuery: ComposeQuery(json, 'Query', TFhirQuery(resource));
     frtQuestionnaire: ComposeQuestionnaire(json, 'Questionnaire', TFhirQuestionnaire(resource));
     frtQuestionnaireAnswers: ComposeQuestionnaireAnswers(json, 'QuestionnaireAnswers', TFhirQuestionnaireAnswers(resource));
+    frtReferralRequest: ComposeReferralRequest(json, 'ReferralRequest', TFhirReferralRequest(resource));
     frtRelatedPerson: ComposeRelatedPerson(json, 'RelatedPerson', TFhirRelatedPerson(resource));
+    frtRiskAssessment: ComposeRiskAssessment(json, 'RiskAssessment', TFhirRiskAssessment(resource));
     frtSecurityEvent: ComposeSecurityEvent(json, 'SecurityEvent', TFhirSecurityEvent(resource));
     frtSlot: ComposeSlot(json, 'Slot', TFhirSlot(resource));
     frtSpecimen: ComposeSpecimen(json, 'Specimen', TFhirSpecimen(resource));

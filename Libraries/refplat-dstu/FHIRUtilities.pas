@@ -1,30 +1,30 @@
 unit FHIRUtilities;
 
 {
-Copyright (c) 2011-2013, HL7, Inc
+Copyright (c) 2011-2014, HL7, Inc
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -37,6 +37,7 @@ uses
   GuidSupport,
   DateSupport,
 
+  IdSoapMime,
   TextUtilities,
   ZLib,
 
@@ -72,6 +73,8 @@ procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
 Function FhirHtmlToText(html : TFhirXHtmlNode):String;
 function FindContainedResource(resource : TFhirResource; ref : TFhirResourceReference) : TFhirResource;
 function GetResourceFromFeed(feed : TFHIRAtomFeed; ref : TFhirResourceReference) : TFHIRResource;
+function LoadFromFormParam(part : TIdSoapMimePart; lang : String) : TFhirResource;
+function LoadDTFromFormParam(part : TIdSoapMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 
 function BuildOperationOutcome(lang : String; e : exception) : TFhirOperationOutcome; overload;
 Function BuildOperationOutcome(lang, message : String) : TFhirOperationOutcome; overload;
@@ -95,6 +98,20 @@ procedure BuildNarrative(vs : TFhirValueSet); overload;
 
 Function removeCaseAndAccents(s : String) : String;
 
+{$IFDEF FHIR-DSTU}
+const
+  TypeRestfulInteractionRead = TypeRestfulOperationRead;
+  TypeRestfulInteractionVread = TypeRestfulOperationVread;
+  TypeRestfulInteractionUpdate = TypeRestfulOperationUpdate;
+  TypeRestfulInteractionDelete = TypeRestfulOperationDelete;
+  TypeRestfulInteractionHistoryInstance = TypeRestfulOperationHistoryInstance;
+  TypeRestfulInteractionValidate = TypeRestfulOperationValidate;
+  TypeRestfulInteractionHistoryType = TypeRestfulOperationHistoryType;
+  TypeRestfulInteractionCreate = TypeRestfulOperationCreate;
+  TypeRestfulInteractionSearchType = TypeRestfulOperationSearchType;
+{$ENDIF}
+
+
 type
   TFHIRElementHelper = class helper for TFHIRElement
   public
@@ -113,7 +130,10 @@ type
 
   TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirConformanceRestResource
   public
+    {$IFDEF FHIR-DSTU}
     function operation(type_ : TFhirTypeRestfulOperation) : TFhirConformanceRestResourceOperation;
+    function interactionList : TFhirConformanceRestResourceOperationList;
+    {$ENDIF}
   end;
 
   TFhirContactListHelper = class helper for TFhirContactList
@@ -128,6 +148,8 @@ type
     function error(source, typeCode, path : string; test : boolean; msg : string) : boolean;
     function warning(source, typeCode, path : string; test : boolean; msg : string) : boolean;
     function hint(source, typeCode, path : string; test : boolean; msg : string) : boolean;
+
+    function hasErrors : boolean;
   end;
 
   {$IFNDEF FHIR-DSTU}
@@ -830,6 +852,59 @@ begin
   end;
 end;
 
+function LoadDTFromFormParam(part : TIdSoapMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+var
+  ct : String;
+  parser : TFHIRParser;
+begin
+  parser := nil;
+  try
+    // first, figure out the format
+    ct := part.Headers.Values['Content-Type'];
+    if ct <> '' then
+    begin
+      if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
+        parser := TFHIRJsonParser.Create(lang)
+      else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
+          StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
+        parser := TFHIRXMLParser.Create(lang);
+    end;
+    if parser = nil then
+      parser := DetectFormat(part.content).Create(lang);
+    parser.source := part.Content;
+    result := parser.ParseDT(name, type_);
+  finally
+    parser.Free;
+  end;
+end;
+
+function LoadFromFormParam(part : TIdSoapMimePart; lang : String) : TFhirResource;
+var
+  ct : String;
+  parser : TFHIRParser;
+begin
+  parser := nil;
+  try
+    // first, figure out the format
+    ct := part.Headers.Values['Content-Type'];
+    if ct <> '' then
+    begin
+      if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
+        parser := TFHIRJsonParser.Create(lang)
+      else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
+          StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
+        parser := TFHIRXMLParser.Create(lang);
+    end;
+    if parser = nil then
+      parser := DetectFormat(part.content).Create(lang);
+    parser.source := part.Content;
+    parser.Parse;
+    result := parser.resource.Link;
+  finally
+    parser.Free;
+  end;
+end;
+
 
 (*
 
@@ -1007,6 +1082,15 @@ begin
   result := test;
 end;
 
+function TFHIROperationOutcomeHelper.hasErrors: boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := 0 to issueList.Count - 1 do
+    result := result or (issueList[i].severityST in [IssueSeverityFatal, IssueSeverityError]);
+end;
+
 function TFHIROperationOutcomeHelper.hint(source, typeCode, path: string; test: boolean; msg: string): boolean;
 var
   issue : TFhirOperationOutcomeIssue;
@@ -1174,6 +1258,11 @@ end;
 
 { TFhirConformanceRestResourceHelper }
 
+function TFhirConformanceRestResourceHelper.interactionList: TFhirConformanceRestResourceOperationList;
+begin
+  result := operationList;
+end;
+
 function TFhirConformanceRestResourceHelper.operation(type_: TFhirTypeRestfulOperation): TFhirConformanceRestResourceOperation;
 var
   i : integer;
@@ -1241,7 +1330,7 @@ begin
   {$IFDEF WIN64}
   ZDecompress(s, result);
   {$ELSE}
-  ZDecompress(Pointer(s[0]),Length(s),buffer,size);
+  ZDecompress(@s[0],Length(s),buffer,size);
 
   SetLength(result,size);
   Move(buffer^,result[0],size);
@@ -1294,6 +1383,7 @@ begin
   result := elementST;
 end;
 {$ENDIF}
+
 
 end.
 

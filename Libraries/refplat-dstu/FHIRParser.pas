@@ -35,7 +35,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.81 generated Mon, Jun 30, 2014 15:44+1000
+// FHIR v0.0.81 generated Sat, Aug 23, 2014 04:40+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
@@ -257,6 +257,7 @@ Type
     function ParseValueSetExpansionContains(element : IXmlDomElement; path : string) : TFhirValueSetExpansionContains;
     function ParseValueSet(element : IXmlDomElement; path : string) : TFhirValueSet;
     function ParseResource(element : IxmlDomElement; path : String) : TFhirResource; override;
+    function ParseDataType(element : IXmlDomElement; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
     function ParseFragment(element : IxmlDomElement) : TFhirElement; overload;
   end;
@@ -475,7 +476,7 @@ Type
     procedure ComposeValueSetExpansion(xml : TXmlBuilder; name : string; elem : TFhirValueSetExpansion);
     procedure ComposeValueSetExpansionContains(xml : TXmlBuilder; name : string; elem : TFhirValueSetExpansionContains);
     procedure ComposeValueSet(xml : TXmlBuilder; name : string; elem : TFhirValueSet);
-    procedure ComposeResource(xml : TXmlBuilder; id, ver : String; resource : TFhirResource); override;
+    procedure ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; resource : TFhirResource); override;
   end;
 
   TFHIRJsonParser = class (TFHIRJsonParserBase)
@@ -889,6 +890,7 @@ Type
     function ParseValueSet(jsn : TJsonObject) : TFhirValueSet; overload; {b|}
     procedure ParseValueSet(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseResource(jsn : TJsonObject) : TFhirResource; override;
+    function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
     function ParseFragment(jsn : TJsonObject; type_ : String) : TFhirElement;  overload;
   end;
@@ -1119,7 +1121,7 @@ Type
     procedure ComposeValueSetExpansion(json : TJSONWriter; name : string; elem : TFhirValueSetExpansion);
     procedure ComposeValueSetExpansionContains(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionContains);
     procedure ComposeValueSet(json : TJSONWriter; name : string; elem : TFhirValueSet);
-    procedure ComposeResource(json : TJSONWriter; id, ver : String; resource : TFhirResource); override;
+    procedure ComposeResource(json : TJSONWriter; statedType, id, ver : String; resource : TFhirResource); override;
   end;
 
 
@@ -24345,7 +24347,7 @@ begin
     raise Exception.create('Error: the element '+element.baseName+' is not recognised as a valid resource name');
 end;
 
-procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; id, ver : String; resource: TFhirResource);
+procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; resource: TFhirResource);
 begin
   if (resource = nil) Then
     Raise Exception.Create('error - resource is nil');
@@ -24591,7 +24593,85 @@ begin
     raise Exception.create('error: the element '+element.nodeName+' is not a valid fragment name');
 end;
 
-procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; id, ver : String; resource: TFhirResource);
+function TFHIRJsonParser.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType;
+begin
+   if (type_ = TFhirExtension) then
+    result := parseExtension(jsn)
+  else if (type_ = TFhirNarrative) then
+    result := parseNarrative(jsn)
+  else if (type_ = TFhirPeriod) then
+    result := parsePeriod(jsn)
+  else if (type_ = TFhirCoding) then
+    result := parseCoding(jsn)
+  else if (type_ = TFhirRange) then
+    result := parseRange(jsn)
+  else if (type_ = TFhirQuantity) then
+    result := parseQuantity(jsn)
+  else if (type_ = TFhirAttachment) then
+    result := parseAttachment(jsn)
+  else if (type_ = TFhirRatio) then
+    result := parseRatio(jsn)
+  else if (type_ = TFhirSampledData) then
+    result := parseSampledData(jsn)
+  else if (type_ = TFhirResourceReference) then
+    result := parseResourceReference(jsn)
+  else if (type_ = TFhirCodeableConcept) then
+    result := parseCodeableConcept(jsn)
+  else if (type_ = TFhirIdentifier) then
+    result := parseIdentifier(jsn)
+  else if (type_ = TFhirSchedule) then
+    result := parseSchedule(jsn)
+  else if (type_ = TFhirContact) then
+    result := parseContact(jsn)
+  else if (type_ = TFhirAddress) then
+    result := parseAddress(jsn)
+  else if (type_ = TFhirHumanName) then
+    result := parseHumanName(jsn)
+  else
+    raise Exception.create('Unknown Type');
+end;
+
+function TFHIRXmlParser.ParseDataType(element : IXMLDOMElement; name : String; type_ : TFHIRTypeClass) : TFhirType;
+begin
+    if (name <> '') and (name <> element.baseName) then
+    raise Exception.Create('Expected Name mismatch : expected "'+name+'"+, but found "'+element.baseName+'"');
+ if (type_ = TFhirExtension) then
+    result := parseExtension(element, name)
+  else if (type_ = TFhirNarrative) then
+    result := parseNarrative(element, name)
+  else if (type_ = TFhirPeriod) then
+    result := parsePeriod(element, name)
+  else if (type_ = TFhirCoding) then
+    result := parseCoding(element, name)
+  else if (type_ = TFhirRange) then
+    result := parseRange(element, name)
+  else if (type_ = TFhirQuantity) then
+    result := parseQuantity(element, name)
+  else if (type_ = TFhirAttachment) then
+    result := parseAttachment(element, name)
+  else if (type_ = TFhirRatio) then
+    result := parseRatio(element, name)
+  else if (type_ = TFhirSampledData) then
+    result := parseSampledData(element, name)
+  else if (type_ = TFhirResourceReference) then
+    result := parseResourceReference(element, name)
+  else if (type_ = TFhirCodeableConcept) then
+    result := parseCodeableConcept(element, name)
+  else if (type_ = TFhirIdentifier) then
+    result := parseIdentifier(element, name)
+  else if (type_ = TFhirSchedule) then
+    result := parseSchedule(element, name)
+  else if (type_ = TFhirContact) then
+    result := parseContact(element, name)
+  else if (type_ = TFhirAddress) then
+    result := parseAddress(element, name)
+  else if (type_ = TFhirHumanName) then
+    result := parseHumanName(element, name)
+  else
+    raise Exception.create('Unknown Type');
+end;
+
+procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; statedType, id, ver : String; resource: TFhirResource);
 begin
   if (resource = nil) Then
     Raise Exception.Create('error - resource is nil');

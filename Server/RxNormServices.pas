@@ -434,14 +434,19 @@ begin
       res.sql := 'and RXCUI in (select RXCUI from rxnconso where SAB = '''+SQLWrapString(value)+'''))'
     else if prop = 'TTY' then
       res.sql := 'and TTY =  '''+SQLWrapString(value)+''''
-    else if StringArrayExistsSensitive(RELATIONSHIPS, prop) then
+    else if StringArrayExistsSensitive(RELATIONSHIPS, prop) and value.StartsWith('CUI:') then
+      res.sql := 'and (RXCUI in (select RXCUI from rxnconso where RXCUI in (select RXCUI1 from rxnrel where '+
+      'REL = '''+SQLWrapString(prop)+''' and RXCUI2 = '''+SQLWrapString(value.Substring(4))+'''))'
+    else if StringArrayExistsSensitive(RELATIONSHIPS, prop) and value.StartsWith('AUI:') then
       res.sql := 'and (RXCUI in (select RXCUI from rxnconso where '+
-      'RXAUI in (select RXAUI1 from rxnrel where REL = '''+SQLWrapString(prop)+''' and RXAUI2 = '''+SQLWrapString(value)+''')) or RXCUI in (select RXCUI1 from rxnrel where '+
-      'REL = '''+SQLWrapString(prop)+''' and RXCUI2 = '''+SQLWrapString(value)+'''))'
-    else if StringArrayExistsSensitive(RELATIONSHIP_TYPES, prop) then
+      'RXAUI in (select RXAUI1 from rxnrel where REL = '''+SQLWrapString(prop)+''' and RXAUI2 = '''+SQLWrapString(value.Substring(4))+'''))'
+    else if StringArrayExistsSensitive(RELATIONSHIP_TYPES, prop) and value.StartsWith('CUI:') then
       res.sql := 'and (RXCUI in (select RXCUI from rxnconso where '+
-      'RXAUI in (select RXAUI1 from rxnrel where RELA = '''+SQLWrapString(prop)+''' and RXAUI2 = '''+SQLWrapString(value)+''')) or RXCUI in (select RXCUI1 from rxnrel where '+
-      'RELA = '''+SQLWrapString(prop)+''' and RXCUI2 = '''+SQLWrapString(value)+'''))'
+      'RXCUI in (select RXCUI1 from rxnrel where '+
+      'RELA = '''+SQLWrapString(prop)+''' and RXCUI2 = '''+SQLWrapString(value.Substring(4))+'''))'
+    else if StringArrayExistsSensitive(RELATIONSHIP_TYPES, prop) and value.StartsWith('AUI:') then
+      res.sql := 'and (RXCUI in (select RXCUI from rxnconso where '+
+      'RXAUI in (select RXAUI1 from rxnrel where RELA = '''+SQLWrapString(prop)+''' and RXAUI2 = '''+SQLWrapString(value.Substring(4))+'''))'
     else
       ok := false;
     if ok then
@@ -449,7 +454,9 @@ begin
       result := res.link;
       if prep <> nil then
         TRxNormPrep(prep).filters.Add(res.Link);
-    end;
+    end
+    else
+      raise Exception.Create('Unknown ');
   finally
     res.Free;
   end;

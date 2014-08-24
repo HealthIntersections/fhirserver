@@ -53,7 +53,7 @@ Type
     procedure excludeCodes(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude);
     procedure handleCompose(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList);
 
-    procedure addCode(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, code, display: string);
+    procedure addCode(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, code, display, definition: string);
     procedure addDefinedCode(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; system : string; c : TFHIRValueSetDefineConcept);
     function key(system, code : String): string; overload;
     function key(c : TFhirValueSetExpansionContains) : string;  overload;
@@ -87,7 +87,7 @@ var
   map : TAdvStringObjectMatch;
   i : integer;
   c : TFhirValueSetExpansionContains;
-  e : TFhirExtension;
+  //e : TFhirExtension;
   filter : TSearchFilterText;
 begin
   result := source.Clone;
@@ -100,13 +100,12 @@ begin
   try
     result.expansion := TFhirValueSetExpansion.create;
     result.expansion.timestampST := NowUTC;
-    e := result.expansion.ExtensionList.Append;
+    //e := result.expansion.ExtensionList.Append;
 
     if (source.define <> nil) then
       handleDefine(list, map, source.define, source.define.conceptList, filter);
     if (source.compose <> nil) then
       handleCompose(list, map, source.compose, filter, dependencies);
-
 
     for i := 0 to list.count - 1 do
     begin
@@ -143,7 +142,7 @@ begin
     importValueSet(list, map, source.importList[i], filter, dependencies);
   for i := 0 to source.includeList.count - 1 do
     includeCodes(list, map, source.includeList[i], filter);
-  for i := 0 to source.importList.count - 1 do
+  for i := 0 to source.excludeList.count - 1 do
     excludeCodes(list, map, source.excludeList[i]);
 end;
 
@@ -155,7 +154,7 @@ begin
   for i := 0 to defines.count - 1 do
   begin
     cm := defines[i];
-    if filter.passes(cm.displayST) then
+    if filter.passes(cm.displayST) or filter.passes(cm.codeST) then
       addDefinedCode(list, map, source.systemST, cm);
     handleDefine(list, map, source, cm.conceptList, filter);
   end;
@@ -166,12 +165,12 @@ var
   i : integer;
 begin
   if (c.abstract = nil) or not c.AbstractST then
-    addCode(list, map, system, c.CodeST, c.DisplayST);
+    addCode(list, map, system, c.CodeST, c.DisplayST, c.definitionST);
   for i := 0 to c.conceptList.count - 1 do
     addDefinedCode(list, map, system, c.conceptList[i]);
 end;
 
-procedure TFHIRValueSetExpander.addCode(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, code, display: string);
+procedure TFHIRValueSetExpander.addCode(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, code, display, definition: string);
 var
   n : TFHIRValueSetExpansionContains;
   s : String;
@@ -183,13 +182,18 @@ begin
   try
     n.SystemST := system;
     n.CodeST := code;
-    n.DisplayST := display;
+    if (display <> '') then
+      n.DisplayST := display
+    else
+      n.DisplayST := code;
     s := key(n);
     if not map.ExistsByKey(s) then
     begin
       list.add(n.link);
       map.add(s, n.link);
     end;
+    if definition <> '' then
+      n.setExtensionString('http://hl7.org/fhir/Profile/tools-extensions#definition', definition);
   finally
     n.free;
   end;
@@ -266,7 +270,7 @@ begin
             if i > UPPER_LIMIT then
               raise exception.create('Too many matches to return');
             c := cs.FilterConcept(ctxt);
-            addCode(list, map, cs.system, cs.code(c), cs.display(c));
+            addCode(list, map, cs.system, cs.code(c), cs.display(c), cs.definition(c));
           end;
         finally
           cs.Close(ctxt);
@@ -276,7 +280,7 @@ begin
 
     for i := 0 to cset.codeList.count - 1 do
       if filter.passes(cs.getDisplay(cset.codeList[i].value)) then
-        addCode(list, map, cs.system, cset.codeList[i].value, cs.getDisplay(cset.codeList[i].value));
+        addCode(list, map, cs.system, cset.codeList[i].value, cs.getDisplay(cset.codeList[i].value), cs.getDefinition(cset.codeList[i].value));
 
     if cset.filterList.Count > 0 then
     begin
@@ -311,7 +315,7 @@ begin
             for i := 1 to length(filters) - 1 do
               ok := ok and cs.InFilter(filters[i], c);
           if ok then
-            addCode(list, map, cs.system, cs.code(c), cs.display(c));
+            addCode(list, map, cs.system, cs.code(c), cs.display(c), cs.definition(c));
         end;
         for i := 0 to length(filters) - 1 do
           cs.Close(filters[i]);
@@ -334,7 +338,7 @@ var
   i : integer;
 begin
   if not cs.IsAbstract(context) then
-    addCode(list, map, cs.system, cs.Code(context), cs.Display(context));
+    addCode(list, map, cs.system, cs.Code(context), cs.Display(context), cs.definition(context));
   for i := 0 to cs.ChildCount(context) - 1 do
     addCodeAndDescendents(list, map, cs, cs.getcontext(context, i));
 end;

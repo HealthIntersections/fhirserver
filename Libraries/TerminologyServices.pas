@@ -33,6 +33,8 @@ Type
     FStems : TStringList;
     FStemmer : TYuStemmer_8;
 
+    function find(s : String) : boolean;
+
     procedure process;
   public
     constructor Create(filter : String);  overload;
@@ -56,11 +58,13 @@ Type
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; virtual; abstract;
     function system : String; virtual; abstract;
     function getDisplay(code : String):String; virtual; abstract;
+    function getDefinition(code : String):String; virtual; abstract;
     function locate(code : String) : TCodeSystemProviderContext; virtual; abstract;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
     function Display(context : TCodeSystemProviderContext) : string; virtual; abstract;
+    function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList); overload; virtual; abstract;
     procedure Displays(code : String; list : TStringList); overload; virtual; abstract;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
@@ -132,6 +136,26 @@ begin
   inherited;
 end;
 
+function TSearchFilterText.find(s: String): boolean;
+var
+  L, H, I, C: Integer;
+begin
+  Result := False;
+  L := 0;
+  H := FStems.Count - 1;
+  while not result and (L <= H) do
+  begin
+    I := (L + H) shr 1;
+    C := CompareStr(FStems[I], copy(S, 1, length(FStems[i])));
+    if C = 0 then
+      Result := True
+    else if C < 0 then
+      L := I + 1
+    else
+      H := I - 1;
+  end;
+end;
+
 function TSearchFilterText.Link: TSearchFilterText;
 begin
   result := TSearchFilterText(inherited link);
@@ -144,37 +168,49 @@ end;
 
 function TSearchFilterText.passes(value: String): boolean;
 var
-  s : String;
-  i : integer;
+  i, j : integer;
 begin
   result := Null;
-  while not result and (value <> '') Do
+  i := 1;
+  while (not result) and (i <= length(value)) Do
   begin
-    StringSplit(value, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='], s, value);
-    if (s <> '') Then
-      result := FStems.Find(lowercase(FStemmer.stem(s)), i);
+    if CharInSet(value[i], ['0'..'9', 'a'..'z', 'A'..'Z']) then
+    begin
+      j := i;
+      while (i <= length(value)) and CharInSet(value[i], ['0'..'9', 'a'..'z', 'A'..'Z']) do
+        inc(i);
+      result := find(lowercase(FStemmer.stem(copy(value, j, i-j))));
+    end
+    else
+      inc(i);
   End;
 end;
 
 function TSearchFilterText.passes(stems: TAdvStringList): boolean;
 var
-  i, j : integer;
+  i : integer;
 begin
   result := Null;
   for i := 0 to stems.count - 1 do
-    result := result or FStems.find(stems[i], j);
+    result := result or find(stems[i]);
 end;
 
 procedure TSearchFilterText.process;
 var
-  s, t : String;
+  i, j : Integer;
 begin
-  t := FFilter;
-  while (t <> '') Do
+  i := 1;
+  while i <= length(FFilter) Do
   begin
-    StringSplit(t, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='], s, t);
-    if (s <> '') Then
-      FStems.Add(lowercase(FStemmer.stem(s)));
+    if CharInSet(FFilter[i], ['0'..'9', 'a'..'z', 'A'..'Z']) then
+    begin
+      j := i;
+      while (i <= length(FFilter)) and CharInSet(FFilter[i], ['0'..'9', 'a'..'z', 'A'..'Z']) do
+        inc(i);
+      FStems.Add(lowercase(FStemmer.stem(copy(FFilter, j, i-j))));
+    end
+    else
+      inc(i);
   End;
   FStems.Sort;
 end;

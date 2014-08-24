@@ -249,11 +249,18 @@ uses
   UcumTests in '..\Libraries\tests\UcumTests.pas',
   FHIRServerUtilities in 'FHIRServerUtilities.pas',
   SearchProcessor in 'SearchProcessor.pas',
-  JWTTests in '..\Libraries\security\JWTTests.pas',
-  JWT in '..\Libraries\security\JWT.pas',
-  HMAC in '..\Libraries\security\HMAC.pas',
-  libeay32 in '..\Libraries\security\libeay32.pas',
-  AuthServer in 'AuthServer.pas';
+  AuthServer in 'AuthServer.pas',
+  libeay32 in '..\Libraries\support\libeay32.pas',
+  JWTTests in '..\Libraries\support\JWTTests.pas',
+  HMAC in '..\Libraries\support\HMAC.pas',
+  JWT in '..\Libraries\support\JWT.pas',
+  QuestionnaireBuilder in '..\Libraries\refplat-dev\QuestionnaireBuilder.pas',
+  SCIMServer in 'SCIMServer.pas',
+  SCIMSearch in 'SCIMSearch.pas',
+  SCIMObjects in '..\Libraries\refplat-dev\SCIMObjects.pas',
+  TwilioClient in '..\Libraries\security\TwilioClient.pas',
+  FHIRSearchSyntax in '..\Libraries\refplat-dev\FHIRSearchSyntax.pas',
+  ProfileManager in 'ProfileManager.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

@@ -4,27 +4,27 @@ unit DBInstaller;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -34,7 +34,8 @@ uses
   SysUtils, Classes,
   AdvObjects,
   KDBManager, KDBDialects,
-  FHIRResources, FHIRConstants, FHIRIndexManagers;
+  FHIRResources, FHIRConstants, FHIRIndexManagers,
+  SCIMServer;
 
 Type
   TFHIRDatabaseInstaller = class (TAdvObject)
@@ -59,6 +60,8 @@ Type
     procedure CreateResourceVersionsTags;
     procedure CreateSubscriptionQueue;
     procedure CreateNotificationQueue;
+    procedure CreateUsers;
+    procedure CreateUserIndexes;
     procedure CreateOAuthLogins;
     procedure DefineIndexes;
     procedure DefineResourceSpaces;
@@ -155,6 +158,7 @@ Begin
        ' cmdRead int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' cmdVersionRead int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' cmdCreate int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
+       ' cmdOperation int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' cmdUpdate int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' cmdDelete int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' cmdValidate int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
@@ -166,14 +170,14 @@ Begin
        PrimaryKeyType(FConn.owner.Platform, 'PK_Types', 'ResourceTypeKey')+') '+CreateTableInfo(FConn.owner.platform));
   for a := Low(TFHIRResourceType) to High(TFHIRResourceType) do
     if (a = frtBinary) then
-      FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, versionUpdates) values '+
-      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0)')
+      FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
+      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0)')
     else if (a = frtSecurityEvent) then
-      FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, versionUpdates) values '+
-      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0)')
+      FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
+      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0)')
     else
-      FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, versionUpdates) values '+
-      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)');
+      FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
+      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)');
 End;
 
 FUnction BooleanToInt(b : boolean) : String;
@@ -285,6 +289,7 @@ Begin
        ' Deleted int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Format int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SessionKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' TextSummary nchar(255) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Tags '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Content '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Summary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -406,6 +411,35 @@ begin
   FConn.ExecSQL('insert into Spaces select ResourceTypeKey as SpaceKey, ResourceName as Space from Types');
 end;
 
+procedure TFHIRDatabaseInstaller.CreateUsers;
+Begin
+  FConn.ExecSQL('CREATE TABLE Users( '+#13#10+
+       ' UserKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' UserName nchar(255)'+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Password nchar(255) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Status int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Content '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_Users', 'UserKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create Unique INDEX SK_Users_StatusName ON Users (Status, UserName)');
+  FConn.ExecSQL('Create Unique INDEX SK_Users_StatusKey ON Users (Status, UserKey)');
+End;
+
+procedure TFHIRDatabaseInstaller.CreateUserIndexes;
+Begin
+  FConn.ExecSQL('CREATE TABLE UserIndexes( '+#13#10+
+       ' UserIndexKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' UserKey      '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' IndexName    nchar(20)'+                           ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Parent       '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' Value        nchar(255) '+                         ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' SortBy       '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_UserIndexes', 'UserIndexKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'UserIndexes', 'UserKey', 'Users', 'UserKey', 'FK_UserIndexes_UserKey'));
+  FConn.ExecSQL('Create INDEX SK_UserIndexes_IndexNameValue ON UserIndexes (IndexName, Value)');
+  FConn.ExecSQL('Create INDEX SK_UserIndexes_ParentIndexNameValue ON UserIndexes (Parent, IndexName, Value)');
+End;
+
+
 destructor TFHIRDatabaseInstaller.Destroy;
 begin
   FBases.Free;
@@ -471,6 +505,8 @@ procedure TFHIRDatabaseInstaller.Install;
 begin
   FConn.StartTransact;
   try
+    CreateUsers;
+    CreateUserIndexes;
     CreateResourceSessions;
     CreateResourceTags;
     CreateResourceTypes;
@@ -540,6 +576,10 @@ begin
         FConn.DropTable('Types');
       if meta.hasTable('Tags') then
         FConn.DropTable('Tags');
+      if meta.hasTable('UserIndexes') then
+        FConn.DropTable('UserIndexes');
+      if meta.hasTable('Users') then
+        FConn.DropTable('Users');
       if meta.hasTable('Sessions') then
         FConn.DropTable('Sessions');
       FConn.Commit;
@@ -550,7 +590,11 @@ begin
   finally
     meta.free;
   end;
-  DoPostTransactionUnInstall;
+  try
+    DoPostTransactionUnInstall;
+  finally
+    // nothing
+  end;
 end;
 
 end.

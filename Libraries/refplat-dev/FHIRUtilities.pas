@@ -37,6 +37,7 @@ uses
   GuidSupport,
   DateSupport,
 
+  IdSoapMime,
   TextUtilities,
   ZLib,
 
@@ -72,6 +73,8 @@ procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
 Function FhirHtmlToText(html : TFhirXHtmlNode):String;
 function FindContainedResource(resource : TFhirResource; ref : TFhirResourceReference) : TFhirResource;
 function GetResourceFromFeed(feed : TFHIRAtomFeed; ref : TFhirResourceReference) : TFHIRResource;
+function LoadFromFormParam(part : TIdSoapMimePart; lang : String) : TFhirResource;
+function LoadDTFromFormParam(part : TIdSoapMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 
 function BuildOperationOutcome(lang : String; e : exception) : TFhirOperationOutcome; overload;
 Function BuildOperationOutcome(lang, message : String) : TFhirOperationOutcome; overload;
@@ -113,7 +116,7 @@ type
 
   TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirConformanceRestResource
   public
-    function operation(type_ : TFhirTypeRestfulOperation) : TFhirConformanceRestResourceOperation;
+    function interaction(type_ : TFhirTypeRestfulInteraction) : TFhirConformanceRestResourceInteraction;
   end;
 
   TFhirContactListHelper = class helper for TFhirContactList
@@ -128,6 +131,8 @@ type
     function error(source, typeCode, path : string; test : boolean; msg : string) : boolean;
     function warning(source, typeCode, path : string; test : boolean; msg : string) : boolean;
     function hint(source, typeCode, path : string; test : boolean; msg : string) : boolean;
+
+    function hasErrors : boolean;
   end;
 
   {$IFNDEF FHIR-DSTU}
@@ -830,6 +835,59 @@ begin
   end;
 end;
 
+function LoadDTFromFormParam(part : TIdSoapMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+var
+  ct : String;
+  parser : TFHIRParser;
+begin
+  parser := nil;
+  try
+    // first, figure out the format
+    ct := part.Headers.Values['Content-Type'];
+    if ct <> '' then
+    begin
+      if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
+        parser := TFHIRJsonParser.Create(lang)
+      else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
+          StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
+        parser := TFHIRXMLParser.Create(lang);
+    end;
+    if parser = nil then
+      parser := DetectFormat(part.content).Create(lang);
+    parser.source := part.Content;
+    result := parser.ParseDT(name, type_);
+  finally
+    parser.Free;
+  end;
+end;
+
+function LoadFromFormParam(part : TIdSoapMimePart; lang : String) : TFhirResource;
+var
+  ct : String;
+  parser : TFHIRParser;
+begin
+  parser := nil;
+  try
+    // first, figure out the format
+    ct := part.Headers.Values['Content-Type'];
+    if ct <> '' then
+    begin
+      if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
+        parser := TFHIRJsonParser.Create(lang)
+      else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
+          StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
+        parser := TFHIRXMLParser.Create(lang);
+    end;
+    if parser = nil then
+      parser := DetectFormat(part.content).Create(lang);
+    parser.source := part.Content;
+    parser.Parse;
+    result := parser.resource.Link;
+  finally
+    parser.Free;
+  end;
+end;
+
 
 (*
 
@@ -1007,6 +1065,15 @@ begin
   result := test;
 end;
 
+function TFHIROperationOutcomeHelper.hasErrors: boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := 0 to issueList.Count - 1 do
+    result := result or (issueList[i].severityST in [IssueSeverityFatal, IssueSeverityError]);
+end;
+
 function TFHIROperationOutcomeHelper.hint(source, typeCode, path: string; test: boolean; msg: string): boolean;
 var
   issue : TFhirOperationOutcomeIssue;
@@ -1174,14 +1241,14 @@ end;
 
 { TFhirConformanceRestResourceHelper }
 
-function TFhirConformanceRestResourceHelper.operation(type_: TFhirTypeRestfulOperation): TFhirConformanceRestResourceOperation;
+function TFhirConformanceRestResourceHelper.interaction(type_: TFhirTypeRestfulInteraction): TFhirConformanceRestResourceInteraction;
 var
   i : integer;
 begin
   result := nil;
-  for i := 0 to self.operationList.count - 1 do
-    if (self.operationList[i].codeST = type_) then
-      result := self.operationList[i];
+  for i := 0 to self.interactionList.count - 1 do
+    if (self.interactionList[i].codeST = type_) then
+      result := self.interactionList[i];
 
 
 
@@ -1250,6 +1317,7 @@ begin
   {$ENDIF}
 end;
 
+{$IFNDEF FHIR-DSTU}
 { TFhirConceptMapElementHelper }
 
 function TFhirConceptMapElementHelper.system: TFhirUri;
@@ -1292,6 +1360,8 @@ function TFhirConceptMapElementDependsOnHelper.conceptST: String;
 begin
   result := elementST;
 end;
+{$ENDIF}
+
 
 end.
 

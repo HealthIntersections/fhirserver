@@ -37,7 +37,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.81 generated Mon, Jun 30, 2014 15:44+1000
+// FHIR v0.0.81 generated Sat, Aug 23, 2014 04:40+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -1187,7 +1187,8 @@ Type
     Function Clone : TFhirType; Overload;
     {!script show}
   End;
-  
+  TFHIRTypeClass = class of TFhirType;
+
   {@Class TFhirBackboneElement : TFHIRBase
     Base Element Definition - extensions, ids
   }
@@ -2766,11 +2767,11 @@ Type
   End;
 
 
-  {@Class TFhirExtension : TFHIRElement
+  {@Class TFhirExtension : TFHIRType
     Optional Extensions Element - found in all resources.
   }
   {!.Net HL7Connect.Fhir.Extension}
-  TFhirExtension = class (TFHIRElement)
+  TFhirExtension = class (TFHIRType)
   private
     FUrl : TFhirUri;
     FValue : TFhirType;
@@ -2886,11 +2887,11 @@ Type
   End;
 
 
-  {@Class TFhirNarrative : TFhirElement
+  {@Class TFhirNarrative : TFHIRType
     A human-readable formatted text, including images.
   }
   {!.Net HL7Connect.Fhir.Narrative}
-  TFhirNarrative = class (TFhirElement)
+  TFhirNarrative = class (TFHIRType)
   private
     FStatus : TFhirEnum;
     FDiv_ : TFhirXHtmlNode;

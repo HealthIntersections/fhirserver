@@ -15,7 +15,7 @@ uses
 
   StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, JSON, JWT,
 
-  FacebookSupport,
+  FacebookSupport, SCIMServer,
 
   FHIRDataStore, FHIRSupport, FHIRBase;
 
@@ -56,7 +56,7 @@ type
     FHL7Appid : String;
     FHL7AppSecret : String;
     FAdminEmail : String;
-
+    FSCIMServer : TSCIMServer;
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -72,7 +72,7 @@ type
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
 
   public
-    Constructor Create(ini : String; filePath, Host, SSLPort : String);
+    Constructor Create(ini : String; filePath, Host, SSLPort : String; SCIM : TSCIMServer);
     Destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -102,9 +102,10 @@ implementation
 
 { TAuth2Server }
 
-constructor TAuth2Server.Create(ini: String; filePath, Host, SSLPort : String);
+constructor TAuth2Server.Create(ini: String; filePath, Host, SSLPort : String; SCIM : TSCIMServer);
 begin
   inherited create;
+  FSCIMServer := SCIM;
   FIni := TIniFile.Create(ini);
   FFilePath := filePath;
   FHost := host;
@@ -128,6 +129,7 @@ begin
   FLock.Free;
   FFhirStore.Free;
   FIni.Free;
+  FSCIMServer.free;
   inherited;
 end;
 
@@ -455,13 +457,13 @@ begin
       username := params.GetVar('username');
       password := params.GetVar('password');
 
-      if password <> FIni.ReadString(username, 'password', '') then
+      if not FSCIMServer.CheckLogin(username, password) then
         raise Exception.Create('Login failed');
 
       if conn.CountSQL('select count(*) from OAuthLogins where Id = '''+SQLWrapString(id)+''' and Status = 1') <> 1 then
         raise Exception.Create('State failed - no login session active');
 
-      session := FFhirStore.RegisterSession(apInternal, '', id, '1', FIni.ReadString(username, 'username', ''), FIni.ReadString(username, 'email', ''), '', FIni.ReadString(username, 'length', inttostr(24*60)), AContext.Binding.PeerIP, '');
+      session := FFhirStore.RegisterSession(apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);

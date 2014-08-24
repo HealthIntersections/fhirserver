@@ -269,6 +269,10 @@ Type
     procedure BuildIndexValuesDataElement(key : integer; id : string; context : TFhirResource; resource : TFhirDataElement);
     procedure BuildIndexValuesNamespace(key : integer; id : string; context : TFhirResource; resource : TFhirNamespace);
     procedure BuildIndexValuesSubscription(key : integer; id : string; context : TFhirResource; resource : TFhirSubscription);
+    procedure BuildIndexValuesContraIndication(key : integer; id : string; context : TFhirResource; resource : TFhirContraIndication);
+    procedure BuildIndexValuesRiskAssessment(key : integer; id : string; context : TFhirResource; resource : TFhirRiskAssessment);
+    procedure BuildIndexValuesOperationDefinition(key : integer; id : string; context : TFhirResource; resource : TFhirOperationDefinition);
+    procedure BuildIndexValuesReferralRequest(key : integer; id : string; context : TFhirResource; resource : TFhirReferralRequest);
   {$ENDIF}
 
     procedure buildIndexesAdverseReaction;
@@ -329,6 +333,10 @@ Type
     procedure BuildIndexesDataElement;
     procedure BuildIndexesNamespace;
     procedure BuildIndexesSubscription;
+    procedure BuildIndexesContraIndication;
+    procedure BuildIndexesRiskAssessment;
+    procedure BuildIndexesOperationDefinition;
+    procedure BuildIndexesReferralRequest;
   {$ENDIF}
 
     procedure processCompartmentTags(key : integer; id: String; tags : TFHIRAtomCategoryList);
@@ -584,6 +592,10 @@ begin
   BuildIndexesDataElement;
   BuildIndexesNamespace;
   BuildIndexesSubscription;
+  BuildIndexesContraIndication;
+  BuildIndexesRiskAssessment;
+  BuildIndexesOperationDefinition;
+  BuildIndexesReferralRequest;
   {$ENDIF}
   buildIndexesBinary;
 end;
@@ -649,6 +661,10 @@ begin
     frtDataElement : BuildIndexValuesDataElement(key, id, context, TFhirDataElement(resource));
     frtNamespace : BuildIndexValuesNamespace(key, id, context, TFhirNamespace(resource));
     frtSubscription : BuildIndexValuesSubscription(key, id, context, TFhirSubscription(resource));
+    frtContraIndication : BuildIndexValuesContraIndication(key, id, context, TFhirContraIndication(resource));
+    frtRiskAssessment : BuildIndexValuesRiskAssessment(key, id, context, TFhirRiskAssessment(resource));
+    frtOperationDefinition : BuildIndexValuesOperationDefinition(key, id, context, TFhirOperationDefinition(resource));
+    frtReferralRequest : BuildIndexValuesReferralRequest(key, id, context, TFhirReferralRequest(resource));
     {$ENDIF}
 
   else
@@ -765,8 +781,8 @@ begin
 
   FEntries.clear;
   index(resource.ResourceType, key, id, '_id');
-//  if (resource.language <> nil) then
-    index(resource.ResourceType, key, resource.language, 'language');
+  if (resource.language <> nil) then
+    index(resource.ResourceType, key, resource.language, '_language');
   FMasterKey := key;
   FSpaces.FDB.ExecSQL('delete from Compartments where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
   FSpaces.FDB.ExecSQL('delete from IndexEntries where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
@@ -1263,7 +1279,7 @@ begin
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes = []) then
-    raise Exception.create('Attempt to index a resource join in an index that is a not a join (has no target types)');
+    raise Exception.create('Attempt to index a resource join in an index ('+CODES_TFhirResourceType[aType]+'/'+name+') that is a not a join (has no target types)');
   if ndx.SearchType <> SearchParamTypeReference then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Contact');
 
@@ -1352,7 +1368,7 @@ var
 begin
   result := SearchParamTypeNull;
   for i := 0 to FIndexes.Count - 1 Do
-    if SameText(FIndexes[i].Name, name) and (FIndexes[i].ResourceType in types) then
+    if SameText(FIndexes[i].Name, name) and ((FIndexes[i].ResourceType in types) or (types = [frtNull])) then
       if (result <> SearchParamTypeNull) and (result <> FIndexes[i].FSearchType) And ((FIndexes[i].FSearchType in [SearchParamTypeDate, SearchParamTypeToken]) or (result in [SearchParamTypeDate, SearchParamTypeToken])) then
         raise Exception.create('Chained Parameters cross resource joins that create disparate index handling requirements')
       else
@@ -1409,12 +1425,21 @@ begin
 end;
 
 procedure TFhirIndexManager.buildIndexValuesLocation(key: integer; id : String; context : TFhirResource; resource: TFhirLocation);
+{$IFNDEF FHIR-DSTU}
+var
+  i : integer;
+{$ENDIF}
 begin
   index(frtLocation, key, resource.address, 'address');
   index(frtLocation, key, resource.Name, 'name');
   index(frtLocation, key, resource.status, 'status');
   index(frtLocation, key, resource.type_, 'type');
+  {$IFDEF FHIR-DSTU}
   index(frtLocation, key, resource.identifier, 'identifier');
+  {$ELSE}
+  for i := 0 to resource.identifierList.Count - 1 do
+    index(frtLocation, key, resource.identifierList, 'identifier');
+  {$ENDIF}
   index(context, frtLocation, key, resource.partOf, 'partof');
   if resource.position <> nil then
   begin
@@ -2014,7 +2039,7 @@ end;
 
 
 Const
-  CHECK_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of TSearchParamsPractitioner = ( spPractitioner__id,  spPractitioner__Language,  spPractitioner_Address, spPractitioner_Family, spPractitioner_Gender, spPractitioner_Given, spPractitioner_Identifier, spPractitioner_Name, spPractitioner_Organization, spPractitioner_Phonetic, spPractitioner_Telecom);
+  CHECK_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of TSearchParamsPractitioner = ( spPractitioner__id,  spPractitioner__Language,  spPractitioner_Address, {$IFNDEF FHIR-DSTU}spPractitioner_Communication, {$ENDIF}spPractitioner_Family, spPractitioner_Gender, spPractitioner_Given, spPractitioner_Identifier, spPractitioner_Name, spPractitioner_Organization, spPractitioner_Phonetic, spPractitioner_Telecom);
 
 procedure TFhirIndexManager.buildIndexesPractitioner;
 var
@@ -2043,9 +2068,17 @@ begin
   end;
   for i := 0 to resource.telecomList.count - 1 do
     index(frtPractitioner, key, resource.telecomList[0].value, 'telecom');
+  {$IFDEF FHIR-DSTU}
   index(frtPractitioner, key, resource.address, 'address');
+  {$ELSE}
+  for i := 0 to resource.addressList.Count - 1 do
+    index(frtPractitioner, key, resource.addressList[i], 'address');
+  for i := 0 to resource.communicationList.Count - 1 do
+    index(frtPractitioner, key, resource.communicationList, 'communication');
+  {$ENDIF}
   index(frtPractitioner, key, resource.gender, 'gender');
   index(context, frtPractitioner, key, resource.organization, 'organization');
+
 end;
 
 
@@ -2133,7 +2166,12 @@ begin
 end;
 
 Const
+  {$IFDEF FHIR-DSTU}
   CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id, spObservation__Language, spObservation_Date, spObservation_Name,   spObservation_Name_value_x, spObservation_Performer, spObservation_Related, spObservation_Related_target, spObservation_Related_type, spObservation_Reliability, spObservation_Specimen, spObservation_Status, spObservation_Subject, spObservation_Value_concept, spObservation_Value_date, spObservation_Value_quantity, spObservation_Value_string);
+  {$ELSE}
+  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id, spObservation__Language, spObservation_Date, spObservation_Encounter, spObservation_Name, spObservation_Name_value_x, spObservation_Performer, spObservation_Related, spObservation_Related_target, spObservation_Related_type, spObservation_Reliability, spObservation_Specimen, spObservation_Status, spObservation_Subject, spObservation_Value_concept, spObservation_Value_date, spObservation_Value_quantity, spObservation_Value_string);
+  {$ENDIF}
+
 
 procedure TFhirIndexManager.buildIndexesObservation;
 var
@@ -2173,6 +2211,10 @@ begin
     index(frtObservation, key, TFhirPeriod(resource.value), 'value-date')
   else if resource.value is TFhirString then
     index(frtObservation, key, TFhirString(resource.value).value, 'value-string');
+
+  {$IFNDEF FHIR-DSTU}
+  index(context, frtObservation, key, resource.encounter, 'encounter');
+  {$ENDIF}
 
   for i := 0 to resource.relatedList.Count - 1 Do
   begin
@@ -3394,13 +3436,13 @@ begin
   for i := 0 to resource.participantList.Count - 1 do
   begin
     index(frtAppointment, key, resource.participantList[i].status, 'partstatus');
-    index(context, frtAppointment, key, resource.participantList[i].individual, 'individual');
-    patientCompartment(key, resource.participantList[i].individual);
+    index(context, frtAppointment, key, resource.participantList[i].actor, 'individual');
+    patientCompartment(key, resource.participantList[i].actor);
   end;
 end;
 
 Const
-  CHECK_TSearchParamsAvailability : Array[TSearchParamsAvailability] of TSearchParamsAvailability = (spAvailability__id, spAvailability__language, spAvailability_Date, spAvailability_Individual, spAvailability_Type);
+  CHECK_TSearchParamsAvailability : Array[TSearchParamsAvailability] of TSearchParamsAvailability = (spAvailability__id, spAvailability__language, spAvailability_Actor, spAvailability_Date, spAvailability_Type);
 
 procedure TFhirIndexManager.buildIndexesAvailability;
 var
@@ -3418,10 +3460,10 @@ var
   i : integer;
 begin
   index(frtAvailability, key, resource.planningHorizon, 'date');
-  index(context, frtAvailability, key, resource.individual, 'individual');
+  index(context, frtAvailability, key, resource.actor, 'actor');
   for i := 0 to resource.type_List.Count - 1 do
     index(frtAvailability, key, resource.type_List[i], 'type');
-  patientCompartment(key, resource.individual);
+  patientCompartment(key, resource.actor);
 end;
 
 Const
@@ -3523,6 +3565,118 @@ begin
   index(frtSubscription, key, resource.channel.type_, 'type');
   index(frtSubscription, key, resource.channel.payload, 'payload');
   index(frtSubscription, key, resource.channel.url, 'url');
+end;
+
+Const
+  CHECK_TSearchParamsContraIndication : Array[TSearchParamsContraIndication] of TSearchParamsContraIndication = (spContraIndication__id, spContraIndication__language, spContraindication_Category, spContraindication_Date, spContraindication_Identifier, spContraindication_Implicated, spContraindication_Patient);
+
+procedure TFhirIndexManager.buildIndexesContraIndication;
+var
+  a : TSearchParamsContraIndication;
+begin
+  for a := low(TSearchParamsContraIndication) to high(TSearchParamsContraIndication) do
+  begin
+    assert(CHECK_TSearchParamsContraIndication[a] = a);
+    indexes.add(frtContraIndication, CODES_TSearchParamsContraIndication[a], DESC_TSearchParamsContraIndication[a], TYPES_TSearchParamsContraIndication[a], TARGETS_TSearchParamsContraIndication[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesContraIndication(key: integer; id : String; context : TFhirResource; resource: TFhirContraIndication);
+var
+  i : integer;
+begin
+  index(frtContraIndication, key, resource.category, 'category');
+  index(frtContraIndication, key, resource.date, 'date');
+  index(frtContraIndication, key, resource.identifier, 'identifier');
+  for i := 0 to resource.implicatedList.Count - 1 do
+    index(context, frtContraIndication, key, resource.patient, 'implicated');
+  index(context, frtContraIndication, key, resource.patient, 'patient');
+end;
+
+Const
+  CHECK_TSearchParamsRiskAssessment : Array[TSearchParamsRiskAssessment] of TSearchParamsRiskAssessment = (spRiskAssessment__id, spRiskAssessment__language, spRiskAssessment_Condition, spRiskAssessment_Date, spRiskAssessment_Identifier, spRiskAssessment_Method, spRiskAssessment_Performer, spRiskAssessment_Subject);
+
+
+procedure TFhirIndexManager.buildIndexesRiskAssessment;
+var
+  a : TSearchParamsRiskAssessment;
+begin
+  for a := low(TSearchParamsRiskAssessment) to high(TSearchParamsRiskAssessment) do
+  begin
+    assert(CHECK_TSearchParamsRiskAssessment[a] = a);
+    indexes.add(frtRiskAssessment, CODES_TSearchParamsRiskAssessment[a], DESC_TSearchParamsRiskAssessment[a], TYPES_TSearchParamsRiskAssessment[a], TARGETS_TSearchParamsRiskAssessment[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesRiskAssessment(key: integer; id : String; context : TFhirResource; resource: TFhirRiskAssessment);
+var
+  i : integer;
+begin
+  index(frtRiskAssessment, key, resource.date, 'date');
+  index(frtRiskAssessment, key, resource.identifier, 'identifier');
+
+  index(frtRiskAssessment, key, resource.method, 'method');
+  index(context, frtRiskAssessment, key, resource.subject, 'subject');
+  index(context, frtRiskAssessment, key, resource.condition, 'condition');
+  index(context, frtRiskAssessment, key, resource.performer, 'performer');
+end;
+
+const
+  CHECK_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of TSearchParamsOperationDefinition = ( spOperationDefinition__id, spOperationDefinition__Language, spOperationDefinition_Base, spOperationDefinition_Code, spOperationDefinition_Date, spOperationDefinition_Identifier, spOperationDefinition_Instance, spOperationDefinition_Kind, spOperationDefinition_Name, spOperationDefinition_Profile, spOperationDefinition_Publisher, spOperationDefinition_Status, spOperationDefinition_System, spOperationDefinition_Title, spOperationDefinition_Type, spOperationDefinition_Version);
+
+procedure TFhirIndexManager.buildIndexesOperationDefinition;
+var
+  a : TSearchParamsOperationDefinition;
+begin
+  for a := low(TSearchParamsOperationDefinition) to high(TSearchParamsOperationDefinition) do
+  begin
+    assert(CHECK_TSearchParamsOperationDefinition[a] = a);
+    indexes.add(frtOperationDefinition, CODES_TSearchParamsOperationDefinition[a], DESC_TSearchParamsOperationDefinition[a], TYPES_TSearchParamsOperationDefinition[a], TARGETS_TSearchParamsOperationDefinition[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesOperationDefinition(key : integer; id : String; context : TFhirResource; resource: TFhirOperationDefinition);
+var
+  i : integer;
+begin
+  index(frtOperationDefinition, key, resource.identifier, 'identifier');
+  index(frtOperationDefinition, key, resource.status, 'status');
+  index(frtOperationDefinition, key, resource.version, 'version');
+  index(frtOperationDefinition, key, resource.publisher, 'publisher');
+  index(frtOperationDefinition, key, resource.name, 'name');
+  index(frtOperationDefinition, key, resource.title, 'title');
+  for i := 0 to resource.CodeList.count - 1 Do
+    index(frtOperationDefinition, key, resource.CodeList[i], 'code');
+  index(context, frtOperationDefinition, key, resource.base, 'base');
+  index(frtOperationDefinition, key, resource.date, 'date');
+  index(frtOperationDefinition, key, resource.kind, 'kind');
+  index(frtOperationDefinition, key, resource.system, 'system');
+  for i := 0 to resource.type_List.count - 1 Do
+    index(frtOperationDefinition, key, resource.type_List[i], 'type');
+  index(frtOperationDefinition, key, resource.instance, 'instance');
+  for i := 0 to resource.parameterList.count - 1 Do
+    index(context, frtOperationDefinition, key, resource.parameterList[i].profile, 'profile');
+end;
+
+const
+  CHECK_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TSearchParamsReferralRequest = ( spReferralRequest__id, spReferralRequest__Language, spReferralRequest_Subject);
+
+procedure TFhirIndexManager.buildIndexesReferralRequest;
+var
+  a : TSearchParamsReferralRequest;
+begin
+  for a := low(TSearchParamsReferralRequest) to high(TSearchParamsReferralRequest) do
+  begin
+    assert(CHECK_TSearchParamsReferralRequest[a] = a);
+    indexes.add(frtReferralRequest, CODES_TSearchParamsReferralRequest[a], DESC_TSearchParamsReferralRequest[a], TYPES_TSearchParamsReferralRequest[a], TARGETS_TSearchParamsReferralRequest[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesReferralRequest(key : integer; id : String; context : TFhirResource; resource: TFhirReferralRequest);
+var
+  i : integer;
+begin
+  index(context, frtReferralRequest, key, resource.subject, 'subject');
 end;
 
 {$ENDIF}

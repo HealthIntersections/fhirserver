@@ -103,9 +103,8 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -loinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.mdb&quot; -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.mdb&quot; -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -nrxstems</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
@@ -117,10 +116,12 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <DCC_DcuOutput>.\$(Platform)\$(Config)\dstu</DCC_DcuOutput>
+        <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_Define>FHIR-DSTU;$(DCC_Define)</DCC_Define>
         <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.mdb&quot; -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -nrxstems</Debugger_RunParams>
+        <Debugger_RunParams>-debug -password g -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.mdb&quot; -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -nrxstems</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -333,12 +334,15 @@
         <DCCReference Include="..\Libraries\tests\UcumTests.pas"/>
         <DCCReference Include="FHIRServerUtilities.pas"/>
         <DCCReference Include="SearchProcessor.pas"/>
-        <DCCReference Include="..\Libraries\security\JWTTests.pas"/>
-        <DCCReference Include="..\Libraries\security\JWT.pas"/>
-        <DCCReference Include="..\Libraries\security\HMAC.pas"/>
-        <DCCReference Include="..\Libraries\security\libeay32.pas"/>
         <DCCReference Include="AuthServer.pas"/>
         <DCCReference Include="RxNormServices.pas"/>
+        <DCCReference Include="..\Libraries\support\libeay32.pas"/>
+        <DCCReference Include="..\Libraries\support\JWTTests.pas"/>
+        <DCCReference Include="..\Libraries\support\HMAC.pas"/>
+        <DCCReference Include="..\Libraries\support\JWT.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\SCIMObjects.pas"/>
+        <DCCReference Include="SCIMServer.pas"/>
+        <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

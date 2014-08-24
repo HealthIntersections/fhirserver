@@ -221,6 +221,8 @@ Type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
+    function getDefinition(code : String):String; override;
+    function Definition(context : TCodeSystemProviderContext) : string; override;
   End;
 
   TUcumServiceList = class (TAdvObjectList)
@@ -317,6 +319,11 @@ begin
   FHandlers.Register;
 end;
 
+function TUcumServices.Definition(context: TCodeSystemProviderContext): string;
+begin
+  result := '';
+end;
+
 destructor TUcumServices.Destroy;
 begin
   FHandlers.Free;
@@ -399,6 +406,11 @@ begin
   Finally
     result.free;
   End;
+end;
+
+function TUcumServices.getDefinition(code: String): String;
+begin
+  result := '';
 end;
 
 procedure TUcumServices.getCommonUnits(propertyName: String; oList : TAdvStringList);

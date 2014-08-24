@@ -33,18 +33,18 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, ParseMap,
-  AdvNames, AdvIntegerObjectMatches, AdvObjects, AdvStringObjectMatches, AdvStringMatches, AdvExclusiveCriticalSections,
+  AdvNames, AdvIntegerObjectMatches, AdvObjects, AdvStringObjectMatches, AdvStringMatches, AdvExclusiveCriticalSections, AdvStringBuilders,
   KDBManager, KDBDialects,
   FHIRAtomFeed, FHIRResources, FHIRBase, FHIRTypes, FHIRComponents, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, FHIRUtilities,
   {$IFNDEF FHIR-DSTU} FHIRSubscriptionManager, {$ENDIF}
-  TerminologyServer;
+  TerminologyServer, SCIMObjects, SCIMServer, ProfileManager;
 
 const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
   OAUTH_SESSION_PREFIX = 'b35b7vX3KTAe-';
   IMPL_COOKIE_PREFIX = 'implicit-';
-
+  SECURITY_BASE_URI = 'http://www.healthintersections.com.au/scim/entitlement/';
 
 Type
   TFhirTag = class (TAdvName)
@@ -74,6 +74,7 @@ Type
     cmdHistoryType : Boolean;
     cmdSearch : Boolean;
     cmdCreate : Boolean;
+    cmdOperation : Boolean;
     versionUpdates : Boolean;
   end;
 
@@ -82,6 +83,7 @@ Type
   TFHIRDataStore = class (TAdvObject)
   private
     FDB : TKDBManager;
+    FSCIMServer : TSCIMServer;
     FTerminologyServer : TTerminologyServer;
     FSourceFolder : String; // folder in which the FHIR specification itself is found
     FSessions : TStringList;
@@ -96,9 +98,7 @@ Type
     FLastResourceKey : Integer;
     FLastEntryKey : Integer;
     FLastCompartmentKey : Integer;
-    FProfiles : TAdvStringMatch;
-    FUserIds : TAdvStringObjectMatch;
-    FUserLogins : TAdvStringObjectMatch;
+    FProfiles : TProfileManager;
     FValidator : TFHIRValidator;
     FResConfig : TConfigArray;
     FSupportTransaction : Boolean;
@@ -120,8 +120,9 @@ Type
     procedure DoExecuteOperation(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean);
     function DoExecuteSearch (typekey : integer; compartmentId, compartments : String; params : TParseMap; conn : TKDBConnection): String;
     function getTypeForKey(key : integer) : TFhirResourceType;
+    procedure asssignAllowedRights(list : TStringList; user : TSCIMUser; choice : String);
   public
-    constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile);
+    constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile; SCIMServer :  TSCIMServer);
     Destructor Destroy; Override;
     Function Link : TFHIRDataStore; virtual;
     procedure CloseAll;
@@ -132,8 +133,6 @@ Type
     function RegisterSession(provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
     procedure MarkSessionChecked(sCookie, sName : String);
     function ProfilesAsOptionList : String;
-    function GetFhirUser(namespace, name :String) : TFHIRUser;
-    function GetFhirUserStructure(namespace, name :String) : TFHIRUserStructure;
     function NextVersionKey : Integer;
     function NextTagVersionKey : Integer;
     function NextSearchKey : Integer;
@@ -177,6 +176,23 @@ end;
 { TFHIRRepository }
 
 
+procedure TFHIRDataStore.asssignAllowedRights(list: TStringList; user: TSCIMUser; choice: String);
+var
+  chosen : TStringList;
+  s : String;
+begin
+  list.Clear;
+  chosen := TStringList.create;
+  try
+    chosen.CommaText := choice;
+    for s in chosen do
+      if user.hasEntitlement(SECURITY_BASE_URI+s) or User.hasEntitlement(SCIM_ADMIN) then
+        list.Add(s);
+  finally
+    chosen.Free;
+  end;
+end;
+
 procedure TFHIRDataStore.CloseAll;
 var
   i : integer;
@@ -195,7 +211,7 @@ begin
   end;
 end;
 
-constructor TFHIRDataStore.Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile);
+constructor TFHIRDataStore.Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile; SCIMServer :  TSCIMServer);
 var
   i : integer;
   conn : TKDBConnection;
@@ -212,6 +228,9 @@ begin
   FSessions := TStringList.create;
   FTags := TAdvNameList.Create;
   FLock := TCriticalSection.Create('fhir-store');
+  FSCIMServer := SCIMServer;
+  FSCIMServer.DefaultRights.Add(SECURITY_BASE_URI+'user');
+
   {$IFNDEF FHIR-DSTU}
   FSubscriptionManager := TSubscriptionManager.Create;
   FSubscriptionManager.dataBase := FDB;
@@ -221,6 +240,9 @@ begin
   FSubscriptionManager.SMTPPassword := ini.readString('email', 'Password' ,'');
   FSubscriptionManager.SMTPUseTLS := ini.ReadBool('email', 'Secure', false);
   FSubscriptionManager.SMTPSender := ini.readString('email', 'Sender' ,'');
+  FSubscriptionManager.SMSAccount := ini.readString('sms', 'account' ,'');
+  FSubscriptionManager.SMSToken := ini.readString('sms', 'token' ,'');
+  FSubscriptionManager.SMSFrom := ini.readString('sms', 'from' ,'');
   FSubscriptionManager.OnExecuteOperation := DoExecuteOperation;
   FSubscriptionManager.OnExecuteSearch := DoExecuteSearch;
   {$ENDIF}
@@ -287,6 +309,7 @@ begin
       FResConfig[a].cmdHistoryType := conn.ColStringByName['cmdHistoryType'] = '1';
       FResConfig[a].cmdSearch := conn.ColStringByName['cmdSearch'] = '1';
       FResConfig[a].cmdCreate := conn.ColStringByName['cmdCreate'] = '1';
+      FResConfig[a].cmdOperation := conn.ColStringByName['cmdOperation'] = '1';
       FResConfig[a].versionUpdates := conn.ColStringByName['versionUpdates'] = '1';
     end;
     conn.Terminate;
@@ -298,14 +321,7 @@ begin
 
     // the expander is tied to what's on the system
     FTerminologyServer := terminologyServer;
-    FProfiles := TAdvStringMatch.create;
-    FProfiles.Forced := true;
-    FUserIds := TAdvStringObjectMatch.create;
-    FUserIds.PreventDuplicates;
-    FUserIds.Forced := true;
-    FUserLogins := TAdvStringObjectMatch.create;
-    FUserLogins.PreventDuplicates;
-    FUserLogins.Forced := true;
+    FProfiles := TProfileManager.create;
     FValidator := TFHIRValidator.create;
     FValidator.SchematronSource := WebFolder;
     FValidator.TerminologyServer := terminologyServer.Link;
@@ -327,6 +343,7 @@ end;
 
 function TFHIRDataStore.CreateImplicitSession(clientInfo: String): TFhirSession;
 var
+  user : TSCIMUser;
   session : TFhirSession;
   dummy : boolean;
   new : boolean;
@@ -351,9 +368,10 @@ begin
         session.Provider := apNone;
         session.originalUrl := '';
         session.email := '';
-        session.User := GetFhirUserStructure(USER_SCHEME_IMPLICIT, clientInfo);
-        if Session.user <> nil then
-          session.Name := Session.User.Resource.Name +' ('+clientInfo+')';
+        session.anonymous := true;
+        session.User := FSCIMServer.loadUser(SCIM_ANONYMOUS);
+        asssignAllowedRights(session.rights, session.user, 'user,read,write');
+        session.Name := Session.User.username +' ('+clientInfo+')';
 
         se := TFhirSecurityEvent.create;
         try
@@ -439,8 +457,6 @@ end;
 destructor TFHIRDataStore.Destroy;
 begin
   FBases.free;
-  FUserIds.free;
-  FUserLogins.free;
   FProfiles.free;
   FTagsByKey.free;
   FSessions.free;
@@ -449,6 +465,7 @@ begin
   FSubscriptionManager.Free;
   {$ENDIF}
   FLock.Free;
+  FSCIMServer.Free;
   FValidator.Free;
   FTerminologyServer.Free;
   inherited;
@@ -774,8 +791,16 @@ begin
     session.originalUrl := original;
     session.email := email;
     session.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
-    session.User := GetFhirUserStructure(USER_SCHEME_PROVIDER[provider], id);
-    session.rights.commaText := rights;
+    if provider = apInternal then
+      session.User := FSCIMServer.loadUser(id)
+    else
+      session.User := FSCIMServer.loadOrCreateUser(USER_SCHEME_PROVIDER[provider]+'#'+id, name, email);
+    if session.name = '' then
+      session.name := session.user.bestName;
+    if (session.email = '') and (session.user.emails.count > 0) then
+      session.email := session.user.emails[0].value;
+
+    asssignAllowedRights(session.rights, session.user, rights);
 
     FLock.Lock('RegisterSession');
     try
@@ -947,10 +972,7 @@ begin
     if resource.ResourceType in [frtValueSet, frtConceptMap] then
       TerminologyServer.SeeTerminologyResource(Codes_TFHIRResourceType[resource.ResourceType]+'/'+id, key, resource)
     else if resource.ResourceType = frtProfile then
-    begin
-      profile := resource as TFhirProfile;
-      FProfiles.matches[id] := profile.nameST;
-    end;
+      FProfiles.seeProfile(Codes_TFHIRResourceType[resource.ResourceType]+'/'+id, key, resource as TFhirProfile);
 {    else if resource.ResourceType = frtUser then
     begin
       user := resource as TFhirUser;
@@ -972,9 +994,7 @@ begin
     if aType in [frtValueSet, frtConceptMap] then
       TerminologyServer.DropTerminologyResource(key, Codes_TFHIRResourceType[aType]+'/'+id, aType)
     else if aType = frtProfile then
-    begin
-      FProfiles.DeleteByKey(id);
-    end;
+      FProfiles.DropProfile(key, Codes_TFHIRResourceType[aType]+'/'+id, aType);
 {    else if aType = frtUser then
     begin
       user := FUserIds.Matches[id] as TFHIRUser;
@@ -1023,75 +1043,38 @@ end;
 function TFHIRDataStore.ProfilesAsOptionList: String;
 var
   i : integer;
-  sn, sv : string;
+  builder : TAdvStringBuilder;
+  profiles : TAdvStringMatch;
 begin
-  result := '';
-  FLock.Enter;
+  builder := TAdvStringBuilder.Create;
   try
-    for i := 0 to FProfiles.Count - 1 do
-    begin
-      sn := FProfiles.KeyByIndex[i];
-      sv := FProfiles.ValueByIndex[i];
-      result := result + '<option value="'+sn+'">';
-      if sv = '' then
-        result := result + '@'+sn+'</option>'+#13#10
-      else
-        result := result + sv+'</option>'+#13#10;
-    end;
-  finally
-    FLock.Leave;
-  end;
-end;
-
-function TFHIRDataStore.GetFhirUser(namespace, name: String): TFHIRUser;
-begin
-  FLock.Enter;
-  try
-    result := FUserLogins.Matches[namespace + #1 + name] as TFhirUser;
-  finally
-    FLock.Leave;
-  end;
-end;
-
-function TFHIRDataStore.GetFhirUserStructure(namespace, name: String): TFHIRUserStructure;
-var
-  user : TFHIRUser;
-  conn : TKDBConnection;
-begin
-  FLock.Enter;
-  try
-    user := FUserLogins.Matches[namespace + #1 + name] as TFhirUser;
-    if user = nil then
-      result := nil
-    else
-    begin
-      result := TFhirUserStructure.create;
-      try
-        result.Resource := user.link;
-        // todo: read other patient compartments
-        conn := FDB.GetConnection('fhir');
-        try
-          conn.sql := 'select Id from Ids where MostRecent in (select ResourceVersionKey from VersionTags where TagKey in (select TagKey from Tags where Scheme = '''+FHIR_TAG_SCHEME+''' and Uri = ''http://fhir.org/connectathon4/patient-compartment-user/'+SQLWrapString(user.login)+'''))';
-          conn.Prepare;
-          conn.Execute;
-          while conn.FetchNext do
-            result.TaggedCompartments.Add(Conn.ColStringByName['Id']);
-          conn.terminate;
-          conn.Release;
-        except
-          on e:exception do
-          begin
-            conn.Error(e);
-            raise;
-          end;
+    profiles := FProfiles.getLinks;
+    try
+      for i := 0 to profiles.Count - 1 do
+      begin
+        builder.Append('<option value="');
+        builder.Append(profiles.KeyByIndex[i]);
+        builder.Append('">');
+        if profiles.ValueByIndex[i] = '' then
+        begin
+          builder.Append('@');
+          builder.Append(profiles.KeyByIndex[i]);
+          builder.Append('</option>');
+          builder.Append(#13#10)
+        end
+        else
+        begin
+          builder.Append(profiles.ValueByIndex[i]);
+          builder.Append('</option>');
+          builder.Append(#13#10);
         end;
-        result.link;
-      finally
-        result.free;
       end;
+    finally
+      profiles.Free;
     end;
+    result := builder.AsString;
   finally
-    FLock.Leave;
+    builder.Free;
   end;
 end;
 

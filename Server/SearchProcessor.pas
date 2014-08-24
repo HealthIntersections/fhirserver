@@ -21,10 +21,12 @@ const
   SEARCH_PAGE_DEFAULT = 50;
   SEARCH_PAGE_LIMIT = 1000;
   SUMMARY_SEARCH_PAGE_LIMIT = 10000;
+  SUMMARY_TEXT_SEARCH_PAGE_LIMIT = 10000;
 
 
 type
   TDateOperation = (dopEqual, dopLess, dopLessEqual, dopGreater, dopGreaterEqual);
+  TFHIRSearchSummary = (ssFull, ssSummary, ssText);
 
   TSearchProcessor = class (TAdvObject)
   private
@@ -37,7 +39,7 @@ type
     FParams: TParseMap;
     FType: TFHIRResourceType;
     FBaseURL: String;
-    FWantSummary: boolean;
+    FWantSummary: TFHIRSearchSummary;
     FIndexer: TFhirIndexManager;
     FLang: String;
     FRepository: TFHIRDataStore;
@@ -68,7 +70,7 @@ type
     property link : String read FLink write FLink;
     property sort : String read FSort write FSort;
     property filter : String read FFilter write FFilter;
-    property wantSummary : boolean read FWantSummary write FWantSummary;
+    property wantSummary : TFHIRSearchSummary read FWantSummary write FWantSummary;
   end;
 
 
@@ -162,7 +164,12 @@ begin
   else if (name = '_summary') and (value = 'true') then
   begin
     bHandled := true;
-    wantSummary := true;
+    wantSummary := ssSummary;
+  end
+  else if (name = '_summary') and (value = 'text') then
+  begin
+    bHandled := true;
+    wantSummary := ssText;
   end
   else if (name = '_text') then
   begin
@@ -299,6 +306,8 @@ begin
                   // _id is a special case
                   if (name = '_id') then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
+                  else if (name = '_language') then
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value like '''+sqlwrapString(value)+'%'')'
                   else if modifier = 'text' then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like ''%'+sqlwrapString(lowercase(RemoveAccents(value)))+'%'')'
                   else if value.Contains('|') then
@@ -368,7 +377,7 @@ begin
                   end;
                 SearchParamTypeQuantity :
                   raise exception.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
-              else
+              else if type_ <> SearchParamTypeNull then
                 raise exception.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
               end;
       {

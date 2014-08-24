@@ -474,6 +474,8 @@ operations
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function buildValueSet(id : String) : TFhirValueSet;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
+    function getDefinition(code : String):String; override;
+    function Definition(context : TCodeSystemProviderContext) : string; override;
   End;
 
   TSnomedServiceList = class (TAdvObjectList)
@@ -915,6 +917,11 @@ begin
   FRefSetIndex := TSnomedReferenceSetIndex.Create;
   FRefSetMembers := TSnomedReferenceSetMembers.Create;
   FDescRef := TSnomedDescriptionIndex.Create;
+end;
+
+function TSnomedServices.Definition(context: TCodeSystemProviderContext): string;
+begin
+  result := '';
 end;
 
 destructor TSnomedServices.Destroy;
@@ -2191,6 +2198,11 @@ begin
   end;
 end;
 
+
+function TSnomedServices.getDefinition(code: String): String;
+begin
+  result := '';
+end;
 
 Function TSnomedServices.GetFSN(iDescriptions : TCardinalArray) : String;
 var

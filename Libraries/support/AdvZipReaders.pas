@@ -175,7 +175,7 @@ End;
 
 Procedure TAdvZipReader.ReadDeflate(iFlags : Word; iSizeComp, iSizeUncomp : LongWord; oBuffer: TAdvBuffer);
 Var
-  pIn : PChar;
+  pIn : PAnsiChar;
 Begin
   If Bit(iFlags, flagUsesDataDescriptor) Then
     ReadUnknownLengthDeflate(oBuffer)
@@ -183,8 +183,8 @@ Begin
   Begin
     GetMem(pIn, iSizeComp+2);
     Try
-      pIn[0] := chr(120);
-      pIn[1] := chr(156);
+      pIn[0] := AnsiChar(120);
+      pIn[1] := AnsiChar(156);
       Stream.Read(pIn[2], iSizeComp);
       ReadKnownDeflate(pIn, iSizeComp+2, iSizeUncomp, oBuffer);
     Finally

@@ -296,6 +296,9 @@ NOTE: while translations on Resources are possible they should be used for rende
     <translation lang="es">Observación</translation>
     <translation lang="fr">Observation</translation>
   </item>
+  <item id="OperationDefinition">
+    <translation lang="en">OperationDefinition</translation>
+  </item>  
   <item id="OperationOutcome">
     <translation lang="en">OperationOutcome</translation>
     <translation lang="zh">手术成果</translation>
@@ -383,6 +386,10 @@ NOTE: while translations on Resources are possible they should be used for rende
   <item id="QuestionnaireAnswers">
     <translation lang="en">QuestionnaireAnswers</translation>
     <translation lang="fr">RéponseQuestionnaire</translation>
+  </item>
+  <item id="ReferralRequest">
+    <translation lang="en">ReferralRequest</translation>
+
   </item>
   <item id="RelatedPerson">
     <translation lang="en">RelatedPerson</translation>
@@ -547,6 +554,7 @@ NOTE: while translations on Resources are possible they should be used for rende
   </item>
   <item id="MSG_CONTENT_PASTE">
     <translation lang="en">or just paste your xml or json here</translation>
+        <translation lang="nl">of plak uw xml of json hier</translation>
   </item>
   <item id="MSG_CONTENT_UPLOAD">
     <translation lang="en">Content to upload</translation>

@@ -20,6 +20,7 @@ Type
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; displays : TStringList) : boolean;
     function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverity; test : boolean; code, msg : string):boolean;
     procedure check(coding: TFhirCoding; op : TFhirOperationOutcome); overload;
+    procedure check(code: TFhirCodeableConcept; op : TFhirOperationOutcome); overload;
   public
     constructor create(store : TTerminologyServerStore; id : String); overload;
     destructor destroy; override;
@@ -225,7 +226,36 @@ end;
 
 function TValueSetChecker.check(coded: TFhirCodeableConcept): TFhirOperationOutcome;
 begin
+  result := TFhirOperationOutcome.Create;
+  try
+    check(coded, result);
+    BuildNarrative(result, 'Code Validation');
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
 
+procedure TValueSetChecker.check(code: TFhirCodeableConcept; op: TFhirOperationOutcome);
+var
+  list : TStringList;
+  i : integer;
+  ok : boolean;
+  codelist : String;
+begin
+  list := TStringList.Create;
+  try
+    ok := false;
+    codelist := '';
+    for i := 0 to code.codingList.Count - 1 do
+    begin
+      codelist := codelist + '{'+code.codingList[i].systemST+'"/"'+code.codingList[i].codeST+'}';
+      ok := ok or check(code.codingList[i].systemST, code.codingList[i].codeST, list);
+    end;
+
+  finally
+    list.Free;
+  end;
 
 end;
 

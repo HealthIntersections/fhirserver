@@ -83,6 +83,9 @@ Type
     FOnExecuteOperation : TExecuteOperationEvent;
     FOnExecuteSearch : TExecuteSearchEvent;
     FSMTPUseTLS: boolean;
+    FSMSFrom: String;
+    FSMSToken: String;
+    FSMSAccount: String;
 
 //    FMessageQueue : TNotification;
     function determineResourceTypeKey(criteria : String; conn : TKDBConnection) : integer;
@@ -97,6 +100,7 @@ Type
     function LoadResourceFromDBByVer(conn : TKDBConnection; vkey: integer; var id : String; tags : TFHIRAtomCategoryList) : TFhirResource;
     procedure sendByRest(id : String; res : TFhirResource; subst : TFhirSubscription; tags : TFHIRAtomCategoryList);
     procedure sendByEmail(id : String; res : TFhirResource; subst : TFhirSubscription; tags : TFHIRAtomCategoryList);
+    procedure sendBySms(id : String; res : TFhirResource; subst : TFhirSubscription; tags : TFHIRAtomCategoryList);
     procedure saveTags(conn : TKDBConnection; ResourceKey : integer; tags : TFHIRAtomCategoryList);
     procedure NotifySuccess(SubscriptionKey : integer);
     procedure NotifyFailure(SubscriptionKey : integer; message : string);
@@ -120,6 +124,9 @@ Type
     Property SMTPPassword : String read FSMTPPassword write FSMTPPassword;
     Property SMTPSender : String read FSMTPSender write FSMTPSender;
     Property SMTPUseTLS : boolean read FSMTPUseTLS write FSMTPUseTLS;
+    Property SMSAccount : String read FSMSAccount write FSMSAccount;
+    Property SMSToken : String read FSMSToken write FSMSToken;
+    Property SMSFrom : String read FSMSFrom write FSMSFrom;
     Property OnExecuteOperation : TExecuteOperationEvent read FOnExecuteOperation write FOnExecuteOperation;
     Property OnExecuteSearch : TExecuteSearchEvent read FOnExecuteSearch write FOnExecuteSearch;
   end;
@@ -127,7 +134,8 @@ Type
 implementation
 
 uses
-  FHIROperation;
+  FHIROperation,
+  TwilioClient;
 
 { TSubscriptionManager }
 
@@ -186,15 +194,17 @@ begin
 //      ok := ok or ((subscription.contactList[i].systemST = ContactSystemEmail) and (subscription.contactList[i].valueST = session.Email));
 //    if not ok then
 //      raise Exception.Create('The subscription must explicitly list the logged in user email ('+session.Email+') as a contact');
-//  end;
+//  end;                                                                           9
 
   // basic setup stuff
   if subscription.channel.type_ST = SubscriptionChannelTypeNull then
     raise Exception.Create('A channel type must be specified');
-  if subscription.channel.type_ST in [SubscriptionChannelTypeWebsocket, SubscriptionChannelTypeSms, SubscriptionChannelTypeMessage] then
+  if subscription.channel.type_ST in [SubscriptionChannelTypeWebsocket, SubscriptionChannelTypeMessage] then
     raise Exception.Create('The channel type '+CODES_TFhirSubscriptionChannelType[subscription.channel.type_ST]+' is not supported');
   if subscription.channel.urlST = '' then
     raise Exception.Create('A channel URL must be specified');
+  if (subscription.channel.type_ST = SubscriptionChannelTypeSms) and not subscription.channel.urlST.StartsWith('tel:') then
+    raise Exception.Create('When the channel type is "sms", then the URL must start with "tel:"');
 end;
 
 
@@ -322,7 +332,7 @@ begin
         try
           bs := TBytesStream.Create;
           try
-            comp.Compose(bs, id, '', res, true);
+            comp.Compose(bs, '', id, '', res, true);
             msg.Body.Text := TEncoding.UTF8.GetString(bs.Bytes);
           finally
             bs.Free;
@@ -375,6 +385,29 @@ begin
     finally
       client.Free;
     end;
+  end;
+end;
+
+procedure TSubscriptionManager.sendBySms(id: String; res: TFhirResource; subst: TFhirSubscription; tags: TFHIRAtomCategoryList);
+var
+  client : TTwilioClient;
+begin
+  client := TTwilioClient.Create;
+  try
+    client.Account := SMSAccount;
+    client.Token := SMSToken;
+    client.From := SMSFrom;
+    if subst.channel.urlST.StartsWith('tel:') then
+      client.dest := subst.channel.urlST.Substring(4)
+    else
+      client.dest := subst.channel.urlST;
+    if subst.channel.payloadST <> '' then
+      client.Body := subst.channel.payloadST
+    else
+      client.Body := 'A new matching resource has been received';
+    client.send;
+  finally
+    client.Free;
   end;
 end;
 
@@ -474,6 +507,7 @@ begin
             case subst.channel.type_ST of
               SubscriptionChannelTypeRestHook: sendByRest(id, res, subst, tags);
               SubscriptionChannelTypeEmail: sendByEmail(id, res, subst, tags);
+              SubscriptionChannelTypeSms: sendBySms(id, res, subst, tags);
             end;
 
             saveTags(conn, ResourceKey, tags);

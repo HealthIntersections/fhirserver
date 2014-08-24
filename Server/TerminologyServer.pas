@@ -82,7 +82,7 @@ var
 begin
   if ini.ReadString('RxNorm', 'database', '') <> '' then
   begin
-    write('Connect to RxNorm');
+    writeln('Connect to RxNorm');
     RxNorm := TRxNormServices.Create(TKDBOdbcDirect.create('rxnorm', 100, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('RxNorm', 'database', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));

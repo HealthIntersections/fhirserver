@@ -38,7 +38,8 @@ Uses
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
   FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests,
-  FHIRServerConstants;
+  FHIRServerConstants,
+  SCIMServer;
 
 Type
   TFHIRService = class (TSystemService)
@@ -99,7 +100,7 @@ begin
     dispName := 'FHIR Server';
   {$IFDEF FHIR-DSTU}
   writeln('FHIR Service (DSTU). Using ini file '+iniName);
-  dispName := dispName + ' (DSTU)';
+  dispName := dispName + ' (DSTU)';
   {$ELSE}
   iniName := iniName.replace('.dstu', '.dev');
   writeln('FHIR Service (DEV). Using ini file '+iniName);
@@ -197,7 +198,10 @@ begin
     result := true;
   except
     on e : Exception do
+    begin
       Writeln(e.Message);
+      raise;
+    end;
   end;
   writeln('started');
 end;
@@ -352,7 +356,24 @@ procedure TFHIRService.InstallDatabase;
 var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
+  scim : TSCIMServer;
+  salt, un, pw, em : String;
 begin
+  // check that user account details are provided
+  salt := FIni.ReadString('scim', 'salt', '');
+  if (salt = '') then
+    raise Exception.Create('You must define a scim salt in the ini file');
+  un := FIni.ReadString('admin', 'username', '');
+  if (un = '') then
+    raise Exception.Create('You must define an admin username in the ini file');
+  FindCmdLineSwitch('password', pw, true, [clstValueNextParam]);
+  if (pw = '') then
+    raise Exception.Create('You must provide a admin password as a parameter to the command');
+  em := FIni.ReadString('admin', 'email', '');
+  if (em = '') then
+    raise Exception.Create('You must define an admin email in the ini file');
+
+
   if FDb = nil then
     ConnectToDatabase;
   Writeln('mount database');
@@ -373,6 +394,13 @@ begin
        conn.Error(e);
        raise;
      end;
+  end;
+  scim := TSCIMServer.Create(FDB, salt, FIni.ReadString('web', 'host', ''));
+  try
+    scim.DefineAnonymousUser();
+    scim.DefineAdminUser(un, pw, em);
+  finally
+    scim.Free;
   end;
 end;
 
