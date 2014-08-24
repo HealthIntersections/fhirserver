@@ -1,15 +1,19 @@
 fhirserver
 ==========
 
-Reference Implementation Server for the FHIR Specification
+Reference Implementation Server for the FHIR Specification. 
 
 
 Basic Information
 -----------------
-This is the code for the reference FHIR server that runs at http://fhir.healthintersections.com.au and other places. 
-It shows how to implement a generic FHIR server against an SQL database.
+
+This is a Pascal (Delphi) server that implements OAuth, OpenID.Connect, SCIM, and FHIR, 
+and is maintained by the author of the FHIR specification. The server runs at 
+http://fhir.healthintersections.com.au, http://fhir-dev.healthintersections.com.au
+and other places. 
 
 In form, this a middleware tool to help applications exchange data via a repository. 
+It shows how to implement a generic FHIR server against an SQL database.
 
 The server is specifically written as an reference server - it implements all parts of the specification 
 as defined, and is co-developed with the specification. It is not optimised for hosting/supporting very
@@ -27,11 +31,10 @@ difference between delphi and FPC unicode implementations.
 Compiling should be simple:
 * get a copy of IndySoap (http://sourceforge.net/projects/indysoap/), and add the source directory to your delphi path
 ** Note: you don't need to install indysoap, just have it in your source path 
-* open the file Server\FHIRServer.dproj in your version of delphi, and compile
-
+* open the file Server\FHIRServer.dproj (fro the DSTU version) or Server\FHIRServerDev.dproj (for the trunk version of FHIR) in your version of delphi, and compile
 
 The Server uses the pascal reference implementation released with the specification. 
-It is simply copied into place using the file copy_fhir.bat, and committed with the
+It is simply copied into place (using the file copy_fhir.bat), and committed with the
 server for convenience. 
 
 
@@ -53,11 +56,14 @@ Commands
 - `-start 'name'` - start the named fhir service 
 - `-stop 'name'` - stop the name fhir service
 - `-debug` - just run the service in debug mode
-- `-snomed 'dir'` - update the snomed cache from the nominated directory - either RF1 or RF2 supported (RF2 use a snapshot only). note: the import can take 30-60 minutes
-- `-loinc 'file'` - update the loinc cache from the given filename (access database)
-- `-mount` - install the database
+- `-mount` - install the database. You can also get the mount process to load the examples in the fhir specification using an extra parameter: `-load 'filename'` 
 - `-unmount` - uninstall the database
-- `-remount` - uninstall and then install the database
+- `-remount` - uninstall and then install the database (also uses the -load parameter)
 - `-tests` - run the automated tests. Needs a local mssql database called "fhir-test" with trusted access
+- `-snomed-rf1 'folder'` - import a SNOMED CT distribution using an RF1 format (can take ~1hour). Nominate the directory that contains the snapshot directly
+- `-snomed-rf2 'folder'` - import a SNOMED CT distribution using an RF2 format (can take ~1hour). Nominate the directory that contains the snapshot directly
+- `-loinc 'file'` - update the loinc cache from the given filename (access database)
+- `-rxstems` - connect to the RxNorm database, and generate the text search index
+
 
 
