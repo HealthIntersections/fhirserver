@@ -82,7 +82,7 @@ Type
     fcmdOperation, {@enum.value fcmdOperation operation, as defined in DSTU2}
 
     fcmdWebUI, {@enum.value fcmdWebUI Special web interface operations - not a valid FHIR operation}
-    fcmdNull);
+    fcmdNull); {@enum.value fcmdNull Internal use only - not a valid FHIR operation}
 
 
 
@@ -173,6 +173,7 @@ type
   TFHIRObject = class (TAdvObject)
   private
     FTag : TAdvObject;
+    FTagValue : String;
     procedure SetTag(const Value: TAdvObject);
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); virtual;
@@ -182,6 +183,7 @@ type
     function createIterator(bInheritedProperties : Boolean) : TFHIRPropertyIterator;
     Function PerformQuery(path : String):TFHIRObjectList;
     property Tag : TAdvObject read FTag write SetTag;
+    property TagValue : String read FTagValue write FTagValue;
   end;
 
   TFHIRObjectList = class (TAdvObjectList)

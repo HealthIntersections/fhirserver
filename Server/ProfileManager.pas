@@ -25,6 +25,7 @@ Type
     procedure DropProfile(key : Integer; url : String; aType : TFhirResourceType);
 
     function getExtensionDefn(source : TFhirProfile; url : String; var profile : TFhirProfile; var extension : TFhirProfileExtensionDefn) : boolean;
+    function getStructure(source : TFhirProfile; url : String; var profile : TFhirProfile; var Structure : TFhirProfileStructure) : boolean;
     function getLinks : TAdvStringMatch;
   end;
 
@@ -101,6 +102,38 @@ begin
     end;
   finally
     lock.Unlock;
+  end;
+end;
+
+function TProfileManager.getStructure(source: TFhirProfile; url: String; var profile: TFhirProfile; var Structure: TFhirProfileStructure): boolean;
+var
+  id, code : String;
+  i : integer;
+begin
+  result := false;
+  if url.StartsWith('#') then
+  begin
+    profile := source;
+    code := url.Substring(1);
+  end
+  else
+  begin
+    StringSplit(url, '#', id, code);
+    lock.Lock;
+    try
+      profile := FProfilesByIdentifier.Matches[id] as TFhirProfile;
+    finally
+      lock.Unlock;
+    end;
+  end;
+
+  if (profile <> nil) then
+  begin
+    structure := nil;
+    for i := 0 to profile.structureList.Count - 1 do
+      if profile.structureList[i].nameST = code then
+        structure := profile.structureList[i];
+    result := structure <> nil;
   end;
 end;
 

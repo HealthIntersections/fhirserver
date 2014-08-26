@@ -35,7 +35,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.81 generated Sat, Aug 23, 2014 04:40+1000
+// FHIR v0.0.81 generated Mon, Aug 25, 2014 12:47+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
@@ -1158,7 +1158,9 @@ begin
   parseComments(element, jsn);
 
   if jsn.has('id') then
-    element.xmlId:= jsn['id'];
+    element.xmlId:= jsn['id']
+  else if jsn.has('_id') then
+    element.xmlId:= jsn['_id'];
   if jsn.has('extension') then
     iterateArray(jsn.vArr['extension'], element.extensionList, parseExtension)
 end;

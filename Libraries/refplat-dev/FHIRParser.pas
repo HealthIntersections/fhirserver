@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Fri, Aug 22, 2014 11:59+1000
+// FHIR v0.3.0 generated Tue, Aug 26, 2014 04:54+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
@@ -1290,7 +1290,9 @@ begin
   parseComments(element, jsn);
 
   if jsn.has('id') then
-    element.xmlId:= jsn['id'];
+    element.xmlId:= jsn['id']
+  else if jsn.has('_id') then
+    element.xmlId:= jsn['_id'];
   if jsn.has('extension') then
     iterateArray(jsn.vArr['extension'], element.extensionList, parseExtension)
 end;
@@ -23579,7 +23581,7 @@ begin
       else if (child.baseName = 'status') then
         result.status := ParseEnum(CODES_TFhirQuestionnaireStatus, path+'/status', child)
       else if (child.baseName = 'date') then
-        result.date := ParseDate(child, path+'/date') {b}
+        result.date := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'publisher') then
         result.publisher := ParseString(child, path+'/publisher') {b}
       else if (child.baseName = 'group') then
@@ -23609,7 +23611,7 @@ begin
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeString(xml, 'version', elem.version);
   ComposeEnum(xml, 'status', elem.Status, CODES_TFhirQuestionnaireStatus);
-  ComposeDate(xml, 'date', elem.date);
+  ComposeDateTime(xml, 'date', elem.date);
   ComposeString(xml, 'publisher', elem.publisher);
   if not SummaryOnly then
     ComposeQuestionnaireGroup(xml, 'group', elem.group);
@@ -23634,7 +23636,7 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.status := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireStatus);
     if jsn.has('date') or jsn.has('_date') then
-        result.date := ParseDate(jsn['date'], jsn.vObj['_date']);{q}
+        result.date := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
         result.publisher := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('group') then
@@ -23663,8 +23665,8 @@ begin
   ComposeStringProps(json, 'version', elem.version, false);
   ComposeEnumValue(json, 'status', elem.Status, CODES_TFhirQuestionnaireStatus, false);
   ComposeEnumProps(json, 'status', elem.Status, CODES_TFhirQuestionnaireStatus, false);
-  ComposeDateValue(json, 'date', elem.date, false);
-  ComposeDateProps(json, 'date', elem.date, false);
+  ComposeDateTimeValue(json, 'date', elem.date, false);
+  ComposeDateTimeProps(json, 'date', elem.date, false);
   ComposeStringValue(json, 'publisher', elem.publisher, false);
   ComposeStringProps(json, 'publisher', elem.publisher, false);
   if not SummaryOnly then

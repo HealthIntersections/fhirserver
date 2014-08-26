@@ -176,7 +176,7 @@ var
   s : String;
 begin
     if (map.Count > UPPER_LIMIT) then
-      raise Exception.create('Too many codes to display (>'+inttostr(UPPER_LIMIT)+')');
+      raise ETooCostly.create('Too many codes to display (>'+inttostr(UPPER_LIMIT)+') (Try using a text filter to reduce the number of codes in the expansion)');
 
   n := TFHIRValueSetExpansionContains.create;
   try
@@ -255,7 +255,7 @@ begin
       if filter.Null then
       begin
         if cs.TotalCount > UPPER_LIMIT then
-          raise exception.create('code system '+cs.system+' too big to include as a whole');
+          raise ETooCostly.create('code system '+cs.system+' too big to include as a whole');
         for i := 0 to cs.ChildCount(nil) - 1 do
           addCodeAndDescendents(list, map, cs, cs.getcontext(nil, i))
       end
@@ -268,7 +268,7 @@ begin
           begin
             inc(i);
             if i > UPPER_LIMIT then
-              raise exception.create('Too many matches to return');
+              raise ETooCostly.create('Too many matches to return');
             c := cs.FilterConcept(ctxt);
             addCode(list, map, cs.system, cs.code(c), cs.display(c), cs.definition(c));
           end;

@@ -39,7 +39,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Fri, Aug 22, 2014 11:59+1000
+// FHIR v0.3.0 generated Tue, Aug 26, 2014 04:54+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
@@ -1543,16 +1543,26 @@ Const
      'status: []',
      'subject: ALL_RESOURCE_TYPES');
   TARGETS_TSearchParamsQuestionnaireAnswers : Array[TSearchParamsQuestionnaireAnswers] of TFhirResourceTypeSet = ([], [], [frtPatient, frtPractitioner, frtRelatedPerson], [], [frtEncounter], [frtQuestionnaire], [], ALL_RESOURCE_TYPES);
-  CODES_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of String = ('_id', '_language', 'subject');
+  CODES_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of String = ('_id', '_language', 'priority', 'recipient', 'specialty', 'status', 'subject', 'type');
   DESC_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource',
-     'Who the referral is about');
-  TYPES_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference);
-//  CHECK_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TSearchParamsReferralRequest = ( spReferralRequest__id,  spReferralRequest__language,  spReferralRequest_Subject);
+     'The priority assigned to the referral',
+     'The person that the referral was sent to',
+     'The specialty that the referral is for',
+     'The status of the referral',
+     'Who the referral is about',
+     'The type of the referral');
+  TYPES_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken);
+//  CHECK_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TSearchParamsReferralRequest = ( spReferralRequest__id,  spReferralRequest__language,  spReferralRequest_Priority,  spReferralRequest_Recipient,  spReferralRequest_Specialty,  spReferralRequest_Status,  spReferralRequest_Subject,  spReferralRequest_Type);
   PATHS_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of String = ('_id: []',
      '_language: []',
-     'subject: [frtPatient]');
-  TARGETS_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TFhirResourceTypeSet = ([], [], [frtPatient]);
+     'priority: []',
+     'recipient: [frtOrganization, frtPractitioner]',
+     'specialty: []',
+     'status: []',
+     'subject: [frtPatient]',
+     'type: []');
+  TARGETS_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TFhirResourceTypeSet = ([], [], [], [frtOrganization, frtPractitioner], [], [], [frtPatient], []);
   CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_id', '_language', 'address', 'gender', 'identifier', 'name', 'patient', 'phonetic', 'telecom');
   DESC_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('The logical resource id associated with the resource (must be supported by all servers)',
      'The stated language of the resource',
@@ -1751,9 +1761,9 @@ Const
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [], []);
   FHIR_GENERATED_VERSION = '0.3.0';
 
-  FHIR_GENERATED_REVISION = '2792';
+  FHIR_GENERATED_REVISION = '2798';
 
-  FHIR_GENERATED_DATE = '20140822115913';
+  FHIR_GENERATED_DATE = '20140826045435';
 
 
 

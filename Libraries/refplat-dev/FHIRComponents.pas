@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Fri, Aug 22, 2014 11:59+1000
+// FHIR v0.3.0 generated Tue, Aug 26, 2014 04:54+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -14950,11 +14950,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script show}
   published
     {@member linkId
-      A unique identifier within the questionnaire allowing linkage to the equivalent group in a QuestionnaireAnswers resource.
+      A identifier that is unique within the questionnaire allowing linkage to the equivalent group in a QuestionnaireAnswers resource.
     }
     property linkId : TFhirString read FLinkId write SetLinkId;
     {@member linkIdST
-      Typed access to A unique identifier within the questionnaire allowing linkage to the equivalent group in a QuestionnaireAnswers resource.
+      Typed access to A identifier that is unique within the questionnaire allowing linkage to the equivalent group in a QuestionnaireAnswers resource.
     }
     property linkIdST : String read GetLinkIdST write SetLinkIdST;
 
@@ -15134,11 +15134,11 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script show}
   published
     {@member linkId
-      A unique identifier within the questionnaire allowing linkage to the equivalent group in a [[[QuestionnaireAnswers]]] resource.
+      An identifier that is unique within the questionnaire allowing linkage to the equivalent group in a [[[QuestionnaireAnswers]]] resource.
     }
     property linkId : TFhirString read FLinkId write SetLinkId;
     {@member linkIdST
-      Typed access to A unique identifier within the questionnaire allowing linkage to the equivalent group in a [[[QuestionnaireAnswers]]] resource.
+      Typed access to An identifier that is unique within the questionnaire allowing linkage to the equivalent group in a [[[QuestionnaireAnswers]]] resource.
     }
     property linkIdST : String read GetLinkIdST write SetLinkIdST;
 

@@ -1214,7 +1214,7 @@ function TFHIRFactory.makeSuccessfulOperation: TFhirOperationOutcome;
 begin
   result := TFhirOperationOutcome.create;
   try
-    result.text := makeNarrative('generated', '<div>The operation was succesful</div>', xppReject);
+    result.text := makeNarrative('generated', '<div>The operation was successful</div>', xppReject);
     result.link;
   finally
     result.Free;

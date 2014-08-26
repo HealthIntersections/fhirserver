@@ -41,7 +41,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Fri, Aug 22, 2014 11:59+1000
+// FHIR v0.3.0 generated Tue, Aug 26, 2014 04:54+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -867,7 +867,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   TSearchParamsReferralRequest = (
     spReferralRequest__id, {@enum.value spReferralRequest__id The logical resource id associated with the resource (must be supported by all servers) }
     spReferralRequest__language, {@enum.value spReferralRequest__language The stated language of the resource }
-    spReferralRequest_Subject); {@enum.value spReferralRequest_Subject Who the referral is about }
+    spReferralRequest_Priority, {@enum.value spReferralRequest_Priority The priority assigned to the referral }
+    spReferralRequest_Recipient, {@enum.value spReferralRequest_Recipient The person that the referral was sent to }
+    spReferralRequest_Specialty, {@enum.value spReferralRequest_Specialty The specialty that the referral is for }
+    spReferralRequest_Status, {@enum.value spReferralRequest_Status The status of the referral }
+    spReferralRequest_Subject, {@enum.value spReferralRequest_Subject Who the referral is about }
+    spReferralRequest_Type); {@enum.value spReferralRequest_Type The type of the referral }
 
   {@Enum TSearchParamsRelatedPerson
     Search Parameters for RelatedPerson
@@ -7129,7 +7134,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     FidentifierList : TFhirIdentifierList;
     FVersion : TFhirString;
     FStatus : TFhirEnum;
-    FDate : TFhirDate;
+    FDate : TFhirDateTime;
     FPublisher : TFhirString;
     FGroup : TFhirQuestionnaireGroup;
     Procedure SetVersion(value : TFhirString);
@@ -7138,7 +7143,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     Procedure SetStatus(value : TFhirEnum);
     Function GetStatusST : TFhirQuestionnaireStatus;
     Procedure SetStatusST(value : TFhirQuestionnaireStatus);
-    Procedure SetDate(value : TFhirDate);
+    Procedure SetDate(value : TFhirDateTime);
     Function GetDateST : TDateAndTime;
     Procedure SetDateST(value : TDateAndTime);
     Procedure SetPublisher(value : TFhirString);
@@ -7185,7 +7190,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member date
       The date that this version of the questionnaire was authored.
     }
-    property date : TFhirDate read FDate write SetDate;
+    property date : TFhirDateTime read FDate write SetDate;
     {@member dateST
       Typed access to The date that this version of the questionnaire was authored.
     }
@@ -20956,7 +20961,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', FIdentifierList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'version', 'string', FVersion.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'date', 'date', FDate.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', FDate.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'publisher', 'string', FPublisher.Link.Link));{2}
   oList.add(TFHIRProperty.create(self, 'group', '', FGroup.Link.Link));{2}
 end;
@@ -21021,7 +21026,7 @@ begin
     Status := TFhirEnum.create(CODES_TFhirQuestionnaireStatus[value]);
 end;
 
-Procedure TFhirQuestionnaire.SetDate(value : TFhirDate);
+Procedure TFhirQuestionnaire.SetDate(value : TFhirDateTime);
 begin
   FDate.free;
   FDate := value;
@@ -21040,7 +21045,7 @@ begin
   if value <> nil then
   begin
     if FDate = nil then
-      FDate := TFhirDate.create;
+      FDate := TFhirDateTime.create;
     FDate.value := value
   end
   else if FDate <> nil then

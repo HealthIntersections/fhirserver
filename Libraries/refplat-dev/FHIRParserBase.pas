@@ -242,7 +242,7 @@ Type
     Property Comments : Boolean read FComments write FComments;
   End;
 
-  TFHIRXhtmlComposerGetLink = procedure (resource : TFhirResource; base, stype, id, ver : String; var link, text : String) of object;
+  TFHIRXhtmlComposerGetLink = procedure (resource : TFhirResource; base, statedType, id, ver : String; var link, text : String) of object;
 
   TFHIRXhtmlComposer = class (TFHIRComposer)
   private
@@ -1834,7 +1834,7 @@ Header(Session, FBaseURL, lang)+
         try
           if (e.resource.text <> nil) and (e.resource.text.div_ <> nil) then
             ComposeXHtmlNode(s, e.resource.text.div_, 2, relativeReferenceAdjustment);
-          xml.Compose(ss, e.id, '', tail(e.links.rel['self']), e.resource, true);
+          xml.Compose(ss, '', e.id, tail(e.links.rel['self']), e.resource, true);
           s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXMLToHTML(ss.dataString)+#13#10+'</pre>'+#13#10);
         finally
           ss.free;
@@ -2004,7 +2004,7 @@ begin
 '		<div class="container">  <!-- container -->'+#13#10+
 '			<div class="inner-wrapper">'+#13#10+
 '				<p>'+#13#10+
-'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011 - 2013. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="/index.htm" style="color: gold">'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</a>'+#13#10+
+'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011 - 2013. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="/index.html" style="color: gold">'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</a>'+#13#10+
 '        </span>'+#13#10+
 '        </p>'+#13#10+
 '			</div>  <!-- /inner-wrapper -->'+#13#10+
@@ -2059,7 +2059,7 @@ begin
   '  &nbsp;|&nbsp;'#13#10+
   '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+''#13#10+
   '  &nbsp;|&nbsp;'#13#10+
-  '  <a href="/index.htm" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</a>'#13#10;
+  '  <a href="/index.html" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</a>'#13#10;
 
   if (session <> nil)  then
   begin
@@ -2067,8 +2067,9 @@ begin
     if session.rights.indexof('user') > -1 then
       result := result +'User: '+FormatTextToXml(Session.Name)
     else
-      result := result +'User: ??';
-    result := result +'&nbsp; <a href="'+base+'/logout" title="Log Out"><img src="/logout.png"></a>';
+      result := result +'User: [n/a]';
+    if not session.anonymous then
+      result := result +'&nbsp; <a href="'+base+'/logout" title="Log Out"><img src="/logout.png"></a>';
   end;
 
   result := result +

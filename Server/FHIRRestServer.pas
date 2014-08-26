@@ -140,7 +140,7 @@ Type
     Procedure StopServer;
     Function ProcessZip(lang : String; oStream : TStream) : TFHIRAtomFeed;
     procedure SSLPassword(var Password: String);
-    procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer);
+    procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : String = '');
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse);
     function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
@@ -475,6 +475,7 @@ Procedure CheckId(lang, id : String);
 var
   i : integer;
 begin
+
   if (Length(id) > 36) then
     Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [id]), HTTP_ERR_BAD_REQUEST);
   for i := 1 to length(id) do
@@ -801,6 +802,8 @@ Begin
         else
           SendError(response, e.Status, aFormat, lang, e.Message, sPath, session, true, sPath + sDoc, relativeReferenceAdjustment);
       end;
+      on e : ETooCostly do
+        SendError(response, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment, 'too-costly');
       on e: ERestfulException do
         SendError(response, e.Status, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment);
       on e: Exception do
@@ -885,7 +888,7 @@ begin
     raise Exception.Create('Unknown request');
 end;
 
-procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer);
+procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : String = '');
 var
   issue : TFhirOperationOutcome;
   report :  TFhirOperationOutcomeIssue;
@@ -931,6 +934,12 @@ begin
       report := issue.issueList.Append;
       report.severityST := IssueSeverityError;
       report.details := TFHIRString.create(message);
+      if (code <> '') then
+      begin
+        report.type_ := TFhirCoding.Create;
+        report.type_.systemST := 'http://hl7.org/fhir/issue-type';
+        report.type_.codeST := code;
+      end;
       response.ContentStream := TMemoryStream.Create;
       oComp := nil;
       case format of

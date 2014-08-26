@@ -3659,7 +3659,7 @@ begin
 end;
 
 const
-  CHECK_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TSearchParamsReferralRequest = ( spReferralRequest__id, spReferralRequest__Language, spReferralRequest_Subject);
+  CHECK_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TSearchParamsReferralRequest = ( spReferralRequest__id, spReferralRequest__Language, spReferralRequest_Priority, spReferralRequest_Recipient, spReferralRequest_Specialty, spReferralRequest_Status, spReferralRequest_Subject, spReferralRequest_Type);
 
 procedure TFhirIndexManager.buildIndexesReferralRequest;
 var
@@ -3676,7 +3676,14 @@ procedure TFhirIndexManager.buildIndexValuesReferralRequest(key : integer; id : 
 var
   i : integer;
 begin
+  patientCompartment(key, resource.subject);
   index(context, frtReferralRequest, key, resource.subject, 'subject');
+  index(frtReferralRequest, key, resource.status, 'status');
+  index(frtReferralRequest, key, resource.priority, 'priority');
+  for i := 0 to resource.recipientList.Count - 1 do
+    index(context, frtReferralRequest, key, resource.recipientList[i], 'recipient');
+  index(frtReferralRequest, key, resource.specialty, 'specialty');
+  index(frtReferralRequest, key, resource.type_, 'type');
 end;
 
 {$ENDIF}

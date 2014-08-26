@@ -51,6 +51,9 @@ uses
   FHIRResources,
   FHIRConstants;
 
+Type
+  ETooCostly = class (Exception);
+
 const
   MIN_DATE = DATETIME_MIN;
   MAX_DATE = DATETIME_MAX;

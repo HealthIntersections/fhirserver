@@ -1046,12 +1046,15 @@ begin
     if (entry.published_ <> nil) Then
       prop(json, 'published', entry.published_.AsXML);
 
+    if entry.resource <> nil then
+    begin
     json.ValueObject('content');
     if entry.resource is TFhirBinary then
       ComposeBinary(json, TFhirBinary(entry.resource))
     else
       ComposeResource(json, '', entry.id, tail(entry.links.rel['self']), entry.resource);
     json.FinishObject;
+    end;
 
     if entry.summary <> nil then
       ComposeXHtmlNode(json, 'summary', entry.summary);
