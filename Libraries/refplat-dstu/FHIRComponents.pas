@@ -37,7 +37,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.81 generated Mon, Aug 25, 2014 12:47+1000
+// FHIR v0.0.81 generated Wed, Aug 27, 2014 23:05+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -17109,7 +17109,7 @@ begin
   if FSeverity = nil then
     result := TFhirReactionSeverity(0)
   else
-    result := TFhirReactionSeverity(StringArrayIndexOf(CODES_TFhirReactionSeverity, Severity.value));
+    result := TFhirReactionSeverity(StringArrayIndexOfSensitive(CODES_TFhirReactionSeverity, Severity.value));
 end;
 
 Procedure TFhirAdverseReactionSymptom.SetSeverityST(value : TFhirReactionSeverity);
@@ -17306,7 +17306,7 @@ begin
   if FType_ = nil then
     result := TFhirExposureType(0)
   else
-    result := TFhirExposureType(StringArrayIndexOf(CODES_TFhirExposureType, Type_.value));
+    result := TFhirExposureType(StringArrayIndexOfSensitive(CODES_TFhirExposureType, Type_.value));
 end;
 
 Procedure TFhirAdverseReactionExposure.SetType_ST(value : TFhirExposureType);
@@ -17328,7 +17328,7 @@ begin
   if FCausalityExpectation = nil then
     result := TFhirCausalityExpectation(0)
   else
-    result := TFhirCausalityExpectation(StringArrayIndexOf(CODES_TFhirCausalityExpectation, CausalityExpectation.value));
+    result := TFhirCausalityExpectation(StringArrayIndexOfSensitive(CODES_TFhirCausalityExpectation, CausalityExpectation.value));
 end;
 
 Procedure TFhirAdverseReactionExposure.SetCausalityExpectationST(value : TFhirCausalityExpectation);
@@ -17683,7 +17683,7 @@ begin
   if FStatus = nil then
     result := TFhirCarePlanGoalStatus(0)
   else
-    result := TFhirCarePlanGoalStatus(StringArrayIndexOf(CODES_TFhirCarePlanGoalStatus, Status.value));
+    result := TFhirCarePlanGoalStatus(StringArrayIndexOfSensitive(CODES_TFhirCarePlanGoalStatus, Status.value));
 end;
 
 Procedure TFhirCarePlanGoal.SetStatusST(value : TFhirCarePlanGoalStatus);
@@ -17897,7 +17897,7 @@ begin
   if FStatus = nil then
     result := TFhirCarePlanActivityStatus(0)
   else
-    result := TFhirCarePlanActivityStatus(StringArrayIndexOf(CODES_TFhirCarePlanActivityStatus, Status.value));
+    result := TFhirCarePlanActivityStatus(StringArrayIndexOfSensitive(CODES_TFhirCarePlanActivityStatus, Status.value));
 end;
 
 Procedure TFhirCarePlanActivity.SetStatusST(value : TFhirCarePlanActivityStatus);
@@ -18153,7 +18153,7 @@ begin
   if FCategory = nil then
     result := TFhirCarePlanActivityCategory(0)
   else
-    result := TFhirCarePlanActivityCategory(StringArrayIndexOf(CODES_TFhirCarePlanActivityCategory, Category.value));
+    result := TFhirCarePlanActivityCategory(StringArrayIndexOfSensitive(CODES_TFhirCarePlanActivityCategory, Category.value));
 end;
 
 Procedure TFhirCarePlanActivitySimple.SetCategoryST(value : TFhirCarePlanActivityCategory);
@@ -19414,7 +19414,7 @@ begin
   if FEquivalence = nil then
     result := TFhirConceptEquivalence(0)
   else
-    result := TFhirConceptEquivalence(StringArrayIndexOf(CODES_TFhirConceptEquivalence, Equivalence.value));
+    result := TFhirConceptEquivalence(StringArrayIndexOfSensitive(CODES_TFhirConceptEquivalence, Equivalence.value));
 end;
 
 Procedure TFhirConceptMapConceptMap.SetEquivalenceST(value : TFhirConceptEquivalence);
@@ -20069,7 +20069,7 @@ begin
   if FType_ = nil then
     result := TFhirConditionRelationshipType(0)
   else
-    result := TFhirConditionRelationshipType(StringArrayIndexOf(CODES_TFhirConditionRelationshipType, Type_.value));
+    result := TFhirConditionRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirConditionRelationshipType, Type_.value));
 end;
 
 Procedure TFhirConditionRelatedItem.SetType_ST(value : TFhirConditionRelationshipType);
@@ -20684,7 +20684,7 @@ begin
   if FMode = nil then
     result := TFhirRestfulConformanceMode(0)
   else
-    result := TFhirRestfulConformanceMode(StringArrayIndexOf(CODES_TFhirRestfulConformanceMode, Mode.value));
+    result := TFhirRestfulConformanceMode(StringArrayIndexOfSensitive(CODES_TFhirRestfulConformanceMode, Mode.value));
 end;
 
 Procedure TFhirConformanceRest.SetModeST(value : TFhirRestfulConformanceMode);
@@ -21507,7 +21507,7 @@ begin
   if FCode = nil then
     result := TFhirTypeRestfulOperation(0)
   else
-    result := TFhirTypeRestfulOperation(StringArrayIndexOf(CODES_TFhirTypeRestfulOperation, Code.value));
+    result := TFhirTypeRestfulOperation(StringArrayIndexOfSensitive(CODES_TFhirTypeRestfulOperation, Code.value));
 end;
 
 Procedure TFhirConformanceRestResourceOperation.SetCodeST(value : TFhirTypeRestfulOperation);
@@ -21768,7 +21768,7 @@ begin
   if FType_ = nil then
     result := TFhirSearchParamType(0)
   else
-    result := TFhirSearchParamType(StringArrayIndexOf(CODES_TFhirSearchParamType, Type_.value));
+    result := TFhirSearchParamType(StringArrayIndexOfSensitive(CODES_TFhirSearchParamType, Type_.value));
 end;
 
 Procedure TFhirConformanceRestResourceSearchParam.SetType_ST(value : TFhirSearchParamType);
@@ -21955,7 +21955,7 @@ begin
   if FCode = nil then
     result := TFhirSystemRestfulOperation(0)
   else
-    result := TFhirSystemRestfulOperation(StringArrayIndexOf(CODES_TFhirSystemRestfulOperation, Code.value));
+    result := TFhirSystemRestfulOperation(StringArrayIndexOfSensitive(CODES_TFhirSystemRestfulOperation, Code.value));
 end;
 
 Procedure TFhirConformanceRestOperation.SetCodeST(value : TFhirSystemRestfulOperation);
@@ -22635,7 +22635,7 @@ begin
   if FCategory = nil then
     result := TFhirMessageSignificanceCategory(0)
   else
-    result := TFhirMessageSignificanceCategory(StringArrayIndexOf(CODES_TFhirMessageSignificanceCategory, Category.value));
+    result := TFhirMessageSignificanceCategory(StringArrayIndexOfSensitive(CODES_TFhirMessageSignificanceCategory, Category.value));
 end;
 
 Procedure TFhirConformanceMessagingEvent.SetCategoryST(value : TFhirMessageSignificanceCategory);
@@ -22657,7 +22657,7 @@ begin
   if FMode = nil then
     result := TFhirMessageConformanceEventMode(0)
   else
-    result := TFhirMessageConformanceEventMode(StringArrayIndexOf(CODES_TFhirMessageConformanceEventMode, Mode.value));
+    result := TFhirMessageConformanceEventMode(StringArrayIndexOfSensitive(CODES_TFhirMessageConformanceEventMode, Mode.value));
 end;
 
 Procedure TFhirConformanceMessagingEvent.SetModeST(value : TFhirMessageConformanceEventMode);
@@ -22887,7 +22887,7 @@ begin
   if FMode = nil then
     result := TFhirDocumentMode(0)
   else
-    result := TFhirDocumentMode(StringArrayIndexOf(CODES_TFhirDocumentMode, Mode.value));
+    result := TFhirDocumentMode(StringArrayIndexOfSensitive(CODES_TFhirDocumentMode, Mode.value));
 end;
 
 Procedure TFhirConformanceDocument.SetModeST(value : TFhirDocumentMode);
@@ -23522,7 +23522,7 @@ begin
   if FStatus = nil then
     result := TFhirDiagnosticOrderStatus(0)
   else
-    result := TFhirDiagnosticOrderStatus(StringArrayIndexOf(CODES_TFhirDiagnosticOrderStatus, Status.value));
+    result := TFhirDiagnosticOrderStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderStatus, Status.value));
 end;
 
 Procedure TFhirDiagnosticOrderEvent.SetStatusST(value : TFhirDiagnosticOrderStatus);
@@ -23750,7 +23750,7 @@ begin
   if FStatus = nil then
     result := TFhirDiagnosticOrderStatus(0)
   else
-    result := TFhirDiagnosticOrderStatus(StringArrayIndexOf(CODES_TFhirDiagnosticOrderStatus, Status.value));
+    result := TFhirDiagnosticOrderStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderStatus, Status.value));
 end;
 
 Procedure TFhirDiagnosticOrderItem.SetStatusST(value : TFhirDiagnosticOrderStatus);
@@ -24082,7 +24082,7 @@ begin
   if FCode = nil then
     result := TFhirDocumentRelationshipType(0)
   else
-    result := TFhirDocumentRelationshipType(StringArrayIndexOf(CODES_TFhirDocumentRelationshipType, Code.value));
+    result := TFhirDocumentRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirDocumentRelationshipType, Code.value));
 end;
 
 Procedure TFhirDocumentReferenceRelatesTo.SetCodeST(value : TFhirDocumentRelationshipType);
@@ -26150,7 +26150,7 @@ begin
   if FModality = nil then
     result := TFhirModality(0)
   else
-    result := TFhirModality(StringArrayIndexOf(CODES_TFhirModality, Modality.value));
+    result := TFhirModality(StringArrayIndexOfSensitive(CODES_TFhirModality, Modality.value));
 end;
 
 Procedure TFhirImagingStudySeries.SetModalityST(value : TFhirModality);
@@ -26250,7 +26250,7 @@ begin
   if FAvailability = nil then
     result := TFhirInstanceAvailability(0)
   else
-    result := TFhirInstanceAvailability(StringArrayIndexOf(CODES_TFhirInstanceAvailability, Availability.value));
+    result := TFhirInstanceAvailability(StringArrayIndexOfSensitive(CODES_TFhirInstanceAvailability, Availability.value));
 end;
 
 Procedure TFhirImagingStudySeries.SetAvailabilityST(value : TFhirInstanceAvailability);
@@ -29360,7 +29360,7 @@ begin
   if FStatus = nil then
     result := TFhirMedicationDispenseStatus(0)
   else
-    result := TFhirMedicationDispenseStatus(StringArrayIndexOf(CODES_TFhirMedicationDispenseStatus, Status.value));
+    result := TFhirMedicationDispenseStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationDispenseStatus, Status.value));
 end;
 
 Procedure TFhirMedicationDispenseDispense.SetStatusST(value : TFhirMedicationDispenseStatus);
@@ -30839,7 +30839,7 @@ begin
   if FCode = nil then
     result := TFhirResponseCode(0)
   else
-    result := TFhirResponseCode(StringArrayIndexOf(CODES_TFhirResponseCode, Code.value));
+    result := TFhirResponseCode(StringArrayIndexOfSensitive(CODES_TFhirResponseCode, Code.value));
 end;
 
 Procedure TFhirMessageHeaderResponse.SetCodeST(value : TFhirResponseCode);
@@ -31645,7 +31645,7 @@ begin
   if FType_ = nil then
     result := TFhirObservationRelationshiptypes(0)
   else
-    result := TFhirObservationRelationshiptypes(StringArrayIndexOf(CODES_TFhirObservationRelationshiptypes, Type_.value));
+    result := TFhirObservationRelationshiptypes(StringArrayIndexOfSensitive(CODES_TFhirObservationRelationshiptypes, Type_.value));
 end;
 
 Procedure TFhirObservationRelated.SetType_ST(value : TFhirObservationRelationshiptypes);
@@ -31823,7 +31823,7 @@ begin
   if FSeverity = nil then
     result := TFhirIssueSeverity(0)
   else
-    result := TFhirIssueSeverity(StringArrayIndexOf(CODES_TFhirIssueSeverity, Severity.value));
+    result := TFhirIssueSeverity(StringArrayIndexOfSensitive(CODES_TFhirIssueSeverity, Severity.value));
 end;
 
 Procedure TFhirOperationOutcomeIssue.SetSeverityST(value : TFhirIssueSeverity);
@@ -32699,7 +32699,7 @@ begin
   if FType_ = nil then
     result := TFhirLinkType(0)
   else
-    result := TFhirLinkType(StringArrayIndexOf(CODES_TFhirLinkType, Type_.value));
+    result := TFhirLinkType(StringArrayIndexOfSensitive(CODES_TFhirLinkType, Type_.value));
 end;
 
 Procedure TFhirPatientLink.SetType_ST(value : TFhirLinkType);
@@ -33173,7 +33173,7 @@ begin
   if FType_ = nil then
     result := TFhirProcedureRelationshipType(0)
   else
-    result := TFhirProcedureRelationshipType(StringArrayIndexOf(CODES_TFhirProcedureRelationshipType, Type_.value));
+    result := TFhirProcedureRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirProcedureRelationshipType, Type_.value));
 end;
 
 Procedure TFhirProcedureRelatedItem.SetType_ST(value : TFhirProcedureRelationshipType);
@@ -34141,7 +34141,7 @@ begin
   if FRules = nil then
     result := TFhirResourceSlicingRules(0)
   else
-    result := TFhirResourceSlicingRules(StringArrayIndexOf(CODES_TFhirResourceSlicingRules, Rules.value));
+    result := TFhirResourceSlicingRules(StringArrayIndexOfSensitive(CODES_TFhirResourceSlicingRules, Rules.value));
 end;
 
 Procedure TFhirProfileStructureElementSlicing.SetRulesST(value : TFhirResourceSlicingRules);
@@ -35075,7 +35075,7 @@ begin
   if FSeverity = nil then
     result := TFhirConstraintSeverity(0)
   else
-    result := TFhirConstraintSeverity(StringArrayIndexOf(CODES_TFhirConstraintSeverity, Severity.value));
+    result := TFhirConstraintSeverity(StringArrayIndexOfSensitive(CODES_TFhirConstraintSeverity, Severity.value));
 end;
 
 Procedure TFhirProfileStructureElementDefinitionConstraint.SetSeverityST(value : TFhirConstraintSeverity);
@@ -35350,7 +35350,7 @@ begin
   if FConformance = nil then
     result := TFhirBindingConformance(0)
   else
-    result := TFhirBindingConformance(StringArrayIndexOf(CODES_TFhirBindingConformance, Conformance.value));
+    result := TFhirBindingConformance(StringArrayIndexOfSensitive(CODES_TFhirBindingConformance, Conformance.value));
 end;
 
 Procedure TFhirProfileStructureElementDefinitionBinding.SetConformanceST(value : TFhirBindingConformance);
@@ -35776,7 +35776,7 @@ begin
   if FType_ = nil then
     result := TFhirSearchParamType(0)
   else
-    result := TFhirSearchParamType(StringArrayIndexOf(CODES_TFhirSearchParamType, Type_.value));
+    result := TFhirSearchParamType(StringArrayIndexOfSensitive(CODES_TFhirSearchParamType, Type_.value));
 end;
 
 Procedure TFhirProfileStructureSearchParam.SetType_ST(value : TFhirSearchParamType);
@@ -36057,7 +36057,7 @@ begin
   if FContextType = nil then
     result := TFhirExtensionContext(0)
   else
-    result := TFhirExtensionContext(StringArrayIndexOf(CODES_TFhirExtensionContext, ContextType.value));
+    result := TFhirExtensionContext(StringArrayIndexOfSensitive(CODES_TFhirExtensionContext, ContextType.value));
 end;
 
 Procedure TFhirProfileExtensionDefn.SetContextTypeST(value : TFhirExtensionContext);
@@ -36649,7 +36649,7 @@ begin
   if FRole = nil then
     result := TFhirProvenanceEntityRole(0)
   else
-    result := TFhirProvenanceEntityRole(StringArrayIndexOf(CODES_TFhirProvenanceEntityRole, Role.value));
+    result := TFhirProvenanceEntityRole(StringArrayIndexOfSensitive(CODES_TFhirProvenanceEntityRole, Role.value));
 end;
 
 Procedure TFhirProvenanceEntity.SetRoleST(value : TFhirProvenanceEntityRole);
@@ -36941,7 +36941,7 @@ begin
   if FOutcome = nil then
     result := TFhirQueryOutcome(0)
   else
-    result := TFhirQueryOutcome(StringArrayIndexOf(CODES_TFhirQueryOutcome, Outcome.value));
+    result := TFhirQueryOutcome(StringArrayIndexOfSensitive(CODES_TFhirQueryOutcome, Outcome.value));
 end;
 
 Procedure TFhirQueryResponse.SetOutcomeST(value : TFhirQueryOutcome);
@@ -37627,7 +37627,7 @@ begin
   if FAction = nil then
     result := TFhirSecurityEventAction(0)
   else
-    result := TFhirSecurityEventAction(StringArrayIndexOf(CODES_TFhirSecurityEventAction, Action.value));
+    result := TFhirSecurityEventAction(StringArrayIndexOfSensitive(CODES_TFhirSecurityEventAction, Action.value));
 end;
 
 Procedure TFhirSecurityEventEvent.SetActionST(value : TFhirSecurityEventAction);
@@ -37675,7 +37675,7 @@ begin
   if FOutcome = nil then
     result := TFhirSecurityEventOutcome(0)
   else
-    result := TFhirSecurityEventOutcome(StringArrayIndexOf(CODES_TFhirSecurityEventOutcome, Outcome.value));
+    result := TFhirSecurityEventOutcome(StringArrayIndexOfSensitive(CODES_TFhirSecurityEventOutcome, Outcome.value));
 end;
 
 Procedure TFhirSecurityEventEvent.SetOutcomeST(value : TFhirSecurityEventOutcome);
@@ -38175,7 +38175,7 @@ begin
   if FType_ = nil then
     result := TFhirNetworkType(0)
   else
-    result := TFhirNetworkType(StringArrayIndexOf(CODES_TFhirNetworkType, Type_.value));
+    result := TFhirNetworkType(StringArrayIndexOfSensitive(CODES_TFhirNetworkType, Type_.value));
 end;
 
 Procedure TFhirSecurityEventParticipantNetwork.SetType_ST(value : TFhirNetworkType);
@@ -38586,7 +38586,7 @@ begin
   if FType_ = nil then
     result := TFhirObjectType(0)
   else
-    result := TFhirObjectType(StringArrayIndexOf(CODES_TFhirObjectType, Type_.value));
+    result := TFhirObjectType(StringArrayIndexOfSensitive(CODES_TFhirObjectType, Type_.value));
 end;
 
 Procedure TFhirSecurityEventObject.SetType_ST(value : TFhirObjectType);
@@ -38608,7 +38608,7 @@ begin
   if FRole = nil then
     result := TFhirObjectRole(0)
   else
-    result := TFhirObjectRole(StringArrayIndexOf(CODES_TFhirObjectRole, Role.value));
+    result := TFhirObjectRole(StringArrayIndexOfSensitive(CODES_TFhirObjectRole, Role.value));
 end;
 
 Procedure TFhirSecurityEventObject.SetRoleST(value : TFhirObjectRole);
@@ -38630,7 +38630,7 @@ begin
   if FLifecycle = nil then
     result := TFhirObjectLifecycle(0)
   else
-    result := TFhirObjectLifecycle(StringArrayIndexOf(CODES_TFhirObjectLifecycle, Lifecycle.value));
+    result := TFhirObjectLifecycle(StringArrayIndexOfSensitive(CODES_TFhirObjectLifecycle, Lifecycle.value));
 end;
 
 Procedure TFhirSecurityEventObject.SetLifecycleST(value : TFhirObjectLifecycle);
@@ -39067,7 +39067,7 @@ begin
   if FRelationship = nil then
     result := TFhirHierarchicalRelationshipType(0)
   else
-    result := TFhirHierarchicalRelationshipType(StringArrayIndexOf(CODES_TFhirHierarchicalRelationshipType, Relationship.value));
+    result := TFhirHierarchicalRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirHierarchicalRelationshipType, Relationship.value));
 end;
 
 Procedure TFhirSpecimenSource.SetRelationshipST(value : TFhirHierarchicalRelationshipType);
@@ -40185,7 +40185,7 @@ begin
   if FStatus = nil then
     result := TFhirValuesetSupplyDispenseStatus(0)
   else
-    result := TFhirValuesetSupplyDispenseStatus(StringArrayIndexOf(CODES_TFhirValuesetSupplyDispenseStatus, Status.value));
+    result := TFhirValuesetSupplyDispenseStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetSupplyDispenseStatus, Status.value));
 end;
 
 Procedure TFhirSupplyDispense.SetStatusST(value : TFhirValuesetSupplyDispenseStatus);
@@ -41246,7 +41246,7 @@ begin
   if FOp = nil then
     result := TFhirFilterOperator(0)
   else
-    result := TFhirFilterOperator(StringArrayIndexOf(CODES_TFhirFilterOperator, Op.value));
+    result := TFhirFilterOperator(StringArrayIndexOfSensitive(CODES_TFhirFilterOperator, Op.value));
 end;
 
 Procedure TFhirValueSetComposeIncludeFilter.SetOpST(value : TFhirFilterOperator);

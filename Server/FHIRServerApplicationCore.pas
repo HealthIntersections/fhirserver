@@ -238,6 +238,9 @@ begin
       tests.executeBefore;
 
       CanStart;
+      {$IFNDEF FHIR-DSTU}
+      TFHIRQuestionnaireBuilderTests.runTests(FIni, FWebServer.DataStore);
+      {$ENDIF}
       tests.executeRound1;
       DoStop;
 

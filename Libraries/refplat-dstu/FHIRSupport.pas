@@ -120,7 +120,7 @@ Type
     }
     Property Provider : TFHIRAuthProvider read FProvider write FProvider;
 
-    {@member InnerToken
+   {@member InnerToken
       the OAuth authorization token (Don't change!)
       This is the OAuth token for the identity server
     }
@@ -397,6 +397,7 @@ Type
     FContentLocation: String;
     FLocation: String;
     FCategories : TFHIRAtomCategoryList;
+    FLinks : TFHIRAtomLinkList;
     FOrigin: String;
     FId: String;
     procedure SetFeed(const Value: TFHIRAtomFeed);
@@ -497,6 +498,11 @@ Type
       Tags for the response
     }
     property categories : TFHIRAtomCategoryList read Fcategories;
+
+    {@member links
+      Links for the response
+    }
+    property links : TFHIRAtomLinkList read FLinks;
 
     {@member Origin
       HTTP Origin header - see http://en.wikipedia.org/wiki/Cross-origin_resource_sharing
@@ -725,7 +731,7 @@ begin
       if Feed <> nil then
         comp.Compose(stream, Feed, true)
       else if Resource <> nil then
-        comp.Compose(stream, CODES_TFHIRResourceType[resourceType],  id, subId, resource, true)
+        comp.Compose(stream, CODES_TFHIRResourceType[ResourceType], id, subId, resource, true, nil)
     finally
       comp.free;
     end;
@@ -860,10 +866,12 @@ constructor TFHIRResponse.Create;
 begin
   inherited;
   FCategories := TFHIRAtomCategoryList.create;
+  FLinks := TFHIRAtomLinkList.create;
 end;
 
 destructor TFHIRResponse.Destroy;
 begin
+  FLinks.Free;
   FCategories.free;
   FFeed.Free;
   FResource.Free;

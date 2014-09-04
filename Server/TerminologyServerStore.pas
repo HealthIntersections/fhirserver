@@ -88,6 +88,7 @@ Type
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
+    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
   end;
 
 
@@ -272,6 +273,9 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
+      if (vs.identifierST = 'http://hl7.org/fhir/ValueSet/ucum-common') then
+        FUcum.SetCommonUnits(vs.Link);
+
       FBaseValueSets.Matches[vs.identifierST] := vs.Link;
       FValueSetsByIdentifier.Matches[vs.identifierST] := vs.Link;
       FValueSetsByURL.Matches[url] := vs.Link;
@@ -591,7 +595,10 @@ end;
 
 function TValueSetProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin
-  result := TValueSetProviderContext.create(TValueSetProviderContext(context).context.conceptList[ndx]);
+  if context = nil then
+    result := TValueSetProviderContext.create(FVs.define.conceptList[ndx])
+  else
+    result := TValueSetProviderContext.create(TValueSetProviderContext(context).context.conceptList[ndx]);
 end;
 
 function TValueSetProvider.Display(context: TCodeSystemProviderContext): string;
@@ -621,7 +628,12 @@ end;
 
 function TValueSetProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
-  result := (TValueSetProviderContext(context).context.abstract = nil) or not TValueSetProviderContext(context).context.abstractST;
+  result := (TValueSetProviderContext(context).context.abstract <> nil) and TValueSetProviderContext(context).context.abstractST;
+end;
+
+function TValueSetProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+begin
+  result := false;
 end;
 
 function TValueSetProvider.getDefinition(code: String): String;

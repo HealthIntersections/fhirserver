@@ -343,6 +343,7 @@
         <DCCReference Include="..\Libraries\refplat-dstu\SCIMObjects.pas"/>
         <DCCReference Include="SCIMServer.pas"/>
         <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
+        <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

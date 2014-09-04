@@ -35,10 +35,10 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.81 generated Mon, Aug 25, 2014 12:47+1000
+// FHIR v0.0.81 generated Wed, Aug 27, 2014 23:05+1000
 
 uses
-  SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON;
+  SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON, FHIRAtomFeed;
 
 Type
 
@@ -476,7 +476,7 @@ Type
     procedure ComposeValueSetExpansion(xml : TXmlBuilder; name : string; elem : TFhirValueSetExpansion);
     procedure ComposeValueSetExpansionContains(xml : TXmlBuilder; name : string; elem : TFhirValueSetExpansionContains);
     procedure ComposeValueSet(xml : TXmlBuilder; name : string; elem : TFhirValueSet);
-    procedure ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; resource : TFhirResource); override;
+    procedure ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; resource : TFhirResource; links : TFHIRAtomLinkList); override;
   end;
 
   TFHIRJsonParser = class (TFHIRJsonParserBase)
@@ -1121,7 +1121,7 @@ Type
     procedure ComposeValueSetExpansion(json : TJSONWriter; name : string; elem : TFhirValueSetExpansion);
     procedure ComposeValueSetExpansionContains(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionContains);
     procedure ComposeValueSet(json : TJSONWriter; name : string; elem : TFhirValueSet);
-    procedure ComposeResource(json : TJSONWriter; statedType, id, ver : String; resource : TFhirResource); override;
+    procedure ComposeResource(json : TJSONWriter; statedType, id, ver : String; resource : TFhirResource; links : TFHIRAtomLinkList); override;
   end;
 
 
@@ -1235,7 +1235,7 @@ begin
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
-    if StringArrayIndexOf(aNames, result.value) < 0 then
+    if StringArrayIndexOfSensitive(aNames, result.value) < 0 then
       raise Exception.create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
     child := FirstChild(element);
     while (child <> nil) do
@@ -1259,7 +1259,7 @@ end;
 
 function TFHIRJsonParser.ParseEnum(value : string; jsn : TJsonObject; Const aNames : Array Of String) : TFHIREnum;
 begin
-  if StringArrayIndexOf(aNames, value) < 0 then
+  if StringArrayIndexOfSensitive(aNames, value) < 0 then
     raise Exception.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+jsn.path+'"');
   result := TFHIREnum.create;
   try
@@ -24349,7 +24349,7 @@ begin
     raise Exception.create('Error: the element '+element.baseName+' is not recognised as a valid resource name');
 end;
 
-procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; resource: TFhirResource);
+procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; resource: TFhirResource; links : TFHIRAtomLinkList);
 begin
   if (resource = nil) Then
     Raise Exception.Create('error - resource is nil');
@@ -24673,7 +24673,7 @@ begin
     raise Exception.create('Unknown Type');
 end;
 
-procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; statedType, id, ver : String; resource: TFhirResource);
+procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; statedType, id, ver : String; resource: TFhirResource; links : TFHIRAtomLinkList);
 begin
   if (resource = nil) Then
     Raise Exception.Create('error - resource is nil');

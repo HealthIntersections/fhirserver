@@ -257,7 +257,8 @@ uses
   JWT in '..\Libraries\support\JWT.pas',
   SCIMObjects in '..\Libraries\refplat-dstu\SCIMObjects.pas',
   SCIMServer in 'SCIMServer.pas',
-  TwilioClient in '..\Libraries\security\TwilioClient.pas';
+  TwilioClient in '..\Libraries\security\TwilioClient.pas',
+  ShellSupport in '..\Libraries\support\ShellSupport.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

@@ -345,6 +345,9 @@
         <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
         <DCCReference Include="..\Libraries\refplat-dev\FHIRSearchSyntax.pas"/>
         <DCCReference Include="ProfileManager.pas"/>
+        <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
+        <DCCReference Include="RectSupport.pas"/>
+        <DCCReference Include="CoordinateSupport.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

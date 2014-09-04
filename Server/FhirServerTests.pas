@@ -3,10 +3,11 @@ unit FhirServerTests;
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes, ShellSupport,
   IniFiles,
-  AdvObjects,
-  TerminologyServer;
+  AdvObjects, GuidSupport,
+  FHIRTypes, FHIRResources, FHIRAtomFeed, FHIRParser, ProfileManager,
+  TerminologyServer, FHIRDataStore;
 
 Type
   TFhirServerTests = class (TAdvObject)
@@ -26,11 +27,26 @@ Type
     procedure executeAfter;
   end;
 
+  {$IFNDEF FHIR-DSTU}
+  TFHIRQuestionnaireBuilderTests = class (TAdvObject)
+  private
+    FDataStore: TFHIRDataStore;
+    function LoadJsonResource(filename : String) : TFhirResource;
+    procedure SaveResource(resource : TFhirResource; filename : String);
+    procedure RoundTrip(filename : String; name : String);
+    procedure RunTests(srcDir : String); overload;
+  public
+    class procedure RunTests(ini : TIniFile; dataStore: TFHIRDataStore); overload;
+  end;
+  {$ENDIF}
+
+
 implementation
 
 uses
   SnomedServices, SnomedExpressions, SCIMSearch,
-  DecimalTests, UcumTests, JWTTests, TwilioClient;
+  DecimalTests, UcumTests, JWTTests, TwilioClient
+  {$IFNDEF FHIR-DSTU}, QuestionnaireBuilder{$ENDIF};
 
 { TFhirServerTests }
 
@@ -44,8 +60,8 @@ begin
   // TTwilioClient.RunTests;
   TSCIMSearchParser.runTests;
   TDecimalTests.runTests;
-  TJWTTests.runTests;
   TUcumTests.runTests(ExtractFilePath(FIni.FileName));
+  TJWTTests.runTests;
   WriteLn('Library tests Passed');
 end;
 
@@ -101,6 +117,108 @@ begin
   TSnomedExpressionParser.Parse(TerminologyServer.Snomed, '397956004 | prosthetic arthroplasty of the hip |:363704007 | procedure site | = (24136001 | hip joint structure| :272741003 | laterality | =7771000 | left |) {363699004 |'+' direct device | =304120007 | total hip replacement prosthesis |,260686004 | method | =257867005 | insertion - action |}').Free;
   TSnomedExpressionParser.Parse(TerminologyServer.Snomed, '243796009 | situation with explicit context |: {363589002 | associated procedure | = (397956004 | prosthetic arthroplasty of the hip |:363704007 | procedure site | = (24136001 | '+'hip joint structure | :272741003 | laterality | =7771000 | left |) {363699004 | direct device | =304120007 | total hip replacement prosthesis |, '+'260686004 | method | =257867005 | insertion - action |}), 408730004 | procedure context | =385658003 | done |, 408731000 | temporal context | =410512000 | current or specified |, 408732007 | subject relationship context |=410604004 | subject of record | }').Free;
 end;
+
+{$IFNDEF FHIR-DSTU}
+
+{ TFHIRQuestionnaireBuilderTests }
+
+function TFHIRQuestionnaireBuilderTests.LoadJsonResource(filename: String): TFhirResource;
+var
+  stream : TFileStream;
+  json : TFHIRJsonParser;
+begin
+  stream := TFileStream.Create(filename, fmOpenRead);
+  try
+    json := TFHIRJsonParser.Create('en');
+    try
+      json.source := stream;
+      json.Parse;
+      result := json.resource.Link;
+    finally
+      json.free;
+    end;
+  finally
+    stream.Free
+  end;
+end;
+
+class procedure TFHIRQuestionnaireBuilderTests.RunTests(ini : TInifile; dataStore: TFHIRDataStore);
+var
+  this : TFHIRQuestionnaireBuilderTests;
+  srcDir : string;
+  profiles : TProfileManager;
+  feed : TFHIRAtomFeed;
+begin
+  this := TFHIRQuestionnaireBuilderTests.Create;
+  try
+    this.FDataStore := dataStore;
+    srcDir := ini.ReadString('fhir', 'source', '');
+    this.RunTests(srcDir);
+  finally
+    this.free;
+  end;
+end;
+
+procedure TFHIRQuestionnaireBuilderTests.SaveResource(resource: TFhirResource; filename: String);
+var
+  stream : TFileStream;
+  json : TFHIRJsonComposer;
+begin
+  stream := TFileStream.Create(filename, fmCreate);
+  try
+    json := TFHIRJsonComposer.Create('en');
+    try
+      json.Compose(stream, '', '', '', resource, true, nil);
+    finally
+      json.free;
+    end;
+  finally
+    stream.Free
+  end;
+end;
+
+procedure TFHIRQuestionnaireBuilderTests.RunTests(srcDir: String);
+begin
+  RoundTrip(IncludeTrailingPathDelimiter(srcDir)+'location-example.json', 'Location');
+//  RoundTrip(IncludeTrailingPathDelimiter(srcDir)+'medication-example.json', 'Medication');
+//  RoundTrip(IncludeTrailingPathDelimiter(srcDir)+'adversereaction-example.json', 'AdverseReaction');
+//  RoundTrip(IncludeTrailingPathDelimiter(srcDir)+'observation-example.json', 'Observation');
+end;
+
+procedure TFHIRQuestionnaireBuilderTests.RoundTrip(filename : String; name : String);
+var
+  thisOut : TQuestionnaireBuilder;
+  thisIn : TQuestionnaireBuilder;
+  answers : TFhirQuestionnaireAnswers;
+begin
+  thisOut := TQuestionnaireBuilder.Create;
+  thisIn := TQuestionnaireBuilder.Create;
+  try
+    thisOut.Profiles := FDataStore.profiles.Link;
+    thisOut.OnExpand := FDataStore.ExpandVS;
+    thisIn.Profiles := FDataStore.profiles.Link;
+    thisIn.OnExpand := FDataStore.ExpandVS;
+    thisOut.QuestionnaireId := NewGuidURN;
+
+    thisOut.Resource := LoadJsonResource(filename);
+    thisOut.Resource.text := nil;
+    thisOut.Profile := FDataStore.profiles['http://hl7.org/fhir/Profile/'+name].Link;
+    thisOut.Build;
+    saveResource(thisOut.Resource, 'c:\temp\start.json');
+    saveResource(thisOut.Answers, 'c:\temp\qa.json');
+
+    thisIn.answers := thisOut.Answers.Link;
+    thisIn.Profile := FDataStore.profiles['http://hl7.org/fhir/Profile/'+name].Link;
+    thisIn.UnBuild;
+    saveResource(thisIn.Resource, 'c:\temp\end.json');
+
+  finally
+    thisOut.Free;
+    thisIn.Free;
+  end;
+  ExecuteOpen('c:\Program Files (x86)\WinMerge\WinMergeU.exe', 'c:\temp\start.json c:\temp\end.json');
+end;
+{$ENDIF}
 
 
 end.

@@ -36,6 +36,7 @@ Uses
   MathSupport, FileSupport,
   AdvBinaryFilers, AdvFiles, AdvFactories, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
   DecimalSupport, UcumHandlers, UcumValidators, UcumExpressions, Ucum,
+  FHIRResources, FHIRComponents, FHIRTypes, FHIRUtilities, FHIRParser,
   TerminologyServices;
 
 Type
@@ -60,6 +61,7 @@ Type
     FKey: Integer;
     FName: String;
     FPath: String;
+    FCommonUnits : TFhirValueSet;
 
     Function ParseDecimal(S,s1 : String):TSmartDecimal;
     Function ParsePrefix(oElem : IXMLDOMElement):TUcumPrefix;
@@ -71,6 +73,8 @@ Type
     Constructor Create; Override;
     Destructor Destroy; Override;
     Function Link : TUcumServices; Overload;
+
+    Procedure SetCommonUnits(vs : TFHIRValueSet);
 
     Property Model : TUcumModel read FModel;
     Property Key : Integer read FKey write FKey;
@@ -223,6 +227,7 @@ Type
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
+    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
   End;
 
   TUcumServiceList = class (TAdvObjectList)
@@ -326,6 +331,7 @@ end;
 
 destructor TUcumServices.Destroy;
 begin
+  FCommonUnits.Free;
   FHandlers.Free;
   FModel.Free;
   inherited;
@@ -518,6 +524,38 @@ begin
   raise Exception.Create('to do');
 end;
 
+procedure TUcumServices.SetCommonUnits(vs: TFHIRValueSet);
+//var
+//  i : integer;
+//  xml : TFHIRXmlComposer;
+//  f : TFileStream;
+//  c, d : String;
+begin
+  FCommonUnits.Free;
+  FCommonUnits := vs;
+
+//  for i := 0 to vs.compose.includeList[0].codeList.count - 1 do
+//    if not vs.compose.includeList[0].codeList[i].HasExtension('http://hl7.org/fhir/Profile/tools-extensions#display') then
+//    begin
+//      c := vs.compose.includeList[0].codeList[i].value;
+//      d := analyse(c);
+//      writeln(c+' -> '+d);
+//      vs.compose.includeList[0].codeList[i].setExtensionString('http://hl7.org/fhir/Profile/tools-extensions#display', d);
+//    end;
+//
+//  f := TFileStream.Create('C:\work\org.hl7.fhir\build\source\valueset\valueset-ucum-common.xml', fmCreate);
+//  try
+//    xml := TFHIRXmlComposer.Create('en');
+//    try
+//      xml.Compose(f, '', '', '', vs, true, nil);
+//    finally
+//      xml.Free;
+//    end;
+//  finally
+//    f.free;
+//  end;
+end;
+
 function TUcumServices.Validate(code: String): String;
 begin
   if (code <> '') Then
@@ -666,6 +704,16 @@ begin
   FValue := Value;
 end;
 
+{ TUCUMCodeHolder }
+
+Type
+  TUCUMCodeHolder = class (TCodeSystemProviderContext)
+  private
+    code : String;
+  public
+    Constructor Create(code : String);
+  end;
+
 { TUcumServiceList }
 
 destructor TUcumServiceList.Destroy;
@@ -730,30 +778,32 @@ end;
 function TUcumServices.ChildCount(context: TCodeSystemProviderContext): integer;
 begin
   result := 0;
-  raise Exception.Create('to do');
 end;
 
 procedure TUcumServices.Close(ctxt: TCodeSystemProviderContext);
 begin
-  // nothing, it's an internal point
+  ctxt.Free;
 end;
 
 function TUcumServices.Code(context: TCodeSystemProviderContext): string;
 begin
-  result := '';
-  raise Exception.Create('to do');
+  if context = nil then
+    result := ''
+  else
+    result := TUCUMCodeHolder(context).code;
 end;
 
 function TUcumServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin
   result := nil;
-  raise Exception.Create('to do');
 end;
 
 function TUcumServices.Display(context: TCodeSystemProviderContext): string;
 begin
-  result := '';
-  raise Exception.Create('to do');
+  if context = nil then
+    result := ''
+  else
+    result := getDisplay(TUCUMCodeHolder(context).code);
 end;
 
 procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
@@ -767,9 +817,15 @@ begin
 end;
 
 function TUcumServices.getDisplay(code: String): String;
+var
+  i : integer;
 begin
-  result := '';
-  raise Exception.Create('to do');
+  result := analyse(code);
+  if FCommonUnits <> nil then
+    for i := 0 to FCommonUnits.compose.includeList[0].codeList.count - 1 do
+      with FCommonUnits.compose.includeList[0].codeList[i] do
+        if (code = code) and HasExtension('http://hl7.org/fhir/Profile/tools-extensions#display') then
+          result := GetExtensionString('http://hl7.org/fhir/Profile/tools-extensions#display');
 end;
 
 procedure TUcumServices.Import(const sFilename: String);
@@ -816,67 +872,72 @@ end;
 
 function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  result := false;
-  raise Exception.Create('to do');
+  raise Exception.Create('not supported yet');
 end;
 
 function TUcumServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
   result := false;
-  raise Exception.Create('to do');
+end;
+
+function TUcumServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+begin
+  result := true;
 end;
 
 function TUcumServices.locate(code: String): TCodeSystemProviderContext;
+var
+  s : String;
 begin
-  result := nil;
-  raise Exception.Create('to do');
+  s:= validate(code);
+  if s = '' then
+    result := TUCUMCodeHolder.Create(code)
+  else
+    result := nil;
 end;
 
 function TUcumServices.system: String;
 begin
-  result := '';
-  raise Exception.Create('to do');
+  result := 'http://unitsofmeasure.org';
 end;
 
 function TUcumServices.TotalCount: integer;
 begin
-  result := 0;
-  raise Exception.Create('to do');
+  // this is not true, but this is not too big to expand (the primary purpose of this function)
+  if FCommonUnits <> nil then
+    result := FCommonUnits.compose.includeList[0].codeList.count
+  else
+    result := 0;
 end;
 
 procedure TUcumServices.Close(ctxt: TCodeSystemProviderFilterContext);
 begin
-  raise Exception.Create('to do');
+  ctxt.Free;
 end;
 
 function TUcumServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  result := nil;
-  raise Exception.Create('to do');
+  raise Exception.Create('not supported yet');
 end;
 
 function TUcumServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := nil;
-  raise Exception.Create('to do');
+  raise Exception.Create('not supported yet');
 end;
 
 function TUcumServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  result := false;
-  raise Exception.Create('to do');
+  raise Exception.Create('not supported yet');
 end;
 
 function TUcumServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
 begin
-  result := nil;
-  raise Exception.Create('to do');
+  raise Exception.Create('not supported yet');
 end;
 
 function TUcumServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
 begin
   result := nil;
-  raise Exception.Create('to do');
 end;
 
 function TUcumServices.ParseDecimal(s, s1: String): TSmartDecimal;
@@ -1002,6 +1063,14 @@ begin
 end;
 
 
+
+{ TUCUMCodeHolder }
+
+constructor TUCUMCodeHolder.Create(code: String);
+begin
+  inherited Create;
+  self.code := code;
+end;
 
 End.
 

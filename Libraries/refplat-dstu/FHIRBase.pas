@@ -181,6 +181,8 @@ type
   public
     Destructor Destroy; override;
     function createIterator(bInheritedProperties : Boolean) : TFHIRPropertyIterator;
+    procedure ListChildrenByName(name : string; list : TFHIRObjectList);
+    procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
     Function PerformQuery(path : String):TFHIRObjectList;
     property Tag : TAdvObject read FTag write SetTag;
     property TagValue : String read FTagValue write FTagValue;
@@ -420,6 +422,7 @@ type
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
+    function FhirType : String; virtual;
   published
     {@member comments
       comments from the XML stream. No support for comments in JSON
@@ -529,6 +532,11 @@ begin
   FCommentsStart.Free;
   FCommentsEnd.Free;
   inherited;
+end;
+
+function TFHIRBase.FhirType: String;
+begin
+  raise Exception.Create('"FhirType" is not overridden');
 end;
 
 function TFHIRBase.GetCommentsStart: TAdvStringList;
@@ -1343,6 +1351,12 @@ begin
   // nothing to add here
 end;
 
+procedure TFHIRObject.ListChildrenByName(name: string; list: TFHIRObjectList);
+begin
+  if self <> nil then
+    GetChildrenByName(name, list);
+end;
+
 procedure TFHIRObject.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   // nothing to add here
@@ -1361,6 +1375,11 @@ begin
   finally
     qry.free;
   end;
+end;
+
+procedure TFHIRObject.setProperty(propName : string; propValue: TFHIRObject);
+begin
+  raise Exception.Create('The property "'+propName+' is unknown"');
 end;
 
 procedure TFHIRObject.SetTag(const Value: TAdvObject);
@@ -1431,29 +1450,29 @@ begin
     end;
   end
   else
+begin
+  first := true;
+  while (src <> '') do
   begin
-    first := true;
-    while (src <> '') do
-    begin
       StringSplit(src, '.', seg, src);
-      if (not IsValidIdent(seg)) Then
+    if (not IsValidIdent(seg)) Then
         raise exception.create('unable to parse path "'+FPath+'"');
-      FResults.clear;
-      if first then
-        for i := 0 to FSource.count - 1 Do
-        begin
-          if FSource[i].ClassName = 'TFhir'+seg then
-            FResults.add(FSource[i].Link);
-        end
-      else
-        for i := 0 to FSource.count - 1 Do
-          FSource[i].GetChildrenByName(seg, FResults);
-      first := false;
-      if src <> '' then
+    FResults.clear;
+    if first then
+      for i := 0 to FSource.count - 1 Do
       begin
-        FSource.Free;
-        FSource := FResults;
-        FResults := TFHIRObjectList.Create;
+        if FSource[i].ClassName = 'TFhir'+seg then
+          FResults.add(FSource[i].Link);
+      end
+    else
+      for i := 0 to FSource.count - 1 Do
+        FSource[i].GetChildrenByName(seg, FResults);
+    first := false;
+    if src <> '' then
+    begin
+      FSource.Free;
+      FSource := FResults;
+      FResults := TFHIRObjectList.Create;
       end;
     end;
   end;

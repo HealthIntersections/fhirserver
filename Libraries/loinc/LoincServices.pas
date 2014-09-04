@@ -347,6 +347,8 @@ Type
     function buildValueSet(id : String) : TFhirValueSet;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
+    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+
   End;
 
   TLOINCServiceList = class (TAdvObjectList)
@@ -811,6 +813,11 @@ var
   iIndex : Cardinal;
 begin
   result := Entries.FindCode(sCode, iIndex, FDesc);
+end;
+
+function TLOINCServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+begin
+  result := false;
 end;
 
 function TLOINCServices.Link: TLOINCServices;
@@ -1650,6 +1657,8 @@ begin
     result := FilterByHeirarchy(op, value, false)
   else if prop = 'ancestor' then
     result := FilterByHeirarchy(op, value, true)
+  else if prop = 'Type' then
+    result := THolder.create
   else
     result := nil;
 end;

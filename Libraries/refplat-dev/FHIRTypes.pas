@@ -17,7 +17,7 @@ unit FHIRTypes;
    * Neither the name of HL7 nor the names of its contributors may be used to 
      endorse or promote products derived from this software without specific 
      prior written permission.
-
+  
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Tue, Aug 26, 2014 04:54+1000
+// FHIR v0.3.0 generated Thu, Sep 4, 2014 10:47+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -934,10 +934,10 @@ Type
   }
   TFhirAdministrativeGender = (
     AdministrativeGenderNull,  {@enum.value AdministrativeGenderNull Value is missing from Instance }
-    AdministrativeGenderM, {@enum.value AdministrativeGenderM Male }
-    AdministrativeGenderF, {@enum.value AdministrativeGenderF Female }
-    AdministrativeGenderO, {@enum.value AdministrativeGenderO Other }
-    AdministrativeGenderU); {@enum.value AdministrativeGenderU Unknown }
+    AdministrativeGenderMale, {@enum.value AdministrativeGenderMale Male }
+    AdministrativeGenderFemale, {@enum.value AdministrativeGenderFemale Female }
+    AdministrativeGenderOther, {@enum.value AdministrativeGenderOther Other }
+    AdministrativeGenderUnknown); {@enum.value AdministrativeGenderUnknown Unknown }
   TFhirAdministrativeGenderList = set of TFhirAdministrativeGender;
 
   {@Enum TFhirLinkType
@@ -1469,13 +1469,13 @@ Type
   End;
 
 
-  {@Class TFhirEnum : TFhirElement
+  {@Class TFhirEnum : TFhirType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Enum}
-  TFhirEnum = class (TFhirElement)
+  TFhirEnum = class (TFhirType)
   Private
     FValue: String;
     procedure setValue(value: String);
@@ -1490,6 +1490,7 @@ Type
     Function Link : TFhirEnum; Overload;
     Function Clone : TFhirEnum; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -1599,6 +1600,7 @@ Type
     Function Link : TFhirInteger; Overload;
     Function Clone : TFhirInteger; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -1708,6 +1710,7 @@ Type
     Function Link : TFhirDateTime; Overload;
     Function Clone : TFhirDateTime; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -1817,6 +1820,7 @@ Type
     Function Link : TFhirDate; Overload;
     Function Clone : TFhirDate; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -1926,6 +1930,7 @@ Type
     Function Link : TFhirDecimal; Overload;
     Function Clone : TFhirDecimal; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -2035,6 +2040,7 @@ Type
     Function Link : TFhirUri; Overload;
     Function Clone : TFhirUri; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -2144,6 +2150,7 @@ Type
     Function Link : TFhirBase64Binary; Overload;
     Function Clone : TFhirBase64Binary; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -2253,6 +2260,7 @@ Type
     Function Link : TFhirTime; Overload;
     Function Clone : TFhirTime; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -2362,6 +2370,7 @@ Type
     Function Link : TFhirString; Overload;
     Function Clone : TFhirString; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -2471,6 +2480,7 @@ Type
     Function Link : TFhirBoolean; Overload;
     Function Clone : TFhirBoolean; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -2580,6 +2590,7 @@ Type
     Function Link : TFhirInstant; Overload;
     Function Clone : TFhirInstant; Overload;
     procedure Assign(oSource : TAdvObject); override;
+    function FhirType : string; override;
     {!script show}
   Published
     {@member value
@@ -2683,6 +2694,7 @@ Type
     {!script hide}
     Function Link : TFhirCode; Overload;
     Function Clone : TFhirCode; Overload;
+    function FhirType : string; override;
     {!script show}
   End;    
 
@@ -2781,6 +2793,7 @@ Type
     {!script hide}
     Function Link : TFhirId; Overload;
     Function Clone : TFhirId; Overload;
+    function FhirType : string; override;
     {!script show}
   End;    
 
@@ -2879,6 +2892,7 @@ Type
     {!script hide}
     Function Link : TFhirOid; Overload;
     Function Clone : TFhirOid; Overload;
+    function FhirType : string; override;
     {!script show}
   End;    
 
@@ -2977,6 +2991,7 @@ Type
     {!script hide}
     Function Link : TFhirUuid; Overload;
     Function Clone : TFhirUuid; Overload;
+    function FhirType : string; override;
     {!script show}
   End;    
 
@@ -3082,6 +3097,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirExtension; overload;
     function Clone : TFhirExtension; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member url
@@ -3202,6 +3219,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirNarrative; overload;
     function Clone : TFhirNarrative; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member status
@@ -3324,6 +3343,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirPeriod; overload;
     function Clone : TFhirPeriod; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member start
@@ -3464,6 +3485,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirCoding; overload;
     function Clone : TFhirCoding; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member system
@@ -3618,6 +3641,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirRange; overload;
     function Clone : TFhirRange; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member low
@@ -3748,6 +3773,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirQuantity; overload;
     function Clone : TFhirQuantity; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member value
@@ -3921,6 +3948,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirAttachment; overload;
     function Clone : TFhirAttachment; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member contentType
@@ -4088,6 +4117,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirRatio; overload;
     function Clone : TFhirRatio; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member numerator
@@ -4224,6 +4255,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirSampledData; overload;
     function Clone : TFhirSampledData; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member origin
@@ -4391,6 +4424,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirResourceReference; overload;
     function Clone : TFhirResourceReference; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member reference
@@ -4514,6 +4549,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirCodeableConcept; overload;
     function Clone : TFhirCodeableConcept; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member codingList
@@ -4648,6 +4685,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirIdentifier; overload;
     function Clone : TFhirIdentifier; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member use
@@ -4818,6 +4857,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirScheduleRepeat; overload;
     function Clone : TFhirScheduleRepeat; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member frequency
@@ -4975,6 +5016,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirSchedule; overload;
     function Clone : TFhirSchedule; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member eventList
@@ -5099,6 +5142,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirContact; overload;
     function Clone : TFhirContact; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member system
@@ -5258,6 +5303,8 @@ Type
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirAddress; overload;
     function Clone : TFhirAddress; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member use
@@ -5437,6 +5484,8 @@ P.O. Box number, delivery hints, and similar address information.
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFhirHumanName; overload;
     function Clone : TFhirHumanName; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function FhirType : string; override;
     {!script show}
   published
     {@member use
@@ -5645,7 +5694,7 @@ Const
   CODES_TFhirOperationParameterUse : Array[TFhirOperationParameterUse] of String = ('', 'in', 'out');
   CODES_TFhirIssueSeverity : Array[TFhirIssueSeverity] of String = ('', 'fatal', 'error', 'warning', 'information');
   CODES_TFhirOrderOutcomeCode : Array[TFhirOrderOutcomeCode] of String = ('', 'pending', 'review', 'rejected', 'error', 'accepted', 'cancelled', 'replaced', 'aborted', 'complete');
-  CODES_TFhirAdministrativeGender : Array[TFhirAdministrativeGender] of String = ('', 'M', 'F', 'O', 'U');
+  CODES_TFhirAdministrativeGender : Array[TFhirAdministrativeGender] of String = ('', 'male', 'female', 'other', 'unknown');
   CODES_TFhirLinkType : Array[TFhirLinkType] of String = ('', 'replace', 'refer', 'seealso');
   CODES_TFhirProcedureRelationshipType : Array[TFhirProcedureRelationshipType] of String = ('', 'caused-by', 'because-of');
   CODES_TFhirPropertyRepresentation : Array[TFhirPropertyRepresentation] of String = ('', 'xmlAttr');
@@ -6077,6 +6126,11 @@ begin
   inherited;
 end;
 
+function TFhirEnum.FhirType : string;
+begin
+  result := 'enum';
+end;
+
 procedure TFhirEnum.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
@@ -6212,6 +6266,11 @@ end;
 Destructor TFhirInteger.Destroy;
 begin
   inherited;
+end;
+
+function TFhirInteger.FhirType : string;
+begin
+  result := 'integer';
 end;
 
 procedure TFhirInteger.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -6350,6 +6409,11 @@ Destructor TFhirDateTime.Destroy;
 begin
   FValue.free;
   inherited;
+end;
+
+function TFhirDateTime.FhirType : string;
+begin
+  result := 'dateTime';
 end;
 
 procedure TFhirDateTime.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -6491,6 +6555,11 @@ begin
   inherited;
 end;
 
+function TFhirDate.FhirType : string;
+begin
+  result := 'date';
+end;
+
 procedure TFhirDate.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
@@ -6627,6 +6696,11 @@ end;
 Destructor TFhirDecimal.Destroy;
 begin
   inherited;
+end;
+
+function TFhirDecimal.FhirType : string;
+begin
+  result := 'decimal';
 end;
 
 procedure TFhirDecimal.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -6766,6 +6840,11 @@ begin
   inherited;
 end;
 
+function TFhirUri.FhirType : string;
+begin
+  result := 'uri';
+end;
+
 procedure TFhirUri.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
@@ -6901,6 +6980,11 @@ end;
 Destructor TFhirBase64Binary.Destroy;
 begin
   inherited;
+end;
+
+function TFhirBase64Binary.FhirType : string;
+begin
+  result := 'base64Binary';
 end;
 
 procedure TFhirBase64Binary.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -7040,6 +7124,11 @@ begin
   inherited;
 end;
 
+function TFhirTime.FhirType : string;
+begin
+  result := 'time';
+end;
+
 procedure TFhirTime.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
@@ -7177,6 +7266,11 @@ begin
   inherited;
 end;
 
+function TFhirString.FhirType : string;
+begin
+  result := 'string';
+end;
+
 procedure TFhirString.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
@@ -7312,6 +7406,11 @@ end;
 Destructor TFhirBoolean.Destroy;
 begin
   inherited;
+end;
+
+function TFhirBoolean.FhirType : string;
+begin
+  result := 'boolean';
 end;
 
 procedure TFhirBoolean.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -7452,6 +7551,11 @@ begin
   inherited;
 end;
 
+function TFhirInstant.FhirType : string;
+begin
+  result := 'instant';
+end;
+
 procedure TFhirInstant.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
@@ -7590,6 +7694,11 @@ begin
   inherited;
 end;
 
+function TFhirCode.FhirType : string;
+begin
+  result := 'code';
+end;
+
 function TFhirCode.Link : TFhirCode;
 begin
   result := TFhirCode(inherited Link);
@@ -7701,6 +7810,11 @@ end;
 Destructor TFhirId.Destroy;
 begin
   inherited;
+end;
+
+function TFhirId.FhirType : string;
+begin
+  result := 'id';
 end;
 
 function TFhirId.Link : TFhirId;
@@ -7816,6 +7930,11 @@ begin
   inherited;
 end;
 
+function TFhirOid.FhirType : string;
+begin
+  result := 'oid';
+end;
+
 function TFhirOid.Link : TFhirOid;
 begin
   result := TFhirOid(inherited Link);
@@ -7927,6 +8046,11 @@ end;
 Destructor TFhirUuid.Destroy;
 begin
   inherited;
+end;
+
+function TFhirUuid.FhirType : string;
+begin
+  result := 'uuid';
 end;
 
 function TFhirUuid.Link : TFhirUuid;
@@ -8055,15 +8179,27 @@ begin
   inherited;
   if (child_name = 'url') Then
      list.add(Url.Link);
-  if (child_name = 'value') Then
+  if (child_name = 'value[x]') Then
      list.add(Value.Link);
 end;
 
 procedure TFhirExtension.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', FUrl.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'value[x]', '*', FValue.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'url', 'uri', FUrl.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'value[x]', '*', FValue.Link));{2}
+end;
+
+procedure TFhirExtension.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'url') then Url := propValue as TFhirUri{5}
+  else if (propName = 'value[x]') then Value := propValue as TFhirType{4}
+  else inherited;
+end;
+
+function TFhirExtension.FhirType : string;
+begin
+  result := 'Extension';
 end;
 
 function TFhirExtension.Link : TFhirExtension;
@@ -8253,7 +8389,7 @@ begin
   inherited;
   if (child_name = 'status') Then
      list.add(FStatus.Link);
-  if (child_name = 'div_') Then
+  if (child_name = 'div') Then
      list.add(Div_.Link);
 end;
 
@@ -8262,6 +8398,18 @@ begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'status', 'code', FStatus.Link));{1}
   oList.add(TFHIRProperty.create(self, 'div', 'xhtml', FDiv_.Link));{2}
+end;
+
+procedure TFhirNarrative.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'status') then Status := propValue as TFHIREnum
+  else if (propName = 'div') then Div_ := propValue as TFhirXHtmlNode{4}
+  else inherited;
+end;
+
+function TFhirNarrative.FhirType : string;
+begin
+  result := 'Narrative';
 end;
 
 function TFhirNarrative.Link : TFhirNarrative;
@@ -8287,7 +8435,7 @@ begin
   if FStatus = nil then
     result := TFhirNarrativeStatus(0)
   else
-    result := TFhirNarrativeStatus(StringArrayIndexOf(CODES_TFhirNarrativeStatus, Status.value));
+    result := TFhirNarrativeStatus(StringArrayIndexOfSensitive(CODES_TFhirNarrativeStatus, Status.value));
 end;
 
 Procedure TFhirNarrative.SetStatusST(value : TFhirNarrativeStatus);
@@ -8420,15 +8568,27 @@ begin
   inherited;
   if (child_name = 'start') Then
      list.add(Start.Link);
-  if (child_name = 'end_') Then
+  if (child_name = 'end') Then
      list.add(End_.Link);
 end;
 
 procedure TFhirPeriod.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'start', 'dateTime', FStart.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'end', 'dateTime', FEnd_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'start', 'dateTime', FStart.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'end', 'dateTime', FEnd_.Link));{2}
+end;
+
+procedure TFhirPeriod.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'start') then Start := propValue as TFhirDateTime{5}
+  else if (propName = 'end') then End_ := propValue as TFhirDateTime{5}
+  else inherited;
+end;
+
+function TFhirPeriod.FhirType : string;
+begin
+  result := 'Period';
 end;
 
 function TFhirPeriod.Link : TFhirPeriod;
@@ -8634,12 +8794,28 @@ end;
 procedure TFhirCoding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'version', 'string', FVersion.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'display', 'string', FDisplay.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'primary', 'boolean', FPrimary.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'valueSet', 'Resource(ValueSet)', FValueSet.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'version', 'string', FVersion.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'display', 'string', FDisplay.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'primary', 'boolean', FPrimary.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'valueSet', 'Resource(ValueSet)', FValueSet.Link));{2}
+end;
+
+procedure TFhirCoding.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'system') then System := propValue as TFhirUri{5}
+  else if (propName = 'version') then Version := propValue as TFhirString{5}
+  else if (propName = 'code') then Code := propValue as TFhirCode{5}
+  else if (propName = 'display') then Display := propValue as TFhirString{5}
+  else if (propName = 'primary') then Primary := propValue as TFhirBoolean{5}
+  else if (propName = 'valueSet') then ValueSet := propValue as TFhirResourceReference{TFhirValueSet}{4}
+  else inherited;
+end;
+
+function TFhirCoding.FhirType : string;
+begin
+  result := 'Coding';
 end;
 
 function TFhirCoding.Link : TFhirCoding;
@@ -8908,8 +9084,20 @@ end;
 procedure TFhirRange.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'low', 'Quantity', FLow.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'high', 'Quantity', FHigh.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'low', 'Quantity', FLow.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'high', 'Quantity', FHigh.Link));{2}
+end;
+
+procedure TFhirRange.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'low') then Low := propValue as TFhirQuantity{4}
+  else if (propName = 'high') then High := propValue as TFhirQuantity{4}
+  else inherited;
+end;
+
+function TFhirRange.FhirType : string;
+begin
+  result := 'Range';
 end;
 
 function TFhirRange.Link : TFhirRange;
@@ -9098,11 +9286,26 @@ end;
 procedure TFhirQuantity.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'value', 'decimal', FValue.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'value', 'decimal', FValue.Link));{2}
   oList.add(TFHIRProperty.create(self, 'comparator', 'code', FComparator.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'units', 'string', FUnits.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'units', 'string', FUnits.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'code', 'code', FCode.Link));{2}
+end;
+
+procedure TFhirQuantity.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'value') then Value := propValue as TFhirDecimal{5}
+  else if (propName = 'comparator') then Comparator := propValue as TFHIREnum
+  else if (propName = 'units') then Units := propValue as TFhirString{5}
+  else if (propName = 'system') then System := propValue as TFhirUri{5}
+  else if (propName = 'code') then Code := propValue as TFhirCode{5}
+  else inherited;
+end;
+
+function TFhirQuantity.FhirType : string;
+begin
+  result := 'Quantity';
 end;
 
 function TFhirQuantity.Link : TFhirQuantity;
@@ -9154,7 +9357,7 @@ begin
   if FComparator = nil then
     result := TFhirQuantityComparator(0)
   else
-    result := TFhirQuantityComparator(StringArrayIndexOf(CODES_TFhirQuantityComparator, Comparator.value));
+    result := TFhirQuantityComparator(StringArrayIndexOfSensitive(CODES_TFhirQuantityComparator, Comparator.value));
 end;
 
 Procedure TFhirQuantity.SetComparatorST(value : TFhirQuantityComparator);
@@ -9386,13 +9589,30 @@ end;
 procedure TFhirAttachment.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'contentType', 'code', FContentType.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'language', 'code', FLanguage.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'data', 'base64Binary', FData.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', FUrl.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'size', 'integer', FSize.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'hash', 'base64Binary', FHash.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'title', 'string', FTitle.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'contentType', 'code', FContentType.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'language', 'code', FLanguage.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'data', 'base64Binary', FData.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'url', 'uri', FUrl.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'size', 'integer', FSize.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'hash', 'base64Binary', FHash.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'title', 'string', FTitle.Link));{2}
+end;
+
+procedure TFhirAttachment.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'contentType') then ContentType := propValue as TFhirCode{5}
+  else if (propName = 'language') then Language := propValue as TFhirCode{5}
+  else if (propName = 'data') then Data := propValue as TFhirBase64Binary{5}
+  else if (propName = 'url') then Url := propValue as TFhirUri{5}
+  else if (propName = 'size') then Size := propValue as TFhirInteger{5}
+  else if (propName = 'hash') then Hash := propValue as TFhirBase64Binary{5}
+  else if (propName = 'title') then Title := propValue as TFhirString{5}
+  else inherited;
+end;
+
+function TFhirAttachment.FhirType : string;
+begin
+  result := 'Attachment';
 end;
 
 function TFhirAttachment.Link : TFhirAttachment;
@@ -9712,8 +9932,20 @@ end;
 procedure TFhirRatio.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'numerator', 'Quantity', FNumerator.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'denominator', 'Quantity', FDenominator.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'numerator', 'Quantity', FNumerator.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'denominator', 'Quantity', FDenominator.Link));{2}
+end;
+
+procedure TFhirRatio.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'numerator') then Numerator := propValue as TFhirQuantity{4}
+  else if (propName = 'denominator') then Denominator := propValue as TFhirQuantity{4}
+  else inherited;
+end;
+
+function TFhirRatio.FhirType : string;
+begin
+  result := 'Ratio';
 end;
 
 function TFhirRatio.Link : TFhirRatio;
@@ -9883,13 +10115,30 @@ end;
 procedure TFhirSampledData.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'origin', 'Quantity', FOrigin.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'period', 'decimal', FPeriod.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'factor', 'decimal', FFactor.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'lowerLimit', 'decimal', FLowerLimit.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'upperLimit', 'decimal', FUpperLimit.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dimensions', 'integer', FDimensions.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'data', 'string', FData.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'origin', 'Quantity', FOrigin.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'period', 'decimal', FPeriod.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'factor', 'decimal', FFactor.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'lowerLimit', 'decimal', FLowerLimit.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'upperLimit', 'decimal', FUpperLimit.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'dimensions', 'integer', FDimensions.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'data', 'string', FData.Link));{2}
+end;
+
+procedure TFhirSampledData.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'origin') then Origin := propValue as TFhirQuantity{4}
+  else if (propName = 'period') then Period := propValue as TFhirDecimal{5}
+  else if (propName = 'factor') then Factor := propValue as TFhirDecimal{5}
+  else if (propName = 'lowerLimit') then LowerLimit := propValue as TFhirDecimal{5}
+  else if (propName = 'upperLimit') then UpperLimit := propValue as TFhirDecimal{5}
+  else if (propName = 'dimensions') then Dimensions := propValue as TFhirInteger{5}
+  else if (propName = 'data') then Data := propValue as TFhirString{5}
+  else inherited;
+end;
+
+function TFhirSampledData.FhirType : string;
+begin
+  result := 'SampledData';
 end;
 
 function TFhirSampledData.Link : TFhirSampledData;
@@ -10189,8 +10438,20 @@ end;
 procedure TFhirResourceReference.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'reference', 'string', FReference.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'display', 'string', FDisplay.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'reference', 'string', FReference.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'display', 'string', FDisplay.Link));{2}
+end;
+
+procedure TFhirResourceReference.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'reference') then Reference := propValue as TFhirString{5}
+  else if (propName = 'display') then Display := propValue as TFhirString{5}
+  else inherited;
+end;
+
+function TFhirResourceReference.FhirType : string;
+begin
+  result := 'ResourceReference';
 end;
 
 function TFhirResourceReference.Link : TFhirResourceReference;
@@ -10382,7 +10643,19 @@ procedure TFhirCodeableConcept.ListProperties(oList: TFHIRPropertyList; bInherit
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'coding', 'Coding', FCodingList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link));{2}
+end;
+
+procedure TFhirCodeableConcept.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'coding') then CodingList.add(propValue as TFhirCoding){2}
+  else if (propName = 'text') then Text := propValue as TFhirString{5}
+  else inherited;
+end;
+
+function TFhirCodeableConcept.FhirType : string;
+begin
+  result := 'CodeableConcept';
 end;
 
 function TFhirCodeableConcept.Link : TFhirCodeableConcept;
@@ -10574,7 +10847,7 @@ begin
   inherited;
   if (child_name = 'use') Then
      list.add(FUse.Link);
-  if (child_name = 'label_') Then
+  if (child_name = 'label') Then
      list.add(Label_.Link);
   if (child_name = 'system') Then
      list.add(System.Link);
@@ -10590,11 +10863,27 @@ procedure TFhirIdentifier.ListProperties(oList: TFHIRPropertyList; bInheritedPro
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'use', 'code', FUse.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'label', 'string', FLabel_.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'value', 'string', FValue.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'assigner', 'Resource(Organization)', FAssigner.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'label', 'string', FLabel_.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'value', 'string', FValue.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'assigner', 'Resource(Organization)', FAssigner.Link));{2}
+end;
+
+procedure TFhirIdentifier.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'use') then Use := propValue as TFHIREnum
+  else if (propName = 'label') then Label_ := propValue as TFhirString{5}
+  else if (propName = 'system') then System := propValue as TFhirUri{5}
+  else if (propName = 'value') then Value := propValue as TFhirString{5}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  else if (propName = 'assigner') then Assigner := propValue as TFhirResourceReference{TFhirOrganization}{4}
+  else inherited;
+end;
+
+function TFhirIdentifier.FhirType : string;
+begin
+  result := 'Identifier';
 end;
 
 function TFhirIdentifier.Link : TFhirIdentifier;
@@ -10620,7 +10909,7 @@ begin
   if FUse = nil then
     result := TFhirIdentifierUse(0)
   else
-    result := TFhirIdentifierUse(StringArrayIndexOf(CODES_TFhirIdentifierUse, Use.value));
+    result := TFhirIdentifierUse(StringArrayIndexOfSensitive(CODES_TFhirIdentifierUse, Use.value));
 end;
 
 Procedure TFhirIdentifier.SetUseST(value : TFhirIdentifierUse);
@@ -10907,19 +11196,35 @@ begin
      list.add(FUnits.Link);
   if (child_name = 'count') Then
      list.add(Count.Link);
-  if (child_name = 'end_') Then
+  if (child_name = 'end') Then
      list.add(End_.Link);
 end;
 
 procedure TFhirScheduleRepeat.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'frequency', 'integer', FFrequency.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'frequency', 'integer', FFrequency.Link));{2}
   oList.add(TFHIRProperty.create(self, 'when', 'code', FWhen.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'duration', 'decimal', FDuration.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'duration', 'decimal', FDuration.Link));{2}
   oList.add(TFHIRProperty.create(self, 'units', 'code', FUnits.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'count', 'integer', FCount.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'end', 'dateTime', FEnd_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'count', 'integer', FCount.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'end', 'dateTime', FEnd_.Link));{2}
+end;
+
+procedure TFhirScheduleRepeat.setProperty(propName : string; propValue: TFHIRObject);
+begin
+  if (propName = 'frequency') then Frequency := propValue as TFhirInteger{5}
+  else if (propName = 'when') then When := propValue as TFHIREnum
+  else if (propName = 'duration') then Duration := propValue as TFhirDecimal{5}
+  else if (propName = 'units') then Units := propValue as TFHIREnum
+  else if (propName = 'count') then Count := propValue as TFhirInteger{5}
+  else if (propName = 'end') then End_ := propValue as TFhirDateTime{5}
+  else inherited;
+end;
+
+function TFhirScheduleRepeat.FhirType : string;
+begin
+  result := 'repeat';
 end;
 
 function TFhirScheduleRepeat.Link : TFhirScheduleRepeat;
@@ -10971,7 +11276,7 @@ begin
   if FWhen = nil then
     result := TFhirEventTiming(0)
   else
-    result := TFhirEventTiming(StringArrayIndexOf(CODES_TFhirEventTiming, When.value));
+    result := TFhirEventTiming(StringArrayIndexOfSensitive(CODES_TFhirEventTiming, When.value));
 end;
 
 Procedure TFhirScheduleRepeat.SetWhenST(value : TFhirEventTiming);
@@ -11019,7 +11324,7 @@ begin
   if FUnits = nil then
     result := TFhirUnitsOfTime(0)
   else
-    result := TFhirUnitsOfTime(StringArrayIndexOf(CODES_TFhirUnitsOfTime, Units.value));
+    result := TFhirUnitsOfTime(StringArrayIndexOfSensitive(CODES_TFhirUnitsOfTime, Units.value));
 end;
 
 Procedure TFhirScheduleRepeat.SetUnitsST(value : TFhirUnitsOfTime);
@@ -11199,7 +11504,7 @@ begin
   inherited;
   if (child_name = 'event') Then
      list.addAll(FEventList);
-  if (child_name = 'repeat_') Then
+  if (child_name = 'repeat') Then
      list.add(Repeat_.Link);
 end;
 
@@ -11207,7 +11512,19 @@ procedure TFhirSchedule.ListProperties(oList: TFHIRPropertyList; bInheritedPrope
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'event', 'Period', FEventList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'repeat', '', FRepeat_.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'repeat', '', FRepeat_.Link));{2}
+end;
+
+procedure TFhirSchedule.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'event') then EventList.add(propValue as TFhirPeriod){2}
+  else if (propName = 'repeat') then Repeat_ := propValue as TFhirScheduleRepeat{4}
+  else inherited;
+end;
+
+function TFhirSchedule.FhirType : string;
+begin
+  result := 'Schedule';
 end;
 
 function TFhirSchedule.Link : TFhirSchedule;
@@ -11414,9 +11731,23 @@ procedure TFhirContact.ListProperties(oList: TFHIRPropertyList; bInheritedProper
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'system', 'code', FSystem.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'value', 'string', FValue.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'value', 'string', FValue.Link));{2}
   oList.add(TFHIRProperty.create(self, 'use', 'code', FUse.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link));{2}
+end;
+
+procedure TFhirContact.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'system') then System := propValue as TFHIREnum
+  else if (propName = 'value') then Value := propValue as TFhirString{5}
+  else if (propName = 'use') then Use := propValue as TFHIREnum
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  else inherited;
+end;
+
+function TFhirContact.FhirType : string;
+begin
+  result := 'Contact';
 end;
 
 function TFhirContact.Link : TFhirContact;
@@ -11442,7 +11773,7 @@ begin
   if FSystem = nil then
     result := TFhirContactSystem(0)
   else
-    result := TFhirContactSystem(StringArrayIndexOf(CODES_TFhirContactSystem, System.value));
+    result := TFhirContactSystem(StringArrayIndexOfSensitive(CODES_TFhirContactSystem, System.value));
 end;
 
 Procedure TFhirContact.SetSystemST(value : TFhirContactSystem);
@@ -11490,7 +11821,7 @@ begin
   if FUse = nil then
     result := TFhirContactUse(0)
   else
-    result := TFhirContactUse(StringArrayIndexOf(CODES_TFhirContactUse, Use.value));
+    result := TFhirContactUse(StringArrayIndexOfSensitive(CODES_TFhirContactUse, Use.value));
 end;
 
 Procedure TFhirContact.SetUseST(value : TFhirContactUse);
@@ -11683,13 +12014,31 @@ procedure TFhirAddress.ListProperties(oList: TFHIRPropertyList; bInheritedProper
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'use', 'code', FUse.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link));{2}
   oList.add(TFHIRProperty.create(self, 'line', 'string', FLineList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'city', 'string', FCity.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'state', 'string', FState.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'zip', 'string', FZip.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'country', 'string', FCountry.Link.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'city', 'string', FCity.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'state', 'string', FState.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'zip', 'string', FZip.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'country', 'string', FCountry.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link));{2}
+end;
+
+procedure TFhirAddress.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'use') then Use := propValue as TFHIREnum
+  else if (propName = 'text') then Text := propValue as TFhirString{5}
+  else if (propName = 'line') then LineList.add(propValue as TFhirString){2}
+  else if (propName = 'city') then City := propValue as TFhirString{5}
+  else if (propName = 'state') then State := propValue as TFhirString{5}
+  else if (propName = 'zip') then Zip := propValue as TFhirString{5}
+  else if (propName = 'country') then Country := propValue as TFhirString{5}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  else inherited;
+end;
+
+function TFhirAddress.FhirType : string;
+begin
+  result := 'Address';
 end;
 
 function TFhirAddress.Link : TFhirAddress;
@@ -11715,7 +12064,7 @@ begin
   if FUse = nil then
     result := TFhirAddressUse(0)
   else
-    result := TFhirAddressUse(StringArrayIndexOf(CODES_TFhirAddressUse, Use.value));
+    result := TFhirAddressUse(StringArrayIndexOfSensitive(CODES_TFhirAddressUse, Use.value));
 end;
 
 Procedure TFhirAddress.SetUseST(value : TFhirAddressUse);
@@ -12037,12 +12386,29 @@ procedure TFhirHumanName.ListProperties(oList: TFHIRPropertyList; bInheritedProp
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'use', 'code', FUse.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'text', 'string', FText.Link));{2}
   oList.add(TFHIRProperty.create(self, 'family', 'string', FFamilyList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'given', 'string', FGivenList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'prefix', 'string', FPrefixList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'suffix', 'string', FSuffixList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link));{2}
+end;
+
+procedure TFhirHumanName.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'use') then Use := propValue as TFHIREnum
+  else if (propName = 'text') then Text := propValue as TFhirString{5}
+  else if (propName = 'family') then FamilyList.add(propValue as TFhirString){2}
+  else if (propName = 'given') then GivenList.add(propValue as TFhirString){2}
+  else if (propName = 'prefix') then PrefixList.add(propValue as TFhirString){2}
+  else if (propName = 'suffix') then SuffixList.add(propValue as TFhirString){2}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  else inherited;
+end;
+
+function TFhirHumanName.FhirType : string;
+begin
+  result := 'HumanName';
 end;
 
 function TFhirHumanName.Link : TFhirHumanName;
@@ -12068,7 +12434,7 @@ begin
   if FUse = nil then
     result := TFhirNameUse(0)
   else
-    result := TFhirNameUse(StringArrayIndexOf(CODES_TFhirNameUse, Use.value));
+    result := TFhirNameUse(StringArrayIndexOfSensitive(CODES_TFhirNameUse, Use.value));
 end;
 
 Procedure TFhirHumanName.SetUseST(value : TFhirNameUse);

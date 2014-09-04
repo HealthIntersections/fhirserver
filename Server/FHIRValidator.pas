@@ -39,7 +39,7 @@ uses
   FHIRParser, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources, FHIRAtomFeed,
   FHIRUtilities, FHIRValueSetExpander, FHIRConstants, FHIRValueSetChecker,
   FHIRBridge,
-  TerminologyServer;
+  TerminologyServer, ProfileManager;
 
 type
   TChildIterator = class (TAdvObject)
@@ -65,6 +65,7 @@ type
   private
     FSchematronSource : String;
     FTerminologyServer : TTerminologyServer;
+    FProfiles : TProfileManager;
 
     FTypes : TAdvStringObjectMatch; // TFHIRProfile
     FSources : TAdvNameBufferList;
@@ -107,12 +108,13 @@ type
     procedure executeSchematron(context : TFHIRValidatorContext; op : TFhirOperationOutcome; source, name : String);
     function transform(op: TFhirOperationOutcome; source: IXMLDOMDocument2; transform: IXSLTemplate): IXMLDOMDocument2;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
-    function getTargetByName(list: TFhirProfileStructureElementList;
-      name: String): TFhirProfileStructureElement;
+    function getTargetByName(list: TFhirProfileStructureElementList; name: String): TFhirProfileStructureElement;
+    procedure SetProfiles(const Value: TProfileManager);
   public
     constructor Create; override;
     destructor Destroy; override;
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
+    Property Profiles : TProfileManager read FProfiles write SetProfiles;
     Property suppressLoincSnomedMessages : boolean read FsuppressLoincSnomedMessages write FsuppressLoincSnomedMessages;
     procedure LoadFromDefinitions(filename : string);
     Property SchematronSource : String read FSchematronSource write FSchematronSource;
@@ -345,7 +347,7 @@ begin
   try
     xml := TFHIRXmlComposer.Create('en');
     try
-      xml.Compose(stream, '', '', '', resource, true);
+      xml.Compose(stream, '', '', '', resource, true, nil);
     finally
       xml.Free;
     end;
@@ -783,6 +785,8 @@ begin
     if r is TFhirProfile then
     begin
       p := r as TFhirProfile;
+      if FProfiles <> nil then
+        FProfiles.SeeProfile(feed.entries[i].id, i, p);
       if (p.StructureList[0].Name <> nil) then
         FTypes.add(LowerCase(p.StructureList[0].NameST), p.link)
       else
@@ -934,6 +938,7 @@ end;
 
 destructor TFHIRValidator.Destroy;
 begin
+  FProfiles.Free;
   FSources.Free;
   FChecks.Free;
   FTypes.Free;
@@ -1043,6 +1048,12 @@ begin
     result := FTerminologyServer.MakeChecker(TFHIRResourceReference(ref).reference.value)
   else
     result := nil;
+end;
+
+procedure TFHIRValidator.SetProfiles(const Value: TProfileManager);
+begin
+  FProfiles.Free;
+  FProfiles := Value;
 end;
 
 procedure TFHIRValidator.SetTerminologyServer(const Value: TTerminologyServer);

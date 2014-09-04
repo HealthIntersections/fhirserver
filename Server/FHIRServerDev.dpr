@@ -260,7 +260,10 @@ uses
   SCIMObjects in '..\Libraries\refplat-dev\SCIMObjects.pas',
   TwilioClient in '..\Libraries\security\TwilioClient.pas',
   FHIRSearchSyntax in '..\Libraries\refplat-dev\FHIRSearchSyntax.pas',
-  ProfileManager in 'ProfileManager.pas';
+  ProfileManager in 'ProfileManager.pas',
+  ShellSupport in '..\Libraries\support\ShellSupport.pas',
+  RectSupport in 'RectSupport.pas',
+  CoordinateSupport in 'CoordinateSupport.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

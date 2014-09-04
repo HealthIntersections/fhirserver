@@ -332,7 +332,7 @@ begin
         try
           bs := TBytesStream.Create;
           try
-            comp.Compose(bs, '', id, '', res, true);
+            comp.Compose(bs, '', id, '', res, true, nil);
             msg.Body.Text := TEncoding.UTF8.GetString(bs.Bytes);
           finally
             bs.Free;

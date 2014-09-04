@@ -50,10 +50,13 @@ Type
   TUcumFactor = class (TUcumComponent)
   private
     FFactor: Integer;
+    FAnnotation : String;
   public
-    Constructor Create(iFactor : integer);
+    Constructor Create(iFactor : integer); overload;
+    Constructor Create(iFactor : integer; Annotation : String); overload;
     Function Link : TUcumFactor; Overload;
     Property Factor : Integer read FFactor write FFactor;
+    Property Annotation : String read FAnnotation write FAnnotation;
   End;
 
   TUcumOperator = (NOOP, MULTIPLICATION, DIVISION);
@@ -221,6 +224,13 @@ begin
   FFactor := iFactor;
 end;
 
+constructor TUcumFactor.Create(iFactor: integer; Annotation : String);
+begin
+  Inherited Create;
+  FFactor := iFactor;
+  self.Annotation := Annotation;
+end;
+
 function TUcumFactor.Link: TUcumFactor;
 begin
   result := TUcumFactor(Inherited Link);
@@ -340,8 +350,8 @@ Begin
   Try
     if bFirst and (FLexer.TokenType = NONE) Then
       result.Component := TUcumFactor.Create(1)
-    else if (FLexer.TokenType = ANNOTATION) Then
-      result.Component := TUcumFactor.Create(1) // still lose the annotation
+//    else if (FLexer.TokenType = ANNOTATION) Then
+//      result.Component := TUcumFactor.Create(1, FLexer.Ftoken)
     else if (FLexer.TokenType = SOLIDUS) Then
     Begin
       result.Operator := DIVISION;
@@ -384,6 +394,11 @@ Begin
     result := TUcumFactor.Create(FLexer.getTokenAsInt());
     FLexer.consume();
   End
+  else if (FLexer.TokenType = ANNOTATION) Then
+  begin
+    result := TUcumFactor.Create(1, FLexer.Ftoken);
+    FLexer.consume();
+  end
   else if (FLexer.TokenType = SYMBOL) Then
     result := parseSymbol
   else if (FLexer.TokenType = NONE) Then
@@ -580,7 +595,8 @@ Begin
       ch := nextChar();
       if (ch = #0) Then
         raise Exception.Create('Error processing Unit_"'+FSource+'": unterminated annotation');
-      s := s + ch;
+      if (ch <> '}') then
+        s := s + ch;
     End;
     // got to the end of the annotation - need to do it again
     FToken := s;
@@ -1174,9 +1190,14 @@ End;
 class Procedure TUcumFormalStructureComposer.composeTerm(oBldr : TAdvStringBuilder; oTerm : TUcumTerm);
 Begin
   if (oTerm.Component <> nil) Then
-          composeComp(oBldr, oTerm.Component);
+    composeComp(oBldr, oTerm.Component);
   if (oTerm.Operator <> NOOP) Then
-          composeOp(oBldr, oTerm.Operator);
+  begin
+    if (oTerm.Operator = MULTIPLICATION) and (oTerm.Term <> nil) and (oTerm.Term.Component <> nil) and (oTerm.Term.Component is TUcumFactor) and (TUcumFactor(oTerm.Term.Component).Annotation <> '') then
+      oBldr.Append(' ')
+    else
+      composeOp(oBldr, oTerm.Operator);
+  end;
   if (oTerm.Term <> nil) Then
     composeTerm(oBldr, oTerm.Term);
 End;
@@ -1195,7 +1216,8 @@ End;
 
 class Procedure TUcumFormalStructureComposer.composeSymbol(oBldr : TAdvStringBuilder; oSymbol : TUcumSymbol);
 Begin
-  oBldr.append('(');
+  if oSymbol.Exponent <> 1 then
+    oBldr.append('(');
   if (oSymbol.Prefix <> nil) Then
     oBldr.append(oSymbol.Prefix.Names[0]);
 
@@ -1205,12 +1227,16 @@ Begin
     oBldr.append(' ^ ');
     oBldr.append(inttostr(oSymbol.Exponent));
   End;
-  oBldr.append(')');
+  if oSymbol.Exponent <> 1 then
+    oBldr.append(')');
 End;
 
 class Procedure TUcumFormalStructureComposer.composeFactor(oBldr : TAdvStringBuilder; oFactor : TUcumFactor);
 Begin
-  oBldr.append(inttostr(oFactor.Factor));
+  if (oFactor.Factor = 1) and (oFactor.Annotation <> '') then
+    oBldr.append('"'+oFactor.Annotation+'"')
+  else
+    oBldr.append(inttostr(oFactor.Factor));
 End;
 
 class Procedure TUcumFormalStructureComposer.composeOp(oBldr : TAdvStringBuilder; aOperator : TUcumOperator);

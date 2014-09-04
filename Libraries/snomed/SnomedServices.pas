@@ -476,6 +476,7 @@ operations
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
+    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
   End;
 
   TSnomedServiceList = class (TAdvObjectList)
@@ -2280,6 +2281,11 @@ end;
 function TSnomedServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
   result := false; // snomed don't do abstract?
+end;
+
+function TSnomedServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+begin
+  result := true;
 end;
 
 function TSnomedServices.locate(code: String): TCodeSystemProviderContext;

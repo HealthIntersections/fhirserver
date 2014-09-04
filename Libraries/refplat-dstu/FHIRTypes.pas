@@ -37,7 +37,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.81 generated Mon, Aug 25, 2014 12:47+1000
+// FHIR v0.0.81 generated Wed, Aug 27, 2014 23:05+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -1188,7 +1188,7 @@ Type
     {!script show}
   End;
   TFHIRTypeClass = class of TFhirType;
-
+  
   {@Class TFhirBackboneElement : TFHIRBase
     Base Element Definition - extensions, ids
   }
@@ -7809,7 +7809,7 @@ begin
   if FStatus = nil then
     result := TFhirNarrativeStatus(0)
   else
-    result := TFhirNarrativeStatus(StringArrayIndexOf(CODES_TFhirNarrativeStatus, Status.value));
+    result := TFhirNarrativeStatus(StringArrayIndexOfSensitive(CODES_TFhirNarrativeStatus, Status.value));
 end;
 
 Procedure TFhirNarrative.SetStatusST(value : TFhirNarrativeStatus);
@@ -8676,7 +8676,7 @@ begin
   if FComparator = nil then
     result := TFhirQuantityComparator(0)
   else
-    result := TFhirQuantityComparator(StringArrayIndexOf(CODES_TFhirQuantityComparator, Comparator.value));
+    result := TFhirQuantityComparator(StringArrayIndexOfSensitive(CODES_TFhirQuantityComparator, Comparator.value));
 end;
 
 Procedure TFhirQuantity.SetComparatorST(value : TFhirQuantityComparator);
@@ -10142,7 +10142,7 @@ begin
   if FUse = nil then
     result := TFhirIdentifierUse(0)
   else
-    result := TFhirIdentifierUse(StringArrayIndexOf(CODES_TFhirIdentifierUse, Use.value));
+    result := TFhirIdentifierUse(StringArrayIndexOfSensitive(CODES_TFhirIdentifierUse, Use.value));
 end;
 
 Procedure TFhirIdentifier.SetUseST(value : TFhirIdentifierUse);
@@ -10493,7 +10493,7 @@ begin
   if FWhen = nil then
     result := TFhirEventTiming(0)
   else
-    result := TFhirEventTiming(StringArrayIndexOf(CODES_TFhirEventTiming, When.value));
+    result := TFhirEventTiming(StringArrayIndexOfSensitive(CODES_TFhirEventTiming, When.value));
 end;
 
 Procedure TFhirScheduleRepeat.SetWhenST(value : TFhirEventTiming);
@@ -10541,7 +10541,7 @@ begin
   if FUnits = nil then
     result := TFhirUnitsOfTime(0)
   else
-    result := TFhirUnitsOfTime(StringArrayIndexOf(CODES_TFhirUnitsOfTime, Units.value));
+    result := TFhirUnitsOfTime(StringArrayIndexOfSensitive(CODES_TFhirUnitsOfTime, Units.value));
 end;
 
 Procedure TFhirScheduleRepeat.SetUnitsST(value : TFhirUnitsOfTime);
@@ -10964,7 +10964,7 @@ begin
   if FSystem = nil then
     result := TFhirContactSystem(0)
   else
-    result := TFhirContactSystem(StringArrayIndexOf(CODES_TFhirContactSystem, System.value));
+    result := TFhirContactSystem(StringArrayIndexOfSensitive(CODES_TFhirContactSystem, System.value));
 end;
 
 Procedure TFhirContact.SetSystemST(value : TFhirContactSystem);
@@ -11012,7 +11012,7 @@ begin
   if FUse = nil then
     result := TFhirContactUse(0)
   else
-    result := TFhirContactUse(StringArrayIndexOf(CODES_TFhirContactUse, Use.value));
+    result := TFhirContactUse(StringArrayIndexOfSensitive(CODES_TFhirContactUse, Use.value));
 end;
 
 Procedure TFhirContact.SetUseST(value : TFhirContactUse);
@@ -11237,7 +11237,7 @@ begin
   if FUse = nil then
     result := TFhirAddressUse(0)
   else
-    result := TFhirAddressUse(StringArrayIndexOf(CODES_TFhirAddressUse, Use.value));
+    result := TFhirAddressUse(StringArrayIndexOfSensitive(CODES_TFhirAddressUse, Use.value));
 end;
 
 Procedure TFhirAddress.SetUseST(value : TFhirAddressUse);
@@ -11590,7 +11590,7 @@ begin
   if FUse = nil then
     result := TFhirNameUse(0)
   else
-    result := TFhirNameUse(StringArrayIndexOf(CODES_TFhirNameUse, Use.value));
+    result := TFhirNameUse(StringArrayIndexOfSensitive(CODES_TFhirNameUse, Use.value));
 end;
 
 Procedure TFhirHumanName.SetUseST(value : TFhirNameUse);

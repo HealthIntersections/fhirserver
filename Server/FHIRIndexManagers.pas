@@ -3414,7 +3414,7 @@ begin
 end;
 
 Const
-  CHECK_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TSearchParamsAppointment = (spAppointment__id, spAppointment__language, spAppointment_Date, spAppointment_Individual, spAppointment_Partstatus, spAppointment_Status);
+  CHECK_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TSearchParamsAppointment = (spAppointment__id, spAppointment__language, spAppointment_Actor, spAppointment_Date, spAppointment_Partstatus, spAppointment_Status);
 
 procedure TFhirIndexManager.buildIndexesAppointment;
 var
@@ -3436,7 +3436,7 @@ begin
   for i := 0 to resource.participantList.Count - 1 do
   begin
     index(frtAppointment, key, resource.participantList[i].status, 'partstatus');
-    index(context, frtAppointment, key, resource.participantList[i].actor, 'individual');
+    index(context, frtAppointment, key, resource.participantList[i].actor, 'actor');
     patientCompartment(key, resource.participantList[i].actor);
   end;
 end;

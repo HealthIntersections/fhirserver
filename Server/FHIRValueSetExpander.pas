@@ -48,10 +48,10 @@ Type
     procedure addCodeAndDescendents(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext);
 
     procedure handleDefine(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetDefine; defines : TFhirValueSetDefineConceptList; filter : TSearchFilterText);
-    procedure importValueSet(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; uri : TFhirUri; filter : TSearchFilterText; dependencies : TStringList);
-    procedure includeCodes(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude; filter : TSearchFilterText);
-    procedure excludeCodes(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude);
-    procedure handleCompose(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList);
+    procedure importValueSet(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; uri : TFhirUri; filter : TSearchFilterText; dependencies : TStringList; var notClosed : boolean);
+    procedure includeCodes(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude; filter : TSearchFilterText; var notClosed : boolean);
+    procedure excludeCodes(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude; var notClosed : boolean);
+    procedure handleCompose(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; var notClosed : boolean);
 
     procedure addCode(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, code, display, definition: string);
     procedure addDefinedCode(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; system : string; c : TFHIRValueSetDefineConcept);
@@ -89,6 +89,7 @@ var
   c : TFhirValueSetExpansionContains;
   //e : TFhirExtension;
   filter : TSearchFilterText;
+  notClosed : boolean;
 begin
   result := source.Clone;
   dependencies.Add(source.identifierST);
@@ -104,8 +105,12 @@ begin
 
     if (source.define <> nil) then
       handleDefine(list, map, source.define, source.define.conceptList, filter);
+    notClosed := false;
     if (source.compose <> nil) then
-      handleCompose(list, map, source.compose, filter, dependencies);
+      handleCompose(list, map, source.compose, filter, dependencies, notClosed);
+
+    if notClosed then
+      result.expansion.addExtension('http://hl7.org/fhir/Profile/questionnaire-extensions#closed', TFhirBoolean.Create(true));
 
     for i := 0 to list.count - 1 do
     begin
@@ -134,16 +139,16 @@ begin
   result := key(c.SystemST, c.CodeST);
 end;
 
-procedure TFHIRValueSetExpander.handleCompose(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source: TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList);
+procedure TFHIRValueSetExpander.handleCompose(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source: TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; var notClosed : boolean);
 var
   i : integer;
 begin
   for i := 0 to source.importList.count - 1 do
-    importValueSet(list, map, source.importList[i], filter, dependencies);
+    importValueSet(list, map, source.importList[i], filter, dependencies, notClosed);
   for i := 0 to source.includeList.count - 1 do
-    includeCodes(list, map, source.includeList[i], filter);
+    includeCodes(list, map, source.includeList[i], filter, notClosed);
   for i := 0 to source.excludeList.count - 1 do
-    excludeCodes(list, map, source.excludeList[i]);
+    excludeCodes(list, map, source.excludeList[i], notClosed);
 end;
 
 procedure TFHIRValueSetExpander.handleDefine(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source : TFhirValueSetDefine; defines : TFhirValueSetDefineConceptList; filter : TSearchFilterText);
@@ -200,7 +205,7 @@ begin
 end;
 
 
-procedure TFHIRValueSetExpander.importValueSet(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; uri: TFhirUri; filter : TSearchFilterText; dependencies : TStringList);
+procedure TFHIRValueSetExpander.importValueSet(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; uri: TFhirUri; filter : TSearchFilterText; dependencies : TStringList; var notClosed : boolean);
 var
   vs : TFHIRValueSet;
   i : integer;
@@ -216,6 +221,9 @@ begin
     if (vs = nil) then
       raise Exception.create('unable to find value set '+uri.value);
     try
+      if vs.expansion.hasextension('http://hl7.org/fhir/Profile/questionnaire-extensions#closed') then
+        notClosed := true;
+
       for i := 0 to vs.expansion.containsList.Count - 1 do
       begin
         c := vs.expansion.containsList[i];
@@ -235,7 +243,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.includeCodes(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude; filter : TSearchFilterText);
+procedure TFHIRValueSetExpander.includeCodes(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude; filter : TSearchFilterText; var notClosed : boolean);
 var
   cs : TCodeSystemProvider;
   i, j, offset : integer;
@@ -261,6 +269,9 @@ begin
       end
       else
       begin
+        if cs.isNotClosed(filter) then
+          notClosed := true;
+
         ctxt := cs.searchFilter(filter, nil);
         try
           i := 0;
@@ -304,6 +315,8 @@ begin
           filters[i+offset] := cs.filter(fc.property_ST, fc.OpST, fc.valueST, prep);
           if filters[i+offset] = nil then
             raise Exception.create('The filter "'+fc.property_ST +' '+ CODES_TFhirFilterOperator[fc.OpST]+ ' '+fc.valueST+'" was not understood in the context of '+cs.system);
+          if cs.isNotClosed(filter, filters[i+offset]) then
+            notClosed := true;
         end;
 
         inner := not cs.prepare(prep);
@@ -328,9 +341,9 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.excludeCodes(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude);
+procedure TFHIRValueSetExpander.excludeCodes(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude; var notClosed : boolean);
 begin
-
+  raise exception.Create('Not done yet');
 end;
 
 procedure TFHIRValueSetExpander.addCodeAndDescendents(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cs: TCodeSystemProvider; context: TCodeSystemProviderContext);

@@ -161,6 +161,8 @@ Type
     procedure ProcessSubscriptions;
     function DefaultRights : String;
     Property OwnerName : String read FOwnerName write FOwnerName;
+    Property Profiles : TProfileManager read FProfiles;
+    function ExpandVS(vs : TFHIRValueSet; ref : TFhirResourceReference) : TFhirValueSet;
   end;
 
 
@@ -325,6 +327,7 @@ begin
     FValidator := TFHIRValidator.create;
     FValidator.SchematronSource := WebFolder;
     FValidator.TerminologyServer := terminologyServer.Link;
+    FValidator.Profiles := Profiles.Link;
     // the order here is important: specification resources must be loaded prior to stored resources
     FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)+'validation.zip');
     LoadExistingResources(Conn);
@@ -600,6 +603,27 @@ begin
   end;
   if key > 0 then
     CloseFhirSession(key);
+end;
+
+function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirResourceReference): TFhirValueSet;
+begin
+  if (vs <> nil) then
+    result := FTerminologyServer.expandVS(vs, '', '')
+  else
+  begin
+    if FTerminologyServer.isKnownValueSet(ref.referenceST, vs) then
+      result := FTerminologyServer.expandVS(vs, ref.referenceST, '')
+    else
+    begin
+      vs := FTerminologyServer.getValueSetByUrl(ref.referenceST);
+      if vs = nil then
+        vs := FTerminologyServer.getValueSetByIdentifier(ref.referenceST);
+      if vs = nil then
+        result := nil
+      else
+        result := FTerminologyServer.expandVS(vs, ref.referenceST, '')
+    end;
+  end;
 end;
 
 procedure TFHIRDataStore.CloseFhirSession(key : integer);
@@ -1048,7 +1072,7 @@ var
 begin
   builder := TAdvStringBuilder.Create;
   try
-    profiles := FProfiles.getLinks;
+    profiles := FProfiles.getLinks(false, false);
     try
       for i := 0 to profiles.Count - 1 do
       begin
