@@ -257,6 +257,8 @@ var
   type_ : String;
   r : TFHIRProfileStructureHolder;
   p : TFHIRProfile;
+  b : boolean;
+  i : integer;
 begin
   children := getChildren(structure, definition.pathST);
   try
@@ -282,8 +284,18 @@ begin
         else
         begin
           if (child.definition.type_List.Count > 1) then
-            raise Exception.create('multiple types?');
-          if (child.Definition.type_List.Count = 1) then
+          begin
+            // all references?
+            b := true;
+            for i := 0 to child.definition.type_List.Count - 1 do
+              if child.definition.type_List[i].CodeST <> 'ResourceReference' then
+                b := false;
+            if b then
+              type_ := child.definition.type_List[0].CodeST
+            else
+              raise Exception.Create('to do?');
+          end
+          else  if (child.Definition.type_List.Count = 1) then
             type_ := child.Definition.Type_List[0].codeST;
           if (type_ <> '') then
           begin

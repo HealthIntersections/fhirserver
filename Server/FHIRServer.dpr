@@ -258,7 +258,8 @@ uses
   SCIMObjects in '..\Libraries\refplat-dstu\SCIMObjects.pas',
   SCIMServer in 'SCIMServer.pas',
   TwilioClient in '..\Libraries\security\TwilioClient.pas',
-  ShellSupport in '..\Libraries\support\ShellSupport.pas';
+  ShellSupport in '..\Libraries\support\ShellSupport.pas',
+  FHIRSearchSyntax in 'FHIRSearchSyntax.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

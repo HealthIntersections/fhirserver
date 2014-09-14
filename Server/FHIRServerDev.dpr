@@ -259,7 +259,7 @@ uses
   SCIMSearch in 'SCIMSearch.pas',
   SCIMObjects in '..\Libraries\refplat-dev\SCIMObjects.pas',
   TwilioClient in '..\Libraries\security\TwilioClient.pas',
-  FHIRSearchSyntax in '..\Libraries\refplat-dev\FHIRSearchSyntax.pas',
+  FHIRSearchSyntax in 'FHIRSearchSyntax.pas',
   ProfileManager in 'ProfileManager.pas',
   ShellSupport in '..\Libraries\support\ShellSupport.pas',
   RectSupport in 'RectSupport.pas',

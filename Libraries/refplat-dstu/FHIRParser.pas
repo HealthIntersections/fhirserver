@@ -35,7 +35,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.81 generated Wed, Aug 27, 2014 23:05+1000
+// FHIR v0.0.82 generated Sun, Sep 14, 2014 17:48+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON, FHIRAtomFeed;
@@ -1377,7 +1377,7 @@ begin
     exit;
   end
   else
-    prop(json, name, value.value);
+    propNumber(json, name, value.value);
 end;
 
 Procedure TFHIRJsonComposer.ComposeIntegerProps(json : TJSONWriter; name : String; value : TFhirInteger; inArray : boolean);
@@ -1629,7 +1629,7 @@ begin
     exit;
   end
   else
-    prop(json, name, value.value);
+    propNumber(json, name, value.value);
 end;
 
 Procedure TFHIRJsonComposer.ComposeDecimalProps(json : TJSONWriter; name : String; value : TFhirDecimal; inArray : boolean);

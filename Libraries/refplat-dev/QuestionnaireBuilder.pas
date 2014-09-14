@@ -13,10 +13,11 @@ Const
   TYPE_REFERENCE = 'http://www.healthintersections.com.au/fhir/Profile/metadata#reference';
   FLYOVER_REFERENCE = 'http://hl7.org/fhir/Profile/questionnaire-extensions#flyover';
   EXTENSION_FILTER_ONLY = 'http://www.healthintersections.com.au/fhir/Profile/metadata#expandNeedsFilter';
-  ANY_CODE_VS = 'http://www.healthintersections.com.au/fhir/ValueSet/anything';
+  MaxListboxCodings = 20;
+
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : TFhirResourceReference) : TFhirValueSet of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : TFhirResourceReference; limit : integer) : TFhirValueSet of object;
   {
  * This class takes a profile, and builds a questionnaire from it
  *
@@ -45,7 +46,7 @@ Type
     FFactory : TFHIRFactory;
     FOnExpand : TGetValueSetExpansion;
     vsCache : TAdvStringMatch;
-    FNotForReal: boolean;
+    FPrebuiltQuestionnaire: TFhirQuestionnaire;
 
     function nextId(prefix : string) : String;
 
@@ -53,15 +54,15 @@ Type
     function getChildList(structure :TFHIRProfileStructure; element : TFhirProfileStructureSnapshotElement) : TFhirProfileStructureSnapshotElementList; overload;
     function isExempt(element, child: TFhirProfileStructureSnapshotElement) : boolean;
 
-    function getSystemForCode(vs : TFHIRValueSet; code : String) : String;
-    function resolveValueSet(profile : TFHIRProfile; binding : TFhirProfileStructureSnapshotElementDefinitionBinding; overrideNotForReal : boolean) : TFHIRValueSet; overload;
-    function resolveValueSet(url : String; overrideNotForReal : boolean) : TFHIRValueSet; overload;
+    function getSystemForCode(vs : TFHIRValueSet; code : String; path : String) : String;
+    function resolveValueSet(profile : TFHIRProfile; binding : TFhirProfileStructureSnapshotElementDefinitionBinding) : TFHIRValueSet; overload;
+    function resolveValueSet(url : String) : TFHIRValueSet; overload;
     function makeAnyValueSet : TFhirValueSet;
 
     function expandTypeList(types: TFhirProfileStructureSnapshotElementDefinitionTypeList): TFhirProfileStructureSnapshotElementDefinitionTypeList;
     function makeTypeList(profile : TFHIRProfile; types : TFhirProfileStructureSnapshotElementDefinitionTypeList; path : String) : TFHIRValueSet;
-    function convertType(v: TFhirElement; t: string): TFhirElement; overload;
-    function convertType(value : TFHIRObject; af : TFhirAnswerFormat; vs : TFHIRValueSet) : TFhirType; overload;
+    function convertType(v: TFhirElement; t: string; path : String): TFhirElement; overload;
+    function convertType(value : TFHIRObject; af : TFhirAnswerFormat; vs : TFHIRValueSet; path : String) : TFhirType; overload;
     procedure selectTypes(profile : TFHIRProfile; sub : TFHIRQuestionnaireGroup; t: TFhirProfileStructureSnapshotElementDefinitionType; source, dest: TFhirQuestionnaireAnswersGroupList);
     function instanceOf(t : TFhirProfileStructureSnapshotElementDefinitionType; obj : TFHIRObject) : boolean;
 
@@ -108,6 +109,7 @@ Type
     procedure SetStructure(const Value: TFhirProfileStructure);
     procedure processExisting(path : String; answerGroups, nAnswers: TFhirQuestionnaireAnswersGroupList);
     procedure SetAnswers(const Value: TFhirQuestionnaireAnswers);
+    procedure SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
   public
     Constructor create; override;
     Destructor Destroy; override;
@@ -124,8 +126,8 @@ Type
 
     // sometimes, when this is used, the questionnaire is already build and cached, and we are
     // processing the answers. for technical reasons, we still go through the process, but
-    // we don't do the intensive parts of the work (save tiem)
-    Property NotForReal : boolean read FNotForReal write FNotForReal;
+    // we don't do the intensive parts of the work (save time)
+    Property PrebuiltQuestionnaire : TFhirQuestionnaire read FPrebuiltQuestionnaire write SetPrebuiltQuestionnaire;
 
     procedure Build;
     procedure UnBuild;
@@ -148,6 +150,7 @@ var
   i : integer;
   list : TFhirProfileStructureSnapshotElementList;
   answerGroups : TFhirQuestionnaireAnswersGroupList;
+  group : TFhirQuestionnaireGroup;
 begin
   if (profile.structureList.IsEmpty) then
 		raise Exception.create('QuestionnaireBuilder.build: no structure found');
@@ -171,7 +174,10 @@ begin
     if Structure.type_ST <> CODES_TFhirResourceType[resource.ResourceType] then
       raise Exception.Create('Wrong Type');
 
-  FQuestionnaire := TFHIRQuestionnaire.Create();
+  if FPrebuiltQuestionnaire <> nil then
+    FQuestionnaire := FPrebuiltQuestionnaire.Link
+  else
+    FQuestionnaire := TFHIRQuestionnaire.Create();
   if resource <> nil then
     FAnswers := TFhirQuestionnaireAnswers.Create;
   processMetadata;
@@ -182,7 +188,18 @@ begin
   try
     if resource <> nil then
       answerGroups.Add(FAnswers.group.Link);
-    buildGroup(FQuestionnaire.group, profile, structure, structure.snapshot.elementList[0], list, answerGroups);
+    if PrebuiltQuestionnaire <> nil then
+    begin
+     // give it a fake group to build
+     group := TFhirQuestionnaireGroup.Create;
+     try
+      buildGroup(group, profile, structure, structure.snapshot.elementList[0], list, answerGroups);
+     finally
+       group.free;
+     end;
+    end
+    else
+      buildGroup(FQuestionnaire.group, profile, structure, structure.snapshot.elementList[0], list, answerGroups);
   finally
     list.Free;
     answerGroups.Free;
@@ -233,6 +250,7 @@ begin
   FQuestionnaire.Free;
   FAnswers.Free;
   FProfiles.Free;
+  FPrebuiltQuestionnaire.Free;
   inherited;
 end;
 
@@ -254,21 +272,24 @@ var
   i : integer;
 begin
   // todo: can we derive a more informative identifier from the questionnaire if we have a profile
-  id := FQuestionnaire.identifierList.Append;
-	id.SystemST := 'urn:ietf:rfc:3986';
-  id.ValueST := FQuestionnaireId;
-  FQuestionnaire.VersionST := profile.VersionST;
-  FQuestionnaire.StatusST := convertStatus(profile.StatusST);
-  FQuestionnaire.DateST := profile.DateST.link;
-  FQuestionnaire.publisherST := profile.PublisherST;
-  FQuestionnaire.Group := TFhirQuestionnaireGroup.Create;
-  FQuestionnaire.group.conceptList.AddAll(profile.codeList);
+  if FPrebuiltQuestionnaire = nil then
+  begin
+    id := FQuestionnaire.identifierList.Append;
+    id.SystemST := 'urn:ietf:rfc:3986';
+    id.ValueST := FQuestionnaireId;
+    FQuestionnaire.VersionST := profile.VersionST;
+    FQuestionnaire.StatusST := convertStatus(profile.StatusST);
+    FQuestionnaire.DateST := profile.DateST.link;
+    FQuestionnaire.publisherST := profile.PublisherST;
+    FQuestionnaire.Group := TFhirQuestionnaireGroup.Create;
+    FQuestionnaire.group.conceptList.AddAll(profile.codeList);
+    FQuestionnaire.xmlId := nextId('qs');
+  end;
 
   if FAnswers <> nil then
   begin
     // no identifier - this is transient
     FAnswers.questionnaire := TFhirResourceReference.Create;
-    FQuestionnaire.xmlId := nextId('qs');
     FAnswers.questionnaire.referenceST := '#'+FQuestionnaire.xmlId;
     FAnswers.containedList.Add(FQuestionnaire.Link);
     FAnswers.statusST := QuestionnaireAnswersStatusInProgress;
@@ -278,15 +299,13 @@ begin
 end;
 
 
-function TQuestionnaireBuilder.resolveValueSet(url: String; overrideNotForReal : boolean): TFHIRValueSet;
+function TQuestionnaireBuilder.resolveValueSet(url: String): TFHIRValueSet;
 var
   ref : TFhirResourceReference;
 begin
-  if not overrideNotForReal and FNotForReal then
-  begin
-    result := nil;
-    exit;
-  end;
+  result := nil;
+  if PrebuiltQuestionnaire <> nil then
+    exit; // we don't do anything with value sets in this case
 
   if vsCache.ExistsByKey(url) then
     result := FQuestionnaire.contained[vsCache.GetValueByKey(url)].link as TFhirValueSet
@@ -296,7 +315,7 @@ begin
     try
       ref.referenceST := url;
       try
-        result := OnExpand(nil, ref);
+        result := OnExpand(nil, ref, MaxListboxCodings);
       except
         on e: ETooCostly do
         begin
@@ -317,17 +336,14 @@ begin
   end;
 end;
 
-function TQuestionnaireBuilder.resolveValueSet(profile: TFHIRProfile; binding: TFhirProfileStructureSnapshotElementDefinitionBinding; overrideNotForReal : boolean): TFHIRValueSet;
+function TQuestionnaireBuilder.resolveValueSet(profile: TFHIRProfile; binding: TFhirProfileStructureSnapshotElementDefinitionBinding): TFHIRValueSet;
 var
   ref : TFhirResourceReference;
 begin
-  if not overrideNotForReal and FNotForReal then
-  begin
-    result := nil;
-    exit;
-  end;
-
   result := nil;
+  if PrebuiltQuestionnaire <> nil then
+    exit; // we don't do anything with value sets in this case
+
   if (binding = nil) or not (binding.reference is TFHIRResourceReference) then
     exit;
 
@@ -340,7 +356,7 @@ begin
     result := FQuestionnaire.contained[vsCache.GetValueByKey(ref.referenceST)].link as TFhirValueSet
   else
     try
-      result := OnExpand(nil, ref);
+      result := OnExpand(nil, ref, MaxListboxCodings);
     except
       on e: ETooCostly do
       begin
@@ -361,6 +377,12 @@ procedure TQuestionnaireBuilder.SetAnswers(const Value: TFhirQuestionnaireAnswer
 begin
   FAnswers.Free;
   FAnswers := Value;
+end;
+
+procedure TQuestionnaireBuilder.SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
+begin
+  FPrebuiltQuestionnaire.Free;
+  FPrebuiltQuestionnaire := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetProfile(const Value: TFHIRProfile);
@@ -427,7 +449,7 @@ begin
   end;
 end;
 
-function TQuestionnaireBuilder.convertType(v : TFhirElement; t : string) : TFhirElement;
+function TQuestionnaireBuilder.convertType(v : TFhirElement; t : string; path : String) : TFhirElement;
 var
   s : String;
 begin
@@ -441,7 +463,7 @@ begin
   else if ((s = 'Coding') and (t = 'code')) then
     result := TFhirEnum.Create(TFHIRCoding(v).codeST)
   else
-    raise Exception.Create('Unable to convert from '+s+' to '+t);
+    raise Exception.Create('Unable to convert from '+s+' to '+t+' at path = '+path);
 end;
 
 function isPrimitive(t : TFhirProfileStructureSnapshotElementDefinitionType) : Boolean; overload;
@@ -549,7 +571,7 @@ begin
             for j := 0 to q.answerList.Count - 1 do
             begin
               a := q.answerList[j];
-              context.setProperty(d.name, convertType(a.value, t.codeST));
+              context.setProperty(d.name, convertType(a.value, t.codeST, g.linkIdST));
             end;
           end
           else
@@ -584,7 +606,7 @@ begin
       for j := 0 to q.answerList.Count - 1 do
       begin
         a := q.answerList[j];
-        context.setProperty(d.name, convertType(a.value, d.statedType.codeST));
+        context.setProperty(d.name, convertType(a.value, d.statedType.codeST, q.linkIdST));
       end;
     finally
       d.free;
@@ -695,12 +717,31 @@ begin
   result := getChildList(structure, element.PathST);
 end;
 
-function TQuestionnaireBuilder.getSystemForCode(vs: TFHIRValueSet; code: String): String;
+function TQuestionnaireBuilder.getSystemForCode(vs: TFHIRValueSet; code: String; path : String): String;
 var
-  i : integer;
+  i, q : integer;
 begin
   if (vs = nil) then
-    raise Exception.Create('Logic error');
+  begin
+    if FPrebuiltQuestionnaire <> nil then
+    begin
+      for q := 0 to FPrebuiltQuestionnaire.containedList.Count - 1 do
+        if FPrebuiltQuestionnaire.containedList[q] is TFhirValueSet then
+        begin
+          vs := TFhirValueSet(FPrebuiltQuestionnaire.containedList[q]);
+          if (vs.expansion <> nil) then
+          begin
+            for i := 0 to vs.expansion.containsList.Count - 1 do
+              if vs.expansion.containsList[i].codeST = code then
+                if result = '' then
+                  result := vs.expansion.containsList[i].systemST
+                 else
+                  raise Exception.Create('Multiple matches in '+vs.identifierST+' for code '+code+' at path = '+path);
+          end;
+        end;
+    end;
+    raise Exception.Create('Logic error'+' at path = '+path);
+  end;
   result := '';
   for i := 0 to vs.expansion.containsList.Count - 1 Do
   begin
@@ -708,8 +749,10 @@ begin
       if result = '' then
         result := vs.expansion.containsList[i].systemST
       else
-        raise Exception.Create('Multiple matches in '+vs.identifierST+' for code '+code);
+        raise Exception.Create('Multiple matches in '+vs.identifierST+' for code '+code+' at path = '+path);
   end;
+  if result = '' then
+    raise Exception.Create('Unable to resolve code '+code+' at path = '+path);
 end;
 
 function TQuestionnaireBuilder.isExempt(element, child: TFhirProfileStructureSnapshotElement) : boolean;
@@ -1067,7 +1110,7 @@ begin
             (obj is TFHIRDate) or (obj is TFHIRDateTime) or (obj is TFHIRTime) or (obj is TFHIRCode) or (obj is TFHIROid) or (obj is TFHIRUuid) or (obj is TFHIRId) or (obj is TFHIRResourceReference);
 end;
 
-function TQuestionnaireBuilder.convertType(value : TFHIRObject; af : TFhirAnswerFormat; vs : TFHIRValueSet) : TFhirType;
+function TQuestionnaireBuilder.convertType(value : TFHIRObject; af : TFhirAnswerFormat; vs : TFHIRValueSet; path : String) : TFhirType;
 begin
   result := nil;
   case af of
@@ -1097,13 +1140,13 @@ begin
       begin
         result := TFhirCoding.create;
         TFhirCoding(result).codeST := TFHIREnum(value).value;
-        TFhirCoding(result).systemST := getSystemForCode(vs, TFHIREnum(value).value);
+        TFhirCoding(result).systemST := getSystemForCode(vs, TFHIREnum(value).value, path);
       end
       else if value is TFHIRString then
       begin
         result := TFhirCoding.create;
         TFhirCoding(result).codeST := TFHIRString(value).value;
-        TFhirCoding(result).systemST := getSystemForCode(vs, TFHIRString(value).value);
+        TFhirCoding(result).systemST := getSystemForCode(vs, TFHIRString(value).value, path);
       end;
 
     AnswerFormatReference:
@@ -1117,7 +1160,7 @@ begin
   end;
 
   if (result = nil) then
-    raise Exception.Create('Unable to convert from "'+value.className+'" for Answer Format '+CODES_TFHIRAnswerFormat[af]);
+    raise Exception.Create('Unable to convert from "'+value.className+'" for Answer Format '+CODES_TFHIRAnswerFormat[af]+', path = '+path);
 end;
 
 
@@ -1196,7 +1239,7 @@ begin
                 aq.LinkIdST := result.linkIdST;
                 aq.TextST := result.textST;
               end;
-              aq.answerList.append.value := convertType(children[j], af, vs);
+              aq.answerList.append.value := convertType(children[j], af, vs, result.linkIdST);
             end;
         finally
           children.Free;
@@ -1233,9 +1276,13 @@ end;
 procedure TQuestionnaireBuilder.addCodeQuestions(group : TFHIRQuestionnaireGroup; element : TFhirProfileStructureSnapshotElement; path : String; answerGroups : TFhirQuestionnaireAnswersGroupList);
 var
   i : integer;
+  vs : TFHIRValueSet;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'code');
-  addQuestion(group, AnswerFormatChoice, path, 'value', unCamelCase(Tail(element.pathST)), answerGroups, resolveValueSet(nil, element.Definition.Binding, true));
+  vs := resolveValueSet(nil, element.Definition.Binding);
+  if vs = nil then
+    vs := makeAnyValueSet;
+  addQuestion(group, AnswerFormatChoice, path, 'value', unCamelCase(Tail(element.pathST)), answerGroups, vs);
   group.text := nil;
   for i := 0 to answerGroups.count - 1 do
     answerGroups[i].text := nil;
@@ -1354,7 +1401,7 @@ var
   i : integer;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Coding');
-  addQuestion(group, AnswerTypeForBinding(element.Definition.Binding), path, 'value', group.textST, answerGroups, resolveValueSet(nil, element.Definition.Binding, false));
+  addQuestion(group, AnswerTypeForBinding(element.Definition.Binding), path, 'value', group.textST, answerGroups, resolveValueSet(nil, element.Definition.Binding));
   group.text := nil;
   for i := 0 to answerGroups.count - 1 do
     answerGroups[i].text := nil;
@@ -1363,7 +1410,7 @@ end;
 procedure TQuestionnaireBuilder.addCodeableConceptQuestions(group : TFHIRQuestionnaireGroup; element : TFhirProfileStructureSnapshotElement; path : String; answerGroups : TFhirQuestionnaireAnswersGroupList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'CodeableConcept');
-  addQuestion(group, AnswerTypeForBinding(element.Definition.Binding), path, 'coding', 'code:', answerGroups, resolveValueSet(nil, element.Definition.Binding, false));
+  addQuestion(group, AnswerTypeForBinding(element.Definition.Binding), path, 'coding', 'code:', answerGroups, resolveValueSet(nil, element.Definition.Binding));
   addQuestion(group, AnswerTypeForBinding(element.Definition.Binding), path, 'coding/1', 'other codes:', answerGroups, makeAnyValueSet).RepeatsST := true;
 	addQuestion(group, AnswerFormatString, path, 'text', 'text:', answerGroups);
 end;
@@ -1402,15 +1449,15 @@ begin
   addQuestion(group, AnswerFormatString, path, 'state', 'state:', answerGroups);
   addQuestion(group, AnswerFormatString, path, 'zip', 'zip:', answerGroups);
   addQuestion(group, AnswerFormatString, path, 'country', 'country:', answerGroups);
-	addQuestion(group, AnswerFormatChoice, path, 'use', 'use:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/address-use', true));
+	addQuestion(group, AnswerFormatChoice, path, 'use', 'use:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/address-use'));
 end;
 
 procedure TQuestionnaireBuilder.addContactQuestions(group : TFHIRQuestionnaireGroup; element : TFhirProfileStructureSnapshotElement; path : String; answerGroups : TFhirQuestionnaireAnswersGroupList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Contact');
-	addQuestion(group, AnswerFormatChoice, path, 'system', 'type:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-system', true));
+	addQuestion(group, AnswerFormatChoice, path, 'system', 'type:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-system'));
 	addQuestion(group, AnswerFormatString, path, 'value', 'value:', answerGroups);
-	addQuestion(group, AnswerFormatChoice, path, 'use', 'use:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-use', true));
+	addQuestion(group, AnswerFormatChoice, path, 'use', 'use:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-use'));
 end;
 
 procedure TQuestionnaireBuilder.addIdentifierQuestions(group : TFHIRQuestionnaireGroup; element : TFhirProfileStructureSnapshotElement; path : String; answerGroups : TFhirQuestionnaireAnswersGroupList);
@@ -1424,7 +1471,7 @@ end;
 procedure TQuestionnaireBuilder.addQuantityQuestions(group : TFHIRQuestionnaireGroup; element : TFhirProfileStructureSnapshotElement; path : String; answerGroups : TFhirQuestionnaireAnswersGroupList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Quantity');
- 	addQuestion(group, AnswerFormatChoice, path, 'comparator', 'comp:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator', true));
+ 	addQuestion(group, AnswerFormatChoice, path, 'comparator', 'comp:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
  	addQuestion(group, AnswerFormatDecimal, path, 'value', 'value:', answerGroups);
   addQuestion(group, AnswerFormatString, path, 'units', 'units:', answerGroups);
   addQuestion(group, AnswerFormatString, path, 'code', 'coded units:', answerGroups);
@@ -1434,9 +1481,9 @@ end;
 procedure TQuestionnaireBuilder.addAgeQuestions(group : TFHIRQuestionnaireGroup; element : TFhirProfileStructureSnapshotElement; path : String; answerGroups : TFhirQuestionnaireAnswersGroupList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Age');
- 	addQuestion(group, AnswerFormatChoice, path, 'comparator', 'comp:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator', true));
+ 	addQuestion(group, AnswerFormatChoice, path, 'comparator', 'comp:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
  	addQuestion(group, AnswerFormatDecimal, path, 'value', 'value:', answerGroups);
-  addQuestion(group, AnswerFormatChoice, path, 'units', 'units:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/duration-units', true));
+  addQuestion(group, AnswerFormatChoice, path, 'units', 'units:', answerGroups, resolveValueSet('http://hl7.org/fhir/vs/duration-units'));
 end;
 
 procedure TQuestionnaireBuilder.addDurationQuestions(group : TFHIRQuestionnaireGroup; element : TFhirProfileStructureSnapshotElement; path : String; answerGroups : TFhirQuestionnaireAnswersGroupList);

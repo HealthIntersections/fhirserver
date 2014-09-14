@@ -101,7 +101,6 @@ type
     FIndexer : TFHIRIndexManager;
     FLang : String;
     FTestServer : Boolean;
-    FValidate: boolean;
     FOwnerName : String;
 
     FSpaces: TFHIRIndexSpaces;
@@ -213,10 +212,9 @@ type
     function GetPatientId : String; virtual;
 
     // called when kernel actually wants to process against the store
-    Function Execute(request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
+    Function Execute(request: TFHIRRequest; response : TFHIRResponse; upload : Boolean) : String;  virtual;
 
     property lang : String read FLang write FLang;
-    Property Validate : boolean read FValidate write FValidate;
     Property TestServer : boolean read FTestServer write FTestServer;
     Property OwnerName : String read FOwnerName write FOwnerName;
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
@@ -379,7 +377,7 @@ begin
     begin
       entry.id := base+sType+'/'+sId;
       {$IFNDEF FHIR-DSTU}
-      if (current) then
+      if (current and not (resource.ResourceType in [frtProfile])) then
         entry.links.AddValue(base+sType+'/'+sId+'/$qa-edit', 'edit-form');
       {$ENDIF}
       if (current) then
@@ -608,7 +606,7 @@ begin
   end;
 end;
 
-Function TFhirOperation.Execute(request: TFHIRRequest; response : TFHIRResponse) : String;
+Function TFhirOperation.Execute(request: TFHIRRequest; response : TFHIRResponse; upload : Boolean) : String;
 begin
  // assert(FConnection.InTransaction);
   result := Request.Id;
@@ -624,7 +622,7 @@ begin
     fcmdCreate : result := ExecuteCreate(nil, false, request, response, idNoNew, 0);
     fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
     fcmdUpload : ExecuteUpload(request, response);
-    fcmdTransaction : ExecuteTransaction(false, request, response);
+    fcmdTransaction : ExecuteTransaction(upload, request, response);
     fcmdGetTags : ExecuteGetTags(request, response);
     fcmdUpdateTags : ExecuteUpdateTags(request, response);
     fcmdDeleteTags : ExecuteDeleteTags(request, response);
@@ -670,8 +668,8 @@ begin
     response.HTTPCode := 200;
     oConf := TFhirConformance.Create;
     response.Resource := oConf;
-    if FRepository.FormalURL <> '' then
-      oConf.identifierST := AppendForwardSlash(FRepository.FormalURL)+'_metadata'
+    if FRepository.FormalURLPlain <> '' then
+      oConf.identifierST := AppendForwardSlash(FRepository.FormalURLPlainOpen)+'_metadata'
     else
       oConf.identifierST := 'http://fhir.healthintersections.com.au/open/_metadata';
     oConf.versionST := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
@@ -688,11 +686,11 @@ begin
     oConf.software.name := TFhirString.create('Reference Server');
     oConf.software.versionST := SERVER_VERSION;
     oConf.software.releaseDate := TFhirDateTime.create(TDateAndTime.createXML(SERVER_RELEASE_DATE));
-    if FRepository.FormalURL <> '' then
+    if FRepository.FormalURLPlainOpen <> '' then
     begin
       oConf.implementation_ := TFhirConformanceImplementation.Create;
-      oConf.implementation_.descriptionST := 'FHIR Server running at '+FRepository.FormalURL;
-      oConf.implementation_.urlST := FRepository.FormalURL;
+      oConf.implementation_.descriptionST := 'FHIR Server running at '+FRepository.FormalURLPlainOpen;
+      oConf.implementation_.urlST := FRepository.FormalURLPlainOpen;
     end;
     if assigned(FOnPopulateConformance) then
       FOnPopulateConformance(self, oConf);
@@ -801,7 +799,7 @@ begin
               addParam(res.searchParamList, html, '_security', 'http://hl7.org/fhir/search', 'Search for resources that have a particular security tag', SearchParamTypeReference, []);
               addParam(res.searchParamList, html, '_sort', 'http://hl7.org/fhir/search', 'Specify one or more other parameters to use as the sort order', SearchParamTypeToken, []);
               addParam(res.searchParamList, html, '_count', 'http://hl7.org/fhir/search', 'Number of records to return', SearchParamTypeNumber, []);
-              addParam(res.searchParamList, html, '_summary', 'http://hl7.org/fir/search', 'Return just a summary for resources that define a summary view', SearchParamTypeNumber, []);
+              addParam(res.searchParamList, html, '_summary', 'http://hl7.org/fhir/search', 'Return just a summary for resources that define a summary view', SearchParamTypeNumber, []);
               addParam(res.searchParamList, html, '_include', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that matching resources refer to', SearchParamTypeToken, ALL_RESOURCE_TYPES);
               addParam(res.searchParamList, html, '_reverseInclude', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that refer to matching resources (this is trialing an extension to the specification)', SearchParamTypeToken, ALL_RESOURCE_TYPES);
               if a in [frtValueSet, frtConceptMap] then
@@ -872,7 +870,7 @@ begin
     if ok and not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) or not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang)) then
       ok := false;
 
-    if ok and FValidate and not upload and (request.Session <> nil) then
+    if ok and FRepository.Validate and not upload and (request.Session <> nil) then
     begin
       if not ExecuteValidation(context, request, response, 'Create Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/'+request.Id+' ('+request.originalId+')') then
         ok := false
@@ -1194,18 +1192,18 @@ begin
       request.categories.AddValue('http://hl7.org/fhir/tag/profile', builder.Profile.urlST, builder.Profile.nameST);
 
     request.Resource := builder.Resource.Link;
-    if request.ResourceType = frtNull then
-    begin
-      request.ResourceType := request.Resource.ResourceType;
-      ExecuteCreate(nil, false, request, response, idNoNew, 0);
-    end
-    else if (request.id <> '') and (request.subId = '') then
-      ExecuteUpdate(nil, false, request, response)
-    else
-      raise Exception.Create('Error in call - can only be called against the system, or a specific resource');
   finally
     builder.Free;
   end;
+  if request.ResourceType = frtNull then
+  begin
+    request.ResourceType := request.Resource.ResourceType;
+    ExecuteCreate(nil, false, request, response, idNoNew, 0);
+  end
+  else if (request.id <> '') and (request.subId = '') then
+    ExecuteUpdate(nil, false, request, response)
+  else
+    raise Exception.Create('Error in call - can only be called against the system, or a specific resource');
 end;
 {$ENDIF}
 
@@ -1348,7 +1346,8 @@ begin
             response.LastModifiedDate := TSToDateTime(FConnection.ColTimeStampByName['StatedDate']);
             response.ContentLocation := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/_history/'+response.versionId;
             {$IFNDEF FHIR-DSTU}
-            response.links.AddValue(request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/$qa-edit', 'edit-form');
+            if not (request.ResourceType in [frtProfile]) then
+              response.links.AddValue(request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/$qa-edit', 'edit-form');
             {$ENDIF}
             response.links.AddValue(request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/$edit', 'z-edit-src');
             processBlob(request, Response, false);
@@ -1643,7 +1642,7 @@ begin
        not check(response, length(request.id) <= 36, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]))) then
       ok := false;
 
-    if ok and FValidate and not upload then
+    if ok and FRepository.Validate and not upload then
     begin
       if not ExecuteValidation(context, request, response, 'Update Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/'+request.Id) then
         ok := false
@@ -1808,8 +1807,10 @@ begin
           try
             if request.Resource <> nil then
               xml.Compose(vcl, '', '', '', request.resource, true, nil)
+            else if request.feed <> nil then
+              xml.Compose(vcl, request.feed, true)
             else
-              xml.Compose(vcl, request.feed, true);
+              raise Exception.Create('Error: '+response.Message);
           finally
             xml.free;
           end;
@@ -2183,7 +2184,7 @@ begin
   begin
     FSpaces := TFHIRIndexSpaces.Create(Value);
     FIndexer := TFHIRIndexManager.Create(FSpaces);
-    FIndexer.Ucum := FRepository.TerminologyServer.Ucum.Link;
+    FIndexer.TerminologyServer := FRepository.TerminologyServer.Link;
     FIndexer.Bases := FRepository.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
   end;
@@ -2568,7 +2569,12 @@ begin
     ExecuteCreate(context, upload, request, response, idIsNew, id.key)
   else
     ExecuteUpdate(context, upload, request, response);
-  result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message);
+  if response.HTTPCode < 300 then
+    result := true
+  else if response.Resource is TFHIROperationOutcome then
+    result := false
+  else
+    result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message);
   if result then
   begin
     ne := TFHIRAtomEntry.create;
@@ -2640,7 +2646,7 @@ begin
         for i := 0 to request.feed.entries.count - 1 do
         begin
           writeln(inttostr(i)+': '+ids.GetByName(request.feed.entries[i].id).summary);
-          if not commitResource(context, request, response, FTestServer and (request.feed.entries.count > 50), request.feed.entries[i], ids.GetByName(request.feed.entries[i].id), request.Session, resp) then
+          if not commitResource(context, request, response, upload, request.feed.entries[i], ids.GetByName(request.feed.entries[i].id), request.Session, resp) then
           begin
             Abort;
           end;
@@ -3090,7 +3096,7 @@ var
   op : TFhirOperationOutcome;
   resourceKey : integer;
   originalId : String;
-  id : String;
+  id, fid : String;
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
 begin
@@ -3103,26 +3109,39 @@ begin
         source := GetResourceByKey(resourceKey);
         try
           // for now, we simply get the base profile
+          if source is TFHIRProfile then
+            raise Exception.Create('Editing a profile via a profile questionnaire is not supported');
+
           profile := GetProfileByURL('http://hl7.org/fhir/Profile/'+Codes_TFHIRResourceType[source.ResourceType], id);
           try
-            builder := TQuestionnaireBuilder.Create;
+            fid := request.baseUrl+'Profile/'+id+'/$questionnaire';
+            questionnaire := FRepository.QuestionnaireCache.getQuestionnaire(frtProfile, id);
             try
-              builder.Profiles := FRepository.Profiles.link;
-              builder.OnExpand := FRepository.ExpandVS;
-              builder.QuestionnaireId := request.baseUrl+'Profile/'+id+'/$questionnaire';
+              builder := TQuestionnaireBuilder.Create;
+              try
+                builder.Profiles := FRepository.Profiles.link;
+                builder.OnExpand := FRepository.ExpandVS;
+                builder.QuestionnaireId := fid;
 
-              builder.Profile := profile.link;
-              builder.Resource := source.Link;
-              builder.build;
-              response.HTTPCode := 200;
-              response.Message := 'OK';
-              response.Body := '';
-              response.LastModifiedDate := now;
-              response.ContentLocation := ''; // does not exist as returned
-              response.links.AddValue(request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/$qa-post', 'edit-post');
-              response.Resource := builder.Answers.Link;
+                builder.Profile := profile.link;
+                builder.Resource := source.Link;
+                if questionnaire <> nil then
+                  builder.PrebuiltQuestionnaire := questionnaire.Link;
+                builder.build;
+                if questionnaire = nil then
+                  FRepository.QuestionnaireCache.putQuestionnaire(frtProfile, id, builder.Questionnaire);
+                response.HTTPCode := 200;
+                response.Message := 'OK';
+                response.Body := '';
+                response.LastModifiedDate := now;
+                response.ContentLocation := ''; // does not exist as returned
+                response.links.AddValue(request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/$qa-post', 'edit-post');
+                response.Resource := builder.Answers.Link;
+              finally
+                builder.Free;
+              end;
             finally
-              builder.Free;
+              questionnaire.free;
             end;
           finally
             profile.free;
@@ -3130,19 +3149,6 @@ begin
         finally
           source.Free;
         end;
-//        op := FRepository.validator.validateInstance(nil, response.Resource, 'Produce Questionnaire', nil);
-//        try
-//          if (op.hasErrors) then
-//          begin
-//            response.HTTPCode := 500;
-//            response.Message := 'Questionnaire Generation Failed';
-//            response.Resource.xmlId := 'src';
-//            op.containedList.Add(response.Resource.Link);
-//            response.Resource := op.link;
-//          end;
-//        finally
-//          op.Free;
-//        end;
       end;
     end;
     AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.OperationName, response.httpCode, '', response.message);
@@ -3404,7 +3410,7 @@ begin
           else
             raise Exception.Create('Unable to find value to expand (not provided by id, identifier, or directly');
 
-          dst := FRepository.TerminologyServer.expandVS(vs, cacheId, request.Parameters.getVar('filter'));
+          dst := FRepository.TerminologyServer.expandVS(vs, cacheId, request.Parameters.getVar('filter'), StrToIntDef(request.Parameters.GetVar('_limit'), 0));
           try
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -3447,7 +3453,7 @@ begin
     feed.title := 'Expanded ValueSet';
     feed.links.Rel['self'] := used;
     feed.SearchTotal := 1;
-    dst := FRepository.TerminologyServer.expandVS(src, cacheId, params.getVar('filter'));
+    dst := FRepository.TerminologyServer.expandVS(src, cacheId, params.getVar('filter'), StrToIntDef(request.Parameters.GetVar('_limit'), 0));
     try
       AddResourceToFeed(feed, NewGuidURN, 'ValueSet', feed.title, '', 'Health Intersections', '??base', '', now, dst, '', nil, false);
     finally
@@ -3464,12 +3470,15 @@ begin
   raise Exception.Create('Not supported in the DSTU version');
 end;
 {$ELSE}
+var
+  icount : integer;
+
 procedure TFhirOperation.ExecuteQuestionnaireGeneration(request: TFHIRRequest; response : TFHIRResponse);
 var
   profile : TFHIRProfile;
   op : TFhirOperationOutcome;
   resourceKey : integer;
-  originalId, id : String;
+  originalId, id, fid : String;
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
 begin
@@ -3494,24 +3503,41 @@ begin
           else
             raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly');
 
-          builder := TQuestionnaireBuilder.Create;
-          try
-            builder.Profile := profile.link;
-            builder.OnExpand := FRepository.ExpandVS;
-            if id <> '' then
-              builder.QuestionnaireId := request.baseUrl+'Profile/'+id+'/$questionnaire'
-            else
-              builder.QuestionnaireId := newGUIDUrn;
-            builder.build;
+          if id <> '' then
+          begin
+            fid := request.baseUrl+'Profile/'+id+'/$questionnaire';
+            questionnaire := FRepository.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+          end
+          else
+          begin
+            fid := newGUIDUrn;
+            questionnaire := nil;
+          end;
 
+          try
+            if questionnaire = nil then
+            begin
+              builder := TQuestionnaireBuilder.Create;
+              try
+                builder.Profile := profile.link;
+                builder.OnExpand := FRepository.ExpandVS;
+                builder.QuestionnaireId := fid;
+                builder.build;
+                questionnaire := builder.questionnaire.Link;
+                if id <> '' then
+                  FRepository.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire);
+              finally
+                builder.Free;
+              end;
+            end;
             response.HTTPCode := 200;
             response.Message := 'OK';
             response.Body := '';
             response.LastModifiedDate := now;
             response.ContentLocation := ''; // does not exist as returned
-            response.Resource := builder.questionnaire.Link;
+            response.Resource := questionnaire.Link;
           finally
-            builder.Free;
+            questionnaire.Free;
           end;
         finally
           profile.free;
@@ -3531,6 +3557,8 @@ begin
         end;
       end;
     end;
+    inc(iCount);
+    TFHIRXhtmlComposer.Create('en').Compose(TFileStream.Create('c:\temp\q'+inttostr(iCount)+'.xml', fmCreate), '', '', '', response.Resource, true, nil);
     AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
@@ -4057,7 +4085,7 @@ begin
         request.Resource := FAudits[i].link;
         request.lastModifiedDate := TFhirSecurityEvent(FAudits[i]).event.dateTimeST.AsUTCDateTime;
         request.Session := nil;
-        Execute(request, response);
+        Execute(request, response, false);
       end;
     finally
       response.Free;
@@ -4091,7 +4119,7 @@ begin
   k := Connection.CountSQL('select Max(IndexKey) from Indexes');
   m := TFHIRIndexManager.create(nil);
   try
-    m.Ucum := FRepository.TerminologyServer.Ucum.Link;
+    m.TerminologyServer := FRepository.TerminologyServer.Link;
     m.KeyEvent := FRepository.GetNextKey;
     for i := 0 to m.Indexes.count - 1 do
     begin

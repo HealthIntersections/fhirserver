@@ -38,12 +38,15 @@ uses
   TerminologyServer;
 
 const
-  UPPER_LIMIT = 10000;
+  UPPER_LIMIT_NO_TEXT = 10000;
+  UPPER_LIMIT_TEXT = 1000;
+
   // won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
 
 Type
   TFHIRValueSetExpander = class (TAdvObject)
   private
+    FLimit : integer;
     FStore : TTerminologyServer;
     procedure addCodeAndDescendents(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext);
 
@@ -61,7 +64,7 @@ Type
     constructor create(store : TTerminologyServer); overload;
     destructor destroy; override;
 
-    function expand(source : TFHIRValueSet; textFilter : String; dependencies : TStringList) : TFHIRValueSet;
+    function expand(source : TFHIRValueSet; textFilter : String; dependencies : TStringList; limit : integer) : TFHIRValueSet;
   end;
 
 
@@ -81,7 +84,7 @@ begin
   inherited;
 end;
 
-function TFHIRValueSetExpander.Expand(source: TFHIRValueSet; textFilter : String; dependencies : TStringList): TFHIRValueSet;
+function TFHIRValueSetExpander.Expand(source: TFHIRValueSet; textFilter : String; dependencies : TStringList; limit : integer): TFHIRValueSet;
 var
   list : TFhirValueSetExpansionContainsList;
   map : TAdvStringObjectMatch;
@@ -99,6 +102,14 @@ begin
   map.PreventDuplicates;
   list := TFhirValueSetExpansionContainsList.create;
   try
+    if filter.null then
+      FLimit := UPPER_LIMIT_NO_TEXT
+    else
+      FLimit := UPPER_LIMIT_TEXT;
+
+    if (limit > 0) and (limit < FLimit) then
+      FLimit := limit;
+
     result.expansion := TFhirValueSetExpansion.create;
     result.expansion.timestampST := NowUTC;
     //e := result.expansion.ExtensionList.Append;
@@ -180,8 +191,8 @@ var
   n : TFHIRValueSetExpansionContains;
   s : String;
 begin
-    if (map.Count > UPPER_LIMIT) then
-      raise ETooCostly.create('Too many codes to display (>'+inttostr(UPPER_LIMIT)+') (Try using a text filter to reduce the number of codes in the expansion)');
+    if (map.Count > FLimit) then
+      raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
 
   n := TFHIRValueSetExpansionContains.create;
   try
@@ -217,7 +228,7 @@ begin
     raise Exception.create('unable to find value set with no identity');
   dep := TStringList.Create;
   try
-    vs := FStore.expandVS(uri.value, filter.filter, dep);
+    vs := FStore.expandVS(uri.value, filter.filter, dep, FLimit);
     if (vs = nil) then
       raise Exception.create('unable to find value set '+uri.value);
     try
@@ -262,8 +273,8 @@ begin
       // special case - add all the code system
       if filter.Null then
       begin
-        if cs.TotalCount > UPPER_LIMIT then
-          raise ETooCostly.create('code system '+cs.system+' too big to include as a whole');
+        if cs.TotalCount > FLimit then
+          raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
         for i := 0 to cs.ChildCount(nil) - 1 do
           addCodeAndDescendents(list, map, cs, cs.getcontext(nil, i))
       end
@@ -271,27 +282,32 @@ begin
       begin
         if cs.isNotClosed(filter) then
           notClosed := true;
-
-        ctxt := cs.searchFilter(filter, nil);
+        prep := cs.getPrepContext;
         try
-          i := 0;
-          while cs.FilterMore(ctxt) do
-          begin
-            inc(i);
-            if i > UPPER_LIMIT then
-              raise ETooCostly.create('Too many matches to return');
-            c := cs.FilterConcept(ctxt);
-            addCode(list, map, cs.system, cs.code(c), cs.display(c), cs.definition(c));
+          ctxt := cs.searchFilter(filter, prep);
+          try
+            cs.prepare(prep);
+            i := 0;
+            while cs.FilterMore(ctxt) do
+            begin
+              inc(i);
+              if i > FLimit then
+                raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
+              c := cs.FilterConcept(ctxt);
+              addCode(list, map, cs.system(c), cs.code(c), cs.display(c), cs.definition(c));
+            end;
+          finally
+            cs.Close(ctxt);
           end;
         finally
-          cs.Close(ctxt);
+          cs.Close(prep);
         end;
       end;
     end;
 
     for i := 0 to cset.codeList.count - 1 do
       if filter.passes(cs.getDisplay(cset.codeList[i].value)) then
-        addCode(list, map, cs.system, cset.codeList[i].value, cs.getDisplay(cset.codeList[i].value), cs.getDefinition(cset.codeList[i].value));
+        addCode(list, map, cs.system(nil), cset.codeList[i].value, cs.getDisplay(cset.codeList[i].value), cs.getDefinition(cset.codeList[i].value));
 
     if cset.filterList.Count > 0 then
     begin
@@ -314,7 +330,7 @@ begin
           fc := cset.filterList[i];
           filters[i+offset] := cs.filter(fc.property_ST, fc.OpST, fc.valueST, prep);
           if filters[i+offset] = nil then
-            raise Exception.create('The filter "'+fc.property_ST +' '+ CODES_TFhirFilterOperator[fc.OpST]+ ' '+fc.valueST+'" was not understood in the context of '+cs.system);
+            raise Exception.create('The filter "'+fc.property_ST +' '+ CODES_TFhirFilterOperator[fc.OpST]+ ' '+fc.valueST+'" was not understood in the context of '+cs.system(nil));
           if cs.isNotClosed(filter, filters[i+offset]) then
             notClosed := true;
         end;
@@ -328,7 +344,7 @@ begin
             for i := 1 to length(filters) - 1 do
               ok := ok and cs.InFilter(filters[i], c);
           if ok then
-            addCode(list, map, cs.system, cs.code(c), cs.display(c), cs.definition(c));
+            addCode(list, map, cs.system(nil), cs.code(c), cs.display(c), cs.definition(c));
         end;
         for i := 0 to length(filters) - 1 do
           cs.Close(filters[i]);
@@ -351,7 +367,7 @@ var
   i : integer;
 begin
   if not cs.IsAbstract(context) then
-    addCode(list, map, cs.system, cs.Code(context), cs.Display(context), cs.definition(context));
+    addCode(list, map, cs.system(context), cs.Code(context), cs.Display(context), cs.definition(context));
   for i := 0 to cs.ChildCount(context) - 1 do
     addCodeAndDescendents(list, map, cs, cs.getcontext(context, i));
 end;

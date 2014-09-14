@@ -208,7 +208,7 @@ Type
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system : String; override;
+    function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -896,7 +896,7 @@ begin
     result := nil;
 end;
 
-function TUcumServices.system: String;
+function TUcumServices.system(context : TCodeSystemProviderContext): String;
 begin
   result := 'http://unitsofmeasure.org';
 end;

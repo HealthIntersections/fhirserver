@@ -49,7 +49,7 @@ type
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system : String; override;
+    function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
@@ -58,6 +58,7 @@ type
     function Display(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(code : String; list : TStringList); override;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
@@ -203,7 +204,7 @@ begin
 end;
 
 
-function TRxNormServices.system : String;
+function TRxNormServices.system(context : TCodeSystemProviderContext) : String;
 begin
   result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
 end;
@@ -293,6 +294,11 @@ begin
   result := TRxNormConcept(context).FCode;
 end;
 
+function TRxNormServices.Definition(context: TCodeSystemProviderContext): string;
+begin
+  result := '';
+end;
+
 destructor TRxNormServices.Destroy;
 begin
   DB.Free;
@@ -343,6 +349,9 @@ var
   i : integer;
   filter : TRxNormFilter;
 begin
+  if TRxNormPrep(prep).filters.Count = 0 then
+    exit; // not being used
+
   sql1 := '';
   sql2 := 'from rxnconso';
 
@@ -395,7 +404,7 @@ begin
     begin
       res := TRxNormFilter.Create;
       try
-        res.sql := ' and (RXCUI = a%%.CUI and a%%.stem like '''+SQLWrapString(filter.stems[i])+'%'')';
+        res.sql := ' and (RXCUI = s%%.CUI and s%%.stem like '''+SQLWrapString(filter.stems[i])+'%'')';
         res.text := true;
         if result = nil then
           result := res.link;

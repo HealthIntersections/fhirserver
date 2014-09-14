@@ -58,6 +58,7 @@ Type
 
     procedure StartForm(method, action : String);
     procedure TextInput(name : String; length : integer = 20);
+    procedure checkbox(name, value, text : String);
     procedure hiddenInput(name, value : String);
     procedure Submit(name : String);
     procedure EndForm;
@@ -117,6 +118,11 @@ end;
 procedure THtmlPublisher.AddTitle(text: String);
 begin
   AddText(text, true, false);
+end;
+
+procedure THtmlPublisher.checkbox(name, value, text: String);
+begin
+  FBuilder.Append('<input type="checkbox" name="'+name+'" value="'+value+'""/> '+text);
 end;
 
 constructor THtmlPublisher.Create;

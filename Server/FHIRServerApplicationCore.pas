@@ -69,6 +69,7 @@ Type
 
     procedure ExecuteTests;
     procedure Load(fn : String);
+    procedure Index;
     procedure InstallDatabase;
     procedure UnInstallDatabase;
   end;
@@ -122,8 +123,9 @@ begin
       svc.InstallDatabase;
       if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
         svc.Load(fn);
-
     end
+    else if FindCmdLineSwitch('index') then
+      svc.index
     else if FindCmdLineSwitch('tests') then
       svc.ExecuteTests
     else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
@@ -319,6 +321,7 @@ procedure TFHIRService.Load(fn: String);
 var
   f : TFileStream;
 begin
+  FNotServing := true;
   {$IFNDEF FHIR-DSTU}
   fn := fn.Replace('.dstu', '');
   {$ENDIF}
@@ -334,19 +337,32 @@ begin
   end;
   writeln('done');
 
+  FTerminologyServer.BuildIndexes(true);
+
   DoStop;
 end;
 
 procedure TFHIRService.LoadTerminologies;
 begin
-  FTerminologyServer := TTerminologyServer.create;
-  FTerminologyServer.load(FIni, FDb);
+  FTerminologyServer := TTerminologyServer.create(FDB);
+  FTerminologyServer.load(FIni);
 end;
 
 procedure TFHIRService.UnloadTerminologies;
 begin
   FTerminologyServer.Free;
   FTerminologyServer := nil;
+end;
+
+procedure TFHIRService.Index;
+begin
+  FNotServing := true;
+  if FDb = nil then
+    ConnectToDatabase;
+  CanStart;
+  writeln('index database');
+  FTerminologyServer.BuildIndexes(true);
+  DoStop;
 end;
 
 procedure TFHIRService.InitialiseRestServer;

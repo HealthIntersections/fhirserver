@@ -80,6 +80,25 @@ Type
 
   TConfigArray = Array [TFHIRResourceType] of TFHIRResourceConfig;
 
+  TQuestionnaireCache = class (TAdvObject)
+  private
+    FLock : TCriticalSection;
+    FQuestionnaires : TAdvStringObjectMatch;
+    FForms : TAdvStringMatch;
+  public
+    Constructor Create; Override;
+    Destructor Destroy; Override;
+
+    procedure putQuestionnaire(rtype : TFhirResourceType; id : String; q : TFhirQuestionnaire);
+    procedure putForm(rtype : TFhirResourceType; id : String; form : String);
+
+    function getQuestionnaire(rtype : TFhirResourceType; id : String) : TFhirQuestionnaire;
+    function getForm(rtype : TFhirResourceType; id : String) : String;
+
+    procedure clear(rtype : TFhirResourceType; id : String); overload;
+    procedure clear; overload;
+  end;
+
   TFHIRDataStore = class (TAdvObject)
   private
     FDB : TKDBManager;
@@ -106,11 +125,17 @@ Type
     FSupportSystemHistory : Boolean;
     FBases : TStringList;
     FTotalResourceCount: integer;
-    FFormalURL: String;
+    FFormalURLPlain: String;
+    FFormalURLSecure: String;
+    FFormalURLPlainOpen: String;
+    FFormalURLSecureOpen: String;
+    FFormalURLSecureClosed: String;
     FOwnerName: String;
     {$IFNDEF FHIR-DSTU}
     FSubscriptionManager : TSubscriptionManager;
     {$ENDIF}
+    FQuestionnaireCache : TQuestionnaireCache;
+    FValidate: boolean;
 
     procedure LoadExistingResources(conn : TKDBConnection);
     procedure SaveSecurityEvent(se : TFhirSecurityEvent);
@@ -156,13 +181,19 @@ Type
     Property TotalResourceCount : integer read FTotalResourceCount;
     Property TerminologyServer : TTerminologyServer read FTerminologyServer;
     procedure Sweep;
-    property FormalURL : String read FFormalURL write FFormalURL;
+    property FormalURLPlain : String read FFormalURLPlain write FFormalURLPlain;
+    property FormalURLSecure : String read FFormalURLSecure write FFormalURLSecure;
+    property FormalURLPlainOpen : String read FFormalURLPlainOpen write FFormalURLPlainOpen;
+    property FormalURLSecureOpen : String read FFormalURLSecureOpen write FFormalURLSecureOpen;
+    property FormalURLSecureClosed : String read FFormalURLSecureClosed write FFormalURLSecureClosed;
     function ResourceTypeKeyForName(name : String) : integer;
     procedure ProcessSubscriptions;
     function DefaultRights : String;
     Property OwnerName : String read FOwnerName write FOwnerName;
     Property Profiles : TProfileManager read FProfiles;
-    function ExpandVS(vs : TFHIRValueSet; ref : TFhirResourceReference) : TFhirValueSet;
+    function ExpandVS(vs : TFHIRValueSet; ref : TFhirResourceReference; limit : integer) : TFhirValueSet;
+    property QuestionnaireCache : TQuestionnaireCache read FQuestionnaireCache;
+    Property Validate : boolean read FValidate write FValidate;
   end;
 
 
@@ -232,6 +263,8 @@ begin
   FLock := TCriticalSection.Create('fhir-store');
   FSCIMServer := SCIMServer;
   FSCIMServer.DefaultRights.Add(SECURITY_BASE_URI+'user');
+
+  FQuestionnaireCache := TQuestionnaireCache.create;
 
   {$IFNDEF FHIR-DSTU}
   FSubscriptionManager := TSubscriptionManager.Create;
@@ -467,6 +500,7 @@ begin
   {$IFNDEF FHIR-DSTU}
   FSubscriptionManager.Free;
   {$ENDIF}
+  FQuestionnaireCache.Free;
   FLock.Free;
   FSCIMServer.Free;
   FValidator.Free;
@@ -487,7 +521,7 @@ begin
     storage.PreCheck(request, response);
     storage.Connection.StartTransact;
     try
-      storage.Execute(request, response);
+      storage.Execute(request, response, false);
       storage.Connection.Commit;
       storage.Connection.Release;
     except
@@ -516,11 +550,11 @@ begin
       sp.type_ := getTypeForKey(typeKey);
       sp.compartmentId := compartmentId;
       sp.compartments := compartments;
-      sp.baseURL := FFormalURL; // todo: what?
+      sp.baseURL := FFormalURLPlainOpen; // todo: what?
       sp.lang := 'en';
       sp.params := params;
       sp.indexer := TFhirIndexManager.Create(spaces);
-      sp.Indexer.Ucum := TerminologyServer.Ucum.Link;
+      sp.Indexer.TerminologyServer := TerminologyServer.Link;
       sp.Indexer.Bases := Bases;
       sp.Indexer.KeyEvent := GetNextKey;
       sp.repository := self.Link;
@@ -605,14 +639,14 @@ begin
     CloseFhirSession(key);
 end;
 
-function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirResourceReference): TFhirValueSet;
+function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirResourceReference; limit : integer): TFhirValueSet;
 begin
   if (vs <> nil) then
-    result := FTerminologyServer.expandVS(vs, '', '')
+    result := FTerminologyServer.expandVS(vs, '', '', limit)
   else
   begin
     if FTerminologyServer.isKnownValueSet(ref.referenceST, vs) then
-      result := FTerminologyServer.expandVS(vs, ref.referenceST, '')
+      result := FTerminologyServer.expandVS(vs, ref.referenceST, '', limit)
     else
     begin
       vs := FTerminologyServer.getValueSetByUrl(ref.referenceST);
@@ -621,7 +655,7 @@ begin
       if vs = nil then
         result := nil
       else
-        result := FTerminologyServer.expandVS(vs, ref.referenceST, '')
+        result := FTerminologyServer.expandVS(vs, ref.referenceST, '', limit)
     end;
   end;
 end;
@@ -997,14 +1031,9 @@ begin
       TerminologyServer.SeeTerminologyResource(Codes_TFHIRResourceType[resource.ResourceType]+'/'+id, key, resource)
     else if resource.ResourceType = frtProfile then
       FProfiles.seeProfile(Codes_TFHIRResourceType[resource.ResourceType]+'/'+id, key, resource as TFhirProfile);
-{    else if resource.ResourceType = frtUser then
-    begin
-      user := resource as TFhirUser;
-      FUserIds.matches[id] := user.link;
-      FUserLogins.matches[user.providerST+#1+user.loginST] := user.link;
-    end;}
     {$IFNDEF FHIR-DSTU}
     FSubscriptionManager.SeeResource(key, vkey, id, resource, conn, reload, session);
+    FQuestionnaireCache.clear(resource.ResourceType, id);
     {$ENDIF}
   finally
     FLock.Unlock;
@@ -1019,14 +1048,9 @@ begin
       TerminologyServer.DropTerminologyResource(key, Codes_TFHIRResourceType[aType]+'/'+id, aType)
     else if aType = frtProfile then
       FProfiles.DropProfile(key, Codes_TFHIRResourceType[aType]+'/'+id, aType);
-{    else if aType = frtUser then
-    begin
-      user := FUserIds.Matches[id] as TFHIRUser;
-      FUserLogins.DeleteByKey(user.providerST+#1+user.loginST);
-      FUserIds.DeleteByKey(id);
-    end;}
     {$IFNDEF FHIR-DSTU}
     FSubscriptionManager.DropResource(key, vkey);
+    FQuestionnaireCache.clear(aType, id);
     {$ENDIF}
   finally
     FLock.Unlock;
@@ -1170,6 +1194,7 @@ var
   i : integer;
   cback : TKDBConnection;
 begin
+  FTerminologyServer.Loading := true;
   conn.SQL := 'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Content from Ids, Types, Versions where '+
     'Versions.ResourceVersionKey = Ids.MostRecent and '+
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and '+
@@ -1204,6 +1229,7 @@ begin
     conn.terminate;
   end;
   FTotalResourceCount := i;
+  FTerminologyServer.Loading := false;
 end;
 
 
@@ -1212,6 +1238,92 @@ end;
 function TFhirTag.combine: String;
 begin
   result := TagCombine(scheme, term);
+end;
+
+{ TQuestionnaireCache }
+
+constructor TQuestionnaireCache.Create;
+begin
+  inherited;
+  FLock := TCriticalSection.Create('TQuestionnaireCache');
+  FQuestionnaires := TAdvStringObjectMatch.Create;
+  FQuestionnaires.Forced := true;
+  FForms := TAdvStringMatch.Create;
+  FForms.Forced := true;
+end;
+
+destructor TQuestionnaireCache.Destroy;
+begin
+  FForms.Free;
+  FQuestionnaires.Free;
+  FLock.Free;
+  inherited;
+end;
+
+procedure TQuestionnaireCache.clear;
+begin
+  FLock.Lock('clear');
+  try
+    FQuestionnaires.Clear;
+    FForms.Clear;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TQuestionnaireCache.clear(rtype : TFhirResourceType; id: String);
+begin
+  FLock.Lock('clear(id)');
+  try
+    if FQuestionnaires.ExistsByKey(Codes_TFHIRResourceType[rType]+'/'+id) then
+      FQuestionnaires.DeleteByKey(Codes_TFHIRResourceType[rType]+'/'+id);
+    if FForms.ExistsByKey(Codes_TFHIRResourceType[rType]+'/'+id) then
+      FForms.DeleteByKey(Codes_TFHIRResourceType[rType]+'/'+id);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TQuestionnaireCache.getForm(rtype : TFhirResourceType; id: String): String;
+begin
+  FLock.Lock('getForm');
+  try
+    result := FForms[Codes_TFHIRResourceType[rType]+'/'+id];
+  finally
+    FLock.Unlock;
+  end;
+
+end;
+
+function TQuestionnaireCache.getQuestionnaire(rtype : TFhirResourceType; id: String): TFhirQuestionnaire;
+begin
+  FLock.Lock('getQuestionnaire');
+  try
+    result := FQuestionnaires[Codes_TFHIRResourceType[rType]+'/'+id].Link as TFhirQuestionnaire; // comes off linked - must happen inside the lock
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TQuestionnaireCache.putForm(rtype : TFhirResourceType; id, form: String);
+begin
+  FLock.Lock('putForm');
+  try
+    FForms[Codes_TFHIRResourceType[rType]+'/'+id] := form;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TQuestionnaireCache.putQuestionnaire(rtype : TFhirResourceType; id : String; q: TFhirQuestionnaire);
+begin
+  FLock.Lock('putQuestionnaire');
+  try
+    FQuestionnaires[Codes_TFHIRResourceType[rType]+'/'+id] := q.Link;
+  finally
+    FLock.Unlock;
+  end;
+
 end;
 
 end.

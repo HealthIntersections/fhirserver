@@ -3,12 +3,13 @@ unit SearchProcessor;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   ParseMap,
   StringSupport, EncodeSupport,
-  AdvObjects, DateAndTime,
+  AdvObjects, DateAndTime, DecimalSupport,
   FHIRResources, FHIRLang, FHIRConstants, FHIRComponents, FHIRTypes,
-  FHIRIndexManagers, FHIRDataStore, FHIRUtilities;
+  FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax,
+  UcumServices;
 
 const
   SEARCH_PARAM_NAME_ID = 'search-id';
@@ -18,6 +19,7 @@ const
   SEARCH_PARAM_NAME_COUNT = '_count';
   SEARCH_PARAM_NAME_SORT = 'search-sort';
   SEARCH_PARAM_NAME_SUMMARY = '_summary';
+  SEARCH_PARAM_NAME_FILTER = '_filter';
   SEARCH_PAGE_DEFAULT = 50;
   SEARCH_PAGE_LIMIT = 1000;
   SUMMARY_SEARCH_PAGE_LIMIT = 10000;
@@ -26,6 +28,7 @@ const
 
 type
   TDateOperation = (dopEqual, dopLess, dopLessEqual, dopGreater, dopGreaterEqual);
+  TQuantityOperation = (qopEqual, qopLess, qopLessEqual, qopGreater, qopGreaterEqual, qopApproximate);
   TFHIRSearchSummary = (ssFull, ssSummary, ssText);
 
   TSearchProcessor = class (TAdvObject)
@@ -43,6 +46,11 @@ type
     FIndexer: TFhirIndexManager;
     FLang: String;
     FRepository: TFHIRDataStore;
+
+    function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
+    function BuildFilterParameter(filter : TFSFilterParameter; path : TFSFilterParameterPath; parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
+    function BuildFilterLogical  (filter : TFSFilterLogical;   parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
+    Function ProcessSearchFilter(value : String) : String;
     Function ProcessParam(types : TFHIRResourceTypeSet; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
     procedure SetIndexer(const Value: TFhirIndexManager);
     procedure SetRepository(const Value: TFHIRDataStore);
@@ -50,7 +58,16 @@ type
     procedure SplitByCommas(value: String; list: TStringList);
     function findPrefix(var value: String; subst: String): boolean;
     procedure checkDateFormat(s : string);
+    function BuildParameterNumber(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+    function BuildParameterString(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+    function buildParameterDate(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+    function buildParameterToken(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+    function buildParameterReference(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+    procedure replaceNames(paramPath : TFSFilterParameterPath; components : TDictionary<String, String>); overload;
+    procedure replaceNames(filter : TFSFilter; components : TDictionary<String, String>); overload;
+    procedure processQuantityValue(name, lang: String; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
   public
+    Destructor Destroy; override;
     procedure Build;
 //procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
 
@@ -137,12 +154,350 @@ begin
   end;
 end;
 
+function TSearchProcessor.buildParameterReference(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+var
+  parts: TArray<String>;
+begin
+  case op of
+    fscoEQ:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + SQLWrapString(Value) + '''' + j + ')';
+    fscoNE:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <> ''' + SQLWrapString(Value) + '''' + j + ')';
+    fscoCO:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 like ''%' + SQLWrapString(Value) + '%''' + j + ')';
+    fscoSW:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 like ''' + SQLWrapString(Value) + '%''' + j + ')';
+    fscoEW:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 like ''%' + SQLWrapString(Value) + '''' + j + ')';
+    fscoRE:
+      begin
+        if value.StartsWith(baseURL) then
+          value := value.Substring(baseURL.Length);
+        if value.StartsWith('http:') or value.StartsWith('http:') then
+          // external reference - treat as equals
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + SQLWrapString(value) + '''' + j + ')'
+        else
+        begin
+          parts := value.Split(['/']);
+          if length(parts) = 1 then
+            result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + SQLWrapString(value) + '''' + j + ')'
+          else
+            result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(parts[0]) + ''') and ' + n + '.Value = ''' + SQLWrapString(parts[1]) + '''' + j + ')';
+        end;
+      end;
+  else
+    //
+    raise Exception.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of reference');
+  end;
+end;
 
+function TSearchProcessor.buildParameterToken(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+var
+  ref: string;
+  like: Boolean;
+begin
+  begin
+    like := false;
+    if value.Contains('|') then
+    begin
+      StringSplit(value, '|', ref, value);
+      if (ref = '') then
+        ref := n + '.SpaceKey is null and '
+      else if (ref = 'loinc') then
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://loinc.org'') and '
+      else if (ref = 'snomed') then
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://snomed.info/sct'') and '
+      else if (ref = 'rxnorm') then
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://www.nlm.nih.gov/research/umls/rxnorm'') and '
+      else if (ref = 'ucum') then
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://unitsofmeasure.org'') and '
+      else
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(ref) + ''') and ';
+    end
+    else
+      ref := '';
+    like := (Name = '_language');
+    case op of
+      fscoEQ:
+        if like then
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' /*' + name + '*/ and ' + ref + ' ' + n + '.Value like ''' + sqlwrapString(value) + '''%)'
+        else
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' /*' + Name + '*/ and ' + ref + ' ' + n + '.Value = ''' + sqlwrapString(value) + ''')';
+      fscoNE:
+        if like then
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' /*' + name + '*/ and ' + ref + ' ' + n + '.Value <> ''' + sqlwrapString(value) + ''')'
+        else
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' /*' + name + '*/ and ' + ref + ' not (' + n + '.Value like ''' + sqlwrapString(value) + '''%))';
+      fscoSS:
+        raise Exception.Create('Not implemented yet');
+      fscoSB:
+        raise Exception.Create('Not implemented yet');
+      fscoIN:
+        raise Exception.Create('Not implemented yet');
+      fscoCO:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 like ''%' + SQLWrapString(value) + '%''' + j + ')';
+      fscoSW:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 like ''' + SQLWrapString(value) + '%''' + j + ')';
+      fscoEW:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 like ''%' + SQLWrapString(value) + '''' + j + ')';
+    else
+      // fscoGT, fscoLT, fscoGE, fscoLE, fscoPO, fscoRE
+      raise Exception.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of token');
+    end;
+  end;
+end;
+
+function TSearchProcessor.buildParameterDate(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+var
+  date: TDateAndTime;
+begin
+  begin
+    date := TDateAndTime.CreateXML(value);
+    try
+      case op of
+        fscoEQ:
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + date.AsUTCDateTimeMinHL7 + ''' and ' + n + '.Value2 = ''' + date.AsUTCDateTimeMaxHL7 + '''' + j + ')';
+        fscoNE:
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and (' + n + '.Value <> ''' + date.AsUTCDateTimeMinHL7 + ''' or ' + n + '.Value2 <> ''' + date.AsUTCDateTimeMaxHL7 + ''')' + j + ')';
+        fscoGT:
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 >= ''' + date.AsUTCDateTimeMaxHL7 + '''' + j + ')';
+        fscoLT:
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + date.AsUTCDateTimeMinHL7 + '''' + j + ')';
+        fscoGE:
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 >= ''' + date.AsUTCDateTimeMinHL7 + '''' + j + ')';
+        fscoLE:
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + date.AsUTCDateTimeMaxHL7 + '''' + j + ')';
+        fscoPO:
+          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and (' + n + '.Value >= ''' + date.AsUTCDateTimeMaxHL7 + ''' or ' + n + '.Value2 <= ''' + date.AsUTCDateTimeMinHL7 + ''')' + j + ')';
+      else
+        // fscoSS, fscoSB, fscoIN, fscoRE, fscoCO, fscoSW, fscoEW
+        raise Exception.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of date');
+      end;
+    finally
+      date.free;
+    end;
+  end;
+end;
+
+function TSearchProcessor.BuildParameterString(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+begin
+  case op of
+    fscoEQ:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + SQLWrapString(Value) + '''' + j + ')';
+    fscoNE:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <> ''' + SQLWrapString(Value) + '''' + j + ')';
+    fscoCO:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''%' + SQLWrapString(Value) + '%''' + j + ')';
+    fscoSW:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''' + SQLWrapString(Value) + '%''' + j + ')';
+    fscoEW:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''%' + SQLWrapString(Value) + '''' + j + ')';
+    fscoGT:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value > ''' + SQLWrapString(Value) + '''' + j + ')';
+    fscoLT:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value < ''' + SQLWrapString(Value) + '''' + j + ')';
+    fscoGE:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value >= ''' + SQLWrapString(Value) + '''' + j + ')';
+    fscoLE:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + SQLWrapString(Value) + '''' + j + ')';
+  else
+    // fscoPO, fscoSS, fscoSB, fscoIN, fscoRE
+    raise Exception.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of string');
+  end;
+end;
+
+function TSearchProcessor.BuildParameterNumber(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
+  function CheckInteger(s : String):String;
+  begin
+    if StringIsInteger32(s) then
+      result := s
+    else
+      raise Exception.Create('not a valid number');
+  end;
+begin
+  case op of
+    fscoEQ:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and Cast(' + n + '.Value as int) = ' + CheckInteger(Value) + j + ')';
+    fscoNE:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and Cast(' + n + '.Value as int) <> ' + CheckInteger(Value) + j + ')';
+    fscoGT:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and Cast(' + n + '.Value as int) > ' + CheckInteger(Value) + j + ')';
+    fscoLT:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and Cast(' + n + '.Value as int) < ' + CheckInteger(Value) + j + ')';
+    fscoGE:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and Cast(' + n + '.Value as int) >= ' + CheckInteger(Value) + j + ')';
+    fscoLE:
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index) + ' and Cast(' + n + '.Value as int) <= ' + CheckInteger(Value) + j + ')';
+  else
+    // fscoCO, fscoSW, fscoEW, fscoPO, fscoSS, fscoSB, fscoIN, fscoRE
+    raise Exception.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of number');
+  end;
+end;
+
+
+procedure TSearchProcessor.processQuantityValue(name, lang : String; parts : TArray<string>; op : TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC : String);
+var
+  dec : TSmartDecimalContext;
+  value : TSmartDecimal;
+  ns, s : String;
+  specified, canonical : TUcumPair;
+  v, u : String;
+  i : integer;
+begin
+  minv := '';
+  maxv := '';
+  space := '';
+  mincv := '';
+  maxcv := '';
+  spaceC := '';
+
+  // [number]|[namespace]|[code]
+  if Length(parts) = 0 then
+    raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]));
+  if TSmartDecimal.StringIsValid(parts[0]) then
+    v := parts[0]
+  else
+  begin
+    i := 1;
+    s := parts[0];
+    while (i <= length(s)) and CharInSet(s[i], ['0'..'9', '.', '-']) do
+      inc(i);
+    if i = 1 then
+      raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]));
+    v := parts[0].Substring(0, i-1);
+    u := parts[0].Substring(i-1);
+  end;
+  dec := TSmartDecimalContext.Create;
+  try
+    value := dec.Value(v);
+
+    // work out the numerical limits
+    case op of
+      qopEqual :
+        begin
+        minv := normaliseDecimal(value.lowerBound.AsDecimal);
+        maxv := normaliseDecimal(value.upperBound.AsDecimal);
+        end;
+      qopLess :
+        maxv := normaliseDecimal(value.lowerBound.AsDecimal);
+      qopLessEqual :
+        maxv := normaliseDecimal(value.immediateLowerBound.AsDecimal);
+      qopGreater :
+        minv := normaliseDecimal(value.UpperBound.AsDecimal);
+      qopGreaterEqual :
+        minv := normaliseDecimal(value.immediateUpperBound.AsDecimal);
+      qopApproximate :
+        begin
+        if value.IsNegative then
+        begin
+          minv := normaliseDecimal(value.Multiply(dec.Value('1.2')).lowerBound.AsDecimal);
+          maxv := normaliseDecimal(value.Multiply(dec.Value('0.8')).upperBound.AsDecimal);
+        end
+        else
+        begin
+          minv := normaliseDecimal(value.Multiply(dec.Value('0.8')).lowerBound.AsDecimal);
+          maxv := normaliseDecimal(value.Multiply(dec.Value('1.2')).upperBound.AsDecimal);
+        end;
+        end;
+    end;
+
+    if (length(parts) = 1) then
+      space := u
+    else if length(parts) = 2 then
+    begin
+      if u = '' then
+        space := parts[1]
+      else
+      begin
+        space := u;
+        ns := parts[1];
+      end;
+    end
+    else if (length(parts) > 3) or (u <> '') then
+      raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]))
+    else
+    begin
+      if (parts[2] = 'ucum') or (parts[2] = 'snomed') or (parts[2].StartsWith('http:')) then
+      begin
+        // 2 is namespace
+        space := parts[1];
+        ns := parts[2];
+      end
+      else if (parts[1] = 'ucum') or (parts[1] = 'snomed') or (parts[1].StartsWith('http:')) then
+      begin
+        // 1 is namespace (per spec)
+        space := parts[2];
+        ns := parts[1];
+      end;
+    end;
+
+    if (ns = 'ucum') then
+      ns := 'http://unitsofmeasure.org'
+    else if ns  = 'snomed' then
+      ns := 'http://snomed.info/sct';
+
+    if (ns = 'http://unitsofmeasure.org') then
+    begin
+      specified := TUcumPair.create;
+      try
+        specified.Value := value.Link;
+        specified.UnitCode := space;
+        canonical := repository.TerminologyServer.Ucum.getCanonicalForm(specified);
+        try
+          mincv := normaliseDecimal(canonical.Value.lowerBound.AsDecimal);
+          maxcv := normaliseDecimal(canonical.Value.upperBound.AsDecimal);
+          spaceC := 'urn:ucum-canonical#'+canonical.UnitCode;
+        finally
+          canonical.free;
+        end;
+      finally
+        specified.free;
+      end;
+    end;
+
+    if (ns <> '') then
+      space := ns+'#'+space;
+  finally
+    dec.Free;
+  end;
+end;
+
+function lt(name, value : String) :String;
+begin
+  if value.StartsWith('-') then
+    result := '(Left('+name+', 1) = ''-'' and '+name+' > '''+value+''')'
+  else
+    result := name+' < '''+value+'''';
+end;
+
+function gt(name, value : String) :String;
+begin
+  if value.StartsWith('-') then
+    result := '((Left('+name+', 1) = ''-'' and '+name+' < '''+value+''')) or ((Left('+name+', 1) <> ''-'' and '+name+' > '''+value+'''))'
+  else
+    result := name+' > '''+value+'''';
+end;
+
+function lte(name, value : String) :String;
+begin
+  if value.StartsWith('-') then
+    result := '(Left('+name+', 1) = ''-'' and '+name+' >= '''+value+''')'
+  else
+    result := name+' <= '''+value+'''';
+end;
+
+function gte(name, value : String) :String;
+begin
+  if value.StartsWith('-') then
+    result := '((Left('+name+', 1) = ''-'' and '+name+' <= '''+value+''')) or ((Left('+name+', 1) <> ''-'' and '+name+' > '''+value+'''))'
+  else
+    result := name+' >= '''+value+'''';
+end;
 
 Function TSearchProcessor.processParam(types : TFHIRResourceTypeSet; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
 var
   key, i : integer;
-  left, right, op, modifier : String;
+  left, right, op, modifier, v1,v2, v1c, v2c, sp, spC : String;
   f, dummy : Boolean;
   ts : TStringList;
   pfx, sfx : String;
@@ -151,6 +506,7 @@ var
   type_ : TFhirSearchParamType;
   parts : TArray<string>;
   dop : TDateOperation;
+  qop : TQuantityOperation;
 begin
   date := nil;
   result := '';
@@ -165,6 +521,11 @@ begin
   begin
     bHandled := true;
     wantSummary := ssSummary;
+  end
+  else if (name = '_filter') and not nested then
+  begin
+    bHandled := true;
+    result:= processSearchFilter(value);
   end
   else if (name = '_summary') and (value = 'text') then
   begin
@@ -317,21 +678,6 @@ begin
                   end
                   else
                     result :=  result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
-//
-//                  !
-//                  // _id is a special case
-//                  if (name = '_id') or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
-//                    result := result + '(IndexKey = '+inttostr(Key)+' and Value = '''+sqlwrapString(value)+''')'
-//                  else
-//                  else if (modifier = 'code') or ((modifier = '') and (pos('/', value) > 0)) then
-//                  begin
-//                    StringSplitRight(value, '/', left, right);
-//                    result := result + '(IndexKey = '+inttostr(Key)+' and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(left)+''') and Value = '''+sqlwrapString(right)+''')';
-//                  end
-//                  else if modifier = 'anyns' then
-//                    result :=  result + '(IndexKey = '+inttostr(Key)+' and Value = '''+sqlwrapString(value)+''')'
-//                  else
-//                    raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]))
                   end;
                 SearchParamTypeReference :
                   begin
@@ -376,7 +722,58 @@ begin
                   end
                   end;
                 SearchParamTypeQuantity :
-                  raise exception.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
+                  begin
+                    if modifier <> '' then
+                      raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name+':'+modifier]));
+                    qop := qopEqual;
+                    if findPrefix(value, '<=') then
+                      qop := qopLessEqual
+                    else if findPrefix(value, '<') then
+                      qop := qopLess
+                    else if findPrefix(value, '>=') then
+                      qop := qopGreaterEqual
+                    else if findPrefix(value, '>') then
+                      qop := qopGreater
+                    else if findPrefix(value, '~') then
+                      qop := qopApproximate;
+                    processQuantityValue(name, lang, value.Split(['|']), qop, v1, v2, sp, v1C, v2C, spC);
+                    if spc <> '' then
+                    begin
+                      case qop of
+                        qopEqual:        result := result
+                           + '((IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(sp)+''') and '+gte('Value', v1)+' and '+lte('Value2', v2)+') or '
+                           + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 1 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(spC)+''') and '+gte('Value', v1C)+' and '+lte('Value2', v2C)+'))';
+                        qopLess:         result := result
+                           + '((IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(sp)+''') and '+lt('Value', v2)+') or '
+                           + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 1 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(spC)+''') and '+lt('Value', v2C)+'))';
+                        qopLessEqual:    result := result
+                           + '((IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(sp)+''') and '+lt('Value', v2)+') or '
+                           + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 1 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(spC)+''') and '+lt('Value', v2C)+'))';
+                        qopGreater:      result := result
+                           + '((IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(sp)+''') and '+gt('Value2', v1)+') or '
+                           + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 1 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(spC)+''') and '+gt('Value2', v1C)+'))';
+                        qopGreaterEqual: result := result
+                           + '((IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(sp)+''') and '+gte('Value2', v1)+') or '
+                           + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 1 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(spC)+''') and '+gte('Value2', v1C)+'))';
+                        qopApproximate:  result := result
+                           + '((IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(sp)+''') and '+gt('Value', v1)+' and '+lt('Value2', v2)+') or '
+                           + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 1 and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(spC)+''') and '+gt('Value', v1C)+' and '+lt('Value2', v2C)+'))';
+                      end;
+                    end
+                    else
+                    begin
+                      if sp <> '' then
+                        sp := 'and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(sp)+''') ';
+                      case qop of
+                        qopEqual:        result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 '+sp+'and '+gte('Value', v1)+' and '+lte('Value2', v2)+')';
+                        qopLess:         result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 '+sp+'and '+lt('Value', v2)+')';
+                        qopLessEqual:    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 '+sp+'and '+lt('Value', v2)+')';
+                        qopGreater:      result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 '+sp+'and '+gt('Value2', v1)+')';
+                        qopGreaterEqual: result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 '+sp+'and '+gte('Value2', v1)+')';
+                        qopApproximate:  result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and flag = 0 '+sp+'and '+gt('Value', v1)+' and '+lt('Value2', v2)+')';
+                      end;
+                    end;
+                  end;
               else if type_ <> SearchParamTypeNull then
                 raise exception.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
               end;
@@ -417,6 +814,45 @@ end;
 
 
 
+function TSearchProcessor.ProcessSearchFilter(value: String): String;
+var
+  filter : TFSFilter;
+  issuer : TFSCharIssuer;
+begin
+  issuer := TFSCharIssuer.Create;
+  try
+    filter := TFSFilterParser.parse(value);
+    try
+      result := '('+BuildFilter(filter, ' ', issuer, [FType])+')';
+    finally
+      filter.Free;
+    end;
+  finally
+    issuer.Free;
+  end;
+end;
+
+procedure TSearchProcessor.replaceNames(paramPath: TFSFilterParameterPath; components: TDictionary<String, String>);
+begin
+  if components.ContainsKey(paramPath.Name) then
+    paramPath.Name := components[paramPath.Name]
+  else
+    raise Exception.Create('Unknown Search Parameter Name "'+paramPath.Name+'"');
+end;
+
+procedure TSearchProcessor.replaceNames(filter: TFSFilter; components: TDictionary<String, String>);
+begin
+  if (filter = nil) then
+    exit
+  else if filter.FilterItemType = fsitLogical then
+  begin
+    replaceNames(TFSFilterLogical(filter).Filter1, components);
+    replaceNames(TFSFilterLogical(filter).Filter2, components);
+  end
+  else
+    replaceNames(TFSFilterParameter(filter).ParamPath, components);
+end;
+
 procedure TSearchProcessor.SetIndexer(const Value: TFhirIndexManager);
 begin
   FIndexer := Value;
@@ -424,8 +860,10 @@ end;
 
 procedure TSearchProcessor.SetRepository(const Value: TFHIRDataStore);
 begin
+  FRepository.Free;
   FRepository := Value;
 end;
+
 
 function TSearchProcessor.SchemeForName(name : String) : string;
 begin
@@ -451,6 +889,95 @@ begin
   result := value.StartsWith(subst);
   if result then
     value := value.Substring(subst.Length);
+end;
+
+function TSearchProcessor.BuildFilter(filter: TFSFilter; parent: char; issuer: TFSCharIssuer; types : TFHIRResourceTypeSet): String;
+begin
+  case filter.FilterItemType of
+    fsitParameter : result := BuildFilterParameter(filter as TFSFilterParameter, TFSFilterParameter(filter).ParamPath, parent, issuer, types);
+    fsitLogical :   result := BuildFilterLogical(filter as TFSFilterLogical, parent, issuer, types);
+  else
+    raise Exception.Create('Unknown type');
+  end;
+end;
+
+function TSearchProcessor.BuildFilterLogical(filter: TFSFilterLogical; parent: char; issuer: TFSCharIssuer; types : TFHIRResourceTypeSet): String;
+begin
+  if filter.Operation = fsloNot then
+    result := '(Not '+BuildFilter(filter.Filter2, parent, issuer, types)+')'
+  else if filter.Operation = fsloOr then
+    result := '('+BuildFilter(filter.Filter1, parent, issuer, types)+' or '+BuildFilter(filter.Filter2, parent, issuer, types)+')'
+  else // filter.Operation = fsloAnd
+    result := '('+BuildFilter(filter.Filter1, parent, issuer, types)+' and '+BuildFilter(filter.Filter2, parent, issuer, types)+')';
+
+end;
+
+
+function TSearchProcessor.BuildFilterParameter(filter: TFSFilterParameter; path : TFSFilterParameterPath; parent: char; issuer: TFSCharIssuer; types : TFHIRResourceTypeSet): String;
+var
+  index : integer;
+  n : char;
+  j, value : string;
+  stype : TFhirSearchParamType;
+  comp : TFhirComposite;
+begin
+  n := issuer.next;
+  if parent = ' ' then
+    j := ''
+  else
+    j := ' and '+n+'.parent = '+parent+'.EntryKey';
+  index := FIndexer.GetKeyByName(types, path.Name);
+
+  if path.Next <> nil then
+  begin
+    comp := FIndexer.getComposite(types, path.Name, types);
+    if (comp <> nil) then
+    begin
+      if (filter = nil) then
+        raise Exception.Create('Parameter ("'+path.Name+'") is missing a filter - it is required');
+      // first, scan the filter - there must be one - and rename them. They must match
+      replaceNames(path.Filter, comp.Components);
+      replaceNames(path.next, comp.components);
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as '+n+' where (indexKey = '''+inttostr(index)+''' and '+BuildFilter(path.Filter, n, issuer, types) +')'+j;
+      // ok, that's the filter. Now we process the content
+      result := result + ' and '+BuildFilterParameter(filter, path.Next, n, issuer, types);
+      result := result +')';
+    end
+    else
+    begin
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where ' + n + '.IndexKey = ' + inttostr(index);
+      if path.filter <> nil then
+        raise Exception.Create('Not handled yet');
+     //   + ' and ' + n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(parts[0]) + ''')'
+    // result := result +'  and ' + n + '.target in ()' + j + ')';
+      result := result + ' and '+n+'.target in (select ResourceKey from IndexEntries where ('+BuildFilterParameter(filter, path.Next, parent, issuer, FIndexer.GetTargetsByName(types, path.name))+')))'+j;
+    end;
+  end
+  else
+  begin
+    // do we recognise the attribute path?
+    assert(path.Filter = nil); // not allowed in the grammar
+    stype := FIndexer.GetTypeByName(types, path.Name);
+
+    if filter.Operation = fscoPR then
+    begin
+      if (filter.value = 'true') then
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as '+n+' where '+n+'.IndexKey = '+inttostr(index)+j+')'
+      else
+        result := 'not (ResourceKey in (select ResourceKey from IndexEntries as '+n+' where '+n+'.IndexKey = '+inttostr(index)+j+'))';
+    end
+    else case stype of
+      SearchParamTypeNull:
+        raise Exception.Create('The search type could not be determined');
+      SearchParamTypeNumber:    result := BuildParameterNumber(index, n, j, path.Name, filter.Operation, filter.Value);
+      SearchParamTypeString :   result := BuildParameterString(index, n, j, path.Name, filter.Operation, filter.Value);
+      SearchParamTypeDate:      result := buildParameterDate(index, n, j, path.Name, filter.Operation, filter.Value);
+      SearchParamTypeToken:     result := buildParameterToken(index, n, j, path.Name, filter.Operation, filter.Value);
+      SearchParamTypeReference: result := buildParameterReference(index, n, j, path.Name, filter.Operation, filter.Value);
+      SearchParamTypeComposite: raise Exception.Create('Composite indexes cannot the direct target of an operation criteria (except for operation "pr")');
+      SearchParamTypeQuantity:  raise Exception.Create('Quantity searching is not handled yet');
+    end;
+  end;
 end;
 
 procedure TSearchProcessor.checkDateFormat(s: string);
@@ -481,6 +1008,12 @@ end;
 
 
 
+
+destructor TSearchProcessor.Destroy;
+begin
+  FRepository.Free;
+  inherited;
+end;
 
 end.
 

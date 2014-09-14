@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Thu, Sep 4, 2014 10:47+1000
+// FHIR v0.3.0 generated Fri, Sep 5, 2014 09:16+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON, FHIRAtomFeed;
@@ -1509,7 +1509,7 @@ begin
     exit;
   end
   else
-    prop(json, name, value.value);
+    propNumber(json, name, value.value);
 end;
 
 Procedure TFHIRJsonComposer.ComposeIntegerProps(json : TJSONWriter; name : String; value : TFhirInteger; inArray : boolean);
@@ -1761,7 +1761,7 @@ begin
     exit;
   end
   else
-    prop(json, name, value.value);
+    propNumber(json, name, value.value);
 end;
 
 Procedure TFHIRJsonComposer.ComposeDecimalProps(json : TJSONWriter; name : String; value : TFhirDecimal; inArray : boolean);

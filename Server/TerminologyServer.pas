@@ -4,6 +4,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
+  StringSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists,
   KDBManager, KDBOdbcExpress,
   FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
@@ -20,15 +21,22 @@ Type
     procedure AddDependency(name, value : String);
     function getCodeDefinition(c : TFHIRValueSetDefineConcept; code : string) : TFHIRValueSetDefineConcept; overload;
     function getCodeDefinition(vs : TFHIRValueSet; code : string) : TFHIRValueSetDefineConcept; overload;
+    function makeAnyValueSet: TFhirValueSet;
+
+    // database maintenance
+    procedure processClosureEntry(ClosureEntryKey, ClosureKey, ConceptKey : integer; conn2, conn3 : TKDBConnection; uri, code : String);
+    function subsumes(uri1, code1, uri2, code2 : String) : boolean;
+    procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TKDBConnection);
+    procedure processConcept(ConceptKey : integer; URL, Code : String; conn2, conn3 : TKDBConnection);
   protected
     procedure invalidateVS(id : String); override;
   public
-    constructor Create;
-    Destructor Destroy;
+    constructor Create(db : TKDBManager); override;
+    Destructor Destroy; override;
     function Link: TTerminologyServer; overload;
 
-    // load external terminology resources (snomed, Loinc)
-    procedure load(ini : TIniFile; db : TKDBManager);
+    // load external terminology resources (snomed, Loinc, etc)
+    procedure load(ini : TIniFile);
 
 
     // functional services
@@ -37,12 +45,12 @@ Type
     function isKnownValueSet(id : String; out vs : TFHIRValueSet): Boolean;
 
     // given a value set, expand it
-    function expandVS(vs : TFHIRValueSet; cacheId : String; textFilter : String) : TFHIRValueSet; overload;
-    function expandVS(uri : String; textFilter : String) : TFHIRValueSet; overload;
+    function expandVS(vs : TFHIRValueSet; cacheId : String; textFilter : String; limit : integer) : TFHIRValueSet; overload;
+    function expandVS(uri : String; textFilter : String; limit : integer) : TFHIRValueSet; overload;
 
     // these are internal services - not for use outside the terminology server
-    function expandVS(uri: String; textFilter : String; dependencies : TStringList) : TFHIRValueSet; overload;
-    function expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; dependencies : TStringList): TFHIRValueSet; overload;
+    function expandVS(uri: String; textFilter : String; dependencies : TStringList; limit : integer) : TFHIRValueSet; overload;
+    function expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; dependencies : TStringList; limit : integer): TFHIRValueSet; overload;
 
     function validate(vs : TFHIRValueSet; coding : TFhirCoding) : TFhirOperationOutcome; overload;
     function validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept) : TFhirOperationOutcome; overload;
@@ -50,6 +58,10 @@ Type
     Function MakeChecker(uri : string) : TValueSetChecker;
     function getDisplayForCode(system, code : String): String;
     function checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
+
+    // database maintenance
+    procedure BuildIndexes(prog : boolean);
+
   end;
 
 implementation
@@ -60,7 +72,7 @@ uses
 
 { TTerminologyServer }
 
-constructor TTerminologyServer.Create;
+constructor TTerminologyServer.Create(db : TKDBManager);
 begin
   inherited;
   FExpansions := TAdvStringObjectMatch.create;
@@ -76,7 +88,7 @@ begin
   inherited;
 end;
 
-procedure TTerminologyServer.load(ini : TIniFile; db : TKDBManager);
+procedure TTerminologyServer.load(ini : TIniFile);
 var
   fn : string;
 begin
@@ -153,19 +165,19 @@ begin
      FExpansions.DeleteByIndex(i);
 end;
 
-function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String): TFHIRValueSet;
+function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; limit : integer): TFHIRValueSet;
 var
   ts : TStringList;
 begin
   ts := TStringList.create;
   try
-    result := expandVS(vs, cacheId, textFilter, ts);
+    result := expandVS(vs, cacheId, textFilter, ts, limit);
   finally
     ts.free;
   end;
 end;
 
-function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; dependencies : TStringList): TFHIRValueSet;
+function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; dependencies : TStringList; limit : integer): TFHIRValueSet;
 var
   s : String;
   exp : TFHIRValueSetExpander;
@@ -175,8 +187,8 @@ begin
   begin
     FLock.Lock('expandVS.1');
     try
-      if FExpansions.ExistsByKey(cacheId+#1+textFilter) then
-        result := (FExpansions.matches[cacheId+#1+textFilter] as TFhirValueSet).link;
+      if FExpansions.ExistsByKey(cacheId+#1+textFilter+#1+inttostr(limit)) then
+        result := (FExpansions.matches[cacheId+#1+textFilter+#1+inttostr(limit)] as TFhirValueSet).link;
     finally
       FLock.Unlock;
     end;
@@ -185,15 +197,18 @@ begin
   begin
     exp := TFHIRValueSetExpander.create(self.Link);
     try
-      result := exp.expand(vs, textFilter, dependencies);
+      result := exp.expand(vs, textFilter, dependencies, limit);
       if (dependencies.Count > 0) and (cacheId <> '') then
       begin
         FLock.Lock('expandVS.2');
         try
-          FExpansions.Add(cacheId+#1+textFilter, result.Link);
-          // in addition, we trace the dependencies so we can expire the cache
-          for s in dependencies do
-            AddDependency(s, cacheId);
+          if not FExpansions.ExistsByKey(cacheId+#1+textFilter+#1+inttostr(limit)) then
+          begin
+            FExpansions.Add(cacheId+#1+textFilter+#1+inttostr(limit), result.Link);
+            // in addition, we trace the dependencies so we can expire the cache
+            for s in dependencies do
+              AddDependency(s, cacheId);
+          end;
         finally
           FLock.Unlock;
         end;
@@ -206,7 +221,7 @@ end;
 
 
 
-function TTerminologyServer.expandVS(uri: String; textFilter : String): TFHIRValueSet;
+function TTerminologyServer.expandVS(uri: String; textFilter : String; limit : integer): TFHIRValueSet;
 var
   vs : TFHIRValueSet;
   ts : TStringList;
@@ -215,7 +230,7 @@ begin
   try
     vs := getValueSetByUrl(uri);
     try
-      result := expandVS(vs, uri, textFilter, ts);
+      result := expandVS(vs, uri, textFilter, ts, limit);
     finally
       vs.Free;
     end;
@@ -224,7 +239,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(uri: String; textFilter : String; dependencies: TStringList): TFHIRValueSet;
+function TTerminologyServer.expandVS(uri: String; textFilter : String; dependencies: TStringList; limit : integer): TFHIRValueSet;
 var
   vs : TFHIRValueSet;
 begin
@@ -232,11 +247,29 @@ begin
   try
     if vs = nil then
       raise Exception.Create('Unable to find value set "'+uri+'"');
-    result := expandVS(vs, uri, textFilter);
+    result := expandVS(vs, uri, textFilter, limit);
   finally
     vs.Free;
   end;
 end;
+
+
+function TTerminologyServer.makeAnyValueSet: TFhirValueSet;
+begin
+  result := TFhirValueSet.Create;
+  try
+    result.identifierST := ANY_CODE_VS;
+    result.nameST := 'All codes known to the system';
+    result.descriptionST := 'All codes known to the system';
+    result.statusST := ValuesetStatusActive;
+    result.compose := TFhirValueSetCompose.create;
+    result.compose.includeList.Append.systemST := ANY_CODE_VS;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
 
 function TTerminologyServer.isKnownValueSet(id: String; out vs: TFHIRValueSet): Boolean;
 begin
@@ -244,7 +277,9 @@ begin
   if id.StartsWith('http://snomed.info/') then
     vs := Snomed.buildValueSet(id)
   else if id.StartsWith('http://loinc.org/vs/LP') then
-    vs := Loinc.buildValueSet(id);
+    vs := Loinc.buildValueSet(id)
+  else if id = ANY_CODE_VS then
+    vs := makeAnyValueSet;
   result := vs <> nil;
 end;
 
@@ -461,254 +496,210 @@ begin
   end;
 end;
 
-(*
-function TTerminologyServer.checkCode(op: TFhirOperationOutcome; path, code, system, display: string; context: TFHIRProfileStructureElement): boolean;
+procedure TTerminologyServer.BuildIndexes(prog : boolean);
+var
+  conn1, conn2, conn3 : TKDBConnection;
+  i : integer;
 begin
-{
-    function getValueSet(system : string) : TFHIRValueSet;
-}
+  conn1 := DB.GetConnection('BuildIndexes');
+  try
+    conn2 := DB.GetConnection('BuildIndexes');
+    try
+      conn3 := DB.GetConnection('BuildIndexes');
+      try
+        if conn1.CountSQL('Select Count(*) from ValueSets where NeedsIndexing = 0') = 0 then
+          conn1.ExecSQL('Update Concepts set NeedsIndexing = 0'); // we're going to index them all anwyay
 
+        // first, update value set member information
+        if (prog) then Write('Updating ValueSet Members');
+        conn1.SQL := 'Select ValueSetKey, URL from ValueSets where NeedsIndexing = 1';
+        conn1.Prepare;
+        conn1.Execute;
+        i := 0;
+        while conn1.FetchNext do
+        begin
+          inc(i);
+          if (prog and (i mod 10 = 0)) then Write('.');
+          processValueSet(conn1.ColIntegerByName['ValueSetKey'], conn1.ColStringByName['URL'], conn2, conn3);
+        end;
+        conn1.Terminate;
+        if (prog) then Writeln;
+
+        // second, for each concept that needs indexing, check it's value set information
+        if (prog) then Write('Indexing Concepts');
+        conn1.SQL := 'Select ConceptKey, URL, Code from Concepts where NeedsIndexing = 1';
+        conn1.Prepare;
+        conn1.Execute;
+        i := 0;
+        while conn1.FetchNext do
+        begin
+          inc(i);
+          if (prog and (i mod 10 = 0)) then Write('.');
+          processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code'], conn2, conn3);
+        end;
+        conn1.Terminate;
+        if (prog) then Writeln;
+
+
+        // last, for each entry in the closure entry table that needs closureing, do it
+        if (prog) then Write('Generating Closures');
+        conn1.SQL := 'select ClosureEntryKey, ClosureKey, SubsumesKey, URL, Code from ClosureEntries, Concepts where ClosureEntries.NeedsIndexing = 1 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
+        conn1.Prepare;
+        conn1.Execute;
+        while conn1.FetchNext do
+        begin
+          inc(i);
+          if (prog and (i mod 100 = 0)) then Write('.');
+          processClosureEntry(conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['ClosureKey'], conn1.ColIntegerByName['SubsumesKey'], conn2, conn3, conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
+        end;
+        conn1.Terminate;
+        if (prog) then Writeln;
+
+        conn3.Release;
+      except
+        on e : exception do
+        begin
+          conn3.Error(e);
+        end;
+      end;
+      conn2.Release;
+    except
+      on e : exception do
+      begin
+        conn2.Error(e);
+      end;
+    end;
+    conn1.Release;
+  except
+    on e : exception do
+    begin
+      conn1.Error(e);
+    end;
+  end;
 end;
 
-procedure TTerminologyServer.DropTerminologyResource(key: Integer; aType : TFhirResourceType);
+function TTerminologyServer.subsumes(uri1, code1, uri2, code2: String): boolean;
+var
+  prov : TCodeSystemProvider;
+  loc :  TCodeSystemProviderContext;
 begin
-
-end;
-
-function TTerminologyServer.expandVS(vs: TFHIRValueSet): TFHIRValueSet;
-begin
-
-end;
-
-function TTerminologyServer.isKnownValueSet(id: String;
-  out vs: TFHIRValueSet): Boolean;
-begin
-
-end;
-
-procedure TTerminologyServer.load(ini: TIniFile);
-begin
-
-end;
-
-procedure TTerminologyServer.SeeSpecificationResource(resource: TFHIRResource);
-begin
-
-end;
-
-procedure TTerminologyServer.SeeTerminologyResource(key: Integer;
-  resource: TFHIRResource);
-begin
-
-end;
-
-function TTerminologyServer.translate(vs: TFHIRValueSet;
-  coding: TFhirCoding): TFhirOperationOutcome;
-begin
-
-end;
-
-function TTerminologyServer.validate(vs: TFHIRValueSet;
-  coding: TFhirCoding): TFhirOperationOutcome;
-begin
-
-end;
-
-function TTerminologyServer.validate(vs: TFHIRValueSet;
-  coded: TFhirCodeableConcept): TFhirOperationOutcome;
-begin
-
-end;
-
-function TTerminologyServer.MakeChecker(uri: string): TValueSetChecker;
-begin
-{
-
-function TTerminologyServer.findValueSet(uri: string): TFhirValueSet;
-begin
-//    result := FValuesets.matches[TFHIRUri(ref).value] as TFHIRValueSet
-
-end;
-
-
-  if Fchecks.ExistsByKey(vs.identifierST) then
-    result := FChecks.matches[vs.identifierST] as TValueSetChecker
+  if (uri1 <> uri2) then
+    result := false // todo later - check that concept maps
+  else if (uri1 = Snomed.system(nil)) then
+    result := Snomed.Subsumes(code1, code2)
   else
   begin
-  end;}
-end;
-
-
-end.
-
-
-function TFHIRDataStore.translate(vs: TFHIRValueSet; coding: TFhirCoding): TFhirOperationOutcome;
-var
-  cm : TFhirConceptMap;
-  s : String;
-begin
-  s.Substring()
-  result := TFhirOperationOutcome.Create;
-  try
-    cm := FindConceptMap(vs, coding.systemST);
-    try
-      if cm = nil then
-        rule(
-
-
-    finally
-      cm.Free;
+    prov := getProvider(uri1, true);
+    if prov <> nil then
+    begin
+      try
+        loc := prov.locateIsA(code2, code1);
+        result := Loc <> nil;
+        prov.Close(loc);
+      finally
+        prov.Free;
+      end;
     end;
-    result.link;
-  finally
-    result.Free;
-  end;
-  cm := T
-  // is there a valueset?
-    // is there a concept map for the value set
-  // else
-    // is there a concept map for the code system
-
-end;
-
-function TFHIRDataStore.validate(vs: TFHIRValueSet; coding: TFhirCoding): TFhirOperationOutcome;
-var
-  check : TValueSetChecker;
-begin
-  check := TValueSetChecker.create;
-  try
-    FLock.Lock('validate');
-    try
-      check.ValueSets := FValuesetExpander.ValueSets.Link;
-      check.CodeSystems := FValuesetExpander.CodeSystems.Link;
-      check.prepare(vs);
-      result := check.check(coding);
-    finally
-      FLock.Unlock;
-    end;
-  finally
-    check.Free;
   end;
 end;
 
-function TFHIRDataStore.validate(vs: TFHIRValueSet; coded: TFhirCodeableConcept): TFhirOperationOutcome;
-var
-  check : TValueSetChecker;
+procedure TTerminologyServer.processClosureEntry(ClosureEntryKey, ClosureKey, ConceptKey: integer; conn2, conn3: TKDBConnection; uri, code : String);
 begin
-  check := TValueSetChecker.create;
+  conn2.SQL := 'select ConceptKey, URL, Code from Concepts where ConceptKey in (select SubsumesKey from ClosureEntries where ClosureKey = '+inttostr(ClosureKey)+' and ClosureEntryKey <> '+inttostr(ClosureEntryKey)+')';
+  conn2.prepare;
   try
-    FLock.Lock('validate');
-    try
-      check.ValueSets := FValuesetExpander.ValueSets.Link;
-      check.CodeSystems := FValuesetExpander.CodeSystems.Link;
-      check.prepare(vs);
-      result := check.check(coded);
-    finally
-      FLock.Unlock;
-    end;
+    conn2.execute;
+    while conn2.fetchnext do
+      if subsumes(uri, code, conn2.ColStringByName['URL'],conn2.ColStringByName['Code']) then
+        conn3.execSQL('Insert into ClosureEntries (ClosureEntryKey, ClosureKey, SubsumesKey, SubsumedKey, NeedsIndexing) values ('+inttostr(NextClosureEntryKey)+', '+inttostr(ClosureKey)+', '+inttostr(ConceptKey)+', '+conn2.colStringByName['ConceptKey']+', 0)');
   finally
-    result.Free;
+    conn2.terminate;
   end;
+  conn2.ExecSQL('Update ClosureEntries set NeedsIndexing = 0 where ClosureEntryKey = '+inttostr(ClosureEntryKey));
 end;
 
-
-procedure TFHIRDataStore.DelistValueSet(key: Integer);
+procedure TTerminologyServer.processConcept(ConceptKey: integer; URL, Code: String; conn2, conn3: TKDBConnection);
 var
-  vs : TFHIRValueSet;
+  vs : TFhirValueSet;
+  val : TValuesetChecker;
 begin
-  FLock.Lock('DelistValueSet');
-  try
-    if FValueSetTracker.ExistsByKey(inttostr(key)) then
-    begin
-      vs := FValueSetTracker.Matches[inttostr(key)] as TFhirValueSet;
-      if (vs.define <> nil) then
-        FValuesetExpander.CodeSystems.DeleteByKey(vs.define.systemST);
-      if (vs.identifierST <> '') then
-      FValuesetExpander.ValueSets.DeleteByKey(vs.identifierST);
-      FValueSetTracker.DeleteByKey(inttostr(key));
-    end;
-  finally
-    FLock.Unlock;
+  conn2.SQL := 'select ValueSetKey, URL from ValueSets';
+  conn2.Prepare;
+  conn2.Execute;
+  while conn2.FetchNext do
+  begin
+    vs := getValueSetByIdentifier(conn2.ColStringByName['URL']);
+    if vs = nil then
+      conn3.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = ''Unable to find definition'' where ValueSetKey = '+conn2.ColStringByName['ValueSetKey'])
+    else
+      try
+        try
+          val := TValueSetChecker.create(self.Link, vs.identifierST);
+          try
+            val.prepare(vs);
+            if not val.check(URL, code) then
+              conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
+            else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
+              conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+conn2.ColStringByName['ValueSetKey']+', '+inttostr(ConceptKey)+')');
+          finally
+            val.Free;
+          end;
+        finally
+          vs.Free;
+        end;
+      except
+        on e : Exception do
+        begin
+          conn3.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = '''+sqlwrapstring(e.Message)+''' where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']);
+        end;
+      end;
   end;
+  Conn2.Terminate;
+  conn2.ExecSQL('Update Concepts set NeedsIndexing = 0 where ConceptKey = '+inttostr(ConceptKey));
 end;
 
-procedure TFHIRDataStore.DelistConceptMap(key: Integer);
+procedure TTerminologyServer.processValueSet(ValueSetKey: integer; URL: String; conn2, conn3: TKDBConnection);
 var
-  vs : TFHIRConceptMap;
+  vs : TFhirValueSet;
+  val : TValuesetChecker;
+  system, code : String;
 begin
-  FLock.Lock('DelistConceptMap');
-  try
-    if FConceptMapTracker.ExistsByKey(inttostr(key)) then
-    begin
-      vs := FConceptMapTracker.Matches[inttostr(key)] as TFhirConceptMap;
-      FConceptMapTracker.DeleteByKey(inttostr(key));
-    end;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-    begin
-      vs := resource as TFHIRValueSet;
-      FValueSetTracker.add(inttostr(key), vs.link);
-      if (vs.define <> nil) then
-        FValuesetExpander.CodeSystems.add(vs.define.systemST, vs.link);
-      if (vs.identifierST <> '') then
-        FValuesetExpander.ValueSets.add(vs.identifierST, vs.link);
-    end
-    else if resource.ResourceType = frtConceptMap then
-    begin
-      cm := resource as TFhirConceptMap;
-      FConceptMapTracker.add(inttostr(key), cm.link);
-    end
-
-        if (aType = frtValueSet) and (FValueSetTracker.ExistsByKey(inttostr(key)))  then
-    begin
-      vs := FValueSetTracker.Matches[inttostr(key)] as TFHIRValueSet;
-      if (vs.define <> nil) then
-        FValuesetExpander.CodeSystems.DeleteByKey(vs.define.systemST);
-      if (vs.identifierST <> '') then
-        FValuesetExpander.ValueSets.DeleteByKey(vs.identifierST);
-      FValueSetTracker.DeleteByKey(inttostr(key));
-    end
-    else if (aType = frtConceptMap) and (FValueSetTracker.ExistsByKey(inttostr(key)))  then
-    begin
-      cm := FConceptMapTracker.Matches[inttostr(key)] as TFHIRConceptMap;
-      FValueSetTracker.DeleteByKey(inttostr(key));
-    end
-
-
-
-    procedure DelistValueSet(key : Integer);
-    procedure DelistConceptMap(key : Integer);
-        if request.ResourceType = frtValueSet then
-          FRepository.DelistValueSet(ResourceKey);
-        if request.ResourceType = frtConceptMap then
-          FRepository.DelistConceptMap(ResourceKey);
-
-function TFHIRValidator.getValueSet(system : string) : TFHIRValueSet;
-begin
-  if FCodeSystems.ExistsByKey(system) then
-    result := FCodeSystems.matches[system] as TFHIRValueSet
+  vs := getValueSetByIdentifier(URL);
+  if vs = nil then
+    conn2.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = ''Unable to find definition'' where ValueSetKey = '+inttostr(valuesetKey))
   else
-    result := nil;
+    try
+      try
+        val := TValueSetChecker.create(self.Link, vs.identifierST);
+        try
+          val.prepare(vs);
+          conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
+          conn2.Prepare;
+          conn2.Execute;
+          while conn2.FetchNext do
+          begin
+            system := conn2.ColStringByName['URL'];
+            code := conn2.ColStringByName['Code'];
+            if not val.check(system, code) then
+              conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey'])
+            else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey']) = 0 then
+              conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+inttostr(ValueSetKey)+', '+conn2.ColStringByName['ConceptKey']+')');
+          end;
+          Conn2.Terminate;
+          conn2.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = null where ValueSetKey = '+inttostr(valuesetKey));
+        finally
+          val.Free;
+        end;
+      finally
+        vs.Free;
+      end;
+    except
+      on e : Exception do
+      begin
+        conn2.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = '''+sqlwrapstring(e.Message)+''' where ValueSetKey = '+inttostr(valuesetKey));
+      end;
+    end;
 end;
 
-
-
-
-
-
-    begin
-      vs := r as TFhirValueSet;
-      FValuesets.add(vs.IdentifierST, vs.link);
-      if (vs.Define <> nil) then
-        FCodesystems.add(vs.Define.SystemST, vs.link);
-    end;
-
-
-
-
-*)
 
 end.

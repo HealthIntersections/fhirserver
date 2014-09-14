@@ -37,7 +37,7 @@ Type
     Procedure PublishConcept(bRoot : Boolean; Const sPrefix, sId : String; iStart : Integer; html : THtmlPublisher);
     Procedure PublishTermConcept(bRoot : Boolean; Const sPrefix, sId : String; iStart : Integer; html : THtmlPublisher);
     Procedure PublishConcepts(Const sPrefix : String; iStart : Integer; html : THtmlPublisher);
-    Procedure PublishSearch(Const sPrefix, sText, sContext : String; iStart: Integer; html : THtmlPublisher);
+    Procedure PublishSearch(Const sPrefix, sText, sContext : String; iStart: Integer; all : boolean; html : THtmlPublisher);
     Procedure PublishHome(Const sPrefix : String; html : THtmlPublisher);
 
     Procedure ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
@@ -63,6 +63,29 @@ Begin
     delete(result, length(result) - length(s2) + 1, length(s));
 End;
 
+function StringToBoolDef(s : String; def : boolean):boolean;
+begin
+  s := lowercase(s);
+  if s = 'true' then
+    result := true
+  else if s = '1' then
+    result := true
+  else if s = 'yes' then
+    result := true
+  else if s = 'y' then
+    result := true
+  else if s = 'false' then
+    result := false
+  else if s = '0' then
+    result := false
+  else if s = 'no' then
+    result := false
+  else if s = 'n' then
+    result := false
+  else
+    result := def;
+end;
+
 Procedure TSnomedPublisher.PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher);
 Var
   sURL : String;
@@ -79,7 +102,7 @@ Begin
     if StringIsInteger64(oMap.Matches['srch']) and ((oMap.Matches['context'] = '') or (FSnomed.Subsumes(oMap.Matches['context'], oMap.Matches['srch']))) then
       PublishConcept(false, sURL, oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), html)
     else
-      PublishSearch(sURL, oMap.Matches['srch'], oMap.Matches['context'], StrToIntDef(oMap.Matches['start'], 0), html)
+      PublishSearch(sURL, oMap.Matches['srch'], oMap.Matches['context'], StrToIntDef(oMap.Matches['start'], 0), StringToBoolDef(oMap.matches['all'], false), html)
   else
     PublishHome(sURL, html)
 End;
@@ -161,6 +184,8 @@ Begin
     html.AddTextPlain('Search: ');
     html.textInput('srch');
     html.submit('Go');
+    html.AddTextPlain(' ');
+    html.checkbox('all', '1', 'Tight');
     html.endForm;
 
     html.StartList;
@@ -1537,7 +1562,7 @@ begin
   html.Done;
 end;
 
-procedure TSnomedPublisher.PublishSearch(const sPrefix, sText, sContext: String; iStart: Integer; html: THtmlPublisher);
+procedure TSnomedPublisher.PublishSearch(const sPrefix, sText, sContext: String; iStart: Integer; all : boolean; html: THtmlPublisher);
 var
   a : TMatchArray;
   i : integer;
@@ -1555,7 +1580,7 @@ begin
       a := TSearchCache(FSearchCache.Objects[i]).a
     else
     Begin
-      a := FSnomed.Search(iContext, sText, 0, false);
+      a := FSnomed.Search(iContext, sText, 0, false, all);
       o := TSearchCache.Create;
       o.a := a;
       FSearchCache.AddObject(sText+#0+sContext, o);

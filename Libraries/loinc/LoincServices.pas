@@ -299,7 +299,7 @@ Type
     Procedure Save(Const sFilename : String);
     Function GetDisplayByName(Const sCode : String) : String;
     procedure GetDisplaysByName(Const sCode : String; list : TStringList);
-    Function Search(sText : String) : TMatchArray; overload;
+    Function Search(sText : String; all: boolean) : TMatchArray; overload;
     Function GetPropertyId(aType : TLoincPropertyType; const sName : String) : Word;
     Function GetPropertyCodes(iProp : Word) : TCardinalArray;
     Function GetConceptName(iConcept : Word): String;
@@ -327,7 +327,7 @@ Type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function findMAConcept(code : String) : Cardinal;
-    function system : String; override;
+    function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -729,9 +729,12 @@ begin
     CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     assert(sCode = sCode1);
     list.Add(Desc.GetEntry(iDescription));
-    names := FRefs.GetCardinals(iOtherNames);
-    for name in names do
-      list.Add(Desc.GetEntry(name));
+    if iOtherNames <> 0 then
+    begin
+      names := FRefs.GetCardinals(iOtherNames);
+      for name in names do
+        list.Add(Desc.GetEntry(name));
+    end;
   End
 end;
 
@@ -921,7 +924,7 @@ var
   children : TCardinalArray;
   i : integer;
 begin
-  matches := Search(filter.filter);
+  matches := Search(filter.filter, true);
   setLength(children, length(matches));
   for i := 0 to Length(matches) - 1 do
     children[i] := matches[i].index;
@@ -992,7 +995,7 @@ End;
 
 
 
-function TLOINCServices.Search(sText: String): TMatchArray;
+function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
   Function Match(const words : TSearchWordArray; s : String; iDepth : byte):Double;
   var
     i : integer;
@@ -1046,19 +1049,32 @@ function TLOINCServices.Search(sText: String): TMatchArray;
     sCode1 : String;
     iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
     iFlags : Byte;
+    matches : integer;
+    ok : boolean;
   Begin
     CodeList.GetInformation(iCodeIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
     r1 := 0;
+    matches := 0;
     Desc := Refs.GetCardinals(iStems);
     For i := 0 to length(words) - 1 do
+    begin
       if words[i].stem <> 0 Then
+      begin
+        ok := false;
         For j := 0 to length(Desc) - 1 do
           if (words[i].stem = desc[j]) Then
-            r1 := r1 + 20 + (20 / length(desc))
+          begin
+            r1 := r1 + 20 + (20 / length(desc));
+            ok := true;
+          end
           else
             assert(FDesc.GetEntry(words[i].stem) <> FDesc.GetEntry(desc[j]));
+        if ok then
+          inc(matches);
+      end;
+    end;
 
-    if r1  > 0 Then
+    if (not all or (matches = length(words))) and (r1  > 0) Then
       AddResult(iCount, iCodeIndex, sCode1, r1, true);
   End;
 
@@ -1069,19 +1085,34 @@ function TLOINCServices.Search(sText: String): TMatchArray;
     r1 : Double;
     Desc : TCardinalArray;
     iStems : Cardinal;
+    matches : integer;
+    ok : boolean;
   Begin
     Entries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
     r1 := 0;
     Desc := Refs.GetCardinals(stems);
+    matches := 0;
     For i := 0 to length(words) - 1 do
+    begin
       if words[i].stem <> 0 Then
+      begin
+        ok := false;
         For j := 0 to length(Desc) - 1 do
+        begin
           if (words[i].stem = desc[j]) Then
-            r1 := r1 + 20 + (20 / length(desc))
+          begin
+            r1 := r1 + 20 + (20 / length(desc));
+            ok := true;
+          end
           else
             assert(FDesc.GetEntry(words[i].stem) <> FDesc.GetEntry(desc[j]));
+        end;
+        if ok then
+          inc(matches);
+      end;
+    end;
 
-    if r1  > 0 Then
+    if (not all or (matches = length(words))) and (r1  > 0) Then
       AddResult(iCount, index, FDesc.GetEntry(code), 1000000+r1, false); // these always come first
   End;
 
@@ -1451,7 +1482,7 @@ function TLoincServices.getDisplay(code: String): String;
 begin
   result := GetDisplayByName(code);
   if result = '' then
-    raise Exception.create('unable to find '+code+' in '+system);
+    raise Exception.create('unable to find '+code+' in '+system(nil));
 end;
 
 function TLoincServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -1469,7 +1500,7 @@ begin
     result := nil;//raise Exception.create('unable to find '+code+' in '+system);
 end;
 
-function TLoincServices.system: String;
+function TLoincServices.system(context : TCodeSystemProviderContext): String;
 begin
   result := 'http://loinc.org';
 end;
@@ -1684,11 +1715,16 @@ var
   i : Cardinal;
   holder : THolder;
 begin
-  holder := THolder(ctxt);
-  if CodeList.FindCode(code, i) and holder.hasChild(i) then
-    result := TCodeSystemProviderContext(i)
+  if (ctxt = nil) then
+    result := nil
   else
-    result := nil;
+  begin
+    holder := THolder(ctxt);
+    if CodeList.FindCode(code, i) and holder.hasChild(i) then
+      result := TCodeSystemProviderContext(i)
+    else
+      result := nil;
+  end;
 end;
 
 

@@ -3,16 +3,8 @@
   <collapsedNodes></collapsedNodes>
   <breakpoints></breakpoints>
   <actions>
-    <action id="{72C9D6E0-492C-43F7-8D8F-09F2677C9A85}">
-      <Description>Compile the Server (32)</Description>
-      <BuildVersion>0</BuildVersion>
-    </action>
     <action id="{19BA12C1-B170-4D83-8D6E-9F5455C5AC51}">
       <Description>Compile the Server (64)</Description>
-      <BuildVersion>0</BuildVersion>
-    </action>
-    <action id="{66EC5DEF-36FE-49DF-8A20-6825D30CF9A4}">
-      <Description>Compile the Server (32)</Description>
       <BuildVersion>0</BuildVersion>
     </action>
     <action id="{FC0D9CF9-73CA-4A5F-9D58-6583CF3EC915}">
@@ -27,8 +19,8 @@
     <Notes>
       <![CDATA[]]>
     </Notes>
-    <LastBuildRun>00:28:08</LastBuildRun>
-    <LastBuildStart>4/09/2014 11:50:31 AM</LastBuildStart>
-    <LastBuildState>True</LastBuildState>
+    <LastBuildRun>00:43:40</LastBuildRun>
+    <LastBuildStart>14/09/2014 6:04:17 PM</LastBuildStart>
+    <LastBuildState>False</LastBuildState>
   </properties>
 </project>

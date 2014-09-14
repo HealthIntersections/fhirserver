@@ -39,7 +39,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Thu, Sep 4, 2014 10:47+1000
+// FHIR v0.3.0 generated Fri, Sep 5, 2014 09:16+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
@@ -423,7 +423,7 @@ Const
      'The appointment that the response is attached to',
      'The overall status of the appointment',
      'The subject that the appointment response replies for');
-  TYPES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeString,  SearchParamTypeReference);
+  TYPES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference);
 //  CHECK_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of TSearchParamsAppointmentResponse = ( spAppointmentResponse__id,  spAppointmentResponse__language,  spAppointmentResponse_Appointment,  spAppointmentResponse_Partstatus,  spAppointmentResponse_Subject);
   PATHS_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_id: []',
      '_language: []',
@@ -1761,9 +1761,9 @@ Const
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [], []);
   FHIR_GENERATED_VERSION = '0.3.0';
 
-  FHIR_GENERATED_REVISION = '2816';
+  FHIR_GENERATED_REVISION = '2825';
 
-  FHIR_GENERATED_DATE = '20140904104730';
+  FHIR_GENERATED_DATE = '20140905091630';
 
 
 

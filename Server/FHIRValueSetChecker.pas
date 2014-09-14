@@ -73,7 +73,7 @@ begin
       try
         if other = nil then
           raise exception.create('Unable to find value set '+fvs.compose.importList[i].value);
-        checker := TValueSetChecker.create;
+        checker := TValueSetChecker.create(Fstore.link, other.identifierST);
         try
           checker.prepare(other);
           FOthers.Add(fvs.compose.importList[i].value, checker.Link);
@@ -92,7 +92,7 @@ begin
       for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
         if not (('concept' = fvs.compose.includeList[i].filterList[j].property_ST) and (fvs.compose.includeList[i].filterList[j].OpST = FilterOperatorIsA)) then
           if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_ST, fvs.compose.includeList[i].filterList[j].OpST, fvs.compose.includeList[i].filterList[j].valueST) then
-            raise Exception.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ST +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].OpST]+ ' '+fvs.compose.includeList[i].filterList[j].valueST+'" was not understood in the context of '+cs.system);
+            raise Exception.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ST +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].OpST]+ ' '+fvs.compose.includeList[i].filterList[j].valueST+'" was not understood in the context of '+cs.system(nil));
     end;
     for i := 0 to fvs.compose.excludeList.Count - 1 do
     begin
@@ -102,7 +102,7 @@ begin
       for j := 0 to fvs.compose.excludeList[i].filterList.count - 1 do
         if not (('concept' = fvs.compose.excludeList[i].filterList[j].property_ST) and (fvs.compose.excludeList[i].filterList[j].OpST = FilterOperatorIsA)) then
           if not cs.doesFilter(fvs.compose.excludeList[i].filterList[j].property_ST, fvs.compose.excludeList[i].filterList[j].OpST, fvs.compose.excludeList[i].filterList[j].valueST) then
-            raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ST +' '+ CODES_TFhirFilterOperator[fvs.compose.excludeList[i].filterList[j].OpST]+ ' '+fvs.compose.excludeList[i].filterList[j].valueST+'" was not understood in the context of '+cs.system);
+            raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ST +' '+ CODES_TFhirFilterOperator[fvs.compose.excludeList[i].filterList[j].OpST]+ ' '+fvs.compose.excludeList[i].filterList[j].valueST+'" was not understood in the context of '+cs.system(nil));
     end;
   end;
 end;
@@ -185,7 +185,7 @@ begin
       if not result then
       begin
         cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].systemST]);
-        result := (cs.system = system) and checkConceptSet(cs, fvs.compose.includeList[i], code, displays);
+        result := (cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.includeList[i], code, displays);
       end;
     end;
     for i := 0 to fvs.compose.excludeList.Count - 1 do
@@ -193,7 +193,7 @@ begin
       if result then
       begin
         cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].systemST]);
-        result := not ((cs.system = system) and checkConceptSet(cs, fvs.compose.excludeList[i], code, displays));
+        result := not ((cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.excludeList[i], code, displays));
       end;
     end;
   end;
@@ -299,11 +299,16 @@ begin
   end;
 
   for i := 0 to cset.codeList.count - 1 do
-    if (code = cset.codeList[i].value) and (cs.locate(code) <> nil) then
+    if (code = cset.codeList[i].value) then
     begin
-      cs.displays(code, displays);
-      result := true;
-      exit;
+      loc := cs.locate(code);
+      if Loc <> nil then
+      begin
+        cs.close(loc);
+        cs.displays(code, displays);
+        result := true;
+        exit;
+      end;
     end;
 
   if cset.filterList.count > 0 then

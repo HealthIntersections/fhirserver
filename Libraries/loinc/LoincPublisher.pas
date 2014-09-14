@@ -52,7 +52,7 @@ Type
     Procedure PublishCodes(Const sPrefix : String; iStart : Integer; html : THTMLPublisher);
     Procedure PublishConcept(bRoot : Boolean; Const sPrefix, sId : String; iStart : Integer; html : THTMLPublisher);
     Procedure PublishHome(Const sPrefix : String; html : THTMLPublisher);
-    Procedure PublishSearch(Const sPrefix, sText : String; iStart: Integer; html : THTMLPublisher);
+    Procedure PublishSearch(Const sPrefix, sText : String; iStart: Integer; all : boolean; html : THTMLPublisher);
     Procedure PublishHeirarchyRoot(Const sPrefix : String; html : THTMLPublisher);
     Procedure PublishHeirarchyEntry(sCode : String; iStart : Integer; Const sPrefix : String; html : THTMLPublisher);
 
@@ -73,6 +73,30 @@ Uses
   EncodeSupport,
   StringSupport;
 
+function StringToBoolDef(s : String; def : boolean):boolean;
+begin
+  s := lowercase(s);
+  if s = 'true' then
+    result := true
+  else if s = '1' then
+    result := true
+  else if s = 'yes' then
+    result := true
+  else if s = 'y' then
+    result := true
+  else if s = 'false' then
+    result := false
+  else if s = '0' then
+    result := false
+  else if s = 'no' then
+    result := false
+  else if s = 'n' then
+    result := false
+  else
+    result := def;
+end;
+
+
 Procedure TloincPublisher.PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher);
 Var
   sURL : String;
@@ -88,7 +112,7 @@ Begin
     else if FLoinc.IsMACode(oMap.Matches['srch']) then
       PublishHeirarchyEntry(oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), sURL, html)
     else
-      PublishSearch(sURL, oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), html)
+      PublishSearch(sURL, oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), StringToBoolDef(oMap.matches['all'], false), html)
   else if oMap.ExistsByKey('macode') then
     PublishHeirarchyEntry(oMap.Matches['macode'], StrToIntDef(oMap.Matches['start'], 0), sURL, html)
   else Begin
@@ -101,6 +125,7 @@ Begin
       PublishCode(sURL, sId, html);
   End;
 End;
+
 
 
 Procedure TloincPublisher.ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
@@ -354,6 +379,8 @@ Begin
     html.AddTextPlain('Search LOINC: ');
     html.textInput('srch');
     html.submit('Go');
+    html.AddTextPlain(' ');
+    html.checkbox('all', '1', 'Tight');
     html.endForm;
     html.Line;
     html.ParaURL('Browse All Codes', sPrefix+'code=*');
@@ -830,7 +857,7 @@ Type
     a : TMatchArray;
   End;
 
-procedure TloincPublisher.PublishSearch(const sPrefix, sText: String; iStart: Integer; html: THTMLPublisher);
+procedure TloincPublisher.PublishSearch(const sPrefix, sText: String; iStart: Integer; all : boolean; html: THTMLPublisher);
   procedure AddParent(p : Cardinal);
   var
     index, code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
@@ -864,14 +891,14 @@ begin
       a := TSearchCache(FSearchCache.Objects[i]).a
     else
     Begin
-      a := FLoinc.Search(sText);
+      a := FLoinc.Search(sText, all);
       o := TSearchCache.Create;
       o.a := a;
       FSearchCache.AddObject(sText, o);
     End;
   Finally
     Lock.Unlock;
-  End;                        
+  End;
   html.Header('Search LOINC for '+sText);
 
   html.StartTable(false);

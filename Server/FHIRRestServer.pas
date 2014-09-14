@@ -117,13 +117,14 @@ Type
     function FindResource(session : TFhirSession; rtype : TFhirResourceType; lang, params : String; var id : String) : TFhirResource;
     function transform1(resource : TFhirResource; lang, xslt : String; saveOnly : boolean) : string;
     function transform2(resource : TFhirResource; lang, xslt : String) : string;
-    procedure HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse);
-    procedure HandleWebQuestionnaire(request : TFHIRRequest; response : TFHIRResponse);
-    procedure HandleWebQuestionnaireInstance(request : TFHIRRequest; response : TFHIRResponse);
-    procedure HandleWebEdit(request : TFHIRRequest; response : TFHIRResponse);
-    procedure HandleWebPost(request : TFHIRRequest; response : TFHIRResponse);
-    procedure HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse);
-    procedure HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse);
+    function HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
+    function HandleWebQuestionnaire(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
+    function HandleWebQuestionnaireInstance(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
+    function HandleWebEdit(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
+    function HandleWebPost(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
+    function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+    function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+    function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 
     function SpecFile(path : String) : String;
     function AltFile(path : String) : String;
@@ -148,7 +149,7 @@ Type
     Function ProcessZip(lang : String; oStream : TStream) : TFHIRAtomFeed;
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : String = '');
-    Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse);
+    Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse; upload : Boolean);
     function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
@@ -275,16 +276,20 @@ Begin
 
   FFhirStore := TFHIRDataStore.Create(db, FSpecPath, FAltPath, terminologyServer, FINi, FSCIMServer.Link);
   FFhirStore.ownername := FOwnerName;
+  FFhirStore.Validate := FIni.ReadBool('fhir', 'validate', true);
   if FIni.ReadString('web', 'host', '') <> '' then
   begin
     if FIni.ReadString('web', 'base', '') <> '' then
       s := FIni.ReadString('web', 'base', '')
     else
       s := FIni.ReadString('web', 'secure', '');
-
-    FFhirStore.FormalURL := AppendForwardSlash(FIni.ReadString('web', 'host', '')) + s;
   end;
   writeln(inttostr(FFhirStore.TotalResourceCount)+' resources');
+  FFhirStore.FormalURLPlain := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FPort);
+  FFhirStore.FormalURLSecure := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FSSLPort);
+  FFhirStore.FormalURLPlainOpen := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FPort)+ FBasePath;
+  FFhirStore.FormalURLSecureOpen := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FSSLPort) + FBasePath;
+  FFhirStore.FormalURLSecureClosed := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FSSLPort) + FSecurePath;
 
 
   if FIni.readString('web', 'clients', '') = '' then
@@ -369,12 +374,14 @@ Procedure TFhirWebServer.Start(active : boolean);
 Begin
   FActive := active;
   StartServer(active);
-  FThread := TFhirServerMaintenanceThread.create(self);
+  if (active) then
+    FThread := TFhirServerMaintenanceThread.create(self);
 End;
 
 Procedure TFhirWebServer.Stop;
 Begin
-  FThread.Terminate;
+  if FThread <> nil then
+    FThread.Terminate;
   StopServer;
 End;
 
@@ -453,7 +460,7 @@ begin
     req.LoadParams('');
     resp := TFHIRResponse.Create;
     try
-      ProcessRequest(req, resp);
+      ProcessRequest(req, resp, true);
     finally
       resp.Free;
     end;
@@ -545,10 +552,14 @@ begin
     c.codeST := 'OAuth2';
     rest.security.descriptionST := 'This server implements OAuth2 for login';
 
-    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oidc-discovery', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURL)+FAuthServer.AuthPath+'/discovery'));
-    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oauth2-hooks-registration', TFhirUri.Create('mailto:'+FAdminEmail));
-    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oauth2-hooks-authorize', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURL)+FAuthServer.AuthPath));
-    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oauth2-hooks-token', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURL)+FAuthServer.TokenPath));
+    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oidc-discovery',
+      TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
+    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#register',
+      TFhirUri.Create('mailto:'+FAdminEmail));
+    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#authorize',
+      TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath));
+    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#token',
+      TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.TokenPath));
   end;
 end;
 
@@ -654,6 +665,7 @@ var
   domain : String;
   noErrCode : boolean;
 Begin
+  noErrCode := false;
   Session := nil;
   try
     if ssl then
@@ -696,11 +708,12 @@ Begin
         oStream := TStringStream.Create(request.UnparsedParams);
         try
           response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+//          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
           response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
+          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+//          response.CustomHeaders.add('Access-Control-Expose-Headers: *');
           if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
             response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
-          response.Expires := Now - 1; //don't want anyone caching anything
           oResponse := TFHIRResponse.Create;
           Try
             if request.AuthUsername = 'Bearer' then
@@ -761,7 +774,7 @@ Begin
                   if oRequest.CommandType = fcmdWebUI then
                     HandleWebUIRequest(oRequest, oResponse)
                   else
-                    ProcessRequest(oRequest, oResponse);
+                    ProcessRequest(oRequest, oResponse, false);
                 except
                   on e : EAbort do
                   begin
@@ -774,7 +787,8 @@ Begin
                 ProcessOutput(oRequest, oResponse, response, relativeReferenceAdjustment, pretty, request.AcceptEncoding.Contains('gzip'));
   // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
   //                 response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
-                response.ETag := '"'+oResponse.versionId+'"';
+                if oResponse.versionId <> '' then
+                  response.ETag := '"'+oResponse.versionId+'"';
                 response.LastModified := oResponse.lastModifiedDate; // todo: timezone
                 if oResponse.Categories.count > 0 then
                   response.CustomHeaders.add('Category: '+ oResponse.Categories.AsHeader);
@@ -836,14 +850,14 @@ Begin
   end;
 end;
 
-procedure TFhirWebServer.HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServer.HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
   profile : TFhirProfile;
   {$IFNDEF FHIR-DSTU}
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
   {$ENDIF}
-  s, id : String;
+  s, id, fid : String;
 begin
   {$IFDEF FHIR-DSTU}
   raise Exception.Create('This operation is not supported in this version of FHIR (DSTU 1)');
@@ -857,36 +871,52 @@ begin
   else
     profile := FindResource(request.Session, frtProfile, request.Lang, 'url='+request.Parameters.GetVar('profile'), id) as TFHirProfile;
   try
-    builder := TQuestionnaireBuilder.Create;
-    try
-      builder.Profile := profile.Link;
-      builder.OnExpand := FFhirStore.ExpandVS;
-      builder.QuestionnaireId := request.baseUrl+'Profile/'+id+'/$questionnaire';
+    fid := request.baseUrl+'Profile/'+id+'/$questionnaire';
+    s := FFhirStore.QuestionnaireCache.getForm(frtProfile, id);
+    if s = '' then
+    begin
+      questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+      try
+        if questionnaire = nil then
+        begin
+          builder := TQuestionnaireBuilder.Create;
+          try
+            builder.Profile := profile.Link;
+            builder.OnExpand := FFhirStore.ExpandVS;
+            builder.QuestionnaireId := fid;
 
-      builder.build;
-      // convert to xhtml
-      s := transform1(builder.questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
-
-      // insert page headers:
-
-      s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
-      s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang)+
-        '<p><a href="'+builder.QuestionnaireId+'">Questionnaire for this form</a>.'+
-        ' The QuestionnaireAnswers should be submitted as a POST to <i>'+request.baseUrl+'$qa-post</i> with a questionnaire reference of <a href="'+builder.QuestionnaireId+'">'+builder.QuestionnaireId+'</a></p>'#13#10);
-      s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
-      s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'$qa-post";');
-      response.body := s;
-      response.ContentType := 'text/html; charset=UTF-8';
-    finally
-      builder.free;
+            builder.build;
+            questionnaire := builder.Questionnaire.Link;
+          finally
+            builder.free;
+          end;
+          FFhirStore.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire);
+        end;
+        // convert to xhtml
+        s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
+        FFhirStore.QuestionnaireCache.putForm(frtProfile, id, s);
+      finally
+        questionnaire.Free;
+      end;
     end;
+
+    // insert page headers:
+    s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
+    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang)+
+      '<p><a href="'+builder.QuestionnaireId+'">Questionnaire for this form</a>.'+
+      ' The QuestionnaireAnswers should be submitted as a POST to <i>'+request.baseUrl+'$qa-post</i> with a questionnaire reference of <a href="'+builder.QuestionnaireId+'">'+builder.QuestionnaireId+'</a></p>'#13#10);
+    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
+    s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'$qa-post";');
+    response.body := s;
+    result := Now; //don't want anyone caching anything
+    response.ContentType := 'text/html; charset=UTF-8';
   finally
     profile.free;
   end;
   {$ENDIF}
 end;
 
-procedure TFhirWebServer.HandleWebEdit(request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServer.HandleWebEdit(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
   typ, id, ver : String;
   r : TFHIRResource;
@@ -946,6 +976,7 @@ begin
         TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, true);
 
       response.body := s;
+      result := Now; //don't want anyone caching anything
       response.ContentType := 'text/html; charset=UTF-8';
     end;
   finally
@@ -953,7 +984,7 @@ begin
   end;
 end;
 
-procedure TFhirWebServer.HandleWebPost(request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServer.HandleWebPost(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
   s, typ, id, ver : String;
   p : TParseMap;
@@ -981,7 +1012,7 @@ begin
       try
         prsr.Parse;
         request.Resource := prsr.resource.Link;
-        ProcessRequest(request, response);
+        ProcessRequest(request, response, false);
         if response.HTTPCode < 300 then
         begin
           response.HTTPCode := 303;
@@ -996,11 +1027,12 @@ begin
   finally
     p.Free;
   end;
+  result := 0;
 end;
 
-procedure TFhirWebServer.HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServer.HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
-  id, ver : String;
+  id, ver, fullid : String;
   profile : TFhirProfile;
   {$IFNDEF FHIR-DSTU}
   builder : TQuestionnaireBuilder;
@@ -1015,31 +1047,83 @@ begin
   StringSplit(request.Id.Substring(8), '/', id, ver);
   profile := GetResource(request.Session, frtProfile, request.Lang, id, ver, '') as TFHirProfile;
   try
-    builder := TQuestionnaireBuilder.Create;
-    try
-      builder.Profile := profile.Link;
-      builder.OnExpand := FFhirStore.ExpandVS;
-      builder.QuestionnaireId := request.baseUrl+'Profile/'+id+'/$questionnaire';
-      builder.build;
-      // convert to xhtml
-      s := transform1(builder.questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
-      // insert page headers:
-      s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
-      s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang));
-      s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
-      s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'$qa-post";');
-      response.body := s;
-      response.ContentType := 'text/html; charset=UTF-8';
-    finally
-      builder.free;
+    fullid := request.baseUrl+'Profile/'+id+'/$questionnaire';
+    s := FFhirStore.QuestionnaireCache.getForm(frtProfile, id);
+    if s = '' then
+    begin
+      questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+      try
+        if questionnaire = nil then
+        begin
+          builder := TQuestionnaireBuilder.Create;
+          try
+            builder.Profile := profile.Link;
+            builder.OnExpand := FFhirStore.ExpandVS;
+            builder.QuestionnaireId := fullid;
+            builder.build;
+            questionnaire := builder.Questionnaire.Link;
+          finally
+            builder.free;
+          end;
+          FFhirStore.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire);
+        end;
+        // convert to xhtml
+        s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
+        FFhirStore.QuestionnaireCache.putForm(frtProfile, id, s);
+      finally
+        questionnaire.Free;
+      end;
     end;
+    // insert page headers:
+    s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
+    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang));
+    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
+    s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'$qa-post";');
+    response.body := s;
+    result := Now; //don't want anyone caching anything
+    response.ContentType := 'text/html; charset=UTF-8';
   finally
     profile.free;
   end;
   {$ENDIF}
 end;
 
-procedure TFhirWebServer.HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServer.HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+var
+  id, ver, fullid : String;
+  s, xhtml : String;
+  patient : TFHIRResource;
+begin
+  StringSplit(request.Id.Substring(8), '/', id, ver);
+  patient := GetResource(request.Session, frtPatient, request.Lang, id, ver, '');
+  try
+    xhtml := FhirHtmlToText(patient.text.div_);
+  finally
+    patient.Free;
+  end;
+
+  s := FileToString(FAltPath+'patient.html', TEncoding.UTF8);
+  s := s.Replace('[%id%]', FName, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION, [rfReplaceAll]);
+  s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
+  s := s.Replace('[%patient-details%]', xhtml, [rfReplaceAll]);
+  s := s.Replace('[%patient-id%]', id, [rfReplaceAll]);
+  s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
+  if FPort = 80 then
+    s := s.Replace('[%host%]', FHost, [rfReplaceAll])
+  else
+    s := s.Replace('[%host%]', FHost+':'+inttostr(FPort), [rfReplaceAll]);
+  if FSSLPort = 443 then
+    s := s.Replace('[%securehost%]', FHost, [rfReplaceAll])
+  else
+    s := s.Replace('[%securehost%]', FHost+':'+inttostr(FSSLPort), [rfReplaceAll]);
+  s := s.Replace('[%endpoints%]', EndPointDesc, [rfReplaceAll]);
+
+  response.Body := s;
+  response.ContentType := 'text/html; charset=UTF-8';
+end;
+
+function TFhirWebServer.HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
   id, ver : String;
   questionnaire : TFHIRQuestionnaire;
@@ -1057,13 +1141,14 @@ begin
     s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
     s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'/QuestionnaireAnswers";');
     response.body := s;
+    result := Now; //don't want anyone caching anything
     response.ContentType := 'text/html; charset=UTF-8';
   finally
     questionnaire.free;
   end;
 end;
 
-procedure TFhirWebServer.HandleWebQuestionnaireInstance(request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServer.HandleWebQuestionnaireInstance(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 {$IFDEF FHIR-DSTU}
 begin
   raise Exception.Create('No supported in DATU version');
@@ -1120,6 +1205,7 @@ begin
       // insert the answer:
       s := s.Replace('var questionnaireAnswers=null;', 'var questionnaireAnswers='+j+';');
       response.body := s;
+      result := Now; //don't want anyone caching anything
       response.ContentType := 'text/html; charset=UTF-8';
     end;
   finally
@@ -1128,36 +1214,28 @@ begin
 end;
 {$ENDIF}
 
-procedure TFhirWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse);
-{$IFDEF FHIR-DSTU}
-begin
-  raise Exception.Create('No supported in DSTU Version');
-end;
-{$ELSE}
+function TFhirWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 begin
   if request.Id.EndsWith('$qa-edit') then
-    HandleWebQuestionnaireInstance(request, response)
+    result := HandleWebQuestionnaireInstance(request, response)
   else if request.Id.EndsWith('$edit') then
-    HandleWebEdit(request, response)
+    result := HandleWebEdit(request, response)
   else if request.Id.EndsWith('$post') then
-    HandleWebPost(request, response)
+    result := HandleWebPost(request, response)
   else if request.Id.StartsWith('Questionnaire/') then
-    HandleWebQuestionnaire(request, response)
+    result := HandleWebQuestionnaire(request, response)
   else if request.Id.StartsWith('Profile/') then
-    HandleWebProfile(request, response)
-  else if request.Id = 'Create' then
-    HandleWebCreate(request, response)
+    result := HandleWebProfile(request, response)
+  else if request.Id.StartsWith('Patient/') then
+    result := HandleWebPatient(request, response)
+  else if request.Id ='Create' then
+    result := HandleWebCreate(request, response)
   else
     raise Exception.Create('Unknown request: '+request.Id);
 end;
-{$ENDIF}
+
 
 procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : String = '');
-{$IFDEF FHIR-DSTU}
-begin
-  raise Exception.Create('No supported in DSTU Version');
-end;
-{$ELSE}
 var
   issue : TFhirOperationOutcome;
   report :  TFhirOperationOutcomeIssue;
@@ -1235,7 +1313,6 @@ begin
   end;
   response.WriteContent;
 end;
-{$ENDIF}
 
 function extractProp(contentType, name : String) : string;
 begin
@@ -1365,7 +1442,7 @@ Begin
     aFormat := oResponse.Format;
 
     // ok, now that we've read the content types, security check
-    if bAuth then
+    if bAuth and not (sURL = 'metadata') then
     begin
       if sUrl = 'logout' then
       begin
@@ -1697,7 +1774,9 @@ Begin
                 end;
               except
                 on e : Exception do
-                  if oRequest.CommandType <> fcmdValidate then
+                  if oRequest.CommandType = fcmdValidate then
+                    oResponse.Message := e.Message
+                  else
                     raise;
               end;
           end;
@@ -1828,11 +1907,15 @@ begin
       end
       else if oResponse.format = ffJson then
       begin
+//        response.Expires := Now; //don't want anyone caching anything
+        response.Pragma := 'no-cache';
         oComp := TFHIRJsonComposer.Create(oRequest.lang);
         response.ContentType := oComp.MimeType;
       end
       else
       begin
+//        response.Expires := Now; //don't want anyone caching anything
+        response.Pragma := 'no-cache';
         oComp := TFHIRXmlComposer.Create(oRequest.lang);
         response.ContentType := 'application/atom+xml; charset=UTF-8';
       end;
@@ -1849,9 +1932,12 @@ begin
         TFhirBinary(oResponse.Resource).Content.SaveToStream(stream);
         response.ContentType := TFhirBinary(oResponse.Resource).ContentType;
         response.ContentDisposition := 'attachment;';
+        response.Expires := Now + 0.25;
       end
       else
       begin
+//        response.Expires := Now; //don't want anyone caching anything
+        response.Pragma := 'no-cache';
         if oResponse.Format = ffJson then
           oComp := TFHIRJsonComposer.Create(oRequest.lang)
         else if oResponse.Format = ffXhtml then
@@ -1862,6 +1948,8 @@ begin
           TFHIRXhtmlComposer(oComp).Tags := oResponse.categories.Link;
           TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
+//          response.Expires := 0;
+        response.Pragma := '';
         end
         else if oResponse.Format = ffXml then
           oComp := TFHIRXmlComposer.Create(oRequest.lang)
@@ -1879,6 +1967,8 @@ begin
     end
     else if oRequest.CommandType in [fcmdGetTags, fcmdUpdateTags, fcmdDeleteTags] then
     begin
+//      response.Expires := Now; //don't want anyone caching anything
+        response.Pragma := 'no-cache';
       if oResponse.Format = ffxhtml then
       begin
         oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
@@ -1887,6 +1977,8 @@ begin
         TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
         TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
         response.ContentType := oComp.MimeType;
+//        response.Expires := 0;
+        response.Pragma := '';
       end
       else if oResponse.format = ffJson then
       begin
@@ -1935,7 +2027,7 @@ begin
   end;
 end;
 
-procedure TFhirWebServer.ProcessRequest(request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirWebServer.ProcessRequest(request: TFHIRRequest; response: TFHIRResponse; upload : Boolean);
 var
   store : TFhirOperation;
 begin
@@ -1949,7 +2041,7 @@ begin
     try
       store.Connection.StartTransact;
       try
-        store.Execute(request, response);
+        store.Execute(request, response, upload);
         store.Connection.Commit;
       except
         store.Connection.Rollback;
@@ -2322,7 +2414,7 @@ begin
       request.CommandType := fcmdVersionRead;
       request.SubId := ver;
     end;
-    ProcessRequest(request, response);
+    ProcessRequest(request, response, false);
     if response.Resource <> nil then
       result := response.resource.link
     else
@@ -2346,7 +2438,7 @@ begin
     request.Lang := lang;
     request.LoadParams(params);
     request.CommandType := fcmdSearch;
-    ProcessRequest(request, response);
+    ProcessRequest(request, response, false);
     if (response.Feed <> nil) and (response.Feed.entries.Count = 1) then
     begin
       result := response.feed.entries[0].resource.link;
@@ -2387,6 +2479,11 @@ begin
     begin
       link := FBasePath+'/ValueSet/'+id+'/$expand?filter=';
       text := 'Expand this value set';
+    end;
+    if resource.ResourceType = frtPatient then
+    begin
+      link := FBasePath+'/_web/Patient/'+id;
+      text := 'Launch Smart App';
     end;
   end;
 end;
@@ -2516,6 +2613,7 @@ begin
     for n in variables.Keys do
       s := s.Replace('[%'+n+'%]', variables[n], [rfReplaceAll]);
 
+  response.Expires := now + 1;
   response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));
   response.FreeContentStream := true;
   response.ContentType := 'text/html; charset=UTF-8';
@@ -2592,6 +2690,10 @@ begin
     sleep(1000);
     if FServer.FActive then
       FServer.FFhirStore.ProcessSubscriptions;
+    try
+      FServer.FFhirStore.TerminologyServer.BuildIndexes(false);
+    except
+    end;
     if FLastSweep < now - DATETIME_MINUTE_ONE then
     begin
       try

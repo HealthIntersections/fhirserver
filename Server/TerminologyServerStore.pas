@@ -6,6 +6,7 @@ uses
   SysUtils, Classes, kCritSct,
   StringSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvStringMatches,
+  KDBManager,
   FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
   TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices,
   YuStemmer;
@@ -60,7 +61,7 @@ Type
   private
     FVs : TFhirValueSet;
     function doLocate(list : TFhirValueSetDefineConceptList; code : String) : TValueSetProviderContext;
-    procedure FilterCodes(dest, source : TFhirValueSetDefineConceptList; filter : TSearchFilterText);
+    procedure FilterCodes(dest, source : TFhirValueSetDefineConceptList; filter : TSearchFilterText; all : boolean);
     function FilterCount(ctxt: TFhirValueSetDefineConcept): integer;
   public
     constructor Create(vs : TFHIRValueSet); overload;
@@ -68,7 +69,7 @@ Type
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system : String; override;
+    function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; overload; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -97,11 +98,19 @@ Type
   // (and at start up)
   TTerminologyServerStore = class (TAdvObject)
   private
+    FLoading : boolean;
+    FDB : TKDBManager;
     FLoinc : TLOINCServices;
     FSnomed : TSnomedServices;
     FUcum : TUcumServices;
     FRxNorm : TRxNormServices;
     FStem : TYuStemmer_8;
+
+    FLastConceptKey : integer;
+    FLastClosureKey : integer;
+    FLastClosureEntryKey : integer;
+    FLastValueSetKey : integer;
+    FLastValueSetMemberKey : integer;
 
     FBaseValueSets : TAdvStringObjectMatch; // value sets out of the specification - these can be overriden, but they never go away
     FValueSetsByIdentifier : TAdvStringObjectMatch; // all current value sets by identifier (ValueSet.identifier)
@@ -118,12 +127,19 @@ Type
     procedure UpdateConceptMaps;
     procedure BuildStems(list : TFhirValueSetDefineConceptList);
     procedure SetRxNorm(const Value: TRxNormServices);
+
+    function TrackValueSet(id : String; bOnlyIfNew : boolean) : integer;
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FConceptMaps : TAdvStringObjectMatch;
     procedure invalidateVS(id : String); virtual;
+    function NextConceptKey : integer;
+    function NextClosureKey : integer;
+    function NextClosureEntryKey : integer;
+    function NextValueSetKey : integer;
+    function NextValueSetMemberKey : integer;
   public
-    Constructor Create; Override;
+    Constructor Create(db : TKDBManager); virtual;
     Destructor Destroy; Override;
     Function Link : TTerminologyServerStore; overload;
 
@@ -131,6 +147,7 @@ Type
     Property Snomed : TSnomedServices read FSnomed write SetSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
+    Property DB : TKDBManager read FDB;
 
     // maintenance procedures
     procedure SeeSpecificationResource(url : String; resource : TFHIRResource);
@@ -147,9 +164,374 @@ Type
     // publishing access
     function GetCodeSystemList : TAdvStringMatch;
     function GetValueSetList : TAdvStringMatch;
+
+    // database maintenance
+    Property Loading : boolean read FLoading write FLoading;
+    function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
   end;
 
 implementation
+
+Type
+  TAllCodeSystemsProviderFilterPreparationContext = class (TCodeSystemProviderFilterPreparationContext)
+  private
+    rxnorm : TCodeSystemProviderFilterPreparationContext;
+    snomed : TCodeSystemProviderFilterPreparationContext;
+    loinc : TCodeSystemProviderFilterPreparationContext;
+    actcode : TCodeSystemProviderFilterPreparationContext;
+  end;
+
+  TAllCodeSystemsProviderFilter = class (TCodeSystemProviderFilterContext)
+  private
+    rxnormDone : boolean;
+    snomedDone : boolean;
+    loincDone : boolean;
+    actcodeDone : boolean;
+
+    rxnorm : TCodeSystemProviderFilterContext;
+    snomed : TCodeSystemProviderFilterContext;
+    loinc : TCodeSystemProviderFilterContext;
+    actcode : TCodeSystemProviderFilterContext;
+  end;
+
+  TAllCodeSystemsSource = (acssLoinc, acssSnomed, acssRxNorm, acssActCode);
+
+  TAllCodeSystemsProviderContext = class (TCodeSystemProviderContext)
+  private
+    source : TAllCodeSystemsSource;
+    context : TCodeSystemProviderContext;
+  end;
+
+  TAllCodeSystemsProvider = class (TCodeSystemProvider)
+  private
+    FStore: TTerminologyServerStore;
+    FActCode : TCodeSystemProvider;
+  public
+    Constructor Create(store : TTerminologyServerStore);
+    Destructor Destroy; override;
+    function TotalCount : integer;  override;
+    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
+    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function system(context : TCodeSystemProviderContext) : String; override;
+    function getDisplay(code : String):String; override;
+    function getDefinition(code : String):String; override;
+    function locate(code : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
+    function Code(context : TCodeSystemProviderContext) : string; override;
+    function Display(context : TCodeSystemProviderContext) : string; override;
+    function Definition(context : TCodeSystemProviderContext) : string; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); overload; override;
+    procedure Displays(code : String; list : TStringList); overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
+    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
+    procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; override;
+    procedure Close(ctxt : TCodeSystemProviderContext); overload; override;
+    function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
+  end;
+
+function TAllCodeSystemsProvider.TotalCount : integer;
+begin
+  result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FStore.RxNorm.TotalCount + FActCode.TotalCount;
+end;
+
+function TAllCodeSystemsProvider.ChildCount(context : TCodeSystemProviderContext) : integer;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.system(context : TCodeSystemProviderContext) : String;
+var
+  c : TAllCodeSystemsProviderContext;
+begin
+  if Context = nil then
+    result := ANY_CODE_VS
+  else
+  begin
+    c := context as TAllCodeSystemsProviderContext;
+    case c.source of
+      acssLoinc : result := FStore.Loinc.System(c.context);
+      acssSnomed : result := FStore.Snomed.System(c.context);
+      acssRxNorm : result := FStore.RxNorm.System(c.context);
+      acssActCode : result := FActCode.System(c.context);
+    end;
+  end;
+end;
+
+function TAllCodeSystemsProvider.getDisplay(code : String):String;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+var
+  ctxt : TAllCodeSystemsProviderFilterPreparationContext;
+begin
+  ctxt := TAllCodeSystemsProviderFilterPreparationContext.Create;
+  try
+    ctxt.rxnorm := FStore.RxNorm.getPrepContext;
+    ctxt.loinc := FStore.Loinc.getPrepContext;
+    ctxt.snomed := FStore.Snomed.getPrepContext;
+    ctxt.actcode := Factcode.getPrepContext;
+    result := ctxt.link;
+  finally
+    ctxt.Free;
+  end;
+end;
+
+function TAllCodeSystemsProvider.getDefinition(code : String):String;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.locate(code : String) : TCodeSystemProviderContext;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.locateIsA(code, parent : String) : TCodeSystemProviderContext;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.IsAbstract(context : TCodeSystemProviderContext) : boolean;
+var
+  c : TAllCodeSystemsProviderContext;
+begin
+  c := context as TAllCodeSystemsProviderContext;
+  case c.source of
+    acssLoinc : result := FStore.Loinc.IsAbstract(c.context);
+    acssSnomed : result := FStore.Snomed.IsAbstract(c.context);
+    acssRxNorm : result := FStore.RxNorm.IsAbstract(c.context);
+    acssActCode : result := FActCode.IsAbstract(c.context);
+  end;
+end;
+
+function TAllCodeSystemsProvider.Code(context : TCodeSystemProviderContext) : string;
+var
+  c : TAllCodeSystemsProviderContext;
+begin
+  c := context as TAllCodeSystemsProviderContext;
+  case c.source of
+    acssLoinc : result := FStore.Loinc.Code(c.context);
+    acssSnomed : result := FStore.Snomed.Code(c.context);
+    acssRxNorm : result := FStore.RxNorm.Code(c.context);
+    acssActCode : result := FActCode.Code(c.context);
+  end;
+end;
+
+constructor TAllCodeSystemsProvider.Create(store: TTerminologyServerStore);
+begin
+  inherited Create;
+  FStore := store;
+  FActCode := store.getProvider('http://hl7.org/fhir/v3/ActCode');
+end;
+
+function TAllCodeSystemsProvider.Display(context : TCodeSystemProviderContext) : string;
+var
+  c : TAllCodeSystemsProviderContext;
+begin
+  c := context as TAllCodeSystemsProviderContext;
+  case c.source of
+    acssLoinc : result := FStore.Loinc.Display(c.context)+' (LOINC: '+FStore.Loinc.Code(c.context)+')';
+    acssSnomed : result := FStore.Snomed.Display(c.context)+' (S-CT: '+FStore.Snomed.Code(c.context)+')';
+    acssRxNorm : result := FStore.RxNorm.Display(c.context)+' (RxN: '+FStore.RxNorm.Code(c.context)+')';
+    acssActCode : result := FActCode.Display(c.context)+' (ActCode: '+FActCode.Code(c.context)+')';
+  end;
+end;
+
+function TAllCodeSystemsProvider.Definition(context : TCodeSystemProviderContext) : string;
+var
+  c : TAllCodeSystemsProviderContext;
+begin
+  c := context as TAllCodeSystemsProviderContext;
+  case c.source of
+    acssLoinc : result := FStore.Loinc.Definition(c.context);
+    acssSnomed : result := FStore.Snomed.Definition(c.context);
+    acssRxNorm : result := FStore.RxNorm.Definition(c.context);
+    acssActCode : result := FActCode.Definition(c.context);
+  end;
+end;
+destructor TAllCodeSystemsProvider.Destroy;
+begin
+  FActCode.Free;
+  FStore.Free;
+  inherited;
+end;
+
+procedure TAllCodeSystemsProvider.Displays(context : TCodeSystemProviderContext; list : TStringList);
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+procedure TAllCodeSystemsProvider.Displays(code : String; list : TStringList);
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+
+function TAllCodeSystemsProvider.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+var
+  ctxt : TAllCodeSystemsProviderFilter;
+begin
+  if filter.filter.trim.Length < 3 then
+    result := nil
+  else
+  begin
+    ctxt := TAllCodeSystemsProviderFilter.create;
+    try
+      ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm);
+      ctxt.snomed := FStore.snomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed);
+      ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc);
+      ctxt.actcode := FActCode.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).actcode);
+      result := ctxt.Link;
+    finally
+      ctxt.free;
+    end;
+  end;
+end;
+
+function TAllCodeSystemsProvider.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
+var
+  ctxt : TAllCodeSystemsProviderFilterPreparationContext;
+begin
+  ctxt := prep as TAllCodeSystemsProviderFilterPreparationContext;
+  if (ctxt <> nil) then
+  begin
+    FStore.Loinc.prepare(ctxt.loinc);
+    FStore.Snomed.prepare(ctxt.snomed);
+    FStore.RxNorm.prepare(ctxt.rxnorm);
+    FActCode.prepare(ctxt.actcode);
+  end;
+end;
+
+function TAllCodeSystemsProvider.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
+var
+  c : TAllCodeSystemsProviderFilter;
+begin
+  if ctxt = nil then
+    result := false
+  else
+  begin
+    c := TAllCodeSystemsProviderFilter(ctxt);
+    result := true;
+    if not c.snomedDone then
+      c.snomedDone := not FStore.Snomed.FilterMore(c.snomed);
+    if c.snomedDone then
+    begin
+      if not c.actcodeDone then
+        c.actcodeDone := not FActCode.FilterMore(c.actcode);
+      if c.actcodeDone then
+      begin
+        if not c.loincDone then
+          c.loincDone := not FStore.Loinc.FilterMore(c.loinc);
+        if c.loincDone then
+        begin
+          if not c.rxNormDone then
+            c.rxNormDone := not FStore.RxNorm.FilterMore(c.rxNorm);
+          result := not c.rxnormDone;
+        end;
+      end;
+    end;
+  end;
+end;
+
+function TAllCodeSystemsProvider.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+var
+  c : TAllCodeSystemsProviderContext;
+  d : TAllCodeSystemsProviderFilter;
+begin
+  d := ctxt as TAllCodeSystemsProviderFilter;
+  c := TAllCodeSystemsProviderContext.create;
+  try
+    if not d.snomedDone then
+    begin
+      c.source := acssSnomed;
+      c.context := FStore.Snomed.FilterConcept(d.snomed);
+    end
+    else if not d.actCodeDone then
+    begin
+      c.source := acssActCode;
+      c.context := FActCode.FilterConcept(d.actcode);
+    end
+    else if not d.loincDone then
+    begin
+      c.source := acssLoinc;
+      c.context := FStore.Loinc.FilterConcept(d.loinc);
+    end
+    else // if not d.rxnormDone then
+    begin
+      c.source := acssRxNorm;
+      c.context := FStore.RxNorm.FilterConcept(d.rxNorm);
+    end;
+    result := c.link;
+  finally
+    c.free;
+  end;
+end;
+
+function TAllCodeSystemsProvider.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
+begin
+  raise Exception.Create('Not Created Yet');
+end;
+function TAllCodeSystemsProvider.isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean;
+begin
+  result := true;
+end;
+
+procedure TAllCodeSystemsProvider.Close(ctxt : TCodeSystemProviderFilterPreparationContext);
+var
+  c : TAllCodeSystemsProviderFilterPreparationContext;
+begin
+  c := ctxt as TAllCodeSystemsProviderFilterPreparationContext;
+  FStore.RxNorm.Close(c.rxnorm);
+  FStore.Loinc.Close(c.loinc);
+  FStore.Snomed.Close(c.snomed);
+  FActCode.Close(c.actcode);
+  ctxt.free;
+end;
+
+procedure TAllCodeSystemsProvider.Close(ctxt : TCodeSystemProviderFilterContext);
+var
+  c : TAllCodeSystemsProviderFilter;
+begin
+  c := ctxt as TAllCodeSystemsProviderFilter;
+  if (c <> nil) then
+  begin
+    FStore.RxNorm.Close(c.rxnorm);
+    FStore.Loinc.Close(c.loinc);
+    FStore.Snomed.Close(c.snomed);
+    FActCode.Close(c.actcode);
+  end;
+  ctxt.free;
+end;
+
+procedure TAllCodeSystemsProvider.Close(ctxt : TCodeSystemProviderContext);
+var
+  c : TAllCodeSystemsProviderContext;
+begin
+  c := ctxt as TAllCodeSystemsProviderContext;
+  case c.source of
+    acssLoinc : FStore.Loinc.Close(c.context);
+    acssSnomed : FStore.Snomed.Close(c.context);
+    acssRxNorm : FStore.RxNorm.Close(c.context);
+    acssActCode : FActCode.Close(c.context);
+  end;
+  ctxt.free;
+end;
+
 
 { TTerminologyServerStore }
 
@@ -181,10 +563,13 @@ begin
   end;
 end;
 
-constructor TTerminologyServerStore.Create;
+constructor TTerminologyServerStore.Create(db : TKDBManager);
+var
+  conn : TKDBConnection;
 begin
-  inherited;
+  inherited Create;
   FLock := TCriticalSection.Create('Terminology Server Store');
+  FDB := db;
 
   FBaseValueSets := TAdvStringObjectMatch.Create;
   FValueSetsByIdentifier := TAdvStringObjectMatch.Create;
@@ -214,6 +599,22 @@ begin
   FConceptMapsByKey.Forced := true;
 
   FStem := GetStemmer_8('english');
+
+  conn := db.GetConnection('loadTerminologyKeys');
+  try
+    FLastConceptKey := conn.CountSQL('select Max(ConceptKey) from Concepts');
+    FLastClosureKey := conn.CountSQL('select Max(ClosureKey) from Closures');
+    FLastClosureEntryKey := conn.CountSQL('select Max(ClosureEntryKey) from ClosureEntries');
+    FLastValueSetKey := conn.CountSQL('select Max(ValueSetKey) from ValueSets');
+    FLastValueSetMemberKey := conn.CountSQL('select Max(ValueSetMemberKey) from ValueSetMembers');
+    conn.Release;
+  except
+    on e:exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
 end;
 
 destructor TTerminologyServerStore.Destroy;
@@ -260,6 +661,29 @@ begin
   FUcum := Value;
 end;
 
+function TTerminologyServerStore.TrackValueSet(id: String; bOnlyIfNew : boolean): integer;
+var
+  conn : TKDBConnection;
+begin
+  conn := FDB.GetConnection('TrackValueSet');
+  try
+    result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
+    if result = 0 then
+    begin
+      result := NextValueSetKey;
+      Conn.ExecSQL('Insert into ValueSets (ValueSetKey, URL, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', 1)');
+    end
+    else if not bOnlyIfNew and not Loading then
+      Conn.ExecSQL('Update ValueSets set NeedsIndexing = 1 where ValueSetKey = '+inttostr(result));
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
+end;
 
 // ----  maintenance procedures ------------------------------------------------
 
@@ -273,6 +697,7 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
+      vs.TagValue := inttostr(TrackValueSet(vs.identifierST, true));
       if (vs.identifierST = 'http://hl7.org/fhir/ValueSet/ucum-common') then
         FUcum.SetCommonUnits(vs.Link);
 
@@ -314,6 +739,7 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
+      vs.TagValue := inttostr(TrackValueSet(vs.identifierST, false));
       FValueSetsByIdentifier.Matches[vs.identifierST] := vs.Link;
       FValueSetsByURL.Matches[url] := vs.Link;
       FValueSetsByKey.Matches[inttostr(key)] := vs.Link;
@@ -392,6 +818,30 @@ begin
     end;
   finally
     FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.enterIntoClosure(conn: TKDBConnection; name, uri, code: String): integer;
+var
+  ck : Integer;
+begin
+  result := conn.CountSQL('select ConceptKey from Concepts where URL = '''+SQLWrapString(uri)+''' and Code = '''+SQLWrapString(code)+'''');
+  if result = 0 then
+  begin
+    result := NextConceptKey;
+    conn.execSQL('insert into Concepts (ConceptKey, URL, Code, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(uri)+''', '''+SQLWrapString(code)+''', 1)');
+  end;
+  // now, check that it is in the closure
+  ck := conn.CountSQL('select ClosureKey from Closures where Name = '''+SQLWrapString(name)+'''');
+  if ck = 0 then
+  begin
+    ck := NextClosureKey;
+    conn.ExecSQL('insert into Closures (ClosureKey, Name) values ('+inttostr(ck)+', '''+SQLWrapString(name)+''')');
+  end;
+  if conn.CountSQL('select Count(*) from ClosureEntries where ClosureKey = '+inttostr(ck)+' and SubsumesKey = '+inttostr(result)) = 0 then
+  begin
+    // enter it into the closure table
+    conn.ExecSQL('insert into ClosureEntries (ClosureEntryKey, ClosureKey, SubsumesKey, SubsumedKey, NeedsIndexing) values ('+inttostr(NextClosureEntryKey)+', '+inttostr(ck)+', '+inttostr(result)+', '+inttostr(result)+', 1)');
   end;
 end;
 
@@ -488,6 +938,8 @@ begin
     result := FRxNorm.Link
   else if system = 'http://unitsofmeasure.org' then
     result := FUcum.Link
+  else if system = ANY_CODE_VS then
+    result := TAllCodeSystemsProvider.create(self.link)
   else
   begin
     FLock.Lock('getProvider');
@@ -554,6 +1006,61 @@ end;
 function TTerminologyServerStore.Link: TTerminologyServerStore;
 begin
   result := TTerminologyServerStore(inherited Link);
+end;
+
+function TTerminologyServerStore.NextConceptKey: integer;
+begin
+  FLock.Lock;
+  try
+    inc(FLastConceptKey);
+    result := FLastConceptKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.NextValueSetKey: integer;
+begin
+  FLock.Lock;
+  try
+    inc(FLastValueSetKey);
+    result := FLastValueSetKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.NextValueSetMemberKey: integer;
+begin
+  FLock.Lock;
+  try
+    inc(FLastValueSetMemberKey);
+    result := FLastValueSetMemberKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.NextClosureEntryKey: integer;
+begin
+  FLock.Lock;
+  try
+    inc(FLastClosureEntryKey);
+    result := FLastClosureEntryKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.NextClosureKey: integer;
+begin
+  FLock.Lock;
+  try
+    inc(FLastClosureKey);
+    result := FLastClosureKey;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 { TValueSetProvider }
@@ -643,7 +1150,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise Exception.create('Unable to find '+code+' in '+system)
+      raise Exception.create('Unable to find '+code+' in '+system(nil))
     else
       result := Definition(ctxt);
   finally
@@ -658,7 +1165,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise Exception.create('Unable to find '+code+' in '+system)
+      raise Exception.create('Unable to find '+code+' in '+system(nil))
     else
       result := Display(ctxt);
   finally
@@ -697,7 +1204,7 @@ var
 begin
   res := TValueSetProviderFilterContext.Create(TFhirValueSetDefineConceptList.Create);
   try
-    FilterCodes(res.concepts, Fvs.define.conceptList, filter);
+    FilterCodes(res.concepts, Fvs.define.conceptList, filter, true);
     res.total := res.concepts.Count;
     result := res.Link;
   finally
@@ -705,7 +1212,7 @@ begin
   end;
 end;
 
-function TValueSetProvider.system: String;
+function TValueSetProvider.system(context : TCodeSystemProviderContext): String;
 begin
   result := Fvs.define.systemST;
 end;
@@ -771,7 +1278,7 @@ begin
     result := nil;
 end;
 
-procedure TValueSetProvider.FilterCodes(dest, source: TFhirValueSetDefineConceptList; filter : TSearchFilterText);
+procedure TValueSetProvider.FilterCodes(dest, source: TFhirValueSetDefineConceptList; filter : TSearchFilterText; all : boolean);
 var
   i : integer;
   code : TFhirValueSetDefineConcept;
@@ -779,9 +1286,9 @@ begin
   for i := 0 to source.Count - 1 do
   begin
     code := source[i];
-    if filter.passes(code.tag as TAdvStringList) then
+    if filter.passes(code.tag as TAdvStringList, all) then
       dest.Add(code.Link);
-    filterCodes(dest, code.conceptList, filter);
+    filterCodes(dest, code.conceptList, filter, all);
   end;
 end;
 

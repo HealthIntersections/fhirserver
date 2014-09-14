@@ -440,7 +440,7 @@ operations
     // simplified interface for consumers
     Function ConceptExists(conceptId : String) : Boolean;
     Function Subsumes(Const sParent, sChild : AnsiString) : Boolean; Overload;
-    Function Search(iRoot : Int64; sText : AnsiString; iLang : Cardinal; bInactive : Boolean) : TMatchArray; overload;
+    Function Search(iRoot : Int64; sText : AnsiString; iLang : Cardinal; bInactive : Boolean; bAll : boolean = false) : TMatchArray; overload;
     Function IsValidConcept(Const sTerm : String):Boolean;
     Function IsValidDescription(Const sTerm : AnsiString; var concept : int64; var description : String):Boolean;
     Function GetDisplayName(Const sTerm, sLangSet : AnsiString) : AnsiString; Overload;
@@ -456,7 +456,7 @@ operations
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system : String; override;
+    function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -1047,7 +1047,7 @@ var
 begin
   res := TSnomedFilterContext.Create;
   try
-    res.matches := Search(0, filter.filter, 0, false);
+    res.matches := Search(0, filter.filter, 0, false, true);
     result := res.Link;
   finally
     res.Free;
@@ -1159,7 +1159,7 @@ End;
 
 
 
-function TSnomedServices.Search(iRoot : Int64; sText: AnsiString; iLang : Cardinal; bInactive : Boolean): TMatchArray;
+function TSnomedServices.Search(iRoot : Int64; sText: AnsiString; iLang : Cardinal; bInactive : Boolean; bAll : boolean): TMatchArray;
 var
   aLangMembers : TSnomedReferenceSetMemberArray;
 
@@ -1220,6 +1220,8 @@ var
     Desc : TCardinalArray;
     iWork, iDummy, module, kind : Cardinal;
     date : TSnomedDate;
+    ok : boolean;
+    s : AnsiString;
   Begin
     SetLength(desc, 0);
     Concept.GetConcept(iConceptIndex, Identity, Flags, date, Parents, Descriptions, outbounds, Inbounds, refsets);
@@ -1231,12 +1233,14 @@ var
       t := 0;
       Desc := Refs.GetReferences(FConcept.GetStems(iConceptIndex));
       For i := 0 to length(words) - 1 do
+      begin
         if words[i].stem <> 0 Then
           For j := 0 to length(Desc) - 1 do
             if (words[i].stem = desc[j]) Then
               r1 := r1 + 20 + (20 / length(desc))
             else
               assert(FStrings.GetEntry(words[i].stem) <> FStrings.GetEntry(desc[j]));
+      end;
 
       Desc := Refs.GetReferences(Descriptions);
       for j := Low(Desc) to High(Desc) Do
@@ -1245,8 +1249,27 @@ var
         t := t + FlagFactor(flags);
         r2 := r2 + Match(words, Strings.GetEntry(iWork), iDepth) * FlagFactor(flags);
       End;
-      if r1 + r2 > 0 Then
-        AddResult(iCount, iConceptIndex, Identity, r1 + r2 / t);
+      if (r1 + r2 > 0) Then
+      begin
+        if not bAll then
+          AddResult(iCount, iConceptIndex, Identity, r1 + r2 / t)
+        else
+        begin
+          for j := Low(Desc) to High(Desc) Do
+          Begin
+            FDesc.GetDescription(Desc[j], iWork, iID2, date, iDummy, module, kind, refsets, flags);
+            s := lowercase(Strings.GetEntry(iWork));
+            ok := true;
+            For i := 0 to length(words) - 1 do
+              if not ((copy(s, 1, length(words[i].original)) = words[i].original) or (ansipos(' '+words[i].original, s) > 0)) then
+                ok := false;
+            if ok then
+              break;
+          End;
+          if ok then
+            AddResult(iCount, iConceptIndex, Identity, r1 + r2 / t)
+        end;
+      end;
     End;
   End;
 var
@@ -1273,7 +1296,7 @@ begin
       if (s <> '') Then
       Begin
         SetLength(words, length(words)+1);
-        words[length(words)-1].original := s;
+        words[length(words)-1].original := lowercase(s);
         s1 := oStemmer.Stem(s);
         if FindStem(s1, index) Then
           words[length(words)-1].stem := FStems.GetString(index);
@@ -2258,7 +2281,7 @@ var
 begin
   ctxt := locate(code);
   if (ctxt = nil) then
-    raise Exception.create('Unable to find '+code+' in '+system)
+    raise Exception.create('Unable to find '+code+' in '+system(nil))
   else
     ListDisplayNames(list, Cardinal(ctxt), 0, $FF);
 end;
@@ -2270,7 +2293,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise Exception.create('Unable to find '+code+' in '+system)
+      raise Exception.create('Unable to find '+code+' in '+system(nil))
     else
       result := Display(ctxt);
   finally
@@ -2297,10 +2320,10 @@ begin
   if Concept.FindConcept(iId, index) Then
     result := TCodeSystemProviderContext(index)
   else
-    raise exception.create('unable to find code '+code+' in '+system);
+    raise exception.create('unable to find code '+code+' in '+system(nil));
 end;
 
-function TSnomedServices.system: String;
+function TSnomedServices.system(context : TCodeSystemProviderContext): String;
 begin
   result := 'http://snomed.info/sct';
 end;

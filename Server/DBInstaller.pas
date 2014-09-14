@@ -63,6 +63,11 @@ Type
     procedure CreateUsers;
     procedure CreateUserIndexes;
     procedure CreateOAuthLogins;
+    procedure CreateClosures;
+    procedure CreateConcepts;
+    procedure CreateValueSets;
+    procedure CreateValueSetMembers;
+    procedure CreateClosureEntries;
     procedure DefineIndexes;
     procedure DefineResourceSpaces;
     procedure DoPostTransactionInstall;
@@ -190,7 +195,7 @@ end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceConfig;
 var
-  i: Integer;
+  i : integer;
 Begin
   FConn.ExecSQL('CREATE TABLE Config( '+#13#10+
        ' ConfigKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
@@ -204,8 +209,46 @@ Begin
 
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+BooleanToInt(FSupportSystemHistory)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (4, '''+BooleanToInt(FDoAudit)+''')');
-
 End;
+
+procedure TFHIRDatabaseInstaller.CreateClosureEntries;
+begin
+  FConn.ExecSQL('CREATE TABLE ClosureEntries ( '+#13#10+
+       ' ClosureEntryKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ClosureKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' SubsumesKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' SubsumedKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' NeedsIndexing int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_ClosureEntries', 'ClosureEntryKey')+') '+CreateTableInfo(FConn.owner.platform));
+
+  FConn.ExecSQL('Create INDEX SK_ClosureEntries_Subsumes ON ClosureEntries (ClosureKey, SubsumesKey)');
+  FConn.ExecSQL('Create INDEX SK_ClosureEntries_Subsumed ON ClosureEntries (ClosureKey, SubsumedKey)');
+  FConn.ExecSQL('Create INDEX SK_ClosureEntries_NeedsIndexing ON ClosureEntries (NeedsIndexing)');
+
+  FConn.ExecSQL(ForeignKeySql(FConn, 'ClosureEntries', 'ClosureKey',  'Closures', 'ClosureKey', 'FK_ClosureEntries_ConceptKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'ClosureEntries', 'SubsumesKey', 'Concepts', 'ConceptKey', 'FK_ClosureEntries_SubsumesKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'ClosureEntries', 'SubsumedKey', 'Concepts', 'ConceptKey', 'FK_ClosureEntries_SubsumedKey'));
+end;
+
+procedure TFHIRDatabaseInstaller.CreateClosures;
+begin
+  FConn.ExecSQL('CREATE TABLE Closures ( '+#13#10+
+       ' ClosureKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
+       ' Name nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_Closures', 'ClosureKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_Closure_Name ON Closures (Name)');
+end;
+
+procedure TFHIRDatabaseInstaller.CreateConcepts;
+begin
+  FConn.ExecSQL('CREATE TABLE Concepts ( '+#13#10+
+       ' ConceptKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
+       ' URL nchar(100) '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       ' Code nchar(100) '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       ' NeedsIndexing int '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_Concepts', 'ConceptKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_Concepts_Name ON Concepts (URL, Code)');
+end;
 
 procedure TFHIRDatabaseInstaller.CreateNotificationQueue;
 begin
@@ -385,11 +428,14 @@ Begin
        ' EntryKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' IndexKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Parent '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' MasterResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' SpaceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Value nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Value2 nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Flag '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, false)+', '+#13#10+
        ' Target '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Concept '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Extension nchar(5) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Xhtml '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_IndexEntries', 'EntryKey')+') '+CreateTableInfo(FConn.owner.platform));
@@ -397,10 +443,12 @@ Begin
   FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_IndexEntry_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'SpaceKey', 'Spaces', 'SpaceKey', 'FK_IndexEntry_SpaceKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'Target', 'Ids', 'ResourceKey', 'FK_IndexEntry_TargetKey'));
-  FConn.ExecSQL('Create INDEX SK_IndexEntriesValueType ON IndexEntries (Value, ResourceKey)');
-  FConn.ExecSQL('Create INDEX SK_IndexEntriesValueType2 ON IndexEntries (Value2, ResourceKey)');
-  FConn.ExecSQL('Create INDEX SK_IndexEntriesValueSpaceType ON IndexEntries (SpaceKey, Value, ResourceKey)');
-  FConn.ExecSQL('Create INDEX SK_IndexEntriesValueSpaceType2 ON IndexEntries (SpaceKey, Value2, ResourceKey)');
+  FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'Concept', 'Concepts', 'ConceptKey', 'FK_IndexEntry_ConceptKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'Parent', 'IndexEntries', 'EntryKey', 'FK_IndexEntry_ParentKey'));
+  FConn.ExecSQL('Create INDEX SK_IndexEntriesValueType ON IndexEntries (Flag, Value, ResourceKey)');
+  FConn.ExecSQL('Create INDEX SK_IndexEntriesValueType2 ON IndexEntries (Flag, Value2, ResourceKey)');
+  FConn.ExecSQL('Create INDEX SK_IndexEntriesValueSpaceType ON IndexEntries (SpaceKey, Flag, Value, ResourceKey)');
+  FConn.ExecSQL('Create INDEX SK_IndexEntriesValueSpaceType2 ON IndexEntries (SpaceKey, Flag, Value2, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_IndexEntriesResKey ON IndexEntries (ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_IndexEntriesTargetKey ON IndexEntries (Target)');
   FConn.ExecSQL('Create INDEX SK_IndexEntriesMasterResKey ON IndexEntries (MasterResourceKey)');
@@ -423,6 +471,31 @@ Begin
   FConn.ExecSQL('Create Unique INDEX SK_Users_StatusName ON Users (Status, UserName)');
   FConn.ExecSQL('Create Unique INDEX SK_Users_StatusKey ON Users (Status, UserKey)');
 End;
+
+procedure TFHIRDatabaseInstaller.CreateValueSetMembers;
+begin
+  FConn.ExecSQL('CREATE TABLE ValueSetMembers ( '+#13#10+
+       ' ValueSetMemberKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ValueSetKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ConceptKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_ValueSetMembers', 'ValueSetMemberKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_ValueSetMembers_Members ON ValueSetMembers (ValueSetKey, ConceptKey)');
+  FConn.ExecSQL('Create INDEX SK_ValueSetMembers_Owners ON ValueSetMembers (ConceptKey, ValueSetKey)');
+  FConn.ExecSQL(ForeignKeySql(FConn, 'ValueSetMembers', 'ValueSetKey', 'ValueSets', 'ValueSetKey', 'FK_ValueSetMembers_ValueSetKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'ValueSetMembers', 'ConceptKey', 'Concepts', 'ConceptKey', 'FK_ValueSetMembers_ConceptKey'));
+end;
+
+procedure TFHIRDatabaseInstaller.CreateValueSets;
+begin
+  FConn.ExecSQL('CREATE TABLE ValueSets ( '+#13#10+
+       ' ValueSetKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
+       ' URL nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       ' NeedsIndexing int '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       ' Error nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_ValueSets', 'ValueSetKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_ValueSets_URI ON ValueSets (URL)');
+  FConn.ExecSQL('Create INDEX SK_ValueSets_NeedsIndexing ON ValueSets (NeedsIndexing)');
+end;
 
 procedure TFHIRDatabaseInstaller.CreateUserIndexes;
 Begin
@@ -494,6 +567,20 @@ begin
         names.add(m.indexes[i].Name.ToLower);
       end;
     end;
+    for i := 0 to m.Composites.count - 1 do
+    begin
+      if names.IndexOf(m.Composites[i].Name.ToLower) = -1 Then
+      begin
+        FConn.Sql := 'insert into Indexes (IndexKey, Name) values (:k, :d)';
+        FConn.prepare;
+        FConn.bindInteger('k', k);
+        FConn.bindString('d', m.Composites[i].Name);
+        FConn.execute;
+        inc(k);
+        FConn.terminate;
+        names.add(m.Composites[i].Name.ToLower);
+      end;
+    end;
   finally
     names.free;
     m.free;
@@ -507,6 +594,13 @@ begin
   try
     CreateUsers;
     CreateUserIndexes;
+
+    CreateClosures;
+    CreateConcepts;
+    CreateValueSets;
+    CreateValueSetMembers;
+    CreateClosureEntries;
+
     CreateResourceSessions;
     CreateResourceTags;
     CreateResourceTypes;
@@ -576,12 +670,24 @@ begin
         FConn.DropTable('Types');
       if meta.hasTable('Tags') then
         FConn.DropTable('Tags');
+      if meta.hasTable('Sessions') then
+        FConn.DropTable('Sessions');
       if meta.hasTable('UserIndexes') then
         FConn.DropTable('UserIndexes');
       if meta.hasTable('Users') then
         FConn.DropTable('Users');
-      if meta.hasTable('Sessions') then
-        FConn.DropTable('Sessions');
+
+      if meta.hasTable('ClosureEntries') then
+        FConn.DropTable('ClosureEntries');
+      if meta.hasTable('ValueSetMembers') then
+        FConn.DropTable('ValueSetMembers');
+      if meta.hasTable('ValueSets') then
+        FConn.DropTable('ValueSets');
+      if meta.hasTable('Closures') then
+        FConn.DropTable('Closures');
+      if meta.hasTable('Concepts') then
+        FConn.DropTable('Concepts');
+
       FConn.Commit;
     except
       FConn.Rollback;

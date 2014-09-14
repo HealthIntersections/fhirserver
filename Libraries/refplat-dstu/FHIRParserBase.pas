@@ -229,6 +229,7 @@ Type
   Protected
     Procedure PropNull(json : TJSONWriter; name : String); overload;
     Procedure Prop(json : TJSONWriter; name, value : String); overload;
+    Procedure PropNumber(json : TJSONWriter; name, value : String); overload;
     Procedure Prop(json : TJSONWriter; name : String; value : boolean); overload;
     Procedure ComposeXHtmlNode(json : TJSONWriter; name : String; value : TFhirXHtmlNode); overload;
 
@@ -861,6 +862,12 @@ procedure TFHIRJsonComposerBase.Prop(json : TJSONWriter; name, value: String);
 begin
   if value <> '' Then
     json.Value(name, value);
+end;
+
+procedure TFHIRJsonComposerBase.PropNumber(json : TJSONWriter; name, value: String);
+begin
+  if value <> '' Then
+    json.ValueNumber(name, value);
 end;
 
 procedure TFHIRJsonComposerBase.Compose(json : TJSONWriter; statedType, id, ver : String; oResource: TFhirResource; links : TFHIRAtomLinkList);

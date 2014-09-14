@@ -38,7 +38,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.81 generated Wed, Aug 27, 2014 23:05+1000
+// FHIR v0.0.82 generated Sun, Sep 14, 2014 17:48+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
@@ -93,7 +93,7 @@ Const
      'substances',
      'supplies',
      'valuesets',
-     'Binaries');
+     'binaries');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'adversereaction',
      'alert',
      'allergyintolerance',
@@ -1057,7 +1057,7 @@ Const
      'The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)',
      'The value of the observation, if the value is a string, and also searches in CodeableConcept.text');
   TYPES_TSearchParamsObservation : Array[TSearchParamsObservation] of TFhirSearchParamType = ( SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeToken,  SearchParamTypeComposite,  SearchParamTypeReference,  SearchParamTypeComposite,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeQuantity,  SearchParamTypeString);
-//  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id,  spObservation__language,  spObservation_Date,  spObservation_Name,  spObservation_Name_value_[x],  spObservation_Performer,  spObservation_Related,  spObservation_Related_target,  spObservation_Related_type,  spObservation_Reliability,  spObservation_Specimen,  spObservation_Status,  spObservation_Subject,  spObservation_Value_concept,  spObservation_Value_date,  spObservation_Value_quantity,  spObservation_Value_string);
+//  CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = ( spObservation__id,  spObservation__language,  spObservation_Date,  spObservation_Name,  spObservation_Name_value_x,  spObservation_Performer,  spObservation_Related,  spObservation_Related_target,  spObservation_Related_type,  spObservation_Reliability,  spObservation_Specimen,  spObservation_Status,  spObservation_Subject,  spObservation_Value_concept,  spObservation_Value_date,  spObservation_Value_quantity,  spObservation_Value_string);
   PATHS_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_id: []',
      '_language: []',
      'date: []',
@@ -1460,11 +1460,11 @@ Const
      'system: []',
      'version: []');
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [], []);
-  FHIR_GENERATED_VERSION = '0.0.81';
+  FHIR_GENERATED_VERSION = '0.0.82';
 
-  FHIR_GENERATED_REVISION = '2787';
+  FHIR_GENERATED_REVISION = '2835';
 
-  FHIR_GENERATED_DATE = '20140827230500';
+  FHIR_GENERATED_DATE = '20140914174828';
 
 
 

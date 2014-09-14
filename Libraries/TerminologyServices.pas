@@ -44,7 +44,7 @@ Type
 
     function null : Boolean;
     function passes(value : String) : boolean; overload;
-    function passes(stems : TAdvStringList) : boolean; overload;
+    function passes(stems : TAdvStringList; all : boolean) : boolean; overload;
     property filter : string read FFilter;
     property stems : TStringList read FStems;
   end;
@@ -56,7 +56,7 @@ Type
     function TotalCount : integer;  virtual; abstract;
     function ChildCount(context : TCodeSystemProviderContext) : integer; virtual; abstract;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; virtual; abstract;
-    function system : String; virtual; abstract;
+    function system(context : TCodeSystemProviderContext) : String; virtual; abstract;
     function getDisplay(code : String):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
     function locate(code : String) : TCodeSystemProviderContext; virtual; abstract;
@@ -187,13 +187,23 @@ begin
   End;
 end;
 
-function TSearchFilterText.passes(stems: TAdvStringList): boolean;
+function TSearchFilterText.passes(stems: TAdvStringList; all : boolean): boolean;
 var
   i : integer;
 begin
   result := Null;
-  for i := 0 to stems.count - 1 do
-    result := result or find(stems[i]);
+  if FStems.Count > 0 then
+  begin
+    if all then
+    begin
+      result := true;
+      for i := 0 to stems.count - 1 do
+        result := result and find(stems[i]);
+    end
+    else
+      for i := 0 to stems.count - 1 do
+        result := result or find(stems[i]);
+  end;
 end;
 
 procedure TSearchFilterText.process;

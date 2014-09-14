@@ -44,7 +44,7 @@ Type
 implementation
 
 uses
-  SnomedServices, SnomedExpressions, SCIMSearch,
+  SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax,
   DecimalTests, UcumTests, JWTTests, TwilioClient
   {$IFNDEF FHIR-DSTU}, QuestionnaireBuilder{$ENDIF};
 
@@ -59,6 +59,7 @@ procedure TFhirServerTests.executeLibrary;
 begin
   // TTwilioClient.RunTests;
   TSCIMSearchParser.runTests;
+  TFSFilterParser.runTests;
   TDecimalTests.runTests;
   TUcumTests.runTests(ExtractFilePath(FIni.FileName));
   TJWTTests.runTests;
