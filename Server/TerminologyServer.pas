@@ -45,12 +45,12 @@ Type
     function isKnownValueSet(id : String; out vs : TFHIRValueSet): Boolean;
 
     // given a value set, expand it
-    function expandVS(vs : TFHIRValueSet; cacheId : String; textFilter : String; limit : integer) : TFHIRValueSet; overload;
-    function expandVS(uri : String; textFilter : String; limit : integer) : TFHIRValueSet; overload;
+    function expandVS(vs : TFHIRValueSet; cacheId : String; textFilter : String; limit : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
+    function expandVS(uri : String; textFilter : String; limit : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
 
     // these are internal services - not for use outside the terminology server
-    function expandVS(uri: String; textFilter : String; dependencies : TStringList; limit : integer) : TFHIRValueSet; overload;
-    function expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; dependencies : TStringList; limit : integer): TFHIRValueSet; overload;
+    function expandVS(uri: String; textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
+    function expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet; overload;
 
     function validate(vs : TFHIRValueSet; coding : TFhirCoding) : TFhirOperationOutcome; overload;
     function validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept) : TFhirOperationOutcome; overload;
@@ -165,21 +165,22 @@ begin
      FExpansions.DeleteByIndex(i);
 end;
 
-function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; limit : integer): TFHIRValueSet;
+function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
   ts : TStringList;
 begin
   ts := TStringList.create;
   try
-    result := expandVS(vs, cacheId, textFilter, ts, limit);
+    result := expandVS(vs, cacheId, textFilter, ts, limit, allowIncomplete);
   finally
     ts.free;
   end;
 end;
 
-function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; dependencies : TStringList; limit : integer): TFHIRValueSet;
+function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
-  s : String;
+  s, d : String;
+  p : TArray<String>;
   exp : TFHIRValueSetExpander;
 begin
   result := nil;
@@ -188,7 +189,13 @@ begin
     FLock.Lock('expandVS.1');
     try
       if FExpansions.ExistsByKey(cacheId+#1+textFilter+#1+inttostr(limit)) then
+      begin
         result := (FExpansions.matches[cacheId+#1+textFilter+#1+inttostr(limit)] as TFhirValueSet).link;
+        p := result.TagValue.Split([#1]);
+        for s in p do
+          if (s <> '') then
+            dependencies.Add(s);
+      end;
     finally
       FLock.Unlock;
     end;
@@ -197,7 +204,7 @@ begin
   begin
     exp := TFHIRValueSetExpander.create(self.Link);
     try
-      result := exp.expand(vs, textFilter, dependencies, limit);
+      result := exp.expand(vs, textFilter, dependencies, limit, allowIncomplete);
       if (dependencies.Count > 0) and (cacheId <> '') then
       begin
         FLock.Lock('expandVS.2');
@@ -206,8 +213,13 @@ begin
           begin
             FExpansions.Add(cacheId+#1+textFilter+#1+inttostr(limit), result.Link);
             // in addition, we trace the dependencies so we can expire the cache
+            d := '';
             for s in dependencies do
+            begin
               AddDependency(s, cacheId);
+              d := d + s+#1;
+            end;
+            result.TagValue := d;
           end;
         finally
           FLock.Unlock;
@@ -221,7 +233,7 @@ end;
 
 
 
-function TTerminologyServer.expandVS(uri: String; textFilter : String; limit : integer): TFHIRValueSet;
+function TTerminologyServer.expandVS(uri: String; textFilter : String; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
   vs : TFHIRValueSet;
   ts : TStringList;
@@ -230,7 +242,7 @@ begin
   try
     vs := getValueSetByUrl(uri);
     try
-      result := expandVS(vs, uri, textFilter, ts, limit);
+      result := expandVS(vs, uri, textFilter, ts, limit, allowIncomplete);
     finally
       vs.Free;
     end;
@@ -239,7 +251,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(uri: String; textFilter : String; dependencies: TStringList; limit : integer): TFHIRValueSet;
+function TTerminologyServer.expandVS(uri: String; textFilter : String; dependencies: TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
   vs : TFHIRValueSet;
 begin
@@ -247,7 +259,7 @@ begin
   try
     if vs = nil then
       raise Exception.Create('Unable to find value set "'+uri+'"');
-    result := expandVS(vs, uri, textFilter, limit);
+    result := expandVS(vs, uri, textFilter, limit, allowIncomplete);
   finally
     vs.Free;
   end;

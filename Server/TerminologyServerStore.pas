@@ -239,17 +239,25 @@ Type
 
 function TAllCodeSystemsProvider.TotalCount : integer;
 begin
-  result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FStore.RxNorm.TotalCount + FActCode.TotalCount;
+  if FStore.RxNorm = nil then
+    result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FActCode.TotalCount
+  else
+    result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FStore.RxNorm.TotalCount + FActCode.TotalCount;
 end;
 
 function TAllCodeSystemsProvider.ChildCount(context : TCodeSystemProviderContext) : integer;
 begin
-  raise Exception.Create('Not Created Yet');
+  if (context = nil) then
+    result := TotalCount
+  else
+    raise Exception.Create('Not Created Yet');
 end;
+
 function TAllCodeSystemsProvider.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
   raise Exception.Create('Not Created Yet');
 end;
+
 function TAllCodeSystemsProvider.system(context : TCodeSystemProviderContext) : String;
 var
   c : TAllCodeSystemsProviderContext;
@@ -262,7 +270,7 @@ begin
     case c.source of
       acssLoinc : result := FStore.Loinc.System(c.context);
       acssSnomed : result := FStore.Snomed.System(c.context);
-      acssRxNorm : result := FStore.RxNorm.System(c.context);
+      acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.System(c.context) else result := '??';
       acssActCode : result := FActCode.System(c.context);
     end;
   end;
@@ -278,7 +286,8 @@ var
 begin
   ctxt := TAllCodeSystemsProviderFilterPreparationContext.Create;
   try
-    ctxt.rxnorm := FStore.RxNorm.getPrepContext;
+    if FStore.RxNorm <> nil then
+      ctxt.rxnorm := FStore.RxNorm.getPrepContext;
     ctxt.loinc := FStore.Loinc.getPrepContext;
     ctxt.snomed := FStore.Snomed.getPrepContext;
     ctxt.actcode := Factcode.getPrepContext;
@@ -308,7 +317,7 @@ begin
   case c.source of
     acssLoinc : result := FStore.Loinc.IsAbstract(c.context);
     acssSnomed : result := FStore.Snomed.IsAbstract(c.context);
-    acssRxNorm : result := FStore.RxNorm.IsAbstract(c.context);
+    acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.IsAbstract(c.context) else result := false;
     acssActCode : result := FActCode.IsAbstract(c.context);
   end;
 end;
@@ -321,7 +330,7 @@ begin
   case c.source of
     acssLoinc : result := FStore.Loinc.Code(c.context);
     acssSnomed : result := FStore.Snomed.Code(c.context);
-    acssRxNorm : result := FStore.RxNorm.Code(c.context);
+    acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Code(c.context) else result := '??';
     acssActCode : result := FActCode.Code(c.context);
   end;
 end;
@@ -341,7 +350,7 @@ begin
   case c.source of
     acssLoinc : result := FStore.Loinc.Display(c.context)+' (LOINC: '+FStore.Loinc.Code(c.context)+')';
     acssSnomed : result := FStore.Snomed.Display(c.context)+' (S-CT: '+FStore.Snomed.Code(c.context)+')';
-    acssRxNorm : result := FStore.RxNorm.Display(c.context)+' (RxN: '+FStore.RxNorm.Code(c.context)+')';
+    acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Display(c.context)+' (RxN: '+FStore.RxNorm.Code(c.context)+')' else result := '';
     acssActCode : result := FActCode.Display(c.context)+' (ActCode: '+FActCode.Code(c.context)+')';
   end;
 end;
@@ -354,7 +363,7 @@ begin
   case c.source of
     acssLoinc : result := FStore.Loinc.Definition(c.context);
     acssSnomed : result := FStore.Snomed.Definition(c.context);
-    acssRxNorm : result := FStore.RxNorm.Definition(c.context);
+    acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Definition(c.context) else result := '??';
     acssActCode : result := FActCode.Definition(c.context);
   end;
 end;
@@ -384,7 +393,8 @@ begin
   begin
     ctxt := TAllCodeSystemsProviderFilter.create;
     try
-      ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm);
+      if FStore.RxNorm <> nil then
+        ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm);
       ctxt.snomed := FStore.snomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed);
       ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc);
       ctxt.actcode := FActCode.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).actcode);
@@ -408,7 +418,8 @@ begin
   begin
     FStore.Loinc.prepare(ctxt.loinc);
     FStore.Snomed.prepare(ctxt.snomed);
-    FStore.RxNorm.prepare(ctxt.rxnorm);
+    if FStore.RxNorm <> nil then
+      FStore.RxNorm.prepare(ctxt.rxnorm);
     FActCode.prepare(ctxt.actcode);
   end;
 end;
@@ -417,6 +428,7 @@ function TAllCodeSystemsProvider.filterLocate(ctxt : TCodeSystemProviderFilterCo
 begin
   raise Exception.Create('Not Created Yet');
 end;
+
 function TAllCodeSystemsProvider.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 var
   c : TAllCodeSystemsProviderFilter;
@@ -439,9 +451,14 @@ begin
           c.loincDone := not FStore.Loinc.FilterMore(c.loinc);
         if c.loincDone then
         begin
-          if not c.rxNormDone then
-            c.rxNormDone := not FStore.RxNorm.FilterMore(c.rxNorm);
-          result := not c.rxnormDone;
+          if FStore.RxNorm = nil then
+            result := false
+          else
+          begin
+            if not c.rxNormDone then
+              c.rxNormDone := not FStore.RxNorm.FilterMore(c.rxNorm);
+            result := not c.rxnormDone;
+          end;
         end;
       end;
     end;
@@ -471,7 +488,11 @@ begin
       c.source := acssLoinc;
       c.context := FStore.Loinc.FilterConcept(d.loinc);
     end
-    else // if not d.rxnormDone then
+    else if FStore.RxNorm = nil then
+    begin
+      // nothing
+    end
+    else
     begin
       c.source := acssRxNorm;
       c.context := FStore.RxNorm.FilterConcept(d.rxNorm);
@@ -496,7 +517,8 @@ var
   c : TAllCodeSystemsProviderFilterPreparationContext;
 begin
   c := ctxt as TAllCodeSystemsProviderFilterPreparationContext;
-  FStore.RxNorm.Close(c.rxnorm);
+  if FStore.RxNorm <> nil then
+    FStore.RxNorm.Close(c.rxnorm);
   FStore.Loinc.Close(c.loinc);
   FStore.Snomed.Close(c.snomed);
   FActCode.Close(c.actcode);
@@ -510,7 +532,8 @@ begin
   c := ctxt as TAllCodeSystemsProviderFilter;
   if (c <> nil) then
   begin
-    FStore.RxNorm.Close(c.rxnorm);
+    if FStore.RxNorm <> nil then
+      FStore.RxNorm.Close(c.rxnorm);
     FStore.Loinc.Close(c.loinc);
     FStore.Snomed.Close(c.snomed);
     FActCode.Close(c.actcode);
@@ -526,7 +549,7 @@ begin
   case c.source of
     acssLoinc : FStore.Loinc.Close(c.context);
     acssSnomed : FStore.Snomed.Close(c.context);
-    acssRxNorm : FStore.RxNorm.Close(c.context);
+    acssRxNorm : if FStore.RxNorm <> nil then FStore.RxNorm.Close(c.context);
     acssActCode : FActCode.Close(c.context);
   end;
   ctxt.free;

@@ -1,7 +1,7 @@
 unit FHIRParser;
 
 {
-  Copyright (c) 2011-2014, HL7, Inc.
+  Copyright (c) 2011+, HL7, Inc.
   All rights reserved.
   
   Redistribution and use in source and binary forms, with or without modification, 
@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Fri, Sep 5, 2014 09:16+1000
+// FHIR v0.3.0 generated Thu, Sep 18, 2014 20:13+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON, FHIRAtomFeed;

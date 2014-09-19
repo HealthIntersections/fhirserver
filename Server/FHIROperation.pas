@@ -51,7 +51,7 @@ uses
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore,
   FHIRServerConstants, FHIRServerUtilities,
   {$IFNDEF FHIR-DSTU}
-  QuestionnaireBuilder,
+  QuestionnaireBuilder, NarrativeGenerator,
   {$ENDIF}
   SearchProcessor;
 
@@ -189,6 +189,7 @@ type
     procedure ReIndex;
     procedure clear(a : TFhirResourceTypeSet);
     function IdentifyValueset(request: TFHIRRequest; resource : TFHIRResource; params: TParseMap; base: String; var used, cacheId: string; allowNull : boolean = false): TFHIRValueSet;
+    procedure CheckCreateNarrative(request : TFHIRRequest);
   public
     Constructor Create(lang : String; repository : TFHIRDataStore);
     Destructor Destroy; Override;
@@ -213,6 +214,8 @@ type
 
     // called when kernel actually wants to process against the store
     Function Execute(request: TFHIRRequest; response : TFHIRResponse; upload : Boolean) : String;  virtual;
+
+    function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
 
     property lang : String read FLang write FLang;
     Property TestServer : boolean read FTestServer write FTestServer;
@@ -862,6 +865,7 @@ var
   tags : TFHIRAtomCategoryList;
   ok : boolean;
 begin
+  CheckCreateNarrative(request);
   try
     ok := true;
     if not check(response, opAllowed(request.ResourceType, fcmdCreate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
@@ -1285,14 +1289,14 @@ begin
             feed.links.AddValue(base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count), 'last');
         end;
 
-        FConnection.SQL := 'Select Ids.ResourceKey, Ids.Id, Versions.ResourceVersionKey, MostRecent, VersionId, StatedDate, Name, Deleted, originalId, TextSummary, Tags, Content, Summary from Versions, Ids, Sessions, SearchEntries '+
-            'where SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id+' '+
+        FConnection.SQL := 'Select Ids.ResourceKey, ResourceName, Ids.Id, Versions.ResourceVersionKey, MostRecent, VersionId, StatedDate, Name, Deleted, originalId, TextSummary, Tags, Content, Summary from Versions, Ids, Sessions, SearchEntries, Types '+
+            'where SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id+' '+
             'order by SearchEntries.ResourceVersionKey DESC OFFSET '+inttostr(offset)+' ROWS FETCH NEXT '+IntToStr(count+1)+' ROWS ONLY';
         FConnection.Prepare;
         try
           FConnection.Execute;
           while FConnection.FetchNext do
-            AddResourceToFeed(feed, '', CODES_TFHIRResourceType[request.ResourceType], request.baseUrl, FConnection.colstringByName['TextSummary'], FConnection.colstringByName['originalId'], wantsummary, FConnection.ColIntegerByName['MostRecent'] = FConnection.ColIntegerByName['ResourceVersionKey']);
+            AddResourceToFeed(feed, '', FConnection.colStringByName['ResourceName'], request.baseUrl, FConnection.colstringByName['TextSummary'], FConnection.colstringByName['originalId'], wantsummary, FConnection.ColIntegerByName['MostRecent'] = FConnection.ColIntegerByName['ResourceVersionKey']);
         finally
           FConnection.Terminate;
         end;
@@ -1632,6 +1636,8 @@ var
   tags : TFHIRAtomCategoryList;
   ok : boolean;
 begin
+  CheckCreateNarrative(request);
+
   nvid := 0;
   key := 0;
   try
@@ -2991,6 +2997,52 @@ begin
   FConnection.Terminate;
 end;
 
+function TFhirOperation.LookupReference(context : TFHIRRequest; id: String): TResourceWithReference;
+var
+  a, atype : TFhirResourceType;
+  resourceKey : integer;
+  originalId : String;
+  parser : TFHIRParser;
+  b, base : String;
+  s : TBytes;
+begin
+  base := context.baseUrl;
+  if id.StartsWith(base) then
+    id := id.Substring(base.Length)
+  else for b in FRepository.Bases do
+    if id.StartsWith(b) then
+      id := id.Substring(b.Length);
+  aType := frtNull;
+  for a := low(TFHIRResourceType) to High(TFHIRResourceType) do
+    if id.startsWith(CODES_TFhirResourceType[a] + '/') then
+    begin
+      aType:= a;
+      id := id.Substring(9);
+    end;
+
+  result := nil;
+  if (aType <> frtNull) and (length(id) <= 36) and FindResource(aType, id, false, resourceKey, originalId, nil, nil, '') then
+  begin
+    FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
+    FConnection.Prepare;
+    try
+      FConnection.Execute;
+      if FConnection.FetchNext then
+      begin
+        s := ZDecompressBytes(FConnection.ColBlobByName['Content']);
+        parser := MakeParser(lang, ffXml, s, xppDrop);
+        try
+          result := TResourceWithReference.Create(id, parser.resource.Link);
+        finally
+          parser.free;
+        end;
+      end
+    finally
+      FConnection.Terminate;
+    end;
+  end;
+end;
+
 procedure TFhirOperation.ExecuteDeleteTags(request: TFHIRRequest; response: TFHIRResponse);
 var
   resourceKey : Integer;
@@ -3121,6 +3173,9 @@ begin
               try
                 builder.Profiles := FRepository.Profiles.link;
                 builder.OnExpand := FRepository.ExpandVS;
+                builder.OnLookupCode := FRepository.LookupCode;
+                builder.onLookupReference := LookupReference;
+                builder.Context := request.Link;
                 builder.QuestionnaireId := fid;
 
                 builder.Profile := profile.link;
@@ -3129,7 +3184,7 @@ begin
                   builder.PrebuiltQuestionnaire := questionnaire.Link;
                 builder.build;
                 if questionnaire = nil then
-                  FRepository.QuestionnaireCache.putQuestionnaire(frtProfile, id, builder.Questionnaire);
+                  FRepository.QuestionnaireCache.putQuestionnaire(frtProfile, id, builder.Questionnaire, builder.Dependencies);
                 response.HTTPCode := 200;
                 response.Message := 'OK';
                 response.Body := '';
@@ -3380,7 +3435,7 @@ procedure TFhirOperation.ExecuteValueSetExpansion(request: TFHIRRequest; respons
 var
   vs, dst : TFHIRValueSet;
   resourceKey : integer;
-  cacheId, originalId : String;
+  url, cacheId, originalId : String;
 begin
   try
     NotFound(request, response);
@@ -3399,7 +3454,12 @@ begin
           end
           else if request.Parameters.VarExists('identifier') then
           begin
-            if not FRepository.TerminologyServer.isKnownValueSet(request.Parameters.getvar('identifier'), vs) then
+            url := request.Parameters.getvar('identifier');
+            if (url.startsWith('ValueSet/')) then
+              vs := GetValueSetById(request, url.substring(9), request.baseUrl)
+            else if (url.startsWith(request.baseURL+'ValueSet/')) then
+              vs := GetValueSetById(request, url.substring(9), request.baseUrl)
+            else if not FRepository.TerminologyServer.isKnownValueSet(url, vs) then
               vs := GetValueSetByIdentity(request.Parameters.getvar('identifier'));
             cacheId := vs.identifierST;
           end
@@ -3410,7 +3470,7 @@ begin
           else
             raise Exception.Create('Unable to find value to expand (not provided by id, identifier, or directly');
 
-          dst := FRepository.TerminologyServer.expandVS(vs, cacheId, request.Parameters.getVar('filter'), StrToIntDef(request.Parameters.GetVar('_limit'), 0));
+          dst := FRepository.TerminologyServer.expandVS(vs, cacheId, request.Parameters.getVar('filter'), StrToIntDef(request.Parameters.GetVar('_limit'), 0), StrToBoolDef(request.Parameters.GetVar('_incomplete'), false));
           try
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -3453,7 +3513,7 @@ begin
     feed.title := 'Expanded ValueSet';
     feed.links.Rel['self'] := used;
     feed.SearchTotal := 1;
-    dst := FRepository.TerminologyServer.expandVS(src, cacheId, params.getVar('filter'), StrToIntDef(request.Parameters.GetVar('_limit'), 0));
+    dst := FRepository.TerminologyServer.expandVS(src, cacheId, params.getVar('filter'), StrToIntDef(request.Parameters.GetVar('_limit'), 0), StrToBoolDef(request.Parameters.GetVar('_incomplete'), false));
     try
       AddResourceToFeed(feed, NewGuidURN, 'ValueSet', feed.title, '', 'Health Intersections', '??base', '', now, dst, '', nil, false);
     finally
@@ -3521,11 +3581,14 @@ begin
               try
                 builder.Profile := profile.link;
                 builder.OnExpand := FRepository.ExpandVS;
+                builder.onLookupCode := FRepository.LookupCode;
+                builder.Context := request.Link;
+                builder.onLookupReference := LookupReference;
                 builder.QuestionnaireId := fid;
                 builder.build;
                 questionnaire := builder.questionnaire.Link;
                 if id <> '' then
-                  FRepository.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire);
+                  FRepository.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire, builder.dependencies);
               finally
                 builder.Free;
               end;
@@ -3766,6 +3829,9 @@ var
   s : TBytes;
   parser : TFHIRParser;
 begin
+  if (id.startsWith('ValueSet/')) then
+    id := id.substring(9);
+
   FConnection.SQL := 'Select * from Versions where ResourceKey in (select ResourceKey from IndexEntries where IndexKey in (Select IndexKey from Indexes where name = ''identifier'') and Value = :id) order by ResourceVersionKey desc';
   FConnection.Prepare;
   try
@@ -3812,7 +3878,7 @@ begin
       result := parser.resource.Link as TFHIRProfile;
       try
         if FConnection.FetchNext then
-          raise Exception.create('Found multiple matches for Profile '+id+'. Pick one by the resource id');
+          raise Exception.create('Found multiple matches for Profile '+url+'. Pick one by the resource id');
         result.link;
       finally
         result.free;
@@ -4290,9 +4356,35 @@ begin
   end;
 end;
 
+procedure TFhirOperation.CheckCreateNarrative(request : TFHIRRequest);
+var
+  gen : TNarrativeGenerator;
+  r : TFhirResource;
+  profile : TFhirProfile;
+begin
+  r := request.Resource;
+  if (r <> nil) and ((r.text = nil) or (r.text.div_ = nil)) then
+  begin
+    profile := FRepository.Profiles.ProfileByType[r.ResourceType].Link;
+    try
+      if profile = nil then
+        r.text := nil
+      else
+      begin
+        gen := TNarrativeGenerator.Create('', FRepository.Profiles.Link, FRepository.LookupCode, LookupReference, request.Link);
+        try
+          gen.generate(r, profile);
+        finally
+          gen.Free;
+        end;
+      end;
+    finally
+      profile.Free;
+    end;
+  end;
+end;
+
 procedure TFhirOperation.ProcessMsgQuery(request: TFHIRRequest; response: TFHIRResponse; feed : TFHIRAtomFeed);
-//var
-//  query
 begin
   raise exception.create('query-response is not yet supported');
 end;

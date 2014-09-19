@@ -6,7 +6,7 @@
 unit FHIRResources;
 
 {
-  Copyright (c) 2011-2014, HL7, Inc.
+  Copyright (c) 2011+, HL7, Inc.
   All rights reserved.
   
   Redistribution and use in source and binary forms, with or without modification, 
@@ -41,7 +41,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Fri, Sep 5, 2014 09:16+1000
+// FHIR v0.3.0 generated Thu, Sep 18, 2014 20:13+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -11758,8 +11758,8 @@ begin
   else if (propName = 'status') then Status := propValue as TFHIREnum
   else if (propName = 'experimental') then Experimental := propValue as TFhirBoolean{5}
   else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'source[x]') then Source := propValue as TFhirType{4}
-  else if (propName = 'target[x]') then Target := propValue as TFhirType{4}
+  else if (propName.startsWith('source')) then Source := propValue as TFhirType{4}
+  else if (propName.startsWith('target')) then Target := propValue as TFhirType{4}
   else if (propName = 'element') then ElementList.add(propValue as TFhirConceptMapElement){2}
   else inherited;
 end;
@@ -12157,8 +12157,8 @@ begin
   else if (propName = 'status') then Status := propValue as TFHIREnum
   else if (propName = 'certainty') then Certainty := propValue as TFhirCodeableConcept{4}
   else if (propName = 'severity') then Severity := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'onset[x]') then Onset := propValue as TFhirType{4}
-  else if (propName = 'abatement[x]') then Abatement := propValue as TFhirType{4}
+  else if (propName.startsWith('onset')) then Onset := propValue as TFhirType{4}
+  else if (propName.startsWith('abatement')) then Abatement := propValue as TFhirType{4}
   else if (propName = 'stage') then Stage := propValue as TFhirConditionStage{4}
   else if (propName = 'evidence') then EvidenceList.add(propValue as TFhirConditionEvidence){2}
   else if (propName = 'location') then LocationList.add(propValue as TFhirConditionLocation){2}
@@ -13160,7 +13160,7 @@ begin
   else if (propName = 'requirements') then Requirements := propValue as TFhirString{5}
   else if (propName = 'synonym') then SynonymList.add(propValue as TFhirString){2}
   else if (propName = 'type') then Type_ := propValue as TFhirCode{5}
-  else if (propName = 'example[x]') then Example := propValue as TFhirType{4}
+  else if (propName.startsWith('example')) then Example := propValue as TFhirType{4}
   else if (propName = 'maxLength') then MaxLength := propValue as TFhirInteger{5}
   else if (propName = 'units') then Units := propValue as TFhirCodeableConcept{4}
   else if (propName = 'binding') then Binding := propValue as TFhirDataElementBinding{4}
@@ -14326,7 +14326,7 @@ begin
   else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
   else if (propName = 'requestDetail') then RequestDetailList.add(propValue as TFhirResourceReference{TFhirDiagnosticOrder}){2}
   else if (propName = 'serviceCategory') then ServiceCategory := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'diagnostic[x]') then Diagnostic := propValue as TFhirType{4}
+  else if (propName.startsWith('diagnostic')) then Diagnostic := propValue as TFhirType{4}
   else if (propName = 'specimen') then SpecimenList.add(propValue as TFhirResourceReference{TFhirSpecimen}){2}
   else if (propName = 'result') then ResultList.add(propValue as TFhirResourceReference{TFhirObservation}){2}
   else if (propName = 'imagingStudy') then ImagingStudyList.add(propValue as TFhirResourceReference{TFhirImagingStudy}){2}
@@ -18198,7 +18198,7 @@ begin
   else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
   else if (propName = 'prescriber') then Prescriber := propValue as TFhirResourceReference{TFhirPractitioner}{4}
   else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4}
-  else if (propName = 'reason[x]') then Reason := propValue as TFhirType{4}
+  else if (propName.startsWith('reason')) then Reason := propValue as TFhirType{4}
   else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4}
   else if (propName = 'dosageInstruction') then DosageInstructionList.add(propValue as TFhirMedicationPrescriptionDosageInstruction){2}
   else if (propName = 'dispense') then Dispense := propValue as TFhirMedicationPrescriptionDispense{4}
@@ -19146,10 +19146,10 @@ end;
 procedure TFhirObservation.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'value[x]') then Value := propValue as TFhirType{4}
+  else if (propName.startsWith('value')) then Value := propValue as TFhirType{4}
   else if (propName = 'interpretation') then Interpretation := propValue as TFhirCodeableConcept{4}
   else if (propName = 'comments') then Comments := propValue as TFhirString{5}
-  else if (propName = 'applies[x]') then Applies := propValue as TFhirType{4}
+  else if (propName.startsWith('applies')) then Applies := propValue as TFhirType{4}
   else if (propName = 'issued') then Issued := propValue as TFhirInstant{5}
   else if (propName = 'status') then Status := propValue as TFHIREnum
   else if (propName = 'reliability') then Reliability := propValue as TFHIREnum
@@ -19990,7 +19990,7 @@ begin
   else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
   else if (propName = 'source') then Source := propValue as TFhirResourceReference{TFhirPractitioner}{4}
   else if (propName = 'target') then Target := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'reason[x]') then Reason := propValue as TFhirType{4}
+  else if (propName.startsWith('reason')) then Reason := propValue as TFhirType{4}
   else if (propName = 'authority') then Authority := propValue as TFhirResourceReference{Resource}{4}
   else if (propName = 'when') then When := propValue as TFhirOrderWhen{4}
   else if (propName = 'detail') then DetailList.add(propValue as TFhirResourceReference{Resource}){2}
@@ -20162,7 +20162,7 @@ begin
   else if (propName = 'request') then Request := propValue as TFhirResourceReference{TFhirOrder}{4}
   else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
   else if (propName = 'who') then Who := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'authority[x]') then Authority := propValue as TFhirType{4}
+  else if (propName.startsWith('authority')) then Authority := propValue as TFhirType{4}
   else if (propName = 'code') then Code := propValue as TFHIREnum
   else if (propName = 'description') then Description := propValue as TFhirString{5}
   else if (propName = 'fulfillment') then FulfillmentList.add(propValue as TFhirResourceReference{Resource}){2}
@@ -20730,10 +20730,10 @@ begin
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
   else if (propName = 'gender') then Gender := propValue as TFHIREnum
   else if (propName = 'birthDate') then BirthDate := propValue as TFhirDateTime{5}
-  else if (propName = 'deceased[x]') then Deceased := propValue as TFhirType{4}
+  else if (propName.startsWith('deceased')) then Deceased := propValue as TFhirType{4}
   else if (propName = 'address') then AddressList.add(propValue as TFhirAddress){2}
   else if (propName = 'maritalStatus') then MaritalStatus := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'multipleBirth[x]') then MultipleBirth := propValue as TFhirType{4}
+  else if (propName.startsWith('multipleBirth')) then MultipleBirth := propValue as TFhirType{4}
   else if (propName = 'photo') then PhotoList.add(propValue as TFhirAttachment){2}
   else if (propName = 'contact') then ContactList.add(propValue as TFhirPatientContact){2}
   else if (propName = 'animal') then Animal := propValue as TFhirPatientAnimal{4}

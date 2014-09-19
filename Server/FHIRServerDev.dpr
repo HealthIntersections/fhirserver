@@ -263,7 +263,8 @@ uses
   ProfileManager in 'ProfileManager.pas',
   ShellSupport in '..\Libraries\support\ShellSupport.pas',
   RectSupport in 'RectSupport.pas',
-  CoordinateSupport in 'CoordinateSupport.pas';
+  CoordinateSupport in 'CoordinateSupport.pas',
+  NarrativeGenerator in '..\Libraries\refplat-dev\NarrativeGenerator.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

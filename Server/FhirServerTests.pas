@@ -61,7 +61,7 @@ begin
   TSCIMSearchParser.runTests;
   TFSFilterParser.runTests;
   TDecimalTests.runTests;
-  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
+//  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
   TJWTTests.runTests;
   WriteLn('Library tests Passed');
 end;

@@ -17,7 +17,8 @@ Type
     FProfilesByIdentifier : TAdvStringObjectMatch; // all current profiles by identifier (ValueSet.identifier)
     FProfilesByURL : TAdvStringObjectMatch; // all current profiles by their URL
     FProfilesByKey : TAdvStringObjectMatch;
-    function GetProfileByUrl(url: String): TFhirProfile; // all profiles by the key they are known from (mainly to support drop)
+    function GetProfileByUrl(url: String): TFhirProfile;
+    function GetProfileByType(aType: TFhirResourceType): TFhirProfile; // all profiles by the key they are known from (mainly to support drop)
 
   public
     constructor Create; override;
@@ -33,6 +34,7 @@ Type
     function getLinks(non_structures, non_resources : boolean) : TAdvStringMatch;
 
     property ProfileByURL[url : String] : TFhirProfile read GetProfileByUrl; default;
+    property ProfileByType[aType : TFhirResourceType] : TFhirProfile read GetProfileByType;
   end;
 
   {$IFNDEF FHIR-DSTU}
@@ -160,6 +162,11 @@ begin
   end;
 end;
 
+function TProfileManager.GetProfileByType(aType: TFhirResourceType): TFhirProfile;
+begin
+  result := GetProfileByUrl('http://hl7.org/fhir/Profile/'+CODES_TFHIRResourceType[aType]);
+end;
+
 function TProfileManager.GetProfileByUrl(url: String): TFhirProfile;
 begin
   result := TFhirProfile(FProfilesByURL.GetValueByKey(url));
@@ -280,6 +287,9 @@ begin
 //    raise Exception.Create('Bad Path "'+id+'"')
 //  else
 //   path := FActualPath+ id.Substring(FStatedPath.Length);
+
+  if id.endsWith('/1') then
+    id := id.subString(0, id.length-2);
 
   if (Types.Count = 0) or (Types[0].codeST = 'Resource') then
   begin

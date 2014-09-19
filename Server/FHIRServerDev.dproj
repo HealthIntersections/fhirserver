@@ -349,6 +349,7 @@
         <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
         <DCCReference Include="RectSupport.pas"/>
         <DCCReference Include="CoordinateSupport.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dev\NarrativeGenerator.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

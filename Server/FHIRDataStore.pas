@@ -31,14 +31,14 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, IniFiles,
+  SysUtils, Classes, IniFiles, Generics.Collections,
   kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, ParseMap,
   AdvNames, AdvIntegerObjectMatches, AdvObjects, AdvStringObjectMatches, AdvStringMatches, AdvExclusiveCriticalSections, AdvStringBuilders,
   KDBManager, KDBDialects,
   FHIRAtomFeed, FHIRResources, FHIRBase, FHIRTypes, FHIRComponents, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, FHIRUtilities,
   {$IFNDEF FHIR-DSTU} FHIRSubscriptionManager, {$ENDIF}
-  TerminologyServer, SCIMObjects, SCIMServer, ProfileManager;
+  TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, ProfileManager;
 
 const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -85,17 +85,19 @@ Type
     FLock : TCriticalSection;
     FQuestionnaires : TAdvStringObjectMatch;
     FForms : TAdvStringMatch;
+    FValueSetDependencies : TDictionary<String, TList<string>>;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
 
-    procedure putQuestionnaire(rtype : TFhirResourceType; id : String; q : TFhirQuestionnaire);
-    procedure putForm(rtype : TFhirResourceType; id : String; form : String);
+    procedure putQuestionnaire(rtype : TFhirResourceType; id : String; q : TFhirQuestionnaire; dependencies : TList<String>);
+    procedure putForm(rtype : TFhirResourceType; id : String; form : String; dependencies : TList<String>);
 
     function getQuestionnaire(rtype : TFhirResourceType; id : String) : TFhirQuestionnaire;
     function getForm(rtype : TFhirResourceType; id : String) : String;
 
     procedure clear(rtype : TFhirResourceType; id : String); overload;
+    procedure clearVS(id : string);
     procedure clear; overload;
   end;
 
@@ -191,7 +193,8 @@ Type
     function DefaultRights : String;
     Property OwnerName : String read FOwnerName write FOwnerName;
     Property Profiles : TProfileManager read FProfiles;
-    function ExpandVS(vs : TFHIRValueSet; ref : TFhirResourceReference; limit : integer) : TFhirValueSet;
+    function ExpandVS(vs : TFHIRValueSet; ref : TFhirResourceReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet;
+    function LookupCode(system, code : String) : String;
     property QuestionnaireCache : TQuestionnaireCache read FQuestionnaireCache;
     Property Validate : boolean read FValidate write FValidate;
   end;
@@ -206,6 +209,7 @@ function TagCombine(scheme, term : String): String;
 begin
   result := scheme+#1+term;
 end;
+
 { TFHIRRepository }
 
 
@@ -639,14 +643,14 @@ begin
     CloseFhirSession(key);
 end;
 
-function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirResourceReference; limit : integer): TFhirValueSet;
+function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirResourceReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList): TFhirValueSet;
 begin
   if (vs <> nil) then
-    result := FTerminologyServer.expandVS(vs, '', '', limit)
+    result := FTerminologyServer.expandVS(vs, '', '',  dependencies, limit, allowIncomplete)
   else
   begin
     if FTerminologyServer.isKnownValueSet(ref.referenceST, vs) then
-      result := FTerminologyServer.expandVS(vs, ref.referenceST, '', limit)
+      result := FTerminologyServer.expandVS(vs, ref.referenceST, '', dependencies, limit, allowIncomplete)
     else
     begin
       vs := FTerminologyServer.getValueSetByUrl(ref.referenceST);
@@ -655,7 +659,7 @@ begin
       if vs = nil then
         result := nil
       else
-        result := FTerminologyServer.expandVS(vs, ref.referenceST, '', limit)
+        result := FTerminologyServer.expandVS(vs, ref.referenceST, '', dependencies, limit, allowIncomplete)
     end;
   end;
 end;
@@ -1034,6 +1038,8 @@ begin
     {$IFNDEF FHIR-DSTU}
     FSubscriptionManager.SeeResource(key, vkey, id, resource, conn, reload, session);
     FQuestionnaireCache.clear(resource.ResourceType, id);
+    if resource.ResourceType = frtValueSet then
+      FQuestionnaireCache.clearVS(TFhirValueSet(resource).identifierST);
     {$ENDIF}
   finally
     FLock.Unlock;
@@ -1233,6 +1239,23 @@ begin
 end;
 
 
+function TFHIRDataStore.LookupCode(system, code: String): String;
+var
+  prov : TCodeSystemProvider;
+begin
+  try
+    prov := FTerminologyServer.getProvider(system);
+    try
+      if prov <> nil then
+        result := prov.getDisplay(code);
+    finally
+      prov.free;
+    end;
+  except
+    result := '';
+  end;
+end;
+
 { TFhirTag }
 
 function TFhirTag.combine: String;
@@ -1250,10 +1273,12 @@ begin
   FQuestionnaires.Forced := true;
   FForms := TAdvStringMatch.Create;
   FForms.Forced := true;
+  FValueSetDependencies := TDictionary<String, TList<string>>.create;
 end;
 
 destructor TQuestionnaireCache.Destroy;
 begin
+  FValueSetDependencies.Free;
   FForms.Free;
   FQuestionnaires.Free;
   FLock.Free;
@@ -1266,19 +1291,46 @@ begin
   try
     FQuestionnaires.Clear;
     FForms.Clear;
+    FValueSetDependencies.Clear;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TQuestionnaireCache.clearVS(id : string);
+var
+  s : String;
+  l : TList<String>;
+begin
+  FLock.Lock('clear(id)');
+  try
+    if FValueSetDependencies.TryGetValue(id, l) then
+    begin
+      for s in l do
+      begin
+        if FQuestionnaires.ExistsByKey(s) then
+          FQuestionnaires.DeleteByKey(s);
+        if FForms.ExistsByKey(s) then
+          FForms.DeleteByKey(s);
+      end;
+      FValueSetDependencies.Remove(s);
+    end;
   finally
     FLock.Unlock;
   end;
 end;
 
 procedure TQuestionnaireCache.clear(rtype : TFhirResourceType; id: String);
+var
+  s  : String;
 begin
+  s := Codes_TFHIRResourceType[rType]+'/'+id;
   FLock.Lock('clear(id)');
   try
-    if FQuestionnaires.ExistsByKey(Codes_TFHIRResourceType[rType]+'/'+id) then
-      FQuestionnaires.DeleteByKey(Codes_TFHIRResourceType[rType]+'/'+id);
-    if FForms.ExistsByKey(Codes_TFHIRResourceType[rType]+'/'+id) then
-      FForms.DeleteByKey(Codes_TFHIRResourceType[rType]+'/'+id);
+    if FQuestionnaires.ExistsByKey(s) then
+      FQuestionnaires.DeleteByKey(s);
+    if FForms.ExistsByKey(s) then
+      FForms.DeleteByKey(s);
   finally
     FLock.Unlock;
   end;
@@ -1305,25 +1357,50 @@ begin
   end;
 end;
 
-procedure TQuestionnaireCache.putForm(rtype : TFhirResourceType; id, form: String);
+procedure TQuestionnaireCache.putForm(rtype : TFhirResourceType; id, form: String; dependencies : TList<String>);
+var
+  s : String;
+  l : TList<String>;
 begin
   FLock.Lock('putForm');
   try
     FForms[Codes_TFHIRResourceType[rType]+'/'+id] := form;
+    for s in dependencies do
+    begin
+      if not FValueSetDependencies.TryGetValue(id, l) then
+      begin
+        l := TList<String>.create;
+        FValueSetDependencies.Add(s, l);
+      end;
+      if not l.Contains(id) then
+        l.Add(id);
+    end;
   finally
     FLock.Unlock;
   end;
 end;
 
-procedure TQuestionnaireCache.putQuestionnaire(rtype : TFhirResourceType; id : String; q: TFhirQuestionnaire);
+procedure TQuestionnaireCache.putQuestionnaire(rtype : TFhirResourceType; id : String; q: TFhirQuestionnaire; dependencies : TList<String>);
+var
+  s : String;
+  l : TList<String>;
 begin
   FLock.Lock('putQuestionnaire');
   try
     FQuestionnaires[Codes_TFHIRResourceType[rType]+'/'+id] := q.Link;
+    for s in dependencies do
+    begin
+      if not FValueSetDependencies.TryGetValue(id, l) then
+      begin
+        l := TList<String>.create;
+        FValueSetDependencies.Add(s, l);
+      end;
+      if not l.Contains(id) then
+        l.Add(id);
+    end;
   finally
     FLock.Unlock;
   end;
-
 end;
 
 end.

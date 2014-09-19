@@ -81,7 +81,8 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*";                                   DestDir: "{app}\web";        Flags: ignoreversion recursesubdirs;
-Source: "C:\work\org.hl7.fhir\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs; 
+Source: "C:\work\org.hl7.fhir\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "*.zip"
+Source: "C:\work\org.hl7.fhir\build\publish\validation.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
 
 ; Terminology resources
 Source: "C:\ProgramData\FHIRServer\ucum.cache";                       DestDir: "{commonappdata}\FHIRServer"

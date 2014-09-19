@@ -3,7 +3,7 @@
 unit FHIRTypes;
 
 {
-  Copyright (c) 2011-2014, HL7, Inc.
+  Copyright (c) 2011+, HL7, Inc.
   All rights reserved.
   
   Redistribution and use in source and binary forms, with or without modification, 
@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.3.0 generated Fri, Sep 5, 2014 09:16+1000
+// FHIR v0.3.0 generated Thu, Sep 18, 2014 20:13+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -1373,6 +1373,20 @@ Type
   End;
   TFHIRTypeClass = class of TFhirType;
   
+  {@Class TFHIRPrimitiveType : TFhirType
+    A base FHIR type - (polymorphism support)
+  }
+  {!.Net HL7Connect.Fhir.Type}
+  TFHIRPrimitiveType = class (TFhirType)
+  Public
+    {!script hide}
+    Function Link : TFHIRPrimitiveType; Overload;
+    Function Clone : TFHIRPrimitiveType; Overload;
+    Function AsStringValue : String; Overload;
+    {!script show}
+  End;
+  TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
+  
   {@Class TFhirBackboneElement : TFHIRBase
     Base Element Definition - extensions, ids
   }
@@ -1579,13 +1593,13 @@ Type
   End;
 
 
-  {@Class TFhirInteger : TFhirType
+  {@Class TFhirInteger : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Integer}
-  TFhirInteger = class (TFhirType)
+  TFhirInteger = class (TFhirPrimitiveType)
   Private
     FValue: String;
     procedure setValue(value: String);
@@ -1689,13 +1703,13 @@ Type
   End;
 
 
-  {@Class TFhirDateTime : TFhirType
+  {@Class TFhirDateTime : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.DateTime}
-  TFhirDateTime = class (TFhirType)
+  TFhirDateTime = class (TFhirPrimitiveType)
   Private
     FValue: TDateAndTime;
     procedure setValue(value: TDateAndTime);
@@ -1799,13 +1813,13 @@ Type
   End;
 
 
-  {@Class TFhirDate : TFhirType
+  {@Class TFhirDate : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Date}
-  TFhirDate = class (TFhirType)
+  TFhirDate = class (TFhirPrimitiveType)
   Private
     FValue: TDateAndTime;
     procedure setValue(value: TDateAndTime);
@@ -1909,13 +1923,13 @@ Type
   End;
 
 
-  {@Class TFhirDecimal : TFhirType
+  {@Class TFhirDecimal : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Decimal}
-  TFhirDecimal = class (TFhirType)
+  TFhirDecimal = class (TFhirPrimitiveType)
   Private
     FValue: String;
     procedure setValue(value: String);
@@ -2019,13 +2033,13 @@ Type
   End;
 
 
-  {@Class TFhirUri : TFhirType
+  {@Class TFhirUri : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Uri}
-  TFhirUri = class (TFhirType)
+  TFhirUri = class (TFhirPrimitiveType)
   Private
     FValue: String;
     procedure setValue(value: String);
@@ -2129,13 +2143,13 @@ Type
   End;
 
 
-  {@Class TFhirBase64Binary : TFhirType
+  {@Class TFhirBase64Binary : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Base64Binary}
-  TFhirBase64Binary = class (TFhirType)
+  TFhirBase64Binary = class (TFhirPrimitiveType)
   Private
     FValue: String;
     procedure setValue(value: String);
@@ -2239,13 +2253,13 @@ Type
   End;
 
 
-  {@Class TFhirTime : TFhirType
+  {@Class TFhirTime : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Time}
-  TFhirTime = class (TFhirType)
+  TFhirTime = class (TFhirPrimitiveType)
   Private
     FValue: String;
     procedure setValue(value: String);
@@ -2349,13 +2363,13 @@ Type
   End;
 
 
-  {@Class TFhirString : TFhirType
+  {@Class TFhirString : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.String}
-  TFhirString = class (TFhirType)
+  TFhirString = class (TFhirPrimitiveType)
   Private
     FValue: String;
     procedure setValue(value: String);
@@ -2459,13 +2473,13 @@ Type
   End;
 
 
-  {@Class TFhirBoolean : TFhirType
+  {@Class TFhirBoolean : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Boolean}
-  TFhirBoolean = class (TFhirType)
+  TFhirBoolean = class (TFhirPrimitiveType)
   Private
     FValue: Boolean;
     procedure setValue(value: Boolean);
@@ -2569,13 +2583,13 @@ Type
   End;
 
 
-  {@Class TFhirInstant : TFhirType
+  {@Class TFhirInstant : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Instant}
-  TFhirInstant = class (TFhirType)
+  TFhirInstant = class (TFhirPrimitiveType)
   Private
     FValue: TDateAndTime;
     procedure setValue(value: TDateAndTime);
@@ -6045,6 +6059,23 @@ begin
   result := TFhirType(inherited Clone);
 end;
 
+{ TFHIRPrimitiveType }
+
+function TFHIRPrimitiveType.Link : TFHIRPrimitiveType;
+begin
+  result := TFHIRPrimitiveType(inherited Link);
+end;
+
+function TFHIRPrimitiveType.Clone : TFHIRPrimitiveType;
+begin
+  result := TFHIRPrimitiveType(inherited Clone);
+end;
+
+function TFHIRPrimitiveType.AsStringValue : string;
+begin
+  raise Exception.create('need to override '+ClassName+'.AsStringValue');
+end;
+
 
 { TFhirElementList }
 procedure TFhirElementList.AddItem(value: TFhirElement);
@@ -8193,7 +8224,7 @@ end;
 procedure TFhirExtension.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'url') then Url := propValue as TFhirUri{5}
-  else if (propName = 'value[x]') then Value := propValue as TFhirType{4}
+  else if (propName.startsWith('value')) then Value := propValue as TFhirType{4}
   else inherited;
 end;
 

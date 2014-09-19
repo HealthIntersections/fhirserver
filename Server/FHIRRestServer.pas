@@ -125,6 +125,7 @@ Type
     function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+    function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
 
     function SpecFile(path : String) : String;
     function AltFile(path : String) : String;
@@ -875,28 +876,31 @@ begin
     s := FFhirStore.QuestionnaireCache.getForm(frtProfile, id);
     if s = '' then
     begin
-      questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+      builder := TQuestionnaireBuilder.Create;
       try
-        if questionnaire = nil then
-        begin
-          builder := TQuestionnaireBuilder.Create;
-          try
+        questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+        try
+          if questionnaire = nil then
+          begin
             builder.Profile := profile.Link;
             builder.OnExpand := FFhirStore.ExpandVS;
+            builder.onLookupCode := FFhirStore.LookupCode;
             builder.QuestionnaireId := fid;
+            builder.onLookupReference := LookupReference;
+            builder.Context := request.Link;
 
             builder.build;
             questionnaire := builder.Questionnaire.Link;
-          finally
-            builder.free;
+            FFhirStore.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire, builder.Dependencies);
           end;
-          FFhirStore.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire);
+          // convert to xhtml
+          s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
+          FFhirStore.QuestionnaireCache.putForm(frtProfile, id, s, builder.Dependencies);
+        finally
+          questionnaire.Free;
         end;
-        // convert to xhtml
-        s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
-        FFhirStore.QuestionnaireCache.putForm(frtProfile, id, s);
       finally
-        questionnaire.Free;
+        builder.free;
       end;
     end;
 
@@ -1051,27 +1055,30 @@ begin
     s := FFhirStore.QuestionnaireCache.getForm(frtProfile, id);
     if s = '' then
     begin
-      questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+      builder := TQuestionnaireBuilder.Create;
       try
-        if questionnaire = nil then
-        begin
-          builder := TQuestionnaireBuilder.Create;
-          try
+        questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+        try
+          if questionnaire = nil then
+          begin
             builder.Profile := profile.Link;
             builder.OnExpand := FFhirStore.ExpandVS;
+            builder.onLookupCode := FFhirStore.LookupCode;
+            builder.onLookupReference := LookupReference;
+            builder.Context := request.Link;
             builder.QuestionnaireId := fullid;
             builder.build;
             questionnaire := builder.Questionnaire.Link;
-          finally
-            builder.free;
+            FFhirStore.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire, builder.Dependencies);
           end;
-          FFhirStore.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire);
+          // convert to xhtml
+          s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
+          FFhirStore.QuestionnaireCache.putForm(frtProfile, id, s, builder.Dependencies);
+        finally
+          questionnaire.Free;
         end;
-        // convert to xhtml
-        s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
-        FFhirStore.QuestionnaireCache.putForm(frtProfile, id, s);
       finally
-        questionnaire.Free;
+        builder.free;
       end;
     end;
     // insert page headers:
@@ -2343,6 +2350,29 @@ begin
   End;
 end;
 
+function TFhirWebServer.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
+var
+  store : TFhirOperation;
+begin
+  store := TFhirOperation.Create(TFHIRRequest(context).Lang, FFhirStore.Link);
+  try
+    store.OwnerName := FOwnerName;
+    store.Connection := FFhirStore.DB.GetConnection('Operation');
+    try
+      result := store.LookupReference(context, id);
+      store.Connection.Release;
+    except
+      on e:exception do
+      begin
+        store.Connection.Error(e);
+        raise;
+      end;
+    end;
+  finally
+    store.Free;
+  end;
+end;
+
 function TFhirWebServer.extractFileData(form : TIdSoapMimeMessage; const name: String; var sContentType : String): TStream;
 var
   m : TIdSoapMimeMessage;
@@ -2483,7 +2513,7 @@ begin
     if resource.ResourceType = frtPatient then
     begin
       link := FBasePath+'/_web/Patient/'+id;
-      text := 'Launch Smart App';
+      text := 'Patient Record Page';
     end;
   end;
 end;

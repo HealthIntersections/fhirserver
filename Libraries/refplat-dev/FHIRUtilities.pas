@@ -1,7 +1,7 @@
 unit FHIRUtilities;
 
 {
-Copyright (c) 2011-2014, HL7, Inc
+Copyright (c) 2011+, HL7, Inc
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -321,22 +321,15 @@ begin
   try
     while iter.More do
     begin
-      if StringStartsWith(iter.Current.Type_, 'Resource(') and (iter.Current.Obj <> nil) then
-      begin
-        if not StringStartsWith(TFhirResourceReference(iter.current.obj).referenceST, '#') then
-          list.add(iter.Current.Obj.Link)
-      end
-      else if StringStartsWith(iter.Current.Type_, 'Resource(') and (iter.Current.List <> nil) then
+      if StringStartsWith(iter.Current.Type_, 'Resource(') then
       begin
         for i := 0 to iter.Current.List.count - 1 do
           if not StringStartsWith(TFhirResourceReference(iter.current.list[i]).referenceST, '#') then
             list.add(iter.Current.list[i].Link)
       end
       else if iter.Current.Type_ = 'Resource' then
-        iterateReferences(TFhirResource(iter.current.obj), list)
-      else if iter.Current.Obj <> nil then
-        iterateReferences(iter.Current.Obj, list)
-      else if iter.Current.list <> nil then
+        iterateReferences(TFhirResource(iter.current.list[0]), list)
+      else
         for i := 0 to iter.Current.list.Count - 1 Do
           iterateReferences(iter.Current.list[i], list);
       iter.Next;
@@ -360,16 +353,10 @@ begin
   try
     while iter.More do
     begin
-      if (iter.Current.Type_ = 'Attachment') and (iter.Current.Obj <> nil) then
-        list.add(iter.Current.Obj.Link)
-      { 0.07todo
-      else if StringStartsWith(iter.Current.Type_, 'Resource(') and (iter.Current.Obj <> nil) and (TFhirResourceReference(iter.current.obj).value <> nil) then
-        iterateAttachments(TFhirResourceReference(iter.current.obj).value, list)
-      }  
-      else if iter.Current.Obj <> nil then
-        iterateAttachments(iter.Current.Obj, list)
-      else if iter.Current.list <> nil then
-        for i := 0 to iter.Current.list.Count - 1 Do
+      for i := 0 to iter.Current.List.Count - 1 do
+        if (iter.Current.Type_ = 'Attachment') then
+          list.add(iter.Current.list[i].Link)
+        else
           iterateAttachments(iter.Current.list[i], list);
       iter.Next;
     end;
