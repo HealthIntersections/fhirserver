@@ -49,12 +49,12 @@ uses
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 var
-  fetch : TgwInternetFetcher;
+  fetch : TInternetFetcher;
   parsemap : TParseMap;
 begin
   result := false;
   try
-    fetch := TgwInternetFetcher.create;
+    fetch := TInternetFetcher.create;
     try
       fetch.URL := 'https://graph.facebook.com/oauth/access_token?client_id='+id+'&redirect_uri='+url+'&client_secret='+secret+'&code='+code;
       fetch.Fetch;
@@ -135,12 +135,12 @@ end;
 
 Function FacebookGetDetails(token : String; var id, name, email, error : String) : boolean;
 var
-  fetch : TgwInternetFetcher;
+  fetch : TInternetFetcher;
   json : TJSONObject;
 begin
   result := false;
   try
-    fetch := TgwInternetFetcher.create;
+    fetch := TInternetFetcher.create;
     try
       fetch.URL := 'https://graph.facebook.com/me?access_token='+token;
       fetch.Fetch;
@@ -165,13 +165,13 @@ end;
 
 Function GoogleGetDetails(token, key, jwtsrc : String; var id, name, email, error : String) : boolean;
 var
-  fetch : TgwInternetFetcher;
+  fetch : TInternetFetcher;
   json : TJSONObject;
   jwt : TJWT;
 begin
   result := false;
   try
-    fetch := TgwInternetFetcher.create;
+    fetch := TInternetFetcher.create;
     try
       fetch.URL := 'https://www.googleapis.com/plus/v1/people/me?access_token='+token+'&key='+key;
       fetch.Fetch;

@@ -62,7 +62,6 @@ Type
     FVs : TFhirValueSet;
     function doLocate(list : TFhirValueSetDefineConceptList; code : String) : TValueSetProviderContext;
     procedure FilterCodes(dest, source : TFhirValueSetDefineConceptList; filter : TSearchFilterText; all : boolean);
-    function FilterCount(ctxt: TFhirValueSetDefineConcept): integer;
   public
     constructor Create(vs : TFHIRValueSet); overload;
     destructor Destroy; override;
@@ -313,6 +312,7 @@ function TAllCodeSystemsProvider.IsAbstract(context : TCodeSystemProviderContext
 var
   c : TAllCodeSystemsProviderContext;
 begin
+  result := true;
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.IsAbstract(c.context);
@@ -413,6 +413,7 @@ function TAllCodeSystemsProvider.prepare(prep : TCodeSystemProviderFilterPrepara
 var
   ctxt : TAllCodeSystemsProviderFilterPreparationContext;
 begin
+  result := false;
   ctxt := prep as TAllCodeSystemsProviderFilterPreparationContext;
   if (ctxt <> nil) then
   begin
@@ -570,12 +571,12 @@ begin
     c := list[i];
     ts := TAdvStringList.Create;
     try
-      t := c.displayST;
+      t := c.display;
       while (t <> '') Do
       begin
         StringSplit(t, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='], s, t);
         if (s <> '') Then
-          ts.Add(lowercase(FStem.stem(s)));
+          ts.Add(lowercase(FStem.calc(s)));
       end;
       ts.SortAscending;
       c.Tag := ts.Link;
@@ -720,16 +721,16 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
-      vs.TagValue := inttostr(TrackValueSet(vs.identifierST, true));
-      if (vs.identifierST = 'http://hl7.org/fhir/ValueSet/ucum-common') then
+      vs.TagValue := inttostr(TrackValueSet(vs.identifier, true));
+      if (vs.identifier = 'http://hl7.org/fhir/ValueSet/ucum-common') then
         FUcum.SetCommonUnits(vs.Link);
 
-      FBaseValueSets.Matches[vs.identifierST] := vs.Link;
-      FValueSetsByIdentifier.Matches[vs.identifierST] := vs.Link;
+      FBaseValueSets.Matches[vs.identifier] := vs.Link;
+      FValueSetsByIdentifier.Matches[vs.identifier] := vs.Link;
       FValueSetsByURL.Matches[url] := vs.Link;
       if (vs.define <> nil) then
       begin
-        FCodeSystems.Matches[vs.define.systemST] := vs.Link;
+        FCodeSystems.Matches[vs.define.system] := vs.Link;
         BuildStems(vs.define.conceptList);
       end;
       UpdateConceptMaps;
@@ -739,10 +740,10 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := TFhirConceptMap(resource).Link;
-        cm.Source := getValueSetByUrl(TFhirResourceReference(cm.Resource.source).referenceST);
-        cm.Target := getValueSetByUrl(TFhirResourceReference(cm.Resource.target).referenceST);
-        FConceptMaps.Matches[cm.Resource.identifierST] := cm.Link;
-        FBaseConceptMaps.Matches[cm.Resource.identifierST] := cm.Link;
+        cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
+        cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
+        FConceptMaps.Matches[cm.Resource.identifier] := cm.Link;
+        FBaseConceptMaps.Matches[cm.Resource.identifier] := cm.Link;
       finally
         cm.Free;
       end;
@@ -762,14 +763,14 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
-      vs.TagValue := inttostr(TrackValueSet(vs.identifierST, false));
-      FValueSetsByIdentifier.Matches[vs.identifierST] := vs.Link;
+      vs.TagValue := inttostr(TrackValueSet(vs.identifier, false));
+      FValueSetsByIdentifier.Matches[vs.identifier] := vs.Link;
       FValueSetsByURL.Matches[url] := vs.Link;
       FValueSetsByKey.Matches[inttostr(key)] := vs.Link;
-      invalidateVS(vs.identifierST);
+      invalidateVS(vs.identifier);
       if (vs.define <> nil) then
       begin
-        FCodeSystems.Matches[vs.define.systemST] := vs.Link;
+        FCodeSystems.Matches[vs.define.system] := vs.Link;
         BuildStems(vs.define.conceptList);
       end;
       UpdateConceptMaps;
@@ -779,9 +780,9 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := TFhirConceptMap(resource).Link;
-        cm.Source := getValueSetByUrl(TFhirResourceReference(cm.Resource.source).referenceST);
-        cm.Target := getValueSetByUrl(TFhirResourceReference(cm.Resource.target).referenceST);
-        FConceptMaps.Matches[cm.Resource.identifierST] := cm.Link;
+        cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
+        cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
+        FConceptMaps.Matches[cm.Resource.identifier] := cm.Link;
         FConceptMapsByKey.Matches[inttostr(key)] := cm.Link;
       finally
         cm.Free;
@@ -797,6 +798,7 @@ var
   vs, vs1 : TFhirValueSet;
   cm, cm1 : TLoadedConceptMap;
 begin
+  vs := nil;
   FLock.Lock('DropTerminologyResource');
   try
     if (aType = frtValueSet) then
@@ -805,18 +807,18 @@ begin
       if vs <> nil then
       begin
         FValueSetsByURL.DeleteByKey(url);
-        FValueSetsByIdentifier.DeleteByKey(vs.identifierST);
+        FValueSetsByIdentifier.DeleteByKey(vs.identifier);
         if (vs.define <> nil) then
-          FCodeSystems.DeleteByKey(vs.define.systemST);
+          FCodeSystems.DeleteByKey(vs.define.system);
 
         // add the base one back if we are dropping a value set that overrides it
         // current logical flaw: what if there's another one that overrides this? how do we prevent or deal with this?
-        vs1 := FBaseValueSets.GetValueByKey(vs.identifierST) as TFhirValueSet;
+        vs1 := FBaseValueSets.GetValueByKey(vs.identifier) as TFhirValueSet;
         if vs1 <> nil then
         begin
-          FValueSetsByIdentifier.Matches[vs.identifierST] := vs1.Link;
+          FValueSetsByIdentifier.Matches[vs.identifier] := vs1.Link;
           if (vs1.define <> nil) then
-            FCodeSystems.Matches[vs1.define.systemST] := vs.Link;
+            FCodeSystems.Matches[vs1.define.system] := vs.Link;
         end;
         // last - after this vs is no longer valid
         FValueSetsByKey.DeleteByKey(inttostr(key));
@@ -828,13 +830,13 @@ begin
       cm := TLoadedConceptMap(FConceptMapsByKey.GetValueByKey(inttostr(key)));
       if vs <> nil then
       begin
-        FConceptMaps.DeleteByKey(cm.Resource.identifierST);
+        FConceptMaps.DeleteByKey(cm.Resource.identifier);
 
         // add the base one back if we are dropping a concept map that overrides it
         // current logical flaw: what if there's another one that overrides this? how do we prevent or deal with this?
-        cm1 := FBaseConceptMaps.GetValueByKey(cm.Resource.identifierST) as TLoadedConceptMap;
+        cm1 := FBaseConceptMaps.GetValueByKey(cm.Resource.identifier) as TLoadedConceptMap;
         if cm1 <> nil then
-          FConceptMaps.Matches[cm1.Resource.identifierST] := cm1.Link;
+          FConceptMaps.Matches[cm1.Resource.identifier] := cm1.Link;
         // last - after this vs is no longer valid
         FConceptMapsByKey.DeleteByKey(inttostr(key));
       end;
@@ -877,12 +879,12 @@ begin
   for i := 0 to FConceptMaps.Count - 1 do
   begin
     cm := TLoadedConceptMap(FConceptMaps.Values[i]);
-    cm.Source := getValueSetByUrl(TFhirResourceReference(cm.Resource.source).referenceST);
+    cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
     if (cm.Source = nil) then
-      cm.Source := getValueSetByIdentifier(TFhirResourceReference(cm.Resource.source).referenceST);
-    cm.Target := getValueSetByUrl(TFhirResourceReference(cm.Resource.target).referenceST);
+      cm.Source := getValueSetByIdentifier(TFhirReference(cm.Resource.source).reference);
+    cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
     if (cm.Target = nil) then
-      cm.Target := getValueSetByIdentifier(TFhirResourceReference(cm.Resource.target).referenceST);
+      cm.Target := getValueSetByIdentifier(TFhirReference(cm.Resource.target).reference);
   end;
 end;
 
@@ -912,7 +914,7 @@ begin
       for i := 0 to FCodeSystems.Count - 1 do
       begin
         vs := TFhirValueSet(FCodeSystems.ValueByIndex[i]);
-        result.Matches[vs.define.systemST] := vs.nameST;
+        result.Matches[vs.define.system] := vs.name;
       end;
     finally
       FLock.Unlock;
@@ -938,7 +940,7 @@ begin
       for i := 0 to FValueSetsByURL.Count - 1 do
       begin
         vs := TFhirValueSet(FValueSetsByURL.ValueByIndex[i]);
-        result.Matches[vs.IdentifierST] := vs.nameST;
+        result.Matches[vs.Identifier] := vs.name;
       end;
     finally
       FLock.Unlock;
@@ -1004,7 +1006,7 @@ begin
     begin
       result := nil;
       for i := 0 to FValueSetsByUrl.Count - 1 do
-        if (result = nil) and (TFHirValueSet(FValueSetsByUrl.ValueByIndex[i]).identifierST = url) then
+        if (result = nil) and (TFHirValueSet(FValueSetsByUrl.ValueByIndex[i]).identifier = url) then
           result := FValueSetsByUrl.ValueByIndex[i].Link as TFhirValueSet;
     end;
   finally
@@ -1096,7 +1098,7 @@ end;
 
 function TValueSetProvider.Definition(context: TCodeSystemProviderContext): string;
 begin
-  result := TValueSetProviderContext(context).context.definitionST;
+  result := TValueSetProviderContext(context).context.definition;
 end;
 
 destructor TValueSetProvider.destroy;
@@ -1120,7 +1122,7 @@ end;
 
 function TValueSetProvider.Code(context: TCodeSystemProviderContext): string;
 begin
-  result := TValueSetProviderContext(context).context.codeST;
+  result := TValueSetProviderContext(context).context.code;
 end;
 
 function TValueSetProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
@@ -1133,7 +1135,7 @@ end;
 
 function TValueSetProvider.Display(context: TCodeSystemProviderContext): string;
 begin
-  result := TValueSetProviderContext(context).context.displayST;
+  result := TValueSetProviderContext(context).context.display;
 end;
 
 procedure TValueSetProvider.Displays(context: TCodeSystemProviderContext; list: TStringList);
@@ -1158,7 +1160,7 @@ end;
 
 function TValueSetProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
-  result := (TValueSetProviderContext(context).context.abstract <> nil) and TValueSetProviderContext(context).context.abstractST;
+  result := (TValueSetProviderContext(context).context.abstractObject <> nil) and TValueSetProviderContext(context).context.abstract;
 end;
 
 function TValueSetProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
@@ -1205,7 +1207,7 @@ begin
   for i := 0 to list.count - 1 do
   begin
     c := list[i];
-    if (c.codeST = code) then
+    if (c.code = code) then
     begin
       result := TValueSetProviderContext.Create(c.Link);
       exit;
@@ -1237,7 +1239,7 @@ end;
 
 function TValueSetProvider.system(context : TCodeSystemProviderContext): String;
 begin
-  result := Fvs.define.systemST;
+  result := Fvs.define.system;
 end;
 
 function TValueSetProvider.TotalCount: integer;
@@ -1266,7 +1268,7 @@ procedure iterateCodes(base : TFhirValueSetDefineConcept; list : TFhirValueSetDe
 var
   i : integer;
 begin
-  if not base.abstractST then
+  if not base.abstract then
     list.Add(base.Link);
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list);
@@ -1329,14 +1331,6 @@ begin
   result := TValueSetProviderContext.Create(context.concepts[context.ndx].Link)
 end;
 
-function TValueSetProvider.FilterCount(ctxt: TFhirValueSetDefineConcept): integer;
-var
-  context : TValueSetProviderFilterContext;
-begin
-  context := TValueSetProviderFilterContext(ctxt);
-  result := context.total;
-end;
-
 function TValueSetProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
 var
   context : TValueSetProviderFilterContext;
@@ -1345,7 +1339,7 @@ begin
   result := nil;
   context := TValueSetProviderFilterContext(ctxt);
   for i := 0 to context.concepts.Count - 1 do
-    if context.concepts[i].codeST = code  then
+    if context.concepts[i].code = code  then
     begin
       result := TValueSetProviderContext.Create( context.concepts[i].Link);
       break;
@@ -1360,7 +1354,7 @@ begin
   result := nil;
   p := Locate(parent) as TValueSetProviderContext;
   if (p <> nil) then
-    if (p.context.codeST = code) then
+    if (p.context.code = code) then
       result := p
     else
       result := doLocate(p.context.conceptList, code);
@@ -1390,7 +1384,7 @@ begin
   for i := 0 to list.Count - 1 do
   begin
     c := list[i];
-    if (c.{$IFDEF FHIR-DSTU}systemST{$ELSE}codeSystemST{$ENDIF} = system) and (c.codeST = code) then
+    if (c.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF} = system) and (c.code = code) then
     begin
       maps := c.mapList.Link;
       result := true;
@@ -1445,7 +1439,5 @@ begin
   context.Free;
   inherited;
 end;
-
-end.
 
 end.

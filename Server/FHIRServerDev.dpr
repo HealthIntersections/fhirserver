@@ -264,7 +264,10 @@ uses
   ShellSupport in '..\Libraries\support\ShellSupport.pas',
   RectSupport in 'RectSupport.pas',
   CoordinateSupport in 'CoordinateSupport.pas',
-  NarrativeGenerator in '..\Libraries\refplat-dev\NarrativeGenerator.pas';
+  NarrativeGenerator in '..\Libraries\refplat-dev\NarrativeGenerator.pas',
+  AdvGenerics in '..\Libraries\support\AdvGenerics.pas',
+  DigitalSignatures in '..\Libraries\security\DigitalSignatures.pas',
+  XMLSupport in '..\Libraries\support\XMLSupport.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

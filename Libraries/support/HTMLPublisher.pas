@@ -112,7 +112,7 @@ end;
 
 procedure THtmlPublisher.AddTextPlain(text: String);
 begin
-  FBuilder.Append(EncodeXML(text));
+  FBuilder.Append(EncodeXML(text, xmlText));
 end;
 
 procedure THtmlPublisher.AddTitle(text: String);
@@ -331,7 +331,7 @@ begin
       begin
         FBuilder.Append('<'+node.Name);
         for i := 0 to node.Attributes.Count - 1 do
-          FBuilder.Append(' '+node.Attributes[i].Name+'="'+EncodeXML(node.Attributes[i].value)+'"');
+          FBuilder.Append(' '+node.Attributes[i].Name+'="'+EncodeXML(node.Attributes[i].value, xmlAttribute)+'"');
         if node.ChildNodes.Count = 0 then
           FBuilder.Append('/>')
         else
@@ -345,7 +345,7 @@ begin
     fhntText:
       AddTextPlain(node.Content);
     fhntComment:
-      FBuilder.Append('<!-- '+EncodeXML(node.Content)+' -->');
+      FBuilder.Append('<!-- '+EncodeXML(node.Content, xmlText)+' -->');
   end;
 end;
 

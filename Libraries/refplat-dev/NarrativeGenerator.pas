@@ -76,20 +76,20 @@ type
     procedure renderIdentifier(v : TFHIRIdentifier; x : TFHIRXhtmlNode);
     procedure renderAddress(v : TFHIRAddress; x : TFHIRXhtmlNode);
     procedure renderHumanName(v : TFHIRHumanName; x : TFHIRXhtmlNode);
-    procedure renderContact(v : TFHIRContact; x : TFHIRXhtmlNode);
+    procedure renderContact(v : TFHIRContactPoint; x : TFHIRXhtmlNode);
     procedure renderUri(v : TFHIRUri; x : TFHIRXhtmlNode);
-    procedure renderSchedule(v : TFHIRSchedule; x : TFHIRXhtmlNode);
+    procedure renderSchedule(v : TFHIRTiming; x : TFHIRXhtmlNode);
     procedure renderQuantity(v : TFHIRQuantity; x : TFHIRXhtmlNode; showCodeDetails : boolean);
     function displayIdentifier(v : TFHIRIdentifier) : String;
     function displayAddress(v : TFHIRAddress) : String;
     function displayHumanName(v : TFHIRHumanName) : String;
-    function displayContact(v : TFHIRContact) : String;
-    function displaySchedule(v : TFHIRSchedule) : String;
+    function displayContact(v : TFHIRContactPoint) : String;
+    function displaySchedule(v : TFHIRTiming) : String;
 
     function resolveReference(res : TFHIRResource; url : String) : TResourceWithReference;
     function lookupCode(system, code : String) : String;
     function describeSystem(system : String) : String; overload;
-    function describeSystem(system : TFHIRContactSystem) : String;  overload;
+    function describeSystem(system : TFHIRContactPointSystem) : String;  overload;
   public
     Constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFHIRRequest);
     Destructor Destroy; Override;
@@ -280,9 +280,9 @@ function TNarrativeGenerator.exemptFromRendering(child : TFhirProfileStructureSn
 begin
   if (child = nil) then
     result := false
-  else if ('Composition.subject' = child.PathST) then
+  else if ('Composition.subject' = child.Path) then
     result := true
-  else if ('Composition.section' = child.PathST) then
+  else if ('Composition.section' = child.Path) then
     result := true
   else
     result := false;
@@ -295,7 +295,7 @@ begin
   result := true;
   if (child.Definition.Type_List.count <> 1) then
   begin
-    t := child.Definition.Type_List[0].CodeST;
+    t := child.Definition.Type_List[0].Code;
     if (t = 'Address') or (t = 'ResourceReference') then
       result := true;
   end;
@@ -306,7 +306,7 @@ var
   i : integer;
 begin
   for i := 0 to grandChildren.Count - 1 do
-    tr.addTag('td').addTag('b').addText(capitalize(tail(grandChildren[i].PathST)));
+    tr.addTag('td').addTag('b').addText(capitalize(tail(grandChildren[i].Path)));
 end;
 
 procedure TNarrativeGenerator.addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirProfileStructureSnapshotElementList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TDictionary<String, String>);
@@ -320,7 +320,7 @@ begin
     e := grandChildren[i];
     list := TFHIRObjectList.Create;
     try
-      v.ListChildrenByName(tail(e.pathST), list);
+      v.ListChildrenByName(tail(e.path), list);
       if (list.Count = 0) then
         tr.addTag('td').addText(' ')
       else
@@ -360,7 +360,7 @@ end;
 
 procedure TNarrativeGenerator.getValues(path : string; p : TFHIRProperty; e : TFhirProfileStructureSnapshotElement; list : TFHIRObjectList);
 var
-  i, j : integer;
+  i : integer;
   v : TFhirElement;
   iter : TFHIRPropertyIterator;
 begin
@@ -371,7 +371,7 @@ begin
     try
       while iter.More do
       begin
-        if ((path+'.'+p.Name+'.'+iter.Current.Name).equals(e.PathST))  then
+        if ((path+'.'+p.Name+'.'+iter.Current.Name).equals(e.Path))  then
           list.add(p.link);
         iter.Next;
       end;
@@ -410,7 +410,7 @@ begin
   for i := 0 to elements.Count- 1 do
   begin
     element := elements[i];
-    if (element.PathST = path) then
+    if (element.Path = path) then
       result := element;
   end;
 end;
@@ -418,7 +418,7 @@ end;
 procedure TNarrativeGenerator.renderLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirProfileStructureSnapshotElement; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
 var
   p : TFHIRPeriod;
-  r : TFhirResourceReference;
+  r : TFhirReference;
   c : TFHIRXhtmlNode;
   tr : TResourceWithReference;
 begin
@@ -457,12 +457,12 @@ begin
     renderHumanName(TFHIRHumanName(e), x)
   else if (e is TFHIRAddress) then
     renderAddress(TFHIRAddress(e), x)
-  else if (e is TFHIRContact) then
-    renderContact(TFHIRContact(e), x)
+  else if (e is TFHIRContactPoint) then
+    renderContact(TFHIRContactPoint(e), x)
   else if (e is TFHIRUri) then
     renderUri(TFHIRUri(e), x)
-  else if (e is TFHIRSchedule) then
-    renderSchedule(TFHIRSchedule(e), x)
+  else if (e is TFHIRTiming) then
+    renderSchedule(TFHIRTiming(e), x)
   else if (e is TFHIRQuantity) or (e is TFHIRDuration) then
     renderQuantity(TFHIRQuantity(e), x, showCodeDetails)
   else if (e is TFHIRRatio) then
@@ -477,44 +477,44 @@ begin
     if p.Start = nil then
       x.addText('??')
     else
-      x.addText(p.StartST.AsXML);
+      x.addText(p.Start.AsXML);
     x.addText(' --> ');
-    if p.end_ST = nil then
+    if p.end_ = nil then
       x.addText('??')
     else
-    x.addText(p.End_ST.AsXML);
+    x.addText(p.End_.AsXML);
   end
-  else if (e is TFHIRResourceReference) then
+  else if (e is TFhirReference) then
   begin
-    r := TFHIRResourceReference(e);
+    r := TFhirReference(e);
     c := x;
     tr := nil;
     try
-      if (r.Reference <> nil) then
+      if (r.referenceObject <> nil) then
       begin
-        tr := resolveReference(res, r.ReferenceST);
-        if (not r.ReferenceST.startsWith('#')) then
+        tr := resolveReference(res, r.Reference);
+        if (not r.Reference.startsWith('#')) then
         begin
           if (tr <> nil) and (tr.Reference <> '') then
             c := x.addTag('a').setattribute('href', tr.Reference)
           else
-            c := x.addTag('a').setattribute('href', r.ReferenceST);
+            c := x.addTag('a').setattribute('href', r.Reference);
         end;
       end;
       // what to display: if text is provided, then that. if the reference was resolved, then show the generated narrative
-      if (r.Display <> nil) then
+      if (r.Display <> '') then
       begin
-        c.addText(r.DisplayST);
+        c.addText(r.Display);
         if (tr <> nil) then
         begin
           c.addText('. Generated Summary: ');
-          generateResourceSummary(c, tr.Resource, true, r.ReferenceST.startsWith('#'));
+          generateResourceSummary(c, tr.Resource, true, r.Reference.startsWith('#'));
         end;
       end
       else if (tr <> nil) then
-        generateResourceSummary(c, tr.Resource, r.ReferenceST.startsWith('#'), r.ReferenceST.startsWith('#'))
+        generateResourceSummary(c, tr.Resource, r.Reference.startsWith('#'), r.Reference.startsWith('#'))
       else
-        c.addText(r.ReferenceST);
+        c.addText(r.Reference);
     finally
       tr.Free;
     end;
@@ -527,8 +527,7 @@ function TNarrativeGenerator.displayLeaf(res : TFHIRResource; e : TFHIRElement; 
 var
   displayHints : TDictionary<String, String>;
   p : TFHIRPeriod;
-  r : TFhirResourceReference;
-  tr : TResourceWithReference;
+  r : TFhirReference;
 begin
   result := false;
   if (e = nil) then
@@ -626,14 +625,14 @@ begin
       renderAddress(TFHIRAddress(e), x);
       result := true;
     end
-    else if (e is TFHIRContact) then
+    else if (e is TFHIRContactPoint) then
     begin
-      renderContact(TFHIRContact(e), x);
+      renderContact(TFHIRContactPoint(e), x);
       result := true;
     end
-    else if (e is TFHIRSchedule) then
+    else if (e is TFHIRTiming) then
     begin
-      renderSchedule(TFHIRSchedule(e), x);
+      renderSchedule(TFHIRTiming(e), x);
       result := true;
     end
     else if (e is TFHIRQuantity) or (e is TFHIRDuration) then
@@ -654,23 +653,23 @@ begin
       if p.Start = nil then
         x.addText('??')
       else
-        x.addText(p.StartST.AsXML);
+        x.addText(p.Start.AsXML);
       x.addText(' --> ');
-      if p.end_ST = nil then
+      if p.end_ = nil then
         x.addText('??')
       else
-      x.addText(p.End_ST.AsXML);
+      x.addText(p.End_.AsXML);
     end
-    else if (e is TFHIRResourceReference) then
+    else if (e is TFhirReference) then
     begin
-      r := TFHIRResourceReference(e);
-      if (r.Display <> nil) then
-        x.addText(r.DisplayST)
-      else if (r.Reference <> nil) then
+      r := TFhirReference(e);
+      if (r.Display <> '') then
+        x.addText(r.Display)
+      else if (r.Reference <> '') then
       begin
-  //      tr := resolveReference(res, r.ReferenceST);
+  //      tr := resolveReference(res, r.Reference);
   //      try
-          x.addText(r.ReferenceST);
+          x.addText(r.Reference);
   //      finally
   //        tr.Free;
   //      end;
@@ -776,14 +775,14 @@ function TNarrativeGenerator.includeInSummary(child : TFhirProfileStructureSnaps
 var
   t : string;
 begin
-  if (child.Definition.IsModifierST) then
+  if (child.Definition.IsModifier) then
     result := true
-  else if (child.Definition.MustSupportST) then
+  else if (child.Definition.MustSupport) then
     result := true
   else if (child.Definition.Type_List.count <> 1) then
   begin
     result := true;
-    t := child.Definition.Type_List[0].CodeST;
+    t := child.Definition.Type_List[0].Code;
     if (t = 'Address')or (t = 'Contact') or (t = 'ResourceReference') or (t = 'Uri') then
       result := false;
   end
@@ -798,18 +797,18 @@ var
   sp : TFHIRXhtmlNode;
   first : boolean;
 begin
-  s := v.TextST;
+  s := v.Text;
   if (s = '') then
     for i := 0 to v.codingList.Count - 1 do
       if (s = '') then
-        s := v.codingList[i].DisplayST;
+        s := v.codingList[i].Display;
 
   if (s = '') then
   begin
     // still? ok, let's try looking it up
     for i := 0 to v.codingList.Count - 1 do
-      if (s = '') and (v.codingList[i].Code <> nil) and (v.codingList[i].System <> nil) then
-         s := lookupCode(v.codingList[i].SystemST, v.codingList[i].CodeST);
+      if (s = '') and (v.codingList[i].Code <> '') and (v.codingList[i].System <> '') then
+         s := lookupCode(v.codingList[i].System, v.codingList[i].Code);
   end;
 
   if (s = '') then
@@ -817,7 +816,7 @@ begin
     if (v.CodingList.isEmpty) then
       s := ''
     else
-      s := v.CodingList[0].CodeST;
+      s := v.CodingList[0].Code;
   end;
 
   if (showCodeDetails) then
@@ -836,7 +835,7 @@ begin
       end
       else
         sp.addText('; ');
-      sp.addText('{'+describeSystem(v.codingList[i].SystemST)+' code "'+v.codingList[i].CodeST+'" := "'+lookupCode(v.codingList[i].SystemST, v.codingList[i].CodeST)+'", given as "'+v.codingList[i].DisplayST+'"}');
+      sp.addText('{'+describeSystem(v.codingList[i].System)+' code "'+v.codingList[i].Code+'" := "'+lookupCode(v.codingList[i].System, v.codingList[i].Code)+'", given as "'+v.codingList[i].Display+'"}');
     end;
     sp.addText(')');
   end
@@ -845,11 +844,11 @@ begin
     s1 := '';
     for i := 0 to v.codingList.Count - 1 do
     begin
-      if (v.codingList[i].Code <> nil) and (v.codingList[i].System <> nil) then
+      if (v.codingList[i].Code <> '') and (v.codingList[i].System <> '') then
       begin
         if s1 <> '' then
           s1 := s1 + ', ';
-        s1 := s1 + ('{'+v.codingList[i].SystemST+' '+v.codingList[i].CodeST+'}');
+        s1 := s1 + ('{'+v.codingList[i].System+' '+v.codingList[i].Code+'}');
       end;
     end;
 
@@ -862,18 +861,18 @@ var
   s  : String;
 begin
   s := '';
-  if (v.Display <> nil) then
-    s := v.DisplayST;
+  if (v.Display <> '') then
+    s := v.Display;
   if (s = '') then
-    s := lookupCode(v.SystemST, v.CodeST);
+    s := lookupCode(v.System, v.Code);
 
   if (s = '') then
-    s := v.CodeST;
+    s := v.Code;
 
   if (showCodeDetails) then
-    x.addText(s+' (Details: '+describeSystem(v.SystemST)+' code '+v.CodeST+' := "'+lookupCode(v.SystemST, v.CodeST)+'", stated as "'+v.DisplayST+'")')
+    x.addText(s+' (Details: '+describeSystem(v.System)+' code '+v.Code+' := "'+lookupCode(v.System, v.Code)+'", stated as "'+v.Display+'")')
   else
-    x.addTag('span').setAttribute('title', '{'+v.SystemST+' '+v.CodeST+'}').addText(s);
+    x.addTag('span').setAttribute('title', '{'+v.System+' '+v.Code+'}').addText(s);
 end;
 
 function TNarrativeGenerator.describeSystem(system : String) : String;
@@ -893,7 +892,7 @@ begin
   x.addText(displayIdentifier(v));
 end;
 
-procedure TNarrativeGenerator.renderSchedule(v : TFHIRSchedule; x : TFHIRXhtmlNode);
+procedure TNarrativeGenerator.renderSchedule(v : TFHIRTiming; x : TFHIRXhtmlNode);
 begin
   x.addText(displaySchedule(v));
 end;
@@ -902,18 +901,18 @@ procedure TNarrativeGenerator.renderQuantity(v : TFHIRQuantity; x : TFHIRXhtmlNo
 var
   sp : TFHIRXhtmlNode;
 begin
-  if (v.Comparator <> nil) then
-    x.addText(v.Comparator.value);
-  x.addText(v.ValueST);
-  if (v.Units <> nil) then
-    x.addText(' '+v.UnitsST)
-  else if (v.Code <> nil) then
-    x.addText(' '+v.CodeST);
-  if (showCodeDetails) and (v.Code <> nil) then
+  if (v.comparatorObject <> nil) then
+    x.addText(v.comparatorObject.value);
+  x.addText(v.Value);
+  if (v.Units <> '') then
+    x.addText(' '+v.Units)
+  else if (v.Code <> '') then
+    x.addText(' '+v.Code);
+  if (showCodeDetails) and (v.Code <> '') then
   begin
     sp := x.addTag('span');
     sp.setAttribute('style', 'background: LightGoldenRodYellow ');
-    sp.addText(' (Details: '+describeSystem(v.SystemST)+' code '+v.CodeST+' := "'+lookupCode(v.SystemST, v.CodeST)+'")');
+    sp.addText(' (Details: '+describeSystem(v.System)+' code '+v.Code+' := "'+lookupCode(v.System, v.Code)+'")');
   end;
 end;
 
@@ -928,7 +927,7 @@ begin
   x.addText(displayAddress(v));
 end;
 
-procedure TNarrativeGenerator.renderContact(v : TFHIRContact; x : TFHIRXhtmlNode);
+procedure TNarrativeGenerator.renderContact(v : TFHIRContactPoint; x : TFHIRXhtmlNode);
 begin
   x.addText(displayContact(v));
 end;
@@ -945,15 +944,15 @@ begin
   result := nil;
   if (url.startsWith('#')) then
   begin
-    res := res.Contained[url.substring(1)];
-    if res <> nil then
+    r := res.Contained[url.substring(1)];
+    if r <> nil then
       result := TResourceWithReference.Create('', r);
   end
   else if url <> '' then
     result := FOnLookupReference(FContext, url);
 end;
 
-function TNarrativeGenerator.displaySchedule(v : TFHIRSchedule) : String;
+function TNarrativeGenerator.displaySchedule(v : TFHIRTiming) : String;
 begin
   result := '';
  { if (s.Event.count > 1) or ((s.Repeat <> nil) and (not s.Event.isEmpty)) then
@@ -971,21 +970,21 @@ begin
       b.append('Starting '+displayPeriod(s.Event[0))+', ');
     if (rep.When <> nil) then
     begin
-      b.append(rep.DurationST.toString+' '+displayTimeUnits(rep.UnitsST));
+      b.append(rep.Duration.toString+' '+displayTimeUnits(rep.Units));
       b.append(' ');
-      b.append(displayEventCode(rep.WhenST));
+      b.append(displayEventCode(rep.When));
     end
     else
     begin
-      if (rep.FrequencyST <> 1) then
+      if (rep.Frequency <> 1) then
         b.append('Once per ')
       else
-        b.append(Integer.toString(rep.FrequencyST)+' per ');
-      b.append(rep.DurationST.toString+' '+displayTimeUnits(rep.UnitsST));
+        b.append(Integer.toString(rep.Frequency)+' per ');
+      b.append(rep.Duration.toString+' '+displayTimeUnits(rep.Units));
       if (rep.Count <> nil) then
-        b.append(' '+Integer.toString(rep.CountST)+' times')
+        b.append(' '+Integer.toString(rep.Count)+' times')
       else if (rep.End <> nil) then
-        b.append(' until '+rep.EndST.toHumanDisplay);
+        b.append(' until '+rep.End.toHumanDisplay);
     end;
     return b.toString; statedType, id, ver : String;
   end
@@ -1000,8 +999,8 @@ var
 begin
   s := TStringBuilder.Create;
   try
-    if (v.Text <> nil) then
-      s.append(v.TextST)
+    if (v.Text <> '') then
+      s.append(v.Text)
     else
     begin
       for i := 0 to v.givenList.Count - 1 do
@@ -1015,8 +1014,8 @@ begin
         s.append(' ');
       end;
     end;
-    if (v.Use <> nil) and (v.UseST <> NameUseUsual) then
-      s.append('('+v.Use.value+')');
+    if (v.useObject <> nil) and (v.Use <> NameUseUsual) then
+      s.append('('+v.UseObject.value+')');
     result := s.toString;
   finally
     s.free;
@@ -1031,8 +1030,8 @@ var
 begin
   s := TStringBuilder.Create;
   try
-    if (v.Text <> nil) then
-      s.append(v.TextST)
+    if (v.Text <> '') then
+      s.append(v.Text)
     else
     begin
       for i := 0 to v.lineList.Count - 1 do
@@ -1040,31 +1039,31 @@ begin
         s.append(v.lineList[i].Value);
         s.append(' ');
       end;
-      if (v.City <> nil) then
+      if (v.City <> '') then
       begin
-        s.append(v.CityST);
+        s.append(v.City);
         s.append(' ');
       end;
-      if (v.State <> nil) then
+      if (v.State <> '') then
       begin
-        s.append(v.StateST);
-        s.append(' ');
-      end;
-
-      if (v.Zip <> nil) then
-      begin
-        s.append(v.ZipST);
+        s.append(v.State);
         s.append(' ');
       end;
 
-      if (v.Country <> nil) then
+      if (v.Zip <> '') then
       begin
-        s.append(v.CountryST);
+        s.append(v.Zip);
+        s.append(' ');
+      end;
+
+      if (v.Country <> '') then
+      begin
+        s.append(v.Country);
         s.append(' ');
       end;
     end;
-    if (v.Use <> nil) then
-      s.append('('+v.Use.value+')');
+    if (v.useObject <> nil) then
+      s.append('('+v.useObject.value+')');
     result := s.toString;
   finally
     s.free;
@@ -1072,25 +1071,25 @@ begin
 end;
 
 
-function TNarrativeGenerator.displayContact(v : TFHIRContact) : String;
+function TNarrativeGenerator.displayContact(v : TFHIRContactPoint) : String;
 begin
-  result := describeSystem(v.SystemST);
-  if (v.Value = nil) then
+  result := describeSystem(v.System);
+  if (v.Value = '') then
     result := result + '-unknown-'
   else
-    result := result + v.ValueST;
-  if (v.Use <> nil) then
-    result := result + '('+v.Use.value+')';
+    result := result + v.Value;
+  if (v.useObject <> nil) then
+    result := result + '('+v.useObject.value+')';
 end;
 
-function TNarrativeGenerator.describeSystem(system : TFHIRContactSystem) : String;
+function TNarrativeGenerator.describeSystem(system : TFHIRContactPointSystem) : String;
 begin
   case system of
-    ContactSystemNull: result := '';
-    ContactSystemPhone: result := 'ph: ';
-    ContactSystemFax: result := 'fax: ';
-    ContactSystemEmail: result := '';
-    ContactSystemUrl: result := '';
+    ContactPointSystemNull: result := '';
+    ContactPointSystemPhone: result := 'ph: ';
+    ContactPointSystemFax: result := 'fax: ';
+    ContactPointSystemEmail: result := '';
+    ContactPointSystemUrl: result := '';
   end;
 end;
 
@@ -1105,16 +1104,16 @@ function TNarrativeGenerator.displayIdentifier(v : TFHIRIdentifier) : String;
 var
   s : String;
 begin
-  if v.value = nil then
+  if v.value = '' then
     s := '??'
   else
-    s := v.ValueST;
+    s := v.Value;
 
-  if (v.label_ST <> '') then
-    s := v.Label_ST+' := '+s;
+  if (v.label_ <> '') then
+    s := v.Label_+' := '+s;
 
-  if (v.Use <> nil) then
-    s := s + ' ('+v.Use.value+')';
+  if (v.useObject <> nil) then
+    s := s + ' ('+v.useObject.value+')';
   result := s;
 end;
 
@@ -1129,17 +1128,17 @@ begin
   for i := 0  to elements.Count - 1 do
   begin
     e := elements[i];
-    if (e.PathST = path) and (e.Definition.NameReferenceST <> '') then
+    if (e.Path = path) and (e.Definition.NameReference <> '') then
     begin
-      name := e.Definition.NameReferenceST;
+      name := e.Definition.NameReference;
       t := nil;
       // now, resolve the name
       for j := 0 to elements.Count - 1 do
-        if name = elements[j].nameST then
+        if name = elements[j].name then
           t := elements[j];
       if (t <> nil) then
         raise Exception.create('Unable to resolve name reference '+name+' trying to resolve '+path);
-      path := t.PathST;
+      path := t.Path;
       break;
     end;
   end;
@@ -1149,8 +1148,8 @@ begin
     for i := 0 to elements.Count - 1 do
     begin
       e := elements[i];
-      if e.PathST.startsWith(path+'.') and (not e.PathST.substring(path.length+1).contains('.')) and
-         not (e.PathST.endsWith('.extension') or e.PathST.endsWith('.modifierExtension')) then
+      if e.Path.startsWith(path+'.') and (not e.Path.substring(path.length+1).contains('.')) and
+         not (e.Path.endsWith('.extension') or e.Path.endsWith('.modifierExtension')) then
         result.add(e.Link);
     end;
     result.link;
@@ -1165,7 +1164,7 @@ var
 begin
   result := nil;
   for I := 0 to profile.structureList.Count - 1 do
-    if ((profile.structureList[i].nameST = name) or (profile.structureList[i].type_ST = name)) and (profile.structureList[i].snapshot <> nil) then
+    if ((profile.structureList[i].name = name) or (profile.structureList[i].type_ = name)) and (profile.structureList[i].snapshot <> nil) then
       result := profile.structureList[i].snapshot;
   if result = nil then
     raise Exception.create('unable to find snapshot for '+name);
@@ -1178,7 +1177,7 @@ begin
   if (res.Text.div_ = nil) or (res.Text.Div_.ChildNodes.isEmpty) then
   begin
     res.Text.Div_ := x.Link;
-    res.Text.StatusST := status;
+    res.Text.Status := status;
   end
   else
   begin
@@ -1190,23 +1189,4 @@ end;
 
 
 end.
-(*
-  public class ResourceWithReference begin
 
-    private String reference;
-    private Resource resource;
-
-    public ResourceWithReference(String reference, Resource resource) begin
-      this.reference := reference;
-      this.resource := resource;
-    end;
-
-    public String getReference begin
-      return reference;
-    end;
-
-    public Resource getResource begin
-      return resource;
-    end;
-  end;
-  *)

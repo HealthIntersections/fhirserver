@@ -48,7 +48,7 @@ Uses
   TerminologyWebServer, AuthServer,
 
   FHIRTypes, fhirresources, fhirparser, fhircomponents, fhirconstants,
-  fhirbase, fhirparserbase, fhirtags, fhirsupport, fhirAtomFeed, FHIRLang, FHIROperation, FHIRDataStore,
+  fhirbase, fhirparserbase, fhirtags, fhirsupport, fhirAtomFeed, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities,
   {$IFNDEF FHIR-DSTU}
   QuestionnaireBuilder,
   {$ENDIF}
@@ -114,9 +114,11 @@ Type
     function BuildCompartmentList(session : TFHIRSession) : String;
 
     function GetResource(session : TFhirSession; rtype : TFhirResourceType; lang, id, ver, op : String) : TFhirResource;
+  {$IFNDEF FHIR-DSTU}
     function FindResource(session : TFhirSession; rtype : TFhirResourceType; lang, params : String; var id : String) : TFhirResource;
+    function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
+  {$ENDIF}
     function transform1(resource : TFhirResource; lang, xslt : String; saveOnly : boolean) : string;
-    function transform2(resource : TFhirResource; lang, xslt : String) : string;
     function HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
     function HandleWebQuestionnaire(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
     function HandleWebQuestionnaireInstance(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
@@ -125,7 +127,6 @@ Type
     function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
-    function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
 
     function SpecFile(path : String) : String;
     function AltFile(path : String) : String;
@@ -176,8 +177,6 @@ Uses
   Windows, Registry,
 
   AdvExceptions,
-
-  FHIRUtilities,
 
   FileSupport,
   FaceBookSupport;
@@ -545,13 +544,13 @@ var
 begin
   if rest.security = nil then
     rest.security := TFhirConformanceRestSecurity.Create;
-  rest.security.corsST := true;
+  rest.security.cors := true;
   if FAuthServer <> nil then
   begin
     c := rest.security.serviceList.Append.codingList.Append;
-    c.systemST := 'http://hl7.org/fhir/restful-security-service';
-    c.codeST := 'OAuth2';
-    rest.security.descriptionST := 'This server implements OAuth2 for login';
+    c.system := 'http://hl7.org/fhir/restful-security-service';
+    c.code := 'OAuth2';
+    rest.security.description := 'This server implements OAuth2 for login';
 
     rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oidc-discovery',
       TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
@@ -852,13 +851,13 @@ Begin
 end;
 
 function TFhirWebServer.HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+  {$IFNDEF FHIR-DSTU}
 var
   profile : TFhirProfile;
-  {$IFNDEF FHIR-DSTU}
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
-  {$ENDIF}
   s, id, fid : String;
+  {$ENDIF}
 begin
   {$IFDEF FHIR-DSTU}
   raise Exception.Create('This operation is not supported in this version of FHIR (DSTU 1)');
@@ -924,11 +923,12 @@ function TFhirWebServer.HandleWebEdit(request: TFHIRRequest; response: TFHIRResp
 var
   typ, id, ver : String;
   r : TFHIRResource;
-  q : TFhirQuestionnaire;
-  s, j : String;
+  s : String;
   comp : TFHIRComposer;
   i : integer;
 begin
+  result := 0;
+
    // get the right questionnaire
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
@@ -1035,14 +1035,14 @@ begin
 end;
 
 function TFhirWebServer.HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+  {$IFNDEF FHIR-DSTU}
 var
   id, ver, fullid : String;
   profile : TFhirProfile;
-  {$IFNDEF FHIR-DSTU}
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
-  {$ENDIF}
   s : String;
+  {$ENDIF}
 begin
   {$IFDEF FHIR-DSTU}
   raise Exception.Create('This operation is not supported in this version of FHIR (DSTU 1)');
@@ -1097,10 +1097,11 @@ end;
 
 function TFhirWebServer.HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
-  id, ver, fullid : String;
+  id, ver : String;
   s, xhtml : String;
   patient : TFHIRResource;
 begin
+  result := 0;
   StringSplit(request.Id.Substring(8), '/', id, ver);
   patient := GetResource(request.Session, frtPatient, request.Lang, id, ver, '');
   try
@@ -1170,6 +1171,8 @@ var
   json : TFHIRJsonComposer;
   i : integer;
 begin
+  result := 0;
+
    // get the right questionnaire
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
@@ -1190,13 +1193,13 @@ begin
       qa := r as TFhirQuestionnaireAnswers;
       q := (FindContainedResource(qa, qa.questionnaire) as TFhirQuestionnaire).link;
       if q = nil then
-        raise Exception.Create('Unable to fetch Questionnaire "'+qa.questionnaire.referenceST.Substring(1)+'"');
+        raise Exception.Create('Unable to fetch Questionnaire "'+qa.questionnaire.reference.Substring(1)+'"');
 
       // convert to xhtml
       s := transform1(q, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
 
       // make clean qa
-      qa.questionnaire.referenceST := 'Questionnaire/'+qa.questionnaire.referenceST.Substring(1);
+      qa.questionnaire.reference := 'Questionnaire/'+qa.questionnaire.reference.Substring(1);
       qa.containedList.Clear;
       json := TFHIRJsonComposer.Create(request.Lang);
       try
@@ -1262,37 +1265,37 @@ begin
     issue := TFhirOperationOutcome.create;
     try
       issue.text := TFhirNarrative.create;
-      issue.text.statusST := NarrativeStatusGenerated;
+      issue.text.status := NarrativeStatusGenerated;
       issue.text.div_ := ParseXhtml(lang, '<div><p>'+FormatTextToXML(message)+'</p></div>', xppReject);
       if addLogins then
       begin
         if FAuthServer.HL7Appid <> '' then
         begin
           e := issue.ExtensionList.Append;
-          e.urlST := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
+          e.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
           e.value := TFhirString.create('http://hl7.amg-hq.net/tools/signup_redirect.cfm?apiKey='+FAuthServer.HL7Appid+'&returnURL='+EncodeMime(path)+'/state/'+FAuthServer.MakeLoginToken(path, apHL7));
         end;
         if FAuthServer.FacebookAppid <> '' then
         begin
           e := issue.ExtensionList.Append;
-          e.urlST := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
+          e.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
           e.value := TFhirString.create('https://www.facebook.com/dialog/oauth?client_id='+FAuthServer.FacebookAppid+'&redirect_uri='+path+'&state='+FAuthServer.MakeLoginToken(path, apFacebook));
         end;
         if FAuthServer.GoogleAppid <> '' then
         begin
           e := issue.ExtensionList.Append;
-          e.urlST := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
+          e.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
           e.value := TFhirString.create('https://accounts.google.com/o/oauth2/auth?client_id='+FAuthServer.GoogleAppid+'&response_type=code&scope=openid%20email&redirect_uri='+path+'&state='+FAuthServer.MakeLoginToken(path, apGoogle));
         end;
       end;
       report := issue.issueList.Append;
-      report.severityST := IssueSeverityError;
-      report.details := TFHIRString.create(message);
+      report.severity := IssueSeverityError;
+      report.details := message;
       if (code <> '') then
       begin
         report.type_ := TFhirCoding.Create;
-        report.type_.systemST := 'http://hl7.org/fhir/issue-type';
-        report.type_.codeST := code;
+        report.type_.system := 'http://hl7.org/fhir/issue-type';
+        report.type_.code := code;
       end;
       response.ContentStream := TMemoryStream.Create;
       oComp := nil;
@@ -2350,6 +2353,7 @@ begin
   End;
 end;
 
+  {$IFNDEF FHIR-DSTU}
 function TFhirWebServer.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 var
   store : TFhirOperation;
@@ -2372,10 +2376,10 @@ begin
     store.Free;
   end;
 end;
+{$ENDIF}
 
 function TFhirWebServer.extractFileData(form : TIdSoapMimeMessage; const name: String; var sContentType : String): TStream;
 var
-  m : TIdSoapMimeMessage;
   sLeft, sRight: String;
   iLoop : Integer;
   oPart : TIdSoapMimePart;
@@ -2455,6 +2459,8 @@ begin
   end;
 end;
 
+  {$IFNDEF FHIR-DSTU}
+
 function TFhirWebServer.FindResource(session : TFhirSession; rtype: TFhirResourceType; lang, params: String; var id : String): TFhirResource;
 var
   request : TFHIRRequest;
@@ -2481,6 +2487,7 @@ begin
     request.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TFhirWebServer.GetWebUILink(resource: TFhirResource; base, statedType, id, ver: String; var link, text: String);
 var
@@ -2804,29 +2811,31 @@ begin
 end;
 
 
-function TFhirWebServer.transform2(resource: TFhirResource; lang, xslt: String): string;
-var
-  xslt2: AltovaXMLLib_TLB.XSLT2;
-  xml : TFHIRXmlComposer;
-  s : String;
-  AltovaXml : AltovaXMLLib_TLB.Application;
-begin
-  xml := TFHIRXmlComposer.Create(lang);
-  try
-    s := xml.Compose('', '', '', resource, false, nil);
-  finally
-    xml.Free;
-  end;
+  {$IFNDEF FHIR-DSTU}
 
-  AltovaXml := AltovaXMLLib_TLB.CoApplication.Create;
-  xslt2 := AltovaXml.XSLT2;
-  xslt2.InputXMLFromText := s;
-  xslt2.XSLFileName := xslt;
-  result := xslt2.ExecuteAndGetResultAsString;
-  xslt2 := nil;
-  AltovaXml := nil;
-end;
-
+//function TFhirWebServer.transform2(resource: TFhirResource; lang, xslt: String): string;
+//var
+//  xslt2: AltovaXMLLib_TLB.XSLT2;
+//  xml : TFHIRXmlComposer;
+//  s : String;
+//  AltovaXml : AltovaXMLLib_TLB.Application;
+//begin
+//  xml := TFHIRXmlComposer.Create(lang);
+//  try
+//    s := xml.Compose('', '', '', resource, false, nil);
+//  finally
+//    xml.Free;
+//  end;
+//
+//  AltovaXml := AltovaXMLLib_TLB.CoApplication.Create;
+//  xslt2 := AltovaXml.XSLT2;
+//  xslt2.InputXMLFromText := s;
+//  xslt2.XSLFileName := xslt;
+//  result := xslt2.ExecuteAndGetResultAsString;
+//  xslt2 := nil;
+//  AltovaXml := nil;
+//end;
+{$ENDIF}
 
 Initialization
   IdSSLOpenSSLHeaders.Load;

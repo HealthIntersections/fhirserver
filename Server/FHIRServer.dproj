@@ -345,6 +345,8 @@
         <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
         <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
         <DCCReference Include="FHIRSearchSyntax.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\NarrativeGenerator.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\QuestionnaireBuilder.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

@@ -180,7 +180,7 @@ begin
       j := i;
       while (i <= length(value)) and CharInSet(value[i], ['0'..'9', 'a'..'z', 'A'..'Z']) do
         inc(i);
-      result := find(lowercase(FStemmer.stem(copy(value, j, i-j))));
+      result := find(lowercase(FStemmer.calc(copy(value, j, i-j))));
     end
     else
       inc(i);
@@ -218,7 +218,7 @@ begin
       j := i;
       while (i <= length(FFilter)) and CharInSet(FFilter[i], ['0'..'9', 'a'..'z', 'A'..'Z']) do
         inc(i);
-      FStems.Add(lowercase(FStemmer.stem(copy(FFilter, j, i-j))));
+      FStems.Add(lowercase(FStemmer.calc(copy(FFilter, j, i-j))));
     end
     else
       inc(i);

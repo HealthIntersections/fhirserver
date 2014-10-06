@@ -30,6 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
+{$WARN SYMBOL_DEPRECATED OFF}
+{$WARN SYMBOL_PLATFORM OFF}
 uses
   Classes,
   AdvObjects,
@@ -75,7 +77,7 @@ type
     procedure ListDependencies(AList : TStrings);
     procedure SetDependencies(AList : TStrings);
 
-    Function AccountName : String;
+    Function AccountName : AnsiString;
     Procedure SetAccount(aUser, aPassword : String);
     
     function GetStatus(Var VMsg : String) : TServiceStatusEnum;
@@ -405,7 +407,7 @@ begin
     RaiseLastWin32Error;
 end;
 
-function TServiceHandle.AccountName: String;
+function TServiceHandle.AccountName: AnsiString;
 var
   LNeeded : DWord;
   LConfig : array [0..11] of _QUERY_SERVICE_CONFIGA;

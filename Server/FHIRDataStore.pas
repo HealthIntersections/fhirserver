@@ -145,8 +145,10 @@ Type
     procedure CloseFhirSession(key: integer);
 
     procedure DoExecuteOperation(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean);
+    {$IFNDEF FHIR-DSTU}
     function DoExecuteSearch (typekey : integer; compartmentId, compartments : String; params : TParseMap; conn : TKDBConnection): String;
     function getTypeForKey(key : integer) : TFhirResourceType;
+    {$ENDIF}
     procedure asssignAllowedRights(list : TStringList; user : TSCIMUser; choice : String);
   public
     constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile; SCIMServer :  TSCIMServer);
@@ -193,7 +195,7 @@ Type
     function DefaultRights : String;
     Property OwnerName : String read FOwnerName write FOwnerName;
     Property Profiles : TProfileManager read FProfiles;
-    function ExpandVS(vs : TFHIRValueSet; ref : TFhirResourceReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet;
+    function ExpandVS(vs : TFHIRValueSet; ref : TFhirReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet;
     function LookupCode(system, code : String) : String;
     property QuestionnaireCache : TQuestionnaireCache read FQuestionnaireCache;
     Property Validate : boolean read FValidate write FValidate;
@@ -383,7 +385,6 @@ end;
 
 function TFHIRDataStore.CreateImplicitSession(clientInfo: String): TFhirSession;
 var
-  user : TSCIMUser;
   session : TFhirSession;
   dummy : boolean;
   new : boolean;
@@ -418,30 +419,30 @@ begin
           se.event := TFhirSecurityEventEvent.create;
           se.event.type_ := TFhirCodeableConcept.create;
           c := se.event.type_.codingList.Append;
-          c.codeST := '110114';
-          c.systemST := 'http://nema.org/dicom/dcid';
-          c.displayST := 'User Authentication';
+          c.code := '110114';
+          c.system := 'http://nema.org/dicom/dcid';
+          c.display := 'User Authentication';
           c := se.event.subtypeList.append.codingList.Append;
-          c.codeST := '110122';
-          c.systemST := 'http://nema.org/dicom/dcid';
-          c.displayST := 'Login';
-          se.event.actionST := SecurityEventActionE;
-          se.event.outcomeST := SecurityEventOutcome0;
-          se.event.dateTimeST := NowUTC;
+          c.code := '110122';
+          c.system := 'http://nema.org/dicom/dcid';
+          c.display := 'Login';
+          se.event.action := SecurityEventActionE;
+          se.event.outcome := SecurityEventOutcome0;
+          se.event.dateTime := NowUTC;
           se.source := TFhirSecurityEventSource.create;
-          se.source.siteST := 'Cloud';
-          se.source.identifierST := FOwnerName;
+          se.source.site := 'Cloud';
+          se.source.identifier := FOwnerName;
           c := se.source.type_List.Append;
-          c.codeST := '3';
-          c.displayST := 'Web Server';
-          c.systemST := 'http://hl7.org/fhir/security-source-type';
+          c.code := '3';
+          c.display := 'Web Server';
+          c.system := 'http://hl7.org/fhir/security-source-type';
 
           // participant - the web browser / user proxy
           p := se.participantList.Append;
-          p.userIdST := clientInfo;
+          p.userId := clientInfo;
           p.network := TFhirSecurityEventParticipantNetwork.create;
-          p.network.identifierST := clientInfo;
-          p.network.type_ST := NetworkType2;
+          p.network.identifier := clientInfo;
+          p.network.type_ := NetworkType2;
 
           SaveSecurityEvent(se);
         finally
@@ -541,6 +542,7 @@ begin
   end;
 end;
 
+{$IFNDEF FHIR-DSTU}
 function TFHIRDataStore.DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn : TKDBConnection): String;
 var
   sp : TSearchProcessor;
@@ -571,7 +573,7 @@ begin
     spaces.Free;
   end;
 end;
-
+{$ENDIF}
 
 procedure TFHIRDataStore.EndSession(sCookie, ip: String);
 var
@@ -595,35 +597,35 @@ begin
           se.event := TFhirSecurityEventEvent.create;
           se.event.type_ := TFhirCodeableConcept.create;
           c := se.event.type_.codingList.Append;
-          c.codeST := '110114';
-          c.systemST := 'http://nema.org/dicom/dcid';
-          c.displayST := 'User Authentication';
+          c.code := '110114';
+          c.system := 'http://nema.org/dicom/dcid';
+          c.display := 'User Authentication';
           c := se.event.subtypeList.append.codingList.Append;
-          c.codeST := '110123';
-          c.systemST := 'http://nema.org/dicom/dcid';
-          c.displayST := 'Logout';
-          se.event.actionST := SecurityEventActionE;
-          se.event.outcomeST := SecurityEventOutcome0;
-          se.event.dateTimeST := NowUTC;
+          c.code := '110123';
+          c.system := 'http://nema.org/dicom/dcid';
+          c.display := 'Logout';
+          se.event.action := SecurityEventActionE;
+          se.event.outcome := SecurityEventOutcome0;
+          se.event.dateTime := NowUTC;
           se.source := TFhirSecurityEventSource.create;
-          se.source.siteST := 'Cloud';
-          se.source.identifierST := ''+FOwnerName+'';
+          se.source.site := 'Cloud';
+          se.source.identifier := ''+FOwnerName+'';
           c := se.source.type_List.Append;
-          c.codeST := '3';
-          c.displayST := 'Web Server';
-          c.systemST := 'http://hl7.org/fhir/security-source-type';
+          c.code := '3';
+          c.display := 'Web Server';
+          c.system := 'http://hl7.org/fhir/security-source-type';
 
           // participant - the web browser / user proxy
           p := se.participantList.Append;
-          p.userIdST := inttostr(session.Key);
-          p.altIdST := session.Id;
-          p.nameST := session.Name;
+          p.userId := inttostr(session.Key);
+          p.altId := session.Id;
+          p.name := session.Name;
           if (ip <> '') then
           begin
             p.network := TFhirSecurityEventParticipantNetwork.create;
-            p.network.identifierST := ip;
-            p.network.type_ST := NetworkType2;
-            p.requestorST := true;
+            p.network.identifier := ip;
+            p.network.type_ := NetworkType2;
+            p.requestor := true;
           end;
 
           SaveSecurityEvent(se);
@@ -643,23 +645,23 @@ begin
     CloseFhirSession(key);
 end;
 
-function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirResourceReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList): TFhirValueSet;
+function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList): TFhirValueSet;
 begin
   if (vs <> nil) then
     result := FTerminologyServer.expandVS(vs, '', '',  dependencies, limit, allowIncomplete)
   else
   begin
-    if FTerminologyServer.isKnownValueSet(ref.referenceST, vs) then
-      result := FTerminologyServer.expandVS(vs, ref.referenceST, '', dependencies, limit, allowIncomplete)
+    if FTerminologyServer.isKnownValueSet(ref.reference, vs) then
+      result := FTerminologyServer.expandVS(vs, ref.reference, '', dependencies, limit, allowIncomplete)
     else
     begin
-      vs := FTerminologyServer.getValueSetByUrl(ref.referenceST);
+      vs := FTerminologyServer.getValueSetByUrl(ref.reference);
       if vs = nil then
-        vs := FTerminologyServer.getValueSetByIdentifier(ref.referenceST);
+        vs := FTerminologyServer.getValueSetByIdentifier(ref.reference);
       if vs = nil then
         result := nil
       else
-        result := FTerminologyServer.expandVS(vs, ref.referenceST, '', dependencies, limit, allowIncomplete)
+        result := FTerminologyServer.expandVS(vs, ref.reference, '', dependencies, limit, allowIncomplete)
     end;
   end;
 end;
@@ -725,7 +727,7 @@ end;
 
 function TFHIRDataStore.GetSessionByToken(outerToken : String; var session: TFhirSession): boolean;
 var
-  key, i : integer;
+  i : integer;
 begin
   result := false;
   session := nil;
@@ -754,6 +756,7 @@ begin
   end;
 end;
 
+{$IFNDEF FHIR-DSTU}
 function TFHIRDataStore.getTypeForKey(key: integer): TFhirResourceType;
 var
   a : TFHIRResourceType;
@@ -766,6 +769,7 @@ begin
       exit;
     end;
 end;
+{$ENDIF}
 
 function TFHIRDataStore.KeyForTag(scheme, term: String): Integer;
 var
@@ -878,35 +882,35 @@ begin
       se.event := TFhirSecurityEventEvent.create;
       se.event.type_ := TFhirCodeableConcept.create;
       c := se.event.type_.codingList.Append;
-      c.codeST := '110114';
-      c.systemST := 'http://nema.org/dicom/dcid';
-      c.displayST := 'User Authentication';
+      c.code := '110114';
+      c.system := 'http://nema.org/dicom/dcid';
+      c.display := 'User Authentication';
       c := se.event.subtypeList.append.codingList.Append;
-      c.codeST := '110122';
-      c.systemST := 'http://nema.org/dicom/dcid';
-      c.displayST := 'Login';
-      se.event.actionST := SecurityEventActionE;
-      se.event.outcomeST := SecurityEventOutcome0;
-      se.event.dateTimeST := NowUTC;
+      c.code := '110122';
+      c.system := 'http://nema.org/dicom/dcid';
+      c.display := 'Login';
+      se.event.action := SecurityEventActionE;
+      se.event.outcome := SecurityEventOutcome0;
+      se.event.dateTime := NowUTC;
       se.source := TFhirSecurityEventSource.create;
-      se.source.siteST := 'Cloud';
-      se.source.identifierST := ''+FOwnerName+'';
+      se.source.site := 'Cloud';
+      se.source.identifier := ''+FOwnerName+'';
       c := se.source.type_List.Append;
-      c.codeST := '3';
-      c.displayST := 'Web Server';
-      c.systemST := 'http://hl7.org/fhir/security-source-type';
+      c.code := '3';
+      c.display := 'Web Server';
+      c.system := 'http://hl7.org/fhir/security-source-type';
 
       // participant - the web browser / user proxy
       p := se.participantList.Append;
-      p.userIdST := inttostr(session.Key);
-      p.altIdST := session.Id;
-      p.nameST := session.Name;
+      p.userId := inttostr(session.Key);
+      p.altId := session.Id;
+      p.name := session.Name;
       if (ip <> '') then
       begin
         p.network := TFhirSecurityEventParticipantNetwork.create;
-        p.network.identifierST := ip;
-        p.network.type_ST := NetworkType2;
-        p.requestorST := true;
+        p.network.identifier := ip;
+        p.network.type_ := NetworkType2;
+        p.requestor := true;
       end;
 
       SaveSecurityEvent(se);
@@ -1026,8 +1030,6 @@ end;
 
 
 procedure TFHIRDataStore.SeeResource(key, vkey : Integer; id : string; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFhirSession);
-var
-  profile : TFhirProfile;
 begin
   FLock.Lock('SeeResource');
   try
@@ -1039,7 +1041,7 @@ begin
     FSubscriptionManager.SeeResource(key, vkey, id, resource, conn, reload, session);
     FQuestionnaireCache.clear(resource.ResourceType, id);
     if resource.ResourceType = frtValueSet then
-      FQuestionnaireCache.clearVS(TFhirValueSet(resource).identifierST);
+      FQuestionnaireCache.clearVS(TFhirValueSet(resource).identifier);
     {$ENDIF}
   finally
     FLock.Unlock;
@@ -1074,7 +1076,7 @@ begin
     request.ResourceType := frtSecurityEvent;
     request.CommandType := fcmdCreate;
     request.Resource := se.link;
-    request.lastModifiedDate := se.event.dateTimeST.AsUTCDateTime;
+    request.lastModifiedDate := se.event.dateTime.AsUTCDateTime;
     request.Session := nil;
     response := TFHIRResponse.create;
     try

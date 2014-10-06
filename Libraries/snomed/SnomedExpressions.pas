@@ -155,7 +155,7 @@ Type
 
   public
     constructor create(services : TSnomedServices);
-    destructor destroy; override;
+    destructor Destroy; override;
 
     Class Function Parse(services : TSnomedServices; source : String) : TSnomedExpression;
     Class Function Render(services : TSnomedServices; source : TSnomedExpression; option : TSnomedExpressionParserRenderOption) : String;  overload;

@@ -12,6 +12,7 @@ Uses
   AdvObjects;
 
 Type
+  {$M+}
   TDecimalTests = Class (TAdvObject) // but can be used with DUnit
   Private
     procedure check(b : boolean);

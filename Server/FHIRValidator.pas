@@ -100,13 +100,12 @@ type
 
 
     procedure Load(feed : TFHIRAtomFeed);
-    function LoadFile(name : String; isFree : boolean = false) : IXMLDomDocument2;
+//    function LoadFile(name : String; isFree : boolean = false) : IXMLDomDocument2;
     function LoadDoc(name : String; isFree : boolean = false) : IXMLDomDocument2;
     procedure validateInstance(op : TFHIROperationOutcome; elem : TIdSoapXmlElement; specifiedprofile : TFhirProfile); overload;
-//    function transform(op : TFhirOperationOutcome; source : IXMLDOMDocument2; transform : IXSLTemplate) : IXMLDOMDocument2;
     procedure processSchematron(op : TFhirOperationOutcome; source : String);
     procedure executeSchematron(context : TFHIRValidatorContext; op : TFhirOperationOutcome; source, name : String);
-    function transform(op: TFhirOperationOutcome; source: IXMLDOMDocument2; transform: IXSLTemplate): IXMLDOMDocument2;
+//    function transform(op: TFhirOperationOutcome; source: IXMLDOMDocument2; transform: IXSLTemplate): IXMLDOMDocument2;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     function getTargetByName(list: TFhirProfileStructureElementList; name: String): TFhirProfileStructureElement;
     procedure SetProfiles(const Value: TProfileManager);
@@ -232,7 +231,7 @@ begin
     result := nil
   else
   begin
-    if (profile.StructureList.Count <> 1) or not ((profile.StructureList[0].type_ST = localName) or (profile.StructureList[0].nameST = localName)) then
+    if (profile.StructureList.Count <> 1) or not ((profile.StructureList[0].type_ = localName) or (profile.StructureList[0].name = localName)) then
       raise Exception.create('unexpected profile contents');
     result := profile.StructureList[0];
   end;
@@ -260,7 +259,7 @@ var
   b : boolean;
   i : integer;
 begin
-  children := getChildren(structure, definition.pathST);
+  children := getChildren(structure, definition.path);
   try
     ci := TChildIterator.create(path, element);
     try
@@ -277,7 +276,7 @@ begin
         begin
           child := getDefinitionByTailNameChoice(children, ci.name);
           if (child <> nil) then
-            type_ := copy(ci.name, length(tail(child.PathST)) - 2, $FFFF);
+            type_ := copy(ci.name, length(tail(child.Path)) - 2, $FFFF);
           if ('Resource' = type_) then
             type_ := 'ResourceReference';
         end
@@ -288,15 +287,15 @@ begin
             // all references?
             b := true;
             for i := 0 to child.definition.type_List.Count - 1 do
-              if child.definition.type_List[i].CodeST <> 'ResourceReference' then
+              if child.definition.type_List[i].Code <> 'ResourceReference' then
                 b := false;
             if b then
-              type_ := child.definition.type_List[0].CodeST
+              type_ := child.definition.type_List[0].Code
             else
               raise Exception.Create('to do?');
           end
           else  if (child.Definition.type_List.Count = 1) then
-            type_ := child.Definition.Type_List[0].codeST;
+            type_ := child.Definition.Type_List[0].code;
           if (type_ <> '') then
           begin
             if (StringStartsWith(type_, 'Resource(')) then
@@ -384,7 +383,7 @@ begin
   for i := 0 to structure.ElementList.Count - 1 do
   begin
     c := structure.ElementList[i];
-    if (c.PathST = name) then
+    if (c.Path = name) then
     begin
       result := c;
       exit;
@@ -398,7 +397,7 @@ var
 begin
   result := nil;
   for i := 0 to list.Count - 1 do
-    if list[i].nameST = name then
+    if list[i].name = name then
     begin
       result := list[i];
       exit;
@@ -420,26 +419,26 @@ begin
     for i := 0 to structure.elementList.Count - 1 do
     begin
       e := structure.elementList[i];
-      p := e.pathST;
-      if (e.definition <> nil) and (e.definition.nameReferenceST <> '') and path.StartsWith(p) then
+      p := e.path;
+      if (e.definition <> nil) and (e.definition.nameReference <> '') and path.StartsWith(p) then
       begin
-        tgt := getTargetByName(structure.elementList, e.definition.nameReferenceST);
+        tgt := getTargetByName(structure.elementList, e.definition.nameReference);
         if (tgt = nil) then
-          raise Exception.Create('Unable to find target for name "'+e.definition.nameReferenceST+'"');
+          raise Exception.Create('Unable to find target for name "'+e.definition.nameReference+'"');
         // The path we are navigating to is on or below this element, but the element defers its definition to another named part of the structure
         if (path.length > p.length) then
           // The path navigates further into the referenced element, so go ahead along the path over there
-          result := getChildren(structure, tgt.pathST+'.'+path.substring(p.length+1))
+          result := getChildren(structure, tgt.path+'.'+path.substring(p.length+1))
         else
           // The path we are looking for is actually this element, but since it defers it definition, go get the referenced element
-          result := getChildren(structure, tgt.pathST);
+          result := getChildren(structure, tgt.path);
         break;
       end
       else if (p.startsWith(path+'.')) then
       begin
     	  // The path of the element is a child of the path we're looking for (i.e. the parent),
     	  // so add this element to the result.
-        tail := copy(e.PathST, length(path)+2, $FF);
+        tail := copy(e.Path, length(path)+2, $FF);
 
         if pos('.', tail) = 0 then
           res.add(e.link);
@@ -461,7 +460,7 @@ begin
   result := nil;
   for i := 0 to children.count - 1 do
   begin
-    n := children[i].pathST;
+    n := children[i].path;
     if tail(n) = name then
     begin
       result := children[i];
@@ -478,7 +477,7 @@ begin
   result := nil;
   for i := 0 to children.count - 1 do
   begin
-    n := tail(children[i].pathST);
+    n := tail(children[i].path);
     if n.EndsWith('[x]') and name.StartsWith(copy(n, 1, length(n)-3)) then
     begin
       result := children[i];
@@ -626,13 +625,13 @@ begin
         binding := context.definition.binding;
         if op.warning('InstanceValidator', 'code-unknown', path, binding <> nil, 'Binding not provided') then
         begin
-          if binding.reference is TFhirResourceReference then
+          if binding.reference is TFhirReference then
           begin
             vsc := resolveBindingReference(binding.Reference);
             try
               try
                 if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.Reference)+' not found')) then
-                  op.warning('InstanceValidator', 'code-unknown', path, vsc.check(system, code), 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.nameST+' ('+vsc.id+')');
+                  op.warning('InstanceValidator', 'code-unknown', path, vsc.check(system, code), 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.name+' ('+vsc.id+')');
               Except
                 on e : Exception do
                   if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
@@ -640,7 +639,7 @@ begin
                   else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
                     op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
                   else
-                    op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vsc.id+' for '+context.Definition.Binding.nameST+': '+e.Message);
+                    op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vsc.id+' for '+context.Definition.Binding.name+': '+e.Message);
               end;
             finally
               vsc.Free;
@@ -662,7 +661,7 @@ begin
   if (context <> nil) and (context.definition.binding <> nil) then
   begin
     binding := context.definition.binding;
-    if binding.reference is TFhirResourceReference then
+    if binding.reference is TFhirReference then
     begin
       vsc := resolveBindingReference(binding.Reference);
       try
@@ -684,13 +683,13 @@ begin
               end;
               c := c.nextSibling;
             end;
-            if not any and (binding.ConformanceST = BindingConformanceRequired) then
-              op.warning('InstanceValidator', 'code-unknown', path, false, 'No code provided, and value set '+context.Definition.Binding.nameST+' ('+vsc.id+') is required');
+            if not any and (binding.Conformance = BindingConformanceRequired) then
+              op.warning('InstanceValidator', 'code-unknown', path, false, 'No code provided, and value set '+context.Definition.Binding.name+' ('+vsc.id+') is required');
             if (any) then
-              if (binding.ConformanceST = BindingConformanceExample) then
-                op.hint('InstanceValidator', 'code-unknown', path, found, 'None of the codes are in the example value set '+context.Definition.Binding.nameST+' ('+vsc.id+')')
+              if (binding.Conformance = BindingConformanceExample) then
+                op.hint('InstanceValidator', 'code-unknown', path, found, 'None of the codes are in the example value set '+context.Definition.Binding.name+' ('+vsc.id+')')
               else
-                op.warning('InstanceValidator', 'code-unknown', path, found, 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.nameST+' ('+vsc.id+')');
+                op.warning('InstanceValidator', 'code-unknown', path, found, 'Code {'+system+'}'+code+' is not in value set '+context.Definition.Binding.name+' ('+vsc.id+')');
           Except
             on e : Exception do
               if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
@@ -698,7 +697,7 @@ begin
               else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
                 op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
               else
-                op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vsc.id+' for '+context.Definition.Binding.nameST+': '+e.Message);
+                op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vsc.id+' for '+context.Definition.Binding.name+': '+e.Message);
           end;
         end;
       finally
@@ -799,10 +798,10 @@ begin
       p := r as TFhirProfile;
       if FProfiles <> nil then
         FProfiles.SeeProfile(feed.entries[i].id, i, p);
-      if (p.StructureList[0].Name <> nil) then
-        FTypes.add(LowerCase(p.StructureList[0].NameST), p.link)
+      if (p.StructureList[0].nameObject <> nil) then
+        FTypes.add(LowerCase(p.StructureList[0].Name), p.link)
       else
-        FTypes.add(LowerCase(p.StructureList[0].Type_ST), p.link);
+        FTypes.add(LowerCase(p.StructureList[0].Type_), p.link);
     end
     else if (r.ResourceType in [frtValueSet, frtConceptMap]) then
       FTerminologyServer.SeeSpecificationResource(feed.entries[i].id, r);
@@ -844,6 +843,7 @@ Begin
 end;
 
 
+{
 function TFHIRValidator.LoadFile(name : String; isFree : boolean) : IXMLDomDocument2;
 Var
   LVariant: Variant;
@@ -856,6 +856,7 @@ Begin
   if not result.load(name) then
     raise Exception.create('unable to parse XML because '+result.parseError.reason);
 end;
+}
 
 function TFHIRValidator.validateInstance(context : TFHIRValidatorContext; source: TAdvBuffer; opDesc : String; profile : TFHIRProfile): TFHIROperationOutcome;
 var
@@ -895,7 +896,7 @@ begin
         try
           load;
         except
-          result.issueList[0].severityST := IssueSeverityFatal;
+          result.issueList[0].severity := IssueSeverityFatal;
         end;
       end;
 
@@ -980,14 +981,14 @@ Begin
     begin
       issue := TFhirOperationOutcomeIssue.create;
       try
-        issue.severityST := IssueSeverityError;
+        issue.severity := IssueSeverityError;
         issue.type_ := TFhirCoding.create;
-        issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
-        issue.type_.codeST := 'invariant';
-        issue.detailsST := e.text;
+        issue.type_.system := 'http://hl7.org/fhir/issue-type';
+        issue.type_.code := 'invariant';
+        issue.details := e.text;
         issue.locationList.Append.value := e.getAttribute('location');
         ex := issue.ExtensionList.Append;
-        ex.urlST := 'http://hl7.org/fhir/tools#issue-source';
+        ex.url := 'http://hl7.org/fhir/tools#issue-source';
         ex.value := TFhirCode.create;
         TFhirCode(ex.value).value := 'Schematron';
         op.issueList.add(issue.link);
@@ -998,7 +999,7 @@ Begin
     e := TMsXmlParser.NextSibling(e);
   end;
 end;
-
+{
 function TFHIRValidator.transform(op : TFhirOperationOutcome; source: IXMLDOMDocument2; transform: IXSLTemplate): IXMLDOMDocument2;
 var
   xml: Variant;
@@ -1029,6 +1030,7 @@ begin
       result := nil;
   end;
 end;
+}
 
 procedure TFHIRValidator.executeSchematron(context : TFHIRValidatorContext; op : TFhirOperationOutcome; source, name: String);
 var
@@ -1056,8 +1058,8 @@ function TFHIRValidator.resolveBindingReference(ref: TFHIRType): TValueSetChecke
 begin
   if (ref is TFHIRUri) then
     result := FTerminologyServer.MakeChecker(TFHIRUri(ref).value)
-  else if (ref is TFHIRResourceReference) then
-    result := FTerminologyServer.MakeChecker(TFHIRResourceReference(ref).reference.value)
+  else if (ref is TFhirReference) then
+    result := FTerminologyServer.MakeChecker(TFhirReference(ref).reference)
   else
     result := nil;
 end;
@@ -1078,8 +1080,8 @@ function TFHIRValidator.describeReference(ref: TFHIRType): String;
 begin
   if (ref is TFHIRUri) then
     result := TFHIRUri(ref).value
-  else if (ref is TFHIRResourceReference) then
-    result := TFHIRResourceReference(ref).reference.value
+  else if (ref is TFhirReference) then
+    result := TFhirReference(ref).reference
   else
     result := '??';
 end;
@@ -1093,7 +1095,7 @@ begin
   for i := 0 to list.count - 1 do
   begin
     c := list[i];
-    if (code = c.CodeST) and (system = c.SystemST) or codeinExpansion(c.containsList, system, code) then
+    if (code = c.Code) and (system = c.System) or codeinExpansion(c.containsList, system, code) then
     begin
       result := true;
       exit;

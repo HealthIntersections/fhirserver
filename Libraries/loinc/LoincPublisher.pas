@@ -185,7 +185,7 @@ end;
 procedure TloincPublisher.PublishHeirarchyEntry(sCode: String; iStart : Integer; const sPrefix: String; html: THTMLPublisher);
   procedure AddParent(p : Cardinal);
   var
-    index, code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
+    code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
   begin
     FLoinc.Entries.GetEntry(p, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
     if (parent <> NO_PARENT) then
@@ -198,7 +198,7 @@ procedure TloincPublisher.PublishHeirarchyEntry(sCode: String; iStart : Integer;
 
 var
   index, code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
-  s, stext : string;
+  stext : string;
   arr : TCardinalArray;
   i, iTotal : integer;
   b : boolean;
@@ -860,7 +860,7 @@ Type
 procedure TloincPublisher.PublishSearch(const sPrefix, sText: String; iStart: Integer; all : boolean; html: THTMLPublisher);
   procedure AddParent(p : Cardinal);
   var
-    index, code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
+    code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
   begin
     FLoinc.Entries.GetEntry(p, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
     if (parent <> NO_PARENT) then

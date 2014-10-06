@@ -43,15 +43,12 @@ Type
       FContent : AnsiString;
       FLength : Integer;
       FBufferSize : integer;
-
-      Procedure Append(Const oStream : TAdvStream; iBytes : Integer); Overload;
-      Procedure Insert(Const oStream : TAdvStream; iBytes : Integer; iIndex : Integer); Overload;
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
       Function AsString : AnsiString;
-      Function ToString : AnsiString;
+      Function ToString : String; override;
 
       Procedure Clear;
 
@@ -125,9 +122,9 @@ Begin
 End;
 
 
-Function TAnsiStringBuilder.ToString : AnsiString;
+Function TAnsiStringBuilder.ToString : String;
 Begin
-  Result := Copy(FContent, 1, FLength);
+  Result := Copy(String(FContent), 1, FLength);
 End;
 
 
@@ -154,7 +151,7 @@ End;
 
 Function TAnsiStringBuilder.AsString: AnsiString;
 Begin
-  Result := ToString;
+  Result := Copy(FContent, 1, FLength);
 End;
 
 
@@ -200,7 +197,7 @@ End;
 
 Procedure TAnsiStringBuilder.Append(Const oBuilder : TAnsiStringBuilder);
 Begin
-  Append(oBuilder.ToString);
+  Append(oBuilder.AsString);
 End;
 
 
@@ -212,7 +209,7 @@ End;
 
 Procedure TAnsiStringBuilder.Append(Const iInt : Integer);
 Begin
-  Append(IntegerToString(iInt));
+  Append(AnsiString(IntegerToString(iInt)));
 End;
 
 
@@ -235,7 +232,7 @@ End;
 
 Procedure TAnsiStringBuilder.Insert(Const oBuilder : TAnsiStringBuilder; iIndex : Integer);
 Begin
-  Insert(oBuilder.ToString, iIndex);
+  Insert(oBuilder.AsString, iIndex);
 End;
 
 
@@ -259,7 +256,7 @@ Begin
 
   While (Result = -1) And (iLoop <= iUpper) Do
   Begin
-    If (bCase And (Copy(FContent, iLoop, iLen) = sStr)) Or (Not bCase And StringEquals(Copy(FContent, iLoop, iLen), sStr)) Then
+    If (bCase And (Copy(FContent, iLoop, iLen) = sStr)) Or (Not bCase And (Copy(FContent, iLoop, iLen) = sStr)) Then
       Result := iLoop - 1;
 
     Inc(iLoop);
@@ -279,41 +276,10 @@ Begin
   iLoop := iUpper;
   While (Result = -1) And (iLoop > 0) Do
   Begin
-    If (bCase And (Copy(FContent, iLoop, iLen) = sStr)) Or (Not bCase And StringEquals(Copy(FContent, iLoop, iLen), sStr)) Then
+    If (bCase And (Copy(FContent, iLoop, iLen) = sStr)) Or (Not bCase And (Copy(FContent, iLoop, iLen) = sStr)) Then
       Result := iLoop - 1;
 
     Dec(iLoop);
-  End;
-End;
-
-
-Procedure TAnsiStringBuilder.Append(Const oStream : TAdvStream; iBytes : Integer);
-Begin
-  If (iBytes > 0) Then
-  Begin
-    If FLength + iBytes > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + Integermax(FBufferSize, iBytes));
-
-    oStream.Read(FContent[FLength + 1], iBytes);
-
-    Inc(FLength, iBytes);
-  End;
-End;
-
-
-Procedure TAnsiStringBuilder.Insert(Const oStream : TAdvStream; iBytes : Integer; iIndex : Integer);
-Begin
-  If (iBytes > 0) Then
-  Begin
-    If FLength + iBytes > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, iBytes));
-
-    If (iIndex) <> FLength Then
-      Move(FContent[iIndex+1], FContent[iIndex+1 + iBytes], (FLength - iIndex));
-
-    oStream.Read(FContent[iIndex + 1], iBytes);
-
-    Inc(FLength, iBytes);
   End;
 End;
 
@@ -378,8 +344,7 @@ var
   i : integer;
 begin
   for i := 0 to amount - 1 Do
-    Append(chr(bBytes[i]));
-
+    Append(AnsiChar(bBytes[i]));
 end;
 
 
@@ -409,7 +374,7 @@ Var
   sA, sB : AnsiString;
 Begin
   // Find the delimiter within the source string
-  iIndex := StringFind(sValue, aDelimiters);
+  iIndex := StringFind(String(sValue), aDelimiters);
   Result := iIndex <> 0;
 
   If Not Result Then

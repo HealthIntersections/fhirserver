@@ -1795,6 +1795,8 @@ Begin
   End;
 End;
 
+{$WARN SYMBOL_DEPRECATED OFF}
+{$WARN IMPLICIT_STRING_CAST OFF}
 Function ToString(CValue: SQLPOINTER;
                   CType: SQLSMALLINT;
                   StringTrimming: TStringTrimming): String;
@@ -2310,7 +2312,6 @@ Begin
 
   If LbDoException Then
     Begin
-
     Raise E
     End
   Else
@@ -4671,7 +4672,7 @@ Begin
         End
       Else
         Begin
-        While (Loc <= Length(FSQL)) And (FSQL[Loc] In ParamCharSet) Do
+        While (Loc <= Length(FSQL)) And CharInSet(FSQL[Loc], ParamCharSet) Do
           Begin
           Token:= Token+FSQL[Loc];
           Inc(Loc);

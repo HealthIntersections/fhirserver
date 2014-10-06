@@ -35,7 +35,7 @@ Uses
   AdvObjects;
 
 Type
-  TgwInternetFetcher = Class (TAdvObject)
+  TInternetFetcher = Class (TAdvObject)
   Private
     FURL: String;
     FBuffer: TAdvBuffer;
@@ -72,9 +72,9 @@ Uses
   IdHTTP,
   IdSSLOpenSSL;
 
-{ TgwInternetFetcher }
+{ TInternetFetcher }
 
-function TgwInternetFetcher.CanFetch: Boolean;
+function TInternetFetcher.CanFetch: Boolean;
 begin
   result := StringStartsWith(url, 'file:') Or
             StringStartsWith(url, 'http:') or
@@ -82,19 +82,19 @@ begin
             StringStartsWith(url, 'ftp:');
 end;
 
-constructor TgwInternetFetcher.Create;
+constructor TInternetFetcher.Create;
 begin
   inherited;
   FBuffer := TAdvBuffer.create;
 end;
 
-destructor TgwInternetFetcher.Destroy;
+destructor TInternetFetcher.Destroy;
 begin
   FBuffer.Free;
   inherited;
 end;
 
-procedure TgwInternetFetcher.Fetch;
+procedure TInternetFetcher.Fetch;
 var
   oUri : TIdURI;
   oHTTP: TIdHTTP;
@@ -112,6 +112,7 @@ begin
       Begin
         oHTTP := TIdHTTP.Create(nil);
         Try
+          oHTTP.HandleRedirects := true;
           oHTTP.URL.URI := url;
           oMem := TMemoryStream.Create;
           try
@@ -186,18 +187,18 @@ begin
   End;
 end;
 
-procedure TgwInternetFetcher.SetBuffer(const Value: TAdvBuffer);
+procedure TInternetFetcher.SetBuffer(const Value: TAdvBuffer);
 begin
   FBuffer.Free;
   FBuffer := Value;
 end;
 
-procedure TgwInternetFetcher.SetPassword(const Value: String);
+procedure TInternetFetcher.SetPassword(const Value: String);
 begin
   FPassword := Value;
 end;
 
-procedure TgwInternetFetcher.SetUsername(const Value: String);
+procedure TInternetFetcher.SetUsername(const Value: String);
 begin
   FUsername := Value;
 end;

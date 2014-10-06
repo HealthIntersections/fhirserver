@@ -1,7 +1,7 @@
 Unit FHIRParserBase;
 
 {
-Copyright (c) 2011-2013, HL7, Inc
+Copyright (c) 2011+, HL7, Inc
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -649,7 +649,6 @@ end;
 function TFHIRJsonParserBase.ParseDT(rootName: String; type_: TFHIRTypeClass): TFHIRType;
 var
   obj : TJsonObject;
-  s : string;
 begin
   obj := TJSONParser.Parse(source);
   try
@@ -1293,7 +1292,6 @@ end;
 function TFHIRXmlParserBase.ParseEntry(element: IXmlDomElement): TFHIRAtomEntry;
 var
   child : IXMLDOMElement;
-  grandchild : IXMLDOMElement;
   s : String;
 begin
   result := TFHIRAtomEntry.create;
@@ -1724,7 +1722,7 @@ Header(Session, FBaseURL, lang)+
           if (oResource is TFHIRQuestionnaireAnswers) then
           begin
             if (TFHIRQuestionnaireAnswers(oResource).questionnaire <> nil) then
-              s.append('. <a href="'+patchToWeb(links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireAnswers(oResource).questionnaire.referenceST+'">see the questionnaire</a>)')
+              s.append('. <a href="'+patchToWeb(links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireAnswers(oResource).questionnaire.reference+'">see the questionnaire</a>)')
           end
           else
             s.append('. <a href="'+patchToWeb(links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+links.GetRel('edit-form')+'">see resources underlying that</a>)');
@@ -1864,7 +1862,7 @@ Header(Session, FBaseURL, lang)+
           if (e.resource is TFHIRQuestionnaireAnswers) then
           begin
             if (TFHIRQuestionnaireAnswers(e.resource).questionnaire <> nil) then
-              s.append(' <a href="'+patchToWeb(e.links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireAnswers(e.resource).questionnaire.referenceST+'">see the questionnaire</a>)')
+              s.append(' <a href="'+patchToWeb(e.links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireAnswers(e.resource).questionnaire.reference+'">see the questionnaire</a>)')
           end
           else
             s.append(' <a href="'+patchToWeb(e.links.GetRel('edit-form'))+'">Edit this Resource</a> (or just see <a href="'+e.links.GetRel('edit-form')+'">the Questionnaire</a>)');
@@ -2479,6 +2477,7 @@ function TFHIRXmlParserBase.CheckHtmlElementOk(elem: IXMLDOMElement): boolean;
 var
   bOk : boolean;
 begin
+  result := true;
   bOk := StringArrayExistsInsensitive(['p', 'br', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'b', 'em', 'i', 'strong',
     'small', 'big', 'tt', 'small', 'dfn', 'q', 'var', 'abbr', 'acronym', 'cite', 'blockquote', 'hr', 'address', 'bdo', 'kbd', 'q', 'sub', 'sup',
     'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'pre', 'table', 'caption', 'colgroup', 'col', 'thead', 'tr', 'tfoot', 'tbody', 'th', 'td',
@@ -2497,6 +2496,7 @@ function TFHIRXmlParserBase.CheckHtmlAttributeOk(elem, attr, value : String): bo
 var
   bOk : boolean;
 begin
+  result := true;
   bOk := StringArrayExistsInsensitive(['title', 'style', 'class', 'id', 'lang', 'xml:lang', 'dir', 'accesskey', 'tabindex',
                     // tables
                    'span', 'width', 'align', 'valign', 'char', 'charoff', 'abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan'], attr) or

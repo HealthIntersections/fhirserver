@@ -49,9 +49,9 @@ uses
 
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, FHIRAtomFeed, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore,
-  FHIRServerConstants, FHIRServerUtilities,
+  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator,
   {$IFNDEF FHIR-DSTU}
-  QuestionnaireBuilder, NarrativeGenerator,
+  QuestionnaireBuilder,
   {$ENDIF}
   SearchProcessor;
 
@@ -114,11 +114,13 @@ type
     function BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
     procedure ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : TFHIRSearchSummary);
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
+    {$IFNDEF FHIR-DSTU}
     function GetResourceByKey(key : integer): TFHIRResource;
+    function GetProfileByURL(url: String; var id : String) : TFHIRProfile;
+    {$ENDIF}
     function GetValueSetById(request: TFHIRRequest; id, base : String) : TFHIRValueSet;
     function GetProfileById(request: TFHIRRequest; id, base : String) : TFHIRProfile;
     function GetValueSetByIdentity(id : String) : TFHIRValueSet;
-    function GetProfileByURL(url: String; var id : String) : TFHIRProfile;
     function constructValueSet(params : TParseMap; var used : String; allowNull : Boolean) : TFhirValueset;
     procedure ProcessValueSetExpansion(request: TFHIRRequest; resource : TFHIRResource; params : TParseMap; feed : TFHIRAtomFeed; includes : TReferenceList; base : String);
     procedure ProcessValueSetValidation(request: TFHIRRequest; resource : TFHIRResource; params : TParseMap; feed : TFHIRAtomFeed; includes : TReferenceList; base, lang : String);
@@ -150,7 +152,7 @@ type
     procedure ProcessMessage(request: TFHIRRequest; response : TFHIRResponse; msg, resp : TFhirMessageHeader; feed : TFHIRAtomFeed);
     procedure ProcessMsgQuery(request: TFHIRRequest; response : TFHIRResponse; feed : TFHIRAtomFeed);
 //    procedure ProcessMsgClaim(request : TFHIRRequest; incoming, outgoing: TFhirMessageHeader; infeed, outfeed: TFHIRAtomFeed);
-    function MessageCreateResource(context : TFHIRValidatorContext; request : TFHIRRequest; res : TFHIRResource) : string;
+//    function MessageCreateResource(context : TFHIRValidatorContext; request : TFHIRRequest; res : TFHIRResource) : string;
     function EncodeResource(r : TFhirResource) : TBytes;
     function EncodeResourceSummary(r : TFhirResource) : TBytes;
     function EncodeFeed(r : TFHIRAtomFeed) : TBytes;
@@ -187,7 +189,6 @@ type
     procedure SetConnection(const Value: TKDBConnection);
     procedure StoreAudits;
     procedure ReIndex;
-    procedure clear(a : TFhirResourceTypeSet);
     function IdentifyValueset(request: TFHIRRequest; resource : TFHIRResource; params: TParseMap; base: String; var used, cacheId: string; allowNull : boolean = false): TFHIRValueSet;
     procedure CheckCreateNarrative(request : TFHIRRequest);
   public
@@ -221,6 +222,9 @@ type
     Property TestServer : boolean read FTestServer write FTestServer;
     Property OwnerName : String read FOwnerName write FOwnerName;
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
+
+    // index maintenance
+    procedure clear(a : TFhirResourceTypeSet);
   end;
 
 
@@ -283,7 +287,6 @@ var
   comp : TFhirComposition;
   i : integer;
   att : TFhirCompositionAttester;
-  s : String;
   req : TFHIRRequest;
   resp : TFHIRResponse;
 begin
@@ -303,34 +306,34 @@ begin
     for i := 0 to comp.attesterList.Count - 1 do
     begin
       att := comp.attesterList[i];
-      if (att.modeST * [CompositionAttestationModeProfessional, CompositionAttestationModeLegal] <> []) then
+      if (att.mode * [CompositionAttestationModeProfessional, CompositionAttestationModeLegal] <> []) then
         ref.authenticator := att.party.Clone; // which means that last one is the one
     end;
-    ref.createdST := comp.dateST.Clone;
-    ref.indexedST := NowUTC;
-    ref.statusST := DocumentReferenceStatusCurrent;
-    ref.docStatus := FFactory.makeCodeableConcept(FFactory.makeCoding('http://hl7.org/fhir/composition-status', comp.status.value, comp.status.value), '');
+    ref.created := comp.date.Clone;
+    ref.indexed := NowUTC;
+    ref.status := DocumentReferenceStatusCurrent;
+    ref.docStatus := FFactory.makeCodeableConcept(FFactory.makeCoding('http://hl7.org/fhir/composition-status', comp.statusObject.value, comp.statusObject.value), '');
     // no relationships to other documents
-    ref.description := comp.title.Clone;
+    ref.description := comp.title;
     ref.confidentialityList.Add(FFactory.makeCodeableConcept(comp.confidentiality.Clone, ''));
-    ref.primaryLanguage := comp.language.Clone;
+    ref.primaryLanguageObject := comp.language.Clone;
     if mainRequest.PostFormat = ffJson then
-      ref.mimeTypeST := 'application/json+fhir'
+      ref.mimeType := 'application/json+fhir'
     else
-      ref.mimeTypeST := 'application/atom+xml';
+      ref.mimeType := 'application/atom+xml';
     // populating DocumentReference.format:
     // we take any tags on the document. We ignore security tags. Always will be at least one - the document tag itself
     for i := 0 to mainRequest.Feed.categories.Count - 1 do
       if (mainRequest.Feed.categories[i].scheme <> 'http://hl7.org/fhir/tag/security') then
         ref.formatList.Add(FFactory.makeUri(mainRequest.Feed.categories[i].term));
-    ref.sizeST := inttostr(mainRequest.Source.Size);
+    ref.size := inttostr(mainRequest.Source.Size);
     // todo: ref.hash (HexBinary representation of SHA1)
-    ref.locationST := 'Binary/'+binaryId;
-    if comp.event <> nil then
+    ref.location := 'Binary/'+binaryId;
+    if comp.eventlist.Count > 0 then
     begin
       ref.context := TFhirDocumentReferenceContext.Create;
-      ref.context.eventList.AddAll(comp.event.codeList);
-      ref.context.period := comp.event.period.Clone;
+      ref.context.eventList.AddAll(comp.eventList[0].codeList);
+      ref.context.period := comp.eventList[0].period.Clone;
     end;
     req := TFHIRRequest.Create;
     try
@@ -567,7 +570,7 @@ begin
     if r.ResourceType = frtBinary then
     begin
       bin := r as TFhirBinary;
-      s := bin.ContentType;
+      s := AnsiString(bin.ContentType);
       i := Length(s);
       b.Write(i, 4);
       b.Write(s[1], length(s));
@@ -642,10 +645,10 @@ var
 begin
   param := TFhirConformanceRestResourceSearchParam.create;
   try
-    param.nameST := n;
-    param.definitionST := url;
-    param.documentationST := d;
-    param.type_ST := t;
+    param.name := n;
+    param.definition := url;
+    param.documentation := d;
+    param.type_ := t;
     for a := Low(TFhirResourceType) to High(TFhirResourceType) do
       if a in tgts then
         param.targetList.Append.value := CODES_TFhirResourceType[a];
@@ -663,58 +666,60 @@ var
   res : TFhirConformanceRestResource;
   a : TFHIRResourceType;
   html : TAdvStringBuilder;
-  c : TFhirContact;
+  c : TFhirContactPoint;
   i : integer;
+  {$IFNDEF FHIR-DSTU}
   op : TFhirConformanceRestOperation;
+  {$ENDIF}
 begin
   try
     response.HTTPCode := 200;
     oConf := TFhirConformance.Create;
     response.Resource := oConf;
     if FRepository.FormalURLPlain <> '' then
-      oConf.identifierST := AppendForwardSlash(FRepository.FormalURLPlainOpen)+'_metadata'
+      oConf.identifier := AppendForwardSlash(FRepository.FormalURLPlainOpen)+'_metadata'
     else
-      oConf.identifierST := 'http://fhir.healthintersections.com.au/open/_metadata';
-    oConf.versionST := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
-    oConf.nameST := 'Health Intersections FHIR Server Conformance Statement';
-    oConf.publisherST := 'Health Intersections'; //
+      oConf.identifier := 'http://fhir.healthintersections.com.au/open/_metadata';
+    oConf.version := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+    oConf.name := 'Health Intersections FHIR Server Conformance Statement';
+    oConf.publisher := 'Health Intersections'; //
     c := oConf.telecomList.Append;
-    c.systemST := ContactSystemUrl;
-    c.valueST := 'http://healthintersections.com.au/';
-    oConf.descriptionST := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
-    oConf.statusST := ConformanceStatementStatusActive;
-    oConf.experimentalST := false;
-    oConf.date := TFhirDateTime.create(TDateAndTime.CreateUTC(UniversalDateTime));
+    c.system := ContactPointSystemUrl;
+    c.value := 'http://healthintersections.com.au/';
+    oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
+    oConf.status := ConformanceStatementStatusActive;
+    oConf.experimental := false;
+    oConf.date := TDateAndTime.CreateUTC(UniversalDateTime);
     oConf.software := TFhirConformanceSoftware.Create;
-    oConf.software.name := TFhirString.create('Reference Server');
-    oConf.software.versionST := SERVER_VERSION;
-    oConf.software.releaseDate := TFhirDateTime.create(TDateAndTime.createXML(SERVER_RELEASE_DATE));
+    oConf.software.name := 'Reference Server';
+    oConf.software.version := SERVER_VERSION;
+    oConf.software.releaseDate := TDateAndTime.createXML(SERVER_RELEASE_DATE);
     if FRepository.FormalURLPlainOpen <> '' then
     begin
       oConf.implementation_ := TFhirConformanceImplementation.Create;
-      oConf.implementation_.descriptionST := 'FHIR Server running at '+FRepository.FormalURLPlainOpen;
-      oConf.implementation_.urlST := FRepository.FormalURLPlainOpen;
+      oConf.implementation_.description := 'FHIR Server running at '+FRepository.FormalURLPlainOpen;
+      oConf.implementation_.url := FRepository.FormalURLPlainOpen;
     end;
     if assigned(FOnPopulateConformance) then
       FOnPopulateConformance(self, oConf);
 
-    oConf.acceptUnknownST := true;
+    oConf.acceptUnknown := true;
     oConf.formatList.Append.value := 'application/xml+fhir';
     oConf.formatList.Append.value := 'application/json+fhir';
 
 
-    oConf.fhirVersionST := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
+    oConf.fhirVersion := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
     oConf.restList.add(TFhirConformanceRest.Create);
-    oConf.restList[0].modeST := RestfulConformanceModeServer;
+    oConf.restList[0].mode := RestfulConformanceModeServer;
     oConf.text := TFhirNarrative.create;
-    oConf.text.statusST := NarrativeStatusGenerated;
+    oConf.text.status := NarrativeStatusGenerated;
 
     if FRepository.TerminologyServer.Loinc <> nil then
-      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', TFhirUri.Create('http://loinc.org'));
+      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', 'http://loinc.org');
     if FRepository.TerminologyServer.Snomed <> nil then
-      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', TFhirUri.Create('http://snomed.info/sct'));
+      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', 'http://snomed.info/sct');
     if FRepository.TerminologyServer.Ucum <> nil then
-      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', TFhirUri.Create('http://unitsofmeasure.org'));
+      oConf.addExtension('http://hl7.org/fhir/Profile/tools-extensions#supported-system', 'http://unitsofmeasure.org');
     if assigned(FOnPopulateConformance) then
       FOnPopulateConformance(self, oConf);
 
@@ -734,60 +739,60 @@ begin
             '<td><a href="'+request.baseUrl+'profile/'+lowercase(CODES_TFHIRResourceType[a])+'?format=text/html">'+lowercase(CODES_TFHIRResourceType[a])+'</a></td>');
           res := TFhirConformanceRestResource.create;
           try
-            res.type_ := TFhirCode.create(CODES_TFHIRResourceType[a]);
+            res.type_ := CODES_TFHIRResourceType[a];
             if a <> frtBinary then
               res.profile := FFactory.makeReference(request.baseUrl+'Profile/'+lowercase(CODES_TFHIRResourceType[a]));
             if a <> frtMessageHeader Then
             begin
               html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td><td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              res.interactionList.Append.codeST := TypeRestfulInteractionRead;
-              res.interactionList.Append.codeST := TypeRestfulInteractionVread;
-              res.readHistory := TFhirBoolean.create(true);
+              res.interactionList.Append.code := TypeRestfulInteractionRead;
+              res.interactionList.Append.code := TypeRestfulInteractionVread;
+              res.readHistory := true;
               if FRepository.ResConfig[a].cmdSearch then
               begin
-                res.interactionList.Append.codeST := TypeRestfulInteractionSearchType;
+                res.interactionList.Append.code := TypeRestfulInteractionSearchType;
                 html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
               if FRepository.ResConfig[a].cmdUpdate then
               begin
-                res.interactionList.Append.codeST := TypeRestfulInteractionUpdate;
+                res.interactionList.Append.code := TypeRestfulInteractionUpdate;
                 html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
               if FRepository.ResConfig[a].cmdHistoryType then
               begin
-                res.interactionList.Append.codeST := TypeRestfulInteractionHistoryType;
+                res.interactionList.Append.code := TypeRestfulInteractionHistoryType;
                 html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
               if FRepository.ResConfig[a].cmdCreate then
               begin
-                res.interactionList.Append.codeST := TypeRestfulInteractionCreate;
+                res.interactionList.Append.code := TypeRestfulInteractionCreate;
                 html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
               if FRepository.ResConfig[a].cmdDelete then
               begin
-                res.interactionList.Append.codeST := TypeRestfulInteractionDelete;
+                res.interactionList.Append.code := TypeRestfulInteractionDelete;
                 html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
               if FRepository.ResConfig[a].cmdHistoryInstance then
               begin
-                res.interactionList.Append.codeST := TypeRestfulInteractionHistoryInstance;
+                res.interactionList.Append.code := TypeRestfulInteractionHistoryInstance;
                 html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
               if FRepository.ResConfig[a].cmdValidate then
               begin
-                res.interactionList.Append.codeST := TypeRestfulInteractionValidate;
+                res.interactionList.Append.code := TypeRestfulInteractionValidate;
                 html.append('<td align="middle"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
@@ -826,15 +831,15 @@ begin
       {$IFNDEF FHIR-DSTU}
       html.append('<p>Operations</p>'#13#10'<ul>'+#13#10);
       op := oConf.restList[0].operationList.Append;
-      op.nameST := 'expand';
+      op.name := 'expand';
       op.definition := FFactory.makeReference('/OperationDefinition/operation-valueset-expand');
       html.append(' <li>expand: see /OperationDefinition/operation-valueset-expand</li>'#13#10);
       op := oConf.restList[0].operationList.Append;
-      op.nameST := 'validate';
+      op.name := 'validate';
       op.definition := FFactory.makeReference('/OperationDefinition/operation-valueset-validate');
       html.append(' <li>validate: see /OperationDefinition/operation-valueset-validate</li>'#13#10);
       op := oConf.restList[0].operationList.Append;
-      op.nameST := 'translate';
+      op.name := 'translate';
       op.definition := FFactory.makeReference('/OperationDefinition/operation-conceptmap-translate');
       html.append(' <li>translate: see /OperationDefinition/operation-conceptmap-translate</li>'#13#10);
       html.append('</ul>'#13#10);
@@ -1187,13 +1192,15 @@ begin
   try
     builder.Answers := request.Resource.link as TFhirQuestionnaireAnswers;
     builder.Profiles := FRepository.Profiles.Link;
-    builder.Profile := GetProfileById(request, extractProfileId(request.baseUrl, builder.Answers.questionnaire.referenceST), '');
+    builder.Profile := GetProfileById(request, extractProfileId(request.baseUrl, builder.Answers.questionnaire.reference), '');
+    builder.onLookupReference := LookupReference;
+    builder.onLookupCode := FRepository.LookupCode;
     builder.UnBuild;
 
     // now, we handle it.
     // todo: tag the resource with a profile
-    if not (builder.Profile.urlST.StartsWith('http://hl7.org/fhir/Profile') and StringArrayExistsSensitive(CODES_TFhirResourceType, builder.Profile.urlST.Substring(28)))  then
-      request.categories.AddValue('http://hl7.org/fhir/tag/profile', builder.Profile.urlST, builder.Profile.nameST);
+    if not (builder.Profile.url.StartsWith('http://hl7.org/fhir/Profile') and StringArrayExistsSensitive(CODES_TFhirResourceType, builder.Profile.url.Substring(28)))  then
+      request.categories.AddValue('http://hl7.org/fhir/tag/profile', builder.Profile.url, builder.Profile.name);
 
     request.Resource := builder.Resource.Link;
   finally
@@ -1435,7 +1442,7 @@ begin
 
     sp.build;
     sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+' from Ids where not MostRecent is null and '+sp.filter+' order by ResourceKey DESC';
-    link := SEARCH_PARAM_NAME_ID+'='+id+'&'+sp.link;
+    link := SEARCH_PARAM_NAME_ID+'='+id+'&'+sp.link_;
     wantSummary := sp.wantSummary;
   finally
     sp.free;
@@ -1836,7 +1843,7 @@ begin
     response.Resource := outcome;
     result := true;
     for i := 0 to outcome.issueList.count - 1 do
-      result := result and (outcome.issueList[i].severityST in [IssueSeverityInformation, IssueSeverityWarning]);
+      result := result and (outcome.issueList[i].severity in [IssueSeverityInformation, IssueSeverityWarning]);
     if result then
       response.HTTPCode := 200
     else
@@ -2489,29 +2496,29 @@ end;
 
 procedure TFhirOperation.adjustReferences(base : String; entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList);
 var
-  refs : TFhirResourceReferenceList;
-  ref : TFhirResourceReference;
+  refs : TFhirReferenceList;
+  ref : TFhirReference;
   i, j, k : integer;
   attachments : TFhirAttachmentList;
   attachment : TFhirAttachment;
   extension : TFhirExtension;
 begin
-  refs := TFhirResourceReferenceList.create;
+  refs := TFhirReferenceList.create;
   try
     listReferences(entry.resource, refs);
     for i := 0 to refs.count - 1 do
     begin
       ref := refs[i];
-      j := ids.IndexByName(ref.referenceST);
+      j := ids.IndexByName(ref.reference);
       k := 0;
       while (j = -1) and (k < FRepository.Bases.Count - 1) do
       begin
-        j := ids.IndexByName(FRepository.Bases[k]+ref.referenceST);
+        j := ids.IndexByName(FRepository.Bases[k]+ref.reference);
         inc(k);
       end;
       if (j <> -1) then
       begin
-        ref.referenceST :=  ids[j].resType+'/'+ids[j].id; // todo: make local?
+        ref.reference :=  ids[j].resType+'/'+ids[j].id; // todo: make local?
       end;
     end;
   finally
@@ -2523,11 +2530,11 @@ begin
     for i := 0 to attachments.count - 1 do
     begin
       attachment := attachments[i];
-      j := ids.IndexByName(attachment.urlST);
+      j := ids.IndexByName(attachment.url);
       if (j > -1) then
-        attachment.urlST := lowercase(ids[j].resType)+'/'+ids[j].id
-      else if attachment.urlST.StartsWith('cid:', true) then
-        Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.urlST]));
+        attachment.url := lowercase(ids[j].resType)+'/'+ids[j].id
+      else if attachment.url.StartsWith('cid:', true) then
+        Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.url]));
     end;
   finally
     attachments.free;
@@ -2535,20 +2542,20 @@ begin
   for i := 0 to entry.resource.extensionList.count - 1 do
   begin
     extension := entry.resource.extensionList[i];
-    j := ids.IndexByName(extension.urlST);
+    j := ids.IndexByName(extension.url);
     if (j > -1) then
-      extension.url := TFhirUri.create(base+ids[j].resType+'/'+ids[j].id)
-    else if extension.urlST.StartsWith('cid:', true) then
-      Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [extension.urlST]));
+      extension.url := base+ids[j].resType+'/'+ids[j].id
+    else if extension.url.StartsWith('cid:', true) then
+      Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [extension.url]));
   end;
   // special case: XdsEntry
-  if (entry.resource.resourceType = frtDocumentReference) and (TFhirDocumentReference(entry.resource).location <> nil) then
+  if (entry.resource.resourceType = frtDocumentReference) and (TFhirDocumentReference(entry.resource).location <> '') then
   begin
-    j := ids.IndexByName(TFhirDocumentReference(entry.resource).locationST);
+    j := ids.IndexByName(TFhirDocumentReference(entry.resource).location);
     if (j > -1) then
-      TFhirDocumentReference(entry.resource).locationST := base+ids[j].resType+'/'+ids[j].id
-    else if TFhirDocumentReference(entry.resource).locationST.StartsWith('cid:', true) then
-      Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [TFhirDocumentReference(entry.resource).locationST]));
+      TFhirDocumentReference(entry.resource).location := base+ids[j].resType+'/'+ids[j].id
+    else if TFhirDocumentReference(entry.resource).location.StartsWith('cid:', true) then
+      Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [TFhirDocumentReference(entry.resource).location]));
   end;
 
   if entry.resource.text <> nil then
@@ -2706,7 +2713,7 @@ begin
           response.Feed.updated := NowUTC;
           // todo: check message and envelope ids
           resp := BuildResponseMessage(request, msg);
-          response.Feed.addEntry('Message Response', resp.timestampST, NewGuidURN, NewGuidURN, resp);
+          response.Feed.addEntry('Message Response', resp.timestamp, NewGuidURN, NewGuidURN, resp);
           ProcessMessage(request, response, msg, resp, response.Feed);
         end
         else if request.Feed.hasTag(FHIR_TAG_SCHEME, 'http://hl7.org/fhir/tag/document') then
@@ -2777,8 +2784,8 @@ begin
     matches := resource.PerformQuery(s);
     try
       for i := 0 to matches.count - 1 do
-        if (matches[i] is TFhirResourceReference) and (TFhirResourceReference(matches[i]).reference <> nil) then
-          includes.seeReference(TFhirResourceReference(matches[i]).referenceST);
+        if (matches[i] is TFhirReference) and (TFhirReference(matches[i]).reference <> '') then
+          includes.seeReference(TFhirReference(matches[i]).reference);
     finally
       matches.free;
     end;
@@ -2948,10 +2955,10 @@ begin
       else
       begin
         coding := TFhirCoding.Create;
-        coding.systemST := params.GetVar('system');
-        coding.versionST := params.GetVar('version');
-        coding.codeST := params.GetVar('code');
-        coding.displayST := params.GetVar('display');
+        coding.system := params.GetVar('system');
+        coding.version := params.GetVar('version');
+        coding.code := params.GetVar('code');
+        coding.display := params.GetVar('display');
         coding.valueSet := FFactory.makeReference(params.GetVar('display'));
       end;
 
@@ -3056,6 +3063,7 @@ var
   blob : TBytes;
   parser : TFHIRParser;
 begin
+  currentResourceVersionKey := 0;
   try
     ok := true;
     if not check(response, opAllowed(request.ResourceType, fcmdDeleteTags), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
@@ -3145,7 +3153,6 @@ end;
 var
   profile : TFHIRProfile;
   source : TFhirResource;
-  op : TFhirOperationOutcome;
   resourceKey : integer;
   originalId : String;
   id, fid : String;
@@ -3303,6 +3310,7 @@ var
   blob : TBytes;
   parser : TFHIRParser;
 begin
+  currentResourceVersionKey := 0;
   try
     ok := true;
     if not check(response, opAllowed(request.ResourceType, fcmdUpdateTags), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
@@ -3408,20 +3416,20 @@ begin
   else if params.VarExists('_id') then
   begin
     result := GetValueSetById(request, params.getvar('_id'), base);
-    cacheId := result.identifierST;
+    cacheId := result.identifier;
     used := used+'&_id='+params.getvar('_id')
   end
   else if params.VarExists('id') then
   begin
     result := GetValueSetById(request, params.getvar('id'), base);
-    cacheId := result.identifierST;
+    cacheId := result.identifier;
     used := used+'&id='+params.getvar('id')
   end
   else if params.VarExists('identifier') then
   begin
     if not FRepository.TerminologyServer.isKnownValueSet(params.getvar('identifier'), result) then
       result := GetValueSetByIdentity(params.getvar('identifier'));
-    cacheId := result.identifierST;
+    cacheId := result.identifier;
     used := used+'&identifier='+params.getvar('identifier')
   end
   else
@@ -3450,7 +3458,7 @@ begin
           if request.Id <> '' then // and it must exist, because of the check above
           begin
             vs := GetValueSetById(request, request.Id, request.baseUrl);
-            cacheId := vs.identifierST;
+            cacheId := vs.identifier;
           end
           else if request.Parameters.VarExists('identifier') then
           begin
@@ -3461,7 +3469,7 @@ begin
               vs := GetValueSetById(request, url.substring(9), request.baseUrl)
             else if not FRepository.TerminologyServer.isKnownValueSet(url, vs) then
               vs := GetValueSetByIdentity(request.Parameters.getvar('identifier'));
-            cacheId := vs.identifierST;
+            cacheId := vs.identifier;
           end
           else if (request.form <> nil) and request.form.hasParam('valueSet') then
             vs := LoadFromFormParam(request.form.getparam('valueSet'), request.Lang) as TFhirValueSet
@@ -3655,13 +3663,13 @@ begin
           if request.Id <> '' then // and it must exist, because of the check above
           begin
             vs := GetValueSetById(request, request.Id, request.baseUrl);
-            cacheId := vs.identifierST;
+            cacheId := vs.identifier;
           end
           else if request.Parameters.VarExists('identifier') then
           begin
             if not FRepository.TerminologyServer.isKnownValueSet(request.Parameters.getvar('identifier'), vs) then
               vs := GetValueSetByIdentity(request.Parameters.getvar('identifier'));
-            cacheId := vs.identifierST;
+            cacheId := vs.identifier;
           end
           else if (request.form <> nil) and request.form.hasParam('valueSet') then
             vs := LoadFromFormParam(request.form.getparam('valueSet'), request.Lang) as TFhirValueSet
@@ -3684,10 +3692,10 @@ begin
             begin
               coded := TFhirCodeableConcept.Create;
               coding := coded.codingList.Append;
-              coding.systemST := request.Parameters.GetVar('system');
-              coding.versionST := request.Parameters.GetVar('version');
-              coding.codeST := request.Parameters.GetVar('code');
-              coding.displayST := request.Parameters.GetVar('display');
+              coding.system := request.Parameters.GetVar('system');
+              coding.version := request.Parameters.GetVar('version');
+              coding.code := request.Parameters.GetVar('code');
+              coding.display := request.Parameters.GetVar('display');
             end
             else
               raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
@@ -3753,10 +3761,10 @@ begin
       else
       begin
         coding := TFhirCoding.Create;
-        coding.systemST := params.GetVar('system');
-        coding.versionST := params.GetVar('version');
-        coding.codeST := params.GetVar('code');
-        coding.displayST := params.GetVar('display');
+        coding.system := params.GetVar('system');
+        coding.version := params.GetVar('version');
+        coding.code := params.GetVar('code');
+        coding.display := params.GetVar('display');
         coding.valueSet := FFactory.makeReference(params.GetVar('display'));
       end;
 
@@ -3858,6 +3866,7 @@ begin
   end;
 end;
 
+{$IFNDEF FHIR-DSTU}
 function TFhirOperation.GetProfileByURL(url: String; var id : String): TFHIRProfile;
 var
   s : TBytes;
@@ -3893,7 +3902,6 @@ end;
 
 function TFhirOperation.GetResourceByKey(key: integer): TFHIRResource;
 var
-  resourceKey : integer;
   parser : TFHIRParser;
   s : TBytes;
 begin
@@ -3917,6 +3925,7 @@ begin
     FConnection.Terminate;
   end;
 end;
+{$ENDIF}
 
 function ReadOperator(s : String) : TFhirFilterOperator;
 begin
@@ -3960,11 +3969,11 @@ begin
 
   result := TFhirValueSet.create;
   try
-    result.NameST := useParam('name');
-    result.identifierST := useParam('vs-identifier');
-    if result.identifierST = '' then
-      result.identifierST := NewGuidURN;
-    result.versionST := useParam('vs-version');
+    result.Name := useParam('name');
+    result.identifier := useParam('vs-identifier');
+    if result.identifier = '' then
+      result.identifier := NewGuidURN;
+    result.version := useParam('vs-version');
     result.compose := TFhirValueSetCompose.create;
     if useParam('import', s) then
       result.compose.importList.Append.value := s;
@@ -3972,17 +3981,17 @@ begin
     begin
       inc := result.compose.includeList.append;
       if (s = 'snomed') then
-        inc.systemST := 'http://snomed.info/sct'
+        inc.system := 'http://snomed.info/sct'
       else if (s = 'loinc') then
-        inc.systemST := 'http://loinc.org'
+        inc.system := 'http://loinc.org'
       else
-        inc.systemST := s;
+        inc.system := s;
       if UseParam('code', s) then
       begin
         while (s <> '') do
         begin
           StringSplit(s, ',', l, s);
-          inc.codeList.Append.value := l;
+          inc.conceptList.Append.code := l;
         end;
       end;
       s := useParam('property');
@@ -3990,11 +3999,11 @@ begin
       if (s <> '') or (l <> '') then
       begin
         filter := inc.filterList.Append;
-        filter.property_ST := s;
-        if filter.property_ST = '' then
-          filter.property_ST := 'concept';
-        filter.valueST := l;
-        filter.opST := ReadOperator(UseParam('op'));
+        filter.property_ := s;
+        if filter.property_ = '' then
+          filter.property_ := 'concept';
+        filter.value := l;
+        filter.op := ReadOperator(UseParam('op'));
       end;
     end;
     if not empty then
@@ -4023,14 +4032,14 @@ var
   begin
     se.event.type_ := TFhirCodeableConcept.create;
     c := se.event.type_.codingList.Append;
-    c.codeST := t;
-    c.systemST := ts;
-    c.displayST := td;
+    c.code := t;
+    c.system := ts;
+    c.display := td;
     c := se.event.subtypeList.append.codingList.Append;
-    c.codeST := s;
-    c.systemST := sc;
-    c.displayST := s;
-    se.event.actionST := a;
+    c.code := s;
+    c.system := sc;
+    c.display := s;
+    se.event.action := a;
   end;
 begin
   if not FRepository.DoAudit then
@@ -4061,70 +4070,70 @@ begin
       raise exception.create('unknown operation');
     end;
     if op = fcmdOperation then
-      se.event.subtypeList.Append.textST := opName;
+      se.event.subtypeList.Append.text := opName;
     if httpCode < 300 then
-      se.event.outcomeST := SecurityEventOutcome0
+      se.event.outcome := SecurityEventOutcome0
     else if httpCode < 500 then
-      se.event.outcomeST := SecurityEventOutcome4
+      se.event.outcome := SecurityEventOutcome4
     else
-      se.event.outcomeST := SecurityEventOutcome8; // no way we are going down...
-    se.event.dateTimeST := NowUTC;
+      se.event.outcome := SecurityEventOutcome8; // no way we are going down...
+    se.event.dateTime := NowUTC;
 
     se.source := TFhirSecurityEventSource.create;
-    se.source.siteST := 'Cloud';
-    se.source.identifierST := FOwnerName;
+    se.source.site := 'Cloud';
+    se.source.identifier := FOwnerName;
     c := se.source.type_List.Append;
-    c.codeST := '3';
-    c.displayST := 'Web Server';
-    c.systemST := 'http://hl7.org/fhir/security-source-type';
+    c.code := '3';
+    c.display := 'Web Server';
+    c.system := 'http://hl7.org/fhir/security-source-type';
 
     // participant - the web browser / user proxy
     p := se.participantList.Append;
     if session = nil then
-      p.nameST := 'Server'
+      p.name := 'Server'
     else
     begin
-      p.userIdST := inttostr(session.Key);
-      p.altIdST := session.Id;
-      p.nameST := session.Name;
+      p.userId := inttostr(session.Key);
+      p.altId := session.Id;
+      p.name := session.Name;
     end;
-    p.requestorST := true;
+    p.requestor := true;
     p.network := TFhirSecurityEventParticipantNetwork.create;
-    p.network.identifierST := ip;
-    p.network.type_ST := NetworkType2;
+    p.network.identifier := ip;
+    p.network.type_ := NetworkType2;
 
     if resourceType <> frtNull then
     begin
       o := se.object_List.Append;
-      o.reference := TFhirResourceReference.create;
+      o.reference := TFhirReference.create;
       if ver <> '' then
-        o.reference.referenceST := CODES_TFHIRResourceType[resourceType]+'/'+id+'/_history/'+ver
+        o.reference.reference := CODES_TFHIRResourceType[resourceType]+'/'+id+'/_history/'+ver
       else if id <> '' then
-        o.reference.referenceST := CODES_TFHIRResourceType[resourceType]+'/'+id;
-      o.type_ST := ObjectType2;
+        o.reference.reference := CODES_TFHIRResourceType[resourceType]+'/'+id;
+      o.type_ := ObjectType2;
       case op of
-        fcmdMailbox :        o.lifecycleST := ObjectLifecycle6;
-        fcmdRead:            o.lifecycleST := ObjectLifecycle6;
-        fcmdVersionRead:     o.lifecycleST := ObjectLifecycle6;
-        fcmdUpdate:          o.lifecycleST := ObjectLifecycle3;
-        fcmdDelete:          o.lifecycleST := ObjectLifecycle14;
-        fcmdHistoryInstance: o.lifecycleST := ObjectLifecycle9;
-        fcmdCreate:          o.lifecycleST := ObjectLifecycle1;
-        fcmdSearch:          o.lifecycleST := ObjectLifecycle6;
-        fcmdHistoryType:     o.lifecycleST := ObjectLifecycle9;
-        fcmdValidate:        o.lifecycleST := ObjectLifecycle4;
-        fcmdConformanceStmt: o.lifecycleST := ObjectLifecycle6;
-        fcmdTransaction:     o.lifecycleST := ObjectLifecycle3;
-        fcmdHistorySystem:   o.lifecycleST := ObjectLifecycle9;
-        fcmdUpload:          o.lifecycleST := ObjectLifecycle9;
-        fcmdGetTags:         o.lifecycleST := ObjectLifecycle6;
-        fcmdUpdateTags:      o.lifecycleST := ObjectLifecycle3;
-        fcmdDeleteTags:      o.lifecycleST := ObjectLifecycle14;
+        fcmdMailbox :        o.lifecycle := ObjectLifecycle6;
+        fcmdRead:            o.lifecycle := ObjectLifecycle6;
+        fcmdVersionRead:     o.lifecycle := ObjectLifecycle6;
+        fcmdUpdate:          o.lifecycle := ObjectLifecycle3;
+        fcmdDelete:          o.lifecycle := ObjectLifecycle14;
+        fcmdHistoryInstance: o.lifecycle := ObjectLifecycle9;
+        fcmdCreate:          o.lifecycle := ObjectLifecycle1;
+        fcmdSearch:          o.lifecycle := ObjectLifecycle6;
+        fcmdHistoryType:     o.lifecycle := ObjectLifecycle9;
+        fcmdValidate:        o.lifecycle := ObjectLifecycle4;
+        fcmdConformanceStmt: o.lifecycle := ObjectLifecycle6;
+        fcmdTransaction:     o.lifecycle := ObjectLifecycle3;
+        fcmdHistorySystem:   o.lifecycle := ObjectLifecycle9;
+        fcmdUpload:          o.lifecycle := ObjectLifecycle9;
+        fcmdGetTags:         o.lifecycle := ObjectLifecycle6;
+        fcmdUpdateTags:      o.lifecycle := ObjectLifecycle3;
+        fcmdDeleteTags:      o.lifecycle := ObjectLifecycle14;
       end;
       if op = fcmdSearch then
-        o.queryST := name
+        o.query := name
       else
-        o.nameST := name;
+        o.name := name;
     end;
     FAudits.add(se.link);
   finally
@@ -4149,7 +4158,7 @@ begin
         request.ResourceType := frtSecurityEvent;
         request.CommandType := fcmdCreate;
         request.Resource := FAudits[i].link;
-        request.lastModifiedDate := TFhirSecurityEvent(FAudits[i]).event.dateTimeST.AsUTCDateTime;
+        request.lastModifiedDate := TFhirSecurityEvent(FAudits[i]).event.dateTime.AsUTCDateTime;
         request.Session := nil;
         Execute(request, response, false);
       end;
@@ -4395,29 +4404,29 @@ var
 begin
   result := TFhirMessageHeader.create;
   try
-    result.identifierST := GUIDToString(CreateGUID);
-    result.timestampST := NowUTC;
+    result.identifier := GUIDToString(CreateGUID);
+    result.timestamp := NowUTC;
     result.event := incoming.event.Clone;
     result.response := TFhirMessageHeaderResponse.create;
-    result.response.identifierST := GUIDToString(CreateGUID);;
-    result.response.codeST := ResponseCodeOk;
+    result.response.identifier := GUIDToString(CreateGUID);;
+    result.response.code := ResponseCodeOk;
     dst := result.destinationList.Append;
     if incoming.source <> nil then
     begin
-      dst.nameST := incoming.source.nameST;
-      dst.endpointST := incoming.source.endpointST;
+      dst.name := incoming.source.name;
+      dst.endpoint := incoming.source.endpoint;
     end
     else
     begin
-      dst.nameST := 'No Source Provided';
-      dst.endpointST := 'http://example.com/unknown';
+      dst.name := 'No Source Provided';
+      dst.endpoint := 'http://example.com/unknown';
     end;
     result.source := TFhirMessageHeaderSource.create;
-    result.source.endpointST := request.baseUrl+'/mailbox';
-    result.source.nameST := 'Health Intersections';
-    result.source.softwareST := FOwnerName;
-    result.source.versionST := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
-    result.source.contact := FFactory.makeContact('email', 'grahame@healthintersections.com.au', '');
+    result.source.endpoint := request.baseUrl+'/mailbox';
+    result.source.name := 'Health Intersections';
+    result.source.software := FOwnerName;
+    result.source.version := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
+    result.source.contact := FFactory.makeContactPoint('email', 'grahame@healthintersections.com.au', '');
     result.link;
   finally
     result.free;
@@ -4429,7 +4438,7 @@ var
   s : String;
 begin
   try
-    s := msg.event.codeST;
+    s := msg.event.code;
     if s = 'MedicationAdministration-Complete' then
       raise exception.create('MedicationAdministration-Complete is not yet supported')
     else if s = 'MedicationAdministration-Nullification' then
@@ -4456,7 +4465,7 @@ begin
   except
     on e:exception do
     begin
-      resp.response.codeST := ResponseCodeFatalError;
+      resp.response.code := ResponseCodeFatalError;
       resp.response.details := FFactory.makeReferenceText(e.message);
     end;
   end;
@@ -4484,9 +4493,9 @@ begin
       for i := 0 to claim.serviceList.count - 1 do
       begin
         svc := rem.serviceList.Append;
-        svc.instanceST := claim.serviceList[i].instanceST;
-        svc.rateST := '0.8';
-        svc.benefitST := floatToStr(0.8 * StrToFloat(claim.serviceList[i].instanceST));
+        svc.instance := claim.serviceList[i].instance;
+        svc.rate := '0.8';
+        svc.benefit := floatToStr(0.8 * StrToFloat(claim.serviceList[i].instance));
       end;
       id := request.BaseURL+'/remittance/'+MessageCreateResource(context, request, rem);
       outgoing.dataList.add(FFactory.makeReference(id));
@@ -4503,7 +4512,6 @@ begin
     FRepository.Validator.YieldContext(context);
   end;
 end;
-}
 
 function TFhirOperation.MessageCreateResource(context : TFHIRValidatorContext; request : TFHIRRequest; res: TFHIRResource): string;
 var
@@ -4527,7 +4535,8 @@ begin
   finally
     req.free;
   end;
-end;                       
+end;
+}
 
 
 procedure TFhirOperation.Inspect(request: TFHIRRequest; response : TFHIRResponse);
@@ -4567,10 +4576,10 @@ begin
   {$IFNDEF FHIR-DSTU}
   if resource is TFhirSubscription then
   begin
-    if (TFhirSubscription(resource).statusST <> SubscriptionStatusRequested) and (request.session.name <> 'server') then // nil = from the internal system, which is allowed to
+    if (TFhirSubscription(resource).status <> SubscriptionStatusRequested) and (request.session.name <> 'server') then // nil = from the internal system, which is allowed to
       raise Exception.Create('Subscription status must be "requested"');
-    if (TFhirSubscription(resource).statusST = SubscriptionStatusRequested) then
-      TFhirSubscription(resource).statusST := SubscriptionStatusActive; // well, it will be, or it will be rejected later
+    if (TFhirSubscription(resource).status = SubscriptionStatusRequested) then
+      TFhirSubscription(resource).status := SubscriptionStatusActive; // well, it will be, or it will be rejected later
   end;
   {$ENDIF}
 end;

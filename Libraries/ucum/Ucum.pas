@@ -60,7 +60,7 @@ type
   Private
     function GetUcumProperty(iIndex : integer): TUcumProperty;
   Protected
-    Function itemClass : TAdvObjectClass; override;
+    Function ItemClass : TAdvObjectClass; override;
   Public
     Property UcumProperty[iIndex : integer] : TUcumProperty read GetUcumProperty; default;
   End;
@@ -93,7 +93,7 @@ type
   Private
     function GetUcumItem(iIndex : integer): TUcumConcept;
   Protected
-    Function itemClass : TAdvObjectClass; override;
+    Function ItemClass : TAdvObjectClass; override;
   Public
     Property UcumItem[iIndex : integer] : TUcumConcept read GetUcumItem; default;
   End;
@@ -116,7 +116,7 @@ type
   Private
     function GetUcumItem(iIndex : integer): TUcumPrefix;
   Protected
-    Function itemClass : TAdvObjectClass; override;
+    Function ItemClass : TAdvObjectClass; override;
   Public
     Property UcumItem[iIndex : integer] : TUcumPrefix read GetUcumItem; default;
   End;
@@ -145,7 +145,7 @@ type
   Private
     function GetUcumItem(iIndex : integer): TUcumBaseUnit;
   Protected
-    Function itemClass : TAdvObjectClass; override;
+    Function ItemClass : TAdvObjectClass; override;
   Public
     Function ExistsByCode(const sCode : String) : Boolean;
     Function GetByCode(const sCode : String) : TUcumBaseUnit;
@@ -193,7 +193,7 @@ type
   Private
     function GetUcumItem(iIndex : integer): TUcumDefinedUnit;
   Protected
-    Function itemClass : TAdvObjectClass; override;
+    Function ItemClass : TAdvObjectClass; override;
   Public
     Function ExistsByCode(const sCode : String) : Boolean;
     Function GetByCode(const sCode : String) : TUcumDefinedUnit;
@@ -404,7 +404,7 @@ begin
   result := TUcumPrefix(inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumPrefixList.itemClass: TAdvObjectClass;
+function TUcumPrefixList.ItemClass: TAdvObjectClass;
 begin
   result := TUcumPrefix;
 end;
@@ -434,7 +434,7 @@ begin
   result := TUcumBaseUnit(inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumBaseUnitList.itemClass: TAdvObjectClass;
+function TUcumBaseUnitList.ItemClass: TAdvObjectClass;
 begin
   result := TUcumBaseUnit;
 end;
@@ -464,7 +464,7 @@ begin
   result := TUcumDefinedUnit(inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumDefinedUnitList.itemClass: TAdvObjectClass;
+function TUcumDefinedUnitList.ItemClass: TAdvObjectClass;
 begin
   result := TUcumDefinedUnit;
 end;
@@ -538,7 +538,7 @@ begin
   result := TUcumConcept(inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumConceptList.itemClass: TAdvObjectClass;
+function TUcumConceptList.ItemClass: TAdvObjectClass;
 begin
   result := TUcumConcept;
 end;
@@ -550,7 +550,7 @@ begin
   result := TUcumProperty(Inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumPropertyList.itemClass: TAdvObjectClass;
+function TUcumPropertyList.ItemClass: TAdvObjectClass;
 begin
   result := TUcumProperty;
 end;

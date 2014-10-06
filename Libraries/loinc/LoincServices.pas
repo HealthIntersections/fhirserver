@@ -32,9 +32,9 @@ Interface
 
 Uses
   SysUtils, Classes,
-  StringSupport, FileSupport,
-  AdvStringBuilders, AdvObjects, AdvObjectLists,
-  AnsiStringBuilder, regexpr, YuStemmer,
+  StringSupport, FileSupport, BytesSupport,
+  AdvObjects, AdvObjectLists,
+  regexpr, YuStemmer,
   FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
 
 {axes
@@ -69,18 +69,18 @@ type
   //   the fifth structure is the multi-axial heirarchy - parent, children, descendents, concepts, and descendent concepts
 
   // 1. a list of strings
-  //   each entry in the AnsiString starts with a byte length, and then the series of characters
+  //   each entry in the String starts with a byte length, and then the series of characters (2 bytes)
   // we store loinc descriptions, and other names in here
   TLoincStrings = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
-      Function GetEntry(iIndex : Cardinal):AnsiString;
+      Function GetEntry(iIndex : Cardinal):String;
 
       Procedure StartBuild;
-      Function AddEntry(Const s : AnsiString) : Cardinal;
+      Function AddEntry(Const s : String) : Cardinal;
       Procedure DoneBuild;
   End;
 
@@ -103,9 +103,9 @@ Type
   // word index. Every word is 5 bytes - a 4 byte index into the strings, and a 1 byte flag
   TLoincWords = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
@@ -119,9 +119,9 @@ Type
   // stem word index. Every word is 4 bytes - a 4 byte index into the strings
   TLoincStems = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal);
       Function Count : Integer;
@@ -136,9 +136,9 @@ Type
   // 2. a list of list of references
   TLOINCReferences = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
       Function GetWords(iIndex : Cardinal) : TWordArray;
       Function GetCardinals(iIndex : Cardinal) : TCardinalArray;
@@ -153,9 +153,9 @@ Type
   // 3. a list of concepts
   TLOINCConcepts = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
       Procedure GetConcept(iIndex : Word; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
 
@@ -168,9 +168,9 @@ Type
   // 4. the master code reference.
   // it is a list of codes and the offset reference to their description
   // codes are stored in alphabetical order so you can do a binary serach for Code identity
-  // This is the effective logical structure of the AnsiString:
+  // This is the effective logical structure of the bytes:
 //  TLOINCCode = {private} packed record
-//    Code : ShortString[FCodeLength]; padded with spaces
+//    Code : Char[FCodeLength]; padded with spaces (2 bytes per char)
 //    Description : Cardinal;
 //    other names : cardinal
 //    component : word
@@ -199,9 +199,9 @@ Type
   TLOINCCodeList = class (TAdvObject)
     Private
       FCodeLength : Cardinal;
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
       Function FindCode(sCode : String; var iIndex : Cardinal) : Boolean;
 
@@ -228,7 +228,7 @@ Type
 
   // 5. the multi-axial heirachy
   // it is a list of entries
-  // This is the effective logical structure of the AnsiString:
+  // This is the effective logical structure of the bytes:
 //  TLOINCEntry = {private} packed record
 //    code : Cardinal;
 //    text : Cardinal;
@@ -240,8 +240,8 @@ Type
 
   TLOINCHeirarchyEntryList = class (TAdvObject)
     Private
-      FMaster : AnsiString;
-      FBuilder : TAnsiStringBuilder;
+      FMaster : TBytes;
+      FBuilder : TAdvBytesBuilder;
     Public
       Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
       Procedure GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal);
@@ -372,13 +372,14 @@ Type
     Property Service[i : integer] : TLOINCServices read GetService; Default;
   End;
 
+function ascopy(s : TBytes; start, length : integer) : String;
 
 
 Implementation
 
 { TLoincStrings }
 
-function TLoincStrings.GetEntry(iIndex: Cardinal): AnsiString;
+function TLoincStrings.GetEntry(iIndex: Cardinal): String;
 begin
   if iIndex = 0 Then
   begin
@@ -388,32 +389,32 @@ begin
 
   if (iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC name');
-  SetLength(Result, Byte(FMaster[iIndex]));
+  SetLength(Result, Word(FMaster[iIndex]));
   if (Byte(FMaster[iIndex]) + iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC name (2)');
   if Byte(FMaster[iIndex]) > 0 Then
-    Move(FMaster[iIndex+1], result[1], Length(Result));
+    Move(FMaster[iIndex], result[1], Length(Result)*2);
 end;
 
-function TLoincStrings.AddEntry(const s: AnsiString): Cardinal;
+function TLoincStrings.AddEntry(const s: String): Cardinal;
 begin
   if Length(s) > 255 Then
     raise exception.Create('LOINC Description too long: '+s);
-  result := FBuilder.Length + 1;
-  FBuilder.Append(Chr(Length(s)));
-  FBuilder.Append(s);
+  result := FBuilder.Length;
+  FBuilder.AddWord(Length(s));
+  FBuilder.AddString(s);
 end;
 
 procedure TLoincStrings.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
 
 procedure TLoincStrings.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 { TLOINCReferences }
@@ -464,34 +465,34 @@ var
 Begin
   if Length(a) > 65535 Then
     raise exception.Create('LOINC reference list too long');
-  result := FBuilder.Length + 1;
-  FBuilder.Append(Chr(0));// for words
-  FBuilder.AddCardinalAsBytes(length(a));
+  result := FBuilder.Length;
+  FBuilder.Append(Byte(0));// for words
+  FBuilder.AddCardinal(length(a));
   for iLoop := Low(a) to High(a) Do
-    FBuilder.AddWordAsBytes(a[iLoop]);
+    FBuilder.AddWord(a[iLoop]);
 End;
 
 Function TLOINCReferences.AddCardinals(Const a : TCardinalArray) : Cardinal;
 var
   iLoop : Integer;
 Begin
-  result := FBuilder.Length + 1;
-  FBuilder.Append(Chr(1));// for Cardinals
-  FBuilder.AddCardinalAsBytes(length(a));
+  result := FBuilder.Length;
+  FBuilder.Append(Byte(1));// for Cardinals
+  FBuilder.AddCardinal(length(a));
   for iLoop := Low(a) to High(a) Do
-    FBuilder.AddCardinalAsBytes(a[iLoop]);
+    FBuilder.AddCardinal(a[iLoop]);
 End;
 
 procedure TLOINCReferences.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
 
 procedure TLOINCReferences.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 function TLOINCReferences.Getlength(iIndex: Cardinal): Cardinal;
@@ -508,29 +509,29 @@ Procedure TLOINCConcepts.GetConcept(iIndex : Word; var iName : Cardinal; var iCh
 begin
   if (iIndex >= FLength) then
     Raise Exception.Create('Wrong length index getting LOINC name');
-  Move(FMaster[iIndex*12+1], iName, 4);
-  Move(FMaster[iIndex*12+5], iChildren, 4);
-  Move(FMaster[iIndex*12+9], iConcepts, 4);
+  Move(FMaster[iIndex*12+0], iName, 4);
+  Move(FMaster[iIndex*12+4], iChildren, 4);
+  Move(FMaster[iIndex*12+8], iConcepts, 4);
 end;
 
 function TLOINCConcepts.AddConcept(iName : Cardinal; iChildren : Cardinal; iConcepts : Cardinal) : Word;
 begin
   result := FBuilder.Length div 12;
-  FBuilder.AddCardinalAsBytes(iName);
-  FBuilder.AddCardinalAsBytes(iChildren);
-  FBuilder.AddCardinalAsBytes(iConcepts);
+  FBuilder.AddCardinal(iName);
+  FBuilder.AddCardinal(iChildren);
+  FBuilder.AddCardinal(iConcepts);
 end;
 
 procedure TLOINCConcepts.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster) div 12;
   FBuilder.Free;
 end;
 
 procedure TLOINCConcepts.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 
@@ -538,70 +539,70 @@ end;
 
 procedure TLOINCCodeList.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 
 Function TLOINCCodeList.AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iv2dt, iv3dt : Word; iFlags : Byte) : Cardinal;
 begin
   Result := FBuilder.Length;
-  Result := Result div (FCodeLength+35);
-  FBuilder.Append(StringPadRight(sCode, ' ', FCodeLength));
-{00}  FBuilder.AddCardinalAsBytes(iDescription);
-{04}  FBuilder.AddCardinalAsBytes(iOtherNames);
-{08}  FBuilder.AddWordAsbytes(0); // Component
-{10}  FBuilder.AddWordAsbytes(0); // Property
-{12}  FBuilder.AddWordAsbytes(0); // TimeAspect
-{14}  FBuilder.AddWordAsbytes(0); // System
-{16}  FBuilder.AddWordAsbytes(0); // Scale
-{18}  FBuilder.AddWordAsbytes(0); // Method
-{20}  FBuilder.AddWordAsbytes(0); // Class
-{22}  FBuilder.AddWordAsbytes(iv2dt);
-{24}  FBuilder.AddWordAsbytes(iv3dt);
-{26}  FBuilder.Append(chr(iFlags));
-{27}  FBuilder.AddCardinalAsBytes(0); // stems
-{31}  FBuilder.AddCardinalAsBytes(iEntry);
+  Result := Result div (FCodeLength*2+35);
+  FBuilder.AddString(StringPadRight(sCode, ' ', FCodeLength));
+{00}  FBuilder.AddCardinal(iDescription);
+{04}  FBuilder.AddCardinal(iOtherNames);
+{08}  FBuilder.AddWord(0); // Component
+{10}  FBuilder.AddWord(0); // Property
+{12}  FBuilder.AddWord(0); // TimeAspect
+{14}  FBuilder.AddWord(0); // System
+{16}  FBuilder.AddWord(0); // Scale
+{18}  FBuilder.AddWord(0); // Method
+{20}  FBuilder.AddWord(0); // Class
+{22}  FBuilder.AddWord(iv2dt);
+{24}  FBuilder.AddWord(iv3dt);
+{26}  FBuilder.Append(iFlags);
+{27}  FBuilder.AddCardinal(0); // stems
+{31}  FBuilder.AddCardinal(iEntry);
 end;
 
 Procedure TLOINCCodeList.SetComponent(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+35) +1+FCodeLength+8], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength*2+35) +1+FCodeLength*2+8], 2);
 End;
 
 Procedure TLOINCCodeList.SetProperty(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+10], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+10], 2);
 End;
 
 Procedure TLOINCCodeList.SetTimeAspect(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+12], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+12], 2);
 End;
 
 Procedure TLOINCCodeList.SetSystem(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+14], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+14], 2);
 End;
 
 Procedure TLOINCCodeList.SetScale(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+16], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+16], 2);
 End;
 
 Procedure TLOINCCodeList.SetMethod(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+18], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+18], 2);
 End;
 
 Procedure TLOINCCodeList.SetClass(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+20], 2);
+  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+20], 2);
 End;
 
 
 procedure TLOINCCodeList.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FBuilder.Free;
 end;
 
@@ -613,18 +614,18 @@ var
   C: Integer;
   s, sF : String;
 begin
-  if FMaster = '' Then
+  if length(FMaster) = 0 Then
     Result := False
   Else
   Begin
     s := StringPadRight(sCode, ' ', FCodeLength);
     Result := False;
     L := 0;
-    H := (FLength div (FCodeLength+35)) - 1;
+    H := (FLength div (FCodeLength*2+35)) - 1;
     while L <= H do
     begin
       I := (L + H) shr 1;
-      sF := Copy(FMaster, i*(FCodeLength + 35)+1, FCodeLength);
+      sF := asCopy(FMaster, i*(FCodeLength*2 + 35)+1, FCodeLength*2);
       C := CompareStr(sF, s);
       if C < 0 then L := I + 1 else
       begin
@@ -643,33 +644,33 @@ end;
 
 Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
 Begin
-  if iIndex > FLength div (FCodeLength+35) - 1 Then
+  if iIndex > FLength div (FCodeLength*2+35) - 1 Then
     Raise Exception.Create('Attempt to access invalid LOINC index');
-  sCode := trim(Copy(FMaster, iIndex*(FCodeLength+35)+1, FCodeLength));
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+0], iDescription, 4);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+4], iOtherNames, 4);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+8], iComponent, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+10], iProperty, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+12], iTimeAspect, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+14], iSystem, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+16], iScale, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+18], iMethod, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+20], iClass, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+22], iv2dt, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+24], iv3dt, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+26], iFlags, 1);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+27], iStems, 4);
-  Move(FMaster[(iIndex*(FCodeLength+35))+1+FCodeLength+31], iEntry, 4);
+  sCode := trim(asCopy(FMaster, iIndex*(FCodeLength*2+35)+1, FCodeLength*2));
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+0], iDescription, 4);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+4], iOtherNames, 4);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+8], iComponent, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+10], iProperty, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+12], iTimeAspect, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+14], iSystem, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+16], iScale, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+18], iMethod, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+20], iClass, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+22], iv2dt, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+24], iv3dt, 2);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+26], iFlags, 1);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+27], iStems, 4);
+  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+31], iEntry, 4);
 end;
 
 function TLOINCCodeList.Count: Integer;
 begin
-  result := FLength div (FCodeLength+35);
+  result := FLength div (FCodeLength*2+35);
 end;
 
 procedure TLOINCCodeList.SetStems(iIndex, iValue: Cardinal);
 begin
-  Move(iValue, FMaster[iIndex*(FCodeLength+35)+1+FCodeLength+27], 4);
+  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+27], 4);
 end;
 
 { TLOINCServices }
@@ -835,6 +836,11 @@ var
   aLoop : TLoincPropertyType;
   a : TLoincSubsetId;
   i, t : integer;
+  function readBytes : TBytes;
+  begin
+    SetLength(result, oRead.ReadInteger);
+    oread.Read(result[0], length(result));
+  end;
 begin
   oFile := TFileStream.Create(sFilename, fmOpenread);
   try
@@ -843,19 +849,19 @@ begin
       if oRead.ReadString <> LOINC_CACHE_VERSION Then
         raise exception.create('the LOINC cache must be rebuilt using the ''Import LOINC'' operation in the manager application.');
       FCode.CodeLength := oRead.ReadInteger;
-      FCode.FMaster := oread.ReadString;
+      FCode.FMaster := ReadBytes;
       FCode.FLength := Length(FCode.FMaster);
-      FDesc.FMaster := oread.ReadString;
+      FDesc.FMaster := ReadBytes;
       FDesc.FLength := Length(FDesc.FMaster);
-      FRefs.FMaster := oread.ReadString;
+      FRefs.FMaster := ReadBytes;
       FRefs.FLength := Length(FRefs.FMaster);
-      FConcepts.FMaster := oread.ReadString;
+      FConcepts.FMaster := ReadBytes;
       FConcepts.FLength := Length(FConcepts.FMaster) div 12;
-      FWords.FMaster := oRead.ReadString;
+      FWords.FMaster := ReadBytes;
       FWords.FLength := Length(FWords.FMaster);
-      FStems.FMaster := oRead.ReadString;
+      FStems.FMaster := ReadBytes;
       FStems.FLength := Length(FStems.FMaster);
-      FEntries.FMaster := oRead.ReadString;
+      FEntries.FMaster := ReadBytes;
       FRoot := oRead.ReadInteger;
       FVersion := oRead.ReadString;
       For aLoop := Low(TLoincPropertyType) To High(TLoincPropertyType) Do
@@ -882,6 +888,11 @@ var
   aLoop : TLoincPropertyType;
   a : TLoincSubsetId;
   i : integer;
+  procedure WriteBytes(b : TBytes);
+  begin
+   oWrite.WriteInteger(length(b));
+   oWrite.Write(b[0], length(b));
+  end;
 begin
   if FileExists(sFilename) Then
   begin
@@ -894,13 +905,13 @@ begin
     try
       oWrite.WriteString(LOINC_CACHE_VERSION);
       oWrite.WriteInteger(FCode.CodeLength);
-      oWrite.WriteString(FCode.FMaster);
-      oWrite.WriteString(FDesc.FMaster);
-      oWrite.WriteString(FRefs.FMaster);
-      oWrite.WriteString(FConcepts.FMaster);
-      oWrite.WriteString(FWords.FMaster);
-      oWrite.WriteString(FStems.FMaster);
-      oWrite.WriteString(FEntries.FMaster);
+      WriteBytes(FCode.FMaster);
+      WriteBytes(FDesc.FMaster);
+      WriteBytes(FRefs.FMaster);
+      WriteBytes(FConcepts.FMaster);
+      WriteBytes(FWords.FMaster);
+      WriteBytes(FStems.FMaster);
+      WriteBytes(FEntries.FMaster);
       oWrite.writeInteger(FRoot);
       oWrite.WriteString(FVersion);
       For aLoop := Low(TLoincPropertyType) To High(TLoincPropertyType) Do
@@ -1084,7 +1095,6 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
     code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
     r1 : Double;
     Desc : TCardinalArray;
-    iStems : Cardinal;
     matches : integer;
     ok : boolean;
   Begin
@@ -1136,7 +1146,7 @@ begin
       Begin
         SetLength(words, length(words)+1);
         words[length(words)-1].original := s;
-        s1 := oStemmer.Stem(s);
+        s1 := oStemmer.calc(s);
         if FindStem(s1, index) Then
           words[length(words)-1].stem := FStems.GetString(index);
       End;
@@ -1281,8 +1291,8 @@ end;
 
 procedure TLoincWords.AddWord(index: Cardinal; Flags: Byte);
 begin
-  FBuilder.AddCardinalAsBytes(index);
-  FBuilder.AddByteAsBytes(flags);
+  FBuilder.AddCardinal(index);
+  FBuilder.Append(flags);
 end;
 
 function TLoincWords.Count: Integer;
@@ -1292,7 +1302,7 @@ end;
 
 procedure TLoincWords.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
@@ -1301,8 +1311,8 @@ procedure TLoincWords.GetEntry(iIndex: Cardinal; var index: Cardinal; var flags:
 var
   l : Cardinal;
 begin
-  l := (iIndex * 5) + 1;
-  if l > FLength - 4 Then
+  l := (iIndex * 5);
+  if l > FLength - 5 Then
     raise Exception.create('invalid index');
   move(FMaster[l], index, 4);
   move(FMaster[l+4], flags, 1);
@@ -1317,14 +1327,14 @@ end;
 
 procedure TLoincWords.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 { TLoincStems }
 
 procedure TLoincStems.AddStem(index : Cardinal);
 begin
-  FBuilder.AddCardinalAsBytes(index);
+  FBuilder.AddCardinal(index);
 end;
 
 function TLoincStems.Count: Integer;
@@ -1334,7 +1344,7 @@ end;
 
 procedure TLoincStems.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
@@ -1343,8 +1353,8 @@ procedure TLoincStems.GetEntry(iIndex: Cardinal; var index: Cardinal);
 var
   l : Cardinal;
 begin
-  l := (iIndex * 4) + 1;
-  if l > FLength - 3 Then
+  l := (iIndex * 4);
+  if l > FLength - 4 Then
     raise Exception.create('invalid index');
   move(FMaster[l], index, 4);
 end;
@@ -1356,7 +1366,7 @@ end;
 
 procedure TLoincStems.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 function TLoincServices.FindStem(s: String; var index: Integer): Boolean;
@@ -1397,19 +1407,19 @@ begin
 
     result := TFhirValueSet.Create;
     try
-      result.identifierST := id;
-      result.versionST := Version;
-      result.nameST := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
-      result.descriptionST := 'All LOINC codes for '+Desc.GetEntry(text);
-      result.statusST := ValuesetStatusActive;
-      result.dateST := NowUTC;
+      result.identifier := id;
+      result.version := Version;
+      result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
+      result.description := 'All LOINC codes for '+Desc.GetEntry(text);
+      result.status := ValuesetStatusActive;
+      result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
-      inc.systemST := 'http://loinc.org';
+      inc.system := 'http://loinc.org';
       filt := inc.filterList.Append;
-      filt.property_ST := 'ancestor';
-      filt.opST := FilterOperatorEqual;
-      filt.valueST := id.Substring(20);
+      filt.property_ := 'ancestor';
+      filt.op := FilterOperatorEqual;
+      filt.value := id.Substring(20);
       result.link;
     finally
       result.free;
@@ -1659,8 +1669,6 @@ begin
 end;
 
 function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
-var
-  ok : boolean;
 begin
   if prop = 'SCALE_TYP' then
     result := FilterByPropertyId(lptScales, op, value)
@@ -1743,20 +1751,20 @@ end;
 
 procedure TLOINCHeirarchyEntryList.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 function TLOINCHeirarchyEntryList.AddEntry(code, text, parent, children, descendents, concepts, descendentConcepts: Cardinal): Cardinal;
 begin
   Result := FBuilder.Length div 32;
-  FBuilder.AddCardinalAsBytes(code);
-  FBuilder.AddCardinalAsBytes(text);
-  FBuilder.AddCardinalAsBytes(children);
-  FBuilder.AddCardinalAsBytes(descendents);
-  FBuilder.AddCardinalAsBytes(concepts);
-  FBuilder.AddCardinalAsBytes(descendentConcepts);
-  FBuilder.AddCardinalAsBytes(parent);
-  FBuilder.AddCardinalAsBytes(0); // stems, fill out later
+  FBuilder.AddCardinal(code);
+  FBuilder.AddCardinal(text);
+  FBuilder.AddCardinal(children);
+  FBuilder.AddCardinal(descendents);
+  FBuilder.AddCardinal(concepts);
+  FBuilder.AddCardinal(descendentConcepts);
+  FBuilder.AddCardinal(parent);
+  FBuilder.AddCardinal(0); // stems, fill out later
 end;
 
 function TLOINCHeirarchyEntryList.Count: Integer;
@@ -1766,7 +1774,7 @@ end;
 
 procedure TLOINCHeirarchyEntryList.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FBuilder.Free;
 end;
 
@@ -1776,7 +1784,7 @@ var
   C: Integer;
   s : String;
 begin
-  if FMaster = '' Then
+  if Length(FMaster) = 0 Then
     Result := False
   Else
   Begin
@@ -1806,17 +1814,26 @@ end;
 
 procedure TLOINCHeirarchyEntryList.GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal);
 begin
-  if iIndex > (Length(FMaster) div 32) - 1 Then
+  if iIndex > (Length(FMaster) div 32) Then
     Raise Exception.Create('Attempt to access invalid LOINC Entry index');
-  Move(FMaster[(iIndex*32)+1+0], code, 4);
-  Move(FMaster[(iIndex*32)+1+4], text, 4);
-  Move(FMaster[(iIndex*32)+1+8], children, 4);
-  Move(FMaster[(iIndex*32)+1+12], descendents, 4);
-  Move(FMaster[(iIndex*32)+1+16], concepts, 4);
-  Move(FMaster[(iIndex*32)+1+20], descendentConcepts, 4);
-  Move(FMaster[(iIndex*32)+1+24], parent, 4);
-  Move(FMaster[(iIndex*32)+1+28], stems, 4);
+  Move(FMaster[(iIndex*32)+0], code, 4);
+  Move(FMaster[(iIndex*32)+4], text, 4);
+  Move(FMaster[(iIndex*32)+8], children, 4);
+  Move(FMaster[(iIndex*32)+12], descendents, 4);
+  Move(FMaster[(iIndex*32)+16], concepts, 4);
+  Move(FMaster[(iIndex*32)+20], descendentConcepts, 4);
+  Move(FMaster[(iIndex*32)+24], parent, 4);
+  Move(FMaster[(iIndex*32)+28], stems, 4);
 end;
+
+function ascopy(s : TBytes; start, length : integer) : String;
+var
+  b : TBytes;
+begin
+  b := copy(s, start, length);
+  result := BytesAsString(b);
+end;
+
 
 End.
 

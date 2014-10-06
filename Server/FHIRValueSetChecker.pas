@@ -22,8 +22,8 @@ Type
     procedure check(coding: TFhirCoding; op : TFhirOperationOutcome); overload;
     procedure check(code: TFhirCodeableConcept; op : TFhirOperationOutcome); overload;
   public
-    constructor create(store : TTerminologyServerStore; id : String); overload;
-    destructor destroy; override;
+    constructor Create(store : TTerminologyServerStore; id : String); overload;
+    destructor Destroy; override;
 
     property id : String read FId;
 
@@ -64,7 +64,7 @@ var
 begin
   FVs := vs.link;
   if fvs.define <> nil then
-    FOthers.Add(fvs.define.systemST, TValueSetProvider.create(FVs.Link));
+    FOthers.Add(fvs.define.system, TValueSetProvider.create(FVs.Link));
   if (fvs.compose <> nil) then
   begin
     for i := 0 to fvs.compose.importList.Count - 1 do
@@ -73,7 +73,7 @@ begin
       try
         if other = nil then
           raise exception.create('Unable to find value set '+fvs.compose.importList[i].value);
-        checker := TValueSetChecker.create(Fstore.link, other.identifierST);
+        checker := TValueSetChecker.create(Fstore.link, other.identifier);
         try
           checker.prepare(other);
           FOthers.Add(fvs.compose.importList[i].value, checker.Link);
@@ -86,23 +86,23 @@ begin
     end;
     for i := 0 to fvs.compose.includeList.Count - 1 do
     begin
-      if not FOthers.ExistsByKey(fvs.compose.includeList[i].systemST) then
-        FOthers.Add(fvs.compose.includeList[i].systemST, FStore.getProvider(fvs.compose.includeList[i].systemST));
-      cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].systemST]);
+      if not FOthers.ExistsByKey(fvs.compose.includeList[i].system) then
+        FOthers.Add(fvs.compose.includeList[i].system, FStore.getProvider(fvs.compose.includeList[i].system));
+      cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
       for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
-        if not (('concept' = fvs.compose.includeList[i].filterList[j].property_ST) and (fvs.compose.includeList[i].filterList[j].OpST = FilterOperatorIsA)) then
-          if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_ST, fvs.compose.includeList[i].filterList[j].OpST, fvs.compose.includeList[i].filterList[j].valueST) then
-            raise Exception.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ST +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].OpST]+ ' '+fvs.compose.includeList[i].filterList[j].valueST+'" was not understood in the context of '+cs.system(nil));
+        if not (('concept' = fvs.compose.includeList[i].filterList[j].property_) and (fvs.compose.includeList[i].filterList[j].Op = FilterOperatorIsA)) then
+          if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_, fvs.compose.includeList[i].filterList[j].Op, fvs.compose.includeList[i].filterList[j].value) then
+            raise Exception.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
     end;
     for i := 0 to fvs.compose.excludeList.Count - 1 do
     begin
-      if not FOthers.ExistsByKey(fvs.compose.excludeList[i].systemST) then
-        FOthers.Add(fvs.compose.excludeList[i].systemST, FStore.getProvider(fvs.compose.excludeList[i].systemST));
-      cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].systemST]);
+      if not FOthers.ExistsByKey(fvs.compose.excludeList[i].system) then
+        FOthers.Add(fvs.compose.excludeList[i].system, FStore.getProvider(fvs.compose.excludeList[i].system));
+      cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
       for j := 0 to fvs.compose.excludeList[i].filterList.count - 1 do
-        if not (('concept' = fvs.compose.excludeList[i].filterList[j].property_ST) and (fvs.compose.excludeList[i].filterList[j].OpST = FilterOperatorIsA)) then
-          if not cs.doesFilter(fvs.compose.excludeList[i].filterList[j].property_ST, fvs.compose.excludeList[i].filterList[j].OpST, fvs.compose.excludeList[i].filterList[j].valueST) then
-            raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ST +' '+ CODES_TFhirFilterOperator[fvs.compose.excludeList[i].filterList[j].OpST]+ ' '+fvs.compose.excludeList[i].filterList[j].valueST+'" was not understood in the context of '+cs.system(nil));
+        if not (('concept' = fvs.compose.excludeList[i].filterList[j].property_) and (fvs.compose.excludeList[i].filterList[j].Op = FilterOperatorIsA)) then
+          if not cs.doesFilter(fvs.compose.excludeList[i].filterList[j].property_, fvs.compose.excludeList[i].filterList[j].Op, fvs.compose.excludeList[i].filterList[j].value) then
+            raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.excludeList[i].filterList[j].Op]+ ' '+fvs.compose.excludeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
     end;
   end;
 end;
@@ -115,11 +115,11 @@ begin
   if not test then
   begin
     issue := op.issueList.Append;
-    issue.severityST := severity;
+    issue.severity := severity;
     issue.type_ := TFhirCoding.Create;
-    issue.type_.systemST := 'http://hl7.org/fhir/issue-type';
-    issue.type_.codeST := code;
-    issue.detailsST := msg;
+    issue.type_.system := 'http://hl7.org/fhir/issue-type';
+    issue.type_.code := code;
+    issue.details := msg;
   end;
 end;
 
@@ -131,10 +131,10 @@ begin
   result := false;
   for i := 0 to list.count - 1 do
   begin
-    if (code = list[i].codeST) and not list[i].abstractST then
+    if (code = list[i].code) and not list[i].abstract then
     begin
       result := true;
-      displays.Add(list[i].displayST);
+      displays.Add(list[i].display);
       exit;
     end;
     if findCode(code, list[i].conceptList, displays) then
@@ -164,7 +164,7 @@ var
   i : integer;
 begin
   result := false;
-  if (fvs.define <> nil) and (system = fvs.define.systemST) then
+  if (fvs.define <> nil) and (system = fvs.define.system) then
   begin
     result := FindCode(code, fvs.define.conceptList, displays);
     if result then
@@ -184,7 +184,7 @@ begin
     begin
       if not result then
       begin
-        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].systemST]);
+        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
         result := (cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.includeList[i], code, displays);
       end;
     end;
@@ -192,7 +192,7 @@ begin
     begin
       if result then
       begin
-        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].systemST]);
+        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
         result := not ((cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.excludeList[i], code, displays));
       end;
     end;
@@ -205,8 +205,8 @@ var
 begin
   list := TStringList.Create;
   try
-    if rule(op, IssueSeverityError, check(coding.systemST, coding.codeST, list), 'code-unknown', 'The system/code "'+coding.systemST+'"/"'+coding.codeST+'" is not in the value set') then
-      rule(op, IssueSeverityWarning, (coding.displayST = '') or (list.IndexOf(coding.displayST) >= 0), 'value', 'The display "'+coding.displayST+'" is not a valid display for the code');
+    if rule(op, IssueSeverityError, check(coding.system, coding.code, list), 'code-unknown', 'The system/code "'+coding.system+'"/"'+coding.code+'" is not in the value set') then
+      rule(op, IssueSeverityWarning, (coding.display = '') or (list.IndexOf(coding.display) >= 0), 'value', 'The display "'+coding.display+'" is not a valid display for the code');
   finally
     list.Free;
   end;
@@ -249,8 +249,8 @@ begin
     codelist := '';
     for i := 0 to code.codingList.Count - 1 do
     begin
-      codelist := codelist + '{'+code.codingList[i].systemST+'"/"'+code.codingList[i].codeST+'}';
-      ok := ok or check(code.codingList[i].systemST, code.codingList[i].codeST, list);
+      codelist := codelist + '{'+code.codingList[i].system+'"/"'+code.codingList[i].code+'}';
+      ok := ok or check(code.codingList[i].system, code.codingList[i].code, list);
     end;
 
   finally
@@ -283,7 +283,7 @@ var
   filters : Array of TCodeSystemProviderFilterContext;
 begin
   result := false;
-  if (cset.codeList.count = 0) and (cset.filterList.count = 0) then
+  if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then
   begin
     loc := cs.locate(code);
     try
@@ -298,8 +298,8 @@ begin
     end;
   end;
 
-  for i := 0 to cset.codeList.count - 1 do
-    if (code = cset.codeList[i].value) then
+  for i := 0 to cset.conceptList.count - 1 do
+    if (code = cset.conceptList[i].code) then
     begin
       loc := cs.locate(code);
       if Loc <> nil then
@@ -319,8 +319,8 @@ begin
       for i := 0 to cset.filterList.count - 1 do
       begin
         fc := cset.filterList[i];
-        if ('concept' = fc.property_ST) and (fc.OpST = FilterOperatorIsA) then
-          filters[i] := cs.filter(fc.property_ST, fc.OpST, fc.valueST, prep);
+        if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
+          filters[i] := cs.filter(fc.property_, fc.Op, fc.value, prep);
       end;
       if cs.prepare(prep) then // all are together, just query the first filter
       begin
@@ -339,9 +339,9 @@ begin
         for i := 0 to cset.filterList.count - 1 do
         begin
           fc := cset.filterList[i];
-          if ('concept' = fc.property_ST) and (fc.OpST = FilterOperatorIsA) then
+          if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
           begin
-            loc := cs.locateIsA(code, fc.valueST);
+            loc := cs.locateIsA(code, fc.value);
             try
               result := loc <> nil;
               if result then

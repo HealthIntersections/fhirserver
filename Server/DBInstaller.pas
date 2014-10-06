@@ -280,7 +280,7 @@ begin
        ' DateSignedIn '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
-       ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL '+#13#10+
+       ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL, '+#13#10+
        ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_OAuthLogins', 'Id')+') '+CreateTableInfo(FConn.owner.platform));
@@ -594,6 +594,8 @@ begin
   try
     CreateUsers;
     CreateUserIndexes;
+    CreateResourceSessions;
+    CreateOAuthLogins;
 
     CreateClosures;
     CreateConcepts;
@@ -601,7 +603,6 @@ begin
     CreateValueSetMembers;
     CreateClosureEntries;
 
-    CreateResourceSessions;
     CreateResourceTags;
     CreateResourceTypes;
     CreateResourceConfig;
@@ -670,6 +671,8 @@ begin
         FConn.DropTable('Types');
       if meta.hasTable('Tags') then
         FConn.DropTable('Tags');
+      if meta.hasTable('OAuthLogins') then
+        FConn.DropTable('OAuthLogins');
       if meta.hasTable('Sessions') then
         FConn.DropTable('Sessions');
       if meta.hasTable('UserIndexes') then

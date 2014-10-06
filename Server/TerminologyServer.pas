@@ -270,12 +270,12 @@ function TTerminologyServer.makeAnyValueSet: TFhirValueSet;
 begin
   result := TFhirValueSet.Create;
   try
-    result.identifierST := ANY_CODE_VS;
-    result.nameST := 'All codes known to the system';
-    result.descriptionST := 'All codes known to the system';
-    result.statusST := ValuesetStatusActive;
+    result.identifier := ANY_CODE_VS;
+    result.name := 'All codes known to the system';
+    result.description := 'All codes known to the system';
+    result.status := ValuesetStatusActive;
     result.compose := TFhirValueSetCompose.create;
-    result.compose.includeList.Append.systemST := ANY_CODE_VS;
+    result.compose.includeList.Append.system := ANY_CODE_VS;
     result.link;
   finally
     result.Free;
@@ -317,7 +317,7 @@ function TTerminologyServer.validate(vs : TFHIRValueSet; coding : TFhirCoding) :
 var
   check : TValueSetChecker;
 begin
-  check := TValueSetChecker.create(self.Link, vs.identifierST);
+  check := TValueSetChecker.create(self.Link, vs.identifier);
   try
     check.prepare(vs);
     result := check.check(coding);
@@ -331,7 +331,7 @@ function TTerminologyServer.validate(vs : TFHIRValueSet; coded : TFhirCodeableCo
 var
   check : TValueSetChecker;
 begin
-  check := TValueSetChecker.create(self.Link, vs.identifierST);
+  check := TValueSetChecker.create(self.Link, vs.identifier);
   try
     check.prepare(vs);
     result := check.check(coded);
@@ -358,7 +358,7 @@ begin
       begin
         def := getCodeDefinition(vs, code);
         if (op.warning('InstanceValidator', 'code-unknown', path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
-            result := op.warning('InstanceValidator', 'code-unknown', path, (display = '') or (display = def.DisplayST), 'Display for '+system+' code "'+code+'" should be "'+def.DisplayST+'"');
+            result := op.warning('InstanceValidator', 'code-unknown', path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
       end;
     end;
   end
@@ -395,7 +395,7 @@ var
   r : TFHIRValueSetDefineConcept;
 begin
   result := nil;
-  if (code = c.CodeST) then
+  if (code = c.Code) then
     result := c;
   for i := 0 to c.conceptList.Count - 1 do
   begin
@@ -454,7 +454,7 @@ var
 begin
   result := TFhirOperationOutcome.Create;
   try
-    if checkCode(result, '', coding.codeST, coding.systemST, coding.displayST) then
+    if checkCode(result, '', coding.code, coding.system, coding.display) then
     begin
       cc := TFhirCodeableConcept.Create;
       try
@@ -470,22 +470,22 @@ begin
           for i := 0 to FConceptMaps.count - 1 do
           begin
             cm := FConceptMaps.values[i] as TLoadedConceptMap;
-            if (cm.source <> nil) and (cm.source.identifierST = vs.identifierST) and
-              cm.hasTranslation(coding.systemST, coding.codeST, maps) then
+            if (cm.source <> nil) and (cm.source.identifier = vs.identifier) and
+              cm.hasTranslation(coding.system, coding.code, maps) then
             try
               for j := 0 to maps.Count - 1 do
               begin
                 map := maps[j];
-                if (map.equivalenceST in [ConceptEquivalenceEqual, ConceptEquivalenceEquivalent, ConceptEquivalenceWider, ConceptEquivalenceInexact]) and
-                  (not isCs {if we'rea value set mapping, we'll just run with all the maps) } or (map.{$IFDEF FHIR-DSTU}systemST{$ELSE}codeSystemST{$ENDIF} = dest)) then
+                if (map.equivalence in [ConceptEquivalenceEqual, ConceptEquivalenceEquivalent, ConceptEquivalenceWider, ConceptEquivalenceInexact]) and
+                  (not isCs {if we'rea value set mapping, we'll just run with all the maps) } or (map.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF} = dest)) then
                 begin
                   ok := true;
                   c := cc.codingList.Append;
-                  c.system := map.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF}.Clone;
-                  c.code := map.code.Clone;
-                  c.displayST := getDisplayForCode(map.{$IFDEF FHIR-DSTU}systemST{$ELSE}codeSystemST{$ENDIF}, map.codeST);
-                  if map.commentsST <> '' then
-                    result.hint('terminology-server', 'mapping', '', false, 'Mapping from "'+coding.systemST+'"/"'+coding.codeST+'" to "'+c.systemST+'"/"'+c.codeST+'": '+map.commentsST)
+                  c.system := map.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF};
+                  c.code := map.code;
+                  c.display := getDisplayForCode(map.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF}, map.code);
+                  if map.comments <> '' then
+                    result.hint('terminology-server', 'mapping', '', false, 'Mapping from "'+coding.system+'"/"'+coding.code+'" to "'+c.system+'"/"'+c.code+'": '+map.comments)
                 end;
               end;
             finally
@@ -595,6 +595,7 @@ var
   prov : TCodeSystemProvider;
   loc :  TCodeSystemProviderContext;
 begin
+  result := false;
   if (uri1 <> uri2) then
     result := false // todo later - check that concept maps
   else if (uri1 = Snomed.system(nil)) then
@@ -646,7 +647,7 @@ begin
     else
       try
         try
-          val := TValueSetChecker.create(self.Link, vs.identifierST);
+          val := TValueSetChecker.create(self.Link, vs.identifier);
           try
             val.prepare(vs);
             if not val.check(URL, code) then
@@ -682,7 +683,7 @@ begin
   else
     try
       try
-        val := TValueSetChecker.create(self.Link, vs.identifierST);
+        val := TValueSetChecker.create(self.Link, vs.identifier);
         try
           val.prepare(vs);
           conn2.SQL := 'select ConceptKey, URL, Code from Concepts';

@@ -41,23 +41,23 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes,
-  StringSupport, FileSupport,
+  StringSupport, FileSupport, BytesSupport,
   AdvStringLists, AdvObjectLists, AdvObjects,
-  AnsiStringBuilder, YuStemmer, DateAndTime,
+  YuStemmer, DateAndTime,
   FHIRTypes, FHIRComponents, FHIRResources,
   TerminologyServices;
 
 Const
   SNOMED_CACHE_VERSION = '8';
-  IS_A_MAGIC : int64 = 116680003;
+  IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
 
 type
-  Int64Array = Array of Int64;
+  UInt64Array = Array of UInt64;
   TCardinalArray = array of Cardinal;
   TMatch = record
     index : cardinal;
-    term : Int64;
+    term : UInt64;
     Priority : Double;
   End;
 
@@ -77,18 +77,18 @@ type
   //   the third structure is a list of concepts. each concept has a refernce to a name and a contained list of references which are either children
   //   the fourth structure is the code list - a list of loinc concepts, with codes and references to names and properties
 
-  // We store snomed as three AnsiStrings
-  //   each entry in the AnsiString starts with a byte length, and then the series of characters as bytes
+  // We store snomed as three Strings
+  //   each entry in the String starts with a byte length, and then the series of characters as bytes
   TSnomedStrings = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
-      Function GetEntry(iIndex : Cardinal):AnsiString;
+      Function GetEntry(iIndex : Cardinal):String;
 
       Procedure StartBuild;
-      Function AddString(Const s : AnsiString) : Cardinal;
+      Function AddString(Const s : String) : Cardinal;
       Procedure DoneBuild;
   End;
 
@@ -101,9 +101,9 @@ Type
   // word index. Every word is 5 bytes - a 4 byte index into the strings, and a 1 byte flag
   TSnomedWords = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
@@ -117,9 +117,9 @@ Type
   // stem word index. Every word is 8 bytes - a 4 byte index into the strings, and a 4 byte index into the references
   TSnomedStems = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var reference : Cardinal);
       Function Count : Integer;
@@ -134,9 +134,9 @@ Type
   // 2. a list of list of references
   TSnomedReferences = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
       Function GetReferences(iIndex : Cardinal) : TCardinalArray;
       Function Getlength(iIndex : Cardinal) : Cardinal;
@@ -174,37 +174,37 @@ const
 Type
   TSnomedDescriptions = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
       function Count : Cardinal;
-      Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : Int64; var date : TSnomedDate; var concept, module, kind, refsets : Cardinal; var iFlags : Byte);
+      Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, refsets : Cardinal; var iFlags : Byte);
       function ConceptByIndex(iIndex : Cardinal) : cardinal;
 
 
       Procedure StartBuild;
-      Function AddDescription(iDesc : Cardinal; id : Int64; date : TSnomedDate; concept, module, kind : Cardinal; iflags : Byte) : Cardinal;
-      Procedure UpdateDetails(iIndex : Cardinal; id : int64; concept : Cardinal);
+      Function AddDescription(iDesc : Cardinal; id : UInt64; date : TSnomedDate; concept, module, kind : Cardinal; iflags : Byte) : Cardinal;
+      Procedure UpdateDetails(iIndex : Cardinal; id : UInt64; concept : Cardinal);
       Procedure DoneBuild;
       Procedure SetRefsets(iIndex : Cardinal; refsets : Cardinal);
   End;
 
   TSnomedDescriptionIndex = class (TAdvObject)
   Private
-    FMaster : AnsiString;
+    FMaster : TBytes;
     FLength : Cardinal;
-    FBuilder : TAnsiStringBuilder;
+    FBuilder : TAdvBytesBuilder;
   Public
-    Function FindDescription(iIdentity : int64; var IIndex : Cardinal) : boolean;
+    Function FindDescription(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
 
     Procedure StartBuild;
-    procedure AddDescription(id : Int64; reference : Cardinal);
+    procedure AddDescription(id : UInt64; reference : Cardinal);
     Procedure DoneBuild;
   End;
 
   // 4. a list of list of terms
-  //   id as a 8 byte int64
+  //   id as a 8 byte UInt64
   //   flag is a byte
   //   descriptions as a cardinal index of cardinal indexes
   //   parents as a cardinal index of cardinal indexes
@@ -227,15 +227,15 @@ Const
 Type
   TSnomedConceptList = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
-      Function FindConcept(iIdentity : int64; var IIndex : Cardinal) : boolean;
-      function getConceptId(iIndex : Cardinal) : int64;
-      procedure GetConcept(iIndex : Cardinal; var Identity : int64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
+      Function FindConcept(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
+      function getConceptId(iIndex : Cardinal) : UInt64;
+      procedure GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
       Function GetParent(iIndex : Cardinal): Cardinal;
-      Function GetIdentity(iIndex : Cardinal): int64;
+      Function GetIdentity(iIndex : Cardinal): UInt64;
       Function Count : Integer;
 
       procedure SetParents(iIndex: Cardinal; const Value: Cardinal);
@@ -262,7 +262,7 @@ Type
 
       // these presume that the terms are registered in order
       Procedure StartBuild;
-      Function AddConcept(iIdentity : int64; effectiveTime : TSnomedDate; iFlags : Byte) : Cardinal;
+      Function AddConcept(iIdentity : UInt64; effectiveTime : TSnomedDate; iFlags : Byte) : Cardinal;
       Procedure DoneBuild;
   End;
 
@@ -282,9 +282,9 @@ Const
 Type
   TSnomedRelationshipList = class (TAdvObject)
     private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
       // for Persistence
       Procedure GetRelationship(iIndex: Cardinal; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags, Group : Byte);
@@ -305,9 +305,9 @@ Type
   // 2. a list of list of references
   TSnomedReferenceSetMembers = class (TAdvObject)
     Private
-      FMaster : AnsiString;
+      FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAnsiStringBuilder;
+      FBuilder : TAdvBytesBuilder;
     Public
       Function GetMembers(iIndex : Cardinal) : TSnomedReferenceSetMemberArray;
       Function GetMemberCount(iIndex : Cardinal) : integer;
@@ -320,9 +320,9 @@ Type
 
   TSnomedReferenceSetIndex = class (TAdvObject)
   Private
-    FMaster : AnsiString;
+    FMaster : TBytes;
     FLength : Cardinal;
-    FBuilder : TAnsiStringBuilder;
+    FBuilder : TAdvBytesBuilder;
   Public
     Procedure GetReferenceSet(iIndex: Cardinal; var iDefinition, iMembersByRef, iMembersByName: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
@@ -337,7 +337,7 @@ Type
 {
 operations
   isSubsumedBy(term, term)
-  getDesc : AnsiString
+  getDesc : String
   is valid (id)
 }
 
@@ -374,8 +374,8 @@ operations
 
   TSnomedServices = class (TCodeSystemProvider)
   Private
-    FActiveRoots : Int64Array;
-    FInactiveRoots : Int64Array;
+    FActiveRoots : UInt64Array;
+    FInactiveRoots : UInt64Array;
     FIs_a_Index : Cardinal;
     FStrings : TSnomedStrings;
     FRefs : TSnomedReferences;
@@ -391,13 +391,11 @@ operations
     FVersion : String;
     FLoaded: Boolean;
 
-    function GetPN(iDescriptions: TCardinalArray): String;
-    function GetFSN(iDescriptions: TCardinalArray): String;
-    function filterIn(id : Int64): TCodeSystemProviderFilterContext;
-    function filterIsA(id : Int64): TCodeSystemProviderFilterContext;
+    function filterIn(id : UInt64): TCodeSystemProviderFilterContext;
+    function filterIsA(id : UInt64): TCodeSystemProviderFilterContext;
 
   //  Function FindWord(s : String; var index : Integer) : Boolean;
-    Function FindStem(s : AnsiString; var index : Integer) : Boolean;
+    Function FindStem(s : String; var index : Integer) : Boolean;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -406,9 +404,9 @@ operations
     Procedure Save(Const sFilename : String);
 
     // helper functions
-    Function StringToId(Const s : String) : Int64;
-    Function StringToIdOrZero(Const s : AnsiString) : Int64;
-    Function StringIsId(Const s : AnsiString; var iId : Int64) : Boolean;
+    Function StringToId(Const s : String) : UInt64;
+    Function StringToIdOrZero(Const s : String) : UInt64;
+    Function StringIsId(Const s : String; var iId : UInt64) : Boolean;
 
     // direct access to the raw data
     Property Strings : TSnomedStrings read FStrings;
@@ -423,28 +421,28 @@ operations
     Property DescRef : TSnomedDescriptionIndex read FDescRef;
 
     // low level access for service providers
-    Property ActiveRoots : Int64Array read FActiveRoots write FActiveRoots;
-    Property InactiveRoots : Int64Array read FInActiveRoots write FInActiveRoots;
+    Property ActiveRoots : UInt64Array read FActiveRoots write FActiveRoots;
+    Property InactiveRoots : UInt64Array read FInActiveRoots write FInActiveRoots;
     Property Is_a_Index : Cardinal read FIs_a_Index write FIs_a_Index;
     function Subsumes(iParent, iChild: Cardinal): Boolean; Overload;
-    Function GetDisplayName(Const iConcept, iLang : Cardinal) : AnsiString; Overload;
+    Function GetDisplayName(Const iConcept, iLang : Cardinal) : String; Overload;
     Procedure ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
-    Function GetConceptId(Const iConcept : Cardinal) : AnsiString; Overload;
-    Procedure GetMatchInfo(iConcept : Cardinal; var sTerm, sFSN, sPreferred : AnsiString);
+    Function GetConceptId(Const iConcept : Cardinal) : String; Overload;
+    Procedure GetMatchInfo(iConcept : Cardinal; var sTerm, sFSN, sPreferred : String);
     Function GetConceptRefSet(iConcept : Cardinal; bByName : Boolean; var iMembers : cardinal) : Cardinal;
     Function GetDescRefsets(iDesc : Cardinal) : TCardinalArray;
     Function GetConceptRefsets(iDesc : Cardinal) : TCardinalArray;
-    Function CheckLangSet(sTerm : AnsiString) : Cardinal;
+    Function CheckLangSet(sTerm : String) : Cardinal;
     function GetConceptDescendents(index : Cardinal) : TCardinalArray;
 
     // simplified interface for consumers
     Function ConceptExists(conceptId : String) : Boolean;
-    Function Subsumes(Const sParent, sChild : AnsiString) : Boolean; Overload;
-    Function Search(iRoot : Int64; sText : AnsiString; iLang : Cardinal; bInactive : Boolean; bAll : boolean = false) : TMatchArray; overload;
+    Function Subsumes(Const sParent, sChild : String) : Boolean; Overload;
+    Function Search(iRoot : UInt64; sText : String; iLang : Cardinal; bInactive : Boolean; bAll : boolean = false) : TMatchArray; overload;
     Function IsValidConcept(Const sTerm : String):Boolean;
-    Function IsValidDescription(Const sTerm : AnsiString; var concept : int64; var description : String):Boolean;
-    Function GetDisplayName(Const sTerm, sLangSet : AnsiString) : AnsiString; Overload;
-    Procedure ListDisplayNames(list : TStringList; Const sTerm, sLangSet : AnsiString; FlagMask : Byte); Overload;
+    Function IsValidDescription(Const sTerm : String; var concept : UInt64; var description : String):Boolean;
+    Function GetDisplayName(Const sTerm, sLangSet : String) : String; Overload;
+    Procedure ListDisplayNames(list : TStringList; Const sTerm, sLangSet : String; FlagMask : Byte); Overload;
     function ReferenceSetExists(sid : String) : Boolean;
 
     // status stuff
@@ -489,7 +487,7 @@ operations
   Public
     Destructor Destroy; Override;
 
-    Function GetDefinitionByName(sName : AnsiString) : TSnomedServices;
+    Function GetDefinitionByName(sName : String) : TSnomedServices;
 
     Property DefaultDefinition : TSnomedServices Read FDefinition write SetDefinition;
     Function HasDefaultDefinition : Boolean;
@@ -502,7 +500,7 @@ operations
 reference set
 
 header....
-  id  int64
+  id  UInt64
 members
   concept - cardinal
   desc - cardinal (or 0 if one is not specified)
@@ -516,7 +514,7 @@ Implementation
 
 { TSnomedStrings }
 
-function TSnomedStrings.GetEntry(iIndex: Cardinal): AnsiString;
+function TSnomedStrings.GetEntry(iIndex: Cardinal): String;
 var
   i : Word;
 begin
@@ -526,31 +524,31 @@ begin
   SetLength(Result, i);
   if (Byte(FMaster[iIndex]) + iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting snomed name (2)');
-  Move(FMaster[iIndex+2], result[1], Length(Result));
+  Move(FMaster[iIndex+2], result[1], Length(Result)*2);
 end;
 
-function TSnomedStrings.AddString(const s: AnsiString): Cardinal;
+function TSnomedStrings.AddString(const s: String): Cardinal;
 var
   i : word;
 begin
   if Length(s) > 65535 Then
-    raise exception.Create('Snomed Description too long: '+s);
-  result := FBuilder.Length + 1;
+    raise exception.Create('Snomed Description too long: '+String(s));
+  result := FBuilder.Length;
   i := length(s);
-  FBuilder.AddWordAsBytes(i);
-  FBuilder.Append(s);
+  FBuilder.AddWord(i);
+  FBuilder.AddString(s);
 end;
 
 procedure TSnomedStrings.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
 
 procedure TSnomedStrings.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 { TSnomedReferences }
@@ -564,14 +562,14 @@ begin
     result := nil
   Else
   Begin
-    if (iIndex > FLength) and (FBuilder <> nil) then
+    if (FBuilder <> nil) and (iIndex >= FLength) then
       Post;
-    if (iIndex > FLength) then
+    if (iIndex >= FLength) then
       Raise Exception.Create('Wrong length index getting Snomed list');
     move(FMaster[iIndex], c, 4);
     SetLength(Result, c);
     if (iIndex + 4 + length(result) * 4 > FLength) then
-      Raise Exception.Create('Wrong length index getting Snomed list (2)');
+      Raise Exception.Create('Wrong length index ('+inttostr(iIndex)+', '+inttostr(length(result))+') getting Snomed list (length = '+inttostr(FLength)+')');
     inc(iIndex, 4);
     for i := 0 to Length(result)-1 Do
     Begin
@@ -585,22 +583,22 @@ Function TSnomedReferences.AddReferences(Const a : TCardinalArray) : Cardinal;
 var
   iLoop : Integer;
 Begin
-  result := FBuilder.Length + 1;
-  FBuilder.AddCardinalAsBytes(length(a));
+  result := FBuilder.Length;
+  FBuilder.AddCardinal(length(a));
   for iLoop := Low(a) to High(a) Do
-    FBuilder.AddCardinalAsBytes(a[iLoop]);
+    FBuilder.AddCardinal(a[iLoop]);
 End;
 
 procedure TSnomedReferences.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
 
 procedure TSnomedReferences.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 function TSnomedReferences.Getlength(iIndex: Cardinal): Cardinal;
@@ -612,7 +610,7 @@ end;
 
 procedure TSnomedReferences.Post;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
 end;
 
@@ -627,20 +625,20 @@ end;
 
 procedure TSnomedDescriptions.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
-Function TSnomedDescriptions.AddDescription(iDesc : Cardinal; id : int64; date : TSnomedDate; concept, module, kind : Cardinal; iflags : Byte) : Cardinal;
+Function TSnomedDescriptions.AddDescription(iDesc : Cardinal; id : UInt64; date : TSnomedDate; concept, module, kind : Cardinal; iflags : Byte) : Cardinal;
 begin
-  result := FBuilder.Length+1;
-  FBuilder.AddCardinalAsBytes(iDesc);
-  FBuilder.AddByteAsBytes(iFlags);
-  FBuilder.AddInt64AsBytes(id);
-  FBuilder.AddCardinalAsBytes(concept);
-  FBuilder.AddCardinalAsBytes(module);
-  FBuilder.AddCardinalAsBytes(kind);
-  FBuilder.AddWordAsBytes(date);
-  FBuilder.AddCardinalAsBytes(0); // refsets
+  result := FBuilder.Length;
+  FBuilder.AddCardinal(iDesc);
+  FBuilder.Append(iFlags);
+  FBuilder.AddUInt64(id);
+  FBuilder.AddCardinal(concept);
+  FBuilder.AddCardinal(module);
+  FBuilder.AddCardinal(kind);
+  FBuilder.AddWord(date);
+  FBuilder.AddCardinal(0); // refsets
 end;
 
 function TSnomedDescriptions.ConceptByIndex(iIndex: Cardinal): cardinal;
@@ -657,12 +655,12 @@ end;
 
 procedure TSnomedDescriptions.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
 
-procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : Int64; var date : TSnomedDate; var concept, module, kind, refsets : Cardinal; var iflags : Byte);
+procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, refsets : Cardinal; var iflags : Byte);
 Begin
   if (iIndex >= FLength) then
     Raise Exception.Create('Wrong length index getting snomed Desc Details');
@@ -677,11 +675,10 @@ Begin
 End;
 
 
-procedure TSnomedDescriptions.UpdateDetails(iIndex: Cardinal; id: int64; concept: Cardinal);
+procedure TSnomedDescriptions.UpdateDetails(iIndex: Cardinal; id: UInt64; concept: Cardinal);
 var
-  t1 : int64;
+  t1 : UInt64;
   t2 : Cardinal;
-  s : AnsiString;
 begin
   FBuilder.Read(iIndex+13, t2, 4);
   if (t2 <> concept) Then
@@ -690,15 +687,11 @@ begin
 
     FBuilder.Read(iIndex+5, t1, 8);
     assert(t1 = 0);
-    SetLength(s, 8);
-    Move(id, s[1], 8);
-    FBuilder.Overwrite(iIndex+5, s);
+    FBuilder.WriteUInt64(iIndex+5, id);
     FBuilder.Read(iIndex+5, t1, 8);
     assert(t1 = id);
 
-    SetLength(s, 4);
-    Move(concept, s[1], 4);
-    FBuilder.Overwrite(iIndex+13, s);
+    FBuilder.WriteCardinal(iIndex+13, concept);
     FBuilder.Read(iIndex+13, t2, 4);
     assert(t2 = concept);
   End;
@@ -709,41 +702,40 @@ end;
 
 procedure TSnomedConceptList.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
-Function TSnomedConceptList.AddConcept(iIdentity : int64; effectiveTime : TSnomedDate; iFlags : Byte) : Cardinal;
+Function TSnomedConceptList.AddConcept(iIdentity : UInt64; effectiveTime : TSnomedDate; iFlags : Byte) : Cardinal;
 begin
-  result := FBuilder.Length+1;
-  FBuilder.AddInt64AsBytes(iIdentity);
-  FBuilder.AddByteAsBytes(iFlags);
-  FBuilder.AddCardinalAsBytes(0); // parents
-  FBuilder.AddCardinalAsBytes(0); // descriptions
-  FBuilder.AddCardinalAsBytes(0); // inbounds
-  FBuilder.AddCardinalAsBytes(0); // outbounds
-  FBuilder.AddCardinalAsBytes(0); // closures
-  FBuilder.AddByteAsBytes(0); // depth
-  FBuilder.AddCardinalAsBytes(0); // stems
-  FBuilder.AddWordAsBytes(effectiveTime); // date
-  FBuilder.AddCardinalAsBytes(0); // moduleId (rf2)
-  FBuilder.AddCardinalAsBytes(0); // status (rf2)
-  FBuilder.AddCardinalAsBytes(0); // refsets (rf2)
+  result := FBuilder.Length;
+  FBuilder.AddUInt64(iIdentity);
+  FBuilder.Append(iFlags);
+  FBuilder.AddCardinal(0); // parents
+  FBuilder.AddCardinal(0); // descriptions
+  FBuilder.AddCardinal(0); // inbounds
+  FBuilder.AddCardinal(0); // outbounds
+  FBuilder.AddCardinal(0); // closures
+  FBuilder.Append(0); // depth
+  FBuilder.AddCardinal(0); // stems
+  FBuilder.AddWord(effectiveTime); // date
+  FBuilder.AddCardinal(0); // moduleId (rf2)
+  FBuilder.AddCardinal(0); // status (rf2)
+  FBuilder.AddCardinal(0); // refsets (rf2)
 end;
 
 procedure TSnomedConceptList.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
 
 {$R-}
 
-function TSnomedConceptList.FindConcept(iIdentity: int64; var IIndex: Cardinal): boolean;
+function TSnomedConceptList.FindConcept(iIdentity: UInt64; var IIndex: Cardinal): boolean;
 var
-  aConcept : int64;
+  aConcept : UInt64;
   L, H, I: Integer;
-  c : Int64;
 begin
   Result := False;
   L := 0;
@@ -752,44 +744,54 @@ begin
   while L <= H do
   begin
     I := (L + H) shr 1;
-    Move(FMaster[(i*CONCEPT_SIZE)+1], aConcept, 8);
-    C := aConcept - iIdentity;
-    if C < 0 then L := I + 1 else
+    Move(FMaster[(i*CONCEPT_SIZE)], aConcept, 8);
+    if aConcept < iIdentity then L := I + 1 else
     begin
       H := I - 1;
-      if C = 0 then
+      if aConcept = iIdentity then
       begin
         Result := True;
         L := I;
       end;
     end;
   end;
-  iIndex := (L*CONCEPT_SIZE)+1;
+  iIndex := (L*CONCEPT_SIZE);
 end;
 
 Function TSnomedConceptList.getParent(iIndex : Cardinal): Cardinal;
 Begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed Concept Details');
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+9], result, 4);
 End;
 
 function TSnomedConceptList.GetRefsets(iIndex: Cardinal): Cardinal;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+44], result, 4);
 end;
 
-Function TSnomedConceptList.getIdentity(iIndex : Cardinal): Int64;
+Function TSnomedConceptList.getIdentity(iIndex : Cardinal): UInt64;
 Begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed Concept Details');
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+0], result, 8);
 End;
 
-procedure TSnomedConceptList.GetConcept(iIndex : Cardinal; var Identity : int64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
+procedure TSnomedConceptList.GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
 Begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed Concept Details');
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+
   Move(FMaster[iIndex+0], Identity, 8);
   Move(FMaster[iIndex+8], Flags, 1);
   Move(FMaster[iIndex+9], Parents, 4);
@@ -800,7 +802,7 @@ Begin
   Move(FMaster[iIndex+44], refsets, 2);
 End;
 
-function TSnomedConceptList.getConceptId(iIndex : Cardinal): int64;
+function TSnomedConceptList.getConceptId(iIndex : Cardinal): UInt64;
 begin
   if (iIndex >= FLength) then
     Raise Exception.Create('Wrong length index getting snomed Concept Details');
@@ -809,31 +811,55 @@ end;
 
 procedure TSnomedConceptList.SetParents(iIndex: Cardinal; const Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+9], 4);
 end;
 
 procedure TSnomedConceptList.SetRefsets(iIndex, Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+44], 4);
 end;
 
 procedure TSnomedConceptList.SetDescriptions(iIndex: Cardinal; const Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+13], 4);
 end;
 
 procedure TSnomedConceptList.SetInbounds(iIndex: Cardinal; const Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+17], 4);
 end;
 
 procedure TSnomedConceptList.SetModuleId(iIndex, Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+36], 4);
 end;
 
 procedure TSnomedConceptList.SetOutbounds(iIndex: Cardinal; const Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+21], 4);
 end;
 
@@ -845,61 +871,109 @@ end;
 
 Function TSnomedConceptList.GetAllDesc(iIndex: Cardinal) : Cardinal;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+25], result, 4);
 end;
 
 procedure TSnomedConceptList.SetAllDesc(iIndex, Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+25], 4);
 end;
 
 function TSnomedConceptList.GetOutbounds(iIndex: Cardinal): Cardinal;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+21], result, 4);
 end;
 
 function TSnomedConceptList.GetInbounds(iIndex: Cardinal): Cardinal;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+17], result, 4);
 end;
 
 function TSnomedConceptList.GetModuleId(iIndex: Cardinal): Cardinal;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+36], result, 4);
 end;
 
 function TSnomedConceptList.GetDepth(iIndex: Cardinal): Byte;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+29], result, 1);
 end;
 
 procedure TSnomedConceptList.SetDepth(iIndex: Cardinal; Value: Byte);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+29], 1);
 end;
 
 function TSnomedConceptList.GetStatus(iIndex: Cardinal): Cardinal;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+40], result, 4);
 end;
 
 function TSnomedConceptList.GetStems(iIndex: Cardinal): Cardinal;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+30], result, 4);
 end;
 
 procedure TSnomedConceptList.SetStatus(iIndex, Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+40], 4);
 end;
 
 procedure TSnomedConceptList.SetStems(iIndex, Value: Cardinal);
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+30], 4);
 end;
 
 function TSnomedConceptList.GetDescriptions(iIndex: Cardinal): Cardinal;
 begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+13], Result, 4);
 end;
 
@@ -945,6 +1019,15 @@ var
   oFile : Tfilestream;
   oread : TReader;
   i : Integer;
+  function readBytes : TBytes;
+  begin
+    SetLength(result, oRead.ReadInteger);
+    oread.Read(result[0], length(result));
+  end;
+  function ReadUInt64: UInt64;
+  begin
+    oread.Read(result, 8);
+  end;
 begin
   oFile := TFileStream.Create(sFilename, fmOpenread);
   try
@@ -953,33 +1036,33 @@ begin
       if oRead.ReadString <> SNOMED_CACHE_VERSION Then
         raise exception.create('The Snomed cache "'+sFilename+'" must be rebuilt using -snomed-rf1 or -snomed-rf2');
       FVersion := oread.ReadString;
-      FStrings.FMaster := oread.ReadString;
+      FStrings.FMaster := ReadBytes;
       FStrings.FLength := Length(FStrings.FMaster);
-      FRefs.FMaster := oread.ReadString;
+      FRefs.FMaster := ReadBytes;
       FRefs.FLength := Length(FRefs.FMaster);
-      FDesc.FMaster := oread.ReadString;
+      FDesc.FMaster := ReadBytes;
       FDesc.FLength := Length(FDesc.FMaster);
-      FWords.FMaster := oRead.ReadString;
+      FWords.FMaster := ReadBytes;
       FWords.FLength := Length(FWords.FMaster);
-      FStems.FMaster := oRead.ReadString;
+      FStems.FMaster := ReadBytes;
       FStems.FLength := Length(FStems.FMaster);
-      FConcept.FMaster := oread.ReadString;
+      FConcept.FMaster := ReadBytes;
       FConcept.FLength := Length(FConcept.FMaster);
-      FRel.FMaster := oread.ReadString;
+      FRel.FMaster := ReadBytes;
       FRel.FLength := Length(FRel.FMaster);
-      FRefSetIndex.FMaster := oread.ReadString;
+      FRefSetIndex.FMaster := ReadBytes;
       FRefSetIndex.FLength := Length(FRefSetIndex.FMaster);
-      FRefSetMembers.FMaster := oread.ReadString;
+      FRefSetMembers.FMaster := ReadBytes;
       FRefSetMembers.FLength := Length(FRefSetMembers.FMaster);
-      FDescRef.FMaster := oread.ReadString;
+      FDescRef.FMaster := ReadBytes;
       FDescRef.FLength := Length(FDescRef.FMaster);
       FIs_a_Index := oread.ReadInteger;
       SetLength(FInactiveRoots, oRead.ReadInteger);
       for i := 0 to Length(FInactiveRoots) - 1 Do
-        FInactiveRoots[i] := oRead.ReadInt64;
+        FInactiveRoots[i] := ReadUInt64;
       SetLength(FActiveRoots, oRead.ReadInteger);
       for i := 0 to Length(FActiveRoots) - 1 Do
-        FActiveRoots[i] := oRead.ReadInt64;
+        FActiveRoots[i] := ReadUInt64;
     Finally
       oread.Free;
     End;
@@ -1003,6 +1086,15 @@ var
   oFile : Tfilestream;
   oWrite : TWriter;
   i : integer;
+  procedure WriteBytes(b : TBytes);
+  begin
+   oWrite.WriteInteger(length(b));
+   oWrite.Write(b[0], length(b));
+  end;
+  procedure WriteUInt64(v : UInt64);
+  begin
+    oWrite.Write(v, 8);
+  end;
 begin
   if FileExists(sFilename) Then
   begin
@@ -1016,23 +1108,23 @@ begin
     try
       oWrite.WriteString(SNOMED_CACHE_VERSION);
       oWrite.WriteString(Version);
-      oWrite.WriteString(FStrings.FMaster);
-      oWrite.WriteString(FRefs.FMaster);
-      oWrite.WriteString(FDesc.FMaster);
-      oWrite.WriteString(FWords.FMaster);
-      oWrite.WriteString(FStems.FMaster);
-      oWrite.WriteString(FConcept.FMaster);
-      oWrite.WriteString(FRel.FMaster);
-      oWrite.WriteString(FRefSetIndex.FMaster);
-      oWrite.WriteString(FRefSetMembers.FMaster);
-      oWrite.WriteString(FDescRef.FMaster);
+      WriteBytes(FStrings.FMaster);
+      WriteBytes(FRefs.FMaster);
+      WriteBytes(FDesc.FMaster);
+      WriteBytes(FWords.FMaster);
+      WriteBytes(FStems.FMaster);
+      WriteBytes(FConcept.FMaster);
+      WriteBytes(FRel.FMaster);
+      WriteBytes(FRefSetIndex.FMaster);
+      WriteBytes(FRefSetMembers.FMaster);
+      WriteBytes(FDescRef.FMaster);
       oWrite.writeInteger(FIs_a_Index);
       oWrite.writeInteger(length(FInactiveRoots));
       for i := 0 to Length(FInactiveRoots) - 1 Do
-        oWrite.writeInteger(FInactiveRoots[i]);
+        writeUInt64(FInactiveRoots[i]);
       oWrite.writeInteger(length(FActiveRoots));
       for i := 0 to Length(FActiveRoots) - 1 Do
-        oWrite.writeInteger(FActiveRoots[i]);
+        writeUInt64(FActiveRoots[i]);
     Finally
       oWrite.Free;
     End;
@@ -1099,7 +1191,7 @@ End;
 
 type
   TSearchWord = record
-    original : AnsiString;
+    original : String;
     stem : Cardinal;
   End;
   TSearchWordArray = array of TSearchWord;
@@ -1159,11 +1251,11 @@ End;
 
 
 
-function TSnomedServices.Search(iRoot : Int64; sText: AnsiString; iLang : Cardinal; bInactive : Boolean; bAll : boolean): TMatchArray;
+function TSnomedServices.Search(iRoot : UInt64; sText: String; iLang : Cardinal; bInactive : Boolean; bAll : boolean): TMatchArray;
 var
   aLangMembers : TSnomedReferenceSetMemberArray;
 
-  Function Match(const words : TSearchWordArray; s : AnsiString; iDepth : byte):Double;
+  Function Match(const words : TSearchWordArray; s : String; iDepth : byte):Double;
   var
     i : integer;
   Begin
@@ -1187,7 +1279,7 @@ var
       End;
   End;
 
-  Procedure AddResult(var iCount : Integer; iindex : cardinal; id : Int64; priority : Double);
+  Procedure AddResult(var iCount : Integer; iindex : cardinal; id : UInt64; priority : Double);
   Begin
     if iCount = length(result) then
       SetLength(result, Length(result)+100);
@@ -1210,7 +1302,7 @@ var
     i, j : cardinal;
     r1, r2, t : Double;
     iDepth : Byte;
-    Identity, iID2 : int64;
+    Identity, iID2 : UInt64;
     Flags : Byte;
     Parents : Cardinal;
     Descriptions : Cardinal;
@@ -1221,7 +1313,7 @@ var
     iWork, iDummy, module, kind : Cardinal;
     date : TSnomedDate;
     ok : boolean;
-    s : AnsiString;
+    s : String;
   Begin
     SetLength(desc, 0);
     Concept.GetConcept(iConceptIndex, Identity, Flags, date, Parents, Descriptions, outbounds, Inbounds, refsets);
@@ -1255,6 +1347,7 @@ var
           AddResult(iCount, iConceptIndex, Identity, r1 + r2 / t)
         else
         begin
+          ok := false;
           for j := Low(Desc) to High(Desc) Do
           Begin
             FDesc.GetDescription(Desc[j], iWork, iID2, date, iDummy, module, kind, refsets, flags);
@@ -1281,8 +1374,8 @@ var
   aMembers : TSnomedReferenceSetMemberArray;
   index : integer;
   oStemmer : TYuStemmer_8;
-  s : AnsiString;
-  s1 : AnsiString;
+  s : String;
+  s1 : String;
 begin
   SetLength(words, 0);
   SetLength(aMembers, 0);
@@ -1292,12 +1385,12 @@ begin
   Try
     while (sText <> '') Do
     Begin
-      AnsiStringSplit(sText, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='], s, sText);
+      StringSplit(sText, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='], s, sText);
       if (s <> '') Then
       Begin
         SetLength(words, length(words)+1);
         words[length(words)-1].original := lowercase(s);
-        s1 := oStemmer.Stem(s);
+        s1 := oStemmer.calc(s);
         if FindStem(s1, index) Then
           words[length(words)-1].stem := FStems.GetString(index);
       End;
@@ -1344,7 +1437,7 @@ begin
   QuickSortArray(result);
 end;
 
-function TSnomedServices.Subsumes(const sParent, sChild: AnsiString): Boolean;
+function TSnomedServices.Subsumes(const sParent, sChild: String): Boolean;
 var
   iParent : Cardinal;
   iChild : Cardinal;
@@ -1374,7 +1467,7 @@ end;
 function FindMember(aMembers : TSnomedReferenceSetMemberArray; iRef : Cardinal; var iIndex: integer): boolean;
 var
   L, H, I: Integer;
-  c : Int64;
+  c : UInt64;
 begin
   Result := False;
   L := 0;
@@ -1400,10 +1493,10 @@ begin
 end;
 
 
-function TSnomedServices.GetDisplayName(const iConcept, iLang: Cardinal): AnsiString;
+function TSnomedServices.GetDisplayName(const iConcept, iLang: Cardinal): String;
 var
   iLoop : integer;
-  Identity, iId2 : int64;
+  Identity, iId2 : UInt64;
   Flags : Byte;
   Parents : Cardinal;
   Descriptions : Cardinal;
@@ -1464,7 +1557,7 @@ begin
     End;
 end;
 
-function TSnomedServices.GetDisplayName(const sTerm, sLangSet: AnsiString): AnsiString;
+function TSnomedServices.GetDisplayName(const sTerm, sLangSet: String): String;
 var
   iTerm, iLang : Cardinal;
 begin
@@ -1478,7 +1571,7 @@ Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const iConcept, i
 var
   aMembers : TSnomedReferenceSetMemberArray;
   iLoop : integer;
-  Identity, iID2 : int64;
+  Identity, iID2 : UInt64;
   Flags : Byte;
   Parents, Descriptions, Inbounds, outbounds, refsets : Cardinal;
   Descs : TCardinalArray;
@@ -1498,7 +1591,7 @@ begin
   End;
 end;
 
-Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const sTerm, sLangSet : AnsiString; FlagMask : Byte);
+Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const sTerm, sLangSet : String; FlagMask : Byte);
 var
   iTerm, iLang : Cardinal;
 begin
@@ -1508,10 +1601,10 @@ begin
   ListDisplayNames(list, iTerm, iLang, flagmask);
 end;
 
-procedure TSnomedServices.GetMatchInfo(iConcept: Cardinal; var sTerm, sFSN, sPreferred: AnsiString);
+procedure TSnomedServices.GetMatchInfo(iConcept: Cardinal; var sTerm, sFSN, sPreferred: String);
 var
   iLoop : integer;
-  Identity, iId2 : int64;
+  Identity, iId2 : UInt64;
   Flags : Byte;
   Parents : Cardinal;
   Descriptions : Cardinal;
@@ -1539,7 +1632,7 @@ begin
   End;
 end;
 {
-function TSnomedServices.FindWord(s: AnsiString; var index : integer): Boolean;
+function TSnomedServices.FindWord(s: String; var index : integer): Boolean;
 var
   L, H, I, c: Integer;
 begin
@@ -1570,7 +1663,7 @@ begin
   result := FConcept.FindConcept(StringToIdOrZero(conceptId), i);
 end;
 
-function TSnomedServices.FindStem(s: AnsiString; var index: Integer): Boolean;
+function TSnomedServices.FindStem(s: String; var index: Integer): Boolean;
 var
   L, H, I, c: Integer;
 begin
@@ -1662,20 +1755,19 @@ begin
   End;
 end;
 
-function TSnomedServices.StringIsId(const s: AnsiString; var iId: Int64): Boolean;
+function TSnomedServices.StringIsId(const s: String; var iId: UInt64): Boolean;
 begin
-  iId := StrToInt64Def(s, -1);
-  result := iId > -1;
+  result := TryStrToUINT64(s, iId);
 end;
 
-function TSnomedServices.StringToId(const s: String): Int64;
+function TSnomedServices.StringToId(const s: String): UInt64;
 begin
-  result := StrToInt64(s);
+  result := StrToUInt64(s);
 end;
 
-function TSnomedServices.CheckLangSet(sTerm: AnsiString): Cardinal;
+function TSnomedServices.CheckLangSet(sTerm: String): Cardinal;
 var
-  iId  : Int64;
+  iId  : UInt64;
 begin
   result := 0;
   if sTerm <> '' Then
@@ -1692,9 +1784,9 @@ begin
   result := FRefs.GetReferences(FConcept.GetAllDesc(index));
 end;
 
-function TSnomedServices.GetConceptId(const iConcept : Cardinal): AnsiString;
+function TSnomedServices.GetConceptId(const iConcept : Cardinal): String;
 var
-  Identity : int64;
+  Identity : UInt64;
   Flags : Byte;
   Parents, Inbounds, outbounds, descriptions, refsets : Cardinal;
   date : TSnomedDate;
@@ -1703,10 +1795,10 @@ begin
   result := inttostr(Identity);
 end;
 
-function TSnomedServices.StringToIdOrZero(const s: AnsiString): Int64;
+function TSnomedServices.StringToIdOrZero(const s: String): UInt64;
 begin
   if StringIsInteger64(s) then
-    result := StrToInt64(s)
+    result := StrToUInt64(s)
   Else
     result := 0;
 end;
@@ -1718,11 +1810,11 @@ begin
   result := Concept.FindConcept(StringToId(sTerm), iTerm);
 end;
 
-function TSnomedServices.IsValidDescription(const sTerm: AnsiString; var concept: int64; var description: String): Boolean;
+function TSnomedServices.IsValidDescription(const sTerm: String; var concept: UInt64; var description: String): Boolean;
 var
   iTerm, desc, cId, module, kind, refsets : Cardinal;
   flags : Byte;
-  id : int64;
+  id : UInt64;
   date : TSnomedDate;
 begin
   result := DescRef.FindDescription(StringToId(sTerm), iTerm);
@@ -1738,26 +1830,26 @@ end;
 
 procedure TSnomedRelationshipList.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 Function TSnomedRelationshipList.AddRelationship(Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags, Group : Byte) : Cardinal;
 begin
-  Result := FBuilder.Length+1;
-  FBuilder.AddCardinalAsBytes(Source);
-  FBuilder.AddCardinalAsBytes(Target);
-  FBuilder.AddCardinalAsBytes(RelType);
-  FBuilder.AddCardinalAsBytes(module);
-  FBuilder.AddCardinalAsBytes(kind);
-  FBuilder.AddCardinalAsBytes(modifier);
-  FBuilder.AddWordAsBytes(date);
-  FBuilder.AddByteAsBytes(Flags);
-  FBuilder.AddByteAsBytes(Group);
+  Result := FBuilder.Length;
+  FBuilder.AddCardinal(Source);
+  FBuilder.AddCardinal(Target);
+  FBuilder.AddCardinal(RelType);
+  FBuilder.AddCardinal(module);
+  FBuilder.AddCardinal(kind);
+  FBuilder.AddCardinal(modifier);
+  FBuilder.AddWord(date);
+  FBuilder.Append(Flags);
+  FBuilder.Append(Group);
 End;
 
 procedure TSnomedRelationshipList.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
@@ -1782,8 +1874,8 @@ end;
 
 procedure TSnomedWords.AddWord(index: Cardinal; Flags: Byte);
 begin
-  FBuilder.AddCardinalAsBytes(index);
-  FBuilder.AddByteAsBytes(flags);
+  FBuilder.AddCardinal(index);
+  FBuilder.Append(flags);
 end;
 
 function TSnomedWords.Count: Integer;
@@ -1793,7 +1885,7 @@ end;
 
 procedure TSnomedWords.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
@@ -1818,15 +1910,15 @@ end;
 
 procedure TSnomedWords.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 { TSnomedStems }
 
 procedure TSnomedStems.AddStem(index: Cardinal; reference : Cardinal);
 begin
-  FBuilder.AddCardinalAsBytes(index);
-  FBuilder.AddCardinalAsBytes(reference);
+  FBuilder.AddCardinal(index);
+  FBuilder.AddCardinal(reference);
 end;
 
 function TSnomedStems.Count: Integer;
@@ -1836,7 +1928,7 @@ end;
 
 procedure TSnomedStems.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
@@ -1861,7 +1953,7 @@ end;
 
 procedure TSnomedStems.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 { TSnomedServiceList }
@@ -1877,7 +1969,7 @@ begin
   result := TSnomedServices(ObjectByIndex[iIndex]);
 end;
 
-function TSnomedServiceList.GetDefinitionByName(sName: AnsiString): TSnomedServices;
+function TSnomedServiceList.GetDefinitionByName(sName: String): TSnomedServices;
 var
   i : integer;
 begin
@@ -1916,9 +2008,9 @@ end;
 
 Procedure TSnomedReferenceSetIndex.AddReferenceSet(iDefinition, iMembersByRef, iMembersByName: Cardinal);
 begin
-  FBuilder.AddCardinalAsBytes(iDefinition);
-  FBuilder.AddCardinalAsBytes(iMembersByRef);
-  FBuilder.AddCardinalAsBytes(iMembersByName);
+  FBuilder.AddCardinal(iDefinition);
+  FBuilder.AddCardinal(iMembersByRef);
+  FBuilder.AddCardinal(iMembersByName);
 end;
 
 function TSnomedReferenceSetIndex.Count: Integer;
@@ -1928,7 +2020,7 @@ end;
 
 procedure TSnomedReferenceSetIndex.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
@@ -1964,29 +2056,28 @@ end;
 
 procedure TSnomedReferenceSetIndex.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 { TSnomedDescriptionIndex }
 
-procedure TSnomedDescriptionIndex.AddDescription(id: Int64; reference: Cardinal);
+procedure TSnomedDescriptionIndex.AddDescription(id: UInt64; reference: Cardinal);
 begin
-  FBuilder.AddInt64AsBytes(id);
-  FBuilder.AddCardinalAsBytes(reference);
+  FBuilder.AddUInt64(id);
+  FBuilder.AddCardinal(reference);
 end;
 
 procedure TSnomedDescriptionIndex.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
 
-function TSnomedDescriptionIndex.FindDescription(iIdentity: int64; var IIndex: Cardinal): boolean;
+function TSnomedDescriptionIndex.FindDescription(iIdentity: UInt64; var IIndex: Cardinal): boolean;
 var
-  aConcept : int64;
+  aConcept : UInt64;
   L, H, I: Integer;
-  c : Int64;
 begin
   Result := False;
   L := 0;
@@ -1995,12 +2086,11 @@ begin
   while L <= H do
   begin
     I := (L + H) shr 1;
-    Move(FMaster[(i*12)+1], aConcept, 8);
-    C := aConcept - iIdentity;
-    if C < 0 then L := I + 1 else
+    Move(FMaster[(i*12)], aConcept, 8);
+    if aConcept < iIdentity then L := I + 1 else
     begin
       H := I - 1;
-      if C = 0 then
+      if aConcept = iIdentity then
       begin
         Result := True;
         L := I;
@@ -2008,12 +2098,12 @@ begin
     end;
   end;
   if result then
-    Move(FMaster[L*12+1+8], iIndex, 4);
+    Move(FMaster[L*12+8], iIndex, 4);
 end;
 
 procedure TSnomedDescriptionIndex.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 { TSnomedReferenceSetMembers }
@@ -2022,18 +2112,18 @@ function TSnomedReferenceSetMembers.AddMembers(const a: TSnomedReferenceSetMembe
 var
   iLoop : Integer;
 Begin
-  result := FBuilder.Length + 1;
-  FBuilder.AddCardinalAsBytes(length(a));
+  result := FBuilder.Length;
+  FBuilder.AddCardinal(length(a));
   for iLoop := Low(a) to High(a) Do
   begin
-    FBuilder.AddByteAsBytes(a[iLoop].kind);
-    FBuilder.AddCardinalAsBytes(a[iLoop].Ref);
+    FBuilder.Append(a[iLoop].kind);
+    FBuilder.AddCardinal(a[iLoop].Ref);
   end;
 end;
 
 procedure TSnomedReferenceSetMembers.DoneBuild;
 begin
-  FMaster := FBuilder.AsString;
+  FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
   FBuilder.Free;
 end;
@@ -2076,7 +2166,7 @@ end;
 
 procedure TSnomedReferenceSetMembers.StartBuild;
 begin
-  FBuilder := TAnsiStringBuilder.Create;
+  FBuilder := TAdvBytesBuilder.Create;
 end;
 
 function TSnomedServices.buildValueSet(id : String): TFhirValueSet;
@@ -2088,19 +2178,19 @@ begin
   begin
     result := TFhirValueSet.Create;
     try
-      result.identifierST := id;
-      result.versionST := Version;
-      result.nameST := 'SNOMED CT Reference Set '+id.Substring(23);
-      result.descriptionST := GetDisplayName(id.Substring(23), '');
-      result.statusST := ValuesetStatusActive;
-      result.dateST := NowUTC;
+      result.identifier := id;
+      result.version := Version;
+      result.name := 'SNOMED CT Reference Set '+id.Substring(23);
+      result.description := GetDisplayName(id.Substring(23), '');
+      result.status := ValuesetStatusActive;
+      result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
-      inc.systemST := 'http://snomed.info/sct';
+      inc.system := 'http://snomed.info/sct';
       filt := inc.filterList.Append;
-      filt.property_ST := 'concept';
-      filt.opST := FilterOperatorIn;
-      filt.valueST := id.Substring(23);
+      filt.property_ := 'concept';
+      filt.op := FilterOperatorIn;
+      filt.value := id.Substring(23);
       result.link;
     finally
       result.free;
@@ -2110,19 +2200,19 @@ begin
   begin
     result := TFhirValueSet.Create;
     try
-      result.identifierST := id;
-      result.versionST := Version;
-      result.nameST := 'SNOMED CT Concept '+id.Substring(22)+' and descendents';
-      result.descriptionST := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(22), '');
-      result.statusST := ValuesetStatusActive;
-      result.dateST := NowUTC;
+      result.identifier := id;
+      result.version := Version;
+      result.name := 'SNOMED CT Concept '+id.Substring(22)+' and descendents';
+      result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(22), '');
+      result.status := ValuesetStatusActive;
+      result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
-      inc.systemST := 'http://snomed.info/sct';
+      inc.system := 'http://snomed.info/sct';
       filt := inc.filterList.Append;
-      filt.property_ST := 'concept';
-      filt.opST := FilterOperatorIsA;
-      filt.valueST := id.Substring(22);
+      filt.property_ := 'concept';
+      filt.op := FilterOperatorIsA;
+      filt.value := id.Substring(22);
       result.link;
     finally
       result.free;
@@ -2136,7 +2226,7 @@ end;
 function TSnomedServices.ChildCount(context: TCodeSystemProviderContext): integer;
 var
   i : integer;
-  Identity : int64;
+  Identity : UInt64;
   Flags, Group : Byte;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
@@ -2170,7 +2260,7 @@ end;
 
 function TSnomedServices.Code(context: TCodeSystemProviderContext): string;
 var
-  Identity : int64;
+  Identity : UInt64;
   Flags : Byte;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
@@ -2187,7 +2277,7 @@ end;
 function TSnomedServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 var
   i, c : integer;
-  Identity : int64;
+  Identity : UInt64;
   Flags, Group : Byte;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
@@ -2228,10 +2318,13 @@ begin
   result := '';
 end;
 
+(*
+not used?
+
 Function TSnomedServices.GetFSN(iDescriptions : TCardinalArray) : String;
 var
   iLoop : Integer;
-  iid : int64;
+  iid : UInt64;
   iString, iDummy, module, refsets, kind : Cardinal;
   iFlag : Byte;
   date : TSnomedDate;
@@ -2249,7 +2342,7 @@ End;
 Function TSnomedServices.GetPN(iDescriptions : TCardinalArray) : String;
 var
   iLoop : Integer;
-  iid : int64;
+  iid : UInt64;
   iString, iDummy, module, refsets, kind : Cardinal;
   date : TSnomedDate;
   iFlag : Byte;
@@ -2264,6 +2357,7 @@ begin
   if result = '' Then
     result := GetFSN(iDescriptions);
 End;
+*)
 
 function TSnomedServices.Display(context: TCodeSystemProviderContext): string;
 begin
@@ -2313,10 +2407,10 @@ end;
 
 function TSnomedServices.locate(code: String): TCodeSystemProviderContext;
 var
-  iId : Int64;
+  iId : UInt64;
   index : cardinal;
 begin
-  iId := StrToInt64Def(code, -1);
+  iId := StrToUInt64Def(code, 0);
   if Concept.FindConcept(iId, index) Then
     result := TCodeSystemProviderContext(index)
   else
@@ -2338,7 +2432,7 @@ begin
   TSnomedFilterContext(ctxt).free;
 end;
 
-function TSnomedServices.filterIsA(id : Int64): TCodeSystemProviderFilterContext;
+function TSnomedServices.filterIsA(id : UInt64): TCodeSystemProviderFilterContext;
 var
   res : TSnomedFilterContext;
   index : cardinal;
@@ -2354,7 +2448,7 @@ begin
   end;
 end;
 
-function TSnomedServices.filterIn(id : Int64): TCodeSystemProviderFilterContext;
+function TSnomedServices.filterIn(id : UInt64): TCodeSystemProviderFilterContext;
 var
   res : TSnomedFilterContext;
   index, members : cardinal;
@@ -2374,7 +2468,7 @@ end;
 
 function TSnomedServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
-  id : Int64;
+  id : UInt64;
 begin
   result := nil;
   if (prop = 'concept') and StringIsId(value, id) then
@@ -2418,6 +2512,7 @@ end;
 function TSnomedServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
 begin
 //  result := TSnomedFilterContext(ctxt).Members[;
+  result := nil;
 end;
 
 function TSnomedServices.locateIsA(code, parent: String): TCodeSystemProviderContext;

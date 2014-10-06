@@ -91,7 +91,6 @@ Type
     function determineResourceTypeKey(criteria : String; conn : TKDBConnection) : integer;
     procedure checkAcceptable(subscription : TFhirSubscription; session : TFHIRSession);
     procedure SeeNewSubscription(key, vkey : Integer; id : String; subscription : TFhirSubscription; session : TFHIRSession; conn : TKDBConnection);
-    procedure SetDatabase(const Value: TKDBManager);
     function ProcessSubscription(conn : TKDBConnection): Boolean;
     function ProcessNotification(conn : TKDBConnection): Boolean;
     function MeetsCriteria(criteria : String; typekey, key : integer; conn : TKDBConnection) : boolean;
@@ -160,7 +159,6 @@ procedure TSubscriptionManager.ApplyUpdateToResource(id: String; resource: TFhir
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
-  op : TFhirOperation;
 begin
   request := TFHIRRequest.Create;
   response := TFHIRResponse.Create;
@@ -180,9 +178,6 @@ begin
 end;
 
 procedure TSubscriptionManager.checkAcceptable(subscription: TFhirSubscription; session: TFHIRSession);
-var
-  i : integer;
-  ok : boolean;
 begin
   // permissions. Anyone who is authenticated can set up a subscription
 //  if (session <> nil) and (session.Name <> 'server') and (session.Name <> 'service') then // session is nil if we are reloading. Service is always allowed to create a subscription
@@ -197,13 +192,13 @@ begin
 //  end;                                                                           9
 
   // basic setup stuff
-  if subscription.channel.type_ST = SubscriptionChannelTypeNull then
+  if subscription.channel.type_ = SubscriptionChannelTypeNull then
     raise Exception.Create('A channel type must be specified');
-  if subscription.channel.type_ST in [SubscriptionChannelTypeWebsocket, SubscriptionChannelTypeMessage] then
-    raise Exception.Create('The channel type '+CODES_TFhirSubscriptionChannelType[subscription.channel.type_ST]+' is not supported');
-  if subscription.channel.urlST = '' then
+  if subscription.channel.type_ in [SubscriptionChannelTypeWebsocket, SubscriptionChannelTypeMessage] then
+    raise Exception.Create('The channel type '+CODES_TFhirSubscriptionChannelType[subscription.channel.type_]+' is not supported');
+  if subscription.channel.url = '' then
     raise Exception.Create('A channel URL must be specified');
-  if (subscription.channel.type_ST = SubscriptionChannelTypeSms) and not subscription.channel.urlST.StartsWith('tel:') then
+  if (subscription.channel.type_ = SubscriptionChannelTypeSms) and not subscription.channel.url.StartsWith('tel:') then
     raise Exception.Create('When the channel type is "sms", then the URL must start with "tel:"');
 end;
 
@@ -215,7 +210,7 @@ end;
 
 function TSubscriptionManager.getSummaryForChannel(subst: TFhirSubscription): String;
 begin
-  result := subst.channel.type_.value+#1+subst.channel.urlST+#1+subst.channel.payloadST+#0+subst.channel.headerST;
+  result := subst.channel.type_Object.value+#1+subst.channel.url+#1+subst.channel.payload+#0+subst.channel.header;
 end;
 
 procedure TSubscriptionManager.DoDropResource(key, vkey: Integer; internal : boolean);
@@ -260,12 +255,12 @@ end;
 
 procedure TSubscriptionManager.SeeNewSubscription(key, vkey: Integer; id : String; subscription: TFhirSubscription; session: TFHIRSession; conn : TKDBConnection);
 begin
-  if subscription.statusST in [SubscriptionStatusActive, SubscriptionStatusError] then
+  if subscription.status in [SubscriptionStatusActive, SubscriptionStatusError] then
   begin
     CheckAcceptable(subscription, session);
     DoDropResource(Key, 0, true); // delete any previously existing entry for this subscription
-    FSubscriptions.add(key, vkey, determineResourceTypeKey(subscription.criteriaST, conn), id, subscription.Link);
-    FSubscriptionTrackers.addorUpdate(key, getSummaryForChannel(subscription), subscription.statusST);
+    FSubscriptions.add(key, vkey, determineResourceTypeKey(subscription.criteria, conn), id, subscription.Link);
+    FSubscriptionTrackers.addorUpdate(key, getSummaryForChannel(subscription), subscription.status);
   end;
 end;
 
@@ -321,14 +316,14 @@ begin
     sender.Connect;
     msg := TIdMessage.Create(Nil);
     try
-      msg.Subject := subst.channel.headerST;
-      msg.Recipients.EMailAddresses := subst.channel.urlST.Replace('mailto:', '');
+      msg.Subject := subst.channel.header;
+      msg.Recipients.EMailAddresses := subst.channel.url.Replace('mailto:', '');
       msg.From.Text := SMTPSender;
-      if subst.channel.payloadST = '' then
+      if subst.channel.payload = '' then
         msg.Body.Text := 'An update has occurred'
       else
       begin
-        comp := MakeComposer('en', subst.channel.payloadST);
+        comp := MakeComposer('en', subst.channel.payload);
         try
           bs := TBytesStream.Create;
           try
@@ -360,7 +355,7 @@ var
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   stream : TMemoryStream;
 begin
-  if subst.channel.payloadST = '' then
+  if subst.channel.payload = '' then
   begin
     stream := TMemoryStream.Create;
     http := TIdHTTP.create(nil);
@@ -368,9 +363,9 @@ begin
     try
       http.IOHandler := ssl;
       ssl.SSLOptions.Mode := sslmClient;
-      if subst.channel.headerST <> '' then
-        http.Request.RawHeaders.Add(subst.channel.headerST);
-      http.Post(subst.channel.urlST, stream);
+      if subst.channel.header <> '' then
+        http.Request.RawHeaders.Add(subst.channel.header);
+      http.Post(subst.channel.url, stream);
     finally
       ssl.Free;
       http.Free;
@@ -379,7 +374,7 @@ begin
   end
   else
   begin
-    client := TFhirClient.create(subst.channel.urlST, subst.channel.payloadST.Contains('json'));
+    client := TFhirClient.create(subst.channel.url, subst.channel.payload.Contains('json'));
     try
       client.updateResource(id, res, tags);
     finally
@@ -397,12 +392,12 @@ begin
     client.Account := SMSAccount;
     client.Token := SMSToken;
     client.From := SMSFrom;
-    if subst.channel.urlST.StartsWith('tel:') then
-      client.dest := subst.channel.urlST.Substring(4)
+    if subst.channel.url.StartsWith('tel:') then
+      client.dest := subst.channel.url.Substring(4)
     else
-      client.dest := subst.channel.urlST;
-    if subst.channel.payloadST <> '' then
-      client.Body := subst.channel.payloadST
+      client.dest := subst.channel.url;
+    if subst.channel.payload <> '' then
+      client.Body := subst.channel.payload
     else
       client.Body := 'A new matching resource has been received';
     client.send;
@@ -411,10 +406,6 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.SetDatabase(const Value: TKDBManager);
-begin
-  FDatabase := Value;
-end;
 
 procedure TSubscriptionManager.Process;
 var
@@ -472,6 +463,7 @@ begin
   try
     conn.Execute;
     result := false;
+    done := false;
     repeat
       if conn.FetchNext then
       begin
@@ -500,11 +492,11 @@ begin
         try
           try
             for i := 0 to subst.tagList.Count - 1 do  
-              if (subst.tagList[i].termST <> '') and (subst.tagList[i].schemeST <> '') then
-                if not tags.HasTag(subst.tagList[i].schemeST, subst.tagList[i].termST) then
-                  tags.AddValue(subst.tagList[i].schemeST, subst.tagList[i].termST, subst.tagList[i].descriptionST);
+              if (subst.tagList[i].term <> '') and (subst.tagList[i].scheme <> '') then
+                if not tags.HasTag(subst.tagList[i].scheme, subst.tagList[i].term) then
+                  tags.AddValue(subst.tagList[i].scheme, subst.tagList[i].term, subst.tagList[i].description);
 
-            case subst.channel.type_ST of
+            case subst.channel.type_ of
               SubscriptionChannelTypeRestHook: sendByRest(id, res, subst, tags);
               SubscriptionChannelTypeEmail: sendByEmail(id, res, subst, tags);
               SubscriptionChannelTypeSms: sendBySms(id, res, subst, tags);
@@ -575,7 +567,7 @@ begin
       conn.StartTransact;
       try
         for i := 0 to list.Count - 1 do
-          if ((list[i].FResourceType = 0) or (list[i].FResourceType = ResourceTypeKey) ) and MeetsCriteria(list[i].Subscription.criteriaST, list[i].FResourceType, ResourceKey, conn) then
+          if ((list[i].FResourceType = 0) or (list[i].FResourceType = ResourceTypeKey) ) and MeetsCriteria(list[i].Subscription.criteria, list[i].FResourceType, ResourceKey, conn) then
             CreateNotification(ResourceVersionKey, list[i].FKey, conn);
          conn.ExecSQL('Update SubscriptionQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where SubscriptionQueueKey = '+inttostr(SubscriptionQueueKey));
          conn.Commit;
@@ -701,6 +693,7 @@ var
   subst : TFhirSubscription;
   id : string;
 begin
+  subst := nil;
   notify := false;
   FLock.Lock('notifysuccess');
   try
@@ -713,14 +706,14 @@ begin
       entry := FSubscriptions.getBykey(SubscriptionKey);
       id := entry.Id;
       subst := entry.FSubscription.Link;
-    end;      
+    end;
   finally
     FLock.Unlock;
   end;
   if notify then
   begin
-    subst.statusST := SubscriptionStatusActive;
-    subst.error := nil;
+    subst.status := SubscriptionStatusActive;
+    subst.error := '';
     ApplyUpdateToResource(id, subst);
   end;
 end;
@@ -734,7 +727,8 @@ var
   id : string;
 begin
   action := 0;
-  
+  subst := nil;
+
   FLock.Lock('notifysuccess');
   try
     tracker := FSubscriptionTrackers.getByKey(SubscriptionKey);
@@ -753,17 +747,17 @@ begin
       entry := FSubscriptions.getBykey(SubscriptionKey);
       id := entry.Id;
       subst := entry.FSubscription.Link;
-    end;      
+    end;
   finally
     FLock.Unlock;
   end;
   if action >  0then
   begin
     if action = 1 then
-      subst.statusST := SubscriptionStatusError
+      subst.status := SubscriptionStatusError
     else
-      subst.statusST := SubscriptionStatusOff;
-    subst.errorST := message;
+      subst.status := SubscriptionStatusOff;
+    subst.error := message;
     ApplyUpdateToResource(id, subst);
   end;
 end;

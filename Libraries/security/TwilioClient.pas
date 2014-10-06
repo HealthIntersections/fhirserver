@@ -53,7 +53,6 @@ var
   http : TIdHTTP;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   response : TMemoryStream;
-  s : String;
   url : String;
   params : TIdMultiPartFormDataStream;
 begin

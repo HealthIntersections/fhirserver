@@ -37,7 +37,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.82 generated Mon, Sep 15, 2014 02:19+1000
+// FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes;
@@ -312,16 +312,27 @@ Type
       Indicates the specific sign or symptom that was observed.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member severity
       The severity of the sign or symptom.
     }
-    property severity : TFhirEnum read FSeverity write SetSeverity;
-    {@member severityST
-      Typed access to The severity of the sign or symptom.
-    }
-    property severityST : TFhirReactionSeverity read GetSeverityST write SetSeverityST;
+    property severity : TFhirReactionSeverity read GetSeverityST write SetSeverityST;
+    property severityObject : TFhirEnum read FSeverity write SetSeverity;
 
+  end;
+
+
+  TFhirAdverseReactionSymptomListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirAdverseReactionSymptomList;
+    function GetCurrent : TFhirAdverseReactionSymptom;
+  public
+    Constructor Create(list : TFhirAdverseReactionSymptomList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirAdverseReactionSymptom read GetCurrent;
   end;
 
 
@@ -337,6 +348,7 @@ Type
     {!script hide}
     function Link : TFhirAdverseReactionSymptomList; Overload;
     function Clone : TFhirAdverseReactionSymptomList; Overload;
+    function GetEnumerator : TFhirAdverseReactionSymptomListEnumerator;
     {!script show}
     
 
@@ -349,7 +361,8 @@ Type
     {@member AddItem
       Add an already existing FhirAdverseReactionSymptom to the end of the list.
     }
-    procedure AddItem(value : TFhirAdverseReactionSymptom);
+    procedure AddItem(value : TFhirAdverseReactionSymptom); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -441,35 +454,43 @@ Type
     {@member date
       Identifies the initial date of the exposure that is suspected to be related to the reaction.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to Identifies the initial date of the exposure that is suspected to be related to the reaction.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member type_
       The type of exposure: Drug Administration, Immunization, Coincidental.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to The type of exposure: Drug Administration, Immunization, Coincidental.
-    }
-    property type_ST : TFhirExposureType read GetType_ST write SetType_ST;
+    property type_ : TFhirExposureType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member causalityExpectation
       A statement of how confident that the recorder was that this exposure caused the reaction.
     }
-    property causalityExpectation : TFhirEnum read FCausalityExpectation write SetCausalityExpectation;
-    {@member causalityExpectationST
-      Typed access to A statement of how confident that the recorder was that this exposure caused the reaction.
-    }
-    property causalityExpectationST : TFhirCausalityExpectation read GetCausalityExpectationST write SetCausalityExpectationST;
+    property causalityExpectation : TFhirCausalityExpectation read GetCausalityExpectationST write SetCausalityExpectationST;
+    property causalityExpectationObject : TFhirEnum read FCausalityExpectation write SetCausalityExpectation;
 
     {@member substance
       Substance that is presumed to have caused the adverse reaction.
     }
     property substance : TFhirResourceReference{TFhirSubstance} read FSubstance write SetSubstance;
+    property substanceObject : TFhirResourceReference{TFhirSubstance} read FSubstance write SetSubstance;
 
+  end;
+
+
+  TFhirAdverseReactionExposureListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirAdverseReactionExposureList;
+    function GetCurrent : TFhirAdverseReactionExposure;
+  public
+    Constructor Create(list : TFhirAdverseReactionExposureList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirAdverseReactionExposure read GetCurrent;
   end;
 
 
@@ -485,6 +506,7 @@ Type
     {!script hide}
     function Link : TFhirAdverseReactionExposureList; Overload;
     function Clone : TFhirAdverseReactionExposureList; Overload;
+    function GetEnumerator : TFhirAdverseReactionExposureListEnumerator;
     {!script show}
     
 
@@ -497,7 +519,8 @@ Type
     {@member AddItem
       Add an already existing FhirAdverseReactionExposure to the end of the list.
     }
-    procedure AddItem(value : TFhirAdverseReactionExposure);
+    procedure AddItem(value : TFhirAdverseReactionExposure); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -580,12 +603,27 @@ Type
       Indicates specific responsibility of an individual within the care plan.  E.g. "Primary physician", "Team coordinator", "Caregiver", etc.
     }
     property role : TFhirCodeableConcept read FRole write SetRole;
+    property roleObject : TFhirCodeableConcept read FRole write SetRole;
 
     {@member member
       The specific person or organization who is participating/expected to participate in the care plan.
     }
     property member : TFhirResourceReference{Resource} read FMember write SetMember;
+    property memberObject : TFhirResourceReference{Resource} read FMember write SetMember;
 
+  end;
+
+
+  TFhirCarePlanParticipantListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirCarePlanParticipantList;
+    function GetCurrent : TFhirCarePlanParticipant;
+  public
+    Constructor Create(list : TFhirCarePlanParticipantList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirCarePlanParticipant read GetCurrent;
   end;
 
 
@@ -601,6 +639,7 @@ Type
     {!script hide}
     function Link : TFhirCarePlanParticipantList; Overload;
     function Clone : TFhirCarePlanParticipantList; Overload;
+    function GetEnumerator : TFhirCarePlanParticipantListEnumerator;
     {!script show}
     
 
@@ -613,7 +652,8 @@ Type
     {@member AddItem
       Add an already existing FhirCarePlanParticipant to the end of the list.
     }
-    procedure AddItem(value : TFhirCarePlanParticipant);
+    procedure AddItem(value : TFhirCarePlanParticipant); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -704,35 +744,45 @@ Type
     {@member description
       Human-readable description of a specific desired objective of the care plan.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Human-readable description of a specific desired objective of the care plan.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member status
       Indicates whether the goal has been reached and is still considered relevant.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to Indicates whether the goal has been reached and is still considered relevant.
-    }
-    property statusST : TFhirCarePlanGoalStatus read GetStatusST write SetStatusST;
+    property status : TFhirCarePlanGoalStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member notes
       Any comments related to the goal.
     }
-    property notes : TFhirString read FNotes write SetNotes;
-    {@member notesST
+    {@member notes
       Typed access to Any comments related to the goal.
     }
-    property notesST : String read GetNotesST write SetNotesST;
+    property notes : String read GetNotesST write SetNotesST;
+    property notesObject : TFhirString read FNotes write SetNotes;
 
     {@member concernList
       The identified conditions that this goal relates to - the condition that caused it to be created, or that it is intended to address.
     }
     property concernList : TFhirResourceReferenceList{TFhirCondition} read FConcernList;
 
+  end;
+
+
+  TFhirCarePlanGoalListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirCarePlanGoalList;
+    function GetCurrent : TFhirCarePlanGoal;
+  public
+    Constructor Create(list : TFhirCarePlanGoalList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirCarePlanGoal read GetCurrent;
   end;
 
 
@@ -748,6 +798,7 @@ Type
     {!script hide}
     function Link : TFhirCarePlanGoalList; Overload;
     function Clone : TFhirCarePlanGoalList; Overload;
+    function GetEnumerator : TFhirCarePlanGoalListEnumerator;
     {!script show}
     
 
@@ -760,7 +811,8 @@ Type
     {@member AddItem
       Add an already existing FhirCarePlanGoal to the end of the list.
     }
-    procedure AddItem(value : TFhirCarePlanGoal);
+    procedure AddItem(value : TFhirCarePlanGoal); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -861,20 +913,17 @@ Type
     {@member status
       Identifies what progress is being made for the specific activity.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to Identifies what progress is being made for the specific activity.
-    }
-    property statusST : TFhirCarePlanActivityStatus read GetStatusST write SetStatusST;
+    property status : TFhirCarePlanActivityStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member prohibited
       If true, indicates that the described activity is one that must NOT be engaged in when following the plan.
     }
-    property prohibited : TFhirBoolean read FProhibited write SetProhibited;
-    {@member prohibitedST
+    {@member prohibited
       Typed access to If true, indicates that the described activity is one that must NOT be engaged in when following the plan.
     }
-    property prohibitedST : Boolean read GetProhibitedST write SetProhibitedST;
+    property prohibited : Boolean read GetProhibitedST write SetProhibitedST;
+    property prohibitedObject : TFhirBoolean read FProhibited write SetProhibited;
 
     {@member actionResultingList
       Resources that describe follow-on actions resulting from the plan, such as drug prescriptions, encounter records, appointments, etc.
@@ -884,22 +933,37 @@ Type
     {@member notes
       Notes about the execution of the activity.
     }
-    property notes : TFhirString read FNotes write SetNotes;
-    {@member notesST
+    {@member notes
       Typed access to Notes about the execution of the activity.
     }
-    property notesST : String read GetNotesST write SetNotesST;
+    property notes : String read GetNotesST write SetNotesST;
+    property notesObject : TFhirString read FNotes write SetNotes;
 
     {@member detail
       The details of the proposed activity represented in a specific resource.
     }
     property detail : TFhirResourceReference{Resource} read FDetail write SetDetail;
+    property detailObject : TFhirResourceReference{Resource} read FDetail write SetDetail;
 
     {@member simple
       A simple summary of details suitable for a general care plan system (e.g. form driven) that doesn't know about specific resources such as procedure etc.
     }
     property simple : TFhirCarePlanActivitySimple read FSimple write SetSimple;
+    property simpleObject : TFhirCarePlanActivitySimple read FSimple write SetSimple;
 
+  end;
+
+
+  TFhirCarePlanActivityListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirCarePlanActivityList;
+    function GetCurrent : TFhirCarePlanActivity;
+  public
+    Constructor Create(list : TFhirCarePlanActivityList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirCarePlanActivity read GetCurrent;
   end;
 
 
@@ -915,6 +979,7 @@ Type
     {!script hide}
     function Link : TFhirCarePlanActivityList; Overload;
     function Clone : TFhirCarePlanActivityList; Overload;
+    function GetEnumerator : TFhirCarePlanActivityListEnumerator;
     {!script show}
     
 
@@ -927,7 +992,8 @@ Type
     {@member AddItem
       Add an already existing FhirCarePlanActivity to the end of the list.
     }
-    procedure AddItem(value : TFhirCarePlanActivity);
+    procedure AddItem(value : TFhirCarePlanActivity); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -1026,26 +1092,26 @@ Type
     {@member category
       High-level categorization of the type of activity in a care plan.
     }
-    property category : TFhirEnum read FCategory write SetCategory;
-    {@member categoryST
-      Typed access to High-level categorization of the type of activity in a care plan.
-    }
-    property categoryST : TFhirCarePlanActivityCategory read GetCategoryST write SetCategoryST;
+    property category : TFhirCarePlanActivityCategory read GetCategoryST write SetCategoryST;
+    property categoryObject : TFhirEnum read FCategory write SetCategory;
 
     {@member code
       Detailed description of the type of activity.  E.g. What lab test, what procedure, what kind of encounter.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member timing
       The period, timing or frequency upon which the described activity is to occur.
     }
     property timing : TFhirType read FTiming write SetTiming;
+    property timingObject : TFhirType read FTiming write SetTiming;
 
     {@member location
       Identifies the facility where the activity will occur.  E.g. home, hospital, specific clinic, etc.
     }
     property location : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
+    property locationObject : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
 
     {@member performerList
       Identifies who's expected to be involved in the activity.
@@ -1056,26 +1122,42 @@ Type
       Identifies the food, drug or other product being consumed or supplied in the activity.
     }
     property product : TFhirResourceReference{Resource} read FProduct write SetProduct;
+    property productObject : TFhirResourceReference{Resource} read FProduct write SetProduct;
 
     {@member dailyAmount
       Identifies the quantity expected to be consumed in a given day.
     }
     property dailyAmount : TFhirQuantity read FDailyAmount write SetDailyAmount;
+    property dailyAmountObject : TFhirQuantity read FDailyAmount write SetDailyAmount;
 
     {@member quantity
       Identifies the quantity expected to be supplied.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member details
       This provides a textual description of constraints on the activity occurrence, including relation to other activities.  It may also include objectives, pre-conditions and end-conditions.  Finally, it may convey specifics about the activity such as body site, method, route, etc.
     }
-    property details : TFhirString read FDetails write SetDetails;
-    {@member detailsST
+    {@member details
       Typed access to This provides a textual description of constraints on the activity occurrence, including relation to other activities.  It may also include objectives, pre-conditions and end-conditions.  Finally, it may convey specifics about the activity such as body site, method, route, etc.
     }
-    property detailsST : String read GetDetailsST write SetDetailsST;
+    property details : String read GetDetailsST write SetDetailsST;
+    property detailsObject : TFhirString read FDetails write SetDetails;
 
+  end;
+
+
+  TFhirCarePlanActivitySimpleListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirCarePlanActivitySimpleList;
+    function GetCurrent : TFhirCarePlanActivitySimple;
+  public
+    Constructor Create(list : TFhirCarePlanActivitySimpleList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirCarePlanActivitySimple read GetCurrent;
   end;
 
 
@@ -1091,6 +1173,7 @@ Type
     {!script hide}
     function Link : TFhirCarePlanActivitySimpleList; Overload;
     function Clone : TFhirCarePlanActivitySimpleList; Overload;
+    function GetEnumerator : TFhirCarePlanActivitySimpleListEnumerator;
     {!script show}
     
 
@@ -1103,7 +1186,8 @@ Type
     {@member AddItem
       Add an already existing FhirCarePlanActivitySimple to the end of the list.
     }
-    procedure AddItem(value : TFhirCarePlanActivitySimple);
+    procedure AddItem(value : TFhirCarePlanActivitySimple); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -1190,25 +1274,36 @@ Type
     {@member mode
       The type of attestation the authenticator offers.
     }
-    property mode : TFhirEnumList read FMode;
-    {@member modeST
-      Typed access to The type of attestation the authenticator offers.
-    }
-    property modeST : TFhirCompositionAttestationModeList read GetModeST write SetModeST;
+    property mode : TFhirCompositionAttestationModeList read GetModeST write SetModeST;
+    property modeObject : TFhirEnumList read FMode;
     {@member time
       When composition was attested by the party.
     }
-    property time : TFhirDateTime read FTime write SetTime;
-    {@member timeST
+    {@member time
       Typed access to When composition was attested by the party.
     }
-    property timeST : TDateAndTime read GetTimeST write SetTimeST;
+    property time : TDateAndTime read GetTimeST write SetTimeST;
+    property timeObject : TFhirDateTime read FTime write SetTime;
 
     {@member party
       Who attested the composition in the specified way.
     }
     property party : TFhirResourceReference{Resource} read FParty write SetParty;
+    property partyObject : TFhirResourceReference{Resource} read FParty write SetParty;
 
+  end;
+
+
+  TFhirCompositionAttesterListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirCompositionAttesterList;
+    function GetCurrent : TFhirCompositionAttester;
+  public
+    Constructor Create(list : TFhirCompositionAttesterList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirCompositionAttester read GetCurrent;
   end;
 
 
@@ -1224,6 +1319,7 @@ Type
     {!script hide}
     function Link : TFhirCompositionAttesterList; Overload;
     function Clone : TFhirCompositionAttesterList; Overload;
+    function GetEnumerator : TFhirCompositionAttesterListEnumerator;
     {!script show}
     
 
@@ -1236,7 +1332,8 @@ Type
     {@member AddItem
       Add an already existing FhirCompositionAttester to the end of the list.
     }
-    procedure AddItem(value : TFhirCompositionAttester);
+    procedure AddItem(value : TFhirCompositionAttester); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -1324,12 +1421,26 @@ Type
       The period of time covered by the documentation. There is no assertion that the documentation is a complete representation for this period, only that it documents events during this time.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member detailList
       Full details for the event(s) the composition/documentation consents.
     }
     property detailList : TFhirResourceReferenceList{Resource} read FDetailList;
 
+  end;
+
+
+  TFhirCompositionEventListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirCompositionEventList;
+    function GetCurrent : TFhirCompositionEvent;
+  public
+    Constructor Create(list : TFhirCompositionEventList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirCompositionEvent read GetCurrent;
   end;
 
 
@@ -1345,6 +1456,7 @@ Type
     {!script hide}
     function Link : TFhirCompositionEventList; Overload;
     function Clone : TFhirCompositionEventList; Overload;
+    function GetEnumerator : TFhirCompositionEventListEnumerator;
     {!script show}
     
 
@@ -1357,7 +1469,8 @@ Type
     {@member AddItem
       Add an already existing FhirCompositionEvent to the end of the list.
     }
-    procedure AddItem(value : TFhirCompositionEvent);
+    procedure AddItem(value : TFhirCompositionEvent); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -1446,32 +1559,48 @@ Type
     {@member title
       The heading for this particular section.  This will be part of the rendered content for the document.
     }
-    property title : TFhirString read FTitle write SetTitle;
-    {@member titleST
+    {@member title
       Typed access to The heading for this particular section.  This will be part of the rendered content for the document.
     }
-    property titleST : String read GetTitleST write SetTitleST;
+    property title : String read GetTitleST write SetTitleST;
+    property titleObject : TFhirString read FTitle write SetTitle;
 
     {@member code
       A code identifying the kind of content contained within the section.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member subject
       Identifies the primary subject of the section.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member content
       Identifies the discrete data that provides the content for the section.
     }
     property content : TFhirResourceReference{Resource} read FContent write SetContent;
+    property contentObject : TFhirResourceReference{Resource} read FContent write SetContent;
 
     {@member sectionList
       A nested sub-section within this section.
     }
     property sectionList : TFhirCompositionSectionList read FSectionList;
 
+  end;
+
+
+  TFhirCompositionSectionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirCompositionSectionList;
+    function GetCurrent : TFhirCompositionSection;
+  public
+    Constructor Create(list : TFhirCompositionSectionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirCompositionSection read GetCurrent;
   end;
 
 
@@ -1487,6 +1616,7 @@ Type
     {!script hide}
     function Link : TFhirCompositionSectionList; Overload;
     function Clone : TFhirCompositionSectionList; Overload;
+    function GetEnumerator : TFhirCompositionSectionListEnumerator;
     {!script show}
     
 
@@ -1499,7 +1629,8 @@ Type
     {@member AddItem
       Add an already existing FhirCompositionSection to the end of the list.
     }
-    procedure AddItem(value : TFhirCompositionSection);
+    procedure AddItem(value : TFhirCompositionSection); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -1587,20 +1718,20 @@ Type
     {@member system
       System that defines the concept being mapped.
     }
-    property system : TFhirUri read FSystem write SetSystem;
-    {@member systemST
+    {@member system
       Typed access to System that defines the concept being mapped.
     }
-    property systemST : String read GetSystemST write SetSystemST;
+    property system : String read GetSystemST write SetSystemST;
+    property systemObject : TFhirUri read FSystem write SetSystem;
 
     {@member code
       Identifies concept being mapped.
     }
-    property code : TFhirCode read FCode write SetCode;
-    {@member codeST
+    {@member code
       Typed access to Identifies concept being mapped.
     }
-    property codeST : String read GetCodeST write SetCodeST;
+    property code : String read GetCodeST write SetCodeST;
+    property codeObject : TFhirCode read FCode write SetCode;
 
     {@member dependsOnList
       A set of additional dependencies for this mapping to hold. This mapping is only applicable if the specified concept can be resolved, and it has the specified value.
@@ -1612,6 +1743,19 @@ Type
     }
     property mapList : TFhirConceptMapConceptMapList read FMapList;
 
+  end;
+
+
+  TFhirConceptMapConceptListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMapConceptList;
+    function GetCurrent : TFhirConceptMapConcept;
+  public
+    Constructor Create(list : TFhirConceptMapConceptList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMapConcept read GetCurrent;
   end;
 
 
@@ -1627,6 +1771,7 @@ Type
     {!script hide}
     function Link : TFhirConceptMapConceptList; Overload;
     function Clone : TFhirConceptMapConceptList; Overload;
+    function GetEnumerator : TFhirConceptMapConceptListEnumerator;
     {!script show}
     
 
@@ -1639,7 +1784,8 @@ Type
     {@member AddItem
       Add an already existing FhirConceptMapConcept to the end of the list.
     }
-    procedure AddItem(value : TFhirConceptMapConcept);
+    procedure AddItem(value : TFhirConceptMapConcept); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -1729,30 +1875,43 @@ Type
     {@member concept
       A reference to a specific concept that holds a coded value. This can be an element in a FHIR resource, or a specific reference to a data element in a different specification (e.g. v2) or a general reference to a kind of data field, or a reference to a value set with an appropriately narrow definition.
     }
-    property concept : TFhirUri read FConcept write SetConcept;
-    {@member conceptST
+    {@member concept
       Typed access to A reference to a specific concept that holds a coded value. This can be an element in a FHIR resource, or a specific reference to a data element in a different specification (e.g. v2) or a general reference to a kind of data field, or a reference to a value set with an appropriately narrow definition.
     }
-    property conceptST : String read GetConceptST write SetConceptST;
+    property concept : String read GetConceptST write SetConceptST;
+    property conceptObject : TFhirUri read FConcept write SetConcept;
 
     {@member system
       System for a concept in the referenced concept.
     }
-    property system : TFhirUri read FSystem write SetSystem;
-    {@member systemST
+    {@member system
       Typed access to System for a concept in the referenced concept.
     }
-    property systemST : String read GetSystemST write SetSystemST;
+    property system : String read GetSystemST write SetSystemST;
+    property systemObject : TFhirUri read FSystem write SetSystem;
 
     {@member code
       Code for a concept in the referenced concept.
     }
-    property code : TFhirCode read FCode write SetCode;
-    {@member codeST
+    {@member code
       Typed access to Code for a concept in the referenced concept.
     }
-    property codeST : String read GetCodeST write SetCodeST;
+    property code : String read GetCodeST write SetCodeST;
+    property codeObject : TFhirCode read FCode write SetCode;
 
+  end;
+
+
+  TFhirConceptMapConceptDependsOnListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMapConceptDependsOnList;
+    function GetCurrent : TFhirConceptMapConceptDependsOn;
+  public
+    Constructor Create(list : TFhirConceptMapConceptDependsOnList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMapConceptDependsOn read GetCurrent;
   end;
 
 
@@ -1768,6 +1927,7 @@ Type
     {!script hide}
     function Link : TFhirConceptMapConceptDependsOnList; Overload;
     function Clone : TFhirConceptMapConceptDependsOnList; Overload;
+    function GetEnumerator : TFhirConceptMapConceptDependsOnListEnumerator;
     {!script show}
     
 
@@ -1780,7 +1940,8 @@ Type
     {@member AddItem
       Add an already existing FhirConceptMapConceptDependsOn to the end of the list.
     }
-    procedure AddItem(value : TFhirConceptMapConceptDependsOn);
+    procedure AddItem(value : TFhirConceptMapConceptDependsOn); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -1875,44 +2036,54 @@ Type
     {@member system
       System of the target.
     }
-    property system : TFhirUri read FSystem write SetSystem;
-    {@member systemST
+    {@member system
       Typed access to System of the target.
     }
-    property systemST : String read GetSystemST write SetSystemST;
+    property system : String read GetSystemST write SetSystemST;
+    property systemObject : TFhirUri read FSystem write SetSystem;
 
     {@member code
       Code that identifies the target concept.
     }
-    property code : TFhirCode read FCode write SetCode;
-    {@member codeST
+    {@member code
       Typed access to Code that identifies the target concept.
     }
-    property codeST : String read GetCodeST write SetCodeST;
+    property code : String read GetCodeST write SetCodeST;
+    property codeObject : TFhirCode read FCode write SetCode;
 
     {@member equivalence
       equal | equivalent | wider | subsumes | narrower | specialises | inexact | unmatched | disjoint.
     }
-    property equivalence : TFhirEnum read FEquivalence write SetEquivalence;
-    {@member equivalenceST
-      Typed access to equal | equivalent | wider | subsumes | narrower | specialises | inexact | unmatched | disjoint.
-    }
-    property equivalenceST : TFhirConceptEquivalence read GetEquivalenceST write SetEquivalenceST;
+    property equivalence : TFhirConceptEquivalence read GetEquivalenceST write SetEquivalenceST;
+    property equivalenceObject : TFhirEnum read FEquivalence write SetEquivalence;
 
     {@member comments
       Description of status/issues in mapping.
     }
-    property comments : TFhirString read FComments write SetComments;
-    {@member commentsST
+    {@member comments
       Typed access to Description of status/issues in mapping.
     }
-    property commentsST : String read GetCommentsST write SetCommentsST;
+    property comments : String read GetCommentsST write SetCommentsST;
+    property commentsObject : TFhirString read FComments write SetComments;
 
     {@member productList
       A set of additional outcomes from this mapping to other value sets. To properly execute this mapping, the specified value set must be mapped to some data element or source that is in context. The mapping may still be useful without a place for the additional data elements, but the equivalence cannot be relied on.
     }
     property productList : TFhirConceptMapConceptDependsOnList read FProductList;
 
+  end;
+
+
+  TFhirConceptMapConceptMapListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMapConceptMapList;
+    function GetCurrent : TFhirConceptMapConceptMap;
+  public
+    Constructor Create(list : TFhirConceptMapConceptMapList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMapConceptMap read GetCurrent;
   end;
 
 
@@ -1928,6 +2099,7 @@ Type
     {!script hide}
     function Link : TFhirConceptMapConceptMapList; Overload;
     function Clone : TFhirConceptMapConceptMapList; Overload;
+    function GetEnumerator : TFhirConceptMapConceptMapListEnumerator;
     {!script show}
     
 
@@ -1940,7 +2112,8 @@ Type
     {@member AddItem
       Add an already existing FhirConceptMapConceptMap to the end of the list.
     }
-    procedure AddItem(value : TFhirConceptMapConceptMap);
+    procedure AddItem(value : TFhirConceptMapConceptMap); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -2022,12 +2195,26 @@ Type
       A simple summary of the stage such as "Stage 3". The determination of the stage is disease-specific.
     }
     property summary : TFhirCodeableConcept read FSummary write SetSummary;
+    property summaryObject : TFhirCodeableConcept read FSummary write SetSummary;
 
     {@member assessmentList
       Reference to a formal record of the evidence on which the staging assessment is based.
     }
     property assessmentList : TFhirResourceReferenceList{Resource} read FAssessmentList;
 
+  end;
+
+
+  TFhirConditionStageListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConditionStageList;
+    function GetCurrent : TFhirConditionStage;
+  public
+    Constructor Create(list : TFhirConditionStageList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConditionStage read GetCurrent;
   end;
 
 
@@ -2043,6 +2230,7 @@ Type
     {!script hide}
     function Link : TFhirConditionStageList; Overload;
     function Clone : TFhirConditionStageList; Overload;
+    function GetEnumerator : TFhirConditionStageListEnumerator;
     {!script show}
     
 
@@ -2055,7 +2243,8 @@ Type
     {@member AddItem
       Add an already existing FhirConditionStage to the end of the list.
     }
-    procedure AddItem(value : TFhirConditionStage);
+    procedure AddItem(value : TFhirConditionStage); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -2137,12 +2326,26 @@ Type
       A manifestation or symptom that led to the recording of this condition.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member detailList
       Links to other relevant information, including pathology reports.
     }
     property detailList : TFhirResourceReferenceList{Resource} read FDetailList;
 
+  end;
+
+
+  TFhirConditionEvidenceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConditionEvidenceList;
+    function GetCurrent : TFhirConditionEvidence;
+  public
+    Constructor Create(list : TFhirConditionEvidenceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConditionEvidence read GetCurrent;
   end;
 
 
@@ -2158,6 +2361,7 @@ Type
     {!script hide}
     function Link : TFhirConditionEvidenceList; Overload;
     function Clone : TFhirConditionEvidenceList; Overload;
+    function GetEnumerator : TFhirConditionEvidenceListEnumerator;
     {!script show}
     
 
@@ -2170,7 +2374,8 @@ Type
     {@member AddItem
       Add an already existing FhirConditionEvidence to the end of the list.
     }
-    procedure AddItem(value : TFhirConditionEvidence);
+    procedure AddItem(value : TFhirConditionEvidence); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -2255,16 +2460,30 @@ Type
       Code that identifies the structural location.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member detail
       Detailed anatomical location information.
     }
-    property detail : TFhirString read FDetail write SetDetail;
-    {@member detailST
+    {@member detail
       Typed access to Detailed anatomical location information.
     }
-    property detailST : String read GetDetailST write SetDetailST;
+    property detail : String read GetDetailST write SetDetailST;
+    property detailObject : TFhirString read FDetail write SetDetail;
 
+  end;
+
+
+  TFhirConditionLocationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConditionLocationList;
+    function GetCurrent : TFhirConditionLocation;
+  public
+    Constructor Create(list : TFhirConditionLocationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConditionLocation read GetCurrent;
   end;
 
 
@@ -2280,6 +2499,7 @@ Type
     {!script hide}
     function Link : TFhirConditionLocationList; Overload;
     function Clone : TFhirConditionLocationList; Overload;
+    function GetEnumerator : TFhirConditionLocationListEnumerator;
     {!script show}
     
 
@@ -2292,7 +2512,8 @@ Type
     {@member AddItem
       Add an already existing FhirConditionLocation to the end of the list.
     }
-    procedure AddItem(value : TFhirConditionLocation);
+    procedure AddItem(value : TFhirConditionLocation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -2378,22 +2599,34 @@ Type
     {@member type_
       The type of relationship that this condition has to the related item.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to The type of relationship that this condition has to the related item.
-    }
-    property type_ST : TFhirConditionRelationshipType read GetType_ST write SetType_ST;
+    property type_ : TFhirConditionRelationshipType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member code
       Code that identifies the target of this relationship. The code takes the place of a detailed instance target.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member target
       Target of the relationship.
     }
     property target : TFhirResourceReference{Resource} read FTarget write SetTarget;
+    property targetObject : TFhirResourceReference{Resource} read FTarget write SetTarget;
 
+  end;
+
+
+  TFhirConditionRelatedItemListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConditionRelatedItemList;
+    function GetCurrent : TFhirConditionRelatedItem;
+  public
+    Constructor Create(list : TFhirConditionRelatedItemList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConditionRelatedItem read GetCurrent;
   end;
 
 
@@ -2409,6 +2642,7 @@ Type
     {!script hide}
     function Link : TFhirConditionRelatedItemList; Overload;
     function Clone : TFhirConditionRelatedItemList; Overload;
+    function GetEnumerator : TFhirConditionRelatedItemListEnumerator;
     {!script show}
     
 
@@ -2421,7 +2655,8 @@ Type
     {@member AddItem
       Add an already existing FhirConditionRelatedItem to the end of the list.
     }
-    procedure AddItem(value : TFhirConditionRelatedItem);
+    procedure AddItem(value : TFhirConditionRelatedItem); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -2511,30 +2746,43 @@ Type
     {@member name
       Name software is known by.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to Name software is known by.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member version
       The version identifier for the software covered by this statement.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to The version identifier for the software covered by this statement.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member releaseDate
       Date this version of the software released.
     }
-    property releaseDate : TFhirDateTime read FReleaseDate write SetReleaseDate;
-    {@member releaseDateST
+    {@member releaseDate
       Typed access to Date this version of the software released.
     }
-    property releaseDateST : TDateAndTime read GetReleaseDateST write SetReleaseDateST;
+    property releaseDate : TDateAndTime read GetReleaseDateST write SetReleaseDateST;
+    property releaseDateObject : TFhirDateTime read FReleaseDate write SetReleaseDate;
 
+  end;
+
+
+  TFhirConformanceSoftwareListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceSoftwareList;
+    function GetCurrent : TFhirConformanceSoftware;
+  public
+    Constructor Create(list : TFhirConformanceSoftwareList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceSoftware read GetCurrent;
   end;
 
 
@@ -2550,6 +2798,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceSoftwareList; Overload;
     function Clone : TFhirConformanceSoftwareList; Overload;
+    function GetEnumerator : TFhirConformanceSoftwareListEnumerator;
     {!script show}
     
 
@@ -2562,7 +2811,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceSoftware to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceSoftware);
+    procedure AddItem(value : TFhirConformanceSoftware); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -2648,21 +2898,34 @@ Type
     {@member description
       Information about the specific installation that this conformance statement relates to.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Information about the specific installation that this conformance statement relates to.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member url
       A base URL for the implementation.  This forms the base for REST interfaces as well as the mailbox and document interfaces.
     }
-    property url : TFhirUri read FUrl write SetUrl;
-    {@member urlST
+    {@member url
       Typed access to A base URL for the implementation.  This forms the base for REST interfaces as well as the mailbox and document interfaces.
     }
-    property urlST : String read GetUrlST write SetUrlST;
+    property url : String read GetUrlST write SetUrlST;
+    property urlObject : TFhirUri read FUrl write SetUrl;
 
+  end;
+
+
+  TFhirConformanceImplementationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceImplementationList;
+    function GetCurrent : TFhirConformanceImplementation;
+  public
+    Constructor Create(list : TFhirConformanceImplementationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceImplementation read GetCurrent;
   end;
 
 
@@ -2678,6 +2941,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceImplementationList; Overload;
     function Clone : TFhirConformanceImplementationList; Overload;
+    function GetEnumerator : TFhirConformanceImplementationListEnumerator;
     {!script show}
     
 
@@ -2690,7 +2954,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceImplementation to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceImplementation);
+    procedure AddItem(value : TFhirConformanceImplementation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -2782,25 +3047,23 @@ Type
     {@member mode
       Identifies whether this portion of the statement is describing ability to initiate or receive restful operations.
     }
-    property mode : TFhirEnum read FMode write SetMode;
-    {@member modeST
-      Typed access to Identifies whether this portion of the statement is describing ability to initiate or receive restful operations.
-    }
-    property modeST : TFhirRestfulConformanceMode read GetModeST write SetModeST;
+    property mode : TFhirRestfulConformanceMode read GetModeST write SetModeST;
+    property modeObject : TFhirEnum read FMode write SetMode;
 
     {@member documentation
       Information about the system's restful capabilities that apply across all applications, such as security.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to Information about the system's restful capabilities that apply across all applications, such as security.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
     {@member security
       Information about security of implementation.
     }
     property security : TFhirConformanceRestSecurity read FSecurity write SetSecurity;
+    property securityObject : TFhirConformanceRestSecurity read FSecurity write SetSecurity;
 
     {@member resourceList
       A specification of the restful capabilities of the solution for a specific resource type.
@@ -2825,6 +3088,19 @@ Type
   end;
 
 
+  TFhirConformanceRestListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceRestList;
+    function GetCurrent : TFhirConformanceRest;
+  public
+    Constructor Create(list : TFhirConformanceRestList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceRest read GetCurrent;
+  end;
+
+
   {@Class TFhirConformanceRestList
     A list of FhirConformanceRest
   }
@@ -2837,6 +3113,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceRestList; Overload;
     function Clone : TFhirConformanceRestList; Overload;
+    function GetEnumerator : TFhirConformanceRestListEnumerator;
     {!script show}
     
 
@@ -2849,7 +3126,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceRest to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRest);
+    procedure AddItem(value : TFhirConformanceRest); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -2937,11 +3215,11 @@ Type
     {@member cors
       Server adds CORS headers when responding to requests - this enables javascript applications to yuse the server.
     }
-    property cors : TFhirBoolean read FCors write SetCors;
-    {@member corsST
+    {@member cors
       Typed access to Server adds CORS headers when responding to requests - this enables javascript applications to yuse the server.
     }
-    property corsST : Boolean read GetCorsST write SetCorsST;
+    property cors : Boolean read GetCorsST write SetCorsST;
+    property corsObject : TFhirBoolean read FCors write SetCors;
 
     {@member serviceList
       Types of security services are supported/required by the system.
@@ -2951,17 +3229,30 @@ Type
     {@member description
       General description of how security works.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to General description of how security works.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member certificateList
       Certificates associated with security profiles.
     }
     property certificateList : TFhirConformanceRestSecurityCertificateList read FCertificateList;
 
+  end;
+
+
+  TFhirConformanceRestSecurityListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceRestSecurityList;
+    function GetCurrent : TFhirConformanceRestSecurity;
+  public
+    Constructor Create(list : TFhirConformanceRestSecurityList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceRestSecurity read GetCurrent;
   end;
 
 
@@ -2977,6 +3268,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceRestSecurityList; Overload;
     function Clone : TFhirConformanceRestSecurityList; Overload;
+    function GetEnumerator : TFhirConformanceRestSecurityListEnumerator;
     {!script show}
     
 
@@ -2989,7 +3281,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceRestSecurity to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRestSecurity);
+    procedure AddItem(value : TFhirConformanceRestSecurity); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -3075,21 +3368,34 @@ Type
     {@member type_
       Mime type for certificate.
     }
-    property type_ : TFhirCode read FType_ write SetType_;
-    {@member type_ST
+    {@member type_
       Typed access to Mime type for certificate.
     }
-    property type_ST : String read GetType_ST write SetType_ST;
+    property type_ : String read GetType_ST write SetType_ST;
+    property type_Object : TFhirCode read FType_ write SetType_;
 
     {@member blob
       Actual certificate.
     }
-    property blob : TFhirBase64Binary read FBlob write SetBlob;
-    {@member blobST
+    {@member blob
       Typed access to Actual certificate.
     }
-    property blobST : String read GetBlobST write SetBlobST;
+    property blob : String read GetBlobST write SetBlobST;
+    property blobObject : TFhirBase64Binary read FBlob write SetBlob;
 
+  end;
+
+
+  TFhirConformanceRestSecurityCertificateListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceRestSecurityCertificateList;
+    function GetCurrent : TFhirConformanceRestSecurityCertificate;
+  public
+    Constructor Create(list : TFhirConformanceRestSecurityCertificateList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceRestSecurityCertificate read GetCurrent;
   end;
 
 
@@ -3105,6 +3411,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceRestSecurityCertificateList; Overload;
     function Clone : TFhirConformanceRestSecurityCertificateList; Overload;
+    function GetEnumerator : TFhirConformanceRestSecurityCertificateListEnumerator;
     {!script show}
     
 
@@ -3117,7 +3424,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceRestSecurityCertificate to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRestSecurityCertificate);
+    procedure AddItem(value : TFhirConformanceRestSecurityCertificate); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -3212,16 +3520,17 @@ Type
     {@member type_
       A type of resource exposed via the restful interface.
     }
-    property type_ : TFhirCode read FType_ write SetType_;
-    {@member type_ST
+    {@member type_
       Typed access to A type of resource exposed via the restful interface.
     }
-    property type_ST : String read GetType_ST write SetType_ST;
+    property type_ : String read GetType_ST write SetType_ST;
+    property type_Object : TFhirCode read FType_ write SetType_;
 
     {@member profile
       A specification of the profile that describes the solution's support for the resource, including any constraints on cardinality, bindings, lengths or other limitations.
     }
     property profile : TFhirResourceReference{TFhirProfile} read FProfile write SetProfile;
+    property profileObject : TFhirResourceReference{TFhirProfile} read FProfile write SetProfile;
 
     {@member operationList
       Identifies a restful operation supported by the solution.
@@ -3231,20 +3540,20 @@ Type
     {@member readHistory
       A flag for whether the server is able to return past versions as part of the vRead operation.
     }
-    property readHistory : TFhirBoolean read FReadHistory write SetReadHistory;
-    {@member readHistoryST
+    {@member readHistory
       Typed access to A flag for whether the server is able to return past versions as part of the vRead operation.
     }
-    property readHistoryST : Boolean read GetReadHistoryST write SetReadHistoryST;
+    property readHistory : Boolean read GetReadHistoryST write SetReadHistoryST;
+    property readHistoryObject : TFhirBoolean read FReadHistory write SetReadHistory;
 
     {@member updateCreate
       A flag to indicate that the server allows the client to create new identities on the server. If the update operation is used (client) or allowed (server) to a new location where a resource doesn't already exist. This means that the server allows the client to create new identities on the server.
     }
-    property updateCreate : TFhirBoolean read FUpdateCreate write SetUpdateCreate;
-    {@member updateCreateST
+    {@member updateCreate
       Typed access to A flag to indicate that the server allows the client to create new identities on the server. If the update operation is used (client) or allowed (server) to a new location where a resource doesn't already exist. This means that the server allows the client to create new identities on the server.
     }
-    property updateCreateST : Boolean read GetUpdateCreateST write SetUpdateCreateST;
+    property updateCreate : Boolean read GetUpdateCreateST write SetUpdateCreateST;
+    property updateCreateObject : TFhirBoolean read FUpdateCreate write SetUpdateCreate;
 
     {@member searchIncludeList
       A list of _include values supported by the server.
@@ -3256,6 +3565,19 @@ Type
     }
     property searchParamList : TFhirConformanceRestResourceSearchParamList read FSearchParamList;
 
+  end;
+
+
+  TFhirConformanceRestResourceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceRestResourceList;
+    function GetCurrent : TFhirConformanceRestResource;
+  public
+    Constructor Create(list : TFhirConformanceRestResourceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceRestResource read GetCurrent;
   end;
 
 
@@ -3271,6 +3593,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceRestResourceList; Overload;
     function Clone : TFhirConformanceRestResourceList; Overload;
+    function GetEnumerator : TFhirConformanceRestResourceListEnumerator;
     {!script show}
     
 
@@ -3283,7 +3606,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceRestResource to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRestResource);
+    procedure AddItem(value : TFhirConformanceRestResource); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -3369,21 +3693,31 @@ Type
     {@member code
       Coded identifier of the operation, supported by the system resource.
     }
-    property code : TFhirEnum read FCode write SetCode;
-    {@member codeST
-      Typed access to Coded identifier of the operation, supported by the system resource.
-    }
-    property codeST : TFhirTypeRestfulOperation read GetCodeST write SetCodeST;
+    property code : TFhirTypeRestfulOperation read GetCodeST write SetCodeST;
+    property codeObject : TFhirEnum read FCode write SetCode;
 
     {@member documentation
       Guidance specific to the implementation of this operation, such as 'delete is a logical delete' or 'updates are only allowed with version id' or 'creates permitted from pre-authorized certificates only'.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to Guidance specific to the implementation of this operation, such as 'delete is a logical delete' or 'updates are only allowed with version id' or 'creates permitted from pre-authorized certificates only'.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
+  end;
+
+
+  TFhirConformanceRestResourceOperationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceRestResourceOperationList;
+    function GetCurrent : TFhirConformanceRestResourceOperation;
+  public
+    Constructor Create(list : TFhirConformanceRestResourceOperationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceRestResourceOperation read GetCurrent;
   end;
 
 
@@ -3399,6 +3733,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceRestResourceOperationList; Overload;
     function Clone : TFhirConformanceRestResourceOperationList; Overload;
+    function GetEnumerator : TFhirConformanceRestResourceOperationListEnumerator;
     {!script show}
     
 
@@ -3411,7 +3746,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceRestResourceOperation to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRestResourceOperation);
+    procedure AddItem(value : TFhirConformanceRestResourceOperation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -3507,38 +3843,35 @@ Type
     {@member name
       The name of the search parameter used in the interface.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to The name of the search parameter used in the interface.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member definition
       A formal reference to where this parameter was first defined, so that a client can be confident of the meaning of the search parameter.
     }
-    property definition : TFhirUri read FDefinition write SetDefinition;
-    {@member definitionST
+    {@member definition
       Typed access to A formal reference to where this parameter was first defined, so that a client can be confident of the meaning of the search parameter.
     }
-    property definitionST : String read GetDefinitionST write SetDefinitionST;
+    property definition : String read GetDefinitionST write SetDefinitionST;
+    property definitionObject : TFhirUri read FDefinition write SetDefinition;
 
     {@member type_
       The type of value a search parameter refers to, and how the content is interpreted.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to The type of value a search parameter refers to, and how the content is interpreted.
-    }
-    property type_ST : TFhirSearchParamType read GetType_ST write SetType_ST;
+    property type_ : TFhirSearchParamType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member documentation
       This allows documentation of any distinct behaviors about how the search parameter is used.  For example, text matching algorithms.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to This allows documentation of any distinct behaviors about how the search parameter is used.  For example, text matching algorithms.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
     {@member targetList
       Types of resource (if a resource is referenced).
@@ -3550,6 +3883,19 @@ Type
     }
     property chainList : TFhirStringList read FChainList;
 
+  end;
+
+
+  TFhirConformanceRestResourceSearchParamListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceRestResourceSearchParamList;
+    function GetCurrent : TFhirConformanceRestResourceSearchParam;
+  public
+    Constructor Create(list : TFhirConformanceRestResourceSearchParamList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceRestResourceSearchParam read GetCurrent;
   end;
 
 
@@ -3565,6 +3911,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceRestResourceSearchParamList; Overload;
     function Clone : TFhirConformanceRestResourceSearchParamList; Overload;
+    function GetEnumerator : TFhirConformanceRestResourceSearchParamListEnumerator;
     {!script show}
     
 
@@ -3577,7 +3924,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceRestResourceSearchParam to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRestResourceSearchParam);
+    procedure AddItem(value : TFhirConformanceRestResourceSearchParam); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -3663,21 +4011,31 @@ Type
     {@member code
       A coded identifier of the operation, supported by the system.
     }
-    property code : TFhirEnum read FCode write SetCode;
-    {@member codeST
-      Typed access to A coded identifier of the operation, supported by the system.
-    }
-    property codeST : TFhirSystemRestfulOperation read GetCodeST write SetCodeST;
+    property code : TFhirSystemRestfulOperation read GetCodeST write SetCodeST;
+    property codeObject : TFhirEnum read FCode write SetCode;
 
     {@member documentation
       Guidance specific to the implementation of this operation, such as limitations on the kind of transactions allowed, or information about system wide search is implemented.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to Guidance specific to the implementation of this operation, such as limitations on the kind of transactions allowed, or information about system wide search is implemented.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
+  end;
+
+
+  TFhirConformanceRestOperationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceRestOperationList;
+    function GetCurrent : TFhirConformanceRestOperation;
+  public
+    Constructor Create(list : TFhirConformanceRestOperationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceRestOperation read GetCurrent;
   end;
 
 
@@ -3693,6 +4051,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceRestOperationList; Overload;
     function Clone : TFhirConformanceRestOperationList; Overload;
+    function GetEnumerator : TFhirConformanceRestOperationListEnumerator;
     {!script show}
     
 
@@ -3705,7 +4064,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceRestOperation to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRestOperation);
+    procedure AddItem(value : TFhirConformanceRestOperation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -3796,35 +4156,48 @@ Type
     {@member name
       The name of a query, which is used in the _query parameter when the query is called.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to The name of a query, which is used in the _query parameter when the query is called.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member definition
       Identifies the custom query, defined either in FHIR core or another profile.
     }
-    property definition : TFhirUri read FDefinition write SetDefinition;
-    {@member definitionST
+    {@member definition
       Typed access to Identifies the custom query, defined either in FHIR core or another profile.
     }
-    property definitionST : String read GetDefinitionST write SetDefinitionST;
+    property definition : String read GetDefinitionST write SetDefinitionST;
+    property definitionObject : TFhirUri read FDefinition write SetDefinition;
 
     {@member documentation
       Additional information about how the query functions in this particular implementation.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to Additional information about how the query functions in this particular implementation.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
     {@member parameterList
       Identifies which of the parameters for the named query are supported.
     }
     property parameterList : TFhirConformanceRestResourceSearchParamList read FParameterList;
 
+  end;
+
+
+  TFhirConformanceRestQueryListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceRestQueryList;
+    function GetCurrent : TFhirConformanceRestQuery;
+  public
+    Constructor Create(list : TFhirConformanceRestQueryList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceRestQuery read GetCurrent;
   end;
 
 
@@ -3840,6 +4213,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceRestQueryList; Overload;
     function Clone : TFhirConformanceRestQueryList; Overload;
+    function GetEnumerator : TFhirConformanceRestQueryListEnumerator;
     {!script show}
     
 
@@ -3852,7 +4226,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceRestQuery to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceRestQuery);
+    procedure AddItem(value : TFhirConformanceRestQuery); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -3943,35 +4318,48 @@ Type
     {@member endpoint
       An address to which messages and/or replies are to be sent.
     }
-    property endpoint : TFhirUri read FEndpoint write SetEndpoint;
-    {@member endpointST
+    {@member endpoint
       Typed access to An address to which messages and/or replies are to be sent.
     }
-    property endpointST : String read GetEndpointST write SetEndpointST;
+    property endpoint : String read GetEndpointST write SetEndpointST;
+    property endpointObject : TFhirUri read FEndpoint write SetEndpoint;
 
     {@member reliableCache
       Length if the receiver's reliable messaging cache (if a receiver) or how long the cache length on the receiver should be (if a sender).
     }
-    property reliableCache : TFhirInteger read FReliableCache write SetReliableCache;
-    {@member reliableCacheST
+    {@member reliableCache
       Typed access to Length if the receiver's reliable messaging cache (if a receiver) or how long the cache length on the receiver should be (if a sender).
     }
-    property reliableCacheST : String read GetReliableCacheST write SetReliableCacheST;
+    property reliableCache : String read GetReliableCacheST write SetReliableCacheST;
+    property reliableCacheObject : TFhirInteger read FReliableCache write SetReliableCache;
 
     {@member documentation
       Documentation about the system's messaging capabilities for this endpoint not otherwise documented by the conformance statement.  For example, process for becoming an authorized messaging exchange partner.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to Documentation about the system's messaging capabilities for this endpoint not otherwise documented by the conformance statement.  For example, process for becoming an authorized messaging exchange partner.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
     {@member eventList
       A description of the solution's support for an event at this end point.
     }
     property eventList : TFhirConformanceMessagingEventList read FEventList;
 
+  end;
+
+
+  TFhirConformanceMessagingListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceMessagingList;
+    function GetCurrent : TFhirConformanceMessaging;
+  public
+    Constructor Create(list : TFhirConformanceMessagingList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceMessaging read GetCurrent;
   end;
 
 
@@ -3987,6 +4375,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceMessagingList; Overload;
     function Clone : TFhirConformanceMessagingList; Overload;
+    function GetEnumerator : TFhirConformanceMessagingListEnumerator;
     {!script show}
     
 
@@ -3999,7 +4388,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceMessaging to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceMessaging);
+    procedure AddItem(value : TFhirConformanceMessaging); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -4101,24 +4491,19 @@ Type
       A coded identifier of a supported messaging event.
     }
     property code : TFhirCoding read FCode write SetCode;
+    property codeObject : TFhirCoding read FCode write SetCode;
 
     {@member category
       The impact of the content of the message.
     }
-    property category : TFhirEnum read FCategory write SetCategory;
-    {@member categoryST
-      Typed access to The impact of the content of the message.
-    }
-    property categoryST : TFhirMessageSignificanceCategory read GetCategoryST write SetCategoryST;
+    property category : TFhirMessageSignificanceCategory read GetCategoryST write SetCategoryST;
+    property categoryObject : TFhirEnum read FCategory write SetCategory;
 
     {@member mode
       The mode of this event declaration - whether application is sender or receiver.
     }
-    property mode : TFhirEnum read FMode write SetMode;
-    {@member modeST
-      Typed access to The mode of this event declaration - whether application is sender or receiver.
-    }
-    property modeST : TFhirMessageConformanceEventMode read GetModeST write SetModeST;
+    property mode : TFhirMessageConformanceEventMode read GetModeST write SetModeST;
+    property modeObject : TFhirEnum read FMode write SetMode;
 
     {@member protocolList
       A list of the messaging transport protocol(s) identifiers, supported by this endpoint.
@@ -4128,31 +4513,46 @@ Type
     {@member focus
       A resource associated with the event.  This is the resource that defines the event.
     }
-    property focus : TFhirCode read FFocus write SetFocus;
-    {@member focusST
+    {@member focus
       Typed access to A resource associated with the event.  This is the resource that defines the event.
     }
-    property focusST : String read GetFocusST write SetFocusST;
+    property focus : String read GetFocusST write SetFocusST;
+    property focusObject : TFhirCode read FFocus write SetFocus;
 
     {@member request
       Information about the request for this event.
     }
     property request : TFhirResourceReference{TFhirProfile} read FRequest write SetRequest;
+    property requestObject : TFhirResourceReference{TFhirProfile} read FRequest write SetRequest;
 
     {@member response
       Information about the response for this event.
     }
     property response : TFhirResourceReference{TFhirProfile} read FResponse write SetResponse;
+    property responseObject : TFhirResourceReference{TFhirProfile} read FResponse write SetResponse;
 
     {@member documentation
       Guidance on how this event is handled, such as internal system trigger points, business rules, etc.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to Guidance on how this event is handled, such as internal system trigger points, business rules, etc.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
+  end;
+
+
+  TFhirConformanceMessagingEventListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceMessagingEventList;
+    function GetCurrent : TFhirConformanceMessagingEvent;
+  public
+    Constructor Create(list : TFhirConformanceMessagingEventList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceMessagingEvent read GetCurrent;
   end;
 
 
@@ -4168,6 +4568,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceMessagingEventList; Overload;
     function Clone : TFhirConformanceMessagingEventList; Overload;
+    function GetEnumerator : TFhirConformanceMessagingEventListEnumerator;
     {!script show}
     
 
@@ -4180,7 +4581,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceMessagingEvent to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceMessagingEvent);
+    procedure AddItem(value : TFhirConformanceMessagingEvent); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -4268,26 +4670,37 @@ Type
     {@member mode
       Mode of this document declaration - whether application is producer or consumer.
     }
-    property mode : TFhirEnum read FMode write SetMode;
-    {@member modeST
-      Typed access to Mode of this document declaration - whether application is producer or consumer.
-    }
-    property modeST : TFhirDocumentMode read GetModeST write SetModeST;
+    property mode : TFhirDocumentMode read GetModeST write SetModeST;
+    property modeObject : TFhirEnum read FMode write SetMode;
 
     {@member documentation
       A description of how the application supports or uses the specified document profile.  For example, when are documents created, what action is taken with consumed documents, etc.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to A description of how the application supports or uses the specified document profile.  For example, when are documents created, what action is taken with consumed documents, etc.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
     {@member profile
       A constraint on a resource used in the document.
     }
     property profile : TFhirResourceReference{TFhirProfile} read FProfile write SetProfile;
+    property profileObject : TFhirResourceReference{TFhirProfile} read FProfile write SetProfile;
 
+  end;
+
+
+  TFhirConformanceDocumentListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirConformanceDocumentList;
+    function GetCurrent : TFhirConformanceDocument;
+  public
+    Constructor Create(list : TFhirConformanceDocumentList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConformanceDocument read GetCurrent;
   end;
 
 
@@ -4303,6 +4716,7 @@ Type
     {!script hide}
     function Link : TFhirConformanceDocumentList; Overload;
     function Clone : TFhirConformanceDocumentList; Overload;
+    function GetEnumerator : TFhirConformanceDocumentListEnumerator;
     {!script show}
     
 
@@ -4315,7 +4729,8 @@ Type
     {@member AddItem
       Add an already existing FhirConformanceDocument to the end of the list.
     }
-    procedure AddItem(value : TFhirConformanceDocument);
+    procedure AddItem(value : TFhirConformanceDocument); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -4397,12 +4812,26 @@ Type
       Describes the compartment.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member channelList
       Groups together physiological measurement data and derived data.
     }
     property channelList : TFhirDeviceObservationReportVirtualDeviceChannelList read FChannelList;
 
+  end;
+
+
+  TFhirDeviceObservationReportVirtualDeviceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDeviceObservationReportVirtualDeviceList;
+    function GetCurrent : TFhirDeviceObservationReportVirtualDevice;
+  public
+    Constructor Create(list : TFhirDeviceObservationReportVirtualDeviceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDeviceObservationReportVirtualDevice read GetCurrent;
   end;
 
 
@@ -4418,6 +4847,7 @@ Type
     {!script hide}
     function Link : TFhirDeviceObservationReportVirtualDeviceList; Overload;
     function Clone : TFhirDeviceObservationReportVirtualDeviceList; Overload;
+    function GetEnumerator : TFhirDeviceObservationReportVirtualDeviceListEnumerator;
     {!script show}
     
 
@@ -4430,7 +4860,8 @@ Type
     {@member AddItem
       Add an already existing FhirDeviceObservationReportVirtualDevice to the end of the list.
     }
-    procedure AddItem(value : TFhirDeviceObservationReportVirtualDevice);
+    procedure AddItem(value : TFhirDeviceObservationReportVirtualDevice); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -4512,12 +4943,26 @@ Type
       Describes the channel.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member metricList
       A piece of measured or derived data that is reported by the machine.
     }
     property metricList : TFhirDeviceObservationReportVirtualDeviceChannelMetricList read FMetricList;
 
+  end;
+
+
+  TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDeviceObservationReportVirtualDeviceChannelList;
+    function GetCurrent : TFhirDeviceObservationReportVirtualDeviceChannel;
+  public
+    Constructor Create(list : TFhirDeviceObservationReportVirtualDeviceChannelList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDeviceObservationReportVirtualDeviceChannel read GetCurrent;
   end;
 
 
@@ -4533,6 +4978,7 @@ Type
     {!script hide}
     function Link : TFhirDeviceObservationReportVirtualDeviceChannelList; Overload;
     function Clone : TFhirDeviceObservationReportVirtualDeviceChannelList; Overload;
+    function GetEnumerator : TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator;
     {!script show}
     
 
@@ -4545,7 +4991,8 @@ Type
     {@member AddItem
       Add an already existing FhirDeviceObservationReportVirtualDeviceChannel to the end of the list.
     }
-    procedure AddItem(value : TFhirDeviceObservationReportVirtualDeviceChannel);
+    procedure AddItem(value : TFhirDeviceObservationReportVirtualDeviceChannel); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -4626,7 +5073,21 @@ Type
       The data for the metric.
     }
     property observation : TFhirResourceReference{TFhirObservation} read FObservation write SetObservation;
+    property observationObject : TFhirResourceReference{TFhirObservation} read FObservation write SetObservation;
 
+  end;
+
+
+  TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDeviceObservationReportVirtualDeviceChannelMetricList;
+    function GetCurrent : TFhirDeviceObservationReportVirtualDeviceChannelMetric;
+  public
+    Constructor Create(list : TFhirDeviceObservationReportVirtualDeviceChannelMetricList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDeviceObservationReportVirtualDeviceChannelMetric read GetCurrent;
   end;
 
 
@@ -4642,6 +5103,7 @@ Type
     {!script hide}
     function Link : TFhirDeviceObservationReportVirtualDeviceChannelMetricList; Overload;
     function Clone : TFhirDeviceObservationReportVirtualDeviceChannelMetricList; Overload;
+    function GetEnumerator : TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator;
     {!script show}
     
 
@@ -4654,7 +5116,8 @@ Type
     {@member AddItem
       Add an already existing FhirDeviceObservationReportVirtualDeviceChannelMetric to the end of the list.
     }
-    procedure AddItem(value : TFhirDeviceObservationReportVirtualDeviceChannelMetric);
+    procedure AddItem(value : TFhirDeviceObservationReportVirtualDeviceChannelMetric); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -4744,31 +5207,43 @@ Type
     {@member status
       The status for the event.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status for the event.
-    }
-    property statusST : TFhirDiagnosticOrderStatus read GetStatusST write SetStatusST;
+    property status : TFhirDiagnosticOrderStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member description
       Additional information about the event that occurred - e.g. if the status remained unchanged.
     }
     property description : TFhirCodeableConcept read FDescription write SetDescription;
+    property descriptionObject : TFhirCodeableConcept read FDescription write SetDescription;
 
     {@member dateTime
       The date/time at which the event occurred.
     }
-    property dateTime : TFhirDateTime read FDateTime write SetDateTime;
-    {@member dateTimeST
+    {@member dateTime
       Typed access to The date/time at which the event occurred.
     }
-    property dateTimeST : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTime : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTimeObject : TFhirDateTime read FDateTime write SetDateTime;
 
     {@member actor
       The person who was responsible for performing or recording the action.
     }
     property actor : TFhirResourceReference{Resource} read FActor write SetActor;
+    property actorObject : TFhirResourceReference{Resource} read FActor write SetActor;
 
+  end;
+
+
+  TFhirDiagnosticOrderEventListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDiagnosticOrderEventList;
+    function GetCurrent : TFhirDiagnosticOrderEvent;
+  public
+    Constructor Create(list : TFhirDiagnosticOrderEventList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDiagnosticOrderEvent read GetCurrent;
   end;
 
 
@@ -4784,6 +5259,7 @@ Type
     {!script hide}
     function Link : TFhirDiagnosticOrderEventList; Overload;
     function Clone : TFhirDiagnosticOrderEventList; Overload;
+    function GetEnumerator : TFhirDiagnosticOrderEventListEnumerator;
     {!script show}
     
 
@@ -4796,7 +5272,8 @@ Type
     {@member AddItem
       Add an already existing FhirDiagnosticOrderEvent to the end of the list.
     }
-    procedure AddItem(value : TFhirDiagnosticOrderEvent);
+    procedure AddItem(value : TFhirDiagnosticOrderEvent); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -4885,6 +5362,7 @@ Type
       A code that identifies a particular diagnostic investigation, or panel of investigations, that have been requested.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member specimenList
       If the item is related to a specific speciment.
@@ -4895,21 +5373,32 @@ Type
       Anatomical location where the request test should be performed.
     }
     property bodySite : TFhirCodeableConcept read FBodySite write SetBodySite;
+    property bodySiteObject : TFhirCodeableConcept read FBodySite write SetBodySite;
 
     {@member status
       The status of this individual item within the order.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of this individual item within the order.
-    }
-    property statusST : TFhirDiagnosticOrderStatus read GetStatusST write SetStatusST;
+    property status : TFhirDiagnosticOrderStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member eventList
       A summary of the events of interest that have occurred as this item of the request is processed.
     }
     property eventList : TFhirDiagnosticOrderEventList read FEventList;
 
+  end;
+
+
+  TFhirDiagnosticOrderItemListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDiagnosticOrderItemList;
+    function GetCurrent : TFhirDiagnosticOrderItem;
+  public
+    Constructor Create(list : TFhirDiagnosticOrderItemList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDiagnosticOrderItem read GetCurrent;
   end;
 
 
@@ -4925,6 +5414,7 @@ Type
     {!script hide}
     function Link : TFhirDiagnosticOrderItemList; Overload;
     function Clone : TFhirDiagnosticOrderItemList; Overload;
+    function GetEnumerator : TFhirDiagnosticOrderItemListEnumerator;
     {!script show}
     
 
@@ -4937,7 +5427,8 @@ Type
     {@member AddItem
       Add an already existing FhirDiagnosticOrderItem to the end of the list.
     }
-    procedure AddItem(value : TFhirDiagnosticOrderItem);
+    procedure AddItem(value : TFhirDiagnosticOrderItem); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -5021,17 +5512,31 @@ Type
     {@member comment
       A comment about the image. Typically, this is used to provide an explanation for why the image is included, or to draw the viewer's attention to important features.
     }
-    property comment : TFhirString read FComment write SetComment;
-    {@member commentST
+    {@member comment
       Typed access to A comment about the image. Typically, this is used to provide an explanation for why the image is included, or to draw the viewer's attention to important features.
     }
-    property commentST : String read GetCommentST write SetCommentST;
+    property comment : String read GetCommentST write SetCommentST;
+    property commentObject : TFhirString read FComment write SetComment;
 
     {@member link_
       Reference to the image source.
     }
     property link_ : TFhirResourceReference{TFhirMedia} read FLink_ write SetLink_;
+    property link_Object : TFhirResourceReference{TFhirMedia} read FLink_ write SetLink_;
 
+  end;
+
+
+  TFhirDiagnosticReportImageListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDiagnosticReportImageList;
+    function GetCurrent : TFhirDiagnosticReportImage;
+  public
+    Constructor Create(list : TFhirDiagnosticReportImageList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDiagnosticReportImage read GetCurrent;
   end;
 
 
@@ -5047,6 +5552,7 @@ Type
     {!script hide}
     function Link : TFhirDiagnosticReportImageList; Overload;
     function Clone : TFhirDiagnosticReportImageList; Overload;
+    function GetEnumerator : TFhirDiagnosticReportImageListEnumerator;
     {!script show}
     
 
@@ -5059,7 +5565,8 @@ Type
     {@member AddItem
       Add an already existing FhirDiagnosticReportImage to the end of the list.
     }
-    procedure AddItem(value : TFhirDiagnosticReportImage);
+    procedure AddItem(value : TFhirDiagnosticReportImage); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -5143,17 +5650,28 @@ Type
     {@member code
       The type of relationship that this document has with anther document.
     }
-    property code : TFhirEnum read FCode write SetCode;
-    {@member codeST
-      Typed access to The type of relationship that this document has with anther document.
-    }
-    property codeST : TFhirDocumentRelationshipType read GetCodeST write SetCodeST;
+    property code : TFhirDocumentRelationshipType read GetCodeST write SetCodeST;
+    property codeObject : TFhirEnum read FCode write SetCode;
 
     {@member target
       The target document of this relationship.
     }
     property target : TFhirResourceReference{TFhirDocumentReference} read FTarget write SetTarget;
+    property targetObject : TFhirResourceReference{TFhirDocumentReference} read FTarget write SetTarget;
 
+  end;
+
+
+  TFhirDocumentReferenceRelatesToListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDocumentReferenceRelatesToList;
+    function GetCurrent : TFhirDocumentReferenceRelatesTo;
+  public
+    Constructor Create(list : TFhirDocumentReferenceRelatesToList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDocumentReferenceRelatesTo read GetCurrent;
   end;
 
 
@@ -5169,6 +5687,7 @@ Type
     {!script hide}
     function Link : TFhirDocumentReferenceRelatesToList; Overload;
     function Clone : TFhirDocumentReferenceRelatesToList; Overload;
+    function GetEnumerator : TFhirDocumentReferenceRelatesToListEnumerator;
     {!script show}
     
 
@@ -5181,7 +5700,8 @@ Type
     {@member AddItem
       Add an already existing FhirDocumentReferenceRelatesTo to the end of the list.
     }
-    procedure AddItem(value : TFhirDocumentReferenceRelatesTo);
+    procedure AddItem(value : TFhirDocumentReferenceRelatesTo); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -5267,21 +5787,35 @@ Type
       The type of the service that can be used to access the documents.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member address
       Where the service end-point is located.
     }
-    property address : TFhirString read FAddress write SetAddress;
-    {@member addressST
+    {@member address
       Typed access to Where the service end-point is located.
     }
-    property addressST : String read GetAddressST write SetAddressST;
+    property address : String read GetAddressST write SetAddressST;
+    property addressObject : TFhirString read FAddress write SetAddress;
 
     {@member parameterList
       A list of named parameters that is used in the service call.
     }
     property parameterList : TFhirDocumentReferenceServiceParameterList read FParameterList;
 
+  end;
+
+
+  TFhirDocumentReferenceServiceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDocumentReferenceServiceList;
+    function GetCurrent : TFhirDocumentReferenceService;
+  public
+    Constructor Create(list : TFhirDocumentReferenceServiceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDocumentReferenceService read GetCurrent;
   end;
 
 
@@ -5297,6 +5831,7 @@ Type
     {!script hide}
     function Link : TFhirDocumentReferenceServiceList; Overload;
     function Clone : TFhirDocumentReferenceServiceList; Overload;
+    function GetEnumerator : TFhirDocumentReferenceServiceListEnumerator;
     {!script show}
     
 
@@ -5309,7 +5844,8 @@ Type
     {@member AddItem
       Add an already existing FhirDocumentReferenceService to the end of the list.
     }
-    procedure AddItem(value : TFhirDocumentReferenceService);
+    procedure AddItem(value : TFhirDocumentReferenceService); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -5395,21 +5931,34 @@ Type
     {@member name
       The name of a parameter.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to The name of a parameter.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member value
       The value of the named parameter.
     }
-    property value : TFhirString read FValue write SetValue;
-    {@member valueST
+    {@member value
       Typed access to The value of the named parameter.
     }
-    property valueST : String read GetValueST write SetValueST;
+    property value : String read GetValueST write SetValueST;
+    property valueObject : TFhirString read FValue write SetValue;
 
+  end;
+
+
+  TFhirDocumentReferenceServiceParameterListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDocumentReferenceServiceParameterList;
+    function GetCurrent : TFhirDocumentReferenceServiceParameter;
+  public
+    Constructor Create(list : TFhirDocumentReferenceServiceParameterList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDocumentReferenceServiceParameter read GetCurrent;
   end;
 
 
@@ -5425,6 +5974,7 @@ Type
     {!script hide}
     function Link : TFhirDocumentReferenceServiceParameterList; Overload;
     function Clone : TFhirDocumentReferenceServiceParameterList; Overload;
+    function GetEnumerator : TFhirDocumentReferenceServiceParameterListEnumerator;
     {!script show}
     
 
@@ -5437,7 +5987,8 @@ Type
     {@member AddItem
       Add an already existing FhirDocumentReferenceServiceParameter to the end of the list.
     }
-    procedure AddItem(value : TFhirDocumentReferenceServiceParameter);
+    procedure AddItem(value : TFhirDocumentReferenceServiceParameter); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -5526,12 +6077,27 @@ Type
       The time period over which the service that is described by the document was provided.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member facilityType
       The kind of facility where the patient was seen.
     }
     property facilityType : TFhirCodeableConcept read FFacilityType write SetFacilityType;
+    property facilityTypeObject : TFhirCodeableConcept read FFacilityType write SetFacilityType;
 
+  end;
+
+
+  TFhirDocumentReferenceContextListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirDocumentReferenceContextList;
+    function GetCurrent : TFhirDocumentReferenceContext;
+  public
+    Constructor Create(list : TFhirDocumentReferenceContextList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDocumentReferenceContext read GetCurrent;
   end;
 
 
@@ -5547,6 +6113,7 @@ Type
     {!script hide}
     function Link : TFhirDocumentReferenceContextList; Overload;
     function Clone : TFhirDocumentReferenceContextList; Overload;
+    function GetEnumerator : TFhirDocumentReferenceContextListEnumerator;
     {!script show}
     
 
@@ -5559,7 +6126,8 @@ Type
     {@member AddItem
       Add an already existing FhirDocumentReferenceContext to the end of the list.
     }
-    procedure AddItem(value : TFhirDocumentReferenceContext);
+    procedure AddItem(value : TFhirDocumentReferenceContext); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -5646,7 +6214,21 @@ Type
       Persons involved in the encounter other than the patient.
     }
     property individual : TFhirResourceReference{Resource} read FIndividual write SetIndividual;
+    property individualObject : TFhirResourceReference{Resource} read FIndividual write SetIndividual;
 
+  end;
+
+
+  TFhirEncounterParticipantListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirEncounterParticipantList;
+    function GetCurrent : TFhirEncounterParticipant;
+  public
+    Constructor Create(list : TFhirEncounterParticipantList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirEncounterParticipant read GetCurrent;
   end;
 
 
@@ -5662,6 +6244,7 @@ Type
     {!script hide}
     function Link : TFhirEncounterParticipantList; Overload;
     function Clone : TFhirEncounterParticipantList; Overload;
+    function GetEnumerator : TFhirEncounterParticipantListEnumerator;
     {!script show}
     
 
@@ -5674,7 +6257,8 @@ Type
     {@member AddItem
       Add an already existing FhirEncounterParticipant to the end of the list.
     }
-    procedure AddItem(value : TFhirEncounterParticipant);
+    procedure AddItem(value : TFhirEncounterParticipant); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -5776,21 +6360,25 @@ Type
       Pre-admission identifier.
     }
     property preAdmissionIdentifier : TFhirIdentifier read FPreAdmissionIdentifier write SetPreAdmissionIdentifier;
+    property preAdmissionIdentifierObject : TFhirIdentifier read FPreAdmissionIdentifier write SetPreAdmissionIdentifier;
 
     {@member origin
       The location from which the patient came before admission.
     }
     property origin : TFhirResourceReference{TFhirLocation} read FOrigin write SetOrigin;
+    property originObject : TFhirResourceReference{TFhirLocation} read FOrigin write SetOrigin;
 
     {@member admitSource
       From where patient was admitted (physician referral, transfer).
     }
     property admitSource : TFhirCodeableConcept read FAdmitSource write SetAdmitSource;
+    property admitSourceObject : TFhirCodeableConcept read FAdmitSource write SetAdmitSource;
 
     {@member period
       Period during which the patient was admitted.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member accomodationList
       Where the patient stays during this encounter.
@@ -5801,6 +6389,7 @@ Type
       Dietary restrictions for the patient.
     }
     property diet : TFhirCodeableConcept read FDiet write SetDiet;
+    property dietObject : TFhirCodeableConcept read FDiet write SetDiet;
 
     {@member specialCourtesyList
       Special courtesies (VIP, board member).
@@ -5816,26 +6405,42 @@ Type
       Location to which the patient is discharged.
     }
     property destination : TFhirResourceReference{TFhirLocation} read FDestination write SetDestination;
+    property destinationObject : TFhirResourceReference{TFhirLocation} read FDestination write SetDestination;
 
     {@member dischargeDisposition
       Category or kind of location after discharge.
     }
     property dischargeDisposition : TFhirCodeableConcept read FDischargeDisposition write SetDischargeDisposition;
+    property dischargeDispositionObject : TFhirCodeableConcept read FDischargeDisposition write SetDischargeDisposition;
 
     {@member dischargeDiagnosis
       The final diagnosis given a patient before release from the hospital after all testing, surgery, and workup are complete.
     }
     property dischargeDiagnosis : TFhirResourceReference{Resource} read FDischargeDiagnosis write SetDischargeDiagnosis;
+    property dischargeDiagnosisObject : TFhirResourceReference{Resource} read FDischargeDiagnosis write SetDischargeDiagnosis;
 
     {@member reAdmission
       Whether this hospitalization is a readmission.
     }
-    property reAdmission : TFhirBoolean read FReAdmission write SetReAdmission;
-    {@member reAdmissionST
+    {@member reAdmission
       Typed access to Whether this hospitalization is a readmission.
     }
-    property reAdmissionST : Boolean read GetReAdmissionST write SetReAdmissionST;
+    property reAdmission : Boolean read GetReAdmissionST write SetReAdmissionST;
+    property reAdmissionObject : TFhirBoolean read FReAdmission write SetReAdmission;
 
+  end;
+
+
+  TFhirEncounterHospitalizationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirEncounterHospitalizationList;
+    function GetCurrent : TFhirEncounterHospitalization;
+  public
+    Constructor Create(list : TFhirEncounterHospitalizationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirEncounterHospitalization read GetCurrent;
   end;
 
 
@@ -5851,6 +6456,7 @@ Type
     {!script hide}
     function Link : TFhirEncounterHospitalizationList; Overload;
     function Clone : TFhirEncounterHospitalizationList; Overload;
+    function GetEnumerator : TFhirEncounterHospitalizationListEnumerator;
     {!script show}
     
 
@@ -5863,7 +6469,8 @@ Type
     {@member AddItem
       Add an already existing FhirEncounterHospitalization to the end of the list.
     }
-    procedure AddItem(value : TFhirEncounterHospitalization);
+    procedure AddItem(value : TFhirEncounterHospitalization); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -5946,12 +6553,27 @@ Type
       The bed that is assigned to the patient.
     }
     property bed : TFhirResourceReference{TFhirLocation} read FBed write SetBed;
+    property bedObject : TFhirResourceReference{TFhirLocation} read FBed write SetBed;
 
     {@member period
       Period during which the patient was assigned the bed.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
+  end;
+
+
+  TFhirEncounterHospitalizationAccomodationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirEncounterHospitalizationAccomodationList;
+    function GetCurrent : TFhirEncounterHospitalizationAccomodation;
+  public
+    Constructor Create(list : TFhirEncounterHospitalizationAccomodationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirEncounterHospitalizationAccomodation read GetCurrent;
   end;
 
 
@@ -5967,6 +6589,7 @@ Type
     {!script hide}
     function Link : TFhirEncounterHospitalizationAccomodationList; Overload;
     function Clone : TFhirEncounterHospitalizationAccomodationList; Overload;
+    function GetEnumerator : TFhirEncounterHospitalizationAccomodationListEnumerator;
     {!script show}
     
 
@@ -5979,7 +6602,8 @@ Type
     {@member AddItem
       Add an already existing FhirEncounterHospitalizationAccomodation to the end of the list.
     }
-    procedure AddItem(value : TFhirEncounterHospitalizationAccomodation);
+    procedure AddItem(value : TFhirEncounterHospitalizationAccomodation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -6062,12 +6686,27 @@ Type
       The location where the encounter takes place.
     }
     property location : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
+    property locationObject : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
 
     {@member period
       Time period during which the patient was present at the location.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
+  end;
+
+
+  TFhirEncounterLocationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirEncounterLocationList;
+    function GetCurrent : TFhirEncounterLocation;
+  public
+    Constructor Create(list : TFhirEncounterLocationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirEncounterLocation read GetCurrent;
   end;
 
 
@@ -6083,6 +6722,7 @@ Type
     {!script hide}
     function Link : TFhirEncounterLocationList; Overload;
     function Clone : TFhirEncounterLocationList; Overload;
+    function GetEnumerator : TFhirEncounterLocationListEnumerator;
     {!script show}
     
 
@@ -6095,7 +6735,8 @@ Type
     {@member AddItem
       Add an already existing FhirEncounterLocation to the end of the list.
     }
-    procedure AddItem(value : TFhirEncounterLocation);
+    procedure AddItem(value : TFhirEncounterLocation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -6188,41 +6829,57 @@ Type
     {@member name
       This will either be a name or a description.  E.g. "Aunt Susan", "my cousin with the red hair".
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to This will either be a name or a description.  E.g. "Aunt Susan", "my cousin with the red hair".
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member relationship
       The type of relationship this person has to the patient (father, mother, brother etc.).
     }
     property relationship : TFhirCodeableConcept read FRelationship write SetRelationship;
+    property relationshipObject : TFhirCodeableConcept read FRelationship write SetRelationship;
 
     {@member born
       The actual or approximate date of birth of the relative.
     }
     property born : TFhirType read FBorn write SetBorn;
+    property bornObject : TFhirType read FBorn write SetBorn;
 
     {@member deceased
       If this resource is indicating that the related person is deceased, then an indicator of whether the person is deceased (yes) or not (no) or the age or age range or description of age at death - can be indicated here. If the reason for death is known, then it can be indicated in the outcome code of the condition - in this case the deceased property should still be set.
     }
     property deceased : TFhirType read FDeceased write SetDeceased;
+    property deceasedObject : TFhirType read FDeceased write SetDeceased;
 
     {@member note
       This property allows a non condition-specific note to the made about the related person. Ideally, the note would be in the condition property, but this is not always possible.
     }
-    property note : TFhirString read FNote write SetNote;
-    {@member noteST
+    {@member note
       Typed access to This property allows a non condition-specific note to the made about the related person. Ideally, the note would be in the condition property, but this is not always possible.
     }
-    property noteST : String read GetNoteST write SetNoteST;
+    property note : String read GetNoteST write SetNoteST;
+    property noteObject : TFhirString read FNote write SetNote;
 
     {@member conditionList
       The significant Conditions (or condition) that the family member had. This is a repeating section to allow a system to represent more than one condition per resource, though there is nothing stopping multiple resources - one per condition.
     }
     property conditionList : TFhirFamilyHistoryRelationConditionList read FConditionList;
 
+  end;
+
+
+  TFhirFamilyHistoryRelationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirFamilyHistoryRelationList;
+    function GetCurrent : TFhirFamilyHistoryRelation;
+  public
+    Constructor Create(list : TFhirFamilyHistoryRelationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirFamilyHistoryRelation read GetCurrent;
   end;
 
 
@@ -6238,6 +6895,7 @@ Type
     {!script hide}
     function Link : TFhirFamilyHistoryRelationList; Overload;
     function Clone : TFhirFamilyHistoryRelationList; Overload;
+    function GetEnumerator : TFhirFamilyHistoryRelationListEnumerator;
     {!script show}
     
 
@@ -6250,7 +6908,8 @@ Type
     {@member AddItem
       Add an already existing FhirFamilyHistoryRelation to the end of the list.
     }
-    procedure AddItem(value : TFhirFamilyHistoryRelation);
+    procedure AddItem(value : TFhirFamilyHistoryRelation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -6339,26 +6998,42 @@ Type
       The actual condition specified. Could be a coded condition (like MI or Diabetes) or a less specific string like 'cancer' depending on how much is known about the condition and the capabilities of the creating system.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member outcome
       Indicates what happened as a result of this condition.  If the condition resulted in death, deceased date is captured on the relation.
     }
     property outcome : TFhirCodeableConcept read FOutcome write SetOutcome;
+    property outcomeObject : TFhirCodeableConcept read FOutcome write SetOutcome;
 
     {@member onset
       Either the age of onset, range of approximate age or descriptive string can be recorded.  For conditions with multiple occurrences, this describes the first known occurrence.
     }
     property onset : TFhirType read FOnset write SetOnset;
+    property onsetObject : TFhirType read FOnset write SetOnset;
 
     {@member note
       An area where general notes can be placed about this specific condition.
     }
-    property note : TFhirString read FNote write SetNote;
-    {@member noteST
+    {@member note
       Typed access to An area where general notes can be placed about this specific condition.
     }
-    property noteST : String read GetNoteST write SetNoteST;
+    property note : String read GetNoteST write SetNoteST;
+    property noteObject : TFhirString read FNote write SetNote;
 
+  end;
+
+
+  TFhirFamilyHistoryRelationConditionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirFamilyHistoryRelationConditionList;
+    function GetCurrent : TFhirFamilyHistoryRelationCondition;
+  public
+    Constructor Create(list : TFhirFamilyHistoryRelationConditionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirFamilyHistoryRelationCondition read GetCurrent;
   end;
 
 
@@ -6374,6 +7049,7 @@ Type
     {!script hide}
     function Link : TFhirFamilyHistoryRelationConditionList; Overload;
     function Clone : TFhirFamilyHistoryRelationConditionList; Overload;
+    function GetEnumerator : TFhirFamilyHistoryRelationConditionListEnumerator;
     {!script show}
     
 
@@ -6386,7 +7062,8 @@ Type
     {@member AddItem
       Add an already existing FhirFamilyHistoryRelationCondition to the end of the list.
     }
-    procedure AddItem(value : TFhirFamilyHistoryRelationCondition);
+    procedure AddItem(value : TFhirFamilyHistoryRelationCondition); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -6473,21 +7150,36 @@ Type
       A code that identifies the kind of trait being asserted.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member value
       The value of the trait that holds (or does not hold - see 'exclude') for members of the group.
     }
     property value : TFhirType read FValue write SetValue;
+    property valueObject : TFhirType read FValue write SetValue;
 
     {@member exclude
       If true, indicates the characteristic is one that is NOT held by members of the group.
     }
-    property exclude : TFhirBoolean read FExclude write SetExclude;
-    {@member excludeST
+    {@member exclude
       Typed access to If true, indicates the characteristic is one that is NOT held by members of the group.
     }
-    property excludeST : Boolean read GetExcludeST write SetExcludeST;
+    property exclude : Boolean read GetExcludeST write SetExcludeST;
+    property excludeObject : TFhirBoolean read FExclude write SetExclude;
 
+  end;
+
+
+  TFhirGroupCharacteristicListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirGroupCharacteristicList;
+    function GetCurrent : TFhirGroupCharacteristic;
+  public
+    Constructor Create(list : TFhirGroupCharacteristicList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirGroupCharacteristic read GetCurrent;
   end;
 
 
@@ -6503,6 +7195,7 @@ Type
     {!script hide}
     function Link : TFhirGroupCharacteristicList; Overload;
     function Clone : TFhirGroupCharacteristicList; Overload;
+    function GetEnumerator : TFhirGroupCharacteristicListEnumerator;
     {!script show}
     
 
@@ -6515,7 +7208,8 @@ Type
     {@member AddItem
       Add an already existing FhirGroupCharacteristic to the end of the list.
     }
-    procedure AddItem(value : TFhirGroupCharacteristic);
+    procedure AddItem(value : TFhirGroupCharacteristic); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -6628,85 +7322,93 @@ Type
     {@member number
       The number of this series in the overall sequence.
     }
-    property number : TFhirInteger read FNumber write SetNumber;
-    {@member numberST
+    {@member number
       Typed access to The number of this series in the overall sequence.
     }
-    property numberST : String read GetNumberST write SetNumberST;
+    property number : String read GetNumberST write SetNumberST;
+    property numberObject : TFhirInteger read FNumber write SetNumber;
 
     {@member modality
       The modality of this series sequence.
     }
-    property modality : TFhirEnum read FModality write SetModality;
-    {@member modalityST
-      Typed access to The modality of this series sequence.
-    }
-    property modalityST : TFhirModality read GetModalityST write SetModalityST;
+    property modality : TFhirModality read GetModalityST write SetModalityST;
+    property modalityObject : TFhirEnum read FModality write SetModality;
 
     {@member uid
       Formal identifier for this series.
     }
-    property uid : TFhirOid read FUid write SetUid;
-    {@member uidST
+    {@member uid
       Typed access to Formal identifier for this series.
     }
-    property uidST : String read GetUidST write SetUidST;
+    property uid : String read GetUidST write SetUidST;
+    property uidObject : TFhirOid read FUid write SetUid;
 
     {@member description
       A description of the series.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to A description of the series.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member numberOfInstances
       Sequence that contains attributes from the.
     }
-    property numberOfInstances : TFhirInteger read FNumberOfInstances write SetNumberOfInstances;
-    {@member numberOfInstancesST
+    {@member numberOfInstances
       Typed access to Sequence that contains attributes from the.
     }
-    property numberOfInstancesST : String read GetNumberOfInstancesST write SetNumberOfInstancesST;
+    property numberOfInstances : String read GetNumberOfInstancesST write SetNumberOfInstancesST;
+    property numberOfInstancesObject : TFhirInteger read FNumberOfInstances write SetNumberOfInstances;
 
     {@member availability
       Availability of series (online, offline or nearline).
     }
-    property availability : TFhirEnum read FAvailability write SetAvailability;
-    {@member availabilityST
-      Typed access to Availability of series (online, offline or nearline).
-    }
-    property availabilityST : TFhirInstanceAvailability read GetAvailabilityST write SetAvailabilityST;
+    property availability : TFhirInstanceAvailability read GetAvailabilityST write SetAvailabilityST;
+    property availabilityObject : TFhirEnum read FAvailability write SetAvailability;
 
     {@member url
       WADO-RS URI where Series is available.
     }
-    property url : TFhirUri read FUrl write SetUrl;
-    {@member urlST
+    {@member url
       Typed access to WADO-RS URI where Series is available.
     }
-    property urlST : String read GetUrlST write SetUrlST;
+    property url : String read GetUrlST write SetUrlST;
+    property urlObject : TFhirUri read FUrl write SetUrl;
 
     {@member bodySite
       Body part examined. See  DICOM Part 16 Annex L for the mapping from DICOM to Snomed.
     }
     property bodySite : TFhirCoding read FBodySite write SetBodySite;
+    property bodySiteObject : TFhirCoding read FBodySite write SetBodySite;
 
     {@member dateTime
       When the series started.
     }
-    property dateTime : TFhirDateTime read FDateTime write SetDateTime;
-    {@member dateTimeST
+    {@member dateTime
       Typed access to When the series started.
     }
-    property dateTimeST : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTime : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTimeObject : TFhirDateTime read FDateTime write SetDateTime;
 
     {@member instanceList
       A single image taken from a patient.
     }
     property instanceList : TFhirImagingStudySeriesInstanceList read FInstanceList;
 
+  end;
+
+
+  TFhirImagingStudySeriesListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirImagingStudySeriesList;
+    function GetCurrent : TFhirImagingStudySeries;
+  public
+    Constructor Create(list : TFhirImagingStudySeriesList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirImagingStudySeries read GetCurrent;
   end;
 
 
@@ -6722,6 +7424,7 @@ Type
     {!script hide}
     function Link : TFhirImagingStudySeriesList; Overload;
     function Clone : TFhirImagingStudySeriesList; Overload;
+    function GetEnumerator : TFhirImagingStudySeriesListEnumerator;
     {!script show}
     
 
@@ -6734,7 +7437,8 @@ Type
     {@member AddItem
       Add an already existing FhirImagingStudySeries to the end of the list.
     }
-    procedure AddItem(value : TFhirImagingStudySeries);
+    procedure AddItem(value : TFhirImagingStudySeries); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -6838,62 +7542,76 @@ Type
     {@member number
       The number of this image in the series.
     }
-    property number : TFhirInteger read FNumber write SetNumber;
-    {@member numberST
+    {@member number
       Typed access to The number of this image in the series.
     }
-    property numberST : String read GetNumberST write SetNumberST;
+    property number : String read GetNumberST write SetNumberST;
+    property numberObject : TFhirInteger read FNumber write SetNumber;
 
     {@member uid
       Formal identifier for this image.
     }
-    property uid : TFhirOid read FUid write SetUid;
-    {@member uidST
+    {@member uid
       Typed access to Formal identifier for this image.
     }
-    property uidST : String read GetUidST write SetUidST;
+    property uid : String read GetUidST write SetUidST;
+    property uidObject : TFhirOid read FUid write SetUid;
 
     {@member sopclass
       DICOM Image type.
     }
-    property sopclass : TFhirOid read FSopclass write SetSopclass;
-    {@member sopclassST
+    {@member sopclass
       Typed access to DICOM Image type.
     }
-    property sopclassST : String read GetSopclassST write SetSopclassST;
+    property sopclass : String read GetSopclassST write SetSopclassST;
+    property sopclassObject : TFhirOid read FSopclass write SetSopclass;
 
     {@member type_
       Type of instance (image etc) (0004,1430).
     }
-    property type_ : TFhirString read FType_ write SetType_;
-    {@member type_ST
+    {@member type_
       Typed access to Type of instance (image etc) (0004,1430).
     }
-    property type_ST : String read GetType_ST write SetType_ST;
+    property type_ : String read GetType_ST write SetType_ST;
+    property type_Object : TFhirString read FType_ write SetType_;
 
     {@member title
       Description (0070,0080 | 0040,A043 > 0008,0104 | 0042,0010 | 0008,0008).
     }
-    property title : TFhirString read FTitle write SetTitle;
-    {@member titleST
+    {@member title
       Typed access to Description (0070,0080 | 0040,A043 > 0008,0104 | 0042,0010 | 0008,0008).
     }
-    property titleST : String read GetTitleST write SetTitleST;
+    property title : String read GetTitleST write SetTitleST;
+    property titleObject : TFhirString read FTitle write SetTitle;
 
     {@member url
       WADO-RS url where image is available.
     }
-    property url : TFhirUri read FUrl write SetUrl;
-    {@member urlST
+    {@member url
       Typed access to WADO-RS url where image is available.
     }
-    property urlST : String read GetUrlST write SetUrlST;
+    property url : String read GetUrlST write SetUrlST;
+    property urlObject : TFhirUri read FUrl write SetUrl;
 
     {@member attachment
       A FHIR resource with content for this instance.
     }
     property attachment : TFhirResourceReference{Resource} read FAttachment write SetAttachment;
+    property attachmentObject : TFhirResourceReference{Resource} read FAttachment write SetAttachment;
 
+  end;
+
+
+  TFhirImagingStudySeriesInstanceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirImagingStudySeriesInstanceList;
+    function GetCurrent : TFhirImagingStudySeriesInstance;
+  public
+    Constructor Create(list : TFhirImagingStudySeriesInstanceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirImagingStudySeriesInstance read GetCurrent;
   end;
 
 
@@ -6909,6 +7627,7 @@ Type
     {!script hide}
     function Link : TFhirImagingStudySeriesInstanceList; Overload;
     function Clone : TFhirImagingStudySeriesInstanceList; Overload;
+    function GetEnumerator : TFhirImagingStudySeriesInstanceListEnumerator;
     {!script show}
     
 
@@ -6921,7 +7640,8 @@ Type
     {@member AddItem
       Add an already existing FhirImagingStudySeriesInstance to the end of the list.
     }
-    procedure AddItem(value : TFhirImagingStudySeriesInstance);
+    procedure AddItem(value : TFhirImagingStudySeriesInstance); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -7011,6 +7731,19 @@ Type
   end;
 
 
+  TFhirImmunizationExplanationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirImmunizationExplanationList;
+    function GetCurrent : TFhirImmunizationExplanation;
+  public
+    Constructor Create(list : TFhirImmunizationExplanationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirImmunizationExplanation read GetCurrent;
+  end;
+
+
   {@Class TFhirImmunizationExplanationList
     A list of FhirImmunizationExplanation
   }
@@ -7023,6 +7756,7 @@ Type
     {!script hide}
     function Link : TFhirImmunizationExplanationList; Overload;
     function Clone : TFhirImmunizationExplanationList; Overload;
+    function GetEnumerator : TFhirImmunizationExplanationListEnumerator;
     {!script show}
     
 
@@ -7035,7 +7769,8 @@ Type
     {@member AddItem
       Add an already existing FhirImmunizationExplanation to the end of the list.
     }
-    procedure AddItem(value : TFhirImmunizationExplanation);
+    procedure AddItem(value : TFhirImmunizationExplanation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -7123,26 +7858,40 @@ Type
     {@member date
       Date of reaction to the immunization.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to Date of reaction to the immunization.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member detail
       Details of the reaction.
     }
     property detail : TFhirResourceReference{Resource} read FDetail write SetDetail;
+    property detailObject : TFhirResourceReference{Resource} read FDetail write SetDetail;
 
     {@member reported
       Self-reported indicator.
     }
-    property reported : TFhirBoolean read FReported write SetReported;
-    {@member reportedST
+    {@member reported
       Typed access to Self-reported indicator.
     }
-    property reportedST : Boolean read GetReportedST write SetReportedST;
+    property reported : Boolean read GetReportedST write SetReportedST;
+    property reportedObject : TFhirBoolean read FReported write SetReported;
 
+  end;
+
+
+  TFhirImmunizationReactionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirImmunizationReactionList;
+    function GetCurrent : TFhirImmunizationReaction;
+  public
+    Constructor Create(list : TFhirImmunizationReactionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirImmunizationReaction read GetCurrent;
   end;
 
 
@@ -7158,6 +7907,7 @@ Type
     {!script hide}
     function Link : TFhirImmunizationReactionList; Overload;
     function Clone : TFhirImmunizationReactionList; Overload;
+    function GetEnumerator : TFhirImmunizationReactionListEnumerator;
     {!script show}
     
 
@@ -7170,7 +7920,8 @@ Type
     {@member AddItem
       Add an already existing FhirImmunizationReaction to the end of the list.
     }
-    procedure AddItem(value : TFhirImmunizationReaction);
+    procedure AddItem(value : TFhirImmunizationReaction); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -7272,59 +8023,76 @@ Type
     {@member doseSequence
       Nominal position in a series.
     }
-    property doseSequence : TFhirInteger read FDoseSequence write SetDoseSequence;
-    {@member doseSequenceST
+    {@member doseSequence
       Typed access to Nominal position in a series.
     }
-    property doseSequenceST : String read GetDoseSequenceST write SetDoseSequenceST;
+    property doseSequence : String read GetDoseSequenceST write SetDoseSequenceST;
+    property doseSequenceObject : TFhirInteger read FDoseSequence write SetDoseSequence;
 
     {@member description
       Contains the description about the protocol under which the vaccine was administered.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Contains the description about the protocol under which the vaccine was administered.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member authority
       Indicates the authority who published the protocol?  E.g. ACIP.
     }
     property authority : TFhirResourceReference{TFhirOrganization} read FAuthority write SetAuthority;
+    property authorityObject : TFhirResourceReference{TFhirOrganization} read FAuthority write SetAuthority;
 
     {@member series
       One possible path to achieve presumed immunity against a disease - within the context of an authority.
     }
-    property series : TFhirString read FSeries write SetSeries;
-    {@member seriesST
+    {@member series
       Typed access to One possible path to achieve presumed immunity against a disease - within the context of an authority.
     }
-    property seriesST : String read GetSeriesST write SetSeriesST;
+    property series : String read GetSeriesST write SetSeriesST;
+    property seriesObject : TFhirString read FSeries write SetSeries;
 
     {@member seriesDoses
       The recommended number of doses to achieve immunity.
     }
-    property seriesDoses : TFhirInteger read FSeriesDoses write SetSeriesDoses;
-    {@member seriesDosesST
+    {@member seriesDoses
       Typed access to The recommended number of doses to achieve immunity.
     }
-    property seriesDosesST : String read GetSeriesDosesST write SetSeriesDosesST;
+    property seriesDoses : String read GetSeriesDosesST write SetSeriesDosesST;
+    property seriesDosesObject : TFhirInteger read FSeriesDoses write SetSeriesDoses;
 
     {@member doseTarget
       The targeted disease.
     }
     property doseTarget : TFhirCodeableConcept read FDoseTarget write SetDoseTarget;
+    property doseTargetObject : TFhirCodeableConcept read FDoseTarget write SetDoseTarget;
 
     {@member doseStatus
       Indicates if the immunization event should "count" against  the protocol.
     }
     property doseStatus : TFhirCodeableConcept read FDoseStatus write SetDoseStatus;
+    property doseStatusObject : TFhirCodeableConcept read FDoseStatus write SetDoseStatus;
 
     {@member doseStatusReason
       Provides an explanation as to why a immunization event should or should not count against the protocol.
     }
     property doseStatusReason : TFhirCodeableConcept read FDoseStatusReason write SetDoseStatusReason;
+    property doseStatusReasonObject : TFhirCodeableConcept read FDoseStatusReason write SetDoseStatusReason;
 
+  end;
+
+
+  TFhirImmunizationVaccinationProtocolListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirImmunizationVaccinationProtocolList;
+    function GetCurrent : TFhirImmunizationVaccinationProtocol;
+  public
+    Constructor Create(list : TFhirImmunizationVaccinationProtocolList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirImmunizationVaccinationProtocol read GetCurrent;
   end;
 
 
@@ -7340,6 +8108,7 @@ Type
     {!script hide}
     function Link : TFhirImmunizationVaccinationProtocolList; Overload;
     function Clone : TFhirImmunizationVaccinationProtocolList; Overload;
+    function GetEnumerator : TFhirImmunizationVaccinationProtocolListEnumerator;
     {!script show}
     
 
@@ -7352,7 +8121,8 @@ Type
     {@member AddItem
       Add an already existing FhirImmunizationVaccinationProtocol to the end of the list.
     }
-    procedure AddItem(value : TFhirImmunizationVaccinationProtocol);
+    procedure AddItem(value : TFhirImmunizationVaccinationProtocol); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -7447,30 +8217,32 @@ Type
     {@member date
       The date the immunization recommendation was created.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The date the immunization recommendation was created.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member vaccineType
       Vaccine that pertains to the recommendation.
     }
     property vaccineType : TFhirCodeableConcept read FVaccineType write SetVaccineType;
+    property vaccineTypeObject : TFhirCodeableConcept read FVaccineType write SetVaccineType;
 
     {@member doseNumber
       This indicates the next recommended dose number (e.g. dose 2 is the next recommended dose).
     }
-    property doseNumber : TFhirInteger read FDoseNumber write SetDoseNumber;
-    {@member doseNumberST
+    {@member doseNumber
       Typed access to This indicates the next recommended dose number (e.g. dose 2 is the next recommended dose).
     }
-    property doseNumberST : String read GetDoseNumberST write SetDoseNumberST;
+    property doseNumber : String read GetDoseNumberST write SetDoseNumberST;
+    property doseNumberObject : TFhirInteger read FDoseNumber write SetDoseNumber;
 
     {@member forecastStatus
       Vaccine administration status.
     }
     property forecastStatus : TFhirCodeableConcept read FForecastStatus write SetForecastStatus;
+    property forecastStatusObject : TFhirCodeableConcept read FForecastStatus write SetForecastStatus;
 
     {@member dateCriterionList
       Vaccine date recommendations - e.g. earliest date to administer, latest date to administer, etc.
@@ -7481,6 +8253,7 @@ Type
       Contains information about the protocol under which the vaccine was administered.
     }
     property protocol : TFhirImmunizationRecommendationRecommendationProtocol read FProtocol write SetProtocol;
+    property protocolObject : TFhirImmunizationRecommendationRecommendationProtocol read FProtocol write SetProtocol;
 
     {@member supportingImmunizationList
       Immunization event history that supports the status and recommendation.
@@ -7492,6 +8265,19 @@ Type
     }
     property supportingPatientInformationList : TFhirResourceReferenceList{Resource} read FSupportingPatientInformationList;
 
+  end;
+
+
+  TFhirImmunizationRecommendationRecommendationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirImmunizationRecommendationRecommendationList;
+    function GetCurrent : TFhirImmunizationRecommendationRecommendation;
+  public
+    Constructor Create(list : TFhirImmunizationRecommendationRecommendationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirImmunizationRecommendationRecommendation read GetCurrent;
   end;
 
 
@@ -7507,6 +8293,7 @@ Type
     {!script hide}
     function Link : TFhirImmunizationRecommendationRecommendationList; Overload;
     function Clone : TFhirImmunizationRecommendationRecommendationList; Overload;
+    function GetEnumerator : TFhirImmunizationRecommendationRecommendationListEnumerator;
     {!script show}
     
 
@@ -7519,7 +8306,8 @@ Type
     {@member AddItem
       Add an already existing FhirImmunizationRecommendationRecommendation to the end of the list.
     }
-    procedure AddItem(value : TFhirImmunizationRecommendationRecommendation);
+    procedure AddItem(value : TFhirImmunizationRecommendationRecommendation); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -7604,16 +8392,30 @@ Type
       Date classification of recommendation - e.g. earliest date to give, latest date to give, etc.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member value
       Date recommendation.
     }
-    property value : TFhirDateTime read FValue write SetValue;
-    {@member valueST
+    {@member value
       Typed access to Date recommendation.
     }
-    property valueST : TDateAndTime read GetValueST write SetValueST;
+    property value : TDateAndTime read GetValueST write SetValueST;
+    property valueObject : TFhirDateTime read FValue write SetValue;
 
+  end;
+
+
+  TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirImmunizationRecommendationRecommendationDateCriterionList;
+    function GetCurrent : TFhirImmunizationRecommendationRecommendationDateCriterion;
+  public
+    Constructor Create(list : TFhirImmunizationRecommendationRecommendationDateCriterionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirImmunizationRecommendationRecommendationDateCriterion read GetCurrent;
   end;
 
 
@@ -7629,6 +8431,7 @@ Type
     {!script hide}
     function Link : TFhirImmunizationRecommendationRecommendationDateCriterionList; Overload;
     function Clone : TFhirImmunizationRecommendationRecommendationDateCriterionList; Overload;
+    function GetEnumerator : TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator;
     {!script show}
     
 
@@ -7641,7 +8444,8 @@ Type
     {@member AddItem
       Add an already existing FhirImmunizationRecommendationRecommendationDateCriterion to the end of the list.
     }
-    procedure AddItem(value : TFhirImmunizationRecommendationRecommendationDateCriterion);
+    procedure AddItem(value : TFhirImmunizationRecommendationRecommendationDateCriterion); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -7733,35 +8537,49 @@ Type
     {@member doseSequence
       Indicates the nominal position in a series of the next dose.  This is the recommended dose number as per a specified protocol.
     }
-    property doseSequence : TFhirInteger read FDoseSequence write SetDoseSequence;
-    {@member doseSequenceST
+    {@member doseSequence
       Typed access to Indicates the nominal position in a series of the next dose.  This is the recommended dose number as per a specified protocol.
     }
-    property doseSequenceST : String read GetDoseSequenceST write SetDoseSequenceST;
+    property doseSequence : String read GetDoseSequenceST write SetDoseSequenceST;
+    property doseSequenceObject : TFhirInteger read FDoseSequence write SetDoseSequence;
 
     {@member description
       Contains the description about the protocol under which the vaccine was administered.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Contains the description about the protocol under which the vaccine was administered.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member authority
       Indicates the authority who published the protocol?  E.g. ACIP.
     }
     property authority : TFhirResourceReference{TFhirOrganization} read FAuthority write SetAuthority;
+    property authorityObject : TFhirResourceReference{TFhirOrganization} read FAuthority write SetAuthority;
 
     {@member series
       One possible path to achieve presumed immunity against a disease - within the context of an authority.
     }
-    property series : TFhirString read FSeries write SetSeries;
-    {@member seriesST
+    {@member series
       Typed access to One possible path to achieve presumed immunity against a disease - within the context of an authority.
     }
-    property seriesST : String read GetSeriesST write SetSeriesST;
+    property series : String read GetSeriesST write SetSeriesST;
+    property seriesObject : TFhirString read FSeries write SetSeries;
 
+  end;
+
+
+  TFhirImmunizationRecommendationRecommendationProtocolListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirImmunizationRecommendationRecommendationProtocolList;
+    function GetCurrent : TFhirImmunizationRecommendationRecommendationProtocol;
+  public
+    Constructor Create(list : TFhirImmunizationRecommendationRecommendationProtocolList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirImmunizationRecommendationRecommendationProtocol read GetCurrent;
   end;
 
 
@@ -7777,6 +8595,7 @@ Type
     {!script hide}
     function Link : TFhirImmunizationRecommendationRecommendationProtocolList; Overload;
     function Clone : TFhirImmunizationRecommendationRecommendationProtocolList; Overload;
+    function GetEnumerator : TFhirImmunizationRecommendationRecommendationProtocolListEnumerator;
     {!script show}
     
 
@@ -7789,7 +8608,8 @@ Type
     {@member AddItem
       Add an already existing FhirImmunizationRecommendationRecommendationProtocol to the end of the list.
     }
-    procedure AddItem(value : TFhirImmunizationRecommendationRecommendationProtocol);
+    procedure AddItem(value : TFhirImmunizationRecommendationRecommendationProtocol); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -7883,26 +8703,40 @@ Type
     {@member deleted
       True if this item is marked as deleted in the list.
     }
-    property deleted : TFhirBoolean read FDeleted write SetDeleted;
-    {@member deletedST
+    {@member deleted
       Typed access to True if this item is marked as deleted in the list.
     }
-    property deletedST : Boolean read GetDeletedST write SetDeletedST;
+    property deleted : Boolean read GetDeletedST write SetDeletedST;
+    property deletedObject : TFhirBoolean read FDeleted write SetDeleted;
 
     {@member date
       When this item was added to the list.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to When this item was added to the list.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member item
       A reference to the actual resource from which data was derived.
     }
     property item : TFhirResourceReference{Resource} read FItem write SetItem;
+    property itemObject : TFhirResourceReference{Resource} read FItem write SetItem;
 
+  end;
+
+
+  TFhirListEntryListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirListEntryList;
+    function GetCurrent : TFhirListEntry;
+  public
+    Constructor Create(list : TFhirListEntryList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirListEntry read GetCurrent;
   end;
 
 
@@ -7918,6 +8752,7 @@ Type
     {!script hide}
     function Link : TFhirListEntryList; Overload;
     function Clone : TFhirListEntryList; Overload;
+    function GetEnumerator : TFhirListEntryListEnumerator;
     {!script show}
     
 
@@ -7930,7 +8765,8 @@ Type
     {@member AddItem
       Add an already existing FhirListEntry to the end of the list.
     }
-    procedure AddItem(value : TFhirListEntry);
+    procedure AddItem(value : TFhirListEntry); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -8020,30 +8856,43 @@ Type
     {@member longitude
       Longitude. The value domain and the interpretation are the same as for the text of the longitude element in KML (see notes below).
     }
-    property longitude : TFhirDecimal read FLongitude write SetLongitude;
-    {@member longitudeST
+    {@member longitude
       Typed access to Longitude. The value domain and the interpretation are the same as for the text of the longitude element in KML (see notes below).
     }
-    property longitudeST : String read GetLongitudeST write SetLongitudeST;
+    property longitude : String read GetLongitudeST write SetLongitudeST;
+    property longitudeObject : TFhirDecimal read FLongitude write SetLongitude;
 
     {@member latitude
       Latitude. The value domain and the interpretation are the same as for the text of the latitude element in KML (see notes below).
     }
-    property latitude : TFhirDecimal read FLatitude write SetLatitude;
-    {@member latitudeST
+    {@member latitude
       Typed access to Latitude. The value domain and the interpretation are the same as for the text of the latitude element in KML (see notes below).
     }
-    property latitudeST : String read GetLatitudeST write SetLatitudeST;
+    property latitude : String read GetLatitudeST write SetLatitudeST;
+    property latitudeObject : TFhirDecimal read FLatitude write SetLatitude;
 
     {@member altitude
       Altitude. The value domain and the interpretation are the same as for the text of the altitude element in KML (see notes below).
     }
-    property altitude : TFhirDecimal read FAltitude write SetAltitude;
-    {@member altitudeST
+    {@member altitude
       Typed access to Altitude. The value domain and the interpretation are the same as for the text of the altitude element in KML (see notes below).
     }
-    property altitudeST : String read GetAltitudeST write SetAltitudeST;
+    property altitude : String read GetAltitudeST write SetAltitudeST;
+    property altitudeObject : TFhirDecimal read FAltitude write SetAltitude;
 
+  end;
+
+
+  TFhirLocationPositionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirLocationPositionList;
+    function GetCurrent : TFhirLocationPosition;
+  public
+    Constructor Create(list : TFhirLocationPositionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirLocationPosition read GetCurrent;
   end;
 
 
@@ -8059,6 +8908,7 @@ Type
     {!script hide}
     function Link : TFhirLocationPositionList; Overload;
     function Clone : TFhirLocationPositionList; Overload;
+    function GetEnumerator : TFhirLocationPositionListEnumerator;
     {!script show}
     
 
@@ -8071,7 +8921,8 @@ Type
     {@member AddItem
       Add an already existing FhirLocationPosition to the end of the list.
     }
-    procedure AddItem(value : TFhirLocationPosition);
+    procedure AddItem(value : TFhirLocationPosition); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -8153,12 +9004,26 @@ Type
       Describes the form of the item.  Powder; tables; carton.
     }
     property form : TFhirCodeableConcept read FForm write SetForm;
+    property formObject : TFhirCodeableConcept read FForm write SetForm;
 
     {@member ingredientList
       Identifies a particular constituent of interest in the product.
     }
     property ingredientList : TFhirMedicationProductIngredientList read FIngredientList;
 
+  end;
+
+
+  TFhirMedicationProductListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationProductList;
+    function GetCurrent : TFhirMedicationProduct;
+  public
+    Constructor Create(list : TFhirMedicationProductList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationProduct read GetCurrent;
   end;
 
 
@@ -8174,6 +9039,7 @@ Type
     {!script hide}
     function Link : TFhirMedicationProductList; Overload;
     function Clone : TFhirMedicationProductList; Overload;
+    function GetEnumerator : TFhirMedicationProductListEnumerator;
     {!script show}
     
 
@@ -8186,7 +9052,8 @@ Type
     {@member AddItem
       Add an already existing FhirMedicationProduct to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationProduct);
+    procedure AddItem(value : TFhirMedicationProduct); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -8269,12 +9136,27 @@ Type
       The actual ingredient - either a substance (simple ingredient) or another medication.
     }
     property item : TFhirResourceReference{Resource} read FItem write SetItem;
+    property itemObject : TFhirResourceReference{Resource} read FItem write SetItem;
 
     {@member amount
       Specifies how many (or how much) of the items there are in this Medication.  E.g. 250 mg per tablet.
     }
     property amount : TFhirRatio read FAmount write SetAmount;
+    property amountObject : TFhirRatio read FAmount write SetAmount;
 
+  end;
+
+
+  TFhirMedicationProductIngredientListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationProductIngredientList;
+    function GetCurrent : TFhirMedicationProductIngredient;
+  public
+    Constructor Create(list : TFhirMedicationProductIngredientList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationProductIngredient read GetCurrent;
   end;
 
 
@@ -8290,6 +9172,7 @@ Type
     {!script hide}
     function Link : TFhirMedicationProductIngredientList; Overload;
     function Clone : TFhirMedicationProductIngredientList; Overload;
+    function GetEnumerator : TFhirMedicationProductIngredientListEnumerator;
     {!script show}
     
 
@@ -8302,7 +9185,8 @@ Type
     {@member AddItem
       Add an already existing FhirMedicationProductIngredient to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationProductIngredient);
+    procedure AddItem(value : TFhirMedicationProductIngredient); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -8384,12 +9268,26 @@ Type
       The kind of container that this package comes as.
     }
     property container : TFhirCodeableConcept read FContainer write SetContainer;
+    property containerObject : TFhirCodeableConcept read FContainer write SetContainer;
 
     {@member contentList
       A set of components that go to make up the described item.
     }
     property contentList : TFhirMedicationPackageContentList read FContentList;
 
+  end;
+
+
+  TFhirMedicationPackageListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationPackageList;
+    function GetCurrent : TFhirMedicationPackage;
+  public
+    Constructor Create(list : TFhirMedicationPackageList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationPackage read GetCurrent;
   end;
 
 
@@ -8405,6 +9303,7 @@ Type
     {!script hide}
     function Link : TFhirMedicationPackageList; Overload;
     function Clone : TFhirMedicationPackageList; Overload;
+    function GetEnumerator : TFhirMedicationPackageListEnumerator;
     {!script show}
     
 
@@ -8417,7 +9316,8 @@ Type
     {@member AddItem
       Add an already existing FhirMedicationPackage to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationPackage);
+    procedure AddItem(value : TFhirMedicationPackage); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -8500,12 +9400,27 @@ Type
       Identifies one of the items in the package.
     }
     property item : TFhirResourceReference{TFhirMedication} read FItem write SetItem;
+    property itemObject : TFhirResourceReference{TFhirMedication} read FItem write SetItem;
 
     {@member amount
       The amount of the product that is in the package.
     }
     property amount : TFhirQuantity read FAmount write SetAmount;
+    property amountObject : TFhirQuantity read FAmount write SetAmount;
 
+  end;
+
+
+  TFhirMedicationPackageContentListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationPackageContentList;
+    function GetCurrent : TFhirMedicationPackageContent;
+  public
+    Constructor Create(list : TFhirMedicationPackageContentList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationPackageContent read GetCurrent;
   end;
 
 
@@ -8521,6 +9436,7 @@ Type
     {!script hide}
     function Link : TFhirMedicationPackageContentList; Overload;
     function Clone : TFhirMedicationPackageContentList; Overload;
+    function GetEnumerator : TFhirMedicationPackageContentListEnumerator;
     {!script show}
     
 
@@ -8533,7 +9449,8 @@ Type
     {@member AddItem
       Add an already existing FhirMedicationPackageContent to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationPackageContent);
+    procedure AddItem(value : TFhirMedicationPackageContent); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -8628,21 +9545,25 @@ Type
       The timing schedule for giving the medication to the patient.  This may be a single time point (using dateTime) or it may be a start and end dateTime (Period).
     }
     property timing : TFhirType read FTiming write SetTiming;
+    property timingObject : TFhirType read FTiming write SetTiming;
 
     {@member asNeeded
       If set to true or if specified as a CodeableConcept, indicates that the medication is only taken when needed within the specified schedule rather than at every scheduled dose.  If a CodeableConcept is present, it indicates the pre-condition for taking the Medication.
     }
     property asNeeded : TFhirType read FAsNeeded write SetAsNeeded;
+    property asNeededObject : TFhirType read FAsNeeded write SetAsNeeded;
 
     {@member site
       A coded specification of the anatomic site where the medication first entered the body.  E.g. "left arm".
     }
     property site : TFhirCodeableConcept read FSite write SetSite;
+    property siteObject : TFhirCodeableConcept read FSite write SetSite;
 
     {@member route
       A code specifying the route or physiological path of administration of a therapeutic agent into or onto the patient.   E.g. topical, intravenous, etc.
     }
     property route : TFhirCodeableConcept read FRoute write SetRoute;
+    property routeObject : TFhirCodeableConcept read FRoute write SetRoute;
 
     {@member method
       A coded value indicating the method by which the medication was introduced into or onto the body. Most commonly used for injections.  Examples:  Slow Push; Deep IV.
@@ -8650,22 +9571,39 @@ Type
 Terminologies used often pre-coordinate this term with the route and or form of administration.
     }
     property method : TFhirCodeableConcept read FMethod write SetMethod;
+    property methodObject : TFhirCodeableConcept read FMethod write SetMethod;
 
     {@member quantity
       The amount of the medication given at one administration event.   Use this value when the administration is essentially an instantaneous event such as a swallowing a tablet or giving an injection.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member rate
       Identifies the speed with which the medication was introduced into the patient. Typically the rate for an infusion e.g. 200ml in 2 hours.  May also expressed as a rate per unit of time such as 100ml per hour - the duration is then not specified, or is specified in the quantity.
     }
     property rate : TFhirRatio read FRate write SetRate;
+    property rateObject : TFhirRatio read FRate write SetRate;
 
     {@member maxDosePerPeriod
       The maximum total quantity of a therapeutic substance that was administered to the patient over the specified period of time. E.g. 1000mg in 24 hours.
     }
     property maxDosePerPeriod : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
+    property maxDosePerPeriodObject : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
 
+  end;
+
+
+  TFhirMedicationAdministrationDosageListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationAdministrationDosageList;
+    function GetCurrent : TFhirMedicationAdministrationDosage;
+  public
+    Constructor Create(list : TFhirMedicationAdministrationDosageList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationAdministrationDosage read GetCurrent;
   end;
 
 
@@ -8681,6 +9619,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMedicationAdministrationDosageList; Overload;
     function Clone : TFhirMedicationAdministrationDosageList; Overload;
+    function GetEnumerator : TFhirMedicationAdministrationDosageListEnumerator;
     {!script show}
     
 
@@ -8693,7 +9632,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMedicationAdministrationDosage to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationAdministrationDosage);
+    procedure AddItem(value : TFhirMedicationAdministrationDosage); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -8796,53 +9736,55 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Identifier assigned by the dispensing facility.   This is an identifier assigned outside FHIR.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member status
       A code specifying the state of the dispense event.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to A code specifying the state of the dispense event.
-    }
-    property statusST : TFhirMedicationDispenseStatus read GetStatusST write SetStatusST;
+    property status : TFhirMedicationDispenseStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member type_
       Indicates the type of dispensing event that is performed. Examples include: Trial Fill, Completion of Trial, Partial Fill, Emergency Fill, Samples, etc.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member quantity
       The amount of medication that has been dispensed. Includes unit of measure.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member medication
       Identifies the medication being administered. This is either a link to a resource representing the details of the medication or a simple attribute carrying a code that identifies the medication from a known list of medications.
     }
     property medication : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
+    property medicationObject : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
 
     {@member whenPrepared
       The time when the dispensed product was packaged and reviewed.
     }
-    property whenPrepared : TFhirDateTime read FWhenPrepared write SetWhenPrepared;
-    {@member whenPreparedST
+    {@member whenPrepared
       Typed access to The time when the dispensed product was packaged and reviewed.
     }
-    property whenPreparedST : TDateAndTime read GetWhenPreparedST write SetWhenPreparedST;
+    property whenPrepared : TDateAndTime read GetWhenPreparedST write SetWhenPreparedST;
+    property whenPreparedObject : TFhirDateTime read FWhenPrepared write SetWhenPrepared;
 
     {@member whenHandedOver
       The time the dispensed product was provided to the patient or their representative.
     }
-    property whenHandedOver : TFhirDateTime read FWhenHandedOver write SetWhenHandedOver;
-    {@member whenHandedOverST
+    {@member whenHandedOver
       Typed access to The time the dispensed product was provided to the patient or their representative.
     }
-    property whenHandedOverST : TDateAndTime read GetWhenHandedOverST write SetWhenHandedOverST;
+    property whenHandedOver : TDateAndTime read GetWhenHandedOverST write SetWhenHandedOverST;
+    property whenHandedOverObject : TFhirDateTime read FWhenHandedOver write SetWhenHandedOver;
 
     {@member destination
       Identification of the facility/location where the medication was shipped to, as part of the dispense event.
     }
     property destination : TFhirResourceReference{TFhirLocation} read FDestination write SetDestination;
+    property destinationObject : TFhirResourceReference{TFhirLocation} read FDestination write SetDestination;
 
     {@member receiverList
       Identifies the person who picked up the medication.  This will usually be a patient or their carer, but some cases exist where it can be a healthcare professional.
@@ -8854,6 +9796,19 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property dosageList : TFhirMedicationDispenseDispenseDosageList read FDosageList;
 
+  end;
+
+
+  TFhirMedicationDispenseDispenseListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationDispenseDispenseList;
+    function GetCurrent : TFhirMedicationDispenseDispense;
+  public
+    Constructor Create(list : TFhirMedicationDispenseDispenseList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationDispenseDispense read GetCurrent;
   end;
 
 
@@ -8869,6 +9824,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMedicationDispenseDispenseList; Overload;
     function Clone : TFhirMedicationDispenseDispenseList; Overload;
+    function GetEnumerator : TFhirMedicationDispenseDispenseListEnumerator;
     {!script show}
     
 
@@ -8881,7 +9837,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMedicationDispenseDispense to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationDispenseDispense);
+    procedure AddItem(value : TFhirMedicationDispenseDispense); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -8978,26 +9935,31 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Additional instructions such as "Swallow with plenty of water" which may or may not be coded.
     }
     property additionalInstructions : TFhirCodeableConcept read FAdditionalInstructions write SetAdditionalInstructions;
+    property additionalInstructionsObject : TFhirCodeableConcept read FAdditionalInstructions write SetAdditionalInstructions;
 
     {@member timing
       The timing schedule for giving the medication to the patient.  The Schedule data type allows many different expressions, for example.  "Every  8 hours"; "Three times a day"; "1/2 an hour before breakfast for 10 days from 23-Dec 2011:";  "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
     }
     property timing : TFhirType read FTiming write SetTiming;
+    property timingObject : TFhirType read FTiming write SetTiming;
 
     {@member asNeeded
       If set to true or if specified as a CodeableConcept, indicates that the medication is only taken when needed within the specified schedule rather than at every scheduled dose.  If a CodeableConcept is present, it indicates the pre-condition for taking the Medication.
     }
     property asNeeded : TFhirType read FAsNeeded write SetAsNeeded;
+    property asNeededObject : TFhirType read FAsNeeded write SetAsNeeded;
 
     {@member site
       A coded specification of the anatomic site where the medication first enters the body.
     }
     property site : TFhirCodeableConcept read FSite write SetSite;
+    property siteObject : TFhirCodeableConcept read FSite write SetSite;
 
     {@member route
       A code specifying the route or physiological path of administration of a therapeutic agent into or onto a subject.
     }
     property route : TFhirCodeableConcept read FRoute write SetRoute;
+    property routeObject : TFhirCodeableConcept read FRoute write SetRoute;
 
     {@member method
       A coded value indicating the method by which the medication is introduced into or onto the body. Most commonly used for injections.  Examples:  Slow Push; Deep IV.
@@ -9005,22 +9967,39 @@ Terminologies used often pre-coordinate this term with the route and or form of 
 Terminologies used often pre-coordinate this term with the route and or form of administration.
     }
     property method : TFhirCodeableConcept read FMethod write SetMethod;
+    property methodObject : TFhirCodeableConcept read FMethod write SetMethod;
 
     {@member quantity
       The amount of therapeutic or other substance given at one administration event.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member rate
       Identifies the speed with which the substance is introduced into the subject. Typically the rate for an infusion. 200ml in 2 hours.
     }
     property rate : TFhirRatio read FRate write SetRate;
+    property rateObject : TFhirRatio read FRate write SetRate;
 
     {@member maxDosePerPeriod
       The maximum total quantity of a therapeutic substance that may be administered to a subject over the period of time,  e.g. 1000mg in 24 hours.
     }
     property maxDosePerPeriod : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
+    property maxDosePerPeriodObject : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
 
+  end;
+
+
+  TFhirMedicationDispenseDispenseDosageListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationDispenseDispenseDosageList;
+    function GetCurrent : TFhirMedicationDispenseDispenseDosage;
+  public
+    Constructor Create(list : TFhirMedicationDispenseDispenseDosageList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationDispenseDispenseDosage read GetCurrent;
   end;
 
 
@@ -9036,6 +10015,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMedicationDispenseDispenseDosageList; Overload;
     function Clone : TFhirMedicationDispenseDispenseDosageList; Overload;
+    function GetEnumerator : TFhirMedicationDispenseDispenseDosageListEnumerator;
     {!script show}
     
 
@@ -9048,7 +10028,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMedicationDispenseDispenseDosage to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationDispenseDispenseDosage);
+    procedure AddItem(value : TFhirMedicationDispenseDispenseDosage); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -9131,6 +10112,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       A code signifying whether a different drug was dispensed from what was prescribed.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member reasonList
       Indicates the reason for the substitution of (or lack of substitution) from what was prescribed.
@@ -9142,6 +10124,19 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property responsiblePartyList : TFhirResourceReferenceList{TFhirPractitioner} read FResponsiblePartyList;
 
+  end;
+
+
+  TFhirMedicationDispenseSubstitutionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationDispenseSubstitutionList;
+    function GetCurrent : TFhirMedicationDispenseSubstitution;
+  public
+    Constructor Create(list : TFhirMedicationDispenseSubstitutionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationDispenseSubstitution read GetCurrent;
   end;
 
 
@@ -9157,6 +10152,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMedicationDispenseSubstitutionList; Overload;
     function Clone : TFhirMedicationDispenseSubstitutionList; Overload;
+    function GetEnumerator : TFhirMedicationDispenseSubstitutionListEnumerator;
     {!script show}
     
 
@@ -9169,7 +10165,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMedicationDispenseSubstitution to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationDispenseSubstitution);
+    procedure AddItem(value : TFhirMedicationDispenseSubstitution); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -9269,36 +10266,41 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member text
       Free text dosage instructions for cases where the instructions are too complex to code.
     }
-    property text : TFhirString read FText write SetText;
-    {@member textST
+    {@member text
       Typed access to Free text dosage instructions for cases where the instructions are too complex to code.
     }
-    property textST : String read GetTextST write SetTextST;
+    property text : String read GetTextST write SetTextST;
+    property textObject : TFhirString read FText write SetText;
 
     {@member additionalInstructions
       Additional instructions such as "Swallow with plenty of water" which may or may not be coded.
     }
     property additionalInstructions : TFhirCodeableConcept read FAdditionalInstructions write SetAdditionalInstructions;
+    property additionalInstructionsObject : TFhirCodeableConcept read FAdditionalInstructions write SetAdditionalInstructions;
 
     {@member timing
       The timing schedule for giving the medication to the patient.  The Schedule data type allows many different expressions, for example.  "Every  8 hours"; "Three times a day"; "1/2 an hour before breakfast for 10 days from 23-Dec 2011:";  "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
     }
     property timing : TFhirType read FTiming write SetTiming;
+    property timingObject : TFhirType read FTiming write SetTiming;
 
     {@member asNeeded
       If set to true or if specified as a CodeableConcept, indicates that the medication is only taken when needed within the specified schedule rather than at every scheduled dose.  If a CodeableConcept is present, it indicates the pre-condition for taking the Medication.
     }
     property asNeeded : TFhirType read FAsNeeded write SetAsNeeded;
+    property asNeededObject : TFhirType read FAsNeeded write SetAsNeeded;
 
     {@member site
       A coded specification of the anatomic site where the medication first enters the body.
     }
     property site : TFhirCodeableConcept read FSite write SetSite;
+    property siteObject : TFhirCodeableConcept read FSite write SetSite;
 
     {@member route
       A code specifying the route or physiological path of administration of a therapeutic agent into or onto a patient.
     }
     property route : TFhirCodeableConcept read FRoute write SetRoute;
+    property routeObject : TFhirCodeableConcept read FRoute write SetRoute;
 
     {@member method
       A coded value indicating the method by which the medication is introduced into or onto the body. Most commonly used for injections.  Examples:  Slow Push; Deep IV.
@@ -9306,22 +10308,39 @@ Terminologies used often pre-coordinate this term with the route and or form of 
 Terminologies used often pre-coordinate this term with the route and or form of administration.
     }
     property method : TFhirCodeableConcept read FMethod write SetMethod;
+    property methodObject : TFhirCodeableConcept read FMethod write SetMethod;
 
     {@member doseQuantity
       The amount of therapeutic or other substance given at one administration event.
     }
     property doseQuantity : TFhirQuantity read FDoseQuantity write SetDoseQuantity;
+    property doseQuantityObject : TFhirQuantity read FDoseQuantity write SetDoseQuantity;
 
     {@member rate
       Identifies the speed with which the substance is introduced into the subject. Typically the rate for an infusion. 200ml in 2 hours.
     }
     property rate : TFhirRatio read FRate write SetRate;
+    property rateObject : TFhirRatio read FRate write SetRate;
 
     {@member maxDosePerPeriod
       The maximum total quantity of a therapeutic substance that may be administered to a subject over the period of time. E.g. 1000mg in 24 hours.
     }
     property maxDosePerPeriod : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
+    property maxDosePerPeriodObject : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
 
+  end;
+
+
+  TFhirMedicationPrescriptionDosageInstructionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationPrescriptionDosageInstructionList;
+    function GetCurrent : TFhirMedicationPrescriptionDosageInstruction;
+  public
+    Constructor Create(list : TFhirMedicationPrescriptionDosageInstructionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationPrescriptionDosageInstruction read GetCurrent;
   end;
 
 
@@ -9337,6 +10356,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMedicationPrescriptionDosageInstructionList; Overload;
     function Clone : TFhirMedicationPrescriptionDosageInstructionList; Overload;
+    function GetEnumerator : TFhirMedicationPrescriptionDosageInstructionListEnumerator;
     {!script show}
     
 
@@ -9349,7 +10369,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMedicationPrescriptionDosageInstruction to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationPrescriptionDosageInstruction);
+    procedure AddItem(value : TFhirMedicationPrescriptionDosageInstruction); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -9440,6 +10461,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Identifies the medication that is to be dispensed.  This may be a more specifically defined than the medicationPrescription.medication . This is either a link to a resource representing the details of the medication or a simple attribute carrying a code that identifies the medication from a known list of medications.
     }
     property medication : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
+    property medicationObject : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
 
     {@member validityPeriod
       Design Comments: This indicates the validity period of a prescription (stale dating the Prescription) 
@@ -9447,29 +10469,45 @@ It reflects the prescriber perspective for the validity of the prescription. Dis
 Rationale: Indicates when the Prescription becomes valid, and when it ceases to be a dispensable Prescription.
     }
     property validityPeriod : TFhirPeriod read FValidityPeriod write SetValidityPeriod;
+    property validityPeriodObject : TFhirPeriod read FValidityPeriod write SetValidityPeriod;
 
     {@member numberOfRepeatsAllowed
       An integer indicating the number of repeats of the Dispense. 
 UsageNotes: For example, the number of times the prescribed quantity is to be supplied including the initial standard fill.
     }
-    property numberOfRepeatsAllowed : TFhirInteger read FNumberOfRepeatsAllowed write SetNumberOfRepeatsAllowed;
-    {@member numberOfRepeatsAllowedST
+    {@member numberOfRepeatsAllowed
       Typed access to An integer indicating the number of repeats of the Dispense. 
 UsageNotes: For example, the number of times the prescribed quantity is to be supplied including the initial standard fill.
     }
-    property numberOfRepeatsAllowedST : String read GetNumberOfRepeatsAllowedST write SetNumberOfRepeatsAllowedST;
+    property numberOfRepeatsAllowed : String read GetNumberOfRepeatsAllowedST write SetNumberOfRepeatsAllowedST;
+    property numberOfRepeatsAllowedObject : TFhirInteger read FNumberOfRepeatsAllowed write SetNumberOfRepeatsAllowed;
 
     {@member quantity
       The amount that is to be dispensed.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member expectedSupplyDuration
       Identifies the period time over which the supplied product is expected to be used, or the length of time the dispense is expected to last. 
 In some situations, this attribute may be used instead of quantity to identify the amount supplied by how long it is expected to last, rather than the physical quantity issued, e.g. 90 days supply of medication (based on an ordered dosage) When possible, it is always better to specify quantity, as this tends to be more precise. expectedSupplyDuration will always be an estimate that can be influenced by external factors.
     }
     property expectedSupplyDuration : TFhirQuantity read FExpectedSupplyDuration write SetExpectedSupplyDuration;
+    property expectedSupplyDurationObject : TFhirQuantity read FExpectedSupplyDuration write SetExpectedSupplyDuration;
 
+  end;
+
+
+  TFhirMedicationPrescriptionDispenseListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationPrescriptionDispenseList;
+    function GetCurrent : TFhirMedicationPrescriptionDispense;
+  public
+    Constructor Create(list : TFhirMedicationPrescriptionDispenseList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationPrescriptionDispense read GetCurrent;
   end;
 
 
@@ -9485,6 +10523,7 @@ In some situations, this attribute may be used instead of quantity to identify t
     {!script hide}
     function Link : TFhirMedicationPrescriptionDispenseList; Overload;
     function Clone : TFhirMedicationPrescriptionDispenseList; Overload;
+    function GetEnumerator : TFhirMedicationPrescriptionDispenseListEnumerator;
     {!script show}
     
 
@@ -9497,7 +10536,8 @@ In some situations, this attribute may be used instead of quantity to identify t
     {@member AddItem
       Add an already existing FhirMedicationPrescriptionDispense to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationPrescriptionDispense);
+    procedure AddItem(value : TFhirMedicationPrescriptionDispense); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -9580,12 +10620,27 @@ In some situations, this attribute may be used instead of quantity to identify t
       A code signifying whether a different drug should be dispensed from what was prescribed.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member reason
       Indicates the reason for the substitution, or why substitution must or must not be performed.
     }
     property reason : TFhirCodeableConcept read FReason write SetReason;
+    property reasonObject : TFhirCodeableConcept read FReason write SetReason;
 
+  end;
+
+
+  TFhirMedicationPrescriptionSubstitutionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationPrescriptionSubstitutionList;
+    function GetCurrent : TFhirMedicationPrescriptionSubstitution;
+  public
+    Constructor Create(list : TFhirMedicationPrescriptionSubstitutionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationPrescriptionSubstitution read GetCurrent;
   end;
 
 
@@ -9601,6 +10656,7 @@ In some situations, this attribute may be used instead of quantity to identify t
     {!script hide}
     function Link : TFhirMedicationPrescriptionSubstitutionList; Overload;
     function Clone : TFhirMedicationPrescriptionSubstitutionList; Overload;
+    function GetEnumerator : TFhirMedicationPrescriptionSubstitutionListEnumerator;
     {!script show}
     
 
@@ -9613,7 +10669,8 @@ In some situations, this attribute may be used instead of quantity to identify t
     {@member AddItem
       Add an already existing FhirMedicationPrescriptionSubstitution to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationPrescriptionSubstitution);
+    procedure AddItem(value : TFhirMedicationPrescriptionSubstitution); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -9708,21 +10765,25 @@ In some situations, this attribute may be used instead of quantity to identify t
       The timing schedule for giving the medication to the patient.  The Schedule data type allows many different expressions, for example.  "Every  8 hours"; "Three times a day"; "1/2 an hour before breakfast for 10 days from 23-Dec 2011:";  "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
     }
     property timing : TFhirSchedule read FTiming write SetTiming;
+    property timingObject : TFhirSchedule read FTiming write SetTiming;
 
     {@member asNeeded
       If set to true or if specified as a CodeableConcept, indicates that the medication is only taken when needed within the specified schedule rather than at every scheduled dose.  If a CodeableConcept is present, it indicates the pre-condition for taking the Medication.
     }
     property asNeeded : TFhirType read FAsNeeded write SetAsNeeded;
+    property asNeededObject : TFhirType read FAsNeeded write SetAsNeeded;
 
     {@member site
       A coded specification of the anatomic site where the medication first enters the body.
     }
     property site : TFhirCodeableConcept read FSite write SetSite;
+    property siteObject : TFhirCodeableConcept read FSite write SetSite;
 
     {@member route
       A code specifying the route or physiological path of administration of a therapeutic agent into or onto a subject.
     }
     property route : TFhirCodeableConcept read FRoute write SetRoute;
+    property routeObject : TFhirCodeableConcept read FRoute write SetRoute;
 
     {@member method
       A coded value indicating the method by which the medication is introduced into or onto the body. Most commonly used for injections.  Examples:  Slow Push; Deep IV.
@@ -9730,22 +10791,39 @@ In some situations, this attribute may be used instead of quantity to identify t
 Terminologies used often pre-coordinate this term with the route and or form of administration.
     }
     property method : TFhirCodeableConcept read FMethod write SetMethod;
+    property methodObject : TFhirCodeableConcept read FMethod write SetMethod;
 
     {@member quantity
       The amount of therapeutic or other substance given at one administration event.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member rate
       Identifies the speed with which the substance is introduced into the subject. Typically the rate for an infusion. 200ml in 2 hours.
     }
     property rate : TFhirRatio read FRate write SetRate;
+    property rateObject : TFhirRatio read FRate write SetRate;
 
     {@member maxDosePerPeriod
       The maximum total quantity of a therapeutic substance that may be administered to a subject over the period of time. E.g. 1000mg in 24 hours.
     }
     property maxDosePerPeriod : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
+    property maxDosePerPeriodObject : TFhirRatio read FMaxDosePerPeriod write SetMaxDosePerPeriod;
 
+  end;
+
+
+  TFhirMedicationStatementDosageListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMedicationStatementDosageList;
+    function GetCurrent : TFhirMedicationStatementDosage;
+  public
+    Constructor Create(list : TFhirMedicationStatementDosageList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMedicationStatementDosage read GetCurrent;
   end;
 
 
@@ -9761,6 +10839,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMedicationStatementDosageList; Overload;
     function Clone : TFhirMedicationStatementDosageList; Overload;
+    function GetEnumerator : TFhirMedicationStatementDosageListEnumerator;
     {!script show}
     
 
@@ -9773,7 +10852,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMedicationStatementDosage to the end of the list.
     }
-    procedure AddItem(value : TFhirMedicationStatementDosage);
+    procedure AddItem(value : TFhirMedicationStatementDosage); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -9861,26 +10941,37 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member identifier
       The id of the message that this message is a response to.
     }
-    property identifier : TFhirId read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to The id of the message that this message is a response to.
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirId read FIdentifier write SetIdentifier;
 
     {@member code
       Code that identifies the type of response to the message - whether it was successful or not, and whether it should be resent or not.
     }
-    property code : TFhirEnum read FCode write SetCode;
-    {@member codeST
-      Typed access to Code that identifies the type of response to the message - whether it was successful or not, and whether it should be resent or not.
-    }
-    property codeST : TFhirResponseCode read GetCodeST write SetCodeST;
+    property code : TFhirResponseCode read GetCodeST write SetCodeST;
+    property codeObject : TFhirEnum read FCode write SetCode;
 
     {@member details
       Full details of any issues found in the message.
     }
     property details : TFhirResourceReference{TFhirOperationOutcome} read FDetails write SetDetails;
+    property detailsObject : TFhirResourceReference{TFhirOperationOutcome} read FDetails write SetDetails;
 
+  end;
+
+
+  TFhirMessageHeaderResponseListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMessageHeaderResponseList;
+    function GetCurrent : TFhirMessageHeaderResponse;
+  public
+    Constructor Create(list : TFhirMessageHeaderResponseList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMessageHeaderResponse read GetCurrent;
   end;
 
 
@@ -9896,6 +10987,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMessageHeaderResponseList; Overload;
     function Clone : TFhirMessageHeaderResponseList; Overload;
+    function GetEnumerator : TFhirMessageHeaderResponseListEnumerator;
     {!script show}
     
 
@@ -9908,7 +11000,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMessageHeaderResponse to the end of the list.
     }
-    procedure AddItem(value : TFhirMessageHeaderResponse);
+    procedure AddItem(value : TFhirMessageHeaderResponse); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -10004,44 +11097,58 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member name
       Human-readable name for the target system.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to Human-readable name for the target system.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member software
       May include configuration or other information useful in debugging.
     }
-    property software : TFhirString read FSoftware write SetSoftware;
-    {@member softwareST
+    {@member software
       Typed access to May include configuration or other information useful in debugging.
     }
-    property softwareST : String read GetSoftwareST write SetSoftwareST;
+    property software : String read GetSoftwareST write SetSoftwareST;
+    property softwareObject : TFhirString read FSoftware write SetSoftware;
 
     {@member version
       Can convey versions of multiple systems in situations where a message passes through multiple hands.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to Can convey versions of multiple systems in situations where a message passes through multiple hands.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member contact
       An e-mail, phone, website or other contact point to use to resolve issues with message communications.
     }
     property contact : TFhirContact read FContact write SetContact;
+    property contactObject : TFhirContact read FContact write SetContact;
 
     {@member endpoint
       Identifies the routing target to send acknowledgements to.
     }
-    property endpoint : TFhirUri read FEndpoint write SetEndpoint;
-    {@member endpointST
+    {@member endpoint
       Typed access to Identifies the routing target to send acknowledgements to.
     }
-    property endpointST : String read GetEndpointST write SetEndpointST;
+    property endpoint : String read GetEndpointST write SetEndpointST;
+    property endpointObject : TFhirUri read FEndpoint write SetEndpoint;
 
+  end;
+
+
+  TFhirMessageHeaderSourceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMessageHeaderSourceList;
+    function GetCurrent : TFhirMessageHeaderSource;
+  public
+    Constructor Create(list : TFhirMessageHeaderSourceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMessageHeaderSource read GetCurrent;
   end;
 
 
@@ -10057,6 +11164,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMessageHeaderSourceList; Overload;
     function Clone : TFhirMessageHeaderSourceList; Overload;
+    function GetEnumerator : TFhirMessageHeaderSourceListEnumerator;
     {!script show}
     
 
@@ -10069,7 +11177,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMessageHeaderSource to the end of the list.
     }
-    procedure AddItem(value : TFhirMessageHeaderSource);
+    procedure AddItem(value : TFhirMessageHeaderSource); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -10157,26 +11266,40 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member name
       Human-readable name for the source system.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to Human-readable name for the source system.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member target
       Identifies the target end system in situations where the initial message transmission is to an intermediary system.
     }
     property target : TFhirResourceReference{TFhirDevice} read FTarget write SetTarget;
+    property targetObject : TFhirResourceReference{TFhirDevice} read FTarget write SetTarget;
 
     {@member endpoint
       Indicates where the message should be routed to.
     }
-    property endpoint : TFhirUri read FEndpoint write SetEndpoint;
-    {@member endpointST
+    {@member endpoint
       Typed access to Indicates where the message should be routed to.
     }
-    property endpointST : String read GetEndpointST write SetEndpointST;
+    property endpoint : String read GetEndpointST write SetEndpointST;
+    property endpointObject : TFhirUri read FEndpoint write SetEndpoint;
 
+  end;
+
+
+  TFhirMessageHeaderDestinationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirMessageHeaderDestinationList;
+    function GetCurrent : TFhirMessageHeaderDestination;
+  public
+    Constructor Create(list : TFhirMessageHeaderDestinationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirMessageHeaderDestination read GetCurrent;
   end;
 
 
@@ -10192,6 +11315,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirMessageHeaderDestinationList; Overload;
     function Clone : TFhirMessageHeaderDestinationList; Overload;
+    function GetEnumerator : TFhirMessageHeaderDestinationListEnumerator;
     {!script show}
     
 
@@ -10204,7 +11328,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirMessageHeaderDestination to the end of the list.
     }
-    procedure AddItem(value : TFhirMessageHeaderDestination);
+    procedure AddItem(value : TFhirMessageHeaderDestination); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -10291,22 +11416,39 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       The value of the low bound of the reference range. If this is omitted, the low bound of the reference range is assumed to be meaningless. E.g. <2.3.
     }
     property low : TFhirQuantity read FLow write SetLow;
+    property lowObject : TFhirQuantity read FLow write SetLow;
 
     {@member high
       The value of the high bound of the reference range. If this is omitted, the high bound of the reference range is assumed to be meaningless. E.g. >5.
     }
     property high : TFhirQuantity read FHigh write SetHigh;
+    property highObject : TFhirQuantity read FHigh write SetHigh;
 
     {@member meaning
       Code for the meaning of the reference range.
     }
     property meaning : TFhirCodeableConcept read FMeaning write SetMeaning;
+    property meaningObject : TFhirCodeableConcept read FMeaning write SetMeaning;
 
     {@member age
       The age at which this reference range is applicable. This is a neonatal age (e.g. number of weeks at term) if the meaning says so.
     }
     property age : TFhirRange read FAge write SetAge;
+    property ageObject : TFhirRange read FAge write SetAge;
 
+  end;
+
+
+  TFhirObservationReferenceRangeListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirObservationReferenceRangeList;
+    function GetCurrent : TFhirObservationReferenceRange;
+  public
+    Constructor Create(list : TFhirObservationReferenceRangeList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirObservationReferenceRange read GetCurrent;
   end;
 
 
@@ -10322,6 +11464,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirObservationReferenceRangeList; Overload;
     function Clone : TFhirObservationReferenceRangeList; Overload;
+    function GetEnumerator : TFhirObservationReferenceRangeListEnumerator;
     {!script show}
     
 
@@ -10334,7 +11477,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirObservationReferenceRange to the end of the list.
     }
-    procedure AddItem(value : TFhirObservationReferenceRange);
+    procedure AddItem(value : TFhirObservationReferenceRange); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -10418,17 +11562,28 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member type_
       A code specifying the kind of relationship that exists with the target observation.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to A code specifying the kind of relationship that exists with the target observation.
-    }
-    property type_ST : TFhirObservationRelationshiptypes read GetType_ST write SetType_ST;
+    property type_ : TFhirObservationRelationshiptypes read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member target
       A reference to the observation that is related to this observation.
     }
     property target : TFhirResourceReference{TFhirObservation} read FTarget write SetTarget;
+    property targetObject : TFhirResourceReference{TFhirObservation} read FTarget write SetTarget;
 
+  end;
+
+
+  TFhirObservationRelatedListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirObservationRelatedList;
+    function GetCurrent : TFhirObservationRelated;
+  public
+    Constructor Create(list : TFhirObservationRelatedList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirObservationRelated read GetCurrent;
   end;
 
 
@@ -10444,6 +11599,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirObservationRelatedList; Overload;
     function Clone : TFhirObservationRelatedList; Overload;
+    function GetEnumerator : TFhirObservationRelatedListEnumerator;
     {!script show}
     
 
@@ -10456,7 +11612,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirObservationRelated to the end of the list.
     }
-    procedure AddItem(value : TFhirObservationRelated);
+    procedure AddItem(value : TFhirObservationRelated); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -10545,31 +11702,42 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member severity
       Indicates whether the issue indicates a variation from successful processing.
     }
-    property severity : TFhirEnum read FSeverity write SetSeverity;
-    {@member severityST
-      Typed access to Indicates whether the issue indicates a variation from successful processing.
-    }
-    property severityST : TFhirIssueSeverity read GetSeverityST write SetSeverityST;
+    property severity : TFhirIssueSeverity read GetSeverityST write SetSeverityST;
+    property severityObject : TFhirEnum read FSeverity write SetSeverity;
 
     {@member type_
       A code indicating the type of error, warning or information message.
     }
     property type_ : TFhirCoding read FType_ write SetType_;
+    property type_Object : TFhirCoding read FType_ write SetType_;
 
     {@member details
       Additional description of the issue.
     }
-    property details : TFhirString read FDetails write SetDetails;
-    {@member detailsST
+    {@member details
       Typed access to Additional description of the issue.
     }
-    property detailsST : String read GetDetailsST write SetDetailsST;
+    property details : String read GetDetailsST write SetDetailsST;
+    property detailsObject : TFhirString read FDetails write SetDetails;
 
     {@member locationList
       A simple XPath limited to element names, repetition indicators and the default child access that identifies one of the elements in the resource that caused this issue to be raised.
     }
     property locationList : TFhirStringList read FLocationList;
 
+  end;
+
+
+  TFhirOperationOutcomeIssueListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirOperationOutcomeIssueList;
+    function GetCurrent : TFhirOperationOutcomeIssue;
+  public
+    Constructor Create(list : TFhirOperationOutcomeIssueList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirOperationOutcomeIssue read GetCurrent;
   end;
 
 
@@ -10585,6 +11753,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirOperationOutcomeIssueList; Overload;
     function Clone : TFhirOperationOutcomeIssueList; Overload;
+    function GetEnumerator : TFhirOperationOutcomeIssueListEnumerator;
     {!script show}
     
 
@@ -10597,7 +11766,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirOperationOutcomeIssue to the end of the list.
     }
-    procedure AddItem(value : TFhirOperationOutcomeIssue);
+    procedure AddItem(value : TFhirOperationOutcomeIssue); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -10680,12 +11850,27 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Code specifies when request should be done. The code may simply be a priority code.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member schedule
       A formal schedule.
     }
     property schedule : TFhirSchedule read FSchedule write SetSchedule;
+    property scheduleObject : TFhirSchedule read FSchedule write SetSchedule;
 
+  end;
+
+
+  TFhirOrderWhenListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirOrderWhenList;
+    function GetCurrent : TFhirOrderWhen;
+  public
+    Constructor Create(list : TFhirOrderWhenList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirOrderWhen read GetCurrent;
   end;
 
 
@@ -10701,6 +11886,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirOrderWhenList; Overload;
     function Clone : TFhirOrderWhenList; Overload;
+    function GetEnumerator : TFhirOrderWhenListEnumerator;
     {!script show}
     
 
@@ -10713,7 +11899,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirOrderWhen to the end of the list.
     }
-    procedure AddItem(value : TFhirOrderWhen);
+    procedure AddItem(value : TFhirOrderWhen); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -10801,11 +11988,13 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Indicates a purpose for which the contact can be reached.
     }
     property purpose : TFhirCodeableConcept read FPurpose write SetPurpose;
+    property purposeObject : TFhirCodeableConcept read FPurpose write SetPurpose;
 
     {@member name
       A name associated with the contact.
     }
     property name : TFhirHumanName read FName write SetName;
+    property nameObject : TFhirHumanName read FName write SetName;
 
     {@member telecomList
       A contact detail (e.g. a telephone number or an email address) by which the party may be contacted.
@@ -10816,12 +12005,27 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Visiting or postal addresses for the contact.
     }
     property address : TFhirAddress read FAddress write SetAddress;
+    property addressObject : TFhirAddress read FAddress write SetAddress;
 
     {@member gender
       Administrative Gender - the gender that the person is considered to have for administration and record keeping purposes.
     }
     property gender : TFhirCodeableConcept read FGender write SetGender;
+    property genderObject : TFhirCodeableConcept read FGender write SetGender;
 
+  end;
+
+
+  TFhirOrganizationContactListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirOrganizationContactList;
+    function GetCurrent : TFhirOrganizationContact;
+  public
+    Constructor Create(list : TFhirOrganizationContactList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirOrganizationContact read GetCurrent;
   end;
 
 
@@ -10837,6 +12041,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirOrganizationContactList; Overload;
     function Clone : TFhirOrganizationContactList; Overload;
+    function GetEnumerator : TFhirOrganizationContactListEnumerator;
     {!script show}
     
 
@@ -10849,7 +12054,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirOrganizationContact to the end of the list.
     }
-    procedure AddItem(value : TFhirOrganizationContact);
+    procedure AddItem(value : TFhirOrganizationContact); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -10943,6 +12149,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       A name associated with the person.
     }
     property name : TFhirHumanName read FName write SetName;
+    property nameObject : TFhirHumanName read FName write SetName;
 
     {@member telecomList
       A contact detail for the person, e.g. a telephone number or an email address.
@@ -10953,17 +12160,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Address for the contact person.
     }
     property address : TFhirAddress read FAddress write SetAddress;
+    property addressObject : TFhirAddress read FAddress write SetAddress;
 
     {@member gender
       Administrative Gender - the gender that the person is considered to have for administration and record keeping purposes.
     }
     property gender : TFhirCodeableConcept read FGender write SetGender;
+    property genderObject : TFhirCodeableConcept read FGender write SetGender;
 
     {@member organization
       Organization on behalf of which the contact is acting or for which the contact is working.
     }
     property organization : TFhirResourceReference{TFhirOrganization} read FOrganization write SetOrganization;
+    property organizationObject : TFhirResourceReference{TFhirOrganization} read FOrganization write SetOrganization;
 
+  end;
+
+
+  TFhirPatientContactListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirPatientContactList;
+    function GetCurrent : TFhirPatientContact;
+  public
+    Constructor Create(list : TFhirPatientContactList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPatientContact read GetCurrent;
   end;
 
 
@@ -10979,6 +12202,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirPatientContactList; Overload;
     function Clone : TFhirPatientContactList; Overload;
+    function GetEnumerator : TFhirPatientContactListEnumerator;
     {!script show}
     
 
@@ -10991,7 +12215,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirPatientContact to the end of the list.
     }
-    procedure AddItem(value : TFhirPatientContact);
+    procedure AddItem(value : TFhirPatientContact); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -11076,17 +12301,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Identifies the high level categorization of the kind of animal.
     }
     property species : TFhirCodeableConcept read FSpecies write SetSpecies;
+    property speciesObject : TFhirCodeableConcept read FSpecies write SetSpecies;
 
     {@member breed
       Identifies the detailed categorization of the kind of animal.
     }
     property breed : TFhirCodeableConcept read FBreed write SetBreed;
+    property breedObject : TFhirCodeableConcept read FBreed write SetBreed;
 
     {@member genderStatus
       Indicates the current state of the animal's reproductive organs.
     }
     property genderStatus : TFhirCodeableConcept read FGenderStatus write SetGenderStatus;
+    property genderStatusObject : TFhirCodeableConcept read FGenderStatus write SetGenderStatus;
 
+  end;
+
+
+  TFhirPatientAnimalListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirPatientAnimalList;
+    function GetCurrent : TFhirPatientAnimal;
+  public
+    Constructor Create(list : TFhirPatientAnimalList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPatientAnimal read GetCurrent;
   end;
 
 
@@ -11102,6 +12343,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirPatientAnimalList; Overload;
     function Clone : TFhirPatientAnimalList; Overload;
+    function GetEnumerator : TFhirPatientAnimalListEnumerator;
     {!script show}
     
 
@@ -11114,7 +12356,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirPatientAnimal to the end of the list.
     }
-    procedure AddItem(value : TFhirPatientAnimal);
+    procedure AddItem(value : TFhirPatientAnimal); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -11199,16 +12442,27 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       The other patient resource that the link refers to.
     }
     property other : TFhirResourceReference{TFhirPatient} read FOther write SetOther;
+    property otherObject : TFhirResourceReference{TFhirPatient} read FOther write SetOther;
 
     {@member type_
       The type of link between this patient resource and another patient resource.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to The type of link between this patient resource and another patient resource.
-    }
-    property type_ST : TFhirLinkType read GetType_ST write SetType_ST;
+    property type_ : TFhirLinkType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
+  end;
+
+
+  TFhirPatientLinkListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirPatientLinkList;
+    function GetCurrent : TFhirPatientLink;
+  public
+    Constructor Create(list : TFhirPatientLinkList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPatientLink read GetCurrent;
   end;
 
 
@@ -11224,6 +12478,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirPatientLinkList; Overload;
     function Clone : TFhirPatientLinkList; Overload;
+    function GetEnumerator : TFhirPatientLinkListEnumerator;
     {!script show}
     
 
@@ -11236,7 +12491,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirPatientLink to the end of the list.
     }
-    procedure AddItem(value : TFhirPatientLink);
+    procedure AddItem(value : TFhirPatientLink); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -11321,17 +12577,33 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Coded representation of the qualification.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member period
       Period during which the qualification is valid.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member issuer
       Organization that regulates and issues the qualification.
     }
     property issuer : TFhirResourceReference{TFhirOrganization} read FIssuer write SetIssuer;
+    property issuerObject : TFhirResourceReference{TFhirOrganization} read FIssuer write SetIssuer;
 
+  end;
+
+
+  TFhirPractitionerQualificationListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirPractitionerQualificationList;
+    function GetCurrent : TFhirPractitionerQualification;
+  public
+    Constructor Create(list : TFhirPractitionerQualificationList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPractitionerQualification read GetCurrent;
   end;
 
 
@@ -11347,6 +12619,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirPractitionerQualificationList; Overload;
     function Clone : TFhirPractitionerQualificationList; Overload;
+    function GetEnumerator : TFhirPractitionerQualificationListEnumerator;
     {!script show}
     
 
@@ -11359,7 +12632,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirPractitionerQualification to the end of the list.
     }
-    procedure AddItem(value : TFhirPractitionerQualification);
+    procedure AddItem(value : TFhirPractitionerQualification); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -11442,12 +12716,27 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       The practitioner who was involved in the procedure.
     }
     property person : TFhirResourceReference{TFhirPractitioner} read FPerson write SetPerson;
+    property personObject : TFhirResourceReference{TFhirPractitioner} read FPerson write SetPerson;
 
     {@member role
       E.g. surgeon, anaethetist, endoscopist.
     }
     property role : TFhirCodeableConcept read FRole write SetRole;
+    property roleObject : TFhirCodeableConcept read FRole write SetRole;
 
+  end;
+
+
+  TFhirProcedurePerformerListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProcedurePerformerList;
+    function GetCurrent : TFhirProcedurePerformer;
+  public
+    Constructor Create(list : TFhirProcedurePerformerList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProcedurePerformer read GetCurrent;
   end;
 
 
@@ -11463,6 +12752,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProcedurePerformerList; Overload;
     function Clone : TFhirProcedurePerformerList; Overload;
+    function GetEnumerator : TFhirProcedurePerformerListEnumerator;
     {!script show}
     
 
@@ -11475,7 +12765,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProcedurePerformer to the end of the list.
     }
-    procedure AddItem(value : TFhirProcedurePerformer);
+    procedure AddItem(value : TFhirProcedurePerformer); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -11559,17 +12850,28 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member type_
       The nature of the relationship.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to The nature of the relationship.
-    }
-    property type_ST : TFhirProcedureRelationshipType read GetType_ST write SetType_ST;
+    property type_ : TFhirProcedureRelationshipType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member target
       The related item - e.g. a procedure.
     }
     property target : TFhirResourceReference{Resource} read FTarget write SetTarget;
+    property targetObject : TFhirResourceReference{Resource} read FTarget write SetTarget;
 
+  end;
+
+
+  TFhirProcedureRelatedItemListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProcedureRelatedItemList;
+    function GetCurrent : TFhirProcedureRelatedItem;
+  public
+    Constructor Create(list : TFhirProcedureRelatedItemList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProcedureRelatedItem read GetCurrent;
   end;
 
 
@@ -11585,6 +12887,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProcedureRelatedItemList; Overload;
     function Clone : TFhirProcedureRelatedItemList; Overload;
+    function GetEnumerator : TFhirProcedureRelatedItemListEnumerator;
     {!script show}
     
 
@@ -11597,7 +12900,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProcedureRelatedItem to the end of the list.
     }
-    procedure AddItem(value : TFhirProcedureRelatedItem);
+    procedure AddItem(value : TFhirProcedureRelatedItem); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -11691,39 +12995,52 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member identity
       An Internal id that is used to identify this mapping set when specific mappings are made.
     }
-    property identity : TFhirId read FIdentity write SetIdentity;
-    {@member identityST
+    {@member identity
       Typed access to An Internal id that is used to identify this mapping set when specific mappings are made.
     }
-    property identityST : String read GetIdentityST write SetIdentityST;
+    property identity : String read GetIdentityST write SetIdentityST;
+    property identityObject : TFhirId read FIdentity write SetIdentity;
 
     {@member uri
       A URI that identifies the specification that this mapping is expressed to.
     }
-    property uri : TFhirUri read FUri write SetUri;
-    {@member uriST
+    {@member uri
       Typed access to A URI that identifies the specification that this mapping is expressed to.
     }
-    property uriST : String read GetUriST write SetUriST;
+    property uri : String read GetUriST write SetUriST;
+    property uriObject : TFhirUri read FUri write SetUri;
 
     {@member name
       A name for the specification that is being mapped to.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to A name for the specification that is being mapped to.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member comments
       Comments about this mapping, including version notes, issues, scope limitations, and other important notes for usage.
     }
-    property comments : TFhirString read FComments write SetComments;
-    {@member commentsST
+    {@member comments
       Typed access to Comments about this mapping, including version notes, issues, scope limitations, and other important notes for usage.
     }
-    property commentsST : String read GetCommentsST write SetCommentsST;
+    property comments : String read GetCommentsST write SetCommentsST;
+    property commentsObject : TFhirString read FComments write SetComments;
 
+  end;
+
+
+  TFhirProfileMappingListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileMappingList;
+    function GetCurrent : TFhirProfileMapping;
+  public
+    Constructor Create(list : TFhirProfileMappingList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileMapping read GetCurrent;
   end;
 
 
@@ -11739,6 +13056,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileMappingList; Overload;
     function Clone : TFhirProfileMappingList; Overload;
+    function GetEnumerator : TFhirProfileMappingListEnumerator;
     {!script show}
     
 
@@ -11751,7 +13069,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileMapping to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileMapping);
+    procedure AddItem(value : TFhirProfileMapping); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -11847,38 +13166,38 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member type_
       The Resource or Data type being described.
     }
-    property type_ : TFhirCode read FType_ write SetType_;
-    {@member type_ST
+    {@member type_
       Typed access to The Resource or Data type being described.
     }
-    property type_ST : String read GetType_ST write SetType_ST;
+    property type_ : String read GetType_ST write SetType_ST;
+    property type_Object : TFhirCode read FType_ write SetType_;
 
     {@member name
       The name of this resource constraint statement (to refer to it from other resource constraints - from Profile.structure.element.definition.type.profile).
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to The name of this resource constraint statement (to refer to it from other resource constraints - from Profile.structure.element.definition.type.profile).
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member publish
       This definition of a profile on a structure is published as a formal statement. Some structural definitions might be defined purely for internal use within the profile, and not intended to be used outside that context.
     }
-    property publish : TFhirBoolean read FPublish write SetPublish;
-    {@member publishST
+    {@member publish
       Typed access to This definition of a profile on a structure is published as a formal statement. Some structural definitions might be defined purely for internal use within the profile, and not intended to be used outside that context.
     }
-    property publishST : Boolean read GetPublishST write SetPublishST;
+    property publish : Boolean read GetPublishST write SetPublishST;
+    property publishObject : TFhirBoolean read FPublish write SetPublish;
 
     {@member purpose
       Human summary: why describe this resource?.
     }
-    property purpose : TFhirString read FPurpose write SetPurpose;
-    {@member purposeST
+    {@member purpose
       Typed access to Human summary: why describe this resource?.
     }
-    property purposeST : String read GetPurposeST write SetPurposeST;
+    property purpose : String read GetPurposeST write SetPurposeST;
+    property purposeObject : TFhirString read FPurpose write SetPurpose;
 
     {@member elementList
       Captures constraints on each element within the resource.
@@ -11890,6 +13209,19 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property searchParamList : TFhirProfileStructureSearchParamList read FSearchParamList;
 
+  end;
+
+
+  TFhirProfileStructureListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureList;
+    function GetCurrent : TFhirProfileStructure;
+  public
+    Constructor Create(list : TFhirProfileStructureList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructure read GetCurrent;
   end;
 
 
@@ -11905,6 +13237,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureList; Overload;
     function Clone : TFhirProfileStructureList; Overload;
+    function GetEnumerator : TFhirProfileStructureListEnumerator;
     {!script show}
     
 
@@ -11917,7 +13250,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructure to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructure);
+    procedure AddItem(value : TFhirProfileStructure); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -12010,39 +13344,51 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member path
       The path identifies the element and is expressed as a "."-separated list of ancestor elements, beginning with the name of the resource.
     }
-    property path : TFhirString read FPath write SetPath;
-    {@member pathST
+    {@member path
       Typed access to The path identifies the element and is expressed as a "."-separated list of ancestor elements, beginning with the name of the resource.
     }
-    property pathST : String read GetPathST write SetPathST;
+    property path : String read GetPathST write SetPathST;
+    property pathObject : TFhirString read FPath write SetPath;
 
     {@member representation
       Codes that define how this element is represented in instances, when the deviation varies from the normal case.
     }
-    property representation : TFhirEnumList read FRepresentation;
-    {@member representationST
-      Typed access to Codes that define how this element is represented in instances, when the deviation varies from the normal case.
-    }
-    property representationST : TFhirPropertyRepresentationList read GetRepresentationST write SetRepresentationST;
+    property representation : TFhirPropertyRepresentationList read GetRepresentationST write SetRepresentationST;
+    property representationObject : TFhirEnumList read FRepresentation;
     {@member name
       The name of this element definition (to refer to it from other element definitions using Profile.structure.element.definition.nameReference). This is a unique name referring to a specific set of constraints applied to this element. One use of this is to provide a name to different slices of the same element.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to The name of this element definition (to refer to it from other element definitions using Profile.structure.element.definition.nameReference). This is a unique name referring to a specific set of constraints applied to this element. One use of this is to provide a name to different slices of the same element.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member slicing
       Indicates that the element is sliced into a set of alternative definitions (there are multiple definitions on a single element in the base resource). The set of slices is any elements that come after this in the element sequence that have the same path, until a shorter path occurs (the shorter path terminates the set).
     }
     property slicing : TFhirProfileStructureElementSlicing read FSlicing write SetSlicing;
+    property slicingObject : TFhirProfileStructureElementSlicing read FSlicing write SetSlicing;
 
     {@member definition
       Definition of the content of the element to provide a more specific definition than that contained for the element in the base resource.
     }
     property definition : TFhirProfileStructureElementDefinition read FDefinition write SetDefinition;
+    property definitionObject : TFhirProfileStructureElementDefinition read FDefinition write SetDefinition;
 
+  end;
+
+
+  TFhirProfileStructureElementListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureElementList;
+    function GetCurrent : TFhirProfileStructureElement;
+  public
+    Constructor Create(list : TFhirProfileStructureElementList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructureElement read GetCurrent;
   end;
 
 
@@ -12058,6 +13404,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureElementList; Overload;
     function Clone : TFhirProfileStructureElementList; Overload;
+    function GetEnumerator : TFhirProfileStructureElementListEnumerator;
     {!script show}
     
 
@@ -12070,7 +13417,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructureElement to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElement);
+    procedure AddItem(value : TFhirProfileStructureElement); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -12160,30 +13508,40 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member discriminator
       Designates which child element is used to discriminate between the slices when processing an instance. The value of the child element in the instance SHALL completely distinguish which slice the element in the resource matches based on the allowed values for that element in each of the slices.
     }
-    property discriminator : TFhirId read FDiscriminator write SetDiscriminator;
-    {@member discriminatorST
+    {@member discriminator
       Typed access to Designates which child element is used to discriminate between the slices when processing an instance. The value of the child element in the instance SHALL completely distinguish which slice the element in the resource matches based on the allowed values for that element in each of the slices.
     }
-    property discriminatorST : String read GetDiscriminatorST write SetDiscriminatorST;
+    property discriminator : String read GetDiscriminatorST write SetDiscriminatorST;
+    property discriminatorObject : TFhirId read FDiscriminator write SetDiscriminator;
 
     {@member ordered
       If the matching elements have to occur in the same order as defined in the profile.
     }
-    property ordered : TFhirBoolean read FOrdered write SetOrdered;
-    {@member orderedST
+    {@member ordered
       Typed access to If the matching elements have to occur in the same order as defined in the profile.
     }
-    property orderedST : Boolean read GetOrderedST write SetOrderedST;
+    property ordered : Boolean read GetOrderedST write SetOrderedST;
+    property orderedObject : TFhirBoolean read FOrdered write SetOrdered;
 
     {@member rules
       Whether additional slices are allowed or not. When the slices are ordered, profile authors can also say that additional slices are only allowed at the end.
     }
-    property rules : TFhirEnum read FRules write SetRules;
-    {@member rulesST
-      Typed access to Whether additional slices are allowed or not. When the slices are ordered, profile authors can also say that additional slices are only allowed at the end.
-    }
-    property rulesST : TFhirResourceSlicingRules read GetRulesST write SetRulesST;
+    property rules : TFhirResourceSlicingRules read GetRulesST write SetRulesST;
+    property rulesObject : TFhirEnum read FRules write SetRules;
 
+  end;
+
+
+  TFhirProfileStructureElementSlicingListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureElementSlicingList;
+    function GetCurrent : TFhirProfileStructureElementSlicing;
+  public
+    Constructor Create(list : TFhirProfileStructureElementSlicingList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructureElementSlicing read GetCurrent;
   end;
 
 
@@ -12199,6 +13557,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureElementSlicingList; Overload;
     function Clone : TFhirProfileStructureElementSlicingList; Overload;
+    function GetEnumerator : TFhirProfileStructureElementSlicingListEnumerator;
     {!script show}
     
 
@@ -12211,7 +13570,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructureElementSlicing to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementSlicing);
+    procedure AddItem(value : TFhirProfileStructureElementSlicing); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -12340,38 +13700,38 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member short
       A concise definition that  is shown in the generated XML format that summarizes profiles (used throughout the specification).
     }
-    property short : TFhirString read FShort write SetShort;
-    {@member shortST
+    {@member short
       Typed access to A concise definition that  is shown in the generated XML format that summarizes profiles (used throughout the specification).
     }
-    property shortST : String read GetShortST write SetShortST;
+    property short : String read GetShortST write SetShortST;
+    property shortObject : TFhirString read FShort write SetShort;
 
     {@member formal
       The definition SHALL be consistent with the base definition, but convey the meaning of the element in the particular context of use of the resource.
     }
-    property formal : TFhirString read FFormal write SetFormal;
-    {@member formalST
+    {@member formal
       Typed access to The definition SHALL be consistent with the base definition, but convey the meaning of the element in the particular context of use of the resource.
     }
-    property formalST : String read GetFormalST write SetFormalST;
+    property formal : String read GetFormalST write SetFormalST;
+    property formalObject : TFhirString read FFormal write SetFormal;
 
     {@member comments
       Comments about the use of the element, including notes about how to use the data properly, exceptions to proper use, etc.
     }
-    property comments : TFhirString read FComments write SetComments;
-    {@member commentsST
+    {@member comments
       Typed access to Comments about the use of the element, including notes about how to use the data properly, exceptions to proper use, etc.
     }
-    property commentsST : String read GetCommentsST write SetCommentsST;
+    property comments : String read GetCommentsST write SetCommentsST;
+    property commentsObject : TFhirString read FComments write SetComments;
 
     {@member requirements
       Explains why this element is needed and why it's been constrained as it has.
     }
-    property requirements : TFhirString read FRequirements write SetRequirements;
-    {@member requirementsST
+    {@member requirements
       Typed access to Explains why this element is needed and why it's been constrained as it has.
     }
-    property requirementsST : String read GetRequirementsST write SetRequirementsST;
+    property requirements : String read GetRequirementsST write SetRequirementsST;
+    property requirementsObject : TFhirString read FRequirements write SetRequirements;
 
     {@member synonymList
       Identifies additional names by which this element might also be known.
@@ -12381,20 +13741,20 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member min
       The minimum number of times this element SHALL appear in the instance.
     }
-    property min : TFhirInteger read FMin write SetMin;
-    {@member minST
+    {@member min
       Typed access to The minimum number of times this element SHALL appear in the instance.
     }
-    property minST : String read GetMinST write SetMinST;
+    property min : String read GetMinST write SetMinST;
+    property minObject : TFhirInteger read FMin write SetMin;
 
     {@member max
       The maximum number of times this element is permitted to appear in the instance.
     }
-    property max : TFhirString read FMax write SetMax;
-    {@member maxST
+    {@member max
       Typed access to The maximum number of times this element is permitted to appear in the instance.
     }
-    property maxST : String read GetMaxST write SetMaxST;
+    property max : String read GetMaxST write SetMaxST;
+    property maxObject : TFhirString read FMax write SetMax;
 
     {@member type_List
       The data type or resource that the value of this element is permitted to be.
@@ -12404,30 +13764,32 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member nameReference
       Identifies the name of a slice defined elsewhere in the profile whose constraints should be applied to the current element.
     }
-    property nameReference : TFhirString read FNameReference write SetNameReference;
-    {@member nameReferenceST
+    {@member nameReference
       Typed access to Identifies the name of a slice defined elsewhere in the profile whose constraints should be applied to the current element.
     }
-    property nameReferenceST : String read GetNameReferenceST write SetNameReferenceST;
+    property nameReference : String read GetNameReferenceST write SetNameReferenceST;
+    property nameReferenceObject : TFhirString read FNameReference write SetNameReference;
 
     {@member value
       Specifies a primitive value that SHALL hold for this element in the instance.
     }
     property value : TFhirType read FValue write SetValue;
+    property valueObject : TFhirType read FValue write SetValue;
 
     {@member example
       An example value for this element.
     }
     property example : TFhirType read FExample write SetExample;
+    property exampleObject : TFhirType read FExample write SetExample;
 
     {@member maxLength
       Indicates the shortest length that SHALL be supported by conformant instances without truncation.
     }
-    property maxLength : TFhirInteger read FMaxLength write SetMaxLength;
-    {@member maxLengthST
+    {@member maxLength
       Typed access to Indicates the shortest length that SHALL be supported by conformant instances without truncation.
     }
-    property maxLengthST : String read GetMaxLengthST write SetMaxLengthST;
+    property maxLength : String read GetMaxLengthST write SetMaxLengthST;
+    property maxLengthObject : TFhirInteger read FMaxLength write SetMaxLength;
 
     {@member conditionList
       A reference to an invariant that may make additional statements about the cardinality or value in the instance.
@@ -12442,31 +13804,45 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member mustSupport
       If true, conformant resource authors SHALL be capable of providing a value for the element and resource consumers SHALL be capable of extracting and doing something useful with the data element.  If false, the element may be ignored and not supported.
     }
-    property mustSupport : TFhirBoolean read FMustSupport write SetMustSupport;
-    {@member mustSupportST
+    {@member mustSupport
       Typed access to If true, conformant resource authors SHALL be capable of providing a value for the element and resource consumers SHALL be capable of extracting and doing something useful with the data element.  If false, the element may be ignored and not supported.
     }
-    property mustSupportST : Boolean read GetMustSupportST write SetMustSupportST;
+    property mustSupport : Boolean read GetMustSupportST write SetMustSupportST;
+    property mustSupportObject : TFhirBoolean read FMustSupport write SetMustSupport;
 
     {@member isModifier
       If true, the value of this element affects the interpretation of the element or resource that contains it, and the value of the element cannot be ignored. Typically, this is used for status, negation and qualification codes. The effect of this is that the element cannot be ignored by systems: they SHALL either recognize the element and process it, and/or a pre-determination has been made that it is not relevant to their particular system.
     }
-    property isModifier : TFhirBoolean read FIsModifier write SetIsModifier;
-    {@member isModifierST
+    {@member isModifier
       Typed access to If true, the value of this element affects the interpretation of the element or resource that contains it, and the value of the element cannot be ignored. Typically, this is used for status, negation and qualification codes. The effect of this is that the element cannot be ignored by systems: they SHALL either recognize the element and process it, and/or a pre-determination has been made that it is not relevant to their particular system.
     }
-    property isModifierST : Boolean read GetIsModifierST write SetIsModifierST;
+    property isModifier : Boolean read GetIsModifierST write SetIsModifierST;
+    property isModifierObject : TFhirBoolean read FIsModifier write SetIsModifier;
 
     {@member binding
       Binds to a value set if this element is coded (code, Coding, CodeableConcept).
     }
     property binding : TFhirProfileStructureElementDefinitionBinding read FBinding write SetBinding;
+    property bindingObject : TFhirProfileStructureElementDefinitionBinding read FBinding write SetBinding;
 
     {@member mappingList
       Identifies a concept from an external specification that roughly corresponds to this element.
     }
     property mappingList : TFhirProfileStructureElementDefinitionMappingList read FMappingList;
 
+  end;
+
+
+  TFhirProfileStructureElementDefinitionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureElementDefinitionList;
+    function GetCurrent : TFhirProfileStructureElementDefinition;
+  public
+    Constructor Create(list : TFhirProfileStructureElementDefinitionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructureElementDefinition read GetCurrent;
   end;
 
 
@@ -12482,6 +13858,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureElementDefinitionList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionList; Overload;
+    function GetEnumerator : TFhirProfileStructureElementDefinitionListEnumerator;
     {!script show}
     
 
@@ -12494,7 +13871,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructureElementDefinition to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinition);
+    procedure AddItem(value : TFhirProfileStructureElementDefinition); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -12583,29 +13961,39 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member code
       Name of Data type or Resource.
     }
-    property code : TFhirCode read FCode write SetCode;
-    {@member codeST
+    {@member code
       Typed access to Name of Data type or Resource.
     }
-    property codeST : String read GetCodeST write SetCodeST;
+    property code : String read GetCodeST write SetCodeST;
+    property codeObject : TFhirCode read FCode write SetCode;
 
     {@member profile
       Identifies a profile that SHALL hold for resources or datatypes referenced as the type of this element. Can be a local reference - to another structure in this profile, or a reference to a structure in another profile.
     }
-    property profile : TFhirUri read FProfile write SetProfile;
-    {@member profileST
+    {@member profile
       Typed access to Identifies a profile that SHALL hold for resources or datatypes referenced as the type of this element. Can be a local reference - to another structure in this profile, or a reference to a structure in another profile.
     }
-    property profileST : String read GetProfileST write SetProfileST;
+    property profile : String read GetProfileST write SetProfileST;
+    property profileObject : TFhirUri read FProfile write SetProfile;
 
     {@member aggregation
       If the type is a reference to another resource, how the resource is or can be aggreated - is it a contained resource, or a reference, and if the context is a bundle, is it included in the bundle.
     }
-    property aggregation : TFhirEnumList read FAggregation;
-    {@member aggregationST
-      Typed access to If the type is a reference to another resource, how the resource is or can be aggreated - is it a contained resource, or a reference, and if the context is a bundle, is it included in the bundle.
-    }
-    property aggregationST : TFhirResourceAggregationModeList read GetAggregationST write SetAggregationST;
+    property aggregation : TFhirResourceAggregationModeList read GetAggregationST write SetAggregationST;
+    property aggregationObject : TFhirEnumList read FAggregation;
+  end;
+
+
+  TFhirProfileStructureElementDefinitionTypeListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureElementDefinitionTypeList;
+    function GetCurrent : TFhirProfileStructureElementDefinitionType;
+  public
+    Constructor Create(list : TFhirProfileStructureElementDefinitionTypeList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructureElementDefinitionType read GetCurrent;
   end;
 
 
@@ -12621,6 +14009,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureElementDefinitionTypeList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionTypeList; Overload;
+    function GetEnumerator : TFhirProfileStructureElementDefinitionTypeListEnumerator;
     {!script show}
     
 
@@ -12633,7 +14022,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructureElementDefinitionType to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinitionType);
+    procedure AddItem(value : TFhirProfileStructureElementDefinitionType); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -12731,48 +14121,58 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member key
       Allows identification of which elements have their cardinalities impacted by the constraint.  Will not be referenced for constraints that do not affect cardinality.
     }
-    property key : TFhirId read FKey write SetKey;
-    {@member keyST
+    {@member key
       Typed access to Allows identification of which elements have their cardinalities impacted by the constraint.  Will not be referenced for constraints that do not affect cardinality.
     }
-    property keyST : String read GetKeyST write SetKeyST;
+    property key : String read GetKeyST write SetKeyST;
+    property keyObject : TFhirId read FKey write SetKey;
 
     {@member name
       Used to label the constraint in OCL or in short displays incapable of displaying the full human description.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to Used to label the constraint in OCL or in short displays incapable of displaying the full human description.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member severity
       Identifies the impact constraint violation has on the conformance of the instance.
     }
-    property severity : TFhirEnum read FSeverity write SetSeverity;
-    {@member severityST
-      Typed access to Identifies the impact constraint violation has on the conformance of the instance.
-    }
-    property severityST : TFhirConstraintSeverity read GetSeverityST write SetSeverityST;
+    property severity : TFhirConstraintSeverity read GetSeverityST write SetSeverityST;
+    property severityObject : TFhirEnum read FSeverity write SetSeverity;
 
     {@member human
       Text that can be used to describe the constraint in messages identifying that the constraint has been violated.
     }
-    property human : TFhirString read FHuman write SetHuman;
-    {@member humanST
+    {@member human
       Typed access to Text that can be used to describe the constraint in messages identifying that the constraint has been violated.
     }
-    property humanST : String read GetHumanST write SetHumanST;
+    property human : String read GetHumanST write SetHumanST;
+    property humanObject : TFhirString read FHuman write SetHuman;
 
     {@member xpath
       XPath expression of constraint.
     }
-    property xpath : TFhirString read FXpath write SetXpath;
-    {@member xpathST
+    {@member xpath
       Typed access to XPath expression of constraint.
     }
-    property xpathST : String read GetXpathST write SetXpathST;
+    property xpath : String read GetXpathST write SetXpathST;
+    property xpathObject : TFhirString read FXpath write SetXpath;
 
+  end;
+
+
+  TFhirProfileStructureElementDefinitionConstraintListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureElementDefinitionConstraintList;
+    function GetCurrent : TFhirProfileStructureElementDefinitionConstraint;
+  public
+    Constructor Create(list : TFhirProfileStructureElementDefinitionConstraintList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructureElementDefinitionConstraint read GetCurrent;
   end;
 
 
@@ -12788,6 +14188,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureElementDefinitionConstraintList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionConstraintList; Overload;
+    function GetEnumerator : TFhirProfileStructureElementDefinitionConstraintListEnumerator;
     {!script show}
     
 
@@ -12800,7 +14201,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructureElementDefinitionConstraint to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinitionConstraint);
+    procedure AddItem(value : TFhirProfileStructureElementDefinitionConstraint); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -12896,44 +14298,55 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member name
       A descriptive name for this - can be useful for generating implementation artifacts.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to A descriptive name for this - can be useful for generating implementation artifacts.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member isExtensible
       If true, then conformant systems may use additional codes or (where the data type permits) text alone to convey concepts not covered by the set of codes identified in the binding.  If false, then conformant systems are constrained to the provided codes alone.
     }
-    property isExtensible : TFhirBoolean read FIsExtensible write SetIsExtensible;
-    {@member isExtensibleST
+    {@member isExtensible
       Typed access to If true, then conformant systems may use additional codes or (where the data type permits) text alone to convey concepts not covered by the set of codes identified in the binding.  If false, then conformant systems are constrained to the provided codes alone.
     }
-    property isExtensibleST : Boolean read GetIsExtensibleST write SetIsExtensibleST;
+    property isExtensible : Boolean read GetIsExtensibleST write SetIsExtensibleST;
+    property isExtensibleObject : TFhirBoolean read FIsExtensible write SetIsExtensible;
 
     {@member conformance
       Indicates the degree of conformance expectations associated with this binding.
     }
-    property conformance : TFhirEnum read FConformance write SetConformance;
-    {@member conformanceST
-      Typed access to Indicates the degree of conformance expectations associated with this binding.
-    }
-    property conformanceST : TFhirBindingConformance read GetConformanceST write SetConformanceST;
+    property conformance : TFhirBindingConformance read GetConformanceST write SetConformanceST;
+    property conformanceObject : TFhirEnum read FConformance write SetConformance;
 
     {@member description
       Describes the intended use of this particular set of codes.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Describes the intended use of this particular set of codes.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member reference
       Points to the value set or external definition that identifies the set of codes to be used.
     }
     property reference : TFhirType read FReference write SetReference;
+    property referenceObject : TFhirType read FReference write SetReference;
 
+  end;
+
+
+  TFhirProfileStructureElementDefinitionBindingListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureElementDefinitionBindingList;
+    function GetCurrent : TFhirProfileStructureElementDefinitionBinding;
+  public
+    Constructor Create(list : TFhirProfileStructureElementDefinitionBindingList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructureElementDefinitionBinding read GetCurrent;
   end;
 
 
@@ -12949,6 +14362,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureElementDefinitionBindingList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionBindingList; Overload;
+    function GetEnumerator : TFhirProfileStructureElementDefinitionBindingListEnumerator;
     {!script show}
     
 
@@ -12961,7 +14375,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructureElementDefinitionBinding to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinitionBinding);
+    procedure AddItem(value : TFhirProfileStructureElementDefinitionBinding); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13047,21 +14462,34 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member identity
       An internal reference to the definition of a mapping.
     }
-    property identity : TFhirId read FIdentity write SetIdentity;
-    {@member identityST
+    {@member identity
       Typed access to An internal reference to the definition of a mapping.
     }
-    property identityST : String read GetIdentityST write SetIdentityST;
+    property identity : String read GetIdentityST write SetIdentityST;
+    property identityObject : TFhirId read FIdentity write SetIdentity;
 
     {@member map
       Expresses what part of the target specification corresponds to this element.
     }
-    property map : TFhirString read FMap write SetMap;
-    {@member mapST
+    {@member map
       Typed access to Expresses what part of the target specification corresponds to this element.
     }
-    property mapST : String read GetMapST write SetMapST;
+    property map : String read GetMapST write SetMapST;
+    property mapObject : TFhirString read FMap write SetMap;
 
+  end;
+
+
+  TFhirProfileStructureElementDefinitionMappingListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureElementDefinitionMappingList;
+    function GetCurrent : TFhirProfileStructureElementDefinitionMapping;
+  public
+    Constructor Create(list : TFhirProfileStructureElementDefinitionMappingList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructureElementDefinitionMapping read GetCurrent;
   end;
 
 
@@ -13077,6 +14505,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureElementDefinitionMappingList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionMappingList; Overload;
+    function GetEnumerator : TFhirProfileStructureElementDefinitionMappingListEnumerator;
     {!script show}
     
 
@@ -13089,7 +14518,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructureElementDefinitionMapping to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureElementDefinitionMapping);
+    procedure AddItem(value : TFhirProfileStructureElementDefinitionMapping); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13184,44 +14614,54 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member name
       The name of the standard or custom search parameter.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to The name of the standard or custom search parameter.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member type_
       The type of value a search parameter refers to, and how the content is interpreted.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to The type of value a search parameter refers to, and how the content is interpreted.
-    }
-    property type_ST : TFhirSearchParamType read GetType_ST write SetType_ST;
+    property type_ : TFhirSearchParamType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member documentation
       A specification for search parameters. For standard parameters, provides additional information on how the parameter is used in this solution.  For custom parameters, provides a description of what the parameter does.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to A specification for search parameters. For standard parameters, provides additional information on how the parameter is used in this solution.  For custom parameters, provides a description of what the parameter does.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
     {@member xpath
       An XPath expression that returns a set of elements for the search parameter.
     }
-    property xpath : TFhirString read FXpath write SetXpath;
-    {@member xpathST
+    {@member xpath
       Typed access to An XPath expression that returns a set of elements for the search parameter.
     }
-    property xpathST : String read GetXpathST write SetXpathST;
+    property xpath : String read GetXpathST write SetXpathST;
+    property xpathObject : TFhirString read FXpath write SetXpath;
 
     {@member targetList
       Types of resource (if a resource is referenced).
     }
     property targetList : TFhirCodeList read FTargetList;
 
+  end;
+
+
+  TFhirProfileStructureSearchParamListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileStructureSearchParamList;
+    function GetCurrent : TFhirProfileStructureSearchParam;
+  public
+    Constructor Create(list : TFhirProfileStructureSearchParamList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileStructureSearchParam read GetCurrent;
   end;
 
 
@@ -13237,6 +14677,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileStructureSearchParamList; Overload;
     function Clone : TFhirProfileStructureSearchParamList; Overload;
+    function GetEnumerator : TFhirProfileStructureSearchParamListEnumerator;
     {!script show}
     
 
@@ -13249,7 +14690,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileStructureSearchParam to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileStructureSearchParam);
+    procedure AddItem(value : TFhirProfileStructureSearchParam); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13342,29 +14784,26 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member code
       A unique code (within the profile) used to identify the extension.
     }
-    property code : TFhirCode read FCode write SetCode;
-    {@member codeST
+    {@member code
       Typed access to A unique code (within the profile) used to identify the extension.
     }
-    property codeST : String read GetCodeST write SetCodeST;
+    property code : String read GetCodeST write SetCodeST;
+    property codeObject : TFhirCode read FCode write SetCode;
 
     {@member display
       Defined so that applications can use this name when displaying the value of the extension to the user.
     }
-    property display : TFhirString read FDisplay write SetDisplay;
-    {@member displayST
+    {@member display
       Typed access to Defined so that applications can use this name when displaying the value of the extension to the user.
     }
-    property displayST : String read GetDisplayST write SetDisplayST;
+    property display : String read GetDisplayST write SetDisplayST;
+    property displayObject : TFhirString read FDisplay write SetDisplay;
 
     {@member contextType
       Identifies the type of context to which the extension applies.
     }
-    property contextType : TFhirEnum read FContextType write SetContextType;
-    {@member contextTypeST
-      Typed access to Identifies the type of context to which the extension applies.
-    }
-    property contextTypeST : TFhirExtensionContext read GetContextTypeST write SetContextTypeST;
+    property contextType : TFhirExtensionContext read GetContextTypeST write SetContextTypeST;
+    property contextTypeObject : TFhirEnum read FContextType write SetContextType;
 
     {@member contextList
       Identifies the types of resource or data type elements to which the extension can be applied.
@@ -13375,7 +14814,21 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Definition of the extension and its content.
     }
     property definition : TFhirProfileStructureElementDefinition read FDefinition write SetDefinition;
+    property definitionObject : TFhirProfileStructureElementDefinition read FDefinition write SetDefinition;
 
+  end;
+
+
+  TFhirProfileExtensionDefnListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileExtensionDefnList;
+    function GetCurrent : TFhirProfileExtensionDefn;
+  public
+    Constructor Create(list : TFhirProfileExtensionDefnList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileExtensionDefn read GetCurrent;
   end;
 
 
@@ -13391,6 +14844,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileExtensionDefnList; Overload;
     function Clone : TFhirProfileExtensionDefnList; Overload;
+    function GetEnumerator : TFhirProfileExtensionDefnListEnumerator;
     {!script show}
     
 
@@ -13403,7 +14857,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileExtensionDefn to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileExtensionDefn);
+    procedure AddItem(value : TFhirProfileExtensionDefn); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13490,26 +14945,39 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member name
       The name of a query, which is used in the URI from Conformance statements declaring use of the query.  Typically this will also be the name for the _query parameter when the query is called, though in some cases it may be aliased by a server to avoid collisions.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to The name of a query, which is used in the URI from Conformance statements declaring use of the query.  Typically this will also be the name for the _query parameter when the query is called, though in some cases it may be aliased by a server to avoid collisions.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member documentation
       Description of the query - the functionality it offers, and considerations about how it functions and to use it.
     }
-    property documentation : TFhirString read FDocumentation write SetDocumentation;
-    {@member documentationST
+    {@member documentation
       Typed access to Description of the query - the functionality it offers, and considerations about how it functions and to use it.
     }
-    property documentationST : String read GetDocumentationST write SetDocumentationST;
+    property documentation : String read GetDocumentationST write SetDocumentationST;
+    property documentationObject : TFhirString read FDocumentation write SetDocumentation;
 
     {@member parameterList
       A parameter of a named query.
     }
     property parameterList : TFhirProfileStructureSearchParamList read FParameterList;
 
+  end;
+
+
+  TFhirProfileQueryListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProfileQueryList;
+    function GetCurrent : TFhirProfileQuery;
+  public
+    Constructor Create(list : TFhirProfileQueryList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProfileQuery read GetCurrent;
   end;
 
 
@@ -13525,6 +14993,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProfileQueryList; Overload;
     function Clone : TFhirProfileQueryList; Overload;
+    function GetEnumerator : TFhirProfileQueryListEnumerator;
     {!script show}
     
 
@@ -13537,7 +15006,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProfileQuery to the end of the list.
     }
-    procedure AddItem(value : TFhirProfileQuery);
+    procedure AddItem(value : TFhirProfileQuery); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13628,30 +15098,45 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       The role that the participant played.
     }
     property role : TFhirCoding read FRole write SetRole;
+    property roleObject : TFhirCoding read FRole write SetRole;
 
     {@member type_
       The type of the participant.
     }
     property type_ : TFhirCoding read FType_ write SetType_;
+    property type_Object : TFhirCoding read FType_ write SetType_;
 
     {@member reference
       Identity of participant. May be a logical or physical uri and maybe absolute or relative.
     }
-    property reference : TFhirUri read FReference write SetReference;
-    {@member referenceST
+    {@member reference
       Typed access to Identity of participant. May be a logical or physical uri and maybe absolute or relative.
     }
-    property referenceST : String read GetReferenceST write SetReferenceST;
+    property reference : String read GetReferenceST write SetReferenceST;
+    property referenceObject : TFhirUri read FReference write SetReference;
 
     {@member display
       Human-readable description of the participant.
     }
-    property display : TFhirString read FDisplay write SetDisplay;
-    {@member displayST
+    {@member display
       Typed access to Human-readable description of the participant.
     }
-    property displayST : String read GetDisplayST write SetDisplayST;
+    property display : String read GetDisplayST write SetDisplayST;
+    property displayObject : TFhirString read FDisplay write SetDisplay;
 
+  end;
+
+
+  TFhirProvenanceAgentListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProvenanceAgentList;
+    function GetCurrent : TFhirProvenanceAgent;
+  public
+    Constructor Create(list : TFhirProvenanceAgentList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProvenanceAgent read GetCurrent;
   end;
 
 
@@ -13667,6 +15152,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProvenanceAgentList; Overload;
     function Clone : TFhirProvenanceAgentList; Overload;
+    function GetEnumerator : TFhirProvenanceAgentListEnumerator;
     {!script show}
     
 
@@ -13679,7 +15165,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProvenanceAgent to the end of the list.
     }
-    procedure AddItem(value : TFhirProvenanceAgent);
+    procedure AddItem(value : TFhirProvenanceAgent); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13773,40 +15260,52 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member role
       How the entity was used during the activity.
     }
-    property role : TFhirEnum read FRole write SetRole;
-    {@member roleST
-      Typed access to How the entity was used during the activity.
-    }
-    property roleST : TFhirProvenanceEntityRole read GetRoleST write SetRoleST;
+    property role : TFhirProvenanceEntityRole read GetRoleST write SetRoleST;
+    property roleObject : TFhirEnum read FRole write SetRole;
 
     {@member type_
       The type of the entity. If the entity is a resource, then this is a resource type.
     }
     property type_ : TFhirCoding read FType_ write SetType_;
+    property type_Object : TFhirCoding read FType_ write SetType_;
 
     {@member reference
       Identity of participant. May be a logical or physical uri and maybe absolute or relative.
     }
-    property reference : TFhirUri read FReference write SetReference;
-    {@member referenceST
+    {@member reference
       Typed access to Identity of participant. May be a logical or physical uri and maybe absolute or relative.
     }
-    property referenceST : String read GetReferenceST write SetReferenceST;
+    property reference : String read GetReferenceST write SetReferenceST;
+    property referenceObject : TFhirUri read FReference write SetReference;
 
     {@member display
       Human-readable description of the entity.
     }
-    property display : TFhirString read FDisplay write SetDisplay;
-    {@member displayST
+    {@member display
       Typed access to Human-readable description of the entity.
     }
-    property displayST : String read GetDisplayST write SetDisplayST;
+    property display : String read GetDisplayST write SetDisplayST;
+    property displayObject : TFhirString read FDisplay write SetDisplay;
 
     {@member agent
       The entity is attributed to an agent to express the agent's responsibility for that entity, possibly along with other agents. This description can be understood as shorthand for saying that the agent was responsible for the activity which generated the entity.
     }
     property agent : TFhirProvenanceAgent read FAgent write SetAgent;
+    property agentObject : TFhirProvenanceAgent read FAgent write SetAgent;
 
+  end;
+
+
+  TFhirProvenanceEntityListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirProvenanceEntityList;
+    function GetCurrent : TFhirProvenanceEntity;
+  public
+    Constructor Create(list : TFhirProvenanceEntityList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirProvenanceEntity read GetCurrent;
   end;
 
 
@@ -13822,6 +15321,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirProvenanceEntityList; Overload;
     function Clone : TFhirProvenanceEntityList; Overload;
+    function GetEnumerator : TFhirProvenanceEntityListEnumerator;
     {!script show}
     
 
@@ -13834,7 +15334,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirProvenanceEntity to the end of the list.
     }
-    procedure AddItem(value : TFhirProvenanceEntity);
+    procedure AddItem(value : TFhirProvenanceEntity); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -13930,29 +15431,26 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member identifier
       Links response to source query.
     }
-    property identifier : TFhirUri read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to Links response to source query.
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirUri read FIdentifier write SetIdentifier;
 
     {@member outcome
       Outcome of processing the query.
     }
-    property outcome : TFhirEnum read FOutcome write SetOutcome;
-    {@member outcomeST
-      Typed access to Outcome of processing the query.
-    }
-    property outcomeST : TFhirQueryOutcome read GetOutcomeST write SetOutcomeST;
+    property outcome : TFhirQueryOutcome read GetOutcomeST write SetOutcomeST;
+    property outcomeObject : TFhirEnum read FOutcome write SetOutcome;
 
     {@member total
       Total number of matching records.
     }
-    property total : TFhirInteger read FTotal write SetTotal;
-    {@member totalST
+    {@member total
       Typed access to Total number of matching records.
     }
-    property totalST : String read GetTotalST write SetTotalST;
+    property total : String read GetTotalST write SetTotalST;
+    property totalObject : TFhirInteger read FTotal write SetTotal;
 
     {@member parameterList
       Parameters server used.
@@ -13987,6 +15485,19 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   end;
 
 
+  TFhirQueryResponseListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirQueryResponseList;
+    function GetCurrent : TFhirQueryResponse;
+  public
+    Constructor Create(list : TFhirQueryResponseList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirQueryResponse read GetCurrent;
+  end;
+
+
   {@Class TFhirQueryResponseList
     A list of FhirQueryResponse
   }
@@ -13999,6 +15510,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirQueryResponseList; Overload;
     function Clone : TFhirQueryResponseList; Overload;
+    function GetEnumerator : TFhirQueryResponseListEnumerator;
     {!script show}
     
 
@@ -14011,7 +15523,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirQueryResponse to the end of the list.
     }
-    procedure AddItem(value : TFhirQueryResponse);
+    procedure AddItem(value : TFhirQueryResponse); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -14104,29 +15617,31 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Structured name for a section of a predefined list of questions this questionnaire is responding to.
     }
     property name : TFhirCodeableConcept read FName write SetName;
+    property nameObject : TFhirCodeableConcept read FName write SetName;
 
     {@member header
       Text that is displayed above the contents of the group.
     }
-    property header : TFhirString read FHeader write SetHeader;
-    {@member headerST
+    {@member header
       Typed access to Text that is displayed above the contents of the group.
     }
-    property headerST : String read GetHeaderST write SetHeaderST;
+    property header : String read GetHeaderST write SetHeaderST;
+    property headerObject : TFhirString read FHeader write SetHeader;
 
     {@member text
       Additional text for the group, used for display purposes.
     }
-    property text : TFhirString read FText write SetText;
-    {@member textST
+    {@member text
       Typed access to Additional text for the group, used for display purposes.
     }
-    property textST : String read GetTextST write SetTextST;
+    property text : String read GetTextST write SetTextST;
+    property textObject : TFhirString read FText write SetText;
 
     {@member subject
       More specific subject this section's answers are about, details the subject given in Questionnaire.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member groupList
       A sub-group within a group. The ordering of groups within this group is relevant.
@@ -14138,6 +15653,19 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property questionList : TFhirQuestionnaireGroupQuestionList read FQuestionList;
 
+  end;
+
+
+  TFhirQuestionnaireGroupListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirQuestionnaireGroupList;
+    function GetCurrent : TFhirQuestionnaireGroup;
+  public
+    Constructor Create(list : TFhirQuestionnaireGroupList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirQuestionnaireGroup read GetCurrent;
   end;
 
 
@@ -14153,6 +15681,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirQuestionnaireGroupList; Overload;
     function Clone : TFhirQuestionnaireGroupList; Overload;
+    function GetEnumerator : TFhirQuestionnaireGroupListEnumerator;
     {!script show}
     
 
@@ -14165,7 +15694,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirQuestionnaireGroup to the end of the list.
     }
-    procedure AddItem(value : TFhirQuestionnaireGroup);
+    procedure AddItem(value : TFhirQuestionnaireGroup); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -14262,20 +15792,22 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Structured name for the question that identifies this question within the Questionnaire or Group.
     }
     property name : TFhirCodeableConcept read FName write SetName;
+    property nameObject : TFhirCodeableConcept read FName write SetName;
 
     {@member text
       Text of the question as it is shown to the user.
     }
-    property text : TFhirString read FText write SetText;
-    {@member textST
+    {@member text
       Typed access to Text of the question as it is shown to the user.
     }
-    property textST : String read GetTextST write SetTextST;
+    property text : String read GetTextST write SetTextST;
+    property textObject : TFhirString read FText write SetText;
 
     {@member answer
       Single-valued answer to the question.
     }
     property answer : TFhirType read FAnswer write SetAnswer;
+    property answerObject : TFhirType read FAnswer write SetAnswer;
 
     {@member choiceList
       Selections made by the user from the list of options.
@@ -14286,26 +15818,41 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Reference to a valueset containing the possible options.
     }
     property options : TFhirResourceReference{TFhirValueSet} read FOptions write SetOptions;
+    property optionsObject : TFhirResourceReference{TFhirValueSet} read FOptions write SetOptions;
 
     {@member data
       Structured answer in the form of a FHIR Resource or datatype.
     }
     property data : TFhirType read FData write SetData;
+    property dataObject : TFhirType read FData write SetData;
 
     {@member remarks
       The remark contains information about the answer given. This is additional information about the answer the author wishes to convey, but should not be used to contain information that is part of the answer itself.
     }
-    property remarks : TFhirString read FRemarks write SetRemarks;
-    {@member remarksST
+    {@member remarks
       Typed access to The remark contains information about the answer given. This is additional information about the answer the author wishes to convey, but should not be used to contain information that is part of the answer itself.
     }
-    property remarksST : String read GetRemarksST write SetRemarksST;
+    property remarks : String read GetRemarksST write SetRemarksST;
+    property remarksObject : TFhirString read FRemarks write SetRemarks;
 
     {@member groupList
       Nested group, containing nested question for this question. The order of groups within the question is relevant.
     }
     property groupList : TFhirQuestionnaireGroupList read FGroupList;
 
+  end;
+
+
+  TFhirQuestionnaireGroupQuestionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirQuestionnaireGroupQuestionList;
+    function GetCurrent : TFhirQuestionnaireGroupQuestion;
+  public
+    Constructor Create(list : TFhirQuestionnaireGroupQuestionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirQuestionnaireGroupQuestion read GetCurrent;
   end;
 
 
@@ -14321,6 +15868,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirQuestionnaireGroupQuestionList; Overload;
     function Clone : TFhirQuestionnaireGroupQuestionList; Overload;
+    function GetEnumerator : TFhirQuestionnaireGroupQuestionListEnumerator;
     {!script show}
     
 
@@ -14333,7 +15881,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirQuestionnaireGroupQuestion to the end of the list.
     }
-    procedure AddItem(value : TFhirQuestionnaireGroupQuestion);
+    procedure AddItem(value : TFhirQuestionnaireGroupQuestion); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -14431,6 +15980,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Identifier for a family of the event.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member subtypeList
       Identifier for the category of event.
@@ -14440,39 +15990,46 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member action
       Indicator for type of action performed during the event that generated the audit.
     }
-    property action : TFhirEnum read FAction write SetAction;
-    {@member actionST
-      Typed access to Indicator for type of action performed during the event that generated the audit.
-    }
-    property actionST : TFhirSecurityEventAction read GetActionST write SetActionST;
+    property action : TFhirSecurityEventAction read GetActionST write SetActionST;
+    property actionObject : TFhirEnum read FAction write SetAction;
 
     {@member dateTime
       The time when the event occurred on the source.
     }
-    property dateTime : TFhirInstant read FDateTime write SetDateTime;
-    {@member dateTimeST
+    {@member dateTime
       Typed access to The time when the event occurred on the source.
     }
-    property dateTimeST : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTime : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTimeObject : TFhirInstant read FDateTime write SetDateTime;
 
     {@member outcome
       Indicates whether the event succeeded or failed.
     }
-    property outcome : TFhirEnum read FOutcome write SetOutcome;
-    {@member outcomeST
-      Typed access to Indicates whether the event succeeded or failed.
-    }
-    property outcomeST : TFhirSecurityEventOutcome read GetOutcomeST write SetOutcomeST;
+    property outcome : TFhirSecurityEventOutcome read GetOutcomeST write SetOutcomeST;
+    property outcomeObject : TFhirEnum read FOutcome write SetOutcome;
 
     {@member outcomeDesc
       A free text description of the outcome of the event.
     }
-    property outcomeDesc : TFhirString read FOutcomeDesc write SetOutcomeDesc;
-    {@member outcomeDescST
+    {@member outcomeDesc
       Typed access to A free text description of the outcome of the event.
     }
-    property outcomeDescST : String read GetOutcomeDescST write SetOutcomeDescST;
+    property outcomeDesc : String read GetOutcomeDescST write SetOutcomeDescST;
+    property outcomeDescObject : TFhirString read FOutcomeDesc write SetOutcomeDesc;
 
+  end;
+
+
+  TFhirSecurityEventEventListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSecurityEventEventList;
+    function GetCurrent : TFhirSecurityEventEvent;
+  public
+    Constructor Create(list : TFhirSecurityEventEventList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSecurityEventEvent read GetCurrent;
   end;
 
 
@@ -14488,6 +16045,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSecurityEventEventList; Overload;
     function Clone : TFhirSecurityEventEventList; Overload;
+    function GetEnumerator : TFhirSecurityEventEventListEnumerator;
     {!script show}
     
 
@@ -14500,7 +16058,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSecurityEventEvent to the end of the list.
     }
-    procedure AddItem(value : TFhirSecurityEventEvent);
+    procedure AddItem(value : TFhirSecurityEventEvent); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -14607,53 +16166,69 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Direct reference to a resource that identifies the participant.
     }
     property reference : TFhirResourceReference{Resource} read FReference write SetReference;
+    property referenceObject : TFhirResourceReference{Resource} read FReference write SetReference;
 
     {@member userId
       Unique identifier for the user actively participating in the event.
     }
-    property userId : TFhirString read FUserId write SetUserId;
-    {@member userIdST
+    {@member userId
       Typed access to Unique identifier for the user actively participating in the event.
     }
-    property userIdST : String read GetUserIdST write SetUserIdST;
+    property userId : String read GetUserIdST write SetUserIdST;
+    property userIdObject : TFhirString read FUserId write SetUserId;
 
     {@member altId
       Alternative Participant Identifier. For a human, this should be a user identifier text string from authentication system. This identifier would be one known to a common authentication system (e.g., single sign-on), if available.
     }
-    property altId : TFhirString read FAltId write SetAltId;
-    {@member altIdST
+    {@member altId
       Typed access to Alternative Participant Identifier. For a human, this should be a user identifier text string from authentication system. This identifier would be one known to a common authentication system (e.g., single sign-on), if available.
     }
-    property altIdST : String read GetAltIdST write SetAltIdST;
+    property altId : String read GetAltIdST write SetAltIdST;
+    property altIdObject : TFhirString read FAltId write SetAltId;
 
     {@member name
       Human-meaningful name for the user.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to Human-meaningful name for the user.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member requestor
       Indicator that the user is or is not the requestor, or initiator, for the event being audited.
     }
-    property requestor : TFhirBoolean read FRequestor write SetRequestor;
-    {@member requestorST
+    {@member requestor
       Typed access to Indicator that the user is or is not the requestor, or initiator, for the event being audited.
     }
-    property requestorST : Boolean read GetRequestorST write SetRequestorST;
+    property requestor : Boolean read GetRequestorST write SetRequestorST;
+    property requestorObject : TFhirBoolean read FRequestor write SetRequestor;
 
     {@member media
       Type of media involved. Used when the event is about exporting/importing onto media.
     }
     property media : TFhirCoding read FMedia write SetMedia;
+    property mediaObject : TFhirCoding read FMedia write SetMedia;
 
     {@member network
       Logical network location for application activity, if the activity has a network location.
     }
     property network : TFhirSecurityEventParticipantNetwork read FNetwork write SetNetwork;
+    property networkObject : TFhirSecurityEventParticipantNetwork read FNetwork write SetNetwork;
 
+  end;
+
+
+  TFhirSecurityEventParticipantListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSecurityEventParticipantList;
+    function GetCurrent : TFhirSecurityEventParticipant;
+  public
+    Constructor Create(list : TFhirSecurityEventParticipantList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSecurityEventParticipant read GetCurrent;
   end;
 
 
@@ -14669,6 +16244,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSecurityEventParticipantList; Overload;
     function Clone : TFhirSecurityEventParticipantList; Overload;
+    function GetEnumerator : TFhirSecurityEventParticipantListEnumerator;
     {!script show}
     
 
@@ -14681,7 +16257,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSecurityEventParticipant to the end of the list.
     }
-    procedure AddItem(value : TFhirSecurityEventParticipant);
+    procedure AddItem(value : TFhirSecurityEventParticipant); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -14767,21 +16344,31 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member identifier
       An identifier for the network access point of the user device for the audit event.
     }
-    property identifier : TFhirString read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to An identifier for the network access point of the user device for the audit event.
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirString read FIdentifier write SetIdentifier;
 
     {@member type_
       An identifier for the type of network access point that originated the audit event.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to An identifier for the type of network access point that originated the audit event.
-    }
-    property type_ST : TFhirNetworkType read GetType_ST write SetType_ST;
+    property type_ : TFhirNetworkType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
+  end;
+
+
+  TFhirSecurityEventParticipantNetworkListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSecurityEventParticipantNetworkList;
+    function GetCurrent : TFhirSecurityEventParticipantNetwork;
+  public
+    Constructor Create(list : TFhirSecurityEventParticipantNetworkList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSecurityEventParticipantNetwork read GetCurrent;
   end;
 
 
@@ -14797,6 +16384,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSecurityEventParticipantNetworkList; Overload;
     function Clone : TFhirSecurityEventParticipantNetworkList; Overload;
+    function GetEnumerator : TFhirSecurityEventParticipantNetworkListEnumerator;
     {!script show}
     
 
@@ -14809,7 +16397,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSecurityEventParticipantNetwork to the end of the list.
     }
-    procedure AddItem(value : TFhirSecurityEventParticipantNetwork);
+    procedure AddItem(value : TFhirSecurityEventParticipantNetwork); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -14896,26 +16485,39 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member site
       Logical source location within the healthcare enterprise network.
     }
-    property site : TFhirString read FSite write SetSite;
-    {@member siteST
+    {@member site
       Typed access to Logical source location within the healthcare enterprise network.
     }
-    property siteST : String read GetSiteST write SetSiteST;
+    property site : String read GetSiteST write SetSiteST;
+    property siteObject : TFhirString read FSite write SetSite;
 
     {@member identifier
       Identifier of the source where the event originated.
     }
-    property identifier : TFhirString read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to Identifier of the source where the event originated.
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirString read FIdentifier write SetIdentifier;
 
     {@member type_List
       Code specifying the type of source where event originated.
     }
     property type_List : TFhirCodingList read FType_List;
 
+  end;
+
+
+  TFhirSecurityEventSourceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSecurityEventSourceList;
+    function GetCurrent : TFhirSecurityEventSource;
+  public
+    Constructor Create(list : TFhirSecurityEventSourceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSecurityEventSource read GetCurrent;
   end;
 
 
@@ -14931,6 +16533,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSecurityEventSourceList; Overload;
     function Clone : TFhirSecurityEventSourceList; Overload;
+    function GetEnumerator : TFhirSecurityEventSourceListEnumerator;
     {!script show}
     
 
@@ -14943,7 +16546,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSecurityEventSource to the end of the list.
     }
-    procedure AddItem(value : TFhirSecurityEventSource);
+    procedure AddItem(value : TFhirSecurityEventSource); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -15053,76 +16657,83 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Identifies a specific instance of the participant object. The reference should always be version specific.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member reference
       Identifies a specific instance of the participant object. The reference should always be version specific.
     }
     property reference : TFhirResourceReference{Resource} read FReference write SetReference;
+    property referenceObject : TFhirResourceReference{Resource} read FReference write SetReference;
 
     {@member type_
       Object type being audited.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to Object type being audited.
-    }
-    property type_ST : TFhirObjectType read GetType_ST write SetType_ST;
+    property type_ : TFhirObjectType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member role
       Code representing the functional application role of Participant Object being audited.
     }
-    property role : TFhirEnum read FRole write SetRole;
-    {@member roleST
-      Typed access to Code representing the functional application role of Participant Object being audited.
-    }
-    property roleST : TFhirObjectRole read GetRoleST write SetRoleST;
+    property role : TFhirObjectRole read GetRoleST write SetRoleST;
+    property roleObject : TFhirEnum read FRole write SetRole;
 
     {@member lifecycle
       Identifier for the data life-cycle stage for the participant object.
     }
-    property lifecycle : TFhirEnum read FLifecycle write SetLifecycle;
-    {@member lifecycleST
-      Typed access to Identifier for the data life-cycle stage for the participant object.
-    }
-    property lifecycleST : TFhirObjectLifecycle read GetLifecycleST write SetLifecycleST;
+    property lifecycle : TFhirObjectLifecycle read GetLifecycleST write SetLifecycleST;
+    property lifecycleObject : TFhirEnum read FLifecycle write SetLifecycle;
 
     {@member sensitivity
       Denotes policy-defined sensitivity for the Participant Object ID such as VIP, HIV status, mental health status or similar topics.
     }
     property sensitivity : TFhirCodeableConcept read FSensitivity write SetSensitivity;
+    property sensitivityObject : TFhirCodeableConcept read FSensitivity write SetSensitivity;
 
     {@member name
       An instance-specific descriptor of the Participant Object ID audited, such as a person's name.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to An instance-specific descriptor of the Participant Object ID audited, such as a person's name.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member description
       Text that describes the object in more detail.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Text that describes the object in more detail.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member query
       The actual query for a query-type participant object.
     }
-    property query : TFhirBase64Binary read FQuery write SetQuery;
-    {@member queryST
+    {@member query
       Typed access to The actual query for a query-type participant object.
     }
-    property queryST : String read GetQueryST write SetQueryST;
+    property query : String read GetQueryST write SetQueryST;
+    property queryObject : TFhirBase64Binary read FQuery write SetQuery;
 
     {@member detailList
       Additional Information about the Object.
     }
     property detailList : TFhirSecurityEventObjectDetailList read FDetailList;
 
+  end;
+
+
+  TFhirSecurityEventObjectListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSecurityEventObjectList;
+    function GetCurrent : TFhirSecurityEventObject;
+  public
+    Constructor Create(list : TFhirSecurityEventObjectList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSecurityEventObject read GetCurrent;
   end;
 
 
@@ -15138,6 +16749,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSecurityEventObjectList; Overload;
     function Clone : TFhirSecurityEventObjectList; Overload;
+    function GetEnumerator : TFhirSecurityEventObjectListEnumerator;
     {!script show}
     
 
@@ -15150,7 +16762,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSecurityEventObject to the end of the list.
     }
-    procedure AddItem(value : TFhirSecurityEventObject);
+    procedure AddItem(value : TFhirSecurityEventObject); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -15236,21 +16849,34 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member type_
       Name of the property.
     }
-    property type_ : TFhirString read FType_ write SetType_;
-    {@member type_ST
+    {@member type_
       Typed access to Name of the property.
     }
-    property type_ST : String read GetType_ST write SetType_ST;
+    property type_ : String read GetType_ST write SetType_ST;
+    property type_Object : TFhirString read FType_ write SetType_;
 
     {@member value
       Property value.
     }
-    property value : TFhirBase64Binary read FValue write SetValue;
-    {@member valueST
+    {@member value
       Typed access to Property value.
     }
-    property valueST : String read GetValueST write SetValueST;
+    property value : String read GetValueST write SetValueST;
+    property valueObject : TFhirBase64Binary read FValue write SetValue;
 
+  end;
+
+
+  TFhirSecurityEventObjectDetailListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSecurityEventObjectDetailList;
+    function GetCurrent : TFhirSecurityEventObjectDetail;
+  public
+    Constructor Create(list : TFhirSecurityEventObjectDetailList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSecurityEventObjectDetail read GetCurrent;
   end;
 
 
@@ -15266,6 +16892,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSecurityEventObjectDetailList; Overload;
     function Clone : TFhirSecurityEventObjectDetailList; Overload;
+    function GetEnumerator : TFhirSecurityEventObjectDetailListEnumerator;
     {!script show}
     
 
@@ -15278,7 +16905,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSecurityEventObjectDetail to the end of the list.
     }
-    procedure AddItem(value : TFhirSecurityEventObjectDetail);
+    procedure AddItem(value : TFhirSecurityEventObjectDetail); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -15361,17 +16989,27 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member relationship
       Whether this relationship is to a parent or to a child.
     }
-    property relationship : TFhirEnum read FRelationship write SetRelationship;
-    {@member relationshipST
-      Typed access to Whether this relationship is to a parent or to a child.
-    }
-    property relationshipST : TFhirHierarchicalRelationshipType read GetRelationshipST write SetRelationshipST;
+    property relationship : TFhirHierarchicalRelationshipType read GetRelationshipST write SetRelationshipST;
+    property relationshipObject : TFhirEnum read FRelationship write SetRelationship;
 
     {@member targetList
       The specimen resource that is the target of this relationship.
     }
     property targetList : TFhirResourceReferenceList{TFhirSpecimen} read FTargetList;
 
+  end;
+
+
+  TFhirSpecimenSourceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSpecimenSourceList;
+    function GetCurrent : TFhirSpecimenSource;
+  public
+    Constructor Create(list : TFhirSpecimenSourceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSpecimenSource read GetCurrent;
   end;
 
 
@@ -15387,6 +17025,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSpecimenSourceList; Overload;
     function Clone : TFhirSpecimenSourceList; Overload;
+    function GetEnumerator : TFhirSpecimenSourceListEnumerator;
     {!script show}
     
 
@@ -15399,7 +17038,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSpecimenSource to the end of the list.
     }
-    procedure AddItem(value : TFhirSpecimenSource);
+    procedure AddItem(value : TFhirSpecimenSource); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -15489,6 +17129,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Person who collected the specimen.
     }
     property collector : TFhirResourceReference{TFhirPractitioner} read FCollector write SetCollector;
+    property collectorObject : TFhirResourceReference{TFhirPractitioner} read FCollector write SetCollector;
 
     {@member commentList
       To communicate any details or issues encountered during the specimen collection procedure.
@@ -15499,22 +17140,39 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Time when specimen was collected from subject - the physiologically relevant time.
     }
     property collected : TFhirType read FCollected write SetCollected;
+    property collectedObject : TFhirType read FCollected write SetCollected;
 
     {@member quantity
       The quantity of specimen collected; for instance the volume of a blood sample, or the physical measurement of an anatomic pathology sample.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member method
       A coded value specifying the technique that is used to perform the procedure.
     }
     property method : TFhirCodeableConcept read FMethod write SetMethod;
+    property methodObject : TFhirCodeableConcept read FMethod write SetMethod;
 
     {@member sourceSite
       Anatomical location from which the specimen should be collected (if subject is a patient). This element is not used for environmental specimens.
     }
     property sourceSite : TFhirCodeableConcept read FSourceSite write SetSourceSite;
+    property sourceSiteObject : TFhirCodeableConcept read FSourceSite write SetSourceSite;
 
+  end;
+
+
+  TFhirSpecimenCollectionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSpecimenCollectionList;
+    function GetCurrent : TFhirSpecimenCollection;
+  public
+    Constructor Create(list : TFhirSpecimenCollectionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSpecimenCollection read GetCurrent;
   end;
 
 
@@ -15530,6 +17188,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSpecimenCollectionList; Overload;
     function Clone : TFhirSpecimenCollectionList; Overload;
+    function GetEnumerator : TFhirSpecimenCollectionListEnumerator;
     {!script show}
     
 
@@ -15542,7 +17201,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSpecimenCollection to the end of the list.
     }
-    procedure AddItem(value : TFhirSpecimenCollection);
+    procedure AddItem(value : TFhirSpecimenCollection); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -15627,22 +17287,36 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member description
       Textual description of procedure.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Textual description of procedure.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member procedure_
       A coded value specifying the procedure used to process the specimen.
     }
     property procedure_ : TFhirCodeableConcept read FProcedure_ write SetProcedure_;
+    property procedure_Object : TFhirCodeableConcept read FProcedure_ write SetProcedure_;
 
     {@member additiveList
       Material used in the processing step.
     }
     property additiveList : TFhirResourceReferenceList{TFhirSubstance} read FAdditiveList;
 
+  end;
+
+
+  TFhirSpecimenTreatmentListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSpecimenTreatmentList;
+    function GetCurrent : TFhirSpecimenTreatment;
+  public
+    Constructor Create(list : TFhirSpecimenTreatmentList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSpecimenTreatment read GetCurrent;
   end;
 
 
@@ -15658,6 +17332,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSpecimenTreatmentList; Overload;
     function Clone : TFhirSpecimenTreatmentList; Overload;
+    function GetEnumerator : TFhirSpecimenTreatmentListEnumerator;
     {!script show}
     
 
@@ -15670,7 +17345,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSpecimenTreatment to the end of the list.
     }
-    procedure AddItem(value : TFhirSpecimenTreatment);
+    procedure AddItem(value : TFhirSpecimenTreatment); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -15766,32 +17442,49 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member description
       Textual description of the container.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Textual description of the container.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member type_
       The type of container associated with the specimen (e.g. slide, aliquot, etc).
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member capacity
       The capacity (volume or other measure) the container may contain.
     }
     property capacity : TFhirQuantity read FCapacity write SetCapacity;
+    property capacityObject : TFhirQuantity read FCapacity write SetCapacity;
 
     {@member specimenQuantity
       The quantity of specimen in the container; may be volume, dimensions, or other appropriate measurements, depending on the specimen type.
     }
     property specimenQuantity : TFhirQuantity read FSpecimenQuantity write SetSpecimenQuantity;
+    property specimenQuantityObject : TFhirQuantity read FSpecimenQuantity write SetSpecimenQuantity;
 
     {@member additive
       Additive associated with the container.
     }
     property additive : TFhirResourceReference{TFhirSubstance} read FAdditive write SetAdditive;
+    property additiveObject : TFhirResourceReference{TFhirSubstance} read FAdditive write SetAdditive;
 
+  end;
+
+
+  TFhirSpecimenContainerListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSpecimenContainerList;
+    function GetCurrent : TFhirSpecimenContainer;
+  public
+    Constructor Create(list : TFhirSpecimenContainerList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSpecimenContainer read GetCurrent;
   end;
 
 
@@ -15807,6 +17500,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSpecimenContainerList; Overload;
     function Clone : TFhirSpecimenContainerList; Overload;
+    function GetEnumerator : TFhirSpecimenContainerListEnumerator;
     {!script show}
     
 
@@ -15819,7 +17513,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSpecimenContainer to the end of the list.
     }
-    procedure AddItem(value : TFhirSpecimenContainer);
+    procedure AddItem(value : TFhirSpecimenContainer); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -15906,21 +17601,36 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Identifier associated with the package/container (usually a label affixed directly).
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member expiry
       When the substance is no longer valid to use. For some substances, a single arbitrary date is used for expiry.
     }
-    property expiry : TFhirDateTime read FExpiry write SetExpiry;
-    {@member expiryST
+    {@member expiry
       Typed access to When the substance is no longer valid to use. For some substances, a single arbitrary date is used for expiry.
     }
-    property expiryST : TDateAndTime read GetExpiryST write SetExpiryST;
+    property expiry : TDateAndTime read GetExpiryST write SetExpiryST;
+    property expiryObject : TFhirDateTime read FExpiry write SetExpiry;
 
     {@member quantity
       The amount of the substance.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
+  end;
+
+
+  TFhirSubstanceInstanceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSubstanceInstanceList;
+    function GetCurrent : TFhirSubstanceInstance;
+  public
+    Constructor Create(list : TFhirSubstanceInstanceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSubstanceInstance read GetCurrent;
   end;
 
 
@@ -15936,6 +17646,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSubstanceInstanceList; Overload;
     function Clone : TFhirSubstanceInstanceList; Overload;
+    function GetEnumerator : TFhirSubstanceInstanceListEnumerator;
     {!script show}
     
 
@@ -15948,7 +17659,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSubstanceInstance to the end of the list.
     }
-    procedure AddItem(value : TFhirSubstanceInstance);
+    procedure AddItem(value : TFhirSubstanceInstance); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -16031,12 +17743,27 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       The amount of the ingredient in the substance - a concentration ratio.
     }
     property quantity : TFhirRatio read FQuantity write SetQuantity;
+    property quantityObject : TFhirRatio read FQuantity write SetQuantity;
 
     {@member substance
       Another substance that is a component of this substance.
     }
     property substance : TFhirResourceReference{TFhirSubstance} read FSubstance write SetSubstance;
+    property substanceObject : TFhirResourceReference{TFhirSubstance} read FSubstance write SetSubstance;
 
+  end;
+
+
+  TFhirSubstanceIngredientListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSubstanceIngredientList;
+    function GetCurrent : TFhirSubstanceIngredient;
+  public
+    Constructor Create(list : TFhirSubstanceIngredientList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSubstanceIngredient read GetCurrent;
   end;
 
 
@@ -16052,6 +17779,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSubstanceIngredientList; Overload;
     function Clone : TFhirSubstanceIngredientList; Overload;
+    function GetEnumerator : TFhirSubstanceIngredientListEnumerator;
     {!script show}
     
 
@@ -16064,7 +17792,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSubstanceIngredient to the end of the list.
     }
-    procedure AddItem(value : TFhirSubstanceIngredient);
+    procedure AddItem(value : TFhirSubstanceIngredient); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -16164,56 +17893,74 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       Identifier assigned by the dispensing facility when the dispense occurs.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member status
       A code specifying the state of the dispense event.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to A code specifying the state of the dispense event.
-    }
-    property statusST : TFhirValuesetSupplyDispenseStatus read GetStatusST write SetStatusST;
+    property status : TFhirValuesetSupplyDispenseStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member type_
       Indicates the type of dispensing event that is performed. Examples include: Trial Fill, Completion of Trial, Partial Fill, Emergency Fill, Samples, etc.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member quantity
       The amount of supply that has been dispensed. Includes unit of measure.
     }
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    property quantityObject : TFhirQuantity read FQuantity write SetQuantity;
 
     {@member suppliedItem
       Identifies the medication or substance being dispensed. This is either a link to a resource representing the details of the medication or substance or a simple attribute carrying a code that identifies the medication from a known list of medications.
     }
     property suppliedItem : TFhirResourceReference{Resource} read FSuppliedItem write SetSuppliedItem;
+    property suppliedItemObject : TFhirResourceReference{Resource} read FSuppliedItem write SetSuppliedItem;
 
     {@member supplier
       The individual responsible for dispensing the medication.
     }
     property supplier : TFhirResourceReference{TFhirPractitioner} read FSupplier write SetSupplier;
+    property supplierObject : TFhirResourceReference{TFhirPractitioner} read FSupplier write SetSupplier;
 
     {@member whenPrepared
       The time the dispense event occurred.
     }
     property whenPrepared : TFhirPeriod read FWhenPrepared write SetWhenPrepared;
+    property whenPreparedObject : TFhirPeriod read FWhenPrepared write SetWhenPrepared;
 
     {@member whenHandedOver
       The time the dispensed item was sent or handed to the patient (or agent).
     }
     property whenHandedOver : TFhirPeriod read FWhenHandedOver write SetWhenHandedOver;
+    property whenHandedOverObject : TFhirPeriod read FWhenHandedOver write SetWhenHandedOver;
 
     {@member destination
       Identification of the facility/location where the Supply was shipped to, as part of the dispense event.
     }
     property destination : TFhirResourceReference{TFhirLocation} read FDestination write SetDestination;
+    property destinationObject : TFhirResourceReference{TFhirLocation} read FDestination write SetDestination;
 
     {@member receiverList
       Identifies the person who picked up the Supply.
     }
     property receiverList : TFhirResourceReferenceList{TFhirPractitioner} read FReceiverList;
 
+  end;
+
+
+  TFhirSupplyDispenseListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirSupplyDispenseList;
+    function GetCurrent : TFhirSupplyDispense;
+  public
+    Constructor Create(list : TFhirSupplyDispenseList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirSupplyDispense read GetCurrent;
   end;
 
 
@@ -16229,6 +17976,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirSupplyDispenseList; Overload;
     function Clone : TFhirSupplyDispenseList; Overload;
+    function GetEnumerator : TFhirSupplyDispenseListEnumerator;
     {!script show}
     
 
@@ -16241,7 +17989,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirSupplyDispense to the end of the list.
     }
-    procedure AddItem(value : TFhirSupplyDispense);
+    procedure AddItem(value : TFhirSupplyDispense); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -16332,35 +18081,48 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member system
       URI to identify the code system.
     }
-    property system : TFhirUri read FSystem write SetSystem;
-    {@member systemST
+    {@member system
       Typed access to URI to identify the code system.
     }
-    property systemST : String read GetSystemST write SetSystemST;
+    property system : String read GetSystemST write SetSystemST;
+    property systemObject : TFhirUri read FSystem write SetSystem;
 
     {@member version
       The version of this code system that defines the codes. Note that the version is optional because a well maintained code system does not suffer from versioning, and therefore the version does not need to be maintained. However many code systems are not well maintained, and the version needs to be defined and tracked.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to The version of this code system that defines the codes. Note that the version is optional because a well maintained code system does not suffer from versioning, and therefore the version does not need to be maintained. However many code systems are not well maintained, and the version needs to be defined and tracked.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member caseSensitive
       If code comparison is case sensitive when codes within this system are compared to each other.
     }
-    property caseSensitive : TFhirBoolean read FCaseSensitive write SetCaseSensitive;
-    {@member caseSensitiveST
+    {@member caseSensitive
       Typed access to If code comparison is case sensitive when codes within this system are compared to each other.
     }
-    property caseSensitiveST : Boolean read GetCaseSensitiveST write SetCaseSensitiveST;
+    property caseSensitive : Boolean read GetCaseSensitiveST write SetCaseSensitiveST;
+    property caseSensitiveObject : TFhirBoolean read FCaseSensitive write SetCaseSensitive;
 
     {@member conceptList
       Concepts in the code system.
     }
     property conceptList : TFhirValueSetDefineConceptList read FConceptList;
 
+  end;
+
+
+  TFhirValueSetDefineListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirValueSetDefineList;
+    function GetCurrent : TFhirValueSetDefine;
+  public
+    Constructor Create(list : TFhirValueSetDefineList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirValueSetDefine read GetCurrent;
   end;
 
 
@@ -16376,6 +18138,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirValueSetDefineList; Overload;
     function Clone : TFhirValueSetDefineList; Overload;
+    function GetEnumerator : TFhirValueSetDefineListEnumerator;
     {!script show}
     
 
@@ -16388,7 +18151,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirValueSetDefine to the end of the list.
     }
-    procedure AddItem(value : TFhirValueSetDefine);
+    procedure AddItem(value : TFhirValueSetDefine); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -16483,44 +18247,57 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member code
       Code that identifies concept.
     }
-    property code : TFhirCode read FCode write SetCode;
-    {@member codeST
+    {@member code
       Typed access to Code that identifies concept.
     }
-    property codeST : String read GetCodeST write SetCodeST;
+    property code : String read GetCodeST write SetCodeST;
+    property codeObject : TFhirCode read FCode write SetCode;
 
     {@member abstract
       If this code is not for use as a real concept.
     }
-    property abstract : TFhirBoolean read FAbstract write SetAbstract;
-    {@member abstractST
+    {@member abstract
       Typed access to If this code is not for use as a real concept.
     }
-    property abstractST : Boolean read GetAbstractST write SetAbstractST;
+    property abstract : Boolean read GetAbstractST write SetAbstractST;
+    property abstractObject : TFhirBoolean read FAbstract write SetAbstract;
 
     {@member display
       Text to Display to the user.
     }
-    property display : TFhirString read FDisplay write SetDisplay;
-    {@member displayST
+    {@member display
       Typed access to Text to Display to the user.
     }
-    property displayST : String read GetDisplayST write SetDisplayST;
+    property display : String read GetDisplayST write SetDisplayST;
+    property displayObject : TFhirString read FDisplay write SetDisplay;
 
     {@member definition
       The formal definition of the concept. Formal definitions are not required, because of the prevalence of legacy systems without them, but they are highly recommended, as without them there is no formal meaning associated with the concept.
     }
-    property definition : TFhirString read FDefinition write SetDefinition;
-    {@member definitionST
+    {@member definition
       Typed access to The formal definition of the concept. Formal definitions are not required, because of the prevalence of legacy systems without them, but they are highly recommended, as without them there is no formal meaning associated with the concept.
     }
-    property definitionST : String read GetDefinitionST write SetDefinitionST;
+    property definition : String read GetDefinitionST write SetDefinitionST;
+    property definitionObject : TFhirString read FDefinition write SetDefinition;
 
     {@member conceptList
       Child Concepts (is-a / contains).
     }
     property conceptList : TFhirValueSetDefineConceptList read FConceptList;
 
+  end;
+
+
+  TFhirValueSetDefineConceptListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirValueSetDefineConceptList;
+    function GetCurrent : TFhirValueSetDefineConcept;
+  public
+    Constructor Create(list : TFhirValueSetDefineConceptList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirValueSetDefineConcept read GetCurrent;
   end;
 
 
@@ -16536,6 +18313,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirValueSetDefineConceptList; Overload;
     function Clone : TFhirValueSetDefineConceptList; Overload;
+    function GetEnumerator : TFhirValueSetDefineConceptListEnumerator;
     {!script show}
     
 
@@ -16548,7 +18326,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirValueSetDefineConcept to the end of the list.
     }
-    procedure AddItem(value : TFhirValueSetDefineConcept);
+    procedure AddItem(value : TFhirValueSetDefineConcept); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -16644,6 +18423,19 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   end;
 
 
+  TFhirValueSetComposeListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirValueSetComposeList;
+    function GetCurrent : TFhirValueSetCompose;
+  public
+    Constructor Create(list : TFhirValueSetComposeList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirValueSetCompose read GetCurrent;
+  end;
+
+
   {@Class TFhirValueSetComposeList
     A list of FhirValueSetCompose
   }
@@ -16656,6 +18448,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirValueSetComposeList; Overload;
     function Clone : TFhirValueSetComposeList; Overload;
+    function GetEnumerator : TFhirValueSetComposeListEnumerator;
     {!script show}
     
 
@@ -16668,7 +18461,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirValueSetCompose to the end of the list.
     }
-    procedure AddItem(value : TFhirValueSetCompose);
+    procedure AddItem(value : TFhirValueSetCompose); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -16756,20 +18550,20 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member system
       The code system from which the selected codes come from.
     }
-    property system : TFhirUri read FSystem write SetSystem;
-    {@member systemST
+    {@member system
       Typed access to The code system from which the selected codes come from.
     }
-    property systemST : String read GetSystemST write SetSystemST;
+    property system : String read GetSystemST write SetSystemST;
+    property systemObject : TFhirUri read FSystem write SetSystem;
 
     {@member version
       The version of the code system that the codes are selected from.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to The version of the code system that the codes are selected from.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member codeList
       Specifies a code or concept to be included or excluded. The list of codes is considered ordered, though the order may not have any particular significance.
@@ -16781,6 +18575,19 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     }
     property filterList : TFhirValueSetComposeIncludeFilterList read FFilterList;
 
+  end;
+
+
+  TFhirValueSetComposeIncludeListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirValueSetComposeIncludeList;
+    function GetCurrent : TFhirValueSetComposeInclude;
+  public
+    Constructor Create(list : TFhirValueSetComposeIncludeList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirValueSetComposeInclude read GetCurrent;
   end;
 
 
@@ -16796,6 +18603,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirValueSetComposeIncludeList; Overload;
     function Clone : TFhirValueSetComposeIncludeList; Overload;
+    function GetEnumerator : TFhirValueSetComposeIncludeListEnumerator;
     {!script show}
     
 
@@ -16808,7 +18616,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirValueSetComposeInclude to the end of the list.
     }
-    procedure AddItem(value : TFhirValueSetComposeInclude);
+    procedure AddItem(value : TFhirValueSetComposeInclude); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -16898,30 +18707,40 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member property_
       A code that identifies a property defined in the code system.
     }
-    property property_ : TFhirCode read FProperty_ write SetProperty_;
-    {@member property_ST
+    {@member property_
       Typed access to A code that identifies a property defined in the code system.
     }
-    property property_ST : String read GetProperty_ST write SetProperty_ST;
+    property property_ : String read GetProperty_ST write SetProperty_ST;
+    property property_Object : TFhirCode read FProperty_ write SetProperty_;
 
     {@member op
       The kind of operation to perform as a part of the filter criteria.
     }
-    property op : TFhirEnum read FOp write SetOp;
-    {@member opST
-      Typed access to The kind of operation to perform as a part of the filter criteria.
-    }
-    property opST : TFhirFilterOperator read GetOpST write SetOpST;
+    property op : TFhirFilterOperator read GetOpST write SetOpST;
+    property opObject : TFhirEnum read FOp write SetOp;
 
     {@member value
       The match value may be either a code defined by the system, or a string value which is used a regex match on the literal string of the property value.
     }
-    property value : TFhirCode read FValue write SetValue;
-    {@member valueST
+    {@member value
       Typed access to The match value may be either a code defined by the system, or a string value which is used a regex match on the literal string of the property value.
     }
-    property valueST : String read GetValueST write SetValueST;
+    property value : String read GetValueST write SetValueST;
+    property valueObject : TFhirCode read FValue write SetValue;
 
+  end;
+
+
+  TFhirValueSetComposeIncludeFilterListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirValueSetComposeIncludeFilterList;
+    function GetCurrent : TFhirValueSetComposeIncludeFilter;
+  public
+    Constructor Create(list : TFhirValueSetComposeIncludeFilterList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirValueSetComposeIncludeFilter read GetCurrent;
   end;
 
 
@@ -16937,6 +18756,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirValueSetComposeIncludeFilterList; Overload;
     function Clone : TFhirValueSetComposeIncludeFilterList; Overload;
+    function GetEnumerator : TFhirValueSetComposeIncludeFilterListEnumerator;
     {!script show}
     
 
@@ -16949,7 +18769,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirValueSetComposeIncludeFilter to the end of the list.
     }
-    procedure AddItem(value : TFhirValueSetComposeIncludeFilter);
+    procedure AddItem(value : TFhirValueSetComposeIncludeFilter); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -17035,21 +18856,35 @@ Terminologies used often pre-coordinate this term with the route and or form of 
       An identifier that uniquely identifies this expansion of the valueset. Systems may re-use the same identifier as long as the expansion and the definition remain the same, but are not required to do so.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member timestamp
       Time valueset expansion happened.
     }
-    property timestamp : TFhirInstant read FTimestamp write SetTimestamp;
-    {@member timestampST
+    {@member timestamp
       Typed access to Time valueset expansion happened.
     }
-    property timestampST : TDateAndTime read GetTimestampST write SetTimestampST;
+    property timestamp : TDateAndTime read GetTimestampST write SetTimestampST;
+    property timestampObject : TFhirInstant read FTimestamp write SetTimestamp;
 
     {@member containsList
       Codes in the value set.
     }
     property containsList : TFhirValueSetExpansionContainsList read FContainsList;
 
+  end;
+
+
+  TFhirValueSetExpansionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirValueSetExpansionList;
+    function GetCurrent : TFhirValueSetExpansion;
+  public
+    Constructor Create(list : TFhirValueSetExpansionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirValueSetExpansion read GetCurrent;
   end;
 
 
@@ -17065,6 +18900,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirValueSetExpansionList; Overload;
     function Clone : TFhirValueSetExpansionList; Overload;
+    function GetEnumerator : TFhirValueSetExpansionListEnumerator;
     {!script show}
     
 
@@ -17077,7 +18913,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirValueSetExpansion to the end of the list.
     }
-    procedure AddItem(value : TFhirValueSetExpansion);
+    procedure AddItem(value : TFhirValueSetExpansion); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -17168,35 +19005,48 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member system
       System value for the code.
     }
-    property system : TFhirUri read FSystem write SetSystem;
-    {@member systemST
+    {@member system
       Typed access to System value for the code.
     }
-    property systemST : String read GetSystemST write SetSystemST;
+    property system : String read GetSystemST write SetSystemST;
+    property systemObject : TFhirUri read FSystem write SetSystem;
 
     {@member code
       Code - if blank, this is not a choosable code.
     }
-    property code : TFhirCode read FCode write SetCode;
-    {@member codeST
+    {@member code
       Typed access to Code - if blank, this is not a choosable code.
     }
-    property codeST : String read GetCodeST write SetCodeST;
+    property code : String read GetCodeST write SetCodeST;
+    property codeObject : TFhirCode read FCode write SetCode;
 
     {@member display
       User display for the concept.
     }
-    property display : TFhirString read FDisplay write SetDisplay;
-    {@member displayST
+    {@member display
       Typed access to User display for the concept.
     }
-    property displayST : String read GetDisplayST write SetDisplayST;
+    property display : String read GetDisplayST write SetDisplayST;
+    property displayObject : TFhirString read FDisplay write SetDisplay;
 
     {@member containsList
       Codes contained in this concept.
     }
     property containsList : TFhirValueSetExpansionContainsList read FContainsList;
 
+  end;
+
+
+  TFhirValueSetExpansionContainsListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirValueSetExpansionContainsList;
+    function GetCurrent : TFhirValueSetExpansionContains;
+  public
+    Constructor Create(list : TFhirValueSetExpansionContainsList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirValueSetExpansionContains read GetCurrent;
   end;
 
 
@@ -17212,6 +19062,7 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {!script hide}
     function Link : TFhirValueSetExpansionContainsList; Overload;
     function Clone : TFhirValueSetExpansionContainsList; Overload;
+    function GetEnumerator : TFhirValueSetExpansionContainsListEnumerator;
     {!script show}
     
 
@@ -17224,7 +19075,8 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     {@member AddItem
       Add an already existing FhirValueSetExpansionContains to the end of the list.
     }
-    procedure AddItem(value : TFhirValueSetExpansionContains);
+    procedure AddItem(value : TFhirValueSetExpansionContains); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -17306,7 +19158,7 @@ procedure TFhirAdverseReactionSymptom.GetChildrenByName(child_name : string; lis
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'severity') Then
      list.add(FSeverity.Link);
 end;
@@ -17320,8 +19172,8 @@ end;
 
 procedure TFhirAdverseReactionSymptom.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'severity') then Severity := propValue as TFHIREnum
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'severity') then SeverityObject := propValue as TFHIREnum
   else inherited;
 end;
 
@@ -17359,15 +19211,43 @@ begin
   if FSeverity = nil then
     result := TFhirReactionSeverity(0)
   else
-    result := TFhirReactionSeverity(StringArrayIndexOfSensitive(CODES_TFhirReactionSeverity, Severity.value));
+    result := TFhirReactionSeverity(StringArrayIndexOfSensitive(CODES_TFhirReactionSeverity, FSeverity.value));
 end;
 
 Procedure TFhirAdverseReactionSymptom.SetSeverityST(value : TFhirReactionSeverity);
 begin
   if ord(value) = 0 then
-    Severity := nil
+    SeverityObject := nil
   else
-    Severity := TFhirEnum.create(CODES_TFhirReactionSeverity[value]);
+    SeverityObject := TFhirEnum.create(CODES_TFhirReactionSeverity[value]);
+end;
+
+
+{ TFhirAdverseReactionSymptomListEnumerator }
+
+Constructor TFhirAdverseReactionSymptomListEnumerator.Create(list : TFhirAdverseReactionSymptomList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirAdverseReactionSymptomListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirAdverseReactionSymptomListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirAdverseReactionSymptomListEnumerator.GetCurrent : TFhirAdverseReactionSymptom;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -17393,6 +19273,11 @@ end;
 procedure TFhirAdverseReactionSymptomList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirAdverseReactionSymptomList.GetEnumerator : TFhirAdverseReactionSymptomListEnumerator;
+begin
+  result := TFhirAdverseReactionSymptomListEnumerator.Create(self.link);
 end;
 
 function TFhirAdverseReactionSymptomList.Clone: TFhirAdverseReactionSymptomList;
@@ -17479,7 +19364,7 @@ end;
 procedure TFhirAdverseReactionExposure.Assign(oSource : TAdvObject);
 begin
   inherited;
-  date := TFhirAdverseReactionExposure(oSource).date.Clone;
+  dateObject := TFhirAdverseReactionExposure(oSource).dateObject.Clone;
   FType_ := TFhirAdverseReactionExposure(oSource).FType_.Link;
   FCausalityExpectation := TFhirAdverseReactionExposure(oSource).FCausalityExpectation.Link;
   substance := TFhirAdverseReactionExposure(oSource).substance.Clone;
@@ -17489,13 +19374,13 @@ procedure TFhirAdverseReactionExposure.GetChildrenByName(child_name : string; li
 begin
   inherited;
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'causalityExpectation') Then
      list.add(FCausalityExpectation.Link);
   if (child_name = 'substance') Then
-     list.add(Substance.Link);
+     list.add(FSubstance.Link);
 end;
 
 procedure TFhirAdverseReactionExposure.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -17509,10 +19394,10 @@ end;
 
 procedure TFhirAdverseReactionExposure.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'causalityExpectation') then CausalityExpectation := propValue as TFHIREnum
-  else if (propName = 'substance') then Substance := propValue as TFhirResourceReference{TFhirSubstance}{4}
+  if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'causalityExpectation') then CausalityExpectationObject := propValue as TFHIREnum
+  else if (propName = 'substance') then Substance := propValue as TFhirResourceReference{TFhirSubstance}{4b}
   else inherited;
 end;
 
@@ -17544,7 +19429,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirAdverseReactionExposure.SetDateST(value : TDateAndTime);
@@ -17570,15 +19455,15 @@ begin
   if FType_ = nil then
     result := TFhirExposureType(0)
   else
-    result := TFhirExposureType(StringArrayIndexOfSensitive(CODES_TFhirExposureType, Type_.value));
+    result := TFhirExposureType(StringArrayIndexOfSensitive(CODES_TFhirExposureType, FType_.value));
 end;
 
 Procedure TFhirAdverseReactionExposure.SetType_ST(value : TFhirExposureType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirExposureType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirExposureType[value]);
 end;
 
 Procedure TFhirAdverseReactionExposure.SetCausalityExpectation(value : TFhirEnum);
@@ -17592,21 +19477,49 @@ begin
   if FCausalityExpectation = nil then
     result := TFhirCausalityExpectation(0)
   else
-    result := TFhirCausalityExpectation(StringArrayIndexOfSensitive(CODES_TFhirCausalityExpectation, CausalityExpectation.value));
+    result := TFhirCausalityExpectation(StringArrayIndexOfSensitive(CODES_TFhirCausalityExpectation, FCausalityExpectation.value));
 end;
 
 Procedure TFhirAdverseReactionExposure.SetCausalityExpectationST(value : TFhirCausalityExpectation);
 begin
   if ord(value) = 0 then
-    CausalityExpectation := nil
+    CausalityExpectationObject := nil
   else
-    CausalityExpectation := TFhirEnum.create(CODES_TFhirCausalityExpectation[value]);
+    CausalityExpectationObject := TFhirEnum.create(CODES_TFhirCausalityExpectation[value]);
 end;
 
 Procedure TFhirAdverseReactionExposure.SetSubstance(value : TFhirResourceReference{TFhirSubstance});
 begin
   FSubstance.free;
   FSubstance := value;
+end;
+
+
+{ TFhirAdverseReactionExposureListEnumerator }
+
+Constructor TFhirAdverseReactionExposureListEnumerator.Create(list : TFhirAdverseReactionExposureList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirAdverseReactionExposureListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirAdverseReactionExposureListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirAdverseReactionExposureListEnumerator.GetCurrent : TFhirAdverseReactionExposure;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -17632,6 +19545,11 @@ end;
 procedure TFhirAdverseReactionExposureList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirAdverseReactionExposureList.GetEnumerator : TFhirAdverseReactionExposureListEnumerator;
+begin
+  result := TFhirAdverseReactionExposureListEnumerator.Create(self.link);
 end;
 
 function TFhirAdverseReactionExposureList.Clone: TFhirAdverseReactionExposureList;
@@ -17724,9 +19642,9 @@ procedure TFhirCarePlanParticipant.GetChildrenByName(child_name : string; list :
 begin
   inherited;
   if (child_name = 'role') Then
-     list.add(Role.Link);
+     list.add(FRole.Link);
   if (child_name = 'member') Then
-     list.add(Member.Link);
+     list.add(FMember.Link);
 end;
 
 procedure TFhirCarePlanParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -17738,8 +19656,8 @@ end;
 
 procedure TFhirCarePlanParticipant.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'role') then Role := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'member') then Member := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'role') then Role := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'member') then Member := propValue as TFhirResourceReference{Resource}{4b}
   else inherited;
 end;
 
@@ -17773,6 +19691,34 @@ begin
 end;
 
 
+{ TFhirCarePlanParticipantListEnumerator }
+
+Constructor TFhirCarePlanParticipantListEnumerator.Create(list : TFhirCarePlanParticipantList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirCarePlanParticipantListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCarePlanParticipantListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirCarePlanParticipantListEnumerator.GetCurrent : TFhirCarePlanParticipant;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirCarePlanParticipantList }
 procedure TFhirCarePlanParticipantList.AddItem(value: TFhirCarePlanParticipant);
 begin
@@ -17795,6 +19741,11 @@ end;
 procedure TFhirCarePlanParticipantList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirCarePlanParticipantList.GetEnumerator : TFhirCarePlanParticipantListEnumerator;
+begin
+  result := TFhirCarePlanParticipantListEnumerator.Create(self.link);
 end;
 
 function TFhirCarePlanParticipantList.Clone: TFhirCarePlanParticipantList;
@@ -17882,9 +19833,9 @@ end;
 procedure TFhirCarePlanGoal.Assign(oSource : TAdvObject);
 begin
   inherited;
-  description := TFhirCarePlanGoal(oSource).description.Clone;
+  descriptionObject := TFhirCarePlanGoal(oSource).descriptionObject.Clone;
   FStatus := TFhirCarePlanGoal(oSource).FStatus.Link;
-  notes := TFhirCarePlanGoal(oSource).notes.Clone;
+  notesObject := TFhirCarePlanGoal(oSource).notesObject.Clone;
   FConcernList.Assign(TFhirCarePlanGoal(oSource).FConcernList);
 end;
 
@@ -17892,11 +19843,11 @@ procedure TFhirCarePlanGoal.GetChildrenByName(child_name : string; list : TFHIRO
 begin
   inherited;
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'notes') Then
-     list.add(Notes.Link);
+     list.add(FNotes.Link);
   if (child_name = 'concern') Then
      list.addAll(FConcernList);
 end;
@@ -17912,9 +19863,9 @@ end;
 
 procedure TFhirCarePlanGoal.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'notes') then Notes := propValue as TFhirString{5}
+  if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'notes') then NotesObject := propValue as TFhirString{5a}
   else if (propName = 'concern') then ConcernList.add(propValue as TFhirResourceReference{TFhirCondition}){2}
   else inherited;
 end;
@@ -17947,7 +19898,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirCarePlanGoal.SetDescriptionST(value : String);
@@ -17973,15 +19924,15 @@ begin
   if FStatus = nil then
     result := TFhirCarePlanGoalStatus(0)
   else
-    result := TFhirCarePlanGoalStatus(StringArrayIndexOfSensitive(CODES_TFhirCarePlanGoalStatus, Status.value));
+    result := TFhirCarePlanGoalStatus(StringArrayIndexOfSensitive(CODES_TFhirCarePlanGoalStatus, FStatus.value));
 end;
 
 Procedure TFhirCarePlanGoal.SetStatusST(value : TFhirCarePlanGoalStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirCarePlanGoalStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirCarePlanGoalStatus[value]);
 end;
 
 Procedure TFhirCarePlanGoal.SetNotes(value : TFhirString);
@@ -17995,7 +19946,7 @@ begin
   if FNotes = nil then
     result := ''
   else
-    result := Notes.value;
+    result := FNotes.value;
 end;
 
 Procedure TFhirCarePlanGoal.SetNotesST(value : String);
@@ -18008,6 +19959,34 @@ begin
   end
   else if FNotes <> nil then
     FNotes.value := '';
+end;
+
+
+{ TFhirCarePlanGoalListEnumerator }
+
+Constructor TFhirCarePlanGoalListEnumerator.Create(list : TFhirCarePlanGoalList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirCarePlanGoalListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCarePlanGoalListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirCarePlanGoalListEnumerator.GetCurrent : TFhirCarePlanGoal;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -18033,6 +20012,11 @@ end;
 procedure TFhirCarePlanGoalList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirCarePlanGoalList.GetEnumerator : TFhirCarePlanGoalListEnumerator;
+begin
+  result := TFhirCarePlanGoalListEnumerator.Create(self.link);
 end;
 
 function TFhirCarePlanGoalList.Clone: TFhirCarePlanGoalList;
@@ -18126,9 +20110,9 @@ begin
   inherited;
   FGoalList.Assign(TFhirCarePlanActivity(oSource).FGoalList);
   FStatus := TFhirCarePlanActivity(oSource).FStatus.Link;
-  prohibited := TFhirCarePlanActivity(oSource).prohibited.Clone;
+  prohibitedObject := TFhirCarePlanActivity(oSource).prohibitedObject.Clone;
   FActionResultingList.Assign(TFhirCarePlanActivity(oSource).FActionResultingList);
-  notes := TFhirCarePlanActivity(oSource).notes.Clone;
+  notesObject := TFhirCarePlanActivity(oSource).notesObject.Clone;
   detail := TFhirCarePlanActivity(oSource).detail.Clone;
   simple := TFhirCarePlanActivity(oSource).simple.Clone;
 end;
@@ -18141,15 +20125,15 @@ begin
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'prohibited') Then
-     list.add(Prohibited.Link);
+     list.add(FProhibited.Link);
   if (child_name = 'actionResulting') Then
      list.addAll(FActionResultingList);
   if (child_name = 'notes') Then
-     list.add(Notes.Link);
+     list.add(FNotes.Link);
   if (child_name = 'detail') Then
-     list.add(Detail.Link);
+     list.add(FDetail.Link);
   if (child_name = 'simple') Then
-     list.add(Simple.Link);
+     list.add(FSimple.Link);
 end;
 
 procedure TFhirCarePlanActivity.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -18167,12 +20151,12 @@ end;
 procedure TFhirCarePlanActivity.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'goal') then GoalList.add(propValue as TFhirString){2}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'prohibited') then Prohibited := propValue as TFhirBoolean{5}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'prohibited') then ProhibitedObject := propValue as TFhirBoolean{5a}
   else if (propName = 'actionResulting') then ActionResultingList.add(propValue as TFhirResourceReference{Resource}){2}
-  else if (propName = 'notes') then Notes := propValue as TFhirString{5}
-  else if (propName = 'detail') then Detail := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'simple') then Simple := propValue as TFhirCarePlanActivitySimple{4}
+  else if (propName = 'notes') then NotesObject := propValue as TFhirString{5a}
+  else if (propName = 'detail') then Detail := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'simple') then Simple := propValue as TFhirCarePlanActivitySimple{4b}
   else inherited;
 end;
 
@@ -18204,15 +20188,15 @@ begin
   if FStatus = nil then
     result := TFhirCarePlanActivityStatus(0)
   else
-    result := TFhirCarePlanActivityStatus(StringArrayIndexOfSensitive(CODES_TFhirCarePlanActivityStatus, Status.value));
+    result := TFhirCarePlanActivityStatus(StringArrayIndexOfSensitive(CODES_TFhirCarePlanActivityStatus, FStatus.value));
 end;
 
 Procedure TFhirCarePlanActivity.SetStatusST(value : TFhirCarePlanActivityStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirCarePlanActivityStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirCarePlanActivityStatus[value]);
 end;
 
 Procedure TFhirCarePlanActivity.SetProhibited(value : TFhirBoolean);
@@ -18226,7 +20210,7 @@ begin
   if FProhibited = nil then
     result := false
   else
-    result := Prohibited.value;
+    result := FProhibited.value;
 end;
 
 Procedure TFhirCarePlanActivity.SetProhibitedST(value : Boolean);
@@ -18247,7 +20231,7 @@ begin
   if FNotes = nil then
     result := ''
   else
-    result := Notes.value;
+    result := FNotes.value;
 end;
 
 Procedure TFhirCarePlanActivity.SetNotesST(value : String);
@@ -18275,6 +20259,34 @@ begin
 end;
 
 
+{ TFhirCarePlanActivityListEnumerator }
+
+Constructor TFhirCarePlanActivityListEnumerator.Create(list : TFhirCarePlanActivityList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirCarePlanActivityListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCarePlanActivityListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirCarePlanActivityListEnumerator.GetCurrent : TFhirCarePlanActivity;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirCarePlanActivityList }
 procedure TFhirCarePlanActivityList.AddItem(value: TFhirCarePlanActivity);
 begin
@@ -18297,6 +20309,11 @@ end;
 procedure TFhirCarePlanActivityList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirCarePlanActivityList.GetEnumerator : TFhirCarePlanActivityListEnumerator;
+begin
+  result := TFhirCarePlanActivityListEnumerator.Create(self.link);
 end;
 
 function TFhirCarePlanActivityList.Clone: TFhirCarePlanActivityList;
@@ -18397,7 +20414,7 @@ begin
   product := TFhirCarePlanActivitySimple(oSource).product.Clone;
   dailyAmount := TFhirCarePlanActivitySimple(oSource).dailyAmount.Clone;
   quantity := TFhirCarePlanActivitySimple(oSource).quantity.Clone;
-  details := TFhirCarePlanActivitySimple(oSource).details.Clone;
+  detailsObject := TFhirCarePlanActivitySimple(oSource).detailsObject.Clone;
 end;
 
 procedure TFhirCarePlanActivitySimple.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -18406,21 +20423,21 @@ begin
   if (child_name = 'category') Then
      list.add(FCategory.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'timing[x]') Then
-     list.add(Timing.Link);
+     list.add(FTiming.Link);
   if (child_name = 'location') Then
-     list.add(Location.Link);
+     list.add(FLocation.Link);
   if (child_name = 'performer') Then
      list.addAll(FPerformerList);
   if (child_name = 'product') Then
-     list.add(Product.Link);
+     list.add(FProduct.Link);
   if (child_name = 'dailyAmount') Then
-     list.add(DailyAmount.Link);
+     list.add(FDailyAmount.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'details') Then
-     list.add(Details.Link);
+     list.add(FDetails.Link);
 end;
 
 procedure TFhirCarePlanActivitySimple.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -18439,15 +20456,15 @@ end;
 
 procedure TFhirCarePlanActivitySimple.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'category') then Category := propValue as TFHIREnum
-  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'timing[x]') then Timing := propValue as TFhirType{4}
-  else if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4}
+  if (propName = 'category') then CategoryObject := propValue as TFHIREnum
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('timing')) then Timing := propValue as TFhirType{4}
+  else if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4b}
   else if (propName = 'performer') then PerformerList.add(propValue as TFhirResourceReference{Resource}){2}
-  else if (propName = 'product') then Product := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'dailyAmount') then DailyAmount := propValue as TFhirQuantity{4}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
-  else if (propName = 'details') then Details := propValue as TFhirString{5}
+  else if (propName = 'product') then Product := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'dailyAmount') then DailyAmount := propValue as TFhirQuantity{4b}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'details') then DetailsObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -18479,15 +20496,15 @@ begin
   if FCategory = nil then
     result := TFhirCarePlanActivityCategory(0)
   else
-    result := TFhirCarePlanActivityCategory(StringArrayIndexOfSensitive(CODES_TFhirCarePlanActivityCategory, Category.value));
+    result := TFhirCarePlanActivityCategory(StringArrayIndexOfSensitive(CODES_TFhirCarePlanActivityCategory, FCategory.value));
 end;
 
 Procedure TFhirCarePlanActivitySimple.SetCategoryST(value : TFhirCarePlanActivityCategory);
 begin
   if ord(value) = 0 then
-    Category := nil
+    CategoryObject := nil
   else
-    Category := TFhirEnum.create(CODES_TFhirCarePlanActivityCategory[value]);
+    CategoryObject := TFhirEnum.create(CODES_TFhirCarePlanActivityCategory[value]);
 end;
 
 Procedure TFhirCarePlanActivitySimple.SetCode(value : TFhirCodeableConcept);
@@ -18537,7 +20554,7 @@ begin
   if FDetails = nil then
     result := ''
   else
-    result := Details.value;
+    result := FDetails.value;
 end;
 
 Procedure TFhirCarePlanActivitySimple.SetDetailsST(value : String);
@@ -18550,6 +20567,34 @@ begin
   end
   else if FDetails <> nil then
     FDetails.value := '';
+end;
+
+
+{ TFhirCarePlanActivitySimpleListEnumerator }
+
+Constructor TFhirCarePlanActivitySimpleListEnumerator.Create(list : TFhirCarePlanActivitySimpleList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirCarePlanActivitySimpleListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCarePlanActivitySimpleListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirCarePlanActivitySimpleListEnumerator.GetCurrent : TFhirCarePlanActivitySimple;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -18575,6 +20620,11 @@ end;
 procedure TFhirCarePlanActivitySimpleList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirCarePlanActivitySimpleList.GetEnumerator : TFhirCarePlanActivitySimpleListEnumerator;
+begin
+  result := TFhirCarePlanActivitySimpleListEnumerator.Create(self.link);
 end;
 
 function TFhirCarePlanActivitySimpleList.Clone: TFhirCarePlanActivitySimpleList;
@@ -18662,7 +20712,7 @@ procedure TFhirCompositionAttester.Assign(oSource : TAdvObject);
 begin
   inherited;
   FMode.Assign(TFhirCompositionAttester(oSource).FMode);
-  time := TFhirCompositionAttester(oSource).time.Clone;
+  timeObject := TFhirCompositionAttester(oSource).timeObject.Clone;
   party := TFhirCompositionAttester(oSource).party.Clone;
 end;
 
@@ -18672,9 +20722,9 @@ begin
   if (child_name = 'mode') Then
      list.addAll(FMode);
   if (child_name = 'time') Then
-     list.add(Time.Link);
+     list.add(FTime.Link);
   if (child_name = 'party') Then
-     list.add(Party.Link);
+     list.add(FParty.Link);
 end;
 
 procedure TFhirCompositionAttester.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -18688,8 +20738,8 @@ end;
 procedure TFhirCompositionAttester.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'mode') then FMode.add(propValue as TFHIREnum) {1}
-  else if (propName = 'time') then Time := propValue as TFhirDateTime{5}
-  else if (propName = 'party') then Party := propValue as TFhirResourceReference{Resource}{4}
+  else if (propName = 'time') then TimeObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'party') then Party := propValue as TFhirResourceReference{Resource}{4b}
   else inherited;
 end;
 
@@ -18714,17 +20764,17 @@ Function TFhirCompositionAttester.GetModeST : TFhirCompositionAttestationModeLis
   var i : integer;
 begin
   result := [];
-  for i := 0 to mode.count - 1 do
-    result := result + [TFhirCompositionAttestationMode(StringArrayIndexOfSensitive(CODES_TFhirCompositionAttestationMode, mode[i].value))];
+  for i := 0 to Fmode.count - 1 do
+    result := result + [TFhirCompositionAttestationMode(StringArrayIndexOfSensitive(CODES_TFhirCompositionAttestationMode, Fmode[i].value))];
 end;
 
 Procedure TFhirCompositionAttester.SetModeST(value : TFhirCompositionAttestationModeList);
 var a : TFhirCompositionAttestationMode;
 begin
-  mode.clear;
+  Fmode.clear;
   for a := low(TFhirCompositionAttestationMode) to high(TFhirCompositionAttestationMode) do
     if a in value then
-      mode.add(TFhirEnum.create(CODES_TFhirCompositionAttestationMode[a]));
+      Fmode.add(TFhirEnum.create(CODES_TFhirCompositionAttestationMode[a]));
 end;
 
 Procedure TFhirCompositionAttester.SetTime(value : TFhirDateTime);
@@ -18738,7 +20788,7 @@ begin
   if FTime = nil then
     result := nil
   else
-    result := Time.value;
+    result := FTime.value;
 end;
 
 Procedure TFhirCompositionAttester.SetTimeST(value : TDateAndTime);
@@ -18757,6 +20807,34 @@ Procedure TFhirCompositionAttester.SetParty(value : TFhirResourceReference{Resou
 begin
   FParty.free;
   FParty := value;
+end;
+
+
+{ TFhirCompositionAttesterListEnumerator }
+
+Constructor TFhirCompositionAttesterListEnumerator.Create(list : TFhirCompositionAttesterList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirCompositionAttesterListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCompositionAttesterListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirCompositionAttesterListEnumerator.GetCurrent : TFhirCompositionAttester;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -18782,6 +20860,11 @@ end;
 procedure TFhirCompositionAttesterList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirCompositionAttesterList.GetEnumerator : TFhirCompositionAttesterListEnumerator;
+begin
+  result := TFhirCompositionAttesterListEnumerator.Create(self.link);
 end;
 
 function TFhirCompositionAttesterList.Clone: TFhirCompositionAttesterList;
@@ -18880,7 +20963,7 @@ begin
   if (child_name = 'code') Then
      list.addAll(FCodeList);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
   if (child_name = 'detail') Then
      list.addAll(FDetailList);
 end;
@@ -18896,7 +20979,7 @@ end;
 procedure TFhirCompositionEvent.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'code') then CodeList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else if (propName = 'detail') then DetailList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
 end;
@@ -18925,6 +21008,34 @@ begin
 end;
 
 
+{ TFhirCompositionEventListEnumerator }
+
+Constructor TFhirCompositionEventListEnumerator.Create(list : TFhirCompositionEventList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirCompositionEventListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCompositionEventListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirCompositionEventListEnumerator.GetCurrent : TFhirCompositionEvent;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirCompositionEventList }
 procedure TFhirCompositionEventList.AddItem(value: TFhirCompositionEvent);
 begin
@@ -18947,6 +21058,11 @@ end;
 procedure TFhirCompositionEventList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirCompositionEventList.GetEnumerator : TFhirCompositionEventListEnumerator;
+begin
+  result := TFhirCompositionEventListEnumerator.Create(self.link);
 end;
 
 function TFhirCompositionEventList.Clone: TFhirCompositionEventList;
@@ -19035,7 +21151,7 @@ end;
 procedure TFhirCompositionSection.Assign(oSource : TAdvObject);
 begin
   inherited;
-  title := TFhirCompositionSection(oSource).title.Clone;
+  titleObject := TFhirCompositionSection(oSource).titleObject.Clone;
   code := TFhirCompositionSection(oSource).code.Clone;
   subject := TFhirCompositionSection(oSource).subject.Clone;
   content := TFhirCompositionSection(oSource).content.Clone;
@@ -19046,13 +21162,13 @@ procedure TFhirCompositionSection.GetChildrenByName(child_name : string; list : 
 begin
   inherited;
   if (child_name = 'title') Then
-     list.add(Title.Link);
+     list.add(FTitle.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'content') Then
-     list.add(Content.Link);
+     list.add(FContent.Link);
   if (child_name = 'section') Then
      list.addAll(FSectionList);
 end;
@@ -19069,10 +21185,10 @@ end;
 
 procedure TFhirCompositionSection.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'title') then Title := propValue as TFhirString{5}
-  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'content') then Content := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'title') then TitleObject := propValue as TFhirString{5a}
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'content') then Content := propValue as TFhirResourceReference{Resource}{4b}
   else if (propName = 'section') then SectionList.add(propValue as TFhirCompositionSection){2}
   else inherited;
 end;
@@ -19105,7 +21221,7 @@ begin
   if FTitle = nil then
     result := ''
   else
-    result := Title.value;
+    result := FTitle.value;
 end;
 
 Procedure TFhirCompositionSection.SetTitleST(value : String);
@@ -19139,6 +21255,34 @@ begin
 end;
 
 
+{ TFhirCompositionSectionListEnumerator }
+
+Constructor TFhirCompositionSectionListEnumerator.Create(list : TFhirCompositionSectionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirCompositionSectionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCompositionSectionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirCompositionSectionListEnumerator.GetCurrent : TFhirCompositionSection;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirCompositionSectionList }
 procedure TFhirCompositionSectionList.AddItem(value: TFhirCompositionSection);
 begin
@@ -19161,6 +21305,11 @@ end;
 procedure TFhirCompositionSectionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirCompositionSectionList.GetEnumerator : TFhirCompositionSectionListEnumerator;
+begin
+  result := TFhirCompositionSectionListEnumerator.Create(self.link);
 end;
 
 function TFhirCompositionSectionList.Clone: TFhirCompositionSectionList;
@@ -19249,8 +21398,8 @@ end;
 procedure TFhirConceptMapConcept.Assign(oSource : TAdvObject);
 begin
   inherited;
-  system := TFhirConceptMapConcept(oSource).system.Clone;
-  code := TFhirConceptMapConcept(oSource).code.Clone;
+  systemObject := TFhirConceptMapConcept(oSource).systemObject.Clone;
+  codeObject := TFhirConceptMapConcept(oSource).codeObject.Clone;
   FDependsOnList.Assign(TFhirConceptMapConcept(oSource).FDependsOnList);
   FMapList.Assign(TFhirConceptMapConcept(oSource).FMapList);
 end;
@@ -19259,9 +21408,9 @@ procedure TFhirConceptMapConcept.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'system') Then
-     list.add(System.Link);
+     list.add(FSystem.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'dependsOn') Then
      list.addAll(FDependsOnList);
   if (child_name = 'map') Then
@@ -19279,8 +21428,14 @@ end;
 
 procedure TFhirConceptMapConcept.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'system') then System := propValue as TFhirUri{5}
-  else if (propName = 'code') then Code := propValue as TFhirCode{5}
+  if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
+  else if (propName = 'code') then
+    if propValue is TFHIRCode then
+      CodeObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
   else if (propName = 'dependsOn') then DependsOnList.add(propValue as TFhirConceptMapConceptDependsOn){2}
   else if (propName = 'map') then MapList.add(propValue as TFhirConceptMapConceptMap){2}
   else inherited;
@@ -19314,7 +21469,7 @@ begin
   if FSystem = nil then
     result := ''
   else
-    result := System.value;
+    result := FSystem.value;
 end;
 
 Procedure TFhirConceptMapConcept.SetSystemST(value : String);
@@ -19340,7 +21495,7 @@ begin
   if FCode = nil then
     result := ''
   else
-    result := Code.value;
+    result := FCode.value;
 end;
 
 Procedure TFhirConceptMapConcept.SetCodeST(value : String);
@@ -19353,6 +21508,34 @@ begin
   end
   else if FCode <> nil then
     FCode.value := '';
+end;
+
+
+{ TFhirConceptMapConceptListEnumerator }
+
+Constructor TFhirConceptMapConceptListEnumerator.Create(list : TFhirConceptMapConceptList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConceptMapConceptListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMapConceptListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConceptMapConceptListEnumerator.GetCurrent : TFhirConceptMapConcept;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -19378,6 +21561,11 @@ end;
 procedure TFhirConceptMapConceptList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConceptMapConceptList.GetEnumerator : TFhirConceptMapConceptListEnumerator;
+begin
+  result := TFhirConceptMapConceptListEnumerator.Create(self.link);
 end;
 
 function TFhirConceptMapConceptList.Clone: TFhirConceptMapConceptList;
@@ -19463,20 +21651,20 @@ end;
 procedure TFhirConceptMapConceptDependsOn.Assign(oSource : TAdvObject);
 begin
   inherited;
-  concept := TFhirConceptMapConceptDependsOn(oSource).concept.Clone;
-  system := TFhirConceptMapConceptDependsOn(oSource).system.Clone;
-  code := TFhirConceptMapConceptDependsOn(oSource).code.Clone;
+  conceptObject := TFhirConceptMapConceptDependsOn(oSource).conceptObject.Clone;
+  systemObject := TFhirConceptMapConceptDependsOn(oSource).systemObject.Clone;
+  codeObject := TFhirConceptMapConceptDependsOn(oSource).codeObject.Clone;
 end;
 
 procedure TFhirConceptMapConceptDependsOn.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'concept') Then
-     list.add(Concept.Link);
+     list.add(FConcept.Link);
   if (child_name = 'system') Then
-     list.add(System.Link);
+     list.add(FSystem.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
 end;
 
 procedure TFhirConceptMapConceptDependsOn.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -19489,9 +21677,15 @@ end;
 
 procedure TFhirConceptMapConceptDependsOn.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'concept') then Concept := propValue as TFhirUri{5}
-  else if (propName = 'system') then System := propValue as TFhirUri{5}
-  else if (propName = 'code') then Code := propValue as TFhirCode{5}
+  if (propName = 'concept') then ConceptObject := propValue as TFhirUri{5a}
+  else if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
+  else if (propName = 'code') then
+    if propValue is TFHIRCode then
+      CodeObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
   else inherited;
 end;
 
@@ -19523,7 +21717,7 @@ begin
   if FConcept = nil then
     result := ''
   else
-    result := Concept.value;
+    result := FConcept.value;
 end;
 
 Procedure TFhirConceptMapConceptDependsOn.SetConceptST(value : String);
@@ -19549,7 +21743,7 @@ begin
   if FSystem = nil then
     result := ''
   else
-    result := System.value;
+    result := FSystem.value;
 end;
 
 Procedure TFhirConceptMapConceptDependsOn.SetSystemST(value : String);
@@ -19575,7 +21769,7 @@ begin
   if FCode = nil then
     result := ''
   else
-    result := Code.value;
+    result := FCode.value;
 end;
 
 Procedure TFhirConceptMapConceptDependsOn.SetCodeST(value : String);
@@ -19588,6 +21782,34 @@ begin
   end
   else if FCode <> nil then
     FCode.value := '';
+end;
+
+
+{ TFhirConceptMapConceptDependsOnListEnumerator }
+
+Constructor TFhirConceptMapConceptDependsOnListEnumerator.Create(list : TFhirConceptMapConceptDependsOnList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConceptMapConceptDependsOnListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMapConceptDependsOnListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConceptMapConceptDependsOnListEnumerator.GetCurrent : TFhirConceptMapConceptDependsOn;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -19613,6 +21835,11 @@ end;
 procedure TFhirConceptMapConceptDependsOnList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConceptMapConceptDependsOnList.GetEnumerator : TFhirConceptMapConceptDependsOnListEnumerator;
+begin
+  result := TFhirConceptMapConceptDependsOnListEnumerator.Create(self.link);
 end;
 
 function TFhirConceptMapConceptDependsOnList.Clone: TFhirConceptMapConceptDependsOnList;
@@ -19701,10 +21928,10 @@ end;
 procedure TFhirConceptMapConceptMap.Assign(oSource : TAdvObject);
 begin
   inherited;
-  system := TFhirConceptMapConceptMap(oSource).system.Clone;
-  code := TFhirConceptMapConceptMap(oSource).code.Clone;
+  systemObject := TFhirConceptMapConceptMap(oSource).systemObject.Clone;
+  codeObject := TFhirConceptMapConceptMap(oSource).codeObject.Clone;
   FEquivalence := TFhirConceptMapConceptMap(oSource).FEquivalence.Link;
-  comments := TFhirConceptMapConceptMap(oSource).comments.Clone;
+  commentsObject := TFhirConceptMapConceptMap(oSource).commentsObject.Clone;
   FProductList.Assign(TFhirConceptMapConceptMap(oSource).FProductList);
 end;
 
@@ -19712,13 +21939,13 @@ procedure TFhirConceptMapConceptMap.GetChildrenByName(child_name : string; list 
 begin
   inherited;
   if (child_name = 'system') Then
-     list.add(System.Link);
+     list.add(FSystem.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'equivalence') Then
      list.add(FEquivalence.Link);
   if (child_name = 'comments') Then
-     list.add(Comments.Link);
+     list.add(FComments.Link);
   if (child_name = 'product') Then
      list.addAll(FProductList);
 end;
@@ -19735,10 +21962,16 @@ end;
 
 procedure TFhirConceptMapConceptMap.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'system') then System := propValue as TFhirUri{5}
-  else if (propName = 'code') then Code := propValue as TFhirCode{5}
-  else if (propName = 'equivalence') then Equivalence := propValue as TFHIREnum
-  else if (propName = 'comments') then Comments := propValue as TFhirString{5}
+  if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
+  else if (propName = 'code') then
+    if propValue is TFHIRCode then
+      CodeObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'equivalence') then EquivalenceObject := propValue as TFHIREnum
+  else if (propName = 'comments') then CommentsObject := propValue as TFhirString{5a}
   else if (propName = 'product') then ProductList.add(propValue as TFhirConceptMapConceptDependsOn){2}
   else inherited;
 end;
@@ -19771,7 +22004,7 @@ begin
   if FSystem = nil then
     result := ''
   else
-    result := System.value;
+    result := FSystem.value;
 end;
 
 Procedure TFhirConceptMapConceptMap.SetSystemST(value : String);
@@ -19797,7 +22030,7 @@ begin
   if FCode = nil then
     result := ''
   else
-    result := Code.value;
+    result := FCode.value;
 end;
 
 Procedure TFhirConceptMapConceptMap.SetCodeST(value : String);
@@ -19823,15 +22056,15 @@ begin
   if FEquivalence = nil then
     result := TFhirConceptEquivalence(0)
   else
-    result := TFhirConceptEquivalence(StringArrayIndexOfSensitive(CODES_TFhirConceptEquivalence, Equivalence.value));
+    result := TFhirConceptEquivalence(StringArrayIndexOfSensitive(CODES_TFhirConceptEquivalence, FEquivalence.value));
 end;
 
 Procedure TFhirConceptMapConceptMap.SetEquivalenceST(value : TFhirConceptEquivalence);
 begin
   if ord(value) = 0 then
-    Equivalence := nil
+    EquivalenceObject := nil
   else
-    Equivalence := TFhirEnum.create(CODES_TFhirConceptEquivalence[value]);
+    EquivalenceObject := TFhirEnum.create(CODES_TFhirConceptEquivalence[value]);
 end;
 
 Procedure TFhirConceptMapConceptMap.SetComments(value : TFhirString);
@@ -19845,7 +22078,7 @@ begin
   if FComments = nil then
     result := ''
   else
-    result := Comments.value;
+    result := FComments.value;
 end;
 
 Procedure TFhirConceptMapConceptMap.SetCommentsST(value : String);
@@ -19858,6 +22091,34 @@ begin
   end
   else if FComments <> nil then
     FComments.value := '';
+end;
+
+
+{ TFhirConceptMapConceptMapListEnumerator }
+
+Constructor TFhirConceptMapConceptMapListEnumerator.Create(list : TFhirConceptMapConceptMapList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConceptMapConceptMapListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMapConceptMapListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConceptMapConceptMapListEnumerator.GetCurrent : TFhirConceptMapConceptMap;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -19883,6 +22144,11 @@ end;
 procedure TFhirConceptMapConceptMapList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConceptMapConceptMapList.GetEnumerator : TFhirConceptMapConceptMapListEnumerator;
+begin
+  result := TFhirConceptMapConceptMapListEnumerator.Create(self.link);
 end;
 
 function TFhirConceptMapConceptMapList.Clone: TFhirConceptMapConceptMapList;
@@ -19976,7 +22242,7 @@ procedure TFhirConditionStage.GetChildrenByName(child_name : string; list : TFHI
 begin
   inherited;
   if (child_name = 'summary') Then
-     list.add(Summary.Link);
+     list.add(FSummary.Link);
   if (child_name = 'assessment') Then
      list.addAll(FAssessmentList);
 end;
@@ -19990,7 +22256,7 @@ end;
 
 procedure TFhirConditionStage.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'summary') then Summary := propValue as TFhirCodeableConcept{4}
+  if (propName = 'summary') then Summary := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'assessment') then AssessmentList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
 end;
@@ -20019,6 +22285,34 @@ begin
 end;
 
 
+{ TFhirConditionStageListEnumerator }
+
+Constructor TFhirConditionStageListEnumerator.Create(list : TFhirConditionStageList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConditionStageListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConditionStageListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConditionStageListEnumerator.GetCurrent : TFhirConditionStage;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirConditionStageList }
 procedure TFhirConditionStageList.AddItem(value: TFhirConditionStage);
 begin
@@ -20041,6 +22335,11 @@ end;
 procedure TFhirConditionStageList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConditionStageList.GetEnumerator : TFhirConditionStageListEnumerator;
+begin
+  result := TFhirConditionStageListEnumerator.Create(self.link);
 end;
 
 function TFhirConditionStageList.Clone: TFhirConditionStageList;
@@ -20134,7 +22433,7 @@ procedure TFhirConditionEvidence.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'detail') Then
      list.addAll(FDetailList);
 end;
@@ -20148,7 +22447,7 @@ end;
 
 procedure TFhirConditionEvidence.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'detail') then DetailList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
 end;
@@ -20177,6 +22476,34 @@ begin
 end;
 
 
+{ TFhirConditionEvidenceListEnumerator }
+
+Constructor TFhirConditionEvidenceListEnumerator.Create(list : TFhirConditionEvidenceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConditionEvidenceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConditionEvidenceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConditionEvidenceListEnumerator.GetCurrent : TFhirConditionEvidence;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirConditionEvidenceList }
 procedure TFhirConditionEvidenceList.AddItem(value: TFhirConditionEvidence);
 begin
@@ -20199,6 +22526,11 @@ end;
 procedure TFhirConditionEvidenceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConditionEvidenceList.GetEnumerator : TFhirConditionEvidenceListEnumerator;
+begin
+  result := TFhirConditionEvidenceListEnumerator.Create(self.link);
 end;
 
 function TFhirConditionEvidenceList.Clone: TFhirConditionEvidenceList;
@@ -20284,16 +22616,16 @@ procedure TFhirConditionLocation.Assign(oSource : TAdvObject);
 begin
   inherited;
   code := TFhirConditionLocation(oSource).code.Clone;
-  detail := TFhirConditionLocation(oSource).detail.Clone;
+  detailObject := TFhirConditionLocation(oSource).detailObject.Clone;
 end;
 
 procedure TFhirConditionLocation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'detail') Then
-     list.add(Detail.Link);
+     list.add(FDetail.Link);
 end;
 
 procedure TFhirConditionLocation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -20305,8 +22637,8 @@ end;
 
 procedure TFhirConditionLocation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'detail') then Detail := propValue as TFhirString{5}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'detail') then DetailObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -20344,7 +22676,7 @@ begin
   if FDetail = nil then
     result := ''
   else
-    result := Detail.value;
+    result := FDetail.value;
 end;
 
 Procedure TFhirConditionLocation.SetDetailST(value : String);
@@ -20357,6 +22689,34 @@ begin
   end
   else if FDetail <> nil then
     FDetail.value := '';
+end;
+
+
+{ TFhirConditionLocationListEnumerator }
+
+Constructor TFhirConditionLocationListEnumerator.Create(list : TFhirConditionLocationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConditionLocationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConditionLocationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConditionLocationListEnumerator.GetCurrent : TFhirConditionLocation;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -20382,6 +22742,11 @@ end;
 procedure TFhirConditionLocationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConditionLocationList.GetEnumerator : TFhirConditionLocationListEnumerator;
+begin
+  result := TFhirConditionLocationListEnumerator.Create(self.link);
 end;
 
 function TFhirConditionLocationList.Clone: TFhirConditionLocationList;
@@ -20478,9 +22843,9 @@ begin
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'target') Then
-     list.add(Target.Link);
+     list.add(FTarget.Link);
 end;
 
 procedure TFhirConditionRelatedItem.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -20493,9 +22858,9 @@ end;
 
 procedure TFhirConditionRelatedItem.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'target') then Target := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'target') then Target := propValue as TFhirResourceReference{Resource}{4b}
   else inherited;
 end;
 
@@ -20527,15 +22892,15 @@ begin
   if FType_ = nil then
     result := TFhirConditionRelationshipType(0)
   else
-    result := TFhirConditionRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirConditionRelationshipType, Type_.value));
+    result := TFhirConditionRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirConditionRelationshipType, FType_.value));
 end;
 
 Procedure TFhirConditionRelatedItem.SetType_ST(value : TFhirConditionRelationshipType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirConditionRelationshipType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirConditionRelationshipType[value]);
 end;
 
 Procedure TFhirConditionRelatedItem.SetCode(value : TFhirCodeableConcept);
@@ -20548,6 +22913,34 @@ Procedure TFhirConditionRelatedItem.SetTarget(value : TFhirResourceReference{Res
 begin
   FTarget.free;
   FTarget := value;
+end;
+
+
+{ TFhirConditionRelatedItemListEnumerator }
+
+Constructor TFhirConditionRelatedItemListEnumerator.Create(list : TFhirConditionRelatedItemList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConditionRelatedItemListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConditionRelatedItemListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConditionRelatedItemListEnumerator.GetCurrent : TFhirConditionRelatedItem;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -20573,6 +22966,11 @@ end;
 procedure TFhirConditionRelatedItemList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConditionRelatedItemList.GetEnumerator : TFhirConditionRelatedItemListEnumerator;
+begin
+  result := TFhirConditionRelatedItemListEnumerator.Create(self.link);
 end;
 
 function TFhirConditionRelatedItemList.Clone: TFhirConditionRelatedItemList;
@@ -20658,20 +23056,20 @@ end;
 procedure TFhirConformanceSoftware.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirConformanceSoftware(oSource).name.Clone;
-  version := TFhirConformanceSoftware(oSource).version.Clone;
-  releaseDate := TFhirConformanceSoftware(oSource).releaseDate.Clone;
+  nameObject := TFhirConformanceSoftware(oSource).nameObject.Clone;
+  versionObject := TFhirConformanceSoftware(oSource).versionObject.Clone;
+  releaseDateObject := TFhirConformanceSoftware(oSource).releaseDateObject.Clone;
 end;
 
 procedure TFhirConformanceSoftware.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'releaseDate') Then
-     list.add(ReleaseDate.Link);
+     list.add(FReleaseDate.Link);
 end;
 
 procedure TFhirConformanceSoftware.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -20684,9 +23082,9 @@ end;
 
 procedure TFhirConformanceSoftware.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
-  else if (propName = 'releaseDate') then ReleaseDate := propValue as TFhirDateTime{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  else if (propName = 'releaseDate') then ReleaseDateObject := propValue as TFhirDateTime{5a}
   else inherited;
 end;
 
@@ -20718,7 +23116,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirConformanceSoftware.SetNameST(value : String);
@@ -20744,7 +23142,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirConformanceSoftware.SetVersionST(value : String);
@@ -20770,7 +23168,7 @@ begin
   if FReleaseDate = nil then
     result := nil
   else
-    result := ReleaseDate.value;
+    result := FReleaseDate.value;
 end;
 
 Procedure TFhirConformanceSoftware.SetReleaseDateST(value : TDateAndTime);
@@ -20783,6 +23181,34 @@ begin
   end
   else if FReleaseDate <> nil then
     FReleaseDate.value := nil;
+end;
+
+
+{ TFhirConformanceSoftwareListEnumerator }
+
+Constructor TFhirConformanceSoftwareListEnumerator.Create(list : TFhirConformanceSoftwareList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceSoftwareListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceSoftwareListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceSoftwareListEnumerator.GetCurrent : TFhirConformanceSoftware;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -20808,6 +23234,11 @@ end;
 procedure TFhirConformanceSoftwareList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceSoftwareList.GetEnumerator : TFhirConformanceSoftwareListEnumerator;
+begin
+  result := TFhirConformanceSoftwareListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceSoftwareList.Clone: TFhirConformanceSoftwareList;
@@ -20892,17 +23323,17 @@ end;
 procedure TFhirConformanceImplementation.Assign(oSource : TAdvObject);
 begin
   inherited;
-  description := TFhirConformanceImplementation(oSource).description.Clone;
-  url := TFhirConformanceImplementation(oSource).url.Clone;
+  descriptionObject := TFhirConformanceImplementation(oSource).descriptionObject.Clone;
+  urlObject := TFhirConformanceImplementation(oSource).urlObject.Clone;
 end;
 
 procedure TFhirConformanceImplementation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'url') Then
-     list.add(Url.Link);
+     list.add(FUrl.Link);
 end;
 
 procedure TFhirConformanceImplementation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -20914,8 +23345,8 @@ end;
 
 procedure TFhirConformanceImplementation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'url') then Url := propValue as TFhirUri{5}
+  if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'url') then UrlObject := propValue as TFhirUri{5a}
   else inherited;
 end;
 
@@ -20947,7 +23378,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirConformanceImplementation.SetDescriptionST(value : String);
@@ -20973,7 +23404,7 @@ begin
   if FUrl = nil then
     result := ''
   else
-    result := Url.value;
+    result := FUrl.value;
 end;
 
 Procedure TFhirConformanceImplementation.SetUrlST(value : String);
@@ -20986,6 +23417,34 @@ begin
   end
   else if FUrl <> nil then
     FUrl.value := '';
+end;
+
+
+{ TFhirConformanceImplementationListEnumerator }
+
+Constructor TFhirConformanceImplementationListEnumerator.Create(list : TFhirConformanceImplementationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceImplementationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceImplementationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceImplementationListEnumerator.GetCurrent : TFhirConformanceImplementation;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -21011,6 +23470,11 @@ end;
 procedure TFhirConformanceImplementationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceImplementationList.GetEnumerator : TFhirConformanceImplementationListEnumerator;
+begin
+  result := TFhirConformanceImplementationListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceImplementationList.Clone: TFhirConformanceImplementationList;
@@ -21105,7 +23569,7 @@ procedure TFhirConformanceRest.Assign(oSource : TAdvObject);
 begin
   inherited;
   FMode := TFhirConformanceRest(oSource).FMode.Link;
-  documentation := TFhirConformanceRest(oSource).documentation.Clone;
+  documentationObject := TFhirConformanceRest(oSource).documentationObject.Clone;
   security := TFhirConformanceRest(oSource).security.Clone;
   FResourceList.Assign(TFhirConformanceRest(oSource).FResourceList);
   FOperationList.Assign(TFhirConformanceRest(oSource).FOperationList);
@@ -21119,9 +23583,9 @@ begin
   if (child_name = 'mode') Then
      list.add(FMode.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
   if (child_name = 'security') Then
-     list.add(Security.Link);
+     list.add(FSecurity.Link);
   if (child_name = 'resource') Then
      list.addAll(FResourceList);
   if (child_name = 'operation') Then
@@ -21146,9 +23610,9 @@ end;
 
 procedure TFhirConformanceRest.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'mode') then Mode := propValue as TFHIREnum
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
-  else if (propName = 'security') then Security := propValue as TFhirConformanceRestSecurity{4}
+  if (propName = 'mode') then ModeObject := propValue as TFHIREnum
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
+  else if (propName = 'security') then Security := propValue as TFhirConformanceRestSecurity{4b}
   else if (propName = 'resource') then ResourceList.add(propValue as TFhirConformanceRestResource){2}
   else if (propName = 'operation') then OperationList.add(propValue as TFhirConformanceRestOperation){2}
   else if (propName = 'query') then QueryList.add(propValue as TFhirConformanceRestQuery){2}
@@ -21184,15 +23648,15 @@ begin
   if FMode = nil then
     result := TFhirRestfulConformanceMode(0)
   else
-    result := TFhirRestfulConformanceMode(StringArrayIndexOfSensitive(CODES_TFhirRestfulConformanceMode, Mode.value));
+    result := TFhirRestfulConformanceMode(StringArrayIndexOfSensitive(CODES_TFhirRestfulConformanceMode, FMode.value));
 end;
 
 Procedure TFhirConformanceRest.SetModeST(value : TFhirRestfulConformanceMode);
 begin
   if ord(value) = 0 then
-    Mode := nil
+    ModeObject := nil
   else
-    Mode := TFhirEnum.create(CODES_TFhirRestfulConformanceMode[value]);
+    ModeObject := TFhirEnum.create(CODES_TFhirRestfulConformanceMode[value]);
 end;
 
 Procedure TFhirConformanceRest.SetDocumentation(value : TFhirString);
@@ -21206,7 +23670,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirConformanceRest.SetDocumentationST(value : String);
@@ -21225,6 +23689,34 @@ Procedure TFhirConformanceRest.SetSecurity(value : TFhirConformanceRestSecurity)
 begin
   FSecurity.free;
   FSecurity := value;
+end;
+
+
+{ TFhirConformanceRestListEnumerator }
+
+Constructor TFhirConformanceRestListEnumerator.Create(list : TFhirConformanceRestList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceRestListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceRestListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceRestListEnumerator.GetCurrent : TFhirConformanceRest;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -21250,6 +23742,11 @@ end;
 procedure TFhirConformanceRestList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceRestList.GetEnumerator : TFhirConformanceRestListEnumerator;
+begin
+  result := TFhirConformanceRestListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceRestList.Clone: TFhirConformanceRestList;
@@ -21338,9 +23835,9 @@ end;
 procedure TFhirConformanceRestSecurity.Assign(oSource : TAdvObject);
 begin
   inherited;
-  cors := TFhirConformanceRestSecurity(oSource).cors.Clone;
+  corsObject := TFhirConformanceRestSecurity(oSource).corsObject.Clone;
   FServiceList.Assign(TFhirConformanceRestSecurity(oSource).FServiceList);
-  description := TFhirConformanceRestSecurity(oSource).description.Clone;
+  descriptionObject := TFhirConformanceRestSecurity(oSource).descriptionObject.Clone;
   FCertificateList.Assign(TFhirConformanceRestSecurity(oSource).FCertificateList);
 end;
 
@@ -21348,11 +23845,11 @@ procedure TFhirConformanceRestSecurity.GetChildrenByName(child_name : string; li
 begin
   inherited;
   if (child_name = 'cors') Then
-     list.add(Cors.Link);
+     list.add(FCors.Link);
   if (child_name = 'service') Then
      list.addAll(FServiceList);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'certificate') Then
      list.addAll(FCertificateList);
 end;
@@ -21368,9 +23865,9 @@ end;
 
 procedure TFhirConformanceRestSecurity.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'cors') then Cors := propValue as TFhirBoolean{5}
+  if (propName = 'cors') then CorsObject := propValue as TFhirBoolean{5a}
   else if (propName = 'service') then ServiceList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
   else if (propName = 'certificate') then CertificateList.add(propValue as TFhirConformanceRestSecurityCertificate){2}
   else inherited;
 end;
@@ -21403,7 +23900,7 @@ begin
   if FCors = nil then
     result := false
   else
-    result := Cors.value;
+    result := FCors.value;
 end;
 
 Procedure TFhirConformanceRestSecurity.SetCorsST(value : Boolean);
@@ -21424,7 +23921,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirConformanceRestSecurity.SetDescriptionST(value : String);
@@ -21437,6 +23934,34 @@ begin
   end
   else if FDescription <> nil then
     FDescription.value := '';
+end;
+
+
+{ TFhirConformanceRestSecurityListEnumerator }
+
+Constructor TFhirConformanceRestSecurityListEnumerator.Create(list : TFhirConformanceRestSecurityList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceRestSecurityListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceRestSecurityListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceRestSecurityListEnumerator.GetCurrent : TFhirConformanceRestSecurity;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -21462,6 +23987,11 @@ end;
 procedure TFhirConformanceRestSecurityList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceRestSecurityList.GetEnumerator : TFhirConformanceRestSecurityListEnumerator;
+begin
+  result := TFhirConformanceRestSecurityListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceRestSecurityList.Clone: TFhirConformanceRestSecurityList;
@@ -21546,17 +24076,17 @@ end;
 procedure TFhirConformanceRestSecurityCertificate.Assign(oSource : TAdvObject);
 begin
   inherited;
-  type_ := TFhirConformanceRestSecurityCertificate(oSource).type_.Clone;
-  blob := TFhirConformanceRestSecurityCertificate(oSource).blob.Clone;
+  type_Object := TFhirConformanceRestSecurityCertificate(oSource).type_Object.Clone;
+  blobObject := TFhirConformanceRestSecurityCertificate(oSource).blobObject.Clone;
 end;
 
 procedure TFhirConformanceRestSecurityCertificate.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'blob') Then
-     list.add(Blob.Link);
+     list.add(FBlob.Link);
 end;
 
 procedure TFhirConformanceRestSecurityCertificate.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -21568,8 +24098,14 @@ end;
 
 procedure TFhirConformanceRestSecurityCertificate.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCode{5}
-  else if (propName = 'blob') then Blob := propValue as TFhirBase64Binary{5}
+  if (propName = 'type') then
+    if propValue is TFHIRCode then
+      Type_Object := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      Type_Object := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'blob') then BlobObject := propValue as TFhirBase64Binary{5a}
   else inherited;
 end;
 
@@ -21601,7 +24137,7 @@ begin
   if FType_ = nil then
     result := ''
   else
-    result := Type_.value;
+    result := FType_.value;
 end;
 
 Procedure TFhirConformanceRestSecurityCertificate.SetType_ST(value : String);
@@ -21627,7 +24163,7 @@ begin
   if FBlob = nil then
     result := ''
   else
-    result := Blob.value;
+    result := FBlob.value;
 end;
 
 Procedure TFhirConformanceRestSecurityCertificate.SetBlobST(value : String);
@@ -21640,6 +24176,34 @@ begin
   end
   else if FBlob <> nil then
     FBlob.value := '';
+end;
+
+
+{ TFhirConformanceRestSecurityCertificateListEnumerator }
+
+Constructor TFhirConformanceRestSecurityCertificateListEnumerator.Create(list : TFhirConformanceRestSecurityCertificateList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceRestSecurityCertificateListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceRestSecurityCertificateListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceRestSecurityCertificateListEnumerator.GetCurrent : TFhirConformanceRestSecurityCertificate;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -21665,6 +24229,11 @@ end;
 procedure TFhirConformanceRestSecurityCertificateList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceRestSecurityCertificateList.GetEnumerator : TFhirConformanceRestSecurityCertificateListEnumerator;
+begin
+  result := TFhirConformanceRestSecurityCertificateListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceRestSecurityCertificateList.Clone: TFhirConformanceRestSecurityCertificateList;
@@ -21757,11 +24326,11 @@ end;
 procedure TFhirConformanceRestResource.Assign(oSource : TAdvObject);
 begin
   inherited;
-  type_ := TFhirConformanceRestResource(oSource).type_.Clone;
+  type_Object := TFhirConformanceRestResource(oSource).type_Object.Clone;
   profile := TFhirConformanceRestResource(oSource).profile.Clone;
   FOperationList.Assign(TFhirConformanceRestResource(oSource).FOperationList);
-  readHistory := TFhirConformanceRestResource(oSource).readHistory.Clone;
-  updateCreate := TFhirConformanceRestResource(oSource).updateCreate.Clone;
+  readHistoryObject := TFhirConformanceRestResource(oSource).readHistoryObject.Clone;
+  updateCreateObject := TFhirConformanceRestResource(oSource).updateCreateObject.Clone;
   FSearchIncludeList.Assign(TFhirConformanceRestResource(oSource).FSearchIncludeList);
   FSearchParamList.Assign(TFhirConformanceRestResource(oSource).FSearchParamList);
 end;
@@ -21770,15 +24339,15 @@ procedure TFhirConformanceRestResource.GetChildrenByName(child_name : string; li
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'profile') Then
-     list.add(Profile.Link);
+     list.add(FProfile.Link);
   if (child_name = 'operation') Then
      list.addAll(FOperationList);
   if (child_name = 'readHistory') Then
-     list.add(ReadHistory.Link);
+     list.add(FReadHistory.Link);
   if (child_name = 'updateCreate') Then
-     list.add(UpdateCreate.Link);
+     list.add(FUpdateCreate.Link);
   if (child_name = 'searchInclude') Then
      list.addAll(FSearchIncludeList);
   if (child_name = 'searchParam') Then
@@ -21799,11 +24368,17 @@ end;
 
 procedure TFhirConformanceRestResource.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCode{5}
-  else if (propName = 'profile') then Profile := propValue as TFhirResourceReference{TFhirProfile}{4}
+  if (propName = 'type') then
+    if propValue is TFHIRCode then
+      Type_Object := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      Type_Object := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'profile') then Profile := propValue as TFhirResourceReference{TFhirProfile}{4b}
   else if (propName = 'operation') then OperationList.add(propValue as TFhirConformanceRestResourceOperation){2}
-  else if (propName = 'readHistory') then ReadHistory := propValue as TFhirBoolean{5}
-  else if (propName = 'updateCreate') then UpdateCreate := propValue as TFhirBoolean{5}
+  else if (propName = 'readHistory') then ReadHistoryObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'updateCreate') then UpdateCreateObject := propValue as TFhirBoolean{5a}
   else if (propName = 'searchInclude') then SearchIncludeList.add(propValue as TFhirString){2}
   else if (propName = 'searchParam') then SearchParamList.add(propValue as TFhirConformanceRestResourceSearchParam){2}
   else inherited;
@@ -21837,7 +24412,7 @@ begin
   if FType_ = nil then
     result := ''
   else
-    result := Type_.value;
+    result := FType_.value;
 end;
 
 Procedure TFhirConformanceRestResource.SetType_ST(value : String);
@@ -21869,7 +24444,7 @@ begin
   if FReadHistory = nil then
     result := false
   else
-    result := ReadHistory.value;
+    result := FReadHistory.value;
 end;
 
 Procedure TFhirConformanceRestResource.SetReadHistoryST(value : Boolean);
@@ -21890,7 +24465,7 @@ begin
   if FUpdateCreate = nil then
     result := false
   else
-    result := UpdateCreate.value;
+    result := FUpdateCreate.value;
 end;
 
 Procedure TFhirConformanceRestResource.SetUpdateCreateST(value : Boolean);
@@ -21898,6 +24473,34 @@ begin
   if FUpdateCreate = nil then
     FUpdateCreate := TFhirBoolean.create;
   FUpdateCreate.value := value
+end;
+
+
+{ TFhirConformanceRestResourceListEnumerator }
+
+Constructor TFhirConformanceRestResourceListEnumerator.Create(list : TFhirConformanceRestResourceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceRestResourceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceRestResourceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceRestResourceListEnumerator.GetCurrent : TFhirConformanceRestResource;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -21923,6 +24526,11 @@ end;
 procedure TFhirConformanceRestResourceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceRestResourceList.GetEnumerator : TFhirConformanceRestResourceListEnumerator;
+begin
+  result := TFhirConformanceRestResourceListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceRestResourceList.Clone: TFhirConformanceRestResourceList;
@@ -22008,7 +24616,7 @@ procedure TFhirConformanceRestResourceOperation.Assign(oSource : TAdvObject);
 begin
   inherited;
   FCode := TFhirConformanceRestResourceOperation(oSource).FCode.Link;
-  documentation := TFhirConformanceRestResourceOperation(oSource).documentation.Clone;
+  documentationObject := TFhirConformanceRestResourceOperation(oSource).documentationObject.Clone;
 end;
 
 procedure TFhirConformanceRestResourceOperation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -22017,7 +24625,7 @@ begin
   if (child_name = 'code') Then
      list.add(FCode.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
 end;
 
 procedure TFhirConformanceRestResourceOperation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -22029,8 +24637,8 @@ end;
 
 procedure TFhirConformanceRestResourceOperation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFHIREnum
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
+  if (propName = 'code') then CodeObject := propValue as TFHIREnum
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -22062,15 +24670,15 @@ begin
   if FCode = nil then
     result := TFhirTypeRestfulOperation(0)
   else
-    result := TFhirTypeRestfulOperation(StringArrayIndexOfSensitive(CODES_TFhirTypeRestfulOperation, Code.value));
+    result := TFhirTypeRestfulOperation(StringArrayIndexOfSensitive(CODES_TFhirTypeRestfulOperation, FCode.value));
 end;
 
 Procedure TFhirConformanceRestResourceOperation.SetCodeST(value : TFhirTypeRestfulOperation);
 begin
   if ord(value) = 0 then
-    Code := nil
+    CodeObject := nil
   else
-    Code := TFhirEnum.create(CODES_TFhirTypeRestfulOperation[value]);
+    CodeObject := TFhirEnum.create(CODES_TFhirTypeRestfulOperation[value]);
 end;
 
 Procedure TFhirConformanceRestResourceOperation.SetDocumentation(value : TFhirString);
@@ -22084,7 +24692,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirConformanceRestResourceOperation.SetDocumentationST(value : String);
@@ -22097,6 +24705,34 @@ begin
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
+end;
+
+
+{ TFhirConformanceRestResourceOperationListEnumerator }
+
+Constructor TFhirConformanceRestResourceOperationListEnumerator.Create(list : TFhirConformanceRestResourceOperationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceRestResourceOperationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceRestResourceOperationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceRestResourceOperationListEnumerator.GetCurrent : TFhirConformanceRestResourceOperation;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -22122,6 +24758,11 @@ end;
 procedure TFhirConformanceRestResourceOperationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceRestResourceOperationList.GetEnumerator : TFhirConformanceRestResourceOperationListEnumerator;
+begin
+  result := TFhirConformanceRestResourceOperationListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceRestResourceOperationList.Clone: TFhirConformanceRestResourceOperationList;
@@ -22212,10 +24853,10 @@ end;
 procedure TFhirConformanceRestResourceSearchParam.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirConformanceRestResourceSearchParam(oSource).name.Clone;
-  definition := TFhirConformanceRestResourceSearchParam(oSource).definition.Clone;
+  nameObject := TFhirConformanceRestResourceSearchParam(oSource).nameObject.Clone;
+  definitionObject := TFhirConformanceRestResourceSearchParam(oSource).definitionObject.Clone;
   FType_ := TFhirConformanceRestResourceSearchParam(oSource).FType_.Link;
-  documentation := TFhirConformanceRestResourceSearchParam(oSource).documentation.Clone;
+  documentationObject := TFhirConformanceRestResourceSearchParam(oSource).documentationObject.Clone;
   FTargetList.Assign(TFhirConformanceRestResourceSearchParam(oSource).FTargetList);
   FChainList.Assign(TFhirConformanceRestResourceSearchParam(oSource).FChainList);
 end;
@@ -22224,13 +24865,13 @@ procedure TFhirConformanceRestResourceSearchParam.GetChildrenByName(child_name :
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'definition') Then
-     list.add(Definition.Link);
+     list.add(FDefinition.Link);
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
   if (child_name = 'target') Then
      list.addAll(FTargetList);
   if (child_name = 'chain') Then
@@ -22250,10 +24891,10 @@ end;
 
 procedure TFhirConformanceRestResourceSearchParam.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'definition') then Definition := propValue as TFhirUri{5}
-  else if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'definition') then DefinitionObject := propValue as TFhirUri{5a}
+  else if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
   else if (propName = 'target') then TargetList.add(propValue as TFhirCode){2}
   else if (propName = 'chain') then ChainList.add(propValue as TFhirString){2}
   else inherited;
@@ -22287,7 +24928,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirConformanceRestResourceSearchParam.SetNameST(value : String);
@@ -22313,7 +24954,7 @@ begin
   if FDefinition = nil then
     result := ''
   else
-    result := Definition.value;
+    result := FDefinition.value;
 end;
 
 Procedure TFhirConformanceRestResourceSearchParam.SetDefinitionST(value : String);
@@ -22339,15 +24980,15 @@ begin
   if FType_ = nil then
     result := TFhirSearchParamType(0)
   else
-    result := TFhirSearchParamType(StringArrayIndexOfSensitive(CODES_TFhirSearchParamType, Type_.value));
+    result := TFhirSearchParamType(StringArrayIndexOfSensitive(CODES_TFhirSearchParamType, FType_.value));
 end;
 
 Procedure TFhirConformanceRestResourceSearchParam.SetType_ST(value : TFhirSearchParamType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirSearchParamType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirSearchParamType[value]);
 end;
 
 Procedure TFhirConformanceRestResourceSearchParam.SetDocumentation(value : TFhirString);
@@ -22361,7 +25002,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirConformanceRestResourceSearchParam.SetDocumentationST(value : String);
@@ -22374,6 +25015,34 @@ begin
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
+end;
+
+
+{ TFhirConformanceRestResourceSearchParamListEnumerator }
+
+Constructor TFhirConformanceRestResourceSearchParamListEnumerator.Create(list : TFhirConformanceRestResourceSearchParamList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceRestResourceSearchParamListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceRestResourceSearchParamListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceRestResourceSearchParamListEnumerator.GetCurrent : TFhirConformanceRestResourceSearchParam;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -22399,6 +25068,11 @@ end;
 procedure TFhirConformanceRestResourceSearchParamList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceRestResourceSearchParamList.GetEnumerator : TFhirConformanceRestResourceSearchParamListEnumerator;
+begin
+  result := TFhirConformanceRestResourceSearchParamListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceRestResourceSearchParamList.Clone: TFhirConformanceRestResourceSearchParamList;
@@ -22484,7 +25158,7 @@ procedure TFhirConformanceRestOperation.Assign(oSource : TAdvObject);
 begin
   inherited;
   FCode := TFhirConformanceRestOperation(oSource).FCode.Link;
-  documentation := TFhirConformanceRestOperation(oSource).documentation.Clone;
+  documentationObject := TFhirConformanceRestOperation(oSource).documentationObject.Clone;
 end;
 
 procedure TFhirConformanceRestOperation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -22493,7 +25167,7 @@ begin
   if (child_name = 'code') Then
      list.add(FCode.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
 end;
 
 procedure TFhirConformanceRestOperation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -22505,8 +25179,8 @@ end;
 
 procedure TFhirConformanceRestOperation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFHIREnum
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
+  if (propName = 'code') then CodeObject := propValue as TFHIREnum
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -22538,15 +25212,15 @@ begin
   if FCode = nil then
     result := TFhirSystemRestfulOperation(0)
   else
-    result := TFhirSystemRestfulOperation(StringArrayIndexOfSensitive(CODES_TFhirSystemRestfulOperation, Code.value));
+    result := TFhirSystemRestfulOperation(StringArrayIndexOfSensitive(CODES_TFhirSystemRestfulOperation, FCode.value));
 end;
 
 Procedure TFhirConformanceRestOperation.SetCodeST(value : TFhirSystemRestfulOperation);
 begin
   if ord(value) = 0 then
-    Code := nil
+    CodeObject := nil
   else
-    Code := TFhirEnum.create(CODES_TFhirSystemRestfulOperation[value]);
+    CodeObject := TFhirEnum.create(CODES_TFhirSystemRestfulOperation[value]);
 end;
 
 Procedure TFhirConformanceRestOperation.SetDocumentation(value : TFhirString);
@@ -22560,7 +25234,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirConformanceRestOperation.SetDocumentationST(value : String);
@@ -22573,6 +25247,34 @@ begin
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
+end;
+
+
+{ TFhirConformanceRestOperationListEnumerator }
+
+Constructor TFhirConformanceRestOperationListEnumerator.Create(list : TFhirConformanceRestOperationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceRestOperationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceRestOperationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceRestOperationListEnumerator.GetCurrent : TFhirConformanceRestOperation;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -22598,6 +25300,11 @@ end;
 procedure TFhirConformanceRestOperationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceRestOperationList.GetEnumerator : TFhirConformanceRestOperationListEnumerator;
+begin
+  result := TFhirConformanceRestOperationListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceRestOperationList.Clone: TFhirConformanceRestOperationList;
@@ -22685,9 +25392,9 @@ end;
 procedure TFhirConformanceRestQuery.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirConformanceRestQuery(oSource).name.Clone;
-  definition := TFhirConformanceRestQuery(oSource).definition.Clone;
-  documentation := TFhirConformanceRestQuery(oSource).documentation.Clone;
+  nameObject := TFhirConformanceRestQuery(oSource).nameObject.Clone;
+  definitionObject := TFhirConformanceRestQuery(oSource).definitionObject.Clone;
+  documentationObject := TFhirConformanceRestQuery(oSource).documentationObject.Clone;
   FParameterList.Assign(TFhirConformanceRestQuery(oSource).FParameterList);
 end;
 
@@ -22695,11 +25402,11 @@ procedure TFhirConformanceRestQuery.GetChildrenByName(child_name : string; list 
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'definition') Then
-     list.add(Definition.Link);
+     list.add(FDefinition.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
   if (child_name = 'parameter') Then
      list.addAll(FParameterList);
 end;
@@ -22715,9 +25422,9 @@ end;
 
 procedure TFhirConformanceRestQuery.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'definition') then Definition := propValue as TFhirUri{5}
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'definition') then DefinitionObject := propValue as TFhirUri{5a}
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
   else if (propName = 'parameter') then ParameterList.add(propValue as TFhirConformanceRestResourceSearchParam){2}
   else inherited;
 end;
@@ -22750,7 +25457,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirConformanceRestQuery.SetNameST(value : String);
@@ -22776,7 +25483,7 @@ begin
   if FDefinition = nil then
     result := ''
   else
-    result := Definition.value;
+    result := FDefinition.value;
 end;
 
 Procedure TFhirConformanceRestQuery.SetDefinitionST(value : String);
@@ -22802,7 +25509,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirConformanceRestQuery.SetDocumentationST(value : String);
@@ -22815,6 +25522,34 @@ begin
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
+end;
+
+
+{ TFhirConformanceRestQueryListEnumerator }
+
+Constructor TFhirConformanceRestQueryListEnumerator.Create(list : TFhirConformanceRestQueryList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceRestQueryListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceRestQueryListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceRestQueryListEnumerator.GetCurrent : TFhirConformanceRestQuery;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -22840,6 +25575,11 @@ end;
 procedure TFhirConformanceRestQueryList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceRestQueryList.GetEnumerator : TFhirConformanceRestQueryListEnumerator;
+begin
+  result := TFhirConformanceRestQueryListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceRestQueryList.Clone: TFhirConformanceRestQueryList;
@@ -22927,9 +25667,9 @@ end;
 procedure TFhirConformanceMessaging.Assign(oSource : TAdvObject);
 begin
   inherited;
-  endpoint := TFhirConformanceMessaging(oSource).endpoint.Clone;
-  reliableCache := TFhirConformanceMessaging(oSource).reliableCache.Clone;
-  documentation := TFhirConformanceMessaging(oSource).documentation.Clone;
+  endpointObject := TFhirConformanceMessaging(oSource).endpointObject.Clone;
+  reliableCacheObject := TFhirConformanceMessaging(oSource).reliableCacheObject.Clone;
+  documentationObject := TFhirConformanceMessaging(oSource).documentationObject.Clone;
   FEventList.Assign(TFhirConformanceMessaging(oSource).FEventList);
 end;
 
@@ -22937,11 +25677,11 @@ procedure TFhirConformanceMessaging.GetChildrenByName(child_name : string; list 
 begin
   inherited;
   if (child_name = 'endpoint') Then
-     list.add(Endpoint.Link);
+     list.add(FEndpoint.Link);
   if (child_name = 'reliableCache') Then
-     list.add(ReliableCache.Link);
+     list.add(FReliableCache.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
   if (child_name = 'event') Then
      list.addAll(FEventList);
 end;
@@ -22957,9 +25697,9 @@ end;
 
 procedure TFhirConformanceMessaging.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'endpoint') then Endpoint := propValue as TFhirUri{5}
-  else if (propName = 'reliableCache') then ReliableCache := propValue as TFhirInteger{5}
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
+  if (propName = 'endpoint') then EndpointObject := propValue as TFhirUri{5a}
+  else if (propName = 'reliableCache') then ReliableCacheObject := propValue as TFhirInteger{5a}
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
   else if (propName = 'event') then EventList.add(propValue as TFhirConformanceMessagingEvent){2}
   else inherited;
 end;
@@ -22992,7 +25732,7 @@ begin
   if FEndpoint = nil then
     result := ''
   else
-    result := Endpoint.value;
+    result := FEndpoint.value;
 end;
 
 Procedure TFhirConformanceMessaging.SetEndpointST(value : String);
@@ -23018,7 +25758,7 @@ begin
   if FReliableCache = nil then
     result := ''
   else
-    result := ReliableCache.value;
+    result := FReliableCache.value;
 end;
 
 Procedure TFhirConformanceMessaging.SetReliableCacheST(value : String);
@@ -23044,7 +25784,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirConformanceMessaging.SetDocumentationST(value : String);
@@ -23057,6 +25797,34 @@ begin
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
+end;
+
+
+{ TFhirConformanceMessagingListEnumerator }
+
+Constructor TFhirConformanceMessagingListEnumerator.Create(list : TFhirConformanceMessagingList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceMessagingListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceMessagingListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceMessagingListEnumerator.GetCurrent : TFhirConformanceMessaging;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -23082,6 +25850,11 @@ end;
 procedure TFhirConformanceMessagingList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceMessagingList.GetEnumerator : TFhirConformanceMessagingListEnumerator;
+begin
+  result := TFhirConformanceMessagingListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceMessagingList.Clone: TFhirConformanceMessagingList;
@@ -23177,17 +25950,17 @@ begin
   FCategory := TFhirConformanceMessagingEvent(oSource).FCategory.Link;
   FMode := TFhirConformanceMessagingEvent(oSource).FMode.Link;
   FProtocolList.Assign(TFhirConformanceMessagingEvent(oSource).FProtocolList);
-  focus := TFhirConformanceMessagingEvent(oSource).focus.Clone;
+  focusObject := TFhirConformanceMessagingEvent(oSource).focusObject.Clone;
   request := TFhirConformanceMessagingEvent(oSource).request.Clone;
   response := TFhirConformanceMessagingEvent(oSource).response.Clone;
-  documentation := TFhirConformanceMessagingEvent(oSource).documentation.Clone;
+  documentationObject := TFhirConformanceMessagingEvent(oSource).documentationObject.Clone;
 end;
 
 procedure TFhirConformanceMessagingEvent.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'category') Then
      list.add(FCategory.Link);
   if (child_name = 'mode') Then
@@ -23195,13 +25968,13 @@ begin
   if (child_name = 'protocol') Then
      list.addAll(FProtocolList);
   if (child_name = 'focus') Then
-     list.add(Focus.Link);
+     list.add(FFocus.Link);
   if (child_name = 'request') Then
-     list.add(Request.Link);
+     list.add(FRequest.Link);
   if (child_name = 'response') Then
-     list.add(Response.Link);
+     list.add(FResponse.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
 end;
 
 procedure TFhirConformanceMessagingEvent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -23219,14 +25992,20 @@ end;
 
 procedure TFhirConformanceMessagingEvent.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCoding{4}
-  else if (propName = 'category') then Category := propValue as TFHIREnum
-  else if (propName = 'mode') then Mode := propValue as TFHIREnum
+  if (propName = 'code') then Code := propValue as TFhirCoding{4b}
+  else if (propName = 'category') then CategoryObject := propValue as TFHIREnum
+  else if (propName = 'mode') then ModeObject := propValue as TFHIREnum
   else if (propName = 'protocol') then ProtocolList.add(propValue as TFhirCoding){2}
-  else if (propName = 'focus') then Focus := propValue as TFhirCode{5}
-  else if (propName = 'request') then Request := propValue as TFhirResourceReference{TFhirProfile}{4}
-  else if (propName = 'response') then Response := propValue as TFhirResourceReference{TFhirProfile}{4}
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
+  else if (propName = 'focus') then
+    if propValue is TFHIRCode then
+      FocusObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      FocusObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'request') then Request := propValue as TFhirResourceReference{TFhirProfile}{4b}
+  else if (propName = 'response') then Response := propValue as TFhirResourceReference{TFhirProfile}{4b}
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -23264,15 +26043,15 @@ begin
   if FCategory = nil then
     result := TFhirMessageSignificanceCategory(0)
   else
-    result := TFhirMessageSignificanceCategory(StringArrayIndexOfSensitive(CODES_TFhirMessageSignificanceCategory, Category.value));
+    result := TFhirMessageSignificanceCategory(StringArrayIndexOfSensitive(CODES_TFhirMessageSignificanceCategory, FCategory.value));
 end;
 
 Procedure TFhirConformanceMessagingEvent.SetCategoryST(value : TFhirMessageSignificanceCategory);
 begin
   if ord(value) = 0 then
-    Category := nil
+    CategoryObject := nil
   else
-    Category := TFhirEnum.create(CODES_TFhirMessageSignificanceCategory[value]);
+    CategoryObject := TFhirEnum.create(CODES_TFhirMessageSignificanceCategory[value]);
 end;
 
 Procedure TFhirConformanceMessagingEvent.SetMode(value : TFhirEnum);
@@ -23286,15 +26065,15 @@ begin
   if FMode = nil then
     result := TFhirMessageConformanceEventMode(0)
   else
-    result := TFhirMessageConformanceEventMode(StringArrayIndexOfSensitive(CODES_TFhirMessageConformanceEventMode, Mode.value));
+    result := TFhirMessageConformanceEventMode(StringArrayIndexOfSensitive(CODES_TFhirMessageConformanceEventMode, FMode.value));
 end;
 
 Procedure TFhirConformanceMessagingEvent.SetModeST(value : TFhirMessageConformanceEventMode);
 begin
   if ord(value) = 0 then
-    Mode := nil
+    ModeObject := nil
   else
-    Mode := TFhirEnum.create(CODES_TFhirMessageConformanceEventMode[value]);
+    ModeObject := TFhirEnum.create(CODES_TFhirMessageConformanceEventMode[value]);
 end;
 
 Procedure TFhirConformanceMessagingEvent.SetFocus(value : TFhirCode);
@@ -23308,7 +26087,7 @@ begin
   if FFocus = nil then
     result := ''
   else
-    result := Focus.value;
+    result := FFocus.value;
 end;
 
 Procedure TFhirConformanceMessagingEvent.SetFocusST(value : String);
@@ -23346,7 +26125,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirConformanceMessagingEvent.SetDocumentationST(value : String);
@@ -23359,6 +26138,34 @@ begin
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
+end;
+
+
+{ TFhirConformanceMessagingEventListEnumerator }
+
+Constructor TFhirConformanceMessagingEventListEnumerator.Create(list : TFhirConformanceMessagingEventList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceMessagingEventListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceMessagingEventListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceMessagingEventListEnumerator.GetCurrent : TFhirConformanceMessagingEvent;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -23384,6 +26191,11 @@ end;
 procedure TFhirConformanceMessagingEventList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceMessagingEventList.GetEnumerator : TFhirConformanceMessagingEventListEnumerator;
+begin
+  result := TFhirConformanceMessagingEventListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceMessagingEventList.Clone: TFhirConformanceMessagingEventList;
@@ -23470,7 +26282,7 @@ procedure TFhirConformanceDocument.Assign(oSource : TAdvObject);
 begin
   inherited;
   FMode := TFhirConformanceDocument(oSource).FMode.Link;
-  documentation := TFhirConformanceDocument(oSource).documentation.Clone;
+  documentationObject := TFhirConformanceDocument(oSource).documentationObject.Clone;
   profile := TFhirConformanceDocument(oSource).profile.Clone;
 end;
 
@@ -23480,9 +26292,9 @@ begin
   if (child_name = 'mode') Then
      list.add(FMode.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
   if (child_name = 'profile') Then
-     list.add(Profile.Link);
+     list.add(FProfile.Link);
 end;
 
 procedure TFhirConformanceDocument.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -23495,9 +26307,9 @@ end;
 
 procedure TFhirConformanceDocument.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'mode') then Mode := propValue as TFHIREnum
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
-  else if (propName = 'profile') then Profile := propValue as TFhirResourceReference{TFhirProfile}{4}
+  if (propName = 'mode') then ModeObject := propValue as TFHIREnum
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
+  else if (propName = 'profile') then Profile := propValue as TFhirResourceReference{TFhirProfile}{4b}
   else inherited;
 end;
 
@@ -23529,15 +26341,15 @@ begin
   if FMode = nil then
     result := TFhirDocumentMode(0)
   else
-    result := TFhirDocumentMode(StringArrayIndexOfSensitive(CODES_TFhirDocumentMode, Mode.value));
+    result := TFhirDocumentMode(StringArrayIndexOfSensitive(CODES_TFhirDocumentMode, FMode.value));
 end;
 
 Procedure TFhirConformanceDocument.SetModeST(value : TFhirDocumentMode);
 begin
   if ord(value) = 0 then
-    Mode := nil
+    ModeObject := nil
   else
-    Mode := TFhirEnum.create(CODES_TFhirDocumentMode[value]);
+    ModeObject := TFhirEnum.create(CODES_TFhirDocumentMode[value]);
 end;
 
 Procedure TFhirConformanceDocument.SetDocumentation(value : TFhirString);
@@ -23551,7 +26363,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirConformanceDocument.SetDocumentationST(value : String);
@@ -23570,6 +26382,34 @@ Procedure TFhirConformanceDocument.SetProfile(value : TFhirResourceReference{TFh
 begin
   FProfile.free;
   FProfile := value;
+end;
+
+
+{ TFhirConformanceDocumentListEnumerator }
+
+Constructor TFhirConformanceDocumentListEnumerator.Create(list : TFhirConformanceDocumentList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirConformanceDocumentListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConformanceDocumentListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirConformanceDocumentListEnumerator.GetCurrent : TFhirConformanceDocument;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -23595,6 +26435,11 @@ end;
 procedure TFhirConformanceDocumentList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirConformanceDocumentList.GetEnumerator : TFhirConformanceDocumentListEnumerator;
+begin
+  result := TFhirConformanceDocumentListEnumerator.Create(self.link);
 end;
 
 function TFhirConformanceDocumentList.Clone: TFhirConformanceDocumentList;
@@ -23688,7 +26533,7 @@ procedure TFhirDeviceObservationReportVirtualDevice.GetChildrenByName(child_name
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'channel') Then
      list.addAll(FChannelList);
 end;
@@ -23702,7 +26547,7 @@ end;
 
 procedure TFhirDeviceObservationReportVirtualDevice.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'channel') then ChannelList.add(propValue as TFhirDeviceObservationReportVirtualDeviceChannel){2}
   else inherited;
 end;
@@ -23731,6 +26576,34 @@ begin
 end;
 
 
+{ TFhirDeviceObservationReportVirtualDeviceListEnumerator }
+
+Constructor TFhirDeviceObservationReportVirtualDeviceListEnumerator.Create(list : TFhirDeviceObservationReportVirtualDeviceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDeviceObservationReportVirtualDeviceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceListEnumerator.GetCurrent : TFhirDeviceObservationReportVirtualDevice;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirDeviceObservationReportVirtualDeviceList }
 procedure TFhirDeviceObservationReportVirtualDeviceList.AddItem(value: TFhirDeviceObservationReportVirtualDevice);
 begin
@@ -23753,6 +26626,11 @@ end;
 procedure TFhirDeviceObservationReportVirtualDeviceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceList.GetEnumerator : TFhirDeviceObservationReportVirtualDeviceListEnumerator;
+begin
+  result := TFhirDeviceObservationReportVirtualDeviceListEnumerator.Create(self.link);
 end;
 
 function TFhirDeviceObservationReportVirtualDeviceList.Clone: TFhirDeviceObservationReportVirtualDeviceList;
@@ -23846,7 +26724,7 @@ procedure TFhirDeviceObservationReportVirtualDeviceChannel.GetChildrenByName(chi
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'metric') Then
      list.addAll(FMetricList);
 end;
@@ -23860,7 +26738,7 @@ end;
 
 procedure TFhirDeviceObservationReportVirtualDeviceChannel.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'metric') then MetricList.add(propValue as TFhirDeviceObservationReportVirtualDeviceChannelMetric){2}
   else inherited;
 end;
@@ -23889,6 +26767,34 @@ begin
 end;
 
 
+{ TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator }
+
+Constructor TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator.Create(list : TFhirDeviceObservationReportVirtualDeviceChannelList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator.GetCurrent : TFhirDeviceObservationReportVirtualDeviceChannel;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirDeviceObservationReportVirtualDeviceChannelList }
 procedure TFhirDeviceObservationReportVirtualDeviceChannelList.AddItem(value: TFhirDeviceObservationReportVirtualDeviceChannel);
 begin
@@ -23911,6 +26817,11 @@ end;
 procedure TFhirDeviceObservationReportVirtualDeviceChannelList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceChannelList.GetEnumerator : TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator;
+begin
+  result := TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator.Create(self.link);
 end;
 
 function TFhirDeviceObservationReportVirtualDeviceChannelList.Clone: TFhirDeviceObservationReportVirtualDeviceChannelList;
@@ -24001,7 +26912,7 @@ procedure TFhirDeviceObservationReportVirtualDeviceChannelMetric.GetChildrenByNa
 begin
   inherited;
   if (child_name = 'observation') Then
-     list.add(Observation.Link);
+     list.add(FObservation.Link);
 end;
 
 procedure TFhirDeviceObservationReportVirtualDeviceChannelMetric.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -24012,7 +26923,7 @@ end;
 
 procedure TFhirDeviceObservationReportVirtualDeviceChannelMetric.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'observation') then Observation := propValue as TFhirResourceReference{TFhirObservation}{4}
+  if (propName = 'observation') then Observation := propValue as TFhirResourceReference{TFhirObservation}{4b}
   else inherited;
 end;
 
@@ -24040,6 +26951,34 @@ begin
 end;
 
 
+{ TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator }
+
+Constructor TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator.Create(list : TFhirDeviceObservationReportVirtualDeviceChannelMetricList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator.GetCurrent : TFhirDeviceObservationReportVirtualDeviceChannelMetric;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirDeviceObservationReportVirtualDeviceChannelMetricList }
 procedure TFhirDeviceObservationReportVirtualDeviceChannelMetricList.AddItem(value: TFhirDeviceObservationReportVirtualDeviceChannelMetric);
 begin
@@ -24062,6 +27001,11 @@ end;
 procedure TFhirDeviceObservationReportVirtualDeviceChannelMetricList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDeviceObservationReportVirtualDeviceChannelMetricList.GetEnumerator : TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator;
+begin
+  result := TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator.Create(self.link);
 end;
 
 function TFhirDeviceObservationReportVirtualDeviceChannelMetricList.Clone: TFhirDeviceObservationReportVirtualDeviceChannelMetricList;
@@ -24150,7 +27094,7 @@ begin
   inherited;
   FStatus := TFhirDiagnosticOrderEvent(oSource).FStatus.Link;
   description := TFhirDiagnosticOrderEvent(oSource).description.Clone;
-  dateTime := TFhirDiagnosticOrderEvent(oSource).dateTime.Clone;
+  dateTimeObject := TFhirDiagnosticOrderEvent(oSource).dateTimeObject.Clone;
   actor := TFhirDiagnosticOrderEvent(oSource).actor.Clone;
 end;
 
@@ -24160,11 +27104,11 @@ begin
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'dateTime') Then
-     list.add(DateTime.Link);
+     list.add(FDateTime.Link);
   if (child_name = 'actor') Then
-     list.add(Actor.Link);
+     list.add(FActor.Link);
 end;
 
 procedure TFhirDiagnosticOrderEvent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -24178,10 +27122,10 @@ end;
 
 procedure TFhirDiagnosticOrderEvent.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'description') then Description := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'dateTime') then DateTime := propValue as TFhirDateTime{5}
-  else if (propName = 'actor') then Actor := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'description') then Description := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'dateTime') then DateTimeObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'actor') then Actor := propValue as TFhirResourceReference{Resource}{4b}
   else inherited;
 end;
 
@@ -24213,15 +27157,15 @@ begin
   if FStatus = nil then
     result := TFhirDiagnosticOrderStatus(0)
   else
-    result := TFhirDiagnosticOrderStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderStatus, Status.value));
+    result := TFhirDiagnosticOrderStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderStatus, FStatus.value));
 end;
 
 Procedure TFhirDiagnosticOrderEvent.SetStatusST(value : TFhirDiagnosticOrderStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirDiagnosticOrderStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirDiagnosticOrderStatus[value]);
 end;
 
 Procedure TFhirDiagnosticOrderEvent.SetDescription(value : TFhirCodeableConcept);
@@ -24241,7 +27185,7 @@ begin
   if FDateTime = nil then
     result := nil
   else
-    result := DateTime.value;
+    result := FDateTime.value;
 end;
 
 Procedure TFhirDiagnosticOrderEvent.SetDateTimeST(value : TDateAndTime);
@@ -24260,6 +27204,34 @@ Procedure TFhirDiagnosticOrderEvent.SetActor(value : TFhirResourceReference{Reso
 begin
   FActor.free;
   FActor := value;
+end;
+
+
+{ TFhirDiagnosticOrderEventListEnumerator }
+
+Constructor TFhirDiagnosticOrderEventListEnumerator.Create(list : TFhirDiagnosticOrderEventList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDiagnosticOrderEventListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDiagnosticOrderEventListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDiagnosticOrderEventListEnumerator.GetCurrent : TFhirDiagnosticOrderEvent;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -24285,6 +27257,11 @@ end;
 procedure TFhirDiagnosticOrderEventList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDiagnosticOrderEventList.GetEnumerator : TFhirDiagnosticOrderEventListEnumerator;
+begin
+  result := TFhirDiagnosticOrderEventListEnumerator.Create(self.link);
 end;
 
 function TFhirDiagnosticOrderEventList.Clone: TFhirDiagnosticOrderEventList;
@@ -24385,11 +27362,11 @@ procedure TFhirDiagnosticOrderItem.GetChildrenByName(child_name : string; list :
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'specimen') Then
      list.addAll(FSpecimenList);
   if (child_name = 'bodySite') Then
-     list.add(BodySite.Link);
+     list.add(FBodySite.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'event') Then
@@ -24408,10 +27385,10 @@ end;
 
 procedure TFhirDiagnosticOrderItem.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'specimen') then SpecimenList.add(propValue as TFhirResourceReference{TFhirSpecimen}){2}
-  else if (propName = 'bodySite') then BodySite := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
+  else if (propName = 'bodySite') then BodySite := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
   else if (propName = 'event') then EventList.add(propValue as TFhirDiagnosticOrderEvent){2}
   else inherited;
 end;
@@ -24456,15 +27433,43 @@ begin
   if FStatus = nil then
     result := TFhirDiagnosticOrderStatus(0)
   else
-    result := TFhirDiagnosticOrderStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderStatus, Status.value));
+    result := TFhirDiagnosticOrderStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderStatus, FStatus.value));
 end;
 
 Procedure TFhirDiagnosticOrderItem.SetStatusST(value : TFhirDiagnosticOrderStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirDiagnosticOrderStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirDiagnosticOrderStatus[value]);
+end;
+
+
+{ TFhirDiagnosticOrderItemListEnumerator }
+
+Constructor TFhirDiagnosticOrderItemListEnumerator.Create(list : TFhirDiagnosticOrderItemList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDiagnosticOrderItemListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDiagnosticOrderItemListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDiagnosticOrderItemListEnumerator.GetCurrent : TFhirDiagnosticOrderItem;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -24490,6 +27495,11 @@ end;
 procedure TFhirDiagnosticOrderItemList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDiagnosticOrderItemList.GetEnumerator : TFhirDiagnosticOrderItemListEnumerator;
+begin
+  result := TFhirDiagnosticOrderItemListEnumerator.Create(self.link);
 end;
 
 function TFhirDiagnosticOrderItemList.Clone: TFhirDiagnosticOrderItemList;
@@ -24574,7 +27584,7 @@ end;
 procedure TFhirDiagnosticReportImage.Assign(oSource : TAdvObject);
 begin
   inherited;
-  comment := TFhirDiagnosticReportImage(oSource).comment.Clone;
+  commentObject := TFhirDiagnosticReportImage(oSource).commentObject.Clone;
   link_ := TFhirDiagnosticReportImage(oSource).link_.Clone;
 end;
 
@@ -24582,9 +27592,9 @@ procedure TFhirDiagnosticReportImage.GetChildrenByName(child_name : string; list
 begin
   inherited;
   if (child_name = 'comment') Then
-     list.add(Comment.Link);
+     list.add(FComment.Link);
   if (child_name = 'link') Then
-     list.add(Link_.Link);
+     list.add(FLink_.Link);
 end;
 
 procedure TFhirDiagnosticReportImage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -24596,8 +27606,8 @@ end;
 
 procedure TFhirDiagnosticReportImage.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'comment') then Comment := propValue as TFhirString{5}
-  else if (propName = 'link') then Link_ := propValue as TFhirResourceReference{TFhirMedia}{4}
+  if (propName = 'comment') then CommentObject := propValue as TFhirString{5a}
+  else if (propName = 'link') then Link_ := propValue as TFhirResourceReference{TFhirMedia}{4b}
   else inherited;
 end;
 
@@ -24629,7 +27639,7 @@ begin
   if FComment = nil then
     result := ''
   else
-    result := Comment.value;
+    result := FComment.value;
 end;
 
 Procedure TFhirDiagnosticReportImage.SetCommentST(value : String);
@@ -24648,6 +27658,34 @@ Procedure TFhirDiagnosticReportImage.SetLink_(value : TFhirResourceReference{TFh
 begin
   FLink_.free;
   FLink_ := value;
+end;
+
+
+{ TFhirDiagnosticReportImageListEnumerator }
+
+Constructor TFhirDiagnosticReportImageListEnumerator.Create(list : TFhirDiagnosticReportImageList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDiagnosticReportImageListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDiagnosticReportImageListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDiagnosticReportImageListEnumerator.GetCurrent : TFhirDiagnosticReportImage;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -24673,6 +27711,11 @@ end;
 procedure TFhirDiagnosticReportImageList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDiagnosticReportImageList.GetEnumerator : TFhirDiagnosticReportImageListEnumerator;
+begin
+  result := TFhirDiagnosticReportImageListEnumerator.Create(self.link);
 end;
 
 function TFhirDiagnosticReportImageList.Clone: TFhirDiagnosticReportImageList;
@@ -24767,7 +27810,7 @@ begin
   if (child_name = 'code') Then
      list.add(FCode.Link);
   if (child_name = 'target') Then
-     list.add(Target.Link);
+     list.add(FTarget.Link);
 end;
 
 procedure TFhirDocumentReferenceRelatesTo.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -24779,8 +27822,8 @@ end;
 
 procedure TFhirDocumentReferenceRelatesTo.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFHIREnum
-  else if (propName = 'target') then Target := propValue as TFhirResourceReference{TFhirDocumentReference}{4}
+  if (propName = 'code') then CodeObject := propValue as TFHIREnum
+  else if (propName = 'target') then Target := propValue as TFhirResourceReference{TFhirDocumentReference}{4b}
   else inherited;
 end;
 
@@ -24812,21 +27855,49 @@ begin
   if FCode = nil then
     result := TFhirDocumentRelationshipType(0)
   else
-    result := TFhirDocumentRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirDocumentRelationshipType, Code.value));
+    result := TFhirDocumentRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirDocumentRelationshipType, FCode.value));
 end;
 
 Procedure TFhirDocumentReferenceRelatesTo.SetCodeST(value : TFhirDocumentRelationshipType);
 begin
   if ord(value) = 0 then
-    Code := nil
+    CodeObject := nil
   else
-    Code := TFhirEnum.create(CODES_TFhirDocumentRelationshipType[value]);
+    CodeObject := TFhirEnum.create(CODES_TFhirDocumentRelationshipType[value]);
 end;
 
 Procedure TFhirDocumentReferenceRelatesTo.SetTarget(value : TFhirResourceReference{TFhirDocumentReference});
 begin
   FTarget.free;
   FTarget := value;
+end;
+
+
+{ TFhirDocumentReferenceRelatesToListEnumerator }
+
+Constructor TFhirDocumentReferenceRelatesToListEnumerator.Create(list : TFhirDocumentReferenceRelatesToList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDocumentReferenceRelatesToListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDocumentReferenceRelatesToListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDocumentReferenceRelatesToListEnumerator.GetCurrent : TFhirDocumentReferenceRelatesTo;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -24852,6 +27923,11 @@ end;
 procedure TFhirDocumentReferenceRelatesToList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDocumentReferenceRelatesToList.GetEnumerator : TFhirDocumentReferenceRelatesToListEnumerator;
+begin
+  result := TFhirDocumentReferenceRelatesToListEnumerator.Create(self.link);
 end;
 
 function TFhirDocumentReferenceRelatesToList.Clone: TFhirDocumentReferenceRelatesToList;
@@ -24939,7 +28015,7 @@ procedure TFhirDocumentReferenceService.Assign(oSource : TAdvObject);
 begin
   inherited;
   type_ := TFhirDocumentReferenceService(oSource).type_.Clone;
-  address := TFhirDocumentReferenceService(oSource).address.Clone;
+  addressObject := TFhirDocumentReferenceService(oSource).addressObject.Clone;
   FParameterList.Assign(TFhirDocumentReferenceService(oSource).FParameterList);
 end;
 
@@ -24947,9 +28023,9 @@ procedure TFhirDocumentReferenceService.GetChildrenByName(child_name : string; l
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'address') Then
-     list.add(Address.Link);
+     list.add(FAddress.Link);
   if (child_name = 'parameter') Then
      list.addAll(FParameterList);
 end;
@@ -24964,8 +28040,8 @@ end;
 
 procedure TFhirDocumentReferenceService.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'address') then Address := propValue as TFhirString{5}
+  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'address') then AddressObject := propValue as TFhirString{5a}
   else if (propName = 'parameter') then ParameterList.add(propValue as TFhirDocumentReferenceServiceParameter){2}
   else inherited;
 end;
@@ -25004,7 +28080,7 @@ begin
   if FAddress = nil then
     result := ''
   else
-    result := Address.value;
+    result := FAddress.value;
 end;
 
 Procedure TFhirDocumentReferenceService.SetAddressST(value : String);
@@ -25017,6 +28093,34 @@ begin
   end
   else if FAddress <> nil then
     FAddress.value := '';
+end;
+
+
+{ TFhirDocumentReferenceServiceListEnumerator }
+
+Constructor TFhirDocumentReferenceServiceListEnumerator.Create(list : TFhirDocumentReferenceServiceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDocumentReferenceServiceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDocumentReferenceServiceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDocumentReferenceServiceListEnumerator.GetCurrent : TFhirDocumentReferenceService;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -25042,6 +28146,11 @@ end;
 procedure TFhirDocumentReferenceServiceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDocumentReferenceServiceList.GetEnumerator : TFhirDocumentReferenceServiceListEnumerator;
+begin
+  result := TFhirDocumentReferenceServiceListEnumerator.Create(self.link);
 end;
 
 function TFhirDocumentReferenceServiceList.Clone: TFhirDocumentReferenceServiceList;
@@ -25126,17 +28235,17 @@ end;
 procedure TFhirDocumentReferenceServiceParameter.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirDocumentReferenceServiceParameter(oSource).name.Clone;
-  value := TFhirDocumentReferenceServiceParameter(oSource).value.Clone;
+  nameObject := TFhirDocumentReferenceServiceParameter(oSource).nameObject.Clone;
+  valueObject := TFhirDocumentReferenceServiceParameter(oSource).valueObject.Clone;
 end;
 
 procedure TFhirDocumentReferenceServiceParameter.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'value') Then
-     list.add(Value.Link);
+     list.add(FValue.Link);
 end;
 
 procedure TFhirDocumentReferenceServiceParameter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -25148,8 +28257,8 @@ end;
 
 procedure TFhirDocumentReferenceServiceParameter.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'value') then Value := propValue as TFhirString{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'value') then ValueObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -25181,7 +28290,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirDocumentReferenceServiceParameter.SetNameST(value : String);
@@ -25207,7 +28316,7 @@ begin
   if FValue = nil then
     result := ''
   else
-    result := Value.value;
+    result := FValue.value;
 end;
 
 Procedure TFhirDocumentReferenceServiceParameter.SetValueST(value : String);
@@ -25220,6 +28329,34 @@ begin
   end
   else if FValue <> nil then
     FValue.value := '';
+end;
+
+
+{ TFhirDocumentReferenceServiceParameterListEnumerator }
+
+Constructor TFhirDocumentReferenceServiceParameterListEnumerator.Create(list : TFhirDocumentReferenceServiceParameterList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDocumentReferenceServiceParameterListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDocumentReferenceServiceParameterListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDocumentReferenceServiceParameterListEnumerator.GetCurrent : TFhirDocumentReferenceServiceParameter;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -25245,6 +28382,11 @@ end;
 procedure TFhirDocumentReferenceServiceParameterList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDocumentReferenceServiceParameterList.GetEnumerator : TFhirDocumentReferenceServiceParameterListEnumerator;
+begin
+  result := TFhirDocumentReferenceServiceParameterListEnumerator.Create(self.link);
 end;
 
 function TFhirDocumentReferenceServiceParameterList.Clone: TFhirDocumentReferenceServiceParameterList;
@@ -25342,9 +28484,9 @@ begin
   if (child_name = 'event') Then
      list.addAll(FEventList);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
   if (child_name = 'facilityType') Then
-     list.add(FacilityType.Link);
+     list.add(FFacilityType.Link);
 end;
 
 procedure TFhirDocumentReferenceContext.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -25358,8 +28500,8 @@ end;
 procedure TFhirDocumentReferenceContext.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'event') then EventList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
-  else if (propName = 'facilityType') then FacilityType := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
+  else if (propName = 'facilityType') then FacilityType := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -25393,6 +28535,34 @@ begin
 end;
 
 
+{ TFhirDocumentReferenceContextListEnumerator }
+
+Constructor TFhirDocumentReferenceContextListEnumerator.Create(list : TFhirDocumentReferenceContextList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirDocumentReferenceContextListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDocumentReferenceContextListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirDocumentReferenceContextListEnumerator.GetCurrent : TFhirDocumentReferenceContext;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirDocumentReferenceContextList }
 procedure TFhirDocumentReferenceContextList.AddItem(value: TFhirDocumentReferenceContext);
 begin
@@ -25415,6 +28585,11 @@ end;
 procedure TFhirDocumentReferenceContextList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirDocumentReferenceContextList.GetEnumerator : TFhirDocumentReferenceContextListEnumerator;
+begin
+  result := TFhirDocumentReferenceContextListEnumerator.Create(self.link);
 end;
 
 function TFhirDocumentReferenceContextList.Clone: TFhirDocumentReferenceContextList;
@@ -25510,7 +28685,7 @@ begin
   if (child_name = 'type') Then
      list.addAll(FType_List);
   if (child_name = 'individual') Then
-     list.add(Individual.Link);
+     list.add(FIndividual.Link);
 end;
 
 procedure TFhirEncounterParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -25523,7 +28698,7 @@ end;
 procedure TFhirEncounterParticipant.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'type') then Type_List.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'individual') then Individual := propValue as TFhirResourceReference{Resource}{4}
+  else if (propName = 'individual') then Individual := propValue as TFhirResourceReference{Resource}{4b}
   else inherited;
 end;
 
@@ -25551,6 +28726,34 @@ begin
 end;
 
 
+{ TFhirEncounterParticipantListEnumerator }
+
+Constructor TFhirEncounterParticipantListEnumerator.Create(list : TFhirEncounterParticipantList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirEncounterParticipantListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirEncounterParticipantListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirEncounterParticipantListEnumerator.GetCurrent : TFhirEncounterParticipant;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirEncounterParticipantList }
 procedure TFhirEncounterParticipantList.AddItem(value: TFhirEncounterParticipant);
 begin
@@ -25573,6 +28776,11 @@ end;
 procedure TFhirEncounterParticipantList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirEncounterParticipantList.GetEnumerator : TFhirEncounterParticipantListEnumerator;
+begin
+  result := TFhirEncounterParticipantListEnumerator.Create(self.link);
 end;
 
 function TFhirEncounterParticipantList.Clone: TFhirEncounterParticipantList;
@@ -25681,36 +28889,36 @@ begin
   destination := TFhirEncounterHospitalization(oSource).destination.Clone;
   dischargeDisposition := TFhirEncounterHospitalization(oSource).dischargeDisposition.Clone;
   dischargeDiagnosis := TFhirEncounterHospitalization(oSource).dischargeDiagnosis.Clone;
-  reAdmission := TFhirEncounterHospitalization(oSource).reAdmission.Clone;
+  reAdmissionObject := TFhirEncounterHospitalization(oSource).reAdmissionObject.Clone;
 end;
 
 procedure TFhirEncounterHospitalization.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'preAdmissionIdentifier') Then
-     list.add(PreAdmissionIdentifier.Link);
+     list.add(FPreAdmissionIdentifier.Link);
   if (child_name = 'origin') Then
-     list.add(Origin.Link);
+     list.add(FOrigin.Link);
   if (child_name = 'admitSource') Then
-     list.add(AdmitSource.Link);
+     list.add(FAdmitSource.Link);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
   if (child_name = 'accomodation') Then
      list.addAll(FAccomodationList);
   if (child_name = 'diet') Then
-     list.add(Diet.Link);
+     list.add(FDiet.Link);
   if (child_name = 'specialCourtesy') Then
      list.addAll(FSpecialCourtesyList);
   if (child_name = 'specialArrangement') Then
      list.addAll(FSpecialArrangementList);
   if (child_name = 'destination') Then
-     list.add(Destination.Link);
+     list.add(FDestination.Link);
   if (child_name = 'dischargeDisposition') Then
-     list.add(DischargeDisposition.Link);
+     list.add(FDischargeDisposition.Link);
   if (child_name = 'dischargeDiagnosis') Then
-     list.add(DischargeDiagnosis.Link);
+     list.add(FDischargeDiagnosis.Link);
   if (child_name = 'reAdmission') Then
-     list.add(ReAdmission.Link);
+     list.add(FReAdmission.Link);
 end;
 
 procedure TFhirEncounterHospitalization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -25732,18 +28940,18 @@ end;
 
 procedure TFhirEncounterHospitalization.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'preAdmissionIdentifier') then PreAdmissionIdentifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'origin') then Origin := propValue as TFhirResourceReference{TFhirLocation}{4}
-  else if (propName = 'admitSource') then AdmitSource := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  if (propName = 'preAdmissionIdentifier') then PreAdmissionIdentifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'origin') then Origin := propValue as TFhirResourceReference{TFhirLocation}{4b}
+  else if (propName = 'admitSource') then AdmitSource := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else if (propName = 'accomodation') then AccomodationList.add(propValue as TFhirEncounterHospitalizationAccomodation){2}
-  else if (propName = 'diet') then Diet := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'diet') then Diet := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'specialCourtesy') then SpecialCourtesyList.add(propValue as TFhirCodeableConcept){2}
   else if (propName = 'specialArrangement') then SpecialArrangementList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'destination') then Destination := propValue as TFhirResourceReference{TFhirLocation}{4}
-  else if (propName = 'dischargeDisposition') then DischargeDisposition := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'dischargeDiagnosis') then DischargeDiagnosis := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'reAdmission') then ReAdmission := propValue as TFhirBoolean{5}
+  else if (propName = 'destination') then Destination := propValue as TFhirResourceReference{TFhirLocation}{4b}
+  else if (propName = 'dischargeDisposition') then DischargeDisposition := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'dischargeDiagnosis') then DischargeDiagnosis := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'reAdmission') then ReAdmissionObject := propValue as TFhirBoolean{5a}
   else inherited;
 end;
 
@@ -25823,7 +29031,7 @@ begin
   if FReAdmission = nil then
     result := false
   else
-    result := ReAdmission.value;
+    result := FReAdmission.value;
 end;
 
 Procedure TFhirEncounterHospitalization.SetReAdmissionST(value : Boolean);
@@ -25831,6 +29039,34 @@ begin
   if FReAdmission = nil then
     FReAdmission := TFhirBoolean.create;
   FReAdmission.value := value
+end;
+
+
+{ TFhirEncounterHospitalizationListEnumerator }
+
+Constructor TFhirEncounterHospitalizationListEnumerator.Create(list : TFhirEncounterHospitalizationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirEncounterHospitalizationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirEncounterHospitalizationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirEncounterHospitalizationListEnumerator.GetCurrent : TFhirEncounterHospitalization;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -25856,6 +29092,11 @@ end;
 procedure TFhirEncounterHospitalizationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirEncounterHospitalizationList.GetEnumerator : TFhirEncounterHospitalizationListEnumerator;
+begin
+  result := TFhirEncounterHospitalizationListEnumerator.Create(self.link);
 end;
 
 function TFhirEncounterHospitalizationList.Clone: TFhirEncounterHospitalizationList;
@@ -25948,9 +29189,9 @@ procedure TFhirEncounterHospitalizationAccomodation.GetChildrenByName(child_name
 begin
   inherited;
   if (child_name = 'bed') Then
-     list.add(Bed.Link);
+     list.add(FBed.Link);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
 end;
 
 procedure TFhirEncounterHospitalizationAccomodation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -25962,8 +29203,8 @@ end;
 
 procedure TFhirEncounterHospitalizationAccomodation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'bed') then Bed := propValue as TFhirResourceReference{TFhirLocation}{4}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  if (propName = 'bed') then Bed := propValue as TFhirResourceReference{TFhirLocation}{4b}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else inherited;
 end;
 
@@ -25997,6 +29238,34 @@ begin
 end;
 
 
+{ TFhirEncounterHospitalizationAccomodationListEnumerator }
+
+Constructor TFhirEncounterHospitalizationAccomodationListEnumerator.Create(list : TFhirEncounterHospitalizationAccomodationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirEncounterHospitalizationAccomodationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirEncounterHospitalizationAccomodationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirEncounterHospitalizationAccomodationListEnumerator.GetCurrent : TFhirEncounterHospitalizationAccomodation;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirEncounterHospitalizationAccomodationList }
 procedure TFhirEncounterHospitalizationAccomodationList.AddItem(value: TFhirEncounterHospitalizationAccomodation);
 begin
@@ -26019,6 +29288,11 @@ end;
 procedure TFhirEncounterHospitalizationAccomodationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirEncounterHospitalizationAccomodationList.GetEnumerator : TFhirEncounterHospitalizationAccomodationListEnumerator;
+begin
+  result := TFhirEncounterHospitalizationAccomodationListEnumerator.Create(self.link);
 end;
 
 function TFhirEncounterHospitalizationAccomodationList.Clone: TFhirEncounterHospitalizationAccomodationList;
@@ -26111,9 +29385,9 @@ procedure TFhirEncounterLocation.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'location') Then
-     list.add(Location.Link);
+     list.add(FLocation.Link);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
 end;
 
 procedure TFhirEncounterLocation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -26125,8 +29399,8 @@ end;
 
 procedure TFhirEncounterLocation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4b}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else inherited;
 end;
 
@@ -26160,6 +29434,34 @@ begin
 end;
 
 
+{ TFhirEncounterLocationListEnumerator }
+
+Constructor TFhirEncounterLocationListEnumerator.Create(list : TFhirEncounterLocationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirEncounterLocationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirEncounterLocationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirEncounterLocationListEnumerator.GetCurrent : TFhirEncounterLocation;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirEncounterLocationList }
 procedure TFhirEncounterLocationList.AddItem(value: TFhirEncounterLocation);
 begin
@@ -26182,6 +29484,11 @@ end;
 procedure TFhirEncounterLocationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirEncounterLocationList.GetEnumerator : TFhirEncounterLocationListEnumerator;
+begin
+  result := TFhirEncounterLocationListEnumerator.Create(self.link);
 end;
 
 function TFhirEncounterLocationList.Clone: TFhirEncounterLocationList;
@@ -26271,11 +29578,11 @@ end;
 procedure TFhirFamilyHistoryRelation.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirFamilyHistoryRelation(oSource).name.Clone;
+  nameObject := TFhirFamilyHistoryRelation(oSource).nameObject.Clone;
   relationship := TFhirFamilyHistoryRelation(oSource).relationship.Clone;
   born := TFhirFamilyHistoryRelation(oSource).born.Clone;
   deceased := TFhirFamilyHistoryRelation(oSource).deceased.Clone;
-  note := TFhirFamilyHistoryRelation(oSource).note.Clone;
+  noteObject := TFhirFamilyHistoryRelation(oSource).noteObject.Clone;
   FConditionList.Assign(TFhirFamilyHistoryRelation(oSource).FConditionList);
 end;
 
@@ -26283,15 +29590,15 @@ procedure TFhirFamilyHistoryRelation.GetChildrenByName(child_name : string; list
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'relationship') Then
-     list.add(Relationship.Link);
+     list.add(FRelationship.Link);
   if (child_name = 'born[x]') Then
-     list.add(Born.Link);
+     list.add(FBorn.Link);
   if (child_name = 'deceased[x]') Then
-     list.add(Deceased.Link);
+     list.add(FDeceased.Link);
   if (child_name = 'note') Then
-     list.add(Note.Link);
+     list.add(FNote.Link);
   if (child_name = 'condition') Then
      list.addAll(FConditionList);
 end;
@@ -26309,11 +29616,11 @@ end;
 
 procedure TFhirFamilyHistoryRelation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'relationship') then Relationship := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'born[x]') then Born := propValue as TFhirType{4}
-  else if (propName = 'deceased[x]') then Deceased := propValue as TFhirType{4}
-  else if (propName = 'note') then Note := propValue as TFhirString{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'relationship') then Relationship := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('born')) then Born := propValue as TFhirType{4}
+  else if (propName.startsWith('deceased')) then Deceased := propValue as TFhirType{4}
+  else if (propName = 'note') then NoteObject := propValue as TFhirString{5a}
   else if (propName = 'condition') then ConditionList.add(propValue as TFhirFamilyHistoryRelationCondition){2}
   else inherited;
 end;
@@ -26346,7 +29653,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirFamilyHistoryRelation.SetNameST(value : String);
@@ -26390,7 +29697,7 @@ begin
   if FNote = nil then
     result := ''
   else
-    result := Note.value;
+    result := FNote.value;
 end;
 
 Procedure TFhirFamilyHistoryRelation.SetNoteST(value : String);
@@ -26403,6 +29710,34 @@ begin
   end
   else if FNote <> nil then
     FNote.value := '';
+end;
+
+
+{ TFhirFamilyHistoryRelationListEnumerator }
+
+Constructor TFhirFamilyHistoryRelationListEnumerator.Create(list : TFhirFamilyHistoryRelationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirFamilyHistoryRelationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirFamilyHistoryRelationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirFamilyHistoryRelationListEnumerator.GetCurrent : TFhirFamilyHistoryRelation;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -26428,6 +29763,11 @@ end;
 procedure TFhirFamilyHistoryRelationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirFamilyHistoryRelationList.GetEnumerator : TFhirFamilyHistoryRelationListEnumerator;
+begin
+  result := TFhirFamilyHistoryRelationListEnumerator.Create(self.link);
 end;
 
 function TFhirFamilyHistoryRelationList.Clone: TFhirFamilyHistoryRelationList;
@@ -26517,20 +29857,20 @@ begin
   type_ := TFhirFamilyHistoryRelationCondition(oSource).type_.Clone;
   outcome := TFhirFamilyHistoryRelationCondition(oSource).outcome.Clone;
   onset := TFhirFamilyHistoryRelationCondition(oSource).onset.Clone;
-  note := TFhirFamilyHistoryRelationCondition(oSource).note.Clone;
+  noteObject := TFhirFamilyHistoryRelationCondition(oSource).noteObject.Clone;
 end;
 
 procedure TFhirFamilyHistoryRelationCondition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'outcome') Then
-     list.add(Outcome.Link);
+     list.add(FOutcome.Link);
   if (child_name = 'onset[x]') Then
-     list.add(Onset.Link);
+     list.add(FOnset.Link);
   if (child_name = 'note') Then
-     list.add(Note.Link);
+     list.add(FNote.Link);
 end;
 
 procedure TFhirFamilyHistoryRelationCondition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -26544,10 +29884,10 @@ end;
 
 procedure TFhirFamilyHistoryRelationCondition.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'outcome') then Outcome := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'onset[x]') then Onset := propValue as TFhirType{4}
-  else if (propName = 'note') then Note := propValue as TFhirString{5}
+  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'outcome') then Outcome := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('onset')) then Onset := propValue as TFhirType{4}
+  else if (propName = 'note') then NoteObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -26597,7 +29937,7 @@ begin
   if FNote = nil then
     result := ''
   else
-    result := Note.value;
+    result := FNote.value;
 end;
 
 Procedure TFhirFamilyHistoryRelationCondition.SetNoteST(value : String);
@@ -26610,6 +29950,34 @@ begin
   end
   else if FNote <> nil then
     FNote.value := '';
+end;
+
+
+{ TFhirFamilyHistoryRelationConditionListEnumerator }
+
+Constructor TFhirFamilyHistoryRelationConditionListEnumerator.Create(list : TFhirFamilyHistoryRelationConditionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirFamilyHistoryRelationConditionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirFamilyHistoryRelationConditionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirFamilyHistoryRelationConditionListEnumerator.GetCurrent : TFhirFamilyHistoryRelationCondition;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -26635,6 +30003,11 @@ end;
 procedure TFhirFamilyHistoryRelationConditionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirFamilyHistoryRelationConditionList.GetEnumerator : TFhirFamilyHistoryRelationConditionListEnumerator;
+begin
+  result := TFhirFamilyHistoryRelationConditionListEnumerator.Create(self.link);
 end;
 
 function TFhirFamilyHistoryRelationConditionList.Clone: TFhirFamilyHistoryRelationConditionList;
@@ -26722,18 +30095,18 @@ begin
   inherited;
   code := TFhirGroupCharacteristic(oSource).code.Clone;
   value := TFhirGroupCharacteristic(oSource).value.Clone;
-  exclude := TFhirGroupCharacteristic(oSource).exclude.Clone;
+  excludeObject := TFhirGroupCharacteristic(oSource).excludeObject.Clone;
 end;
 
 procedure TFhirGroupCharacteristic.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'value[x]') Then
-     list.add(Value.Link);
+     list.add(FValue.Link);
   if (child_name = 'exclude') Then
-     list.add(Exclude.Link);
+     list.add(FExclude.Link);
 end;
 
 procedure TFhirGroupCharacteristic.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -26746,9 +30119,9 @@ end;
 
 procedure TFhirGroupCharacteristic.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'value[x]') then Value := propValue as TFhirType{4}
-  else if (propName = 'exclude') then Exclude := propValue as TFhirBoolean{5}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('value')) then Value := propValue as TFhirType{4}
+  else if (propName = 'exclude') then ExcludeObject := propValue as TFhirBoolean{5a}
   else inherited;
 end;
 
@@ -26792,7 +30165,7 @@ begin
   if FExclude = nil then
     result := false
   else
-    result := Exclude.value;
+    result := FExclude.value;
 end;
 
 Procedure TFhirGroupCharacteristic.SetExcludeST(value : Boolean);
@@ -26800,6 +30173,34 @@ begin
   if FExclude = nil then
     FExclude := TFhirBoolean.create;
   FExclude.value := value
+end;
+
+
+{ TFhirGroupCharacteristicListEnumerator }
+
+Constructor TFhirGroupCharacteristicListEnumerator.Create(list : TFhirGroupCharacteristicList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirGroupCharacteristicListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirGroupCharacteristicListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirGroupCharacteristicListEnumerator.GetCurrent : TFhirGroupCharacteristic;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -26825,6 +30226,11 @@ end;
 procedure TFhirGroupCharacteristicList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirGroupCharacteristicList.GetEnumerator : TFhirGroupCharacteristicListEnumerator;
+begin
+  result := TFhirGroupCharacteristicListEnumerator.Create(self.link);
 end;
 
 function TFhirGroupCharacteristicList.Clone: TFhirGroupCharacteristicList;
@@ -26918,15 +30324,15 @@ end;
 procedure TFhirImagingStudySeries.Assign(oSource : TAdvObject);
 begin
   inherited;
-  number := TFhirImagingStudySeries(oSource).number.Clone;
+  numberObject := TFhirImagingStudySeries(oSource).numberObject.Clone;
   FModality := TFhirImagingStudySeries(oSource).FModality.Link;
-  uid := TFhirImagingStudySeries(oSource).uid.Clone;
-  description := TFhirImagingStudySeries(oSource).description.Clone;
-  numberOfInstances := TFhirImagingStudySeries(oSource).numberOfInstances.Clone;
+  uidObject := TFhirImagingStudySeries(oSource).uidObject.Clone;
+  descriptionObject := TFhirImagingStudySeries(oSource).descriptionObject.Clone;
+  numberOfInstancesObject := TFhirImagingStudySeries(oSource).numberOfInstancesObject.Clone;
   FAvailability := TFhirImagingStudySeries(oSource).FAvailability.Link;
-  url := TFhirImagingStudySeries(oSource).url.Clone;
+  urlObject := TFhirImagingStudySeries(oSource).urlObject.Clone;
   bodySite := TFhirImagingStudySeries(oSource).bodySite.Clone;
-  dateTime := TFhirImagingStudySeries(oSource).dateTime.Clone;
+  dateTimeObject := TFhirImagingStudySeries(oSource).dateTimeObject.Clone;
   FInstanceList.Assign(TFhirImagingStudySeries(oSource).FInstanceList);
 end;
 
@@ -26934,23 +30340,23 @@ procedure TFhirImagingStudySeries.GetChildrenByName(child_name : string; list : 
 begin
   inherited;
   if (child_name = 'number') Then
-     list.add(Number.Link);
+     list.add(FNumber.Link);
   if (child_name = 'modality') Then
      list.add(FModality.Link);
   if (child_name = 'uid') Then
-     list.add(Uid.Link);
+     list.add(FUid.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'numberOfInstances') Then
-     list.add(NumberOfInstances.Link);
+     list.add(FNumberOfInstances.Link);
   if (child_name = 'availability') Then
      list.add(FAvailability.Link);
   if (child_name = 'url') Then
-     list.add(Url.Link);
+     list.add(FUrl.Link);
   if (child_name = 'bodySite') Then
-     list.add(BodySite.Link);
+     list.add(FBodySite.Link);
   if (child_name = 'dateTime') Then
-     list.add(DateTime.Link);
+     list.add(FDateTime.Link);
   if (child_name = 'instance') Then
      list.addAll(FInstanceList);
 end;
@@ -26972,15 +30378,15 @@ end;
 
 procedure TFhirImagingStudySeries.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'number') then Number := propValue as TFhirInteger{5}
-  else if (propName = 'modality') then Modality := propValue as TFHIREnum
-  else if (propName = 'uid') then Uid := propValue as TFhirOid{5}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'numberOfInstances') then NumberOfInstances := propValue as TFhirInteger{5}
-  else if (propName = 'availability') then Availability := propValue as TFHIREnum
-  else if (propName = 'url') then Url := propValue as TFhirUri{5}
-  else if (propName = 'bodySite') then BodySite := propValue as TFhirCoding{4}
-  else if (propName = 'dateTime') then DateTime := propValue as TFhirDateTime{5}
+  if (propName = 'number') then NumberObject := propValue as TFhirInteger{5a}
+  else if (propName = 'modality') then ModalityObject := propValue as TFHIREnum
+  else if (propName = 'uid') then UidObject := propValue as TFhirOid{5a}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'numberOfInstances') then NumberOfInstancesObject := propValue as TFhirInteger{5a}
+  else if (propName = 'availability') then AvailabilityObject := propValue as TFHIREnum
+  else if (propName = 'url') then UrlObject := propValue as TFhirUri{5a}
+  else if (propName = 'bodySite') then BodySite := propValue as TFhirCoding{4b}
+  else if (propName = 'dateTime') then DateTimeObject := propValue as TFhirDateTime{5a}
   else if (propName = 'instance') then InstanceList.add(propValue as TFhirImagingStudySeriesInstance){2}
   else inherited;
 end;
@@ -27013,7 +30419,7 @@ begin
   if FNumber = nil then
     result := ''
   else
-    result := Number.value;
+    result := FNumber.value;
 end;
 
 Procedure TFhirImagingStudySeries.SetNumberST(value : String);
@@ -27039,15 +30445,15 @@ begin
   if FModality = nil then
     result := TFhirModality(0)
   else
-    result := TFhirModality(StringArrayIndexOfSensitive(CODES_TFhirModality, Modality.value));
+    result := TFhirModality(StringArrayIndexOfSensitive(CODES_TFhirModality, FModality.value));
 end;
 
 Procedure TFhirImagingStudySeries.SetModalityST(value : TFhirModality);
 begin
   if ord(value) = 0 then
-    Modality := nil
+    ModalityObject := nil
   else
-    Modality := TFhirEnum.create(CODES_TFhirModality[value]);
+    ModalityObject := TFhirEnum.create(CODES_TFhirModality[value]);
 end;
 
 Procedure TFhirImagingStudySeries.SetUid(value : TFhirOid);
@@ -27061,7 +30467,7 @@ begin
   if FUid = nil then
     result := ''
   else
-    result := Uid.value;
+    result := FUid.value;
 end;
 
 Procedure TFhirImagingStudySeries.SetUidST(value : String);
@@ -27087,7 +30493,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirImagingStudySeries.SetDescriptionST(value : String);
@@ -27113,7 +30519,7 @@ begin
   if FNumberOfInstances = nil then
     result := ''
   else
-    result := NumberOfInstances.value;
+    result := FNumberOfInstances.value;
 end;
 
 Procedure TFhirImagingStudySeries.SetNumberOfInstancesST(value : String);
@@ -27139,15 +30545,15 @@ begin
   if FAvailability = nil then
     result := TFhirInstanceAvailability(0)
   else
-    result := TFhirInstanceAvailability(StringArrayIndexOfSensitive(CODES_TFhirInstanceAvailability, Availability.value));
+    result := TFhirInstanceAvailability(StringArrayIndexOfSensitive(CODES_TFhirInstanceAvailability, FAvailability.value));
 end;
 
 Procedure TFhirImagingStudySeries.SetAvailabilityST(value : TFhirInstanceAvailability);
 begin
   if ord(value) = 0 then
-    Availability := nil
+    AvailabilityObject := nil
   else
-    Availability := TFhirEnum.create(CODES_TFhirInstanceAvailability[value]);
+    AvailabilityObject := TFhirEnum.create(CODES_TFhirInstanceAvailability[value]);
 end;
 
 Procedure TFhirImagingStudySeries.SetUrl(value : TFhirUri);
@@ -27161,7 +30567,7 @@ begin
   if FUrl = nil then
     result := ''
   else
-    result := Url.value;
+    result := FUrl.value;
 end;
 
 Procedure TFhirImagingStudySeries.SetUrlST(value : String);
@@ -27193,7 +30599,7 @@ begin
   if FDateTime = nil then
     result := nil
   else
-    result := DateTime.value;
+    result := FDateTime.value;
 end;
 
 Procedure TFhirImagingStudySeries.SetDateTimeST(value : TDateAndTime);
@@ -27206,6 +30612,34 @@ begin
   end
   else if FDateTime <> nil then
     FDateTime.value := nil;
+end;
+
+
+{ TFhirImagingStudySeriesListEnumerator }
+
+Constructor TFhirImagingStudySeriesListEnumerator.Create(list : TFhirImagingStudySeriesList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirImagingStudySeriesListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirImagingStudySeriesListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirImagingStudySeriesListEnumerator.GetCurrent : TFhirImagingStudySeries;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -27231,6 +30665,11 @@ end;
 procedure TFhirImagingStudySeriesList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirImagingStudySeriesList.GetEnumerator : TFhirImagingStudySeriesListEnumerator;
+begin
+  result := TFhirImagingStudySeriesListEnumerator.Create(self.link);
 end;
 
 function TFhirImagingStudySeriesList.Clone: TFhirImagingStudySeriesList;
@@ -27320,12 +30759,12 @@ end;
 procedure TFhirImagingStudySeriesInstance.Assign(oSource : TAdvObject);
 begin
   inherited;
-  number := TFhirImagingStudySeriesInstance(oSource).number.Clone;
-  uid := TFhirImagingStudySeriesInstance(oSource).uid.Clone;
-  sopclass := TFhirImagingStudySeriesInstance(oSource).sopclass.Clone;
-  type_ := TFhirImagingStudySeriesInstance(oSource).type_.Clone;
-  title := TFhirImagingStudySeriesInstance(oSource).title.Clone;
-  url := TFhirImagingStudySeriesInstance(oSource).url.Clone;
+  numberObject := TFhirImagingStudySeriesInstance(oSource).numberObject.Clone;
+  uidObject := TFhirImagingStudySeriesInstance(oSource).uidObject.Clone;
+  sopclassObject := TFhirImagingStudySeriesInstance(oSource).sopclassObject.Clone;
+  type_Object := TFhirImagingStudySeriesInstance(oSource).type_Object.Clone;
+  titleObject := TFhirImagingStudySeriesInstance(oSource).titleObject.Clone;
+  urlObject := TFhirImagingStudySeriesInstance(oSource).urlObject.Clone;
   attachment := TFhirImagingStudySeriesInstance(oSource).attachment.Clone;
 end;
 
@@ -27333,19 +30772,19 @@ procedure TFhirImagingStudySeriesInstance.GetChildrenByName(child_name : string;
 begin
   inherited;
   if (child_name = 'number') Then
-     list.add(Number.Link);
+     list.add(FNumber.Link);
   if (child_name = 'uid') Then
-     list.add(Uid.Link);
+     list.add(FUid.Link);
   if (child_name = 'sopclass') Then
-     list.add(Sopclass.Link);
+     list.add(FSopclass.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'title') Then
-     list.add(Title.Link);
+     list.add(FTitle.Link);
   if (child_name = 'url') Then
-     list.add(Url.Link);
+     list.add(FUrl.Link);
   if (child_name = 'attachment') Then
-     list.add(Attachment.Link);
+     list.add(FAttachment.Link);
 end;
 
 procedure TFhirImagingStudySeriesInstance.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -27362,13 +30801,13 @@ end;
 
 procedure TFhirImagingStudySeriesInstance.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'number') then Number := propValue as TFhirInteger{5}
-  else if (propName = 'uid') then Uid := propValue as TFhirOid{5}
-  else if (propName = 'sopclass') then Sopclass := propValue as TFhirOid{5}
-  else if (propName = 'type') then Type_ := propValue as TFhirString{5}
-  else if (propName = 'title') then Title := propValue as TFhirString{5}
-  else if (propName = 'url') then Url := propValue as TFhirUri{5}
-  else if (propName = 'attachment') then Attachment := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'number') then NumberObject := propValue as TFhirInteger{5a}
+  else if (propName = 'uid') then UidObject := propValue as TFhirOid{5a}
+  else if (propName = 'sopclass') then SopclassObject := propValue as TFhirOid{5a}
+  else if (propName = 'type') then Type_Object := propValue as TFhirString{5a}
+  else if (propName = 'title') then TitleObject := propValue as TFhirString{5a}
+  else if (propName = 'url') then UrlObject := propValue as TFhirUri{5a}
+  else if (propName = 'attachment') then Attachment := propValue as TFhirResourceReference{Resource}{4b}
   else inherited;
 end;
 
@@ -27400,7 +30839,7 @@ begin
   if FNumber = nil then
     result := ''
   else
-    result := Number.value;
+    result := FNumber.value;
 end;
 
 Procedure TFhirImagingStudySeriesInstance.SetNumberST(value : String);
@@ -27426,7 +30865,7 @@ begin
   if FUid = nil then
     result := ''
   else
-    result := Uid.value;
+    result := FUid.value;
 end;
 
 Procedure TFhirImagingStudySeriesInstance.SetUidST(value : String);
@@ -27452,7 +30891,7 @@ begin
   if FSopclass = nil then
     result := ''
   else
-    result := Sopclass.value;
+    result := FSopclass.value;
 end;
 
 Procedure TFhirImagingStudySeriesInstance.SetSopclassST(value : String);
@@ -27478,7 +30917,7 @@ begin
   if FType_ = nil then
     result := ''
   else
-    result := Type_.value;
+    result := FType_.value;
 end;
 
 Procedure TFhirImagingStudySeriesInstance.SetType_ST(value : String);
@@ -27504,7 +30943,7 @@ begin
   if FTitle = nil then
     result := ''
   else
-    result := Title.value;
+    result := FTitle.value;
 end;
 
 Procedure TFhirImagingStudySeriesInstance.SetTitleST(value : String);
@@ -27530,7 +30969,7 @@ begin
   if FUrl = nil then
     result := ''
   else
-    result := Url.value;
+    result := FUrl.value;
 end;
 
 Procedure TFhirImagingStudySeriesInstance.SetUrlST(value : String);
@@ -27549,6 +30988,34 @@ Procedure TFhirImagingStudySeriesInstance.SetAttachment(value : TFhirResourceRef
 begin
   FAttachment.free;
   FAttachment := value;
+end;
+
+
+{ TFhirImagingStudySeriesInstanceListEnumerator }
+
+Constructor TFhirImagingStudySeriesInstanceListEnumerator.Create(list : TFhirImagingStudySeriesInstanceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirImagingStudySeriesInstanceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirImagingStudySeriesInstanceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirImagingStudySeriesInstanceListEnumerator.GetCurrent : TFhirImagingStudySeriesInstance;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -27574,6 +31041,11 @@ end;
 procedure TFhirImagingStudySeriesInstanceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirImagingStudySeriesInstanceList.GetEnumerator : TFhirImagingStudySeriesInstanceListEnumerator;
+begin
+  result := TFhirImagingStudySeriesInstanceListEnumerator.Create(self.link);
 end;
 
 function TFhirImagingStudySeriesInstanceList.Clone: TFhirImagingStudySeriesInstanceList;
@@ -27705,6 +31177,34 @@ end;
 { TFhirImmunizationExplanation }
 
 
+{ TFhirImmunizationExplanationListEnumerator }
+
+Constructor TFhirImmunizationExplanationListEnumerator.Create(list : TFhirImmunizationExplanationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirImmunizationExplanationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirImmunizationExplanationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirImmunizationExplanationListEnumerator.GetCurrent : TFhirImmunizationExplanation;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirImmunizationExplanationList }
 procedure TFhirImmunizationExplanationList.AddItem(value: TFhirImmunizationExplanation);
 begin
@@ -27727,6 +31227,11 @@ end;
 procedure TFhirImmunizationExplanationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirImmunizationExplanationList.GetEnumerator : TFhirImmunizationExplanationListEnumerator;
+begin
+  result := TFhirImmunizationExplanationListEnumerator.Create(self.link);
 end;
 
 function TFhirImmunizationExplanationList.Clone: TFhirImmunizationExplanationList;
@@ -27812,20 +31317,20 @@ end;
 procedure TFhirImmunizationReaction.Assign(oSource : TAdvObject);
 begin
   inherited;
-  date := TFhirImmunizationReaction(oSource).date.Clone;
+  dateObject := TFhirImmunizationReaction(oSource).dateObject.Clone;
   detail := TFhirImmunizationReaction(oSource).detail.Clone;
-  reported := TFhirImmunizationReaction(oSource).reported.Clone;
+  reportedObject := TFhirImmunizationReaction(oSource).reportedObject.Clone;
 end;
 
 procedure TFhirImmunizationReaction.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'detail') Then
-     list.add(Detail.Link);
+     list.add(FDetail.Link);
   if (child_name = 'reported') Then
-     list.add(Reported.Link);
+     list.add(FReported.Link);
 end;
 
 procedure TFhirImmunizationReaction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -27838,9 +31343,9 @@ end;
 
 procedure TFhirImmunizationReaction.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'detail') then Detail := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'reported') then Reported := propValue as TFhirBoolean{5}
+  if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'detail') then Detail := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'reported') then ReportedObject := propValue as TFhirBoolean{5a}
   else inherited;
 end;
 
@@ -27872,7 +31377,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirImmunizationReaction.SetDateST(value : TDateAndTime);
@@ -27904,7 +31409,7 @@ begin
   if FReported = nil then
     result := false
   else
-    result := Reported.value;
+    result := FReported.value;
 end;
 
 Procedure TFhirImmunizationReaction.SetReportedST(value : Boolean);
@@ -27912,6 +31417,34 @@ begin
   if FReported = nil then
     FReported := TFhirBoolean.create;
   FReported.value := value
+end;
+
+
+{ TFhirImmunizationReactionListEnumerator }
+
+Constructor TFhirImmunizationReactionListEnumerator.Create(list : TFhirImmunizationReactionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirImmunizationReactionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirImmunizationReactionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirImmunizationReactionListEnumerator.GetCurrent : TFhirImmunizationReaction;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -27937,6 +31470,11 @@ end;
 procedure TFhirImmunizationReactionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirImmunizationReactionList.GetEnumerator : TFhirImmunizationReactionListEnumerator;
+begin
+  result := TFhirImmunizationReactionListEnumerator.Create(self.link);
 end;
 
 function TFhirImmunizationReactionList.Clone: TFhirImmunizationReactionList;
@@ -28027,11 +31565,11 @@ end;
 procedure TFhirImmunizationVaccinationProtocol.Assign(oSource : TAdvObject);
 begin
   inherited;
-  doseSequence := TFhirImmunizationVaccinationProtocol(oSource).doseSequence.Clone;
-  description := TFhirImmunizationVaccinationProtocol(oSource).description.Clone;
+  doseSequenceObject := TFhirImmunizationVaccinationProtocol(oSource).doseSequenceObject.Clone;
+  descriptionObject := TFhirImmunizationVaccinationProtocol(oSource).descriptionObject.Clone;
   authority := TFhirImmunizationVaccinationProtocol(oSource).authority.Clone;
-  series := TFhirImmunizationVaccinationProtocol(oSource).series.Clone;
-  seriesDoses := TFhirImmunizationVaccinationProtocol(oSource).seriesDoses.Clone;
+  seriesObject := TFhirImmunizationVaccinationProtocol(oSource).seriesObject.Clone;
+  seriesDosesObject := TFhirImmunizationVaccinationProtocol(oSource).seriesDosesObject.Clone;
   doseTarget := TFhirImmunizationVaccinationProtocol(oSource).doseTarget.Clone;
   doseStatus := TFhirImmunizationVaccinationProtocol(oSource).doseStatus.Clone;
   doseStatusReason := TFhirImmunizationVaccinationProtocol(oSource).doseStatusReason.Clone;
@@ -28041,21 +31579,21 @@ procedure TFhirImmunizationVaccinationProtocol.GetChildrenByName(child_name : st
 begin
   inherited;
   if (child_name = 'doseSequence') Then
-     list.add(DoseSequence.Link);
+     list.add(FDoseSequence.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'authority') Then
-     list.add(Authority.Link);
+     list.add(FAuthority.Link);
   if (child_name = 'series') Then
-     list.add(Series.Link);
+     list.add(FSeries.Link);
   if (child_name = 'seriesDoses') Then
-     list.add(SeriesDoses.Link);
+     list.add(FSeriesDoses.Link);
   if (child_name = 'doseTarget') Then
-     list.add(DoseTarget.Link);
+     list.add(FDoseTarget.Link);
   if (child_name = 'doseStatus') Then
-     list.add(DoseStatus.Link);
+     list.add(FDoseStatus.Link);
   if (child_name = 'doseStatusReason') Then
-     list.add(DoseStatusReason.Link);
+     list.add(FDoseStatusReason.Link);
 end;
 
 procedure TFhirImmunizationVaccinationProtocol.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -28073,14 +31611,14 @@ end;
 
 procedure TFhirImmunizationVaccinationProtocol.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'doseSequence') then DoseSequence := propValue as TFhirInteger{5}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'authority') then Authority := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'series') then Series := propValue as TFhirString{5}
-  else if (propName = 'seriesDoses') then SeriesDoses := propValue as TFhirInteger{5}
-  else if (propName = 'doseTarget') then DoseTarget := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'doseStatus') then DoseStatus := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'doseStatusReason') then DoseStatusReason := propValue as TFhirCodeableConcept{4}
+  if (propName = 'doseSequence') then DoseSequenceObject := propValue as TFhirInteger{5a}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'authority') then Authority := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'series') then SeriesObject := propValue as TFhirString{5a}
+  else if (propName = 'seriesDoses') then SeriesDosesObject := propValue as TFhirInteger{5a}
+  else if (propName = 'doseTarget') then DoseTarget := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'doseStatus') then DoseStatus := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'doseStatusReason') then DoseStatusReason := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -28112,7 +31650,7 @@ begin
   if FDoseSequence = nil then
     result := ''
   else
-    result := DoseSequence.value;
+    result := FDoseSequence.value;
 end;
 
 Procedure TFhirImmunizationVaccinationProtocol.SetDoseSequenceST(value : String);
@@ -28138,7 +31676,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirImmunizationVaccinationProtocol.SetDescriptionST(value : String);
@@ -28170,7 +31708,7 @@ begin
   if FSeries = nil then
     result := ''
   else
-    result := Series.value;
+    result := FSeries.value;
 end;
 
 Procedure TFhirImmunizationVaccinationProtocol.SetSeriesST(value : String);
@@ -28196,7 +31734,7 @@ begin
   if FSeriesDoses = nil then
     result := ''
   else
-    result := SeriesDoses.value;
+    result := FSeriesDoses.value;
 end;
 
 Procedure TFhirImmunizationVaccinationProtocol.SetSeriesDosesST(value : String);
@@ -28230,6 +31768,34 @@ begin
 end;
 
 
+{ TFhirImmunizationVaccinationProtocolListEnumerator }
+
+Constructor TFhirImmunizationVaccinationProtocolListEnumerator.Create(list : TFhirImmunizationVaccinationProtocolList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirImmunizationVaccinationProtocolListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirImmunizationVaccinationProtocolListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirImmunizationVaccinationProtocolListEnumerator.GetCurrent : TFhirImmunizationVaccinationProtocol;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirImmunizationVaccinationProtocolList }
 procedure TFhirImmunizationVaccinationProtocolList.AddItem(value: TFhirImmunizationVaccinationProtocol);
 begin
@@ -28252,6 +31818,11 @@ end;
 procedure TFhirImmunizationVaccinationProtocolList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirImmunizationVaccinationProtocolList.GetEnumerator : TFhirImmunizationVaccinationProtocolListEnumerator;
+begin
+  result := TFhirImmunizationVaccinationProtocolListEnumerator.Create(self.link);
 end;
 
 function TFhirImmunizationVaccinationProtocolList.Clone: TFhirImmunizationVaccinationProtocolList;
@@ -28345,9 +31916,9 @@ end;
 procedure TFhirImmunizationRecommendationRecommendation.Assign(oSource : TAdvObject);
 begin
   inherited;
-  date := TFhirImmunizationRecommendationRecommendation(oSource).date.Clone;
+  dateObject := TFhirImmunizationRecommendationRecommendation(oSource).dateObject.Clone;
   vaccineType := TFhirImmunizationRecommendationRecommendation(oSource).vaccineType.Clone;
-  doseNumber := TFhirImmunizationRecommendationRecommendation(oSource).doseNumber.Clone;
+  doseNumberObject := TFhirImmunizationRecommendationRecommendation(oSource).doseNumberObject.Clone;
   forecastStatus := TFhirImmunizationRecommendationRecommendation(oSource).forecastStatus.Clone;
   FDateCriterionList.Assign(TFhirImmunizationRecommendationRecommendation(oSource).FDateCriterionList);
   protocol := TFhirImmunizationRecommendationRecommendation(oSource).protocol.Clone;
@@ -28359,17 +31930,17 @@ procedure TFhirImmunizationRecommendationRecommendation.GetChildrenByName(child_
 begin
   inherited;
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'vaccineType') Then
-     list.add(VaccineType.Link);
+     list.add(FVaccineType.Link);
   if (child_name = 'doseNumber') Then
-     list.add(DoseNumber.Link);
+     list.add(FDoseNumber.Link);
   if (child_name = 'forecastStatus') Then
-     list.add(ForecastStatus.Link);
+     list.add(FForecastStatus.Link);
   if (child_name = 'dateCriterion') Then
      list.addAll(FDateCriterionList);
   if (child_name = 'protocol') Then
-     list.add(Protocol.Link);
+     list.add(FProtocol.Link);
   if (child_name = 'supportingImmunization') Then
      list.addAll(FSupportingImmunizationList);
   if (child_name = 'supportingPatientInformation') Then
@@ -28391,12 +31962,12 @@ end;
 
 procedure TFhirImmunizationRecommendationRecommendation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'vaccineType') then VaccineType := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'doseNumber') then DoseNumber := propValue as TFhirInteger{5}
-  else if (propName = 'forecastStatus') then ForecastStatus := propValue as TFhirCodeableConcept{4}
+  if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'vaccineType') then VaccineType := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'doseNumber') then DoseNumberObject := propValue as TFhirInteger{5a}
+  else if (propName = 'forecastStatus') then ForecastStatus := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'dateCriterion') then DateCriterionList.add(propValue as TFhirImmunizationRecommendationRecommendationDateCriterion){2}
-  else if (propName = 'protocol') then Protocol := propValue as TFhirImmunizationRecommendationRecommendationProtocol{4}
+  else if (propName = 'protocol') then Protocol := propValue as TFhirImmunizationRecommendationRecommendationProtocol{4b}
   else if (propName = 'supportingImmunization') then SupportingImmunizationList.add(propValue as TFhirResourceReference{TFhirImmunization}){2}
   else if (propName = 'supportingPatientInformation') then SupportingPatientInformationList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
@@ -28430,7 +32001,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirImmunizationRecommendationRecommendation.SetDateST(value : TDateAndTime);
@@ -28462,7 +32033,7 @@ begin
   if FDoseNumber = nil then
     result := ''
   else
-    result := DoseNumber.value;
+    result := FDoseNumber.value;
 end;
 
 Procedure TFhirImmunizationRecommendationRecommendation.SetDoseNumberST(value : String);
@@ -28490,6 +32061,34 @@ begin
 end;
 
 
+{ TFhirImmunizationRecommendationRecommendationListEnumerator }
+
+Constructor TFhirImmunizationRecommendationRecommendationListEnumerator.Create(list : TFhirImmunizationRecommendationRecommendationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirImmunizationRecommendationRecommendationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirImmunizationRecommendationRecommendationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirImmunizationRecommendationRecommendationListEnumerator.GetCurrent : TFhirImmunizationRecommendationRecommendation;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirImmunizationRecommendationRecommendationList }
 procedure TFhirImmunizationRecommendationRecommendationList.AddItem(value: TFhirImmunizationRecommendationRecommendation);
 begin
@@ -28512,6 +32111,11 @@ end;
 procedure TFhirImmunizationRecommendationRecommendationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirImmunizationRecommendationRecommendationList.GetEnumerator : TFhirImmunizationRecommendationRecommendationListEnumerator;
+begin
+  result := TFhirImmunizationRecommendationRecommendationListEnumerator.Create(self.link);
 end;
 
 function TFhirImmunizationRecommendationRecommendationList.Clone: TFhirImmunizationRecommendationRecommendationList;
@@ -28597,16 +32201,16 @@ procedure TFhirImmunizationRecommendationRecommendationDateCriterion.Assign(oSou
 begin
   inherited;
   code := TFhirImmunizationRecommendationRecommendationDateCriterion(oSource).code.Clone;
-  value := TFhirImmunizationRecommendationRecommendationDateCriterion(oSource).value.Clone;
+  valueObject := TFhirImmunizationRecommendationRecommendationDateCriterion(oSource).valueObject.Clone;
 end;
 
 procedure TFhirImmunizationRecommendationRecommendationDateCriterion.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'value') Then
-     list.add(Value.Link);
+     list.add(FValue.Link);
 end;
 
 procedure TFhirImmunizationRecommendationRecommendationDateCriterion.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -28618,8 +32222,8 @@ end;
 
 procedure TFhirImmunizationRecommendationRecommendationDateCriterion.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'value') then Value := propValue as TFhirDateTime{5}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'value') then ValueObject := propValue as TFhirDateTime{5a}
   else inherited;
 end;
 
@@ -28657,7 +32261,7 @@ begin
   if FValue = nil then
     result := nil
   else
-    result := Value.value;
+    result := FValue.value;
 end;
 
 Procedure TFhirImmunizationRecommendationRecommendationDateCriterion.SetValueST(value : TDateAndTime);
@@ -28670,6 +32274,34 @@ begin
   end
   else if FValue <> nil then
     FValue.value := nil;
+end;
+
+
+{ TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator }
+
+Constructor TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator.Create(list : TFhirImmunizationRecommendationRecommendationDateCriterionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator.GetCurrent : TFhirImmunizationRecommendationRecommendationDateCriterion;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -28695,6 +32327,11 @@ end;
 procedure TFhirImmunizationRecommendationRecommendationDateCriterionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirImmunizationRecommendationRecommendationDateCriterionList.GetEnumerator : TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator;
+begin
+  result := TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator.Create(self.link);
 end;
 
 function TFhirImmunizationRecommendationRecommendationDateCriterionList.Clone: TFhirImmunizationRecommendationRecommendationDateCriterionList;
@@ -28781,23 +32418,23 @@ end;
 procedure TFhirImmunizationRecommendationRecommendationProtocol.Assign(oSource : TAdvObject);
 begin
   inherited;
-  doseSequence := TFhirImmunizationRecommendationRecommendationProtocol(oSource).doseSequence.Clone;
-  description := TFhirImmunizationRecommendationRecommendationProtocol(oSource).description.Clone;
+  doseSequenceObject := TFhirImmunizationRecommendationRecommendationProtocol(oSource).doseSequenceObject.Clone;
+  descriptionObject := TFhirImmunizationRecommendationRecommendationProtocol(oSource).descriptionObject.Clone;
   authority := TFhirImmunizationRecommendationRecommendationProtocol(oSource).authority.Clone;
-  series := TFhirImmunizationRecommendationRecommendationProtocol(oSource).series.Clone;
+  seriesObject := TFhirImmunizationRecommendationRecommendationProtocol(oSource).seriesObject.Clone;
 end;
 
 procedure TFhirImmunizationRecommendationRecommendationProtocol.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'doseSequence') Then
-     list.add(DoseSequence.Link);
+     list.add(FDoseSequence.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'authority') Then
-     list.add(Authority.Link);
+     list.add(FAuthority.Link);
   if (child_name = 'series') Then
-     list.add(Series.Link);
+     list.add(FSeries.Link);
 end;
 
 procedure TFhirImmunizationRecommendationRecommendationProtocol.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -28811,10 +32448,10 @@ end;
 
 procedure TFhirImmunizationRecommendationRecommendationProtocol.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'doseSequence') then DoseSequence := propValue as TFhirInteger{5}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'authority') then Authority := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'series') then Series := propValue as TFhirString{5}
+  if (propName = 'doseSequence') then DoseSequenceObject := propValue as TFhirInteger{5a}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'authority') then Authority := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'series') then SeriesObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -28846,7 +32483,7 @@ begin
   if FDoseSequence = nil then
     result := ''
   else
-    result := DoseSequence.value;
+    result := FDoseSequence.value;
 end;
 
 Procedure TFhirImmunizationRecommendationRecommendationProtocol.SetDoseSequenceST(value : String);
@@ -28872,7 +32509,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirImmunizationRecommendationRecommendationProtocol.SetDescriptionST(value : String);
@@ -28904,7 +32541,7 @@ begin
   if FSeries = nil then
     result := ''
   else
-    result := Series.value;
+    result := FSeries.value;
 end;
 
 Procedure TFhirImmunizationRecommendationRecommendationProtocol.SetSeriesST(value : String);
@@ -28917,6 +32554,34 @@ begin
   end
   else if FSeries <> nil then
     FSeries.value := '';
+end;
+
+
+{ TFhirImmunizationRecommendationRecommendationProtocolListEnumerator }
+
+Constructor TFhirImmunizationRecommendationRecommendationProtocolListEnumerator.Create(list : TFhirImmunizationRecommendationRecommendationProtocolList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirImmunizationRecommendationRecommendationProtocolListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirImmunizationRecommendationRecommendationProtocolListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirImmunizationRecommendationRecommendationProtocolListEnumerator.GetCurrent : TFhirImmunizationRecommendationRecommendationProtocol;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -28942,6 +32607,11 @@ end;
 procedure TFhirImmunizationRecommendationRecommendationProtocolList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirImmunizationRecommendationRecommendationProtocolList.GetEnumerator : TFhirImmunizationRecommendationRecommendationProtocolListEnumerator;
+begin
+  result := TFhirImmunizationRecommendationRecommendationProtocolListEnumerator.Create(self.link);
 end;
 
 function TFhirImmunizationRecommendationRecommendationProtocolList.Clone: TFhirImmunizationRecommendationRecommendationProtocolList;
@@ -29030,8 +32700,8 @@ procedure TFhirListEntry.Assign(oSource : TAdvObject);
 begin
   inherited;
   FFlagList.Assign(TFhirListEntry(oSource).FFlagList);
-  deleted := TFhirListEntry(oSource).deleted.Clone;
-  date := TFhirListEntry(oSource).date.Clone;
+  deletedObject := TFhirListEntry(oSource).deletedObject.Clone;
+  dateObject := TFhirListEntry(oSource).dateObject.Clone;
   item := TFhirListEntry(oSource).item.Clone;
 end;
 
@@ -29041,11 +32711,11 @@ begin
   if (child_name = 'flag') Then
      list.addAll(FFlagList);
   if (child_name = 'deleted') Then
-     list.add(Deleted.Link);
+     list.add(FDeleted.Link);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'item') Then
-     list.add(Item.Link);
+     list.add(FItem.Link);
 end;
 
 procedure TFhirListEntry.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -29060,9 +32730,9 @@ end;
 procedure TFhirListEntry.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'flag') then FlagList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'deleted') then Deleted := propValue as TFhirBoolean{5}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'item') then Item := propValue as TFhirResourceReference{Resource}{4}
+  else if (propName = 'deleted') then DeletedObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'item') then Item := propValue as TFhirResourceReference{Resource}{4b}
   else inherited;
 end;
 
@@ -29094,7 +32764,7 @@ begin
   if FDeleted = nil then
     result := false
   else
-    result := Deleted.value;
+    result := FDeleted.value;
 end;
 
 Procedure TFhirListEntry.SetDeletedST(value : Boolean);
@@ -29115,7 +32785,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirListEntry.SetDateST(value : TDateAndTime);
@@ -29134,6 +32804,34 @@ Procedure TFhirListEntry.SetItem(value : TFhirResourceReference{Resource});
 begin
   FItem.free;
   FItem := value;
+end;
+
+
+{ TFhirListEntryListEnumerator }
+
+Constructor TFhirListEntryListEnumerator.Create(list : TFhirListEntryList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirListEntryListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirListEntryListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirListEntryListEnumerator.GetCurrent : TFhirListEntry;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -29159,6 +32857,11 @@ end;
 procedure TFhirListEntryList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirListEntryList.GetEnumerator : TFhirListEntryListEnumerator;
+begin
+  result := TFhirListEntryListEnumerator.Create(self.link);
 end;
 
 function TFhirListEntryList.Clone: TFhirListEntryList;
@@ -29244,20 +32947,20 @@ end;
 procedure TFhirLocationPosition.Assign(oSource : TAdvObject);
 begin
   inherited;
-  longitude := TFhirLocationPosition(oSource).longitude.Clone;
-  latitude := TFhirLocationPosition(oSource).latitude.Clone;
-  altitude := TFhirLocationPosition(oSource).altitude.Clone;
+  longitudeObject := TFhirLocationPosition(oSource).longitudeObject.Clone;
+  latitudeObject := TFhirLocationPosition(oSource).latitudeObject.Clone;
+  altitudeObject := TFhirLocationPosition(oSource).altitudeObject.Clone;
 end;
 
 procedure TFhirLocationPosition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'longitude') Then
-     list.add(Longitude.Link);
+     list.add(FLongitude.Link);
   if (child_name = 'latitude') Then
-     list.add(Latitude.Link);
+     list.add(FLatitude.Link);
   if (child_name = 'altitude') Then
-     list.add(Altitude.Link);
+     list.add(FAltitude.Link);
 end;
 
 procedure TFhirLocationPosition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -29270,9 +32973,9 @@ end;
 
 procedure TFhirLocationPosition.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'longitude') then Longitude := propValue as TFhirDecimal{5}
-  else if (propName = 'latitude') then Latitude := propValue as TFhirDecimal{5}
-  else if (propName = 'altitude') then Altitude := propValue as TFhirDecimal{5}
+  if (propName = 'longitude') then LongitudeObject := propValue as TFhirDecimal{5a}
+  else if (propName = 'latitude') then LatitudeObject := propValue as TFhirDecimal{5a}
+  else if (propName = 'altitude') then AltitudeObject := propValue as TFhirDecimal{5a}
   else inherited;
 end;
 
@@ -29304,7 +33007,7 @@ begin
   if FLongitude = nil then
     result := ''
   else
-    result := Longitude.value;
+    result := FLongitude.value;
 end;
 
 Procedure TFhirLocationPosition.SetLongitudeST(value : String);
@@ -29330,7 +33033,7 @@ begin
   if FLatitude = nil then
     result := ''
   else
-    result := Latitude.value;
+    result := FLatitude.value;
 end;
 
 Procedure TFhirLocationPosition.SetLatitudeST(value : String);
@@ -29356,7 +33059,7 @@ begin
   if FAltitude = nil then
     result := ''
   else
-    result := Altitude.value;
+    result := FAltitude.value;
 end;
 
 Procedure TFhirLocationPosition.SetAltitudeST(value : String);
@@ -29369,6 +33072,34 @@ begin
   end
   else if FAltitude <> nil then
     FAltitude.value := '';
+end;
+
+
+{ TFhirLocationPositionListEnumerator }
+
+Constructor TFhirLocationPositionListEnumerator.Create(list : TFhirLocationPositionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirLocationPositionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirLocationPositionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirLocationPositionListEnumerator.GetCurrent : TFhirLocationPosition;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -29394,6 +33125,11 @@ end;
 procedure TFhirLocationPositionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirLocationPositionList.GetEnumerator : TFhirLocationPositionListEnumerator;
+begin
+  result := TFhirLocationPositionListEnumerator.Create(self.link);
 end;
 
 function TFhirLocationPositionList.Clone: TFhirLocationPositionList;
@@ -29487,7 +33223,7 @@ procedure TFhirMedicationProduct.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'form') Then
-     list.add(Form.Link);
+     list.add(FForm.Link);
   if (child_name = 'ingredient') Then
      list.addAll(FIngredientList);
 end;
@@ -29501,7 +33237,7 @@ end;
 
 procedure TFhirMedicationProduct.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'form') then Form := propValue as TFhirCodeableConcept{4}
+  if (propName = 'form') then Form := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'ingredient') then IngredientList.add(propValue as TFhirMedicationProductIngredient){2}
   else inherited;
 end;
@@ -29530,6 +33266,34 @@ begin
 end;
 
 
+{ TFhirMedicationProductListEnumerator }
+
+Constructor TFhirMedicationProductListEnumerator.Create(list : TFhirMedicationProductList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationProductListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationProductListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationProductListEnumerator.GetCurrent : TFhirMedicationProduct;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationProductList }
 procedure TFhirMedicationProductList.AddItem(value: TFhirMedicationProduct);
 begin
@@ -29552,6 +33316,11 @@ end;
 procedure TFhirMedicationProductList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationProductList.GetEnumerator : TFhirMedicationProductListEnumerator;
+begin
+  result := TFhirMedicationProductListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationProductList.Clone: TFhirMedicationProductList;
@@ -29644,9 +33413,9 @@ procedure TFhirMedicationProductIngredient.GetChildrenByName(child_name : string
 begin
   inherited;
   if (child_name = 'item') Then
-     list.add(Item.Link);
+     list.add(FItem.Link);
   if (child_name = 'amount') Then
-     list.add(Amount.Link);
+     list.add(FAmount.Link);
 end;
 
 procedure TFhirMedicationProductIngredient.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -29658,8 +33427,8 @@ end;
 
 procedure TFhirMedicationProductIngredient.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'item') then Item := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'amount') then Amount := propValue as TFhirRatio{4}
+  if (propName = 'item') then Item := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'amount') then Amount := propValue as TFhirRatio{4b}
   else inherited;
 end;
 
@@ -29693,6 +33462,34 @@ begin
 end;
 
 
+{ TFhirMedicationProductIngredientListEnumerator }
+
+Constructor TFhirMedicationProductIngredientListEnumerator.Create(list : TFhirMedicationProductIngredientList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationProductIngredientListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationProductIngredientListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationProductIngredientListEnumerator.GetCurrent : TFhirMedicationProductIngredient;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationProductIngredientList }
 procedure TFhirMedicationProductIngredientList.AddItem(value: TFhirMedicationProductIngredient);
 begin
@@ -29715,6 +33512,11 @@ end;
 procedure TFhirMedicationProductIngredientList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationProductIngredientList.GetEnumerator : TFhirMedicationProductIngredientListEnumerator;
+begin
+  result := TFhirMedicationProductIngredientListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationProductIngredientList.Clone: TFhirMedicationProductIngredientList;
@@ -29808,7 +33610,7 @@ procedure TFhirMedicationPackage.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'container') Then
-     list.add(Container.Link);
+     list.add(FContainer.Link);
   if (child_name = 'content') Then
      list.addAll(FContentList);
 end;
@@ -29822,7 +33624,7 @@ end;
 
 procedure TFhirMedicationPackage.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'container') then Container := propValue as TFhirCodeableConcept{4}
+  if (propName = 'container') then Container := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'content') then ContentList.add(propValue as TFhirMedicationPackageContent){2}
   else inherited;
 end;
@@ -29851,6 +33653,34 @@ begin
 end;
 
 
+{ TFhirMedicationPackageListEnumerator }
+
+Constructor TFhirMedicationPackageListEnumerator.Create(list : TFhirMedicationPackageList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationPackageListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationPackageListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationPackageListEnumerator.GetCurrent : TFhirMedicationPackage;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationPackageList }
 procedure TFhirMedicationPackageList.AddItem(value: TFhirMedicationPackage);
 begin
@@ -29873,6 +33703,11 @@ end;
 procedure TFhirMedicationPackageList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationPackageList.GetEnumerator : TFhirMedicationPackageListEnumerator;
+begin
+  result := TFhirMedicationPackageListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationPackageList.Clone: TFhirMedicationPackageList;
@@ -29965,9 +33800,9 @@ procedure TFhirMedicationPackageContent.GetChildrenByName(child_name : string; l
 begin
   inherited;
   if (child_name = 'item') Then
-     list.add(Item.Link);
+     list.add(FItem.Link);
   if (child_name = 'amount') Then
-     list.add(Amount.Link);
+     list.add(FAmount.Link);
 end;
 
 procedure TFhirMedicationPackageContent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -29979,8 +33814,8 @@ end;
 
 procedure TFhirMedicationPackageContent.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'item') then Item := propValue as TFhirResourceReference{TFhirMedication}{4}
-  else if (propName = 'amount') then Amount := propValue as TFhirQuantity{4}
+  if (propName = 'item') then Item := propValue as TFhirResourceReference{TFhirMedication}{4b}
+  else if (propName = 'amount') then Amount := propValue as TFhirQuantity{4b}
   else inherited;
 end;
 
@@ -30014,6 +33849,34 @@ begin
 end;
 
 
+{ TFhirMedicationPackageContentListEnumerator }
+
+Constructor TFhirMedicationPackageContentListEnumerator.Create(list : TFhirMedicationPackageContentList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationPackageContentListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationPackageContentListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationPackageContentListEnumerator.GetCurrent : TFhirMedicationPackageContent;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationPackageContentList }
 procedure TFhirMedicationPackageContentList.AddItem(value: TFhirMedicationPackageContent);
 begin
@@ -30036,6 +33899,11 @@ end;
 procedure TFhirMedicationPackageContentList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationPackageContentList.GetEnumerator : TFhirMedicationPackageContentListEnumerator;
+begin
+  result := TFhirMedicationPackageContentListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationPackageContentList.Clone: TFhirMedicationPackageContentList;
@@ -30140,21 +34008,21 @@ procedure TFhirMedicationAdministrationDosage.GetChildrenByName(child_name : str
 begin
   inherited;
   if (child_name = 'timing[x]') Then
-     list.add(Timing.Link);
+     list.add(FTiming.Link);
   if (child_name = 'asNeeded[x]') Then
-     list.add(AsNeeded.Link);
+     list.add(FAsNeeded.Link);
   if (child_name = 'site') Then
-     list.add(Site.Link);
+     list.add(FSite.Link);
   if (child_name = 'route') Then
-     list.add(Route.Link);
+     list.add(FRoute.Link);
   if (child_name = 'method') Then
-     list.add(Method.Link);
+     list.add(FMethod.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'rate') Then
-     list.add(Rate.Link);
+     list.add(FRate.Link);
   if (child_name = 'maxDosePerPeriod') Then
-     list.add(MaxDosePerPeriod.Link);
+     list.add(FMaxDosePerPeriod.Link);
 end;
 
 procedure TFhirMedicationAdministrationDosage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -30172,14 +34040,14 @@ end;
 
 procedure TFhirMedicationAdministrationDosage.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'timing[x]') then Timing := propValue as TFhirType{4}
-  else if (propName = 'asNeeded[x]') then AsNeeded := propValue as TFhirType{4}
-  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
-  else if (propName = 'rate') then Rate := propValue as TFhirRatio{4}
-  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriod := propValue as TFhirRatio{4}
+  if (propName.startsWith('timing')) then Timing := propValue as TFhirType{4}
+  else if (propName.startsWith('asNeeded')) then AsNeeded := propValue as TFhirType{4}
+  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'rate') then Rate := propValue as TFhirRatio{4b}
+  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriod := propValue as TFhirRatio{4b}
   else inherited;
 end;
 
@@ -30249,6 +34117,34 @@ begin
 end;
 
 
+{ TFhirMedicationAdministrationDosageListEnumerator }
+
+Constructor TFhirMedicationAdministrationDosageListEnumerator.Create(list : TFhirMedicationAdministrationDosageList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationAdministrationDosageListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationAdministrationDosageListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationAdministrationDosageListEnumerator.GetCurrent : TFhirMedicationAdministrationDosage;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationAdministrationDosageList }
 procedure TFhirMedicationAdministrationDosageList.AddItem(value: TFhirMedicationAdministrationDosage);
 begin
@@ -30271,6 +34167,11 @@ end;
 procedure TFhirMedicationAdministrationDosageList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationAdministrationDosageList.GetEnumerator : TFhirMedicationAdministrationDosageListEnumerator;
+begin
+  result := TFhirMedicationAdministrationDosageListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationAdministrationDosageList.Clone: TFhirMedicationAdministrationDosageList;
@@ -30370,8 +34271,8 @@ begin
   type_ := TFhirMedicationDispenseDispense(oSource).type_.Clone;
   quantity := TFhirMedicationDispenseDispense(oSource).quantity.Clone;
   medication := TFhirMedicationDispenseDispense(oSource).medication.Clone;
-  whenPrepared := TFhirMedicationDispenseDispense(oSource).whenPrepared.Clone;
-  whenHandedOver := TFhirMedicationDispenseDispense(oSource).whenHandedOver.Clone;
+  whenPreparedObject := TFhirMedicationDispenseDispense(oSource).whenPreparedObject.Clone;
+  whenHandedOverObject := TFhirMedicationDispenseDispense(oSource).whenHandedOverObject.Clone;
   destination := TFhirMedicationDispenseDispense(oSource).destination.Clone;
   FReceiverList.Assign(TFhirMedicationDispenseDispense(oSource).FReceiverList);
   FDosageList.Assign(TFhirMedicationDispenseDispense(oSource).FDosageList);
@@ -30381,21 +34282,21 @@ procedure TFhirMedicationDispenseDispense.GetChildrenByName(child_name : string;
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'medication') Then
-     list.add(Medication.Link);
+     list.add(FMedication.Link);
   if (child_name = 'whenPrepared') Then
-     list.add(WhenPrepared.Link);
+     list.add(FWhenPrepared.Link);
   if (child_name = 'whenHandedOver') Then
-     list.add(WhenHandedOver.Link);
+     list.add(FWhenHandedOver.Link);
   if (child_name = 'destination') Then
-     list.add(Destination.Link);
+     list.add(FDestination.Link);
   if (child_name = 'receiver') Then
      list.addAll(FReceiverList);
   if (child_name = 'dosage') Then
@@ -30419,14 +34320,14 @@ end;
 
 procedure TFhirMedicationDispenseDispense.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
-  else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4}
-  else if (propName = 'whenPrepared') then WhenPrepared := propValue as TFhirDateTime{5}
-  else if (propName = 'whenHandedOver') then WhenHandedOver := propValue as TFhirDateTime{5}
-  else if (propName = 'destination') then Destination := propValue as TFhirResourceReference{TFhirLocation}{4}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4b}
+  else if (propName = 'whenPrepared') then WhenPreparedObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'whenHandedOver') then WhenHandedOverObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'destination') then Destination := propValue as TFhirResourceReference{TFhirLocation}{4b}
   else if (propName = 'receiver') then ReceiverList.add(propValue as TFhirResourceReference{Resource}){2}
   else if (propName = 'dosage') then DosageList.add(propValue as TFhirMedicationDispenseDispenseDosage){2}
   else inherited;
@@ -30466,15 +34367,15 @@ begin
   if FStatus = nil then
     result := TFhirMedicationDispenseStatus(0)
   else
-    result := TFhirMedicationDispenseStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationDispenseStatus, Status.value));
+    result := TFhirMedicationDispenseStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationDispenseStatus, FStatus.value));
 end;
 
 Procedure TFhirMedicationDispenseDispense.SetStatusST(value : TFhirMedicationDispenseStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirMedicationDispenseStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirMedicationDispenseStatus[value]);
 end;
 
 Procedure TFhirMedicationDispenseDispense.SetType_(value : TFhirCodeableConcept);
@@ -30506,7 +34407,7 @@ begin
   if FWhenPrepared = nil then
     result := nil
   else
-    result := WhenPrepared.value;
+    result := FWhenPrepared.value;
 end;
 
 Procedure TFhirMedicationDispenseDispense.SetWhenPreparedST(value : TDateAndTime);
@@ -30532,7 +34433,7 @@ begin
   if FWhenHandedOver = nil then
     result := nil
   else
-    result := WhenHandedOver.value;
+    result := FWhenHandedOver.value;
 end;
 
 Procedure TFhirMedicationDispenseDispense.SetWhenHandedOverST(value : TDateAndTime);
@@ -30551,6 +34452,34 @@ Procedure TFhirMedicationDispenseDispense.SetDestination(value : TFhirResourceRe
 begin
   FDestination.free;
   FDestination := value;
+end;
+
+
+{ TFhirMedicationDispenseDispenseListEnumerator }
+
+Constructor TFhirMedicationDispenseDispenseListEnumerator.Create(list : TFhirMedicationDispenseDispenseList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationDispenseDispenseListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationDispenseDispenseListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationDispenseDispenseListEnumerator.GetCurrent : TFhirMedicationDispenseDispense;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -30576,6 +34505,11 @@ end;
 procedure TFhirMedicationDispenseDispenseList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationDispenseDispenseList.GetEnumerator : TFhirMedicationDispenseDispenseListEnumerator;
+begin
+  result := TFhirMedicationDispenseDispenseListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationDispenseDispenseList.Clone: TFhirMedicationDispenseDispenseList;
@@ -30682,23 +34616,23 @@ procedure TFhirMedicationDispenseDispenseDosage.GetChildrenByName(child_name : s
 begin
   inherited;
   if (child_name = 'additionalInstructions') Then
-     list.add(AdditionalInstructions.Link);
+     list.add(FAdditionalInstructions.Link);
   if (child_name = 'timing[x]') Then
-     list.add(Timing.Link);
+     list.add(FTiming.Link);
   if (child_name = 'asNeeded[x]') Then
-     list.add(AsNeeded.Link);
+     list.add(FAsNeeded.Link);
   if (child_name = 'site') Then
-     list.add(Site.Link);
+     list.add(FSite.Link);
   if (child_name = 'route') Then
-     list.add(Route.Link);
+     list.add(FRoute.Link);
   if (child_name = 'method') Then
-     list.add(Method.Link);
+     list.add(FMethod.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'rate') Then
-     list.add(Rate.Link);
+     list.add(FRate.Link);
   if (child_name = 'maxDosePerPeriod') Then
-     list.add(MaxDosePerPeriod.Link);
+     list.add(FMaxDosePerPeriod.Link);
 end;
 
 procedure TFhirMedicationDispenseDispenseDosage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -30717,15 +34651,15 @@ end;
 
 procedure TFhirMedicationDispenseDispenseDosage.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'additionalInstructions') then AdditionalInstructions := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'timing[x]') then Timing := propValue as TFhirType{4}
-  else if (propName = 'asNeeded[x]') then AsNeeded := propValue as TFhirType{4}
-  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
-  else if (propName = 'rate') then Rate := propValue as TFhirRatio{4}
-  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriod := propValue as TFhirRatio{4}
+  if (propName = 'additionalInstructions') then AdditionalInstructions := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('timing')) then Timing := propValue as TFhirType{4}
+  else if (propName.startsWith('asNeeded')) then AsNeeded := propValue as TFhirType{4}
+  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'rate') then Rate := propValue as TFhirRatio{4b}
+  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriod := propValue as TFhirRatio{4b}
   else inherited;
 end;
 
@@ -30801,6 +34735,34 @@ begin
 end;
 
 
+{ TFhirMedicationDispenseDispenseDosageListEnumerator }
+
+Constructor TFhirMedicationDispenseDispenseDosageListEnumerator.Create(list : TFhirMedicationDispenseDispenseDosageList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationDispenseDispenseDosageListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationDispenseDispenseDosageListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationDispenseDispenseDosageListEnumerator.GetCurrent : TFhirMedicationDispenseDispenseDosage;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationDispenseDispenseDosageList }
 procedure TFhirMedicationDispenseDispenseDosageList.AddItem(value: TFhirMedicationDispenseDispenseDosage);
 begin
@@ -30823,6 +34785,11 @@ end;
 procedure TFhirMedicationDispenseDispenseDosageList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationDispenseDispenseDosageList.GetEnumerator : TFhirMedicationDispenseDispenseDosageListEnumerator;
+begin
+  result := TFhirMedicationDispenseDispenseDosageListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationDispenseDispenseDosageList.Clone: TFhirMedicationDispenseDispenseDosageList;
@@ -30919,7 +34886,7 @@ procedure TFhirMedicationDispenseSubstitution.GetChildrenByName(child_name : str
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'reason') Then
      list.addAll(FReasonList);
   if (child_name = 'responsibleParty') Then
@@ -30936,7 +34903,7 @@ end;
 
 procedure TFhirMedicationDispenseSubstitution.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
+  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'reason') then ReasonList.add(propValue as TFhirCodeableConcept){2}
   else if (propName = 'responsibleParty') then ResponsiblePartyList.add(propValue as TFhirResourceReference{TFhirPractitioner}){2}
   else inherited;
@@ -30966,6 +34933,34 @@ begin
 end;
 
 
+{ TFhirMedicationDispenseSubstitutionListEnumerator }
+
+Constructor TFhirMedicationDispenseSubstitutionListEnumerator.Create(list : TFhirMedicationDispenseSubstitutionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationDispenseSubstitutionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationDispenseSubstitutionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationDispenseSubstitutionListEnumerator.GetCurrent : TFhirMedicationDispenseSubstitution;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationDispenseSubstitutionList }
 procedure TFhirMedicationDispenseSubstitutionList.AddItem(value: TFhirMedicationDispenseSubstitution);
 begin
@@ -30988,6 +34983,11 @@ end;
 procedure TFhirMedicationDispenseSubstitutionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationDispenseSubstitutionList.GetEnumerator : TFhirMedicationDispenseSubstitutionListEnumerator;
+begin
+  result := TFhirMedicationDispenseSubstitutionListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationDispenseSubstitutionList.Clone: TFhirMedicationDispenseSubstitutionList;
@@ -31080,7 +35080,7 @@ end;
 procedure TFhirMedicationPrescriptionDosageInstruction.Assign(oSource : TAdvObject);
 begin
   inherited;
-  text := TFhirMedicationPrescriptionDosageInstruction(oSource).text.Clone;
+  textObject := TFhirMedicationPrescriptionDosageInstruction(oSource).textObject.Clone;
   additionalInstructions := TFhirMedicationPrescriptionDosageInstruction(oSource).additionalInstructions.Clone;
   timing := TFhirMedicationPrescriptionDosageInstruction(oSource).timing.Clone;
   asNeeded := TFhirMedicationPrescriptionDosageInstruction(oSource).asNeeded.Clone;
@@ -31096,25 +35096,25 @@ procedure TFhirMedicationPrescriptionDosageInstruction.GetChildrenByName(child_n
 begin
   inherited;
   if (child_name = 'text') Then
-     list.add(Text.Link);
+     list.add(FText.Link);
   if (child_name = 'additionalInstructions') Then
-     list.add(AdditionalInstructions.Link);
+     list.add(FAdditionalInstructions.Link);
   if (child_name = 'timing[x]') Then
-     list.add(Timing.Link);
+     list.add(FTiming.Link);
   if (child_name = 'asNeeded[x]') Then
-     list.add(AsNeeded.Link);
+     list.add(FAsNeeded.Link);
   if (child_name = 'site') Then
-     list.add(Site.Link);
+     list.add(FSite.Link);
   if (child_name = 'route') Then
-     list.add(Route.Link);
+     list.add(FRoute.Link);
   if (child_name = 'method') Then
-     list.add(Method.Link);
+     list.add(FMethod.Link);
   if (child_name = 'doseQuantity') Then
-     list.add(DoseQuantity.Link);
+     list.add(FDoseQuantity.Link);
   if (child_name = 'rate') Then
-     list.add(Rate.Link);
+     list.add(FRate.Link);
   if (child_name = 'maxDosePerPeriod') Then
-     list.add(MaxDosePerPeriod.Link);
+     list.add(FMaxDosePerPeriod.Link);
 end;
 
 procedure TFhirMedicationPrescriptionDosageInstruction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -31134,16 +35134,16 @@ end;
 
 procedure TFhirMedicationPrescriptionDosageInstruction.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'text') then Text := propValue as TFhirString{5}
-  else if (propName = 'additionalInstructions') then AdditionalInstructions := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'timing[x]') then Timing := propValue as TFhirType{4}
-  else if (propName = 'asNeeded[x]') then AsNeeded := propValue as TFhirType{4}
-  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'doseQuantity') then DoseQuantity := propValue as TFhirQuantity{4}
-  else if (propName = 'rate') then Rate := propValue as TFhirRatio{4}
-  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriod := propValue as TFhirRatio{4}
+  if (propName = 'text') then TextObject := propValue as TFhirString{5a}
+  else if (propName = 'additionalInstructions') then AdditionalInstructions := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('timing')) then Timing := propValue as TFhirType{4}
+  else if (propName.startsWith('asNeeded')) then AsNeeded := propValue as TFhirType{4}
+  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'doseQuantity') then DoseQuantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'rate') then Rate := propValue as TFhirRatio{4b}
+  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriod := propValue as TFhirRatio{4b}
   else inherited;
 end;
 
@@ -31175,7 +35175,7 @@ begin
   if FText = nil then
     result := ''
   else
-    result := Text.value;
+    result := FText.value;
 end;
 
 Procedure TFhirMedicationPrescriptionDosageInstruction.SetTextST(value : String);
@@ -31245,6 +35245,34 @@ begin
 end;
 
 
+{ TFhirMedicationPrescriptionDosageInstructionListEnumerator }
+
+Constructor TFhirMedicationPrescriptionDosageInstructionListEnumerator.Create(list : TFhirMedicationPrescriptionDosageInstructionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationPrescriptionDosageInstructionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationPrescriptionDosageInstructionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationPrescriptionDosageInstructionListEnumerator.GetCurrent : TFhirMedicationPrescriptionDosageInstruction;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationPrescriptionDosageInstructionList }
 procedure TFhirMedicationPrescriptionDosageInstructionList.AddItem(value: TFhirMedicationPrescriptionDosageInstruction);
 begin
@@ -31267,6 +35295,11 @@ end;
 procedure TFhirMedicationPrescriptionDosageInstructionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationPrescriptionDosageInstructionList.GetEnumerator : TFhirMedicationPrescriptionDosageInstructionListEnumerator;
+begin
+  result := TFhirMedicationPrescriptionDosageInstructionListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationPrescriptionDosageInstructionList.Clone: TFhirMedicationPrescriptionDosageInstructionList;
@@ -31356,7 +35389,7 @@ begin
   inherited;
   medication := TFhirMedicationPrescriptionDispense(oSource).medication.Clone;
   validityPeriod := TFhirMedicationPrescriptionDispense(oSource).validityPeriod.Clone;
-  numberOfRepeatsAllowed := TFhirMedicationPrescriptionDispense(oSource).numberOfRepeatsAllowed.Clone;
+  numberOfRepeatsAllowedObject := TFhirMedicationPrescriptionDispense(oSource).numberOfRepeatsAllowedObject.Clone;
   quantity := TFhirMedicationPrescriptionDispense(oSource).quantity.Clone;
   expectedSupplyDuration := TFhirMedicationPrescriptionDispense(oSource).expectedSupplyDuration.Clone;
 end;
@@ -31365,15 +35398,15 @@ procedure TFhirMedicationPrescriptionDispense.GetChildrenByName(child_name : str
 begin
   inherited;
   if (child_name = 'medication') Then
-     list.add(Medication.Link);
+     list.add(FMedication.Link);
   if (child_name = 'validityPeriod') Then
-     list.add(ValidityPeriod.Link);
+     list.add(FValidityPeriod.Link);
   if (child_name = 'numberOfRepeatsAllowed') Then
-     list.add(NumberOfRepeatsAllowed.Link);
+     list.add(FNumberOfRepeatsAllowed.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'expectedSupplyDuration') Then
-     list.add(ExpectedSupplyDuration.Link);
+     list.add(FExpectedSupplyDuration.Link);
 end;
 
 procedure TFhirMedicationPrescriptionDispense.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -31388,11 +35421,11 @@ end;
 
 procedure TFhirMedicationPrescriptionDispense.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4}
-  else if (propName = 'validityPeriod') then ValidityPeriod := propValue as TFhirPeriod{4}
-  else if (propName = 'numberOfRepeatsAllowed') then NumberOfRepeatsAllowed := propValue as TFhirInteger{5}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
-  else if (propName = 'expectedSupplyDuration') then ExpectedSupplyDuration := propValue as TFhirQuantity{4}
+  if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4b}
+  else if (propName = 'validityPeriod') then ValidityPeriod := propValue as TFhirPeriod{4b}
+  else if (propName = 'numberOfRepeatsAllowed') then NumberOfRepeatsAllowedObject := propValue as TFhirInteger{5a}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'expectedSupplyDuration') then ExpectedSupplyDuration := propValue as TFhirQuantity{4b}
   else inherited;
 end;
 
@@ -31436,7 +35469,7 @@ begin
   if FNumberOfRepeatsAllowed = nil then
     result := ''
   else
-    result := NumberOfRepeatsAllowed.value;
+    result := FNumberOfRepeatsAllowed.value;
 end;
 
 Procedure TFhirMedicationPrescriptionDispense.SetNumberOfRepeatsAllowedST(value : String);
@@ -31464,6 +35497,34 @@ begin
 end;
 
 
+{ TFhirMedicationPrescriptionDispenseListEnumerator }
+
+Constructor TFhirMedicationPrescriptionDispenseListEnumerator.Create(list : TFhirMedicationPrescriptionDispenseList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationPrescriptionDispenseListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationPrescriptionDispenseListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationPrescriptionDispenseListEnumerator.GetCurrent : TFhirMedicationPrescriptionDispense;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationPrescriptionDispenseList }
 procedure TFhirMedicationPrescriptionDispenseList.AddItem(value: TFhirMedicationPrescriptionDispense);
 begin
@@ -31486,6 +35547,11 @@ end;
 procedure TFhirMedicationPrescriptionDispenseList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationPrescriptionDispenseList.GetEnumerator : TFhirMedicationPrescriptionDispenseListEnumerator;
+begin
+  result := TFhirMedicationPrescriptionDispenseListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationPrescriptionDispenseList.Clone: TFhirMedicationPrescriptionDispenseList;
@@ -31578,9 +35644,9 @@ procedure TFhirMedicationPrescriptionSubstitution.GetChildrenByName(child_name :
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'reason') Then
-     list.add(Reason.Link);
+     list.add(FReason.Link);
 end;
 
 procedure TFhirMedicationPrescriptionSubstitution.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -31592,8 +35658,8 @@ end;
 
 procedure TFhirMedicationPrescriptionSubstitution.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'reason') then Reason := propValue as TFhirCodeableConcept{4}
+  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'reason') then Reason := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -31627,6 +35693,34 @@ begin
 end;
 
 
+{ TFhirMedicationPrescriptionSubstitutionListEnumerator }
+
+Constructor TFhirMedicationPrescriptionSubstitutionListEnumerator.Create(list : TFhirMedicationPrescriptionSubstitutionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationPrescriptionSubstitutionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationPrescriptionSubstitutionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationPrescriptionSubstitutionListEnumerator.GetCurrent : TFhirMedicationPrescriptionSubstitution;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationPrescriptionSubstitutionList }
 procedure TFhirMedicationPrescriptionSubstitutionList.AddItem(value: TFhirMedicationPrescriptionSubstitution);
 begin
@@ -31649,6 +35743,11 @@ end;
 procedure TFhirMedicationPrescriptionSubstitutionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationPrescriptionSubstitutionList.GetEnumerator : TFhirMedicationPrescriptionSubstitutionListEnumerator;
+begin
+  result := TFhirMedicationPrescriptionSubstitutionListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationPrescriptionSubstitutionList.Clone: TFhirMedicationPrescriptionSubstitutionList;
@@ -31753,21 +35852,21 @@ procedure TFhirMedicationStatementDosage.GetChildrenByName(child_name : string; 
 begin
   inherited;
   if (child_name = 'timing') Then
-     list.add(Timing.Link);
+     list.add(FTiming.Link);
   if (child_name = 'asNeeded[x]') Then
-     list.add(AsNeeded.Link);
+     list.add(FAsNeeded.Link);
   if (child_name = 'site') Then
-     list.add(Site.Link);
+     list.add(FSite.Link);
   if (child_name = 'route') Then
-     list.add(Route.Link);
+     list.add(FRoute.Link);
   if (child_name = 'method') Then
-     list.add(Method.Link);
+     list.add(FMethod.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'rate') Then
-     list.add(Rate.Link);
+     list.add(FRate.Link);
   if (child_name = 'maxDosePerPeriod') Then
-     list.add(MaxDosePerPeriod.Link);
+     list.add(FMaxDosePerPeriod.Link);
 end;
 
 procedure TFhirMedicationStatementDosage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -31785,14 +35884,14 @@ end;
 
 procedure TFhirMedicationStatementDosage.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'timing') then Timing := propValue as TFhirSchedule{4}
-  else if (propName = 'asNeeded[x]') then AsNeeded := propValue as TFhirType{4}
-  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
-  else if (propName = 'rate') then Rate := propValue as TFhirRatio{4}
-  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriod := propValue as TFhirRatio{4}
+  if (propName = 'timing') then Timing := propValue as TFhirSchedule{4b}
+  else if (propName.startsWith('asNeeded')) then AsNeeded := propValue as TFhirType{4}
+  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'rate') then Rate := propValue as TFhirRatio{4b}
+  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriod := propValue as TFhirRatio{4b}
   else inherited;
 end;
 
@@ -31862,6 +35961,34 @@ begin
 end;
 
 
+{ TFhirMedicationStatementDosageListEnumerator }
+
+Constructor TFhirMedicationStatementDosageListEnumerator.Create(list : TFhirMedicationStatementDosageList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMedicationStatementDosageListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMedicationStatementDosageListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMedicationStatementDosageListEnumerator.GetCurrent : TFhirMedicationStatementDosage;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirMedicationStatementDosageList }
 procedure TFhirMedicationStatementDosageList.AddItem(value: TFhirMedicationStatementDosage);
 begin
@@ -31884,6 +36011,11 @@ end;
 procedure TFhirMedicationStatementDosageList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMedicationStatementDosageList.GetEnumerator : TFhirMedicationStatementDosageListEnumerator;
+begin
+  result := TFhirMedicationStatementDosageListEnumerator.Create(self.link);
 end;
 
 function TFhirMedicationStatementDosageList.Clone: TFhirMedicationStatementDosageList;
@@ -31969,7 +36101,7 @@ end;
 procedure TFhirMessageHeaderResponse.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirMessageHeaderResponse(oSource).identifier.Clone;
+  identifierObject := TFhirMessageHeaderResponse(oSource).identifierObject.Clone;
   FCode := TFhirMessageHeaderResponse(oSource).FCode.Link;
   details := TFhirMessageHeaderResponse(oSource).details.Clone;
 end;
@@ -31978,11 +36110,11 @@ procedure TFhirMessageHeaderResponse.GetChildrenByName(child_name : string; list
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'code') Then
      list.add(FCode.Link);
   if (child_name = 'details') Then
-     list.add(Details.Link);
+     list.add(FDetails.Link);
 end;
 
 procedure TFhirMessageHeaderResponse.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -31995,9 +36127,9 @@ end;
 
 procedure TFhirMessageHeaderResponse.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirId{5}
-  else if (propName = 'code') then Code := propValue as TFHIREnum
-  else if (propName = 'details') then Details := propValue as TFhirResourceReference{TFhirOperationOutcome}{4}
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirId{5a}
+  else if (propName = 'code') then CodeObject := propValue as TFHIREnum
+  else if (propName = 'details') then Details := propValue as TFhirResourceReference{TFhirOperationOutcome}{4b}
   else inherited;
 end;
 
@@ -32029,7 +36161,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirMessageHeaderResponse.SetIdentifierST(value : String);
@@ -32055,21 +36187,49 @@ begin
   if FCode = nil then
     result := TFhirResponseCode(0)
   else
-    result := TFhirResponseCode(StringArrayIndexOfSensitive(CODES_TFhirResponseCode, Code.value));
+    result := TFhirResponseCode(StringArrayIndexOfSensitive(CODES_TFhirResponseCode, FCode.value));
 end;
 
 Procedure TFhirMessageHeaderResponse.SetCodeST(value : TFhirResponseCode);
 begin
   if ord(value) = 0 then
-    Code := nil
+    CodeObject := nil
   else
-    Code := TFhirEnum.create(CODES_TFhirResponseCode[value]);
+    CodeObject := TFhirEnum.create(CODES_TFhirResponseCode[value]);
 end;
 
 Procedure TFhirMessageHeaderResponse.SetDetails(value : TFhirResourceReference{TFhirOperationOutcome});
 begin
   FDetails.free;
   FDetails := value;
+end;
+
+
+{ TFhirMessageHeaderResponseListEnumerator }
+
+Constructor TFhirMessageHeaderResponseListEnumerator.Create(list : TFhirMessageHeaderResponseList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMessageHeaderResponseListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMessageHeaderResponseListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMessageHeaderResponseListEnumerator.GetCurrent : TFhirMessageHeaderResponse;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -32095,6 +36255,11 @@ end;
 procedure TFhirMessageHeaderResponseList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMessageHeaderResponseList.GetEnumerator : TFhirMessageHeaderResponseListEnumerator;
+begin
+  result := TFhirMessageHeaderResponseListEnumerator.Create(self.link);
 end;
 
 function TFhirMessageHeaderResponseList.Clone: TFhirMessageHeaderResponseList;
@@ -32182,26 +36347,26 @@ end;
 procedure TFhirMessageHeaderSource.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirMessageHeaderSource(oSource).name.Clone;
-  software := TFhirMessageHeaderSource(oSource).software.Clone;
-  version := TFhirMessageHeaderSource(oSource).version.Clone;
+  nameObject := TFhirMessageHeaderSource(oSource).nameObject.Clone;
+  softwareObject := TFhirMessageHeaderSource(oSource).softwareObject.Clone;
+  versionObject := TFhirMessageHeaderSource(oSource).versionObject.Clone;
   contact := TFhirMessageHeaderSource(oSource).contact.Clone;
-  endpoint := TFhirMessageHeaderSource(oSource).endpoint.Clone;
+  endpointObject := TFhirMessageHeaderSource(oSource).endpointObject.Clone;
 end;
 
 procedure TFhirMessageHeaderSource.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'software') Then
-     list.add(Software.Link);
+     list.add(FSoftware.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'contact') Then
-     list.add(Contact.Link);
+     list.add(FContact.Link);
   if (child_name = 'endpoint') Then
-     list.add(Endpoint.Link);
+     list.add(FEndpoint.Link);
 end;
 
 procedure TFhirMessageHeaderSource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -32216,11 +36381,11 @@ end;
 
 procedure TFhirMessageHeaderSource.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'software') then Software := propValue as TFhirString{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
-  else if (propName = 'contact') then Contact := propValue as TFhirContact{4}
-  else if (propName = 'endpoint') then Endpoint := propValue as TFhirUri{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'software') then SoftwareObject := propValue as TFhirString{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  else if (propName = 'contact') then Contact := propValue as TFhirContact{4b}
+  else if (propName = 'endpoint') then EndpointObject := propValue as TFhirUri{5a}
   else inherited;
 end;
 
@@ -32252,7 +36417,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirMessageHeaderSource.SetNameST(value : String);
@@ -32278,7 +36443,7 @@ begin
   if FSoftware = nil then
     result := ''
   else
-    result := Software.value;
+    result := FSoftware.value;
 end;
 
 Procedure TFhirMessageHeaderSource.SetSoftwareST(value : String);
@@ -32304,7 +36469,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirMessageHeaderSource.SetVersionST(value : String);
@@ -32336,7 +36501,7 @@ begin
   if FEndpoint = nil then
     result := ''
   else
-    result := Endpoint.value;
+    result := FEndpoint.value;
 end;
 
 Procedure TFhirMessageHeaderSource.SetEndpointST(value : String);
@@ -32349,6 +36514,34 @@ begin
   end
   else if FEndpoint <> nil then
     FEndpoint.value := '';
+end;
+
+
+{ TFhirMessageHeaderSourceListEnumerator }
+
+Constructor TFhirMessageHeaderSourceListEnumerator.Create(list : TFhirMessageHeaderSourceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMessageHeaderSourceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMessageHeaderSourceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMessageHeaderSourceListEnumerator.GetCurrent : TFhirMessageHeaderSource;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -32374,6 +36567,11 @@ end;
 procedure TFhirMessageHeaderSourceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMessageHeaderSourceList.GetEnumerator : TFhirMessageHeaderSourceListEnumerator;
+begin
+  result := TFhirMessageHeaderSourceListEnumerator.Create(self.link);
 end;
 
 function TFhirMessageHeaderSourceList.Clone: TFhirMessageHeaderSourceList;
@@ -32459,20 +36657,20 @@ end;
 procedure TFhirMessageHeaderDestination.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirMessageHeaderDestination(oSource).name.Clone;
+  nameObject := TFhirMessageHeaderDestination(oSource).nameObject.Clone;
   target := TFhirMessageHeaderDestination(oSource).target.Clone;
-  endpoint := TFhirMessageHeaderDestination(oSource).endpoint.Clone;
+  endpointObject := TFhirMessageHeaderDestination(oSource).endpointObject.Clone;
 end;
 
 procedure TFhirMessageHeaderDestination.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'target') Then
-     list.add(Target.Link);
+     list.add(FTarget.Link);
   if (child_name = 'endpoint') Then
-     list.add(Endpoint.Link);
+     list.add(FEndpoint.Link);
 end;
 
 procedure TFhirMessageHeaderDestination.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -32485,9 +36683,9 @@ end;
 
 procedure TFhirMessageHeaderDestination.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'target') then Target := propValue as TFhirResourceReference{TFhirDevice}{4}
-  else if (propName = 'endpoint') then Endpoint := propValue as TFhirUri{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'target') then Target := propValue as TFhirResourceReference{TFhirDevice}{4b}
+  else if (propName = 'endpoint') then EndpointObject := propValue as TFhirUri{5a}
   else inherited;
 end;
 
@@ -32519,7 +36717,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirMessageHeaderDestination.SetNameST(value : String);
@@ -32551,7 +36749,7 @@ begin
   if FEndpoint = nil then
     result := ''
   else
-    result := Endpoint.value;
+    result := FEndpoint.value;
 end;
 
 Procedure TFhirMessageHeaderDestination.SetEndpointST(value : String);
@@ -32564,6 +36762,34 @@ begin
   end
   else if FEndpoint <> nil then
     FEndpoint.value := '';
+end;
+
+
+{ TFhirMessageHeaderDestinationListEnumerator }
+
+Constructor TFhirMessageHeaderDestinationListEnumerator.Create(list : TFhirMessageHeaderDestinationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirMessageHeaderDestinationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirMessageHeaderDestinationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirMessageHeaderDestinationListEnumerator.GetCurrent : TFhirMessageHeaderDestination;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -32589,6 +36815,11 @@ end;
 procedure TFhirMessageHeaderDestinationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirMessageHeaderDestinationList.GetEnumerator : TFhirMessageHeaderDestinationListEnumerator;
+begin
+  result := TFhirMessageHeaderDestinationListEnumerator.Create(self.link);
 end;
 
 function TFhirMessageHeaderDestinationList.Clone: TFhirMessageHeaderDestinationList;
@@ -32685,13 +36916,13 @@ procedure TFhirObservationReferenceRange.GetChildrenByName(child_name : string; 
 begin
   inherited;
   if (child_name = 'low') Then
-     list.add(Low.Link);
+     list.add(FLow.Link);
   if (child_name = 'high') Then
-     list.add(High.Link);
+     list.add(FHigh.Link);
   if (child_name = 'meaning') Then
-     list.add(Meaning.Link);
+     list.add(FMeaning.Link);
   if (child_name = 'age') Then
-     list.add(Age.Link);
+     list.add(FAge.Link);
 end;
 
 procedure TFhirObservationReferenceRange.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -32705,10 +36936,10 @@ end;
 
 procedure TFhirObservationReferenceRange.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'low') then Low := propValue as TFhirQuantity{4}
-  else if (propName = 'high') then High := propValue as TFhirQuantity{4}
-  else if (propName = 'meaning') then Meaning := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'age') then Age := propValue as TFhirRange{4}
+  if (propName = 'low') then Low := propValue as TFhirQuantity{4b}
+  else if (propName = 'high') then High := propValue as TFhirQuantity{4b}
+  else if (propName = 'meaning') then Meaning := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'age') then Age := propValue as TFhirRange{4b}
   else inherited;
 end;
 
@@ -32754,6 +36985,34 @@ begin
 end;
 
 
+{ TFhirObservationReferenceRangeListEnumerator }
+
+Constructor TFhirObservationReferenceRangeListEnumerator.Create(list : TFhirObservationReferenceRangeList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirObservationReferenceRangeListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirObservationReferenceRangeListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirObservationReferenceRangeListEnumerator.GetCurrent : TFhirObservationReferenceRange;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirObservationReferenceRangeList }
 procedure TFhirObservationReferenceRangeList.AddItem(value: TFhirObservationReferenceRange);
 begin
@@ -32776,6 +37035,11 @@ end;
 procedure TFhirObservationReferenceRangeList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirObservationReferenceRangeList.GetEnumerator : TFhirObservationReferenceRangeListEnumerator;
+begin
+  result := TFhirObservationReferenceRangeListEnumerator.Create(self.link);
 end;
 
 function TFhirObservationReferenceRangeList.Clone: TFhirObservationReferenceRangeList;
@@ -32870,7 +37134,7 @@ begin
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'target') Then
-     list.add(Target.Link);
+     list.add(FTarget.Link);
 end;
 
 procedure TFhirObservationRelated.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -32882,8 +37146,8 @@ end;
 
 procedure TFhirObservationRelated.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'target') then Target := propValue as TFhirResourceReference{TFhirObservation}{4}
+  if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'target') then Target := propValue as TFhirResourceReference{TFhirObservation}{4b}
   else inherited;
 end;
 
@@ -32915,21 +37179,49 @@ begin
   if FType_ = nil then
     result := TFhirObservationRelationshiptypes(0)
   else
-    result := TFhirObservationRelationshiptypes(StringArrayIndexOfSensitive(CODES_TFhirObservationRelationshiptypes, Type_.value));
+    result := TFhirObservationRelationshiptypes(StringArrayIndexOfSensitive(CODES_TFhirObservationRelationshiptypes, FType_.value));
 end;
 
 Procedure TFhirObservationRelated.SetType_ST(value : TFhirObservationRelationshiptypes);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirObservationRelationshiptypes[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirObservationRelationshiptypes[value]);
 end;
 
 Procedure TFhirObservationRelated.SetTarget(value : TFhirResourceReference{TFhirObservation});
 begin
   FTarget.free;
   FTarget := value;
+end;
+
+
+{ TFhirObservationRelatedListEnumerator }
+
+Constructor TFhirObservationRelatedListEnumerator.Create(list : TFhirObservationRelatedList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirObservationRelatedListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirObservationRelatedListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirObservationRelatedListEnumerator.GetCurrent : TFhirObservationRelated;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -32955,6 +37247,11 @@ end;
 procedure TFhirObservationRelatedList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirObservationRelatedList.GetEnumerator : TFhirObservationRelatedListEnumerator;
+begin
+  result := TFhirObservationRelatedListEnumerator.Create(self.link);
 end;
 
 function TFhirObservationRelatedList.Clone: TFhirObservationRelatedList;
@@ -33044,7 +37341,7 @@ begin
   inherited;
   FSeverity := TFhirOperationOutcomeIssue(oSource).FSeverity.Link;
   type_ := TFhirOperationOutcomeIssue(oSource).type_.Clone;
-  details := TFhirOperationOutcomeIssue(oSource).details.Clone;
+  detailsObject := TFhirOperationOutcomeIssue(oSource).detailsObject.Clone;
   FLocationList.Assign(TFhirOperationOutcomeIssue(oSource).FLocationList);
 end;
 
@@ -33054,9 +37351,9 @@ begin
   if (child_name = 'severity') Then
      list.add(FSeverity.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'details') Then
-     list.add(Details.Link);
+     list.add(FDetails.Link);
   if (child_name = 'location') Then
      list.addAll(FLocationList);
 end;
@@ -33072,9 +37369,9 @@ end;
 
 procedure TFhirOperationOutcomeIssue.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'severity') then Severity := propValue as TFHIREnum
-  else if (propName = 'type') then Type_ := propValue as TFhirCoding{4}
-  else if (propName = 'details') then Details := propValue as TFhirString{5}
+  if (propName = 'severity') then SeverityObject := propValue as TFHIREnum
+  else if (propName = 'type') then Type_ := propValue as TFhirCoding{4b}
+  else if (propName = 'details') then DetailsObject := propValue as TFhirString{5a}
   else if (propName = 'location') then LocationList.add(propValue as TFhirString){2}
   else inherited;
 end;
@@ -33107,15 +37404,15 @@ begin
   if FSeverity = nil then
     result := TFhirIssueSeverity(0)
   else
-    result := TFhirIssueSeverity(StringArrayIndexOfSensitive(CODES_TFhirIssueSeverity, Severity.value));
+    result := TFhirIssueSeverity(StringArrayIndexOfSensitive(CODES_TFhirIssueSeverity, FSeverity.value));
 end;
 
 Procedure TFhirOperationOutcomeIssue.SetSeverityST(value : TFhirIssueSeverity);
 begin
   if ord(value) = 0 then
-    Severity := nil
+    SeverityObject := nil
   else
-    Severity := TFhirEnum.create(CODES_TFhirIssueSeverity[value]);
+    SeverityObject := TFhirEnum.create(CODES_TFhirIssueSeverity[value]);
 end;
 
 Procedure TFhirOperationOutcomeIssue.SetType_(value : TFhirCoding);
@@ -33135,7 +37432,7 @@ begin
   if FDetails = nil then
     result := ''
   else
-    result := Details.value;
+    result := FDetails.value;
 end;
 
 Procedure TFhirOperationOutcomeIssue.SetDetailsST(value : String);
@@ -33148,6 +37445,34 @@ begin
   end
   else if FDetails <> nil then
     FDetails.value := '';
+end;
+
+
+{ TFhirOperationOutcomeIssueListEnumerator }
+
+Constructor TFhirOperationOutcomeIssueListEnumerator.Create(list : TFhirOperationOutcomeIssueList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirOperationOutcomeIssueListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirOperationOutcomeIssueListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirOperationOutcomeIssueListEnumerator.GetCurrent : TFhirOperationOutcomeIssue;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -33173,6 +37498,11 @@ end;
 procedure TFhirOperationOutcomeIssueList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirOperationOutcomeIssueList.GetEnumerator : TFhirOperationOutcomeIssueListEnumerator;
+begin
+  result := TFhirOperationOutcomeIssueListEnumerator.Create(self.link);
 end;
 
 function TFhirOperationOutcomeIssueList.Clone: TFhirOperationOutcomeIssueList;
@@ -33265,9 +37595,9 @@ procedure TFhirOrderWhen.GetChildrenByName(child_name : string; list : TFHIRObje
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'schedule') Then
-     list.add(Schedule.Link);
+     list.add(FSchedule.Link);
 end;
 
 procedure TFhirOrderWhen.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -33279,8 +37609,8 @@ end;
 
 procedure TFhirOrderWhen.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'schedule') then Schedule := propValue as TFhirSchedule{4}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'schedule') then Schedule := propValue as TFhirSchedule{4b}
   else inherited;
 end;
 
@@ -33314,6 +37644,34 @@ begin
 end;
 
 
+{ TFhirOrderWhenListEnumerator }
+
+Constructor TFhirOrderWhenListEnumerator.Create(list : TFhirOrderWhenList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirOrderWhenListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirOrderWhenListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirOrderWhenListEnumerator.GetCurrent : TFhirOrderWhen;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirOrderWhenList }
 procedure TFhirOrderWhenList.AddItem(value: TFhirOrderWhen);
 begin
@@ -33336,6 +37694,11 @@ end;
 procedure TFhirOrderWhenList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirOrderWhenList.GetEnumerator : TFhirOrderWhenListEnumerator;
+begin
+  result := TFhirOrderWhenListEnumerator.Create(self.link);
 end;
 
 function TFhirOrderWhenList.Clone: TFhirOrderWhenList;
@@ -33435,15 +37798,15 @@ procedure TFhirOrganizationContact.GetChildrenByName(child_name : string; list :
 begin
   inherited;
   if (child_name = 'purpose') Then
-     list.add(Purpose.Link);
+     list.add(FPurpose.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'address') Then
-     list.add(Address.Link);
+     list.add(FAddress.Link);
   if (child_name = 'gender') Then
-     list.add(Gender.Link);
+     list.add(FGender.Link);
 end;
 
 procedure TFhirOrganizationContact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -33458,11 +37821,11 @@ end;
 
 procedure TFhirOrganizationContact.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'purpose') then Purpose := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'name') then Name := propValue as TFhirHumanName{4}
+  if (propName = 'purpose') then Purpose := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'name') then Name := propValue as TFhirHumanName{4b}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'address') then Address := propValue as TFhirAddress{4}
-  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'address') then Address := propValue as TFhirAddress{4b}
+  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -33508,6 +37871,34 @@ begin
 end;
 
 
+{ TFhirOrganizationContactListEnumerator }
+
+Constructor TFhirOrganizationContactListEnumerator.Create(list : TFhirOrganizationContactList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirOrganizationContactListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirOrganizationContactListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirOrganizationContactListEnumerator.GetCurrent : TFhirOrganizationContact;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirOrganizationContactList }
 procedure TFhirOrganizationContactList.AddItem(value: TFhirOrganizationContact);
 begin
@@ -33530,6 +37921,11 @@ end;
 procedure TFhirOrganizationContactList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirOrganizationContactList.GetEnumerator : TFhirOrganizationContactListEnumerator;
+begin
+  result := TFhirOrganizationContactListEnumerator.Create(self.link);
 end;
 
 function TFhirOrganizationContactList.Clone: TFhirOrganizationContactList;
@@ -33634,15 +38030,15 @@ begin
   if (child_name = 'relationship') Then
      list.addAll(FRelationshipList);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'address') Then
-     list.add(Address.Link);
+     list.add(FAddress.Link);
   if (child_name = 'gender') Then
-     list.add(Gender.Link);
+     list.add(FGender.Link);
   if (child_name = 'organization') Then
-     list.add(Organization.Link);
+     list.add(FOrganization.Link);
 end;
 
 procedure TFhirPatientContact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -33659,11 +38055,11 @@ end;
 procedure TFhirPatientContact.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'relationship') then RelationshipList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'name') then Name := propValue as TFhirHumanName{4}
+  else if (propName = 'name') then Name := propValue as TFhirHumanName{4b}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'address') then Address := propValue as TFhirAddress{4}
-  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'organization') then Organization := propValue as TFhirResourceReference{TFhirOrganization}{4}
+  else if (propName = 'address') then Address := propValue as TFhirAddress{4b}
+  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'organization') then Organization := propValue as TFhirResourceReference{TFhirOrganization}{4b}
   else inherited;
 end;
 
@@ -33709,6 +38105,34 @@ begin
 end;
 
 
+{ TFhirPatientContactListEnumerator }
+
+Constructor TFhirPatientContactListEnumerator.Create(list : TFhirPatientContactList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirPatientContactListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPatientContactListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirPatientContactListEnumerator.GetCurrent : TFhirPatientContact;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirPatientContactList }
 procedure TFhirPatientContactList.AddItem(value: TFhirPatientContact);
 begin
@@ -33731,6 +38155,11 @@ end;
 procedure TFhirPatientContactList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirPatientContactList.GetEnumerator : TFhirPatientContactListEnumerator;
+begin
+  result := TFhirPatientContactListEnumerator.Create(self.link);
 end;
 
 function TFhirPatientContactList.Clone: TFhirPatientContactList;
@@ -33825,11 +38254,11 @@ procedure TFhirPatientAnimal.GetChildrenByName(child_name : string; list : TFHIR
 begin
   inherited;
   if (child_name = 'species') Then
-     list.add(Species.Link);
+     list.add(FSpecies.Link);
   if (child_name = 'breed') Then
-     list.add(Breed.Link);
+     list.add(FBreed.Link);
   if (child_name = 'genderStatus') Then
-     list.add(GenderStatus.Link);
+     list.add(FGenderStatus.Link);
 end;
 
 procedure TFhirPatientAnimal.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -33842,9 +38271,9 @@ end;
 
 procedure TFhirPatientAnimal.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'species') then Species := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'breed') then Breed := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'genderStatus') then GenderStatus := propValue as TFhirCodeableConcept{4}
+  if (propName = 'species') then Species := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'breed') then Breed := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'genderStatus') then GenderStatus := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -33884,6 +38313,34 @@ begin
 end;
 
 
+{ TFhirPatientAnimalListEnumerator }
+
+Constructor TFhirPatientAnimalListEnumerator.Create(list : TFhirPatientAnimalList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirPatientAnimalListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPatientAnimalListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirPatientAnimalListEnumerator.GetCurrent : TFhirPatientAnimal;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirPatientAnimalList }
 procedure TFhirPatientAnimalList.AddItem(value: TFhirPatientAnimal);
 begin
@@ -33906,6 +38363,11 @@ end;
 procedure TFhirPatientAnimalList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirPatientAnimalList.GetEnumerator : TFhirPatientAnimalListEnumerator;
+begin
+  result := TFhirPatientAnimalListEnumerator.Create(self.link);
 end;
 
 function TFhirPatientAnimalList.Clone: TFhirPatientAnimalList;
@@ -33998,7 +38460,7 @@ procedure TFhirPatientLink.GetChildrenByName(child_name : string; list : TFHIROb
 begin
   inherited;
   if (child_name = 'other') Then
-     list.add(Other.Link);
+     list.add(FOther.Link);
   if (child_name = 'type') Then
      list.add(FType_.Link);
 end;
@@ -34012,8 +38474,8 @@ end;
 
 procedure TFhirPatientLink.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'other') then Other := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'type') then Type_ := propValue as TFHIREnum
+  if (propName = 'other') then Other := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'type') then Type_Object := propValue as TFHIREnum
   else inherited;
 end;
 
@@ -34051,15 +38513,43 @@ begin
   if FType_ = nil then
     result := TFhirLinkType(0)
   else
-    result := TFhirLinkType(StringArrayIndexOfSensitive(CODES_TFhirLinkType, Type_.value));
+    result := TFhirLinkType(StringArrayIndexOfSensitive(CODES_TFhirLinkType, FType_.value));
 end;
 
 Procedure TFhirPatientLink.SetType_ST(value : TFhirLinkType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirLinkType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirLinkType[value]);
+end;
+
+
+{ TFhirPatientLinkListEnumerator }
+
+Constructor TFhirPatientLinkListEnumerator.Create(list : TFhirPatientLinkList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirPatientLinkListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPatientLinkListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirPatientLinkListEnumerator.GetCurrent : TFhirPatientLink;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -34085,6 +38575,11 @@ end;
 procedure TFhirPatientLinkList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirPatientLinkList.GetEnumerator : TFhirPatientLinkListEnumerator;
+begin
+  result := TFhirPatientLinkListEnumerator.Create(self.link);
 end;
 
 function TFhirPatientLinkList.Clone: TFhirPatientLinkList;
@@ -34179,11 +38674,11 @@ procedure TFhirPractitionerQualification.GetChildrenByName(child_name : string; 
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
   if (child_name = 'issuer') Then
-     list.add(Issuer.Link);
+     list.add(FIssuer.Link);
 end;
 
 procedure TFhirPractitionerQualification.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -34196,9 +38691,9 @@ end;
 
 procedure TFhirPractitionerQualification.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
-  else if (propName = 'issuer') then Issuer := propValue as TFhirResourceReference{TFhirOrganization}{4}
+  if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
+  else if (propName = 'issuer') then Issuer := propValue as TFhirResourceReference{TFhirOrganization}{4b}
   else inherited;
 end;
 
@@ -34238,6 +38733,34 @@ begin
 end;
 
 
+{ TFhirPractitionerQualificationListEnumerator }
+
+Constructor TFhirPractitionerQualificationListEnumerator.Create(list : TFhirPractitionerQualificationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirPractitionerQualificationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPractitionerQualificationListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirPractitionerQualificationListEnumerator.GetCurrent : TFhirPractitionerQualification;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirPractitionerQualificationList }
 procedure TFhirPractitionerQualificationList.AddItem(value: TFhirPractitionerQualification);
 begin
@@ -34260,6 +38783,11 @@ end;
 procedure TFhirPractitionerQualificationList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirPractitionerQualificationList.GetEnumerator : TFhirPractitionerQualificationListEnumerator;
+begin
+  result := TFhirPractitionerQualificationListEnumerator.Create(self.link);
 end;
 
 function TFhirPractitionerQualificationList.Clone: TFhirPractitionerQualificationList;
@@ -34352,9 +38880,9 @@ procedure TFhirProcedurePerformer.GetChildrenByName(child_name : string; list : 
 begin
   inherited;
   if (child_name = 'person') Then
-     list.add(Person.Link);
+     list.add(FPerson.Link);
   if (child_name = 'role') Then
-     list.add(Role.Link);
+     list.add(FRole.Link);
 end;
 
 procedure TFhirProcedurePerformer.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -34366,8 +38894,8 @@ end;
 
 procedure TFhirProcedurePerformer.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'person') then Person := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'role') then Role := propValue as TFhirCodeableConcept{4}
+  if (propName = 'person') then Person := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'role') then Role := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -34401,6 +38929,34 @@ begin
 end;
 
 
+{ TFhirProcedurePerformerListEnumerator }
+
+Constructor TFhirProcedurePerformerListEnumerator.Create(list : TFhirProcedurePerformerList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProcedurePerformerListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProcedurePerformerListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProcedurePerformerListEnumerator.GetCurrent : TFhirProcedurePerformer;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirProcedurePerformerList }
 procedure TFhirProcedurePerformerList.AddItem(value: TFhirProcedurePerformer);
 begin
@@ -34423,6 +38979,11 @@ end;
 procedure TFhirProcedurePerformerList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProcedurePerformerList.GetEnumerator : TFhirProcedurePerformerListEnumerator;
+begin
+  result := TFhirProcedurePerformerListEnumerator.Create(self.link);
 end;
 
 function TFhirProcedurePerformerList.Clone: TFhirProcedurePerformerList;
@@ -34517,7 +39078,7 @@ begin
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'target') Then
-     list.add(Target.Link);
+     list.add(FTarget.Link);
 end;
 
 procedure TFhirProcedureRelatedItem.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -34529,8 +39090,8 @@ end;
 
 procedure TFhirProcedureRelatedItem.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'target') then Target := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'target') then Target := propValue as TFhirResourceReference{Resource}{4b}
   else inherited;
 end;
 
@@ -34562,21 +39123,49 @@ begin
   if FType_ = nil then
     result := TFhirProcedureRelationshipType(0)
   else
-    result := TFhirProcedureRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirProcedureRelationshipType, Type_.value));
+    result := TFhirProcedureRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirProcedureRelationshipType, FType_.value));
 end;
 
 Procedure TFhirProcedureRelatedItem.SetType_ST(value : TFhirProcedureRelationshipType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirProcedureRelationshipType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirProcedureRelationshipType[value]);
 end;
 
 Procedure TFhirProcedureRelatedItem.SetTarget(value : TFhirResourceReference{Resource});
 begin
   FTarget.free;
   FTarget := value;
+end;
+
+
+{ TFhirProcedureRelatedItemListEnumerator }
+
+Constructor TFhirProcedureRelatedItemListEnumerator.Create(list : TFhirProcedureRelatedItemList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProcedureRelatedItemListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProcedureRelatedItemListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProcedureRelatedItemListEnumerator.GetCurrent : TFhirProcedureRelatedItem;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -34602,6 +39191,11 @@ end;
 procedure TFhirProcedureRelatedItemList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProcedureRelatedItemList.GetEnumerator : TFhirProcedureRelatedItemListEnumerator;
+begin
+  result := TFhirProcedureRelatedItemListEnumerator.Create(self.link);
 end;
 
 function TFhirProcedureRelatedItemList.Clone: TFhirProcedureRelatedItemList;
@@ -34688,23 +39282,23 @@ end;
 procedure TFhirProfileMapping.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identity := TFhirProfileMapping(oSource).identity.Clone;
-  uri := TFhirProfileMapping(oSource).uri.Clone;
-  name := TFhirProfileMapping(oSource).name.Clone;
-  comments := TFhirProfileMapping(oSource).comments.Clone;
+  identityObject := TFhirProfileMapping(oSource).identityObject.Clone;
+  uriObject := TFhirProfileMapping(oSource).uriObject.Clone;
+  nameObject := TFhirProfileMapping(oSource).nameObject.Clone;
+  commentsObject := TFhirProfileMapping(oSource).commentsObject.Clone;
 end;
 
 procedure TFhirProfileMapping.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'identity') Then
-     list.add(Identity.Link);
+     list.add(FIdentity.Link);
   if (child_name = 'uri') Then
-     list.add(Uri.Link);
+     list.add(FUri.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'comments') Then
-     list.add(Comments.Link);
+     list.add(FComments.Link);
 end;
 
 procedure TFhirProfileMapping.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -34718,10 +39312,10 @@ end;
 
 procedure TFhirProfileMapping.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identity') then Identity := propValue as TFhirId{5}
-  else if (propName = 'uri') then Uri := propValue as TFhirUri{5}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'comments') then Comments := propValue as TFhirString{5}
+  if (propName = 'identity') then IdentityObject := propValue as TFhirId{5a}
+  else if (propName = 'uri') then UriObject := propValue as TFhirUri{5a}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'comments') then CommentsObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -34753,7 +39347,7 @@ begin
   if FIdentity = nil then
     result := ''
   else
-    result := Identity.value;
+    result := FIdentity.value;
 end;
 
 Procedure TFhirProfileMapping.SetIdentityST(value : String);
@@ -34779,7 +39373,7 @@ begin
   if FUri = nil then
     result := ''
   else
-    result := Uri.value;
+    result := FUri.value;
 end;
 
 Procedure TFhirProfileMapping.SetUriST(value : String);
@@ -34805,7 +39399,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirProfileMapping.SetNameST(value : String);
@@ -34831,7 +39425,7 @@ begin
   if FComments = nil then
     result := ''
   else
-    result := Comments.value;
+    result := FComments.value;
 end;
 
 Procedure TFhirProfileMapping.SetCommentsST(value : String);
@@ -34844,6 +39438,34 @@ begin
   end
   else if FComments <> nil then
     FComments.value := '';
+end;
+
+
+{ TFhirProfileMappingListEnumerator }
+
+Constructor TFhirProfileMappingListEnumerator.Create(list : TFhirProfileMappingList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileMappingListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileMappingListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileMappingListEnumerator.GetCurrent : TFhirProfileMapping;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -34869,6 +39491,11 @@ end;
 procedure TFhirProfileMappingList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileMappingList.GetEnumerator : TFhirProfileMappingListEnumerator;
+begin
+  result := TFhirProfileMappingListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileMappingList.Clone: TFhirProfileMappingList;
@@ -34959,10 +39586,10 @@ end;
 procedure TFhirProfileStructure.Assign(oSource : TAdvObject);
 begin
   inherited;
-  type_ := TFhirProfileStructure(oSource).type_.Clone;
-  name := TFhirProfileStructure(oSource).name.Clone;
-  publish := TFhirProfileStructure(oSource).publish.Clone;
-  purpose := TFhirProfileStructure(oSource).purpose.Clone;
+  type_Object := TFhirProfileStructure(oSource).type_Object.Clone;
+  nameObject := TFhirProfileStructure(oSource).nameObject.Clone;
+  publishObject := TFhirProfileStructure(oSource).publishObject.Clone;
+  purposeObject := TFhirProfileStructure(oSource).purposeObject.Clone;
   FElementList.Assign(TFhirProfileStructure(oSource).FElementList);
   FSearchParamList.Assign(TFhirProfileStructure(oSource).FSearchParamList);
 end;
@@ -34971,13 +39598,13 @@ procedure TFhirProfileStructure.GetChildrenByName(child_name : string; list : TF
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'publish') Then
-     list.add(Publish.Link);
+     list.add(FPublish.Link);
   if (child_name = 'purpose') Then
-     list.add(Purpose.Link);
+     list.add(FPurpose.Link);
   if (child_name = 'element') Then
      list.addAll(FElementList);
   if (child_name = 'searchParam') Then
@@ -34997,10 +39624,16 @@ end;
 
 procedure TFhirProfileStructure.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCode{5}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'publish') then Publish := propValue as TFhirBoolean{5}
-  else if (propName = 'purpose') then Purpose := propValue as TFhirString{5}
+  if (propName = 'type') then
+    if propValue is TFHIRCode then
+      Type_Object := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      Type_Object := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'publish') then PublishObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'purpose') then PurposeObject := propValue as TFhirString{5a}
   else if (propName = 'element') then ElementList.add(propValue as TFhirProfileStructureElement){2}
   else if (propName = 'searchParam') then SearchParamList.add(propValue as TFhirProfileStructureSearchParam){2}
   else inherited;
@@ -35034,7 +39667,7 @@ begin
   if FType_ = nil then
     result := ''
   else
-    result := Type_.value;
+    result := FType_.value;
 end;
 
 Procedure TFhirProfileStructure.SetType_ST(value : String);
@@ -35060,7 +39693,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirProfileStructure.SetNameST(value : String);
@@ -35086,7 +39719,7 @@ begin
   if FPublish = nil then
     result := false
   else
-    result := Publish.value;
+    result := FPublish.value;
 end;
 
 Procedure TFhirProfileStructure.SetPublishST(value : Boolean);
@@ -35107,7 +39740,7 @@ begin
   if FPurpose = nil then
     result := ''
   else
-    result := Purpose.value;
+    result := FPurpose.value;
 end;
 
 Procedure TFhirProfileStructure.SetPurposeST(value : String);
@@ -35120,6 +39753,34 @@ begin
   end
   else if FPurpose <> nil then
     FPurpose.value := '';
+end;
+
+
+{ TFhirProfileStructureListEnumerator }
+
+Constructor TFhirProfileStructureListEnumerator.Create(list : TFhirProfileStructureList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureListEnumerator.GetCurrent : TFhirProfileStructure;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -35145,6 +39806,11 @@ end;
 procedure TFhirProfileStructureList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureList.GetEnumerator : TFhirProfileStructureListEnumerator;
+begin
+  result := TFhirProfileStructureListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureList.Clone: TFhirProfileStructureList;
@@ -35233,9 +39899,9 @@ end;
 procedure TFhirProfileStructureElement.Assign(oSource : TAdvObject);
 begin
   inherited;
-  path := TFhirProfileStructureElement(oSource).path.Clone;
+  pathObject := TFhirProfileStructureElement(oSource).pathObject.Clone;
   FRepresentation.Assign(TFhirProfileStructureElement(oSource).FRepresentation);
-  name := TFhirProfileStructureElement(oSource).name.Clone;
+  nameObject := TFhirProfileStructureElement(oSource).nameObject.Clone;
   slicing := TFhirProfileStructureElement(oSource).slicing.Clone;
   definition := TFhirProfileStructureElement(oSource).definition.Clone;
 end;
@@ -35244,15 +39910,15 @@ procedure TFhirProfileStructureElement.GetChildrenByName(child_name : string; li
 begin
   inherited;
   if (child_name = 'path') Then
-     list.add(Path.Link);
+     list.add(FPath.Link);
   if (child_name = 'representation') Then
      list.addAll(FRepresentation);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'slicing') Then
-     list.add(Slicing.Link);
+     list.add(FSlicing.Link);
   if (child_name = 'definition') Then
-     list.add(Definition.Link);
+     list.add(FDefinition.Link);
 end;
 
 procedure TFhirProfileStructureElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -35267,11 +39933,11 @@ end;
 
 procedure TFhirProfileStructureElement.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'path') then Path := propValue as TFhirString{5}
+  if (propName = 'path') then PathObject := propValue as TFhirString{5a}
   else if (propName = 'representation') then FRepresentation.add(propValue as TFHIREnum) {1}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'slicing') then Slicing := propValue as TFhirProfileStructureElementSlicing{4}
-  else if (propName = 'definition') then Definition := propValue as TFhirProfileStructureElementDefinition{4}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'slicing') then Slicing := propValue as TFhirProfileStructureElementSlicing{4b}
+  else if (propName = 'definition') then Definition := propValue as TFhirProfileStructureElementDefinition{4b}
   else inherited;
 end;
 
@@ -35303,7 +39969,7 @@ begin
   if FPath = nil then
     result := ''
   else
-    result := Path.value;
+    result := FPath.value;
 end;
 
 Procedure TFhirProfileStructureElement.SetPathST(value : String);
@@ -35322,17 +39988,17 @@ Function TFhirProfileStructureElement.GetRepresentationST : TFhirPropertyReprese
   var i : integer;
 begin
   result := [];
-  for i := 0 to representation.count - 1 do
-    result := result + [TFhirPropertyRepresentation(StringArrayIndexOfSensitive(CODES_TFhirPropertyRepresentation, representation[i].value))];
+  for i := 0 to Frepresentation.count - 1 do
+    result := result + [TFhirPropertyRepresentation(StringArrayIndexOfSensitive(CODES_TFhirPropertyRepresentation, Frepresentation[i].value))];
 end;
 
 Procedure TFhirProfileStructureElement.SetRepresentationST(value : TFhirPropertyRepresentationList);
 var a : TFhirPropertyRepresentation;
 begin
-  representation.clear;
+  Frepresentation.clear;
   for a := low(TFhirPropertyRepresentation) to high(TFhirPropertyRepresentation) do
     if a in value then
-      representation.add(TFhirEnum.create(CODES_TFhirPropertyRepresentation[a]));
+      Frepresentation.add(TFhirEnum.create(CODES_TFhirPropertyRepresentation[a]));
 end;
 
 Procedure TFhirProfileStructureElement.SetName(value : TFhirString);
@@ -35346,7 +40012,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirProfileStructureElement.SetNameST(value : String);
@@ -35374,6 +40040,34 @@ begin
 end;
 
 
+{ TFhirProfileStructureElementListEnumerator }
+
+Constructor TFhirProfileStructureElementListEnumerator.Create(list : TFhirProfileStructureElementList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureElementListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureElementListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureElementListEnumerator.GetCurrent : TFhirProfileStructureElement;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirProfileStructureElementList }
 procedure TFhirProfileStructureElementList.AddItem(value: TFhirProfileStructureElement);
 begin
@@ -35396,6 +40090,11 @@ end;
 procedure TFhirProfileStructureElementList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureElementList.GetEnumerator : TFhirProfileStructureElementListEnumerator;
+begin
+  result := TFhirProfileStructureElementListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureElementList.Clone: TFhirProfileStructureElementList;
@@ -35481,8 +40180,8 @@ end;
 procedure TFhirProfileStructureElementSlicing.Assign(oSource : TAdvObject);
 begin
   inherited;
-  discriminator := TFhirProfileStructureElementSlicing(oSource).discriminator.Clone;
-  ordered := TFhirProfileStructureElementSlicing(oSource).ordered.Clone;
+  discriminatorObject := TFhirProfileStructureElementSlicing(oSource).discriminatorObject.Clone;
+  orderedObject := TFhirProfileStructureElementSlicing(oSource).orderedObject.Clone;
   FRules := TFhirProfileStructureElementSlicing(oSource).FRules.Link;
 end;
 
@@ -35490,9 +40189,9 @@ procedure TFhirProfileStructureElementSlicing.GetChildrenByName(child_name : str
 begin
   inherited;
   if (child_name = 'discriminator') Then
-     list.add(Discriminator.Link);
+     list.add(FDiscriminator.Link);
   if (child_name = 'ordered') Then
-     list.add(Ordered.Link);
+     list.add(FOrdered.Link);
   if (child_name = 'rules') Then
      list.add(FRules.Link);
 end;
@@ -35507,9 +40206,9 @@ end;
 
 procedure TFhirProfileStructureElementSlicing.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'discriminator') then Discriminator := propValue as TFhirId{5}
-  else if (propName = 'ordered') then Ordered := propValue as TFhirBoolean{5}
-  else if (propName = 'rules') then Rules := propValue as TFHIREnum
+  if (propName = 'discriminator') then DiscriminatorObject := propValue as TFhirId{5a}
+  else if (propName = 'ordered') then OrderedObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'rules') then RulesObject := propValue as TFHIREnum
   else inherited;
 end;
 
@@ -35541,7 +40240,7 @@ begin
   if FDiscriminator = nil then
     result := ''
   else
-    result := Discriminator.value;
+    result := FDiscriminator.value;
 end;
 
 Procedure TFhirProfileStructureElementSlicing.SetDiscriminatorST(value : String);
@@ -35567,7 +40266,7 @@ begin
   if FOrdered = nil then
     result := false
   else
-    result := Ordered.value;
+    result := FOrdered.value;
 end;
 
 Procedure TFhirProfileStructureElementSlicing.SetOrderedST(value : Boolean);
@@ -35588,15 +40287,43 @@ begin
   if FRules = nil then
     result := TFhirResourceSlicingRules(0)
   else
-    result := TFhirResourceSlicingRules(StringArrayIndexOfSensitive(CODES_TFhirResourceSlicingRules, Rules.value));
+    result := TFhirResourceSlicingRules(StringArrayIndexOfSensitive(CODES_TFhirResourceSlicingRules, FRules.value));
 end;
 
 Procedure TFhirProfileStructureElementSlicing.SetRulesST(value : TFhirResourceSlicingRules);
 begin
   if ord(value) = 0 then
-    Rules := nil
+    RulesObject := nil
   else
-    Rules := TFhirEnum.create(CODES_TFhirResourceSlicingRules[value]);
+    RulesObject := TFhirEnum.create(CODES_TFhirResourceSlicingRules[value]);
+end;
+
+
+{ TFhirProfileStructureElementSlicingListEnumerator }
+
+Constructor TFhirProfileStructureElementSlicingListEnumerator.Create(list : TFhirProfileStructureElementSlicingList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureElementSlicingListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureElementSlicingListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureElementSlicingListEnumerator.GetCurrent : TFhirProfileStructureElementSlicing;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -35622,6 +40349,11 @@ end;
 procedure TFhirProfileStructureElementSlicingList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureElementSlicingList.GetEnumerator : TFhirProfileStructureElementSlicingListEnumerator;
+begin
+  result := TFhirProfileStructureElementSlicingListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureElementSlicingList.Clone: TFhirProfileStructureElementSlicingList;
@@ -35727,22 +40459,22 @@ end;
 procedure TFhirProfileStructureElementDefinition.Assign(oSource : TAdvObject);
 begin
   inherited;
-  short := TFhirProfileStructureElementDefinition(oSource).short.Clone;
-  formal := TFhirProfileStructureElementDefinition(oSource).formal.Clone;
-  comments := TFhirProfileStructureElementDefinition(oSource).comments.Clone;
-  requirements := TFhirProfileStructureElementDefinition(oSource).requirements.Clone;
+  shortObject := TFhirProfileStructureElementDefinition(oSource).shortObject.Clone;
+  formalObject := TFhirProfileStructureElementDefinition(oSource).formalObject.Clone;
+  commentsObject := TFhirProfileStructureElementDefinition(oSource).commentsObject.Clone;
+  requirementsObject := TFhirProfileStructureElementDefinition(oSource).requirementsObject.Clone;
   FSynonymList.Assign(TFhirProfileStructureElementDefinition(oSource).FSynonymList);
-  min := TFhirProfileStructureElementDefinition(oSource).min.Clone;
-  max := TFhirProfileStructureElementDefinition(oSource).max.Clone;
+  minObject := TFhirProfileStructureElementDefinition(oSource).minObject.Clone;
+  maxObject := TFhirProfileStructureElementDefinition(oSource).maxObject.Clone;
   FType_List.Assign(TFhirProfileStructureElementDefinition(oSource).FType_List);
-  nameReference := TFhirProfileStructureElementDefinition(oSource).nameReference.Clone;
+  nameReferenceObject := TFhirProfileStructureElementDefinition(oSource).nameReferenceObject.Clone;
   value := TFhirProfileStructureElementDefinition(oSource).value.Clone;
   example := TFhirProfileStructureElementDefinition(oSource).example.Clone;
-  maxLength := TFhirProfileStructureElementDefinition(oSource).maxLength.Clone;
+  maxLengthObject := TFhirProfileStructureElementDefinition(oSource).maxLengthObject.Clone;
   FConditionList.Assign(TFhirProfileStructureElementDefinition(oSource).FConditionList);
   FConstraintList.Assign(TFhirProfileStructureElementDefinition(oSource).FConstraintList);
-  mustSupport := TFhirProfileStructureElementDefinition(oSource).mustSupport.Clone;
-  isModifier := TFhirProfileStructureElementDefinition(oSource).isModifier.Clone;
+  mustSupportObject := TFhirProfileStructureElementDefinition(oSource).mustSupportObject.Clone;
+  isModifierObject := TFhirProfileStructureElementDefinition(oSource).isModifierObject.Clone;
   binding := TFhirProfileStructureElementDefinition(oSource).binding.Clone;
   FMappingList.Assign(TFhirProfileStructureElementDefinition(oSource).FMappingList);
 end;
@@ -35751,39 +40483,39 @@ procedure TFhirProfileStructureElementDefinition.GetChildrenByName(child_name : 
 begin
   inherited;
   if (child_name = 'short') Then
-     list.add(Short.Link);
+     list.add(FShort.Link);
   if (child_name = 'formal') Then
-     list.add(Formal.Link);
+     list.add(FFormal.Link);
   if (child_name = 'comments') Then
-     list.add(Comments.Link);
+     list.add(FComments.Link);
   if (child_name = 'requirements') Then
-     list.add(Requirements.Link);
+     list.add(FRequirements.Link);
   if (child_name = 'synonym') Then
      list.addAll(FSynonymList);
   if (child_name = 'min') Then
-     list.add(Min.Link);
+     list.add(FMin.Link);
   if (child_name = 'max') Then
-     list.add(Max.Link);
+     list.add(FMax.Link);
   if (child_name = 'type') Then
      list.addAll(FType_List);
   if (child_name = 'nameReference') Then
-     list.add(NameReference.Link);
+     list.add(FNameReference.Link);
   if (child_name = 'value[x]') Then
-     list.add(Value.Link);
+     list.add(FValue.Link);
   if (child_name = 'example[x]') Then
-     list.add(Example.Link);
+     list.add(FExample.Link);
   if (child_name = 'maxLength') Then
-     list.add(MaxLength.Link);
+     list.add(FMaxLength.Link);
   if (child_name = 'condition') Then
      list.addAll(FConditionList);
   if (child_name = 'constraint') Then
      list.addAll(FConstraintList);
   if (child_name = 'mustSupport') Then
-     list.add(MustSupport.Link);
+     list.add(FMustSupport.Link);
   if (child_name = 'isModifier') Then
-     list.add(IsModifier.Link);
+     list.add(FIsModifier.Link);
   if (child_name = 'binding') Then
-     list.add(Binding.Link);
+     list.add(FBinding.Link);
   if (child_name = 'mapping') Then
      list.addAll(FMappingList);
 end;
@@ -35813,23 +40545,23 @@ end;
 
 procedure TFhirProfileStructureElementDefinition.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'short') then Short := propValue as TFhirString{5}
-  else if (propName = 'formal') then Formal := propValue as TFhirString{5}
-  else if (propName = 'comments') then Comments := propValue as TFhirString{5}
-  else if (propName = 'requirements') then Requirements := propValue as TFhirString{5}
+  if (propName = 'short') then ShortObject := propValue as TFhirString{5a}
+  else if (propName = 'formal') then FormalObject := propValue as TFhirString{5a}
+  else if (propName = 'comments') then CommentsObject := propValue as TFhirString{5a}
+  else if (propName = 'requirements') then RequirementsObject := propValue as TFhirString{5a}
   else if (propName = 'synonym') then SynonymList.add(propValue as TFhirString){2}
-  else if (propName = 'min') then Min := propValue as TFhirInteger{5}
-  else if (propName = 'max') then Max := propValue as TFhirString{5}
+  else if (propName = 'min') then MinObject := propValue as TFhirInteger{5a}
+  else if (propName = 'max') then MaxObject := propValue as TFhirString{5a}
   else if (propName = 'type') then Type_List.add(propValue as TFhirProfileStructureElementDefinitionType){2}
-  else if (propName = 'nameReference') then NameReference := propValue as TFhirString{5}
-  else if (propName = 'value[x]') then Value := propValue as TFhirType{4}
-  else if (propName = 'example[x]') then Example := propValue as TFhirType{4}
-  else if (propName = 'maxLength') then MaxLength := propValue as TFhirInteger{5}
+  else if (propName = 'nameReference') then NameReferenceObject := propValue as TFhirString{5a}
+  else if (propName.startsWith('value')) then Value := propValue as TFhirType{4}
+  else if (propName.startsWith('example')) then Example := propValue as TFhirType{4}
+  else if (propName = 'maxLength') then MaxLengthObject := propValue as TFhirInteger{5a}
   else if (propName = 'condition') then ConditionList.add(propValue as TFhirId){2}
   else if (propName = 'constraint') then ConstraintList.add(propValue as TFhirProfileStructureElementDefinitionConstraint){2}
-  else if (propName = 'mustSupport') then MustSupport := propValue as TFhirBoolean{5}
-  else if (propName = 'isModifier') then IsModifier := propValue as TFhirBoolean{5}
-  else if (propName = 'binding') then Binding := propValue as TFhirProfileStructureElementDefinitionBinding{4}
+  else if (propName = 'mustSupport') then MustSupportObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'isModifier') then IsModifierObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'binding') then Binding := propValue as TFhirProfileStructureElementDefinitionBinding{4b}
   else if (propName = 'mapping') then MappingList.add(propValue as TFhirProfileStructureElementDefinitionMapping){2}
   else inherited;
 end;
@@ -35862,7 +40594,7 @@ begin
   if FShort = nil then
     result := ''
   else
-    result := Short.value;
+    result := FShort.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetShortST(value : String);
@@ -35888,7 +40620,7 @@ begin
   if FFormal = nil then
     result := ''
   else
-    result := Formal.value;
+    result := FFormal.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetFormalST(value : String);
@@ -35914,7 +40646,7 @@ begin
   if FComments = nil then
     result := ''
   else
-    result := Comments.value;
+    result := FComments.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetCommentsST(value : String);
@@ -35940,7 +40672,7 @@ begin
   if FRequirements = nil then
     result := ''
   else
-    result := Requirements.value;
+    result := FRequirements.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetRequirementsST(value : String);
@@ -35966,7 +40698,7 @@ begin
   if FMin = nil then
     result := ''
   else
-    result := Min.value;
+    result := FMin.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetMinST(value : String);
@@ -35992,7 +40724,7 @@ begin
   if FMax = nil then
     result := ''
   else
-    result := Max.value;
+    result := FMax.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetMaxST(value : String);
@@ -36018,7 +40750,7 @@ begin
   if FNameReference = nil then
     result := ''
   else
-    result := NameReference.value;
+    result := FNameReference.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetNameReferenceST(value : String);
@@ -36056,7 +40788,7 @@ begin
   if FMaxLength = nil then
     result := ''
   else
-    result := MaxLength.value;
+    result := FMaxLength.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetMaxLengthST(value : String);
@@ -36082,7 +40814,7 @@ begin
   if FMustSupport = nil then
     result := false
   else
-    result := MustSupport.value;
+    result := FMustSupport.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetMustSupportST(value : Boolean);
@@ -36103,7 +40835,7 @@ begin
   if FIsModifier = nil then
     result := false
   else
-    result := IsModifier.value;
+    result := FIsModifier.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinition.SetIsModifierST(value : Boolean);
@@ -36117,6 +40849,34 @@ Procedure TFhirProfileStructureElementDefinition.SetBinding(value : TFhirProfile
 begin
   FBinding.free;
   FBinding := value;
+end;
+
+
+{ TFhirProfileStructureElementDefinitionListEnumerator }
+
+Constructor TFhirProfileStructureElementDefinitionListEnumerator.Create(list : TFhirProfileStructureElementDefinitionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureElementDefinitionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureElementDefinitionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureElementDefinitionListEnumerator.GetCurrent : TFhirProfileStructureElementDefinition;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -36142,6 +40902,11 @@ end;
 procedure TFhirProfileStructureElementDefinitionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureElementDefinitionList.GetEnumerator : TFhirProfileStructureElementDefinitionListEnumerator;
+begin
+  result := TFhirProfileStructureElementDefinitionListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureElementDefinitionList.Clone: TFhirProfileStructureElementDefinitionList;
@@ -36228,8 +40993,8 @@ end;
 procedure TFhirProfileStructureElementDefinitionType.Assign(oSource : TAdvObject);
 begin
   inherited;
-  code := TFhirProfileStructureElementDefinitionType(oSource).code.Clone;
-  profile := TFhirProfileStructureElementDefinitionType(oSource).profile.Clone;
+  codeObject := TFhirProfileStructureElementDefinitionType(oSource).codeObject.Clone;
+  profileObject := TFhirProfileStructureElementDefinitionType(oSource).profileObject.Clone;
   FAggregation.Assign(TFhirProfileStructureElementDefinitionType(oSource).FAggregation);
 end;
 
@@ -36237,9 +41002,9 @@ procedure TFhirProfileStructureElementDefinitionType.GetChildrenByName(child_nam
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'profile') Then
-     list.add(Profile.Link);
+     list.add(FProfile.Link);
   if (child_name = 'aggregation') Then
      list.addAll(FAggregation);
 end;
@@ -36254,8 +41019,14 @@ end;
 
 procedure TFhirProfileStructureElementDefinitionType.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCode{5}
-  else if (propName = 'profile') then Profile := propValue as TFhirUri{5}
+  if (propName = 'code') then
+    if propValue is TFHIRCode then
+      CodeObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'profile') then ProfileObject := propValue as TFhirUri{5a}
   else if (propName = 'aggregation') then FAggregation.add(propValue as TFHIREnum) {1}
   else inherited;
 end;
@@ -36288,7 +41059,7 @@ begin
   if FCode = nil then
     result := ''
   else
-    result := Code.value;
+    result := FCode.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionType.SetCodeST(value : String);
@@ -36314,7 +41085,7 @@ begin
   if FProfile = nil then
     result := ''
   else
-    result := Profile.value;
+    result := FProfile.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionType.SetProfileST(value : String);
@@ -36333,17 +41104,45 @@ Function TFhirProfileStructureElementDefinitionType.GetAggregationST : TFhirReso
   var i : integer;
 begin
   result := [];
-  for i := 0 to aggregation.count - 1 do
-    result := result + [TFhirResourceAggregationMode(StringArrayIndexOfSensitive(CODES_TFhirResourceAggregationMode, aggregation[i].value))];
+  for i := 0 to Faggregation.count - 1 do
+    result := result + [TFhirResourceAggregationMode(StringArrayIndexOfSensitive(CODES_TFhirResourceAggregationMode, Faggregation[i].value))];
 end;
 
 Procedure TFhirProfileStructureElementDefinitionType.SetAggregationST(value : TFhirResourceAggregationModeList);
 var a : TFhirResourceAggregationMode;
 begin
-  aggregation.clear;
+  Faggregation.clear;
   for a := low(TFhirResourceAggregationMode) to high(TFhirResourceAggregationMode) do
     if a in value then
-      aggregation.add(TFhirEnum.create(CODES_TFhirResourceAggregationMode[a]));
+      Faggregation.add(TFhirEnum.create(CODES_TFhirResourceAggregationMode[a]));
+end;
+
+
+{ TFhirProfileStructureElementDefinitionTypeListEnumerator }
+
+Constructor TFhirProfileStructureElementDefinitionTypeListEnumerator.Create(list : TFhirProfileStructureElementDefinitionTypeList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureElementDefinitionTypeListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureElementDefinitionTypeListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureElementDefinitionTypeListEnumerator.GetCurrent : TFhirProfileStructureElementDefinitionType;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -36369,6 +41168,11 @@ end;
 procedure TFhirProfileStructureElementDefinitionTypeList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureElementDefinitionTypeList.GetEnumerator : TFhirProfileStructureElementDefinitionTypeListEnumerator;
+begin
+  result := TFhirProfileStructureElementDefinitionTypeListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureElementDefinitionTypeList.Clone: TFhirProfileStructureElementDefinitionTypeList;
@@ -36456,26 +41260,26 @@ end;
 procedure TFhirProfileStructureElementDefinitionConstraint.Assign(oSource : TAdvObject);
 begin
   inherited;
-  key := TFhirProfileStructureElementDefinitionConstraint(oSource).key.Clone;
-  name := TFhirProfileStructureElementDefinitionConstraint(oSource).name.Clone;
+  keyObject := TFhirProfileStructureElementDefinitionConstraint(oSource).keyObject.Clone;
+  nameObject := TFhirProfileStructureElementDefinitionConstraint(oSource).nameObject.Clone;
   FSeverity := TFhirProfileStructureElementDefinitionConstraint(oSource).FSeverity.Link;
-  human := TFhirProfileStructureElementDefinitionConstraint(oSource).human.Clone;
-  xpath := TFhirProfileStructureElementDefinitionConstraint(oSource).xpath.Clone;
+  humanObject := TFhirProfileStructureElementDefinitionConstraint(oSource).humanObject.Clone;
+  xpathObject := TFhirProfileStructureElementDefinitionConstraint(oSource).xpathObject.Clone;
 end;
 
 procedure TFhirProfileStructureElementDefinitionConstraint.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'key') Then
-     list.add(Key.Link);
+     list.add(FKey.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'severity') Then
      list.add(FSeverity.Link);
   if (child_name = 'human') Then
-     list.add(Human.Link);
+     list.add(FHuman.Link);
   if (child_name = 'xpath') Then
-     list.add(Xpath.Link);
+     list.add(FXpath.Link);
 end;
 
 procedure TFhirProfileStructureElementDefinitionConstraint.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -36490,11 +41294,11 @@ end;
 
 procedure TFhirProfileStructureElementDefinitionConstraint.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'key') then Key := propValue as TFhirId{5}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'severity') then Severity := propValue as TFHIREnum
-  else if (propName = 'human') then Human := propValue as TFhirString{5}
-  else if (propName = 'xpath') then Xpath := propValue as TFhirString{5}
+  if (propName = 'key') then KeyObject := propValue as TFhirId{5a}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'severity') then SeverityObject := propValue as TFHIREnum
+  else if (propName = 'human') then HumanObject := propValue as TFhirString{5a}
+  else if (propName = 'xpath') then XpathObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -36526,7 +41330,7 @@ begin
   if FKey = nil then
     result := ''
   else
-    result := Key.value;
+    result := FKey.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionConstraint.SetKeyST(value : String);
@@ -36552,7 +41356,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionConstraint.SetNameST(value : String);
@@ -36578,15 +41382,15 @@ begin
   if FSeverity = nil then
     result := TFhirConstraintSeverity(0)
   else
-    result := TFhirConstraintSeverity(StringArrayIndexOfSensitive(CODES_TFhirConstraintSeverity, Severity.value));
+    result := TFhirConstraintSeverity(StringArrayIndexOfSensitive(CODES_TFhirConstraintSeverity, FSeverity.value));
 end;
 
 Procedure TFhirProfileStructureElementDefinitionConstraint.SetSeverityST(value : TFhirConstraintSeverity);
 begin
   if ord(value) = 0 then
-    Severity := nil
+    SeverityObject := nil
   else
-    Severity := TFhirEnum.create(CODES_TFhirConstraintSeverity[value]);
+    SeverityObject := TFhirEnum.create(CODES_TFhirConstraintSeverity[value]);
 end;
 
 Procedure TFhirProfileStructureElementDefinitionConstraint.SetHuman(value : TFhirString);
@@ -36600,7 +41404,7 @@ begin
   if FHuman = nil then
     result := ''
   else
-    result := Human.value;
+    result := FHuman.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionConstraint.SetHumanST(value : String);
@@ -36626,7 +41430,7 @@ begin
   if FXpath = nil then
     result := ''
   else
-    result := Xpath.value;
+    result := FXpath.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionConstraint.SetXpathST(value : String);
@@ -36639,6 +41443,34 @@ begin
   end
   else if FXpath <> nil then
     FXpath.value := '';
+end;
+
+
+{ TFhirProfileStructureElementDefinitionConstraintListEnumerator }
+
+Constructor TFhirProfileStructureElementDefinitionConstraintListEnumerator.Create(list : TFhirProfileStructureElementDefinitionConstraintList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureElementDefinitionConstraintListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureElementDefinitionConstraintListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureElementDefinitionConstraintListEnumerator.GetCurrent : TFhirProfileStructureElementDefinitionConstraint;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -36664,6 +41496,11 @@ end;
 procedure TFhirProfileStructureElementDefinitionConstraintList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureElementDefinitionConstraintList.GetEnumerator : TFhirProfileStructureElementDefinitionConstraintListEnumerator;
+begin
+  result := TFhirProfileStructureElementDefinitionConstraintListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureElementDefinitionConstraintList.Clone: TFhirProfileStructureElementDefinitionConstraintList;
@@ -36751,10 +41588,10 @@ end;
 procedure TFhirProfileStructureElementDefinitionBinding.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirProfileStructureElementDefinitionBinding(oSource).name.Clone;
-  isExtensible := TFhirProfileStructureElementDefinitionBinding(oSource).isExtensible.Clone;
+  nameObject := TFhirProfileStructureElementDefinitionBinding(oSource).nameObject.Clone;
+  isExtensibleObject := TFhirProfileStructureElementDefinitionBinding(oSource).isExtensibleObject.Clone;
   FConformance := TFhirProfileStructureElementDefinitionBinding(oSource).FConformance.Link;
-  description := TFhirProfileStructureElementDefinitionBinding(oSource).description.Clone;
+  descriptionObject := TFhirProfileStructureElementDefinitionBinding(oSource).descriptionObject.Clone;
   reference := TFhirProfileStructureElementDefinitionBinding(oSource).reference.Clone;
 end;
 
@@ -36762,15 +41599,15 @@ procedure TFhirProfileStructureElementDefinitionBinding.GetChildrenByName(child_
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'isExtensible') Then
-     list.add(IsExtensible.Link);
+     list.add(FIsExtensible.Link);
   if (child_name = 'conformance') Then
      list.add(FConformance.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'reference[x]') Then
-     list.add(Reference.Link);
+     list.add(FReference.Link);
 end;
 
 procedure TFhirProfileStructureElementDefinitionBinding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -36785,11 +41622,11 @@ end;
 
 procedure TFhirProfileStructureElementDefinitionBinding.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'isExtensible') then IsExtensible := propValue as TFhirBoolean{5}
-  else if (propName = 'conformance') then Conformance := propValue as TFHIREnum
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'reference[x]') then Reference := propValue as TFhirType{4}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'isExtensible') then IsExtensibleObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'conformance') then ConformanceObject := propValue as TFHIREnum
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName.startsWith('reference')) then Reference := propValue as TFhirType{4}
   else inherited;
 end;
 
@@ -36821,7 +41658,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionBinding.SetNameST(value : String);
@@ -36847,7 +41684,7 @@ begin
   if FIsExtensible = nil then
     result := false
   else
-    result := IsExtensible.value;
+    result := FIsExtensible.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionBinding.SetIsExtensibleST(value : Boolean);
@@ -36868,15 +41705,15 @@ begin
   if FConformance = nil then
     result := TFhirBindingConformance(0)
   else
-    result := TFhirBindingConformance(StringArrayIndexOfSensitive(CODES_TFhirBindingConformance, Conformance.value));
+    result := TFhirBindingConformance(StringArrayIndexOfSensitive(CODES_TFhirBindingConformance, FConformance.value));
 end;
 
 Procedure TFhirProfileStructureElementDefinitionBinding.SetConformanceST(value : TFhirBindingConformance);
 begin
   if ord(value) = 0 then
-    Conformance := nil
+    ConformanceObject := nil
   else
-    Conformance := TFhirEnum.create(CODES_TFhirBindingConformance[value]);
+    ConformanceObject := TFhirEnum.create(CODES_TFhirBindingConformance[value]);
 end;
 
 Procedure TFhirProfileStructureElementDefinitionBinding.SetDescription(value : TFhirString);
@@ -36890,7 +41727,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionBinding.SetDescriptionST(value : String);
@@ -36909,6 +41746,34 @@ Procedure TFhirProfileStructureElementDefinitionBinding.SetReference(value : TFh
 begin
   FReference.free;
   FReference := value;
+end;
+
+
+{ TFhirProfileStructureElementDefinitionBindingListEnumerator }
+
+Constructor TFhirProfileStructureElementDefinitionBindingListEnumerator.Create(list : TFhirProfileStructureElementDefinitionBindingList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureElementDefinitionBindingListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureElementDefinitionBindingListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureElementDefinitionBindingListEnumerator.GetCurrent : TFhirProfileStructureElementDefinitionBinding;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -36934,6 +41799,11 @@ end;
 procedure TFhirProfileStructureElementDefinitionBindingList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureElementDefinitionBindingList.GetEnumerator : TFhirProfileStructureElementDefinitionBindingListEnumerator;
+begin
+  result := TFhirProfileStructureElementDefinitionBindingListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureElementDefinitionBindingList.Clone: TFhirProfileStructureElementDefinitionBindingList;
@@ -37018,17 +41888,17 @@ end;
 procedure TFhirProfileStructureElementDefinitionMapping.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identity := TFhirProfileStructureElementDefinitionMapping(oSource).identity.Clone;
-  map := TFhirProfileStructureElementDefinitionMapping(oSource).map.Clone;
+  identityObject := TFhirProfileStructureElementDefinitionMapping(oSource).identityObject.Clone;
+  mapObject := TFhirProfileStructureElementDefinitionMapping(oSource).mapObject.Clone;
 end;
 
 procedure TFhirProfileStructureElementDefinitionMapping.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'identity') Then
-     list.add(Identity.Link);
+     list.add(FIdentity.Link);
   if (child_name = 'map') Then
-     list.add(Map.Link);
+     list.add(FMap.Link);
 end;
 
 procedure TFhirProfileStructureElementDefinitionMapping.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -37040,8 +41910,8 @@ end;
 
 procedure TFhirProfileStructureElementDefinitionMapping.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identity') then Identity := propValue as TFhirId{5}
-  else if (propName = 'map') then Map := propValue as TFhirString{5}
+  if (propName = 'identity') then IdentityObject := propValue as TFhirId{5a}
+  else if (propName = 'map') then MapObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -37073,7 +41943,7 @@ begin
   if FIdentity = nil then
     result := ''
   else
-    result := Identity.value;
+    result := FIdentity.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionMapping.SetIdentityST(value : String);
@@ -37099,7 +41969,7 @@ begin
   if FMap = nil then
     result := ''
   else
-    result := Map.value;
+    result := FMap.value;
 end;
 
 Procedure TFhirProfileStructureElementDefinitionMapping.SetMapST(value : String);
@@ -37112,6 +41982,34 @@ begin
   end
   else if FMap <> nil then
     FMap.value := '';
+end;
+
+
+{ TFhirProfileStructureElementDefinitionMappingListEnumerator }
+
+Constructor TFhirProfileStructureElementDefinitionMappingListEnumerator.Create(list : TFhirProfileStructureElementDefinitionMappingList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureElementDefinitionMappingListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureElementDefinitionMappingListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureElementDefinitionMappingListEnumerator.GetCurrent : TFhirProfileStructureElementDefinitionMapping;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -37137,6 +42035,11 @@ end;
 procedure TFhirProfileStructureElementDefinitionMappingList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureElementDefinitionMappingList.GetEnumerator : TFhirProfileStructureElementDefinitionMappingListEnumerator;
+begin
+  result := TFhirProfileStructureElementDefinitionMappingListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureElementDefinitionMappingList.Clone: TFhirProfileStructureElementDefinitionMappingList;
@@ -37225,10 +42128,10 @@ end;
 procedure TFhirProfileStructureSearchParam.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirProfileStructureSearchParam(oSource).name.Clone;
+  nameObject := TFhirProfileStructureSearchParam(oSource).nameObject.Clone;
   FType_ := TFhirProfileStructureSearchParam(oSource).FType_.Link;
-  documentation := TFhirProfileStructureSearchParam(oSource).documentation.Clone;
-  xpath := TFhirProfileStructureSearchParam(oSource).xpath.Clone;
+  documentationObject := TFhirProfileStructureSearchParam(oSource).documentationObject.Clone;
+  xpathObject := TFhirProfileStructureSearchParam(oSource).xpathObject.Clone;
   FTargetList.Assign(TFhirProfileStructureSearchParam(oSource).FTargetList);
 end;
 
@@ -37236,13 +42139,13 @@ procedure TFhirProfileStructureSearchParam.GetChildrenByName(child_name : string
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
   if (child_name = 'xpath') Then
-     list.add(Xpath.Link);
+     list.add(FXpath.Link);
   if (child_name = 'target') Then
      list.addAll(FTargetList);
 end;
@@ -37259,10 +42162,10 @@ end;
 
 procedure TFhirProfileStructureSearchParam.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
-  else if (propName = 'xpath') then Xpath := propValue as TFhirString{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
+  else if (propName = 'xpath') then XpathObject := propValue as TFhirString{5a}
   else if (propName = 'target') then TargetList.add(propValue as TFhirCode){2}
   else inherited;
 end;
@@ -37295,7 +42198,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirProfileStructureSearchParam.SetNameST(value : String);
@@ -37321,15 +42224,15 @@ begin
   if FType_ = nil then
     result := TFhirSearchParamType(0)
   else
-    result := TFhirSearchParamType(StringArrayIndexOfSensitive(CODES_TFhirSearchParamType, Type_.value));
+    result := TFhirSearchParamType(StringArrayIndexOfSensitive(CODES_TFhirSearchParamType, FType_.value));
 end;
 
 Procedure TFhirProfileStructureSearchParam.SetType_ST(value : TFhirSearchParamType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirSearchParamType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirSearchParamType[value]);
 end;
 
 Procedure TFhirProfileStructureSearchParam.SetDocumentation(value : TFhirString);
@@ -37343,7 +42246,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirProfileStructureSearchParam.SetDocumentationST(value : String);
@@ -37369,7 +42272,7 @@ begin
   if FXpath = nil then
     result := ''
   else
-    result := Xpath.value;
+    result := FXpath.value;
 end;
 
 Procedure TFhirProfileStructureSearchParam.SetXpathST(value : String);
@@ -37382,6 +42285,34 @@ begin
   end
   else if FXpath <> nil then
     FXpath.value := '';
+end;
+
+
+{ TFhirProfileStructureSearchParamListEnumerator }
+
+Constructor TFhirProfileStructureSearchParamListEnumerator.Create(list : TFhirProfileStructureSearchParamList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileStructureSearchParamListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileStructureSearchParamListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileStructureSearchParamListEnumerator.GetCurrent : TFhirProfileStructureSearchParam;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -37407,6 +42338,11 @@ end;
 procedure TFhirProfileStructureSearchParamList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileStructureSearchParamList.GetEnumerator : TFhirProfileStructureSearchParamListEnumerator;
+begin
+  result := TFhirProfileStructureSearchParamListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileStructureSearchParamList.Clone: TFhirProfileStructureSearchParamList;
@@ -37495,8 +42431,8 @@ end;
 procedure TFhirProfileExtensionDefn.Assign(oSource : TAdvObject);
 begin
   inherited;
-  code := TFhirProfileExtensionDefn(oSource).code.Clone;
-  display := TFhirProfileExtensionDefn(oSource).display.Clone;
+  codeObject := TFhirProfileExtensionDefn(oSource).codeObject.Clone;
+  displayObject := TFhirProfileExtensionDefn(oSource).displayObject.Clone;
   FContextType := TFhirProfileExtensionDefn(oSource).FContextType.Link;
   FContextList.Assign(TFhirProfileExtensionDefn(oSource).FContextList);
   definition := TFhirProfileExtensionDefn(oSource).definition.Clone;
@@ -37506,15 +42442,15 @@ procedure TFhirProfileExtensionDefn.GetChildrenByName(child_name : string; list 
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'display') Then
-     list.add(Display.Link);
+     list.add(FDisplay.Link);
   if (child_name = 'contextType') Then
      list.add(FContextType.Link);
   if (child_name = 'context') Then
      list.addAll(FContextList);
   if (child_name = 'definition') Then
-     list.add(Definition.Link);
+     list.add(FDefinition.Link);
 end;
 
 procedure TFhirProfileExtensionDefn.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -37529,11 +42465,17 @@ end;
 
 procedure TFhirProfileExtensionDefn.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCode{5}
-  else if (propName = 'display') then Display := propValue as TFhirString{5}
-  else if (propName = 'contextType') then ContextType := propValue as TFHIREnum
+  if (propName = 'code') then
+    if propValue is TFHIRCode then
+      CodeObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'display') then DisplayObject := propValue as TFhirString{5a}
+  else if (propName = 'contextType') then ContextTypeObject := propValue as TFHIREnum
   else if (propName = 'context') then ContextList.add(propValue as TFhirString){2}
-  else if (propName = 'definition') then Definition := propValue as TFhirProfileStructureElementDefinition{4}
+  else if (propName = 'definition') then Definition := propValue as TFhirProfileStructureElementDefinition{4b}
   else inherited;
 end;
 
@@ -37565,7 +42507,7 @@ begin
   if FCode = nil then
     result := ''
   else
-    result := Code.value;
+    result := FCode.value;
 end;
 
 Procedure TFhirProfileExtensionDefn.SetCodeST(value : String);
@@ -37591,7 +42533,7 @@ begin
   if FDisplay = nil then
     result := ''
   else
-    result := Display.value;
+    result := FDisplay.value;
 end;
 
 Procedure TFhirProfileExtensionDefn.SetDisplayST(value : String);
@@ -37617,21 +42559,49 @@ begin
   if FContextType = nil then
     result := TFhirExtensionContext(0)
   else
-    result := TFhirExtensionContext(StringArrayIndexOfSensitive(CODES_TFhirExtensionContext, ContextType.value));
+    result := TFhirExtensionContext(StringArrayIndexOfSensitive(CODES_TFhirExtensionContext, FContextType.value));
 end;
 
 Procedure TFhirProfileExtensionDefn.SetContextTypeST(value : TFhirExtensionContext);
 begin
   if ord(value) = 0 then
-    ContextType := nil
+    ContextTypeObject := nil
   else
-    ContextType := TFhirEnum.create(CODES_TFhirExtensionContext[value]);
+    ContextTypeObject := TFhirEnum.create(CODES_TFhirExtensionContext[value]);
 end;
 
 Procedure TFhirProfileExtensionDefn.SetDefinition(value : TFhirProfileStructureElementDefinition);
 begin
   FDefinition.free;
   FDefinition := value;
+end;
+
+
+{ TFhirProfileExtensionDefnListEnumerator }
+
+Constructor TFhirProfileExtensionDefnListEnumerator.Create(list : TFhirProfileExtensionDefnList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileExtensionDefnListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileExtensionDefnListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileExtensionDefnListEnumerator.GetCurrent : TFhirProfileExtensionDefn;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -37657,6 +42627,11 @@ end;
 procedure TFhirProfileExtensionDefnList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileExtensionDefnList.GetEnumerator : TFhirProfileExtensionDefnListEnumerator;
+begin
+  result := TFhirProfileExtensionDefnListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileExtensionDefnList.Clone: TFhirProfileExtensionDefnList;
@@ -37743,8 +42718,8 @@ end;
 procedure TFhirProfileQuery.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirProfileQuery(oSource).name.Clone;
-  documentation := TFhirProfileQuery(oSource).documentation.Clone;
+  nameObject := TFhirProfileQuery(oSource).nameObject.Clone;
+  documentationObject := TFhirProfileQuery(oSource).documentationObject.Clone;
   FParameterList.Assign(TFhirProfileQuery(oSource).FParameterList);
 end;
 
@@ -37752,9 +42727,9 @@ procedure TFhirProfileQuery.GetChildrenByName(child_name : string; list : TFHIRO
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'documentation') Then
-     list.add(Documentation.Link);
+     list.add(FDocumentation.Link);
   if (child_name = 'parameter') Then
      list.addAll(FParameterList);
 end;
@@ -37769,8 +42744,8 @@ end;
 
 procedure TFhirProfileQuery.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'documentation') then Documentation := propValue as TFhirString{5}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'documentation') then DocumentationObject := propValue as TFhirString{5a}
   else if (propName = 'parameter') then ParameterList.add(propValue as TFhirProfileStructureSearchParam){2}
   else inherited;
 end;
@@ -37803,7 +42778,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirProfileQuery.SetNameST(value : String);
@@ -37829,7 +42804,7 @@ begin
   if FDocumentation = nil then
     result := ''
   else
-    result := Documentation.value;
+    result := FDocumentation.value;
 end;
 
 Procedure TFhirProfileQuery.SetDocumentationST(value : String);
@@ -37842,6 +42817,34 @@ begin
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
+end;
+
+
+{ TFhirProfileQueryListEnumerator }
+
+Constructor TFhirProfileQueryListEnumerator.Create(list : TFhirProfileQueryList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProfileQueryListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProfileQueryListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProfileQueryListEnumerator.GetCurrent : TFhirProfileQuery;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -37867,6 +42870,11 @@ end;
 procedure TFhirProfileQueryList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProfileQueryList.GetEnumerator : TFhirProfileQueryListEnumerator;
+begin
+  result := TFhirProfileQueryListEnumerator.Create(self.link);
 end;
 
 function TFhirProfileQueryList.Clone: TFhirProfileQueryList;
@@ -37955,21 +42963,21 @@ begin
   inherited;
   role := TFhirProvenanceAgent(oSource).role.Clone;
   type_ := TFhirProvenanceAgent(oSource).type_.Clone;
-  reference := TFhirProvenanceAgent(oSource).reference.Clone;
-  display := TFhirProvenanceAgent(oSource).display.Clone;
+  referenceObject := TFhirProvenanceAgent(oSource).referenceObject.Clone;
+  displayObject := TFhirProvenanceAgent(oSource).displayObject.Clone;
 end;
 
 procedure TFhirProvenanceAgent.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'role') Then
-     list.add(Role.Link);
+     list.add(FRole.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'reference') Then
-     list.add(Reference.Link);
+     list.add(FReference.Link);
   if (child_name = 'display') Then
-     list.add(Display.Link);
+     list.add(FDisplay.Link);
 end;
 
 procedure TFhirProvenanceAgent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -37983,10 +42991,10 @@ end;
 
 procedure TFhirProvenanceAgent.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'role') then Role := propValue as TFhirCoding{4}
-  else if (propName = 'type') then Type_ := propValue as TFhirCoding{4}
-  else if (propName = 'reference') then Reference := propValue as TFhirUri{5}
-  else if (propName = 'display') then Display := propValue as TFhirString{5}
+  if (propName = 'role') then Role := propValue as TFhirCoding{4b}
+  else if (propName = 'type') then Type_ := propValue as TFhirCoding{4b}
+  else if (propName = 'reference') then ReferenceObject := propValue as TFhirUri{5a}
+  else if (propName = 'display') then DisplayObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -38030,7 +43038,7 @@ begin
   if FReference = nil then
     result := ''
   else
-    result := Reference.value;
+    result := FReference.value;
 end;
 
 Procedure TFhirProvenanceAgent.SetReferenceST(value : String);
@@ -38056,7 +43064,7 @@ begin
   if FDisplay = nil then
     result := ''
   else
-    result := Display.value;
+    result := FDisplay.value;
 end;
 
 Procedure TFhirProvenanceAgent.SetDisplayST(value : String);
@@ -38069,6 +43077,34 @@ begin
   end
   else if FDisplay <> nil then
     FDisplay.value := '';
+end;
+
+
+{ TFhirProvenanceAgentListEnumerator }
+
+Constructor TFhirProvenanceAgentListEnumerator.Create(list : TFhirProvenanceAgentList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProvenanceAgentListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProvenanceAgentListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProvenanceAgentListEnumerator.GetCurrent : TFhirProvenanceAgent;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -38094,6 +43130,11 @@ end;
 procedure TFhirProvenanceAgentList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProvenanceAgentList.GetEnumerator : TFhirProvenanceAgentListEnumerator;
+begin
+  result := TFhirProvenanceAgentListEnumerator.Create(self.link);
 end;
 
 function TFhirProvenanceAgentList.Clone: TFhirProvenanceAgentList;
@@ -38183,8 +43224,8 @@ begin
   inherited;
   FRole := TFhirProvenanceEntity(oSource).FRole.Link;
   type_ := TFhirProvenanceEntity(oSource).type_.Clone;
-  reference := TFhirProvenanceEntity(oSource).reference.Clone;
-  display := TFhirProvenanceEntity(oSource).display.Clone;
+  referenceObject := TFhirProvenanceEntity(oSource).referenceObject.Clone;
+  displayObject := TFhirProvenanceEntity(oSource).displayObject.Clone;
   agent := TFhirProvenanceEntity(oSource).agent.Clone;
 end;
 
@@ -38194,13 +43235,13 @@ begin
   if (child_name = 'role') Then
      list.add(FRole.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'reference') Then
-     list.add(Reference.Link);
+     list.add(FReference.Link);
   if (child_name = 'display') Then
-     list.add(Display.Link);
+     list.add(FDisplay.Link);
   if (child_name = 'agent') Then
-     list.add(Agent.Link);
+     list.add(FAgent.Link);
 end;
 
 procedure TFhirProvenanceEntity.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -38215,11 +43256,11 @@ end;
 
 procedure TFhirProvenanceEntity.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'role') then Role := propValue as TFHIREnum
-  else if (propName = 'type') then Type_ := propValue as TFhirCoding{4}
-  else if (propName = 'reference') then Reference := propValue as TFhirUri{5}
-  else if (propName = 'display') then Display := propValue as TFhirString{5}
-  else if (propName = 'agent') then Agent := propValue as TFhirProvenanceAgent{4}
+  if (propName = 'role') then RoleObject := propValue as TFHIREnum
+  else if (propName = 'type') then Type_ := propValue as TFhirCoding{4b}
+  else if (propName = 'reference') then ReferenceObject := propValue as TFhirUri{5a}
+  else if (propName = 'display') then DisplayObject := propValue as TFhirString{5a}
+  else if (propName = 'agent') then Agent := propValue as TFhirProvenanceAgent{4b}
   else inherited;
 end;
 
@@ -38251,15 +43292,15 @@ begin
   if FRole = nil then
     result := TFhirProvenanceEntityRole(0)
   else
-    result := TFhirProvenanceEntityRole(StringArrayIndexOfSensitive(CODES_TFhirProvenanceEntityRole, Role.value));
+    result := TFhirProvenanceEntityRole(StringArrayIndexOfSensitive(CODES_TFhirProvenanceEntityRole, FRole.value));
 end;
 
 Procedure TFhirProvenanceEntity.SetRoleST(value : TFhirProvenanceEntityRole);
 begin
   if ord(value) = 0 then
-    Role := nil
+    RoleObject := nil
   else
-    Role := TFhirEnum.create(CODES_TFhirProvenanceEntityRole[value]);
+    RoleObject := TFhirEnum.create(CODES_TFhirProvenanceEntityRole[value]);
 end;
 
 Procedure TFhirProvenanceEntity.SetType_(value : TFhirCoding);
@@ -38279,7 +43320,7 @@ begin
   if FReference = nil then
     result := ''
   else
-    result := Reference.value;
+    result := FReference.value;
 end;
 
 Procedure TFhirProvenanceEntity.SetReferenceST(value : String);
@@ -38305,7 +43346,7 @@ begin
   if FDisplay = nil then
     result := ''
   else
-    result := Display.value;
+    result := FDisplay.value;
 end;
 
 Procedure TFhirProvenanceEntity.SetDisplayST(value : String);
@@ -38324,6 +43365,34 @@ Procedure TFhirProvenanceEntity.SetAgent(value : TFhirProvenanceAgent);
 begin
   FAgent.free;
   FAgent := value;
+end;
+
+
+{ TFhirProvenanceEntityListEnumerator }
+
+Constructor TFhirProvenanceEntityListEnumerator.Create(list : TFhirProvenanceEntityList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirProvenanceEntityListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirProvenanceEntityListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirProvenanceEntityListEnumerator.GetCurrent : TFhirProvenanceEntity;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -38349,6 +43418,11 @@ end;
 procedure TFhirProvenanceEntityList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirProvenanceEntityList.GetEnumerator : TFhirProvenanceEntityListEnumerator;
+begin
+  result := TFhirProvenanceEntityListEnumerator.Create(self.link);
 end;
 
 function TFhirProvenanceEntityList.Clone: TFhirProvenanceEntityList;
@@ -38446,9 +43520,9 @@ end;
 procedure TFhirQueryResponse.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirQueryResponse(oSource).identifier.Clone;
+  identifierObject := TFhirQueryResponse(oSource).identifierObject.Clone;
   FOutcome := TFhirQueryResponse(oSource).FOutcome.Link;
-  total := TFhirQueryResponse(oSource).total.Clone;
+  totalObject := TFhirQueryResponse(oSource).totalObject.Clone;
   FParameterList.Assign(TFhirQueryResponse(oSource).FParameterList);
   FFirstList.Assign(TFhirQueryResponse(oSource).FFirstList);
   FPreviousList.Assign(TFhirQueryResponse(oSource).FPreviousList);
@@ -38461,11 +43535,11 @@ procedure TFhirQueryResponse.GetChildrenByName(child_name : string; list : TFHIR
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'outcome') Then
      list.add(FOutcome.Link);
   if (child_name = 'total') Then
-     list.add(Total.Link);
+     list.add(FTotal.Link);
   if (child_name = 'parameter') Then
      list.addAll(FParameterList);
   if (child_name = 'first') Then
@@ -38496,9 +43570,9 @@ end;
 
 procedure TFhirQueryResponse.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirUri{5}
-  else if (propName = 'outcome') then Outcome := propValue as TFHIREnum
-  else if (propName = 'total') then Total := propValue as TFhirInteger{5}
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirUri{5a}
+  else if (propName = 'outcome') then OutcomeObject := propValue as TFHIREnum
+  else if (propName = 'total') then TotalObject := propValue as TFhirInteger{5a}
   else if (propName = 'parameter') then ParameterList.add(propValue as TFhirExtension){2}
   else if (propName = 'first') then FirstList.add(propValue as TFhirExtension){2}
   else if (propName = 'previous') then PreviousList.add(propValue as TFhirExtension){2}
@@ -38536,7 +43610,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirQueryResponse.SetIdentifierST(value : String);
@@ -38562,15 +43636,15 @@ begin
   if FOutcome = nil then
     result := TFhirQueryOutcome(0)
   else
-    result := TFhirQueryOutcome(StringArrayIndexOfSensitive(CODES_TFhirQueryOutcome, Outcome.value));
+    result := TFhirQueryOutcome(StringArrayIndexOfSensitive(CODES_TFhirQueryOutcome, FOutcome.value));
 end;
 
 Procedure TFhirQueryResponse.SetOutcomeST(value : TFhirQueryOutcome);
 begin
   if ord(value) = 0 then
-    Outcome := nil
+    OutcomeObject := nil
   else
-    Outcome := TFhirEnum.create(CODES_TFhirQueryOutcome[value]);
+    OutcomeObject := TFhirEnum.create(CODES_TFhirQueryOutcome[value]);
 end;
 
 Procedure TFhirQueryResponse.SetTotal(value : TFhirInteger);
@@ -38584,7 +43658,7 @@ begin
   if FTotal = nil then
     result := ''
   else
-    result := Total.value;
+    result := FTotal.value;
 end;
 
 Procedure TFhirQueryResponse.SetTotalST(value : String);
@@ -38597,6 +43671,34 @@ begin
   end
   else if FTotal <> nil then
     FTotal.value := '';
+end;
+
+
+{ TFhirQueryResponseListEnumerator }
+
+Constructor TFhirQueryResponseListEnumerator.Create(list : TFhirQueryResponseList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirQueryResponseListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirQueryResponseListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirQueryResponseListEnumerator.GetCurrent : TFhirQueryResponse;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -38622,6 +43724,11 @@ end;
 procedure TFhirQueryResponseList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirQueryResponseList.GetEnumerator : TFhirQueryResponseListEnumerator;
+begin
+  result := TFhirQueryResponseListEnumerator.Create(self.link);
 end;
 
 function TFhirQueryResponseList.Clone: TFhirQueryResponseList;
@@ -38713,8 +43820,8 @@ procedure TFhirQuestionnaireGroup.Assign(oSource : TAdvObject);
 begin
   inherited;
   name := TFhirQuestionnaireGroup(oSource).name.Clone;
-  header := TFhirQuestionnaireGroup(oSource).header.Clone;
-  text := TFhirQuestionnaireGroup(oSource).text.Clone;
+  headerObject := TFhirQuestionnaireGroup(oSource).headerObject.Clone;
+  textObject := TFhirQuestionnaireGroup(oSource).textObject.Clone;
   subject := TFhirQuestionnaireGroup(oSource).subject.Clone;
   FGroupList.Assign(TFhirQuestionnaireGroup(oSource).FGroupList);
   FQuestionList.Assign(TFhirQuestionnaireGroup(oSource).FQuestionList);
@@ -38724,13 +43831,13 @@ procedure TFhirQuestionnaireGroup.GetChildrenByName(child_name : string; list : 
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'header') Then
-     list.add(Header.Link);
+     list.add(FHeader.Link);
   if (child_name = 'text') Then
-     list.add(Text.Link);
+     list.add(FText.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'group') Then
      list.addAll(FGroupList);
   if (child_name = 'question') Then
@@ -38750,10 +43857,10 @@ end;
 
 procedure TFhirQuestionnaireGroup.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'header') then Header := propValue as TFhirString{5}
-  else if (propName = 'text') then Text := propValue as TFhirString{5}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'header') then HeaderObject := propValue as TFhirString{5a}
+  else if (propName = 'text') then TextObject := propValue as TFhirString{5a}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
   else if (propName = 'group') then GroupList.add(propValue as TFhirQuestionnaireGroup){2}
   else if (propName = 'question') then QuestionList.add(propValue as TFhirQuestionnaireGroupQuestion){2}
   else inherited;
@@ -38793,7 +43900,7 @@ begin
   if FHeader = nil then
     result := ''
   else
-    result := Header.value;
+    result := FHeader.value;
 end;
 
 Procedure TFhirQuestionnaireGroup.SetHeaderST(value : String);
@@ -38819,7 +43926,7 @@ begin
   if FText = nil then
     result := ''
   else
-    result := Text.value;
+    result := FText.value;
 end;
 
 Procedure TFhirQuestionnaireGroup.SetTextST(value : String);
@@ -38838,6 +43945,34 @@ Procedure TFhirQuestionnaireGroup.SetSubject(value : TFhirResourceReference{Reso
 begin
   FSubject.free;
   FSubject := value;
+end;
+
+
+{ TFhirQuestionnaireGroupListEnumerator }
+
+Constructor TFhirQuestionnaireGroupListEnumerator.Create(list : TFhirQuestionnaireGroupList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirQuestionnaireGroupListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirQuestionnaireGroupListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirQuestionnaireGroupListEnumerator.GetCurrent : TFhirQuestionnaireGroup;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -38863,6 +43998,11 @@ end;
 procedure TFhirQuestionnaireGroupList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirQuestionnaireGroupList.GetEnumerator : TFhirQuestionnaireGroupListEnumerator;
+begin
+  result := TFhirQuestionnaireGroupListEnumerator.Create(self.link);
 end;
 
 function TFhirQuestionnaireGroupList.Clone: TFhirQuestionnaireGroupList;
@@ -38956,12 +44096,12 @@ procedure TFhirQuestionnaireGroupQuestion.Assign(oSource : TAdvObject);
 begin
   inherited;
   name := TFhirQuestionnaireGroupQuestion(oSource).name.Clone;
-  text := TFhirQuestionnaireGroupQuestion(oSource).text.Clone;
+  textObject := TFhirQuestionnaireGroupQuestion(oSource).textObject.Clone;
   answer := TFhirQuestionnaireGroupQuestion(oSource).answer.Clone;
   FChoiceList.Assign(TFhirQuestionnaireGroupQuestion(oSource).FChoiceList);
   options := TFhirQuestionnaireGroupQuestion(oSource).options.Clone;
   data := TFhirQuestionnaireGroupQuestion(oSource).data.Clone;
-  remarks := TFhirQuestionnaireGroupQuestion(oSource).remarks.Clone;
+  remarksObject := TFhirQuestionnaireGroupQuestion(oSource).remarksObject.Clone;
   FGroupList.Assign(TFhirQuestionnaireGroupQuestion(oSource).FGroupList);
 end;
 
@@ -38969,19 +44109,19 @@ procedure TFhirQuestionnaireGroupQuestion.GetChildrenByName(child_name : string;
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'text') Then
-     list.add(Text.Link);
+     list.add(FText.Link);
   if (child_name = 'answer[x]') Then
-     list.add(Answer.Link);
+     list.add(FAnswer.Link);
   if (child_name = 'choice') Then
      list.addAll(FChoiceList);
   if (child_name = 'options') Then
-     list.add(Options.Link);
+     list.add(FOptions.Link);
   if (child_name = 'data[x]') Then
-     list.add(Data.Link);
+     list.add(FData.Link);
   if (child_name = 'remarks') Then
-     list.add(Remarks.Link);
+     list.add(FRemarks.Link);
   if (child_name = 'group') Then
      list.addAll(FGroupList);
 end;
@@ -39001,13 +44141,13 @@ end;
 
 procedure TFhirQuestionnaireGroupQuestion.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'text') then Text := propValue as TFhirString{5}
-  else if (propName = 'answer[x]') then Answer := propValue as TFhirType{4}
+  if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'text') then TextObject := propValue as TFhirString{5a}
+  else if (propName.startsWith('answer')) then Answer := propValue as TFhirType{4}
   else if (propName = 'choice') then ChoiceList.add(propValue as TFhirCoding){2}
-  else if (propName = 'options') then Options := propValue as TFhirResourceReference{TFhirValueSet}{4}
-  else if (propName = 'data[x]') then Data := propValue as TFhirType{4}
-  else if (propName = 'remarks') then Remarks := propValue as TFhirString{5}
+  else if (propName = 'options') then Options := propValue as TFhirResourceReference{TFhirValueSet}{4b}
+  else if (propName.startsWith('data')) then Data := propValue as TFhirType{4}
+  else if (propName = 'remarks') then RemarksObject := propValue as TFhirString{5a}
   else if (propName = 'group') then GroupList.add(propValue as TFhirQuestionnaireGroup){2}
   else inherited;
 end;
@@ -39046,7 +44186,7 @@ begin
   if FText = nil then
     result := ''
   else
-    result := Text.value;
+    result := FText.value;
 end;
 
 Procedure TFhirQuestionnaireGroupQuestion.SetTextST(value : String);
@@ -39090,7 +44230,7 @@ begin
   if FRemarks = nil then
     result := ''
   else
-    result := Remarks.value;
+    result := FRemarks.value;
 end;
 
 Procedure TFhirQuestionnaireGroupQuestion.SetRemarksST(value : String);
@@ -39103,6 +44243,34 @@ begin
   end
   else if FRemarks <> nil then
     FRemarks.value := '';
+end;
+
+
+{ TFhirQuestionnaireGroupQuestionListEnumerator }
+
+Constructor TFhirQuestionnaireGroupQuestionListEnumerator.Create(list : TFhirQuestionnaireGroupQuestionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirQuestionnaireGroupQuestionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirQuestionnaireGroupQuestionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirQuestionnaireGroupQuestionListEnumerator.GetCurrent : TFhirQuestionnaireGroupQuestion;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -39128,6 +44296,11 @@ end;
 procedure TFhirQuestionnaireGroupQuestionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirQuestionnaireGroupQuestionList.GetEnumerator : TFhirQuestionnaireGroupQuestionListEnumerator;
+begin
+  result := TFhirQuestionnaireGroupQuestionListEnumerator.Create(self.link);
 end;
 
 function TFhirQuestionnaireGroupQuestionList.Clone: TFhirQuestionnaireGroupQuestionList;
@@ -39220,26 +44393,26 @@ begin
   type_ := TFhirSecurityEventEvent(oSource).type_.Clone;
   FSubtypeList.Assign(TFhirSecurityEventEvent(oSource).FSubtypeList);
   FAction := TFhirSecurityEventEvent(oSource).FAction.Link;
-  dateTime := TFhirSecurityEventEvent(oSource).dateTime.Clone;
+  dateTimeObject := TFhirSecurityEventEvent(oSource).dateTimeObject.Clone;
   FOutcome := TFhirSecurityEventEvent(oSource).FOutcome.Link;
-  outcomeDesc := TFhirSecurityEventEvent(oSource).outcomeDesc.Clone;
+  outcomeDescObject := TFhirSecurityEventEvent(oSource).outcomeDescObject.Clone;
 end;
 
 procedure TFhirSecurityEventEvent.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'subtype') Then
      list.addAll(FSubtypeList);
   if (child_name = 'action') Then
      list.add(FAction.Link);
   if (child_name = 'dateTime') Then
-     list.add(DateTime.Link);
+     list.add(FDateTime.Link);
   if (child_name = 'outcome') Then
      list.add(FOutcome.Link);
   if (child_name = 'outcomeDesc') Then
-     list.add(OutcomeDesc.Link);
+     list.add(FOutcomeDesc.Link);
 end;
 
 procedure TFhirSecurityEventEvent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -39255,12 +44428,12 @@ end;
 
 procedure TFhirSecurityEventEvent.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
+  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'subtype') then SubtypeList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'action') then Action := propValue as TFHIREnum
-  else if (propName = 'dateTime') then DateTime := propValue as TFhirInstant{5}
-  else if (propName = 'outcome') then Outcome := propValue as TFHIREnum
-  else if (propName = 'outcomeDesc') then OutcomeDesc := propValue as TFhirString{5}
+  else if (propName = 'action') then ActionObject := propValue as TFHIREnum
+  else if (propName = 'dateTime') then DateTimeObject := propValue as TFhirInstant{5a}
+  else if (propName = 'outcome') then OutcomeObject := propValue as TFHIREnum
+  else if (propName = 'outcomeDesc') then OutcomeDescObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -39298,15 +44471,15 @@ begin
   if FAction = nil then
     result := TFhirSecurityEventAction(0)
   else
-    result := TFhirSecurityEventAction(StringArrayIndexOfSensitive(CODES_TFhirSecurityEventAction, Action.value));
+    result := TFhirSecurityEventAction(StringArrayIndexOfSensitive(CODES_TFhirSecurityEventAction, FAction.value));
 end;
 
 Procedure TFhirSecurityEventEvent.SetActionST(value : TFhirSecurityEventAction);
 begin
   if ord(value) = 0 then
-    Action := nil
+    ActionObject := nil
   else
-    Action := TFhirEnum.create(CODES_TFhirSecurityEventAction[value]);
+    ActionObject := TFhirEnum.create(CODES_TFhirSecurityEventAction[value]);
 end;
 
 Procedure TFhirSecurityEventEvent.SetDateTime(value : TFhirInstant);
@@ -39320,7 +44493,7 @@ begin
   if FDateTime = nil then
     result := nil
   else
-    result := DateTime.value;
+    result := FDateTime.value;
 end;
 
 Procedure TFhirSecurityEventEvent.SetDateTimeST(value : TDateAndTime);
@@ -39346,15 +44519,15 @@ begin
   if FOutcome = nil then
     result := TFhirSecurityEventOutcome(0)
   else
-    result := TFhirSecurityEventOutcome(StringArrayIndexOfSensitive(CODES_TFhirSecurityEventOutcome, Outcome.value));
+    result := TFhirSecurityEventOutcome(StringArrayIndexOfSensitive(CODES_TFhirSecurityEventOutcome, FOutcome.value));
 end;
 
 Procedure TFhirSecurityEventEvent.SetOutcomeST(value : TFhirSecurityEventOutcome);
 begin
   if ord(value) = 0 then
-    Outcome := nil
+    OutcomeObject := nil
   else
-    Outcome := TFhirEnum.create(CODES_TFhirSecurityEventOutcome[value]);
+    OutcomeObject := TFhirEnum.create(CODES_TFhirSecurityEventOutcome[value]);
 end;
 
 Procedure TFhirSecurityEventEvent.SetOutcomeDesc(value : TFhirString);
@@ -39368,7 +44541,7 @@ begin
   if FOutcomeDesc = nil then
     result := ''
   else
-    result := OutcomeDesc.value;
+    result := FOutcomeDesc.value;
 end;
 
 Procedure TFhirSecurityEventEvent.SetOutcomeDescST(value : String);
@@ -39381,6 +44554,34 @@ begin
   end
   else if FOutcomeDesc <> nil then
     FOutcomeDesc.value := '';
+end;
+
+
+{ TFhirSecurityEventEventListEnumerator }
+
+Constructor TFhirSecurityEventEventListEnumerator.Create(list : TFhirSecurityEventEventList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSecurityEventEventListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSecurityEventEventListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSecurityEventEventListEnumerator.GetCurrent : TFhirSecurityEventEvent;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -39406,6 +44607,11 @@ end;
 procedure TFhirSecurityEventEventList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSecurityEventEventList.GetEnumerator : TFhirSecurityEventEventListEnumerator;
+begin
+  result := TFhirSecurityEventEventListEnumerator.Create(self.link);
 end;
 
 function TFhirSecurityEventEventList.Clone: TFhirSecurityEventEventList;
@@ -39499,10 +44705,10 @@ begin
   inherited;
   FRoleList.Assign(TFhirSecurityEventParticipant(oSource).FRoleList);
   reference := TFhirSecurityEventParticipant(oSource).reference.Clone;
-  userId := TFhirSecurityEventParticipant(oSource).userId.Clone;
-  altId := TFhirSecurityEventParticipant(oSource).altId.Clone;
-  name := TFhirSecurityEventParticipant(oSource).name.Clone;
-  requestor := TFhirSecurityEventParticipant(oSource).requestor.Clone;
+  userIdObject := TFhirSecurityEventParticipant(oSource).userIdObject.Clone;
+  altIdObject := TFhirSecurityEventParticipant(oSource).altIdObject.Clone;
+  nameObject := TFhirSecurityEventParticipant(oSource).nameObject.Clone;
+  requestorObject := TFhirSecurityEventParticipant(oSource).requestorObject.Clone;
   media := TFhirSecurityEventParticipant(oSource).media.Clone;
   network := TFhirSecurityEventParticipant(oSource).network.Clone;
 end;
@@ -39513,19 +44719,19 @@ begin
   if (child_name = 'role') Then
      list.addAll(FRoleList);
   if (child_name = 'reference') Then
-     list.add(Reference.Link);
+     list.add(FReference.Link);
   if (child_name = 'userId') Then
-     list.add(UserId.Link);
+     list.add(FUserId.Link);
   if (child_name = 'altId') Then
-     list.add(AltId.Link);
+     list.add(FAltId.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'requestor') Then
-     list.add(Requestor.Link);
+     list.add(FRequestor.Link);
   if (child_name = 'media') Then
-     list.add(Media.Link);
+     list.add(FMedia.Link);
   if (child_name = 'network') Then
-     list.add(Network.Link);
+     list.add(FNetwork.Link);
 end;
 
 procedure TFhirSecurityEventParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -39544,13 +44750,13 @@ end;
 procedure TFhirSecurityEventParticipant.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'role') then RoleList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'reference') then Reference := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'userId') then UserId := propValue as TFhirString{5}
-  else if (propName = 'altId') then AltId := propValue as TFhirString{5}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'requestor') then Requestor := propValue as TFhirBoolean{5}
-  else if (propName = 'media') then Media := propValue as TFhirCoding{4}
-  else if (propName = 'network') then Network := propValue as TFhirSecurityEventParticipantNetwork{4}
+  else if (propName = 'reference') then Reference := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'userId') then UserIdObject := propValue as TFhirString{5a}
+  else if (propName = 'altId') then AltIdObject := propValue as TFhirString{5a}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'requestor') then RequestorObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'media') then Media := propValue as TFhirCoding{4b}
+  else if (propName = 'network') then Network := propValue as TFhirSecurityEventParticipantNetwork{4b}
   else inherited;
 end;
 
@@ -39588,7 +44794,7 @@ begin
   if FUserId = nil then
     result := ''
   else
-    result := UserId.value;
+    result := FUserId.value;
 end;
 
 Procedure TFhirSecurityEventParticipant.SetUserIdST(value : String);
@@ -39614,7 +44820,7 @@ begin
   if FAltId = nil then
     result := ''
   else
-    result := AltId.value;
+    result := FAltId.value;
 end;
 
 Procedure TFhirSecurityEventParticipant.SetAltIdST(value : String);
@@ -39640,7 +44846,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirSecurityEventParticipant.SetNameST(value : String);
@@ -39666,7 +44872,7 @@ begin
   if FRequestor = nil then
     result := false
   else
-    result := Requestor.value;
+    result := FRequestor.value;
 end;
 
 Procedure TFhirSecurityEventParticipant.SetRequestorST(value : Boolean);
@@ -39686,6 +44892,34 @@ Procedure TFhirSecurityEventParticipant.SetNetwork(value : TFhirSecurityEventPar
 begin
   FNetwork.free;
   FNetwork := value;
+end;
+
+
+{ TFhirSecurityEventParticipantListEnumerator }
+
+Constructor TFhirSecurityEventParticipantListEnumerator.Create(list : TFhirSecurityEventParticipantList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSecurityEventParticipantListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSecurityEventParticipantListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSecurityEventParticipantListEnumerator.GetCurrent : TFhirSecurityEventParticipant;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -39711,6 +44945,11 @@ end;
 procedure TFhirSecurityEventParticipantList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSecurityEventParticipantList.GetEnumerator : TFhirSecurityEventParticipantListEnumerator;
+begin
+  result := TFhirSecurityEventParticipantListEnumerator.Create(self.link);
 end;
 
 function TFhirSecurityEventParticipantList.Clone: TFhirSecurityEventParticipantList;
@@ -39795,7 +45034,7 @@ end;
 procedure TFhirSecurityEventParticipantNetwork.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirSecurityEventParticipantNetwork(oSource).identifier.Clone;
+  identifierObject := TFhirSecurityEventParticipantNetwork(oSource).identifierObject.Clone;
   FType_ := TFhirSecurityEventParticipantNetwork(oSource).FType_.Link;
 end;
 
@@ -39803,7 +45042,7 @@ procedure TFhirSecurityEventParticipantNetwork.GetChildrenByName(child_name : st
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'type') Then
      list.add(FType_.Link);
 end;
@@ -39817,8 +45056,8 @@ end;
 
 procedure TFhirSecurityEventParticipantNetwork.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirString{5}
-  else if (propName = 'type') then Type_ := propValue as TFHIREnum
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirString{5a}
+  else if (propName = 'type') then Type_Object := propValue as TFHIREnum
   else inherited;
 end;
 
@@ -39850,7 +45089,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirSecurityEventParticipantNetwork.SetIdentifierST(value : String);
@@ -39876,15 +45115,43 @@ begin
   if FType_ = nil then
     result := TFhirNetworkType(0)
   else
-    result := TFhirNetworkType(StringArrayIndexOfSensitive(CODES_TFhirNetworkType, Type_.value));
+    result := TFhirNetworkType(StringArrayIndexOfSensitive(CODES_TFhirNetworkType, FType_.value));
 end;
 
 Procedure TFhirSecurityEventParticipantNetwork.SetType_ST(value : TFhirNetworkType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirNetworkType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirNetworkType[value]);
+end;
+
+
+{ TFhirSecurityEventParticipantNetworkListEnumerator }
+
+Constructor TFhirSecurityEventParticipantNetworkListEnumerator.Create(list : TFhirSecurityEventParticipantNetworkList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSecurityEventParticipantNetworkListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSecurityEventParticipantNetworkListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSecurityEventParticipantNetworkListEnumerator.GetCurrent : TFhirSecurityEventParticipantNetwork;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -39910,6 +45177,11 @@ end;
 procedure TFhirSecurityEventParticipantNetworkList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSecurityEventParticipantNetworkList.GetEnumerator : TFhirSecurityEventParticipantNetworkListEnumerator;
+begin
+  result := TFhirSecurityEventParticipantNetworkListEnumerator.Create(self.link);
 end;
 
 function TFhirSecurityEventParticipantNetworkList.Clone: TFhirSecurityEventParticipantNetworkList;
@@ -39996,8 +45268,8 @@ end;
 procedure TFhirSecurityEventSource.Assign(oSource : TAdvObject);
 begin
   inherited;
-  site := TFhirSecurityEventSource(oSource).site.Clone;
-  identifier := TFhirSecurityEventSource(oSource).identifier.Clone;
+  siteObject := TFhirSecurityEventSource(oSource).siteObject.Clone;
+  identifierObject := TFhirSecurityEventSource(oSource).identifierObject.Clone;
   FType_List.Assign(TFhirSecurityEventSource(oSource).FType_List);
 end;
 
@@ -40005,9 +45277,9 @@ procedure TFhirSecurityEventSource.GetChildrenByName(child_name : string; list :
 begin
   inherited;
   if (child_name = 'site') Then
-     list.add(Site.Link);
+     list.add(FSite.Link);
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'type') Then
      list.addAll(FType_List);
 end;
@@ -40022,8 +45294,8 @@ end;
 
 procedure TFhirSecurityEventSource.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'site') then Site := propValue as TFhirString{5}
-  else if (propName = 'identifier') then Identifier := propValue as TFhirString{5}
+  if (propName = 'site') then SiteObject := propValue as TFhirString{5a}
+  else if (propName = 'identifier') then IdentifierObject := propValue as TFhirString{5a}
   else if (propName = 'type') then Type_List.add(propValue as TFhirCoding){2}
   else inherited;
 end;
@@ -40056,7 +45328,7 @@ begin
   if FSite = nil then
     result := ''
   else
-    result := Site.value;
+    result := FSite.value;
 end;
 
 Procedure TFhirSecurityEventSource.SetSiteST(value : String);
@@ -40082,7 +45354,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirSecurityEventSource.SetIdentifierST(value : String);
@@ -40095,6 +45367,34 @@ begin
   end
   else if FIdentifier <> nil then
     FIdentifier.value := '';
+end;
+
+
+{ TFhirSecurityEventSourceListEnumerator }
+
+Constructor TFhirSecurityEventSourceListEnumerator.Create(list : TFhirSecurityEventSourceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSecurityEventSourceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSecurityEventSourceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSecurityEventSourceListEnumerator.GetCurrent : TFhirSecurityEventSource;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -40120,6 +45420,11 @@ end;
 procedure TFhirSecurityEventSourceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSecurityEventSourceList.GetEnumerator : TFhirSecurityEventSourceListEnumerator;
+begin
+  result := TFhirSecurityEventSourceListEnumerator.Create(self.link);
 end;
 
 function TFhirSecurityEventSourceList.Clone: TFhirSecurityEventSourceList;
@@ -40219,9 +45524,9 @@ begin
   FRole := TFhirSecurityEventObject(oSource).FRole.Link;
   FLifecycle := TFhirSecurityEventObject(oSource).FLifecycle.Link;
   sensitivity := TFhirSecurityEventObject(oSource).sensitivity.Clone;
-  name := TFhirSecurityEventObject(oSource).name.Clone;
-  description := TFhirSecurityEventObject(oSource).description.Clone;
-  query := TFhirSecurityEventObject(oSource).query.Clone;
+  nameObject := TFhirSecurityEventObject(oSource).nameObject.Clone;
+  descriptionObject := TFhirSecurityEventObject(oSource).descriptionObject.Clone;
+  queryObject := TFhirSecurityEventObject(oSource).queryObject.Clone;
   FDetailList.Assign(TFhirSecurityEventObject(oSource).FDetailList);
 end;
 
@@ -40229,9 +45534,9 @@ procedure TFhirSecurityEventObject.GetChildrenByName(child_name : string; list :
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'reference') Then
-     list.add(Reference.Link);
+     list.add(FReference.Link);
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'role') Then
@@ -40239,13 +45544,13 @@ begin
   if (child_name = 'lifecycle') Then
      list.add(FLifecycle.Link);
   if (child_name = 'sensitivity') Then
-     list.add(Sensitivity.Link);
+     list.add(FSensitivity.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'query') Then
-     list.add(Query.Link);
+     list.add(FQuery.Link);
   if (child_name = 'detail') Then
      list.addAll(FDetailList);
 end;
@@ -40267,15 +45572,15 @@ end;
 
 procedure TFhirSecurityEventObject.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'reference') then Reference := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'role') then Role := propValue as TFHIREnum
-  else if (propName = 'lifecycle') then Lifecycle := propValue as TFHIREnum
-  else if (propName = 'sensitivity') then Sensitivity := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'query') then Query := propValue as TFhirBase64Binary{5}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'reference') then Reference := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'role') then RoleObject := propValue as TFHIREnum
+  else if (propName = 'lifecycle') then LifecycleObject := propValue as TFHIREnum
+  else if (propName = 'sensitivity') then Sensitivity := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'query') then QueryObject := propValue as TFhirBase64Binary{5a}
   else if (propName = 'detail') then DetailList.add(propValue as TFhirSecurityEventObjectDetail){2}
   else inherited;
 end;
@@ -40320,15 +45625,15 @@ begin
   if FType_ = nil then
     result := TFhirObjectType(0)
   else
-    result := TFhirObjectType(StringArrayIndexOfSensitive(CODES_TFhirObjectType, Type_.value));
+    result := TFhirObjectType(StringArrayIndexOfSensitive(CODES_TFhirObjectType, FType_.value));
 end;
 
 Procedure TFhirSecurityEventObject.SetType_ST(value : TFhirObjectType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirObjectType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirObjectType[value]);
 end;
 
 Procedure TFhirSecurityEventObject.SetRole(value : TFhirEnum);
@@ -40342,15 +45647,15 @@ begin
   if FRole = nil then
     result := TFhirObjectRole(0)
   else
-    result := TFhirObjectRole(StringArrayIndexOfSensitive(CODES_TFhirObjectRole, Role.value));
+    result := TFhirObjectRole(StringArrayIndexOfSensitive(CODES_TFhirObjectRole, FRole.value));
 end;
 
 Procedure TFhirSecurityEventObject.SetRoleST(value : TFhirObjectRole);
 begin
   if ord(value) = 0 then
-    Role := nil
+    RoleObject := nil
   else
-    Role := TFhirEnum.create(CODES_TFhirObjectRole[value]);
+    RoleObject := TFhirEnum.create(CODES_TFhirObjectRole[value]);
 end;
 
 Procedure TFhirSecurityEventObject.SetLifecycle(value : TFhirEnum);
@@ -40364,15 +45669,15 @@ begin
   if FLifecycle = nil then
     result := TFhirObjectLifecycle(0)
   else
-    result := TFhirObjectLifecycle(StringArrayIndexOfSensitive(CODES_TFhirObjectLifecycle, Lifecycle.value));
+    result := TFhirObjectLifecycle(StringArrayIndexOfSensitive(CODES_TFhirObjectLifecycle, FLifecycle.value));
 end;
 
 Procedure TFhirSecurityEventObject.SetLifecycleST(value : TFhirObjectLifecycle);
 begin
   if ord(value) = 0 then
-    Lifecycle := nil
+    LifecycleObject := nil
   else
-    Lifecycle := TFhirEnum.create(CODES_TFhirObjectLifecycle[value]);
+    LifecycleObject := TFhirEnum.create(CODES_TFhirObjectLifecycle[value]);
 end;
 
 Procedure TFhirSecurityEventObject.SetSensitivity(value : TFhirCodeableConcept);
@@ -40392,7 +45697,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirSecurityEventObject.SetNameST(value : String);
@@ -40418,7 +45723,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirSecurityEventObject.SetDescriptionST(value : String);
@@ -40444,7 +45749,7 @@ begin
   if FQuery = nil then
     result := ''
   else
-    result := Query.value;
+    result := FQuery.value;
 end;
 
 Procedure TFhirSecurityEventObject.SetQueryST(value : String);
@@ -40457,6 +45762,34 @@ begin
   end
   else if FQuery <> nil then
     FQuery.value := '';
+end;
+
+
+{ TFhirSecurityEventObjectListEnumerator }
+
+Constructor TFhirSecurityEventObjectListEnumerator.Create(list : TFhirSecurityEventObjectList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSecurityEventObjectListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSecurityEventObjectListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSecurityEventObjectListEnumerator.GetCurrent : TFhirSecurityEventObject;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -40482,6 +45815,11 @@ end;
 procedure TFhirSecurityEventObjectList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSecurityEventObjectList.GetEnumerator : TFhirSecurityEventObjectListEnumerator;
+begin
+  result := TFhirSecurityEventObjectListEnumerator.Create(self.link);
 end;
 
 function TFhirSecurityEventObjectList.Clone: TFhirSecurityEventObjectList;
@@ -40566,17 +45904,17 @@ end;
 procedure TFhirSecurityEventObjectDetail.Assign(oSource : TAdvObject);
 begin
   inherited;
-  type_ := TFhirSecurityEventObjectDetail(oSource).type_.Clone;
-  value := TFhirSecurityEventObjectDetail(oSource).value.Clone;
+  type_Object := TFhirSecurityEventObjectDetail(oSource).type_Object.Clone;
+  valueObject := TFhirSecurityEventObjectDetail(oSource).valueObject.Clone;
 end;
 
 procedure TFhirSecurityEventObjectDetail.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'value') Then
-     list.add(Value.Link);
+     list.add(FValue.Link);
 end;
 
 procedure TFhirSecurityEventObjectDetail.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -40588,8 +45926,8 @@ end;
 
 procedure TFhirSecurityEventObjectDetail.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirString{5}
-  else if (propName = 'value') then Value := propValue as TFhirBase64Binary{5}
+  if (propName = 'type') then Type_Object := propValue as TFhirString{5a}
+  else if (propName = 'value') then ValueObject := propValue as TFhirBase64Binary{5a}
   else inherited;
 end;
 
@@ -40621,7 +45959,7 @@ begin
   if FType_ = nil then
     result := ''
   else
-    result := Type_.value;
+    result := FType_.value;
 end;
 
 Procedure TFhirSecurityEventObjectDetail.SetType_ST(value : String);
@@ -40647,7 +45985,7 @@ begin
   if FValue = nil then
     result := ''
   else
-    result := Value.value;
+    result := FValue.value;
 end;
 
 Procedure TFhirSecurityEventObjectDetail.SetValueST(value : String);
@@ -40660,6 +45998,34 @@ begin
   end
   else if FValue <> nil then
     FValue.value := '';
+end;
+
+
+{ TFhirSecurityEventObjectDetailListEnumerator }
+
+Constructor TFhirSecurityEventObjectDetailListEnumerator.Create(list : TFhirSecurityEventObjectDetailList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSecurityEventObjectDetailListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSecurityEventObjectDetailListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSecurityEventObjectDetailListEnumerator.GetCurrent : TFhirSecurityEventObjectDetail;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -40685,6 +46051,11 @@ end;
 procedure TFhirSecurityEventObjectDetailList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSecurityEventObjectDetailList.GetEnumerator : TFhirSecurityEventObjectDetailListEnumerator;
+begin
+  result := TFhirSecurityEventObjectDetailListEnumerator.Create(self.link);
 end;
 
 function TFhirSecurityEventObjectDetailList.Clone: TFhirSecurityEventObjectDetailList;
@@ -40792,7 +46163,7 @@ end;
 
 procedure TFhirSpecimenSource.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'relationship') then Relationship := propValue as TFHIREnum
+  if (propName = 'relationship') then RelationshipObject := propValue as TFHIREnum
   else if (propName = 'target') then TargetList.add(propValue as TFhirResourceReference{TFhirSpecimen}){2}
   else inherited;
 end;
@@ -40825,15 +46196,43 @@ begin
   if FRelationship = nil then
     result := TFhirHierarchicalRelationshipType(0)
   else
-    result := TFhirHierarchicalRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirHierarchicalRelationshipType, Relationship.value));
+    result := TFhirHierarchicalRelationshipType(StringArrayIndexOfSensitive(CODES_TFhirHierarchicalRelationshipType, FRelationship.value));
 end;
 
 Procedure TFhirSpecimenSource.SetRelationshipST(value : TFhirHierarchicalRelationshipType);
 begin
   if ord(value) = 0 then
-    Relationship := nil
+    RelationshipObject := nil
   else
-    Relationship := TFhirEnum.create(CODES_TFhirHierarchicalRelationshipType[value]);
+    RelationshipObject := TFhirEnum.create(CODES_TFhirHierarchicalRelationshipType[value]);
+end;
+
+
+{ TFhirSpecimenSourceListEnumerator }
+
+Constructor TFhirSpecimenSourceListEnumerator.Create(list : TFhirSpecimenSourceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSpecimenSourceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSpecimenSourceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSpecimenSourceListEnumerator.GetCurrent : TFhirSpecimenSource;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -40859,6 +46258,11 @@ end;
 procedure TFhirSpecimenSourceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSpecimenSourceList.GetEnumerator : TFhirSpecimenSourceListEnumerator;
+begin
+  result := TFhirSpecimenSourceListEnumerator.Create(self.link);
 end;
 
 function TFhirSpecimenSourceList.Clone: TFhirSpecimenSourceList;
@@ -40960,17 +46364,17 @@ procedure TFhirSpecimenCollection.GetChildrenByName(child_name : string; list : 
 begin
   inherited;
   if (child_name = 'collector') Then
-     list.add(Collector.Link);
+     list.add(FCollector.Link);
   if (child_name = 'comment') Then
      list.addAll(FCommentList);
   if (child_name = 'collected[x]') Then
-     list.add(Collected.Link);
+     list.add(FCollected.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'method') Then
-     list.add(Method.Link);
+     list.add(FMethod.Link);
   if (child_name = 'sourceSite') Then
-     list.add(SourceSite.Link);
+     list.add(FSourceSite.Link);
 end;
 
 procedure TFhirSpecimenCollection.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -40986,12 +46390,12 @@ end;
 
 procedure TFhirSpecimenCollection.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'collector') then Collector := propValue as TFhirResourceReference{TFhirPractitioner}{4}
+  if (propName = 'collector') then Collector := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
   else if (propName = 'comment') then CommentList.add(propValue as TFhirString){2}
-  else if (propName = 'collected[x]') then Collected := propValue as TFhirType{4}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
-  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'sourceSite') then SourceSite := propValue as TFhirCodeableConcept{4}
+  else if (propName.startsWith('collected')) then Collected := propValue as TFhirType{4}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'sourceSite') then SourceSite := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -41043,6 +46447,34 @@ begin
 end;
 
 
+{ TFhirSpecimenCollectionListEnumerator }
+
+Constructor TFhirSpecimenCollectionListEnumerator.Create(list : TFhirSpecimenCollectionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSpecimenCollectionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSpecimenCollectionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSpecimenCollectionListEnumerator.GetCurrent : TFhirSpecimenCollection;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirSpecimenCollectionList }
 procedure TFhirSpecimenCollectionList.AddItem(value: TFhirSpecimenCollection);
 begin
@@ -41065,6 +46497,11 @@ end;
 procedure TFhirSpecimenCollectionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSpecimenCollectionList.GetEnumerator : TFhirSpecimenCollectionListEnumerator;
+begin
+  result := TFhirSpecimenCollectionListEnumerator.Create(self.link);
 end;
 
 function TFhirSpecimenCollectionList.Clone: TFhirSpecimenCollectionList;
@@ -41151,7 +46588,7 @@ end;
 procedure TFhirSpecimenTreatment.Assign(oSource : TAdvObject);
 begin
   inherited;
-  description := TFhirSpecimenTreatment(oSource).description.Clone;
+  descriptionObject := TFhirSpecimenTreatment(oSource).descriptionObject.Clone;
   procedure_ := TFhirSpecimenTreatment(oSource).procedure_.Clone;
   FAdditiveList.Assign(TFhirSpecimenTreatment(oSource).FAdditiveList);
 end;
@@ -41160,9 +46597,9 @@ procedure TFhirSpecimenTreatment.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'procedure') Then
-     list.add(Procedure_.Link);
+     list.add(FProcedure_.Link);
   if (child_name = 'additive') Then
      list.addAll(FAdditiveList);
 end;
@@ -41177,8 +46614,8 @@ end;
 
 procedure TFhirSpecimenTreatment.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'procedure') then Procedure_ := propValue as TFhirCodeableConcept{4}
+  if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'procedure') then Procedure_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'additive') then AdditiveList.add(propValue as TFhirResourceReference{TFhirSubstance}){2}
   else inherited;
 end;
@@ -41211,7 +46648,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirSpecimenTreatment.SetDescriptionST(value : String);
@@ -41230,6 +46667,34 @@ Procedure TFhirSpecimenTreatment.SetProcedure_(value : TFhirCodeableConcept);
 begin
   FProcedure_.free;
   FProcedure_ := value;
+end;
+
+
+{ TFhirSpecimenTreatmentListEnumerator }
+
+Constructor TFhirSpecimenTreatmentListEnumerator.Create(list : TFhirSpecimenTreatmentList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSpecimenTreatmentListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSpecimenTreatmentListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSpecimenTreatmentListEnumerator.GetCurrent : TFhirSpecimenTreatment;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -41255,6 +46720,11 @@ end;
 procedure TFhirSpecimenTreatmentList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSpecimenTreatmentList.GetEnumerator : TFhirSpecimenTreatmentListEnumerator;
+begin
+  result := TFhirSpecimenTreatmentListEnumerator.Create(self.link);
 end;
 
 function TFhirSpecimenTreatmentList.Clone: TFhirSpecimenTreatmentList;
@@ -41345,7 +46815,7 @@ procedure TFhirSpecimenContainer.Assign(oSource : TAdvObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirSpecimenContainer(oSource).FIdentifierList);
-  description := TFhirSpecimenContainer(oSource).description.Clone;
+  descriptionObject := TFhirSpecimenContainer(oSource).descriptionObject.Clone;
   type_ := TFhirSpecimenContainer(oSource).type_.Clone;
   capacity := TFhirSpecimenContainer(oSource).capacity.Clone;
   specimenQuantity := TFhirSpecimenContainer(oSource).specimenQuantity.Clone;
@@ -41358,15 +46828,15 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'capacity') Then
-     list.add(Capacity.Link);
+     list.add(FCapacity.Link);
   if (child_name = 'specimenQuantity') Then
-     list.add(SpecimenQuantity.Link);
+     list.add(FSpecimenQuantity.Link);
   if (child_name = 'additive') Then
-     list.add(Additive.Link);
+     list.add(FAdditive.Link);
 end;
 
 procedure TFhirSpecimenContainer.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -41383,11 +46853,11 @@ end;
 procedure TFhirSpecimenContainer.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'capacity') then Capacity := propValue as TFhirQuantity{4}
-  else if (propName = 'specimenQuantity') then SpecimenQuantity := propValue as TFhirQuantity{4}
-  else if (propName = 'additive') then Additive := propValue as TFhirResourceReference{TFhirSubstance}{4}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'capacity') then Capacity := propValue as TFhirQuantity{4b}
+  else if (propName = 'specimenQuantity') then SpecimenQuantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'additive') then Additive := propValue as TFhirResourceReference{TFhirSubstance}{4b}
   else inherited;
 end;
 
@@ -41419,7 +46889,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirSpecimenContainer.SetDescriptionST(value : String);
@@ -41459,6 +46929,34 @@ begin
 end;
 
 
+{ TFhirSpecimenContainerListEnumerator }
+
+Constructor TFhirSpecimenContainerListEnumerator.Create(list : TFhirSpecimenContainerList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSpecimenContainerListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSpecimenContainerListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSpecimenContainerListEnumerator.GetCurrent : TFhirSpecimenContainer;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirSpecimenContainerList }
 procedure TFhirSpecimenContainerList.AddItem(value: TFhirSpecimenContainer);
 begin
@@ -41481,6 +46979,11 @@ end;
 procedure TFhirSpecimenContainerList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSpecimenContainerList.GetEnumerator : TFhirSpecimenContainerListEnumerator;
+begin
+  result := TFhirSpecimenContainerListEnumerator.Create(self.link);
 end;
 
 function TFhirSpecimenContainerList.Clone: TFhirSpecimenContainerList;
@@ -41567,7 +47070,7 @@ procedure TFhirSubstanceInstance.Assign(oSource : TAdvObject);
 begin
   inherited;
   identifier := TFhirSubstanceInstance(oSource).identifier.Clone;
-  expiry := TFhirSubstanceInstance(oSource).expiry.Clone;
+  expiryObject := TFhirSubstanceInstance(oSource).expiryObject.Clone;
   quantity := TFhirSubstanceInstance(oSource).quantity.Clone;
 end;
 
@@ -41575,11 +47078,11 @@ procedure TFhirSubstanceInstance.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'expiry') Then
-     list.add(Expiry.Link);
+     list.add(FExpiry.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
 end;
 
 procedure TFhirSubstanceInstance.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -41592,9 +47095,9 @@ end;
 
 procedure TFhirSubstanceInstance.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'expiry') then Expiry := propValue as TFhirDateTime{5}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'expiry') then ExpiryObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
   else inherited;
 end;
 
@@ -41632,7 +47135,7 @@ begin
   if FExpiry = nil then
     result := nil
   else
-    result := Expiry.value;
+    result := FExpiry.value;
 end;
 
 Procedure TFhirSubstanceInstance.SetExpiryST(value : TDateAndTime);
@@ -41651,6 +47154,34 @@ Procedure TFhirSubstanceInstance.SetQuantity(value : TFhirQuantity);
 begin
   FQuantity.free;
   FQuantity := value;
+end;
+
+
+{ TFhirSubstanceInstanceListEnumerator }
+
+Constructor TFhirSubstanceInstanceListEnumerator.Create(list : TFhirSubstanceInstanceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSubstanceInstanceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSubstanceInstanceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSubstanceInstanceListEnumerator.GetCurrent : TFhirSubstanceInstance;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -41676,6 +47207,11 @@ end;
 procedure TFhirSubstanceInstanceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSubstanceInstanceList.GetEnumerator : TFhirSubstanceInstanceListEnumerator;
+begin
+  result := TFhirSubstanceInstanceListEnumerator.Create(self.link);
 end;
 
 function TFhirSubstanceInstanceList.Clone: TFhirSubstanceInstanceList;
@@ -41768,9 +47304,9 @@ procedure TFhirSubstanceIngredient.GetChildrenByName(child_name : string; list :
 begin
   inherited;
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'substance') Then
-     list.add(Substance.Link);
+     list.add(FSubstance.Link);
 end;
 
 procedure TFhirSubstanceIngredient.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -41782,8 +47318,8 @@ end;
 
 procedure TFhirSubstanceIngredient.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'quantity') then Quantity := propValue as TFhirRatio{4}
-  else if (propName = 'substance') then Substance := propValue as TFhirResourceReference{TFhirSubstance}{4}
+  if (propName = 'quantity') then Quantity := propValue as TFhirRatio{4b}
+  else if (propName = 'substance') then Substance := propValue as TFhirResourceReference{TFhirSubstance}{4b}
   else inherited;
 end;
 
@@ -41817,6 +47353,34 @@ begin
 end;
 
 
+{ TFhirSubstanceIngredientListEnumerator }
+
+Constructor TFhirSubstanceIngredientListEnumerator.Create(list : TFhirSubstanceIngredientList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSubstanceIngredientListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSubstanceIngredientListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSubstanceIngredientListEnumerator.GetCurrent : TFhirSubstanceIngredient;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirSubstanceIngredientList }
 procedure TFhirSubstanceIngredientList.AddItem(value: TFhirSubstanceIngredient);
 begin
@@ -41839,6 +47403,11 @@ end;
 procedure TFhirSubstanceIngredientList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSubstanceIngredientList.GetEnumerator : TFhirSubstanceIngredientListEnumerator;
+begin
+  result := TFhirSubstanceIngredientListEnumerator.Create(self.link);
 end;
 
 function TFhirSubstanceIngredientList.Clone: TFhirSubstanceIngredientList;
@@ -41948,23 +47517,23 @@ procedure TFhirSupplyDispense.GetChildrenByName(child_name : string; list : TFHI
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'suppliedItem') Then
-     list.add(SuppliedItem.Link);
+     list.add(FSuppliedItem.Link);
   if (child_name = 'supplier') Then
-     list.add(Supplier.Link);
+     list.add(FSupplier.Link);
   if (child_name = 'whenPrepared') Then
-     list.add(WhenPrepared.Link);
+     list.add(FWhenPrepared.Link);
   if (child_name = 'whenHandedOver') Then
-     list.add(WhenHandedOver.Link);
+     list.add(FWhenHandedOver.Link);
   if (child_name = 'destination') Then
-     list.add(Destination.Link);
+     list.add(FDestination.Link);
   if (child_name = 'receiver') Then
      list.addAll(FReceiverList);
 end;
@@ -41986,15 +47555,15 @@ end;
 
 procedure TFhirSupplyDispense.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4}
-  else if (propName = 'suppliedItem') then SuppliedItem := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'supplier') then Supplier := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'whenPrepared') then WhenPrepared := propValue as TFhirPeriod{4}
-  else if (propName = 'whenHandedOver') then WhenHandedOver := propValue as TFhirPeriod{4}
-  else if (propName = 'destination') then Destination := propValue as TFhirResourceReference{TFhirLocation}{4}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'quantity') then Quantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'suppliedItem') then SuppliedItem := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'supplier') then Supplier := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'whenPrepared') then WhenPrepared := propValue as TFhirPeriod{4b}
+  else if (propName = 'whenHandedOver') then WhenHandedOver := propValue as TFhirPeriod{4b}
+  else if (propName = 'destination') then Destination := propValue as TFhirResourceReference{TFhirLocation}{4b}
   else if (propName = 'receiver') then ReceiverList.add(propValue as TFhirResourceReference{TFhirPractitioner}){2}
   else inherited;
 end;
@@ -42033,15 +47602,15 @@ begin
   if FStatus = nil then
     result := TFhirValuesetSupplyDispenseStatus(0)
   else
-    result := TFhirValuesetSupplyDispenseStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetSupplyDispenseStatus, Status.value));
+    result := TFhirValuesetSupplyDispenseStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetSupplyDispenseStatus, FStatus.value));
 end;
 
 Procedure TFhirSupplyDispense.SetStatusST(value : TFhirValuesetSupplyDispenseStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirValuesetSupplyDispenseStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirValuesetSupplyDispenseStatus[value]);
 end;
 
 Procedure TFhirSupplyDispense.SetType_(value : TFhirCodeableConcept);
@@ -42087,6 +47656,34 @@ begin
 end;
 
 
+{ TFhirSupplyDispenseListEnumerator }
+
+Constructor TFhirSupplyDispenseListEnumerator.Create(list : TFhirSupplyDispenseList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirSupplyDispenseListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirSupplyDispenseListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirSupplyDispenseListEnumerator.GetCurrent : TFhirSupplyDispense;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirSupplyDispenseList }
 procedure TFhirSupplyDispenseList.AddItem(value: TFhirSupplyDispense);
 begin
@@ -42109,6 +47706,11 @@ end;
 procedure TFhirSupplyDispenseList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirSupplyDispenseList.GetEnumerator : TFhirSupplyDispenseListEnumerator;
+begin
+  result := TFhirSupplyDispenseListEnumerator.Create(self.link);
 end;
 
 function TFhirSupplyDispenseList.Clone: TFhirSupplyDispenseList;
@@ -42196,9 +47798,9 @@ end;
 procedure TFhirValueSetDefine.Assign(oSource : TAdvObject);
 begin
   inherited;
-  system := TFhirValueSetDefine(oSource).system.Clone;
-  version := TFhirValueSetDefine(oSource).version.Clone;
-  caseSensitive := TFhirValueSetDefine(oSource).caseSensitive.Clone;
+  systemObject := TFhirValueSetDefine(oSource).systemObject.Clone;
+  versionObject := TFhirValueSetDefine(oSource).versionObject.Clone;
+  caseSensitiveObject := TFhirValueSetDefine(oSource).caseSensitiveObject.Clone;
   FConceptList.Assign(TFhirValueSetDefine(oSource).FConceptList);
 end;
 
@@ -42206,11 +47808,11 @@ procedure TFhirValueSetDefine.GetChildrenByName(child_name : string; list : TFHI
 begin
   inherited;
   if (child_name = 'system') Then
-     list.add(System.Link);
+     list.add(FSystem.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'caseSensitive') Then
-     list.add(CaseSensitive.Link);
+     list.add(FCaseSensitive.Link);
   if (child_name = 'concept') Then
      list.addAll(FConceptList);
 end;
@@ -42226,9 +47828,9 @@ end;
 
 procedure TFhirValueSetDefine.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'system') then System := propValue as TFhirUri{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
-  else if (propName = 'caseSensitive') then CaseSensitive := propValue as TFhirBoolean{5}
+  if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  else if (propName = 'caseSensitive') then CaseSensitiveObject := propValue as TFhirBoolean{5a}
   else if (propName = 'concept') then ConceptList.add(propValue as TFhirValueSetDefineConcept){2}
   else inherited;
 end;
@@ -42261,7 +47863,7 @@ begin
   if FSystem = nil then
     result := ''
   else
-    result := System.value;
+    result := FSystem.value;
 end;
 
 Procedure TFhirValueSetDefine.SetSystemST(value : String);
@@ -42287,7 +47889,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirValueSetDefine.SetVersionST(value : String);
@@ -42313,7 +47915,7 @@ begin
   if FCaseSensitive = nil then
     result := false
   else
-    result := CaseSensitive.value;
+    result := FCaseSensitive.value;
 end;
 
 Procedure TFhirValueSetDefine.SetCaseSensitiveST(value : Boolean);
@@ -42321,6 +47923,34 @@ begin
   if FCaseSensitive = nil then
     FCaseSensitive := TFhirBoolean.create;
   FCaseSensitive.value := value
+end;
+
+
+{ TFhirValueSetDefineListEnumerator }
+
+Constructor TFhirValueSetDefineListEnumerator.Create(list : TFhirValueSetDefineList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirValueSetDefineListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirValueSetDefineListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirValueSetDefineListEnumerator.GetCurrent : TFhirValueSetDefine;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -42346,6 +47976,11 @@ end;
 procedure TFhirValueSetDefineList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirValueSetDefineList.GetEnumerator : TFhirValueSetDefineListEnumerator;
+begin
+  result := TFhirValueSetDefineListEnumerator.Create(self.link);
 end;
 
 function TFhirValueSetDefineList.Clone: TFhirValueSetDefineList;
@@ -42434,10 +48069,10 @@ end;
 procedure TFhirValueSetDefineConcept.Assign(oSource : TAdvObject);
 begin
   inherited;
-  code := TFhirValueSetDefineConcept(oSource).code.Clone;
-  abstract := TFhirValueSetDefineConcept(oSource).abstract.Clone;
-  display := TFhirValueSetDefineConcept(oSource).display.Clone;
-  definition := TFhirValueSetDefineConcept(oSource).definition.Clone;
+  codeObject := TFhirValueSetDefineConcept(oSource).codeObject.Clone;
+  abstractObject := TFhirValueSetDefineConcept(oSource).abstractObject.Clone;
+  displayObject := TFhirValueSetDefineConcept(oSource).displayObject.Clone;
+  definitionObject := TFhirValueSetDefineConcept(oSource).definitionObject.Clone;
   FConceptList.Assign(TFhirValueSetDefineConcept(oSource).FConceptList);
 end;
 
@@ -42445,13 +48080,13 @@ procedure TFhirValueSetDefineConcept.GetChildrenByName(child_name : string; list
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'abstract') Then
-     list.add(Abstract.Link);
+     list.add(FAbstract.Link);
   if (child_name = 'display') Then
-     list.add(Display.Link);
+     list.add(FDisplay.Link);
   if (child_name = 'definition') Then
-     list.add(Definition.Link);
+     list.add(FDefinition.Link);
   if (child_name = 'concept') Then
      list.addAll(FConceptList);
 end;
@@ -42468,10 +48103,16 @@ end;
 
 procedure TFhirValueSetDefineConcept.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then Code := propValue as TFhirCode{5}
-  else if (propName = 'abstract') then Abstract := propValue as TFhirBoolean{5}
-  else if (propName = 'display') then Display := propValue as TFhirString{5}
-  else if (propName = 'definition') then Definition := propValue as TFhirString{5}
+  if (propName = 'code') then
+    if propValue is TFHIRCode then
+      CodeObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'abstract') then AbstractObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'display') then DisplayObject := propValue as TFhirString{5a}
+  else if (propName = 'definition') then DefinitionObject := propValue as TFhirString{5a}
   else if (propName = 'concept') then ConceptList.add(propValue as TFhirValueSetDefineConcept){2}
   else inherited;
 end;
@@ -42504,7 +48145,7 @@ begin
   if FCode = nil then
     result := ''
   else
-    result := Code.value;
+    result := FCode.value;
 end;
 
 Procedure TFhirValueSetDefineConcept.SetCodeST(value : String);
@@ -42530,7 +48171,7 @@ begin
   if FAbstract = nil then
     result := false
   else
-    result := Abstract.value;
+    result := FAbstract.value;
 end;
 
 Procedure TFhirValueSetDefineConcept.SetAbstractST(value : Boolean);
@@ -42551,7 +48192,7 @@ begin
   if FDisplay = nil then
     result := ''
   else
-    result := Display.value;
+    result := FDisplay.value;
 end;
 
 Procedure TFhirValueSetDefineConcept.SetDisplayST(value : String);
@@ -42577,7 +48218,7 @@ begin
   if FDefinition = nil then
     result := ''
   else
-    result := Definition.value;
+    result := FDefinition.value;
 end;
 
 Procedure TFhirValueSetDefineConcept.SetDefinitionST(value : String);
@@ -42590,6 +48231,34 @@ begin
   end
   else if FDefinition <> nil then
     FDefinition.value := '';
+end;
+
+
+{ TFhirValueSetDefineConceptListEnumerator }
+
+Constructor TFhirValueSetDefineConceptListEnumerator.Create(list : TFhirValueSetDefineConceptList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirValueSetDefineConceptListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirValueSetDefineConceptListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirValueSetDefineConceptListEnumerator.GetCurrent : TFhirValueSetDefineConcept;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -42615,6 +48284,11 @@ end;
 procedure TFhirValueSetDefineConceptList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirValueSetDefineConceptList.GetEnumerator : TFhirValueSetDefineConceptListEnumerator;
+begin
+  result := TFhirValueSetDefineConceptListEnumerator.Create(self.link);
 end;
 
 function TFhirValueSetDefineConceptList.Clone: TFhirValueSetDefineConceptList;
@@ -42753,6 +48427,34 @@ end;
 { TFhirValueSetCompose }
 
 
+{ TFhirValueSetComposeListEnumerator }
+
+Constructor TFhirValueSetComposeListEnumerator.Create(list : TFhirValueSetComposeList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirValueSetComposeListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirValueSetComposeListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirValueSetComposeListEnumerator.GetCurrent : TFhirValueSetCompose;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirValueSetComposeList }
 procedure TFhirValueSetComposeList.AddItem(value: TFhirValueSetCompose);
 begin
@@ -42775,6 +48477,11 @@ end;
 procedure TFhirValueSetComposeList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirValueSetComposeList.GetEnumerator : TFhirValueSetComposeListEnumerator;
+begin
+  result := TFhirValueSetComposeListEnumerator.Create(self.link);
 end;
 
 function TFhirValueSetComposeList.Clone: TFhirValueSetComposeList;
@@ -42863,8 +48570,8 @@ end;
 procedure TFhirValueSetComposeInclude.Assign(oSource : TAdvObject);
 begin
   inherited;
-  system := TFhirValueSetComposeInclude(oSource).system.Clone;
-  version := TFhirValueSetComposeInclude(oSource).version.Clone;
+  systemObject := TFhirValueSetComposeInclude(oSource).systemObject.Clone;
+  versionObject := TFhirValueSetComposeInclude(oSource).versionObject.Clone;
   FCodeList.Assign(TFhirValueSetComposeInclude(oSource).FCodeList);
   FFilterList.Assign(TFhirValueSetComposeInclude(oSource).FFilterList);
 end;
@@ -42873,9 +48580,9 @@ procedure TFhirValueSetComposeInclude.GetChildrenByName(child_name : string; lis
 begin
   inherited;
   if (child_name = 'system') Then
-     list.add(System.Link);
+     list.add(FSystem.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'code') Then
      list.addAll(FCodeList);
   if (child_name = 'filter') Then
@@ -42893,8 +48600,8 @@ end;
 
 procedure TFhirValueSetComposeInclude.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'system') then System := propValue as TFhirUri{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
+  if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
   else if (propName = 'code') then CodeList.add(propValue as TFhirCode){2}
   else if (propName = 'filter') then FilterList.add(propValue as TFhirValueSetComposeIncludeFilter){2}
   else inherited;
@@ -42928,7 +48635,7 @@ begin
   if FSystem = nil then
     result := ''
   else
-    result := System.value;
+    result := FSystem.value;
 end;
 
 Procedure TFhirValueSetComposeInclude.SetSystemST(value : String);
@@ -42954,7 +48661,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirValueSetComposeInclude.SetVersionST(value : String);
@@ -42967,6 +48674,34 @@ begin
   end
   else if FVersion <> nil then
     FVersion.value := '';
+end;
+
+
+{ TFhirValueSetComposeIncludeListEnumerator }
+
+Constructor TFhirValueSetComposeIncludeListEnumerator.Create(list : TFhirValueSetComposeIncludeList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirValueSetComposeIncludeListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirValueSetComposeIncludeListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirValueSetComposeIncludeListEnumerator.GetCurrent : TFhirValueSetComposeInclude;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -42992,6 +48727,11 @@ end;
 procedure TFhirValueSetComposeIncludeList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirValueSetComposeIncludeList.GetEnumerator : TFhirValueSetComposeIncludeListEnumerator;
+begin
+  result := TFhirValueSetComposeIncludeListEnumerator.Create(self.link);
 end;
 
 function TFhirValueSetComposeIncludeList.Clone: TFhirValueSetComposeIncludeList;
@@ -43077,20 +48817,20 @@ end;
 procedure TFhirValueSetComposeIncludeFilter.Assign(oSource : TAdvObject);
 begin
   inherited;
-  property_ := TFhirValueSetComposeIncludeFilter(oSource).property_.Clone;
+  property_Object := TFhirValueSetComposeIncludeFilter(oSource).property_Object.Clone;
   FOp := TFhirValueSetComposeIncludeFilter(oSource).FOp.Link;
-  value := TFhirValueSetComposeIncludeFilter(oSource).value.Clone;
+  valueObject := TFhirValueSetComposeIncludeFilter(oSource).valueObject.Clone;
 end;
 
 procedure TFhirValueSetComposeIncludeFilter.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
   if (child_name = 'property') Then
-     list.add(Property_.Link);
+     list.add(FProperty_.Link);
   if (child_name = 'op') Then
      list.add(FOp.Link);
   if (child_name = 'value') Then
-     list.add(Value.Link);
+     list.add(FValue.Link);
 end;
 
 procedure TFhirValueSetComposeIncludeFilter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -43103,9 +48843,21 @@ end;
 
 procedure TFhirValueSetComposeIncludeFilter.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'property') then Property_ := propValue as TFhirCode{5}
-  else if (propName = 'op') then Op := propValue as TFHIREnum
-  else if (propName = 'value') then Value := propValue as TFhirCode{5}
+  if (propName = 'property') then
+    if propValue is TFHIRCode then
+      Property_Object := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      Property_Object := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'op') then OpObject := propValue as TFHIREnum
+  else if (propName = 'value') then
+    if propValue is TFHIRCode then
+      ValueObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      ValueObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
   else inherited;
 end;
 
@@ -43137,7 +48889,7 @@ begin
   if FProperty_ = nil then
     result := ''
   else
-    result := Property_.value;
+    result := FProperty_.value;
 end;
 
 Procedure TFhirValueSetComposeIncludeFilter.SetProperty_ST(value : String);
@@ -43163,15 +48915,15 @@ begin
   if FOp = nil then
     result := TFhirFilterOperator(0)
   else
-    result := TFhirFilterOperator(StringArrayIndexOfSensitive(CODES_TFhirFilterOperator, Op.value));
+    result := TFhirFilterOperator(StringArrayIndexOfSensitive(CODES_TFhirFilterOperator, FOp.value));
 end;
 
 Procedure TFhirValueSetComposeIncludeFilter.SetOpST(value : TFhirFilterOperator);
 begin
   if ord(value) = 0 then
-    Op := nil
+    OpObject := nil
   else
-    Op := TFhirEnum.create(CODES_TFhirFilterOperator[value]);
+    OpObject := TFhirEnum.create(CODES_TFhirFilterOperator[value]);
 end;
 
 Procedure TFhirValueSetComposeIncludeFilter.SetValue(value : TFhirCode);
@@ -43185,7 +48937,7 @@ begin
   if FValue = nil then
     result := ''
   else
-    result := Value.value;
+    result := FValue.value;
 end;
 
 Procedure TFhirValueSetComposeIncludeFilter.SetValueST(value : String);
@@ -43198,6 +48950,34 @@ begin
   end
   else if FValue <> nil then
     FValue.value := '';
+end;
+
+
+{ TFhirValueSetComposeIncludeFilterListEnumerator }
+
+Constructor TFhirValueSetComposeIncludeFilterListEnumerator.Create(list : TFhirValueSetComposeIncludeFilterList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirValueSetComposeIncludeFilterListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirValueSetComposeIncludeFilterListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirValueSetComposeIncludeFilterListEnumerator.GetCurrent : TFhirValueSetComposeIncludeFilter;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -43223,6 +49003,11 @@ end;
 procedure TFhirValueSetComposeIncludeFilterList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirValueSetComposeIncludeFilterList.GetEnumerator : TFhirValueSetComposeIncludeFilterListEnumerator;
+begin
+  result := TFhirValueSetComposeIncludeFilterListEnumerator.Create(self.link);
 end;
 
 function TFhirValueSetComposeIncludeFilterList.Clone: TFhirValueSetComposeIncludeFilterList;
@@ -43310,7 +49095,7 @@ procedure TFhirValueSetExpansion.Assign(oSource : TAdvObject);
 begin
   inherited;
   identifier := TFhirValueSetExpansion(oSource).identifier.Clone;
-  timestamp := TFhirValueSetExpansion(oSource).timestamp.Clone;
+  timestampObject := TFhirValueSetExpansion(oSource).timestampObject.Clone;
   FContainsList.Assign(TFhirValueSetExpansion(oSource).FContainsList);
 end;
 
@@ -43318,9 +49103,9 @@ procedure TFhirValueSetExpansion.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'timestamp') Then
-     list.add(Timestamp.Link);
+     list.add(FTimestamp.Link);
   if (child_name = 'contains') Then
      list.addAll(FContainsList);
 end;
@@ -43335,8 +49120,8 @@ end;
 
 procedure TFhirValueSetExpansion.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'timestamp') then Timestamp := propValue as TFhirInstant{5}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'timestamp') then TimestampObject := propValue as TFhirInstant{5a}
   else if (propName = 'contains') then ContainsList.add(propValue as TFhirValueSetExpansionContains){2}
   else inherited;
 end;
@@ -43375,7 +49160,7 @@ begin
   if FTimestamp = nil then
     result := nil
   else
-    result := Timestamp.value;
+    result := FTimestamp.value;
 end;
 
 Procedure TFhirValueSetExpansion.SetTimestampST(value : TDateAndTime);
@@ -43388,6 +49173,34 @@ begin
   end
   else if FTimestamp <> nil then
     FTimestamp.value := nil;
+end;
+
+
+{ TFhirValueSetExpansionListEnumerator }
+
+Constructor TFhirValueSetExpansionListEnumerator.Create(list : TFhirValueSetExpansionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirValueSetExpansionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirValueSetExpansionListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirValueSetExpansionListEnumerator.GetCurrent : TFhirValueSetExpansion;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -43413,6 +49226,11 @@ end;
 procedure TFhirValueSetExpansionList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirValueSetExpansionList.GetEnumerator : TFhirValueSetExpansionListEnumerator;
+begin
+  result := TFhirValueSetExpansionListEnumerator.Create(self.link);
 end;
 
 function TFhirValueSetExpansionList.Clone: TFhirValueSetExpansionList;
@@ -43500,9 +49318,9 @@ end;
 procedure TFhirValueSetExpansionContains.Assign(oSource : TAdvObject);
 begin
   inherited;
-  system := TFhirValueSetExpansionContains(oSource).system.Clone;
-  code := TFhirValueSetExpansionContains(oSource).code.Clone;
-  display := TFhirValueSetExpansionContains(oSource).display.Clone;
+  systemObject := TFhirValueSetExpansionContains(oSource).systemObject.Clone;
+  codeObject := TFhirValueSetExpansionContains(oSource).codeObject.Clone;
+  displayObject := TFhirValueSetExpansionContains(oSource).displayObject.Clone;
   FContainsList.Assign(TFhirValueSetExpansionContains(oSource).FContainsList);
 end;
 
@@ -43510,11 +49328,11 @@ procedure TFhirValueSetExpansionContains.GetChildrenByName(child_name : string; 
 begin
   inherited;
   if (child_name = 'system') Then
-     list.add(System.Link);
+     list.add(FSystem.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'display') Then
-     list.add(Display.Link);
+     list.add(FDisplay.Link);
   if (child_name = 'contains') Then
      list.addAll(FContainsList);
 end;
@@ -43530,9 +49348,15 @@ end;
 
 procedure TFhirValueSetExpansionContains.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'system') then System := propValue as TFhirUri{5}
-  else if (propName = 'code') then Code := propValue as TFhirCode{5}
-  else if (propName = 'display') then Display := propValue as TFhirString{5}
+  if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
+  else if (propName = 'code') then
+    if propValue is TFHIRCode then
+      CodeObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'display') then DisplayObject := propValue as TFhirString{5a}
   else if (propName = 'contains') then ContainsList.add(propValue as TFhirValueSetExpansionContains){2}
   else inherited;
 end;
@@ -43565,7 +49389,7 @@ begin
   if FSystem = nil then
     result := ''
   else
-    result := System.value;
+    result := FSystem.value;
 end;
 
 Procedure TFhirValueSetExpansionContains.SetSystemST(value : String);
@@ -43591,7 +49415,7 @@ begin
   if FCode = nil then
     result := ''
   else
-    result := Code.value;
+    result := FCode.value;
 end;
 
 Procedure TFhirValueSetExpansionContains.SetCodeST(value : String);
@@ -43617,7 +49441,7 @@ begin
   if FDisplay = nil then
     result := ''
   else
-    result := Display.value;
+    result := FDisplay.value;
 end;
 
 Procedure TFhirValueSetExpansionContains.SetDisplayST(value : String);
@@ -43630,6 +49454,34 @@ begin
   end
   else if FDisplay <> nil then
     FDisplay.value := '';
+end;
+
+
+{ TFhirValueSetExpansionContainsListEnumerator }
+
+Constructor TFhirValueSetExpansionContainsListEnumerator.Create(list : TFhirValueSetExpansionContainsList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirValueSetExpansionContainsListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirValueSetExpansionContainsListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirValueSetExpansionContainsListEnumerator.GetCurrent : TFhirValueSetExpansionContains;
+begin
+  Result := FList[FIndex];
 end;
 
 
@@ -43655,6 +49507,11 @@ end;
 procedure TFhirValueSetExpansionContainsList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirValueSetExpansionContainsList.GetEnumerator : TFhirValueSetExpansionContainsListEnumerator;
+begin
+  result := TFhirValueSetExpansionContainsListEnumerator.Create(self.link);
 end;
 
 function TFhirValueSetExpansionContainsList.Clone: TFhirValueSetExpansionContainsList;

@@ -16,6 +16,7 @@ Uses
 Type
   EUcumTestFail = class (Exception);
 
+  {$M+}
   TUcumTests = Class(TAdvObject) // but can be used with DUnit
   private
     FFolder : String;
@@ -86,8 +87,6 @@ end;
 
 Procedure TUcumTests.TestConversion;
 var
-  oParser : TMsXmlParser;
-  IDoc : IXMLDOMDocument2;
   iElem : IXMLDOMElement;
 Begin
   iElem := TMsXmlParser.FirstChild(FTestDoc.documentElement);

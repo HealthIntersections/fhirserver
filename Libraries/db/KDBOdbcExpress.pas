@@ -85,7 +85,7 @@ type
     function GetDBPlatform: TKDBPlatform; Override;
     function GetDBDetails: String; Override;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     class function IsSupportAvailable(APlatform : TKDBPlatform; Var VMsg : String):Boolean; override;
     property Dsn : String read FDsn;
     property Driver : String read FDriver;

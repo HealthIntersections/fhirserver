@@ -71,7 +71,6 @@ Type
     function ConsumeNumber : String;
     function ConsumeString : String;
 
-    procedure setFilter(filter : TSCIMSearchFilter);
     procedure parse; overload;
     function parseOpen : TSCIMSearchFilter;
     function parseLogical(test : TSCIMSearchFilter) : TSCIMSearchFilter;
@@ -172,12 +171,6 @@ begin
   test('userType eq "Employee" and emails[type eq "work" and value co "@example.com"]');
   test('emails[type eq "work" and value co "@example.com"] or ims[type eq "xmpp" and value co "@foo.com"]');
   test('addresses[state eq "CA" and rooms[type eq "bedroom" and number gt 2]]');
-end;
-
-procedure TSCIMSearchParser.setFilter(filter: TSCIMSearchFilter);
-begin
-  self.filter.Free;
-  self.filter := filter;
 end;
 
 class procedure TSCIMSearchParser.test(expression: String);
@@ -363,7 +356,6 @@ end;
 function TSCIMSearchParser.ConsumeString: String;
 var
   l : integer;
-  esc : boolean;
 begin
   inc(cursor);
   setLength(result, length(original)); // can't be longer than that

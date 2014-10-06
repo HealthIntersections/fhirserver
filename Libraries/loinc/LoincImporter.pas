@@ -33,8 +33,8 @@ Interface
 Uses
   SysUtils, Contnrs, Classes,
   StringSupport, DateSupport,
-  AdvObjects, AdvObjectLists, AdvStringLists, AdvIntegerLists, AdvNames,
-  KDBManager, KDBODBCExpress, KDBDialects, YuStemmer, LoincServices;
+  AdvObjects, AdvObjectLists, AdvStringLists, AdvIntegerLists, AdvNames, AdvCSVExtractors, AdvFiles,
+  YuStemmer, LoincServices;
 
 Const
   FLAG_LONG_COMMON = 1;
@@ -59,13 +59,13 @@ Type
   End;
 
   TConceptManager = class (TAdvNameList)
-    Function See(sName : AnsiString; oCode : TObject) : TConcept;
-    Function Store(sName : AnsiString; oImp : TLOINCImporter) : Word;
+    Function See(sName : String; oCode : TObject) : TConcept;
+    Function Store(sName : String; oImp : TLOINCImporter) : Word;
   End;
 
   TDescribed = class  (TAdvObject)
   private
-    index : Integer;
+    index : Cardinal;
     Stems : TAdvIntegerList;
   public
     Constructor Create; Override;
@@ -109,8 +109,8 @@ Type
 
   TCode = class (TDescribed)
   Private
-    Code : AnsiString;
-    Display : AnsiString;
+    Code : String;
+    Display : String;
     Names : Cardinal;
     Comps : TConcept;
     Props : TConcept;
@@ -165,12 +165,12 @@ Type
     FOutputFile: String;
     FMultiAxialFilename: String;
 
-    procedure SeeDesc(sDesc: AnsiString; oObj : TDescribed; iFlags: Byte);
-    procedure SeeWord(sDesc: AnsiString; oObj : TDescribed; iFlags: Byte);
+    procedure SeeDesc(sDesc: String; oObj : TDescribed; iFlags: Byte);
+    procedure SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte);
 
-    Function AddDescription(Const s : AnsiString):Cardinal;
-    Function SeeUnits(Const s : AnsiString):Word;
-    function LoadLOINCDB(o: TKDBConnection; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
+    Function AddDescription(Const s : String):Cardinal;
+    Function SeeUnits(Const s : String):Word;
+    function LoadLOINCFile(source : TAdvFile; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
     function ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
     procedure Progress(msg : String);
     procedure ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln : string);
@@ -188,14 +188,12 @@ function importLoinc(filename, maFilename : String; dest : String) : String;
 
 Implementation
 
-uses
-  AnsiStringBuilder;
-
 Function DetermineVersion(filename : String) : String;
 var
   txtFile : String;
   f : TFileStream;
-  txt, s : AnsiString;
+  txt : AnsiString;
+  s, t : String;
 begin
   txtFile := ChangeFileExt(filename, '.txt');
   if not FileExists(txtFile) then
@@ -207,7 +205,8 @@ begin
   finally
     f.free;
   end;
-  AnsiStringSplit(txt, [#13], s, txt);
+  t := String(txt);
+  StringSplit(t, [#13], s, t);
   result := copy(s, length(s)-3, 4);
   if not (StringIsInteger16(copy(result, 1, 1)) and (result[2] = '.') and StringIsInteger16(copy(result, 3, 2))) then
     raise Exception.Create('Unable to read the version from '+txtFile);
@@ -246,29 +245,29 @@ var
 Begin
   result := '';
   for i := 1 to length(sName) Do
-    if (sName[i] in ['a'..'z', '_', '-', 'A'..'Z', '0'..'9']) Then
+    if CharInSet(sName[i], ['a'..'z', '_', '-', 'A'..'Z', '0'..'9']) Then
       result := result + sName[i];
   if result = '' then
     result := inttostr(newkey);
 End;
 
-procedure TLoincImporter.SeeDesc(sDesc: AnsiString; oObj : TDescribed; iFlags: Byte);
+procedure TLoincImporter.SeeDesc(sDesc: String; oObj : TDescribed; iFlags: Byte);
 var
-  s : AnsiString;
+  s : String;
 begin
   while (sDesc <> '') Do
   Begin
-    AnsiStringSplit(sdesc, [#13, #10, ',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='],
+    StringSplit(sdesc, [#13, #10, ',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='],
       s, sdesc);
     if (s <> '') {And not StringContainsAny(s, ['0'..'9']) And (length(s) > 3)} Then
       SeeWord(s, oObj, iFlags);
   End;
 end;
 
-procedure TLoincImporter.SeeWord(sDesc: AnsiString; oObj : TDescribed; iFlags: Byte);
+procedure TLoincImporter.SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte);
 var
   i, m : integer;
-  sStem : AnsiString;
+  sStem : String;
   oList : TAdvObjectList;
 begin
   sDesc := lowercase(sdesc);
@@ -282,7 +281,7 @@ begin
 
   FWordList.Objects[i] := TObject(m);
 
-  sStem := FStemmer.Stem(sDesc);
+  sStem := FStemmer.calc(sDesc);
   if not FStemList.Find(sStem, i) Then
   Begin
     oList := TAdvObjectList.Create;
@@ -333,8 +332,58 @@ begin
     raise Exception.Create('Out of order');
 end;
 
+Const
+  FLD_LOINC_NUM =                            0;
+  FLD_COMPONENT =                            1;
+  FLD_PROPERTY =                             2;
+  FLD_TIME_ASPCT =                           3;
+  FLD_SYSTEM =                               4;
+  FLD_SCALE_TYP =                            5;
+  FLD_METHOD_TYP =                           6;
+  FLD_CLASS =                                7;
+  FLD_SOURCE =                               8;
+  FLD_DATE_LAST_CHANGED =                    9;
+  FLD_CHNG_TYPE =                           10;
+  FLD_COMMENTS =                            11;
+  FLD_STATUS =                              12;
+  FLD_CONSUMER_NAME =                       13;
+  FLD_MOLAR_MASS =                          14;
+  FLD_CLASSTYPE =                           15;
+  FLD_FORMULA =                             16;
+  FLD_SPECIES =                             17;
+  FLD_EXMPL_ANSWERS =                       18;
+  FLD_ACSSYM =                              19;
+  FLD_BASE_NAME =                           20;
+  FLD_NAACCR_ID =                           21;
+  FLD_CODE_TABLE =                          22;
+  FLD_SURVEY_QUEST_TEXT =                   23;
+  FLD_SURVEY_QUEST_SRC =                    24;
+  FLD_UNITSREQUIRED =                       25;
+  FLD_SUBMITTED_UNITS =                     26;
+  FLD_RELATEDNAMES2 =                       27;
+  FLD_SHORTNAME =                           28;
+  FLD_ORDER_OBS =                           29;
+  FLD_CDISC_COMMON_TESTS =                  30;
+  FLD_HL7_FIELD_SUBFIELD_ID =               31;
+  FLD_EXTERNAL_COPYRIGHT_NOTICE =           32;
+  FLD_EXAMPLE_UNITS =                       33;
+  FLD_LONG_COMMON_NAME =                    34;
+  FLD_HL7_V2_DATATYPE =                     35;
+  FLD_HL7_V3_DATATYPE =                     36;
+  FLD_CURATED_RANGE_AND_UNITS =             37;
+  FLD_DOCUMENT_SECTION =                    38;
+  FLD_EXAMPLE_UCUM_UNITS =                  39;
+  FLD_EXAMPLE_SI_UCUM_UNITS =               40;
+  FLD_STATUS_REASON =                       41;
+  FLD_STATUS_TEXT =                         42;
+  FLD_CHANGE_REASON_PUBLIC =                43;
+  FLD_COMMON_TEST_RANK =                    44;
+  FLD_COMMON_ORDER_RANK =                   45;
+  FLD_COMMON_SI_TEST_RANK =                 46;
+  FLD_HL7_ATTACHMENT_STRUCTURE =            47;
 
-Function TLoincImporter.LoadLOINCDB(o : TKDBConnection; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
+
+Function TLoincImporter.LoadLOINCFile(source : TAdvFile; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
 var
   iLength : Integer;
   iCount : Integer;
@@ -362,6 +411,8 @@ var
   ma : Text;
   ln : String;
   a : TLoincSubsetId;
+  csv : TAdvCSVExtractor;
+  items : TAdvStringList;
 begin
   result := 0;
   iLength := 0;
@@ -391,129 +442,136 @@ begin
 
     iCount := 0;
     Progress('Loading Concepts');
-    o.sql := 'Select LOINC_NUM, LONG_COMMON_NAME, COMPONENT, PROPERTY, TIME_ASPCT, SYSTEM, SCALE_TYP, METHOD_TYP, CLASS, RELATEDNAMES2, SHORTNAME, '
-                +'HL7_V2_DATATYPE, HL7_V3_DATATYPE, ORDER_OBS, UNITSREQUIRED, CLASSTYPE, STATUS, EXTERNAL_COPYRIGHT_NOTICE from LOINC order by LOINC_NUM';
-    o.prepare;
+    items := TAdvStringList.create;
+    csv := TAdvCSVExtractor.Create(source.Link);
     Try
-      o.execute;
-      while o.fetchnext do
+      // headers
+      csv.ConsumeEntries(items);
+
+      while csv.More do
       begin
-        oCode := TCode.Create;
-        oCodes.Add(oCode);
-
-        oCode.Names := 0;
-        oCode.Code := Trim(o.ColStringByName['LOINC_NUM']);
-        oCode.Display := Trim(o.ColStringByName['LONG_COMMON_NAME']);
-        if Length(oCode.Code) > iLength Then
-          iLength := Length(oCode.Code);
-
-        oCode.Comps := oComps.See(o.ColStringByName['COMPONENT'], oCode);
-        oCode.Props := oProps.See(o.ColStringByName['PROPERTY'], oCode);
-        oCode.Time := oTime.See(o.ColStringByName['TIME_ASPCT'], oCode);
-        oCode.System := oSystem.See(o.ColStringByName['SYSTEM'], oCode);
-        oCode.Scale := oScale.See(o.ColStringByName['SCALE_TYP'], oCode);
-        oCode.Method := oMethod.See(o.ColStringByName['METHOD_TYP'], oCode);
-        oCode.Class_ := oClass.See(o.ColStringByName['CLASS'], oCode);
-
-        oSubsets[lsiAll].add(oCode.Link);
-        oCode.Flags := 0;
-//        if o.ColIntegerByName['SETROOT'] = 1 Then
-//          oCode.Flags := oCode.Flags + FLAGS_ROOT;
-        if sameText(o.ColStringByName['ORDER_OBS'], 'Both') Then    
+        items.Clear;
+        csv.ConsumeEntries(items);
+        if items.count > 0 then
         begin
-          oCode.Flags := oCode.Flags + FLAGS_ORDER + FLAGS_OBS;
-          oSubsets[lsiOrderObs].add(oCode.Link);
-        end
-        else if sameText(o.ColStringByName['ORDER_OBS'], 'Observation') Then
-        begin
-          oCode.Flags := oCode.Flags + FLAGS_OBS;
-          oSubsets[lsiObs].add(oCode.Link);
-        end
-        else if sameText(o.ColStringByName['ORDER_OBS'], 'Order') Then
-        begin
-          oCode.Flags := oCode.Flags + FLAGS_ORDER;
-          oSubsets[lsiOrder].add(oCode.Link);
-        end
-        else if (o.ColStringByName['ORDER_OBS'] <> '') And (o.ColStringByName['ORDER_OBS'] <> 'Subset') Then
-          Raise exception.create('unknown order/obs '+o.ColStringByName['ORDER_OBS'])
-        else
-          oSubsets[lsiOrderSubset].add(oCode.Link);
+          oCode := TCode.Create;
+          oCodes.Add(oCode);
+
+          oCode.Names := 0;
+          oCode.Code := Trim(items[FLD_LOINC_NUM]);
+          oCode.Display := Trim(items[FLD_LONG_COMMON_NAME]);
+          if Length(oCode.Code) > iLength Then
+            iLength := Length(oCode.Code);
+
+          oCode.Comps := oComps.See(items[FLD_COMPONENT], oCode);
+          oCode.Props := oProps.See(items[FLD_PROPERTY], oCode);
+          oCode.Time := oTime.See(items[FLD_TIME_ASPCT], oCode);
+          oCode.System := oSystem.See(items[FLD_SYSTEM], oCode);
+          oCode.Scale := oScale.See(items[FLD_SCALE_TYP], oCode);
+          oCode.Method := oMethod.See(items[FLD_METHOD_TYP], oCode);
+          oCode.Class_ := oClass.See(items[FLD_CLASS], oCode);
+
+          oSubsets[lsiAll].add(oCode.Link);
+          oCode.Flags := 0;
+  //        if o.ColIntegerByName['SETROOT'] = 1 Then
+  //          oCode.Flags := oCode.Flags + FLAGS_ROOT;
+          if sameText(items[FLD_ORDER_OBS], 'Both') Then
+          begin
+            oCode.Flags := oCode.Flags + FLAGS_ORDER + FLAGS_OBS;
+            oSubsets[lsiOrderObs].add(oCode.Link);
+          end
+          else if sameText(items[FLD_ORDER_OBS], 'Observation') Then
+          begin
+            oCode.Flags := oCode.Flags + FLAGS_OBS;
+            oSubsets[lsiObs].add(oCode.Link);
+          end
+          else if sameText(items[FLD_ORDER_OBS], 'Order') Then
+          begin
+            oCode.Flags := oCode.Flags + FLAGS_ORDER;
+            oSubsets[lsiOrder].add(oCode.Link);
+          end
+          else if (items[FLD_ORDER_OBS] <> '') And (items[FLD_ORDER_OBS] <> 'Subset') Then
+            Raise exception.create('unknown order/obs '+items[FLD_ORDER_OBS])
+          else
+            oSubsets[lsiOrderSubset].add(oCode.Link);
+
+          if items[FLD_UNITSREQUIRED] = 'Y' Then
+            oCode.Flags := oCode.Flags + FLAGS_UNITS;
+          if items[FLD_EXTERNAL_COPYRIGHT_NOTICE] = '' then
+            oSubsets[lsiInternal].add(oCode.Link)
+          else
+            oSubsets[lsi3rdParty].add(oCode.Link);
         
-        if o.ColStringByName['UNITSREQUIRED'] = 'Y' Then
-          oCode.Flags := oCode.Flags + FLAGS_UNITS;
-        if o.ColNullByName['EXTERNAL_COPYRIGHT_NOTICE'] then
-          oSubsets[lsiInternal].add(oCode.Link)
-        else
-          oSubsets[lsi3rdParty].add(oCode.Link);
-        
-        case o.ColIntegerByName['CLASSTYPE'] of
-         2: begin
-            oCode.Flags := oCode.Flags + FLAGS_CLIN;
-            oSubsets[lsiTypeClinical].add(oCode.Link);
-            end;
-         3: begin
-            oCode.Flags := oCode.Flags + FLAGS_ATT;
-            oSubsets[lsiTypeAttachment].add(oCode.Link);
-            end;
-         4: begin
-            oCode.Flags := oCode.Flags + FLAGS_SURV;
-            oSubsets[lsiTypeSurvey].add(oCode.Link);
-            end;
-         1: begin
-            oSubsets[lsiTypeObservation].add(oCode.Link);
-            end;
-        else
-          Raise exception.create('unexpected class type '+inttostr(o.ColIntegerByName['CLASSTYPE']));
-        End;
-        if SameText(o.ColStringByName['STATUS'], 'Active') then
-          oSubsets[lsiActive].add(oCode.Link)
-        else if SameText(o.ColStringByName['STATUS'], 'Deprecated') then
-          oSubsets[lsiDeprecated].add(oCode.Link)
-        else if SameText(o.ColStringByName['STATUS'], 'Discouraged') then
-          oSubsets[lsiDiscouraged].add(oCode.Link)
-        else if SameText(o.ColStringByName['STATUS'], 'Trial') then
-          oSubsets[lsiTrial].add(oCode.Link)
-        else
-          raise Exception.Create('Unknown LOINC Code status '+o.ColStringByName['STATUS']);
-
-        SeeDesc(oCode.Display, oCode, FLAG_LONG_COMMON);
-
-        oCode.v2dt := SeeUnits(o.ColStringByName['HL7_V2_DATATYPE']);
-        oCode.v3dt := SeeUnits(o.ColStringByName['HL7_V3_DATATYPE']);
-           
-        oNames := TAdvStringList.Create;
-        Try
-          oNames.Symbol := ';';
-          oNames.AsText := o.ColStringByName['RELATEDNAMES2'];
-          if o.ColStringByName['SHORTNAME'] <> '' Then
-            oNames.Insert(0, o.ColStringByName['SHORTNAME']);
-
-          if oNames.Count > 0 Then
-          Begin
-            SetLength(aNames, oNames.Count);
-            For iLoop := 0 to oNames.Count - 1 Do
-              If Trim(oNames[iLoop]) <> '' Then
-              Begin
-                aNames[iLoop] := addDescription(Trim(oNames[iLoop]));
-                SeeDesc(oNames[iLoop], oCode, FLAG_LONG_RELATED);
-              End
-              Else
-                aNames[iLoop] := 0;
-
-            oCode.Names := FRefs.AddCardinals(aNames);
+          case StrToInt(items[FLD_CLASSTYPE]) of
+           2: begin
+              oCode.Flags := oCode.Flags + FLAGS_CLIN;
+              oSubsets[lsiTypeClinical].add(oCode.Link);
+              end;
+           3: begin
+              oCode.Flags := oCode.Flags + FLAGS_ATT;
+              oSubsets[lsiTypeAttachment].add(oCode.Link);
+              end;
+           4: begin
+              oCode.Flags := oCode.Flags + FLAGS_SURV;
+              oSubsets[lsiTypeSurvey].add(oCode.Link);
+              end;
+           1: begin
+              oSubsets[lsiTypeObservation].add(oCode.Link);
+              end;
+          else
+            Raise exception.create('unexpected class type '+items[FLD_CLASSTYPE]);
           End;
-        Finally
-          oNames.Free;
-        End;
+          if SameText(items[FLD_STATUS], 'Active') then
+            oSubsets[lsiActive].add(oCode.Link)
+          else if SameText(items[FLD_STATUS], 'Deprecated') then
+            oSubsets[lsiDeprecated].add(oCode.Link)
+          else if SameText(items[FLD_STATUS], 'Discouraged') then
+            oSubsets[lsiDiscouraged].add(oCode.Link)
+          else if SameText(items[FLD_STATUS], 'Trial') then
+            oSubsets[lsiTrial].add(oCode.Link)
+          else
+            raise Exception.Create('Unknown LOINC Code status '+items[FLD_STATUS]);
 
-        // properties
+          SeeDesc(oCode.Display, oCode, FLAG_LONG_COMMON);
 
-        if iCount mod STEP_COUNT = 0 then
-          Progress('');
-        inc(iCount);
+          oCode.v2dt := SeeUnits(items[FLD_HL7_V2_DATATYPE]);
+          oCode.v3dt := SeeUnits(items[FLD_HL7_V3_DATATYPE]);
+
+          oNames := TAdvStringList.Create;
+          Try
+            oNames.Symbol := ';';
+            oNames.AsText := items[FLD_RELATEDNAMES2];
+            if items[FLD_SHORTNAME] <> '' Then
+              oNames.Insert(0, items[FLD_SHORTNAME]);
+
+            if oNames.Count > 0 Then
+            Begin
+              SetLength(aNames, oNames.Count);
+              For iLoop := 0 to oNames.Count - 1 Do
+                If Trim(oNames[iLoop]) <> '' Then
+                Begin
+                  aNames[iLoop] := addDescription(Trim(oNames[iLoop]));
+                  SeeDesc(oNames[iLoop], oCode, FLAG_LONG_RELATED);
+                End
+                Else
+                  aNames[iLoop] := 0;
+
+              oCode.Names := FRefs.AddCardinals(aNames);
+            End;
+          Finally
+            oNames.Free;
+          End;
+
+          // properties
+
+          if iCount mod STEP_COUNT = 0 then
+            Progress('');
+          inc(iCount);
+        end;
       End;
     Finally
-      o.Terminate;
+      csv.free;
+      items.Free;
     End;
     Progress('Sort Codes');
     oCodes.SortedByCode;
@@ -542,7 +600,7 @@ begin
     For iLoop := 0 to oCodes.Count - 1 Do
     Begin
       oCode := TCode(oCodes[iLoop]);
-      oCode.Code := AnsiPadString(oCode.Code, iLength, ' ', false);
+      oCode.Code := StringPadRight(oCode.Code, ' ', iLength);
     End;
     FCode.CodeLength := iLength;
 
@@ -696,24 +754,20 @@ End;
 
 Function TLoincImporter.ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
 var
-  oLink : TKDBManager;
-  o : TKDBConnection;
+  f : TAdvFile;
 Begin
   FStrings := TStringList.Create;
   FStrings.Sorted := True;
   FUnits := TStringList.Create;
   FUnits.Sorted := true;
   try
-    oLink := TKDBOdbcDirect.Create('loinc', 1, 'Microsoft Access Driver (*.mdb)', '', FFilename, '', '');
+    f := TAdvFile.Create;
     Try
-      o := oLink.GetConnection('load');
-      Try
-        result := LoadLOINCDB(o, props, roots, subsets);
-      Finally
-        o.Release;
-      End;
+      f.Name := FFilename;
+      f.OpenRead;
+      result := LoadLOINCFile(f, props, roots, subsets);
     Finally
-      oLink.Free;
+      f.Free;
     End;
   Finally
     FUnits.Free;
@@ -725,8 +779,7 @@ Procedure TLoincImporter.ImportLOINC;
 var
   oSvc : TLOINCServices;
   props : TLoincPropertyIds;
-  newKey : integer;
-  i, iStatus : integer;
+  i : integer;
   roots : TCardinalArray;
   subsets : TLoincSubsets;
 begin
@@ -856,7 +909,7 @@ end;
 
 { TConceptManager }
 
-function TConceptManager.See(sName: AnsiString; oCode: TObject): TConcept;
+function TConceptManager.See(sName: String; oCode: TObject): TConcept;
 var
   i : Integer;
 begin
@@ -877,7 +930,7 @@ begin
   End;
 end;
 
-function TConceptManager.Store(sName : AnsiString; oImp : TLoincImporter): Word;
+function TConceptManager.Store(sName : String; oImp : TLoincImporter): Word;
 var
   i, j : integer;
   aChildren : TWordArray;
@@ -897,7 +950,7 @@ begin
   result := oImp.FConcepts.AddConcept(oImp.AddDescription(sName), oImp.FRefs.AddWords(aChildren), 0);
 end;
 
-function TLoincImporter.AddDescription(const s: AnsiString): Cardinal;
+function TLoincImporter.AddDescription(const s: String): Cardinal;
 var
   i : Integer;
 begin
@@ -910,7 +963,7 @@ begin
   End;
 end;
 
-function TLoincImporter.SeeUnits(const s: AnsiString): Word;
+function TLoincImporter.SeeUnits(const s: String): Word;
 var
   i : Integer;
 begin

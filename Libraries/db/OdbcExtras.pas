@@ -94,8 +94,6 @@ type
 
     constructor Create;
     destructor Destroy; override;
-  published
-    { Published declarations }
   end;
 
   { TSchemaColumns }
@@ -123,8 +121,6 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
-  published
-    { Published declarations }
   end;
 
   TSchemaIndex = class;
@@ -157,8 +153,6 @@ type
     destructor Destroy; override;
     procedure LoadIndex;
     procedure DropIndex;
-  published
-    { Published declarations }
   end;
 
   { TSchemaIndexes }
@@ -187,8 +181,6 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
-  published
-    { Published declarations }
   end;
 
   { TSchemaTable }
@@ -218,8 +210,6 @@ type
     procedure DropTable;
     procedure LoadIndexes;
     procedure DropIndexes(IgnoreErrors: Boolean);
-  published
-    { Published declarations }
   end;
 
   { TSchemaTables }
@@ -251,8 +241,6 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
-  published
-    { Published declarations }
   end;
 
   { TSchemaView }
@@ -279,8 +267,6 @@ type
     destructor Destroy; override;
     procedure LoadView;
     procedure DropView;
-  published
-    { Published declarations }
   end;
 
   { TSchemaViews }
@@ -312,8 +298,6 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
-  published
-    { Published declarations }
   end;
 
   { TOESchema }
@@ -459,8 +443,6 @@ type
 
     constructor Create;
     destructor Destroy; override;
-  published
-    { Published declarations }
   end;
 
   { TCatalogColumns }
@@ -484,8 +466,6 @@ type
 
     constructor Create;
     destructor Destroy; override;
-  published
-    { Published declarations }
   end;
 
   { TCatalogTable }
@@ -545,8 +525,6 @@ type
     destructor Destroy; override;
     function ColumnByName(AColumnName: String): TCatalogColumn;
     procedure Refresh;
-  published
-    { Published declarations }
   end;
 
   { TCatalogTables }
@@ -571,8 +549,6 @@ type
 
     constructor Create;
     destructor Destroy; override;
-  published
-    { Published declarations }
   end;
 
   { TCatalogProcedure }
@@ -607,8 +583,6 @@ type
     destructor Destroy; override;
     function ColumnByName(AColumnName: String): TCatalogColumn;
     procedure Refresh;
-  published
-    { Published declarations }
   end;
 
   { TCatalogProcedures }
@@ -633,8 +607,6 @@ type
 
     constructor Create;
     destructor Destroy; override;
-  published
-    { Published declarations }
   end;
 
   { TOECatalog }

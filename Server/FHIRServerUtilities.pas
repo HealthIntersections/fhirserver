@@ -26,9 +26,9 @@ begin
     move(s[4+i], j, 4);
 
     result.Content.AsBytes := copy(s, 8+i, j);
-    result.ContentType := ct;
+    result.ContentType := String(ct);
     result.text :=  TFhirNarrative.create;
-    result.text.statusST := NarrativeStatusGenerated;
+    result.text.status := NarrativeStatusGenerated;
     result.text.div_ := ParseXhtml(lang, '<div>'+GetFhirMessage('NAME_BINARY', lang)+' ('+result.ContentType+', '+DescribeBytes(result.Content.Size)+')</div>', xppReject);
     result.Link;
   finally

@@ -1,7 +1,7 @@
 unit FHIRBase;
 
 {
-Copyright (c) 2011-2014, HL7, Inc
+Copyright (c) 2011+, HL7, Inc
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, 
@@ -124,32 +124,45 @@ type
 
   TFHIRObject = class;
   TFHIRObjectList = class;
+  TFHIRPropertyList = class;
 
   TFHIRProperty = class (TAdvObject)
   Private
     FName : String;
     FType : String;
-    FObj : TFHIRObject;
     FList : TFHIRObjectList;
-    FValue : String;
+    function GetHasValue: Boolean;
   Public
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; oObject : TFHIRObject); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; oList : TFHIRObjectList); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; sValue : String); Overload;
     Destructor Destroy; Override;
 
+    Property hasValue : Boolean read GetHasValue;
     Property Name : String read FName;
     Property Type_ : String read FType;
-    Property Obj : TFHIRObject read FObj;
     Property List : TFHIRObjectList read FList;
-    Property Value : String read FValue;
   End;
 
+
+  TFHIRPropertyListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFHIRPropertyList;
+    function GetCurrent : TFHIRProperty;
+  public
+    Constructor Create(list : TFHIRPropertyList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFHIRProperty read GetCurrent;
+  end;
 
   TFHIRPropertyList = class (TAdvObjectList)
   private
     Function GetProperty(iIndex : Integer) : TFHIRProperty;
   public
+    function Link : TFHIRPropertyList; overload;
+    function GetEnumerator : TFHIRPropertyListEnumerator;
     Property Properties[iIndex : Integer] : TFHIRProperty read GetProperty; default;
   End;
 
@@ -188,6 +201,18 @@ type
     property TagValue : String read FTagValue write FTagValue;
   end;
 
+  TFHIRObjectListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFHIRObjectList;
+    function GetCurrent : TFHIRObject;
+  public
+    Constructor Create(list : TFHIRObjectList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFHIRObject read GetCurrent;
+  end;
+
   TFHIRObjectList = class (TAdvObjectList)
   private
     Function GetItemN(index : Integer) : TFHIRObject;
@@ -196,6 +221,7 @@ type
   public
     function Link : TFHIRObjectList; Overload;
     function Clone : TFHIRObjectList; Overload;
+    function GetEnumerator : TFHIRObjectListEnumerator;
     Property ObjByIndex[index : Integer] : TFHIRObject read GetItemN; default;
   end;
 
@@ -213,6 +239,7 @@ type
 
   TFHIRSearchParameters = class (TAdvStringMatch);
 
+  TFHIRAttributeList = class;
   TFHIRAttribute = class (TFHIRObject)
   private
     FName : String;
@@ -229,15 +256,29 @@ type
     property Value : String read FValue write FValue;
   end;
 
+  TFHIRAttributeListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFHIRAttributeList;
+    function GetCurrent : TFHIRAttribute;
+  public
+    Constructor Create(list : TFHIRAttributeList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFHIRAttribute read GetCurrent;
+  end;
+
   TFHIRAttributeList = class (TFHIRObjectList)
   private
     Function GetItemN(index : Integer) : TFHIRAttribute;
   public
+    function Link : TFHIRAttributeList; Overload;
     Function IndexOf(value : TFHIRAttribute) : Integer;
     Function Item(index : Integer) : TFHIRAttribute;
     Function Count : Integer; Overload;
     Property Segments[index : Integer] : TFHIRAttribute read GetItemN; default;
     Function Get(name : String):String;
+    function GetEnumerator : TFHIRAttributeListEnumerator;
     Procedure SetValue(name : String; value :String);
   End;
 
@@ -268,6 +309,7 @@ type
     function Clone : TFhirXHtmlNode; Overload;
     procedure Assign(oSource : TAdvObject); override;
     property Attributes : TFHIRAttributeList read FAttributes;
+    function allChildrenAreText : boolean;
     {!script show}
 
     {@member AsPlainText
@@ -340,7 +382,19 @@ type
 
       Note that namespaces are not supported in FHIR xhtml
     }
-    procedure SetAttribute(name, value : String);
+    function SetAttribute(name, value : String) : TFhirXHtmlNode;
+  end;
+
+  TFHIRXhtmlNodeListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFHIRXhtmlNodeList;
+    function GetCurrent : TFHIRXhtmlNode;
+  public
+    Constructor Create(list : TFHIRXhtmlNodeList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFHIRXhtmlNode read GetCurrent;
   end;
 
   {@Class TFHIRXHtmlNodeList
@@ -355,6 +409,7 @@ type
     {!script hide}
     Function Link : TFHIRXHtmlNodeList; Overload;
     Function Clone : TFHIRXHtmlNodeList; Overload;
+    function GetEnumerator : TFHIRXhtmlNodeListEnumerator;
     {!script show}
     {@member Append
       Add an Xhtml Node to the end of the list.
@@ -572,250 +627,6 @@ function TFHIRBase.Link: TFHIRBase;
 begin
   result := TFHIRBase(Inherited Link);
 end;
-(*
-{ TFHIRString }
-
-procedure TFHIRString.Assign(oSource: TAdvObject);
-begin
-  inherited;
-  FValue := TFHIRString(oSource).FValue;
-end;
-
-function TFHIRString.Clone: TFHIRString;
-begin
-  result := TFHIRString(inherited Clone);
-end;
-
-constructor TFHIRString.Create(value: String);
-begin
-  Create;
-  FValue := value;
-end;
-
-procedure TFHIRString.GetChildrenByName(name: string; list: TFHIRObjectList);
-begin
-  inherited;
-  if (name = 'text()') then
-    list.add(TFHIRObjectText.create(value));
-end;
-
-function TFHIRString.Link: TFHIRString;
-begin
-  result := TFHIRString(inherited Link);
-end;
-
-procedure TFHIRString.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  if (bInheritedProperties) Then
-    inherited;
-  oList.add(TFHIRProperty.create(self, 'content', 'string', FValue));
-end;
-
-{ TFHIRCode }
-
-function TFHIRCode.Clone: TFHIRCode;
-begin
-  result := TFHIRCode(inherited Clone);
-end;
-
-function TFHIRCode.Link: TFHIRCode;
-begin
-  result := TFHIRCode(inherited Link);
-end;
-
-{ TFHIRBoolean }
-
-procedure TFHIRBoolean.Assign(oSource: TAdvObject);
-begin
-  inherited;
-  FValue := TFHIRBoolean(oSource).FValue;
-end;
-
-function TFHIRBoolean.Clone: TFHIRBoolean;
-begin
-  result := TFHIRBoolean(inherited Clone);
-end;
-
-constructor TFHIRBoolean.Create(value: boolean);
-begin
-  Create;
-  FValue := value;
-end;
-
-procedure TFHIRBoolean.GetChildrenByName(name: string; list: TFHIRObjectList);
-begin
-  inherited;
-  if (name = 'text()') then
-    list.add(TFHIRObjectText.create(lowercase(BooleantoString(value))));
-end;
-
-function TFHIRBoolean.Link: TFHIRBoolean;
-begin
-  result := TFHIRBoolean(inherited Link);
-end;
-
-procedure TFHIRBoolean.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  if (bInheritedProperties) Then
-    inherited;
-  oList.add(TFHIRProperty.create(self, 'content', 'string', BooleanToString(FValue)));
-end;
-
-{ TFHIRInteger }
-
-procedure TFHIRInteger.Assign(oSource: TAdvObject);
-begin
-  inherited;
-  FValue := TFHIRInteger(oSource).FValue;
-end;
-
-function TFHIRInteger.Clone: TFHIRInteger;
-begin
-  result := TFHIRInteger(inherited Clone);
-end;
-
-procedure TFHIRInteger.GetChildrenByName(name: string; list: TFHIRObjectList);
-begin
-  inherited;
-  if (name = 'text()') then
-    list.add(TFHIRObjectText.create(inttostr(value)));
-end;
-
-function TFHIRInteger.Link: TFHIRInteger;
-begin
-  result := TFHIRInteger(inherited Link);
-end;
-
-procedure TFHIRInteger.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  if (bInheritedProperties) Then
-    inherited;
-  oList.add(TFHIRProperty.create(self, 'content', 'string', IntToStr(FValue)));
-end;
-
-{ TFHIRInstant }
-
-procedure TFHIRInstant.Assign(oSource: TAdvObject);
-begin
-  inherited;
-  FValue := TFHIRInstant(oSource).FValue;
-end;
-
-function TFHIRInstant.Clone: TFHIRInstant;
-begin
-  result := TFHIRInstant(inherited Clone);
-end;
-
-constructor TFHIRInstant.Create(aValue: TDateAndTime);
-begin
-  Create;
-  FValue := avalue;
-end;
-
-constructor TFHIRInstant.CreateUTC(aValue: TDateTime);
-begin
-  Create;
-  FValue := TDateAndTime.create;
-  FValue.SetDateTime(avalue);
-  FValue.TimezoneType := dttzUTC;
-end;
-
-destructor TFHIRInstant.Destroy;
-begin
-  FValue.Free;
-  inherited;
-end;
-
-procedure TFHIRInstant.GetChildrenByName(name: string; list: TFHIRObjectList);
-begin
-  inherited;
-  if (name = 'text()') and (value <> nil) then
-    list.add(TFHIRObjectText.create(value.AsXML));
-end;
-
-function TFHIRInstant.Link: TFHIRInstant;
-begin
-  result := TFHIRInstant(inherited Link);
-end;
-
-procedure TFHIRInstant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  if (bInheritedProperties) Then
-    inherited;
-  oList.add(TFHIRProperty.create(self, 'content', 'string', FValue.asxml));
-end;
-
-procedure TFHIRInstant.SetValue(const Value: TDateAndTime);
-begin
-  FValue.Free;
-  FValue := Value;
-end;
-
-{ TFHIRDecimal }
-
-procedure TFHIRDecimal.Assign(oSource: TAdvObject);
-begin
-  inherited;
-  FValue := TFHIRDecimal(oSource).FValue.Link;
-end;
-
-function TFHIRDecimal.Clone: TFHIRDecimal;
-begin
-  result := TFHIRDecimal(inherited Clone);
-end;
-
-procedure TFHIRDecimal.GetChildrenByName(name: string; list: TFHIRObjectList);
-begin
-  inherited;
-  if (name = 'text()') and (value <> nil) then
-    list.add(TFHIRObjectText.create(value.AsString));
-end;
-
-function TFHIRDecimal.Link: TFHIRDecimal;
-begin
-  result := TFHIRDecimal(inherited Link);
-end;
-
-procedure TFHIRDecimal.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  if (bInheritedProperties) Then
-    inherited;
-  oList.add(TFHIRProperty.create(self, 'content', 'string', FValue.AsString));
-end;
-
-{ TFHIRBytes }
-
-procedure TFHIRBytes.Assign(oSource: TAdvObject);
-begin
-  inherited;
-  FValue := TFHIRBytes(oSource).FValue.Link;
-end;
-
-function TFHIRBytes.Clone: TFHIRBytes;
-begin
-  result := TFHIRBytes(inherited Clone);
-end;
-
-procedure TFHIRBytes.GetChildrenByName(name: string; list: TFHIRObjectList);
-begin
-  inherited;
-  if (name = 'text()') then
-    list.add(TFHIRObjectText.create(EncodeBase64(value.asbytes)));
-end;
-
-function TFHIRBytes.Link: TFHIRBytes;
-begin
-  result := TFHIRBytes(inherited Link);
-end;
-
-
-procedure TFHIRBytes.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
-begin
-  if (bInheritedProperties) Then
-    inherited;
-  oList.add(TFHIRProperty.create(self, 'content', 'string', FValue.AsBase64));
-end;
-  *)
 
 { TFHIRXHtmlNodeList }
 procedure TFHIRXHtmlNodeList.AddItem(value: TFHIRXHtmlNode);
@@ -846,6 +657,11 @@ end;
 function TFHIRXHtmlNodeList.Count: Integer;
 begin
   result := Inherited Count;
+end;
+
+function TFHIRXHtmlNodeList.GetEnumerator: TFHIRXhtmlNodeListEnumerator;
+begin
+  result := TFHIRXhtmlNodeListEnumerator.Create(self.Link);
 end;
 
 function TFHIRXHtmlNodeList.GetItemN(index: Integer): TFHIRXHtmlNode;
@@ -914,6 +730,11 @@ begin
       result := GetItemN(i).Value;
 end;
 
+function TFHIRAttributeList.GetEnumerator: TFHIRAttributeListEnumerator;
+begin
+  result := TFHIRAttributeListEnumerator.Create(self.Link);
+end;
+
 function TFHIRAttributeList.GetItemN(index: Integer): TFHIRAttribute;
 begin
   result := TFHIRAttribute(ObjectByIndex[index]);
@@ -927,6 +748,11 @@ end;
 function TFHIRAttributeList.Item(index: Integer): TFHIRAttribute;
 begin
   result := TFHIRAttribute(ObjectByIndex[index]);
+end;
+
+function TFHIRAttributeList.Link: TFHIRAttributeList;
+begin
+  result := TFHIRAttributeList(inherited Link);
 end;
 
 procedure TFHIRAttributeList.SetValue(name, value: String);
@@ -1046,6 +872,15 @@ begin
   end;
 end;
 
+function TFhirXHtmlNode.allChildrenAreText: boolean;
+var
+  i : integer;
+begin
+  result := FChildNodes.Count > 0;
+  for i := 0 to FChildNodes.Count - 1 do
+    result := result and (FChildNodes[i].FNodeType = fhntText);
+end;
+
 function TFhirXHtmlNode.AsPlainText: String;
 var
   s : String;
@@ -1147,10 +982,11 @@ begin
   oList.add(TFHIRProperty.create(self, 'content', 'string', FContent));
 end;
 
-procedure TFhirXHtmlNode.SetAttribute(name, value: String);
+function TFhirXHtmlNode.SetAttribute(name, value: String) : TFhirXHtmlNode;
 var
   i : integer;
 begin
+  result := self;
   for i := 0 to FAttributes.Count - 1 Do
     if FAttributes[i].Name = name then
     begin
@@ -1169,169 +1005,6 @@ begin
     FAttributes := TFHIRAttributeList.create;
   end;
 end;
-
-(*
-{ TFHIRResourceReferenceList }
-procedure TFHIRResourceReferenceList.AddItem(value: TFHIRResourceReference);
-begin
-  add(value.Link);
-end;
-
-function TFHIRResourceReferenceList.Append: TFHIRResourceReference;
-begin
-  result := TFhirResourceReference.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRResourceReferenceList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFHIRResourceReferenceList.Clone: TFHIRResourceReferenceList;
-begin
-  result := TFHIRResourceReferenceList(inherited Clone);
-end;
-
-function TFHIRResourceReferenceList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFHIRResourceReferenceList.GetItemN(index: Integer): TFHIRResourceReference;
-begin
-  result := TFHIRResourceReference(ObjectByIndex[index]);
-end;
-
-function TFHIRResourceReferenceList.IndexOf(value: TFHIRResourceReference): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFHIRResourceReferenceList.Insert(index: Integer): TFHIRResourceReference;
-begin
-  result := TFhirResourceReference.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRResourceReferenceList.InsertItem(index: Integer; value: TFHIRResourceReference);
-begin
-  Inherited Insert(index, value.Link);
-end;
-
-function TFHIRResourceReferenceList.Item(index: Integer): TFHIRResourceReference;
-begin
-  result := TFHIRResourceReference(ObjectByIndex[index]);
-end;
-
-function TFHIRResourceReferenceList.Link: TFHIRResourceReferenceList;
-begin
-  result := TFHIRResourceReferenceList(inherited Link);
-end;
-
-procedure TFHIRResourceReferenceList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFHIRResourceReferenceList.SetItemByIndex(index: Integer; value: TFHIRResourceReference);
-begin
-  References[index] := value.Link;
-end;
-
-
-procedure TFHIRResourceReferenceList.SetItemN(index: Integer; const value: TFHIRResourceReference);
-begin
-  ObjectByIndex[index] := value;
-end;
-*)
-
-{ TFHIRBaseFactory }
-(*
-function TFHIRBaseFactory.makeBoolean(value: Boolean): TFHIRBoolean;
-begin
-  result := TFHIRBoolean.create;
-  result.value := value;
-end;
-
-function TFHIRBaseFactory.makeBytesFromChars(value: String): TFHIRBytes;
-begin
-  result := TFHIRBytes.create;
-  result.value := TAdvBuffer.create;
-  result.value.AsText := value;
-end;
-
-function TFHIRBaseFactory.makeBytesFromFile(value: String): TFHIRBytes;
-begin
-  result := TFHIRBytes.create;
-  result.value := TAdvBuffer.create;
-  result.value.LoadFromFileName(value);
-end;
-
-function TFHIRBaseFactory.makeBytesFromStream(value: TStream): TFHIRBytes;
-begin
-  result := TFHIRBytes.create;
-  result.value := TAdvBuffer.create;
-  result.value.LoadFromStream(value);
-end;
-
-function TFHIRBaseFactory.makeDateTimeHL7(value: String): TDateAndTime;
-begin
-  result := TDateAndTime.CreateHL7(value);
-end;
-
-function TFHIRBaseFactory.makeDecimal(value: String): TFHIRDecimal;
-begin
-  result := TFHIRDecimal.create;
-  result.value := TSmartDecimal.create(value);
-end;
-
-function TFHIRBaseFactory.makeInstant(value: TDateAndTime): TFHIRInstant;
-begin
-  result := TFHIRInstant.create;
-  result.value := value.link;
-end;
-
-function TFHIRBaseFactory.makeInstantHL7(value: String): TFHIRInstant;
-begin
-  result := TFHIRInstant.create;
-  result.value := TDateAndTime.CreateHL7(value);
-end;
-
-function TFHIRBaseFactory.makeInstantXML(value: String): TFHIRInstant;
-begin
-  result := TFHIRInstant.create;
-  result.value := TDateAndTime.CreateXML(value);
-end;
-
-function TFHIRBaseFactory.makeInteger(value: Integer): TFHIRInteger;
-begin
-  result := TFHIRInteger.create;
-  result.value := value;
-end;
-                                               (*
-function TFHIRBaseFactory.makeResourceReference(resourceType, id: String): TFHIRResourceReference;
-begin
-  result := TFHIRResourceReference.create;
-  result.resourceType := resourceType;
-  result.id := id;
-end;
-
-
-function TFHIRBaseFactory.makeString(value: String): TFHIRString;
-begin
-  result := TFHIRString.create;
-  result.value := value;
-end;
-*)
 
 { TFHIRObject }
 
@@ -1484,6 +1157,11 @@ end;
 function TFHIRObjectList.Clone: TFHIRObjectList;
 begin
   result := TFHIRObjectList(Inherited Clone);
+end;
+
+function TFHIRObjectList.GetEnumerator: TFHIRObjectListEnumerator;
+begin
+  result := TFHIRObjectListEnumerator.Create(self.link);
 end;
 
 function TFHIRObjectList.GetItemN(index: Integer): TFHIRObject;
@@ -1664,7 +1342,8 @@ begin
   Create;
   FName := sName;
   FType := sType;
-  FObj := oObject;
+  FList := TFHIRObjectList.Create;
+  FList.Add(oObject);
 end;
 
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; oList: TFHIRObjectList);
@@ -1680,21 +1359,36 @@ begin
   Create;
   FName := sName;
   FType := sType;
-  FValue := sValue;
+  FList := TFHIRObjectList.Create;
+  FList.Add(TFhirString.Create(sValue));
 end;
 
 destructor TFHIRProperty.Destroy;
 begin
-  FObj.free;
   FList.free;
   inherited;
 end;
 
+function TFHIRProperty.GetHasValue: Boolean;
+begin
+  result := (FList <> nil) and (Flist.Count > 0);
+end;
+
 { TFHIRPropertyList }
+
+function TFHIRPropertyList.GetEnumerator: TFHIRPropertyListEnumerator;
+begin
+  result := TFHIRPropertyListEnumerator.Create(self.link);
+end;
 
 function TFHIRPropertyList.GetProperty(iIndex: Integer): TFHIRProperty;
 begin
   result := TFHIRProperty(ObjectByIndex[iIndex]);
+end;
+
+function TFHIRPropertyList.Link: TFHIRPropertyList;
+begin
+  result := TFHIRPropertyList(inherited Link);
 end;
 
 { TFHIRPropertyIterator }
@@ -1732,6 +1426,116 @@ end;
 procedure TFHIRPropertyIterator.Reset;
 begin
   FCursor := 0;
+end;
+
+{ TFhirPropertyListEnumerator }
+
+Constructor TFhirPropertyListEnumerator.Create(list : TFhirPropertyList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirPropertyListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPropertyListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirPropertyListEnumerator.GetCurrent : TFhirProperty;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirObjectListEnumerator }
+
+Constructor TFhirObjectListEnumerator.Create(list : TFhirObjectList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirObjectListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirObjectListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirObjectListEnumerator.GetCurrent : TFhirObject;
+begin
+  Result := FList[FIndex];
+end;
+
+
+{ TFhirAttributeListEnumerator }
+
+Constructor TFhirAttributeListEnumerator.Create(list : TFhirAttributeList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirAttributeListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirAttributeListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirAttributeListEnumerator.GetCurrent : TFhirAttribute;
+begin
+  Result := FList[FIndex];
+end;
+
+
+{ TFhirXhtmlNodeListEnumerator }
+
+Constructor TFhirXhtmlNodeListEnumerator.Create(list : TFhirXhtmlNodeList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirXhtmlNodeListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirXhtmlNodeListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirXhtmlNodeListEnumerator.GetCurrent : TFhirXhtmlNode;
+begin
+  Result := FList[FIndex];
 end;
 
 End.

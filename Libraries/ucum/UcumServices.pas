@@ -819,13 +819,13 @@ end;
 function TUcumServices.getDisplay(code: String): String;
 var
   i : integer;
+  cc : TFhirValueSetComposeIncludeConcept;
 begin
   result := analyse(code);
   if FCommonUnits <> nil then
-    for i := 0 to FCommonUnits.compose.includeList[0].codeList.count - 1 do
-      with FCommonUnits.compose.includeList[0].codeList[i] do
-        if (code = code) and HasExtension('http://hl7.org/fhir/Profile/tools-extensions#display') then
-          result := GetExtensionString('http://hl7.org/fhir/Profile/tools-extensions#display');
+    for cc in FCommonUnits.compose.includeList[0].conceptList do
+        if (cc.code = code) and (cc.display <> '') then
+          result := cc.display;
 end;
 
 procedure TUcumServices.Import(const sFilename: String);
@@ -905,7 +905,7 @@ function TUcumServices.TotalCount: integer;
 begin
   // this is not true, but this is not too big to expand (the primary purpose of this function)
   if FCommonUnits <> nil then
-    result := FCommonUnits.compose.includeList[0].codeList.count
+    result := FCommonUnits.compose.includeList[0].conceptList.count
   else
     result := 0;
 end;

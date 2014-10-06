@@ -318,7 +318,7 @@ End;
 
 Function TSnomedPublisher.GetPNForConcept(iIndex : Cardinal) : String;
 var
-  Identity : int64;
+  Identity : UInt64;
   Flags : Byte;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
@@ -335,7 +335,7 @@ End;
 Function TSnomedPublisher.GetFSN(iDescriptions : TCardinalArray) : String;
 var
   iLoop : Integer;
-  iid : int64;
+  iid : UInt64;
   iString, iDummy, module, refsets, kind : Cardinal;
   iFlag : Byte;
   date : TSnomedDate;
@@ -352,12 +352,12 @@ End;
 Function TSnomedPublisher.GetPN(iDescriptions : TCardinalArray) : String;
 var
   iLoop : Integer;
-  iid : int64;
+  iid : UInt64;
   iString, iDummy, module, refsets, kind : Cardinal;
   iFlag : Byte;
   date : TSnomedDate;
   iList : TCardinalArray;
-  v : AnsiString;
+  v : String;
 begin
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
@@ -634,9 +634,9 @@ end;
 
 procedure TSnomedPublisher.PublishConcept(bRoot : Boolean; const sPrefix, sId: String; iStart : Integer; html: THtmlPublisher);
 var
-  iId : int64;
+  iId : UInt64;
   iIndex : Cardinal;
-  Identity : int64;
+  Identity : UInt64;
   Flags, Group : Byte;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
@@ -659,10 +659,11 @@ var
   date : TSnomedDate;
   ok : boolean;
 Begin
+  bDescSet := false;
   SetLength(aMembers, 0);
   SetLength(iList, 0);
   SetLength(alLDesc, 0);
-  iId := StrToInt64Def(sId, -1);
+  iId := StrToUInt64Def(sId, 0);
   ok := FSnomed.Concept.FindConcept(iId, iIndex);
   if not ok then
   begin
@@ -1570,10 +1571,10 @@ var
   iTotal : Integer;
 //  iDummy : Cardinal;
   b2 : Boolean;
-  icontext : Int64;
+  icontext : UInt64;
 
 begin
-  iContext := StrToInt64Def(sContext, 0);
+  iContext := StrToUInt64Def(sContext, 0);
   Lock.Lock;
   Try
     if FSearchCache.Find(sText+#0+sContext, i) Then
@@ -1667,9 +1668,9 @@ end;
 
 procedure TSnomedPublisher.PublishTermConcept(bRoot : Boolean; const sPrefix, sId: String; iStart : Integer; html: THtmlPublisher);
 var
-  iId : int64;
+  iId : UInt64;
   iIndex : Cardinal;
-  Identity : int64;
+  Identity : UInt64;
   Flags, Group : Byte;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
@@ -1688,7 +1689,7 @@ var
   i : integer;
 Begin
   SetLength(allDesc, 0);
-  iId := StrToInt64Def(sId, -1);
+  iId := StrToUInt64Def(sId, 0);
   if not FSnomed.Concept.FindConcept(iId, iIndex) Then
   Begin
     html.AddTitle('Snomed Concept '+sId);
@@ -1765,7 +1766,7 @@ end;
 
 function TSnomedPublisher.ConceptForDesc(iDesc: Cardinal; var iDescs : Cardinal): Cardinal;
 var
-  id : Int64;
+  id : UInt64;
   iflags : Byte;
   date : TSnomedDate;
   module, refsets, kind : Cardinal;

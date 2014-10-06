@@ -84,7 +84,7 @@ type
 
 
     // outbound
-    property link : String read FLink write FLink;
+    property link_ : String read FLink write FLink;
     property sort : String read FSort write FSort;
     property filter : String read FFilter write FFilter;
     property wantSummary : TFHIRSearchSummary read FWantSummary write FWantSummary;
@@ -116,7 +116,7 @@ begin
   if (compartments <> '') then
     filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where CompartmentType = 1 and Id in ('+compartments+'))';
 
-  link := '';
+  link_ := '';
   first := false;
   ts := TStringList.create;
   try
@@ -132,7 +132,7 @@ begin
         handled := false;
         filter := filter + processParam([type_], params.VarName(i), ts[j], false, first, handled);
         if handled then
-          link := link + '&'+params.VarName(i)+'='+EncodeMIME(ts[j]);
+          link_ := link_ + '&'+params.VarName(i)+'='+EncodeMIME(ts[j]);
       end;
     end;
   finally
@@ -145,12 +145,12 @@ begin
     if (ix = nil) then
       Raise Exception.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
     sort :='(SELECT Min(Value) FROM IndexEntries WHERE IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
-    link := link+'&'+SEARCH_PARAM_NAME_SORT+'='+ix.Name;
+    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'='+ix.Name;
   end
   else
   begin
     sort := 'Id';
-    link := link+'&'+SEARCH_PARAM_NAME_SORT+'=_id';
+    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'=_id';
   end;
 end;
 
@@ -498,7 +498,7 @@ Function TSearchProcessor.processParam(types : TFHIRResourceTypeSet; name : Stri
 var
   key, i : integer;
   left, right, op, modifier, v1,v2, v1c, v2c, sp, spC : String;
-  f, dummy : Boolean;
+  f : Boolean;
   ts : TStringList;
   pfx, sfx : String;
   date : TDateAndTime;
@@ -508,6 +508,7 @@ var
   dop : TDateOperation;
   qop : TQuantityOperation;
 begin
+  a := frtNull;
   date := nil;
   result := '';
   op := '';
@@ -917,7 +918,7 @@ function TSearchProcessor.BuildFilterParameter(filter: TFSFilterParameter; path 
 var
   index : integer;
   n : char;
-  j, value : string;
+  j : string;
   stype : TFhirSearchParamType;
   comp : TFhirComposite;
 begin

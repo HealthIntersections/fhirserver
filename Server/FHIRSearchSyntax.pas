@@ -407,7 +407,6 @@ end;
 function TFSFilterParser.ConsumeString: String;
 var
   l : integer;
-  esc : boolean;
 begin
   inc(cursor);
   setLength(result, length(original)); // can't be longer than that

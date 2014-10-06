@@ -169,7 +169,7 @@ end;
 
 Procedure DeathThread(o : TObject); Stdcall;
 var
-  LMemMgr: TMemoryManager;
+  LMemMgr: TMemoryManagerEx;
 Begin
   DebugThreadName := 'DeathThread';
   Try

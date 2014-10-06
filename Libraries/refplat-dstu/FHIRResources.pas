@@ -40,7 +40,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.82 generated Mon, Sep 15, 2014 02:19+1000
+// FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
@@ -956,6 +956,19 @@ Type
   
 
 
+  TFhirResourceListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirResourceList;
+    function GetCurrent : TFhirResource;
+  public
+    Constructor Create(list : TFhirResourceList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirResource read GetCurrent;
+  end;
+
+
   {@Class TFhirResourceList
     A list of FhirResource
   }
@@ -968,6 +981,7 @@ Type
     {!script hide}
     function Link : TFhirResourceList; Overload;
     function Clone : TFhirResourceList; Overload;
+    function GetEnumerator : TFhirResourceListEnumerator;
     {!script show}
     
 
@@ -975,7 +989,8 @@ Type
     {@member AddItem
       Add an already existing FhirResource to the end of the list.
     }
-    procedure AddItem(value : TFhirResource);
+    procedure AddItem(value : TFhirResource); overload;
+
     
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
@@ -1069,30 +1084,32 @@ Type
     {@member date
       The date (and possibly time) when the reaction began.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The date (and possibly time) when the reaction began.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member subject
       The subject of the adverse reaction.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member didNotOccurFlag
       If true, indicates that no reaction occurred.
     }
-    property didNotOccurFlag : TFhirBoolean read FDidNotOccurFlag write SetDidNotOccurFlag;
-    {@member didNotOccurFlagST
+    {@member didNotOccurFlag
       Typed access to If true, indicates that no reaction occurred.
     }
-    property didNotOccurFlagST : Boolean read GetDidNotOccurFlagST write SetDidNotOccurFlagST;
+    property didNotOccurFlag : Boolean read GetDidNotOccurFlagST write SetDidNotOccurFlagST;
+    property didNotOccurFlagObject : TFhirBoolean read FDidNotOccurFlag write SetDidNotOccurFlag;
 
     {@member recorder
       Identifies the individual responsible for the information in the reaction record.
     }
     property recorder : TFhirResourceReference{Resource} read FRecorder write SetRecorder;
+    property recorderObject : TFhirResourceReference{Resource} read FRecorder write SetRecorder;
 
     {@member symptomList
       The signs and symptoms that were observed as part of the reaction.
@@ -1153,34 +1170,34 @@ Type
       Allows an alert to be divided into different categories like clinical, administrative etc.
     }
     property category : TFhirCodeableConcept read FCategory write SetCategory;
+    property categoryObject : TFhirCodeableConcept read FCategory write SetCategory;
 
     {@member status
       Supports basic workflow.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to Supports basic workflow.
-    }
-    property statusST : TFhirAlertStatus read GetStatusST write SetStatusST;
+    property status : TFhirAlertStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member subject
       The person who this alert concerns.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member author
       The person or device that created the alert.
     }
     property author : TFhirResourceReference{Resource} read FAuthor write SetAuthor;
+    property authorObject : TFhirResourceReference{Resource} read FAuthor write SetAuthor;
 
     {@member note
       The textual component of the alert to display to the user.
     }
-    property note : TFhirString read FNote write SetNote;
-    {@member noteST
+    {@member note
       Typed access to The textual component of the alert to display to the user.
     }
-    property noteST : String read GetNoteST write SetNoteST;
+    property note : String read GetNoteST write SetNoteST;
+    property noteObject : TFhirString read FNote write SetNote;
 
   end;
 
@@ -1240,53 +1257,47 @@ Type
     {@member criticality
       Criticality of the sensitivity.
     }
-    property criticality : TFhirEnum read FCriticality write SetCriticality;
-    {@member criticalityST
-      Typed access to Criticality of the sensitivity.
-    }
-    property criticalityST : TFhirCriticality read GetCriticalityST write SetCriticalityST;
+    property criticality : TFhirCriticality read GetCriticalityST write SetCriticalityST;
+    property criticalityObject : TFhirEnum read FCriticality write SetCriticality;
 
     {@member sensitivityType
       Type of the sensitivity.
     }
-    property sensitivityType : TFhirEnum read FSensitivityType write SetSensitivityType;
-    {@member sensitivityTypeST
-      Typed access to Type of the sensitivity.
-    }
-    property sensitivityTypeST : TFhirSensitivitytype read GetSensitivityTypeST write SetSensitivityTypeST;
+    property sensitivityType : TFhirSensitivitytype read GetSensitivityTypeST write SetSensitivityTypeST;
+    property sensitivityTypeObject : TFhirEnum read FSensitivityType write SetSensitivityType;
 
     {@member recordedDate
       Date when the sensitivity was recorded.
     }
-    property recordedDate : TFhirDateTime read FRecordedDate write SetRecordedDate;
-    {@member recordedDateST
+    {@member recordedDate
       Typed access to Date when the sensitivity was recorded.
     }
-    property recordedDateST : TDateAndTime read GetRecordedDateST write SetRecordedDateST;
+    property recordedDate : TDateAndTime read GetRecordedDateST write SetRecordedDateST;
+    property recordedDateObject : TFhirDateTime read FRecordedDate write SetRecordedDate;
 
     {@member status
       Status of the sensitivity.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to Status of the sensitivity.
-    }
-    property statusST : TFhirSensitivitystatus read GetStatusST write SetStatusST;
+    property status : TFhirSensitivitystatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member subject
       The patient who has the allergy or intolerance.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member recorder
       Indicates who has responsibility for the record.
     }
     property recorder : TFhirResourceReference{Resource} read FRecorder write SetRecorder;
+    property recorderObject : TFhirResourceReference{Resource} read FRecorder write SetRecorder;
 
     {@member substance
       The substance that causes the sensitivity.
     }
     property substance : TFhirResourceReference{TFhirSubstance} read FSubstance write SetSubstance;
+    property substanceObject : TFhirResourceReference{TFhirSubstance} read FSubstance write SetSubstance;
 
     {@member reactionList
       Reactions associated with the sensitivity.
@@ -1353,29 +1364,28 @@ Type
       Identifies the patient/subject whose intended care is described by the plan.
     }
     property patient : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
+    property patientObject : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
 
     {@member status
       Indicates whether the plan is currently being acted upon, represents future intentions or is now just historical record.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to Indicates whether the plan is currently being acted upon, represents future intentions or is now just historical record.
-    }
-    property statusST : TFhirCarePlanStatus read GetStatusST write SetStatusST;
+    property status : TFhirCarePlanStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member period
       Indicates when the plan did (or is intended to) come into effect and end.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member modified
       Identifies the most recent date on which the plan has been revised.
     }
-    property modified : TFhirDateTime read FModified write SetModified;
-    {@member modifiedST
+    {@member modified
       Typed access to Identifies the most recent date on which the plan has been revised.
     }
-    property modifiedST : TDateAndTime read GetModifiedST write SetModifiedST;
+    property modified : TDateAndTime read GetModifiedST write SetModifiedST;
+    property modifiedObject : TFhirDateTime read FModified write SetModified;
 
     {@member concernList
       Identifies the conditions/problems/concerns/diagnoses/etc. whose management and/or mitigation are handled by this plan.
@@ -1400,11 +1410,11 @@ Type
     {@member notes
       General notes about the care plan not covered elsewhere.
     }
-    property notes : TFhirString read FNotes write SetNotes;
-    {@member notesST
+    {@member notes
       Typed access to General notes about the care plan not covered elsewhere.
     }
-    property notesST : String read GetNotesST write SetNotesST;
+    property notes : String read GetNotesST write SetNotesST;
+    property notesObject : TFhirString read FNotes write SetNotes;
 
   end;
 
@@ -1466,53 +1476,55 @@ Type
       Logical Identifier for the composition, assigned when created. This identifier stays constant as the composition is changed over time.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member date
       The composition editing time, when the composition was last logically changed by the author.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The composition editing time, when the composition was last logically changed by the author.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member type_
       Specifies the particular kind of composition (e.g. History and Physical, Discharge Summary, Progress Note). This usually equates to the purpose of making the composition.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member class_
       A categorization for the type of the composition. This may be implied by or derived from the code specified in the Composition Type.
     }
     property class_ : TFhirCodeableConcept read FClass_ write SetClass_;
+    property class_Object : TFhirCodeableConcept read FClass_ write SetClass_;
 
     {@member title
       Official human-readable label for the composition.
     }
-    property title : TFhirString read FTitle write SetTitle;
-    {@member titleST
+    {@member title
       Typed access to Official human-readable label for the composition.
     }
-    property titleST : String read GetTitleST write SetTitleST;
+    property title : String read GetTitleST write SetTitleST;
+    property titleObject : TFhirString read FTitle write SetTitle;
 
     {@member status
       The workflow/clinical status of this composition. The status is a marker for the clinical standing of the document.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The workflow/clinical status of this composition. The status is a marker for the clinical standing of the document.
-    }
-    property statusST : TFhirCompositionStatus read GetStatusST write SetStatusST;
+    property status : TFhirCompositionStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member confidentiality
       The code specifying the level of confidentiality of the Composition.
     }
     property confidentiality : TFhirCoding read FConfidentiality write SetConfidentiality;
+    property confidentialityObject : TFhirCoding read FConfidentiality write SetConfidentiality;
 
     {@member subject
       Who or what the composition is about. The composition can be about a person, (patient or healthcare practitioner), a device (I.e. machine) or even a group of subjects (such as a document about a herd of livestock, or a set of patients that share a common exposure).
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member authorList
       Identifies who is responsible for the information in the composition.  (Not necessarily who typed it in.).
@@ -1528,16 +1540,19 @@ Type
       Identifies the organization or group who is responsible for ongoing maintenance of and access to the composition/document information.
     }
     property custodian : TFhirResourceReference{TFhirOrganization} read FCustodian write SetCustodian;
+    property custodianObject : TFhirResourceReference{TFhirOrganization} read FCustodian write SetCustodian;
 
     {@member event
       The main event/act/item, such as a colonoscopy or an appendectomy, being documented.
     }
     property event : TFhirCompositionEvent read FEvent write SetEvent;
+    property eventObject : TFhirCompositionEvent read FEvent write SetEvent;
 
     {@member encounter
       Describes the clinical encounter or type of care this documentation is associated with.
     }
     property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
+    property encounterObject : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
 
     {@member sectionList
       The root of the sections that make up the composition.
@@ -1614,38 +1629,38 @@ Type
     {@member identifier
       The identifier that is used to identify this concept map when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }
-    property identifier : TFhirString read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to The identifier that is used to identify this concept map when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirString read FIdentifier write SetIdentifier;
 
     {@member version
       The identifier that is used to identify this version of the concept map when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to The identifier that is used to identify this version of the concept map when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member name
       A free text natural language name describing the concept map.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to A free text natural language name describing the concept map.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member publisher
       The name of the individual or organization that published the concept map.
     }
-    property publisher : TFhirString read FPublisher write SetPublisher;
-    {@member publisherST
+    {@member publisher
       Typed access to The name of the individual or organization that published the concept map.
     }
-    property publisherST : String read GetPublisherST write SetPublisherST;
+    property publisher : String read GetPublisherST write SetPublisherST;
+    property publisherObject : TFhirString read FPublisher write SetPublisher;
 
     {@member telecomList
       Contacts of the publisher to assist a user in finding and communicating with the publisher.
@@ -1655,57 +1670,56 @@ Type
     {@member description
       A free text natural language description of the use of the concept map - reason for definition, conditions of use, etc.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to A free text natural language description of the use of the concept map - reason for definition, conditions of use, etc.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member copyright
       A copyright statement relating to the concept map and/or its contents.
     }
-    property copyright : TFhirString read FCopyright write SetCopyright;
-    {@member copyrightST
+    {@member copyright
       Typed access to A copyright statement relating to the concept map and/or its contents.
     }
-    property copyrightST : String read GetCopyrightST write SetCopyrightST;
+    property copyright : String read GetCopyrightST write SetCopyrightST;
+    property copyrightObject : TFhirString read FCopyright write SetCopyright;
 
     {@member status
       The status of the concept map.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of the concept map.
-    }
-    property statusST : TFhirValuesetStatus read GetStatusST write SetStatusST;
+    property status : TFhirValuesetStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member experimental
       This ConceptMap was authored for testing purposes (or education/evaluation/marketing), and is not intended to be used for genuine usage.
     }
-    property experimental : TFhirBoolean read FExperimental write SetExperimental;
-    {@member experimentalST
+    {@member experimental
       Typed access to This ConceptMap was authored for testing purposes (or education/evaluation/marketing), and is not intended to be used for genuine usage.
     }
-    property experimentalST : Boolean read GetExperimentalST write SetExperimentalST;
+    property experimental : Boolean read GetExperimentalST write SetExperimentalST;
+    property experimentalObject : TFhirBoolean read FExperimental write SetExperimental;
 
     {@member date
       The date that the concept map status was last changed.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The date that the concept map status was last changed.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member source
       The source value set that specifies the concepts that are being mapped.
     }
     property source : TFhirResourceReference{TFhirValueSet} read FSource write SetSource;
+    property sourceObject : TFhirResourceReference{TFhirValueSet} read FSource write SetSource;
 
     {@member target
       The target value set provides context to the mappings. Note that the mapping is made between concepts, not between value sets, but the value set provides important context about how the concept mapping choices are made.
     }
     property target : TFhirResourceReference{TFhirValueSet} read FTarget write SetTarget;
+    property targetObject : TFhirResourceReference{TFhirValueSet} read FTarget write SetTarget;
 
     {@member conceptList
       Mappings for a concept from the source valueset.
@@ -1782,69 +1796,76 @@ Type
       Indicates the patient who the condition record is associated with.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member encounter
       Encounter during which the condition was first asserted.
     }
     property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
+    property encounterObject : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
 
     {@member asserter
       Person who takes responsibility for asserting the existence of the condition as part of the electronic record.
     }
     property asserter : TFhirResourceReference{Resource} read FAsserter write SetAsserter;
+    property asserterObject : TFhirResourceReference{Resource} read FAsserter write SetAsserter;
 
     {@member dateAsserted
       Estimated or actual date the condition/problem/diagnosis was first detected/suspected.
     }
-    property dateAsserted : TFhirDate read FDateAsserted write SetDateAsserted;
-    {@member dateAssertedST
+    {@member dateAsserted
       Typed access to Estimated or actual date the condition/problem/diagnosis was first detected/suspected.
     }
-    property dateAssertedST : TDateAndTime read GetDateAssertedST write SetDateAssertedST;
+    property dateAsserted : TDateAndTime read GetDateAssertedST write SetDateAssertedST;
+    property dateAssertedObject : TFhirDate read FDateAsserted write SetDateAsserted;
 
     {@member code
       Identification of the condition, problem or diagnosis.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member category
       A category assigned to the condition. E.g. complaint | symptom | finding | diagnosis.
     }
     property category : TFhirCodeableConcept read FCategory write SetCategory;
+    property categoryObject : TFhirCodeableConcept read FCategory write SetCategory;
 
     {@member status
       The clinical status of the condition.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The clinical status of the condition.
-    }
-    property statusST : TFhirConditionStatus read GetStatusST write SetStatusST;
+    property status : TFhirConditionStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member certainty
       The degree of confidence that this condition is correct.
     }
     property certainty : TFhirCodeableConcept read FCertainty write SetCertainty;
+    property certaintyObject : TFhirCodeableConcept read FCertainty write SetCertainty;
 
     {@member severity
       A subjective assessment of the severity of the condition as evaluated by the clinician.
     }
     property severity : TFhirCodeableConcept read FSeverity write SetSeverity;
+    property severityObject : TFhirCodeableConcept read FSeverity write SetSeverity;
 
     {@member onset
       Estimated or actual date the condition began, in the opinion of the clinician.
     }
     property onset : TFhirType read FOnset write SetOnset;
+    property onsetObject : TFhirType read FOnset write SetOnset;
 
     {@member abatement
       The date or estimated date that the condition resolved or went into remission. This is called "abatement" because of the many overloaded connotations associated with "remission" or "resolution" - Conditions are never really resolved, but they can abate.
     }
     property abatement : TFhirType read FAbatement write SetAbatement;
+    property abatementObject : TFhirType read FAbatement write SetAbatement;
 
     {@member stage
       Clinical stage or grade of a condition. May include formal severity assessments.
     }
     property stage : TFhirConditionStage read FStage write SetStage;
+    property stageObject : TFhirConditionStage read FStage write SetStage;
 
     {@member evidenceList
       Supporting Evidence / manifestations that are the basis on which this condition is suspected or confirmed.
@@ -1864,11 +1885,11 @@ Type
     {@member notes
       Additional information about the Condition. This is a general notes/comments entry  for description of the Condition, its diagnosis and prognosis.
     }
-    property notes : TFhirString read FNotes write SetNotes;
-    {@member notesST
+    {@member notes
       Typed access to Additional information about the Condition. This is a general notes/comments entry  for description of the Condition, its diagnosis and prognosis.
     }
-    property notesST : String read GetNotesST write SetNotesST;
+    property notes : String read GetNotesST write SetNotesST;
+    property notesObject : TFhirString read FNotes write SetNotes;
 
   end;
 
@@ -1948,38 +1969,38 @@ Type
     {@member identifier
       The identifier that is used to identify this conformance statement when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }
-    property identifier : TFhirString read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to The identifier that is used to identify this conformance statement when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirString read FIdentifier write SetIdentifier;
 
     {@member version
       The identifier that is used to identify this version of the conformance statement when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to The identifier that is used to identify this version of the conformance statement when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member name
       A free text natural language name identifying the conformance statement.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to A free text natural language name identifying the conformance statement.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member publisher
       Name of Organization publishing this conformance statement.
     }
-    property publisher : TFhirString read FPublisher write SetPublisher;
-    {@member publisherST
+    {@member publisher
       Typed access to Name of Organization publishing this conformance statement.
     }
-    property publisherST : String read GetPublisherST write SetPublisherST;
+    property publisher : String read GetPublisherST write SetPublisherST;
+    property publisherObject : TFhirString read FPublisher write SetPublisher;
 
     {@member telecomList
       Contacts for Organization relevant to this conformance statement.  The contacts may be a website, email, phone numbers, etc.
@@ -1989,66 +2010,65 @@ Type
     {@member description
       A free text natural language description of the conformance statement and its use. Typically, this is used when the profile describes a desired rather than an actual solution, for example as a formal expression of requirements as part of an RFP.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to A free text natural language description of the conformance statement and its use. Typically, this is used when the profile describes a desired rather than an actual solution, for example as a formal expression of requirements as part of an RFP.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member status
       The status of this conformance statement.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of this conformance statement.
-    }
-    property statusST : TFhirConformanceStatementStatus read GetStatusST write SetStatusST;
+    property status : TFhirConformanceStatementStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member experimental
       A flag to indicate that this conformance statement is authored for testing purposes (or education/evaluation/marketing), and is not intended to be used for genuine usage.
     }
-    property experimental : TFhirBoolean read FExperimental write SetExperimental;
-    {@member experimentalST
+    {@member experimental
       Typed access to A flag to indicate that this conformance statement is authored for testing purposes (or education/evaluation/marketing), and is not intended to be used for genuine usage.
     }
-    property experimentalST : Boolean read GetExperimentalST write SetExperimentalST;
+    property experimental : Boolean read GetExperimentalST write SetExperimentalST;
+    property experimentalObject : TFhirBoolean read FExperimental write SetExperimental;
 
     {@member date
       The date when the conformance statement was published.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The date when the conformance statement was published.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member software
       Software that is covered by this conformance statement.  It is used when the profile describes the capabilities of a particular software version, independent of an installation.
     }
     property software : TFhirConformanceSoftware read FSoftware write SetSoftware;
+    property softwareObject : TFhirConformanceSoftware read FSoftware write SetSoftware;
 
     {@member implementation_
       Identifies a specific implementation instance that is described by the conformance statement - i.e. a particular installation, rather than the capabilities of a software program.
     }
     property implementation_ : TFhirConformanceImplementation read FImplementation_ write SetImplementation_;
+    property implementation_Object : TFhirConformanceImplementation read FImplementation_ write SetImplementation_;
 
     {@member fhirVersion
       The version of the FHIR specification on which this conformance statement is based.
     }
-    property fhirVersion : TFhirId read FFhirVersion write SetFhirVersion;
-    {@member fhirVersionST
+    {@member fhirVersion
       Typed access to The version of the FHIR specification on which this conformance statement is based.
     }
-    property fhirVersionST : String read GetFhirVersionST write SetFhirVersionST;
+    property fhirVersion : String read GetFhirVersionST write SetFhirVersionST;
+    property fhirVersionObject : TFhirId read FFhirVersion write SetFhirVersion;
 
     {@member acceptUnknown
       A flag that indicates whether the application accepts unknown elements as part of a resource.
     }
-    property acceptUnknown : TFhirBoolean read FAcceptUnknown write SetAcceptUnknown;
-    {@member acceptUnknownST
+    {@member acceptUnknown
       Typed access to A flag that indicates whether the application accepts unknown elements as part of a resource.
     }
-    property acceptUnknownST : Boolean read GetAcceptUnknownST write SetAcceptUnknownST;
+    property acceptUnknown : Boolean read GetAcceptUnknownST write SetAcceptUnknownST;
+    property acceptUnknownObject : TFhirBoolean read FAcceptUnknown write SetAcceptUnknown;
 
     {@member formatList
       A list of the formats supported by this implementation.
@@ -2147,75 +2167,79 @@ Type
       A kind of this device.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member manufacturer
       A name of the manufacturer.
     }
-    property manufacturer : TFhirString read FManufacturer write SetManufacturer;
-    {@member manufacturerST
+    {@member manufacturer
       Typed access to A name of the manufacturer.
     }
-    property manufacturerST : String read GetManufacturerST write SetManufacturerST;
+    property manufacturer : String read GetManufacturerST write SetManufacturerST;
+    property manufacturerObject : TFhirString read FManufacturer write SetManufacturer;
 
     {@member model
       The "model" - an identifier assigned by the manufacturer to identify the product by its type. This number is shared by the all devices sold as the same type.
     }
-    property model : TFhirString read FModel write SetModel;
-    {@member modelST
+    {@member model
       Typed access to The "model" - an identifier assigned by the manufacturer to identify the product by its type. This number is shared by the all devices sold as the same type.
     }
-    property modelST : String read GetModelST write SetModelST;
+    property model : String read GetModelST write SetModelST;
+    property modelObject : TFhirString read FModel write SetModel;
 
     {@member version
       The version of the device, if the device has multiple releases under the same model, or if the device is software or carries firmware.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to The version of the device, if the device has multiple releases under the same model, or if the device is software or carries firmware.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member expiry
       Date of expiry of this device (if applicable).
     }
-    property expiry : TFhirDate read FExpiry write SetExpiry;
-    {@member expiryST
+    {@member expiry
       Typed access to Date of expiry of this device (if applicable).
     }
-    property expiryST : TDateAndTime read GetExpiryST write SetExpiryST;
+    property expiry : TDateAndTime read GetExpiryST write SetExpiryST;
+    property expiryObject : TFhirDate read FExpiry write SetExpiry;
 
     {@member udi
       FDA Mandated Unique Device Identifier. Use the human readable information (the content that the user sees, which is sometimes different to the exact syntax represented in the barcode)  - see http://www.fda.gov/MedicalDevices/DeviceRegulationandGuidance/UniqueDeviceIdentification/default.htm.
     }
-    property udi : TFhirString read FUdi write SetUdi;
-    {@member udiST
+    {@member udi
       Typed access to FDA Mandated Unique Device Identifier. Use the human readable information (the content that the user sees, which is sometimes different to the exact syntax represented in the barcode)  - see http://www.fda.gov/MedicalDevices/DeviceRegulationandGuidance/UniqueDeviceIdentification/default.htm.
     }
-    property udiST : String read GetUdiST write SetUdiST;
+    property udi : String read GetUdiST write SetUdiST;
+    property udiObject : TFhirString read FUdi write SetUdi;
 
     {@member lotNumber
       Lot number assigned by the manufacturer.
     }
-    property lotNumber : TFhirString read FLotNumber write SetLotNumber;
-    {@member lotNumberST
+    {@member lotNumber
       Typed access to Lot number assigned by the manufacturer.
     }
-    property lotNumberST : String read GetLotNumberST write SetLotNumberST;
+    property lotNumber : String read GetLotNumberST write SetLotNumberST;
+    property lotNumberObject : TFhirString read FLotNumber write SetLotNumber;
 
     {@member owner
       An organization that is responsible for the provision and ongoing maintenance of the device.
     }
     property owner : TFhirResourceReference{TFhirOrganization} read FOwner write SetOwner;
+    property ownerObject : TFhirResourceReference{TFhirOrganization} read FOwner write SetOwner;
 
     {@member location
       The resource may be found in a literal location (i.e. GPS coordinates), a logical place (i.e. "in/with the patient"), or a coded location.
     }
     property location : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
+    property locationObject : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
 
     {@member patient
       Patient information, if the resource is affixed to a person.
     }
     property patient : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
+    property patientObject : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
 
     {@member contactList
       Contact details for an organization or a particular human that is responsible for the device.
@@ -2225,11 +2249,11 @@ Type
     {@member url
       A network address on which the device may be contacted directly.
     }
-    property url : TFhirUri read FUrl write SetUrl;
-    {@member urlST
+    {@member url
       Typed access to A network address on which the device may be contacted directly.
     }
-    property urlST : String read GetUrlST write SetUrlST;
+    property url : String read GetUrlST write SetUrlST;
+    property urlObject : TFhirUri read FUrl write SetUrl;
 
   end;
 
@@ -2270,26 +2294,29 @@ Type
     {@member instant
       The point in time that the values are reported.
     }
-    property instant : TFhirInstant read FInstant write SetInstant;
-    {@member instantST
+    {@member instant
       Typed access to The point in time that the values are reported.
     }
-    property instantST : TDateAndTime read GetInstantST write SetInstantST;
+    property instant : TDateAndTime read GetInstantST write SetInstantST;
+    property instantObject : TFhirInstant read FInstant write SetInstant;
 
     {@member identifier
       An identifier assigned to this observation bu the source device that made the observation.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member source
       Identification information for the device that is the source of the data.
     }
     property source : TFhirResourceReference{TFhirDevice} read FSource write SetSource;
+    property sourceObject : TFhirResourceReference{TFhirDevice} read FSource write SetSource;
 
     {@member subject
       The subject of the measurement.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member virtualDeviceList
       A medical-related subsystem of a medical device.
@@ -2347,11 +2374,13 @@ Type
       Who or what the investigation is to be performed on. This is usually a human patient, but diagnostic tests can also be requested on animals, groups of humans or animals, devices such as dialysis machines, or even locations (typically for environmental scans).
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member orderer
       The practitioner that holds legal responsibility for ordering the investigation.
     }
     property orderer : TFhirResourceReference{TFhirPractitioner} read FOrderer write SetOrderer;
+    property ordererObject : TFhirResourceReference{TFhirPractitioner} read FOrderer write SetOrderer;
 
     {@member identifierList
       Identifiers assigned to this order by the order or by the receiver.
@@ -2362,15 +2391,16 @@ Type
       An encounter that provides additional informaton about the healthcare context in which this request is made.
     }
     property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
+    property encounterObject : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
 
     {@member clinicalNotes
       An explanation or justification for why this diagnostic investigation is being requested.
     }
-    property clinicalNotes : TFhirString read FClinicalNotes write SetClinicalNotes;
-    {@member clinicalNotesST
+    {@member clinicalNotes
       Typed access to An explanation or justification for why this diagnostic investigation is being requested.
     }
-    property clinicalNotesST : String read GetClinicalNotesST write SetClinicalNotesST;
+    property clinicalNotes : String read GetClinicalNotesST write SetClinicalNotesST;
+    property clinicalNotesObject : TFhirString read FClinicalNotes write SetClinicalNotes;
 
     {@member specimenList
       One or more specimens that the diagnostic investigation is about.
@@ -2380,20 +2410,14 @@ Type
     {@member status
       The status of the order.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of the order.
-    }
-    property statusST : TFhirDiagnosticOrderStatus read GetStatusST write SetStatusST;
+    property status : TFhirDiagnosticOrderStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member priority
       The clinical priority associated with this order.
     }
-    property priority : TFhirEnum read FPriority write SetPriority;
-    {@member priorityST
-      Typed access to The clinical priority associated with this order.
-    }
-    property priorityST : TFhirDiagnosticOrderPriority read GetPriorityST write SetPriorityST;
+    property priority : TFhirDiagnosticOrderPriority read GetPriorityST write SetPriorityST;
+    property priorityObject : TFhirEnum read FPriority write SetPriority;
 
     {@member eventList
       A summary of the events of interest that have occurred as the request is processed. E.g. when the order was made, various processing steps (specimens received), when it was completed.
@@ -2465,39 +2489,40 @@ Type
       A code or name that describes this diagnostic report.
     }
     property name : TFhirCodeableConcept read FName write SetName;
+    property nameObject : TFhirCodeableConcept read FName write SetName;
 
     {@member status
       The status of the diagnostic report as a whole.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of the diagnostic report as a whole.
-    }
-    property statusST : TFhirDiagnosticReportStatus read GetStatusST write SetStatusST;
+    property status : TFhirDiagnosticReportStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member issued
       The date and/or time that this version of the report was released from the source diagnostic service.
     }
-    property issued : TFhirDateTime read FIssued write SetIssued;
-    {@member issuedST
+    {@member issued
       Typed access to The date and/or time that this version of the report was released from the source diagnostic service.
     }
-    property issuedST : TDateAndTime read GetIssuedST write SetIssuedST;
+    property issued : TDateAndTime read GetIssuedST write SetIssuedST;
+    property issuedObject : TFhirDateTime read FIssued write SetIssued;
 
     {@member subject
       The subject of the report. Usually, but not always, this is a patient. However diagnostic services also perform analyses on specimens collected from a variety of other sources.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member performer
       The diagnostic service that is responsible for issuing the report.
     }
     property performer : TFhirResourceReference{Resource} read FPerformer write SetPerformer;
+    property performerObject : TFhirResourceReference{Resource} read FPerformer write SetPerformer;
 
     {@member identifier
       The local ID assigned to the report by the order filler, usually by the Information System of the diagnostic service provider.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member requestDetailList
       Details concerning a test requested.
@@ -2508,11 +2533,13 @@ Type
       The section of the diagnostic service that performs the examination e.g. biochemistry, hematology, MRI.
     }
     property serviceCategory : TFhirCodeableConcept read FServiceCategory write SetServiceCategory;
+    property serviceCategoryObject : TFhirCodeableConcept read FServiceCategory write SetServiceCategory;
 
     {@member diagnostic
       The time or time-period the observed values are related to. This is usually either the time of the procedure or of specimen collection(s), but very often the source of the date/time is not known, only the date/time itself.
     }
     property diagnostic : TFhirType read FDiagnostic write SetDiagnostic;
+    property diagnosticObject : TFhirType read FDiagnostic write SetDiagnostic;
 
     {@member specimenList
       Details about the specimens on which this Disagnostic report is based.
@@ -2537,11 +2564,11 @@ Type
     {@member conclusion
       Concise and clinically contextualized narrative interpretation of the diagnostic report.
     }
-    property conclusion : TFhirString read FConclusion write SetConclusion;
-    {@member conclusionST
+    {@member conclusion
       Typed access to Concise and clinically contextualized narrative interpretation of the diagnostic report.
     }
-    property conclusionST : String read GetConclusionST write SetConclusionST;
+    property conclusion : String read GetConclusionST write SetConclusionST;
+    property conclusionObject : TFhirString read FConclusion write SetConclusion;
 
     {@member codedDiagnosisList
       Codes for the conclusion.
@@ -2611,6 +2638,7 @@ Type
       A single identifier that uniquely identifies this manifest. Principally used to refer to the manifest in non-FHIR contexts.
     }
     property masterIdentifier : TFhirIdentifier read FMasterIdentifier write SetMasterIdentifier;
+    property masterIdentifierObject : TFhirIdentifier read FMasterIdentifier write SetMasterIdentifier;
 
     {@member identifierList
       Other identifiers associated with the document, including version independent, source record and workflow related identifiers.
@@ -2631,6 +2659,7 @@ Type
       Specifies the kind of this set of documents (e.g. Patient Summary, Discharge Summary, Prescription, etc.). The type of a set of documents may be the same as one of the documents in it - especially if there is only one - but it may be wider.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member authorList
       Identifies who is responsible for adding the information to the document.
@@ -2640,48 +2669,47 @@ Type
     {@member created
       When the document manifest was created for submission to the server (not necessarily the same thing as the actual resource last modified time, since it may be modified, replicated etc).
     }
-    property created : TFhirDateTime read FCreated write SetCreated;
-    {@member createdST
+    {@member created
       Typed access to When the document manifest was created for submission to the server (not necessarily the same thing as the actual resource last modified time, since it may be modified, replicated etc).
     }
-    property createdST : TDateAndTime read GetCreatedST write SetCreatedST;
+    property created : TDateAndTime read GetCreatedST write SetCreatedST;
+    property createdObject : TFhirDateTime read FCreated write SetCreated;
 
     {@member source
       Identifies the source system, application, or software that produced the document manifest.
     }
-    property source : TFhirUri read FSource write SetSource;
-    {@member sourceST
+    {@member source
       Typed access to Identifies the source system, application, or software that produced the document manifest.
     }
-    property sourceST : String read GetSourceST write SetSourceST;
+    property source : String read GetSourceST write SetSourceST;
+    property sourceObject : TFhirUri read FSource write SetSource;
 
     {@member status
       The status of this document manifest.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of this document manifest.
-    }
-    property statusST : TFhirDocumentReferenceStatus read GetStatusST write SetStatusST;
+    property status : TFhirDocumentReferenceStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member supercedes
       Whether this document manifest replaces another.
     }
     property supercedes : TFhirResourceReference{TFhirDocumentManifest} read FSupercedes write SetSupercedes;
+    property supercedesObject : TFhirResourceReference{TFhirDocumentManifest} read FSupercedes write SetSupercedes;
 
     {@member description
       Human-readable description of the source document. This is sometimes known as the "title".
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Human-readable description of the source document. This is sometimes known as the "title".
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member confidentiality
       A code specifying the level of confidentiality of this set of Documents.
     }
     property confidentiality : TFhirCodeableConcept read FConfidentiality write SetConfidentiality;
+    property confidentialityObject : TFhirCodeableConcept read FConfidentiality write SetConfidentiality;
 
     {@member contentList
       The list of resources that describe the parts of this document reference. Usually, these would be document references, but direct references to binary attachments and images are also allowed.
@@ -2780,6 +2808,7 @@ Type
       Document identifier as assigned by the source of the document. This identifier is specific to this version of the document. This unique identifier may be used elsewhere to identify this version of the document.
     }
     property masterIdentifier : TFhirIdentifier read FMasterIdentifier write SetMasterIdentifier;
+    property masterIdentifierObject : TFhirIdentifier read FMasterIdentifier write SetMasterIdentifier;
 
     {@member identifierList
       Other identifiers associated with the document, including version independent, source record and workflow related identifiers.
@@ -2790,16 +2819,19 @@ Type
       Who or what the document is about. The document can be about a person, (patient or healthcare practitioner), a device (I.e. machine) or even a group of subjects (such as a document about a herd of farm animals, or a set of patients that share a common exposure).
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member type_
       Specifies the particular kind of document (e.g. Patient Summary, Discharge Summary, Prescription, etc.).
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member class_
       A categorization for the type of the document. This may be implied by or derived from the code specified in the Document Type.
     }
     property class_ : TFhirCodeableConcept read FClass_ write SetClass_;
+    property class_Object : TFhirCodeableConcept read FClass_ write SetClass_;
 
     {@member authorList
       Identifies who is responsible for adding the information to the document.
@@ -2810,52 +2842,52 @@ Type
       Identifies the organization or group who is responsible for ongoing maintenance of and access to the document.
     }
     property custodian : TFhirResourceReference{TFhirOrganization} read FCustodian write SetCustodian;
+    property custodianObject : TFhirResourceReference{TFhirOrganization} read FCustodian write SetCustodian;
 
     {@member policyManager
       A reference to a domain or server that manages policies under which the document is accessed and/or made available.
     }
-    property policyManager : TFhirUri read FPolicyManager write SetPolicyManager;
-    {@member policyManagerST
+    {@member policyManager
       Typed access to A reference to a domain or server that manages policies under which the document is accessed and/or made available.
     }
-    property policyManagerST : String read GetPolicyManagerST write SetPolicyManagerST;
+    property policyManager : String read GetPolicyManagerST write SetPolicyManagerST;
+    property policyManagerObject : TFhirUri read FPolicyManager write SetPolicyManager;
 
     {@member authenticator
       Which person or organization authenticates that this document is valid.
     }
     property authenticator : TFhirResourceReference{Resource} read FAuthenticator write SetAuthenticator;
+    property authenticatorObject : TFhirResourceReference{Resource} read FAuthenticator write SetAuthenticator;
 
     {@member created
       When the document was created.
     }
-    property created : TFhirDateTime read FCreated write SetCreated;
-    {@member createdST
+    {@member created
       Typed access to When the document was created.
     }
-    property createdST : TDateAndTime read GetCreatedST write SetCreatedST;
+    property created : TDateAndTime read GetCreatedST write SetCreatedST;
+    property createdObject : TFhirDateTime read FCreated write SetCreated;
 
     {@member indexed
       When the document reference was created.
     }
-    property indexed : TFhirInstant read FIndexed write SetIndexed;
-    {@member indexedST
+    {@member indexed
       Typed access to When the document reference was created.
     }
-    property indexedST : TDateAndTime read GetIndexedST write SetIndexedST;
+    property indexed : TDateAndTime read GetIndexedST write SetIndexedST;
+    property indexedObject : TFhirInstant read FIndexed write SetIndexed;
 
     {@member status
       The status of this document reference.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of this document reference.
-    }
-    property statusST : TFhirDocumentReferenceStatus read GetStatusST write SetStatusST;
+    property status : TFhirDocumentReferenceStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member docStatus
       The status of the underlying document.
     }
     property docStatus : TFhirCodeableConcept read FDocStatus write SetDocStatus;
+    property docStatusObject : TFhirCodeableConcept read FDocStatus write SetDocStatus;
 
     {@member relatesToList
       Relationships that this document has with other document references that already exist.
@@ -2865,11 +2897,11 @@ Type
     {@member description
       Human-readable description of the source document. This is sometimes known as the "title".
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Human-readable description of the source document. This is sometimes known as the "title".
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member confidentialityList
       A code specifying the level of confidentiality of the XDS Document.
@@ -2879,20 +2911,20 @@ Type
     {@member primaryLanguage
       The primary language in which the source document is written.
     }
-    property primaryLanguage : TFhirCode read FPrimaryLanguage write SetPrimaryLanguage;
-    {@member primaryLanguageST
+    {@member primaryLanguage
       Typed access to The primary language in which the source document is written.
     }
-    property primaryLanguageST : String read GetPrimaryLanguageST write SetPrimaryLanguageST;
+    property primaryLanguage : String read GetPrimaryLanguageST write SetPrimaryLanguageST;
+    property primaryLanguageObject : TFhirCode read FPrimaryLanguage write SetPrimaryLanguage;
 
     {@member mimeType
       The mime type of the source document.
     }
-    property mimeType : TFhirCode read FMimeType write SetMimeType;
-    {@member mimeTypeST
+    {@member mimeType
       Typed access to The mime type of the source document.
     }
-    property mimeTypeST : String read GetMimeTypeST write SetMimeTypeST;
+    property mimeType : String read GetMimeTypeST write SetMimeTypeST;
+    property mimeTypeObject : TFhirCode read FMimeType write SetMimeType;
 
     {@member formatList
       An identifier that identifies that the format and content of the document conforms to additional rules beyond the base format indicated in the mimeType.
@@ -2902,39 +2934,41 @@ Type
     {@member size
       The size of the source document this reference refers to in bytes.
     }
-    property size : TFhirInteger read FSize write SetSize;
-    {@member sizeST
+    {@member size
       Typed access to The size of the source document this reference refers to in bytes.
     }
-    property sizeST : String read GetSizeST write SetSizeST;
+    property size : String read GetSizeST write SetSizeST;
+    property sizeObject : TFhirInteger read FSize write SetSize;
 
     {@member hash
       A hash of the source document to ensure that changes have not occurred.
     }
-    property hash : TFhirString read FHash write SetHash;
-    {@member hashST
+    {@member hash
       Typed access to A hash of the source document to ensure that changes have not occurred.
     }
-    property hashST : String read GetHashST write SetHashST;
+    property hash : String read GetHashST write SetHashST;
+    property hashObject : TFhirString read FHash write SetHash;
 
     {@member location
       A url at which the document can be accessed.
     }
-    property location : TFhirUri read FLocation write SetLocation;
-    {@member locationST
+    {@member location
       Typed access to A url at which the document can be accessed.
     }
-    property locationST : String read GetLocationST write SetLocationST;
+    property location : String read GetLocationST write SetLocationST;
+    property locationObject : TFhirUri read FLocation write SetLocation;
 
     {@member service
       A description of a service call that can be used to retrieve the document.
     }
     property service : TFhirDocumentReferenceService read FService write SetService;
+    property serviceObject : TFhirDocumentReferenceService read FService write SetService;
 
     {@member context
       The clinical context in which the document was prepared.
     }
     property context : TFhirDocumentReferenceContext read FContext write SetContext;
+    property contextObject : TFhirDocumentReferenceContext read FContext write SetContext;
 
   end;
 
@@ -2999,20 +3033,14 @@ Type
     {@member status
       planned | in progress | onleave | finished | cancelled.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to planned | in progress | onleave | finished | cancelled.
-    }
-    property statusST : TFhirEncounterState read GetStatusST write SetStatusST;
+    property status : TFhirEncounterState read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member class_
       inpatient | outpatient | ambulatory | emergency +.
     }
-    property class_ : TFhirEnum read FClass_ write SetClass_;
-    {@member class_ST
-      Typed access to inpatient | outpatient | ambulatory | emergency +.
-    }
-    property class_ST : TFhirEncounterClass read GetClass_ST write SetClass_ST;
+    property class_ : TFhirEncounterClass read GetClass_ST write SetClass_ST;
+    property class_Object : TFhirEnum read FClass_ write SetClass_;
 
     {@member type_List
       Specific type of encounter (e.g. e-mail consultation, surgical day-care, skilled nursing, rehabilitation).
@@ -3023,6 +3051,7 @@ Type
       The patient present at the encounter.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member participantList
       The main practitioner responsible for providing the service.
@@ -3033,31 +3062,37 @@ Type
       The start and end time of the encounter.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member length
       Quantity of time the encounter lasted. This excludes the time during leaves of absence.
     }
     property length : TFhirQuantity read FLength write SetLength;
+    property lengthObject : TFhirQuantity read FLength write SetLength;
 
     {@member reason
       Reason the encounter takes place, expressed as a code. For admissions, this can be used for a coded admission diagnosis.
     }
     property reason : TFhirCodeableConcept read FReason write SetReason;
+    property reasonObject : TFhirCodeableConcept read FReason write SetReason;
 
     {@member indication
       Reason the encounter takes place, as specified using information from another resource. For admissions, this is the admission diagnosis.
     }
     property indication : TFhirResourceReference{Resource} read FIndication write SetIndication;
+    property indicationObject : TFhirResourceReference{Resource} read FIndication write SetIndication;
 
     {@member priority
       Indicates the urgency of the encounter.
     }
     property priority : TFhirCodeableConcept read FPriority write SetPriority;
+    property priorityObject : TFhirCodeableConcept read FPriority write SetPriority;
 
     {@member hospitalization
       Details about an admission to a clinic.
     }
     property hospitalization : TFhirEncounterHospitalization read FHospitalization write SetHospitalization;
+    property hospitalizationObject : TFhirEncounterHospitalization read FHospitalization write SetHospitalization;
 
     {@member locationList
       List of locations at which the patient has been.
@@ -3068,11 +3103,13 @@ Type
       Department or team providing care.
     }
     property serviceProvider : TFhirResourceReference{TFhirOrganization} read FServiceProvider write SetServiceProvider;
+    property serviceProviderObject : TFhirResourceReference{TFhirOrganization} read FServiceProvider write SetServiceProvider;
 
     {@member partOf
       Another Encounter of which this encounter is a part of (administratively or in time).
     }
     property partOf : TFhirResourceReference{TFhirEncounter} read FPartOf write SetPartOf;
+    property partOfObject : TFhirResourceReference{TFhirEncounter} read FPartOf write SetPartOf;
 
   end;
 
@@ -3116,15 +3153,16 @@ Type
       The person who this history concerns.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member note
       Conveys information about family history not specific to individual relations.
     }
-    property note : TFhirString read FNote write SetNote;
-    {@member noteST
+    {@member note
       Typed access to Conveys information about family history not specific to individual relations.
     }
-    property noteST : String read GetNoteST write SetNoteST;
+    property note : String read GetNoteST write SetNoteST;
+    property noteObject : TFhirString read FNote write SetNote;
 
     {@member relationList
       The related person. Each FamilyHistory resource contains the entire family history for a single person.
@@ -3182,47 +3220,46 @@ Type
       A unique business identifier for this group.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member type_
       Identifies the broad classification of the kind of resources the group includes.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to Identifies the broad classification of the kind of resources the group includes.
-    }
-    property type_ST : TFhirGroupType read GetType_ST write SetType_ST;
+    property type_ : TFhirGroupType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member actual
       If true, indicates that the resource refers to a specific group of real individuals.  If false, the group defines a set of intended individuals.
     }
-    property actual : TFhirBoolean read FActual write SetActual;
-    {@member actualST
+    {@member actual
       Typed access to If true, indicates that the resource refers to a specific group of real individuals.  If false, the group defines a set of intended individuals.
     }
-    property actualST : Boolean read GetActualST write SetActualST;
+    property actual : Boolean read GetActualST write SetActualST;
+    property actualObject : TFhirBoolean read FActual write SetActual;
 
     {@member code
       Provides a specific type of resource the group includes.  E.g. "cow", "syringe", etc.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member name
       A label assigned to the group for human identification and communication.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to A label assigned to the group for human identification and communication.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member quantity
       A count of the number of resource instances that are part of the group.
     }
-    property quantity : TFhirInteger read FQuantity write SetQuantity;
-    {@member quantityST
+    {@member quantity
       Typed access to A count of the number of resource instances that are part of the group.
     }
-    property quantityST : String read GetQuantityST write SetQuantityST;
+    property quantity : String read GetQuantityST write SetQuantityST;
+    property quantityObject : TFhirInteger read FQuantity write SetQuantity;
 
     {@member characteristicList
       Identifies the traits shared by members of the group.
@@ -3307,30 +3344,32 @@ Type
     {@member dateTime
       Date and Time the study took place.
     }
-    property dateTime : TFhirDateTime read FDateTime write SetDateTime;
-    {@member dateTimeST
+    {@member dateTime
       Typed access to Date and Time the study took place.
     }
-    property dateTimeST : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTime : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTimeObject : TFhirDateTime read FDateTime write SetDateTime;
 
     {@member subject
       Who the images are of.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member uid
       Formal identifier for the study.
     }
-    property uid : TFhirOid read FUid write SetUid;
-    {@member uidST
+    {@member uid
       Typed access to Formal identifier for the study.
     }
-    property uidST : String read GetUidST write SetUidST;
+    property uid : String read GetUidST write SetUidST;
+    property uidObject : TFhirOid read FUid write SetUid;
 
     {@member accessionNo
       Accession Number.
     }
     property accessionNo : TFhirIdentifier read FAccessionNo write SetAccessionNo;
+    property accessionNoObject : TFhirIdentifier read FAccessionNo write SetAccessionNo;
 
     {@member identifierList
       Other identifiers for the study.
@@ -3342,59 +3381,54 @@ Type
     }
     property orderList : TFhirResourceReferenceList{TFhirDiagnosticOrder} read FOrderList;
 
-    {@member modality
-      A list of all the Series.ImageModality values that are actual acquisition modalities, i.e. those in the DICOM Context Group 29 (value set OID 1.2.840.10008.6.1.19).
-    }
     property modality : TFhirEnumList read FModality;
     {@member referrer
       The requesting/referring physician.
     }
     property referrer : TFhirResourceReference{TFhirPractitioner} read FReferrer write SetReferrer;
+    property referrerObject : TFhirResourceReference{TFhirPractitioner} read FReferrer write SetReferrer;
 
     {@member availability
       Availability of study (online, offline or nearline).
     }
-    property availability : TFhirEnum read FAvailability write SetAvailability;
-    {@member availabilityST
-      Typed access to Availability of study (online, offline or nearline).
-    }
-    property availabilityST : TFhirInstanceAvailability read GetAvailabilityST write SetAvailabilityST;
+    property availability : TFhirInstanceAvailability read GetAvailabilityST write SetAvailabilityST;
+    property availabilityObject : TFhirEnum read FAvailability write SetAvailability;
 
     {@member url
       WADO-RS URI where Study is available.
     }
-    property url : TFhirUri read FUrl write SetUrl;
-    {@member urlST
+    {@member url
       Typed access to WADO-RS URI where Study is available.
     }
-    property urlST : String read GetUrlST write SetUrlST;
+    property url : String read GetUrlST write SetUrlST;
+    property urlObject : TFhirUri read FUrl write SetUrl;
 
     {@member numberOfSeries
       Number of Series in Study.
     }
-    property numberOfSeries : TFhirInteger read FNumberOfSeries write SetNumberOfSeries;
-    {@member numberOfSeriesST
+    {@member numberOfSeries
       Typed access to Number of Series in Study.
     }
-    property numberOfSeriesST : String read GetNumberOfSeriesST write SetNumberOfSeriesST;
+    property numberOfSeries : String read GetNumberOfSeriesST write SetNumberOfSeriesST;
+    property numberOfSeriesObject : TFhirInteger read FNumberOfSeries write SetNumberOfSeries;
 
     {@member numberOfInstances
       Number of SOP Instances in Study.
     }
-    property numberOfInstances : TFhirInteger read FNumberOfInstances write SetNumberOfInstances;
-    {@member numberOfInstancesST
+    {@member numberOfInstances
       Typed access to Number of SOP Instances in Study.
     }
-    property numberOfInstancesST : String read GetNumberOfInstancesST write SetNumberOfInstancesST;
+    property numberOfInstances : String read GetNumberOfInstancesST write SetNumberOfInstancesST;
+    property numberOfInstancesObject : TFhirInteger read FNumberOfInstances write SetNumberOfInstances;
 
     {@member clinicalInformation
       Diagnoses etc provided with request.
     }
-    property clinicalInformation : TFhirString read FClinicalInformation write SetClinicalInformation;
-    {@member clinicalInformationST
+    {@member clinicalInformation
       Typed access to Diagnoses etc provided with request.
     }
-    property clinicalInformationST : String read GetClinicalInformationST write SetClinicalInformationST;
+    property clinicalInformation : String read GetClinicalInformationST write SetClinicalInformationST;
+    property clinicalInformationObject : TFhirString read FClinicalInformation write SetClinicalInformation;
 
     {@member procedure_List
       Type of procedure performed.
@@ -3405,15 +3439,16 @@ Type
       Who read study and interpreted the images.
     }
     property interpreter : TFhirResourceReference{TFhirPractitioner} read FInterpreter write SetInterpreter;
+    property interpreterObject : TFhirResourceReference{TFhirPractitioner} read FInterpreter write SetInterpreter;
 
     {@member description
       Institution-generated description or classification of the Study (component) performed.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Institution-generated description or classification of the Study (component) performed.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member seriesList
       Each study has one or more series of image instances.
@@ -3496,97 +3531,107 @@ Type
     {@member date
       Date vaccine administered or was to be administered.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to Date vaccine administered or was to be administered.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member vaccineType
       Vaccine that was administered or was to be administered.
     }
     property vaccineType : TFhirCodeableConcept read FVaccineType write SetVaccineType;
+    property vaccineTypeObject : TFhirCodeableConcept read FVaccineType write SetVaccineType;
 
     {@member subject
       The patient to whom the vaccine was to be administered.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member refusedIndicator
       Indicates if the vaccination was refused.
     }
-    property refusedIndicator : TFhirBoolean read FRefusedIndicator write SetRefusedIndicator;
-    {@member refusedIndicatorST
+    {@member refusedIndicator
       Typed access to Indicates if the vaccination was refused.
     }
-    property refusedIndicatorST : Boolean read GetRefusedIndicatorST write SetRefusedIndicatorST;
+    property refusedIndicator : Boolean read GetRefusedIndicatorST write SetRefusedIndicatorST;
+    property refusedIndicatorObject : TFhirBoolean read FRefusedIndicator write SetRefusedIndicator;
 
     {@member reported
       True if this administration was reported rather than directly administered.
     }
-    property reported : TFhirBoolean read FReported write SetReported;
-    {@member reportedST
+    {@member reported
       Typed access to True if this administration was reported rather than directly administered.
     }
-    property reportedST : Boolean read GetReportedST write SetReportedST;
+    property reported : Boolean read GetReportedST write SetReportedST;
+    property reportedObject : TFhirBoolean read FReported write SetReported;
 
     {@member performer
       Clinician who administered the vaccine.
     }
     property performer : TFhirResourceReference{TFhirPractitioner} read FPerformer write SetPerformer;
+    property performerObject : TFhirResourceReference{TFhirPractitioner} read FPerformer write SetPerformer;
 
     {@member requester
       Clinician who ordered the vaccination.
     }
     property requester : TFhirResourceReference{TFhirPractitioner} read FRequester write SetRequester;
+    property requesterObject : TFhirResourceReference{TFhirPractitioner} read FRequester write SetRequester;
 
     {@member manufacturer
       Name of vaccine manufacturer.
     }
     property manufacturer : TFhirResourceReference{TFhirOrganization} read FManufacturer write SetManufacturer;
+    property manufacturerObject : TFhirResourceReference{TFhirOrganization} read FManufacturer write SetManufacturer;
 
     {@member location
       The service delivery location where the vaccine administration occurred.
     }
     property location : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
+    property locationObject : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
 
     {@member lotNumber
       Lot number of the  vaccine product.
     }
-    property lotNumber : TFhirString read FLotNumber write SetLotNumber;
-    {@member lotNumberST
+    {@member lotNumber
       Typed access to Lot number of the  vaccine product.
     }
-    property lotNumberST : String read GetLotNumberST write SetLotNumberST;
+    property lotNumber : String read GetLotNumberST write SetLotNumberST;
+    property lotNumberObject : TFhirString read FLotNumber write SetLotNumber;
 
     {@member expirationDate
       Date vaccine batch expires.
     }
-    property expirationDate : TFhirDate read FExpirationDate write SetExpirationDate;
-    {@member expirationDateST
+    {@member expirationDate
       Typed access to Date vaccine batch expires.
     }
-    property expirationDateST : TDateAndTime read GetExpirationDateST write SetExpirationDateST;
+    property expirationDate : TDateAndTime read GetExpirationDateST write SetExpirationDateST;
+    property expirationDateObject : TFhirDate read FExpirationDate write SetExpirationDate;
 
     {@member site
       Body site where vaccine was administered.
     }
     property site : TFhirCodeableConcept read FSite write SetSite;
+    property siteObject : TFhirCodeableConcept read FSite write SetSite;
 
     {@member route
       The path by which the vaccine product is taken into the body.
     }
     property route : TFhirCodeableConcept read FRoute write SetRoute;
+    property routeObject : TFhirCodeableConcept read FRoute write SetRoute;
 
     {@member doseQuantity
       The quantity of vaccine product that was administered.
     }
     property doseQuantity : TFhirQuantity read FDoseQuantity write SetDoseQuantity;
+    property doseQuantityObject : TFhirQuantity read FDoseQuantity write SetDoseQuantity;
 
     {@member explanation
       Reasons why a vaccine was administered or refused.
     }
     property explanation : TFhirImmunizationExplanation read FExplanation write SetExplanation;
+    property explanationObject : TFhirImmunizationExplanation read FExplanation write SetExplanation;
 
     {@member reactionList
       Categorical data indicating that an adverse event is associated in time to an immunization.
@@ -3636,6 +3681,7 @@ Type
       The patient who is the subject of the profile.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member recommendationList
       Vaccine administration recommendations.
@@ -3698,43 +3744,43 @@ Type
       This code defines the purpose of the list - why it was created.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member subject
       The common subject (or patient) of the resources that are in the list, if there is one.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member source
       The entity responsible for deciding what the contents of the list were.
     }
     property source : TFhirResourceReference{Resource} read FSource write SetSource;
+    property sourceObject : TFhirResourceReference{Resource} read FSource write SetSource;
 
     {@member date
       The date that the list was prepared.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The date that the list was prepared.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member ordered
       Whether items in the list have a meaningful order.
     }
-    property ordered : TFhirBoolean read FOrdered write SetOrdered;
-    {@member orderedST
+    {@member ordered
       Typed access to Whether items in the list have a meaningful order.
     }
-    property orderedST : Boolean read GetOrderedST write SetOrderedST;
+    property ordered : Boolean read GetOrderedST write SetOrderedST;
+    property orderedObject : TFhirBoolean read FOrdered write SetOrdered;
 
     {@member mode
       How this list was prepared - whether it is a working list that is suitable for being maintained on an ongoing basis, or if it represents a snapshot of a list of items from another source, or whether it is a prepared list where items may be marked as added, modified or deleted.
     }
-    property mode : TFhirEnum read FMode write SetMode;
-    {@member modeST
-      Typed access to How this list was prepared - whether it is a working list that is suitable for being maintained on an ongoing basis, or if it represents a snapshot of a list of items from another source, or whether it is a prepared list where items may be marked as added, modified or deleted.
-    }
-    property modeST : TFhirListMode read GetModeST write SetModeST;
+    property mode : TFhirListMode read GetModeST write SetModeST;
+    property modeObject : TFhirEnum read FMode write SetMode;
 
     {@member entryList
       Entries in this list.
@@ -3745,6 +3791,7 @@ Type
       If the list is empty, why the list is empty.
     }
     property emptyReason : TFhirCodeableConcept read FEmptyReason write SetEmptyReason;
+    property emptyReasonObject : TFhirCodeableConcept read FEmptyReason write SetEmptyReason;
 
   end;
 
@@ -3806,29 +3853,31 @@ Type
       Unique code or number identifying the location to its users.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member name
       Name of the location as used by humans. Does not need to be unique.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to Name of the location as used by humans. Does not need to be unique.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member description
       Description of the Location, which helps in finding or referencing the place.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Description of the Location, which helps in finding or referencing the place.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member type_
       Indicates the type of function performed at the location.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member telecomList
       The contact details of communication devices available at the location. This can include phone numbers, fax numbers, mobile numbers, email addresses and web sites.
@@ -3839,44 +3888,43 @@ Type
       Physical location.
     }
     property address : TFhirAddress read FAddress write SetAddress;
+    property addressObject : TFhirAddress read FAddress write SetAddress;
 
     {@member physicalType
       Physical form of the location, e.g. building, room, vehicle, road.
     }
     property physicalType : TFhirCodeableConcept read FPhysicalType write SetPhysicalType;
+    property physicalTypeObject : TFhirCodeableConcept read FPhysicalType write SetPhysicalType;
 
     {@member position
       The absolute geographic location of the Location, expressed in a KML compatible manner (see notes below for KML).
     }
     property position : TFhirLocationPosition read FPosition write SetPosition;
+    property positionObject : TFhirLocationPosition read FPosition write SetPosition;
 
     {@member managingOrganization
       The organization that is responsible for the provisioning and upkeep of the location.
     }
     property managingOrganization : TFhirResourceReference{TFhirOrganization} read FManagingOrganization write SetManagingOrganization;
+    property managingOrganizationObject : TFhirResourceReference{TFhirOrganization} read FManagingOrganization write SetManagingOrganization;
 
     {@member status
       active | suspended | inactive.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to active | suspended | inactive.
-    }
-    property statusST : TFhirLocationStatus read GetStatusST write SetStatusST;
+    property status : TFhirLocationStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member partOf
       Another Location which this Location is physically part of.
     }
     property partOf : TFhirResourceReference{TFhirLocation} read FPartOf write SetPartOf;
+    property partOfObject : TFhirResourceReference{TFhirLocation} read FPartOf write SetPartOf;
 
     {@member mode
       Indicates whether a resource instance represents a specific location or a class of locations.
     }
-    property mode : TFhirEnum read FMode write SetMode;
-    {@member modeST
-      Typed access to Indicates whether a resource instance represents a specific location or a class of locations.
-    }
-    property modeST : TFhirLocationMode read GetModeST write SetModeST;
+    property mode : TFhirLocationMode read GetModeST write SetModeST;
+    property modeObject : TFhirEnum read FMode write SetMode;
 
   end;
 
@@ -3945,16 +3993,14 @@ Type
     {@member type_
       Whether the media is a photo (still image), an audio recording, or a video recording.
     }
-    property type_ : TFhirEnum read FType_ write SetType_;
-    {@member type_ST
-      Typed access to Whether the media is a photo (still image), an audio recording, or a video recording.
-    }
-    property type_ST : TFhirMediaType read GetType_ST write SetType_ST;
+    property type_ : TFhirMediaType read GetType_ST write SetType_ST;
+    property type_Object : TFhirEnum read FType_ write SetType_;
 
     {@member subtype
       Details of the type of the media - usually, how it was acquired (what type of device). If images sourced from a DICOM system, are wrapped in a Media resource, then this is the modality.
     }
     property subtype : TFhirCodeableConcept read FSubtype write SetSubtype;
+    property subtypeObject : TFhirCodeableConcept read FSubtype write SetSubtype;
 
     {@member identifierList
       Identifiers associated with the image - these may include identifiers for the image itself, identifiers for the context of its collection (e.g. series ids) and context ids such as accession numbers or other workflow identifiers.
@@ -3964,76 +4010,80 @@ Type
     {@member dateTime
       When the media was originally recorded. For video and audio, if the length of the recording is not insignificant, this is the end of the recording.
     }
-    property dateTime : TFhirDateTime read FDateTime write SetDateTime;
-    {@member dateTimeST
+    {@member dateTime
       Typed access to When the media was originally recorded. For video and audio, if the length of the recording is not insignificant, this is the end of the recording.
     }
-    property dateTimeST : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTime : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTimeObject : TFhirDateTime read FDateTime write SetDateTime;
 
     {@member subject
       Who/What this Media is a record of.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member operator
       The person who administered the collection of the image.
     }
     property operator : TFhirResourceReference{TFhirPractitioner} read FOperator write SetOperator;
+    property operatorObject : TFhirResourceReference{TFhirPractitioner} read FOperator write SetOperator;
 
     {@member view
       The name of the imaging view e.g Lateral or Antero-posterior (AP).
     }
     property view : TFhirCodeableConcept read FView write SetView;
+    property viewObject : TFhirCodeableConcept read FView write SetView;
 
     {@member deviceName
       The name of the device / manufacturer of the device  that was used to make the recording.
     }
-    property deviceName : TFhirString read FDeviceName write SetDeviceName;
-    {@member deviceNameST
+    {@member deviceName
       Typed access to The name of the device / manufacturer of the device  that was used to make the recording.
     }
-    property deviceNameST : String read GetDeviceNameST write SetDeviceNameST;
+    property deviceName : String read GetDeviceNameST write SetDeviceNameST;
+    property deviceNameObject : TFhirString read FDeviceName write SetDeviceName;
 
     {@member height
       Height of the image in pixels(photo/video).
     }
-    property height : TFhirInteger read FHeight write SetHeight;
-    {@member heightST
+    {@member height
       Typed access to Height of the image in pixels(photo/video).
     }
-    property heightST : String read GetHeightST write SetHeightST;
+    property height : String read GetHeightST write SetHeightST;
+    property heightObject : TFhirInteger read FHeight write SetHeight;
 
     {@member width
       Width of the image in pixels (photo/video).
     }
-    property width : TFhirInteger read FWidth write SetWidth;
-    {@member widthST
+    {@member width
       Typed access to Width of the image in pixels (photo/video).
     }
-    property widthST : String read GetWidthST write SetWidthST;
+    property width : String read GetWidthST write SetWidthST;
+    property widthObject : TFhirInteger read FWidth write SetWidth;
 
     {@member frames
       The number of frames in a photo. This is used with a multi-page fax, or an imaging acquisition context that takes multiple slices in a single image, or an animated gif. If there is more than one frame, this SHALL have a value in order to alert interface software that a multi-frame capable rendering widget is required.
     }
-    property frames : TFhirInteger read FFrames write SetFrames;
-    {@member framesST
+    {@member frames
       Typed access to The number of frames in a photo. This is used with a multi-page fax, or an imaging acquisition context that takes multiple slices in a single image, or an animated gif. If there is more than one frame, this SHALL have a value in order to alert interface software that a multi-frame capable rendering widget is required.
     }
-    property framesST : String read GetFramesST write SetFramesST;
+    property frames : String read GetFramesST write SetFramesST;
+    property framesObject : TFhirInteger read FFrames write SetFrames;
 
     {@member length
       The length of the recording in seconds - for audio and video.
     }
-    property length : TFhirInteger read FLength write SetLength;
-    {@member lengthST
+    {@member length
       Typed access to The length of the recording in seconds - for audio and video.
     }
-    property lengthST : String read GetLengthST write SetLengthST;
+    property length : String read GetLengthST write SetLengthST;
+    property lengthObject : TFhirInteger read FLength write SetLength;
 
     {@member content
       The actual content of the media - inline or by direct reference to the media source file.
     }
     property content : TFhirAttachment read FContent write SetContent;
+    property contentObject : TFhirAttachment read FContent write SetContent;
 
   end;
 
@@ -4083,49 +4133,50 @@ Type
     {@member name
       The common/commercial name of the medication absent information such as strength, form, etc.  E.g. Acetaminophen, Tylenol 3, etc.  The fully coordinated name is communicated as the display of Medication.code.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to The common/commercial name of the medication absent information such as strength, form, etc.  E.g. Acetaminophen, Tylenol 3, etc.  The fully coordinated name is communicated as the display of Medication.code.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member code
       A code (or set of codes) that identify this medication.   Usage note: This could be a standard drug code such as a drug regulator code, RxNorm code, SNOMED CT code, etc. It could also be a local formulary code, optionally with translations to the standard drug codes.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member isBrand
       Set to true if the item is attributable to a specific manufacturer (even if we don't know who that is).
     }
-    property isBrand : TFhirBoolean read FIsBrand write SetIsBrand;
-    {@member isBrandST
+    {@member isBrand
       Typed access to Set to true if the item is attributable to a specific manufacturer (even if we don't know who that is).
     }
-    property isBrandST : Boolean read GetIsBrandST write SetIsBrandST;
+    property isBrand : Boolean read GetIsBrandST write SetIsBrandST;
+    property isBrandObject : TFhirBoolean read FIsBrand write SetIsBrand;
 
     {@member manufacturer
       Describes the details of the manufacturer.
     }
     property manufacturer : TFhirResourceReference{TFhirOrganization} read FManufacturer write SetManufacturer;
+    property manufacturerObject : TFhirResourceReference{TFhirOrganization} read FManufacturer write SetManufacturer;
 
     {@member kind
       Medications are either a single administrable product or a package that contains one or more products.
     }
-    property kind : TFhirEnum read FKind write SetKind;
-    {@member kindST
-      Typed access to Medications are either a single administrable product or a package that contains one or more products.
-    }
-    property kindST : TFhirMedicationKind read GetKindST write SetKindST;
+    property kind : TFhirMedicationKind read GetKindST write SetKindST;
+    property kindObject : TFhirEnum read FKind write SetKind;
 
     {@member product
       Information that only applies to products (not packages).
     }
     property product : TFhirMedicationProduct read FProduct write SetProduct;
+    property productObject : TFhirMedicationProduct read FProduct write SetProduct;
 
     {@member package
       Information that only applies to packages (not products).
     }
     property package : TFhirMedicationPackage read FPackage write SetPackage;
+    property packageObject : TFhirMedicationPackage read FPackage write SetPackage;
 
   end;
 
@@ -4186,40 +4237,41 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member status
       Will generally be set to show that the administration has been completed.  For some long running administrations such as infusions it is possible for an administration to be started but not completed or it may be paused while some other process is under way.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to Will generally be set to show that the administration has been completed.  For some long running administrations such as infusions it is possible for an administration to be started but not completed or it may be paused while some other process is under way.
-    }
-    property statusST : TFhirMedicationAdminStatus read GetStatusST write SetStatusST;
+    property status : TFhirMedicationAdminStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member patient
       The person or animal to whom the medication was given.
     }
     property patient : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
+    property patientObject : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
 
     {@member practitioner
       The individual who was responsible for giving the medication to the patient.
     }
     property practitioner : TFhirResourceReference{TFhirPractitioner} read FPractitioner write SetPractitioner;
+    property practitionerObject : TFhirResourceReference{TFhirPractitioner} read FPractitioner write SetPractitioner;
 
     {@member encounter
       The visit or admission the or other contact between patient and health care provider the medication administration was performed as part of.
     }
     property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
+    property encounterObject : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
 
     {@member prescription
       The original request, instruction or authority to perform the administration.
     }
     property prescription : TFhirResourceReference{TFhirMedicationPrescription} read FPrescription write SetPrescription;
+    property prescriptionObject : TFhirResourceReference{TFhirMedicationPrescription} read FPrescription write SetPrescription;
 
     {@member wasNotGiven
       Set this to true if the record is saying that the medication was NOT administered.
     }
-    property wasNotGiven : TFhirBoolean read FWasNotGiven write SetWasNotGiven;
-    {@member wasNotGivenST
+    {@member wasNotGiven
       Typed access to Set this to true if the record is saying that the medication was NOT administered.
     }
-    property wasNotGivenST : Boolean read GetWasNotGivenST write SetWasNotGivenST;
+    property wasNotGiven : Boolean read GetWasNotGivenST write SetWasNotGivenST;
+    property wasNotGivenObject : TFhirBoolean read FWasNotGiven write SetWasNotGiven;
 
     {@member reasonNotGivenList
       A code indicating why the administration was not performed.
@@ -4230,11 +4282,13 @@ Related resources tie this event to the authorizing prescription, and the specif
       An interval of time during which the administration took place.  For many administrations, such as swallowing a tablet the lower and upper values of the interval will be the same.
     }
     property whenGiven : TFhirPeriod read FWhenGiven write SetWhenGiven;
+    property whenGivenObject : TFhirPeriod read FWhenGiven write SetWhenGiven;
 
     {@member medication
       Identifies the medication that was administered. This is either a link to a resource representing the details of the medication or a simple attribute carrying a code that identifies the medication from a known list of medications.
     }
     property medication : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
+    property medicationObject : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
 
     {@member deviceList
       The device used in administering the medication to the patient.  E.g. a particular infusion pump.
@@ -4289,25 +4343,25 @@ Related resources tie this event to the authorizing prescription, and the specif
       Identifier assigned by the dispensing facility - this is an identifier assigned outside FHIR.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member status
       A code specifying the state of the set of dispense events.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to A code specifying the state of the set of dispense events.
-    }
-    property statusST : TFhirMedicationDispenseStatus read GetStatusST write SetStatusST;
+    property status : TFhirMedicationDispenseStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member patient
       A link to a resource representing the person to whom the medication will be given.
     }
     property patient : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
+    property patientObject : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
 
     {@member dispenser
       The individual responsible for dispensing the medication.
     }
     property dispenser : TFhirResourceReference{TFhirPractitioner} read FDispenser write SetDispenser;
+    property dispenserObject : TFhirResourceReference{TFhirPractitioner} read FDispenser write SetDispenser;
 
     {@member authorizingPrescriptionList
       Indicates the medication order that is being dispensed against.
@@ -4323,6 +4377,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       Indicates whether or not substitution was made as part of the dispense.  In some cases substitution will be expected but doesn't happen, in other cases substitution is not expected but does happen.  This block explains what substitition did or did not happen and why.
     }
     property substitution : TFhirMedicationDispenseSubstitution read FSubstitution write SetSubstitution;
+    property substitutionObject : TFhirMedicationDispenseSubstitution read FSubstitution write SetSubstitution;
 
   end;
 
@@ -4381,45 +4436,47 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member dateWritten
       The date (and perhaps time) when the prescription was written.
     }
-    property dateWritten : TFhirDateTime read FDateWritten write SetDateWritten;
-    {@member dateWrittenST
+    {@member dateWritten
       Typed access to The date (and perhaps time) when the prescription was written.
     }
-    property dateWrittenST : TDateAndTime read GetDateWrittenST write SetDateWrittenST;
+    property dateWritten : TDateAndTime read GetDateWrittenST write SetDateWrittenST;
+    property dateWrittenObject : TFhirDateTime read FDateWritten write SetDateWritten;
 
     {@member status
       A code specifying the state of the order.  Generally this will be active or completed state.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to A code specifying the state of the order.  Generally this will be active or completed state.
-    }
-    property statusST : TFhirMedicationPrescriptionStatus read GetStatusST write SetStatusST;
+    property status : TFhirMedicationPrescriptionStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member patient
       A link to a resource representing the person to whom the medication will be given.
     }
     property patient : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
+    property patientObject : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
 
     {@member prescriber
       The healthcare professional responsible for authorizing the prescription.
     }
     property prescriber : TFhirResourceReference{TFhirPractitioner} read FPrescriber write SetPrescriber;
+    property prescriberObject : TFhirResourceReference{TFhirPractitioner} read FPrescriber write SetPrescriber;
 
     {@member encounter
       A link to a resource that identifies the particular occurrence of contact between patient and health care provider.
     }
     property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
+    property encounterObject : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
 
     {@member reason
       Can be the reason or the indication for writing the prescription.
     }
     property reason : TFhirType read FReason write SetReason;
+    property reasonObject : TFhirType read FReason write SetReason;
 
     {@member medication
       Identifies the medication being administered. This is either a link to a resource representing the details of the medication or a simple attribute carrying a code that identifies the medication from a known list of medications.
     }
     property medication : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
+    property medicationObject : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
 
     {@member dosageInstructionList
       Indicates how the medication is to be used by the patient.
@@ -4430,11 +4487,13 @@ Related resources tie this event to the authorizing prescription, and the specif
       Deals with details of the dispense part of the order.
     }
     property dispense : TFhirMedicationPrescriptionDispense read FDispense write SetDispense;
+    property dispenseObject : TFhirMedicationPrescriptionDispense read FDispense write SetDispense;
 
     {@member substitution
       Indicates whether or not substitution can or should be part of the dispense. In some cases substitution must happen, in other cases substitution must not happen, and in others it does not matter. This block explains the prescriber's intent. If nothing is specified substitution may be done.
     }
     property substitution : TFhirMedicationPrescriptionSubstitution read FSubstitution write SetSubstitution;
+    property substitutionObject : TFhirMedicationPrescriptionSubstitution read FSubstitution write SetSubstitution;
 
   end;
 
@@ -4484,15 +4543,16 @@ Related resources tie this event to the authorizing prescription, and the specif
       The person or animal who is /was taking the medication.
     }
     property patient : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
+    property patientObject : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
 
     {@member wasNotGiven
       Set this to true if the record is saying that the medication was NOT taken.
     }
-    property wasNotGiven : TFhirBoolean read FWasNotGiven write SetWasNotGiven;
-    {@member wasNotGivenST
+    {@member wasNotGiven
       Typed access to Set this to true if the record is saying that the medication was NOT taken.
     }
-    property wasNotGivenST : Boolean read GetWasNotGivenST write SetWasNotGivenST;
+    property wasNotGiven : Boolean read GetWasNotGivenST write SetWasNotGivenST;
+    property wasNotGivenObject : TFhirBoolean read FWasNotGiven write SetWasNotGiven;
 
     {@member reasonNotGivenList
       A code indicating why the medication was not taken.
@@ -4503,11 +4563,13 @@ Related resources tie this event to the authorizing prescription, and the specif
       The interval of time during which it is being asserted that the patient was taking the medication.
     }
     property whenGiven : TFhirPeriod read FWhenGiven write SetWhenGiven;
+    property whenGivenObject : TFhirPeriod read FWhenGiven write SetWhenGiven;
 
     {@member medication
       Identifies the medication being administered. This is either a link to a resource representing the details of the medication or a simple attribute carrying a code that identifies the medication from a known list of medications.
     }
     property medication : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
+    property medicationObject : TFhirResourceReference{TFhirMedication} read FMedication write SetMedication;
 
     {@member deviceList
       An identifier or a link to a resource that identifies a device used in administering the medication to the patient.
@@ -4573,35 +4635,38 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member identifier
       The identifier of this message.
     }
-    property identifier : TFhirId read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to The identifier of this message.
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirId read FIdentifier write SetIdentifier;
 
     {@member timestamp
       The time that the message was sent.
     }
-    property timestamp : TFhirInstant read FTimestamp write SetTimestamp;
-    {@member timestampST
+    {@member timestamp
       Typed access to The time that the message was sent.
     }
-    property timestampST : TDateAndTime read GetTimestampST write SetTimestampST;
+    property timestamp : TDateAndTime read GetTimestampST write SetTimestampST;
+    property timestampObject : TFhirInstant read FTimestamp write SetTimestamp;
 
     {@member event
       Code that identifies the event this message represents and connects it with it's definition. Events defined as part of the FHIR specification have the system value "http://hl7.org/fhir/message-type".
     }
     property event : TFhirCoding read FEvent write SetEvent;
+    property eventObject : TFhirCoding read FEvent write SetEvent;
 
     {@member response
       Information about the message that this message is a response to.  Only present if this message is a response.
     }
     property response : TFhirMessageHeaderResponse read FResponse write SetResponse;
+    property responseObject : TFhirMessageHeaderResponse read FResponse write SetResponse;
 
     {@member source
       The source application from which this message originated.
     }
     property source : TFhirMessageHeaderSource read FSource write SetSource;
+    property sourceObject : TFhirMessageHeaderSource read FSource write SetSource;
 
     {@member destinationList
       The destination application which the message is intended for.
@@ -4612,26 +4677,31 @@ Related resources tie this event to the authorizing prescription, and the specif
       The person or device that performed the data entry leading to this message. Where there is more than one candidate, pick the most proximal to the message. Can provide other enterers in extensions.
     }
     property enterer : TFhirResourceReference{TFhirPractitioner} read FEnterer write SetEnterer;
+    property entererObject : TFhirResourceReference{TFhirPractitioner} read FEnterer write SetEnterer;
 
     {@member author
       The logical author of the message - the person or device that decided the described event should happen. Where there is more than one candidate, pick the most proximal to the MessageHeader. Can provide other authors in extensions.
     }
     property author : TFhirResourceReference{TFhirPractitioner} read FAuthor write SetAuthor;
+    property authorObject : TFhirResourceReference{TFhirPractitioner} read FAuthor write SetAuthor;
 
     {@member receiver
       Allows data conveyed by a message to be addressed to a particular person or department when routing to a specific application isn't sufficient.
     }
     property receiver : TFhirResourceReference{Resource} read FReceiver write SetReceiver;
+    property receiverObject : TFhirResourceReference{Resource} read FReceiver write SetReceiver;
 
     {@member responsible
       The person or organization that accepts overall responsibility for the contents of the message. The implication is that the message event happened under the policies of the responsible party.
     }
     property responsible : TFhirResourceReference{Resource} read FResponsible write SetResponsible;
+    property responsibleObject : TFhirResourceReference{Resource} read FResponsible write SetResponsible;
 
     {@member reason
       Coded indication of the cause for the event - indicates  a reason for the occurance of the event that is a focus of this message.
     }
     property reason : TFhirCodeableConcept read FReason write SetReason;
+    property reasonObject : TFhirCodeableConcept read FReason write SetReason;
 
     {@member dataList
       The actual data of the message - a reference to the root/focus class of the event.
@@ -4704,82 +4774,85 @@ Related resources tie this event to the authorizing prescription, and the specif
       Describes what was observed. Sometimes this is called the observation "code".
     }
     property name : TFhirCodeableConcept read FName write SetName;
+    property nameObject : TFhirCodeableConcept read FName write SetName;
 
     {@member value
       The information determined as a result of making the observation, if the information has a simple value.
     }
     property value : TFhirType read FValue write SetValue;
+    property valueObject : TFhirType read FValue write SetValue;
 
     {@member interpretation
       The assessment made based on the result of the observation.
     }
     property interpretation : TFhirCodeableConcept read FInterpretation write SetInterpretation;
+    property interpretationObject : TFhirCodeableConcept read FInterpretation write SetInterpretation;
 
     {@member comments
       May include statements about significant, unexpected or unreliable values, or information about the source of the value where this may be relevant to the interpretation of the result.
     }
-    property comments : TFhirString read FComments write SetComments;
-    {@member commentsST
+    {@member comments
       Typed access to May include statements about significant, unexpected or unreliable values, or information about the source of the value where this may be relevant to the interpretation of the result.
     }
-    property commentsST : String read GetCommentsST write SetCommentsST;
+    property comments : String read GetCommentsST write SetCommentsST;
+    property commentsObject : TFhirString read FComments write SetComments;
 
     {@member applies
       The time or time-period the observed value is asserted as being true. For biological subjects - e.g. human patients - this is usually called the "physiologically relevant time". This is usually either the time of the procedure or of specimen collection, but very often the source of the date/time is not known, only the date/time itself.
     }
     property applies : TFhirType read FApplies write SetApplies;
+    property appliesObject : TFhirType read FApplies write SetApplies;
 
     {@member issued
       Date/Time this was made available.
     }
-    property issued : TFhirInstant read FIssued write SetIssued;
-    {@member issuedST
+    {@member issued
       Typed access to Date/Time this was made available.
     }
-    property issuedST : TDateAndTime read GetIssuedST write SetIssuedST;
+    property issued : TDateAndTime read GetIssuedST write SetIssuedST;
+    property issuedObject : TFhirInstant read FIssued write SetIssued;
 
     {@member status
       The status of the result value.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of the result value.
-    }
-    property statusST : TFhirObservationStatus read GetStatusST write SetStatusST;
+    property status : TFhirObservationStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member reliability
       An estimate of the degree to which quality issues have impacted on the value reported.
     }
-    property reliability : TFhirEnum read FReliability write SetReliability;
-    {@member reliabilityST
-      Typed access to An estimate of the degree to which quality issues have impacted on the value reported.
-    }
-    property reliabilityST : TFhirObservationReliability read GetReliabilityST write SetReliabilityST;
+    property reliability : TFhirObservationReliability read GetReliabilityST write SetReliabilityST;
+    property reliabilityObject : TFhirEnum read FReliability write SetReliability;
 
     {@member bodySite
       Indicates where on the subject's body the observation was made.
     }
     property bodySite : TFhirCodeableConcept read FBodySite write SetBodySite;
+    property bodySiteObject : TFhirCodeableConcept read FBodySite write SetBodySite;
 
     {@member method
       Indicates the mechanism used to perform the observation.
     }
     property method : TFhirCodeableConcept read FMethod write SetMethod;
+    property methodObject : TFhirCodeableConcept read FMethod write SetMethod;
 
     {@member identifier
       A unique identifier for the simple observation.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member subject
       The thing the observation is being made about.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member specimen
       The specimen that was used when this observation was made.
     }
     property specimen : TFhirResourceReference{TFhirSpecimen} read FSpecimen write SetSpecimen;
+    property specimenObject : TFhirResourceReference{TFhirSpecimen} read FSpecimen write SetSpecimen;
 
     {@member performerList
       Who was responsible for asserting the observed value as "true".
@@ -4878,41 +4951,47 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member date
       When the order was made.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to When the order was made.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member subject
       Patient this order is about.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member source
       Who initiated the order.
     }
     property source : TFhirResourceReference{TFhirPractitioner} read FSource write SetSource;
+    property sourceObject : TFhirResourceReference{TFhirPractitioner} read FSource write SetSource;
 
     {@member target
       Who is intended to fulfill the order.
     }
     property target : TFhirResourceReference{Resource} read FTarget write SetTarget;
+    property targetObject : TFhirResourceReference{Resource} read FTarget write SetTarget;
 
     {@member reason
       Text - why the order was made.
     }
     property reason : TFhirType read FReason write SetReason;
+    property reasonObject : TFhirType read FReason write SetReason;
 
     {@member authority
       If required by policy.
     }
     property authority : TFhirResourceReference{Resource} read FAuthority write SetAuthority;
+    property authorityObject : TFhirResourceReference{Resource} read FAuthority write SetAuthority;
 
     {@member when
       When order should be fulfilled.
     }
     property when : TFhirOrderWhen read FWhen write SetWhen;
+    property whenObject : TFhirOrderWhen read FWhen write SetWhen;
 
     {@member detailList
       What action is being ordered.
@@ -4973,43 +5052,43 @@ Related resources tie this event to the authorizing prescription, and the specif
       A reference to the order that this is in response to.
     }
     property request : TFhirResourceReference{TFhirOrder} read FRequest write SetRequest;
+    property requestObject : TFhirResourceReference{TFhirOrder} read FRequest write SetRequest;
 
     {@member date
       The date and time at which this order response was made (created/posted).
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The date and time at which this order response was made (created/posted).
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member who
       The person, organization, or device credited with making the response.
     }
     property who : TFhirResourceReference{Resource} read FWho write SetWho;
+    property whoObject : TFhirResourceReference{Resource} read FWho write SetWho;
 
     {@member authority
       A reference to an authority policy that is the reason for the response. Usually this is used when the order is rejected, to provide a reason for rejection.
     }
     property authority : TFhirType read FAuthority write SetAuthority;
+    property authorityObject : TFhirType read FAuthority write SetAuthority;
 
     {@member code
       What this response says about the status of the original order.
     }
-    property code : TFhirEnum read FCode write SetCode;
-    {@member codeST
-      Typed access to What this response says about the status of the original order.
-    }
-    property codeST : TFhirOrderOutcomeCode read GetCodeST write SetCodeST;
+    property code : TFhirOrderOutcomeCode read GetCodeST write SetCodeST;
+    property codeObject : TFhirEnum read FCode write SetCode;
 
     {@member description
       Additional description about the response - e.g. a text description provided by a human user when making decisions about the order.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to Additional description about the response - e.g. a text description provided by a human user when making decisions about the order.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member fulfillmentList
       Links to resources that provide details of the outcome of performing the order. E.g. Diagnostic Reports in a response that is made to an order that referenced a diagnostic order.
@@ -5066,16 +5145,17 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member name
       A name associated with the organization.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to A name associated with the organization.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member type_
       The kind of organization that this is.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member telecomList
       A contact detail for the organization.
@@ -5091,6 +5171,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       The organization of which this organization forms a part.
     }
     property partOf : TFhirResourceReference{TFhirOrganization} read FPartOf write SetPartOf;
+    property partOfObject : TFhirResourceReference{TFhirOrganization} read FPartOf write SetPartOf;
 
     {@member contactList
       Contact for the organization for a certain purpose.
@@ -5105,11 +5186,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member active
       Whether the organization's record is still in active use.
     }
-    property active : TFhirBoolean read FActive write SetActive;
-    {@member activeST
+    {@member active
       Typed access to Whether the organization's record is still in active use.
     }
-    property activeST : Boolean read GetActiveST write SetActiveST;
+    property active : Boolean read GetActiveST write SetActiveST;
+    property activeObject : TFhirBoolean read FActive write SetActive;
 
   end;
 
@@ -5156,25 +5237,28 @@ Related resources tie this event to the authorizing prescription, and the specif
       Identifies the 'type' of resource - equivalent to the resource name for other resources.
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
+    property codeObject : TFhirCodeableConcept read FCode write SetCode;
 
     {@member subject
       Identifies the patient, practitioner, device or any other resource that is the "focus" of this resoruce.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member author
       Indicates who was responsible for creating the resource instance.
     }
     property author : TFhirResourceReference{Resource} read FAuthor write SetAuthor;
+    property authorObject : TFhirResourceReference{Resource} read FAuthor write SetAuthor;
 
     {@member created
       Identifies when the resource was first created.
     }
-    property created : TFhirDate read FCreated write SetCreated;
-    {@member createdST
+    {@member created
       Typed access to Identifies when the resource was first created.
     }
-    property createdST : TDateAndTime read GetCreatedST write SetCreatedST;
+    property created : TDateAndTime read GetCreatedST write SetCreatedST;
+    property createdObject : TFhirDate read FCreated write SetCreated;
 
   end;
 
@@ -5249,20 +5333,22 @@ Related resources tie this event to the authorizing prescription, and the specif
       Administrative Gender - the gender that the patient is considered to have for administration and record keeping purposes.
     }
     property gender : TFhirCodeableConcept read FGender write SetGender;
+    property genderObject : TFhirCodeableConcept read FGender write SetGender;
 
     {@member birthDate
       The date and time of birth for the individual.
     }
-    property birthDate : TFhirDateTime read FBirthDate write SetBirthDate;
-    {@member birthDateST
+    {@member birthDate
       Typed access to The date and time of birth for the individual.
     }
-    property birthDateST : TDateAndTime read GetBirthDateST write SetBirthDateST;
+    property birthDate : TDateAndTime read GetBirthDateST write SetBirthDateST;
+    property birthDateObject : TFhirDateTime read FBirthDate write SetBirthDate;
 
     {@member deceased
       Indicates if the individual is deceased or not.
     }
     property deceased : TFhirType read FDeceased write SetDeceased;
+    property deceasedObject : TFhirType read FDeceased write SetDeceased;
 
     {@member addressList
       Addresses for the individual.
@@ -5273,11 +5359,13 @@ Related resources tie this event to the authorizing prescription, and the specif
       This field contains a patient's most recent marital (civil) status.
     }
     property maritalStatus : TFhirCodeableConcept read FMaritalStatus write SetMaritalStatus;
+    property maritalStatusObject : TFhirCodeableConcept read FMaritalStatus write SetMaritalStatus;
 
     {@member multipleBirth
       Indicates whether the patient is part of a multiple or indicates the actual birth order.
     }
     property multipleBirth : TFhirType read FMultipleBirth write SetMultipleBirth;
+    property multipleBirthObject : TFhirType read FMultipleBirth write SetMultipleBirth;
 
     {@member photoList
       Image of the person.
@@ -5293,6 +5381,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       This element has a value if the patient is an animal.
     }
     property animal : TFhirPatientAnimal read FAnimal write SetAnimal;
+    property animalObject : TFhirPatientAnimal read FAnimal write SetAnimal;
 
     {@member communicationList
       Languages which may be used to communicate with the patient about his or her health.
@@ -5308,6 +5397,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       Organization that is the custodian of the patient record.
     }
     property managingOrganization : TFhirResourceReference{TFhirOrganization} read FManagingOrganization write SetManagingOrganization;
+    property managingOrganizationObject : TFhirResourceReference{TFhirOrganization} read FManagingOrganization write SetManagingOrganization;
 
     {@member link_List
       Link to another patient resource that concerns the same actual person.
@@ -5317,11 +5407,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member active
       Whether this patient record is in active use.
     }
-    property active : TFhirBoolean read FActive write SetActive;
-    {@member activeST
+    {@member active
       Typed access to Whether this patient record is in active use.
     }
-    property activeST : Boolean read GetActiveST write SetActiveST;
+    property active : Boolean read GetActiveST write SetActiveST;
+    property activeObject : TFhirBoolean read FActive write SetActive;
 
   end;
 
@@ -5379,6 +5469,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       A name associated with the person.
     }
     property name : TFhirHumanName read FName write SetName;
+    property nameObject : TFhirHumanName read FName write SetName;
 
     {@member telecomList
       A contact detail for the practitioner, e.g. a telephone number or an email address.
@@ -5389,20 +5480,22 @@ Related resources tie this event to the authorizing prescription, and the specif
       The postal address where the practitioner can be found or visited or to which mail can be delivered.
     }
     property address : TFhirAddress read FAddress write SetAddress;
+    property addressObject : TFhirAddress read FAddress write SetAddress;
 
     {@member gender
       Administrative Gender - the gender that the person is considered to have for administration and record keeping purposes.
     }
     property gender : TFhirCodeableConcept read FGender write SetGender;
+    property genderObject : TFhirCodeableConcept read FGender write SetGender;
 
     {@member birthDate
       The date and time of birth for the practitioner.
     }
-    property birthDate : TFhirDateTime read FBirthDate write SetBirthDate;
-    {@member birthDateST
+    {@member birthDate
       Typed access to The date and time of birth for the practitioner.
     }
-    property birthDateST : TDateAndTime read GetBirthDateST write SetBirthDateST;
+    property birthDate : TDateAndTime read GetBirthDateST write SetBirthDateST;
+    property birthDateObject : TFhirDateTime read FBirthDate write SetBirthDate;
 
     {@member photoList
       Image of the person.
@@ -5413,6 +5506,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       The organization that the practitioner represents.
     }
     property organization : TFhirResourceReference{TFhirOrganization} read FOrganization write SetOrganization;
+    property organizationObject : TFhirResourceReference{TFhirOrganization} read FOrganization write SetOrganization;
 
     {@member roleList
       Roles which this practitioner is authorized to perform for the organization.
@@ -5428,6 +5522,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       The period during which the person is authorized to act as a practitioner in these role(s) for the organization.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member locationList
       The location(s) at which this practitioner provides care.
@@ -5505,11 +5600,13 @@ Related resources tie this event to the authorizing prescription, and the specif
       The person on whom the procedure was performed.
     }
     property subject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{TFhirPatient} read FSubject write SetSubject;
 
     {@member type_
       The specific procedure that is performed. Use text if the exact nature of the procedure can't be coded.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member bodySiteList
       Detailed and structured anatomical location information. Multiple locations are allowed - e.g. multiple punch biopsies of a lesion.
@@ -5530,20 +5627,22 @@ Related resources tie this event to the authorizing prescription, and the specif
       The dates over which the procedure was performed. Allows a period to support complex procedures that span more that one date, and also allows for the length of the procedure to be captured.
     }
     property date : TFhirPeriod read FDate write SetDate;
+    property dateObject : TFhirPeriod read FDate write SetDate;
 
     {@member encounter
       The encounter during which the procedure was performed.
     }
     property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
+    property encounterObject : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
 
     {@member outcome
       What was the outcome of the procedure - did it resolve reasons why the procedure was performed?.
     }
-    property outcome : TFhirString read FOutcome write SetOutcome;
-    {@member outcomeST
+    {@member outcome
       Typed access to What was the outcome of the procedure - did it resolve reasons why the procedure was performed?.
     }
-    property outcomeST : String read GetOutcomeST write SetOutcomeST;
+    property outcome : String read GetOutcomeST write SetOutcomeST;
+    property outcomeObject : TFhirString read FOutcome write SetOutcome;
 
     {@member reportList
       This could be a histology result. There could potentially be multiple reports - e.g. if this was a procedure that made multiple biopsies.
@@ -5558,11 +5657,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member followUp
       If the procedure required specific follow up - e.g. removal of sutures. The followup may be represented as a simple note, or potentially could be more complex in which case the CarePlan resource can be used.
     }
-    property followUp : TFhirString read FFollowUp write SetFollowUp;
-    {@member followUpST
+    {@member followUp
       Typed access to If the procedure required specific follow up - e.g. removal of sutures. The followup may be represented as a simple note, or potentially could be more complex in which case the CarePlan resource can be used.
     }
-    property followUpST : String read GetFollowUpST write SetFollowUpST;
+    property followUp : String read GetFollowUpST write SetFollowUpST;
+    property followUpObject : TFhirString read FFollowUp write SetFollowUp;
 
     {@member relatedItemList
       Procedures may be related to other items such as procedures or medications. For example treating wound dehiscence following a previous procedure.
@@ -5572,11 +5671,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member notes
       Any other notes about the procedure - e.g. the operative notes.
     }
-    property notes : TFhirString read FNotes write SetNotes;
-    {@member notesST
+    {@member notes
       Typed access to Any other notes about the procedure - e.g. the operative notes.
     }
-    property notesST : String read GetNotesST write SetNotesST;
+    property notes : String read GetNotesST write SetNotesST;
+    property notesObject : TFhirString read FNotes write SetNotes;
 
   end;
 
@@ -5652,38 +5751,38 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member identifier
       The identifier that is used to identify this profile when it is referenced in a specification, model, design or an instance  (should be globally unique OID, UUID, or URI).
     }
-    property identifier : TFhirString read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to The identifier that is used to identify this profile when it is referenced in a specification, model, design or an instance  (should be globally unique OID, UUID, or URI).
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirString read FIdentifier write SetIdentifier;
 
     {@member version
       The identifier that is used to identify this version of the profile when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to The identifier that is used to identify this version of the profile when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member name
       A free text natural language name identifying the Profile.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to A free text natural language name identifying the Profile.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member publisher
       Details of the individual or organization who accepts responsibility for publishing the profile.
     }
-    property publisher : TFhirString read FPublisher write SetPublisher;
-    {@member publisherST
+    {@member publisher
       Typed access to Details of the individual or organization who accepts responsibility for publishing the profile.
     }
-    property publisherST : String read GetPublisherST write SetPublisherST;
+    property publisher : String read GetPublisherST write SetPublisherST;
+    property publisherObject : TFhirString read FPublisher write SetPublisher;
 
     {@member telecomList
       Contact details to assist a user in finding and communicating with the publisher.
@@ -5693,11 +5792,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member description
       A free text natural language description of the profile and its use.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to A free text natural language description of the profile and its use.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member codeList
       A set of terms from external terminologies that may be used to assist with indexing and searching of templates.
@@ -5707,47 +5806,44 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member status
       The status of the profile.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of the profile.
-    }
-    property statusST : TFhirResourceProfileStatus read GetStatusST write SetStatusST;
+    property status : TFhirResourceProfileStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member experimental
       This profile was authored for testing purposes (or education/evaluation/marketing), and is not intended to be used for genuine usage.
     }
-    property experimental : TFhirBoolean read FExperimental write SetExperimental;
-    {@member experimentalST
+    {@member experimental
       Typed access to This profile was authored for testing purposes (or education/evaluation/marketing), and is not intended to be used for genuine usage.
     }
-    property experimentalST : Boolean read GetExperimentalST write SetExperimentalST;
+    property experimental : Boolean read GetExperimentalST write SetExperimentalST;
+    property experimentalObject : TFhirBoolean read FExperimental write SetExperimental;
 
     {@member date
       The date that this version of the profile was published.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The date that this version of the profile was published.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member requirements
       The Scope and Usage that this profile was created to meet.
     }
-    property requirements : TFhirString read FRequirements write SetRequirements;
-    {@member requirementsST
+    {@member requirements
       Typed access to The Scope and Usage that this profile was created to meet.
     }
-    property requirementsST : String read GetRequirementsST write SetRequirementsST;
+    property requirements : String read GetRequirementsST write SetRequirementsST;
+    property requirementsObject : TFhirString read FRequirements write SetRequirements;
 
     {@member fhirVersion
       The version of the FHIR specification on which this profile is based.
     }
-    property fhirVersion : TFhirId read FFhirVersion write SetFhirVersion;
-    {@member fhirVersionST
+    {@member fhirVersion
       Typed access to The version of the FHIR specification on which this profile is based.
     }
-    property fhirVersionST : String read GetFhirVersionST write SetFhirVersionST;
+    property fhirVersion : String read GetFhirVersionST write SetFhirVersionST;
+    property fhirVersionObject : TFhirId read FFhirVersion write SetFhirVersion;
 
     {@member mappingList
       An external specification that the content is mapped to.
@@ -5821,25 +5917,28 @@ Related resources tie this event to the authorizing prescription, and the specif
       The period during which the activity occurred.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
+    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member recorded
       The instant of time at which the activity was recorded.
     }
-    property recorded : TFhirInstant read FRecorded write SetRecorded;
-    {@member recordedST
+    {@member recorded
       Typed access to The instant of time at which the activity was recorded.
     }
-    property recordedST : TDateAndTime read GetRecordedST write SetRecordedST;
+    property recorded : TDateAndTime read GetRecordedST write SetRecordedST;
+    property recordedObject : TFhirInstant read FRecorded write SetRecorded;
 
     {@member reason
       The reason that the activity was taking place.
     }
     property reason : TFhirCodeableConcept read FReason write SetReason;
+    property reasonObject : TFhirCodeableConcept read FReason write SetReason;
 
     {@member location
       Where the activity occurred, if relevant.
     }
     property location : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
+    property locationObject : TFhirResourceReference{TFhirLocation} read FLocation write SetLocation;
 
     {@member policyList
       Policy or plan the activity was defined by. Typically, a single activity may have multiple applicable policy documents, such as patient consent, guarantor funding, etc.
@@ -5859,11 +5958,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member integritySignature
       A digital signature on the target resource(s). The signature should match a Provenance.agent.reference in the provenance resource. The signature is only added to support checking cryptographic integrity of the resource, and not to represent workflow and clinical aspects of the signing process, or to support non-repudiation.
     }
-    property integritySignature : TFhirString read FIntegritySignature write SetIntegritySignature;
-    {@member integritySignatureST
+    {@member integritySignature
       Typed access to A digital signature on the target resource(s). The signature should match a Provenance.agent.reference in the provenance resource. The signature is only added to support checking cryptographic integrity of the resource, and not to represent workflow and clinical aspects of the signing process, or to support non-repudiation.
     }
-    property integritySignatureST : String read GetIntegritySignatureST write SetIntegritySignatureST;
+    property integritySignature : String read GetIntegritySignatureST write SetIntegritySignatureST;
+    property integritySignatureObject : TFhirString read FIntegritySignature write SetIntegritySignature;
 
   end;
 
@@ -5900,11 +5999,11 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member identifier
       Links query and its response(s).
     }
-    property identifier : TFhirUri read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to Links query and its response(s).
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirUri read FIdentifier write SetIdentifier;
 
     {@member parameterList
       Set of query parameters with values.
@@ -5915,6 +6014,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       If this is a response to a query.
     }
     property response : TFhirQueryResponse read FResponse write SetResponse;
+    property responseObject : TFhirQueryResponse read FResponse write SetResponse;
 
   end;
 
@@ -5965,40 +6065,41 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member status
       The lifecycle status of the questionnaire as a whole.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The lifecycle status of the questionnaire as a whole.
-    }
-    property statusST : TFhirQuestionnaireStatus read GetStatusST write SetStatusST;
+    property status : TFhirQuestionnaireStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member authored
       The date and/or time that this version of the questionnaire was authored.
     }
-    property authored : TFhirDateTime read FAuthored write SetAuthored;
-    {@member authoredST
+    {@member authored
       Typed access to The date and/or time that this version of the questionnaire was authored.
     }
-    property authoredST : TDateAndTime read GetAuthoredST write SetAuthoredST;
+    property authored : TDateAndTime read GetAuthoredST write SetAuthoredST;
+    property authoredObject : TFhirDateTime read FAuthored write SetAuthored;
 
     {@member subject
       The subject of the questionnaires: this is the patient that the answers apply to, but this person is not necessarily the source of information.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member author
       Person who received the answers to the questions in the Questionnaire and recorded them in the system.
     }
     property author : TFhirResourceReference{Resource} read FAuthor write SetAuthor;
+    property authorObject : TFhirResourceReference{Resource} read FAuthor write SetAuthor;
 
     {@member source
       The person who answered the questions about the subject. Only used when this is not the subject him/herself.
     }
     property source : TFhirResourceReference{Resource} read FSource write SetSource;
+    property sourceObject : TFhirResourceReference{Resource} read FSource write SetSource;
 
     {@member name
       Structured name for a predefined list of questions this questionnaire is responding to.
     }
     property name : TFhirCodeableConcept read FName write SetName;
+    property nameObject : TFhirCodeableConcept read FName write SetName;
 
     {@member identifierList
       This records identifiers associated with this question/answer set that are defined by business processed and/ or used to refer to it when a direct URL reference to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
@@ -6009,11 +6110,13 @@ Related resources tie this event to the authorizing prescription, and the specif
       Encounter during which this questionnaire answers were collected. When there were multiple encounters, this is the one considered most relevant to the context of the answers.
     }
     property encounter : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
+    property encounterObject : TFhirResourceReference{TFhirEncounter} read FEncounter write SetEncounter;
 
     {@member group
       A group of questions to a possibly similarly grouped set of questions in the questionnaire.
     }
     property group : TFhirQuestionnaireGroup read FGroup write SetGroup;
+    property groupObject : TFhirQuestionnaireGroup read FGroup write SetGroup;
 
   end;
 
@@ -6062,16 +6165,19 @@ Related resources tie this event to the authorizing prescription, and the specif
       The patient this person is related to.
     }
     property patient : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
+    property patientObject : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
 
     {@member relationship
       The nature of the relationship between a patient and the related person.
     }
     property relationship : TFhirCodeableConcept read FRelationship write SetRelationship;
+    property relationshipObject : TFhirCodeableConcept read FRelationship write SetRelationship;
 
     {@member name
       A name associated with the person.
     }
     property name : TFhirHumanName read FName write SetName;
+    property nameObject : TFhirHumanName read FName write SetName;
 
     {@member telecomList
       A contact detail for the person, e.g. a telephone number or an email address.
@@ -6082,11 +6188,13 @@ Related resources tie this event to the authorizing prescription, and the specif
       Administrative Gender - the gender that the person is considered to have for administration and record keeping purposes.
     }
     property gender : TFhirCodeableConcept read FGender write SetGender;
+    property genderObject : TFhirCodeableConcept read FGender write SetGender;
 
     {@member address
       Address where the related person can be contacted or visited.
     }
     property address : TFhirAddress read FAddress write SetAddress;
+    property addressObject : TFhirAddress read FAddress write SetAddress;
 
     {@member photoList
       Image of the person.
@@ -6128,6 +6236,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       Identifies the name, action type, time, and disposition of the audited event.
     }
     property event : TFhirSecurityEventEvent read FEvent write SetEvent;
+    property eventObject : TFhirSecurityEventEvent read FEvent write SetEvent;
 
     {@member participantList
       A person, a hardware device or software process.
@@ -6138,6 +6247,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       Application systems and processes.
     }
     property source : TFhirSecurityEventSource read FSource write SetSource;
+    property sourceObject : TFhirSecurityEventSource read FSource write SetSource;
 
     {@member object_List
       Specific instances of data or objects that have been accessed.
@@ -6194,6 +6304,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       Kind of material that forms the specimen.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member sourceList
       Parent specimen from which the focal specimen was a component.
@@ -6204,25 +6315,28 @@ Related resources tie this event to the authorizing prescription, and the specif
       Where the specimen came from. This may be the patient(s) or from the environment or  a device.
     }
     property subject : TFhirResourceReference{Resource} read FSubject write SetSubject;
+    property subjectObject : TFhirResourceReference{Resource} read FSubject write SetSubject;
 
     {@member accessionIdentifier
       The identifier assigned by the lab when accessioning specimen(s). This is not necessarily the same as the specimen identifier, depending on local lab procedures.
     }
     property accessionIdentifier : TFhirIdentifier read FAccessionIdentifier write SetAccessionIdentifier;
+    property accessionIdentifierObject : TFhirIdentifier read FAccessionIdentifier write SetAccessionIdentifier;
 
     {@member receivedTime
       Time when specimen was received for processing or testing.
     }
-    property receivedTime : TFhirDateTime read FReceivedTime write SetReceivedTime;
-    {@member receivedTimeST
+    {@member receivedTime
       Typed access to Time when specimen was received for processing or testing.
     }
-    property receivedTimeST : TDateAndTime read GetReceivedTimeST write SetReceivedTimeST;
+    property receivedTime : TDateAndTime read GetReceivedTimeST write SetReceivedTimeST;
+    property receivedTimeObject : TFhirDateTime read FReceivedTime write SetReceivedTime;
 
     {@member collection
       Details concerning the specimen collection.
     }
     property collection : TFhirSpecimenCollection read FCollection write SetCollection;
+    property collectionObject : TFhirSpecimenCollection read FCollection write SetCollection;
 
     {@member treatmentList
       Details concerning treatment and processing steps for the specimen.
@@ -6272,20 +6386,22 @@ Related resources tie this event to the authorizing prescription, and the specif
       A code (or set of codes) that identify this substance.
     }
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    property type_Object : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member description
       A description of the substance - its appearance, handling requirements, and other usage notes.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to A description of the substance - its appearance, handling requirements, and other usage notes.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member instance
       Substance may be used to describe a kind of substance, or a specific package/container of the substance: an instance.
     }
     property instance : TFhirSubstanceInstance read FInstance write SetInstance;
+    property instanceObject : TFhirSubstanceInstance read FInstance write SetInstance;
 
     {@member ingredientList
       A substance can be composed of other substances.
@@ -6334,30 +6450,31 @@ Related resources tie this event to the authorizing prescription, and the specif
       Category of supply, e.g.  central, non-stock, etc. This is used to support work flows associated with the supply process.
     }
     property kind : TFhirCodeableConcept read FKind write SetKind;
+    property kindObject : TFhirCodeableConcept read FKind write SetKind;
 
     {@member identifier
       Unique identifier for this supply request.
     }
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifierObject : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member status
       Status of the supply request.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to Status of the supply request.
-    }
-    property statusST : TFhirValuesetSupplyStatus read GetStatusST write SetStatusST;
+    property status : TFhirValuesetSupplyStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member orderedItem
       The item that is requested to be supplied.
     }
     property orderedItem : TFhirResourceReference{Resource} read FOrderedItem write SetOrderedItem;
+    property orderedItemObject : TFhirResourceReference{Resource} read FOrderedItem write SetOrderedItem;
 
     {@member patient
       A link to a resource representing the person whom the ordered item is for.
     }
     property patient : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
+    property patientObject : TFhirResourceReference{TFhirPatient} read FPatient write SetPatient;
 
     {@member dispenseList
       Indicates the details of the dispense event such as the days supply and quantity of a supply dispensed.
@@ -6439,38 +6556,38 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member identifier
       The identifier that is used to identify this value set when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }
-    property identifier : TFhirString read FIdentifier write SetIdentifier;
-    {@member identifierST
+    {@member identifier
       Typed access to The identifier that is used to identify this value set when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }
-    property identifierST : String read GetIdentifierST write SetIdentifierST;
+    property identifier : String read GetIdentifierST write SetIdentifierST;
+    property identifierObject : TFhirString read FIdentifier write SetIdentifier;
 
     {@member version
       The identifier that is used to identify this version of the value set when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
     }
-    property version : TFhirString read FVersion write SetVersion;
-    {@member versionST
+    {@member version
       Typed access to The identifier that is used to identify this version of the value set when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the profile author manually and the value should be a timestamp.
     }
-    property versionST : String read GetVersionST write SetVersionST;
+    property version : String read GetVersionST write SetVersionST;
+    property versionObject : TFhirString read FVersion write SetVersion;
 
     {@member name
       A free text natural language name describing the value set.
     }
-    property name : TFhirString read FName write SetName;
-    {@member nameST
+    {@member name
       Typed access to A free text natural language name describing the value set.
     }
-    property nameST : String read GetNameST write SetNameST;
+    property name : String read GetNameST write SetNameST;
+    property nameObject : TFhirString read FName write SetName;
 
     {@member publisher
       The name of the individual or organization that published the value set.
     }
-    property publisher : TFhirString read FPublisher write SetPublisher;
-    {@member publisherST
+    {@member publisher
       Typed access to The name of the individual or organization that published the value set.
     }
-    property publisherST : String read GetPublisherST write SetPublisherST;
+    property publisher : String read GetPublisherST write SetPublisherST;
+    property publisherObject : TFhirString read FPublisher write SetPublisher;
 
     {@member telecomList
       Contacts of the publisher to assist a user in finding and communicating with the publisher.
@@ -6480,71 +6597,71 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member description
       A free text natural language description of the use of the value set - reason for definition, conditions of use, etc.
     }
-    property description : TFhirString read FDescription write SetDescription;
-    {@member descriptionST
+    {@member description
       Typed access to A free text natural language description of the use of the value set - reason for definition, conditions of use, etc.
     }
-    property descriptionST : String read GetDescriptionST write SetDescriptionST;
+    property description : String read GetDescriptionST write SetDescriptionST;
+    property descriptionObject : TFhirString read FDescription write SetDescription;
 
     {@member copyright
       A copyright statement relating to the value set and/or its contents.
     }
-    property copyright : TFhirString read FCopyright write SetCopyright;
-    {@member copyrightST
+    {@member copyright
       Typed access to A copyright statement relating to the value set and/or its contents.
     }
-    property copyrightST : String read GetCopyrightST write SetCopyrightST;
+    property copyright : String read GetCopyrightST write SetCopyrightST;
+    property copyrightObject : TFhirString read FCopyright write SetCopyright;
 
     {@member status
       The status of the value set.
     }
-    property status : TFhirEnum read FStatus write SetStatus;
-    {@member statusST
-      Typed access to The status of the value set.
-    }
-    property statusST : TFhirValuesetStatus read GetStatusST write SetStatusST;
+    property status : TFhirValuesetStatus read GetStatusST write SetStatusST;
+    property statusObject : TFhirEnum read FStatus write SetStatus;
 
     {@member experimental
       This valueset was authored for testing purposes (or education/evaluation/marketing), and is not intended to be used for genuine usage.
     }
-    property experimental : TFhirBoolean read FExperimental write SetExperimental;
-    {@member experimentalST
+    {@member experimental
       Typed access to This valueset was authored for testing purposes (or education/evaluation/marketing), and is not intended to be used for genuine usage.
     }
-    property experimentalST : Boolean read GetExperimentalST write SetExperimentalST;
+    property experimental : Boolean read GetExperimentalST write SetExperimentalST;
+    property experimentalObject : TFhirBoolean read FExperimental write SetExperimental;
 
     {@member extensible
       Whether this is intended to be used with an extensible binding or not.
     }
-    property extensible : TFhirBoolean read FExtensible write SetExtensible;
-    {@member extensibleST
+    {@member extensible
       Typed access to Whether this is intended to be used with an extensible binding or not.
     }
-    property extensibleST : Boolean read GetExtensibleST write SetExtensibleST;
+    property extensible : Boolean read GetExtensibleST write SetExtensibleST;
+    property extensibleObject : TFhirBoolean read FExtensible write SetExtensible;
 
     {@member date
       The date that the value set status was last changed.
     }
-    property date : TFhirDateTime read FDate write SetDate;
-    {@member dateST
+    {@member date
       Typed access to The date that the value set status was last changed.
     }
-    property dateST : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateAndTime read GetDateST write SetDateST;
+    property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member define
       When value set defines its own codes.
     }
     property define : TFhirValueSetDefine read FDefine write SetDefine;
+    property defineObject : TFhirValueSetDefine read FDefine write SetDefine;
 
     {@member compose
       When value set includes codes from elsewhere.
     }
     property compose : TFhirValueSetCompose read FCompose write SetCompose;
+    property composeObject : TFhirValueSetCompose read FCompose write SetCompose;
 
     {@member expansion
       When value set is an expansion.
     }
     property expansion : TFhirValueSetExpansion read FExpansion write SetExpansion;
+    property expansionObject : TFhirValueSetExpansion read FExpansion write SetExpansion;
 
   end;
 
@@ -7700,6 +7817,34 @@ begin
 end;
 
 
+{ TFhirResourceListEnumerator }
+
+Constructor TFhirResourceListEnumerator.Create(list : TFhirResourceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirResourceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirResourceListEnumerator.MoveNext : boolean;
+begin
+  Result := FIndex < FList.count;
+  if Result then
+    Inc(FIndex);
+end;
+
+function TFhirResourceListEnumerator.GetCurrent : TFhirResource;
+begin
+  Result := FList[FIndex];
+end;
+
+
 { TFhirResourceList }
 procedure TFhirResourceList.AddItem(value: TFhirResource);
 begin
@@ -7711,6 +7856,11 @@ end;
 procedure TFhirResourceList.ClearItems;
 begin
   Clear;
+end;
+
+function TFhirResourceList.GetEnumerator : TFhirResourceListEnumerator;
+begin
+  result := TFhirResourceListEnumerator.Create(self.link);
 end;
 
 function TFhirResourceList.Clone: TFhirResourceList;
@@ -7803,9 +7953,9 @@ procedure TFhirAdverseReaction.Assign(oSource : TAdvObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirAdverseReaction(oSource).FIdentifierList);
-  date := TFhirAdverseReaction(oSource).date.Clone;
+  dateObject := TFhirAdverseReaction(oSource).dateObject.Clone;
   subject := TFhirAdverseReaction(oSource).subject.Clone;
-  didNotOccurFlag := TFhirAdverseReaction(oSource).didNotOccurFlag.Clone;
+  didNotOccurFlagObject := TFhirAdverseReaction(oSource).didNotOccurFlagObject.Clone;
   recorder := TFhirAdverseReaction(oSource).recorder.Clone;
   FSymptomList.Assign(TFhirAdverseReaction(oSource).FSymptomList);
   FExposureList.Assign(TFhirAdverseReaction(oSource).FExposureList);
@@ -7817,13 +7967,13 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'didNotOccurFlag') Then
-     list.add(DidNotOccurFlag.Link);
+     list.add(FDidNotOccurFlag.Link);
   if (child_name = 'recorder') Then
-     list.add(Recorder.Link);
+     list.add(FRecorder.Link);
   if (child_name = 'symptom') Then
      list.addAll(FSymptomList);
   if (child_name = 'exposure') Then
@@ -7845,10 +7995,10 @@ end;
 procedure TFhirAdverseReaction.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'didNotOccurFlag') then DidNotOccurFlag := propValue as TFhirBoolean{5}
-  else if (propName = 'recorder') then Recorder := propValue as TFhirResourceReference{Resource}{4}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'didNotOccurFlag') then DidNotOccurFlagObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'recorder') then Recorder := propValue as TFhirResourceReference{Resource}{4b}
   else if (propName = 'symptom') then SymptomList.add(propValue as TFhirAdverseReactionSymptom){2}
   else if (propName = 'exposure') then ExposureList.add(propValue as TFhirAdverseReactionExposure){2}
   else inherited;
@@ -7882,7 +8032,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirAdverseReaction.SetDateST(value : TDateAndTime);
@@ -7914,7 +8064,7 @@ begin
   if FDidNotOccurFlag = nil then
     result := false
   else
-    result := DidNotOccurFlag.value;
+    result := FDidNotOccurFlag.value;
 end;
 
 Procedure TFhirAdverseReaction.SetDidNotOccurFlagST(value : Boolean);
@@ -7968,7 +8118,7 @@ begin
   FStatus := TFhirAlert(oSource).FStatus.Link;
   subject := TFhirAlert(oSource).subject.Clone;
   author := TFhirAlert(oSource).author.Clone;
-  note := TFhirAlert(oSource).note.Clone;
+  noteObject := TFhirAlert(oSource).noteObject.Clone;
 end;
 
 procedure TFhirAlert.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -7977,15 +8127,15 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'category') Then
-     list.add(Category.Link);
+     list.add(FCategory.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'author') Then
-     list.add(Author.Link);
+     list.add(FAuthor.Link);
   if (child_name = 'note') Then
-     list.add(Note.Link);
+     list.add(FNote.Link);
 end;
 
 procedure TFhirAlert.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -8002,11 +8152,11 @@ end;
 procedure TFhirAlert.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'category') then Category := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'author') then Author := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'note') then Note := propValue as TFhirString{5}
+  else if (propName = 'category') then Category := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'author') then Author := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'note') then NoteObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -8044,15 +8194,15 @@ begin
   if FStatus = nil then
     result := TFhirAlertStatus(0)
   else
-    result := TFhirAlertStatus(StringArrayIndexOfSensitive(CODES_TFhirAlertStatus, Status.value));
+    result := TFhirAlertStatus(StringArrayIndexOfSensitive(CODES_TFhirAlertStatus, FStatus.value));
 end;
 
 Procedure TFhirAlert.SetStatusST(value : TFhirAlertStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirAlertStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirAlertStatus[value]);
 end;
 
 Procedure TFhirAlert.SetSubject(value : TFhirResourceReference{TFhirPatient});
@@ -8078,7 +8228,7 @@ begin
   if FNote = nil then
     result := ''
   else
-    result := Note.value;
+    result := FNote.value;
 end;
 
 Procedure TFhirAlert.SetNoteST(value : String);
@@ -8135,7 +8285,7 @@ begin
   FIdentifierList.Assign(TFhirAllergyIntolerance(oSource).FIdentifierList);
   FCriticality := TFhirAllergyIntolerance(oSource).FCriticality.Link;
   FSensitivityType := TFhirAllergyIntolerance(oSource).FSensitivityType.Link;
-  recordedDate := TFhirAllergyIntolerance(oSource).recordedDate.Clone;
+  recordedDateObject := TFhirAllergyIntolerance(oSource).recordedDateObject.Clone;
   FStatus := TFhirAllergyIntolerance(oSource).FStatus.Link;
   subject := TFhirAllergyIntolerance(oSource).subject.Clone;
   recorder := TFhirAllergyIntolerance(oSource).recorder.Clone;
@@ -8154,15 +8304,15 @@ begin
   if (child_name = 'sensitivityType') Then
      list.add(FSensitivityType.Link);
   if (child_name = 'recordedDate') Then
-     list.add(RecordedDate.Link);
+     list.add(FRecordedDate.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'recorder') Then
-     list.add(Recorder.Link);
+     list.add(FRecorder.Link);
   if (child_name = 'substance') Then
-     list.add(Substance.Link);
+     list.add(FSubstance.Link);
   if (child_name = 'reaction') Then
      list.addAll(FReactionList);
   if (child_name = 'sensitivityTest') Then
@@ -8187,13 +8337,13 @@ end;
 procedure TFhirAllergyIntolerance.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'criticality') then Criticality := propValue as TFHIREnum
-  else if (propName = 'sensitivityType') then SensitivityType := propValue as TFHIREnum
-  else if (propName = 'recordedDate') then RecordedDate := propValue as TFhirDateTime{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'recorder') then Recorder := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'substance') then Substance := propValue as TFhirResourceReference{TFhirSubstance}{4}
+  else if (propName = 'criticality') then CriticalityObject := propValue as TFHIREnum
+  else if (propName = 'sensitivityType') then SensitivityTypeObject := propValue as TFHIREnum
+  else if (propName = 'recordedDate') then RecordedDateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'recorder') then Recorder := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'substance') then Substance := propValue as TFhirResourceReference{TFhirSubstance}{4b}
   else if (propName = 'reaction') then ReactionList.add(propValue as TFhirResourceReference{TFhirAdverseReaction}){2}
   else if (propName = 'sensitivityTest') then SensitivityTestList.add(propValue as TFhirResourceReference{TFhirObservation}){2}
   else inherited;
@@ -8227,15 +8377,15 @@ begin
   if FCriticality = nil then
     result := TFhirCriticality(0)
   else
-    result := TFhirCriticality(StringArrayIndexOfSensitive(CODES_TFhirCriticality, Criticality.value));
+    result := TFhirCriticality(StringArrayIndexOfSensitive(CODES_TFhirCriticality, FCriticality.value));
 end;
 
 Procedure TFhirAllergyIntolerance.SetCriticalityST(value : TFhirCriticality);
 begin
   if ord(value) = 0 then
-    Criticality := nil
+    CriticalityObject := nil
   else
-    Criticality := TFhirEnum.create(CODES_TFhirCriticality[value]);
+    CriticalityObject := TFhirEnum.create(CODES_TFhirCriticality[value]);
 end;
 
 Procedure TFhirAllergyIntolerance.SetSensitivityType(value : TFhirEnum);
@@ -8249,15 +8399,15 @@ begin
   if FSensitivityType = nil then
     result := TFhirSensitivitytype(0)
   else
-    result := TFhirSensitivitytype(StringArrayIndexOfSensitive(CODES_TFhirSensitivitytype, SensitivityType.value));
+    result := TFhirSensitivitytype(StringArrayIndexOfSensitive(CODES_TFhirSensitivitytype, FSensitivityType.value));
 end;
 
 Procedure TFhirAllergyIntolerance.SetSensitivityTypeST(value : TFhirSensitivitytype);
 begin
   if ord(value) = 0 then
-    SensitivityType := nil
+    SensitivityTypeObject := nil
   else
-    SensitivityType := TFhirEnum.create(CODES_TFhirSensitivitytype[value]);
+    SensitivityTypeObject := TFhirEnum.create(CODES_TFhirSensitivitytype[value]);
 end;
 
 Procedure TFhirAllergyIntolerance.SetRecordedDate(value : TFhirDateTime);
@@ -8271,7 +8421,7 @@ begin
   if FRecordedDate = nil then
     result := nil
   else
-    result := RecordedDate.value;
+    result := FRecordedDate.value;
 end;
 
 Procedure TFhirAllergyIntolerance.SetRecordedDateST(value : TDateAndTime);
@@ -8297,15 +8447,15 @@ begin
   if FStatus = nil then
     result := TFhirSensitivitystatus(0)
   else
-    result := TFhirSensitivitystatus(StringArrayIndexOfSensitive(CODES_TFhirSensitivitystatus, Status.value));
+    result := TFhirSensitivitystatus(StringArrayIndexOfSensitive(CODES_TFhirSensitivitystatus, FStatus.value));
 end;
 
 Procedure TFhirAllergyIntolerance.SetStatusST(value : TFhirSensitivitystatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirSensitivitystatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirSensitivitystatus[value]);
 end;
 
 Procedure TFhirAllergyIntolerance.SetSubject(value : TFhirResourceReference{TFhirPatient});
@@ -8371,12 +8521,12 @@ begin
   patient := TFhirCarePlan(oSource).patient.Clone;
   FStatus := TFhirCarePlan(oSource).FStatus.Link;
   period := TFhirCarePlan(oSource).period.Clone;
-  modified := TFhirCarePlan(oSource).modified.Clone;
+  modifiedObject := TFhirCarePlan(oSource).modifiedObject.Clone;
   FConcernList.Assign(TFhirCarePlan(oSource).FConcernList);
   FParticipantList.Assign(TFhirCarePlan(oSource).FParticipantList);
   FGoalList.Assign(TFhirCarePlan(oSource).FGoalList);
   FActivityList.Assign(TFhirCarePlan(oSource).FActivityList);
-  notes := TFhirCarePlan(oSource).notes.Clone;
+  notesObject := TFhirCarePlan(oSource).notesObject.Clone;
 end;
 
 procedure TFhirCarePlan.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -8385,13 +8535,13 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'patient') Then
-     list.add(Patient.Link);
+     list.add(FPatient.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
   if (child_name = 'modified') Then
-     list.add(Modified.Link);
+     list.add(FModified.Link);
   if (child_name = 'concern') Then
      list.addAll(FConcernList);
   if (child_name = 'participant') Then
@@ -8401,7 +8551,7 @@ begin
   if (child_name = 'activity') Then
      list.addAll(FActivityList);
   if (child_name = 'notes') Then
-     list.add(Notes.Link);
+     list.add(FNotes.Link);
 end;
 
 procedure TFhirCarePlan.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -8422,15 +8572,15 @@ end;
 procedure TFhirCarePlan.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
-  else if (propName = 'modified') then Modified := propValue as TFhirDateTime{5}
+  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
+  else if (propName = 'modified') then ModifiedObject := propValue as TFhirDateTime{5a}
   else if (propName = 'concern') then ConcernList.add(propValue as TFhirResourceReference{TFhirCondition}){2}
   else if (propName = 'participant') then ParticipantList.add(propValue as TFhirCarePlanParticipant){2}
   else if (propName = 'goal') then GoalList.add(propValue as TFhirCarePlanGoal){2}
   else if (propName = 'activity') then ActivityList.add(propValue as TFhirCarePlanActivity){2}
-  else if (propName = 'notes') then Notes := propValue as TFhirString{5}
+  else if (propName = 'notes') then NotesObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -8468,15 +8618,15 @@ begin
   if FStatus = nil then
     result := TFhirCarePlanStatus(0)
   else
-    result := TFhirCarePlanStatus(StringArrayIndexOfSensitive(CODES_TFhirCarePlanStatus, Status.value));
+    result := TFhirCarePlanStatus(StringArrayIndexOfSensitive(CODES_TFhirCarePlanStatus, FStatus.value));
 end;
 
 Procedure TFhirCarePlan.SetStatusST(value : TFhirCarePlanStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirCarePlanStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirCarePlanStatus[value]);
 end;
 
 Procedure TFhirCarePlan.SetPeriod(value : TFhirPeriod);
@@ -8496,7 +8646,7 @@ begin
   if FModified = nil then
     result := nil
   else
-    result := Modified.value;
+    result := FModified.value;
 end;
 
 Procedure TFhirCarePlan.SetModifiedST(value : TDateAndTime);
@@ -8522,7 +8672,7 @@ begin
   if FNotes = nil then
     result := ''
   else
-    result := Notes.value;
+    result := FNotes.value;
 end;
 
 Procedure TFhirCarePlan.SetNotesST(value : String);
@@ -8581,10 +8731,10 @@ procedure TFhirComposition.Assign(oSource : TAdvObject);
 begin
   inherited;
   identifier := TFhirComposition(oSource).identifier.Clone;
-  date := TFhirComposition(oSource).date.Clone;
+  dateObject := TFhirComposition(oSource).dateObject.Clone;
   type_ := TFhirComposition(oSource).type_.Clone;
   class_ := TFhirComposition(oSource).class_.Clone;
-  title := TFhirComposition(oSource).title.Clone;
+  titleObject := TFhirComposition(oSource).titleObject.Clone;
   FStatus := TFhirComposition(oSource).FStatus.Link;
   confidentiality := TFhirComposition(oSource).confidentiality.Clone;
   subject := TFhirComposition(oSource).subject.Clone;
@@ -8600,31 +8750,31 @@ procedure TFhirComposition.GetChildrenByName(child_name : string; list : TFHIROb
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'class') Then
-     list.add(Class_.Link);
+     list.add(FClass_.Link);
   if (child_name = 'title') Then
-     list.add(Title.Link);
+     list.add(FTitle.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'confidentiality') Then
-     list.add(Confidentiality.Link);
+     list.add(FConfidentiality.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'author') Then
      list.addAll(FAuthorList);
   if (child_name = 'attester') Then
      list.addAll(FAttesterList);
   if (child_name = 'custodian') Then
-     list.add(Custodian.Link);
+     list.add(FCustodian.Link);
   if (child_name = 'event') Then
-     list.add(Event.Link);
+     list.add(FEvent.Link);
   if (child_name = 'encounter') Then
-     list.add(Encounter.Link);
+     list.add(FEncounter.Link);
   if (child_name = 'section') Then
      list.addAll(FSectionList);
 end;
@@ -8650,19 +8800,19 @@ end;
 
 procedure TFhirComposition.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'class') then Class_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'title') then Title := propValue as TFhirString{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'confidentiality') then Confidentiality := propValue as TFhirCoding{4}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'class') then Class_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'title') then TitleObject := propValue as TFhirString{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'confidentiality') then Confidentiality := propValue as TFhirCoding{4b}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
   else if (propName = 'author') then AuthorList.add(propValue as TFhirResourceReference{Resource}){2}
   else if (propName = 'attester') then AttesterList.add(propValue as TFhirCompositionAttester){2}
-  else if (propName = 'custodian') then Custodian := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'event') then Event := propValue as TFhirCompositionEvent{4}
-  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4}
+  else if (propName = 'custodian') then Custodian := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'event') then Event := propValue as TFhirCompositionEvent{4b}
+  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4b}
   else if (propName = 'section') then SectionList.add(propValue as TFhirCompositionSection){2}
   else inherited;
 end;
@@ -8701,7 +8851,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirComposition.SetDateST(value : TDateAndTime);
@@ -8739,7 +8889,7 @@ begin
   if FTitle = nil then
     result := ''
   else
-    result := Title.value;
+    result := FTitle.value;
 end;
 
 Procedure TFhirComposition.SetTitleST(value : String);
@@ -8765,15 +8915,15 @@ begin
   if FStatus = nil then
     result := TFhirCompositionStatus(0)
   else
-    result := TFhirCompositionStatus(StringArrayIndexOfSensitive(CODES_TFhirCompositionStatus, Status.value));
+    result := TFhirCompositionStatus(StringArrayIndexOfSensitive(CODES_TFhirCompositionStatus, FStatus.value));
 end;
 
 Procedure TFhirComposition.SetStatusST(value : TFhirCompositionStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirCompositionStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirCompositionStatus[value]);
 end;
 
 Procedure TFhirComposition.SetConfidentiality(value : TFhirCoding);
@@ -8847,16 +8997,16 @@ end;
 procedure TFhirConceptMap.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirConceptMap(oSource).identifier.Clone;
-  version := TFhirConceptMap(oSource).version.Clone;
-  name := TFhirConceptMap(oSource).name.Clone;
-  publisher := TFhirConceptMap(oSource).publisher.Clone;
+  identifierObject := TFhirConceptMap(oSource).identifierObject.Clone;
+  versionObject := TFhirConceptMap(oSource).versionObject.Clone;
+  nameObject := TFhirConceptMap(oSource).nameObject.Clone;
+  publisherObject := TFhirConceptMap(oSource).publisherObject.Clone;
   FTelecomList.Assign(TFhirConceptMap(oSource).FTelecomList);
-  description := TFhirConceptMap(oSource).description.Clone;
-  copyright := TFhirConceptMap(oSource).copyright.Clone;
+  descriptionObject := TFhirConceptMap(oSource).descriptionObject.Clone;
+  copyrightObject := TFhirConceptMap(oSource).copyrightObject.Clone;
   FStatus := TFhirConceptMap(oSource).FStatus.Link;
-  experimental := TFhirConceptMap(oSource).experimental.Clone;
-  date := TFhirConceptMap(oSource).date.Clone;
+  experimentalObject := TFhirConceptMap(oSource).experimentalObject.Clone;
+  dateObject := TFhirConceptMap(oSource).dateObject.Clone;
   source := TFhirConceptMap(oSource).source.Clone;
   target := TFhirConceptMap(oSource).target.Clone;
   FConceptList.Assign(TFhirConceptMap(oSource).FConceptList);
@@ -8866,29 +9016,29 @@ procedure TFhirConceptMap.GetChildrenByName(child_name : string; list : TFHIRObj
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'publisher') Then
-     list.add(Publisher.Link);
+     list.add(FPublisher.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'copyright') Then
-     list.add(Copyright.Link);
+     list.add(FCopyright.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'experimental') Then
-     list.add(Experimental.Link);
+     list.add(FExperimental.Link);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'source') Then
-     list.add(Source.Link);
+     list.add(FSource.Link);
   if (child_name = 'target') Then
-     list.add(Target.Link);
+     list.add(FTarget.Link);
   if (child_name = 'concept') Then
      list.addAll(FConceptList);
 end;
@@ -8913,18 +9063,18 @@ end;
 
 procedure TFhirConceptMap.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirString{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'publisher') then Publisher := propValue as TFhirString{5}
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirString{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'publisher') then PublisherObject := propValue as TFhirString{5a}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'copyright') then Copyright := propValue as TFhirString{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'experimental') then Experimental := propValue as TFhirBoolean{5}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'source') then Source := propValue as TFhirResourceReference{TFhirValueSet}{4}
-  else if (propName = 'target') then Target := propValue as TFhirResourceReference{TFhirValueSet}{4}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'copyright') then CopyrightObject := propValue as TFhirString{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'experimental') then ExperimentalObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'source') then Source := propValue as TFhirResourceReference{TFhirValueSet}{4b}
+  else if (propName = 'target') then Target := propValue as TFhirResourceReference{TFhirValueSet}{4b}
   else if (propName = 'concept') then ConceptList.add(propValue as TFhirConceptMapConcept){2}
   else inherited;
 end;
@@ -8957,7 +9107,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirConceptMap.SetIdentifierST(value : String);
@@ -8983,7 +9133,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirConceptMap.SetVersionST(value : String);
@@ -9009,7 +9159,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirConceptMap.SetNameST(value : String);
@@ -9035,7 +9185,7 @@ begin
   if FPublisher = nil then
     result := ''
   else
-    result := Publisher.value;
+    result := FPublisher.value;
 end;
 
 Procedure TFhirConceptMap.SetPublisherST(value : String);
@@ -9061,7 +9211,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirConceptMap.SetDescriptionST(value : String);
@@ -9087,7 +9237,7 @@ begin
   if FCopyright = nil then
     result := ''
   else
-    result := Copyright.value;
+    result := FCopyright.value;
 end;
 
 Procedure TFhirConceptMap.SetCopyrightST(value : String);
@@ -9113,15 +9263,15 @@ begin
   if FStatus = nil then
     result := TFhirValuesetStatus(0)
   else
-    result := TFhirValuesetStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetStatus, Status.value));
+    result := TFhirValuesetStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetStatus, FStatus.value));
 end;
 
 Procedure TFhirConceptMap.SetStatusST(value : TFhirValuesetStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirValuesetStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirValuesetStatus[value]);
 end;
 
 Procedure TFhirConceptMap.SetExperimental(value : TFhirBoolean);
@@ -9135,7 +9285,7 @@ begin
   if FExperimental = nil then
     result := false
   else
-    result := Experimental.value;
+    result := FExperimental.value;
 end;
 
 Procedure TFhirConceptMap.SetExperimentalST(value : Boolean);
@@ -9156,7 +9306,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirConceptMap.SetDateST(value : TDateAndTime);
@@ -9234,7 +9384,7 @@ begin
   subject := TFhirCondition(oSource).subject.Clone;
   encounter := TFhirCondition(oSource).encounter.Clone;
   asserter := TFhirCondition(oSource).asserter.Clone;
-  dateAsserted := TFhirCondition(oSource).dateAsserted.Clone;
+  dateAssertedObject := TFhirCondition(oSource).dateAssertedObject.Clone;
   code := TFhirCondition(oSource).code.Clone;
   category := TFhirCondition(oSource).category.Clone;
   FStatus := TFhirCondition(oSource).FStatus.Link;
@@ -9246,7 +9396,7 @@ begin
   FEvidenceList.Assign(TFhirCondition(oSource).FEvidenceList);
   FLocationList.Assign(TFhirCondition(oSource).FLocationList);
   FRelatedItemList.Assign(TFhirCondition(oSource).FRelatedItemList);
-  notes := TFhirCondition(oSource).notes.Clone;
+  notesObject := TFhirCondition(oSource).notesObject.Clone;
 end;
 
 procedure TFhirCondition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -9255,29 +9405,29 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'encounter') Then
-     list.add(Encounter.Link);
+     list.add(FEncounter.Link);
   if (child_name = 'asserter') Then
-     list.add(Asserter.Link);
+     list.add(FAsserter.Link);
   if (child_name = 'dateAsserted') Then
-     list.add(DateAsserted.Link);
+     list.add(FDateAsserted.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'category') Then
-     list.add(Category.Link);
+     list.add(FCategory.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'certainty') Then
-     list.add(Certainty.Link);
+     list.add(FCertainty.Link);
   if (child_name = 'severity') Then
-     list.add(Severity.Link);
+     list.add(FSeverity.Link);
   if (child_name = 'onset[x]') Then
-     list.add(Onset.Link);
+     list.add(FOnset.Link);
   if (child_name = 'abatement[x]') Then
-     list.add(Abatement.Link);
+     list.add(FAbatement.Link);
   if (child_name = 'stage') Then
-     list.add(Stage.Link);
+     list.add(FStage.Link);
   if (child_name = 'evidence') Then
      list.addAll(FEvidenceList);
   if (child_name = 'location') Then
@@ -9285,7 +9435,7 @@ begin
   if (child_name = 'relatedItem') Then
      list.addAll(FRelatedItemList);
   if (child_name = 'notes') Then
-     list.add(Notes.Link);
+     list.add(FNotes.Link);
 end;
 
 procedure TFhirCondition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -9313,22 +9463,22 @@ end;
 procedure TFhirCondition.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4}
-  else if (propName = 'asserter') then Asserter := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'dateAsserted') then DateAsserted := propValue as TFhirDate{5}
-  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'category') then Category := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'certainty') then Certainty := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'severity') then Severity := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'onset[x]') then Onset := propValue as TFhirType{4}
-  else if (propName = 'abatement[x]') then Abatement := propValue as TFhirType{4}
-  else if (propName = 'stage') then Stage := propValue as TFhirConditionStage{4}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4b}
+  else if (propName = 'asserter') then Asserter := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'dateAsserted') then DateAssertedObject := propValue as TFhirDate{5a}
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'category') then Category := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'certainty') then Certainty := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'severity') then Severity := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('onset')) then Onset := propValue as TFhirType{4}
+  else if (propName.startsWith('abatement')) then Abatement := propValue as TFhirType{4}
+  else if (propName = 'stage') then Stage := propValue as TFhirConditionStage{4b}
   else if (propName = 'evidence') then EvidenceList.add(propValue as TFhirConditionEvidence){2}
   else if (propName = 'location') then LocationList.add(propValue as TFhirConditionLocation){2}
   else if (propName = 'relatedItem') then RelatedItemList.add(propValue as TFhirConditionRelatedItem){2}
-  else if (propName = 'notes') then Notes := propValue as TFhirString{5}
+  else if (propName = 'notes') then NotesObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -9378,7 +9528,7 @@ begin
   if FDateAsserted = nil then
     result := nil
   else
-    result := DateAsserted.value;
+    result := FDateAsserted.value;
 end;
 
 Procedure TFhirCondition.SetDateAssertedST(value : TDateAndTime);
@@ -9416,15 +9566,15 @@ begin
   if FStatus = nil then
     result := TFhirConditionStatus(0)
   else
-    result := TFhirConditionStatus(StringArrayIndexOfSensitive(CODES_TFhirConditionStatus, Status.value));
+    result := TFhirConditionStatus(StringArrayIndexOfSensitive(CODES_TFhirConditionStatus, FStatus.value));
 end;
 
 Procedure TFhirCondition.SetStatusST(value : TFhirConditionStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirConditionStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirConditionStatus[value]);
 end;
 
 Procedure TFhirCondition.SetCertainty(value : TFhirCodeableConcept);
@@ -9468,7 +9618,7 @@ begin
   if FNotes = nil then
     result := ''
   else
-    result := Notes.value;
+    result := FNotes.value;
 end;
 
 Procedure TFhirCondition.SetNotesST(value : String);
@@ -9533,19 +9683,19 @@ end;
 procedure TFhirConformance.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirConformance(oSource).identifier.Clone;
-  version := TFhirConformance(oSource).version.Clone;
-  name := TFhirConformance(oSource).name.Clone;
-  publisher := TFhirConformance(oSource).publisher.Clone;
+  identifierObject := TFhirConformance(oSource).identifierObject.Clone;
+  versionObject := TFhirConformance(oSource).versionObject.Clone;
+  nameObject := TFhirConformance(oSource).nameObject.Clone;
+  publisherObject := TFhirConformance(oSource).publisherObject.Clone;
   FTelecomList.Assign(TFhirConformance(oSource).FTelecomList);
-  description := TFhirConformance(oSource).description.Clone;
+  descriptionObject := TFhirConformance(oSource).descriptionObject.Clone;
   FStatus := TFhirConformance(oSource).FStatus.Link;
-  experimental := TFhirConformance(oSource).experimental.Clone;
-  date := TFhirConformance(oSource).date.Clone;
+  experimentalObject := TFhirConformance(oSource).experimentalObject.Clone;
+  dateObject := TFhirConformance(oSource).dateObject.Clone;
   software := TFhirConformance(oSource).software.Clone;
   implementation_ := TFhirConformance(oSource).implementation_.Clone;
-  fhirVersion := TFhirConformance(oSource).fhirVersion.Clone;
-  acceptUnknown := TFhirConformance(oSource).acceptUnknown.Clone;
+  fhirVersionObject := TFhirConformance(oSource).fhirVersionObject.Clone;
+  acceptUnknownObject := TFhirConformance(oSource).acceptUnknownObject.Clone;
   FFormatList.Assign(TFhirConformance(oSource).FFormatList);
   FProfileList.Assign(TFhirConformance(oSource).FProfileList);
   FRestList.Assign(TFhirConformance(oSource).FRestList);
@@ -9557,31 +9707,31 @@ procedure TFhirConformance.GetChildrenByName(child_name : string; list : TFHIROb
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'publisher') Then
-     list.add(Publisher.Link);
+     list.add(FPublisher.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'experimental') Then
-     list.add(Experimental.Link);
+     list.add(FExperimental.Link);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'software') Then
-     list.add(Software.Link);
+     list.add(FSoftware.Link);
   if (child_name = 'implementation') Then
-     list.add(Implementation_.Link);
+     list.add(FImplementation_.Link);
   if (child_name = 'fhirVersion') Then
-     list.add(FhirVersion.Link);
+     list.add(FFhirVersion.Link);
   if (child_name = 'acceptUnknown') Then
-     list.add(AcceptUnknown.Link);
+     list.add(FAcceptUnknown.Link);
   if (child_name = 'format') Then
      list.addAll(FFormatList);
   if (child_name = 'profile') Then
@@ -9619,19 +9769,19 @@ end;
 
 procedure TFhirConformance.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirString{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'publisher') then Publisher := propValue as TFhirString{5}
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirString{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'publisher') then PublisherObject := propValue as TFhirString{5a}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'experimental') then Experimental := propValue as TFhirBoolean{5}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'software') then Software := propValue as TFhirConformanceSoftware{4}
-  else if (propName = 'implementation') then Implementation_ := propValue as TFhirConformanceImplementation{4}
-  else if (propName = 'fhirVersion') then FhirVersion := propValue as TFhirId{5}
-  else if (propName = 'acceptUnknown') then AcceptUnknown := propValue as TFhirBoolean{5}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'experimental') then ExperimentalObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'software') then Software := propValue as TFhirConformanceSoftware{4b}
+  else if (propName = 'implementation') then Implementation_ := propValue as TFhirConformanceImplementation{4b}
+  else if (propName = 'fhirVersion') then FhirVersionObject := propValue as TFhirId{5a}
+  else if (propName = 'acceptUnknown') then AcceptUnknownObject := propValue as TFhirBoolean{5a}
   else if (propName = 'format') then FormatList.add(propValue as TFhirCode){2}
   else if (propName = 'profile') then ProfileList.add(propValue as TFhirResourceReference{TFhirProfile}){2}
   else if (propName = 'rest') then RestList.add(propValue as TFhirConformanceRest){2}
@@ -9668,7 +9818,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirConformance.SetIdentifierST(value : String);
@@ -9694,7 +9844,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirConformance.SetVersionST(value : String);
@@ -9720,7 +9870,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirConformance.SetNameST(value : String);
@@ -9746,7 +9896,7 @@ begin
   if FPublisher = nil then
     result := ''
   else
-    result := Publisher.value;
+    result := FPublisher.value;
 end;
 
 Procedure TFhirConformance.SetPublisherST(value : String);
@@ -9772,7 +9922,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirConformance.SetDescriptionST(value : String);
@@ -9798,15 +9948,15 @@ begin
   if FStatus = nil then
     result := TFhirConformanceStatementStatus(0)
   else
-    result := TFhirConformanceStatementStatus(StringArrayIndexOfSensitive(CODES_TFhirConformanceStatementStatus, Status.value));
+    result := TFhirConformanceStatementStatus(StringArrayIndexOfSensitive(CODES_TFhirConformanceStatementStatus, FStatus.value));
 end;
 
 Procedure TFhirConformance.SetStatusST(value : TFhirConformanceStatementStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirConformanceStatementStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirConformanceStatementStatus[value]);
 end;
 
 Procedure TFhirConformance.SetExperimental(value : TFhirBoolean);
@@ -9820,7 +9970,7 @@ begin
   if FExperimental = nil then
     result := false
   else
-    result := Experimental.value;
+    result := FExperimental.value;
 end;
 
 Procedure TFhirConformance.SetExperimentalST(value : Boolean);
@@ -9841,7 +9991,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirConformance.SetDateST(value : TDateAndTime);
@@ -9879,7 +10029,7 @@ begin
   if FFhirVersion = nil then
     result := ''
   else
-    result := FhirVersion.value;
+    result := FFhirVersion.value;
 end;
 
 Procedure TFhirConformance.SetFhirVersionST(value : String);
@@ -9905,7 +10055,7 @@ begin
   if FAcceptUnknown = nil then
     result := false
   else
-    result := AcceptUnknown.value;
+    result := FAcceptUnknown.value;
 end;
 
 Procedure TFhirConformance.SetAcceptUnknownST(value : Boolean);
@@ -9958,17 +10108,17 @@ begin
   inherited;
   FIdentifierList.Assign(TFhirDevice(oSource).FIdentifierList);
   type_ := TFhirDevice(oSource).type_.Clone;
-  manufacturer := TFhirDevice(oSource).manufacturer.Clone;
-  model := TFhirDevice(oSource).model.Clone;
-  version := TFhirDevice(oSource).version.Clone;
-  expiry := TFhirDevice(oSource).expiry.Clone;
-  udi := TFhirDevice(oSource).udi.Clone;
-  lotNumber := TFhirDevice(oSource).lotNumber.Clone;
+  manufacturerObject := TFhirDevice(oSource).manufacturerObject.Clone;
+  modelObject := TFhirDevice(oSource).modelObject.Clone;
+  versionObject := TFhirDevice(oSource).versionObject.Clone;
+  expiryObject := TFhirDevice(oSource).expiryObject.Clone;
+  udiObject := TFhirDevice(oSource).udiObject.Clone;
+  lotNumberObject := TFhirDevice(oSource).lotNumberObject.Clone;
   owner := TFhirDevice(oSource).owner.Clone;
   location := TFhirDevice(oSource).location.Clone;
   patient := TFhirDevice(oSource).patient.Clone;
   FContactList.Assign(TFhirDevice(oSource).FContactList);
-  url := TFhirDevice(oSource).url.Clone;
+  urlObject := TFhirDevice(oSource).urlObject.Clone;
 end;
 
 procedure TFhirDevice.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -9977,29 +10127,29 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'manufacturer') Then
-     list.add(Manufacturer.Link);
+     list.add(FManufacturer.Link);
   if (child_name = 'model') Then
-     list.add(Model.Link);
+     list.add(FModel.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'expiry') Then
-     list.add(Expiry.Link);
+     list.add(FExpiry.Link);
   if (child_name = 'udi') Then
-     list.add(Udi.Link);
+     list.add(FUdi.Link);
   if (child_name = 'lotNumber') Then
-     list.add(LotNumber.Link);
+     list.add(FLotNumber.Link);
   if (child_name = 'owner') Then
-     list.add(Owner.Link);
+     list.add(FOwner.Link);
   if (child_name = 'location') Then
-     list.add(Location.Link);
+     list.add(FLocation.Link);
   if (child_name = 'patient') Then
-     list.add(Patient.Link);
+     list.add(FPatient.Link);
   if (child_name = 'contact') Then
      list.addAll(FContactList);
   if (child_name = 'url') Then
-     list.add(Url.Link);
+     list.add(FUrl.Link);
 end;
 
 procedure TFhirDevice.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -10023,18 +10173,18 @@ end;
 procedure TFhirDevice.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'manufacturer') then Manufacturer := propValue as TFhirString{5}
-  else if (propName = 'model') then Model := propValue as TFhirString{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
-  else if (propName = 'expiry') then Expiry := propValue as TFhirDate{5}
-  else if (propName = 'udi') then Udi := propValue as TFhirString{5}
-  else if (propName = 'lotNumber') then LotNumber := propValue as TFhirString{5}
-  else if (propName = 'owner') then Owner := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4}
-  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'manufacturer') then ManufacturerObject := propValue as TFhirString{5a}
+  else if (propName = 'model') then ModelObject := propValue as TFhirString{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  else if (propName = 'expiry') then ExpiryObject := propValue as TFhirDate{5a}
+  else if (propName = 'udi') then UdiObject := propValue as TFhirString{5a}
+  else if (propName = 'lotNumber') then LotNumberObject := propValue as TFhirString{5a}
+  else if (propName = 'owner') then Owner := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4b}
+  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4b}
   else if (propName = 'contact') then ContactList.add(propValue as TFhirContact){2}
-  else if (propName = 'url') then Url := propValue as TFhirUri{5}
+  else if (propName = 'url') then UrlObject := propValue as TFhirUri{5a}
   else inherited;
 end;
 
@@ -10072,7 +10222,7 @@ begin
   if FManufacturer = nil then
     result := ''
   else
-    result := Manufacturer.value;
+    result := FManufacturer.value;
 end;
 
 Procedure TFhirDevice.SetManufacturerST(value : String);
@@ -10098,7 +10248,7 @@ begin
   if FModel = nil then
     result := ''
   else
-    result := Model.value;
+    result := FModel.value;
 end;
 
 Procedure TFhirDevice.SetModelST(value : String);
@@ -10124,7 +10274,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirDevice.SetVersionST(value : String);
@@ -10150,7 +10300,7 @@ begin
   if FExpiry = nil then
     result := nil
   else
-    result := Expiry.value;
+    result := FExpiry.value;
 end;
 
 Procedure TFhirDevice.SetExpiryST(value : TDateAndTime);
@@ -10176,7 +10326,7 @@ begin
   if FUdi = nil then
     result := ''
   else
-    result := Udi.value;
+    result := FUdi.value;
 end;
 
 Procedure TFhirDevice.SetUdiST(value : String);
@@ -10202,7 +10352,7 @@ begin
   if FLotNumber = nil then
     result := ''
   else
-    result := LotNumber.value;
+    result := FLotNumber.value;
 end;
 
 Procedure TFhirDevice.SetLotNumberST(value : String);
@@ -10246,7 +10396,7 @@ begin
   if FUrl = nil then
     result := ''
   else
-    result := Url.value;
+    result := FUrl.value;
 end;
 
 Procedure TFhirDevice.SetUrlST(value : String);
@@ -10293,7 +10443,7 @@ end;
 procedure TFhirDeviceObservationReport.Assign(oSource : TAdvObject);
 begin
   inherited;
-  instant := TFhirDeviceObservationReport(oSource).instant.Clone;
+  instantObject := TFhirDeviceObservationReport(oSource).instantObject.Clone;
   identifier := TFhirDeviceObservationReport(oSource).identifier.Clone;
   source := TFhirDeviceObservationReport(oSource).source.Clone;
   subject := TFhirDeviceObservationReport(oSource).subject.Clone;
@@ -10304,13 +10454,13 @@ procedure TFhirDeviceObservationReport.GetChildrenByName(child_name : string; li
 begin
   inherited;
   if (child_name = 'instant') Then
-     list.add(Instant.Link);
+     list.add(FInstant.Link);
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'source') Then
-     list.add(Source.Link);
+     list.add(FSource.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'virtualDevice') Then
      list.addAll(FVirtualDeviceList);
 end;
@@ -10327,10 +10477,10 @@ end;
 
 procedure TFhirDeviceObservationReport.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'instant') then Instant := propValue as TFhirInstant{5}
-  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'source') then Source := propValue as TFhirResourceReference{TFhirDevice}{4}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
+  if (propName = 'instant') then InstantObject := propValue as TFhirInstant{5a}
+  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'source') then Source := propValue as TFhirResourceReference{TFhirDevice}{4b}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
   else if (propName = 'virtualDevice') then VirtualDeviceList.add(propValue as TFhirDeviceObservationReportVirtualDevice){2}
   else inherited;
 end;
@@ -10363,7 +10513,7 @@ begin
   if FInstant = nil then
     result := nil
   else
-    result := Instant.value;
+    result := FInstant.value;
 end;
 
 Procedure TFhirDeviceObservationReport.SetInstantST(value : TDateAndTime);
@@ -10440,7 +10590,7 @@ begin
   orderer := TFhirDiagnosticOrder(oSource).orderer.Clone;
   FIdentifierList.Assign(TFhirDiagnosticOrder(oSource).FIdentifierList);
   encounter := TFhirDiagnosticOrder(oSource).encounter.Clone;
-  clinicalNotes := TFhirDiagnosticOrder(oSource).clinicalNotes.Clone;
+  clinicalNotesObject := TFhirDiagnosticOrder(oSource).clinicalNotesObject.Clone;
   FSpecimenList.Assign(TFhirDiagnosticOrder(oSource).FSpecimenList);
   FStatus := TFhirDiagnosticOrder(oSource).FStatus.Link;
   FPriority := TFhirDiagnosticOrder(oSource).FPriority.Link;
@@ -10452,15 +10602,15 @@ procedure TFhirDiagnosticOrder.GetChildrenByName(child_name : string; list : TFH
 begin
   inherited;
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'orderer') Then
-     list.add(Orderer.Link);
+     list.add(FOrderer.Link);
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'encounter') Then
-     list.add(Encounter.Link);
+     list.add(FEncounter.Link);
   if (child_name = 'clinicalNotes') Then
-     list.add(ClinicalNotes.Link);
+     list.add(FClinicalNotes.Link);
   if (child_name = 'specimen') Then
      list.addAll(FSpecimenList);
   if (child_name = 'status') Then
@@ -10490,14 +10640,14 @@ end;
 
 procedure TFhirDiagnosticOrder.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'orderer') then Orderer := propValue as TFhirResourceReference{TFhirPractitioner}{4}
+  if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'orderer') then Orderer := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
   else if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4}
-  else if (propName = 'clinicalNotes') then ClinicalNotes := propValue as TFhirString{5}
+  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4b}
+  else if (propName = 'clinicalNotes') then ClinicalNotesObject := propValue as TFhirString{5a}
   else if (propName = 'specimen') then SpecimenList.add(propValue as TFhirResourceReference{TFhirSpecimen}){2}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'priority') then Priority := propValue as TFHIREnum
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'priority') then PriorityObject := propValue as TFHIREnum
   else if (propName = 'event') then EventList.add(propValue as TFhirDiagnosticOrderEvent){2}
   else if (propName = 'item') then ItemList.add(propValue as TFhirDiagnosticOrderItem){2}
   else inherited;
@@ -10549,7 +10699,7 @@ begin
   if FClinicalNotes = nil then
     result := ''
   else
-    result := ClinicalNotes.value;
+    result := FClinicalNotes.value;
 end;
 
 Procedure TFhirDiagnosticOrder.SetClinicalNotesST(value : String);
@@ -10575,15 +10725,15 @@ begin
   if FStatus = nil then
     result := TFhirDiagnosticOrderStatus(0)
   else
-    result := TFhirDiagnosticOrderStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderStatus, Status.value));
+    result := TFhirDiagnosticOrderStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderStatus, FStatus.value));
 end;
 
 Procedure TFhirDiagnosticOrder.SetStatusST(value : TFhirDiagnosticOrderStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirDiagnosticOrderStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirDiagnosticOrderStatus[value]);
 end;
 
 Procedure TFhirDiagnosticOrder.SetPriority(value : TFhirEnum);
@@ -10597,15 +10747,15 @@ begin
   if FPriority = nil then
     result := TFhirDiagnosticOrderPriority(0)
   else
-    result := TFhirDiagnosticOrderPriority(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderPriority, Priority.value));
+    result := TFhirDiagnosticOrderPriority(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticOrderPriority, FPriority.value));
 end;
 
 Procedure TFhirDiagnosticOrder.SetPriorityST(value : TFhirDiagnosticOrderPriority);
 begin
   if ord(value) = 0 then
-    Priority := nil
+    PriorityObject := nil
   else
-    Priority := TFhirEnum.create(CODES_TFhirDiagnosticOrderPriority[value]);
+    PriorityObject := TFhirEnum.create(CODES_TFhirDiagnosticOrderPriority[value]);
 end;
 
 
@@ -10659,7 +10809,7 @@ begin
   inherited;
   name := TFhirDiagnosticReport(oSource).name.Clone;
   FStatus := TFhirDiagnosticReport(oSource).FStatus.Link;
-  issued := TFhirDiagnosticReport(oSource).issued.Clone;
+  issuedObject := TFhirDiagnosticReport(oSource).issuedObject.Clone;
   subject := TFhirDiagnosticReport(oSource).subject.Clone;
   performer := TFhirDiagnosticReport(oSource).performer.Clone;
   identifier := TFhirDiagnosticReport(oSource).identifier.Clone;
@@ -10670,7 +10820,7 @@ begin
   FResultList.Assign(TFhirDiagnosticReport(oSource).FResultList);
   FImagingStudyList.Assign(TFhirDiagnosticReport(oSource).FImagingStudyList);
   FImageList.Assign(TFhirDiagnosticReport(oSource).FImageList);
-  conclusion := TFhirDiagnosticReport(oSource).conclusion.Clone;
+  conclusionObject := TFhirDiagnosticReport(oSource).conclusionObject.Clone;
   FCodedDiagnosisList.Assign(TFhirDiagnosticReport(oSource).FCodedDiagnosisList);
   FPresentedFormList.Assign(TFhirDiagnosticReport(oSource).FPresentedFormList);
 end;
@@ -10679,23 +10829,23 @@ procedure TFhirDiagnosticReport.GetChildrenByName(child_name : string; list : TF
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'issued') Then
-     list.add(Issued.Link);
+     list.add(FIssued.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'performer') Then
-     list.add(Performer.Link);
+     list.add(FPerformer.Link);
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'requestDetail') Then
      list.addAll(FRequestDetailList);
   if (child_name = 'serviceCategory') Then
-     list.add(ServiceCategory.Link);
+     list.add(FServiceCategory.Link);
   if (child_name = 'diagnostic[x]') Then
-     list.add(Diagnostic.Link);
+     list.add(FDiagnostic.Link);
   if (child_name = 'specimen') Then
      list.addAll(FSpecimenList);
   if (child_name = 'result') Then
@@ -10705,7 +10855,7 @@ begin
   if (child_name = 'image') Then
      list.addAll(FImageList);
   if (child_name = 'conclusion') Then
-     list.add(Conclusion.Link);
+     list.add(FConclusion.Link);
   if (child_name = 'codedDiagnosis') Then
      list.addAll(FCodedDiagnosisList);
   if (child_name = 'presentedForm') Then
@@ -10735,20 +10885,20 @@ end;
 
 procedure TFhirDiagnosticReport.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'issued') then Issued := propValue as TFhirDateTime{5}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'performer') then Performer := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
+  if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'issued') then IssuedObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'performer') then Performer := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
   else if (propName = 'requestDetail') then RequestDetailList.add(propValue as TFhirResourceReference{TFhirDiagnosticOrder}){2}
-  else if (propName = 'serviceCategory') then ServiceCategory := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'diagnostic[x]') then Diagnostic := propValue as TFhirType{4}
+  else if (propName = 'serviceCategory') then ServiceCategory := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('diagnostic')) then Diagnostic := propValue as TFhirType{4}
   else if (propName = 'specimen') then SpecimenList.add(propValue as TFhirResourceReference{TFhirSpecimen}){2}
   else if (propName = 'result') then ResultList.add(propValue as TFhirResourceReference{TFhirObservation}){2}
   else if (propName = 'imagingStudy') then ImagingStudyList.add(propValue as TFhirResourceReference{TFhirImagingStudy}){2}
   else if (propName = 'image') then ImageList.add(propValue as TFhirDiagnosticReportImage){2}
-  else if (propName = 'conclusion') then Conclusion := propValue as TFhirString{5}
+  else if (propName = 'conclusion') then ConclusionObject := propValue as TFhirString{5a}
   else if (propName = 'codedDiagnosis') then CodedDiagnosisList.add(propValue as TFhirCodeableConcept){2}
   else if (propName = 'presentedForm') then PresentedFormList.add(propValue as TFhirAttachment){2}
   else inherited;
@@ -10788,15 +10938,15 @@ begin
   if FStatus = nil then
     result := TFhirDiagnosticReportStatus(0)
   else
-    result := TFhirDiagnosticReportStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticReportStatus, Status.value));
+    result := TFhirDiagnosticReportStatus(StringArrayIndexOfSensitive(CODES_TFhirDiagnosticReportStatus, FStatus.value));
 end;
 
 Procedure TFhirDiagnosticReport.SetStatusST(value : TFhirDiagnosticReportStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirDiagnosticReportStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirDiagnosticReportStatus[value]);
 end;
 
 Procedure TFhirDiagnosticReport.SetIssued(value : TFhirDateTime);
@@ -10810,7 +10960,7 @@ begin
   if FIssued = nil then
     result := nil
   else
-    result := Issued.value;
+    result := FIssued.value;
 end;
 
 Procedure TFhirDiagnosticReport.SetIssuedST(value : TDateAndTime);
@@ -10866,7 +11016,7 @@ begin
   if FConclusion = nil then
     result := ''
   else
-    result := Conclusion.value;
+    result := FConclusion.value;
 end;
 
 Procedure TFhirDiagnosticReport.SetConclusionST(value : String);
@@ -10931,11 +11081,11 @@ begin
   FRecipientList.Assign(TFhirDocumentManifest(oSource).FRecipientList);
   type_ := TFhirDocumentManifest(oSource).type_.Clone;
   FAuthorList.Assign(TFhirDocumentManifest(oSource).FAuthorList);
-  created := TFhirDocumentManifest(oSource).created.Clone;
-  source := TFhirDocumentManifest(oSource).source.Clone;
+  createdObject := TFhirDocumentManifest(oSource).createdObject.Clone;
+  sourceObject := TFhirDocumentManifest(oSource).sourceObject.Clone;
   FStatus := TFhirDocumentManifest(oSource).FStatus.Link;
   supercedes := TFhirDocumentManifest(oSource).supercedes.Clone;
-  description := TFhirDocumentManifest(oSource).description.Clone;
+  descriptionObject := TFhirDocumentManifest(oSource).descriptionObject.Clone;
   confidentiality := TFhirDocumentManifest(oSource).confidentiality.Clone;
   FContentList.Assign(TFhirDocumentManifest(oSource).FContentList);
 end;
@@ -10944,7 +11094,7 @@ procedure TFhirDocumentManifest.GetChildrenByName(child_name : string; list : TF
 begin
   inherited;
   if (child_name = 'masterIdentifier') Then
-     list.add(MasterIdentifier.Link);
+     list.add(FMasterIdentifier.Link);
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'subject') Then
@@ -10952,21 +11102,21 @@ begin
   if (child_name = 'recipient') Then
      list.addAll(FRecipientList);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'author') Then
      list.addAll(FAuthorList);
   if (child_name = 'created') Then
-     list.add(Created.Link);
+     list.add(FCreated.Link);
   if (child_name = 'source') Then
-     list.add(Source.Link);
+     list.add(FSource.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'supercedes') Then
-     list.add(Supercedes.Link);
+     list.add(FSupercedes.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'confidentiality') Then
-     list.add(Confidentiality.Link);
+     list.add(FConfidentiality.Link);
   if (child_name = 'content') Then
      list.addAll(FContentList);
 end;
@@ -10991,18 +11141,18 @@ end;
 
 procedure TFhirDocumentManifest.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'masterIdentifier') then MasterIdentifier := propValue as TFhirIdentifier{4}
+  if (propName = 'masterIdentifier') then MasterIdentifier := propValue as TFhirIdentifier{4b}
   else if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
   else if (propName = 'subject') then SubjectList.add(propValue as TFhirResourceReference{Resource}){2}
   else if (propName = 'recipient') then RecipientList.add(propValue as TFhirResourceReference{Resource}){2}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'author') then AuthorList.add(propValue as TFhirResourceReference{Resource}){2}
-  else if (propName = 'created') then Created := propValue as TFhirDateTime{5}
-  else if (propName = 'source') then Source := propValue as TFhirUri{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'supercedes') then Supercedes := propValue as TFhirResourceReference{TFhirDocumentManifest}{4}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'confidentiality') then Confidentiality := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'created') then CreatedObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'source') then SourceObject := propValue as TFhirUri{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'supercedes') then Supercedes := propValue as TFhirResourceReference{TFhirDocumentManifest}{4b}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'confidentiality') then Confidentiality := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'content') then ContentList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
 end;
@@ -11047,7 +11197,7 @@ begin
   if FCreated = nil then
     result := nil
   else
-    result := Created.value;
+    result := FCreated.value;
 end;
 
 Procedure TFhirDocumentManifest.SetCreatedST(value : TDateAndTime);
@@ -11073,7 +11223,7 @@ begin
   if FSource = nil then
     result := ''
   else
-    result := Source.value;
+    result := FSource.value;
 end;
 
 Procedure TFhirDocumentManifest.SetSourceST(value : String);
@@ -11099,15 +11249,15 @@ begin
   if FStatus = nil then
     result := TFhirDocumentReferenceStatus(0)
   else
-    result := TFhirDocumentReferenceStatus(StringArrayIndexOfSensitive(CODES_TFhirDocumentReferenceStatus, Status.value));
+    result := TFhirDocumentReferenceStatus(StringArrayIndexOfSensitive(CODES_TFhirDocumentReferenceStatus, FStatus.value));
 end;
 
 Procedure TFhirDocumentManifest.SetStatusST(value : TFhirDocumentReferenceStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirDocumentReferenceStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirDocumentReferenceStatus[value]);
 end;
 
 Procedure TFhirDocumentManifest.SetSupercedes(value : TFhirResourceReference{TFhirDocumentManifest});
@@ -11127,7 +11277,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirDocumentManifest.SetDescriptionST(value : String);
@@ -11210,21 +11360,21 @@ begin
   class_ := TFhirDocumentReference(oSource).class_.Clone;
   FAuthorList.Assign(TFhirDocumentReference(oSource).FAuthorList);
   custodian := TFhirDocumentReference(oSource).custodian.Clone;
-  policyManager := TFhirDocumentReference(oSource).policyManager.Clone;
+  policyManagerObject := TFhirDocumentReference(oSource).policyManagerObject.Clone;
   authenticator := TFhirDocumentReference(oSource).authenticator.Clone;
-  created := TFhirDocumentReference(oSource).created.Clone;
-  indexed := TFhirDocumentReference(oSource).indexed.Clone;
+  createdObject := TFhirDocumentReference(oSource).createdObject.Clone;
+  indexedObject := TFhirDocumentReference(oSource).indexedObject.Clone;
   FStatus := TFhirDocumentReference(oSource).FStatus.Link;
   docStatus := TFhirDocumentReference(oSource).docStatus.Clone;
   FRelatesToList.Assign(TFhirDocumentReference(oSource).FRelatesToList);
-  description := TFhirDocumentReference(oSource).description.Clone;
+  descriptionObject := TFhirDocumentReference(oSource).descriptionObject.Clone;
   FConfidentialityList.Assign(TFhirDocumentReference(oSource).FConfidentialityList);
-  primaryLanguage := TFhirDocumentReference(oSource).primaryLanguage.Clone;
-  mimeType := TFhirDocumentReference(oSource).mimeType.Clone;
+  primaryLanguageObject := TFhirDocumentReference(oSource).primaryLanguageObject.Clone;
+  mimeTypeObject := TFhirDocumentReference(oSource).mimeTypeObject.Clone;
   FFormatList.Assign(TFhirDocumentReference(oSource).FFormatList);
-  size := TFhirDocumentReference(oSource).size.Clone;
-  hash := TFhirDocumentReference(oSource).hash.Clone;
-  location := TFhirDocumentReference(oSource).location.Clone;
+  sizeObject := TFhirDocumentReference(oSource).sizeObject.Clone;
+  hashObject := TFhirDocumentReference(oSource).hashObject.Clone;
+  locationObject := TFhirDocumentReference(oSource).locationObject.Clone;
   service := TFhirDocumentReference(oSource).service.Clone;
   context := TFhirDocumentReference(oSource).context.Clone;
 end;
@@ -11233,53 +11383,53 @@ procedure TFhirDocumentReference.GetChildrenByName(child_name : string; list : T
 begin
   inherited;
   if (child_name = 'masterIdentifier') Then
-     list.add(MasterIdentifier.Link);
+     list.add(FMasterIdentifier.Link);
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'class') Then
-     list.add(Class_.Link);
+     list.add(FClass_.Link);
   if (child_name = 'author') Then
      list.addAll(FAuthorList);
   if (child_name = 'custodian') Then
-     list.add(Custodian.Link);
+     list.add(FCustodian.Link);
   if (child_name = 'policyManager') Then
-     list.add(PolicyManager.Link);
+     list.add(FPolicyManager.Link);
   if (child_name = 'authenticator') Then
-     list.add(Authenticator.Link);
+     list.add(FAuthenticator.Link);
   if (child_name = 'created') Then
-     list.add(Created.Link);
+     list.add(FCreated.Link);
   if (child_name = 'indexed') Then
-     list.add(Indexed.Link);
+     list.add(FIndexed.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'docStatus') Then
-     list.add(DocStatus.Link);
+     list.add(FDocStatus.Link);
   if (child_name = 'relatesTo') Then
      list.addAll(FRelatesToList);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'confidentiality') Then
      list.addAll(FConfidentialityList);
   if (child_name = 'primaryLanguage') Then
-     list.add(PrimaryLanguage.Link);
+     list.add(FPrimaryLanguage.Link);
   if (child_name = 'mimeType') Then
-     list.add(MimeType.Link);
+     list.add(FMimeType.Link);
   if (child_name = 'format') Then
      list.addAll(FFormatList);
   if (child_name = 'size') Then
-     list.add(Size.Link);
+     list.add(FSize.Link);
   if (child_name = 'hash') Then
-     list.add(Hash.Link);
+     list.add(FHash.Link);
   if (child_name = 'location') Then
-     list.add(Location.Link);
+     list.add(FLocation.Link);
   if (child_name = 'service') Then
-     list.add(Service.Link);
+     list.add(FService.Link);
   if (child_name = 'context') Then
-     list.add(Context.Link);
+     list.add(FContext.Link);
 end;
 
 procedure TFhirDocumentReference.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -11313,30 +11463,42 @@ end;
 
 procedure TFhirDocumentReference.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'masterIdentifier') then MasterIdentifier := propValue as TFhirIdentifier{4}
+  if (propName = 'masterIdentifier') then MasterIdentifier := propValue as TFhirIdentifier{4b}
   else if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'class') then Class_ := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'class') then Class_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'author') then AuthorList.add(propValue as TFhirResourceReference{Resource}){2}
-  else if (propName = 'custodian') then Custodian := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'policyManager') then PolicyManager := propValue as TFhirUri{5}
-  else if (propName = 'authenticator') then Authenticator := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'created') then Created := propValue as TFhirDateTime{5}
-  else if (propName = 'indexed') then Indexed := propValue as TFhirInstant{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'docStatus') then DocStatus := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'custodian') then Custodian := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'policyManager') then PolicyManagerObject := propValue as TFhirUri{5a}
+  else if (propName = 'authenticator') then Authenticator := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'created') then CreatedObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'indexed') then IndexedObject := propValue as TFhirInstant{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'docStatus') then DocStatus := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'relatesTo') then RelatesToList.add(propValue as TFhirDocumentReferenceRelatesTo){2}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
   else if (propName = 'confidentiality') then ConfidentialityList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'primaryLanguage') then PrimaryLanguage := propValue as TFhirCode{5}
-  else if (propName = 'mimeType') then MimeType := propValue as TFhirCode{5}
+  else if (propName = 'primaryLanguage') then
+    if propValue is TFHIRCode then
+      PrimaryLanguageObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      PrimaryLanguageObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
+  else if (propName = 'mimeType') then
+    if propValue is TFHIRCode then
+      MimeTypeObject := propValue as TFhirCode{5}
+    else if propValue is TFHIREnum then
+      MimeTypeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+    else
+      raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
   else if (propName = 'format') then FormatList.add(propValue as TFhirUri){2}
-  else if (propName = 'size') then Size := propValue as TFhirInteger{5}
-  else if (propName = 'hash') then Hash := propValue as TFhirString{5}
-  else if (propName = 'location') then Location := propValue as TFhirUri{5}
-  else if (propName = 'service') then Service := propValue as TFhirDocumentReferenceService{4}
-  else if (propName = 'context') then Context := propValue as TFhirDocumentReferenceContext{4}
+  else if (propName = 'size') then SizeObject := propValue as TFhirInteger{5a}
+  else if (propName = 'hash') then HashObject := propValue as TFhirString{5a}
+  else if (propName = 'location') then LocationObject := propValue as TFhirUri{5a}
+  else if (propName = 'service') then Service := propValue as TFhirDocumentReferenceService{4b}
+  else if (propName = 'context') then Context := propValue as TFhirDocumentReferenceContext{4b}
   else inherited;
 end;
 
@@ -11398,7 +11560,7 @@ begin
   if FPolicyManager = nil then
     result := ''
   else
-    result := PolicyManager.value;
+    result := FPolicyManager.value;
 end;
 
 Procedure TFhirDocumentReference.SetPolicyManagerST(value : String);
@@ -11430,7 +11592,7 @@ begin
   if FCreated = nil then
     result := nil
   else
-    result := Created.value;
+    result := FCreated.value;
 end;
 
 Procedure TFhirDocumentReference.SetCreatedST(value : TDateAndTime);
@@ -11456,7 +11618,7 @@ begin
   if FIndexed = nil then
     result := nil
   else
-    result := Indexed.value;
+    result := FIndexed.value;
 end;
 
 Procedure TFhirDocumentReference.SetIndexedST(value : TDateAndTime);
@@ -11482,15 +11644,15 @@ begin
   if FStatus = nil then
     result := TFhirDocumentReferenceStatus(0)
   else
-    result := TFhirDocumentReferenceStatus(StringArrayIndexOfSensitive(CODES_TFhirDocumentReferenceStatus, Status.value));
+    result := TFhirDocumentReferenceStatus(StringArrayIndexOfSensitive(CODES_TFhirDocumentReferenceStatus, FStatus.value));
 end;
 
 Procedure TFhirDocumentReference.SetStatusST(value : TFhirDocumentReferenceStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirDocumentReferenceStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirDocumentReferenceStatus[value]);
 end;
 
 Procedure TFhirDocumentReference.SetDocStatus(value : TFhirCodeableConcept);
@@ -11510,7 +11672,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirDocumentReference.SetDescriptionST(value : String);
@@ -11536,7 +11698,7 @@ begin
   if FPrimaryLanguage = nil then
     result := ''
   else
-    result := PrimaryLanguage.value;
+    result := FPrimaryLanguage.value;
 end;
 
 Procedure TFhirDocumentReference.SetPrimaryLanguageST(value : String);
@@ -11562,7 +11724,7 @@ begin
   if FMimeType = nil then
     result := ''
   else
-    result := MimeType.value;
+    result := FMimeType.value;
 end;
 
 Procedure TFhirDocumentReference.SetMimeTypeST(value : String);
@@ -11588,7 +11750,7 @@ begin
   if FSize = nil then
     result := ''
   else
-    result := Size.value;
+    result := FSize.value;
 end;
 
 Procedure TFhirDocumentReference.SetSizeST(value : String);
@@ -11614,7 +11776,7 @@ begin
   if FHash = nil then
     result := ''
   else
-    result := Hash.value;
+    result := FHash.value;
 end;
 
 Procedure TFhirDocumentReference.SetHashST(value : String);
@@ -11640,7 +11802,7 @@ begin
   if FLocation = nil then
     result := ''
   else
-    result := Location.value;
+    result := FLocation.value;
 end;
 
 Procedure TFhirDocumentReference.SetLocationST(value : String);
@@ -11741,27 +11903,27 @@ begin
   if (child_name = 'type') Then
      list.addAll(FType_List);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'participant') Then
      list.addAll(FParticipantList);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
   if (child_name = 'length') Then
-     list.add(Length.Link);
+     list.add(FLength.Link);
   if (child_name = 'reason') Then
-     list.add(Reason.Link);
+     list.add(FReason.Link);
   if (child_name = 'indication') Then
-     list.add(Indication.Link);
+     list.add(FIndication.Link);
   if (child_name = 'priority') Then
-     list.add(Priority.Link);
+     list.add(FPriority.Link);
   if (child_name = 'hospitalization') Then
-     list.add(Hospitalization.Link);
+     list.add(FHospitalization.Link);
   if (child_name = 'location') Then
      list.addAll(FLocationList);
   if (child_name = 'serviceProvider') Then
-     list.add(ServiceProvider.Link);
+     list.add(FServiceProvider.Link);
   if (child_name = 'partOf') Then
-     list.add(PartOf.Link);
+     list.add(FPartOf.Link);
 end;
 
 procedure TFhirEncounter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -11787,20 +11949,20 @@ end;
 procedure TFhirEncounter.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'class') then Class_ := propValue as TFHIREnum
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'class') then Class_Object := propValue as TFHIREnum
   else if (propName = 'type') then Type_List.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
   else if (propName = 'participant') then ParticipantList.add(propValue as TFhirEncounterParticipant){2}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
-  else if (propName = 'length') then Length := propValue as TFhirQuantity{4}
-  else if (propName = 'reason') then Reason := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'indication') then Indication := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'priority') then Priority := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'hospitalization') then Hospitalization := propValue as TFhirEncounterHospitalization{4}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
+  else if (propName = 'length') then Length := propValue as TFhirQuantity{4b}
+  else if (propName = 'reason') then Reason := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'indication') then Indication := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'priority') then Priority := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'hospitalization') then Hospitalization := propValue as TFhirEncounterHospitalization{4b}
   else if (propName = 'location') then LocationList.add(propValue as TFhirEncounterLocation){2}
-  else if (propName = 'serviceProvider') then ServiceProvider := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'partOf') then PartOf := propValue as TFhirResourceReference{TFhirEncounter}{4}
+  else if (propName = 'serviceProvider') then ServiceProvider := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'partOf') then PartOf := propValue as TFhirResourceReference{TFhirEncounter}{4b}
   else inherited;
 end;
 
@@ -11832,15 +11994,15 @@ begin
   if FStatus = nil then
     result := TFhirEncounterState(0)
   else
-    result := TFhirEncounterState(StringArrayIndexOfSensitive(CODES_TFhirEncounterState, Status.value));
+    result := TFhirEncounterState(StringArrayIndexOfSensitive(CODES_TFhirEncounterState, FStatus.value));
 end;
 
 Procedure TFhirEncounter.SetStatusST(value : TFhirEncounterState);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirEncounterState[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirEncounterState[value]);
 end;
 
 Procedure TFhirEncounter.SetClass_(value : TFhirEnum);
@@ -11854,15 +12016,15 @@ begin
   if FClass_ = nil then
     result := TFhirEncounterClass(0)
   else
-    result := TFhirEncounterClass(StringArrayIndexOfSensitive(CODES_TFhirEncounterClass, Class_.value));
+    result := TFhirEncounterClass(StringArrayIndexOfSensitive(CODES_TFhirEncounterClass, FClass_.value));
 end;
 
 Procedure TFhirEncounter.SetClass_ST(value : TFhirEncounterClass);
 begin
   if ord(value) = 0 then
-    Class_ := nil
+    Class_Object := nil
   else
-    Class_ := TFhirEnum.create(CODES_TFhirEncounterClass[value]);
+    Class_Object := TFhirEnum.create(CODES_TFhirEncounterClass[value]);
 end;
 
 Procedure TFhirEncounter.SetSubject(value : TFhirResourceReference{TFhirPatient});
@@ -11953,7 +12115,7 @@ begin
   inherited;
   FIdentifierList.Assign(TFhirFamilyHistory(oSource).FIdentifierList);
   subject := TFhirFamilyHistory(oSource).subject.Clone;
-  note := TFhirFamilyHistory(oSource).note.Clone;
+  noteObject := TFhirFamilyHistory(oSource).noteObject.Clone;
   FRelationList.Assign(TFhirFamilyHistory(oSource).FRelationList);
 end;
 
@@ -11963,9 +12125,9 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'note') Then
-     list.add(Note.Link);
+     list.add(FNote.Link);
   if (child_name = 'relation') Then
      list.addAll(FRelationList);
 end;
@@ -11982,8 +12144,8 @@ end;
 procedure TFhirFamilyHistory.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'note') then Note := propValue as TFhirString{5}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'note') then NoteObject := propValue as TFhirString{5a}
   else if (propName = 'relation') then RelationList.add(propValue as TFhirFamilyHistoryRelation){2}
   else inherited;
 end;
@@ -12022,7 +12184,7 @@ begin
   if FNote = nil then
     result := ''
   else
-    result := Note.value;
+    result := FNote.value;
 end;
 
 Procedure TFhirFamilyHistory.SetNoteST(value : String);
@@ -12075,10 +12237,10 @@ begin
   inherited;
   identifier := TFhirGroup(oSource).identifier.Clone;
   FType_ := TFhirGroup(oSource).FType_.Link;
-  actual := TFhirGroup(oSource).actual.Clone;
+  actualObject := TFhirGroup(oSource).actualObject.Clone;
   code := TFhirGroup(oSource).code.Clone;
-  name := TFhirGroup(oSource).name.Clone;
-  quantity := TFhirGroup(oSource).quantity.Clone;
+  nameObject := TFhirGroup(oSource).nameObject.Clone;
+  quantityObject := TFhirGroup(oSource).quantityObject.Clone;
   FCharacteristicList.Assign(TFhirGroup(oSource).FCharacteristicList);
   FMemberList.Assign(TFhirGroup(oSource).FMemberList);
 end;
@@ -12087,17 +12249,17 @@ procedure TFhirGroup.GetChildrenByName(child_name : string; list : TFHIRObjectLi
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'actual') Then
-     list.add(Actual.Link);
+     list.add(FActual.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'quantity') Then
-     list.add(Quantity.Link);
+     list.add(FQuantity.Link);
   if (child_name = 'characteristic') Then
      list.addAll(FCharacteristicList);
   if (child_name = 'member') Then
@@ -12119,12 +12281,12 @@ end;
 
 procedure TFhirGroup.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'actual') then Actual := propValue as TFhirBoolean{5}
-  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'quantity') then Quantity := propValue as TFhirInteger{5}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'actual') then ActualObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'quantity') then QuantityObject := propValue as TFhirInteger{5a}
   else if (propName = 'characteristic') then CharacteristicList.add(propValue as TFhirGroupCharacteristic){2}
   else if (propName = 'member') then MemberList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
@@ -12164,15 +12326,15 @@ begin
   if FType_ = nil then
     result := TFhirGroupType(0)
   else
-    result := TFhirGroupType(StringArrayIndexOfSensitive(CODES_TFhirGroupType, Type_.value));
+    result := TFhirGroupType(StringArrayIndexOfSensitive(CODES_TFhirGroupType, FType_.value));
 end;
 
 Procedure TFhirGroup.SetType_ST(value : TFhirGroupType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirGroupType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirGroupType[value]);
 end;
 
 Procedure TFhirGroup.SetActual(value : TFhirBoolean);
@@ -12186,7 +12348,7 @@ begin
   if FActual = nil then
     result := false
   else
-    result := Actual.value;
+    result := FActual.value;
 end;
 
 Procedure TFhirGroup.SetActualST(value : Boolean);
@@ -12213,7 +12375,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirGroup.SetNameST(value : String);
@@ -12239,7 +12401,7 @@ begin
   if FQuantity = nil then
     result := ''
   else
-    result := Quantity.value;
+    result := FQuantity.value;
 end;
 
 Procedure TFhirGroup.SetQuantityST(value : String);
@@ -12302,22 +12464,22 @@ end;
 procedure TFhirImagingStudy.Assign(oSource : TAdvObject);
 begin
   inherited;
-  dateTime := TFhirImagingStudy(oSource).dateTime.Clone;
+  dateTimeObject := TFhirImagingStudy(oSource).dateTimeObject.Clone;
   subject := TFhirImagingStudy(oSource).subject.Clone;
-  uid := TFhirImagingStudy(oSource).uid.Clone;
+  uidObject := TFhirImagingStudy(oSource).uidObject.Clone;
   accessionNo := TFhirImagingStudy(oSource).accessionNo.Clone;
   FIdentifierList.Assign(TFhirImagingStudy(oSource).FIdentifierList);
   FOrderList.Assign(TFhirImagingStudy(oSource).FOrderList);
   FModality.Assign(TFhirImagingStudy(oSource).FModality);
   referrer := TFhirImagingStudy(oSource).referrer.Clone;
   FAvailability := TFhirImagingStudy(oSource).FAvailability.Link;
-  url := TFhirImagingStudy(oSource).url.Clone;
-  numberOfSeries := TFhirImagingStudy(oSource).numberOfSeries.Clone;
-  numberOfInstances := TFhirImagingStudy(oSource).numberOfInstances.Clone;
-  clinicalInformation := TFhirImagingStudy(oSource).clinicalInformation.Clone;
+  urlObject := TFhirImagingStudy(oSource).urlObject.Clone;
+  numberOfSeriesObject := TFhirImagingStudy(oSource).numberOfSeriesObject.Clone;
+  numberOfInstancesObject := TFhirImagingStudy(oSource).numberOfInstancesObject.Clone;
+  clinicalInformationObject := TFhirImagingStudy(oSource).clinicalInformationObject.Clone;
   FProcedure_List.Assign(TFhirImagingStudy(oSource).FProcedure_List);
   interpreter := TFhirImagingStudy(oSource).interpreter.Clone;
-  description := TFhirImagingStudy(oSource).description.Clone;
+  descriptionObject := TFhirImagingStudy(oSource).descriptionObject.Clone;
   FSeriesList.Assign(TFhirImagingStudy(oSource).FSeriesList);
 end;
 
@@ -12325,13 +12487,13 @@ procedure TFhirImagingStudy.GetChildrenByName(child_name : string; list : TFHIRO
 begin
   inherited;
   if (child_name = 'dateTime') Then
-     list.add(DateTime.Link);
+     list.add(FDateTime.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'uid') Then
-     list.add(Uid.Link);
+     list.add(FUid.Link);
   if (child_name = 'accessionNo') Then
-     list.add(AccessionNo.Link);
+     list.add(FAccessionNo.Link);
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'order') Then
@@ -12339,23 +12501,23 @@ begin
   if (child_name = 'modality') Then
      list.addAll(FModality);
   if (child_name = 'referrer') Then
-     list.add(Referrer.Link);
+     list.add(FReferrer.Link);
   if (child_name = 'availability') Then
      list.add(FAvailability.Link);
   if (child_name = 'url') Then
-     list.add(Url.Link);
+     list.add(FUrl.Link);
   if (child_name = 'numberOfSeries') Then
-     list.add(NumberOfSeries.Link);
+     list.add(FNumberOfSeries.Link);
   if (child_name = 'numberOfInstances') Then
-     list.add(NumberOfInstances.Link);
+     list.add(FNumberOfInstances.Link);
   if (child_name = 'clinicalInformation') Then
-     list.add(ClinicalInformation.Link);
+     list.add(FClinicalInformation.Link);
   if (child_name = 'procedure') Then
      list.addAll(FProcedure_List);
   if (child_name = 'interpreter') Then
-     list.add(Interpreter.Link);
+     list.add(FInterpreter.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'series') Then
      list.addAll(FSeriesList);
 end;
@@ -12384,22 +12546,22 @@ end;
 
 procedure TFhirImagingStudy.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'dateTime') then DateTime := propValue as TFhirDateTime{5}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'uid') then Uid := propValue as TFhirOid{5}
-  else if (propName = 'accessionNo') then AccessionNo := propValue as TFhirIdentifier{4}
+  if (propName = 'dateTime') then DateTimeObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'uid') then UidObject := propValue as TFhirOid{5a}
+  else if (propName = 'accessionNo') then AccessionNo := propValue as TFhirIdentifier{4b}
   else if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
   else if (propName = 'order') then OrderList.add(propValue as TFhirResourceReference{TFhirDiagnosticOrder}){2}
   else if (propName = 'modality') then FModality.add(propValue as TFHIREnum) {1}
-  else if (propName = 'referrer') then Referrer := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'availability') then Availability := propValue as TFHIREnum
-  else if (propName = 'url') then Url := propValue as TFhirUri{5}
-  else if (propName = 'numberOfSeries') then NumberOfSeries := propValue as TFhirInteger{5}
-  else if (propName = 'numberOfInstances') then NumberOfInstances := propValue as TFhirInteger{5}
-  else if (propName = 'clinicalInformation') then ClinicalInformation := propValue as TFhirString{5}
+  else if (propName = 'referrer') then Referrer := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'availability') then AvailabilityObject := propValue as TFHIREnum
+  else if (propName = 'url') then UrlObject := propValue as TFhirUri{5a}
+  else if (propName = 'numberOfSeries') then NumberOfSeriesObject := propValue as TFhirInteger{5a}
+  else if (propName = 'numberOfInstances') then NumberOfInstancesObject := propValue as TFhirInteger{5a}
+  else if (propName = 'clinicalInformation') then ClinicalInformationObject := propValue as TFhirString{5a}
   else if (propName = 'procedure') then Procedure_List.add(propValue as TFhirCoding){2}
-  else if (propName = 'interpreter') then Interpreter := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
+  else if (propName = 'interpreter') then Interpreter := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
   else if (propName = 'series') then SeriesList.add(propValue as TFhirImagingStudySeries){2}
   else inherited;
 end;
@@ -12432,7 +12594,7 @@ begin
   if FDateTime = nil then
     result := nil
   else
-    result := DateTime.value;
+    result := FDateTime.value;
 end;
 
 Procedure TFhirImagingStudy.SetDateTimeST(value : TDateAndTime);
@@ -12464,7 +12626,7 @@ begin
   if FUid = nil then
     result := ''
   else
-    result := Uid.value;
+    result := FUid.value;
 end;
 
 Procedure TFhirImagingStudy.SetUidST(value : String);
@@ -12502,15 +12664,15 @@ begin
   if FAvailability = nil then
     result := TFhirInstanceAvailability(0)
   else
-    result := TFhirInstanceAvailability(StringArrayIndexOfSensitive(CODES_TFhirInstanceAvailability, Availability.value));
+    result := TFhirInstanceAvailability(StringArrayIndexOfSensitive(CODES_TFhirInstanceAvailability, FAvailability.value));
 end;
 
 Procedure TFhirImagingStudy.SetAvailabilityST(value : TFhirInstanceAvailability);
 begin
   if ord(value) = 0 then
-    Availability := nil
+    AvailabilityObject := nil
   else
-    Availability := TFhirEnum.create(CODES_TFhirInstanceAvailability[value]);
+    AvailabilityObject := TFhirEnum.create(CODES_TFhirInstanceAvailability[value]);
 end;
 
 Procedure TFhirImagingStudy.SetUrl(value : TFhirUri);
@@ -12524,7 +12686,7 @@ begin
   if FUrl = nil then
     result := ''
   else
-    result := Url.value;
+    result := FUrl.value;
 end;
 
 Procedure TFhirImagingStudy.SetUrlST(value : String);
@@ -12550,7 +12712,7 @@ begin
   if FNumberOfSeries = nil then
     result := ''
   else
-    result := NumberOfSeries.value;
+    result := FNumberOfSeries.value;
 end;
 
 Procedure TFhirImagingStudy.SetNumberOfSeriesST(value : String);
@@ -12576,7 +12738,7 @@ begin
   if FNumberOfInstances = nil then
     result := ''
   else
-    result := NumberOfInstances.value;
+    result := FNumberOfInstances.value;
 end;
 
 Procedure TFhirImagingStudy.SetNumberOfInstancesST(value : String);
@@ -12602,7 +12764,7 @@ begin
   if FClinicalInformation = nil then
     result := ''
   else
-    result := ClinicalInformation.value;
+    result := FClinicalInformation.value;
 end;
 
 Procedure TFhirImagingStudy.SetClinicalInformationST(value : String);
@@ -12634,7 +12796,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirImagingStudy.SetDescriptionST(value : String);
@@ -12697,17 +12859,17 @@ procedure TFhirImmunization.Assign(oSource : TAdvObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirImmunization(oSource).FIdentifierList);
-  date := TFhirImmunization(oSource).date.Clone;
+  dateObject := TFhirImmunization(oSource).dateObject.Clone;
   vaccineType := TFhirImmunization(oSource).vaccineType.Clone;
   subject := TFhirImmunization(oSource).subject.Clone;
-  refusedIndicator := TFhirImmunization(oSource).refusedIndicator.Clone;
-  reported := TFhirImmunization(oSource).reported.Clone;
+  refusedIndicatorObject := TFhirImmunization(oSource).refusedIndicatorObject.Clone;
+  reportedObject := TFhirImmunization(oSource).reportedObject.Clone;
   performer := TFhirImmunization(oSource).performer.Clone;
   requester := TFhirImmunization(oSource).requester.Clone;
   manufacturer := TFhirImmunization(oSource).manufacturer.Clone;
   location := TFhirImmunization(oSource).location.Clone;
-  lotNumber := TFhirImmunization(oSource).lotNumber.Clone;
-  expirationDate := TFhirImmunization(oSource).expirationDate.Clone;
+  lotNumberObject := TFhirImmunization(oSource).lotNumberObject.Clone;
+  expirationDateObject := TFhirImmunization(oSource).expirationDateObject.Clone;
   site := TFhirImmunization(oSource).site.Clone;
   route := TFhirImmunization(oSource).route.Clone;
   doseQuantity := TFhirImmunization(oSource).doseQuantity.Clone;
@@ -12722,35 +12884,35 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'vaccineType') Then
-     list.add(VaccineType.Link);
+     list.add(FVaccineType.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'refusedIndicator') Then
-     list.add(RefusedIndicator.Link);
+     list.add(FRefusedIndicator.Link);
   if (child_name = 'reported') Then
-     list.add(Reported.Link);
+     list.add(FReported.Link);
   if (child_name = 'performer') Then
-     list.add(Performer.Link);
+     list.add(FPerformer.Link);
   if (child_name = 'requester') Then
-     list.add(Requester.Link);
+     list.add(FRequester.Link);
   if (child_name = 'manufacturer') Then
-     list.add(Manufacturer.Link);
+     list.add(FManufacturer.Link);
   if (child_name = 'location') Then
-     list.add(Location.Link);
+     list.add(FLocation.Link);
   if (child_name = 'lotNumber') Then
-     list.add(LotNumber.Link);
+     list.add(FLotNumber.Link);
   if (child_name = 'expirationDate') Then
-     list.add(ExpirationDate.Link);
+     list.add(FExpirationDate.Link);
   if (child_name = 'site') Then
-     list.add(Site.Link);
+     list.add(FSite.Link);
   if (child_name = 'route') Then
-     list.add(Route.Link);
+     list.add(FRoute.Link);
   if (child_name = 'doseQuantity') Then
-     list.add(DoseQuantity.Link);
+     list.add(FDoseQuantity.Link);
   if (child_name = 'explanation') Then
-     list.add(Explanation.Link);
+     list.add(FExplanation.Link);
   if (child_name = 'reaction') Then
      list.addAll(FReactionList);
   if (child_name = 'vaccinationProtocol') Then
@@ -12783,21 +12945,21 @@ end;
 procedure TFhirImmunization.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'vaccineType') then VaccineType := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'refusedIndicator') then RefusedIndicator := propValue as TFhirBoolean{5}
-  else if (propName = 'reported') then Reported := propValue as TFhirBoolean{5}
-  else if (propName = 'performer') then Performer := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'requester') then Requester := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'manufacturer') then Manufacturer := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4}
-  else if (propName = 'lotNumber') then LotNumber := propValue as TFhirString{5}
-  else if (propName = 'expirationDate') then ExpirationDate := propValue as TFhirDate{5}
-  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'doseQuantity') then DoseQuantity := propValue as TFhirQuantity{4}
-  else if (propName = 'explanation') then Explanation := propValue as TFhirImmunizationExplanation{4}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'vaccineType') then VaccineType := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'refusedIndicator') then RefusedIndicatorObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'reported') then ReportedObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'performer') then Performer := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'requester') then Requester := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'manufacturer') then Manufacturer := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4b}
+  else if (propName = 'lotNumber') then LotNumberObject := propValue as TFhirString{5a}
+  else if (propName = 'expirationDate') then ExpirationDateObject := propValue as TFhirDate{5a}
+  else if (propName = 'site') then Site := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'route') then Route := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'doseQuantity') then DoseQuantity := propValue as TFhirQuantity{4b}
+  else if (propName = 'explanation') then Explanation := propValue as TFhirImmunizationExplanation{4b}
   else if (propName = 'reaction') then ReactionList.add(propValue as TFhirImmunizationReaction){2}
   else if (propName = 'vaccinationProtocol') then VaccinationProtocolList.add(propValue as TFhirImmunizationVaccinationProtocol){2}
   else inherited;
@@ -12831,7 +12993,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirImmunization.SetDateST(value : TDateAndTime);
@@ -12869,7 +13031,7 @@ begin
   if FRefusedIndicator = nil then
     result := false
   else
-    result := RefusedIndicator.value;
+    result := FRefusedIndicator.value;
 end;
 
 Procedure TFhirImmunization.SetRefusedIndicatorST(value : Boolean);
@@ -12890,7 +13052,7 @@ begin
   if FReported = nil then
     result := false
   else
-    result := Reported.value;
+    result := FReported.value;
 end;
 
 Procedure TFhirImmunization.SetReportedST(value : Boolean);
@@ -12935,7 +13097,7 @@ begin
   if FLotNumber = nil then
     result := ''
   else
-    result := LotNumber.value;
+    result := FLotNumber.value;
 end;
 
 Procedure TFhirImmunization.SetLotNumberST(value : String);
@@ -12961,7 +13123,7 @@ begin
   if FExpirationDate = nil then
     result := nil
   else
-    result := ExpirationDate.value;
+    result := FExpirationDate.value;
 end;
 
 Procedure TFhirImmunization.SetExpirationDateST(value : TDateAndTime);
@@ -13042,7 +13204,7 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'recommendation') Then
      list.addAll(FRecommendationList);
 end;
@@ -13058,7 +13220,7 @@ end;
 procedure TFhirImmunizationRecommendation.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
   else if (propName = 'recommendation') then RecommendationList.add(propValue as TFhirImmunizationRecommendationRecommendation){2}
   else inherited;
 end;
@@ -13127,8 +13289,8 @@ begin
   code := TFhirList(oSource).code.Clone;
   subject := TFhirList(oSource).subject.Clone;
   source := TFhirList(oSource).source.Clone;
-  date := TFhirList(oSource).date.Clone;
-  ordered := TFhirList(oSource).ordered.Clone;
+  dateObject := TFhirList(oSource).dateObject.Clone;
+  orderedObject := TFhirList(oSource).orderedObject.Clone;
   FMode := TFhirList(oSource).FMode.Link;
   FEntryList.Assign(TFhirList(oSource).FEntryList);
   emptyReason := TFhirList(oSource).emptyReason.Clone;
@@ -13140,21 +13302,21 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'source') Then
-     list.add(Source.Link);
+     list.add(FSource.Link);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'ordered') Then
-     list.add(Ordered.Link);
+     list.add(FOrdered.Link);
   if (child_name = 'mode') Then
      list.add(FMode.Link);
   if (child_name = 'entry') Then
      list.addAll(FEntryList);
   if (child_name = 'emptyReason') Then
-     list.add(EmptyReason.Link);
+     list.add(FEmptyReason.Link);
 end;
 
 procedure TFhirList.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -13174,14 +13336,14 @@ end;
 procedure TFhirList.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'source') then Source := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'ordered') then Ordered := propValue as TFhirBoolean{5}
-  else if (propName = 'mode') then Mode := propValue as TFHIREnum
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'source') then Source := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'ordered') then OrderedObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'mode') then ModeObject := propValue as TFHIREnum
   else if (propName = 'entry') then EntryList.add(propValue as TFhirListEntry){2}
-  else if (propName = 'emptyReason') then EmptyReason := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'emptyReason') then EmptyReason := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -13231,7 +13393,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirList.SetDateST(value : TDateAndTime);
@@ -13257,7 +13419,7 @@ begin
   if FOrdered = nil then
     result := false
   else
-    result := Ordered.value;
+    result := FOrdered.value;
 end;
 
 Procedure TFhirList.SetOrderedST(value : Boolean);
@@ -13278,15 +13440,15 @@ begin
   if FMode = nil then
     result := TFhirListMode(0)
   else
-    result := TFhirListMode(StringArrayIndexOfSensitive(CODES_TFhirListMode, Mode.value));
+    result := TFhirListMode(StringArrayIndexOfSensitive(CODES_TFhirListMode, FMode.value));
 end;
 
 Procedure TFhirList.SetModeST(value : TFhirListMode);
 begin
   if ord(value) = 0 then
-    Mode := nil
+    ModeObject := nil
   else
-    Mode := TFhirEnum.create(CODES_TFhirListMode[value]);
+    ModeObject := TFhirEnum.create(CODES_TFhirListMode[value]);
 end;
 
 Procedure TFhirList.SetEmptyReason(value : TFhirCodeableConcept);
@@ -13335,8 +13497,8 @@ procedure TFhirLocation.Assign(oSource : TAdvObject);
 begin
   inherited;
   identifier := TFhirLocation(oSource).identifier.Clone;
-  name := TFhirLocation(oSource).name.Clone;
-  description := TFhirLocation(oSource).description.Clone;
+  nameObject := TFhirLocation(oSource).nameObject.Clone;
+  descriptionObject := TFhirLocation(oSource).descriptionObject.Clone;
   type_ := TFhirLocation(oSource).type_.Clone;
   FTelecomList.Assign(TFhirLocation(oSource).FTelecomList);
   address := TFhirLocation(oSource).address.Clone;
@@ -13352,27 +13514,27 @@ procedure TFhirLocation.GetChildrenByName(child_name : string; list : TFHIRObjec
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'address') Then
-     list.add(Address.Link);
+     list.add(FAddress.Link);
   if (child_name = 'physicalType') Then
-     list.add(PhysicalType.Link);
+     list.add(FPhysicalType.Link);
   if (child_name = 'position') Then
-     list.add(Position.Link);
+     list.add(FPosition.Link);
   if (child_name = 'managingOrganization') Then
-     list.add(ManagingOrganization.Link);
+     list.add(FManagingOrganization.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'partOf') Then
-     list.add(PartOf.Link);
+     list.add(FPartOf.Link);
   if (child_name = 'mode') Then
      list.add(FMode.Link);
 end;
@@ -13396,18 +13558,18 @@ end;
 
 procedure TFhirLocation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'address') then Address := propValue as TFhirAddress{4}
-  else if (propName = 'physicalType') then PhysicalType := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'position') then Position := propValue as TFhirLocationPosition{4}
-  else if (propName = 'managingOrganization') then ManagingOrganization := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'partOf') then PartOf := propValue as TFhirResourceReference{TFhirLocation}{4}
-  else if (propName = 'mode') then Mode := propValue as TFHIREnum
+  else if (propName = 'address') then Address := propValue as TFhirAddress{4b}
+  else if (propName = 'physicalType') then PhysicalType := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'position') then Position := propValue as TFhirLocationPosition{4b}
+  else if (propName = 'managingOrganization') then ManagingOrganization := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'partOf') then PartOf := propValue as TFhirResourceReference{TFhirLocation}{4b}
+  else if (propName = 'mode') then ModeObject := propValue as TFHIREnum
   else inherited;
 end;
 
@@ -13445,7 +13607,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirLocation.SetNameST(value : String);
@@ -13471,7 +13633,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirLocation.SetDescriptionST(value : String);
@@ -13527,15 +13689,15 @@ begin
   if FStatus = nil then
     result := TFhirLocationStatus(0)
   else
-    result := TFhirLocationStatus(StringArrayIndexOfSensitive(CODES_TFhirLocationStatus, Status.value));
+    result := TFhirLocationStatus(StringArrayIndexOfSensitive(CODES_TFhirLocationStatus, FStatus.value));
 end;
 
 Procedure TFhirLocation.SetStatusST(value : TFhirLocationStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirLocationStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirLocationStatus[value]);
 end;
 
 Procedure TFhirLocation.SetPartOf(value : TFhirResourceReference{TFhirLocation});
@@ -13555,15 +13717,15 @@ begin
   if FMode = nil then
     result := TFhirLocationMode(0)
   else
-    result := TFhirLocationMode(StringArrayIndexOfSensitive(CODES_TFhirLocationMode, Mode.value));
+    result := TFhirLocationMode(StringArrayIndexOfSensitive(CODES_TFhirLocationMode, FMode.value));
 end;
 
 Procedure TFhirLocation.SetModeST(value : TFhirLocationMode);
 begin
   if ord(value) = 0 then
-    Mode := nil
+    ModeObject := nil
   else
-    Mode := TFhirEnum.create(CODES_TFhirLocationMode[value]);
+    ModeObject := TFhirEnum.create(CODES_TFhirLocationMode[value]);
 end;
 
 
@@ -13609,15 +13771,15 @@ begin
   FType_ := TFhirMedia(oSource).FType_.Link;
   subtype := TFhirMedia(oSource).subtype.Clone;
   FIdentifierList.Assign(TFhirMedia(oSource).FIdentifierList);
-  dateTime := TFhirMedia(oSource).dateTime.Clone;
+  dateTimeObject := TFhirMedia(oSource).dateTimeObject.Clone;
   subject := TFhirMedia(oSource).subject.Clone;
   operator := TFhirMedia(oSource).operator.Clone;
   view := TFhirMedia(oSource).view.Clone;
-  deviceName := TFhirMedia(oSource).deviceName.Clone;
-  height := TFhirMedia(oSource).height.Clone;
-  width := TFhirMedia(oSource).width.Clone;
-  frames := TFhirMedia(oSource).frames.Clone;
-  length := TFhirMedia(oSource).length.Clone;
+  deviceNameObject := TFhirMedia(oSource).deviceNameObject.Clone;
+  heightObject := TFhirMedia(oSource).heightObject.Clone;
+  widthObject := TFhirMedia(oSource).widthObject.Clone;
+  framesObject := TFhirMedia(oSource).framesObject.Clone;
+  lengthObject := TFhirMedia(oSource).lengthObject.Clone;
   content := TFhirMedia(oSource).content.Clone;
 end;
 
@@ -13627,29 +13789,29 @@ begin
   if (child_name = 'type') Then
      list.add(FType_.Link);
   if (child_name = 'subtype') Then
-     list.add(Subtype.Link);
+     list.add(FSubtype.Link);
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'dateTime') Then
-     list.add(DateTime.Link);
+     list.add(FDateTime.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'operator') Then
-     list.add(Operator.Link);
+     list.add(FOperator.Link);
   if (child_name = 'view') Then
-     list.add(View.Link);
+     list.add(FView.Link);
   if (child_name = 'deviceName') Then
-     list.add(DeviceName.Link);
+     list.add(FDeviceName.Link);
   if (child_name = 'height') Then
-     list.add(Height.Link);
+     list.add(FHeight.Link);
   if (child_name = 'width') Then
-     list.add(Width.Link);
+     list.add(FWidth.Link);
   if (child_name = 'frames') Then
-     list.add(Frames.Link);
+     list.add(FFrames.Link);
   if (child_name = 'length') Then
-     list.add(Length.Link);
+     list.add(FLength.Link);
   if (child_name = 'content') Then
-     list.add(Content.Link);
+     list.add(FContent.Link);
 end;
 
 procedure TFhirMedia.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -13672,19 +13834,19 @@ end;
 
 procedure TFhirMedia.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFHIREnum
-  else if (propName = 'subtype') then Subtype := propValue as TFhirCodeableConcept{4}
+  if (propName = 'type') then Type_Object := propValue as TFHIREnum
+  else if (propName = 'subtype') then Subtype := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'dateTime') then DateTime := propValue as TFhirDateTime{5}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'operator') then Operator := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'view') then View := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'deviceName') then DeviceName := propValue as TFhirString{5}
-  else if (propName = 'height') then Height := propValue as TFhirInteger{5}
-  else if (propName = 'width') then Width := propValue as TFhirInteger{5}
-  else if (propName = 'frames') then Frames := propValue as TFhirInteger{5}
-  else if (propName = 'length') then Length := propValue as TFhirInteger{5}
-  else if (propName = 'content') then Content := propValue as TFhirAttachment{4}
+  else if (propName = 'dateTime') then DateTimeObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'operator') then Operator := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'view') then View := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'deviceName') then DeviceNameObject := propValue as TFhirString{5a}
+  else if (propName = 'height') then HeightObject := propValue as TFhirInteger{5a}
+  else if (propName = 'width') then WidthObject := propValue as TFhirInteger{5a}
+  else if (propName = 'frames') then FramesObject := propValue as TFhirInteger{5a}
+  else if (propName = 'length') then LengthObject := propValue as TFhirInteger{5a}
+  else if (propName = 'content') then Content := propValue as TFhirAttachment{4b}
   else inherited;
 end;
 
@@ -13716,15 +13878,15 @@ begin
   if FType_ = nil then
     result := TFhirMediaType(0)
   else
-    result := TFhirMediaType(StringArrayIndexOfSensitive(CODES_TFhirMediaType, Type_.value));
+    result := TFhirMediaType(StringArrayIndexOfSensitive(CODES_TFhirMediaType, FType_.value));
 end;
 
 Procedure TFhirMedia.SetType_ST(value : TFhirMediaType);
 begin
   if ord(value) = 0 then
-    Type_ := nil
+    Type_Object := nil
   else
-    Type_ := TFhirEnum.create(CODES_TFhirMediaType[value]);
+    Type_Object := TFhirEnum.create(CODES_TFhirMediaType[value]);
 end;
 
 Procedure TFhirMedia.SetSubtype(value : TFhirCodeableConcept);
@@ -13744,7 +13906,7 @@ begin
   if FDateTime = nil then
     result := nil
   else
-    result := DateTime.value;
+    result := FDateTime.value;
 end;
 
 Procedure TFhirMedia.SetDateTimeST(value : TDateAndTime);
@@ -13788,7 +13950,7 @@ begin
   if FDeviceName = nil then
     result := ''
   else
-    result := DeviceName.value;
+    result := FDeviceName.value;
 end;
 
 Procedure TFhirMedia.SetDeviceNameST(value : String);
@@ -13814,7 +13976,7 @@ begin
   if FHeight = nil then
     result := ''
   else
-    result := Height.value;
+    result := FHeight.value;
 end;
 
 Procedure TFhirMedia.SetHeightST(value : String);
@@ -13840,7 +14002,7 @@ begin
   if FWidth = nil then
     result := ''
   else
-    result := Width.value;
+    result := FWidth.value;
 end;
 
 Procedure TFhirMedia.SetWidthST(value : String);
@@ -13866,7 +14028,7 @@ begin
   if FFrames = nil then
     result := ''
   else
-    result := Frames.value;
+    result := FFrames.value;
 end;
 
 Procedure TFhirMedia.SetFramesST(value : String);
@@ -13892,7 +14054,7 @@ begin
   if FLength = nil then
     result := ''
   else
-    result := Length.value;
+    result := FLength.value;
 end;
 
 Procedure TFhirMedia.SetLengthST(value : String);
@@ -13946,9 +14108,9 @@ end;
 procedure TFhirMedication.Assign(oSource : TAdvObject);
 begin
   inherited;
-  name := TFhirMedication(oSource).name.Clone;
+  nameObject := TFhirMedication(oSource).nameObject.Clone;
   code := TFhirMedication(oSource).code.Clone;
-  isBrand := TFhirMedication(oSource).isBrand.Clone;
+  isBrandObject := TFhirMedication(oSource).isBrandObject.Clone;
   manufacturer := TFhirMedication(oSource).manufacturer.Clone;
   FKind := TFhirMedication(oSource).FKind.Link;
   product := TFhirMedication(oSource).product.Clone;
@@ -13959,19 +14121,19 @@ procedure TFhirMedication.GetChildrenByName(child_name : string; list : TFHIRObj
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'isBrand') Then
-     list.add(IsBrand.Link);
+     list.add(FIsBrand.Link);
   if (child_name = 'manufacturer') Then
-     list.add(Manufacturer.Link);
+     list.add(FManufacturer.Link);
   if (child_name = 'kind') Then
      list.add(FKind.Link);
   if (child_name = 'product') Then
-     list.add(Product.Link);
+     list.add(FProduct.Link);
   if (child_name = 'package') Then
-     list.add(Package.Link);
+     list.add(FPackage.Link);
 end;
 
 procedure TFhirMedication.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -13988,13 +14150,13 @@ end;
 
 procedure TFhirMedication.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'isBrand') then IsBrand := propValue as TFhirBoolean{5}
-  else if (propName = 'manufacturer') then Manufacturer := propValue as TFhirResourceReference{TFhirOrganization}{4}
-  else if (propName = 'kind') then Kind := propValue as TFHIREnum
-  else if (propName = 'product') then Product := propValue as TFhirMedicationProduct{4}
-  else if (propName = 'package') then Package := propValue as TFhirMedicationPackage{4}
+  if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'isBrand') then IsBrandObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'manufacturer') then Manufacturer := propValue as TFhirResourceReference{TFhirOrganization}{4b}
+  else if (propName = 'kind') then KindObject := propValue as TFHIREnum
+  else if (propName = 'product') then Product := propValue as TFhirMedicationProduct{4b}
+  else if (propName = 'package') then Package := propValue as TFhirMedicationPackage{4b}
   else inherited;
 end;
 
@@ -14026,7 +14188,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirMedication.SetNameST(value : String);
@@ -14058,7 +14220,7 @@ begin
   if FIsBrand = nil then
     result := false
   else
-    result := IsBrand.value;
+    result := FIsBrand.value;
 end;
 
 Procedure TFhirMedication.SetIsBrandST(value : Boolean);
@@ -14085,15 +14247,15 @@ begin
   if FKind = nil then
     result := TFhirMedicationKind(0)
   else
-    result := TFhirMedicationKind(StringArrayIndexOfSensitive(CODES_TFhirMedicationKind, Kind.value));
+    result := TFhirMedicationKind(StringArrayIndexOfSensitive(CODES_TFhirMedicationKind, FKind.value));
 end;
 
 Procedure TFhirMedication.SetKindST(value : TFhirMedicationKind);
 begin
   if ord(value) = 0 then
-    Kind := nil
+    KindObject := nil
   else
-    Kind := TFhirEnum.create(CODES_TFhirMedicationKind[value]);
+    KindObject := TFhirEnum.create(CODES_TFhirMedicationKind[value]);
 end;
 
 Procedure TFhirMedication.SetProduct(value : TFhirMedicationProduct);
@@ -14156,7 +14318,7 @@ begin
   practitioner := TFhirMedicationAdministration(oSource).practitioner.Clone;
   encounter := TFhirMedicationAdministration(oSource).encounter.Clone;
   prescription := TFhirMedicationAdministration(oSource).prescription.Clone;
-  wasNotGiven := TFhirMedicationAdministration(oSource).wasNotGiven.Clone;
+  wasNotGivenObject := TFhirMedicationAdministration(oSource).wasNotGivenObject.Clone;
   FReasonNotGivenList.Assign(TFhirMedicationAdministration(oSource).FReasonNotGivenList);
   whenGiven := TFhirMedicationAdministration(oSource).whenGiven.Clone;
   medication := TFhirMedicationAdministration(oSource).medication.Clone;
@@ -14172,21 +14334,21 @@ begin
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'patient') Then
-     list.add(Patient.Link);
+     list.add(FPatient.Link);
   if (child_name = 'practitioner') Then
-     list.add(Practitioner.Link);
+     list.add(FPractitioner.Link);
   if (child_name = 'encounter') Then
-     list.add(Encounter.Link);
+     list.add(FEncounter.Link);
   if (child_name = 'prescription') Then
-     list.add(Prescription.Link);
+     list.add(FPrescription.Link);
   if (child_name = 'wasNotGiven') Then
-     list.add(WasNotGiven.Link);
+     list.add(FWasNotGiven.Link);
   if (child_name = 'reasonNotGiven') Then
      list.addAll(FReasonNotGivenList);
   if (child_name = 'whenGiven') Then
-     list.add(WhenGiven.Link);
+     list.add(FWhenGiven.Link);
   if (child_name = 'medication') Then
-     list.add(Medication.Link);
+     list.add(FMedication.Link);
   if (child_name = 'device') Then
      list.addAll(FDeviceList);
   if (child_name = 'dosage') Then
@@ -14213,15 +14375,15 @@ end;
 procedure TFhirMedicationAdministration.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'practitioner') then Practitioner := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4}
-  else if (propName = 'prescription') then Prescription := propValue as TFhirResourceReference{TFhirMedicationPrescription}{4}
-  else if (propName = 'wasNotGiven') then WasNotGiven := propValue as TFhirBoolean{5}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'practitioner') then Practitioner := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4b}
+  else if (propName = 'prescription') then Prescription := propValue as TFhirResourceReference{TFhirMedicationPrescription}{4b}
+  else if (propName = 'wasNotGiven') then WasNotGivenObject := propValue as TFhirBoolean{5a}
   else if (propName = 'reasonNotGiven') then ReasonNotGivenList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'whenGiven') then WhenGiven := propValue as TFhirPeriod{4}
-  else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4}
+  else if (propName = 'whenGiven') then WhenGiven := propValue as TFhirPeriod{4b}
+  else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4b}
   else if (propName = 'device') then DeviceList.add(propValue as TFhirResourceReference{TFhirDevice}){2}
   else if (propName = 'dosage') then DosageList.add(propValue as TFhirMedicationAdministrationDosage){2}
   else inherited;
@@ -14255,15 +14417,15 @@ begin
   if FStatus = nil then
     result := TFhirMedicationAdminStatus(0)
   else
-    result := TFhirMedicationAdminStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationAdminStatus, Status.value));
+    result := TFhirMedicationAdminStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationAdminStatus, FStatus.value));
 end;
 
 Procedure TFhirMedicationAdministration.SetStatusST(value : TFhirMedicationAdminStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirMedicationAdminStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirMedicationAdminStatus[value]);
 end;
 
 Procedure TFhirMedicationAdministration.SetPatient(value : TFhirResourceReference{TFhirPatient});
@@ -14301,7 +14463,7 @@ begin
   if FWasNotGiven = nil then
     result := false
   else
-    result := WasNotGiven.value;
+    result := FWasNotGiven.value;
 end;
 
 Procedure TFhirMedicationAdministration.SetWasNotGivenST(value : Boolean);
@@ -14371,19 +14533,19 @@ procedure TFhirMedicationDispense.GetChildrenByName(child_name : string; list : 
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'patient') Then
-     list.add(Patient.Link);
+     list.add(FPatient.Link);
   if (child_name = 'dispenser') Then
-     list.add(Dispenser.Link);
+     list.add(FDispenser.Link);
   if (child_name = 'authorizingPrescription') Then
      list.addAll(FAuthorizingPrescriptionList);
   if (child_name = 'dispense') Then
      list.addAll(FDispenseList);
   if (child_name = 'substitution') Then
-     list.add(Substitution.Link);
+     list.add(FSubstitution.Link);
 end;
 
 procedure TFhirMedicationDispense.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -14400,13 +14562,13 @@ end;
 
 procedure TFhirMedicationDispense.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'dispenser') then Dispenser := propValue as TFhirResourceReference{TFhirPractitioner}{4}
+  if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'dispenser') then Dispenser := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
   else if (propName = 'authorizingPrescription') then AuthorizingPrescriptionList.add(propValue as TFhirResourceReference{TFhirMedicationPrescription}){2}
   else if (propName = 'dispense') then DispenseList.add(propValue as TFhirMedicationDispenseDispense){2}
-  else if (propName = 'substitution') then Substitution := propValue as TFhirMedicationDispenseSubstitution{4}
+  else if (propName = 'substitution') then Substitution := propValue as TFhirMedicationDispenseSubstitution{4b}
   else inherited;
 end;
 
@@ -14444,15 +14606,15 @@ begin
   if FStatus = nil then
     result := TFhirMedicationDispenseStatus(0)
   else
-    result := TFhirMedicationDispenseStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationDispenseStatus, Status.value));
+    result := TFhirMedicationDispenseStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationDispenseStatus, FStatus.value));
 end;
 
 Procedure TFhirMedicationDispense.SetStatusST(value : TFhirMedicationDispenseStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirMedicationDispenseStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirMedicationDispenseStatus[value]);
 end;
 
 Procedure TFhirMedicationDispense.SetPatient(value : TFhirResourceReference{TFhirPatient});
@@ -14513,7 +14675,7 @@ procedure TFhirMedicationPrescription.Assign(oSource : TAdvObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirMedicationPrescription(oSource).FIdentifierList);
-  dateWritten := TFhirMedicationPrescription(oSource).dateWritten.Clone;
+  dateWrittenObject := TFhirMedicationPrescription(oSource).dateWrittenObject.Clone;
   FStatus := TFhirMedicationPrescription(oSource).FStatus.Link;
   patient := TFhirMedicationPrescription(oSource).patient.Clone;
   prescriber := TFhirMedicationPrescription(oSource).prescriber.Clone;
@@ -14531,25 +14693,25 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'dateWritten') Then
-     list.add(DateWritten.Link);
+     list.add(FDateWritten.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'patient') Then
-     list.add(Patient.Link);
+     list.add(FPatient.Link);
   if (child_name = 'prescriber') Then
-     list.add(Prescriber.Link);
+     list.add(FPrescriber.Link);
   if (child_name = 'encounter') Then
-     list.add(Encounter.Link);
+     list.add(FEncounter.Link);
   if (child_name = 'reason[x]') Then
-     list.add(Reason.Link);
+     list.add(FReason.Link);
   if (child_name = 'medication') Then
-     list.add(Medication.Link);
+     list.add(FMedication.Link);
   if (child_name = 'dosageInstruction') Then
      list.addAll(FDosageInstructionList);
   if (child_name = 'dispense') Then
-     list.add(Dispense.Link);
+     list.add(FDispense.Link);
   if (child_name = 'substitution') Then
-     list.add(Substitution.Link);
+     list.add(FSubstitution.Link);
 end;
 
 procedure TFhirMedicationPrescription.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -14571,16 +14733,16 @@ end;
 procedure TFhirMedicationPrescription.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'dateWritten') then DateWritten := propValue as TFhirDateTime{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'prescriber') then Prescriber := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4}
-  else if (propName = 'reason[x]') then Reason := propValue as TFhirType{4}
-  else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4}
+  else if (propName = 'dateWritten') then DateWrittenObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'prescriber') then Prescriber := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4b}
+  else if (propName.startsWith('reason')) then Reason := propValue as TFhirType{4}
+  else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4b}
   else if (propName = 'dosageInstruction') then DosageInstructionList.add(propValue as TFhirMedicationPrescriptionDosageInstruction){2}
-  else if (propName = 'dispense') then Dispense := propValue as TFhirMedicationPrescriptionDispense{4}
-  else if (propName = 'substitution') then Substitution := propValue as TFhirMedicationPrescriptionSubstitution{4}
+  else if (propName = 'dispense') then Dispense := propValue as TFhirMedicationPrescriptionDispense{4b}
+  else if (propName = 'substitution') then Substitution := propValue as TFhirMedicationPrescriptionSubstitution{4b}
   else inherited;
 end;
 
@@ -14612,7 +14774,7 @@ begin
   if FDateWritten = nil then
     result := nil
   else
-    result := DateWritten.value;
+    result := FDateWritten.value;
 end;
 
 Procedure TFhirMedicationPrescription.SetDateWrittenST(value : TDateAndTime);
@@ -14638,15 +14800,15 @@ begin
   if FStatus = nil then
     result := TFhirMedicationPrescriptionStatus(0)
   else
-    result := TFhirMedicationPrescriptionStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationPrescriptionStatus, Status.value));
+    result := TFhirMedicationPrescriptionStatus(StringArrayIndexOfSensitive(CODES_TFhirMedicationPrescriptionStatus, FStatus.value));
 end;
 
 Procedure TFhirMedicationPrescription.SetStatusST(value : TFhirMedicationPrescriptionStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirMedicationPrescriptionStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirMedicationPrescriptionStatus[value]);
 end;
 
 Procedure TFhirMedicationPrescription.SetPatient(value : TFhirResourceReference{TFhirPatient});
@@ -14731,7 +14893,7 @@ begin
   inherited;
   FIdentifierList.Assign(TFhirMedicationStatement(oSource).FIdentifierList);
   patient := TFhirMedicationStatement(oSource).patient.Clone;
-  wasNotGiven := TFhirMedicationStatement(oSource).wasNotGiven.Clone;
+  wasNotGivenObject := TFhirMedicationStatement(oSource).wasNotGivenObject.Clone;
   FReasonNotGivenList.Assign(TFhirMedicationStatement(oSource).FReasonNotGivenList);
   whenGiven := TFhirMedicationStatement(oSource).whenGiven.Clone;
   medication := TFhirMedicationStatement(oSource).medication.Clone;
@@ -14745,15 +14907,15 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'patient') Then
-     list.add(Patient.Link);
+     list.add(FPatient.Link);
   if (child_name = 'wasNotGiven') Then
-     list.add(WasNotGiven.Link);
+     list.add(FWasNotGiven.Link);
   if (child_name = 'reasonNotGiven') Then
      list.addAll(FReasonNotGivenList);
   if (child_name = 'whenGiven') Then
-     list.add(WhenGiven.Link);
+     list.add(FWhenGiven.Link);
   if (child_name = 'medication') Then
-     list.add(Medication.Link);
+     list.add(FMedication.Link);
   if (child_name = 'device') Then
      list.addAll(FDeviceList);
   if (child_name = 'dosage') Then
@@ -14776,11 +14938,11 @@ end;
 procedure TFhirMedicationStatement.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'wasNotGiven') then WasNotGiven := propValue as TFhirBoolean{5}
+  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'wasNotGiven') then WasNotGivenObject := propValue as TFhirBoolean{5a}
   else if (propName = 'reasonNotGiven') then ReasonNotGivenList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'whenGiven') then WhenGiven := propValue as TFhirPeriod{4}
-  else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4}
+  else if (propName = 'whenGiven') then WhenGiven := propValue as TFhirPeriod{4b}
+  else if (propName = 'medication') then Medication := propValue as TFhirResourceReference{TFhirMedication}{4b}
   else if (propName = 'device') then DeviceList.add(propValue as TFhirResourceReference{TFhirDevice}){2}
   else if (propName = 'dosage') then DosageList.add(propValue as TFhirMedicationStatementDosage){2}
   else inherited;
@@ -14820,7 +14982,7 @@ begin
   if FWasNotGiven = nil then
     result := false
   else
-    result := WasNotGiven.value;
+    result := FWasNotGiven.value;
 end;
 
 Procedure TFhirMedicationStatement.SetWasNotGivenST(value : Boolean);
@@ -14882,8 +15044,8 @@ end;
 procedure TFhirMessageHeader.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirMessageHeader(oSource).identifier.Clone;
-  timestamp := TFhirMessageHeader(oSource).timestamp.Clone;
+  identifierObject := TFhirMessageHeader(oSource).identifierObject.Clone;
+  timestampObject := TFhirMessageHeader(oSource).timestampObject.Clone;
   event := TFhirMessageHeader(oSource).event.Clone;
   response := TFhirMessageHeader(oSource).response.Clone;
   source := TFhirMessageHeader(oSource).source.Clone;
@@ -14900,27 +15062,27 @@ procedure TFhirMessageHeader.GetChildrenByName(child_name : string; list : TFHIR
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'timestamp') Then
-     list.add(Timestamp.Link);
+     list.add(FTimestamp.Link);
   if (child_name = 'event') Then
-     list.add(Event.Link);
+     list.add(FEvent.Link);
   if (child_name = 'response') Then
-     list.add(Response.Link);
+     list.add(FResponse.Link);
   if (child_name = 'source') Then
-     list.add(Source.Link);
+     list.add(FSource.Link);
   if (child_name = 'destination') Then
      list.addAll(FDestinationList);
   if (child_name = 'enterer') Then
-     list.add(Enterer.Link);
+     list.add(FEnterer.Link);
   if (child_name = 'author') Then
-     list.add(Author.Link);
+     list.add(FAuthor.Link);
   if (child_name = 'receiver') Then
-     list.add(Receiver.Link);
+     list.add(FReceiver.Link);
   if (child_name = 'responsible') Then
-     list.add(Responsible.Link);
+     list.add(FResponsible.Link);
   if (child_name = 'reason') Then
-     list.add(Reason.Link);
+     list.add(FReason.Link);
   if (child_name = 'data') Then
      list.addAll(FDataList);
 end;
@@ -14944,17 +15106,17 @@ end;
 
 procedure TFhirMessageHeader.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirId{5}
-  else if (propName = 'timestamp') then Timestamp := propValue as TFhirInstant{5}
-  else if (propName = 'event') then Event := propValue as TFhirCoding{4}
-  else if (propName = 'response') then Response := propValue as TFhirMessageHeaderResponse{4}
-  else if (propName = 'source') then Source := propValue as TFhirMessageHeaderSource{4}
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirId{5a}
+  else if (propName = 'timestamp') then TimestampObject := propValue as TFhirInstant{5a}
+  else if (propName = 'event') then Event := propValue as TFhirCoding{4b}
+  else if (propName = 'response') then Response := propValue as TFhirMessageHeaderResponse{4b}
+  else if (propName = 'source') then Source := propValue as TFhirMessageHeaderSource{4b}
   else if (propName = 'destination') then DestinationList.add(propValue as TFhirMessageHeaderDestination){2}
-  else if (propName = 'enterer') then Enterer := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'author') then Author := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'receiver') then Receiver := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'responsible') then Responsible := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'reason') then Reason := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'enterer') then Enterer := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'author') then Author := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'receiver') then Receiver := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'responsible') then Responsible := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'reason') then Reason := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'data') then DataList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
 end;
@@ -14987,7 +15149,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirMessageHeader.SetIdentifierST(value : String);
@@ -15013,7 +15175,7 @@ begin
   if FTimestamp = nil then
     result := nil
   else
-    result := Timestamp.value;
+    result := FTimestamp.value;
 end;
 
 Procedure TFhirMessageHeader.SetTimestampST(value : TDateAndTime);
@@ -15124,9 +15286,9 @@ begin
   name := TFhirObservation(oSource).name.Clone;
   value := TFhirObservation(oSource).value.Clone;
   interpretation := TFhirObservation(oSource).interpretation.Clone;
-  comments := TFhirObservation(oSource).comments.Clone;
+  commentsObject := TFhirObservation(oSource).commentsObject.Clone;
   applies := TFhirObservation(oSource).applies.Clone;
-  issued := TFhirObservation(oSource).issued.Clone;
+  issuedObject := TFhirObservation(oSource).issuedObject.Clone;
   FStatus := TFhirObservation(oSource).FStatus.Link;
   FReliability := TFhirObservation(oSource).FReliability.Link;
   bodySite := TFhirObservation(oSource).bodySite.Clone;
@@ -15143,31 +15305,31 @@ procedure TFhirObservation.GetChildrenByName(child_name : string; list : TFHIROb
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'value[x]') Then
-     list.add(Value.Link);
+     list.add(FValue.Link);
   if (child_name = 'interpretation') Then
-     list.add(Interpretation.Link);
+     list.add(FInterpretation.Link);
   if (child_name = 'comments') Then
-     list.add(Comments.Link);
+     list.add(FComments.Link);
   if (child_name = 'applies[x]') Then
-     list.add(Applies.Link);
+     list.add(FApplies.Link);
   if (child_name = 'issued') Then
-     list.add(Issued.Link);
+     list.add(FIssued.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'reliability') Then
      list.add(FReliability.Link);
   if (child_name = 'bodySite') Then
-     list.add(BodySite.Link);
+     list.add(FBodySite.Link);
   if (child_name = 'method') Then
-     list.add(Method.Link);
+     list.add(FMethod.Link);
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'specimen') Then
-     list.add(Specimen.Link);
+     list.add(FSpecimen.Link);
   if (child_name = 'performer') Then
      list.addAll(FPerformerList);
   if (child_name = 'referenceRange') Then
@@ -15199,19 +15361,19 @@ end;
 
 procedure TFhirObservation.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'value[x]') then Value := propValue as TFhirType{4}
-  else if (propName = 'interpretation') then Interpretation := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'comments') then Comments := propValue as TFhirString{5}
-  else if (propName = 'applies[x]') then Applies := propValue as TFhirType{4}
-  else if (propName = 'issued') then Issued := propValue as TFhirInstant{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'reliability') then Reliability := propValue as TFHIREnum
-  else if (propName = 'bodySite') then BodySite := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'specimen') then Specimen := propValue as TFhirResourceReference{TFhirSpecimen}{4}
+  if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('value')) then Value := propValue as TFhirType{4}
+  else if (propName = 'interpretation') then Interpretation := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'comments') then CommentsObject := propValue as TFhirString{5a}
+  else if (propName.startsWith('applies')) then Applies := propValue as TFhirType{4}
+  else if (propName = 'issued') then IssuedObject := propValue as TFhirInstant{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'reliability') then ReliabilityObject := propValue as TFHIREnum
+  else if (propName = 'bodySite') then BodySite := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'method') then Method := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'specimen') then Specimen := propValue as TFhirResourceReference{TFhirSpecimen}{4b}
   else if (propName = 'performer') then PerformerList.add(propValue as TFhirResourceReference{Resource}){2}
   else if (propName = 'referenceRange') then ReferenceRangeList.add(propValue as TFhirObservationReferenceRange){2}
   else if (propName = 'related') then RelatedList.add(propValue as TFhirObservationRelated){2}
@@ -15264,7 +15426,7 @@ begin
   if FComments = nil then
     result := ''
   else
-    result := Comments.value;
+    result := FComments.value;
 end;
 
 Procedure TFhirObservation.SetCommentsST(value : String);
@@ -15296,7 +15458,7 @@ begin
   if FIssued = nil then
     result := nil
   else
-    result := Issued.value;
+    result := FIssued.value;
 end;
 
 Procedure TFhirObservation.SetIssuedST(value : TDateAndTime);
@@ -15322,15 +15484,15 @@ begin
   if FStatus = nil then
     result := TFhirObservationStatus(0)
   else
-    result := TFhirObservationStatus(StringArrayIndexOfSensitive(CODES_TFhirObservationStatus, Status.value));
+    result := TFhirObservationStatus(StringArrayIndexOfSensitive(CODES_TFhirObservationStatus, FStatus.value));
 end;
 
 Procedure TFhirObservation.SetStatusST(value : TFhirObservationStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirObservationStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirObservationStatus[value]);
 end;
 
 Procedure TFhirObservation.SetReliability(value : TFhirEnum);
@@ -15344,15 +15506,15 @@ begin
   if FReliability = nil then
     result := TFhirObservationReliability(0)
   else
-    result := TFhirObservationReliability(StringArrayIndexOfSensitive(CODES_TFhirObservationReliability, Reliability.value));
+    result := TFhirObservationReliability(StringArrayIndexOfSensitive(CODES_TFhirObservationReliability, FReliability.value));
 end;
 
 Procedure TFhirObservation.SetReliabilityST(value : TFhirObservationReliability);
 begin
   if ord(value) = 0 then
-    Reliability := nil
+    ReliabilityObject := nil
   else
-    Reliability := TFhirEnum.create(CODES_TFhirObservationReliability[value]);
+    ReliabilityObject := TFhirEnum.create(CODES_TFhirObservationReliability[value]);
 end;
 
 Procedure TFhirObservation.SetBodySite(value : TFhirCodeableConcept);
@@ -15490,7 +15652,7 @@ procedure TFhirOrder.Assign(oSource : TAdvObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirOrder(oSource).FIdentifierList);
-  date := TFhirOrder(oSource).date.Clone;
+  dateObject := TFhirOrder(oSource).dateObject.Clone;
   subject := TFhirOrder(oSource).subject.Clone;
   source := TFhirOrder(oSource).source.Clone;
   target := TFhirOrder(oSource).target.Clone;
@@ -15506,19 +15668,19 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'source') Then
-     list.add(Source.Link);
+     list.add(FSource.Link);
   if (child_name = 'target') Then
-     list.add(Target.Link);
+     list.add(FTarget.Link);
   if (child_name = 'reason[x]') Then
-     list.add(Reason.Link);
+     list.add(FReason.Link);
   if (child_name = 'authority') Then
-     list.add(Authority.Link);
+     list.add(FAuthority.Link);
   if (child_name = 'when') Then
-     list.add(When.Link);
+     list.add(FWhen.Link);
   if (child_name = 'detail') Then
      list.addAll(FDetailList);
 end;
@@ -15540,13 +15702,13 @@ end;
 procedure TFhirOrder.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'source') then Source := propValue as TFhirResourceReference{TFhirPractitioner}{4}
-  else if (propName = 'target') then Target := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'reason[x]') then Reason := propValue as TFhirType{4}
-  else if (propName = 'authority') then Authority := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'when') then When := propValue as TFhirOrderWhen{4}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'source') then Source := propValue as TFhirResourceReference{TFhirPractitioner}{4b}
+  else if (propName = 'target') then Target := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName.startsWith('reason')) then Reason := propValue as TFhirType{4}
+  else if (propName = 'authority') then Authority := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'when') then When := propValue as TFhirOrderWhen{4b}
   else if (propName = 'detail') then DetailList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
 end;
@@ -15579,7 +15741,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirOrder.SetDateST(value : TDateAndTime);
@@ -15668,11 +15830,11 @@ begin
   inherited;
   FIdentifierList.Assign(TFhirOrderResponse(oSource).FIdentifierList);
   request := TFhirOrderResponse(oSource).request.Clone;
-  date := TFhirOrderResponse(oSource).date.Clone;
+  dateObject := TFhirOrderResponse(oSource).dateObject.Clone;
   who := TFhirOrderResponse(oSource).who.Clone;
   authority := TFhirOrderResponse(oSource).authority.Clone;
   FCode := TFhirOrderResponse(oSource).FCode.Link;
-  description := TFhirOrderResponse(oSource).description.Clone;
+  descriptionObject := TFhirOrderResponse(oSource).descriptionObject.Clone;
   FFulfillmentList.Assign(TFhirOrderResponse(oSource).FFulfillmentList);
 end;
 
@@ -15682,17 +15844,17 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'request') Then
-     list.add(Request.Link);
+     list.add(FRequest.Link);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'who') Then
-     list.add(Who.Link);
+     list.add(FWho.Link);
   if (child_name = 'authority[x]') Then
-     list.add(Authority.Link);
+     list.add(FAuthority.Link);
   if (child_name = 'code') Then
      list.add(FCode.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'fulfillment') Then
      list.addAll(FFulfillmentList);
 end;
@@ -15713,12 +15875,12 @@ end;
 procedure TFhirOrderResponse.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'request') then Request := propValue as TFhirResourceReference{TFhirOrder}{4}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'who') then Who := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'authority[x]') then Authority := propValue as TFhirType{4}
-  else if (propName = 'code') then Code := propValue as TFHIREnum
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
+  else if (propName = 'request') then Request := propValue as TFhirResourceReference{TFhirOrder}{4b}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'who') then Who := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName.startsWith('authority')) then Authority := propValue as TFhirType{4}
+  else if (propName = 'code') then CodeObject := propValue as TFHIREnum
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
   else if (propName = 'fulfillment') then FulfillmentList.add(propValue as TFhirResourceReference{Resource}){2}
   else inherited;
 end;
@@ -15757,7 +15919,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirOrderResponse.SetDateST(value : TDateAndTime);
@@ -15795,15 +15957,15 @@ begin
   if FCode = nil then
     result := TFhirOrderOutcomeCode(0)
   else
-    result := TFhirOrderOutcomeCode(StringArrayIndexOfSensitive(CODES_TFhirOrderOutcomeCode, Code.value));
+    result := TFhirOrderOutcomeCode(StringArrayIndexOfSensitive(CODES_TFhirOrderOutcomeCode, FCode.value));
 end;
 
 Procedure TFhirOrderResponse.SetCodeST(value : TFhirOrderOutcomeCode);
 begin
   if ord(value) = 0 then
-    Code := nil
+    CodeObject := nil
   else
-    Code := TFhirEnum.create(CODES_TFhirOrderOutcomeCode[value]);
+    CodeObject := TFhirEnum.create(CODES_TFhirOrderOutcomeCode[value]);
 end;
 
 Procedure TFhirOrderResponse.SetDescription(value : TFhirString);
@@ -15817,7 +15979,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirOrderResponse.SetDescriptionST(value : String);
@@ -15873,14 +16035,14 @@ procedure TFhirOrganization.Assign(oSource : TAdvObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirOrganization(oSource).FIdentifierList);
-  name := TFhirOrganization(oSource).name.Clone;
+  nameObject := TFhirOrganization(oSource).nameObject.Clone;
   type_ := TFhirOrganization(oSource).type_.Clone;
   FTelecomList.Assign(TFhirOrganization(oSource).FTelecomList);
   FAddressList.Assign(TFhirOrganization(oSource).FAddressList);
   partOf := TFhirOrganization(oSource).partOf.Clone;
   FContactList.Assign(TFhirOrganization(oSource).FContactList);
   FLocationList.Assign(TFhirOrganization(oSource).FLocationList);
-  active := TFhirOrganization(oSource).active.Clone;
+  activeObject := TFhirOrganization(oSource).activeObject.Clone;
 end;
 
 procedure TFhirOrganization.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -15889,21 +16051,21 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'address') Then
      list.addAll(FAddressList);
   if (child_name = 'partOf') Then
-     list.add(PartOf.Link);
+     list.add(FPartOf.Link);
   if (child_name = 'contact') Then
      list.addAll(FContactList);
   if (child_name = 'location') Then
      list.addAll(FLocationList);
   if (child_name = 'active') Then
-     list.add(Active.Link);
+     list.add(FActive.Link);
 end;
 
 procedure TFhirOrganization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -15923,14 +16085,14 @@ end;
 procedure TFhirOrganization.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
   else if (propName = 'address') then AddressList.add(propValue as TFhirAddress){2}
-  else if (propName = 'partOf') then PartOf := propValue as TFhirResourceReference{TFhirOrganization}{4}
+  else if (propName = 'partOf') then PartOf := propValue as TFhirResourceReference{TFhirOrganization}{4b}
   else if (propName = 'contact') then ContactList.add(propValue as TFhirOrganizationContact){2}
   else if (propName = 'location') then LocationList.add(propValue as TFhirResourceReference{TFhirLocation}){2}
-  else if (propName = 'active') then Active := propValue as TFhirBoolean{5}
+  else if (propName = 'active') then ActiveObject := propValue as TFhirBoolean{5a}
   else inherited;
 end;
 
@@ -15962,7 +16124,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirOrganization.SetNameST(value : String);
@@ -16000,7 +16162,7 @@ begin
   if FActive = nil then
     result := false
   else
-    result := Active.value;
+    result := FActive.value;
 end;
 
 Procedure TFhirOrganization.SetActiveST(value : Boolean);
@@ -16046,7 +16208,7 @@ begin
   code := TFhirOther(oSource).code.Clone;
   subject := TFhirOther(oSource).subject.Clone;
   author := TFhirOther(oSource).author.Clone;
-  created := TFhirOther(oSource).created.Clone;
+  createdObject := TFhirOther(oSource).createdObject.Clone;
 end;
 
 procedure TFhirOther.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -16055,13 +16217,13 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'code') Then
-     list.add(Code.Link);
+     list.add(FCode.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'author') Then
-     list.add(Author.Link);
+     list.add(FAuthor.Link);
   if (child_name = 'created') Then
-     list.add(Created.Link);
+     list.add(FCreated.Link);
 end;
 
 procedure TFhirOther.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -16077,10 +16239,10 @@ end;
 procedure TFhirOther.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'author') then Author := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'created') then Created := propValue as TFhirDate{5}
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'author') then Author := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'created') then CreatedObject := propValue as TFhirDate{5a}
   else inherited;
 end;
 
@@ -16130,7 +16292,7 @@ begin
   if FCreated = nil then
     result := nil
   else
-    result := Created.value;
+    result := FCreated.value;
 end;
 
 Procedure TFhirOther.SetCreatedST(value : TDateAndTime);
@@ -16201,7 +16363,7 @@ begin
   FNameList.Assign(TFhirPatient(oSource).FNameList);
   FTelecomList.Assign(TFhirPatient(oSource).FTelecomList);
   gender := TFhirPatient(oSource).gender.Clone;
-  birthDate := TFhirPatient(oSource).birthDate.Clone;
+  birthDateObject := TFhirPatient(oSource).birthDateObject.Clone;
   deceased := TFhirPatient(oSource).deceased.Clone;
   FAddressList.Assign(TFhirPatient(oSource).FAddressList);
   maritalStatus := TFhirPatient(oSource).maritalStatus.Clone;
@@ -16213,7 +16375,7 @@ begin
   FCareProviderList.Assign(TFhirPatient(oSource).FCareProviderList);
   managingOrganization := TFhirPatient(oSource).managingOrganization.Clone;
   FLink_List.Assign(TFhirPatient(oSource).FLink_List);
-  active := TFhirPatient(oSource).active.Clone;
+  activeObject := TFhirPatient(oSource).activeObject.Clone;
 end;
 
 procedure TFhirPatient.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -16226,33 +16388,33 @@ begin
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'gender') Then
-     list.add(Gender.Link);
+     list.add(FGender.Link);
   if (child_name = 'birthDate') Then
-     list.add(BirthDate.Link);
+     list.add(FBirthDate.Link);
   if (child_name = 'deceased[x]') Then
-     list.add(Deceased.Link);
+     list.add(FDeceased.Link);
   if (child_name = 'address') Then
      list.addAll(FAddressList);
   if (child_name = 'maritalStatus') Then
-     list.add(MaritalStatus.Link);
+     list.add(FMaritalStatus.Link);
   if (child_name = 'multipleBirth[x]') Then
-     list.add(MultipleBirth.Link);
+     list.add(FMultipleBirth.Link);
   if (child_name = 'photo') Then
      list.addAll(FPhotoList);
   if (child_name = 'contact') Then
      list.addAll(FContactList);
   if (child_name = 'animal') Then
-     list.add(Animal.Link);
+     list.add(FAnimal.Link);
   if (child_name = 'communication') Then
      list.addAll(FCommunicationList);
   if (child_name = 'careProvider') Then
      list.addAll(FCareProviderList);
   if (child_name = 'managingOrganization') Then
-     list.add(ManagingOrganization.Link);
+     list.add(FManagingOrganization.Link);
   if (child_name = 'link') Then
      list.addAll(FLink_List);
   if (child_name = 'active') Then
-     list.add(Active.Link);
+     list.add(FActive.Link);
 end;
 
 procedure TFhirPatient.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -16282,20 +16444,20 @@ begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
   else if (propName = 'name') then NameList.add(propValue as TFhirHumanName){2}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'birthDate') then BirthDate := propValue as TFhirDateTime{5}
-  else if (propName = 'deceased[x]') then Deceased := propValue as TFhirType{4}
+  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'birthDate') then BirthDateObject := propValue as TFhirDateTime{5a}
+  else if (propName.startsWith('deceased')) then Deceased := propValue as TFhirType{4}
   else if (propName = 'address') then AddressList.add(propValue as TFhirAddress){2}
-  else if (propName = 'maritalStatus') then MaritalStatus := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'multipleBirth[x]') then MultipleBirth := propValue as TFhirType{4}
+  else if (propName = 'maritalStatus') then MaritalStatus := propValue as TFhirCodeableConcept{4b}
+  else if (propName.startsWith('multipleBirth')) then MultipleBirth := propValue as TFhirType{4}
   else if (propName = 'photo') then PhotoList.add(propValue as TFhirAttachment){2}
   else if (propName = 'contact') then ContactList.add(propValue as TFhirPatientContact){2}
-  else if (propName = 'animal') then Animal := propValue as TFhirPatientAnimal{4}
+  else if (propName = 'animal') then Animal := propValue as TFhirPatientAnimal{4b}
   else if (propName = 'communication') then CommunicationList.add(propValue as TFhirCodeableConcept){2}
   else if (propName = 'careProvider') then CareProviderList.add(propValue as TFhirResourceReference{Resource}){2}
-  else if (propName = 'managingOrganization') then ManagingOrganization := propValue as TFhirResourceReference{TFhirOrganization}{4}
+  else if (propName = 'managingOrganization') then ManagingOrganization := propValue as TFhirResourceReference{TFhirOrganization}{4b}
   else if (propName = 'link') then Link_List.add(propValue as TFhirPatientLink){2}
-  else if (propName = 'active') then Active := propValue as TFhirBoolean{5}
+  else if (propName = 'active') then ActiveObject := propValue as TFhirBoolean{5a}
   else inherited;
 end;
 
@@ -16333,7 +16495,7 @@ begin
   if FBirthDate = nil then
     result := nil
   else
-    result := BirthDate.value;
+    result := FBirthDate.value;
 end;
 
 Procedure TFhirPatient.SetBirthDateST(value : TDateAndTime);
@@ -16389,7 +16551,7 @@ begin
   if FActive = nil then
     result := false
   else
-    result := Active.value;
+    result := FActive.value;
 end;
 
 Procedure TFhirPatient.SetActiveST(value : Boolean);
@@ -16452,7 +16614,7 @@ begin
   FTelecomList.Assign(TFhirPractitioner(oSource).FTelecomList);
   address := TFhirPractitioner(oSource).address.Clone;
   gender := TFhirPractitioner(oSource).gender.Clone;
-  birthDate := TFhirPractitioner(oSource).birthDate.Clone;
+  birthDateObject := TFhirPractitioner(oSource).birthDateObject.Clone;
   FPhotoList.Assign(TFhirPractitioner(oSource).FPhotoList);
   organization := TFhirPractitioner(oSource).organization.Clone;
   FRoleList.Assign(TFhirPractitioner(oSource).FRoleList);
@@ -16469,25 +16631,25 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'address') Then
-     list.add(Address.Link);
+     list.add(FAddress.Link);
   if (child_name = 'gender') Then
-     list.add(Gender.Link);
+     list.add(FGender.Link);
   if (child_name = 'birthDate') Then
-     list.add(BirthDate.Link);
+     list.add(FBirthDate.Link);
   if (child_name = 'photo') Then
      list.addAll(FPhotoList);
   if (child_name = 'organization') Then
-     list.add(Organization.Link);
+     list.add(FOrganization.Link);
   if (child_name = 'role') Then
      list.addAll(FRoleList);
   if (child_name = 'specialty') Then
      list.addAll(FSpecialtyList);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
   if (child_name = 'location') Then
      list.addAll(FLocationList);
   if (child_name = 'qualification') Then
@@ -16518,16 +16680,16 @@ end;
 procedure TFhirPractitioner.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'name') then Name := propValue as TFhirHumanName{4}
+  else if (propName = 'name') then Name := propValue as TFhirHumanName{4b}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'address') then Address := propValue as TFhirAddress{4}
-  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'birthDate') then BirthDate := propValue as TFhirDateTime{5}
+  else if (propName = 'address') then Address := propValue as TFhirAddress{4b}
+  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'birthDate') then BirthDateObject := propValue as TFhirDateTime{5a}
   else if (propName = 'photo') then PhotoList.add(propValue as TFhirAttachment){2}
-  else if (propName = 'organization') then Organization := propValue as TFhirResourceReference{TFhirOrganization}{4}
+  else if (propName = 'organization') then Organization := propValue as TFhirResourceReference{TFhirOrganization}{4b}
   else if (propName = 'role') then RoleList.add(propValue as TFhirCodeableConcept){2}
   else if (propName = 'specialty') then SpecialtyList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else if (propName = 'location') then LocationList.add(propValue as TFhirResourceReference{TFhirLocation}){2}
   else if (propName = 'qualification') then QualificationList.add(propValue as TFhirPractitionerQualification){2}
   else if (propName = 'communication') then CommunicationList.add(propValue as TFhirCodeableConcept){2}
@@ -16580,7 +16742,7 @@ begin
   if FBirthDate = nil then
     result := nil
   else
-    result := BirthDate.value;
+    result := FBirthDate.value;
 end;
 
 Procedure TFhirPractitioner.SetBirthDateST(value : TDateAndTime);
@@ -16662,12 +16824,12 @@ begin
   FPerformerList.Assign(TFhirProcedure(oSource).FPerformerList);
   date := TFhirProcedure(oSource).date.Clone;
   encounter := TFhirProcedure(oSource).encounter.Clone;
-  outcome := TFhirProcedure(oSource).outcome.Clone;
+  outcomeObject := TFhirProcedure(oSource).outcomeObject.Clone;
   FReportList.Assign(TFhirProcedure(oSource).FReportList);
   FComplicationList.Assign(TFhirProcedure(oSource).FComplicationList);
-  followUp := TFhirProcedure(oSource).followUp.Clone;
+  followUpObject := TFhirProcedure(oSource).followUpObject.Clone;
   FRelatedItemList.Assign(TFhirProcedure(oSource).FRelatedItemList);
-  notes := TFhirProcedure(oSource).notes.Clone;
+  notesObject := TFhirProcedure(oSource).notesObject.Clone;
 end;
 
 procedure TFhirProcedure.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -16676,9 +16838,9 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'bodySite') Then
      list.addAll(FBodySiteList);
   if (child_name = 'indication') Then
@@ -16686,21 +16848,21 @@ begin
   if (child_name = 'performer') Then
      list.addAll(FPerformerList);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'encounter') Then
-     list.add(Encounter.Link);
+     list.add(FEncounter.Link);
   if (child_name = 'outcome') Then
-     list.add(Outcome.Link);
+     list.add(FOutcome.Link);
   if (child_name = 'report') Then
      list.addAll(FReportList);
   if (child_name = 'complication') Then
      list.addAll(FComplicationList);
   if (child_name = 'followUp') Then
-     list.add(FollowUp.Link);
+     list.add(FFollowUp.Link);
   if (child_name = 'relatedItem') Then
      list.addAll(FRelatedItemList);
   if (child_name = 'notes') Then
-     list.add(Notes.Link);
+     list.add(FNotes.Link);
 end;
 
 procedure TFhirProcedure.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -16725,19 +16887,19 @@ end;
 procedure TFhirProcedure.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'bodySite') then BodySiteList.add(propValue as TFhirCodeableConcept){2}
   else if (propName = 'indication') then IndicationList.add(propValue as TFhirCodeableConcept){2}
   else if (propName = 'performer') then PerformerList.add(propValue as TFhirProcedurePerformer){2}
-  else if (propName = 'date') then Date := propValue as TFhirPeriod{4}
-  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4}
-  else if (propName = 'outcome') then Outcome := propValue as TFhirString{5}
+  else if (propName = 'date') then Date := propValue as TFhirPeriod{4b}
+  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4b}
+  else if (propName = 'outcome') then OutcomeObject := propValue as TFhirString{5a}
   else if (propName = 'report') then ReportList.add(propValue as TFhirResourceReference{TFhirDiagnosticReport}){2}
   else if (propName = 'complication') then ComplicationList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'followUp') then FollowUp := propValue as TFhirString{5}
+  else if (propName = 'followUp') then FollowUpObject := propValue as TFhirString{5a}
   else if (propName = 'relatedItem') then RelatedItemList.add(propValue as TFhirProcedureRelatedItem){2}
-  else if (propName = 'notes') then Notes := propValue as TFhirString{5}
+  else if (propName = 'notes') then NotesObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -16793,7 +16955,7 @@ begin
   if FOutcome = nil then
     result := ''
   else
-    result := Outcome.value;
+    result := FOutcome.value;
 end;
 
 Procedure TFhirProcedure.SetOutcomeST(value : String);
@@ -16819,7 +16981,7 @@ begin
   if FFollowUp = nil then
     result := ''
   else
-    result := FollowUp.value;
+    result := FFollowUp.value;
 end;
 
 Procedure TFhirProcedure.SetFollowUpST(value : String);
@@ -16845,7 +17007,7 @@ begin
   if FNotes = nil then
     result := ''
   else
-    result := Notes.value;
+    result := FNotes.value;
 end;
 
 Procedure TFhirProcedure.SetNotesST(value : String);
@@ -16908,18 +17070,18 @@ end;
 procedure TFhirProfile.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirProfile(oSource).identifier.Clone;
-  version := TFhirProfile(oSource).version.Clone;
-  name := TFhirProfile(oSource).name.Clone;
-  publisher := TFhirProfile(oSource).publisher.Clone;
+  identifierObject := TFhirProfile(oSource).identifierObject.Clone;
+  versionObject := TFhirProfile(oSource).versionObject.Clone;
+  nameObject := TFhirProfile(oSource).nameObject.Clone;
+  publisherObject := TFhirProfile(oSource).publisherObject.Clone;
   FTelecomList.Assign(TFhirProfile(oSource).FTelecomList);
-  description := TFhirProfile(oSource).description.Clone;
+  descriptionObject := TFhirProfile(oSource).descriptionObject.Clone;
   FCodeList.Assign(TFhirProfile(oSource).FCodeList);
   FStatus := TFhirProfile(oSource).FStatus.Link;
-  experimental := TFhirProfile(oSource).experimental.Clone;
-  date := TFhirProfile(oSource).date.Clone;
-  requirements := TFhirProfile(oSource).requirements.Clone;
-  fhirVersion := TFhirProfile(oSource).fhirVersion.Clone;
+  experimentalObject := TFhirProfile(oSource).experimentalObject.Clone;
+  dateObject := TFhirProfile(oSource).dateObject.Clone;
+  requirementsObject := TFhirProfile(oSource).requirementsObject.Clone;
+  fhirVersionObject := TFhirProfile(oSource).fhirVersionObject.Clone;
   FMappingList.Assign(TFhirProfile(oSource).FMappingList);
   FStructureList.Assign(TFhirProfile(oSource).FStructureList);
   FExtensionDefnList.Assign(TFhirProfile(oSource).FExtensionDefnList);
@@ -16930,29 +17092,29 @@ procedure TFhirProfile.GetChildrenByName(child_name : string; list : TFHIRObject
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'publisher') Then
-     list.add(Publisher.Link);
+     list.add(FPublisher.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'code') Then
      list.addAll(FCodeList);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'experimental') Then
-     list.add(Experimental.Link);
+     list.add(FExperimental.Link);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'requirements') Then
-     list.add(Requirements.Link);
+     list.add(FRequirements.Link);
   if (child_name = 'fhirVersion') Then
-     list.add(FhirVersion.Link);
+     list.add(FFhirVersion.Link);
   if (child_name = 'mapping') Then
      list.addAll(FMappingList);
   if (child_name = 'structure') Then
@@ -16986,18 +17148,18 @@ end;
 
 procedure TFhirProfile.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirString{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'publisher') then Publisher := propValue as TFhirString{5}
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirString{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'publisher') then PublisherObject := propValue as TFhirString{5a}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
   else if (propName = 'code') then CodeList.add(propValue as TFhirCoding){2}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'experimental') then Experimental := propValue as TFhirBoolean{5}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'requirements') then Requirements := propValue as TFhirString{5}
-  else if (propName = 'fhirVersion') then FhirVersion := propValue as TFhirId{5}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'experimental') then ExperimentalObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'requirements') then RequirementsObject := propValue as TFhirString{5a}
+  else if (propName = 'fhirVersion') then FhirVersionObject := propValue as TFhirId{5a}
   else if (propName = 'mapping') then MappingList.add(propValue as TFhirProfileMapping){2}
   else if (propName = 'structure') then StructureList.add(propValue as TFhirProfileStructure){2}
   else if (propName = 'extensionDefn') then ExtensionDefnList.add(propValue as TFhirProfileExtensionDefn){2}
@@ -17033,7 +17195,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirProfile.SetIdentifierST(value : String);
@@ -17059,7 +17221,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirProfile.SetVersionST(value : String);
@@ -17085,7 +17247,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirProfile.SetNameST(value : String);
@@ -17111,7 +17273,7 @@ begin
   if FPublisher = nil then
     result := ''
   else
-    result := Publisher.value;
+    result := FPublisher.value;
 end;
 
 Procedure TFhirProfile.SetPublisherST(value : String);
@@ -17137,7 +17299,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirProfile.SetDescriptionST(value : String);
@@ -17163,15 +17325,15 @@ begin
   if FStatus = nil then
     result := TFhirResourceProfileStatus(0)
   else
-    result := TFhirResourceProfileStatus(StringArrayIndexOfSensitive(CODES_TFhirResourceProfileStatus, Status.value));
+    result := TFhirResourceProfileStatus(StringArrayIndexOfSensitive(CODES_TFhirResourceProfileStatus, FStatus.value));
 end;
 
 Procedure TFhirProfile.SetStatusST(value : TFhirResourceProfileStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirResourceProfileStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirResourceProfileStatus[value]);
 end;
 
 Procedure TFhirProfile.SetExperimental(value : TFhirBoolean);
@@ -17185,7 +17347,7 @@ begin
   if FExperimental = nil then
     result := false
   else
-    result := Experimental.value;
+    result := FExperimental.value;
 end;
 
 Procedure TFhirProfile.SetExperimentalST(value : Boolean);
@@ -17206,7 +17368,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirProfile.SetDateST(value : TDateAndTime);
@@ -17232,7 +17394,7 @@ begin
   if FRequirements = nil then
     result := ''
   else
-    result := Requirements.value;
+    result := FRequirements.value;
 end;
 
 Procedure TFhirProfile.SetRequirementsST(value : String);
@@ -17258,7 +17420,7 @@ begin
   if FFhirVersion = nil then
     result := ''
   else
-    result := FhirVersion.value;
+    result := FFhirVersion.value;
 end;
 
 Procedure TFhirProfile.SetFhirVersionST(value : String);
@@ -17314,13 +17476,13 @@ begin
   inherited;
   FTargetList.Assign(TFhirProvenance(oSource).FTargetList);
   period := TFhirProvenance(oSource).period.Clone;
-  recorded := TFhirProvenance(oSource).recorded.Clone;
+  recordedObject := TFhirProvenance(oSource).recordedObject.Clone;
   reason := TFhirProvenance(oSource).reason.Clone;
   location := TFhirProvenance(oSource).location.Clone;
   FPolicyList.Assign(TFhirProvenance(oSource).FPolicyList);
   FAgentList.Assign(TFhirProvenance(oSource).FAgentList);
   FEntityList.Assign(TFhirProvenance(oSource).FEntityList);
-  integritySignature := TFhirProvenance(oSource).integritySignature.Clone;
+  integritySignatureObject := TFhirProvenance(oSource).integritySignatureObject.Clone;
 end;
 
 procedure TFhirProvenance.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -17329,13 +17491,13 @@ begin
   if (child_name = 'target') Then
      list.addAll(FTargetList);
   if (child_name = 'period') Then
-     list.add(Period.Link);
+     list.add(FPeriod.Link);
   if (child_name = 'recorded') Then
-     list.add(Recorded.Link);
+     list.add(FRecorded.Link);
   if (child_name = 'reason') Then
-     list.add(Reason.Link);
+     list.add(FReason.Link);
   if (child_name = 'location') Then
-     list.add(Location.Link);
+     list.add(FLocation.Link);
   if (child_name = 'policy') Then
      list.addAll(FPolicyList);
   if (child_name = 'agent') Then
@@ -17343,7 +17505,7 @@ begin
   if (child_name = 'entity') Then
      list.addAll(FEntityList);
   if (child_name = 'integritySignature') Then
-     list.add(IntegritySignature.Link);
+     list.add(FIntegritySignature.Link);
 end;
 
 procedure TFhirProvenance.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -17363,14 +17525,14 @@ end;
 procedure TFhirProvenance.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'target') then TargetList.add(propValue as TFhirResourceReference{Resource}){2}
-  else if (propName = 'period') then Period := propValue as TFhirPeriod{4}
-  else if (propName = 'recorded') then Recorded := propValue as TFhirInstant{5}
-  else if (propName = 'reason') then Reason := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4}
+  else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
+  else if (propName = 'recorded') then RecordedObject := propValue as TFhirInstant{5a}
+  else if (propName = 'reason') then Reason := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'location') then Location := propValue as TFhirResourceReference{TFhirLocation}{4b}
   else if (propName = 'policy') then PolicyList.add(propValue as TFhirUri){2}
   else if (propName = 'agent') then AgentList.add(propValue as TFhirProvenanceAgent){2}
   else if (propName = 'entity') then EntityList.add(propValue as TFhirProvenanceEntity){2}
-  else if (propName = 'integritySignature') then IntegritySignature := propValue as TFhirString{5}
+  else if (propName = 'integritySignature') then IntegritySignatureObject := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -17408,7 +17570,7 @@ begin
   if FRecorded = nil then
     result := nil
   else
-    result := Recorded.value;
+    result := FRecorded.value;
 end;
 
 Procedure TFhirProvenance.SetRecordedST(value : TDateAndTime);
@@ -17446,7 +17608,7 @@ begin
   if FIntegritySignature = nil then
     result := ''
   else
-    result := IntegritySignature.value;
+    result := FIntegritySignature.value;
 end;
 
 Procedure TFhirProvenance.SetIntegritySignatureST(value : String);
@@ -17491,7 +17653,7 @@ end;
 procedure TFhirQuery.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirQuery(oSource).identifier.Clone;
+  identifierObject := TFhirQuery(oSource).identifierObject.Clone;
   FParameterList.Assign(TFhirQuery(oSource).FParameterList);
   response := TFhirQuery(oSource).response.Clone;
 end;
@@ -17500,11 +17662,11 @@ procedure TFhirQuery.GetChildrenByName(child_name : string; list : TFHIRObjectLi
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'parameter') Then
      list.addAll(FParameterList);
   if (child_name = 'response') Then
-     list.add(Response.Link);
+     list.add(FResponse.Link);
 end;
 
 procedure TFhirQuery.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -17517,9 +17679,9 @@ end;
 
 procedure TFhirQuery.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirUri{5}
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirUri{5a}
   else if (propName = 'parameter') then ParameterList.add(propValue as TFhirExtension){2}
-  else if (propName = 'response') then Response := propValue as TFhirQueryResponse{4}
+  else if (propName = 'response') then Response := propValue as TFhirQueryResponse{4b}
   else inherited;
 end;
 
@@ -17551,7 +17713,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirQuery.SetIdentifierST(value : String);
@@ -17609,7 +17771,7 @@ procedure TFhirQuestionnaire.Assign(oSource : TAdvObject);
 begin
   inherited;
   FStatus := TFhirQuestionnaire(oSource).FStatus.Link;
-  authored := TFhirQuestionnaire(oSource).authored.Clone;
+  authoredObject := TFhirQuestionnaire(oSource).authoredObject.Clone;
   subject := TFhirQuestionnaire(oSource).subject.Clone;
   author := TFhirQuestionnaire(oSource).author.Clone;
   source := TFhirQuestionnaire(oSource).source.Clone;
@@ -17625,21 +17787,21 @@ begin
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'authored') Then
-     list.add(Authored.Link);
+     list.add(FAuthored.Link);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'author') Then
-     list.add(Author.Link);
+     list.add(FAuthor.Link);
   if (child_name = 'source') Then
-     list.add(Source.Link);
+     list.add(FSource.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'encounter') Then
-     list.add(Encounter.Link);
+     list.add(FEncounter.Link);
   if (child_name = 'group') Then
-     list.add(Group.Link);
+     list.add(FGroup.Link);
 end;
 
 procedure TFhirQuestionnaire.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -17658,15 +17820,15 @@ end;
 
 procedure TFhirQuestionnaire.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'authored') then Authored := propValue as TFhirDateTime{5}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'author') then Author := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'source') then Source := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4}
+  if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'authored') then AuthoredObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'author') then Author := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'source') then Source := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'name') then Name := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4}
-  else if (propName = 'group') then Group := propValue as TFhirQuestionnaireGroup{4}
+  else if (propName = 'encounter') then Encounter := propValue as TFhirResourceReference{TFhirEncounter}{4b}
+  else if (propName = 'group') then Group := propValue as TFhirQuestionnaireGroup{4b}
   else inherited;
 end;
 
@@ -17698,15 +17860,15 @@ begin
   if FStatus = nil then
     result := TFhirQuestionnaireStatus(0)
   else
-    result := TFhirQuestionnaireStatus(StringArrayIndexOfSensitive(CODES_TFhirQuestionnaireStatus, Status.value));
+    result := TFhirQuestionnaireStatus(StringArrayIndexOfSensitive(CODES_TFhirQuestionnaireStatus, FStatus.value));
 end;
 
 Procedure TFhirQuestionnaire.SetStatusST(value : TFhirQuestionnaireStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirQuestionnaireStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirQuestionnaireStatus[value]);
 end;
 
 Procedure TFhirQuestionnaire.SetAuthored(value : TFhirDateTime);
@@ -17720,7 +17882,7 @@ begin
   if FAuthored = nil then
     result := nil
   else
-    result := Authored.value;
+    result := FAuthored.value;
 end;
 
 Procedure TFhirQuestionnaire.SetAuthoredST(value : TDateAndTime);
@@ -17824,17 +17986,17 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'patient') Then
-     list.add(Patient.Link);
+     list.add(FPatient.Link);
   if (child_name = 'relationship') Then
-     list.add(Relationship.Link);
+     list.add(FRelationship.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'gender') Then
-     list.add(Gender.Link);
+     list.add(FGender.Link);
   if (child_name = 'address') Then
-     list.add(Address.Link);
+     list.add(FAddress.Link);
   if (child_name = 'photo') Then
      list.addAll(FPhotoList);
 end;
@@ -17855,12 +18017,12 @@ end;
 procedure TFhirRelatedPerson.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
-  else if (propName = 'relationship') then Relationship := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'name') then Name := propValue as TFhirHumanName{4}
+  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4b}
+  else if (propName = 'relationship') then Relationship := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'name') then Name := propValue as TFhirHumanName{4b}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'address') then Address := propValue as TFhirAddress{4}
+  else if (propName = 'gender') then Gender := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'address') then Address := propValue as TFhirAddress{4b}
   else if (propName = 'photo') then PhotoList.add(propValue as TFhirAttachment){2}
   else inherited;
 end;
@@ -17954,11 +18116,11 @@ procedure TFhirSecurityEvent.GetChildrenByName(child_name : string; list : TFHIR
 begin
   inherited;
   if (child_name = 'event') Then
-     list.add(Event.Link);
+     list.add(FEvent.Link);
   if (child_name = 'participant') Then
      list.addAll(FParticipantList);
   if (child_name = 'source') Then
-     list.add(Source.Link);
+     list.add(FSource.Link);
   if (child_name = 'object') Then
      list.addAll(FObject_List);
 end;
@@ -17974,9 +18136,9 @@ end;
 
 procedure TFhirSecurityEvent.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'event') then Event := propValue as TFhirSecurityEventEvent{4}
+  if (propName = 'event') then Event := propValue as TFhirSecurityEventEvent{4b}
   else if (propName = 'participant') then ParticipantList.add(propValue as TFhirSecurityEventParticipant){2}
-  else if (propName = 'source') then Source := propValue as TFhirSecurityEventSource{4}
+  else if (propName = 'source') then Source := propValue as TFhirSecurityEventSource{4b}
   else if (propName = 'object') then Object_List.add(propValue as TFhirSecurityEventObject){2}
   else inherited;
 end;
@@ -18054,7 +18216,7 @@ begin
   FSourceList.Assign(TFhirSpecimen(oSource).FSourceList);
   subject := TFhirSpecimen(oSource).subject.Clone;
   accessionIdentifier := TFhirSpecimen(oSource).accessionIdentifier.Clone;
-  receivedTime := TFhirSpecimen(oSource).receivedTime.Clone;
+  receivedTimeObject := TFhirSpecimen(oSource).receivedTimeObject.Clone;
   collection := TFhirSpecimen(oSource).collection.Clone;
   FTreatmentList.Assign(TFhirSpecimen(oSource).FTreatmentList);
   FContainerList.Assign(TFhirSpecimen(oSource).FContainerList);
@@ -18066,17 +18228,17 @@ begin
   if (child_name = 'identifier') Then
      list.addAll(FIdentifierList);
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'source') Then
      list.addAll(FSourceList);
   if (child_name = 'subject') Then
-     list.add(Subject.Link);
+     list.add(FSubject.Link);
   if (child_name = 'accessionIdentifier') Then
-     list.add(AccessionIdentifier.Link);
+     list.add(FAccessionIdentifier.Link);
   if (child_name = 'receivedTime') Then
-     list.add(ReceivedTime.Link);
+     list.add(FReceivedTime.Link);
   if (child_name = 'collection') Then
-     list.add(Collection.Link);
+     list.add(FCollection.Link);
   if (child_name = 'treatment') Then
      list.addAll(FTreatmentList);
   if (child_name = 'container') Then
@@ -18100,12 +18262,12 @@ end;
 procedure TFhirSpecimen.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'identifier') then IdentifierList.add(propValue as TFhirIdentifier){2}
-  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'source') then SourceList.add(propValue as TFhirSpecimenSource){2}
-  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'accessionIdentifier') then AccessionIdentifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'receivedTime') then ReceivedTime := propValue as TFhirDateTime{5}
-  else if (propName = 'collection') then Collection := propValue as TFhirSpecimenCollection{4}
+  else if (propName = 'subject') then Subject := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'accessionIdentifier') then AccessionIdentifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'receivedTime') then ReceivedTimeObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'collection') then Collection := propValue as TFhirSpecimenCollection{4b}
   else if (propName = 'treatment') then TreatmentList.add(propValue as TFhirSpecimenTreatment){2}
   else if (propName = 'container') then ContainerList.add(propValue as TFhirSpecimenContainer){2}
   else inherited;
@@ -18157,7 +18319,7 @@ begin
   if FReceivedTime = nil then
     result := nil
   else
-    result := ReceivedTime.value;
+    result := FReceivedTime.value;
 end;
 
 Procedure TFhirSpecimen.SetReceivedTimeST(value : TDateAndTime);
@@ -18210,7 +18372,7 @@ procedure TFhirSubstance.Assign(oSource : TAdvObject);
 begin
   inherited;
   type_ := TFhirSubstance(oSource).type_.Clone;
-  description := TFhirSubstance(oSource).description.Clone;
+  descriptionObject := TFhirSubstance(oSource).descriptionObject.Clone;
   instance := TFhirSubstance(oSource).instance.Clone;
   FIngredientList.Assign(TFhirSubstance(oSource).FIngredientList);
 end;
@@ -18219,11 +18381,11 @@ procedure TFhirSubstance.GetChildrenByName(child_name : string; list : TFHIRObje
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(Type_.Link);
+     list.add(FType_.Link);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'instance') Then
-     list.add(Instance.Link);
+     list.add(FInstance.Link);
   if (child_name = 'ingredient') Then
      list.addAll(FIngredientList);
 end;
@@ -18239,9 +18401,9 @@ end;
 
 procedure TFhirSubstance.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'instance') then Instance := propValue as TFhirSubstanceInstance{4}
+  if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'instance') then Instance := propValue as TFhirSubstanceInstance{4b}
   else if (propName = 'ingredient') then IngredientList.add(propValue as TFhirSubstanceIngredient){2}
   else inherited;
 end;
@@ -18280,7 +18442,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirSubstance.SetDescriptionST(value : String);
@@ -18346,15 +18508,15 @@ procedure TFhirSupply.GetChildrenByName(child_name : string; list : TFHIRObjectL
 begin
   inherited;
   if (child_name = 'kind') Then
-     list.add(Kind.Link);
+     list.add(FKind.Link);
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'orderedItem') Then
-     list.add(OrderedItem.Link);
+     list.add(FOrderedItem.Link);
   if (child_name = 'patient') Then
-     list.add(Patient.Link);
+     list.add(FPatient.Link);
   if (child_name = 'dispense') Then
      list.addAll(FDispenseList);
 end;
@@ -18372,11 +18534,11 @@ end;
 
 procedure TFhirSupply.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'kind') then Kind := propValue as TFhirCodeableConcept{4}
-  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'orderedItem') then OrderedItem := propValue as TFhirResourceReference{Resource}{4}
-  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4}
+  if (propName = 'kind') then Kind := propValue as TFhirCodeableConcept{4b}
+  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'orderedItem') then OrderedItem := propValue as TFhirResourceReference{Resource}{4b}
+  else if (propName = 'patient') then Patient := propValue as TFhirResourceReference{TFhirPatient}{4b}
   else if (propName = 'dispense') then DispenseList.add(propValue as TFhirSupplyDispense){2}
   else inherited;
 end;
@@ -18421,15 +18583,15 @@ begin
   if FStatus = nil then
     result := TFhirValuesetSupplyStatus(0)
   else
-    result := TFhirValuesetSupplyStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetSupplyStatus, Status.value));
+    result := TFhirValuesetSupplyStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetSupplyStatus, FStatus.value));
 end;
 
 Procedure TFhirSupply.SetStatusST(value : TFhirValuesetSupplyStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirValuesetSupplyStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirValuesetSupplyStatus[value]);
 end;
 
 Procedure TFhirSupply.SetOrderedItem(value : TFhirResourceReference{Resource});
@@ -18485,17 +18647,17 @@ end;
 procedure TFhirValueSet.Assign(oSource : TAdvObject);
 begin
   inherited;
-  identifier := TFhirValueSet(oSource).identifier.Clone;
-  version := TFhirValueSet(oSource).version.Clone;
-  name := TFhirValueSet(oSource).name.Clone;
-  publisher := TFhirValueSet(oSource).publisher.Clone;
+  identifierObject := TFhirValueSet(oSource).identifierObject.Clone;
+  versionObject := TFhirValueSet(oSource).versionObject.Clone;
+  nameObject := TFhirValueSet(oSource).nameObject.Clone;
+  publisherObject := TFhirValueSet(oSource).publisherObject.Clone;
   FTelecomList.Assign(TFhirValueSet(oSource).FTelecomList);
-  description := TFhirValueSet(oSource).description.Clone;
-  copyright := TFhirValueSet(oSource).copyright.Clone;
+  descriptionObject := TFhirValueSet(oSource).descriptionObject.Clone;
+  copyrightObject := TFhirValueSet(oSource).copyrightObject.Clone;
   FStatus := TFhirValueSet(oSource).FStatus.Link;
-  experimental := TFhirValueSet(oSource).experimental.Clone;
-  extensible := TFhirValueSet(oSource).extensible.Clone;
-  date := TFhirValueSet(oSource).date.Clone;
+  experimentalObject := TFhirValueSet(oSource).experimentalObject.Clone;
+  extensibleObject := TFhirValueSet(oSource).extensibleObject.Clone;
+  dateObject := TFhirValueSet(oSource).dateObject.Clone;
   define := TFhirValueSet(oSource).define.Clone;
   compose := TFhirValueSet(oSource).compose.Clone;
   expansion := TFhirValueSet(oSource).expansion.Clone;
@@ -18505,33 +18667,33 @@ procedure TFhirValueSet.GetChildrenByName(child_name : string; list : TFHIRObjec
 begin
   inherited;
   if (child_name = 'identifier') Then
-     list.add(Identifier.Link);
+     list.add(FIdentifier.Link);
   if (child_name = 'version') Then
-     list.add(Version.Link);
+     list.add(FVersion.Link);
   if (child_name = 'name') Then
-     list.add(Name.Link);
+     list.add(FName.Link);
   if (child_name = 'publisher') Then
-     list.add(Publisher.Link);
+     list.add(FPublisher.Link);
   if (child_name = 'telecom') Then
      list.addAll(FTelecomList);
   if (child_name = 'description') Then
-     list.add(Description.Link);
+     list.add(FDescription.Link);
   if (child_name = 'copyright') Then
-     list.add(Copyright.Link);
+     list.add(FCopyright.Link);
   if (child_name = 'status') Then
      list.add(FStatus.Link);
   if (child_name = 'experimental') Then
-     list.add(Experimental.Link);
+     list.add(FExperimental.Link);
   if (child_name = 'extensible') Then
-     list.add(Extensible.Link);
+     list.add(FExtensible.Link);
   if (child_name = 'date') Then
-     list.add(Date.Link);
+     list.add(FDate.Link);
   if (child_name = 'define') Then
-     list.add(Define.Link);
+     list.add(FDefine.Link);
   if (child_name = 'compose') Then
-     list.add(Compose.Link);
+     list.add(FCompose.Link);
   if (child_name = 'expansion') Then
-     list.add(Expansion.Link);
+     list.add(FExpansion.Link);
 end;
 
 procedure TFhirValueSet.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -18555,20 +18717,20 @@ end;
 
 procedure TFhirValueSet.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identifier') then Identifier := propValue as TFhirString{5}
-  else if (propName = 'version') then Version := propValue as TFhirString{5}
-  else if (propName = 'name') then Name := propValue as TFhirString{5}
-  else if (propName = 'publisher') then Publisher := propValue as TFhirString{5}
+  if (propName = 'identifier') then IdentifierObject := propValue as TFhirString{5a}
+  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  else if (propName = 'name') then NameObject := propValue as TFhirString{5a}
+  else if (propName = 'publisher') then PublisherObject := propValue as TFhirString{5a}
   else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContact){2}
-  else if (propName = 'description') then Description := propValue as TFhirString{5}
-  else if (propName = 'copyright') then Copyright := propValue as TFhirString{5}
-  else if (propName = 'status') then Status := propValue as TFHIREnum
-  else if (propName = 'experimental') then Experimental := propValue as TFhirBoolean{5}
-  else if (propName = 'extensible') then Extensible := propValue as TFhirBoolean{5}
-  else if (propName = 'date') then Date := propValue as TFhirDateTime{5}
-  else if (propName = 'define') then Define := propValue as TFhirValueSetDefine{4}
-  else if (propName = 'compose') then Compose := propValue as TFhirValueSetCompose{4}
-  else if (propName = 'expansion') then Expansion := propValue as TFhirValueSetExpansion{4}
+  else if (propName = 'description') then DescriptionObject := propValue as TFhirString{5a}
+  else if (propName = 'copyright') then CopyrightObject := propValue as TFhirString{5a}
+  else if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  else if (propName = 'experimental') then ExperimentalObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'extensible') then ExtensibleObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'date') then DateObject := propValue as TFhirDateTime{5a}
+  else if (propName = 'define') then Define := propValue as TFhirValueSetDefine{4b}
+  else if (propName = 'compose') then Compose := propValue as TFhirValueSetCompose{4b}
+  else if (propName = 'expansion') then Expansion := propValue as TFhirValueSetExpansion{4b}
   else inherited;
 end;
 
@@ -18600,7 +18762,7 @@ begin
   if FIdentifier = nil then
     result := ''
   else
-    result := Identifier.value;
+    result := FIdentifier.value;
 end;
 
 Procedure TFhirValueSet.SetIdentifierST(value : String);
@@ -18626,7 +18788,7 @@ begin
   if FVersion = nil then
     result := ''
   else
-    result := Version.value;
+    result := FVersion.value;
 end;
 
 Procedure TFhirValueSet.SetVersionST(value : String);
@@ -18652,7 +18814,7 @@ begin
   if FName = nil then
     result := ''
   else
-    result := Name.value;
+    result := FName.value;
 end;
 
 Procedure TFhirValueSet.SetNameST(value : String);
@@ -18678,7 +18840,7 @@ begin
   if FPublisher = nil then
     result := ''
   else
-    result := Publisher.value;
+    result := FPublisher.value;
 end;
 
 Procedure TFhirValueSet.SetPublisherST(value : String);
@@ -18704,7 +18866,7 @@ begin
   if FDescription = nil then
     result := ''
   else
-    result := Description.value;
+    result := FDescription.value;
 end;
 
 Procedure TFhirValueSet.SetDescriptionST(value : String);
@@ -18730,7 +18892,7 @@ begin
   if FCopyright = nil then
     result := ''
   else
-    result := Copyright.value;
+    result := FCopyright.value;
 end;
 
 Procedure TFhirValueSet.SetCopyrightST(value : String);
@@ -18756,15 +18918,15 @@ begin
   if FStatus = nil then
     result := TFhirValuesetStatus(0)
   else
-    result := TFhirValuesetStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetStatus, Status.value));
+    result := TFhirValuesetStatus(StringArrayIndexOfSensitive(CODES_TFhirValuesetStatus, FStatus.value));
 end;
 
 Procedure TFhirValueSet.SetStatusST(value : TFhirValuesetStatus);
 begin
   if ord(value) = 0 then
-    Status := nil
+    StatusObject := nil
   else
-    Status := TFhirEnum.create(CODES_TFhirValuesetStatus[value]);
+    StatusObject := TFhirEnum.create(CODES_TFhirValuesetStatus[value]);
 end;
 
 Procedure TFhirValueSet.SetExperimental(value : TFhirBoolean);
@@ -18778,7 +18940,7 @@ begin
   if FExperimental = nil then
     result := false
   else
-    result := Experimental.value;
+    result := FExperimental.value;
 end;
 
 Procedure TFhirValueSet.SetExperimentalST(value : Boolean);
@@ -18799,7 +18961,7 @@ begin
   if FExtensible = nil then
     result := false
   else
-    result := Extensible.value;
+    result := FExtensible.value;
 end;
 
 Procedure TFhirValueSet.SetExtensibleST(value : Boolean);
@@ -18820,7 +18982,7 @@ begin
   if FDate = nil then
     result := nil
   else
-    result := Date.value;
+    result := FDate.value;
 end;
 
 Procedure TFhirValueSet.SetDateST(value : TDateAndTime);

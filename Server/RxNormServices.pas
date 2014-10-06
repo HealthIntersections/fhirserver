@@ -16,8 +16,8 @@ type
     FDisplay : String;
     FOthers : TStringList;
   public
-    constructor create; override;
-    destructor destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
   end;
 
   TRxNormFilter = class (TCodeSystemProviderFilterContext)
@@ -51,6 +51,7 @@ type
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
+    function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -69,6 +70,7 @@ type
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
@@ -91,7 +93,7 @@ begin
     s := StringTrimSet(s, ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']).ToLower;
     if (s <> '') and not StringIsInteger16(s) and (s[1] >= 'a') then
     begin
-      s := stemmer.Stem(s);
+      s := stemmer.calc(s);
       if stems.Find(s, i) then
         TStringList(stems.Objects[i]).add(cui)
       else
@@ -209,6 +211,11 @@ begin
   result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
 end;
 
+function TRxNormServices.getDefinition(code: String): String;
+begin
+  result := '';
+end;
+
 function TRxNormServices.getDisplay(code : String):String;
 var
   qry : TKDBConnection;
@@ -321,6 +328,11 @@ begin
   result := false;  // RxNorm doesn't do abstract?
 end;
 
+function TRxNormServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+begin
+  result := false;
+end;
+
 function TRxNormServices.Link: TRxNormServices;
 begin
   result := TRxNormServices(Inherited Link);
@@ -349,6 +361,7 @@ var
   i : integer;
   filter : TRxNormFilter;
 begin
+  result := false;
   if TRxNormPrep(prep).filters.Count = 0 then
     exit; // not being used
 

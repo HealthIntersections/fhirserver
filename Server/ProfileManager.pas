@@ -119,7 +119,7 @@ begin
   begin
     extension := nil;
     for i := 0 to profile.extensionDefnList.Count - 1 do
-      if profile.extensionDefnList[i].codeST = url.Substring(1) then
+      if profile.extensionDefnList[i].code = url.Substring(1) then
         extension := profile.extensionDefnList[i];
     result := extension <> nil;
   end;
@@ -146,11 +146,11 @@ begin
           br := non_resources;
           for j := 0 to p.structureList.Count - 1 do
           begin
-            bs := bs or p.structureList[j].publishST;
-            br := br or StringArrayExistsSensitive(CODES_TFhirResourceType, p.structureList[j].type_ST);
+            bs := bs or p.structureList[j].publish;
+            br := br or StringArrayExistsSensitive(CODES_TFhirResourceType, p.structureList[j].type_);
           end;
           if bs and br then
-            result.Add(url, p.nameST);
+            result.Add(url, p.name);
         end;
       end;
       result.Link;
@@ -198,7 +198,7 @@ begin
   begin
     structure := nil;
     for i := 0 to profile.structureList.Count - 1 do
-      if profile.structureList[i].nameST = code then
+      if profile.structureList[i].name = code then
         structure := profile.structureList[i];
     result := structure <> nil;
   end;
@@ -222,7 +222,7 @@ procedure TProfileManager.SeeProfile(url: String; key: Integer; profile: TFHIRPr
 begin
   lock.Lock('SeeProfile');
   try
-    FProfilesByIdentifier.Matches[profile.{$IFDEF FHIR-DST}identifierST {$ELSE}urlST{$ENDIF}] := profile.Link;
+    FProfilesByIdentifier.Matches[profile.{$IFDEF FHIR-DST}identifier {$ELSE}url{$ENDIF}] := profile.Link;
     FProfilesByURL.Matches[url] := profile.Link;
     FProfilesByKey.Matches[inttostr(key)] := profile.Link;
   finally
@@ -233,7 +233,7 @@ end;
 
 procedure TProfileManager.DropProfile(key: Integer; url: String; aType: TFhirResourceType);
 var
-  p, p1 : TFhirProfile;
+  p : TFhirProfile;
 begin
   lock.Lock('DropProfile');
   try
@@ -241,7 +241,7 @@ begin
     if p <> nil then
     begin
       FProfilesByURL.DeleteByKey(url);
-      FProfilesByIdentifier.DeleteByKey(p.{$IFDEF FHIR-DST}identifierST {$ELSE}urlST{$ENDIF});
+      FProfilesByIdentifier.DeleteByKey(p.{$IFDEF FHIR-DST}identifier {$ELSE}url{$ENDIF});
       FProfilesByKey.DeleteByKey(inttostr(key));
     end;
   finally
@@ -291,7 +291,7 @@ begin
   if id.endsWith('/1') then
     id := id.subString(0, id.length-2);
 
-  if (Types.Count = 0) or (Types[0].codeST = 'Resource') then
+  if (Types.Count = 0) or (Types[0].code = 'Resource') then
   begin
     path := id;
     profile := FProfile;
@@ -299,21 +299,21 @@ begin
   end
   else if Types.Count = 1 then
   begin
-    profile := FProfiles['http://hl7.org/fhir/Profile/'+Types[0].codeST];
+    profile := FProfiles['http://hl7.org/fhir/Profile/'+Types[0].code];
     if (profile = nil) then
-      raise Exception.Create('Unable to find profile for '+Types[0].codeST+' @ '+id);
+      raise Exception.Create('Unable to find profile for '+Types[0].code+' @ '+id);
     structure := profile.structureList[0];
-    path := Types[0].codeST+id.Substring(statedPath.Length);
+    path := Types[0].code+id.Substring(statedPath.Length);
   end
   else if FType <> nil then
   begin
-    profile := FProfiles['http://hl7.org/fhir/Profile/'+FType.codeST];
+    profile := FProfiles['http://hl7.org/fhir/Profile/'+FType.code];
     if (profile = nil) then
-      raise Exception.Create('Unable to find profile for '+FType.codeST+' @ '+id);
+      raise Exception.Create('Unable to find profile for '+FType.code+' @ '+id);
     structure := profile.structureList[0];
     if not id.startsWith(statedPath+'._'+FType.tagValue) then
       raise Exception.Create('Internal logic error');
-    path := Types[0].codeST+id.Substring(statedPath.Length+2+FType.tagValue.length);
+    path := Types[0].code+id.Substring(statedPath.Length+2+FType.tagValue.length);
   end
   else
     raise Exception.Create('not handled - multiple types');
@@ -321,7 +321,7 @@ begin
 
   result := nil;
   for i := 0 to elements.Count - 1 do
-    if elements[i].pathST = path then
+    if elements[i].path = path then
     begin
       result := TProfileDefinition.Create(FProfiles.Link, profile.Link, structure.Link);
       try
@@ -345,7 +345,7 @@ end;
 
 function TProfileDefinition.GetPath: String;
 begin
-  result := FElement.pathST;
+  result := FElement.path;
 end;
 
 function TProfileDefinition.GetTypes: TFhirProfileStructureSnapshotElementDefinitionTypeList;

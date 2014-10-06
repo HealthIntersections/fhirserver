@@ -259,7 +259,9 @@ uses
   SCIMServer in 'SCIMServer.pas',
   TwilioClient in '..\Libraries\security\TwilioClient.pas',
   ShellSupport in '..\Libraries\support\ShellSupport.pas',
-  FHIRSearchSyntax in 'FHIRSearchSyntax.pas';
+  FHIRSearchSyntax in 'FHIRSearchSyntax.pas',
+  NarrativeGenerator in '..\Libraries\refplat-dstu\NarrativeGenerator.pas',
+  QuestionnaireBuilder in '..\Libraries\refplat-dstu\QuestionnaireBuilder.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

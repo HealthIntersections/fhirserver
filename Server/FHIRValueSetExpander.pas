@@ -61,8 +61,8 @@ Type
     function key(system, code : String): string; overload;
     function key(c : TFhirValueSetExpansionContains) : string;  overload;
   public
-    constructor create(store : TTerminologyServer); overload;
-    destructor destroy; override;
+    constructor Create(store : TTerminologyServer); overload;
+    destructor Destroy; override;
 
     function expand(source : TFHIRValueSet; textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean) : TFHIRValueSet;
   end;
@@ -96,8 +96,8 @@ var
 begin
   result := source.Clone;
   result.xmlId := '';
-  if (source.identifierST <> '') then
-    dependencies.Add(source.identifierST);
+  if (source.identifier <> '') then
+    dependencies.Add(source.identifier);
 
   filter := TSearchFilterText.create(textFilter);
   map := TAdvStringObjectMatch.create;
@@ -113,7 +113,7 @@ begin
       FLimit := limit;
 
     result.expansion := TFhirValueSetExpansion.create;
-    result.expansion.timestampST := NowUTC;
+    result.expansion.timestamp := NowUTC;
     //e := result.expansion.ExtensionList.Append;
 
     try
@@ -160,7 +160,7 @@ end;
 
 function TFHIRValueSetExpander.key(c: TFhirValueSetExpansionContains): string;
 begin
-  result := key(c.SystemST, c.CodeST);
+  result := key(c.System, c.Code);
 end;
 
 procedure TFHIRValueSetExpander.handleCompose(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source: TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; var notClosed : boolean);
@@ -183,8 +183,8 @@ begin
   for i := 0 to defines.count - 1 do
   begin
     cm := defines[i];
-    if filter.passes(cm.displayST) or filter.passes(cm.codeST) then
-      addDefinedCode(list, map, source.systemST, cm);
+    if filter.passes(cm.display) or filter.passes(cm.code) then
+      addDefinedCode(list, map, source.system, cm);
     handleDefine(list, map, source, cm.conceptList, filter);
   end;
 end;
@@ -193,8 +193,8 @@ procedure TFHIRValueSetExpander.addDefinedCode(list: TFhirValueSetExpansionConta
 var
   i : integer;
 begin
-  if (c.abstract = nil) or not c.AbstractST then
-    addCode(list, map, system, c.CodeST, c.DisplayST, c.definitionST);
+  if (c.abstractObject = nil) or not c.Abstract then
+    addCode(list, map, system, c.Code, c.Display, c.definition);
   for i := 0 to c.conceptList.count - 1 do
     addDefinedCode(list, map, system, c.conceptList[i]);
 end;
@@ -209,12 +209,12 @@ begin
 
   n := TFHIRValueSetExpansionContains.create;
   try
-    n.SystemST := system;
-    n.CodeST := code;
+    n.System := system;
+    n.Code := code;
     if (display <> '') then
-      n.DisplayST := display
+      n.Display := display
     else
-      n.DisplayST := code;
+      n.Display := code;
     s := key(n);
     if not map.ExistsByKey(s) then
     begin
@@ -270,7 +270,7 @@ end;
 procedure TFHIRValueSetExpander.includeCodes(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude; filter : TSearchFilterText; allowIncomplete : boolean; var notClosed : boolean);
 var
   cs : TCodeSystemProvider;
-  i, j, offset : integer;
+  i, offset : integer;
   fc : TFhirValueSetComposeIncludeFilter;
   c : TCodeSystemProviderContext;
   filters : Array of TCodeSystemProviderFilterContext;
@@ -279,9 +279,9 @@ var
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
 begin
-  cs := FStore.getProvider(cset.systemST);
+  cs := FStore.getProvider(cset.system);
   try
-    if (cset.codeList.count = 0) and (cset.filterList.count = 0) then
+    if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then
     begin
       // special case - add all the code system
       if filter.Null then
@@ -318,9 +318,9 @@ begin
       end;
     end;
 
-    for i := 0 to cset.codeList.count - 1 do
-      if filter.passes(cs.getDisplay(cset.codeList[i].value)) then
-        addCode(list, map, cs.system(nil), cset.codeList[i].value, cs.getDisplay(cset.codeList[i].value), cs.getDefinition(cset.codeList[i].value));
+    for i := 0 to cset.conceptList.count - 1 do
+      if filter.passes(cs.getDisplay(cset.conceptList[i].code)) then
+        addCode(list, map, cs.system(nil), cset.conceptList[i].code, cs.getDisplay(cset.conceptList[i].code), cs.getDefinition(cset.conceptList[i].code));
 
     if cset.filterList.Count > 0 then
     begin
@@ -341,9 +341,9 @@ begin
         for i := 0 to cset.filterList.count - 1 do
         begin
           fc := cset.filterList[i];
-          filters[i+offset] := cs.filter(fc.property_ST, fc.OpST, fc.valueST, prep);
+          filters[i+offset] := cs.filter(fc.property_, fc.Op, fc.value, prep);
           if filters[i+offset] = nil then
-            raise Exception.create('The filter "'+fc.property_ST +' '+ CODES_TFhirFilterOperator[fc.OpST]+ ' '+fc.valueST+'" was not understood in the context of '+cs.system(nil));
+            raise Exception.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
           if cs.isNotClosed(filter, filters[i+offset]) then
             notClosed := true;
         end;

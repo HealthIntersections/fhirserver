@@ -52,7 +52,7 @@ type
     FGoogleAppid : String;
     FGoogleAppSecret : String;
     FGoogleAppKey : String;
-    FAppSecrets : String;
+//    FAppSecrets : String;
     FHL7Appid : String;
     FHL7AppSecret : String;
     FAdminEmail : String;
@@ -282,7 +282,7 @@ end;
 
 procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  id, client_id, name, authurl: String;
+  client_id, name, authurl: String;
   conn : TKDBConnection;
   variables : TDictionary<String,String>;
   c : integer;
@@ -405,7 +405,7 @@ begin
     response.ResponseNo := 200;
     response.ResponseText := 'OK';
     response.ContentType := 'application/json';
-    response.ContentText := TJSONWriter.writeStr(obj, true);
+    response.ContentText := TJSONWriter.writeObjectStr(obj, true);
   finally
     obj.free;
   end;
@@ -430,7 +430,7 @@ begin
     jwk.obj['kid'] := authurl+'/auth_key';
 
     response.ContentType := 'application/json';
-    response.ContentText := TJSONWriter.writeStr(jwk.obj, true);
+    response.ContentText := TJSONWriter.writeObjectStr(jwk.obj, true);
   finally
     jwk.free;
   end;
@@ -721,7 +721,7 @@ end;
 
 procedure TAuth2Server.HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  token, clientId, clientSecret, auth : string;
+  token, clientId, clientSecret : string;
   session : TFhirSession;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;

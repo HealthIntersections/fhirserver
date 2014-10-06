@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, ShellSupport,
   IniFiles,
-  AdvObjects, GuidSupport,
+  AdvObjects, GuidSupport, AdvXmlBuilders,
   FHIRTypes, FHIRResources, FHIRAtomFeed, FHIRParser, ProfileManager,
   TerminologyServer, FHIRDataStore;
 
@@ -45,7 +45,7 @@ implementation
 
 uses
   SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax,
-  DecimalTests, UcumTests, JWTTests, TwilioClient
+  DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures
   {$IFNDEF FHIR-DSTU}, QuestionnaireBuilder{$ENDIF};
 
 { TFhirServerTests }
@@ -61,8 +61,10 @@ begin
   TSCIMSearchParser.runTests;
   TFSFilterParser.runTests;
   TDecimalTests.runTests;
-//  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
+  TAdvXmlBuilderCanonicalizationTests.test;
   TJWTTests.runTests;
+  TDigitalSignatureTests.test;
+//  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
   WriteLn('Library tests Passed');
 end;
 
@@ -147,8 +149,6 @@ class procedure TFHIRQuestionnaireBuilderTests.RunTests(ini : TInifile; dataStor
 var
   this : TFHIRQuestionnaireBuilderTests;
   srcDir : string;
-  profiles : TProfileManager;
-  feed : TFHIRAtomFeed;
 begin
   this := TFHIRQuestionnaireBuilderTests.Create;
   try
@@ -190,7 +190,6 @@ procedure TFHIRQuestionnaireBuilderTests.RoundTrip(filename : String; name : Str
 var
   thisOut : TQuestionnaireBuilder;
   thisIn : TQuestionnaireBuilder;
-  answers : TFhirQuestionnaireAnswers;
 begin
   thisOut := TQuestionnaireBuilder.Create;
   thisIn := TQuestionnaireBuilder.Create;

@@ -197,6 +197,7 @@ Type
     function ResolveSpace(space : String):integer;
   end;
 
+  {$HINTS OFF}
   TFhirIndexManager = class (TAdvObject)
   private
     FKeyEvent : TFHIRGetNextKey;
@@ -218,7 +219,7 @@ Type
     procedure buildIndexes;
     procedure buildIndexValues(key : integer; id : String; context, resource : TFhirResource);
 
-    procedure patientCompartment(key : integer; reference : TFhirResourceReference); overload;
+    procedure patientCompartment(key : integer; reference : TFhirReference); overload;
     procedure patientCompartmentNot(key : integer; type_, id : String); overload;
     procedure patientCompartment(key : integer; type_, id : String); overload;
 
@@ -240,7 +241,7 @@ Type
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirDateTime; name : String); overload;
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirDate; name : String); overload;
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirPeriod; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirSchedule; name : String); overload;
+    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirTiming; name : String); overload;
 
     // complexes
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirRatio; name : String); overload;
@@ -252,10 +253,10 @@ Type
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirCodeableConceptList; name : String); overload;
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirIdentifier; name : String); overload;
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirIdentifierList; name : String); overload;
-    procedure index(context : TFhirResource; aType : TFhirResourceType; key, parent : integer; value : TFhirResourceReference; name : String); overload;
+    procedure index(context : TFhirResource; aType : TFhirResourceType; key, parent : integer; value : TFhirReference; name : String); overload;
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirHumanName; name, phoneticName : String); overload;
     procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirAddress; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirContact; name : String); overload;
+    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirContactPoint; name : String); overload;
 
     // structure holder
     function index(aType : TFhirResourceType; key, parent : integer; name : String) : Integer; overload;
@@ -323,6 +324,7 @@ Type
     procedure BuildIndexValuesRiskAssessment(key : integer; id : string; context : TFhirResource; resource : TFhirRiskAssessment);
     procedure BuildIndexValuesOperationDefinition(key : integer; id : string; context : TFhirResource; resource : TFhirOperationDefinition);
     procedure BuildIndexValuesReferralRequest(key : integer; id : string; context : TFhirResource; resource : TFhirReferralRequest);
+    procedure BuildIndexValuesNutritionOrder(key : integer; id : string; context : TFhirResource; resource : TFhirNutritionOrder);
   {$ENDIF}
 
     procedure buildIndexesAdverseReaction;
@@ -387,6 +389,7 @@ Type
     procedure BuildIndexesRiskAssessment;
     procedure BuildIndexesOperationDefinition;
     procedure BuildIndexesReferralRequest;
+    procedure BuildIndexesNutritionOrder;
   {$ENDIF}
 
     procedure processCompartmentTags(key : integer; id: String; tags : TFHIRAtomCategoryList);
@@ -688,6 +691,7 @@ begin
   BuildIndexesRiskAssessment;
   BuildIndexesOperationDefinition;
   BuildIndexesReferralRequest;
+  BuildIndexesNutritionOrder;
   {$ENDIF}
   buildIndexesBinary;
 end;
@@ -757,6 +761,7 @@ begin
     frtRiskAssessment : BuildIndexValuesRiskAssessment(key, id, context, TFhirRiskAssessment(resource));
     frtOperationDefinition : BuildIndexValuesOperationDefinition(key, id, context, TFhirOperationDefinition(resource));
     frtReferralRequest : BuildIndexValuesReferralRequest(key, id, context, TFhirReferralRequest(resource));
+    frtNutritionOrder : BuildIndexValuesNutritionOrder(key, id, context, TFhirNutritionOrder(resource));
     {$ENDIF}
 
   else
@@ -1001,7 +1006,7 @@ var
   ref : integer;
   concept : integer;
 begin
-  if (value = nil) or (value.code = nil) or (value.code.value = '') then
+  if (value = nil) or (value.code = '') then
     exit;
   ndx := FIndexes.getByName(aType, name);
   if (ndx = nil) then
@@ -1010,10 +1015,10 @@ begin
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if ndx.SearchType <> SearchParamTypeToken then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Coding');
-  if (value.system <> nil) and (value.system.value <> '') then
+  if (value.system <> '') then
   begin
-    ref := FSpaces.ResolveSpace(value.system.value);
-    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFhirResourceType[aType]+'.'+name, value.systemST, value.codeST);
+    ref := FSpaces.ResolveSpace(value.system);
+    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFhirResourceType[aType]+'.'+name, value.system, value.code);
   end
   else
   begin
@@ -1021,12 +1026,12 @@ begin
     concept := 0;
   end;
 
-  if (length(value.code.value) > INDEX_ENTRY_LENGTH) then
-    raise exception.create('code too long for indexing: '+value.code.value);
-  if value.display <> nil then
-    FEntries.add(key, parent, ndx, ref, value.code.value, lowercase(RemoveAccents(copy(value.display.value, 1, INDEX_ENTRY_LENGTH))), 0, ndx.SearchType, false, concept)
+  if (length(value.code) > INDEX_ENTRY_LENGTH) then
+    raise exception.create('code too long for indexing: '+value.code);
+  if value.display <> '' then
+    FEntries.add(key, parent, ndx, ref, value.code, lowercase(RemoveAccents(copy(value.display, 1, INDEX_ENTRY_LENGTH))), 0, ndx.SearchType, false, concept)
   else
-    FEntries.add(key, parent, ndx, ref, value.code.value, '', 0, ndx.SearchType, false, concept);
+    FEntries.add(key, parent, ndx, ref, value.code, '', 0, ndx.SearchType, false, concept);
 end;
 
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirCodeableConcept; name: String);
@@ -1037,21 +1042,28 @@ begin
   begin
     for i := 0 to value.codingList.count - 1 do
       index(aType, key, parent, value.codingList[i], name);
-    if value.text <> nil then
-      index2(aType, key, parent, value.text.value, name);
+    if value.text <> '' then
+      index2(aType, key, parent, value.text, name);
   End;
 end;
 
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value, name: String);
 var
   ndx : TFhirIndex;
+  types : TFhirSearchParamTypeList;
+
 begin
   if (value = '') then
     exit;
   ndx := FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
-  if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference]) then //todo: fix up text
+
+  if StringIsInteger32(value) then
+    types := [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference, SearchParamTypeNumber]
+  else
+    types := [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference];
+  if not (ndx.SearchType in types) then //todo: fix up text
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
   if ndx.SearchType = SearchParamTypeString then
     value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)))
@@ -1193,31 +1205,31 @@ begin
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber, SearchParamTypeQuantity]) then
     raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing quantity');
 
-  GetBoundaries(value.valueST, value.comparatorST, v1, v2);
+  GetBoundaries(value.value, value.comparator, v1, v2);
 
   if (length(v1) > INDEX_ENTRY_LENGTH) then
       raise exception.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   if (length(v2) > INDEX_ENTRY_LENGTH) then
       raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-  ref := FSpaces.ResolveSpace(value.unitsST);
+  ref := FSpaces.ResolveSpace(value.units);
   FEntries.add(key, parent, ndx, ref, v1, v2, 0, ndx.SearchType);
-  if value.systemST <> '' then
+  if value.system <> '' then
   begin
-    ref := FSpaces.ResolveSpace(value.systemST+'#'+value.codeST);
+    ref := FSpaces.ResolveSpace(value.system+'#'+value.code);
     FEntries.add(key, parent, ndx, ref, v1, v2, 0, ndx.SearchType);
   end;
 
   // ok, if there's a ucum code:
-  if (value.codeST <> '') and (value.systemST = 'http://unitsofmeasure.org') then
+  if (value.code <> '') and (value.system = 'http://unitsofmeasure.org') then
   begin
     context := TSmartDecimalContext.Create;
     specified := TUcumPair.create;
     try
-      specified.Value := context.Value(value.valueST).Link;
-      specified.UnitCode := value.codeST;
+      specified.Value := context.Value(value.value).Link;
+      specified.UnitCode := value.code;
       canonical := FTerminologyServer.Ucum.getCanonicalForm(specified);
       try
-        GetBoundaries(canonical.Value.AsString, value.comparatorST, v1, v2);
+        GetBoundaries(canonical.Value.AsString, value.comparator, v1, v2);
         if (length(v1) > INDEX_ENTRY_LENGTH) then
           raise exception.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
         if (length(v2) > INDEX_ENTRY_LENGTH) then
@@ -1240,7 +1252,7 @@ begin
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value : TFhirSchedule; name : String);
+procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value : TFhirTiming; name : String);
 begin
   if (value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
@@ -1271,7 +1283,7 @@ var
   ndx : TFhirIndex;
   ref : integer;
 begin
-  if (value = nil) or (value.value = nil) or (value.value.value = '') then
+  if (value = nil) or (value.value = '') then
     exit;
   ndx := FIndexes.getByName(aType, name);
   if (ndx = nil) then
@@ -1281,11 +1293,11 @@ begin
   if not (ndx.SearchType in [SearchParamTypeToken]) then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Identifier');
   ref := 0;
-  if (value.system <> nil) and (value.system.value <> '') then
-    ref := FSpaces.ResolveSpace(value.system.value);
-  if (length(value.value.value) > INDEX_ENTRY_LENGTH) then
-    raise exception.create('id too long for indexing: '+value.value.value);
-  FEntries.add(key, parent, ndx, ref, value.value.value, '', 0, ndx.SearchType);
+  if (value.system <> '') then
+    ref := FSpaces.ResolveSpace(value.system);
+  if (length(value.value) > INDEX_ENTRY_LENGTH) then
+    raise exception.create('id too long for indexing: '+value.value);
+  FEntries.add(key, parent, ndx, ref, value.value, '', 0, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirAddress; name: String);
@@ -1301,12 +1313,12 @@ begin
   index(aType, key, parent, value.country, name);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirContact; name: String);
+procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirContactPoint; name: String);
 var
   ndx : TFhirIndex;
   ref : integer;
 begin
-  if (value = nil) or (value.value = nil) or (value.value.value = '') then
+  if (value = nil) or (value.value = '') then
     exit;
   ndx := FIndexes.getByName(aType, name);
   if (ndx = nil) then
@@ -1316,11 +1328,11 @@ begin
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeString]) then
     raise Exception.create('Unsuitable index '+name+':'+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Contact on '+CODES_TFhirResourceType[aType]);
   ref := 0;
-  if (value.system <> nil) and (value.system.value <> '') then
-    ref := FSpaces.ResolveSpace(value.system.value);
-  if (length(value.value.value) > INDEX_ENTRY_LENGTH) then
-    raise exception.create('contact value too long for indexing: '+value.value.value);
-  FEntries.add(key, parent, ndx, ref, value.value.value, '', 0, ndx.SearchType);
+  if (value.systemObject <> nil) and (value.systemObject.value <> '') then
+    ref := FSpaces.ResolveSpace(value.systemObject.value);
+  if (length(value.value) > INDEX_ENTRY_LENGTH) then
+    raise exception.create('contact value too long for indexing: '+value.value);
+  FEntries.add(key, parent, ndx, ref, value.value, '', 0, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirIdentifierList; name: String);
@@ -1428,7 +1440,7 @@ begin
   delete(result, 1, 1);
 end;
 
-procedure TFhirIndexManager.index(context : TFhirResource; aType : TFhirResourceType; key, parent : integer; value: TFhirResourceReference; name: String);
+procedure TFhirIndexManager.index(context : TFhirResource; aType : TFhirResourceType; key, parent : integer; value: TFhirReference; name: String);
 var
   ndx : TFhirIndex;
   ref, i : integer;
@@ -1439,12 +1451,12 @@ var
 begin
   if (value = nil) then
     exit;
-  if (value.referenceST = '') and (value.displayST <> '') then
+  if (value.reference = '') and (value.display <> '') then
   begin
-    index(aType, key, parent, value.displayST, name);
+    index(aType, key, parent, value.display, name);
     exit;
   end;
-  if (value.referenceST = '') then
+  if (value.reference = '') then
     exit;
 
   ndx := FIndexes.getByName(aType, name);
@@ -1455,8 +1467,8 @@ begin
   if ndx.SearchType <> SearchParamTypeReference then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Contact');
 
-  if (length(value.referenceST) > INDEX_ENTRY_LENGTH) then
-    raise exception.create('resource url too long for indexing: '+value.referenceST);
+  if (length(value.reference) > INDEX_ENTRY_LENGTH) then
+    raise exception.create('resource url too long for indexing: '+value.reference);
 
  {
   ! if the value has a value, then we need to index the value, even though we don't actually have it as a resource
@@ -1466,15 +1478,15 @@ begin
   target := 0;
   ref := 0;
 
-  if StringStartsWith(value.referenceST, '#') then
+  if StringStartsWith(value.reference, '#') then
   begin
     contained := FindContainedResource(context, value);
     if contained = nil then
-      raise exception.create('No contained resource found in resource for "'+value.referenceST+'", list from '+CODES_TFhirResourceType[context.ResourceType]+' = "'+sumContainedResources(context)+'"');
+      raise exception.create('No contained resource found in resource for "'+value.reference+'", list from '+CODES_TFhirResourceType[context.ResourceType]+' = "'+sumContainedResources(context)+'"');
 
     ref := FSpaces.ResolveSpace(CODES_TFhirResourceType[contained.ResourceType]);
     if (contained = nil) then
-      raise exception.create('Unable to find internal reference to contained resource: "'+value.referenceST+'", list = '+sumContainedResources(context));
+      raise exception.create('Unable to find internal reference to contained resource: "'+value.reference+'", list = '+sumContainedResources(context));
     id := FHIRGuidToString(CreateGuid);
     target := FKeyEvent(ktResource); //FSpaces.FDB.CountSQL('select Max(ResourceKey) from Ids') + 1;
     FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
@@ -1488,7 +1500,7 @@ begin
   end
   else
   begin
-    url := value.referenceST;
+    url := value.reference;
     for i := 0 to FBases.Count -1 do
     begin
       if StringStartsWith(url, FBases[i]+'/') then
@@ -1568,16 +1580,16 @@ var
 begin
   index(context, frtEncounter, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
-  index(frtEncounter, key, 0, resource.status, 'http://hl7.org/fhir/encounter-state', 'status');
-  index(frtEncounter, key, 0, resource.period, 'date');
-  index(frtEncounter, key, 0, resource.length, 'length');
-  index(context, frtEncounter, key, 0, resource.indication, 'indication');
+  index(frtEncounter, key, 0, resource.statusObject, 'http://hl7.org/fhir/encounter-state', 'status');
+  index(frtEncounter, key, 0, resource.periodObject, 'date');
+  index(frtEncounter, key, 0, resource.lengthObject, 'length');
+  index(context, frtEncounter, key, 0, resource.indicationObject, 'indication');
   for i := 0 to resource.identifierList.count - 1 do
     index(frtEncounter, key, 0, resource.identifierList[i], 'identifier');
   for i := 0 to resource.locationList.count - 1 do
   begin
-    index(context, frtEncounter, key, 0, resource.locationList[i].location, 'location');
-    index(frtEncounter, key, 0, resource.locationList[i].period, 'location-period');
+    index(context, frtEncounter, key, 0, resource.locationList[i].locationObject, 'location');
+    index(frtEncounter, key, 0, resource.locationList[i].periodObject, 'location-period');
   end;
 end;
 
@@ -1604,7 +1616,7 @@ var
 begin
   index(frtLocation, key, 0, resource.address, 'address');
   index(frtLocation, key, 0, resource.Name, 'name');
-  index(frtLocation, key, 0, resource.status, 'http://hl7.org/fhir/location-status', 'status');
+  index(frtLocation, key, 0, resource.statusObject, 'http://hl7.org/fhir/location-status', 'status');
   index(frtLocation, key, 0, resource.type_, 'type');
   {$IFDEF FHIR-DSTU}
   index(frtLocation, key, 0, resource.identifier, 'identifier');
@@ -1615,8 +1627,8 @@ begin
   index(context, frtLocation, key, 0, resource.partOf, 'partof');
   if resource.position <> nil then
   begin
-    if (resource.position.longitude <> nil) and (resource.position.latitude <> nil) then
-      index(frtLocation, key, 0, resource.position.longitudeST, resource.position.latitudeST, 'near');
+    if (resource.position.longitude <> '') and (resource.position.latitude <> '') then
+      index(frtLocation, key, 0, resource.position.longitude, resource.position.latitude, 'near');
   end
 //    spLocation_Near_distance, {@enum.value spLocation_Near_distance A distance quantity to limit the near search to locations within a specific distance }
 end;
@@ -1667,7 +1679,7 @@ begin
     index(context, frtDocumentReference, key, 0, resource.authorList[i], 'author');
   for i := 0 to resource.confidentialityList.count - 1 do
     index(frtDocumentReference, key, 0, resource.confidentialityList[i], 'confidentiality');
-  index(frtDocumentReference, key, 0, resource.created, 'created');
+  index(frtDocumentReference, key, 0, resource.createdObject, 'created');
   index(context, frtDocumentReference, key, 0, resource.custodian, 'custodian');
   index(frtDocumentReference, key, 0, resource.description, 'description');
   if resource.context <> nil then
@@ -1682,18 +1694,18 @@ begin
   index(frtDocumentReference, key, 0, resource.masterIdentifier, 'identifier');
   for i := 0 to resource.identifierList.count - 1 do
     index(frtDocumentReference, key, 0, resource.identifierList[i], 'identifier');
-  index(frtDocumentReference, key, 0, resource.indexed, 'indexed');
+  index(frtDocumentReference, key, 0, resource.indexedObject, 'indexed');
   index(frtDocumentReference, key, 0, resource.primaryLanguage, 'language');
   index(frtDocumentReference, key, 0, resource.location, 'location');
   index(frtDocumentReference, key, 0, resource.size, 'size');
-  index(frtDocumentReference, key, 0, resource.status, 'http://hl7.org/fhir/document-reference-status', 'status');
+  index(frtDocumentReference, key, 0, resource.statusObject, 'http://hl7.org/fhir/document-reference-status', 'status');
   index(context, frtDocumentReference, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
   for i := 0 to resource.relatesToList.Count - 1 do
   begin
     p := index(frtDocumentReference, key, 0, 'relatesTo');
     index(context, frtDocumentReference, key, p, resource.relatesToList[i].target, 'relatesTo');
-    index(frtDocumentReference, key, p, resource.relatesToList[i].code, 'http://hl7.org/fhir/document-relationship-type', 'relation');
+    index(frtDocumentReference, key, p, resource.relatesToList[i].codeObject, 'http://hl7.org/fhir/document-relationship-type', 'relation');
   end;
   index(frtDocumentReference, key, 0, resource.type_, 'type');
   index(frtDocumentReference, key, 0, resource.class_, 'class');
@@ -1720,12 +1732,12 @@ begin
   for i := 0 to resource.authorList.count - 1 do
     index(context, frtDocumentManifest, key, 0, resource.authorList[i], 'author');
   index(frtDocumentManifest, key, 0, resource.confidentiality, 'confidentiality');
-  index(frtDocumentManifest, key, 0, resource.created, 'created');
+  index(frtDocumentManifest, key, 0, resource.createdObject, 'created');
   index(frtDocumentManifest, key, 0, resource.description, 'description');
   index(frtDocumentManifest, key, 0, resource.masterIdentifier, 'identifier');
   for i := 0 to resource.identifierList.count - 1 do
     index(frtDocumentManifest, key, 0, resource.identifierList[i], 'identifier');
-  index(frtDocumentManifest, key, 0, resource.status, 'http://hl7.org/fhir/document-reference-status', 'status');
+  index(frtDocumentManifest, key, 0, resource.statusObject, 'http://hl7.org/fhir/document-reference-status', 'status');
   for i := 0 to resource.subjectList.count - 1 do
     index(context, frtDocumentManifest, key, 0, resource.subjectList[i], 'subject');
   index(context, frtDocumentManifest, key, 0, resource.supercedes, 'supercedes');
@@ -1780,7 +1792,7 @@ procedure TFhirIndexManager.buildIndexValuesAdverseReaction(key: integer; id : S
 var
   i : integer;
 begin
-  index(frtAdverseReaction, key, 0, resource.date, 'date');
+  index(frtAdverseReaction, key, 0, resource.dateObject, 'date');
   index(context, frtAdverseReaction, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
 //  index(frtAdverseReaction, key, 0, resource, resource.substance, 'substance');
@@ -1824,13 +1836,13 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesAllergyIntolerance(key: integer; id : String; context : TFhirResource; resource: TFhirAllergyIntolerance);
 begin
-  index(frtAllergyIntolerance, key, 0, resource.recordedDate, 'date');
-  index(frtAllergyIntolerance, key, 0, resource.status, 'http://hl7.org/fhir/sensitivitystatus', 'status');
+  index(frtAllergyIntolerance, key, 0, resource.recordedDateObject, 'date');
+  index(frtAllergyIntolerance, key, 0, resource.statusObject, 'http://hl7.org/fhir/sensitivitystatus', 'status');
   index(context, frtAllergyIntolerance, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
   index(context, frtAllergyIntolerance, key, 0, resource.recorder, 'recorder');
   index(context, frtAllergyIntolerance, key, 0, resource.substance, 'substance');
-  index(frtAllergyIntolerance, key, 0, resource.sensitivityType, 'http://hl7.org/fhir/sensitivitytype', 'type');
+  index(frtAllergyIntolerance, key, 0, resource.sensitivityTypeObject, 'http://hl7.org/fhir/sensitivitytype', 'type');
 end;
 
 Const
@@ -1856,7 +1868,7 @@ begin
   if resource.instance <> nil then
   begin
     index(frtSubstance, key, 0, resource.instance.identifier, 'identifier');
-    index(frtSubstance, key, 0, resource.instance.expiry, 'expiry');
+    index(frtSubstance, key, 0, resource.instance.expiryObject, 'expiry');
   end;
   for i := 0 to resource.ingredientList.count - 1 do
   begin
@@ -1903,7 +1915,7 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesOther(key: integer; id : String; context : TFhirResource; resource: TFhirOther);
 begin
-  index(frtOther, key, 0, resource.created, 'created');
+  index(frtOther, key, 0, resource.createdObject, 'created');
   index(frtOther, key, 0, resource.code, 'code');
   index(context, frtOther, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
@@ -1929,13 +1941,13 @@ var
 begin
   index(frtSupply, key, 0, resource.identifier, 'identifier');
   index(frtSupply, key, 0, resource.kind, 'kind');
-  index(frtSupply, key, 0, resource.status, 'http://hl7.org/fhir/valueset-supply-status', 'status');
+  index(frtSupply, key, 0, resource.statusObject, 'http://hl7.org/fhir/valueset-supply-status', 'status');
   index(context, frtSupply, key, 0, resource.patient, 'patient');
   patientCompartment(key, resource.patient);
   for i := 0 to resource.dispenseList.count - 1 do
   begin
     index(frtSupply, key, 0, resource.dispenseList[i].identifier, 'dispenseid');
-    index(frtSupply, key, 0, resource.dispenseList[i].status, 'http://hl7.org/fhir/valueset-supply-dispense-status', 'dispensestatus');
+    index(frtSupply, key, 0, resource.dispenseList[i].statusObject, 'http://hl7.org/fhir/valueset-supply-dispense-status', 'dispensestatus');
     index(context, frtSupply, key, 0, resource.dispenseList[i].supplier, 'supplier');
   end;
 end;
@@ -1962,7 +1974,7 @@ begin
   {$IFDEF FHIR-DSTU}
   index(frtRelatedPerson, key, 0, resource.gender, 'gender');
   {$ELSE}
-  index(frtRelatedPerson, key, 0, resource.gender, 'http://hl7.org/fhir/administrative-gender', 'gender');
+  index(frtRelatedPerson, key, 0, resource.genderObject, 'http://hl7.org/fhir/administrative-gender', 'gender');
   {$ENDIF}
   for i := 0 to resource.identifierList.count - 1 do
     index(frtRelatedPerson, key, 0, resource.identifierList[i], 'identifier');
@@ -1973,19 +1985,19 @@ begin
     index(frtRelatedPerson, key, 0, resource.telecomList[i], 'telecom');
 end;
 
-procedure TFhirIndexManager.patientCompartment(key : integer; reference: TFhirResourceReference);
+procedure TFhirIndexManager.patientCompartment(key : integer; reference: TFhirReference);
 var
   sid : string;
 begin
   if reference = nil then
     exit;
-  if reference.referenceST = '' then
+  if reference.reference = '' then
     exit;
-  if StringStartsWith(reference.referenceST, '#') then
+  if StringStartsWith(reference.reference, '#') then
     exit; // what to do in this case?
-  if not StringStartsWith(reference.referenceST, 'Patient/') then
+  if not StringStartsWith(reference.reference, 'Patient/') then
     exit; // what to do in this case?
-  sid := copy(reference.referenceST, 9, $FF);
+  sid := copy(reference.reference, 9, $FF);
   if (pos('/', sid) > 0) then
     sid := copy(sid, 1, pos('/', sid) - 1);
   patientCompartment(key, 'Patient', sid);
@@ -2109,9 +2121,9 @@ var
   i : integer;
   j : integer;
 begin
-  index(frtConformance, key, 0, resource.date, 'date');
+  index(frtConformance, key, 0, resource.dateObject, 'date');
   index(frtConformance, key, 0, resource.name, 'name');
-  index(frtConformance, key, 0, resource.status, 'http://hl7.org/fhir/conformance-statement-status', 'status');
+  index(frtConformance, key, 0, resource.statusObject, 'http://hl7.org/fhir/conformance-statement-status', 'status');
   index(frtConformance, key, 0, resource.description, 'description');
   index(frtConformance, key, 0, resource.publisher, 'publisher');
   if resource.software <> nil then
@@ -2140,7 +2152,7 @@ begin
       index(context, frtConformance, key, 0, resource.restList[j].resourceList[i].profile, 'profile');
       index(frtConformance, key, 0, resource.restList[j].resourceList[i].type_, 'resource');
     end;
-    index(frtConformance, key, 0, resource.restList[j].mode, 'http://hl7.org/fhir/restful-conformance-mode', 'mode');
+    index(frtConformance, key, 0, resource.restList[j].modeObject, 'http://hl7.org/fhir/restful-conformance-mode', 'mode');
   end;
 
   for j := 0 to resource.messagingList.Count - 1 Do
@@ -2150,7 +2162,7 @@ begin
       index(frtConformance, key, 0, resource.messagingList[j].EventList[i].focus, 'resource');
       index(context, frtConformance, key, 0, resource.messagingList[j].EventList[i].request, 'profile');
       index(context, frtConformance, key, 0, resource.messagingList[j].EventList[i].response, 'profile');
-      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].mode, 'http://hl7.org/fhir/message-conformance-event-mode', 'mode');
+      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].modeObject, 'http://hl7.org/fhir/message-conformance-event-mode', 'mode');
       index(frtConformance, key, 0, resource.messagingList[j].EventList[i].code, 'event');
     end;
   end;
@@ -2164,7 +2176,7 @@ end;
 { TFhirCompositionIndexManager }
 
 Const
-  CHECK_TSearchParamsComposition : Array[TSearchParamsComposition] of TSearchParamsComposition = ( spComposition__id, spComposition__Language, spComposition_Attester, spComposition_Author, spComposition_Class, spComposition_Context, spComposition_Date, spComposition_Identifier, spComposition_Section_content, spComposition_Section_type, spComposition_Subject, spComposition_Type);
+  CHECK_TSearchParamsComposition : Array[TSearchParamsComposition] of TSearchParamsComposition = ( spComposition__id, spComposition__Language, spComposition_Attester, spComposition_Author, spComposition_Class, spComposition_Context, spComposition_Date, spComposition_Identifier, spComposition_Section_entry, spComposition_Section_type, spComposition_Subject, spComposition_Type);
 
 procedure TFhirIndexManager.buildIndexesComposition;
 var
@@ -2183,22 +2195,33 @@ procedure TFhirIndexManager.buildIndexValuesComposition(key : integer; id : Stri
     i : integer;
   begin
     index(frtComposition, key, 0, section.code, 'section-type');
+    {$IFDEF FHIR-DSTU}
     index(context, frtComposition, key, 0, section.content, 'section-content');
+    {$ELSE}
+    for i := 0 to section.entryList.count - 1 do
+      index(context, frtComposition, key, 0, section.entryList[i], 'section-entry');
+    {$ENDIF}
     for i := 0 to section.SectionList.count - 1 do
       indexSection(section.SectionList[i]);
   end;
 var
-  i : integer;
+  i, j : integer;
 begin
-  index(frtComposition, key, 0, resource.date, 'date');
+  index(frtComposition, key, 0, resource.dateObject, 'date');
   index(frtComposition, key, 0, resource.identifier, 'identifier');
   index(context, frtComposition, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
   index(frtComposition, key, 0, resource.type_, 'type');
   index(frtComposition, key, 0, resource.class_, 'class');
+  {$IFDEF FHIR-DSTU}
   if resource.event <> nil then
     for i := 0 to resource.event.codeList.Count - 1 do
       index(frtComposition, key, 0, resource.event.codeList[i], 'context');
+  {$ELSE}
+  for j := 0 to resource.eventList.Count - 1 do
+    for i := 0 to resource.eventList[j].codeList.Count - 1 do
+      index(frtComposition, key, 0, resource.eventList[j].codeList[i], 'context');
+  {$ENDIF}
   for i := 0 to resource.authorList.count - 1 do
     index(context, frtComposition, key, 0, resource.authorList[i], 'author');
   for i := 0 to resource.attesterList.count - 1 do
@@ -2262,7 +2285,7 @@ begin
   index(frtPractitioner, key, 0, resource.address, 'address');
   index(frtPractitioner, key, 0, resource.gender, 'gender');
   {$ELSE}
-  index(frtPractitioner, key, 0, resource.gender, 'http://hl7.org/fhir/administrative-gender', 'gender');
+  index(frtPractitioner, key, 0, resource.genderObject, 'http://hl7.org/fhir/administrative-gender', 'gender');
   for i := 0 to resource.addressList.Count - 1 do
     index(frtPractitioner, key, 0, resource.addressList[i], 'address');
   for i := 0 to resource.communicationList.Count - 1 do
@@ -2295,7 +2318,7 @@ var
 begin
   index(frtOrganization, key, 0, resource.active, 'active');
   index(frtOrganization, key, 0, resource.Name, 'name');
-  index(frtOrganization, key, 0, EncodeNYSIISValue(resource.Name), 'phonetic');
+  index(frtOrganization, key, 0, EncodeNYSIISValue(resource.NameObject), 'phonetic');
   index(frtOrganization, key, 0, resource.type_, 'type');
   for i := 0 to resource.IdentifierList.Count - 1 Do
     if resource.IdentifierList[i] <> nil then
@@ -2338,7 +2361,7 @@ var
 begin
   index(frtGroup, key, 0, resource.actual, 'actual');
   index(frtGroup, key, 0, resource.code, 'code');
-  index(frtGroup, key, 0, resource.type_, 'http://hl7.org/fhir/group-type', 'type');
+  index(frtGroup, key, 0, resource.type_Object, 'http://hl7.org/fhir/group-type', 'type');
   index(frtGroup, key, 0, resource.identifier, 'identifier');
 
   for i := 0 to resource.memberList.Count - 1 Do
@@ -2387,8 +2410,8 @@ begin
   patientCompartment(key, resource.subject);
   if resource.applies is TFhirDateTime then
     index(frtObservation, key, 0, TFhirDateTime(resource.applies), 'date');
-  index(frtObservation, key, 0, resource.status, 'http://hl7.org/fhir/observation-status', 'status');
-  index(frtObservation, key, 0, resource.reliability, 'http://hl7.org/fhir/observation-reliability', 'reliability');
+  index(frtObservation, key, 0, resource.statusObject, 'http://hl7.org/fhir/observation-status', 'status');
+  index(frtObservation, key, 0, resource.reliabilityObject, 'http://hl7.org/fhir/observation-reliability', 'reliability');
   for i := 0 to resource.performerList.Count - 1 Do
     index(context, frtObservation, key, 0, resource.performerList[i], 'performer');
   index(context, frtObservation, key, 0, resource.specimen, 'specimen');
@@ -2413,7 +2436,7 @@ begin
   for i := 0 to resource.relatedList.Count - 1 Do
   begin
     p := index(frtObservation, key, 0, 'related');
-    index(frtObservation, key, p, resource.relatedList[i].type_, 'http://hl7.org/fhir/observation-relationshiptypes', 'related-type');
+    index(frtObservation, key, p, resource.relatedList[i].type_Object, 'http://hl7.org/fhir/observation-relationshiptypes', 'related-type');
     index(context, frtObservation, key, p, resource.relatedList[i].target, 'related-target');
   end;
 end;
@@ -2442,7 +2465,7 @@ var
       if element.definition.binding.reference is TFhirUri then
         index(frtProfile, key, 0, TFhirUri(element.definition.binding.reference), 'valueset')
       else
-        index(context, frtProfile, key, 0, TFhirResourceReference(element.definition.binding.reference), 'valueset');
+        index(context, frtProfile, key, 0, TFhirReference(element.definition.binding.reference), 'valueset');
   end;
 begin
   {$IFDEF FHIR-DSTU}
@@ -2452,9 +2475,9 @@ begin
   index(frtProfile, key, 0, resource.url, 'url');
   {$ENDIF}
   index(frtProfile, key, 0, resource.name, 'name');
-  index(frtProfile, key, 0, resource.date, 'date');
+  index(frtProfile, key, 0, resource.dateObject, 'date');
   index(frtProfile, key, 0, resource.description, 'description');
-  index(frtProfile, key, 0, resource.status, 'http://hl7.org/fhir/resource-profile-status', 'status');
+  index(frtProfile, key, 0, resource.statusObject, 'http://hl7.org/fhir/resource-profile-status', 'status');
   index(frtProfile, key, 0, resource.version, 'version');
   index(frtProfile, key, 0, resource.publisher, 'publisher');
   for i := 0 to resource.CodeList.count - 1 Do
@@ -2516,18 +2539,18 @@ begin
     {$IFDEF FHIR-DSTU}
     index(frtPatient, key, 0, resource.gender, 'gender');
     {$ELSE}
-    index(frtPatient, key, 0, resource.gender, 'http://hl7.org/fhir/administrative-gender', 'gender');
+    index(frtPatient, key, 0, resource.genderObject, 'http://hl7.org/fhir/administrative-gender', 'gender');
     {$ENDIF}
     for i := 0 to resource.communicationList.Count - 1 Do
       index(frtPatient, key, 0, resource.communicationList[i], 'language');
-    index(frtPatient, key, 0, resource.birthDate, 'birthdate');
+    index(frtPatient, key, 0, resource.birthDateObject, 'birthdate');
 
   index(context, frtPatient, key, 0, resource.managingOrganization, 'provider');
 
   for i := 0 to resource.link_List.count - 1 do
     index(context, frtPatient, key, 0, resource.link_List[i].other, 'link');
 
-  index(frtPatient, key, 0, resource.activeST, 'active');
+  index(frtPatient, key, 0, resource.active, 'active');
 
   if (resource.animal <> nil) then
   begin
@@ -2566,7 +2589,7 @@ procedure TFhirIndexManager.buildIndexValuesDiagnosticReport(key : integer; id :
 var
   i, j, k : integer;
 begin
-  index(frtDiagnosticReport, key, 0, resource.status, 'http://hl7.org/fhir/diagnostic-report-status', 'status');
+  index(frtDiagnosticReport, key, 0, resource.statusObject, 'http://hl7.org/fhir/diagnostic-report-status', 'status');
   index(frtDiagnosticReport, key, 0, resource.identifier, 'identifier');
   for k := 0 to resource.RequestDetailList.count - 1 do
     index(context, frtDiagnosticReport, key, 0, resource.requestDetailList[k], 'request');
@@ -2578,7 +2601,7 @@ begin
   index(context, frtDiagnosticReport, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
   index(context, frtDiagnosticReport, key, 0, resource.performer, 'performer');
-  index(frtDiagnosticReport, key, 0, resource.issued, 'issued');
+  index(frtDiagnosticReport, key, 0, resource.issuedObject, 'issued');
   index(frtDiagnosticReport, key, 0, resource.identifier, 'identifier');
   index(frtDiagnosticReport, key, 0, resource.serviceCategory, 'service');
   if resource.diagnostic is TFhirPeriod then
@@ -2661,7 +2684,7 @@ begin
   index(context, frtDiagnosticOrder, key, 0, resource.Encounter, 'encounter');
   for i := 0 to resource.specimenList.Count - 1 do
     index(context, frtDiagnosticOrder, key, 0, resource.specimenList[i], 'specimen');
-  index(frtDiagnosticOrder, key, 0, resource.status, 'http://hl7.org/fhir/diagnostic-order-status', 'status');
+  index(frtDiagnosticOrder, key, 0, resource.statusObject, 'http://hl7.org/fhir/diagnostic-order-status', 'status');
   for i := 0 to resource.identifierList.Count - 1 do
     index(frtDiagnosticOrder, key, 0, resource.identifierList[i], 'identifier');
 
@@ -2669,8 +2692,8 @@ begin
   begin
     p := index(frtDiagnosticOrder, key, 0, 'event');
     index(context, frtDiagnosticOrder, key, p, resource.eventList[j].actor, 'actor');
-    index(frtDiagnosticOrder, key, p, resource.eventList[j].status, 'http://hl7.org/fhir/diagnostic-order-status', 'event-status');
-    index(frtDiagnosticOrder, key, p, resource.eventList[j].dateTime, 'event-date');
+    index(frtDiagnosticOrder, key, p, resource.eventList[j].statusObject, 'http://hl7.org/fhir/diagnostic-order-status', 'event-status');
+    index(frtDiagnosticOrder, key, p, resource.eventList[j].dateTimeObject, 'event-date');
   end;
 
   for k := 0 to resource.itemList.count - 1 do
@@ -2680,13 +2703,13 @@ begin
     for i := 0 to resource.itemList[k].specimenList.Count - 1 do
       index(context, frtDiagnosticOrder, key, 0, resource.itemList[k].specimenList[i], 'specimen');
     index(frtDiagnosticOrder, key, p, resource.itemList[k].bodySite, 'bodysite');
-    index(frtDiagnosticOrder, key, p, resource.itemList[k].status, 'http://hl7.org/fhir/diagnostic-order-status', 'item-status');
+    index(frtDiagnosticOrder, key, p, resource.itemList[k].statusObject, 'http://hl7.org/fhir/diagnostic-order-status', 'item-status');
     for j := 0 to resource.itemList[k].eventList.count - 1 do
     begin
       p1 := index(frtDiagnosticOrder, key, p, 'item-event');
       index(context, frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].actor, 'actor');
-      index(frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].status, 'http://hl7.org/fhir/diagnostic-order-status', 'item-past-status');
-      index(frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].dateTime, 'item-date');
+      index(frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].statusObject, 'http://hl7.org/fhir/diagnostic-order-status', 'item-past-status');
+      index(frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].dateTimeObject, 'item-date');
     end;
   end;
 end;
@@ -2723,8 +2746,8 @@ begin
   index(frtValueSet, key, 0, resource.identifier, 'identifier');
   index(frtValueSet, key, 0, resource.version, 'version');
   index(frtValueSet, key, 0, resource.name, 'name');
-  index(frtValueSet, key, 0, resource.status, 'http://hl7.org/fhir/valueset-status', 'status');
-  index(frtValueSet, key, 0, resource.date, 'date');
+  index(frtValueSet, key, 0, resource.statusObject, 'http://hl7.org/fhir/valueset-status', 'status');
+  index(frtValueSet, key, 0, resource.dateObject, 'date');
   index(frtValueSet, key, 0, resource.publisher, 'publisher');
   index(frtValueSet, key, 0, resource.description, 'description');
   if (resource.define <> nil) then
@@ -2765,8 +2788,8 @@ begin
   index(frtConceptMap, key, 0, resource.identifier, 'identifier');
   index(frtConceptMap, key, 0, resource.version, 'version');
   index(frtConceptMap, key, 0, resource.name, 'name');
-  index(frtConceptMap, key, 0, resource.status, 'http://hl7.org/fhir/valueset-status', 'status');
-  index(frtConceptMap, key, 0, resource.date, 'date');
+  index(frtConceptMap, key, 0, resource.statusObject, 'http://hl7.org/fhir/valueset-status', 'status');
+  index(frtConceptMap, key, 0, resource.dateObject, 'date');
   index(frtConceptMap, key, 0, resource.publisher, 'publisher');
   index(frtConceptMap, key, 0, resource.description, 'description');
 
@@ -2775,12 +2798,12 @@ begin
   index(context, frtConceptMap, key, 0, resource.target, 'target');
   list := resource.conceptList;
   {$ELSE}
-  if resource.source is TFhirResourceReference then
-    index(context, frtConceptMap, key, 0, TFhirResourceReference(resource.source), 'source')
+  if resource.source is TFhirReference then
+    index(context, frtConceptMap, key, 0, TFhirReference(resource.source), 'source')
   else
     index(frtConceptMap, key, 0, TFhirURI(resource.source), 'source');
-  if resource.target is TFhirResourceReference then
-    index(context, frtConceptMap, key, 0, TFhirResourceReference(resource.target), 'target')
+  if resource.target is TFhirReference then
+    index(context, frtConceptMap, key, 0, TFhirReference(resource.target), 'target')
   else
     index(frtConceptMap, key, 0, TFhirURI(resource.target), 'target');
   list := resource.elementList;
@@ -2850,8 +2873,8 @@ var
   i : integer;
 begin
   index(frtSecurityEvent, key, 0, resource.event.type_, 'type');
-  index(frtSecurityEvent, key, 0, resource.event.action, 'http://hl7.org/fhir/security-event-action', 'action');
-  index(frtSecurityEvent, key, 0, resource.event.dateTime, 'date');
+  index(frtSecurityEvent, key, 0, resource.event.actionObject, 'http://hl7.org/fhir/security-event-action', 'action');
+  index(frtSecurityEvent, key, 0, resource.event.dateTimeObject, 'date');
   for i := 0 to resource.event.subTypeList.count - 1 do
     index(frtSecurityEvent, key, 0, resource.event.subtypeList[i], 'subtype');
 
@@ -2872,7 +2895,7 @@ begin
 
   for i := 0 to resource.object_List.count - 1 do
   begin
-    index(frtSecurityEvent, key, 0, resource.object_List[i].type_, 'http://hl7.org/fhir/object-type', 'object-type');
+    index(frtSecurityEvent, key, 0, resource.object_List[i].type_Object, 'http://hl7.org/fhir/object-type', 'object-type');
     index(frtSecurityEvent, key, 0, resource.object_List[i].identifier, 'identity');
     index(context, frtSecurityEvent, key, 0, resource.object_List[i].reference, 'reference');
     patientCompartment(key, resource.object_List[i].reference);
@@ -2900,7 +2923,7 @@ var
   i : integer;
 begin
   index(frtCondition, key, 0, resource.code, 'code');
-  index(frtCondition, key, 0, resource.status, 'http://hl7.org/fhir/condition-status', 'status');
+  index(frtCondition, key, 0, resource.statusObject, 'http://hl7.org/fhir/condition-status', 'status');
   index(frtCondition, key, 0, resource.severity, 'severity');
   index(frtCondition, key, 0, resource.category, 'category');
   index(context, frtCondition, key, 0, resource.subject, 'subject');
@@ -2912,7 +2935,7 @@ begin
     index(frtCondition, key, 0, resource.relatedItemList[i].code, 'related-code');
     index(context, frtCondition, key, 0, resource.relatedItemList[i].target, 'related-item');
   end;
-  index(frtCondition, key, 0, resource.dateAsserted, 'date-asserted');
+  index(frtCondition, key, 0, resource.dateAssertedObject, 'date-asserted');
 // todo  index(frtCondition, key, 0, resource.onset, 'onset');
   for i := 0 to resource.evidenceList.count - 1 do
     index(frtCondition, key, 0, resource.evidenceList[i].code, 'evidence');
@@ -2972,8 +2995,8 @@ begin
   index(context, frtProvenance, key, 0, resource.targetList[i], 'target');
   if (resource.period <> nil) then
   begin
-    index(frtProvenance, key, 0, resource.period.start, 'start');
-    index(frtProvenance, key, 0, resource.period.end_, 'end');
+    index(frtProvenance, key, 0, resource.period.startObject, 'start');
+    index(frtProvenance, key, 0, resource.period.end_Object, 'end');
   end;
   index(context, frtProvenance, key, 0, resource.location, 'location');
 
@@ -3022,7 +3045,13 @@ end;
 
 
 const
+  {$IFDEF FHIR-DSTU}
   CHECK_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of TSearchParamsMedicationAdministration = ( spMedicationAdministration__id, spMedicationAdministration__Language, spMedicationAdministration_Device, spMedicationAdministration_Encounter, spMedicationAdministration_Identifier, spMedicationAdministration_Medication, spMedicationAdministration_Notgiven, spMedicationAdministration_Patient, spMedicationAdministration_Prescription, spMedicationAdministration_Status, spMedicationAdministration_Whengiven);
+  {$ELSE}
+  CHECK_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of TSearchParamsMedicationAdministration = ( spMedicationAdministration__id, spMedicationAdministration__Language, spMedicationAdministration_Device, spMedicationAdministration_Effectivetime, spMedicationAdministration_Encounter, spMedicationAdministration_Identifier, spMedicationAdministration_Medication, spMedicationAdministration_Notgiven, spMedicationAdministration_Patient, spMedicationAdministration_Prescription, spMedicationAdministration_Status);
+  {$ENDIF}
+
+
 
 
 procedure TFhirIndexManager.buildIndexesMedicationAdministration;
@@ -3045,8 +3074,16 @@ begin
   index(context, frtMedicationAdministration, key, 0, resource.Encounter, 'encounter');
   index(context, frtMedicationAdministration, key, 0, resource.prescription, 'prescription');
   index(frtMedicationAdministration, key, 0, resource.wasNotGiven, 'notgiven');
-  index(frtMedicationAdministration, key, 0, resource.whenGiven, 'whengiven');
-  index(frtMedicationAdministration, key, 0, resource.status, 'http://hl7.org/fhir/medication-admin-status', 'status');
+  {$IFDEF FHIR-DSTU}
+  index(frtMedicationAdministration, key, 0, resource.whengiven, 'whengiven');
+  {$ELSE}
+  if resource.effectiveTime is TFhirPeriod then
+    index(frtMedicationAdministration, key, 0, TFhirPeriod(resource.effectiveTime), 'effectivetime')
+  else
+    index(frtMedicationAdministration, key, 0, TFhirDateTime(resource.effectiveTime), 'effectivetime');
+  {$ENDIF}
+
+  index(frtMedicationAdministration, key, 0, resource.statusObject, 'http://hl7.org/fhir/medication-admin-status', 'status');
   index(context, frtMedicationAdministration, key, 0, resource.medication, 'medication');
   for i := 0 to resource.identifierList.Count - 1 do
     index(frtMedicationAdministration, key, 0, resource.identifierList[i], 'identifier');
@@ -3074,14 +3111,14 @@ procedure TFhirIndexManager.buildIndexValuesMedicationPrescription(key : integer
 var
   i : integer;
 begin
-  index(frtMedicationPrescription, key, 0, resource.status, 'http://hl7.org/fhir/medication-prescription-status', 'status');
+  index(frtMedicationPrescription, key, 0, resource.statusObject, 'http://hl7.org/fhir/medication-prescription-status', 'status');
   index(context, frtMedicationPrescription, key, 0, resource.patient, 'patient');
   patientCompartment(key, resource.patient);
   index(context, frtMedicationPrescription, key, 0, resource.Encounter, 'encounter');
   index(context, frtMedicationPrescription, key, 0, resource.medication, 'medication');
   for i := 0 to resource.identifierList.Count - 1 do
     index(frtMedicationPrescription, key, 0, resource.identifierList[i], 'identifier');
-  index(frtMedicationPrescription, key, 0, resource.dateWritten, 'datewritten');
+  index(frtMedicationPrescription, key, 0, resource.dateWrittenObject, 'datewritten');
 end;
 
 const
@@ -3102,7 +3139,7 @@ procedure TFhirIndexManager.buildIndexValuesMedicationDispense(key : integer; id
 var
   i, j : integer;
 begin
-  index(frtMedicationDispense, key, 0, resource.status, 'http://hl7.org/fhir/medication-dispense-status', 'status');
+  index(frtMedicationDispense, key, 0, resource.statusObject, 'http://hl7.org/fhir/medication-dispense-status', 'status');
   index(context, frtMedicationDispense, key, 0, resource.patient, 'patient');
   patientCompartment(key, resource.patient);
   index(context, frtMedicationDispense, key, 0, resource.dispenser, 'dispenser');
@@ -3115,8 +3152,8 @@ begin
     index(context, frtMedicationDispense, key, 0, resource.dispenseList[j].destination, 'destination');
     index(context, frtMedicationDispense, key, 0, resource.dispenseList[j].medication, 'medication');
     index(frtMedicationDispense, key, 0, resource.dispenseList[j].type_, 'type');
-    index(frtMedicationDispense, key, 0, resource.dispenseList[j].whenPrepared, 'whenPrepared');
-    index(frtMedicationDispense, key, 0, resource.dispenseList[j].whenHandedOver, 'whenHandedOver');
+    index(frtMedicationDispense, key, 0, resource.dispenseList[j].whenPreparedObject, 'whenPrepared');
+    index(frtMedicationDispense, key, 0, resource.dispenseList[j].whenHandedOverObject, 'whenHandedOver');
   end;
   if resource.substitution <> nil then
   begin
@@ -3176,8 +3213,8 @@ begin
   for i := 0 to resource.entryList.count - 1 do
     index(context, frtList, key, 0, resource.entryList[i].item, 'item');
   index(frtList, key, 0, resource.emptyReason, 'empty-reason');
-  index(frtList, key, 0, resource.date, 'date');
-  index(frtList, key, 0, resource.code, 'code');
+  index(frtList, key, 0, resource.dateObject, 'date');
+  index(frtList, key, 0, resource.codeObject, 'code');
   index(context, frtList, key, 0, resource.subject, 'subject');
 end;
 
@@ -3212,10 +3249,10 @@ begin
     begin
       index(frtCareplan, key, 0, resource.activityList[i].simple.code, 'activitycode');
       index(context, frtCareplan, key, 0, resource.activityList[i].detail, 'activitydetail');
-      if (resource.activityList[i].simple.timing is TFhirSchedule) then
-        index(frtCareplan, key, 0, TFhirSchedule(resource.activityList[i].simple.timing), 'activitydate')
-      else if (resource.activityList[i].simple.timing is TFhirPeriod) then
-        index(frtCareplan, key, 0, TFhirPeriod(resource.activityList[i].simple.timing), 'activitydate');
+      if (resource.activityList[i].simple.scheduled is TFhirTiming) then
+        index(frtCareplan, key, 0, TFhirTiming(resource.activityList[i].simple.scheduled), 'activitydate')
+      else if (resource.activityList[i].simple.scheduled is TFhirPeriod) then
+        index(frtCareplan, key, 0, TFhirPeriod(resource.activityList[i].simple.scheduled), 'activitydate');
     end;
 end;
 
@@ -3242,14 +3279,14 @@ var
 begin
   index(context, frtImagingStudy, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
-  index(frtImagingStudy, key, 0, resource.dateTime, 'date');
+  index(frtImagingStudy, key, 0, resource.dateTimeObject, 'date');
   index(frtImagingStudy, key, 0, resource.accessionNo, 'accession');
   index(frtImagingStudy, key, 0, resource.uid, 'study');
   for i := 0 to resource.seriesList.count -1 do
   begin
     series := resource.seriesList[i];
     index(frtImagingStudy, key, 0, series.uid, 'series');
-    index(frtImagingStudy, key, 0, series.Modality, 'http://nema.org/dicom/dcid', 'modality');
+    index(frtImagingStudy, key, 0, series.ModalityObject, 'http://nema.org/dicom/dcid', 'modality');
 //  index(frtImagingStudy, key, 0, resource.size, 'size');
     index(frtImagingStudy, key, 0, series.bodySite, 'bodySite');
     for j := 0 to series.instanceList.count - 1 do
@@ -3281,7 +3318,7 @@ var
   i : integer;
 begin
   index(frtImmunization, key, 0, resource.vaccineType, 'vaccine-type');
-  index(frtImmunization, key, 0, resource.date, 'date');
+  index(frtImmunization, key, 0, resource.dateObject, 'date');
   if resource.explanation <> nil then
   begin
     for i := 0 to resource.explanation.refusalReasonList.count - 1 do
@@ -3301,7 +3338,7 @@ begin
   for i := 0 to resource.reactionList.count - 1 do
   begin
     index(context, frtImmunization, key, 0, resource.reactionList[i].detail, 'reaction');
-    index(frtImmunization, key, 0, resource.reactionList[i].date, 'reaction-date');
+    index(frtImmunization, key, 0, resource.reactionList[i].dateObject, 'reaction-date');
   end;
   for i := 0 to resource.vaccinationProtocolList.count - 1 do
     index(frtImmunization, key, 0, resource.vaccinationProtocolList[i].doseSequence, 'dose-sequence');
@@ -3327,7 +3364,7 @@ procedure TFhirIndexManager.buildIndexValuesOrder(key: integer; id : String; con
 var
   i : integer;
 begin
-  index(frtOrder, key, 0, resource.date, 'date');
+  index(frtOrder, key, 0, resource.dateObject, 'date');
   index(context, frtOrder, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
   index(context, frtOrder, key, 0, resource.source, 'source');
@@ -3362,9 +3399,9 @@ var
   i : integer;
 begin
   index(context, frtOrderResponse, key, 0, resource.request, 'request');
-  index(frtOrderResponse, key, 0, resource.date, 'date');
+  index(frtOrderResponse, key, 0, resource.dateObject, 'date');
   index(context, frtOrderResponse, key, 0, resource.who, 'who');
-  index(frtOrderResponse, key, 0, resource.code, 'http://hl7.org/fhir/order-outcome-code', 'code');
+  index(frtOrderResponse, key, 0, resource.codeObject, 'http://hl7.org/fhir/order-outcome-code', 'code');
   for i := 0 to resource.fulfillmentList.count - 1 do
     index(context, frtOrderResponse, key, 0, resource.fulfillmentList[i], 'fulfillment');
 end;
@@ -3390,11 +3427,11 @@ var
 begin
   index(context, frtMedia, key, 0, resource.subject, 'subject');
   patientCompartment(key, resource.subject);
-  index(frtMedia, key, 0, resource.dateTime, 'date');
+  index(frtMedia, key, 0, resource.dateTimeObject, 'date');
   for i := 0 to resource.identifierList.count - 1 do
     index(frtMedia, key, 0, resource.identifierList[i], 'identifier');
   index(context, frtMedia, key, 0, resource.operator, 'operator');
-  index(frtMedia, key, 0, resource.type_, 'http://hl7.org/fhir/media-type', 'type');
+  index(frtMedia, key, 0, resource.type_Object, 'http://hl7.org/fhir/media-type', 'type');
   index(frtMedia, key, 0, resource.subtype, 'subtype');
 //  index(frtMedia, key, 0, resource.size, 'size');
   index(frtMedia, key, 0, resource.view, 'view');
@@ -3418,7 +3455,7 @@ procedure TFhirIndexManager.buildIndexValuesFamilyHistory(key: integer; id : Str
 begin
   index(context, frtFamilyHistory, key, 0, resource.subject, 'subject');
   {$IFNDEF FHIR-DSTU}
-  index(frtFamilyHistory, key, 0, resource.date, 'date');
+  index(frtFamilyHistory, key, 0, resource.dateObject, 'date');
   {$ENDIF}
   patientCompartment(key, resource.subject);
 end;
@@ -3491,7 +3528,7 @@ begin
 
   for i := 0 to resource.recommendationList.count - 1 do
   begin
-    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].date, 'date');
+    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].dateObject, 'date');
     index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].vaccineType, 'vaccine-type');
     index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].doseNumber, 'dose-number');
     index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].forecastStatus, 'status');
@@ -3523,8 +3560,8 @@ end;
 procedure TFhirIndexManager.buildIndexValuesQuestionnaire(key: integer; id : String; context : TFhirResource; resource: TFhirQuestionnaire);
 begin
   index(context, frtQuestionnaire, key, 0, resource.author, 'author');
-  index(frtQuestionnaire, key, 0, resource.authored, 'authored');
-  index(frtQuestionnaire, key, 0, resource.status, 'http://hl7.org/fhir/questionnaire-status', 'status');
+  index(frtQuestionnaire, key, 0, resource.authoredObject, 'authored');
+  index(frtQuestionnaire, key, 0, resource.statusObject, 'http://hl7.org/fhir/questionnaire-status', 'status');
   index(context, frtQuestionnaire, key, 0, resource.encounter, 'encounter');
   index(context, frtQuestionnaire, key, 0, resource.subject, 'subject');
   index(frtQuestionnaire, key, 0, resource.identifierList, 'identifier');
@@ -3559,9 +3596,9 @@ procedure TFhirIndexManager.buildIndexValuesQuestionnaire(key: integer; id : Str
   end;
 begin
   index(frtQuestionnaire, key, 0, resource.publisher, 'publisher');
-  index(frtQuestionnaire, key, 0, resource.status, 'http://hl7.org/fhir/questionnaire-status', 'status');
+  index(frtQuestionnaire, key, 0, resource.statusObject, 'http://hl7.org/fhir/questionnaire-status', 'status');
   index(frtQuestionnaire, key, 0, resource.identifierList, 'identifier');
-  index(frtQuestionnaire, key, 0, resource.date, 'date');
+  index(frtQuestionnaire, key, 0, resource.dateObject, 'date');
   index(frtQuestionnaire, key, 0, resource.version, 'version');
   index(frtQuestionnaire, key, 0, resource.group.title, 'title');
   IndexGroup(resource.group);
@@ -3589,8 +3626,8 @@ begin
   index(context, frtQuestionnaireAnswers, key, 0, resource.encounter, 'encounter');
   index(context, frtQuestionnaireAnswers, key, 0, resource.questionnaire, 'questionnaire');
   index(context, frtQuestionnaireAnswers, key, 0, resource.subject, 'subject');
-  index(frtQuestionnaireAnswers, key, 0, resource.status, 'http://hl7.org/fhir/questionnaire-answers-status', 'status');
-  index(frtQuestionnaireAnswers, key, 0, resource.authored, 'authored');
+  index(frtQuestionnaireAnswers, key, 0, resource.statusObject, 'http://hl7.org/fhir/questionnaire-answers-status', 'status');
+  index(frtQuestionnaireAnswers, key, 0, resource.authoredObject, 'authored');
 
   patientCompartment(key, resource.subject);
   patientCompartment(key, resource.author);
@@ -3615,9 +3652,9 @@ end;
 procedure TFhirIndexManager.buildIndexValuesSlot(key: integer; id : String; context : TFhirResource; resource: TFhirSlot);
 begin
   index(context, frtSlot, key, 0, resource.availability, 'availability');
-  index(frtSlot, key, 0, resource.freeBusyType, 'http://hl7.org/fhir/slotstatus', 'fbtype');
+  index(frtSlot, key, 0, resource.freeBusyTypeObject, 'http://hl7.org/fhir/slotstatus', 'fbtype');
   index(frtSlot, key, 0, resource.type_, 'slottype');
-  index(frtSlot, key, 0, resource.start, 'start');
+  index(frtSlot, key, 0, resource.startObject, 'start');
 end;
 
 Const
@@ -3638,11 +3675,11 @@ procedure TFhirIndexManager.buildIndexValuesAppointment(key: integer; id : Strin
 var
   i : integer;
 begin
-  index(frtAppointment, key, 0, resource.start, 'date');
+  index(frtAppointment, key, 0, resource.startObject, 'date');
   index(frtAppointment, key, 0, resource.status, 'status');
   for i := 0 to resource.participantList.Count - 1 do
   begin
-    index(frtAppointment, key, 0, resource.participantList[i].status, 'http://hl7.org/fhir/participationstatus', 'partstatus');
+    index(frtAppointment, key, 0, resource.participantList[i].statusObject, 'http://hl7.org/fhir/participationstatus', 'partstatus');
     index(context, frtAppointment, key, 0, resource.participantList[i].actor, 'actor');
     patientCompartment(key, resource.participantList[i].actor);
   end;
@@ -3691,7 +3728,7 @@ procedure TFhirIndexManager.buildIndexValuesAppointmentResponse(key: integer; id
 var
   i : integer;
 begin
-  index(frtAppointmentResponse, key, 0, resource.participantStatus, 'http://hl7.org/fhir/participantstatus', 'partstatus');
+  index(frtAppointmentResponse, key, 0, resource.participantStatusObject, 'http://hl7.org/fhir/participantstatus', 'partstatus');
   index(context, frtAppointmentResponse, key, 0, resource.appointment, 'appointment');
   for i := 0 to resource.individualList.Count - 1 do
   begin
@@ -3718,12 +3755,12 @@ procedure TFhirIndexManager.buildIndexValuesDataElement(key: integer; id : Strin
 begin
   index(frtDataElement, key, 0, resource.categoryList, 'category');
   index(frtDataElement, key, 0, resource.codeList, 'code');
-  index(frtDataElement, key, 0, resource.date, 'date');
+  index(frtDataElement, key, 0, resource.dateObject, 'date');
   index(frtDataElement, key, 0, resource.definition, 'description');
   index(frtDataElement, key, 0, resource.identifier, 'identifier');
   index(frtDataElement, key, 0, resource.name, 'name');
   index(frtDataElement, key, 0, resource.publisher, 'publisher');
-  index(frtDataElement, key, 0, resource.status, 'http://hl7.org/fhir/resource-observation-def-status', 'status');
+  index(frtDataElement, key, 0, resource.statusObject, 'http://hl7.org/fhir/resource-observation-def-status', 'status');
   index(frtDataElement, key, 0, resource.version, 'version');
 end;
 
@@ -3766,10 +3803,10 @@ begin
   for i := 0 to resource.contactList.Count - 1 do
     index(frtSubscription, key, 0, resource.contactList[i], 'contact');
   index(frtSubscription, key, 0, resource.criteria, 'criteria');
-  index(frtSubscription, key, 0, resource.status, 'http://hl7.org/fhir/subscription-status', 'status');
+  index(frtSubscription, key, 0, resource.statusObject, 'http://hl7.org/fhir/subscription-status', 'status');
   for i := 0 to resource.tagList.Count - 1 do
     index(frtSubscription, key, 0, resource.tagList[i].term, 'tag');
-  index(frtSubscription, key, 0, resource.channel.type_, 'http://hl7.org/fhir/subscription-channel-type', 'type');
+  index(frtSubscription, key, 0, resource.channel.type_Object, 'http://hl7.org/fhir/subscription-channel-type', 'type');
   index(frtSubscription, key, 0, resource.channel.payload, 'payload');
   index(frtSubscription, key, 0, resource.channel.url, 'url');
 end;
@@ -3793,7 +3830,7 @@ var
   i : integer;
 begin
   index(frtContraIndication, key, 0, resource.category, 'category');
-  index(frtContraIndication, key, 0, resource.date, 'date');
+  index(frtContraIndication, key, 0, resource.dateObject, 'date');
   index(frtContraIndication, key, 0, resource.identifier, 'identifier');
   for i := 0 to resource.implicatedList.Count - 1 do
     index(context, frtContraIndication, key, 0, resource.patient, 'implicated');
@@ -3819,7 +3856,7 @@ procedure TFhirIndexManager.buildIndexValuesRiskAssessment(key: integer; id : St
 var
   i : integer;
 begin
-  index(frtRiskAssessment, key, 0, resource.date, 'date');
+  index(frtRiskAssessment, key, 0, resource.dateObject, 'date');
   index(frtRiskAssessment, key, 0, resource.identifier, 'identifier');
 
   index(frtRiskAssessment, key, 0, resource.method, 'method');
@@ -3847,7 +3884,7 @@ var
   i : integer;
 begin
   index(frtOperationDefinition, key, 0, resource.identifier, 'identifier');
-  index(frtOperationDefinition, key, 0, resource.status, 'http://hl7.org/fhir/resource-profile-status', 'status');
+  index(frtOperationDefinition, key, 0, resource.statusObject, 'http://hl7.org/fhir/resource-profile-status', 'status');
   index(frtOperationDefinition, key, 0, resource.version, 'version');
   index(frtOperationDefinition, key, 0, resource.publisher, 'publisher');
   index(frtOperationDefinition, key, 0, resource.name, 'name');
@@ -3855,8 +3892,8 @@ begin
   for i := 0 to resource.CodeList.count - 1 Do
     index(frtOperationDefinition, key, 0, resource.CodeList[i], 'code');
   index(context, frtOperationDefinition, key, 0, resource.base, 'base');
-  index(frtOperationDefinition, key, 0, resource.date, 'date');
-  index(frtOperationDefinition, key, 0, resource.kind, 'http://hl7.org/fhir/operation-kind', 'kind');
+  index(frtOperationDefinition, key, 0, resource.dateObject, 'date');
+  index(frtOperationDefinition, key, 0, resource.kindObject, 'http://hl7.org/fhir/operation-kind', 'kind');
   index(frtOperationDefinition, key, 0, resource.system, 'system');
   for i := 0 to resource.type_List.count - 1 Do
     index(frtOperationDefinition, key, 0, resource.type_List[i], 'type');
@@ -3885,12 +3922,55 @@ var
 begin
   patientCompartment(key, resource.subject);
   index(context, frtReferralRequest, key, 0, resource.subject, 'subject');
-  index(frtReferralRequest, key, 0, resource.status, 'http://hl7.org/fhir/referralstatus', 'status');
+  index(frtReferralRequest, key, 0, resource.statusObject, 'http://hl7.org/fhir/referralstatus', 'status');
   index(frtReferralRequest, key, 0, resource.priority, 'priority');
   for i := 0 to resource.recipientList.Count - 1 do
     index(context, frtReferralRequest, key, 0, resource.recipientList[i], 'recipient');
   index(frtReferralRequest, key, 0, resource.specialty, 'specialty');
   index(frtReferralRequest, key, 0, resource.type_, 'type');
+end;
+
+const
+  CHECK_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of TSearchParamsNutritionOrder = ( spNutritionOrder__id, spNutritionOrder__Language, spNutritionOrder_Additive, spNutritionOrder_Datewritten, spNutritionOrder_Encounter, spNutritionOrder_Food, spNutritionOrder_Formula, spNutritionOrder_Indentifier, spNutritionOrder_Oraldiet, spNutritionOrder_Provider, spNutritionOrder_Status, spNutritionOrder_Subject, spNutritionOrder_Supplement);
+
+procedure TFhirIndexManager.buildIndexesNutritionOrder;
+var
+  a : TSearchParamsNutritionOrder;
+begin
+  for a := low(TSearchParamsNutritionOrder) to high(TSearchParamsNutritionOrder) do
+  begin
+    assert(CHECK_TSearchParamsNutritionOrder[a] = a);
+    indexes.add(frtNutritionOrder, CODES_TSearchParamsNutritionOrder[a], DESC_TSearchParamsNutritionOrder[a], TYPES_TSearchParamsNutritionOrder[a], TARGETS_TSearchParamsNutritionOrder[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesNutritionOrder(key : integer; id : String; context : TFhirResource; resource: TFhirNutritionOrder);
+var
+  item : TFhirNutritionOrderItem;
+begin
+  patientCompartment(key, resource.subject);
+  index(context, frtNutritionOrder, key, 0, resource.subject, 'subject');
+  index(context, frtNutritionOrder, key, 0, resource.orderer, 'provider');
+  index(frtNutritionOrder, key, 0, resource.statusObject, 'http://hl7.org/fhir/nutrition-order-status', 'status');
+  index(context, frtNutritionOrder, key, 0, resource.encounter, 'encounter');
+  index(frtNutritionOrder, key, 0, resource.identifierList, 'identifier');
+  index(frtNutritionOrder, key, 0, resource.dateTimeObject, 'dateWritten');
+
+  for item in resource.itemList do
+  begin
+    if item.oralDiet <> nil then
+    begin
+      index(frtNutritionOrder, key, 0, item.oralDiet.codeList, 'oraldiet');
+      index(frtNutritionOrder, key, 0, item.oralDiet.foodTypeList, 'food');
+    end;
+    if item.supplement <> nil then
+      index(frtNutritionOrder, key, 0, item.supplement.type_List, 'supplement');
+    if item.enteralFormula <> nil then
+    begin
+      index(frtNutritionOrder, key, 0, item.enteralFormula.additiveTypeList, 'additive');
+      index(frtNutritionOrder, key, 0, item.enteralFormula.baseFormulaType, 'formula');
+    end;
+  end;
 end;
 
 {$ENDIF}

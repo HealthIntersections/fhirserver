@@ -77,8 +77,6 @@ implementation
 function TSCIMServer.CheckLogin(username, password: String): boolean;
 var
   conn : TKDBConnection;
-  b : TBytes;
-  s : String;
 begin
   conn := db.GetConnection('scim.checkpassword');
   try
@@ -164,7 +162,7 @@ begin
           conn.BindInteger('uk', key);
           conn.BindString('un', un);
           conn.BindString('pw', HashPassword(key, pw));
-          conn.BindBlobFromBytes('cnt', TJSONWriter.write(user.json, false));
+          conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
           conn.Execute;
         finally
           conn.Terminate;
@@ -223,7 +221,7 @@ begin
           conn.BindInteger('uk', key);
           conn.BindString('un', 'Anonymous');
           conn.BindNull('pw');
-          conn.BindBlobFromBytes('cnt', TJSONWriter.write(user.json, false));
+          conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
           conn.Execute;
         finally
           conn.Terminate;
@@ -310,7 +308,7 @@ begin
   finally
     hash.free;
   end;
-  result := EncodeHexadecimal(res);
+  result := String(EncodeHexadecimal(res));
 end;
 
 
@@ -329,12 +327,13 @@ end;
 function TSCIMServer.loadOrCreateUser(id, name, email: String): TSCIMUser;
 var
   conn : TKDBConnection;
-  b : TBytes;
   new, upd : boolean;
   now : TDateAndTime;
   key : integer;
   s : String;
 begin
+  upd := false;
+  key := 0;
   conn := db.GetConnection('scim.loadOrCreateUser');
   try
     if id = SCIM_ANONYMOUS then
@@ -408,7 +407,7 @@ begin
               conn.BindInteger('uk', key);
               if new then
                 conn.BindString('un', id);
-              conn.BindBlobFromBytes('cnt', TJSONWriter.write(result.json, false));
+              conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(result.json, false));
               conn.Execute;
             finally
               conn.Terminate;
@@ -442,7 +441,6 @@ end;
 function TSCIMServer.loadUser(id: String): TSCIMUser;
 var
   conn : TKDBConnection;
-  b : TBytes;
   s : String;
 begin
   conn := db.GetConnection('scim.loadUser');
@@ -498,7 +496,6 @@ procedure TSCIMServer.processUserDelete(context: TIdContext; request: TIdHTTPReq
 var
   id : String;
   conn : TKDBConnection;
-  b : TBytes;
 begin
   id := request.Document.Substring(12);
   conn := db.GetConnection('scim.user.delete');
@@ -563,7 +560,6 @@ var
   username : String;
   conn : TKDBConnection;
   key : integer;
-  instant : TDateAndTime;
   now : TDateAndTime;
 begin
   if (request.Document <> '/scim/Users') then
@@ -607,7 +603,7 @@ begin
               conn.BindString('pw', HashPassword(key, password))
             else
               conn.BindNull('pw');
-            conn.BindBlobFromBytes('cnt', TJSONWriter.write(user.json, false));
+            conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
             conn.Execute;
           finally
             conn.Terminate;
@@ -642,11 +638,9 @@ end;
 
 procedure TSCIMServer.processUserPut(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  json : TJsonObject;
   nUser, eUser : TSCIMUser;
   password : String;
   conn : TKDBConnection;
-  instant : TDateAndTime;
   now : TDateAndTime;
   id : String;
   b : TBytes;
@@ -700,7 +694,7 @@ begin
                 conn.BindString('pw', HashPassword(StrToInt(id), password))
               else
                 conn.BindNull('pw');
-              conn.BindBlobFromBytes('cnt', TJSONWriter.write(nUser.json, false));
+              conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(nUser.json, false));
               conn.Execute;
             finally
               conn.Terminate;
@@ -738,7 +732,6 @@ procedure TSCIMServer.processUserQuery(context: TIdContext; request: TIdHTTPRequ
 var
   params : TParseMap;
   conn : TKDBConnection;
-  b : TBytes;
   json : TJsonObject;
   list : TJsonArray;
   c, t, l, s : integer;
@@ -801,7 +794,7 @@ begin
       response.ResponseText := 'OK';
       response.ContentType := 'application/scim+json';
       response.ContentStream := TMemoryStream.create;
-      TJSONWriter.write(response.ContentStream, json, false);
+      TJSONWriter.writeObject(response.ContentStream, json, false);
       response.ContentStream.Position := 0;
     finally
       json.free;
@@ -998,7 +991,7 @@ begin
     b := true;
     for i := 0 to user.entitlementcount - 1 do
     begin
-      ndx(p, 'entitlements', user.entitlement[i], b);
+      ndx(0, 'entitlements', user.entitlement[i], b);
       b := false;
     end;
 
@@ -1064,7 +1057,7 @@ procedure TSCIMServer.WriteOutgoing(response: TIdHTTPResponseInfo; json: TJsonOb
 begin
   response.ContentType := 'application/scim+json';
   response.ContentStream := TMemoryStream.create;
-  TJSONWriter.write(response.contentStream, json, false);
+  TJSONWriter.writeObject(response.contentStream, json, false);
   response.ContentStream.Position := 0;
 end;
 

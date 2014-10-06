@@ -71,7 +71,7 @@ Type
     FTags: TFHIRAtomCategoryList;
     FParserPolicy : TFHIRXhtmlParserPolicy;
     procedure Setfeed(const Value: TFHIRAtomFeed);
-    procedure SeTFhirResource(const Value: TFhirResource);
+    procedure SetResource(const Value: TFhirResource);
   protected
     procedure checkDateFormat(s : string);
     Function toTDateAndTime(s : String) : TDateAndTime;
@@ -82,7 +82,7 @@ Type
     property source : TStream read FSource write FSource;
     procedure Parse; Virtual; abstract;
     function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Virtual; abstract;
-    property resource : TFhirResource read Fresource write SeTFhirResource;
+    property resource : TFhirResource read Fresource write SetResource;
     property feed : TFHIRAtomFeed read Ffeed write Setfeed;
     Property Tags : TFHIRAtomCategoryList read FTags;
 
@@ -649,7 +649,6 @@ end;
 function TFHIRJsonParserBase.ParseDT(rootName: String; type_: TFHIRTypeClass): TFHIRType;
 var
   obj : TJsonObject;
-  s : string;
 begin
   obj := TJSONParser.Parse(source);
   try
@@ -706,7 +705,7 @@ begin
     xml := TAdvXmlBuilder.Create;
     try
       xml.IsPretty := isPretty;
-      xml.Namespace := FHIR_NS;
+      xml.CurrentNamespaces.DefaultNS := FHIR_NS;
       xml.Start;
       if FComment <> '' then
         xml.Comment(FComment);
@@ -733,7 +732,7 @@ begin
   xml := TMsXmlBuilder.Create;
   try
     TMsXmlBuilder(xml).Start(node);
-    xml.Namespace := FHIR_NS;
+    xml.CurrentNamespaces.DefaultNS := FHIR_NS;
     if FComment <> '' then
       xml.Comment(FComment);
     ComposeResource(xml, statedType, id, ver, oResource, links);
@@ -750,15 +749,13 @@ begin
 end;
 
 procedure TFHIRXmlComposerBase.ComposeXHtmlNode(xml : TXmlBuilder; name: String; value: TFhirXHtmlNode);
-var
-  s : String;
 begin
 //   attribute('xmlns', XHTML_NS);
-  s := xml.Namespace;
-  xml.Namespace := XHTML_NS;
+  xml.NSPush;
+  xml.CurrentNamespaces.DefaultNS := XHTML_NS;
   if value <> nil then
     ComposeXhtmlNode(xml, value, false);
-  xml.Namespace := s;
+  xml.NSPop
 end;
 
 function TFHIRXmlComposerBase.MimeType: String;
@@ -809,7 +806,7 @@ begin
   xml := TAdvXmlBuilder.Create;
   try
     xml.IsPretty := isPretty;
-    xml.Namespace := FHIR_NS;
+    xml.CurrentNamespaces.DefaultNS := FHIR_NS;
     xml.Start;
     if FComment <> '' then
       xml.Comment(FComment);
@@ -905,7 +902,7 @@ begin
     try
       xml.IsPretty := false;
       xml.CharEncoding := '';
-      xml.Namespace := XHTML_NS;
+      xml.CurrentNamespaces.DefaultNS := XHTML_NS;
       xml.NoHeader := true;
       {
       xml.StartFragment;
@@ -1250,7 +1247,7 @@ begin
   Ffeed := Value;
 end;
 
-procedure TFHIRParser.SeTFhirResource(const Value: TFhirResource);
+procedure TFHIRParser.SetResource(const Value: TFhirResource);
 begin
   Fresource.Free;
   Fresource := Value;
@@ -1293,7 +1290,6 @@ end;
 function TFHIRXmlParserBase.ParseEntry(element: IXmlDomElement): TFHIRAtomEntry;
 var
   child : IXMLDOMElement;
-  grandchild : IXMLDOMElement;
   s : String;
 begin
   result := TFHIRAtomEntry.create;
@@ -1479,7 +1475,7 @@ begin
   xml := TAdvXmlBuilder.Create;
   try
     xml.IsPretty := isPretty;
-    xml.Namespace := ATOM_NS;
+    xml.CurrentNamespaces.DefaultNS := ATOM_NS;
     xml.Start;
     if FComment <> '' then
       xml.Comment(FComment);
@@ -1535,9 +1531,10 @@ begin
 
   if (feed.isSearch) and ((feed.SearchTotal > 0) or (feed.entries.Count = 0)) then
   begin
-    xml.Namespace := 'http://a9.com/-/spec/opensearch/1.1/';
+    xml.NSPush;
+    xml.CurrentNamespaces.DefaultNS := 'http://a9.com/-/spec/opensearch/1.1/';
     xml.TagText('totalResults', inttostr(feed.SearchTotal));
-    xml.Namespace := ATOM_NS;
+    xml.NSPop;
   end;
 
   for i := 0 to feed.entries.count - 1 Do
@@ -1552,7 +1549,8 @@ var
 begin
   if entry.deleted then
   begin
-    xml.Namespace := 'http://purl.org/atompub/tombstones/1.0';
+    xml.NSPush;
+    xml.CurrentNamespaces.DefaultNS := 'http://purl.org/atompub/tombstones/1.0';
     xml.AddAttribute('ref', entry.id);
     xml.AddAttribute('when', entry.updated.AsXml);
     xml.Open('deleted-entry');
@@ -1573,12 +1571,10 @@ begin
       xml.Close('by');
     end;
     xml.Close('deleted-entry');
-    xml.Namespace := ATOM_NS;
+    xml.NSPop;
   end
   else
   begin
-    if xml.Namespace <> ATOM_NS  then
-      xml.Namespace := ATOM_NS;
     xml.Open('entry');
     composeAtomBase(xml, entry);
     if (entry.published_ <> nil) Then
@@ -1588,22 +1584,24 @@ begin
 //      xml.AddAttribute('type', 'application/xml+fhir');
       xml.AddAttribute('type', 'text/xml');
       xml.Open('content');
-      xml.Namespace := FHIR_NS;
+      xml.NSPush;
+      xml.CurrentNamespaces.DefaultNS := FHIR_NS;
       if entry.resource is TFhirBinary then
         ComposeBinary(xml, TFhirBinary(entry.resource))
       else
         ComposeResource(xml, '', entry.id, tail(entry.links.rel['self']), entry.resource, entry.Links);
-      xml.Namespace := ATOM_NS;
       xml.Close('content');
+      xml.NSPop;
     end;
     if entry.summary <> nil then
     begin
+      xml.NSPush;
       xml.AddAttribute('type', 'xhtml');
       xml.Open('summary');
-      xml.Namespace := XHTML_NS;
+      xml.CurrentNamespaces.DefaultNS := XHTML_NS;
       ComposeXHtmlNode(xml, entry.summary, false);
-      xml.Namespace := ATOM_NS;
       xml.Close('summary');
+      xml.NSPop;
     end;
     commentsEnd(xml, entry);
     xml.Close('entry');
@@ -1724,7 +1722,7 @@ Header(Session, FBaseURL, lang)+
           if (oResource is TFHIRQuestionnaireAnswers) then
           begin
             if (TFHIRQuestionnaireAnswers(oResource).questionnaire <> nil) then
-              s.append('. <a href="'+patchToWeb(links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireAnswers(oResource).questionnaire.referenceST+'">see the questionnaire</a>)')
+              s.append('. <a href="'+patchToWeb(links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireAnswers(oResource).questionnaire.reference+'">see the questionnaire</a>)')
           end
           else
             s.append('. <a href="'+patchToWeb(links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+links.GetRel('edit-form')+'">see resources underlying that</a>)');
@@ -1864,7 +1862,7 @@ Header(Session, FBaseURL, lang)+
           if (e.resource is TFHIRQuestionnaireAnswers) then
           begin
             if (TFHIRQuestionnaireAnswers(e.resource).questionnaire <> nil) then
-              s.append(' <a href="'+patchToWeb(e.links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireAnswers(e.resource).questionnaire.referenceST+'">see the questionnaire</a>)')
+              s.append(' <a href="'+patchToWeb(e.links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireAnswers(e.resource).questionnaire.reference+'">see the questionnaire</a>)')
           end
           else
             s.append(' <a href="'+patchToWeb(e.links.GetRel('edit-form'))+'">Edit this Resource</a> (or just see <a href="'+e.links.GetRel('edit-form')+'">the Questionnaire</a>)');
@@ -2396,11 +2394,12 @@ end;
 
 procedure TFHIRComposer.ComposeBinary(xml: TXmlBuilder; binary: TFhirBinary);
 begin
-  if (xml.Namespace <> FHIR_NS) then
-    xml.Namespace := FHIR_NS;
+  xml.NSPush;
+  xml.CurrentNamespaces.DefaultNS := FHIR_NS;
   xml.AddAttribute('id', binary.xmlId);
   xml.AddAttribute('contentType', binary.ContentType);
   xml.TagText('Binary', StringReplace(string(EncodeBase64(binary.Content.Data, binary.Content.Size)), #13#10, ''));
+  xml.NSPop;
 end;
 
 function isRelativeReference(s : string) : boolean;
@@ -2479,6 +2478,7 @@ function TFHIRXmlParserBase.CheckHtmlElementOk(elem: IXMLDOMElement): boolean;
 var
   bOk : boolean;
 begin
+  result := true;
   bOk := StringArrayExistsInsensitive(['p', 'br', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'b', 'em', 'i', 'strong',
     'small', 'big', 'tt', 'small', 'dfn', 'q', 'var', 'abbr', 'acronym', 'cite', 'blockquote', 'hr', 'address', 'bdo', 'kbd', 'q', 'sub', 'sup',
     'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'pre', 'table', 'caption', 'colgroup', 'col', 'thead', 'tr', 'tfoot', 'tbody', 'th', 'td',
@@ -2497,6 +2497,7 @@ function TFHIRXmlParserBase.CheckHtmlAttributeOk(elem, attr, value : String): bo
 var
   bOk : boolean;
 begin
+  result := true;
   bOk := StringArrayExistsInsensitive(['title', 'style', 'class', 'id', 'lang', 'xml:lang', 'dir', 'accesskey', 'tabindex',
                     // tables
                    'span', 'width', 'align', 'valign', 'char', 'charoff', 'abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan'], attr) or

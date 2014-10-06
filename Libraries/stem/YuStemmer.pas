@@ -81,8 +81,8 @@ type
   public
     destructor Destroy; override;
 
+    function calc(const s: String): String;
     function Stem(const s: Utf8String): Utf8String; overload;
-
     procedure Stem(var p: PUtf8Char; var l: Integer); overload;
   end;
 
@@ -809,6 +809,11 @@ begin
                               if AName = 'spanish' then Result := TYuStemmer_Spanish.Create else
                                 if AName = 'swedish' then Result := TYuStemmer_Swedish.Create else
                                   Result := nil;
+end;
+
+function TYuStemmer_8.calc(const s: String): String;
+begin
+  result := String(Stem(UTF8String(s)));
 end;
 
 destructor TYuStemmer_8.Destroy;
