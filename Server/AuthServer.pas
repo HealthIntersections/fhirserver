@@ -422,8 +422,7 @@ begin
   else
     authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2';
 
-
-  jwk := TJWTUtils.loadKeyFromCert(FSSLCert);
+  jwk := TJWTUtils.loadKeyFromRSACert(FSSLCert);
   try
     jwk.obj['alg'] := 'RS256';
     jwk.obj['use'] := 'sig';

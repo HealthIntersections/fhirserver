@@ -37,7 +37,7 @@ var
   jwk : TJWK;
   s: String;
 begin
-  jwk := TJWTUtils.loadKeyFromCert('C:\work\fhirserver\Exec\jwt-test.key.crt');
+  jwk := TJWTUtils.loadKeyFromRSACert('C:\work\fhirserver\Exec\jwt-test.key.crt');
   try
     s := TJSONWriter.writeObjectStr(jwk.obj, true);
     Writeln(s);
