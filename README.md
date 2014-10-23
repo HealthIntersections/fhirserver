@@ -43,7 +43,7 @@ Running
 
 System Pre-requisites
 * you need either MSSQL 2012, or MySQL 5.5+  (err, MySQL is not supported right now because of a lack of open-source licensed connections - the original code used mydac)
-* you need a copy of the file fhir-spec.zip from a properly built copy of FHIR. The reference source is http://hl7.org/fhir/fhir-spec.zip, but you should have the one that matches the built code compiled 
+* you need a copy of the file fhir-spec.zip from a properly built copy of FHIR. The reference source is http://www.hl7.org/documentcenter/public/standards/FHIR/fhir-spec.zip, but you should have the one that matches the built code compiled 
 * when the executable runs, it takes two parameters, in either order: an optional ini filename, and an optional command
 * for ini file documentation, see exec\fhir.ini. If no ini file is nominated, the default is fhir.ini in the same directory as the executable
 * if there is no command, nothing will happen - the server will terminate
