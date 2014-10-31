@@ -249,6 +249,26 @@
     {$DEFINE COMPILER_19}
   {$ENDIF VER260}
 
+  {$IFDEF VER270} // RAD Studio XE6
+    {$IFDEF BCB}
+      {$DEFINE BCB_19}
+    {$ELSE}
+      {$DEFINE DELPHI}
+      {$DEFINE DELPHI_19}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_19}
+  {$ENDIF VER260}
+
+  {$IFDEF VER280} // RAD Studio XE7
+    {$IFDEF BCB}
+      {$DEFINE BCB_19}
+    {$ELSE}
+      {$DEFINE DELPHI}
+      {$DEFINE DELPHI_19}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_19}
+  {$ENDIF VER260}
+
   // CLR - DotNet
 
   {$IFDEF CLR}
