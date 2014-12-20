@@ -45,27 +45,26 @@ type
     FOnLookupReference : TLookupReferenceEvent;
     FContext : TFHIRRequest;
 
-    function getByName(profile : TFHIRProfile; name : String) : TFhirProfileStructureSnapshot;
-    procedure generateByProfile(res : TFHIRResource; e : TFHIRElement; allElements : TFhirProfileStructureSnapshotElementList; defn : TFhirProfileStructureSnapshotElement; children : TFhirProfileStructureSnapshotElementList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
-    function getChildrenForPath(elements : TFhirProfileStructureSnapshotElementList; path : String) : TFhirProfileStructureSnapshotElementList;
-    procedure inject(res : TFHIRResource; x : TFHIRXhtmlNode; status : TFhirNarrativeStatus);
-    procedure renderLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirProfileStructureSnapshotElement; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
-    procedure readDisplayHints(defn : TFhirProfileStructureSnapshotElement; hints : TDictionary<String, String>);
-    function getElementDefinition(elements : TFhirProfileStructureSnapshotElementList; path : String) : TFhirProfileStructureSnapshotElement;
-    function exemptFromRendering(child : TFhirProfileStructureSnapshotElement) : boolean;
+    procedure generateByProfile(res : TFHIRDomainResource; e : TFHIRBase; allElements : TFhirElementDefinitionList; defn : TFhirElementDefinition; children : TFhirElementDefinitionList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
+    function getChildrenForPath(elements : TFhirElementDefinitionList; path : String) : TFhirElementDefinitionList;
+    procedure inject(res : TFHIRDomainResource; x : TFHIRXhtmlNode; status : TFhirNarrativeStatus);
+    procedure renderLeaf(res : TFHIRResource; e : TFHIRBase; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
+    procedure readDisplayHints(defn : TFhirElementDefinition; hints : TDictionary<String, String>);
+    function getElementDefinition(elements : TFhirElementDefinitionList; path : String) : TFhirElementDefinition;
+    function exemptFromRendering(child : TFhirElementDefinition) : boolean;
     function isDefaultValue(displayHints : TDictionary<String, String>; list: TFHIRObjectList) : boolean;
-    function renderAsList(child : TFhirProfileStructureSnapshotElement) : boolean;
-    function canDoTable(path : String; p : TFHIRProperty; grandChildren  : TFhirProfileStructureSnapshotElementList) : boolean;
-    procedure addColumnHeadings(tr : TFHIRXhtmlNode; grandChildren : TFhirProfileStructureSnapshotElementList);
-    procedure addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirProfileStructureSnapshotElementList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TDictionary<String, String>);
+    function renderAsList(child : TFhirElementDefinition) : boolean;
+    function canDoTable(path : String; p : TFHIRProperty; grandChildren  : TFhirElementDefinitionList) : boolean;
+    procedure addColumnHeadings(tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList);
+    procedure addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TDictionary<String, String>);
     function isDefault(displayHints : TDictionary<String, String>; primitiveType : TFHIRPrimitiveType) : boolean;
-    procedure getValues(path : string; p : TFHIRProperty; e : TFhirProfileStructureSnapshotElement; list : TFHIRObjectList);
-    function canCollapse(e : TFhirProfileStructureSnapshotElement) : boolean;
+    procedure getValues(path : string; p : TFHIRProperty; e : TFhirElementDefinition; list : TFHIRObjectList);
+    function canCollapse(e : TFhirElementDefinition) : boolean;
     procedure generateResourceSummary(x : TFHIRXhtmlNode; res : TFHIRResource; textAlready, showCodeDetails : boolean);
-    function includeInSummary(child : TFhirProfileStructureSnapshotElement): boolean;
-    function displayLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirProfileStructureSnapshotElement; x : TFHIRXhtmlNode; name : String; showCodeDetails : boolean) : boolean;
+    function includeInSummary(child : TFhirElementDefinition): boolean;
+    function displayLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; name : String; showCodeDetails : boolean) : boolean;
 
-    function isPrimitive(e : TFhirProfileStructureSnapshotElement) : boolean; overload;
+    function isPrimitive(e : TFhirElementDefinition) : boolean; overload;
     function capitalize(s : String):String;
     function camelCase(s : String):String;
     function tail(s : String):String;
@@ -94,7 +93,7 @@ type
     Constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFHIRRequest);
     Destructor Destroy; Override;
 
-    Procedure generate(r : TFHIRResource; profile : TFHIRProfile);
+    Procedure generate(r : TFHIRDomainResource; profile : TFHIRProfile);
 
   end;
 
@@ -130,14 +129,12 @@ begin
   FContext := context;
 end;
 
-Procedure TNarrativeGenerator.generate(r : TFHIRResource; profile : TFHIRProfile);
+Procedure TNarrativeGenerator.generate(r : TFHIRDomainResource; profile : TFHIRProfile);
 var
-  ps : TFhirProfileStructureSnapshot;
   x : TFHIRXhtmlNode;
 begin
-  if (r.hasModifierExtensions) then
+  if (r.modifierExtensionList.Count > 0) then
     raise Exception.create('Unable to generate narrative for resource of type '+CODES_TFHIRResourceType[r.ResourceType]+' because it has modifier extensions');
-  ps := getByName(profile, CODES_TFHIRResourceType[r.ResourceType]);
 
   x := TFHIRXhtmlNode.create;
   try
@@ -146,7 +143,7 @@ begin
 
     x.addTag('p').addTag('b').addText('Generated Narrative'); // +(showCodeDetails ? ' with Details' : ''));
     try
-      generateByProfile(r, r, ps.elementList, ps.ElementList[0], getChildrenForPath(ps.ElementList, CODES_TFHIRResourceType[r.ResourceType]), x, CODES_TFHIRResourceType[r.ResourceType], true);
+      generateByProfile(r, r, profile.snapshot.elementList, profile.snapshot.ElementList[0], getChildrenForPath(profile.snapshot.ElementList, CODES_TFHIRResourceType[r.ResourceType]), x, CODES_TFHIRResourceType[r.ResourceType], true);
     except
       on e : Exception do
          x.addTag('p').addTag('b').setAttribute('style', 'color: maroon').addText('Exception generating Narrative: '+e.Message);
@@ -157,13 +154,13 @@ begin
   end;
 end;
 
-procedure TNarrativeGenerator.generateByProfile(res : TFHIRResource; e : TFHIRElement; allElements : TFhirProfileStructureSnapshotElementList; defn : TFhirProfileStructureSnapshotElement; children : TFhirProfileStructureSnapshotElementList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
+procedure TNarrativeGenerator.generateByProfile(res : TFHIRDomainResource; e : TFHIRBase; allElements : TFhirElementDefinitionList; defn : TFhirElementDefinition; children : TFhirElementDefinitionList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
 var
   i : integer;
   iter : TFHIRPropertyIterator;
-  child : TFhirProfileStructureSnapshotElement;
+  child : TFhirElementDefinition;
   displayHints : TDictionary<String, String>;
-  grandChildren : TFhirProfileStructureSnapshotElementList;
+  grandChildren : TFhirElementDefinitionList;
   para, list, tbl, bq : TFHIRXhtmlNode;
   name : String;
   first : boolean;
@@ -276,7 +273,7 @@ begin
   result := (v <> '') and displayHints.containsKey('default') and (v = displayHints['default']);
 end;
 
-function TNarrativeGenerator.exemptFromRendering(child : TFhirProfileStructureSnapshotElement) : boolean;
+function TNarrativeGenerator.exemptFromRendering(child : TFhirElementDefinition) : boolean;
 begin
   if (child = nil) then
     result := false
@@ -288,20 +285,20 @@ begin
     result := false;
 end;
 
-function TNarrativeGenerator.renderAsList(child : TFhirProfileStructureSnapshotElement) : boolean;
+function TNarrativeGenerator.renderAsList(child : TFhirElementDefinition) : boolean;
 var
   t : String;
 begin
   result := true;
-  if (child.Definition.Type_List.count <> 1) then
+  if (child.Type_List.count <> 1) then
   begin
-    t := child.Definition.Type_List[0].Code;
-    if (t = 'Address') or (t = 'ResourceReference') then
+    t := child.Type_List[0].Code;
+    if (t = 'Address') or (t = 'Reference') then
       result := true;
   end;
 end;
 
-procedure TNarrativeGenerator.addColumnHeadings(tr : TFHIRXhtmlNode; grandChildren : TFhirProfileStructureSnapshotElementList);
+procedure TNarrativeGenerator.addColumnHeadings(tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList);
 var
   i : integer;
 begin
@@ -309,10 +306,10 @@ begin
     tr.addTag('td').addTag('b').addText(capitalize(tail(grandChildren[i].Path)));
 end;
 
-procedure TNarrativeGenerator.addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirProfileStructureSnapshotElementList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TDictionary<String, String>);
+procedure TNarrativeGenerator.addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TDictionary<String, String>);
 var
   i : integer;
-  e : TFhirProfileStructureSnapshotElement;
+  e : TFhirElementDefinition;
   list : TFHIRObjectList;
 begin
   for i := 0 to grandChildren.Count - 1 do
@@ -336,10 +333,10 @@ begin
   result := s.substring(s.lastIndexOf('.')+1);
 end;
 
-function TNarrativeGenerator.canDoTable(path : String; p : TFHIRProperty; grandChildren  : TFhirProfileStructureSnapshotElementList) : boolean;
+function TNarrativeGenerator.canDoTable(path : String; p : TFHIRProperty; grandChildren  : TFhirElementDefinitionList) : boolean;
 var
   i : integer;
-  e : TFhirProfileStructureSnapshotElement;
+  e : TFhirElementDefinition;
   list : TFHIRObjectList;
 begin
   result := true;
@@ -358,7 +355,7 @@ begin
   end;
 end;
 
-procedure TNarrativeGenerator.getValues(path : string; p : TFHIRProperty; e : TFhirProfileStructureSnapshotElement; list : TFHIRObjectList);
+procedure TNarrativeGenerator.getValues(path : string; p : TFHIRProperty; e : TFhirElementDefinition; list : TFHIRObjectList);
 var
   i : integer;
   v : TFhirElement;
@@ -381,16 +378,16 @@ begin
   end;
 end;
 
-function TNarrativeGenerator.canCollapse(e : TFhirProfileStructureSnapshotElement) : boolean;
+function TNarrativeGenerator.canCollapse(e : TFhirElementDefinition) : boolean;
 begin
   // we can collapse any data type
-  result := not e.Definition.Type_List.isEmpty;
+  result := not e.Type_List.isEmpty;
 end;
 
-function TNarrativeGenerator.isPrimitive(e : TFhirProfileStructureSnapshotElement) : boolean;
+function TNarrativeGenerator.isPrimitive(e : TFhirElementDefinition) : boolean;
 begin
   //we can tell if e is a primitive because it has types
-  result := not e.Definition.Type_List.isEmpty;
+  result := not e.Type_List.isEmpty;
 end;
 
 function TNarrativeGenerator.lookupCode(system, code: String): String;
@@ -401,10 +398,10 @@ begin
     result := '';
 end;
 
-function TNarrativeGenerator.getElementDefinition(elements : TFhirProfileStructureSnapshotElementList; path : String) : TFhirProfileStructureSnapshotElement;
+function TNarrativeGenerator.getElementDefinition(elements : TFhirElementDefinitionList; path : String) : TFhirElementDefinition;
 var
   i : integer;
-  element : TFhirProfileStructureSnapshotElement;
+  element : TFhirElementDefinition;
 begin
   result := nil;
   for i := 0 to elements.Count- 1 do
@@ -415,7 +412,7 @@ begin
   end;
 end;
 
-procedure TNarrativeGenerator.renderLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirProfileStructureSnapshotElement; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
+procedure TNarrativeGenerator.renderLeaf(res : TFHIRResource; e : TFHIRBase; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
 var
   p : TFHIRPeriod;
   r : TFhirReference;
@@ -490,7 +487,7 @@ begin
     c := x;
     tr := nil;
     try
-      if (r.referenceObject <> nil) then
+      if (r.referenceElement <> nil) then
       begin
         tr := resolveReference(res, r.Reference);
         if (not r.Reference.startsWith('#')) then
@@ -523,7 +520,7 @@ begin
     raise Exception.create('type '+e.ClassName+' not handled yet');
 end;
 
-function TNarrativeGenerator.displayLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirProfileStructureSnapshotElement; x : TFHIRXhtmlNode; name : String; showCodeDetails : boolean) : boolean;
+function TNarrativeGenerator.displayLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; name : String; showCodeDetails : boolean) : boolean;
 var
   displayHints : TDictionary<String, String>;
   p : TFHIRPeriod;
@@ -685,7 +682,7 @@ begin
   end;
 end;
 
-procedure TNarrativeGenerator.readDisplayHints(defn : TFhirProfileStructureSnapshotElement; hints : TDictionary<String, String>);
+procedure TNarrativeGenerator.readDisplayHints(defn : TFhirElementDefinition; hints : TDictionary<String, String>);
 var
   d, item : String;
   list, parts : TArray<String>;
@@ -693,7 +690,7 @@ begin
   hints.Clear;
   if (defn <> nil) then
   begin
-    d := defn.Definition.getextensionString('http://hl7.org/fhir/Profile/tools-extensions#display-hint');
+    d := defn.getextensionString('http://hl7.org/fhir/Profile/tools-extensions#display-hint');
     if (d <> '') then
     begin
       list := d.split([';']);
@@ -712,17 +709,22 @@ var
   path : String;
   profile : TFHIRProfile;
   firstElement, last, first : boolean;
-  struc : TFhirProfileStructureSnapshot;
+  struc : TFhirProfileSnapshot;
   iter : TFHIRPropertyIterator;
-  child : TFhirProfileStructureSnapshotElement;
+  child : TFhirElementDefinition;
   v : TFhirElement;
   i : integer;
+  dres :  TFhirDomainResource;
 begin
+  if not (res is TFHIRDomainResource) then
+    raise Exception.create('Not handled yet');
+  dres := TFHIRDomainResource(res);
+
   if (not textAlready) then
   begin
-    if (res.Text <> nil) and (res.Text.Div_ <> nil) then
+    if (dres.Text <> nil) and (dres.Text.Div_ <> nil) then
     begin
-      div_ := res.Text.Div_;
+      div_ := dres.Text.Div_;
       if (div_.allChildrenAreText) then
         x.ChildNodes.addAll(div_.ChildNodes)
       else if (div_.ChildNodes.count <> 1) and (div_.ChildNodes[0].allChildrenAreText) then
@@ -736,7 +738,7 @@ begin
     x.addText('unknown resource ' +path)
   else
   begin
-    struc := profile.StructureList[0].snapshot; // todo: how to do this better?
+    struc := profile.snapshot;
 
     firstElement := true;
     last := false;
@@ -771,19 +773,19 @@ begin
   end;
 end;
 
-function TNarrativeGenerator.includeInSummary(child : TFhirProfileStructureSnapshotElement): boolean;
+function TNarrativeGenerator.includeInSummary(child : TFhirElementDefinition): boolean;
 var
   t : string;
 begin
-  if (child.Definition.IsModifier) then
+  if (child.IsModifier) then
     result := true
-  else if (child.Definition.MustSupport) then
+  else if (child.MustSupport) then
     result := true
-  else if (child.Definition.Type_List.count <> 1) then
+  else if (child.Type_List.count <> 1) then
   begin
     result := true;
-    t := child.Definition.Type_List[0].Code;
-    if (t = 'Address')or (t = 'Contact') or (t = 'ResourceReference') or (t = 'Uri') then
+    t := child.Type_List[0].Code;
+    if (t = 'Address')or (t = 'Contact') or (t = 'Reference') or (t = 'Uri') then
       result := false;
   end
   else
@@ -901,8 +903,8 @@ procedure TNarrativeGenerator.renderQuantity(v : TFHIRQuantity; x : TFHIRXhtmlNo
 var
   sp : TFHIRXhtmlNode;
 begin
-  if (v.comparatorObject <> nil) then
-    x.addText(v.comparatorObject.value);
+  if (v.comparatorElement <> nil) then
+    x.addText(v.comparatorElement.value);
   x.addText(v.Value);
   if (v.Units <> '') then
     x.addText(' '+v.Units)
@@ -942,9 +944,9 @@ var
   r : TFhirResource;
 begin
   result := nil;
-  if (url.startsWith('#')) then
+  if (url.startsWith('#') and (res is TFhirDomainResource)) then
   begin
-    r := res.Contained[url.substring(1)];
+    r := TFhirDomainResource(res).Contained[url.substring(1)];
     if r <> nil then
       result := TResourceWithReference.Create('', r);
   end
@@ -1014,8 +1016,8 @@ begin
         s.append(' ');
       end;
     end;
-    if (v.useObject <> nil) and (v.Use <> NameUseUsual) then
-      s.append('('+v.UseObject.value+')');
+    if (v.useElement <> nil) and (v.Use <> NameUseUsual) then
+      s.append('('+v.UseElement.value+')');
     result := s.toString;
   finally
     s.free;
@@ -1050,9 +1052,9 @@ begin
         s.append(' ');
       end;
 
-      if (v.Zip <> '') then
+      if (v.postalCode <> '') then
       begin
-        s.append(v.Zip);
+        s.append(v.postalCode);
         s.append(' ');
       end;
 
@@ -1062,8 +1064,8 @@ begin
         s.append(' ');
       end;
     end;
-    if (v.useObject <> nil) then
-      s.append('('+v.useObject.value+')');
+    if (v.useElement <> nil) then
+      s.append('('+v.useElement.value+')');
     result := s.toString;
   finally
     s.free;
@@ -1078,8 +1080,8 @@ begin
     result := result + '-unknown-'
   else
     result := result + v.Value;
-  if (v.useObject <> nil) then
-    result := result + '('+v.useObject.value+')';
+  if (v.useElement <> nil) then
+    result := result + '('+v.useElement.value+')';
 end;
 
 function TNarrativeGenerator.describeSystem(system : TFHIRContactPointSystem) : String;
@@ -1112,25 +1114,25 @@ begin
   if (v.label_ <> '') then
     s := v.Label_+' := '+s;
 
-  if (v.useObject <> nil) then
-    s := s + ' ('+v.useObject.value+')';
+  if (v.useElement <> nil) then
+    s := s + ' ('+v.useElement.value+')';
   result := s;
 end;
 
 
-function TNarrativeGenerator.getChildrenForPath(elements : TFhirProfileStructureSnapshotElementList; path : String) : TFhirProfileStructureSnapshotElementList;
+function TNarrativeGenerator.getChildrenForPath(elements : TFhirElementDefinitionList; path : String) : TFhirElementDefinitionList;
 var
   i, j : integer;
-  e, t : TFhirProfileStructureSnapshotElement;
+  e, t : TFhirElementDefinition;
   name : String;
 begin
   // do we need to do a name reference substitution?
   for i := 0  to elements.Count - 1 do
   begin
     e := elements[i];
-    if (e.Path = path) and (e.Definition.NameReference <> '') then
+    if (e.Path = path) and (e.NameReference <> '') then
     begin
-      name := e.Definition.NameReference;
+      name := e.NameReference;
       t := nil;
       // now, resolve the name
       for j := 0 to elements.Count - 1 do
@@ -1143,7 +1145,7 @@ begin
     end;
   end;
 
-  result := TFhirProfileStructureSnapshotElementList.Create;
+  result := TFhirElementDefinitionList.Create;
   try
     for i := 0 to elements.Count - 1 do
     begin
@@ -1158,19 +1160,8 @@ begin
   end;
 end;
 
-function TNarrativeGenerator.getByName(profile : TFHIRProfile; name : String) : TFhirProfileStructureSnapshot;
-var
-  i : integer;
-begin
-  result := nil;
-  for I := 0 to profile.structureList.Count - 1 do
-    if ((profile.structureList[i].name = name) or (profile.structureList[i].type_ = name)) and (profile.structureList[i].snapshot <> nil) then
-      result := profile.structureList[i].snapshot;
-  if result = nil then
-    raise Exception.create('unable to find snapshot for '+name);
-end;
 
-procedure TNarrativeGenerator.inject(res : TFHIRResource; x : TFHIRXhtmlNode; status : TFhirNarrativeStatus);
+procedure TNarrativeGenerator.inject(res : TFHIRDomainResource; x : TFHIRXhtmlNode; status : TFhirNarrativeStatus);
 begin
   if (res.Text = nil) then
     res.Text := TFHIRNarrative.create;

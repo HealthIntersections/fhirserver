@@ -45,7 +45,7 @@ implementation
 
 uses
   SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax,
-  DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures
+  DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures
   {$IFNDEF FHIR-DSTU}, QuestionnaireBuilder{$ENDIF};
 
 { TFhirServerTests }
@@ -169,7 +169,7 @@ begin
   try
     json := TFHIRJsonComposer.Create('en');
     try
-      json.Compose(stream, '', '', '', resource, true, nil);
+      json.Compose(stream, resource, true, nil);
     finally
       json.free;
     end;
@@ -200,7 +200,7 @@ begin
     thisIn.OnExpand := FDataStore.ExpandVS;
     thisOut.QuestionnaireId := NewGuidURN;
 
-    thisOut.Resource := LoadJsonResource(filename);
+    thisOut.Resource := LoadJsonResource(filename) as TFhirDomainResource;
     thisOut.Resource.text := nil;
     thisOut.Profile := FDataStore.profiles['http://hl7.org/fhir/Profile/'+name].Link;
     thisOut.Build;

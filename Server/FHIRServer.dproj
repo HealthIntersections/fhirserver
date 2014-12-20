@@ -121,7 +121,7 @@
         <DCC_Define>FHIR-DSTU;$(DCC_Define)</DCC_Define>
         <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <Debugger_RunParams>-debug -password g -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.mdb&quot; -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -nrxstems</Debugger_RunParams>
+        <Debugger_RunParams>-debug -password g -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir.dstu\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -ini C:\work\fhirserver\Exec\fhir.dstu.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -xremount -xtests -nrxstems</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -268,7 +268,6 @@
         <DCCReference Include="..\Libraries\ucum\UcumValidators.pas"/>
         <DCCReference Include="..\Libraries\ucum\UcumExpressions.pas"/>
         <DCCReference Include="..\Libraries\ucum\UcumSearch.pas"/>
-        <DCCReference Include="FHIRValidator.pas"/>
         <DCCReference Include="..\Libraries\Support\AltovaXMLLib_TLB.pas"/>
         <DCCReference Include="FHIRValueSetExpander.pas"/>
         <DCCReference Include="..\Libraries\Stem\YuStemmer.pas"/>
@@ -347,6 +346,11 @@
         <DCCReference Include="FHIRSearchSyntax.pas"/>
         <DCCReference Include="..\Libraries\refplat-dstu\NarrativeGenerator.pas"/>
         <DCCReference Include="..\Libraries\refplat-dstu\QuestionnaireBuilder.pas"/>
+        <DCCReference Include="..\Libraries\support\XMLSupport.pas"/>
+        <DCCReference Include="..\Libraries\support\AdvGenerics.pas"/>
+        <DCCReference Include="..\Libraries\support\DigitalSignatures.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\FHIRValidator.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dstu\ProfileManager.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

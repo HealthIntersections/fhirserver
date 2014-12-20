@@ -183,7 +183,6 @@ uses
   UcumValidators in '..\Libraries\ucum\UcumValidators.pas',
   UcumExpressions in '..\Libraries\ucum\UcumExpressions.pas',
   UcumSearch in '..\Libraries\ucum\UcumSearch.pas',
-  FHIRValidator in 'FHIRValidator.pas',
   AltovaXMLLib_TLB in '..\Libraries\Support\AltovaXMLLib_TLB.pas',
   FHIRValueSetExpander in 'FHIRValueSetExpander.pas',
   YuStemmer in '..\Libraries\Stem\YuStemmer.pas',
@@ -235,7 +234,9 @@ uses
   IdSoapClasses in 'C:\HL7Connect\indysoap\source\IdSoapClasses.pas',
   IdSoapDebug in 'C:\HL7Connect\indysoap\source\IdSoapDebug.pas',
   IdSoapResourceStrings in 'C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas',
+  {$IFDEF OBJECT_TRACKING}
   IdSoapTracker in 'C:\HL7Connect\indysoap\source\IdSoapTracker.pas',
+  {$ENDIF }
   IdSoapUtilities in 'C:\HL7Connect\indysoap\source\IdSoapUtilities.pas',
   IdSoapExceptions in 'C:\HL7Connect\indysoap\source\IdSoapExceptions.pas',
   IdSoapMsXml in 'C:\HL7Connect\indysoap\source\IdSoapMsXml.pas',
@@ -261,7 +262,12 @@ uses
   ShellSupport in '..\Libraries\support\ShellSupport.pas',
   FHIRSearchSyntax in 'FHIRSearchSyntax.pas',
   NarrativeGenerator in '..\Libraries\refplat-dstu\NarrativeGenerator.pas',
-  QuestionnaireBuilder in '..\Libraries\refplat-dstu\QuestionnaireBuilder.pas';
+  QuestionnaireBuilder in '..\Libraries\refplat-dstu\QuestionnaireBuilder.pas',
+  XMLSupport in '..\Libraries\support\XMLSupport.pas',
+  AdvGenerics in '..\Libraries\support\AdvGenerics.pas',
+  DigitalSignatures in '..\Libraries\support\DigitalSignatures.pas',
+  FHIRValidator in '..\Libraries\refplat-dstu\FHIRValidator.pas',
+  ProfileManager in '..\Libraries\refplat-dstu\ProfileManager.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
@@ -277,5 +283,6 @@ begin
       Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
+
 
 

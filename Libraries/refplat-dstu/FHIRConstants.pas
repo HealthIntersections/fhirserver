@@ -38,7 +38,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
+// FHIR v0.0.82 generated Fri, Oct 17, 2014 08:34+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
@@ -1462,9 +1462,9 @@ Const
   TARGETS_TSearchParamsValueSet : Array[TSearchParamsValueSet] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [], [], []);
   FHIR_GENERATED_VERSION = '0.0.82';
 
-  FHIR_GENERATED_REVISION = '2943';
+  FHIR_GENERATED_REVISION = '3059';
 
-  FHIR_GENERATED_DATE = '20140930180829';
+  FHIR_GENERATED_DATE = '20141017083459';
 
 
 

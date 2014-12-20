@@ -490,7 +490,7 @@ begin
     c := x;
     tr := nil;
     try
-      if (r.referenceObject <> nil) then
+      if (r.referenceElement <> nil) then
       begin
         tr := resolveReference(res, r.Reference);
         if (not r.Reference.startsWith('#')) then
@@ -901,8 +901,8 @@ procedure TNarrativeGenerator.renderQuantity(v : TFHIRQuantity; x : TFHIRXhtmlNo
 var
   sp : TFHIRXhtmlNode;
 begin
-  if (v.comparatorObject <> nil) then
-    x.addText(v.comparatorObject.value);
+  if (v.comparatorElement <> nil) then
+    x.addText(v.comparatorElement.value);
   x.addText(v.Value);
   if (v.Units <> '') then
     x.addText(' '+v.Units)
@@ -1014,8 +1014,8 @@ begin
         s.append(' ');
       end;
     end;
-    if (v.useObject <> nil) and (v.Use <> NameUseUsual) then
-      s.append('('+v.UseObject.value+')');
+    if (v.useElement <> nil) and (v.Use <> NameUseUsual) then
+      s.append('('+v.UseElement.value+')');
     result := s.toString;
   finally
     s.free;
@@ -1062,8 +1062,8 @@ begin
         s.append(' ');
       end;
     end;
-    if (v.useObject <> nil) then
-      s.append('('+v.useObject.value+')');
+    if (v.useElement <> nil) then
+      s.append('('+v.useElement.value+')');
     result := s.toString;
   finally
     s.free;
@@ -1078,8 +1078,8 @@ begin
     result := result + '-unknown-'
   else
     result := result + v.Value;
-  if (v.useObject <> nil) then
-    result := result + '('+v.useObject.value+')';
+  if (v.useElement <> nil) then
+    result := result + '('+v.useElement.value+')';
 end;
 
 function TNarrativeGenerator.describeSystem(system : TFHIRContactSystem) : String;
@@ -1112,8 +1112,8 @@ begin
   if (v.label_ <> '') then
     s := v.Label_+' := '+s;
 
-  if (v.useObject <> nil) then
-    s := s + ' ('+v.useObject.value+')';
+  if (v.useElement <> nil) then
+    s := s + ' ('+v.useElement.value+')';
   result := s;
 end;
 

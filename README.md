@@ -19,6 +19,13 @@ The server is specifically written as an reference server - it implements all pa
 as defined, and is co-developed with the specification. It is not optimised for hosting/supporting very
 large repositories efficiently. 
 
+Installing the Server
+---------------------
+
+You have to:
+* install this first: http://www.healthintersections.com.au/AltovaXmlCom.msi
+* edit the ini file
+
 
 Compiling 
 ---------
@@ -64,6 +71,7 @@ Commands
 - `-snomed-rf2 'folder'` - import a SNOMED CT distribution using an RF2 format (can take ~1hour). Nominate the directory that contains the snapshot directly
 - `-loinc 'file'` - update the loinc cache from the given filename (access database)
 - `-rxstems` - connect to the RxNorm database, and generate the text search index
+- '-unii 'file'` - fill the unii database from the unii text distribution format (tab delimited)
 
 
 

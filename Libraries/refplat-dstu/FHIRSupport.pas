@@ -41,7 +41,7 @@ uses
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport,
   AdvObjects, AdvBuffers, AdvStringLists,
-  DateAndTime, JWT, SCIMObjects,
+  DateAndTime, {$IFDEF UNICODE} JWT, {$ENDIF} SCIMObjects,
   FHirBase, FHirResources, FHIRConstants, FHIRComponents, FHIRTypes, FHIRAtomFeed;
 
 Const
@@ -95,7 +95,9 @@ Type
     FUseCount: integer;
     FRights: TStringList;
     FFirstCreated: TDateTime;
+    {$IFDEF UNICODE}
     FJwt : TJWT;
+    {$ENDIF}
     FJwtPacked : String;
     FTaggedCompartments : TStringList;
     FPatientList: TStringList;
@@ -103,7 +105,9 @@ Type
     FUser : TSCIMUser;
     Fanonymous : boolean;
 
+    {$IFDEF UNICODE}
     procedure SetJwt(const Value: TJWT);
+    {$ENDIF}
     procedure SetUser(const Value: TSCIMUser);
   public
     Constructor Create; Override;
@@ -173,6 +177,7 @@ Type
     }
     Property User : TSCIMUser read FUser write SetUser;
 
+    {$IFDEF UNICODE}
     {@member JWT
       The JWT token (Open ID Connect token) associated with this session
     }
@@ -182,6 +187,7 @@ Type
       The JWT packed and signed using RSA
     }
     Property JWTPacked : string read FJWTPacked write FJWTPacked;
+    {$ENDIF}
 
     Property useCount : integer read FUseCount write FUseCount;
     Property rights : TStringList read FRights;
@@ -230,7 +236,7 @@ Type
     FCompartmentId: String;
     FForm: TIdSoapMimeMessage;
     FOperationName: String;
-    procedure SeTFhirResource(const Value: TFhirResource);
+    procedure SetResource(const Value: TFhirResource);
     procedure SetFeed(const Value: TFHIRAtomFeed);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -316,7 +322,7 @@ Type
       Note that actual kind of the resource will be one of the ones defined as
       part of the FHIR specification
     }
-    Property Resource : TFhirResource read FResource write SeTFhirResource;
+    Property Resource : TFhirResource read FResource write SetResource;
 
     {@member Bundle
       the request bnndle (i.e. atom feed), if a resource was submitted as part of the request.
@@ -401,7 +407,7 @@ Type
     FOrigin: String;
     FId: String;
     procedure SetFeed(const Value: TFHIRAtomFeed);
-    procedure SeTFhirResource(const Value: TFhirResource);
+    procedure SetResource(const Value: TFhirResource);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -444,7 +450,7 @@ Type
       Note that actual kind of the resource will be one of the ones defined as
       part of the FHIR specification
     }
-    Property Resource : TFhirResource read FResource write SeTFhirResource;
+    Property Resource : TFhirResource read FResource write SetResource;
 
     {@member Feed
       the feed resulting from the transaction
@@ -499,10 +505,10 @@ Type
     }
     property categories : TFHIRAtomCategoryList read Fcategories;
 
-    {@member links
-      Links for the response
+    {@member link_List
+      link_List for the response
     }
-    property links : TFHIRAtomLinkList read FLinks;
+    property link_List : TFHIRAtomLinkList read FLinks;
 
     {@member Origin
       HTTP Origin header - see http://en.wikipedia.org/wiki/Cross-origin_resource_sharing
@@ -678,7 +684,7 @@ Type
       create a new bundle (i.e. atom feed)
     }
     {!script nolink}
-    function makeBundle : TFHIRAtomFeed;
+    function makeBundle(feedType : TFHIRAtomFeedType) : TFHIRAtomFeed;
 
     {@member makeBinary
       make a new Binary resource
@@ -800,8 +806,8 @@ begin
     if (p.MediaType = '') then
     begin
       n := p.ParamName;
-      s := UTF8StreamToString(p.Content).trimRight([#13, #10]);
-      if (n <> '') and (not s.Contains(#10)) then
+      s := {$IFDEF UNICODE}UTF8StreamToString(p.Content).trimRight([#13, #10]){$ELSE}trimRight(StreamToString(p.Content)){$ENDIF};
+      if (n <> '') and (pos(#10, s) = 0) then
         FParams.addItem(n, s);
     end;
   end;
@@ -820,7 +826,7 @@ begin
   FFeed := Value;
 end;
 
-procedure TFHIRRequest.SeTFhirResource(const Value: TFhirResource);
+procedure TFHIRRequest.SetResource(const Value: TFhirResource);
 begin
   FResource.Free;
   FResource := Value;
@@ -896,7 +902,7 @@ begin
   FFeed := Value;
 end;
 
-procedure TFHIRResponse.SeTFhirResource(const Value: TFhirResource);
+procedure TFHIRResponse.SetResource(const Value: TFhirResource);
 begin
   FResource.free;
   FResource := nil;
@@ -987,8 +993,8 @@ function TFHIRFactory.makeContact(system, value, use: String): TFhirContact;
 begin
   result := TFhirContact.create;
   try
-    result.useObject := CheckEnum(CODES_TFhirContactUse, use);
-    result.systemObject := CheckEnum(CODES_TFhirContactSystem, system);
+    result.useElement := CheckEnum(CODES_TFhirContactUse, use);
+    result.systemElement := CheckEnum(CODES_TFhirContactSystem, system);
     result.value := value;
     result.link;
   finally
@@ -1000,8 +1006,8 @@ function TFHIRFactory.makeContactPoint(system, value, use: String): TFhirContact
 begin
   result := TFhirContact.create;
   try
-    result.useObject := CheckEnum(CODES_TFhirContactUse, use);
-    result.systemObject := CheckEnum(CODES_TFhirContactSystem, system);
+    result.useElement := CheckEnum(CODES_TFhirContactUse, use);
+    result.systemElement := CheckEnum(CODES_TFhirContactSystem, system);
     result.value := value;
     result.link;
   finally
@@ -1013,7 +1019,7 @@ function TFHIRFactory.makeAddress(use, street, city, state, zip, country : Strin
 begin
   result := TFhirAddress.create;
   try
-    result.useObject := CheckEnum(CODES_TFhirAddressUse, use);
+    result.useElement := CheckEnum(CODES_TFhirAddressUse, use);
     result.lineList.AddItem(street);
     result.city := city;
     result.state := state;
@@ -1029,7 +1035,7 @@ function TFHIRFactory.makeIdentifierWithLabel(use : string; label_, idSystem, id
 begin
   result := TFhirIdentifier.create;
   try
-    result.useObject := CheckEnum(CODES_TFhirIdentifierUse, use);
+    result.useElement := CheckEnum(CODES_TFhirIdentifierUse, use);
     result.label_ := label_;
     result.system := idsystem;
     result.value := id;
@@ -1043,7 +1049,7 @@ function TFHIRFactory.makeHumanName(use, family, given, prefix, suffix: String):
 begin
   result := TFhirHumanName.create;
   try
-    result.useObject := CheckEnum(CODES_TFhirNameUse, use);
+    result.useElement := CheckEnum(CODES_TFhirNameUse, use);
     result.familyList.addItem(family);
     result.givenList.addItem(given);
     result.prefixList.addItem(prefix);
@@ -1061,7 +1067,7 @@ begin
     result.system := system;
     result.value := key;
     result.label_ := label_;
-    result.useObject := CheckEnum(CODES_TFhirIdentifierUse, use);
+    result.useElement := CheckEnum(CODES_TFhirIdentifierUse, use);
     result.link;
   finally
     result.free;
@@ -1181,7 +1187,7 @@ function TFHIRFactory.makeNarrative(status, html: String; policy : TFHIRXhtmlPar
 begin
   result := TFhirNarrative.create;
   try
-    result.statusObject := CheckEnum(CODES_TFhirNarrativeStatus, status);
+    result.statusElement := CheckEnum(CODES_TFhirNarrativeStatus, status);
     result.div_ := parseHTML(html, policy);
     result.link;
   finally
@@ -1227,9 +1233,9 @@ begin
   end;
 end;
 
-function TFHIRFactory.makeBundle: TFHIRAtomFeed;
+function TFHIRFactory.makeBundle(feedType : TFHIRAtomFeedType): TFHIRAtomFeed;
 begin
-  result := TFHIRAtomFeed.create;
+  result := TFHIRAtomFeed.create(feedType);
 end;
 
 function TFHIRFactory.makeRequest: TFhirRequest;
@@ -1252,7 +1258,7 @@ function TFHIRFactory.makeHumanNameText(use, text: String): TFhirHumanName;
 begin
   result := TFhirHumanName.create;
   try
-    result.useObject := CheckEnum(CODES_TFhirNameUse, use);
+    result.useElement := CheckEnum(CODES_TFhirNameUse, use);
     result.text := text;
     result.link;
   finally
@@ -1265,7 +1271,7 @@ function TFHIRFactory.makeAddressText(use, text: String): TFhirAddress;
 begin
   result := TFhirAddress.create;
   try
-    result.useObject := CheckEnum(CODES_TFhirAddressUse, use);
+    result.useElement := CheckEnum(CODES_TFhirAddressUse, use);
     result.text := text;
     result.link;
   finally
@@ -1300,7 +1306,9 @@ end;
 
 destructor TFhirSession.Destroy;
 begin
+  {$IFDEF UNICODE}
   FJwt.free;
+  {$ENDIF}
   FRights.Free;
   FTaggedCompartments.Free;
   FPatientList.Free;
@@ -1318,12 +1326,13 @@ begin
   result := TFhirSession(inherited Link);
 end;
 
-
+{$IFDEF UNICODE}
 procedure TFhirSession.SetJwt(const Value: TJWT);
 begin
   FJwt.free;
   FJwt := Value;
 end;
+{$ENDIF}
 
 procedure TFhirSession.SetUser(const Value: TSCIMUser);
 begin

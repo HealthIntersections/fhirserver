@@ -8,7 +8,8 @@ uses
   AdvObjects, AdvStringObjectMatches, AdvStringLists,
   KDBManager, KDBOdbcExpress,
   FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
-  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices,
+  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices,
+  CountryCodeServices,
   FHIRValueSetChecker,
   TerminologyServerStore;
 
@@ -92,6 +93,14 @@ procedure TTerminologyServer.load(ini : TIniFile);
 var
   fn : string;
 begin
+  write('Load DB Terinologies');
+  Unii := TUniiServices.Create(TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
+        Ini.ReadString('database', 'server', ''), Ini.ReadString('database', 'tx', ''),
+        Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
+  Cvx := TCvxServices.Create(unii.db);
+  CountryCode := TCountryCodeServices.Create(unii.db);
+  writeln(' - done');
+
   if ini.ReadString('RxNorm', 'database', '') <> '' then
   begin
     writeln('Connect to RxNorm');
@@ -191,7 +200,7 @@ begin
       if FExpansions.ExistsByKey(cacheId+#1+textFilter+#1+inttostr(limit)) then
       begin
         result := (FExpansions.matches[cacheId+#1+textFilter+#1+inttostr(limit)] as TFhirValueSet).link;
-        p := result.TagValue.Split([#1]);
+        p := result.Tags['cache'].Split([#1]);
         for s in p do
           if (s <> '') then
             dependencies.Add(s);
@@ -219,7 +228,7 @@ begin
               AddDependency(s, cacheId);
               d := d + s+#1;
             end;
-            result.TagValue := d;
+            result.Tags['cache'] := d;
           end;
         finally
           FLock.Unlock;

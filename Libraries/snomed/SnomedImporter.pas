@@ -1607,7 +1607,7 @@ begin
       if c > 0 then
       begin
         ndx := FRefs.AddReferences(refs);
-        FDesc.SetRefsets(i * DESC_SIZE+1, ndx);
+        FDesc.SetRefsets(i * DESC_SIZE, ndx);
       end;
     end;
 end;

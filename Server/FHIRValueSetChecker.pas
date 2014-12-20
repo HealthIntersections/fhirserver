@@ -72,7 +72,7 @@ begin
       other := FStore.getValueSetByIdentifier(fvs.compose.importList[i].value);
       try
         if other = nil then
-          raise exception.create('Unable to find value set '+fvs.compose.importList[i].value);
+          raise ETerminologyError.create('Unable to find value set '+fvs.compose.importList[i].value);
         checker := TValueSetChecker.create(Fstore.link, other.identifier);
         try
           checker.prepare(other);
@@ -92,7 +92,7 @@ begin
       for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
         if not (('concept' = fvs.compose.includeList[i].filterList[j].property_) and (fvs.compose.includeList[i].filterList[j].Op = FilterOperatorIsA)) then
           if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_, fvs.compose.includeList[i].filterList[j].Op, fvs.compose.includeList[i].filterList[j].value) then
-            raise Exception.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
+            raise ETerminologyError.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
     end;
     for i := 0 to fvs.compose.excludeList.Count - 1 do
     begin

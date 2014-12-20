@@ -658,6 +658,7 @@ var
   aMembers : TSnomedReferenceSetMemberArray;
   date : TSnomedDate;
   ok : boolean;
+  iRef : Cardinal;
 Begin
   bDescSet := false;
   SetLength(aMembers, 0);
@@ -840,7 +841,8 @@ Begin
         End
         Else
         Begin
-          CellConceptRef(html, sPrefix, aMembers[i].Ref, false);
+          iRef := FSnomed.Desc.ConceptByIndex(aMembers[i].Ref);
+          CellConceptRef(html, sPrefix, iRef, false);
 //          CellConceptRef(html, sPrefix, aMembers[i].Attr, false);
         End;
         html.EndTableRow;

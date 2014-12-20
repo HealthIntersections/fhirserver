@@ -265,6 +265,7 @@ begin
   try
     qry.SQL := 'Select STR, TTY from rxnconso where RXCUI = :code and SAB = ''RXNORM''';
     qry.prepare;
+    qry.bindString('code', code);
     qry.execute;
     if not qry.FetchNext then
       result := nil
@@ -350,7 +351,7 @@ end;
 
 function TRxNormServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('locateIsA not supported by RXNorm'); // RxNorm doesn't have formal subsumption property, so this is not used
+  result := nil; // todo: no sumbsumption?
 end;
 
 

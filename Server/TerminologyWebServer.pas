@@ -286,7 +286,7 @@ begin
     s := TStringStream.Create;
     xml := TFHIRXmlComposer.Create('en');
     try
-      xml.Compose(s, '', '', '', vs, true, nil);
+      xml.Compose(s, vs, true, nil);
       html.startPre;
       html.AddTextPlain(s.DataString);
       html.endPre;

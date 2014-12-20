@@ -44,12 +44,12 @@ certificate you nominate
 
 uses
   SysUtils, Classes,
-  IdHashSHA,
+  IdHashSHA, IdGlobal,
   Xml.xmlintf, Xml.XMLDoc, Xml.adomxmldom,
   BytesSupport, StringSupport, EncodeSupport, EncdDecd,
   AdvObjects, AdvObjectLists,
   XmlBuilder, AdvXmlBuilders,
-  IdSSLOpenSSLHeaders, libeay32, HMAC, JWT, XMLSupport, InternetFetcher;
+  IdSSLOpenSSLHeaders, libeay32, HMAC, XMLSupport, InternetFetcher;
 
 Const
   NS_DS = 'http://www.w3.org/2000/09/xmldsig#';
@@ -76,7 +76,7 @@ Type
     function getReference(i: integer): TDigitalSignatureReference;
 
   protected
-    function itemClass : TAdvObjectClass; override;
+    function ItemClass : TAdvObjectClass; override;
   public
     property reference[i : integer] : TDigitalSignatureReference read getReference; default;
   end;
@@ -85,9 +85,9 @@ Type
   private
     dsa : PDSA;
     rsa : PRSA;
-    procedure checkSignatureRSA(digest, signature : TBytes; method : TSignatureMethod);
-    procedure checkSignatureDSA(digest, signature : TBytes; method : TSignatureMethod);
-    procedure checkSignature(digest, signature : TBytes; method : TSignatureMethod);
+    function checkSignatureRSA(digest, signature : TBytes; method : TSignatureMethod) : boolean;
+    function checkSignatureDSA(digest, signature : TBytes; method : TSignatureMethod) : boolean;
+    function checkSignature(digest, signature : TBytes; method : TSignatureMethod) : boolean;
   public
     destructor Destroy; override;
   end;
@@ -121,8 +121,8 @@ Type
 
     // key/ certificate management routines
     function LoadKeyInfo(sig : IXmlNode) : TKeyInfo;
-    function loadRSAPrivateKey: PRSA;
-    function loadDSAPrivateKey: PDSA;
+    function loadRSAKey: PRSA;
+    function loadDSAKey: PDSA;
     procedure AddKeyInfo(sig: IXmlNode; method : TSignatureMethod);
 
     // source content management
@@ -132,7 +132,6 @@ Type
     // certificate files, for signing
     Property KeyFile : AnsiString read FkeyFile write FkeyFile;
     Property KeyPassword : AnsiString read FKeyPassword write FKeyPassword;
-    Property CertFile : AnsiString read FCertFile write FCertFile;
 
     function signEnveloped(xml : TBytes; method : TSignatureMethod; keyinfo : boolean) : TBytes;
     function signExternal(references : TDigitalSignatureReferenceList; method : TSignatureMethod; keyinfo : boolean) : TBytes;
@@ -157,7 +156,7 @@ end;
 
 function unbase64(value : String): TBytes;
 begin
-  result := decodeBase64(value);
+  result := decodeBase64(AnsiString(value));
 end;
 
 procedure check(test: boolean; failmsg: string);
@@ -186,7 +185,7 @@ begin
     Insert(#0, r, 1);
   if (s[1] >= #$80) then
     Insert(#0, s, 1);
-  result := AnsiStringAsBytes(#$30+ansichar(4+length(r)+length(s))+#02+ansichar(length(r))+r+#02+ansichar(length(s))+s);
+  result := AnsiStringAsBytes(ansichar($30)+ansichar(4+length(r)+length(s))+ansichar(02)+ansichar(length(r))+r+ansichar(02)+ansichar(length(s))+s);
 end;
 
 function asn1SigToBytePair(asn1 : TBytes) : TBytes;
@@ -242,7 +241,6 @@ end;
 
 function TDigitalSigner.canonicaliseXml(method : TXmlCanonicalisationMethodSet; source: TBytes; var dom : IXMLDocument): TBytes;
 var
-  s : String;
   xb : TAdvXmlBuilder;
 begin
   dom := loadXml(source);
@@ -338,11 +336,10 @@ end;
 function TDigitalSigner.verifySignature(xml: TBytes): boolean;
 var
   doc : IXMLDocument;
-  sig, si, ref : IXMLNode;
+  sig, si : IXMLNode;
   can, v : TBytes;
   key : TKeyInfo;
   i : integer;
-  s : string;
 begin
   doc := loadXml(xml);
   if (doc.DocumentElement.NodeName = 'Signature') and (doc.DocumentElement.NamespaceURI = NS_DS) then
@@ -373,23 +370,21 @@ begin
   try
     // 4. Obtain the canonical form of the SignatureMethod using the CanonicalizationMethod and use the result (and previously obtained KeyInfo) to confirm the SignatureValue over the SignedInfo element.
     v := unbase64(getChildNode(sig, 'SignatureValue').text);
-    key.checkSignature(can, v, signatureMethod(getChildNode(si, 'SignatureMethod', NS_DS).GetAttribute('Algorithm')));
-    // ok, it's all good
+    result := key.checkSignature(can, v, signatureMethod(getChildNode(si, 'SignatureMethod', NS_DS).GetAttribute('Algorithm')));
   finally
     key.Free;
   end;
 end;
 
-procedure TKeyInfo.checkSignature(digest, signature: TBytes; method: TSignatureMethod);
+function TKeyInfo.checkSignature(digest, signature: TBytes; method: TSignatureMethod) : boolean;
 begin
-  OpenSSL_add_all_algorithms;
   if method in [sdXmlDSASha1, sdXmlDSASha256] then
-    checkSignatureDSA(digest, signature, method)
+    result := checkSignatureDSA(digest, signature, method)
   else
-    checkSignatureRSA(digest, signature, method);
+    result := checkSignatureRSA(digest, signature, method);
 end;
 
-procedure TKeyInfo.checkSignatureRSA(digest, signature: TBytes; method: TSignatureMethod);
+function TKeyInfo.checkSignatureRSA(digest, signature: TBytes; method: TSignatureMethod) : boolean;
 var
   ctx : EVP_MD_CTX;
   e: integer;
@@ -408,7 +403,7 @@ begin
         EVP_VerifyInit(@ctx, EVP_sha256);
       check(EVP_VerifyUpdate(@ctx, @digest[0], Length(digest)) = 1, 'openSSL EVP_VerifyUpdate failed');
       e := EVP_VerifyFinal(@ctx, @signature[0], length(signature), pKey);
-      check(e = 1, 'Signature is not valid (RSA) (e = '+inttostr(e)+')');
+      result := e = 1;
     finally
       EVP_MD_CTX_cleanup(@ctx);
     end;
@@ -417,7 +412,7 @@ begin
   end;
 end;
 
-procedure TKeyInfo.checkSignatureDSA(digest, signature: TBytes; method: TSignatureMethod);
+function TKeyInfo.checkSignatureDSA(digest, signature: TBytes; method: TSignatureMethod) : Boolean;
 var
   ctx : EVP_MD_CTX;
   e: integer;
@@ -446,13 +441,13 @@ begin
         e := ERR_get_error;
         repeat
           ERR_error_string(e, @err);
-          m := m + inttohex(e, 8)+' ('+err+')'+#13#10;
+          m := m + inttohex(e, 8)+' ('+String(err)+')'+#13#10;
           e := ERR_get_error;
         until e = 0;
         raise Exception.Create('OpenSSL Error verifying signature: '+#13#10+m);
       end
-      else if e = 0 then
-        raise Exception.Create('Signature is not valid (DSA)');
+      else
+        result := e = 1;
     finally
       EVP_MD_CTX_cleanup(@ctx);
     end;
@@ -494,17 +489,20 @@ end;
 function TDigitalSigner.digestSHA256(source: TBytes): TBytes;
 var
   hash : TIdHashSHA256;
+  b : TIdBytes;
 begin
   hash := TIdHashSHA256.Create;
   try
-    result := idb(hash.HashBytes(idb(source)));
+    b := idb(source);
+    b := hash.HashBytes(b);
+    result := idb(b);
   finally
     hash.Free;
   end;
 end;
 
 
-function TDigitalSigner.loadRSAPrivateKey: PRSA;
+function TDigitalSigner.loadRSAKey: PRSA;
 var
   bp: pBIO;
   fn, pp: PAnsiChar;
@@ -521,7 +519,7 @@ begin
 end;
 
 
-function TDigitalSigner.loadDSAPrivateKey: PDSA;
+function TDigitalSigner.loadDSAKey: PDSA;
 var
   bp: pBIO;
   fn, pp: PAnsiChar;
@@ -556,7 +554,7 @@ var
   asn1 : TBytes;
 begin
   // 1. Load the RSA private Key from FKey
-  dkey := loadDSAPrivateKey;
+  dkey := loadDSAKey;
   try
     pkey := EVP_PKEY_new;
     try
@@ -595,7 +593,7 @@ var
   len : integer;
 begin
   // 1. Load the RSA private Key from FKey
-  rkey := loadRSAPrivateKey;
+  rkey := loadRSAKey;
   try
     pkey := EVP_PKEY_new;
     try
@@ -665,7 +663,7 @@ begin
   trns.addChild('Transform').SetAttribute('Algorithm', 'http://www.w3.org/2000/09/xmldsig#enveloped-signature');
   ref.addChild('DigestMethod').setAttribute('Algorithm', digestAlgorithmForMethod(method));
   dig := digest(can, method); // the method doesn't actually apply to this, but we figure that if the method specifies sha256, then it should be used here
-  ref.addChild('DigestValue').Text := EncodeBase64(@dig[0], length(dig));
+  ref.addChild('DigestValue').Text := String(EncodeBase64(@dig[0], length(dig)));
   can := canonicaliseXml([xcmCanonicalise],si);
   dig := sign(can, method);
   s := base64(dig);
@@ -677,35 +675,43 @@ begin
   result := TEncoding.UTF8.GetBytes(s);
 end;
 
+function bn2Base64(p : PBigNum) : String;
+var
+  b : TBytes;
+begin
+  setlength(b,  BN_num_bytes(p));
+  BN_bn2bin(p, @b[0]);
+  result := String(base64(b));
+end;
+
 procedure TDigitalSigner.AddKeyInfo(sig : IXmlNode; method : TSignatureMethod);
 var
-  key : TJWK;
   kv: IXMLNode;
+  dkey : PDSA;
+  rkey : PRSA;
 begin
   if method in [sdXmlDSASha1, sdXmlDSASha256] then
   begin
     kv := sig.AddChild('KeyInfo').AddChild('KeyValue').AddChild('DSAKeyValue');
-    key := TJWTUtils.loadKeyFromDSACert(CertFile, KeyPassword);
+    dkey := LoadDSAKey;
     try
-      kv.AddChild('P').text := base64(key.P);
-      kv.AddChild('Q').text := base64(key.Q);
-      kv.AddChild('G').text := base64(key.G);
-      kv.AddChild('Y').text := base64(key.Y);
-      if (key.hasX) then
-        kv.AddChild('X').text := base64(key.X);
+      kv.AddChild('P').text := bn2Base64(dkey.p);
+      kv.AddChild('Q').text := bn2Base64(dkey.q);
+      kv.AddChild('G').text := bn2Base64(dkey.g);
+      kv.AddChild('Y').text := bn2Base64(dkey.pub_key);
     finally
-      key.Free;
+      DSA_free(dKey);
     end;
   end
   else
   begin
     kv := sig.AddChild('KeyInfo').AddChild('KeyValue').AddChild('RSAKeyValue');
-    key := TJWTUtils.loadKeyFromRSACert(CertFile);
+    rkey := loadRSAKey;
     try
-      kv.AddChild('Modulus').text := base64(key.publicKey);
-      kv.AddChild('Exponent').text := base64(key.exponent);
+      kv.AddChild('Modulus').text := bn2Base64(rkey.n);
+      kv.AddChild('Exponent').text := bn2Base64(rkey.e);
     finally
-      key.Free;
+      RSA_free(rkey);
     end;
   end;
 end;
@@ -717,7 +723,7 @@ var
   i : integer;
   reference : TDigitalSignatureReference;
   s, t : String;
-  can, src, dig : TBytes;
+  can, dig : TBytes;
 begin
   doc := TXMLDocument.Create(nil);
   doc.DOMVendor := OpenXML4Factory;
@@ -740,7 +746,7 @@ begin
     end;
     ref.addChild('DigestMethod').setAttribute('Algorithm', digestAlgorithmForMethod(method));
     dig := digest(reference.content, method);
-    ref.addChild('DigestValue').Text := EncodeBase64(@dig[0], length(dig));
+    ref.addChild('DigestValue').Text := String(EncodeBase64(@dig[0], length(dig)));
   end;
   can := canonicaliseXml([xcmCanonicalise],si);
   dig := sign(can, method);
@@ -909,7 +915,8 @@ begin
   end;
   sig := TDigitalSigner.Create;
   try
-    sig.verifySignature(bytes);
+    if not sig.verifySignature(bytes) then
+      raise Exception.Create('Signature Invalid, '+filename);
   finally
     sig.Free;
   end;
@@ -925,7 +932,6 @@ begin
   try
     sig.KeyFile := 'C:\work\fhirserver\Exec\jwt-test.key.key';
     sig.KeyPassword := 'fhirserver';
-    sig.CertFile := 'C:\work\fhirserver\Exec\jwt-test.key.crt';
     inputRSA := sig.signEnveloped(TEncoding.UTF8.GetBytes('<Envelope xmlns="urn:envelope">'+#13#10+'</Envelope>'+#13#10), sdXmlRSASha256, true);
     output := TENcoding.UTF8.GetString(inputRSA);
     writeln(output);
@@ -938,7 +944,6 @@ begin
   try
     sig.KeyFile := 'C:\work\fhirserver\tests\signatures\test_dsa_key.pem';
     sig.KeyPassword := 'fhir';
-    sig.CertFile := 'C:\work\fhirserver\tests\signatures\test_dsa_key.pem';
     inputDSA := sig.signEnveloped(TEncoding.UTF8.GetBytes('<Envelope xmlns="urn:envelope">'+#13#10+'</Envelope>'+#13#10), sdXmlDSASha256, true);
     output := TENcoding.UTF8.GetString(inputDSA);
     writeln(output);
@@ -954,14 +959,14 @@ begin
   // 1. test yourself
   sig := TDigitalSigner.Create;
   try
-    sig.verifySignature(inputRSA);
+    if not sig.verifySignature(inputRSA) then raise Exception.Create('signature invalid');
   finally
     sig.Free;
   end;
 
   sig := TDigitalSigner.Create;
   try
-    sig.verifySignature(inputDSA);
+    if not sig.verifySignature(inputDSA) then raise Exception.Create('signature invalid');
   finally
     sig.Free;
   end;
@@ -973,7 +978,6 @@ begin
   // dsa, don't work
   testFile('C:\work\fhirserver\tests\signatures\java_example_dsa.xml');
   testFile('C:\work\fhirserver\tests\signatures\james.xml');
-  raise Exception.Create('RSA tests passed');
 end;
 
 

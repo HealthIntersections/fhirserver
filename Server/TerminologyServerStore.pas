@@ -8,7 +8,8 @@ uses
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvStringMatches,
   KDBManager,
   FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
-  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices,
+  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, CvxServices, UriServices,
+  CountryCodeServices,
   YuStemmer;
 
 Type
@@ -18,6 +19,9 @@ Type
   TFhirConceptMapConcept = TFhirConceptMapElement;
   TFhirConceptMapConceptMap = TFhirConceptMapElementMap;
   {$ENDIF}
+
+  ETerminologySetup = class (Exception);
+  ETerminologyError = class (Exception);
 
 
   TLoadedConceptMap = class (TAdvObject)
@@ -103,6 +107,9 @@ Type
     FSnomed : TSnomedServices;
     FUcum : TUcumServices;
     FRxNorm : TRxNormServices;
+    FUnii : TUniiServices;
+    FCountryCode : TCountryCodeServices;
+    FCvx : TCvxServices;
     FStem : TYuStemmer_8;
 
     FLastConceptKey : integer;
@@ -126,6 +133,9 @@ Type
     procedure UpdateConceptMaps;
     procedure BuildStems(list : TFhirValueSetDefineConceptList);
     procedure SetRxNorm(const Value: TRxNormServices);
+    procedure SetUnii(const Value: TUniiServices);
+    procedure SetCountryCode(const Value: TCountryCodeServices);
+    procedure SetCvx(const Value: TCvxServices);
 
     function TrackValueSet(id : String; bOnlyIfNew : boolean) : integer;
   protected
@@ -146,6 +156,9 @@ Type
     Property Snomed : TSnomedServices read FSnomed write SetSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
+    Property Unii : TUniiServices read FUnii write SetUnii;
+    Property CountryCode : TCountryCodeServices read FCountryCode write SetCountryCode;
+    Property Cvx : TCvxServices read FCvx write SetCvx;
     Property DB : TKDBManager read FDB;
 
     // maintenance procedures
@@ -167,6 +180,7 @@ Type
     // database maintenance
     Property Loading : boolean read FLoading write FLoading;
     function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
+    procedure declareSystems(conf : TFHIRConformance);
   end;
 
 implementation
@@ -178,22 +192,25 @@ Type
     snomed : TCodeSystemProviderFilterPreparationContext;
     loinc : TCodeSystemProviderFilterPreparationContext;
     actcode : TCodeSystemProviderFilterPreparationContext;
+    unii : TCodeSystemProviderFilterPreparationContext;
   end;
 
   TAllCodeSystemsProviderFilter = class (TCodeSystemProviderFilterContext)
   private
     rxnormDone : boolean;
+    uniiDone : boolean;
     snomedDone : boolean;
     loincDone : boolean;
     actcodeDone : boolean;
 
     rxnorm : TCodeSystemProviderFilterContext;
+    unii : TCodeSystemProviderFilterContext;
     snomed : TCodeSystemProviderFilterContext;
     loinc : TCodeSystemProviderFilterContext;
     actcode : TCodeSystemProviderFilterContext;
   end;
 
-  TAllCodeSystemsSource = (acssLoinc, acssSnomed, acssRxNorm, acssActCode);
+  TAllCodeSystemsSource = (acssLoinc, acssSnomed, acssRxNorm, acssActCode, acssUnii);
 
   TAllCodeSystemsProviderContext = class (TCodeSystemProviderContext)
   private
@@ -239,9 +256,9 @@ Type
 function TAllCodeSystemsProvider.TotalCount : integer;
 begin
   if FStore.RxNorm = nil then
-    result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FActCode.TotalCount
+    result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FActCode.TotalCount + FStore.Unii.TotalCount
   else
-    result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FStore.RxNorm.TotalCount + FActCode.TotalCount;
+    result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FStore.RxNorm.TotalCount + FActCode.TotalCount + FStore.Unii.TotalCount;
 end;
 
 function TAllCodeSystemsProvider.ChildCount(context : TCodeSystemProviderContext) : integer;
@@ -270,6 +287,7 @@ begin
       acssLoinc : result := FStore.Loinc.System(c.context);
       acssSnomed : result := FStore.Snomed.System(c.context);
       acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.System(c.context) else result := '??';
+      acssUnii : result := FStore.Unii.System(c.context);
       acssActCode : result := FActCode.System(c.context);
     end;
   end;
@@ -287,6 +305,7 @@ begin
   try
     if FStore.RxNorm <> nil then
       ctxt.rxnorm := FStore.RxNorm.getPrepContext;
+    ctxt.unii := FStore.Unii.getPrepContext;
     ctxt.loinc := FStore.Loinc.getPrepContext;
     ctxt.snomed := FStore.Snomed.getPrepContext;
     ctxt.actcode := Factcode.getPrepContext;
@@ -318,6 +337,7 @@ begin
     acssLoinc : result := FStore.Loinc.IsAbstract(c.context);
     acssSnomed : result := FStore.Snomed.IsAbstract(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.IsAbstract(c.context) else result := false;
+    acssUnii : result := FStore.Unii.IsAbstract(c.context);
     acssActCode : result := FActCode.IsAbstract(c.context);
   end;
 end;
@@ -331,6 +351,7 @@ begin
     acssLoinc : result := FStore.Loinc.Code(c.context);
     acssSnomed : result := FStore.Snomed.Code(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Code(c.context) else result := '??';
+    acssUnii : result := FStore.Unii.Code(c.context);
     acssActCode : result := FActCode.Code(c.context);
   end;
 end;
@@ -351,6 +372,7 @@ begin
     acssLoinc : result := FStore.Loinc.Display(c.context)+' (LOINC: '+FStore.Loinc.Code(c.context)+')';
     acssSnomed : result := FStore.Snomed.Display(c.context)+' (S-CT: '+FStore.Snomed.Code(c.context)+')';
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Display(c.context)+' (RxN: '+FStore.RxNorm.Code(c.context)+')' else result := '';
+    acssUnii : result := FStore.Unii.Display(c.context)+' (Unii: '+FStore.Unii.Code(c.context)+')';
     acssActCode : result := FActCode.Display(c.context)+' (ActCode: '+FActCode.Code(c.context)+')';
   end;
 end;
@@ -364,6 +386,7 @@ begin
     acssLoinc : result := FStore.Loinc.Definition(c.context);
     acssSnomed : result := FStore.Snomed.Definition(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Definition(c.context) else result := '??';
+    acssUnii : result := FStore.Unii.Definition(c.context);
     acssActCode : result := FActCode.Definition(c.context);
   end;
 end;
@@ -395,6 +418,7 @@ begin
     try
       if FStore.RxNorm <> nil then
         ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm);
+      ctxt.unii := FStore.Unii.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).unii);
       ctxt.snomed := FStore.snomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed);
       ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc);
       ctxt.actcode := FActCode.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).actcode);
@@ -421,6 +445,7 @@ begin
     FStore.Snomed.prepare(ctxt.snomed);
     if FStore.RxNorm <> nil then
       FStore.RxNorm.prepare(ctxt.rxnorm);
+    FStore.FUnii.prepare(ctxt.unii);
     FActCode.prepare(ctxt.actcode);
   end;
 end;
@@ -452,13 +477,18 @@ begin
           c.loincDone := not FStore.Loinc.FilterMore(c.loinc);
         if c.loincDone then
         begin
-          if FStore.RxNorm = nil then
-            result := false
-          else
+          if not c.uniiDone then
+            c.uniiDone := not FStore.unii.FilterMore(c.unii);
+          if c.uniiDone then
           begin
-            if not c.rxNormDone then
-              c.rxNormDone := not FStore.RxNorm.FilterMore(c.rxNorm);
-            result := not c.rxnormDone;
+            if FStore.RxNorm = nil then
+              result := false
+            else
+            begin
+              if not c.rxNormDone then
+                c.rxNormDone := not FStore.RxNorm.FilterMore(c.rxNorm);
+              result := not c.rxnormDone;
+            end;
           end;
         end;
       end;
@@ -488,6 +518,11 @@ begin
     begin
       c.source := acssLoinc;
       c.context := FStore.Loinc.FilterConcept(d.loinc);
+    end
+    else if not d.uniiDone then
+    begin
+      c.source := acssunii;
+      c.context := FStore.unii.FilterConcept(d.unii);
     end
     else if FStore.RxNorm = nil then
     begin
@@ -520,6 +555,7 @@ begin
   c := ctxt as TAllCodeSystemsProviderFilterPreparationContext;
   if FStore.RxNorm <> nil then
     FStore.RxNorm.Close(c.rxnorm);
+  FStore.unii.Close(c.unii);
   FStore.Loinc.Close(c.loinc);
   FStore.Snomed.Close(c.snomed);
   FActCode.Close(c.actcode);
@@ -535,6 +571,7 @@ begin
   begin
     if FStore.RxNorm <> nil then
       FStore.RxNorm.Close(c.rxnorm);
+    FStore.Unii.Close(c.unii);
     FStore.Loinc.Close(c.loinc);
     FStore.Snomed.Close(c.snomed);
     FActCode.Close(c.actcode);
@@ -551,6 +588,7 @@ begin
     acssLoinc : FStore.Loinc.Close(c.context);
     acssSnomed : FStore.Snomed.Close(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then FStore.RxNorm.Close(c.context);
+    acssUnii : FStore.Unii.Close(c.context);
     acssActCode : FActCode.Close(c.context);
   end;
   ctxt.free;
@@ -641,6 +679,22 @@ begin
   end;
 end;
 
+procedure TTerminologyServerStore.declareSystems(conf: TFHIRConformance);
+begin
+  if (FLoinc <> nil) and (FLoinc.TotalCount > 0) then
+    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FLoinc.system(nil));
+  if (FSnomed <> nil) and (FSnomed.TotalCount > 0) then
+    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FSnomed.system(nil));
+  if (FUcum <> nil) and (FUcum.TotalCount > 0) then
+    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FUcum.system(nil));
+  if (FRxNorm <> nil) and (FRxNorm.TotalCount > 0) then
+    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FRxNorm.system(nil));
+  if (FUnii <> nil) and (FUnii.TotalCount > 0) then
+    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FUnii.system(nil));
+  if (FCvx <> nil) and (FCvx.TotalCount > 0) then
+    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FCvx.system(nil));
+end;
+
 destructor TTerminologyServerStore.Destroy;
 begin
   FStem.Free;
@@ -655,6 +709,8 @@ begin
 
   FLoinc.free;
   FSnomed.free;
+  FUnii.Free;
+  FCvx.Free;
   FUcum.free;
   FLock.Free;
   FRxNorm.Free;
@@ -671,6 +727,24 @@ procedure TTerminologyServerStore.SetRxNorm(const Value: TRxNormServices);
 begin
   FRxNorm.Free;
   FRxNorm := Value;
+end;
+
+procedure TTerminologyServerStore.SetUnii(const Value: TUniiServices);
+begin
+  FUnii.Free;
+  FUnii := Value;
+end;
+
+procedure TTerminologyServerStore.SetCountryCode(const Value: TCountryCodeServices);
+begin
+  FCountryCode.Free;
+  FCountryCode := Value;
+end;
+
+procedure TTerminologyServerStore.SetCvx(const Value: TCvxServices);
+begin
+  FCvx.Free;
+  FCvx := Value;
 end;
 
 procedure TTerminologyServerStore.SetSnomed(const Value: TSnomedServices);
@@ -721,7 +795,7 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
-      vs.TagValue := inttostr(TrackValueSet(vs.identifier, true));
+      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.identifier, true));
       if (vs.identifier = 'http://hl7.org/fhir/ValueSet/ucum-common') then
         FUcum.SetCommonUnits(vs.Link);
 
@@ -763,7 +837,7 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
-      vs.TagValue := inttostr(TrackValueSet(vs.identifier, false));
+      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.identifier, false));
       FValueSetsByIdentifier.Matches[vs.identifier] := vs.Link;
       FValueSetsByURL.Matches[url] := vs.Link;
       FValueSetsByKey.Matches[inttostr(key)] := vs.Link;
@@ -961,8 +1035,14 @@ begin
     result := FSnomed.Link
   else if system = 'http://www.nlm.nih.gov/research/umls/rxnorm' then
     result := FRxNorm.Link
+  else if system = 'http://fdasis.nlm.nih.gov' then
+    result := FUnii.Link
+  else if system = 'http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp?rpt=cvx' then
+    result := FCvx.Link
   else if system = 'http://unitsofmeasure.org' then
     result := FUcum.Link
+  else if system = 'urn:ietf:rfc:3986' then
+    result := TUriServices.create
   else if system = ANY_CODE_VS then
     result := TAllCodeSystemsProvider.create(self.link)
   else
@@ -977,7 +1057,7 @@ begin
   end;
 
   if (result = nil) and not noException then
-    raise Exception.create('unable to provide support for code system '+system);
+    raise ETerminologySetup.create('unable to provide support for code system '+system);
 end;
 
 
@@ -1160,7 +1240,7 @@ end;
 
 function TValueSetProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
-  result := (TValueSetProviderContext(context).context.abstractObject <> nil) and TValueSetProviderContext(context).context.abstract;
+  result := (TValueSetProviderContext(context).context.abstractElement <> nil) and TValueSetProviderContext(context).context.abstract;
 end;
 
 function TValueSetProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;

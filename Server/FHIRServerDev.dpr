@@ -156,6 +156,7 @@ uses
   FHIRLang in '..\Libraries\refplat-dev\FHIRLang.pas',
   FHIRUtilities in '..\Libraries\refplat-dev\FHIRUtilities.pas',
   FHIRClient in '..\Libraries\refplat-dev\FHIRClient.pas',
+  FHIRValidator in '..\Libraries\refplat-dev\FHIRValidator.pas',
   MsXmlParser in '..\Libraries\Support\MsXmlParser.pas',
   XMLBuilder in '..\Libraries\Support\XMLBuilder.pas',
   AdvWinInetClients in '..\Libraries\Support\AdvWinInetClients.pas',
@@ -183,7 +184,6 @@ uses
   UcumValidators in '..\Libraries\ucum\UcumValidators.pas',
   UcumExpressions in '..\Libraries\ucum\UcumExpressions.pas',
   UcumSearch in '..\Libraries\ucum\UcumSearch.pas',
-  FHIRValidator in 'FHIRValidator.pas',
   AltovaXMLLib_TLB in '..\Libraries\Support\AltovaXMLLib_TLB.pas',
   FHIRValueSetExpander in 'FHIRValueSetExpander.pas',
   YuStemmer in '..\Libraries\Stem\YuStemmer.pas',
@@ -260,14 +260,18 @@ uses
   SCIMObjects in '..\Libraries\refplat-dev\SCIMObjects.pas',
   TwilioClient in '..\Libraries\security\TwilioClient.pas',
   FHIRSearchSyntax in 'FHIRSearchSyntax.pas',
-  ProfileManager in 'ProfileManager.pas',
+  ProfileManager in '..\Libraries\refplat-dev\ProfileManager.pas',
   ShellSupport in '..\Libraries\support\ShellSupport.pas',
   RectSupport in 'RectSupport.pas',
   CoordinateSupport in 'CoordinateSupport.pas',
   NarrativeGenerator in '..\Libraries\refplat-dev\NarrativeGenerator.pas',
   AdvGenerics in '..\Libraries\support\AdvGenerics.pas',
-  DigitalSignatures in '..\Libraries\security\DigitalSignatures.pas',
-  XMLSupport in '..\Libraries\support\XMLSupport.pas';
+  XMLSupport in '..\Libraries\support\XMLSupport.pas',
+  DigitalSignatures in '..\Libraries\support\DigitalSignatures.pas',
+  UriServices in 'UriServices.pas',
+  CvxServices in 'CvxServices.pas',
+  CountryCodeServices in 'CountryCodeServices.pas',
+  UniiServices in 'UniiServices.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

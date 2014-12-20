@@ -565,7 +565,7 @@ begin
     if (FBuilder <> nil) and (iIndex >= FLength) then
       Post;
     if (iIndex >= FLength) then
-      Raise Exception.Create('Wrong length index getting Snomed list');
+      Raise Exception.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength));
     move(FMaster[iIndex], c, 4);
     SetLength(Result, c);
     if (iIndex + 4 + length(result) * 4 > FLength) then
@@ -620,6 +620,7 @@ procedure TSnomedDescriptions.SetRefsets(iIndex, refsets: Cardinal);
 begin
   if (iIndex >= FLength) then
     Raise Exception.Create('Wrong length index getting snomed Desc Details');
+  assert(iIndex mod 31 = 0);
   Move(refsets, FMaster[iIndex+27], 4);
 end;
 
@@ -631,13 +632,13 @@ end;
 Function TSnomedDescriptions.AddDescription(iDesc : Cardinal; id : UInt64; date : TSnomedDate; concept, module, kind : Cardinal; iflags : Byte) : Cardinal;
 begin
   result := FBuilder.Length;
-  FBuilder.AddCardinal(iDesc);
-  FBuilder.Append(iFlags);
-  FBuilder.AddUInt64(id);
-  FBuilder.AddCardinal(concept);
-  FBuilder.AddCardinal(module);
-  FBuilder.AddCardinal(kind);
-  FBuilder.AddWord(date);
+  FBuilder.AddCardinal(iDesc);  // 4
+  FBuilder.Append(iFlags);      // 5
+  FBuilder.AddUInt64(id);       // 13
+  FBuilder.AddCardinal(concept); // 17
+  FBuilder.AddCardinal(module);  // 21
+  FBuilder.AddCardinal(kind);    // 25
+  FBuilder.AddWord(date);        // 27
   FBuilder.AddCardinal(0); // refsets
 end;
 
@@ -790,7 +791,7 @@ Begin
   if (iIndex >= FLength) then
     Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details (mod = '+inttostr(iIndex mod CONCEPT_SIZE)+')');
 
   Move(FMaster[iIndex+0], Identity, 8);
   Move(FMaster[iIndex+8], Flags, 1);
@@ -1415,7 +1416,7 @@ begin
         CheckDescription(words, iCount, aLangMembers[i].Ref)
     else}
       for i := 0 to Concept.Count - 1 Do
-        CheckConcept(words, iCount, i * CONCEPT_SIZE  + 1)
+        CheckConcept(words, iCount, i * CONCEPT_SIZE)
   end
   Else if Concept.FindConcept(iRoot, iC) Then
   Begin
@@ -1476,13 +1477,12 @@ begin
   begin
     I := (L + H) shr 1;
     C := aMembers[i].Ref;
-    c := c - iRef;
-    if C < 0 then
+    if C < iRef then
       L := I + 1
     else
     begin
       H := I - 1;
-      if C = 0 then
+      if C = iRef then
       begin
         Result := True;
         L := I;
@@ -1937,7 +1937,7 @@ procedure TSnomedStems.GetEntry(iIndex: Cardinal; var index: Cardinal; var refer
 var
   l : Cardinal;
 begin
-  l := (iIndex * 8) + 1;
+  l := (iIndex * 8);
   if l > FLength - 7 Then
     raise Exception.create('invalid index');
   move(FMaster[l], index, 4);
@@ -2032,13 +2032,13 @@ begin
   result := 0;
   For i := 0 to Count - 1 Do
   begin
-    Move(FMaster[i * 12 + 1], v, 4);
+    Move(FMaster[i * 12], v, 4);
     if v = iIndex Then
     Begin
       if bByName Then
-        Move(FMaster[i * 12 + 9], result, 4)
+        Move(FMaster[i * 12 + 8], result, 4)
       Else
-        Move(FMaster[i * 12 + 5], result, 4);
+        Move(FMaster[i * 12 + 4], result, 4);
       exit;
     End;
   End;
@@ -2046,7 +2046,7 @@ end;
 
 procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; var iDefinition, iMembersByRef, iMembersByName: Cardinal);
 begin
-  iIndex := iIndex * 12 + 1;
+  iIndex := iIndex * 12;
   if (iIndex >= FLength) then
     Raise Exception.Create('Wrong length index getting snomed relationship Details');
   Move(FMaster[iIndex+0], iDefinition, 4);
@@ -2150,7 +2150,7 @@ begin
   Else
   Begin
     if (iIndex > FLength) then
-      Raise Exception.Create('Wrong length index getting Snomed list');
+      Raise Exception.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength));
     move(FMaster[iIndex], c, 4);
     SetLength(Result, c);
     inc(iIndex, 4);

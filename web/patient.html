@@ -76,7 +76,7 @@
             	<div class="inner-wrapper">
  <div class="col-9">
 
- <h2>Page for Patient</h2>
+  <h2>Page for Patient</h2>
 
 <p>
 Patient Details:
@@ -84,10 +84,15 @@ Patient Details:
 [%patient-details%]
 
 <hr/>
-<p>
-<a href="https://fhir.smartplatforms.org/apps/growth-chart/launch.html?iss=https://localhost:961/closed&launch=[%patient-id%]">Launch Smart Application:</a>
-</p>
 
+<p>
+Patient Focused Applications:
+</p>
+<ul>
+ <li><a href="https://fhir.smartplatforms.org/apps/growth-chart/launch.html?iss=https://[%baseSecure%]&launch=[%patient-id%]">Launch Smart Application (growth charts)</a> </li>
+ <li><a href="http://localhost:8000/fhir-app/launch.html?iss=https://[%baseSecure%]&launch=[%patient-id%]">Launch Scot's app</a></li>
+ <li><a href="/fitbit-start.hts"/>Load FitBit Data</a>: this app loads summary data from FitBit into this patient's record. You will have to provide you own fitbit data</li>
+</ul>
 
  </div>
 

@@ -48,7 +48,6 @@ Type
     Function Pad(offset : integer = 0) : String;
     function ReadTextLength(s : string):String;
     function ReadTextLengthWithEscapes(pfx, s, sfx : string):String;
-    procedure WriteXmlDoc(iDoc: IXMLDocument);
   Public
     Constructor Create; Override;
     Procedure Start(oNode : IXmlDomNode); overload;
@@ -76,6 +75,7 @@ Type
 
     Procedure WriteXml(iElement : IXMLNode; first : boolean); override;
     Procedure WriteXmlNode(iDoc : IXMLNode; first : boolean); override;
+    Procedure WriteXmlDocument(iDoc : IXMLDocument); overload; override;
   End;
 
 Implementation
@@ -397,7 +397,7 @@ begin
   raise Exception.Create('Not supported yet');
 end;
 
-procedure TMsXmlBuilder.WriteXmlDoc(iDoc: IXMLDocument);
+procedure TMsXmlBuilder.WriteXmlDocument(iDoc: IXMLDocument);
 begin
   raise Exception.Create('Not supported yet');
 end;

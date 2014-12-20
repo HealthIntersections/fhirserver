@@ -242,6 +242,13 @@ end;
 
 Procedure TAdvXmlBuilder.AddAttribute(Const sName, sValue : String);
 begin
+  if (sName = 'xmlns') and CurrentNamespaces.DefaultSet then
+  begin
+    if sValue <> CurrentNamespaces.DefaultNS then
+      raise Exception.Create('Namespace mismatch');
+    CurrentNamespaces.DefaultSet := false;
+  end;
+
   xml.AddAttribute(sName, sValue);
 end;
 
@@ -322,8 +329,6 @@ begin
 end;
 
 function TAdvXmlBuilder.Text(Const sValue : String) : TSourceLocation;
-var
-  s : String;
 begin
   if (xcmCanonicalise in FCanonicalise) then
   begin
@@ -344,8 +349,7 @@ end;
 
 procedure TAdvXmlBuilder.WriteXml(iElement: IXMLDomElement);
 var
-  n, attr : IXMLDOMNode;
-  i : integer;
+  attr : IXMLDOMNode;
   a: Integer;
 begin
   if iElement.attributes <> nil then
@@ -367,10 +371,8 @@ end;
 
 procedure TAdvXmlBuilder.WriteXmlNode(iNode: IXMLDOMNode);
 var
-  n, attr : IXMLDOMNode;
+  n : IXMLDOMNode;
   i : integer;
-  a: Integer;
-
 begin
   for i := 0 to iNode.childNodes.length - 1  do
   begin
@@ -639,12 +641,12 @@ begin
 
   check(s, [xcmCanonicalise],
 '<doc>©</doc>');
+
 end;
 
 procedure TAdvXmlBuilder.WriteXml(iElement: IXMLNode; first : boolean);
 var
-  n, attr : IXMLNode;
-  i : integer;
+  attr : IXMLNode;
   a: Integer;
 begin
   NSPush;

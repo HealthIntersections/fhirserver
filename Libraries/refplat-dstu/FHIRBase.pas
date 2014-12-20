@@ -43,6 +43,7 @@ Uses
   Classes,
   DateAndTime,
   SysUtils,
+  Generics.Collections,
   AdvExceptions,
   AdvObjects,
   AdvObjectLists,
@@ -52,6 +53,10 @@ Uses
   DateSupport,
   EncodeSupport,
   DecimalSupport;
+
+
+Const
+  ID_LENGTH = 36;
 
 Type
   {@Enum TFHIRCommandType
@@ -186,8 +191,10 @@ type
   TFHIRObject = class (TAdvObject)
   private
     FTag : TAdvObject;
-    FTagValue : String;
+    FTags : TDictionary<String,String>;
     procedure SetTag(const Value: TAdvObject);
+    procedure SetTags(name: String; const Value: String);
+    function getTags(name: String): String;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); virtual;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Virtual;
@@ -198,7 +205,14 @@ type
     procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
     Function PerformQuery(path : String):TFHIRObjectList;
     property Tag : TAdvObject read FTag write SetTag;
-    property TagValue : String read FTagValue write FTagValue;
+    Property Tags[name : String] : String read getTags write SetTags;
+  end;
+
+  TFhirStringProperty = class (TFHIRObject)
+  private
+    Fvalue : String;
+  public
+    constructor create(value : String);
   end;
 
   TFHIRObjectListEnumerator = class (TAdvObject)
@@ -515,46 +529,7 @@ type
     property results : TFHIRObjectList read FResults;
   end;
 
-                   (*
-{ TFHIRType }
 
-function TFHIRType.Clone: TFHIRType;
-begin
-  result := TFHIRType(Inherited Clone);
-end;
-
-procedure TFHIRType.GetChildrenByName(name: string; list: TFHIRObjectList);
-begin
-  inherited;
-end;
-
-function TFHIRType.Link: TFHIRType;
-begin
-  result := TFHIRType(Inherited Link);
-end;
-*)
-(*
-{ TFHIRResourceReference }
-
-procedure TFHIRResourceReference.Assign(oSource: TAdvObject);
-begin
-  inherited;
-  resourceType := TFHIRResourceReference(oSource).resourceType;
-  id := TFHIRResourceReference(oSource).id;
-  version := TFHIRResourceReference(oSource).version;
-  text := TFHIRResourceReference(oSource).text;
-end;
-
-function TFHIRResourceReference.Clone: TFHIRResourceReference;
-begin
-  result := TFHIRResourceReference(Inherited Clone);
-end;
-
-function TFHIRResourceReference.Link: TFHIRResourceReference;
-begin
-  result := TFHIRResourceReference(Inherited Link);
-end;
-  *)
 
 { TFHIRBase }
 
@@ -1024,6 +999,16 @@ begin
   // nothing to add here
 end;
 
+function TFHIRObject.getTags(name: String): String;
+begin
+  if FTags = nil then
+    FTags := TDictionary<String, String>.create;
+  if FTags.ContainsKey(name) then
+    result := FTags[name]
+  else
+    result := '';
+end;
+
 procedure TFHIRObject.ListChildrenByName(name: string; list: TFHIRObjectList);
 begin
   if self <> nil then
@@ -1059,6 +1044,13 @@ procedure TFHIRObject.SetTag(const Value: TAdvObject);
 begin
   FTag.Free;
   FTag := Value;
+end;
+
+procedure TFHIRObject.SetTags(name: String; const Value: String);
+begin
+  if FTags = nil then
+    FTags := TDictionary<String,String>.create;
+  FTags.AddOrSetValue(name, value);
 end;
 
 { TFHIRObjectText }
@@ -1343,7 +1335,8 @@ begin
   FName := sName;
   FType := sType;
   FList := TFHIRObjectList.Create;
-  FList.Add(oObject);
+  if (oObject <> nil) then
+    FList.Add(oObject);
 end;
 
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; oList: TFHIRObjectList);
@@ -1351,7 +1344,9 @@ begin
   Create;
   FName := sName;
   FType := sType;
-  FList := oList;
+  FList := TFHIRObjectList.Create;
+  if oList <> nil then
+    FList.AddAll(oList);
 end;
 
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; sValue: String);
@@ -1360,7 +1355,8 @@ begin
   FName := sName;
   FType := sType;
   FList := TFHIRObjectList.Create;
-  FList.Add(TFhirString.Create(sValue));
+  if sValue <> '' then
+    FList.Add(TFhirStringProperty.Create(sValue));
 end;
 
 destructor TFHIRProperty.Destroy;
@@ -1536,6 +1532,14 @@ end;
 function TFhirXhtmlNodeListEnumerator.GetCurrent : TFhirXhtmlNode;
 begin
   Result := FList[FIndex];
+end;
+
+{ TFhirStringProperty }
+
+constructor TFhirStringProperty.create(value: String);
+begin
+  inherited create;
+  Fvalue := value;
 end;
 
 End.

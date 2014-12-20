@@ -138,6 +138,7 @@ Type
     {$ENDIF}
     FQuestionnaireCache : TQuestionnaireCache;
     FValidate: boolean;
+    FAudits : TFhirResourceList;
 
     procedure LoadExistingResources(conn : TKDBConnection);
     procedure SaveSecurityEvent(se : TFhirSecurityEvent);
@@ -199,6 +200,7 @@ Type
     function LookupCode(system, code : String) : String;
     property QuestionnaireCache : TQuestionnaireCache read FQuestionnaireCache;
     Property Validate : boolean read FValidate write FValidate;
+    procedure QueueResource(r : TFHIRResource);
   end;
 
 
@@ -269,6 +271,7 @@ begin
   FLock := TCriticalSection.Create('fhir-store');
   FSCIMServer := SCIMServer;
   FSCIMServer.DefaultRights.Add(SECURITY_BASE_URI+'user');
+  FAudits := TFhirResourceList.create;
 
   FQuestionnaireCache := TQuestionnaireCache.create;
 
@@ -497,6 +500,7 @@ end;
 
 destructor TFHIRDataStore.Destroy;
 begin
+  FAudits.Free;
   FBases.free;
   FProfiles.free;
   FTagsByKey.free;
@@ -515,15 +519,14 @@ end;
 
 procedure TFHIRDataStore.DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession : boolean);
 var
-  storage : TFhirOperation;
+  storage : TFhirOperationManager;
 begin
   if bWantSession then
     request.Session := CreateImplicitSession('server');
-  storage := TFhirOperation.create('en', self.Link);
+  storage := TFhirOperationManager.create('en', self.Link);
   try
     storage.OwnerName := OwnerName;
     storage.Connection := FDB.GetConnection('fhir');
-    storage.PreCheck(request, response);
     storage.Connection.StartTransact;
     try
       storage.Execute(request, response, false);
@@ -931,6 +934,7 @@ var
   i : integer;
   t : TFhirTag;
 begin
+   {$IFDEF FHIR-DSTU}
   FLock.Lock('RegisterTag');
   try
     i := FTags.IndexByName(TagCombine(Tag.scheme, Tag.term));
@@ -961,7 +965,11 @@ begin
   finally
     FLock.UnLock;
   end;
+  {$ELSE}
+  raise Exception.Create('TODO');
+  {$ENDIF}
 end;
+
 
 procedure TFHIRDataStore.registerTag(tag: TFhirTag);
 var
@@ -1003,8 +1011,11 @@ var
   key, i : integer;
   session : TFhirSession;
   d : TDateTime;
+  list : TFhirResourceList;
+  storage : TFhirOperationManager;
 begin
   key := 0;
+  list := nil;
   d := UniversalDateTime;
   FLock.Lock('sweep2');
   try
@@ -1021,9 +1032,36 @@ begin
         end;
       end;
     end;
+    if FAudits.Count > 0 then
+    begin
+      list := FAudits;
+      FAudits := TFhirResourceList.Create;
+    end;
   finally
     FLock.Unlock;
   end;
+  if list <> nil then
+    try
+      storage := TFhirOperationManager.create('en', self.Link);
+      try
+        storage.OwnerName := OwnerName;
+        storage.Connection := FDB.GetConnection('fhir');
+        try
+          storage.storeResources(list);
+          storage.Connection.Release;
+        except
+          on e : exception do
+          begin
+            storage.Connection.Error(e);
+            raise;
+          end;
+        end;
+      finally
+        storage.Free;
+      end;
+    finally
+      list.Free;
+    end;
   if key > 0 then
     CloseFhirSession(key);
 end;
@@ -1055,7 +1093,7 @@ begin
     if aType in [frtValueSet, frtConceptMap] then
       TerminologyServer.DropTerminologyResource(key, Codes_TFHIRResourceType[aType]+'/'+id, aType)
     else if aType = frtProfile then
-      FProfiles.DropProfile(key, Codes_TFHIRResourceType[aType]+'/'+id, aType);
+      FProfiles.DropProfile({$IFNDEF FHIR-DSTU}Codes_TFHIRResourceType[aType]+'/'+id, {$ENDIF}key, Codes_TFHIRResourceType[aType]+'/'+id, aType);
     {$IFNDEF FHIR-DSTU}
     FSubscriptionManager.DropResource(key, vkey);
     FQuestionnaireCache.clear(aType, id);
@@ -1104,7 +1142,7 @@ var
 begin
   builder := TAdvStringBuilder.Create;
   try
-    profiles := FProfiles.getLinks(false, false);
+    profiles := FProfiles.getLinks({$IFDEF FHIR-DSTU}false, {$ENDIF} false);
     try
       for i := 0 to profiles.Count - 1 do
       begin
@@ -1131,6 +1169,16 @@ begin
     result := builder.AsString;
   finally
     builder.Free;
+  end;
+end;
+
+procedure TFHIRDataStore.QueueResource(r: TFHIRResource);
+begin
+  FLock.Lock;
+  try
+    FAudits.add(r.link);
+  finally
+    FLock.Unlock;
   end;
 end;
 

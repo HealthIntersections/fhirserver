@@ -33,7 +33,7 @@ interface
 Uses
   SysUtils, Classes, IniFiles, ActiveX, ComObj,
   SystemService, SystemSupport,
-  SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices,
+  SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
@@ -134,6 +134,13 @@ begin
       svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
     else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('mafile', dir2, true, [clstValueNextParam]) then
       svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, dir2, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+    else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+    begin
+      svc.ConnectToDatabase;
+      ImportUnii(fn, TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
+        svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('database', 'tx', ''),
+        svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')));
+    end
     else if FindCmdLineSwitch('rxstems', dir, true, []) then
     begin
       generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',

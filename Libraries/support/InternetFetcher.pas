@@ -7,24 +7,24 @@ All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -35,12 +35,15 @@ Uses
   AdvObjects;
 
 Type
+  TInternetFetcherMethod = (imfGet, imfPost);
+
   TInternetFetcher = Class (TAdvObject)
   Private
     FURL: String;
     FBuffer: TAdvBuffer;
     FUsername: String;
     FPassword: String;
+    FMethod: TInternetFetcherMethod;
     procedure SetBuffer(const Value: TAdvBuffer);
     procedure SetPassword(const Value: String);
     procedure SetUsername(const Value: String);
@@ -48,7 +51,7 @@ Type
     Constructor Create; Override;
 
     Destructor Destroy; Override;
-     
+
     Property URL : String read FURL write FURL;
     Property Buffer : TAdvBuffer read FBuffer write SetBuffer;
 
@@ -57,6 +60,7 @@ Type
 
     Property Username : String read FUsername write SetUsername;
     Property Password : String read FPassword write SetPassword;
+    Property Method : TInternetFetcherMethod read FMethod write FMethod;
   End;
 
 Implementation
@@ -66,7 +70,7 @@ Uses
 
   SysUtils,
   Classes,
-  
+
   IdURi,
   IdFTP,
   IdHTTP,
@@ -86,6 +90,7 @@ constructor TInternetFetcher.Create;
 begin
   inherited;
   FBuffer := TAdvBuffer.create;
+  FMethod := imfGet;
 end;
 
 destructor TInternetFetcher.Destroy;
@@ -116,7 +121,10 @@ begin
           oHTTP.URL.URI := url;
           oMem := TMemoryStream.Create;
           try
-            oHTTP.Get(url, oMem);
+            if FMethod = imfPost then
+              oHTTP.Post(url, oMem)
+            else
+              oHTTP.Get(url, oMem);
             oMem.position := 0;
             FBuffer.Capacity := oMem.Size;
             oMem.read(Fbuffer.Data^, oMem.Size);
@@ -135,11 +143,14 @@ begin
           Try
             oHTTP.IOHandler := oSSL;
             oSSL.SSLOptions.Mode := sslmClient;
-            oSSL.SSLOptions.Method := sslvSSLv3;
+            oSSL.SSLOptions.Method := sslvTLSv1_2;
             oHTTP.URL.URI := url;
             oMem := TMemoryStream.Create;
             try
-              oHTTP.Get(url, oMem);
+              if FMethod = imfPost then
+                oHTTP.Post(url, oMem)
+              else
+                oHTTP.Get(url, oMem);
               oMem.position := 0;
               FBuffer.Capacity := oMem.Size;
               oMem.read(Fbuffer.Data^, oMem.Size);

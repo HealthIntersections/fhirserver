@@ -35,7 +35,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
+// FHIR v0.0.82 generated Fri, Oct 17, 2014 08:34+1100
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON, FHIRAtomFeed;
@@ -2419,7 +2419,7 @@ begin
   if (child.baseName = 'text') then
     resource.text := ParseNarrative(child, path+'/text')
   else if (child.baseName = 'language') then
-    resource.language := ParseCode(child, path+'/language')
+    resource.languageElement := ParseCode(child, path+'/language')
   else if (child.baseName = 'contained') then
     resource.ContainedList.add(ParseContained(child, path+'/contained'))
   else if not parseBackboneElementChild(resource, path, child) then
@@ -2430,7 +2430,7 @@ procedure TFHIRJsonParser.ParseResourceProperties(jsn : TJsonObject; resource : 
 begin
   ParseBackboneElementProperties(jsn, resource);
   if jsn.has('language') or jsn.has('_language') then
-    resource.language := parseCode(jsn['language'], jsn.vObj['_language']);
+    resource.languageElement := parseCode(jsn['language'], jsn.vObj['_language']);
   if jsn.has('text') then
     resource.text := parseNarrative(jsn.vObj['text']);
   if jsn.has('contained') then
@@ -2447,7 +2447,7 @@ var
   i : integer;
 begin
   composeBackboneElementChildren(xml, resource);
-  composeCode(xml, 'language', resource.language);
+  composeCode(xml, 'language', resource.languageElement);
   if not SummaryOnly then
     composeNarrative(xml, 'text', resource.text);
   if not SummaryOnly then
@@ -2460,8 +2460,8 @@ var
   i : integer;
 begin
   ComposeBackboneElementProperties(json, resource);
-  composeCodeValue(json, 'language', resource.language, false);
-  composeCodeProps(json, 'language', resource.language, false);
+  composeCodeValue(json, 'language', resource.languageElement, false);
+  composeCodeProps(json, 'language', resource.languageElement, false);
   if not SummaryOnly then
     ComposeNarrative(json, 'text', resource.text);
   if not SummaryOnly and (resource.containedList.count > 0) then
@@ -2627,7 +2627,7 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlObject := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
         result.value := ParseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
@@ -2694,8 +2694,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeUriValue(json, 'url', elem.urlObject, false);
-  ComposeUriProps(json, 'url', elem.urlObject, false);
+  ComposeUriValue(json, 'url', elem.urlElement, false);
+  ComposeUriProps(json, 'url', elem.urlElement, false);
   if (elem.value is TFhirInteger) then
   begin
     ComposeIntegerValue(json, 'valueInteger', TFhirInteger(elem.value), false);
@@ -2803,7 +2803,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirNarrativeStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirNarrativeStatus, path+'/status', child){1a}
       else if (child.baseName = 'div') then
         result.div_ := ParseXHtmlNode(child, path+'/div') {b}
       else if Not ParseElementChild(result, path, child) then
@@ -2825,7 +2825,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirNarrativeStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirNarrativeStatus);
   ComposeXHtmlNode(xml, 'div', elem.div_);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -2842,7 +2842,7 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatus);
     if jsn.has('div') then
         result.div_ := ParseXHtmlNode(jsn.path+'.div', jsn['div']);{q}
     result.link;
@@ -2857,8 +2857,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirNarrativeStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirNarrativeStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirNarrativeStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirNarrativeStatus, false);
   ComposeXHtmlNode(json, 'div', elem.div_); {a}
   json.finishObject;
 end;
@@ -2874,9 +2874,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'start') then
-        result.startObject := ParseDateTime(child, path+'/start') {b}
+        result.startElement := ParseDateTime(child, path+'/start') {b}
       else if (child.baseName = 'end') then
-        result.end_Object := ParseDateTime(child, path+'/end') {b}
+        result.end_Element := ParseDateTime(child, path+'/end') {b}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -2896,8 +2896,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeDateTime(xml, 'start', elem.startObject);{x.2}
-  ComposeDateTime(xml, 'end', elem.end_Object);{x.2}
+  ComposeDateTime(xml, 'start', elem.startElement);{x.2}
+  ComposeDateTime(xml, 'end', elem.end_Element);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -2913,9 +2913,9 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('start') or jsn.has('_start') then
-        result.startObject := ParseDateTime(jsn['start'], jsn.vObj['_start']);{q}
+        result.startElement := ParseDateTime(jsn['start'], jsn.vObj['_start']);{q}
     if jsn.has('end') or jsn.has('_end') then
-        result.end_Object := ParseDateTime(jsn['end'], jsn.vObj['_end']);{q}
+        result.end_Element := ParseDateTime(jsn['end'], jsn.vObj['_end']);{q}
     result.link;
   finally
     result.free;
@@ -2928,10 +2928,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeDateTimeValue(json, 'start', elem.startObject, false);
-  ComposeDateTimeProps(json, 'start', elem.startObject, false);
-  ComposeDateTimeValue(json, 'end', elem.end_Object, false);
-  ComposeDateTimeProps(json, 'end', elem.end_Object, false);
+  ComposeDateTimeValue(json, 'start', elem.startElement, false);
+  ComposeDateTimeProps(json, 'start', elem.startElement, false);
+  ComposeDateTimeValue(json, 'end', elem.end_Element, false);
+  ComposeDateTimeProps(json, 'end', elem.end_Element, false);
   json.finishObject;
 end;
 
@@ -2946,15 +2946,15 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if (child.baseName = 'display') then
-        result.displayObject := ParseString(child, path+'/display') {b}
+        result.displayElement := ParseString(child, path+'/display') {b}
       else if (child.baseName = 'primary') then
-        result.primaryObject := ParseBoolean(child, path+'/primary') {b}
+        result.primaryElement := ParseBoolean(child, path+'/primary') {b}
       else if (child.baseName = 'valueSet') then
         result.valueSet := ParseResourceReference{TFhirValueSet}(child, path+'/valueSet') {b}
       else if Not ParseElementChild(result, path, child) then
@@ -2976,11 +2976,11 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
-  ComposeString(xml, 'display', elem.displayObject);{x.2}
-  ComposeBoolean(xml, 'primary', elem.primaryObject);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
+  ComposeString(xml, 'display', elem.displayElement);{x.2}
+  ComposeBoolean(xml, 'primary', elem.primaryElement);{x.2}
   ComposeResourceReference{TFhirValueSet}(xml, 'valueSet', elem.valueSet);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -2997,15 +2997,15 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayObject := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     if jsn.has('primary') or jsn.has('_primary') then
-        result.primaryObject := ParseBoolean(jsn['primary'], jsn.vObj['_primary']);{q}
+        result.primaryElement := ParseBoolean(jsn['primary'], jsn.vObj['_primary']);{q}
     if jsn.has('valueSet') then
         result.valueSet := ParseResourceReference{TFhirValueSet}(jsn.vObj['valueSet']);{q}
     result.link;
@@ -3020,16 +3020,16 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
-  ComposeStringValue(json, 'display', elem.displayObject, false);
-  ComposeStringProps(json, 'display', elem.displayObject, false);
-  ComposeBooleanValue(json, 'primary', elem.primaryObject, false);
-  ComposeBooleanProps(json, 'primary', elem.primaryObject, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
+  ComposeStringValue(json, 'display', elem.displayElement, false);
+  ComposeStringProps(json, 'display', elem.displayElement, false);
+  ComposeBooleanValue(json, 'primary', elem.primaryElement, false);
+  ComposeBooleanProps(json, 'primary', elem.primaryElement, false);
   ComposeResourceReference{TFhirValueSet}(json, 'valueSet', elem.valueSet); {a}
   json.finishObject;
 end;
@@ -3115,15 +3115,15 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'value') then
-        result.valueObject := ParseDecimal(child, path+'/value') {b}
+        result.valueElement := ParseDecimal(child, path+'/value') {b}
       else if (child.baseName = 'comparator') then
-        result.comparatorObject := ParseEnum(CODES_TFhirQuantityComparator, path+'/comparator', child){1a}
+        result.comparatorElement := ParseEnum(CODES_TFhirQuantityComparator, path+'/comparator', child){1a}
       else if (child.baseName = 'units') then
-        result.unitsObject := ParseString(child, path+'/units') {b}
+        result.unitsElement := ParseString(child, path+'/units') {b}
       else if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -3143,11 +3143,11 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeDecimal(xml, 'value', elem.valueObject);{x.2}
-  ComposeEnum(xml, 'comparator', elem.ComparatorObject, CODES_TFhirQuantityComparator);
-  ComposeString(xml, 'units', elem.unitsObject);{x.2}
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
+  ComposeDecimal(xml, 'value', elem.valueElement);{x.2}
+  ComposeEnum(xml, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparator);
+  ComposeString(xml, 'units', elem.unitsElement);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -3163,15 +3163,15 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('value') or jsn.has('_value') then
-        result.valueObject := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
     if jsn.has('comparator') or jsn.has('_comparator')  then
-      result.comparatorObject := parseEnum(jsn['comparator'], jsn.vObj['_comparator'], CODES_TFhirQuantityComparator);
+      result.comparatorElement := parseEnum(jsn['comparator'], jsn.vObj['_comparator'], CODES_TFhirQuantityComparator);
     if jsn.has('units') or jsn.has('_units') then
-        result.unitsObject := ParseString(jsn['units'], jsn.vObj['_units']);{q}
+        result.unitsElement := ParseString(jsn['units'], jsn.vObj['_units']);{q}
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     result.link;
   finally
     result.free;
@@ -3184,16 +3184,16 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeDecimalValue(json, 'value', elem.valueObject, false);
-  ComposeDecimalProps(json, 'value', elem.valueObject, false);
-  ComposeEnumValue(json, 'comparator', elem.ComparatorObject, CODES_TFhirQuantityComparator, false);
-  ComposeEnumProps(json, 'comparator', elem.ComparatorObject, CODES_TFhirQuantityComparator, false);
-  ComposeStringValue(json, 'units', elem.unitsObject, false);
-  ComposeStringProps(json, 'units', elem.unitsObject, false);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
+  ComposeDecimalValue(json, 'value', elem.valueElement, false);
+  ComposeDecimalProps(json, 'value', elem.valueElement, false);
+  ComposeEnumValue(json, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparator, false);
+  ComposeEnumProps(json, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparator, false);
+  ComposeStringValue(json, 'units', elem.unitsElement, false);
+  ComposeStringProps(json, 'units', elem.unitsElement, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
   json.finishObject;
 end;
 
@@ -3208,19 +3208,19 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'contentType') then
-        result.contentTypeObject := ParseCode(child, path+'/contentType') {b}
+        result.contentTypeElement := ParseCode(child, path+'/contentType') {b}
       else if (child.baseName = 'language') then
-        result.languageObject := ParseCode(child, path+'/language') {b}
+        result.languageElement := ParseCode(child, path+'/language') {b}
       else if (child.baseName = 'data') then
-        result.dataObject := ParseBase64Binary(child, path+'/data') {b}
+        result.dataElement := ParseBase64Binary(child, path+'/data') {b}
       else if (child.baseName = 'url') then
-        result.urlObject := ParseUri(child, path+'/url') {b}
+        result.urlElement := ParseUri(child, path+'/url') {b}
       else if (child.baseName = 'size') then
-        result.sizeObject := ParseInteger(child, path+'/size') {b}
+        result.sizeElement := ParseInteger(child, path+'/size') {b}
       else if (child.baseName = 'hash') then
-        result.hashObject := ParseBase64Binary(child, path+'/hash') {b}
+        result.hashElement := ParseBase64Binary(child, path+'/hash') {b}
       else if (child.baseName = 'title') then
-        result.titleObject := ParseString(child, path+'/title') {b}
+        result.titleElement := ParseString(child, path+'/title') {b}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -3240,13 +3240,13 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeCode(xml, 'contentType', elem.contentTypeObject);{x.2}
-  ComposeCode(xml, 'language', elem.languageObject);{x.2}
-  ComposeBase64Binary(xml, 'data', elem.dataObject);{x.2}
-  ComposeUri(xml, 'url', elem.urlObject);{x.2}
-  ComposeInteger(xml, 'size', elem.sizeObject);{x.2}
-  ComposeBase64Binary(xml, 'hash', elem.hashObject);{x.2}
-  ComposeString(xml, 'title', elem.titleObject);{x.2}
+  ComposeCode(xml, 'contentType', elem.contentTypeElement);{x.2}
+  ComposeCode(xml, 'language', elem.languageElement);{x.2}
+  ComposeBase64Binary(xml, 'data', elem.dataElement);{x.2}
+  ComposeUri(xml, 'url', elem.urlElement);{x.2}
+  ComposeInteger(xml, 'size', elem.sizeElement);{x.2}
+  ComposeBase64Binary(xml, 'hash', elem.hashElement);{x.2}
+  ComposeString(xml, 'title', elem.titleElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -3262,19 +3262,19 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('contentType') or jsn.has('_contentType') then
-        result.contentTypeObject := ParseCode(jsn['contentType'], jsn.vObj['_contentType']);{q}
+        result.contentTypeElement := ParseCode(jsn['contentType'], jsn.vObj['_contentType']);{q}
     if jsn.has('language') or jsn.has('_language') then
-        result.languageObject := ParseCode(jsn['language'], jsn.vObj['_language']);{q}
+        result.languageElement := ParseCode(jsn['language'], jsn.vObj['_language']);{q}
     if jsn.has('data') or jsn.has('_data') then
-        result.dataObject := ParseBase64Binary(jsn['data'], jsn.vObj['_data']);{q}
+        result.dataElement := ParseBase64Binary(jsn['data'], jsn.vObj['_data']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlObject := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('size') or jsn.has('_size') then
-        result.sizeObject := ParseInteger(jsn['size'], jsn.vObj['_size']);{q}
+        result.sizeElement := ParseInteger(jsn['size'], jsn.vObj['_size']);{q}
     if jsn.has('hash') or jsn.has('_hash') then
-        result.hashObject := ParseBase64Binary(jsn['hash'], jsn.vObj['_hash']);{q}
+        result.hashElement := ParseBase64Binary(jsn['hash'], jsn.vObj['_hash']);{q}
     if jsn.has('title') or jsn.has('_title') then
-        result.titleObject := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     result.link;
   finally
     result.free;
@@ -3287,20 +3287,20 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeCodeValue(json, 'contentType', elem.contentTypeObject, false);
-  ComposeCodeProps(json, 'contentType', elem.contentTypeObject, false);
-  ComposeCodeValue(json, 'language', elem.languageObject, false);
-  ComposeCodeProps(json, 'language', elem.languageObject, false);
-  ComposeBase64BinaryValue(json, 'data', elem.dataObject, false);
-  ComposeBase64BinaryProps(json, 'data', elem.dataObject, false);
-  ComposeUriValue(json, 'url', elem.urlObject, false);
-  ComposeUriProps(json, 'url', elem.urlObject, false);
-  ComposeIntegerValue(json, 'size', elem.sizeObject, false);
-  ComposeIntegerProps(json, 'size', elem.sizeObject, false);
-  ComposeBase64BinaryValue(json, 'hash', elem.hashObject, false);
-  ComposeBase64BinaryProps(json, 'hash', elem.hashObject, false);
-  ComposeStringValue(json, 'title', elem.titleObject, false);
-  ComposeStringProps(json, 'title', elem.titleObject, false);
+  ComposeCodeValue(json, 'contentType', elem.contentTypeElement, false);
+  ComposeCodeProps(json, 'contentType', elem.contentTypeElement, false);
+  ComposeCodeValue(json, 'language', elem.languageElement, false);
+  ComposeCodeProps(json, 'language', elem.languageElement, false);
+  ComposeBase64BinaryValue(json, 'data', elem.dataElement, false);
+  ComposeBase64BinaryProps(json, 'data', elem.dataElement, false);
+  ComposeUriValue(json, 'url', elem.urlElement, false);
+  ComposeUriProps(json, 'url', elem.urlElement, false);
+  ComposeIntegerValue(json, 'size', elem.sizeElement, false);
+  ComposeIntegerProps(json, 'size', elem.sizeElement, false);
+  ComposeBase64BinaryValue(json, 'hash', elem.hashElement, false);
+  ComposeBase64BinaryProps(json, 'hash', elem.hashElement, false);
+  ComposeStringValue(json, 'title', elem.titleElement, false);
+  ComposeStringProps(json, 'title', elem.titleElement, false);
   json.finishObject;
 end;
 
@@ -3387,17 +3387,17 @@ begin
       if (child.baseName = 'origin') then
         result.origin := ParseQuantity(child, path+'/origin') {b}
       else if (child.baseName = 'period') then
-        result.periodObject := ParseDecimal(child, path+'/period') {b}
+        result.periodElement := ParseDecimal(child, path+'/period') {b}
       else if (child.baseName = 'factor') then
-        result.factorObject := ParseDecimal(child, path+'/factor') {b}
+        result.factorElement := ParseDecimal(child, path+'/factor') {b}
       else if (child.baseName = 'lowerLimit') then
-        result.lowerLimitObject := ParseDecimal(child, path+'/lowerLimit') {b}
+        result.lowerLimitElement := ParseDecimal(child, path+'/lowerLimit') {b}
       else if (child.baseName = 'upperLimit') then
-        result.upperLimitObject := ParseDecimal(child, path+'/upperLimit') {b}
+        result.upperLimitElement := ParseDecimal(child, path+'/upperLimit') {b}
       else if (child.baseName = 'dimensions') then
-        result.dimensionsObject := ParseInteger(child, path+'/dimensions') {b}
+        result.dimensionsElement := ParseInteger(child, path+'/dimensions') {b}
       else if (child.baseName = 'data') then
-        result.dataObject := ParseString(child, path+'/data') {b}
+        result.dataElement := ParseString(child, path+'/data') {b}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -3418,12 +3418,12 @@ begin
   xml.open(name);
   composeElementChildren(xml, elem);
   ComposeQuantity(xml, 'origin', elem.origin);{x.2}
-  ComposeDecimal(xml, 'period', elem.periodObject);{x.2}
-  ComposeDecimal(xml, 'factor', elem.factorObject);{x.2}
-  ComposeDecimal(xml, 'lowerLimit', elem.lowerLimitObject);{x.2}
-  ComposeDecimal(xml, 'upperLimit', elem.upperLimitObject);{x.2}
-  ComposeInteger(xml, 'dimensions', elem.dimensionsObject);{x.2}
-  ComposeString(xml, 'data', elem.dataObject);{x.2}
+  ComposeDecimal(xml, 'period', elem.periodElement);{x.2}
+  ComposeDecimal(xml, 'factor', elem.factorElement);{x.2}
+  ComposeDecimal(xml, 'lowerLimit', elem.lowerLimitElement);{x.2}
+  ComposeDecimal(xml, 'upperLimit', elem.upperLimitElement);{x.2}
+  ComposeInteger(xml, 'dimensions', elem.dimensionsElement);{x.2}
+  ComposeString(xml, 'data', elem.dataElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -3441,17 +3441,17 @@ begin
     if jsn.has('origin') then
         result.origin := ParseQuantity(jsn.vObj['origin']);{q}
     if jsn.has('period') or jsn.has('_period') then
-        result.periodObject := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
+        result.periodElement := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
     if jsn.has('factor') or jsn.has('_factor') then
-        result.factorObject := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
+        result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('lowerLimit') or jsn.has('_lowerLimit') then
-        result.lowerLimitObject := ParseDecimal(jsn['lowerLimit'], jsn.vObj['_lowerLimit']);{q}
+        result.lowerLimitElement := ParseDecimal(jsn['lowerLimit'], jsn.vObj['_lowerLimit']);{q}
     if jsn.has('upperLimit') or jsn.has('_upperLimit') then
-        result.upperLimitObject := ParseDecimal(jsn['upperLimit'], jsn.vObj['_upperLimit']);{q}
+        result.upperLimitElement := ParseDecimal(jsn['upperLimit'], jsn.vObj['_upperLimit']);{q}
     if jsn.has('dimensions') or jsn.has('_dimensions') then
-        result.dimensionsObject := ParseInteger(jsn['dimensions'], jsn.vObj['_dimensions']);{q}
+        result.dimensionsElement := ParseInteger(jsn['dimensions'], jsn.vObj['_dimensions']);{q}
     if jsn.has('data') or jsn.has('_data') then
-        result.dataObject := ParseString(jsn['data'], jsn.vObj['_data']);{q}
+        result.dataElement := ParseString(jsn['data'], jsn.vObj['_data']);{q}
     result.link;
   finally
     result.free;
@@ -3465,18 +3465,18 @@ begin
   json.valueObject(name);
   ComposeElementProperties(json, elem);
   ComposeQuantity(json, 'origin', elem.origin); {a}
-  ComposeDecimalValue(json, 'period', elem.periodObject, false);
-  ComposeDecimalProps(json, 'period', elem.periodObject, false);
-  ComposeDecimalValue(json, 'factor', elem.factorObject, false);
-  ComposeDecimalProps(json, 'factor', elem.factorObject, false);
-  ComposeDecimalValue(json, 'lowerLimit', elem.lowerLimitObject, false);
-  ComposeDecimalProps(json, 'lowerLimit', elem.lowerLimitObject, false);
-  ComposeDecimalValue(json, 'upperLimit', elem.upperLimitObject, false);
-  ComposeDecimalProps(json, 'upperLimit', elem.upperLimitObject, false);
-  ComposeIntegerValue(json, 'dimensions', elem.dimensionsObject, false);
-  ComposeIntegerProps(json, 'dimensions', elem.dimensionsObject, false);
-  ComposeStringValue(json, 'data', elem.dataObject, false);
-  ComposeStringProps(json, 'data', elem.dataObject, false);
+  ComposeDecimalValue(json, 'period', elem.periodElement, false);
+  ComposeDecimalProps(json, 'period', elem.periodElement, false);
+  ComposeDecimalValue(json, 'factor', elem.factorElement, false);
+  ComposeDecimalProps(json, 'factor', elem.factorElement, false);
+  ComposeDecimalValue(json, 'lowerLimit', elem.lowerLimitElement, false);
+  ComposeDecimalProps(json, 'lowerLimit', elem.lowerLimitElement, false);
+  ComposeDecimalValue(json, 'upperLimit', elem.upperLimitElement, false);
+  ComposeDecimalProps(json, 'upperLimit', elem.upperLimitElement, false);
+  ComposeIntegerValue(json, 'dimensions', elem.dimensionsElement, false);
+  ComposeIntegerProps(json, 'dimensions', elem.dimensionsElement, false);
+  ComposeStringValue(json, 'data', elem.dataElement, false);
+  ComposeStringProps(json, 'data', elem.dataElement, false);
   json.finishObject;
 end;
 
@@ -3491,9 +3491,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'reference') then
-        result.referenceObject := ParseString(child, path+'/reference') {b}
+        result.referenceElement := ParseString(child, path+'/reference') {b}
       else if (child.baseName = 'display') then
-        result.displayObject := ParseString(child, path+'/display') {b}
+        result.displayElement := ParseString(child, path+'/display') {b}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -3513,8 +3513,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeString(xml, 'reference', elem.referenceObject);{x.2}
-  ComposeString(xml, 'display', elem.displayObject);{x.2}
+  ComposeString(xml, 'reference', elem.referenceElement);{x.2}
+  ComposeString(xml, 'display', elem.displayElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -3530,9 +3530,9 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('reference') or jsn.has('_reference') then
-        result.referenceObject := ParseString(jsn['reference'], jsn.vObj['_reference']);{q}
+        result.referenceElement := ParseString(jsn['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayObject := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     result.link;
   finally
     result.free;
@@ -3545,10 +3545,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeStringValue(json, 'reference', elem.referenceObject, false);
-  ComposeStringProps(json, 'reference', elem.referenceObject, false);
-  ComposeStringValue(json, 'display', elem.displayObject, false);
-  ComposeStringProps(json, 'display', elem.displayObject, false);
+  ComposeStringValue(json, 'reference', elem.referenceElement, false);
+  ComposeStringProps(json, 'reference', elem.referenceElement, false);
+  ComposeStringValue(json, 'display', elem.displayElement, false);
+  ComposeStringProps(json, 'display', elem.displayElement, false);
   json.finishObject;
 end;
 
@@ -3565,7 +3565,7 @@ begin
       if (child.baseName = 'coding') then
         result.codingList.Add(ParseCoding(child, path+'/coding')){y.2}
       else if (child.baseName = 'text') then
-        result.textObject := ParseString(child, path+'/text') {b}
+        result.textElement := ParseString(child, path+'/text') {b}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -3589,7 +3589,7 @@ begin
   composeElementChildren(xml, elem);
   for i := 0 to elem.codingList.Count - 1 do
     ComposeCoding(xml, 'coding', elem.codingList[i]);
-  ComposeString(xml, 'text', elem.textObject);{x.2}
+  ComposeString(xml, 'text', elem.textElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -3607,7 +3607,7 @@ begin
     if jsn.has('coding') then
       iterateArray(jsn.vArr['coding'], result.codingList, parseCoding);
     if jsn.has('text') or jsn.has('_text') then
-        result.textObject := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     result.link;
   finally
     result.free;
@@ -3629,8 +3629,8 @@ begin
       ComposeCoding(json, '',elem.codingList[i]); {z - Coding}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'text', elem.textObject, false);
-  ComposeStringProps(json, 'text', elem.textObject, false);
+  ComposeStringValue(json, 'text', elem.textElement, false);
+  ComposeStringProps(json, 'text', elem.textElement, false);
   json.finishObject;
 end;
 
@@ -3645,13 +3645,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'use') then
-        result.useObject := ParseEnum(CODES_TFhirIdentifierUse, path+'/use', child){1a}
+        result.useElement := ParseEnum(CODES_TFhirIdentifierUse, path+'/use', child){1a}
       else if (child.baseName = 'label') then
-        result.label_Object := ParseString(child, path+'/label') {b}
+        result.label_Element := ParseString(child, path+'/label') {b}
       else if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'value') then
-        result.valueObject := ParseString(child, path+'/value') {b}
+        result.valueElement := ParseString(child, path+'/value') {b}
       else if (child.baseName = 'period') then
         result.period := ParsePeriod(child, path+'/period') {b}
       else if (child.baseName = 'assigner') then
@@ -3675,10 +3675,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeEnum(xml, 'use', elem.UseObject, CODES_TFhirIdentifierUse);
-  ComposeString(xml, 'label', elem.label_Object);{x.2}
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeString(xml, 'value', elem.valueObject);{x.2}
+  ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirIdentifierUse);
+  ComposeString(xml, 'label', elem.label_Element);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeString(xml, 'value', elem.valueElement);{x.2}
   ComposePeriod(xml, 'period', elem.period);{x.2}
   ComposeResourceReference{TFhirOrganization}(xml, 'assigner', elem.assigner);{x.2}
   closeOutElement(xml, elem);
@@ -3696,13 +3696,13 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
-      result.useObject := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirIdentifierUse);
+      result.useElement := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirIdentifierUse);
     if jsn.has('label') or jsn.has('_label') then
-        result.label_Object := ParseString(jsn['label'], jsn.vObj['_label']);{q}
+        result.label_Element := ParseString(jsn['label'], jsn.vObj['_label']);{q}
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueObject := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     if jsn.has('assigner') then
@@ -3719,14 +3719,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeEnumValue(json, 'use', elem.UseObject, CODES_TFhirIdentifierUse, false);
-  ComposeEnumProps(json, 'use', elem.UseObject, CODES_TFhirIdentifierUse, false);
-  ComposeStringValue(json, 'label', elem.label_Object, false);
-  ComposeStringProps(json, 'label', elem.label_Object, false);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeStringValue(json, 'value', elem.valueObject, false);
-  ComposeStringProps(json, 'value', elem.valueObject, false);
+  ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirIdentifierUse, false);
+  ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirIdentifierUse, false);
+  ComposeStringValue(json, 'label', elem.label_Element, false);
+  ComposeStringProps(json, 'label', elem.label_Element, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeStringValue(json, 'value', elem.valueElement, false);
+  ComposeStringProps(json, 'value', elem.valueElement, false);
   ComposePeriod(json, 'period', elem.period); {a}
   ComposeResourceReference{TFhirOrganization}(json, 'assigner', elem.assigner); {a}
   json.finishObject;
@@ -3743,17 +3743,17 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'frequency') then
-        result.frequencyObject := ParseInteger(child, path+'/frequency') {b}
+        result.frequencyElement := ParseInteger(child, path+'/frequency') {b}
       else if (child.baseName = 'when') then
-        result.whenObject := ParseEnum(CODES_TFhirEventTiming, path+'/when', child){1a}
+        result.whenElement := ParseEnum(CODES_TFhirEventTiming, path+'/when', child){1a}
       else if (child.baseName = 'duration') then
-        result.durationObject := ParseDecimal(child, path+'/duration') {b}
+        result.durationElement := ParseDecimal(child, path+'/duration') {b}
       else if (child.baseName = 'units') then
-        result.unitsObject := ParseEnum(CODES_TFhirUnitsOfTime, path+'/units', child){1a}
+        result.unitsElement := ParseEnum(CODES_TFhirUnitsOfTime, path+'/units', child){1a}
       else if (child.baseName = 'count') then
-        result.countObject := ParseInteger(child, path+'/count') {b}
+        result.countElement := ParseInteger(child, path+'/count') {b}
       else if (child.baseName = 'end') then
-        result.end_Object := ParseDateTime(child, path+'/end') {b}
+        result.end_Element := ParseDateTime(child, path+'/end') {b}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -3773,12 +3773,12 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeInteger(xml, 'frequency', elem.frequencyObject);{x.2}
-  ComposeEnum(xml, 'when', elem.WhenObject, CODES_TFhirEventTiming);
-  ComposeDecimal(xml, 'duration', elem.durationObject);{x.2}
-  ComposeEnum(xml, 'units', elem.UnitsObject, CODES_TFhirUnitsOfTime);
-  ComposeInteger(xml, 'count', elem.countObject);{x.2}
-  ComposeDateTime(xml, 'end', elem.end_Object);{x.2}
+  ComposeInteger(xml, 'frequency', elem.frequencyElement);{x.2}
+  ComposeEnum(xml, 'when', elem.WhenElement, CODES_TFhirEventTiming);
+  ComposeDecimal(xml, 'duration', elem.durationElement);{x.2}
+  ComposeEnum(xml, 'units', elem.UnitsElement, CODES_TFhirUnitsOfTime);
+  ComposeInteger(xml, 'count', elem.countElement);{x.2}
+  ComposeDateTime(xml, 'end', elem.end_Element);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -3794,17 +3794,17 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('frequency') or jsn.has('_frequency') then
-        result.frequencyObject := ParseInteger(jsn['frequency'], jsn.vObj['_frequency']);{q}
+        result.frequencyElement := ParseInteger(jsn['frequency'], jsn.vObj['_frequency']);{q}
     if jsn.has('when') or jsn.has('_when')  then
-      result.whenObject := parseEnum(jsn['when'], jsn.vObj['_when'], CODES_TFhirEventTiming);
+      result.whenElement := parseEnum(jsn['when'], jsn.vObj['_when'], CODES_TFhirEventTiming);
     if jsn.has('duration') or jsn.has('_duration') then
-        result.durationObject := ParseDecimal(jsn['duration'], jsn.vObj['_duration']);{q}
+        result.durationElement := ParseDecimal(jsn['duration'], jsn.vObj['_duration']);{q}
     if jsn.has('units') or jsn.has('_units')  then
-      result.unitsObject := parseEnum(jsn['units'], jsn.vObj['_units'], CODES_TFhirUnitsOfTime);
+      result.unitsElement := parseEnum(jsn['units'], jsn.vObj['_units'], CODES_TFhirUnitsOfTime);
     if jsn.has('count') or jsn.has('_count') then
-        result.countObject := ParseInteger(jsn['count'], jsn.vObj['_count']);{q}
+        result.countElement := ParseInteger(jsn['count'], jsn.vObj['_count']);{q}
     if jsn.has('end') or jsn.has('_end') then
-        result.end_Object := ParseDateTime(jsn['end'], jsn.vObj['_end']);{q}
+        result.end_Element := ParseDateTime(jsn['end'], jsn.vObj['_end']);{q}
     result.link;
   finally
     result.free;
@@ -3817,18 +3817,18 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeIntegerValue(json, 'frequency', elem.frequencyObject, false);
-  ComposeIntegerProps(json, 'frequency', elem.frequencyObject, false);
-  ComposeEnumValue(json, 'when', elem.WhenObject, CODES_TFhirEventTiming, false);
-  ComposeEnumProps(json, 'when', elem.WhenObject, CODES_TFhirEventTiming, false);
-  ComposeDecimalValue(json, 'duration', elem.durationObject, false);
-  ComposeDecimalProps(json, 'duration', elem.durationObject, false);
-  ComposeEnumValue(json, 'units', elem.UnitsObject, CODES_TFhirUnitsOfTime, false);
-  ComposeEnumProps(json, 'units', elem.UnitsObject, CODES_TFhirUnitsOfTime, false);
-  ComposeIntegerValue(json, 'count', elem.countObject, false);
-  ComposeIntegerProps(json, 'count', elem.countObject, false);
-  ComposeDateTimeValue(json, 'end', elem.end_Object, false);
-  ComposeDateTimeProps(json, 'end', elem.end_Object, false);
+  ComposeIntegerValue(json, 'frequency', elem.frequencyElement, false);
+  ComposeIntegerProps(json, 'frequency', elem.frequencyElement, false);
+  ComposeEnumValue(json, 'when', elem.WhenElement, CODES_TFhirEventTiming, false);
+  ComposeEnumProps(json, 'when', elem.WhenElement, CODES_TFhirEventTiming, false);
+  ComposeDecimalValue(json, 'duration', elem.durationElement, false);
+  ComposeDecimalProps(json, 'duration', elem.durationElement, false);
+  ComposeEnumValue(json, 'units', elem.UnitsElement, CODES_TFhirUnitsOfTime, false);
+  ComposeEnumProps(json, 'units', elem.UnitsElement, CODES_TFhirUnitsOfTime, false);
+  ComposeIntegerValue(json, 'count', elem.countElement, false);
+  ComposeIntegerProps(json, 'count', elem.countElement, false);
+  ComposeDateTimeValue(json, 'end', elem.end_Element, false);
+  ComposeDateTimeProps(json, 'end', elem.end_Element, false);
   json.finishObject;
 end;
 
@@ -3924,11 +3924,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'system') then
-        result.systemObject := ParseEnum(CODES_TFhirContactSystem, path+'/system', child){1a}
+        result.systemElement := ParseEnum(CODES_TFhirContactSystem, path+'/system', child){1a}
       else if (child.baseName = 'value') then
-        result.valueObject := ParseString(child, path+'/value') {b}
+        result.valueElement := ParseString(child, path+'/value') {b}
       else if (child.baseName = 'use') then
-        result.useObject := ParseEnum(CODES_TFhirContactUse, path+'/use', child){1a}
+        result.useElement := ParseEnum(CODES_TFhirContactUse, path+'/use', child){1a}
       else if (child.baseName = 'period') then
         result.period := ParsePeriod(child, path+'/period') {b}
       else if Not ParseElementChild(result, path, child) then
@@ -3950,9 +3950,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeEnum(xml, 'system', elem.SystemObject, CODES_TFhirContactSystem);
-  ComposeString(xml, 'value', elem.valueObject);{x.2}
-  ComposeEnum(xml, 'use', elem.UseObject, CODES_TFhirContactUse);
+  ComposeEnum(xml, 'system', elem.SystemElement, CODES_TFhirContactSystem);
+  ComposeString(xml, 'value', elem.valueElement);{x.2}
+  ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirContactUse);
   ComposePeriod(xml, 'period', elem.period);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -3969,11 +3969,11 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system')  then
-      result.systemObject := parseEnum(jsn['system'], jsn.vObj['_system'], CODES_TFhirContactSystem);
+      result.systemElement := parseEnum(jsn['system'], jsn.vObj['_system'], CODES_TFhirContactSystem);
     if jsn.has('value') or jsn.has('_value') then
-        result.valueObject := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useObject := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirContactUse);
+      result.useElement := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirContactUse);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     result.link;
@@ -3988,12 +3988,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeEnumValue(json, 'system', elem.SystemObject, CODES_TFhirContactSystem, false);
-  ComposeEnumProps(json, 'system', elem.SystemObject, CODES_TFhirContactSystem, false);
-  ComposeStringValue(json, 'value', elem.valueObject, false);
-  ComposeStringProps(json, 'value', elem.valueObject, false);
-  ComposeEnumValue(json, 'use', elem.UseObject, CODES_TFhirContactUse, false);
-  ComposeEnumProps(json, 'use', elem.UseObject, CODES_TFhirContactUse, false);
+  ComposeEnumValue(json, 'system', elem.SystemElement, CODES_TFhirContactSystem, false);
+  ComposeEnumProps(json, 'system', elem.SystemElement, CODES_TFhirContactSystem, false);
+  ComposeStringValue(json, 'value', elem.valueElement, false);
+  ComposeStringProps(json, 'value', elem.valueElement, false);
+  ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirContactUse, false);
+  ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirContactUse, false);
   ComposePeriod(json, 'period', elem.period); {a}
   json.finishObject;
 end;
@@ -4009,19 +4009,19 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'use') then
-        result.useObject := ParseEnum(CODES_TFhirAddressUse, path+'/use', child){1a}
+        result.useElement := ParseEnum(CODES_TFhirAddressUse, path+'/use', child){1a}
       else if (child.baseName = 'text') then
-        result.textObject := ParseString(child, path+'/text') {b}
+        result.textElement := ParseString(child, path+'/text') {b}
       else if (child.baseName = 'line') then
         result.lineList.Add(ParseString(child, path+'/line')){y.2}
       else if (child.baseName = 'city') then
-        result.cityObject := ParseString(child, path+'/city') {b}
+        result.cityElement := ParseString(child, path+'/city') {b}
       else if (child.baseName = 'state') then
-        result.stateObject := ParseString(child, path+'/state') {b}
+        result.stateElement := ParseString(child, path+'/state') {b}
       else if (child.baseName = 'zip') then
-        result.zipObject := ParseString(child, path+'/zip') {b}
+        result.zipElement := ParseString(child, path+'/zip') {b}
       else if (child.baseName = 'country') then
-        result.countryObject := ParseString(child, path+'/country') {b}
+        result.countryElement := ParseString(child, path+'/country') {b}
       else if (child.baseName = 'period') then
         result.period := ParsePeriod(child, path+'/period') {b}
       else if Not ParseElementChild(result, path, child) then
@@ -4045,14 +4045,14 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeEnum(xml, 'use', elem.UseObject, CODES_TFhirAddressUse);
-  ComposeString(xml, 'text', elem.textObject);{x.2}
+  ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirAddressUse);
+  ComposeString(xml, 'text', elem.textElement);{x.2}
   for i := 0 to elem.lineList.Count - 1 do
     ComposeString(xml, 'line', elem.lineList[i]);
-  ComposeString(xml, 'city', elem.cityObject);{x.2}
-  ComposeString(xml, 'state', elem.stateObject);{x.2}
-  ComposeString(xml, 'zip', elem.zipObject);{x.2}
-  ComposeString(xml, 'country', elem.countryObject);{x.2}
+  ComposeString(xml, 'city', elem.cityElement);{x.2}
+  ComposeString(xml, 'state', elem.stateElement);{x.2}
+  ComposeString(xml, 'zip', elem.zipElement);{x.2}
+  ComposeString(xml, 'country', elem.countryElement);{x.2}
   ComposePeriod(xml, 'period', elem.period);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -4069,19 +4069,19 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
-      result.useObject := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirAddressUse);
+      result.useElement := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirAddressUse);
     if jsn.has('text') or jsn.has('_text') then
-        result.textObject := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
       if jsn.has('line') or jsn.has('_line') then
       iteratePrimitiveArray(jsn.vArr['line'], jsn.vArr['_line'], result.lineList, parseString);
     if jsn.has('city') or jsn.has('_city') then
-        result.cityObject := ParseString(jsn['city'], jsn.vObj['_city']);{q}
+        result.cityElement := ParseString(jsn['city'], jsn.vObj['_city']);{q}
     if jsn.has('state') or jsn.has('_state') then
-        result.stateObject := ParseString(jsn['state'], jsn.vObj['_state']);{q}
+        result.stateElement := ParseString(jsn['state'], jsn.vObj['_state']);{q}
     if jsn.has('zip') or jsn.has('_zip') then
-        result.zipObject := ParseString(jsn['zip'], jsn.vObj['_zip']);{q}
+        result.zipElement := ParseString(jsn['zip'], jsn.vObj['_zip']);{q}
     if jsn.has('country') or jsn.has('_country') then
-        result.countryObject := ParseString(jsn['country'], jsn.vObj['_country']);{q}
+        result.countryElement := ParseString(jsn['country'], jsn.vObj['_country']);{q}
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     result.link;
@@ -4099,10 +4099,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeEnumValue(json, 'use', elem.UseObject, CODES_TFhirAddressUse, false);
-  ComposeEnumProps(json, 'use', elem.UseObject, CODES_TFhirAddressUse, false);
-  ComposeStringValue(json, 'text', elem.textObject, false);
-  ComposeStringProps(json, 'text', elem.textObject, false);
+  ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirAddressUse, false);
+  ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirAddressUse, false);
+  ComposeStringValue(json, 'text', elem.textElement, false);
+  ComposeStringProps(json, 'text', elem.textElement, false);
   if elem.lineList.Count > 0 then
   begin
     json.valueArray('line');
@@ -4121,14 +4121,14 @@ begin
       json.FinishArray;
     end;
   end;
-  ComposeStringValue(json, 'city', elem.cityObject, false);
-  ComposeStringProps(json, 'city', elem.cityObject, false);
-  ComposeStringValue(json, 'state', elem.stateObject, false);
-  ComposeStringProps(json, 'state', elem.stateObject, false);
-  ComposeStringValue(json, 'zip', elem.zipObject, false);
-  ComposeStringProps(json, 'zip', elem.zipObject, false);
-  ComposeStringValue(json, 'country', elem.countryObject, false);
-  ComposeStringProps(json, 'country', elem.countryObject, false);
+  ComposeStringValue(json, 'city', elem.cityElement, false);
+  ComposeStringProps(json, 'city', elem.cityElement, false);
+  ComposeStringValue(json, 'state', elem.stateElement, false);
+  ComposeStringProps(json, 'state', elem.stateElement, false);
+  ComposeStringValue(json, 'zip', elem.zipElement, false);
+  ComposeStringProps(json, 'zip', elem.zipElement, false);
+  ComposeStringValue(json, 'country', elem.countryElement, false);
+  ComposeStringProps(json, 'country', elem.countryElement, false);
   ComposePeriod(json, 'period', elem.period); {a}
   json.finishObject;
 end;
@@ -4144,9 +4144,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'use') then
-        result.useObject := ParseEnum(CODES_TFhirNameUse, path+'/use', child){1a}
+        result.useElement := ParseEnum(CODES_TFhirNameUse, path+'/use', child){1a}
       else if (child.baseName = 'text') then
-        result.textObject := ParseString(child, path+'/text') {b}
+        result.textElement := ParseString(child, path+'/text') {b}
       else if (child.baseName = 'family') then
         result.familyList.Add(ParseString(child, path+'/family')){y.2}
       else if (child.baseName = 'given') then
@@ -4178,8 +4178,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeElementChildren(xml, elem);
-  ComposeEnum(xml, 'use', elem.UseObject, CODES_TFhirNameUse);
-  ComposeString(xml, 'text', elem.textObject);{x.2}
+  ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirNameUse);
+  ComposeString(xml, 'text', elem.textElement);{x.2}
   for i := 0 to elem.familyList.Count - 1 do
     ComposeString(xml, 'family', elem.familyList[i]);
   for i := 0 to elem.givenList.Count - 1 do
@@ -4204,9 +4204,9 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
-      result.useObject := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirNameUse);
+      result.useElement := parseEnum(jsn['use'], jsn.vObj['_use'], CODES_TFhirNameUse);
     if jsn.has('text') or jsn.has('_text') then
-        result.textObject := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
       if jsn.has('family') or jsn.has('_family') then
       iteratePrimitiveArray(jsn.vArr['family'], jsn.vArr['_family'], result.familyList, parseString);
       if jsn.has('given') or jsn.has('_given') then
@@ -4232,10 +4232,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeElementProperties(json, elem);
-  ComposeEnumValue(json, 'use', elem.UseObject, CODES_TFhirNameUse, false);
-  ComposeEnumProps(json, 'use', elem.UseObject, CODES_TFhirNameUse, false);
-  ComposeStringValue(json, 'text', elem.textObject, false);
-  ComposeStringProps(json, 'text', elem.textObject, false);
+  ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirNameUse, false);
+  ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirNameUse, false);
+  ComposeStringValue(json, 'text', elem.textElement, false);
+  ComposeStringProps(json, 'text', elem.textElement, false);
   if elem.familyList.Count > 0 then
   begin
     json.valueArray('family');
@@ -4425,7 +4425,7 @@ begin
       if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'severity') then
-        result.severityObject := ParseEnum(CODES_TFhirReactionSeverity, path+'/severity', child){1a}
+        result.severityElement := ParseEnum(CODES_TFhirReactionSeverity, path+'/severity', child){1a}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -4446,7 +4446,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
-  ComposeEnum(xml, 'severity', elem.SeverityObject, CODES_TFhirReactionSeverity);
+  ComposeEnum(xml, 'severity', elem.SeverityElement, CODES_TFhirReactionSeverity);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -4464,7 +4464,7 @@ begin
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityObject := parseEnum(jsn['severity'], jsn.vObj['_severity'], CODES_TFhirReactionSeverity);
+      result.severityElement := parseEnum(jsn['severity'], jsn.vObj['_severity'], CODES_TFhirReactionSeverity);
     result.link;
   finally
     result.free;
@@ -4478,8 +4478,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
-  ComposeEnumValue(json, 'severity', elem.SeverityObject, CODES_TFhirReactionSeverity, false);
-  ComposeEnumProps(json, 'severity', elem.SeverityObject, CODES_TFhirReactionSeverity, false);
+  ComposeEnumValue(json, 'severity', elem.SeverityElement, CODES_TFhirReactionSeverity, false);
+  ComposeEnumProps(json, 'severity', elem.SeverityElement, CODES_TFhirReactionSeverity, false);
   json.finishObject;
 end;
 
@@ -4494,11 +4494,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirExposureType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirExposureType, path+'/type', child){1a}
       else if (child.baseName = 'causalityExpectation') then
-        result.causalityExpectationObject := ParseEnum(CODES_TFhirCausalityExpectation, path+'/causalityExpectation', child){1a}
+        result.causalityExpectationElement := ParseEnum(CODES_TFhirCausalityExpectation, path+'/causalityExpectation', child){1a}
       else if (child.baseName = 'substance') then
         result.substance := ParseResourceReference{TFhirSubstance}(child, path+'/substance') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -4520,9 +4520,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirExposureType);
-  ComposeEnum(xml, 'causalityExpectation', elem.CausalityExpectationObject, CODES_TFhirCausalityExpectation);
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirExposureType);
+  ComposeEnum(xml, 'causalityExpectation', elem.CausalityExpectationElement, CODES_TFhirCausalityExpectation);
   ComposeResourceReference{TFhirSubstance}(xml, 'substance', elem.substance);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -4539,11 +4539,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirExposureType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirExposureType);
     if jsn.has('causalityExpectation') or jsn.has('_causalityExpectation')  then
-      result.causalityExpectationObject := parseEnum(jsn['causalityExpectation'], jsn.vObj['_causalityExpectation'], CODES_TFhirCausalityExpectation);
+      result.causalityExpectationElement := parseEnum(jsn['causalityExpectation'], jsn.vObj['_causalityExpectation'], CODES_TFhirCausalityExpectation);
     if jsn.has('substance') then
         result.substance := ParseResourceReference{TFhirSubstance}(jsn.vObj['substance']);{q}
     result.link;
@@ -4558,12 +4558,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirExposureType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirExposureType, false);
-  ComposeEnumValue(json, 'causalityExpectation', elem.CausalityExpectationObject, CODES_TFhirCausalityExpectation, false);
-  ComposeEnumProps(json, 'causalityExpectation', elem.CausalityExpectationObject, CODES_TFhirCausalityExpectation, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirExposureType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirExposureType, false);
+  ComposeEnumValue(json, 'causalityExpectation', elem.CausalityExpectationElement, CODES_TFhirCausalityExpectation, false);
+  ComposeEnumProps(json, 'causalityExpectation', elem.CausalityExpectationElement, CODES_TFhirCausalityExpectation, false);
   ComposeResourceReference{TFhirSubstance}(json, 'substance', elem.substance); {a}
   json.finishObject;
 end;
@@ -4581,11 +4581,11 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.baseName = 'didNotOccurFlag') then
-        result.didNotOccurFlagObject := ParseBoolean(child, path+'/didNotOccurFlag') {b}
+        result.didNotOccurFlagElement := ParseBoolean(child, path+'/didNotOccurFlag') {b}
       else if (child.baseName = 'recorder') then
         result.recorder := ParseResourceReference{Resource}(child, path+'/recorder') {b}
       else if (child.baseName = 'symptom') then
@@ -4615,9 +4615,9 @@ begin
   composeResourceChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
-  ComposeBoolean(xml, 'didNotOccurFlag', elem.didNotOccurFlagObject);{x.2}
+  ComposeBoolean(xml, 'didNotOccurFlag', elem.didNotOccurFlagElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'recorder', elem.recorder);{x.2}
   for i := 0 to elem.symptomList.Count - 1 do
     ComposeAdverseReactionSymptom(xml, 'symptom', elem.symptomList[i]);
@@ -4640,11 +4640,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('subject') then
         result.subject := ParseResourceReference{TFhirPatient}(jsn.vObj['subject']);{q}
     if jsn.has('didNotOccurFlag') or jsn.has('_didNotOccurFlag') then
-        result.didNotOccurFlagObject := ParseBoolean(jsn['didNotOccurFlag'], jsn.vObj['_didNotOccurFlag']);{q}
+        result.didNotOccurFlagElement := ParseBoolean(jsn['didNotOccurFlag'], jsn.vObj['_didNotOccurFlag']);{q}
     if jsn.has('recorder') then
         result.recorder := ParseResourceReference{Resource}(jsn.vObj['recorder']);{q}
     if jsn.has('symptom') then
@@ -4671,11 +4671,11 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
-  ComposeBooleanValue(json, 'didNotOccurFlag', elem.didNotOccurFlagObject, false);
-  ComposeBooleanProps(json, 'didNotOccurFlag', elem.didNotOccurFlagObject, false);
+  ComposeBooleanValue(json, 'didNotOccurFlag', elem.didNotOccurFlagElement, false);
+  ComposeBooleanProps(json, 'didNotOccurFlag', elem.didNotOccurFlagElement, false);
   ComposeResourceReference{Resource}(json, 'recorder', elem.recorder); {a}
   if elem.symptomList.Count > 0 then
   begin
@@ -4708,13 +4708,13 @@ begin
       else if (child.baseName = 'category') then
         result.category := ParseCodeableConcept(child, path+'/category') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirAlertStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirAlertStatus, path+'/status', child){1a}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.baseName = 'author') then
         result.author := ParseResourceReference{Resource}(child, path+'/author') {b}
       else if (child.baseName = 'note') then
-        result.noteObject := ParseString(child, path+'/note') {b}
+        result.noteElement := ParseString(child, path+'/note') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -4739,10 +4739,10 @@ begin
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeCodeableConcept(xml, 'category', elem.category);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirAlertStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirAlertStatus);
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{Resource}(xml, 'author', elem.author);{x.2}
-  ComposeString(xml, 'note', elem.noteObject);{x.2}
+  ComposeString(xml, 'note', elem.noteElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -4762,13 +4762,13 @@ begin
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirAlertStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirAlertStatus);
     if jsn.has('subject') then
         result.subject := ParseResourceReference{TFhirPatient}(jsn.vObj['subject']);{q}
     if jsn.has('author') then
         result.author := ParseResourceReference{Resource}(jsn.vObj['author']);{q}
     if jsn.has('note') or jsn.has('_note') then
-        result.noteObject := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
     result.link;
   finally
     result.free;
@@ -4790,12 +4790,12 @@ begin
     json.FinishArray;
   end;
   ComposeCodeableConcept(json, 'category', elem.category); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirAlertStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirAlertStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirAlertStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirAlertStatus, false);
   ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{Resource}(json, 'author', elem.author); {a}
-  ComposeStringValue(json, 'note', elem.noteObject, false);
-  ComposeStringProps(json, 'note', elem.noteObject, false);
+  ComposeStringValue(json, 'note', elem.noteElement, false);
+  ComposeStringProps(json, 'note', elem.noteElement, false);
 end;
 
 function TFHIRXmlParser.ParseAllergyIntolerance(element : IXmlDomElement; path : string) : TFhirAllergyIntolerance;
@@ -4811,13 +4811,13 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'criticality') then
-        result.criticalityObject := ParseEnum(CODES_TFhirCriticality, path+'/criticality', child){1a}
+        result.criticalityElement := ParseEnum(CODES_TFhirCriticality, path+'/criticality', child){1a}
       else if (child.baseName = 'sensitivityType') then
-        result.sensitivityTypeObject := ParseEnum(CODES_TFhirSensitivitytype, path+'/sensitivityType', child){1a}
+        result.sensitivityTypeElement := ParseEnum(CODES_TFhirSensitivitytype, path+'/sensitivityType', child){1a}
       else if (child.baseName = 'recordedDate') then
-        result.recordedDateObject := ParseDateTime(child, path+'/recordedDate') {b}
+        result.recordedDateElement := ParseDateTime(child, path+'/recordedDate') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirSensitivitystatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirSensitivitystatus, path+'/status', child){1a}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.baseName = 'recorder') then
@@ -4851,10 +4851,10 @@ begin
   composeResourceChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeEnum(xml, 'criticality', elem.CriticalityObject, CODES_TFhirCriticality);
-  ComposeEnum(xml, 'sensitivityType', elem.SensitivityTypeObject, CODES_TFhirSensitivitytype);
-  ComposeDateTime(xml, 'recordedDate', elem.recordedDateObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirSensitivitystatus);
+  ComposeEnum(xml, 'criticality', elem.CriticalityElement, CODES_TFhirCriticality);
+  ComposeEnum(xml, 'sensitivityType', elem.SensitivityTypeElement, CODES_TFhirSensitivitytype);
+  ComposeDateTime(xml, 'recordedDate', elem.recordedDateElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirSensitivitystatus);
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{Resource}(xml, 'recorder', elem.recorder);{x.2}
   ComposeResourceReference{TFhirSubstance}(xml, 'substance', elem.substance);{x.2}
@@ -4879,13 +4879,13 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('criticality') or jsn.has('_criticality')  then
-      result.criticalityObject := parseEnum(jsn['criticality'], jsn.vObj['_criticality'], CODES_TFhirCriticality);
+      result.criticalityElement := parseEnum(jsn['criticality'], jsn.vObj['_criticality'], CODES_TFhirCriticality);
     if jsn.has('sensitivityType') or jsn.has('_sensitivityType')  then
-      result.sensitivityTypeObject := parseEnum(jsn['sensitivityType'], jsn.vObj['_sensitivityType'], CODES_TFhirSensitivitytype);
+      result.sensitivityTypeElement := parseEnum(jsn['sensitivityType'], jsn.vObj['_sensitivityType'], CODES_TFhirSensitivitytype);
     if jsn.has('recordedDate') or jsn.has('_recordedDate') then
-        result.recordedDateObject := ParseDateTime(jsn['recordedDate'], jsn.vObj['_recordedDate']);{q}
+        result.recordedDateElement := ParseDateTime(jsn['recordedDate'], jsn.vObj['_recordedDate']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirSensitivitystatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirSensitivitystatus);
     if jsn.has('subject') then
         result.subject := ParseResourceReference{TFhirPatient}(jsn.vObj['subject']);{q}
     if jsn.has('recorder') then
@@ -4916,14 +4916,14 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeEnumValue(json, 'criticality', elem.CriticalityObject, CODES_TFhirCriticality, false);
-  ComposeEnumProps(json, 'criticality', elem.CriticalityObject, CODES_TFhirCriticality, false);
-  ComposeEnumValue(json, 'sensitivityType', elem.SensitivityTypeObject, CODES_TFhirSensitivitytype, false);
-  ComposeEnumProps(json, 'sensitivityType', elem.SensitivityTypeObject, CODES_TFhirSensitivitytype, false);
-  ComposeDateTimeValue(json, 'recordedDate', elem.recordedDateObject, false);
-  ComposeDateTimeProps(json, 'recordedDate', elem.recordedDateObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirSensitivitystatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirSensitivitystatus, false);
+  ComposeEnumValue(json, 'criticality', elem.CriticalityElement, CODES_TFhirCriticality, false);
+  ComposeEnumProps(json, 'criticality', elem.CriticalityElement, CODES_TFhirCriticality, false);
+  ComposeEnumValue(json, 'sensitivityType', elem.SensitivityTypeElement, CODES_TFhirSensitivitytype, false);
+  ComposeEnumProps(json, 'sensitivityType', elem.SensitivityTypeElement, CODES_TFhirSensitivitytype, false);
+  ComposeDateTimeValue(json, 'recordedDate', elem.recordedDateElement, false);
+  ComposeDateTimeProps(json, 'recordedDate', elem.recordedDateElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirSensitivitystatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirSensitivitystatus, false);
   ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{Resource}(json, 'recorder', elem.recorder); {a}
   ComposeResourceReference{TFhirSubstance}(json, 'substance', elem.substance); {a}
@@ -5024,11 +5024,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirCarePlanGoalStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirCarePlanGoalStatus, path+'/status', child){1a}
       else if (child.baseName = 'notes') then
-        result.notesObject := ParseString(child, path+'/notes') {b}
+        result.notesElement := ParseString(child, path+'/notes') {b}
       else if (child.baseName = 'concern') then
         result.concernList.Add(ParseResourceReference{TFhirCondition}(child, path+'/concern')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -5052,9 +5052,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirCarePlanGoalStatus);
-  ComposeString(xml, 'notes', elem.notesObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirCarePlanGoalStatus);
+  ComposeString(xml, 'notes', elem.notesElement);{x.2}
   for i := 0 to elem.concernList.Count - 1 do
     ComposeResourceReference{TFhirCondition}(xml, 'concern', elem.concernList[i]);
   closeOutElement(xml, elem);
@@ -5072,11 +5072,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanGoalStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanGoalStatus);
     if jsn.has('notes') or jsn.has('_notes') then
-        result.notesObject := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+        result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
     if jsn.has('concern') then
       iterateArray(jsn.vArr['concern'], result.concernList, parseResourceReference{TFhirCondition});
     result.link;
@@ -5093,12 +5093,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirCarePlanGoalStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirCarePlanGoalStatus, false);
-  ComposeStringValue(json, 'notes', elem.notesObject, false);
-  ComposeStringProps(json, 'notes', elem.notesObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirCarePlanGoalStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirCarePlanGoalStatus, false);
+  ComposeStringValue(json, 'notes', elem.notesElement, false);
+  ComposeStringProps(json, 'notes', elem.notesElement, false);
   if elem.concernList.Count > 0 then
   begin
     json.valueArray('concern');
@@ -5122,13 +5122,13 @@ begin
       if (child.baseName = 'goal') then
         result.goalList.Add(ParseString(child, path+'/goal')){y.2}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirCarePlanActivityStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirCarePlanActivityStatus, path+'/status', child){1a}
       else if (child.baseName = 'prohibited') then
-        result.prohibitedObject := ParseBoolean(child, path+'/prohibited') {b}
+        result.prohibitedElement := ParseBoolean(child, path+'/prohibited') {b}
       else if (child.baseName = 'actionResulting') then
         result.actionResultingList.Add(ParseResourceReference{Resource}(child, path+'/actionResulting')){y.2}
       else if (child.baseName = 'notes') then
-        result.notesObject := ParseString(child, path+'/notes') {b}
+        result.notesElement := ParseString(child, path+'/notes') {b}
       else if (child.baseName = 'detail') then
         result.detail := ParseResourceReference{Resource}(child, path+'/detail') {b}
       else if (child.baseName = 'simple') then
@@ -5156,11 +5156,11 @@ begin
   composeBackboneElementChildren(xml, elem);
   for i := 0 to elem.goalList.Count - 1 do
     ComposeString(xml, 'goal', elem.goalList[i]);
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirCarePlanActivityStatus);
-  ComposeBoolean(xml, 'prohibited', elem.prohibitedObject);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirCarePlanActivityStatus);
+  ComposeBoolean(xml, 'prohibited', elem.prohibitedElement);{x.2}
   for i := 0 to elem.actionResultingList.Count - 1 do
     ComposeResourceReference{Resource}(xml, 'actionResulting', elem.actionResultingList[i]);
-  ComposeString(xml, 'notes', elem.notesObject);{x.2}
+  ComposeString(xml, 'notes', elem.notesElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'detail', elem.detail);{x.2}
   ComposeCarePlanActivitySimple(xml, 'simple', elem.simple);{x.2}
   closeOutElement(xml, elem);
@@ -5180,13 +5180,13 @@ begin
       if jsn.has('goal') or jsn.has('_goal') then
       iteratePrimitiveArray(jsn.vArr['goal'], jsn.vArr['_goal'], result.goalList, parseString);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanActivityStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanActivityStatus);
     if jsn.has('prohibited') or jsn.has('_prohibited') then
-        result.prohibitedObject := ParseBoolean(jsn['prohibited'], jsn.vObj['_prohibited']);{q}
+        result.prohibitedElement := ParseBoolean(jsn['prohibited'], jsn.vObj['_prohibited']);{q}
     if jsn.has('actionResulting') then
       iterateArray(jsn.vArr['actionResulting'], result.actionResultingList, parseResourceReference{Resource});
     if jsn.has('notes') or jsn.has('_notes') then
-        result.notesObject := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+        result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
     if jsn.has('detail') then
         result.detail := ParseResourceReference{Resource}(jsn.vObj['detail']);{q}
     if jsn.has('simple') then
@@ -5224,10 +5224,10 @@ begin
       json.FinishArray;
     end;
   end;
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirCarePlanActivityStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirCarePlanActivityStatus, false);
-  ComposeBooleanValue(json, 'prohibited', elem.prohibitedObject, false);
-  ComposeBooleanProps(json, 'prohibited', elem.prohibitedObject, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirCarePlanActivityStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirCarePlanActivityStatus, false);
+  ComposeBooleanValue(json, 'prohibited', elem.prohibitedElement, false);
+  ComposeBooleanProps(json, 'prohibited', elem.prohibitedElement, false);
   if elem.actionResultingList.Count > 0 then
   begin
     json.valueArray('actionResulting');
@@ -5235,8 +5235,8 @@ begin
       ComposeResourceReference{Resource}(json, '',elem.actionResultingList[i]); {z - Resource(Any)}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'notes', elem.notesObject, false);
-  ComposeStringProps(json, 'notes', elem.notesObject, false);
+  ComposeStringValue(json, 'notes', elem.notesElement, false);
+  ComposeStringProps(json, 'notes', elem.notesElement, false);
   ComposeResourceReference{Resource}(json, 'detail', elem.detail); {a}
   ComposeCarePlanActivitySimple(json, 'simple', elem.simple); {a}
   json.finishObject;
@@ -5253,7 +5253,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'category') then
-        result.categoryObject := ParseEnum(CODES_TFhirCarePlanActivityCategory, path+'/category', child){1a}
+        result.categoryElement := ParseEnum(CODES_TFhirCarePlanActivityCategory, path+'/category', child){1a}
       else if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'timingSchedule') then
@@ -5273,7 +5273,7 @@ begin
       else if (child.baseName = 'quantity') then
         result.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.baseName = 'details') then
-        result.detailsObject := ParseString(child, path+'/details') {b}
+        result.detailsElement := ParseString(child, path+'/details') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -5295,7 +5295,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'category', elem.CategoryObject, CODES_TFhirCarePlanActivityCategory);
+  ComposeEnum(xml, 'category', elem.CategoryElement, CODES_TFhirCarePlanActivityCategory);
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
   if (elem.timing is TFhirSchedule) {6} then
     ComposeSchedule(xml, 'timingSchedule', TFhirSchedule(elem.timing))
@@ -5309,7 +5309,7 @@ begin
   ComposeResourceReference{Resource}(xml, 'product', elem.product);{x.2}
   ComposeQuantity(xml, 'dailyAmount', elem.dailyAmount);{x.2}
   ComposeQuantity(xml, 'quantity', elem.quantity);{x.2}
-  ComposeString(xml, 'details', elem.detailsObject);{x.2}
+  ComposeString(xml, 'details', elem.detailsElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -5325,7 +5325,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('category') or jsn.has('_category')  then
-      result.categoryObject := parseEnum(jsn['category'], jsn.vObj['_category'], CODES_TFhirCarePlanActivityCategory);
+      result.categoryElement := parseEnum(jsn['category'], jsn.vObj['_category'], CODES_TFhirCarePlanActivityCategory);
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('timingSchedule') {a4} then
@@ -5345,7 +5345,7 @@ begin
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
     if jsn.has('details') or jsn.has('_details') then
-        result.detailsObject := ParseString(jsn['details'], jsn.vObj['_details']);{q}
+        result.detailsElement := ParseString(jsn['details'], jsn.vObj['_details']);{q}
     result.link;
   finally
     result.free;
@@ -5360,8 +5360,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'category', elem.CategoryObject, CODES_TFhirCarePlanActivityCategory, false);
-  ComposeEnumProps(json, 'category', elem.CategoryObject, CODES_TFhirCarePlanActivityCategory, false);
+  ComposeEnumValue(json, 'category', elem.CategoryElement, CODES_TFhirCarePlanActivityCategory, false);
+  ComposeEnumProps(json, 'category', elem.CategoryElement, CODES_TFhirCarePlanActivityCategory, false);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   if (elem.timing is TFhirSchedule) then 
     ComposeSchedule(json, 'timingSchedule', TFhirSchedule(elem.timing)) 
@@ -5383,8 +5383,8 @@ begin
   ComposeResourceReference{Resource}(json, 'product', elem.product); {a}
   ComposeQuantity(json, 'dailyAmount', elem.dailyAmount); {a}
   ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  ComposeStringValue(json, 'details', elem.detailsObject, false);
-  ComposeStringProps(json, 'details', elem.detailsObject, false);
+  ComposeStringValue(json, 'details', elem.detailsElement, false);
+  ComposeStringProps(json, 'details', elem.detailsElement, false);
   json.finishObject;
 end;
 
@@ -5403,11 +5403,11 @@ begin
       else if (child.baseName = 'patient') then
         result.patient := ParseResourceReference{TFhirPatient}(child, path+'/patient') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirCarePlanStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirCarePlanStatus, path+'/status', child){1a}
       else if (child.baseName = 'period') then
         result.period := ParsePeriod(child, path+'/period') {b}
       else if (child.baseName = 'modified') then
-        result.modifiedObject := ParseDateTime(child, path+'/modified') {b}
+        result.modifiedElement := ParseDateTime(child, path+'/modified') {b}
       else if (child.baseName = 'concern') then
         result.concernList.Add(ParseResourceReference{TFhirCondition}(child, path+'/concern')){y.2}
       else if (child.baseName = 'participant') then
@@ -5417,7 +5417,7 @@ begin
       else if (child.baseName = 'activity') then
         result.activityList.Add(ParseCarePlanActivity(child, path+'/activity')){y.2}
       else if (child.baseName = 'notes') then
-        result.notesObject := ParseString(child, path+'/notes') {b}
+        result.notesElement := ParseString(child, path+'/notes') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -5442,9 +5442,9 @@ begin
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeResourceReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirCarePlanStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirCarePlanStatus);
   ComposePeriod(xml, 'period', elem.period);{x.2}
-  ComposeDateTime(xml, 'modified', elem.modifiedObject);{x.2}
+  ComposeDateTime(xml, 'modified', elem.modifiedElement);{x.2}
   for i := 0 to elem.concernList.Count - 1 do
     ComposeResourceReference{TFhirCondition}(xml, 'concern', elem.concernList[i]);
   for i := 0 to elem.participantList.Count - 1 do
@@ -5453,7 +5453,7 @@ begin
     ComposeCarePlanGoal(xml, 'goal', elem.goalList[i]);
   for i := 0 to elem.activityList.Count - 1 do
     ComposeCarePlanActivity(xml, 'activity', elem.activityList[i]);
-  ComposeString(xml, 'notes', elem.notesObject);{x.2}
+  ComposeString(xml, 'notes', elem.notesElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -5473,11 +5473,11 @@ begin
     if jsn.has('patient') then
         result.patient := ParseResourceReference{TFhirPatient}(jsn.vObj['patient']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanStatus);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     if jsn.has('modified') or jsn.has('_modified') then
-        result.modifiedObject := ParseDateTime(jsn['modified'], jsn.vObj['_modified']);{q}
+        result.modifiedElement := ParseDateTime(jsn['modified'], jsn.vObj['_modified']);{q}
     if jsn.has('concern') then
       iterateArray(jsn.vArr['concern'], result.concernList, parseResourceReference{TFhirCondition});
     if jsn.has('participant') then
@@ -5487,7 +5487,7 @@ begin
     if jsn.has('activity') then
       iterateArray(jsn.vArr['activity'], result.activityList, parseCarePlanActivity);
     if jsn.has('notes') or jsn.has('_notes') then
-        result.notesObject := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+        result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
     result.link;
   finally
     result.free;
@@ -5509,11 +5509,11 @@ begin
     json.FinishArray;
   end;
   ComposeResourceReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirCarePlanStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirCarePlanStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirCarePlanStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirCarePlanStatus, false);
   ComposePeriod(json, 'period', elem.period); {a}
-  ComposeDateTimeValue(json, 'modified', elem.modifiedObject, false);
-  ComposeDateTimeProps(json, 'modified', elem.modifiedObject, false);
+  ComposeDateTimeValue(json, 'modified', elem.modifiedElement, false);
+  ComposeDateTimeProps(json, 'modified', elem.modifiedElement, false);
   if elem.concernList.Count > 0 then
   begin
     json.valueArray('concern');
@@ -5542,8 +5542,8 @@ begin
       ComposeCarePlanActivity(json, '',elem.activityList[i]); {z - }
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'notes', elem.notesObject, false);
-  ComposeStringProps(json, 'notes', elem.notesObject, false);
+  ComposeStringValue(json, 'notes', elem.notesElement, false);
+  ComposeStringProps(json, 'notes', elem.notesElement, false);
 end;
 
 function TFHIRXmlParser.ParseCompositionAttester(element : IXmlDomElement; path : string) : TFhirCompositionAttester;
@@ -5557,9 +5557,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'mode') then
-        result.modeObject.Add(ParseEnum(CODES_TFhirCompositionAttestationMode, path+'/mode', child)){y.1}
+        result.modeElement.Add(ParseEnum(CODES_TFhirCompositionAttestationMode, path+'/mode', child)){y.1}
       else if (child.baseName = 'time') then
-        result.timeObject := ParseDateTime(child, path+'/time') {b}
+        result.timeElement := ParseDateTime(child, path+'/time') {b}
       else if (child.baseName = 'party') then
         result.party := ParseResourceReference{Resource}(child, path+'/party') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -5583,9 +5583,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  for i := 0 to elem.modeObject.Count - 1 do
-    ComposeEnum(xml, 'mode', elem.modeObject[i], CODES_TFhirCompositionAttestationMode);
-  ComposeDateTime(xml, 'time', elem.timeObject);{x.2}
+  for i := 0 to elem.modeElement.Count - 1 do
+    ComposeEnum(xml, 'mode', elem.modeElement[i], CODES_TFhirCompositionAttestationMode);
+  ComposeDateTime(xml, 'time', elem.timeElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'party', elem.party);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -5602,9 +5602,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode') then
-      iterateEnumArray(jsn.vArr['mode'], jsn.vArr['_mode'], result.modeObject, parseEnum, CODES_TFhirCompositionAttestationMode);
+      iterateEnumArray(jsn.vArr['mode'], jsn.vArr['_mode'], result.modeElement, parseEnum, CODES_TFhirCompositionAttestationMode);
     if jsn.has('time') or jsn.has('_time') then
-        result.timeObject := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
+        result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
     if jsn.has('party') then
         result.party := ParseResourceReference{Resource}(jsn.vObj['party']);{q}
     result.link;
@@ -5622,26 +5622,26 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if elem.modeObject.Count > 0 then
+  if elem.modeElement.Count > 0 then
   begin
     json.valueArray('mode');
     ext := false;
-    for i := 0 to elem.modeObject.Count - 1 do
+    for i := 0 to elem.modeElement.Count - 1 do
     begin
-      ext := ext or ((elem.modeObject[i].xmlid <> '') or (elem.modeObject[i].hasExtensions));
-      ComposeEnumValue(json, '', elem.modeObject[i], CODES_TFhirCompositionAttestationMode, true);
+      ext := ext or ((elem.modeElement[i].xmlid <> '') or (elem.modeElement[i].hasExtensions));
+      ComposeEnumValue(json, '', elem.modeElement[i], CODES_TFhirCompositionAttestationMode, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_mode');
-      for i := 0 to elem.modeObject.Count - 1 do
-        ComposeEnumProps(json, '', elem.modeObject[i], CODES_TFhirCompositionAttestationMode, true);
+      for i := 0 to elem.modeElement.Count - 1 do
+        ComposeEnumProps(json, '', elem.modeElement[i], CODES_TFhirCompositionAttestationMode, true);
       json.FinishArray;
     end;
   end;
-  ComposeDateTimeValue(json, 'time', elem.timeObject, false);
-  ComposeDateTimeProps(json, 'time', elem.timeObject, false);
+  ComposeDateTimeValue(json, 'time', elem.timeElement, false);
+  ComposeDateTimeProps(json, 'time', elem.timeElement, false);
   ComposeResourceReference{Resource}(json, 'party', elem.party); {a}
   json.finishObject;
 end;
@@ -5751,7 +5751,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'title') then
-        result.titleObject := ParseString(child, path+'/title') {b}
+        result.titleElement := ParseString(child, path+'/title') {b}
       else if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'subject') then
@@ -5781,7 +5781,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'title', elem.titleObject);{x.2}
+  ComposeString(xml, 'title', elem.titleElement);{x.2}
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{Resource}(xml, 'content', elem.content);{x.2}
@@ -5802,7 +5802,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('title') or jsn.has('_title') then
-        result.titleObject := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('subject') then
@@ -5825,8 +5825,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'title', elem.titleObject, false);
-  ComposeStringProps(json, 'title', elem.titleObject, false);
+  ComposeStringValue(json, 'title', elem.titleElement, false);
+  ComposeStringProps(json, 'title', elem.titleElement, false);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{Resource}(json, 'content', elem.content); {a}
@@ -5853,15 +5853,15 @@ begin
       if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'class') then
         result.class_ := ParseCodeableConcept(child, path+'/class') {b}
       else if (child.baseName = 'title') then
-        result.titleObject := ParseString(child, path+'/title') {b}
+        result.titleElement := ParseString(child, path+'/title') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirCompositionStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirCompositionStatus, path+'/status', child){1a}
       else if (child.baseName = 'confidentiality') then
         result.confidentiality := ParseCoding(child, path+'/confidentiality') {b}
       else if (child.baseName = 'subject') then
@@ -5900,11 +5900,11 @@ begin
   xml.open(name);
   composeResourceChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   ComposeCodeableConcept(xml, 'class', elem.class_);{x.2}
-  ComposeString(xml, 'title', elem.titleObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirCompositionStatus);
+  ComposeString(xml, 'title', elem.titleElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirCompositionStatus);
   ComposeCoding(xml, 'confidentiality', elem.confidentiality);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   for i := 0 to elem.authorList.Count - 1 do
@@ -5934,15 +5934,15 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('class') then
         result.class_ := ParseCodeableConcept(jsn.vObj['class']);{q}
     if jsn.has('title') or jsn.has('_title') then
-        result.titleObject := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirCompositionStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirCompositionStatus);
     if jsn.has('confidentiality') then
         result.confidentiality := ParseCoding(jsn.vObj['confidentiality']);{q}
     if jsn.has('subject') then
@@ -5973,14 +5973,14 @@ begin
     exit;
   ComposeResourceProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   ComposeCodeableConcept(json, 'class', elem.class_); {a}
-  ComposeStringValue(json, 'title', elem.titleObject, false);
-  ComposeStringProps(json, 'title', elem.titleObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirCompositionStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirCompositionStatus, false);
+  ComposeStringValue(json, 'title', elem.titleElement, false);
+  ComposeStringProps(json, 'title', elem.titleElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirCompositionStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirCompositionStatus, false);
   ComposeCoding(json, 'confidentiality', elem.confidentiality); {a}
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   if elem.authorList.Count > 0 then
@@ -6020,9 +6020,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if (child.baseName = 'dependsOn') then
         result.dependsOnList.Add(ParseConceptMapConceptDependsOn(child, path+'/dependsOn')){y.2}
       else if (child.baseName = 'map') then
@@ -6048,8 +6048,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
   for i := 0 to elem.dependsOnList.Count - 1 do
     ComposeConceptMapConceptDependsOn(xml, 'dependsOn', elem.dependsOnList[i]);
   for i := 0 to elem.mapList.Count - 1 do
@@ -6069,9 +6069,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     if jsn.has('dependsOn') then
       iterateArray(jsn.vArr['dependsOn'], result.dependsOnList, parseConceptMapConceptDependsOn);
     if jsn.has('map') then
@@ -6090,10 +6090,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
   if elem.dependsOnList.Count > 0 then
   begin
     json.valueArray('dependsOn');
@@ -6122,11 +6122,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'concept') then
-        result.conceptObject := ParseUri(child, path+'/concept') {b}
+        result.conceptElement := ParseUri(child, path+'/concept') {b}
       else if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -6146,9 +6146,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeUri(xml, 'concept', elem.conceptObject);{x.2}
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
+  ComposeUri(xml, 'concept', elem.conceptElement);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -6164,11 +6164,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('concept') or jsn.has('_concept') then
-        result.conceptObject := ParseUri(jsn['concept'], jsn.vObj['_concept']);{q}
+        result.conceptElement := ParseUri(jsn['concept'], jsn.vObj['_concept']);{q}
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     result.link;
   finally
     result.free;
@@ -6181,12 +6181,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeUriValue(json, 'concept', elem.conceptObject, false);
-  ComposeUriProps(json, 'concept', elem.conceptObject, false);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
+  ComposeUriValue(json, 'concept', elem.conceptElement, false);
+  ComposeUriProps(json, 'concept', elem.conceptElement, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
   json.finishObject;
 end;
 
@@ -6201,13 +6201,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if (child.baseName = 'equivalence') then
-        result.equivalenceObject := ParseEnum(CODES_TFhirConceptEquivalence, path+'/equivalence', child){1a}
+        result.equivalenceElement := ParseEnum(CODES_TFhirConceptEquivalence, path+'/equivalence', child){1a}
       else if (child.baseName = 'comments') then
-        result.commentsObject := ParseString(child, path+'/comments') {b}
+        result.commentsElement := ParseString(child, path+'/comments') {b}
       else if (child.baseName = 'product') then
         result.productList.Add(ParseConceptMapConceptDependsOn(child, path+'/product')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -6231,10 +6231,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
-  ComposeEnum(xml, 'equivalence', elem.EquivalenceObject, CODES_TFhirConceptEquivalence);
-  ComposeString(xml, 'comments', elem.commentsObject);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
+  ComposeEnum(xml, 'equivalence', elem.EquivalenceElement, CODES_TFhirConceptEquivalence);
+  ComposeString(xml, 'comments', elem.commentsElement);{x.2}
   for i := 0 to elem.productList.Count - 1 do
     ComposeConceptMapConceptDependsOn(xml, 'product', elem.productList[i]);
   closeOutElement(xml, elem);
@@ -6252,13 +6252,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     if jsn.has('equivalence') or jsn.has('_equivalence')  then
-      result.equivalenceObject := parseEnum(jsn['equivalence'], jsn.vObj['_equivalence'], CODES_TFhirConceptEquivalence);
+      result.equivalenceElement := parseEnum(jsn['equivalence'], jsn.vObj['_equivalence'], CODES_TFhirConceptEquivalence);
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsObject := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
     if jsn.has('product') then
       iterateArray(jsn.vArr['product'], result.productList, parseConceptMapConceptDependsOn);
     result.link;
@@ -6275,14 +6275,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
-  ComposeEnumValue(json, 'equivalence', elem.EquivalenceObject, CODES_TFhirConceptEquivalence, false);
-  ComposeEnumProps(json, 'equivalence', elem.EquivalenceObject, CODES_TFhirConceptEquivalence, false);
-  ComposeStringValue(json, 'comments', elem.commentsObject, false);
-  ComposeStringProps(json, 'comments', elem.commentsObject, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
+  ComposeEnumValue(json, 'equivalence', elem.EquivalenceElement, CODES_TFhirConceptEquivalence, false);
+  ComposeEnumProps(json, 'equivalence', elem.EquivalenceElement, CODES_TFhirConceptEquivalence, false);
+  ComposeStringValue(json, 'comments', elem.commentsElement, false);
+  ComposeStringProps(json, 'comments', elem.commentsElement, false);
   if elem.productList.Count > 0 then
   begin
     json.valueArray('product');
@@ -6304,25 +6304,25 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseString(child, path+'/identifier') {b}
+        result.identifierElement := ParseString(child, path+'/identifier') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'publisher') then
-        result.publisherObject := ParseString(child, path+'/publisher') {b}
+        result.publisherElement := ParseString(child, path+'/publisher') {b}
       else if (child.baseName = 'telecom') then
         result.telecomList.Add(ParseContact(child, path+'/telecom')){y.2}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'copyright') then
-        result.copyrightObject := ParseString(child, path+'/copyright') {b}
+        result.copyrightElement := ParseString(child, path+'/copyright') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirValuesetStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirValuesetStatus, path+'/status', child){1a}
       else if (child.baseName = 'experimental') then
-        result.experimentalObject := ParseBoolean(child, path+'/experimental') {b}
+        result.experimentalElement := ParseBoolean(child, path+'/experimental') {b}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'source') then
         result.source := ParseResourceReference{TFhirValueSet}(child, path+'/source') {b}
       else if (child.baseName = 'target') then
@@ -6350,18 +6350,18 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeString(xml, 'identifier', elem.identifierObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'publisher', elem.publisherObject);{x.2}
+  ComposeString(xml, 'identifier', elem.identifierElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'publisher', elem.publisherElement);{x.2}
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   if not SummaryOnly then
-    ComposeString(xml, 'copyright', elem.copyrightObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirValuesetStatus);
-  ComposeBoolean(xml, 'experimental', elem.experimentalObject);{x.2}
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+    ComposeString(xml, 'copyright', elem.copyrightElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirValuesetStatus);
+  ComposeBoolean(xml, 'experimental', elem.experimentalElement);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeResourceReference{TFhirValueSet}(xml, 'source', elem.source);{x.2}
   ComposeResourceReference{TFhirValueSet}(xml, 'target', elem.target);{x.2}
   if not SummaryOnly then
@@ -6382,25 +6382,25 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherObject := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightObject := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetStatus);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalObject := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('source') then
         result.source := ParseResourceReference{TFhirValueSet}(jsn.vObj['source']);{q}
     if jsn.has('target') then
@@ -6420,14 +6420,14 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeStringValue(json, 'identifier', elem.identifierObject, false);
-  ComposeStringProps(json, 'identifier', elem.identifierObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'publisher', elem.publisherObject, false);
-  ComposeStringProps(json, 'publisher', elem.publisherObject, false);
+  ComposeStringValue(json, 'identifier', elem.identifierElement, false);
+  ComposeStringProps(json, 'identifier', elem.identifierElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'publisher', elem.publisherElement, false);
+  ComposeStringProps(json, 'publisher', elem.publisherElement, false);
   if elem.telecomList.Count > 0 then
   begin
     json.valueArray('telecom');
@@ -6435,18 +6435,18 @@ begin
       ComposeContact(json, '',elem.telecomList[i]); {z - Contact}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if not SummaryOnly then
-    ComposeStringValue(json, 'copyright', elem.copyrightObject, false);
+    ComposeStringValue(json, 'copyright', elem.copyrightElement, false);
   if not SummaryOnly then
-    ComposeStringProps(json, 'copyright', elem.copyrightObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirValuesetStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirValuesetStatus, false);
-  ComposeBooleanValue(json, 'experimental', elem.experimentalObject, false);
-  ComposeBooleanProps(json, 'experimental', elem.experimentalObject, false);
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+    ComposeStringProps(json, 'copyright', elem.copyrightElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirValuesetStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirValuesetStatus, false);
+  ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
+  ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeResourceReference{TFhirValueSet}(json, 'source', elem.source); {a}
   ComposeResourceReference{TFhirValueSet}(json, 'target', elem.target); {a}
   if not SummaryOnly and (elem.conceptList.Count > 0) then
@@ -6633,7 +6633,7 @@ begin
       if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'detail') then
-        result.detailObject := ParseString(child, path+'/detail') {b}
+        result.detailElement := ParseString(child, path+'/detail') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -6654,7 +6654,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
-  ComposeString(xml, 'detail', elem.detailObject);{x.2}
+  ComposeString(xml, 'detail', elem.detailElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -6672,7 +6672,7 @@ begin
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('detail') or jsn.has('_detail') then
-        result.detailObject := ParseString(jsn['detail'], jsn.vObj['_detail']);{q}
+        result.detailElement := ParseString(jsn['detail'], jsn.vObj['_detail']);{q}
     result.link;
   finally
     result.free;
@@ -6686,8 +6686,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
-  ComposeStringValue(json, 'detail', elem.detailObject, false);
-  ComposeStringProps(json, 'detail', elem.detailObject, false);
+  ComposeStringValue(json, 'detail', elem.detailElement, false);
+  ComposeStringProps(json, 'detail', elem.detailElement, false);
   json.finishObject;
 end;
 
@@ -6702,7 +6702,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirConditionRelationshipType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirConditionRelationshipType, path+'/type', child){1a}
       else if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'target') then
@@ -6726,7 +6726,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirConditionRelationshipType);
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirConditionRelationshipType);
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
   ComposeResourceReference{Resource}(xml, 'target', elem.target);{x.2}
   closeOutElement(xml, elem);
@@ -6744,7 +6744,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirConditionRelationshipType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirConditionRelationshipType);
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('target') then
@@ -6761,8 +6761,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirConditionRelationshipType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirConditionRelationshipType, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirConditionRelationshipType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirConditionRelationshipType, false);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   ComposeResourceReference{Resource}(json, 'target', elem.target); {a}
   json.finishObject;
@@ -6787,13 +6787,13 @@ begin
       else if (child.baseName = 'asserter') then
         result.asserter := ParseResourceReference{Resource}(child, path+'/asserter') {b}
       else if (child.baseName = 'dateAsserted') then
-        result.dateAssertedObject := ParseDate(child, path+'/dateAsserted') {b}
+        result.dateAssertedElement := ParseDate(child, path+'/dateAsserted') {b}
       else if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'category') then
         result.category := ParseCodeableConcept(child, path+'/category') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirConditionStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirConditionStatus, path+'/status', child){1a}
       else if (child.baseName = 'certainty') then
         result.certainty := ParseCodeableConcept(child, path+'/certainty') {b}
       else if (child.baseName = 'severity') then
@@ -6817,7 +6817,7 @@ begin
       else if (child.baseName = 'relatedItem') then
         result.relatedItemList.Add(ParseConditionRelatedItem(child, path+'/relatedItem')){y.2}
       else if (child.baseName = 'notes') then
-        result.notesObject := ParseString(child, path+'/notes') {b}
+        result.notesElement := ParseString(child, path+'/notes') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -6844,10 +6844,10 @@ begin
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{TFhirEncounter}(xml, 'encounter', elem.encounter);{x.2}
   ComposeResourceReference{Resource}(xml, 'asserter', elem.asserter);{x.2}
-  ComposeDate(xml, 'dateAsserted', elem.dateAssertedObject);{x.2}
+  ComposeDate(xml, 'dateAsserted', elem.dateAssertedElement);{x.2}
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
   ComposeCodeableConcept(xml, 'category', elem.category);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirConditionStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirConditionStatus);
   ComposeCodeableConcept(xml, 'certainty', elem.certainty);{x.2}
   ComposeCodeableConcept(xml, 'severity', elem.severity);{x.2}
   if (elem.onset is TFhirDate) {6} then
@@ -6867,7 +6867,7 @@ begin
     ComposeConditionLocation(xml, 'location', elem.locationList[i]);
   for i := 0 to elem.relatedItemList.Count - 1 do
     ComposeConditionRelatedItem(xml, 'relatedItem', elem.relatedItemList[i]);
-  ComposeString(xml, 'notes', elem.notesObject);{x.2}
+  ComposeString(xml, 'notes', elem.notesElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -6891,13 +6891,13 @@ begin
     if jsn.has('asserter') then
         result.asserter := ParseResourceReference{Resource}(jsn.vObj['asserter']);{q}
     if jsn.has('dateAsserted') or jsn.has('_dateAsserted') then
-        result.dateAssertedObject := ParseDate(jsn['dateAsserted'], jsn.vObj['_dateAsserted']);{q}
+        result.dateAssertedElement := ParseDate(jsn['dateAsserted'], jsn.vObj['_dateAsserted']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirConditionStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirConditionStatus);
     if jsn.has('certainty') then
         result.certainty := ParseCodeableConcept(jsn.vObj['certainty']);{q}
     if jsn.has('severity') then
@@ -6921,7 +6921,7 @@ begin
     if jsn.has('relatedItem') then
       iterateArray(jsn.vArr['relatedItem'], result.relatedItemList, parseConditionRelatedItem);
     if jsn.has('notes') or jsn.has('_notes') then
-        result.notesObject := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+        result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
     result.link;
   finally
     result.free;
@@ -6945,12 +6945,12 @@ begin
   ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
   ComposeResourceReference{Resource}(json, 'asserter', elem.asserter); {a}
-  ComposeDateValue(json, 'dateAsserted', elem.dateAssertedObject, false);
-  ComposeDateProps(json, 'dateAsserted', elem.dateAssertedObject, false);
+  ComposeDateValue(json, 'dateAsserted', elem.dateAssertedElement, false);
+  ComposeDateProps(json, 'dateAsserted', elem.dateAssertedElement, false);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   ComposeCodeableConcept(json, 'category', elem.category); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirConditionStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirConditionStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirConditionStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirConditionStatus, false);
   ComposeCodeableConcept(json, 'certainty', elem.certainty); {a}
   ComposeCodeableConcept(json, 'severity', elem.severity); {a}
   if (elem.onset is TFhirDate) then 
@@ -6994,8 +6994,8 @@ begin
       ComposeConditionRelatedItem(json, '',elem.relatedItemList[i]); {z - }
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'notes', elem.notesObject, false);
-  ComposeStringProps(json, 'notes', elem.notesObject, false);
+  ComposeStringValue(json, 'notes', elem.notesElement, false);
+  ComposeStringProps(json, 'notes', elem.notesElement, false);
 end;
 
 function TFHIRXmlParser.ParseConformanceSoftware(element : IXmlDomElement; path : string) : TFhirConformanceSoftware;
@@ -7009,11 +7009,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'releaseDate') then
-        result.releaseDateObject := ParseDateTime(child, path+'/releaseDate') {b}
+        result.releaseDateElement := ParseDateTime(child, path+'/releaseDate') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -7033,9 +7033,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
-  ComposeDateTime(xml, 'releaseDate', elem.releaseDateObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
+  ComposeDateTime(xml, 'releaseDate', elem.releaseDateElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -7051,11 +7051,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('releaseDate') or jsn.has('_releaseDate') then
-        result.releaseDateObject := ParseDateTime(jsn['releaseDate'], jsn.vObj['_releaseDate']);{q}
+        result.releaseDateElement := ParseDateTime(jsn['releaseDate'], jsn.vObj['_releaseDate']);{q}
     result.link;
   finally
     result.free;
@@ -7068,12 +7068,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
-  ComposeDateTimeValue(json, 'releaseDate', elem.releaseDateObject, false);
-  ComposeDateTimeProps(json, 'releaseDate', elem.releaseDateObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
+  ComposeDateTimeValue(json, 'releaseDate', elem.releaseDateElement, false);
+  ComposeDateTimeProps(json, 'releaseDate', elem.releaseDateElement, false);
   json.finishObject;
 end;
 
@@ -7088,9 +7088,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'url') then
-        result.urlObject := ParseUri(child, path+'/url') {b}
+        result.urlElement := ParseUri(child, path+'/url') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -7110,8 +7110,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
-  ComposeUri(xml, 'url', elem.urlObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
+  ComposeUri(xml, 'url', elem.urlElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -7127,9 +7127,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlObject := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     result.link;
   finally
     result.free;
@@ -7142,10 +7142,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
-  ComposeUriValue(json, 'url', elem.urlObject, false);
-  ComposeUriProps(json, 'url', elem.urlObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  ComposeUriValue(json, 'url', elem.urlElement, false);
+  ComposeUriProps(json, 'url', elem.urlElement, false);
   json.finishObject;
 end;
 
@@ -7160,9 +7160,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'mode') then
-        result.modeObject := ParseEnum(CODES_TFhirRestfulConformanceMode, path+'/mode', child){1a}
+        result.modeElement := ParseEnum(CODES_TFhirRestfulConformanceMode, path+'/mode', child){1a}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'security') then
         result.security := ParseConformanceRestSecurity(child, path+'/security') {b}
       else if (child.baseName = 'resource') then
@@ -7194,8 +7194,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'mode', elem.ModeObject, CODES_TFhirRestfulConformanceMode);
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeEnum(xml, 'mode', elem.ModeElement, CODES_TFhirRestfulConformanceMode);
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   ComposeConformanceRestSecurity(xml, 'security', elem.security);{x.2}
   for i := 0 to elem.resourceList.Count - 1 do
     ComposeConformanceRestResource(xml, 'resource', elem.resourceList[i]);
@@ -7220,9 +7220,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeObject := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirRestfulConformanceMode);
+      result.modeElement := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirRestfulConformanceMode);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('security') then
         result.security := ParseConformanceRestSecurity(jsn.vObj['security']);{q}
     if jsn.has('resource') then
@@ -7248,10 +7248,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'mode', elem.ModeObject, CODES_TFhirRestfulConformanceMode, false);
-  ComposeEnumProps(json, 'mode', elem.ModeObject, CODES_TFhirRestfulConformanceMode, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirRestfulConformanceMode, false);
+  ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirRestfulConformanceMode, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   ComposeConformanceRestSecurity(json, 'security', elem.security); {a}
   if elem.resourceList.Count > 0 then
   begin
@@ -7306,11 +7306,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'cors') then
-        result.corsObject := ParseBoolean(child, path+'/cors') {b}
+        result.corsElement := ParseBoolean(child, path+'/cors') {b}
       else if (child.baseName = 'service') then
         result.serviceList.Add(ParseCodeableConcept(child, path+'/service')){y.2}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'certificate') then
         result.certificateList.Add(ParseConformanceRestSecurityCertificate(child, path+'/certificate')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -7334,10 +7334,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeBoolean(xml, 'cors', elem.corsObject);{x.2}
+  ComposeBoolean(xml, 'cors', elem.corsElement);{x.2}
   for i := 0 to elem.serviceList.Count - 1 do
     ComposeCodeableConcept(xml, 'service', elem.serviceList[i]);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   for i := 0 to elem.certificateList.Count - 1 do
     ComposeConformanceRestSecurityCertificate(xml, 'certificate', elem.certificateList[i]);
   closeOutElement(xml, elem);
@@ -7355,11 +7355,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('cors') or jsn.has('_cors') then
-        result.corsObject := ParseBoolean(jsn['cors'], jsn.vObj['_cors']);{q}
+        result.corsElement := ParseBoolean(jsn['cors'], jsn.vObj['_cors']);{q}
     if jsn.has('service') then
       iterateArray(jsn.vArr['service'], result.serviceList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('certificate') then
       iterateArray(jsn.vArr['certificate'], result.certificateList, parseConformanceRestSecurityCertificate);
     result.link;
@@ -7376,8 +7376,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeBooleanValue(json, 'cors', elem.corsObject, false);
-  ComposeBooleanProps(json, 'cors', elem.corsObject, false);
+  ComposeBooleanValue(json, 'cors', elem.corsElement, false);
+  ComposeBooleanProps(json, 'cors', elem.corsElement, false);
   if elem.serviceList.Count > 0 then
   begin
     json.valueArray('service');
@@ -7385,8 +7385,8 @@ begin
       ComposeCodeableConcept(json, '',elem.serviceList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if elem.certificateList.Count > 0 then
   begin
     json.valueArray('certificate');
@@ -7408,9 +7408,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Object := ParseCode(child, path+'/type') {b}
+        result.type_Element := ParseCode(child, path+'/type') {b}
       else if (child.baseName = 'blob') then
-        result.blobObject := ParseBase64Binary(child, path+'/blob') {b}
+        result.blobElement := ParseBase64Binary(child, path+'/blob') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -7430,8 +7430,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeCode(xml, 'type', elem.type_Object);{x.2}
-  ComposeBase64Binary(xml, 'blob', elem.blobObject);{x.2}
+  ComposeCode(xml, 'type', elem.type_Element);{x.2}
+  ComposeBase64Binary(xml, 'blob', elem.blobElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -7447,9 +7447,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Object := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('blob') or jsn.has('_blob') then
-        result.blobObject := ParseBase64Binary(jsn['blob'], jsn.vObj['_blob']);{q}
+        result.blobElement := ParseBase64Binary(jsn['blob'], jsn.vObj['_blob']);{q}
     result.link;
   finally
     result.free;
@@ -7462,10 +7462,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeCodeValue(json, 'type', elem.type_Object, false);
-  ComposeCodeProps(json, 'type', elem.type_Object, false);
-  ComposeBase64BinaryValue(json, 'blob', elem.blobObject, false);
-  ComposeBase64BinaryProps(json, 'blob', elem.blobObject, false);
+  ComposeCodeValue(json, 'type', elem.type_Element, false);
+  ComposeCodeProps(json, 'type', elem.type_Element, false);
+  ComposeBase64BinaryValue(json, 'blob', elem.blobElement, false);
+  ComposeBase64BinaryProps(json, 'blob', elem.blobElement, false);
   json.finishObject;
 end;
 
@@ -7480,15 +7480,15 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Object := ParseCode(child, path+'/type') {b}
+        result.type_Element := ParseCode(child, path+'/type') {b}
       else if (child.baseName = 'profile') then
         result.profile := ParseResourceReference{TFhirProfile}(child, path+'/profile') {b}
       else if (child.baseName = 'operation') then
         result.operationList.Add(ParseConformanceRestResourceOperation(child, path+'/operation')){y.2}
       else if (child.baseName = 'readHistory') then
-        result.readHistoryObject := ParseBoolean(child, path+'/readHistory') {b}
+        result.readHistoryElement := ParseBoolean(child, path+'/readHistory') {b}
       else if (child.baseName = 'updateCreate') then
-        result.updateCreateObject := ParseBoolean(child, path+'/updateCreate') {b}
+        result.updateCreateElement := ParseBoolean(child, path+'/updateCreate') {b}
       else if (child.baseName = 'searchInclude') then
         result.searchIncludeList.Add(ParseString(child, path+'/searchInclude')){y.2}
       else if (child.baseName = 'searchParam') then
@@ -7514,12 +7514,12 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeCode(xml, 'type', elem.type_Object);{x.2}
+  ComposeCode(xml, 'type', elem.type_Element);{x.2}
   ComposeResourceReference{TFhirProfile}(xml, 'profile', elem.profile);{x.2}
   for i := 0 to elem.operationList.Count - 1 do
     ComposeConformanceRestResourceOperation(xml, 'operation', elem.operationList[i]);
-  ComposeBoolean(xml, 'readHistory', elem.readHistoryObject);{x.2}
-  ComposeBoolean(xml, 'updateCreate', elem.updateCreateObject);{x.2}
+  ComposeBoolean(xml, 'readHistory', elem.readHistoryElement);{x.2}
+  ComposeBoolean(xml, 'updateCreate', elem.updateCreateElement);{x.2}
   for i := 0 to elem.searchIncludeList.Count - 1 do
     ComposeString(xml, 'searchInclude', elem.searchIncludeList[i]);
   for i := 0 to elem.searchParamList.Count - 1 do
@@ -7539,15 +7539,15 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Object := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('profile') then
         result.profile := ParseResourceReference{TFhirProfile}(jsn.vObj['profile']);{q}
     if jsn.has('operation') then
       iterateArray(jsn.vArr['operation'], result.operationList, parseConformanceRestResourceOperation);
     if jsn.has('readHistory') or jsn.has('_readHistory') then
-        result.readHistoryObject := ParseBoolean(jsn['readHistory'], jsn.vObj['_readHistory']);{q}
+        result.readHistoryElement := ParseBoolean(jsn['readHistory'], jsn.vObj['_readHistory']);{q}
     if jsn.has('updateCreate') or jsn.has('_updateCreate') then
-        result.updateCreateObject := ParseBoolean(jsn['updateCreate'], jsn.vObj['_updateCreate']);{q}
+        result.updateCreateElement := ParseBoolean(jsn['updateCreate'], jsn.vObj['_updateCreate']);{q}
       if jsn.has('searchInclude') or jsn.has('_searchInclude') then
       iteratePrimitiveArray(jsn.vArr['searchInclude'], jsn.vArr['_searchInclude'], result.searchIncludeList, parseString);
     if jsn.has('searchParam') then
@@ -7567,8 +7567,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeCodeValue(json, 'type', elem.type_Object, false);
-  ComposeCodeProps(json, 'type', elem.type_Object, false);
+  ComposeCodeValue(json, 'type', elem.type_Element, false);
+  ComposeCodeProps(json, 'type', elem.type_Element, false);
   ComposeResourceReference{TFhirProfile}(json, 'profile', elem.profile); {a}
   if elem.operationList.Count > 0 then
   begin
@@ -7577,10 +7577,10 @@ begin
       ComposeConformanceRestResourceOperation(json, '',elem.operationList[i]); {z - }
     json.FinishArray;
   end;
-  ComposeBooleanValue(json, 'readHistory', elem.readHistoryObject, false);
-  ComposeBooleanProps(json, 'readHistory', elem.readHistoryObject, false);
-  ComposeBooleanValue(json, 'updateCreate', elem.updateCreateObject, false);
-  ComposeBooleanProps(json, 'updateCreate', elem.updateCreateObject, false);
+  ComposeBooleanValue(json, 'readHistory', elem.readHistoryElement, false);
+  ComposeBooleanProps(json, 'readHistory', elem.readHistoryElement, false);
+  ComposeBooleanValue(json, 'updateCreate', elem.updateCreateElement, false);
+  ComposeBooleanProps(json, 'updateCreate', elem.updateCreateElement, false);
   if elem.searchIncludeList.Count > 0 then
   begin
     json.valueArray('searchInclude');
@@ -7620,9 +7620,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'code') then
-        result.codeObject := ParseEnum(CODES_TFhirTypeRestfulOperation, path+'/code', child){1a}
+        result.codeElement := ParseEnum(CODES_TFhirTypeRestfulOperation, path+'/code', child){1a}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -7642,8 +7642,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'code', elem.CodeObject, CODES_TFhirTypeRestfulOperation);
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeEnum(xml, 'code', elem.CodeElement, CODES_TFhirTypeRestfulOperation);
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -7659,9 +7659,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeObject := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirTypeRestfulOperation);
+      result.codeElement := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirTypeRestfulOperation);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     result.link;
   finally
     result.free;
@@ -7674,10 +7674,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'code', elem.CodeObject, CODES_TFhirTypeRestfulOperation, false);
-  ComposeEnumProps(json, 'code', elem.CodeObject, CODES_TFhirTypeRestfulOperation, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirTypeRestfulOperation, false);
+  ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirTypeRestfulOperation, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   json.finishObject;
 end;
 
@@ -7692,13 +7692,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'definition') then
-        result.definitionObject := ParseUri(child, path+'/definition') {b}
+        result.definitionElement := ParseUri(child, path+'/definition') {b}
       else if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirSearchParamType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirSearchParamType, path+'/type', child){1a}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'target') then
         result.targetList.Add(ParseCode(child, path+'/target')){y.2}
       else if (child.baseName = 'chain') then
@@ -7724,10 +7724,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeUri(xml, 'definition', elem.definitionObject);{x.2}
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirSearchParamType);
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeUri(xml, 'definition', elem.definitionElement);{x.2}
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirSearchParamType);
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   for i := 0 to elem.targetList.Count - 1 do
     ComposeCode(xml, 'target', elem.targetList[i]);
   for i := 0 to elem.chainList.Count - 1 do
@@ -7747,13 +7747,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('definition') or jsn.has('_definition') then
-        result.definitionObject := ParseUri(jsn['definition'], jsn.vObj['_definition']);{q}
+        result.definitionElement := ParseUri(jsn['definition'], jsn.vObj['_definition']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamType);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
       if jsn.has('target') or jsn.has('_target') then
       iteratePrimitiveArray(jsn.vArr['target'], jsn.vArr['_target'], result.targetList, parseCode);
       if jsn.has('chain') or jsn.has('_chain') then
@@ -7773,14 +7773,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeUriValue(json, 'definition', elem.definitionObject, false);
-  ComposeUriProps(json, 'definition', elem.definitionObject, false);
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirSearchParamType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirSearchParamType, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeUriValue(json, 'definition', elem.definitionElement, false);
+  ComposeUriProps(json, 'definition', elem.definitionElement, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirSearchParamType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirSearchParamType, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   if elem.targetList.Count > 0 then
   begin
     json.valueArray('target');
@@ -7831,9 +7831,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'code') then
-        result.codeObject := ParseEnum(CODES_TFhirSystemRestfulOperation, path+'/code', child){1a}
+        result.codeElement := ParseEnum(CODES_TFhirSystemRestfulOperation, path+'/code', child){1a}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -7853,8 +7853,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'code', elem.CodeObject, CODES_TFhirSystemRestfulOperation);
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeEnum(xml, 'code', elem.CodeElement, CODES_TFhirSystemRestfulOperation);
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -7870,9 +7870,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeObject := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirSystemRestfulOperation);
+      result.codeElement := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirSystemRestfulOperation);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     result.link;
   finally
     result.free;
@@ -7885,10 +7885,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'code', elem.CodeObject, CODES_TFhirSystemRestfulOperation, false);
-  ComposeEnumProps(json, 'code', elem.CodeObject, CODES_TFhirSystemRestfulOperation, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirSystemRestfulOperation, false);
+  ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirSystemRestfulOperation, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   json.finishObject;
 end;
 
@@ -7903,11 +7903,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'definition') then
-        result.definitionObject := ParseUri(child, path+'/definition') {b}
+        result.definitionElement := ParseUri(child, path+'/definition') {b}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'parameter') then
         result.parameterList.Add(ParseConformanceRestResourceSearchParam(child, path+'/parameter')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -7931,9 +7931,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeUri(xml, 'definition', elem.definitionObject);{x.2}
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeUri(xml, 'definition', elem.definitionElement);{x.2}
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   for i := 0 to elem.parameterList.Count - 1 do
     ComposeConformanceRestResourceSearchParam(xml, 'parameter', elem.parameterList[i]);
   closeOutElement(xml, elem);
@@ -7951,11 +7951,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('definition') or jsn.has('_definition') then
-        result.definitionObject := ParseUri(jsn['definition'], jsn.vObj['_definition']);{q}
+        result.definitionElement := ParseUri(jsn['definition'], jsn.vObj['_definition']);{q}
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('parameter') then
       iterateArray(jsn.vArr['parameter'], result.parameterList, parseConformanceRestResourceSearchParam);
     result.link;
@@ -7972,12 +7972,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeUriValue(json, 'definition', elem.definitionObject, false);
-  ComposeUriProps(json, 'definition', elem.definitionObject, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeUriValue(json, 'definition', elem.definitionElement, false);
+  ComposeUriProps(json, 'definition', elem.definitionElement, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   if elem.parameterList.Count > 0 then
   begin
     json.valueArray('parameter');
@@ -7999,11 +7999,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'endpoint') then
-        result.endpointObject := ParseUri(child, path+'/endpoint') {b}
+        result.endpointElement := ParseUri(child, path+'/endpoint') {b}
       else if (child.baseName = 'reliableCache') then
-        result.reliableCacheObject := ParseInteger(child, path+'/reliableCache') {b}
+        result.reliableCacheElement := ParseInteger(child, path+'/reliableCache') {b}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'event') then
         result.eventList.Add(ParseConformanceMessagingEvent(child, path+'/event')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -8027,9 +8027,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeUri(xml, 'endpoint', elem.endpointObject);{x.2}
-  ComposeInteger(xml, 'reliableCache', elem.reliableCacheObject);{x.2}
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeUri(xml, 'endpoint', elem.endpointElement);{x.2}
+  ComposeInteger(xml, 'reliableCache', elem.reliableCacheElement);{x.2}
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   for i := 0 to elem.eventList.Count - 1 do
     ComposeConformanceMessagingEvent(xml, 'event', elem.eventList[i]);
   closeOutElement(xml, elem);
@@ -8047,11 +8047,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('endpoint') or jsn.has('_endpoint') then
-        result.endpointObject := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
+        result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
     if jsn.has('reliableCache') or jsn.has('_reliableCache') then
-        result.reliableCacheObject := ParseInteger(jsn['reliableCache'], jsn.vObj['_reliableCache']);{q}
+        result.reliableCacheElement := ParseInteger(jsn['reliableCache'], jsn.vObj['_reliableCache']);{q}
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseConformanceMessagingEvent);
     result.link;
@@ -8068,12 +8068,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeUriValue(json, 'endpoint', elem.endpointObject, false);
-  ComposeUriProps(json, 'endpoint', elem.endpointObject, false);
-  ComposeIntegerValue(json, 'reliableCache', elem.reliableCacheObject, false);
-  ComposeIntegerProps(json, 'reliableCache', elem.reliableCacheObject, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeUriValue(json, 'endpoint', elem.endpointElement, false);
+  ComposeUriProps(json, 'endpoint', elem.endpointElement, false);
+  ComposeIntegerValue(json, 'reliableCache', elem.reliableCacheElement, false);
+  ComposeIntegerProps(json, 'reliableCache', elem.reliableCacheElement, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   if elem.eventList.Count > 0 then
   begin
     json.valueArray('event');
@@ -8097,19 +8097,19 @@ begin
       if (child.baseName = 'code') then
         result.code := ParseCoding(child, path+'/code') {b}
       else if (child.baseName = 'category') then
-        result.categoryObject := ParseEnum(CODES_TFhirMessageSignificanceCategory, path+'/category', child){1a}
+        result.categoryElement := ParseEnum(CODES_TFhirMessageSignificanceCategory, path+'/category', child){1a}
       else if (child.baseName = 'mode') then
-        result.modeObject := ParseEnum(CODES_TFhirMessageConformanceEventMode, path+'/mode', child){1a}
+        result.modeElement := ParseEnum(CODES_TFhirMessageConformanceEventMode, path+'/mode', child){1a}
       else if (child.baseName = 'protocol') then
         result.protocolList.Add(ParseCoding(child, path+'/protocol')){y.2}
       else if (child.baseName = 'focus') then
-        result.focusObject := ParseCode(child, path+'/focus') {b}
+        result.focusElement := ParseCode(child, path+'/focus') {b}
       else if (child.baseName = 'request') then
         result.request := ParseResourceReference{TFhirProfile}(child, path+'/request') {b}
       else if (child.baseName = 'response') then
         result.response := ParseResourceReference{TFhirProfile}(child, path+'/response') {b}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -8132,14 +8132,14 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeCoding(xml, 'code', elem.code);{x.2}
-  ComposeEnum(xml, 'category', elem.CategoryObject, CODES_TFhirMessageSignificanceCategory);
-  ComposeEnum(xml, 'mode', elem.ModeObject, CODES_TFhirMessageConformanceEventMode);
+  ComposeEnum(xml, 'category', elem.CategoryElement, CODES_TFhirMessageSignificanceCategory);
+  ComposeEnum(xml, 'mode', elem.ModeElement, CODES_TFhirMessageConformanceEventMode);
   for i := 0 to elem.protocolList.Count - 1 do
     ComposeCoding(xml, 'protocol', elem.protocolList[i]);
-  ComposeCode(xml, 'focus', elem.focusObject);{x.2}
+  ComposeCode(xml, 'focus', elem.focusElement);{x.2}
   ComposeResourceReference{TFhirProfile}(xml, 'request', elem.request);{x.2}
   ComposeResourceReference{TFhirProfile}(xml, 'response', elem.response);{x.2}
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -8157,19 +8157,19 @@ begin
     if jsn.has('code') then
         result.code := ParseCoding(jsn.vObj['code']);{q}
     if jsn.has('category') or jsn.has('_category')  then
-      result.categoryObject := parseEnum(jsn['category'], jsn.vObj['_category'], CODES_TFhirMessageSignificanceCategory);
+      result.categoryElement := parseEnum(jsn['category'], jsn.vObj['_category'], CODES_TFhirMessageSignificanceCategory);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeObject := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirMessageConformanceEventMode);
+      result.modeElement := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirMessageConformanceEventMode);
     if jsn.has('protocol') then
       iterateArray(jsn.vArr['protocol'], result.protocolList, parseCoding);
     if jsn.has('focus') or jsn.has('_focus') then
-        result.focusObject := ParseCode(jsn['focus'], jsn.vObj['_focus']);{q}
+        result.focusElement := ParseCode(jsn['focus'], jsn.vObj['_focus']);{q}
     if jsn.has('request') then
         result.request := ParseResourceReference{TFhirProfile}(jsn.vObj['request']);{q}
     if jsn.has('response') then
         result.response := ParseResourceReference{TFhirProfile}(jsn.vObj['response']);{q}
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     result.link;
   finally
     result.free;
@@ -8185,10 +8185,10 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeCoding(json, 'code', elem.code); {a}
-  ComposeEnumValue(json, 'category', elem.CategoryObject, CODES_TFhirMessageSignificanceCategory, false);
-  ComposeEnumProps(json, 'category', elem.CategoryObject, CODES_TFhirMessageSignificanceCategory, false);
-  ComposeEnumValue(json, 'mode', elem.ModeObject, CODES_TFhirMessageConformanceEventMode, false);
-  ComposeEnumProps(json, 'mode', elem.ModeObject, CODES_TFhirMessageConformanceEventMode, false);
+  ComposeEnumValue(json, 'category', elem.CategoryElement, CODES_TFhirMessageSignificanceCategory, false);
+  ComposeEnumProps(json, 'category', elem.CategoryElement, CODES_TFhirMessageSignificanceCategory, false);
+  ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirMessageConformanceEventMode, false);
+  ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirMessageConformanceEventMode, false);
   if elem.protocolList.Count > 0 then
   begin
     json.valueArray('protocol');
@@ -8196,12 +8196,12 @@ begin
       ComposeCoding(json, '',elem.protocolList[i]); {z - Coding}
     json.FinishArray;
   end;
-  ComposeCodeValue(json, 'focus', elem.focusObject, false);
-  ComposeCodeProps(json, 'focus', elem.focusObject, false);
+  ComposeCodeValue(json, 'focus', elem.focusElement, false);
+  ComposeCodeProps(json, 'focus', elem.focusElement, false);
   ComposeResourceReference{TFhirProfile}(json, 'request', elem.request); {a}
   ComposeResourceReference{TFhirProfile}(json, 'response', elem.response); {a}
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   json.finishObject;
 end;
 
@@ -8216,9 +8216,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'mode') then
-        result.modeObject := ParseEnum(CODES_TFhirDocumentMode, path+'/mode', child){1a}
+        result.modeElement := ParseEnum(CODES_TFhirDocumentMode, path+'/mode', child){1a}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'profile') then
         result.profile := ParseResourceReference{TFhirProfile}(child, path+'/profile') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -8240,8 +8240,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'mode', elem.ModeObject, CODES_TFhirDocumentMode);
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeEnum(xml, 'mode', elem.ModeElement, CODES_TFhirDocumentMode);
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   ComposeResourceReference{TFhirProfile}(xml, 'profile', elem.profile);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -8258,9 +8258,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeObject := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirDocumentMode);
+      result.modeElement := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirDocumentMode);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('profile') then
         result.profile := ParseResourceReference{TFhirProfile}(jsn.vObj['profile']);{q}
     result.link;
@@ -8275,10 +8275,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'mode', elem.ModeObject, CODES_TFhirDocumentMode, false);
-  ComposeEnumProps(json, 'mode', elem.ModeObject, CODES_TFhirDocumentMode, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirDocumentMode, false);
+  ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirDocumentMode, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   ComposeResourceReference{TFhirProfile}(json, 'profile', elem.profile); {a}
   json.finishObject;
 end;
@@ -8294,31 +8294,31 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseString(child, path+'/identifier') {b}
+        result.identifierElement := ParseString(child, path+'/identifier') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'publisher') then
-        result.publisherObject := ParseString(child, path+'/publisher') {b}
+        result.publisherElement := ParseString(child, path+'/publisher') {b}
       else if (child.baseName = 'telecom') then
         result.telecomList.Add(ParseContact(child, path+'/telecom')){y.2}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirConformanceStatementStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirConformanceStatementStatus, path+'/status', child){1a}
       else if (child.baseName = 'experimental') then
-        result.experimentalObject := ParseBoolean(child, path+'/experimental') {b}
+        result.experimentalElement := ParseBoolean(child, path+'/experimental') {b}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'software') then
         result.software := ParseConformanceSoftware(child, path+'/software') {b}
       else if (child.baseName = 'implementation') then
         result.implementation_ := ParseConformanceImplementation(child, path+'/implementation') {b}
       else if (child.baseName = 'fhirVersion') then
-        result.fhirVersionObject := ParseId(child, path+'/fhirVersion') {b}
+        result.fhirVersionElement := ParseId(child, path+'/fhirVersion') {b}
       else if (child.baseName = 'acceptUnknown') then
-        result.acceptUnknownObject := ParseBoolean(child, path+'/acceptUnknown') {b}
+        result.acceptUnknownElement := ParseBoolean(child, path+'/acceptUnknown') {b}
       else if (child.baseName = 'format') then
         result.formatList.Add(ParseCode(child, path+'/format')){y.2}
       else if (child.baseName = 'profile') then
@@ -8350,20 +8350,20 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeString(xml, 'identifier', elem.identifierObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'publisher', elem.publisherObject);{x.2}
+  ComposeString(xml, 'identifier', elem.identifierElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'publisher', elem.publisherElement);{x.2}
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirConformanceStatementStatus);
-  ComposeBoolean(xml, 'experimental', elem.experimentalObject);{x.2}
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirConformanceStatementStatus);
+  ComposeBoolean(xml, 'experimental', elem.experimentalElement);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeConformanceSoftware(xml, 'software', elem.software);{x.2}
   ComposeConformanceImplementation(xml, 'implementation', elem.implementation_);{x.2}
-  ComposeId(xml, 'fhirVersion', elem.fhirVersionObject);{x.2}
-  ComposeBoolean(xml, 'acceptUnknown', elem.acceptUnknownObject);{x.2}
+  ComposeId(xml, 'fhirVersion', elem.fhirVersionElement);{x.2}
+  ComposeBoolean(xml, 'acceptUnknown', elem.acceptUnknownElement);{x.2}
   if not SummaryOnly then
     for i := 0 to elem.formatList.Count - 1 do
       ComposeCode(xml, 'format', elem.formatList[i]);
@@ -8394,31 +8394,31 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherObject := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceStatementStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceStatementStatus);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalObject := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('software') then
         result.software := ParseConformanceSoftware(jsn.vObj['software']);{q}
     if jsn.has('implementation') then
         result.implementation_ := ParseConformanceImplementation(jsn.vObj['implementation']);{q}
     if jsn.has('fhirVersion') or jsn.has('_fhirVersion') then
-        result.fhirVersionObject := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
+        result.fhirVersionElement := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
     if jsn.has('acceptUnknown') or jsn.has('_acceptUnknown') then
-        result.acceptUnknownObject := ParseBoolean(jsn['acceptUnknown'], jsn.vObj['_acceptUnknown']);{q}
+        result.acceptUnknownElement := ParseBoolean(jsn['acceptUnknown'], jsn.vObj['_acceptUnknown']);{q}
       if jsn.has('format') or jsn.has('_format') then
       iteratePrimitiveArray(jsn.vArr['format'], jsn.vArr['_format'], result.formatList, parseCode);
     if jsn.has('profile') then
@@ -8443,14 +8443,14 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeStringValue(json, 'identifier', elem.identifierObject, false);
-  ComposeStringProps(json, 'identifier', elem.identifierObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'publisher', elem.publisherObject, false);
-  ComposeStringProps(json, 'publisher', elem.publisherObject, false);
+  ComposeStringValue(json, 'identifier', elem.identifierElement, false);
+  ComposeStringProps(json, 'identifier', elem.identifierElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'publisher', elem.publisherElement, false);
+  ComposeStringProps(json, 'publisher', elem.publisherElement, false);
   if elem.telecomList.Count > 0 then
   begin
     json.valueArray('telecom');
@@ -8458,20 +8458,20 @@ begin
       ComposeContact(json, '',elem.telecomList[i]); {z - Contact}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirConformanceStatementStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirConformanceStatementStatus, false);
-  ComposeBooleanValue(json, 'experimental', elem.experimentalObject, false);
-  ComposeBooleanProps(json, 'experimental', elem.experimentalObject, false);
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirConformanceStatementStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirConformanceStatementStatus, false);
+  ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
+  ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeConformanceSoftware(json, 'software', elem.software); {a}
   ComposeConformanceImplementation(json, 'implementation', elem.implementation_); {a}
-  ComposeIdValue(json, 'fhirVersion', elem.fhirVersionObject, false);
-  ComposeIdProps(json, 'fhirVersion', elem.fhirVersionObject, false);
-  ComposeBooleanValue(json, 'acceptUnknown', elem.acceptUnknownObject, false);
-  ComposeBooleanProps(json, 'acceptUnknown', elem.acceptUnknownObject, false);
+  ComposeIdValue(json, 'fhirVersion', elem.fhirVersionElement, false);
+  ComposeIdProps(json, 'fhirVersion', elem.fhirVersionElement, false);
+  ComposeBooleanValue(json, 'acceptUnknown', elem.acceptUnknownElement, false);
+  ComposeBooleanProps(json, 'acceptUnknown', elem.acceptUnknownElement, false);
   if not SummaryOnly and (elem.formatList.Count > 0) then
   begin
     json.valueArray('format');
@@ -8535,17 +8535,17 @@ begin
       else if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'manufacturer') then
-        result.manufacturerObject := ParseString(child, path+'/manufacturer') {b}
+        result.manufacturerElement := ParseString(child, path+'/manufacturer') {b}
       else if (child.baseName = 'model') then
-        result.modelObject := ParseString(child, path+'/model') {b}
+        result.modelElement := ParseString(child, path+'/model') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'expiry') then
-        result.expiryObject := ParseDate(child, path+'/expiry') {b}
+        result.expiryElement := ParseDate(child, path+'/expiry') {b}
       else if (child.baseName = 'udi') then
-        result.udiObject := ParseString(child, path+'/udi') {b}
+        result.udiElement := ParseString(child, path+'/udi') {b}
       else if (child.baseName = 'lotNumber') then
-        result.lotNumberObject := ParseString(child, path+'/lotNumber') {b}
+        result.lotNumberElement := ParseString(child, path+'/lotNumber') {b}
       else if (child.baseName = 'owner') then
         result.owner := ParseResourceReference{TFhirOrganization}(child, path+'/owner') {b}
       else if (child.baseName = 'location') then
@@ -8555,7 +8555,7 @@ begin
       else if (child.baseName = 'contact') then
         result.contactList.Add(ParseContact(child, path+'/contact')){y.2}
       else if (child.baseName = 'url') then
-        result.urlObject := ParseUri(child, path+'/url') {b}
+        result.urlElement := ParseUri(child, path+'/url') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -8580,18 +8580,18 @@ begin
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
-  ComposeString(xml, 'manufacturer', elem.manufacturerObject);{x.2}
-  ComposeString(xml, 'model', elem.modelObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
-  ComposeDate(xml, 'expiry', elem.expiryObject);{x.2}
-  ComposeString(xml, 'udi', elem.udiObject);{x.2}
-  ComposeString(xml, 'lotNumber', elem.lotNumberObject);{x.2}
+  ComposeString(xml, 'manufacturer', elem.manufacturerElement);{x.2}
+  ComposeString(xml, 'model', elem.modelElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
+  ComposeDate(xml, 'expiry', elem.expiryElement);{x.2}
+  ComposeString(xml, 'udi', elem.udiElement);{x.2}
+  ComposeString(xml, 'lotNumber', elem.lotNumberElement);{x.2}
   ComposeResourceReference{TFhirOrganization}(xml, 'owner', elem.owner);{x.2}
   ComposeResourceReference{TFhirLocation}(xml, 'location', elem.location);{x.2}
   ComposeResourceReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
   for i := 0 to elem.contactList.Count - 1 do
     ComposeContact(xml, 'contact', elem.contactList[i]);
-  ComposeUri(xml, 'url', elem.urlObject);{x.2}
+  ComposeUri(xml, 'url', elem.urlElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -8611,17 +8611,17 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('manufacturer') or jsn.has('_manufacturer') then
-        result.manufacturerObject := ParseString(jsn['manufacturer'], jsn.vObj['_manufacturer']);{q}
+        result.manufacturerElement := ParseString(jsn['manufacturer'], jsn.vObj['_manufacturer']);{q}
     if jsn.has('model') or jsn.has('_model') then
-        result.modelObject := ParseString(jsn['model'], jsn.vObj['_model']);{q}
+        result.modelElement := ParseString(jsn['model'], jsn.vObj['_model']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('expiry') or jsn.has('_expiry') then
-        result.expiryObject := ParseDate(jsn['expiry'], jsn.vObj['_expiry']);{q}
+        result.expiryElement := ParseDate(jsn['expiry'], jsn.vObj['_expiry']);{q}
     if jsn.has('udi') or jsn.has('_udi') then
-        result.udiObject := ParseString(jsn['udi'], jsn.vObj['_udi']);{q}
+        result.udiElement := ParseString(jsn['udi'], jsn.vObj['_udi']);{q}
     if jsn.has('lotNumber') or jsn.has('_lotNumber') then
-        result.lotNumberObject := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
+        result.lotNumberElement := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
     if jsn.has('owner') then
         result.owner := ParseResourceReference{TFhirOrganization}(jsn.vObj['owner']);{q}
     if jsn.has('location') then
@@ -8631,7 +8631,7 @@ begin
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseContact);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlObject := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     result.link;
   finally
     result.free;
@@ -8653,18 +8653,18 @@ begin
     json.FinishArray;
   end;
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  ComposeStringValue(json, 'manufacturer', elem.manufacturerObject, false);
-  ComposeStringProps(json, 'manufacturer', elem.manufacturerObject, false);
-  ComposeStringValue(json, 'model', elem.modelObject, false);
-  ComposeStringProps(json, 'model', elem.modelObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
-  ComposeDateValue(json, 'expiry', elem.expiryObject, false);
-  ComposeDateProps(json, 'expiry', elem.expiryObject, false);
-  ComposeStringValue(json, 'udi', elem.udiObject, false);
-  ComposeStringProps(json, 'udi', elem.udiObject, false);
-  ComposeStringValue(json, 'lotNumber', elem.lotNumberObject, false);
-  ComposeStringProps(json, 'lotNumber', elem.lotNumberObject, false);
+  ComposeStringValue(json, 'manufacturer', elem.manufacturerElement, false);
+  ComposeStringProps(json, 'manufacturer', elem.manufacturerElement, false);
+  ComposeStringValue(json, 'model', elem.modelElement, false);
+  ComposeStringProps(json, 'model', elem.modelElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
+  ComposeDateValue(json, 'expiry', elem.expiryElement, false);
+  ComposeDateProps(json, 'expiry', elem.expiryElement, false);
+  ComposeStringValue(json, 'udi', elem.udiElement, false);
+  ComposeStringProps(json, 'udi', elem.udiElement, false);
+  ComposeStringValue(json, 'lotNumber', elem.lotNumberElement, false);
+  ComposeStringProps(json, 'lotNumber', elem.lotNumberElement, false);
   ComposeResourceReference{TFhirOrganization}(json, 'owner', elem.owner); {a}
   ComposeResourceReference{TFhirLocation}(json, 'location', elem.location); {a}
   ComposeResourceReference{TFhirPatient}(json, 'patient', elem.patient); {a}
@@ -8675,8 +8675,8 @@ begin
       ComposeContact(json, '',elem.contactList[i]); {z - Contact}
     json.FinishArray;
   end;
-  ComposeUriValue(json, 'url', elem.urlObject, false);
-  ComposeUriProps(json, 'url', elem.urlObject, false);
+  ComposeUriValue(json, 'url', elem.urlElement, false);
+  ComposeUriProps(json, 'url', elem.urlElement, false);
 end;
 
 function TFHIRXmlParser.ParseDeviceObservationReportVirtualDevice(element : IXmlDomElement; path : string) : TFhirDeviceObservationReportVirtualDevice;
@@ -8916,7 +8916,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'instant') then
-        result.instantObject := ParseInstant(child, path+'/instant') {b}
+        result.instantElement := ParseInstant(child, path+'/instant') {b}
       else if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'source') then
@@ -8946,7 +8946,7 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeInstant(xml, 'instant', elem.instantObject);{x.2}
+  ComposeInstant(xml, 'instant', elem.instantElement);{x.2}
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
   ComposeResourceReference{TFhirDevice}(xml, 'source', elem.source);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
@@ -8967,7 +8967,7 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('instant') or jsn.has('_instant') then
-        result.instantObject := ParseInstant(jsn['instant'], jsn.vObj['_instant']);{q}
+        result.instantElement := ParseInstant(jsn['instant'], jsn.vObj['_instant']);{q}
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('source') then
@@ -8989,8 +8989,8 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeInstantValue(json, 'instant', elem.instantObject, false);
-  ComposeInstantProps(json, 'instant', elem.instantObject, false);
+  ComposeInstantValue(json, 'instant', elem.instantElement, false);
+  ComposeInstantProps(json, 'instant', elem.instantElement, false);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
   ComposeResourceReference{TFhirDevice}(json, 'source', elem.source); {a}
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
@@ -9014,11 +9014,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirDiagnosticOrderStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirDiagnosticOrderStatus, path+'/status', child){1a}
       else if (child.baseName = 'description') then
         result.description := ParseCodeableConcept(child, path+'/description') {b}
       else if (child.baseName = 'dateTime') then
-        result.dateTimeObject := ParseDateTime(child, path+'/dateTime') {b}
+        result.dateTimeElement := ParseDateTime(child, path+'/dateTime') {b}
       else if (child.baseName = 'actor') then
         result.actor := ParseResourceReference{Resource}(child, path+'/actor') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -9040,9 +9040,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus);
   ComposeCodeableConcept(xml, 'description', elem.description);{x.2}
-  ComposeDateTime(xml, 'dateTime', elem.dateTimeObject);{x.2}
+  ComposeDateTime(xml, 'dateTime', elem.dateTimeElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'actor', elem.actor);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -9059,11 +9059,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatus);
     if jsn.has('description') then
         result.description := ParseCodeableConcept(jsn.vObj['description']);{q}
     if jsn.has('dateTime') or jsn.has('_dateTime') then
-        result.dateTimeObject := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
+        result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('actor') then
         result.actor := ParseResourceReference{Resource}(jsn.vObj['actor']);{q}
     result.link;
@@ -9078,11 +9078,11 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus, false);
   ComposeCodeableConcept(json, 'description', elem.description); {a}
-  ComposeDateTimeValue(json, 'dateTime', elem.dateTimeObject, false);
-  ComposeDateTimeProps(json, 'dateTime', elem.dateTimeObject, false);
+  ComposeDateTimeValue(json, 'dateTime', elem.dateTimeElement, false);
+  ComposeDateTimeProps(json, 'dateTime', elem.dateTimeElement, false);
   ComposeResourceReference{Resource}(json, 'actor', elem.actor); {a}
   json.finishObject;
 end;
@@ -9104,7 +9104,7 @@ begin
       else if (child.baseName = 'bodySite') then
         result.bodySite := ParseCodeableConcept(child, path+'/bodySite') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirDiagnosticOrderStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirDiagnosticOrderStatus, path+'/status', child){1a}
       else if (child.baseName = 'event') then
         result.eventList.Add(ParseDiagnosticOrderEvent(child, path+'/event')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -9132,7 +9132,7 @@ begin
   for i := 0 to elem.specimenList.Count - 1 do
     ComposeResourceReference{TFhirSpecimen}(xml, 'specimen', elem.specimenList[i]);
   ComposeCodeableConcept(xml, 'bodySite', elem.bodySite);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus);
   for i := 0 to elem.eventList.Count - 1 do
     ComposeDiagnosticOrderEvent(xml, 'event', elem.eventList[i]);
   closeOutElement(xml, elem);
@@ -9156,7 +9156,7 @@ begin
     if jsn.has('bodySite') then
         result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatus);
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseDiagnosticOrderEvent);
     result.link;
@@ -9182,8 +9182,8 @@ begin
     json.FinishArray;
   end;
   ComposeCodeableConcept(json, 'bodySite', elem.bodySite); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus, false);
   if elem.eventList.Count > 0 then
   begin
     json.valueArray('event');
@@ -9213,13 +9213,13 @@ begin
       else if (child.baseName = 'encounter') then
         result.encounter := ParseResourceReference{TFhirEncounter}(child, path+'/encounter') {b}
       else if (child.baseName = 'clinicalNotes') then
-        result.clinicalNotesObject := ParseString(child, path+'/clinicalNotes') {b}
+        result.clinicalNotesElement := ParseString(child, path+'/clinicalNotes') {b}
       else if (child.baseName = 'specimen') then
         result.specimenList.Add(ParseResourceReference{TFhirSpecimen}(child, path+'/specimen')){y.2}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirDiagnosticOrderStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirDiagnosticOrderStatus, path+'/status', child){1a}
       else if (child.baseName = 'priority') then
-        result.priorityObject := ParseEnum(CODES_TFhirDiagnosticOrderPriority, path+'/priority', child){1a}
+        result.priorityElement := ParseEnum(CODES_TFhirDiagnosticOrderPriority, path+'/priority', child){1a}
       else if (child.baseName = 'event') then
         result.eventList.Add(ParseDiagnosticOrderEvent(child, path+'/event')){y.2}
       else if (child.baseName = 'item') then
@@ -9250,11 +9250,11 @@ begin
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeResourceReference{TFhirEncounter}(xml, 'encounter', elem.encounter);{x.2}
-  ComposeString(xml, 'clinicalNotes', elem.clinicalNotesObject);{x.2}
+  ComposeString(xml, 'clinicalNotes', elem.clinicalNotesElement);{x.2}
   for i := 0 to elem.specimenList.Count - 1 do
     ComposeResourceReference{TFhirSpecimen}(xml, 'specimen', elem.specimenList[i]);
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus);
-  ComposeEnum(xml, 'priority', elem.PriorityObject, CODES_TFhirDiagnosticOrderPriority);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus);
+  ComposeEnum(xml, 'priority', elem.PriorityElement, CODES_TFhirDiagnosticOrderPriority);
   for i := 0 to elem.eventList.Count - 1 do
     ComposeDiagnosticOrderEvent(xml, 'event', elem.eventList[i]);
   for i := 0 to elem.itemList.Count - 1 do
@@ -9282,13 +9282,13 @@ begin
     if jsn.has('encounter') then
         result.encounter := ParseResourceReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
     if jsn.has('clinicalNotes') or jsn.has('_clinicalNotes') then
-        result.clinicalNotesObject := ParseString(jsn['clinicalNotes'], jsn.vObj['_clinicalNotes']);{q}
+        result.clinicalNotesElement := ParseString(jsn['clinicalNotes'], jsn.vObj['_clinicalNotes']);{q}
     if jsn.has('specimen') then
       iterateArray(jsn.vArr['specimen'], result.specimenList, parseResourceReference{TFhirSpecimen});
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatus);
     if jsn.has('priority') or jsn.has('_priority')  then
-      result.priorityObject := parseEnum(jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDiagnosticOrderPriority);
+      result.priorityElement := parseEnum(jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDiagnosticOrderPriority);
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseDiagnosticOrderEvent);
     if jsn.has('item') then
@@ -9316,8 +9316,8 @@ begin
     json.FinishArray;
   end;
   ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  ComposeStringValue(json, 'clinicalNotes', elem.clinicalNotesObject, false);
-  ComposeStringProps(json, 'clinicalNotes', elem.clinicalNotesObject, false);
+  ComposeStringValue(json, 'clinicalNotes', elem.clinicalNotesElement, false);
+  ComposeStringProps(json, 'clinicalNotes', elem.clinicalNotesElement, false);
   if elem.specimenList.Count > 0 then
   begin
     json.valueArray('specimen');
@@ -9325,10 +9325,10 @@ begin
       ComposeResourceReference{TFhirSpecimen}(json, '',elem.specimenList[i]); {z - Resource(Specimen)}
     json.FinishArray;
   end;
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirDiagnosticOrderStatus, false);
-  ComposeEnumValue(json, 'priority', elem.PriorityObject, CODES_TFhirDiagnosticOrderPriority, false);
-  ComposeEnumProps(json, 'priority', elem.PriorityObject, CODES_TFhirDiagnosticOrderPriority, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticOrderStatus, false);
+  ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirDiagnosticOrderPriority, false);
+  ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirDiagnosticOrderPriority, false);
   if elem.eventList.Count > 0 then
   begin
     json.valueArray('event');
@@ -9356,7 +9356,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'comment') then
-        result.commentObject := ParseString(child, path+'/comment') {b}
+        result.commentElement := ParseString(child, path+'/comment') {b}
       else if (child.baseName = 'link') then
         result.link_ := ParseResourceReference{TFhirMedia}(child, path+'/link') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -9378,7 +9378,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'comment', elem.commentObject);{x.2}
+  ComposeString(xml, 'comment', elem.commentElement);{x.2}
   ComposeResourceReference{TFhirMedia}(xml, 'link', elem.link_);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -9395,7 +9395,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('comment') or jsn.has('_comment') then
-        result.commentObject := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
+        result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
     if jsn.has('link') then
         result.link_ := ParseResourceReference{TFhirMedia}(jsn.vObj['link']);{q}
     result.link;
@@ -9410,8 +9410,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'comment', elem.commentObject, false);
-  ComposeStringProps(json, 'comment', elem.commentObject, false);
+  ComposeStringValue(json, 'comment', elem.commentElement, false);
+  ComposeStringProps(json, 'comment', elem.commentElement, false);
   ComposeResourceReference{TFhirMedia}(json, 'link', elem.link_); {a}
   json.finishObject;
 end;
@@ -9429,9 +9429,9 @@ begin
       if (child.baseName = 'name') then
         result.name := ParseCodeableConcept(child, path+'/name') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirDiagnosticReportStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirDiagnosticReportStatus, path+'/status', child){1a}
       else if (child.baseName = 'issued') then
-        result.issuedObject := ParseDateTime(child, path+'/issued') {b}
+        result.issuedElement := ParseDateTime(child, path+'/issued') {b}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{Resource}(child, path+'/subject') {b}
       else if (child.baseName = 'performer') then
@@ -9455,7 +9455,7 @@ begin
       else if (child.baseName = 'image') then
         result.imageList.Add(ParseDiagnosticReportImage(child, path+'/image')){y.2}
       else if (child.baseName = 'conclusion') then
-        result.conclusionObject := ParseString(child, path+'/conclusion') {b}
+        result.conclusionElement := ParseString(child, path+'/conclusion') {b}
       else if (child.baseName = 'codedDiagnosis') then
         result.codedDiagnosisList.Add(ParseCodeableConcept(child, path+'/codedDiagnosis')){y.2}
       else if (child.baseName = 'presentedForm') then
@@ -9483,8 +9483,8 @@ begin
   composeResourceChildren(xml, elem);
   if not SummaryOnly then
     ComposeCodeableConcept(xml, 'name', elem.name);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirDiagnosticReportStatus);
-  ComposeDateTime(xml, 'issued', elem.issuedObject);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirDiagnosticReportStatus);
+  ComposeDateTime(xml, 'issued', elem.issuedElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{Resource}(xml, 'performer', elem.performer);{x.2}
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
@@ -9508,7 +9508,7 @@ begin
   for i := 0 to elem.imageList.Count - 1 do
     ComposeDiagnosticReportImage(xml, 'image', elem.imageList[i]);
   if not SummaryOnly then
-    ComposeString(xml, 'conclusion', elem.conclusionObject);{x.2}
+    ComposeString(xml, 'conclusion', elem.conclusionElement);{x.2}
   if not SummaryOnly then
     for i := 0 to elem.codedDiagnosisList.Count - 1 do
       ComposeCodeableConcept(xml, 'codedDiagnosis', elem.codedDiagnosisList[i]);
@@ -9532,9 +9532,9 @@ begin
     if jsn.has('name') then
         result.name := ParseCodeableConcept(jsn.vObj['name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticReportStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticReportStatus);
     if jsn.has('issued') or jsn.has('_issued') then
-        result.issuedObject := ParseDateTime(jsn['issued'], jsn.vObj['_issued']);{q}
+        result.issuedElement := ParseDateTime(jsn['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('subject') then
         result.subject := ParseResourceReference{Resource}(jsn.vObj['subject']);{q}
     if jsn.has('performer') then
@@ -9558,7 +9558,7 @@ begin
     if jsn.has('image') then
       iterateArray(jsn.vArr['image'], result.imageList, parseDiagnosticReportImage);
     if jsn.has('conclusion') or jsn.has('_conclusion') then
-        result.conclusionObject := ParseString(jsn['conclusion'], jsn.vObj['_conclusion']);{q}
+        result.conclusionElement := ParseString(jsn['conclusion'], jsn.vObj['_conclusion']);{q}
     if jsn.has('codedDiagnosis') then
       iterateArray(jsn.vArr['codedDiagnosis'], result.codedDiagnosisList, parseCodeableConcept);
     if jsn.has('presentedForm') then
@@ -9578,10 +9578,10 @@ begin
   ComposeResourceProperties(json, elem);
   if not SummaryOnly then
     ComposeCodeableConcept(json, 'name', elem.name); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirDiagnosticReportStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirDiagnosticReportStatus, false);
-  ComposeDateTimeValue(json, 'issued', elem.issuedObject, false);
-  ComposeDateTimeProps(json, 'issued', elem.issuedObject, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticReportStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticReportStatus, false);
+  ComposeDateTimeValue(json, 'issued', elem.issuedElement, false);
+  ComposeDateTimeProps(json, 'issued', elem.issuedElement, false);
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{Resource}(json, 'performer', elem.performer); {a}
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -9629,9 +9629,9 @@ begin
     json.FinishArray;
   end;
   if not SummaryOnly then
-    ComposeStringValue(json, 'conclusion', elem.conclusionObject, false);
+    ComposeStringValue(json, 'conclusion', elem.conclusionElement, false);
   if not SummaryOnly then
-    ComposeStringProps(json, 'conclusion', elem.conclusionObject, false);
+    ComposeStringProps(json, 'conclusion', elem.conclusionElement, false);
   if not SummaryOnly and (elem.codedDiagnosisList.Count > 0) then
   begin
     json.valueArray('codedDiagnosis');
@@ -9671,15 +9671,15 @@ begin
       else if (child.baseName = 'author') then
         result.authorList.Add(ParseResourceReference{Resource}(child, path+'/author')){y.2}
       else if (child.baseName = 'created') then
-        result.createdObject := ParseDateTime(child, path+'/created') {b}
+        result.createdElement := ParseDateTime(child, path+'/created') {b}
       else if (child.baseName = 'source') then
-        result.sourceObject := ParseUri(child, path+'/source') {b}
+        result.sourceElement := ParseUri(child, path+'/source') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirDocumentReferenceStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirDocumentReferenceStatus, path+'/status', child){1a}
       else if (child.baseName = 'supercedes') then
         result.supercedes := ParseResourceReference{TFhirDocumentManifest}(child, path+'/supercedes') {b}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'confidentiality') then
         result.confidentiality := ParseCodeableConcept(child, path+'/confidentiality') {b}
       else if (child.baseName = 'content') then
@@ -9715,11 +9715,11 @@ begin
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   for i := 0 to elem.authorList.Count - 1 do
     ComposeResourceReference{Resource}(xml, 'author', elem.authorList[i]);
-  ComposeDateTime(xml, 'created', elem.createdObject);{x.2}
-  ComposeUri(xml, 'source', elem.sourceObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirDocumentReferenceStatus);
+  ComposeDateTime(xml, 'created', elem.createdElement);{x.2}
+  ComposeUri(xml, 'source', elem.sourceElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatus);
   ComposeResourceReference{TFhirDocumentManifest}(xml, 'supercedes', elem.supercedes);{x.2}
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   ComposeCodeableConcept(xml, 'confidentiality', elem.confidentiality);{x.2}
   for i := 0 to elem.contentList.Count - 1 do
     ComposeResourceReference{Resource}(xml, 'content', elem.contentList[i]);
@@ -9750,15 +9750,15 @@ begin
     if jsn.has('author') then
       iterateArray(jsn.vArr['author'], result.authorList, parseResourceReference{Resource});
     if jsn.has('created') or jsn.has('_created') then
-        result.createdObject := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('source') or jsn.has('_source') then
-        result.sourceObject := ParseUri(jsn['source'], jsn.vObj['_source']);{q}
+        result.sourceElement := ParseUri(jsn['source'], jsn.vObj['_source']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatus);
     if jsn.has('supercedes') then
         result.supercedes := ParseResourceReference{TFhirDocumentManifest}(jsn.vObj['supercedes']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('confidentiality') then
         result.confidentiality := ParseCodeableConcept(jsn.vObj['confidentiality']);{q}
     if jsn.has('content') then
@@ -9806,15 +9806,15 @@ begin
       ComposeResourceReference{Resource}(json, '',elem.authorList[i]); {z - Resource(Practitioner|Device|Patient|RelatedPerson)}
     json.FinishArray;
   end;
-  ComposeDateTimeValue(json, 'created', elem.createdObject, false);
-  ComposeDateTimeProps(json, 'created', elem.createdObject, false);
-  ComposeUriValue(json, 'source', elem.sourceObject, false);
-  ComposeUriProps(json, 'source', elem.sourceObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirDocumentReferenceStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirDocumentReferenceStatus, false);
+  ComposeDateTimeValue(json, 'created', elem.createdElement, false);
+  ComposeDateTimeProps(json, 'created', elem.createdElement, false);
+  ComposeUriValue(json, 'source', elem.sourceElement, false);
+  ComposeUriProps(json, 'source', elem.sourceElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatus, false);
   ComposeResourceReference{TFhirDocumentManifest}(json, 'supercedes', elem.supercedes); {a}
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeCodeableConcept(json, 'confidentiality', elem.confidentiality); {a}
   if elem.contentList.Count > 0 then
   begin
@@ -9836,7 +9836,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'code') then
-        result.codeObject := ParseEnum(CODES_TFhirDocumentRelationshipType, path+'/code', child){1a}
+        result.codeElement := ParseEnum(CODES_TFhirDocumentRelationshipType, path+'/code', child){1a}
       else if (child.baseName = 'target') then
         result.target := ParseResourceReference{TFhirDocumentReference}(child, path+'/target') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -9858,7 +9858,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'code', elem.CodeObject, CODES_TFhirDocumentRelationshipType);
+  ComposeEnum(xml, 'code', elem.CodeElement, CODES_TFhirDocumentRelationshipType);
   ComposeResourceReference{TFhirDocumentReference}(xml, 'target', elem.target);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -9875,7 +9875,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeObject := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirDocumentRelationshipType);
+      result.codeElement := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirDocumentRelationshipType);
     if jsn.has('target') then
         result.target := ParseResourceReference{TFhirDocumentReference}(jsn.vObj['target']);{q}
     result.link;
@@ -9890,8 +9890,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'code', elem.CodeObject, CODES_TFhirDocumentRelationshipType, false);
-  ComposeEnumProps(json, 'code', elem.CodeObject, CODES_TFhirDocumentRelationshipType, false);
+  ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirDocumentRelationshipType, false);
+  ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirDocumentRelationshipType, false);
   ComposeResourceReference{TFhirDocumentReference}(json, 'target', elem.target); {a}
   json.finishObject;
 end;
@@ -9909,7 +9909,7 @@ begin
       if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'address') then
-        result.addressObject := ParseString(child, path+'/address') {b}
+        result.addressElement := ParseString(child, path+'/address') {b}
       else if (child.baseName = 'parameter') then
         result.parameterList.Add(ParseDocumentReferenceServiceParameter(child, path+'/parameter')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -9934,7 +9934,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
-  ComposeString(xml, 'address', elem.addressObject);{x.2}
+  ComposeString(xml, 'address', elem.addressElement);{x.2}
   for i := 0 to elem.parameterList.Count - 1 do
     ComposeDocumentReferenceServiceParameter(xml, 'parameter', elem.parameterList[i]);
   closeOutElement(xml, elem);
@@ -9954,7 +9954,7 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('address') or jsn.has('_address') then
-        result.addressObject := ParseString(jsn['address'], jsn.vObj['_address']);{q}
+        result.addressElement := ParseString(jsn['address'], jsn.vObj['_address']);{q}
     if jsn.has('parameter') then
       iterateArray(jsn.vArr['parameter'], result.parameterList, parseDocumentReferenceServiceParameter);
     result.link;
@@ -9972,8 +9972,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  ComposeStringValue(json, 'address', elem.addressObject, false);
-  ComposeStringProps(json, 'address', elem.addressObject, false);
+  ComposeStringValue(json, 'address', elem.addressElement, false);
+  ComposeStringProps(json, 'address', elem.addressElement, false);
   if elem.parameterList.Count > 0 then
   begin
     json.valueArray('parameter');
@@ -9995,9 +9995,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'value') then
-        result.valueObject := ParseString(child, path+'/value') {b}
+        result.valueElement := ParseString(child, path+'/value') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -10017,8 +10017,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'value', elem.valueObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'value', elem.valueElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -10034,9 +10034,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueObject := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
     result.link;
   finally
     result.free;
@@ -10049,10 +10049,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'value', elem.valueObject, false);
-  ComposeStringProps(json, 'value', elem.valueObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'value', elem.valueElement, false);
+  ComposeStringProps(json, 'value', elem.valueElement, false);
   json.finishObject;
 end;
 
@@ -10168,35 +10168,35 @@ begin
       else if (child.baseName = 'custodian') then
         result.custodian := ParseResourceReference{TFhirOrganization}(child, path+'/custodian') {b}
       else if (child.baseName = 'policyManager') then
-        result.policyManagerObject := ParseUri(child, path+'/policyManager') {b}
+        result.policyManagerElement := ParseUri(child, path+'/policyManager') {b}
       else if (child.baseName = 'authenticator') then
         result.authenticator := ParseResourceReference{Resource}(child, path+'/authenticator') {b}
       else if (child.baseName = 'created') then
-        result.createdObject := ParseDateTime(child, path+'/created') {b}
+        result.createdElement := ParseDateTime(child, path+'/created') {b}
       else if (child.baseName = 'indexed') then
-        result.indexedObject := ParseInstant(child, path+'/indexed') {b}
+        result.indexedElement := ParseInstant(child, path+'/indexed') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirDocumentReferenceStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirDocumentReferenceStatus, path+'/status', child){1a}
       else if (child.baseName = 'docStatus') then
         result.docStatus := ParseCodeableConcept(child, path+'/docStatus') {b}
       else if (child.baseName = 'relatesTo') then
         result.relatesToList.Add(ParseDocumentReferenceRelatesTo(child, path+'/relatesTo')){y.2}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'confidentiality') then
         result.confidentialityList.Add(ParseCodeableConcept(child, path+'/confidentiality')){y.2}
       else if (child.baseName = 'primaryLanguage') then
-        result.primaryLanguageObject := ParseCode(child, path+'/primaryLanguage') {b}
+        result.primaryLanguageElement := ParseCode(child, path+'/primaryLanguage') {b}
       else if (child.baseName = 'mimeType') then
-        result.mimeTypeObject := ParseCode(child, path+'/mimeType') {b}
+        result.mimeTypeElement := ParseCode(child, path+'/mimeType') {b}
       else if (child.baseName = 'format') then
         result.formatList.Add(ParseUri(child, path+'/format')){y.2}
       else if (child.baseName = 'size') then
-        result.sizeObject := ParseInteger(child, path+'/size') {b}
+        result.sizeElement := ParseInteger(child, path+'/size') {b}
       else if (child.baseName = 'hash') then
-        result.hashObject := ParseString(child, path+'/hash') {b}
+        result.hashElement := ParseString(child, path+'/hash') {b}
       else if (child.baseName = 'location') then
-        result.locationObject := ParseUri(child, path+'/location') {b}
+        result.locationElement := ParseUri(child, path+'/location') {b}
       else if (child.baseName = 'service') then
         result.service := ParseDocumentReferenceService(child, path+'/service') {b}
       else if (child.baseName = 'context') then
@@ -10231,24 +10231,24 @@ begin
   for i := 0 to elem.authorList.Count - 1 do
     ComposeResourceReference{Resource}(xml, 'author', elem.authorList[i]);
   ComposeResourceReference{TFhirOrganization}(xml, 'custodian', elem.custodian);{x.2}
-  ComposeUri(xml, 'policyManager', elem.policyManagerObject);{x.2}
+  ComposeUri(xml, 'policyManager', elem.policyManagerElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'authenticator', elem.authenticator);{x.2}
-  ComposeDateTime(xml, 'created', elem.createdObject);{x.2}
-  ComposeInstant(xml, 'indexed', elem.indexedObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirDocumentReferenceStatus);
+  ComposeDateTime(xml, 'created', elem.createdElement);{x.2}
+  ComposeInstant(xml, 'indexed', elem.indexedElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatus);
   ComposeCodeableConcept(xml, 'docStatus', elem.docStatus);{x.2}
   for i := 0 to elem.relatesToList.Count - 1 do
     ComposeDocumentReferenceRelatesTo(xml, 'relatesTo', elem.relatesToList[i]);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   for i := 0 to elem.confidentialityList.Count - 1 do
     ComposeCodeableConcept(xml, 'confidentiality', elem.confidentialityList[i]);
-  ComposeCode(xml, 'primaryLanguage', elem.primaryLanguageObject);{x.2}
-  ComposeCode(xml, 'mimeType', elem.mimeTypeObject);{x.2}
+  ComposeCode(xml, 'primaryLanguage', elem.primaryLanguageElement);{x.2}
+  ComposeCode(xml, 'mimeType', elem.mimeTypeElement);{x.2}
   for i := 0 to elem.formatList.Count - 1 do
     ComposeUri(xml, 'format', elem.formatList[i]);
-  ComposeInteger(xml, 'size', elem.sizeObject);{x.2}
-  ComposeString(xml, 'hash', elem.hashObject);{x.2}
-  ComposeUri(xml, 'location', elem.locationObject);{x.2}
+  ComposeInteger(xml, 'size', elem.sizeElement);{x.2}
+  ComposeString(xml, 'hash', elem.hashElement);{x.2}
+  ComposeUri(xml, 'location', elem.locationElement);{x.2}
   ComposeDocumentReferenceService(xml, 'service', elem.service);{x.2}
   ComposeDocumentReferenceContext(xml, 'context', elem.context);{x.2}
   closeOutElement(xml, elem);
@@ -10280,35 +10280,35 @@ begin
     if jsn.has('custodian') then
         result.custodian := ParseResourceReference{TFhirOrganization}(jsn.vObj['custodian']);{q}
     if jsn.has('policyManager') or jsn.has('_policyManager') then
-        result.policyManagerObject := ParseUri(jsn['policyManager'], jsn.vObj['_policyManager']);{q}
+        result.policyManagerElement := ParseUri(jsn['policyManager'], jsn.vObj['_policyManager']);{q}
     if jsn.has('authenticator') then
         result.authenticator := ParseResourceReference{Resource}(jsn.vObj['authenticator']);{q}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdObject := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('indexed') or jsn.has('_indexed') then
-        result.indexedObject := ParseInstant(jsn['indexed'], jsn.vObj['_indexed']);{q}
+        result.indexedElement := ParseInstant(jsn['indexed'], jsn.vObj['_indexed']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatus);
     if jsn.has('docStatus') then
         result.docStatus := ParseCodeableConcept(jsn.vObj['docStatus']);{q}
     if jsn.has('relatesTo') then
       iterateArray(jsn.vArr['relatesTo'], result.relatesToList, parseDocumentReferenceRelatesTo);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('confidentiality') then
       iterateArray(jsn.vArr['confidentiality'], result.confidentialityList, parseCodeableConcept);
     if jsn.has('primaryLanguage') or jsn.has('_primaryLanguage') then
-        result.primaryLanguageObject := ParseCode(jsn['primaryLanguage'], jsn.vObj['_primaryLanguage']);{q}
+        result.primaryLanguageElement := ParseCode(jsn['primaryLanguage'], jsn.vObj['_primaryLanguage']);{q}
     if jsn.has('mimeType') or jsn.has('_mimeType') then
-        result.mimeTypeObject := ParseCode(jsn['mimeType'], jsn.vObj['_mimeType']);{q}
+        result.mimeTypeElement := ParseCode(jsn['mimeType'], jsn.vObj['_mimeType']);{q}
       if jsn.has('format') or jsn.has('_format') then
       iteratePrimitiveArray(jsn.vArr['format'], jsn.vArr['_format'], result.formatList, parseUri);
     if jsn.has('size') or jsn.has('_size') then
-        result.sizeObject := ParseInteger(jsn['size'], jsn.vObj['_size']);{q}
+        result.sizeElement := ParseInteger(jsn['size'], jsn.vObj['_size']);{q}
     if jsn.has('hash') or jsn.has('_hash') then
-        result.hashObject := ParseString(jsn['hash'], jsn.vObj['_hash']);{q}
+        result.hashElement := ParseString(jsn['hash'], jsn.vObj['_hash']);{q}
     if jsn.has('location') or jsn.has('_location') then
-        result.locationObject := ParseUri(jsn['location'], jsn.vObj['_location']);{q}
+        result.locationElement := ParseUri(jsn['location'], jsn.vObj['_location']);{q}
     if jsn.has('service') then
         result.service := ParseDocumentReferenceService(jsn.vObj['service']);{q}
     if jsn.has('context') then
@@ -10346,15 +10346,15 @@ begin
     json.FinishArray;
   end;
   ComposeResourceReference{TFhirOrganization}(json, 'custodian', elem.custodian); {a}
-  ComposeUriValue(json, 'policyManager', elem.policyManagerObject, false);
-  ComposeUriProps(json, 'policyManager', elem.policyManagerObject, false);
+  ComposeUriValue(json, 'policyManager', elem.policyManagerElement, false);
+  ComposeUriProps(json, 'policyManager', elem.policyManagerElement, false);
   ComposeResourceReference{Resource}(json, 'authenticator', elem.authenticator); {a}
-  ComposeDateTimeValue(json, 'created', elem.createdObject, false);
-  ComposeDateTimeProps(json, 'created', elem.createdObject, false);
-  ComposeInstantValue(json, 'indexed', elem.indexedObject, false);
-  ComposeInstantProps(json, 'indexed', elem.indexedObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirDocumentReferenceStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirDocumentReferenceStatus, false);
+  ComposeDateTimeValue(json, 'created', elem.createdElement, false);
+  ComposeDateTimeProps(json, 'created', elem.createdElement, false);
+  ComposeInstantValue(json, 'indexed', elem.indexedElement, false);
+  ComposeInstantProps(json, 'indexed', elem.indexedElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatus, false);
   ComposeCodeableConcept(json, 'docStatus', elem.docStatus); {a}
   if elem.relatesToList.Count > 0 then
   begin
@@ -10363,8 +10363,8 @@ begin
       ComposeDocumentReferenceRelatesTo(json, '',elem.relatesToList[i]); {z - }
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if elem.confidentialityList.Count > 0 then
   begin
     json.valueArray('confidentiality');
@@ -10372,10 +10372,10 @@ begin
       ComposeCodeableConcept(json, '',elem.confidentialityList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  ComposeCodeValue(json, 'primaryLanguage', elem.primaryLanguageObject, false);
-  ComposeCodeProps(json, 'primaryLanguage', elem.primaryLanguageObject, false);
-  ComposeCodeValue(json, 'mimeType', elem.mimeTypeObject, false);
-  ComposeCodeProps(json, 'mimeType', elem.mimeTypeObject, false);
+  ComposeCodeValue(json, 'primaryLanguage', elem.primaryLanguageElement, false);
+  ComposeCodeProps(json, 'primaryLanguage', elem.primaryLanguageElement, false);
+  ComposeCodeValue(json, 'mimeType', elem.mimeTypeElement, false);
+  ComposeCodeProps(json, 'mimeType', elem.mimeTypeElement, false);
   if elem.formatList.Count > 0 then
   begin
     json.valueArray('format');
@@ -10394,12 +10394,12 @@ begin
       json.FinishArray;
     end;
   end;
-  ComposeIntegerValue(json, 'size', elem.sizeObject, false);
-  ComposeIntegerProps(json, 'size', elem.sizeObject, false);
-  ComposeStringValue(json, 'hash', elem.hashObject, false);
-  ComposeStringProps(json, 'hash', elem.hashObject, false);
-  ComposeUriValue(json, 'location', elem.locationObject, false);
-  ComposeUriProps(json, 'location', elem.locationObject, false);
+  ComposeIntegerValue(json, 'size', elem.sizeElement, false);
+  ComposeIntegerProps(json, 'size', elem.sizeElement, false);
+  ComposeStringValue(json, 'hash', elem.hashElement, false);
+  ComposeStringProps(json, 'hash', elem.hashElement, false);
+  ComposeUriValue(json, 'location', elem.locationElement, false);
+  ComposeUriProps(json, 'location', elem.locationElement, false);
   ComposeDocumentReferenceService(json, 'service', elem.service); {a}
   ComposeDocumentReferenceContext(json, 'context', elem.context); {a}
 end;
@@ -10518,7 +10518,7 @@ begin
       else if (child.baseName = 'dischargeDiagnosis') then
         result.dischargeDiagnosis := ParseResourceReference{Resource}(child, path+'/dischargeDiagnosis') {b}
       else if (child.baseName = 'reAdmission') then
-        result.reAdmissionObject := ParseBoolean(child, path+'/reAdmission') {b}
+        result.reAdmissionElement := ParseBoolean(child, path+'/reAdmission') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -10554,7 +10554,7 @@ begin
   ComposeResourceReference{TFhirLocation}(xml, 'destination', elem.destination);{x.2}
   ComposeCodeableConcept(xml, 'dischargeDisposition', elem.dischargeDisposition);{x.2}
   ComposeResourceReference{Resource}(xml, 'dischargeDiagnosis', elem.dischargeDiagnosis);{x.2}
-  ComposeBoolean(xml, 'reAdmission', elem.reAdmissionObject);{x.2}
+  ComposeBoolean(xml, 'reAdmission', elem.reAdmissionElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -10592,7 +10592,7 @@ begin
     if jsn.has('dischargeDiagnosis') then
         result.dischargeDiagnosis := ParseResourceReference{Resource}(jsn.vObj['dischargeDiagnosis']);{q}
     if jsn.has('reAdmission') or jsn.has('_reAdmission') then
-        result.reAdmissionObject := ParseBoolean(jsn['reAdmission'], jsn.vObj['_reAdmission']);{q}
+        result.reAdmissionElement := ParseBoolean(jsn['reAdmission'], jsn.vObj['_reAdmission']);{q}
     result.link;
   finally
     result.free;
@@ -10636,8 +10636,8 @@ begin
   ComposeResourceReference{TFhirLocation}(json, 'destination', elem.destination); {a}
   ComposeCodeableConcept(json, 'dischargeDisposition', elem.dischargeDisposition); {a}
   ComposeResourceReference{Resource}(json, 'dischargeDiagnosis', elem.dischargeDiagnosis); {a}
-  ComposeBooleanValue(json, 'reAdmission', elem.reAdmissionObject, false);
-  ComposeBooleanProps(json, 'reAdmission', elem.reAdmissionObject, false);
+  ComposeBooleanValue(json, 'reAdmission', elem.reAdmissionElement, false);
+  ComposeBooleanProps(json, 'reAdmission', elem.reAdmissionElement, false);
   json.finishObject;
 end;
 
@@ -10794,9 +10794,9 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirEncounterState, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirEncounterState, path+'/status', child){1a}
       else if (child.baseName = 'class') then
-        result.class_Object := ParseEnum(CODES_TFhirEncounterClass, path+'/class', child){1a}
+        result.class_Element := ParseEnum(CODES_TFhirEncounterClass, path+'/class', child){1a}
       else if (child.baseName = 'type') then
         result.type_List.Add(ParseCodeableConcept(child, path+'/type')){y.2}
       else if (child.baseName = 'subject') then
@@ -10844,8 +10844,8 @@ begin
   composeResourceChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirEncounterState);
-  ComposeEnum(xml, 'class', elem.Class_Object, CODES_TFhirEncounterClass);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirEncounterState);
+  ComposeEnum(xml, 'class', elem.Class_Element, CODES_TFhirEncounterClass);
   for i := 0 to elem.type_List.Count - 1 do
     ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
@@ -10886,9 +10886,9 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterState);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterState);
     if jsn.has('class') or jsn.has('_class')  then
-      result.class_Object := parseEnum(jsn['class'], jsn.vObj['_class'], CODES_TFhirEncounterClass);
+      result.class_Element := parseEnum(jsn['class'], jsn.vObj['_class'], CODES_TFhirEncounterClass);
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('subject') then
@@ -10933,10 +10933,10 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirEncounterState, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirEncounterState, false);
-  ComposeEnumValue(json, 'class', elem.Class_Object, CODES_TFhirEncounterClass, false);
-  ComposeEnumProps(json, 'class', elem.Class_Object, CODES_TFhirEncounterClass, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEncounterState, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEncounterState, false);
+  ComposeEnumValue(json, 'class', elem.Class_Element, CODES_TFhirEncounterClass, false);
+  ComposeEnumProps(json, 'class', elem.Class_Element, CODES_TFhirEncounterClass, false);
   if elem.type_List.Count > 0 then
   begin
     json.valueArray('type');
@@ -10987,7 +10987,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'relationship') then
         result.relationship := ParseCodeableConcept(child, path+'/relationship') {b}
       else if (child.baseName = 'bornPeriod') then
@@ -11007,7 +11007,7 @@ begin
       else if (child.baseName = 'deceasedString') then
         result.deceased := ParseString(child, path+'/deceasedString'){x.3}
       else if (child.baseName = 'note') then
-        result.noteObject := ParseString(child, path+'/note') {b}
+        result.noteElement := ParseString(child, path+'/note') {b}
       else if (child.baseName = 'condition') then
         result.conditionList.Add(ParseFamilyHistoryRelationCondition(child, path+'/condition')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -11031,7 +11031,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
   ComposeCodeableConcept(xml, 'relationship', elem.relationship);{x.2}
   if (elem.born is TFhirPeriod) {6} then
     ComposePeriod(xml, 'bornPeriod', TFhirPeriod(elem.born))
@@ -11049,7 +11049,7 @@ begin
     ComposeDate(xml, 'deceasedDate', TFhirDate(elem.deceased))
   else if (elem.deceased is TFhirString) {6} then
     ComposeString(xml, 'deceasedString', TFhirString(elem.deceased));
-  ComposeString(xml, 'note', elem.noteObject);{x.2}
+  ComposeString(xml, 'note', elem.noteElement);{x.2}
   for i := 0 to elem.conditionList.Count - 1 do
     ComposeFamilyHistoryRelationCondition(xml, 'condition', elem.conditionList[i]);
   closeOutElement(xml, elem);
@@ -11067,7 +11067,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('relationship') then
         result.relationship := ParseCodeableConcept(jsn.vObj['relationship']);{q}
     if jsn.has('bornPeriod') {a4} then
@@ -11087,7 +11087,7 @@ begin
     if jsn.has('deceasedString') or jsn.has('_deceasedString') then
       result.deceased := parseString(jsn['deceasedString'], jsn.vObj['_deceasedString']);
     if jsn.has('note') or jsn.has('_note') then
-        result.noteObject := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
     if jsn.has('condition') then
       iterateArray(jsn.vArr['condition'], result.conditionList, parseFamilyHistoryRelationCondition);
     result.link;
@@ -11104,8 +11104,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeCodeableConcept(json, 'relationship', elem.relationship); {a}
   if (elem.born is TFhirPeriod) then 
     ComposePeriod(json, 'bornPeriod', TFhirPeriod(elem.born)) 
@@ -11138,8 +11138,8 @@ begin
     ComposeStringValue(json, 'deceasedString', TFhirString(elem.deceased), false);
     ComposeStringProps(json, 'deceasedString', TFhirString(elem.deceased), false);
   end;
-  ComposeStringValue(json, 'note', elem.noteObject, false);
-  ComposeStringProps(json, 'note', elem.noteObject, false);
+  ComposeStringValue(json, 'note', elem.noteElement, false);
+  ComposeStringProps(json, 'note', elem.noteElement, false);
   if elem.conditionList.Count > 0 then
   begin
     json.valueArray('condition');
@@ -11171,7 +11171,7 @@ begin
       else if (child.baseName = 'onsetString') then
         result.onset := ParseString(child, path+'/onsetString'){x.3}
       else if (child.baseName = 'note') then
-        result.noteObject := ParseString(child, path+'/note') {b}
+        result.noteElement := ParseString(child, path+'/note') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -11199,7 +11199,7 @@ begin
     ComposeRange(xml, 'onsetRange', TFhirRange(elem.onset))
   else if (elem.onset is TFhirString) {6} then
     ComposeString(xml, 'onsetString', TFhirString(elem.onset));
-  ComposeString(xml, 'note', elem.noteObject);{x.2}
+  ComposeString(xml, 'note', elem.noteElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -11225,7 +11225,7 @@ begin
     if jsn.has('onsetString') or jsn.has('_onsetString') then
       result.onset := parseString(jsn['onsetString'], jsn.vObj['_onsetString']);
     if jsn.has('note') or jsn.has('_note') then
-        result.noteObject := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
     result.link;
   finally
     result.free;
@@ -11249,8 +11249,8 @@ begin
     ComposeStringValue(json, 'onsetString', TFhirString(elem.onset), false);
     ComposeStringProps(json, 'onsetString', TFhirString(elem.onset), false);
   end;
-  ComposeStringValue(json, 'note', elem.noteObject, false);
-  ComposeStringProps(json, 'note', elem.noteObject, false);
+  ComposeStringValue(json, 'note', elem.noteElement, false);
+  ComposeStringProps(json, 'note', elem.noteElement, false);
   json.finishObject;
 end;
 
@@ -11269,7 +11269,7 @@ begin
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.baseName = 'note') then
-        result.noteObject := ParseString(child, path+'/note') {b}
+        result.noteElement := ParseString(child, path+'/note') {b}
       else if (child.baseName = 'relation') then
         result.relationList.Add(ParseFamilyHistoryRelation(child, path+'/relation')){y.2}
       else if Not ParseResourceChild(result, path, child) then
@@ -11297,7 +11297,7 @@ begin
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
   if not SummaryOnly then
-    ComposeString(xml, 'note', elem.noteObject);{x.2}
+    ComposeString(xml, 'note', elem.noteElement);{x.2}
   if not SummaryOnly then
     for i := 0 to elem.relationList.Count - 1 do
       ComposeFamilyHistoryRelation(xml, 'relation', elem.relationList[i]);
@@ -11320,7 +11320,7 @@ begin
     if jsn.has('subject') then
         result.subject := ParseResourceReference{TFhirPatient}(jsn.vObj['subject']);{q}
     if jsn.has('note') or jsn.has('_note') then
-        result.noteObject := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
     if jsn.has('relation') then
       iterateArray(jsn.vArr['relation'], result.relationList, parseFamilyHistoryRelation);
     result.link;
@@ -11345,9 +11345,9 @@ begin
   end;
   ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
   if not SummaryOnly then
-    ComposeStringValue(json, 'note', elem.noteObject, false);
+    ComposeStringValue(json, 'note', elem.noteElement, false);
   if not SummaryOnly then
-    ComposeStringProps(json, 'note', elem.noteObject, false);
+    ComposeStringProps(json, 'note', elem.noteElement, false);
   if not SummaryOnly and (elem.relationList.Count > 0) then
   begin
     json.valueArray('relation');
@@ -11378,7 +11378,7 @@ begin
       else if (child.baseName = 'valueRange') then
         result.value := ParseRange(child, path+'/valueRange'){x.3}
       else if (child.baseName = 'exclude') then
-        result.excludeObject := ParseBoolean(child, path+'/exclude') {b}
+        result.excludeElement := ParseBoolean(child, path+'/exclude') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -11407,7 +11407,7 @@ begin
     ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (elem.value is TFhirRange) {6} then
     ComposeRange(xml, 'valueRange', TFhirRange(elem.value));
-  ComposeBoolean(xml, 'exclude', elem.excludeObject);{x.2}
+  ComposeBoolean(xml, 'exclude', elem.excludeElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -11433,7 +11433,7 @@ begin
     if jsn.has('valueRange') {a4} then
       result.value := ParseRange(jsn.vObj['valueRange']);
     if jsn.has('exclude') or jsn.has('_exclude') then
-        result.excludeObject := ParseBoolean(jsn['exclude'], jsn.vObj['_exclude']);{q}
+        result.excludeElement := ParseBoolean(jsn['exclude'], jsn.vObj['_exclude']);{q}
     result.link;
   finally
     result.free;
@@ -11458,8 +11458,8 @@ begin
     ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value)) 
   else if (elem.value is TFhirRange) then 
     ComposeRange(json, 'valueRange', TFhirRange(elem.value)) ;
-  ComposeBooleanValue(json, 'exclude', elem.excludeObject, false);
-  ComposeBooleanProps(json, 'exclude', elem.excludeObject, false);
+  ComposeBooleanValue(json, 'exclude', elem.excludeElement, false);
+  ComposeBooleanProps(json, 'exclude', elem.excludeElement, false);
   json.finishObject;
 end;
 
@@ -11476,15 +11476,15 @@ begin
       if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirGroupType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirGroupType, path+'/type', child){1a}
       else if (child.baseName = 'actual') then
-        result.actualObject := ParseBoolean(child, path+'/actual') {b}
+        result.actualElement := ParseBoolean(child, path+'/actual') {b}
       else if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'quantity') then
-        result.quantityObject := ParseInteger(child, path+'/quantity') {b}
+        result.quantityElement := ParseInteger(child, path+'/quantity') {b}
       else if (child.baseName = 'characteristic') then
         result.characteristicList.Add(ParseGroupCharacteristic(child, path+'/characteristic')){y.2}
       else if (child.baseName = 'member') then
@@ -11511,11 +11511,11 @@ begin
   xml.open(name);
   composeResourceChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirGroupType);
-  ComposeBoolean(xml, 'actual', elem.actualObject);{x.2}
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirGroupType);
+  ComposeBoolean(xml, 'actual', elem.actualElement);{x.2}
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeInteger(xml, 'quantity', elem.quantityObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeInteger(xml, 'quantity', elem.quantityElement);{x.2}
   if not SummaryOnly then
     for i := 0 to elem.characteristicList.Count - 1 do
       ComposeGroupCharacteristic(xml, 'characteristic', elem.characteristicList[i]);
@@ -11539,15 +11539,15 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirGroupType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirGroupType);
     if jsn.has('actual') or jsn.has('_actual') then
-        result.actualObject := ParseBoolean(jsn['actual'], jsn.vObj['_actual']);{q}
+        result.actualElement := ParseBoolean(jsn['actual'], jsn.vObj['_actual']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('quantity') or jsn.has('_quantity') then
-        result.quantityObject := ParseInteger(jsn['quantity'], jsn.vObj['_quantity']);{q}
+        result.quantityElement := ParseInteger(jsn['quantity'], jsn.vObj['_quantity']);{q}
     if jsn.has('characteristic') then
       iterateArray(jsn.vArr['characteristic'], result.characteristicList, parseGroupCharacteristic);
     if jsn.has('member') then
@@ -11566,15 +11566,15 @@ begin
     exit;
   ComposeResourceProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirGroupType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirGroupType, false);
-  ComposeBooleanValue(json, 'actual', elem.actualObject, false);
-  ComposeBooleanProps(json, 'actual', elem.actualObject, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirGroupType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirGroupType, false);
+  ComposeBooleanValue(json, 'actual', elem.actualElement, false);
+  ComposeBooleanProps(json, 'actual', elem.actualElement, false);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeIntegerValue(json, 'quantity', elem.quantityObject, false);
-  ComposeIntegerProps(json, 'quantity', elem.quantityObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeIntegerValue(json, 'quantity', elem.quantityElement, false);
+  ComposeIntegerProps(json, 'quantity', elem.quantityElement, false);
   if not SummaryOnly and (elem.characteristicList.Count > 0) then
   begin
     json.valueArray('characteristic');
@@ -11602,23 +11602,23 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'number') then
-        result.numberObject := ParseInteger(child, path+'/number') {b}
+        result.numberElement := ParseInteger(child, path+'/number') {b}
       else if (child.baseName = 'modality') then
-        result.modalityObject := ParseEnum(CODES_TFhirModality, path+'/modality', child){1a}
+        result.modalityElement := ParseEnum(CODES_TFhirModality, path+'/modality', child){1a}
       else if (child.baseName = 'uid') then
-        result.uidObject := ParseOid(child, path+'/uid') {b}
+        result.uidElement := ParseOid(child, path+'/uid') {b}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'numberOfInstances') then
-        result.numberOfInstancesObject := ParseInteger(child, path+'/numberOfInstances') {b}
+        result.numberOfInstancesElement := ParseInteger(child, path+'/numberOfInstances') {b}
       else if (child.baseName = 'availability') then
-        result.availabilityObject := ParseEnum(CODES_TFhirInstanceAvailability, path+'/availability', child){1a}
+        result.availabilityElement := ParseEnum(CODES_TFhirInstanceAvailability, path+'/availability', child){1a}
       else if (child.baseName = 'url') then
-        result.urlObject := ParseUri(child, path+'/url') {b}
+        result.urlElement := ParseUri(child, path+'/url') {b}
       else if (child.baseName = 'bodySite') then
         result.bodySite := ParseCoding(child, path+'/bodySite') {b}
       else if (child.baseName = 'dateTime') then
-        result.dateTimeObject := ParseDateTime(child, path+'/dateTime') {b}
+        result.dateTimeElement := ParseDateTime(child, path+'/dateTime') {b}
       else if (child.baseName = 'instance') then
         result.instanceList.Add(ParseImagingStudySeriesInstance(child, path+'/instance')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -11642,15 +11642,15 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeInteger(xml, 'number', elem.numberObject);{x.2}
-  ComposeEnum(xml, 'modality', elem.ModalityObject, CODES_TFhirModality);
-  ComposeOid(xml, 'uid', elem.uidObject);{x.2}
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
-  ComposeInteger(xml, 'numberOfInstances', elem.numberOfInstancesObject);{x.2}
-  ComposeEnum(xml, 'availability', elem.AvailabilityObject, CODES_TFhirInstanceAvailability);
-  ComposeUri(xml, 'url', elem.urlObject);{x.2}
+  ComposeInteger(xml, 'number', elem.numberElement);{x.2}
+  ComposeEnum(xml, 'modality', elem.ModalityElement, CODES_TFhirModality);
+  ComposeOid(xml, 'uid', elem.uidElement);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
+  ComposeInteger(xml, 'numberOfInstances', elem.numberOfInstancesElement);{x.2}
+  ComposeEnum(xml, 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailability);
+  ComposeUri(xml, 'url', elem.urlElement);{x.2}
   ComposeCoding(xml, 'bodySite', elem.bodySite);{x.2}
-  ComposeDateTime(xml, 'dateTime', elem.dateTimeObject);{x.2}
+  ComposeDateTime(xml, 'dateTime', elem.dateTimeElement);{x.2}
   for i := 0 to elem.instanceList.Count - 1 do
     ComposeImagingStudySeriesInstance(xml, 'instance', elem.instanceList[i]);
   closeOutElement(xml, elem);
@@ -11668,23 +11668,23 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('number') or jsn.has('_number') then
-        result.numberObject := ParseInteger(jsn['number'], jsn.vObj['_number']);{q}
+        result.numberElement := ParseInteger(jsn['number'], jsn.vObj['_number']);{q}
     if jsn.has('modality') or jsn.has('_modality')  then
-      result.modalityObject := parseEnum(jsn['modality'], jsn.vObj['_modality'], CODES_TFhirModality);
+      result.modalityElement := parseEnum(jsn['modality'], jsn.vObj['_modality'], CODES_TFhirModality);
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidObject := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('numberOfInstances') or jsn.has('_numberOfInstances') then
-        result.numberOfInstancesObject := ParseInteger(jsn['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
+        result.numberOfInstancesElement := ParseInteger(jsn['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
     if jsn.has('availability') or jsn.has('_availability')  then
-      result.availabilityObject := parseEnum(jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailability);
+      result.availabilityElement := parseEnum(jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailability);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlObject := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('bodySite') then
         result.bodySite := ParseCoding(jsn.vObj['bodySite']);{q}
     if jsn.has('dateTime') or jsn.has('_dateTime') then
-        result.dateTimeObject := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
+        result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('instance') then
       iterateArray(jsn.vArr['instance'], result.instanceList, parseImagingStudySeriesInstance);
     result.link;
@@ -11701,23 +11701,23 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIntegerValue(json, 'number', elem.numberObject, false);
-  ComposeIntegerProps(json, 'number', elem.numberObject, false);
-  ComposeEnumValue(json, 'modality', elem.ModalityObject, CODES_TFhirModality, false);
-  ComposeEnumProps(json, 'modality', elem.ModalityObject, CODES_TFhirModality, false);
-  ComposeOidValue(json, 'uid', elem.uidObject, false);
-  ComposeOidProps(json, 'uid', elem.uidObject, false);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
-  ComposeIntegerValue(json, 'numberOfInstances', elem.numberOfInstancesObject, false);
-  ComposeIntegerProps(json, 'numberOfInstances', elem.numberOfInstancesObject, false);
-  ComposeEnumValue(json, 'availability', elem.AvailabilityObject, CODES_TFhirInstanceAvailability, false);
-  ComposeEnumProps(json, 'availability', elem.AvailabilityObject, CODES_TFhirInstanceAvailability, false);
-  ComposeUriValue(json, 'url', elem.urlObject, false);
-  ComposeUriProps(json, 'url', elem.urlObject, false);
+  ComposeIntegerValue(json, 'number', elem.numberElement, false);
+  ComposeIntegerProps(json, 'number', elem.numberElement, false);
+  ComposeEnumValue(json, 'modality', elem.ModalityElement, CODES_TFhirModality, false);
+  ComposeEnumProps(json, 'modality', elem.ModalityElement, CODES_TFhirModality, false);
+  ComposeOidValue(json, 'uid', elem.uidElement, false);
+  ComposeOidProps(json, 'uid', elem.uidElement, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  ComposeIntegerValue(json, 'numberOfInstances', elem.numberOfInstancesElement, false);
+  ComposeIntegerProps(json, 'numberOfInstances', elem.numberOfInstancesElement, false);
+  ComposeEnumValue(json, 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailability, false);
+  ComposeEnumProps(json, 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailability, false);
+  ComposeUriValue(json, 'url', elem.urlElement, false);
+  ComposeUriProps(json, 'url', elem.urlElement, false);
   ComposeCoding(json, 'bodySite', elem.bodySite); {a}
-  ComposeDateTimeValue(json, 'dateTime', elem.dateTimeObject, false);
-  ComposeDateTimeProps(json, 'dateTime', elem.dateTimeObject, false);
+  ComposeDateTimeValue(json, 'dateTime', elem.dateTimeElement, false);
+  ComposeDateTimeProps(json, 'dateTime', elem.dateTimeElement, false);
   if elem.instanceList.Count > 0 then
   begin
     json.valueArray('instance');
@@ -11739,17 +11739,17 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'number') then
-        result.numberObject := ParseInteger(child, path+'/number') {b}
+        result.numberElement := ParseInteger(child, path+'/number') {b}
       else if (child.baseName = 'uid') then
-        result.uidObject := ParseOid(child, path+'/uid') {b}
+        result.uidElement := ParseOid(child, path+'/uid') {b}
       else if (child.baseName = 'sopclass') then
-        result.sopclassObject := ParseOid(child, path+'/sopclass') {b}
+        result.sopclassElement := ParseOid(child, path+'/sopclass') {b}
       else if (child.baseName = 'type') then
-        result.type_Object := ParseString(child, path+'/type') {b}
+        result.type_Element := ParseString(child, path+'/type') {b}
       else if (child.baseName = 'title') then
-        result.titleObject := ParseString(child, path+'/title') {b}
+        result.titleElement := ParseString(child, path+'/title') {b}
       else if (child.baseName = 'url') then
-        result.urlObject := ParseUri(child, path+'/url') {b}
+        result.urlElement := ParseUri(child, path+'/url') {b}
       else if (child.baseName = 'attachment') then
         result.attachment := ParseResourceReference{Resource}(child, path+'/attachment') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -11771,12 +11771,12 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeInteger(xml, 'number', elem.numberObject);{x.2}
-  ComposeOid(xml, 'uid', elem.uidObject);{x.2}
-  ComposeOid(xml, 'sopclass', elem.sopclassObject);{x.2}
-  ComposeString(xml, 'type', elem.type_Object);{x.2}
-  ComposeString(xml, 'title', elem.titleObject);{x.2}
-  ComposeUri(xml, 'url', elem.urlObject);{x.2}
+  ComposeInteger(xml, 'number', elem.numberElement);{x.2}
+  ComposeOid(xml, 'uid', elem.uidElement);{x.2}
+  ComposeOid(xml, 'sopclass', elem.sopclassElement);{x.2}
+  ComposeString(xml, 'type', elem.type_Element);{x.2}
+  ComposeString(xml, 'title', elem.titleElement);{x.2}
+  ComposeUri(xml, 'url', elem.urlElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'attachment', elem.attachment);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -11793,17 +11793,17 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('number') or jsn.has('_number') then
-        result.numberObject := ParseInteger(jsn['number'], jsn.vObj['_number']);{q}
+        result.numberElement := ParseInteger(jsn['number'], jsn.vObj['_number']);{q}
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidObject := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('sopclass') or jsn.has('_sopclass') then
-        result.sopclassObject := ParseOid(jsn['sopclass'], jsn.vObj['_sopclass']);{q}
+        result.sopclassElement := ParseOid(jsn['sopclass'], jsn.vObj['_sopclass']);{q}
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Object := ParseString(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseString(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('title') or jsn.has('_title') then
-        result.titleObject := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlObject := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('attachment') then
         result.attachment := ParseResourceReference{Resource}(jsn.vObj['attachment']);{q}
     result.link;
@@ -11818,18 +11818,18 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIntegerValue(json, 'number', elem.numberObject, false);
-  ComposeIntegerProps(json, 'number', elem.numberObject, false);
-  ComposeOidValue(json, 'uid', elem.uidObject, false);
-  ComposeOidProps(json, 'uid', elem.uidObject, false);
-  ComposeOidValue(json, 'sopclass', elem.sopclassObject, false);
-  ComposeOidProps(json, 'sopclass', elem.sopclassObject, false);
-  ComposeStringValue(json, 'type', elem.type_Object, false);
-  ComposeStringProps(json, 'type', elem.type_Object, false);
-  ComposeStringValue(json, 'title', elem.titleObject, false);
-  ComposeStringProps(json, 'title', elem.titleObject, false);
-  ComposeUriValue(json, 'url', elem.urlObject, false);
-  ComposeUriProps(json, 'url', elem.urlObject, false);
+  ComposeIntegerValue(json, 'number', elem.numberElement, false);
+  ComposeIntegerProps(json, 'number', elem.numberElement, false);
+  ComposeOidValue(json, 'uid', elem.uidElement, false);
+  ComposeOidProps(json, 'uid', elem.uidElement, false);
+  ComposeOidValue(json, 'sopclass', elem.sopclassElement, false);
+  ComposeOidProps(json, 'sopclass', elem.sopclassElement, false);
+  ComposeStringValue(json, 'type', elem.type_Element, false);
+  ComposeStringProps(json, 'type', elem.type_Element, false);
+  ComposeStringValue(json, 'title', elem.titleElement, false);
+  ComposeStringProps(json, 'title', elem.titleElement, false);
+  ComposeUriValue(json, 'url', elem.urlElement, false);
+  ComposeUriProps(json, 'url', elem.urlElement, false);
   ComposeResourceReference{Resource}(json, 'attachment', elem.attachment); {a}
   json.finishObject;
 end;
@@ -11845,11 +11845,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'dateTime') then
-        result.dateTimeObject := ParseDateTime(child, path+'/dateTime') {b}
+        result.dateTimeElement := ParseDateTime(child, path+'/dateTime') {b}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.baseName = 'uid') then
-        result.uidObject := ParseOid(child, path+'/uid') {b}
+        result.uidElement := ParseOid(child, path+'/uid') {b}
       else if (child.baseName = 'accessionNo') then
         result.accessionNo := ParseIdentifier(child, path+'/accessionNo') {b}
       else if (child.baseName = 'identifier') then
@@ -11861,21 +11861,21 @@ begin
       else if (child.baseName = 'referrer') then
         result.referrer := ParseResourceReference{TFhirPractitioner}(child, path+'/referrer') {b}
       else if (child.baseName = 'availability') then
-        result.availabilityObject := ParseEnum(CODES_TFhirInstanceAvailability, path+'/availability', child){1a}
+        result.availabilityElement := ParseEnum(CODES_TFhirInstanceAvailability, path+'/availability', child){1a}
       else if (child.baseName = 'url') then
-        result.urlObject := ParseUri(child, path+'/url') {b}
+        result.urlElement := ParseUri(child, path+'/url') {b}
       else if (child.baseName = 'numberOfSeries') then
-        result.numberOfSeriesObject := ParseInteger(child, path+'/numberOfSeries') {b}
+        result.numberOfSeriesElement := ParseInteger(child, path+'/numberOfSeries') {b}
       else if (child.baseName = 'numberOfInstances') then
-        result.numberOfInstancesObject := ParseInteger(child, path+'/numberOfInstances') {b}
+        result.numberOfInstancesElement := ParseInteger(child, path+'/numberOfInstances') {b}
       else if (child.baseName = 'clinicalInformation') then
-        result.clinicalInformationObject := ParseString(child, path+'/clinicalInformation') {b}
+        result.clinicalInformationElement := ParseString(child, path+'/clinicalInformation') {b}
       else if (child.baseName = 'procedure') then
         result.procedure_List.Add(ParseCoding(child, path+'/procedure')){y.2}
       else if (child.baseName = 'interpreter') then
         result.interpreter := ParseResourceReference{TFhirPractitioner}(child, path+'/interpreter') {b}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'series') then
         result.seriesList.Add(ParseImagingStudySeries(child, path+'/series')){y.2}
       else if Not ParseResourceChild(result, path, child) then
@@ -11899,9 +11899,9 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeDateTime(xml, 'dateTime', elem.dateTimeObject);{x.2}
+  ComposeDateTime(xml, 'dateTime', elem.dateTimeElement);{x.2}
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
-  ComposeOid(xml, 'uid', elem.uidObject);{x.2}
+  ComposeOid(xml, 'uid', elem.uidElement);{x.2}
   ComposeIdentifier(xml, 'accessionNo', elem.accessionNo);{x.2}
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
@@ -11910,15 +11910,15 @@ begin
   for i := 0 to elem.modality.Count - 1 do
     ComposeEnum(xml, 'modality', elem.modality[i], CODES_TFhirImagingModality);
   ComposeResourceReference{TFhirPractitioner}(xml, 'referrer', elem.referrer);{x.2}
-  ComposeEnum(xml, 'availability', elem.AvailabilityObject, CODES_TFhirInstanceAvailability);
-  ComposeUri(xml, 'url', elem.urlObject);{x.2}
-  ComposeInteger(xml, 'numberOfSeries', elem.numberOfSeriesObject);{x.2}
-  ComposeInteger(xml, 'numberOfInstances', elem.numberOfInstancesObject);{x.2}
-  ComposeString(xml, 'clinicalInformation', elem.clinicalInformationObject);{x.2}
+  ComposeEnum(xml, 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailability);
+  ComposeUri(xml, 'url', elem.urlElement);{x.2}
+  ComposeInteger(xml, 'numberOfSeries', elem.numberOfSeriesElement);{x.2}
+  ComposeInteger(xml, 'numberOfInstances', elem.numberOfInstancesElement);{x.2}
+  ComposeString(xml, 'clinicalInformation', elem.clinicalInformationElement);{x.2}
   for i := 0 to elem.procedure_List.Count - 1 do
     ComposeCoding(xml, 'procedure', elem.procedure_List[i]);
   ComposeResourceReference{TFhirPractitioner}(xml, 'interpreter', elem.interpreter);{x.2}
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   for i := 0 to elem.seriesList.Count - 1 do
     ComposeImagingStudySeries(xml, 'series', elem.seriesList[i]);
   closeOutElement(xml, elem);
@@ -11936,11 +11936,11 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('dateTime') or jsn.has('_dateTime') then
-        result.dateTimeObject := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
+        result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('subject') then
         result.subject := ParseResourceReference{TFhirPatient}(jsn.vObj['subject']);{q}
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidObject := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('accessionNo') then
         result.accessionNo := ParseIdentifier(jsn.vObj['accessionNo']);{q}
     if jsn.has('identifier') then
@@ -11952,21 +11952,21 @@ begin
     if jsn.has('referrer') then
         result.referrer := ParseResourceReference{TFhirPractitioner}(jsn.vObj['referrer']);{q}
     if jsn.has('availability') or jsn.has('_availability')  then
-      result.availabilityObject := parseEnum(jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailability);
+      result.availabilityElement := parseEnum(jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailability);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlObject := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('numberOfSeries') or jsn.has('_numberOfSeries') then
-        result.numberOfSeriesObject := ParseInteger(jsn['numberOfSeries'], jsn.vObj['_numberOfSeries']);{q}
+        result.numberOfSeriesElement := ParseInteger(jsn['numberOfSeries'], jsn.vObj['_numberOfSeries']);{q}
     if jsn.has('numberOfInstances') or jsn.has('_numberOfInstances') then
-        result.numberOfInstancesObject := ParseInteger(jsn['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
+        result.numberOfInstancesElement := ParseInteger(jsn['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
     if jsn.has('clinicalInformation') or jsn.has('_clinicalInformation') then
-        result.clinicalInformationObject := ParseString(jsn['clinicalInformation'], jsn.vObj['_clinicalInformation']);{q}
+        result.clinicalInformationElement := ParseString(jsn['clinicalInformation'], jsn.vObj['_clinicalInformation']);{q}
     if jsn.has('procedure') then
       iterateArray(jsn.vArr['procedure'], result.procedure_List, parseCoding);
     if jsn.has('interpreter') then
         result.interpreter := ParseResourceReference{TFhirPractitioner}(jsn.vObj['interpreter']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('series') then
       iterateArray(jsn.vArr['series'], result.seriesList, parseImagingStudySeries);
     result.link;
@@ -11983,11 +11983,11 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeDateTimeValue(json, 'dateTime', elem.dateTimeObject, false);
-  ComposeDateTimeProps(json, 'dateTime', elem.dateTimeObject, false);
+  ComposeDateTimeValue(json, 'dateTime', elem.dateTimeElement, false);
+  ComposeDateTimeProps(json, 'dateTime', elem.dateTimeElement, false);
   ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
-  ComposeOidValue(json, 'uid', elem.uidObject, false);
-  ComposeOidProps(json, 'uid', elem.uidObject, false);
+  ComposeOidValue(json, 'uid', elem.uidElement, false);
+  ComposeOidProps(json, 'uid', elem.uidElement, false);
   ComposeIdentifier(json, 'accessionNo', elem.accessionNo); {a}
   if elem.identifierList.Count > 0 then
   begin
@@ -12022,16 +12022,16 @@ begin
     end;
   end;
   ComposeResourceReference{TFhirPractitioner}(json, 'referrer', elem.referrer); {a}
-  ComposeEnumValue(json, 'availability', elem.AvailabilityObject, CODES_TFhirInstanceAvailability, false);
-  ComposeEnumProps(json, 'availability', elem.AvailabilityObject, CODES_TFhirInstanceAvailability, false);
-  ComposeUriValue(json, 'url', elem.urlObject, false);
-  ComposeUriProps(json, 'url', elem.urlObject, false);
-  ComposeIntegerValue(json, 'numberOfSeries', elem.numberOfSeriesObject, false);
-  ComposeIntegerProps(json, 'numberOfSeries', elem.numberOfSeriesObject, false);
-  ComposeIntegerValue(json, 'numberOfInstances', elem.numberOfInstancesObject, false);
-  ComposeIntegerProps(json, 'numberOfInstances', elem.numberOfInstancesObject, false);
-  ComposeStringValue(json, 'clinicalInformation', elem.clinicalInformationObject, false);
-  ComposeStringProps(json, 'clinicalInformation', elem.clinicalInformationObject, false);
+  ComposeEnumValue(json, 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailability, false);
+  ComposeEnumProps(json, 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailability, false);
+  ComposeUriValue(json, 'url', elem.urlElement, false);
+  ComposeUriProps(json, 'url', elem.urlElement, false);
+  ComposeIntegerValue(json, 'numberOfSeries', elem.numberOfSeriesElement, false);
+  ComposeIntegerProps(json, 'numberOfSeries', elem.numberOfSeriesElement, false);
+  ComposeIntegerValue(json, 'numberOfInstances', elem.numberOfInstancesElement, false);
+  ComposeIntegerProps(json, 'numberOfInstances', elem.numberOfInstancesElement, false);
+  ComposeStringValue(json, 'clinicalInformation', elem.clinicalInformationElement, false);
+  ComposeStringProps(json, 'clinicalInformation', elem.clinicalInformationElement, false);
   if elem.procedure_List.Count > 0 then
   begin
     json.valueArray('procedure');
@@ -12040,8 +12040,8 @@ begin
     json.FinishArray;
   end;
   ComposeResourceReference{TFhirPractitioner}(json, 'interpreter', elem.interpreter); {a}
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if elem.seriesList.Count > 0 then
   begin
     json.valueArray('series');
@@ -12150,11 +12150,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'detail') then
         result.detail := ParseResourceReference{Resource}(child, path+'/detail') {b}
       else if (child.baseName = 'reported') then
-        result.reportedObject := ParseBoolean(child, path+'/reported') {b}
+        result.reportedElement := ParseBoolean(child, path+'/reported') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -12174,9 +12174,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'detail', elem.detail);{x.2}
-  ComposeBoolean(xml, 'reported', elem.reportedObject);{x.2}
+  ComposeBoolean(xml, 'reported', elem.reportedElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -12192,11 +12192,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('detail') then
         result.detail := ParseResourceReference{Resource}(jsn.vObj['detail']);{q}
     if jsn.has('reported') or jsn.has('_reported') then
-        result.reportedObject := ParseBoolean(jsn['reported'], jsn.vObj['_reported']);{q}
+        result.reportedElement := ParseBoolean(jsn['reported'], jsn.vObj['_reported']);{q}
     result.link;
   finally
     result.free;
@@ -12209,11 +12209,11 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeResourceReference{Resource}(json, 'detail', elem.detail); {a}
-  ComposeBooleanValue(json, 'reported', elem.reportedObject, false);
-  ComposeBooleanProps(json, 'reported', elem.reportedObject, false);
+  ComposeBooleanValue(json, 'reported', elem.reportedElement, false);
+  ComposeBooleanProps(json, 'reported', elem.reportedElement, false);
   json.finishObject;
 end;
 
@@ -12228,15 +12228,15 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'doseSequence') then
-        result.doseSequenceObject := ParseInteger(child, path+'/doseSequence') {b}
+        result.doseSequenceElement := ParseInteger(child, path+'/doseSequence') {b}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'authority') then
         result.authority := ParseResourceReference{TFhirOrganization}(child, path+'/authority') {b}
       else if (child.baseName = 'series') then
-        result.seriesObject := ParseString(child, path+'/series') {b}
+        result.seriesElement := ParseString(child, path+'/series') {b}
       else if (child.baseName = 'seriesDoses') then
-        result.seriesDosesObject := ParseInteger(child, path+'/seriesDoses') {b}
+        result.seriesDosesElement := ParseInteger(child, path+'/seriesDoses') {b}
       else if (child.baseName = 'doseTarget') then
         result.doseTarget := ParseCodeableConcept(child, path+'/doseTarget') {b}
       else if (child.baseName = 'doseStatus') then
@@ -12262,11 +12262,11 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeInteger(xml, 'doseSequence', elem.doseSequenceObject);{x.2}
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeInteger(xml, 'doseSequence', elem.doseSequenceElement);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   ComposeResourceReference{TFhirOrganization}(xml, 'authority', elem.authority);{x.2}
-  ComposeString(xml, 'series', elem.seriesObject);{x.2}
-  ComposeInteger(xml, 'seriesDoses', elem.seriesDosesObject);{x.2}
+  ComposeString(xml, 'series', elem.seriesElement);{x.2}
+  ComposeInteger(xml, 'seriesDoses', elem.seriesDosesElement);{x.2}
   ComposeCodeableConcept(xml, 'doseTarget', elem.doseTarget);{x.2}
   ComposeCodeableConcept(xml, 'doseStatus', elem.doseStatus);{x.2}
   ComposeCodeableConcept(xml, 'doseStatusReason', elem.doseStatusReason);{x.2}
@@ -12285,15 +12285,15 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('doseSequence') or jsn.has('_doseSequence') then
-        result.doseSequenceObject := ParseInteger(jsn['doseSequence'], jsn.vObj['_doseSequence']);{q}
+        result.doseSequenceElement := ParseInteger(jsn['doseSequence'], jsn.vObj['_doseSequence']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('authority') then
         result.authority := ParseResourceReference{TFhirOrganization}(jsn.vObj['authority']);{q}
     if jsn.has('series') or jsn.has('_series') then
-        result.seriesObject := ParseString(jsn['series'], jsn.vObj['_series']);{q}
+        result.seriesElement := ParseString(jsn['series'], jsn.vObj['_series']);{q}
     if jsn.has('seriesDoses') or jsn.has('_seriesDoses') then
-        result.seriesDosesObject := ParseInteger(jsn['seriesDoses'], jsn.vObj['_seriesDoses']);{q}
+        result.seriesDosesElement := ParseInteger(jsn['seriesDoses'], jsn.vObj['_seriesDoses']);{q}
     if jsn.has('doseTarget') then
         result.doseTarget := ParseCodeableConcept(jsn.vObj['doseTarget']);{q}
     if jsn.has('doseStatus') then
@@ -12312,15 +12312,15 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIntegerValue(json, 'doseSequence', elem.doseSequenceObject, false);
-  ComposeIntegerProps(json, 'doseSequence', elem.doseSequenceObject, false);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeIntegerValue(json, 'doseSequence', elem.doseSequenceElement, false);
+  ComposeIntegerProps(json, 'doseSequence', elem.doseSequenceElement, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeResourceReference{TFhirOrganization}(json, 'authority', elem.authority); {a}
-  ComposeStringValue(json, 'series', elem.seriesObject, false);
-  ComposeStringProps(json, 'series', elem.seriesObject, false);
-  ComposeIntegerValue(json, 'seriesDoses', elem.seriesDosesObject, false);
-  ComposeIntegerProps(json, 'seriesDoses', elem.seriesDosesObject, false);
+  ComposeStringValue(json, 'series', elem.seriesElement, false);
+  ComposeStringProps(json, 'series', elem.seriesElement, false);
+  ComposeIntegerValue(json, 'seriesDoses', elem.seriesDosesElement, false);
+  ComposeIntegerProps(json, 'seriesDoses', elem.seriesDosesElement, false);
   ComposeCodeableConcept(json, 'doseTarget', elem.doseTarget); {a}
   ComposeCodeableConcept(json, 'doseStatus', elem.doseStatus); {a}
   ComposeCodeableConcept(json, 'doseStatusReason', elem.doseStatusReason); {a}
@@ -12340,15 +12340,15 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'vaccineType') then
         result.vaccineType := ParseCodeableConcept(child, path+'/vaccineType') {b}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.baseName = 'refusedIndicator') then
-        result.refusedIndicatorObject := ParseBoolean(child, path+'/refusedIndicator') {b}
+        result.refusedIndicatorElement := ParseBoolean(child, path+'/refusedIndicator') {b}
       else if (child.baseName = 'reported') then
-        result.reportedObject := ParseBoolean(child, path+'/reported') {b}
+        result.reportedElement := ParseBoolean(child, path+'/reported') {b}
       else if (child.baseName = 'performer') then
         result.performer := ParseResourceReference{TFhirPractitioner}(child, path+'/performer') {b}
       else if (child.baseName = 'requester') then
@@ -12358,9 +12358,9 @@ begin
       else if (child.baseName = 'location') then
         result.location := ParseResourceReference{TFhirLocation}(child, path+'/location') {b}
       else if (child.baseName = 'lotNumber') then
-        result.lotNumberObject := ParseString(child, path+'/lotNumber') {b}
+        result.lotNumberElement := ParseString(child, path+'/lotNumber') {b}
       else if (child.baseName = 'expirationDate') then
-        result.expirationDateObject := ParseDate(child, path+'/expirationDate') {b}
+        result.expirationDateElement := ParseDate(child, path+'/expirationDate') {b}
       else if (child.baseName = 'site') then
         result.site := ParseCodeableConcept(child, path+'/site') {b}
       else if (child.baseName = 'route') then
@@ -12396,17 +12396,17 @@ begin
   composeResourceChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeCodeableConcept(xml, 'vaccineType', elem.vaccineType);{x.2}
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
-  ComposeBoolean(xml, 'refusedIndicator', elem.refusedIndicatorObject);{x.2}
-  ComposeBoolean(xml, 'reported', elem.reportedObject);{x.2}
+  ComposeBoolean(xml, 'refusedIndicator', elem.refusedIndicatorElement);{x.2}
+  ComposeBoolean(xml, 'reported', elem.reportedElement);{x.2}
   ComposeResourceReference{TFhirPractitioner}(xml, 'performer', elem.performer);{x.2}
   ComposeResourceReference{TFhirPractitioner}(xml, 'requester', elem.requester);{x.2}
   ComposeResourceReference{TFhirOrganization}(xml, 'manufacturer', elem.manufacturer);{x.2}
   ComposeResourceReference{TFhirLocation}(xml, 'location', elem.location);{x.2}
-  ComposeString(xml, 'lotNumber', elem.lotNumberObject);{x.2}
-  ComposeDate(xml, 'expirationDate', elem.expirationDateObject);{x.2}
+  ComposeString(xml, 'lotNumber', elem.lotNumberElement);{x.2}
+  ComposeDate(xml, 'expirationDate', elem.expirationDateElement);{x.2}
   ComposeCodeableConcept(xml, 'site', elem.site);{x.2}
   ComposeCodeableConcept(xml, 'route', elem.route);{x.2}
   ComposeQuantity(xml, 'doseQuantity', elem.doseQuantity);{x.2}
@@ -12432,15 +12432,15 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('vaccineType') then
         result.vaccineType := ParseCodeableConcept(jsn.vObj['vaccineType']);{q}
     if jsn.has('subject') then
         result.subject := ParseResourceReference{TFhirPatient}(jsn.vObj['subject']);{q}
     if jsn.has('refusedIndicator') or jsn.has('_refusedIndicator') then
-        result.refusedIndicatorObject := ParseBoolean(jsn['refusedIndicator'], jsn.vObj['_refusedIndicator']);{q}
+        result.refusedIndicatorElement := ParseBoolean(jsn['refusedIndicator'], jsn.vObj['_refusedIndicator']);{q}
     if jsn.has('reported') or jsn.has('_reported') then
-        result.reportedObject := ParseBoolean(jsn['reported'], jsn.vObj['_reported']);{q}
+        result.reportedElement := ParseBoolean(jsn['reported'], jsn.vObj['_reported']);{q}
     if jsn.has('performer') then
         result.performer := ParseResourceReference{TFhirPractitioner}(jsn.vObj['performer']);{q}
     if jsn.has('requester') then
@@ -12450,9 +12450,9 @@ begin
     if jsn.has('location') then
         result.location := ParseResourceReference{TFhirLocation}(jsn.vObj['location']);{q}
     if jsn.has('lotNumber') or jsn.has('_lotNumber') then
-        result.lotNumberObject := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
+        result.lotNumberElement := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
     if jsn.has('expirationDate') or jsn.has('_expirationDate') then
-        result.expirationDateObject := ParseDate(jsn['expirationDate'], jsn.vObj['_expirationDate']);{q}
+        result.expirationDateElement := ParseDate(jsn['expirationDate'], jsn.vObj['_expirationDate']);{q}
     if jsn.has('site') then
         result.site := ParseCodeableConcept(jsn.vObj['site']);{q}
     if jsn.has('route') then
@@ -12485,22 +12485,22 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeCodeableConcept(json, 'vaccineType', elem.vaccineType); {a}
   ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
-  ComposeBooleanValue(json, 'refusedIndicator', elem.refusedIndicatorObject, false);
-  ComposeBooleanProps(json, 'refusedIndicator', elem.refusedIndicatorObject, false);
-  ComposeBooleanValue(json, 'reported', elem.reportedObject, false);
-  ComposeBooleanProps(json, 'reported', elem.reportedObject, false);
+  ComposeBooleanValue(json, 'refusedIndicator', elem.refusedIndicatorElement, false);
+  ComposeBooleanProps(json, 'refusedIndicator', elem.refusedIndicatorElement, false);
+  ComposeBooleanValue(json, 'reported', elem.reportedElement, false);
+  ComposeBooleanProps(json, 'reported', elem.reportedElement, false);
   ComposeResourceReference{TFhirPractitioner}(json, 'performer', elem.performer); {a}
   ComposeResourceReference{TFhirPractitioner}(json, 'requester', elem.requester); {a}
   ComposeResourceReference{TFhirOrganization}(json, 'manufacturer', elem.manufacturer); {a}
   ComposeResourceReference{TFhirLocation}(json, 'location', elem.location); {a}
-  ComposeStringValue(json, 'lotNumber', elem.lotNumberObject, false);
-  ComposeStringProps(json, 'lotNumber', elem.lotNumberObject, false);
-  ComposeDateValue(json, 'expirationDate', elem.expirationDateObject, false);
-  ComposeDateProps(json, 'expirationDate', elem.expirationDateObject, false);
+  ComposeStringValue(json, 'lotNumber', elem.lotNumberElement, false);
+  ComposeStringProps(json, 'lotNumber', elem.lotNumberElement, false);
+  ComposeDateValue(json, 'expirationDate', elem.expirationDateElement, false);
+  ComposeDateProps(json, 'expirationDate', elem.expirationDateElement, false);
   ComposeCodeableConcept(json, 'site', elem.site); {a}
   ComposeCodeableConcept(json, 'route', elem.route); {a}
   ComposeQuantity(json, 'doseQuantity', elem.doseQuantity); {a}
@@ -12532,11 +12532,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'vaccineType') then
         result.vaccineType := ParseCodeableConcept(child, path+'/vaccineType') {b}
       else if (child.baseName = 'doseNumber') then
-        result.doseNumberObject := ParseInteger(child, path+'/doseNumber') {b}
+        result.doseNumberElement := ParseInteger(child, path+'/doseNumber') {b}
       else if (child.baseName = 'forecastStatus') then
         result.forecastStatus := ParseCodeableConcept(child, path+'/forecastStatus') {b}
       else if (child.baseName = 'dateCriterion') then
@@ -12568,9 +12568,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeCodeableConcept(xml, 'vaccineType', elem.vaccineType);{x.2}
-  ComposeInteger(xml, 'doseNumber', elem.doseNumberObject);{x.2}
+  ComposeInteger(xml, 'doseNumber', elem.doseNumberElement);{x.2}
   ComposeCodeableConcept(xml, 'forecastStatus', elem.forecastStatus);{x.2}
   for i := 0 to elem.dateCriterionList.Count - 1 do
     ComposeImmunizationRecommendationRecommendationDateCriterion(xml, 'dateCriterion', elem.dateCriterionList[i]);
@@ -12594,11 +12594,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('vaccineType') then
         result.vaccineType := ParseCodeableConcept(jsn.vObj['vaccineType']);{q}
     if jsn.has('doseNumber') or jsn.has('_doseNumber') then
-        result.doseNumberObject := ParseInteger(jsn['doseNumber'], jsn.vObj['_doseNumber']);{q}
+        result.doseNumberElement := ParseInteger(jsn['doseNumber'], jsn.vObj['_doseNumber']);{q}
     if jsn.has('forecastStatus') then
         result.forecastStatus := ParseCodeableConcept(jsn.vObj['forecastStatus']);{q}
     if jsn.has('dateCriterion') then
@@ -12623,11 +12623,11 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeCodeableConcept(json, 'vaccineType', elem.vaccineType); {a}
-  ComposeIntegerValue(json, 'doseNumber', elem.doseNumberObject, false);
-  ComposeIntegerProps(json, 'doseNumber', elem.doseNumberObject, false);
+  ComposeIntegerValue(json, 'doseNumber', elem.doseNumberElement, false);
+  ComposeIntegerProps(json, 'doseNumber', elem.doseNumberElement, false);
   ComposeCodeableConcept(json, 'forecastStatus', elem.forecastStatus); {a}
   if elem.dateCriterionList.Count > 0 then
   begin
@@ -12667,7 +12667,7 @@ begin
       if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'value') then
-        result.valueObject := ParseDateTime(child, path+'/value') {b}
+        result.valueElement := ParseDateTime(child, path+'/value') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -12688,7 +12688,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
-  ComposeDateTime(xml, 'value', elem.valueObject);{x.2}
+  ComposeDateTime(xml, 'value', elem.valueElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -12706,7 +12706,7 @@ begin
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueObject := ParseDateTime(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDateTime(jsn['value'], jsn.vObj['_value']);{q}
     result.link;
   finally
     result.free;
@@ -12720,8 +12720,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
-  ComposeDateTimeValue(json, 'value', elem.valueObject, false);
-  ComposeDateTimeProps(json, 'value', elem.valueObject, false);
+  ComposeDateTimeValue(json, 'value', elem.valueElement, false);
+  ComposeDateTimeProps(json, 'value', elem.valueElement, false);
   json.finishObject;
 end;
 
@@ -12736,13 +12736,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'doseSequence') then
-        result.doseSequenceObject := ParseInteger(child, path+'/doseSequence') {b}
+        result.doseSequenceElement := ParseInteger(child, path+'/doseSequence') {b}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'authority') then
         result.authority := ParseResourceReference{TFhirOrganization}(child, path+'/authority') {b}
       else if (child.baseName = 'series') then
-        result.seriesObject := ParseString(child, path+'/series') {b}
+        result.seriesElement := ParseString(child, path+'/series') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -12762,10 +12762,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeInteger(xml, 'doseSequence', elem.doseSequenceObject);{x.2}
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeInteger(xml, 'doseSequence', elem.doseSequenceElement);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   ComposeResourceReference{TFhirOrganization}(xml, 'authority', elem.authority);{x.2}
-  ComposeString(xml, 'series', elem.seriesObject);{x.2}
+  ComposeString(xml, 'series', elem.seriesElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -12781,13 +12781,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('doseSequence') or jsn.has('_doseSequence') then
-        result.doseSequenceObject := ParseInteger(jsn['doseSequence'], jsn.vObj['_doseSequence']);{q}
+        result.doseSequenceElement := ParseInteger(jsn['doseSequence'], jsn.vObj['_doseSequence']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('authority') then
         result.authority := ParseResourceReference{TFhirOrganization}(jsn.vObj['authority']);{q}
     if jsn.has('series') or jsn.has('_series') then
-        result.seriesObject := ParseString(jsn['series'], jsn.vObj['_series']);{q}
+        result.seriesElement := ParseString(jsn['series'], jsn.vObj['_series']);{q}
     result.link;
   finally
     result.free;
@@ -12800,13 +12800,13 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIntegerValue(json, 'doseSequence', elem.doseSequenceObject, false);
-  ComposeIntegerProps(json, 'doseSequence', elem.doseSequenceObject, false);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeIntegerValue(json, 'doseSequence', elem.doseSequenceElement, false);
+  ComposeIntegerProps(json, 'doseSequence', elem.doseSequenceElement, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeResourceReference{TFhirOrganization}(json, 'authority', elem.authority); {a}
-  ComposeStringValue(json, 'series', elem.seriesObject, false);
-  ComposeStringProps(json, 'series', elem.seriesObject, false);
+  ComposeStringValue(json, 'series', elem.seriesElement, false);
+  ComposeStringProps(json, 'series', elem.seriesElement, false);
   json.finishObject;
 end;
 
@@ -12915,9 +12915,9 @@ begin
       if (child.baseName = 'flag') then
         result.flagList.Add(ParseCodeableConcept(child, path+'/flag')){y.2}
       else if (child.baseName = 'deleted') then
-        result.deletedObject := ParseBoolean(child, path+'/deleted') {b}
+        result.deletedElement := ParseBoolean(child, path+'/deleted') {b}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'item') then
         result.item := ParseResourceReference{Resource}(child, path+'/item') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -12943,8 +12943,8 @@ begin
   composeBackboneElementChildren(xml, elem);
   for i := 0 to elem.flagList.Count - 1 do
     ComposeCodeableConcept(xml, 'flag', elem.flagList[i]);
-  ComposeBoolean(xml, 'deleted', elem.deletedObject);{x.2}
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeBoolean(xml, 'deleted', elem.deletedElement);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'item', elem.item);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -12963,9 +12963,9 @@ begin
     if jsn.has('flag') then
       iterateArray(jsn.vArr['flag'], result.flagList, parseCodeableConcept);
     if jsn.has('deleted') or jsn.has('_deleted') then
-        result.deletedObject := ParseBoolean(jsn['deleted'], jsn.vObj['_deleted']);{q}
+        result.deletedElement := ParseBoolean(jsn['deleted'], jsn.vObj['_deleted']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('item') then
         result.item := ParseResourceReference{Resource}(jsn.vObj['item']);{q}
     result.link;
@@ -12989,10 +12989,10 @@ begin
       ComposeCodeableConcept(json, '',elem.flagList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  ComposeBooleanValue(json, 'deleted', elem.deletedObject, false);
-  ComposeBooleanProps(json, 'deleted', elem.deletedObject, false);
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeBooleanValue(json, 'deleted', elem.deletedElement, false);
+  ComposeBooleanProps(json, 'deleted', elem.deletedElement, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeResourceReference{Resource}(json, 'item', elem.item); {a}
   json.finishObject;
 end;
@@ -13016,11 +13016,11 @@ begin
       else if (child.baseName = 'source') then
         result.source := ParseResourceReference{Resource}(child, path+'/source') {b}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'ordered') then
-        result.orderedObject := ParseBoolean(child, path+'/ordered') {b}
+        result.orderedElement := ParseBoolean(child, path+'/ordered') {b}
       else if (child.baseName = 'mode') then
-        result.modeObject := ParseEnum(CODES_TFhirListMode, path+'/mode', child){1a}
+        result.modeElement := ParseEnum(CODES_TFhirListMode, path+'/mode', child){1a}
       else if (child.baseName = 'entry') then
         result.entryList.Add(ParseListEntry(child, path+'/entry')){y.2}
       else if (child.baseName = 'emptyReason') then
@@ -13051,9 +13051,9 @@ begin
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{Resource}(xml, 'source', elem.source);{x.2}
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
-  ComposeBoolean(xml, 'ordered', elem.orderedObject);{x.2}
-  ComposeEnum(xml, 'mode', elem.ModeObject, CODES_TFhirListMode);
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
+  ComposeBoolean(xml, 'ordered', elem.orderedElement);{x.2}
+  ComposeEnum(xml, 'mode', elem.ModeElement, CODES_TFhirListMode);
   for i := 0 to elem.entryList.Count - 1 do
     ComposeListEntry(xml, 'entry', elem.entryList[i]);
   ComposeCodeableConcept(xml, 'emptyReason', elem.emptyReason);{x.2}
@@ -13080,11 +13080,11 @@ begin
     if jsn.has('source') then
         result.source := ParseResourceReference{Resource}(jsn.vObj['source']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('ordered') or jsn.has('_ordered') then
-        result.orderedObject := ParseBoolean(jsn['ordered'], jsn.vObj['_ordered']);{q}
+        result.orderedElement := ParseBoolean(jsn['ordered'], jsn.vObj['_ordered']);{q}
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeObject := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListMode);
+      result.modeElement := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListMode);
     if jsn.has('entry') then
       iterateArray(jsn.vArr['entry'], result.entryList, parseListEntry);
     if jsn.has('emptyReason') then
@@ -13112,12 +13112,12 @@ begin
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{Resource}(json, 'source', elem.source); {a}
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
-  ComposeBooleanValue(json, 'ordered', elem.orderedObject, false);
-  ComposeBooleanProps(json, 'ordered', elem.orderedObject, false);
-  ComposeEnumValue(json, 'mode', elem.ModeObject, CODES_TFhirListMode, false);
-  ComposeEnumProps(json, 'mode', elem.ModeObject, CODES_TFhirListMode, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
+  ComposeBooleanValue(json, 'ordered', elem.orderedElement, false);
+  ComposeBooleanProps(json, 'ordered', elem.orderedElement, false);
+  ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirListMode, false);
+  ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirListMode, false);
   if elem.entryList.Count > 0 then
   begin
     json.valueArray('entry');
@@ -13139,11 +13139,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'longitude') then
-        result.longitudeObject := ParseDecimal(child, path+'/longitude') {b}
+        result.longitudeElement := ParseDecimal(child, path+'/longitude') {b}
       else if (child.baseName = 'latitude') then
-        result.latitudeObject := ParseDecimal(child, path+'/latitude') {b}
+        result.latitudeElement := ParseDecimal(child, path+'/latitude') {b}
       else if (child.baseName = 'altitude') then
-        result.altitudeObject := ParseDecimal(child, path+'/altitude') {b}
+        result.altitudeElement := ParseDecimal(child, path+'/altitude') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -13163,9 +13163,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeDecimal(xml, 'longitude', elem.longitudeObject);{x.2}
-  ComposeDecimal(xml, 'latitude', elem.latitudeObject);{x.2}
-  ComposeDecimal(xml, 'altitude', elem.altitudeObject);{x.2}
+  ComposeDecimal(xml, 'longitude', elem.longitudeElement);{x.2}
+  ComposeDecimal(xml, 'latitude', elem.latitudeElement);{x.2}
+  ComposeDecimal(xml, 'altitude', elem.altitudeElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -13181,11 +13181,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('longitude') or jsn.has('_longitude') then
-        result.longitudeObject := ParseDecimal(jsn['longitude'], jsn.vObj['_longitude']);{q}
+        result.longitudeElement := ParseDecimal(jsn['longitude'], jsn.vObj['_longitude']);{q}
     if jsn.has('latitude') or jsn.has('_latitude') then
-        result.latitudeObject := ParseDecimal(jsn['latitude'], jsn.vObj['_latitude']);{q}
+        result.latitudeElement := ParseDecimal(jsn['latitude'], jsn.vObj['_latitude']);{q}
     if jsn.has('altitude') or jsn.has('_altitude') then
-        result.altitudeObject := ParseDecimal(jsn['altitude'], jsn.vObj['_altitude']);{q}
+        result.altitudeElement := ParseDecimal(jsn['altitude'], jsn.vObj['_altitude']);{q}
     result.link;
   finally
     result.free;
@@ -13198,12 +13198,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeDecimalValue(json, 'longitude', elem.longitudeObject, false);
-  ComposeDecimalProps(json, 'longitude', elem.longitudeObject, false);
-  ComposeDecimalValue(json, 'latitude', elem.latitudeObject, false);
-  ComposeDecimalProps(json, 'latitude', elem.latitudeObject, false);
-  ComposeDecimalValue(json, 'altitude', elem.altitudeObject, false);
-  ComposeDecimalProps(json, 'altitude', elem.altitudeObject, false);
+  ComposeDecimalValue(json, 'longitude', elem.longitudeElement, false);
+  ComposeDecimalProps(json, 'longitude', elem.longitudeElement, false);
+  ComposeDecimalValue(json, 'latitude', elem.latitudeElement, false);
+  ComposeDecimalProps(json, 'latitude', elem.latitudeElement, false);
+  ComposeDecimalValue(json, 'altitude', elem.altitudeElement, false);
+  ComposeDecimalProps(json, 'altitude', elem.altitudeElement, false);
   json.finishObject;
 end;
 
@@ -13220,9 +13220,9 @@ begin
       if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'telecom') then
@@ -13236,11 +13236,11 @@ begin
       else if (child.baseName = 'managingOrganization') then
         result.managingOrganization := ParseResourceReference{TFhirOrganization}(child, path+'/managingOrganization') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirLocationStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirLocationStatus, path+'/status', child){1a}
       else if (child.baseName = 'partOf') then
         result.partOf := ParseResourceReference{TFhirLocation}(child, path+'/partOf') {b}
       else if (child.baseName = 'mode') then
-        result.modeObject := ParseEnum(CODES_TFhirLocationMode, path+'/mode', child){1a}
+        result.modeElement := ParseEnum(CODES_TFhirLocationMode, path+'/mode', child){1a}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -13263,8 +13263,8 @@ begin
   xml.open(name);
   composeResourceChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
@@ -13272,9 +13272,9 @@ begin
   ComposeCodeableConcept(xml, 'physicalType', elem.physicalType);{x.2}
   ComposeLocationPosition(xml, 'position', elem.position);{x.2}
   ComposeResourceReference{TFhirOrganization}(xml, 'managingOrganization', elem.managingOrganization);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirLocationStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirLocationStatus);
   ComposeResourceReference{TFhirLocation}(xml, 'partOf', elem.partOf);{x.2}
-  ComposeEnum(xml, 'mode', elem.ModeObject, CODES_TFhirLocationMode);
+  ComposeEnum(xml, 'mode', elem.ModeElement, CODES_TFhirLocationMode);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -13292,9 +13292,9 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('telecom') then
@@ -13308,11 +13308,11 @@ begin
     if jsn.has('managingOrganization') then
         result.managingOrganization := ParseResourceReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirLocationStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirLocationStatus);
     if jsn.has('partOf') then
         result.partOf := ParseResourceReference{TFhirLocation}(jsn.vObj['partOf']);{q}
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeObject := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirLocationMode);
+      result.modeElement := parseEnum(jsn['mode'], jsn.vObj['_mode'], CODES_TFhirLocationMode);
     result.link;
   finally
     result.free;
@@ -13327,10 +13327,10 @@ begin
     exit;
   ComposeResourceProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if elem.telecomList.Count > 0 then
   begin
@@ -13343,11 +13343,11 @@ begin
   ComposeCodeableConcept(json, 'physicalType', elem.physicalType); {a}
   ComposeLocationPosition(json, 'position', elem.position); {a}
   ComposeResourceReference{TFhirOrganization}(json, 'managingOrganization', elem.managingOrganization); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirLocationStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirLocationStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirLocationStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirLocationStatus, false);
   ComposeResourceReference{TFhirLocation}(json, 'partOf', elem.partOf); {a}
-  ComposeEnumValue(json, 'mode', elem.ModeObject, CODES_TFhirLocationMode, false);
-  ComposeEnumProps(json, 'mode', elem.ModeObject, CODES_TFhirLocationMode, false);
+  ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirLocationMode, false);
+  ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirLocationMode, false);
 end;
 
 function TFHIRXmlParser.ParseMedia(element : IXmlDomElement; path : string) : TFhirMedia;
@@ -13361,13 +13361,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirMediaType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirMediaType, path+'/type', child){1a}
       else if (child.baseName = 'subtype') then
         result.subtype := ParseCodeableConcept(child, path+'/subtype') {b}
       else if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'dateTime') then
-        result.dateTimeObject := ParseDateTime(child, path+'/dateTime') {b}
+        result.dateTimeElement := ParseDateTime(child, path+'/dateTime') {b}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{Resource}(child, path+'/subject') {b}
       else if (child.baseName = 'operator') then
@@ -13375,15 +13375,15 @@ begin
       else if (child.baseName = 'view') then
         result.view := ParseCodeableConcept(child, path+'/view') {b}
       else if (child.baseName = 'deviceName') then
-        result.deviceNameObject := ParseString(child, path+'/deviceName') {b}
+        result.deviceNameElement := ParseString(child, path+'/deviceName') {b}
       else if (child.baseName = 'height') then
-        result.heightObject := ParseInteger(child, path+'/height') {b}
+        result.heightElement := ParseInteger(child, path+'/height') {b}
       else if (child.baseName = 'width') then
-        result.widthObject := ParseInteger(child, path+'/width') {b}
+        result.widthElement := ParseInteger(child, path+'/width') {b}
       else if (child.baseName = 'frames') then
-        result.framesObject := ParseInteger(child, path+'/frames') {b}
+        result.framesElement := ParseInteger(child, path+'/frames') {b}
       else if (child.baseName = 'length') then
-        result.lengthObject := ParseInteger(child, path+'/length') {b}
+        result.lengthElement := ParseInteger(child, path+'/length') {b}
       else if (child.baseName = 'content') then
         result.content := ParseAttachment(child, path+'/content') {b}
       else if Not ParseResourceChild(result, path, child) then
@@ -13407,19 +13407,19 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirMediaType);
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirMediaType);
   ComposeCodeableConcept(xml, 'subtype', elem.subtype);{x.2}
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeDateTime(xml, 'dateTime', elem.dateTimeObject);{x.2}
+  ComposeDateTime(xml, 'dateTime', elem.dateTimeElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{TFhirPractitioner}(xml, 'operator', elem.operator);{x.2}
   ComposeCodeableConcept(xml, 'view', elem.view);{x.2}
-  ComposeString(xml, 'deviceName', elem.deviceNameObject);{x.2}
-  ComposeInteger(xml, 'height', elem.heightObject);{x.2}
-  ComposeInteger(xml, 'width', elem.widthObject);{x.2}
-  ComposeInteger(xml, 'frames', elem.framesObject);{x.2}
-  ComposeInteger(xml, 'length', elem.lengthObject);{x.2}
+  ComposeString(xml, 'deviceName', elem.deviceNameElement);{x.2}
+  ComposeInteger(xml, 'height', elem.heightElement);{x.2}
+  ComposeInteger(xml, 'width', elem.widthElement);{x.2}
+  ComposeInteger(xml, 'frames', elem.framesElement);{x.2}
+  ComposeInteger(xml, 'length', elem.lengthElement);{x.2}
   if not SummaryOnly then
     ComposeAttachment(xml, 'content', elem.content);{x.2}
   closeOutElement(xml, elem);
@@ -13437,13 +13437,13 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirMediaType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirMediaType);
     if jsn.has('subtype') then
         result.subtype := ParseCodeableConcept(jsn.vObj['subtype']);{q}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('dateTime') or jsn.has('_dateTime') then
-        result.dateTimeObject := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
+        result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('subject') then
         result.subject := ParseResourceReference{Resource}(jsn.vObj['subject']);{q}
     if jsn.has('operator') then
@@ -13451,15 +13451,15 @@ begin
     if jsn.has('view') then
         result.view := ParseCodeableConcept(jsn.vObj['view']);{q}
     if jsn.has('deviceName') or jsn.has('_deviceName') then
-        result.deviceNameObject := ParseString(jsn['deviceName'], jsn.vObj['_deviceName']);{q}
+        result.deviceNameElement := ParseString(jsn['deviceName'], jsn.vObj['_deviceName']);{q}
     if jsn.has('height') or jsn.has('_height') then
-        result.heightObject := ParseInteger(jsn['height'], jsn.vObj['_height']);{q}
+        result.heightElement := ParseInteger(jsn['height'], jsn.vObj['_height']);{q}
     if jsn.has('width') or jsn.has('_width') then
-        result.widthObject := ParseInteger(jsn['width'], jsn.vObj['_width']);{q}
+        result.widthElement := ParseInteger(jsn['width'], jsn.vObj['_width']);{q}
     if jsn.has('frames') or jsn.has('_frames') then
-        result.framesObject := ParseInteger(jsn['frames'], jsn.vObj['_frames']);{q}
+        result.framesElement := ParseInteger(jsn['frames'], jsn.vObj['_frames']);{q}
     if jsn.has('length') or jsn.has('_length') then
-        result.lengthObject := ParseInteger(jsn['length'], jsn.vObj['_length']);{q}
+        result.lengthElement := ParseInteger(jsn['length'], jsn.vObj['_length']);{q}
     if jsn.has('content') then
         result.content := ParseAttachment(jsn.vObj['content']);{q}
     result.link;
@@ -13475,8 +13475,8 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirMediaType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirMediaType, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirMediaType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirMediaType, false);
   ComposeCodeableConcept(json, 'subtype', elem.subtype); {a}
   if elem.identifierList.Count > 0 then
   begin
@@ -13485,21 +13485,21 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeDateTimeValue(json, 'dateTime', elem.dateTimeObject, false);
-  ComposeDateTimeProps(json, 'dateTime', elem.dateTimeObject, false);
+  ComposeDateTimeValue(json, 'dateTime', elem.dateTimeElement, false);
+  ComposeDateTimeProps(json, 'dateTime', elem.dateTimeElement, false);
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{TFhirPractitioner}(json, 'operator', elem.operator); {a}
   ComposeCodeableConcept(json, 'view', elem.view); {a}
-  ComposeStringValue(json, 'deviceName', elem.deviceNameObject, false);
-  ComposeStringProps(json, 'deviceName', elem.deviceNameObject, false);
-  ComposeIntegerValue(json, 'height', elem.heightObject, false);
-  ComposeIntegerProps(json, 'height', elem.heightObject, false);
-  ComposeIntegerValue(json, 'width', elem.widthObject, false);
-  ComposeIntegerProps(json, 'width', elem.widthObject, false);
-  ComposeIntegerValue(json, 'frames', elem.framesObject, false);
-  ComposeIntegerProps(json, 'frames', elem.framesObject, false);
-  ComposeIntegerValue(json, 'length', elem.lengthObject, false);
-  ComposeIntegerProps(json, 'length', elem.lengthObject, false);
+  ComposeStringValue(json, 'deviceName', elem.deviceNameElement, false);
+  ComposeStringProps(json, 'deviceName', elem.deviceNameElement, false);
+  ComposeIntegerValue(json, 'height', elem.heightElement, false);
+  ComposeIntegerProps(json, 'height', elem.heightElement, false);
+  ComposeIntegerValue(json, 'width', elem.widthElement, false);
+  ComposeIntegerProps(json, 'width', elem.widthElement, false);
+  ComposeIntegerValue(json, 'frames', elem.framesElement, false);
+  ComposeIntegerProps(json, 'frames', elem.framesElement, false);
+  ComposeIntegerValue(json, 'length', elem.lengthElement, false);
+  ComposeIntegerProps(json, 'length', elem.lengthElement, false);
   if not SummaryOnly then
     ComposeAttachment(json, 'content', elem.content); {a}
 end;
@@ -13817,15 +13817,15 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'code') then
         result.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.baseName = 'isBrand') then
-        result.isBrandObject := ParseBoolean(child, path+'/isBrand') {b}
+        result.isBrandElement := ParseBoolean(child, path+'/isBrand') {b}
       else if (child.baseName = 'manufacturer') then
         result.manufacturer := ParseResourceReference{TFhirOrganization}(child, path+'/manufacturer') {b}
       else if (child.baseName = 'kind') then
-        result.kindObject := ParseEnum(CODES_TFhirMedicationKind, path+'/kind', child){1a}
+        result.kindElement := ParseEnum(CODES_TFhirMedicationKind, path+'/kind', child){1a}
       else if (child.baseName = 'product') then
         result.product := ParseMedicationProduct(child, path+'/product') {b}
       else if (child.baseName = 'package') then
@@ -13849,11 +13849,11 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
-  ComposeBoolean(xml, 'isBrand', elem.isBrandObject);{x.2}
+  ComposeBoolean(xml, 'isBrand', elem.isBrandElement);{x.2}
   ComposeResourceReference{TFhirOrganization}(xml, 'manufacturer', elem.manufacturer);{x.2}
-  ComposeEnum(xml, 'kind', elem.KindObject, CODES_TFhirMedicationKind);
+  ComposeEnum(xml, 'kind', elem.KindElement, CODES_TFhirMedicationKind);
   if not SummaryOnly then
     ComposeMedicationProduct(xml, 'product', elem.product);{x.2}
   if not SummaryOnly then
@@ -13873,15 +13873,15 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('isBrand') or jsn.has('_isBrand') then
-        result.isBrandObject := ParseBoolean(jsn['isBrand'], jsn.vObj['_isBrand']);{q}
+        result.isBrandElement := ParseBoolean(jsn['isBrand'], jsn.vObj['_isBrand']);{q}
     if jsn.has('manufacturer') then
         result.manufacturer := ParseResourceReference{TFhirOrganization}(jsn.vObj['manufacturer']);{q}
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindObject := parseEnum(jsn['kind'], jsn.vObj['_kind'], CODES_TFhirMedicationKind);
+      result.kindElement := parseEnum(jsn['kind'], jsn.vObj['_kind'], CODES_TFhirMedicationKind);
     if jsn.has('product') then
         result.product := ParseMedicationProduct(jsn.vObj['product']);{q}
     if jsn.has('package') then
@@ -13897,14 +13897,14 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
-  ComposeBooleanValue(json, 'isBrand', elem.isBrandObject, false);
-  ComposeBooleanProps(json, 'isBrand', elem.isBrandObject, false);
+  ComposeBooleanValue(json, 'isBrand', elem.isBrandElement, false);
+  ComposeBooleanProps(json, 'isBrand', elem.isBrandElement, false);
   ComposeResourceReference{TFhirOrganization}(json, 'manufacturer', elem.manufacturer); {a}
-  ComposeEnumValue(json, 'kind', elem.KindObject, CODES_TFhirMedicationKind, false);
-  ComposeEnumProps(json, 'kind', elem.KindObject, CODES_TFhirMedicationKind, false);
+  ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirMedicationKind, false);
+  ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirMedicationKind, false);
   if not SummaryOnly then
     ComposeMedicationProduct(json, 'product', elem.product); {a}
   if not SummaryOnly then
@@ -14056,7 +14056,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirMedicationAdminStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirMedicationAdminStatus, path+'/status', child){1a}
       else if (child.baseName = 'patient') then
         result.patient := ParseResourceReference{TFhirPatient}(child, path+'/patient') {b}
       else if (child.baseName = 'practitioner') then
@@ -14066,7 +14066,7 @@ begin
       else if (child.baseName = 'prescription') then
         result.prescription := ParseResourceReference{TFhirMedicationPrescription}(child, path+'/prescription') {b}
       else if (child.baseName = 'wasNotGiven') then
-        result.wasNotGivenObject := ParseBoolean(child, path+'/wasNotGiven') {b}
+        result.wasNotGivenElement := ParseBoolean(child, path+'/wasNotGiven') {b}
       else if (child.baseName = 'reasonNotGiven') then
         result.reasonNotGivenList.Add(ParseCodeableConcept(child, path+'/reasonNotGiven')){y.2}
       else if (child.baseName = 'whenGiven') then
@@ -14100,12 +14100,12 @@ begin
   composeResourceChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirMedicationAdminStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirMedicationAdminStatus);
   ComposeResourceReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
   ComposeResourceReference{TFhirPractitioner}(xml, 'practitioner', elem.practitioner);{x.2}
   ComposeResourceReference{TFhirEncounter}(xml, 'encounter', elem.encounter);{x.2}
   ComposeResourceReference{TFhirMedicationPrescription}(xml, 'prescription', elem.prescription);{x.2}
-  ComposeBoolean(xml, 'wasNotGiven', elem.wasNotGivenObject);{x.2}
+  ComposeBoolean(xml, 'wasNotGiven', elem.wasNotGivenElement);{x.2}
   for i := 0 to elem.reasonNotGivenList.Count - 1 do
     ComposeCodeableConcept(xml, 'reasonNotGiven', elem.reasonNotGivenList[i]);
   ComposePeriod(xml, 'whenGiven', elem.whenGiven);{x.2}
@@ -14131,7 +14131,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatus);
     if jsn.has('patient') then
         result.patient := ParseResourceReference{TFhirPatient}(jsn.vObj['patient']);{q}
     if jsn.has('practitioner') then
@@ -14141,7 +14141,7 @@ begin
     if jsn.has('prescription') then
         result.prescription := ParseResourceReference{TFhirMedicationPrescription}(jsn.vObj['prescription']);{q}
     if jsn.has('wasNotGiven') or jsn.has('_wasNotGiven') then
-        result.wasNotGivenObject := ParseBoolean(jsn['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
+        result.wasNotGivenElement := ParseBoolean(jsn['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
     if jsn.has('reasonNotGiven') then
       iterateArray(jsn.vArr['reasonNotGiven'], result.reasonNotGivenList, parseCodeableConcept);
     if jsn.has('whenGiven') then
@@ -14172,14 +14172,14 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirMedicationAdminStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirMedicationAdminStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationAdminStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationAdminStatus, false);
   ComposeResourceReference{TFhirPatient}(json, 'patient', elem.patient); {a}
   ComposeResourceReference{TFhirPractitioner}(json, 'practitioner', elem.practitioner); {a}
   ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
   ComposeResourceReference{TFhirMedicationPrescription}(json, 'prescription', elem.prescription); {a}
-  ComposeBooleanValue(json, 'wasNotGiven', elem.wasNotGivenObject, false);
-  ComposeBooleanProps(json, 'wasNotGiven', elem.wasNotGivenObject, false);
+  ComposeBooleanValue(json, 'wasNotGiven', elem.wasNotGivenElement, false);
+  ComposeBooleanProps(json, 'wasNotGiven', elem.wasNotGivenElement, false);
   if elem.reasonNotGivenList.Count > 0 then
   begin
     json.valueArray('reasonNotGiven');
@@ -14218,7 +14218,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirMedicationDispenseStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirMedicationDispenseStatus, path+'/status', child){1a}
       else if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'quantity') then
@@ -14226,9 +14226,9 @@ begin
       else if (child.baseName = 'medication') then
         result.medication := ParseResourceReference{TFhirMedication}(child, path+'/medication') {b}
       else if (child.baseName = 'whenPrepared') then
-        result.whenPreparedObject := ParseDateTime(child, path+'/whenPrepared') {b}
+        result.whenPreparedElement := ParseDateTime(child, path+'/whenPrepared') {b}
       else if (child.baseName = 'whenHandedOver') then
-        result.whenHandedOverObject := ParseDateTime(child, path+'/whenHandedOver') {b}
+        result.whenHandedOverElement := ParseDateTime(child, path+'/whenHandedOver') {b}
       else if (child.baseName = 'destination') then
         result.destination := ParseResourceReference{TFhirLocation}(child, path+'/destination') {b}
       else if (child.baseName = 'receiver') then
@@ -14257,12 +14257,12 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirMedicationDispenseStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatus);
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   ComposeQuantity(xml, 'quantity', elem.quantity);{x.2}
   ComposeResourceReference{TFhirMedication}(xml, 'medication', elem.medication);{x.2}
-  ComposeDateTime(xml, 'whenPrepared', elem.whenPreparedObject);{x.2}
-  ComposeDateTime(xml, 'whenHandedOver', elem.whenHandedOverObject);{x.2}
+  ComposeDateTime(xml, 'whenPrepared', elem.whenPreparedElement);{x.2}
+  ComposeDateTime(xml, 'whenHandedOver', elem.whenHandedOverElement);{x.2}
   ComposeResourceReference{TFhirLocation}(xml, 'destination', elem.destination);{x.2}
   for i := 0 to elem.receiverList.Count - 1 do
     ComposeResourceReference{Resource}(xml, 'receiver', elem.receiverList[i]);
@@ -14285,7 +14285,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatus);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('quantity') then
@@ -14293,9 +14293,9 @@ begin
     if jsn.has('medication') then
         result.medication := ParseResourceReference{TFhirMedication}(jsn.vObj['medication']);{q}
     if jsn.has('whenPrepared') or jsn.has('_whenPrepared') then
-        result.whenPreparedObject := ParseDateTime(jsn['whenPrepared'], jsn.vObj['_whenPrepared']);{q}
+        result.whenPreparedElement := ParseDateTime(jsn['whenPrepared'], jsn.vObj['_whenPrepared']);{q}
     if jsn.has('whenHandedOver') or jsn.has('_whenHandedOver') then
-        result.whenHandedOverObject := ParseDateTime(jsn['whenHandedOver'], jsn.vObj['_whenHandedOver']);{q}
+        result.whenHandedOverElement := ParseDateTime(jsn['whenHandedOver'], jsn.vObj['_whenHandedOver']);{q}
     if jsn.has('destination') then
         result.destination := ParseResourceReference{TFhirLocation}(jsn.vObj['destination']);{q}
     if jsn.has('receiver') then
@@ -14317,15 +14317,15 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirMedicationDispenseStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirMedicationDispenseStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatus, false);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   ComposeQuantity(json, 'quantity', elem.quantity); {a}
   ComposeResourceReference{TFhirMedication}(json, 'medication', elem.medication); {a}
-  ComposeDateTimeValue(json, 'whenPrepared', elem.whenPreparedObject, false);
-  ComposeDateTimeProps(json, 'whenPrepared', elem.whenPreparedObject, false);
-  ComposeDateTimeValue(json, 'whenHandedOver', elem.whenHandedOverObject, false);
-  ComposeDateTimeProps(json, 'whenHandedOver', elem.whenHandedOverObject, false);
+  ComposeDateTimeValue(json, 'whenPrepared', elem.whenPreparedElement, false);
+  ComposeDateTimeProps(json, 'whenPrepared', elem.whenPreparedElement, false);
+  ComposeDateTimeValue(json, 'whenHandedOver', elem.whenHandedOverElement, false);
+  ComposeDateTimeProps(json, 'whenHandedOver', elem.whenHandedOverElement, false);
   ComposeResourceReference{TFhirLocation}(json, 'destination', elem.destination); {a}
   if elem.receiverList.Count > 0 then
   begin
@@ -14597,7 +14597,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirMedicationDispenseStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirMedicationDispenseStatus, path+'/status', child){1a}
       else if (child.baseName = 'patient') then
         result.patient := ParseResourceReference{TFhirPatient}(child, path+'/patient') {b}
       else if (child.baseName = 'dispenser') then
@@ -14630,7 +14630,7 @@ begin
   xml.open(name);
   composeResourceChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirMedicationDispenseStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatus);
   ComposeResourceReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
   ComposeResourceReference{TFhirPractitioner}(xml, 'dispenser', elem.dispenser);{x.2}
   for i := 0 to elem.authorizingPrescriptionList.Count - 1 do
@@ -14655,7 +14655,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatus);
     if jsn.has('patient') then
         result.patient := ParseResourceReference{TFhirPatient}(jsn.vObj['patient']);{q}
     if jsn.has('dispenser') then
@@ -14680,8 +14680,8 @@ begin
     exit;
   ComposeResourceProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirMedicationDispenseStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirMedicationDispenseStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatus, false);
   ComposeResourceReference{TFhirPatient}(json, 'patient', elem.patient); {a}
   ComposeResourceReference{TFhirPractitioner}(json, 'dispenser', elem.dispenser); {a}
   if elem.authorizingPrescriptionList.Count > 0 then
@@ -14712,7 +14712,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'text') then
-        result.textObject := ParseString(child, path+'/text') {b}
+        result.textElement := ParseString(child, path+'/text') {b}
       else if (child.baseName = 'additionalInstructions') then
         result.additionalInstructions := ParseCodeableConcept(child, path+'/additionalInstructions') {b}
       else if (child.baseName = 'timingDateTime') then
@@ -14756,7 +14756,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'text', elem.textObject);{x.2}
+  ComposeString(xml, 'text', elem.textElement);{x.2}
   ComposeCodeableConcept(xml, 'additionalInstructions', elem.additionalInstructions);{x.2}
   if (elem.timing is TFhirDateTime) {6} then
     ComposeDateTime(xml, 'timingDateTime', TFhirDateTime(elem.timing))
@@ -14789,7 +14789,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('text') or jsn.has('_text') then
-        result.textObject := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     if jsn.has('additionalInstructions') then
         result.additionalInstructions := ParseCodeableConcept(jsn.vObj['additionalInstructions']);{q}
     if jsn.has('timingDateTime') or jsn.has('_timingDateTime') then
@@ -14826,8 +14826,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'text', elem.textObject, false);
-  ComposeStringProps(json, 'text', elem.textObject, false);
+  ComposeStringValue(json, 'text', elem.textElement, false);
+  ComposeStringProps(json, 'text', elem.textElement, false);
   ComposeCodeableConcept(json, 'additionalInstructions', elem.additionalInstructions); {a}
   if (elem.timing is TFhirDateTime) then 
   begin
@@ -14869,7 +14869,7 @@ begin
       else if (child.baseName = 'validityPeriod') then
         result.validityPeriod := ParsePeriod(child, path+'/validityPeriod') {b}
       else if (child.baseName = 'numberOfRepeatsAllowed') then
-        result.numberOfRepeatsAllowedObject := ParseInteger(child, path+'/numberOfRepeatsAllowed') {b}
+        result.numberOfRepeatsAllowedElement := ParseInteger(child, path+'/numberOfRepeatsAllowed') {b}
       else if (child.baseName = 'quantity') then
         result.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.baseName = 'expectedSupplyDuration') then
@@ -14895,7 +14895,7 @@ begin
   composeBackboneElementChildren(xml, elem);
   ComposeResourceReference{TFhirMedication}(xml, 'medication', elem.medication);{x.2}
   ComposePeriod(xml, 'validityPeriod', elem.validityPeriod);{x.2}
-  ComposeInteger(xml, 'numberOfRepeatsAllowed', elem.numberOfRepeatsAllowedObject);{x.2}
+  ComposeInteger(xml, 'numberOfRepeatsAllowed', elem.numberOfRepeatsAllowedElement);{x.2}
   ComposeQuantity(xml, 'quantity', elem.quantity);{x.2}
   ComposeQuantity(xml, 'expectedSupplyDuration', elem.expectedSupplyDuration);{x.2}
   closeOutElement(xml, elem);
@@ -14917,7 +14917,7 @@ begin
     if jsn.has('validityPeriod') then
         result.validityPeriod := ParsePeriod(jsn.vObj['validityPeriod']);{q}
     if jsn.has('numberOfRepeatsAllowed') or jsn.has('_numberOfRepeatsAllowed') then
-        result.numberOfRepeatsAllowedObject := ParseInteger(jsn['numberOfRepeatsAllowed'], jsn.vObj['_numberOfRepeatsAllowed']);{q}
+        result.numberOfRepeatsAllowedElement := ParseInteger(jsn['numberOfRepeatsAllowed'], jsn.vObj['_numberOfRepeatsAllowed']);{q}
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
     if jsn.has('expectedSupplyDuration') then
@@ -14936,8 +14936,8 @@ begin
   ComposeBackboneElementProperties(json, elem);
   ComposeResourceReference{TFhirMedication}(json, 'medication', elem.medication); {a}
   ComposePeriod(json, 'validityPeriod', elem.validityPeriod); {a}
-  ComposeIntegerValue(json, 'numberOfRepeatsAllowed', elem.numberOfRepeatsAllowedObject, false);
-  ComposeIntegerProps(json, 'numberOfRepeatsAllowed', elem.numberOfRepeatsAllowedObject, false);
+  ComposeIntegerValue(json, 'numberOfRepeatsAllowed', elem.numberOfRepeatsAllowedElement, false);
+  ComposeIntegerProps(json, 'numberOfRepeatsAllowed', elem.numberOfRepeatsAllowedElement, false);
   ComposeQuantity(json, 'quantity', elem.quantity); {a}
   ComposeQuantity(json, 'expectedSupplyDuration', elem.expectedSupplyDuration); {a}
   json.finishObject;
@@ -15026,9 +15026,9 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'dateWritten') then
-        result.dateWrittenObject := ParseDateTime(child, path+'/dateWritten') {b}
+        result.dateWrittenElement := ParseDateTime(child, path+'/dateWritten') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirMedicationPrescriptionStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirMedicationPrescriptionStatus, path+'/status', child){1a}
       else if (child.baseName = 'patient') then
         result.patient := ParseResourceReference{TFhirPatient}(child, path+'/patient') {b}
       else if (child.baseName = 'prescriber') then
@@ -15070,8 +15070,8 @@ begin
   composeResourceChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeDateTime(xml, 'dateWritten', elem.dateWrittenObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirMedicationPrescriptionStatus);
+  ComposeDateTime(xml, 'dateWritten', elem.dateWrittenElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirMedicationPrescriptionStatus);
   ComposeResourceReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
   ComposeResourceReference{TFhirPractitioner}(xml, 'prescriber', elem.prescriber);{x.2}
   ComposeResourceReference{TFhirEncounter}(xml, 'encounter', elem.encounter);{x.2}
@@ -15101,9 +15101,9 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('dateWritten') or jsn.has('_dateWritten') then
-        result.dateWrittenObject := ParseDateTime(jsn['dateWritten'], jsn.vObj['_dateWritten']);{q}
+        result.dateWrittenElement := ParseDateTime(jsn['dateWritten'], jsn.vObj['_dateWritten']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationPrescriptionStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationPrescriptionStatus);
     if jsn.has('patient') then
         result.patient := ParseResourceReference{TFhirPatient}(jsn.vObj['patient']);{q}
     if jsn.has('prescriber') then
@@ -15142,10 +15142,10 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeDateTimeValue(json, 'dateWritten', elem.dateWrittenObject, false);
-  ComposeDateTimeProps(json, 'dateWritten', elem.dateWrittenObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirMedicationPrescriptionStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirMedicationPrescriptionStatus, false);
+  ComposeDateTimeValue(json, 'dateWritten', elem.dateWrittenElement, false);
+  ComposeDateTimeProps(json, 'dateWritten', elem.dateWrittenElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationPrescriptionStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationPrescriptionStatus, false);
   ComposeResourceReference{TFhirPatient}(json, 'patient', elem.patient); {a}
   ComposeResourceReference{TFhirPractitioner}(json, 'prescriber', elem.prescriber); {a}
   ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
@@ -15299,7 +15299,7 @@ begin
       else if (child.baseName = 'patient') then
         result.patient := ParseResourceReference{TFhirPatient}(child, path+'/patient') {b}
       else if (child.baseName = 'wasNotGiven') then
-        result.wasNotGivenObject := ParseBoolean(child, path+'/wasNotGiven') {b}
+        result.wasNotGivenElement := ParseBoolean(child, path+'/wasNotGiven') {b}
       else if (child.baseName = 'reasonNotGiven') then
         result.reasonNotGivenList.Add(ParseCodeableConcept(child, path+'/reasonNotGiven')){y.2}
       else if (child.baseName = 'whenGiven') then
@@ -15334,7 +15334,7 @@ begin
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeResourceReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
-  ComposeBoolean(xml, 'wasNotGiven', elem.wasNotGivenObject);{x.2}
+  ComposeBoolean(xml, 'wasNotGiven', elem.wasNotGivenElement);{x.2}
   for i := 0 to elem.reasonNotGivenList.Count - 1 do
     ComposeCodeableConcept(xml, 'reasonNotGiven', elem.reasonNotGivenList[i]);
   ComposePeriod(xml, 'whenGiven', elem.whenGiven);{x.2}
@@ -15362,7 +15362,7 @@ begin
     if jsn.has('patient') then
         result.patient := ParseResourceReference{TFhirPatient}(jsn.vObj['patient']);{q}
     if jsn.has('wasNotGiven') or jsn.has('_wasNotGiven') then
-        result.wasNotGivenObject := ParseBoolean(jsn['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
+        result.wasNotGivenElement := ParseBoolean(jsn['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
     if jsn.has('reasonNotGiven') then
       iterateArray(jsn.vArr['reasonNotGiven'], result.reasonNotGivenList, parseCodeableConcept);
     if jsn.has('whenGiven') then
@@ -15394,8 +15394,8 @@ begin
     json.FinishArray;
   end;
   ComposeResourceReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  ComposeBooleanValue(json, 'wasNotGiven', elem.wasNotGivenObject, false);
-  ComposeBooleanProps(json, 'wasNotGiven', elem.wasNotGivenObject, false);
+  ComposeBooleanValue(json, 'wasNotGiven', elem.wasNotGivenElement, false);
+  ComposeBooleanProps(json, 'wasNotGiven', elem.wasNotGivenElement, false);
   if elem.reasonNotGivenList.Count > 0 then
   begin
     json.valueArray('reasonNotGiven');
@@ -15432,9 +15432,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseId(child, path+'/identifier') {b}
+        result.identifierElement := ParseId(child, path+'/identifier') {b}
       else if (child.baseName = 'code') then
-        result.codeObject := ParseEnum(CODES_TFhirResponseCode, path+'/code', child){1a}
+        result.codeElement := ParseEnum(CODES_TFhirResponseCode, path+'/code', child){1a}
       else if (child.baseName = 'details') then
         result.details := ParseResourceReference{TFhirOperationOutcome}(child, path+'/details') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -15456,8 +15456,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeId(xml, 'identifier', elem.identifierObject);{x.2}
-  ComposeEnum(xml, 'code', elem.CodeObject, CODES_TFhirResponseCode);
+  ComposeId(xml, 'identifier', elem.identifierElement);{x.2}
+  ComposeEnum(xml, 'code', elem.CodeElement, CODES_TFhirResponseCode);
   ComposeResourceReference{TFhirOperationOutcome}(xml, 'details', elem.details);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -15474,9 +15474,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseId(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseId(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeObject := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirResponseCode);
+      result.codeElement := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirResponseCode);
     if jsn.has('details') then
         result.details := ParseResourceReference{TFhirOperationOutcome}(jsn.vObj['details']);{q}
     result.link;
@@ -15491,10 +15491,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIdValue(json, 'identifier', elem.identifierObject, false);
-  ComposeIdProps(json, 'identifier', elem.identifierObject, false);
-  ComposeEnumValue(json, 'code', elem.CodeObject, CODES_TFhirResponseCode, false);
-  ComposeEnumProps(json, 'code', elem.CodeObject, CODES_TFhirResponseCode, false);
+  ComposeIdValue(json, 'identifier', elem.identifierElement, false);
+  ComposeIdProps(json, 'identifier', elem.identifierElement, false);
+  ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirResponseCode, false);
+  ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirResponseCode, false);
   ComposeResourceReference{TFhirOperationOutcome}(json, 'details', elem.details); {a}
   json.finishObject;
 end;
@@ -15510,15 +15510,15 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'software') then
-        result.softwareObject := ParseString(child, path+'/software') {b}
+        result.softwareElement := ParseString(child, path+'/software') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'contact') then
         result.contact := ParseContact(child, path+'/contact') {b}
       else if (child.baseName = 'endpoint') then
-        result.endpointObject := ParseUri(child, path+'/endpoint') {b}
+        result.endpointElement := ParseUri(child, path+'/endpoint') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -15538,11 +15538,11 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'software', elem.softwareObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'software', elem.softwareElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
   ComposeContact(xml, 'contact', elem.contact);{x.2}
-  ComposeUri(xml, 'endpoint', elem.endpointObject);{x.2}
+  ComposeUri(xml, 'endpoint', elem.endpointElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -15558,15 +15558,15 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('software') or jsn.has('_software') then
-        result.softwareObject := ParseString(jsn['software'], jsn.vObj['_software']);{q}
+        result.softwareElement := ParseString(jsn['software'], jsn.vObj['_software']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('contact') then
         result.contact := ParseContact(jsn.vObj['contact']);{q}
     if jsn.has('endpoint') or jsn.has('_endpoint') then
-        result.endpointObject := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
+        result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
     result.link;
   finally
     result.free;
@@ -15579,15 +15579,15 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'software', elem.softwareObject, false);
-  ComposeStringProps(json, 'software', elem.softwareObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'software', elem.softwareElement, false);
+  ComposeStringProps(json, 'software', elem.softwareElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
   ComposeContact(json, 'contact', elem.contact); {a}
-  ComposeUriValue(json, 'endpoint', elem.endpointObject, false);
-  ComposeUriProps(json, 'endpoint', elem.endpointObject, false);
+  ComposeUriValue(json, 'endpoint', elem.endpointElement, false);
+  ComposeUriProps(json, 'endpoint', elem.endpointElement, false);
   json.finishObject;
 end;
 
@@ -15602,11 +15602,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'target') then
         result.target := ParseResourceReference{TFhirDevice}(child, path+'/target') {b}
       else if (child.baseName = 'endpoint') then
-        result.endpointObject := ParseUri(child, path+'/endpoint') {b}
+        result.endpointElement := ParseUri(child, path+'/endpoint') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -15626,9 +15626,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
   ComposeResourceReference{TFhirDevice}(xml, 'target', elem.target);{x.2}
-  ComposeUri(xml, 'endpoint', elem.endpointObject);{x.2}
+  ComposeUri(xml, 'endpoint', elem.endpointElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -15644,11 +15644,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('target') then
         result.target := ParseResourceReference{TFhirDevice}(jsn.vObj['target']);{q}
     if jsn.has('endpoint') or jsn.has('_endpoint') then
-        result.endpointObject := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
+        result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
     result.link;
   finally
     result.free;
@@ -15661,11 +15661,11 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeResourceReference{TFhirDevice}(json, 'target', elem.target); {a}
-  ComposeUriValue(json, 'endpoint', elem.endpointObject, false);
-  ComposeUriProps(json, 'endpoint', elem.endpointObject, false);
+  ComposeUriValue(json, 'endpoint', elem.endpointElement, false);
+  ComposeUriProps(json, 'endpoint', elem.endpointElement, false);
   json.finishObject;
 end;
 
@@ -15680,9 +15680,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseId(child, path+'/identifier') {b}
+        result.identifierElement := ParseId(child, path+'/identifier') {b}
       else if (child.baseName = 'timestamp') then
-        result.timestampObject := ParseInstant(child, path+'/timestamp') {b}
+        result.timestampElement := ParseInstant(child, path+'/timestamp') {b}
       else if (child.baseName = 'event') then
         result.event := ParseCoding(child, path+'/event') {b}
       else if (child.baseName = 'response') then
@@ -15724,8 +15724,8 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeId(xml, 'identifier', elem.identifierObject);{x.2}
-  ComposeInstant(xml, 'timestamp', elem.timestampObject);{x.2}
+  ComposeId(xml, 'identifier', elem.identifierElement);{x.2}
+  ComposeInstant(xml, 'timestamp', elem.timestampElement);{x.2}
   ComposeCoding(xml, 'event', elem.event);{x.2}
   ComposeMessageHeaderResponse(xml, 'response', elem.response);{x.2}
   ComposeMessageHeaderSource(xml, 'source', elem.source);{x.2}
@@ -15753,9 +15753,9 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseId(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseId(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('timestamp') or jsn.has('_timestamp') then
-        result.timestampObject := ParseInstant(jsn['timestamp'], jsn.vObj['_timestamp']);{q}
+        result.timestampElement := ParseInstant(jsn['timestamp'], jsn.vObj['_timestamp']);{q}
     if jsn.has('event') then
         result.event := ParseCoding(jsn.vObj['event']);{q}
     if jsn.has('response') then
@@ -15789,10 +15789,10 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeIdValue(json, 'identifier', elem.identifierObject, false);
-  ComposeIdProps(json, 'identifier', elem.identifierObject, false);
-  ComposeInstantValue(json, 'timestamp', elem.timestampObject, false);
-  ComposeInstantProps(json, 'timestamp', elem.timestampObject, false);
+  ComposeIdValue(json, 'identifier', elem.identifierElement, false);
+  ComposeIdProps(json, 'identifier', elem.identifierElement, false);
+  ComposeInstantValue(json, 'timestamp', elem.timestampElement, false);
+  ComposeInstantProps(json, 'timestamp', elem.timestampElement, false);
   ComposeCoding(json, 'event', elem.event); {a}
   ComposeMessageHeaderResponse(json, 'response', elem.response); {a}
   ComposeMessageHeaderSource(json, 'source', elem.source); {a}
@@ -15910,7 +15910,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirObservationRelationshiptypes, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirObservationRelationshiptypes, path+'/type', child){1a}
       else if (child.baseName = 'target') then
         result.target := ParseResourceReference{TFhirObservation}(child, path+'/target') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -15932,7 +15932,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirObservationRelationshiptypes);
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirObservationRelationshiptypes);
   ComposeResourceReference{TFhirObservation}(xml, 'target', elem.target);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -15949,7 +15949,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirObservationRelationshiptypes);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirObservationRelationshiptypes);
     if jsn.has('target') then
         result.target := ParseResourceReference{TFhirObservation}(jsn.vObj['target']);{q}
     result.link;
@@ -15964,8 +15964,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirObservationRelationshiptypes, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirObservationRelationshiptypes, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirObservationRelationshiptypes, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirObservationRelationshiptypes, false);
   ComposeResourceReference{TFhirObservation}(json, 'target', elem.target); {a}
   json.finishObject;
 end;
@@ -15999,17 +15999,17 @@ begin
       else if (child.baseName = 'interpretation') then
         result.interpretation := ParseCodeableConcept(child, path+'/interpretation') {b}
       else if (child.baseName = 'comments') then
-        result.commentsObject := ParseString(child, path+'/comments') {b}
+        result.commentsElement := ParseString(child, path+'/comments') {b}
       else if (child.baseName = 'appliesDateTime') then
         result.applies := ParseDateTime(child, path+'/appliesDateTime'){x.3}
       else if (child.baseName = 'appliesPeriod') then
         result.applies := ParsePeriod(child, path+'/appliesPeriod'){x.3}
       else if (child.baseName = 'issued') then
-        result.issuedObject := ParseInstant(child, path+'/issued') {b}
+        result.issuedElement := ParseInstant(child, path+'/issued') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirObservationStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirObservationStatus, path+'/status', child){1a}
       else if (child.baseName = 'reliability') then
-        result.reliabilityObject := ParseEnum(CODES_TFhirObservationReliability, path+'/reliability', child){1a}
+        result.reliabilityElement := ParseEnum(CODES_TFhirObservationReliability, path+'/reliability', child){1a}
       else if (child.baseName = 'bodySite') then
         result.bodySite := ParseCodeableConcept(child, path+'/bodySite') {b}
       else if (child.baseName = 'method') then
@@ -16063,14 +16063,14 @@ begin
   else if (elem.value is TFhirString) {6} then
     ComposeString(xml, 'valueString', TFhirString(elem.value));
   ComposeCodeableConcept(xml, 'interpretation', elem.interpretation);{x.2}
-  ComposeString(xml, 'comments', elem.commentsObject);{x.2}
+  ComposeString(xml, 'comments', elem.commentsElement);{x.2}
   if (elem.applies is TFhirDateTime) {6} then
     ComposeDateTime(xml, 'appliesDateTime', TFhirDateTime(elem.applies))
   else if (elem.applies is TFhirPeriod) {6} then
     ComposePeriod(xml, 'appliesPeriod', TFhirPeriod(elem.applies));
-  ComposeInstant(xml, 'issued', elem.issuedObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirObservationStatus);
-  ComposeEnum(xml, 'reliability', elem.ReliabilityObject, CODES_TFhirObservationReliability);
+  ComposeInstant(xml, 'issued', elem.issuedElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirObservationStatus);
+  ComposeEnum(xml, 'reliability', elem.ReliabilityElement, CODES_TFhirObservationReliability);
   ComposeCodeableConcept(xml, 'bodySite', elem.bodySite);{x.2}
   ComposeCodeableConcept(xml, 'method', elem.method);{x.2}
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
@@ -16115,17 +16115,17 @@ begin
     if jsn.has('interpretation') then
         result.interpretation := ParseCodeableConcept(jsn.vObj['interpretation']);{q}
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsObject := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
     if jsn.has('appliesDateTime') or jsn.has('_appliesDateTime') then
       result.applies := parseDateTime(jsn['appliesDateTime'], jsn.vObj['_appliesDateTime']);
     if jsn.has('appliesPeriod') {a4} then
       result.applies := ParsePeriod(jsn.vObj['appliesPeriod']);
     if jsn.has('issued') or jsn.has('_issued') then
-        result.issuedObject := ParseInstant(jsn['issued'], jsn.vObj['_issued']);{q}
+        result.issuedElement := ParseInstant(jsn['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirObservationStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirObservationStatus);
     if jsn.has('reliability') or jsn.has('_reliability')  then
-      result.reliabilityObject := parseEnum(jsn['reliability'], jsn.vObj['_reliability'], CODES_TFhirObservationReliability);
+      result.reliabilityElement := parseEnum(jsn['reliability'], jsn.vObj['_reliability'], CODES_TFhirObservationReliability);
     if jsn.has('bodySite') then
         result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q}
     if jsn.has('method') then
@@ -16174,8 +16174,8 @@ begin
     ComposeStringProps(json, 'valueString', TFhirString(elem.value), false);
   end;
   ComposeCodeableConcept(json, 'interpretation', elem.interpretation); {a}
-  ComposeStringValue(json, 'comments', elem.commentsObject, false);
-  ComposeStringProps(json, 'comments', elem.commentsObject, false);
+  ComposeStringValue(json, 'comments', elem.commentsElement, false);
+  ComposeStringProps(json, 'comments', elem.commentsElement, false);
   if (elem.applies is TFhirDateTime) then 
   begin
     ComposeDateTimeValue(json, 'appliesDateTime', TFhirDateTime(elem.applies), false);
@@ -16183,12 +16183,12 @@ begin
   end
   else if (elem.applies is TFhirPeriod) then 
     ComposePeriod(json, 'appliesPeriod', TFhirPeriod(elem.applies)) ;
-  ComposeInstantValue(json, 'issued', elem.issuedObject, false);
-  ComposeInstantProps(json, 'issued', elem.issuedObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirObservationStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirObservationStatus, false);
-  ComposeEnumValue(json, 'reliability', elem.ReliabilityObject, CODES_TFhirObservationReliability, false);
-  ComposeEnumProps(json, 'reliability', elem.ReliabilityObject, CODES_TFhirObservationReliability, false);
+  ComposeInstantValue(json, 'issued', elem.issuedElement, false);
+  ComposeInstantProps(json, 'issued', elem.issuedElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirObservationStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirObservationStatus, false);
+  ComposeEnumValue(json, 'reliability', elem.ReliabilityElement, CODES_TFhirObservationReliability, false);
+  ComposeEnumProps(json, 'reliability', elem.ReliabilityElement, CODES_TFhirObservationReliability, false);
   ComposeCodeableConcept(json, 'bodySite', elem.bodySite); {a}
   ComposeCodeableConcept(json, 'method', elem.method); {a}
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -16228,11 +16228,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'severity') then
-        result.severityObject := ParseEnum(CODES_TFhirIssueSeverity, path+'/severity', child){1a}
+        result.severityElement := ParseEnum(CODES_TFhirIssueSeverity, path+'/severity', child){1a}
       else if (child.baseName = 'type') then
         result.type_ := ParseCoding(child, path+'/type') {b}
       else if (child.baseName = 'details') then
-        result.detailsObject := ParseString(child, path+'/details') {b}
+        result.detailsElement := ParseString(child, path+'/details') {b}
       else if (child.baseName = 'location') then
         result.locationList.Add(ParseString(child, path+'/location')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -16256,9 +16256,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'severity', elem.SeverityObject, CODES_TFhirIssueSeverity);
+  ComposeEnum(xml, 'severity', elem.SeverityElement, CODES_TFhirIssueSeverity);
   ComposeCoding(xml, 'type', elem.type_);{x.2}
-  ComposeString(xml, 'details', elem.detailsObject);{x.2}
+  ComposeString(xml, 'details', elem.detailsElement);{x.2}
   for i := 0 to elem.locationList.Count - 1 do
     ComposeString(xml, 'location', elem.locationList[i]);
   closeOutElement(xml, elem);
@@ -16276,11 +16276,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityObject := parseEnum(jsn['severity'], jsn.vObj['_severity'], CODES_TFhirIssueSeverity);
+      result.severityElement := parseEnum(jsn['severity'], jsn.vObj['_severity'], CODES_TFhirIssueSeverity);
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q}
     if jsn.has('details') or jsn.has('_details') then
-        result.detailsObject := ParseString(jsn['details'], jsn.vObj['_details']);{q}
+        result.detailsElement := ParseString(jsn['details'], jsn.vObj['_details']);{q}
       if jsn.has('location') or jsn.has('_location') then
       iteratePrimitiveArray(jsn.vArr['location'], jsn.vArr['_location'], result.locationList, parseString);
     result.link;
@@ -16298,11 +16298,11 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'severity', elem.SeverityObject, CODES_TFhirIssueSeverity, false);
-  ComposeEnumProps(json, 'severity', elem.SeverityObject, CODES_TFhirIssueSeverity, false);
+  ComposeEnumValue(json, 'severity', elem.SeverityElement, CODES_TFhirIssueSeverity, false);
+  ComposeEnumProps(json, 'severity', elem.SeverityElement, CODES_TFhirIssueSeverity, false);
   ComposeCoding(json, 'type', elem.type_); {a}
-  ComposeStringValue(json, 'details', elem.detailsObject, false);
-  ComposeStringProps(json, 'details', elem.detailsObject, false);
+  ComposeStringValue(json, 'details', elem.detailsElement, false);
+  ComposeStringProps(json, 'details', elem.detailsElement, false);
   if elem.locationList.Count > 0 then
   begin
     json.valueArray('location');
@@ -16480,7 +16480,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.baseName = 'source') then
@@ -16520,7 +16520,7 @@ begin
   composeResourceChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeResourceReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{TFhirPractitioner}(xml, 'source', elem.source);{x.2}
   ComposeResourceReference{Resource}(xml, 'target', elem.target);{x.2}
@@ -16549,7 +16549,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('subject') then
         result.subject := ParseResourceReference{TFhirPatient}(jsn.vObj['subject']);{q}
     if jsn.has('source') then
@@ -16586,8 +16586,8 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeResourceReference{TFhirPatient}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{TFhirPractitioner}(json, 'source', elem.source); {a}
   ComposeResourceReference{Resource}(json, 'target', elem.target); {a}
@@ -16621,7 +16621,7 @@ begin
       else if (child.baseName = 'request') then
         result.request := ParseResourceReference{TFhirOrder}(child, path+'/request') {b}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'who') then
         result.who := ParseResourceReference{Resource}(child, path+'/who') {b}
       else if (child.baseName = 'authorityCodeableConcept') then
@@ -16629,9 +16629,9 @@ begin
       else if (child.baseName = 'authorityResource') then
         result.authority := ParseResourceReference(child, path+'/authorityResource') {a}
       else if (child.baseName = 'code') then
-        result.codeObject := ParseEnum(CODES_TFhirOrderOutcomeCode, path+'/code', child){1a}
+        result.codeElement := ParseEnum(CODES_TFhirOrderOutcomeCode, path+'/code', child){1a}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'fulfillment') then
         result.fulfillmentList.Add(ParseResourceReference{Resource}(child, path+'/fulfillment')){y.2}
       else if Not ParseResourceChild(result, path, child) then
@@ -16658,14 +16658,14 @@ begin
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   ComposeResourceReference{TFhirOrder}(xml, 'request', elem.request);{x.2}
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'who', elem.who);{x.2}
   if (elem.authority is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(xml, 'authorityCodeableConcept', TFhirCodeableConcept(elem.authority))
   else if (elem.authority is TFhirResourceReference) {2} then
     ComposeResourceReference(xml, 'authorityResource', TFhirResourceReference(elem.authority));
-  ComposeEnum(xml, 'code', elem.CodeObject, CODES_TFhirOrderOutcomeCode);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeEnum(xml, 'code', elem.CodeElement, CODES_TFhirOrderOutcomeCode);
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   for i := 0 to elem.fulfillmentList.Count - 1 do
     ComposeResourceReference{Resource}(xml, 'fulfillment', elem.fulfillmentList[i]);
   closeOutElement(xml, elem);
@@ -16687,7 +16687,7 @@ begin
     if jsn.has('request') then
         result.request := ParseResourceReference{TFhirOrder}(jsn.vObj['request']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('who') then
         result.who := ParseResourceReference{Resource}(jsn.vObj['who']);{q}
     if jsn.has('authorityCodeableConcept') {a4} then
@@ -16695,9 +16695,9 @@ begin
     if jsn.has('authorityResource') {a3} then
       result.authority := ParseResourceReference(jsn.vObj['authorityResource']);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeObject := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirOrderOutcomeCode);
+      result.codeElement := parseEnum(jsn['code'], jsn.vObj['_code'], CODES_TFhirOrderOutcomeCode);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('fulfillment') then
       iterateArray(jsn.vArr['fulfillment'], result.fulfillmentList, parseResourceReference{Resource});
     result.link;
@@ -16721,17 +16721,17 @@ begin
     json.FinishArray;
   end;
   ComposeResourceReference{TFhirOrder}(json, 'request', elem.request); {a}
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeResourceReference{Resource}(json, 'who', elem.who); {a}
   if (elem.authority is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'authorityCodeableConcept', TFhirCodeableConcept(elem.authority)) 
   else if (elem.authority is TFhirResourceReference) then
     ComposeResourceReference(json, 'authorityResource', TFhirResourceReference(elem.authority));
-  ComposeEnumValue(json, 'code', elem.CodeObject, CODES_TFhirOrderOutcomeCode, false);
-  ComposeEnumProps(json, 'code', elem.CodeObject, CODES_TFhirOrderOutcomeCode, false);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirOrderOutcomeCode, false);
+  ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirOrderOutcomeCode, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if elem.fulfillmentList.Count > 0 then
   begin
     json.valueArray('fulfillment');
@@ -16853,7 +16853,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'telecom') then
@@ -16867,7 +16867,7 @@ begin
       else if (child.baseName = 'location') then
         result.locationList.Add(ParseResourceReference{TFhirLocation}(child, path+'/location')){y.2}
       else if (child.baseName = 'active') then
-        result.activeObject := ParseBoolean(child, path+'/active') {b}
+        result.activeElement := ParseBoolean(child, path+'/active') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -16891,7 +16891,7 @@ begin
   composeResourceChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
@@ -16902,7 +16902,7 @@ begin
     ComposeOrganizationContact(xml, 'contact', elem.contactList[i]);
   for i := 0 to elem.locationList.Count - 1 do
     ComposeResourceReference{TFhirLocation}(xml, 'location', elem.locationList[i]);
-  ComposeBoolean(xml, 'active', elem.activeObject);{x.2}
+  ComposeBoolean(xml, 'active', elem.activeElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -16920,7 +16920,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('telecom') then
@@ -16934,7 +16934,7 @@ begin
     if jsn.has('location') then
       iterateArray(jsn.vArr['location'], result.locationList, parseResourceReference{TFhirLocation});
     if jsn.has('active') or jsn.has('_active') then
-        result.activeObject := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
+        result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
     result.link;
   finally
     result.free;
@@ -16955,8 +16955,8 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if elem.telecomList.Count > 0 then
   begin
@@ -16987,8 +16987,8 @@ begin
       ComposeResourceReference{TFhirLocation}(json, '',elem.locationList[i]); {z - Resource(Location)}
     json.FinishArray;
   end;
-  ComposeBooleanValue(json, 'active', elem.activeObject, false);
-  ComposeBooleanProps(json, 'active', elem.activeObject, false);
+  ComposeBooleanValue(json, 'active', elem.activeElement, false);
+  ComposeBooleanProps(json, 'active', elem.activeElement, false);
 end;
 
 function TFHIRXmlParser.ParseOther(element : IXmlDomElement; path : string) : TFhirOther;
@@ -17010,7 +17010,7 @@ begin
       else if (child.baseName = 'author') then
         result.author := ParseResourceReference{Resource}(child, path+'/author') {b}
       else if (child.baseName = 'created') then
-        result.createdObject := ParseDate(child, path+'/created') {b}
+        result.createdElement := ParseDate(child, path+'/created') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -17037,7 +17037,7 @@ begin
   ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{Resource}(xml, 'author', elem.author);{x.2}
-  ComposeDate(xml, 'created', elem.createdObject);{x.2}
+  ComposeDate(xml, 'created', elem.createdElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -17061,7 +17061,7 @@ begin
     if jsn.has('author') then
         result.author := ParseResourceReference{Resource}(jsn.vObj['author']);{q}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdObject := ParseDate(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDate(jsn['created'], jsn.vObj['_created']);{q}
     result.link;
   finally
     result.free;
@@ -17085,8 +17085,8 @@ begin
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{Resource}(json, 'author', elem.author); {a}
-  ComposeDateValue(json, 'created', elem.createdObject, false);
-  ComposeDateProps(json, 'created', elem.createdObject, false);
+  ComposeDateValue(json, 'created', elem.createdElement, false);
+  ComposeDateProps(json, 'created', elem.createdElement, false);
 end;
 
 function TFHIRXmlParser.ParsePatientContact(element : IXmlDomElement; path : string) : TFhirPatientContact;
@@ -17290,7 +17290,7 @@ begin
       if (child.baseName = 'other') then
         result.other := ParseResourceReference{TFhirPatient}(child, path+'/other') {b}
       else if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirLinkType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirLinkType, path+'/type', child){1a}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -17311,7 +17311,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeResourceReference{TFhirPatient}(xml, 'other', elem.other);{x.2}
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirLinkType);
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirLinkType);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -17329,7 +17329,7 @@ begin
     if jsn.has('other') then
         result.other := ParseResourceReference{TFhirPatient}(jsn.vObj['other']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirLinkType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirLinkType);
     result.link;
   finally
     result.free;
@@ -17343,8 +17343,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeResourceReference{TFhirPatient}(json, 'other', elem.other); {a}
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirLinkType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirLinkType, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirLinkType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirLinkType, false);
   json.finishObject;
 end;
 
@@ -17367,7 +17367,7 @@ begin
       else if (child.baseName = 'gender') then
         result.gender := ParseCodeableConcept(child, path+'/gender') {b}
       else if (child.baseName = 'birthDate') then
-        result.birthDateObject := ParseDateTime(child, path+'/birthDate') {b}
+        result.birthDateElement := ParseDateTime(child, path+'/birthDate') {b}
       else if (child.baseName = 'deceasedBoolean') then
         result.deceased := ParseBoolean(child, path+'/deceasedBoolean'){x.3}
       else if (child.baseName = 'deceasedDateTime') then
@@ -17395,7 +17395,7 @@ begin
       else if (child.baseName = 'link') then
         result.link_List.Add(ParsePatientLink(child, path+'/link')){y.2}
       else if (child.baseName = 'active') then
-        result.activeObject := ParseBoolean(child, path+'/active') {b}
+        result.activeElement := ParseBoolean(child, path+'/active') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -17424,7 +17424,7 @@ begin
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
   ComposeCodeableConcept(xml, 'gender', elem.gender);{x.2}
-  ComposeDateTime(xml, 'birthDate', elem.birthDateObject);{x.2}
+  ComposeDateTime(xml, 'birthDate', elem.birthDateElement);{x.2}
   if (elem.deceased is TFhirBoolean) {6} then
     ComposeBoolean(xml, 'deceasedBoolean', TFhirBoolean(elem.deceased))
   else if (elem.deceased is TFhirDateTime) {6} then
@@ -17452,7 +17452,7 @@ begin
   ComposeResourceReference{TFhirOrganization}(xml, 'managingOrganization', elem.managingOrganization);{x.2}
   for i := 0 to elem.link_List.Count - 1 do
     ComposePatientLink(xml, 'link', elem.link_List[i]);
-  ComposeBoolean(xml, 'active', elem.activeObject);{x.2}
+  ComposeBoolean(xml, 'active', elem.activeElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -17476,7 +17476,7 @@ begin
     if jsn.has('gender') then
         result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q}
     if jsn.has('birthDate') or jsn.has('_birthDate') then
-        result.birthDateObject := ParseDateTime(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
+        result.birthDateElement := ParseDateTime(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('deceasedBoolean') or jsn.has('_deceasedBoolean') then
       result.deceased := parseBoolean(jsn['deceasedBoolean'], jsn.vObj['_deceasedBoolean']);
     if jsn.has('deceasedDateTime') or jsn.has('_deceasedDateTime') then
@@ -17504,7 +17504,7 @@ begin
     if jsn.has('link') then
       iterateArray(jsn.vArr['link'], result.link_List, parsePatientLink);
     if jsn.has('active') or jsn.has('_active') then
-        result.activeObject := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
+        result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
     result.link;
   finally
     result.free;
@@ -17540,8 +17540,8 @@ begin
     json.FinishArray;
   end;
   ComposeCodeableConcept(json, 'gender', elem.gender); {a}
-  ComposeDateTimeValue(json, 'birthDate', elem.birthDateObject, false);
-  ComposeDateTimeProps(json, 'birthDate', elem.birthDateObject, false);
+  ComposeDateTimeValue(json, 'birthDate', elem.birthDateElement, false);
+  ComposeDateTimeProps(json, 'birthDate', elem.birthDateElement, false);
   if (elem.deceased is TFhirBoolean) then 
   begin
     ComposeBooleanValue(json, 'deceasedBoolean', TFhirBoolean(elem.deceased), false);
@@ -17607,8 +17607,8 @@ begin
       ComposePatientLink(json, '',elem.link_List[i]); {z - }
     json.FinishArray;
   end;
-  ComposeBooleanValue(json, 'active', elem.activeObject, false);
-  ComposeBooleanProps(json, 'active', elem.activeObject, false);
+  ComposeBooleanValue(json, 'active', elem.activeElement, false);
+  ComposeBooleanProps(json, 'active', elem.activeElement, false);
 end;
 
 function TFHIRXmlParser.ParsePractitionerQualification(element : IXmlDomElement; path : string) : TFhirPractitionerQualification;
@@ -17708,7 +17708,7 @@ begin
       else if (child.baseName = 'gender') then
         result.gender := ParseCodeableConcept(child, path+'/gender') {b}
       else if (child.baseName = 'birthDate') then
-        result.birthDateObject := ParseDateTime(child, path+'/birthDate') {b}
+        result.birthDateElement := ParseDateTime(child, path+'/birthDate') {b}
       else if (child.baseName = 'photo') then
         result.photoList.Add(ParseAttachment(child, path+'/photo')){y.2}
       else if (child.baseName = 'organization') then
@@ -17753,7 +17753,7 @@ begin
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
   ComposeAddress(xml, 'address', elem.address);{x.2}
   ComposeCodeableConcept(xml, 'gender', elem.gender);{x.2}
-  ComposeDateTime(xml, 'birthDate', elem.birthDateObject);{x.2}
+  ComposeDateTime(xml, 'birthDate', elem.birthDateElement);{x.2}
   if not SummaryOnly then
     for i := 0 to elem.photoList.Count - 1 do
       ComposeAttachment(xml, 'photo', elem.photoList[i]);
@@ -17797,7 +17797,7 @@ begin
     if jsn.has('gender') then
         result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q}
     if jsn.has('birthDate') or jsn.has('_birthDate') then
-        result.birthDateObject := ParseDateTime(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
+        result.birthDateElement := ParseDateTime(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('photo') then
       iterateArray(jsn.vArr['photo'], result.photoList, parseAttachment);
     if jsn.has('organization') then
@@ -17844,8 +17844,8 @@ begin
   end;
   ComposeAddress(json, 'address', elem.address); {a}
   ComposeCodeableConcept(json, 'gender', elem.gender); {a}
-  ComposeDateTimeValue(json, 'birthDate', elem.birthDateObject, false);
-  ComposeDateTimeProps(json, 'birthDate', elem.birthDateObject, false);
+  ComposeDateTimeValue(json, 'birthDate', elem.birthDateElement, false);
+  ComposeDateTimeProps(json, 'birthDate', elem.birthDateElement, false);
   if not SummaryOnly and (elem.photoList.Count > 0) then
   begin
     json.valueArray('photo');
@@ -17973,7 +17973,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirProcedureRelationshipType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirProcedureRelationshipType, path+'/type', child){1a}
       else if (child.baseName = 'target') then
         result.target := ParseResourceReference{Resource}(child, path+'/target') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -17995,7 +17995,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirProcedureRelationshipType);
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirProcedureRelationshipType);
   ComposeResourceReference{Resource}(xml, 'target', elem.target);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -18012,7 +18012,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirProcedureRelationshipType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirProcedureRelationshipType);
     if jsn.has('target') then
         result.target := ParseResourceReference{Resource}(jsn.vObj['target']);{q}
     result.link;
@@ -18027,8 +18027,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirProcedureRelationshipType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirProcedureRelationshipType, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirProcedureRelationshipType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirProcedureRelationshipType, false);
   ComposeResourceReference{Resource}(json, 'target', elem.target); {a}
   json.finishObject;
 end;
@@ -18060,17 +18060,17 @@ begin
       else if (child.baseName = 'encounter') then
         result.encounter := ParseResourceReference{TFhirEncounter}(child, path+'/encounter') {b}
       else if (child.baseName = 'outcome') then
-        result.outcomeObject := ParseString(child, path+'/outcome') {b}
+        result.outcomeElement := ParseString(child, path+'/outcome') {b}
       else if (child.baseName = 'report') then
         result.reportList.Add(ParseResourceReference{TFhirDiagnosticReport}(child, path+'/report')){y.2}
       else if (child.baseName = 'complication') then
         result.complicationList.Add(ParseCodeableConcept(child, path+'/complication')){y.2}
       else if (child.baseName = 'followUp') then
-        result.followUpObject := ParseString(child, path+'/followUp') {b}
+        result.followUpElement := ParseString(child, path+'/followUp') {b}
       else if (child.baseName = 'relatedItem') then
         result.relatedItemList.Add(ParseProcedureRelatedItem(child, path+'/relatedItem')){y.2}
       else if (child.baseName = 'notes') then
-        result.notesObject := ParseString(child, path+'/notes') {b}
+        result.notesElement := ParseString(child, path+'/notes') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -18104,7 +18104,7 @@ begin
     ComposeProcedurePerformer(xml, 'performer', elem.performerList[i]);
   ComposePeriod(xml, 'date', elem.date);{x.2}
   ComposeResourceReference{TFhirEncounter}(xml, 'encounter', elem.encounter);{x.2}
-  ComposeString(xml, 'outcome', elem.outcomeObject);{x.2}
+  ComposeString(xml, 'outcome', elem.outcomeElement);{x.2}
   if not SummaryOnly then
     for i := 0 to elem.reportList.Count - 1 do
       ComposeResourceReference{TFhirDiagnosticReport}(xml, 'report', elem.reportList[i]);
@@ -18112,12 +18112,12 @@ begin
     for i := 0 to elem.complicationList.Count - 1 do
       ComposeCodeableConcept(xml, 'complication', elem.complicationList[i]);
   if not SummaryOnly then
-    ComposeString(xml, 'followUp', elem.followUpObject);{x.2}
+    ComposeString(xml, 'followUp', elem.followUpElement);{x.2}
   if not SummaryOnly then
     for i := 0 to elem.relatedItemList.Count - 1 do
       ComposeProcedureRelatedItem(xml, 'relatedItem', elem.relatedItemList[i]);
   if not SummaryOnly then
-    ComposeString(xml, 'notes', elem.notesObject);{x.2}
+    ComposeString(xml, 'notes', elem.notesElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -18149,17 +18149,17 @@ begin
     if jsn.has('encounter') then
         result.encounter := ParseResourceReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
     if jsn.has('outcome') or jsn.has('_outcome') then
-        result.outcomeObject := ParseString(jsn['outcome'], jsn.vObj['_outcome']);{q}
+        result.outcomeElement := ParseString(jsn['outcome'], jsn.vObj['_outcome']);{q}
     if jsn.has('report') then
       iterateArray(jsn.vArr['report'], result.reportList, parseResourceReference{TFhirDiagnosticReport});
     if jsn.has('complication') then
       iterateArray(jsn.vArr['complication'], result.complicationList, parseCodeableConcept);
     if jsn.has('followUp') or jsn.has('_followUp') then
-        result.followUpObject := ParseString(jsn['followUp'], jsn.vObj['_followUp']);{q}
+        result.followUpElement := ParseString(jsn['followUp'], jsn.vObj['_followUp']);{q}
     if jsn.has('relatedItem') then
       iterateArray(jsn.vArr['relatedItem'], result.relatedItemList, parseProcedureRelatedItem);
     if jsn.has('notes') or jsn.has('_notes') then
-        result.notesObject := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+        result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
     result.link;
   finally
     result.free;
@@ -18205,8 +18205,8 @@ begin
   end;
   ComposePeriod(json, 'date', elem.date); {a}
   ComposeResourceReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  ComposeStringValue(json, 'outcome', elem.outcomeObject, false);
-  ComposeStringProps(json, 'outcome', elem.outcomeObject, false);
+  ComposeStringValue(json, 'outcome', elem.outcomeElement, false);
+  ComposeStringProps(json, 'outcome', elem.outcomeElement, false);
   if not SummaryOnly and (elem.reportList.Count > 0) then
   begin
     json.valueArray('report');
@@ -18222,9 +18222,9 @@ begin
     json.FinishArray;
   end;
   if not SummaryOnly then
-    ComposeStringValue(json, 'followUp', elem.followUpObject, false);
+    ComposeStringValue(json, 'followUp', elem.followUpElement, false);
   if not SummaryOnly then
-    ComposeStringProps(json, 'followUp', elem.followUpObject, false);
+    ComposeStringProps(json, 'followUp', elem.followUpElement, false);
   if not SummaryOnly and (elem.relatedItemList.Count > 0) then
   begin
     json.valueArray('relatedItem');
@@ -18233,9 +18233,9 @@ begin
     json.FinishArray;
   end;
   if not SummaryOnly then
-    ComposeStringValue(json, 'notes', elem.notesObject, false);
+    ComposeStringValue(json, 'notes', elem.notesElement, false);
   if not SummaryOnly then
-    ComposeStringProps(json, 'notes', elem.notesObject, false);
+    ComposeStringProps(json, 'notes', elem.notesElement, false);
 end;
 
 function TFHIRXmlParser.ParseProfileMapping(element : IXmlDomElement; path : string) : TFhirProfileMapping;
@@ -18249,13 +18249,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identity') then
-        result.identityObject := ParseId(child, path+'/identity') {b}
+        result.identityElement := ParseId(child, path+'/identity') {b}
       else if (child.baseName = 'uri') then
-        result.uriObject := ParseUri(child, path+'/uri') {b}
+        result.uriElement := ParseUri(child, path+'/uri') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'comments') then
-        result.commentsObject := ParseString(child, path+'/comments') {b}
+        result.commentsElement := ParseString(child, path+'/comments') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -18275,10 +18275,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeId(xml, 'identity', elem.identityObject);{x.2}
-  ComposeUri(xml, 'uri', elem.uriObject);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'comments', elem.commentsObject);{x.2}
+  ComposeId(xml, 'identity', elem.identityElement);{x.2}
+  ComposeUri(xml, 'uri', elem.uriElement);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'comments', elem.commentsElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -18294,13 +18294,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identity') or jsn.has('_identity') then
-        result.identityObject := ParseId(jsn['identity'], jsn.vObj['_identity']);{q}
+        result.identityElement := ParseId(jsn['identity'], jsn.vObj['_identity']);{q}
     if jsn.has('uri') or jsn.has('_uri') then
-        result.uriObject := ParseUri(jsn['uri'], jsn.vObj['_uri']);{q}
+        result.uriElement := ParseUri(jsn['uri'], jsn.vObj['_uri']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsObject := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
     result.link;
   finally
     result.free;
@@ -18313,14 +18313,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIdValue(json, 'identity', elem.identityObject, false);
-  ComposeIdProps(json, 'identity', elem.identityObject, false);
-  ComposeUriValue(json, 'uri', elem.uriObject, false);
-  ComposeUriProps(json, 'uri', elem.uriObject, false);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'comments', elem.commentsObject, false);
-  ComposeStringProps(json, 'comments', elem.commentsObject, false);
+  ComposeIdValue(json, 'identity', elem.identityElement, false);
+  ComposeIdProps(json, 'identity', elem.identityElement, false);
+  ComposeUriValue(json, 'uri', elem.uriElement, false);
+  ComposeUriProps(json, 'uri', elem.uriElement, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'comments', elem.commentsElement, false);
+  ComposeStringProps(json, 'comments', elem.commentsElement, false);
   json.finishObject;
 end;
 
@@ -18335,13 +18335,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Object := ParseCode(child, path+'/type') {b}
+        result.type_Element := ParseCode(child, path+'/type') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'publish') then
-        result.publishObject := ParseBoolean(child, path+'/publish') {b}
+        result.publishElement := ParseBoolean(child, path+'/publish') {b}
       else if (child.baseName = 'purpose') then
-        result.purposeObject := ParseString(child, path+'/purpose') {b}
+        result.purposeElement := ParseString(child, path+'/purpose') {b}
       else if (child.baseName = 'element') then
         result.elementList.Add(ParseProfileStructureElement(child, path+'/element')){y.2}
       else if (child.baseName = 'searchParam') then
@@ -18367,10 +18367,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeCode(xml, 'type', elem.type_Object);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeBoolean(xml, 'publish', elem.publishObject);{x.2}
-  ComposeString(xml, 'purpose', elem.purposeObject);{x.2}
+  ComposeCode(xml, 'type', elem.type_Element);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeBoolean(xml, 'publish', elem.publishElement);{x.2}
+  ComposeString(xml, 'purpose', elem.purposeElement);{x.2}
   for i := 0 to elem.elementList.Count - 1 do
     ComposeProfileStructureElement(xml, 'element', elem.elementList[i]);
   for i := 0 to elem.searchParamList.Count - 1 do
@@ -18390,13 +18390,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Object := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('publish') or jsn.has('_publish') then
-        result.publishObject := ParseBoolean(jsn['publish'], jsn.vObj['_publish']);{q}
+        result.publishElement := ParseBoolean(jsn['publish'], jsn.vObj['_publish']);{q}
     if jsn.has('purpose') or jsn.has('_purpose') then
-        result.purposeObject := ParseString(jsn['purpose'], jsn.vObj['_purpose']);{q}
+        result.purposeElement := ParseString(jsn['purpose'], jsn.vObj['_purpose']);{q}
     if jsn.has('element') then
       iterateArray(jsn.vArr['element'], result.elementList, parseProfileStructureElement);
     if jsn.has('searchParam') then
@@ -18415,14 +18415,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeCodeValue(json, 'type', elem.type_Object, false);
-  ComposeCodeProps(json, 'type', elem.type_Object, false);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeBooleanValue(json, 'publish', elem.publishObject, false);
-  ComposeBooleanProps(json, 'publish', elem.publishObject, false);
-  ComposeStringValue(json, 'purpose', elem.purposeObject, false);
-  ComposeStringProps(json, 'purpose', elem.purposeObject, false);
+  ComposeCodeValue(json, 'type', elem.type_Element, false);
+  ComposeCodeProps(json, 'type', elem.type_Element, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeBooleanValue(json, 'publish', elem.publishElement, false);
+  ComposeBooleanProps(json, 'publish', elem.publishElement, false);
+  ComposeStringValue(json, 'purpose', elem.purposeElement, false);
+  ComposeStringProps(json, 'purpose', elem.purposeElement, false);
   if elem.elementList.Count > 0 then
   begin
     json.valueArray('element');
@@ -18451,11 +18451,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'path') then
-        result.pathObject := ParseString(child, path+'/path') {b}
+        result.pathElement := ParseString(child, path+'/path') {b}
       else if (child.baseName = 'representation') then
-        result.representationObject.Add(ParseEnum(CODES_TFhirPropertyRepresentation, path+'/representation', child)){y.1}
+        result.representationElement.Add(ParseEnum(CODES_TFhirPropertyRepresentation, path+'/representation', child)){y.1}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'slicing') then
         result.slicing := ParseProfileStructureElementSlicing(child, path+'/slicing') {b}
       else if (child.baseName = 'definition') then
@@ -18481,10 +18481,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'path', elem.pathObject);{x.2}
-  for i := 0 to elem.representationObject.Count - 1 do
-    ComposeEnum(xml, 'representation', elem.representationObject[i], CODES_TFhirPropertyRepresentation);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
+  ComposeString(xml, 'path', elem.pathElement);{x.2}
+  for i := 0 to elem.representationElement.Count - 1 do
+    ComposeEnum(xml, 'representation', elem.representationElement[i], CODES_TFhirPropertyRepresentation);
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
   ComposeProfileStructureElementSlicing(xml, 'slicing', elem.slicing);{x.2}
   ComposeProfileStructureElementDefinition(xml, 'definition', elem.definition);{x.2}
   closeOutElement(xml, elem);
@@ -18502,11 +18502,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('path') or jsn.has('_path') then
-        result.pathObject := ParseString(jsn['path'], jsn.vObj['_path']);{q}
+        result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
     if jsn.has('representation') or jsn.has('_representation') then
-      iterateEnumArray(jsn.vArr['representation'], jsn.vArr['_representation'], result.representationObject, parseEnum, CODES_TFhirPropertyRepresentation);
+      iterateEnumArray(jsn.vArr['representation'], jsn.vArr['_representation'], result.representationElement, parseEnum, CODES_TFhirPropertyRepresentation);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('slicing') then
         result.slicing := ParseProfileStructureElementSlicing(jsn.vObj['slicing']);{q}
     if jsn.has('definition') then
@@ -18526,28 +18526,28 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'path', elem.pathObject, false);
-  ComposeStringProps(json, 'path', elem.pathObject, false);
-  if elem.representationObject.Count > 0 then
+  ComposeStringValue(json, 'path', elem.pathElement, false);
+  ComposeStringProps(json, 'path', elem.pathElement, false);
+  if elem.representationElement.Count > 0 then
   begin
     json.valueArray('representation');
     ext := false;
-    for i := 0 to elem.representationObject.Count - 1 do
+    for i := 0 to elem.representationElement.Count - 1 do
     begin
-      ext := ext or ((elem.representationObject[i].xmlid <> '') or (elem.representationObject[i].hasExtensions));
-      ComposeEnumValue(json, '', elem.representationObject[i], CODES_TFhirPropertyRepresentation, true);
+      ext := ext or ((elem.representationElement[i].xmlid <> '') or (elem.representationElement[i].hasExtensions));
+      ComposeEnumValue(json, '', elem.representationElement[i], CODES_TFhirPropertyRepresentation, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_representation');
-      for i := 0 to elem.representationObject.Count - 1 do
-        ComposeEnumProps(json, '', elem.representationObject[i], CODES_TFhirPropertyRepresentation, true);
+      for i := 0 to elem.representationElement.Count - 1 do
+        ComposeEnumProps(json, '', elem.representationElement[i], CODES_TFhirPropertyRepresentation, true);
       json.FinishArray;
     end;
   end;
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeProfileStructureElementSlicing(json, 'slicing', elem.slicing); {a}
   ComposeProfileStructureElementDefinition(json, 'definition', elem.definition); {a}
   json.finishObject;
@@ -18564,11 +18564,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'discriminator') then
-        result.discriminatorObject := ParseId(child, path+'/discriminator') {b}
+        result.discriminatorElement := ParseId(child, path+'/discriminator') {b}
       else if (child.baseName = 'ordered') then
-        result.orderedObject := ParseBoolean(child, path+'/ordered') {b}
+        result.orderedElement := ParseBoolean(child, path+'/ordered') {b}
       else if (child.baseName = 'rules') then
-        result.rulesObject := ParseEnum(CODES_TFhirResourceSlicingRules, path+'/rules', child){1a}
+        result.rulesElement := ParseEnum(CODES_TFhirResourceSlicingRules, path+'/rules', child){1a}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -18588,9 +18588,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeId(xml, 'discriminator', elem.discriminatorObject);{x.2}
-  ComposeBoolean(xml, 'ordered', elem.orderedObject);{x.2}
-  ComposeEnum(xml, 'rules', elem.RulesObject, CODES_TFhirResourceSlicingRules);
+  ComposeId(xml, 'discriminator', elem.discriminatorElement);{x.2}
+  ComposeBoolean(xml, 'ordered', elem.orderedElement);{x.2}
+  ComposeEnum(xml, 'rules', elem.RulesElement, CODES_TFhirResourceSlicingRules);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -18606,11 +18606,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('discriminator') or jsn.has('_discriminator') then
-        result.discriminatorObject := ParseId(jsn['discriminator'], jsn.vObj['_discriminator']);{q}
+        result.discriminatorElement := ParseId(jsn['discriminator'], jsn.vObj['_discriminator']);{q}
     if jsn.has('ordered') or jsn.has('_ordered') then
-        result.orderedObject := ParseBoolean(jsn['ordered'], jsn.vObj['_ordered']);{q}
+        result.orderedElement := ParseBoolean(jsn['ordered'], jsn.vObj['_ordered']);{q}
     if jsn.has('rules') or jsn.has('_rules')  then
-      result.rulesObject := parseEnum(jsn['rules'], jsn.vObj['_rules'], CODES_TFhirResourceSlicingRules);
+      result.rulesElement := parseEnum(jsn['rules'], jsn.vObj['_rules'], CODES_TFhirResourceSlicingRules);
     result.link;
   finally
     result.free;
@@ -18623,12 +18623,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIdValue(json, 'discriminator', elem.discriminatorObject, false);
-  ComposeIdProps(json, 'discriminator', elem.discriminatorObject, false);
-  ComposeBooleanValue(json, 'ordered', elem.orderedObject, false);
-  ComposeBooleanProps(json, 'ordered', elem.orderedObject, false);
-  ComposeEnumValue(json, 'rules', elem.RulesObject, CODES_TFhirResourceSlicingRules, false);
-  ComposeEnumProps(json, 'rules', elem.RulesObject, CODES_TFhirResourceSlicingRules, false);
+  ComposeIdValue(json, 'discriminator', elem.discriminatorElement, false);
+  ComposeIdProps(json, 'discriminator', elem.discriminatorElement, false);
+  ComposeBooleanValue(json, 'ordered', elem.orderedElement, false);
+  ComposeBooleanProps(json, 'ordered', elem.orderedElement, false);
+  ComposeEnumValue(json, 'rules', elem.RulesElement, CODES_TFhirResourceSlicingRules, false);
+  ComposeEnumProps(json, 'rules', elem.RulesElement, CODES_TFhirResourceSlicingRules, false);
   json.finishObject;
 end;
 
@@ -18643,23 +18643,23 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'short') then
-        result.shortObject := ParseString(child, path+'/short') {b}
+        result.shortElement := ParseString(child, path+'/short') {b}
       else if (child.baseName = 'formal') then
-        result.formalObject := ParseString(child, path+'/formal') {b}
+        result.formalElement := ParseString(child, path+'/formal') {b}
       else if (child.baseName = 'comments') then
-        result.commentsObject := ParseString(child, path+'/comments') {b}
+        result.commentsElement := ParseString(child, path+'/comments') {b}
       else if (child.baseName = 'requirements') then
-        result.requirementsObject := ParseString(child, path+'/requirements') {b}
+        result.requirementsElement := ParseString(child, path+'/requirements') {b}
       else if (child.baseName = 'synonym') then
         result.synonymList.Add(ParseString(child, path+'/synonym')){y.2}
       else if (child.baseName = 'min') then
-        result.minObject := ParseInteger(child, path+'/min') {b}
+        result.minElement := ParseInteger(child, path+'/min') {b}
       else if (child.baseName = 'max') then
-        result.maxObject := ParseString(child, path+'/max') {b}
+        result.maxElement := ParseString(child, path+'/max') {b}
       else if (child.baseName = 'type') then
         result.type_List.Add(ParseProfileStructureElementDefinitionType(child, path+'/type')){y.2}
       else if (child.baseName = 'nameReference') then
-        result.nameReferenceObject := ParseString(child, path+'/nameReference') {b}
+        result.nameReferenceElement := ParseString(child, path+'/nameReference') {b}
       else if (child.baseName = 'valueInteger') then
         result.value := ParseInteger(child, path+'.valueInteger') {c}
       else if (child.baseName = 'valueDateTime') then
@@ -18769,15 +18769,15 @@ begin
       else if (child.baseName = 'exampleHumanName') then
         result.example := ParseHumanName(child, path+'/exampleHumanName') {f}
       else if (child.baseName = 'maxLength') then
-        result.maxLengthObject := ParseInteger(child, path+'/maxLength') {b}
+        result.maxLengthElement := ParseInteger(child, path+'/maxLength') {b}
       else if (child.baseName = 'condition') then
         result.conditionList.Add(ParseId(child, path+'/condition')){y.2}
       else if (child.baseName = 'constraint') then
         result.constraintList.Add(ParseProfileStructureElementDefinitionConstraint(child, path+'/constraint')){y.2}
       else if (child.baseName = 'mustSupport') then
-        result.mustSupportObject := ParseBoolean(child, path+'/mustSupport') {b}
+        result.mustSupportElement := ParseBoolean(child, path+'/mustSupport') {b}
       else if (child.baseName = 'isModifier') then
-        result.isModifierObject := ParseBoolean(child, path+'/isModifier') {b}
+        result.isModifierElement := ParseBoolean(child, path+'/isModifier') {b}
       else if (child.baseName = 'binding') then
         result.binding := ParseProfileStructureElementDefinitionBinding(child, path+'/binding') {b}
       else if (child.baseName = 'mapping') then
@@ -18803,17 +18803,17 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'short', elem.shortObject);{x.2}
-  ComposeString(xml, 'formal', elem.formalObject);{x.2}
-  ComposeString(xml, 'comments', elem.commentsObject);{x.2}
-  ComposeString(xml, 'requirements', elem.requirementsObject);{x.2}
+  ComposeString(xml, 'short', elem.shortElement);{x.2}
+  ComposeString(xml, 'formal', elem.formalElement);{x.2}
+  ComposeString(xml, 'comments', elem.commentsElement);{x.2}
+  ComposeString(xml, 'requirements', elem.requirementsElement);{x.2}
   for i := 0 to elem.synonymList.Count - 1 do
     ComposeString(xml, 'synonym', elem.synonymList[i]);
-  ComposeInteger(xml, 'min', elem.minObject);{x.2}
-  ComposeString(xml, 'max', elem.maxObject);{x.2}
+  ComposeInteger(xml, 'min', elem.minElement);{x.2}
+  ComposeString(xml, 'max', elem.maxElement);{x.2}
   for i := 0 to elem.type_List.Count - 1 do
     ComposeProfileStructureElementDefinitionType(xml, 'type', elem.type_List[i]);
-  ComposeString(xml, 'nameReference', elem.nameReferenceObject);{x.2}
+  ComposeString(xml, 'nameReference', elem.nameReferenceElement);{x.2}
   if (elem.value is TFhirInteger) {1} then
     ComposeInteger(xml, 'valueInteger', TFhirInteger(elem.value))
   else if (elem.value is TFhirDateTime) {1} then
@@ -18922,13 +18922,13 @@ begin
     ComposeAddress(xml, 'exampleAddress', TFhirAddress(elem.example))
   else if (elem.example is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'exampleHumanName', TFhirHumanName(elem.example));
-  ComposeInteger(xml, 'maxLength', elem.maxLengthObject);{x.2}
+  ComposeInteger(xml, 'maxLength', elem.maxLengthElement);{x.2}
   for i := 0 to elem.conditionList.Count - 1 do
     ComposeId(xml, 'condition', elem.conditionList[i]);
   for i := 0 to elem.constraintList.Count - 1 do
     ComposeProfileStructureElementDefinitionConstraint(xml, 'constraint', elem.constraintList[i]);
-  ComposeBoolean(xml, 'mustSupport', elem.mustSupportObject);{x.2}
-  ComposeBoolean(xml, 'isModifier', elem.isModifierObject);{x.2}
+  ComposeBoolean(xml, 'mustSupport', elem.mustSupportElement);{x.2}
+  ComposeBoolean(xml, 'isModifier', elem.isModifierElement);{x.2}
   ComposeProfileStructureElementDefinitionBinding(xml, 'binding', elem.binding);{x.2}
   for i := 0 to elem.mappingList.Count - 1 do
     ComposeProfileStructureElementDefinitionMapping(xml, 'mapping', elem.mappingList[i]);
@@ -18947,23 +18947,23 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('short') or jsn.has('_short') then
-        result.shortObject := ParseString(jsn['short'], jsn.vObj['_short']);{q}
+        result.shortElement := ParseString(jsn['short'], jsn.vObj['_short']);{q}
     if jsn.has('formal') or jsn.has('_formal') then
-        result.formalObject := ParseString(jsn['formal'], jsn.vObj['_formal']);{q}
+        result.formalElement := ParseString(jsn['formal'], jsn.vObj['_formal']);{q}
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsObject := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsObject := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
       if jsn.has('synonym') or jsn.has('_synonym') then
       iteratePrimitiveArray(jsn.vArr['synonym'], jsn.vArr['_synonym'], result.synonymList, parseString);
     if jsn.has('min') or jsn.has('_min') then
-        result.minObject := ParseInteger(jsn['min'], jsn.vObj['_min']);{q}
+        result.minElement := ParseInteger(jsn['min'], jsn.vObj['_min']);{q}
     if jsn.has('max') or jsn.has('_max') then
-        result.maxObject := ParseString(jsn['max'], jsn.vObj['_max']);{q}
+        result.maxElement := ParseString(jsn['max'], jsn.vObj['_max']);{q}
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseProfileStructureElementDefinitionType);
     if jsn.has('nameReference') or jsn.has('_nameReference') then
-        result.nameReferenceObject := ParseString(jsn['nameReference'], jsn.vObj['_nameReference']);{q}
+        result.nameReferenceElement := ParseString(jsn['nameReference'], jsn.vObj['_nameReference']);{q}
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
         result.value := ParseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
@@ -19073,15 +19073,15 @@ begin
     if jsn.has('exampleHumanName') {a9} then
         result.example := ParseHumanName(jsn.vObj['exampleHumanName']);
     if jsn.has('maxLength') or jsn.has('_maxLength') then
-        result.maxLengthObject := ParseInteger(jsn['maxLength'], jsn.vObj['_maxLength']);{q}
+        result.maxLengthElement := ParseInteger(jsn['maxLength'], jsn.vObj['_maxLength']);{q}
       if jsn.has('condition') or jsn.has('_condition') then
       iteratePrimitiveArray(jsn.vArr['condition'], jsn.vArr['_condition'], result.conditionList, parseId);
     if jsn.has('constraint') then
       iterateArray(jsn.vArr['constraint'], result.constraintList, parseProfileStructureElementDefinitionConstraint);
     if jsn.has('mustSupport') or jsn.has('_mustSupport') then
-        result.mustSupportObject := ParseBoolean(jsn['mustSupport'], jsn.vObj['_mustSupport']);{q}
+        result.mustSupportElement := ParseBoolean(jsn['mustSupport'], jsn.vObj['_mustSupport']);{q}
     if jsn.has('isModifier') or jsn.has('_isModifier') then
-        result.isModifierObject := ParseBoolean(jsn['isModifier'], jsn.vObj['_isModifier']);{q}
+        result.isModifierElement := ParseBoolean(jsn['isModifier'], jsn.vObj['_isModifier']);{q}
     if jsn.has('binding') then
         result.binding := ParseProfileStructureElementDefinitionBinding(jsn.vObj['binding']);{q}
     if jsn.has('mapping') then
@@ -19101,14 +19101,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'short', elem.shortObject, false);
-  ComposeStringProps(json, 'short', elem.shortObject, false);
-  ComposeStringValue(json, 'formal', elem.formalObject, false);
-  ComposeStringProps(json, 'formal', elem.formalObject, false);
-  ComposeStringValue(json, 'comments', elem.commentsObject, false);
-  ComposeStringProps(json, 'comments', elem.commentsObject, false);
-  ComposeStringValue(json, 'requirements', elem.requirementsObject, false);
-  ComposeStringProps(json, 'requirements', elem.requirementsObject, false);
+  ComposeStringValue(json, 'short', elem.shortElement, false);
+  ComposeStringProps(json, 'short', elem.shortElement, false);
+  ComposeStringValue(json, 'formal', elem.formalElement, false);
+  ComposeStringProps(json, 'formal', elem.formalElement, false);
+  ComposeStringValue(json, 'comments', elem.commentsElement, false);
+  ComposeStringProps(json, 'comments', elem.commentsElement, false);
+  ComposeStringValue(json, 'requirements', elem.requirementsElement, false);
+  ComposeStringProps(json, 'requirements', elem.requirementsElement, false);
   if elem.synonymList.Count > 0 then
   begin
     json.valueArray('synonym');
@@ -19127,10 +19127,10 @@ begin
       json.FinishArray;
     end;
   end;
-  ComposeIntegerValue(json, 'min', elem.minObject, false);
-  ComposeIntegerProps(json, 'min', elem.minObject, false);
-  ComposeStringValue(json, 'max', elem.maxObject, false);
-  ComposeStringProps(json, 'max', elem.maxObject, false);
+  ComposeIntegerValue(json, 'min', elem.minElement, false);
+  ComposeIntegerProps(json, 'min', elem.minElement, false);
+  ComposeStringValue(json, 'max', elem.maxElement, false);
+  ComposeStringProps(json, 'max', elem.maxElement, false);
   if elem.type_List.Count > 0 then
   begin
     json.valueArray('type');
@@ -19138,8 +19138,8 @@ begin
       ComposeProfileStructureElementDefinitionType(json, '',elem.type_List[i]); {z - }
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'nameReference', elem.nameReferenceObject, false);
-  ComposeStringProps(json, 'nameReference', elem.nameReferenceObject, false);
+  ComposeStringValue(json, 'nameReference', elem.nameReferenceElement, false);
+  ComposeStringProps(json, 'nameReference', elem.nameReferenceElement, false);
   if (elem.value is TFhirInteger) then
   begin
     ComposeIntegerValue(json, 'valueInteger', TFhirInteger(elem.value), false);
@@ -19326,8 +19326,8 @@ begin
     ComposeAddress(json, 'exampleAddress', TFhirAddress(elem.example))
   else if (elem.example is TFhirHumanName) then
     ComposeHumanName(json, 'exampleHumanName', TFhirHumanName(elem.example));
-  ComposeIntegerValue(json, 'maxLength', elem.maxLengthObject, false);
-  ComposeIntegerProps(json, 'maxLength', elem.maxLengthObject, false);
+  ComposeIntegerValue(json, 'maxLength', elem.maxLengthElement, false);
+  ComposeIntegerProps(json, 'maxLength', elem.maxLengthElement, false);
   if elem.conditionList.Count > 0 then
   begin
     json.valueArray('condition');
@@ -19353,10 +19353,10 @@ begin
       ComposeProfileStructureElementDefinitionConstraint(json, '',elem.constraintList[i]); {z - }
     json.FinishArray;
   end;
-  ComposeBooleanValue(json, 'mustSupport', elem.mustSupportObject, false);
-  ComposeBooleanProps(json, 'mustSupport', elem.mustSupportObject, false);
-  ComposeBooleanValue(json, 'isModifier', elem.isModifierObject, false);
-  ComposeBooleanProps(json, 'isModifier', elem.isModifierObject, false);
+  ComposeBooleanValue(json, 'mustSupport', elem.mustSupportElement, false);
+  ComposeBooleanProps(json, 'mustSupport', elem.mustSupportElement, false);
+  ComposeBooleanValue(json, 'isModifier', elem.isModifierElement, false);
+  ComposeBooleanProps(json, 'isModifier', elem.isModifierElement, false);
   ComposeProfileStructureElementDefinitionBinding(json, 'binding', elem.binding); {a}
   if elem.mappingList.Count > 0 then
   begin
@@ -19379,11 +19379,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if (child.baseName = 'profile') then
-        result.profileObject := ParseUri(child, path+'/profile') {b}
+        result.profileElement := ParseUri(child, path+'/profile') {b}
       else if (child.baseName = 'aggregation') then
-        result.aggregationObject.Add(ParseEnum(CODES_TFhirResourceAggregationMode, path+'/aggregation', child)){y.1}
+        result.aggregationElement.Add(ParseEnum(CODES_TFhirResourceAggregationMode, path+'/aggregation', child)){y.1}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -19405,10 +19405,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
-  ComposeUri(xml, 'profile', elem.profileObject);{x.2}
-  for i := 0 to elem.aggregationObject.Count - 1 do
-    ComposeEnum(xml, 'aggregation', elem.aggregationObject[i], CODES_TFhirResourceAggregationMode);
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
+  ComposeUri(xml, 'profile', elem.profileElement);{x.2}
+  for i := 0 to elem.aggregationElement.Count - 1 do
+    ComposeEnum(xml, 'aggregation', elem.aggregationElement[i], CODES_TFhirResourceAggregationMode);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -19424,11 +19424,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     if jsn.has('profile') or jsn.has('_profile') then
-        result.profileObject := ParseUri(jsn['profile'], jsn.vObj['_profile']);{q}
+        result.profileElement := ParseUri(jsn['profile'], jsn.vObj['_profile']);{q}
     if jsn.has('aggregation') or jsn.has('_aggregation') then
-      iterateEnumArray(jsn.vArr['aggregation'], jsn.vArr['_aggregation'], result.aggregationObject, parseEnum, CODES_TFhirResourceAggregationMode);
+      iterateEnumArray(jsn.vArr['aggregation'], jsn.vArr['_aggregation'], result.aggregationElement, parseEnum, CODES_TFhirResourceAggregationMode);
     result.link;
   finally
     result.free;
@@ -19444,25 +19444,25 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
-  ComposeUriValue(json, 'profile', elem.profileObject, false);
-  ComposeUriProps(json, 'profile', elem.profileObject, false);
-  if elem.aggregationObject.Count > 0 then
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
+  ComposeUriValue(json, 'profile', elem.profileElement, false);
+  ComposeUriProps(json, 'profile', elem.profileElement, false);
+  if elem.aggregationElement.Count > 0 then
   begin
     json.valueArray('aggregation');
     ext := false;
-    for i := 0 to elem.aggregationObject.Count - 1 do
+    for i := 0 to elem.aggregationElement.Count - 1 do
     begin
-      ext := ext or ((elem.aggregationObject[i].xmlid <> '') or (elem.aggregationObject[i].hasExtensions));
-      ComposeEnumValue(json, '', elem.aggregationObject[i], CODES_TFhirResourceAggregationMode, true);
+      ext := ext or ((elem.aggregationElement[i].xmlid <> '') or (elem.aggregationElement[i].hasExtensions));
+      ComposeEnumValue(json, '', elem.aggregationElement[i], CODES_TFhirResourceAggregationMode, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_aggregation');
-      for i := 0 to elem.aggregationObject.Count - 1 do
-        ComposeEnumProps(json, '', elem.aggregationObject[i], CODES_TFhirResourceAggregationMode, true);
+      for i := 0 to elem.aggregationElement.Count - 1 do
+        ComposeEnumProps(json, '', elem.aggregationElement[i], CODES_TFhirResourceAggregationMode, true);
       json.FinishArray;
     end;
   end;
@@ -19480,15 +19480,15 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'key') then
-        result.keyObject := ParseId(child, path+'/key') {b}
+        result.keyElement := ParseId(child, path+'/key') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'severity') then
-        result.severityObject := ParseEnum(CODES_TFhirConstraintSeverity, path+'/severity', child){1a}
+        result.severityElement := ParseEnum(CODES_TFhirConstraintSeverity, path+'/severity', child){1a}
       else if (child.baseName = 'human') then
-        result.humanObject := ParseString(child, path+'/human') {b}
+        result.humanElement := ParseString(child, path+'/human') {b}
       else if (child.baseName = 'xpath') then
-        result.xpathObject := ParseString(child, path+'/xpath') {b}
+        result.xpathElement := ParseString(child, path+'/xpath') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -19508,11 +19508,11 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeId(xml, 'key', elem.keyObject);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeEnum(xml, 'severity', elem.SeverityObject, CODES_TFhirConstraintSeverity);
-  ComposeString(xml, 'human', elem.humanObject);{x.2}
-  ComposeString(xml, 'xpath', elem.xpathObject);{x.2}
+  ComposeId(xml, 'key', elem.keyElement);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeEnum(xml, 'severity', elem.SeverityElement, CODES_TFhirConstraintSeverity);
+  ComposeString(xml, 'human', elem.humanElement);{x.2}
+  ComposeString(xml, 'xpath', elem.xpathElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -19528,15 +19528,15 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('key') or jsn.has('_key') then
-        result.keyObject := ParseId(jsn['key'], jsn.vObj['_key']);{q}
+        result.keyElement := ParseId(jsn['key'], jsn.vObj['_key']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityObject := parseEnum(jsn['severity'], jsn.vObj['_severity'], CODES_TFhirConstraintSeverity);
+      result.severityElement := parseEnum(jsn['severity'], jsn.vObj['_severity'], CODES_TFhirConstraintSeverity);
     if jsn.has('human') or jsn.has('_human') then
-        result.humanObject := ParseString(jsn['human'], jsn.vObj['_human']);{q}
+        result.humanElement := ParseString(jsn['human'], jsn.vObj['_human']);{q}
     if jsn.has('xpath') or jsn.has('_xpath') then
-        result.xpathObject := ParseString(jsn['xpath'], jsn.vObj['_xpath']);{q}
+        result.xpathElement := ParseString(jsn['xpath'], jsn.vObj['_xpath']);{q}
     result.link;
   finally
     result.free;
@@ -19549,16 +19549,16 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIdValue(json, 'key', elem.keyObject, false);
-  ComposeIdProps(json, 'key', elem.keyObject, false);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeEnumValue(json, 'severity', elem.SeverityObject, CODES_TFhirConstraintSeverity, false);
-  ComposeEnumProps(json, 'severity', elem.SeverityObject, CODES_TFhirConstraintSeverity, false);
-  ComposeStringValue(json, 'human', elem.humanObject, false);
-  ComposeStringProps(json, 'human', elem.humanObject, false);
-  ComposeStringValue(json, 'xpath', elem.xpathObject, false);
-  ComposeStringProps(json, 'xpath', elem.xpathObject, false);
+  ComposeIdValue(json, 'key', elem.keyElement, false);
+  ComposeIdProps(json, 'key', elem.keyElement, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeEnumValue(json, 'severity', elem.SeverityElement, CODES_TFhirConstraintSeverity, false);
+  ComposeEnumProps(json, 'severity', elem.SeverityElement, CODES_TFhirConstraintSeverity, false);
+  ComposeStringValue(json, 'human', elem.humanElement, false);
+  ComposeStringProps(json, 'human', elem.humanElement, false);
+  ComposeStringValue(json, 'xpath', elem.xpathElement, false);
+  ComposeStringProps(json, 'xpath', elem.xpathElement, false);
   json.finishObject;
 end;
 
@@ -19573,13 +19573,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'isExtensible') then
-        result.isExtensibleObject := ParseBoolean(child, path+'/isExtensible') {b}
+        result.isExtensibleElement := ParseBoolean(child, path+'/isExtensible') {b}
       else if (child.baseName = 'conformance') then
-        result.conformanceObject := ParseEnum(CODES_TFhirBindingConformance, path+'/conformance', child){1a}
+        result.conformanceElement := ParseEnum(CODES_TFhirBindingConformance, path+'/conformance', child){1a}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'referenceUri') then
         result.reference := ParseUri(child, path+'/referenceUri'){x.3}
       else if (child.baseName = 'referenceResource') then
@@ -19603,10 +19603,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeBoolean(xml, 'isExtensible', elem.isExtensibleObject);{x.2}
-  ComposeEnum(xml, 'conformance', elem.ConformanceObject, CODES_TFhirBindingConformance);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeBoolean(xml, 'isExtensible', elem.isExtensibleElement);{x.2}
+  ComposeEnum(xml, 'conformance', elem.ConformanceElement, CODES_TFhirBindingConformance);
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   if (elem.reference is TFhirUri) {6} then
     ComposeUri(xml, 'referenceUri', TFhirUri(elem.reference))
   else if (elem.reference is TFhirResourceReference) {2} then
@@ -19626,13 +19626,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('isExtensible') or jsn.has('_isExtensible') then
-        result.isExtensibleObject := ParseBoolean(jsn['isExtensible'], jsn.vObj['_isExtensible']);{q}
+        result.isExtensibleElement := ParseBoolean(jsn['isExtensible'], jsn.vObj['_isExtensible']);{q}
     if jsn.has('conformance') or jsn.has('_conformance')  then
-      result.conformanceObject := parseEnum(jsn['conformance'], jsn.vObj['_conformance'], CODES_TFhirBindingConformance);
+      result.conformanceElement := parseEnum(jsn['conformance'], jsn.vObj['_conformance'], CODES_TFhirBindingConformance);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('referenceUri') or jsn.has('_referenceUri') then
       result.reference := parseUri(jsn['referenceUri'], jsn.vObj['_referenceUri']);
     if jsn.has('referenceResource') {a3} then
@@ -19649,14 +19649,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeBooleanValue(json, 'isExtensible', elem.isExtensibleObject, false);
-  ComposeBooleanProps(json, 'isExtensible', elem.isExtensibleObject, false);
-  ComposeEnumValue(json, 'conformance', elem.ConformanceObject, CODES_TFhirBindingConformance, false);
-  ComposeEnumProps(json, 'conformance', elem.ConformanceObject, CODES_TFhirBindingConformance, false);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeBooleanValue(json, 'isExtensible', elem.isExtensibleElement, false);
+  ComposeBooleanProps(json, 'isExtensible', elem.isExtensibleElement, false);
+  ComposeEnumValue(json, 'conformance', elem.ConformanceElement, CODES_TFhirBindingConformance, false);
+  ComposeEnumProps(json, 'conformance', elem.ConformanceElement, CODES_TFhirBindingConformance, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if (elem.reference is TFhirUri) then 
   begin
     ComposeUriValue(json, 'referenceUri', TFhirUri(elem.reference), false);
@@ -19678,9 +19678,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identity') then
-        result.identityObject := ParseId(child, path+'/identity') {b}
+        result.identityElement := ParseId(child, path+'/identity') {b}
       else if (child.baseName = 'map') then
-        result.mapObject := ParseString(child, path+'/map') {b}
+        result.mapElement := ParseString(child, path+'/map') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -19700,8 +19700,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeId(xml, 'identity', elem.identityObject);{x.2}
-  ComposeString(xml, 'map', elem.mapObject);{x.2}
+  ComposeId(xml, 'identity', elem.identityElement);{x.2}
+  ComposeString(xml, 'map', elem.mapElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -19717,9 +19717,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identity') or jsn.has('_identity') then
-        result.identityObject := ParseId(jsn['identity'], jsn.vObj['_identity']);{q}
+        result.identityElement := ParseId(jsn['identity'], jsn.vObj['_identity']);{q}
     if jsn.has('map') or jsn.has('_map') then
-        result.mapObject := ParseString(jsn['map'], jsn.vObj['_map']);{q}
+        result.mapElement := ParseString(jsn['map'], jsn.vObj['_map']);{q}
     result.link;
   finally
     result.free;
@@ -19732,10 +19732,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeIdValue(json, 'identity', elem.identityObject, false);
-  ComposeIdProps(json, 'identity', elem.identityObject, false);
-  ComposeStringValue(json, 'map', elem.mapObject, false);
-  ComposeStringProps(json, 'map', elem.mapObject, false);
+  ComposeIdValue(json, 'identity', elem.identityElement, false);
+  ComposeIdProps(json, 'identity', elem.identityElement, false);
+  ComposeStringValue(json, 'map', elem.mapElement, false);
+  ComposeStringProps(json, 'map', elem.mapElement, false);
   json.finishObject;
 end;
 
@@ -19750,13 +19750,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirSearchParamType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirSearchParamType, path+'/type', child){1a}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'xpath') then
-        result.xpathObject := ParseString(child, path+'/xpath') {b}
+        result.xpathElement := ParseString(child, path+'/xpath') {b}
       else if (child.baseName = 'target') then
         result.targetList.Add(ParseCode(child, path+'/target')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -19780,10 +19780,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirSearchParamType);
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
-  ComposeString(xml, 'xpath', elem.xpathObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirSearchParamType);
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
+  ComposeString(xml, 'xpath', elem.xpathElement);{x.2}
   for i := 0 to elem.targetList.Count - 1 do
     ComposeCode(xml, 'target', elem.targetList[i]);
   closeOutElement(xml, elem);
@@ -19801,13 +19801,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamType);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('xpath') or jsn.has('_xpath') then
-        result.xpathObject := ParseString(jsn['xpath'], jsn.vObj['_xpath']);{q}
+        result.xpathElement := ParseString(jsn['xpath'], jsn.vObj['_xpath']);{q}
       if jsn.has('target') or jsn.has('_target') then
       iteratePrimitiveArray(jsn.vArr['target'], jsn.vArr['_target'], result.targetList, parseCode);
     result.link;
@@ -19825,14 +19825,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirSearchParamType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirSearchParamType, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
-  ComposeStringValue(json, 'xpath', elem.xpathObject, false);
-  ComposeStringProps(json, 'xpath', elem.xpathObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirSearchParamType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirSearchParamType, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
+  ComposeStringValue(json, 'xpath', elem.xpathElement, false);
+  ComposeStringProps(json, 'xpath', elem.xpathElement, false);
   if elem.targetList.Count > 0 then
   begin
     json.valueArray('target');
@@ -19865,11 +19865,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if (child.baseName = 'display') then
-        result.displayObject := ParseString(child, path+'/display') {b}
+        result.displayElement := ParseString(child, path+'/display') {b}
       else if (child.baseName = 'contextType') then
-        result.contextTypeObject := ParseEnum(CODES_TFhirExtensionContext, path+'/contextType', child){1a}
+        result.contextTypeElement := ParseEnum(CODES_TFhirExtensionContext, path+'/contextType', child){1a}
       else if (child.baseName = 'context') then
         result.contextList.Add(ParseString(child, path+'/context')){y.2}
       else if (child.baseName = 'definition') then
@@ -19895,9 +19895,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
-  ComposeString(xml, 'display', elem.displayObject);{x.2}
-  ComposeEnum(xml, 'contextType', elem.ContextTypeObject, CODES_TFhirExtensionContext);
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
+  ComposeString(xml, 'display', elem.displayElement);{x.2}
+  ComposeEnum(xml, 'contextType', elem.ContextTypeElement, CODES_TFhirExtensionContext);
   for i := 0 to elem.contextList.Count - 1 do
     ComposeString(xml, 'context', elem.contextList[i]);
   ComposeProfileStructureElementDefinition(xml, 'definition', elem.definition);{x.2}
@@ -19916,11 +19916,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayObject := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     if jsn.has('contextType') or jsn.has('_contextType')  then
-      result.contextTypeObject := parseEnum(jsn['contextType'], jsn.vObj['_contextType'], CODES_TFhirExtensionContext);
+      result.contextTypeElement := parseEnum(jsn['contextType'], jsn.vObj['_contextType'], CODES_TFhirExtensionContext);
       if jsn.has('context') or jsn.has('_context') then
       iteratePrimitiveArray(jsn.vArr['context'], jsn.vArr['_context'], result.contextList, parseString);
     if jsn.has('definition') then
@@ -19940,12 +19940,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
-  ComposeStringValue(json, 'display', elem.displayObject, false);
-  ComposeStringProps(json, 'display', elem.displayObject, false);
-  ComposeEnumValue(json, 'contextType', elem.ContextTypeObject, CODES_TFhirExtensionContext, false);
-  ComposeEnumProps(json, 'contextType', elem.ContextTypeObject, CODES_TFhirExtensionContext, false);
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
+  ComposeStringValue(json, 'display', elem.displayElement, false);
+  ComposeStringProps(json, 'display', elem.displayElement, false);
+  ComposeEnumValue(json, 'contextType', elem.ContextTypeElement, CODES_TFhirExtensionContext, false);
+  ComposeEnumProps(json, 'contextType', elem.ContextTypeElement, CODES_TFhirExtensionContext, false);
   if elem.contextList.Count > 0 then
   begin
     json.valueArray('context');
@@ -19979,9 +19979,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'documentation') then
-        result.documentationObject := ParseString(child, path+'/documentation') {b}
+        result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'parameter') then
         result.parameterList.Add(ParseProfileStructureSearchParam(child, path+'/parameter')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -20005,8 +20005,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'documentation', elem.documentationObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   for i := 0 to elem.parameterList.Count - 1 do
     ComposeProfileStructureSearchParam(xml, 'parameter', elem.parameterList[i]);
   closeOutElement(xml, elem);
@@ -20024,9 +20024,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationObject := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('parameter') then
       iterateArray(jsn.vArr['parameter'], result.parameterList, parseProfileStructureSearchParam);
     result.link;
@@ -20043,10 +20043,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'documentation', elem.documentationObject, false);
-  ComposeStringProps(json, 'documentation', elem.documentationObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'documentation', elem.documentationElement, false);
+  ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   if elem.parameterList.Count > 0 then
   begin
     json.valueArray('parameter');
@@ -20068,29 +20068,29 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseString(child, path+'/identifier') {b}
+        result.identifierElement := ParseString(child, path+'/identifier') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'publisher') then
-        result.publisherObject := ParseString(child, path+'/publisher') {b}
+        result.publisherElement := ParseString(child, path+'/publisher') {b}
       else if (child.baseName = 'telecom') then
         result.telecomList.Add(ParseContact(child, path+'/telecom')){y.2}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'code') then
         result.codeList.Add(ParseCoding(child, path+'/code')){y.2}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirResourceProfileStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirResourceProfileStatus, path+'/status', child){1a}
       else if (child.baseName = 'experimental') then
-        result.experimentalObject := ParseBoolean(child, path+'/experimental') {b}
+        result.experimentalElement := ParseBoolean(child, path+'/experimental') {b}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'requirements') then
-        result.requirementsObject := ParseString(child, path+'/requirements') {b}
+        result.requirementsElement := ParseString(child, path+'/requirements') {b}
       else if (child.baseName = 'fhirVersion') then
-        result.fhirVersionObject := ParseId(child, path+'/fhirVersion') {b}
+        result.fhirVersionElement := ParseId(child, path+'/fhirVersion') {b}
       else if (child.baseName = 'mapping') then
         result.mappingList.Add(ParseProfileMapping(child, path+'/mapping')){y.2}
       else if (child.baseName = 'structure') then
@@ -20120,21 +20120,21 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeString(xml, 'identifier', elem.identifierObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'publisher', elem.publisherObject);{x.2}
+  ComposeString(xml, 'identifier', elem.identifierElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'publisher', elem.publisherElement);{x.2}
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   for i := 0 to elem.codeList.Count - 1 do
     ComposeCoding(xml, 'code', elem.codeList[i]);
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirResourceProfileStatus);
-  ComposeBoolean(xml, 'experimental', elem.experimentalObject);{x.2}
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirResourceProfileStatus);
+  ComposeBoolean(xml, 'experimental', elem.experimentalElement);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   if not SummaryOnly then
-    ComposeString(xml, 'requirements', elem.requirementsObject);{x.2}
-  ComposeId(xml, 'fhirVersion', elem.fhirVersionObject);{x.2}
+    ComposeString(xml, 'requirements', elem.requirementsElement);{x.2}
+  ComposeId(xml, 'fhirVersion', elem.fhirVersionElement);{x.2}
   if not SummaryOnly then
     for i := 0 to elem.mappingList.Count - 1 do
       ComposeProfileMapping(xml, 'mapping', elem.mappingList[i]);
@@ -20162,29 +20162,29 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherObject := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('code') then
       iterateArray(jsn.vArr['code'], result.codeList, parseCoding);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirResourceProfileStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirResourceProfileStatus);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalObject := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsObject := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('fhirVersion') or jsn.has('_fhirVersion') then
-        result.fhirVersionObject := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
+        result.fhirVersionElement := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
     if jsn.has('mapping') then
       iterateArray(jsn.vArr['mapping'], result.mappingList, parseProfileMapping);
     if jsn.has('structure') then
@@ -20206,14 +20206,14 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeStringValue(json, 'identifier', elem.identifierObject, false);
-  ComposeStringProps(json, 'identifier', elem.identifierObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'publisher', elem.publisherObject, false);
-  ComposeStringProps(json, 'publisher', elem.publisherObject, false);
+  ComposeStringValue(json, 'identifier', elem.identifierElement, false);
+  ComposeStringProps(json, 'identifier', elem.identifierElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'publisher', elem.publisherElement, false);
+  ComposeStringProps(json, 'publisher', elem.publisherElement, false);
   if elem.telecomList.Count > 0 then
   begin
     json.valueArray('telecom');
@@ -20221,8 +20221,8 @@ begin
       ComposeContact(json, '',elem.telecomList[i]); {z - Contact}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if elem.codeList.Count > 0 then
   begin
     json.valueArray('code');
@@ -20230,18 +20230,18 @@ begin
       ComposeCoding(json, '',elem.codeList[i]); {z - Coding}
     json.FinishArray;
   end;
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirResourceProfileStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirResourceProfileStatus, false);
-  ComposeBooleanValue(json, 'experimental', elem.experimentalObject, false);
-  ComposeBooleanProps(json, 'experimental', elem.experimentalObject, false);
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirResourceProfileStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirResourceProfileStatus, false);
+  ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
+  ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   if not SummaryOnly then
-    ComposeStringValue(json, 'requirements', elem.requirementsObject, false);
+    ComposeStringValue(json, 'requirements', elem.requirementsElement, false);
   if not SummaryOnly then
-    ComposeStringProps(json, 'requirements', elem.requirementsObject, false);
-  ComposeIdValue(json, 'fhirVersion', elem.fhirVersionObject, false);
-  ComposeIdProps(json, 'fhirVersion', elem.fhirVersionObject, false);
+    ComposeStringProps(json, 'requirements', elem.requirementsElement, false);
+  ComposeIdValue(json, 'fhirVersion', elem.fhirVersionElement, false);
+  ComposeIdProps(json, 'fhirVersion', elem.fhirVersionElement, false);
   if not SummaryOnly and (elem.mappingList.Count > 0) then
   begin
     json.valueArray('mapping');
@@ -20287,9 +20287,9 @@ begin
       else if (child.baseName = 'type') then
         result.type_ := ParseCoding(child, path+'/type') {b}
       else if (child.baseName = 'reference') then
-        result.referenceObject := ParseUri(child, path+'/reference') {b}
+        result.referenceElement := ParseUri(child, path+'/reference') {b}
       else if (child.baseName = 'display') then
-        result.displayObject := ParseString(child, path+'/display') {b}
+        result.displayElement := ParseString(child, path+'/display') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -20311,8 +20311,8 @@ begin
   composeBackboneElementChildren(xml, elem);
   ComposeCoding(xml, 'role', elem.role);{x.2}
   ComposeCoding(xml, 'type', elem.type_);{x.2}
-  ComposeUri(xml, 'reference', elem.referenceObject);{x.2}
-  ComposeString(xml, 'display', elem.displayObject);{x.2}
+  ComposeUri(xml, 'reference', elem.referenceElement);{x.2}
+  ComposeString(xml, 'display', elem.displayElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -20332,9 +20332,9 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q}
     if jsn.has('reference') or jsn.has('_reference') then
-        result.referenceObject := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
+        result.referenceElement := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayObject := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     result.link;
   finally
     result.free;
@@ -20349,10 +20349,10 @@ begin
   ComposeBackboneElementProperties(json, elem);
   ComposeCoding(json, 'role', elem.role); {a}
   ComposeCoding(json, 'type', elem.type_); {a}
-  ComposeUriValue(json, 'reference', elem.referenceObject, false);
-  ComposeUriProps(json, 'reference', elem.referenceObject, false);
-  ComposeStringValue(json, 'display', elem.displayObject, false);
-  ComposeStringProps(json, 'display', elem.displayObject, false);
+  ComposeUriValue(json, 'reference', elem.referenceElement, false);
+  ComposeUriProps(json, 'reference', elem.referenceElement, false);
+  ComposeStringValue(json, 'display', elem.displayElement, false);
+  ComposeStringProps(json, 'display', elem.displayElement, false);
   json.finishObject;
 end;
 
@@ -20367,13 +20367,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'role') then
-        result.roleObject := ParseEnum(CODES_TFhirProvenanceEntityRole, path+'/role', child){1a}
+        result.roleElement := ParseEnum(CODES_TFhirProvenanceEntityRole, path+'/role', child){1a}
       else if (child.baseName = 'type') then
         result.type_ := ParseCoding(child, path+'/type') {b}
       else if (child.baseName = 'reference') then
-        result.referenceObject := ParseUri(child, path+'/reference') {b}
+        result.referenceElement := ParseUri(child, path+'/reference') {b}
       else if (child.baseName = 'display') then
-        result.displayObject := ParseString(child, path+'/display') {b}
+        result.displayElement := ParseString(child, path+'/display') {b}
       else if (child.baseName = 'agent') then
         result.agent := ParseProvenanceAgent(child, path+'/agent') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -20395,10 +20395,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'role', elem.RoleObject, CODES_TFhirProvenanceEntityRole);
+  ComposeEnum(xml, 'role', elem.RoleElement, CODES_TFhirProvenanceEntityRole);
   ComposeCoding(xml, 'type', elem.type_);{x.2}
-  ComposeUri(xml, 'reference', elem.referenceObject);{x.2}
-  ComposeString(xml, 'display', elem.displayObject);{x.2}
+  ComposeUri(xml, 'reference', elem.referenceElement);{x.2}
+  ComposeString(xml, 'display', elem.displayElement);{x.2}
   ComposeProvenanceAgent(xml, 'agent', elem.agent);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -20415,13 +20415,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('role') or jsn.has('_role')  then
-      result.roleObject := parseEnum(jsn['role'], jsn.vObj['_role'], CODES_TFhirProvenanceEntityRole);
+      result.roleElement := parseEnum(jsn['role'], jsn.vObj['_role'], CODES_TFhirProvenanceEntityRole);
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q}
     if jsn.has('reference') or jsn.has('_reference') then
-        result.referenceObject := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
+        result.referenceElement := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayObject := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     if jsn.has('agent') then
         result.agent := ParseProvenanceAgent(jsn.vObj['agent']);{q}
     result.link;
@@ -20436,13 +20436,13 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'role', elem.RoleObject, CODES_TFhirProvenanceEntityRole, false);
-  ComposeEnumProps(json, 'role', elem.RoleObject, CODES_TFhirProvenanceEntityRole, false);
+  ComposeEnumValue(json, 'role', elem.RoleElement, CODES_TFhirProvenanceEntityRole, false);
+  ComposeEnumProps(json, 'role', elem.RoleElement, CODES_TFhirProvenanceEntityRole, false);
   ComposeCoding(json, 'type', elem.type_); {a}
-  ComposeUriValue(json, 'reference', elem.referenceObject, false);
-  ComposeUriProps(json, 'reference', elem.referenceObject, false);
-  ComposeStringValue(json, 'display', elem.displayObject, false);
-  ComposeStringProps(json, 'display', elem.displayObject, false);
+  ComposeUriValue(json, 'reference', elem.referenceElement, false);
+  ComposeUriProps(json, 'reference', elem.referenceElement, false);
+  ComposeStringValue(json, 'display', elem.displayElement, false);
+  ComposeStringProps(json, 'display', elem.displayElement, false);
   ComposeProvenanceAgent(json, 'agent', elem.agent); {a}
   json.finishObject;
 end;
@@ -20462,7 +20462,7 @@ begin
       else if (child.baseName = 'period') then
         result.period := ParsePeriod(child, path+'/period') {b}
       else if (child.baseName = 'recorded') then
-        result.recordedObject := ParseInstant(child, path+'/recorded') {b}
+        result.recordedElement := ParseInstant(child, path+'/recorded') {b}
       else if (child.baseName = 'reason') then
         result.reason := ParseCodeableConcept(child, path+'/reason') {b}
       else if (child.baseName = 'location') then
@@ -20474,7 +20474,7 @@ begin
       else if (child.baseName = 'entity') then
         result.entityList.Add(ParseProvenanceEntity(child, path+'/entity')){y.2}
       else if (child.baseName = 'integritySignature') then
-        result.integritySignatureObject := ParseString(child, path+'/integritySignature') {b}
+        result.integritySignatureElement := ParseString(child, path+'/integritySignature') {b}
       else if Not ParseResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -20499,7 +20499,7 @@ begin
   for i := 0 to elem.targetList.Count - 1 do
     ComposeResourceReference{Resource}(xml, 'target', elem.targetList[i]);
   ComposePeriod(xml, 'period', elem.period);{x.2}
-  ComposeInstant(xml, 'recorded', elem.recordedObject);{x.2}
+  ComposeInstant(xml, 'recorded', elem.recordedElement);{x.2}
   ComposeCodeableConcept(xml, 'reason', elem.reason);{x.2}
   ComposeResourceReference{TFhirLocation}(xml, 'location', elem.location);{x.2}
   for i := 0 to elem.policyList.Count - 1 do
@@ -20508,7 +20508,7 @@ begin
     ComposeProvenanceAgent(xml, 'agent', elem.agentList[i]);
   for i := 0 to elem.entityList.Count - 1 do
     ComposeProvenanceEntity(xml, 'entity', elem.entityList[i]);
-  ComposeString(xml, 'integritySignature', elem.integritySignatureObject);{x.2}
+  ComposeString(xml, 'integritySignature', elem.integritySignatureElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -20528,7 +20528,7 @@ begin
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     if jsn.has('recorded') or jsn.has('_recorded') then
-        result.recordedObject := ParseInstant(jsn['recorded'], jsn.vObj['_recorded']);{q}
+        result.recordedElement := ParseInstant(jsn['recorded'], jsn.vObj['_recorded']);{q}
     if jsn.has('reason') then
         result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q}
     if jsn.has('location') then
@@ -20540,7 +20540,7 @@ begin
     if jsn.has('entity') then
       iterateArray(jsn.vArr['entity'], result.entityList, parseProvenanceEntity);
     if jsn.has('integritySignature') or jsn.has('_integritySignature') then
-        result.integritySignatureObject := ParseString(jsn['integritySignature'], jsn.vObj['_integritySignature']);{q}
+        result.integritySignatureElement := ParseString(jsn['integritySignature'], jsn.vObj['_integritySignature']);{q}
     result.link;
   finally
     result.free;
@@ -20563,8 +20563,8 @@ begin
     json.FinishArray;
   end;
   ComposePeriod(json, 'period', elem.period); {a}
-  ComposeInstantValue(json, 'recorded', elem.recordedObject, false);
-  ComposeInstantProps(json, 'recorded', elem.recordedObject, false);
+  ComposeInstantValue(json, 'recorded', elem.recordedElement, false);
+  ComposeInstantProps(json, 'recorded', elem.recordedElement, false);
   ComposeCodeableConcept(json, 'reason', elem.reason); {a}
   ComposeResourceReference{TFhirLocation}(json, 'location', elem.location); {a}
   if elem.policyList.Count > 0 then
@@ -20599,8 +20599,8 @@ begin
       ComposeProvenanceEntity(json, '',elem.entityList[i]); {z - }
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'integritySignature', elem.integritySignatureObject, false);
-  ComposeStringProps(json, 'integritySignature', elem.integritySignatureObject, false);
+  ComposeStringValue(json, 'integritySignature', elem.integritySignatureElement, false);
+  ComposeStringProps(json, 'integritySignature', elem.integritySignatureElement, false);
 end;
 
 function TFHIRXmlParser.ParseQueryResponse(element : IXmlDomElement; path : string) : TFhirQueryResponse;
@@ -20614,11 +20614,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseUri(child, path+'/identifier') {b}
+        result.identifierElement := ParseUri(child, path+'/identifier') {b}
       else if (child.baseName = 'outcome') then
-        result.outcomeObject := ParseEnum(CODES_TFhirQueryOutcome, path+'/outcome', child){1a}
+        result.outcomeElement := ParseEnum(CODES_TFhirQueryOutcome, path+'/outcome', child){1a}
       else if (child.baseName = 'total') then
-        result.totalObject := ParseInteger(child, path+'/total') {b}
+        result.totalElement := ParseInteger(child, path+'/total') {b}
       else if (child.baseName = 'parameter') then
         result.parameterList.Add(ParseExtension(child, path+'/parameter')){y.2}
       else if (child.baseName = 'first') then
@@ -20652,9 +20652,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeUri(xml, 'identifier', elem.identifierObject);{x.2}
-  ComposeEnum(xml, 'outcome', elem.OutcomeObject, CODES_TFhirQueryOutcome);
-  ComposeInteger(xml, 'total', elem.totalObject);{x.2}
+  ComposeUri(xml, 'identifier', elem.identifierElement);{x.2}
+  ComposeEnum(xml, 'outcome', elem.OutcomeElement, CODES_TFhirQueryOutcome);
+  ComposeInteger(xml, 'total', elem.totalElement);{x.2}
   for i := 0 to elem.parameterList.Count - 1 do
     ComposeExtension(xml, 'parameter', elem.parameterList[i]);
   for i := 0 to elem.firstList.Count - 1 do
@@ -20682,11 +20682,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseUri(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseUri(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeObject := parseEnum(jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirQueryOutcome);
+      result.outcomeElement := parseEnum(jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirQueryOutcome);
     if jsn.has('total') or jsn.has('_total') then
-        result.totalObject := ParseInteger(jsn['total'], jsn.vObj['_total']);{q}
+        result.totalElement := ParseInteger(jsn['total'], jsn.vObj['_total']);{q}
     if jsn.has('parameter') then
       iterateArray(jsn.vArr['parameter'], result.parameterList, parseExtension);
     if jsn.has('first') then
@@ -20713,12 +20713,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeUriValue(json, 'identifier', elem.identifierObject, false);
-  ComposeUriProps(json, 'identifier', elem.identifierObject, false);
-  ComposeEnumValue(json, 'outcome', elem.OutcomeObject, CODES_TFhirQueryOutcome, false);
-  ComposeEnumProps(json, 'outcome', elem.OutcomeObject, CODES_TFhirQueryOutcome, false);
-  ComposeIntegerValue(json, 'total', elem.totalObject, false);
-  ComposeIntegerProps(json, 'total', elem.totalObject, false);
+  ComposeUriValue(json, 'identifier', elem.identifierElement, false);
+  ComposeUriProps(json, 'identifier', elem.identifierElement, false);
+  ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirQueryOutcome, false);
+  ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirQueryOutcome, false);
+  ComposeIntegerValue(json, 'total', elem.totalElement, false);
+  ComposeIntegerProps(json, 'total', elem.totalElement, false);
   if elem.parameterList.Count > 0 then
   begin
     json.valueArray('parameter');
@@ -20775,7 +20775,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseUri(child, path+'/identifier') {b}
+        result.identifierElement := ParseUri(child, path+'/identifier') {b}
       else if (child.baseName = 'parameter') then
         result.parameterList.Add(ParseExtension(child, path+'/parameter')){y.2}
       else if (child.baseName = 'response') then
@@ -20801,7 +20801,7 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeUri(xml, 'identifier', elem.identifierObject);{x.2}
+  ComposeUri(xml, 'identifier', elem.identifierElement);{x.2}
   for i := 0 to elem.parameterList.Count - 1 do
     ComposeExtension(xml, 'parameter', elem.parameterList[i]);
   ComposeQueryResponse(xml, 'response', elem.response);{x.2}
@@ -20820,7 +20820,7 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseUri(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseUri(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('parameter') then
       iterateArray(jsn.vArr['parameter'], result.parameterList, parseExtension);
     if jsn.has('response') then
@@ -20838,8 +20838,8 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeUriValue(json, 'identifier', elem.identifierObject, false);
-  ComposeUriProps(json, 'identifier', elem.identifierObject, false);
+  ComposeUriValue(json, 'identifier', elem.identifierElement, false);
+  ComposeUriProps(json, 'identifier', elem.identifierElement, false);
   if elem.parameterList.Count > 0 then
   begin
     json.valueArray('parameter');
@@ -20863,9 +20863,9 @@ begin
       if (child.baseName = 'name') then
         result.name := ParseCodeableConcept(child, path+'/name') {b}
       else if (child.baseName = 'header') then
-        result.headerObject := ParseString(child, path+'/header') {b}
+        result.headerElement := ParseString(child, path+'/header') {b}
       else if (child.baseName = 'text') then
-        result.textObject := ParseString(child, path+'/text') {b}
+        result.textElement := ParseString(child, path+'/text') {b}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{Resource}(child, path+'/subject') {b}
       else if (child.baseName = 'group') then
@@ -20894,8 +20894,8 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeCodeableConcept(xml, 'name', elem.name);{x.2}
-  ComposeString(xml, 'header', elem.headerObject);{x.2}
-  ComposeString(xml, 'text', elem.textObject);{x.2}
+  ComposeString(xml, 'header', elem.headerElement);{x.2}
+  ComposeString(xml, 'text', elem.textElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   for i := 0 to elem.groupList.Count - 1 do
     ComposeQuestionnaireGroup(xml, 'group', elem.groupList[i]);
@@ -20918,9 +20918,9 @@ begin
     if jsn.has('name') then
         result.name := ParseCodeableConcept(jsn.vObj['name']);{q}
     if jsn.has('header') or jsn.has('_header') then
-        result.headerObject := ParseString(jsn['header'], jsn.vObj['_header']);{q}
+        result.headerElement := ParseString(jsn['header'], jsn.vObj['_header']);{q}
     if jsn.has('text') or jsn.has('_text') then
-        result.textObject := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     if jsn.has('subject') then
         result.subject := ParseResourceReference{Resource}(jsn.vObj['subject']);{q}
     if jsn.has('group') then
@@ -20942,10 +20942,10 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'name', elem.name); {a}
-  ComposeStringValue(json, 'header', elem.headerObject, false);
-  ComposeStringProps(json, 'header', elem.headerObject, false);
-  ComposeStringValue(json, 'text', elem.textObject, false);
-  ComposeStringProps(json, 'text', elem.textObject, false);
+  ComposeStringValue(json, 'header', elem.headerElement, false);
+  ComposeStringProps(json, 'header', elem.headerElement, false);
+  ComposeStringValue(json, 'text', elem.textElement, false);
+  ComposeStringProps(json, 'text', elem.textElement, false);
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   if elem.groupList.Count > 0 then
   begin
@@ -20977,7 +20977,7 @@ begin
       if (child.baseName = 'name') then
         result.name := ParseCodeableConcept(child, path+'/name') {b}
       else if (child.baseName = 'text') then
-        result.textObject := ParseString(child, path+'/text') {b}
+        result.textElement := ParseString(child, path+'/text') {b}
       else if (child.baseName = 'answerDecimal') then
         result.answer := ParseDecimal(child, path+'/answerDecimal'){x.3}
       else if (child.baseName = 'answerInteger') then
@@ -21051,7 +21051,7 @@ begin
       else if (child.baseName = 'dataHumanName') then
         result.data := ParseHumanName(child, path+'/dataHumanName') {f}
       else if (child.baseName = 'remarks') then
-        result.remarksObject := ParseString(child, path+'/remarks') {b}
+        result.remarksElement := ParseString(child, path+'/remarks') {b}
       else if (child.baseName = 'group') then
         result.groupList.Add(ParseQuestionnaireGroup(child, path+'/group')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -21076,7 +21076,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeCodeableConcept(xml, 'name', elem.name);{x.2}
-  ComposeString(xml, 'text', elem.textObject);{x.2}
+  ComposeString(xml, 'text', elem.textElement);{x.2}
   if (elem.answer is TFhirDecimal) {6} then
     ComposeDecimal(xml, 'answerDecimal', TFhirDecimal(elem.answer))
   else if (elem.answer is TFhirInteger) {6} then
@@ -21148,7 +21148,7 @@ begin
     ComposeAddress(xml, 'dataAddress', TFhirAddress(elem.data))
   else if (elem.data is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'dataHumanName', TFhirHumanName(elem.data));
-  ComposeString(xml, 'remarks', elem.remarksObject);{x.2}
+  ComposeString(xml, 'remarks', elem.remarksElement);{x.2}
   for i := 0 to elem.groupList.Count - 1 do
     ComposeQuestionnaireGroup(xml, 'group', elem.groupList[i]);
   closeOutElement(xml, elem);
@@ -21168,7 +21168,7 @@ begin
     if jsn.has('name') then
         result.name := ParseCodeableConcept(jsn.vObj['name']);{q}
     if jsn.has('text') or jsn.has('_text') then
-        result.textObject := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     if jsn.has('answerDecimal') or jsn.has('_answerDecimal') then
       result.answer := parseDecimal(jsn['answerDecimal'], jsn.vObj['_answerDecimal']);
     if jsn.has('answerInteger') or jsn.has('_answerInteger') then
@@ -21242,7 +21242,7 @@ begin
     if jsn.has('dataHumanName') {a9} then
         result.data := ParseHumanName(jsn.vObj['dataHumanName']);
     if jsn.has('remarks') or jsn.has('_remarks') then
-        result.remarksObject := ParseString(jsn['remarks'], jsn.vObj['_remarks']);{q}
+        result.remarksElement := ParseString(jsn['remarks'], jsn.vObj['_remarks']);{q}
     if jsn.has('group') then
       iterateArray(jsn.vArr['group'], result.groupList, parseQuestionnaireGroup);
     result.link;
@@ -21260,8 +21260,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'name', elem.name); {a}
-  ComposeStringValue(json, 'text', elem.textObject, false);
-  ComposeStringProps(json, 'text', elem.textObject, false);
+  ComposeStringValue(json, 'text', elem.textElement, false);
+  ComposeStringProps(json, 'text', elem.textElement, false);
   if (elem.answer is TFhirDecimal) then 
   begin
     ComposeDecimalValue(json, 'answerDecimal', TFhirDecimal(elem.answer), false);
@@ -21398,8 +21398,8 @@ begin
     ComposeAddress(json, 'dataAddress', TFhirAddress(elem.data))
   else if (elem.data is TFhirHumanName) then
     ComposeHumanName(json, 'dataHumanName', TFhirHumanName(elem.data));
-  ComposeStringValue(json, 'remarks', elem.remarksObject, false);
-  ComposeStringProps(json, 'remarks', elem.remarksObject, false);
+  ComposeStringValue(json, 'remarks', elem.remarksElement, false);
+  ComposeStringProps(json, 'remarks', elem.remarksElement, false);
   if elem.groupList.Count > 0 then
   begin
     json.valueArray('group');
@@ -21421,9 +21421,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirQuestionnaireStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirQuestionnaireStatus, path+'/status', child){1a}
       else if (child.baseName = 'authored') then
-        result.authoredObject := ParseDateTime(child, path+'/authored') {b}
+        result.authoredElement := ParseDateTime(child, path+'/authored') {b}
       else if (child.baseName = 'subject') then
         result.subject := ParseResourceReference{Resource}(child, path+'/subject') {b}
       else if (child.baseName = 'author') then
@@ -21459,8 +21459,8 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirQuestionnaireStatus);
-  ComposeDateTime(xml, 'authored', elem.authoredObject);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirQuestionnaireStatus);
+  ComposeDateTime(xml, 'authored', elem.authoredElement);{x.2}
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   ComposeResourceReference{Resource}(xml, 'author', elem.author);{x.2}
   ComposeResourceReference{Resource}(xml, 'source', elem.source);{x.2}
@@ -21485,9 +21485,9 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireStatus);
     if jsn.has('authored') or jsn.has('_authored') then
-        result.authoredObject := ParseDateTime(jsn['authored'], jsn.vObj['_authored']);{q}
+        result.authoredElement := ParseDateTime(jsn['authored'], jsn.vObj['_authored']);{q}
     if jsn.has('subject') then
         result.subject := ParseResourceReference{Resource}(jsn.vObj['subject']);{q}
     if jsn.has('author') then
@@ -21515,10 +21515,10 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirQuestionnaireStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirQuestionnaireStatus, false);
-  ComposeDateTimeValue(json, 'authored', elem.authoredObject, false);
-  ComposeDateTimeProps(json, 'authored', elem.authoredObject, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirQuestionnaireStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirQuestionnaireStatus, false);
+  ComposeDateTimeValue(json, 'authored', elem.authoredElement, false);
+  ComposeDateTimeProps(json, 'authored', elem.authoredElement, false);
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   ComposeResourceReference{Resource}(json, 'author', elem.author); {a}
   ComposeResourceReference{Resource}(json, 'source', elem.source); {a}
@@ -21680,13 +21680,13 @@ begin
       else if (child.baseName = 'subtype') then
         result.subtypeList.Add(ParseCodeableConcept(child, path+'/subtype')){y.2}
       else if (child.baseName = 'action') then
-        result.actionObject := ParseEnum(CODES_TFhirSecurityEventAction, path+'/action', child){1a}
+        result.actionElement := ParseEnum(CODES_TFhirSecurityEventAction, path+'/action', child){1a}
       else if (child.baseName = 'dateTime') then
-        result.dateTimeObject := ParseInstant(child, path+'/dateTime') {b}
+        result.dateTimeElement := ParseInstant(child, path+'/dateTime') {b}
       else if (child.baseName = 'outcome') then
-        result.outcomeObject := ParseEnum(CODES_TFhirSecurityEventOutcome, path+'/outcome', child){1a}
+        result.outcomeElement := ParseEnum(CODES_TFhirSecurityEventOutcome, path+'/outcome', child){1a}
       else if (child.baseName = 'outcomeDesc') then
-        result.outcomeDescObject := ParseString(child, path+'/outcomeDesc') {b}
+        result.outcomeDescElement := ParseString(child, path+'/outcomeDesc') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -21711,10 +21711,10 @@ begin
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   for i := 0 to elem.subtypeList.Count - 1 do
     ComposeCodeableConcept(xml, 'subtype', elem.subtypeList[i]);
-  ComposeEnum(xml, 'action', elem.ActionObject, CODES_TFhirSecurityEventAction);
-  ComposeInstant(xml, 'dateTime', elem.dateTimeObject);{x.2}
-  ComposeEnum(xml, 'outcome', elem.OutcomeObject, CODES_TFhirSecurityEventOutcome);
-  ComposeString(xml, 'outcomeDesc', elem.outcomeDescObject);{x.2}
+  ComposeEnum(xml, 'action', elem.ActionElement, CODES_TFhirSecurityEventAction);
+  ComposeInstant(xml, 'dateTime', elem.dateTimeElement);{x.2}
+  ComposeEnum(xml, 'outcome', elem.OutcomeElement, CODES_TFhirSecurityEventOutcome);
+  ComposeString(xml, 'outcomeDesc', elem.outcomeDescElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -21734,13 +21734,13 @@ begin
     if jsn.has('subtype') then
       iterateArray(jsn.vArr['subtype'], result.subtypeList, parseCodeableConcept);
     if jsn.has('action') or jsn.has('_action')  then
-      result.actionObject := parseEnum(jsn['action'], jsn.vObj['_action'], CODES_TFhirSecurityEventAction);
+      result.actionElement := parseEnum(jsn['action'], jsn.vObj['_action'], CODES_TFhirSecurityEventAction);
     if jsn.has('dateTime') or jsn.has('_dateTime') then
-        result.dateTimeObject := ParseInstant(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
+        result.dateTimeElement := ParseInstant(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeObject := parseEnum(jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirSecurityEventOutcome);
+      result.outcomeElement := parseEnum(jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirSecurityEventOutcome);
     if jsn.has('outcomeDesc') or jsn.has('_outcomeDesc') then
-        result.outcomeDescObject := ParseString(jsn['outcomeDesc'], jsn.vObj['_outcomeDesc']);{q}
+        result.outcomeDescElement := ParseString(jsn['outcomeDesc'], jsn.vObj['_outcomeDesc']);{q}
     result.link;
   finally
     result.free;
@@ -21763,14 +21763,14 @@ begin
       ComposeCodeableConcept(json, '',elem.subtypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  ComposeEnumValue(json, 'action', elem.ActionObject, CODES_TFhirSecurityEventAction, false);
-  ComposeEnumProps(json, 'action', elem.ActionObject, CODES_TFhirSecurityEventAction, false);
-  ComposeInstantValue(json, 'dateTime', elem.dateTimeObject, false);
-  ComposeInstantProps(json, 'dateTime', elem.dateTimeObject, false);
-  ComposeEnumValue(json, 'outcome', elem.OutcomeObject, CODES_TFhirSecurityEventOutcome, false);
-  ComposeEnumProps(json, 'outcome', elem.OutcomeObject, CODES_TFhirSecurityEventOutcome, false);
-  ComposeStringValue(json, 'outcomeDesc', elem.outcomeDescObject, false);
-  ComposeStringProps(json, 'outcomeDesc', elem.outcomeDescObject, false);
+  ComposeEnumValue(json, 'action', elem.ActionElement, CODES_TFhirSecurityEventAction, false);
+  ComposeEnumProps(json, 'action', elem.ActionElement, CODES_TFhirSecurityEventAction, false);
+  ComposeInstantValue(json, 'dateTime', elem.dateTimeElement, false);
+  ComposeInstantProps(json, 'dateTime', elem.dateTimeElement, false);
+  ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirSecurityEventOutcome, false);
+  ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirSecurityEventOutcome, false);
+  ComposeStringValue(json, 'outcomeDesc', elem.outcomeDescElement, false);
+  ComposeStringProps(json, 'outcomeDesc', elem.outcomeDescElement, false);
   json.finishObject;
 end;
 
@@ -21789,13 +21789,13 @@ begin
       else if (child.baseName = 'reference') then
         result.reference := ParseResourceReference{Resource}(child, path+'/reference') {b}
       else if (child.baseName = 'userId') then
-        result.userIdObject := ParseString(child, path+'/userId') {b}
+        result.userIdElement := ParseString(child, path+'/userId') {b}
       else if (child.baseName = 'altId') then
-        result.altIdObject := ParseString(child, path+'/altId') {b}
+        result.altIdElement := ParseString(child, path+'/altId') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'requestor') then
-        result.requestorObject := ParseBoolean(child, path+'/requestor') {b}
+        result.requestorElement := ParseBoolean(child, path+'/requestor') {b}
       else if (child.baseName = 'media') then
         result.media := ParseCoding(child, path+'/media') {b}
       else if (child.baseName = 'network') then
@@ -21824,10 +21824,10 @@ begin
   for i := 0 to elem.roleList.Count - 1 do
     ComposeCodeableConcept(xml, 'role', elem.roleList[i]);
   ComposeResourceReference{Resource}(xml, 'reference', elem.reference);{x.2}
-  ComposeString(xml, 'userId', elem.userIdObject);{x.2}
-  ComposeString(xml, 'altId', elem.altIdObject);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeBoolean(xml, 'requestor', elem.requestorObject);{x.2}
+  ComposeString(xml, 'userId', elem.userIdElement);{x.2}
+  ComposeString(xml, 'altId', elem.altIdElement);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeBoolean(xml, 'requestor', elem.requestorElement);{x.2}
   ComposeCoding(xml, 'media', elem.media);{x.2}
   ComposeSecurityEventParticipantNetwork(xml, 'network', elem.network);{x.2}
   closeOutElement(xml, elem);
@@ -21849,13 +21849,13 @@ begin
     if jsn.has('reference') then
         result.reference := ParseResourceReference{Resource}(jsn.vObj['reference']);{q}
     if jsn.has('userId') or jsn.has('_userId') then
-        result.userIdObject := ParseString(jsn['userId'], jsn.vObj['_userId']);{q}
+        result.userIdElement := ParseString(jsn['userId'], jsn.vObj['_userId']);{q}
     if jsn.has('altId') or jsn.has('_altId') then
-        result.altIdObject := ParseString(jsn['altId'], jsn.vObj['_altId']);{q}
+        result.altIdElement := ParseString(jsn['altId'], jsn.vObj['_altId']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('requestor') or jsn.has('_requestor') then
-        result.requestorObject := ParseBoolean(jsn['requestor'], jsn.vObj['_requestor']);{q}
+        result.requestorElement := ParseBoolean(jsn['requestor'], jsn.vObj['_requestor']);{q}
     if jsn.has('media') then
         result.media := ParseCoding(jsn.vObj['media']);{q}
     if jsn.has('network') then
@@ -21882,14 +21882,14 @@ begin
     json.FinishArray;
   end;
   ComposeResourceReference{Resource}(json, 'reference', elem.reference); {a}
-  ComposeStringValue(json, 'userId', elem.userIdObject, false);
-  ComposeStringProps(json, 'userId', elem.userIdObject, false);
-  ComposeStringValue(json, 'altId', elem.altIdObject, false);
-  ComposeStringProps(json, 'altId', elem.altIdObject, false);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeBooleanValue(json, 'requestor', elem.requestorObject, false);
-  ComposeBooleanProps(json, 'requestor', elem.requestorObject, false);
+  ComposeStringValue(json, 'userId', elem.userIdElement, false);
+  ComposeStringProps(json, 'userId', elem.userIdElement, false);
+  ComposeStringValue(json, 'altId', elem.altIdElement, false);
+  ComposeStringProps(json, 'altId', elem.altIdElement, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeBooleanValue(json, 'requestor', elem.requestorElement, false);
+  ComposeBooleanProps(json, 'requestor', elem.requestorElement, false);
   ComposeCoding(json, 'media', elem.media); {a}
   ComposeSecurityEventParticipantNetwork(json, 'network', elem.network); {a}
   json.finishObject;
@@ -21906,9 +21906,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseString(child, path+'/identifier') {b}
+        result.identifierElement := ParseString(child, path+'/identifier') {b}
       else if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirNetworkType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirNetworkType, path+'/type', child){1a}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -21928,8 +21928,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'identifier', elem.identifierObject);{x.2}
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirNetworkType);
+  ComposeString(xml, 'identifier', elem.identifierElement);{x.2}
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirNetworkType);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -21945,9 +21945,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirNetworkType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirNetworkType);
     result.link;
   finally
     result.free;
@@ -21960,10 +21960,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'identifier', elem.identifierObject, false);
-  ComposeStringProps(json, 'identifier', elem.identifierObject, false);
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirNetworkType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirNetworkType, false);
+  ComposeStringValue(json, 'identifier', elem.identifierElement, false);
+  ComposeStringProps(json, 'identifier', elem.identifierElement, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirNetworkType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirNetworkType, false);
   json.finishObject;
 end;
 
@@ -21978,9 +21978,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'site') then
-        result.siteObject := ParseString(child, path+'/site') {b}
+        result.siteElement := ParseString(child, path+'/site') {b}
       else if (child.baseName = 'identifier') then
-        result.identifierObject := ParseString(child, path+'/identifier') {b}
+        result.identifierElement := ParseString(child, path+'/identifier') {b}
       else if (child.baseName = 'type') then
         result.type_List.Add(ParseCoding(child, path+'/type')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -22004,8 +22004,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'site', elem.siteObject);{x.2}
-  ComposeString(xml, 'identifier', elem.identifierObject);{x.2}
+  ComposeString(xml, 'site', elem.siteElement);{x.2}
+  ComposeString(xml, 'identifier', elem.identifierElement);{x.2}
   for i := 0 to elem.type_List.Count - 1 do
     ComposeCoding(xml, 'type', elem.type_List[i]);
   closeOutElement(xml, elem);
@@ -22023,9 +22023,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('site') or jsn.has('_site') then
-        result.siteObject := ParseString(jsn['site'], jsn.vObj['_site']);{q}
+        result.siteElement := ParseString(jsn['site'], jsn.vObj['_site']);{q}
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCoding);
     result.link;
@@ -22042,10 +22042,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'site', elem.siteObject, false);
-  ComposeStringProps(json, 'site', elem.siteObject, false);
-  ComposeStringValue(json, 'identifier', elem.identifierObject, false);
-  ComposeStringProps(json, 'identifier', elem.identifierObject, false);
+  ComposeStringValue(json, 'site', elem.siteElement, false);
+  ComposeStringProps(json, 'site', elem.siteElement, false);
+  ComposeStringValue(json, 'identifier', elem.identifierElement, false);
+  ComposeStringProps(json, 'identifier', elem.identifierElement, false);
   if elem.type_List.Count > 0 then
   begin
     json.valueArray('type');
@@ -22071,19 +22071,19 @@ begin
       else if (child.baseName = 'reference') then
         result.reference := ParseResourceReference{Resource}(child, path+'/reference') {b}
       else if (child.baseName = 'type') then
-        result.type_Object := ParseEnum(CODES_TFhirObjectType, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirObjectType, path+'/type', child){1a}
       else if (child.baseName = 'role') then
-        result.roleObject := ParseEnum(CODES_TFhirObjectRole, path+'/role', child){1a}
+        result.roleElement := ParseEnum(CODES_TFhirObjectRole, path+'/role', child){1a}
       else if (child.baseName = 'lifecycle') then
-        result.lifecycleObject := ParseEnum(CODES_TFhirObjectLifecycle, path+'/lifecycle', child){1a}
+        result.lifecycleElement := ParseEnum(CODES_TFhirObjectLifecycle, path+'/lifecycle', child){1a}
       else if (child.baseName = 'sensitivity') then
         result.sensitivity := ParseCodeableConcept(child, path+'/sensitivity') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'query') then
-        result.queryObject := ParseBase64Binary(child, path+'/query') {b}
+        result.queryElement := ParseBase64Binary(child, path+'/query') {b}
       else if (child.baseName = 'detail') then
         result.detailList.Add(ParseSecurityEventObjectDetail(child, path+'/detail')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -22109,13 +22109,13 @@ begin
   composeBackboneElementChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
   ComposeResourceReference{Resource}(xml, 'reference', elem.reference);{x.2}
-  ComposeEnum(xml, 'type', elem.Type_Object, CODES_TFhirObjectType);
-  ComposeEnum(xml, 'role', elem.RoleObject, CODES_TFhirObjectRole);
-  ComposeEnum(xml, 'lifecycle', elem.LifecycleObject, CODES_TFhirObjectLifecycle);
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirObjectType);
+  ComposeEnum(xml, 'role', elem.RoleElement, CODES_TFhirObjectRole);
+  ComposeEnum(xml, 'lifecycle', elem.LifecycleElement, CODES_TFhirObjectLifecycle);
   ComposeCodeableConcept(xml, 'sensitivity', elem.sensitivity);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
-  ComposeBase64Binary(xml, 'query', elem.queryObject);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
+  ComposeBase64Binary(xml, 'query', elem.queryElement);{x.2}
   for i := 0 to elem.detailList.Count - 1 do
     ComposeSecurityEventObjectDetail(xml, 'detail', elem.detailList[i]);
   closeOutElement(xml, elem);
@@ -22137,19 +22137,19 @@ begin
     if jsn.has('reference') then
         result.reference := ParseResourceReference{Resource}(jsn.vObj['reference']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Object := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirObjectType);
+      result.type_Element := parseEnum(jsn['type'], jsn.vObj['_type'], CODES_TFhirObjectType);
     if jsn.has('role') or jsn.has('_role')  then
-      result.roleObject := parseEnum(jsn['role'], jsn.vObj['_role'], CODES_TFhirObjectRole);
+      result.roleElement := parseEnum(jsn['role'], jsn.vObj['_role'], CODES_TFhirObjectRole);
     if jsn.has('lifecycle') or jsn.has('_lifecycle')  then
-      result.lifecycleObject := parseEnum(jsn['lifecycle'], jsn.vObj['_lifecycle'], CODES_TFhirObjectLifecycle);
+      result.lifecycleElement := parseEnum(jsn['lifecycle'], jsn.vObj['_lifecycle'], CODES_TFhirObjectLifecycle);
     if jsn.has('sensitivity') then
         result.sensitivity := ParseCodeableConcept(jsn.vObj['sensitivity']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('query') or jsn.has('_query') then
-        result.queryObject := ParseBase64Binary(jsn['query'], jsn.vObj['_query']);{q}
+        result.queryElement := ParseBase64Binary(jsn['query'], jsn.vObj['_query']);{q}
     if jsn.has('detail') then
       iterateArray(jsn.vArr['detail'], result.detailList, parseSecurityEventObjectDetail);
     result.link;
@@ -22168,19 +22168,19 @@ begin
   ComposeBackboneElementProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
   ComposeResourceReference{Resource}(json, 'reference', elem.reference); {a}
-  ComposeEnumValue(json, 'type', elem.Type_Object, CODES_TFhirObjectType, false);
-  ComposeEnumProps(json, 'type', elem.Type_Object, CODES_TFhirObjectType, false);
-  ComposeEnumValue(json, 'role', elem.RoleObject, CODES_TFhirObjectRole, false);
-  ComposeEnumProps(json, 'role', elem.RoleObject, CODES_TFhirObjectRole, false);
-  ComposeEnumValue(json, 'lifecycle', elem.LifecycleObject, CODES_TFhirObjectLifecycle, false);
-  ComposeEnumProps(json, 'lifecycle', elem.LifecycleObject, CODES_TFhirObjectLifecycle, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirObjectType, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirObjectType, false);
+  ComposeEnumValue(json, 'role', elem.RoleElement, CODES_TFhirObjectRole, false);
+  ComposeEnumProps(json, 'role', elem.RoleElement, CODES_TFhirObjectRole, false);
+  ComposeEnumValue(json, 'lifecycle', elem.LifecycleElement, CODES_TFhirObjectLifecycle, false);
+  ComposeEnumProps(json, 'lifecycle', elem.LifecycleElement, CODES_TFhirObjectLifecycle, false);
   ComposeCodeableConcept(json, 'sensitivity', elem.sensitivity); {a}
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
-  ComposeBase64BinaryValue(json, 'query', elem.queryObject, false);
-  ComposeBase64BinaryProps(json, 'query', elem.queryObject, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  ComposeBase64BinaryValue(json, 'query', elem.queryElement, false);
+  ComposeBase64BinaryProps(json, 'query', elem.queryElement, false);
   if elem.detailList.Count > 0 then
   begin
     json.valueArray('detail');
@@ -22202,9 +22202,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Object := ParseString(child, path+'/type') {b}
+        result.type_Element := ParseString(child, path+'/type') {b}
       else if (child.baseName = 'value') then
-        result.valueObject := ParseBase64Binary(child, path+'/value') {b}
+        result.valueElement := ParseBase64Binary(child, path+'/value') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -22224,8 +22224,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'type', elem.type_Object);{x.2}
-  ComposeBase64Binary(xml, 'value', elem.valueObject);{x.2}
+  ComposeString(xml, 'type', elem.type_Element);{x.2}
+  ComposeBase64Binary(xml, 'value', elem.valueElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -22241,9 +22241,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Object := ParseString(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseString(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueObject := ParseBase64Binary(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseBase64Binary(jsn['value'], jsn.vObj['_value']);{q}
     result.link;
   finally
     result.free;
@@ -22256,10 +22256,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'type', elem.type_Object, false);
-  ComposeStringProps(json, 'type', elem.type_Object, false);
-  ComposeBase64BinaryValue(json, 'value', elem.valueObject, false);
-  ComposeBase64BinaryProps(json, 'value', elem.valueObject, false);
+  ComposeStringValue(json, 'type', elem.type_Element, false);
+  ComposeStringProps(json, 'type', elem.type_Element, false);
+  ComposeBase64BinaryValue(json, 'value', elem.valueElement, false);
+  ComposeBase64BinaryProps(json, 'value', elem.valueElement, false);
   json.finishObject;
 end;
 
@@ -22372,7 +22372,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'relationship') then
-        result.relationshipObject := ParseEnum(CODES_TFhirHierarchicalRelationshipType, path+'/relationship', child){1a}
+        result.relationshipElement := ParseEnum(CODES_TFhirHierarchicalRelationshipType, path+'/relationship', child){1a}
       else if (child.baseName = 'target') then
         result.targetList.Add(ParseResourceReference{TFhirSpecimen}(child, path+'/target')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -22396,7 +22396,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'relationship', elem.RelationshipObject, CODES_TFhirHierarchicalRelationshipType);
+  ComposeEnum(xml, 'relationship', elem.RelationshipElement, CODES_TFhirHierarchicalRelationshipType);
   for i := 0 to elem.targetList.Count - 1 do
     ComposeResourceReference{TFhirSpecimen}(xml, 'target', elem.targetList[i]);
   closeOutElement(xml, elem);
@@ -22414,7 +22414,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('relationship') or jsn.has('_relationship')  then
-      result.relationshipObject := parseEnum(jsn['relationship'], jsn.vObj['_relationship'], CODES_TFhirHierarchicalRelationshipType);
+      result.relationshipElement := parseEnum(jsn['relationship'], jsn.vObj['_relationship'], CODES_TFhirHierarchicalRelationshipType);
     if jsn.has('target') then
       iterateArray(jsn.vArr['target'], result.targetList, parseResourceReference{TFhirSpecimen});
     result.link;
@@ -22431,8 +22431,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'relationship', elem.RelationshipObject, CODES_TFhirHierarchicalRelationshipType, false);
-  ComposeEnumProps(json, 'relationship', elem.RelationshipObject, CODES_TFhirHierarchicalRelationshipType, false);
+  ComposeEnumValue(json, 'relationship', elem.RelationshipElement, CODES_TFhirHierarchicalRelationshipType, false);
+  ComposeEnumProps(json, 'relationship', elem.RelationshipElement, CODES_TFhirHierarchicalRelationshipType, false);
   if elem.targetList.Count > 0 then
   begin
     json.valueArray('target');
@@ -22584,7 +22584,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'procedure') then
         result.procedure_ := ParseCodeableConcept(child, path+'/procedure') {b}
       else if (child.baseName = 'additive') then
@@ -22610,7 +22610,7 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   ComposeCodeableConcept(xml, 'procedure', elem.procedure_);{x.2}
   for i := 0 to elem.additiveList.Count - 1 do
     ComposeResourceReference{TFhirSubstance}(xml, 'additive', elem.additiveList[i]);
@@ -22629,7 +22629,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('procedure') then
         result.procedure_ := ParseCodeableConcept(jsn.vObj['procedure']);{q}
     if jsn.has('additive') then
@@ -22648,8 +22648,8 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeCodeableConcept(json, 'procedure', elem.procedure_); {a}
   if elem.additiveList.Count > 0 then
   begin
@@ -22674,7 +22674,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'capacity') then
@@ -22706,7 +22706,7 @@ begin
   composeBackboneElementChildren(xml, elem);
   for i := 0 to elem.identifierList.Count - 1 do
     ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   ComposeQuantity(xml, 'capacity', elem.capacity);{x.2}
   ComposeQuantity(xml, 'specimenQuantity', elem.specimenQuantity);{x.2}
@@ -22728,7 +22728,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('capacity') then
@@ -22758,8 +22758,8 @@ begin
       ComposeIdentifier(json, '',elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   ComposeQuantity(json, 'capacity', elem.capacity); {a}
   ComposeQuantity(json, 'specimenQuantity', elem.specimenQuantity); {a}
@@ -22788,7 +22788,7 @@ begin
       else if (child.baseName = 'accessionIdentifier') then
         result.accessionIdentifier := ParseIdentifier(child, path+'/accessionIdentifier') {b}
       else if (child.baseName = 'receivedTime') then
-        result.receivedTimeObject := ParseDateTime(child, path+'/receivedTime') {b}
+        result.receivedTimeElement := ParseDateTime(child, path+'/receivedTime') {b}
       else if (child.baseName = 'collection') then
         result.collection := ParseSpecimenCollection(child, path+'/collection') {b}
       else if (child.baseName = 'treatment') then
@@ -22823,7 +22823,7 @@ begin
     ComposeSpecimenSource(xml, 'source', elem.sourceList[i]);
   ComposeResourceReference{Resource}(xml, 'subject', elem.subject);{x.2}
   ComposeIdentifier(xml, 'accessionIdentifier', elem.accessionIdentifier);{x.2}
-  ComposeDateTime(xml, 'receivedTime', elem.receivedTimeObject);{x.2}
+  ComposeDateTime(xml, 'receivedTime', elem.receivedTimeElement);{x.2}
   ComposeSpecimenCollection(xml, 'collection', elem.collection);{x.2}
   for i := 0 to elem.treatmentList.Count - 1 do
     ComposeSpecimenTreatment(xml, 'treatment', elem.treatmentList[i]);
@@ -22854,7 +22854,7 @@ begin
     if jsn.has('accessionIdentifier') then
         result.accessionIdentifier := ParseIdentifier(jsn.vObj['accessionIdentifier']);{q}
     if jsn.has('receivedTime') or jsn.has('_receivedTime') then
-        result.receivedTimeObject := ParseDateTime(jsn['receivedTime'], jsn.vObj['_receivedTime']);{q}
+        result.receivedTimeElement := ParseDateTime(jsn['receivedTime'], jsn.vObj['_receivedTime']);{q}
     if jsn.has('collection') then
         result.collection := ParseSpecimenCollection(jsn.vObj['collection']);{q}
     if jsn.has('treatment') then
@@ -22891,8 +22891,8 @@ begin
   end;
   ComposeResourceReference{Resource}(json, 'subject', elem.subject); {a}
   ComposeIdentifier(json, 'accessionIdentifier', elem.accessionIdentifier); {a}
-  ComposeDateTimeValue(json, 'receivedTime', elem.receivedTimeObject, false);
-  ComposeDateTimeProps(json, 'receivedTime', elem.receivedTimeObject, false);
+  ComposeDateTimeValue(json, 'receivedTime', elem.receivedTimeElement, false);
+  ComposeDateTimeProps(json, 'receivedTime', elem.receivedTimeElement, false);
   ComposeSpecimenCollection(json, 'collection', elem.collection); {a}
   if elem.treatmentList.Count > 0 then
   begin
@@ -22923,7 +22923,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'expiry') then
-        result.expiryObject := ParseDateTime(child, path+'/expiry') {b}
+        result.expiryElement := ParseDateTime(child, path+'/expiry') {b}
       else if (child.baseName = 'quantity') then
         result.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -22946,7 +22946,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeDateTime(xml, 'expiry', elem.expiryObject);{x.2}
+  ComposeDateTime(xml, 'expiry', elem.expiryElement);{x.2}
   ComposeQuantity(xml, 'quantity', elem.quantity);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -22965,7 +22965,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('expiry') or jsn.has('_expiry') then
-        result.expiryObject := ParseDateTime(jsn['expiry'], jsn.vObj['_expiry']);{q}
+        result.expiryElement := ParseDateTime(jsn['expiry'], jsn.vObj['_expiry']);{q}
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
     result.link;
@@ -22981,8 +22981,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeDateTimeValue(json, 'expiry', elem.expiryObject, false);
-  ComposeDateTimeProps(json, 'expiry', elem.expiryObject, false);
+  ComposeDateTimeValue(json, 'expiry', elem.expiryElement, false);
+  ComposeDateTimeProps(json, 'expiry', elem.expiryElement, false);
   ComposeQuantity(json, 'quantity', elem.quantity); {a}
   json.finishObject;
 end;
@@ -23070,7 +23070,7 @@ begin
       if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'instance') then
         result.instance := ParseSubstanceInstance(child, path+'/instance') {b}
       else if (child.baseName = 'ingredient') then
@@ -23097,7 +23097,7 @@ begin
   xml.open(name);
   composeResourceChildren(xml, elem);
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   ComposeSubstanceInstance(xml, 'instance', elem.instance);{x.2}
   for i := 0 to elem.ingredientList.Count - 1 do
     ComposeSubstanceIngredient(xml, 'ingredient', elem.ingredientList[i]);
@@ -23118,7 +23118,7 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('instance') then
         result.instance := ParseSubstanceInstance(jsn.vObj['instance']);{q}
     if jsn.has('ingredient') then
@@ -23137,8 +23137,8 @@ begin
     exit;
   ComposeResourceProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeSubstanceInstance(json, 'instance', elem.instance); {a}
   if elem.ingredientList.Count > 0 then
   begin
@@ -23162,7 +23162,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirValuesetSupplyDispenseStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirValuesetSupplyDispenseStatus, path+'/status', child){1a}
       else if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'quantity') then
@@ -23201,7 +23201,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirValuesetSupplyDispenseStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyDispenseStatus);
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   ComposeQuantity(xml, 'quantity', elem.quantity);{x.2}
   ComposeResourceReference{Resource}(xml, 'suppliedItem', elem.suppliedItem);{x.2}
@@ -23228,7 +23228,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetSupplyDispenseStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetSupplyDispenseStatus);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('quantity') then
@@ -23260,8 +23260,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirValuesetSupplyDispenseStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirValuesetSupplyDispenseStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyDispenseStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyDispenseStatus, false);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   ComposeQuantity(json, 'quantity', elem.quantity); {a}
   ComposeResourceReference{Resource}(json, 'suppliedItem', elem.suppliedItem); {a}
@@ -23294,7 +23294,7 @@ begin
       else if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirValuesetSupplyStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirValuesetSupplyStatus, path+'/status', child){1a}
       else if (child.baseName = 'orderedItem') then
         result.orderedItem := ParseResourceReference{Resource}(child, path+'/orderedItem') {b}
       else if (child.baseName = 'patient') then
@@ -23324,7 +23324,7 @@ begin
   composeResourceChildren(xml, elem);
   ComposeCodeableConcept(xml, 'kind', elem.kind);{x.2}
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirValuesetSupplyStatus);
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyStatus);
   ComposeResourceReference{Resource}(xml, 'orderedItem', elem.orderedItem);{x.2}
   ComposeResourceReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
   for i := 0 to elem.dispenseList.Count - 1 do
@@ -23348,7 +23348,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetSupplyStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetSupplyStatus);
     if jsn.has('orderedItem') then
         result.orderedItem := ParseResourceReference{Resource}(jsn.vObj['orderedItem']);{q}
     if jsn.has('patient') then
@@ -23370,8 +23370,8 @@ begin
   ComposeResourceProperties(json, elem);
   ComposeCodeableConcept(json, 'kind', elem.kind); {a}
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirValuesetSupplyStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirValuesetSupplyStatus, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyStatus, false);
   ComposeResourceReference{Resource}(json, 'orderedItem', elem.orderedItem); {a}
   ComposeResourceReference{TFhirPatient}(json, 'patient', elem.patient); {a}
   if elem.dispenseList.Count > 0 then
@@ -23394,11 +23394,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'caseSensitive') then
-        result.caseSensitiveObject := ParseBoolean(child, path+'/caseSensitive') {b}
+        result.caseSensitiveElement := ParseBoolean(child, path+'/caseSensitive') {b}
       else if (child.baseName = 'concept') then
         result.conceptList.Add(ParseValueSetDefineConcept(child, path+'/concept')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -23422,9 +23422,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
-  ComposeBoolean(xml, 'caseSensitive', elem.caseSensitiveObject);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
+  ComposeBoolean(xml, 'caseSensitive', elem.caseSensitiveElement);{x.2}
   for i := 0 to elem.conceptList.Count - 1 do
     ComposeValueSetDefineConcept(xml, 'concept', elem.conceptList[i]);
   closeOutElement(xml, elem);
@@ -23442,11 +23442,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('caseSensitive') or jsn.has('_caseSensitive') then
-        result.caseSensitiveObject := ParseBoolean(jsn['caseSensitive'], jsn.vObj['_caseSensitive']);{q}
+        result.caseSensitiveElement := ParseBoolean(jsn['caseSensitive'], jsn.vObj['_caseSensitive']);{q}
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseValueSetDefineConcept);
     result.link;
@@ -23463,12 +23463,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
-  ComposeBooleanValue(json, 'caseSensitive', elem.caseSensitiveObject, false);
-  ComposeBooleanProps(json, 'caseSensitive', elem.caseSensitiveObject, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
+  ComposeBooleanValue(json, 'caseSensitive', elem.caseSensitiveElement, false);
+  ComposeBooleanProps(json, 'caseSensitive', elem.caseSensitiveElement, false);
   if elem.conceptList.Count > 0 then
   begin
     json.valueArray('concept');
@@ -23490,13 +23490,13 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if (child.baseName = 'abstract') then
-        result.abstractObject := ParseBoolean(child, path+'/abstract') {b}
+        result.abstractElement := ParseBoolean(child, path+'/abstract') {b}
       else if (child.baseName = 'display') then
-        result.displayObject := ParseString(child, path+'/display') {b}
+        result.displayElement := ParseString(child, path+'/display') {b}
       else if (child.baseName = 'definition') then
-        result.definitionObject := ParseString(child, path+'/definition') {b}
+        result.definitionElement := ParseString(child, path+'/definition') {b}
       else if (child.baseName = 'concept') then
         result.conceptList.Add(ParseValueSetDefineConcept(child, path+'/concept')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -23520,10 +23520,10 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
-  ComposeBoolean(xml, 'abstract', elem.abstractObject);{x.2}
-  ComposeString(xml, 'display', elem.displayObject);{x.2}
-  ComposeString(xml, 'definition', elem.definitionObject);{x.2}
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
+  ComposeBoolean(xml, 'abstract', elem.abstractElement);{x.2}
+  ComposeString(xml, 'display', elem.displayElement);{x.2}
+  ComposeString(xml, 'definition', elem.definitionElement);{x.2}
   for i := 0 to elem.conceptList.Count - 1 do
     ComposeValueSetDefineConcept(xml, 'concept', elem.conceptList[i]);
   closeOutElement(xml, elem);
@@ -23541,13 +23541,13 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     if jsn.has('abstract') or jsn.has('_abstract') then
-        result.abstractObject := ParseBoolean(jsn['abstract'], jsn.vObj['_abstract']);{q}
+        result.abstractElement := ParseBoolean(jsn['abstract'], jsn.vObj['_abstract']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayObject := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     if jsn.has('definition') or jsn.has('_definition') then
-        result.definitionObject := ParseString(jsn['definition'], jsn.vObj['_definition']);{q}
+        result.definitionElement := ParseString(jsn['definition'], jsn.vObj['_definition']);{q}
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseValueSetDefineConcept);
     result.link;
@@ -23564,14 +23564,14 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
-  ComposeBooleanValue(json, 'abstract', elem.abstractObject, false);
-  ComposeBooleanProps(json, 'abstract', elem.abstractObject, false);
-  ComposeStringValue(json, 'display', elem.displayObject, false);
-  ComposeStringProps(json, 'display', elem.displayObject, false);
-  ComposeStringValue(json, 'definition', elem.definitionObject, false);
-  ComposeStringProps(json, 'definition', elem.definitionObject, false);
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
+  ComposeBooleanValue(json, 'abstract', elem.abstractElement, false);
+  ComposeBooleanProps(json, 'abstract', elem.abstractElement, false);
+  ComposeStringValue(json, 'display', elem.displayElement, false);
+  ComposeStringProps(json, 'display', elem.displayElement, false);
+  ComposeStringValue(json, 'definition', elem.definitionElement, false);
+  ComposeStringProps(json, 'definition', elem.definitionElement, false);
   if elem.conceptList.Count > 0 then
   begin
     json.valueArray('concept');
@@ -23706,9 +23706,9 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'code') then
         result.codeList.Add(ParseCode(child, path+'/code')){y.2}
       else if (child.baseName = 'filter') then
@@ -23734,8 +23734,8 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
   for i := 0 to elem.codeList.Count - 1 do
     ComposeCode(xml, 'code', elem.codeList[i]);
   for i := 0 to elem.filterList.Count - 1 do
@@ -23755,9 +23755,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
       if jsn.has('code') or jsn.has('_code') then
       iteratePrimitiveArray(jsn.vArr['code'], jsn.vArr['_code'], result.codeList, parseCode);
     if jsn.has('filter') then
@@ -23777,10 +23777,10 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
   if elem.codeList.Count > 0 then
   begin
     json.valueArray('code');
@@ -23820,11 +23820,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'property') then
-        result.property_Object := ParseCode(child, path+'/property') {b}
+        result.property_Element := ParseCode(child, path+'/property') {b}
       else if (child.baseName = 'op') then
-        result.opObject := ParseEnum(CODES_TFhirFilterOperator, path+'/op', child){1a}
+        result.opElement := ParseEnum(CODES_TFhirFilterOperator, path+'/op', child){1a}
       else if (child.baseName = 'value') then
-        result.valueObject := ParseCode(child, path+'/value') {b}
+        result.valueElement := ParseCode(child, path+'/value') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -23844,9 +23844,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeCode(xml, 'property', elem.property_Object);{x.2}
-  ComposeEnum(xml, 'op', elem.OpObject, CODES_TFhirFilterOperator);
-  ComposeCode(xml, 'value', elem.valueObject);{x.2}
+  ComposeCode(xml, 'property', elem.property_Element);{x.2}
+  ComposeEnum(xml, 'op', elem.OpElement, CODES_TFhirFilterOperator);
+  ComposeCode(xml, 'value', elem.valueElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -23862,11 +23862,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('property') or jsn.has('_property') then
-        result.property_Object := ParseCode(jsn['property'], jsn.vObj['_property']);{q}
+        result.property_Element := ParseCode(jsn['property'], jsn.vObj['_property']);{q}
     if jsn.has('op') or jsn.has('_op')  then
-      result.opObject := parseEnum(jsn['op'], jsn.vObj['_op'], CODES_TFhirFilterOperator);
+      result.opElement := parseEnum(jsn['op'], jsn.vObj['_op'], CODES_TFhirFilterOperator);
     if jsn.has('value') or jsn.has('_value') then
-        result.valueObject := ParseCode(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseCode(jsn['value'], jsn.vObj['_value']);{q}
     result.link;
   finally
     result.free;
@@ -23879,12 +23879,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeCodeValue(json, 'property', elem.property_Object, false);
-  ComposeCodeProps(json, 'property', elem.property_Object, false);
-  ComposeEnumValue(json, 'op', elem.OpObject, CODES_TFhirFilterOperator, false);
-  ComposeEnumProps(json, 'op', elem.OpObject, CODES_TFhirFilterOperator, false);
-  ComposeCodeValue(json, 'value', elem.valueObject, false);
-  ComposeCodeProps(json, 'value', elem.valueObject, false);
+  ComposeCodeValue(json, 'property', elem.property_Element, false);
+  ComposeCodeProps(json, 'property', elem.property_Element, false);
+  ComposeEnumValue(json, 'op', elem.OpElement, CODES_TFhirFilterOperator, false);
+  ComposeEnumProps(json, 'op', elem.OpElement, CODES_TFhirFilterOperator, false);
+  ComposeCodeValue(json, 'value', elem.valueElement, false);
+  ComposeCodeProps(json, 'value', elem.valueElement, false);
   json.finishObject;
 end;
 
@@ -23901,7 +23901,7 @@ begin
       if (child.baseName = 'identifier') then
         result.identifier := ParseIdentifier(child, path+'/identifier') {b}
       else if (child.baseName = 'timestamp') then
-        result.timestampObject := ParseInstant(child, path+'/timestamp') {b}
+        result.timestampElement := ParseInstant(child, path+'/timestamp') {b}
       else if (child.baseName = 'contains') then
         result.containsList.Add(ParseValueSetExpansionContains(child, path+'/contains')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -23926,7 +23926,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
-  ComposeInstant(xml, 'timestamp', elem.timestampObject);{x.2}
+  ComposeInstant(xml, 'timestamp', elem.timestampElement);{x.2}
   for i := 0 to elem.containsList.Count - 1 do
     ComposeValueSetExpansionContains(xml, 'contains', elem.containsList[i]);
   closeOutElement(xml, elem);
@@ -23946,7 +23946,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('timestamp') or jsn.has('_timestamp') then
-        result.timestampObject := ParseInstant(jsn['timestamp'], jsn.vObj['_timestamp']);{q}
+        result.timestampElement := ParseInstant(jsn['timestamp'], jsn.vObj['_timestamp']);{q}
     if jsn.has('contains') then
       iterateArray(jsn.vArr['contains'], result.containsList, parseValueSetExpansionContains);
     result.link;
@@ -23964,8 +23964,8 @@ begin
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  ComposeInstantValue(json, 'timestamp', elem.timestampObject, false);
-  ComposeInstantProps(json, 'timestamp', elem.timestampObject, false);
+  ComposeInstantValue(json, 'timestamp', elem.timestampElement, false);
+  ComposeInstantProps(json, 'timestamp', elem.timestampElement, false);
   if elem.containsList.Count > 0 then
   begin
     json.valueArray('contains');
@@ -23987,11 +23987,11 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'system') then
-        result.systemObject := ParseUri(child, path+'/system') {b}
+        result.systemElement := ParseUri(child, path+'/system') {b}
       else if (child.baseName = 'code') then
-        result.codeObject := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if (child.baseName = 'display') then
-        result.displayObject := ParseString(child, path+'/display') {b}
+        result.displayElement := ParseString(child, path+'/display') {b}
       else if (child.baseName = 'contains') then
         result.containsList.Add(ParseValueSetExpansionContains(child, path+'/contains')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -24015,9 +24015,9 @@ begin
   composeElementAttributes(xml, elem);
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
-  ComposeUri(xml, 'system', elem.systemObject);{x.2}
-  ComposeCode(xml, 'code', elem.codeObject);{x.2}
-  ComposeString(xml, 'display', elem.displayObject);{x.2}
+  ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  ComposeCode(xml, 'code', elem.codeElement);{x.2}
+  ComposeString(xml, 'display', elem.displayElement);{x.2}
   for i := 0 to elem.containsList.Count - 1 do
     ComposeValueSetExpansionContains(xml, 'contains', elem.containsList[i]);
   closeOutElement(xml, elem);
@@ -24035,11 +24035,11 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemObject := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeObject := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayObject := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     if jsn.has('contains') then
       iterateArray(jsn.vArr['contains'], result.containsList, parseValueSetExpansionContains);
     result.link;
@@ -24056,12 +24056,12 @@ begin
     exit;
   json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeUriValue(json, 'system', elem.systemObject, false);
-  ComposeUriProps(json, 'system', elem.systemObject, false);
-  ComposeCodeValue(json, 'code', elem.codeObject, false);
-  ComposeCodeProps(json, 'code', elem.codeObject, false);
-  ComposeStringValue(json, 'display', elem.displayObject, false);
-  ComposeStringProps(json, 'display', elem.displayObject, false);
+  ComposeUriValue(json, 'system', elem.systemElement, false);
+  ComposeUriProps(json, 'system', elem.systemElement, false);
+  ComposeCodeValue(json, 'code', elem.codeElement, false);
+  ComposeCodeProps(json, 'code', elem.codeElement, false);
+  ComposeStringValue(json, 'display', elem.displayElement, false);
+  ComposeStringProps(json, 'display', elem.displayElement, false);
   if elem.containsList.Count > 0 then
   begin
     json.valueArray('contains');
@@ -24083,27 +24083,27 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'identifier') then
-        result.identifierObject := ParseString(child, path+'/identifier') {b}
+        result.identifierElement := ParseString(child, path+'/identifier') {b}
       else if (child.baseName = 'version') then
-        result.versionObject := ParseString(child, path+'/version') {b}
+        result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'name') then
-        result.nameObject := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'publisher') then
-        result.publisherObject := ParseString(child, path+'/publisher') {b}
+        result.publisherElement := ParseString(child, path+'/publisher') {b}
       else if (child.baseName = 'telecom') then
         result.telecomList.Add(ParseContact(child, path+'/telecom')){y.2}
       else if (child.baseName = 'description') then
-        result.descriptionObject := ParseString(child, path+'/description') {b}
+        result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'copyright') then
-        result.copyrightObject := ParseString(child, path+'/copyright') {b}
+        result.copyrightElement := ParseString(child, path+'/copyright') {b}
       else if (child.baseName = 'status') then
-        result.statusObject := ParseEnum(CODES_TFhirValuesetStatus, path+'/status', child){1a}
+        result.statusElement := ParseEnum(CODES_TFhirValuesetStatus, path+'/status', child){1a}
       else if (child.baseName = 'experimental') then
-        result.experimentalObject := ParseBoolean(child, path+'/experimental') {b}
+        result.experimentalElement := ParseBoolean(child, path+'/experimental') {b}
       else if (child.baseName = 'extensible') then
-        result.extensibleObject := ParseBoolean(child, path+'/extensible') {b}
+        result.extensibleElement := ParseBoolean(child, path+'/extensible') {b}
       else if (child.baseName = 'date') then
-        result.dateObject := ParseDateTime(child, path+'/date') {b}
+        result.dateElement := ParseDateTime(child, path+'/date') {b}
       else if (child.baseName = 'define') then
         result.define := ParseValueSetDefine(child, path+'/define') {b}
       else if (child.baseName = 'compose') then
@@ -24131,20 +24131,20 @@ begin
   composeResourceAttributes(xml, elem);
   xml.open(name);
   composeResourceChildren(xml, elem);
-  ComposeString(xml, 'identifier', elem.identifierObject);{x.2}
-  ComposeString(xml, 'version', elem.versionObject);{x.2}
-  ComposeString(xml, 'name', elem.nameObject);{x.2}
-  ComposeString(xml, 'publisher', elem.publisherObject);{x.2}
+  ComposeString(xml, 'identifier', elem.identifierElement);{x.2}
+  ComposeString(xml, 'version', elem.versionElement);{x.2}
+  ComposeString(xml, 'name', elem.nameElement);{x.2}
+  ComposeString(xml, 'publisher', elem.publisherElement);{x.2}
   for i := 0 to elem.telecomList.Count - 1 do
     ComposeContact(xml, 'telecom', elem.telecomList[i]);
-  ComposeString(xml, 'description', elem.descriptionObject);{x.2}
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   if not SummaryOnly then
-    ComposeString(xml, 'copyright', elem.copyrightObject);{x.2}
-  ComposeEnum(xml, 'status', elem.StatusObject, CODES_TFhirValuesetStatus);
-  ComposeBoolean(xml, 'experimental', elem.experimentalObject);{x.2}
+    ComposeString(xml, 'copyright', elem.copyrightElement);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirValuesetStatus);
+  ComposeBoolean(xml, 'experimental', elem.experimentalElement);{x.2}
   if not SummaryOnly then
-    ComposeBoolean(xml, 'extensible', elem.extensibleObject);{x.2}
-  ComposeDateTime(xml, 'date', elem.dateObject);{x.2}
+    ComposeBoolean(xml, 'extensible', elem.extensibleElement);{x.2}
+  ComposeDateTime(xml, 'date', elem.dateElement);{x.2}
   ComposeValueSetDefine(xml, 'define', elem.define);{x.2}
   if not SummaryOnly then
     ComposeValueSetCompose(xml, 'compose', elem.compose);{x.2}
@@ -24165,27 +24165,27 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierObject := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseString(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionObject := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameObject := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherObject := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContact);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionObject := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightObject := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusObject := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetStatus);
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetStatus);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalObject := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('extensible') or jsn.has('_extensible') then
-        result.extensibleObject := ParseBoolean(jsn['extensible'], jsn.vObj['_extensible']);{q}
+        result.extensibleElement := ParseBoolean(jsn['extensible'], jsn.vObj['_extensible']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateObject := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('define') then
         result.define := ParseValueSetDefine(jsn.vObj['define']);{q}
     if jsn.has('compose') then
@@ -24205,14 +24205,14 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  ComposeStringValue(json, 'identifier', elem.identifierObject, false);
-  ComposeStringProps(json, 'identifier', elem.identifierObject, false);
-  ComposeStringValue(json, 'version', elem.versionObject, false);
-  ComposeStringProps(json, 'version', elem.versionObject, false);
-  ComposeStringValue(json, 'name', elem.nameObject, false);
-  ComposeStringProps(json, 'name', elem.nameObject, false);
-  ComposeStringValue(json, 'publisher', elem.publisherObject, false);
-  ComposeStringProps(json, 'publisher', elem.publisherObject, false);
+  ComposeStringValue(json, 'identifier', elem.identifierElement, false);
+  ComposeStringProps(json, 'identifier', elem.identifierElement, false);
+  ComposeStringValue(json, 'version', elem.versionElement, false);
+  ComposeStringProps(json, 'version', elem.versionElement, false);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeStringValue(json, 'publisher', elem.publisherElement, false);
+  ComposeStringProps(json, 'publisher', elem.publisherElement, false);
   if elem.telecomList.Count > 0 then
   begin
     json.valueArray('telecom');
@@ -24220,22 +24220,22 @@ begin
       ComposeContact(json, '',elem.telecomList[i]); {z - Contact}
     json.FinishArray;
   end;
-  ComposeStringValue(json, 'description', elem.descriptionObject, false);
-  ComposeStringProps(json, 'description', elem.descriptionObject, false);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if not SummaryOnly then
-    ComposeStringValue(json, 'copyright', elem.copyrightObject, false);
+    ComposeStringValue(json, 'copyright', elem.copyrightElement, false);
   if not SummaryOnly then
-    ComposeStringProps(json, 'copyright', elem.copyrightObject, false);
-  ComposeEnumValue(json, 'status', elem.StatusObject, CODES_TFhirValuesetStatus, false);
-  ComposeEnumProps(json, 'status', elem.StatusObject, CODES_TFhirValuesetStatus, false);
-  ComposeBooleanValue(json, 'experimental', elem.experimentalObject, false);
-  ComposeBooleanProps(json, 'experimental', elem.experimentalObject, false);
+    ComposeStringProps(json, 'copyright', elem.copyrightElement, false);
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirValuesetStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirValuesetStatus, false);
+  ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
+  ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
   if not SummaryOnly then
-    ComposeBooleanValue(json, 'extensible', elem.extensibleObject, false);
+    ComposeBooleanValue(json, 'extensible', elem.extensibleElement, false);
   if not SummaryOnly then
-    ComposeBooleanProps(json, 'extensible', elem.extensibleObject, false);
-  ComposeDateTimeValue(json, 'date', elem.dateObject, false);
-  ComposeDateTimeProps(json, 'date', elem.dateObject, false);
+    ComposeBooleanProps(json, 'extensible', elem.extensibleElement, false);
+  ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeValueSetDefine(json, 'define', elem.define); {a}
   if not SummaryOnly then
     ComposeValueSetCompose(json, 'compose', elem.compose); {a}

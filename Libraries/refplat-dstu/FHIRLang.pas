@@ -39,6 +39,7 @@ implementation
 uses
   SysUtils, classes,
   StringSupport,
+  BytesSupport,
   AdvExceptions,
   AfsResourceVolumes,
   AfsVolumes,

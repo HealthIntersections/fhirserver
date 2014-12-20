@@ -51,6 +51,7 @@ const
 
 type
   TFhirReference = TFhirResourceReference;
+  TFhirDomainResource = TFhirResource;
   TFhirReferenceList = TFhirResourceReferenceList;
   TFhirTiming = TFhirSchedule;
   TFhirContactPoint = TFhirContact;
@@ -127,7 +128,10 @@ type
     property Resource : TFHIRResource read FResource write SetResource;
   end;
 
+{$IFDEF UNICODE}
 type
+  TFHIRProfileStructureHolder = TFHIRProfileStructure;
+
   TFHIRElementHelper = class helper for TFHIRElement
   public
     procedure addExtension(url : String; t : TFhirType); overload;
@@ -187,6 +191,21 @@ type
     procedure setSystem(type_ : TFhirContactSystem; value : String);
   end;
 
+  TFhirConceptMapConceptHelper = class helper (TFhirElementHelper) for TFhirConceptMapConcept
+  public
+    function codeSystemElement : TFhirUri;
+  end;
+
+  TFhirConceptMapConceptDependsOnHelper = class helper (TFhirElementHelper) for TFhirConceptMapConceptDependsOn
+  public
+    function elementElement : TFhirUri;
+  end;
+
+  TFhirConceptMapConceptMapHelper  = class helper (TFhirElementHelper) for TFhirConceptMapConceptMap
+  public
+    function codeSystemElement : TFhirUri;
+  end;
+
   TFHIROperationOutcomeHelper = class helper (TFHIRElementHelper) for TFhirOperationOutcome
   public
     function rule(level : TFhirIssueSeverity; source, typeCode, path : string; test : boolean; msg : string) : boolean;
@@ -196,13 +215,16 @@ type
 
     function hasErrors : boolean;
   end;
-
+{$ENDIF}
 
 function ZCompressBytes(const s: TBytes): TBytes;
 function ZDecompressBytes(const s: TBytes): TBytes;
 function TryZDecompressBytes(const s: TBytes): TBytes;
 
 implementation
+
+Uses
+  BytesSupport;
 
 
 function DetectFormat(oContent : TStream) : TFHIRParserClass;
@@ -253,11 +275,11 @@ end;
 
 function MakeComposer(lang : string; mimetype : String) : TFHIRComposer;
 begin
-  if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
+  if StringStartsWith(mimeType, 'text/xml', true) or StringStartsWith(mimeType, 'application/xml', true) or StringStartsWith(mimeType, 'application/fhir+xml', true) or (mimetype = 'xml') then
     result := TFHIRXmlComposer.Create(lang)
-  else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'xml') then
+  else if StringStartsWith(mimeType, 'text/json', true) or StringStartsWith(mimeType, 'application/json', true) or StringStartsWith(mimeType, 'application/fhir+json', true) or (mimetype = 'xml') then
     result := TFHIRJsonComposer.Create(lang)
-  else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
+  else if StringStartsWith(mimeType, 'text/html', true) or StringStartsWith(mimeType, 'text/xhtml', true) or StringStartsWith(mimeType, 'application/fhir+xhtml', true) or (mimetype = 'xhtml') then
     result := TFHIRXhtmlComposer.Create(lang)
   else
     raise Exception.Create('Format '+mimetype+' not recognised');
@@ -265,7 +287,7 @@ end;
 
 Function FhirGUIDToString(aGuid : TGuid):String;
 begin
-  result := Copy(GUIDToString(aGuid), 2, 34).ToLower;
+  result := Lowercase(Copy(GUIDToString(aGuid), 2, 34));
 end;
 
 
@@ -341,17 +363,20 @@ begin
   try
     while iter.More do
     begin
-      if StringStartsWith(iter.Current.Type_, 'Resource(') then
+      if StringStartsWith(iter.Current.Type_, 'Resource(', true) then
       begin
         for i := 0 to iter.Current.List.count - 1 do
-          if not StringStartsWith(TFhirResourceReference(iter.current.list[i]).reference, '#') then
+          if not StringStartsWith(TFhirResourceReference(iter.current.list[i]).reference, '#', true) then
             list.add(iter.Current.list[i].Link)
       end
-      else if iter.Current.Type_ = 'Resource' then
-        iterateReferences(TFhirResource(iter.current.list[0]), list)
-      else
-        for i := 0 to iter.Current.list.Count - 1 Do
-          iterateReferences(iter.Current.list[i], list);
+      else if iter.current.List <> nil then
+      begin
+        if (iter.Current.Type_ = 'Resource') and (iter.current.List.Count > 0) then
+          iterateReferences(TFhirResource(iter.current.list[0]), list)
+        else
+          for i := 0 to iter.Current.list.Count - 1 Do
+            iterateReferences(iter.Current.list[i], list);
+      end;
       iter.Next;
     end;
   finally
@@ -486,7 +511,7 @@ begin
         result := DateTimeMax(result, AsUTCMax(value.eventList[i]));
   end
   else if (value.repeat_.end_ <> nil) then
-    result := asUTCMax(value.repeat_.end_Object)
+    result := asUTCMax(value.repeat_.end_Element)
   else if (value.repeat_.count <> '') and (value.eventList.Count > 0) and
     (value.repeat_.frequency <> '') and (value.repeat_.duration <> '') and (value.repeat_.units <> UnitsOfTimeNull) then
   begin
@@ -506,7 +531,7 @@ begin
         UnitsOfTimeMo : duration := 30;
         UnitsOfTimeA : duration := 365 // todo - how to correct for leap years?;
       else
-        raise exception.create('unknown duration units "'+value.repeat_.unitsObject.value+'"');
+        raise exception.create('unknown duration units "'+value.repeat_.unitsElement.value+'"');
       end;
       result := result + (StrToInt(value.repeat_.count) * duration / StrToInt(value.repeat_.frequency));
     end;
@@ -520,11 +545,11 @@ var
   i : integer;
 begin
   result := nil;
-  for i := 0 to feed.entries.count - 1 do
+  for i := 0 to feed.entryList.count - 1 do
   begin
-    if feed.entries[i].id = ref.reference then
+    if feed.entryList[i].id = ref.reference then
     begin
-      result := feed.entries[i].resource;
+      result := feed.entryList[i].resource;
       break;
     end;
   end;
@@ -598,9 +623,9 @@ function gen(coding : TFHIRCoding):String; overload;
 begin
   if (coding = nil) then
      result := ''
-  else if (coding.DisplayObject <> nil) then
+  else if (coding.DisplayElement <> nil) then
     result := coding.Display
-  else if (coding.CodeObject <> nil) then
+  else if (coding.CodeElement <> nil) then
     result := coding.Code
   else
     result := '';
@@ -945,7 +970,7 @@ end;
     li := ul.addTag('li');
     AtomEntry e := codeSystems.(inc.System.toString);
     
-    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then 
+    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then
       li.addText(type+' all codes defined in ');
       addCsRef(inc, li, e);
     end; else begin 
@@ -1060,6 +1085,8 @@ Function removeCaseAndAccents(s : String) : String;
 begin
   result := lowercase(s);
 end;
+
+{$IFDEF UNICODE}
 
 { TFHIROperationOutcomeHelper }
 
@@ -1322,39 +1349,6 @@ begin
 end;
 
 
-function ZCompressBytes(const s: TBytes): TBytes;
-begin
-  ZCompress(s, result);
-end;
-
-function TryZDecompressBytes(const s: TBytes): TBytes;
-begin
-  try
-    result := ZDecompressBytes(s);
-  except
-    result := s;
-  end;
-end;
-
-function ZDecompressBytes(const s: TBytes): TBytes;
-  {$IFNDEF WIN64}
-var
-  buffer: Pointer;
-  size  : Integer;
-  {$ENDIF}
-begin
-  {$IFDEF WIN64}
-  ZDecompress(s, result);
-  {$ELSE}
-  ZDecompress(@s[0],Length(s),buffer,size);
-
-  SetLength(result,size);
-  Move(buffer^,result[0],size);
-
-  FreeMem(buffer);
-  {$ENDIF}
-end;
-
 { TFHIRResourceHelper }
 
 procedure TFHIRResourceHelper.collapseAllContained;
@@ -1380,28 +1374,6 @@ begin
       result := containedList[i];
 end;
 
-
-{ TResourceWithReference }
-
-constructor TResourceWithReference.Create(reference: String; resource: TFHIRResource);
-begin
-  inherited Create;
-  self.Reference := reference;
-  self.Resource := resource;
-
-end;
-
-destructor TResourceWithReference.Destroy;
-begin
-  FResource.free;
-  inherited;
-end;
-
-procedure TResourceWithReference.SetResource(const Value: TFHIRResource);
-begin
-  FResource.free;
-  FResource := Value;
-end;
 
 { TFhirCarePlanActivitySimpleHelper }
 
@@ -1432,6 +1404,90 @@ end;
 procedure TFhirValueSetComposeIncludeConceptHelper.SetCode(const s: string);
 begin
   value := s
+end;
+
+{$ENDIF}
+
+{ TResourceWithReference }
+
+constructor TResourceWithReference.Create(reference: String; resource: TFHIRResource);
+begin
+  inherited Create;
+  self.Reference := reference;
+  self.Resource := resource;
+
+end;
+
+destructor TResourceWithReference.Destroy;
+begin
+  FResource.free;
+  inherited;
+end;
+
+procedure TResourceWithReference.SetResource(const Value: TFHIRResource);
+begin
+  FResource.free;
+  FResource := Value;
+end;
+
+function TryZDecompressBytes(const s: TBytes): TBytes;
+begin
+  try
+    result := ZDecompressBytes(s);
+  except
+    result := s;
+  end;
+end;
+
+function ZDecompressBytes(const s: TBytes): TBytes;
+  {$IFNDEF WIN64}
+var
+  buffer: Pointer;
+  size  : Integer;
+  {$ENDIF}
+begin
+  {$IFDEF WIN64}
+  ZDecompress(s, result);
+  {$ELSE}
+  {$IFDEF VER130}
+  {$ELSE}
+  ZDecompress(@s[0],Length(s),buffer,size);
+  {$ENDIF}
+
+  SetLength(result,size);
+  Move(buffer^,result[0],size);
+
+  FreeMem(buffer);
+  {$ENDIF}
+end;
+
+function ZCompressBytes(const s: TBytes): TBytes;
+begin
+  {$IFDEF VER130}
+  {$ELSE}
+  ZCompress(s, result);
+  {$ENDIF}
+end;
+
+{ TFhirConceptMapConceptHelper }
+
+function TFhirConceptMapConceptHelper.codeSystemElement: TFhirUri;
+begin
+  result := systemELement;
+end;
+
+{ TFhirConceptMapConceptDependsOnHelper }
+
+function TFhirConceptMapConceptDependsOnHelper.elementElement: TFhirUri;
+begin
+  result := conceptElement;
+end;
+
+{ TFhirConceptMapConceptMapHelper }
+
+function TFhirConceptMapConceptMapHelper.codeSystemElement: TFhirUri;
+begin
+  result := systemElement;
 end;
 
 end.

@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes;
+  SysUtils, Classes, EncodeSupport, DateSupport;
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 Function FacebookGetDetails(token : String; var id, name, email, error : String) : boolean;
@@ -39,11 +39,13 @@ Function FacebookGetDetails(token : String; var id, name, email, error : String)
 Function GoogleCheckLogin(id, secret, url, code : String; var token, expires, jwt, error : String) : boolean;
 Function GoogleGetDetails(token, key, jwtsrc : String; var id, name, email, error : String) : boolean;
 
+function FitBitInitiate(secret, key, nonce, callback : String) : String;
+
 implementation
 
 uses
   InternetFetcher,
-  IdHTTP, IdSSLOpenSSL,
+  IdHTTP, IdSSLOpenSSL, hmac, idHMAC, IdHMACSHA1, BytesSupport,
   AdvMemories,
   json, jwt, ParseMap;
 
@@ -204,6 +206,74 @@ begin
   except
     on e:exception do
       error := e.Message;
+  end;
+end;
+
+function SecondsSince1970 : integer;
+begin
+  result := trunc((now - EncodeDate(1970,1,1)) / DATETIME_SECOND_ONE);
+end;
+
+function oAuthSign(secret, s : String) : String;
+var
+  bs, bsecret : TBytes;
+begin
+  bs := AnsiStringAsBytes(s);
+  bsecret := AnsiStringAsBytes(secret);
+//  result := EncodeMIME(BinToBase64(THMACUtils.HMAC_HexStr(TIdHMACSHA256, bsecret, bs)));
+end;
+
+
+function FitBitInitiate(secret, key, nonce, callback : String) : String;
+var
+  ts : String;
+  base : String;
+  header : String;
+  fetch : TInternetFetcher;
+  parsemap : TParseMap;
+begin
+  ts := inttostr(SecondsSince1970);
+  try
+
+    // build the base correctly:
+    base := 'POST&'+
+    'http%3A%2F%2Fapi.fitbit.com%2Foauth%2Frequest_token&'+
+    'oauth_callback%3D'+EncodeMIME(callback)+'%26'+
+    'oauth_consumer_key%3D'+key+'%26'+
+    'oauth_nonce%3D'+nonce+'%26'+
+    'oauth_signature_method%3DHMAC-SHA1%26'+
+    'oauth_timestamp%3D'+ts+'%26'+
+    'oauth_version%3D1.0';
+
+    header := 'OAuth oauth_consumer_key="'+key+'", '+
+      'oauth_signature_method="HMAC-SHA1", '+
+      'oauth_timestamp="'+ts+'", '+
+      'oauth_nonce="'+nonce+'", '+
+      'oauth_callback="'+EncodeMIME(callback)+'", '+
+      'oauth_signature="'+oAuthSign(secret, base)+'"'+
+      'oauth_version="1.0"';
+
+    fetch := TInternetFetcher.create;
+    try
+      fetch.Method := imfPost;
+      fetch.URL := 'https://https://www.fitbit.com/oauth/request_token';
+      fetch.Fetch;
+
+  //      parsemap := TParseMap.createSmart(fetch.Buffer.AsUnicode);
+  //      try
+  //        token := parsemap.GetVar('access_token');
+  //        expires := parsemap.GetVar('expires');
+  //      finally
+  //        parsemap.free;
+  //      end;
+  //      result := true;
+    finally
+      fetch.free;
+    end;
+  except
+    on e : Exception do
+      result := '<p>Error: '+e.message+'</p>';
+
   end;
 end;
 

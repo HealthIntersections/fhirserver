@@ -818,7 +818,6 @@ end;
 
 function TUcumServices.getDisplay(code: String): String;
 var
-  i : integer;
   cc : TFhirValueSetComposeIncludeConcept;
 begin
   result := analyse(code);

@@ -120,7 +120,7 @@
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -xremount -tests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -xremount -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -xunii C:\Data\terminologies\uniis\unii.txt</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -240,6 +240,7 @@
         <DCCReference Include="..\Libraries\refplat-dev\FHIRLang.pas"/>
         <DCCReference Include="..\Libraries\refplat-dev\FHIRUtilities.pas"/>
         <DCCReference Include="..\Libraries\refplat-dev\FHIRClient.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dev\FHIRValidator.pas"/>
         <DCCReference Include="..\Libraries\Support\MsXmlParser.pas"/>
         <DCCReference Include="..\Libraries\Support\XMLBuilder.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvWinInetClients.pas"/>
@@ -267,7 +268,6 @@
         <DCCReference Include="..\Libraries\ucum\UcumValidators.pas"/>
         <DCCReference Include="..\Libraries\ucum\UcumExpressions.pas"/>
         <DCCReference Include="..\Libraries\ucum\UcumSearch.pas"/>
-        <DCCReference Include="FHIRValidator.pas"/>
         <DCCReference Include="..\Libraries\Support\AltovaXMLLib_TLB.pas"/>
         <DCCReference Include="FHIRValueSetExpander.pas"/>
         <DCCReference Include="..\Libraries\Stem\YuStemmer.pas"/>
@@ -344,14 +344,18 @@
         <DCCReference Include="..\Libraries\refplat-dev\SCIMObjects.pas"/>
         <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
         <DCCReference Include="FHIRSearchSyntax.pas"/>
-        <DCCReference Include="ProfileManager.pas"/>
+        <DCCReference Include="..\Libraries\refplat-dev\ProfileManager.pas"/>
         <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
         <DCCReference Include="RectSupport.pas"/>
         <DCCReference Include="CoordinateSupport.pas"/>
         <DCCReference Include="..\Libraries\refplat-dev\NarrativeGenerator.pas"/>
         <DCCReference Include="..\Libraries\support\AdvGenerics.pas"/>
-        <DCCReference Include="..\Libraries\security\DigitalSignatures.pas"/>
         <DCCReference Include="..\Libraries\support\XMLSupport.pas"/>
+        <DCCReference Include="..\Libraries\support\DigitalSignatures.pas"/>
+        <DCCReference Include="UriServices.pas"/>
+        <DCCReference Include="CvxServices.pas"/>
+        <DCCReference Include="CountryCodeServices.pas"/>
+        <DCCReference Include="UniiServices.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

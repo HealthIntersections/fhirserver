@@ -4,27 +4,27 @@ unit FHIRBase;
 Copyright (c) 2011+, HL7, Inc
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -42,6 +42,7 @@ Interface
 Uses
   Classes,
   DateAndTime,
+  Generics.Collections,
   SysUtils,
   AdvExceptions,
   AdvObjects,
@@ -51,8 +52,11 @@ Uses
   AdvStringLists,
   DateSupport,
   EncodeSupport,
-  EncdDecd,
+  {$IFDEF UNICODE} EncdDecd, {$ENDIF}
   DecimalSupport;
+
+Const
+  ID_LENGTH = 64;
 
 Type
   {@Enum TFHIRCommandType
@@ -137,6 +141,7 @@ type
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; oObject : TFHIRObject); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; oList : TFHIRObjectList); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; sValue : String); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; Value : TBytes); Overload;
     Destructor Destroy; Override;
 
     Property hasValue : Boolean read GetHasValue;
@@ -186,9 +191,11 @@ type
   {$M+}
   TFHIRObject = class (TAdvObject)
   private
+    FTags : TDictionary<String,String>;
     FTag : TAdvObject;
-    FTagValue : String;
     procedure SetTag(const Value: TAdvObject);
+    procedure SetTags(name: String; const Value: String);
+    function getTags(name: String): String;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); virtual;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Virtual;
@@ -198,8 +205,8 @@ type
     procedure ListChildrenByName(name : string; list : TFHIRObjectList);
     procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
     Function PerformQuery(path : String):TFHIRObjectList;
+    Property Tags[name : String] : String read getTags write SetTags;
     property Tag : TAdvObject read FTag write SetTag;
-    property TagValue : String read FTagValue write FTagValue;
   end;
 
   TFHIRObjectListEnumerator = class (TAdvObject)
@@ -216,14 +223,19 @@ type
 
   TFHIRObjectList = class (TAdvObjectList)
   private
+    FTags : TDictionary<String,String>;
     Function GetItemN(index : Integer) : TFHIRObject;
+    procedure SetTags(name: String; const Value: String);
+    function getTags(name: String): String;
   protected
     function ItemClass : TAdvObjectClass; override;
   public
+    Destructor Destroy; override;
     function Link : TFHIRObjectList; Overload;
     function Clone : TFHIRObjectList; Overload;
     function GetEnumerator : TFHIRObjectListEnumerator;
     Property ObjByIndex[index : Integer] : TFHIRObject read GetItemN; default;
+    Property Tags[name : String] : String read getTags write SetTags;
   end;
 
   TFHIRObjectText = class (TFHIRObject)
@@ -235,6 +247,7 @@ type
     constructor create(value : String); Overload;
     constructor create(value : TDateAndTime); Overload;
     constructor create(value : boolean); Overload;
+    constructor create(value : TBytes); Overload;
     property value : string read FValue write FValue;
   end;
 
@@ -463,6 +476,7 @@ type
   private
     FCommentsStart: TAdvStringList;
     FCommentsEnd: TAdvStringList;
+    FFormat : TFHIRFormat;
     function GetCommentsStart: TAdvStringList;
     function GetCommentsEnd: TAdvStringList;
   protected
@@ -485,6 +499,8 @@ type
     }
     Property xml_commentsStart : TAdvStringList read GetCommentsStart;
     Property xml_commentsEnd : TAdvStringList read GetCommentsEnd;
+
+    Property _source_format : TFHIRFormat read FFormat write FFormat;
   end;
 
   TFHIRBaseFactory = class (TAdvObject)
@@ -516,46 +532,7 @@ type
     property results : TFHIRObjectList read FResults;
   end;
 
-                   (*
-{ TFHIRType }
 
-function TFHIRType.Clone: TFHIRType;
-begin
-  result := TFHIRType(Inherited Clone);
-end;
-
-procedure TFHIRType.GetChildrenByName(name: string; list: TFHIRObjectList);
-begin
-  inherited;
-end;
-
-function TFHIRType.Link: TFHIRType;
-begin
-  result := TFHIRType(Inherited Link);
-end;
-*)
-(*
-{ TFhirReference }
-
-procedure TFhirReference.Assign(oSource: TAdvObject);
-begin
-  inherited;
-  resourceType := TFhirReference(oSource).resourceType;
-  id := TFhirReference(oSource).id;
-  version := TFhirReference(oSource).version;
-  text := TFhirReference(oSource).text;
-end;
-
-function TFhirReference.Clone: TFhirReference;
-begin
-  result := TFhirReference(Inherited Clone);
-end;
-
-function TFhirReference.Link: TFhirReference;
-begin
-  result := TFhirReference(Inherited Link);
-end;
-  *)
 
 { TFHIRBase }
 
@@ -1016,6 +993,7 @@ end;
 
 destructor TFHIRObject.destroy;
 begin
+  FTags.Free;
   FTag.Free;
   inherited;
 end;
@@ -1023,6 +1001,16 @@ end;
 procedure TFHIRObject.GetChildrenByName(name: string; list: TFHIRObjectList);
 begin
   // nothing to add here
+end;
+
+function TFHIRObject.getTags(name: String): String;
+begin
+  if FTags = nil then
+    FTags := TDictionary<String, String>.create;
+  if FTags.ContainsKey(name) then
+    result := FTags[name]
+  else
+    result := '';
 end;
 
 procedure TFHIRObject.ListChildrenByName(name: string; list: TFHIRObjectList);
@@ -1062,6 +1050,13 @@ begin
   FTag := Value;
 end;
 
+procedure TFHIRObject.SetTags(name: String; const Value: String);
+begin
+  if FTags = nil then
+    FTags := TDictionary<String,String>.create;
+  FTags.AddOrSetValue(name, value);
+end;
+
 { TFHIRObjectText }
 
 constructor TFHIRObjectText.create(value: String);
@@ -1080,6 +1075,12 @@ constructor TFHIRObjectText.create(value: TDateAndTime);
 begin
   Create;
   self.value := value.AsXML;
+end;
+
+constructor TFHIRObjectText.create(value: TBytes);
+begin
+  Create;
+  self.value := EncodeBase64(@value[0], length(value));
 end;
 
 procedure TFHIRObjectText.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -1160,6 +1161,12 @@ begin
   result := TFHIRObjectList(Inherited Clone);
 end;
 
+destructor TFHIRObjectList.Destroy;
+begin
+  FTags.Free;
+  inherited;
+end;
+
 function TFHIRObjectList.GetEnumerator: TFHIRObjectListEnumerator;
 begin
   result := TFHIRObjectListEnumerator.Create(self.link);
@@ -1168,6 +1175,16 @@ end;
 function TFHIRObjectList.GetItemN(index: Integer): TFHIRObject;
 begin
   result := TFHIRObject(ObjectByIndex[index]);
+end;
+
+function TFHIRObjectList.getTags(name: String): String;
+begin
+  if FTags = nil then
+    FTags := TDictionary<String, String>.create;
+  if FTags.ContainsKey(name) then
+    result := FTags[name]
+  else
+    result := '';
 end;
 
 function TFHIRObjectList.ItemClass: TAdvObjectClass;
@@ -1179,6 +1196,13 @@ function TFHIRObjectList.Link: TFHIRObjectList;
 begin
   result := TFHIRObjectList(Inherited Link);
 end;
+procedure TFHIRObjectList.SetTags(name: String; const Value: String);
+begin
+  if FTags = nil then
+    FTags := TDictionary<String,String>.create;
+  FTags.AddOrSetValue(name, value);
+end;
+
 (*
 
 { TFHIRSid }
@@ -1344,7 +1368,8 @@ begin
   FName := sName;
   FType := sType;
   FList := TFHIRObjectList.Create;
-  FList.Add(oObject);
+  if (oObject <> nil) then
+    FList.Add(oObject);
 end;
 
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; oList: TFHIRObjectList);
@@ -1374,6 +1399,16 @@ end;
 function TFHIRProperty.GetHasValue: Boolean;
 begin
   result := (FList <> nil) and (Flist.Count > 0);
+end;
+
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; Value: TBytes);
+begin
+  Create;
+  FName := sName;
+  FType := sType;
+  FList := TFHIRObjectList.Create;
+  if (length(value) > 0) then
+    FList.Add(TFhirString.Create(EncodeBase64(@value[0], length(value))));
 end;
 
 { TFHIRPropertyList }

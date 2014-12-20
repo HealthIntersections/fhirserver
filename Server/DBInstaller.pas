@@ -34,7 +34,7 @@ uses
   SysUtils, Classes,
   AdvObjects,
   KDBManager, KDBDialects,
-  FHIRResources, FHIRConstants, FHIRIndexManagers,
+  FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers,
   SCIMServer;
 
 Type
@@ -270,7 +270,7 @@ end;
 procedure TFHIRDatabaseInstaller.CreateOAuthLogins;
 begin
   FConn.ExecSQL('CREATE TABLE OAuthLogins( '+#13#10+
-       ' Id nchar(36) NOT NULL, '+#13#10+
+       ' Id nchar('+inttostr(ID_LENGTH)+') NOT NULL, '+#13#10+
        ' Client nchar(12) NOT NULL, '+#13#10+
        ' Scope nchar(255) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
@@ -295,7 +295,7 @@ begin
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' MasterResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' CompartmentType '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' Id nchar(36) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Id nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' CompartmentKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Compartments', 'ResourceCompartmentKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Compartments', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_CompartmentResource_ResKey'));
@@ -311,7 +311,7 @@ Begin
   FConn.ExecSQL('CREATE TABLE Ids( '+#13#10+
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceTypeKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' Id nchar(36) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Id nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' originalId nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' MasterResourceKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' MostRecent '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -328,7 +328,7 @@ Begin
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' StatedDate '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' TransactionDate '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' VersionId nchar(36) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' VersionId nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Deleted int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Format int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SessionKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -400,7 +400,7 @@ Begin
        ' SearchKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' SortValue nchar(50) '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
+       ' SortValue nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search'));

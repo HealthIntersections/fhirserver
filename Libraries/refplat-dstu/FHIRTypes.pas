@@ -37,7 +37,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
+// FHIR v0.0.82 generated Fri, Oct 17, 2014 08:34+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
@@ -1261,10 +1261,10 @@ Type
     
 
     
-    {@member AddItem
-      Add an already existing FhirElement to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirElement element to the end of the list.
     }
-    procedure AddItem(value : TFhirElement); overload;
+    procedure AddItemElement(value : TFhirElement); overload;
 
     
     {@member IndexOf
@@ -1314,13 +1314,13 @@ Type
   End;
 
 
-  {@Class TFhirEnum : TFhirType
+  {@Class TFhirEnum : TFhirPrimitiveType
     a complex string - has an xmlId attribute, and a dataAbsentReason.
     
     Used where a FHIR element is a string, and may have a dataAbsentReason
   }
   {!.Net HL7Connect.Fhir.Enum}
-  TFhirEnum = class (TFhirType)
+  TFhirEnum = class (TFhirPrimitiveType)
   Private
     FValue: String;
     procedure setValue(value: String);
@@ -1380,10 +1380,10 @@ Type
     function Append : TFhirEnum;
 
     
-    {@member AddItem
-      Add an already existing FhirEnum to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirEnum element to the end of the list.
     }
-    procedure AddItem(value : TFhirEnum); overload;
+    procedure AddItemElement(value : TFhirEnum); overload;
 
     
     {@member AddItem
@@ -1511,10 +1511,10 @@ Type
     function Append : TFhirInteger;
 
     
-    {@member AddItem
-      Add an already existing FhirInteger to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirInteger element to the end of the list.
     }
-    procedure AddItem(value : TFhirInteger); overload;
+    procedure AddItemElement(value : TFhirInteger); overload;
 
     
     {@member AddItem
@@ -1642,10 +1642,10 @@ Type
     function Append : TFhirDateTime;
 
     
-    {@member AddItem
-      Add an already existing FhirDateTime to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirDateTime element to the end of the list.
     }
-    procedure AddItem(value : TFhirDateTime); overload;
+    procedure AddItemElement(value : TFhirDateTime); overload;
 
     
     {@member AddItem
@@ -1773,10 +1773,10 @@ Type
     function Append : TFhirDate;
 
     
-    {@member AddItem
-      Add an already existing FhirDate to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirDate element to the end of the list.
     }
-    procedure AddItem(value : TFhirDate); overload;
+    procedure AddItemElement(value : TFhirDate); overload;
 
     
     {@member AddItem
@@ -1904,10 +1904,10 @@ Type
     function Append : TFhirDecimal;
 
     
-    {@member AddItem
-      Add an already existing FhirDecimal to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirDecimal element to the end of the list.
     }
-    procedure AddItem(value : TFhirDecimal); overload;
+    procedure AddItemElement(value : TFhirDecimal); overload;
 
     
     {@member AddItem
@@ -2035,10 +2035,10 @@ Type
     function Append : TFhirUri;
 
     
-    {@member AddItem
-      Add an already existing FhirUri to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirUri element to the end of the list.
     }
-    procedure AddItem(value : TFhirUri); overload;
+    procedure AddItemElement(value : TFhirUri); overload;
 
     
     {@member AddItem
@@ -2166,10 +2166,10 @@ Type
     function Append : TFhirBase64Binary;
 
     
-    {@member AddItem
-      Add an already existing FhirBase64Binary to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirBase64Binary element to the end of the list.
     }
-    procedure AddItem(value : TFhirBase64Binary); overload;
+    procedure AddItemElement(value : TFhirBase64Binary); overload;
 
     
     {@member AddItem
@@ -2297,10 +2297,10 @@ Type
     function Append : TFhirString;
 
     
-    {@member AddItem
-      Add an already existing FhirString to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirString element to the end of the list.
     }
-    procedure AddItem(value : TFhirString); overload;
+    procedure AddItemElement(value : TFhirString); overload;
 
     
     {@member AddItem
@@ -2428,10 +2428,10 @@ Type
     function Append : TFhirBoolean;
 
     
-    {@member AddItem
-      Add an already existing FhirBoolean to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirBoolean element to the end of the list.
     }
-    procedure AddItem(value : TFhirBoolean); overload;
+    procedure AddItemElement(value : TFhirBoolean); overload;
 
     
     {@member AddItem
@@ -2559,10 +2559,10 @@ Type
     function Append : TFhirInstant;
 
     
-    {@member AddItem
-      Add an already existing FhirInstant to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirInstant element to the end of the list.
     }
-    procedure AddItem(value : TFhirInstant); overload;
+    procedure AddItemElement(value : TFhirInstant); overload;
 
     
     {@member AddItem
@@ -2679,10 +2679,10 @@ Type
     function Append : TFhirCode;
 
     
-    {@member AddItem
-      Add an already existing FhirCode to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirCode element to the end of the list.
     }
-    procedure AddItem(value : TFhirCode); overload;
+    procedure AddItemElement(value : TFhirCode); overload;
 
     
     {@member AddItem
@@ -2799,10 +2799,10 @@ Type
     function Append : TFhirId;
 
     
-    {@member AddItem
-      Add an already existing FhirId to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirId element to the end of the list.
     }
-    procedure AddItem(value : TFhirId); overload;
+    procedure AddItemElement(value : TFhirId); overload;
 
     
     {@member AddItem
@@ -2919,10 +2919,10 @@ Type
     function Append : TFhirOid;
 
     
-    {@member AddItem
-      Add an already existing FhirOid to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirOid element to the end of the list.
     }
-    procedure AddItem(value : TFhirOid); overload;
+    procedure AddItemElement(value : TFhirOid); overload;
 
     
     {@member AddItem
@@ -3039,10 +3039,10 @@ Type
     function Append : TFhirUuid;
 
     
-    {@member AddItem
-      Add an already existing FhirUuid to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirUuid element to the end of the list.
     }
-    procedure AddItem(value : TFhirUuid); overload;
+    procedure AddItemElement(value : TFhirUuid); overload;
 
     
     {@member AddItem
@@ -3137,13 +3137,13 @@ Type
       Typed access to Source of the definition for the extension code - a logical name or a URL.
     }
     property url : String read GetUrlST write SetUrlST;
-    property urlObject : TFhirUri read FUrl write SetUrl;
+    property urlElement : TFhirUri read FUrl write SetUrl;
 
     {@member value
       Value of extension - may be a resource or one of a constrained set of the data types (see Extensibility in the spec for list).
     }
     property value : TFhirType read FValue write SetValue;
-    property valueObject : TFhirType read FValue write SetValue;
+    property valueElement : TFhirType read FValue write SetValue;
 
   end;
 
@@ -3183,10 +3183,10 @@ Type
     function Append : TFhirExtension;
 
     
-    {@member AddItem
-      Add an already existing FhirExtension to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirExtension element to the end of the list.
     }
-    procedure AddItem(value : TFhirExtension); overload;
+    procedure AddItemElement(value : TFhirExtension); overload;
 
     
     {@member IndexOf
@@ -3272,13 +3272,13 @@ Type
       The status of the narrative - whether it's entirely generated (from just the defined data or the extensions too), or whether a human authored it and it may contain additional data.
     }
     property status : TFhirNarrativeStatus read GetStatusST write SetStatusST;
-    property statusObject : TFhirEnum read FStatus write SetStatus;
+    property statusElement : TFhirEnum read FStatus write SetStatus;
 
     {@member div_
       The actual narrative content, a stripped down version of XHTML.
     }
     property div_ : TFhirXHtmlNode read FDiv_ write SetDiv_;
-    property div_Object : TFhirXHtmlNode read FDiv_ write SetDiv_;
+    property div_Element : TFhirXHtmlNode read FDiv_ write SetDiv_;
 
   end;
 
@@ -3318,10 +3318,10 @@ Type
     function Append : TFhirNarrative;
 
     
-    {@member AddItem
-      Add an already existing FhirNarrative to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirNarrative element to the end of the list.
     }
-    procedure AddItem(value : TFhirNarrative); overload;
+    procedure AddItemElement(value : TFhirNarrative); overload;
 
     
     {@member IndexOf
@@ -3412,7 +3412,7 @@ Type
       Typed access to The start of the period. The boundary is inclusive.
     }
     property start : TDateAndTime read GetStartST write SetStartST;
-    property startObject : TFhirDateTime read FStart write SetStart;
+    property startElement : TFhirDateTime read FStart write SetStart;
 
     {@member end_
       The end of the period. If the end of the period is missing, it means that the period is ongoing.
@@ -3421,7 +3421,7 @@ Type
       Typed access to The end of the period. If the end of the period is missing, it means that the period is ongoing.
     }
     property end_ : TDateAndTime read GetEnd_ST write SetEnd_ST;
-    property end_Object : TFhirDateTime read FEnd_ write SetEnd_;
+    property end_Element : TFhirDateTime read FEnd_ write SetEnd_;
 
   end;
 
@@ -3461,10 +3461,10 @@ Type
     function Append : TFhirPeriod;
 
     
-    {@member AddItem
-      Add an already existing FhirPeriod to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirPeriod element to the end of the list.
     }
-    procedure AddItem(value : TFhirPeriod); overload;
+    procedure AddItemElement(value : TFhirPeriod); overload;
 
     
     {@member IndexOf
@@ -3569,7 +3569,7 @@ Type
       Typed access to The identification of the code system that defines the meaning of the symbol in the code.
     }
     property system : String read GetSystemST write SetSystemST;
-    property systemObject : TFhirUri read FSystem write SetSystem;
+    property systemElement : TFhirUri read FSystem write SetSystem;
 
     {@member version
       The version of the code system which was used when choosing this code. Note that a well-maintained code system does not need the version reported, because the meaning of codes is consistent across versions. However this cannot consistently be assured. and When the meaning is not guaranteed to be consistent, the version SHOULD be exchanged.
@@ -3578,7 +3578,7 @@ Type
       Typed access to The version of the code system which was used when choosing this code. Note that a well-maintained code system does not need the version reported, because the meaning of codes is consistent across versions. However this cannot consistently be assured. and When the meaning is not guaranteed to be consistent, the version SHOULD be exchanged.
     }
     property version : String read GetVersionST write SetVersionST;
-    property versionObject : TFhirString read FVersion write SetVersion;
+    property versionElement : TFhirString read FVersion write SetVersion;
 
     {@member code
       A symbol in syntax defined by the system. The symbol may be a predefined code or an expression in a syntax defined by the coding system (e.g. post-coordination).
@@ -3587,7 +3587,7 @@ Type
       Typed access to A symbol in syntax defined by the system. The symbol may be a predefined code or an expression in a syntax defined by the coding system (e.g. post-coordination).
     }
     property code : String read GetCodeST write SetCodeST;
-    property codeObject : TFhirCode read FCode write SetCode;
+    property codeElement : TFhirCode read FCode write SetCode;
 
     {@member display
       A representation of the meaning of the code in the system, following the rules of the system.
@@ -3596,7 +3596,7 @@ Type
       Typed access to A representation of the meaning of the code in the system, following the rules of the system.
     }
     property display : String read GetDisplayST write SetDisplayST;
-    property displayObject : TFhirString read FDisplay write SetDisplay;
+    property displayElement : TFhirString read FDisplay write SetDisplay;
 
     {@member primary
       Indicates that this code was chosen by a user directly - i.e. off a pick list of available items (codes or displays).
@@ -3605,13 +3605,13 @@ Type
       Typed access to Indicates that this code was chosen by a user directly - i.e. off a pick list of available items (codes or displays).
     }
     property primary : Boolean read GetPrimaryST write SetPrimaryST;
-    property primaryObject : TFhirBoolean read FPrimary write SetPrimary;
+    property primaryElement : TFhirBoolean read FPrimary write SetPrimary;
 
     {@member valueSet
       The set of possible coded values this coding was chosen from or constrained by.
     }
     property valueSet : TFhirResourceReference{TFhirValueSet} read FValueSet write SetValueSet;
-    property valueSetObject : TFhirResourceReference{TFhirValueSet} read FValueSet write SetValueSet;
+    property valueSetElement : TFhirResourceReference{TFhirValueSet} read FValueSet write SetValueSet;
 
   end;
 
@@ -3651,10 +3651,10 @@ Type
     function Append : TFhirCoding;
 
     
-    {@member AddItem
-      Add an already existing FhirCoding to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirCoding element to the end of the list.
     }
-    procedure AddItem(value : TFhirCoding); overload;
+    procedure AddItemElement(value : TFhirCoding); overload;
 
     
     {@member IndexOf
@@ -3738,13 +3738,13 @@ Type
       The low limit. The boundary is inclusive.
     }
     property low : TFhirQuantity read FLow write SetLow;
-    property lowObject : TFhirQuantity read FLow write SetLow;
+    property lowElement : TFhirQuantity read FLow write SetLow;
 
     {@member high
       The high limit. The boundary is inclusive.
     }
     property high : TFhirQuantity read FHigh write SetHigh;
-    property highObject : TFhirQuantity read FHigh write SetHigh;
+    property highElement : TFhirQuantity read FHigh write SetHigh;
 
   end;
 
@@ -3784,10 +3784,10 @@ Type
     function Append : TFhirRange;
 
     
-    {@member AddItem
-      Add an already existing FhirRange to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirRange element to the end of the list.
     }
-    procedure AddItem(value : TFhirRange); overload;
+    procedure AddItemElement(value : TFhirRange); overload;
 
     
     {@member IndexOf
@@ -3890,13 +3890,13 @@ Type
       Typed access to The value of the measured amount. The value includes an implicit precision in the presentation of the value.
     }
     property value : String read GetValueST write SetValueST;
-    property valueObject : TFhirDecimal read FValue write SetValue;
+    property valueElement : TFhirDecimal read FValue write SetValue;
 
     {@member comparator
       How the value should be understood and represented - whether the actual value is greater or less than the stated value due to measurement issues. E.g. if the comparator is "<" , then the real value is < stated value.
     }
     property comparator : TFhirQuantityComparator read GetComparatorST write SetComparatorST;
-    property comparatorObject : TFhirEnum read FComparator write SetComparator;
+    property comparatorElement : TFhirEnum read FComparator write SetComparator;
 
     {@member units
       A human-readable form of the units.
@@ -3905,7 +3905,7 @@ Type
       Typed access to A human-readable form of the units.
     }
     property units : String read GetUnitsST write SetUnitsST;
-    property unitsObject : TFhirString read FUnits write SetUnits;
+    property unitsElement : TFhirString read FUnits write SetUnits;
 
     {@member system
       The identification of the system that provides the coded form of the unit.
@@ -3914,7 +3914,7 @@ Type
       Typed access to The identification of the system that provides the coded form of the unit.
     }
     property system : String read GetSystemST write SetSystemST;
-    property systemObject : TFhirUri read FSystem write SetSystem;
+    property systemElement : TFhirUri read FSystem write SetSystem;
 
     {@member code
       A computer processable form of the units in some unit representation system.
@@ -3923,7 +3923,7 @@ Type
       Typed access to A computer processable form of the units in some unit representation system.
     }
     property code : String read GetCodeST write SetCodeST;
-    property codeObject : TFhirCode read FCode write SetCode;
+    property codeElement : TFhirCode read FCode write SetCode;
 
   end;
 
@@ -3963,10 +3963,10 @@ Type
     function Append : TFhirQuantity;
 
     
-    {@member AddItem
-      Add an already existing FhirQuantity to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirQuantity element to the end of the list.
     }
-    procedure AddItem(value : TFhirQuantity); overload;
+    procedure AddItemElement(value : TFhirQuantity); overload;
 
     
     {@member IndexOf
@@ -4077,7 +4077,7 @@ Type
       Typed access to Identifies the type of the data in the attachment and allows a method to be chosen to interpret or render the data. Includes mime type parameters such as charset where appropriate.
     }
     property contentType : String read GetContentTypeST write SetContentTypeST;
-    property contentTypeObject : TFhirCode read FContentType write SetContentType;
+    property contentTypeElement : TFhirCode read FContentType write SetContentType;
 
     {@member language
       The human language of the content. The value can be any valid value according to BCP 47.
@@ -4086,7 +4086,7 @@ Type
       Typed access to The human language of the content. The value can be any valid value according to BCP 47.
     }
     property language : String read GetLanguageST write SetLanguageST;
-    property languageObject : TFhirCode read FLanguage write SetLanguage;
+    property languageElement : TFhirCode read FLanguage write SetLanguage;
 
     {@member data
       The actual data of the attachment - a sequence of bytes. In XML, represented using base64.
@@ -4095,7 +4095,7 @@ Type
       Typed access to The actual data of the attachment - a sequence of bytes. In XML, represented using base64.
     }
     property data : String read GetDataST write SetDataST;
-    property dataObject : TFhirBase64Binary read FData write SetData;
+    property dataElement : TFhirBase64Binary read FData write SetData;
 
     {@member url
       An alternative location where the data can be accessed.
@@ -4104,7 +4104,7 @@ Type
       Typed access to An alternative location where the data can be accessed.
     }
     property url : String read GetUrlST write SetUrlST;
-    property urlObject : TFhirUri read FUrl write SetUrl;
+    property urlElement : TFhirUri read FUrl write SetUrl;
 
     {@member size
       The number of bytes of data that make up this attachment.
@@ -4113,7 +4113,7 @@ Type
       Typed access to The number of bytes of data that make up this attachment.
     }
     property size : String read GetSizeST write SetSizeST;
-    property sizeObject : TFhirInteger read FSize write SetSize;
+    property sizeElement : TFhirInteger read FSize write SetSize;
 
     {@member hash
       The calculated hash of the data using SHA-1. Represented using base64.
@@ -4122,7 +4122,7 @@ Type
       Typed access to The calculated hash of the data using SHA-1. Represented using base64.
     }
     property hash : String read GetHashST write SetHashST;
-    property hashObject : TFhirBase64Binary read FHash write SetHash;
+    property hashElement : TFhirBase64Binary read FHash write SetHash;
 
     {@member title
       A label or set of text to display in place of the data.
@@ -4131,7 +4131,7 @@ Type
       Typed access to A label or set of text to display in place of the data.
     }
     property title : String read GetTitleST write SetTitleST;
-    property titleObject : TFhirString read FTitle write SetTitle;
+    property titleElement : TFhirString read FTitle write SetTitle;
 
   end;
 
@@ -4171,10 +4171,10 @@ Type
     function Append : TFhirAttachment;
 
     
-    {@member AddItem
-      Add an already existing FhirAttachment to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirAttachment element to the end of the list.
     }
-    procedure AddItem(value : TFhirAttachment); overload;
+    procedure AddItemElement(value : TFhirAttachment); overload;
 
     
     {@member IndexOf
@@ -4258,13 +4258,13 @@ Type
       The value of the numerator.
     }
     property numerator : TFhirQuantity read FNumerator write SetNumerator;
-    property numeratorObject : TFhirQuantity read FNumerator write SetNumerator;
+    property numeratorElement : TFhirQuantity read FNumerator write SetNumerator;
 
     {@member denominator
       The value of the denominator.
     }
     property denominator : TFhirQuantity read FDenominator write SetDenominator;
-    property denominatorObject : TFhirQuantity read FDenominator write SetDenominator;
+    property denominatorElement : TFhirQuantity read FDenominator write SetDenominator;
 
   end;
 
@@ -4304,10 +4304,10 @@ Type
     function Append : TFhirRatio;
 
     
-    {@member AddItem
-      Add an already existing FhirRatio to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirRatio element to the end of the list.
     }
-    procedure AddItem(value : TFhirRatio); overload;
+    procedure AddItemElement(value : TFhirRatio); overload;
 
     
     {@member IndexOf
@@ -4413,7 +4413,7 @@ Type
       The base quantity that a measured value of zero represents. In addition, this provides the units of the entire measurement series.
     }
     property origin : TFhirQuantity read FOrigin write SetOrigin;
-    property originObject : TFhirQuantity read FOrigin write SetOrigin;
+    property originElement : TFhirQuantity read FOrigin write SetOrigin;
 
     {@member period
       The length of time between sampling times, measured in milliseconds.
@@ -4422,7 +4422,7 @@ Type
       Typed access to The length of time between sampling times, measured in milliseconds.
     }
     property period : String read GetPeriodST write SetPeriodST;
-    property periodObject : TFhirDecimal read FPeriod write SetPeriod;
+    property periodElement : TFhirDecimal read FPeriod write SetPeriod;
 
     {@member factor
       A correction factor that is applied to the sampled data points before they are added to the origin.
@@ -4431,7 +4431,7 @@ Type
       Typed access to A correction factor that is applied to the sampled data points before they are added to the origin.
     }
     property factor : String read GetFactorST write SetFactorST;
-    property factorObject : TFhirDecimal read FFactor write SetFactor;
+    property factorElement : TFhirDecimal read FFactor write SetFactor;
 
     {@member lowerLimit
       The lower limit of detection of the measured points. This is needed if any of the data points have the value "L" (lower than detection limit).
@@ -4440,7 +4440,7 @@ Type
       Typed access to The lower limit of detection of the measured points. This is needed if any of the data points have the value "L" (lower than detection limit).
     }
     property lowerLimit : String read GetLowerLimitST write SetLowerLimitST;
-    property lowerLimitObject : TFhirDecimal read FLowerLimit write SetLowerLimit;
+    property lowerLimitElement : TFhirDecimal read FLowerLimit write SetLowerLimit;
 
     {@member upperLimit
       The upper limit of detection of the measured points. This is needed if any of the data points have the value "U" (higher than detection limit).
@@ -4449,7 +4449,7 @@ Type
       Typed access to The upper limit of detection of the measured points. This is needed if any of the data points have the value "U" (higher than detection limit).
     }
     property upperLimit : String read GetUpperLimitST write SetUpperLimitST;
-    property upperLimitObject : TFhirDecimal read FUpperLimit write SetUpperLimit;
+    property upperLimitElement : TFhirDecimal read FUpperLimit write SetUpperLimit;
 
     {@member dimensions
       The number of sample points at each time point. If this value is greater than one, then the dimensions will be interlaced - all the sample points for a point in time will be recorded at once.
@@ -4458,7 +4458,7 @@ Type
       Typed access to The number of sample points at each time point. If this value is greater than one, then the dimensions will be interlaced - all the sample points for a point in time will be recorded at once.
     }
     property dimensions : String read GetDimensionsST write SetDimensionsST;
-    property dimensionsObject : TFhirInteger read FDimensions write SetDimensions;
+    property dimensionsElement : TFhirInteger read FDimensions write SetDimensions;
 
     {@member data
       A series of data points which are decimal values separated by a single space (character u20). The special values "E" (error), "L" (below detection limit) and "U" (above detection limit) can also be used in place of a decimal value.
@@ -4467,7 +4467,7 @@ Type
       Typed access to A series of data points which are decimal values separated by a single space (character u20). The special values "E" (error), "L" (below detection limit) and "U" (above detection limit) can also be used in place of a decimal value.
     }
     property data : String read GetDataST write SetDataST;
-    property dataObject : TFhirString read FData write SetData;
+    property dataElement : TFhirString read FData write SetData;
 
   end;
 
@@ -4507,10 +4507,10 @@ Type
     function Append : TFhirSampledData;
 
     
-    {@member AddItem
-      Add an already existing FhirSampledData to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirSampledData element to the end of the list.
     }
-    procedure AddItem(value : TFhirSampledData); overload;
+    procedure AddItemElement(value : TFhirSampledData); overload;
 
     
     {@member IndexOf
@@ -4601,7 +4601,7 @@ Type
       Typed access to A reference to a location at which the other resource is found. The reference may a relative reference, in which case it is relative to the service base URL, or an absolute URL that resolves to the location where the resource is found. The reference may be version specific or not. If the reference is not to a FHIR RESTful server, then it should be assumed to be version specific. Internal fragment references (start with '#') refer to contained resources.
     }
     property reference : String read GetReferenceST write SetReferenceST;
-    property referenceObject : TFhirString read FReference write SetReference;
+    property referenceElement : TFhirString read FReference write SetReference;
 
     {@member display
       Plain text narrative that identifies the resource in addition to the resource reference.
@@ -4610,7 +4610,7 @@ Type
       Typed access to Plain text narrative that identifies the resource in addition to the resource reference.
     }
     property display : String read GetDisplayST write SetDisplayST;
-    property displayObject : TFhirString read FDisplay write SetDisplay;
+    property displayElement : TFhirString read FDisplay write SetDisplay;
 
   end;
 
@@ -4650,10 +4650,10 @@ Type
     function Append : TFhirResourceReference;
 
     
-    {@member AddItem
-      Add an already existing FhirResourceReference to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirResourceReference element to the end of the list.
     }
-    procedure AddItem(value : TFhirResourceReference); overload;
+    procedure AddItemElement(value : TFhirResourceReference); overload;
 
     
     {@member IndexOf
@@ -4746,7 +4746,7 @@ Type
       Typed access to A human language representation of the concept as seen/selected/uttered by the user who entered the data and/or which represents the intended meaning of the user.
     }
     property text : String read GetTextST write SetTextST;
-    property textObject : TFhirString read FText write SetText;
+    property textElement : TFhirString read FText write SetText;
 
   end;
 
@@ -4786,10 +4786,10 @@ Type
     function Append : TFhirCodeableConcept;
 
     
-    {@member AddItem
-      Add an already existing FhirCodeableConcept to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirCodeableConcept element to the end of the list.
     }
-    procedure AddItem(value : TFhirCodeableConcept); overload;
+    procedure AddItemElement(value : TFhirCodeableConcept); overload;
 
     
     {@member IndexOf
@@ -4889,7 +4889,7 @@ Type
       The purpose of this identifier.
     }
     property use : TFhirIdentifierUse read GetUseST write SetUseST;
-    property useObject : TFhirEnum read FUse write SetUse;
+    property useElement : TFhirEnum read FUse write SetUse;
 
     {@member label_
       A text string for the identifier that can be displayed to a human so they can recognize the identifier.
@@ -4898,7 +4898,7 @@ Type
       Typed access to A text string for the identifier that can be displayed to a human so they can recognize the identifier.
     }
     property label_ : String read GetLabel_ST write SetLabel_ST;
-    property label_Object : TFhirString read FLabel_ write SetLabel_;
+    property label_Element : TFhirString read FLabel_ write SetLabel_;
 
     {@member system
       Establishes the namespace in which set of possible id values is unique.
@@ -4907,7 +4907,7 @@ Type
       Typed access to Establishes the namespace in which set of possible id values is unique.
     }
     property system : String read GetSystemST write SetSystemST;
-    property systemObject : TFhirUri read FSystem write SetSystem;
+    property systemElement : TFhirUri read FSystem write SetSystem;
 
     {@member value
       The portion of the identifier typically displayed to the user and which is unique within the context of the system.
@@ -4916,19 +4916,19 @@ Type
       Typed access to The portion of the identifier typically displayed to the user and which is unique within the context of the system.
     }
     property value : String read GetValueST write SetValueST;
-    property valueObject : TFhirString read FValue write SetValue;
+    property valueElement : TFhirString read FValue write SetValue;
 
     {@member period
       Time period during which identifier is/was valid for use.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
-    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
+    property periodElement : TFhirPeriod read FPeriod write SetPeriod;
 
     {@member assigner
       Organization that issued/manages the identifier.
     }
     property assigner : TFhirResourceReference{TFhirOrganization} read FAssigner write SetAssigner;
-    property assignerObject : TFhirResourceReference{TFhirOrganization} read FAssigner write SetAssigner;
+    property assignerElement : TFhirResourceReference{TFhirOrganization} read FAssigner write SetAssigner;
 
   end;
 
@@ -4968,10 +4968,10 @@ Type
     function Append : TFhirIdentifier;
 
     
-    {@member AddItem
-      Add an already existing FhirIdentifier to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirIdentifier element to the end of the list.
     }
-    procedure AddItem(value : TFhirIdentifier); overload;
+    procedure AddItemElement(value : TFhirIdentifier); overload;
 
     
     {@member IndexOf
@@ -5078,13 +5078,13 @@ Type
       Typed access to Indicates how often the event should occur.
     }
     property frequency : String read GetFrequencyST write SetFrequencyST;
-    property frequencyObject : TFhirInteger read FFrequency write SetFrequency;
+    property frequencyElement : TFhirInteger read FFrequency write SetFrequency;
 
     {@member when
       Identifies the occurrence of daily life that determines timing.
     }
     property when : TFhirEventTiming read GetWhenST write SetWhenST;
-    property whenObject : TFhirEnum read FWhen write SetWhen;
+    property whenElement : TFhirEnum read FWhen write SetWhen;
 
     {@member duration
       How long each repetition should last.
@@ -5093,13 +5093,13 @@ Type
       Typed access to How long each repetition should last.
     }
     property duration : String read GetDurationST write SetDurationST;
-    property durationObject : TFhirDecimal read FDuration write SetDuration;
+    property durationElement : TFhirDecimal read FDuration write SetDuration;
 
     {@member units
       The units of time for the duration.
     }
     property units : TFhirUnitsOfTime read GetUnitsST write SetUnitsST;
-    property unitsObject : TFhirEnum read FUnits write SetUnits;
+    property unitsElement : TFhirEnum read FUnits write SetUnits;
 
     {@member count
       A total count of the desired number of repetitions.
@@ -5108,7 +5108,7 @@ Type
       Typed access to A total count of the desired number of repetitions.
     }
     property count : String read GetCountST write SetCountST;
-    property countObject : TFhirInteger read FCount write SetCount;
+    property countElement : TFhirInteger read FCount write SetCount;
 
     {@member end_
       When to stop repeating the schedule.
@@ -5117,7 +5117,7 @@ Type
       Typed access to When to stop repeating the schedule.
     }
     property end_ : TDateAndTime read GetEnd_ST write SetEnd_ST;
-    property end_Object : TFhirDateTime read FEnd_ write SetEnd_;
+    property end_Element : TFhirDateTime read FEnd_ write SetEnd_;
 
   end;
 
@@ -5157,10 +5157,10 @@ Type
     function Append : TFhirScheduleRepeat;
 
     
-    {@member AddItem
-      Add an already existing FhirScheduleRepeat to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirScheduleRepeat element to the end of the list.
     }
-    procedure AddItem(value : TFhirScheduleRepeat); overload;
+    procedure AddItemElement(value : TFhirScheduleRepeat); overload;
 
     
     {@member IndexOf
@@ -5248,7 +5248,7 @@ Type
       Identifies a repeating pattern to the intended time periods.
     }
     property repeat_ : TFhirScheduleRepeat read FRepeat_ write SetRepeat_;
-    property repeat_Object : TFhirScheduleRepeat read FRepeat_ write SetRepeat_;
+    property repeat_Element : TFhirScheduleRepeat read FRepeat_ write SetRepeat_;
 
   end;
 
@@ -5288,10 +5288,10 @@ Type
     function Append : TFhirSchedule;
 
     
-    {@member AddItem
-      Add an already existing FhirSchedule to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirSchedule element to the end of the list.
     }
-    procedure AddItem(value : TFhirSchedule); overload;
+    procedure AddItemElement(value : TFhirSchedule); overload;
 
     
     {@member IndexOf
@@ -5385,7 +5385,7 @@ Type
       Telecommunications form for contact - what communications system is required to make use of the contact.
     }
     property system : TFhirContactSystem read GetSystemST write SetSystemST;
-    property systemObject : TFhirEnum read FSystem write SetSystem;
+    property systemElement : TFhirEnum read FSystem write SetSystem;
 
     {@member value
       The actual contact details, in a form that is meaningful to the designated communication system (i.e. phone number or email address).
@@ -5394,19 +5394,19 @@ Type
       Typed access to The actual contact details, in a form that is meaningful to the designated communication system (i.e. phone number or email address).
     }
     property value : String read GetValueST write SetValueST;
-    property valueObject : TFhirString read FValue write SetValue;
+    property valueElement : TFhirString read FValue write SetValue;
 
     {@member use
       Identifies the purpose for the address.
     }
     property use : TFhirContactUse read GetUseST write SetUseST;
-    property useObject : TFhirEnum read FUse write SetUse;
+    property useElement : TFhirEnum read FUse write SetUse;
 
     {@member period
       Time period when the contact was/is in use.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
-    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
+    property periodElement : TFhirPeriod read FPeriod write SetPeriod;
 
   end;
 
@@ -5446,10 +5446,10 @@ Type
     function Append : TFhirContact;
 
     
-    {@member AddItem
-      Add an already existing FhirContact to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirContact element to the end of the list.
     }
-    procedure AddItem(value : TFhirContact); overload;
+    procedure AddItemElement(value : TFhirContact); overload;
 
     
     {@member IndexOf
@@ -5556,7 +5556,7 @@ Type
       The purpose of this address.
     }
     property use : TFhirAddressUse read GetUseST write SetUseST;
-    property useObject : TFhirEnum read FUse write SetUse;
+    property useElement : TFhirEnum read FUse write SetUse;
 
     {@member text
       A full text representation of the address.
@@ -5565,7 +5565,7 @@ Type
       Typed access to A full text representation of the address.
     }
     property text : String read GetTextST write SetTextST;
-    property textObject : TFhirString read FText write SetText;
+    property textElement : TFhirString read FText write SetText;
 
     {@member lineList
       This component contains the house number, apartment number, street name, street direction, 
@@ -5580,7 +5580,7 @@ P.O. Box number, delivery hints, and similar address information.
       Typed access to The name of the city, town, village or other community or delivery center.
     }
     property city : String read GetCityST write SetCityST;
-    property cityObject : TFhirString read FCity write SetCity;
+    property cityElement : TFhirString read FCity write SetCity;
 
     {@member state
       Sub-unit of a country with limited sovereignty in a federally organized country. A code may be used if codes are in common use (i.e. US 2 letter state codes).
@@ -5589,7 +5589,7 @@ P.O. Box number, delivery hints, and similar address information.
       Typed access to Sub-unit of a country with limited sovereignty in a federally organized country. A code may be used if codes are in common use (i.e. US 2 letter state codes).
     }
     property state : String read GetStateST write SetStateST;
-    property stateObject : TFhirString read FState write SetState;
+    property stateElement : TFhirString read FState write SetState;
 
     {@member zip
       A postal code designating a region defined by the postal service.
@@ -5598,7 +5598,7 @@ P.O. Box number, delivery hints, and similar address information.
       Typed access to A postal code designating a region defined by the postal service.
     }
     property zip : String read GetZipST write SetZipST;
-    property zipObject : TFhirString read FZip write SetZip;
+    property zipElement : TFhirString read FZip write SetZip;
 
     {@member country
       Country - a nation as commonly understood or generally accepted.
@@ -5607,13 +5607,13 @@ P.O. Box number, delivery hints, and similar address information.
       Typed access to Country - a nation as commonly understood or generally accepted.
     }
     property country : String read GetCountryST write SetCountryST;
-    property countryObject : TFhirString read FCountry write SetCountry;
+    property countryElement : TFhirString read FCountry write SetCountry;
 
     {@member period
       Time period when address was/is in use.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
-    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
+    property periodElement : TFhirPeriod read FPeriod write SetPeriod;
 
   end;
 
@@ -5653,10 +5653,10 @@ P.O. Box number, delivery hints, and similar address information.
     function Append : TFhirAddress;
 
     
-    {@member AddItem
-      Add an already existing FhirAddress to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirAddress element to the end of the list.
     }
-    procedure AddItem(value : TFhirAddress); overload;
+    procedure AddItemElement(value : TFhirAddress); overload;
 
     
     {@member IndexOf
@@ -5750,7 +5750,7 @@ P.O. Box number, delivery hints, and similar address information.
       Identifies the purpose for this name.
     }
     property use : TFhirNameUse read GetUseST write SetUseST;
-    property useObject : TFhirEnum read FUse write SetUse;
+    property useElement : TFhirEnum read FUse write SetUse;
 
     {@member text
       A full text representation of the name.
@@ -5759,7 +5759,7 @@ P.O. Box number, delivery hints, and similar address information.
       Typed access to A full text representation of the name.
     }
     property text : String read GetTextST write SetTextST;
-    property textObject : TFhirString read FText write SetText;
+    property textElement : TFhirString read FText write SetText;
 
     {@member familyList
       The part of a name that links to the genealogy. In some cultures (e.g. Eritrea) the family name of a son is the first name of his father.
@@ -5785,7 +5785,7 @@ P.O. Box number, delivery hints, and similar address information.
       Indicates the period of time when this name was valid for the named person.
     }
     property period : TFhirPeriod read FPeriod write SetPeriod;
-    property periodObject : TFhirPeriod read FPeriod write SetPeriod;
+    property periodElement : TFhirPeriod read FPeriod write SetPeriod;
 
   end;
 
@@ -5825,10 +5825,10 @@ P.O. Box number, delivery hints, and similar address information.
     function Append : TFhirHumanName;
 
     
-    {@member AddItem
-      Add an already existing FhirHumanName to the end of the list.
+    {@member AddItemElement
+      Add an already existing FhirHumanName element to the end of the list.
     }
-    procedure AddItem(value : TFhirHumanName); overload;
+    procedure AddItemElement(value : TFhirHumanName); overload;
 
     
     {@member IndexOf
@@ -6303,9 +6303,8 @@ end;
 
 function TFhirElementListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirElementListEnumerator.GetCurrent : TFhirElement;
@@ -6315,7 +6314,7 @@ end;
 
 
 { TFhirElementList }
-procedure TFhirElementList.AddItem(value: TFhirElement);
+procedure TFhirElementList.AddItemElement(value: TFhirElement);
 begin
   assert(value.ClassName = 'TFhirElement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElement');
   add(value);
@@ -6456,9 +6455,8 @@ end;
 
 function TFhirEnumListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirEnumListEnumerator.GetCurrent : TFhirEnum;
@@ -6468,7 +6466,7 @@ end;
 
 
 { TFhirEnumList }
-procedure TFhirEnumList.AddItem(value: TFhirEnum);
+procedure TFhirEnumList.AddItemElement(value: TFhirEnum);
 begin
   assert(value.ClassName = 'TFhirEnum', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEnum');
   add(value);
@@ -6637,9 +6635,8 @@ end;
 
 function TFhirIntegerListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirIntegerListEnumerator.GetCurrent : TFhirInteger;
@@ -6649,7 +6646,7 @@ end;
 
 
 { TFhirIntegerList }
-procedure TFhirIntegerList.AddItem(value: TFhirInteger);
+procedure TFhirIntegerList.AddItemElement(value: TFhirInteger);
 begin
   assert(value.ClassName = 'TFhirInteger', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInteger');
   add(value);
@@ -6820,9 +6817,8 @@ end;
 
 function TFhirDateTimeListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirDateTimeListEnumerator.GetCurrent : TFhirDateTime;
@@ -6832,7 +6828,7 @@ end;
 
 
 { TFhirDateTimeList }
-procedure TFhirDateTimeList.AddItem(value: TFhirDateTime);
+procedure TFhirDateTimeList.AddItemElement(value: TFhirDateTime);
 begin
   assert(value.ClassName = 'TFhirDateTime', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDateTime');
   add(value);
@@ -7003,9 +6999,8 @@ end;
 
 function TFhirDateListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirDateListEnumerator.GetCurrent : TFhirDate;
@@ -7015,7 +7010,7 @@ end;
 
 
 { TFhirDateList }
-procedure TFhirDateList.AddItem(value: TFhirDate);
+procedure TFhirDateList.AddItemElement(value: TFhirDate);
 begin
   assert(value.ClassName = 'TFhirDate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDate');
   add(value);
@@ -7184,9 +7179,8 @@ end;
 
 function TFhirDecimalListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirDecimalListEnumerator.GetCurrent : TFhirDecimal;
@@ -7196,7 +7190,7 @@ end;
 
 
 { TFhirDecimalList }
-procedure TFhirDecimalList.AddItem(value: TFhirDecimal);
+procedure TFhirDecimalList.AddItemElement(value: TFhirDecimal);
 begin
   assert(value.ClassName = 'TFhirDecimal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDecimal');
   add(value);
@@ -7365,9 +7359,8 @@ end;
 
 function TFhirUriListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirUriListEnumerator.GetCurrent : TFhirUri;
@@ -7377,7 +7370,7 @@ end;
 
 
 { TFhirUriList }
-procedure TFhirUriList.AddItem(value: TFhirUri);
+procedure TFhirUriList.AddItemElement(value: TFhirUri);
 begin
   assert(value.ClassName = 'TFhirUri', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUri');
   add(value);
@@ -7546,9 +7539,8 @@ end;
 
 function TFhirBase64BinaryListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirBase64BinaryListEnumerator.GetCurrent : TFhirBase64Binary;
@@ -7558,7 +7550,7 @@ end;
 
 
 { TFhirBase64BinaryList }
-procedure TFhirBase64BinaryList.AddItem(value: TFhirBase64Binary);
+procedure TFhirBase64BinaryList.AddItemElement(value: TFhirBase64Binary);
 begin
   assert(value.ClassName = 'TFhirBase64Binary', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBase64Binary');
   add(value);
@@ -7727,9 +7719,8 @@ end;
 
 function TFhirStringListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirStringListEnumerator.GetCurrent : TFhirString;
@@ -7739,7 +7730,7 @@ end;
 
 
 { TFhirStringList }
-procedure TFhirStringList.AddItem(value: TFhirString);
+procedure TFhirStringList.AddItemElement(value: TFhirString);
 begin
   assert(value.ClassName = 'TFhirString', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirString');
   add(value);
@@ -7908,9 +7899,8 @@ end;
 
 function TFhirBooleanListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirBooleanListEnumerator.GetCurrent : TFhirBoolean;
@@ -7920,7 +7910,7 @@ end;
 
 
 { TFhirBooleanList }
-procedure TFhirBooleanList.AddItem(value: TFhirBoolean);
+procedure TFhirBooleanList.AddItemElement(value: TFhirBoolean);
 begin
   assert(value.ClassName = 'TFhirBoolean', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBoolean');
   add(value);
@@ -8091,9 +8081,8 @@ end;
 
 function TFhirInstantListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirInstantListEnumerator.GetCurrent : TFhirInstant;
@@ -8103,7 +8092,7 @@ end;
 
 
 { TFhirInstantList }
-procedure TFhirInstantList.AddItem(value: TFhirInstant);
+procedure TFhirInstantList.AddItemElement(value: TFhirInstant);
 begin
   assert(value.ClassName = 'TFhirInstant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInstant');
   add(value);
@@ -8248,9 +8237,8 @@ end;
 
 function TFhirCodeListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirCodeListEnumerator.GetCurrent : TFhirCode;
@@ -8260,7 +8248,7 @@ end;
 
 
 { TFhirCodeList }
-procedure TFhirCodeList.AddItem(value: TFhirCode);
+procedure TFhirCodeList.AddItemElement(value: TFhirCode);
 begin
   assert(value.ClassName = 'TFhirCode', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCode');
   add(value);
@@ -8405,9 +8393,8 @@ end;
 
 function TFhirIdListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirIdListEnumerator.GetCurrent : TFhirId;
@@ -8417,7 +8404,7 @@ end;
 
 
 { TFhirIdList }
-procedure TFhirIdList.AddItem(value: TFhirId);
+procedure TFhirIdList.AddItemElement(value: TFhirId);
 begin
   assert(value.ClassName = 'TFhirId', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirId');
   add(value);
@@ -8562,9 +8549,8 @@ end;
 
 function TFhirOidListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirOidListEnumerator.GetCurrent : TFhirOid;
@@ -8574,7 +8560,7 @@ end;
 
 
 { TFhirOidList }
-procedure TFhirOidList.AddItem(value: TFhirOid);
+procedure TFhirOidList.AddItemElement(value: TFhirOid);
 begin
   assert(value.ClassName = 'TFhirOid', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOid');
   add(value);
@@ -8719,9 +8705,8 @@ end;
 
 function TFhirUuidListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirUuidListEnumerator.GetCurrent : TFhirUuid;
@@ -8731,7 +8716,7 @@ end;
 
 
 { TFhirUuidList }
-procedure TFhirUuidList.AddItem(value: TFhirUuid);
+procedure TFhirUuidList.AddItemElement(value: TFhirUuid);
 begin
   assert(value.ClassName = 'TFhirUuid', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUuid');
   add(value);
@@ -8847,7 +8832,7 @@ end;
 procedure TFhirExtension.Assign(oSource : TAdvObject);
 begin
   inherited;
-  urlObject := TFhirExtension(oSource).urlObject.Clone;
+  urlElement := TFhirExtension(oSource).urlElement.Clone;
   value := TFhirExtension(oSource).value.Clone;
 end;
 
@@ -8869,8 +8854,8 @@ end;
 
 procedure TFhirExtension.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'url') then UrlObject := propValue as TFhirUri{5a}
-  else if (propName.startsWith('value')) then Value := propValue as TFhirType{4}
+  if (propName = 'url') then UrlElement := propValue as TFhirUri{5a}
+  else if (StringStartsWith(propName, 'value')) then Value := propValue as TFhirType{4}
   else inherited;
 end;
 
@@ -8941,9 +8926,8 @@ end;
 
 function TFhirExtensionListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirExtensionListEnumerator.GetCurrent : TFhirExtension;
@@ -8953,7 +8937,7 @@ end;
 
 
 { TFhirExtensionList }
-procedure TFhirExtensionList.AddItem(value: TFhirExtension);
+procedure TFhirExtensionList.AddItemElement(value: TFhirExtension);
 begin
   assert(value.ClassName = 'TFhirExtension', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExtension');
   add(value);
@@ -9112,7 +9096,7 @@ end;
 
 procedure TFhirNarrative.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'status') then StatusObject := propValue as TFHIREnum
+  if (propName = 'status') then StatusElement := propValue as TFHIREnum
   else if (propName = 'div') then Div_ := propValue as TFhirXHtmlNode{4b}
   else inherited;
 end;
@@ -9151,9 +9135,9 @@ end;
 Procedure TFhirNarrative.SetStatusST(value : TFhirNarrativeStatus);
 begin
   if ord(value) = 0 then
-    StatusObject := nil
+    StatusElement := nil
   else
-    StatusObject := TFhirEnum.create(CODES_TFhirNarrativeStatus[value]);
+    StatusElement := TFhirEnum.create(CODES_TFhirNarrativeStatus[value]);
 end;
 
 Procedure TFhirNarrative.SetDiv_(value : TFhirXHtmlNode);
@@ -9180,9 +9164,8 @@ end;
 
 function TFhirNarrativeListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirNarrativeListEnumerator.GetCurrent : TFhirNarrative;
@@ -9192,7 +9175,7 @@ end;
 
 
 { TFhirNarrativeList }
-procedure TFhirNarrativeList.AddItem(value: TFhirNarrative);
+procedure TFhirNarrativeList.AddItemElement(value: TFhirNarrative);
 begin
   assert(value.ClassName = 'TFhirNarrative', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNarrative');
   add(value);
@@ -9302,8 +9285,8 @@ end;
 procedure TFhirPeriod.Assign(oSource : TAdvObject);
 begin
   inherited;
-  startObject := TFhirPeriod(oSource).startObject.Clone;
-  end_Object := TFhirPeriod(oSource).end_Object.Clone;
+  startElement := TFhirPeriod(oSource).startElement.Clone;
+  end_Element := TFhirPeriod(oSource).end_Element.Clone;
 end;
 
 procedure TFhirPeriod.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -9324,8 +9307,8 @@ end;
 
 procedure TFhirPeriod.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'start') then StartObject := propValue as TFhirDateTime{5a}
-  else if (propName = 'end') then End_Object := propValue as TFhirDateTime{5a}
+  if (propName = 'start') then StartElement := propValue as TFhirDateTime{5a}
+  else if (propName = 'end') then End_Element := propValue as TFhirDateTime{5a}
   else inherited;
 end;
 
@@ -9416,9 +9399,8 @@ end;
 
 function TFhirPeriodListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirPeriodListEnumerator.GetCurrent : TFhirPeriod;
@@ -9428,7 +9410,7 @@ end;
 
 
 { TFhirPeriodList }
-procedure TFhirPeriodList.AddItem(value: TFhirPeriod);
+procedure TFhirPeriodList.AddItemElement(value: TFhirPeriod);
 begin
   assert(value.ClassName = 'TFhirPeriod', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPeriod');
   add(value);
@@ -9542,11 +9524,11 @@ end;
 procedure TFhirCoding.Assign(oSource : TAdvObject);
 begin
   inherited;
-  systemObject := TFhirCoding(oSource).systemObject.Clone;
-  versionObject := TFhirCoding(oSource).versionObject.Clone;
-  codeObject := TFhirCoding(oSource).codeObject.Clone;
-  displayObject := TFhirCoding(oSource).displayObject.Clone;
-  primaryObject := TFhirCoding(oSource).primaryObject.Clone;
+  systemElement := TFhirCoding(oSource).systemElement.Clone;
+  versionElement := TFhirCoding(oSource).versionElement.Clone;
+  codeElement := TFhirCoding(oSource).codeElement.Clone;
+  displayElement := TFhirCoding(oSource).displayElement.Clone;
+  primaryElement := TFhirCoding(oSource).primaryElement.Clone;
   valueSet := TFhirCoding(oSource).valueSet.Clone;
 end;
 
@@ -9580,17 +9562,17 @@ end;
 
 procedure TFhirCoding.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
-  else if (propName = 'version') then VersionObject := propValue as TFhirString{5a}
+  if (propName = 'system') then SystemElement := propValue as TFhirUri{5a}
+  else if (propName = 'version') then VersionElement := propValue as TFhirString{5a}
   else if (propName = 'code') then
     if propValue is TFHIRCode then
-      CodeObject := propValue as TFhirCode{5}
+      CodeElement := propValue as TFhirCode{5}
     else if propValue is TFHIREnum then
-      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+      CodeElement := TFHIRCode.create(TFHIREnum(propValue).value)
     else
       raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
-  else if (propName = 'display') then DisplayObject := propValue as TFhirString{5a}
-  else if (propName = 'primary') then PrimaryObject := propValue as TFhirBoolean{5a}
+  else if (propName = 'display') then DisplayElement := propValue as TFhirString{5a}
+  else if (propName = 'primary') then PrimaryElement := propValue as TFhirBoolean{5a}
   else if (propName = 'valueSet') then ValueSet := propValue as TFhirResourceReference{TFhirValueSet}{4b}
   else inherited;
 end;
@@ -9761,9 +9743,8 @@ end;
 
 function TFhirCodingListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirCodingListEnumerator.GetCurrent : TFhirCoding;
@@ -9773,7 +9754,7 @@ end;
 
 
 { TFhirCodingList }
-procedure TFhirCodingList.AddItem(value: TFhirCoding);
+procedure TFhirCodingList.AddItemElement(value: TFhirCoding);
 begin
   assert(value.ClassName = 'TFhirCoding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoding');
   add(value);
@@ -9957,9 +9938,8 @@ end;
 
 function TFhirRangeListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirRangeListEnumerator.GetCurrent : TFhirRange;
@@ -9969,7 +9949,7 @@ end;
 
 
 { TFhirRangeList }
-procedure TFhirRangeList.AddItem(value: TFhirRange);
+procedure TFhirRangeList.AddItemElement(value: TFhirRange);
 begin
   assert(value.ClassName = 'TFhirRange', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRange');
   add(value);
@@ -10109,11 +10089,11 @@ end;
 procedure TFhirQuantity.Assign(oSource : TAdvObject);
 begin
   inherited;
-  valueObject := TFhirQuantity(oSource).valueObject.Clone;
+  valueElement := TFhirQuantity(oSource).valueElement.Clone;
   FComparator := TFhirQuantity(oSource).FComparator.Link;
-  unitsObject := TFhirQuantity(oSource).unitsObject.Clone;
-  systemObject := TFhirQuantity(oSource).systemObject.Clone;
-  codeObject := TFhirQuantity(oSource).codeObject.Clone;
+  unitsElement := TFhirQuantity(oSource).unitsElement.Clone;
+  systemElement := TFhirQuantity(oSource).systemElement.Clone;
+  codeElement := TFhirQuantity(oSource).codeElement.Clone;
 end;
 
 procedure TFhirQuantity.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -10143,15 +10123,15 @@ end;
 
 procedure TFhirQuantity.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'value') then ValueObject := propValue as TFhirDecimal{5a}
-  else if (propName = 'comparator') then ComparatorObject := propValue as TFHIREnum
-  else if (propName = 'units') then UnitsObject := propValue as TFhirString{5a}
-  else if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
+  if (propName = 'value') then ValueElement := propValue as TFhirDecimal{5a}
+  else if (propName = 'comparator') then ComparatorElement := propValue as TFHIREnum
+  else if (propName = 'units') then UnitsElement := propValue as TFhirString{5a}
+  else if (propName = 'system') then SystemElement := propValue as TFhirUri{5a}
   else if (propName = 'code') then
     if propValue is TFHIRCode then
-      CodeObject := propValue as TFhirCode{5}
+      CodeElement := propValue as TFhirCode{5}
     else if propValue is TFHIREnum then
-      CodeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+      CodeElement := TFHIRCode.create(TFHIREnum(propValue).value)
     else
       raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
   else inherited;
@@ -10217,9 +10197,9 @@ end;
 Procedure TFhirQuantity.SetComparatorST(value : TFhirQuantityComparator);
 begin
   if ord(value) = 0 then
-    ComparatorObject := nil
+    ComparatorElement := nil
   else
-    ComparatorObject := TFhirEnum.create(CODES_TFhirQuantityComparator[value]);
+    ComparatorElement := TFhirEnum.create(CODES_TFhirQuantityComparator[value]);
 end;
 
 Procedure TFhirQuantity.SetUnits(value : TFhirString);
@@ -10318,9 +10298,8 @@ end;
 
 function TFhirQuantityListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirQuantityListEnumerator.GetCurrent : TFhirQuantity;
@@ -10330,7 +10309,7 @@ end;
 
 
 { TFhirQuantityList }
-procedure TFhirQuantityList.AddItem(value: TFhirQuantity);
+procedure TFhirQuantityList.AddItemElement(value: TFhirQuantity);
 begin
   assert(value.ClassName = 'TFhirQuantity', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuantity');
   add(value);
@@ -10445,13 +10424,13 @@ end;
 procedure TFhirAttachment.Assign(oSource : TAdvObject);
 begin
   inherited;
-  contentTypeObject := TFhirAttachment(oSource).contentTypeObject.Clone;
-  languageObject := TFhirAttachment(oSource).languageObject.Clone;
-  dataObject := TFhirAttachment(oSource).dataObject.Clone;
-  urlObject := TFhirAttachment(oSource).urlObject.Clone;
-  sizeObject := TFhirAttachment(oSource).sizeObject.Clone;
-  hashObject := TFhirAttachment(oSource).hashObject.Clone;
-  titleObject := TFhirAttachment(oSource).titleObject.Clone;
+  contentTypeElement := TFhirAttachment(oSource).contentTypeElement.Clone;
+  languageElement := TFhirAttachment(oSource).languageElement.Clone;
+  dataElement := TFhirAttachment(oSource).dataElement.Clone;
+  urlElement := TFhirAttachment(oSource).urlElement.Clone;
+  sizeElement := TFhirAttachment(oSource).sizeElement.Clone;
+  hashElement := TFhirAttachment(oSource).hashElement.Clone;
+  titleElement := TFhirAttachment(oSource).titleElement.Clone;
 end;
 
 procedure TFhirAttachment.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -10489,23 +10468,23 @@ procedure TFhirAttachment.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'contentType') then
     if propValue is TFHIRCode then
-      ContentTypeObject := propValue as TFhirCode{5}
+      ContentTypeElement := propValue as TFhirCode{5}
     else if propValue is TFHIREnum then
-      ContentTypeObject := TFHIRCode.create(TFHIREnum(propValue).value)
+      ContentTypeElement := TFHIRCode.create(TFHIREnum(propValue).value)
     else
       raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
   else if (propName = 'language') then
     if propValue is TFHIRCode then
-      LanguageObject := propValue as TFhirCode{5}
+      LanguageElement := propValue as TFhirCode{5}
     else if propValue is TFHIREnum then
-      LanguageObject := TFHIRCode.create(TFHIREnum(propValue).value)
+      LanguageElement := TFHIRCode.create(TFHIREnum(propValue).value)
     else
       raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
-  else if (propName = 'data') then DataObject := propValue as TFhirBase64Binary{5a}
-  else if (propName = 'url') then UrlObject := propValue as TFhirUri{5a}
-  else if (propName = 'size') then SizeObject := propValue as TFhirInteger{5a}
-  else if (propName = 'hash') then HashObject := propValue as TFhirBase64Binary{5a}
-  else if (propName = 'title') then TitleObject := propValue as TFhirString{5a}
+  else if (propName = 'data') then DataElement := propValue as TFhirBase64Binary{5a}
+  else if (propName = 'url') then UrlElement := propValue as TFhirUri{5a}
+  else if (propName = 'size') then SizeElement := propValue as TFhirInteger{5a}
+  else if (propName = 'hash') then HashElement := propValue as TFhirBase64Binary{5a}
+  else if (propName = 'title') then TitleElement := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -10726,9 +10705,8 @@ end;
 
 function TFhirAttachmentListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirAttachmentListEnumerator.GetCurrent : TFhirAttachment;
@@ -10738,7 +10716,7 @@ end;
 
 
 { TFhirAttachmentList }
-procedure TFhirAttachmentList.AddItem(value: TFhirAttachment);
+procedure TFhirAttachmentList.AddItemElement(value: TFhirAttachment);
 begin
   assert(value.ClassName = 'TFhirAttachment', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAttachment');
   add(value);
@@ -10922,9 +10900,8 @@ end;
 
 function TFhirRatioListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirRatioListEnumerator.GetCurrent : TFhirRatio;
@@ -10934,7 +10911,7 @@ end;
 
 
 { TFhirRatioList }
-procedure TFhirRatioList.AddItem(value: TFhirRatio);
+procedure TFhirRatioList.AddItemElement(value: TFhirRatio);
 begin
   assert(value.ClassName = 'TFhirRatio', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRatio');
   add(value);
@@ -11050,12 +11027,12 @@ procedure TFhirSampledData.Assign(oSource : TAdvObject);
 begin
   inherited;
   origin := TFhirSampledData(oSource).origin.Clone;
-  periodObject := TFhirSampledData(oSource).periodObject.Clone;
-  factorObject := TFhirSampledData(oSource).factorObject.Clone;
-  lowerLimitObject := TFhirSampledData(oSource).lowerLimitObject.Clone;
-  upperLimitObject := TFhirSampledData(oSource).upperLimitObject.Clone;
-  dimensionsObject := TFhirSampledData(oSource).dimensionsObject.Clone;
-  dataObject := TFhirSampledData(oSource).dataObject.Clone;
+  periodElement := TFhirSampledData(oSource).periodElement.Clone;
+  factorElement := TFhirSampledData(oSource).factorElement.Clone;
+  lowerLimitElement := TFhirSampledData(oSource).lowerLimitElement.Clone;
+  upperLimitElement := TFhirSampledData(oSource).upperLimitElement.Clone;
+  dimensionsElement := TFhirSampledData(oSource).dimensionsElement.Clone;
+  dataElement := TFhirSampledData(oSource).dataElement.Clone;
 end;
 
 procedure TFhirSampledData.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -11092,12 +11069,12 @@ end;
 procedure TFhirSampledData.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'origin') then Origin := propValue as TFhirQuantity{4b}
-  else if (propName = 'period') then PeriodObject := propValue as TFhirDecimal{5a}
-  else if (propName = 'factor') then FactorObject := propValue as TFhirDecimal{5a}
-  else if (propName = 'lowerLimit') then LowerLimitObject := propValue as TFhirDecimal{5a}
-  else if (propName = 'upperLimit') then UpperLimitObject := propValue as TFhirDecimal{5a}
-  else if (propName = 'dimensions') then DimensionsObject := propValue as TFhirInteger{5a}
-  else if (propName = 'data') then DataObject := propValue as TFhirString{5a}
+  else if (propName = 'period') then PeriodElement := propValue as TFhirDecimal{5a}
+  else if (propName = 'factor') then FactorElement := propValue as TFhirDecimal{5a}
+  else if (propName = 'lowerLimit') then LowerLimitElement := propValue as TFhirDecimal{5a}
+  else if (propName = 'upperLimit') then UpperLimitElement := propValue as TFhirDecimal{5a}
+  else if (propName = 'dimensions') then DimensionsElement := propValue as TFhirInteger{5a}
+  else if (propName = 'data') then DataElement := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -11298,9 +11275,8 @@ end;
 
 function TFhirSampledDataListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirSampledDataListEnumerator.GetCurrent : TFhirSampledData;
@@ -11310,7 +11286,7 @@ end;
 
 
 { TFhirSampledDataList }
-procedure TFhirSampledDataList.AddItem(value: TFhirSampledData);
+procedure TFhirSampledDataList.AddItemElement(value: TFhirSampledData);
 begin
   assert(value.ClassName = 'TFhirSampledData', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSampledData');
   add(value);
@@ -11420,8 +11396,8 @@ end;
 procedure TFhirResourceReference.Assign(oSource : TAdvObject);
 begin
   inherited;
-  referenceObject := TFhirResourceReference(oSource).referenceObject.Clone;
-  displayObject := TFhirResourceReference(oSource).displayObject.Clone;
+  referenceElement := TFhirResourceReference(oSource).referenceElement.Clone;
+  displayElement := TFhirResourceReference(oSource).displayElement.Clone;
 end;
 
 procedure TFhirResourceReference.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -11442,8 +11418,8 @@ end;
 
 procedure TFhirResourceReference.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'reference') then ReferenceObject := propValue as TFhirString{5a}
-  else if (propName = 'display') then DisplayObject := propValue as TFhirString{5a}
+  if (propName = 'reference') then ReferenceElement := propValue as TFhirString{5a}
+  else if (propName = 'display') then DisplayElement := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -11534,9 +11510,8 @@ end;
 
 function TFhirResourceReferenceListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirResourceReferenceListEnumerator.GetCurrent : TFhirResourceReference;
@@ -11546,7 +11521,7 @@ end;
 
 
 { TFhirResourceReferenceList }
-procedure TFhirResourceReferenceList.AddItem(value: TFhirResourceReference);
+procedure TFhirResourceReferenceList.AddItemElement(value: TFhirResourceReference);
 begin
   assert(value.ClassName = 'TFhirResourceReference', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirResourceReference');
   add(value);
@@ -11658,7 +11633,7 @@ procedure TFhirCodeableConcept.Assign(oSource : TAdvObject);
 begin
   inherited;
   FCodingList.Assign(TFhirCodeableConcept(oSource).FCodingList);
-  textObject := TFhirCodeableConcept(oSource).textObject.Clone;
+  textElement := TFhirCodeableConcept(oSource).textElement.Clone;
 end;
 
 procedure TFhirCodeableConcept.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -11680,7 +11655,7 @@ end;
 procedure TFhirCodeableConcept.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'coding') then CodingList.add(propValue as TFhirCoding){2}
-  else if (propName = 'text') then TextObject := propValue as TFhirString{5a}
+  else if (propName = 'text') then TextElement := propValue as TFhirString{5a}
   else inherited;
 end;
 
@@ -11745,9 +11720,8 @@ end;
 
 function TFhirCodeableConceptListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirCodeableConceptListEnumerator.GetCurrent : TFhirCodeableConcept;
@@ -11757,7 +11731,7 @@ end;
 
 
 { TFhirCodeableConceptList }
-procedure TFhirCodeableConceptList.AddItem(value: TFhirCodeableConcept);
+procedure TFhirCodeableConceptList.AddItemElement(value: TFhirCodeableConcept);
 begin
   assert(value.ClassName = 'TFhirCodeableConcept', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeableConcept');
   add(value);
@@ -11899,9 +11873,9 @@ procedure TFhirIdentifier.Assign(oSource : TAdvObject);
 begin
   inherited;
   FUse := TFhirIdentifier(oSource).FUse.Link;
-  label_Object := TFhirIdentifier(oSource).label_Object.Clone;
-  systemObject := TFhirIdentifier(oSource).systemObject.Clone;
-  valueObject := TFhirIdentifier(oSource).valueObject.Clone;
+  label_Element := TFhirIdentifier(oSource).label_Element.Clone;
+  systemElement := TFhirIdentifier(oSource).systemElement.Clone;
+  valueElement := TFhirIdentifier(oSource).valueElement.Clone;
   period := TFhirIdentifier(oSource).period.Clone;
   assigner := TFhirIdentifier(oSource).assigner.Clone;
 end;
@@ -11936,10 +11910,10 @@ end;
 
 procedure TFhirIdentifier.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'use') then UseObject := propValue as TFHIREnum
-  else if (propName = 'label') then Label_Object := propValue as TFhirString{5a}
-  else if (propName = 'system') then SystemObject := propValue as TFhirUri{5a}
-  else if (propName = 'value') then ValueObject := propValue as TFhirString{5a}
+  if (propName = 'use') then UseElement := propValue as TFHIREnum
+  else if (propName = 'label') then Label_Element := propValue as TFhirString{5a}
+  else if (propName = 'system') then SystemElement := propValue as TFhirUri{5a}
+  else if (propName = 'value') then ValueElement := propValue as TFhirString{5a}
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else if (propName = 'assigner') then Assigner := propValue as TFhirResourceReference{TFhirOrganization}{4b}
   else inherited;
@@ -11979,9 +11953,9 @@ end;
 Procedure TFhirIdentifier.SetUseST(value : TFhirIdentifierUse);
 begin
   if ord(value) = 0 then
-    UseObject := nil
+    UseElement := nil
   else
-    UseObject := TFhirEnum.create(CODES_TFhirIdentifierUse[value]);
+    UseElement := TFhirEnum.create(CODES_TFhirIdentifierUse[value]);
 end;
 
 Procedure TFhirIdentifier.SetLabel_(value : TFhirString);
@@ -12092,9 +12066,8 @@ end;
 
 function TFhirIdentifierListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirIdentifierListEnumerator.GetCurrent : TFhirIdentifier;
@@ -12104,7 +12077,7 @@ end;
 
 
 { TFhirIdentifierList }
-procedure TFhirIdentifierList.AddItem(value: TFhirIdentifier);
+procedure TFhirIdentifierList.AddItemElement(value: TFhirIdentifier);
 begin
   assert(value.ClassName = 'TFhirIdentifier', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirIdentifier');
   add(value);
@@ -12272,12 +12245,12 @@ end;
 procedure TFhirScheduleRepeat.Assign(oSource : TAdvObject);
 begin
   inherited;
-  frequencyObject := TFhirScheduleRepeat(oSource).frequencyObject.Clone;
+  frequencyElement := TFhirScheduleRepeat(oSource).frequencyElement.Clone;
   FWhen := TFhirScheduleRepeat(oSource).FWhen.Link;
-  durationObject := TFhirScheduleRepeat(oSource).durationObject.Clone;
+  durationElement := TFhirScheduleRepeat(oSource).durationElement.Clone;
   FUnits := TFhirScheduleRepeat(oSource).FUnits.Link;
-  countObject := TFhirScheduleRepeat(oSource).countObject.Clone;
-  end_Object := TFhirScheduleRepeat(oSource).end_Object.Clone;
+  countElement := TFhirScheduleRepeat(oSource).countElement.Clone;
+  end_Element := TFhirScheduleRepeat(oSource).end_Element.Clone;
 end;
 
 procedure TFhirScheduleRepeat.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -12310,12 +12283,12 @@ end;
 
 procedure TFhirScheduleRepeat.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'frequency') then FrequencyObject := propValue as TFhirInteger{5a}
-  else if (propName = 'when') then WhenObject := propValue as TFHIREnum
-  else if (propName = 'duration') then DurationObject := propValue as TFhirDecimal{5a}
-  else if (propName = 'units') then UnitsObject := propValue as TFHIREnum
-  else if (propName = 'count') then CountObject := propValue as TFhirInteger{5a}
-  else if (propName = 'end') then End_Object := propValue as TFhirDateTime{5a}
+  if (propName = 'frequency') then FrequencyElement := propValue as TFhirInteger{5a}
+  else if (propName = 'when') then WhenElement := propValue as TFHIREnum
+  else if (propName = 'duration') then DurationElement := propValue as TFhirDecimal{5a}
+  else if (propName = 'units') then UnitsElement := propValue as TFHIREnum
+  else if (propName = 'count') then CountElement := propValue as TFhirInteger{5a}
+  else if (propName = 'end') then End_Element := propValue as TFhirDateTime{5a}
   else inherited;
 end;
 
@@ -12379,9 +12352,9 @@ end;
 Procedure TFhirScheduleRepeat.SetWhenST(value : TFhirEventTiming);
 begin
   if ord(value) = 0 then
-    WhenObject := nil
+    WhenElement := nil
   else
-    WhenObject := TFhirEnum.create(CODES_TFhirEventTiming[value]);
+    WhenElement := TFhirEnum.create(CODES_TFhirEventTiming[value]);
 end;
 
 Procedure TFhirScheduleRepeat.SetDuration(value : TFhirDecimal);
@@ -12427,9 +12400,9 @@ end;
 Procedure TFhirScheduleRepeat.SetUnitsST(value : TFhirUnitsOfTime);
 begin
   if ord(value) = 0 then
-    UnitsObject := nil
+    UnitsElement := nil
   else
-    UnitsObject := TFhirEnum.create(CODES_TFhirUnitsOfTime[value]);
+    UnitsElement := TFhirEnum.create(CODES_TFhirUnitsOfTime[value]);
 end;
 
 Procedure TFhirScheduleRepeat.SetCount(value : TFhirInteger);
@@ -12502,9 +12475,8 @@ end;
 
 function TFhirScheduleRepeatListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirScheduleRepeatListEnumerator.GetCurrent : TFhirScheduleRepeat;
@@ -12514,7 +12486,7 @@ end;
 
 
 { TFhirScheduleRepeatList }
-procedure TFhirScheduleRepeatList.AddItem(value: TFhirScheduleRepeat);
+procedure TFhirScheduleRepeatList.AddItemElement(value: TFhirScheduleRepeat);
 begin
   assert(value.ClassName = 'TFhirScheduleRepeat', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirScheduleRepeat');
   add(value);
@@ -12693,9 +12665,8 @@ end;
 
 function TFhirScheduleListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirScheduleListEnumerator.GetCurrent : TFhirSchedule;
@@ -12705,7 +12676,7 @@ end;
 
 
 { TFhirScheduleList }
-procedure TFhirScheduleList.AddItem(value: TFhirSchedule);
+procedure TFhirScheduleList.AddItemElement(value: TFhirSchedule);
 begin
   assert(value.ClassName = 'TFhirSchedule', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSchedule');
   add(value);
@@ -12872,7 +12843,7 @@ procedure TFhirContact.Assign(oSource : TAdvObject);
 begin
   inherited;
   FSystem := TFhirContact(oSource).FSystem.Link;
-  valueObject := TFhirContact(oSource).valueObject.Clone;
+  valueElement := TFhirContact(oSource).valueElement.Clone;
   FUse := TFhirContact(oSource).FUse.Link;
   period := TFhirContact(oSource).period.Clone;
 end;
@@ -12901,9 +12872,9 @@ end;
 
 procedure TFhirContact.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'system') then SystemObject := propValue as TFHIREnum
-  else if (propName = 'value') then ValueObject := propValue as TFhirString{5a}
-  else if (propName = 'use') then UseObject := propValue as TFHIREnum
+  if (propName = 'system') then SystemElement := propValue as TFHIREnum
+  else if (propName = 'value') then ValueElement := propValue as TFhirString{5a}
+  else if (propName = 'use') then UseElement := propValue as TFHIREnum
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else inherited;
 end;
@@ -12942,9 +12913,9 @@ end;
 Procedure TFhirContact.SetSystemST(value : TFhirContactSystem);
 begin
   if ord(value) = 0 then
-    SystemObject := nil
+    SystemElement := nil
   else
-    SystemObject := TFhirEnum.create(CODES_TFhirContactSystem[value]);
+    SystemElement := TFhirEnum.create(CODES_TFhirContactSystem[value]);
 end;
 
 Procedure TFhirContact.SetValue(value : TFhirString);
@@ -12990,9 +12961,9 @@ end;
 Procedure TFhirContact.SetUseST(value : TFhirContactUse);
 begin
   if ord(value) = 0 then
-    UseObject := nil
+    UseElement := nil
   else
-    UseObject := TFhirEnum.create(CODES_TFhirContactUse[value]);
+    UseElement := TFhirEnum.create(CODES_TFhirContactUse[value]);
 end;
 
 Procedure TFhirContact.SetPeriod(value : TFhirPeriod);
@@ -13019,9 +12990,8 @@ end;
 
 function TFhirContactListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirContactListEnumerator.GetCurrent : TFhirContact;
@@ -13031,7 +13001,7 @@ end;
 
 
 { TFhirContactList }
-procedure TFhirContactList.AddItem(value: TFhirContact);
+procedure TFhirContactList.AddItemElement(value: TFhirContact);
 begin
   assert(value.ClassName = 'TFhirContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirContact');
   add(value);
@@ -13176,12 +13146,12 @@ procedure TFhirAddress.Assign(oSource : TAdvObject);
 begin
   inherited;
   FUse := TFhirAddress(oSource).FUse.Link;
-  textObject := TFhirAddress(oSource).textObject.Clone;
+  textElement := TFhirAddress(oSource).textElement.Clone;
   FLineList.Assign(TFhirAddress(oSource).FLineList);
-  cityObject := TFhirAddress(oSource).cityObject.Clone;
-  stateObject := TFhirAddress(oSource).stateObject.Clone;
-  zipObject := TFhirAddress(oSource).zipObject.Clone;
-  countryObject := TFhirAddress(oSource).countryObject.Clone;
+  cityElement := TFhirAddress(oSource).cityElement.Clone;
+  stateElement := TFhirAddress(oSource).stateElement.Clone;
+  zipElement := TFhirAddress(oSource).zipElement.Clone;
+  countryElement := TFhirAddress(oSource).countryElement.Clone;
   period := TFhirAddress(oSource).period.Clone;
 end;
 
@@ -13221,13 +13191,13 @@ end;
 
 procedure TFhirAddress.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'use') then UseObject := propValue as TFHIREnum
-  else if (propName = 'text') then TextObject := propValue as TFhirString{5a}
+  if (propName = 'use') then UseElement := propValue as TFHIREnum
+  else if (propName = 'text') then TextElement := propValue as TFhirString{5a}
   else if (propName = 'line') then LineList.add(propValue as TFhirString){2}
-  else if (propName = 'city') then CityObject := propValue as TFhirString{5a}
-  else if (propName = 'state') then StateObject := propValue as TFhirString{5a}
-  else if (propName = 'zip') then ZipObject := propValue as TFhirString{5a}
-  else if (propName = 'country') then CountryObject := propValue as TFhirString{5a}
+  else if (propName = 'city') then CityElement := propValue as TFhirString{5a}
+  else if (propName = 'state') then StateElement := propValue as TFhirString{5a}
+  else if (propName = 'zip') then ZipElement := propValue as TFhirString{5a}
+  else if (propName = 'country') then CountryElement := propValue as TFhirString{5a}
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else inherited;
 end;
@@ -13266,9 +13236,9 @@ end;
 Procedure TFhirAddress.SetUseST(value : TFhirAddressUse);
 begin
   if ord(value) = 0 then
-    UseObject := nil
+    UseElement := nil
   else
-    UseObject := TFhirEnum.create(CODES_TFhirAddressUse[value]);
+    UseElement := TFhirEnum.create(CODES_TFhirAddressUse[value]);
 end;
 
 Procedure TFhirAddress.SetText(value : TFhirString);
@@ -13425,9 +13395,8 @@ end;
 
 function TFhirAddressListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirAddressListEnumerator.GetCurrent : TFhirAddress;
@@ -13437,7 +13406,7 @@ end;
 
 
 { TFhirAddressList }
-procedure TFhirAddressList.AddItem(value: TFhirAddress);
+procedure TFhirAddressList.AddItemElement(value: TFhirAddress);
 begin
   assert(value.ClassName = 'TFhirAddress', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAddress');
   add(value);
@@ -13584,7 +13553,7 @@ procedure TFhirHumanName.Assign(oSource : TAdvObject);
 begin
   inherited;
   FUse := TFhirHumanName(oSource).FUse.Link;
-  textObject := TFhirHumanName(oSource).textObject.Clone;
+  textElement := TFhirHumanName(oSource).textElement.Clone;
   FFamilyList.Assign(TFhirHumanName(oSource).FFamilyList);
   FGivenList.Assign(TFhirHumanName(oSource).FGivenList);
   FPrefixList.Assign(TFhirHumanName(oSource).FPrefixList);
@@ -13625,8 +13594,8 @@ end;
 
 procedure TFhirHumanName.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'use') then UseObject := propValue as TFHIREnum
-  else if (propName = 'text') then TextObject := propValue as TFhirString{5a}
+  if (propName = 'use') then UseElement := propValue as TFHIREnum
+  else if (propName = 'text') then TextElement := propValue as TFhirString{5a}
   else if (propName = 'family') then FamilyList.add(propValue as TFhirString){2}
   else if (propName = 'given') then GivenList.add(propValue as TFhirString){2}
   else if (propName = 'prefix') then PrefixList.add(propValue as TFhirString){2}
@@ -13669,9 +13638,9 @@ end;
 Procedure TFhirHumanName.SetUseST(value : TFhirNameUse);
 begin
   if ord(value) = 0 then
-    UseObject := nil
+    UseElement := nil
   else
-    UseObject := TFhirEnum.create(CODES_TFhirNameUse[value]);
+    UseElement := TFhirEnum.create(CODES_TFhirNameUse[value]);
 end;
 
 Procedure TFhirHumanName.SetText(value : TFhirString);
@@ -13724,9 +13693,8 @@ end;
 
 function TFhirHumanNameListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirHumanNameListEnumerator.GetCurrent : TFhirHumanName;
@@ -13736,7 +13704,7 @@ end;
 
 
 { TFhirHumanNameList }
-procedure TFhirHumanNameList.AddItem(value: TFhirHumanName);
+procedure TFhirHumanNameList.AddItemElement(value: TFhirHumanName);
 begin
   assert(value.ClassName = 'TFhirHumanName', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirHumanName');
   add(value);

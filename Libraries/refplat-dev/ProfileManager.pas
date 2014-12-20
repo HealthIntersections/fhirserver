@@ -7,7 +7,7 @@ uses
   kCritSct,
   StringSupport,
   AdvObjects, AdvStringMatches, AdvStringObjectMatches,
-  FHIRComponents, FHIRResources, FHIRAtomFeed, FHIRUtilities, FHIRConstants;
+  FHIRComponents, FHIRResources, FHIRAtomFeed, FHIRUtilities, FHIRConstants, FHIRTypes;
 
 
 Type
@@ -17,6 +17,7 @@ Type
     FProfilesByIdentifier : TAdvStringObjectMatch; // all current profiles by identifier (ValueSet.identifier)
     FProfilesByURL : TAdvStringObjectMatch; // all current profiles by their URL
     FProfilesByKey : TAdvStringObjectMatch;
+    FExtensions : TAdvStringObjectMatch;
     function GetProfileByUrl(url: String): TFhirProfile;
     function GetProfileByType(aType: TFhirResourceType): TFhirProfile; // all profiles by the key they are known from (mainly to support drop)
 
@@ -25,19 +26,18 @@ Type
     destructor Destroy; override;
     function Link : TProfileManager; overload;
 
-    procedure SeeProfile(url : String; key : Integer; profile : TFHIRProfile);
-    procedure DropProfile(key : Integer; url : String; aType : TFhirResourceType);
-    procedure loadFromFeed(feed : TFHIRAtomFeed);
+    procedure SeeProfile(base : String; key : Integer; profile : TFHIRProfile);
+    procedure DropProfile(base : String; key : Integer; url : String; aType : TFhirResourceType);
+    procedure loadFromFeed(feed : TFHIRBundle);
 
-    function getExtensionDefn(source : TFhirProfile; url : String; var profile : TFhirProfile; var extension : TFhirProfileExtensionDefn) : boolean;
-    function getStructure(source : TFhirProfile; url : String; var profile : TFhirProfile; var Structure : TFhirProfileStructure) : boolean;
-    function getLinks(non_structures, non_resources : boolean) : TAdvStringMatch;
+    function getExtensionDefn(source : TFhirProfile; url : String; var profile : TFhirProfile; var extension : TFhirExtensionDefinition) : boolean;
+    function getProfileStructure(source : TFhirProfile; url : String; var profile : TFhirProfile) : boolean;
+    function getLinks(non_resources : boolean) : TAdvStringMatch;
 
     property ProfileByURL[url : String] : TFhirProfile read GetProfileByUrl; default;
     property ProfileByType[aType : TFhirResourceType] : TFhirProfile read GetProfileByType;
   end;
 
-  {$IFNDEF FHIR-DSTU}
   {
   This encapsulates a reference to an element definition within a structure.
   The path may be replace
@@ -46,27 +46,25 @@ Type
   private
     FProfiles : TProfileManager;
     FProfile : TFhirProfile;
-    FStructure : TFhirProfileStructure;
-    FElement : TFhirProfileStructureSnapshotElement;
+    FElement : TFhirElementDefinition;
     statedPath : String;
-    FType : TFhirProfileStructureSnapshotElementDefinitionType;
+    FType : TFhirElementDefinitionType;
 
-    function GetTypes: TFhirProfileStructureSnapshotElementDefinitionTypeList;
+    function GetTypes: TFhirElementDefinitionTypeList;
     function GetPath: String;
     function GetName: String;
-    Property Types : TFhirProfileStructureSnapshotElementDefinitionTypeList read GetTypes;
+    Property Types : TFhirElementDefinitionTypeList read GetTypes;
   public
-    Constructor Create(profiles : TProfileManager; profile : TFhirProfile; structure : TFhirProfileStructure); overload;
+    Constructor Create(profiles : TProfileManager; profile : TFhirProfile); overload;
     Destructor Destroy; override;
 
-    procedure setType(t : TFhirProfileStructureSnapshotElementDefinitionType);
-    function statedType : TFhirProfileStructureSnapshotElementDefinitionType;
+    procedure setType(t : TFhirElementDefinitionType);
+    function statedType : TFhirElementDefinitionType;
     function hasTypeChoice : boolean;
     Property path : String read GetPath;
     Property name : String read GetName;
     function getById(id : String) : TProfileDefinition;
   end;
-  {$ENDIF}
 
 implementation
 
@@ -93,12 +91,12 @@ begin
   inherited;
 end;
 
-function TProfileManager.getExtensionDefn(source: TFhirProfile; url: String; var profile: TFhirProfile; var extension : TFhirProfileExtensionDefn): boolean;
+function TProfileManager.getExtensionDefn(source: TFhirProfile; url: String; var profile: TFhirProfile; var extension : TFhirExtensionDefinition): boolean;
 var
   id, code : String;
   i : integer;
 begin
-  result := false;
+{  result := false;
   if url.StartsWith('#') then
   begin
     profile := source;
@@ -122,14 +120,14 @@ begin
       if profile.extensionDefnList[i].code = url.Substring(1) then
         extension := profile.extensionDefnList[i];
     result := extension <> nil;
-  end;
+  end;}
+
 end;
 
-function TProfileManager.getLinks(non_structures, non_resources : boolean): TAdvStringMatch;
+function TProfileManager.getLinks(non_resources : boolean): TAdvStringMatch;
 var
   i, j : integer;
   p : TFHIRProfile;
-  bs, br : boolean;
   url : String;
 begin
   lock.Lock('getLinks');
@@ -142,14 +140,7 @@ begin
         if (not url.startsWith('http:')) then
         begin
           p := TFHIRProfile(FProfilesByURL.ValueByIndex[i]);
-          bs := non_structures;
-          br := non_resources;
-          for j := 0 to p.structureList.Count - 1 do
-          begin
-            bs := bs or p.structureList[j].publish;
-            br := br or StringArrayExistsSensitive(CODES_TFhirResourceType, p.structureList[j].type_);
-          end;
-          if bs and br then
+          if non_resources or StringArrayExistsSensitive(CODES_TFhirResourceType, p.type_) then
             result.Add(url, p.name);
         end;
       end;
@@ -172,7 +163,7 @@ begin
   result := TFhirProfile(FProfilesByURL.GetValueByKey(url));
 end;
 
-function TProfileManager.getStructure(source: TFhirProfile; url: String; var profile: TFhirProfile; var Structure: TFhirProfileStructure): boolean;
+function TProfileManager.getProfileStructure(source: TFhirProfile; url: String; var profile: TFhirProfile): boolean;
 var
   id, code : String;
   i : integer;
@@ -194,14 +185,14 @@ begin
     end;
   end;
 
-  if (profile <> nil) then
+{  if (profile <> nil) then
   begin
     structure := nil;
     for i := 0 to profile.structureList.Count - 1 do
       if profile.structureList[i].name = code then
         structure := profile.structureList[i];
     result := structure <> nil;
-  end;
+  end;}
 end;
 
 function TProfileManager.Link: TProfileManager;
@@ -209,21 +200,29 @@ begin
   result := TProfileManager(inherited Link);
 end;
 
-procedure TProfileManager.loadFromFeed(feed: TFHIRAtomFeed);
+procedure TProfileManager.loadFromFeed(feed: TFHIRBundle);
 var
   i : integer;
+  base : String;
 begin
-  for i := 0 to feed.entries.Count - 1 do
-    if feed.entries[i].resource is TFHIRProfile then
-      SeeProfile(feed.entries[i].id, i, feed.entries[i].resource as TFhirProfile);
+  for i := 0 to feed.entryList.Count - 1 do
+  begin
+    if feed.entryList[i].base <> '' then
+      base := feed.entryList[i].base
+    else
+      base := feed.base;
+
+    if feed.entryList[i].resource is TFHIRProfile then
+      SeeProfile(base, i, feed.entryList[i].resource as TFhirProfile);
+  end;
 end;
 
-procedure TProfileManager.SeeProfile(url: String; key: Integer; profile: TFHIRProfile);
+procedure TProfileManager.SeeProfile(base : String; key: Integer; profile: TFHIRProfile);
 begin
   lock.Lock('SeeProfile');
   try
     FProfilesByIdentifier.Matches[profile.{$IFDEF FHIR-DST}identifier {$ELSE}url{$ENDIF}] := profile.Link;
-    FProfilesByURL.Matches[url] := profile.Link;
+    FProfilesByURL.Matches[profile.id] := profile.Link;
     FProfilesByKey.Matches[inttostr(key)] := profile.Link;
   finally
     lock.Unlock;
@@ -231,7 +230,7 @@ begin
 end;
 
 
-procedure TProfileManager.DropProfile(key: Integer; url: String; aType: TFhirResourceType);
+procedure TProfileManager.DropProfile(base : String; key: Integer; url: String; aType: TFhirResourceType);
 var
   p : TFhirProfile;
 begin
@@ -241,7 +240,7 @@ begin
     if p <> nil then
     begin
       FProfilesByURL.DeleteByKey(url);
-      FProfilesByIdentifier.DeleteByKey(p.{$IFDEF FHIR-DST}identifier {$ELSE}url{$ENDIF});
+      FProfilesByIdentifier.DeleteByKey(fullResourceUri(base, aType, p.id));
       FProfilesByKey.DeleteByKey(inttostr(key));
     end;
   finally
@@ -249,18 +248,14 @@ begin
   end;
 end;
 
-
-{$IFNDEF FHIR-DSTU}
-
 { TProfileDefinition }
 
-constructor TProfileDefinition.Create(profiles: TProfileManager; profile: TFhirProfile; structure: TFhirProfileStructure);
+constructor TProfileDefinition.Create(profiles: TProfileManager; profile: TFhirProfile);
 begin
   Create;
   FProfiles := profiles;
   FProfile := profile;
-  FStructure := structure;
-  FElement := structure.snapshot.elementList[0].link;
+  FElement := profile.snapshot.elementList[0].link;
 end;
 
 destructor TProfileDefinition.Destroy;
@@ -268,7 +263,6 @@ begin
   FType.free;
   FProfiles.Free;
   FProfile.Free;
-  FStructure.Free;
   FElement.Free;
   inherited;
 end;
@@ -278,8 +272,7 @@ var
   path : String;
   i : integer;
   profile : TFhirProfile;
-  structure : TFhirProfileStructure;
-  elements : TFhirProfileStructureSnapshotElementList;
+  elements : TFhirElementDefinitionList;
 begin
 //  if FActualPath = '' then
 //    path := id
@@ -295,14 +288,12 @@ begin
   begin
     path := id;
     profile := FProfile;
-    structure := FStructure;
   end
   else if Types.Count = 1 then
   begin
     profile := FProfiles['http://hl7.org/fhir/Profile/'+Types[0].code];
     if (profile = nil) then
       raise Exception.Create('Unable to find profile for '+Types[0].code+' @ '+id);
-    structure := profile.structureList[0];
     path := Types[0].code+id.Substring(statedPath.Length);
   end
   else if FType <> nil then
@@ -310,20 +301,19 @@ begin
     profile := FProfiles['http://hl7.org/fhir/Profile/'+FType.code];
     if (profile = nil) then
       raise Exception.Create('Unable to find profile for '+FType.code+' @ '+id);
-    structure := profile.structureList[0];
-    if not id.startsWith(statedPath+'._'+FType.tagValue) then
+    if not id.startsWith(statedPath+'._'+FType.tags['type']) then
       raise Exception.Create('Internal logic error');
-    path := Types[0].code+id.Substring(statedPath.Length+2+FType.tagValue.length);
+    path := Types[0].code+id.Substring(statedPath.Length+2+FType.tags['type'].length);
   end
   else
     raise Exception.Create('not handled - multiple types');
-  elements := structure.snapshot.elementList;
+  elements := profile.snapshot.elementList;
 
   result := nil;
   for i := 0 to elements.Count - 1 do
     if elements[i].path = path then
     begin
-      result := TProfileDefinition.Create(FProfiles.Link, profile.Link, structure.Link);
+      result := TProfileDefinition.Create(FProfiles.Link, profile.Link);
       try
         result.FElement := elements[i].Link;
         result.statedPath := id;
@@ -348,22 +338,23 @@ begin
   result := FElement.path;
 end;
 
-function TProfileDefinition.GetTypes: TFhirProfileStructureSnapshotElementDefinitionTypeList;
+function TProfileDefinition.GetTypes: TFhirElementDefinitionTypeList;
 begin
-  result := FElement.definition.type_List;
+  result := FElement.type_List;
 end;
+
 function TProfileDefinition.hasTypeChoice: boolean;
 begin
   result := Types.Count > 1;
 end;
 
-procedure TProfileDefinition.setType(t: TFhirProfileStructureSnapshotElementDefinitionType);
+procedure TProfileDefinition.setType(t: TFhirElementDefinitionType);
 begin
   FType.Free;
   FType := t;
 end;
 
-function TProfileDefinition.statedType: TFhirProfileStructureSnapshotElementDefinitionType;
+function TProfileDefinition.statedType: TFhirElementDefinitionType;
 begin
   if Types.Count = 0 then
     result := nil
@@ -373,7 +364,6 @@ begin
     raise Exception.Create('Shouldn''t get here');
 end;
 
-{$ENDIF}
 
 end.
 

@@ -189,8 +189,8 @@ type
   private
     procedure SetItemN(index : Integer; value : TFHIRAtomCategory);
     function GetJson : TBytes;
-    procedure SetJson(value : TBytes); overload;
-    procedure SetJson(obj : TJsonObject); overload;
+    procedure SetJson(value : TBytes);
+    procedure SetJsonObject(obj : TJsonObject);
   protected
     function ItemClass: TAdvObjectClass; Override;
     Procedure InsertByIndex(index : Integer; value : TFHIRAtomCategory);
@@ -297,7 +297,7 @@ type
     {@member links
       Master Location for Resource
     }
-    property links : TFHIRAtomLinkList read Flinks;
+    property link_List : TFHIRAtomLinkList read Flinks;
 
     {@member categories
       Tags on the resource
@@ -437,6 +437,7 @@ type
     Property AtomEntrys[index : Integer] : TFHIRAtomEntry read GetItemN write SetItemN; default;
   End;
 
+  TFHIRAtomFeedType = (BundleTypeNull, BundleTypeDocument, BundleTypeMessage, BundleTypeTransaction, BundleTypeTransactionResponse, BundleTypeHistory, BundleTypeSearchset, BundleTypeCollection);
 
   {@Class TFHIRAtomFeed
     An atom feed (as profiled in the FHIR specification)
@@ -444,27 +445,27 @@ type
   {!.Net HL7Connect.Fhir.AtomFeed}
   TFHIRAtomFeed = class (TFHIRAtomBase)
   private
-    Fentries: TFHIRAtomEntryList;
-    FisSearch: Boolean;
+    FentryList: TFHIRAtomEntryList;
     FSearchCount: Integer;
     FSearchTotal: Integer;
     FSearchOffset: Integer;
     FSQL: String;
+    FfeedType : TFHIRAtomFeedType;
     function GetFHIRBaseUrl: String;
     procedure SetFhirBaseUrl(const Value: String);
   public
-    constructor Create; Override;
+    constructor Create(feedType : TFHIRAtomFeedType);
     destructor Destroy; override;
     {!script hide}
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFHIRAtomFeed; overload;
     function Clone : TFHIRAtomFeed; overload;
-    Property isSearch : Boolean read FisSearch write FisSearch;
     Property SearchCount : Integer read FSearchCount write FSearchCount;
     Property SearchTotal : Integer read FSearchTotal write FSearchTotal;
     Property SearchOffset : Integer read FSearchOffset write FSearchOffset;
     Property sql : String read FSQL write FSQL;
-    Property fhirBaseUrl : String read GetFHIRBaseUrl write SetFhirBaseUrl;
+    Property base : String read GetFHIRBaseUrl write SetFhirBaseUrl;
+    property feedType : TFHIRAtomFeedType read FfeedType;
 
     {!script show}
 
@@ -479,12 +480,13 @@ type
     {!script nolink}
     Function addEntry(title: String; updated : TDateAndTime; id, link : String; resource : TFhirResource) : TFHIRAtomEntry;
   published
-    {@member entries
+    {@member entryList
       actual content of the atom feed
     }
-    property entries : TFHIRAtomEntryList read Fentries;
+    property entryList : TFHIRAtomEntryList read FentryList;
 
   end;
+  TFhirBundle = TFHIRAtomFeed; // DSTU2 compatibiliy
 
 implementation
 
@@ -575,7 +577,7 @@ end;
 
 function TFHIRAtomEntry.getOriginalId: String;
 begin
-  result := links['original'];
+  result := link_List['original'];
 end;
 
 function TFHIRAtomEntry.Link: TFHIRAtomEntry;
@@ -586,9 +588,9 @@ end;
 procedure TFHIRAtomEntry.setOriginalId(const Value: String);
 begin
   if (Value <> '') then
-    links['original'] := Value
+    link_List['original'] := Value
   else
-    links.deleteRel('original');
+    link_List.deleteRel('original');
 end;
 
 procedure TFHIRAtomEntry.SetResource(const Value: TFhirResource);
@@ -616,7 +618,7 @@ begin
     result.updated := updated.Link;
     if resource.text <> nil then
       result.summary := resource.text.div_.link;
-    Fentries.add(result.link);
+    FentryList.add(result.link);
   finally
     result.free;
   end;
@@ -625,7 +627,7 @@ end;
 procedure TFHIRAtomFeed.Assign(oSource: TAdvObject);
 begin
   inherited;
-  Fentries.Assign(TFHIRAtomFeed(oSource).Fentries);
+  FentryList.Assign(TFHIRAtomFeed(oSource).FentryList);
 end;
 
 function TFHIRAtomFeed.Clone: TFHIRAtomFeed;
@@ -635,13 +637,14 @@ end;
 
 constructor TFHIRAtomFeed.Create;
 begin
-  inherited;
-  Fentries := TFHIRAtomEntryList.Create;
+  inherited create;
+  FentryList := TFHIRAtomEntryList.Create;
+  FfeedType := FeedType;
 end;
 
 destructor TFHIRAtomFeed.Destroy;
 begin
-  FEntries.free;
+  FentryList.free;
   inherited;
 end;
 
@@ -990,7 +993,7 @@ begin
   if length(bytes) = 0 then
     clear
   else
-    SetJson(TJSONParser.Parse(bytes));
+    SetJsonObject(TJSONParser.Parse(bytes));
 end;
 
 function TFHIRAtomCategoryList.GetItemN(index: Integer): TFHIRAtomCategory;
@@ -1098,7 +1101,7 @@ begin
         add(other[i].link);
 end;
 
-procedure TFHIRAtomCategoryList.SetJson(obj : TJsonObject);
+procedure TFHIRAtomCategoryList.SetJsonObject(obj : TJsonObject);
 var
   jsn : TJsonObject;
   ja : TJsonArray;
@@ -1123,7 +1126,7 @@ begin
 end;
 procedure TFHIRAtomCategoryList.SetJson(value : TBytes);
 begin
-  SetJson(TJSONParser.Parse(value));
+  SetJsonObject(TJSONParser.Parse(value));
 end;
 
 function TFHIRAtomCategoryList.AsHeader: String;

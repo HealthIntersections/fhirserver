@@ -95,6 +95,7 @@ type
     function AuthPath : String;
     function BasePath : String;
     function TokenPath : String;
+    Property Ini : TIniFile read FIni;
   end;
 
 
@@ -181,7 +182,7 @@ end;
 function TAuth2Server.checkNotEmpty(v , n : String) : String;
 begin
   if (v = '') then
-    raise Exception.Create('Parameter "'+v+'" not found');
+    raise Exception.Create('Parameter "'+n+'" not found');
   result := v;
 end;
 
@@ -252,7 +253,7 @@ begin
   redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
   state := checkNotEmpty(params.GetVar('state'), 'state');
 
-  if FIni.ReadString(client_id, 'secret', '') = '' then
+  if FIni.ReadString(client_id, 'name', '') = '' then
     raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
 
   if not isAllowedRedirect(client_id, redirect_uri) then
@@ -422,7 +423,7 @@ begin
   else
     authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2';
 
-  jwk := TJWTUtils.loadKeyFromRSACert(FSSLCert);
+  jwk := TJWTUtils.loadKeyFromRSACert(AnsiString(FSSLCert));
   try
     jwk.obj['alg'] := 'RS256';
     jwk.obj['use'] := 'sig';
@@ -541,6 +542,14 @@ procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPReque
 var
   params : TParseMap;
 begin
+  // cors
+  response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+  response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
+  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+  if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+    response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
+  response.ContentType := 'application/json';
+
   params := TParseMap.createSmart(request.UnparsedParams);
   try
     if (request.Document = '/oauth2/auth') then
@@ -624,6 +633,24 @@ begin
   end;
 end;
 
+function readFromScope(scope, name : String) : String;
+var
+  i : integer;
+var
+  list : TStringList;
+begin
+  result := '';
+  list := TStringList.create;
+  try
+    list.CommaText := scope.Replace(' ', ',');
+    for i := 0 to list.Count - 1 do
+      if list[i].StartsWith(name+':') then
+        result := list[i].Substring(name.Length+1)
+  finally
+    list.free;
+  end;
+end;
+
 procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   code, clientId, clientSecret, uri, errCode : string;
@@ -631,6 +658,7 @@ var
   conn : TKDBConnection;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;
+  launch, scope : String;
 begin
   buffer := TAdvMemoryStream.Create;
   try
@@ -638,7 +666,7 @@ begin
       errCode := 'invalid_request';
       code := checkNotEmpty(params.getVar('code'), 'code');
       clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
-      clientSecret := checkNotEmpty(params.getVar('client_secret'), 'client_secret');
+      clientSecret := params.getVar('client_secret');
       uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri');
       errCode := 'unsupported_grant_type';
       if params.getVar('grant_type') <> 'authorization_code' then
@@ -656,7 +684,7 @@ begin
         errCode := 'invalid_request';
         conn := FFhirStore.DB.GetConnection('OAuth2');
         try
-          conn.SQL := 'select Redirect from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 3 and OAuthLogins.SessionKey = Sessions.SessionKey';
+          conn.SQL := 'select Redirect, Scope from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 3 and OAuthLogins.SessionKey = Sessions.SessionKey';
           conn.prepare;
           conn.execute;
 
@@ -667,6 +695,8 @@ begin
           errCode := 'invalid_request';
           if conn.ColStringByName['Redirect'] <> uri then
             raise Exception.Create('Mismatch between claimed and actual redirection URIs');
+          scope := conn.ColStringByName['Scope'];
+          launch := readFromScope(scope, 'launch');
           conn.terminate;
 
 
@@ -676,10 +706,11 @@ begin
           try
             json.Stream := buffer.link;
             json.Start;
-            json.Value('access_token', session.JWTPacked);
+            json.Value('access_token', session.Cookie);
             json.Value('token_type', 'Bearer');
             json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
             json.Value('id_token', session.JWTPacked);
+            json.Value('patient', launch);
             json.Finish;
           finally
             json.Free;
@@ -699,6 +730,7 @@ begin
     except
       on e : Exception do
       begin
+        response.ResponseNo := 500;
         json := TJsonWriter.create;
         try
           json.Stream := buffer.link;

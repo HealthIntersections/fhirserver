@@ -210,7 +210,7 @@ end;
 
 function TSubscriptionManager.getSummaryForChannel(subst: TFhirSubscription): String;
 begin
-  result := subst.channel.type_Object.value+#1+subst.channel.url+#1+subst.channel.payload+#0+subst.channel.header;
+  result := subst.channel.type_Element.value+#1+subst.channel.url+#1+subst.channel.payload+#0+subst.channel.header;
 end;
 
 procedure TSubscriptionManager.DoDropResource(key, vkey: Integer; internal : boolean);
@@ -327,7 +327,7 @@ begin
         try
           bs := TBytesStream.Create;
           try
-            comp.Compose(bs, '', id, '', res, true, nil);
+            comp.Compose(bs, res, true, nil);
             msg.Body.Text := TEncoding.UTF8.GetString(bs.Bytes);
           finally
             bs.Free;
@@ -491,11 +491,13 @@ begin
         res := LoadResourceFromDBByVer(conn, ResourceKey, id, tags);
         try
           try
-            for i := 0 to subst.tagList.Count - 1 do  
+            raise Exception.Create('todo');
+            {
+            for i := 0 to subst.tagList.Count - 1 do
               if (subst.tagList[i].term <> '') and (subst.tagList[i].scheme <> '') then
                 if not tags.HasTag(subst.tagList[i].scheme, subst.tagList[i].term) then
                   tags.AddValue(subst.tagList[i].scheme, subst.tagList[i].term, subst.tagList[i].description);
-
+            }
             case subst.channel.type_ of
               SubscriptionChannelTypeRestHook: sendByRest(id, res, subst, tags);
               SubscriptionChannelTypeEmail: sendByEmail(id, res, subst, tags);
@@ -611,7 +613,8 @@ begin
       raise Exception.Create('Cannot find resource');
     id := conn.ColStringByName['Id'];
     tags.Clear;
-    tags.DecodeJson(conn.ColBlobByName['Tags']);
+    raise Exception.Create('todo');
+//   tags.DecodeJson(conn.ColBlobByName['Tags']);
     if conn.ColStringByName['ResourceName'] = 'Binary' then
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else

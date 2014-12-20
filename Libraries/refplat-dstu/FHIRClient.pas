@@ -114,7 +114,7 @@ begin
     try
       result.resource := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]), post, src);
       result.id := copy(client.response.location, 1, pos('/history', client.response.location)-1);
-      result.links.AddValue('self', client.response.location);
+      result.link_List.AddValue('self', client.response.location);
       parseCategories(result.categories);
       result.link;
     finally
@@ -145,7 +145,7 @@ begin
     try
       result.resource := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]+'/'+id), put, src);
       result.id := copy(client.response.location, 1, pos('/history', client.response.location)-1);
-      result.links.AddValue('self', client.response.location);
+      result.link_List.AddValue('self', client.response.location);
       parseCategories(result.categories);
       result.link;
     finally
@@ -206,19 +206,19 @@ begin
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
   result := fetchFeed(makeUrl(CODES_TFhirResourceType[aType])+'?'+encodeParams(params), get, nil);
   try
-    s := result.links['next'];
+    s := result.link_List['next'];
     while AllRecords and (s <> '') do
     begin
       feed := fetchFeed(s, get, nil);
       try
-        result.entries.AddAll(feed.entries);
-        s := feed.links['next'];
+        result.entryList.AddAll(feed.entryList);
+        s := feed.link_List['next'];
       finally
         feed.free;
       end;
     end;
     if allRecords then
-      result.Links.Clear;
+      result.link_List.Clear;
     result.Link;
   finally
     result.Free;
@@ -239,7 +239,7 @@ begin
       result := fetchFeed(makeUrl(CODES_TFhirResourceType[aType])+'/_search', post, frm, ct);
       try
         result.id := copy(client.response.location, 1, pos('/history', client.response.location)-1);
-        result.links.AddValue('self', client.response.location);
+        result.link_List.AddValue('self', client.response.location);
         parseCategories(result.categories);
         result.link;
       finally
@@ -542,7 +542,7 @@ begin
   try
     result.resource := fetchResource(MakeUrl(CODES_TFhirResourceType[AType]+'/'+id), get, nil);
     result.id := copy(client.response.location, 1, pos('/history', client.response.location)-1);
-    result.links.AddValue('self', client.response.location);
+    result.link_List.AddValue('self', client.response.location);
     parseCategories(result.categories);
     result.link;
   finally

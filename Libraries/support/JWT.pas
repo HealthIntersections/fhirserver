@@ -5,9 +5,8 @@ interface
 uses
   SysUtils, EncdDecd, Classes,
   IdSSLOpenSSLHeaders, IdHMACSHA1,
-  Xml.xmlintf,
-
-  EncodeSupport, BytesSupport, StringSupport, XmlSupport,
+  
+  EncodeSupport, BytesSupport, StringSupport,
   AdvObjects, AdvObjectLists,
   JSON, HMAC, libeay32;
 
@@ -263,7 +262,7 @@ Type
   private
     class function loadRSAPrivateKey(pemfile, pempassword : AnsiString) : PRSA;
     class function loadRSAPublicKey(pemfile : AnsiString) : PRSA;
-    class function loadDSAPrivateKey(pemfile, pempassword : AnsiString) : PDSA;
+//    class function loadDSAPrivateKey(pemfile, pempassword : AnsiString) : PDSA;
     class function loadDSAPublicKey(pemfile, pempassword : AnsiString) : PDSA;
 
     class function Sign_Hmac_SHA256(input : TBytes; key: TJWK) : TBytes;
@@ -292,8 +291,8 @@ Type
     class function unpack(token : string; verify : boolean; keys : TJWKList) : TJWT;
 
     // load the publi key details from the provided filename
-    class function loadKeyFromRSACert(filename : String) : TJWK;
-    class function loadKeyFromDSACert(filename, password : String) : TJWK;
+    class function loadKeyFromRSACert(filename : AnsiString) : TJWK;
+    class function loadKeyFromDSACert(filename, password : AnsiString) : TJWK;
   end;
 
 implementation
@@ -1084,11 +1083,11 @@ begin
 end;
 
 
-class function TJWTUtils.loadKeyFromRSACert(filename: String): TJWK;
+class function TJWTUtils.loadKeyFromRSACert(filename: AnsiString): TJWK;
 var
   key : PRSA;
 begin
-  key := PRSA(LoadRSAPublicKey(AnsiString(filename)));
+  key := PRSA(LoadRSAPublicKey(filename));
   try
     result := TJWK.create(key, false);
   finally
@@ -1096,11 +1095,11 @@ begin
   end;
 end;
 
-class function TJWTUtils.loadKeyFromDSACert(filename, password: String): TJWK;
+class function TJWTUtils.loadKeyFromDSACert(filename, password: AnsiString): TJWK;
 var
   key : PDSA;
 begin
-  key := PDSA(LoadDSAPublicKey(AnsiString(filename), AnsiString(password)));
+  key := PDSA(LoadDSAPublicKey(filename, password));
   try
     result := TJWK.create(key, true);
   finally
@@ -1124,22 +1123,22 @@ begin
     raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
 end;
 
-class function TJWTUtils.loadDSAPrivateKey(pemfile, pempassword: AnsiString): PDSA;
-var
-  bp: pBIO;
-  fn, pp: PAnsiChar;
-  pk: PDSA;
-begin
-  fn := PAnsiChar(pemfile);
-  pp := PAnsiChar(pempassword);
-  bp := BIO_new(BIO_s_file());
-  BIO_read_filename(bp, fn);
-  pk := nil;
-  result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
-  if result = nil then
-    raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
-end;
-
+//class function TJWTUtils.loadDSAPrivateKey(pemfile, pempassword: AnsiString): PDSA;
+//var
+//  bp: pBIO;
+//  fn, pp: PAnsiChar;
+//  pk: PDSA;
+//begin
+//  fn := PAnsiChar(pemfile);
+//  pp := PAnsiChar(pempassword);
+//  bp := BIO_new(BIO_s_file());
+//  BIO_read_filename(bp, fn);
+//  pk := nil;
+//  result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
+//  if result = nil then
+//    raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
+//end;
+//
 class function TJWTUtils.loadRSAPublicKey(pemfile: AnsiString) : PRSA;
 var
   bp: pBIO;
@@ -1234,6 +1233,7 @@ var
   hb, pb : TBytes;
   h, p : TJsonObject;
 begin
+  result := nil;
   StringSplit(token, '.', header, payload);
   StringSplit(payload, '.', payload, sig);
   check(header <> '', 'Header not found reading JWT');

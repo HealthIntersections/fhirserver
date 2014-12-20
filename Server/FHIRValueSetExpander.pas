@@ -193,7 +193,7 @@ procedure TFHIRValueSetExpander.addDefinedCode(list: TFhirValueSetExpansionConta
 var
   i : integer;
 begin
-  if (c.abstractObject = nil) or not c.Abstract then
+  if (c.abstractElement = nil) or not c.Abstract then
     addCode(list, map, system, c.Code, c.Display, c.definition);
   for i := 0 to c.conceptList.count - 1 do
     addDefinedCode(list, map, system, c.conceptList[i]);

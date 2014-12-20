@@ -38,7 +38,6 @@ uses
   IdSoapXml, IdSoapMsXml, AltovaXMLLib_TLB, MsXmlParser, IdUri,
   FHIRParser, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources, FHIRAtomFeed,
   FHIRUtilities, FHIRValueSetExpander, FHIRConstants, FHIRValueSetChecker,
-  FHIRBridge,
   TerminologyServer, ProfileManager;
 
 type
@@ -108,6 +107,7 @@ type
 //    function transform(op: TFhirOperationOutcome; source: IXMLDOMDocument2; transform: IXSLTemplate): IXMLDOMDocument2;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     function getTargetByName(list: TFhirProfileStructureElementList; name: String): TFhirProfileStructureElement;
+    function getTargetByPath(list: TFhirProfileStructureElementList; path: String): TFhirProfileStructureElement;
     procedure SetProfiles(const Value: TProfileManager);
   public
     constructor Create; override;
@@ -404,6 +404,19 @@ begin
     end;
 end;
 
+function TFHIRValidator.getTargetByPath(list : TFhirProfileStructureElementList; path : String) : TFhirProfileStructureElement;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to list.Count - 1 do
+    if list[i].path = path then
+    begin
+      result := list[i];
+      exit;
+    end;
+end;
+
 function TFHIRValidator.getChildren(structure : TFHIRProfileStructureHolder; path : String) : TFhirProfileStructureElementList;
 var
   i : integer;
@@ -423,6 +436,8 @@ begin
       if (e.definition <> nil) and (e.definition.nameReference <> '') and path.StartsWith(p) then
       begin
         tgt := getTargetByName(structure.elementList, e.definition.nameReference);
+        if (tgt = nil) then
+          tgt := getTargetByPath(structure.elementList, e.definition.nameReference);
         if (tgt = nil) then
           raise Exception.Create('Unable to find target for name "'+e.definition.nameReference+'"');
         // The path we are navigating to is on or below this element, but the element defers its definition to another named part of the structure
@@ -790,21 +805,21 @@ var
   r : TFhirResource;
   p : TFhirProfile;
 begin
-  for i := 0 to feed.entries.count - 1 do
+  for i := 0 to feed.entryList.count - 1 do
   begin
-    r := feed.entries[i].resource;
+    r := feed.entryList[i].resource;
     if r is TFhirProfile then
     begin
       p := r as TFhirProfile;
       if FProfiles <> nil then
-        FProfiles.SeeProfile(feed.entries[i].id, i, p);
-      if (p.StructureList[0].nameObject <> nil) then
+        FProfiles.SeeProfile(feed.entryList[i].id, i, p);
+      if (p.StructureList[0].nameElement <> nil) then
         FTypes.add(LowerCase(p.StructureList[0].Name), p.link)
       else
         FTypes.add(LowerCase(p.StructureList[0].Type_), p.link);
     end
     else if (r.ResourceType in [frtValueSet, frtConceptMap]) then
-      FTerminologyServer.SeeSpecificationResource(feed.entries[i].id, r);
+      FTerminologyServer.SeeSpecificationResource(feed.entryList[i].id, r);
   end;
 end;
 
@@ -1042,6 +1057,9 @@ begin
     app := context.FxmlApp
   else
     app := AltovaXMLLib_TLB.CoApplication.Create;
+
+  if name = 'feed.sch' then
+    name := 'fhir-atom.sch';
 
   xslt2 := App.XSLT2;
   src := FSources.GetByName(name).AsUnicode;

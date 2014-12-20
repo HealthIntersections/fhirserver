@@ -198,10 +198,11 @@ Const
 Type
   TLOINCCodeList = class (TAdvObject)
     Private
-      FCodeLength : Cardinal;
+      FCodeLength, FReclength : Cardinal;
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TAdvBytesBuilder;
+      procedure SetCodeLength(const Value: Cardinal);
     Public
       Function FindCode(sCode : String; var iIndex : Cardinal) : Boolean;
 
@@ -223,7 +224,7 @@ Type
       Procedure SetStems(iIndex : Cardinal; iValue : Cardinal);
 
       Function Count : Integer;
-      Property CodeLength : Cardinal read FCodeLength Write FCodeLength;
+      Property CodeLength : Cardinal read FCodeLength Write SetCodeLength;
   End;
 
   // 5. the multi-axial heirachy
@@ -393,7 +394,7 @@ begin
   if (Byte(FMaster[iIndex]) + iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC name (2)');
   if Byte(FMaster[iIndex]) > 0 Then
-    Move(FMaster[iIndex], result[1], Length(Result)*2);
+    Move(FMaster[iIndex+2], result[1], Length(Result)*2);
 end;
 
 function TLoincStrings.AddEntry(const s: String): Cardinal;
@@ -564,39 +565,45 @@ begin
 {31}  FBuilder.AddCardinal(iEntry);
 end;
 
+procedure TLOINCCodeList.SetCodeLength(const Value: Cardinal);
+begin
+  FCodeLength := Value;
+  FRecLength := FCodeLength*2+35;
+end;
+
 Procedure TLOINCCodeList.SetComponent(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength*2+35) +1+FCodeLength*2+8], 2);
+  Move(iValue, FMaster[iIndex*(FRecLength) +FCodeLength*2+8], 2);
 End;
 
 Procedure TLOINCCodeList.SetProperty(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+10], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength*2+10], 2);
 End;
 
 Procedure TLOINCCodeList.SetTimeAspect(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+12], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength*2+12], 2);
 End;
 
 Procedure TLOINCCodeList.SetSystem(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+14], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength*2+14], 2);
 End;
 
 Procedure TLOINCCodeList.SetScale(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+16], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength*2+16], 2);
 End;
 
 Procedure TLOINCCodeList.SetMethod(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+18], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength*2+18], 2);
 End;
 
 Procedure TLOINCCodeList.SetClass(iIndex : Cardinal; iValue : Word);
 Begin
-  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+20], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength*2+20], 2);
 End;
 
 
@@ -621,11 +628,11 @@ begin
     s := StringPadRight(sCode, ' ', FCodeLength);
     Result := False;
     L := 0;
-    H := (FLength div (FCodeLength*2+35)) - 1;
+    H := (FLength div FRecLength) - 1;
     while L <= H do
     begin
       I := (L + H) shr 1;
-      sF := asCopy(FMaster, i*(FCodeLength*2 + 35)+1, FCodeLength*2);
+      sF := asCopy(FMaster, i*FReclength, FCodeLength*2);
       C := CompareStr(sF, s);
       if C < 0 then L := I + 1 else
       begin
@@ -644,33 +651,33 @@ end;
 
 Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
 Begin
-  if iIndex > FLength div (FCodeLength*2+35) - 1 Then
+  if iIndex > FLength div FRecLength - 1 Then
     Raise Exception.Create('Attempt to access invalid LOINC index');
-  sCode := trim(asCopy(FMaster, iIndex*(FCodeLength*2+35)+1, FCodeLength*2));
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+0], iDescription, 4);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+4], iOtherNames, 4);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+8], iComponent, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+10], iProperty, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+12], iTimeAspect, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+14], iSystem, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+16], iScale, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+18], iMethod, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+20], iClass, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+22], iv2dt, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+24], iv3dt, 2);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+26], iFlags, 1);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+27], iStems, 4);
-  Move(FMaster[(iIndex*(FCodeLength+35))+FCodeLength*2+31], iEntry, 4);
+  sCode := trim(asCopy(FMaster, iIndex*FRecLength, FCodeLength*2));
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+0], iDescription, 4);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+4], iOtherNames, 4);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+8], iComponent, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+10], iProperty, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+12], iTimeAspect, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+14], iSystem, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+16], iScale, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+18], iMethod, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+20], iClass, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+22], iv2dt, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+24], iv3dt, 2);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+26], iFlags, 1);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+27], iStems, 4);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength*2+31], iEntry, 4);
 end;
 
 function TLOINCCodeList.Count: Integer;
 begin
-  result := FLength div (FCodeLength*2+35);
+  result := FLength div FRecLength;
 end;
 
 procedure TLOINCCodeList.SetStems(iIndex, iValue: Cardinal);
 begin
-  Move(iValue, FMaster[iIndex*(FCodeLength*2+35)+1+FCodeLength*2+27], 4);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength*2+27], 4);
 end;
 
 { TLOINCServices }
@@ -1746,7 +1753,7 @@ end;
 
 procedure TLOINCHeirarchyEntryList.SetStems(iIndex, iValue: Cardinal);
 begin
-  Move(iValue, FMaster[iIndex*(32)+1+28], 4);
+  Move(iValue, FMaster[iIndex*(32)+28], 4);
 end;
 
 procedure TLOINCHeirarchyEntryList.StartBuild;
@@ -1794,7 +1801,7 @@ begin
     while L <= H do
     begin
       I := (L + H) shr 1;
-      Move(FMaster[i*32+1], d, 4);
+      Move(FMaster[i*32], d, 4);
       s := Strings.GetEntry(d);
       C := CompareStr(s, sCode);
       if C < 0 then L := I + 1 else
@@ -1827,11 +1834,11 @@ begin
 end;
 
 function ascopy(s : TBytes; start, length : integer) : String;
-var
-  b : TBytes;
 begin
-  b := copy(s, start, length);
-  result := BytesAsString(b);
+  SetLength(result, length div 2);
+  move(s[start], result[1], length);
+//  b := copy(s, start, length);
+//  result := BytesAsString(b);
 end;
 
 
