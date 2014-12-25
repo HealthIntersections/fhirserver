@@ -219,9 +219,17 @@ type
     function getMatch(rel: String): string;
     procedure SetMatch(rel: String; const Value: string);
   public
-    procedure AddValue(url, rel : String);
+    procedure AddValue(rel, ref : String);
     function AsHeader : String;
     property Matches[rel : String] : string read getMatch write SetMatch;
+  end;
+
+  TFhirParametersHelper = class helper for TFhirParameters
+  private
+    function GetNamedParameter(name: String): TFhirBase;
+  public
+    function hasParameter(name : String):Boolean;
+    Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
   end;
 
 function ZCompressBytes(const s: TBytes): TBytes;
@@ -1626,13 +1634,13 @@ end;
 
 { TFhirBundleLinkListHelper }
 
-procedure TFhirBundleLinkListHelper.AddValue(url, rel: String);
+procedure TFhirBundleLinkListHelper.AddValue(rel, ref: String);
 var
   link : TFhirBundleLink;
 begin
   link := Append;
   link.relation := rel;
-  link.url := url;
+  link.url := ref;
 end;
 
 function TFhirBundleLinkListHelper.AsHeader: String;
@@ -1662,6 +1670,37 @@ begin
     result := base+id
   else
     result := AppendForwardSlash(base) + CODES_TFhirResourceType[atype]+'/'+id;
+end;
+
+{ TFhirParametersHelper }
+
+function TFhirParametersHelper.GetNamedParameter(name: String): TFhirBase;
+var
+  i: Integer;
+begin
+  for i := 0 to parameterList.Count - 1 do
+    if (parameterList[i].name = name) then
+    begin
+      if parameterList[i].valueElement <> nil then
+        result := parameterList[i].valueElement.Link
+      else
+        result := parameterList[i].resourceElement.Link;
+      exit;
+    end;
+  result := nil;
+end;
+
+function TFhirParametersHelper.hasParameter(name: String): Boolean;
+var
+  i: Integer;
+begin
+  for i := 0 to parameterList.Count - 1 do
+    if (parameterList[i].name = name) then
+    begin
+      result := true;
+      exit;
+    end;
+  result := false;
 end;
 
 end.

@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.4.0 generated Mon, Dec 15, 2014 12:57+1100
+// FHIR v0.4.0 generated Fri, Dec 26, 2014 09:37+1100
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON, AdvStringMatches;
@@ -44931,6 +44931,8 @@ function TFHIRXmlParser.ParseResource(element : IXmlDomElement; path : String) :
 begin
   if (element = nil) Then
     Raise Exception.Create('error - element is nil')
+  else if element.baseName = 'Parameters' Then
+    result := ParseParameters(element, path+'/Parameters')
   else if element.baseName = 'Alert' Then
     result := ParseAlert(element, path+'/Alert')
   else if element.baseName = 'AllergyIntolerance' Then
@@ -45129,8 +45131,6 @@ begin
     result := ParseVisionClaim(element, path+'/VisionClaim')
   else if element.baseName = 'VisionPrescription' Then
     result := ParseVisionPrescription(element, path+'/VisionPrescription')
-  else if element.baseName = 'Parameters' Then
-    result := ParseParameters(element, path+'/Parameters')
   else
     raise Exception.create('Error: the element '+element.baseName+' is not recognised as a valid resource name');
 end;
@@ -45140,6 +45140,7 @@ begin
   if (resource = nil) Then
     Raise Exception.Create('error - resource is nil');
   Case resource.ResourceType of
+    frtParameters: ComposeParameters(xml, 'Parameters', TFhirParameters(resource));
     frtAlert: ComposeAlert(xml, 'Alert', TFhirAlert(resource));
     frtAllergyIntolerance: ComposeAllergyIntolerance(xml, 'AllergyIntolerance', TFhirAllergyIntolerance(resource));
     frtAppointment: ComposeAppointment(xml, 'Appointment', TFhirAppointment(resource));
@@ -45249,7 +45250,9 @@ var
   s : String;
 begin
   s := jsn['resourceType'];
-  if s = 'Alert' Then
+  if s = 'Parameters' Then
+    result := ParseParameters(jsn)
+  else if s = 'Alert' Then
     result := ParseAlert(jsn)
   else if s = 'AllergyIntolerance' Then
     result := ParseAllergyIntolerance(jsn)
@@ -46027,6 +46030,7 @@ begin
     Raise Exception.Create('error - resource is nil');
   json.value('resourceType', CODES_TFhirResourceType[resource.ResourceType]);
   Case resource.ResourceType of
+    frtParameters: ComposeParameters(json, 'Parameters', TFhirParameters(resource));
     frtAlert: ComposeAlert(json, 'Alert', TFhirAlert(resource));
     frtAllergyIntolerance: ComposeAllergyIntolerance(json, 'AllergyIntolerance', TFhirAllergyIntolerance(resource));
     frtAppointment: ComposeAppointment(json, 'Appointment', TFhirAppointment(resource));

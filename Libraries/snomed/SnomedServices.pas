@@ -53,6 +53,8 @@ Const
   ALL_DISPLAY_NAMES = $FF;
 
 type
+  ESnomedServices = class (Exception);
+
   UInt64Array = Array of UInt64;
   TCardinalArray = array of Cardinal;
   TMatch = record
@@ -2414,7 +2416,7 @@ begin
   if Concept.FindConcept(iId, index) Then
     result := TCodeSystemProviderContext(index)
   else
-    raise exception.create('unable to find code '+code+' in '+system(nil));
+    raise ESnomedServices.create('unable to find code '+code+' in '+system(nil));
 end;
 
 function TSnomedServices.system(context : TCodeSystemProviderContext): String;

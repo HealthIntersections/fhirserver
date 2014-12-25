@@ -120,7 +120,7 @@
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -xremount -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -xunii C:\Data\terminologies\uniis\unii.txt</Debugger_RunParams>
+        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -xremount -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -xunii C:\Data\terminologies\uniis\unii.txt -xncistems</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -354,8 +354,9 @@
         <DCCReference Include="..\Libraries\support\DigitalSignatures.pas"/>
         <DCCReference Include="UriServices.pas"/>
         <DCCReference Include="CvxServices.pas"/>
-        <DCCReference Include="CountryCodeServices.pas"/>
+        <DCCReference Include="USStateCodeServices.pas"/>
         <DCCReference Include="UniiServices.pas"/>
+        <DCCReference Include="RxNormServices.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

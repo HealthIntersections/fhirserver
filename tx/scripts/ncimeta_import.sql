@@ -1,6 +1,17 @@
-CREATE TABLE NCIATOMARCHIVE
+Drop Table RXNATOMARCHIVE
+Drop Table RXNCONSO
+Drop Table RXNREL
+Drop Table RXNSAB
+Drop Table RXNSAT
+Drop Table RXNSTY
+Drop Table RXNDOC 
+Drop Table RXNCUICHANGES
+Drop Table RXNCUI 
+Drop Table RXNSTEMS 
+
+CREATE TABLE RXNATOMARCHIVE
 (
-   RXAUI             varchar(8) NOT NULL,
+   RXAUI             varchar(12) NOT NULL,
    AUI               varchar(10),
    STR               varchar(4000) NOT NULL,
    ARCHIVE_TIMESTAMP varchar(280) NOT NULL,
@@ -19,22 +30,22 @@ CREATE TABLE NCIATOMARCHIVE
 )
 GO
 
-CREATE TABLE NCICONSO
+CREATE TABLE RXNCONSO
 (
-   RXCUI             varchar(8) NOT NULL,
+   RXCUI             varchar(12) NOT NULL,
    LAT               varchar (3) DEFAULT 'ENG' NOT NULL,
    TS                varchar (1),
    LUI               varchar(8),
    STT               varchar (3),
    SUI               varchar (8),
    ISPREF            varchar (1),
-   RXAUI             varchar(8) NOT NULL,
+   RXAUI             varchar(12) NOT NULL,
    SAUI              varchar (50),
    SCUI              varchar (50),
    SDUI              varchar (50),
    SAB               varchar (20) NOT NULL,
    TTY               varchar (20) NOT NULL,
-   CODE              varchar (50) NOT NULL,
+   CODE              varchar (80) NOT NULL,
    STR               varchar (3000) NOT NULL,
    SRL               varchar (10),
    SUPPRESS          varchar (1),
@@ -43,21 +54,21 @@ CREATE TABLE NCICONSO
 
 Go
 
-CREATE TABLE NCIREL
+CREATE TABLE RXNREL
 (
-   RXCUI1    varchar(8) ,
-   RXAUI1    varchar(8),
+   RXCUI1    varchar(12) ,
+   RXAUI1    varchar(12),
    STYPE1    varchar(50),
    REL       varchar(4) ,
-   RXCUI2    varchar(8) ,
-   RXAUI2    varchar(8),
+   RXCUI2    varchar(12) ,
+   RXAUI2    varchar(12),
    STYPE2    varchar(50),
    RELA      varchar(100) ,
    RUI       varchar(10),
    SRUI      varchar(50),
    SAB       varchar(20) NOT NULL,
    SL        varchar(1000),
-   DIR       varchar(1),
+   DIR       varchar(2),
    RG        varchar(10),
    SUPPRESS  varchar(1),
    CVF       varchar(50)
@@ -65,10 +76,10 @@ CREATE TABLE NCIREL
 
 Go
 
-CREATE TABLE NCISAB
+CREATE TABLE RXNSAB
 (
-   VCUI           varchar (8),
-   RCUI           varchar (8),
+   VCUI           varchar (12),
+   RCUI           varchar (12),
    VSAB           varchar (40),
    RSAB           varchar (20) NOT NULL,
    SON            varchar (3000),
@@ -96,12 +107,12 @@ CREATE TABLE NCISAB
 
 Go
 
-CREATE TABLE NCISAT
+CREATE TABLE RXNSAT
 (
-   RXCUI            varchar(8) ,
+   RXCUI            varchar(12) ,
    LUI              varchar(8),
    SUI              varchar(8),
-   RXAUI            varchar(8),
+   RXAUI            varchar(12),
    STYPE            varchar (50),
    CODE             varchar (50),
    ATUI             varchar(11),
@@ -115,9 +126,9 @@ CREATE TABLE NCISAT
 
 Go
 
-CREATE TABLE NCISTY
+CREATE TABLE RXNSTY
 (
-   RXCUI          varchar(8) NOT NULL,
+   RXCUI          varchar(12) NOT NULL,
    TUI            varchar (4),
    STN            varchar (100),
    STY            varchar (50),
@@ -127,7 +138,7 @@ CREATE TABLE NCISTY
 
 Go
 
-CREATE TABLE NCIDOC (
+CREATE TABLE RXNDOC (
     DOCKEY      varchar(50) NOT NULL,
     VALUE       varchar(1000),
     TYPE        varchar(50) NOT NULL,
@@ -136,9 +147,9 @@ CREATE TABLE NCIDOC (
 
 Go
 
-CREATE TABLE NCICUICHANGES
+CREATE TABLE RXNCUICHANGES
 (
-      RXAUI         varchar(8),
+      RXAUI         varchar(12),
       CODE          varchar(50),
       SAB           varchar(20),
       TTY           varchar(20),
@@ -149,60 +160,61 @@ CREATE TABLE NCICUICHANGES
 
 Go
 
- CREATE TABLE NCICUI (
- cui1 VARCHAR(8),
+ CREATE TABLE RXNCUI (
+ cui1 VARCHAR(12),
  ver_start VARCHAR(40),
  ver_end   VARCHAR(40),
  cardinality VARCHAR(8),
- cui2       VARCHAR(8) 
+ cui2       VARCHAR(12) 
 )
 
 Go
 
 -- bulk imports
 
-BULK INSERT NCIREL from 'C:\Data\terminologies\nci\META\MRREL.RRF'
-  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a')
+BULK INSERT RXNREL from 'C:\Data\terminologies\nci\META\MRREL.RRF'
+  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a', CodePage = 'UTF-8')
 Go
 
-BULK INSERT NCISAB from 'C:\Data\terminologies\nci\META\MRSAB.RRF'
-  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a')
+BULK INSERT RXNSAB from 'C:\Data\terminologies\nci\META\MRSAB.RRF'
+  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a', CodePage = 'UTF-8')
 Go
 
-BULK INSERT NCISAT from 'C:\Data\terminologies\nci\META\MRSAT.RRF'
-  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a')
+BULK INSERT RXNSAT from 'C:\Data\terminologies\nci\META\MRSAT.RRF'
+  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a', CodePage = 'UTF-8')
 Go
 
-BULK INSERT NCISTY from 'C:\Data\terminologies\nci\META\MRSTY.RRF'
-  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a')
+BULK INSERT RXNSTY from 'C:\Data\terminologies\nci\META\MRSTY.RRF'
+  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a', CodePage = 'UTF-8')
 Go
 
-BULK INSERT NCICONSO from 'C:\Data\terminologies\nci\META\MRCONSO.RRF'
-  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a')
+BULK INSERT RXNCONSO from 'C:\Data\terminologies\nci\META\MRCONSO.RRF'
+  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a', CodePage = 'UTF-8')
 Go
 
-BULK INSERT NCICUI from 'C:\Data\terminologies\nci\META\MRCUI.RRF'
-  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a')
+BULK INSERT RXNCUI from 'C:\Data\terminologies\nci\META\MRCUI.RRF'
+  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a', CodePage = 'UTF-8')
 Go
 
-BULK INSERT NCIDOC from 'C:\Data\terminologies\nci\META\MRDOC.RRF'
-  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a')
+BULK INSERT RXNDOC from 'C:\Data\terminologies\nci\META\MRDOC.RRF'
+  WITH (FIELDTERMINATOR = '|' , ROWTERMINATOR ='0x0a', CodePage = 'UTF-8')
 Go
 
 -- create basic indexes
 
-CREATE INDEX X_NCIREL_RXCUI1 ON NCIREL(RXCUI1);
-CREATE INDEX X_NCIREL_RXCUI2 ON NCIREL(RXCUI2);
-CREATE INDEX X_NCIREL_RXAUI1 ON NCIREL(RXAUI1);
-CREATE INDEX X_NCIREL_RXAUI2 ON NCIREL(RXAUI2);
-CREATE INDEX X_NCIREL_RELA ON NCIREL(RELA);
-CREATE INDEX X_NCICONSO_RXCUI ON NCICONSO(RXCUI);
-CREATE INDEX X_NCICONSO_TTY ON NCICONSO(TTY);
+CREATE INDEX X_RXNREL_RXCUI1 ON RXNREL(RXCUI1);
+CREATE INDEX X_RXNREL_RXCUI2 ON RXNREL(RXCUI2);
+CREATE INDEX X_RXNREL_RXAUI1 ON RXNREL(RXAUI1);
+CREATE INDEX X_RXNREL_RXAUI2 ON RXNREL(RXAUI2);
+CREATE INDEX X_RXNREL_RELA ON RXNREL(RELA);
+CREATE INDEX X_RXNREL_REL ON RXNREL(REL);
+CREATE INDEX X_RXNCONSO_RXCUI ON RXNCONSO(RXCUI);
+CREATE INDEX X_RXNCONSO_TTY ON RXNCONSO(TTY);
 
 -- create FHIR Server Extensions
-CREATE TABLE NCIstems (
+CREATE TABLE RXNstems (
   stem CHAR(20) NOT NULL,
-  CUI VARCHAR(8) NOT NULL,
+  CUI VARCHAR(12) NOT NULL,
   PRIMARY KEY (stem, CUI));
 Go
 

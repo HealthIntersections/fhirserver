@@ -104,8 +104,15 @@ begin
   if ini.ReadString('RxNorm', 'database', '') <> '' then
   begin
     writeln('Connect to RxNorm');
-    RxNorm := TRxNormServices.Create(TKDBOdbcDirect.create('rxnorm', 100, 'SQL Server Native Client 11.0',
+    RxNorm := TRxNormServices.Create(false, TKDBOdbcDirect.create('rxnorm', 100, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('RxNorm', 'database', ''),
+        Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
+  end;
+  if ini.ReadString('NciMeta', 'database', '') <> '' then
+  begin
+    writeln('Connect to NciMeta');
+    NciMeta := TRxNormServices.Create(true, TKDBOdbcDirect.create('ncimeta', 100, 'SQL Server Native Client 11.0',
+        Ini.ReadString('database', 'server', ''), Ini.ReadString('NciMeta', 'database', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
   end;
   fn := ini.ReadString('snomed', 'cache', '');

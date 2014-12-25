@@ -39,10 +39,15 @@ type
 
   TRxNormServices = class (TCodeSystemProvider)
   private
+    nci : boolean;
+    dbprefix : string;
     db : TKDBManager;
+    rels : TStringList;
+    reltypes : TStringList;
 
+    procedure load(list : TStringList; sql : String);
   public
-    Constructor Create(db : TKDBManager);
+    Constructor Create(nci : boolean; db : TKDBManager);
     Destructor Destroy; Override;
     Function Link : TRxNormServices; overload;
 
@@ -89,7 +94,7 @@ var
 begin
   while (desc <> '') do
   begin
-    StringSplit(desc, [' ', '.', ',', '-', ')', '(', '#', '/', '%', '[', ']', '{', '}', ':'], s, desc);
+    StringSplit(desc, [' ', '.', ',', '-', ')', '(', '#', '/', '%', '[', ']', '{', '}', ':', '@'], s, desc);
     s := StringTrimSet(s, ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']).ToLower;
     if (s <> '') and not StringIsInteger16(s) and (s[1] >= 'a') then
     begin
@@ -172,13 +177,23 @@ end;
 
 { TRxNormServices }
 
-Constructor TRxNormServices.create(db : TKDBManager);
+Constructor TRxNormServices.create(nci : boolean; db : TKDBManager);
 begin
   inherited Create;
 
+  self.nci := nci;
+  if (nci) then
+    dbprefix := 'NciMeta'
+  else
+    dbprefix := 'RxNorm';
   self.db := db;
+  rels := TStringList.create;
+  reltypes := TStringList.create;
+
   if (TotalCount = 0) then
     raise Exception.Create('Error Connecting to RxNorm');
+  load(rels, 'select distinct REL from RXNREL');
+  load(reltypes, 'select distinct RELA from RXNREL');
 end;
 
 
@@ -187,7 +202,7 @@ function TRxNormServices.TotalCount : integer;
 var
   qry : TKDBConnection;
 begin
-  qry := db.GetConnection('RxNorm.Count');
+  qry := db.GetConnection(dbprefix+'.Count');
   try
     qry.SQL := 'Select Count(*) from rxnconso where SAB = ''RXNORM'' and TTY <> ''SY''';
     qry.prepare;
@@ -208,7 +223,10 @@ end;
 
 function TRxNormServices.system(context : TCodeSystemProviderContext) : String;
 begin
-  result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
+  if nci then
+    result := 'http://ncimeta.nci.nih.gov'
+  else
+    result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
 end;
 
 function TRxNormServices.getDefinition(code: String): String;
@@ -220,7 +238,7 @@ function TRxNormServices.getDisplay(code : String):String;
 var
   qry : TKDBConnection;
 begin
-  qry := db.GetConnection('RxNorm.display');
+  qry := db.GetConnection(dbprefix+'.display');
   try
     qry.SQL := 'Select STR from rxnconso where RXCUI = :code and SAB = ''RXNORM'' and TTY <> ''SY''';
     qry.prepare;
@@ -256,12 +274,34 @@ end;
  used to get information about the code
 }
 
+procedure TRxNormServices.load(list: TStringList; sql: String);
+var
+  qry : TKDBConnection;
+begin
+  qry := db.GetConnection(dbprefix+'.display');
+  try
+    qry.SQL := sql;
+    qry.prepare;
+    qry.Execute;
+    while qry.FetchNext do
+      list.add(qry.ColString[1]);
+    qry.Terminate;
+    qry.Release;
+  except
+    on e : Exception do
+    begin
+      qry.Error(e);
+      raise;
+    end;
+  end;
+end;
+
 function TRxNormServices.locate(code : String) : TCodeSystemProviderContext;
 var
   qry : TKDBConnection;
   res : TRxNormConcept;
 begin
-  qry := db.GetConnection('RxNorm.display');
+  qry := db.GetConnection(dbprefix+'.display');
   try
     qry.SQL := 'Select STR, TTY from rxnconso where RXCUI = :code and SAB = ''RXNORM''';
     qry.prepare;
@@ -310,6 +350,8 @@ end;
 destructor TRxNormServices.Destroy;
 begin
   DB.Free;
+  rels.free;
+  reltypes.free;
   inherited;
 end;
 
@@ -384,7 +426,7 @@ begin
   filter := TRxNormFilter(TRxNormPrep(prep).filters[0]);
   filter.sql := sql1;
   result := true;
-  filter.qry := db.GetConnection('RxNorm.prepare');
+  filter.qry := db.GetConnection(dbprefix+'.prepare');
   filter.qry.SQL := 'Select RXCUI, STR '+sql2+' where SAB = ''RXNORM'' and TTY <> ''SY'' '+filter.sql;
   filter.qry.Prepare;
   filter.qry.Execute;
@@ -430,15 +472,6 @@ begin
   end;
 end;
 
-const
-  RELATIONSHIPS : Array[0..6] of String = ('SY', 'SIB', 'RN', 'PAR', 'CHD', 'RB', 'RO');
-  RELATIONSHIP_TYPES : Array[0..77] of String = (
-    'active_ingredient_of', 'active_metabolites_of', 'chemical_structure_of', 'consists_of', 'constitutes', 'contained_in', 'contains', 'contraindicated_with_disease', 'contraindicating_class_of', 'contraindicating_mechanism_of_action_of', 'contraindicating_physiologic_effect_of', 'doseformgroup_of', 'dose_form_of', 'effect_may_be_inhibited_by', 'entry_version_of',
-    'form_of', 'has_active_ingredient', 'has_active_metabolites', 'has_chemical_structure', 'has_contraindicated_drug', 'has_contraindicating_class', 'has_contraindicating_mechanism_of_action', 'has_contraindicating_physiologic_effect', 'has_doseformgroup', 'has_dose_form', 'has_entry_version',
-    'has_form', 'has_ingredient', 'has_ingredients', 'has_mechanism_of_action', 'has_member', 'has_part', 'has_participant', 'has_permuted_term', 'has_pharmacokinetics', 'has_physiologic_effect', 'has_precise_ingredient', 'has_print_name', 'has_product_component', 'has_quantified_form', 'has_sort_version', 'has_therapeutic_class', 'has_tradename', 'included_in', 'includes', 'induced_by', 'induces', 'ingredients_of', 'ingredient_of',
-    'inverse_isa', 'isa', 'mapped_from', 'mapped_to', 'may_be_diagnosed_by', 'may_be_prevented_by', 'may_be_treated_by', 'may_diagnose', 'may_inhibit_effect_of', 'may_prevent', 'may_treat', 'mechanism_of_action_of', 'member_of', 'metabolic_site_of', 'participates_in', 'part_of', 'permuted_term_of', 'pharmacokinetics_of', 'physiologic_effect_of', 'precise_ingredient_of', 'print_name_of', 'product_component_of', 'quantified_form_of', 'reformulated_to', 'reformulation_of', 'site_of_metabolism', 'sort_version_of', 'therapeutic_class_of', 'tradename_of'
-  );
-
 function TRxNormServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   res : TRxNormFilter;
@@ -457,17 +490,17 @@ begin
       res.sql := 'and RXCUI in (select RXCUI from rxnconso where SAB = '''+SQLWrapString(value)+'''))'
     else if prop = 'TTY' then
       res.sql := 'and TTY =  '''+SQLWrapString(value)+''''
-    else if StringArrayExistsSensitive(RELATIONSHIPS, prop) and value.StartsWith('CUI:') then
+    else if (rels.indexof(prop) > -1) and value.StartsWith('CUI:') then
       res.sql := 'and (RXCUI in (select RXCUI from rxnconso where RXCUI in (select RXCUI1 from rxnrel where '+
       'REL = '''+SQLWrapString(prop)+''' and RXCUI2 = '''+SQLWrapString(value.Substring(4))+'''))'
-    else if StringArrayExistsSensitive(RELATIONSHIPS, prop) and value.StartsWith('AUI:') then
+    else if (rels.indexof(prop) > -1) and value.StartsWith('AUI:') then
       res.sql := 'and (RXCUI in (select RXCUI from rxnconso where '+
       'RXAUI in (select RXAUI1 from rxnrel where REL = '''+SQLWrapString(prop)+''' and RXAUI2 = '''+SQLWrapString(value.Substring(4))+'''))'
-    else if StringArrayExistsSensitive(RELATIONSHIP_TYPES, prop) and value.StartsWith('CUI:') then
+    else if (reltypes.indexof(prop) > -1) and value.StartsWith('CUI:') then
       res.sql := 'and (RXCUI in (select RXCUI from rxnconso where '+
       'RXCUI in (select RXCUI1 from rxnrel where '+
       'RELA = '''+SQLWrapString(prop)+''' and RXCUI2 = '''+SQLWrapString(value.Substring(4))+'''))'
-    else if StringArrayExistsSensitive(RELATIONSHIP_TYPES, prop) and value.StartsWith('AUI:') then
+    else if (reltypes.indexof(prop) > -1) and value.StartsWith('AUI:') then
       res.sql := 'and (RXCUI in (select RXCUI from rxnconso where '+
       'RXAUI in (select RXAUI1 from rxnrel where RELA = '''+SQLWrapString(prop)+''' and RXAUI2 = '''+SQLWrapString(value.Substring(4))+'''))'
     else
@@ -490,7 +523,7 @@ var
   qry : TKDBConnection;
   res : TRxNormConcept;
 begin
-  qry := db.GetConnection('RxNorm.display');
+  qry := db.GetConnection(dbprefix+'.display');
   try
     qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = ''RXNORM''  and TTY <> ''SY'' and RXCUI = :code '+TRxNormFilter(ctxt).sql;
     qry.prepare;
@@ -527,7 +560,7 @@ begin
   if (filter.qry = nil) then
   begin
     // search on full rxnorm
-    filter.qry := db.GetConnection('RxNorm.filter');
+    filter.qry := db.GetConnection(dbprefix+'.filter');
     filter.qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = ''RXNORM'' and TTY <> ''SY'' '+filter.sql;
     filter.qry.prepare;
     filter.qry.Execute;

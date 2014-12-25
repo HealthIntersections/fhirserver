@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, StringSupport,
+  SysUtils, Classes, StringSupport, GuidSupport,
   AdvStringObjectMatches, AdvObjects, AdvObjectLists,
   FHIRBase, FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities, DateAndTime,
   TerminologyServices, LoincServices, SnomedServices, UcumServices,
@@ -96,6 +96,9 @@ var
 begin
   result := source.Clone;
   result.xmlId := '';
+  {$IFNDEF FHIR-DSTU}
+  result.id := NewGuidURN;
+  {$ENDIF}
   if (source.identifier <> '') then
     dependencies.Add(source.identifier);
 

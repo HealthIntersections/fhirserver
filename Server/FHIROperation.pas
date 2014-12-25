@@ -177,7 +177,6 @@ type
     function EncodeFeed(r : TFHIRAtomFeed) : TBytes;
 
     // operations
-    procedure ExecuteValueSetValidation(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteResourceValidation(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteQuestionnaireGeneration(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGenerateQA(request: TFHIRRequest; response : TFHIRResponse);
@@ -1084,7 +1083,11 @@ begin
         response.Message := 'Created';
         response.ContentLocation := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+sId+'/_history/1';
         response.Location := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+sId+'/_history/1';
+        {$IFDEF FHIR-DSTU}
         response.Resource := FFactory.makeSuccessfulOperation;  // don't need to return anything, but we return this anyway
+        {$ELSE}
+        response.Resource := request.Resource.Link;
+        {$ENDIF}
         response.id := sId;
         {$IFDEF FHIR-DSTU}
         response.categories.CopyTags(tags);
@@ -2014,7 +2017,9 @@ begin
       end;
       response.HTTPCode := 200;
       response.Message := 'OK';
+      {$IFDEF FHIR-DSTU}
       response.Resource := FFactory.makeSuccessfulOperation; // don't need to return anything, but we return this anyway
+      {$ENDIF}
       response.ContentLocation := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.Id+'/_history/'+inttostr(nvid);
     end;
     AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), request.CommandType, response.httpCode, '', response.message);
@@ -3987,103 +3992,6 @@ begin
 end;
 {$ENDIF}
 
-procedure TFhirOperationManager.ExecuteValueSetValidation(request: TFHIRRequest; response: TFHIRResponse);
-var
-  vs : TFHIRValueSet;
-  op : TFhirOperationOutcome;
-  resourceKey : integer;
-  cacheId, originalId : String;
-  coded : TFhirCodeableConcept;
-  coding : TFhirCoding;
-begin
-  try
-    NotFound(request, response);
-    if check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
-    begin
-      if (request.id = '') or ((length(request.id) <= 36) and FindResource(request.ResourceType, request.Id, false, resourceKey, originalId, request, response, request.compartments)) then
-      begin
-        cacheId := '';
-        vs := nil;
-        try
-          // first, we have to identify the value set.
-          if request.Id <> '' then // and it must exist, because of the check above
-          begin
-            vs := GetValueSetById(request, request.Id, request.baseUrl);
-            cacheId := vs.identifier;
-          end
-          else if request.Parameters.VarExists('identifier') then
-          begin
-            if not FRepository.TerminologyServer.isKnownValueSet(request.Parameters.getvar('identifier'), vs) then
-              vs := GetValueSetByIdentity(request.Parameters.getvar('identifier'));
-            cacheId := vs.identifier;
-          end
-          else if (request.form <> nil) and request.form.hasParam('valueSet') then
-            vs := LoadFromFormParam(request.form.getparam('valueSet'), request.Lang) as TFhirValueSet
-          else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
-            vs := request.Resource.Link as TFhirValueSet
-          else
-            raise Exception.Create('Unable to find value to expand (not provided by id, identifier, or directly');
-
-          coded := nil;
-          try
-            // ok, now we need to find the source code to validate
-            if (request.form <> nil) and request.form.hasParam('coding') then
-            begin
-              coded := TFhirCodeableConcept.Create;
-              coded.codingList.add(LoadDTFromFormParam(request.form.getParam('coding'), request.lang, 'coding', TFhirCoding) as TFhirCoding)
-            end
-            else if (request.form <> nil) and request.form.hasParam('codeableConcept') then
-              coded := LoadDTFromFormParam(request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
-            else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
-            begin
-              coded := TFhirCodeableConcept.Create;
-              coding := coded.codingList.Append;
-              coding.system := request.Parameters.GetVar('system');
-              coding.version := request.Parameters.GetVar('version');
-              coding.code := request.Parameters.GetVar('code');
-              coding.display := request.Parameters.GetVar('display');
-            end
-            else
-              raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
-
-            op := FRepository.TerminologyServer.validate(vs, coded);
-            try
-              if op.hasErrors then
-              begin
-                response.HTTPCode := 422;
-                response.Message := 'Unprocessible Entity';
-              end
-              else
-              begin
-                response.HTTPCode := 200;
-                response.Message := 'OK';
-              end;
-              response.Body := '';
-              response.LastModifiedDate := now;
-              response.ContentLocation := ''; // does not exist as returned
-              response.Resource := op.Link;
-              // response.categories.... no tags to go on this resource
-            finally
-              op.free;
-            end;
-          finally
-            coded.Free;
-          end;
-        finally
-          vs.free;
-        end;
-      end;
-    end;
-    AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.OperationName, response.httpCode, '', response.message);
-  except
-    on e: exception do
-    begin
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.OperationName, 500, '', e.message);
-      raise;
-    end;
-  end;
-end;
-
 // need to set feed title, self link, search total. may add includes
 procedure TFhirOperationManager.ProcessValueSetValidation(request: TFHIRRequest; resource : TFHIRResource; params: TParseMap; feed: TFHIRAtomFeed; includes: TReferenceList; base, lang : String);
 var
@@ -5251,8 +5159,13 @@ end;
 
 function TFhirValueSetValidationOperation.HandlesRequest(request: TFHIRRequest): boolean;
 begin
-  result := inherited HandlesRequest(request) and ((request.form <> nil) and (request.form.hasParam('coding') or request.form.hasParam('codeableConcept'))
-       or (request.Parameters.VarExists('code') and request.Parameters.VarExists('system')));
+  result := inherited HandlesRequest(request) and
+   // passed as form
+   (((request.form <> nil) and (request.form.hasParam('coding') or request.form.hasParam('codeableConcept'))
+       or (request.Parameters.VarExists('code') and request.Parameters.VarExists('system')))
+    or
+      // passed as params
+      ((request.resource <> nil) and (request.Resource.ResourceType = frtParameters)));
 end;
 
 function TFhirValueSetValidationOperation.CreateDefinition: TFHIROperationDefinition;
@@ -5260,7 +5173,128 @@ begin
 end;
 
 procedure TFhirValueSetValidationOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  vs : TFHIRValueSet;
+  op : TFhirOperationOutcome;
+  resourceKey : integer;
+  cacheId, originalId : String;
+  coded : TFhirCodeableConcept;
+  coding : TFhirCoding;
+  {$IFNDEF FHIR-DSTU}
+  params : TFhirParameters;
+  {$ENDIF}
 begin
+  try
+    manager.NotFound(request, response);
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    begin
+      if (request.id = '') or ((length(request.id) <= 36) and manager.FindResource(request.ResourceType, request.Id, false, resourceKey, originalId, request, response, request.compartments)) then
+      begin
+        cacheId := '';
+        vs := nil;
+        try
+          // first, we have to identify the value set.
+          if request.Id <> '' then // and it must exist, because of the check above
+          begin
+            vs := manager.GetValueSetById(request, request.Id, request.baseUrl);
+            cacheId := vs.identifier;
+          end
+          else if request.Parameters.VarExists('identifier') then
+          begin
+            if not manager.FRepository.TerminologyServer.isKnownValueSet(request.Parameters.getvar('identifier'), vs) then
+              vs := manager.GetValueSetByIdentity(request.Parameters.getvar('identifier'));
+            cacheId := vs.identifier;
+          end
+          else if (request.form <> nil) and request.form.hasParam('valueSet') then
+            vs := LoadFromFormParam(request.form.getparam('valueSet'), request.Lang) as TFhirValueSet
+          else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
+            vs := request.Resource.Link as TFhirValueSet
+          else
+            raise Exception.Create('Unable to find value to expand (not provided by id, identifier, or directly');
+
+          coded := nil;
+          try
+            // ok, now we need to find the source code to validate
+            if (request.form <> nil) and request.form.hasParam('coding') then
+            begin
+              coded := TFhirCodeableConcept.Create;
+              coded.codingList.add(LoadDTFromFormParam(request.form.getParam('coding'), request.lang, 'coding', TFhirCoding) as TFhirCoding)
+            end
+            else if (request.form <> nil) and request.form.hasParam('codeableConcept') then
+              coded := LoadDTFromFormParam(request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
+            else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
+            begin
+              coded := TFhirCodeableConcept.Create;
+              coding := coded.codingList.Append;
+              coding.system := request.Parameters.GetVar('system');
+              coding.version := request.Parameters.GetVar('version');
+              coding.code := request.Parameters.GetVar('code');
+              coding.display := request.Parameters.GetVar('display');
+            end
+            {$IFNDEF FHIR-DSTU}
+            else if ((request.resource <> nil) and (request.Resource.ResourceType = frtParameters)) then
+            begin
+              params := request.Resource as TFhirParameters;
+              if params.hasParameter('coding') then
+              begin
+                coded := TFhirCodeableConcept.Create;
+                coded.codingList.Add(params['coding'].Link);
+              end
+              else if params.hasParameter('codeableConcept') then
+                coded := params['codeableConcept'].Link as TFhirCodeableConcept
+              else if params.hasParameter('code') and params.hasParameter('system') then
+              begin
+                coded := TFhirCodeableConcept.Create;
+                coding := coded.codingList.Append;
+                coding.system := TFHIRPrimitiveType(params['system']).StringValue;
+                coding.version := TFHIRPrimitiveType(params['version']).StringValue;
+                coding.code := TFHIRPrimitiveType(params['code']).StringValue;
+                coding.display := TFHIRPrimitiveType(params['display']).StringValue;
+              end
+              else
+                raise Exception.Create('Unable to find code to validate (params. coding | codeableConcept | code');
+
+            end
+            {$ENDIF}
+            else
+              raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
+
+            op := manager.FRepository.TerminologyServer.validate(vs, coded);
+            try
+              if op.hasErrors then
+              begin
+                response.HTTPCode := 422;
+                response.Message := 'Unprocessible Entity';
+              end
+              else
+              begin
+                response.HTTPCode := 200;
+                response.Message := 'OK';
+              end;
+              response.Body := '';
+              response.LastModifiedDate := now;
+              response.ContentLocation := ''; // does not exist as returned
+              response.Resource := op.Link;
+              // response.categories.... no tags to go on this resource
+            finally
+              op.free;
+            end;
+          finally
+            coded.Free;
+          end;
+        finally
+          vs.free;
+        end;
+      end;
+    end;
+    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.OperationName, 500, '', e.message);
+      raise;
+    end;
+  end;
 end;
 
 end.

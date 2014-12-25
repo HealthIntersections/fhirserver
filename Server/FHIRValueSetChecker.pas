@@ -240,8 +240,10 @@ procedure TValueSetChecker.check(code: TFhirCodeableConcept; op: TFhirOperationO
 var
   list : TStringList;
   i : integer;
-  ok : boolean;
-  codelist : String;
+  ok, v : boolean;
+  cc, codelist : String;
+  prov : TCodeSystemProvider;
+  ctxt : TCodeSystemProviderContext;
 begin
   list := TStringList.Create;
   try
@@ -249,14 +251,41 @@ begin
     codelist := '';
     for i := 0 to code.codingList.Count - 1 do
     begin
-      codelist := codelist + '{'+code.codingList[i].system+'"/"'+code.codingList[i].code+'}';
-      ok := ok or check(code.codingList[i].system, code.codingList[i].code, list);
+      list.Clear;
+      cc := ',{'+code.codingList[i].system+'}'+code.codingList[i].code;
+      codelist := codelist + cc;
+      v := check(code.codingList[i].system, code.codingList[i].code, list);
+      ok := ok or v;
+      if (v) then
+        rule(op, IssueSeverityWarning, (code.codingList[i].display = '') or (list.IndexOf(code.codingList[i].display) >= 0), 'value', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc)
+      else
+      begin
+        prov := FStore.getProvider(code.codingList[i].system, true);
+        try
+         if (prov = nil) then
+           rule(op, IssueSeverityWarning, false, 'value', 'The system "'+code.codingList[i].system+'" is not known')
+         else
+         begin
+           ctxt := prov.locate(code.codingList[i].code);
+           try
+             if rule(op, IssueSeverityError, ctxt <> nil, 'value', 'The code "'+code.codingList[i].code+'" is not valid in the system '+code.codingList[i].system) then
+             begin
+               prov.Displays(ctxt, list);
+               rule(op, IssueSeverityWarning, (code.codingList[i].display = '') or (list.IndexOf(code.codingList[i].display) > -1), 'value', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc)
+             end;
+           finally
+             prov.Close(ctxt);
+           end;
+         end;
+        finally
+          prov.Free;
+        end;
+      end;
     end;
-
+    rule(op, IssueSeverityError, ok, 'code-unknown', 'None of the codes provided ('+codelist.Substring(1)+') are in the value set');
   finally
     list.Free;
   end;
-
 end;
 
 Function FreeAsBoolean(cs : TCodeSystemProvider; ctxt : TCodeSystemProviderContext) : boolean; overload;
@@ -319,8 +348,8 @@ begin
       for i := 0 to cset.filterList.count - 1 do
       begin
         fc := cset.filterList[i];
-        if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
-          filters[i] := cs.filter(fc.property_, fc.Op, fc.value, prep);
+        // gg - why? if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
+        filters[i] := cs.filter(fc.property_, fc.Op, fc.value, prep);
       end;
       if cs.prepare(prep) then // all are together, just query the first filter
       begin

@@ -38,10 +38,10 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.4.0 generated Sun, Dec 14, 2014 22:19+1100
+// FHIR v0.4.0 generated Fri, Dec 26, 2014 09:37+1100
 
 uses
-  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
+  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
 
 Type
   {@Enum TFhirNarrativeStatus
@@ -1930,17 +1930,20 @@ Type
     {!script show}
   End;
   TFHIRTypeClass = class of TFhirType;
-  
+
   {@Class TFHIRPrimitiveType : TFhirType
     A base FHIR type - (polymorphism support)
   }
   {!.Net HL7Connect.Fhir.Type}
   TFHIRPrimitiveType = class (TFhirType)
+  Private
+    Function GetStringValue : String;
+    Function AsStringValue : String; Virtual;
   Public
     {!script hide}
     Function Link : TFHIRPrimitiveType; Overload;
     Function Clone : TFHIRPrimitiveType; Overload;
-    Function AsStringValue : String; Overload;
+    Property StringValue : String read GetStringValue;
     {!script show}
   End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
@@ -1959,10 +1962,11 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirEnum; Overload;
     Function Clone : TFhirEnum; Overload;
@@ -2090,6 +2094,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -2221,6 +2226,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
@@ -2352,6 +2358,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
@@ -2483,6 +2490,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -2614,6 +2622,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -2745,6 +2754,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : TBytes); overload;
     Destructor Destroy; override;
@@ -2876,6 +2886,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3007,6 +3018,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3138,6 +3150,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : Boolean); overload;
     Destructor Destroy; override;
@@ -3269,6 +3282,7 @@ Type
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    function AsStringValue : String; Override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
@@ -8779,6 +8793,14 @@ begin
   result := TFHIRPrimitiveType(inherited Clone);
 end;
 
+function TFHIRPrimitiveType.GetStringValue : string;
+begin
+  if self = nil then
+    result := ''
+  else
+    result := AsStringValue;
+end;
+
 function TFHIRPrimitiveType.AsStringValue : string;
 begin
   raise Exception.create('need to override '+ClassName+'.AsStringValue');
@@ -8820,6 +8842,11 @@ procedure TFhirEnum.Assign(oSource : TAdvObject);
 begin
   inherited;
   FValue := TFhirEnum(oSource).Value;
+end;
+
+function TFhirEnum.AsStringValue : string;
+begin
+  result := FValue;
 end;
 
 function TFhirEnum.Link : TFhirEnum;
@@ -9002,6 +9029,11 @@ begin
   FValue := TFhirInteger(oSource).Value;
 end;
 
+function TFhirInteger.AsStringValue : string;
+begin
+  result := FValue;
+end;
+
 function TFhirInteger.Link : TFhirInteger;
 begin
   result := TFhirInteger(inherited Link);
@@ -9181,6 +9213,11 @@ procedure TFhirDateTime.Assign(oSource : TAdvObject);
 begin
   inherited;
   FValue := TFhirDateTime(oSource).Value.Link;
+end;
+
+function TFhirDateTime.AsStringValue : string;
+begin
+  result := FValue.toString;
 end;
 
 function TFhirDateTime.Link : TFhirDateTime;
@@ -9365,6 +9402,11 @@ begin
   FValue := TFhirDate(oSource).Value.Link;
 end;
 
+function TFhirDate.AsStringValue : string;
+begin
+  result := FValue.toString;
+end;
+
 function TFhirDate.Link : TFhirDate;
 begin
   result := TFhirDate(inherited Link);
@@ -9544,6 +9586,11 @@ procedure TFhirDecimal.Assign(oSource : TAdvObject);
 begin
   inherited;
   FValue := TFhirDecimal(oSource).Value;
+end;
+
+function TFhirDecimal.AsStringValue : string;
+begin
+  result := FValue;
 end;
 
 function TFhirDecimal.Link : TFhirDecimal;
@@ -9726,6 +9773,11 @@ begin
   FValue := TFhirUri(oSource).Value;
 end;
 
+function TFhirUri.AsStringValue : string;
+begin
+  result := FValue;
+end;
+
 function TFhirUri.Link : TFhirUri;
 begin
   result := TFhirUri(inherited Link);
@@ -9904,6 +9956,11 @@ procedure TFhirBase64Binary.Assign(oSource : TAdvObject);
 begin
   inherited;
   FValue := TFhirBase64Binary(oSource).Value;
+end;
+
+function TFhirBase64Binary.AsStringValue : string;
+begin
+  if (length(FValue) = 0) then result := '' else result := EncodeBase64(@FValue[0], length(FValue));
 end;
 
 function TFhirBase64Binary.Link : TFhirBase64Binary;
@@ -10086,6 +10143,11 @@ begin
   FValue := TFhirTime(oSource).Value;
 end;
 
+function TFhirTime.AsStringValue : string;
+begin
+  result := FValue;
+end;
+
 function TFhirTime.Link : TFhirTime;
 begin
   result := TFhirTime(inherited Link);
@@ -10264,6 +10326,11 @@ procedure TFhirString.Assign(oSource : TAdvObject);
 begin
   inherited;
   FValue := TFhirString(oSource).Value;
+end;
+
+function TFhirString.AsStringValue : string;
+begin
+  result := FValue;
 end;
 
 function TFhirString.Link : TFhirString;
@@ -10446,6 +10513,11 @@ begin
   FValue := TFhirBoolean(oSource).Value;
 end;
 
+function TFhirBoolean.AsStringValue : string;
+begin
+  result := LCBooleanToString(FValue);
+end;
+
 function TFhirBoolean.Link : TFhirBoolean;
 begin
   result := TFhirBoolean(inherited Link);
@@ -10625,6 +10697,11 @@ procedure TFhirInstant.Assign(oSource : TAdvObject);
 begin
   inherited;
   FValue := TFhirInstant(oSource).Value.Link;
+end;
+
+function TFhirInstant.AsStringValue : string;
+begin
+  result := FValue.toString;
 end;
 
 function TFhirInstant.Link : TFhirInstant;

@@ -807,7 +807,7 @@ Begin
   // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
   //                 response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
                 if oResponse.versionId <> '' then
-                  response.ETag := '"'+oResponse.versionId+'"';
+                  response.ETag := 'W/"'+oResponse.versionId+'"';
                 response.LastModified := oResponse.lastModifiedDate; // todo: timezone
                 if oResponse.Categories.count > 0 then
                   response.CustomHeaders.add('Category: '+ oResponse.Categories.AsHeader);

@@ -270,8 +270,9 @@ uses
   DigitalSignatures in '..\Libraries\support\DigitalSignatures.pas',
   UriServices in 'UriServices.pas',
   CvxServices in 'CvxServices.pas',
-  CountryCodeServices in 'CountryCodeServices.pas',
-  UniiServices in 'UniiServices.pas';
+  USStateCodeServices in 'USStateCodeServices.pas',
+  UniiServices in 'UniiServices.pas',
+  RxNormServices in 'RxNormServices.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

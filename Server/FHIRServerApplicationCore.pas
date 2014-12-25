@@ -147,6 +147,12 @@ begin
         svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('RxNorm', 'database', ''),
         svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
     end
+    else if FindCmdLineSwitch('ncistems', dir, true, []) then
+    begin
+      generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
+        svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('NciMeta', 'database', ''),
+        svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
+    end
 //    procedure ReIndex;
 //    procedure clear(types : String);
     else

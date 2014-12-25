@@ -269,7 +269,7 @@ function TNarrativeGenerator.isDefault(displayHints : TDictionary<String, String
 var
   v : string;
 begin
-  v := primitiveType.AsStringValue;
+  v := primitiveType.StringValue;
   result := (v <> '') and displayHints.containsKey('default') and (v = displayHints['default']);
 end;
 
