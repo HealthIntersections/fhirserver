@@ -47,20 +47,6 @@ const
   SECURITY_BASE_URI = 'http://www.healthintersections.com.au/scim/entitlement/';
 
 Type
-  TFhirTag = class (TAdvName)
-  private
-    FKey : integer;
-    FLabel : String;
-    FScheme: String;
-    FTerm: String;
-    function combine : String;
-  public
-    property Key : integer read FKey write FKey;
-    property Scheme : String read FScheme write FScheme;
-    property Term : String read FTerm write FTerm;
-    property Label_ : String read FLabel write FLabel;
-  end;
-
   TFHIRResourceConfig = record
     key : integer;
     Supported : Boolean;
@@ -171,10 +157,11 @@ Type
     function NextCompartmentKey : Integer;
     Function GetNextKey(keytype : TKeyType): Integer;
     procedure RegisterTag(tag : TFHIRAtomCategory; conn : TKDBConnection); overload;
+    procedure RegisterTag(tag : TFhirTag; conn : TKDBConnection); overload;
     procedure registerTag(tag: TFhirTag); overload;
     procedure SeeResource(key, vkey : Integer; id : string; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFhirSession);
     procedure DropResource(key, vkey : Integer; id : string; aType : TFhirResourceType; indexer : TFhirIndexManager);
-    function KeyForTag(scheme, term : String) : Integer;
+    function KeyForTag(type_ : TFhirTagKind; system, code : String) : Integer;
     Property Validator : TFHIRValidator read FValidator;
     function GetTagByKey(key : integer): TFhirTag;
     Property DB : TKDBManager read FDB;
@@ -208,11 +195,6 @@ implementation
 
 uses
   FHIROperation, SearchProcessor;
-
-function TagCombine(scheme, term : String): String;
-begin
-  result := scheme+#1+term;
-end;
 
 { TFHIRRepository }
 
@@ -302,17 +284,18 @@ begin
     FLastCompartmentKey := conn.CountSQL('select max(ResourceCompartmentKey) from Compartments');
     conn.execSQL('Update Sessions set Closed = '+DBGetDate(conn.Owner.Platform)+' where Closed = null');
 
-    conn.SQL := 'Select TagKey, SchemeUri, TermURI, Label from Tags';
+    conn.SQL := 'Select TagKey, Kind, Uri, Code, Display from Tags';
     conn.Prepare;
     conn.Execute;
     while conn.FetchNext do
     begin
       tag := TFhirTag.create;
       try
-        tag.Term := conn.ColStringByName['TermURI'];
-        tag.Scheme := conn.ColStringByName['SchemeURI'];
-        tag.Label_ := conn.ColStringByName['Label'];
         tag.Key := conn.ColIntegerByName['TagKey'];
+        tag.Kind := TFhirTagKind(conn.ColIntegerByName['Kind']);
+        tag.Uri := conn.ColStringByName['Uri'];
+        tag.Code := conn.ColStringByName['Code'];
+        tag.Display := conn.ColStringByName['Display'];
         tag.Name := tag.combine;
         FTags.add(tag.Link);
       finally
@@ -363,19 +346,22 @@ begin
     for i := 0 to FTags.count - 1 do
       FTagsBykey.Add(TFhirTag(FTags[i]).Key, FTags[i].Link);
 
-    // the expander is tied to what's on the system
-    FTerminologyServer := terminologyServer;
-    FProfiles := TProfileManager.create;
-    FValidator := TFHIRValidator.create;
-    FValidator.SchematronSource := WebFolder;
-    FValidator.TerminologyServer := terminologyServer.Link;
-    FValidator.Profiles := Profiles.Link;
-    // the order here is important: specification resources must be loaded prior to stored resources
-    FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)+'validation.zip');
-    LoadExistingResources(Conn);
-    {$IFNDEF FHIR-DSTU}
-    FSubscriptionManager.LoadQueue(Conn);
-    {$ENDIF}
+    if terminologyServer <> nil then
+    begin
+      // the expander is tied to what's on the system
+      FTerminologyServer := terminologyServer;
+      FProfiles := TProfileManager.create;
+      FValidator := TFHIRValidator.create;
+      FValidator.SchematronSource := WebFolder;
+      FValidator.TerminologyServer := terminologyServer.Link;
+      FValidator.Profiles := Profiles.Link;
+      // the order here is important: specification resources must be loaded prior to stored resources
+      FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)+'validation.zip');
+      LoadExistingResources(Conn);
+      {$IFNDEF FHIR-DSTU}
+      FSubscriptionManager.LoadQueue(Conn);
+      {$ENDIF}
+    end;
     conn.Release;
   except
     on e:exception do
@@ -774,7 +760,7 @@ begin
 end;
 {$ENDIF}
 
-function TFHIRDataStore.KeyForTag(scheme, term: String): Integer;
+function TFHIRDataStore.KeyForTag(type_ : TFhirTagKind; system, code: String): Integer;
 var
   i : integer;
   p : String;
@@ -782,7 +768,7 @@ var
 begin
   FLock.Lock('KeyForTag');
   try
-    p := TagCombine(scheme, term);
+    p := TagCombine(type_, system, code);
     i := FTags.IndexByName(p);
     if i = -1 then
     begin
@@ -929,44 +915,53 @@ begin
 end;
 
 
+procedure TFHIRDataStore.RegisterTag(tag : TFHIRTag; conn : TKDBConnection);
+var
+  i : integer;
+begin
+  FLock.Lock('RegisterTag');
+  try
+    i := FTags.IndexByName(tag.combine);
+    if i > -1 then
+    begin
+      tag.Key := TFhirTag(FTags[i]).Key;
+      if tag.display = '' then
+        tag.display := TFhirTag(FTags[i]).Display;
+    end
+    else
+    begin
+      inc(FLastTagKey);
+      tag.Key := FLastTagKey;
+      registerTag(tag);
+      FTags.add(tag.Link);
+      FTagsByKey.Add(tag.Key, tag.Link);
+    end;
+  finally
+    FLock.UnLock;
+  end;
+end;
+
 procedure TFHIRDataStore.RegisterTag(tag : TFHIRAtomCategory; conn : TKDBConnection);
 var
   i : integer;
   t : TFhirTag;
 begin
-   {$IFDEF FHIR-DSTU}
-  FLock.Lock('RegisterTag');
+  {$IFDEF FHIR-DSTU}
+  t := TFhirTag.create;
   try
-    i := FTags.IndexByName(TagCombine(Tag.scheme, Tag.term));
-    if i > -1 then
-    begin
-      tag.TagKey := TFhirTag(FTags[i]).Key;
-      if tag.label_ = '' then
-        tag.label_ := TFhirTag(FTags[i]).Label_;
-    end
-    else
-    begin
-      t := TFhirTag.create;
-      try
-        t.Scheme := tag.scheme;
-        t.Term := tag.term;
-        t.Label_ := tag.label_;
-        t.Name := t.combine;
-        inc(FLastTagKey);
-        t.key := FLastTagKey;
-        registerTag(t);
-        tag.TagKey := t.Key;
-        FTags.add(t.Link);
-        FTagsByKey.Add(t.Key, t.Link);
-      finally
-        t.free;
-      end;
-    end;
+    t.kind := TagKindForScheme(Tag.scheme);
+    t.Uri := tag.term;
+    t.Display := tag.label_;
+    t.Name := t.combine;
+    RegisterTag(t, conn);
+    tag.TagKey := t.Key;
+    if tag.label_ = '' then
+      tag.label_ := t.Display;
   finally
-    FLock.UnLock;
+    t.free;
   end;
   {$ELSE}
-  raise Exception.Create('TODO');
+  raise Exception.Create('Should not call this');
   {$ENDIF}
 end;
 
@@ -977,12 +972,13 @@ var
 begin
   conn := FDB.GetConnection('fhir');
   try
-    conn.SQL := 'insert into Tags (TagKey, SchemeUri, TermUri, Label) values (:k, :s, :u, :l)';
+    conn.SQL := 'insert into Tags (TagKey, Kind, Uri, Code, Display) values (:k, :t, :s, :c, :d)';
     conn.Prepare;
     conn.BindInteger('k', tag.Key);
-    conn.BindString('s', tag.Scheme);
-    conn.BindString('u', tag.Term);
-    conn.BindString('l', tag.Label_);
+    conn.BindInteger('t', Ord(tag.Kind));
+    conn.BindString('s', tag.Uri);
+    conn.BindString('c', tag.Code);
+    conn.BindString('d', tag.Display);
     conn.Execute;
     conn.terminate;
     conn.Release;
@@ -1047,7 +1043,7 @@ begin
         storage.OwnerName := OwnerName;
         storage.Connection := FDB.GetConnection('fhir');
         try
-          storage.storeResources(list);
+          storage.storeResources(list, false);
           storage.Connection.Release;
         except
           on e : exception do
@@ -1304,13 +1300,6 @@ begin
   except
     result := '';
   end;
-end;
-
-{ TFhirTag }
-
-function TFhirTag.combine: String;
-begin
-  result := TagCombine(scheme, term);
 end;
 
 { TQuestionnaireCache }

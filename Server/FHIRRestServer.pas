@@ -452,7 +452,22 @@ procedure TFhirWebServer.Transaction(stream: TStream);
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
+  op : TFhirOperationManager;
 begin
+  op := TFhirOperationManager.Create('en', FFhirStore.Link);
+  try
+    op.Connection := DataStore.DB.GetConnection('op');
+    try
+      op.DefineConformanceResources(FIni.ReadString('web', 'host', ''));
+      op.Connection.Release;
+    except
+      on e:exception do
+        op.Connection.Error(e);
+    end;
+  finally
+    op.Free;
+  end;
+
   req := TFHIRRequest.Create;
   try
     req.CommandType := fcmdTransaction;
@@ -1363,6 +1378,13 @@ begin
     result := '';
 end;
 
+Const
+  {$IFDEF FHIR-DSTU}
+  META_CMD_NAME = '_tags';
+  {$ELSE}
+  META_CMD_NAME = '_meta';
+  {$ENDIF}
+
 Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
    var redirect : boolean; form : TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean) : TFHIRRequest;
 Var
@@ -1552,10 +1574,10 @@ Begin
         if sCommand <> 'GET' then
           ForceMethod('POST');
       end
-      else if (sType = '_tags') then
+      else if (sType = META_CMD_NAME) then
       begin
         ForceMethod('GET');
-        oRequest.CommandType := fcmdGetTags;
+        oRequest.CommandType := fcmdGetMeta;
       end
       else if (sType = '_history') then
       begin
@@ -1660,15 +1682,15 @@ Begin
                 ForceMethod('GET');
                 oRequest.CommandType := fcmdVersionRead;
               end
-              else if (sid = '_tags') then
+              else if (sid = META_CMD_NAME) then
               begin
                 sId := NextSegment(sURL);
                 if sId = '' then
                 begin
                   if sCommand = 'GET' Then
-                    oRequest.CommandType := fcmdGetTags
+                    oRequest.CommandType := fcmdGetMeta
                   else if sCommand = 'POST' Then
-                    oRequest.CommandType := fcmdUpdateTags
+                    oRequest.CommandType := fcmdUpdateMeta
 //                  else if sCommand = 'DELETE' Then
 //                    oRequest.CommandType := fcmdDeleteTags
                   else
@@ -1676,7 +1698,7 @@ Begin
                 end else if sId = '_delete' then
                 begin
                   ForceMethod('POST');
-                  oRequest.CommandType := fcmdDeleteTags;
+                  oRequest.CommandType := fcmdDeleteMeta;
                 end
                 else
                   raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sResource, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN);
@@ -1687,16 +1709,26 @@ Begin
             else
               raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [sResource]), HTTP_ERR_BAD_REQUEST);
           end
-          else if (sId = '_tags') then
+          else if (sId = META_CMD_NAME) then
           begin
             if sCommand = 'GET' Then
-              oRequest.CommandType := fcmdGetTags
+              oRequest.CommandType := fcmdGetMeta
             else if sCommand = 'POST' Then
-              oRequest.CommandType := fcmdUpdateTags
+              oRequest.CommandType := fcmdUpdateMeta
             else if sCommand = 'DELETE' Then
-              oRequest.CommandType := fcmdDeleteTags
+              oRequest.CommandType := fcmdDeleteMeta
             else
               raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sResource, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN);
+          end
+          else if sId = '*' then // all tpes
+          begin
+            if oRequest.ResourceType <> frtPatient then
+              raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_UNKNOWN_COMPARTMENT', lang), [sResource, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN);
+
+            oRequest.CompartmentId := oRequest.Id;
+            oRequest.CommandType := fcmdSearch;
+            oRequest.ResourceType := frtNull;
+            oRequest.Id := '';
           end
           else if StringArrayExistsInSensitive(CODES_TFhirResourceType, sId) then
           begin
@@ -1730,10 +1762,10 @@ Begin
             oRequest.Id := copy(sId, 2, $FF);
           End;
         end
-        else if (sId = '_tags') or (sId = '_tags.xml') or (sId = '_tags.json') Then
+        else if (sId = META_CMD_NAME) or (sId = META_CMD_NAME+'.xml') or (sId = META_CMD_NAME+'.json') Then
         begin
           ForceMethod('GET');
-          oRequest.CommandType := fcmdGetTags
+          oRequest.CommandType := fcmdGetMeta
         end
         else if (sId = '_search') or (sId = '_search.xml') or (sId = '_search.json') Then
           oRequest.CommandType := fcmdSearch
@@ -1760,7 +1792,8 @@ Begin
         if (oRequest.Session <> nil) and (oRequest.Session.User <> nil) and (oRequest.Session.PatientList.Count > 0) then
           oRequest.compartments := BuildCompartmentList(oRequest.Session);
 
-        if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdValidate, fcmdCreate, fcmdMailbox]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0)) Then
+        if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdValidate, fcmdCreate, fcmdMailbox]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
+          or ((oRequest.CommandType in [fcmdDelete]) and ((sCommand = 'DELETE')) and (oPostStream <> nil) and (oPostStream.Size > 0)) Then
         begin
           oRequest.CopyPost(oPostStream);
           if (sContentType = 'application/x-zip-compressed') or (sContentType = 'application/zip') then
@@ -1824,11 +1857,15 @@ Begin
               end;
           end;
         end
-        else if (oRequest.CommandType in [fcmdUpdateTags, fcmdDeleteTags]) then
+        else if (oRequest.CommandType in [fcmdUpdateMeta, fcmdDeleteMeta]) then
         begin
           parser := MakeParser(lang, oRequest.PostFormat, oPostStream, xppDrop);
           try
+            {$IFDEF FHIR-DSTU}
             oRequest.categories.AddAll(parser.Tags);
+            {$ELSE}
+            oRequest.Meta := parser.meta.Link;
+            {$ENDIF}
           finally
             parser.free;
           end;
@@ -1947,6 +1984,7 @@ begin
     ownsStream := true;
     if oResponse.Resource <> nil then
     Begin
+      {$IFDEF FHIR-DSTU}
       if oResponse.Resource is TFhirBinary then
       begin
 //        TFhirBinary(oResponse.Resource).Content.SaveToStream(stream);
@@ -1955,6 +1993,7 @@ begin
 //        response.Expires := Now + 0.25;
       end
       else
+      {$ENDIF}
       begin
 //        response.Expires := Now; //don't want anyone caching anything
         response.Pragma := 'no-cache';
@@ -1985,12 +2024,11 @@ begin
         end;
       end;
     end
-    else if oRequest.CommandType in [fcmdGetTags, fcmdUpdateTags, fcmdDeleteTags] then
+    else if oRequest.CommandType in [fcmdGetMeta, fcmdUpdateMeta, fcmdDeleteMeta] then
     begin
-      raise Exception.Create('Not supported yet');
-    {
-//      response.Expires := Now; //don't want anyone caching anything
-        response.Pragma := 'no-cache';
+      response.Expires := Now; //don't want anyone caching anything
+      {$IFDEF FHIR-DSTU}
+      response.Pragma := 'no-cache';
       if oResponse.Format = ffxhtml then
       begin
         oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
@@ -2013,10 +2051,39 @@ begin
         response.ContentType := oComp.MimeType;
       end;
       try
-        oComp.Compose(stream, oRequest.ResourceType, oResponse.Categories, pretty);
+        oComp.Compose(stream, oRequest.ResourceType, '', '', '', oResponse.Categories, pretty);
       finally
         oComp.Free;
-      end; }
+      end;
+      {$ELSE}
+      assert(oResponse.Meta <> nil);
+      response.Pragma := 'no-cache';
+      if oResponse.Format = ffJson then
+        oComp := TFHIRJsonComposer.Create(oRequest.lang)
+      else if oResponse.Format = ffXhtml then
+      begin
+        oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
+        TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
+        TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
+        TFHIRXhtmlComposer(oComp).Tags := oResponse.categories.Link;
+        TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
+        TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
+//          response.Expires := 0;
+      response.Pragma := '';
+      end
+      else if oResponse.Format = ffXml then
+        oComp := TFHIRXmlComposer.Create(oRequest.lang)
+      else if oResponse.Resource._source_format = ffJson then
+        oComp := TFHIRJsonComposer.Create(oRequest.lang)
+      else
+        oComp := TFHIRXmlComposer.Create(oRequest.lang);
+      try
+        response.ContentType := oComp.MimeType;
+        oComp.Compose(stream, oResponse.meta, pretty, oresponse.link_List);
+      finally
+        oComp.Free;
+      end;
+    {$ENDIF}
     end
     else
     begin
@@ -2209,7 +2276,7 @@ begin
   ''#13#10+
   '<p>'+GetFhirMessage('SYSTEM_OPERATIONS', lang)+':</p><ul><li> <a href="'+sBaseUrl+'/metadata">'+GetFhirMessage('CONF_PROFILE', lang)+'</a> '+
    '('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> ('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10+
-  '<li><a class="tag" href="'+sBaseUrl+'/_tags">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>'+
+  '<li><a class="tag" href="'+sBaseUrl+'/'+META_CMD_NAME+'">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>'+
   '<li><a href="'+sBaseUrl+'/_search">'+GetFhirMessage('GENERAL_SEARCH', lang)+'</a> (the form''s a bit weird, but the API is useful)</li>'+
   '<li><a href="'+sBaseUrl+'/_history">'+StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)])+'</a> (History of all resources)</li>'+#13#10+
   '<li><a href="#upload">'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</a></li>'+#13#10);

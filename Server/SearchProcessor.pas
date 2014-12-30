@@ -7,7 +7,7 @@ uses
   ParseMap,
   StringSupport, EncodeSupport,
   AdvObjects, DateAndTime, DecimalSupport,
-  FHIRResources, FHIRLang, FHIRConstants, FHIRComponents, FHIRTypes,
+  FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRComponents, FHIRTypes,
   FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax,
   UcumServices;
 
@@ -54,7 +54,6 @@ type
     Function ProcessParam(types : TFHIRResourceTypeSet; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
     procedure SetIndexer(const Value: TFhirIndexManager);
     procedure SetRepository(const Value: TFHIRDataStore);
-    function SchemeForName(name: String): string;
     procedure SplitByCommas(value: String; list: TStringList);
     function findPrefix(var value: String; subst: String): boolean;
     procedure checkDateFormat(s : string);
@@ -494,6 +493,30 @@ begin
     result := name+' >= '''+value+'''';
 end;
 
+function TypeForName(name : String) : integer;
+begin
+  if (name = '_profile') then
+    result := ord(tkProfile)
+  else if (name = '_tag') then
+    result := ord(tkTag)
+  else if (name = '_security') then
+    result := ord(tkSecurity)
+  else
+    result := 0;
+end;
+
+function KindForName(name : String) : TFhirTagKind;
+begin
+  if (name = '_profile') then
+    result := tkProfile
+  else if (name = '_tag') then
+    result := tkTag
+  else if (name = '_security') then
+    result := tkSecurity
+  else
+    result := tkUnknown;
+end;
+
 Function TSearchProcessor.processParam(types : TFHIRResourceTypeSet; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
 var
   key, i : integer;
@@ -573,18 +596,20 @@ begin
         raise exception.create('modifier "'+modifier+'" not handled on originalId');
       result :=  '(originalId = '''+sqlwrapString(value)+''')';
     end
-    else if (name = '_tag') or (name = 'profile') or (name = '_security') then
+    {$IFDEF FHIR-DSTU}
+    else if (name = '_tag') or (name = '_profile') or (name = '_security') then
     begin
       bHandled := true;
       if modifier = 'partial' then
-        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey in (Select TagKey from Tags where SchemeUri = '''+SchemeForName(name)+''' and TermUri like '''+SQLWrapString(value)+'%'')))'
+        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey in (Select TagKey from Tags where Type = '+inttostr(TypeForName(name))+' and TermUri like '''+SQLWrapString(value)+'%'')))'
       else if modifier = 'text' then
         result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where Label like ''%'+SQLWrapString(value)+'%''))'
       else if modifier = '' then
-        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey = '''+intToStr(FRepository.KeyForTag(SchemeForName(name), value))+'''))'
+        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey = '''+intToStr(FRepository.KeyForTag(KindForName(name), value, ''))+'''))'
       else
         raise exception.create('modifier "'+modifier+'" not handled on tag');
     end
+    {$ENDIF}
     else
     begin
       key := FIndexer.GetKeyByName(types, name);
@@ -865,16 +890,6 @@ begin
   FRepository := Value;
 end;
 
-
-function TSearchProcessor.SchemeForName(name : String) : string;
-begin
-  if name = '_tag' then
-    result := 'http://hl7.org/fhir/tag'
-  else if result = '_profile' then
-    result :='http://hl7.org/fhir/tag/profile'
-  else
-    result := 'http://hl7.org/fhir/tag/security';
-end;
 
 
 procedure TSearchProcessor.SplitByCommas(value : String; list : TStringList);

@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.4.0 generated Fri, Dec 26, 2014 09:37+1100
+// FHIR v0.4.0 generated Tue, Dec 30, 2014 21:20+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -8531,7 +8531,7 @@ function TFhirElementList.Insert(index: Integer): TFhirElement;
 begin
   result := TFhirElement.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -8729,7 +8729,7 @@ function TFhirBackboneElementList.Insert(index: Integer): TFhirBackboneElement;
 begin
   result := TFhirBackboneElement.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -8952,7 +8952,7 @@ function TFhirEnumList.Insert(index: Integer): TFhirEnum;
 begin
   result := TFhirEnum.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -9137,7 +9137,7 @@ function TFhirIntegerList.Insert(index: Integer): TFhirInteger;
 begin
   result := TFhirInteger.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -9324,7 +9324,7 @@ function TFhirDateTimeList.Insert(index: Integer): TFhirDateTime;
 begin
   result := TFhirDateTime.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -9511,7 +9511,7 @@ function TFhirDateList.Insert(index: Integer): TFhirDate;
 begin
   result := TFhirDate.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -9696,7 +9696,7 @@ function TFhirDecimalList.Insert(index: Integer): TFhirDecimal;
 begin
   result := TFhirDecimal.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -9881,7 +9881,7 @@ function TFhirUriList.Insert(index: Integer): TFhirUri;
 begin
   result := TFhirUri.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -10066,7 +10066,7 @@ function TFhirBase64BinaryList.Insert(index: Integer): TFhirBase64Binary;
 begin
   result := TFhirBase64Binary.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -10251,7 +10251,7 @@ function TFhirTimeList.Insert(index: Integer): TFhirTime;
 begin
   result := TFhirTime.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -10436,7 +10436,7 @@ function TFhirStringList.Insert(index: Integer): TFhirString;
 begin
   result := TFhirString.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -10621,7 +10621,7 @@ function TFhirBooleanList.Insert(index: Integer): TFhirBoolean;
 begin
   result := TFhirBoolean.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -10808,7 +10808,7 @@ function TFhirInstantList.Insert(index: Integer): TFhirInstant;
 begin
   result := TFhirInstant.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -10964,7 +10964,7 @@ function TFhirCodeList.Insert(index: Integer): TFhirCode;
 begin
   result := TFhirCode.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -11120,7 +11120,7 @@ function TFhirIdList.Insert(index: Integer): TFhirId;
 begin
   result := TFhirId.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -11276,7 +11276,7 @@ function TFhirOidList.Insert(index: Integer): TFhirOid;
 begin
   result := TFhirOid.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -11432,7 +11432,7 @@ function TFhirUuidList.Insert(index: Integer): TFhirUuid;
 begin
   result := TFhirUuid.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -11647,7 +11647,7 @@ function TFhirExtensionList.Insert(index: Integer): TFhirExtension;
 begin
   result := TFhirExtension.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -11885,7 +11885,7 @@ function TFhirNarrativeList.Insert(index: Integer): TFhirNarrative;
 begin
   result := TFhirNarrative.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -12120,7 +12120,7 @@ function TFhirPeriodList.Insert(index: Integer): TFhirPeriod;
 begin
   result := TFhirPeriod.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -12464,7 +12464,7 @@ function TFhirCodingList.Insert(index: Integer): TFhirCoding;
 begin
   result := TFhirCoding.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -12659,7 +12659,7 @@ function TFhirRangeList.Insert(index: Integer): TFhirRange;
 begin
   result := TFhirRange.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -13019,7 +13019,7 @@ function TFhirQuantityList.Insert(index: Integer): TFhirQuantity;
 begin
   result := TFhirQuantity.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -13426,7 +13426,7 @@ function TFhirAttachmentList.Insert(index: Integer): TFhirAttachment;
 begin
   result := TFhirAttachment.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -13621,7 +13621,7 @@ function TFhirRatioList.Insert(index: Integer): TFhirRatio;
 begin
   result := TFhirRatio.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -13996,7 +13996,7 @@ function TFhirSampledDataList.Insert(index: Integer): TFhirSampledData;
 begin
   result := TFhirSampledData.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -14231,7 +14231,7 @@ function TFhirReferenceList.Insert(index: Integer): TFhirReference;
 begin
   result := TFhirReference.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -14461,7 +14461,7 @@ function TFhirCodeableConceptList.Insert(index: Integer): TFhirCodeableConcept;
 begin
   result := TFhirCodeableConcept.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -14807,7 +14807,7 @@ function TFhirIdentifierList.Insert(index: Integer): TFhirIdentifier;
 begin
   result := TFhirIdentifier.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -15227,7 +15227,7 @@ function TFhirElementDefinitionSlicingList.Insert(index: Integer): TFhirElementD
 begin
   result := TFhirElementDefinitionSlicing.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -15512,7 +15512,7 @@ function TFhirElementDefinitionTypeList.Insert(index: Integer): TFhirElementDefi
 begin
   result := TFhirElementDefinitionType.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -15839,7 +15839,7 @@ function TFhirElementDefinitionConstraintList.Insert(index: Integer): TFhirEleme
 begin
   result := TFhirElementDefinitionConstraint.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -16141,7 +16141,7 @@ function TFhirElementDefinitionBindingList.Insert(index: Integer): TFhirElementD
 begin
   result := TFhirElementDefinitionBinding.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -16376,7 +16376,7 @@ function TFhirElementDefinitionMappingList.Insert(index: Integer): TFhirElementD
 begin
   result := TFhirElementDefinitionMapping.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -17231,7 +17231,7 @@ function TFhirElementDefinitionList.Insert(index: Integer): TFhirElementDefiniti
 begin
   result := TFhirElementDefinition.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -17640,7 +17640,7 @@ function TFhirTimingRepeatList.Insert(index: Integer): TFhirTimingRepeat;
 begin
   result := TFhirTimingRepeat.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -17850,7 +17850,7 @@ function TFhirTimingList.Insert(index: Integer): TFhirTiming;
 begin
   result := TFhirTiming.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -18275,7 +18275,7 @@ function TFhirAddressList.Insert(index: Integer): TFhirAddress;
 begin
   result := TFhirAddress.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -18653,7 +18653,7 @@ function TFhirHumanNameList.Insert(index: Integer): TFhirHumanName;
 begin
   result := TFhirHumanName.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;
@@ -18978,7 +18978,7 @@ function TFhirContactPointList.Insert(index: Integer): TFhirContactPoint;
 begin
   result := TFhirContactPoint.create;
   try
-    inherited insert(index, result);
+    inherited insert(index, result.Link);
   finally
     result.free;
   end;

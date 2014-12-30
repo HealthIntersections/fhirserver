@@ -383,9 +383,9 @@ begin
       fcmdTransaction : raise Exception.Create('to do');
       fcmdHistorySystem : raise Exception.Create('to do');
       fcmdUpload : raise Exception.Create('to do');
-      fcmdGetTags : raise Exception.Create('to do');
-      fcmdUpdateTags : raise Exception.Create('to do');
-      fcmdDeleteTags : raise Exception.Create('to do');
+      fcmdGetMeta : raise Exception.Create('to do');
+      fcmdUpdateMeta : raise Exception.Create('to do');
+      fcmdDeleteMeta : raise Exception.Create('to do');
     end;
   except
     on e:EFHIRClientException do

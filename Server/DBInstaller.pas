@@ -128,24 +128,25 @@ procedure TFHIRDatabaseInstaller.CreateResourceTags;
 begin
   FConn.ExecSQL('CREATE TABLE Tags( '+#13#10+
        ' TagKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
-       ' SchemeUri nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' TermUri nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' Label nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Kind int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Uri nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Code nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Display nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Tags', 'TagKey')+') '+CreateTableInfo(FConn.owner.platform));
-  FConn.ExecSQL('Create INDEX SK_Tags_Uri ON Tags (SchemeUri, TermUri)');
+  FConn.ExecSQL('Create INDEX SK_Tags_Uri ON Tags (Kind, Uri, Code)');
   // pre-registering common tags
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (1, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#U'', ''Confidentiality = none'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (2, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#L'', ''Confidentiality = Low'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (3, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#M'', ''Confidentiality = Moderate'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (4, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#N'', ''Confidentiality = Normal'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (5, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#R'', ''Confidentiality = Restricted'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (6, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/Confidentiality#V'', ''Confidentiality = Very Restricted'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (7, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#CEL'', ''Celebrity / VIP'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (8, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#EMP'', ''Employee / Staff member'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (9, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#TABOO'', ''Patient/Carer Only'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (10, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#DEMO'', ''Contact/Employment Confidential'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (11, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#DIA'', ''Diagnosis is/would be Confidential'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, SchemeUri, TermUri, Label) values (12, ''http://hl7.org/fhir/tag/security'', ''http://hl7.org/fhir/v3/ActCode#ORCON'', ''Author only'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (1,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''U'', ''Confidentiality = none'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (2,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''L'', ''Confidentiality = Low'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (3,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''M'', ''Confidentiality = Moderate'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (4,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''N'', ''Confidentiality = Normal'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (5,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''R'', ''Confidentiality = Restricted'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (6,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''V'', ''Confidentiality = Very Restricted'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (7,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''CEL'', ''Celebrity / VIP'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (8,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''EMP'', ''Employee / Staff member'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (9,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''TABOO'', ''Patient/Carer Only'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (10, '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''DEMO'', ''Contact/Employment Confidential'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (11, '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''DIA'', ''Diagnosis is/would be Confidential'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (12, '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''ORCON'', ''Author only'')');
 end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceTypes;
@@ -291,18 +292,17 @@ end;
 procedure TFHIRDatabaseInstaller.CreateResourceCompartments;
 begin
   FConn.ExecSQL('CREATE TABLE Compartments( '+#13#10+
-       ' ResourceCompartmentKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' MasterResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' CompartmentType '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' Id nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' CompartmentKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' ResourceCompartmentKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+ // internal primary key
+       ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+ // id of resource that is in a compartment
+       ' CompartmentType '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+ // field one of composite id for compartment - compartment type (spurioius since there's only one
+       ' Id nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+                    // field two of composite id for compartment - compartment id (spurioius since there's only one
+       ' CompartmentKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+   // key for the resource that creates this compartment
        PrimaryKeyType(FConn.owner.Platform, 'PK_Compartments', 'ResourceCompartmentKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Compartments', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_CompartmentResource_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Compartments', 'CompartmentKey', 'Ids', 'ResourceKey', 'FK_Compartment_ResKey'));
   FConn.ExecSQL('Create INDEX SK_Comps_Res ON Compartments (ResourceKey)');
-  FConn.ExecSQL('Create INDEX SK_Comps_ResMstr ON Compartments (MasterResourceKey)');
-  FConn.ExecSQL('Create INDEX SK_Comps_Comp ON Compartments (CompartmentType, CompartmentKey)');
+  FConn.ExecSQL('Create INDEX SK_Comps_CompKey ON Compartments (CompartmentType, CompartmentKey)');
+  FConn.ExecSQL('Create INDEX SK_Comps_CompId ON Compartments (CompartmentType, Id)');
 end;
 
 
@@ -315,10 +315,12 @@ Begin
        ' originalId nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' MasterResourceKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' MostRecent '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Deleted int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Ids', 'ResourceKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Ids', 'ResourceTypeKey', 'Types', 'ResourceTypeKey', 'FK_ResType_TypeKey'));
   FConn.ExecSQL('Create Unique INDEX SK_Ids_Id ON Ids (ResourceTypeKey, Id)');
   FConn.ExecSQL('Create INDEX SK_Ids_TypeMaster ON Ids (ResourceTypeKey, MasterResourceKey)');
+  FConn.ExecSQL('Create INDEX SK_Ids_DelTypeMaster ON Ids (ResourceTypeKey, Deleted, MasterResourceKey)');
 End;
 
 procedure TFHIRDatabaseInstaller.CreateResourceVersions;
@@ -349,7 +351,7 @@ Begin
        ' ResourceTagKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' TagKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' Label nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Display nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_VersionTags', 'ResourceTagKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_VersionTags_ResTag1 ON VersionTags (ResourceVersionKey, TagKey)');
   FConn.ExecSQL('Create UNIQUE INDEX SK_VersionTags_ResTag2 ON VersionTags (TagKey, ResourceVersionKey)');

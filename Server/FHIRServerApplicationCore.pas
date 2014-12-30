@@ -37,7 +37,7 @@ Uses
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
-  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests,
+  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests, FHIROperation, FHIRDataStore,
   FHIRServerConstants,
   SCIMServer;
 
@@ -389,6 +389,8 @@ var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
   scim : TSCIMServer;
+  store : TFHIRDataStore;
+  op : TFhirOperationManager;
   salt, un, pw, em : String;
 begin
   // check that user account details are provided
@@ -434,6 +436,7 @@ begin
   finally
     scim.Free;
   end;
+
 end;
 
 procedure TFHIRService.UnInstallDatabase;

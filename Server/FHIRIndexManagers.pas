@@ -1177,9 +1177,25 @@ begin
   FEntries.clear;
   FEntries.FKeyEvent := FKeyEvent;
 
+  // base indexes
   index(resource.ResourceType, key, 0, id, '_id');
   if (resource.languageElement <> nil) then
     index(resource.ResourceType, key, 0, resource.language, '_language');
+  {$IFNDEF FHIR-DSTU}
+  index(resource.ResourceType, key, 0, resource.implicitRulesElement, '_rules');
+  if resource.meta <> nil then
+  begin
+//    index(resource.ResourceType, key, 0, resource.meta.versionId, '_versionId');
+    index(resource.ResourceType, key, 0, resource.meta.lastUpdatedElement, '_lastUpdated');
+    for i := 0 to resource.meta.profileList.Count - 1 do
+      index(resource.ResourceType, key, 0, resource.meta.profileList[i], '_profile');
+    for i := 0 to resource.meta.tagList.Count - 1 do
+      index(resource.ResourceType, key, 0, resource.meta.tagList[i], '_tag');
+    for i := 0 to resource.meta.securityList.Count - 1 do
+      index(resource.ResourceType, key, 0, resource.meta.securityList[i], '_security');
+  end;
+  {$ENDIF}
+
   FMasterKey := key;
   FSpaces.FDB.ExecSQL('delete from Compartments where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
   FSpaces.FDB.ExecSQL('delete from IndexEntries where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
@@ -1252,7 +1268,7 @@ begin
   result := '';
   if FPatientCompartments.Count > 0 then
   begin
-    FSpaces.FDB.SQL := 'insert into Compartments (ResourceCompartmentKey, ResourceKey, MasterResourceKey, CompartmentType, CompartmentKey, Id) values (:pk, :r, :mr, :ct, :ck, :id)';
+    FSpaces.FDB.SQL := 'insert into Compartments (ResourceCompartmentKey, ResourceKey, CompartmentType, CompartmentKey, Id) values (:pk, :r, :ct, :ck, :id)';
     FSpaces.FDB.prepare;
     for i := 0 to FPatientCompartments.Count - 1 Do
     begin
@@ -1262,7 +1278,6 @@ begin
 
       FSpaces.FDB.BindInteger('pk', FKeyEvent(ktCompartment));
       FSpaces.FDB.BindInteger('r', FPatientCompartments[i].key);
-      FSpaces.FDB.BindInteger('mr', key);
       FSpaces.FDB.BindInteger('ct', 1);
       FSpaces.FDB.BindString('id', FPatientCompartments[i].id);
       if FPatientCompartments[i].ckey > 0 then
@@ -2500,7 +2515,9 @@ begin
     if StringStartsWith(tags[i].term, TAG_COMPARTMENT_IN) then
       patientCompartment(key, 'Patient', Copy(tags[i].term, length(TAG_COMPARTMENT_IN), $FF));
   {$ELSE}
-  // raise Exception.Create('todo');
+  for i := 0 to tags.Count - 1 do
+    if tags[i].uri = TAG_COMPARTMENT_IN then
+      patientCompartment(key, 'Patient', tags[i].code);
   {$ENDIF}
 end;
 
@@ -2513,7 +2530,9 @@ begin
     if StringStartsWith(tags[i].term, TAG_COMPARTMENT_OUT) then
       patientCompartmentNot(key, 'Patient', Copy(tags[i].term, length(TAG_COMPARTMENT_OUT), $FF));
   {$ELSE}
-  // raise Exception.Create('todo');
+  for i := 0 to tags.Count - 1 do
+    if tags[i].uri = TAG_COMPARTMENT_OUT then
+      patientCompartmentNot(key, 'Patient', tags[i].code);
   {$ENDIF}
 end;
 
@@ -3044,6 +3063,7 @@ begin
       indexElement(resource.structureList[i].elementList[j]);
   end;
   {$ELSE}
+  index(frtProfile, key, 0, resource.type_ELement, 'type');
   if resource.snapshot <> nil then
     for j := 0 to resource.snapshot.elementList.Count - 1 do
       indexElement(resource.snapshot.elementList[j]);
@@ -3589,13 +3609,30 @@ begin
 end;
 
 
+  {$IFNDEF FHIR-DSTU}
+const
+  CHECK_TSearchParamsBinary : Array[TSearchParamsBinary] of TSearchParamsBinary = (spBinary__id, spBinary__language, spBinary__lastUpdated, spBinary__profile, spBinary__security, spBinary__tag, spBinary_Contenttype);
+  {$ENDIF}
+
 procedure TFhirIndexManager.buildIndexesBinary;
+{$IFDEF FHIR-DSTU}
 begin
   indexes.add(frtBinary, '_id', '_id', SearchParamTypeToken, []);
+{$ELSE}
+var
+  a : TSearchParamsBinary;
+begin
+  for a := low(TSearchParamsBinary) to high(TSearchParamsBinary) do
+  begin
+    assert(CHECK_TSearchParamsBinary[a] = a);
+    indexes.add(frtBinary, CODES_TSearchParamsBinary[a], DESC_TSearchParamsBinary[a], TYPES_TSearchParamsBinary[a], TARGETS_TSearchParamsBinary[a]);
+  end;
+  {$ENDIF}
 end;
 
 procedure TFhirIndexManager.buildIndexValuesBinary(key : integer; id : String; context : TFhirResource; resource: TFhirBinary);
 begin
+  index(frtBinary, key, 0, resource.contentType, 'contentType');
 end;
 
 const
@@ -5661,7 +5698,7 @@ begin
   item := TFhirCompartmentEntry.create;
   try
     item.key := key;
-    item.ckey := key;
+    item.ckey := ckey;
     item.id := id;
     inherited add(item.Link);
   finally

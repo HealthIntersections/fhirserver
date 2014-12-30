@@ -154,6 +154,11 @@ type
     function rest(type_ : TFhirResourceType) : TFhirConformanceRestResource;
   end;
 
+  TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
+  public
+    function hasCode(System, Code : String) : boolean;
+  end;
+
   TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirConformanceRestResource
   public
     function interaction(type_ : TFhirTypeRestfulInteraction) : TFhirConformanceRestResourceInteraction;
@@ -203,6 +208,7 @@ type
     function GetLinks(s: string): String;
   public
     property Links[s : string] : String read GetLinks;
+    procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleType) : TFhirBundle; overload;
   end;
 
@@ -1592,6 +1598,15 @@ begin
   result.type_ := aType;
 end;
 
+procedure TFHIRBundleHelper.deleteEntry(resource: TFHIRResource);
+var
+  i : integer;
+begin
+  for i := entryList.Count -1 downto 0 do
+    if entryList[i].resource = resource then
+      entrylist.DeleteByIndex(i);
+end;
+
 function TFHIRBundleHelper.GetLinks(s: string): String;
 var
   i : integer;
@@ -1701,6 +1716,22 @@ begin
       exit;
     end;
   result := false;
+end;
+
+{ TFHIRCodeableConceptHelper }
+
+function TFHIRCodeableConceptHelper.hasCode(System, Code: String): boolean;
+var
+  i : integer;
+begin
+  result :=  false;
+  if self <> nil then
+    for i := 0 to codingList.Count - 1 do
+      if (codingList[i].system = system) and (codingList[i].code = code) then
+      begin
+        result := true;
+        break;
+      end;
 end;
 
 end.

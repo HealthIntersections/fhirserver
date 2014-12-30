@@ -57,6 +57,7 @@ type
   TFhirContactPoint = TFhirContact;
   TFhirValueSetComposeIncludeConcept = TFHIRCode;
   TFhirValueSetComposeIncludeConceptList = TFHIRCodeList;
+  TFHIROperationDefinition = TAdvObject;
 
 const
   TypeRestfulInteractionRead = TypeRestfulOperationRead;
