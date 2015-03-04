@@ -109,6 +109,10 @@ type
       Add a URL and Rel to the end of the list.
     }
     Procedure AddValue(url, rel : String);
+    {@member AddRelRef
+      Add a URL and Rel to the end of the list.
+    }
+    Procedure AddRelRef(rel, url : String);
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -783,6 +787,20 @@ end;
 procedure TFHIRAtomLinkList.AddItem(value: TFHIRAtomLink);
 begin
   add(value.Link);
+end;
+
+procedure TFHIRAtomLinkList.AddRelRef(rel, url: String);
+var
+  link : TFHIRAtomLink;
+begin
+  link := TFhirAtomLink.create;
+  try
+    link.url := url;
+    link.rel := rel;
+    add(link.Link);
+  finally
+    link.free;
+  end;
 end;
 
 procedure TFHIRAtomLinkList.AddValue(url, rel: String);

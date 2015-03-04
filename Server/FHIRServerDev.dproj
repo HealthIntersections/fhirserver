@@ -117,9 +117,11 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <DCC_RangeChecking>true</DCC_RangeChecking>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+        <DCC_Optimize>true</DCC_Optimize>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <Icon_MainIcon>..\..\com.healthintersections.fhir\ValueSetEditor\fhir.ico</Icon_MainIcon>
-        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -xremount -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot; -xunii C:\Data\terminologies\uniis\unii.txt -xncistems</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
@@ -357,6 +359,7 @@
         <DCCReference Include="USStateCodeServices.pas"/>
         <DCCReference Include="UniiServices.pas"/>
         <DCCReference Include="RxNormServices.pas"/>
+        <DCCReference Include="..\Libraries\support\OIDSupport.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

@@ -450,7 +450,7 @@ begin
       result := result + '</snomed>';
     end
     else
-      raise Exception.Create('Snomed ID '+code+' not known');
+      result := '<snomed version="'+FServer.Snomed.Version+'" description="Snomed ID '+code+' not known"/>';
   end
   else
   begin

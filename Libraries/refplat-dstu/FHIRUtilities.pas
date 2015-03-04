@@ -57,7 +57,7 @@ type
   TFhirContactPoint = TFhirContact;
   TFhirValueSetComposeIncludeConcept = TFHIRCode;
   TFhirValueSetComposeIncludeConceptList = TFHIRCodeList;
-  TFHIROperationDefinition = TAdvObject;
+  TFHIROperationDefinition = TFHIRObject;
 
 const
   TypeRestfulInteractionRead = TypeRestfulOperationRead;
@@ -114,6 +114,9 @@ procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String); overload;
 procedure BuildNarrative(vs : TFhirValueSet); overload;
 
 Function removeCaseAndAccents(s : String) : String;
+function isHistoryURL(url : String) : boolean;
+procedure splitHistoryUrl(var url : String; var history : String);
+function ResourceTypeByName(name : String) : TFhirResourceType;
 
 
 type
@@ -1490,6 +1493,28 @@ function TFhirConceptMapConceptMapHelper.codeSystemElement: TFhirUri;
 begin
   result := systemElement;
 end;
+
+function isHistoryURL(url : String) : boolean;
+begin
+  result := url.Contains('/_history/') and IsId(url.Substring(url.IndexOf('/_history/')+10));
+end;
+
+procedure splitHistoryUrl(var url : String; var history : String);
+begin
+  history := url.Substring(url.IndexOf('/_history/')+10);
+  url := url.Substring(0, url.IndexOf('/_history/'));
+end;
+
+function ResourceTypeByName(name : String) : TFhirResourceType;
+var
+  index : Integer;
+begin
+  index := StringArrayIndexOfSensitive(CODES_TFhirResourceType, name);
+  if index < 1 then
+    raise Exception.Create('Unknown resource name "'+name+'"');
+  result := TFhirResourceType(index);
+end;
+
 
 end.
 

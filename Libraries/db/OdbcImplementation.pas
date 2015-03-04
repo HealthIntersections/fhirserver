@@ -16,6 +16,10 @@ unit OdbcImplementation;
 {$DEFINE ODBCDYN}
 {$ENDIF}
 
+{$IFDEF WIN64}
+{$O-}
+{$ENDIF}
+
 interface
 
 uses

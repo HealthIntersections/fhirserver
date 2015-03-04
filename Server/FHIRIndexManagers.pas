@@ -1674,7 +1674,7 @@ begin
   if (ndx.TargetTypes = []) then
     raise Exception.create('Attempt to index a resource join in an index ('+CODES_TFhirResourceType[aType]+'/'+name+') that is a not a join (has no target types)');
   if ndx.SearchType <> SearchParamTypeReference then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Contact');
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing reference on a '+CODES_TFhirResourceType[aType]);
 
   if (length(value.reference) > INDEX_ENTRY_LENGTH) then
     raise exception.create('resource url too long for indexing: '+value.reference);
@@ -1697,8 +1697,6 @@ begin
       raise exception.create('No contained resource found in resource for "'+value.reference+'", list from '+CODES_TFhirResourceType[context.ResourceType]+' = "'+sumContainedResources(TFhirDomainResource(context))+'"');
 
     ref := FSpaces.ResolveSpace(CODES_TFhirResourceType[contained.ResourceType]);
-    if (contained = nil) then
-      raise exception.create('Unable to find internal reference to contained resource: "'+value.reference+'", list = '+sumContainedResources(TFhirDomainResource(context)));
     id := FHIRGuidToString(CreateGuid);
     target := FKeyEvent(ktResource); //FSpaces.FDB.CountSQL('select Max(ResourceKey) from Ids') + 1;
     FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
@@ -2077,11 +2075,49 @@ begin
 end;
 
 procedure TFhirIndexManager.buildIndexValuesBundle(key: integer; id : String; context : TFhirResource; resource: TFhirBundle);
+var
+  inner : TFhirResource;
+  ref, target : integer;
+  name : String;
+  ndx : TFhirIndex;
 begin
   index(frtBundle, key, 0, resource.type_Element, 'http://hl7.org/fhir/bundle-type', 'type');
-  // todo:
-//    spBundle_Composition, {@enum.value "composition" spBundle_Composition The first resource in the bundle, if the bundle type is "document" - this is a composition, and this parameter provides access to searches it's contents }
-//    spBundle_Message, {@enum.value "message" spBundle_Message The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search it's contents }
+  if (resource.type_ = BundleTypeDocument) then
+  begin
+    name := 'composition';
+    inner := resource.entryList[0].resource
+  end
+  else if (resource.type_ = BundleTypeMessage) then
+  begin
+    name := 'message';
+    inner := resource.entryList[0].resource
+  end
+  else
+    inner := nil;
+
+  if inner <> nil then
+  begin
+    ndx := FIndexes.getByName(frtBundle, name);
+    if (ndx = nil) then
+      raise Exception.create('Unknown index Bundle.'+name);
+    if (ndx.TargetTypes = []) then
+      raise Exception.create('Attempt to index a resource join in an index (Bundle.'+name+') that is a not a join (has no target types)');
+    if ndx.SearchType <> SearchParamTypeReference then
+      raise Exception.create('Unsuitable index Bundle.'+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing inner');
+
+    ref := FSpaces.ResolveSpace(CODES_TFhirResourceType[inner.ResourceType]);
+    id := FHIRGuidToString(CreateGuid); // ignore the existing one because this is a virtual entry; we don't want the real id to appear twice if the resource also really exists
+    target := FKeyEvent(ktResource); //FSpaces.FDB.CountSQL('select Max(ResourceKey) from Ids') + 1;
+    FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
+    FSpaces.FDB.Prepare;
+    FSpaces.FDB.BindInteger('k', target);
+    FSpaces.FDB.BindInteger('r', ref);
+    FSpaces.FDB.BindString('i', id);
+    FSpaces.FDB.Execute;
+    FSpaces.FDB.Terminate;
+    buildIndexValues(target, '', context, inner);
+    FEntries.add(key, 0, ndx, ref, id, '', target, ndx.SearchType);
+  end;
 end;
 
 {$ENDIF}
@@ -2716,13 +2752,13 @@ begin
   index(frtComposition, key, 0, resource.titleElement, 'title');
   index(frtComposition, key, 0, resource.type_Element, 'type');
   index(frtComposition, key, 0, resource.class_Element, 'class');
-  index(frtComposition, key, 0, resource.statusElement, 'http://hl7.org/fhir/composition-status', 'status');
-  index(frtComposition, key, 0, resource.confidentialityElement, 'confidentiality');
   {$IFDEF FHIR-DSTU}
   if resource.event <> nil then
     for i := 0 to resource.event.codeList.Count - 1 do
       index(frtComposition, key, 0, resource.event.codeList[i], 'context');
   {$ELSE}
+  index(frtComposition, key, 0, resource.confidentialityElement, 'confidentiality');
+  index(frtComposition, key, 0, resource.statusElement, 'http://hl7.org/fhir/composition-status', 'status');
   for j := 0 to resource.eventList.Count - 1 do
     for i := 0 to resource.eventList[j].codeList.Count - 1 do
     begin
@@ -3632,7 +3668,9 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesBinary(key : integer; id : String; context : TFhirResource; resource: TFhirBinary);
 begin
+  {$IFNDEF FHIR-DSTU}
   index(frtBinary, key, 0, resource.contentType, 'contentType');
+  {$ENDIF}
 end;
 
 const

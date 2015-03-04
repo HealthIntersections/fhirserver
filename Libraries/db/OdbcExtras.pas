@@ -9,6 +9,10 @@ unit OdbcExtras;
 {!!}
 {0.00-000  10 Jul 03 21:45  []       User: Grahame Grieve    File First added to CodeVault}
 
+{$IFDEF WIN64}
+{$O-}
+{$ENDIF}
+
 {.$.ObjExportAll On}
 
 interface

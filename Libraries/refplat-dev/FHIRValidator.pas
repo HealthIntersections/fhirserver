@@ -766,11 +766,12 @@ begin
   FCache.add('http://www.w3.org/1999/xhtml', loadDoc('fhir-xhtml.xsd'));
   FCache.add('http://www.w3.org/2000/09/xmldsig#', loadDoc('xmldsig-core-schema.xsd'));
   FCache.add('http://hl7.org/fhir', loadDoc('fhir-single.xsd'));
+  {$IFDEF FHIR-DSTU}
   FCache.add('http://purl.org/atompub/tombstones/1.0', loadDoc('tombstone.xsd'));
   FCache.add('http://a9.com/-/spec/opensearch/1.1/', loadDoc('opensearch.xsd'));
   FCache.add('http://a9.com/-/opensearch/extensions/relevance/1.0/', loadDoc('opensearchscore.xsd'));
   FCache.add('http://www.w3.org/2005/Atom', loadDoc('fhir-atom-single.xsd'));
-
+  {$ENDIF}
 end;
 
 procedure TFHIRValidator.Load(feed: TFHIRBundle);

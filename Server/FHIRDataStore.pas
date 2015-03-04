@@ -137,6 +137,7 @@ Type
     function getTypeForKey(key : integer) : TFhirResourceType;
     {$ENDIF}
     procedure asssignAllowedRights(list : TStringList; user : TSCIMUser; choice : String);
+    procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
   public
     constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile; SCIMServer :  TSCIMServer);
     Destructor Destroy; Override;
@@ -312,7 +313,7 @@ begin
       if conn.ColIntegerByName['ConfigKey'] = 1 then
         FSupportTransaction := conn.ColStringByName['Value'] = '1'
       else if conn.ColIntegerByName['ConfigKey'] = 2 then
-        FBases.add(conn.ColStringByName['Value'])
+        FBases.add(AppendForwardSlash(conn.ColStringByName['Value']))
       else if conn.ColIntegerByName['ConfigKey'] = 3 then
         FSupportSystemHistory := conn.ColStringByName['Value'] = '1'
       else if conn.ColIntegerByName['ConfigKey'] = 4 then
@@ -932,7 +933,8 @@ begin
     begin
       inc(FLastTagKey);
       tag.Key := FLastTagKey;
-      registerTag(tag);
+      tag.Name := tag.combine;
+      doregisterTag(tag, conn);
       FTags.add(tag.Link);
       FTagsByKey.Add(tag.Key, tag.Link);
     end;
@@ -966,21 +968,26 @@ begin
 end;
 
 
+procedure TFHIRDataStore.doRegisterTag(tag : TFHIRTag; conn : TKDBConnection);
+begin
+  conn.SQL := 'insert into Tags (TagKey, Kind, Uri, Code, Display) values (:k, :t, :s, :c, :d)';
+  conn.Prepare;
+  conn.BindInteger('k', tag.Key);
+  conn.BindInteger('t', Ord(tag.Kind));
+  conn.BindString('s', tag.Uri);
+  conn.BindString('c', tag.Code);
+  conn.BindString('d', tag.Display);
+  conn.Execute;
+  conn.terminate;
+end;
+
 procedure TFHIRDataStore.registerTag(tag: TFhirTag);
 var
   conn : TKDBConnection;
 begin
   conn := FDB.GetConnection('fhir');
   try
-    conn.SQL := 'insert into Tags (TagKey, Kind, Uri, Code, Display) values (:k, :t, :s, :c, :d)';
-    conn.Prepare;
-    conn.BindInteger('k', tag.Key);
-    conn.BindInteger('t', Ord(tag.Kind));
-    conn.BindString('s', tag.Uri);
-    conn.BindString('c', tag.Code);
-    conn.BindString('d', tag.Display);
-    conn.Execute;
-    conn.terminate;
+    doRegisterTag(tag, conn);
     conn.Release;
   except
     on e:exception do

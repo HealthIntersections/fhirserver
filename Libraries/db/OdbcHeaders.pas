@@ -10,6 +10,9 @@
 Unit OdbcHeaders;
 
 {.$.ObjExportAll On}
+{$IFDEF WIN64}
+{$O-}
+{$ENDIF}
 
 Interface
 

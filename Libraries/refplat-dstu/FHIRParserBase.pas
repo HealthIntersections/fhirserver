@@ -195,6 +195,7 @@ Type
     function Compose(oFeed : TFHIRAtomFeed; isPretty : Boolean) : String; Overload;
 
     Function MimeType : String; virtual;
+    Function FeedMimeType : String; virtual;
     Property Lang : String read FLang write FLang;
     Property SummaryOnly : Boolean read FSummaryOnly write FSummaryOnly;
   End;
@@ -220,6 +221,7 @@ Type
     Procedure Compose(stream : TStream; oFeed : TFHIRAtomFeed; isPretty : Boolean); Overload; Override;
     Procedure ComposeXHtmlNode(xml : TXmlBuilder; name : String; value : TFhirXHtmlNode); overload;
     Function MimeType : String; Override;
+    Function FeedMimeType : String; Override;
     Property Comment : String read FComment write FComment;
   End;
 
@@ -246,6 +248,7 @@ Type
     Procedure Compose(stream : TStream; oFeed : TFHIRAtomFeed; isPretty : Boolean); Overload; Override;
     Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRAtomCategoryList; isPretty : Boolean); Override;
     Function MimeType : String; Override;
+    Function FeedMimeType : String; Override;
     Property Comments : Boolean read FComments write FComments;
   End;
 
@@ -277,6 +280,7 @@ Type
     Procedure Compose(stream : TStream; oFeed : TFHIRAtomFeed; isPretty : Boolean); Override;
     Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRAtomCategoryList; isPretty : Boolean); Override;
     Function MimeType : String; Override;
+    Function FeedMimeType : String; Override;
 
     Property relativeReferenceAdjustment : integer read FrelativeReferenceAdjustment write FrelativeReferenceAdjustment;
     Property OnGetLink : TFHIRXhtmlComposerGetLink read FOnGetLink write FOnGetLink;
@@ -760,9 +764,14 @@ begin
   xml.NSPop
 end;
 
+function TFHIRXmlComposerBase.FeedMimeType: String;
+begin
+  result := 'application/atom+xml; charset=UTF-8';
+end;
+
 function TFHIRXmlComposerBase.MimeType: String;
 begin
-  result := 'application/fhir+xml; charset=UTF-8';
+  result := 'application/xml+fhir; charset=UTF-8';
 end;
 
 procedure TFHIRXmlComposerBase.commentsStart(xml: TXmlBuilder; value: TFhirBase);
@@ -925,9 +934,14 @@ begin
 end;
 
 
-function TFHIRJsonComposerBase.MimeType: String;
+function TFHIRJsonComposerBase.FeedMimeType: String;
 begin
  result := 'application/fhir+json; charset=UTF-8';
+end;
+
+function TFHIRJsonComposerBase.MimeType: String;
+begin
+ result := 'application/json+fhir; charset=UTF-8';
 end;
 
 
@@ -2058,6 +2072,11 @@ begin
   inherited;
 end;
 
+function TFHIRXhtmlComposer.FeedMimeType: String;
+begin
+  result := 'text/html; charset=UTF-8';
+end;
+
 class function TFHIRXhtmlComposer.Footer(base, lang : String; tail : boolean = true): string;
 begin
   result :=
@@ -2601,6 +2620,11 @@ constructor TFHIRComposer.Create(lang: String);
 begin
   inherited Create;
   FLang := lang;
+end;
+
+function TFHIRComposer.FeedMimeType: String;
+begin
+  result := '??';
 end;
 
 procedure TFHIRXhtmlComposer.SetSession(const Value: TFhirSession);

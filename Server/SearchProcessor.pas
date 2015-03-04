@@ -47,6 +47,7 @@ type
     FLang: String;
     FRepository: TFHIRDataStore;
 
+    function processValueSetMembership(vs : String) : String;
     function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
     function BuildFilterParameter(filter : TFSFilterParameter; path : TFSFilterParameterPath; parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
     function BuildFilterLogical  (filter : TFSFilterLogical;   parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
@@ -568,7 +569,7 @@ begin
       StringSplit(left, ':', left, modifier);
       if not StringArrayExistsInSensitive(CODES_TFHIRResourceType, modifier) then
         raise Exception.create(StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [modifier]));
-      a := TFHIRResourceType(StringArrayIndexOfSensitive(CODES_TFHIRResourceType, modifier));
+      a := TFHIRResourceType(StringArrayIndexOfInSensitive(CODES_TFHIRResourceType, modifier));
       types := [a];
     end
     else
@@ -578,7 +579,7 @@ begin
       raise Exception.create(StringFormat(GetFhirMessage('MSG_PARAM_CHAINED', lang), [left]));
     f := true;
     if modifier <> '' then
-      result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where (ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(FRepository.ResConfig[a].key)+')) and ('+processParam(FIndexer.GetTargetsByName(types, left), right, lowercase(value), true, f, bHandled)+')))'
+      result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where (ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(FRepository.ResConfig[a].key)+')) and ('+processParam(types, right, lowercase(value), true, f, bHandled)+')))'
     else
       result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where '+processParam(FIndexer.GetTargetsByName(types, left), right, lowercase(value), true, f, bHandled)+'))';
     bHandled := true;
@@ -691,16 +692,21 @@ begin
                   begin
                   value := lowercase(value);
                   // _id is a special case
-                  if (name = '_id') then
+                  if (name = '_id') or (name = 'id') then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
                   else if (name = '_language') then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value like '''+sqlwrapString(value)+'%'')'
                   else if modifier = 'text' then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like ''%'+sqlwrapString(lowercase(RemoveAccents(value)))+'%'')'
+                  else if modifier = 'in' then
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and '+processValueSetMembership(value)+')'
                   else if value.Contains('|') then
                   begin
                     StringSplit(value, '|', left, right);
-                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(left)+''') and Value = '''+sqlwrapString(right)+''')';
+                    if (right = '') then
+                      result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(left)+'''))'
+                    else
+                      result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and SpaceKey = (Select SpaceKey from Spaces where Space = '''+sqlwrapstring(left)+''') and Value = '''+sqlwrapString(right)+''')';
                   end
                   else
                     result :=  result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
@@ -708,7 +714,7 @@ begin
                 SearchParamTypeReference :
                   begin
                   // _id is a special case
-                  if (name = '_id') or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
+                  if (name = '_id') or (name = 'id') or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
                   else if modifier = 'text' then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like ''%'+sqlwrapString(lowercase(RemoveAccents(value)))+'%'')'
@@ -856,6 +862,26 @@ begin
   finally
     issuer.Free;
   end;
+end;
+
+function TSearchProcessor.processValueSetMembership(vs: String): String;
+var
+  vso : TFHIRValueSet;
+begin
+  // firstly, the vs can be a logical reference or a literal reference
+  if (vs.StartsWith('valueset/')) then
+  begin
+    vso := FRepository.TerminologyServer.getValueSetByUrl(vs);
+    try
+      if vso = nil then
+        vs := 'not-found'
+      else
+        vs := vso.identifier;
+    finally
+      vso.Free;
+    end;
+  end;
+  result := 'Concept in (select ConceptKey from ValueSetMembers where ValueSetKey in (select ValueSetKey from ValueSets where URL = '''+sqlWrapString(vs)+'''))';
 end;
 
 procedure TSearchProcessor.replaceNames(paramPath: TFSFilterParameterPath; components: TDictionary<String, String>);

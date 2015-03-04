@@ -234,9 +234,6 @@ uses
   IdSoapClasses in 'C:\HL7Connect\indysoap\source\IdSoapClasses.pas',
   IdSoapDebug in 'C:\HL7Connect\indysoap\source\IdSoapDebug.pas',
   IdSoapResourceStrings in 'C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas',
-  {$IFDEF OBJECT_TRACKING}
-  IdSoapTracker in 'C:\HL7Connect\indysoap\source\IdSoapTracker.pas',
-  {$ENDIF }
   IdSoapUtilities in 'C:\HL7Connect\indysoap\source\IdSoapUtilities.pas',
   IdSoapExceptions in 'C:\HL7Connect\indysoap\source\IdSoapExceptions.pas',
   IdSoapMsXml in 'C:\HL7Connect\indysoap\source\IdSoapMsXml.pas',
@@ -267,7 +264,8 @@ uses
   AdvGenerics in '..\Libraries\support\AdvGenerics.pas',
   DigitalSignatures in '..\Libraries\support\DigitalSignatures.pas',
   FHIRValidator in '..\Libraries\refplat-dstu\FHIRValidator.pas',
-  ProfileManager in '..\Libraries\refplat-dstu\ProfileManager.pas';
+  ProfileManager in '..\Libraries\refplat-dstu\ProfileManager.pas',
+  IdSoapTracker in 'C:\HL7Connect\indysoap\source\IdSoapTracker.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

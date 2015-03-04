@@ -96,11 +96,11 @@ Type
     function MeetsCriteria(criteria : String; typekey, key : integer; conn : TKDBConnection) : boolean;
     procedure createNotification(vkey, skey : integer; conn : TKDBConnection);
     function LoadResourceFromDBByKey(conn : TKDBConnection; key: integer) : TFhirResource;
-    function LoadResourceFromDBByVer(conn : TKDBConnection; vkey: integer; var id : String; tags : TFHIRAtomCategoryList) : TFhirResource;
-    procedure sendByRest(id : String; res : TFhirResource; subst : TFhirSubscription; tags : TFHIRAtomCategoryList);
-    procedure sendByEmail(id : String; res : TFhirResource; subst : TFhirSubscription; tags : TFHIRAtomCategoryList);
-    procedure sendBySms(id : String; res : TFhirResource; subst : TFhirSubscription; tags : TFHIRAtomCategoryList);
-    procedure saveTags(conn : TKDBConnection; ResourceKey : integer; tags : TFHIRAtomCategoryList);
+    function LoadResourceFromDBByVer(conn : TKDBConnection; vkey: integer; var id : String) : TFhirResource;
+    procedure sendByRest(id : String; res : TFhirResource; subst : TFhirSubscription);
+    procedure sendByEmail(id : String; res : TFhirResource; subst : TFhirSubscription);
+    procedure sendBySms(id : String; res : TFhirResource; subst : TFhirSubscription);
+    procedure saveTags(conn : TKDBConnection; ResourceKey : integer; res : TFHIRResource);
     procedure NotifySuccess(SubscriptionKey : integer);
     procedure NotifyFailure(SubscriptionKey : integer; message : string);
     procedure DoDropResource(key, vkey : Integer; internal : boolean);
@@ -284,7 +284,7 @@ begin
 end;
 
 
-procedure TSubscriptionManager.sendByEmail(id : String; res: TFhirResource; subst: TFhirSubscription; tags : TFHIRAtomCategoryList);
+procedure TSubscriptionManager.sendByEmail(id : String; res: TFhirResource; subst: TFhirSubscription);
 var
   sender : TIdSMTP;
   msg : TIdMessage;
@@ -348,7 +348,7 @@ begin
 end;
 
 
-procedure TSubscriptionManager.sendByRest(id : String; res: TFhirResource; subst: TFhirSubscription; tags : TFHIRAtomCategoryList);
+procedure TSubscriptionManager.sendByRest(id : String; res: TFhirResource; subst: TFhirSubscription);
 var
   http : TIdHTTP;
   client : TFHIRClient;
@@ -376,14 +376,14 @@ begin
   begin
     client := TFhirClient.create(subst.channel.url, subst.channel.payload.Contains('json'));
     try
-      client.updateResource(id, res, tags);
+      client.updateResource(id, res);
     finally
       client.Free;
     end;
   end;
 end;
 
-procedure TSubscriptionManager.sendBySms(id: String; res: TFhirResource; subst: TFhirSubscription; tags: TFHIRAtomCategoryList);
+procedure TSubscriptionManager.sendBySms(id: String; res: TFhirResource; subst: TFhirSubscription);
 var
   client : TTwilioClient;
 begin
@@ -413,9 +413,9 @@ var
   found : boolean;
   conn : TKDBConnection;
 begin
-  if EmptyQueue then
+//  if EmptyQueue then
     exit;
-  try  
+  try
     finish := now + DATETIME_MINUTE_ONE;
     repeat
       conn := FDatabase.GetConnection('process subscription');
@@ -447,7 +447,6 @@ var
   res : TFhirResource;
   id : string;
   subst : TFhirSubscription;
-  tags : TFHIRAtomCategoryList;
   done : boolean;
   tnow, dnow : TDateTime;
   i: Integer;
@@ -484,44 +483,36 @@ begin
   end;
   if result then
   begin
-    tags := TFHIRAtomCategoryList.Create;
+    subst := LoadResourceFromDBByKey(conn, SubscriptionKey) as TFhirSubscription;
     try
-      subst := LoadResourceFromDBByKey(conn, SubscriptionKey) as TFhirSubscription;
+      res := LoadResourceFromDBByVer(conn, ResourceKey, id);
       try
-        res := LoadResourceFromDBByVer(conn, ResourceKey, id, tags);
         try
-          try
-            raise Exception.Create('todo');
-            {
-            for i := 0 to subst.tagList.Count - 1 do
-              if (subst.tagList[i].term <> '') and (subst.tagList[i].scheme <> '') then
-                if not tags.HasTag(subst.tagList[i].scheme, subst.tagList[i].term) then
-                  tags.AddValue(subst.tagList[i].scheme, subst.tagList[i].term, subst.tagList[i].description);
-            }
-            case subst.channel.type_ of
-              SubscriptionChannelTypeRestHook: sendByRest(id, res, subst, tags);
-              SubscriptionChannelTypeEmail: sendByEmail(id, res, subst, tags);
-              SubscriptionChannelTypeSms: sendBySms(id, res, subst, tags);
-            end;
-
-            saveTags(conn, ResourceKey, tags);
-            conn.ExecSQL('update NotificationQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
-            NotifySuccess(SubscriptionKey);
-          except  
-            on e:exception do
-            begin
-              conn.ExecSQL('update NotificationQueue set LastTry = '+DBGetDate(conn.Owner.Platform)+', ErrorCount = ErrorCount + 1 where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
-              NotifyFailure(SubscriptionKey, e.message);              
-            end;
+          for i := 0 to subst.meta.tagList.Count - 1 do
+            if (subst.meta.tagList[i].code <> '') and (subst.meta.tagList[i].system <> '') then
+              if not res.meta.HasTag(subst.meta.tagList[i].system, subst.meta.tagList[i].code) then
+                res.meta.tagList.AddValue(subst.meta.tagList[i].code, subst.meta.tagList[i].system, subst.meta.tagList[i].code);
+          case subst.channel.type_ of
+            SubscriptionChannelTypeRestHook: sendByRest(id, res, subst);
+            SubscriptionChannelTypeEmail: sendByEmail(id, res, subst);
+            SubscriptionChannelTypeSms: sendBySms(id, res, subst);
           end;
-        finally
-          subst.Free;
+
+          saveTags(conn, ResourceKey, res);
+          conn.ExecSQL('update NotificationQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
+          NotifySuccess(SubscriptionKey);
+        except
+          on e:exception do
+          begin
+            conn.ExecSQL('update NotificationQueue set LastTry = '+DBGetDate(conn.Owner.Platform)+', ErrorCount = ErrorCount + 1 where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
+            NotifyFailure(SubscriptionKey, e.message);
+          end;
         end;
       finally
-        res.free;
+        subst.Free;
       end;
     finally
-      tags.Free;
+      res.free;
     end;
   end;
 end;
@@ -583,9 +574,10 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.saveTags(conn: TKDBConnection; ResourceKey: integer; tags: TFHIRAtomCategoryList);
+procedure TSubscriptionManager.saveTags(conn: TKDBConnection; ResourceKey: integer; res : TFHIRResource);
 begin
-  conn.SQL := 'Update Versions set tags = :t where ResourceVersionKey = '+inttostr(ResourceKey);
+raise Exception.Create('Error Message');
+{  conn.SQL := 'Update Versions set content = :t where ResourceVersionKey = '+inttostr(ResourceKey);
   conn.Prepare;
   try
     conn.BindBlobFromBytes('t', tags.Json);
@@ -593,6 +585,7 @@ begin
   finally
     conn.Terminate;
   end;
+  }
 end;
 
 procedure TSubscriptionManager.loadQueue(conn: TKDBConnection);
@@ -601,7 +594,7 @@ begin
   FLastNotificationQueueKey := conn.CountSQL('select max(NotificationQueueKey) from NotificationQueue');
 end;
 
-function TSubscriptionManager.LoadResourceFromDBByVer(conn: TKDBConnection; vkey: integer; var id : String; tags : TFHIRAtomCategoryList): TFhirResource;
+function TSubscriptionManager.LoadResourceFromDBByVer(conn: TKDBConnection; vkey: integer; var id : String): TFhirResource;
 var
   parser : TFHIRParser;
 begin
@@ -612,9 +605,6 @@ begin
     if not conn.FetchNext then
       raise Exception.Create('Cannot find resource');
     id := conn.ColStringByName['Id'];
-    tags.Clear;
-    raise Exception.Create('todo');
-//   tags.DecodeJson(conn.ColBlobByName['Tags']);
     if conn.ColStringByName['ResourceName'] = 'Binary' then
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else

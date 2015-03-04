@@ -181,8 +181,8 @@ Type
     function asString(value : TBytes):String; overload;
   public
     Constructor Create(lang : String); Virtual;
-    Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Overload; Virtual; Abstract;
-    Procedure Compose(stream : TStream; oMeta : TFhirResourceMeta; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Overload; Virtual; Abstract;
+    Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Overload; Virtual;
+    Procedure Compose(stream : TStream; oMeta : TFhirResourceMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Overload; Virtual;
 //    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList; isPretty : Boolean); Overload; Virtual; Abstract;
 
     function Compose(oResource : TFhirResource; isPretty : Boolean = true; links : TFhirBundleLinkList = nil) : String; Overload;
@@ -206,7 +206,7 @@ Type
     Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; value : TFhirResource); overload;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
-    Procedure Compose(stream : TStream; oMeta : TFhirResourceMeta; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
+    Procedure Compose(stream : TStream; oMeta : TFhirResourceMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
     Procedure Compose(node : IXmlDomNode; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Overload;
 //    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; oTags : TFHIRCodingList; isPretty : Boolean); Override;
     Procedure ComposeXHtmlNode(xml : TXmlBuilder; name : String; value : TFhirXHtmlNode); overload;
@@ -232,11 +232,11 @@ Type
     Procedure ComposeResource(json : TJSONWriter; oResource : TFhirResource; links : TFhirBundleLinkList); overload; virtual;
     Procedure ComposeResourceMetaElement(json : TJSONWriter; oMeta : TFhirResourceMeta); overload; virtual;
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList); overload; override;
-    Procedure ComposeExtension(json : TJSONWriter; name : String; extension : TFhirExtension; noObj : boolean = false); virtual; abstract;
+    Procedure ComposeExtension(json : TJSONWriter; name : String; extension : TFhirExtension; noObj : boolean = false); virtual;
 //    Procedure ComposeBinary(json : TJSONWriter; binary : TFhirBinary);
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
-    Procedure Compose(stream : TStream; oMeta : TFhirResourceMeta; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
+    Procedure Compose(stream : TStream; oMeta : TFhirResourceMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
     Procedure Compose(json: TJSONWriter; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Overload;
 //    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList; isPretty : Boolean); Override;
     Function MimeType : String; Override;
@@ -260,6 +260,7 @@ Type
 //    xml : TXmlBuilder;
 //    procedure ComposeNode(node : TFhirXHtmlNode);
     Procedure ComposeBundle(stream : TStream; bundle : TFHIRBundle; isPretty : Boolean);
+    Procedure ComposeDocument(stream : TStream; bundle : TFHIRBundle; isPretty : Boolean);
 
   protected
     function ResourceMediaType: String; override;
@@ -271,7 +272,7 @@ Type
     property Tags : TFHIRCodingList read FTags write SetTags;
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
-//    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList; isPretty : Boolean); Override;
+    Procedure Compose(stream : TStream; oMeta : TFhirResourceMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
     Function MimeType : String; Override;
 
     Property relativeReferenceAdjustment : integer read FrelativeReferenceAdjustment write FrelativeReferenceAdjustment;
@@ -644,7 +645,7 @@ begin
   end;
 end;
 
-procedure TFHIRXmlComposerBase.Compose(stream: TStream; oMeta: TFhirResourceMeta; isPretty: Boolean; links: TFhirBundleLinkList);
+procedure TFHIRXmlComposerBase.Compose(stream: TStream; oMeta: TFhirResourceMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty: Boolean; links: TFhirBundleLinkList);
 var
   xml : TXmlBuilder;
 begin
@@ -865,6 +866,11 @@ begin
   json.FinishObject;
 end;
 
+procedure TFHIRJsonComposerBase.ComposeExtension(json: TJSONWriter; name: String; extension: TFhirExtension; noObj: boolean);
+begin
+  raise Exception.Create('Error : call to TFHIRJsonComposerBase.ComposeExtension(json: TJSONWriter; name: String; extension: TFhirExtension; noObj: boolean)');
+end;
+
 procedure TFHIRJsonComposerBase.ComposeExtensions(json: TJSONWriter; extensions: TFhirExtensionList);
 var
   done : TStringList;
@@ -916,7 +922,7 @@ end;
 //  Prop(json, 'content', StringReplace(string(EncodeBase64(binary.Content.Data, binary.Content.Size)), #13#10, ''));
 //end;
 
-procedure TFHIRJsonComposerBase.Compose(stream: TStream; oMeta: TFhirResourceMeta; isPretty: Boolean; links: TFhirBundleLinkList);
+procedure TFHIRJsonComposerBase.Compose(stream: TStream; oMeta: TFhirResourceMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty: Boolean; links: TFhirBundleLinkList);
 var
   oStream : TAdvVCLStream;
   json : TJSONWriter;
@@ -1163,6 +1169,16 @@ end;
 
 {atom }
 
+procedure TFHIRComposer.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList);
+begin
+  raise Exception.Create('Error: call to TFHIRComposer.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList)');
+end;
+
+procedure TFHIRComposer.Compose(stream: TStream; oMeta: TFhirResourceMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty: Boolean; links: TFhirBundleLinkList);
+begin
+  raise Exception.Create('Error: call to TFHIRComposer.Compose(stream: TStream; oMeta: TFhirResourceMeta; isPretty: Boolean; links: TFhirBundleLinkList)');
+end;
+
 procedure TFHIRComposer.ComposeResource(xml : TXmlBuilder; oResource: TFhirResource; links : TFhirBundleLinkList);
 begin
   raise exception.create('don''t use TFHIRXmlComposerBase directly - use TFHIRXmlComposer');
@@ -1242,7 +1258,10 @@ var
 begin
   if (oResource is TFhirBundle) then
   begin
-    composeBundle(stream, oResource as TFhirBundle, isPretty);
+    if TFhirBundle(oResource).type_ = BundleTypeDocument then
+      composeDocument(stream, TFhirBundle(oResource), isPretty)
+    else
+      composeBundle(stream, TFhirBundle(oResource), isPretty);
     exit;
   end;
 
@@ -1508,89 +1527,84 @@ begin
     result := '_othertag';
 end;
 
-//procedure TFHIRXhtmlComposer.Compose(stream: TStream; ResourceType: TFhirResourceType; oTags: TFHIRCodingList; isPretty: Boolean);
-//var
-//  s : TAdvStringBuilder;
-//  i : integer;
-//begin
-//  s := TAdvStringBuilder.create;
-//  try
-//    s.append(
-//'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
-//'<!DOCTYPE HTML'+#13#10+
-//'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'+#13#10+
-//''+#13#10+
-//'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
-//'<head>'+#13#10);
-//  if ResourceType = frtNull then
-//    s.append('    <title>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', lang))+'</title>'+#13#10)
-//  else if id = '' then
-//    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', lang), [CODES_TFhirResourceType[ResourceType]]))+'</title>'+#13#10)
-//  else if ver = '' then
-//    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id]))+'</title>'+#13#10)
-//  else
-//    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id, ver]))+'</title>'+#13#10);
-//
-//    s.append(
-//PageLinks+#13#10+
-//FHIR_JS+#13#10+
-//'</head>'+#13#10+
-//''+#13#10+
-//'<body>'+#13#10+
-//''+#13#10+
-//Header(Session, FBaseURL, Lang));
-//
-//  if ResourceType = frtNull then
-//    s.append('    <h2>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', lang))+'</title>'+#13#10+
-//     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
-//     'Or: <a href="'+FBaseUrl+'"/>Home Page</a> </p>')
-//  else if id = '' then
-//    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', lang), [CODES_TFhirResourceType[ResourceType]]))+'</h2>'+#13#10+
-//     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
-//     'Or: '+ResourceLinks(ResourceType, lang, FBaseURL, 0, false, false)+' </p>')
-//  else if ver = '' then
-//    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id]))+'</h2>'+#13#10+
-//     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
-//     'Or: <a href="../'+id+'">This Resource</a> </p>')
-//  else
-//    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id, ver]))+'</h2>'+#13#10+
-//     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
-//     'Or: <a href="../'+ver+'">This Resource Version</a> </p>');
-//
-//   s.append('<p></p>'+#13#10);
-//   if (oTags.Count = 0) then
-//     s.append('<p>'+GetFhirMessage('NO_TAGS', lang)+'</p>'+#13#10)
-//   else
-//   begin
-//     s.append('<table>'+#13#10);
-//     s.append(' <tr><td><b>URI</b></td><td></td><td><b>Label</b></td></tr>'+#13#10);
-//     for i := 0 to oTags.Count - 1 do
-//     begin
-//       s.append(' <tr><td>');
-//{
-//       if ResourceType = frtNull then
-//         s.append('<a href="'+FBaseUrl+'_search?') // todo-bundle paramForScheme(oTags[i].scheme)+'='+EncodeMIME(oTags[i].term)+'"/>'+oTags[i].term+'</a>')
-//       else
-//         s.append('<a href="'+FBaseUrl+CODES_TFhirResourceType[ResourceType]+'/_search?'+paramForScheme(oTags[i].scheme)+'='+EncodeMIME(oTags[i].term)+'"/>'+oTags[i].term+'</a>');
-//       s.append('</td><td></td><td>'+FormatTextToXml(oTags[i].label_)+'</td></tr>'+#13#10);
-//}
-//     end;
-//     s.append('</table>'+#13#10);
-//   end;
-//   s.append('<p></p>'+#13#10);
-//
-//    s.append(
-//'<p><br/>'+Footer(FBaseURL, lang)
-//    );
-//    s.WriteToStream(stream);
-//  finally
-//    s.free;
-//  end;
-//end;
-//
 
 const
   TYPE_TITLE : Array[TFhirBundleType] of String = ('', 'Document', 'Message', 'Transaction', 'Trnsaction Response', 'History Record', 'Search Results', 'Resource Collection');
+
+procedure TFHIRXhtmlComposer.Compose(stream: TStream; oMeta: TFhirResourceMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty: Boolean; links: TFhirBundleLinkList);
+var
+  s : TAdvStringBuilder;
+  i : integer;
+begin
+  s := TAdvStringBuilder.create;
+  try
+    s.append(
+'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
+'<!DOCTYPE HTML'+#13#10+
+'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'+#13#10+
+''+#13#10+
+'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
+'<head>'+#13#10);
+  if ResourceType = frtNull then
+    s.append('    <title>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', lang))+'</title>'+#13#10)
+  else if id = '' then
+    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', lang), [CODES_TFhirResourceType[ResourceType]]))+'</title>'+#13#10)
+  else if ver = '' then
+    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id]))+'</title>'+#13#10)
+  else
+    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id, ver]))+'</title>'+#13#10);
+
+    s.append(
+PageLinks+#13#10+
+FHIR_JS+#13#10+
+'</head>'+#13#10+
+''+#13#10+
+'<body>'+#13#10+
+''+#13#10+
+Header(Session, FBaseURL, Lang));
+
+  if ResourceType = frtNull then
+    s.append('    <h2>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', lang))+'</title>'+#13#10+
+     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
+     'Or: <a href="'+FBaseUrl+'"/>Home Page</a> </p>')
+  else if id = '' then
+    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', lang), [CODES_TFhirResourceType[ResourceType]]))+'</h2>'+#13#10+
+     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
+     'Or: '+ResourceLinks(ResourceType, lang, FBaseURL, 0, false, false)+' </p>')
+  else if ver = '' then
+    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id]))+'</h2>'+#13#10+
+     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
+     'Or: <a href="../'+id+'">This Resource</a> </p>')
+  else
+    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id, ver]))+'</h2>'+#13#10+
+     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
+     'Or: <a href="../'+ver+'">This Resource Version</a> </p>');
+
+   s.append('<p></p>'+#13#10);
+   if (oMeta.profileList.Count + oMeta.tagList.Count + oMeta.securityList.Count = 0) then
+     s.append('<p>'+GetFhirMessage('NO_TAGS', lang)+'</p>'+#13#10)
+   else
+   begin
+     s.append('<table>'+#13#10);
+     s.append(' <tr><td><b>Type</b></td><td></td><td><b>identity</b></td><td></td><td><b>Label</b></td></tr>'+#13#10);
+     for i := 0 to oMeta.profileList.Count - 1 do
+       s.append(' <tr><td>Profile</td><td></td><td>'+oMeta.profileList[i].value+'</td><td></td><td></td></tr>'+#13#10);
+     for i := 0 to oMeta.tagList.Count - 1 do
+       s.append(' <tr><td>Tag</td><td></td><td>'+oMeta.tagList[i].system+'::'+oMeta.tagList[i].code+'</td><td></td><td>'+oMeta.tagList[i].display+'</td></tr>'+#13#10);
+     for i := 0 to oMeta.securityList.Count - 1 do
+       s.append(' <tr><td>Security Label</td><td></td><td>'+oMeta.securityList[i].system+'::'+oMeta.securityList[i].code+'</td><td></td><td>'+oMeta.securityList[i].display+'</td></tr>'+#13#10);
+     s.append('</table>'+#13#10);
+   end;
+   s.append('<p></p>'+#13#10);
+
+    s.append(
+'<p><br/>'+Footer(FBaseURL, lang)
+    );
+    s.WriteToStream(stream);
+  finally
+    s.free;
+  end;
+end;
 
 procedure TFHIRXhtmlComposer.ComposeBundle(stream: TStream; bundle: TFHIRBundle; isPretty: Boolean);
 var
@@ -1715,6 +1729,7 @@ Header(Session, FBaseURL, lang)+
 //      else if e.resource = nil then
 //        s.append('<p>(--)</p>')
 //      else
+{$IFDEF FHIR-DSTU}
       if e.resource is TFhirBinary then
       begin
         if StringStartsWith(TFhirBinary(e.resource).ContentType, 'image/', true) then
@@ -1723,6 +1738,7 @@ Header(Session, FBaseURL, lang)+
           s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', lang)+')'+#13#10+'</pre>'+#13#10);
       end
       else
+      {$ENDIF}
       begin
         xml := TFHIRXmlComposer.create(lang);
         ss := TStringStream.create('');
@@ -1736,6 +1752,85 @@ Header(Session, FBaseURL, lang)+
           xml.free;
         end;
       end;
+    end;
+    s.append(
+'<p><br/>'
++footer(FBaseUrl, lang)
+    );
+    s.WriteToStream(stream);
+  finally
+    s.free;
+  end;
+end;
+
+procedure TFHIRXhtmlComposer.ComposeDocument(stream: TStream; bundle: TFHIRBundle; isPretty: Boolean);
+var
+  comp : TFhirComposition;
+  s : TAdvStringBuilder;
+  ss : TStringStream;
+  xml : TFHIRXmlComposer;
+  base, title : String;
+  procedure AddNarrative(title : String; be : TFhirBundleEntry);
+  var
+    r : TFHIRResource;
+  begin
+    if (title <> '') then
+      s.Append('<h2>'+FormatTextToXML(title)+'</h2>'#13#10);
+    if (be <> nil) then
+    begin
+      r := be.resource;
+      if (r <> nil) and (r is TFhirDomainResource) and (TFhirDomainResource(r).text <> nil) and (TFhirDomainResource(r).text.div_ <> nil) then
+        ComposeXHtmlNode(s, TFhirDomainResource(r).text.div_, 2, relativeReferenceAdjustment);
+    end;
+  end;
+  procedure addSections(sections : TFhirCompositionSectionList; bundle : TFHIRBundle);
+  var
+    i : integer;
+  begin
+    for i := 0 to sections.Count - 1 do
+    begin
+      addNarrative(title, bundle.resolve(base, sections[i].content));
+      addSections(sections[i].sectionList, bundle);
+    end;
+  end;
+begin
+  comp := bundle.entryList[0].resource as TFhirComposition;
+  base := bundle.entryBase(bundle.entryList[0]);
+  title := comp.getWorkingTitle;
+
+
+  s := TAdvStringBuilder.create;
+  try
+    s.append(
+'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
+'<!DOCTYPE HTML'+#13#10+
+'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'+#13#10+
+''+#13#10+
+'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
+'<head>'+#13#10+
+'    <title>Document: '+title+'</title>'+#13#10+
+PageLinks+
+FHIR_JS+#13#10+
+'</head>'+#13#10+
+''+#13#10+
+'<body>'+#13#10+
+''+#13#10+
+Header(Session, FBaseURL, lang)+
+'<h1>Document: '+title+'</h1>'+#13#10);
+
+    xml := TFHIRXmlComposer.create(lang);
+    ss := TStringStream.create('');
+    try
+      s.Append('<p><b>Document Narrative:</b></p>'#13#10);
+      addNarrative(title, bundle.entryList[0]);
+      addNarrative('Subject', bundle.resolve(base, comp.subject));
+      addSections(comp.sectionList, bundle);
+      s.Append('<hr/><p><b>Document Source:</b></p>'#13#10);
+      xml.Compose(ss, bundle, true, nil);
+      s.append(#13#10+'<pre class="xml">'+#13#10+FormatXMLToHTML(ss.dataString)+#13#10+'</pre>'+#13#10);
+    finally
+      ss.free;
+      xml.free;
     end;
     s.append(
 '<p><br/>'
@@ -1962,43 +2057,64 @@ var
   lbl : string;
   clss, typ : string;
 begin
-  if tags.count = 0 then
+  if meta.tagList.count + meta.securityList.count = 0 then
     result := '(no tags)'
   else
   begin
     result := '';
-    for i := 0 to tags.count - 1 do
+    for i := 0 to meta.taglist.count - 1 do
     begin
-{ todo-bundle
-      lbl := tags[i].label_;
+      lbl := meta.taglist[i].display;
       if lbl = '' then
-        lbl := URLTail(tags[i].term);
+        lbl := meta.taglist[i].code;
       if (length(lbl) > 20) then
         lbl := Copy(lbl, 1, 20)+'..';
-
-      if tags[i].scheme = TAG_FHIR_SCHEME_PROFILE then
-      begin
-        clss := 'tag-profile';
-        typ := 'Profile: ';
-      end
-      else if tags[i].scheme = TAG_FHIR_SCHEME_SECURITY then
-      begin
-        clss := 'tag-security';
-        typ := 'Security: ';
-      end
-      else
-        clss := 'tag';
+      clss := 'tag';
 
       if aType = frtNull then
-        result := result + '<a href="'+FBaseUrl+'_search?'+paramForScheme(tags[i].scheme)+'='+EncodeMIME(tags[i].term)+'" class="'+clss+'" title="'+typ+tags[i].term+'">'+lbl+'</a>'
+        result := result + '<a href="'+FBaseUrl+'_search?tag='+EncodeMIME(meta.taglist[i].system+'|'+meta.taglist[i].code)+'" class="tag" title="'+typ+meta.taglist[i].system+'|'+meta.taglist[i].code+'">'+lbl+'</a>'
       else
       begin
-        result := result + '<a href="'+FBaseUrl+CODES_TFhirResourceType[aType]+'/_search?'+paramForScheme(tags[i].scheme)+'='+EncodeMIME(tags[i].term)+'" class="'+clss+'" title="'+typ+tags[i].term+'">'+lbl+'</a>';
+        result := result + '<a href="'+FBaseUrl+CODES_TFhirResourceType[aType]+'/_search?tag='+EncodeMIME(meta.taglist[i].system+'|'+meta.taglist[i].code)+'" class="tag" title="'+typ+meta.taglist[i].system+'|'+meta.taglist[i].code+'">'+lbl+'</a>';
         if (target <> '') then
-          result := result + '<a href="javascript:deleteTag('''+target+'/_delete'', '''+tags[i].scheme+''', '''+tags[i].term+''')" class="tag-delete" title="Delete '+tags[i].term+'">-</a>'
+          result := result + '<a href="javascript:deleteTag('''+target+'/_delete'', ''tag'', '''+meta.taglist[i].system+'|'+meta.taglist[i].code+''')" class="tag-delete" title="Delete '+meta.taglist[i].display+'">-</a>'
       end;
       result := result + '&nbsp;';
-    }
+    end;
+    for i := 0 to meta.securityList.count - 1 do
+    begin
+      lbl := meta.securityList[i].display;
+      if lbl = '' then
+        lbl := meta.securityList[i].code;
+      if (length(lbl) > 20) then
+        lbl := Copy(lbl, 1, 20)+'..';
+      clss := 'tag-profile';
+
+      if aType = frtNull then
+        result := result + '<a href="'+FBaseUrl+'_search?security='+EncodeMIME(meta.securityList[i].system+'|'+meta.securityList[i].code)+'" class="tag" title="'+typ+meta.securityList[i].system+'|'+meta.securityList[i].code+'">'+lbl+'</a>'
+      else
+      begin
+        result := result + '<a href="'+FBaseUrl+CODES_TFhirResourceType[aType]+'/_search?tag='+EncodeMIME(meta.securityList[i].system+'|'+meta.securityList[i].code)+'" class="tag" title="'+typ+meta.securityList[i].system+'|'+meta.securityList[i].code+'">'+lbl+'</a>';
+        if (target <> '') then
+          result := result + '<a href="javascript:deleteTag('''+target+'/_delete'', ''security'', '''+meta.securityList[i].system+'|'+meta.securityList[i].code+''')" class="tag-delete" title="Delete '+meta.securityList[i].display+'">-</a>'
+      end;
+      result := result + '&nbsp;';
+    end;
+    for i := 0 to meta.profileList.count - 1 do
+    begin
+      lbl := URLTail(meta.profileList[i].value);
+      if (length(lbl) > 20) then
+        lbl := Copy(lbl, 1, 20)+'..';
+      clss := 'tag-profile';
+      if aType = frtNull then
+        result := result + '<a href="'+FBaseUrl+'_search?profile='+EncodeMIME(meta.profileList[i].value)+'" class="'+clss+'" title="'+typ+meta.profileList[i].value+'">'+lbl+'</a>'
+      else
+      begin
+        result := result + '<a href="'+FBaseUrl+CODES_TFhirResourceType[aType]+'/_search?profile='+EncodeMIME(meta.profileList[i].value)+'" class="'+clss+'" title="'+typ+meta.profileList[i].value+'">'+lbl+'</a>';
+        if (target <> '') then
+          result := result + '<a href="javascript:deleteTag('''+target+'/_delete'', ''profile'', '''+meta.profileList[i].value+''')" class="tag-delete" title="Delete '+meta.profileList[i].value+'">-</a>'
+      end;
+      result := result + '&nbsp;';
     end;
   end;
   if target <> '' then
@@ -2212,12 +2328,16 @@ end;
 function TFHIRXmlParserBase.CheckHtmlElementOk(elem: IXMLDOMElement): boolean;
 var
   bOk : boolean;
+  n : string;
 begin
   result := true;
+  n := elem.nodeName;
+  if (n.contains(':')) then
+    n := n.substring(n.indexof(':')+1);
   bOk := StringArrayExistsInsensitive(['p', 'br', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'b', 'em', 'i', 'strong',
     'small', 'big', 'tt', 'small', 'dfn', 'q', 'var', 'abbr', 'acronym', 'cite', 'blockquote', 'hr', 'address', 'bdo', 'kbd', 'q', 'sub', 'sup',
     'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'pre', 'table', 'caption', 'colgroup', 'col', 'thead', 'tr', 'tfoot', 'tbody', 'th', 'td',
-    'code', 'samp', 'img', 'map', 'area'], elem.nodeName);
+    'code', 'samp', 'img', 'map', 'area'], n);
   if bOk then
     result := true
   else case FParserPolicy of

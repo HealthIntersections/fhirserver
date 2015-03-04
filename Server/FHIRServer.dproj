@@ -319,7 +319,6 @@
         <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapClasses.pas"/>
         <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapDebug.pas"/>
         <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapTracker.pas"/>
         <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapUtilities.pas"/>
         <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapExceptions.pas"/>
         <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapMsXml.pas"/>
@@ -351,6 +350,7 @@
         <DCCReference Include="..\Libraries\support\DigitalSignatures.pas"/>
         <DCCReference Include="..\Libraries\refplat-dstu\FHIRValidator.pas"/>
         <DCCReference Include="..\Libraries\refplat-dstu\ProfileManager.pas"/>
+        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapTracker.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

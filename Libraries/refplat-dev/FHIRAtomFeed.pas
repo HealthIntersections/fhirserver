@@ -61,6 +61,8 @@ type
     function GetTag(kind : TFHIRTagKind; uri, code : string) : TFhirTag;
     function AddValue(kind : TFHIRTagKind; uri, code, display : string) : TFhirTag;
     procedure delete(kind : TFHIRTagKind; uri, code : String); overload;
+
+    procedure AddToList(list : TFhirCodingList);
   end;
   TFHIRAtomCategoryList = TFHIRTagList;
 
@@ -1238,6 +1240,36 @@ end;
 *)
 
 { TFhirTagList }
+
+procedure TFhirTagList.AddToList(list: TFhirCodingList);
+var
+  i, j : integer;
+  found : boolean;
+  code : TFhirCoding;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    found := false;
+    for j := 0 to list.Count - 1 do
+    begin
+      if (list[j].system = TagItem[i].Uri) and
+         (list[j].code = TagItem[i].Code) then
+         found := true;
+    end;
+    if not found then
+    begin
+      code := TFhirCoding.Create;
+      try
+        code.system := TagItem[i].Uri;
+        code.code := TagItem[i].Code;
+        code.display := TagItem[i].Display;
+        list.Add(code.link);
+      finally
+        code.Free;
+      end;
+    end;
+  end;
+end;
 
 function TFhirTagList.AddValue(kind: TFHIRTagKind; uri, code, display: string): TFhirTag;
 begin

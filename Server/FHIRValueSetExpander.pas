@@ -95,6 +95,9 @@ var
   notClosed : boolean;
 begin
   result := source.Clone;
+  if (result.expansion <> nil) then
+    exit; // just return the expansion
+
   result.xmlId := '';
   {$IFNDEF FHIR-DSTU}
   result.id := NewGuidURN;
@@ -117,6 +120,7 @@ begin
 
     result.expansion := TFhirValueSetExpansion.create;
     result.expansion.timestamp := NowUTC;
+//    result.expansion.identifier :=
     //e := result.expansion.ExtensionList.Append;
 
     try

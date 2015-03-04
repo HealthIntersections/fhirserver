@@ -1599,7 +1599,7 @@ var
 begin
   iLang := CheckLangSet(sLangSet);
   if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
-    raise Exception.Create('Concept '+sTerm+' not found');
+    raise ESnomedServices.Create('Concept '+sTerm+' not found');
   ListDisplayNames(list, iTerm, iLang, flagmask);
 end;
 

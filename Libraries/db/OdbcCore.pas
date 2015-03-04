@@ -10,6 +10,9 @@ Unit OdbcCore;
 {! 29 !}
 
 {.$.ObjExportAll On}
+{$IFDEF WIN64}
+{$O-}
+{$ENDIF}
 
 Interface
 

@@ -333,6 +333,10 @@ begin
             end;
           end;
         end
+        else if (child = nil) and (ci.name = 'language') then
+        begin
+          // hack work around
+        end
         else
         begin
           if (op.error('InstanceValidator', 'structure', path, child <> nil, 'Unrecognised Content '+ci.name)) then

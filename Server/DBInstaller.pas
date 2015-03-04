@@ -133,7 +133,7 @@ begin
        ' Code nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Display nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Tags', 'TagKey')+') '+CreateTableInfo(FConn.owner.platform));
-  FConn.ExecSQL('Create INDEX SK_Tags_Uri ON Tags (Kind, Uri, Code)');
+  FConn.ExecSQL('Create Unique INDEX SK_Tags_Uri ON Tags (Kind, Uri, Code)');
   // pre-registering common tags
   FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (1,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''U'', ''Confidentiality = none'')');
   FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (2,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''L'', ''Confidentiality = Low'')');

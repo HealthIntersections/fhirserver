@@ -7,24 +7,24 @@ All rights reserved.
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport, GuidSupport, DateSupport, BytesSupport,
+  StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport,
   AdvObjects,
 
   IdSoapMime, TextUtilities, ZLib,
@@ -50,6 +50,7 @@ const
 
 function HumanNameAsText(name : TFhirHumanName):String;
 function GetEmailAddress(contacts : TFhirContactPointList):String;
+function ResourceTypeByName(name : String) : TFhirResourceType;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
@@ -61,7 +62,12 @@ Function FhirGUIDToString(aGuid : TGuid):String;
 function ParseXhtml(lang : String; content : String; policy : TFHIRXhtmlParserPolicy):TFhirXHtmlNode;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function IsId(s : String) : boolean;
-function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String;
+function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String; overload;
+function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
+function isHistoryURL(url : String) : boolean;
+procedure splitHistoryUrl(var url : String; var history : String);
+
+procedure RemoveBOM(var s : String);
 
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
@@ -210,6 +216,8 @@ type
     property Links[s : string] : String read GetLinks;
     procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleType) : TFhirBundle; overload;
+    function resolve(base : String; ref : TFhirReference) : TFHIRBundleEntry;
+    function entryBase(entry : TFhirBundleEntry) : String;
   end;
 
   TFHIRCodingListHelper = class helper for TFHIRCodingList
@@ -225,7 +233,7 @@ type
     function getMatch(rel: String): string;
     procedure SetMatch(rel: String; const Value: string);
   public
-    procedure AddValue(rel, ref : String);
+    procedure AddRelRef(rel, ref : String);
     function AsHeader : String;
     property Matches[rel : String] : string read getMatch write SetMatch;
   end;
@@ -236,7 +244,24 @@ type
   public
     function hasParameter(name : String):Boolean;
     Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
+    procedure AddParameter(name : String; value : TFhirType); overload;
+    procedure AddParameter(name : String; value : boolean); overload;
+    procedure AddParameter(name : String; value : string); overload;
+    procedure AddParameter(name : String; value : TFhirResource); overload;
+
   end;
+
+  TFhirCompositionHelper = class helper for TFhirComposition
+  public
+    function getWorkingTitle:String;
+  end;
+
+  TFhirResourceMetaHelper = class helper for TFhirResourceMeta
+  public
+    function HasTag(system, code : String)  : boolean;
+  end;
+
+
 
 function ZCompressBytes(const s: TBytes): TBytes;
 function ZDecompressBytes(const s: TBytes): TBytes;
@@ -308,6 +333,16 @@ begin
   result := Copy(GUIDToString(aGuid), 2, 34).ToLower;
 end;
 
+
+function ResourceTypeByName(name : String) : TFhirResourceType;
+var
+  index : Integer;
+begin
+  index := StringArrayIndexOfSensitive(CODES_TFhirResourceType, name);
+  if index < 1 then
+    raise Exception.Create('Unknown resource name "'+name+'"');
+  result := TFhirResourceType(index);
+end;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 var
@@ -381,20 +416,23 @@ begin
   try
     while iter.More do
     begin
-      if StringStartsWith(iter.Current.Type_, 'Reference(') then
+      if (iter.Current.list <> nil)  then
       begin
-        for i := 0 to iter.Current.List.count - 1 do
-          if (iter.current.list[i] <> nil)  and not StringStartsWith(TFhirReference(iter.current.list[i]).reference, '#') then
-            list.add(iter.Current.list[i].Link)
-      end
-      else if (iter.Current.list <> nil) and (iter.Current.Type_ = 'Resource') then
-      begin
-        for i := 0 to iter.Current.List.count - 1 do
-          iterateReferences(path+'/'+iter.Current.Name, TFhirReference(iter.current.list[i]), list)
-      end
-      else if (iter.Current.list <> nil) and not ((node is TFHIRPrimitiveType) and (iter.current.name = 'value')) then
-        for i := 0 to iter.Current.list.Count - 1 Do
-          iterateReferences(path+'/'+iter.Current.Name, iter.Current.list[i], list);
+        if StringStartsWith(iter.Current.Type_, 'Reference(') then
+        begin
+          for i := 0 to iter.Current.List.count - 1 do
+            if (iter.current.list[i] <> nil)  and not StringStartsWith(TFhirReference(iter.current.list[i]).reference, '#') then
+              list.add(iter.Current.list[i].Link)
+        end
+        else if (iter.Current.Type_ = 'Resource') then
+        begin
+          for i := 0 to iter.Current.List.count - 1 do
+            iterateReferences(path+'/'+iter.Current.Name, TFhirReference(iter.current.list[i]), list)
+        end
+        else if not ((node is TFHIRPrimitiveType) and (iter.current.name = 'value')) then
+          for i := 0 to iter.Current.list.Count - 1 Do
+            iterateReferences(path+'/'+iter.Current.Name, iter.Current.list[i], list);
+      end;
       iter.Next;
     end;
   finally
@@ -1592,6 +1630,14 @@ end;
 
 { TFHIRBundleHelper }
 
+function TFHIRBundleHelper.entryBase(entry: TFhirBundleEntry): String;
+begin
+  if entry.base <> '' then
+    result := entry.base
+  else
+    result := base;
+end;
+
 class function TFHIRBundleHelper.Create(aType: TFhirBundleType): TFhirBundle;
 begin
   result := TFhirBundle.Create;
@@ -1618,6 +1664,29 @@ begin
       result := link_List[i].url;
       exit;
     end;
+end;
+
+function TFHIRBundleHelper.resolve(base : String; ref : TFhirReference): TFHIRBundleEntry;
+var
+  tgt, dst : String;
+  i : integer;
+  entry : TFhirBundleEntry;
+begin
+  result := nil;
+  tgt := fullResourceUri(base, ref);
+  for i := 0 to entryList.Count - 1 do
+  begin
+    entry := entryList[i];
+    if (entry.resource <> nil) then
+    begin
+      dst := fullResourceUri(entryBase(entry), entry.resource.ResourceType, entry.resource.id);
+      if (dst = tgt) then
+      begin
+        result := entry;
+        exit;
+      end;
+    end;
+  end;
 end;
 
 { TFHIRCodingListHelper }
@@ -1649,7 +1718,7 @@ end;
 
 { TFhirBundleLinkListHelper }
 
-procedure TFhirBundleLinkListHelper.AddValue(rel, ref: String);
+procedure TFhirBundleLinkListHelper.AddRelRef(rel, ref: String);
 var
   link : TFhirBundleLink;
 begin
@@ -1681,13 +1750,88 @@ end;
 
 function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String;
 begin
-  if (base = 'urn:uuid:') or ( base = 'urn:oid:') then
-    result := base+id
+  if (base = 'urn:oid:') then
+  begin
+    if isOid(id) then
+      result := base+id
+    else
+      raise Exception.Create('The resource id "'+'" has a base of "urn:oid:" but is not a valid OID');
+  end
+  else if (base = 'urn:uuid:') then
+  begin
+    if isGuid(id) then
+      result := base+id
+    else
+      raise Exception.Create('The resource id "'+id+'" has a base of "urn:uuid:" but is not a valid UUID');
+  end
+  else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
+    raise Exception.Create('The resource base of "'+base+'" is not understood')
   else
-    result := AppendForwardSlash(base) + CODES_TFhirResourceType[atype]+'/'+id;
+    result := AppendForwardSlash(base)+CODES_TFhirResourceType[aType]+'/'+id;
 end;
 
+function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
+var
+  url : String;
+begin
+  url := ref.reference;
+  if url = '' then
+    result := ''
+  else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
+    result := url
+  else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
+    raise Exception.Create('The resource base of "'+base+'" is not understood')
+  else
+    result := AppendForwardSlash(base)+url;
+end;
+
+function isHistoryURL(url : String) : boolean;
+begin
+  result := url.Contains('/_history/') and IsId(url.Substring(url.IndexOf('/_history/')+10));
+end;
+
+procedure splitHistoryUrl(var url : String; var history : String);
+begin
+  history := url.Substring(url.IndexOf('/_history/')+10);
+  url := url.Substring(0, url.IndexOf('/_history/'));
+end;
 { TFhirParametersHelper }
+
+procedure TFhirParametersHelper.AddParameter(name: String; value: TFhirType);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.parameterList.Append;
+  p.name := name;
+  p.value := value.Link;
+end;
+
+procedure TFhirParametersHelper.AddParameter(name: String; value: TFhirResource);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.parameterList.Append;
+  p.name := name;
+  p.resource := value.Link;
+end;
+
+procedure TFhirParametersHelper.AddParameter(name: String; value: boolean);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.parameterList.Append;
+  p.name := name;
+  p.value := TFhirBoolean.Create(value);
+end;
+
+procedure TFhirParametersHelper.AddParameter(name, value: string);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.parameterList.Append;
+  p.name := name;
+  p.value := TFhirString.Create(value);
+end;
 
 function TFhirParametersHelper.GetNamedParameter(name: String): TFhirBase;
 var
@@ -1732,6 +1876,37 @@ begin
         result := true;
         break;
       end;
+end;
+
+{ TFhirCompositionHelper }
+
+function TFhirCompositionHelper.getWorkingTitle: String;
+begin
+  result := title;
+  if (result = '') and (type_ <> nil) then
+    result := type_.text;
+  if (result = '') and (class_ <> nil) then
+    result := class_.text;
+  if (result = '') and (type_ <> nil) and (type_.codingList.Count > 0)  then
+    result := type_.codingList[0].display;
+  if (result = '') and (class_ <> nil) and (class_.codingList.Count > 0)  then
+    result := class_.codingList[0].display;
+end;
+
+{ TFhirResourceMetaHelper }
+
+function TFhirResourceMetaHelper.HasTag(system, code: String): boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := 0 to taglist.Count - 1 do
+    result := result or (taglist[i].system = system) and (taglist[i].code = code);
+end;
+procedure RemoveBOM(var s : String);
+begin
+  if s.startsWith(#$FEFF) then
+    s := s.substring(1);
 end;
 
 end.

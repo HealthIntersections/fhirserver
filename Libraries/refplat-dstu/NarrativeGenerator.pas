@@ -519,7 +519,7 @@ begin
       tr.Free;
     end;
   end
-  else if (not (e is TFHIRAttachment)) then
+  else if (not (e is TFHIRAttachment)) and not ((e is TFHIRBase64Binary)) then
     raise Exception.create('type '+e.ClassName+' not handled yet');
 end;
 

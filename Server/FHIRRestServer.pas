@@ -152,13 +152,14 @@ Type
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : String = '');
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse; upload : Boolean);
-    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
+    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc : String;
     function EndPointDesc : String;
     procedure GetWebUILink(resource : TFhirResource; base, statedType, id, ver : String; var link, text : String);
     function loadMultipartForm(const request: TStream; const contentType : String): TIdSoapMimeMessage;
+    function processProvenanceHeader(header, lang : String) : TFhirProvenance;
   Public
     Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
     Destructor Destroy; Override;
@@ -508,7 +509,7 @@ var
   i : integer;
 begin
 
-  if (Length(id) > 36) then
+  if (Length(id) > ID_LENGTH) then
     Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [id]), HTTP_ERR_BAD_REQUEST);
   for i := 1 to length(id) do
     if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-']) then
@@ -657,6 +658,16 @@ begin
   end;
 end;
 
+function processIfMatch(value : string) : String;
+begin
+  if value.StartsWith('W/') then
+    value := value.Substring(2);
+  if value.StartsWith('"') and value.EndsWith('"') then
+    result := copy(value, 2, length(value)-2)
+  else
+    result := value;
+
+end;
 procedure TFhirWebServer.HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 begin
   if FAuthServer = nil then
@@ -756,10 +767,10 @@ Begin
             end;
 
             oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP, request.CustomHeaders.Values['content-location'],
-               request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
+               request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, request.RawHeaders.Values['Provenance'], oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
             try
               {$IFNDEF FHIR-DSTU}
-              oRequest.IfMatch := request.RawHeaders.Values['If-Match'];
+              oRequest.IfMatch := processIfMatch(request.RawHeaders.Values['If-Match']);
               {$ENDIF}
               
               noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('nohttperr')) or StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('_nohttperr'));
@@ -1385,7 +1396,7 @@ Const
   META_CMD_NAME = '_meta';
   {$ENDIF}
 
-Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
+Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
    var redirect : boolean; form : TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean) : TFHIRRequest;
 Var
   sURL, sId, sType, msg : String;
@@ -1438,6 +1449,7 @@ Begin
     oRequest.lastModifiedDate := 0; // Xml
     oRequest.contentLocation := sContentLocation; // for version aware updates
     oRequest.form := form;
+    oRequest.Provenance := processProvenanceHeader(provenance, lang);
 
     If Not StringStartsWithSensitive(sResource, sBaseURL) Then
     begin
@@ -1714,11 +1726,17 @@ Begin
             if sCommand = 'GET' Then
               oRequest.CommandType := fcmdGetMeta
             else if sCommand = 'POST' Then
-              oRequest.CommandType := fcmdUpdateMeta
-            else if sCommand = 'DELETE' Then
-              oRequest.CommandType := fcmdDeleteMeta
+            begin
+              if (sUrl = '_delete') then
+              begin
+                sUrl := '';
+                oRequest.CommandType := fcmdDeleteMeta;
+              end
+              else
+                oRequest.CommandType := fcmdUpdateMeta
+            end
             else
-              raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sResource, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN);
+              raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sResource, 'GET, or POST']), HTTP_ERR_FORBIDDEN);
           end
           else if sId = '*' then // all tpes
           begin
@@ -1764,8 +1782,19 @@ Begin
         end
         else if (sId = META_CMD_NAME) or (sId = META_CMD_NAME+'.xml') or (sId = META_CMD_NAME+'.json') Then
         begin
-          ForceMethod('GET');
-          oRequest.CommandType := fcmdGetMeta
+          if (sUrl = '_delete') then
+          begin
+            ForceMethod('POST');
+            sUrl := '';
+            oRequest.CommandType := fcmdDeleteMeta;
+          end
+          else if sCommand = 'POST' then
+            oRequest.CommandType := fcmdUpdateMeta
+          else
+          begin
+            ForceMethod('GET');
+            oRequest.CommandType := fcmdGetMeta;
+          end;
         end
         else if (sId = '_search') or (sId = '_search.xml') or (sId = '_search.json') Then
           oRequest.CommandType := fcmdSearch
@@ -1984,16 +2013,21 @@ begin
     ownsStream := true;
     if oResponse.Resource <> nil then
     Begin
-      {$IFDEF FHIR-DSTU}
       if oResponse.Resource is TFhirBinary then
       begin
-//        TFhirBinary(oResponse.Resource).Content.SaveToStream(stream);
-//        response.ContentType := TFhirBinary(oResponse.Resource).ContentType;
-//        response.ContentDisposition := 'attachment;';
-//        response.Expires := Now + 0.25;
+        {$IFDEF FHIR-DSTU}
+        TFhirBinary(oResponse.Resource).Content.SaveToStream(stream);
+        {$ELSE}
+        if Length(TFhirBinary(oResponse.Resource).content) > 0 then
+          stream.Write(TFhirBinary(oResponse.Resource).content[0], Length(TFhirBinary(oResponse.Resource).content));
+        stream.Position := 0;
+        {$ENDIF}
+        response.ContentType := TFhirBinary(oResponse.Resource).ContentType;
+        if StrToBoolDef(orequest.Parameters.GetVar('no-attachment'), false) then
+          response.ContentDisposition := 'attachment;';
+        response.Expires := Now + 0.25;
       end
       else
-      {$ENDIF}
       begin
 //        response.Expires := Now; //don't want anyone caching anything
         response.Pragma := 'no-cache';
@@ -2024,6 +2058,36 @@ begin
         end;
       end;
     end
+    {$IFDEF FHIR-DSTU}
+    else if oResponse.Feed <> nil then
+    Begin
+      response.Pragma := 'no-cache';
+      if oResponse.Format = ffJson then
+        oComp := TFHIRJsonComposer.Create(oRequest.lang)
+      else if oResponse.Format = ffXhtml then
+      begin
+        oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
+        TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
+        TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
+        TFHIRXhtmlComposer(oComp).Tags := oResponse.categories.Link;
+        TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
+        TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
+//          response.Expires := 0;
+      response.Pragma := '';
+      end
+      else if oResponse.Format = ffXml then
+        oComp := TFHIRXmlComposer.Create(oRequest.lang)
+      else
+        oComp := TFHIRXmlComposer.Create(oRequest.lang);
+      try
+        response.ContentType := oComp.FeedMimeType;
+        oComp.Compose(stream, oResponse.feed, pretty);
+      finally
+        oComp.Free;
+      end;
+    end
+
+    {$ENDIF}
     else if oRequest.CommandType in [fcmdGetMeta, fcmdUpdateMeta, fcmdDeleteMeta] then
     begin
       response.Expires := Now; //don't want anyone caching anything
@@ -2079,7 +2143,7 @@ begin
         oComp := TFHIRXmlComposer.Create(oRequest.lang);
       try
         response.ContentType := oComp.MimeType;
-        oComp.Compose(stream, oResponse.meta, pretty, oresponse.link_List);
+        oComp.Compose(stream, oResponse.meta, oRequest.ResourceType, oRequest.Id, oRequest.SubId, pretty, oresponse.link_List);
       finally
         oComp.Free;
       end;
@@ -2113,6 +2177,31 @@ begin
   finally
     if ownsStream then
       stream.Free;
+  end;
+end;
+
+function TFhirWebServer.processProvenanceHeader(header, lang: String): TFhirProvenance;
+var
+  json : TFHIRJsonParser;
+  ss : TStringStream;
+begin
+  if header = '' then
+    result := nil
+  else
+  begin
+    ss := TStringStream.Create(header, TEncoding.UTF8);
+    try
+      json := TFHIRJsonParser.Create(lang);
+      try
+        json.source := ss;
+        json.Parse;
+        result := (json.resource as TFhirProvenance).Link;
+      finally
+        json.Free;
+      end;
+    finally
+      ss.Free;
+    end;
   end;
 end;
 

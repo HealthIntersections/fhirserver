@@ -44,6 +44,12 @@ bug list:
 [2:25:55 PM] Brian Postlethwaite: http://fhir.healthintersections.com.au/open/MedicationStatement/_search?_count=100&patient:Patient._id=163
  is there a way to issue a query and include _since>= on it?
 
+
+[1:33:14 AM] Ewout Kramer: paging on your server seems to reverse url and relation:
+[1:33:14 AM] Ewout Kramer: <relation value="http://fhir-dev.healthintersections.com.au/open/DiagnosticReport/_search?_format=text/xml+fhir&amp;search-id=e9a68b91-6777-4fbf-a4e2-de31e44829&amp;&amp;search-sort=_id" xmlns="http://hl7.org/fhir" />
+[1:33:18 AM] Ewout Kramer: <url value="self" xmlns="http://hl7.org/fhir" />
+
+
 build validator jar not in validation pack
 
 
@@ -272,7 +278,8 @@ uses
   CvxServices in 'CvxServices.pas',
   USStateCodeServices in 'USStateCodeServices.pas',
   UniiServices in 'UniiServices.pas',
-  RxNormServices in 'RxNormServices.pas';
+  RxNormServices in 'RxNormServices.pas',
+  OIDSupport in '..\Libraries\support\OIDSupport.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
