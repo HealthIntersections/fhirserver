@@ -876,7 +876,7 @@ begin
       if vso = nil then
         vs := 'not-found'
       else
-        vs := vso.identifier;
+        vs := vso.url;
     finally
       vso.Free;
     end;

@@ -10,7 +10,7 @@ uses
   FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
 
 type
-  TRxNormConcept = class (TCodeSystemProviderContext)
+  TUMLSConcept = class (TCodeSystemProviderContext)
   private
     FCode : string;
     FDisplay : String;
@@ -20,7 +20,7 @@ type
     destructor Destroy; override;
   end;
 
-  TRxNormFilter = class (TCodeSystemProviderFilterContext)
+  TUMLSFilter = class (TCodeSystemProviderFilterContext)
   private
     sql : String;
     text : boolean;
@@ -29,7 +29,7 @@ type
     Destructor Destroy; Override;
   end;
 
-  TRxNormPrep = class (TCodeSystemProviderFilterPreparationContext)
+  TUMLSPrep = class (TCodeSystemProviderFilterPreparationContext)
   private
     filters : TAdvObjectList;
   public
@@ -37,7 +37,7 @@ type
     Destructor Destroy; Override;
   end;
 
-  TRxNormServices = class (TCodeSystemProvider)
+  TUMLSServices = class (TCodeSystemProvider)
   private
     nci : boolean;
     dbprefix : string;
@@ -49,12 +49,12 @@ type
   public
     Constructor Create(nci : boolean; db : TKDBManager);
     Destructor Destroy; Override;
-    Function Link : TRxNormServices; overload;
+    Function Link : TUMLSServices; overload;
 
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+//    function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
@@ -80,6 +80,18 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+  end;
+
+  TRxNormServices = class (TUMLSServices)
+  public
+    Constructor Create(db : TKDBManager);
+    function system(context : TCodeSystemProviderContext) : String; override;
+  end;
+
+  TNciMetaServices = class (TUMLSServices)
+  public
+    Constructor Create(db : TKDBManager);
+    function system(context : TCodeSystemProviderContext) : String; override;
   end;
 
 procedure generateRxStems(db : TKDBManager);
@@ -175,9 +187,9 @@ begin
   end;
 end;
 
-{ TRxNormServices }
+{ TUMLSServices }
 
-Constructor TRxNormServices.create(nci : boolean; db : TKDBManager);
+Constructor TUMLSServices.create(nci : boolean; db : TKDBManager);
 begin
   inherited Create;
 
@@ -198,7 +210,7 @@ end;
 
 
 
-function TRxNormServices.TotalCount : integer;
+function TUMLSServices.TotalCount : integer;
 var
   qry : TKDBConnection;
 begin
@@ -221,20 +233,12 @@ begin
 end;
 
 
-function TRxNormServices.system(context : TCodeSystemProviderContext) : String;
-begin
-  if nci then
-    result := 'http://ncimeta.nci.nih.gov'
-  else
-    result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
-end;
-
-function TRxNormServices.getDefinition(code: String): String;
+function TUMLSServices.getDefinition(code: String): String;
 begin
   result := '';
 end;
 
-function TRxNormServices.getDisplay(code : String):String;
+function TUMLSServices.getDisplay(code : String):String;
 var
   qry : TKDBConnection;
 begin
@@ -256,12 +260,12 @@ begin
   end;
 end;
 
-function TRxNormServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+function TUMLSServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  result := TRxNormPrep.Create;
+  result := TUMLSPrep.Create;
 end;
 
-procedure TRxNormServices.Displays(code : String; list : TStringList);
+procedure TUMLSServices.Displays(code : String; list : TStringList);
 begin
   list.Add(getDisplay(code));
 end;
@@ -274,7 +278,7 @@ end;
  used to get information about the code
 }
 
-procedure TRxNormServices.load(list: TStringList; sql: String);
+procedure TUMLSServices.load(list: TStringList; sql: String);
 var
   qry : TKDBConnection;
 begin
@@ -296,10 +300,10 @@ begin
   end;
 end;
 
-function TRxNormServices.locate(code : String) : TCodeSystemProviderContext;
+function TUMLSServices.locate(code : String) : TCodeSystemProviderContext;
 var
   qry : TKDBConnection;
-  res : TRxNormConcept;
+  res : TUMLSConcept;
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
@@ -311,7 +315,7 @@ begin
       result := nil
     else
     begin
-      res := TRxNormConcept.Create;
+      res := TUMLSConcept.Create;
       try
         res.FCode := code;
         repeat
@@ -337,17 +341,17 @@ begin
 end;
 
 
-function TRxNormServices.Code(context : TCodeSystemProviderContext) : string;
+function TUMLSServices.Code(context : TCodeSystemProviderContext) : string;
 begin
-  result := TRxNormConcept(context).FCode;
+  result := TUMLSConcept(context).FCode;
 end;
 
-function TRxNormServices.Definition(context: TCodeSystemProviderContext): string;
+function TUMLSServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
 end;
 
-destructor TRxNormServices.Destroy;
+destructor TUMLSServices.Destroy;
 begin
   DB.Free;
   rels.free;
@@ -355,75 +359,75 @@ begin
   inherited;
 end;
 
-function TRxNormServices.Display(context : TCodeSystemProviderContext) : string;
+function TUMLSServices.Display(context : TCodeSystemProviderContext) : string;
 begin
-  result := TRxNormConcept(context).FDisplay;
+  result := TUMLSConcept(context).FDisplay;
 end;
 
-procedure TRxNormServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
 begin
   list.Add(Display(context));
-  list.AddStrings(TRxNormConcept(context).FOthers);
+  list.AddStrings(TUMLSConcept(context).FOthers);
 end;
 
-function TRxNormServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
+function TUMLSServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
 begin
   result := false;  // RxNorm doesn't do abstract?
 end;
 
-function TRxNormServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+function TUMLSServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := false;
 end;
 
-function TRxNormServices.Link: TRxNormServices;
+function TUMLSServices.Link: TUMLSServices;
 begin
-  result := TRxNormServices(Inherited Link);
+  result := TUMLSServices(Inherited Link);
 end;
 
-function TRxNormServices.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TUMLSServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 begin
   raise Exception.Create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
-function TRxNormServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TUMLSServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
   raise Exception.Create('getcontext not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
-function TRxNormServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
+function TUMLSServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
   result := nil; // todo: no sumbsumption?
 end;
 
 
-function TRxNormServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
+function TUMLSServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 var
   sql1 : string;
   sql2 : String;
   i : integer;
-  filter : TRxNormFilter;
+  filter : TUMLSFilter;
 begin
   result := false;
-  if TRxNormPrep(prep).filters.Count = 0 then
+  if TUMLSPrep(prep).filters.Count = 0 then
     exit; // not being used
 
   sql1 := '';
   sql2 := 'from rxnconso';
 
-  for i := 0 to TRxNormPrep(prep).filters.Count - 1 do
-    if not TRxNormFilter(TRxNormPrep(prep).filters[i]).text then
-      sql1 := sql1 + ' '+TRxNormFilter(TRxNormPrep(prep).filters[i]).sql;
-  for i := 0 to TRxNormPrep(prep).filters.Count - 1 do
+  for i := 0 to TUMLSPrep(prep).filters.Count - 1 do
+    if not TUMLSFilter(TUMLSPrep(prep).filters[i]).text then
+      sql1 := sql1 + ' '+TUMLSFilter(TUMLSPrep(prep).filters[i]).sql;
+  for i := 0 to TUMLSPrep(prep).filters.Count - 1 do
   begin
-    if TRxNormFilter(TRxNormPrep(prep).filters[i]).text then
+    if TUMLSFilter(TUMLSPrep(prep).filters[i]).text then
     begin
       sql2 := sql2 + ', rxnstems as s'+inttostr(i);
-      sql1 := sql1 + ' '+TRxNormFilter(TRxNormPrep(prep).filters[i]).sql.replace('%%', inttostr(i));
+      sql1 := sql1 + ' '+TUMLSFilter(TUMLSPrep(prep).filters[i]).sql.replace('%%', inttostr(i));
     end;
   end;
 
-  filter := TRxNormFilter(TRxNormPrep(prep).filters[0]);
+  filter := TUMLSFilter(TUMLSPrep(prep).filters[0]);
   filter.sql := sql1;
   result := true;
   filter.qry := db.GetConnection(dbprefix+'.prepare');
@@ -432,11 +436,11 @@ begin
   filter.qry.Execute;
 end;
 
-function TRxNormServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TUMLSServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   s : String;
   i : integer;
-  res : TRxNormFilter;
+  res : TUMLSFilter;
 begin
   if prep = nil then
   begin
@@ -445,7 +449,7 @@ begin
     for i := 0 to filter.stems.Count - 1 do
       s := s +' and RXCUI in (select CUI from rxnstems where stem like '''+SQLWrapString(filter.stems[i])+'%'')';
 
-    res := TRxNormFilter.Create;
+    res := TUMLSFilter.Create;
     try
       res.sql := s;
       result := res.link;
@@ -458,13 +462,13 @@ begin
     result := nil;
     for i := 0 to filter.stems.Count - 1 do
     begin
-      res := TRxNormFilter.Create;
+      res := TUMLSFilter.Create;
       try
         res.sql := ' and (RXCUI = s%%.CUI and s%%.stem like '''+SQLWrapString(filter.stems[i])+'%'')';
         res.text := true;
         if result = nil then
           result := res.link;
-        TRxNormPrep(prep).filters.Add(res.Link);
+        TUMLSPrep(prep).filters.Add(res.Link);
       finally
         res.Free;
       end;
@@ -472,14 +476,14 @@ begin
   end;
 end;
 
-function TRxNormServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TUMLSServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
-  res : TRxNormFilter;
+  res : TUMLSFilter;
   ok : boolean;
 begin
   result := nil;
 
-  res := TRxNormFilter.Create;
+  res := TUMLSFilter.Create;
   try
     ok := true;
     if (op <> FilterOperatorEqual) then
@@ -509,7 +513,7 @@ begin
     begin
       result := res.link;
       if prep <> nil then
-        TRxNormPrep(prep).filters.Add(res.Link);
+        TUMLSPrep(prep).filters.Add(res.Link);
     end
     else
       raise Exception.Create('Unknown ');
@@ -518,21 +522,21 @@ begin
   end;
 end;
 
-function TRxNormServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext;
+function TUMLSServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext;
 var
   qry : TKDBConnection;
-  res : TRxNormConcept;
+  res : TUMLSConcept;
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
-    qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = ''RXNORM''  and TTY <> ''SY'' and RXCUI = :code '+TRxNormFilter(ctxt).sql;
+    qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = ''RXNORM''  and TTY <> ''SY'' and RXCUI = :code '+TUMLSFilter(ctxt).sql;
     qry.prepare;
     qry.execute;
     if not qry.FetchNext then
       result := nil
     else
     begin
-      res := TRxNormConcept.Create;
+      res := TUMLSConcept.Create;
       try
         res.FCode := code;
         res.FDisplay := qry.ColString[2];
@@ -552,11 +556,11 @@ begin
   end;
 end;
 
-function TRxNormServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
+function TUMLSServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 var
-  filter : TRxNormFilter;
+  filter : TUMLSFilter;
 begin
-  filter := TRxNormFilter(ctxt);
+  filter := TUMLSFilter(ctxt);
   if (filter.qry = nil) then
   begin
     // search on full rxnorm
@@ -568,13 +572,13 @@ begin
   result := filter.qry.FetchNext;
 end;
 
-function TRxNormServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+function TUMLSServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 var
-  filter : TRxNormFilter;
-  res : TRxNormConcept;
+  filter : TUMLSFilter;
+  res : TUMLSConcept;
 begin
-  filter := TRxNormFilter(ctxt);
-  res := TRxNormConcept.Create;
+  filter := TUMLSFilter(ctxt);
+  res := TUMLSConcept.Create;
   try
     res.FCode := filter.qry.ColString[1];
     res.FDisplay := filter.qry.ColString[2];
@@ -584,64 +588,88 @@ begin
   end;
 end;
 
-function TRxNormServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
+function TUMLSServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
   raise Exception.Create('Error in internal logic - filter not prepped?');
 end;
 
-procedure TRxNormServices.Close(ctxt: TCodeSystemProviderContext);
+procedure TUMLSServices.Close(ctxt: TCodeSystemProviderContext);
 begin
   ctxt.free;
 end;
 
-procedure TRxNormServices.Close(ctxt : TCodeSystemProviderFilterContext);
+procedure TUMLSServices.Close(ctxt : TCodeSystemProviderFilterContext);
 begin
   ctxt.free;
 end;
 
 
 
-procedure TRxNormServices.Close(
+procedure TUMLSServices.Close(
   ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
 
 end;
 
-{ TRxNormPrep }
+{ TUMLSPrep }
 
-constructor TRxNormPrep.Create;
+constructor TUMLSPrep.Create;
 begin
   inherited;
   filters := TAdvObjectList.Create;
 end;
 
-destructor TRxNormPrep.Destroy;
+destructor TUMLSPrep.Destroy;
 begin
   filters.Free;
   inherited;
 end;
 
-{ TRxNormFilter }
+{ TUMLSFilter }
 
-destructor TRxNormFilter.Destroy;
+destructor TUMLSFilter.Destroy;
 begin
   qry.terminate;
   qry.Release;
   inherited;
 end;
 
-{ TRxNormConcept }
+{ TUMLSConcept }
 
-constructor TRxNormConcept.create;
+constructor TUMLSConcept.create;
 begin
   inherited;
   FOthers := TStringList.Create;
 end;
 
-destructor TRxNormConcept.destroy;
+destructor TUMLSConcept.destroy;
 begin
   FOthers.free;
   inherited;
+end;
+
+{ TRxNormServices }
+
+constructor TRxNormServices.Create(db: TKDBManager);
+begin
+  inherited create(false, db);
+end;
+
+function TRxNormServices.system(context: TCodeSystemProviderContext): String;
+begin
+  result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
+end;
+
+{ TNciMetaServices }
+
+constructor TNciMetaServices.Create(db: TKDBManager);
+begin
+  inherited create(true, db);
+end;
+
+function TNciMetaServices.system(context: TCodeSystemProviderContext): String;
+begin
+  result := 'http://ncimeta.nci.nih.gov';
 end;
 
 end.

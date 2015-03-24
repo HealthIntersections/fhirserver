@@ -102,8 +102,8 @@ begin
   {$IFNDEF FHIR-DSTU}
   result.id := NewGuidURN;
   {$ENDIF}
-  if (source.identifier <> '') then
-    dependencies.Add(source.identifier);
+  if (source.url <> '') then
+    dependencies.Add(source.url);
 
   filter := TSearchFilterText.create(textFilter);
   map := TAdvStringObjectMatch.create;
@@ -120,7 +120,7 @@ begin
 
     result.expansion := TFhirValueSetExpansion.create;
     result.expansion.timestamp := NowUTC;
-//    result.expansion.identifier :=
+//    result.expansion.url :=
     //e := result.expansion.ExtensionList.Append;
 
     try

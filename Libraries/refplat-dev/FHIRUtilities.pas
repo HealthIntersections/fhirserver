@@ -66,7 +66,6 @@ function fullResourceUri(base: String; aType : TFhirResourceType; id : String) :
 function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
 function isHistoryURL(url : String) : boolean;
 procedure splitHistoryUrl(var url : String; var history : String);
-
 procedure RemoveBOM(var s : String);
 
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
@@ -99,7 +98,7 @@ procedure BuildNarrative(vs : TFhirValueSet); overload;
 Function removeCaseAndAccents(s : String) : String;
 
 type
-  TFHIRProfileStructureHolder = TFhirProfileSnapshot;
+  TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
   TFHIRProfileStructureElement = TFhirElementDefinition;
   TFhirProfileStructureElementList = TFhirElementDefinitionList;
   TFhirProfileStructureElementDefinitionBinding = TFhirElementDefinitionBinding;
@@ -216,8 +215,6 @@ type
     property Links[s : string] : String read GetLinks;
     procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleType) : TFhirBundle; overload;
-    function resolve(base : String; ref : TFhirReference) : TFHIRBundleEntry;
-    function entryBase(entry : TFhirBundleEntry) : String;
   end;
 
   TFHIRCodingListHelper = class helper for TFHIRCodingList
@@ -244,19 +241,13 @@ type
   public
     function hasParameter(name : String):Boolean;
     Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
-    procedure AddParameter(name : String; value : TFhirType); overload;
-    procedure AddParameter(name : String; value : boolean); overload;
-    procedure AddParameter(name : String; value : string); overload;
-    procedure AddParameter(name : String; value : TFhirResource); overload;
-
+    procedure AddParameter(name: String; value: TFhirType); overload;
+    procedure AddParameter(name: String; value: TFhirResource); overload;
+    procedure AddParameter(name: String; value: boolean); overload;
+    procedure AddParameter(name, value: string); overload;
   end;
 
-  TFhirCompositionHelper = class helper for TFhirComposition
-  public
-    function getWorkingTitle:String;
-  end;
-
-  TFhirResourceMetaHelper = class helper for TFhirResourceMeta
+  TFhirResourceMetaHelper = class helper for TFhirMeta
   public
     function HasTag(system, code : String)  : boolean;
   end;
@@ -567,10 +558,10 @@ begin
       for i := 0 to value.eventList.count - 1 do
         result := DateTimeMax(result, AsUTCMax(value.eventList[i]));
   end
-  else if (value.repeat_.end_ <> nil) then
-    result := asUTCMax(value.repeat_.end_Element)
+  else if (value.repeat_.bounds <> nil) and (value.repeat_.bounds.end_ <> nil) then
+    result := asUTCMax(value.repeat_.bounds.end_Element)
   else if (value.repeat_.count <> '') and (value.eventList.Count > 0) and
-    (value.repeat_.frequency <> '') and (value.repeat_.duration <> '') and (value.repeat_.units <> UnitsOfTimeNull) then
+    (value.repeat_.frequency <> '') and (value.repeat_.period <> '') and (value.repeat_.periodunits <> UnitsOfTimeNull) then
   begin
     result := MIN_DATE;
     for i := 0 to value.eventList.count - 1 do
@@ -579,7 +570,7 @@ begin
       result := MAX_DATE
     else
     begin
-      case value.repeat_.units of
+      case value.repeat_.periodunits of
         UnitsOfTimeS : duration := DATETIME_SECOND_ONE;
         UnitsOfTimeMin : duration := DATETIME_MINUTE_ONE;
         UnitsOfTimeH : duration := DATETIME_HOUR_ONE;
@@ -588,7 +579,7 @@ begin
         UnitsOfTimeMo : duration := 30;
         UnitsOfTimeA : duration := 365 // todo - how to correct for leap years?;
       else
-        raise exception.create('unknown duration units "'+value.repeat_.unitsElement.value+'"');
+        raise exception.create('unknown duration units "'+value.repeat_.periodunitsElement.value+'"');
       end;
       result := result + (StrToInt(value.repeat_.count) * duration / StrToInt(value.repeat_.frequency));
     end;
@@ -690,6 +681,18 @@ begin
     result := '';
 end;
 
+function gen(code : TFhirCodeableConcept):String; overload;
+begin
+  if (code = nil) then
+    result := ''
+  else if (code.text <> '') then
+    result := code.text
+  else if (code.codingList.Count > 0) then
+    result := gen(code.codingList[0])
+  else
+    result := '';
+end;
+
 function gen(extension : TFHIRExtension):String; overload;
 begin
   if extension = nil then
@@ -705,7 +708,7 @@ end;
 procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String);
 var
   x, tbl, tr, td : TFhirXHtmlNode;
-  hasSource, hasType, success, d : boolean;
+  hasSource, success, d : boolean;
   i, j : integer;
   issue : TFhirOperationOutcomeIssue;
   s : TFhirString;
@@ -717,14 +720,12 @@ begin
     x.AddTag('p').addTag('b').addText('Operation Outcome for :'+opDesc);
 
     hasSource := false;
-    hasType := false;
     success := true;
     for i := 0 to op.issueList.count - 1 do
     begin
       issue := op.issueList[i];
       success := success and (issue.Severity = IssueSeverityInformation);
       hasSource := hasSource or (hasExtension(issue, 'http://hl7.org/fhir/tools#issue-source'));
-      hasType := hasType or (issue.Type_ <> nil);
     end;
     if (success) then
       x.AddChild('p').addText('All OK');
@@ -736,7 +737,6 @@ begin
       tr.addTag('td').addTag('b').addText('Severity');
       tr.addTag('td').addTag('b').addText('Location');
       tr.addTag('td').addTag('b').addText('Details');
-      if (hasType) then
         tr.addTag('td').addTag('b').addText('Type');
       if (hasSource) then
         tr.addTag('td').addTag('b').addText('Source');
@@ -757,8 +757,7 @@ begin
            td.addText(s.Value);
         end;
         tr.addTag('td').addText(issue.details);
-        if (hasType) then
-          tr.addTag('td').addText(gen(issue.Type_));
+        tr.addTag('td').addText(gen(issue.Code));
         if (hasSource) then
           tr.addTag('td').addText(gen(getExtension(issue, 'http://hl7.org/fhir/tools#issue-source')));
       end;
@@ -1158,9 +1157,12 @@ begin
     issue := TFhirOperationOutcomeIssue.create;
     try
       issue.severity := IssueSeverityError;
-      issue.type_ := TFhirCoding.create;
-      issue.type_.system := 'http://hl7.org/fhir/issue-type';
-      issue.type_.code := typeCode;
+      issue.code := TFhirCodeableConcept.create;
+      with issue.code.codingList.Append do
+      begin
+        system := 'http://hl7.org/fhir/issue-type';
+        code := typeCode;
+      end;
       issue.details := msg;
       issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1194,9 +1196,12 @@ begin
     issue := TFhirOperationOutcomeIssue.create;
     try
       issue.severity := IssueSeverityInformation;
-      issue.type_ := TFhirCoding.create;
-      issue.type_.system := 'http://hl7.org/fhir/issue-type';
-      issue.type_.code := typeCode;
+      issue.code := TFhirCodeableConcept.create;
+      with issue.code.codingList.Append do
+      begin
+        system := 'http://hl7.org/fhir/issue-type';
+        code := typeCode;
+      end;
       issue.details := msg;
       issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1221,9 +1226,12 @@ begin
     issue := TFhirOperationOutcomeIssue.create;
     try
       issue.severity := level;
-      issue.type_ := TFhirCoding.create;
-      issue.type_.system := 'http://hl7.org/fhir/issue-type';
-      issue.type_.code := typeCode;
+      issue.code := TFhirCodeableConcept.create;
+      with issue.code.codingList.Append do
+      begin
+        system := 'http://hl7.org/fhir/issue-type';
+        code := typeCode;
+      end;
       issue.details := msg;
       issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1248,9 +1256,12 @@ begin
     issue := TFhirOperationOutcomeIssue.create;
     try
       issue.severity := IssueSeverityWarning;
-      issue.type_ := TFhirCoding.create;
-      issue.type_.system := 'http://hl7.org/fhir/issue-type';
-      issue.type_.code := typeCode;
+      issue.code := TFhirCodeableConcept.create;
+      with issue.code.codingList.Append do
+      begin
+        system := 'http://hl7.org/fhir/issue-type';
+        code := typeCode;
+      end;
       issue.details := msg;
       issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1630,14 +1641,6 @@ end;
 
 { TFHIRBundleHelper }
 
-function TFHIRBundleHelper.entryBase(entry: TFhirBundleEntry): String;
-begin
-  if entry.base <> '' then
-    result := entry.base
-  else
-    result := base;
-end;
-
 class function TFHIRBundleHelper.Create(aType: TFhirBundleType): TFhirBundle;
 begin
   result := TFhirBundle.Create;
@@ -1664,29 +1667,6 @@ begin
       result := link_List[i].url;
       exit;
     end;
-end;
-
-function TFHIRBundleHelper.resolve(base : String; ref : TFhirReference): TFHIRBundleEntry;
-var
-  tgt, dst : String;
-  i : integer;
-  entry : TFhirBundleEntry;
-begin
-  result := nil;
-  tgt := fullResourceUri(base, ref);
-  for i := 0 to entryList.Count - 1 do
-  begin
-    entry := entryList[i];
-    if (entry.resource <> nil) then
-    begin
-      dst := fullResourceUri(entryBase(entry), entry.resource.ResourceType, entry.resource.id);
-      if (dst = tgt) then
-      begin
-        result := entry;
-        exit;
-      end;
-    end;
-  end;
 end;
 
 { TFHIRCodingListHelper }
@@ -1878,20 +1858,12 @@ begin
       end;
 end;
 
-{ TFhirCompositionHelper }
-
-function TFhirCompositionHelper.getWorkingTitle: String;
+procedure RemoveBOM(var s : String);
 begin
-  result := title;
-  if (result = '') and (type_ <> nil) then
-    result := type_.text;
-  if (result = '') and (class_ <> nil) then
-    result := class_.text;
-  if (result = '') and (type_ <> nil) and (type_.codingList.Count > 0)  then
-    result := type_.codingList[0].display;
-  if (result = '') and (class_ <> nil) and (class_.codingList.Count > 0)  then
-    result := class_.codingList[0].display;
+  if s.startsWith(#$FEFF) then
+    s := s.substring(1);
 end;
+
 
 { TFhirResourceMetaHelper }
 
@@ -1902,11 +1874,6 @@ begin
   result := false;
   for i := 0 to taglist.Count - 1 do
     result := result or (taglist[i].system = system) and (taglist[i].code = code);
-end;
-procedure RemoveBOM(var s : String);
-begin
-  if s.startsWith(#$FEFF) then
-    s := s.substring(1);
 end;
 
 end.

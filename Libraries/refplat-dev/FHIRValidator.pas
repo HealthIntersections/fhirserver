@@ -73,26 +73,26 @@ type
     FChecks : TAdvStringObjectMatch; // TValueSetChecker
 
 
-    procedure validateAtomEntry(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; specifiedprofile : TFhirProfile);
-    procedure validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFhirProfile);
-    function getProfileForType(localName : string; specifiedprofile : TFhirProfile) : TFHIRProfile;
+    procedure validateAtomEntry(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition);
+    procedure validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition);
+    function getProfileForType(localName : string; specifiedprofile : TFHirStructureDefinition) : TFHirStructureDefinition;
     procedure validateBinary(elem : TIdSoapXmlElement);
     procedure validateTag(path : string; element : TIdSoapXmlElement; onEntry : boolean);
-    procedure validateElement(op : TFhirOperationOutcome; profile : TFHIRProfile; structure : TFHIRProfileStructureHolder; path : string; definition : TFHIRProfileStructureElement; cprofile : TFHIRProfile; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
-    function findElement(structure : TFHIRProfileStructureHolder; name : string) : TFHIRProfileStructureElement;
-    function getChildren(structure : TFHIRProfileStructureHolder; path : String) : TFhirProfileStructureElementList;
-    function getChild(children : TFhirProfileStructureElementList; name : string) : TFHIRProfileStructureElement;
-    function getDefinitionByTailNameChoice(children : TFhirProfileStructureElementList; name : string) : TFHIRProfileStructureElement;
+    procedure validateElement(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; structure : TFHirProfileStructureHolder; path : string; definition : TFHirElementDefinition; cprofile : TFHirStructureDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement);
+    function findElement(structure : TFHirProfileStructureHolder; name : string) : TFHirElementDefinition;
+    function getChildren(structure : TFHirProfileStructureHolder; path : String) : TFHirElementDefinitionList;
+    function getChild(children : TFHirElementDefinitionList; name : string) : TFHirElementDefinition;
+    function getDefinitionByTailNameChoice(children : TFHirElementDefinitionList; name : string) : TFHirElementDefinition;
     function tail(path : string) : String;
-    procedure validateContains(op : TFhirOperationOutcome; path : string; child : TFHIRProfileStructureElement; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
+    procedure validateContains(op : TFhirOperationOutcome; path : string; child : TFHirElementDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement);
     function typeIsPrimitive(t : string) : boolean;
-    procedure checkPrimitive(op : TFhirOperationOutcome; path : string; type_ : string; context : TFHIRProfileStructureElement; e : TIdSoapXmlElement);
-    procedure checkExtension(path : string; elementDefn : TFHIRProfileStructureElement; context : TFHIRProfileStructureElement; e : TIdSoapXmlElement);
-    procedure checkReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
-    procedure checkIdentifier(path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
-    procedure checkQuantity(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
-    procedure checkCoding(op : TFhirOperationOutcome; profile : TFHIRProfile; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
-    procedure checkCodeableConcept(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; profile : TFHIRProfile; context : TFHIRProfileStructureElement);
+    procedure checkPrimitive(op : TFhirOperationOutcome; path : string; type_ : string; context : TFHirElementDefinition; e : TIdSoapXmlElement);
+    procedure checkExtension(path : string; elementDefn : TFHirElementDefinition; context : TFHirElementDefinition; e : TIdSoapXmlElement);
+    procedure checkReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
+    procedure checkIdentifier(path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
+    procedure checkQuantity(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
+    procedure checkCoding(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
+    procedure checkCodeableConcept(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; profile : TFHirStructureDefinition; context : TFHirElementDefinition);
     function resolveBindingReference(ref : TFHIRType) : TValueSetChecker;
     function describeReference(ref : TFHIRType) : String;
     function codeInExpansion(list: TFHIRValueSetExpansionContainsList; system, code : string) : Boolean;
@@ -101,12 +101,12 @@ type
     procedure Load(feed : TFHIRBundle);
 //    function LoadFile(name : String; isFree : boolean = false) : IXMLDomDocument2;
     function LoadDoc(name : String; isFree : boolean = false) : IXMLDomDocument2;
-    procedure validateInstance(op : TFHIROperationOutcome; elem : TIdSoapXmlElement; specifiedprofile : TFhirProfile); overload;
+    procedure validateInstance(op : TFHIROperationOutcome; elem : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition); overload;
     procedure processSchematron(op : TFhirOperationOutcome; source : String);
     procedure executeSchematron(context : TFHIRValidatorContext; op : TFhirOperationOutcome; source, name : String);
 //    function transform(op: TFhirOperationOutcome; source: IXMLDOMDocument2; transform: IXSLTemplate): IXMLDOMDocument2;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
-    function getTargetByName(list: TFhirProfileStructureElementList; name: String): TFhirProfileStructureElement;
+    function getTargetByName(list: TFHirElementDefinitionList; name: String): TFHirElementDefinition;
     procedure SetProfiles(const Value: TProfileManager);
   public
     constructor Create; override;
@@ -119,9 +119,9 @@ type
 
     function AcquireContext : TFHIRValidatorContext;
     procedure YieldContext(context : TFHIRValidatorContext);
-    Function validateInstance(context : TFHIRValidatorContext; elem : TIdSoapXmlElement; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome; overload;
-    Function validateInstance(context : TFHIRValidatorContext; resource : TFhirResource; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome; overload;
-    Function validateInstance(context : TFHIRValidatorContext; source : TAdvBuffer; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome; overload;
+    Function validateInstance(context : TFHIRValidatorContext; elem : TIdSoapXmlElement; opDesc : String; profile : TFHirStructureDefinition) : TFHIROperationOutcome; overload;
+    Function validateInstance(context : TFHIRValidatorContext; resource : TFhirResource; opDesc : String; profile : TFHirStructureDefinition) : TFHIROperationOutcome; overload;
+    Function validateInstance(context : TFHIRValidatorContext; source : TAdvBuffer; opDesc : String; profile : TFHirStructureDefinition) : TFHIROperationOutcome; overload;
   end;
 
 implementation
@@ -171,7 +171,7 @@ begin
    result := FBasePath+'/f:'+name+result;
 end;
 
-Function TFHIRValidator.validateInstance(context : TFHIRValidatorContext; elem : TIdSoapXmlElement; opDesc : String; profile : TFHIRProfile) : TFHIROperationOutcome;
+Function TFHIRValidator.validateInstance(context : TFHIRValidatorContext; elem : TIdSoapXmlElement; opDesc : String; profile : TFHirStructureDefinition) : TFHIROperationOutcome;
 begin
   result := TFhirOperationOutcome.create;
   try
@@ -183,7 +183,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateAtomEntry(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; specifiedprofile : TFhirProfile);
+procedure TFHIRValidator.validateAtomEntry(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition);
 var
   ci : TChildIterator;
   r : TIdSoapXmlElement;
@@ -205,9 +205,9 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFhirProfile);
+procedure TFHIRValidator.validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition);
 var
-  p : TFHIRProfile;
+  p : TFHirStructureDefinition;
 begin
   if (elem.Name = 'Binary') then
     validateBinary(elem)
@@ -219,12 +219,12 @@ begin
   end;
 end;
 
-function TFHIRValidator.getProfileForType(localName : string; specifiedprofile : TFhirProfile) : TFHIRProfile;
+function TFHIRValidator.getProfileForType(localName : string; specifiedprofile : TFHirStructureDefinition) : TFHirStructureDefinition;
 begin
   if specifiedprofile <> nil then
     result := specifiedprofile
   else
-    result := FTypes.matches[localName] as TFHIRProfile;
+    result := FTypes.matches[localName] as TFHirStructureDefinition;
 end;
 
 
@@ -238,13 +238,13 @@ begin
   // nothing yet
 end;
 
-procedure TFHIRValidator.validateElement(op : TFhirOperationOutcome; profile : TFHIRProfile; structure : TFHIRProfileStructureHolder; path : string; definition : TFHIRProfileStructureElement; cprofile : TFHIRProfile; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
+procedure TFHIRValidator.validateElement(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; structure : TFHirProfileStructureHolder; path : string; definition : TFHirElementDefinition; cprofile : TFHirStructureDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement);
 var
-  children : TFhirProfileStructureElementList;
+  children : TFHirElementDefinitionList;
   ci : TChildIterator;
-  child : TFHIRProfileStructureElement;
+  child : TFHirElementDefinition;
   type_ : String;
-  p : TFHIRProfile;
+  p : TFHirStructureDefinition;
   b : boolean;
   i : integer;
 begin
@@ -337,7 +337,7 @@ begin
 end;
 
 
-function TFHIRValidator.validateInstance(context: TFHIRValidatorContext; resource: TFhirResource; opDesc: String; profile: TFHIRProfile): TFHIROperationOutcome;
+function TFHIRValidator.validateInstance(context: TFHIRValidatorContext; resource: TFhirResource; opDesc: String; profile: TFHirStructureDefinition): TFHIROperationOutcome;
 var
   stream : TBytesStream;
   xml : TFHIRXmlComposer;
@@ -363,10 +363,10 @@ begin
   end;
 end;
 
-function TFHIRValidator.findElement(structure : TFHIRProfileStructureHolder; name : string) : TFHIRProfileStructureElement;
+function TFHIRValidator.findElement(structure : TFHirProfileStructureHolder; name : string) : TFHirElementDefinition;
 var
   i : integer;
-  c : TFHIRProfileStructureElement;
+  c : TFHirElementDefinition;
 begin
   result := nil;
   for i := 0 to structure.ElementList.Count - 1 do
@@ -380,7 +380,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.getTargetByName(list : TFhirProfileStructureElementList; name : String) : TFhirProfileStructureElement;
+function TFHIRValidator.getTargetByName(list : TFHirElementDefinitionList; name : String) : TFHirElementDefinition;
 var
   i : integer;
 begin
@@ -393,17 +393,17 @@ begin
     end;
 end;
 
-function TFHIRValidator.getChildren(structure : TFHIRProfileStructureHolder; path : String) : TFhirProfileStructureElementList;
+function TFHIRValidator.getChildren(structure : TFHirProfileStructureHolder; path : String) : TFHirElementDefinitionList;
 var
   i : integer;
-  e : TFhirProfileStructureElement;
+  e : TFHirElementDefinition;
   tail : string;
   p : String;
-  res : TFhirProfileStructureElementList;
-  tgt : TFhirProfileStructureElement;
+  res : TFHirElementDefinitionList;
+  tgt : TFHirElementDefinition;
 begin
   result := nil;
-  res := TFhirProfileStructureElementList.create;
+  res := TFHirElementDefinitionList.create;
   try
     for i := 0 to structure.elementList.Count - 1 do
     begin
@@ -441,7 +441,7 @@ begin
 end;
 
 
-function TFHIRValidator.getChild(children : TFhirProfileStructureElementList; name : string) : TFHIRProfileStructureElement;
+function TFHIRValidator.getChild(children : TFHirElementDefinitionList; name : string) : TFHirElementDefinition;
 var
   i : integer;
   n : string;
@@ -458,7 +458,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.getDefinitionByTailNameChoice(children : TFhirProfileStructureElementList; name : string) : TFHIRProfileStructureElement;
+function TFHIRValidator.getDefinitionByTailNameChoice(children : TFHirElementDefinitionList; name : string) : TFHirElementDefinition;
 var
   i : integer;
   n : string;
@@ -481,7 +481,7 @@ begin
   result := copy(path, LastDelimiter('.', path)+1, $FF);
 end;
 
-procedure TFHIRValidator.validateContains(op : TFhirOperationOutcome; path : string; child : TFHIRProfileStructureElement; context : TFHIRProfileStructureElement; element : TIdSoapXmlElement);
+procedure TFHIRValidator.validateContains(op : TFhirOperationOutcome; path : string; child : TFHirElementDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement);
 begin
   validate(op, path, element.FirstChild, nil);
 end;
@@ -523,7 +523,7 @@ begin
     result := false;
 end;
 
-procedure TFHIRValidator.checkPrimitive(op : TFhirOperationOutcome; path : string; type_ : string; context : TFHIRProfileStructureElement; e : TIdSoapXmlElement);
+procedure TFHIRValidator.checkPrimitive(op : TFhirOperationOutcome; path : string; type_ : string; context : TFHirElementDefinition; e : TIdSoapXmlElement);
 begin
   // for now. nothing to check
   if (type_ = 'uri') then
@@ -542,7 +542,7 @@ begin
     result := '';
 end;
 
-procedure TFHIRValidator.checkExtension(path : string; elementDefn : TFHIRProfileStructureElement; context : TFHIRProfileStructureElement; e : TIdSoapXmlElement);
+procedure TFHIRValidator.checkExtension(path : string; elementDefn : TFHirElementDefinition; context : TFHirElementDefinition; e : TIdSoapXmlElement);
 begin
   // for now, nothing to check yet
 end;
@@ -569,7 +569,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
+procedure TFHIRValidator.checkReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
 var
   r, e : String;
 begin
@@ -581,12 +581,12 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkIdentifier(path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
+procedure TFHIRValidator.checkIdentifier(path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
 begin
   // nothing to do yet
 end;
 
-procedure TFHIRValidator.checkQuantity(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
+procedure TFHIRValidator.checkQuantity(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
 var
   code, system, units :string;
 begin
@@ -597,10 +597,10 @@ begin
     FTerminologyServer.checkCode(op, path, code, system, units);
 end;
 
-procedure TFHIRValidator.checkCoding(op : TFhirOperationOutcome; profile : TFHIRProfile; path : string; element : TIdSoapXmlElement; context : TFHIRProfileStructureElement);
+procedure TFHIRValidator.checkCoding(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
 var
   code, system, display :string;
-  binding : TFhirProfileStructureElementDefinitionBinding;
+  binding : TFHirElementDefinitionBinding;
   vsc : TValueSetChecker;
 begin
   code := getNamedChildValue(element,  'code');
@@ -614,12 +614,12 @@ begin
         binding := context.binding;
         if op.warning('InstanceValidator', 'code-unknown', path, binding <> nil, 'Binding not provided') then
         begin
-          if binding.reference is TFhirReference then
+          if binding.valueset is TFhirReference then
           begin
-            vsc := resolveBindingReference(binding.Reference);
+            vsc := resolveBindingReference(binding.valueset);
             try
               try
-                if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.Reference)+' not found')) then
+                if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.valueset)+' not found')) then
                   op.warning('InstanceValidator', 'code-unknown', path, vsc.check(system, code), 'Code {'+system+'}'+code+' is not in value set '+context.Binding.name+' ('+vsc.id+')');
               Except
                 on e : Exception do
@@ -639,9 +639,9 @@ begin
     end;
 end;
 
-procedure TFHIRValidator.checkCodeableConcept(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; profile : TFHIRProfile; context : TFHIRProfileStructureElement);
+procedure TFHIRValidator.checkCodeableConcept(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; profile : TFHirStructureDefinition; context : TFHirElementDefinition);
 var
-  binding : TFhirProfileStructureElementDefinitionBinding;
+  binding : TFHirElementDefinitionBinding;
   found, any : boolean;
   c : TIdSoapXmlElement;
   system, code : String;
@@ -650,11 +650,11 @@ begin
   if (context <> nil) and (context.binding <> nil) then
   begin
     binding := context.binding;
-    if binding.reference is TFhirReference then
+    if binding.valueset is TFhirReference then
     begin
-      vsc := resolveBindingReference(binding.Reference);
+      vsc := resolveBindingReference(binding.valueset);
       try
-        if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.Reference)+' not found')) then
+        if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.valueset)+' not found')) then
         begin
           try
             found := false;
@@ -672,12 +672,12 @@ begin
               end;
               c := c.nextSibling;
             end;
-            if not any and (binding.Conformance = BindingConformanceRequired) then
+            if not any and (binding.Strength = BindingStrengthRequired) then
               op.warning('InstanceValidator', 'code-unknown', path, false, 'No code provided, and value set '+context.Binding.name+' ('+vsc.id+') is required');
             if (any) then
-              if (binding.Conformance = BindingConformanceExample) then
+              if (binding.Strength = BindingStrengthPreferred) then
                 op.hint('InstanceValidator', 'code-unknown', path, found, 'None of the codes are in the example value set '+context.Binding.name+' ('+vsc.id+')')
-              else
+              else if (binding.Strength = BindingStrengthExtensible) then
                 op.warning('InstanceValidator', 'code-unknown', path, found, 'Code {'+system+'}'+code+' is not in value set '+context.Binding.name+' ('+vsc.id+')');
           Except
             on e : Exception do
@@ -778,7 +778,7 @@ procedure TFHIRValidator.Load(feed: TFHIRBundle);
 var
   i : integer;
   r : TFhirResource;
-  p : TFhirProfile;
+  p : TFHirStructureDefinition;
   base : String;
 begin
   for i := 0 to feed.entryList.count - 1 do
@@ -789,15 +789,13 @@ begin
       base := feed.base;
 
     r := feed.entryList[i].resource;
-    if r is TFhirProfile then
+    if r is TFHirStructureDefinition then
     begin
-      p := r as TFhirProfile;
+      p := r as TFHirStructureDefinition;
       if FProfiles <> nil then
         FProfiles.SeeProfile(base, i, p);
-      if (p.nameElement <> nil) then
-        FTypes.add(LowerCase(p.Name), p.link)
-      else
-        FTypes.add(LowerCase(p.Type_), p.link);
+      if (p.type_ = StructureDefinitionTypeType) or (p.type_ = StructureDefinitionTypeResource)  then
+        FTypes.add(LowerCase(p.snapshot.elementList[0].path), p.link);
     end
     else if (r.ResourceType in [frtValueSet, frtConceptMap]) then
       FTerminologyServer.SeeSpecificationResource(fullResourceUri(base, r.ResourceType, r.id), r);
@@ -854,7 +852,7 @@ Begin
 end;
 }
 
-function TFHIRValidator.validateInstance(context : TFHIRValidatorContext; source: TAdvBuffer; opDesc : String; profile : TFHIRProfile): TFHIROperationOutcome;
+function TFHIRValidator.validateInstance(context : TFHIRValidatorContext; source: TAdvBuffer; opDesc : String; profile : TFHirStructureDefinition): TFHIROperationOutcome;
 var
   dom : TIdSoapMSXmlDom;
   procedure load;
@@ -912,7 +910,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateInstance(op: TFHIROperationOutcome; elem: TIdSoapXmlElement; specifiedprofile : TFhirProfile);
+procedure TFHIRValidator.validateInstance(op: TFHIROperationOutcome; elem: TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition);
 var
   ci : TChildIterator;
 begin
@@ -978,9 +976,12 @@ Begin
       issue := TFhirOperationOutcomeIssue.create;
       try
         issue.severity := IssueSeverityError;
-        issue.type_ := TFhirCoding.create;
-        issue.type_.system := 'http://hl7.org/fhir/issue-type';
-        issue.type_.code := 'invariant';
+        issue.code := TFhirCodeableConcept.Create;
+        with issue.code.codingList.Append do
+        begin
+          system := 'http://hl7.org/fhir/issue-type';
+          code := 'invariant';
+        end;
         issue.details := e.text;
         issue.locationList.Append.value := e.getAttribute('location');
         ex := issue.ExtensionList.Append;

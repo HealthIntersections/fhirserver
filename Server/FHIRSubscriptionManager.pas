@@ -196,9 +196,9 @@ begin
     raise Exception.Create('A channel type must be specified');
   if subscription.channel.type_ in [SubscriptionChannelTypeWebsocket, SubscriptionChannelTypeMessage] then
     raise Exception.Create('The channel type '+CODES_TFhirSubscriptionChannelType[subscription.channel.type_]+' is not supported');
-  if subscription.channel.url = '' then
+  if subscription.channel.endpoint = '' then
     raise Exception.Create('A channel URL must be specified');
-  if (subscription.channel.type_ = SubscriptionChannelTypeSms) and not subscription.channel.url.StartsWith('tel:') then
+  if (subscription.channel.type_ = SubscriptionChannelTypeSms) and not subscription.channel.endpoint.StartsWith('tel:') then
     raise Exception.Create('When the channel type is "sms", then the URL must start with "tel:"');
 end;
 
@@ -210,7 +210,7 @@ end;
 
 function TSubscriptionManager.getSummaryForChannel(subst: TFhirSubscription): String;
 begin
-  result := subst.channel.type_Element.value+#1+subst.channel.url+#1+subst.channel.payload+#0+subst.channel.header;
+  result := subst.channel.type_Element.value+#1+subst.channel.endpoint+#1+subst.channel.payload+#0+subst.channel.header;
 end;
 
 procedure TSubscriptionManager.DoDropResource(key, vkey: Integer; internal : boolean);
@@ -317,7 +317,7 @@ begin
     msg := TIdMessage.Create(Nil);
     try
       msg.Subject := subst.channel.header;
-      msg.Recipients.EMailAddresses := subst.channel.url.Replace('mailto:', '');
+      msg.Recipients.EMailAddresses := subst.channel.endpoint.Replace('mailto:', '');
       msg.From.Text := SMTPSender;
       if subst.channel.payload = '' then
         msg.Body.Text := 'An update has occurred'
@@ -365,7 +365,7 @@ begin
       ssl.SSLOptions.Mode := sslmClient;
       if subst.channel.header <> '' then
         http.Request.RawHeaders.Add(subst.channel.header);
-      http.Post(subst.channel.url, stream);
+      http.Post(subst.channel.endpoint, stream);
     finally
       ssl.Free;
       http.Free;
@@ -374,7 +374,7 @@ begin
   end
   else
   begin
-    client := TFhirClient.create(subst.channel.url, subst.channel.payload.Contains('json'));
+    client := TFhirClient.create(subst.channel.endpoint, subst.channel.payload.Contains('json'));
     try
       client.updateResource(id, res);
     finally
@@ -392,10 +392,10 @@ begin
     client.Account := SMSAccount;
     client.Token := SMSToken;
     client.From := SMSFrom;
-    if subst.channel.url.StartsWith('tel:') then
-      client.dest := subst.channel.url.Substring(4)
+    if subst.channel.endpoint.StartsWith('tel:') then
+      client.dest := subst.channel.endpoint.Substring(4)
     else
-      client.dest := subst.channel.url;
+      client.dest := subst.channel.endpoint;
     if subst.channel.payload <> '' then
       client.Body := subst.channel.payload
     else

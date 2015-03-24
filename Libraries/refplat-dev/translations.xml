@@ -72,6 +72,12 @@ NOTE: while translations on Resources are possible they should be used for rende
         <translation lang="es">Binario</translation>
         <translation lang="fr">Binaire</translation>
     </item>
+     <item id="BodySite">
+        <translation lang="en">BodySite</translation>
+        <translation lang="zh">身体部位</translation>
+        <translation lang="es">SitioDelCuerpo</translation>
+        <translation lang="fr">SiteDeCorps</translation>
+    </item>
     <item id="NewBundle">
       <translation lang="en">NewBundle</translation>
     </item>
@@ -96,8 +102,8 @@ NOTE: while translations on Resources are possible they should be used for rende
     <item id="ClaimResponse">
         <translation lang="en">ClaimResponse</translation>
     </item>
-    <item id="ClinicalAssessment">
-        <translation lang="en">ClinicalAssessment</translation>
+    <item id="ClinicalImpression">
+        <translation lang="en">ClinicalImpression</translation>
     </item>
     <item id="Communication">
         <translation lang="en">Communication</translation>
@@ -419,9 +425,6 @@ NOTE: while translations on Resources are possible they should be used for rende
      <item id="PaymentReconciliation">
         <translation lang="en">PaymentReconciliation</translation>
     </item>
-     <item id="PendedRequest">
-        <translation lang="en">PendedRequest</translation>
-    </item>
     <item id="PharmacyClaim">
         <translation lang="en">PharmacyClaim</translation>
     </item>
@@ -446,6 +449,12 @@ NOTE: while translations on Resources are possible they should be used for rende
     <item id="ProcedureRequest">
         <translation lang="en">ProcedureRequest</translation>
         <translation lang="fr">ProcédureDemande</translation>
+    </item>
+    <item id="ProcessRequest">
+        <translation lang="en">ProcessRequest</translation>
+    </item>
+    <item id="ProcessResponse">
+        <translation lang="en">ProcessResponse</translation>
     </item>
     <item id="ProfessionalClaim">
         <translation lang="en">ProfessionalClaim</translation>
@@ -484,9 +493,6 @@ NOTE: while translations on Resources are possible they should be used for rende
         <translation lang="en">QuestionnaireAnswers</translation>
         <translation lang="fr">RéponseQuestionnaire</translation>
     </item>
-    <item id="Readjudicate">
-        <translation lang="en">Readjudicate</translation>
-    </item>
     <item id="ReferralRequest">
         <translation lang="en">ReferralRequest</translation>
 
@@ -503,9 +509,6 @@ NOTE: while translations on Resources are possible they should be used for rende
         <translation lang="es">Remesa</translation>
         <translation lang="fr">Remise</translation>
     </item>
-    <item id="Reversal">
-        <translation lang="en">Reversal</translation>
-    </item>
     <item id="RiskAssessment">
         <translation lang="en">RiskAssessment</translation>
     </item>
@@ -515,8 +518,8 @@ NOTE: while translations on Resources are possible they should be used for rende
     <item id="SearchParameter">
         <translation lang="en">SearchParameter</translation>
     </item>
-    <item id="SecurityEvent">
-        <translation lang="en">SecurityEvent</translation>
+    <item id="AuditEvent">
+        <translation lang="en">AuditEvent</translation>
         <translation lang="zh">安全事件</translation>
         <translation lang="es">EventoSeguridad</translation>
         <translation lang="fr">ÉvènementSécurité</translation>
@@ -550,12 +553,6 @@ NOTE: while translations on Resources are possible they should be used for rende
         <translation lang="zh">样本</translation>
         <translation lang="es">Especimen</translation>
         <translation lang="fr">Spécimen</translation>
-    </item>
-    <item id="StatusRequest">
-        <translation lang="en">StatusRequest</translation>
-    </item>
-    <item id="StatusResponse">
-        <translation lang="en">StatusResponse</translation>
     </item>
     <item id="Study">
         <translation lang="en">Study</translation>
@@ -609,6 +606,9 @@ NOTE: while translations on Resources are possible they should be used for rende
         <translation lang="zh">VCF变体</translation>
         <translation lang="es">VCFVariante</translation>
         <translation lang="fr">VCFVariante</translation>
+    </item>
+    <item id="StructureDefinition">
+        <translation lang="en">StructureDefinition</translation>
     </item>
     <!-- Messages -->
     <item id="MSG_AUTH_REQUIRED">
@@ -703,14 +703,15 @@ NOTE: while translations on Resources are possible they should be used for rende
         <translation lang="ru">Контент для проверки</translation>
     </item>
     <item id="MSG_CREATED">
-        <translation lang="en">existing resource created</translation>
-        <translation lang="it">risorsa esistente aggiornata</translation>
+        <translation lang="en">New resource created</translation>
+<!--        <translation lang="it">risorsa esistente aggiornata</translation>
         <translation lang="nl">nieuwe resource gemaakt</translation>
         <translation lang="zh">存在的资源已创建</translation>
         <translation lang="pl">utworzono istniejący zasób</translation>
         <translation lang="es">recurso existente creado</translation>
         <translation lang="fr">ressource existante créée</translation>
         <translation lang="ru">существующий ресурс создан</translation>
+-->        
     </item>
     <item id="MSG_DATE_FORMAT">
         <translation lang="en">The Date value %s is not in the correct format (Xml Date Format required)</translation>

@@ -88,9 +88,9 @@ Type
   TSnomedImporter = class (TAdvObject)
   private
     FCacheDir : String;
-    FFilenameConcept: String;
-    FFilenameRelationship: String;
-    FFilenameDescription: String;
+    FConceptFiles : TStringList;
+    FRelationshipFiles : TStringList;
+    FDescriptionFiles : TStringList;
     OverallCount : Integer;
     FImportFormat : TFormatSettings;
 
@@ -155,9 +155,9 @@ Type
     Constructor Create; override;
     Destructor Destroy; override;
     procedure Go;
-    Property FileNameConcept : String read FFilenameConcept write FFilenameConcept;
-    Property FileNameRelationship : String read FFilenameRelationship write FFilenameRelationship;
-    Property FileNameDescription : String read FFilenameDescription write FFilenameDescription;
+    Property ConceptFiles : TStringList read FConceptFiles;
+    Property RelationshipFiles : TStringList read FRelationshipFiles;
+    Property DescriptionFiles : TStringList read FDescriptionFiles;
     Property DirectoryReferenceSets : String read FDirectoryReferenceSets write FDirectoryReferenceSets;
     Property Status : Integer read FStatus Write FStatus;
     Property Key : Integer read FKey write FKey;
@@ -208,13 +208,14 @@ begin
         s := ReadFirstLine(IncludeTrailingPathDelimiter(dir) + sr.Name);
         if (s.StartsWith('CONCEPTID'#9'CONCEPTSTATUS'#9'FULLYSPECIFIEDNAME'#9'CTV3ID'#9'SNOMEDID'#9'ISPRIMITIVE')) then
         begin
-          imp.FilenameConcept := IncludeTrailingPathDelimiter(dir) + sr.Name;
-          imp.Fversion := ExtractFileVersion(imp.FileNameConcept);
+          imp.ConceptFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name);
+          if imp.Fversion = '' then
+            imp.Fversion := ExtractFileVersion(imp.ConceptFiles[0]);
         end
         else if (s.StartsWith('DESCRIPTIONID'#9'DESCRIPTIONSTATUS'#9'CONCEPTID'#9'TERM'#9'INITIALCAPITALSTATUS'#9'DESCRIPTIONTYPE'#9'LANGUAGECODE')) then
-          imp.FileNameDescription := IncludeTrailingPathDelimiter(dir) + sr.Name
+          imp.DescriptionFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name)
         else if (s.StartsWith('RELATIONSHIPID'#9'CONCEPTID1'#9'RELATIONSHIPTYPE'#9'CONCEPTID2'#9'CHARACTERISTICTYPE'#9'REFINABILITY'#9'RELATIONSHIPGROUP')) then
-          imp.FileNameRelationship := IncludeTrailingPathDelimiter(dir) + sr.Name
+          imp.RelationshipFiles.add(IncludeTrailingPathDelimiter(dir) + sr.Name)
         else
           ;  // we ignore the file
       end;
@@ -243,13 +244,14 @@ begin
         s := ReadFirstLine(IncludeTrailingPathDelimiter(dir) + sr.Name);
         if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'definitionStatusId')) then
         begin
-          imp.FilenameConcept := IncludeTrailingPathDelimiter(dir) + sr.Name;
-          imp.Fversion := ExtractFileVersion(imp.FileNameConcept);
+          imp.ConceptFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name);
+          if imp.Fversion = '' then
+            imp.Fversion := ExtractFileVersion(imp.ConceptFiles[0]);
         end
         else if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'conceptId'#9'languageCode'#9'typeId'#9'term'#9'caseSignificanceId')) then
-          imp.FileNameDescription := IncludeTrailingPathDelimiter(dir) + sr.Name
+          imp.DescriptionFiles.add(IncludeTrailingPathDelimiter(dir) + sr.Name)
         else if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'sourceId'#9'destinationId'#9'relationshipGroup'#9'typeId'#9'characteristicTypeId'#9'modifierId')) then
-          imp.FileNameRelationship := IncludeTrailingPathDelimiter(dir) + sr.Name
+          imp.RelationshipFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name)
         else
           ;  // we ignore the file
       end;
@@ -336,10 +338,16 @@ constructor TSnomedImporter.Create;
 begin
   inherited;
   FImportFormat := TFormatSettings.Create('en-AU');
+  FConceptFiles := TStringList.create;
+  FRelationshipFiles := TStringList.create;
+  FDescriptionFiles := TStringList.create;
 end;
 
 destructor TSnomedImporter.Destroy;
 begin
+  FConceptFiles.Free;
+  FRelationshipFiles.Free;
+  FDescriptionFiles.Free;
   inherited;
 end;
 
@@ -486,6 +494,7 @@ Procedure TSnomedImporter.ReadConceptsFile;
 var
   s :TBytes;
   iCursor : Integer;
+  fi : integer;
   iStart : Integer;
   iConcept : Integer;
   iStatus : integer;
@@ -496,7 +505,7 @@ var
 //  iv3Id : Integer;
   iId : integer;
   iCount : Integer;
-  iLast : Integer;
+  iLast : UInt64;
   iModule : integer;
   iTerm : Uint64;
   iEntry : Integer;
@@ -512,85 +521,89 @@ var
   End;
 Begin
   Progress('#1 Read Concept File');
-  s := LoadFile(FFilenameConcept);
-  iCursor := -1;
-  iCount := 0;
-  iCursor := Next(13) + 2;
-  While iCursor < Length(s) Do
-  Begin
-    iStart := iCursor;
-    if RF2 then
-    begin
-      iConcept := Next(9);
-      iDate := Next(9);
-      iStatus := Next(9);
-      iModule := Next(9);
-      iCursor := Next(13); // also is status
-      iDesc := 0;
-      iId := 0;
-    end
-    else
-    begin
-      iConcept := Next(9);
-      iDate := 0;
-      iStatus := Next(9);
-      iDesc := Next(9);
-      {iv3Id := }Next(9);
-      iId := Next(9);
-      iCursor := Next(13);
-      iModule := 0;
-    end;
+  for fi := 0 to ConceptFiles.Count - 1 do
+  begin
+    s := LoadFile(ConceptFiles[fi]);
+    iCursor := -1;
+    iCount := 0;
+    iCursor := Next(13) + 2;
+    While iCursor < Length(s) Do
+    Begin
+      iStart := iCursor;
+      if RF2 then
+      begin
+        iConcept := Next(9);
+        iDate := Next(9);
+        iStatus := Next(9);
+        iModule := Next(9);
+        iCursor := Next(13); // also is status
+        iDesc := 0;
+        iId := 0;
+      end
+      else
+      begin
+        iConcept := Next(9);
+        iDate := 0;
+        iStatus := Next(9);
+        iDesc := Next(9);
+        {iv3Id := }Next(9);
+        iId := Next(9);
+        iCursor := Next(13);
+        iModule := 0;
+      end;
 
-    iTerm := StrToUInt64(ascopy(s, iStart, iConcept - iStart));
-    oConcept := TConcept.Create;
-    iEntry := FConcepts.Add(oConcept);
-//      if TrackConceptDuplicates then
-//        FConceptMap.Add(iTerm, iEntry);
-    oConcept.Identity := iTerm;
-//    else
-//    begin
-//      oConcept := FConcepts[FConceptMap.Matches[iTerm]] as TConcept;
-//      assert(oConcept.Identity = iTerm);
-//    end;
+      iTerm := StrToUInt64(ascopy(s, iStart, iConcept - iStart));
+      oConcept := TConcept.Create;
+      iEntry := FConcepts.Add(oConcept);
+  //      if TrackConceptDuplicates then
+  //        FConceptMap.Add(iTerm, iEntry);
+      oConcept.Identity := iTerm;
+  //    else
+  //    begin
+  //      oConcept := FConcepts[FConceptMap.Matches[iTerm]] as TConcept;
+  //      assert(oConcept.Identity = iTerm);
+  //    end;
 
-    if not RF2 then
-    begin
-      SetLength(oConcept.FDescriptions, 1);
-      oConcept.FSN := ascopy(s, iStatus+1, (iDesc - iStatus) - 1);
-      oConcept.FDescriptions[0] := FDesc.AddDescription(AddString(oConcept.FSN), 0, 0, 0, 0, 0, DescFlag(FLAG_Active, true, VAL_DESC_FullySpecifiedName));
-      oConcept.Flag := strtoint(ascopy(s, iConcept+1, iStatus - iConcept -1));
-      if ascopy(s, iId, iCursor - iId - 1) = '1' Then
-        oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
-    end
-    else
-    begin
-      oConcept.FDate := readDate(ascopy(s, iConcept+1, iDate - iConcept -1));
-      if ascopy(s, iDate+1, iStatus - iDate -1) <> '1' then
-        oConcept.Flag := 1;
-      oConcept.FModuleId := StrToUInt64(ascopy(s, iStatus+1, iModule - iStatus-1));
-      oConcept.FStatus := StrToUInt64(ascopy(s, iModule+1, iCursor - iModule-1));
-      if oConcept.FStatus = RF2_MAGIC_PRIMITIVE then
-        oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
-    end;
-    oConcept.Active := oConcept.Flag and MASK_CONCEPT_STATUS = 0;
+      if not RF2 then
+      begin
+        SetLength(oConcept.FDescriptions, 1);
+        oConcept.FSN := ascopy(s, iStatus+1, (iDesc - iStatus) - 1);
+        oConcept.FDescriptions[0] := FDesc.AddDescription(AddString(oConcept.FSN), 0, 0, 0, 0, 0, DescFlag(FLAG_Active, true, VAL_DESC_FullySpecifiedName));
+        oConcept.Flag := strtoint(ascopy(s, iConcept+1, iStatus - iConcept -1));
+        if ascopy(s, iId, iCursor - iId - 1) = '1' Then
+          oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
+      end
+      else
+      begin
+        oConcept.FDate := readDate(ascopy(s, iConcept+1, iDate - iConcept -1));
+        if ascopy(s, iDate+1, iStatus - iDate -1) <> '1' then
+          oConcept.Flag := 1;
+        oConcept.FModuleId := StrToUInt64(ascopy(s, iStatus+1, iModule - iStatus-1));
+        oConcept.FStatus := StrToUInt64(ascopy(s, iModule+1, iCursor - iModule-1));
+        if oConcept.FStatus = RF2_MAGIC_PRIMITIVE then
+          oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
+      end;
+      oConcept.Active := oConcept.Flag and MASK_CONCEPT_STATUS = 0;
 
-    inc(iCursor, 2);
-    inc(OverallCount);
-    if OverallCount mod 5001 = 0 then
-      Progress('');
-    inc(iCount);
+      inc(iCursor, 2);
+      inc(OverallCount);
+      if OverallCount mod 5001 = 0 then
+        Progress('');
+      inc(iCount);
+    End;
   End;
 
   Progress('#2 Sort Concepts');
   FConcepts.SortedBy(Compare);
 
   Progress('#3 Build Concept Cache');
-  iLast := -1;
+  iLast := 0;
   for iLoop := 0 to FConcepts.Count - 1 Do
   begin
     oConcept := TConcept(FConcepts[iLoop]);
     if oConcept.Identity <= iLast then
-      Raise Exception.Create('out of order'); // if you get this, change the value of TrackConceptDuplicates to true
+      Raise Exception.Create('out of order at '+inttostr(oConcept.Identity)+' (last was '+inttostr(ilast)+')'); // if you get this, change the value of TrackConceptDuplicates to true
+    iLast := oConcept.Identity;
     inc(OverallCount);
     oConcept.Index := FConcept.AddConcept(oConcept.Identity, oConcept.FDate, oConcept.Flag);
     if OverallCount mod 5001 = 0 then
@@ -740,6 +753,7 @@ var
   iSt : integer;
   ikind : UInt64;
   date : TSnomedDate;
+  fi : integer;
 
   Function Next(ch : byte) : integer;
   begin
@@ -750,107 +764,113 @@ var
   End;
 begin
   Progress('#4 Read Description File');
-  s := LoadFile(FFilenameDescription);
-  iCursor := -1;
-  iCount := 0;
   SetLength(aIndex, 10000);
   aIndexLength := 0;
-  iCursor := Next(13) + 2;
-  While iCursor < Length(s) Do
-  Begin
-    iStart := iCursor;
-    if RF2 then
-    begin
-      iId := Next(9);
-      iDate := Next(9);
-      iStatus := Next(9);
-      iModuleId := Next(9);
-      iConceptStart := iModuleId;
-      iConcept := Next(9);
-      iLang := Next(9);
-      iType := Next(9);
-      iTermStart := iType;
-      iTerm := Next(9);
-      iCaps := Next(13);
-    end
-    else
-    begin
-      iId := Next(9);
-      iStatus := Next(9);
-      iConceptStart := iStatus;
-      iConcept := Next(9);
-      iTermStart := iConcept;
-      iTerm := Next(9);
-      iCaps := Next(9);
-      iType := Next(9);
-      iCursor := Next(13);
-      iLang := iCursor; // lang (which is ignored)
-      iDate := 0;
-      iModuleId := 0;
-      module := 0;
-      kind := 0;
-    end;
-
-    iDescId := StrToUInt64(ascopy(s, iStart, (iId - iStart)));
-    oConcept := GetConcept(StrToUInt64(ascopy(s, iConceptStart+1, (iConcept - iConceptStart)-1)), iConceptIndex);
-    if oConcept = nil then
-      raise exception.create('unable to find Concept in desc ('+ascopy(s, iStatus+1, (iConcept - iStatus)-1)+')');
-
-    if RF2 then
-    begin
-      ascopy(s, iType+1, (iTerm - iType) - 1);
-      if not FConcept.FindConcept(StrtoUInt64(ascopy(s, iStatus+1, (iModuleId - iStatus) - 1)), module) then
-        raise Exception.Create('Unable to find desc module '+ascopy(s, iStatus+1, (iModuleId - iStatus) - 1));
-      iKind := StrtoUInt64(ascopy(s, iLang+1, (iType - iLang) - 1));
-      if not FConcept.FindConcept(iKind, kind) then
-        raise Exception.Create('Unable to find desc type '+ascopy(s, iLang+1, (iType - iLang) - 1));
-
-      date := ReadDate(ascopy(s, iId+1, (iDate - iId) - 1));
-      iSt := strtoint(ascopy(s, iDate+1, (iStatus - iDate) -1)); // we'll have to go update it later based on caps and type
-      if iSt = 1 then
-        iSt := FLAG_Active
-      else
-        iSt := FLAG_RetiredWithoutStatedReason;
-
-      if iKind = RF2_MAGIC_FSN then
-        iFlag := DescFlag(iSt, false {todo}, VAL_DESC_FullySpecifiedName)
-      else
-        iFlag := DescFlag(iSt, false {todo}, VAL_DESC_Unspecified);
-    end
-    else
-    begin
-      date := 0;
-      iFlag := DescFlag(strtoint(ascopy(s, iId+1, (iStatus - iId) -1)), ascopy(s, iTerm+1, (iCaps - iTerm) - 1) = '1', StrToInt(ascopy(s, iCaps+1, (iType - iCaps) - 1)));
-    end;
-
-    sDesc := ascopy(s, iTermStart+1, (iTerm - iTermStart) - 1);
-    SeeDesc(sDesc, iConceptIndex, iFlag);
-
-    if RF2 or (iFlag and MASK_DESC_STYLE <> VAL_DESC_FullySpecifiedName shl 4) Or (oConcept.FSN <> sDesc) Then
+  iCount := 0;
+  for fi := 0 to DescriptionFiles.Count - 1 do
+  begin
+    s := LoadFile(DescriptionFiles[fi]);
+    iCursor := -1;
+    iCursor := Next(13) + 2;
+    While iCursor < Length(s) Do
     Begin
-      SetLength(oConcept.FDescriptions, length(oConcept.FDescriptions)+1);
-      iRef := FDesc.AddDescription(AddString(sDesc), iDescId, date, oConcept.Index, module, kind, iFlag);
-      oConcept.FDescriptions[Length(oConcept.FDescriptions)-1] := iRef;
-    End
-    Else
-    Begin
-      iRef := oConcept.FDescriptions[0];
-      FDesc.UpdateDetails(iRef, iDescId, oConcept.Index);
+      iStart := iCursor;
+      if RF2 then
+      begin
+        iId := Next(9);
+        iDate := Next(9);
+        iStatus := Next(9);
+        iModuleId := Next(9);
+        iConceptStart := iModuleId;
+        iConcept := Next(9);
+        iLang := Next(9);
+        iType := Next(9);
+        iTermStart := iType;
+        iTerm := Next(9);
+        iCaps := Next(13);
+      end
+      else
+      begin
+        iId := Next(9);
+        iStatus := Next(9);
+        iConceptStart := iStatus;
+        iConcept := Next(9);
+        iTermStart := iConcept;
+        iTerm := Next(9);
+        iCaps := Next(9);
+        iType := Next(9);
+        iCursor := Next(13);
+        iLang := iCursor; // lang (which is ignored)
+        iDate := 0;
+        iModuleId := 0;
+        module := 0;
+        kind := 0;
+      end;
+
+      iDescId := StrToUInt64(ascopy(s, iStart, (iId - iStart)));
+      if iDescId = 135851013 then
+        writeln('135851013 encountered');
+
+      oConcept := GetConcept(StrToUInt64(ascopy(s, iConceptStart+1, (iConcept - iConceptStart)-1)), iConceptIndex);
+      if oConcept = nil then
+        raise exception.create('unable to find Concept in desc ('+ascopy(s, iStatus+1, (iConcept - iStatus)-1)+')');
+
+      if RF2 then
+      begin
+        ascopy(s, iType+1, (iTerm - iType) - 1);
+        if not FConcept.FindConcept(StrtoUInt64(ascopy(s, iStatus+1, (iModuleId - iStatus) - 1)), module) then
+          raise Exception.Create('Unable to find desc module '+ascopy(s, iStatus+1, (iModuleId - iStatus) - 1));
+        iKind := StrtoUInt64(ascopy(s, iLang+1, (iType - iLang) - 1));
+        if not FConcept.FindConcept(iKind, kind) then
+          raise Exception.Create('Unable to find desc type '+ascopy(s, iLang+1, (iType - iLang) - 1));
+
+        date := ReadDate(ascopy(s, iId+1, (iDate - iId) - 1));
+        iSt := strtoint(ascopy(s, iDate+1, (iStatus - iDate) -1)); // we'll have to go update it later based on caps and type
+        if iSt = 1 then
+          iSt := FLAG_Active
+        else
+          iSt := FLAG_RetiredWithoutStatedReason;
+
+        if iKind = RF2_MAGIC_FSN then
+          iFlag := DescFlag(iSt, false {todo}, VAL_DESC_FullySpecifiedName)
+        else
+          iFlag := DescFlag(iSt, false {todo}, VAL_DESC_Unspecified);
+      end
+      else
+      begin
+        date := 0;
+        iFlag := DescFlag(strtoint(ascopy(s, iId+1, (iStatus - iId) -1)), ascopy(s, iTerm+1, (iCaps - iTerm) - 1) = '1', StrToInt(ascopy(s, iCaps+1, (iType - iCaps) - 1)));
+      end;
+
+      sDesc := ascopy(s, iTermStart+1, (iTerm - iTermStart) - 1);
+      SeeDesc(sDesc, iConceptIndex, iFlag);
+
+      if RF2 or (iFlag and MASK_DESC_STYLE <> VAL_DESC_FullySpecifiedName shl 4) Or (oConcept.FSN <> sDesc) Then
+      Begin
+        SetLength(oConcept.FDescriptions, length(oConcept.FDescriptions)+1);
+        iRef := FDesc.AddDescription(AddString(sDesc), iDescId, date, oConcept.Index, module, kind, iFlag);
+        oConcept.FDescriptions[Length(oConcept.FDescriptions)-1] := iRef;
+      End
+      Else
+      Begin
+        iRef := oConcept.FDescriptions[0];
+        FDesc.UpdateDetails(iRef, iDescId, oConcept.Index);
+      End;
+
+      if aIndexLength = Length(aIndex) Then
+        SetLength(aIndex, Length(aIndex)+10000);
+      aIndex[aIndexLength].id := iDescId;
+      aIndex[aIndexLength].ref := iRef;
+      inc(aIndexLength);
+
+
+      inc(iCursor, 2);
+      inc(OverallCount);
+      if OverallCount mod 15001 = 0 then
+        Progress('');
+      inc(iCount);
     End;
-
-    if aIndexLength = Length(aIndex) Then
-      SetLength(aIndex, Length(aIndex)+10000);
-    aIndex[aIndexLength].id := iDescId;
-    aIndex[aIndexLength].ref := iRef;
-    inc(aIndexLength);
-
-
-    inc(iCursor, 2);
-    inc(OverallCount);
-    if OverallCount mod 15001 = 0 then
-      Progress('');
-    inc(iCount);
-  End;
+  end;
   Progress('#5 Sort Descriptions');
   SetLength(aIndex, aIndexLength);
   QuickSortIndex(aIndex);
@@ -925,6 +945,7 @@ var
   iCtype : Integer;
   iRef : integer;
   iDate : integer;
+  fi : integer;
 
   iCount : Integer;
  // iIndex : Integer;
@@ -963,92 +984,95 @@ Begin
   Progress('#10 Read Relationship File');
   if not FConcept.FindConcept(IS_A_MAGIC, Findex_is_a) Then
     Raise exception.Create('is-a concept not found ('+inttostr(IS_A_MAGIC)+')');
-  s := LoadFile(FileNameRelationship);
-  iCursor := -1;
-  iCount := 0;
-  iCursor := Next(13) + 2;
-  While iCursor < Length(s) Do
-  Begin
-    if RF2 then
-    begin
-      iRelId := Next(9);
-      iDate := Next(9);
-      iStatus := Next(9);
-      iModuleId := Next(9);
-      iC1Id := Next(9);
-      iC2Id := Next(9);
-      iGroup := Next(9);
-      iRTId := Next(9);
-      iCtype := Next(9);
-      iCursor := Next(13);
-      iRef := iCursor;
-      i_c := 0; // todo
-      i_r := 0; // todo
-      iFlag := 0; // todo;
-      active := ascopy(s, iDate+1, iStatus - iDate-1) = '1';
-      if (not active) then
-        iFlag := VAL_REL_Historical;
-      oSource := GetConceptLocal(iModuleId, iC1Id);
-      oRelType := GetConceptLocal(iGroup, iRTId);
-      oTarget := GetConceptLocal(iC1Id, iC2Id);
-      date := ReadDate(ascopy(s, iRelId+1, (iDate - iRelId) - 1));
-      module := GetConceptLocal(iStatus, iModuleId).Index;
-      kind := GetConceptLocal(iRTId, iCtype).Index;
-      modifier := GetConceptLocal(iCtype, iRef).Index;
-      iGroup := StrToInt(ascopy(s, iC2Id+1, iGroup - iC2Id-1));
-    end
-    else
-    begin
-      iRelId := Next(9);
-      iC1Id := Next(9);
-      iRTId := Next(9);
-      iC2Id := Next(9);
-      iCtype := Next(9);
-      iRef := Next(9);
-      iCursor := Next(13);
-      iGroup := iCursor;
-      iModuleId := 0;
-
-      i_c := strtoint(ascopy(s, iC2Id+1, iCtype - iC2Id -1));
-      active := i_c = 0;
-      i_r := strtoint(ascopy(s, iCtype+1, iRef - iCtype -1));
-      iFlag := i_c + i_r shl 4;
-      sGroup := ascopy(s, iRef+1, iCursor - iRef -1);
-      if pos(#9, sGroup) > 0 Then
-        iGroup := strtoint(copy(sGroup, 1, pos(#9, sGroup) - 1))
-      Else
-        iGroup := strtoint(sGroup);
-      oSource := GetConceptLocal(iRelId, iC1Id);
-      oRelType := GetConceptLocal(iC1Id, iRTId);
-      oTarget := GetConceptLocal(iRTId, iC2Id);
-      date := 0;
-      module := 0;
-      kind := 0;
-      modifier := 0;
-    end;
-
-
-    iIndex := FRel.AddRelationship(oSource.Index, oTarget.Index, oRelType.Index, module, kind, modifier, date, iFlag, iGroup);
-    if (oRelType.Index = Findex_is_a) and (active) Then
+  for fi := 0 to RelationshipFiles.Count - 1 do
+  begin
+    s := LoadFile(RelationshipFiles[fi]);
+    iCursor := -1;
+    iCount := 0;
+    iCursor := Next(13) + 2;
+    While iCursor < Length(s) Do
     Begin
-      SetLength(oSource.FParents, Length(oSource.FParents)+1);
-      oSource.FParents[Length(oSource.FParents)-1] := oTarget.Index;
+      if RF2 then
+      begin
+        iRelId := Next(9);
+        iDate := Next(9);
+        iStatus := Next(9);
+        iModuleId := Next(9);
+        iC1Id := Next(9);
+        iC2Id := Next(9);
+        iGroup := Next(9);
+        iRTId := Next(9);
+        iCtype := Next(9);
+        iCursor := Next(13);
+        iRef := iCursor;
+        i_c := 0; // todo
+        i_r := 0; // todo
+        iFlag := 0; // todo;
+        active := ascopy(s, iDate+1, iStatus - iDate-1) = '1';
+        if (not active) then
+          iFlag := VAL_REL_Historical;
+        oSource := GetConceptLocal(iModuleId, iC1Id);
+        oRelType := GetConceptLocal(iGroup, iRTId);
+        oTarget := GetConceptLocal(iC1Id, iC2Id);
+        date := ReadDate(ascopy(s, iRelId+1, (iDate - iRelId) - 1));
+        module := GetConceptLocal(iStatus, iModuleId).Index;
+        kind := GetConceptLocal(iRTId, iCtype).Index;
+        modifier := GetConceptLocal(iCtype, iRef).Index;
+        iGroup := StrToInt(ascopy(s, iC2Id+1, iGroup - iC2Id-1));
+      end
+      else
+      begin
+        iRelId := Next(9);
+        iC1Id := Next(9);
+        iRTId := Next(9);
+        iC2Id := Next(9);
+        iCtype := Next(9);
+        iRef := Next(9);
+        iCursor := Next(13);
+        iGroup := iCursor;
+        iModuleId := 0;
+
+        i_c := strtoint(ascopy(s, iC2Id+1, iCtype - iC2Id -1));
+        active := i_c = 0;
+        i_r := strtoint(ascopy(s, iCtype+1, iRef - iCtype -1));
+        iFlag := i_c + i_r shl 4;
+        sGroup := ascopy(s, iRef+1, iCursor - iRef -1);
+        if pos(#9, sGroup) > 0 Then
+          iGroup := strtoint(copy(sGroup, 1, pos(#9, sGroup) - 1))
+        Else
+          iGroup := strtoint(sGroup);
+        oSource := GetConceptLocal(iRelId, iC1Id);
+        oRelType := GetConceptLocal(iC1Id, iRTId);
+        oTarget := GetConceptLocal(iRTId, iC2Id);
+        date := 0;
+        module := 0;
+        kind := 0;
+        modifier := 0;
+      end;
+
+
+      iIndex := FRel.AddRelationship(oSource.Index, oTarget.Index, oRelType.Index, module, kind, modifier, date, iFlag, iGroup);
+      if (oRelType.Index = Findex_is_a) and (active) Then
+      Begin
+        SetLength(oSource.FParents, Length(oSource.FParents)+1);
+        oSource.FParents[Length(oSource.FParents)-1] := oTarget.Index;
+      End;
+      SetLength(oSource.FOutbounds, Length(oSource.FOutbounds)+1);
+      oSource.FOutbounds[Length(oSource.FOutbounds)-1].relationship := iIndex;
+      oSource.FOutbounds[Length(oSource.FOutbounds)-1].characteristic := i_c;
+      oSource.FOutbounds[Length(oSource.FOutbounds)-1].Refinability := i_r;
+      oSource.FOutbounds[Length(oSource.FOutbounds)-1].Group := iGroup;
+      SetLength(oTarget.FInbounds, Length(oTarget.FInbounds)+1);
+      oTarget.FInbounds[Length(oTarget.FInbounds)-1].relationship := iIndex;
+      oTarget.FInbounds[Length(oTarget.FInbounds)-1].characteristic := i_c;
+      oTarget.FInbounds[Length(oTarget.FInbounds)-1].Refinability := i_r;
+      oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := iGroup;
+      inc(iCursor, 2);
+      inc(OverallCount);
+      if OverallCount mod 15001 = 0 then
+        Progress('');
+      inc(iCount);
     End;
-    SetLength(oSource.FOutbounds, Length(oSource.FOutbounds)+1);
-    oSource.FOutbounds[Length(oSource.FOutbounds)-1].relationship := iIndex;
-    oSource.FOutbounds[Length(oSource.FOutbounds)-1].characteristic := i_c;
-    oSource.FOutbounds[Length(oSource.FOutbounds)-1].Refinability := i_r;
-    oSource.FOutbounds[Length(oSource.FOutbounds)-1].Group := iGroup;
-    SetLength(oTarget.FInbounds, Length(oTarget.FInbounds)+1);
-    oTarget.FInbounds[Length(oTarget.FInbounds)-1].relationship := iIndex;
-    oTarget.FInbounds[Length(oTarget.FInbounds)-1].characteristic := i_c;
-    oTarget.FInbounds[Length(oTarget.FInbounds)-1].Refinability := i_r;
-    oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := iGroup;
-    inc(iCursor, 2);
-    inc(OverallCount);
-    if OverallCount mod 15001 = 0 then
-      Progress('');
-    inc(iCount);
   End;
 End;
 
@@ -1769,25 +1793,27 @@ End;
 procedure TSnomedImporter.LoadReferenceSet(sFile: String);
 var
   s : TBytes;
-  iId, iTime, iActive, iModule, iRefSetId, iRefComp, iCursor : Integer;
+  iId, iTime, iActive, iModule, iRefSetId, iRefComp : Integer;
   sActive, sRefSetId, sRefComp : String;
 
   iTermRef, iRefsetRef : Cardinal;
+  iCursor : int64;
 
   bDesc : byte;
 
   refset : TRefSet;
+  ok : boolean;
 
   Function Next(ch : Byte) : integer;
   begin
     inc(iCursor);
-    While (iCursor <= length(s)) And (s[iCursor] <> ch) and (s[iCursor] <> 13) do
+    While (iCursor < length(s)) And (s[iCursor] <> ch) and (s[iCursor] <> 13) do
       inc(iCursor);
     result := iCursor;
   End;
 begin
   s := LoadFile(sFile);
-  iCursor := -1;
+  iCursor := 0;
   iCursor := Next(13) + 2;
   While iCursor < Length(s) Do
   Begin
@@ -1812,18 +1838,25 @@ begin
         else
           refset.index := iRefsetRef;
 
+      ok := true;
       if FConcept.FindConcept(StrToUInt64(sRefComp), iTermRef) then
         bDesc := 0
       else if FDescRef.FindDescription(StrToUInt64(sRefComp), iTermRef) then
         bDesc := 1
       Else
-        raise exception.Create('Unknown component '+sRefComp);
+      begin
+        Writeln('Unknown component '+sRefComp+' in '+sFile);
+        ok := false;
+      end;
 
-      if (refset.iMemberLength = length(refset.aMembers)) Then
-        SetLength(refset.aMembers, length(refset.aMembers)+10000);
-      refset.aMembers[refset.iMemberLength].kind := bDesc;
-      refset.aMembers[refset.iMemberLength].Ref := iTermRef;
-      inc(refset.iMemberLength);
+      if ok then
+      begin
+        if (refset.iMemberLength = length(refset.aMembers)) Then
+          SetLength(refset.aMembers, length(refset.aMembers)+10000);
+        refset.aMembers[refset.iMemberLength].kind := bDesc;
+        refset.aMembers[refset.iMemberLength].Ref := iTermRef;
+        inc(refset.iMemberLength);
+      end;
     End;
 
     inc(iCursor, 2);

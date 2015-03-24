@@ -373,7 +373,7 @@ Type
     Property Service[i : integer] : TLOINCServices read GetService; Default;
   End;
 
-function ascopy(s : TBytes; start, length : integer) : String;
+function ascopy(s : TBytes; start, length : integer) : AnsiString;
 
 
 Implementation
@@ -1414,11 +1414,11 @@ begin
 
     result := TFhirValueSet.Create;
     try
-      result.identifier := id;
+      result.url := id;
       result.version := Version;
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text);
-      result.status := ValuesetStatusActive;
+      result.status := ConformanceResourceStatusActive;
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -1833,9 +1833,9 @@ begin
   Move(FMaster[(iIndex*32)+28], stems, 4);
 end;
 
-function ascopy(s : TBytes; start, length : integer) : String;
+function ascopy(s : TBytes; start, length : integer) : AnsiString;
 begin
-  SetLength(result, length div 2);
+  SetLength(result, length);
   move(s[start], result[1], length);
 //  b := copy(s, start, length);
 //  result := BytesAsString(b);

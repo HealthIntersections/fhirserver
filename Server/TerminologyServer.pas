@@ -104,14 +104,14 @@ begin
   if ini.ReadString('RxNorm', 'database', '') <> '' then
   begin
     writeln('Connect to RxNorm');
-    RxNorm := TRxNormServices.Create(false, TKDBOdbcDirect.create('rxnorm', 100, 'SQL Server Native Client 11.0',
+    RxNorm := TRxNormServices.Create(TKDBOdbcDirect.create('rxnorm', 100, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('RxNorm', 'database', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
   end;
   if ini.ReadString('NciMeta', 'database', '') <> '' then
   begin
     writeln('Connect to NciMeta');
-    NciMeta := TRxNormServices.Create(true, TKDBOdbcDirect.create('ncimeta', 100, 'SQL Server Native Client 11.0',
+    NciMeta := TNciMetaServices.Create(TKDBOdbcDirect.create('ncimeta', 100, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('NciMeta', 'database', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
   end;
@@ -286,10 +286,10 @@ function TTerminologyServer.makeAnyValueSet: TFhirValueSet;
 begin
   result := TFhirValueSet.Create;
   try
-    result.identifier := ANY_CODE_VS;
+    result.url := ANY_CODE_VS;
     result.name := 'All codes known to the system';
     result.description := 'All codes known to the system';
-    result.status := ValuesetStatusActive;
+    result.status := ConformanceResourceStatusActive;
     result.compose := TFhirValueSetCompose.create;
     result.compose.includeList.Append.system := ANY_CODE_VS;
     result.link;
@@ -333,7 +333,7 @@ function TTerminologyServer.validate(vs : TFHIRValueSet; coding : TFhirCoding) :
 var
   check : TValueSetChecker;
 begin
-  check := TValueSetChecker.create(self.Link, vs.identifier);
+  check := TValueSetChecker.create(self.Link, vs.url);
   try
     check.prepare(vs);
     result := check.check(coding);
@@ -347,7 +347,7 @@ function TTerminologyServer.validate(vs : TFHIRValueSet; coded : TFhirCodeableCo
 var
   check : TValueSetChecker;
 begin
-  check := TValueSetChecker.create(self.Link, vs.identifier);
+  check := TValueSetChecker.create(self.Link, vs.url);
   try
     check.prepare(vs);
     result := check.check(coded);
@@ -486,7 +486,7 @@ begin
           for i := 0 to FConceptMaps.count - 1 do
           begin
             cm := FConceptMaps.values[i] as TLoadedConceptMap;
-            if (cm.source <> nil) and (cm.source.identifier = vs.identifier) and
+            if (cm.source <> nil) and (cm.source.url = vs.url) and
               cm.hasTranslation(coding.system, coding.code, maps) then
             try
               for j := 0 to maps.Count - 1 do
@@ -663,7 +663,7 @@ begin
     else
       try
         try
-          val := TValueSetChecker.create(self.Link, vs.identifier);
+          val := TValueSetChecker.create(self.Link, vs.url);
           try
             val.prepare(vs);
             if not val.check(URL, code) then
@@ -699,7 +699,7 @@ begin
   else
     try
       try
-        val := TValueSetChecker.create(self.Link, vs.identifier);
+        val := TValueSetChecker.create(self.Link, vs.url);
         try
           val.prepare(vs);
           conn2.SQL := 'select ConceptKey, URL, Code from Concepts';

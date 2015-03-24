@@ -69,6 +69,7 @@ Type
 
     procedure ExecuteTests;
     procedure Load(fn : String);
+    procedure LoadbyProfile(fn : String);
     procedure Index;
     procedure InstallDatabase;
     procedure UnInstallDatabase;
@@ -121,7 +122,9 @@ begin
       svc.FNotServing := true;
       svc.UninstallDatabase;
       svc.InstallDatabase;
-      if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
+      if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+        svc.LoadByProfile(fn)
+      else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
         svc.Load(fn);
     end
     else if FindCmdLineSwitch('index') then
@@ -344,7 +347,7 @@ begin
   writeln('Load database from '+fn);
   f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
   try
-    FWebServer.Transaction(f);
+    FWebServer.Transaction(f, true, 'http://hl7.org/fhir', '');
   finally
     f.Free;
   end;
@@ -353,6 +356,48 @@ begin
   FTerminologyServer.BuildIndexes(true);
 
   DoStop;
+end;
+
+procedure TFHIRService.LoadbyProfile(fn: String);
+var
+  ini : TIniFile;
+  f : TFileStream;
+  i : integer;
+begin
+  FNotServing := true;
+  ini := TIniFile.Create(fn);
+  try
+    {$IFNDEF FHIR-DSTU}
+    fn := fn.Replace('.dstu', '');
+    {$ENDIF}
+    if FDb = nil then
+      ConnectToDatabase;
+    CanStart;
+    fn := ini.ReadString('control', 'load', '');
+    writeln('Load database from '+fn);
+    f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+    try
+      FWebServer.Transaction(f, true, 'http://hl7.org/fhir', ini.ReadString('control', 'ignore', ''));
+    finally
+      f.Free;
+    end;
+    for i := 1 to ini.ReadInteger('control', 'files', 0) do
+    begin
+      fn := ini.ReadString('control', 'file'+inttostr(i), '');
+      writeln('Load '+fn);
+      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+      try
+        FWebServer.Transaction(f, false, ini.ReadString('control', 'base'+inttostr(i), ''), '');
+      finally
+        f.Free;
+      end;
+    end;
+    writeln('done');
+    FTerminologyServer.BuildIndexes(true);
+    DoStop;
+  finally
+    ini.free;
+  end;
 end;
 
 procedure TFHIRService.LoadTerminologies;

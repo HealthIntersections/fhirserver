@@ -38,7 +38,7 @@ This is the dstu branch of the FHIR code
 {$ENDIF}
 interface
 
-// FHIR v0.0.82 generated Fri, Oct 17, 2014 08:34+1100
+// FHIR v0.0.82 generated Thu, Jan 29, 2015 08:36+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
@@ -1464,7 +1464,7 @@ Const
 
   FHIR_GENERATED_REVISION = '3059';
 
-  FHIR_GENERATED_DATE = '20141017083459';
+  FHIR_GENERATED_DATE = '20150129083630';
 
 
 

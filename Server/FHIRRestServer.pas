@@ -148,7 +148,7 @@ Type
     function extractFileData(form : TIdSoapMimeMessage; const name: String; var sContentType : String): TStream;
     Procedure StartServer(active : boolean);
     Procedure StopServer;
-    Function ProcessZip(lang : String; oStream : TStream) : TFHIRAtomFeed;
+    Function ProcessZip(lang : String; oStream : TStream; base, exempt : String) : TFHIRAtomFeed;
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : String = '');
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse; upload : Boolean);
@@ -166,7 +166,7 @@ Type
 
     Procedure Start(active : boolean);
     Procedure Stop;
-    Procedure Transaction(stream : TStream);
+    Procedure Transaction(stream : TStream; init: boolean; base, exempt : String);
 
     Property DataStore : TFHIRDataStore read FFhirStore;
   End;
@@ -449,30 +449,33 @@ Begin
   end;
 End;
 
-procedure TFhirWebServer.Transaction(stream: TStream);
+procedure TFhirWebServer.Transaction(stream: TStream; init: boolean; base, exempt : String);
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
   op : TFhirOperationManager;
 begin
-  op := TFhirOperationManager.Create('en', FFhirStore.Link);
-  try
-    op.Connection := DataStore.DB.GetConnection('op');
+  if init then
+  begin
+    op := TFhirOperationManager.Create('en', FFhirStore.Link);
     try
-      op.DefineConformanceResources(FIni.ReadString('web', 'host', ''));
-      op.Connection.Release;
-    except
-      on e:exception do
-        op.Connection.Error(e);
+      op.Connection := DataStore.DB.GetConnection('op');
+      try
+        op.DefineConformanceResources(FIni.ReadString('web', 'host', ''));
+        op.Connection.Release;
+      except
+        on e:exception do
+          op.Connection.Error(e);
+      end;
+    finally
+      op.Free;
     end;
-  finally
-    op.Free;
   end;
 
   req := TFHIRRequest.Create;
   try
     req.CommandType := fcmdTransaction;
-    req.Feed := ProcessZip('en', stream);
+    req.Feed := ProcessZip('en', stream, base, exempt);
     req.feed.tags['duplicates'] := 'ignore';
     req.session := FFhirStore.CreateImplicitSession('service');
     req.LoadParams('');
@@ -898,7 +901,7 @@ end;
 function TFhirWebServer.HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
   {$IFNDEF FHIR-DSTU}
 var
-  profile : TFhirProfile;
+  profile : TFhirStructureDefinition;
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
   s, id, fid : String;
@@ -911,18 +914,18 @@ begin
   if request.Parameters.GetVar('profile').StartsWith('Profile/') then
   begin
     id := request.Parameters.GetVar('profile').Substring(8);
-    profile := GetResource(request.Session, frtProfile, request.Lang, id, '','') as TFHirProfile;
+    profile := GetResource(request.Session, frtStructureDefinition, request.Lang, id, '','') as TFHirStructureDefinition;
   end
   else
-    profile := FindResource(request.Session, frtProfile, request.Lang, 'url='+request.Parameters.GetVar('profile'), id) as TFHirProfile;
+    profile := FindResource(request.Session, frtStructureDefinition, request.Lang, 'url='+request.Parameters.GetVar('profile'), id) as TFHirStructureDefinition;
   try
     fid := request.baseUrl+'Profile/'+id+'/$questionnaire';
-    s := FFhirStore.QuestionnaireCache.getForm(frtProfile, id);
+    s := FFhirStore.QuestionnaireCache.getForm(frtStructureDefinition, id);
     if s = '' then
     begin
       builder := TQuestionnaireBuilder.Create;
       try
-        questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+        questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
         try
           if questionnaire = nil then
           begin
@@ -935,11 +938,11 @@ begin
 
             builder.build;
             questionnaire := builder.Questionnaire.Link;
-            FFhirStore.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire, builder.Dependencies);
+            FFhirStore.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
           end;
           // convert to xhtml
           s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
-          FFhirStore.QuestionnaireCache.putForm(frtProfile, id, s, builder.Dependencies);
+          FFhirStore.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
         finally
           questionnaire.Free;
         end;
@@ -1083,7 +1086,7 @@ function TFhirWebServer.HandleWebProfile(request: TFHIRRequest; response: TFHIRR
   {$IFNDEF FHIR-DSTU}
 var
   id, ver, fullid : String;
-  profile : TFhirProfile;
+  profile : TFHirStructureDefinition;
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
   s : String;
@@ -1094,15 +1097,15 @@ begin
   {$ELSE}
    // get the right questionnaire
   StringSplit(request.Id.Substring(8), '/', id, ver);
-  profile := GetResource(request.Session, frtProfile, request.Lang, id, ver, '') as TFHirProfile;
+  profile := GetResource(request.Session, frtStructureDefinition, request.Lang, id, ver, '') as TFHirStructureDefinition;
   try
     fullid := request.baseUrl+'Profile/'+id+'/$questionnaire';
-    s := FFhirStore.QuestionnaireCache.getForm(frtProfile, id);
+    s := FFhirStore.QuestionnaireCache.getForm(frtStructureDefinition, id);
     if s = '' then
     begin
       builder := TQuestionnaireBuilder.Create;
       try
-        questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtProfile, id);
+        questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
         try
           if questionnaire = nil then
           begin
@@ -1114,11 +1117,11 @@ begin
             builder.QuestionnaireId := fullid;
             builder.build;
             questionnaire := builder.Questionnaire.Link;
-            FFhirStore.QuestionnaireCache.putQuestionnaire(frtProfile, id, questionnaire, builder.Dependencies);
+            FFhirStore.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
           end;
           // convert to xhtml
           s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
-          FFhirStore.QuestionnaireCache.putForm(frtProfile, id, s, builder.Dependencies);
+          FFhirStore.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
         finally
           questionnaire.Free;
         end;
@@ -1346,9 +1349,12 @@ begin
       report.details := message;
       if (code <> '') then
       begin
-        report.type_ := TFhirCoding.Create;
-        report.type_.system := 'http://hl7.org/fhir/issue-type';
-        report.type_.code := code;
+        report.code := TFhirCodeableConcept.Create;
+        with report.code.codingList.Append do
+        begin
+          system := 'http://hl7.org/fhir/issue-type';
+          code := code;
+        end;
       end;
       response.ContentStream := TMemoryStream.Create;
       oComp := nil;
@@ -1826,7 +1832,7 @@ Begin
         begin
           oRequest.CopyPost(oPostStream);
           if (sContentType = 'application/x-zip-compressed') or (sContentType = 'application/zip') then
-            oRequest.Feed := ProcessZip(lang, oPostStream)
+            oRequest.Feed := ProcessZip(lang, oPostStream, 'http://hl7.org/fhir', '')
           else
           begin
             oRequest.Source := TAdvBuffer.Create;
@@ -1908,26 +1914,27 @@ Begin
   End;
 End;
 
-Function TFhirWebServer.ProcessZip(lang : String; oStream : TStream) : TFHIRAtomFeed;
+Function TFhirWebServer.ProcessZip(lang : String; oStream : TStream; base, exempt : String) : TFHIRAtomFeed;
 var
   rdr : TAdvZipReader;
   p : TFHIRParser;
-  i : integer;
+  i, k : integer;
   s : TAdvVCLStream;
   e : TFHIRAtomEntry;
   f : TFileStream;
-begin
-  f := TFileStream.Create('c:\temp\text.zip', fmcreate);
-  try
-    f.CopyFrom(oStream, oStream.Size);
-  finally
-    f.Free;
+  bnd : TFHIRBundle;
+  ex : TStringList;
+  function ok(res : TFHIRResource) : boolean;
+  begin
+    result := ex.IndexOf(CODES_TFHIRResourceType[res.ResourceType]) = -1
   end;
-  oStream.Position := 0;
-
+begin
+  ex := TStringList.Create;
   result := TFHIRAtomFeed.Create(BundleTypeTransaction);
   try
+    ex.CommaText := exempt;
     result.id := NewGuidURN;
+    result.base := base;
     rdr := TAdvZipReader.Create;
     try
       s := TAdvVCLStream.Create;
@@ -1950,8 +1957,17 @@ begin
           else
           {$ELSE}
           if  p.resource is TFhirBundle then
-            result.entryList.AddAll(TFhirBundle(p.resource).entryList)
-          else if not (p.resource is TFhirParameters) then
+          begin
+            bnd := TFhirBundle(p.resource);
+            case bnd.type_ of
+              BundleTypeDocument, BundleTypeMessage, BundleTypeHistory, BundleTypeSearchset, BundleTypeCollection :
+                 for k := 0 to bnd.entryList.Count - 1 do
+                   if ok(bnd.entryList[k].resource) then
+                     result.entryList.Add(bnd.entryList[k].link);
+              BundleTypeTransaction, BundleTypeTransactionResponse : ; // we ignore these for now
+            end;
+          end
+          else if not (p.resource is TFhirParameters) and ok(p.resource) then
           {$ENDIF}
           begin
             e := TFHIRAtomEntry.create;
@@ -1972,6 +1988,7 @@ begin
               e.summary := TFhirXHtmlNode.create;
               e.summary.Name := 'div';
               e.summary.NodeType := fhntElement;
+              {$ELSE}
               {$ENDIF}
               result.entryList.add(e.Link);
             finally
@@ -1989,6 +2006,7 @@ begin
     result.Link;
   finally
     result.Free;
+    ex.Free;
   end;
 end;
 
@@ -2394,7 +2412,7 @@ begin
     names := TStringList.create;
     Try
       for a := TFHIRResourceType(1) to High(TFHIRResourceType) do
-        if counts[a] > -1 then
+        if (counts[a] > -1) and (FFhirStore.ResConfig[a].Supported)  then
           names.Add(CODES_TFHIRResourceType[a]);
 
       names.Sort;
@@ -2674,7 +2692,7 @@ begin
       else
         link := FBasePath+'/_web/Questionnaire/'+tail;
     end;
-    if resource.ResourceType = frtProfile then
+    if resource.ResourceType = frtStructureDefinition then
     begin
       link := FBasePath+'/_web/Profile/'+tail;
       text := 'Try out the Profile as a questionnaire based web form';

@@ -230,14 +230,14 @@ Type
     FForm: TIdSoapMimeMessage;
     FOperationName: String;
     FIfMatch : String;
-    FMeta: TFhirResourceMeta;
+    FMeta: TFhirMeta;
     FProvenance: TFhirProvenance;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
     function GetFeed: TFhirBundle;
     procedure SetFeed(const Value: TFhirBundle);
-    procedure SetMeta(const Value: TFhirResourceMeta);
+    procedure SetMeta(const Value: TFhirMeta);
     procedure SetProvenance(const Value: TFhirProvenance);
   Public
     Constructor Create; Override;
@@ -323,7 +323,7 @@ Type
     }
     Property Resource : TFhirResource read FResource write SetResource;
     Property Feed : TFhirBundle read GetFeed write SetFeed;
-    property meta : TFhirResourceMeta read FMeta write SetMeta;
+    property meta : TFhirMeta read FMeta write SetMeta;
 
     {@member categories
       Tags on the request - if it's a resource directly
@@ -404,11 +404,11 @@ Type
     Flink_list : TFhirBundleLinkList;
     FOrigin: String;
     FId: String;
-    FMeta: TFhirResourceMeta;
+    FMeta: TFhirMeta;
     procedure SetResource(const Value: TFhirResource);
     function GetFeed: TFhirBundle;
     procedure SetFeed(const Value: TFhirBundle);
-    procedure SetMeta(const Value: TFhirResourceMeta);
+    procedure SetMeta(const Value: TFhirMeta);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -502,7 +502,7 @@ Type
     }
     property categories : TFHIRCodingList read Fcategories;
 
-    property meta : TFhirResourceMeta read FMeta write SetMeta;
+    property meta : TFhirMeta read FMeta write SetMeta;
 
     {@member link_list
       link_list for the response
@@ -815,7 +815,7 @@ begin
   setresource(value);
 end;
 
-procedure TFHIRRequest.SetMeta(const Value: TFhirResourceMeta);
+procedure TFHIRRequest.SetMeta(const Value: TFhirMeta);
 begin
   FMeta.Free;
   FMeta := Value;
@@ -906,7 +906,7 @@ begin
   SetResource(value);
 end;
 
-procedure TFHIRResponse.SetMeta(const Value: TFhirResourceMeta);
+procedure TFHIRResponse.SetMeta(const Value: TFhirMeta);
 begin
   FMeta.Free;
   FMeta := Value;

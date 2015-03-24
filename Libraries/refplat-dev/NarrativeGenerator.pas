@@ -93,7 +93,7 @@ type
     Constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFHIRRequest);
     Destructor Destroy; Override;
 
-    Procedure generate(r : TFHIRDomainResource; profile : TFHIRProfile);
+    Procedure generate(r : TFHIRDomainResource; profile : TFHirStructureDefinition);
 
   end;
 
@@ -129,7 +129,7 @@ begin
   FContext := context;
 end;
 
-Procedure TNarrativeGenerator.generate(r : TFHIRDomainResource; profile : TFHIRProfile);
+Procedure TNarrativeGenerator.generate(r : TFHIRDomainResource; profile : TFHirStructureDefinition);
 var
   x : TFHIRXhtmlNode;
 begin
@@ -707,9 +707,9 @@ procedure TNarrativeGenerator.generateResourceSummary(x : TFHIRXhtmlNode; res : 
 var
   div_ : TFHIRXhtmlNode;
   path : String;
-  profile : TFHIRProfile;
+  profile : TFHirStructureDefinition;
   firstElement, last, first : boolean;
-  struc : TFhirProfileSnapshot;
+  struc : TFHirStructureDefinitionSnapshot;
   iter : TFHIRPropertyIterator;
   child : TFhirElementDefinition;
   v : TFhirElement;

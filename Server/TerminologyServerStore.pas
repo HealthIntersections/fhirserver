@@ -9,7 +9,7 @@ uses
   KDBManager,
   FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
   TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, CvxServices, UriServices,
-  USStateCodeServices, CountryCodeServices,
+  USStateCodeServices, CountryCodeServices, IETFLanguageCodeServices,
   YuStemmer;
 
 Type
@@ -107,7 +107,7 @@ Type
     FSnomed : TSnomedServices;
     FUcum : TUcumServices;
     FRxNorm : TRxNormServices;
-    FNciMeta : TRxNormServices;
+    FNciMeta : TNciMetaServices;
     FUnii : TUniiServices;
     FCountryCode : TCountryCodeServices;
     FCvx : TCvxServices;
@@ -127,14 +127,16 @@ Type
 
     FBaseConceptMaps : TAdvStringObjectMatch; // value sets out of the specification - these can be overriden, but they never go away
     FConceptMapsByKey : TAdvStringObjectMatch;
+    FProviderClasses : TAdvStringObjectMatch;
+
+    procedure UpdateConceptMaps;
+    procedure BuildStems(list : TFhirValueSetDefineConceptList);
 
     procedure SetLoinc(const Value: TLOINCServices);
     procedure SetSnomed(const Value: TSnomedServices);
     procedure SetUcum(const Value: TUcumServices);
-    procedure UpdateConceptMaps;
-    procedure BuildStems(list : TFhirValueSetDefineConceptList);
     procedure SetRxNorm(const Value: TRxNormServices);
-    procedure SetNciMeta(const Value: TRxNormServices);
+    procedure SetNciMeta(const Value: TNciMetaServices);
     procedure SetUnii(const Value: TUniiServices);
     procedure SetCountryCode(const Value: TCountryCodeServices);
     procedure SetCvx(const Value: TCvxServices);
@@ -158,7 +160,7 @@ Type
     Property Snomed : TSnomedServices read FSnomed write SetSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
-    Property NciMeta : TRxNormServices read FNciMeta write SetNciMeta;
+    Property NciMeta : TNciMetaServices read FNciMeta write SetNciMeta;
     Property Unii : TUniiServices read FUnii write SetUnii;
     Property CountryCode : TCountryCodeServices read FCountryCode write SetCountryCode;
     Property Cvx : TCvxServices read FCvx write SetCvx;
@@ -656,9 +658,12 @@ end;
 constructor TTerminologyServerStore.Create(db : TKDBManager);
 var
   conn : TKDBConnection;
+  p : TCodeSystemProvider;
 begin
   inherited Create;
   FLock := TCriticalSection.Create('Terminology Server Store');
+  FProviderClasses := TAdvStringObjectMatch.Create;
+
   FDB := db;
 
   FBaseValueSets := TAdvStringObjectMatch.Create;
@@ -688,6 +693,13 @@ begin
   FBaseConceptMaps.Forced := true;
   FConceptMapsByKey.Forced := true;
 
+  p := TUSStateCodeServices.Create(FDB);
+  FProviderClasses.Add(p.system(nil), p);
+  p := TIETFLanguageCodeServices.Create;
+  FProviderClasses.Add(p.system(nil), p);
+  p := TUriServices.Create();
+  FProviderClasses.Add(p.system(nil), p);
+
   FStem := GetStemmer_8('english');
 
   conn := db.GetConnection('loadTerminologyKeys');
@@ -708,21 +720,11 @@ begin
 end;
 
 procedure TTerminologyServerStore.declareSystems(conf: TFHIRConformance);
+var
+  i : integer;
 begin
-  if (FLoinc <> nil) and (FLoinc.TotalCount > 0) then
-    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FLoinc.system(nil));
-  if (FSnomed <> nil) and (FSnomed.TotalCount > 0) then
-    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FSnomed.system(nil));
-  if (FUcum <> nil) and (FUcum.TotalCount > 0) then
-    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FUcum.system(nil));
-  if (FRxNorm <> nil) and (FRxNorm.TotalCount > 0) then
-    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FRxNorm.system(nil));
-  if (FNciMeta <> nil) and (FNciMeta.TotalCount > 0) then
-    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FNciMeta.system(nil));
-  if (FUnii <> nil) and (FUnii.TotalCount > 0) then
-    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FUnii.system(nil));
-  if (FCvx <> nil) and (FCvx.TotalCount > 0) then
-    conf.addExtension('http://hl7.org/fhir/ExtensionDefinition/supported-system', FCvx.system(nil));
+  for i := 0 to FProviderClasses.Count - 1 do
+    conf.addExtension('http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system', TCodeSystemProvider(FProviderClasses.Values[i]).system(nil));
 end;
 
 destructor TTerminologyServerStore.Destroy;
@@ -736,6 +738,7 @@ begin
   FValueSetsByIdentifier.free;
   FValueSetsByURL.free;
   FValueSetsByKey.free;
+  FProviderClasses.Free;
 
   FLoinc.free;
   FSnomed.free;
@@ -750,50 +753,82 @@ end;
 
 procedure TTerminologyServerStore.SetLoinc(const Value: TLOINCServices);
 begin
+  if FLoinc <> nil then
+    FProviderClasses.DeleteByKey(FLoinc.system(nil));
   FLoinc.Free;
   FLoinc := Value;
+  if FLoinc <> nil then
+    FProviderClasses.add(FLoinc.system(nil), FLoinc.Link);
 end;
 
 procedure TTerminologyServerStore.SetRxNorm(const Value: TRxNormServices);
 begin
+  if FRxNorm <> nil then
+    FProviderClasses.DeleteByKey(FRxNorm.system(nil));
   FRxNorm.Free;
   FRxNorm := Value;
+  if FRxNorm <> nil then
+    FProviderClasses.add(FRxNorm.system(nil), FRxNorm.Link);
 end;
 
-procedure TTerminologyServerStore.SetNciMeta(const Value: TRxNormServices);
+procedure TTerminologyServerStore.SetNciMeta(const Value: TNciMetaServices);
 begin
+  if FNciMeta <> nil then
+    FProviderClasses.DeleteByKey(FNciMeta.system(nil));
   FNciMeta.Free;
   FNciMeta := Value;
+  if FNciMeta <> nil then
+    FProviderClasses.add(FNciMeta.system(nil), FNciMeta.Link);
 end;
 
 procedure TTerminologyServerStore.SetUnii(const Value: TUniiServices);
 begin
+  if FUnii <> nil then
+    FProviderClasses.DeleteByKey(FUnii.system(nil));
   FUnii.Free;
   FUnii := Value;
+  if FUnii <> nil then
+    FProviderClasses.add(FUnii.system(nil), FUnii.Link);
 end;
 
 procedure TTerminologyServerStore.SetCountryCode(const Value: TCountryCodeServices);
 begin
+  if FCountryCode <> nil then
+    FProviderClasses.DeleteByKey(FCountryCode.system(nil));
   FCountryCode.Free;
   FCountryCode := Value;
+  if FCountryCode <> nil then
+    FProviderClasses.add(FCountryCode.system(nil), FCountryCode.Link);
 end;
 
 procedure TTerminologyServerStore.SetCvx(const Value: TCvxServices);
 begin
+  if FCvx <> nil then
+    FProviderClasses.DeleteByKey(FCvx.system(nil));
   FCvx.Free;
   FCvx := Value;
+  if FCvx <> nil then
+    FProviderClasses.add(FCvx.system(nil), FCvx.Link);
 end;
 
 procedure TTerminologyServerStore.SetSnomed(const Value: TSnomedServices);
 begin
+  if FSnomed <> nil then
+    FProviderClasses.DeleteByKey(FSnomed.system(nil));
   FSnomed.Free;
   FSnomed := Value;
+  if FSnomed <> nil then
+    FProviderClasses.add(FSnomed.system(nil), FSnomed.Link);
 end;
 
 procedure TTerminologyServerStore.SetUcum(const Value: TUcumServices);
 begin
+  if FUcum <> nil then
+    FProviderClasses.DeleteByKey(FUcum.system(nil));
   FUcum.Free;
   FUcum := Value;
+  if FUcum <> nil then
+    FProviderClasses.add(FUcum.system(nil), FUcum.Link);
 end;
 
 function TTerminologyServerStore.TrackValueSet(id: String; bOnlyIfNew : boolean): integer;
@@ -832,12 +867,12 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
-      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.identifier, true));
-      if (vs.identifier = 'http://hl7.org/fhir/ValueSet/ucum-common') then
+      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, true));
+      if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
         FUcum.SetCommonUnits(vs.Link);
 
-      FBaseValueSets.Matches[vs.identifier] := vs.Link;
-      FValueSetsByIdentifier.Matches[vs.identifier] := vs.Link;
+      FBaseValueSets.Matches[vs.url] := vs.Link;
+      FValueSetsByIdentifier.Matches[vs.url] := vs.Link;
       FValueSetsByURL.Matches[url] := vs.Link;
       if (vs.define <> nil) then
       begin
@@ -853,8 +888,8 @@ begin
         cm.Resource := TFhirConceptMap(resource).Link;
         cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
         cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
-        FConceptMaps.Matches[cm.Resource.identifier] := cm.Link;
-        FBaseConceptMaps.Matches[cm.Resource.identifier] := cm.Link;
+        FConceptMaps.Matches[cm.Resource.url] := cm.Link;
+        FBaseConceptMaps.Matches[cm.Resource.url] := cm.Link;
       finally
         cm.Free;
       end;
@@ -874,11 +909,11 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
-      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.identifier, false));
-      FValueSetsByIdentifier.Matches[vs.identifier] := vs.Link;
+      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, false));
+      FValueSetsByIdentifier.Matches[vs.url] := vs.Link;
       FValueSetsByURL.Matches[url] := vs.Link;
       FValueSetsByKey.Matches[inttostr(key)] := vs.Link;
-      invalidateVS(vs.identifier);
+      invalidateVS(vs.url);
       if (vs.define <> nil) then
       begin
         FCodeSystems.Matches[vs.define.system] := vs.Link;
@@ -893,7 +928,7 @@ begin
         cm.Resource := TFhirConceptMap(resource).Link;
         cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
         cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
-        FConceptMaps.Matches[cm.Resource.identifier] := cm.Link;
+        FConceptMaps.Matches[cm.Resource.url] := cm.Link;
         FConceptMapsByKey.Matches[inttostr(key)] := cm.Link;
       finally
         cm.Free;
@@ -918,16 +953,16 @@ begin
       if vs <> nil then
       begin
         FValueSetsByURL.DeleteByKey(url);
-        FValueSetsByIdentifier.DeleteByKey(vs.identifier);
+        FValueSetsByIdentifier.DeleteByKey(vs.url);
         if (vs.define <> nil) then
           FCodeSystems.DeleteByKey(vs.define.system);
 
         // add the base one back if we are dropping a value set that overrides it
         // current logical flaw: what if there's another one that overrides this? how do we prevent or deal with this?
-        vs1 := FBaseValueSets.GetValueByKey(vs.identifier) as TFhirValueSet;
+        vs1 := FBaseValueSets.GetValueByKey(vs.url) as TFhirValueSet;
         if vs1 <> nil then
         begin
-          FValueSetsByIdentifier.Matches[vs.identifier] := vs1.Link;
+          FValueSetsByIdentifier.Matches[vs.url] := vs1.Link;
           if (vs1.define <> nil) then
             FCodeSystems.Matches[vs1.define.system] := vs.Link;
         end;
@@ -941,13 +976,13 @@ begin
       cm := TLoadedConceptMap(FConceptMapsByKey.GetValueByKey(inttostr(key)));
       if vs <> nil then
       begin
-        FConceptMaps.DeleteByKey(cm.Resource.identifier);
+        FConceptMaps.DeleteByKey(cm.Resource.url);
 
         // add the base one back if we are dropping a concept map that overrides it
         // current logical flaw: what if there's another one that overrides this? how do we prevent or deal with this?
-        cm1 := FBaseConceptMaps.GetValueByKey(cm.Resource.identifier) as TLoadedConceptMap;
+        cm1 := FBaseConceptMaps.GetValueByKey(cm.Resource.url) as TLoadedConceptMap;
         if cm1 <> nil then
-          FConceptMaps.Matches[cm1.Resource.identifier] := cm1.Link;
+          FConceptMaps.Matches[cm1.Resource.url] := cm1.Link;
         // last - after this vs is no longer valid
         FConceptMapsByKey.DeleteByKey(inttostr(key));
       end;
@@ -1051,7 +1086,7 @@ begin
       for i := 0 to FValueSetsByURL.Count - 1 do
       begin
         vs := TFhirValueSet(FValueSetsByURL.ValueByIndex[i]);
-        result.Matches[vs.Identifier] := vs.name;
+        result.Matches[vs.url] := vs.name;
       end;
     finally
       FLock.Unlock;
@@ -1066,26 +1101,9 @@ end;
 Function TTerminologyServerStore.getProvider(system : String; noException : boolean = false) : TCodeSystemProvider;
 begin
   result := nil;
-  if (system = 'http://loinc.org') then
-    result := FLoinc.Link
-  else if system = 'http://snomed.info/sct' then
-    result := FSnomed.Link
-  else if system = 'http://www.nlm.nih.gov/research/umls/rxnorm' then
-    result := FRxNorm.Link
-  else if system = 'http://ncimeta.nci.nih.gov' then
-    result := FNciMeta.Link
-  else if system = 'http://fdasis.nlm.nih.gov' then
-    result := FUnii.Link
-  else if system = 'https://www.usps.com/' then
-    result := TUSStateCodeServices.Create(FDB)
-  else if system = 'urn:iso:std:iso:3166' then
-    result := TCountryCodeServices.Create(FDB)
-  else if system = 'http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp?rpt=cvx' then
-    result := FCvx.Link
-  else if system = 'http://unitsofmeasure.org' then
-    result := FUcum.Link
-  else if system = 'urn:ietf:rfc:3986' then
-    result := TUriServices.create
+
+  if FProviderClasses.ExistsByKey(system) then
+    result := (FProviderClasses.Matches[system] as TCodeSystemProvider).link
   else if system = ANY_CODE_VS then
     result := TAllCodeSystemsProvider.create(self.link)
   else
@@ -1129,7 +1147,7 @@ begin
     begin
       result := nil;
       for i := 0 to FValueSetsByUrl.Count - 1 do
-        if (result = nil) and (TFHirValueSet(FValueSetsByUrl.ValueByIndex[i]).identifier = url) then
+        if (result = nil) and (TFHirValueSet(FValueSetsByUrl.ValueByIndex[i]).url = url) then
           result := FValueSetsByUrl.ValueByIndex[i].Link as TFhirValueSet;
     end;
   finally

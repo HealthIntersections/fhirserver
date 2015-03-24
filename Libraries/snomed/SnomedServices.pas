@@ -262,6 +262,9 @@ Type
       Function GetRefsets(iIndex: Cardinal) : Cardinal;
       procedure SetRefsets(iIndex: Cardinal; Value: Cardinal);
 
+      procedure SetFlag(iIndex: Cardinal; iFlags: Byte);
+      procedure SetDate(iIndex: Cardinal; effectiveTime: TSnomedDate);
+
       // these presume that the terms are registered in order
       Procedure StartBuild;
       Function AddConcept(iIdentity : UInt64; effectiveTime : TSnomedDate; iFlags : Byte) : Cardinal;
@@ -839,6 +842,15 @@ begin
   Move(Value, FMaster[iIndex+13], 4);
 end;
 
+procedure TSnomedConceptList.SetFlag(iIndex: Cardinal; iFlags: Byte);
+begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+  Move(iFlags, FMaster[iIndex+8], 1);
+end;
+
 procedure TSnomedConceptList.SetInbounds(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
@@ -924,6 +936,15 @@ begin
   if (iIndex mod CONCEPT_SIZE <> 0) then
     Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+29], result, 1);
+end;
+
+procedure TSnomedConceptList.SetDate(iIndex: Cardinal; effectiveTime: TSnomedDate);
+begin
+  if (iIndex >= FLength) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+  if (iIndex mod CONCEPT_SIZE <> 0) then
+    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+  Move(effectiveTime, FMaster[iIndex+34], 2);
 end;
 
 procedure TSnomedConceptList.SetDepth(iIndex: Cardinal; Value: Byte);
@@ -2180,11 +2201,11 @@ begin
   begin
     result := TFhirValueSet.Create;
     try
-      result.identifier := id;
+      result.url := id;
       result.version := Version;
       result.name := 'SNOMED CT Reference Set '+id.Substring(23);
       result.description := GetDisplayName(id.Substring(23), '');
-      result.status := ValuesetStatusActive;
+      result.status := ConformanceResourceStatusActive;
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -2202,11 +2223,11 @@ begin
   begin
     result := TFhirValueSet.Create;
     try
-      result.identifier := id;
+      result.url := id;
       result.version := Version;
       result.name := 'SNOMED CT Concept '+id.Substring(22)+' and descendents';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(22), '');
-      result.status := ValuesetStatusActive;
+      result.status := ConformanceResourceStatusActive;
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;

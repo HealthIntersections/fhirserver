@@ -73,7 +73,7 @@ begin
       try
         if other = nil then
           raise ETerminologyError.create('Unable to find value set '+fvs.compose.importList[i].value);
-        checker := TValueSetChecker.create(Fstore.link, other.identifier);
+        checker := TValueSetChecker.create(Fstore.link, other.url);
         try
           checker.prepare(other);
           FOthers.Add(fvs.compose.importList[i].value, checker.Link);
@@ -116,9 +116,12 @@ begin
   begin
     issue := op.issueList.Append;
     issue.severity := severity;
-    issue.type_ := TFhirCoding.Create;
-    issue.type_.system := 'http://hl7.org/fhir/issue-type';
-    issue.type_.code := code;
+    issue.code := TFhirCodeableConcept.Create;
+    with issue.code.codingList.Append do
+    begin
+      system := 'http://hl7.org/fhir/issue-type';
+      code := code;
+    end;
     issue.details := msg;
   end;
 end;
@@ -161,39 +164,67 @@ function TValueSetChecker.check(system, code : String; displays : TStringList) :
 var
   checker : TValueSetChecker;
   cs : TCodeSystemProvider;
+  ctxt : TCodeSystemProviderContext;
   i : integer;
 begin
   result := false;
-  if (fvs.define <> nil) and (system = fvs.define.system) then
+  {special case:}
+  if (fvs.url = ANY_CODE_VS) then
   begin
-    result := FindCode(code, fvs.define.conceptList, displays);
-    if result then
-      exit;
-  end;
-  if (fvs.compose <> nil) then
+    cs := FStore.getProvider(system, true);
+    try
+      if cs = nil then
+        result := false
+      else
+      begin
+        ctxt := cs.locate(code);
+        if (ctxt = nil) then
+          result := false
+        else
+          try
+            result := true;
+            cs.Displays(ctxt, displays);
+          finally
+            cs.Close(ctxt);
+          end;
+      end;
+    finally
+      cs.Free;
+    end;
+  end
+  else
   begin
-    for i := 0 to fvs.compose.importList.Count - 1 do
+    if (fvs.define <> nil) and (system = fvs.define.system) then
     begin
-      if not result then
-      begin
-        checker := TValueSetChecker(FOthers.matches[fvs.compose.importList[i].value]);
-        result := checker.check(system, code, displays);
-      end;
-    end;
-    for i := 0 to fvs.compose.includeList.Count - 1 do
-    begin
-      if not result then
-      begin
-        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
-        result := (cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.includeList[i], code, displays);
-      end;
-    end;
-    for i := 0 to fvs.compose.excludeList.Count - 1 do
-    begin
+      result := FindCode(code, fvs.define.conceptList, displays);
       if result then
+        exit;
+    end;
+    if (fvs.compose <> nil) then
+    begin
+      for i := 0 to fvs.compose.importList.Count - 1 do
       begin
-        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
-        result := not ((cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.excludeList[i], code, displays));
+        if not result then
+        begin
+          checker := TValueSetChecker(FOthers.matches[fvs.compose.importList[i].value]);
+          result := checker.check(system, code, displays);
+        end;
+      end;
+      for i := 0 to fvs.compose.includeList.Count - 1 do
+      begin
+        if not result then
+        begin
+          cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
+          result := (cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.includeList[i], code, displays);
+        end;
+      end;
+      for i := 0 to fvs.compose.excludeList.Count - 1 do
+      begin
+        if result then
+        begin
+          cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
+          result := not ((cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.excludeList[i], code, displays));
+        end;
       end;
     end;
   end;

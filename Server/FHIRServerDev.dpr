@@ -279,7 +279,8 @@ uses
   USStateCodeServices in 'USStateCodeServices.pas',
   UniiServices in 'UniiServices.pas',
   RxNormServices in 'RxNormServices.pas',
-  OIDSupport in '..\Libraries\support\OIDSupport.pas';
+  OIDSupport in '..\Libraries\support\OIDSupport.pas',
+  IETFLanguageCodeServices in 'IETFLanguageCodeServices.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
