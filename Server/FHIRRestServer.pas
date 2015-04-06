@@ -574,13 +574,13 @@ begin
     c.code := 'OAuth2';
     rest.security.description := 'This server implements OAuth2 for login';
 
-    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#oidc-discovery',
+    rest.security.addExtension('http://fhir-registry.smarthealthit.org/Profile/oauth-uris#oidc-discovery',
       TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
-    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#register',
+    rest.security.addExtension('http://fhir-registry.smarthealthit.org/Profile/oauth-uris#register',
       TFhirUri.Create('mailto:'+FAdminEmail));
-    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#authorize',
+    rest.security.addExtension('http://fhir-registry.smarthealthit.org/Profile/oauth-uris#authorize',
       TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath));
-    rest.security.addExtension('http://fhir-registry.smartplatforms.org/Profile/oauth-uris#token',
+    rest.security.addExtension('http://fhir-registry.smarthealthit.org/Profile/oauth-uris#token',
       TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.TokenPath));
   end;
 end;
@@ -1646,6 +1646,13 @@ Begin
           end
           else if sCommand = 'POST' then
             oRequest.CommandType := fcmdCreate
+          {$IFNDEF FHIR-DSTU}  // conditional update
+          else if (scommand = 'PUT') then
+          begin
+            oRequest.CommandType := fcmdUpdate;
+            oRequest.DefaultSearch := true;
+          end
+          {$ENDIF}
           else
             raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [sResource]), HTTP_ERR_BAD_REQUEST);
         end

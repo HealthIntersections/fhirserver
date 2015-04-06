@@ -771,6 +771,8 @@ end;
 
 function TFHIRRequest.GetFeed: TFhirBundle;
 begin
+  if not (Resource is TFHIRBundle) then
+    raise Exception.Create('Found a '+resource.FhirType+' expecting a Bundle');
   result := Resource as TFhirBundle;
 end;
 
@@ -1033,7 +1035,8 @@ begin
   result := TFhirIdentifier.create;
   try
     result.useElement := CheckEnum(CODES_TFhirIdentifierUse, use);
-    result.label_ := label_;
+    result.type_ := TFhirCodeableConcept.Create;
+    result.type_.text := label_;
     result.system := idsystem;
     result.value := id;
     result.link;
@@ -1063,7 +1066,8 @@ begin
   try
     result.system := system;
     result.value := key;
-    result.label_ := label_;
+    result.type_ := TFhirCodeableConcept.Create;
+    result.type_.text := label_;
     result.useElement := CheckEnum(CODES_TFhirIdentifierUse, use);
     result.link;
   finally

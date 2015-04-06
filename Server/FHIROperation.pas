@@ -1061,8 +1061,8 @@ begin
       begin
         op := oConf.restList[0].operationList.Append;
         op.name := TFhirOperation(FOperations[i]).Name;
-        op.definition := FFactory.makeReference('/OperationDefinition/fso-'+op.name);
-        html.append(' <li>'+op.name+': see /OperationDefinition/fso-'+op.name+'</li>'#13#10);
+        op.definition := FFactory.makeReference('OperationDefinition/fso-'+op.name);
+        html.append(' <li>'+op.name+': see OperationDefinition/fso-'+op.name+'</li>'#13#10);
       end;
       html.append('</ul>'#13#10);
       {$ENDIF}

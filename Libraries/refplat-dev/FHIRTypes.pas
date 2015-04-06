@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.4.0 generated Tue, Mar 24, 2015 14:27+1100
+// FHIR v0.5.0 generated Thu, Apr 2, 2015 23:25+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -208,16 +208,6 @@ Type
     ContactPointUseMobile); {@enum.value ContactPointUseMobile A telecommunication device that moves and stays with its owner. May have characteristics of all other use codes, suitable for urgent matters, not the first choice for routine business. }
   TFhirContactPointUseList = set of TFhirContactPointUse;
 
-  {@Enum TFhirAlertStatus
-    Indicates whether this alert is active and needs to be displayed to a user, or whether it is no longer needed or entered in error
-  }
-  TFhirAlertStatus = (
-    AlertStatusNull,  {@enum.value AlertStatusNull Value is missing from Instance }
-    AlertStatusActive, {@enum.value AlertStatusActive A current alert that should be displayed to a user. A system may use the category to determine which roles should view the alert. }
-    AlertStatusInactive, {@enum.value AlertStatusInactive The alert does not need to be displayed any more. }
-    AlertStatusEnteredInError); {@enum.value AlertStatusEnteredInError The alert was added in error, and should no longer be displayed. }
-  TFhirAlertStatusList = set of TFhirAlertStatus;
-
   {@Enum TFhirAllergyIntoleranceStatus
     Assertion about certainty associated with a propensity, or potential risk, of a reaction to the identified Substance
   }
@@ -226,7 +216,8 @@ Type
     AllergyIntoleranceStatusUnconfirmed, {@enum.value AllergyIntoleranceStatusUnconfirmed A low level of certainty about the propensity for a reaction to the identified Substance. }
     AllergyIntoleranceStatusConfirmed, {@enum.value AllergyIntoleranceStatusConfirmed A high level of certainty about the propensity for a reaction to the identified Substance, which may include clinical evidence by testing or rechallenge. }
     AllergyIntoleranceStatusResolved, {@enum.value AllergyIntoleranceStatusResolved A reaction to the identified Substance has been clinically reassessed by testing or rechallenge and considered to be resolved. }
-    AllergyIntoleranceStatusRefuted); {@enum.value AllergyIntoleranceStatusRefuted A propensity for a reaction to the identified Substance has been disproven with a high level of clinical certainty, which may include testing or rechallenge, and is refuted. }
+    AllergyIntoleranceStatusRefuted, {@enum.value AllergyIntoleranceStatusRefuted A propensity for a reaction to the identified Substance has been disproven with a high level of clinical certainty, which may include testing or rechallenge, and is refuted. }
+    AllergyIntoleranceStatusEnteredInError); {@enum.value AllergyIntoleranceStatusEnteredInError The statement was entered in error and Is not valid. }
   TFhirAllergyIntoleranceStatusList = set of TFhirAllergyIntoleranceStatus;
 
   {@Enum TFhirAllergyIntoleranceCriticality
@@ -349,7 +340,7 @@ Type
   TFhirAuditEventOutcomeList = set of TFhirAuditEventOutcome;
 
   {@Enum TFhirNetworkType
-    The type of network access point that originated the audit event
+    The type of network access point of this participant in the audit event
   }
   TFhirNetworkType = (
     NetworkTypeNull,  {@enum.value NetworkTypeNull Value is missing from Instance }
@@ -361,7 +352,7 @@ Type
   TFhirNetworkTypeList = set of TFhirNetworkType;
 
   {@Enum TFhirObjectType
-    Code for the participant object type being audited
+    Code for the object type involved audited
   }
   TFhirObjectType = (
     ObjectTypeNull,  {@enum.value ObjectTypeNull Value is missing from Instance }
@@ -372,14 +363,14 @@ Type
   TFhirObjectTypeList = set of TFhirObjectType;
 
   {@Enum TFhirObjectRole
-    Code representing the functional application role of Participant Object being audited
+    Code representing the role the Object played in the event
   }
   TFhirObjectRole = (
     ObjectRoleNull,  {@enum.value ObjectRoleNull Value is missing from Instance }
     ObjectRole1, {@enum.value ObjectRole1 This object is the patient that is the subject of care related to this event.  It is identifiable by patient ID or equivalent.  The patient may be either human or animal. }
     ObjectRole2, {@enum.value ObjectRole2 This is a location identified as related to the event.  This is usually the location where the event took place.  Note that for shipping, the usual events are arrival at a location or departure from a location. }
     ObjectRole3, {@enum.value ObjectRole3 This object is any kind of persistent document created as a result of the event.  This could be a paper report, film, electronic report, DICOM Study, etc.  Issues related to medical records life cycle management are conveyed elsewhere. }
-    ObjectRole4, {@enum.value ObjectRole4 A logical object related to the event.  (Deprecated). }
+    ObjectRole4, {@enum.value ObjectRole4 A logical object related to a health record event.  This is any healthcare  specific resource (object) not restricted to FHIR defined Resources. }
     ObjectRole5, {@enum.value ObjectRole5 This is any configurable file used to control creation of documents.  Examples include the objects maintained by the HL7 Master File transactions, Value Sets, etc. }
     ObjectRole6, {@enum.value ObjectRole6 A human participant not otherwise identified by some other category. }
     ObjectRole7, {@enum.value ObjectRole7 (deprecated). }
@@ -403,7 +394,7 @@ Type
   TFhirObjectRoleList = set of TFhirObjectRole;
 
   {@Enum TFhirObjectLifecycle
-    Identifier for the data life-cycle stage for the participant object
+    Identifier for the data life-cycle stage for the object
   }
   TFhirObjectLifecycle = (
     ObjectLifecycleNull,  {@enum.value ObjectLifecycleNull Value is missing from Instance }
@@ -468,30 +459,6 @@ Type
     CarePlanStatusCompleted); {@enum.value CarePlanStatusCompleted The plan is no longer in use and is not expected to be followed or used in patient care. }
   TFhirCarePlanStatusList = set of TFhirCarePlanStatus;
 
-  {@Enum TFhirCarePlanGoalStatus
-    Indicates whether the goal has been met and is still being targeted
-  }
-  TFhirCarePlanGoalStatus = (
-    CarePlanGoalStatusNull,  {@enum.value CarePlanGoalStatusNull Value is missing from Instance }
-    CarePlanGoalStatusInProgress, {@enum.value CarePlanGoalStatusInProgress The goal is being sought but has not yet been reached.  (Also applies if goal was reached in the past but there has been regression and goal is being sought again). }
-    CarePlanGoalStatusAchieved, {@enum.value CarePlanGoalStatusAchieved The goal has been met and no further action is needed. }
-    CarePlanGoalStatusSustaining, {@enum.value CarePlanGoalStatusSustaining The goal has been met, but ongoing activity is needed to sustain the goal objective. }
-    CarePlanGoalStatusCancelled); {@enum.value CarePlanGoalStatusCancelled The goal is no longer being sought. }
-  TFhirCarePlanGoalStatusList = set of TFhirCarePlanGoalStatus;
-
-  {@Enum TFhirCarePlanActivityStatus
-    Indicates where the activity is at in its overall life cycle
-  }
-  TFhirCarePlanActivityStatus = (
-    CarePlanActivityStatusNull,  {@enum.value CarePlanActivityStatusNull Value is missing from Instance }
-    CarePlanActivityStatusNotStarted, {@enum.value CarePlanActivityStatusNotStarted Activity is planned but no action has yet been taken. }
-    CarePlanActivityStatusScheduled, {@enum.value CarePlanActivityStatusScheduled Appointment or other booking has occurred but activity has not yet begun. }
-    CarePlanActivityStatusInProgress, {@enum.value CarePlanActivityStatusInProgress Activity has been started but is not yet complete. }
-    CarePlanActivityStatusOnHold, {@enum.value CarePlanActivityStatusOnHold Activity was started but has temporarily ceased with an expectation of resumption at a future time. }
-    CarePlanActivityStatusCompleted, {@enum.value CarePlanActivityStatusCompleted The activities have been completed (more or less) as planned. }
-    CarePlanActivityStatusCancelled); {@enum.value CarePlanActivityStatusCancelled The activities have been ended prior to completion (perhaps even before they were started). }
-  TFhirCarePlanActivityStatusList = set of TFhirCarePlanActivityStatus;
-
   {@Enum TFhirCarePlanActivityCategory
     High-level categorization of the type of activity in a care plan.
   }
@@ -506,15 +473,18 @@ Type
     CarePlanActivityCategoryOther); {@enum.value CarePlanActivityCategoryOther Some other form of action. }
   TFhirCarePlanActivityCategoryList = set of TFhirCarePlanActivityCategory;
 
-  {@Enum TFhirCarePlan2Status
-    Indicates whether the plan is currently being acted upon, represents future intentions or is now just historical record.
+  {@Enum TFhirCarePlanActivityStatus
+    Indicates where the activity is at in its overall life cycle
   }
-  TFhirCarePlan2Status = (
-    CarePlan2StatusNull,  {@enum.value CarePlan2StatusNull Value is missing from Instance }
-    CarePlan2StatusPlanned, {@enum.value CarePlan2StatusPlanned The plan is in development or awaiting use but is not yet intended to be acted upon. }
-    CarePlan2StatusActive, {@enum.value CarePlan2StatusActive The plan is intended to be followed and used as part of patient care. }
-    CarePlan2StatusCompleted); {@enum.value CarePlan2StatusCompleted The plan is no longer in use and is not expected to be followed or used in patient care. }
-  TFhirCarePlan2StatusList = set of TFhirCarePlan2Status;
+  TFhirCarePlanActivityStatus = (
+    CarePlanActivityStatusNull,  {@enum.value CarePlanActivityStatusNull Value is missing from Instance }
+    CarePlanActivityStatusNotStarted, {@enum.value CarePlanActivityStatusNotStarted Activity is planned but no action has yet been taken. }
+    CarePlanActivityStatusScheduled, {@enum.value CarePlanActivityStatusScheduled Appointment or other booking has occurred but activity has not yet begun. }
+    CarePlanActivityStatusInProgress, {@enum.value CarePlanActivityStatusInProgress Activity has been started but is not yet complete. }
+    CarePlanActivityStatusOnHold, {@enum.value CarePlanActivityStatusOnHold Activity was started but has temporarily ceased with an expectation of resumption at a future time. }
+    CarePlanActivityStatusCompleted, {@enum.value CarePlanActivityStatusCompleted The activities have been completed (more or less) as planned. }
+    CarePlanActivityStatusCancelled); {@enum.value CarePlanActivityStatusCancelled The activities have been ended prior to completion (perhaps even before they were started). }
+  TFhirCarePlanActivityStatusList = set of TFhirCarePlanActivityStatus;
 
   {@Enum TFhirTypeLink
     The type or discipline-style of the claim
@@ -547,6 +517,16 @@ Type
     RSLinkComplete, {@enum.value RSLinkComplete The processing completed without errors. }
     RSLinkError); {@enum.value RSLinkError The processing identified with errors. }
   TFhirRSLinkList = set of TFhirRSLink;
+
+  {@Enum TFhirClinicalImpressionStatus
+    The workflow state of a clinical impression
+  }
+  TFhirClinicalImpressionStatus = (
+    ClinicalImpressionStatusNull,  {@enum.value ClinicalImpressionStatusNull Value is missing from Instance }
+    ClinicalImpressionStatusInProgress, {@enum.value ClinicalImpressionStatusInProgress The assessment is still on-going and results are not yet final. }
+    ClinicalImpressionStatusCompleted, {@enum.value ClinicalImpressionStatusCompleted The assessment is done and the results are final. }
+    ClinicalImpressionStatusEnteredInError); {@enum.value ClinicalImpressionStatusEnteredInError This assessment was never actually done and the record is erroneous (e.g. Wrong patient). }
+  TFhirClinicalImpressionStatusList = set of TFhirClinicalImpressionStatus;
 
   {@Enum TFhirCommunicationStatus
     The status of the communication
@@ -634,7 +614,9 @@ Type
     ConditionStatusProvisional, {@enum.value ConditionStatusProvisional This is a tentative diagnosis - still a candidate that is under consideration. }
     ConditionStatusWorking, {@enum.value ConditionStatusWorking The patient is being treated on the basis that this is the condition, but it is still not confirmed. }
     ConditionStatusConfirmed, {@enum.value ConditionStatusConfirmed There is sufficient diagnostic and/or clinical evidence to treat this as a confirmed condition. }
-    ConditionStatusRefuted); {@enum.value ConditionStatusRefuted This condition has been ruled out by diagnostic and clinical evidence. }
+    ConditionStatusRefuted, {@enum.value ConditionStatusRefuted This condition has been ruled out by diagnostic and clinical evidence. }
+    ConditionStatusEnteredInError, {@enum.value ConditionStatusEnteredInError The statement was entered in error and Is not valid. }
+    ConditionStatusUnknown); {@enum.value ConditionStatusUnknown The condition status is unknown.  Note that "unknown" is a value of last resort and every attempt should be made to provide a meaningful value other than "unknown". }
   TFhirConditionStatusList = set of TFhirConditionStatus;
 
   {@Enum TFhirRestfulConformanceMode
@@ -737,6 +719,16 @@ Type
     DataelementSpecificityScaleable, {@enum.value DataelementSpecificityScaleable A convertable data element where unit conversions are different only by a power of 10.  E.g. g, mg, kg. }
     DataelementSpecificityFlexible); {@enum.value DataelementSpecificityFlexible The data element is unconstrained in units, choice of data types and/or choice of vocabulary such that automated comparison of data captured using the data element is not possible. }
   TFhirDataelementSpecificityList = set of TFhirDataelementSpecificity;
+
+  {@Enum TFhirDevicestatus
+    The availability status of the device
+  }
+  TFhirDevicestatus = (
+    DevicestatusNull,  {@enum.value DevicestatusNull Value is missing from Instance }
+    DevicestatusAvailable, {@enum.value DevicestatusAvailable The Device is available for use. }
+    DevicestatusNotAvailable, {@enum.value DevicestatusNotAvailable The Device is no longer available for use ( e.g lost, expired, damaged). }
+    DevicestatusEnteredInError); {@enum.value DevicestatusEnteredInError The Device was entered in error and voided. }
+  TFhirDevicestatusList = set of TFhirDevicestatus;
 
   {@Enum TFhirMeasurementPrinciple
     Different measurement principle supported by the device
@@ -893,7 +885,7 @@ Type
   TFhirDocumentReferenceStatus = (
     DocumentReferenceStatusNull,  {@enum.value DocumentReferenceStatusNull Value is missing from Instance }
     DocumentReferenceStatusCurrent, {@enum.value DocumentReferenceStatusCurrent This is the current reference for this document. }
-    DocumentReferenceStatusSuperceded, {@enum.value DocumentReferenceStatusSuperceded This reference has been superseded by another reference. }
+    DocumentReferenceStatusSuperceded, {@enum.value DocumentReferenceStatusSuperceded This reference has been superceded by another reference. }
     DocumentReferenceStatusEnteredInError); {@enum.value DocumentReferenceStatusEnteredInError This reference was created in error. }
   TFhirDocumentReferenceStatusList = set of TFhirDocumentReferenceStatus;
 
@@ -953,12 +945,33 @@ Type
   TFhirEpisodeOfCareStatus = (
     EpisodeOfCareStatusNull,  {@enum.value EpisodeOfCareStatusNull Value is missing from Instance }
     EpisodeOfCareStatusPlanned, {@enum.value EpisodeOfCareStatusPlanned This episode of care is planned to start at the date specified in the period.start. During this status an organization may perform assessments to determine if they are eligible to receive services, or be organizing to make resources available to provide care services. }
+    EpisodeOfCareStatusWaitlist, {@enum.value EpisodeOfCareStatusWaitlist This episode has been placed on a waitlist, pending the episode being made active (or cancelled). }
     EpisodeOfCareStatusActive, {@enum.value EpisodeOfCareStatusActive This episode of care is current. }
-    EpisodeOfCareStatusOnhold, {@enum.value EpisodeOfCareStatusOnhold This episode of care is on hold, the organization has limitted responsibility for the patient (such as while on respite). }
-    EpisodeOfCareStatusFinished, {@enum.value EpisodeOfCareStatusFinished This episode of care is finished at the organization is not expecting to be providing care to the patient. }
-    EpisodeOfCareStatusWithdrawn, {@enum.value EpisodeOfCareStatusWithdrawn The episode of care was withdrawn from service, often selected during the planned stage as the patient may have gone elsewhere, or the circumstances have changed and the organization is unable to provide the care. }
-    EpisodeOfCareStatusOther); {@enum.value EpisodeOfCareStatusOther The status is outside one of these values, an extension should be used to define what the status reason is. }
+    EpisodeOfCareStatusOnhold, {@enum.value EpisodeOfCareStatusOnhold This episode of care is on hold, the organization has limited responsibility for the patient (such as while on respite). }
+    EpisodeOfCareStatusFinished, {@enum.value EpisodeOfCareStatusFinished This episode of care is finished at the organization is not expecting to be providing care to the patient. Can also be known as "closed", "completed" or other similar terms. }
+    EpisodeOfCareStatusCancelled); {@enum.value EpisodeOfCareStatusCancelled The episode of care was cancelled, or withdrawn from service, often selected during the planned stage as the patient may have gone elsewhere, or the circumstances have changed and the organization is unable to provide the care. It indicates that services terminated outside the planned/expected workflow. }
   TFhirEpisodeOfCareStatusList = set of TFhirEpisodeOfCareStatus;
+
+  {@Enum TFhirAdministrativeGender
+    The gender of a person used for administrative purposes
+  }
+  TFhirAdministrativeGender = (
+    AdministrativeGenderNull,  {@enum.value AdministrativeGenderNull Value is missing from Instance }
+    AdministrativeGenderMale, {@enum.value AdministrativeGenderMale Male }
+    AdministrativeGenderFemale, {@enum.value AdministrativeGenderFemale Female }
+    AdministrativeGenderOther, {@enum.value AdministrativeGenderOther Other }
+    AdministrativeGenderUnknown); {@enum.value AdministrativeGenderUnknown Unknown }
+  TFhirAdministrativeGenderList = set of TFhirAdministrativeGender;
+
+  {@Enum TFhirFlagStatus
+    Indicates whether this flag is active and needs to be displayed to a user, or whether it is no longer needed or entered in error
+  }
+  TFhirFlagStatus = (
+    FlagStatusNull,  {@enum.value FlagStatusNull Value is missing from Instance }
+    FlagStatusActive, {@enum.value FlagStatusActive A current flag that should be displayed to a user. A system may use the category to determine which roles should view the flag. }
+    FlagStatusInactive, {@enum.value FlagStatusInactive The flag does not need to be displayed any more. }
+    FlagStatusEnteredInError); {@enum.value FlagStatusEnteredInError The flag was added in error, and should no longer be displayed. }
+  TFhirFlagStatusList = set of TFhirFlagStatus;
 
   {@Enum TFhirGoalStatus
     Indicates whether the goal has been met and is still being targeted
@@ -987,6 +1000,20 @@ Type
     GroupTypeMedication, {@enum.value GroupTypeMedication Group contains Medication resources. }
     GroupTypeSubstance); {@enum.value GroupTypeSubstance Group contains Substance resources. }
   TFhirGroupTypeList = set of TFhirGroupType;
+
+  {@Enum TFhirDaysOfWeek
+    The days of the week
+  }
+  TFhirDaysOfWeek = (
+    DaysOfWeekNull,  {@enum.value DaysOfWeekNull Value is missing from Instance }
+    DaysOfWeekMon, {@enum.value DaysOfWeekMon Monday. }
+    DaysOfWeekTue, {@enum.value DaysOfWeekTue Tuesday. }
+    DaysOfWeekWed, {@enum.value DaysOfWeekWed Wednesday. }
+    DaysOfWeekThu, {@enum.value DaysOfWeekThu Thursday. }
+    DaysOfWeekFri, {@enum.value DaysOfWeekFri Friday. }
+    DaysOfWeekSat, {@enum.value DaysOfWeekSat Saturday. }
+    DaysOfWeekSun); {@enum.value DaysOfWeekSun Sunday. }
+  TFhirDaysOfWeekList = set of TFhirDaysOfWeek;
 
   {@Enum TFhirImagingModality
     Type of acquired image data in the instance
@@ -1102,6 +1129,16 @@ Type
     ModalityXC); {@enum.value ModalityXC  }
   TFhirModalityList = set of TFhirModality;
 
+  {@Enum TFhirListStatus
+    The current state of the list
+  }
+  TFhirListStatus = (
+    ListStatusNull,  {@enum.value ListStatusNull Value is missing from Instance }
+    ListStatusCurrent, {@enum.value ListStatusCurrent The list is considered to be an active part of the patient's record. }
+    ListStatusRetired, {@enum.value ListStatusRetired The list is "old" and should no longer be considered accurate or relevant. }
+    ListStatusEnteredInError); {@enum.value ListStatusEnteredInError The list was never accurate.  It is retained for medico-legal purposes only. }
+  TFhirListStatusList = set of TFhirListStatus;
+
   {@Enum TFhirListMode
     The processing mode that applies to this list
   }
@@ -1112,6 +1149,15 @@ Type
     ListModeChanges); {@enum.value ListModeChanges The list is prepared as a statement of changes that have been made or recommended. }
   TFhirListModeList = set of TFhirListMode;
 
+  {@Enum TFhirLocationMode
+    Indicates whether a resource instance represents a specific location or a class of locations
+  }
+  TFhirLocationMode = (
+    LocationModeNull,  {@enum.value LocationModeNull Value is missing from Instance }
+    LocationModeInstance, {@enum.value LocationModeInstance The Location resource represents a specific instance of a Location (e.g. Operating Theatre 1A). }
+    LocationModeKind); {@enum.value LocationModeKind The Location represents a class of Locations (e.g. Any Operating Theatre). Although this class of locations could be constrained within a specific boundary (such as organization, or parent location, address etc). }
+  TFhirLocationModeList = set of TFhirLocationMode;
+
   {@Enum TFhirLocationStatus
     Indicates whether the location is still in use
   }
@@ -1121,15 +1167,6 @@ Type
     LocationStatusSuspended, {@enum.value LocationStatusSuspended The location is temporarily closed. }
     LocationStatusInactive); {@enum.value LocationStatusInactive The location is no longer used. }
   TFhirLocationStatusList = set of TFhirLocationStatus;
-
-  {@Enum TFhirLocationMode
-    Indicates whether a resource instance represents a specific location or a class of locations
-  }
-  TFhirLocationMode = (
-    LocationModeNull,  {@enum.value LocationModeNull Value is missing from Instance }
-    LocationModeInstance, {@enum.value LocationModeInstance The Location resource represents a specific instance of a Location. }
-    LocationModeKind); {@enum.value LocationModeKind The Location represents a class of Locations. }
-  TFhirLocationModeList = set of TFhirLocationMode;
 
   {@Enum TFhirDigitalMediaType
     Whether the Media is a photo, video, or audio
@@ -1331,17 +1368,6 @@ Type
     OrderStatusCompleted); {@enum.value OrderStatusCompleted The order has been completed. }
   TFhirOrderStatusList = set of TFhirOrderStatus;
 
-  {@Enum TFhirAdministrativeGender
-    The gender of a person used for administrative purposes
-  }
-  TFhirAdministrativeGender = (
-    AdministrativeGenderNull,  {@enum.value AdministrativeGenderNull Value is missing from Instance }
-    AdministrativeGenderMale, {@enum.value AdministrativeGenderMale Male }
-    AdministrativeGenderFemale, {@enum.value AdministrativeGenderFemale Female }
-    AdministrativeGenderOther, {@enum.value AdministrativeGenderOther Other }
-    AdministrativeGenderUnknown); {@enum.value AdministrativeGenderUnknown Unknown }
-  TFhirAdministrativeGenderList = set of TFhirAdministrativeGender;
-
   {@Enum TFhirLinkType
     The type of link between this patient resource and another patient resource.
   }
@@ -1481,9 +1507,10 @@ Type
   TFhirReferralstatus = (
     ReferralstatusNull,  {@enum.value ReferralstatusNull Value is missing from Instance }
     ReferralstatusDraft, {@enum.value ReferralstatusDraft A draft referral that has yet to be send. }
-    ReferralstatusSent, {@enum.value ReferralstatusSent The referral has been transmitted, but not yet acknowledged by the recipient. }
+    ReferralstatusRequested, {@enum.value ReferralstatusRequested The referral has been transmitted, but not yet acknowledged by the recipient. }
     ReferralstatusActive, {@enum.value ReferralstatusActive The referral has been acknowledged by the recipient, and is in the process of being actioned. }
     ReferralstatusCancelled, {@enum.value ReferralstatusCancelled The referral has been cancelled without being completed. For example it is no longer needed. }
+    ReferralstatusAccepted, {@enum.value ReferralstatusAccepted The recipient has agreed to deliver the care requested by the referral. }
     ReferralstatusRejected, {@enum.value ReferralstatusRejected The recipient has declined to accept the referral. }
     ReferralstatusCompleted); {@enum.value ReferralstatusCompleted The referral has been completely actioned. }
   TFhirReferralstatusList = set of TFhirReferralstatus;
@@ -1626,12 +1653,16 @@ Type
   TFhirBooleanList = class;
   TFhirInstant = class;
   TFhirInstantList = class;
+  TFhirUnsignedInt = class;
+  TFhirUnsignedIntList = class;
   TFhirCode = class;
   TFhirCodeList = class;
   TFhirId = class;
   TFhirIdList = class;
   TFhirOid = class;
   TFhirOidList = class;
+  TFhirPositiveInt = class;
+  TFhirPositiveIntList = class;
   TFhirUuid = class;
   TFhirUuidList = class;
   TFhirExtension = class;
@@ -3433,6 +3464,126 @@ Type
   End;
 
 
+  {@Class TFhirUnsignedInt : TFhirInteger
+    a complex string - has an Id attribute, and a dataAbsentReason.
+    
+    Used where a FHIR element is a string, and may have a dataAbsentReason
+  }
+  {!.Net HL7Connect.Fhir.UnsignedInt}
+  TFhirUnsignedInt = class (TFhirInteger)
+  Private
+  Public
+    Constructor Create(value : String); overload;
+    Destructor Destroy; override;
+    
+    {!script hide}
+    Function Link : TFhirUnsignedInt; Overload;
+    Function Clone : TFhirUnsignedInt; Overload;
+    function FhirType : string; override;
+    {!script show}
+  End;    
+
+
+  TFhirUnsignedIntListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirUnsignedIntList;
+    function GetCurrent : TFhirUnsignedInt;
+  public
+    Constructor Create(list : TFhirUnsignedIntList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirUnsignedInt read GetCurrent;
+  end;
+
+
+  {@Class TFhirUnsignedIntList
+    A list of FhirUnsignedInt
+  }
+  {!.Net HL7Connect.Fhir.UnsignedIntList}
+  TFhirUnsignedIntList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirUnsignedInt;
+    procedure SetItemN(index : Integer; value : TFhirUnsignedInt);
+  public
+    {!script hide}
+    function Link : TFhirUnsignedIntList; Overload;
+    function Clone : TFhirUnsignedIntList; Overload;
+    function GetEnumerator : TFhirUnsignedIntListEnumerator;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirUnsignedInt to the end of the list.
+    }
+    function Append : TFhirUnsignedInt;
+
+    
+    {@member AddItem
+      Add an already existing FhirUnsignedInt to the end of the list.
+    }
+    procedure AddItem(value : TFhirUnsignedInt); overload;
+
+    
+    {@member AddItem
+      Add an already existing FhirUnsignedInt to the end of the list.
+    }
+    procedure AddItem(value : String); overload;
+
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirUnsignedInt) : Integer;
+    
+
+    {@member Insert
+      Insert FhirUnsignedInt before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirUnsignedInt;
+    
+
+    {@member InsertItem
+       Insert an existing FhirUnsignedInt before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirUnsignedInt);
+    
+    {@member Item
+       Get the iIndexth FhirUnsignedInt. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirUnsignedInt. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirUnsignedInt);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirUnsignedInt;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirUnsignedInts[index : Integer] : TFhirUnsignedInt read GetItemN write SetItemN; default;
+  End;
+
+
   {@Class TFhirCode : TFhirString
     a complex string - has an Id attribute, and a dataAbsentReason.
     
@@ -3790,6 +3941,126 @@ Type
     procedure ClearItems;
     
     Property FhirOids[index : Integer] : TFhirOid read GetItemN write SetItemN; default;
+  End;
+
+
+  {@Class TFhirPositiveInt : TFhirInteger
+    a complex string - has an Id attribute, and a dataAbsentReason.
+    
+    Used where a FHIR element is a string, and may have a dataAbsentReason
+  }
+  {!.Net HL7Connect.Fhir.PositiveInt}
+  TFhirPositiveInt = class (TFhirInteger)
+  Private
+  Public
+    Constructor Create(value : String); overload;
+    Destructor Destroy; override;
+    
+    {!script hide}
+    Function Link : TFhirPositiveInt; Overload;
+    Function Clone : TFhirPositiveInt; Overload;
+    function FhirType : string; override;
+    {!script show}
+  End;    
+
+
+  TFhirPositiveIntListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirPositiveIntList;
+    function GetCurrent : TFhirPositiveInt;
+  public
+    Constructor Create(list : TFhirPositiveIntList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPositiveInt read GetCurrent;
+  end;
+
+
+  {@Class TFhirPositiveIntList
+    A list of FhirPositiveInt
+  }
+  {!.Net HL7Connect.Fhir.PositiveIntList}
+  TFhirPositiveIntList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPositiveInt;
+    procedure SetItemN(index : Integer; value : TFhirPositiveInt);
+  public
+    {!script hide}
+    function Link : TFhirPositiveIntList; Overload;
+    function Clone : TFhirPositiveIntList; Overload;
+    function GetEnumerator : TFhirPositiveIntListEnumerator;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirPositiveInt to the end of the list.
+    }
+    function Append : TFhirPositiveInt;
+
+    
+    {@member AddItem
+      Add an already existing FhirPositiveInt to the end of the list.
+    }
+    procedure AddItem(value : TFhirPositiveInt); overload;
+
+    
+    {@member AddItem
+      Add an already existing FhirPositiveInt to the end of the list.
+    }
+    procedure AddItem(value : String); overload;
+
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirPositiveInt) : Integer;
+    
+
+    {@member Insert
+      Insert FhirPositiveInt before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirPositiveInt;
+    
+
+    {@member InsertItem
+       Insert an existing FhirPositiveInt before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirPositiveInt);
+    
+    {@member Item
+       Get the iIndexth FhirPositiveInt. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirPositiveInt. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirPositiveInt);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirPositiveInt;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirPositiveInts[index : Integer] : TFhirPositiveInt read GetItemN write SetItemN; default;
   End;
 
 
@@ -4845,7 +5116,7 @@ Type
     FLanguage : TFhirCode;
     FData : TFhirBase64Binary;
     FUrl : TFhirUri;
-    FSize : TFhirInteger;
+    FSize : TFhirUnsignedInt;
     FHash : TFhirBase64Binary;
     FTitle : TFhirString;
     FCreation : TFhirDateTime;
@@ -4861,7 +5132,7 @@ Type
     Procedure SetUrl(value : TFhirUri);
     Function GetUrlST : String;
     Procedure SetUrlST(value : String);
-    Procedure SetSize(value : TFhirInteger);
+    Procedure SetSize(value : TFhirUnsignedInt);
     Function GetSizeST : String;
     Procedure SetSizeST(value : String);
     Procedure SetHash(value : TFhirBase64Binary);
@@ -4930,7 +5201,7 @@ Type
     {@member sizeElement
       The number of bytes of data that make up this attachment.
     }
-    property sizeElement : TFhirInteger read FSize write SetSize;
+    property sizeElement : TFhirUnsignedInt read FSize write SetSize;
 
     {@member hash
       Typed access to The calculated hash of the data using SHA-1. Represented using base64.
@@ -5206,7 +5477,7 @@ Type
     FFactor : TFhirDecimal;
     FLowerLimit : TFhirDecimal;
     FUpperLimit : TFhirDecimal;
-    FDimensions : TFhirInteger;
+    FDimensions : TFhirPositiveInt;
     FData : TFhirString;
     Procedure SetOrigin(value : TFhirQuantity);
     Procedure SetPeriod(value : TFhirDecimal);
@@ -5221,7 +5492,7 @@ Type
     Procedure SetUpperLimit(value : TFhirDecimal);
     Function GetUpperLimitST : String;
     Procedure SetUpperLimitST(value : String);
-    Procedure SetDimensions(value : TFhirInteger);
+    Procedure SetDimensions(value : TFhirPositiveInt);
     Function GetDimensionsST : String;
     Procedure SetDimensionsST(value : String);
     Procedure SetData(value : TFhirString);
@@ -5293,7 +5564,7 @@ Type
     {@member dimensionsElement
       The number of sample points at each time point. If this value is greater than one, then the dimensions will be interlaced - all the sample points for a point in time will be recorded at once.
     }
-    property dimensionsElement : TFhirInteger read FDimensions write SetDimensions;
+    property dimensionsElement : TFhirPositiveInt read FDimensions write SetDimensions;
 
     {@member data
       Typed access to A series of data points which are decimal values separated by a single space (character u20). The special values "E" (error), "L" (below detection limit) and "U" (above detection limit) can also be used in place of a decimal value.
@@ -5690,7 +5961,7 @@ Type
   TFhirIdentifier = class (TFhirType)
   private
     FUse : TFhirEnum;
-    FLabel_ : TFhirString;
+    FType_ : TFhirCodeableConcept;
     FSystem : TFhirUri;
     FValue : TFhirString;
     FPeriod : TFhirPeriod;
@@ -5698,9 +5969,7 @@ Type
     Procedure SetUse(value : TFhirEnum);
     Function GetUseST : TFhirIdentifierUse;
     Procedure SetUseST(value : TFhirIdentifierUse);
-    Procedure SetLabel_(value : TFhirString);
-    Function GetLabel_ST : String;
-    Procedure SetLabel_ST(value : String);
+    Procedure SetType_(value : TFhirCodeableConcept);
     Procedure SetSystem(value : TFhirUri);
     Function GetSystemST : String;
     Procedure SetSystemST(value : String);
@@ -5729,14 +5998,14 @@ Type
     property use : TFhirIdentifierUse read GetUseST write SetUseST;
     property useElement : TFhirEnum read FUse write SetUse;
 
-    {@member label_
-      Typed access to A text string for the identifier that can be displayed to a human so they can recognize the identifier.
+    {@member type_
+      Typed access to A coded type for the identifier that can be used to determine which identifier to use for a specific purpose. (defined for API consistency)
     }
-    property label_ : String read GetLabel_ST write SetLabel_ST;
-    {@member label_Element
-      A text string for the identifier that can be displayed to a human so they can recognize the identifier.
+    property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    {@member type_Element
+      A coded type for the identifier that can be used to determine which identifier to use for a specific purpose.
     }
-    property label_Element : TFhirString read FLabel_ write SetLabel_;
+    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
 
     {@member system
       Typed access to Establishes the namespace in which set of possible id values is unique.
@@ -7031,20 +7300,20 @@ Type
     property definitionElement : TFhirString read FDefinition write SetDefinition;
 
     {@member comments
-      Typed access to Comments about the use of the element, including notes about how to use the data properly, exceptions to proper use, etc.
+      Typed access to Explanatory notes and implementation guidance about the data element, including notes about how to use the data properly, exceptions to proper use, etc.
     }
     property comments : String read GetCommentsST write SetCommentsST;
     {@member commentsElement
-      Comments about the use of the element, including notes about how to use the data properly, exceptions to proper use, etc.
+      Explanatory notes and implementation guidance about the data element, including notes about how to use the data properly, exceptions to proper use, etc.
     }
     property commentsElement : TFhirString read FComments write SetComments;
 
     {@member requirements
-      Typed access to Explains why this element is needed and why it's been constrained as it has.
+      Typed access to This element is for traceability of why the element was created and why the constraints exist as they do. This may be used to point to source materials or specifications that drove the structure of this element.
     }
     property requirements : String read GetRequirementsST write SetRequirementsST;
     {@member requirementsElement
-      Explains why this element is needed and why it's been constrained as it has.
+      This element is for traceability of why the element was created and why the constraints exist as they do. This may be used to point to source materials or specifications that drove the structure of this element.
     }
     property requirementsElement : TFhirString read FRequirements write SetRequirements;
 
@@ -7536,9 +7805,11 @@ Type
   private
     FeventList : TFhirDateTimeList;
     FRepeat_ : TFhirTimingRepeat;
+    FCode : TFhirCodeableConcept;
     function GetEventList : TFhirDateTimeList;
     function GetHasEventList : Boolean;
     Procedure SetRepeat_(value : TFhirTimingRepeat);
+    Procedure SetCode(value : TFhirCodeableConcept);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -7567,6 +7838,15 @@ Type
       A set of rules that describe when the event should occur.
     }
     property repeat_Element : TFhirTimingRepeat read FRepeat_ write SetRepeat_;
+
+    {@member code
+      Typed access to A code for the timing pattern. Some codes such as BID are uniquitious, but many instutions define their own additional codes. (defined for API consistency)
+    }
+    property code : TFhirCodeableConcept read FCode write SetCode;
+    {@member codeElement
+      A code for the timing pattern. Some codes such as BID are uniquitious, but many instutions define their own additional codes.
+    }
+    property codeElement : TFhirCodeableConcept read FCode write SetCode;
 
   end;
 
@@ -8421,8 +8701,7 @@ Const
   CODES_TFhirNameUse : Array[TFhirNameUse] of String = ('', 'usual', 'official', 'temp', 'nickname', 'anonymous', 'old', 'maiden');
   CODES_TFhirContactPointSystem : Array[TFhirContactPointSystem] of String = ('', 'phone', 'fax', 'email', 'url');
   CODES_TFhirContactPointUse : Array[TFhirContactPointUse] of String = ('', 'home', 'work', 'temp', 'old', 'mobile');
-  CODES_TFhirAlertStatus : Array[TFhirAlertStatus] of String = ('', 'active', 'inactive', 'entered-in-error');
-  CODES_TFhirAllergyIntoleranceStatus : Array[TFhirAllergyIntoleranceStatus] of String = ('', 'unconfirmed', 'confirmed', 'resolved', 'refuted');
+  CODES_TFhirAllergyIntoleranceStatus : Array[TFhirAllergyIntoleranceStatus] of String = ('', 'unconfirmed', 'confirmed', 'resolved', 'refuted', 'entered-in-error');
   CODES_TFhirAllergyIntoleranceCriticality : Array[TFhirAllergyIntoleranceCriticality] of String = ('', 'low', 'high', 'unassessible');
   CODES_TFhirAllergyIntoleranceType : Array[TFhirAllergyIntoleranceType] of String = ('', 'immune', 'non-immune');
   CODES_TFhirAllergyIntoleranceCategory : Array[TFhirAllergyIntoleranceCategory] of String = ('', 'food', 'medication', 'environment');
@@ -8442,20 +8721,19 @@ Const
   CODES_TFhirSearchEntryMode : Array[TFhirSearchEntryMode] of String = ('', 'match', 'include');
   CODES_TFhirHttpVerb : Array[TFhirHttpVerb] of String = ('', 'GET', 'POST', 'PUT', 'DELETE');
   CODES_TFhirCarePlanStatus : Array[TFhirCarePlanStatus] of String = ('', 'planned', 'active', 'completed');
-  CODES_TFhirCarePlanGoalStatus : Array[TFhirCarePlanGoalStatus] of String = ('', 'in-progress', 'achieved', 'sustaining', 'cancelled');
-  CODES_TFhirCarePlanActivityStatus : Array[TFhirCarePlanActivityStatus] of String = ('', 'not-started', 'scheduled', 'in-progress', 'on-hold', 'completed', 'cancelled');
   CODES_TFhirCarePlanActivityCategory : Array[TFhirCarePlanActivityCategory] of String = ('', 'diet', 'drug', 'encounter', 'observation', 'procedure', 'supply', 'other');
-  CODES_TFhirCarePlan2Status : Array[TFhirCarePlan2Status] of String = ('', 'planned', 'active', 'completed');
+  CODES_TFhirCarePlanActivityStatus : Array[TFhirCarePlanActivityStatus] of String = ('', 'not-started', 'scheduled', 'in-progress', 'on-hold', 'completed', 'cancelled');
   CODES_TFhirTypeLink : Array[TFhirTypeLink] of String = ('', 'institutional', 'oral', 'pharmacy', 'professional', 'vision');
   CODES_TFhirUseLink : Array[TFhirUseLink] of String = ('', 'complete', 'proposed', 'exploratory', 'other');
   CODES_TFhirRSLink : Array[TFhirRSLink] of String = ('', 'complete', 'error');
+  CODES_TFhirClinicalImpressionStatus : Array[TFhirClinicalImpressionStatus] of String = ('', 'in-progress', 'completed', 'entered-in-error');
   CODES_TFhirCommunicationStatus : Array[TFhirCommunicationStatus] of String = ('', 'in-progress', 'completed', 'suspended', 'rejected', 'failed');
   CODES_TFhirCommunicationRequestStatus : Array[TFhirCommunicationRequestStatus] of String = ('', 'proposed', 'planned', 'requested', 'received', 'accepted', 'in-progress', 'completed', 'suspended', 'rejected', 'failed');
   CODES_TFhirCompositionStatus : Array[TFhirCompositionStatus] of String = ('', 'preliminary', 'final', 'appended', 'amended', 'entered-in-error');
   CODES_TFhirCompositionAttestationMode : Array[TFhirCompositionAttestationMode] of String = ('', 'personal', 'professional', 'legal', 'official');
   CODES_TFhirConformanceResourceStatus : Array[TFhirConformanceResourceStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TFhirConceptEquivalence : Array[TFhirConceptEquivalence] of String = ('', 'equivalent', 'equal', 'wider', 'subsumes', 'narrower', 'specialises', 'inexact', 'unmatched', 'disjoint');
-  CODES_TFhirConditionStatus : Array[TFhirConditionStatus] of String = ('', 'provisional', 'working', 'confirmed', 'refuted');
+  CODES_TFhirConditionStatus : Array[TFhirConditionStatus] of String = ('', 'provisional', 'working', 'confirmed', 'refuted', 'entered-in-error', 'unknown');
   CODES_TFhirRestfulConformanceMode : Array[TFhirRestfulConformanceMode] of String = ('', 'client', 'server');
   CODES_TFhirTypeRestfulInteraction : Array[TFhirTypeRestfulInteraction] of String = ('', 'read', 'vread', 'update', 'delete', 'history-instance', 'validate', 'history-type', 'create', 'search-type');
   CODES_TFhirVersioningPolicy : Array[TFhirVersioningPolicy] of String = ('', 'no-version', 'versioned', 'versioned-update');
@@ -8465,6 +8743,7 @@ Const
   CODES_TFhirMessageConformanceEventMode : Array[TFhirMessageConformanceEventMode] of String = ('', 'sender', 'receiver');
   CODES_TFhirDocumentMode : Array[TFhirDocumentMode] of String = ('', 'producer', 'consumer');
   CODES_TFhirDataelementSpecificity : Array[TFhirDataelementSpecificity] of String = ('', 'comparable', 'fully-specified', 'equivalent', 'convertable', 'scaleable', 'flexible');
+  CODES_TFhirDevicestatus : Array[TFhirDevicestatus] of String = ('', 'available', 'not-available', 'entered-in-error');
   CODES_TFhirMeasurementPrinciple : Array[TFhirMeasurementPrinciple] of String = ('', 'other', 'chemical', 'electrical', 'impedance', 'nuclear', 'optical', 'thermal', 'biological', 'mechanical', 'acoustical', 'manual');
   CODES_TFhirMetricOperationalStatus : Array[TFhirMetricOperationalStatus] of String = ('', 'on', 'off', 'standby');
   CODES_TFhirMetricColor : Array[TFhirMetricColor] of String = ('', 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white');
@@ -8481,15 +8760,19 @@ Const
   CODES_TFhirEncounterState : Array[TFhirEncounterState] of String = ('', 'planned', 'arrived', 'in-progress', 'onleave', 'finished', 'cancelled');
   CODES_TFhirEncounterClass : Array[TFhirEncounterClass] of String = ('', 'inpatient', 'outpatient', 'ambulatory', 'emergency', 'home', 'field', 'daytime', 'virtual', 'other');
   CODES_TFhirEncounterLocationStatus : Array[TFhirEncounterLocationStatus] of String = ('', 'planned', 'present', 'reserved');
-  CODES_TFhirEpisodeOfCareStatus : Array[TFhirEpisodeOfCareStatus] of String = ('', 'planned', 'active', 'onhold', 'finished', 'withdrawn', 'other');
+  CODES_TFhirEpisodeOfCareStatus : Array[TFhirEpisodeOfCareStatus] of String = ('', 'planned', 'waitlist', 'active', 'onhold', 'finished', 'cancelled');
+  CODES_TFhirAdministrativeGender : Array[TFhirAdministrativeGender] of String = ('', 'male', 'female', 'other', 'unknown');
+  CODES_TFhirFlagStatus : Array[TFhirFlagStatus] of String = ('', 'active', 'inactive', 'entered-in-error');
   CODES_TFhirGoalStatus : Array[TFhirGoalStatus] of String = ('', 'proposed', 'planned', 'in-progress', 'achieved', 'sustaining', 'cancelled', 'accepted', 'rejected');
   CODES_TFhirGroupType : Array[TFhirGroupType] of String = ('', 'person', 'animal', 'practitioner', 'device', 'medication', 'substance');
+  CODES_TFhirDaysOfWeek : Array[TFhirDaysOfWeek] of String = ('', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
   CODES_TFhirImagingModality : Array[TFhirImagingModality] of String = ('', 'AR', 'BMD', 'BDUS', 'EPS', 'CR', 'CT', 'DX', 'ECG', 'ES', 'XC', 'GM', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'LEN', 'MR', 'MG', 'NM', 'OAM', 'OCT', 'OPM', 'OP', 'OPR', 'OPT', 'OPV', 'PX', 'PT', 'RF', 'RG', 'SM', 'SRF', 'US', 'VA', 'XA');
   CODES_TFhirInstanceAvailability : Array[TFhirInstanceAvailability] of String = ('', 'ONLINE', 'OFFLINE', 'NEARLINE', 'UNAVAILABLE');
   CODES_TFhirModality : Array[TFhirModality] of String = ('', 'AR', 'AU', 'BDUS', 'BI', 'BMD', 'CR', 'CT', 'DG', 'DX', 'ECG', 'EPS', 'ES', 'GM', 'HC', 'HD', 'IO', 'IVOCT', 'IVUS', 'KER', 'KO', 'LEN', 'LS', 'MG', 'MR', 'NM', 'OAM', 'OCT', 'OP', 'OPM', 'OPT', 'OPV', 'OT', 'PR', 'PT', 'PX', 'REG', 'RF', 'RG', 'RTDOSE', 'RTIMAGE', 'RTPLAN', 'RTRECORD', 'RTSTRUCT', 'SEG', 'SM', 'SMR', 'SR', 'SRF', 'TG', 'US', 'VA', 'XA', 'XC');
+  CODES_TFhirListStatus : Array[TFhirListStatus] of String = ('', 'current', 'retired', 'entered-in-error');
   CODES_TFhirListMode : Array[TFhirListMode] of String = ('', 'working', 'snapshot', 'changes');
-  CODES_TFhirLocationStatus : Array[TFhirLocationStatus] of String = ('', 'active', 'suspended', 'inactive');
   CODES_TFhirLocationMode : Array[TFhirLocationMode] of String = ('', 'instance', 'kind');
+  CODES_TFhirLocationStatus : Array[TFhirLocationStatus] of String = ('', 'active', 'suspended', 'inactive');
   CODES_TFhirDigitalMediaType : Array[TFhirDigitalMediaType] of String = ('', 'photo', 'video', 'audio');
   CODES_TFhirMedicationKind : Array[TFhirMedicationKind] of String = ('', 'product', 'package');
   CODES_TFhirMedicationAdminStatus : Array[TFhirMedicationAdminStatus] of String = ('', 'in-progress', 'on-hold', 'completed', 'entered-in-error', 'stopped');
@@ -8507,7 +8790,6 @@ Const
   CODES_TFhirOperationParameterUse : Array[TFhirOperationParameterUse] of String = ('', 'in', 'out');
   CODES_TFhirIssueSeverity : Array[TFhirIssueSeverity] of String = ('', 'fatal', 'error', 'warning', 'information');
   CODES_TFhirOrderStatus : Array[TFhirOrderStatus] of String = ('', 'pending', 'review', 'rejected', 'error', 'accepted', 'cancelled', 'replaced', 'aborted', 'completed');
-  CODES_TFhirAdministrativeGender : Array[TFhirAdministrativeGender] of String = ('', 'male', 'female', 'other', 'unknown');
   CODES_TFhirLinkType : Array[TFhirLinkType] of String = ('', 'replace', 'refer', 'seealso');
   CODES_TFhirIdentityAssuranceLevel : Array[TFhirIdentityAssuranceLevel] of String = ('', 'level1', 'level2', 'level3', 'level4');
   CODES_TFhirProcedureStatus : Array[TFhirProcedureStatus] of String = ('', 'in-progress', 'aborted', 'completed', 'entered-in-error');
@@ -8519,7 +8801,7 @@ Const
   CODES_TFhirQuestionnaireStatus : Array[TFhirQuestionnaireStatus] of String = ('', 'draft', 'published', 'retired');
   CODES_TFhirAnswerFormat : Array[TFhirAnswerFormat] of String = ('', 'boolean', 'decimal', 'integer', 'date', 'dateTime', 'instant', 'time', 'string', 'text', 'url', 'choice', 'open-choice', 'attachment', 'reference', 'quantity');
   CODES_TFhirQuestionnaireAnswersStatus : Array[TFhirQuestionnaireAnswersStatus] of String = ('', 'in-progress', 'completed', 'amended');
-  CODES_TFhirReferralstatus : Array[TFhirReferralstatus] of String = ('', 'draft', 'sent', 'active', 'cancelled', 'rejected', 'completed');
+  CODES_TFhirReferralstatus : Array[TFhirReferralstatus] of String = ('', 'draft', 'requested', 'active', 'cancelled', 'accepted', 'rejected', 'completed');
   CODES_TFhirSlotstatus : Array[TFhirSlotstatus] of String = ('', 'BUSY', 'FREE', 'BUSY-UNAVAILABLE', 'BUSY-TENTATIVE');
   CODES_TFhirStructureDefinitionType : Array[TFhirStructureDefinitionType] of String = ('', 'type', 'resource', 'constraint', 'extension');
   CODES_TFhirExtensionContext : Array[TFhirExtensionContext] of String = ('', 'resource', 'datatype', 'mapping', 'extension');
@@ -8559,8 +8841,6 @@ Function TFhirContactPointSystemListAsInteger(aSet : TFhirContactPointSystemList
 Function IntegerAsTFhirContactPointSystemList(i : integer) : TFhirContactPointSystemList; overload;
 Function TFhirContactPointUseListAsInteger(aSet : TFhirContactPointUseList) : Integer; overload;
 Function IntegerAsTFhirContactPointUseList(i : integer) : TFhirContactPointUseList; overload;
-Function TFhirAlertStatusListAsInteger(aSet : TFhirAlertStatusList) : Integer; overload;
-Function IntegerAsTFhirAlertStatusList(i : integer) : TFhirAlertStatusList; overload;
 Function TFhirAllergyIntoleranceStatusListAsInteger(aSet : TFhirAllergyIntoleranceStatusList) : Integer; overload;
 Function IntegerAsTFhirAllergyIntoleranceStatusList(i : integer) : TFhirAllergyIntoleranceStatusList; overload;
 Function TFhirAllergyIntoleranceCriticalityListAsInteger(aSet : TFhirAllergyIntoleranceCriticalityList) : Integer; overload;
@@ -8601,20 +8881,18 @@ Function TFhirHttpVerbListAsInteger(aSet : TFhirHttpVerbList) : Integer; overloa
 Function IntegerAsTFhirHttpVerbList(i : integer) : TFhirHttpVerbList; overload;
 Function TFhirCarePlanStatusListAsInteger(aSet : TFhirCarePlanStatusList) : Integer; overload;
 Function IntegerAsTFhirCarePlanStatusList(i : integer) : TFhirCarePlanStatusList; overload;
-Function TFhirCarePlanGoalStatusListAsInteger(aSet : TFhirCarePlanGoalStatusList) : Integer; overload;
-Function IntegerAsTFhirCarePlanGoalStatusList(i : integer) : TFhirCarePlanGoalStatusList; overload;
-Function TFhirCarePlanActivityStatusListAsInteger(aSet : TFhirCarePlanActivityStatusList) : Integer; overload;
-Function IntegerAsTFhirCarePlanActivityStatusList(i : integer) : TFhirCarePlanActivityStatusList; overload;
 Function TFhirCarePlanActivityCategoryListAsInteger(aSet : TFhirCarePlanActivityCategoryList) : Integer; overload;
 Function IntegerAsTFhirCarePlanActivityCategoryList(i : integer) : TFhirCarePlanActivityCategoryList; overload;
-Function TFhirCarePlan2StatusListAsInteger(aSet : TFhirCarePlan2StatusList) : Integer; overload;
-Function IntegerAsTFhirCarePlan2StatusList(i : integer) : TFhirCarePlan2StatusList; overload;
+Function TFhirCarePlanActivityStatusListAsInteger(aSet : TFhirCarePlanActivityStatusList) : Integer; overload;
+Function IntegerAsTFhirCarePlanActivityStatusList(i : integer) : TFhirCarePlanActivityStatusList; overload;
 Function TFhirTypeLinkListAsInteger(aSet : TFhirTypeLinkList) : Integer; overload;
 Function IntegerAsTFhirTypeLinkList(i : integer) : TFhirTypeLinkList; overload;
 Function TFhirUseLinkListAsInteger(aSet : TFhirUseLinkList) : Integer; overload;
 Function IntegerAsTFhirUseLinkList(i : integer) : TFhirUseLinkList; overload;
 Function TFhirRSLinkListAsInteger(aSet : TFhirRSLinkList) : Integer; overload;
 Function IntegerAsTFhirRSLinkList(i : integer) : TFhirRSLinkList; overload;
+Function TFhirClinicalImpressionStatusListAsInteger(aSet : TFhirClinicalImpressionStatusList) : Integer; overload;
+Function IntegerAsTFhirClinicalImpressionStatusList(i : integer) : TFhirClinicalImpressionStatusList; overload;
 Function TFhirCommunicationStatusListAsInteger(aSet : TFhirCommunicationStatusList) : Integer; overload;
 Function IntegerAsTFhirCommunicationStatusList(i : integer) : TFhirCommunicationStatusList; overload;
 Function TFhirCommunicationRequestStatusListAsInteger(aSet : TFhirCommunicationRequestStatusList) : Integer; overload;
@@ -8647,6 +8925,8 @@ Function TFhirDocumentModeListAsInteger(aSet : TFhirDocumentModeList) : Integer;
 Function IntegerAsTFhirDocumentModeList(i : integer) : TFhirDocumentModeList; overload;
 Function TFhirDataelementSpecificityListAsInteger(aSet : TFhirDataelementSpecificityList) : Integer; overload;
 Function IntegerAsTFhirDataelementSpecificityList(i : integer) : TFhirDataelementSpecificityList; overload;
+Function TFhirDevicestatusListAsInteger(aSet : TFhirDevicestatusList) : Integer; overload;
+Function IntegerAsTFhirDevicestatusList(i : integer) : TFhirDevicestatusList; overload;
 Function TFhirMeasurementPrincipleListAsInteger(aSet : TFhirMeasurementPrincipleList) : Integer; overload;
 Function IntegerAsTFhirMeasurementPrincipleList(i : integer) : TFhirMeasurementPrincipleList; overload;
 Function TFhirMetricOperationalStatusListAsInteger(aSet : TFhirMetricOperationalStatusList) : Integer; overload;
@@ -8681,22 +8961,30 @@ Function TFhirEncounterLocationStatusListAsInteger(aSet : TFhirEncounterLocation
 Function IntegerAsTFhirEncounterLocationStatusList(i : integer) : TFhirEncounterLocationStatusList; overload;
 Function TFhirEpisodeOfCareStatusListAsInteger(aSet : TFhirEpisodeOfCareStatusList) : Integer; overload;
 Function IntegerAsTFhirEpisodeOfCareStatusList(i : integer) : TFhirEpisodeOfCareStatusList; overload;
+Function TFhirAdministrativeGenderListAsInteger(aSet : TFhirAdministrativeGenderList) : Integer; overload;
+Function IntegerAsTFhirAdministrativeGenderList(i : integer) : TFhirAdministrativeGenderList; overload;
+Function TFhirFlagStatusListAsInteger(aSet : TFhirFlagStatusList) : Integer; overload;
+Function IntegerAsTFhirFlagStatusList(i : integer) : TFhirFlagStatusList; overload;
 Function TFhirGoalStatusListAsInteger(aSet : TFhirGoalStatusList) : Integer; overload;
 Function IntegerAsTFhirGoalStatusList(i : integer) : TFhirGoalStatusList; overload;
 Function TFhirGroupTypeListAsInteger(aSet : TFhirGroupTypeList) : Integer; overload;
 Function IntegerAsTFhirGroupTypeList(i : integer) : TFhirGroupTypeList; overload;
+Function TFhirDaysOfWeekListAsInteger(aSet : TFhirDaysOfWeekList) : Integer; overload;
+Function IntegerAsTFhirDaysOfWeekList(i : integer) : TFhirDaysOfWeekList; overload;
 Function TFhirImagingModalityListAsInteger(aSet : TFhirImagingModalityList) : Integer; overload;
 Function IntegerAsTFhirImagingModalityList(i : integer) : TFhirImagingModalityList; overload;
 Function TFhirInstanceAvailabilityListAsInteger(aSet : TFhirInstanceAvailabilityList) : Integer; overload;
 Function IntegerAsTFhirInstanceAvailabilityList(i : integer) : TFhirInstanceAvailabilityList; overload;
 Function TFhirModalityListAsInteger(aSet : TFhirModalityList) : Integer; overload;
 Function IntegerAsTFhirModalityList(i : integer) : TFhirModalityList; overload;
+Function TFhirListStatusListAsInteger(aSet : TFhirListStatusList) : Integer; overload;
+Function IntegerAsTFhirListStatusList(i : integer) : TFhirListStatusList; overload;
 Function TFhirListModeListAsInteger(aSet : TFhirListModeList) : Integer; overload;
 Function IntegerAsTFhirListModeList(i : integer) : TFhirListModeList; overload;
-Function TFhirLocationStatusListAsInteger(aSet : TFhirLocationStatusList) : Integer; overload;
-Function IntegerAsTFhirLocationStatusList(i : integer) : TFhirLocationStatusList; overload;
 Function TFhirLocationModeListAsInteger(aSet : TFhirLocationModeList) : Integer; overload;
 Function IntegerAsTFhirLocationModeList(i : integer) : TFhirLocationModeList; overload;
+Function TFhirLocationStatusListAsInteger(aSet : TFhirLocationStatusList) : Integer; overload;
+Function IntegerAsTFhirLocationStatusList(i : integer) : TFhirLocationStatusList; overload;
 Function TFhirDigitalMediaTypeListAsInteger(aSet : TFhirDigitalMediaTypeList) : Integer; overload;
 Function IntegerAsTFhirDigitalMediaTypeList(i : integer) : TFhirDigitalMediaTypeList; overload;
 Function TFhirMedicationKindListAsInteger(aSet : TFhirMedicationKindList) : Integer; overload;
@@ -8731,8 +9019,6 @@ Function TFhirIssueSeverityListAsInteger(aSet : TFhirIssueSeverityList) : Intege
 Function IntegerAsTFhirIssueSeverityList(i : integer) : TFhirIssueSeverityList; overload;
 Function TFhirOrderStatusListAsInteger(aSet : TFhirOrderStatusList) : Integer; overload;
 Function IntegerAsTFhirOrderStatusList(i : integer) : TFhirOrderStatusList; overload;
-Function TFhirAdministrativeGenderListAsInteger(aSet : TFhirAdministrativeGenderList) : Integer; overload;
-Function IntegerAsTFhirAdministrativeGenderList(i : integer) : TFhirAdministrativeGenderList; overload;
 Function TFhirLinkTypeListAsInteger(aSet : TFhirLinkTypeList) : Integer; overload;
 Function IntegerAsTFhirLinkTypeList(i : integer) : TFhirLinkTypeList; overload;
 Function TFhirIdentityAssuranceLevelListAsInteger(aSet : TFhirIdentityAssuranceLevelList) : Integer; overload;
@@ -11287,6 +11573,162 @@ begin
   ObjectByIndex[index] := value;
 end;
 
+{ TFhirUnsignedInt }
+
+Constructor TFhirUnsignedInt.Create(value : String);
+begin
+  Create;
+  FValue := value;
+end;
+
+Destructor TFhirUnsignedInt.Destroy;
+begin
+  inherited;
+end;
+
+function TFhirUnsignedInt.FhirType : string;
+begin
+  result := 'unsignedInt';
+end;
+
+function TFhirUnsignedInt.Link : TFhirUnsignedInt;
+begin
+  result := TFhirUnsignedInt(inherited Link);
+end;
+
+function TFhirUnsignedInt.Clone : TFhirUnsignedInt;
+begin
+  result := TFhirUnsignedInt(inherited Clone);
+end;
+
+
+{ TFhirUnsignedIntListEnumerator }
+
+Constructor TFhirUnsignedIntListEnumerator.Create(list : TFhirUnsignedIntList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirUnsignedIntListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirUnsignedIntListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirUnsignedIntListEnumerator.GetCurrent : TFhirUnsignedInt;
+begin
+  Result := FList[FIndex];
+end;
+
+
+{ TFhirUnsignedIntList }
+procedure TFhirUnsignedIntList.AddItem(value: TFhirUnsignedInt);
+begin
+  assert(value.ClassName = 'TFhirUnsignedInt', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUnsignedInt');
+  add(value);
+end;
+
+
+procedure TFhirUnsignedIntList.AddItem(value: String);
+begin
+  add(TFhirUnsignedInt.create(value));
+end;
+
+
+function TFhirUnsignedIntList.Append: TFhirUnsignedInt;
+begin
+  result := TFhirUnsignedInt.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirUnsignedIntList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirUnsignedIntList.GetEnumerator : TFhirUnsignedIntListEnumerator;
+begin
+  result := TFhirUnsignedIntListEnumerator.Create(self.link);
+end;
+
+function TFhirUnsignedIntList.Clone: TFhirUnsignedIntList;
+begin
+  result := TFhirUnsignedIntList(inherited Clone);
+end;
+
+function TFhirUnsignedIntList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirUnsignedIntList.GetItemN(index: Integer): TFhirUnsignedInt;
+begin
+  result := TFhirUnsignedInt(ObjectByIndex[index]);
+end;
+
+function TFhirUnsignedIntList.IndexOf(value: TFhirUnsignedInt): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirUnsignedIntList.Insert(index: Integer): TFhirUnsignedInt;
+begin
+  result := TFhirUnsignedInt.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirUnsignedIntList.InsertItem(index: Integer; value: TFhirUnsignedInt);
+begin
+  assert(value is TFhirUnsignedInt);
+  Inherited Insert(index, value);
+end;
+
+function TFhirUnsignedIntList.Item(index: Integer): TFhirUnsignedInt;
+begin
+  result := TFhirUnsignedInt(ObjectByIndex[index]);
+end;
+
+function TFhirUnsignedIntList.Link: TFhirUnsignedIntList;
+begin
+  result := TFhirUnsignedIntList(inherited Link);
+end;
+
+procedure TFhirUnsignedIntList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirUnsignedIntList.SetItemByIndex(index: Integer; value: TFhirUnsignedInt);
+begin
+  assert(value is TFhirUnsignedInt);
+  FhirUnsignedInts[index] := value;
+end;
+
+procedure TFhirUnsignedIntList.SetItemN(index: Integer; value: TFhirUnsignedInt);
+begin
+  assert(value is TFhirUnsignedInt);
+  ObjectByIndex[index] := value;
+end;
+
 { TFhirCode }
 
 Constructor TFhirCode.Create(value : String);
@@ -11752,6 +12194,162 @@ end;
 procedure TFhirOidList.SetItemN(index: Integer; value: TFhirOid);
 begin
   assert(value is TFhirOid);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirPositiveInt }
+
+Constructor TFhirPositiveInt.Create(value : String);
+begin
+  Create;
+  FValue := value;
+end;
+
+Destructor TFhirPositiveInt.Destroy;
+begin
+  inherited;
+end;
+
+function TFhirPositiveInt.FhirType : string;
+begin
+  result := 'positiveInt';
+end;
+
+function TFhirPositiveInt.Link : TFhirPositiveInt;
+begin
+  result := TFhirPositiveInt(inherited Link);
+end;
+
+function TFhirPositiveInt.Clone : TFhirPositiveInt;
+begin
+  result := TFhirPositiveInt(inherited Clone);
+end;
+
+
+{ TFhirPositiveIntListEnumerator }
+
+Constructor TFhirPositiveIntListEnumerator.Create(list : TFhirPositiveIntList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirPositiveIntListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPositiveIntListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPositiveIntListEnumerator.GetCurrent : TFhirPositiveInt;
+begin
+  Result := FList[FIndex];
+end;
+
+
+{ TFhirPositiveIntList }
+procedure TFhirPositiveIntList.AddItem(value: TFhirPositiveInt);
+begin
+  assert(value.ClassName = 'TFhirPositiveInt', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPositiveInt');
+  add(value);
+end;
+
+
+procedure TFhirPositiveIntList.AddItem(value: String);
+begin
+  add(TFhirPositiveInt.create(value));
+end;
+
+
+function TFhirPositiveIntList.Append: TFhirPositiveInt;
+begin
+  result := TFhirPositiveInt.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirPositiveIntList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPositiveIntList.GetEnumerator : TFhirPositiveIntListEnumerator;
+begin
+  result := TFhirPositiveIntListEnumerator.Create(self.link);
+end;
+
+function TFhirPositiveIntList.Clone: TFhirPositiveIntList;
+begin
+  result := TFhirPositiveIntList(inherited Clone);
+end;
+
+function TFhirPositiveIntList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPositiveIntList.GetItemN(index: Integer): TFhirPositiveInt;
+begin
+  result := TFhirPositiveInt(ObjectByIndex[index]);
+end;
+
+function TFhirPositiveIntList.IndexOf(value: TFhirPositiveInt): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirPositiveIntList.Insert(index: Integer): TFhirPositiveInt;
+begin
+  result := TFhirPositiveInt.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirPositiveIntList.InsertItem(index: Integer; value: TFhirPositiveInt);
+begin
+  assert(value is TFhirPositiveInt);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPositiveIntList.Item(index: Integer): TFhirPositiveInt;
+begin
+  result := TFhirPositiveInt(ObjectByIndex[index]);
+end;
+
+function TFhirPositiveIntList.Link: TFhirPositiveIntList;
+begin
+  result := TFhirPositiveIntList(inherited Link);
+end;
+
+procedure TFhirPositiveIntList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPositiveIntList.SetItemByIndex(index: Integer; value: TFhirPositiveInt);
+begin
+  assert(value is TFhirPositiveInt);
+  FhirPositiveInts[index] := value;
+end;
+
+procedure TFhirPositiveIntList.SetItemN(index: Integer; value: TFhirPositiveInt);
+begin
+  assert(value is TFhirPositiveInt);
   ObjectByIndex[index] := value;
 end;
 
@@ -13547,7 +14145,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'language', 'code', FLanguage.Link));{2}
   oList.add(TFHIRProperty.create(self, 'data', 'base64Binary', FData.Link));{2}
   oList.add(TFHIRProperty.create(self, 'url', 'uri', FUrl.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'size', 'integer', FSize.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'size', 'unsignedInt', FSize.Link));{2}
   oList.add(TFHIRProperty.create(self, 'hash', 'base64Binary', FHash.Link));{2}
   oList.add(TFHIRProperty.create(self, 'title', 'string', FTitle.Link));{2}
   oList.add(TFHIRProperty.create(self, 'creation', 'dateTime', FCreation.Link));{2}
@@ -13571,7 +14169,7 @@ begin
       raise Exception.Create('Type mismatch: cannot convert from "'+propValue.className+'" to "TFHIRCode"'){5a}
   else if (propName = 'data') then DataElement := propValue as TFhirBase64Binary{5a}
   else if (propName = 'url') then UrlElement := propValue as TFhirUri{5a}
-  else if (propName = 'size') then SizeElement := propValue as TFhirInteger{5a}
+  else if (propName = 'size') then SizeElement := propValue as TFhirUnsignedInt{5a}
   else if (propName = 'hash') then HashElement := propValue as TFhirBase64Binary{5a}
   else if (propName = 'title') then TitleElement := propValue as TFhirString{5a}
   else if (propName = 'creation') then CreationElement := propValue as TFhirDateTime{5a}
@@ -13699,7 +14297,7 @@ begin
     FUrl.value := '';
 end;
 
-Procedure TFhirAttachment.SetSize(value : TFhirInteger);
+Procedure TFhirAttachment.SetSize(value : TFhirUnsignedInt);
 begin
   FSize.free;
   FSize := value;
@@ -13718,7 +14316,7 @@ begin
   if value <> '' then
   begin
     if FSize = nil then
-      FSize := TFhirInteger.create;
+      FSize := TFhirUnsignedInt.create;
     FSize.value := value
   end
   else if FSize <> nil then
@@ -14178,7 +14776,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'factor', 'decimal', FFactor.Link));{2}
   oList.add(TFHIRProperty.create(self, 'lowerLimit', 'decimal', FLowerLimit.Link));{2}
   oList.add(TFHIRProperty.create(self, 'upperLimit', 'decimal', FUpperLimit.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dimensions', 'integer', FDimensions.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'dimensions', 'positiveInt', FDimensions.Link));{2}
   oList.add(TFHIRProperty.create(self, 'data', 'string', FData.Link));{2}
 end;
 
@@ -14189,7 +14787,7 @@ begin
   else if (propName = 'factor') then FactorElement := propValue as TFhirDecimal{5a}
   else if (propName = 'lowerLimit') then LowerLimitElement := propValue as TFhirDecimal{5a}
   else if (propName = 'upperLimit') then UpperLimitElement := propValue as TFhirDecimal{5a}
-  else if (propName = 'dimensions') then DimensionsElement := propValue as TFhirInteger{5a}
+  else if (propName = 'dimensions') then DimensionsElement := propValue as TFhirPositiveInt{5a}
   else if (propName = 'data') then DataElement := propValue as TFhirString{5a}
   else inherited;
 end;
@@ -14321,7 +14919,7 @@ begin
     FUpperLimit.value := '';
 end;
 
-Procedure TFhirSampledData.SetDimensions(value : TFhirInteger);
+Procedure TFhirSampledData.SetDimensions(value : TFhirPositiveInt);
 begin
   FDimensions.free;
   FDimensions := value;
@@ -14340,7 +14938,7 @@ begin
   if value <> '' then
   begin
     if FDimensions = nil then
-      FDimensions := TFhirInteger.create;
+      FDimensions := TFhirPositiveInt.create;
     FDimensions.value := value
   end
   else if FDimensions <> nil then
@@ -14997,7 +15595,7 @@ end;
 destructor TFhirIdentifier.Destroy;
 begin
   FUse.free;
-  FLabel_.free;
+  FType_.free;
   FSystem.free;
   FValue.free;
   FPeriod.free;
@@ -15009,7 +15607,7 @@ procedure TFhirIdentifier.Assign(oSource : TAdvObject);
 begin
   inherited;
   FUse := TFhirIdentifier(oSource).FUse.Link;
-  label_Element := TFhirIdentifier(oSource).label_Element.Clone;
+  type_ := TFhirIdentifier(oSource).type_.Clone;
   systemElement := TFhirIdentifier(oSource).systemElement.Clone;
   valueElement := TFhirIdentifier(oSource).valueElement.Clone;
   period := TFhirIdentifier(oSource).period.Clone;
@@ -15021,8 +15619,8 @@ begin
   inherited;
   if (child_name = 'use') Then
      list.add(FUse.Link);
-  if (child_name = 'label') Then
-     list.add(FLabel_.Link);
+  if (child_name = 'type') Then
+     list.add(FType_.Link);
   if (child_name = 'system') Then
      list.add(FSystem.Link);
   if (child_name = 'value') Then
@@ -15037,7 +15635,7 @@ procedure TFhirIdentifier.ListProperties(oList: TFHIRPropertyList; bInheritedPro
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'use', 'code', FUse.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'label', 'string', FLabel_.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', FType_.Link));{2}
   oList.add(TFHIRProperty.create(self, 'system', 'uri', FSystem.Link));{2}
   oList.add(TFHIRProperty.create(self, 'value', 'string', FValue.Link));{2}
   oList.add(TFHIRProperty.create(self, 'period', 'Period', FPeriod.Link));{2}
@@ -15047,7 +15645,7 @@ end;
 procedure TFhirIdentifier.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'use') then UseElement := propValue as TFHIREnum
-  else if (propName = 'label') then Label_Element := propValue as TFhirString{5a}
+  else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
   else if (propName = 'system') then SystemElement := propValue as TFhirUri{5a}
   else if (propName = 'value') then ValueElement := propValue as TFhirString{5a}
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
@@ -15094,30 +15692,10 @@ begin
     UseElement := TFhirEnum.create(CODES_TFhirIdentifierUse[value]);
 end;
 
-Procedure TFhirIdentifier.SetLabel_(value : TFhirString);
+Procedure TFhirIdentifier.SetType_(value : TFhirCodeableConcept);
 begin
-  FLabel_.free;
-  FLabel_ := value;
-end;
-
-Function TFhirIdentifier.GetLabel_ST : String;
-begin
-  if FLabel_ = nil then
-    result := ''
-  else
-    result := FLabel_.value;
-end;
-
-Procedure TFhirIdentifier.SetLabel_ST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FLabel_ = nil then
-      FLabel_ := TFhirString.create;
-    FLabel_.value := value
-  end
-  else if FLabel_ <> nil then
-    FLabel_.value := '';
+  FType_.free;
+  FType_ := value;
 end;
 
 Procedure TFhirIdentifier.SetSystem(value : TFhirUri);
@@ -18598,6 +19176,7 @@ destructor TFhirTiming.Destroy;
 begin
   FEventList.Free;
   FRepeat_.free;
+  FCode.free;
   inherited;
 end;
 
@@ -18615,6 +19194,7 @@ begin
   FEventList.Assign(TFhirTiming(oSource).FEventList);
   end;
   repeat_ := TFhirTiming(oSource).repeat_.Clone;
+  code := TFhirTiming(oSource).code.Clone;
 end;
 
 procedure TFhirTiming.GetChildrenByName(child_name : string; list : TFHIRObjectList);
@@ -18624,6 +19204,8 @@ begin
     list.addAll(FEventList);
   if (child_name = 'repeat') Then
      list.add(FRepeat_.Link);
+  if (child_name = 'code') Then
+     list.add(FCode.Link);
 end;
 
 procedure TFhirTiming.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
@@ -18631,12 +19213,14 @@ begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'event', 'dateTime', FEventList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'repeat', '', FRepeat_.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', FCode.Link));{2}
 end;
 
 procedure TFhirTiming.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'event') then EventList.add(propValue as TFhirDateTime){2}
   else if (propName = 'repeat') then Repeat_ := propValue as TFhirTimingRepeat{4b}
+  else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
   else inherited;
 end;
 
@@ -18673,6 +19257,12 @@ Procedure TFhirTiming.SetRepeat_(value : TFhirTimingRepeat);
 begin
   FRepeat_.free;
   FRepeat_ := value;
+end;
+
+Procedure TFhirTiming.SetCode(value : TFhirCodeableConcept);
+begin
+  FCode.free;
+  FCode := value;
 end;
 
 
@@ -20241,33 +20831,6 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-function TFhirAlertStatusListAsInteger(aSet : TFhirAlertStatusList) : Integer;
-var
-  a : TFhirAlertStatus;
-begin
-  result := 0;
-  for a := low(TFhirAlertStatus) to high(TFhirAlertStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirAlertStatusList(i : Integer) : TFhirAlertStatusList;
-var
-  aLoop : TFhirAlertStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirAlertStatus) to high(TFhirAlertStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirAllergyIntoleranceStatusListAsInteger(aSet : TFhirAllergyIntoleranceStatusList) : Integer;
 var
   a : TFhirAllergyIntoleranceStatus;
@@ -20808,60 +21371,6 @@ begin
  end;
 
 
-function TFhirCarePlanGoalStatusListAsInteger(aSet : TFhirCarePlanGoalStatusList) : Integer;
-var
-  a : TFhirCarePlanGoalStatus;
-begin
-  result := 0;
-  for a := low(TFhirCarePlanGoalStatus) to high(TFhirCarePlanGoalStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCarePlanGoalStatusList(i : Integer) : TFhirCarePlanGoalStatusList;
-var
-  aLoop : TFhirCarePlanGoalStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirCarePlanGoalStatus) to high(TFhirCarePlanGoalStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCarePlanActivityStatusListAsInteger(aSet : TFhirCarePlanActivityStatusList) : Integer;
-var
-  a : TFhirCarePlanActivityStatus;
-begin
-  result := 0;
-  for a := low(TFhirCarePlanActivityStatus) to high(TFhirCarePlanActivityStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCarePlanActivityStatusList(i : Integer) : TFhirCarePlanActivityStatusList;
-var
-  aLoop : TFhirCarePlanActivityStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirCarePlanActivityStatus) to high(TFhirCarePlanActivityStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirCarePlanActivityCategoryListAsInteger(aSet : TFhirCarePlanActivityCategoryList) : Integer;
 var
   a : TFhirCarePlanActivityCategory;
@@ -20889,12 +21398,12 @@ begin
  end;
 
 
-function TFhirCarePlan2StatusListAsInteger(aSet : TFhirCarePlan2StatusList) : Integer;
+function TFhirCarePlanActivityStatusListAsInteger(aSet : TFhirCarePlanActivityStatusList) : Integer;
 var
-  a : TFhirCarePlan2Status;
+  a : TFhirCarePlanActivityStatus;
 begin
   result := 0;
-  for a := low(TFhirCarePlan2Status) to high(TFhirCarePlan2Status) do
+  for a := low(TFhirCarePlanActivityStatus) to high(TFhirCarePlanActivityStatus) do
   begin
     assert(ord(a) < 32);
     if a in aSet then
@@ -20902,12 +21411,12 @@ begin
   end;
 end;
 
-function IntegerAsTFhirCarePlan2StatusList(i : Integer) : TFhirCarePlan2StatusList;
+function IntegerAsTFhirCarePlanActivityStatusList(i : Integer) : TFhirCarePlanActivityStatusList;
 var
-  aLoop : TFhirCarePlan2Status;
+  aLoop : TFhirCarePlanActivityStatus;
 begin
   result := [];
-  for aLoop := low(TFhirCarePlan2Status) to high(TFhirCarePlan2Status) Do
+  for aLoop := low(TFhirCarePlanActivityStatus) to high(TFhirCarePlanActivityStatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -20989,6 +21498,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirRSLink) to high(TFhirRSLink) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirClinicalImpressionStatusListAsInteger(aSet : TFhirClinicalImpressionStatusList) : Integer;
+var
+  a : TFhirClinicalImpressionStatus;
+begin
+  result := 0;
+  for a := low(TFhirClinicalImpressionStatus) to high(TFhirClinicalImpressionStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirClinicalImpressionStatusList(i : Integer) : TFhirClinicalImpressionStatusList;
+var
+  aLoop : TFhirClinicalImpressionStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirClinicalImpressionStatus) to high(TFhirClinicalImpressionStatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -21421,6 +21957,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirDataelementSpecificity) to high(TFhirDataelementSpecificity) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirDevicestatusListAsInteger(aSet : TFhirDevicestatusList) : Integer;
+var
+  a : TFhirDevicestatus;
+begin
+  result := 0;
+  for a := low(TFhirDevicestatus) to high(TFhirDevicestatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirDevicestatusList(i : Integer) : TFhirDevicestatusList;
+var
+  aLoop : TFhirDevicestatus;
+begin
+  result := [];
+  for aLoop := low(TFhirDevicestatus) to high(TFhirDevicestatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -21888,6 +22451,60 @@ begin
  end;
 
 
+function TFhirAdministrativeGenderListAsInteger(aSet : TFhirAdministrativeGenderList) : Integer;
+var
+  a : TFhirAdministrativeGender;
+begin
+  result := 0;
+  for a := low(TFhirAdministrativeGender) to high(TFhirAdministrativeGender) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirAdministrativeGenderList(i : Integer) : TFhirAdministrativeGenderList;
+var
+  aLoop : TFhirAdministrativeGender;
+begin
+  result := [];
+  for aLoop := low(TFhirAdministrativeGender) to high(TFhirAdministrativeGender) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirFlagStatusListAsInteger(aSet : TFhirFlagStatusList) : Integer;
+var
+  a : TFhirFlagStatus;
+begin
+  result := 0;
+  for a := low(TFhirFlagStatus) to high(TFhirFlagStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirFlagStatusList(i : Integer) : TFhirFlagStatusList;
+var
+  aLoop : TFhirFlagStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirFlagStatus) to high(TFhirFlagStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirGoalStatusListAsInteger(aSet : TFhirGoalStatusList) : Integer;
 var
   a : TFhirGoalStatus;
@@ -21934,6 +22551,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirGroupType) to high(TFhirGroupType) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirDaysOfWeekListAsInteger(aSet : TFhirDaysOfWeekList) : Integer;
+var
+  a : TFhirDaysOfWeek;
+begin
+  result := 0;
+  for a := low(TFhirDaysOfWeek) to high(TFhirDaysOfWeek) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirDaysOfWeekList(i : Integer) : TFhirDaysOfWeekList;
+var
+  aLoop : TFhirDaysOfWeek;
+begin
+  result := [];
+  for aLoop := low(TFhirDaysOfWeek) to high(TFhirDaysOfWeek) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -22023,6 +22667,33 @@ begin
  end;
 
 
+function TFhirListStatusListAsInteger(aSet : TFhirListStatusList) : Integer;
+var
+  a : TFhirListStatus;
+begin
+  result := 0;
+  for a := low(TFhirListStatus) to high(TFhirListStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirListStatusList(i : Integer) : TFhirListStatusList;
+var
+  aLoop : TFhirListStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirListStatus) to high(TFhirListStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirListModeListAsInteger(aSet : TFhirListModeList) : Integer;
 var
   a : TFhirListMode;
@@ -22050,33 +22721,6 @@ begin
  end;
 
 
-function TFhirLocationStatusListAsInteger(aSet : TFhirLocationStatusList) : Integer;
-var
-  a : TFhirLocationStatus;
-begin
-  result := 0;
-  for a := low(TFhirLocationStatus) to high(TFhirLocationStatus) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirLocationStatusList(i : Integer) : TFhirLocationStatusList;
-var
-  aLoop : TFhirLocationStatus;
-begin
-  result := [];
-  for aLoop := low(TFhirLocationStatus) to high(TFhirLocationStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirLocationModeListAsInteger(aSet : TFhirLocationModeList) : Integer;
 var
   a : TFhirLocationMode;
@@ -22096,6 +22740,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirLocationMode) to high(TFhirLocationMode) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirLocationStatusListAsInteger(aSet : TFhirLocationStatusList) : Integer;
+var
+  a : TFhirLocationStatus;
+begin
+  result := 0;
+  for a := low(TFhirLocationStatus) to high(TFhirLocationStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirLocationStatusList(i : Integer) : TFhirLocationStatusList;
+var
+  aLoop : TFhirLocationStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirLocationStatus) to high(TFhirLocationStatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -22555,33 +23226,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirOrderStatus) to high(TFhirOrderStatus) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirAdministrativeGenderListAsInteger(aSet : TFhirAdministrativeGenderList) : Integer;
-var
-  a : TFhirAdministrativeGender;
-begin
-  result := 0;
-  for a := low(TFhirAdministrativeGender) to high(TFhirAdministrativeGender) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirAdministrativeGenderList(i : Integer) : TFhirAdministrativeGenderList;
-var
-  aLoop : TFhirAdministrativeGender;
-begin
-  result := [];
-  for aLoop := low(TFhirAdministrativeGender) to high(TFhirAdministrativeGender) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

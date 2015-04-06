@@ -486,7 +486,9 @@ begin
   res := TUMLSFilter.Create;
   try
     ok := true;
-    if (op <> FilterOperatorEqual) then
+    if (op = FilterOperatorIn) and (prop = 'TTY') then
+      res.sql := 'and TTY in ('+SQLWrapStrings(value)+')'
+    else if (op <> FilterOperatorEqual) then
       ok := false
     else if prop = 'STY' then
       res.sql := 'and RXCUI in (select RXCUI from rxnsty where TUI = '''+SQLWrapString(value)+''')'
@@ -516,7 +518,7 @@ begin
         TUMLSPrep(prep).filters.Add(res.Link);
     end
     else
-      raise Exception.Create('Unknown ');
+      raise Exception.Create('Unknown filter ');
   finally
     res.Free;
   end;
@@ -531,6 +533,7 @@ begin
   try
     qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = ''RXNORM''  and TTY <> ''SY'' and RXCUI = :code '+TUMLSFilter(ctxt).sql;
     qry.prepare;
+    qry.BindString('code', code);
     qry.execute;
     if not qry.FetchNext then
       result := nil
@@ -629,8 +632,11 @@ end;
 
 destructor TUMLSFilter.Destroy;
 begin
-  qry.terminate;
-  qry.Release;
+  if (qry <> nil) then
+  begin
+    qry.terminate;
+    qry.Release;
+  end;
   inherited;
 end;
 

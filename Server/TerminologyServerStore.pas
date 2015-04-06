@@ -127,7 +127,6 @@ Type
 
     FBaseConceptMaps : TAdvStringObjectMatch; // value sets out of the specification - these can be overriden, but they never go away
     FConceptMapsByKey : TAdvStringObjectMatch;
-    FProviderClasses : TAdvStringObjectMatch;
 
     procedure UpdateConceptMaps;
     procedure BuildStems(list : TFhirValueSetDefineConceptList);
@@ -145,6 +144,7 @@ Type
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FConceptMaps : TAdvStringObjectMatch;
+    FProviderClasses : TAdvStringObjectMatch;
     procedure invalidateVS(id : String); virtual;
     function NextConceptKey : integer;
     function NextClosureKey : integer;
@@ -693,8 +693,6 @@ begin
   FBaseConceptMaps.Forced := true;
   FConceptMapsByKey.Forced := true;
 
-  p := TUSStateCodeServices.Create(FDB);
-  FProviderClasses.Add(p.system(nil), p);
   p := TIETFLanguageCodeServices.Create;
   FProviderClasses.Add(p.system(nil), p);
   p := TUriServices.Create();

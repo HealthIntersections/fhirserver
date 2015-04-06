@@ -45,6 +45,7 @@ Type
     FTransactions: boolean;
     FBases: TStringList;
     FSupportSystemHistory: boolean;
+    FTextIndexing: boolean;
     procedure CreateResourceCompartments;
     procedure CreateResourceConfig;
     procedure CreateResourceIndexEntries;
@@ -81,6 +82,7 @@ Type
     Property  Bases : TStringList read FBases;
     procedure Install;
     Procedure Uninstall;
+    Property TextIndexing : boolean read FTextIndexing write FTextIndexing;
 
   end;
 
@@ -523,8 +525,11 @@ end;
 
 procedure TFHIRDatabaseInstaller.DoPostTransactionInstall;
 begin
-  FConn.ExecSQL('CREATE FULLTEXT CATALOG FHIR as DEFAULT');
-  FConn.ExecSQL('Create FULLTEXT INDEX on IndexEntries (Xhtml TYPE COLUMN Extension) KEY INDEX PK_IndexEntries');
+  if TextIndexing then
+  begin
+    FConn.ExecSQL('CREATE FULLTEXT CATALOG FHIR as DEFAULT');
+    FConn.ExecSQL('Create FULLTEXT INDEX on IndexEntries (Xhtml TYPE COLUMN Extension) KEY INDEX PK_IndexEntries');
+  end;
 end;
 
 procedure TFHIRDatabaseInstaller.DoPostTransactionUnInstall;

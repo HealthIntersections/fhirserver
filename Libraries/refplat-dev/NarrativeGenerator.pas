@@ -84,6 +84,7 @@ type
     function displayHumanName(v : TFHIRHumanName) : String;
     function displayContact(v : TFHIRContactPoint) : String;
     function displaySchedule(v : TFHIRTiming) : String;
+    function displayCodeable(v : TFHIRCodeableConcept) : String;
 
     function resolveReference(res : TFHIRResource; url : String) : TResourceWithReference;
     function lookupCode(system, code : String) : String;
@@ -1073,6 +1074,18 @@ begin
 end;
 
 
+function TNarrativeGenerator.displayCodeable(v: TFHIRCodeableConcept): String;
+begin
+  result := '';
+  if (v <> nil) then
+  begin
+    if (v.text <> '') then
+      result := v.text
+    else if (v.hasCodingList) then
+      result := v.codingList[0].display;
+  end;
+end;
+
 function TNarrativeGenerator.displayContact(v : TFHIRContactPoint) : String;
 begin
   result := describeSystem(v.System);
@@ -1111,8 +1124,8 @@ begin
   else
     s := v.Value;
 
-  if (v.label_ <> '') then
-    s := v.Label_+' := '+s;
+  if (v.type_ <> nil) then
+    s := displayCodeable(v.type_)+' := '+s;
 
   if (v.useElement <> nil) then
     s := s + ' ('+v.useElement.value+')';

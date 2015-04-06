@@ -68,6 +68,7 @@ Type
 implementation
 
 uses
+  USStateCodeServices,
   FHIRValueSetExpander;
 
 
@@ -92,6 +93,7 @@ end;
 procedure TTerminologyServer.load(ini : TIniFile);
 var
   fn : string;
+  p : TCodeSystemProvider;
 begin
   write('Load DB Terinologies');
   Unii := TUniiServices.Create(TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
@@ -99,6 +101,8 @@ begin
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
   Cvx := TCvxServices.Create(unii.db);
   CountryCode := TCountryCodeServices.Create(unii.db);
+  p := TUSStateCodeServices.Create(unii.db);
+  FProviderClasses.Add(p.system(nil), p);
   writeln(' - done');
 
   if ini.ReadString('RxNorm', 'database', '') <> '' then

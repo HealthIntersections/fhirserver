@@ -79,7 +79,7 @@ var
 begin
   qry := db.GetConnection('USStateCode.Count');
   try
-    qry.SQL := 'Select Count(*) from USStateCode';
+    qry.SQL := 'Select Count(*) from USStateCodes';
     qry.prepare;
     qry.execute;
     qry.FetchNext;
@@ -112,9 +112,8 @@ var
 begin
   qry := db.GetConnection('USStateCode.display');
   try
-    qry.SQL := 'Select Display from USStateCode where Code = :code';
+    qry.SQL := 'Select Display from USStateCodes where Code = '''+sqlwrapString(code)+'''';
     qry.prepare;
-    qry.BindString('code', code);
     qry.execute;
     qry.FetchNext;
     result := qry.colString[1];
@@ -147,7 +146,7 @@ var
 begin
   qry := db.GetConnection('USStateCode.locate');
   try
-    qry.SQL := 'Select USStateCodeKey, Display from USStateCode where code = :code';
+    qry.SQL := 'Select USStateCodeKey, Display from USStateCodes where code = :code';
     qry.prepare;
     qry.bindString('code', code);
     qry.execute;

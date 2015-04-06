@@ -79,7 +79,7 @@ var
 begin
   qry := db.GetConnection('CountryCode.Count');
   try
-    qry.SQL := 'Select Count(*) from CountryCode';
+    qry.SQL := 'Select Count(*) from CountryCodes';
     qry.prepare;
     qry.execute;
     qry.FetchNext;
@@ -112,7 +112,7 @@ var
 begin
   qry := db.GetConnection('CountryCode.display');
   try
-    qry.SQL := 'Select Display from CountryCode where Code = :code';
+    qry.SQL := 'Select Display from CountryCodes where Code = :code';
     qry.prepare;
     qry.BindString('code', code);
     qry.execute;
@@ -147,7 +147,7 @@ var
 begin
   qry := db.GetConnection('CountryCode.locate');
   try
-    qry.SQL := 'Select CountryCodeKey, Display from CountryCode where code = :code';
+    qry.SQL := 'Select CountryCodeKey, Display from CountryCodes where code = :code';
     qry.prepare;
     qry.bindString('code', code);
     qry.execute;

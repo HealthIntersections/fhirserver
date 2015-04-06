@@ -460,6 +460,7 @@ begin
   try
     db := TFHIRDatabaseInstaller.create(conn);
     try
+      db.TextIndexing := not FindCmdLineSwitch('no-text-index');
       db.Install;
     finally
       db.free;
