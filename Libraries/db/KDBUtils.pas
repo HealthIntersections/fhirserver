@@ -202,6 +202,37 @@ const
     );
   {$ENDIF}
 
+ {$IFDEF VER290}
+  ColTypeMap: array[TFieldType] of TKDBColumnType =
+    ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
+    {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
+    {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
+    {ftFloat}       ctFloat,      {ftCurrency}     ctFloat,
+    {ftBCD}         ctFloat,      {ftDate}         ctDateTime,
+    {ftTime}        ctDateTime,   {ftDateTime}     ctDateTime,
+    {ftBytes}       ctBlob,       {ftVarBytes}     ctBlob,
+    {ftAutoInc}     ctInteger,    {ftBlob}         ctBlob,
+    {ftMemo}        ctBlob,       {ftGraphic}      ctBlob,
+    {ftFmtMemo}     ctBlob,       {ftParadoxOle}   ctBlob,
+    {ftDBaseOle}    ctBlob,       {ftTypedBinary}  ctUnknown,
+    {ftCursor}      ctUnknown,    {ftFixedChar}    ctChar,
+    {ftWideString}  ctChar,       {ftLargeint}     ctInt64,
+    {ftADT}         ctUnknown,    {ftArray}        ctUnknown,
+    {ftReference}   ctUnknown,    {ftDataSet}      ctBlob,
+    {ftOraBlob}     ctBlob,       {ftOraClob}      ctBlob,
+    {ftVariant}     ctUnknown,    {ftInterface}    ctUnknown,
+    {ftIDispatch}   ctUnknown,    {ftGuid}         ctUnknown,
+    {ftTimeStamp}    ctUnknown,   {ftFMTBcd}      ctUnknown,
+    {ftFixedWideChar}ctChar,      {ftWideMemo}    ctUnknown,
+    {ftOraTimeStamp} ctUnknown,   {ftOraInterval} ctUnknown,
+    {ftLongWord}     ctInteger,   {ftShortint}    ctInteger,
+    {ftByte}         ctInteger,   {ftExtended}    ctFloat,
+    {ftConnection}   ctUnknown,   {ftParams}      ctUnknown,
+    {ftStream}       ctUnknown,   {ftTimeStampOffset} ctUnknown,
+    {ftObject}       ctUnknown,   {ftSingle{}     ctFloat
+    );
+  {$ENDIF}
+
 {$IFDEF WIN32}
 function IdSoapDateTimeToTimeStamp(AValue : TIdSoapDateTime):TTimeStamp;
 function TimeStampToIdSoapDateTime(AValue : TTimeStamp):TIdSoapDateTime;

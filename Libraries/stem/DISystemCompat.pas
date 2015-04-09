@@ -1,5 +1,5 @@
 {-------------------------------------------------------------------------------
- 
+
  Copyright (c) 1999-2013 Ralf Junker, The Delphi Inspiration
  Internet: http://www.yunqa.de/delphi/
  E-Mail:   delphi@yunqa.de
@@ -121,7 +121,7 @@ const
 
 type
 
-  UInt64 = 0..High(Int64);
+   UInt64 = 0..High(Int64);
 
   {$ENDIF ~COMPILE_9_UP}
 
