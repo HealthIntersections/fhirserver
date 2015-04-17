@@ -917,7 +917,7 @@ begin
     oConf.name := 'Health Intersections FHIR Server Conformance Statement';
     oConf.publisher := 'Health Intersections'; //
     oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
-    oConf.status := ConformanceResourceStatusActive;
+    oConf.status := ConformanceStatementStatusActive;
     oConf.experimental := false;
     oConf.date := TDateAndTime.CreateUTC(UniversalDateTime);
     oConf.software := TFhirConformanceSoftware.Create;
@@ -2391,7 +2391,9 @@ begin
   begin
     prv.targetList.Clear;
     prv.targetList.Append.reference := rtype+'/'+id+'/_history/'+vid;
+    {$IFNDEF FHIR-DSTU}
     prv.signatureList.Clear;
+    {$ENDIF}
     // todo: check this....
   end;
 end;
@@ -2721,7 +2723,10 @@ end;
 
 procedure TFhirOperationManager.SaveProvenance(session: TFhirSession; prv: TFHIRProvenance);
 begin
+  {$IFDEF FHIR-DSTU}
+  {$ELSE}
   prv.id := '';
+  {$ENDIF}
   FRepository.QueueResource(prv);
 end;
 
@@ -6074,6 +6079,7 @@ begin
 end;
 {$ENDIF}
 
+{$IFNDEF FHIR-DSTU}
 { TFhirGenerateDocumentOperation }
 
 procedure TFhirGenerateDocumentOperation.addResource(manager: TFhirOperationManager; bundle: TFHIRBundle; reference: TFhirReference; required: boolean; compartments : String);
@@ -6198,6 +6204,7 @@ function TFhirGenerateDocumentOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtComposition];
 end;
+{$ENDIF}
 
 end.
 

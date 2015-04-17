@@ -1349,12 +1349,18 @@ begin
       report.details := message;
       if (code <> '') then
       begin
+        {$IFDEF FHIR-DSTU}
+        report.type_ := TFhirCoding.Create;
+        report.type_.system := 'http://hl7.org/fhir/issue-type';
+        report.type_.code := code;
+        {$ELSE}
         report.code := TFhirCodeableConcept.Create;
         with report.code.codingList.Append do
         begin
           system := 'http://hl7.org/fhir/issue-type';
           code := code;
         end;
+        {$ENDIF}
       end;
       response.ContentStream := TMemoryStream.Create;
       oComp := nil;

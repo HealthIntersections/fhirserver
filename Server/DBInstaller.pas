@@ -34,7 +34,7 @@ uses
   SysUtils, Classes,
   AdvObjects,
   KDBManager, KDBDialects,
-  FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers,
+  FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
   SCIMServer;
 
 Type

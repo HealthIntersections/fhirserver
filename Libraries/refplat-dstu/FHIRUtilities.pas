@@ -58,6 +58,14 @@ type
   TFhirValueSetComposeIncludeConcept = TFHIRCode;
   TFhirValueSetComposeIncludeConceptList = TFHIRCodeList;
   TFHIROperationDefinition = TFHIRObject;
+  TFhirAuditEvent = TFhirSecurityEvent;
+  TFhirAuditEventParticipant = TFhirSecurityEventParticipant;
+  TFhirAuditEventObject = TFhirSecurityEventObject;
+  TFhirAuditEventAction = TFhirSecurityEventAction;
+  TFhirAuditEventEvent = TFhirSecurityEventEvent;
+  TFhirAuditEventSource = TFhirSecurityEventSource;
+  TFhirAuditEventParticipantNetwork = TFhirSecurityEventParticipantNetwork;
+  TFHirStructureDefinition = TFhirProfile;
 
 const
   TypeRestfulInteractionRead = TypeRestfulOperationRead;
@@ -70,7 +78,17 @@ const
   TypeRestfulInteractionCreate = TypeRestfulOperationCreate;
   TypeRestfulInteractionSearchType = TypeRestfulOperationSearchType;
   ContactPointSystemUrl = ContactSystemUrl;
-
+  frtAuditEvent = frtSecurityEvent;
+  frtStructureDefinition = frtProfile;
+  AuditEventActionC = SecurityEventActionC;
+  AuditEventActionR = SecurityEventActionR;
+  AuditEventActionU = SecurityEventActionU;
+  AuditEventActionD = SecurityEventActionD;
+  AuditEventActionE = SecurityEventActionE;
+  AuditEventOutcome0 = SecurityEventOutcome0;
+  AuditEventOutcome4 = SecurityEventOutcome4;
+  AuditEventOutcome8 = SecurityEventOutcome8;
+  AuditEventOutcome12 = SecurityEventOutcome12;
 
 function HumanNameAsText(name : TFhirHumanName):String;
 function GetEmailAddress(contacts : TFhirContactList):String;
@@ -132,7 +150,6 @@ type
     property Resource : TFHIRResource read FResource write SetResource;
   end;
 
-{$IFDEF UNICODE}
 type
   TFHIRProfileStructureHolder = TFHIRProfileStructure;
 
@@ -210,6 +227,31 @@ type
     function codeSystemElement : TFhirUri;
   end;
 
+  TFhirConceptMapHelper  = class helper (TFhirElementHelper) for TFhirConceptMap
+  private
+    function GetUri: string;
+    procedure SetUri(const Value: string);
+  public
+    property url : string read GetUri write SetUri;
+  end;
+
+  TFhirValueSetHelper  = class helper (TFhirElementHelper) for TFhirValueSet
+  private
+    function GetUri: string;
+    procedure SetUri(const Value: string);
+  public
+    property url : string read GetUri write SetUri;
+  end;
+
+
+  TFhirConditionHelper  = class helper (TFhirElementHelper) for TFhirCondition
+  private
+    function GetConditionStatus: TFhirEnum;
+    procedure SetConditionStatus(const Value: TFhirEnum);
+  public
+    property clinicalstatusElement : TFhirEnum read GetConditionStatus write SetConditionStatus;
+  end;
+
   TFHIROperationOutcomeHelper = class helper (TFHIRElementHelper) for TFhirOperationOutcome
   public
     function rule(level : TFhirIssueSeverity; source, typeCode, path : string; test : boolean; msg : string) : boolean;
@@ -219,7 +261,6 @@ type
 
     function hasErrors : boolean;
   end;
-{$ENDIF}
 
 function ZCompressBytes(const s: TBytes): TBytes;
 function ZDecompressBytes(const s: TBytes): TBytes;
@@ -1515,6 +1556,44 @@ begin
   result := TFhirResourceType(index);
 end;
 
+
+{ TFhirValueSetHelper }
+
+function TFhirValueSetHelper.GetUri: string;
+begin
+  result := identifier;
+end;
+
+procedure TFhirValueSetHelper.SetUri(const Value: string);
+begin
+  identifier := Value;
+end;
+
+{ TFhirConceptMapHelper }
+
+function TFhirConceptMapHelper.GetUri: string;
+begin
+  result := identifier;
+end;
+
+procedure TFhirConceptMapHelper.SetUri(const Value: string);
+begin
+  identifier := Value;
+end;
+
+{ TFhirConditionHelper }
+
+{ TFhirConditionHelper }
+
+function TFhirConditionHelper.GetConditionStatus: TFhirEnum;
+begin
+  result := statusElement;
+end;
+
+procedure TFhirConditionHelper.SetConditionStatus(const Value: TFhirEnum);
+begin
+  statusElement := Value;
+end;
 
 end.
 

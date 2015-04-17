@@ -319,19 +319,19 @@
         <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
         <DCCReference Include="FHIRValueSetChecker.pas"/>
         <DCCReference Include="TerminologyWebServer.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapConsts.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapClasses.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapDebug.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapTracker.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapUtilities.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapExceptions.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapMsXml.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapXML.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapComponent.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapNamespaces.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapMime.pas"/>
-        <DCCReference Include="C:\HL7Connect\indysoap\source\IdSoapBase64.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapConsts.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapClasses.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapDebug.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapResourceStrings.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapTracker.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapUtilities.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapExceptions.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapMsXml.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapXML.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapComponent.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapNamespaces.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapMime.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapBase64.pas"/>
         <DCCReference Include="FHIRServerConstants.pas"/>
         <DCCReference Include="..\Libraries\tests\DecimalTests.pas"/>
         <DCCReference Include="..\Libraries\tests\UcumTests.pas"/>
@@ -758,13 +758,13 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="OSX32">False</Platform>

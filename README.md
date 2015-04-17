@@ -19,43 +19,39 @@ The server is specifically written as an reference server - it implements all pa
 as defined, and is co-developed with the specification. It is not optimised for hosting/supporting very
 large repositories efficiently. 
 
-Installing the Server
----------------------
-
-You have to:
-* install this first: http://www.healthintersections.com.au/AltovaXmlCom.msi
-* edit the ini file
-
-
 Compiling 
 ---------
 
-This is pascal code that compoiles under Delphi XE+ (any edition, personal will do).
+This is pascal code that compoiles under Delphi XE3+ (any edition, personal will do).
  
 Support for Free Pascal(/Lazarus) would be good, but requires substantial work to deal with the 
 difference between delphi and FPC unicode implementations.
 
 Compiling should be simple:
-* get a copy of IndySoap (http://sourceforge.net/projects/indysoap/), and add the source directory to your delphi path
-** Note: you don't need to install indysoap, just have it in your source path 
-* open the file Server\FHIRServer.dproj (fro the DSTU version) or Server\FHIRServerDev.dproj (for the trunk version of FHIR) in your version of delphi, and compile
+* open the file Server\FHIRServerDv.dproj (for the DSTU version) or Server\FHIRServerDev.dproj (for the trunk version of FHIR) in your version of delphi, and compile
 
 The Server uses the pascal reference implementation released with the specification. 
 It is simply copied into place (using the file copy_fhir.bat), and committed with the
-server for convenience. 
+server for convenience. (so you don't need to use copy_fhir.bat unless you want to build
+the server with our own custom build of FHIR, which is not recommended)
 
 
 Running
 -------
 
 System Pre-requisites
-* you need either MSSQL 2012, or MySQL 5.5+  (err, MySQL is not supported right now because of a lack of open-source licensed connections - the original code used mydac)
-* you need a copy of the file fhir-spec.zip from a properly built copy of FHIR. The reference source is http://www.hl7.org/documentcenter/public/standards/FHIR/fhir-spec.zip, but you should have the one that matches the built code compiled 
-* when the executable runs, it takes two parameters, in either order: an optional ini filename, and an optional command
-* for ini file documentation, see exec\fhir.ini. If no ini file is nominated, the default is fhir.ini in the same directory as the executable
+* you need MSSQL 2012+ (express version will do)
+* install this: http://www.healthintersections.com.au/AltovaXmlCom.msi
+* you need a copy of the full specification for the same version as the generated reference implementation code 
+  (download file http://hl7.org/fhir/fhir-spec.zip for DSTU version, or get from svn (see http://wiki.hl7.org/index.php?title=FHIR : update svn, run a build, in build\publish)) 
+* when the executable runs, it takes parameters on the command line, in either order: an optional ini filename, and an optional command
 * if there is no command, nothing will happen - the server will terminate
+* for ini file documentation, see exec\fhir.ini. 
+* you have to rename the ini file to either fhir.dstu.ini or fhir.dev.ini, and then edit it
+* for additional execution set up, see install\readme.txt
 
 Commands
+--------
 
 - `-help` - this document
 - `setup` - install the various required tables in the nominated database
@@ -69,7 +65,8 @@ Commands
 - `-tests` - run the automated tests. Needs a local mssql database called "fhir-test" with trusted access
 - `-snomed-rf1 'folder'` - import a SNOMED CT distribution using an RF1 format (can take ~1hour). Nominate the directory that contains the snapshot directly
 - `-snomed-rf2 'folder'` - import a SNOMED CT distribution using an RF2 format (can take ~1hour). Nominate the directory that contains the snapshot directly
-- `-loinc 'file'` - update the loinc cache from the given filename (access database)
+- `-loinc 'file'` - update the loinc cache from the given filename (csv form)
+  - `-mafile 'file'` - loinc heirarchy (csv file)
 - `-rxstems` - connect to the RxNorm database, and generate the text search index
 - '-unii 'file'` - fill the unii database from the unii text distribution format (tab delimited)
 

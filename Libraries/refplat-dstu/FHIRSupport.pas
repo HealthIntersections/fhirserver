@@ -236,10 +236,12 @@ Type
     FCompartmentId: String;
     FForm: TIdSoapMimeMessage;
     FOperationName: String;
+    FProvenance: TFhirProvenance;
     procedure SetResource(const Value: TFhirResource);
     procedure SetFeed(const Value: TFHIRAtomFeed);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
+   procedure SetProvenance(const Value: TFhirProvenance);
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -369,6 +371,7 @@ Type
     }
     Property Lang : String read FLang write FLang;
 
+    Property Provenance : TFhirProvenance read FProvenance write SetProvenance;
   End;
 
   {@Class TFHIRResponse
@@ -781,6 +784,7 @@ begin
   FSource.Free;
   FFeed.Free;
   FResource.Free;
+  FProvenance.Free;
   inherited;
 end;
 
@@ -824,6 +828,12 @@ procedure TFHIRRequest.SetFeed(const Value: TFHIRAtomFeed);
 begin
   FFeed.Free;
   FFeed := Value;
+end;
+
+procedure TFHIRRequest.SetProvenance(const Value: TFhirProvenance);
+begin
+  FProvenance.Free;
+  FProvenance := Value;
 end;
 
 procedure TFHIRRequest.SetResource(const Value: TFhirResource);

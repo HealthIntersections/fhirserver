@@ -35,7 +35,8 @@ Uses
   StringSupport, FileSupport, BytesSupport,
   AdvObjects, AdvObjectLists,
   regexpr, YuStemmer,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
+  TerminologyServices, DateAndTime;
 
 {axes
 
@@ -1415,10 +1416,10 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
+      result.status := ValueSetStatusActive;
       result.version := Version;
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text);
-      result.status := ConformanceResourceStatusActive;
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;

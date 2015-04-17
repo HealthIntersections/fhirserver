@@ -44,7 +44,7 @@ Uses
   StringSupport, FileSupport, BytesSupport,
   AdvStringLists, AdvObjectLists, AdvObjects,
   YuStemmer, DateAndTime,
-  FHIRTypes, FHIRComponents, FHIRResources,
+  FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
   TerminologyServices;
 
 Const
@@ -2202,10 +2202,10 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
+      result.status := ValueSetStatusActive;
       result.version := Version;
       result.name := 'SNOMED CT Reference Set '+id.Substring(23);
       result.description := GetDisplayName(id.Substring(23), '');
-      result.status := ConformanceResourceStatusActive;
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -2224,10 +2224,10 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
+      result.status := ValueSetStatusActive;
       result.version := Version;
       result.name := 'SNOMED CT Concept '+id.Substring(22)+' and descendents';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(22), '');
-      result.status := ConformanceResourceStatusActive;
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;

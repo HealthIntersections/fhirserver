@@ -13,12 +13,6 @@ uses
   YuStemmer;
 
 Type
-  {$IFNDEF FHIR-DSTU}
-  TFhirConceptMapConceptList = TFhirConceptMapElementList;
-  TFhirConceptMapConceptMapList = TFhirConceptMapElementMapList;
-  TFhirConceptMapConcept = TFhirConceptMapElement;
-  TFhirConceptMapConceptMap = TFhirConceptMapElementMap;
-  {$ENDIF}
 
   ETerminologySetup = class (Exception);
   ETerminologyError = class (Exception);

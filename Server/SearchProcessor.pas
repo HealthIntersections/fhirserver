@@ -688,6 +688,25 @@ begin
                       raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]));
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value '+pfx+sqlwrapString(lowercase(RemoveAccents(value)))+sfx+')';
                   end;
+                {$IFNDEF FHIR-DSTU}
+                SearchParamTypeUri:
+                  begin
+                    value := lowercase(value);
+                    if (modifier = 'partial') or (modifier = '') then
+                    begin
+                      pfx := 'like ''%';
+                      sfx := '%''';
+                    end
+                    else if (modifier = 'exact') then
+                    begin
+                      pfx := '= ''';
+                      sfx := '''';
+                    end
+                    else
+                      raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]));
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value '+pfx+sqlwrapString(lowercase(RemoveAccents(value)))+sfx+')';
+                  end;
+                {$ENDIF}
                 SearchParamTypeToken:
                   begin
                   value := lowercase(value);

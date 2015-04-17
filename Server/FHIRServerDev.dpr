@@ -36,6 +36,17 @@ POSSIBILITY OF SUCH DAMAGE.
 {
 
 bug list:
+
+Hi Grahame,
+[12:05:43 PM] David Hay: any reason why this query doesn’t return any expansion:
+[12:05:51 PM] David Hay: http://fhir-dev.healthintersections.com.au/openValueSet/valueset-medication-codes/$expand?filter=amox
+[12:05:59 PM] David Hay: This one works just fine:
+[12:06:07 PM] David Hay: http://fhir-dev.healthintersections.com.au/openValueSet/valueset-condition-code/$expand?filter=asth
+[12:12:43 PM] David Hay: also: valueset-medication-form-codes
+[12:12:50 PM] David Hay: are actually route codes…
+
+
+
  * multiple duplicate tags
  * Try dereferencing http://hl7.org/fhir/questionnaire-extensions#answerFormat -- 404
     Our URLs for extensions are broken
@@ -237,19 +248,19 @@ uses
   TerminologyServices in '..\Libraries\TerminologyServices.pas',
   FHIRValueSetChecker in 'FHIRValueSetChecker.pas',
   TerminologyWebServer in 'TerminologyWebServer.pas',
-  IdSoapConsts in 'C:\HL7Connect\indysoap\source\IdSoapConsts.pas',
-  IdSoapClasses in 'C:\HL7Connect\indysoap\source\IdSoapClasses.pas',
-  IdSoapDebug in 'C:\HL7Connect\indysoap\source\IdSoapDebug.pas',
-  IdSoapResourceStrings in 'C:\HL7Connect\indysoap\source\IdSoapResourceStrings.pas',
-  IdSoapTracker in 'C:\HL7Connect\indysoap\source\IdSoapTracker.pas',
-  IdSoapUtilities in 'C:\HL7Connect\indysoap\source\IdSoapUtilities.pas',
-  IdSoapExceptions in 'C:\HL7Connect\indysoap\source\IdSoapExceptions.pas',
-  IdSoapMsXml in 'C:\HL7Connect\indysoap\source\IdSoapMsXml.pas',
-  IdSoapXML in 'C:\HL7Connect\indysoap\source\IdSoapXML.pas',
-  IdSoapComponent in 'C:\HL7Connect\indysoap\source\IdSoapComponent.pas',
-  IdSoapNamespaces in 'C:\HL7Connect\indysoap\source\IdSoapNamespaces.pas',
-  IdSoapMime in 'C:\HL7Connect\indysoap\source\IdSoapMime.pas',
-  IdSoapBase64 in 'C:\HL7Connect\indysoap\source\IdSoapBase64.pas',
+  IdSoapConsts in '..\Libraries\indysoap\IdSoapConsts.pas',
+  IdSoapClasses in '..\Libraries\indysoap\IdSoapClasses.pas',
+  IdSoapDebug in '..\Libraries\indysoap\IdSoapDebug.pas',
+  IdSoapResourceStrings in '..\Libraries\indysoap\IdSoapResourceStrings.pas',
+  IdSoapTracker in '..\Libraries\indysoap\IdSoapTracker.pas',
+  IdSoapUtilities in '..\Libraries\indysoap\IdSoapUtilities.pas',
+  IdSoapExceptions in '..\Libraries\indysoap\IdSoapExceptions.pas',
+  IdSoapMsXml in '..\Libraries\indysoap\IdSoapMsXml.pas',
+  IdSoapXML in '..\Libraries\indysoap\IdSoapXML.pas',
+  IdSoapComponent in '..\Libraries\indysoap\IdSoapComponent.pas',
+  IdSoapNamespaces in '..\Libraries\indysoap\IdSoapNamespaces.pas',
+  IdSoapMime in '..\Libraries\indysoap\IdSoapMime.pas',
+  IdSoapBase64 in '..\Libraries\indysoap\IdSoapBase64.pas',
   FHIRServerConstants in 'FHIRServerConstants.pas',
   DecimalTests in '..\Libraries\tests\DecimalTests.pas',
   UcumTests in '..\Libraries\tests\UcumTests.pas',

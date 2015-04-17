@@ -33,6 +33,8 @@ type
   end;
 
 
+  // predefined token per user for testing
+
   // this is a server that lives at /oauth2
   TAuth2Server = class (TAdvObject)
   private
@@ -66,6 +68,7 @@ type
     Procedure HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     function checkNotEmpty(v, n: String): String;
     function isAllowedRedirect(client_id, redirect_uri: String): boolean;
+    function isAllowedAud(client_id, aud_uri: String): boolean;
     procedure SetFhirStore(const Value: TFHIRDataStore);
     function BuildLoginList(id : String) : String;
     function AltFile(path: String): String;
@@ -196,6 +199,11 @@ begin
 end;
 
 
+function TAuth2Server.isAllowedAud(client_id, aud_uri: String): boolean;
+begin
+  result := (aud_uri = BasePath);
+end;
+
 function TAuth2Server.isAllowedRedirect(client_id, redirect_uri: String): boolean;
 var
   i : integer;
@@ -242,6 +250,7 @@ var
   scope : String;
   redirect_uri : String;
   state : String;
+  aud : String;
   id : String;
   conn : TKDBConnection;
   variables : TDictionary<String,String>;
@@ -252,12 +261,14 @@ begin
   scope := checkNotEmpty(params.GetVar('scope'), 'scope');
   redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
   state := checkNotEmpty(params.GetVar('state'), 'state');
+  aud := checkNotEmpty(params.GetVar('aud'), 'aud');
 
   if FIni.ReadString(client_id, 'name', '') = '' then
     raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
-
   if not isAllowedRedirect(client_id, redirect_uri) then
     raise Exception.Create('Unacceptable Redirect url "'+redirect_uri+'"');
+  if not isAllowedAud(client_id, aud) then
+    raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'"');
 
   id := GUIDToString(CreateGUID).ToLower.Substring(1, 36);
   conn := FFhirStore.DB.GetConnection('oatuh2');
