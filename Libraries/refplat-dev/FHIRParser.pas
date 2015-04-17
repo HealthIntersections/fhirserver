@@ -39,7 +39,7 @@ interface
 // FHIR v0.5.0 generated Thu, Apr 9, 2015 08:17+1000
 
 uses
-  SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, JSON, AdvStringMatches;
+  SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
 
 Type
 

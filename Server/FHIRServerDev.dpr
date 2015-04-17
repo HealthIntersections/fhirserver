@@ -179,7 +179,7 @@ uses
   AdvWinInetClients in '..\Libraries\Support\AdvWinInetClients.pas',
   MsXmlBuilder in '..\Libraries\Support\MsXmlBuilder.pas',
   AdvXmlBuilders in '..\Libraries\Support\AdvXmlBuilders.pas',
-  JSON in '..\Libraries\Support\JSON.pas',
+  AdvJSON in '..\Libraries\Support\AdvJSON.pas',
   AfsResourceVolumes in '..\Libraries\Support\AfsResourceVolumes.pas',
   AfsVolumes in '..\Libraries\Support\AfsVolumes.pas',
   AfsStreamManagers in '..\Libraries\Support\AfsStreamManagers.pas',

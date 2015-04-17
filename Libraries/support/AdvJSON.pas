@@ -1,4 +1,4 @@
-Unit JSON;
+Unit AdvJSON;
 
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)

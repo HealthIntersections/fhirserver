@@ -13,7 +13,7 @@ uses
 
   ParseMap, KDBManager, KDBDialects, KCritSct,
 
-  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, JSON, JWT,
+  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, AdvJSON, JWT,
 
   FacebookSupport, SCIMServer,
 

@@ -47,7 +47,7 @@ uses
   InternetFetcher,
   IdHTTP, IdSSLOpenSSL, hmac, idHMAC, IdHMACSHA1, BytesSupport,
   AdvMemories,
-  json, jwt, ParseMap;
+  AdvJson, jwt, ParseMap;
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 var

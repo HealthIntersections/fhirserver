@@ -36,7 +36,7 @@ uses
   FHIRSupport,
   MsXmlParser, AdvBuffers, AdvStringLists, StringSupport, DecimalSupport, EncodeSupport, DateAndTime, AdvStringMatches,
   XmlBuilder, AdvXmlBuilders, TextUtilities, FHIRTags,
-  DateSupport, MsXmlBuilder, JSON, AdvVCLStreams, AdvStringStreams, AdvStringBuilders, FHIRLang;
+  DateSupport, MsXmlBuilder, AdvJSON, AdvVCLStreams, AdvStringStreams, AdvStringBuilders, FHIRLang;
 
 const
   ATOM_NS = 'http://www.w3.org/2005/Atom';

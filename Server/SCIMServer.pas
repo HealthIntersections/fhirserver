@@ -6,7 +6,7 @@ uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer, IdHashSHA,
   DCPsha256, ParseMap,
-  KDBManager, JSON, KCritSct, DateAndTime,
+  KDBManager, AdvJSON, KCritSct, DateAndTime,
   StringSupport, EncodeSupport,
   AdvObjects, AdvObjectLists,
   SCIMSearch, SCIMObjects;
