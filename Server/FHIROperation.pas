@@ -5896,7 +5896,7 @@ begin
           else
             raise Exception.Create('Unable to find value to expand (not provided by id, identifier, or directly');
 
-          dst := manager.FRepository.TerminologyServer.expandVS(vs, cacheId, request.Parameters.getVar('filter'), StrToIntDef(request.Parameters.GetVar('_limit'), 0), StrToBoolDef(request.Parameters.GetVar('_incomplete'), false));
+          dst := manager.FRepository.TerminologyServer.expandVS(vs, cacheId, request.Parameters.getVar('profile'), request.Parameters.getVar('filter'), StrToIntDef(request.Parameters.GetVar('_limit'), 0), StrToBoolDef(request.Parameters.GetVar('_incomplete'), false));
           try
             response.HTTPCode := 200;
             response.Message := 'OK';

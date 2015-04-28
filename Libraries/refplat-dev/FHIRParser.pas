@@ -4658,12 +4658,8 @@ begin
 end;
 
 procedure TFHIRJsonParser.ParseExtension(jsn : TJsonObject; ctxt : TFHIRObjectList);
-var
-  ex : TFhirExtension;
 begin
-  ex := ParseExtension(jsn);
-  ex.url := ctxt.tags['url']; {2}
-  ctxt.add(ex);
+  ctxt.add(ParseExtension(jsn));
 end;
 
 function TFHIRJsonParser.ParseExtension(jsn : TJsonObject) : TFhirExtension;

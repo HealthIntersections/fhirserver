@@ -443,7 +443,7 @@ begin
     iCount := 0;
     Progress('Loading Concepts');
     items := TAdvStringList.create;
-    csv := TAdvCSVExtractor.Create(source.Link);
+    csv := TAdvCSVExtractor.Create(source.Link, TEncoding.ASCII);
     Try
       // headers
       csv.ConsumeEntries(items);

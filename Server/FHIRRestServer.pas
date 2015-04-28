@@ -518,10 +518,11 @@ begin
     finally
       resp.Free;
     end;
-    if cursor = -1 then
-      ini.DeleteKey('process', 'start')
-    else
-      ini.WriteInteger('process', 'start', cursor);
+    if (ini <> nil) then
+      if (cursor = -1) then
+        ini.DeleteKey('process', 'start')
+      else
+        ini.WriteInteger('process', 'start', cursor);
   finally
     req.Free;
   end;
@@ -1998,7 +1999,7 @@ begin
   inc := TStringList.Create;
   result := TFHIRAtomFeed.Create(BundleTypeTransaction);
   try
-    if init then
+    if init and (ini <> nil) then
       inc.CommaText := ini.ReadString('control', 'include', '');
     result.id := NewGuidURN;
     result.base := base;

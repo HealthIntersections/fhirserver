@@ -618,11 +618,11 @@ end;
 function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList): TFhirValueSet;
 begin
   if (vs <> nil) then
-    result := FTerminologyServer.expandVS(vs, '', '',  dependencies, limit, allowIncomplete)
+    result := FTerminologyServer.expandVS(vs, '', '', '', dependencies, limit, allowIncomplete)
   else
   begin
     if FTerminologyServer.isKnownValueSet(ref.reference, vs) then
-      result := FTerminologyServer.expandVS(vs, ref.reference, '', dependencies, limit, allowIncomplete)
+      result := FTerminologyServer.expandVS(vs, ref.reference, '', '', dependencies, limit, allowIncomplete)
     else
     begin
       vs := FTerminologyServer.getValueSetByUrl(ref.reference);
@@ -631,7 +631,7 @@ begin
       if vs = nil then
         result := nil
       else
-        result := FTerminologyServer.expandVS(vs, ref.reference, '', dependencies, limit, allowIncomplete)
+        result := FTerminologyServer.expandVS(vs, ref.reference, '', '', dependencies, limit, allowIncomplete)
     end;
   end;
 end;
