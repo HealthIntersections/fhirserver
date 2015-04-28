@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.5.0 generated Thu, Apr 9, 2015 08:17+1000
+// FHIR v0.5.0 generated Tue, Apr 21, 2015 16:18+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -1592,6 +1592,27 @@ Type
     ValuesetSupplyDispenseStatusDispensed, {@enum.value ValuesetSupplyDispenseStatusDispensed Supply is part of a pharmacy order and has been dispensed. }
     ValuesetSupplyDispenseStatusAbandoned); {@enum.value ValuesetSupplyDispenseStatusAbandoned Dispensing was not completed. }
   TFhirValuesetSupplyDispenseStatusList = set of TFhirValuesetSupplyDispenseStatus;
+
+  {@Enum TFhirValuesetSupplydeliveryStatus
+    Status of the Supply delivery
+  }
+  TFhirValuesetSupplydeliveryStatus = (
+    ValuesetSupplydeliveryStatusNull,  {@enum.value ValuesetSupplydeliveryStatusNull Value is missing from Instance }
+    ValuesetSupplydeliveryStatusInProgress, {@enum.value ValuesetSupplydeliveryStatusInProgress Supply has been requested, but not delivered. }
+    ValuesetSupplydeliveryStatusCompleted, {@enum.value ValuesetSupplydeliveryStatusCompleted Supply has been delivered. ( "completed"). }
+    ValuesetSupplydeliveryStatusAbandoned); {@enum.value ValuesetSupplydeliveryStatusAbandoned Dispensing was not completed. }
+  TFhirValuesetSupplydeliveryStatusList = set of TFhirValuesetSupplydeliveryStatus;
+
+  {@Enum TFhirValuesetSupplyrequestStatus
+    Status of the supply request
+  }
+  TFhirValuesetSupplyrequestStatus = (
+    ValuesetSupplyrequestStatusNull,  {@enum.value ValuesetSupplyrequestStatusNull Value is missing from Instance }
+    ValuesetSupplyrequestStatusRequested, {@enum.value ValuesetSupplyrequestStatusRequested Supply has been requested, but not dispensed. }
+    ValuesetSupplyrequestStatusCompleted, {@enum.value ValuesetSupplyrequestStatusCompleted Supply has been received by the requestor. }
+    ValuesetSupplyrequestStatusFailed, {@enum.value ValuesetSupplyrequestStatusFailed The supply will not be completed because the supplier was unable or unwilling to supply the item. }
+    ValuesetSupplyrequestStatusCancelled); {@enum.value ValuesetSupplyrequestStatusCancelled The orderer of the supply cancelled the request. }
+  TFhirValuesetSupplyrequestStatusList = set of TFhirValuesetSupplyrequestStatus;
 
   {@Enum TFhirFilterOperator
     The kind of operation to perform as a part of a property based filter
@@ -8809,6 +8830,8 @@ Const
   CODES_TFhirSubscriptionChannelType : Array[TFhirSubscriptionChannelType] of String = ('', 'rest-hook', 'websocket', 'email', 'sms', 'message');
   CODES_TFhirValuesetSupplyStatus : Array[TFhirValuesetSupplyStatus] of String = ('', 'requested', 'dispensed', 'received', 'failed', 'cancelled');
   CODES_TFhirValuesetSupplyDispenseStatus : Array[TFhirValuesetSupplyDispenseStatus] of String = ('', 'in-progress', 'dispensed', 'abandoned');
+  CODES_TFhirValuesetSupplydeliveryStatus : Array[TFhirValuesetSupplydeliveryStatus] of String = ('', 'in-progress', 'completed', 'abandoned');
+  CODES_TFhirValuesetSupplyrequestStatus : Array[TFhirValuesetSupplyrequestStatus] of String = ('', 'requested', 'completed', 'failed', 'cancelled');
   CODES_TFhirFilterOperator : Array[TFhirFilterOperator] of String = ('', '=', 'is-a', 'is-not-a', 'regex', 'in', 'not-in');
   CODES_TFhirEyeCodes : Array[TFhirEyeCodes] of String = ('', 'right', 'left');
   CODES_TFhirBaseCodes : Array[TFhirBaseCodes] of String = ('', 'up', 'down', 'in', 'out');
@@ -9057,6 +9080,10 @@ Function TFhirValuesetSupplyStatusListAsInteger(aSet : TFhirValuesetSupplyStatus
 Function IntegerAsTFhirValuesetSupplyStatusList(i : integer) : TFhirValuesetSupplyStatusList; overload;
 Function TFhirValuesetSupplyDispenseStatusListAsInteger(aSet : TFhirValuesetSupplyDispenseStatusList) : Integer; overload;
 Function IntegerAsTFhirValuesetSupplyDispenseStatusList(i : integer) : TFhirValuesetSupplyDispenseStatusList; overload;
+Function TFhirValuesetSupplydeliveryStatusListAsInteger(aSet : TFhirValuesetSupplydeliveryStatusList) : Integer; overload;
+Function IntegerAsTFhirValuesetSupplydeliveryStatusList(i : integer) : TFhirValuesetSupplydeliveryStatusList; overload;
+Function TFhirValuesetSupplyrequestStatusListAsInteger(aSet : TFhirValuesetSupplyrequestStatusList) : Integer; overload;
+Function IntegerAsTFhirValuesetSupplyrequestStatusList(i : integer) : TFhirValuesetSupplyrequestStatusList; overload;
 Function TFhirFilterOperatorListAsInteger(aSet : TFhirFilterOperatorList) : Integer; overload;
 Function IntegerAsTFhirFilterOperatorList(i : integer) : TFhirFilterOperatorList; overload;
 Function TFhirEyeCodesListAsInteger(aSet : TFhirEyeCodesList) : Integer; overload;
@@ -23739,6 +23766,60 @@ var
 begin
   result := [];
   for aLoop := low(TFhirValuesetSupplyDispenseStatus) to high(TFhirValuesetSupplyDispenseStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirValuesetSupplydeliveryStatusListAsInteger(aSet : TFhirValuesetSupplydeliveryStatusList) : Integer;
+var
+  a : TFhirValuesetSupplydeliveryStatus;
+begin
+  result := 0;
+  for a := low(TFhirValuesetSupplydeliveryStatus) to high(TFhirValuesetSupplydeliveryStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirValuesetSupplydeliveryStatusList(i : Integer) : TFhirValuesetSupplydeliveryStatusList;
+var
+  aLoop : TFhirValuesetSupplydeliveryStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirValuesetSupplydeliveryStatus) to high(TFhirValuesetSupplydeliveryStatus) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirValuesetSupplyrequestStatusListAsInteger(aSet : TFhirValuesetSupplyrequestStatusList) : Integer;
+var
+  a : TFhirValuesetSupplyrequestStatus;
+begin
+  result := 0;
+  for a := low(TFhirValuesetSupplyrequestStatus) to high(TFhirValuesetSupplyrequestStatus) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirValuesetSupplyrequestStatusList(i : Integer) : TFhirValuesetSupplyrequestStatusList;
+var
+  aLoop : TFhirValuesetSupplyrequestStatus;
+begin
+  result := [];
+  for aLoop := low(TFhirValuesetSupplyrequestStatus) to high(TFhirValuesetSupplyrequestStatus) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

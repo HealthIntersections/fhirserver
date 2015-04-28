@@ -529,7 +529,7 @@ var
   qry : TKDBConnection;
   res : TUMLSConcept;
 begin
-  qry := db.GetConnection(dbprefix+'.display');
+  qry := db.GetConnection(dbprefix+'.locate');
   try
     qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = ''RXNORM''  and TTY <> ''SY'' and RXCUI = :code '+TUMLSFilter(ctxt).sql;
     qry.prepare;
@@ -608,9 +608,12 @@ end;
 
 
 
-procedure TUMLSServices.Close(
-  ctxt: TCodeSystemProviderFilterPreparationContext);
+procedure TUMLSServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
+var
+  filter : TUMLSFilter;
 begin
+  filter := TUMLSFilter(TUMLSPrep(ctxt).filters[0]);
+  filter.qry.release;
 
 end;
 

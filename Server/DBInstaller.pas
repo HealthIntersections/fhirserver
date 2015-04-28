@@ -280,9 +280,9 @@ begin
        ' ClientState nchar(255) NOT NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
        ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
-       ' DateSignedIn '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
-       ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
-       ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
+       ' DateSignedIn '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
+       ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
+       ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL, '+#13#10+
        ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
@@ -384,6 +384,7 @@ Begin
   FConn.ExecSQL('CREATE TABLE Searches( '+#13#10+
        ' SearchKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Id nchar(36) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' SessionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Count int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Summary int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Date '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+

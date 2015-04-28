@@ -8,7 +8,7 @@ uses
   StringSupport, EncodeSupport,
   AdvObjects, DateAndTime, DecimalSupport,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRComponents, FHIRTypes,
-  FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax,
+  FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax, FHIRSupport,
   UcumServices;
 
 const
@@ -46,6 +46,7 @@ type
     FIndexer: TFhirIndexManager;
     FLang: String;
     FRepository: TFHIRDataStore;
+    FSession : TFhirSession;
 
     function processValueSetMembership(vs : String) : String;
     function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
@@ -66,6 +67,8 @@ type
     procedure replaceNames(paramPath : TFSFilterParameterPath; components : TDictionary<String, String>); overload;
     procedure replaceNames(filter : TFSFilter; components : TDictionary<String, String>); overload;
     procedure processQuantityValue(name, lang: String; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
+    procedure SetSession(const Value: TFhirSession);
+    function filterTypes(types: TFHIRResourceTypeSet): TFHIRResourceTypeSet;
   public
     Destructor Destroy; override;
     procedure Build;
@@ -81,6 +84,7 @@ type
     property params : TParseMap read FParams write FParams;
     property indexer : TFhirIndexManager read FIndexer write SetIndexer;
     property repository : TFHIRDataStore read FRepository write SetRepository;
+    property session : TFhirSession read FSession write SetSession;
 
 
     // outbound
@@ -518,10 +522,20 @@ begin
     result := tkUnknown;
 end;
 
+Function TSearchProcessor.filterTypes(types : TFHIRResourceTypeSet) : TFHIRResourceTypeSet;
+var
+  a : TFHIRResourceType;
+begin
+  result := [];
+  for a in types do
+    if session.canRead(a) then
+      result := result + [a];
+end;
+
 Function TSearchProcessor.processParam(types : TFHIRResourceTypeSet; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
 var
   key, i : integer;
-  left, right, op, modifier, v1,v2, v1c, v2c, sp, spC : String;
+  left, right, op, modifier, v1,v2, v1c, v2c, sp, spC, tl : String;
   f : Boolean;
   ts : TStringList;
   pfx, sfx : String;
@@ -570,19 +584,32 @@ begin
       if not StringArrayExistsInSensitive(CODES_TFHIRResourceType, modifier) then
         raise Exception.create(StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [modifier]));
       a := TFHIRResourceType(StringArrayIndexOfInSensitive(CODES_TFHIRResourceType, modifier));
-      types := [a];
+      types := filterTypes([a]);
     end
     else
-      modifier := '';
+    begin
+      types := filterTypes(FIndexer.GetTargetsByName(types, left));
+    end;
     key := FIndexer.GetKeyByName(types, left);
     if key = 0 then
       raise Exception.create(StringFormat(GetFhirMessage('MSG_PARAM_CHAINED', lang), [left]));
     f := true;
-    if modifier <> '' then
-      result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where (ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(FRepository.ResConfig[a].key)+')) and ('+processParam(types, right, lowercase(value), true, f, bHandled)+')))'
+    tl := '';
+    for a in types do
+      tl := tl+','+inttostr(FRepository.ResConfig[a].key);
+    if (tl <> '') then
+      tl := tl.Substring(1);
+    if (tl = '') then
+    begin
+      result := ''; // cannot match because the chain cannot be executed
+      bHandled := false;
+    end
     else
-      result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where '+processParam(FIndexer.GetTargetsByName(types, left), right, lowercase(value), true, f, bHandled)+'))';
-    bHandled := true;
+    begin
+      result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where (ResourceKey in '+
+        '(select ResourceKey from Ids where ResourceTypeKey in ('+tl+')) and ('+processParam(types, right, lowercase(value), true, f, bHandled)+')))';
+      bHandled := true;
+    end;
   end
   else
   begin
@@ -604,7 +631,7 @@ begin
       if modifier = 'partial' then
         result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey in (Select TagKey from Tags where Type = '+inttostr(TypeForName(name))+' and TermUri like '''+SQLWrapString(value)+'%'')))'
       else if modifier = 'text' then
-        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where Label like ''%'+SQLWrapString(value)+'%''))'
+        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where Label like '''+SQLWrapString(value)+'%''))'
       else if modifier = '' then
         result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey = '''+intToStr(FRepository.KeyForTag(KindForName(name), value, ''))+'''))'
       else
@@ -676,7 +703,7 @@ begin
                       value := EncodeNYSIIS(value);
                     if (modifier = 'partial') or (modifier = '') then
                     begin
-                      pfx := 'like ''%';
+                      pfx := 'like ''';
                       sfx := '%''';
                     end
                     else if (modifier = 'exact') then
@@ -694,7 +721,7 @@ begin
                     value := lowercase(value);
                     if (modifier = 'partial') or (modifier = '') then
                     begin
-                      pfx := 'like ''%';
+                      pfx := 'like ''';
                       sfx := '%''';
                     end
                     else if (modifier = 'exact') then
@@ -716,7 +743,7 @@ begin
                   else if (name = '_language') then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value like '''+sqlwrapString(value)+'%'')'
                   else if modifier = 'text' then
-                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like ''%'+sqlwrapString(lowercase(RemoveAccents(value)))+'%'')'
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like '''+sqlwrapString(lowercase(RemoveAccents(value)))+'%'')'
                   else if modifier = 'in' then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and '+processValueSetMembership(value)+')'
                   else if value.Contains('|') then
@@ -736,7 +763,7 @@ begin
                   if (name = '_id') or (name = 'id') or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value = '''+sqlwrapString(value)+''')'
                   else if modifier = 'text' then
-                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like ''%'+sqlwrapString(lowercase(RemoveAccents(value)))+'%'')'
+                    result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value2 like '''+sqlwrapString(lowercase(RemoveAccents(value)))+'%'')'
                   else if (modifier = 'anyns') or (modifier = '') then
                   begin
                     if IsId(value) then
@@ -937,6 +964,12 @@ end;
 
 
 
+procedure TSearchProcessor.SetSession(const Value: TFhirSession);
+begin
+  FSession.Free;
+  FSession := Value;
+end;
+
 procedure TSearchProcessor.SplitByCommas(value : String; list : TStringList);
 var
   s : String;
@@ -1073,6 +1106,7 @@ end;
 destructor TSearchProcessor.Destroy;
 begin
   FRepository.Free;
+  FSession.Free;
   inherited;
 end;
 

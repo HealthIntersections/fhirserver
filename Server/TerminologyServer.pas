@@ -637,14 +637,23 @@ begin
 end;
 
 procedure TTerminologyServer.processClosureEntry(ClosureEntryKey, ClosureKey, ConceptKey: integer; conn2, conn3: TKDBConnection; uri, code : String);
+var
+  b : boolean;
 begin
   conn2.SQL := 'select ConceptKey, URL, Code from Concepts where ConceptKey in (select SubsumesKey from ClosureEntries where ClosureKey = '+inttostr(ClosureKey)+' and ClosureEntryKey <> '+inttostr(ClosureEntryKey)+')';
   conn2.prepare;
   try
     conn2.execute;
     while conn2.fetchnext do
-      if subsumes(uri, code, conn2.ColStringByName['URL'],conn2.ColStringByName['Code']) then
+    begin
+      try
+        b := subsumes(uri, code, conn2.ColStringByName['URL'],conn2.ColStringByName['Code']) ;
+      except
+        b := false;
+      end;
+      if b then
         conn3.execSQL('Insert into ClosureEntries (ClosureEntryKey, ClosureKey, SubsumesKey, SubsumedKey, NeedsIndexing) values ('+inttostr(NextClosureEntryKey)+', '+inttostr(ClosureKey)+', '+inttostr(ConceptKey)+', '+conn2.colStringByName['ConceptKey']+', 0)');
+    end;
   finally
     conn2.terminate;
   end;

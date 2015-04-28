@@ -342,6 +342,8 @@ Type
     procedure BuildIndexValuesConceptMap(key : integer; id : string; context : TFhirResource; resource : TFhirConceptMap);
     procedure BuildIndexValuesRelatedPerson(key : integer; id : string; context : TFhirResource; resource : TFhirRelatedPerson);
     procedure BuildIndexValuesSupply(key : integer; id : string; context : TFhirResource; resource : TFhirSupply);
+    procedure BuildIndexValuesSupplyDelivery(key : integer; id : string; context : TFhirResource; resource : TFhirSupplyDelivery);
+    procedure BuildIndexValuesSupplyRequest(key : integer; id : string; context : TFhirResource; resource : TFhirSupplyRequest);
   {$IFDEF FHIR-DSTU}
     procedure BuildIndexValuesOther(key : integer; id : string; context : TFhirResource; resource : TFhirOther);
   {$ELSE}
@@ -433,6 +435,8 @@ Type
     procedure buildIndexesBinary;
     procedure BuildIndexesRelatedPerson;
     procedure BuildIndexesSupply;
+    procedure BuildIndexesSupplyDelivery;
+    procedure BuildIndexesSupplyRequest;
   {$IFDEF FHIR-DSTU}
     procedure BuildIndexesOther;
     procedure buildIndexesQuery;
@@ -808,6 +812,8 @@ begin
   buildIndexesEncounter;
   BuildIndexesRelatedPerson;
   BuildIndexesSupply;
+  BuildIndexesSupplyRequest;
+  BuildIndexesSupplyDelivery;
 
   {$IFDEF FHIR-DSTU}
   BuildIndexesOther;
@@ -936,6 +942,8 @@ begin
     frtProfile : buildIndexValuesProfile(key, id, context, TFHirProfile(resource));
     frtSecurityEvent : buildIndexValuesSecurityEvent(key, id, context, TFhirSecurityEvent(resource));
     {$ELSE}
+    frtSupplyDelivery : buildIndexValuesSupplyDelivery(key, id, context, TFhirSupplyDelivery(resource));
+    frtSupplyRequest : buildIndexValuesSupplyRequest(key, id, context, TFhirSupplyRequest(resource));
     frtFlag : buildIndexValuesFlag(key, id, context, TFhirFlag(resource));
     frtFamilyMemberHistory : buildIndexValuesFamilyMemberHistory(key, id, context, TFhirFamilyMemberHistory(resource));
     frtStructureDefinition : buildIndexValuesStructureDefinition(key, id, context, TFHirStructureDefinition(resource));
@@ -2662,6 +2670,58 @@ begin
   index(frtContract, key, 0, resource.identifier, 'identifier');
 end;
 
+Const
+  CHECK_TSearchParamsSupplyDelivery : Array[TSearchParamsSupplyDelivery] of TSearchParamsSupplyDelivery = ( spSupplyDelivery__id, spSupplyDelivery__language, spSupplyDelivery__lastUpdated, spSupplyDelivery__profile, spSupplyDelivery__security, spSupplyDelivery__tag,
+    spSupplyDelivery_Identifier, spSupplyDelivery_Patient, spSupplyDelivery_Receiver, spSupplyDelivery_Status, spSupplyDelivery_Supplier);
+
+procedure TFhirIndexManager.buildIndexesSupplyDelivery;
+var
+  a : TSearchParamsSupplyDelivery;
+begin
+  for a := low(TSearchParamsSupplyDelivery) to high(TSearchParamsSupplyDelivery) do
+  begin
+    assert(CHECK_TSearchParamsSupplyDelivery[a] = a);
+    indexes.add(frtSupplyDelivery, CODES_TSearchParamsSupplyDelivery[a], DESC_TSearchParamsSupplyDelivery[a], TYPES_TSearchParamsSupplyDelivery[a], TARGETS_TSearchParamsSupplyDelivery[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesSupplyDelivery(key: integer; id : String; context : TFhirResource; resource: TFhirSupplyDelivery);
+var
+  i : integer;
+begin
+  index(frtSupplyDelivery, key, 0, resource.identifier, 'identifier');
+  index(context, frtSupplyDelivery, key, 0, resource.patient, 'patient');
+  patientCompartment(key, resource.patient);
+  index(context, frtSupplyDelivery, key, 0, resource.receiverList, 'receiver');
+  index(frtSupplyDelivery, key, 0, resource.statusElement, 'http://hl7.org/fhir/valueset-supplydelivery-status', 'status');
+  index(context, frtSupplyDelivery, key, 0, resource.supplier, 'supplier');
+end;
+
+Const
+  CHECK_TSearchParamsSupplyRequest : Array[TSearchParamsSupplyRequest] of TSearchParamsSupplyRequest = ( spSupplyRequest__id, spSupplyRequest__language, spSupplyRequest__lastUpdated, spSupplyRequest__profile, spSupplyRequest__security, spSupplyRequest__tag,
+    spSupplyRequest_Identifier, spSupplyRequest_Kind, spSupplyRequest_Patient, spSupplyRequest_Status);
+
+procedure TFhirIndexManager.buildIndexesSupplyRequest;
+var
+  a : TSearchParamsSupplyRequest;
+begin
+  for a := low(TSearchParamsSupplyRequest) to high(TSearchParamsSupplyRequest) do
+  begin
+    assert(CHECK_TSearchParamsSupplyRequest[a] = a);
+    indexes.add(frtSupplyRequest, CODES_TSearchParamsSupplyRequest[a], DESC_TSearchParamsSupplyRequest[a], TYPES_TSearchParamsSupplyRequest[a], TARGETS_TSearchParamsSupplyRequest[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesSupplyRequest(key: integer; id : String; context : TFhirResource; resource: TFhirSupplyRequest);
+var
+  i : integer;
+begin
+  index(frtSupplyRequest, key, 0, resource.identifier, 'identifier');
+  index(frtSupplyRequest, key, 0, resource.kind, 'kind');
+  index(frtSupplyRequest, key, 0, resource.statusElement, 'http://hl7.org/fhir/valueset-supplyrequest-status', 'status');
+  index(context, frtSupplyRequest, key, 0, resource.patient, 'patient');
+  patientCompartment(key, resource.patient);
+end;
 
 {$ENDIF}
 
@@ -2848,6 +2908,8 @@ end;
 { TFhirIndexSpaces }
 
 constructor TFhirIndexSpaces.Create(db: TKDBConnection);
+var
+  i : integer;
 begin
   inherited create;
   FSpaces := TStringList.Create;
@@ -2857,8 +2919,16 @@ begin
   FDB.SQL := 'select * from Spaces';
   FDb.prepare;
   FDb.execute;
+  i := 0;
   while FDb.FetchNext do
-    FSpaces.addObject(FDb.ColStringByName['Space'], TObject(FDb.ColIntegerByName['SpaceKey']));
+  begin
+    inc(i);
+    try
+      FSpaces.addObject(FDb.ColStringByName['Space'], TObject(FDb.ColIntegerByName['SpaceKey']));
+    except
+      raise Exception.Create('itereation '+inttostr(i));
+    end;
+  end;
   FDb.terminate;
 end;
 

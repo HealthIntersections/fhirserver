@@ -37,14 +37,13 @@ uses
   KDBManager, KDBDialects,
   FHIRAtomFeed, FHIRResources, FHIRBase, FHIRTypes, FHIRComponents, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, FHIRUtilities,
-  {$IFNDEF FHIR-DSTU} FHIRSubscriptionManager, {$ENDIF}
+  {$IFNDEF FHIR-DSTU} FHIRSubscriptionManager, {$ENDIF} FHIRSecurity,
   TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, ProfileManager;
 
 const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
   OAUTH_SESSION_PREFIX = 'b35b7vX3KTAe-';
   IMPL_COOKIE_PREFIX = 'implicit-';
-  SECURITY_BASE_URI = 'http://www.healthintersections.com.au/scim/entitlement/';
 
 Type
   TFHIRResourceConfig = record
@@ -136,7 +135,6 @@ Type
     function DoExecuteSearch (typekey : integer; compartmentId, compartments : String; params : TParseMap; conn : TKDBConnection): String;
     function getTypeForKey(key : integer) : TFhirResourceType;
     {$ENDIF}
-    procedure asssignAllowedRights(list : TStringList; user : TSCIMUser; choice : String);
     procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
   public
     constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile; SCIMServer :  TSCIMServer);
@@ -200,23 +198,6 @@ uses
 { TFHIRRepository }
 
 
-procedure TFHIRDataStore.asssignAllowedRights(list: TStringList; user: TSCIMUser; choice: String);
-var
-  chosen : TStringList;
-  s : String;
-begin
-  list.Clear;
-  chosen := TStringList.create;
-  try
-    chosen.CommaText := choice;
-    for s in chosen do
-      if user.hasEntitlement(SECURITY_BASE_URI+s) or User.hasEntitlement(SCIM_ADMIN) then
-        list.Add(s);
-  finally
-    chosen.Free;
-  end;
-end;
-
 procedure TFHIRDataStore.CloseAll;
 var
   i : integer;
@@ -253,7 +234,6 @@ begin
   FTags := TAdvNameList.Create;
   FLock := TCriticalSection.Create('fhir-store');
   FSCIMServer := SCIMServer;
-  FSCIMServer.DefaultRights.Add(SECURITY_BASE_URI+'user');
   FAudits := TFhirResourceList.create;
 
   FQuestionnaireCache := TQuestionnaireCache.create;
@@ -388,7 +368,7 @@ begin
     if not GetSession(IMPL_COOKIE_PREFIX+clientInfo, result, dummy) then
     begin
       new := true;
-      session := TFhirSession.create;
+      session := TFhirSession.create(false);
       try
         inc(FLastSessionKey);
         session.Key := FLastSessionKey;
@@ -400,8 +380,8 @@ begin
         session.originalUrl := '';
         session.email := '';
         session.anonymous := true;
-        session.User := FSCIMServer.loadUser(SCIM_ANONYMOUS);
-        asssignAllowedRights(session.rights, session.user, 'user,read,write');
+        session.User := FSCIMServer.loadUser(SCIM_ANONYMOUS_USER);
+        session.scopes := TFHIRSecurityRights.allScopes;
         session.Name := Session.User.username +' ('+clientInfo+')';
 
         se := TFhirAuditEvent.create;
@@ -835,7 +815,7 @@ var
   C : TFhirCoding;
   p : TFhirAuditEventParticipant;
 begin
-  session := TFhirSession.create;
+  session := TFhirSession.create(true);
   try
     session.InnerToken := innerToken;
     session.OuterToken := outerToken;
@@ -856,7 +836,7 @@ begin
     if (session.email = '') and (session.user.emails.count > 0) then
       session.email := session.user.emails[0].value;
 
-    asssignAllowedRights(session.rights, session.user, rights);
+    session.scopes := rights;
 
     FLock.Lock('RegisterSession');
     try

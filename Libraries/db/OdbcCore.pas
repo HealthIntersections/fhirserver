@@ -542,10 +542,10 @@ Type
     FColBinds: TColBindPtr;
 
     FCols: TColPtr;
-    FColIndexes: TAdvIntegerList;
+    FColIndexes: Array of TColPtr;
 
     FParams: TParamPtr;
-    FParamIndexes: TAdvIntegerMatch;
+    FParamIndexes: Array of TParamPtr;
 
     FRowStatus: TColPtr;
     FRowFlags: TColPtr;
@@ -3325,7 +3325,7 @@ Begin
     FParams:= temp;
   End;
   FParams:= Nil;
-  FParamIndexes.Clear;
+  SetLength(FParamIndexes, 0);
   FNumParams:= 0;
   FHdesc:= Nil;
 
@@ -3373,7 +3373,7 @@ Begin
     FCols:= temp;
   End;
   FCols:= Nil;
-  FColIndexes.Clear;
+  SetLength(FColIndexes, 0);
   FNumCols:= 0;
   FNumRows:= 0;
 
@@ -3438,7 +3438,10 @@ Begin
 
   temp^.Next:= FParams;
   FParams:= temp;
-  FParamIndexes.Add(FParam, Integer(temp));
+  if (FParam >= length(FParamIndexes)) then
+    SetLength(FParamIndexes, FParam+1);
+
+  FParamIndexes[FParam] := temp;
 End;
 
 Procedure THstmt.InsertTail(Var FTail: TColPtr;
@@ -3476,7 +3479,8 @@ Begin
   Else
     FTail^.Next:= temp;
   FTail:= temp;
-  FColIndexes.Add(Integer(temp));
+  SetLength(FColIndexes, Length(FColIndexes)+1);
+  FColIndexes[Length(FColIndexes)-1] := temp;
 End;
 
 Procedure THstmt.InsertColBind(FCol: SQLUSMALLINT;
@@ -4233,14 +4237,9 @@ Begin
   FColBinds:= Nil;
 
   FCols:= Nil;
-  FColIndexes:= TAdvIntegerList.Create;
 
   FParams:= Nil;
-  FParamIndexes:= TAdvIntegerMatch.Create;
-  FParamIndexes.Sorted;
-  FParamIndexes.Forced := False;
-  FParamIndexes.PreventDuplicates;
-
+  
   FRowStatus:= Nil;
   FRowFlags:= Nil;
   FRowBookmark:= Nil;
@@ -4303,10 +4302,10 @@ Begin
   Terminate;
 
   FParamNames.Free;
-  FParamIndexes.Free;
+  SetLength(FParamIndexes, 0);
   
   FColNames.Free;
-  FColIndexes.Free;
+  SetLength(FColIndexes, 0);
 
   If FHstmtInsert <> Nil Then
     FHstmtInsert.Free;
@@ -7168,32 +7167,11 @@ Begin
 End;
 
 Function THstmt.ParamRec(Param: SQLUSMALLINT): TParamPtr;
-Var
-  LiParamIndex : Integer;
 Begin
-  LiParamIndex := FParamIndexes.IndexByKey(Param);
-
-  If LiParamIndex >= 0 Then
-    Begin
-    Result := TParamPtr(FParamIndexes.ValueByIndex[LiParamIndex]);
-    End
-  Else
-    Begin
-    Result := Nil;
-    End;
-
-{
-//Obsolete linear search
-
-  Result:= FParams;
-
-  while Result <> nil do
-  begin
-    if Result^.FParam = Param then
-      Break;
-    Result:= Result^.Next;
-  end;
-}
+  if param >= Length(FParamIndexes) then
+    Result := nil
+  else
+    Result := FParamIndexes[Param];
 End;
 
 Function THstmt.ColBindRec(Col: SQLUSMALLINT): TColBindPtr;
@@ -7218,7 +7196,7 @@ Begin
 
   If (Col > 0) And (Col <= SQLUSMALLINT(FNumCols)) Then
     Begin
-    Result := TColPtr(FColIndexes[Pred(col)]);
+    Result := FColIndexes[Pred(col)];
     End
   Else
     Begin

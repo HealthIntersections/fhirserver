@@ -316,7 +316,7 @@ End;
 
 Function TAdvObject.ErrorClass : EAdvExceptionClass;
 Begin
-  Result := EAdvException;                                                        
+  Result := EAdvException;
 End;  
 
 

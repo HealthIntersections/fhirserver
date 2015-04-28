@@ -327,7 +327,10 @@ begin
 
     for i := 0 to cset.conceptList.count - 1 do
       if filter.passes(cs.getDisplay(cset.conceptList[i].code)) then
-        addCode(list, map, cs.system(nil), cset.conceptList[i].code, cs.getDisplay(cset.conceptList[i].code), cs.getDefinition(cset.conceptList[i].code));
+        if cset.conceptList[i].display <> '' then
+          addCode(list, map, cs.system(nil), cset.conceptList[i].code, cset.conceptList[i].display, cs.getDefinition(cset.conceptList[i].code))
+        else
+          addCode(list, map, cs.system(nil), cset.conceptList[i].code, cs.getDisplay(cset.conceptList[i].code), cs.getDefinition(cset.conceptList[i].code));
 
     if cset.filterList.Count > 0 then
     begin

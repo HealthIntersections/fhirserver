@@ -1112,7 +1112,7 @@ begin
     addSampledDataQuestions(group, element, path, required, answerGroups)
   else if (t.Code = 'Extension') then
     addExtensionQuestions(profile, group, element, path, required, t.profile, answerGroups)
-  else
+  else if (t.Code <> 'Meta') and (t.Code <> 'Narrative') and (t.Code <> 'Resource') then
     raise Exception.create('Unhandled Data Type: '+t.Code+' on element '+element.Path);
 end;
 

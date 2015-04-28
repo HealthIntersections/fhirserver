@@ -69,7 +69,7 @@ Type
 
     procedure ExecuteTests;
     procedure Load(fn : String);
-    procedure LoadbyProfile(fn : String);
+    procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
     procedure InstallDatabase;
     procedure UnInstallDatabase;
@@ -123,10 +123,12 @@ begin
       svc.UninstallDatabase;
       svc.InstallDatabase;
       if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-        svc.LoadByProfile(fn)
+        svc.LoadByProfile(fn, true)
       else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
         svc.Load(fn);
     end
+    else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+      svc.LoadByProfile(fn, false)
     else if FindCmdLineSwitch('index') then
       svc.index
     else if FindCmdLineSwitch('tests') then
@@ -336,6 +338,7 @@ end;
 procedure TFHIRService.Load(fn: String);
 var
   f : TFileStream;
+  cursor : integer;
 begin
   FNotServing := true;
   {$IFNDEF FHIR-DSTU}
@@ -347,7 +350,7 @@ begin
   writeln('Load database from '+fn);
   f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
   try
-    FWebServer.Transaction(f, true, 'http://hl7.org/fhir', '');
+    FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', nil);
   finally
     f.Free;
   end;
@@ -358,7 +361,7 @@ begin
   DoStop;
 end;
 
-procedure TFHIRService.LoadbyProfile(fn: String);
+procedure TFHIRService.LoadbyProfile(fn: String; init : boolean);
 var
   ini : TIniFile;
   f : TFileStream;
@@ -373,23 +376,31 @@ begin
     if FDb = nil then
       ConnectToDatabase;
     CanStart;
-    fn := ini.ReadString('control', 'load', '');
-    writeln('Load database from '+fn);
-    f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
-    try
-      FWebServer.Transaction(f, true, 'http://hl7.org/fhir', ini.ReadString('control', 'ignore', ''));
-    finally
-      f.Free;
+    if init then
+    begin
+      fn := ini.ReadString('control', 'load', '');
+      writeln('Load database from '+fn);
+      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+      try
+        FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', ini);
+      finally
+        f.Free;
+      end;
     end;
     for i := 1 to ini.ReadInteger('control', 'files', 0) do
     begin
       fn := ini.ReadString('control', 'file'+inttostr(i), '');
-      writeln('Load '+fn);
-      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
-      try
-        FWebServer.Transaction(f, false, ini.ReadString('control', 'base'+inttostr(i), ''), '');
-      finally
-        f.Free;
+      if (fn <> '') then
+      begin
+        repeat
+          writeln('Load '+fn);
+          f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+          try
+            FWebServer.Transaction(f, false, fn, ini.ReadString('control', 'base'+inttostr(i), ''), ini);
+          finally
+            f.Free;
+          end;
+        until ini.ReadInteger('process', 'start', -1) = -1;
       end;
     end;
     writeln('done');
@@ -460,6 +471,8 @@ begin
   try
     db := TFHIRDatabaseInstaller.create(conn);
     try
+      db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
+      db.Bases.Add('http://hl7.org/fhir');
       db.TextIndexing := not FindCmdLineSwitch('no-text-index');
       db.Install;
     finally

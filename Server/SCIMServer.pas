@@ -11,6 +11,9 @@ uses
   AdvObjects, AdvObjectLists,
   SCIMSearch, SCIMObjects;
 
+Const
+  SCIM_ANONYMOUS_USER = 'http://www.healthintersections.com.au/scim/anonymous';
+
 Type
   TSCIMCharIssuer = class (TAdvObject)
   private
@@ -72,6 +75,9 @@ Type
 
 implementation
 
+uses
+  FHIRSecurity;
+
 { TSCIMServer }
 
 function TSCIMServer.CheckLogin(username, password: String): boolean;
@@ -132,6 +138,8 @@ var
   user : TSCIMUser;
   key : integer;
   conn : TKDBConnection;
+  list : TStringList;
+  s : String;
 begin
   now := NowUTC;
   user := TSCIMUser.Create(TJsonObject.create);
@@ -148,7 +156,14 @@ begin
     user.location := 'https://'+host+'/scim/Users/'+inttostr(key);
     user.version := '1';
     user.resourceType := 'User';
-    user.addEntitlement(SCIM_ADMIN);
+    user.addEntitlement(SCIM_ADMINISTRATOR);
+    list := TFHIRSecurityRights.allScopesAsUris;
+    try
+      for s in list do
+        user.addEntitlement(s);
+    finally
+      list.Free;
+    end;
 
     conn := db.GetConnection('scim.user.create');
     try
@@ -195,6 +210,8 @@ var
   user : TSCIMUser;
   key : integer;
   conn : TKDBConnection;
+  list : TStringList;
+  s : String;
 begin
   now := NowUTC;
   user := TSCIMUser.Create(TJsonObject.create);
@@ -209,7 +226,13 @@ begin
     user.location := 'https://'+host+'/scim/Users/'+inttostr(key);
     user.version := '1';
     user.resourceType := 'User';
-    user.addEntitlement(SCIM_ANONYMOUS);
+    list := TFHIRSecurityRights.allScopesAsUris;
+    try
+      for s in list do
+        user.addEntitlement(s);
+    finally
+      list.Free;
+    end;
 
     conn := db.GetConnection('scim.user.create');
     try
@@ -336,7 +359,7 @@ begin
   key := 0;
   conn := db.GetConnection('scim.loadOrCreateUser');
   try
-    if id = SCIM_ANONYMOUS then
+    if id = SCIM_ANONYMOUS_User then
       conn.SQL := 'Select Content from Users where Status = 1 and UserKey = 1'
     else
       conn.SQL := 'Select Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
@@ -445,7 +468,7 @@ var
 begin
   conn := db.GetConnection('scim.loadUser');
   try
-    if id = SCIM_ANONYMOUS then
+    if id = SCIM_ANONYMOUS_USER then
       conn.SQL := 'Select Content from Users where Status = 1 and UserKey = 1'
     else
       conn.SQL := 'Select Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';

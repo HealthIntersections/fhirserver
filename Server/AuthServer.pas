@@ -17,13 +17,15 @@ uses
 
   FacebookSupport, SCIMServer,
 
-  FHIRDataStore, FHIRSupport, FHIRBase;
+  FHIRDataStore, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity;
 
 Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
 
 type
-  TProcessFileEvent = procedure (response : TIdHTTPResponseInfo; named, path : String; variables: TDictionary<String, String> = nil) of Object;
+  TProcessFileEvent = procedure (response : TIdHTTPResponseInfo; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
+
+  TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther);
 
   TFhirLoginToken = Class (TAdvObject)
   private
@@ -31,7 +33,6 @@ type
     FPath : String;
     FExpires : TDateTime;
   end;
-
 
   // predefined token per user for testing
 
@@ -59,6 +60,7 @@ type
     FHL7AppSecret : String;
     FAdminEmail : String;
     FSCIMServer : TSCIMServer;
+    FEndPoint: String;
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -73,6 +75,9 @@ type
     function BuildLoginList(id : String) : String;
     function AltFile(path: String): String;
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
+    procedure loadScopeVariables(variables: TDictionary<String, String>;
+      scope: String);
+    procedure readScopes(scopes: TStringList; params: TParseMap);
 
   public
     Constructor Create(ini : String; filePath, Host, SSLPort : String; SCIM : TSCIMServer);
@@ -98,11 +103,114 @@ type
     function AuthPath : String;
     function BasePath : String;
     function TokenPath : String;
+    Property EndPoint : String read FEndPoint write FEndPoint;
     Property Ini : TIniFile read FIni;
   end;
 
 
 implementation
+
+const
+  CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'Other');
+
+// categories for web login
+// tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther
+  RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
+    (
+        tcOther,
+    tcClinical , // frtAllergyIntolerance,
+    tcSchedule , // frtAppointment,
+    tcSchedule , // frtAppointmentResponse,
+    tcAudit , // frtAuditEvent,
+    tcOther , // frtBasic,
+    tcDocuments , // frtBinary,
+    tcOther , // frtBodySite,
+    tcOther , // frtBundle,
+    tcClinical , // frtCarePlan,
+    tcFinancial , // frtClaim,
+    tcFinancial , // frtClaimResponse,
+    tcClinical , // frtClinicalImpression,
+    tcOther , // frtCommunication,
+    tcOther , // frtCommunicationRequest,
+    tcDocuments , // frtComposition,
+    tcOther , // frtConceptMap,
+    tcClinical , // frtCondition,
+    tcOther , // frtConformance,
+    tcFinancial , // frtContract,
+    tcClinical , // frtContraindication,
+    tcFinancial , // frtCoverage,
+    tcOther , // frtDataElement,
+    tcOther , // frtDevice,
+    tcOther , // frtDeviceComponent,
+    tcOther , // frtDeviceMetric,
+    tcOther , // frtDeviceUseRequest,
+    tcOther , // frtDeviceUseStatement,
+    tcOther , // frtDiagnosticOrder,
+    tcData , // frtDiagnosticReport,
+    tcDocuments , // frtDocumentManifest,
+    tcDocuments , // frtDocumentReference,
+    tcFinancial , // frtEligibilityRequest,
+    tcFinancial , // frtEligibilityResponse,
+    tcSchedule , // frtEncounter,
+    tcFinancial , // frtEnrollmentRequest,
+    tcFinancial , // frtEnrollmentResponse,
+    tcSchedule , // frtEpisodeOfCare,
+    tcFinancial , // frtExplanationOfBenefit,
+    tcClinical , // frtFamilyMemberHistory,
+    tcClinical , // frtFlag,
+    tcClinical , // frtGoal,
+    tcOther , // frtGroup,
+    tcSchedule , // frtHealthcareService,
+    tcData , // frtImagingObjectSelection,
+    tcData , // frtImagingStudy,
+    tcMeds , // frtImmunization,
+    tcMeds , // frtImmunizationRecommendation,
+    tcOther , // frtList,
+    tcOther , // frtLocation,
+    tcOther , // frtMedia,
+    tcMeds , // frtMedication,
+    tcMeds , // frtMedicationAdministration,
+    tcMeds , // frtMedicationDispense,
+    tcMeds , // frtMedicationPrescription,
+    tcMeds , // frtMedicationStatement,
+    tcOther , // frtMessageHeader,
+    tcOther , // frtNamingSystem,
+    tcMeds , // frtNutritionOrder,
+    tcData , // frtObservation,
+    tcOther , // frtOperationDefinition,
+    tcOther , // frtOperationOutcome,
+    tcOther , // frtOrder,
+    tcOther , // frtOrderResponse,
+    tcOther , // frtOrganization,
+    tcOther , // frtParameters,
+    tcSchedule , // frtPatient,
+    tcFinancial , // frtPaymentNotice,
+    tcFinancial , // frtPaymentReconciliation,
+    tcOther , // frtPerson,
+    tcOther , // frtPractitioner,
+    tcClinical , // frtProcedure,
+    tcOther , // frtProcedureRequest,
+    tcOther , // frtProcessRequest,
+    tcOther , // frtProcessResponse,
+    tcAudit , // frtProvenance,
+    tcOther , // frtQuestionnaire,
+    tcOther , // frtQuestionnaireAnswers,
+    tcClinical , // frtReferralRequest,
+    tcOther , // frtRelatedPerson,
+    tcOther , // frtRiskAssessment,
+    tcSchedule , // frtSchedule,
+    tcOther , // frtSearchParameter,
+    tcSchedule , // frtSlot,
+    tcData , // frtSpecimen,
+    tcOther , // frtStructureDefinition,
+    tcOther , // frtSubscription,
+    tcOther , // frtSubstance,
+    tcOther , // frtSupply,
+    tcOther , // frtSupplyDelivery,
+    tcOther , // frtSupplyRequest,
+    tcOther , // frtValueSet,
+    tcClinical); // frtVisionPrescription);
+
 
 { TAuth2Server }
 
@@ -201,7 +309,7 @@ end;
 
 function TAuth2Server.isAllowedAud(client_id, aud_uri: String): boolean;
 begin
-  result := (aud_uri = BasePath);
+  result := (aud_uri = EndPoint);
 end;
 
 function TAuth2Server.isAllowedRedirect(client_id, redirect_uri: String): boolean;
@@ -286,9 +394,111 @@ begin
   try
     variables.Add('idmethods', BuildLoginList(id));
     variables.Add('client', FIni.ReadString(client_id, 'name', ''));
-    OnProcessFile(response, '/oauth_login.html', AltFile('/oauth_login.html'), variables)
+    OnProcessFile(response, '/oauth_login.html', AltFile('/oauth_login.html'), true, variables)
   finally
     variables.free;
+  end;
+end;
+
+procedure TAuth2Server.loadScopeVariables(variables : TDictionary<String,String>; scope : String);
+//patient/*.read	Permission to read any resource for the current patient
+//user/*.*	Permission to read and write all resources that the current user can access
+//openid profile	Permission to retrieve information about the current logged-in user
+//launch	Permission to obtain launch context when app is launched from an EHR
+//launch/patient	When launching outside the EHR, ask for a patient to be selected at launch time
+var
+  s : String;
+  scopes : TStringList;
+  t : TFhirResourceType;
+begin
+  scopes := TStringList.create;
+  try
+    for s in scope.Split([' ']) do
+      scopes.Add(s);
+    variables.add('userlevel', '');
+    variables.add('userinfo', '');
+    for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
+    begin
+      variables.AddOrSetValue('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]], '');
+      variables.AddOrSetValue('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]], '');
+    end;
+
+    for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
+    begin
+      if (scopes.IndexOf('patient/*.*') > -1) then
+      begin
+        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+      end;
+      if (scopes.IndexOf('patient/*.read') > -1) then
+        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+      if (scopes.IndexOf('user/*.*') > -1) then
+      begin
+        variables['userlevel'] := 'checked';
+        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+      end;
+      if (scopes.IndexOf('patient/*.read') > -1) then
+      begin
+        variables['userlevel'] := 'checked';
+        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked'
+      end;
+      if (scopes.IndexOf('patient/'+CODES_TFHIRResourceType[t]+'.read') > -1) then
+        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+      if (scopes.IndexOf('patient/'+CODES_TFHIRResourceType[t]+'.write') > -1) then
+        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+      if (scopes.IndexOf('user/'+CODES_TFHIRResourceType[t]+'.read') > -1) then
+      begin
+        variables['userlevel'] := 'checked';
+        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked'
+      end;
+      if (scopes.IndexOf('user/'+CODES_TFHIRResourceType[t]+'.write') > -1) then
+      begin
+        variables['userlevel'] := 'checked';
+        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked'
+      end;
+      if (scopes.IndexOf('openid') > -1) and (scopes.IndexOf('profile') > -1) then
+        variables['userinfo'] := 'checked';
+    end;
+  finally
+    scopes.free;
+  end;
+end;
+
+procedure TAuth2Server.readScopes(scopes : TStringList; params : TParseMap);
+var
+  pfx : String;
+  t : TFhirResourceType;
+  all : boolean;
+begin
+  scopes.clear;
+  if (params.getVar('userInfo') = '1') then
+  begin
+    scopes.add('openid');
+    scopes.add('profile');
+  end;
+  if (params.GetVar('userlevel') = '1') then
+    pfx := 'User/'
+  else
+    pfx := 'Patient/';
+
+  all := true;
+  for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
+    if (params.GetVar('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]) <> '1') or
+      (params.GetVar('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]) <> '1') then
+      all := false;
+
+  if all then
+    scopes.Add(pfx+'*.*')
+  else
+  begin
+    for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
+    begin
+      if params.GetVar('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]) = '1' then
+        scopes.Add(pfx+CODES_TFHIRResourceType[t]+'.read');
+      if params.GetVar('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]) = '1' then
+        scopes.Add(pfx+CODES_TFHIRResourceType[t]+'.write');
+    end;
   end;
 end;
 
@@ -300,8 +510,8 @@ var
   c : integer;
   check : boolean;
   session : TFhirSession;
-  rights : TStringList;
-  redirect, state : String;
+  scopes : TStringList;
+  redirect, state, scope : String;
 begin
   session := nil;
   c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
@@ -318,7 +528,7 @@ begin
   try
     conn := FFhirStore.DB.GetConnection('OAuth2');
     try
-      conn.SQL := 'select Client, Name, Redirect, ClientState from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 2 and OAuthLogins.SessionKey = Sessions.SessionKey';
+      conn.SQL := 'select Client, Name, Scope, Redirect, ClientState from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 2 and OAuthLogins.SessionKey = Sessions.SessionKey';
       conn.Prepare;
       conn.Execute;
       if not conn.FetchNext then
@@ -327,18 +537,14 @@ begin
       name := conn.ColStringByName['Name'];
       redirect := conn.ColStringByName['Redirect'];
       state := conn.ColStringByName['ClientState'];
+      scope := conn.ColStringByName['Scope'];
       conn.Terminate;
 
       if params.getVar('form') = 'true' then
       begin
-        rights := TStringList.create;
+        scopes := TStringList.create;
         try
-          if params.getVar('read') = '1' then
-            rights.Add('read');
-          if params.getVar('write') = '1' then
-            rights.Add('write');
-          if params.getVar('user') = '1' then
-            rights.Add('user');
+          readScopes(scopes, params);
 
           session.JWT := TJWT.Create;
           session.jwt.header['kid'] := authurl+'/auth_key'; // cause we'll sign with our SSL certificate
@@ -359,15 +565,15 @@ begin
 
           conn.SQL := 'Update OAuthLogins set Status = 3, DateChosen = '+DBGetDate(conn.Owner.Platform)+', Rights = :r, Jwt = :jwt where Id = '''+SQLWrapString(Session.OuterToken)+'''';
           conn.prepare;
-          conn.BindBlobFromString('r', rights.CommaText);
+          conn.BindBlobFromString('r', scopes.CommaText);
           conn.BindBlobFromString('jwt', session.JWTPacked);
           conn.Execute;
           conn.Terminate;
 
-          session.Rights.assign(rights); // marks it ok for use. possible thread safety issue here, but we'll ignore it for now
+          session.scopes := scopes.CommaText.Replace(',', ' ');
           response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
         finally
-          rights.Free;
+          scopes.Free;
         end;
       end
       else
@@ -376,7 +582,8 @@ begin
         try
           variables.Add('client', FIni.ReadString(client_id, 'name', ''));
           variables.Add('username', name);
-          OnProcessFile(response, '/oauth_choice.html', AltFile('/oauth_choice.html'), variables)
+          loadScopeVariables(variables, scope);
+          OnProcessFile(response, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
         finally
           variables.free;
         end;
@@ -632,7 +839,7 @@ begin
       end
     end
     else
-      OnProcessFile(response, '/oauth2/auth_skype.html', AltFile('/oauth_skype.html'), nil);
+      OnProcessFile(response, '/oauth2/auth_skype.html', AltFile('/oauth_skype.html'), true, nil);
     conn.Release;
   except
     on e:exception do
@@ -806,9 +1013,9 @@ begin
           json.Value('token_type', 'Bearer');
           json.Value('exp', inttostr(trunc((session.Expires - EncodeDate(1970, 1, 1)) / DATETIME_SECOND_ONE)));
           json.Value('iat', inttostr(trunc((session.FirstCreated - EncodeDate(1970, 1, 1)) / DATETIME_SECOND_ONE)));
-          json.Value('scope', session.rights.CommaText.Replace(',', ' '));
+          json.Value('scope', session.scopes);
           json.Value('use_count', inttostr(session.useCount));
-          if session.Rights.IndexOf('user') > -1 then
+          if session.canGetUser then
           begin
             json.Value('user_id', Names_TFHIRAuthProvider[session.Provider]+':'+session.id);
             json.Value('user_name', session.Name);

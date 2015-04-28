@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.5.0 generated Thu, Apr 9, 2015 08:17+1000
+// FHIR v0.5.0 generated Tue, Apr 21, 2015 16:18+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
@@ -377,6 +377,8 @@ Type
     function ParseSubstance(element : IXmlDomElement; path : string) : TFhirSubstance;
     function ParseSupplyDispense(element : IXmlDomElement; path : string) : TFhirSupplyDispense;
     function ParseSupply(element : IXmlDomElement; path : string) : TFhirSupply;
+    function ParseSupplyDelivery(element : IXmlDomElement; path : string) : TFhirSupplyDelivery;
+    function ParseSupplyRequest(element : IXmlDomElement; path : string) : TFhirSupplyRequest;
     function ParseValueSetContact(element : IXmlDomElement; path : string) : TFhirValueSetContact;
     function ParseValueSetDefine(element : IXmlDomElement; path : string) : TFhirValueSetDefine;
     function ParseValueSetDefineConcept(element : IXmlDomElement; path : string) : TFhirValueSetDefineConcept;
@@ -731,6 +733,8 @@ Type
     procedure ComposeSubstance(xml : TXmlBuilder; name : string; elem : TFhirSubstance);
     procedure ComposeSupplyDispense(xml : TXmlBuilder; name : string; elem : TFhirSupplyDispense);
     procedure ComposeSupply(xml : TXmlBuilder; name : string; elem : TFhirSupply);
+    procedure ComposeSupplyDelivery(xml : TXmlBuilder; name : string; elem : TFhirSupplyDelivery);
+    procedure ComposeSupplyRequest(xml : TXmlBuilder; name : string; elem : TFhirSupplyRequest);
     procedure ComposeValueSetContact(xml : TXmlBuilder; name : string; elem : TFhirValueSetContact);
     procedure ComposeValueSetDefine(xml : TXmlBuilder; name : string; elem : TFhirValueSetDefine);
     procedure ComposeValueSetDefineConcept(xml : TXmlBuilder; name : string; elem : TFhirValueSetDefineConcept);
@@ -1395,6 +1399,10 @@ Type
     procedure ParseSupplyDispense(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSupply(jsn : TJsonObject) : TFhirSupply; overload;
     procedure ParseSupply(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseSupplyDelivery(jsn : TJsonObject) : TFhirSupplyDelivery; overload;
+    procedure ParseSupplyDelivery(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseSupplyRequest(jsn : TJsonObject) : TFhirSupplyRequest; overload;
+    procedure ParseSupplyRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseValueSetContact(jsn : TJsonObject) : TFhirValueSetContact; overload; {b\}
     procedure ParseValueSetContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseValueSetDefine(jsn : TJsonObject) : TFhirValueSetDefine; overload; {b\}
@@ -1777,6 +1785,8 @@ Type
     procedure ComposeSubstance(json : TJSONWriter; name : string; elem : TFhirSubstance; noObj : boolean = false);
     procedure ComposeSupplyDispense(json : TJSONWriter; name : string; elem : TFhirSupplyDispense; noObj : boolean = false);
     procedure ComposeSupply(json : TJSONWriter; name : string; elem : TFhirSupply; noObj : boolean = false);
+    procedure ComposeSupplyDelivery(json : TJSONWriter; name : string; elem : TFhirSupplyDelivery; noObj : boolean = false);
+    procedure ComposeSupplyRequest(json : TJSONWriter; name : string; elem : TFhirSupplyRequest; noObj : boolean = false);
     procedure ComposeValueSetContact(json : TJSONWriter; name : string; elem : TFhirValueSetContact; noObj : boolean = false);
     procedure ComposeValueSetDefine(json : TJSONWriter; name : string; elem : TFhirValueSetDefine; noObj : boolean = false);
     procedure ComposeValueSetDefineConcept(json : TJSONWriter; name : string; elem : TFhirValueSetDefineConcept; noObj : boolean = false);
@@ -40569,6 +40579,228 @@ begin
   end;
 end;
 
+function TFHIRXmlParser.ParseSupplyDelivery(element : IXmlDomElement; path : string) : TFhirSupplyDelivery;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirSupplyDelivery.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'identifier') then
+        result.identifier := ParseIdentifier(child, path+'/identifier') {b}
+      else if (child.baseName = 'status') then
+        result.statusElement := ParseEnum(CODES_TFhirValuesetSupplydeliveryStatus, path+'/status', child){1a}
+      else if (child.baseName = 'patient') then
+        result.patient := ParseReference{TFhirPatient}(child, path+'/patient') {b}
+      else if (child.baseName = 'type') then
+        result.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.baseName = 'quantity') then
+        result.quantity := ParseQuantity(child, path+'/quantity') {b}
+      else if (child.baseName = 'suppliedItem') then
+        result.suppliedItem := ParseReference{Resource}(child, path+'/suppliedItem') {b}
+      else if (child.baseName = 'supplier') then
+        result.supplier := ParseReference{TFhirPractitioner}(child, path+'/supplier') {b}
+      else if (child.baseName = 'whenPrepared') then
+        result.whenPrepared := ParsePeriod(child, path+'/whenPrepared') {b}
+      else if (child.baseName = 'time') then
+        result.timeElement := ParseDateTime(child, path+'/time') {b}
+      else if (child.baseName = 'destination') then
+        result.destination := ParseReference{TFhirLocation}(child, path+'/destination') {b}
+      else if (child.baseName = 'receiver') then
+        result.receiverList.Add(ParseReference{TFhirPractitioner}(child, path+'/receiver')){y.2}
+      else if Not ParseDomainResourceChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeSupplyDelivery(xml : TXmlBuilder; name : string; elem : TFhirSupplyDelivery);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeDomainResourceChildren(xml, elem);
+  ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirValuesetSupplydeliveryStatus);
+  ComposeReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
+  ComposeQuantity(xml, 'quantity', elem.quantity);{x.2}
+  ComposeReference{Resource}(xml, 'suppliedItem', elem.suppliedItem);{x.2}
+  ComposeReference{TFhirPractitioner}(xml, 'supplier', elem.supplier);{x.2}
+  ComposePeriod(xml, 'whenPrepared', elem.whenPrepared);{x.2}
+  ComposeDateTime(xml, 'time', elem.timeElement);{x.2}
+  ComposeReference{TFhirLocation}(xml, 'destination', elem.destination);{x.2}
+  for i := 0 to elem.receiverList.Count - 1 do
+    ComposeReference{TFhirPractitioner}(xml, 'receiver', elem.receiverList[i]);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseSupplyDelivery(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseSupplyDelivery(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseSupplyDelivery(jsn : TJsonObject) : TFhirSupplyDelivery;
+begin
+  result := TFhirSupplyDelivery.create;
+  try
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('identifier') then
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+    if jsn.has('status') or jsn.has('_status')  then
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetSupplydeliveryStatus);
+    if jsn.has('patient') then
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+    if jsn.has('quantity') then
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+    if jsn.has('suppliedItem') then
+        result.suppliedItem := ParseReference{Resource}(jsn.vObj['suppliedItem']);{q}
+    if jsn.has('supplier') then
+        result.supplier := ParseReference{TFhirPractitioner}(jsn.vObj['supplier']);{q}
+    if jsn.has('whenPrepared') then
+        result.whenPrepared := ParsePeriod(jsn.vObj['whenPrepared']);{q}
+    if jsn.has('time') or jsn.has('_time') then
+        result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
+    if jsn.has('destination') then
+        result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q}
+    if jsn.has('receiver') then
+      iterateArray(jsn.vArr['receiver'], result.receiverList, parseReference{TFhirPractitioner});
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeSupplyDelivery(json : TJSONWriter; name : string; elem : TFhirSupplyDelivery; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirValuesetSupplydeliveryStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirValuesetSupplydeliveryStatus, false);
+  ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  ComposeQuantity(json, 'quantity', elem.quantity); {a}
+  ComposeReference{Resource}(json, 'suppliedItem', elem.suppliedItem); {a}
+  ComposeReference{TFhirPractitioner}(json, 'supplier', elem.supplier); {a}
+  ComposePeriod(json, 'whenPrepared', elem.whenPrepared); {a}
+  ComposeDateTimeValue(json, 'time', elem.timeElement, false);
+  ComposeDateTimeProps(json, 'time', elem.timeElement, false);
+  ComposeReference{TFhirLocation}(json, 'destination', elem.destination); {a}
+  if elem.receiverList.Count > 0 then
+  begin
+    json.valueArray('receiver');
+    for i := 0 to elem.receiverList.Count - 1 do
+      ComposeReference{TFhirPractitioner}(json, '',elem.receiverList[i]); {z - Reference(Practitioner)}
+    json.FinishArray;
+  end;
+end;
+
+function TFHIRXmlParser.ParseSupplyRequest(element : IXmlDomElement; path : string) : TFhirSupplyRequest;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirSupplyRequest.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'kind') then
+        result.kind := ParseCodeableConcept(child, path+'/kind') {b}
+      else if (child.baseName = 'identifier') then
+        result.identifier := ParseIdentifier(child, path+'/identifier') {b}
+      else if (child.baseName = 'status') then
+        result.statusElement := ParseEnum(CODES_TFhirValuesetSupplyrequestStatus, path+'/status', child){1a}
+      else if (child.baseName = 'orderedItem') then
+        result.orderedItem := ParseReference{Resource}(child, path+'/orderedItem') {b}
+      else if (child.baseName = 'patient') then
+        result.patient := ParseReference{TFhirPatient}(child, path+'/patient') {b}
+      else if Not ParseDomainResourceChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeSupplyRequest(xml : TXmlBuilder; name : string; elem : TFhirSupplyRequest);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeDomainResourceChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'kind', elem.kind);{x.2}
+  ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2}
+  ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyrequestStatus);
+  ComposeReference{Resource}(xml, 'orderedItem', elem.orderedItem);{x.2}
+  ComposeReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2}
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseSupplyRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseSupplyRequest(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseSupplyRequest(jsn : TJsonObject) : TFhirSupplyRequest;
+begin
+  result := TFhirSupplyRequest.create;
+  try
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('kind') then
+        result.kind := ParseCodeableConcept(jsn.vObj['kind']);{q}
+    if jsn.has('identifier') then
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+    if jsn.has('status') or jsn.has('_status')  then
+      result.statusElement := parseEnum(jsn['status'], jsn.vObj['_status'], CODES_TFhirValuesetSupplyrequestStatus);
+    if jsn.has('orderedItem') then
+        result.orderedItem := ParseReference{Resource}(jsn.vObj['orderedItem']);{q}
+    if jsn.has('patient') then
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeSupplyRequest(json : TJSONWriter; name : string; elem : TFhirSupplyRequest; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  ComposeCodeableConcept(json, 'kind', elem.kind); {a}
+  ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyrequestStatus, false);
+  ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirValuesetSupplyrequestStatus, false);
+  ComposeReference{Resource}(json, 'orderedItem', elem.orderedItem); {a}
+  ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
+end;
+
 function TFHIRXmlParser.ParseValueSetContact(element : IXmlDomElement; path : string) : TFhirValueSetContact;
 var
   child : IXMLDOMElement;
@@ -42336,6 +42568,10 @@ begin
     result := ParseSubstance(element, path+'/Substance')
   else if element.baseName = 'Supply' Then
     result := ParseSupply(element, path+'/Supply')
+  else if element.baseName = 'SupplyDelivery' Then
+    result := ParseSupplyDelivery(element, path+'/SupplyDelivery')
+  else if element.baseName = 'SupplyRequest' Then
+    result := ParseSupplyRequest(element, path+'/SupplyRequest')
   else if element.baseName = 'ValueSet' Then
     result := ParseValueSet(element, path+'/ValueSet')
   else if element.baseName = 'VisionPrescription' Then
@@ -42437,6 +42673,8 @@ begin
     frtSubscription: ComposeSubscription(xml, 'Subscription', TFhirSubscription(resource));
     frtSubstance: ComposeSubstance(xml, 'Substance', TFhirSubstance(resource));
     frtSupply: ComposeSupply(xml, 'Supply', TFhirSupply(resource));
+    frtSupplyDelivery: ComposeSupplyDelivery(xml, 'SupplyDelivery', TFhirSupplyDelivery(resource));
+    frtSupplyRequest: ComposeSupplyRequest(xml, 'SupplyRequest', TFhirSupplyRequest(resource));
     frtValueSet: ComposeValueSet(xml, 'ValueSet', TFhirValueSet(resource));
     frtVisionPrescription: ComposeVisionPrescription(xml, 'VisionPrescription', TFhirVisionPrescription(resource));
   else
@@ -42625,6 +42863,10 @@ begin
     result := ParseSubstance(jsn)
   else if s = 'Supply' Then
     result := ParseSupply(jsn)
+  else if s = 'SupplyDelivery' Then
+    result := ParseSupplyDelivery(jsn)
+  else if s = 'SupplyRequest' Then
+    result := ParseSupplyRequest(jsn)
   else if s = 'ValueSet' Then
     result := ParseValueSet(jsn)
   else if s = 'VisionPrescription' Then
@@ -42853,6 +43095,10 @@ begin
     result := parseSubstance(jsn)
   else if (type_ = 'TFhirSupply') then
     result := parseSupply(jsn)
+  else if (type_ = 'TFhirSupplyDelivery') then
+    result := parseSupplyDelivery(jsn)
+  else if (type_ = 'TFhirSupplyRequest') then
+    result := parseSupplyRequest(jsn)
   else if (type_ = 'TFhirValueSet') then
     result := parseValueSet(jsn)
   else if (type_ = 'TFhirVisionPrescription') then
@@ -43081,6 +43327,10 @@ begin
     result := parseSubstance(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirSupply') then
     result := parseSupply(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirSupplyDelivery') then
+    result := parseSupplyDelivery(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirSupplyRequest') then
+    result := parseSupplyRequest(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirValueSet') then
     result := parseValueSet(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirVisionPrescription') then
@@ -43273,6 +43523,8 @@ begin
     frtSubscription: ComposeSubscription(json, 'Subscription', TFhirSubscription(resource));
     frtSubstance: ComposeSubstance(json, 'Substance', TFhirSubstance(resource));
     frtSupply: ComposeSupply(json, 'Supply', TFhirSupply(resource));
+    frtSupplyDelivery: ComposeSupplyDelivery(json, 'SupplyDelivery', TFhirSupplyDelivery(resource));
+    frtSupplyRequest: ComposeSupplyRequest(json, 'SupplyRequest', TFhirSupplyRequest(resource));
     frtValueSet: ComposeValueSet(json, 'ValueSet', TFhirValueSet(resource));
     frtVisionPrescription: ComposeVisionPrescription(json, 'VisionPrescription', TFhirVisionPrescription(resource));
   else

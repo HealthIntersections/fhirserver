@@ -7,10 +7,6 @@ uses
   AdvObjects, AdvObjectLists,
   AdvJSON, DateAndTime;
 
-Const
-  SCIM_ADMIN = 'http://www.healthintersections.com.au/scim/entitlement/admin';
-  SCIM_ANONYMOUS = 'http://www.healthintersections.com.au/scim/entitlement/anonymous';
-
 Type
   ESCIMException = class (Exception)
   private
