@@ -192,6 +192,7 @@ Type
     function canReadAll : boolean;
     function canWrite(aResourceType : TFhirResourceType):boolean;
     function canGetUser : boolean;
+    function canAdministerUsers : boolean;
     procedure allowAll; // for internal use
 
     property TaggedCompartments : TStringList read FTaggedCompartments;
@@ -824,7 +825,7 @@ end;
 
 procedure TFHIRRequest.LoadParams(s: String);
 begin
-  FParams := TParseMap.createSmart(s);
+  FParams := TParseMap.create(s);
 end;
 
 procedure TFHIRRequest.LoadParams(form: TIdSoapMimeMessage);
@@ -1335,6 +1336,11 @@ end;
 procedure TFhirSession.allowAll;
 begin
   FSecurity.allowAll;
+end;
+
+function TFhirSession.canAdministerUsers: boolean;
+begin
+  result := FSecurity.canAdministerUsers;
 end;
 
 function TFhirSession.canGetUser: boolean;

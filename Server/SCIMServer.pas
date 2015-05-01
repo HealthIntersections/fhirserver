@@ -3,18 +3,21 @@ unit SCIMServer;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
-  DCPsha256, ParseMap,
+  DCPsha256, ParseMap, TextUtilities,
   KDBManager, AdvJSON, KCritSct, DateAndTime,
-  StringSupport, EncodeSupport,
+  StringSupport, EncodeSupport,  FHIRSupport,
   AdvObjects, AdvObjectLists,
   SCIMSearch, SCIMObjects;
 
 Const
-  SCIM_ANONYMOUS_USER = 'http://www.healthintersections.com.au/scim/anonymous';
+  SCIM_ANONYMOUS_USER = 'ANONYMOUS';
+  SCIM_SYSTEM_USER = 'SYSTEM';
 
 Type
+  TProcessFileEvent = procedure (response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
+
   TSCIMCharIssuer = class (TAdvObject)
   private
     cursor : char;
@@ -31,7 +34,9 @@ Type
     lastUserIndexKey : integer;
     salt : String;
     host : String;
-    FDefaultRights : TStringList;
+    FAnonymousRights : TStringList;
+    FOnProcessFile : TProcessFileEvent;
+    FFilePath : String;
 
 
     function GetNextUserKey : Integer;
@@ -57,19 +62,28 @@ Type
     Procedure processUserPut(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure processUserDelete(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure processUserRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+
+    Procedure processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    function AltFile(path: String): String;
+    procedure processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    procedure processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   public
-    Constructor Create(db : TKDBManager; salt, host : String);
+    Constructor Create(db : TKDBManager; filePath, salt, host, defaultRights : String; forInstall : boolean);
     Destructor Destroy; override;
     Function Link : TSCIMServer; overload;
 
-    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession);
     Function loadUser(id : String) : TSCIMUser;
     function loadOrCreateUser(id, name, email : String) : TSCIMUser;
     function CheckLogin(username, password : String) : boolean;
-    Procedure DefineAdminUser(un, pw, em : String);
-    Procedure DefineAnonymousUser;
 
-    property DefaultRights : TStringList read FDefaultRights;
+    // install
+    Procedure DefineSystem(conn : TKDBConnection);
+    Procedure DefineAdminUser(conn : TKDBConnection; un, pw, em : String);
+    Procedure DefineAnonymousUser(conn : TKDBConnection);
+
+    property AnonymousRights : TStringList read FAnonymousRights;
+    property OnProcessFile : TProcessFileEvent read FOnProcessFile write FOnProcessFile;
   end;
 
 
@@ -107,37 +121,43 @@ begin
   end;
 end;
 
-constructor TSCIMServer.Create(db: TKDBManager; salt, host : String);
+constructor TSCIMServer.Create(db: TKDBManager; filePath, salt, host, defaultRights : String; forInstall : boolean);
 var
   conn : TKDBConnection;
+  s : String;
 begin
   Inherited Create;
   self.db := db;
   self.salt := salt;
   self.host := host;
-  FDefaultRights := TStringList.Create;
+  FAnonymousRights := TStringList.Create;
+  for s in defaultRights.split([',']) do
+    FAnonymousRights.add(UriForScope(s));
+  FFilePath := filePath;
   lock := TCriticalSection.Create('scim');
 
-  conn := db.GetConnection('scim.load');
-  try
-    lastUserKey := conn.CountSQL('select Max(UserKey) from Users');
-    lastUserIndexKey := conn.CountSQL('select Max(UserIndexKey) from UserIndexes');
-    conn.Release;
-  except
-    on e:Exception do
-    begin
-      conn.Error(e);
-      raise;
+  if not forInstall then
+  begin
+    conn := db.GetConnection('scim.load');
+    try
+      lastUserKey := conn.CountSQL('select Max(UserKey) from Users');
+      lastUserIndexKey := conn.CountSQL('select Max(UserIndexKey) from UserIndexes');
+      conn.Release;
+    except
+      on e:Exception do
+      begin
+        conn.Error(e);
+        raise;
+      end;
     end;
   end;
 end;
 
-procedure TSCIMServer.DefineAdminUser(un, pw, em: String);
+procedure TSCIMServer.DefineAdminUser(conn : TKDBConnection; un, pw, em: String);
 var
   now : TDateAndTime;
   user : TSCIMUser;
   key : integer;
-  conn : TKDBConnection;
   list : TStringList;
   s : String;
 begin
@@ -165,38 +185,20 @@ begin
       list.Free;
     end;
 
-    conn := db.GetConnection('scim.user.create');
+    if conn.CountSQL('select UserKey from Users where Status = 1 and UserName = '''+SQLWrapString(un)+'''') > 0 then
+      raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'Duplicate User name');
+    conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values (:uk, :un, :pw, 1, :cnt)';
+    conn.Prepare;
     try
-      conn.StartTransact;
-      try
-        if conn.CountSQL('select UserKey from Users where Status = 1 and UserName = '''+SQLWrapString(un)+'''') > 0 then
-          raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'Duplicate User name');
-        conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values (:uk, :un, :pw, 1, :cnt)';
-        conn.Prepare;
-        try
-          conn.BindInteger('uk', key);
-          conn.BindString('un', un);
-          conn.BindString('pw', HashPassword(key, pw));
-          conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
-          conn.Execute;
-        finally
-          conn.Terminate;
-        end;
-        IndexUser(conn, user, key);
-        conn.Commit;
-      except
-        conn.Rollback;
-        raise;
-      end;
-
-      conn.Release;
-    except
-      on e:Exception do
-      begin
-        conn.Error(e);
-        raise;
-      end;
+      conn.BindInteger('uk', key);
+      conn.BindString('un', un);
+      conn.BindString('pw', HashPassword(key, pw));
+      conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
+      conn.Execute;
+    finally
+      conn.Terminate;
     end;
+    IndexUser(conn, user, key);
 
   finally
     user.Free;
@@ -204,22 +206,22 @@ begin
   end;
 end;
 
-procedure TSCIMServer.DefineAnonymousUser;
+procedure TSCIMServer.DefineSystem(conn : TKDBConnection);
 var
   now : TDateAndTime;
   user : TSCIMUser;
   key : integer;
-  conn : TKDBConnection;
   list : TStringList;
   s : String;
 begin
   now := NowUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
-    user.username := 'Anonymous';
+    user.username := SCIM_SYSTEM_USER;
     user.check;
 
     key := GetNextUserKey;
+    assert(key = 1);
     user.id := inttostr(key);
     user.created := now.Link;
     user.lastModified := now.Link;
@@ -234,35 +236,60 @@ begin
       list.Free;
     end;
 
-    conn := db.GetConnection('scim.user.create');
+    conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values (:uk, :un, :pw, 1, :cnt)';
+    conn.Prepare;
     try
-      conn.StartTransact;
-      try
-        conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values (:uk, :un, :pw, 1, :cnt)';
-        conn.Prepare;
-        try
-          conn.BindInteger('uk', key);
-          conn.BindString('un', 'Anonymous');
-          conn.BindNull('pw');
-          conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
-          conn.Execute;
-        finally
-          conn.Terminate;
-        end;
-        IndexUser(conn, user, key);
-        conn.Commit;
-      except
-        conn.Rollback;
-        raise;
-      end;
-      conn.Release;
-    except
-      on e:Exception do
-      begin
-        conn.Error(e);
-        raise;
-      end;
+      conn.BindInteger('uk', key);
+      conn.BindString('un', user.username);
+      conn.BindNull('pw');
+      conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
+      conn.Execute;
+    finally
+      conn.Terminate;
     end;
+    IndexUser(conn, user, key);
+  finally
+    user.Free;
+    now.Free;
+  end;
+end;
+
+procedure TSCIMServer.DefineAnonymousUser(conn : TKDBConnection);
+var
+  now : TDateAndTime;
+  user : TSCIMUser;
+  key : integer;
+  list : TStringList;
+  s : String;
+begin
+  now := NowUTC;
+  user := TSCIMUser.Create(TJsonObject.create);
+  try
+    user.username := SCIM_ANONYMOUS_USER;
+    user.check;
+
+    key := GetNextUserKey;
+    user.id := inttostr(key);
+    user.created := now.Link;
+    user.lastModified := now.Link;
+    user.location := 'https://'+host+'/scim/Users/'+inttostr(key);
+    user.version := '1';
+    user.resourceType := 'User';
+    for s in AnonymousRights do
+      user.addEntitlement(s);
+
+    conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values (:uk, :un, :pw, 1, :cnt)';
+    conn.Prepare;
+    try
+      conn.BindInteger('uk', key);
+      conn.BindString('un', user.username);
+      conn.BindNull('pw');
+      conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
+      conn.Execute;
+    finally
+      conn.Terminate;
+    end;
+    IndexUser(conn, user, key);
   finally
     user.Free;
     now.Free;
@@ -272,7 +299,7 @@ end;
 destructor TSCIMServer.Destroy;
 begin
   lock.Free;
-  FDefaultRights.Free;
+  FAnonymousRights.Free;
   inherited;
 end;
 
@@ -412,7 +439,7 @@ begin
             result.location := 'https://'+Host+'/scim/Users/'+inttostr(key);
             result.version := '1';
             result.resourceType := 'User';
-            for s in DefaultRights do
+            for s in AnonymousRights do
               result.addEntitlement(s);
           end
           else
@@ -468,10 +495,7 @@ var
 begin
   conn := db.GetConnection('scim.loadUser');
   try
-    if id = SCIM_ANONYMOUS_USER then
-      conn.SQL := 'Select Content from Users where Status = 1 and UserKey = 1'
-    else
-      conn.SQL := 'Select Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
+    conn.SQL := 'Select Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
     conn.Prepare;
     try
       conn.Execute;
@@ -489,11 +513,9 @@ begin
       raise;
     end;
   end;
-  for s in DefaultRights do
-    result.addEntitlement(s);
 end;
 
-procedure TSCIMServer.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TSCIMServer.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession);
 var
   path : String;
 begin
@@ -501,6 +523,8 @@ begin
     path := request.Document;
     if (path.StartsWith('/scim/Users')) then
       processUserRequest(context, request, response)
+    else if (path.StartsWith('/scim/web')) then
+      processWebRequest(context, session, request, response)
     else
       raise ESCIMException.Create(501, 'NOT IMPLEMENTED', '', 'Not done yet');
   except
@@ -760,7 +784,7 @@ var
   c, t, l, s : integer;
   sql, sort : String;
 begin
-  params := TParseMap.createSmart(request.QueryParams);
+  params := TParseMap.create(request.QueryParams);
   try
     json := TJsonObject.Create;
     try
@@ -832,16 +856,21 @@ var
   f : TSCIMSearchFilter;
   issuer : TSCIMCharIssuer;
 begin
-  issuer := TSCIMCharIssuer.Create;
-  try
-    f := TSCIMSearchParser.parse(filter);
+  if filter = '' then
+    result := ''
+  else
+  begin
+    issuer := TSCIMCharIssuer.Create;
     try
-      result := ' and ' + BuildUserFilter(f, '', ' ', issuer);
+      f := TSCIMSearchParser.parse(filter);
+      try
+        result := ' and ' + BuildUserFilter(f, '', ' ', issuer);
+      finally
+        f.Free;
+      end;
     finally
-      f.Free;
+      issuer.Free;
     end;
-  finally
-    issuer.Free;
   end;
 end;
 
@@ -861,6 +890,198 @@ begin
   end;
 end;
 
+
+function extractProvider(s : String) : String;
+begin
+  if s = '' then
+    result := 'n/a'
+  else if s.StartsWith('http://www.facebook.com') then
+    result := 'Facebook'
+  else if s.StartsWith('http://www.google.com') then
+    result := 'Google'
+  else if s.StartsWith('http://www.hl7.org') then
+    result := 'HL7'
+  else
+    result := '??';
+end;
+
+procedure TSCIMServer.processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+begin
+  if (request.Document = '/scim/web') then
+    processWebUserList(context, session, request, response)
+  else if StringIsInteger16(request.Document.Substring(10)) then
+    processWebUserId(context, session, request, response)
+  else
+    raise ESCIMException.Create(403, 'FORBIDDEN', '', 'URL not understood');
+end;
+
+procedure TSCIMServer.processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  variables : TDictionary<String,String>;
+  conn : TKDBConnection;
+  user : TSCIMUser;
+  i : integer;
+  s : String;
+  st : TStringList;
+  p : TParseMap;
+begin
+  variables := TDictionary<String,String>.create;
+  try
+    conn := db.GetConnection('scim.user.search');
+    try
+      conn.SQL := 'Select Content from Users where status = 1 and UserKey = '+SQLWrapString(request.Document.Substring(10));
+      conn.Prepare;
+      try
+        conn.Execute;
+        if not conn.FetchNext then
+          raise ESCIMException.Create(403, 'FORBIDDEN', '', 'User not found');
+        user := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
+        try
+          if request.Command = 'POST' then
+          begin
+            p := TParseMap.Create(request.UnparsedParams);
+            st := TStringList.create;
+            try
+              user.DisplayName := p.GetVar('display');
+              st.Text := p.GetVar('emails');
+              user.emails.Clear;
+              for i := 0 to st.Count - 1 do
+                user.AddEmail(st[i], '');
+              st.Text := p.GetVar('rights');
+              user.clearEntitlements;
+              for i := 0 to st.Count - 1 do
+                user.addEntitlement(st[i]);
+              conn.terminate;
+              conn.SQL := 'Update Users set Content = :c where UserKey = '+SQLWrapString(request.Document.Substring(10));
+              conn.prepare;
+              conn.BindBlobFromBytes('c', TJSONWriter.writeObject(user.json));
+              conn.Execute;
+            finally
+              st.Free;
+              p.Free;
+            end;
+          end;
+          variables.Add('user.id', user.id);
+          variables.Add('user.name', user.username);
+          variables.Add('user.display', user.DisplayName);
+          variables.Add('user.external', user.ExternalId);
+          s := '';
+          for i := 0 to user.emails.Count - 1 do
+            s := s + user.emails[i].Value+#13#10;
+          variables.Add('user.email', s);
+          s := '';
+          for i := 0 to user.entitlementCount - 1 do
+            s := s + user.entitlement[i]+#13#10;
+          variables.Add('user.rights', s);
+          variables.Add('user.json', TJSONWriter.writeObjectStr(user.json, true));
+        finally
+          user.Free;
+        end;
+      finally
+        conn.Terminate;
+      end;
+      conn.Release;
+    except
+      on e:Exception do
+      begin
+        conn.Error(e);
+        raise;
+      end;
+    end;
+
+    OnProcessFile(response, session, '/scimuser.html', AltFile('/scimuser.html'), true, variables);
+  finally
+    variables.free;
+  end;
+end;
+
+procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  variables : TDictionary<String,String>;
+  conn : TKDBConnection;
+  b : TStringBuilder;
+  user : TSCIMUser;
+  i : integer;
+begin
+  b := TStringBuilder.Create;
+  try
+    conn := db.GetConnection('scim.user.search');
+    try
+      conn.SQL := 'Select Content from Users where status = 1';
+      conn.Prepare;
+      try
+        conn.Execute;
+        while conn.FetchNext do
+        begin
+          user := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
+          try
+            b.Append('<tr>');
+            b.Append('<td>');
+            b.Append(user.id);
+            b.Append('</td>');
+            b.Append('<td><a href="/scim/web/');
+            b.Append(user.id);
+            b.Append('">');
+            b.Append(user.username);
+            b.Append('</a></td>');
+            b.Append('<td>');
+            b.Append(extractProvider(user.ExternalId));
+            b.Append('</td>');
+            b.Append('<td>');
+            for i := 0 to user.emails.Count - 1 do
+            begin
+              if i > 0 then
+                b.Append(', ');
+              b.Append('<a href="mailto:'+user.emails[i].Value+'">'+user.emails[i].Value+'</a>');
+            end;
+            b.Append('</td>');
+            b.Append('<td>');
+            for i := 0 to user.entitlementCount - 1 do
+            begin
+              if i > 0 then
+                b.Append(',<br/> ');
+              b.Append(prefixScope(user.entitlement[i]));
+            end;
+            b.Append('</td>');
+//            b.Append('<td>');
+//            b.Append(TJSONWriter.writeObjectStr(user.json, true));
+//            b.Append('</td>');
+            b.Append('</tr>'#13#10);
+          finally
+            user.Free;
+          end;
+        end;
+      finally
+        conn.Terminate;
+      end;
+      conn.Release;
+    except
+      on e:Exception do
+      begin
+        conn.Error(e);
+        raise;
+      end;
+    end;
+
+    variables := TDictionary<String,String>.create;
+    try
+      variables.Add('usertable', b.ToString);
+      OnProcessFile(response, session, '/scimusers.html', AltFile('/scimusers.html'), true, variables);
+    finally
+      variables.free;
+    end;
+  finally
+    b.Free;
+  end;
+end;
+
+function TSCIMServer.AltFile(path : String) : String;
+begin
+  if path.StartsWith('/') then
+    result := FFilePath+path.Substring(1).Replace('/', '\')
+  else
+    result := '';
+end;
 
 procedure TSCIMServer.IndexUser(conn: TKDBConnection; user: TSCIMUser; userKey: integer);
   function ndxStruc(parent : integer; name : String) : integer;

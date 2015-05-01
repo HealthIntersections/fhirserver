@@ -2852,7 +2852,7 @@ begin
     key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+CODES_TFHIRResourceType[aType]+'''');
     assert(key > 0);
   end;
-  p := TParseMap.createSmart(params);
+  p := TParseMap.create(params);
   sp := TSearchProcessor.create;
   try
     sp.typekey := key;
@@ -6338,7 +6338,7 @@ begin
         feed := TFHIRAtomFeed.Create(BundleTypeSearchset);
         includes := TReferenceList.create;
         keys := TStringList.Create;
-        params := TParseMap.CreateSmart('');
+        params := TParseMap.Create('');
         try
           feed.base := request.baseUrl;
           if manager.FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary) then

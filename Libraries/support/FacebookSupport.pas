@@ -60,7 +60,7 @@ begin
     try
       fetch.URL := 'https://graph.facebook.com/oauth/access_token?client_id='+id+'&redirect_uri='+url+'&client_secret='+secret+'&code='+code;
       fetch.Fetch;
-      parsemap := TParseMap.createSmart(fetch.Buffer.AsUnicode);
+      parsemap := TParseMap.create(fetch.Buffer.AsUnicode);
       try
         token := parsemap.GetVar('access_token');
         expires := parsemap.GetVar('expires');

@@ -15,7 +15,7 @@ uses
 
   StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, AdvJSON, JWT,
 
-  FacebookSupport, SCIMServer,
+  FacebookSupport, SCIMServer, SCIMObjects,
 
   FHIRDataStore, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity;
 
@@ -23,8 +23,6 @@ Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
 
 type
-  TProcessFileEvent = procedure (response : TIdHTTPResponseInfo; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
-
   TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther);
 
   TFhirLoginToken = Class (TAdvObject)
@@ -61,13 +59,13 @@ type
     FAdminEmail : String;
     FSCIMServer : TSCIMServer;
     FEndPoint: String;
-    Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     function checkNotEmpty(v, n: String): String;
     function isAllowedRedirect(client_id, redirect_uri: String): boolean;
     function isAllowedAud(client_id, aud_uri: String): boolean;
@@ -75,15 +73,14 @@ type
     function BuildLoginList(id : String) : String;
     function AltFile(path: String): String;
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
-    procedure loadScopeVariables(variables: TDictionary<String, String>;
-      scope: String);
+    procedure loadScopeVariables(variables: TDictionary<String, String>; scope: String; user : TSCIMUser);
     procedure readScopes(scopes: TStringList; params: TParseMap);
 
   public
     Constructor Create(ini : String; filePath, Host, SSLPort : String; SCIM : TSCIMServer);
     Destructor Destroy; override;
 
-    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
     Procedure HandleDiscovery(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 
     procedure setCookie(response: TIdHTTPResponseInfo; const cookiename, cookieval, domain, path: String; expiry: TDateTime; secure: Boolean);
@@ -352,7 +349,7 @@ begin
  result := '/oauth2/token';
 end;
 
-procedure TAuth2Server.HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; params : TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap; response: TIdHTTPResponseInfo);
 var
   client_id : String;
   scope : String;
@@ -394,74 +391,56 @@ begin
   try
     variables.Add('idmethods', BuildLoginList(id));
     variables.Add('client', FIni.ReadString(client_id, 'name', ''));
-    OnProcessFile(response, '/oauth_login.html', AltFile('/oauth_login.html'), true, variables)
+    OnProcessFile(response, session, '/oauth_login.html', AltFile('/oauth_login.html'), true, variables)
   finally
     variables.free;
   end;
 end;
 
-procedure TAuth2Server.loadScopeVariables(variables : TDictionary<String,String>; scope : String);
+procedure TAuth2Server.loadScopeVariables(variables : TDictionary<String,String>; scope : String; user : TSCIMUser);
 //patient/*.read	Permission to read any resource for the current patient
 //user/*.*	Permission to read and write all resources that the current user can access
 //openid profile	Permission to retrieve information about the current logged-in user
 //launch	Permission to obtain launch context when app is launched from an EHR
 //launch/patient	When launching outside the EHR, ask for a patient to be selected at launch time
 var
-  s : String;
-  scopes : TStringList;
+  security : TFHIRSecurityRights;
   t : TFhirResourceType;
 begin
-  scopes := TStringList.create;
+  variables.add('userlevel', '');
+  variables.add('userinfo', '');
+  security := TFHIRSecurityRights.create(user, scope, true);
   try
-    for s in scope.Split([' ']) do
-      scopes.Add(s);
-    variables.add('userlevel', '');
-    variables.add('userinfo', '');
+    if security.canAdministerUsers then
+      variables.add('useradmin', '<input type="checkbox" name="useradmin" value="1"/> Administer Users')
+    else
+      variables.add('useradmin', '');
+    if security.canGetUserInfo then
+      variables['userinfo'] := 'checked';
+
     for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
     begin
       variables.AddOrSetValue('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]], '');
       variables.AddOrSetValue('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]], '');
+      variables.AddOrSetValue('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled', 'disabled');
+      variables.AddOrSetValue('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled', 'disabled');
     end;
 
     for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
     begin
-      if (scopes.IndexOf('patient/*.*') > -1) then
+      if security.canRead(t) then
       begin
         variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled'] := '';
+      end;
+      if security.canWrite(t) then
+      begin
         variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
+        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled'] := '';
       end;
-      if (scopes.IndexOf('patient/*.read') > -1) then
-        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
-      if (scopes.IndexOf('user/*.*') > -1) then
-      begin
-        variables['userlevel'] := 'checked';
-        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
-        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
-      end;
-      if (scopes.IndexOf('patient/*.read') > -1) then
-      begin
-        variables['userlevel'] := 'checked';
-        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked'
-      end;
-      if (scopes.IndexOf('patient/'+CODES_TFHIRResourceType[t]+'.read') > -1) then
-        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
-      if (scopes.IndexOf('patient/'+CODES_TFHIRResourceType[t]+'.write') > -1) then
-        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
-      if (scopes.IndexOf('user/'+CODES_TFHIRResourceType[t]+'.read') > -1) then
-      begin
-        variables['userlevel'] := 'checked';
-        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked'
-      end;
-      if (scopes.IndexOf('user/'+CODES_TFHIRResourceType[t]+'.write') > -1) then
-      begin
-        variables['userlevel'] := 'checked';
-        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked'
-      end;
-      if (scopes.IndexOf('openid') > -1) and (scopes.IndexOf('profile') > -1) then
-        variables['userinfo'] := 'checked';
     end;
   finally
-    scopes.free;
+    security.free;
   end;
 end;
 
@@ -477,6 +456,9 @@ begin
     scopes.add('openid');
     scopes.add('profile');
   end;
+  if (params.getVar('useradmin') = '1') then
+    scopes.add(SCIM_ADMINISTRATOR);
+
   if (params.GetVar('userlevel') = '1') then
     pfx := 'User/'
   else
@@ -502,21 +484,16 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   client_id, name, authurl: String;
   conn : TKDBConnection;
   variables : TDictionary<String,String>;
   c : integer;
   check : boolean;
-  session : TFhirSession;
   scopes : TStringList;
   redirect, state, scope : String;
 begin
-  session := nil;
-  c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
-  if c > -1 then
-    FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
   if session = nil then
     raise Exception.Create('User Session not found');
 
@@ -571,6 +548,7 @@ begin
           conn.Terminate;
 
           session.scopes := scopes.CommaText.Replace(',', ' ');
+          FHIRStore.RegisterConsentRecord(session);
           response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
         finally
           scopes.Free;
@@ -582,8 +560,8 @@ begin
         try
           variables.Add('client', FIni.ReadString(client_id, 'name', ''));
           variables.Add('username', name);
-          loadScopeVariables(variables, scope);
-          OnProcessFile(response, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
+          loadScopeVariables(variables, scope, session.User);
+          OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
         finally
           variables.free;
         end;
@@ -631,7 +609,7 @@ begin
 
 end;
 
-procedure TAuth2Server.HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   jwk : TJWK;
   authurl : String;
@@ -654,12 +632,11 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   conn : TKDBConnection;
   id, username, password, domain, state, jwt : String;
   authurl, token, expires, msg, uid, name, email : String;
-  session : TFhirSession;
   provider : TFHIRAuthProvider;
   ok : boolean;
 begin
@@ -756,7 +733,7 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
 var
   params : TParseMap;
 begin
@@ -768,22 +745,22 @@ begin
     response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
   response.ContentType := 'application/json';
 
-  params := TParseMap.createSmart(request.UnparsedParams);
+  params := TParseMap.create(request.UnparsedParams);
   try
     if (request.Document = '/oauth2/auth') then
-      HandleAuth(AContext, request, params, response)
+      HandleAuth(AContext, request, session, params, response)
     else if (request.Document.startsWith('/oauth2/auth_dest')) then
-      HandleLogin(AContext, request, params, response)
+      HandleLogin(AContext, request, session, params, response)
     else if (request.Document = '/oauth2/auth_choice') then
-      HandleChoice(AContext, request, params, response)
+      HandleChoice(AContext, request, session, params, response)
     else if (request.Document = '/oauth2/token') then
-      HandleToken(AContext, request, params, response)
+      HandleToken(AContext, request, session, params, response)
     else if (request.Document = '/oauth2/token_data') then
-      HandleTokenData(AContext, request, params, response)
+      HandleTokenData(AContext, request, session, params, response)
     else if (request.Document = '/oauth2/auth_skype') then
-      HandleSkype(AContext, request, params, response)
+      HandleSkype(AContext, request, session, params, response)
     else if (request.Document = '/oauth2/auth_key') then
-      HandleKey(AContext, request, params, response)
+      HandleKey(AContext, request, session, params, response)
     else if (request.Document = '/oauth2/discovery') then
       HandleDiscovery(AContext, request, response)
     else
@@ -793,11 +770,10 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   conn : TKDBConnection;
   token, id, name, email, password, domain : String;
-  session : TFhirSession;
 begin
   domain := request.Host;
   if domain.Contains(':') then
@@ -839,7 +815,7 @@ begin
       end
     end
     else
-      OnProcessFile(response, '/oauth2/auth_skype.html', AltFile('/oauth_skype.html'), true, nil);
+      OnProcessFile(response, session, '/oauth2/auth_skype.html', AltFile('/oauth_skype.html'), true, nil);
     conn.Release;
   except
     on e:exception do
@@ -869,10 +845,9 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   code, clientId, clientSecret, uri, errCode : string;
-  session : TFhirSession;
   conn : TKDBConnection;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;
@@ -968,10 +943,9 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   token, clientId, clientSecret : string;
-  session : TFhirSession;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;
   check : boolean;
@@ -1114,104 +1088,5 @@ begin
     FLock.Unlock;
   end;
 end;
-
-(*
-
-function TFhirWebServer.ProcessOAuthLogin(path, url, ip : String; request: TFHIRRequest; response: TFHIRResponse; var msg : String; secure : boolean): Boolean;
-var
-  token, expires, state, id, name, original, email, pname, idt : String;
-  provider : TFHIRAuthProvider;
-  ok : boolean;
-begin
-  if url = 'auth-login' then
-  begin
-    // direct login
-    pname := request.Parameters.GetVar('provider');
-    token := request.Parameters.GetVar('access_token');
-    idt := request.Parameters.GetVar('id_token');
-    expires := request.Parameters.GetVar('expires');
-    if pname = '' then
-      raise ERestfulException.create('TFhirWebServer', 'ProcessOAuthLogin', 'Provider Required', HTTP_ERR_BAD_REQUEST);
-    if (pname = 'google') then
-      provider := apGoogle
-    else if (pname = 'facebook') then
-      provider := apFacebook
-    else if (pname = 'custom') then
-      provider := apInternal
-    else
-      raise ERestfulException.create('TFhirWebServer', 'ProcessOAuthLogin', 'Provider Value invalid (facebook or google)', HTTP_ERR_BAD_REQUEST);
-    if (provider <> apInternal) and (token = '') then
-      raise ERestfulException.create('TFhirWebServer', 'ProcessOAuthLogin', 'Access Token Required', HTTP_ERR_BAD_REQUEST);
-    if (pname = 'google') and (idt = '') then
-      raise ERestfulException.create('TFhirWebServer', 'ProcessOAuthLogin', 'ID Token required for google logins', HTTP_ERR_BAD_REQUEST);
-    if expires = '' then
-      expires := '1800'; // 30min
-    if provider = apGoogle then
-      result := GoogleGetDetails(token, FGoogleAppKey, id, name, email, msg)
-    else if provider = apFacebook then
-      result := FacebookGetDetails(token, id, name, email, msg)
-    else
-    begin
-      id := request.Parameters.GetVar('id');
-      name := request.Parameters.GetVar('name');
-      if pos(request.Parameters.GetVar('secret'), FAppSecrets) = 0 then
-        raise ERestfulException.create('TFhirWebServer', 'ProcessOAuthLogin', 'Application Secret not recognised', HTTP_ERR_BAD_REQUEST);
-      result := true;
-    end;
-    if not result then
-      raise ERestfulException.create('TFhirWebServer', 'ProcessOAuthLogin', 'Unable to confirm Access Token: '+msg, HTTP_ERR_BAD_REQUEST);
-    request.Session := FFhirStore.RegisterSession(provider, token, '', id, name, email, FSecurePath, expires, ip, FFhirStore.defaultRights);
-  end
-  else if StringStartsWith(url, 'state/', false) and StringStartsWith(copy(url, 7, $FF), OAUTH_LOGIN_PREFIX, false) then
-  begin
-    // HL7
-    result := CheckLoginToken(copy(url, 7, $FF), original, provider);
-    if result then
-    begin
-      // todo: check the signature
-      id := request.Parameters.GetVar('userid');
-      name := request.Parameters.GetVar('fullName');
-      expires := inttostr(60 * 24 * 10); // 10 days
-      request.Session := FFhirStore.RegisterSession(aphl7, '', '', id, name, email, original, expires, ip, FFhirStore.defaultRights);
-    end;
-  end
-  else
-  begin
-    result := request.Parameters.VarExists('state');
-    if result then
-    begin
-      state := request.Parameters.GetVar('state');
-      result := StringStartsWith(state, OAUTH_LOGIN_PREFIX, false);
-      if result then
-      begin
-        result := false;
-        if not CheckLoginToken(state, original, provider) then
-          msg := 'The state does not match. You may be a victim of a cross-site spoof'
-        else if request.Parameters.VarExists('error') then
-          msg := request.Parameters.GetVar('error_description')
-        else
-        begin
-          if provider = apGoogle then
-          begin
-            ok := GoogleCheckLogin(FGoogleAppid, FGoogleAppSecret, OAuthPath(secure), request.Parameters.GetVar('code'), token, expires, msg);
-            if ok then
-              result := GoogleGetDetails(token, FGoogleAppKey, id, name, email, msg);
-          end
-          else
-          begin
-            ok := FacebookCheckLogin(FFacebookAppid, FFacebookAppSecret, OAuthPath(secure), request.Parameters.GetVar('code'), token, expires, msg);
-            if ok then
-              result := FacebookGetDetails(token, id, name, email, msg);
-          end;
-          if result then
-            request.Session := FFhirStore.RegisterSession(provider, token, '', id, name, email, original, expires, ip, FFhirStore.DefaultRights);
-        end;
-      end;
-    end;
-  end;
-end;
-
-
-*)
 
 end.

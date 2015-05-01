@@ -11,10 +11,11 @@ uses
 Const
 //  SECURITY_BASE_URI = 'http://www.healthintersections.com.au/scim/entitlement/';
   // can admin SCIM
-  SCIM_ADMINISTRATOR = 'http://www.healthintersections.com.au/scim/entitlement/admin';
+  SCIM_ADMINISTRATOR = 'http://www.healthintersections.com.au/scim/administer';
 
   // SMART ON FHIR Scopes
   SCIM_SMART_PREFIX = 'http://smarthealthit.org/fhir/scopes/';
+  SCIM_OPENID_PREFIX = 'http://openid.net/specs/openid-connect-core-1_0#';
 
 var
   nonSecureTypes : TFhirResourceTypeSet;
@@ -24,6 +25,7 @@ type
   private
     FSource : String;
     FUserInfo : boolean;
+    FAdministerUsers : boolean;
     FReadAll : boolean;
     FReadAllowed : array [TFhirResourceType] of boolean;
     FWriteAllowed : array [TFhirResourceType] of boolean;
@@ -41,6 +43,7 @@ type
     function canRead(aType : TFHIRResourceType) : boolean;
     function canWrite(aType : TFHIRResourceType) : boolean;
     property canReadAll : boolean read FReadAll;
+    property canAdministerUsers : boolean read FAdministerUsers;
     procedure allowAll;
 
     property source : String read FSource;
@@ -49,6 +52,8 @@ type
     class function allScopesAsUris : TStringList;
   end;
 
+function UriForScope(scope : String): String;
+function prefixScope(uri : String): String;
 
 implementation
 
@@ -64,7 +69,9 @@ begin
   try
     for i := 0 to user.entitlementCount - 1 do
       if user.entitlement[i].StartsWith(SCIM_SMART_PREFIX) then
-        list.Add(user.entitlement[i].Substring(SCIM_SMART_PREFIX.Length));
+        list.Add(user.entitlement[i].Substring(SCIM_SMART_PREFIX.Length))
+      else
+        list.add(user.entitlement[i]);
     processScopes(list, nil, secure);
   finally
     list.Free;
@@ -163,8 +170,11 @@ var
   s : String;
 begin
   FSource := scopes.CommaText.replace(',', ' ');
-  if (scopes.IndexOf('openid') > -1) and (scopes.IndexOf('profile') > -1) then
+  if (scopes.IndexOf('openid') > -1) and (scopes.IndexOf('profile') > -1) and ((base = nil)  or (base.canGetUserInfo)) then
     FUserInfo := true;
+  if (scopes.IndexOf(SCIM_ADMINISTRATOR) > -1) and ((base = nil)  or (base.canAdministerUsers)) then
+    FAdministerUsers := true;
+
   FReadAll := true;
   for a := Low(TFhirResourceType) to High(TFhirResourceType) do
   begin
@@ -210,5 +220,27 @@ begin
   end;
 end;
 
+
+function UriForScope(scope : String): String;
+begin
+  if (scope.StartsWith('http:') or scope.StartsWith('https:')) then
+    result := scope
+  else if (scope = 'openid') or (scope = 'profile') then
+    result := SCIM_OPENID_PREFIX+scope
+  else
+    result := SCIM_SMART_PREFIX+scope;
+end;
+
+function prefixScope(uri : String): String;
+begin
+  if uri.StartsWith(SCIM_SMART_PREFIX) then
+    result := 'smart:'+uri.Substring(SCIM_SMART_PREFIX.Length)
+  else if uri.StartsWith(SCIM_OPENID_PREFIX) then
+    result := 'openid:'+uri.Substring(SCIM_OPENID_PREFIX.Length)
+  else if uri.StartsWith('http://www.healthintersections.com.au') then
+    result := 'server:'+uri.Substring('http://www.healthintersections.com.au'.Length)
+  else
+    result := uri;
+end;
 
 end.

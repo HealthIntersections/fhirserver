@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, Classes, IniFiles, ActiveX, ComObj,
+  Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
   SystemService, SystemSupport,
   SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
   LoincImporter, LoincServices,
@@ -44,6 +44,7 @@ Uses
 Type
   TFHIRService = class (TSystemService)
   private
+    FStartTime : integer;
     TestMode : Boolean;
     FIni : TIniFile;
     FDb : TKDBManager;
@@ -171,6 +172,7 @@ end;
 
 constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName: String);
 begin
+  FStartTime := GetTickCount;
   inherited create(ASystemName, ADisplayName);
   FIni := TIniFile.Create(AIniName);
   CheckWebSource;
@@ -223,7 +225,7 @@ begin
       raise;
     end;
   end;
-  writeln('started');
+  writeln(sNow+' started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
 end;
 
 procedure TFHIRService.DoStop;
@@ -467,31 +469,31 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   Writeln('mount database');
-  conn := FDb.GetConnection('setup');
+  scim := TSCIMServer.Create(FDB, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
   try
-    db := TFHIRDatabaseInstaller.create(conn);
+    conn := FDb.GetConnection('setup');
     try
-      db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
-      db.Bases.Add('http://hl7.org/fhir');
-      db.TextIndexing := not FindCmdLineSwitch('no-text-index');
-      db.Install;
-    finally
-      db.free;
+      db := TFHIRDatabaseInstaller.create(conn);
+      try
+        db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
+        db.Bases.Add('http://hl7.org/fhir');
+        db.TextIndexing := not FindCmdLineSwitch('no-text-index');
+        db.Install(scim);
+      finally
+        db.free;
+      end;
+      scim.DefineAnonymousUser(conn);
+      scim.DefineAdminUser(conn, un, pw, em);
+      conn.Release;
+      Writeln('done');
+    except
+       on e:exception do
+       begin
+         Writeln('Error: '+e.Message);
+         conn.Error(e);
+         raise;
+       end;
     end;
-    conn.Release;
-    Writeln('done');
-  except
-     on e:exception do
-     begin
-       Writeln('Error: '+e.Message);
-       conn.Error(e);
-       raise;
-     end;
-  end;
-  scim := TSCIMServer.Create(FDB, salt, FIni.ReadString('web', 'host', ''));
-  try
-    scim.DefineAnonymousUser();
-    scim.DefineAdminUser(un, pw, em);
   finally
     scim.Free;
   end;

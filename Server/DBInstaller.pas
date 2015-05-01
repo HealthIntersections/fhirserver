@@ -37,6 +37,9 @@ uses
   FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
   SCIMServer;
 
+const
+  ServerVersion = 1;
+
 Type
   TFHIRDatabaseInstaller = class (TAdvObject)
   private
@@ -80,7 +83,7 @@ Type
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
     Property DoAudit : boolean read FDoAudit write FDoAudit;
     Property  Bases : TStringList read FBases;
-    procedure Install;
+    procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
     Property TextIndexing : boolean read FTextIndexing write FTextIndexing;
 
@@ -113,17 +116,21 @@ procedure TFHIRDatabaseInstaller.CreateResourceSessions;
 begin
   FConn.ExecSQL('CREATE TABLE Sessions( '+#13#10+
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
+       ' UserKey int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' Provider int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' Id nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Name nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Email nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Created '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' Expiry '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' Closed '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+',  '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Sessions', 'SessionKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_Sessions_Id ON Sessions (Provider, Id, Name)');
-  FConn.ExecSQL('Create INDEX SK_Sessions_Name ON Sessions (Name)');
+  FConn.ExecSQL('Create INDEX SK_Sessions_Name ON Sessions (Name, Created)');
+  FConn.ExecSQL('Create INDEX SK_Sessions_User ON Sessions (UserKey, Created)');
   FConn.ExecSQL('Create INDEX SK_Sessions_Email ON Sessions (Email)');
-  FConn.execSQL('insert into Sessions (SessionKey, Provider, Expiry, Name) values (0, 0, '+DBGetDate(FConn.Owner.Platform)+', ''System'')');
+  FConn.ExecSQL(ForeignKeySql(FConn, 'Sessions', 'UserKey', 'Users', 'UserKey', 'FK_Session_UserKey'));
+  FConn.execSQL('insert into Sessions (SessionKey, UserKey, Created, Provider, Expiry, Name) values (0, 1, '+DBGetDate(FConn.Owner.Platform)+', 0, '+DBGetDate(FConn.Owner.Platform)+', ''System'')');
 end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceTags;
@@ -212,6 +219,7 @@ Begin
 
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+BooleanToInt(FSupportSystemHistory)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (4, '''+BooleanToInt(FDoAudit)+''')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (5, '''+inttostr(ServerVersion)+''')');
 End;
 
 procedure TFHIRDatabaseInstaller.CreateClosureEntries;
@@ -596,12 +604,13 @@ begin
 end;
 
 
-procedure TFHIRDatabaseInstaller.Install;
+procedure TFHIRDatabaseInstaller.Install(scim : TSCIMServer);
 begin
   FConn.StartTransact;
   try
     CreateUsers;
     CreateUserIndexes;
+    scim.defineSystem(FConn);
     CreateResourceSessions;
     CreateOAuthLogins;
 

@@ -7,12 +7,12 @@ uses
   EncodeSupport, StringSupport,
   AdvObjects, AdvStringMatches,
   IdContext, IdCustomHTTPServer,
-  FHIRLang,
+  FHIRLang, FHIRSupport,
   HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions,
   TerminologyServer;
 
 Type
-  TReturnProcessFileEvent = procedure (response: TIdHTTPResponseInfo; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
+  TReturnProcessFileEvent = procedure (response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
 
   TTerminologyWebServer = class (TAdvObject)
   private
@@ -23,7 +23,7 @@ Type
     Procedure HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean);
+    Procedure HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
     Procedure BuildCsByName(html : THtmlPublisher; id : String);
     Procedure BuildCsByURL(html : THtmlPublisher; id : String);
     Procedure BuildVsByName(html : THtmlPublisher; id : String);
@@ -33,7 +33,7 @@ Type
     constructor create(server : TTerminologyServer; FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
 
     function HandlesRequest(path : String) : boolean;
-    Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean);
+    Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 
   end;
 
@@ -59,13 +59,13 @@ begin
   result := path.StartsWith('/tx') or path.StartsWith('/snomed') or path.StartsWith('/loinc') ;
 end;
 
-procedure TTerminologyWebServer.Process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean);
+procedure TTerminologyWebServer.Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 var
   path : string;
 begin
   path := request.Document;
   if path.StartsWith('/tx/form') then
-    HandleTxForm(AContext, request, response, secure)
+    HandleTxForm(AContext, request, session, response, secure)
   else if path.StartsWith('/tx') then
     HandleTxRequest(AContext, request, response)
   else if path.StartsWith('/snomed') and (FServer.Snomed <> nil) then
@@ -84,7 +84,7 @@ end;
 
 
 
-procedure TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean);
+procedure TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 var
   vs : String;
   vars : TDictionary<String, String>;
@@ -110,7 +110,7 @@ begin
     end;
 
     vars.Add('vslist', vs);
-    FReturnProcessFileEvent(response, '/tx/form', IncludeTrailingPathDelimiter(FWebDir)+'txform.html', secure, vars);
+    FReturnProcessFileEvent(response, session, '/tx/form', IncludeTrailingPathDelimiter(FWebDir)+'txform.html', secure, vars);
   finally
     vars.free;
   end;

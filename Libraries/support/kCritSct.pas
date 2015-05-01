@@ -56,7 +56,7 @@ type
     FOwnID: Integer;                 // unique serial number assigned to all critical sections
     FCategory: String;                // category in the lock list
     FName: String;                   // Name of the critical section object
-    FLockName: String;               // Name of the current Lock (first one to grab)
+    FLockName: Array of String;      // Name of the current Lock (first one to grab)
     FDelayCount: Integer;            // Number of times there has been a failed attempt to lock a critical section
     FUseCount: Integer;              // The amount of times there has been a succesful attempt to lock a critical section
     FCurrLockTime: Int64;            // Time which the owning thread obtained the lock for the thread
@@ -65,9 +65,6 @@ type
     FEntryCount: Integer;            // Amount of times the thread owning the critical section has called Lock without calling UnLock. Used for recursion
     FLockThread : Thread;
 
-    procedure DoEnter(var VCS: TRTLCriticalSection);
-    function DoTryEnter(var VCS: TRTLCriticalSection) : Boolean;
-    procedure DoLeave(var VCS: TRTLCriticalSection);
     procedure MarkEntered;
     procedure MarkLeft;
     Function DebugSummary : String;
@@ -85,6 +82,8 @@ type
     procedure Leave;
     function Trylock: Boolean;
     function LockedToMe: Boolean; // mainly for assertion support
+    procedure changeName(aName : String);
+
 
     // debugging support
     property Category: String Read FCategory Write FCategory;
@@ -92,7 +91,7 @@ type
     // use with caution - not thread safe
     property OwnID: Integer Read FOwnID;
     property Name: String Read FName;
-    property LockName: String Read FLockName;
+//    property LockName: String Read FLockName;
     property DelayCount: Integer Read FDelayCount;
     property UseCount: Integer Read FUseCount;
     property CurrLockTime: Int64 Read FCurrLockTime;
@@ -151,25 +150,17 @@ const
 var
   GHaveCritSect : Boolean = False;
   GCritSct: TRTLCriticalSection;
+  GQPFrequency : Int64;
 
   GFirst: TCriticalSection = NIL;
   GCount: Integer = 0;
   GTotal: Integer = 0;
 
-{$IFDEF CLR}
-procedure InitializeCriticalSection(var VDummy : TRTLCriticalSection);
-begin
-  VDummy := DateTime.Now;
-end;
-
-procedure DeleteCriticalSection(var VDummy : TRTLCriticalSection);
-begin
-end;
-
-{$ENDIF}
 
 procedure InitUnit;
 begin
+  QueryPerformanceFrequency(GQPFrequency);
+  GQPFrequency := GQPFrequency div 1000; // in milliseconds
   InitializeCriticalSection(GCritSct);
   GHaveCritSect := true;
 end;
@@ -180,7 +171,7 @@ begin
   inherited Create;
   FCategory := '';
   FName := ClassName;
-  FLockName := '';
+  SetLength(FLockName, 0);
   FDelayCount := 0;
   FUseCount := 0;
   FCurrLockTime := 0;
@@ -191,7 +182,7 @@ begin
   if not GHaveCritSect then
     InitUnit;
   InitializeCriticalSection(FCritSect);
-  DoEnter(GCritSct);
+  EnterCriticalSection(GCritSct);
   try
     inc(GCount);
     inc(GTotal);
@@ -208,8 +199,14 @@ begin
     FPrev := NIL;
     GFirst := self;
   finally
-    DoLeave(GCritSct);
+    LeaveCriticalSection(GCritSct);
     end;
+end;
+
+procedure TCriticalSection.changeName(aName: String);
+begin
+  if LockedToMe then
+    FName := aName;
 end;
 
 constructor TCriticalSection.Create(AName: String);
@@ -220,7 +217,7 @@ end;
 
 destructor TCriticalSection.Destroy;
 begin
-  DoEnter(GCritSct);
+  EnterCriticalSection(GCritSct);
   try
     dec(GCount);
     if FPrev = NIL then
@@ -230,40 +227,27 @@ begin
     if FNext <> NIL then
       FNext.FPrev := FPrev;
   finally
-    DoLeave(GCritSct);
+    LeaveCriticalSection(GCritSct);
     end;
   DeleteCriticalSection(FCritSect);
   inherited;
 end;
 
-{$IFDEF CLR}
-function GetCurrentThreadId : Thread;
-begin
-  result := Thread.CurrentThread;
-end;
-
-procedure QueryPerformanceCounter(Var VTicks : Int64);
-begin
-  VTicks := DateTime.Now.Ticks;
-end;
-
-{$ENDIF}
 
 procedure TCriticalSection.MarkEntered;
 begin
   assert((FLockThread = NO_THREAD) or (FLockThread = GetCurrentThreadId),
      'Thread '+inttostr(GetCurrentThreadId)+' entering critical section '+inttohex(integer(Self), 8)+'/'+inttohex(integer(@FCritSect), 8)+' owned '+inttostr(FEntryCount)+' times by '+inttostr(FLockThread));
   if FLockThread = GetCurrentThreadid then
-    begin
-    inc(FEntryCount);
-    end
+    inc(FEntryCount)
   else
-    begin
+  begin
     FLockThread := GetCurrentThreadId;
     FEntryCount := 1;
     inc(FUseCount);
     QueryPerformanceCounter(FCurrLockTime);
-    end;
+  end;
+  SetLength(FLockName, FEntryCount);
 end;
 
 procedure TCriticalSection.MarkLeft;
@@ -272,10 +256,10 @@ var
 begin
   assert(FLockThread = GetCurrentThreadID);
   dec(FEntryCount);
+  SetLength(FLockName, FEntryCount);
   if FEntryCount = 0 then
     begin
     FLockThread := NO_THREAD;
-    FLockName := '';
     QueryPerformanceCounter(LEndTime);
     FTimeLocked := FTimeLocked + (LEndTime - FCurrLockTime);
     FCurrLockTime := 0;
@@ -295,7 +279,7 @@ begin
   if not TryLock then
     begin
     QueryPerformanceCounter(LStartTime);
-    DoEnter(FCritSect);
+    EnterCriticalSection(FCritSect);
     MarkEntered;
     FDelayTime := FDelayTime + (FCurrLockTime - LStartTime);
     inc(FDelayCount);
@@ -305,12 +289,12 @@ end;
 procedure TCriticalSection.Lock(const Name: String);
 begin
   Lock;
-  FLockName := Name;
+  FLockName[FEntryCount - 1] := Name;
 end;
 
 function TCriticalSection.TryLock: Boolean;
 begin
-  Result := DoTryEnter(FCritSect);
+  Result := TryEnterCriticalSection(FCritSect);
   if Result then
     begin
     MarkEntered;
@@ -319,9 +303,15 @@ end;
 
 procedure TCriticalSection.Unlock;
 begin
-  Assert(LockedToMe, 'TCriticalSection.Unlock: not locked to this thread');
-  MarkLeft;
-  DoLeave(FCritSect);
+  If not LockedToMe then
+  begin
+    ChangeName('not locked to this thread');
+  end
+  else
+  begin
+    MarkLeft;
+    LeaveCriticalSection(FCritSect);
+  end;
 end;
 
 procedure TCriticalSection.Enter;
@@ -344,38 +334,20 @@ begin
   Result := GCount;
 end;
 
-procedure TCriticalSection.DoEnter(var VCS: TRTLCriticalSection);
+function ms(count : int64) : integer;
 begin
-  {$IFDEF CLR}
-  Monitor.Enter(VCS);
-  {$ELSE}
-  EnterCriticalSection(VCS);
-  {$ENDIF}
-end;
-
-function TCriticalSection.DoTryEnter(var VCS: TRTLCriticalSection) : Boolean;
-begin
-  {$IFDEF CLR}
-  result := Monitor.TryEnter(VCS);
-  {$ELSE}
-  result := TryEnterCriticalSection(VCS);
-  {$ENDIF}
-end;
-
-procedure TCriticalSection.DoLeave(var VCS: TRTLCriticalSection);
-begin
-  {$IFDEF CLR}
-  Monitor.Exit(VCS);
-  {$ELSE}
-  LeaveCriticalSection(VCS);
-  {$ENDIF}
+  result := count div GQPFrequency;
 end;
 
 function TCriticalSection.DebugSummary: String;
+var
+  i : integer;
 begin
-  Result := IntToStr(FOwnID)+' "'+FCategory+'" "'+FName+'" "'+FLockName+'" '+IntToStr(FDelayCount)+' '+
-     IntToStr(FUseCount)+' ' +IntToStr(FCurrLockTime)+' '+IntToStr(FTimeLocked)+' '+IntToStr(FDelayTime)+' '+
-     IntToStr(FEntryCount)+' '+IntToStr(FLockThread);
+  Result := IntToStr(FOwnID)+' "'+FCategory+'" "'+FName+'" '+IntToStr(FDelayCount)+' '+
+     IntToStr(FUseCount)+' ' +IntToStr(ms(FCurrLockTime))+' '+IntToStr(ms(FTimeLocked))+' '+IntToStr(ms(FDelayTime))+' '+
+     IntToStr(FEntryCount)+' '+IntToStr(FLockThread)+' ';
+  for i := 0 to High(FLockName) do
+    result := result + '/' + FLockName[i];
 end;
 
 { TEvent }
@@ -482,12 +454,10 @@ Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
 var
   oCrit : TCriticalSection;
   LCheckTime: Int64;
-  LFreq : Int64;
 Begin
   result := true;
   QueryPerformanceCounter(LCheckTime);
-  QueryPerformanceFrequency(LFreq);
-  LCheckTime := LCheckTime - (30 * LFreq);
+  LCheckTime := LCheckTime - (30 * GQPFrequency * 1000);
   EnterCriticalSection(GCritSct);
   Try
     oCrit := GFirst;
@@ -497,7 +467,7 @@ Begin
       Begin
         if LCheckTime > oCrit.FCurrLockTime Then
         Begin
-          sMessage := 'Critical Section has been locked more than 30 seconds ('+oCrit.FName+'/'+oCrit.FLockName+')';
+          sMessage := 'Critical Section has been locked more than 30 seconds ('+oCrit.DebugSummary+')';
           result := False;
         End;
       End;
@@ -514,11 +484,11 @@ var
   aTime : Int64;
 Begin
   QueryPerformanceCounter(aTime);
-  Result := IntToStr(TCriticalSection.CurrentCount) + ' Critical Sections (@'+InttoStr(aTime)+')'+crlf;
+  Result := IntToStr(TCriticalSection.CurrentCount) + ' Critical Sections (@'+InttoStr(ms(aTime))+')'+crlf;
   oCrit := GFirst;
   While oCrit <> nil Do
   Begin
-    if oCrit.EntryCount > 0 Then
+//    if oCrit.EntryCount > 0 Then
       Result := Result + oCrit.DebugSummary + crlf;
     oCrit := oCrit.FNext;
   End;

@@ -126,7 +126,7 @@ Type
     FAudits : TFhirResourceList;
 
     procedure LoadExistingResources(conn : TKDBConnection);
-    procedure SaveAuditEvent(se : TFhirAuditEvent);
+    procedure SaveResource(res : TFhirResource; dateTime : TDateAndTime);
     procedure RecordFhirSession(session: TFhirSession);
     procedure CloseFhirSession(key: integer);
 
@@ -136,6 +136,7 @@ Type
     function getTypeForKey(key : integer) : TFhirResourceType;
     {$ENDIF}
     procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
+    procedure RegisterAuditEvent(session: TFHIRSession; ip : String);
   public
     constructor Create(DB : TKDBManager; SourceFolder, WebFolder : String; terminologyServer : TTerminologyServer; ini : TIniFile; SCIMServer :  TSCIMServer);
     Destructor Destroy; Override;
@@ -143,7 +144,7 @@ Type
     procedure CloseAll;
     function GetSession(sCookie : String; var session : TFhirSession; var check : boolean) : boolean;
     function GetSessionByToken(outerToken : String; var session : TFhirSession) : boolean;
-    Function CreateImplicitSession(clientInfo : String) : TFhirSession;
+    Function CreateImplicitSession(clientInfo : String; server : boolean) : TFhirSession;
     Procedure EndSession(sCookie, ip : String);
     function RegisterSession(provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
     procedure MarkSessionChecked(sCookie, sName : String);
@@ -160,6 +161,7 @@ Type
     procedure registerTag(tag: TFhirTag); overload;
     procedure SeeResource(key, vkey : Integer; id : string; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFhirSession);
     procedure DropResource(key, vkey : Integer; id : string; aType : TFhirResourceType; indexer : TFhirIndexManager);
+    procedure RegisterConsentRecord(session: TFHIRSession);
     function KeyForTag(type_ : TFhirTagKind; system, code : String) : Integer;
     Property Validator : TFHIRValidator read FValidator;
     function GetTagByKey(key : integer): TFhirTag;
@@ -179,7 +181,7 @@ Type
     property FormalURLSecureClosed : String read FFormalURLSecureClosed write FFormalURLSecureClosed;
     function ResourceTypeKeyForName(name : String) : integer;
     procedure ProcessSubscriptions;
-    function DefaultRights : String;
+
     Property OwnerName : String read FOwnerName write FOwnerName;
     Property Profiles : TProfileManager read FProfiles;
     function ExpandVS(vs : TFHIRValueSet; ref : TFhirReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet;
@@ -353,7 +355,7 @@ begin
   end;
 end;
 
-function TFHIRDataStore.CreateImplicitSession(clientInfo: String): TFhirSession;
+function TFHIRDataStore.CreateImplicitSession(clientInfo: String; server : boolean): TFhirSession;
 var
   session : TFhirSession;
   dummy : boolean;
@@ -380,45 +382,6 @@ begin
         session.originalUrl := '';
         session.email := '';
         session.anonymous := true;
-        session.User := FSCIMServer.loadUser(SCIM_ANONYMOUS_USER);
-        session.scopes := TFHIRSecurityRights.allScopes;
-        session.Name := Session.User.username +' ('+clientInfo+')';
-
-        se := TFhirAuditEvent.create;
-        try
-          se.event := TFhirAuditEventEvent.create;
-          se.event.type_ := TFhirCodeableConcept.create;
-          c := se.event.type_.codingList.Append;
-          c.code := '110114';
-          c.system := 'http://nema.org/dicom/dcid';
-          c.display := 'User Authentication';
-          c := se.event.subtypeList.append.codingList.Append;
-          c.code := '110122';
-          c.system := 'http://nema.org/dicom/dcid';
-          c.display := 'Login';
-          se.event.action := AuditEventActionE;
-          se.event.outcome := AuditEventOutcome0;
-          se.event.dateTime := NowUTC;
-          se.source := TFhirAuditEventSource.create;
-          se.source.site := 'Cloud';
-          se.source.identifier := FOwnerName;
-          c := se.source.type_List.Append;
-          c.code := '3';
-          c.display := 'Web Server';
-          c.system := 'http://hl7.org/fhir/security-source-type';
-
-          // participant - the web browser / user proxy
-          p := se.participantList.Append;
-          p.userId := clientInfo;
-          p.network := TFhirAuditEventParticipantNetwork.create;
-          p.network.identifier := clientInfo;
-          p.network.type_ := NetworkType2;
-
-          SaveAuditEvent(se);
-        finally
-          se.free;
-        end;
-
         FSessions.AddObject(IMPL_COOKIE_PREFIX+clientInfo, session.Link);
         result := session.Link as TFhirSession;
       finally
@@ -429,7 +392,49 @@ begin
     FLock.UnLock;
   end;
   if new then
+  begin
+    if server then
+      session.User := FSCIMServer.loadUser(SCIM_SYSTEM_USER)
+    else
+      session.User := FSCIMServer.loadUser(SCIM_ANONYMOUS_USER);
+    session.Name := Session.User.username +' ('+clientInfo+')';
+    session.scopes := TFHIRSecurityRights.allScopes;  // though they'll only actually get what the user allows
     RecordFhirSession(result);
+    se := TFhirAuditEvent.create;
+    try
+      se.event := TFhirAuditEventEvent.create;
+      se.event.type_ := TFhirCodeableConcept.create;
+      c := se.event.type_.codingList.Append;
+      c.code := '110114';
+      c.system := 'http://nema.org/dicom/dcid';
+      c.display := 'User Authentication';
+      c := se.event.subtypeList.append.codingList.Append;
+      c.code := '110122';
+      c.system := 'http://nema.org/dicom/dcid';
+      c.display := 'Login';
+      se.event.action := AuditEventActionE;
+      se.event.outcome := AuditEventOutcome0;
+      se.event.dateTime := NowUTC;
+      se.source := TFhirAuditEventSource.create;
+      se.source.site := 'Cloud';
+      se.source.identifier := FOwnerName;
+      c := se.source.type_List.Append;
+      c.code := '3';
+      c.display := 'Web Server';
+      c.system := 'http://hl7.org/fhir/security-source-type';
+
+      // participant - the web browser / user proxy
+      p := se.participantList.Append;
+      p.userId := clientInfo;
+      p.network := TFhirAuditEventParticipantNetwork.create;
+      p.network.identifier := clientInfo;
+      p.network.type_ := NetworkType2;
+
+      SaveResource(se, se.event.dateTimeElement.value);
+    finally
+      se.free;
+    end;
+  end;
 end;
 
 procedure TFHIRDataStore.RecordFhirSession(session: TFhirSession);
@@ -438,9 +443,11 @@ var
 begin
   conn := FDB.GetConnection('fhir');
   try
-    conn.SQL := 'insert into Sessions (SessionKey, Provider, Id, Name, Email, Expiry) values (:sk, :p, :i, :n, :e, :ex)';
+    conn.SQL := 'insert into Sessions (SessionKey, UserKey, Created, Provider, Id, Name, Email, Expiry) values (:sk, :uk, :d, :p, :i, :n, :e, :ex)';
     conn.Prepare;
     conn.BindInteger('sk', Session.Key);
+    conn.BindInteger('uk', StrToInt(Session.User.id));
+    conn.BindTimeStamp('d', DateTimeToTS(now));
     conn.BindInteger('p', Integer(Session.Provider));
     conn.BindString('i', session.Id);
     conn.BindString('n', session.Name);
@@ -457,12 +464,6 @@ begin
     end;
   end;
 
-end;
-
-
-function TFHIRDataStore.DefaultRights: String;
-begin
-  result := 'read,write,user';
 end;
 
 destructor TFHIRDataStore.Destroy;
@@ -489,7 +490,7 @@ var
   storage : TFhirOperationManager;
 begin
   if bWantSession then
-    request.Session := CreateImplicitSession('server');
+    request.Session := CreateImplicitSession('server', true);
   storage := TFhirOperationManager.create('en', self.Link);
   try
     storage.OwnerName := OwnerName;
@@ -598,7 +599,7 @@ begin
             p.requestor := true;
           end;
 
-          SaveAuditEvent(se);
+          SaveResource(se, se.event.dateTimeElement.value);
         finally
           se.free;
         end;
@@ -808,12 +809,100 @@ begin
   end;
 end;
 
-function TFHIRDataStore.RegisterSession(provider : TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
+procedure TFHIRDataStore.RegisterConsentRecord(session : TFHIRSession);
 var
-  session : TFhirSession;
+  ct : TFhirContract;
+  s : String;
+begin
+  ct := TFhirContract.create;
+  try
+    ct.issued := NowUTC;
+    ct.applies := TFHIRPeriod.Create;
+    ct.applies.start := ct.issued.Link;
+    ct.applies.end_ := TDateAndTime.CreateUTC(session.Expires);
+    //  need to figure out who this is...   ct.subjectList.Append.reference := '
+    ct.type_ := TFhirCodeableConcept.Create;
+    with ct.type_.codingList.Append do
+    begin
+      code := 'disclosure';
+      system := 'http://hl7.org/fhir/contracttypecodes';
+    end;
+    ct.subTypeList.Append.text := 'Smart on FHIR Authorization';
+    with ct.actionReasonList.Append.codingList.Append do
+    begin
+      code := 'PATRQT';
+      system := 'http://hl7.org/fhir/v3/ActReason';
+      display := 'patient requested';
+    end;
+    with ct.actorList.Append do
+    begin
+      roleList.Append.text := 'Server Host';
+      entity := TFhirReference.Create;
+      entity.reference := 'Device/this-server';
+    end;
+    for s in session.scopes.Split([' ']) do
+      with ct.actionList.Append.codingList.Append do
+      begin
+        code := UriForScope(s);
+        system := 'urn:ietf:rfc:3986';
+      end;
+    SaveResource(ct, ct.issued);
+  finally
+    ct.free;
+  end;
+end;
+
+procedure TFHIRDataStore.RegisterAuditEvent(session : TFHIRSession; ip : String);
+var
   se : TFhirAuditEvent;
   C : TFhirCoding;
   p : TFhirAuditEventParticipant;
+begin
+  se := TFhirAuditEvent.create;
+  try
+    se.event := TFhirAuditEventEvent.create;
+    se.event.type_ := TFhirCodeableConcept.create;
+    c := se.event.type_.codingList.Append;
+    c.code := '110114';
+    c.system := 'http://nema.org/dicom/dcid';
+    c.display := 'User Authentication';
+    c := se.event.subtypeList.append.codingList.Append;
+    c.code := '110122';
+    c.system := 'http://nema.org/dicom/dcid';
+    c.display := 'Login';
+    se.event.action := AuditEventActionE;
+    se.event.outcome := AuditEventOutcome0;
+    se.event.dateTime := NowUTC;
+    se.source := TFhirAuditEventSource.create;
+    se.source.site := 'Cloud';
+    se.source.identifier := ''+FOwnerName+'';
+    c := se.source.type_List.Append;
+    c.code := '3';
+    c.display := 'Web Server';
+    c.system := 'http://hl7.org/fhir/security-source-type';
+
+    // participant - the web browser / user proxy
+    p := se.participantList.Append;
+    p.userId := inttostr(session.Key);
+    p.altId := session.Id;
+    p.name := session.Name;
+    if (ip <> '') then
+    begin
+      p.network := TFhirAuditEventParticipantNetwork.create;
+      p.network.identifier := ip;
+      p.network.type_ := NetworkType2;
+      p.requestor := true;
+    end;
+
+    SaveResource(se, se.event.dateTime);
+  finally
+    se.free;
+  end;
+end;
+
+function TFHIRDataStore.RegisterSession(provider : TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
+var
+  session : TFhirSession;
 begin
   session := TFhirSession.create(true);
   try
@@ -836,7 +925,7 @@ begin
     if (session.email = '') and (session.user.emails.count > 0) then
       session.email := session.user.emails[0].value;
 
-    session.scopes := rights;
+    session.scopes := rights;  // empty, mostly - user will assign them later when they submit their choice
 
     FLock.Lock('RegisterSession');
     try
@@ -847,46 +936,7 @@ begin
       FLock.Unlock;
     end;
 
-    se := TFhirAuditEvent.create;
-    try
-      se.event := TFhirAuditEventEvent.create;
-      se.event.type_ := TFhirCodeableConcept.create;
-      c := se.event.type_.codingList.Append;
-      c.code := '110114';
-      c.system := 'http://nema.org/dicom/dcid';
-      c.display := 'User Authentication';
-      c := se.event.subtypeList.append.codingList.Append;
-      c.code := '110122';
-      c.system := 'http://nema.org/dicom/dcid';
-      c.display := 'Login';
-      se.event.action := AuditEventActionE;
-      se.event.outcome := AuditEventOutcome0;
-      se.event.dateTime := NowUTC;
-      se.source := TFhirAuditEventSource.create;
-      se.source.site := 'Cloud';
-      se.source.identifier := ''+FOwnerName+'';
-      c := se.source.type_List.Append;
-      c.code := '3';
-      c.display := 'Web Server';
-      c.system := 'http://hl7.org/fhir/security-source-type';
-
-      // participant - the web browser / user proxy
-      p := se.participantList.Append;
-      p.userId := inttostr(session.Key);
-      p.altId := session.Id;
-      p.name := session.Name;
-      if (ip <> '') then
-      begin
-        p.network := TFhirAuditEventParticipantNetwork.create;
-        p.network.identifier := ip;
-        p.network.type_ := NetworkType2;
-        p.requestor := true;
-      end;
-
-      SaveAuditEvent(se);
-    finally
-      se.free;
-    end;
+    RegisterAuditEvent(session, ip);
 
     result := session.Link as TFhirSession;
   finally
@@ -1087,17 +1137,17 @@ begin
 end;
 
 
-procedure TFHIRDataStore.SaveAuditEvent(se: TFhirAuditEvent);
+procedure TFHIRDataStore.SaveResource(res : TFhirResource; dateTime : TDateAndTime);
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
   request := TFHIRRequest.create;
   try
-    request.ResourceType := frtAuditEvent;
+    request.ResourceType := res.ResourceType;
     request.CommandType := fcmdCreate;
-    request.Resource := se.link;
-    request.lastModifiedDate := se.event.dateTime.AsUTCDateTime;
+    request.Resource := res.link;
+    request.lastModifiedDate := dateTime.AsUTCDateTime;
     request.Session := nil;
     response := TFHIRResponse.create;
     try

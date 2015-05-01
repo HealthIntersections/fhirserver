@@ -669,7 +669,7 @@ var
   p : TParseMap;
 begin
   StringSplit(criteria, '?', l, r);
-  p := TParseMap.createSmart(r, true);
+  p := TParseMap.create(r, true);
   try
     sql := FOnExecuteSearch(typekey, '', '', p, conn);
     result := conn.CountSQL('select count(*) from Ids where not MostRecent is null and ResourceKey = '+inttostr(key)+' and '+sql) > 0;

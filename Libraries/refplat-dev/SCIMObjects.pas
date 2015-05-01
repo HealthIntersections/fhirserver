@@ -211,6 +211,8 @@ Type
     Property entitlementCount : integer read GetEntitlementCount;
     Property entitlement[i : integer] : String read GetEntitlement;
 
+    procedure clearEntitlements;
+
     function AddEmail(value, type_ : String) : TSCIMContact;
     function hasEmail(value : String) : boolean;
     procedure addEntitlement(value : String);
@@ -463,6 +465,12 @@ begin
   checkSchema('urn:scim:schemas:core:2.0:User');
 end;
 
+
+procedure TSCIMUser.clearEntitlements;
+begin
+  if FJson.has('entitlements') then
+    FJson.clear('entitlements');
+end;
 
 procedure TSCIMUser.copyFrom(source: TSCIMUser);
 var

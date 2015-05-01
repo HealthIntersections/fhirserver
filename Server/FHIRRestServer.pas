@@ -134,7 +134,7 @@ Type
     function SpecFile(path : String) : String;
     function AltFile(path : String) : String;
     Procedure ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path : String);
-    Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil);
+    Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil);
     Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
     Procedure ReadTags(header : String; Request : TFHIRRequest); overload;
     function CheckSessionOK(session : TFhirSession; ip : string) : Boolean;
@@ -143,6 +143,7 @@ Type
     Function BuildFhirUploadPage(lang, host, sBaseURL : String; aType : TFHIRResourceType; session : TFhirSession) : String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
     Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: Boolean);
+    Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
@@ -173,6 +174,8 @@ Type
 
     Property DataStore : TFHIRDataStore read FFhirStore;
   End;
+
+function sNow : String;
 
 Implementation
 
@@ -255,11 +258,13 @@ Begin
   FIni := TIniFile.Create(ini);
   FHost := FIni.ReadString('web', 'host', '');
 
-  FSCIMServer := TSCIMServer.Create(db, FIni.ReadString('scim', 'salt', ''), Fhost);
-
-  write('Load & Cache Store: ');
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
+  write('Users');
+  FSCIMServer := TSCIMServer.Create(db, FAltPath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
+  FSCIMServer.OnProcessFile := ReturnProcessedFile;
+
+  write('Load & Cache Store: ');
   FOwnerName := Fini.readString('admin', 'ownername', '');
   if FOwnerName = '' then
     FOwnerName := 'Health Intersections';
@@ -508,7 +513,7 @@ begin
     req.CommandType := fcmdTransaction;
     req.Feed := ProcessZip('en', stream, name, base, init, ini, cursor);
     req.feed.tags['duplicates'] := 'ignore';
-    req.session := FFhirStore.CreateImplicitSession('service');
+    req.session := FFhirStore.CreateImplicitSession('service', true);
     req.session.allowAll;
     req.LoadParams('');
     req.baseUrl := FFhirStore.Bases[0];
@@ -564,19 +569,26 @@ begin
 end;
 
 Procedure TFhirWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  session : TFHIRSession;
+  c : integer;
+  check : boolean;
 begin
+  session := nil;
+  c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
+  if c > -1 then
+    FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+
   if FileExists(SpecFile(request.Document)) then
     ReturnSpecFile(response, request.Document, SpecFile(request.Document))
   else if FileExists(AltFile(request.Document)) then
     ReturnSpecFile(response, request.Document, AltFile(request.Document))
   else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
-    ReturnProcessedFile(response, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), false)
+    ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), false)
 //  else if FileExists(FAltPath+ExtractFileName(request.Document.replace('/', '\'))) then
 //    ReturnSpecFile(response, request.Document, FAltPath+ExtractFileName(request.Document.replace('/', '\')))
 //  else if FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
 //    ReturnSpecFile(response, request.Document, FSpecPath+ExtractFileName(request.Document.replace('/', '\')))
-  else if request.Document.StartsWith('/scim') then
-    FSCIMServer.processRequest(AContext, request, response)
   else if request.document = FBasePath+'/.well-known/openid-configuration' then
     HandleDiscoveryRedirect(AContext, request, response)
   else if request.document = '/.well-known/openid-configuration' then
@@ -586,9 +598,9 @@ begin
   else if request.Document.StartsWith(FSecurePath, false) then
     HandleRequest(AContext, request, response, false, false, FBasePath)
   else if request.Document = '/' then
-    ReturnProcessedFile(response, '/homepage.html', AltFile('/homepage.html'), false)
+    ReturnProcessedFile(response, session, '/homepage.html', AltFile('/homepage.html'), false)
   else if FTerminologyWebServer.handlesRequest(request.Document) then
-    FTerminologyWebServer.Process(AContext, request, response, false)
+    FTerminologyWebServer.Process(AContext, request, session, response, false)
   else
   begin
     response.ResponseNo := 404;
@@ -651,7 +663,16 @@ end;
 
 
 Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  session : TFHIRSession;
+  check : boolean;
+  c : integer;
 begin
+  session := nil;
+  c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
+  if c > -1 then
+    FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+
   if (request.CommandType = hcOption) and ((request.Document <> FBasePath) and (request.Document <> FSecurePath)) then
   begin
     response.ResponseNo := 200;
@@ -669,7 +690,7 @@ begin
   else if FileExists(AltFile(request.Document)) then
     ReturnSpecFile(response, request.Document, AltFile(request.Document))
   else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
-    ReturnProcessedFile(response, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), true)
+    ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), true)
 //  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+request.Document) then
 //    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FAltPath)+request.Document)
 //  else if FileExists(AltFile(ExtractFileName(request.Document))) then
@@ -677,7 +698,7 @@ begin
   else if request.document = FBasePath+'/.well-known/openid-configuration' then
     HandleDiscoveryRedirect(AContext, request, response)
   else if request.Document.StartsWith('/scim') then
-    FSCIMServer.processRequest(AContext, request, response)
+    processSCIMRequest(AContext, request, response)
   else if request.document = '/.well-known/openid-configuration' then
     FAuthServer.HandleDiscovery(AContext, request, response)
 //  else if request.Document.StartsWith(FBasePath, false) then
@@ -685,11 +706,11 @@ begin
   else if request.Document.StartsWith(FSecurePath, false) then
     HandleRequest(AContext, request, response, true, true, FSecurePath)
   else if FTerminologyWebServer.handlesRequest(request.Document) then
-    FTerminologyWebServer.Process(AContext, request, response, true)
+    FTerminologyWebServer.Process(AContext, request, session, response, true)
   else if request.Document.StartsWith('/oauth2') then
-    FAuthServer.HandleRequest(AContext, request, response)
+    FAuthServer.HandleRequest(AContext, request, session, response)
   else if request.Document = '/' then
-    ReturnProcessedFile(response, '/hompage.html', AltFile('/homepage.html'), true)
+    ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
   else
   begin
     response.ResponseNo := 404;
@@ -1100,7 +1121,7 @@ begin
   request.ResourceType := TFhirResourceType(i);
   request.CommandType := fcmdUpdate;
 
-  p := TParseMap.createSmart(TEncoding.UTF8.GetString(request.Content.AsBytes), true);
+  p := TParseMap.create(TEncoding.UTF8.GetString(request.Content.AsBytes), true);
   try
     if p.GetVar('srcformat') = 'json' then
       prsr := TFHIRJsonParser.Create(request.Lang)
@@ -1593,7 +1614,7 @@ Begin
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', lang), msg, HTTP_ERR_UNAUTHORIZED);
     end
     else
-      oRequest.session := FFhirStore.CreateImplicitSession(sClient);
+      oRequest.session := FFhirStore.CreateImplicitSession(sClient, false);
 
     relativeReferenceAdjustment := 0;
     if not redirect then
@@ -2317,11 +2338,16 @@ begin
   end;
 end;
 
+function sNow : String;
+begin
+  result := FormatDateTime('c', now);
+end;
+
 procedure TFhirWebServer.ProcessRequest(request: TFHIRRequest; response: TFHIRResponse; upload : Boolean);
 var
   store : TFhirOperationManager;
 begin
-  writeln('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source);
+  writeln(sNow+' Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source);
   store := TFhirOperationManager.Create(request.Lang, FFhirStore.Link);
   try
     store.OwnerName := FOwnerName;
@@ -2347,6 +2373,43 @@ begin
   finally
     store.Free;
   end;
+end;
+
+procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  sCookie : String;
+  c : integer;
+  session : TFhirSession;
+  check : boolean;
+begin
+  if request.AuthUsername = 'Bearer' then
+    sCookie := request.AuthPassword
+  else
+  begin
+    c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
+    if c > -1 then
+      sCookie := request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1);
+  end;
+
+  if (sCookie <> '') and request.Document.StartsWith('/scim/logout') then
+  begin
+    FFhirStore.EndSession(sCookie, request.RemoteIP);
+    response.Redirect('/closed');
+  end
+  else if (FFhirStore.GetSession(sCookie, session, check)) then
+  begin
+    try
+      if check and not CheckSessionOK(session, request.RemoteIP) then
+        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage), 'Session Expired', HTTP_ERR_UNAUTHORIZED);
+      if not session.canAdministerUsers then
+        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage), 'This Session is not authorised to manage users', HTTP_ERR_UNAUTHORIZED);
+      FSCIMServer.processRequest(acontext, request, response, session);
+    finally
+      session.Free;
+    end;
+  end
+  else
+    Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage), 'Authentication required', HTTP_ERR_UNAUTHORIZED);
 end;
 
 function TFhirWebServer.BuildFhirAuthenticationPage(lang, host, path, msg : String; secure : boolean): String;
@@ -2383,7 +2446,7 @@ result := result +
   '<p><b>'+ FormatTextToHTML(msg)+'</b></p>'#13#10;
 
 result := result +
-'<p><a href="/oauth2/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*&redirect_uri='+authurl+'/internal&aud='+authurl+'&state='+FAuthServer.MakeLoginToken(path, apGoogle)+'">Login using OAuth</a></p>'+#13#10;
+'<p><a href="/oauth2/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+authurl+'/internal&aud='+authurl+'&state='+FAuthServer.MakeLoginToken(path, apGoogle)+'">Login using OAuth</a></p>'+#13#10;
 
 result := result +
 '<p>Or use the <a href="http://'+FHost+port(FPort, 80)+FBasePath+'">unsecured API</a>.</p>'#13#10+
@@ -2493,6 +2556,9 @@ begin
   b.Append(
   '<li>Create/Edit a new resource based on the profile: <form action="'+sBaseURL+'/_web/Create" method="GET"><select name="profile">'+pol+'</select> <input type="submit" value="GO"></form></li>'+#13#10);
   {$ENDIF}
+
+  if (session.canAdministerUsers) then
+    b.Append('<li><a href="/scim/web">Manage Users</a></li>'+#13#10);
 
   b.Append(
   '</ul>'+#13#10+
@@ -2917,7 +2983,7 @@ begin
 end;
 
 
-procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; named, path: String; secure : boolean; variables: TDictionary<String, String> = nil);
+procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String> = nil);
 var
   s, n : String;
 begin
@@ -2927,6 +2993,10 @@ begin
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
+  if (session = nil) then
+    s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll])
+  else
+    s := s.Replace('[%logout%]', '|&nbsp;User: '+session.Name+'&nbsp; <a href="/closed/logout" title="Log Out"><img src="/logout.png"></a>  &nbsp;', [rfReplaceAll]);
   if FPort = 80 then
     s := s.Replace('[%host%]', FHost, [rfReplaceAll])
   else
@@ -3141,5 +3211,9 @@ end;
 Initialization
   IdSSLOpenSSLHeaders.Load;
 End.
+
+
+
+
 
 

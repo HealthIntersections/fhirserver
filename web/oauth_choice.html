@@ -87,55 +87,56 @@ Welcome [%username%]. What rights you want the [%client%] to have?
   <p>
     <input type="checkbox" name="userlevel" value="1" [%userlevel%]/> Change Patient focus <br/>
     <input type="checkbox" name="userinfo" value="1" [%userinfo%]/> Share User Details <br/>
+    [%useradmin%]
   </p>
   <table class="grid">
     <tr>
       <td>Clinical Content</td>
       <td>Allergies, Medical History, Consultation notes, Care plans, Referrals </td>
-      <td><input type="checkbox" name="readClinical" value="1" [%readClinical%]/> read</td>
-      <td><input type="checkbox" name="writeClinical" value="1" [%writeClinical%]/> write</td>
+      <td><input type="checkbox" name="readClinical" value="1" [%readClinical%] [%readClinicaldisabled%]/> read</td>
+      <td><input type="checkbox" name="writeClinical" value="1" [%writeClinical%] [%writeClinicaldisabled%]/> write</td>
     </tr>
     <tr>
       <td>Recorded Data</td>
       <td>Labs, Imaging, Vital signs, device measurements</td>
-      <td><input type="checkbox" name="readData" value="1" [%readData%]/> read</td>
-      <td><input type="checkbox" name="writeData" value="1" [%writeData%]/> write</td>
+      <td><input type="checkbox" name="readData" value="1" [%readData%] [%readDatadisabled%]/> read</td>
+      <td><input type="checkbox" name="writeData" value="1" [%writeData%] [%writeDatadisabled%]/> write</td>
     </tr>
     <tr>
       <td>Medications</td>
       <td>Prescriptions, Dispenses, Records</td>
-      <td><input type="checkbox" name="readMeds" value="1" [%readMeds%]/> read</td>
-      <td><input type="checkbox" name="writeMeds" value="1" [%writeMeds%]/> write</td>
+      <td><input type="checkbox" name="readMeds" value="1" [%readMeds%] [%readMedsdisabled%]/> read</td>
+      <td><input type="checkbox" name="writeMeds" value="1" [%writeMeds%] [%writeMedsdisabled%]/> write</td>
     </tr>
     <tr>
       <td>Appointments</td>
       <td>Past &amp; Future appointments / encounters </td>
-      <td><input type="checkbox" name="readSchedule" value="1" [%readSchedule%]/> read</td>
-      <td><input type="checkbox" name="writeSchedule" value="1" [%writeSchedule%]/> write</td>
+      <td><input type="checkbox" name="readSchedule" value="1" [%readSchedule%] [%readScheduledisabled%]/> read</td>
+      <td><input type="checkbox" name="writeSchedule" value="1" [%writeSchedule%] [%writeScheduledisabled%]/> write</td>
     </tr>
     <tr>
       <td>Audit Trail</td>
       <td>Record of all changes to all kinds of data</td>
-      <td><input type="checkbox" name="readAudit" value="1" [%readAudit%]/> read</td>
-      <td><input type="checkbox" name="writeAudit" value="1" [%writeAudit%]/> write</td>
+      <td><input type="checkbox" name="readAudit" value="1" [%readAudit%] [%readAuditdisabled%]/> read</td>
+      <td><input type="checkbox" name="writeAudit" value="1" [%writeAudit%] [%writeAuditdisabled%]/> write</td>
     </tr>
     <tr>
       <td>Documents</td>
       <td>Various documents</td>
-      <td><input type="checkbox" name="readDocuments" value="1" [%readDocuments%]/> read</td>
-      <td><input type="checkbox" name="writeDocuments" value="1" [%writeDocuments%]/> write</td>
+      <td><input type="checkbox" name="readDocuments" value="1" [%readDocuments%] [%readDocumentsdisabled%]/> read</td>
+      <td><input type="checkbox" name="writeDocuments" value="1" [%writeDocuments%] [%writeDocumentsdisabled%]/> write</td>
     </tr>
     <tr>
       <td>Financial Records</td>
       <td>Various documents</td>
-      <td><input type="checkbox" name="readFinancial" value="1" [%readFinancial%]/> read</td>
-      <td><input type="checkbox" name="writeFinancial" value="1" [%writeFinancial%]/> write</td>
+      <td><input type="checkbox" name="readFinancial" value="1" [%readFinancial%] [%readFinancialdisabled%]/> read</td>
+      <td><input type="checkbox" name="writeFinancial" value="1" [%writeFinancial%] [%writeFinancialdisabled%]/> write</td>
     </tr>
     <tr>
       <td>Other stuff</td>
       <td>Communication records, Supply, Questionnaires, more stuff</td>
-      <td><input type="checkbox" name="readOther" value="1" [%readOther%]/> read</td>
-      <td><input type="checkbox" name="writeOther" value="1" [%writeOther%]/> write</td>
+      <td><input type="checkbox" name="readOther" value="1" [%readOther%] [%readOtherdisabled%]/> read</td>
+      <td><input type="checkbox" name="writeOther" value="1" [%writeOther%] [%writeOtherdisabled%]/> write</td>
     </tr>
   </table>
   <input type="submit"/>

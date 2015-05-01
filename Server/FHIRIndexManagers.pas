@@ -2656,9 +2656,9 @@ begin
   for i := 0 to resource.actorList.Count - 1 do
   begin
     index(context, frtContract, key, 0, resource.actorList[i].entity, 'actor');
-    practitionerCompartment(key, resource.subjectList[i]);
-    relatedPersonCompartment(key, resource.subjectList[i]);
-    deviceCompartment(key, resource.subjectList[i]);
+    practitionerCompartment(key, resource.actorList[i].entity);
+    relatedPersonCompartment(key, resource.actorList[i].entity);
+    deviceCompartment(key, resource.actorList[i].entity);
   end;
   for i := 0 to resource.signerList.Count - 1 do
   begin
