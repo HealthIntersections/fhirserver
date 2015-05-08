@@ -27,7 +27,6 @@ Type
     procedure executeAfter;
   end;
 
-  {$IFNDEF FHIR-DSTU}
   TFHIRQuestionnaireBuilderTests = class (TAdvObject)
   private
     FDataStore: TFHIRDataStore;
@@ -38,15 +37,13 @@ Type
   public
     class procedure RunTests(ini : TIniFile; dataStore: TFHIRDataStore); overload;
   end;
-  {$ENDIF}
 
 
 implementation
 
 uses
   SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax,
-  DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures
-  {$IFNDEF FHIR-DSTU}, QuestionnaireBuilder{$ENDIF};
+  DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures, QuestionnaireBuilder;
 
 { TFhirServerTests }
 
@@ -121,7 +118,6 @@ begin
   TSnomedExpressionParser.Parse(TerminologyServer.Snomed, '243796009 | situation with explicit context |: {363589002 | associated procedure | = (397956004 | prosthetic arthroplasty of the hip |:363704007 | procedure site | = (24136001 | '+'hip joint structure | :272741003 | laterality | =7771000 | left |) {363699004 | direct device | =304120007 | total hip replacement prosthesis |, '+'260686004 | method | =257867005 | insertion - action |}), 408730004 | procedure context | =385658003 | done |, 408731000 | temporal context | =410512000 | current or specified |, 408732007 | subject relationship context |=410604004 | subject of record | }').Free;
 end;
 
-{$IFNDEF FHIR-DSTU}
 
 { TFHIRQuestionnaireBuilderTests }
 
@@ -218,7 +214,6 @@ begin
   end;
   ExecuteOpen('c:\Program Files (x86)\WinMerge\WinMergeU.exe', 'c:\temp\start.json c:\temp\end.json');
 end;
-{$ENDIF}
 
 
 end.

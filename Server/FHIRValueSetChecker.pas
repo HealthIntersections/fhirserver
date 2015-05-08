@@ -116,18 +116,12 @@ begin
   begin
     issue := op.issueList.Append;
     issue.severity := severity;
-    {$IFDEF FHIR-DSTU}
-    issue.type_ := TFhirCoding.Create;
-    issue.type_.system := 'http://hl7.org/fhir/issue-type';
-    issue.type_.code := code;
-    {$ELSE}
     issue.code := TFhirCodeableConcept.Create;
     with issue.code.codingList.Append do
     begin
       system := 'http://hl7.org/fhir/issue-type';
       code := code;
     end;
-    {$ENDIF}
     issue.details := msg;
   end;
 end;

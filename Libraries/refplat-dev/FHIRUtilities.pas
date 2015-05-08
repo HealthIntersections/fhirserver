@@ -1525,7 +1525,6 @@ begin
   {$ENDIF}
 end;
 
-{$IFNDEF FHIR-DSTU}
 { TFhirConceptMapElementHelper }
 
 function TFhirConceptMapElementHelper.systemObject: TFhirUri;
@@ -1568,7 +1567,6 @@ function TFhirConceptMapElementDependsOnHelper.concept: String;
 begin
   result := element;
 end;
-{$ENDIF}
 
 
 { TFHIRDomainResourceHelper }

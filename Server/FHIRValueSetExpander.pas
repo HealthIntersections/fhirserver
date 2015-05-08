@@ -129,10 +129,8 @@ begin
 
     result.expansion := TFhirValueSetExpansion.create;
     result.expansion.timestamp := NowUTC;
-    {$IFNDEF FHIR-DSTU}
     result.expansion.identifier := NewGuidURN;
-    {$ENDIF}
-
+    
 //    result.expansion.url :=
     //e := result.expansion.ExtensionList.Append;
 

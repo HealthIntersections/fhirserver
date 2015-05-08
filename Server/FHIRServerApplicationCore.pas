@@ -101,15 +101,9 @@ begin
     svcName := 'fhirserver';
   if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
     dispName := 'FHIR Server';
-  {$IFDEF FHIR-DSTU}
-  writeln('FHIR Service (DSTU). Using ini file '+iniName);
-  dispName := dispName + ' (DSTU)';
-  {$ELSE}
   iniName := iniName.replace('.dstu', '.dev');
   writeln('FHIR Service (DEV). Using ini file '+iniName);
   dispName := dispName + ' (DEV)';
-  {$ENDIF}
-
 
 
   svc := TFHIRService.Create(svcName, dispName, iniName);
@@ -260,9 +254,7 @@ begin
       tests.executeBefore;
 
       CanStart;
-      {$IFNDEF FHIR-DSTU}
       TFHIRQuestionnaireBuilderTests.runTests(FIni, FWebServer.DataStore);
-      {$ENDIF}
       tests.executeRound1;
       DoStop;
 
@@ -343,9 +335,7 @@ var
   cursor : integer;
 begin
   FNotServing := true;
-  {$IFNDEF FHIR-DSTU}
   fn := fn.Replace('.dstu', '');
-  {$ENDIF}
   if FDb = nil then
     ConnectToDatabase;
   CanStart;
@@ -372,9 +362,7 @@ begin
   FNotServing := true;
   ini := TIniFile.Create(fn);
   try
-    {$IFNDEF FHIR-DSTU}
     fn := fn.Replace('.dstu', '');
-    {$ENDIF}
     if FDb = nil then
       ConnectToDatabase;
     CanStart;
