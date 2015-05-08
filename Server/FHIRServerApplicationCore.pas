@@ -72,6 +72,7 @@ Type
     procedure Load(fn : String);
     procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
+    procedure UpgradeDatabase;
     procedure InstallDatabase;
     procedure UnInstallDatabase;
   end;
@@ -114,7 +115,9 @@ begin
 
   svc := TFHIRService.Create(svcName, dispName, iniName);
   try
-    if FindCmdLineSwitch('mount') then
+    if FindCmdLineSwitch('upgrade') then
+      svc.UpgradeDatabase
+    else if FindCmdLineSwitch('mount') then
       svc.InstallDatabase
     else if FindCmdLineSwitch('unmount') then
       svc.UninstallDatabase
@@ -425,6 +428,47 @@ begin
   FTerminologyServer := nil;
 end;
 
+procedure TFHIRService.UpgradeDatabase;
+var
+  db : TFHIRDatabaseInstaller;
+  conn : TKDBConnection;
+  scim : TSCIMServer;
+  store : TFHIRDataStore;
+  op : TFhirOperationManager;
+  salt, un, pw, em : String;
+begin
+  if FDb = nil then
+    ConnectToDatabase;
+  Writeln('upgrade database');
+  scim := TSCIMServer.Create(FDB, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
+  try
+    conn := FDb.GetConnection('upgrade');
+    try
+      db := TFHIRDatabaseInstaller.create(conn);
+      try
+        db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
+        db.Bases.Add('http://hl7.org/fhir');
+        db.TextIndexing := not FindCmdLineSwitch('no-text-index');
+        db.upgrade(scim);
+      finally
+        db.free;
+      end;
+      conn.Release;
+      Writeln('done');
+    except
+       on e:exception do
+       begin
+         Writeln('Error: '+e.Message);
+         conn.Error(e);
+         raise;
+       end;
+    end;
+  finally
+    scim.Free;
+  end;
+
+end;
+
 procedure TFHIRService.Index;
 begin
   FNotServing := true;
@@ -497,7 +541,6 @@ begin
   finally
     scim.Free;
   end;
-
 end;
 
 procedure TFHIRService.UnInstallDatabase;

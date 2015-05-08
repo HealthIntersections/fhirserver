@@ -81,17 +81,27 @@ const
 type
   TCreateIdState = (idNoNew, idMaybeNew, idIsNew);
 
+  TFHIRTransactionEntryState = (tesIgnore, tesRead, tesCreate, tesUpdate, tesDelete);
+
   TFHIRTransactionEntry = class (TAdvName)
   private
+    state : TFHIRTransactionEntryState;
     id : String;
     originalId : String;
     key : integer;
-    new : boolean;
-    deleted : Boolean;
-    resType : String;
-    html : String;
-    ignore : boolean;
+    resType : TFhirResourceType;
     version : String;
+    html : String;
+    {$IFDEF FHIR-DSTU}
+    new : boolean;
+    ignore : boolean;
+    deleted : Boolean;
+    {$ELSE}
+    entry : TFhirBundleEntry;
+    count : integer;
+    function ignore : boolean;
+    function deleted : boolean;
+    {$ENDIF}
     function summary : string;
 
   end;
@@ -189,10 +199,13 @@ type
     procedure CommitTags(tags : TFHIRAtomCategoryList; key : integer);
     Procedure ProcessBlob(request: TFHIRRequest; response : TFHIRResponse; wantSummary : boolean);
     Procedure ResolveSearchId(atype : TFHIRResourceType; compartmentId, compartments : String; baseURL, params : String; ids : TStringList);
+    function ResolveSearchIdCount(atype : TFHIRResourceType; compartmentId, compartments : String; baseURL, params : String) : integer;
     function ScanId(base : String; request : TFHIRRequest; entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList) : TFHIRTransactionEntry;
+    {$IFDEF FHIR-DSTU}
     procedure ConfirmId(te : TFHIRTransactionEntry; base : String; entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList);
+    {$ENDIF}
     procedure adjustReferences(te : TFHIRTransactionEntry; base : String; entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList);
-    function commitResource(context: TFHIRValidatorContext; request: TFHIRRequest; response : TFHIRResponse; upload : boolean; entry : TFHIRAtomEntry; id : TFHIRTransactionEntry; session : TFhirSession; resp : TFHIRAtomFeed) : boolean;
+    function commitResource(context: TFHIRValidatorContext; request: TFHIRRequest; response : TFHIRResponse; upload : boolean; entry : TFHIRAtomEntry; i : integer; id : TFHIRTransactionEntry; session : TFhirSession; resp : TFHIRAtomFeed) : boolean;
 
     procedure checkProposedContent(request : TFHIRRequest; resource : TFhirResource; tags : TFHIRAtomCategoryList);
     procedure checkProposedDeletion(request : TFHIRRequest; resource : TFhirResource; tags : TFHIRAtomCategoryList);
@@ -220,6 +233,8 @@ type
 
     procedure CheckCompartments(actual, allowed : String);
     procedure ExecuteRead(request: TFHIRRequest; response : TFHIRResponse);
+    procedure executeReadInTransaction(entry : TFhirBundleEntryTransaction; request: TFHIRRequest; response : TFHIRResponse);
+
     function ExecuteUpdate(context: TFHIRValidatorContext; upload : boolean; request: TFHIRRequest; response : TFHIRResponse) : Boolean;
     procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteDelete(request: TFHIRRequest; response : TFHIRResponse);
@@ -1319,7 +1334,7 @@ begin
 
     if ok and ({$IFDEF FHIR-DSTU}not check(response, request.Resource = nil, 400, lang, GetFhirMessage('MSG_RESOURCE_NOT_ALLOWED', lang)) or {$ENDIF}
        not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id])) or
-       not FindResource(request.ResourceType, request.Id, false, resourceKey, originalId, request, response, request.compartments)) then
+       not FindResource(request.ResourceType, request.Id, true, resourceKey, originalId, request, response, request.compartments)) then
       ok := false;
 
     if ok and FTestServer and not check(response, request.id <> 'example', 400, lang, GetFhirMessage('MSG_RESOURCE_EXAMPLE_PROTECTED', lang)) then
@@ -1789,6 +1804,92 @@ begin
   end;
 end;
 
+
+procedure TFhirOperationManager.executeReadInTransaction(entry : TFhirBundleEntryTransaction; request: TFHIRRequest; response: TFHIRResponse);
+  Function NextSegment(var url : String):String;
+  var
+    i : integer;
+  Begin
+    i := StringFind(url, ['/', '?']);
+    if i = 0 then
+    begin
+      result := url;
+      url := '';
+    end
+    else
+    begin
+//      inc(relativeReferenceAdjustment);
+      result := copy(url, 1, i-1);
+      url := copy(url, i + 1, $FFF);
+    end;
+  End;
+var
+  url, s : String;
+
+begin
+  url := entry.url;
+  if (url.Contains('?')) then
+  begin
+    request.LoadParams(url.Substring(url.IndexOf('?')+1));
+    url := url.Substring(0, url.IndexOf('?'));
+  end
+  else
+    request.LoadParams('');
+  request.Id := '';
+  request.SubId := '';
+  request.OperationName := '';
+
+  s := NextSegment(url);
+  if (s = '') then
+    raise Exception.Create('not done yet') // system search
+  else if (s.StartsWith('$')) then
+    raise Exception.Create('not done yet') // system level operation
+  else if (s.StartsWith('_')) then
+    raise Exception.Create('not done yet') // system history
+  else if not StringArrayExistsSensitive(CODES_TFhirResourceType, s) then
+    raise Exception.Create('Unknown path type "'+entry.url+'"')
+  else
+  begin
+    request.ResourceType := TFhirResourceType(StringArrayIndexOfSensitive(CODES_TFhirResourceType, s));
+    s := NextSegment(url);
+    if (s = '') then
+      ExecuteSearch(request, response)
+    else if (s.StartsWith('$')) then
+      raise Exception.Create('not done yet') // resource type level operation
+    else if (s.StartsWith('_')) then
+      raise Exception.Create('not done yet') // resource type history
+    else if not IsId(s) then
+      raise Exception.Create('Unknown path type "'+entry.url+'"')
+    else
+    begin
+      request.Id := s;
+      s := NextSegment(url);
+      if (s = '') then
+        ExecuteRead(request, response)
+      else if (s.StartsWith('$')) then
+        raise Exception.Create('not done yet') // resource instance level operation
+      else if (s = '_history') then
+      begin
+        s := NextSegment(url);
+        if (s = '') then
+          ExecuteHistory(request, response)
+        else if not IsId(s) then
+          raise Exception.Create('Unknown path type "'+entry.url+'"')
+        else
+        begin
+          request.SubId := s;
+          s := NextSegment(url);
+          if (s = '') then
+            ExecuteVersionRead(request, response)
+          else
+            raise Exception.Create('Unknown path type "'+entry.url+'"')
+        end;
+      end
+      else
+        raise Exception.Create('Unknown path type "'+entry.url+'"')
+    end;
+  end;
+end;
 
 function TFhirOperationManager.FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var wantSummary : TFHIRSearchSummary): boolean;
 begin
@@ -2518,7 +2619,7 @@ end;
 procedure TFhirOperationManager.NoMatch(request: TFHIRRequest; response: TFHIRResponse);
 begin
   response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [CODES_TFHIRResourceType[request.ResourceType]+'?'+request.parameters.source]);
+  response.Message := StringFormat(GetFhirMessage('MSG_NO_MATCH', lang), [CODES_TFHIRResourceType[request.ResourceType]+'?'+request.parameters.source]);
   response.Body := response.Message;
   response.Resource := BuildOperationOutcome(lang, response.Message);
 end;
@@ -2867,12 +2968,12 @@ begin
 
     sp.build;
 
-    FConnection.SQL := 'Select Id from Ids where ResourceTypeKey = '+inttostr(key)+' and MasterResourceKey is null and Ids.ResourceKey in (select ResourceKey from IndexEntries where '+sp.filter+')';
+    FConnection.SQL := 'Select ResourceKey, Id from Ids where ResourceTypeKey = '+inttostr(key)+' and MasterResourceKey is null and Ids.ResourceKey in (select ResourceKey from IndexEntries where '+sp.filter+')';
     FConnection.prepare;
     try
       FConnection.Execute;
       while FConnection.FetchNext do
-        ids.add(FConnection.ColStringByName['Id']);
+        ids.addObject(FConnection.ColStringByName['Id'], TObject(FConnection.ColIntegerByName['ResourceKey']));
     finally
       FConnection.terminate;
     end;
@@ -2883,6 +2984,19 @@ begin
 end;
 
 
+function TFhirOperationManager.ResolveSearchIdCount(atype: TFHIRResourceType; compartmentId, compartments, baseURL, params: String): integer;
+var
+  list : TStringlist;
+begin
+  list := TStringList.Create;
+  try
+    ResolveSearchId(atype, compartmentId, compartments, baseURL, params, list);
+    result := list.Count;
+  finally
+    list.free;
+  end;
+end;
+
 procedure TFhirOperationManager.SaveProvenance(session: TFhirSession; prv: TFHIRProvenance);
 begin
   {$IFDEF FHIR-DSTU}
@@ -2892,37 +3006,57 @@ begin
   FRepository.QueueResource(prv);
 end;
 
+var
+  it : integer = 0;
 function TFhirOperationManager.scanId(base : String; request : TFHIRRequest; entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList) : TFHIRTransactionEntry;
 var
   match : boolean;
   id : TFHIRTransactionEntry;
   i, k : integer;
-  sId, oId : String;
+  sId, oId, s, cver : String;
+  sParts : TArray<String>;
   baseok : boolean;
   aType : TFHIRResourceType;
+  list : TStringList;
 begin
   {$IFDEF FHIR-DSTU}
   aType := entry.resource.ResourceType;
   {$ELSE}
 
+  inc(it);
   if entry.resource <> nil then
     aType := entry.resource.ResourceType
-  else // more complicated - must be deleting something
-    raise Exception.Create('Not done yet');
+  else if (entry.transaction = nil) or not (entry.transaction.method in [HttpVerbDELETE, HttpVerbGET]) or (entry.transaction.url = '') then // must be deleting something
+    raise Exception.Create('A resource must be provided unless the entry has a transaction with method = delete and a url')
+  else
+  begin
+    s := entry.transaction.url;
+    if s.contains('?') then
+      s := s.subString(0, s.indexOf('?'));
+    sParts := s.Split(['/']);
+    i := StringArrayIndexOfSensitive(CODES_TFhirResourceType, sParts[0]);
+    if i = -1 then
+      raise Exception.Create('Unknown resource type '+sParts[0]+' in deletion URL');
+    aType := TFhirResourceType(i);
+  end;
+
+  if (entry.transaction <> nil) and (entry.transaction.method = HttpVerbDELETE) and not FRepository.ResConfig[aType].cmdDelete then
+    Raise Exception.create('Deleting Resource '+CODES_TFHIRResourceType[entry.resource.ResourceType]+' is not supported in Transactions');
   {$ENDIF}
 
   if not FRepository.ResConfig[aType].cmdUpdate and not FRepository.ResConfig[aType].cmdCreate then
     Raise Exception.create('Resource '+CODES_TFHIRResourceType[entry.resource.ResourceType]+' is not supported in Transactions');
 
-  if entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id.Contains('[x]') then
-//    raise Exception.Create('not handled - error? (a)');
-    entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id := entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id.replace('[x]',CODES_TFHIRResourceType[entry.resource.ResourceType]);
+  if {$IFNDEF FHIR-DSTU}(entry.resource <> nil) and {$ENDIF} (entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id.Contains('[x]')) then
+    raise Exception.Create('not handled - error in transaction');
+    // this was a work around an for an error in the build tool - not needed any more
+//    entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id := entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id.replace('[x]',CODES_TFHIRResourceType[entry.resource.ResourceType]);
 
   id := TFHIRTransactionEntry.create;
   try
-    id.ResType := CODES_TFHIRResourceType[aType];
+    id.ResType := aType;
     {$IFDEF FHIR-DSTU}
-    id.Name := entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id;
+    id.Name := entry.id;
 
     if id.name = '' then
       raise Exception.create(GetFhirMessage('MSG_TRANSACTION_MISSING_ID', lang));
@@ -2973,106 +3107,6 @@ begin
     end;
 
     If (not entry.deleted) and (id.id <> '') then
-    {$ELSE}
-    if (entry.resource <> nil) and (entry.resource.id <> '') and not IsId(entry.resource.id) then
-      raise Exception.create('resource id is illegal ("'+entry.resource.id+'")');
-
-    if entry.base <> '' then
-      base := entry.base;
-    if base = '' then
-      base := request.baseUrl;
-    if base = '' then
-      raise Exception.Create('Unable to process transaction - no base found or could be implied');
-
-    baseok := (AppendForwardSlash(base) = AppendForwardSlash(request.baseUrl)) or (FRepository.Bases.IndexOf(AppendForwardSlash(base)) > -1);
-
-    if entry.resource = nil then
-      raise Exception.Create('Not Done Yet');
-
-//    if entry.deleted <> nil then
-//    begin
-//      id.Name := fullResourceUri(base, aType, entry.deleted.resourceId);
-//      if not baseOk then
-//        raise Exception.Create('Request to delete the resource '+id.Name+' but the server does not know this resource')
-//        // id.ignore := true // well, we don't know what it is. we'll just ignore it
-//      else if FindResource(aType, entry.deleted.resourceId, false, k, oid, request, nil, request.compartments) then
-//      begin
-//        id.deleted := true;
-//        id.key := k;
-//        id.id := entry.deleted.resourceId;
-//      end
-//      else if FindResource(aType, entry.deleted.resourceId, true, k, oid, request, nil, request.compartments) then
-//        raise Exception.Create('Request to delete the resource '+id.Name+' but the resource is already deleted')
-//      else
-//        raise Exception.Create('Request to delete the resource '+id.Name+' but the resource does not exist');
-//    end
-//    else
-
-//    begin
-      id.Name := fullResourceUri(base, entry.resource.ResourceType, entry.resource.id);
-      if (baseOk and (entry.resource.id <> '')) or (isGuid(entry.resource.id)) then
-      // we accept the id, or blow up
-      begin
-        id.id := entry.resource.id;
-        if ids.ExistsByTypeAndId(id) then
-          if ids.dropDuplicates then
-            id.ignore := true
-          else
-            raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.restype+'/'+id.id]));
-        id.originalId := '';
-      end
-  //    else if entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id.StartsWith(AppendForwardSlash(request.baseUrl)+CODES_TFHIRResourceType[entry.resource.ResourceType]+'/_search?', true) or
-  //      entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id.StartsWith('http://localhost/'+CODES_TFHIRResourceType[entry.resource.ResourceType]+'/_search?', true)  then
-  //    begin
-  //      id.id := ResolveSearchId(entry.resource.ResourceType, request.compartmentId, request.compartments, request.baseUrl, copy(entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id, pos('?', entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id)+1, $FFF));
-  //    end
-      else // if base.StartsWith('urn:uuid:', true) or base.StartsWith('urn:oid:', true) then
-      begin
-        // We will ignore the proferred id, and make our own
-        // don't set this - get a new id below!  id.id :=
-        id.ignore := false;
-      end;
-//    end;
-//    else if entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id.StartsWith('urn:uuid:', true) and IsGuid(copy(entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id, 10, $FFFF)) then
-//    begin
-//      // todo: do we care if GUIDs aren't allowed?
-//      id.id := copy(entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id, 10, $FFFF).ToLower;
-//      id.originalId := '';
-//    end
-//    else
-//    begin
-//      match := false;
-//      for i := 0 to FRepository.Bases.count - 1 do
-//       if entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id.StartsWith(FRepository.Bases[i], true) and IsTypeAndId(copy(entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id, length(FRepository.Bases[i])+2, $FFFF), sId) then
-//       begin
-//         id.id := sId;
-//         id.originalId := '';
-//         match := true;
-//       end;
-//     if not match then
-//     begin
-//       id.originalId := entry.{$IFNDEF FHIR-DSTU}resource.{$ENDIF}id;
-//       id.id := '';
-//     end;
-//    end;
-
-//    If ({$IFDEF FHIR-DSTU} not entry.deleted {$ELSE}entry.deleted = nil{$ENDIF}) and (id.id <> '') then
-//    begin
-//      if ids.ExistsByTypeAndId(id) and not FTestServer then
-//        raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.Name]));
-//
-//      if ids.ExistsByTypeAndId(id) then
-//      begin
-//        i := 0;
-//        sId := id.id;
-//        repeat
-//          inc(i);
-//          id.id := sId + inttostr(i);
-//        until not ids.ExistsByTypeAndId(id);
-//      end;
-
-    If (id.id <> '') and not id.ignore then
-    {$ENDIF}
     begin
       if ids.ExistsByTypeAndId(id) and not FTestServer then
         raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.Name]));
@@ -3095,9 +3129,198 @@ begin
       id.key := k;
     end;
 
-    {$IFNDEF FHIR-DSTU}
-    if (entry.resource <> nil) and (entry.resource.meta <> nil) then
-      id.version := entry.resource.meta.versionId;
+    {$ELSE}
+
+    // first, sort out the base
+    if entry.base <> '' then
+      base := entry.base;
+    if base = '' then
+      base := request.baseUrl;
+    if base = '' then
+      raise Exception.Create('Unable to process transaction - no base found or could be implied');
+    baseok := (AppendForwardSlash(base) = AppendForwardSlash(request.baseUrl)) or (FRepository.Bases.IndexOf(AppendForwardSlash(base)) > -1);
+
+    if (entry.resource <> nil) then
+      id.Name := fullResourceUri(base, entry.resource.ResourceType, entry.resource.id)
+    else if entry.transaction <> nil then
+      id.Name := fullResourceUri(base, entry.transaction.url)
+    else
+      id.Name := '??';
+
+    // figure out what kind of operation is involved here
+    if entry.transaction <> nil then
+    begin
+      // does base matter?
+      case entry.transaction.method of
+        HttpVerbGET :
+          begin
+            id.state := tesRead; // at this level, this is a null operation;
+          end;
+        HttpVerbPOST :
+          begin
+            id.state := tesCreate;
+            if entry.transaction.ifNoneExist <> '' then
+            begin
+              s := entry.transaction.IfNoneExist;
+              if (s.Contains('?')) then
+                s := s.Substring(s.IndexOf('?')+1);
+              list := TStringList.Create;
+              try
+                ResolveSearchId(aType, request.compartmentId, request.compartments, request.baseUrl, s, list);
+                if list.Count = 1 then
+                begin
+                  id.state := tesIgnore;
+                end
+                else if list.Count > 1 then
+                  raise Exception.Create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang));
+              finally
+                list.Free;
+              end;
+            end;
+            if id.state = tesCreate then
+            begin
+              if not GetNewResourceId(entry.resource.resourceType,  sId, k) then
+                raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang));
+              id.id := sId;
+              id.key := k;
+            end;
+          end;
+        HttpVerbPUT :
+          begin
+            id.state := tesUpdate;
+            if entry.transaction.url.Contains('?') then
+            begin
+              s := entry.transaction.url.substring(entry.transaction.url.IndexOf('?')+1);
+              list := TStringList.Create;
+              try
+                ResolveSearchId(aType, request.compartmentId, request.compartments, request.baseUrl, s, list);
+                id.count := list.count;
+                if list.Count = 1 then // so we update this one
+                begin
+                  id.id := list[0];
+                  id.key := integer(list.Objects[0]);
+                end
+                else if list.Count = 0 then
+                begin
+                  id.state := tesCreate;
+                  if not GetNewResourceId(entry.resource.resourceType,  sId, k) then
+                    raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang));
+                  id.id := sId;
+                  id.key := k;
+                end
+                else if list.Count > 1 then
+                  raise Exception.Create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang));
+              finally
+                list.Free;
+              end;
+            end
+            else
+              id.id := entry.resource.id;
+              if ids.ExistsByTypeAndId(id) then
+                  raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [CODES_TFHIRResourceType[id.restype]+'/'+id.id]));
+            // version check
+            if (id.state = tesUpdate) and FindResource(aType, id.id, true, id.key, oid, nil, nil, request.compartments) then
+            begin
+              if entry.transaction.ifMatch <> '' then
+              begin
+                FConnection.SQL := 'Select VersionId from Versions where ResourceKey = '+IntToStr(id.Key)+' order by ResourceVersionKey DESC';
+                FConnection.prepare;
+                FConnection.execute;
+                FConnection.fetchNext;
+                cver := FConnection.ColStringByName['VersionId'];
+                FConnection.Terminate;
+                if 'W/'+cver <> entry.transaction.ifMatch then
+                  raise Exception.Create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['W/'+cver, entry.transaction.ifMatch]));
+              end;
+            end
+            else if entry.transaction.ifMatch <> '' then
+               raise Exception.Create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['(n/a)', entry.transaction.ifMatch]));
+          end;
+        HttpVerbDELETE :
+          begin
+            id.state := tesDelete;
+            if entry.transaction.url.Contains('?') then
+            begin
+              s := entry.transaction.url.substring(entry.transaction.url.IndexOf('?')+1);
+              list := TStringList.Create;
+              try
+                ResolveSearchId(aType, request.compartmentId, request.compartments, request.baseUrl, s, list);
+                id.count := list.count;
+                if list.Count = 1 then // so we delete this one
+                begin
+                  id.id := list[0];
+                  id.key := integer(list.Objects[0]);
+                end
+                else if list.Count = 0 then
+                begin
+                  id.state := tesIgnore;
+                end
+                else if list.Count > 1 then
+                  raise Exception.Create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang));
+              finally
+                list.Free;
+              end;
+            end
+            else
+              id.id := sParts[1];
+            // version check
+            if (id.state = tesDelete) and ids.ExistsByTypeAndId(id) then
+                  raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [CODES_TFHIRResourceType[id.restype]+'/'+id.id]));
+            if (id.state = tesDelete) and FindResource(aType, id.id, true, id.key, oid, nil, nil, request.compartments) then
+            begin
+              if entry.transaction.ifMatch <> '' then
+              begin
+                FConnection.SQL := 'Select VersionId from Versions where ResourceKey = '+IntToStr(id.Key)+' order by ResourceVersionKey DESC';
+                FConnection.prepare;
+                FConnection.execute;
+                FConnection.fetchNext;
+                cver := FConnection.ColStringByName['VersionId'];
+                FConnection.Terminate;
+                if 'W/'+cver <> entry.transaction.ifMatch then
+                 raise Exception.Create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['W/'+cver, entry.transaction.ifMatch]));
+              end;
+            end
+            else if entry.transaction.ifMatch <> '' then
+              raise Exception.Create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['(n/a)', entry.transaction.ifMatch]))
+            else if (id.state = tesDelete) then
+              id.state := tesIgnore; // nothing to delete
+            // do we need to get the key?
+          end
+        else
+          raise Exception.Create('illegal method type on entry?');
+      end;
+    end
+    else
+    begin
+      id.state := tesCreate; // or it might be update - we'll figure out whether it's a create or an update based on the resource itself
+      if (entry.resource = nil) then
+        raise Exception.create('resource cannot be missing');
+      if (entry.resource.id <> '') and not IsId(entry.resource.id) then
+        raise Exception.create('resource id is illegal ("'+entry.resource.id+'")');
+      if (baseOk and (entry.resource.id <> '')) or (isGuid(entry.resource.id)) then
+      begin
+        id.id := entry.resource.id;
+        id.state := tesUpdate;
+        if ids.ExistsByTypeAndId(id) then
+          if ids.dropDuplicates then
+            id.state := tesIgnore
+          else
+            raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [CODES_TFHIRResourceType[id.restype]+'/'+id.id]));
+      end;
+      case id.state of
+        tesIgnore: ; // yup, ignore it
+        tesCreate:
+          begin
+            if not GetNewResourceId(entry.resource.resourceType,  sId, k) then
+              raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang));
+            id.id := sId;
+            id.key := k;
+            entry.resource.id := sId;
+          end;
+        tesUpdate: ; // nothing
+      end;
+    end;
+
     {$ENDIF}
     result := id;
     ids.add(id.link);
@@ -3106,6 +3329,7 @@ begin
   end;
 end;
 
+{$IFDEF FHIR-DSTU}
 procedure TFhirOperationManager.confirmId(te : TFHIRTransactionEntry; base : String; entry : TFHIRAtomEntry; ids : TFHIRTransactionEntryList);
 var
   id : TFHIRTransactionEntry;
@@ -3113,29 +3337,22 @@ var
   k : integer;
 begin
 
- {$IFNDEF FHIR-DSTU}
-  if entry.base <> '' then
-    base := entry.base;
-  {$ENDIF}
   if entry.resource = nil then
     raise Exception.Create('not done yet')
   else
   begin
-   id := ids.getByName({$IFDEF FHIR-DSTU}entry.id{$ELSE} fullResourceUri(base, entry.resource.ResourceType, entry.resource.id) {$ENDIF}) as TFHIRTransactionEntry;
-    if ({$IFDEF FHIR-DSTU} not entry.deleted {$ELSE} true {$ENDIF}) // doesn't matter if id is unknown
-      and (id.id = '') then
+   id := ids.getByName(entry.id) as TFHIRTransactionEntry;
+    if (not entry.deleted) and (id.id = '') then
     begin
       id.new := true;
       if not GetNewResourceId(entry.resource.resourceType,  sId, k) then
         raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang));
       id.id := sId;
       id.key := k;
-      {$IFNDEF FHIR-DSTU}
-      entry.resource.id := sId;
-      {$ENDIF}
     end;
   end;
 end;
+  {$ENDIF}
 
 
 procedure FixXhtmlUrls(lang, base : String; ids : TFHIRTransactionEntryList; node : TFhirXHtmlNode);
@@ -3153,7 +3370,7 @@ begin
         j := ids.IndexByHtml(s);
 
       if (j > -1) then
-        node.Attributes.SetValue('href', base+ids[j].resType+'/'+ids[j].id)
+        node.Attributes.SetValue('href', base+CODES_TFHIRResourceType[ids[j].resType]+'/'+ids[j].id)
       else if s.StartsWith('cid:', true) then
         Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
     end;
@@ -3162,7 +3379,7 @@ begin
       s := node.Attributes.Get('src');
       j := ids.IndexByName(s);
       if (j > -1) then
-        node.Attributes.SetValue('src', base+ids[j].resType+'/'+ids[j].id)
+        node.Attributes.SetValue('src', base+CODES_TFHIRResourceType[ids[j].resType]+'/'+ids[j].id)
       else if s.StartsWith('cid:', true) then
         Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
     end;
@@ -3183,6 +3400,8 @@ var
   attachment : TFhirAttachment;
   extension : TFhirExtension;
 begin
+  if entry.resource = nil then
+    exit;
   refs := TFhirReferenceList.create;
   try
     listReferences(entry.resource, refs);
@@ -3210,7 +3429,7 @@ begin
           if ids[j].version <> vHist then
            Raise Exception.create(StringFormat(GetFhirMessage('Version ID Mismatch for '+url+': reference to version '+vHist+', reference is '+ids[j].version, lang), [attachment.url]));
            // Raise Exception.create(StringFormat(GetFhirMessage('MSG_VERSION_MISMATCH', lang), [attachment.url]));
-        ref.reference :=  ids[j].resType+'/'+ids[j].id; // todo: make local?
+        ref.reference :=  CODES_TFHIRResourceType[ids[j].resType]+'/'+ids[j].id; // todo: make local?
       end;
     end;
   finally
@@ -3224,7 +3443,7 @@ begin
       attachment := attachments[i];
       j := ids.IndexByName(attachment.url);
       if (j > -1) then
-        attachment.url := lowercase(ids[j].resType)+'/'+ids[j].id
+        attachment.url := CODES_TFHIRResourceType[ids[j].resType]+'/'+ids[j].id
       else if attachment.url.StartsWith('cid:', true) then
         Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.url]));
     end;
@@ -3238,7 +3457,7 @@ begin
       extension := TFhirDomainResource(entry.resource).extensionList[i];
       j := ids.IndexByName(extension.url);
       if (j > -1) then
-        extension.url := base+ids[j].resType+'/'+ids[j].id
+        extension.url := base+CODES_TFHIRResourceType[ids[j].resType]+'/'+ids[j].id
       else if extension.url.StartsWith('cid:', true) then
         Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [extension.url]));
     end;
@@ -3259,7 +3478,7 @@ begin
     begin
       j := ids.IndexByName(attachment.url);
       if (j > -1) then
-        attachment.url := base+ids[j].resType+'/'+ids[j].id
+        attachment.url := base+CODES_TFHIRResourceType[ids[j].resType]+'/'+ids[j].id
       else if Attachment.url.StartsWith('cid:', true) then
         Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.url]));
     end;
@@ -3269,6 +3488,7 @@ begin
     FixXhtmlUrls(lang, base, ids, TFhirDomainResource(entry.resource).text.div_);
 end;
 
+{$IFDEF FHIR-DSTU}
 function TFhirOperationManager.commitResource(context: TFHIRValidatorContext; request: TFHIRRequest; response : TFHIRResponse; upload : boolean; entry: TFHIRAtomEntry; id: TFHIRTransactionEntry; session : TFHIRSession; resp : TFHIRAtomFeed) : Boolean;
 var
   ne : TFHIRAtomEntry;
@@ -3277,7 +3497,7 @@ begin
   request.originalId := id.originalId;
   request.SubId := '';
   if id.deleted then
-    request.ResourceType := {$IFDEF FHIR-DSTU} entry.resource.ResourceType  {$ELSE} frtNull {ResourceTypeByName(entry.deleted.type_)} {$ENDIF}
+    request.ResourceType :=  entry.resource.ResourceType
   else
     request.ResourceType := entry.resource.ResourceType;
   request.resource := entry.resource.link;
@@ -3302,7 +3522,6 @@ begin
   begin
     ne := TFHIRAtomEntry.create;
     try
-      {$IFDEF FHIR-DSTU}
       // server assigned id
       ne.id := request.baseUrl+CODES_TFHIRResourceType[request.resourceType]+'/'+request.id;
       // specific version reference
@@ -3317,27 +3536,81 @@ begin
       ne.title := 'Resource "'+request.id+'"';
       ne.authorName := request.Session.Name;
       // no content or summary
-      {$ELSE}
-      if id.deleted then
-      begin
-        raise Exception.Create('not done yet');
-{
-        ne.deleted := TFhirBundleEntryDeleted.create;
-        ne.deleted.type_ := entry.deleted.type_;
-        ne.deleted.resourceId := entry.deleted.resourceId;
-        ne.base := entry.base;
-        ne.deleted.versionId := response.versionId;
-        ne.deleted.instant := TDateAndTime.CreateUTC(response.lastModifiedDate);}
-      end
-      else
-        ne.resource := entry.resource.Link;
-      {$ENDIF}
       resp.entryList.add(ne.Link);
     finally
       ne.free;
     end;
   end;
 end;
+
+{$ELSE}
+function TFhirOperationManager.commitResource(context: TFHIRValidatorContext; request: TFHIRRequest; response : TFHIRResponse; upload : boolean; entry: TFHIRAtomEntry; i : integer; id: TFHIRTransactionEntry; session : TFHIRSession; resp : TFHIRAtomFeed) : Boolean;
+var
+  ne : TFhirBundleEntry;
+begin
+  if (entry.transaction <> nil) then
+    writeln(inttostr(i)+': '+entry.transaction.methodElement.value+' '+id.summary)
+  else
+    writeln(inttostr(i)+': '+id.summary);
+
+  request.Id := id.id;
+  if entry.resource <> nil then
+    entry.resource.id := id.id;;
+
+  request.originalId := id.originalId;
+  request.SubId := '';
+  request.ResourceType := ID.resType;
+  request.resource := entry.resource.link;
+
+  //todo: check session
+
+  case id.state of
+    tesIgnore: ;  // yup, ignore it
+    tesRead: executeReadInTransaction(entry.transaction, request, response);
+    tesCreate: ExecuteCreate(context, upload, request, response, idIsNew, id.key);
+    tesUpdate:
+      begin
+//        if (entry.transaction <> nil) and (entry.transaction.url.contains('?')) then
+//        begin
+//          if Id.count <> ResolveSearchIdCount(id.resType, request.compartmentId, request.compartments, request.baseUrl, entry.transaction.url.substring(entry.transaction.url.IndexOf('?')+1)) then
+//            raise Exception.Create('error processing batch - id clash: one of the create statements altered the processing of a conditional update: '+entry.transaction.url);
+//        end;
+        ExecuteUpdate(context, upload, request, response);
+      end;
+    tesDelete:
+      begin
+//        if (entry.transaction <> nil) and (entry.transaction.url.contains('?')) then
+//        begin
+//          if Id.count <> ResolveSearchIdCount(id.resType, request.compartmentId, request.compartments, request.baseUrl, entry.transaction.url.substring(entry.transaction.url.IndexOf('?')+1)) then
+//            raise Exception.Create('error processing batch - id clash: one of the create or update statements altered the processing of a conditional delete: '+entry.transaction.url);
+//        end;
+        ExecuteDelete(request, Response);
+      end;
+  end;
+
+  if response.HTTPCode < 300 then
+    result := true
+  else if response.Resource is TFhirOperationOutcome then
+    result := false
+  else
+    result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message);
+  ne := id.entry;
+  ne.resource := response.resource.Link;
+  ne.transactionResponse := TFhirBundleEntryTransactionResponse.Create;
+  ne.transactionResponse.status := inttostr(response.HTTPCode);
+  ne.transactionResponse.location := response.Location;
+  ne.transactionResponse.etag := 'W/'+response.versionId;
+  ne.transactionResponse.lastModified := TDateAndTime.CreateUTC(response.lastModifiedDate);
+end;
+
+procedure ignoreEntry(req, resp : TFHIRAtomEntry);
+begin
+  resp.transactionResponse := TFhirBundleEntryTransactionResponse.Create;
+  resp.transactionResponse.status := '200';
+  if (req.transaction <> nil) and (req.transaction.method = HttpVerbDELETE) then
+    resp.transactionResponse.status := '404';
+end;
+ {$ENDIF}
 
 
 procedure TFhirOperationManager.ExecuteTransaction(upload : boolean; request: TFHIRRequest; response: TFHIRResponse);
@@ -3351,12 +3624,13 @@ var
   context: TFHIRValidatorContext;
   bundle : TFHIRBundle;
   base : String;
+  ne : TFHIRAtomEntry;
 begin
   try
     ok := true;
     if not check(response, FRepository.SupportTransaction, 405, lang, 'Transaction Operations not allowed') then
       ok := false;
-    if ok and not check(response, request.feed <> nil, 400, lang, 'A bundle is required for a Transaction operation') then
+    if ok and not check(response, request.Resource is TFhirBundle, 400, lang, 'A bundle is required for a Transaction operation') then
       ok := false;
 
     if ok then
@@ -3392,9 +3666,11 @@ begin
         end;
 
         // second pass: confirm ids
+        {$IFDEF FHIR-DSTU}
         for i := 0 to request.feed.entryList.count - 1 do
           if not (request.feed.entryList[i].Tag as TFHIRTransactionEntry).ignore and not (request.feed.entryList[i].Tag as TFHIRTransactionEntry).deleted then
             confirmId(request.feed.entryList[i].Tag as TFHIRTransactionEntry, base, request.feed.entryList[i], ids);
+        {$ENDIF}
 
         // third pass: reassign references
         for i := 0 to request.feed.entryList.count - 1 do
@@ -3404,16 +3680,40 @@ begin
         // four pass: commit resources
         bundle := request.feed.Link;
         try
+          {$IFDEF FHIR-DSTU}
           for i := 0 to bundle.entryList.count - 1 do
             if not (bundle.entryList[i].Tag as TFHIRTransactionEntry).ignore then
-            begin
-              id := bundle.entryList[i].Tag as TFHIRTransactionEntry;;
-              writeln(inttostr(i)+': '+id.summary);
-              if not commitResource(context, request, response, upload, bundle.entryList[i], id, request.Session, resp) then
-              begin
+              if not commitResource(context, request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
                 Abort;
-              end;
-            end;
+          {$ELSE}
+          for i := 0 to bundle.entryList.count - 1 do
+          begin
+             ne := resp.entryList.Append;
+//             ne.transaction := bundle.entryList[i].transaction.Link;
+            (bundle.entryList[i].Tag as TFHIRTransactionEntry).entry := ne;
+          end;
+
+          for i := 0 to bundle.entryList.count - 1 do
+            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
+              ignoreEntry(bundle.entryList[i], resp.entryList[i]);
+
+          for i := 0 to bundle.entryList.count - 1 do
+            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
+              if not commitResource(context, request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+                Abort;
+          for i := 0 to bundle.entryList.count - 1 do
+            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesUpdate then
+              if not commitResource(context, request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+                Abort;
+          for i := 0 to bundle.entryList.count - 1 do
+            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesDelete then
+              if not commitResource(context, request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+                Abort;
+          for i := 0 to bundle.entryList.count - 1 do
+            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesRead then
+              if not commitResource(context, request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+                Abort;
+          {$ENDIF}
         finally
           bundle.free;
         end;
@@ -5536,12 +5836,22 @@ end;
 
 { TFHIRTransactionEntry }
 
+function TFHIRTransactionEntry.deleted: boolean;
+begin
+  result := state = tesDelete;
+end;
+
+function TFHIRTransactionEntry.ignore: boolean;
+begin
+  result := state = tesIgnore;
+end;
+
 function TFHIRTransactionEntry.summary: string;
 begin
   {$IFDEF FHIR-DSTU}
   result := name;
   {$ELSE}
-  result := restype+'/'+id;
+  result := CODES_TFHIRResourceType[restype]+'/'+id;
   {$ENDIF}
 end;
 

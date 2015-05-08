@@ -825,6 +825,9 @@ end;
 
 procedure TFHIRRequest.LoadParams(s: String);
 begin
+  if (FParams <> nil) then
+    FParams.Free;
+  FParams := nil;
   FParams := TParseMap.create(s);
 end;
 

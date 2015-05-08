@@ -83,6 +83,7 @@ Type
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
     Property DoAudit : boolean read FDoAudit write FDoAudit;
     Property  Bases : TStringList read FBases;
+    procedure Upgrade(scim : TSCIMServer);
     procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
     Property TextIndexing : boolean read FTextIndexing write FTextIndexing;
@@ -721,6 +722,17 @@ begin
   finally
     // nothing
   end;
+end;
+
+procedure TFHIRDatabaseInstaller.Upgrade(scim: TSCIMServer);
+var
+  ver : Integer;
+begin
+  ver := StrToInt(FConn.Lookup('Config', 'ConfigKey', '5', 'Value', '0'));
+  if ver = 0 then
+    raise Exception.Create('Unable to upgrade this database - it was created proir to the upgrade system existing');
+//  if ver >= 1 then
+//
 end;
 
 end.

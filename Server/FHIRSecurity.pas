@@ -70,6 +70,8 @@ begin
     for i := 0 to user.entitlementCount - 1 do
       if user.entitlement[i].StartsWith(SCIM_SMART_PREFIX) then
         list.Add(user.entitlement[i].Substring(SCIM_SMART_PREFIX.Length))
+      else if user.entitlement[i].StartsWith(SCIM_OPENID_PREFIX) then
+        list.Add(user.entitlement[i].Substring(SCIM_OPENID_PREFIX.Length))
       else
         list.add(user.entitlement[i]);
     processScopes(list, nil, secure);
@@ -181,7 +183,7 @@ begin
     if (base <> nil) and not base.canRead(a) then
       FReadAllowed[a] := false
     else if not (assigned(base) or secure or (a in nonSecureTypes)) then
-      FReadAllowed[a] := false
+      FReadAllowed[a] := true
     else if scopes.IndexOf('user/*.*') > -1 then
       FReadAllowed[a] := true
     else if scopes.IndexOf('patient/*.*') > -1 then
@@ -202,7 +204,7 @@ begin
     if (base <> nil) and not base.canWrite(a) then
       FWriteAllowed[a] := false
     else if not (assigned(base) or secure or (a in nonSecureTypes)) then
-      FWriteAllowed[a] := false
+      FWriteAllowed[a] := true
     else if scopes.IndexOf('user/*.*') > -1 then
       FWriteAllowed[a] := true
     else if scopes.IndexOf('patient/*.*') > -1 then

@@ -72,6 +72,7 @@ function ParseXhtml(lang : String; content : String; policy : TFHIRXhtmlParserPo
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function IsId(s : String) : boolean;
 function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String; overload;
+function fullResourceUri(base: String; url : String) : String; overload;
 function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
 function isHistoryURL(url : String) : boolean;
 procedure splitHistoryUrl(var url : String; var history : String);
@@ -1764,6 +1765,18 @@ var
   url : String;
 begin
   url := ref.reference;
+  if url = '' then
+    result := ''
+  else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
+    result := url
+  else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
+    raise Exception.Create('The resource base of "'+base+'" is not understood')
+  else
+    result := AppendForwardSlash(base)+url;
+end;
+
+function fullResourceUri(base: String; url : String) : String; overload;
+begin
   if url = '' then
     result := ''
   else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
