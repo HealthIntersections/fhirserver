@@ -37,7 +37,7 @@ uses
   KDBManager, KDBDialects,
   FHIRAtomFeed, FHIRResources, FHIRBase, FHIRTypes, FHIRComponents, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, FHIRUtilities,
-  {$IFNDEF FHIR-DSTU} FHIRSubscriptionManager, {$ENDIF} FHIRSecurity,
+  FHIRSubscriptionManager, FHIRSecurity,
   TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, ProfileManager;
 
 const
@@ -118,9 +118,7 @@ Type
     FFormalURLSecureOpen: String;
     FFormalURLSecureClosed: String;
     FOwnerName: String;
-    {$IFNDEF FHIR-DSTU}
     FSubscriptionManager : TSubscriptionManager;
-    {$ENDIF}
     FQuestionnaireCache : TQuestionnaireCache;
     FValidate: boolean;
     FAudits : TFhirResourceList;
@@ -131,10 +129,8 @@ Type
     procedure CloseFhirSession(key: integer);
 
     procedure DoExecuteOperation(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean);
-    {$IFNDEF FHIR-DSTU}
     function DoExecuteSearch (typekey : integer; compartmentId, compartments : String; params : TParseMap; conn : TKDBConnection): String;
     function getTypeForKey(key : integer) : TFhirResourceType;
-    {$ENDIF}
     procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
     procedure RegisterAuditEvent(session: TFHIRSession; ip : String);
   public
@@ -240,7 +236,6 @@ begin
 
   FQuestionnaireCache := TQuestionnaireCache.create;
 
-  {$IFNDEF FHIR-DSTU}
   FSubscriptionManager := TSubscriptionManager.Create;
   FSubscriptionManager.dataBase := FDB;
   FSubscriptionManager.SMTPHost := ini.ReadString('email', 'Host', '');
@@ -254,7 +249,7 @@ begin
   FSubscriptionManager.SMSFrom := ini.readString('sms', 'from' ,'');
   FSubscriptionManager.OnExecuteOperation := DoExecuteOperation;
   FSubscriptionManager.OnExecuteSearch := DoExecuteSearch;
-  {$ENDIF}
+
   conn := FDB.GetConnection('setup');
   try
     FLastSessionKey := conn.CountSQL('Select max(SessionKey) from Sessions');
@@ -341,9 +336,7 @@ begin
       // the order here is important: specification resources must be loaded prior to stored resources
       FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)+'validation.zip');
       LoadExistingResources(Conn);
-      {$IFNDEF FHIR-DSTU}
       FSubscriptionManager.LoadQueue(Conn);
-      {$ENDIF}
     end;
     conn.Release;
   except
@@ -474,9 +467,7 @@ begin
   FTagsByKey.free;
   FSessions.free;
   FTags.Free;
-  {$IFNDEF FHIR-DSTU}
   FSubscriptionManager.Free;
-  {$ENDIF}
   FQuestionnaireCache.Free;
   FLock.Free;
   FSCIMServer.Free;
@@ -513,7 +504,6 @@ begin
   end;
 end;
 
-{$IFNDEF FHIR-DSTU}
 function TFHIRDataStore.DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn : TKDBConnection): String;
 var
   sp : TSearchProcessor;
@@ -544,7 +534,6 @@ begin
     spaces.Free;
   end;
 end;
-{$ENDIF}
 
 procedure TFHIRDataStore.EndSession(sCookie, ip: String);
 var
@@ -727,7 +716,6 @@ begin
   end;
 end;
 
-{$IFNDEF FHIR-DSTU}
 function TFHIRDataStore.getTypeForKey(key: integer): TFhirResourceType;
 var
   a : TFHIRResourceType;
@@ -740,7 +728,6 @@ begin
       exit;
     end;
 end;
-{$ENDIF}
 
 function TFHIRDataStore.KeyForTag(type_ : TFhirTagKind; system, code: String): Integer;
 var
@@ -974,27 +961,11 @@ begin
 end;
 
 procedure TFHIRDataStore.RegisterTag(tag : TFHIRAtomCategory; conn : TKDBConnection);
-var
-  i : integer;
-  t : TFhirTag;
+//var
+//  i : integer;
+//  t : TFhirTag;
 begin
-  {$IFDEF FHIR-DSTU}
-  t := TFhirTag.create;
-  try
-    t.kind := TagKindForScheme(Tag.scheme);
-    t.Uri := tag.term;
-    t.Display := tag.label_;
-    t.Name := t.combine;
-    RegisterTag(t, conn);
-    tag.TagKey := t.Key;
-    if tag.label_ = '' then
-      tag.label_ := t.Display;
-  finally
-    t.free;
-  end;
-  {$ELSE}
   raise Exception.Create('Should not call this');
-  {$ENDIF}
 end;
 
 
@@ -1108,12 +1079,10 @@ begin
       TerminologyServer.SeeTerminologyResource(Codes_TFHIRResourceType[resource.ResourceType]+'/'+id, key, resource)
     else if resource.ResourceType = frtStructureDefinition then
       FProfiles.seeProfile(Codes_TFHIRResourceType[resource.ResourceType]+'/'+id, key, resource as TFhirStructureDefinition);
-    {$IFNDEF FHIR-DSTU}
     FSubscriptionManager.SeeResource(key, vkey, id, resource, conn, reload, session);
     FQuestionnaireCache.clear(resource.ResourceType, id);
     if resource.ResourceType = frtValueSet then
       FQuestionnaireCache.clearVS(TFhirValueSet(resource).url);
-    {$ENDIF}
   finally
     FLock.Unlock;
   end;
@@ -1126,11 +1095,9 @@ begin
     if aType in [frtValueSet, frtConceptMap] then
       TerminologyServer.DropTerminologyResource(key, Codes_TFHIRResourceType[aType]+'/'+id, aType)
     else if aType = frtStructureDefinition then
-      FProfiles.DropProfile({$IFNDEF FHIR-DSTU}Codes_TFHIRResourceType[aType]+'/'+id, {$ENDIF}key, Codes_TFHIRResourceType[aType]+'/'+id, aType);
-    {$IFNDEF FHIR-DSTU}
+      FProfiles.DropProfile(Codes_TFHIRResourceType[aType]+'/'+id, key, Codes_TFHIRResourceType[aType]+'/'+id, aType);
     FSubscriptionManager.DropResource(key, vkey);
     FQuestionnaireCache.clear(aType, id);
-    {$ENDIF}
   finally
     FLock.Unlock;
   end;
@@ -1162,9 +1129,7 @@ end;
 
 procedure TFHIRDataStore.ProcessSubscriptions;
 begin
-  {$IFNDEF FHIR-DSTU}
   FSubscriptionManager.Process;
-  {$ENDIF}
 end;
 
 function TFHIRDataStore.ProfilesAsOptionList: String;
@@ -1175,7 +1140,7 @@ var
 begin
   builder := TAdvStringBuilder.Create;
   try
-    profiles := FProfiles.getLinks({$IFDEF FHIR-DSTU}false, {$ENDIF} false);
+    profiles := FProfiles.getLinks(false);
     try
       for i := 0 to profiles.Count - 1 do
       begin

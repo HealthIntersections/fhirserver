@@ -49,10 +49,7 @@ Uses
 
   FHIRTypes, fhirresources, fhirparser, fhircomponents, fhirconstants,
   fhirbase, fhirparserbase, fhirtags, fhirsupport, fhirAtomFeed, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity,
-  {$IFNDEF FHIR-DSTU}
-  QuestionnaireBuilder,
-  {$ENDIF}
-  FHIRClient, SCIMServer;
+  QuestionnaireBuilder, FHIRClient, SCIMServer;
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -117,10 +114,8 @@ Type
     function BuildCompartmentList(session : TFHIRSession) : String;
 
     function GetResource(session : TFhirSession; rtype : TFhirResourceType; lang, id, ver, op : String) : TFhirResource;
-  {$IFNDEF FHIR-DSTU}
     function FindResource(session : TFhirSession; rtype : TFhirResourceType; lang, params : String; var id : String) : TFhirResource;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
-  {$ENDIF}
     function transform1(resource : TFhirResource; lang, xslt : String; saveOnly : boolean) : string;
     function HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse; secure : boolean) : TDateTime;
     function HandleWebQuestionnaire(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
@@ -838,12 +833,10 @@ Begin
             oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP, request.CustomHeaders.Values['content-location'],
                request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, request.RawHeaders.Values['Provenance'], oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
             try
-              {$IFNDEF FHIR-DSTU}
               oRequest.IfMatch := processIfMatch(request.RawHeaders.Values['If-Match']);
               oRequest.IfNoneMatch := processIfMatch(request.RawHeaders.Values['If-None-Match']);
               oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
               oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
-              {$ENDIF}
               
               noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('nohttperr')) or StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('_nohttperr'));
               ReadTags(request.RawHeaders.Values['Category'], oRequest);
@@ -968,17 +961,12 @@ Begin
 end;
 
 function TFhirWebServer.HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
-  {$IFNDEF FHIR-DSTU}
 var
   profile : TFhirStructureDefinition;
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
   s, id, fid : String;
-  {$ENDIF}
 begin
-  {$IFDEF FHIR-DSTU}
-  raise Exception.Create('This operation is not supported in this version of FHIR (DSTU 1)');
-  {$ELSE}
    // get the right questionnaire
   if request.Parameters.GetVar('profile').StartsWith('Profile/') then
   begin
@@ -1033,7 +1021,6 @@ begin
   finally
     profile.free;
   end;
-  {$ENDIF}
 end;
 
 function TFhirWebServer.HandleWebEdit(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
@@ -1152,18 +1139,13 @@ begin
 end;
 
 function TFhirWebServer.HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
-  {$IFNDEF FHIR-DSTU}
 var
   id, ver, fullid : String;
   profile : TFHirStructureDefinition;
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
   s : String;
-  {$ENDIF}
 begin
-  {$IFDEF FHIR-DSTU}
-  raise Exception.Create('This operation is not supported in this version of FHIR (DSTU 1)');
-  {$ELSE}
    // get the right questionnaire
   StringSplit(request.Id.Substring(8), '/', id, ver);
   profile := GetResource(request.Session, frtStructureDefinition, request.Lang, id, ver, '') as TFHirStructureDefinition;
@@ -1209,7 +1191,6 @@ begin
   finally
     profile.free;
   end;
-  {$ENDIF}
 end;
 
 function TFhirWebServer.HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
@@ -1282,11 +1263,6 @@ begin
 end;
 
 function TFhirWebServer.HandleWebQuestionnaireInstance(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
-{$IFDEF FHIR-DSTU}
-begin
-  raise Exception.Create('No supported in DATU version');
-end;
-{$ELSE}
 var
   typ, id, ver : String;
   r : TFHIRResource;
@@ -1347,7 +1323,6 @@ begin
     r.free;
   end;
 end;
-{$ENDIF}
 
 function TFhirWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
 begin
@@ -1418,18 +1393,12 @@ begin
       report.details := message;
       if (code <> '') then
       begin
-        {$IFDEF FHIR-DSTU}
-        report.type_ := TFhirCoding.Create;
-        report.type_.system := 'http://hl7.org/fhir/issue-type';
-        report.type_.code := code;
-        {$ELSE}
         report.code := TFhirCodeableConcept.Create;
         with report.code.codingList.Append do
         begin
           system := 'http://hl7.org/fhir/issue-type';
           code := code;
         end;
-        {$ENDIF}
       end;
       response.ContentStream := TMemoryStream.Create;
       oComp := nil;
@@ -1471,11 +1440,7 @@ begin
 end;
 
 Const
-  {$IFDEF FHIR-DSTU}
-  META_CMD_NAME = '_tags';
-  {$ELSE}
-  META_CMD_NAME = '_meta';
-  {$ENDIF}
+  META_CMD_NAME = '$meta';
 
 Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
    var redirect : boolean; form : TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean) : TFHIRRequest;
@@ -1721,7 +1686,6 @@ Begin
           end
           else if sCommand = 'POST' then
             oRequest.CommandType := fcmdCreate
-          {$IFNDEF FHIR-DSTU}  // conditional update
           else if (scommand = 'PUT') then
           begin
             oRequest.CommandType := fcmdUpdate;
@@ -1732,7 +1696,6 @@ Begin
             oRequest.CommandType := fcmdDelete;
             oRequest.DefaultSearch := true;
           end
-          {$ENDIF}
           else
             raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [sResource]), HTTP_ERR_BAD_REQUEST);
         end
@@ -1951,20 +1914,13 @@ Begin
                 parser := MakeParser(lang, oRequest.PostFormat, oPostStream, xppReject);
                 try
                   oRequest.Resource := parser.resource.Link;
-                  {$IFDEF FHIR-DSTU}
-                  oRequest.Feed := parser.feed.Link;
-                  {$ENDIF}
                   if (oRequest.CommandType = fcmdTransaction) and (oRequest.feed = nil) then
                   begin
                     oRequest.feed := TFHIRAtomFeed.create(BundleTypeTransactionResponse);
                     oRequest.Feed.base := oRequest.baseUrl;
                     oRequest.feed.entryList.add(TFHIRAtomEntry.create);
                     oRequest.feed.entryList[0].resource := oRequest.Resource.link;
-                    {$IFDEF FHIR-DSTU}
-                    oRequest.feed.entryList[0].id := NewGuidURN;
-                    {$ELSE}
                     oRequest.feed.entryList[0].resource.id := FhirGUIDToString(CreateGUID);
-                    {$ENDIF}
                     oRequest.resource := nil;
                   end;
                 finally
@@ -1983,11 +1939,7 @@ Begin
         begin
           parser := MakeParser(lang, oRequest.PostFormat, oPostStream, xppDrop);
           try
-            {$IFDEF FHIR-DSTU}
-            oRequest.categories.AddAll(parser.Tags);
-            {$ELSE}
             oRequest.Resource := parser.resource.Link;
-            {$ENDIF}
           finally
             parser.free;
           end;
@@ -2062,11 +2014,6 @@ begin
         try
           p.source := TBytesStream.create(rdr.parts[i].AsBytes);
           p.Parse;
-          {$IFDEF FHIR-DSTU}
-          if  p.feed <> nil then
-            result.entryList.AddAll(p.feed.entryList)
-          else
-          {$ELSE}
           if  p.resource is TFhirBundle then
           begin
             bnd := TFhirBundle(p.resource);
@@ -2079,28 +2026,10 @@ begin
             end;
           end
           else if not (p.resource is TFhirParameters) and ok(p.resource) then
-          {$ENDIF}
           begin
             e := TFHIRAtomEntry.create;
             try
               e.resource := p.resource.Link;
-              {$IFDEF FHIR-DSTU}
-              if pos('(', rdr.parts[i].Name) > 0 Then
-              begin
-                e.id := 'http://hl7.org/fhir/'+CODES_TFHIRResourceType[p.resource.ResourceType]+'/'+GetStringCell(GetStringCell(rdr.parts[i].Name, 1, '('), 0, ')');
-                e.link_List.Rel['html'] := rdr.parts[i].Name.Substring(0, rdr.parts[i].Name.IndexOf('('))+'.html';
-              end
-              else if rdr.parts[i].Name.EndsWith('.profile.xml') then
-                e.id := 'http://hl7.org/fhir/'+CODES_TFHIRResourceType[p.resource.ResourceType]+'/'+copy(rdr.parts[i].Name, 1, length(rdr.parts[i].Name) - 12)
-              else if IsId(rdr.parts[i].Name.Substring(0, rdr.parts[i].Name.IndexOf('.'))) then
-                e.id :=  'http://hl7.org/fhir/[x]/'+rdr.parts[i].Name.Substring(0, rdr.parts[i].Name.IndexOf('.'))
-              else
-                e.id := NewGuidURN;
-              e.summary := TFhirXHtmlNode.create;
-              e.summary.Name := 'div';
-              e.summary.NodeType := fhntElement;
-              {$ELSE}
-              {$ENDIF}
               result.entryList.add(e.Link);
             finally
               e.free;
@@ -2148,13 +2077,9 @@ begin
     Begin
       if oResponse.Resource is TFhirBinary then
       begin
-        {$IFDEF FHIR-DSTU}
-        TFhirBinary(oResponse.Resource).Content.SaveToStream(stream);
-        {$ELSE}
         if Length(TFhirBinary(oResponse.Resource).content) > 0 then
           stream.Write(TFhirBinary(oResponse.Resource).content[0], Length(TFhirBinary(oResponse.Resource).content));
         stream.Position := 0;
-        {$ENDIF}
         response.ContentType := TFhirBinary(oResponse.Resource).ContentType;
         if StrToBoolDef(orequest.Parameters.GetVar('no-attachment'), false) then
           response.ContentDisposition := 'attachment;';
@@ -2191,68 +2116,9 @@ begin
         end;
       end;
     end
-    {$IFDEF FHIR-DSTU}
-    else if oResponse.Feed <> nil then
-    Begin
-      response.Pragma := 'no-cache';
-      if oResponse.Format = ffJson then
-        oComp := TFHIRJsonComposer.Create(oRequest.lang)
-      else if oResponse.Format = ffXhtml then
-      begin
-        oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
-        TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
-        TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
-        TFHIRXhtmlComposer(oComp).Tags := oResponse.categories.Link;
-        TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
-        TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
-//          response.Expires := 0;
-      response.Pragma := '';
-      end
-      else if oResponse.Format = ffXml then
-        oComp := TFHIRXmlComposer.Create(oRequest.lang)
-      else
-        oComp := TFHIRXmlComposer.Create(oRequest.lang);
-      try
-        response.ContentType := oComp.FeedMimeType;
-        oComp.Compose(stream, oResponse.feed, pretty);
-      finally
-        oComp.Free;
-      end;
-    end
-
-    {$ENDIF}
     else if oRequest.CommandType in [fcmdGetMeta, fcmdUpdateMeta, fcmdDeleteMeta] then
     begin
       response.Expires := Now; //don't want anyone caching anything
-      {$IFDEF FHIR-DSTU}
-      response.Pragma := 'no-cache';
-      if oResponse.Format = ffxhtml then
-      begin
-        oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
-        TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
-        TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
-        TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
-        TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
-        response.ContentType := oComp.MimeType;
-//        response.Expires := 0;
-        response.Pragma := '';
-      end
-      else if oResponse.format = ffJson then
-      begin
-        oComp := TFHIRJsonComposer.Create(oRequest.lang);
-        response.ContentType := oComp.MimeType;
-      end
-      else
-      begin
-        oComp := TFHIRXmlComposer.Create(oRequest.lang);
-        response.ContentType := oComp.MimeType;
-      end;
-      try
-        oComp.Compose(stream, oRequest.ResourceType, '', '', '', oResponse.Categories, pretty);
-      finally
-        oComp.Free;
-      end;
-      {$ELSE}
       assert(oResponse.Meta <> nil);
       response.Pragma := 'no-cache';
       if oResponse.Format = ffJson then
@@ -2280,7 +2146,6 @@ begin
       finally
         oComp.Free;
       end;
-    {$ENDIF}
     end
     else
     begin
@@ -2552,10 +2417,8 @@ begin
   '<li><a href="'+sBaseUrl+'/_history">'+StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)])+'</a> (History of all resources)</li>'+#13#10+
   '<li><a href="#upload">'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</a></li>'+#13#10);
 
-  {$IFNDEF FHIR-DSTU}
   b.Append(
   '<li>Create/Edit a new resource based on the profile: <form action="'+sBaseURL+'/_web/Create" method="GET"><select name="profile">'+pol+'</select> <input type="submit" value="GO"></form></li>'+#13#10);
-  {$ENDIF}
 
   if (session.canAdministerUsers) then
     b.Append('<li><a href="/scim/web">Manage Users</a></li>'+#13#10);
@@ -2705,7 +2568,6 @@ begin
   End;
 end;
 
-  {$IFNDEF FHIR-DSTU}
 function TFhirWebServer.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 var
   store : TFhirOperationManager;
@@ -2728,7 +2590,6 @@ begin
     store.Free;
   end;
 end;
-{$ENDIF}
 
 function TFhirWebServer.extractFileData(form : TIdSoapMimeMessage; const name: String; var sContentType : String): TStream;
 var
@@ -2811,8 +2672,6 @@ begin
   end;
 end;
 
-  {$IFNDEF FHIR-DSTU}
-
 function TFhirWebServer.FindResource(session : TFhirSession; rtype: TFhirResourceType; lang, params: String; var id : String): TFhirResource;
 var
   request : TFHIRRequest;
@@ -2830,7 +2689,7 @@ begin
     if (response.Feed <> nil) and (response.Feed.entryList.Count = 1) then
     begin
       result := response.feed.entryList[0].resource.link;
-      id := response.feed.entryList[0].{$IFNDEF FHIR-DSTU}Resource.{$ENDIF}id.Substring(response.feed.entryList[0].{$IFNDEF FHIR-DSTU}Resource.{$ENDIF}id.LastIndexOf('/'));
+      id := response.feed.entryList[0].Resource.id.Substring(response.feed.entryList[0].Resource.id.LastIndexOf('/'));
     end
     else
       raise Exception.Create('Unable to find resource '+CODES_TFhirResourceType[rtype]+'?'+params);
@@ -2839,7 +2698,6 @@ begin
     request.Free;
   end;
 end;
-{$ENDIF}
 
 procedure TFhirWebServer.GetWebUILink(resource: TFhirResource; base, statedType, id, ver: String; var link, text: String);
 var
@@ -2948,38 +2806,11 @@ begin
 end;
 
 Procedure TFhirWebServer.ReadTags(header : String; Request : TFHIRRequest);
-var
-  s, s1, l, r, n, v : string;
-  cat : TFHIRAtomCategory;
+//var
+//  s, s1, l, r, n, v : string;
+//  cat : TFHIRAtomCategory;
 begin
-{$IFDEF FHIR-DSTU}
-  StringSplit(trim(header), ',', s, s1);
-  while (s <> '') do
-  begin
-    StringSplit(trim(s), ';', l, r);
-    cat := TFHIRAtomCategory.create;
-    try
-      cat.term := l;
-      StringSplit(trim(r), ';', l, r);
-      while (l <> '') do
-      begin
-        StringSplit(trim(l), '=', n, v);
-        v := StringReplace(v, '"', '');
-        if n = 'scheme' then
-          cat.scheme := v
-        else if n = 'label' then
-          cat.label_ := v;
-        StringSplit(trim(r), ';', l, r);
-      end;
-      Request.categories.add(cat.link);
-    finally
-      cat.free;
-    end;
-    StringSplit(trim(s1), ',', s, s1);
-  end;
-{$ELSE}
  // raise Exception.Create('todo');
-{$ENDIF}
 end;
 
 
@@ -3182,8 +3013,6 @@ begin
 end;
 
 
-  {$IFNDEF FHIR-DSTU}
-
 //function TFhirWebServer.transform2(resource: TFhirResource; lang, xslt: String): string;
 //var
 //  xslt2: AltovaXMLLib_TLB.XSLT2;
@@ -3206,7 +3035,6 @@ end;
 //  xslt2 := nil;
 //  AltovaXml := nil;
 //end;
-{$ENDIF}
 
 Initialization
   IdSSLOpenSSLHeaders.Load;

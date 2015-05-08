@@ -297,11 +297,7 @@ uses
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
-    {$IFDEF FHIR-DSTU}
-    SetConsoleTitle('FHIR Server (DSTU)');
-    {$ELSE}
     SetConsoleTitle('FHIR Server (Dev)');
-    {$ENDIF}
     ExecuteFhirServer;
   except
     on E: Exception do

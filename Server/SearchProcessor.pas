@@ -624,20 +624,6 @@ begin
         raise exception.create('modifier "'+modifier+'" not handled on originalId');
       result :=  '(originalId = '''+sqlwrapString(value)+''')';
     end
-    {$IFDEF FHIR-DSTU}
-    else if (name = '_tag') or (name = '_profile') or (name = '_security') then
-    begin
-      bHandled := true;
-      if modifier = 'partial' then
-        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey in (Select TagKey from Tags where Type = '+inttostr(TypeForName(name))+' and TermUri like '''+SQLWrapString(value)+'%'')))'
-      else if modifier = 'text' then
-        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where Label like '''+SQLWrapString(value)+'%''))'
-      else if modifier = '' then
-        result :=  '(MostRecent in (Select ResourceVersionKey from VersionTags where TagKey = '''+intToStr(FRepository.KeyForTag(KindForName(name), value, ''))+'''))'
-      else
-        raise exception.create('modifier "'+modifier+'" not handled on tag');
-    end
-    {$ENDIF}
     else
     begin
       key := FIndexer.GetKeyByName(types, name);
@@ -715,7 +701,6 @@ begin
                       raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]));
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value '+pfx+sqlwrapString(lowercase(RemoveAccents(value)))+sfx+')';
                   end;
-                {$IFNDEF FHIR-DSTU}
                 SearchParamTypeUri:
                   begin
                     value := lowercase(value);
@@ -733,7 +718,6 @@ begin
                       raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [modifier]));
                     result := result + '(IndexKey = '+inttostr(Key)+' /*'+name+'*/ and Value '+pfx+sqlwrapString(lowercase(RemoveAccents(value)))+sfx+')';
                   end;
-                {$ENDIF}
                 SearchParamTypeToken:
                   begin
                   value := lowercase(value);

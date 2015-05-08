@@ -1517,7 +1517,7 @@ begin
   for i := 0 to list.Count - 1 do
   begin
     c := list[i];
-    if (c.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF} = system) and (c.code = code) then
+    if (c.codeSystem = system) and (c.code = code) then
     begin
       maps := c.mapList.Link;
       result := true;

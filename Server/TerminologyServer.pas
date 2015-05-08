@@ -495,13 +495,13 @@ begin
               begin
                 map := maps[j];
                 if (map.equivalence in [ConceptEquivalenceEqual, ConceptEquivalenceEquivalent, ConceptEquivalenceWider, ConceptEquivalenceInexact]) and
-                  (not isCs {if we'rea value set mapping, we'll just run with all the maps) } or (map.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF} = dest)) then
+                  (not isCs {if we'rea value set mapping, we'll just run with all the maps) } or (map.codeSystem = dest)) then
                 begin
                   ok := true;
                   c := cc.codingList.Append;
-                  c.system := map.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF};
+                  c.system := map.codeSystem;
                   c.code := map.code;
-                  c.display := getDisplayForCode(map.{$IFDEF FHIR-DSTU}system{$ELSE}codeSystem{$ENDIF}, map.code);
+                  c.display := getDisplayForCode(map.codeSystem, map.code);
                   if map.comments <> '' then
                     result.hint('terminology-server', 'mapping', '', false, 'Mapping from "'+coding.system+'"/"'+coding.code+'" to "'+c.system+'"/"'+c.code+'": '+map.comments)
                 end;
