@@ -191,6 +191,7 @@ Type
 implementation
 
 uses
+  SystemService,
   FHIROperation, SearchProcessor;
 
 { TFHIRRepository }
@@ -743,7 +744,7 @@ begin
     begin
       for i := 0 to FTags.count - 1 do
         s := s + FTags[i].Name+#13#10;
-      writeln(s);
+      writelnt(s);
       result := -1; // nothing will match
     end
     else

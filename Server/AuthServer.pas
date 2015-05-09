@@ -107,6 +107,9 @@ type
 
 implementation
 
+uses
+  SystemService;
+
 const
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'Other');
 
@@ -319,6 +322,7 @@ begin
   repeat
     s := FIni.ReadString(client_id, 'redirect'+inttostr(i), '');
     result := s = redirect_uri;
+    inc(i);
   until result or (s = '');
 end;
 
@@ -367,7 +371,6 @@ begin
   redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
   state := checkNotEmpty(params.GetVar('state'), 'state');
   aud := checkNotEmpty(params.GetVar('aud'), 'aud');
-
   if FIni.ReadString(client_id, 'name', '') = '' then
     raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
   if not isAllowedRedirect(client_id, redirect_uri) then
@@ -379,6 +382,8 @@ begin
   conn := FFhirStore.DB.GetConnection('oatuh2');
   try
     conn.ExecSQL('insert into OAuthLogins (Id, Client, Scope, Redirect, ClientState, Status, DateAdded) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', '''+SQLWrapString(state)+''', 1, '+DBGetDate(conn.Owner.Platform)+')');
+    conn.release;
+
   except
     on e:exception do
     begin
@@ -389,6 +394,7 @@ begin
 
   variables := TDictionary<String,String>.create;
   try
+
     variables.Add('idmethods', BuildLoginList(id));
     variables.Add('client', FIni.ReadString(client_id, 'name', ''));
     OnProcessFile(response, session, '/oauth_login.html', AltFile('/oauth_login.html'), true, variables)
@@ -737,36 +743,45 @@ procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPReque
 var
   params : TParseMap;
 begin
-  // cors
-  response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-  response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
-  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-  if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-    response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
-  response.ContentType := 'application/json';
-
-  params := TParseMap.create(request.UnparsedParams);
+  writelnt('Auth: '+request.Document);
   try
-    if (request.Document = '/oauth2/auth') then
-      HandleAuth(AContext, request, session, params, response)
-    else if (request.Document.startsWith('/oauth2/auth_dest')) then
-      HandleLogin(AContext, request, session, params, response)
-    else if (request.Document = '/oauth2/auth_choice') then
-      HandleChoice(AContext, request, session, params, response)
-    else if (request.Document = '/oauth2/token') then
-      HandleToken(AContext, request, session, params, response)
-    else if (request.Document = '/oauth2/token_data') then
-      HandleTokenData(AContext, request, session, params, response)
-    else if (request.Document = '/oauth2/auth_skype') then
-      HandleSkype(AContext, request, session, params, response)
-    else if (request.Document = '/oauth2/auth_key') then
-      HandleKey(AContext, request, session, params, response)
-    else if (request.Document = '/oauth2/discovery') then
-      HandleDiscovery(AContext, request, response)
-    else
-      raise Exception.Create('Invalid URL');
-  finally
-    params.Free;
+    // cors
+    response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+    response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
+    response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+      response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
+    response.ContentType := 'application/json';
+
+    params := TParseMap.create(request.UnparsedParams);
+    try
+      if (request.Document = '/oauth2/auth') then
+        HandleAuth(AContext, request, session, params, response)
+      else if (request.Document.startsWith('/oauth2/auth_dest')) then
+        HandleLogin(AContext, request, session, params, response)
+      else if (request.Document = '/oauth2/auth_choice') then
+        HandleChoice(AContext, request, session, params, response)
+      else if (request.Document = '/oauth2/token') then
+        HandleToken(AContext, request, session, params, response)
+      else if (request.Document = '/oauth2/token_data') then
+        HandleTokenData(AContext, request, session, params, response)
+      else if (request.Document = '/oauth2/auth_skype') then
+        HandleSkype(AContext, request, session, params, response)
+      else if (request.Document = '/oauth2/auth_key') then
+        HandleKey(AContext, request, session, params, response)
+      else if (request.Document = '/oauth2/discovery') then
+        HandleDiscovery(AContext, request, response)
+      else
+        raise Exception.Create('Invalid URL');
+    finally
+      params.Free;
+    end;
+  except
+    on e : Exception do
+    begin
+      writelnt('Auth Exception: '+e.Message);
+      raise;
+    end;
   end;
 end;
 

@@ -781,6 +781,7 @@ type
     function HasConnManByName(s : String) : Boolean;
     procedure RegisterHook(AName : String; AHook : TKDBManagerEvent);
     procedure UnRegisterHook(AName : String);
+    function dump : String;
   end;
 
 {@routine DescribeType
@@ -1837,6 +1838,15 @@ begin
   FLock.free;
   FHooks.free;
   inherited;
+end;
+
+function TKDBManagerList.dump: String;
+var
+  i : integer;
+begin
+  result := '';
+  for i := 0 to Count - 1 do
+    result := result + Strings[i] + ': ' + TKDBManager(Objects[i]).GetConnSummary+#13#10;
 end;
 
 procedure TKDBManagerList.AddConnMan(AConnMan : TKDBManager);

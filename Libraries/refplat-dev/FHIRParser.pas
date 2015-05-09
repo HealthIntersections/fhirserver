@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v0.5.0 generated Tue, Apr 21, 2015 16:18+1000
+// FHIR v0.5.0 generated Sat, May 9, 2015 01:14+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
@@ -4659,7 +4659,7 @@ end;
 
 procedure TFHIRJsonParser.ParseExtension(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseExtension(jsn));
+  ctxt.add(ParseExtension(jsn)); {2}
 end;
 
 function TFHIRJsonParser.ParseExtension(jsn : TJsonObject) : TFhirExtension;
@@ -31451,9 +31451,9 @@ begin
       else if (child.baseName = 'quantity') then
         result.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.baseName = 'rate') then
-        result.rate := ParseRatio(child, path+'/rate') {b}
+        result.rate := ParseQuantity(child, path+'/rate') {b}
       else if (child.baseName = 'rateAdjustment') then
-        result.rateAdjustment := ParseQuantity(child, path+'/rateAdjustment') {b}
+        result.rateAdjustment := ParseRatio(child, path+'/rateAdjustment') {b}
       else if (child.baseName = 'maxVolumeToDeliver') then
         result.maxVolumeToDeliver := ParseQuantity(child, path+'/maxVolumeToDeliver') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -31484,8 +31484,8 @@ begin
   ComposeQuantity(xml, 'caloricDensity', elem.caloricDensity);{x.2}
   ComposeCodeableConcept(xml, 'routeofAdministration', elem.routeofAdministration);{x.2}
   ComposeQuantity(xml, 'quantity', elem.quantity);{x.2}
-  ComposeRatio(xml, 'rate', elem.rate);{x.2}
-  ComposeQuantity(xml, 'rateAdjustment', elem.rateAdjustment);{x.2}
+  ComposeQuantity(xml, 'rate', elem.rate);{x.2}
+  ComposeRatio(xml, 'rateAdjustment', elem.rateAdjustment);{x.2}
   ComposeQuantity(xml, 'maxVolumeToDeliver', elem.maxVolumeToDeliver);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
@@ -31520,9 +31520,9 @@ begin
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
     if jsn.has('rate') then
-        result.rate := ParseRatio(jsn.vObj['rate']);{q}
+        result.rate := ParseQuantity(jsn.vObj['rate']);{q}
     if jsn.has('rateAdjustment') then
-        result.rateAdjustment := ParseQuantity(jsn.vObj['rateAdjustment']);{q}
+        result.rateAdjustment := ParseRatio(jsn.vObj['rateAdjustment']);{q}
     if jsn.has('maxVolumeToDeliver') then
         result.maxVolumeToDeliver := ParseQuantity(jsn.vObj['maxVolumeToDeliver']);{q}
     result.link;
@@ -31549,8 +31549,8 @@ begin
   ComposeQuantity(json, 'caloricDensity', elem.caloricDensity); {a}
   ComposeCodeableConcept(json, 'routeofAdministration', elem.routeofAdministration); {a}
   ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  ComposeRatio(json, 'rate', elem.rate); {a}
-  ComposeQuantity(json, 'rateAdjustment', elem.rateAdjustment); {a}
+  ComposeQuantity(json, 'rate', elem.rate); {a}
+  ComposeRatio(json, 'rateAdjustment', elem.rateAdjustment); {a}
   ComposeQuantity(json, 'maxVolumeToDeliver', elem.maxVolumeToDeliver); {a}
   if not noObj then json.finishObject;
 end;

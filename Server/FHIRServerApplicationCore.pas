@@ -64,6 +64,7 @@ Type
   protected
     function CanStart : boolean; Override;
     procedure DoStop; Override;
+    procedure dump; override;
   public
     Constructor Create(const ASystemName, ADisplayName, AIniName: String);
     Destructor Destroy; override;
@@ -103,7 +104,7 @@ begin
   if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
     dispName := 'FHIR Server';
   iniName := iniName.replace('.dstu', '.dev');
-  writeln('FHIR Service (DEV). Using ini file '+iniName);
+  writelnt('FHIR Service (DEV). Using ini file '+iniName);
   dispName := dispName + ' (DEV)';
 
 
@@ -218,23 +219,30 @@ begin
   except
     on e : Exception do
     begin
-      Writeln(e.Message);
+      writelnt(e.Message);
       raise;
     end;
   end;
-  writeln(sNow+' started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
+  writelnt('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
 end;
 
 procedure TFHIRService.DoStop;
 begin
   try
-    writeln('stop: '+StopReason);
+    writelnt('stop: '+StopReason);
     StopRestServer;
     UnloadTerminologies;
   except
     on e : Exception do
-      Writeln(e.Message);
+      writelnt(e.Message);
   end;
+end;
+
+procedure TFHIRService.dump;
+begin
+  inherited;
+  writelnt(KDBManagers.Dump);
+  writelnt(FWebServer.dump);
 end;
 
 procedure TFHIRService.ExecuteTests;
@@ -276,7 +284,7 @@ begin
   except
     on e: Exception do
     begin
-      writeln(e.Message);
+      writelnt(e.Message);
       ExitCode := 1;
     end;
   end;
@@ -288,19 +296,19 @@ begin
     FDb := TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0', '(local)', 'fhir-test', '', '')
   else if FIni.ReadString('database', 'type', '') = 'mssql' then
   begin
-    Writeln('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+FIni.ReadString('database', 'database', ''));
+    writelnt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+FIni.ReadString('database', 'database', ''));
     FDb := TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
       FIni.ReadString('database', 'server', ''), FIni.ReadString('database', 'database', ''),
       FIni.ReadString('database', 'username', ''), FIni.ReadString('database', 'password', ''));
   end
   else if FIni.ReadString('database', 'type', '') = 'mysql' then
   begin
-    Writeln('Database mysql://'+FIni.ReadString('database', 'server', '')+'/'+FIni.ReadString('database', 'database', ''));
+    writelnt('Database mysql://'+FIni.ReadString('database', 'server', '')+'/'+FIni.ReadString('database', 'database', ''));
     raise Exception.Create('Not Done Yet')
   end
   else
   begin
-    Writeln('Database not configured');
+    writelnt('Database not configured');
     raise Exception.Create('Database Access not configured');
   end;
 end;
@@ -311,7 +319,7 @@ var
   s : String;
 begin
   FWebSource := FIni.ReadString('fhir', 'source', '');
-  writeln('Using FHIR Specification at '+FWebSource);
+  writelnt('Using FHIR Specification at '+FWebSource);
 
   if not FileExists(IncludeTrailingPathDelimiter(FWebSource)+'version.info') then
     raise Exception.Create('FHIR Publication not found at '+FWebSource);
@@ -342,14 +350,14 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   CanStart;
-  writeln('Load database from '+fn);
+  writelnt('Load database from '+fn);
   f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
   try
     FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', nil);
   finally
     f.Free;
   end;
-  writeln('done');
+  writelnt('done');
 
   FTerminologyServer.BuildIndexes(true);
 
@@ -372,7 +380,7 @@ begin
     if init then
     begin
       fn := ini.ReadString('control', 'load', '');
-      writeln('Load database from '+fn);
+      writelnt('Load database from '+fn);
       f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
       try
         FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', ini);
@@ -386,7 +394,7 @@ begin
       if (fn <> '') then
       begin
         repeat
-          writeln('Load '+fn);
+          writelnt('Load '+fn);
           f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
           try
             FWebServer.Transaction(f, false, fn, ini.ReadString('control', 'base'+inttostr(i), ''), ini);
@@ -396,7 +404,7 @@ begin
         until ini.ReadInteger('process', 'start', -1) = -1;
       end;
     end;
-    writeln('done');
+    writelnt('done');
     FTerminologyServer.BuildIndexes(true);
     DoStop;
   finally
@@ -427,7 +435,7 @@ var
 begin
   if FDb = nil then
     ConnectToDatabase;
-  Writeln('upgrade database');
+  writelnt('upgrade database');
   scim := TSCIMServer.Create(FDB, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
   try
     conn := FDb.GetConnection('upgrade');
@@ -442,11 +450,11 @@ begin
         db.free;
       end;
       conn.Release;
-      Writeln('done');
+      writelnt('done');
     except
        on e:exception do
        begin
-         Writeln('Error: '+e.Message);
+         writelnt('Error: '+e.Message);
          conn.Error(e);
          raise;
        end;
@@ -463,7 +471,7 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   CanStart;
-  writeln('index database');
+  writelnt('index database');
   FTerminologyServer.BuildIndexes(true);
   DoStop;
 end;
@@ -500,7 +508,7 @@ begin
 
   if FDb = nil then
     ConnectToDatabase;
-  Writeln('mount database');
+  writelnt('mount database');
   scim := TSCIMServer.Create(FDB, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
   try
     conn := FDb.GetConnection('setup');
@@ -517,11 +525,11 @@ begin
       scim.DefineAnonymousUser(conn);
       scim.DefineAdminUser(conn, un, pw, em);
       conn.Release;
-      Writeln('done');
+      writelnt('done');
     except
        on e:exception do
        begin
-         Writeln('Error: '+e.Message);
+         writelnt('Error: '+e.Message);
          conn.Error(e);
          raise;
        end;
@@ -538,7 +546,7 @@ var
 begin
   if FDb = nil then
     ConnectToDatabase;
-  Writeln('unmount database');
+  writelnt('unmount database');
   conn := FDb.GetConnection('setup');
   try
     db := TFHIRDatabaseInstaller.create(conn);
@@ -548,11 +556,11 @@ begin
       db.free;
     end;
     conn.Release;
-    Writeln('done');
+    writelnt('done');
   except
      on e:exception do
      begin
-       Writeln('Error: '+e.Message);
+       writelnt('Error: '+e.Message);
        conn.Error(e);
        raise;
      end;

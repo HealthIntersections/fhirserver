@@ -40,6 +40,7 @@ Type
 implementation
 
 uses
+  SystemService,
   FHIRParser,
   FHIRResources;
 
@@ -135,7 +136,7 @@ begin
         BuildCsByURL(html, getId(request.Document, '/tx/vs-uri'))
       else
       begin
-        writeln(''+GetFhirMessage('TERMINOLOGY', request.AcceptLanguage)+' '+GetFhirMessage('SERVER_HOME', request.AcceptLanguage));
+        writelnt(''+GetFhirMessage('TERMINOLOGY', request.AcceptLanguage)+' '+GetFhirMessage('SERVER_HOME', request.AcceptLanguage));
         html.Header('Terminology Server');
         html.StartList;
         html.StartListItem;
@@ -180,7 +181,7 @@ var
   ts : TStringList;
   i: Integer;
 begin
-  writeln('Tx: CS By Name '+Id);
+  writelnt('Tx: CS By Name '+Id);
   ts := TStringList.Create;
   list := FServer.GetCodeSystemList;
   try
@@ -210,7 +211,7 @@ var
   ts : TStringList;
   i: Integer;
 begin
-  writeln('Tx: CS By URL '+Id);
+  writelnt('Tx: CS By URL '+Id);
   ts := TStringList.Create;
   list := FServer.GetCodeSystemList;
   try
@@ -240,7 +241,7 @@ var
   ts : TStringList;
   i: Integer;
 begin
-  writeln('Tx: VS By Name '+Id);
+  writelnt('Tx: VS By Name '+Id);
   ts := TStringList.Create;
   list := FServer.GetValueSetList;
   try
@@ -272,7 +273,7 @@ var
   xml : TFHIRXmlComposer;
   s : TStringStream;
 begin
-  writeln('Tx: VS By URL '+Id);
+  writelnt('Tx: VS By URL '+Id);
   html.Header('Terminology Server');
   html.Heading(2, 'Value Sets (By URL)');
   if (id <> '') then
@@ -342,7 +343,7 @@ begin
   else if request.Document.StartsWith('/snomed/doco/')  then
   begin
     code := request.UnparsedParams;
-    writeln('Snomed Doco: '+code);
+    writelnt('Snomed Doco: '+code);
 
     try
       html := THtmlPublisher.Create;
@@ -369,7 +370,7 @@ begin
   begin
     response.ResponseNo := 404;
     response.ContentText := 'Document '+request.Document+' not found';
-    writeln('miss: '+request.Document);
+    writelnt('miss: '+request.Document);
   end;
 end;
 
@@ -382,7 +383,7 @@ begin
   if request.Document.StartsWith('/loinc/doco/')  then
   begin
     code := request.UnparsedParams;
-    writeln('Loinc Doco: '+code);
+    writelnt('Loinc Doco: '+code);
 
     try
       html := THtmlPublisher.Create;
@@ -409,7 +410,7 @@ begin
   begin
     response.ResponseNo := 404;
     response.ContentText := 'Document '+request.Document+' not found';
-    writeln('miss: '+request.Document);
+    writelnt('miss: '+request.Document);
   end;
 end;
 
@@ -420,7 +421,7 @@ var
   id : UInt64;
   exp : TSnomedExpression;
 begin
-  writeln('Snomed: '+code);
+  writelnt('Snomed: '+code);
   if StringIsInteger64(code) then
   begin
     if FServer.Snomed.IsValidConcept(code) then

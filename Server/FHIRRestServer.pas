@@ -35,7 +35,7 @@ Uses
 
   EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport,
 
-  AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories,
+  AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects, MsXmlParser,
   DCPsha256, AdvJSON, libeay32,
@@ -76,6 +76,9 @@ Type
   Private
     FIni : TIniFile;
     FLock : TCriticalSection;
+    FLastTrack : integer;
+    FTracks : TDictionary<String, String>;
+
     FPort : Integer;
     FSSLPort : Integer;
     FCertFile : String;
@@ -139,6 +142,8 @@ Type
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
     Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: Boolean);
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    function MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : integer;
+    procedure MarkExit(track : integer);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
@@ -167,10 +172,10 @@ Type
     Procedure Stop;
     Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TIniFile);
 
+    function dump : String;
+
     Property DataStore : TFHIRDataStore read FFhirStore;
   End;
-
-function sNow : String;
 
 Implementation
 
@@ -178,7 +183,7 @@ Implementation
 Uses
   Windows, Registry,
 
-  AdvExceptions,
+  AdvExceptions, SystemService,
 
   FileSupport,
   FaceBookSupport;
@@ -252,14 +257,15 @@ Begin
   FName := Name;
   FIni := TIniFile.Create(ini);
   FHost := FIni.ReadString('web', 'host', '');
+  FTracks := TDictionary<String, String>.create();
 
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
-  writeln('Load User Sub-system');
+  writelnt('Load User Sub-system');
   FSCIMServer := TSCIMServer.Create(db, FAltPath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
   FSCIMServer.OnProcessFile := ReturnProcessedFile;
 
-  write('Load & Cache Store: ');
+  writelnt('Load & Cache Store: ');
   FOwnerName := Fini.readString('admin', 'ownername', '');
   if FOwnerName = '' then
     FOwnerName := 'Health Intersections';
@@ -295,7 +301,7 @@ Begin
     else
       s := FIni.ReadString('web', 'secure', '');
   end;
-  writeln(inttostr(FFhirStore.TotalResourceCount)+' resources');
+  writelnt(inttostr(FFhirStore.TotalResourceCount)+' resources');
   FFhirStore.FormalURLPlain := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FPort);
   FFhirStore.FormalURLSecure := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FSSLPort);
   FFhirStore.FormalURLPlainOpen := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FPort)+ FBasePath;
@@ -315,22 +321,22 @@ Begin
 
 
   if (FPort <> 0) and (FSSLPort <> 0) then
-    writeln('Web Server: http = '+inttostr(FPort)+', https = '+inttostr(FSSLPort))
+    writelnt('Web Server: http = '+inttostr(FPort)+', https = '+inttostr(FSSLPort))
   else if (FPort <> 0) then
-    writeln('Web Server: http = '+inttostr(FPort))
+    writelnt('Web Server: http = '+inttostr(FPort))
   else if (FSSLPort <> 0) then
-    writeln('Web Server: https = '+inttostr(FSSLPort))
+    writelnt('Web Server: https = '+inttostr(FSSLPort))
   else
-    writeln('Web Server not configued');
+    writelnt('Web Server not configued');
 
   if (FBasePath <> '') and (FSecurePath <> '') then
-    writeln(' ...paths: open = '+FBasePath+', secure = '+FSecurePath)
+    writelnt(' ...paths: open = '+FBasePath+', secure = '+FSecurePath)
   else if (FPort <> 0) then
-    writeln(' ...paths: open = '+FBasePath)
+    writelnt(' ...paths: open = '+FBasePath)
   else if (FSSLPort <> 0) then
-    writeln(' ...paths: secure = '+FSecurePath)
+    writelnt(' ...paths: secure = '+FSecurePath)
   else
-    writeln(' ...paths: <none>');
+    writelnt(' ...paths: <none>');
 
 //  FAuthRequired := FIni.ReadString('fhir', 'oauth-secure', '') = '1';
 //  FAppSecrets := FIni.ReadString('fhir', 'oauth-secrets', '');
@@ -348,6 +354,7 @@ Begin
     FFhirStore.CloseAll;
     FFhirStore.Free;
   end;
+  FTracks.Free;
   FLock.Free;
   Inherited;
 End;
@@ -372,6 +379,20 @@ begin
     FLock.Unlock;
   end;
   CoUninitialize;
+end;
+
+function TFhirWebServer.dump : String;
+var
+  s : String;
+begin
+  result := 'Current Web Requests: '+#13#10;
+  FLock.Lock;
+  try
+    for s in FTracks.Keys do
+      result := result + FTracks[s]+#13#10;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 function port(port, default : integer): String;
@@ -568,39 +589,45 @@ var
   session : TFHIRSession;
   c : integer;
   check : boolean;
+  track : integer;
 begin
   session := nil;
-  c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
-  if c > -1 then
-    FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+  track := MarkEntry(AContext, request, response);
+  try
+    c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
+    if c > -1 then
+      FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
-  if FileExists(SpecFile(request.Document)) then
-    ReturnSpecFile(response, request.Document, SpecFile(request.Document))
-  else if FileExists(AltFile(request.Document)) then
-    ReturnSpecFile(response, request.Document, AltFile(request.Document))
-  else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
-    ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), false)
-//  else if FileExists(FAltPath+ExtractFileName(request.Document.replace('/', '\'))) then
-//    ReturnSpecFile(response, request.Document, FAltPath+ExtractFileName(request.Document.replace('/', '\')))
-//  else if FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
-//    ReturnSpecFile(response, request.Document, FSpecPath+ExtractFileName(request.Document.replace('/', '\')))
-  else if request.document = FBasePath+'/.well-known/openid-configuration' then
-    HandleDiscoveryRedirect(AContext, request, response)
-  else if request.document = '/.well-known/openid-configuration' then
-    FAuthServer.HandleDiscovery(AContext, request, response)
-  else if request.Document.StartsWith(FBasePath, false) then
-    HandleRequest(AContext, request, response, false, false, FBasePath)
-  else if request.Document.StartsWith(FSecurePath, false) then
-    HandleRequest(AContext, request, response, false, false, FBasePath)
-  else if request.Document = '/' then
-    ReturnProcessedFile(response, session, '/homepage.html', AltFile('/homepage.html'), false)
-  else if FTerminologyWebServer.handlesRequest(request.Document) then
-    FTerminologyWebServer.Process(AContext, request, session, response, false)
-  else
-  begin
-    response.ResponseNo := 404;
-    response.ContentText := 'Document '+request.Document+' not found';
-    writeln('miss: '+request.Document);
+    if FileExists(SpecFile(request.Document)) then
+      ReturnSpecFile(response, request.Document, SpecFile(request.Document))
+    else if FileExists(AltFile(request.Document)) then
+      ReturnSpecFile(response, request.Document, AltFile(request.Document))
+    else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
+      ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), false)
+  //  else if FileExists(FAltPath+ExtractFileName(request.Document.replace('/', '\'))) then
+  //    ReturnSpecFile(response, request.Document, FAltPath+ExtractFileName(request.Document.replace('/', '\')))
+  //  else if FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
+  //    ReturnSpecFile(response, request.Document, FSpecPath+ExtractFileName(request.Document.replace('/', '\')))
+    else if request.document = FBasePath+'/.well-known/openid-configuration' then
+      HandleDiscoveryRedirect(AContext, request, response)
+    else if request.document = '/.well-known/openid-configuration' then
+      FAuthServer.HandleDiscovery(AContext, request, response)
+    else if request.Document.StartsWith(FBasePath, false) then
+      HandleRequest(AContext, request, response, false, false, FBasePath)
+    else if request.Document.StartsWith(FSecurePath, false) then
+      HandleRequest(AContext, request, response, false, false, FBasePath)
+    else if request.Document = '/' then
+      ReturnProcessedFile(response, session, '/homepage.html', AltFile('/homepage.html'), false)
+    else if FTerminologyWebServer.handlesRequest(request.Document) then
+      FTerminologyWebServer.Process(AContext, request, session, response, false)
+    else
+    begin
+      response.ResponseNo := 404;
+      response.ContentText := 'Document '+request.Document+' not found';
+      writelnt('miss: '+request.Document);
+    end;
+  finally
+    MarkExit(track);
   end;
 end;
 
@@ -662,55 +689,61 @@ var
   session : TFHIRSession;
   check : boolean;
   c : integer;
+  track : integer;
 begin
   session := nil;
-  c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
-  if c > -1 then
-    FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+  track := MarkEntry(AContext, request, response);
+  try
+    c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
+    if c > -1 then
+      FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
-  if (request.CommandType = hcOption) and ((request.Document <> FBasePath) and (request.Document <> FSecurePath)) then
-  begin
-    response.ResponseNo := 200;
-    response.ContentText := 'ok';
-    response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-//  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
-    response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-//  response.CustomHeaders.add('Access-Control-Expose-Headers: *');
-    if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-      response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
-  end
-  else if FileExists(SpecFile(request.Document)) then
-    ReturnSpecFile(response, request.Document, SpecFile(request.Document))
-  else if FileExists(AltFile(request.Document)) then
-    ReturnSpecFile(response, request.Document, AltFile(request.Document))
-  else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
-    ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), true)
-//  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+request.Document) then
-//    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FAltPath)+request.Document)
-//  else if FileExists(AltFile(ExtractFileName(request.Document))) then
-//    ReturnSpecFile(response, request.Document, AltFile(ExtractFileName(request.Document)))
-  else if request.document = FBasePath+'/.well-known/openid-configuration' then
-    HandleDiscoveryRedirect(AContext, request, response)
-  else if request.Document.StartsWith('/scim') then
-    processSCIMRequest(AContext, request, response)
-  else if request.document = '/.well-known/openid-configuration' then
-    FAuthServer.HandleDiscovery(AContext, request, response)
-//  else if request.Document.StartsWith(FBasePath, false) then
-//    HandleRequest(AContext, request, response, true, false, FBasePath)
-  else if request.Document.StartsWith(FSecurePath, false) then
-    HandleRequest(AContext, request, response, true, true, FSecurePath)
-  else if FTerminologyWebServer.handlesRequest(request.Document) then
-    FTerminologyWebServer.Process(AContext, request, session, response, true)
-  else if request.Document.StartsWith('/oauth2') then
-    FAuthServer.HandleRequest(AContext, request, session, response)
-  else if request.Document = '/' then
-    ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
-  else
-  begin
-    response.ResponseNo := 404;
-    response.ContentText := 'Document '+request.Document+' not found';
-    writeln('miss: '+request.Document);
+    if (request.CommandType = hcOption) and ((request.Document <> FBasePath) and (request.Document <> FSecurePath)) then
+    begin
+      response.ResponseNo := 200;
+      response.ContentText := 'ok';
+      response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+  //  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+      response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
+      response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+  //  response.CustomHeaders.add('Access-Control-Expose-Headers: *');
+      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+        response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
+    end
+    else if FileExists(SpecFile(request.Document)) then
+      ReturnSpecFile(response, request.Document, SpecFile(request.Document))
+    else if FileExists(AltFile(request.Document)) then
+      ReturnSpecFile(response, request.Document, AltFile(request.Document))
+    else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
+      ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), true)
+  //  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+request.Document) then
+  //    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FAltPath)+request.Document)
+  //  else if FileExists(AltFile(ExtractFileName(request.Document))) then
+  //    ReturnSpecFile(response, request.Document, AltFile(ExtractFileName(request.Document)))
+    else if request.document = FBasePath+'/.well-known/openid-configuration' then
+      HandleDiscoveryRedirect(AContext, request, response)
+    else if request.Document.StartsWith('/scim') then
+      processSCIMRequest(AContext, request, response)
+    else if request.document = '/.well-known/openid-configuration' then
+      FAuthServer.HandleDiscovery(AContext, request, response)
+  //  else if request.Document.StartsWith(FBasePath, false) then
+  //    HandleRequest(AContext, request, response, true, false, FBasePath)
+    else if request.Document.StartsWith(FSecurePath, false) then
+      HandleRequest(AContext, request, response, true, true, FSecurePath)
+    else if FTerminologyWebServer.handlesRequest(request.Document) then
+      FTerminologyWebServer.Process(AContext, request, session, response, true)
+    else if request.Document.StartsWith('/oauth2') then
+      FAuthServer.HandleRequest(AContext, request, session, response)
+    else if request.Document = '/' then
+      ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
+    else
+    begin
+      response.ResponseNo := 404;
+      response.ContentText := 'Document '+request.Document+' not found';
+      writelnt('miss: '+request.Document);
+    end;
+  finally
+    markExit(track)
   end;
 end;
 
@@ -2212,7 +2245,7 @@ procedure TFhirWebServer.ProcessRequest(request: TFHIRRequest; response: TFHIRRe
 var
   store : TFhirOperationManager;
 begin
-  writeln(sNow+' Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source);
+  writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source);
   store := TFhirOperationManager.Create(request.Lang, FFhirStore.Link);
   try
     store.OwnerName := FOwnerName;
@@ -2591,6 +2624,31 @@ begin
   end;
 end;
 
+function TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): integer;
+var
+  s : string;
+begin
+  s := AContext.Binding.PeerIP + ' ' + request.Document+'?'+request.UnparsedParams;
+  FLock.Lock;
+  try
+     inc(FLastTrack);
+     result := FLastTrack;
+     FTracks.Add(inttostr(result), s);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TFhirWebServer.MarkExit(track: integer);
+begin
+  FLock.Lock;
+  try
+     FTracks.Remove(inttostr(track));
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 function TFhirWebServer.extractFileData(form : TIdSoapMimeMessage; const name: String; var sContentType : String): TStream;
 var
   sLeft, sRight: String;
@@ -2818,7 +2876,7 @@ procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; sess
 var
   s, n : String;
 begin
-  writeln('script: '+named);
+  writelnt('script: '+named);
   s := FileToString(path, TEncoding.UTF8);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION, [rfReplaceAll]);
@@ -2857,7 +2915,7 @@ end;
 
 procedure TFhirWebServer.ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path: String);
 begin
-  writeln('file: '+stated);
+  writelnt('file: '+stated);
   response.Expires := now + 1;
   response.ContentStream := TFileStream.Create(path, fmOpenRead);
   response.FreeContentStream := true;
@@ -2977,7 +3035,7 @@ begin
   finally
     b.Free;
   end;
-  writeln(doc.documentElement.namespaceURI +', '+doc.documentElement.nodeName);
+  writelnt(doc.documentElement.namespaceURI +', '+doc.documentElement.nodeName);
 
   v := CreateOLEObject('MSXML2.FreeThreadedDOMDocument.6.0');
   src := IUnknown(TVarData(v).VDispatch) as IXMLDomDocument2;

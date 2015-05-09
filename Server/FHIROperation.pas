@@ -366,6 +366,9 @@ type
 
 implementation
 
+uses
+  SystemService;
+
 function booleanToSQL(b : boolean): string;
 begin
   if b then
@@ -3155,9 +3158,9 @@ var
   ne : TFhirBundleEntry;
 begin
   if (entry.transaction <> nil) then
-    writeln(inttostr(i)+': '+entry.transaction.methodElement.value+' '+id.summary)
+    writelnt(inttostr(i)+': '+entry.transaction.methodElement.value+' '+id.summary)
   else
-    writeln(inttostr(i)+': '+id.summary);
+    writelnt(inttostr(i)+': '+id.summary);
 
   request.Id := id.id;
   if entry.resource <> nil then

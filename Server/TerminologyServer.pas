@@ -66,6 +66,7 @@ Type
 implementation
 
 uses
+  SystemService,
   USStateCodeServices,
   FHIRValueSetExpander;
 
@@ -93,7 +94,7 @@ var
   fn : string;
   p : TCodeSystemProvider;
 begin
-  write('Load DB Terinologies');
+  writelnt('Load DB Terinologies');
   Unii := TUniiServices.Create(TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('database', 'tx', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
@@ -101,18 +102,18 @@ begin
   CountryCode := TCountryCodeServices.Create(unii.db);
   p := TUSStateCodeServices.Create(unii.db);
   FProviderClasses.Add(p.system(nil), p);
-  writeln(' - done');
+  writelnt(' - done');
 
   if ini.ReadString('RxNorm', 'database', '') <> '' then
   begin
-    writeln('Connect to RxNorm');
+    writelnt('Connect to RxNorm');
     RxNorm := TRxNormServices.Create(TKDBOdbcDirect.create('rxnorm', 100, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('RxNorm', 'database', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
   end;
   if ini.ReadString('NciMeta', 'database', '') <> '' then
   begin
-    writeln('Connect to NciMeta');
+    writelnt('Connect to NciMeta');
     NciMeta := TNciMetaServices.Create(TKDBOdbcDirect.create('ncimeta', 100, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('NciMeta', 'database', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
@@ -120,26 +121,26 @@ begin
   fn := ini.ReadString('snomed', 'cache', '');
   if fn <> '' then
   begin
-    write('Load Snomed from '+fn);
+    writelnt('Load Snomed from '+fn);
     Snomed := TSnomedServices.Create;
     Snomed.Load(fn);
-    writeln(' - done');
+    writelnt(' - done');
   end;
   fn := ini.ReadString('loinc', 'cache', '');
   if fn <> '' then
   begin
-    write('Load Loinc from '+fn);
+    writelnt('Load Loinc from '+fn);
     Loinc := TLoincServices.Create;
     Loinc.Load(fn);
-    writeln(' - done');
+    writelnt(' - done');
   end;
   fn := ini.ReadString('ucum', 'source', '');
   if fn <> '' then
   begin
-    write('Load Ucum from '+fn);
+    writelnt('Load Ucum from '+fn);
     Ucum := TUcumServices.Create;
     Ucum.Import(fn);
-    writeln(' - done');
+    writelnt(' - done');
   end;
 end;
 
