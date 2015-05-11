@@ -402,7 +402,7 @@ begin
     Frefsets.SortedByName;
     FWordList.Sorted := True;
     FStemList.Sorted := True;
-    oSvc.Version := FVersion;
+    oSvc.SCTVersion := FVersion;
     FStrings := oSvc.Strings;
     FRefs := oSvc.Refs;
     FDesc := oSvc.Desc;

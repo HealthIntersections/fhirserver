@@ -805,7 +805,7 @@ begin
 
     Try
       oSvc.Root := ReadLOINCDatabase(props, roots, subsets);
-      oSvc.Version := Version;
+      oSvc.LOINCVersion := Version;
       oSvc.Properties := props;
       oSvc.HeirarchyRoots := roots;
       oSvc.Subsets := subsets;

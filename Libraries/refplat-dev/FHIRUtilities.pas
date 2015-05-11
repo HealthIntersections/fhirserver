@@ -150,8 +150,8 @@ type
   public
     property Contained[id : String] : TFhirResource read GetContained; default;
     procedure collapseAllContained;
-    procedure addExtension(url : String; t : TFhirType); overload;
-    procedure addExtension(url : String; v : String); overload;
+    function addExtension(url : String; t : TFhirType) : TFhirExtension; overload;
+    function addExtension(url : String; v : String) : TFhirExtension; overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
     function getExtensionString(url : String) : String;
@@ -248,9 +248,11 @@ type
   TFhirParametersHelper = class helper for TFhirParameters
   private
     function GetNamedParameter(name: String): TFhirBase;
+    function GetStringParameter(name: String): String;
   public
     function hasParameter(name : String):Boolean;
     Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
+    Property str[name : String] : String read GetStringParameter;
     procedure AddParameter(name: String; value: TFhirType); overload;
     procedure AddParameter(name: String; value: TFhirResource); overload;
     procedure AddParameter(name: String; value: boolean); overload;
@@ -1359,18 +1361,16 @@ end;
 
 { TFHIRDomainResourceHelper }
 
-procedure TFHIRDomainResourceHelper.addExtension(url: String; t: TFhirType);
-var
-  ex : TFhirExtension;
+function TFHIRDomainResourceHelper.addExtension(url: String; t: TFhirType) : TFhirExtension;
 begin
-  ex := self.ExtensionList.Append;
-  ex.url := url;
-  ex.value := t; // nolink here (done outside)
+  result := self.ExtensionList.Append;
+  result.url := url;
+  result.value := t; // nolink here (done outside)
 end;
 
-procedure TFHIRDomainResourceHelper.addExtension(url, v: String);
+function TFHIRDomainResourceHelper.addExtension(url, v: String) : TFhirExtension;
 begin
-  addExtension(url, TFhirString.Create(v));
+  result := addExtension(url, TFhirString.Create(v));
 end;
 
 function TFHIRDomainResourceHelper.getExtension(url: String): Integer;
@@ -1847,6 +1847,11 @@ begin
       exit;
     end;
   result := nil;
+end;
+
+function TFhirParametersHelper.GetStringParameter(name: String): String;
+begin
+  result := (NamedParameter[name] as TFhirPrimitiveType).StringValue;
 end;
 
 function TFhirParametersHelper.hasParameter(name: String): Boolean;

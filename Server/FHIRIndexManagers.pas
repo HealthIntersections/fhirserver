@@ -2380,11 +2380,13 @@ begin
     assert(CHECK_TSearchParamsClaimResponse[a] = a);
     indexes.add(frtClaimResponse, CODES_TSearchParamsClaimResponse[a], DESC_TSearchParamsClaimResponse[a], TYPES_TSearchParamsClaimResponse[a], TARGETS_TSearchParamsClaimResponse[a]);
   end;
+  indexes.add(frtClaimResponse, 'request', 'request claim link', SearchParamTypeReference, [frtClaim]);
 end;
 
 procedure TFhirIndexManager.buildIndexValuesClaimResponse(key: integer; id : String; context : TFhirResource; resource: TFhirClaimResponse);
 begin
   index(frtClaimResponse, key, 0, resource.identifierList, 'identifier');
+  index(context, frtClaimResponse, key, 0, resource.request, 'request');
 end;
 
 

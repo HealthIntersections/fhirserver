@@ -237,6 +237,7 @@ Type
     FTags : TFHIRCodingList;
     FrelativeReferenceAdjustment: integer;
     FOnGetLink: TFHIRXhtmlComposerGetLink;
+    FOperationName : String;
     procedure SetSession(const Value: TFhirSession);
     function PresentTags(aType : TFhirResourceType; target : String; tags : TFHIRCodingList; c : integer):String; overload;
     function PresentTags(aType : TFhirResourceType; target : String; meta: TFhirMeta; c : integer):String; overload;
@@ -260,6 +261,7 @@ Type
 
     Property relativeReferenceAdjustment : integer read FrelativeReferenceAdjustment write FrelativeReferenceAdjustment;
     Property OnGetLink : TFHIRXhtmlComposerGetLink read FOnGetLink write FOnGetLink;
+    Property OperationName : String read FOperationName write FOperationName;
 
     class function ResourceLinks(a : TFhirResourceType; lang, base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
     class function PageLinks : String;
@@ -1107,7 +1109,12 @@ begin
   statedType := CODES_TFhirResourceType[oResource.resourceType]; // todo: resolve this
 
   if (id = '') and (ver = '') then
-    title := FormatTextToXml(GetFhirMessage(CODES_TFhirResourceType[oResource.resourceType], lang))
+  begin
+    if FOperationName <> '' then
+      title := 'Results from '+FOperationName
+    else
+      title := FormatTextToXml(GetFhirMessage(CODES_TFhirResourceType[oResource.resourceType], lang))
+  end
   else if (ver = '') then
     title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', lang)+' "'+id + '" ('+CODES_TFhirResourceType[oResource.ResourceType]+') ')
   else

@@ -74,21 +74,21 @@ type
 
 
     procedure validateAtomEntry(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition);
-    procedure validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition);
+    procedure validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition; inBundle : boolean);
     function getProfileForType(localName : string; specifiedprofile : TFHirStructureDefinition) : TFHirStructureDefinition;
     procedure validateBinary(elem : TIdSoapXmlElement);
     procedure validateTag(path : string; element : TIdSoapXmlElement; onEntry : boolean);
-    procedure validateElement(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; structure : TFHirProfileStructureHolder; path : string; definition : TFHirElementDefinition; cprofile : TFHirStructureDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement);
+    procedure validateElement(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; structure : TFHirProfileStructureHolder; path : string; definition : TFHirElementDefinition; cprofile : TFHirStructureDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement; inBundle : boolean);
     function findElement(structure : TFHirProfileStructureHolder; name : string) : TFHirElementDefinition;
     function getChildren(structure : TFHirProfileStructureHolder; path : String) : TFHirElementDefinitionList;
     function getChild(children : TFHirElementDefinitionList; name : string) : TFHirElementDefinition;
     function getDefinitionByTailNameChoice(children : TFHirElementDefinitionList; name : string) : TFHirElementDefinition;
     function tail(path : string) : String;
-    procedure validateContains(op : TFhirOperationOutcome; path : string; child : TFHirElementDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement);
+    procedure validateContains(op : TFhirOperationOutcome; path : string; child : TFHirElementDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement; inBundle : boolean);
     function typeIsPrimitive(t : string) : boolean;
     procedure checkPrimitive(op : TFhirOperationOutcome; path : string; type_ : string; context : TFHirElementDefinition; e : TIdSoapXmlElement);
     procedure checkExtension(path : string; elementDefn : TFHirElementDefinition; context : TFHirElementDefinition; e : TIdSoapXmlElement);
-    procedure checkReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
+    procedure checkReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition; inBundle : boolean);
     procedure checkIdentifier(path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
     procedure checkQuantity(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
     procedure checkCoding(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
@@ -197,7 +197,7 @@ begin
       else if (ci.name = 'content') then
       begin
         r := ci.element.FirstChild;
-        validate(op, ci.path+'/f:'+r.Name, r, specifiedProfile);
+        validate(op, ci.path+'/f:'+r.Name, r, specifiedProfile, true);
       end;
     end;
   finally
@@ -205,7 +205,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition);
+procedure TFHIRValidator.validate(op : TFhirOperationOutcome; path : string; elem : TIdSoapXmlElement; specifiedprofile : TFHirStructureDefinition; inBundle : boolean);
 var
   p : TFHirStructureDefinition;
 begin
@@ -215,7 +215,7 @@ begin
   begin
     p := getProfileForType(elem.Name, specifiedprofile);
     if (op.error('InstanceValidator', 'invalid', elem.Name, p <> nil, 'Unknown Resource Type '+elem.Name)) then
-      validateElement(op, p, p.snapshot, path+'/f:'+elem.Name, p.snapshot.elementList[0], nil, nil, elem);
+      validateElement(op, p, p.snapshot, path+'/f:'+elem.Name, p.snapshot.elementList[0], nil, nil, elem, inBundle);
   end;
 end;
 
@@ -238,7 +238,7 @@ begin
   // nothing yet
 end;
 
-procedure TFHIRValidator.validateElement(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; structure : TFHirProfileStructureHolder; path : string; definition : TFHirElementDefinition; cprofile : TFHirStructureDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement);
+procedure TFHIRValidator.validateElement(op : TFhirOperationOutcome; profile : TFHirStructureDefinition; structure : TFHirProfileStructureHolder; path : string; definition : TFHirElementDefinition; cprofile : TFHirStructureDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement; inBundle : boolean);
 var
   children : TFHirElementDefinitionList;
   ci : TChildIterator;
@@ -308,24 +308,27 @@ begin
             else if (type_ = 'Coding') then
               checkCoding(op, cprofile, ci.path, ci.element, child)
             else if (type_ = 'Reference') then
-              checkReference(op, ci.path, ci.element, child)
+              checkReference(op, ci.path, ci.element, child, inBundle)
             else if (type_ = 'CodeableConcept') then
               checkCodeableConcept(op, ci.path, ci.element, profile, child);
 
             if (type_ = 'Resource') then
-              validateContains(op, ci.path, child, definition, ci.element)
+              validateContains(op, ci.path, child, definition, ci.element, inBundle)
             else
             begin
+              if (type_ = 'Money') then
+                type_ := 'Quantity';
+
               p := getProfileForType(type_, nil);
               if (op.error('InstanceValidator', 'structure', ci.path, p <> nil, 'Unknown type_ '+type_)) then
-                validateElement(op, p, p.snapshot, ci.path, p.snapshot.elementList[0], profile, child, ci.element);
+                validateElement(op, p, p.snapshot, ci.path, p.snapshot.elementList[0], profile, child, ci.element, inBundle);
             end;
           end;
         end
         else
         begin
           if (op.error('InstanceValidator', 'structure', path, child <> nil, 'Unrecognised Content '+ci.name)) then
-            validateElement(op, profile, structure, ci.path, child, nil, nil, ci.element);
+            validateElement(op, profile, structure, ci.path, child, nil, nil, ci.element, inBundle);
         end;
       end;
     finally
@@ -481,9 +484,9 @@ begin
   result := copy(path, LastDelimiter('.', path)+1, $FF);
 end;
 
-procedure TFHIRValidator.validateContains(op : TFhirOperationOutcome; path : string; child : TFHirElementDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement);
+procedure TFHIRValidator.validateContains(op : TFhirOperationOutcome; path : string; child : TFHirElementDefinition; context : TFHirElementDefinition; element : TIdSoapXmlElement; inBundle : boolean);
 begin
-  validate(op, path, element.FirstChild, nil);
+  validate(op, path, element.FirstChild, nil, inBundle);
 end;
 
 function TFHIRValidator.typeIsPrimitive(t : string) : boolean;
@@ -547,7 +550,7 @@ begin
   // for now, nothing to check yet
 end;
 
-function refError(r : String):string;
+function refError(r : String; inBundle : boolean):string;
 var
   uri : TIdURI;
 begin
@@ -556,7 +559,7 @@ begin
     try
       if (uri.Protocol <> '') and not StringArrayExistsSensitive(['http', 'https'], uri.Protocol) then
         result := 'Unacceptable protocol'
-      else if StringStartsWith(r, 'cid:') or StringStartsWith(r, 'urn:') then
+      else if not inBundle and (StringStartsWith(r, 'cid:') or StringStartsWith(r, 'urn:')) then
         result := 'Logical Identifiers are not valid'
       else
         result := '';
@@ -569,14 +572,14 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition);
+procedure TFHIRValidator.checkReference(op : TFhirOperationOutcome; path : string; element : TIdSoapXmlElement; context : TFHirElementDefinition; inBundle : boolean);
 var
   r, e : String;
 begin
   r := getNamedChildValue(element,  'reference');
   if (r <> '') then
   begin
-    e := refError(r);
+    e := refError(r, inBundle);
     op.error('InstanceValidator', 'value', path, e = '', 'The Resource reference "'+r+'" is not valid: '+e);
   end;
 end;
@@ -652,11 +655,11 @@ begin
     binding := context.binding;
     if binding.valueset is TFhirReference then
     begin
-      vsc := resolveBindingReference(binding.valueset);
       try
-        if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.valueset)+' not found')) then
-        begin
-          try
+        vsc := resolveBindingReference(binding.valueset);
+        try
+          if (op.warning('InstanceValidator', 'code-unknown', path, vsc <> nil, 'ValueSet '+describeReference(binding.valueset)+' not found')) then
+          begin
             found := false;
             any := false;
             c := element.FirstChild;
@@ -679,18 +682,20 @@ begin
                 op.hint('InstanceValidator', 'code-unknown', path, found, 'None of the codes are in the example value set '+context.Binding.name+' ('+vsc.id+')')
               else if (binding.Strength = BindingStrengthExtensible) then
                 op.warning('InstanceValidator', 'code-unknown', path, found, 'Code {'+system+'}'+code+' is not in value set '+context.Binding.name+' ('+vsc.id+')');
-          Except
-            on e : Exception do
-              if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
-                op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Snomed value set - not validated')
-              else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
-                op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
-              else
-                op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vsc.id+' for '+context.Binding.name+': '+e.Message);
           end;
+        finally
+          vsc.free;
         end;
-      finally
-        vsc.free;
+      Except
+        on e : Exception do
+          if StringFind(e.Message, 'unable to find value set http://snomed.info/sct') > 0 then
+            op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Snomed value set - not validated')
+          else if StringFind(e.Message, 'unable to find value set http://loinc.org') > 0 then
+            op.hint('InstanceValidator', 'code-unknown', path, suppressLoincSnomedMessages, 'Loinc value set - not validated')
+          else if (vsc <> nil) then
+            op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+vsc.id+' for '+context.Binding.name+': '+e.Message)
+          else
+            op.warning('InstanceValidator', 'code-unknown', path, false, 'Exception opening value set '+TFhirReference(binding.valueset).reference+' for '+context.Binding.name+': '+e.Message);
       end;
     end;
   end;
@@ -924,7 +929,7 @@ begin
     end;
   end
   else
-    validate(op, '', elem, specifiedprofile);
+    validate(op, '', elem, specifiedprofile, elem.Name = 'Bundle');
 end;
 
 constructor TFHIRValidator.Create;

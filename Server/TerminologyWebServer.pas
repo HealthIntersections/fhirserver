@@ -336,7 +336,7 @@ begin
       on e : Exception do
       begin
         response.ResponseNo := 500;
-        response.ContentText := '<snomed version="'+FServer.snomed.Version+'" type="error" message="'+EncodeXML(e.Message, xmlAttribute)+'"/>';
+        response.ContentText := '<snomed version="'+FServer.snomed.SCTVersion+'" type="error" message="'+EncodeXML(e.Message, xmlAttribute)+'"/>';
       end;
     end;
   end
@@ -426,7 +426,7 @@ begin
   begin
     if FServer.Snomed.IsValidConcept(code) then
     begin
-      result := '<snomed version="'+FServer.Snomed.Version+'" type="concept" concept="'+code+'" display="'+EncodeXml(FServer.Snomed.GetDisplayName(code, ''), xmlAttribute)+'">';
+      result := '<snomed version="'+FServer.Snomed.SCTVersion+'" type="concept" concept="'+code+'" display="'+EncodeXml(FServer.Snomed.GetDisplayName(code, ''), xmlAttribute)+'">';
       sl := TStringList.Create;
       try
         FServer.Snomed.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
@@ -439,7 +439,7 @@ begin
     end
     else if FServer.Snomed.IsValidDescription(code, id, s) then
     begin
-      result := '<snomed version="'+FServer.Snomed.Version+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+EncodeXml(s, xmlAttribute)+'">';
+      result := '<snomed version="'+FServer.Snomed.SCTVersion+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+EncodeXml(s, xmlAttribute)+'">';
       sl := TStringList.Create;
       try
         FServer.Snomed.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
@@ -451,13 +451,13 @@ begin
       result := result + '</snomed>';
     end
     else
-      result := '<snomed version="'+FServer.Snomed.Version+'" description="Snomed ID '+code+' not known"/>';
+      result := '<snomed version="'+FServer.Snomed.SCTVersion+'" description="Snomed ID '+code+' not known"/>';
   end
   else
   begin
     exp := TSnomedExpressionParser.Parse(FServer.Snomed, code);
     try
-      result := '<snomed version="'+FServer.Snomed.Version+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(TSnomedExpressionParser.Render(FServer.Snomed, exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
+      result := '<snomed version="'+FServer.Snomed.SCTVersion+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(TSnomedExpressionParser.Render(FServer.Snomed, exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
       EncodeXml(TSnomedExpressionParser.Render(FServer.Snomed, exp, sroReplaceAll), xmlAttribute)+'" display="'+EncodeXml(TSnomedExpressionParser.Display(FServer.Snomed, exp), xmlAttribute)+'" ok="true"/>';
     finally
       exp.Free;

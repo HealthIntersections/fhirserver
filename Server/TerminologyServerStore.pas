@@ -179,7 +179,7 @@ Type
     // database maintenance
     Property Loading : boolean read FLoading write FLoading;
     function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
-    procedure declareSystems(conf : TFHIRConformance);
+    procedure declareSystems(oConf : TFHIRConformance);
   end;
 
 implementation
@@ -711,12 +711,24 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.declareSystems(conf: TFHIRConformance);
+procedure TTerminologyServerStore.declareSystems(oConf: TFHIRConformance);
 var
   i : integer;
+  e : TFhirExtension;
+  s : String;
 begin
   for i := 0 to FProviderClasses.Count - 1 do
-    conf.addExtension('http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system', TCodeSystemProvider(FProviderClasses.Values[i]).system(nil));
+  begin
+    e := oConf.addExtension('http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system', nil);
+    s := TCodeSystemProvider(FProviderClasses.Values[i]).system(nil);
+    e.addExtension('system', s);
+    s := TCodeSystemProvider(FProviderClasses.Values[i]).version(nil);
+    if (s <> '') then
+      e.addExtension('version', s);
+    s := TCodeSystemProvider(FProviderClasses.Values[i]).name(nil);
+    if (s <> '') then
+      e.addExtension('name', s);
+  end;
 end;
 
 destructor TTerminologyServerStore.Destroy;

@@ -27,3 +27,13 @@ Exec/ssl.key
 Server/Win64/Debug/FHIRServer.rsm
 Exec/Temp/HashInfo.txt
 install/fhirserver.fb7lck
+Exec/certificates/argonaut.healthintersections.com.au.crt
+Exec/certificates/argonaut.healthintersections.com.au.csr
+Exec/certificates/argonaut.healthintersections.com.au.key
+Exec/certificates/fhir-dev.healthintersections.com.au.crt
+Exec/certificates/fhir-dev.healthintersections.com.au.csr
+Exec/certificates/fhir-dev.healthintersections.com.au.key
+Exec/certificates/health_intersections_certs.bat
+Exec/certificates/local.healthintersections.com.au.crt
+Exec/certificates/local.healthintersections.com.au.csr
+Exec/certificates/local.healthintersections.com.au.key

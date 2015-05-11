@@ -319,7 +319,7 @@ Type
 
     Property Root : Word read FRoot write FRoot;
     Property Loaded : Boolean read FLoaded write FLoaded;
-    Property Version : String read FVersion write FVersion;
+    Property LOINCVersion : String read FVersion write FVersion;
     Property Properties : TLoincPropertyIds read FProperties Write FProperties;
     Property HeirarchyRoots : TCardinalArray read FHeirarchyRoots write FHeirarchyRoots;
     Property Key : integer read FKey write FKey;
@@ -330,6 +330,8 @@ Type
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function findMAConcept(code : String) : Cardinal;
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -1281,7 +1283,7 @@ begin
     i := 0;
     While (i < Count) and (result = nil) do
     Begin
-      if SameText(Service[i].Version, sName) then
+      if SameText(Service[i].LOINCVersion, sName) then
         result := Service[i];
       inc(i);
     End;
@@ -1424,7 +1426,7 @@ begin
     try
       result.url := id;
       result.status := ValueSetStatusActive;
-      result.version := Version;
+      result.version := Version(nil);
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text);
       result.date := NowUTC;
@@ -1533,6 +1535,11 @@ end;
 function TLoincServices.TotalCount: integer;
 begin
   result := CodeList.Count;
+end;
+
+function TLOINCServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := FVersion;
 end;
 
 function TLoincServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
@@ -1731,6 +1738,11 @@ end;
 function TLoincServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
 begin
   result := nil; // cause loinc don't do subsumption
+end;
+
+function TLOINCServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'LOINC';
 end;
 
 function TLoincServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;

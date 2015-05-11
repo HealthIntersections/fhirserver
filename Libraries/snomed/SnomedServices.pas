@@ -452,7 +452,7 @@ operations
 
     // status stuff
     Property Loaded : Boolean read FLoaded write FLoaded;
-    Property Version : String read FVersion write FVersion;
+    Property SCTVersion : String read FVersion write FVersion;
 
 
     // generic terminology server interface
@@ -460,6 +460,8 @@ operations
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -1131,7 +1133,7 @@ begin
     oWrite := TWriter.Create(oFile, 8192);
     try
       oWrite.WriteString(SNOMED_CACHE_VERSION);
-      oWrite.WriteString(Version);
+      oWrite.WriteString(SCTVersion);
       WriteBytes(FStrings.FMaster);
       WriteBytes(FRefs.FMaster);
       WriteBytes(FDesc.FMaster);
@@ -2004,7 +2006,7 @@ begin
     i := 0;
     While (i < Count) and (result = nil) do
     Begin
-      if SameText(Definition[i].Version, sName) then
+      if SameText(Definition[i].SCTVersion, sName) then
         result := Definition[i];
       inc(i);
     End;
@@ -2203,7 +2205,7 @@ begin
     try
       result.url := id;
       result.status := ValueSetStatusActive;
-      result.version := Version;
+      result.version := SCTVersion;
       result.name := 'SNOMED CT Reference Set '+id.Substring(23);
       result.description := GetDisplayName(id.Substring(23), '');
       result.date := NowUTC;
@@ -2225,7 +2227,7 @@ begin
     try
       result.url := id;
       result.status := ValueSetStatusActive;
-      result.version := Version;
+      result.version := SCTVersion;
       result.name := 'SNOMED CT Concept '+id.Substring(22)+' and descendents';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(22), '');
       result.date := NowUTC;
@@ -2450,6 +2452,11 @@ begin
   result := Concept.Count;
 end;
 
+function TSnomedServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := 'http://snomed.info/sct/900000000000207008/version/20150131';
+end;
+
 procedure TSnomedServices.Close(ctxt: TCodeSystemProviderFilterContext);
 begin
   TSnomedFilterContext(ctxt).free;
@@ -2549,5 +2556,10 @@ begin
     result := nil;
 end;
 
+
+function TSnomedServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'SNOMED CT';
+end;
 
 End.

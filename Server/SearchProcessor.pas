@@ -607,7 +607,7 @@ begin
     else
     begin
       result := result + '(IndexKey = '+inttostr(Key)+' /*'+left+'*/ and target in (select ResourceKey from IndexEntries where (ResourceKey in '+
-        '(select ResourceKey from Ids where ResourceTypeKey in ('+tl+')) and ('+processParam(types, right, lowercase(value), true, f, bHandled)+')))';
+        '(select ResourceKey from Ids where ResourceTypeKey in ('+tl+')) and ('+processParam(types, right, lowercase(value), true, f, bHandled)+'))))';
       bHandled := true;
     end;
   end
@@ -689,7 +689,7 @@ begin
                       value := EncodeNYSIIS(value);
                     if (modifier = 'partial') or (modifier = '') then
                     begin
-                      pfx := 'like ''';
+                      pfx := 'like ''%';
                       sfx := '%''';
                     end
                     else if (modifier = 'exact') then

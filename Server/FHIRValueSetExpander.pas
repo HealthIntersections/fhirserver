@@ -93,6 +93,7 @@ var
   //e : TFhirExtension;
   filter : TSearchFilterText;
   notClosed : boolean;
+  ref : TFhirReference;
 begin
   result := source.Clone;
   if profile = 'http://www.healthintersections.com.au/fhir/expansion/no-details' then
@@ -130,6 +131,16 @@ begin
     result.expansion := TFhirValueSetExpansion.create;
     result.expansion.timestamp := NowUTC;
     result.expansion.identifier := NewGuidURN;
+    if source.id <> '' then
+    begin
+      ref := TFhirReference.Create;
+      try
+        ref.reference := 'ValueSet/'+source.id;
+        result.expansion.addExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/source-valueset', ref.Link);
+      finally
+        ref.Free;
+      end;
+    end;
     
 //    result.expansion.url :=
     //e := result.expansion.ExtensionList.Append;

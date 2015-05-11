@@ -824,8 +824,6 @@ Begin
       sDoc := request.Document;
     try
       sContentType := request.ContentType;
-    if sContentType = '' then
-      sContentType := request.Accept;
 
     if s.StartsWith('multipart/form-data', true) then
       form := loadMultipartForm(request.PostStream, request.ContentType)
@@ -844,6 +842,7 @@ Begin
       end
       else
         oStream := TStringStream.Create(request.UnparsedParams);
+
         try
           response.CustomHeaders.add('Access-Control-Allow-Origin: *');
 //          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -870,7 +869,7 @@ Begin
               oRequest.IfNoneMatch := processIfMatch(request.RawHeaders.Values['If-None-Match']);
               oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
               oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
-              
+
               noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('nohttperr')) or StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('_nohttperr'));
               ReadTags(request.RawHeaders.Values['Category'], oRequest);
               session := oRequest.Session.Link;
@@ -1911,7 +1910,7 @@ Begin
           oRequest.compartments := BuildCompartmentList(oRequest.Session);
 
         if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdValidate, fcmdCreate, fcmdMailbox]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
-          or ((oRequest.CommandType in [fcmdDelete]) and ((sCommand = 'DELETE')) and (oPostStream <> nil) and (oPostStream.Size > 0)) Then
+          or ((oRequest.CommandType in [fcmdDelete]) and ((sCommand = 'DELETE')) and (oPostStream <> nil) and (sContentType <> '')) Then
         begin
           oRequest.CopyPost(oPostStream);
           if (sContentType = 'application/x-zip-compressed') or (sContentType = 'application/zip') then
@@ -2132,6 +2131,7 @@ begin
           TFHIRXhtmlComposer(oComp).Tags := oResponse.categories.Link;
           TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
+          TFHIRXhtmlComposer(oComp).OperationName := oRequest.OperationName;
 //          response.Expires := 0;
         response.Pragma := '';
         end

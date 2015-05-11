@@ -51,6 +51,7 @@ Type
     function expandVS(uri: String; profile, textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
     function expandVS(vs: TFHIRValueSet; cacheId : String; profile, textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet; overload;
 
+    function lookupCode(coding : TFhirCoding) : TFhirResource;
     function validate(vs : TFHIRValueSet; coding : TFhirCoding) : TFhirOperationOutcome; overload;
     function validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept) : TFhirOperationOutcome; overload;
     function translate(vs : TFHIRValueSet; coding : TFhirCoding; dest : String) : TFhirOperationOutcome; overload;
@@ -141,6 +142,51 @@ begin
     Ucum := TUcumServices.Create;
     Ucum.Import(fn);
     writelnt(' - done');
+  end;
+end;
+
+function TTerminologyServer.lookupCode(coding: TFhirCoding): TFhirResource;
+var
+  provider : TCodeSystemProvider;
+  params : TFhirParameters;
+  op : TFHIROperationOutcome;
+  ctxt : TCodeSystemProviderContext;
+begin
+  try
+    params := TFhirParameters.Create;
+    try
+      provider := getProvider(coding.system);
+      try
+        params.AddParameter('name', provider.name(nil));
+        if (provider.version(nil) <> '') then
+          params.AddParameter('version', provider.version(nil));
+        ctxt := provider.locate(coding.code);
+        try
+          if provider.IsAbstract(ctxt) then
+            params.AddParameter('abstract', TFhirBoolean.Create(true));
+          params.AddParameter('display', provider.Display(ctxt));
+          // todo : add designations
+        finally
+          provider.Close(ctxt);
+        end;
+      finally
+        provider.Free;
+      end;
+      result := params.Link;
+    finally
+      result.free;
+    end;
+  except
+    on e : exception do
+    begin
+      op := TFhirOperationOutcome.Create;
+      try
+        op.error('terminology', 'code-invalid', 'coding', false, e.Message);
+        result := op.Link;
+      finally
+        op.Free;
+      end;
+    end;
   end;
 end;
 

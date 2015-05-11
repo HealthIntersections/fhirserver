@@ -57,6 +57,8 @@ Type
     function ChildCount(context : TCodeSystemProviderContext) : integer; virtual; abstract;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; virtual; abstract;
     function system(context : TCodeSystemProviderContext) : String; virtual; abstract;
+    function version(context : TCodeSystemProviderContext) : String; virtual;
+    function name(context : TCodeSystemProviderContext) : String; virtual;
     function getDisplay(code : String):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
     function locate(code : String) : TCodeSystemProviderContext; virtual; abstract;
@@ -114,9 +116,19 @@ begin
   result := TCodeSystemProvider(inherited link);
 end;
 
+function TCodeSystemProvider.name(context: TCodeSystemProviderContext): String;
+begin
+  result := '';
+end;
+
 function TCodeSystemProvider.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   result := false;
+end;
+
+function TCodeSystemProvider.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '';
 end;
 
 { TSearchFilterText }

@@ -120,6 +120,7 @@ Type
     FOwnerName: String;
     FSubscriptionManager : TSubscriptionManager;
     FQuestionnaireCache : TQuestionnaireCache;
+    FClaimQueue : TFHIRClaimList;
     FValidate: boolean;
     FAudits : TFhirResourceList;
 
@@ -177,6 +178,7 @@ Type
     property FormalURLSecureClosed : String read FFormalURLSecureClosed write FFormalURLSecureClosed;
     function ResourceTypeKeyForName(name : String) : integer;
     procedure ProcessSubscriptions;
+    function GenerateClaimResponse(claim : TFhirClaim) : TFhirClaimResponse;
 
     Property OwnerName : String read FOwnerName write FOwnerName;
     Property Profiles : TProfileManager read FProfiles;
@@ -236,6 +238,7 @@ begin
   FAudits := TFhirResourceList.create;
 
   FQuestionnaireCache := TQuestionnaireCache.create;
+  FClaimQueue := TFhirClaimList.Create;
 
   FSubscriptionManager := TSubscriptionManager.Create;
   FSubscriptionManager.dataBase := FDB;
@@ -470,6 +473,7 @@ begin
   FTags.Free;
   FSubscriptionManager.Free;
   FQuestionnaireCache.Free;
+  FClaimQueue.Free;
   FLock.Free;
   FSCIMServer.Free;
   FValidator.Free;
@@ -1018,9 +1022,12 @@ var
   d : TDateTime;
   list : TFhirResourceList;
   storage : TFhirOperationManager;
+  claim : TFhirClaim;
+  resp : TFhirClaimResponse;
 begin
   key := 0;
   list := nil;
+  claim := nil;
   d := UniversalDateTime;
   FLock.Lock('sweep2');
   try
@@ -1042,11 +1049,19 @@ begin
       list := FAudits;
       FAudits := TFhirResourceList.Create;
     end;
+    if (list = nil) and (FClaimQueue.Count > 0) then
+    begin
+      claim := FClaimQueue[0].Link;
+      FClaimQueue.DeleteByIndex(0);
+    end;
   finally
     FLock.Unlock;
   end;
-  if list <> nil then
-    try
+  try
+    if key > 0 then
+      CloseFhirSession(key);
+    if list <> nil then
+    begin
       storage := TFhirOperationManager.create('en', self.Link);
       try
         storage.OwnerName := OwnerName;
@@ -1064,11 +1079,19 @@ begin
       finally
         storage.Free;
       end;
-    finally
-      list.Free;
     end;
-  if key > 0 then
-    CloseFhirSession(key);
+    if (claim <> nil) then
+    begin
+      resp := GenerateClaimResponse(claim);
+      try
+        SaveResource(resp, resp.created);
+      finally
+        resp.Free;
+      end;
+    end;
+  finally
+    list.Free;
+  end;
 end;
 
 
@@ -1084,12 +1107,16 @@ begin
     FQuestionnaireCache.clear(resource.ResourceType, id);
     if resource.ResourceType = frtValueSet then
       FQuestionnaireCache.clearVS(TFhirValueSet(resource).url);
+    if resource.ResourceType = frtClaim then
+      FClaimQueue.add(resource.link);
   finally
     FLock.Unlock;
   end;
 end;
 
 procedure TFHIRDataStore.DropResource(key, vkey : Integer; id : string; aType : TFhirResourceType; indexer : TFhirIndexManager);
+var
+  i : integer;
 begin
   FLock.Lock('DropResource');
   try
@@ -1099,6 +1126,9 @@ begin
       FProfiles.DropProfile(Codes_TFHIRResourceType[aType]+'/'+id, key, Codes_TFHIRResourceType[aType]+'/'+id, aType);
     FSubscriptionManager.DropResource(key, vkey);
     FQuestionnaireCache.clear(aType, id);
+    for i := FClaimQueue.count - 1 downto 0 do
+      if FClaimQueue[i].id = id then
+        FClaimQueue.DeleteByIndex(i);
   finally
     FLock.Unlock;
   end;
@@ -1225,6 +1255,33 @@ begin
   end;
 end;
 
+
+function TFHIRDataStore.GenerateClaimResponse(claim: TFhirClaim) : TFhirClaimResponse;
+var
+  resp : TFhirClaimResponse;
+begin
+  resp := TFhirClaimResponse.Create;
+  try
+    resp.created := NowUTC;
+    with resp.identifierList.Append do
+    begin
+      system := FBases[0]+'/claimresponses';
+      value := claim.id;
+    end;
+    resp.request := TFhirReference.Create;
+    resp.request.reference := 'Claim/'+claim.id;
+    resp.outcome := RSLinkComplete;
+    resp.disposition := 'Automatic Response';
+    resp.paymentAmount := TFhirQuantity.Create;
+    resp.paymentAmount.value := '0';
+    resp.paymentAmount.units := '$';
+    resp.paymentAmount.system := 'urn:iso:std:4217';
+    resp.paymentAmount.code := 'USD';
+    result := resp.Link;
+  finally
+    resp.Free;
+  end;
+end;
 
 function TFHIRDataStore.GetNextKey(keytype: TKeyType): Integer;
 begin
