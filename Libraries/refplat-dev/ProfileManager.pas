@@ -7,7 +7,7 @@ uses
   kCritSct,
   StringSupport,
   AdvObjects, AdvStringMatches, AdvStringObjectMatches,
-  FHIRComponents, FHIRResources, FHIRAtomFeed, FHIRUtilities, FHIRConstants, FHIRTypes;
+  FHIRComponents, FHIRResources, FHIRUtilities, FHIRConstants, FHIRTypes;
 
 
 Type

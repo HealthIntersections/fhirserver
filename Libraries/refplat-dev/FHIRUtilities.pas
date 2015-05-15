@@ -131,7 +131,9 @@ type
     procedure addExtension(url : String; v : String); overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
-    function getExtensionString(url : String) : String;
+    function getExtensionCount(url : String) : Integer;
+    function getExtensionString(url : String) : String; overload;
+    function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
   end;
@@ -154,7 +156,9 @@ type
     function addExtension(url : String; v : String) : TFhirExtension; overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
-    function getExtensionString(url : String) : String;
+    function getExtensionCount(url : String) : Integer;
+    function getExtensionString(url : String) : String; overload;
+    function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
   end;
@@ -180,6 +184,12 @@ type
   end;
 
   TFHIRContactPointListHelper = class helper for TFhirContactPointList
+  public
+    function system(type_ : TFhirContactPointSystem) : String;
+    procedure setSystem(type_ : TFhirContactPointSystem; value : String);
+  end;
+
+  TFhirValueSetContactListHelper = class helper for TFhirValueSetContactList
   public
     function system(type_ : TFhirContactPointSystem) : String;
     procedure setSystem(type_ : TFhirContactPointSystem; value : String);
@@ -264,6 +274,7 @@ type
     function HasTag(system, code : String)  : boolean;
   end;
 
+function Path(const parts : array of String) : String;
 
 
 function ZCompressBytes(const s: TBytes): TBytes;
@@ -1359,6 +1370,16 @@ begin
   ext.value := TFhirString.Create(value);
 end;
 
+function TFHIRElementHelper.getExtensionCount(url: String): Integer;
+var
+  i : integer;
+begin
+  result := 0;
+  for i := 0 to self.ExtensionList.Count - 1 do
+    if self.ExtensionList[i].url = url then
+      inc(result);
+end;
+
 { TFHIRDomainResourceHelper }
 
 function TFHIRDomainResourceHelper.addExtension(url: String; t: TFhirType) : TFhirExtension;
@@ -1381,6 +1402,42 @@ begin
   for i := 0 to self.ExtensionList.Count -1 do
     if self.ExtensionList[i].url = url then
       result := i;
+end;
+
+function TFHIRDomainResourceHelper.getExtensionCount(url: String): Integer;
+var
+  i : integer;
+begin
+  result := 0;
+  for i := 0 to self.ExtensionList.Count - 1 do
+    if self.ExtensionList[i].url = url then
+      inc(result);
+end;
+
+function TFHIRDomainResourceHelper.getExtensionString(url: String; index: integer): String;
+var
+  ndx : Integer;
+begin
+  result := '';
+  for ndx := 0 to self.ExtensionList.Count - 1 do
+  begin
+    if self.ExtensionList[ndx].url = url then
+    begin
+      if index > 0 then
+        dec(index)
+      else
+      begin
+        if (self.ExtensionList.Item(ndx).value is TFhirString) then
+          result := TFhirString(self.ExtensionList.Item(ndx).value).value
+        else if (self.ExtensionList.Item(ndx).value is TFhirCode) then
+          result := TFhirCode(self.ExtensionList.Item(ndx).value).value
+        else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
+          result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+        else
+          result := '';
+      end;
+    end;
+  end;
 end;
 
 function TFHIRDomainResourceHelper.getExtensionString(url: String): String;
@@ -1899,6 +1956,76 @@ begin
   result := false;
   for i := 0 to taglist.Count - 1 do
     result := result or (taglist[i].system = system) and (taglist[i].code = code);
+end;
+
+function Path(const parts : array of String) : String;
+var
+  i : integer;
+begin
+  if length(parts) = 0 then
+    result := ''
+  else
+    result := parts[0];
+  for i := 1 to high(parts) do
+    result := IncludeTrailingPathDelimiter(result) + parts[i];
+end;
+
+
+function TFHIRElementHelper.getExtensionString(url: String; index: integer): String;
+var
+  ndx : Integer;
+begin
+  result := '';
+  for ndx := 0 to self.ExtensionList.Count - 1 do
+  begin
+    if self.ExtensionList[ndx].url = url then
+    begin
+      if index > 0 then
+        dec(index)
+      else
+      begin
+        if (self.ExtensionList.Item(ndx).value is TFhirString) then
+          result := TFhirString(self.ExtensionList.Item(ndx).value).value
+        else if (self.ExtensionList.Item(ndx).value is TFhirCode) then
+          result := TFhirCode(self.ExtensionList.Item(ndx).value).value
+        else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
+          result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+        else
+          result := '';
+      end;
+    end;
+  end;
+end;
+
+{ TFhirValueSetContactListHelper }
+
+procedure TFhirValueSetContactListHelper.setSystem(type_: TFhirContactPointSystem; value: String);
+var
+  i : integer;
+  c : TFhirContactPoint;
+begin
+  if Count = 0 then
+    Append;
+  for i := 0 to Item(0).telecomList.Count - 1 do
+    if Item(0).telecomList[i].system = type_ then
+    begin
+      Item(0).telecomList[i].value := value;
+      exit;
+    end;
+  c := Item(0).telecomList.Append;
+  c.system := type_;
+  c.value := value;
+end;
+
+function TFhirValueSetContactListHelper.system(type_: TFhirContactPointSystem): String;
+var
+  i, j : integer;
+begin
+  result := '';
+  for j := 0 to Count - 1 do
+    for i := 0 to Item(j).telecomList.Count - 1 do
+     if Item(j).telecomList[i].system = type_ then
+       result := Item(j).telecomList[i].value;
 end;
 
 end.

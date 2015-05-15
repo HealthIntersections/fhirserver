@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   GUIDSupport, DateAndTime, AdvObjects, ShellSupport, StringSupport, AdvStringMatches,
-  FHIRResources, FHIRComponents, FHIRTypes, FHIRConstants, FHIRBase, FHIRAtomFeed, FHIRParser,
+  FHIRResources, FHIRComponents, FHIRTypes, FHIRConstants, FHIRBase, FHIRParser,
   FHIRUtilities, FHIRSupport, ProfileManager;
 
 Const

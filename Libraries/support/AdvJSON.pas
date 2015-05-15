@@ -47,6 +47,7 @@ Function JSONString(const value : String) : String;
 
 Type
   TJsonObject = class;
+  TJsonArray = class;
 
   TJsonNode = class (TAdvObject)
   private
@@ -68,6 +69,17 @@ Type
   public
     Function Link : TJsonProperties; Overload;
     Property Prop[Const aKey : String] : TJsonNode Read GetProp Write SetProp; Default;
+  end;
+
+  TJsonArrayEnumerator = class (TAdvObject)
+  private
+    FArray : TJsonArray;
+    cursor : integer;
+    function GetCurrent: TJsonObject;
+  public
+    Destructor Destroy; Override;
+    function MoveNext() : boolean;
+    Property Current : TJsonObject read GetCurrent;
   end;
 
   TJsonArray = class (TJsonNode)
@@ -95,6 +107,8 @@ Type
     function add(value : String): TJsonArray; overload;
     function add(value : TJsonObject): TJsonArray; overload;
     function addObject : TJsonObject; overload;
+
+    function GetEnumerator : TJsonArrayEnumerator; // can only use this when the array members are objects
   end;
 
   TJsonNull = class (TJsonNode);
@@ -1240,6 +1254,13 @@ begin
     result := FItems.Count;
 end;
 
+function TJsonArray.GetEnumerator: TJsonArrayEnumerator;
+begin
+  result := TJsonArrayEnumerator.Create;
+  result.FArray := self.Link;
+  result.cursor := -1;
+end;
+
 function TJsonArray.GetItem(i: integer): TJsonNode;
 begin
   if (self = nil) or (i >= Count) then
@@ -1530,6 +1551,26 @@ begin
   else
     result := def;
 end;
+
+{ TJsonArrayEnumerator }
+
+function TJsonArrayEnumerator.GetCurrent: TJsonObject;
+begin
+  result := FArray.GetObj(cursor);
+end;
+
+destructor TJsonArrayEnumerator.Destroy;
+begin
+  FArray.Free;
+  inherited;
+end;
+
+function TJsonArrayEnumerator.MoveNext: boolean;
+begin
+  inc(cursor);
+  result := cursor < FArray.GetCount;
+end;
+
 
 End.
 

@@ -7,7 +7,7 @@ uses
   StringSupport, EncodeSupport, GuidSupport,
   IdHTTP, IdSSLOpenSSL, IdSoapMime,
   AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches,
-  FHIRAtomFeed, FHIRParser, FHIRResources, FHIRUtilities,
+  FHIRParser, FHIRResources, FHIRUtilities, DateAndTime,
   FHIRConstants, FHIRSupport, FHIRParserBase, FHIRBase;
 
 Type
@@ -23,6 +23,8 @@ Type
 
   TFHIRClientHTTPVerb = (get, post, put, delete);
 
+  TFHIRClientStatusEvent = procedure (client : TObject; details : String) of Object;
+
   // this is meant ot be used once, and then disposed of
   TFhirClient = class (TAdvObject)
   private
@@ -30,6 +32,8 @@ Type
     FJson : Boolean;
     client : TIdHTTP;
     ssl : TIdSSLIOHandlerSocketOpenSSL;
+    FOnClientStatus : TFHIRClientStatusEvent;
+    procedure status(msg : String);
     function serialise(resource : TFhirResource):TStream; overload;
     function makeUrl(tail : String) : String;
     function makeUrlPath(tail : String) : String;
@@ -55,9 +59,17 @@ Type
     procedure deleteResource(atype : TFhirResourceType; id : String);
     function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
+
+    property OnClientStatus : TFHIRClientStatusEvent read FOnClientStatus write FOnClientStatus;
+
+    function lastUpdate : TDateAndTime;
   end;
 
 implementation
+
+uses
+  TextUtilities;
 
 { TFhirClient }
 
@@ -175,6 +187,12 @@ begin
     if not ok then
       result.free;
   end;
+end;
+
+procedure TFhirClient.status(msg: String);
+begin
+  if assigned(FOnClientStatus) then
+    FOnClientStatus(self, msg);
 end;
 
 function encodeParams(params : TAdvStringMatch) : String;
@@ -389,6 +407,7 @@ begin
       result := nil
     else
     begin
+      StreamToFile(ret, 'c:\temp\file.txt');
       p := CreateParser(ret);
       try
         p.parse;
@@ -498,6 +517,43 @@ destructor EFHIRClientException.destroy;
 begin
   FIssue.Free;
   inherited;
+end;
+
+function TFhirClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+var
+  s : String;
+  feed : TFHIRBundle;
+  i : integer;
+begin
+//    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
+  status('Fetch History for '+PLURAL_CODES_TFhirResourceType[aType]);
+  result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_history?'+encodeParams(params), get, nil) as TFhirBundle;
+  try
+    s := result.links['next'];
+    i := 1;
+    while AllRecords and (s <> '') do
+    begin
+      inc(i);
+      status('Fetch History for '+PLURAL_CODES_TFhirResourceType[aType]+' page '+inttostr(i));
+      feed := fetchResource(s, get, nil) as TFhirBundle;
+      try
+        result.entryList.AddAll(feed.entryList);
+        s := feed.links['next'];
+      finally
+        feed.free;
+      end;
+    end;
+    if allRecords then
+      result.link_List.Clear;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirClient.lastUpdate: TDateAndTime;
+begin
+  result := nil;
 end;
 
 end.

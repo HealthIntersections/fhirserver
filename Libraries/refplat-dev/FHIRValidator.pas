@@ -36,7 +36,7 @@ uses
   AdvObjects, AdvStringObjectMatches, AdvFiles, AdvZipReaders, AdvZipParts,
   AdvMemories, AdvVclStreams, AdvBuffers, AdvNameBuffers,
   IdSoapXml, IdSoapMsXml, AltovaXMLLib_TLB, MsXmlParser, IdUri,
-  FHIRParser, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources, FHIRAtomFeed,
+  FHIRParser, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources,
   FHIRUtilities, FHIRValueSetExpander, FHIRConstants, FHIRValueSetChecker,
   TerminologyServer, ProfileManager;
 
