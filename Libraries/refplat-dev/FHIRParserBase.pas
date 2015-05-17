@@ -36,7 +36,7 @@ uses
   FHIRSupport,
   MsXmlParser, AdvBuffers, AdvStringLists, StringSupport, DecimalSupport, EncodeSupport, DateAndTime, AdvStringMatches,
   XmlBuilder, AdvXmlBuilders, TextUtilities, FHIRTags,
-  DateSupport, MsXmlBuilder, AdvJSON, AdvVCLStreams, AdvStringStreams, AdvStringBuilders, FHIRLang;
+  DateSupport, MsXmlBuilder, AdvJSON, AdvVCLStreams, AdvStringBuilders, FHIRLang;
 
 const
   ATOM_NS = 'http://www.w3.org/2005/Atom';
@@ -376,10 +376,10 @@ end;
 
 function TFHIRJsonParserBase.ParseXHtmlNode(path, value : String): TFhirXHtmlNode;
 var
-  ss : TStringStream;
+  ss : TBytesStream;
   parser : TFHIRXmlParserBase;
 begin
-  ss := TStringStream.create(value);
+  ss := TBytesStream.create(TEncoding.UTF8.getBytes(value));
   try
     parser := TFHIRXmlParserBase.create(lang);
     try
@@ -719,12 +719,12 @@ end;
 
 Procedure TFHIRJsonComposerBase.ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList);
 var
-  s : TStringStream;
+  s : TBytesStream;
 begin
-  s := TStringStream.Create('');
+  s := TBytesStream.Create();
   try
     compose(s, oResource, false, links);
-    xml.Text(s.DataString);
+    xml.Text(TEncoding.UTF8.getString(s.bytes, 0, s.size));
   finally
     s.free;
   end;
@@ -732,10 +732,10 @@ end;
 
 procedure TFHIRJsonComposerBase.ComposeXHtmlNode(json : TJSONWriter; name: String; value: TFhirXHtmlNode);
 var
-  s : TStringStream;
+  s : TBytesStream;
   xml : TXmlBuilder;
 begin
-  s := TStringStream.Create('');
+  s := TBytesStream.Create();
   try
     xml := TAdvXmlBuilder.Create;
     try
@@ -755,7 +755,7 @@ begin
     finally
       xml.Free;
     end;
-    json.value(name, s.DataString);
+    json.value(name, TEncoding.UTF8.GetString(s.Bytes, 0, s.Size));
   finally
     s.free;
   end;
@@ -894,11 +894,11 @@ end;
 
 class function TFHIRJsonParserBase.ParseFragment(fragment, type_, lang: String): TFHIRBase;
 var
-  ss : TStringStream;
+  ss : TBytesStream;
   p : TFHIRJsonParser;
   jsn : TJsonObject;
 begin
-  ss := TStringStream.Create(fragment, TEncoding.UTF8);
+  ss := TBytesStream.Create(TEncoding.UTF8.getBytes(fragment));
   try
     jsn := TJSONParser.Parse(ss);
     try
@@ -928,12 +928,12 @@ end;
 
 class function TFHIRXmlParserBase.ParseFragment(fragment, lang: String): TFHIRBase;
 var
-  ss : TStringStream;
+  ss : TBytesStream;
   p : TFHIRXmlParser;
   xml : IXMLDOMElement;
 begin
   result := nil;
-  ss := TStringStream.Create(fragment, TEncoding.UTF8);
+  ss := TBytesStream.Create(TEncoding.UTF8.getBytes(fragment));
   try
     p := TFHIRXmlParser.Create(lang);
     try
@@ -1088,7 +1088,7 @@ end;
 procedure TFHIRXhtmlComposer.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links : TFhirBundleLinkList);
 var
   s : TAdvStringBuilder;
-  ss : TStringStream;
+  ss : TBytesStream;
   xml : TFHIRXmlComposer;
   c : integer;
   title : String;
@@ -1185,10 +1185,10 @@ Header(Session, FBaseURL, lang)+
         ComposeXHtmlNode(s, TFHIRDomainResource(oResource).text.div_, 0, relativeReferenceAdjustment);
       s.append('<hr/>'+#13#10);
       xml := TFHIRXmlComposer.create(lang);
-      ss := TStringStream.create('');
+      ss := TBytesStream.create();
       try
         xml.Compose(ss, oResource, true, links);
-        s.append('<pre class="xml">'+#13#10+FormatXMLToHTML(ss.dataString)+#13#10+'</pre>'+#13#10);
+        s.append('<pre class="xml">'+#13#10+FormatXMLToHTML(TEncoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10);
       finally
         ss.free;
         xml.free;
@@ -1220,7 +1220,7 @@ end;
 //  i : integer;
 //  a : string;
 //  e : TFHIRAtomEntry;
-//  ss : TStringStream;
+//  ss : TBytesStream;
 //  xml : TFHIRXmlComposer;
 //  link, text : String;
 //  u : string;
@@ -1336,7 +1336,7 @@ end;
 //      else
 //      begin
 //        xml := TFHIRXmlComposer.create(lang);
-//        ss := TStringStream.create('');
+//        ss := TBytesStream.create('');
 //        try
 //          if (e.resource.text <> nil) and (e.resource.text.div_ <> nil) then
 //            ComposeXHtmlNode(s, e.resource.text.div_, 2, relativeReferenceAdjustment);
@@ -1456,7 +1456,7 @@ var
   s : TAdvStringBuilder;
   i : integer;
   e : TFhirBundleEntry;
-  ss : TStringStream;
+  ss : TBytesStream;
   xml : TFHIRXmlComposer;
   r : TFhirResource;
   t, link, text, sl, ul : String;
@@ -1584,12 +1584,12 @@ Header(Session, FBaseURL, lang)+
       else
       begin
         xml := TFHIRXmlComposer.create(lang);
-        ss := TStringStream.create('');
+        ss := TBytesStream.create();
         try
           if (r is TFhirDomainResource) and (TFhirDomainResource(r).text <> nil) and (TFhirDomainResource(r).text.div_ <> nil) then
             ComposeXHtmlNode(s, TFhirDomainResource(r).text.div_, 2, relativeReferenceAdjustment);
           xml.Compose(ss, r, true, nil);
-          s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXMLToHTML(ss.dataString)+#13#10+'</pre>'+#13#10);
+          s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXMLToHTML(TENcoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10);
         finally
           ss.free;
           xml.free;

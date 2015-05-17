@@ -292,7 +292,8 @@ uses
   RxNormServices in 'RxNormServices.pas',
   OIDSupport in '..\Libraries\support\OIDSupport.pas',
   IETFLanguageCodeServices in 'IETFLanguageCodeServices.pas',
-  FHIRSecurity in '..\Libraries\refplat-dev\FHIRSecurity.pas';
+  FHIRSecurity in '..\Libraries\refplat-dev\FHIRSecurity.pas',
+  FHIRParserTests in '..\Libraries\refplat-dev\FHIRParserTests.pas';
 
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));

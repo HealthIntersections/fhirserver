@@ -663,7 +663,7 @@ begin
   result := false;
   if (uri1 <> uri2) then
     result := false // todo later - check that concept maps
-  else if (uri1 = Snomed.system(nil)) then
+  else if (snomed <> nil) and (uri1 = Snomed.system(nil)) then
     result := Snomed.Subsumes(code1, code2)
   else
   begin

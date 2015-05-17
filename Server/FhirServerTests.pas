@@ -42,7 +42,7 @@ Type
 implementation
 
 uses
-  SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax,
+  SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax, FHIRParserTests,
   DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures, QuestionnaireBuilder;
 
 { TFhirServerTests }
@@ -55,12 +55,13 @@ end;
 procedure TFhirServerTests.executeLibrary;
 begin
   // TTwilioClient.RunTests;
+  TFHIRParserTests.runTests;
   TSCIMSearchParser.runTests;
   TFSFilterParser.runTests;
   TDecimalTests.runTests;
   TAdvXmlBuilderCanonicalizationTests.test;
   TJWTTests.runTests;
-  TDigitalSignatureTests.test;
+ // TDigitalSignatureTests.test;
 //  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
   WriteLn('Library tests Passed');
 end;
