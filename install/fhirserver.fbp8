@@ -1,0 +1,410 @@
+﻿project
+begin
+  projectid = {96B9BA55-5E12-4F31-933B-F8023413916C}
+  target
+  begin
+    name = Default
+    targetid = {6B5A0694-1E5F-4406-9BAB-B997EBCC200E}
+    rootaction
+    begin
+      action.gui.inputbox
+      begin
+        actiontypeid = {95261620-BBED-49FE-89A2-B623F678C1F0}
+        customactionname = InputBox
+        enabletimeout = false
+        id = {8B8614C2-7840-427F-BBE6-6E990A24F9A6}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        terminateontimeout = true
+        timeoutlength = 1
+        as.caption = "Releast Notes"
+        as.text = "What to say to users in release"
+        as.xpos = -1
+        as.ypos = -1
+        as.returnvalue = "fix json serialisation bug"
+        as.returnvariable = purpose
+      end
+      action.variables.loadfromini
+      begin
+        createvarininiifnotexists = false
+        failifvariablenotdefined = true
+        failifvariablenotininifile = true
+        id = {AF219536-6BFA-4B06-B4B5-925AA7B158E7}
+        ignorefilenotfound = false
+        inifile = C:\\work\\ftp.ini
+        sectionname = settings
+        variables = "ftppassword" +
+                    ""
+        variabletypes = "String" +
+                        ""
+      end
+      action.variables.loadfromini
+      begin
+        createvarininiifnotexists = false
+        description = "Read FHIR Version"
+        failifvariablenotdefined = true
+        failifvariablenotininifile = true
+        id = {25828604-726F-4115-89FB-03799A67707B}
+        ignorefilenotfound = false
+        inifile = C:\\work\\org.hl7.fhir\\build\\publish\\version.info
+        sectionname = FHIR
+        variables = "FhirVersion" +
+                    ""
+        variabletypes = "String" +
+                        ""
+      end
+      action.files.delete
+      begin
+        deletehidden = false
+        deletereadonly = false
+        failifnofile = false
+        filespec = C:\\work\\fhirserver\\Exec\\FHIRServer-dev64.exe
+        id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
+      end
+      action.delphi.build
+      begin
+        allowimplicitimport = true
+        alwaysuseconditionalsfromdof = false
+        autoincbuild = true
+        autoupdatefileversion = true
+        autoupdateproductversion = false
+        buildall = true
+        buildversion = 0
+        codepage = 1252
+        compileprojectresources = false
+        compileridl = true
+        configname = Release
+        debugversionnumbers = false
+        delphiversion = DelphiXE8
+        description = "Compile the Server (64)"
+        eurekalogverboselogging = false
+        frameworktype = VCL
+        hintsaserror = false
+        iconfile = C:\\work\\fhirserver\\Server\\fhir.ico
+        id = {217F3077-B26C-48A2-B7CF-5FE7B5106B4B}
+        includecompiledate = false
+        includemanifest = false
+        includeverinfo = false
+        isdebug = false
+        isdll = false
+        isprerelease = false
+        isprivate = false
+        isspecial = false
+        keepcfg = false
+        linkproductversiontofileversion = true
+        locale = 3081
+        majorversion = 0
+        minorversion = 0
+        platform = Win64
+        projectfile = C:\\work\\fhirserver\\Server\\FHIRServerDev.dpr
+        regenerateresource = true
+        releaseversion = 0
+        resourcecompilertype = rcBorland
+        startingdir = C:\\work\\fhirserver\\Server\\
+        updatedoffile = false
+        updatepackagesource = false
+        updateversioninfokeys = false
+        useeurekalogcompiler = false
+        useprojectsettings = []
+        usepropertyset = false
+        useversionfromdof = false
+        versioninfokeys = "CompanyName=" +
+                          "FileDescription=" +
+                          "FileVersion=0.0.0.0" +
+                          "InternalName=" +
+                          "LegalCopyright=" +
+                          "LegalTrademarks=" +
+                          "OriginalFilename=" +
+                          "ProductName=" +
+                          "ProductVersion=0.0.0.0" +
+                          "Comments=" +
+                          ""
+        warningsaserror = false
+        workaroundd5bug = false
+        delphi.compileroptions
+        begin
+          alwaysuseconditionalsfromdof = false
+          alwaysusedelphilibrarypath = false
+          alwaysusedofsearchpath = false
+          assertions = false
+          assignableconst = false
+          booleval = false
+          compilerwarnings = "-w-UNSAFE_TYPE=0" +
+                             "-w-UNSAFE_CODE=0" +
+                             "-w-UNSAFE_CAST=0" +
+                             ""
+          consoleapp = false
+          debuginfo = false
+          definitionsonly = true
+          emitruntimetypeinformation = false
+          exportallsymbols = false
+          extendedsyntax = true
+          externaltd32 = true
+          frameworktype = None
+          generatedocumentation = false
+          generatehpp = false
+          hugestrings = true
+          imagebase = 4194304
+          includenamespaces = false
+          includeremotesymbols = false
+          includetd32 = false
+          inlining = inOn
+          iochecking = true
+          librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+          linkeroutput = 0
+          localsymbols = false
+          mapfile = 0
+          maxstacksize = 1048576
+          minstacksize = 16384
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+          openstrings = true
+          optimisation = false
+          outputdir = C:\\work\\fhirserver\\Exec
+          overflowchecking = false
+          rangechecking = false
+          recordfieldalign = fa8
+          referenceinfo = false
+          safedivide = false
+          searchpath = C:\\HL7Connect\\indysoap\\source
+          showhints = true
+          showwarnings = true
+          stackframes = false
+          stringchecks = true
+          typedpointers = false
+          unitaliases = WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+          unitoutputdir = C:\\work\\fhirserver\\Exec\\Temp
+          usedebugdcu = false
+          usepackages = false
+          varstringchecks = true
+        end
+      end
+      action.directory.rename
+      begin
+        id = {296F3AA1-BCDF-472D-9C91-B3ED07F898D0}
+        newdirname = FHIRServer-dev64.exe
+        renamedir = false
+        sourcefile = C:\\work\\fhirserver\\Exec\\FHIRServerDev.exe
+      end
+      action.process.execute
+      begin
+        captureoutput = true
+        description = "Sign the Server (64)"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {9F01F557-BE77-4FF3-9066-591BF7CB030D}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer-dev64.exe\""
+        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        startindir = "C:\\Program Files (x86)\\kSign"
+        terminateontimeout = false
+        timeoutlength = 1
+        useerrordialogmonitor = false
+        waitforcompletion = true
+      end
+      action.innosetup.execute
+      begin
+        description = "Build the server install"
+        id = {DB9CE85D-5959-4FD8-94EC-33ED5C16CE3A}
+        innoversion = Inno5
+        scriptfile = C:\\work\\fhirserver\\install\\install.iss
+        showprogress = true
+        unicode = false
+        usecommandline = true
+        usepreprocessor = false
+      end
+      action.process.execute
+      begin
+        captureoutput = true
+        description = "Sign the server nstall"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {558736BC-993B-4201-95DD-D5280B95116C}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\FHIRServer_Install_DSTU2.exe\""
+        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        startindir = "C:\\Program Files (x86)\\kSign"
+        terminateontimeout = false
+        timeoutlength = 1
+        useerrordialogmonitor = false
+        waitforcompletion = true
+      end
+      action.ftp.connect
+      begin
+        connecttimeoutinsec = 0
+        detailedlogging = false
+        enablekeepalives = false
+        ftpconnectionname = HealthIntersections
+        ftphost = 27.123.25.1
+        ftpport = 21
+        id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+        passive = true
+        proxyport = 0
+        proxytype = fpcmNone
+        transfertype = ftBinary
+        useglobalopt = false
+        usehost = true
+        useproxy = false
+        userid = healthi3
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = FHIRServer_Install_DSTU2.exe
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {73EE9861-9B29-4EDF-B7F7-18F44D1B2B95}
+        localdir = C:\\work\\fhirserver\\install\\build
+        recursive = false
+        remotefile = public_html/FhirServer/FHIRServer_Install_DSTU2.exe
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.smtp.send
+      begin
+        authenticate = false
+        bccsource = asSpecify
+        bodyobject = "A new version of the Dev FHIR Server has been posted at " +
+                     "" +
+                     "http://www.healthintersections.com.au/FhirServer/FHIRServer_Install_DEV_0.10.0001.exe" +
+                     "" +
+                     "In this release:" +
+                     "  %purpose%" +
+                     "" +
+                     ".. FHIR Server Build Process" +
+                     "" +
+                     "" +
+                     ""
+        copytosource = asSpecify
+        encryptedpassword = 3R\+g9NnIZyx/OFFW
+        host = smtp.gmail.com
+        htmlmessage = false
+        id = {21040135-AB86-4642-8C17-290A44768977}
+        logsslnegotiation = false
+        port = 465
+        recipientssource = asSpecify
+        replytosource = asSpecify
+        subject = "New FHIR Server Posted"
+        useehlo = false
+        useglobaloptions = false
+        userid = fhir-server@healthintersections.com.au
+        usessl = true
+        usetls = utUseExplicitTLS
+        email.address
+        begin
+          address = server@healthintersections.com.au
+          addresstype = from
+          name = "FHIR Server"
+        end
+        email.address
+        begin
+          addresstype = sender
+        end
+        email.list
+        begin
+          listtype = replyto
+        end
+        email.address
+        begin
+          addresstype = ReceiptRecipient
+        end
+        email.list
+        begin
+          listtype = recipients
+          email.address
+          begin
+            address = patrick.werner@hs-heilbronn.de
+            name = "Patrick Werner"
+          end
+          email.address
+          begin
+            address = grahame@healthintersections.com.au
+            name = "Grahame Grieve"
+          end
+          email.address
+          begin
+            address = john.carey@kestral.com.au
+            name = "John Carey"
+          end
+          email.address
+          begin
+            address = Michael.Osborne@mater.org.au
+            name = "Michael Osborne"
+          end
+        end
+        email.list
+        begin
+          listtype = copyto
+        end
+        email.list
+        begin
+          listtype = blindcopyto
+        end
+      end
+      action.ftp.disconnect
+      begin
+        autoreconnect = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        id = {58346928-77F3-4C2F-A158-2DF37D0A7337}
+      end
+    end
+  end
+  variable
+  begin
+    name = FhirVersion
+    variablescope = vtProject
+  end
+  variable
+  begin
+    name = FTPFileList
+    variablescope = vtProject
+    variabletype = btString
+  end
+  variable
+  begin
+    name = FTPItem
+    variablescope = vtProject
+    variabletype = btString
+  end
+  variable
+  begin
+    name = ftppassword
+    variablescope = vtProject
+    variabletype = btString
+  end
+  variable
+  begin
+    name = purpose
+    variablescope = vtProject
+    variabletype = btString
+  end
+end

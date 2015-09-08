@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, ShellSupport,
   IniFiles,
   AdvObjects, GuidSupport, AdvXmlBuilders,
-  FHIRTypes, FHIRResources, FHIRAtomFeed, FHIRParser, ProfileManager,
+  FHIRTypes, FHIRResources, FHIRParser, ProfileManager,
   TerminologyServer, FHIRDataStore;
 
 Type

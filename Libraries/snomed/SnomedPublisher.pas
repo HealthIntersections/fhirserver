@@ -21,8 +21,6 @@ Type
     Lock : TAdvExclusiveCriticalSection;
     FSearchCache : TStringList;
     FFHIRPath : String;
-    Function GetFSN(iDescriptions : TCardinalArray) : String;
-    Function GetPN(iDescriptions : TCardinalArray) : String;
     Function GetPNForConcept(iIndex : Cardinal) : String;
     Function GetPaths(iIndex : Cardinal) : TArrayofIdArray;
     Function ConceptForDesc(iDesc : Cardinal; var iDescs : Cardinal):Cardinal;
@@ -170,7 +168,7 @@ Begin
   html.AddLine(1);
 }
 
-  html.Header('Snomed-CT Definitions (v: '+FSnomed.SCTVersion+')');
+  html.Header('Snomed-CT Definitions (v: '+FSnomed.VersionDate+')');
   if Not FSnomed.Loaded Then
   Begin
     html.StartParagraph;
@@ -329,57 +327,9 @@ var
 Begin
   FSnomed.Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);
-  result := GetPN(Descriptions);
+  result := FSnomed.GetPN(Descriptions);
 End;
 
-Function TSnomedPublisher.GetFSN(iDescriptions : TCardinalArray) : String;
-var
-  iLoop : Integer;
-  iid : UInt64;
-  iString, iDummy, module, refsets, kind : Cardinal;
-  iFlag : Byte;
-  date : TSnomedDate;
-begin
-  result := '';
-  For iLoop := Low(iDescriptions) To High(iDescriptions) Do
-  Begin
-    FSnomed.Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
-    if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE = VAL_DESC_FullySpecifiedName shl 4) Then
-      result := FSnomed.Strings.GetEntry(iString);
-  End;
-End;
-
-Function TSnomedPublisher.GetPN(iDescriptions : TCardinalArray) : String;
-var
-  iLoop : Integer;
-  iid : UInt64;
-  iString, iDummy, module, refsets, kind : Cardinal;
-  iFlag : Byte;
-  date : TSnomedDate;
-  iList : TCardinalArray;
-  v : String;
-begin
-  result := '';
-  For iLoop := Low(iDescriptions) To High(iDescriptions) Do
-  Begin
-    FSnomed.Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
-    if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
-      result := FSnomed.Strings.GetEntry(iString);
-  End;
-  if result = '' then // ok, well, we'll pick the first description that's in a value set
-  begin
-    For iLoop := Low(iDescriptions) To High(iDescriptions) Do
-    Begin
-      FSnomed.Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
-      iList := FSnomed.Refs.GetReferences(refsets);
-      v := FSnomed.Strings.GetEntry(iString);
-      if ((result = '') or (length(result) > length(v))) and (iFlag and MASK_DESC_STATUS = FLAG_Active) And (Length(iList) > 0) Then
-        result := v;
-    End;
-  end;
-  if result = '' Then // ok, give up. and use the FSN
-    result := GetFSN(iDescriptions);
-End;
 
 
 Function TSnomedPublisher.GetPaths(iIndex : Cardinal): TArrayofIdArray;
@@ -690,8 +640,8 @@ Begin
       Parents := FSnomed.Refs.GetReferences(ParentIndex);
     Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);
     outbounds := FSnomed.Refs.GetReferences(outboundIndex);
-    FSN := GetFSN(Descriptions);
-    PN := GetPN(Descriptions);
+    FSN := FSnomed.GetFSN(Descriptions);
+    PN := FSnomed.GetPN(Descriptions);
     if Not bRoot then
       html.Header(inttostr(Identity)+': '+screen(FSN, ''));
     if not bRoot Then
@@ -828,7 +778,6 @@ Begin
       html.StartTable(false);
       html.StartTableRow;
       html.AddTableCell('Member', true);
-//      html.AddTableCell('Type', true);
       html.EndTableRow;
       For i := iStart to Min(iStart+MAX_ROWS, High(aMembers)) Do
       Begin
@@ -837,13 +786,10 @@ Begin
         Begin
           iDummy := ConceptForDesc(aMembers[i].Ref, iDescs);
           CellConceptRef(html, sPrefix, iDummy, false, iDescs);
-//          CellConceptRef(html, sPrefix, aMembers[i].Attr, false);
         End
         Else
         Begin
-          iRef := FSnomed.Desc.ConceptByIndex(aMembers[i].Ref);
-          CellConceptRef(html, sPrefix, iRef, false);
-//          CellConceptRef(html, sPrefix, aMembers[i].Attr, false);
+          CellConceptRef(html, sPrefix, aMembers[i].Ref, false);
         End;
         html.EndTableRow;
       End;
@@ -882,7 +828,7 @@ Begin
       html.StartTableRow;
       html.AddTableCell('Inbound Relationships', true);
       html.AddTableCell('Type', true);
-      html.AddTableCell('Source', true);
+//      html.AddTableCell('Source', true);
       html.AddTableCell('Characteristic', true);
       html.AddTableCell('Refinability', true);
       html.AddTableCell('Group', true);
@@ -891,9 +837,9 @@ Begin
       Begin
         FSnomed.Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
         html.StartRowFlip(i);
-        CellConceptRef(html, sPrefix, iWork, false);
+        CellConceptRef(html, sPrefix, iWork, true);
         CellConceptRef(html, sPrefix, iWork3, false);
-        html.AddTableCell(Screen(PN, ''));
+  //      html.AddTableCell(Screen(PN, ''));
         html.AddTableCell(' '+GetRelChar(Flags));
         html.AddTableCell(' '+GetRelRefinability(Flags));
         html.AddTableCell(' '+GetRelGroup(Group));
@@ -1497,6 +1443,7 @@ end;
 
 Type
   TSearchCache = class (TObject)
+  public
     a : TMatchArray;
   End;
 
@@ -1710,8 +1657,8 @@ Begin
     Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);
     Inbounds := FSnomed.Refs.GetReferences(InboundIndex);
     outbounds := FSnomed.Refs.GetReferences(outboundIndex);
-    FSN := GetFSN(Descriptions);
-    PN := GetPN(Descriptions);
+    FSN := FSnomed.GetFSN(Descriptions);
+    PN := FSnomed.GetPN(Descriptions);
 
     html.StartParagraph;
     html.AddText(sId, true, true);
@@ -1759,9 +1706,11 @@ End;
 procedure TSnomedPublisher.RefsetRef(html: THtmlPublisher; const sPrefix: String; iIndex: cardinal);
 var
   iDefinition, iMembersByName, iMembersByRef: Cardinal;
+  id : String;
 begin
   FSnomed.RefSetIndex.GetReferenceSet(iIndex, iDefinition, iMembersByName, iMembersByRef);
-  html.URL(Screen(GetPNForConcept(iDefinition), ' reference set'), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iDefinition)));
+  id := inttostr(FSnomed.Concept.GetIdentity(iDefinition));
+  html.URL(Screen(id+' '+GetPNForConcept(iDefinition), ' reference set'), sPrefix+'id='+id);
   html.AddTextPlain('(');
   html.AddTextPlain(inttostr(FSnomed.RefSetMembers.GetMemberCount(iMembersByRef))+' members)');
 end;

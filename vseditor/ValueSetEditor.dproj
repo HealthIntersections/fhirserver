@@ -74,7 +74,6 @@
         <Icon_MainIcon>ValueSetEditor_Icon.ico</Icon_MainIcon>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;C:\work\Components;C:\work\Components\treeview\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -234,6 +233,21 @@
         <DCCReference Include="..\Libraries\refplat-dev\ProfileManager.pas"/>
         <DCCReference Include="..\Libraries\refplat-dev\QuestionnaireBuilder.pas"/>
         <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapMime.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapClasses.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapDebug.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapResourceStrings.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapTracker.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapBase64.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapConsts.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapUtilities.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapExceptions.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapMsXml.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapXML.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapComponent.pas"/>
+        <DCCReference Include="..\Libraries\indysoap\IdSoapNamespaces.pas"/>
+        <DCCReference Include="..\Libraries\ui\LookAheadUnit.pas"/>
+        <DCCReference Include="..\Libraries\ui\DProgress.pas"/>
         <DCCReference Include="ValueSetEditorRegisterServerForm.pas">
             <Form>frmRegisterServer</Form>
             <FormType>dfm</FormType>
@@ -686,8 +700,8 @@
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

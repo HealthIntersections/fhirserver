@@ -202,6 +202,7 @@ Type
     Procedure Value(Const name : String; avalue : Double); overload;
     Procedure ValueDate(Const name : String; aValue : TDateTime); overload;
     Procedure ValueNull(Const name : String);
+    Procedure ValueBytes(Const name : String; bytes : TBytes);
 
     Procedure ValueObject(Const name : String); Overload;
     Procedure ValueObject; Overload;
@@ -590,6 +591,15 @@ begin
   DoName(name);
   ProduceLine(UseName + '[');
   LevelDown;
+end;
+
+procedure TJSONWriter.ValueBytes(const name: String; bytes: TBytes);
+begin
+  if name = '' then
+    raise Exception.Create('Injecting bytes not supported in an array');
+  DoName(Name);
+  produce(UseName);
+  ProduceBytes(bytes);
 end;
 
 procedure TJSONWriter.FinishArray;

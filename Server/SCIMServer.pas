@@ -76,6 +76,7 @@ Type
     Function loadUser(id : String) : TSCIMUser;
     function loadOrCreateUser(id, name, email : String) : TSCIMUser;
     function CheckLogin(username, password : String) : boolean;
+    function CheckId(id : String; var username, hash : String) : boolean;
 
     // install
     Procedure DefineSystem(conn : TKDBConnection);
@@ -93,6 +94,35 @@ uses
   FHIRSecurity;
 
 { TSCIMServer }
+
+function TSCIMServer.CheckId(id: String; var username, hash: String): boolean;
+var
+  conn : TKDBConnection;
+begin
+  conn := db.GetConnection('scim.checkid');
+  try
+    conn.SQL := 'Select UserName, Password from Users where Status = 1 and UserKey = '''+SQLWrapString(id)+'''';
+    conn.Prepare;
+    try
+      conn.Execute;
+      result := conn.FetchNext;
+      if result then
+      begin
+        username := conn.ColStringByName['UserName'];
+        hash := conn.ColStringByName['Password'];
+      end;
+    finally
+      conn.Terminate;
+    end;
+    conn.Release;
+  except
+    on e:Exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
+end;
 
 function TSCIMServer.CheckLogin(username, password: String): boolean;
 var
@@ -894,7 +924,7 @@ end;
 function extractProvider(s : String) : String;
 begin
   if s = '' then
-    result := 'n/a'
+    result := '<i>internal</i>'
   else if s.StartsWith('http://www.facebook.com') then
     result := 'Facebook'
   else if s.StartsWith('http://www.google.com') then
@@ -909,7 +939,7 @@ procedure TSCIMServer.processWebRequest(context: TIdContext; session : TFhirSess
 begin
   if (request.Document = '/scim/web') then
     processWebUserList(context, session, request, response)
-  else if StringIsInteger16(request.Document.Substring(10)) then
+  else if StringIsInteger16(request.Document.Substring(10)) or (request.Document.Substring(10) = '$new') then
     processWebUserId(context, session, request, response)
   else
     raise ESCIMException.Create(403, 'FORBIDDEN', '', 'URL not understood');
@@ -920,65 +950,114 @@ var
   variables : TDictionary<String,String>;
   conn : TKDBConnection;
   user : TSCIMUser;
+  bnew : boolean;
+  bDone : boolean;
   i : integer;
   s : String;
   st : TStringList;
   p : TParseMap;
+  uk : integer;
 begin
+  bDone := false;
   variables := TDictionary<String,String>.create;
   try
     conn := db.GetConnection('scim.user.search');
     try
-      conn.SQL := 'Select Content from Users where status = 1 and UserKey = '+SQLWrapString(request.Document.Substring(10));
+      bnew := request.Document.Substring(10) = '$new';
+      if bnew then
+        uk := 2 // anonymous
+      else
+        uk := StrToInt(request.Document.Substring(10));
+      conn.SQL := 'Select Content from Users where status = 1 and UserKey = '+inttostr(uk);
       conn.Prepare;
+      conn.Execute;
+      if not conn.FetchNext then
+        raise ESCIMException.Create(403, 'FORBIDDEN', '', 'User not found');
+      user := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
       try
-        conn.Execute;
-        if not conn.FetchNext then
-          raise ESCIMException.Create(403, 'FORBIDDEN', '', 'User not found');
-        user := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
-        try
-          if request.Command = 'POST' then
-          begin
-            p := TParseMap.Create(request.UnparsedParams);
-            st := TStringList.create;
+        conn.Terminate;
+        if request.Command = 'POST' then
+        begin
+          p := TParseMap.Create(request.UnparsedParams);
+          st := TStringList.create;
+          try
+            user.DisplayName := p.GetVar('display');
+            st.Text := p.GetVar('emails');
+            user.clearEmails;
+            for i := 0 to st.Count - 1 do
+              user.AddEmail(st[i], '');
+            st.Text := p.GetVar('rights');
+            user.clearEntitlements;
+            for i := 0 to st.Count - 1 do
+              user.addEntitlement(st[i]);
+            conn.terminate;
+            conn.StartTransact;
             try
-              user.DisplayName := p.GetVar('display');
-              st.Text := p.GetVar('emails');
-              user.emails.Clear;
-              for i := 0 to st.Count - 1 do
-                user.AddEmail(st[i], '');
-              st.Text := p.GetVar('rights');
-              user.clearEntitlements;
-              for i := 0 to st.Count - 1 do
-                user.addEntitlement(st[i]);
-              conn.terminate;
-              conn.SQL := 'Update Users set Content = :c where UserKey = '+SQLWrapString(request.Document.Substring(10));
+              if bNew then
+              begin
+                user.created := nowUTC;
+                user.lastModified := user.created.Link;
+                user.location := 'https://'+request.Host+'/scim/Users/'+inttostr(uk);
+                user.version := '1';
+                user.resourceType := 'User';
+                user.username := p.GetVar('username');
+                if conn.CountSQL('select UserKey from Users where Status = 1 and UserName = '''+SQLWrapString(user.username)+'''') > 0 then
+                  raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'Duplicate User name');
+                uk := GetNextUserKey;
+                user.id := inttostr(uk);
+                conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values ('+inttostr(uk)+', '''+SQLWrapString(user.username)+''', '''+HashPassword(uk, p.GetVar('password'))+''', 1, :c)';
+              end
+              else if p.GetVar('password') <> '' then
+                conn.SQL := 'Update Users set Password = '''+HashPassword(uk, p.GetVar('password'))+''', Content = :c where UserKey = '+inttostr(uk)
+              else
+                conn.SQL := 'Update Users set Content = :c where UserKey = '+inttostr(uk);
               conn.prepare;
               conn.BindBlobFromBytes('c', TJSONWriter.writeObject(user.json));
               conn.Execute;
-            finally
-              st.Free;
-              p.Free;
+              conn.Terminate;
+              IndexUser(conn, user, uk);
+              response.Redirect('/scim/web');
+              bDone := true;
+              conn.Commit;
+            except
+              conn.Rollback;
+              raise;
             end;
+          finally
+            st.Free;
+            p.Free;
           end;
-          variables.Add('user.id', user.id);
-          variables.Add('user.name', user.username);
-          variables.Add('user.display', user.DisplayName);
-          variables.Add('user.external', user.ExternalId);
-          s := '';
-          for i := 0 to user.emails.Count - 1 do
-            s := s + user.emails[i].Value+#13#10;
-          variables.Add('user.email', s);
-          s := '';
-          for i := 0 to user.entitlementCount - 1 do
-            s := s + user.entitlement[i]+#13#10;
-          variables.Add('user.rights', s);
-          variables.Add('user.json', TJSONWriter.writeObjectStr(user.json, true));
-        finally
-          user.Free;
         end;
+        if user.ExternalId = '' then
+          variables.Add('user.password', '<input type="text" name="password" value=""/>')
+        else
+          variables.Add('user.password', '<i>No Password for this user</i>');
+        variables.Add('user.external', user.ExternalId);
+        if bnew then
+        begin
+          variables.Add('user.fname', '(new user)');
+          variables.Add('user.name', '<input type="text" name="username" value=""/>');
+          variables.Add('user.id', '$new');
+          variables.Add('user.display', '<input type="text" name="display" value=""/>');
+        end
+        else
+        begin
+          variables.Add('user.fname', user.username);
+          variables.Add('user.name', user.username);
+          variables.Add('user.id', user.id);
+          variables.Add('user.display', '<input type="text" name="display" value="'+user.DisplayName+'"/>');
+        end;
+
+        s := '';
+        for i := 0 to user.emails.Count - 1 do
+          s := s + user.emails[i].Value+#13#10;
+        variables.Add('user.email', s);
+        s := '';
+        for i := 0 to user.entitlementCount - 1 do
+          s := s + user.entitlement[i]+#13#10;
+        variables.Add('user.rights', s);
       finally
-        conn.Terminate;
+        user.Free;
       end;
       conn.Release;
     except
@@ -989,7 +1068,8 @@ begin
       end;
     end;
 
-    OnProcessFile(response, session, '/scimuser.html', AltFile('/scimuser.html'), true, variables);
+    if not bDone then
+      OnProcessFile(response, session, '/scimuser.html', AltFile('/scimuser.html'), true, variables);
   finally
     variables.free;
   end;
@@ -1123,8 +1203,10 @@ begin
     ndx(0, 'id', user.id, true);
     ndx(0, 'externalId', user.externalId, true);
     ndx(0, 'resourceType', user.resourceType, true);
-    ndx(0, 'created', user.createdUTC.AsXML, true);
-    ndx(0, 'lastModified', user.lastModifiedUTC.AsXML, true);
+    if (user.createdUTC <> nil) then
+      ndx(0, 'created', user.createdUTC.AsXML, true);
+    if (user.lastModifiedUTC <> nil) then
+      ndx(0, 'lastModified', user.lastModifiedUTC.AsXML, true);
     ndx(0, 'location', user.location, true);
     ndx(0, 'version', user.version, true);
     ndx(0, 'formattedName', user.formattedName, true);

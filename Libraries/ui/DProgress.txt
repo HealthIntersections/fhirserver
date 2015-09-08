@@ -1,0 +1,28 @@
+Dreamsoft ProgressBar
+---------------------
+Dreamsoft ProgressBar is an ideal alternative to other progress
+meters when the total duration of an operation is unknown (just
+like the one in Windows Explorer "Search" Pane or "Setting 
+Folder permissions..." dialog). Supports WindowsXP skins.
+
+As this component is freeware it comes with no warranty of any kind.
+However, if your computer does blow up as a direct result of using
+it I'd enjoy hearing about the experience.
+
+To use Dreamsoft ProgressBar just drop it onto a form and set a
+few properties! The key properties are:
+
+  Speed: Integer   - Set the animation interval (if 0, animation stops)
+  Animate: Boolean - Starts or stops the animation
+
+Hope you like it and find it useful. Comments and suggestions are
+most welcome. Future revisions of this component will be posted
+to http://www.torry.net
+
+Developed and tested with Delphi 3 on Windows XP. It might also
+works fine with Delphi 4/5/6/7 on Windows 2000. If it works under 
+Windows 98/98SE/Me, please be kind and send me an e-mail: 
+
+E-Mail: schlechteduard@yahoo.com
+
+P.S.: Sorry for my english.

@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   AdvObjects, AdvStringObjectMatches,
-  FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities,
   TerminologyServices, TerminologyServerStore;
 
 Type
@@ -15,23 +15,23 @@ Type
     FOthers : TAdvStringObjectMatch; // checkers or code system providers
     fvs : TFHIRValueSet;
     FId: String;
-    function check(system, code : String; displays : TStringList) : boolean; overload;
-    function findCode(code: String; list : TFhirValueSetDefineConceptList; displays : TStringList): boolean;
-    function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; displays : TStringList) : boolean;
-    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverity; test : boolean; code, msg : string):boolean;
-    procedure check(coding: TFhirCoding; op : TFhirOperationOutcome); overload;
-    procedure check(code: TFhirCodeableConcept; op : TFhirOperationOutcome); overload;
+    function check(system, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
+    function findCode(code: String; list : TFhirValueSetCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
+    function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
+    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverity; test : boolean; code : TFhirIssueType; msg : string):boolean;
+    function getName: String;
   public
     constructor Create(store : TTerminologyServerStore; id : String); overload;
     destructor Destroy; override;
 
     property id : String read FId;
+    property name : String read getName;
 
     procedure prepare(vs : TFHIRValueSet);
 
-    function check(system, code : String) : boolean; overload;
-    function check(coding : TFhirCoding) : TFhirOperationOutcome; overload;
-    function check(coded : TFhirCodeableConcept) : TFhirOperationOutcome; overload;
+    function check(system, code : String; abstractOk : boolean) : boolean; overload;
+    function check(coding : TFhirCoding; abstractOk : boolean): TFhirParameters; overload;
+    function check(code: TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters; overload;
   end;
 
 implementation
@@ -63,13 +63,13 @@ var
   other : TFHIRValueSet;
 begin
   FVs := vs.link;
-  if fvs.define <> nil then
-    FOthers.Add(fvs.define.system, TValueSetProvider.create(FVs.Link));
+  if fvs.codeSystem <> nil then
+    FOthers.Add(fvs.codeSystem.system, TValueSetProvider.create(FVs.Link));
   if (fvs.compose <> nil) then
   begin
     for i := 0 to fvs.compose.importList.Count - 1 do
     begin
-      other := FStore.getValueSetByIdentifier(fvs.compose.importList[i].value);
+      other := FStore.getValueSetByUrl(fvs.compose.importList[i].value);
       try
         if other = nil then
           raise ETerminologyError.create('Unable to find value set '+fvs.compose.importList[i].value);
@@ -107,7 +107,7 @@ begin
   end;
 end;
 
-function TValueSetChecker.rule(op: TFhirOperationOutcome; severity: TFhirIssueSeverity; test: boolean; code, msg: string): boolean;
+function TValueSetChecker.rule(op: TFhirOperationOutcome; severity: TFhirIssueSeverity; test: boolean; code : TFhirIssueType; msg: string): boolean;
 var
   issue : TFhirOperationOutcomeIssue;
 begin
@@ -116,31 +116,27 @@ begin
   begin
     issue := op.issueList.Append;
     issue.severity := severity;
-    issue.code := TFhirCodeableConcept.Create;
-    with issue.code.codingList.Append do
-    begin
-      system := 'http://hl7.org/fhir/issue-type';
-      code := code;
-    end;
-    issue.details := msg;
+    issue.code := code;
+    issue.diagnostics := msg;
   end;
 end;
 
 
-function TValueSetChecker.findCode(code: String; list : TFhirValueSetDefineConceptList; displays : TStringList): boolean;
+function TValueSetChecker.findCode(code: String; list : TFhirValueSetCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
 var
   i : integer;
 begin
   result := false;
   for i := 0 to list.count - 1 do
   begin
-    if (code = list[i].code) and not list[i].abstract then
+    if (code = list[i].code) then
     begin
       result := true;
+      isabstract := list[i].abstract;
       displays.Add(list[i].display);
       exit;
     end;
-    if findCode(code, list[i].conceptList, displays) then
+    if findCode(code, list[i].conceptList, displays, isabstract) then
     begin
       result := true;
       exit;
@@ -148,24 +144,33 @@ begin
   end;
 end;
 
-function TValueSetChecker.check(system, code: String): boolean;
+function TValueSetChecker.getName: String;
+begin
+  if (fvs <> nil) then
+    result := fvs.name
+  else
+    result := '??';
+end;
+
+function TValueSetChecker.check(system, code: String; abstractOk : boolean): boolean;
 var
   list : TStringList;
 begin
   list := TStringList.Create;
   try
-    result := check(system, code, list);
+    result := check(system, code, abstractOk, list);
   finally
     list.Free;
   end;
 end;
 
-function TValueSetChecker.check(system, code : String; displays : TStringList) : boolean;
+function TValueSetChecker.check(system, code : String; abstractOk : boolean; displays : TStringList) : boolean;
 var
   checker : TValueSetChecker;
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   i : integer;
+  isabstract : boolean;
 begin
   result := false;
   {special case:}
@@ -182,7 +187,7 @@ begin
           result := false
         else
           try
-            result := true;
+            result := abstractOk or not cs.IsAbstract(ctxt);
             cs.Displays(ctxt, displays);
           finally
             cs.Close(ctxt);
@@ -194,11 +199,14 @@ begin
   end
   else
   begin
-    if (fvs.define <> nil) and (system = fvs.define.system) then
+    if (fvs.codeSystem <> nil) and (system = fvs.codeSystem.system) then
     begin
-      result := FindCode(code, fvs.define.conceptList, displays);
+      result := FindCode(code, fvs.codeSystem.conceptList, displays, isabstract);
       if result then
+      begin
+        result := abstractOk or not isabstract;
         exit;
+      end;
     end;
     if (fvs.compose <> nil) then
     begin
@@ -207,7 +215,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[fvs.compose.importList[i].value]);
-          result := checker.check(system, code, displays);
+          result := checker.check(system, code, abstractOk, displays);
         end;
       end;
       for i := 0 to fvs.compose.includeList.Count - 1 do
@@ -215,7 +223,7 @@ begin
         if not result then
         begin
           cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
-          result := (cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.includeList[i], code, displays);
+          result := (cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.includeList[i], code, abstractOk, displays);
         end;
       end;
       for i := 0 to fvs.compose.excludeList.Count - 1 do
@@ -223,99 +231,112 @@ begin
         if result then
         begin
           cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
-          result := not ((cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.excludeList[i], code, displays));
+          result := not ((cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.excludeList[i], code, abstractOk, displays));
         end;
       end;
     end;
   end;
 end;
 
-procedure TValueSetChecker.check(coding: TFhirCoding; op : TFhirOperationOutcome);
+
+function TValueSetChecker.check(coding: TFhirCoding; abstractOk : boolean) : TFhirParameters;
 var
   list : TStringList;
 begin
-  list := TStringList.Create;
+  result := TFhirParameters.create;
   try
-    if rule(op, IssueSeverityError, check(coding.system, coding.code, list), 'code-unknown', 'The system/code "'+coding.system+'"/"'+coding.code+'" is not in the value set') then
-      rule(op, IssueSeverityWarning, (coding.display = '') or (list.IndexOf(coding.display) >= 0), 'value', 'The display "'+coding.display+'" is not a valid display for the code');
-  finally
-    list.Free;
-  end;
-end;
-
-function TValueSetChecker.check(coding: TFhirCoding): TFhirOperationOutcome;
-begin
-  result := TFhirOperationOutcome.Create;
-  try
-    check(coding, result);
-    BuildNarrative(result, 'Code Validation');
+    list := TStringList.Create;
+    try
+      list.CaseSensitive := false;
+      if check(coding.system, coding.code, abstractOk, list) then
+      begin
+        result.AddParameter('result', TFhirBoolean.Create(true));
+        if (coding.display <> '') and (list.IndexOf(coding.display) < 0) then
+          result.AddParameter('message', 'The display "'+coding.display+'" is not a valid display for the code '+coding.code);
+        if list.Count > 0 then
+          result.AddParameter('display', list[0]);
+      end
+      else
+      begin
+        result.AddParameter('result', TFhirBoolean.Create(false));
+        result.AddParameter('message', 'The system/code "'+coding.system+'"/"'+coding.code+'" is not in the value set '+fvs.name);
+      end;
+    finally
+      list.Free;
+    end;
     result.Link;
   finally
     result.free;
   end;
 end;
 
-function TValueSetChecker.check(coded: TFhirCodeableConcept): TFhirOperationOutcome;
-begin
-  result := TFhirOperationOutcome.Create;
-  try
-    check(coded, result);
-    BuildNarrative(result, 'Code Validation');
-    result.Link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TValueSetChecker.check(code: TFhirCodeableConcept; op: TFhirOperationOutcome);
+function TValueSetChecker.check(code: TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters;
 var
   list : TStringList;
   i : integer;
-  ok, v : boolean;
+  v : boolean;
+  ok : TFhirBoolean;
   cc, codelist : String;
   prov : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
 begin
-  list := TStringList.Create;
+  result := TFhirParameters.Create;
   try
-    ok := false;
-    codelist := '';
-    for i := 0 to code.codingList.Count - 1 do
-    begin
-      list.Clear;
-      cc := ',{'+code.codingList[i].system+'}'+code.codingList[i].code;
-      codelist := codelist + cc;
-      v := check(code.codingList[i].system, code.codingList[i].code, list);
-      ok := ok or v;
-      if (v) then
-        rule(op, IssueSeverityWarning, (code.codingList[i].display = '') or (list.IndexOf(code.codingList[i].display) >= 0), 'value', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc)
-      else
+    list := TStringList.Create;
+    try
+      ok := TFhirBoolean.Create(false);
+      result.AddParameter('result', ok);
+      codelist := '';
+      for i := 0 to code.codingList.Count - 1 do
       begin
-        prov := FStore.getProvider(code.codingList[i].system, true);
-        try
-         if (prov = nil) then
-           rule(op, IssueSeverityWarning, false, 'value', 'The system "'+code.codingList[i].system+'" is not known')
-         else
-         begin
-           ctxt := prov.locate(code.codingList[i].code);
-           try
-             if rule(op, IssueSeverityError, ctxt <> nil, 'value', 'The code "'+code.codingList[i].code+'" is not valid in the system '+code.codingList[i].system) then
-             begin
-               prov.Displays(ctxt, list);
-               rule(op, IssueSeverityWarning, (code.codingList[i].display = '') or (list.IndexOf(code.codingList[i].display) > -1), 'value', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc)
+        list.Clear;
+        cc := ',{'+code.codingList[i].system+'}'+code.codingList[i].code;
+        codelist := codelist + cc;
+        v := check(code.codingList[i].system, code.codingList[i].code, abstractOk, list);
+        ok.value := ok.value or v;
+        if (v) then
+        begin
+          if (code.codingList[i].display <> '') and (list.IndexOf(code.codingList[i].display) < 0) then
+            result.AddParameter('message', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc);
+          if list.Count > 0 then
+            result.AddParameter('display', list[0]);
+        end
+        else
+        begin
+          prov := FStore.getProvider(code.codingList[i].system, true);
+          try
+           if (prov = nil) then
+             result.AddParameter('message', 'The system "'+code.codingList[i].system+'" is not known')
+           else
+           begin
+             ctxt := prov.locate(code.codingList[i].code);
+             try
+               if ctxt = nil then
+                 result.AddParameter('message', 'The code "'+code.codingList[i].code+'" is not valid in the system '+code.codingList[i].system)
+               else
+               begin
+                 prov.Displays(ctxt, list);
+                 if (code.codingList[i].display <> '') and (list.IndexOf(code.codingList[i].display) = -1) then
+                   result.AddParameter('message', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc)
+               end;
+             finally
+               prov.Close(ctxt);
              end;
-           finally
-             prov.Close(ctxt);
            end;
-         end;
-        finally
-          prov.Free;
+          finally
+            prov.Free;
+          end;
         end;
       end;
+      if (not ok.value) then
+        result.AddParameter('message', 'None of the supplied codes are in the value set '+fvs.name);
+
+    finally
+      list.Free;
     end;
-    rule(op, IssueSeverityError, ok, 'code-unknown', 'None of the codes provided ('+codelist.Substring(1)+') are in the value set');
+    result.Link;
   finally
-    list.Free;
+    result.free;
   end;
 end;
 
@@ -333,7 +354,7 @@ begin
     cs.Close(ctxt);
 end;
 
-function TValueSetChecker.checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code: String; displays : TStringList): boolean;
+function TValueSetChecker.checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code: String; abstractOk : boolean; displays : TStringList): boolean;
 var
   i : integer;
   fc : TFhirValueSetComposeIncludeFilter;
@@ -347,7 +368,7 @@ begin
   begin
     loc := cs.locate(code);
     try
-      result := loc <> nil;
+      result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
       if result then
       begin
         cs.displays(loc, displays);
@@ -366,7 +387,7 @@ begin
       begin
         cs.close(loc);
         cs.displays(code, displays);
-        result := true;
+        result := (abstractOk or not cs.IsAbstract(loc));
         exit;
       end;
     end;
@@ -387,7 +408,7 @@ begin
         ctxt := filters[0];
         loc := cs.filterLocate(ctxt, code);
         try
-          result := loc <> nil;
+          result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
           if result then
             cs.displays(loc, displays);
         finally
@@ -403,7 +424,7 @@ begin
           begin
             loc := cs.locateIsA(code, fc.value);
             try
-              result := loc <> nil;
+              result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
               if result then
                 cs.displays(loc, displays);
             finally
@@ -415,7 +436,7 @@ begin
             ctxt := filters[i];
             loc := cs.filterLocate(ctxt, code);
             try
-              result := loc <> nil;
+              result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
               if result then
                 cs.displays(loc, displays);
             finally

@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   StringSupport,
-  FHIRBase, FHIRResources, FHIRComponents, FHIRTypes, FHIRLang, FHIRUtilities;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRLang, FHIRUtilities;
 
 function LoadBinaryResource(lang : String; b: TBytes): TFhirBinary;
 

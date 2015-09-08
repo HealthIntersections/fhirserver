@@ -1,0 +1,24 @@
+{
+  "client_id": "c1be9476-39f4-4bc4-a6ce-85306034571f",
+  "client_secret": "9290c5b6-8cd6-465b-9199-37207f1775bc",
+  "redirect_uris": [
+    "http://www.fhir-cloud.com",
+    "https://www.fhir-cloud.com",
+    "http://localhost:8085"
+  ],
+  "client_name": "FHIR Cloud",
+  "client_uri": "https://www.fhir-cloud.com",
+  "logo_uri": "http://www.fhir-cloud.com/assets/cloud.png",
+  "contacts": [
+    "peter.bernhardt@gmail.com"
+  ],
+  "tos_uri": null,
+  "token_endpoint_auth_method": "none",
+  "scope": "openid user/*.* patient/*.* launch/patient profile",
+  "grant_types": [
+    "authorization_code"
+  ],
+  "response_types": [
+    "code"
+  ]
+}

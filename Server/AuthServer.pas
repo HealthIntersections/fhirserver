@@ -44,6 +44,7 @@ type
     FFilePath : String;
     FSSLPort : String;
     FHost : String;
+    FRootCert : String;
     FSSLCert : String;
     FSSLPassword : String;
 
@@ -93,6 +94,7 @@ type
     property GoogleAppKey : String read FGoogleAppKey;
     property HL7Appid : String read FHL7Appid;
     function MakeLoginToken(path: String; provider: TFHIRAuthProvider): String;
+    property RootCert : String read FRootCert write FRootCert;
     property SSLCert : String read FSSLCert write FSSLCert;
     property SSLPassword : String read FSSLPassword write FSSLPassword;
     property AdminEmail : String read FAdminEmail write FAdminEmail;
@@ -118,6 +120,7 @@ const
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
         tcOther,
+    tcFinancial , // frtAccount,
     tcClinical , // frtAllergyIntolerance,
     tcSchedule , // frtAppointment,
     tcSchedule , // frtAppointmentResponse,
@@ -165,6 +168,7 @@ const
     tcData , // frtImagingStudy,
     tcMeds , // frtImmunization,
     tcMeds , // frtImmunizationRecommendation,
+    tcOther , // frtImplemnetationGuide,
     tcOther , // frtList,
     tcOther , // frtLocation,
     tcOther , // frtMedia,
@@ -205,9 +209,9 @@ const
     tcOther , // frtStructureDefinition,
     tcOther , // frtSubscription,
     tcOther , // frtSubstance,
-    tcOther , // frtSupply,
     tcOther , // frtSupplyDelivery,
     tcOther , // frtSupplyRequest,
+    tcOther , // frtTestScript,
     tcOther , // frtValueSet,
     tcClinical); // frtVisionPrescription);
 
@@ -367,14 +371,14 @@ begin
   if params.GetVar('response_type') <> 'code' then
     raise Exception.Create('Only response_type allowed is ''code''');
   client_id := checkNotEmpty(params.GetVar('client_id'), 'client_id');
-  scope := checkNotEmpty(params.GetVar('scope'), 'scope');
-  redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
-  state := checkNotEmpty(params.GetVar('state'), 'state');
-  aud := checkNotEmpty(params.GetVar('aud'), 'aud');
   if FIni.ReadString(client_id, 'name', '') = '' then
     raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
+  redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
   if not isAllowedRedirect(client_id, redirect_uri) then
     raise Exception.Create('Unacceptable Redirect url "'+redirect_uri+'"');
+  scope := checkNotEmpty(params.GetVar('scope'), 'scope');
+  state := checkNotEmpty(params.GetVar('state'), 'state');
+  aud := checkNotEmpty(params.GetVar('aud'), 'aud');
   if not isAllowedAud(client_id, aud) then
     raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'"');
 
@@ -508,6 +512,7 @@ begin
   else
     authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2';
 
+  writelnt('a_c 1: '+authurl);
   try
     conn := FFhirStore.DB.GetConnection('OAuth2');
     try
@@ -522,6 +527,7 @@ begin
       state := conn.ColStringByName['ClientState'];
       scope := conn.ColStringByName['Scope'];
       conn.Terminate;
+   writelnt('a_c 2: '+redirect);
 
       if params.getVar('form') = 'true' then
       begin
@@ -566,7 +572,9 @@ begin
         try
           variables.Add('client', FIni.ReadString(client_id, 'name', ''));
           variables.Add('username', name);
+   writelnt('a_c 3: '+redirect);
           loadScopeVariables(variables, scope, session.User);
+   writelnt('a_c 4: '+redirect);
           OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
         finally
           variables.free;
@@ -730,6 +738,7 @@ begin
     end
     else
       raise Exception.Create('Login attempt not understood');
+    conn.release;
   except
     on e:exception do
     begin

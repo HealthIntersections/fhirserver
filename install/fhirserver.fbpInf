@@ -1,7 +1,6 @@
 <project ServerProjectName="">
   <watches/>
   <collapsedNodes></collapsedNodes>
-  <breakpoints></breakpoints>
   <actions>
     <action id="{FC0D9CF9-73CA-4A5F-9D58-6583CF3EC915}">
       <Description>Compile the Server (64)</Description>
@@ -19,8 +18,70 @@
     <Notes>
       <![CDATA[]]>
     </Notes>
-    <LastBuildRun>00:09:54</LastBuildRun>
-    <LastBuildStart>10/05/2015 10:50:14 PM</LastBuildStart>
-    <LastBuildState>True</LastBuildState>
+    <LastBuildRun>00:06:49</LastBuildRun>
+    <LastBuildStart>8/09/2015 5:01:27 PM</LastBuildStart>
+    <LastBuildState>False</LastBuildState>
+    <builds>
+      <build>
+        <id>{8E7AF437-51D3-4C1D-9D47-8DF9D9A43D1A}</id>
+        <start>28/08/2015 9:43:43 PM</start>
+        <run>00:47:17</run>
+        <result>True</result>
+      </build>
+      <build>
+        <id>{2EBBB7FD-5F2D-43CA-900C-AA2259F4FD7F}</id>
+        <start>29/08/2015 8:38:42 AM</start>
+        <run>00:08:58</run>
+        <result>False</result>
+      </build>
+      <build>
+        <id>{AF2978F0-568D-4F6C-BA67-D7DDC1353364}</id>
+        <start>29/08/2015 9:09:38 AM</start>
+        <run>00:47:53</run>
+        <result>True</result>
+      </build>
+      <build>
+        <id>{76952218-5C23-4B9A-8634-639E504FC8B3}</id>
+        <start>29/08/2015 12:05:40 PM</start>
+        <run>00:00:13</run>
+        <result>False</result>
+      </build>
+      <build>
+        <id>{1B0A8B18-1D8E-4661-9437-74D5EB3724A8}</id>
+        <start>7/09/2015 10:39:54 AM</start>
+        <run>00:34:25</run>
+        <result>True</result>
+      </build>
+      <build>
+        <id>{E15C9B06-DAEF-4CD9-BA90-C704DCD485F1}</id>
+        <start>7/09/2015 11:22:00 AM</start>
+        <run>00:37:08</run>
+        <result>False</result>
+      </build>
+      <build>
+        <id>{172962FE-5CA9-4090-AF73-2F3A4300205C}</id>
+        <start>7/09/2015 2:57:50 PM</start>
+        <run>00:07:39</run>
+        <result>False</result>
+      </build>
+      <build>
+        <id>{EAB338A7-5593-4A14-87C3-054EB1E4CE46}</id>
+        <start>7/09/2015 3:08:03 PM</start>
+        <run>00:09:17</run>
+        <result>False</result>
+      </build>
+      <build>
+        <id>{239D0BC1-AD01-4042-AEEA-17D2B24A247E}</id>
+        <start>7/09/2015 11:25:42 PM</start>
+        <run>00:06:53</run>
+        <result>False</result>
+      </build>
+      <build>
+        <id>{95873EC1-23DA-4C70-A82B-0DC0C4F27EE6}</id>
+        <start>8/09/2015 5:01:27 PM</start>
+        <run>00:06:49</run>
+        <result>False</result>
+      </build>
+    </builds>
   </properties>
 </project>

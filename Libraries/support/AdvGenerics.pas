@@ -20,12 +20,14 @@ Type
   end;
 
   TArrayManager<T> = class abstract
+  public
     procedure Move(var AArray: array of T; FromIndex, ToIndex, Count: Integer); overload; virtual; abstract;
     procedure Move(var FromArray, ToArray: array of T; FromIndex, ToIndex, Count: Integer); overload; virtual; abstract;
     procedure Finalize(var AArray: array of T; Index, Count: Integer); virtual; abstract;
   end;
 
   TMoveArrayManager<T> = class(TArrayManager<T>)
+  public
     procedure Move(var AArray: array of T; FromIndex, ToIndex, Count: Integer); overload; override;
     procedure Move(var FromArray, ToArray: array of T; FromIndex, ToIndex, Count: Integer); overload; override;
     procedure Finalize(var AArray: array of T; Index, Count: Integer); override;
@@ -33,6 +35,7 @@ Type
 
 {$IF Defined(WEAKREF)}
   TManualArrayManager<T> = class(TArrayManager<T>)
+  public
     procedure Move(var AArray: array of T; FromIndex, ToIndex, Count: Integer); overload; override;
     procedure Move(var FromArray, ToArray: array of T; FromIndex, ToIndex, Count: Integer); overload; override;
     procedure Finalize(var AArray: array of T; Index, Count: Integer); override;
@@ -384,7 +387,7 @@ begin
     Notify(oldItem, cnRemoved);
     Notify(Value, cnAdded);
   finally
-    oldItem.free;
+    TAdvObject(oldItem).free;
   end;
 end;
 
@@ -675,7 +678,7 @@ begin
   try
     Notify(oldItem, Notification);
   finally
-    oldItem.free;
+    TAdvObject(oldItem).free;
   end;
 end;
 
@@ -712,7 +715,7 @@ begin
       Notify(oldItems[I], cnRemoved);
   finally
     for I := 0 to Length(oldItems) - 1 do
-      oldItems[I].free;
+      TAdvObject(oldItems[I]).free;
   end;
 end;
 
@@ -971,20 +974,6 @@ begin
   end;
 end;
 
-function TAdvMap<T>.Hash(const Key: String): Integer;
-var
-  LResult: UInt32;
-  I: Integer;
-begin
-  LResult := 0;
-  for I := 0 to Key.Length - 1 do
-  begin
-    LResult := (LResult shl 5) or (LResult shr 27); //ROL Result, 5
-    LResult := LResult xor UInt32(Key[I]);
-  end;
-  Result := LResult
-end;
-
 function TAdvMap<T>.GetItem(const Key: String): T;
 var
   index: Integer;
@@ -1010,7 +999,7 @@ begin
     ValueNotify(oldValue, cnRemoved);
     ValueNotify(Value, cnAdded);
   finally
-    oldValue.free;
+    TAdvObject(oldValue).free;
   end;
 end;
 
@@ -1142,7 +1131,7 @@ end;
 
 procedure TAdvMap<T>.Remove(const Key: String);
 begin
-  DoRemove(Key, Hash(Key), cnRemoved).Free;
+  TAdvObject(DoRemove(Key, Hash(Key), cnRemoved)).Free;
 end;
 
 procedure TAdvMap<T>.Clear;
@@ -1162,7 +1151,7 @@ begin
       Continue;
     KeyNotify(oldItems[i].Key, cnRemoved);
     ValueNotify(oldItems[i].Value, cnRemoved);
-    oldItems[i].Value.free;
+    TAdvObject(oldItems[i].Value).free;
   end;
 end;
 
@@ -1215,7 +1204,7 @@ begin
 
   ValueNotify(oldValue, cnRemoved);
   ValueNotify(Value, cnAdded);
-  oldValue.Free;
+  TAdvObject(oldValue).Free;
 end;
 
 procedure TAdvMap<T>.AddOrSetValue(const Key: String; const Value: T);
@@ -1498,6 +1487,21 @@ begin
 end;
 {$ENDIF}
 
+
+{$R-}
+function TAdvMap<T>.Hash(const Key: String): Integer;
+var
+  LResult: UInt32;
+  I: Integer;
+begin
+  LResult := 0;
+  for I := 0 to Key.Length - 1 do
+  begin
+    LResult := (LResult shl 5) or (LResult shr 27); //ROL Result, 5
+    LResult := LResult xor UInt32(Key[I]);
+  end;
+  Result := LResult
+end;
 
 end.
 

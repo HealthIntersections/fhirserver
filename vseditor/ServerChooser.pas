@@ -20,6 +20,8 @@ type
     Button1: TButton;
     btnOpen: TButton;
     lblId: TLabel;
+    Label1: TLabel;
+    eFilter: TEdit;
     procedure tvValuesetsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure tvValuesetsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure tvValuesetsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
@@ -28,9 +30,12 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure tvValuesetsClick(Sender: TObject);
+    procedure FilterValueSets();
+    procedure eFilterChange(Sender: TObject);
   private
     FContext: TValueSetEditorContext;
     FCurrentServer : String;
+    FValueSets : TFhirValueSetList;
     procedure SetContext(const Value: TValueSetEditorContext);
     { Private declarations }
   public
@@ -45,8 +50,38 @@ implementation
 
 {$R *.dfm}
 
+procedure TServerChooserForm.eFilterChange(Sender: TObject);
+begin
+  Context.Settings.ServerFilter := eFilter.text;
+  FilterValueSets();
+end;
+
+procedure TServerChooserForm.FilterValueSets;
+var
+  i : integer;
+  vs : TFhirValueSet;
+  sFilter : String;
+begin
+  sFilter := eFilter.text;
+
+  if FValueSets = nil then
+    FValueSets := TFhirValueSetList.Create
+  else
+    FValueSets.Clear;
+
+  for i := 0 to Context.Server.List.Count - 1 do
+  begin
+    vs := Context.Server.List[i];
+    if (sFilter = '') or (vs.name.Contains(sFilter)) or (vs.url.Contains(sFilter)) or (vs.description.Contains(sFilter)) then
+      FValueSets.Add(vs.Link);
+  end;
+  tvValuesets.RootNodeCount := FValueSets.Count;
+  tvValuesets.Invalidate;
+end;
+
 procedure TServerChooserForm.FormDestroy(Sender: TObject);
 begin
+  FValueSets.Free;
   Context := nil;
 end;
 
@@ -66,8 +101,9 @@ begin
   if Context <> nil then
   begin
     Caption := 'Value Sets on '+Context.Server.URL;
-    tvValuesets.RootNodeCount := Context.Server.List.entryList.Count;
-    tvValuesets.Invalidate;
+    eFilter.text := Context.Settings.ServerFilter;
+    if eFilter.text = '' then
+      FilterValueSets();
   end;
 end;
 
@@ -102,7 +138,7 @@ var
 begin
   Node.ChildCount := 0; // no children here
   p := tvValuesets.GetNodeData(node);
-  p.obj := Context.Server.List.entryList[Node.Index];
+  p.obj := FValueSets[Node.Index];
 end;
 
 procedure TServerChooserForm.tvValuesetsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
@@ -111,7 +147,7 @@ var
   vs : TFhirValueSet;
 begin
   p := tvValuesets.GetNodeData(node);
-  vs := TFhirValueSet(TFHIRBundleEntry(p.obj).resource);
+  vs := TFhirValueSet(p.obj);
   case Column of
     0: CellText := vs.name;
     1: CellText := CODES_TFhirConformanceResourceStatus[vs.status];
@@ -125,8 +161,8 @@ procedure TServerChooserForm.tvValuesetsCompareNodes(Sender: TBaseVirtualTree; N
 var
   vs1, vs2 : TFhirValueSet;
 begin
-  vs1 := TFhirValueSet(TFHIRBundleEntry(PTreeDataPointer(tvValuesets.GetNodeData(node1)).obj).resource);
-  vs2 := TFhirValueSet(TFHIRBundleEntry(PTreeDataPointer(tvValuesets.GetNodeData(node2)).obj).resource);
+  vs1 := TFhirValueSet(PTreeDataPointer(tvValuesets.GetNodeData(node1)).obj);
+  vs2 := TFhirValueSet(PTreeDataPointer(tvValuesets.GetNodeData(node2)).obj);
   case column of
     0 : result := CompareText(vs1.name, vs2.name);
     1 : result := CompareText(CODES_TFhirConformanceResourceStatus[vs1.status], CODES_TFhirConformanceResourceStatus[vs2.status]);
@@ -139,10 +175,10 @@ end;
 
 procedure TServerChooserForm.tvValuesetsDblClick(Sender: TObject);
 var
-  ae : TFHIRBundleEntry;
+  vs : TFHIRValueSet;
 begin
-  ae := TFHIRBundleEntry(PTreeDataPointer(tvValuesets.GetNodeData(tvValuesets.FocusedNode)).obj);
-  Context.openFromServer(nil, ae.id);
+  vs := TFHIRValueSet(PTreeDataPointer(tvValuesets.GetNodeData(tvValuesets.FocusedNode)).obj);
+  Context.openFromServer(nil, vs.id);
   ModalResult := mrOk;
 end;
 

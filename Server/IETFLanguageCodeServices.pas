@@ -6,7 +6,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
 type
   TIETFLanguageCodeConcept = class (TCodeSystemProviderContext)
@@ -35,6 +35,8 @@ type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
@@ -90,9 +92,14 @@ begin
 end;
 
 
+function TIETFLanguageCodeServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '';
+end;
+
 function TIETFLanguageCodeServices.system(context : TCodeSystemProviderContext) : String;
 begin
-  result := 'urn:ietf:params:language';
+  result := 'urn:ietf:bcp:47';
 end;
 
 function TIETFLanguageCodeServices.getDefinition(code: String): String;
@@ -615,6 +622,11 @@ begin
   result := nil; // no subsumption
 end;
 
+
+function TIETFLanguageCodeServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'IETF langauge';
+end;
 
 function TIETFLanguageCodeServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin

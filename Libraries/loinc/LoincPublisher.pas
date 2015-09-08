@@ -854,6 +854,7 @@ end;
 
 Type
   TSearchCache = class (TObject)
+  public
     a : TMatchArray;
   End;
 

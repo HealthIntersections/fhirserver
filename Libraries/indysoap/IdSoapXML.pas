@@ -114,15 +114,15 @@ Type
     Function getIndexOf: Integer;
   Protected
     Function GetAttributeCount : Integer;             Virtual; abstract;
-    Function GetName : WideString;                    Virtual; abstract;
-    Function GetNamespace : WideString;               Virtual; abstract;
-    Function GetNodeName : WideString;                Virtual; abstract;
+    Function GetName : String;                    Virtual; abstract;
+    Function GetNamespace : String;               Virtual; abstract;
+    Function GetNodeName : String;                Virtual; abstract;
     Function GetHasText : Boolean;                    Virtual; abstract;
     Function GetAsXML : AnsiString;                   Virtual; abstract;
     Function GetTextContentA:String;                  Virtual; abstract;
     Procedure SetTextContentA(AValue : String);       Virtual; abstract;
-    Function GetTextContentW:WideString;              Virtual; abstract;
-    Procedure SetTextContentW(AValue : WideString);   Virtual; abstract;
+    Function GetTextContentW:String;              Virtual; abstract;
+    Procedure SetTextContentW(AValue : String);   Virtual; abstract;
   Public
     Constructor Create(ADom : TIdSoapXmlDom; AParent : TIdSoapXmlElement);
     destructor Destroy; Override;
@@ -137,35 +137,35 @@ Type
 
     Property FirstChild  : TIdSoapXmlElement Read GetFirstChild;
     Property NextSibling : TIdSoapXmlElement Read FSibling;
-    Function FirstElement(ANamespace, AName : WideString) : TIdSoapXmlElement;
-    Function NextElement(ANamespace, AName : WideString) : TIdSoapXmlElement;
-    Function NthChildElement(ANamespace, AName : WideString; AIndex : Integer) : TIdSoapXmlElement;
-    Function ChildElementCount(ANamespace, AName : WideString) : Integer;
-    Function FindElementAnyNS(AName : WideString) : TIdSoapXmlElement;
-    Function AppendChild(AName, ANS : WideString):TIdSoapxmlelement;                          Virtual; abstract;
-    Function InsertChild(AIndex : Integer; AName, ANS : WideString):TIdSoapxmlelement;        Virtual; abstract;
+    Function FirstElement(ANamespace, AName : String) : TIdSoapXmlElement;
+    Function NextElement(ANamespace, AName : String) : TIdSoapXmlElement;
+    Function NthChildElement(ANamespace, AName : String; AIndex : Integer) : TIdSoapXmlElement;
+    Function ChildElementCount(ANamespace, AName : String) : Integer;
+    Function FindElementAnyNS(AName : String) : TIdSoapXmlElement;
+    Function AppendChild(AName, ANS : String):TIdSoapxmlelement;                          Virtual; abstract;
+    Function InsertChild(AIndex : Integer; AName, ANS : String):TIdSoapxmlelement;        Virtual; abstract;
     Procedure removeChild(AElement : TIdSoapXmlElement);                                 Virtual; abstract;
     Procedure ClearChildren();                                                           Virtual; abstract;
     procedure appendComment(source : String);                                            Virtual; abstract;
-    Property Element[ANamespace, AName : WideString] : TIdSoapXmlElement Read FirstElement; Default;
+    Property Element[ANamespace, AName : String] : TIdSoapXmlElement Read FirstElement; Default;
 
     // attributes
     Property AttributeCount : Integer Read GetAttributeCount;
-    Function hasAttribute(Const ANamespace, AName : WideString): Boolean;                Virtual; abstract;
-    Function getAttribute(Const ANamespace, AName : WideString): WideString;             Virtual; abstract;
-    Function getAttributeName(i : Integer; Var VNamespace, VName : WideString) :Boolean; Virtual; abstract;
-    Procedure setAttribute(ANS, AName, AValue : WideString); Virtual; abstract;
+    Function hasAttribute(Const ANamespace, AName : String): Boolean;                Virtual; abstract;
+    Function getAttribute(Const ANamespace, AName : String): String;             Virtual; abstract;
+    Function getAttributeName(i : Integer; Var VNamespace, VName : String) :Boolean; Virtual; abstract;
+    Procedure setAttribute(ANS, AName, AValue : String); Virtual; abstract;
 
     // names and namespaces
-    Function ResolveXMLNamespaceCode(ANamespace, ALocation : WideString) : String;       Virtual; abstract;
-    Property Name : WideString Read GetName;
-    Property Namespace : WideString Read GetNamespace;
-    Property NodeName : WideString Read GetNodeName;
+    Function ResolveXMLNamespaceCode(ANamespace, ALocation : String) : String;       Virtual; abstract;
+    Property Name : String Read GetName;
+    Property Namespace : String Read GetNamespace;
+    Property NodeName : String Read GetNodeName;
 
     // text content. Code is xml encoded contents
     Property HasText : Boolean Read GetHasText;
     Property TextContentA : String Read GetTextContentA Write SetTextContentA;
-    Property TextContentW : WideString Read GetTextContentW Write SetTextContentW;
+    Property TextContentW : String Read GetTextContentW Write SetTextContentW;
 
     // utilities
     Procedure GrabChildren(AElem : TIdSoapXmlElement; AOtherDOM : Boolean);              Virtual; abstract;
@@ -177,7 +177,7 @@ Type
 
     // xml content
     Property AsXML : AnsiString Read GetAsXML;
-    Procedure BuildChildFromXML(ASrc : WideString);                                      Virtual; abstract;
+    Procedure BuildChildFromXML(ASrc : String);                                      Virtual; abstract;
   End;
 
   {$IFDEF UNICODE}
@@ -205,29 +205,29 @@ Type
     FElement : IXMLNode;
   Protected
     Function GetAttributeCount : Integer;             Override;
-    Function GetName : WideString;                    Override;
-    Function GetNamespace : WideString;               Override;
-    Function GetNodeName : WideString;                Override;
+    Function GetName : String;                    Override;
+    Function GetNamespace : String;               Override;
+    Function GetNodeName : String;                Override;
     Function GetHasText : Boolean;                    Override;
     Function GetAsXML : AnsiString;                   Override;
     Function GetTextContentA:String;                  Override;
     Procedure SetTextContentA(AValue : String);       Override;
-    Function GetTextContentW:WideString;              Override;
-    Procedure SetTextContentW(AValue : WideString);   Override;
+    Function GetTextContentW:String;              Override;
+    Procedure SetTextContentW(AValue : String);   Override;
   Public
     Constructor Create(ADom : TIdSoapXmlDom; AParent : TIdSoapXmlElement; aNode : IXMLNode);
 
-    Function AppendChild(AName, ANS : WideString):TIdSoapxmlelement;                          Override;
-    Function InsertChild(AIndex : Integer; AName, ANS : WideString):TIdSoapxmlelement;        Override;
+    Function AppendChild(AName, ANS : String):TIdSoapxmlelement;                          Override;
+    Function InsertChild(AIndex : Integer; AName, ANS : String):TIdSoapxmlelement;        Override;
     Procedure removeChild(AElement : TIdSoapXmlElement);                                 Override;
     Procedure ClearChildren();                                                           Override;
     procedure appendComment(source : String);                                            Override;
-    Function hasAttribute(Const ANamespace, AName : WideString): Boolean;                Override;
-    Function getAttribute(Const ANamespace, AName : WideString): WideString;             Override;
-    Function getAttributeName(i : Integer; Var VNamespace, VName : WideString) :Boolean; Override;
-    Procedure setAttribute(ANS, AName, AValue : WideString);                                  Override;
-    Function ResolveXMLNamespaceCode(ANamespace, ALocation : WideString) : String;       Override;
-    Procedure BuildChildFromXML(ASrc : WideString);                                      Override;
+    Function hasAttribute(Const ANamespace, AName : String): Boolean;                Override;
+    Function getAttribute(Const ANamespace, AName : String): String;             Override;
+    Function getAttributeName(i : Integer; Var VNamespace, VName : String) :Boolean; Override;
+    Procedure setAttribute(ANS, AName, AValue : String);                                  Override;
+    Function ResolveXMLNamespaceCode(ANamespace, ALocation : String) : String;       Override;
+    Procedure BuildChildFromXML(ASrc : String);                                      Override;
     Procedure GrabChildren(AElem : TIdSoapXmlElement; AOtherDOM : Boolean);              Override;
   End;
   {$ELSE}
@@ -264,29 +264,29 @@ Type
     FElement : Tox4domElement;
   Protected
     Function GetAttributeCount : Integer;             Override;
-    Function GetName : WideString;                    Override;
-    Function GetNamespace : WideString;               Override;
-    Function GetNodeName : WideString;                Override;
+    Function GetName : String;                    Override;
+    Function GetNamespace : String;               Override;
+    Function GetNodeName : String;                Override;
     Function GetHasText : Boolean;                    Override;
     Function GetAsXML : AnsiString;                   Override;
     Function GetTextContentA:String;                  Override;
     Procedure SetTextContentA(AValue : String);       Override;
-    Function GetTextContentW:WideString;              Override;
-    Procedure SetTextContentW(AValue : WideString);   Override;
+    Function GetTextContentW:String;              Override;
+    Procedure SetTextContentW(AValue : String);   Override;
   Public
     Constructor Create(ADom : TIdSoapXmlDom; AParent : TIdSoapXmlElement; AElement : Tox4domElement);
 
-    Function AppendChild(AName, ANs : WideString):TIdSoapxmlelement;                          Override;
-    Function InsertChild(AIndex : Integer; AName, ANs : WideString):TIdSoapxmlelement;        Override;
+    Function AppendChild(AName, ANs : String):TIdSoapxmlelement;                          Override;
+    Function InsertChild(AIndex : Integer; AName, ANs : String):TIdSoapxmlelement;        Override;
     Procedure removeChild(AElement : TIdSoapXmlElement);                                 Override;
     Procedure ClearChildren();                                                           Override;
     procedure appendComment(source : String);                                            Override;
-    Function hasAttribute(Const ANamespace, AName : WideString): Boolean;                Override;
-    Function getAttribute(Const ANamespace, AName : WideString): WideString;             Override;
-    Function getAttributeName(i : Integer; Var VNamespace, VName : WideString) :Boolean; Override;
-    Procedure setAttribute(ANs, AName, AValue : WideString);                                  Override;
-    Function ResolveXMLNamespaceCode(ANamespace, ALocation : WideString) : String;       Override;
-    Procedure BuildChildFromXML(ASrc : WideString);                                      Override;
+    Function hasAttribute(Const ANamespace, AName : String): Boolean;                Override;
+    Function getAttribute(Const ANamespace, AName : String): String;             Override;
+    Function getAttributeName(i : Integer; Var VNamespace, VName : String) :Boolean; Override;
+    Procedure setAttribute(ANs, AName, AValue : String);                                  Override;
+    Function ResolveXMLNamespaceCode(ANamespace, ALocation : String) : String;       Override;
+    Procedure BuildChildFromXML(ASrc : String);                                      Override;
     Procedure GrabChildren(AElem : TIdSoapXmlElement; AOtherDOM : Boolean);              Override;
 
     // expose raw XML for direct access through TIdSoapRawXML
@@ -338,28 +338,28 @@ Type
     FElem : IXMLDOMElement;
   Protected
     Function GetAttributeCount : Integer;             Override;
-    Function GetName : WideString;                    Override;
-    Function GetNamespace : WideString;               Override;
-    Function GetNodeName : WideString;                Override;
+    Function GetName : String;                    Override;
+    Function GetNamespace : String;               Override;
+    Function GetNodeName : String;                Override;
     Function GetHasText : Boolean;                    Override;
     Function GetAsXML : AnsiString;                   Override;
     Function GetTextContentA:String;                  Override;
     Procedure SetTextContentA(AValue : String);       Override;
-    Function GetTextContentW:WideString;              Override;
-    Procedure SetTextContentW(AValue : WideString);   Override;
+    Function GetTextContentW:String;              Override;
+    Procedure SetTextContentW(AValue : String);   Override;
   Public
     Constructor Create(ADom : TIdSoapXmlDom; AParent : TIdSoapXmlElement; AElem : IXMLDOMElement);
-    Function AppendChild(AName, ANS : WideString):TIdSoapxmlelement;                          Override;
+    Function AppendChild(AName, ANS : String):TIdSoapxmlelement;                          Override;
     procedure appendComment(source : String);                                            Override;
-    Function InsertChild(AIndex : Integer; AName, ANS : WideString):TIdSoapxmlelement;        Override;
+    Function InsertChild(AIndex : Integer; AName, ANS : String):TIdSoapxmlelement;        Override;
     Procedure ClearChildren();                                                           Override;
     Procedure removeChild(AElement : TIdSoapXmlElement);                                 Override;
-    Function hasAttribute(Const ANamespace, AName : WideString): Boolean;                Override;
-    Function getAttribute(Const ANamespace, AName : WideString): WideString;             Override;
-    Function getAttributeName(i : Integer; Var VNamespace, VName : WideString) :Boolean; Override;
-    Procedure setAttribute(ANS, AName, AValue : WideString);                                  Override;
-    Function ResolveXMLNamespaceCode(ANamespace, ALocation : WideString) : String;       Override;
-    Procedure BuildChildFromXML(ASrc : WideString);                                      Override;
+    Function hasAttribute(Const ANamespace, AName : String): Boolean;                Override;
+    Function getAttribute(Const ANamespace, AName : String): String;             Override;
+    Function getAttributeName(i : Integer; Var VNamespace, VName : String) :Boolean; Override;
+    Procedure setAttribute(ANS, AName, AValue : String);                                  Override;
+    Function ResolveXMLNamespaceCode(ANamespace, ALocation : String) : String;       Override;
+    Procedure BuildChildFromXML(ASrc : String);                                      Override;
     Procedure GrabChildren(AElem : TIdSoapXmlElement; AOtherDOM : Boolean);              Override;
 
     // expose raw XML for direct access through TIdSoapRawXML
@@ -418,30 +418,30 @@ Type
     Procedure StripWhitespace;
   Protected
     Function GetAttributeCount : Integer;             Override;
-    Function GetName : WideString;                    Override;
-    Function GetNamespace : WideString;               Override;
-    Function GetNodeName : WideString;                Override;
+    Function GetName : String;                    Override;
+    Function GetNamespace : String;               Override;
+    Function GetNodeName : String;                Override;
     Function GetHasText : Boolean;                    Override;
     Function GetAsXML : AnsiString;                   Override;
     Function GetTextContentA:String;                  Override;
     Procedure SetTextContentA(AValue : String);       Override;
-    Function GetTextContentW:WideString;              Override;
-    Procedure SetTextContentW(AValue : WideString);   Override;
+    Function GetTextContentW:String;              Override;
+    Procedure SetTextContentW(AValue : String);   Override;
   Public
-    Constructor Create(ADom : TIdSoapXmlDom; AParent : TIdSoapXmlElement; AName : widestring);
+    Constructor Create(ADom : TIdSoapXmlDom; AParent : TIdSoapXmlElement; AName : String);
     destructor Destroy; Override;
 
-    Function AppendChild(AName, ANS : WideString):TIdSoapxmlelement;                          Override;
+    Function AppendChild(AName, ANS : String):TIdSoapxmlelement;                          Override;
     procedure appendComment(source : String);                                            Override;
-    Function InsertChild(AIndex : Integer; AName, ANS : WideString):TIdSoapxmlelement;        Override;
+    Function InsertChild(AIndex : Integer; AName, ANS : String):TIdSoapxmlelement;        Override;
     Procedure removeChild(AElement : TIdSoapXmlElement);                                 Override;
     Procedure ClearChildren();                                                           Override;
-    Function hasAttribute(Const ANamespace, AName : WideString): Boolean;                Override;
-    Function getAttribute(Const ANamespace, AName : WideString): WideString;             Override;
-    Function getAttributeName(i : Integer; Var VNamespace, VName : WideString) :Boolean; Override;
-    Procedure setAttribute(ANS, AName, AValue : WideString);                                  Override;
-    Function ResolveXMLNamespaceCode(ANamespace, ALocation : WideString) : String;       Override;
-    Procedure BuildChildFromXML(ASrc : WideString);                                      Override;
+    Function hasAttribute(Const ANamespace, AName : String): Boolean;                Override;
+    Function getAttribute(Const ANamespace, AName : String): String;             Override;
+    Function getAttributeName(i : Integer; Var VNamespace, VName : String) :Boolean; Override;
+    Procedure setAttribute(ANS, AName, AValue : String);                                  Override;
+    Function ResolveXMLNamespaceCode(ANamespace, ALocation : String) : String;       Override;
+    Procedure BuildChildFromXML(ASrc : String);                                      Override;
     Procedure GrabChildren(AElem : TIdSoapXmlElement; AOtherDOM : Boolean);              Override;
   End;
 
@@ -559,7 +559,7 @@ Begin
     End;
 End;
 
-Function TIdSoapXmlElement.FirstElement(ANamespace, AName : WideString) : TIdSoapXmlElement;
+Function TIdSoapXmlElement.FirstElement(ANamespace, AName : String) : TIdSoapXmlElement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapXmlElement.FirstElement';
 Var
   i : Integer;
@@ -585,7 +585,7 @@ Begin
     End;
 End;
 
-Function TIdSoapXmlElement.NextElement(ANamespace, AName : WideString) : TIdSoapXmlElement;
+Function TIdSoapXmlElement.NextElement(ANamespace, AName : String) : TIdSoapXmlElement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapXmlElement.NextElement';
 Var
   LSib : TIdSoapXmlElement;
@@ -605,7 +605,7 @@ Begin
 End;
 
 
-Function TIdSoapXmlElement.FindElementAnyNS(AName : WideString) : TIdSoapXmlElement;
+Function TIdSoapXmlElement.FindElementAnyNS(AName : String) : TIdSoapXmlElement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapXmlElement.FindElementAnyNS';
 Var
   i : Integer;
@@ -766,7 +766,7 @@ Begin
     End;
 End;
 
-Function TIdSoapXmlElement.NthChildElement(ANamespace, AName: WideString; AIndex: Integer): TIdSoapXmlElement;
+Function TIdSoapXmlElement.NthChildElement(ANamespace, AName: String; AIndex: Integer): TIdSoapXmlElement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapXmlElement.NthChildElement';
 Var
   i, c : Integer;
@@ -805,7 +805,7 @@ Begin
     FLastFindName := '';
 End;
 
-Function TIdSoapXmlElement.ChildElementCount(ANamespace, AName: WideString ) : Integer;
+Function TIdSoapXmlElement.ChildElementCount(ANamespace, AName: String ) : Integer;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapXmlElement.NthChildElement';
 Var
   i : Integer;
@@ -958,21 +958,21 @@ Begin
   Result := FElement.attributes.Length;
 End;
 
-Function TIdSoapOpenXmlElement.GetName : WideString;
+Function TIdSoapOpenXmlElement.GetName : String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.GetName';
 Begin
   Assert(Self.TestValid(TIdSoapOpenXmlElement), ASSERT_LOCATION+': self is not valid');
   Result := FElement.localName;
 End;
 
-Function TIdSoapOpenXmlElement.GetNamespace : WideString;
+Function TIdSoapOpenXmlElement.GetNamespace : String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.GetNamespace';
 Begin
   Assert(Self.TestValid(TIdSoapOpenXmlElement), ASSERT_LOCATION+': self is not valid');
   Result := FElement.namespaceURI;
 End;
 
-Function TIdSoapOpenXmlElement.GetNodeName : WideString;
+Function TIdSoapOpenXmlElement.GetNodeName : String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.GetNodeName';
 Begin
   Assert(Self.TestValid(TIdSoapOpenXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -992,7 +992,7 @@ Begin
   Result := GetTextContentW;
 End;
 
-Function TIdSoapOpenXmlElement.GetTextContentW:WideString;
+Function TIdSoapOpenXmlElement.GetTextContentW:String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.GetTextContent';
 Begin
   Assert(Self.TestValid(TIdSoapOpenXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1019,7 +1019,7 @@ Begin
   SetTextContentW(AValue);
 End;
 
-Procedure TIdSoapOpenXmlElement.SetTextContentW(AValue : WideString);
+Procedure TIdSoapOpenXmlElement.SetTextContentW(AValue : String);
 Const
   ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.SetTextContent';
 Var
@@ -1032,7 +1032,7 @@ Begin
   FElement.appendChild(LText);
 End;
 
-Function TIdSoapOpenXmlElement.AppendChild(AName, ANs : WideString):TIdSoapxmlelement;
+Function TIdSoapOpenXmlElement.AppendChild(AName, ANs : String):TIdSoapxmlelement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.AppendChild';
 Var
   LElem : TdomElement;
@@ -1060,7 +1060,7 @@ Begin
   PrivRemoveChild(AElement);
 End;
 
-Function TIdSoapOpenXmlElement.hasAttribute(Const ANamespace, AName : WideString): Boolean;
+Function TIdSoapOpenXmlElement.hasAttribute(Const ANamespace, AName : String): Boolean;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.hasAttribute';
 Begin
   Assert(Self.TestValid(TIdSoapOpenXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1081,7 +1081,7 @@ Begin
     End;
 End;
 
-Function TIdSoapOpenXmlElement.getAttribute(Const ANamespace, AName : WideString): WideString;
+Function TIdSoapOpenXmlElement.getAttribute(Const ANamespace, AName : String): String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.getAttribute';
 Begin
   Assert(Self.TestValid(TIdSoapOpenXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1101,7 +1101,7 @@ Begin
     End;
 End;
 
-Function TIdSoapOpenXmlElement.getAttributeName(i : Integer; Var VNamespace, VName : WideString) :Boolean;
+Function TIdSoapOpenXmlElement.getAttributeName(i : Integer; Var VNamespace, VName : String) :Boolean;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.getAttributeName';
 Var
   LAttr : TdomAttr;
@@ -1117,7 +1117,7 @@ Begin
     End;
 End;
 
-Procedure TIdSoapOpenXmlElement.setAttribute(ANs, AName, AValue : WideString);
+Procedure TIdSoapOpenXmlElement.setAttribute(ANs, AName, AValue : String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.setAttribute';
 Begin
   Assert(Self.TestValid(TIdSoapOpenXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1126,7 +1126,7 @@ Begin
   FElement.setAttribute(AName, AValue);
 End;
 
-Function TIdSoapOpenXmlElement.ResolveXMLNamespaceCode(ANamespace, ALocation : WideString) : String;
+Function TIdSoapOpenXmlElement.ResolveXMLNamespaceCode(ANamespace, ALocation : String) : String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.ResolveXMLNamespaceCode';
 Begin
   Assert(Self.TestValid(TIdSoapOpenXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1135,7 +1135,7 @@ Begin
   Result := IdSoapNamespaces.ResolveXMLNamespaceCode(FElement, ANamespace, ALocation);
 End;
 
-Procedure TIdSoapOpenXmlElement.BuildChildFromXML(ASrc : WideString);
+Procedure TIdSoapOpenXmlElement.BuildChildFromXML(ASrc : String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.BuildChildFromXML';
 Var
   LRoot : TdomDocumentFragment;
@@ -1196,7 +1196,7 @@ Begin
     End;
 End;
 
-Function TIdSoapOpenXmlElement.InsertChild(AIndex: Integer; AName, ANs: WideString): TIdSoapxmlelement;
+Function TIdSoapOpenXmlElement.InsertChild(AIndex: Integer; AName, ANs: String): TIdSoapxmlelement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.InsertChild';
 Var
   LElem : TdomElement;
@@ -1244,7 +1244,7 @@ Procedure DetermineMsXmlProgId;
     Res : HResult;
   Begin
     Result := false;
-    if Succeeded(CLSIDFromProgID(PWideChar(WideString('MSXML2.DOMDocument'+sId)), ClassID)) Then
+    if Succeeded(CLSIDFromProgID(PWideChar(String('MSXML2.DOMDocument'+sId)), ClassID)) Then
     Begin
       Res := CoCreateInstance(ClassID, nil, CLSCTX_INPROC_SERVER or CLSCTX_LOCAL_SERVER, IDispatch, iTest);
       result := Succeeded(Res);
@@ -1406,7 +1406,7 @@ Begin
 End;
 
 
-Function TIdSoapMSXmlElement.AppendChild(AName, ANs: WideString): TIdSoapxmlelement;
+Function TIdSoapMSXmlElement.AppendChild(AName, ANs: String): TIdSoapxmlelement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.AppendChild';
 Var
   LElem : IXMLDOMElement;
@@ -1420,7 +1420,7 @@ Begin
   PrivAppendChild(Result);
 End;
 
-Function TIdSoapMSXmlElement.InsertChild(AIndex: Integer; AName, ANs: WideString): TIdSoapxmlelement;
+Function TIdSoapMSXmlElement.InsertChild(AIndex: Integer; AName, ANs: String): TIdSoapxmlelement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.InsertChild';
 Var
   LElem : IXMLDOMElement;
@@ -1449,7 +1449,7 @@ Begin
   FElem.appendChild(LElem);
 end;
 
-Procedure TIdSoapMSXmlElement.BuildChildFromXML(ASrc: WideString);
+Procedure TIdSoapMSXmlElement.BuildChildFromXML(ASrc: String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.BuildChildFromXML';
 Begin
   Assert(Self.TestValid(TIdSoapMSXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1473,7 +1473,7 @@ Begin
   {$ENDIF}
 End;
 
-Function TIdSoapMSXmlElement.getAttribute(Const ANamespace, AName: WideString): WideString;
+Function TIdSoapMSXmlElement.getAttribute(Const ANamespace, AName: String): String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.getAttribute';
 Var
   LAttr : IXMLDOMNamedNodeMap;
@@ -1503,7 +1503,7 @@ Begin
   Result := FElem.attributes.Length;
 End;
 
-Function TIdSoapMSXmlElement.getAttributeName(i: Integer; Var VNamespace, VName: WideString): Boolean;
+Function TIdSoapMSXmlElement.getAttributeName(i: Integer; Var VNamespace, VName: String): Boolean;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.getAttributeName';
 Var
   LAttr : IXMLDOMNamedNodeMap;
@@ -1527,21 +1527,21 @@ Begin
   Result := (FElem.childNodes.Length = 0) Or ((FElem.childNodes.Length = 1) And (FElem.firstChild.NodeType = NODE_TEXT));
 End;
 
-Function TIdSoapMSXmlElement.GetName: WideString;
+Function TIdSoapMSXmlElement.GetName: String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.GetName';
 Begin
   Assert(Self.TestValid(TIdSoapMSXmlElement), ASSERT_LOCATION+': self is not valid');
   Result := FElem.baseName;
 End;
 
-Function TIdSoapMSXmlElement.GetNamespace: WideString;
+Function TIdSoapMSXmlElement.GetNamespace: String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.GetNamespace';
 Begin
   Assert(Self.TestValid(TIdSoapMSXmlElement), ASSERT_LOCATION+': self is not valid');
   Result := FElem.namespaceURI;
 End;
 
-Function TIdSoapMSXmlElement.GetNodeName: WideString;
+Function TIdSoapMSXmlElement.GetNodeName: String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.GetNodeName';
 Begin
   Assert(Self.TestValid(TIdSoapMSXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1553,7 +1553,7 @@ Begin
   Result := GetTextContentW;
 End;
 
-Function TIdSoapMSXmlElement.GetTextContentW: WideString;
+Function TIdSoapMSXmlElement.GetTextContentW: String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.GetTextContent';
 Begin
   Assert(Self.TestValid(TIdSoapMSXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1568,7 +1568,7 @@ Begin
     End;
 End;
 
-Function TIdSoapMSXmlElement.hasAttribute(Const ANamespace, AName: WideString): Boolean;
+Function TIdSoapMSXmlElement.hasAttribute(Const ANamespace, AName: String): Boolean;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.hasAttribute';
 Var
   LAttr : IXMLDOMNamedNodeMap;
@@ -1626,14 +1626,14 @@ Begin
 End;
 
 
-Function TIdSoapMSXmlElement.ResolveXMLNamespaceCode(ANamespace, ALocation: WideString): String;
+Function TIdSoapMSXmlElement.ResolveXMLNamespaceCode(ANamespace, ALocation: String): String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.ResolveXMLNamespaceCode';
 Begin
   Assert(Self.TestValid(TIdSoapMSXmlElement), ASSERT_LOCATION+': self is not valid');
   Result := ResolveMSXMLNamespaceCode(FElem, ANamespace, ALocation);
 End;
 
-Procedure TIdSoapMSXmlElement.setAttribute(ANs, AName, AValue: WideString);
+Procedure TIdSoapMSXmlElement.setAttribute(ANs, AName, AValue: String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.setAttribute';
 Begin
   Assert(Self.TestValid(TIdSoapMSXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1645,7 +1645,7 @@ Begin
   SetTextContentW(AValue);
 End;
 
-Procedure TIdSoapMSXmlElement.SetTextContentW(AValue: WideString);
+Procedure TIdSoapMSXmlElement.SetTextContentW(AValue: String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.SetTextContent';
 Begin
   Assert(Self.TestValid(TIdSoapMSXmlElement), ASSERT_LOCATION+': self is not valid');
@@ -1886,7 +1886,7 @@ End;
 
 { TIdSoapCustomElement }
 
-Constructor TIdSoapCustomElement.Create(ADom : TIdSoapXmlDom; AParent : TIdSoapXmlElement; AName : widestring);
+Constructor TIdSoapCustomElement.Create(ADom : TIdSoapXmlDom; AParent : TIdSoapXmlElement; AName : String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.create';
 Begin
   Inherited Create(ADom, AParent);
@@ -1905,7 +1905,7 @@ Begin
   Inherited;
 End;
 
-Function TIdSoapCustomElement.AppendChild(AName, ANs: WideString): TIdSoapxmlelement;
+Function TIdSoapCustomElement.AppendChild(AName, ANs: String): TIdSoapxmlelement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.AppendChild';
 Begin
   Assert(Self.TestValid(TIdSoapCustomElement), ASSERT_LOCATION+': self is not valid');
@@ -1921,7 +1921,7 @@ begin
 // studiously ignore this
 end;
 
-Function TIdSoapCustomElement.InsertChild(AIndex: Integer; AName, ANs: WideString): TIdSoapxmlelement;
+Function TIdSoapCustomElement.InsertChild(AIndex: Integer; AName, ANs: String): TIdSoapxmlelement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.InsertChild';
 Begin
   Assert(Self.TestValid(TIdSoapCustomElement), ASSERT_LOCATION+': self is not valid');
@@ -1933,7 +1933,7 @@ Begin
   PrivInsertChild(AIndex, Result);
 End;
 
-Procedure TIdSoapCustomElement.BuildChildFromXML(ASrc: WideString);
+Procedure TIdSoapCustomElement.BuildChildFromXML(ASrc: String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.BuildChildFromXML';
 Begin
   Raise Exception.Create('not supported');
@@ -1962,7 +1962,7 @@ Begin
   {$ENDIF}
 End;
 
-Function TIdSoapCustomElement.getAttribute(Const ANamespace, AName: WideString): WideString;
+Function TIdSoapCustomElement.getAttribute(Const ANamespace, AName: String): String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.getAttribute';
 Var
   i : Integer;
@@ -1995,7 +1995,7 @@ Begin
   Result := FAttr.count;
 End;
 
-Function TIdSoapCustomElement.getAttributeName(i: Integer; Var VNamespace, VName: WideString): Boolean;
+Function TIdSoapCustomElement.getAttributeName(i: Integer; Var VNamespace, VName: String): Boolean;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.getAttributeName';
 Var
   LAttr : TIdSoapCustomAttribute;
@@ -2012,19 +2012,19 @@ Begin
   Result := (FContent <> '') And (FChildren.Count = 0);
 End;
 
-Function TIdSoapCustomElement.GetName: WideString;
+Function TIdSoapCustomElement.GetName: String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.GetName';
 Begin
   Result := FName;
 End;
 
-Function TIdSoapCustomElement.GetNamespace: WideString;
+Function TIdSoapCustomElement.GetNamespace: String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.GetNamespace';
 Begin
   Result := FNs;
 End;
 
-Function TIdSoapCustomElement.GetNodeName: WideString;
+Function TIdSoapCustomElement.GetNodeName: String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.GetNodeName';
 Begin
   Result := FNodeName;
@@ -2036,7 +2036,7 @@ Begin
   Result := FContent;
 End;
 
-Function TIdSoapCustomElement.GetTextContentW: WideString;
+Function TIdSoapCustomElement.GetTextContentW: String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.GetTextContentW';
 Begin
   {$IFDEF UNICODE}
@@ -2052,7 +2052,7 @@ Begin
   Raise Exception.Create('not supported');
 End;
 
-Function TIdSoapCustomElement.hasAttribute(Const ANamespace, AName: WideString): Boolean;
+Function TIdSoapCustomElement.hasAttribute(Const ANamespace, AName: String): Boolean;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.hasAttribute';
 Var
   i : Integer;
@@ -2080,7 +2080,7 @@ Begin
   FChildren.Remove(AElement);
 End;
 
-Function TIdSoapCustomElement.ResolveXMLNamespaceCode(ANamespace, ALocation: WideString): String;
+Function TIdSoapCustomElement.ResolveXMLNamespaceCode(ANamespace, ALocation: String): String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.ResolveXMLNamespaceCode';
 Var
   i : Integer;
@@ -2116,7 +2116,7 @@ Begin
     End;
 End;
 
-Procedure TIdSoapCustomElement.setAttribute(ANs, AName, AValue: WideString);
+Procedure TIdSoapCustomElement.setAttribute(ANs, AName, AValue: String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.setAttribute';
 Var
   LAttr : TIdSoapCustomAttribute;
@@ -2133,7 +2133,7 @@ Begin
   FContent := AValue;
 End;
 
-Procedure TIdSoapCustomElement.SetTextContentW(AValue: WideString);
+Procedure TIdSoapCustomElement.SetTextContentW(AValue: String);
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapCustomElement.SetTextContentW';
 Begin
   {$IFDEF UNICODE}
@@ -2759,7 +2759,7 @@ begin
   FElement := aNode;
 end;
 
-function TIdSoapDelphiXmlElement.AppendChild(AName, Ans: WideString): TIdSoapxmlelement;
+function TIdSoapDelphiXmlElement.AppendChild(AName, Ans: String): TIdSoapxmlelement;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapOpenXmlElement.AppendChild';
 Var
   LElem : IXMLNode;
@@ -2778,7 +2778,7 @@ begin
   raise Exception.Create('Not Done Yet');
 end;
 
-procedure TIdSoapDelphiXmlElement.BuildChildFromXML(ASrc: WideString);
+procedure TIdSoapDelphiXmlElement.BuildChildFromXML(ASrc: String);
 begin
   raise Exception.Create('Not Done Yet');
 end;
@@ -2800,7 +2800,7 @@ Begin
   move(b[0], result[1], length(b));
 end;
 
-function TIdSoapDelphiXmlElement.getAttribute(const ANamespace, AName: WideString): WideString;
+function TIdSoapDelphiXmlElement.getAttribute(const ANamespace, AName: String): String;
 begin
   if FElement.HasAttribute(AName, ANamespace) then
     result := FElement.GetAttributeNS(AName, ANamespace)
@@ -2813,7 +2813,7 @@ begin
   result := FElement.AttributeNodes.Count;
 end;
 
-function TIdSoapDelphiXmlElement.getAttributeName(i: Integer; var VNamespace, VName: WideString): Boolean;
+function TIdSoapDelphiXmlElement.getAttributeName(i: Integer; var VNamespace, VName: String): Boolean;
 var
   n : IXmlNode;
 begin
@@ -2831,17 +2831,17 @@ begin
   result := FElement.IsTextElement;
 end;
 
-function TIdSoapDelphiXmlElement.GetName: WideString;
+function TIdSoapDelphiXmlElement.GetName: String;
 begin
   result := FElement.LocalName;
 end;
 
-function TIdSoapDelphiXmlElement.GetNamespace: WideString;
+function TIdSoapDelphiXmlElement.GetNamespace: String;
 begin
   result := FElement.NamespaceURI;
 end;
 
-function TIdSoapDelphiXmlElement.GetNodeName: WideString;
+function TIdSoapDelphiXmlElement.GetNodeName: String;
 begin
   result := FElement.nodeName;
 end;
@@ -2856,7 +2856,7 @@ begin
 //    raise EIdSoapRequirementFail.Create('Attempt to read complex as text ('+FElement.NodeName+': '+inttostr(FElement.ChildNodes.Count)+' children');
 end;
 
-function TIdSoapDelphiXmlElement.GetTextContentW: WideString;
+function TIdSoapDelphiXmlElement.GetTextContentW: String;
 begin
   result := GetTextContentA;
 end;
@@ -2872,12 +2872,12 @@ Begin
   // todo: TIdSoapDelphiXmlDom(FDom).IterateChildren(self);
 end;
 
-function TIdSoapDelphiXmlElement.hasAttribute(const ANamespace, AName: WideString): Boolean;
+function TIdSoapDelphiXmlElement.hasAttribute(const ANamespace, AName: String): Boolean;
 begin
   result := FElement.HasAttribute(aName, ANamespace);
 end;
 
-function TIdSoapDelphiXmlElement.InsertChild(AIndex: Integer; AName, ANs: WideString): TIdSoapxmlelement;
+function TIdSoapDelphiXmlElement.InsertChild(AIndex: Integer; AName, ANs: String): TIdSoapxmlelement;
 begin
   raise Exception.Create('Not Done Yet');
 end;
@@ -2929,14 +2929,14 @@ Begin
     End;
 End;
 
-function TIdSoapDelphiXmlElement.ResolveXMLNamespaceCode(ANamespace,  ALocation: WideString): String;
+function TIdSoapDelphiXmlElement.ResolveXMLNamespaceCode(ANamespace,  ALocation: String): String;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdSoapMSXmlElement.ResolveXMLNamespaceCode';
 Begin
   Assert(Self.TestValid(TIdSoapDelphiXmlElement), ASSERT_LOCATION+': self is not valid');
   Result := ResolveDelphiXMLNamespaceCode(FElement, ANamespace, ALocation);
 end;
 
-procedure TIdSoapDelphiXmlElement.setAttribute(ANs, AName, AValue: WideString);
+procedure TIdSoapDelphiXmlElement.setAttribute(ANs, AName, AValue: String);
 begin
   FElement.SetAttributeNS(AName, Ans, AValue);
 end;
@@ -2951,7 +2951,7 @@ Begin
   FElement.Text := AValue;
 end;
 
-procedure TIdSoapDelphiXmlElement.SetTextContentW(AValue: WideString);
+procedure TIdSoapDelphiXmlElement.SetTextContentW(AValue: String);
 begin
   SetTextContentA(AValue);
 end;

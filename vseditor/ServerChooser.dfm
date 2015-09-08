@@ -61,7 +61,7 @@ object ServerChooserForm: TServerChooserForm
       end
       item
         Position = 4
-        Width = 184
+        Width = 180
         WideText = 'Description'
       end>
   end
@@ -81,6 +81,13 @@ object ServerChooserForm: TServerChooserForm
       Top = 12
       Width = 3
       Height = 13
+    end
+    object Label1: TLabel
+      Left = 10
+      Top = 12
+      Width = 28
+      Height = 13
+      Caption = 'Filter:'
     end
     object Button1: TButton
       Left = 697
@@ -104,6 +111,14 @@ object ServerChooserForm: TServerChooserForm
       Enabled = False
       TabOrder = 1
       OnClick = tvValuesetsDblClick
+    end
+    object eFilter: TEdit
+      Left = 44
+      Top = 10
+      Width = 317
+      Height = 21
+      TabOrder = 2
+      OnChange = eFilterChange
     end
   end
 end

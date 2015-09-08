@@ -7,7 +7,7 @@ uses
   kCritSct, KDBManager, KDBDialects, KDate, ParseMap,
   AdvObjects, AdvObjectLists,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal,
-  FHIRBase, FhirResources, FHIRComponents, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient, FHIRAtomFeed,
+  FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
   FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase;
 
 Type
@@ -491,7 +491,7 @@ begin
           for i := 0 to subst.meta.tagList.Count - 1 do
             if (subst.meta.tagList[i].code <> '') and (subst.meta.tagList[i].system <> '') then
               if not res.meta.HasTag(subst.meta.tagList[i].system, subst.meta.tagList[i].code) then
-                res.meta.tagList.AddValue(subst.meta.tagList[i].code, subst.meta.tagList[i].system, subst.meta.tagList[i].code);
+                res.meta.tagList.AddCoding(subst.meta.tagList[i].system, subst.meta.tagList[i].code, subst.meta.tagList[i].display);
           case subst.channel.type_ of
             SubscriptionChannelTypeRestHook: sendByRest(id, res, subst);
             SubscriptionChannelTypeEmail: sendByEmail(id, res, subst);

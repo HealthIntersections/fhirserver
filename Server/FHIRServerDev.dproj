@@ -103,13 +103,14 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
-        <DCC_IOChecking>false</DCC_IOChecking>
+        <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
+        <DCC_RangeChecking>true</DCC_RangeChecking>
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
-        <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
-        <DCC_Optimize>true</DCC_Optimize>
+        <DCC_Inlining>off</DCC_Inlining>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <Icon_MainIcon>FHIRServerDev_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-us\Snapshot&quot; -xremount -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.50\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.50\mafile.csv&quot; -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\work\fhirserver\profiles\daf-upload.ini&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-us&quot; -sver &quot;http://snomed.info/sct/428031000124101/version/20150301&quot; -xremount -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.50&quot; -lver 2.50 -load C:\work\org.hl7.fhir\build\publish\examples.zip -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot;</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -214,19 +215,17 @@
         <DCCReference Include="..\Libraries\Support\DateAndTime.pas"/>
         <DCCReference Include="..\Libraries\Support\KDate.pas"/>
         <DCCReference Include="..\Libraries\Support\HL7V2DateSupport.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRBase.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRTypes.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRResources.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRComponents.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRParser.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRParserBase.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRConstants.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRSupport.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRAtomFeed.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRLang.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRUtilities.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRClient.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRValidator.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRBase.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRTypes.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRResources.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRParser.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRParserBase.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRConstants.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRSupport.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRLang.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRUtilities.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRClient.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRValidator.pas"/>
         <DCCReference Include="..\Libraries\Support\MsXmlParser.pas"/>
         <DCCReference Include="..\Libraries\Support\XMLBuilder.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvWinInetClients.pas"/>
@@ -239,7 +238,6 @@
         <DCCReference Include="..\Libraries\Support\AdvObjectMatches.pas"/>
         <DCCReference Include="..\Libraries\Support\RegExpr.pas"/>
         <DCCReference Include="..\Libraries\Support\TextUtilities.pas"/>
-        <DCCReference Include="FHIRTags.pas"/>
         <DCCReference Include="FHIROperation.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvIntegerObjectMatches.pas"/>
         <DCCReference Include="..\Libraries\Support\AdvStringObjectMatches.pas"/>
@@ -324,17 +322,17 @@
         <DCCReference Include="..\Libraries\support\JWTTests.pas"/>
         <DCCReference Include="..\Libraries\support\HMAC.pas"/>
         <DCCReference Include="..\Libraries\support\JWT.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\QuestionnaireBuilder.pas"/>
+        <DCCReference Include="..\Libraries\refplat\QuestionnaireBuilder.pas"/>
         <DCCReference Include="SCIMServer.pas"/>
         <DCCReference Include="SCIMSearch.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\SCIMObjects.pas"/>
+        <DCCReference Include="..\Libraries\refplat\SCIMObjects.pas"/>
         <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
         <DCCReference Include="FHIRSearchSyntax.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\ProfileManager.pas"/>
+        <DCCReference Include="..\Libraries\refplat\ProfileManager.pas"/>
         <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
         <DCCReference Include="RectSupport.pas"/>
         <DCCReference Include="CoordinateSupport.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\NarrativeGenerator.pas"/>
+        <DCCReference Include="..\Libraries\refplat\NarrativeGenerator.pas"/>
         <DCCReference Include="..\Libraries\support\AdvGenerics.pas"/>
         <DCCReference Include="..\Libraries\support\XMLSupport.pas"/>
         <DCCReference Include="..\Libraries\support\DigitalSignatures.pas"/>
@@ -345,8 +343,11 @@
         <DCCReference Include="RxNormServices.pas"/>
         <DCCReference Include="..\Libraries\support\OIDSupport.pas"/>
         <DCCReference Include="IETFLanguageCodeServices.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRSecurity.pas"/>
-        <DCCReference Include="..\Libraries\refplat-dev\FHIRParserTests.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRSecurity.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRParserTests.pas"/>
+        <DCCReference Include="..\Libraries\snomed\SnomedAnalysis.pas"/>
+        <DCCReference Include="AreaCodeServices.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRTags.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -404,28 +405,33 @@
                     <Source Name="MainSource">FHIRServerDev.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp190.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k220.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp220.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment Version="1">
-                <DeployFile LocalName="Win32\Debug\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win32">
-                        <RemoteName>FHIRServer.rsm</RemoteName>
-                    </Platform>
-                </DeployFile>
+            <Deployment Version="2">
                 <DeployFile LocalName="Win64\Debug\FHIRServerDev.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>FHIRServerDev.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>FHIRServer.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Win64\Debug\FHIRServerDev.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>FHIRServerDev.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
                     </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32"/>
                 </DeployFile>
                 <DeployClass Required="true" Name="DependencyPackage">
                     <Platform Name="iOSDevice64">
@@ -460,10 +466,10 @@
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPad_Launch2048">
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
@@ -494,10 +500,10 @@
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectiOSResource">
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
@@ -512,10 +518,10 @@
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPhone_Launch640">
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
@@ -535,10 +541,10 @@
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPhone_Launch320">
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
@@ -608,10 +614,10 @@
                 <DeployClass Name="ProjectiOSDeviceInfoPList"/>
                 <DeployClass Name="ProjectiOSInfoPList"/>
                 <DeployClass Name="iPad_Launch1024">
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
@@ -633,10 +639,10 @@
                 </DeployClass>
                 <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <DeployClass Name="iPad_Launch768">
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
@@ -697,10 +703,10 @@
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPhone_Launch640x1136">
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
@@ -720,10 +726,10 @@
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPad_Launch1536">
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
@@ -747,13 +753,13 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

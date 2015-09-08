@@ -89,7 +89,7 @@ Function HasDefaultNamespace(AElement : TIdSoapXmlElement):Boolean;
 Const ASSERT_LOCATION = ASSERT_UNIT+'.HasDefaultNamesapce';
 Var
   i : Integer;
-  ns, name : widestring;
+  ns, name : string;
 Begin
   Result := False;
   For i := 0 To AElement.AttributeCount Do
@@ -164,7 +164,7 @@ Function ResolveXMLNamespaceCode(AElement : TIdSoapXmlElement; ANamespace, ALoca
 Const ASSERT_LOCATION = ASSERT_UNIT+'.ResolveXMLNamespaceCode';
 Var
   i : Integer;
-  ns, name : widestring;
+  ns, name : String;
 Begin
   Assert(AAllowDefault Or (ANamespace <> ''), ASSERT_LOCATION+': namespace is blank ('+ALocation+')');
   Assert(ALocation <> '', ASSERT_LOCATION+': Location is blank ('+ALocation+')');

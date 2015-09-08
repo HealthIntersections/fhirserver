@@ -373,7 +373,8 @@ type
     {@member ExecSQL
      Execute a single SQL statement (update, insert, etc. Returns the number of rows affected). You can't use this meaningfully with select statements
     }
-    function ExecSQL(ASql: String) : integer;
+    function ExecSQL(ASql: String) : integer; overload;
+    function ExecSQL(ASql: String; rows : integer) : integer; overload;
 
     {@member DatabaseSize
       Get the size of the database
@@ -952,6 +953,25 @@ begin
   assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   assert(FOwner.TestValid(TKDBManager), ASSERT_LOCATION+': owner is not valid');
   FOwner.Error(self, AException, AErrMsg);
+end;
+
+function TKDBConnection.ExecSQL(ASql: String; rows : integer) : integer;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.ExecSQL.1';
+begin
+  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
+  assert(ASql <> '', ASSERT_LOCATION+': sql statement is missing');
+  assert(not SQLHasResultSet(ASql), ASSERT_LOCATION+': sql would have results');
+
+  FSQL := ASql;
+  Prepare;
+  try
+    Execute;
+    result := GetRowsAffected;
+    if (result <> rows) then
+      raise Exception.Create('Error running sql - wrong row count (expected '+inttostr(rows)+', affected '+inttostr(result)+' for sql '+asql+')');
+  finally
+    Terminate;
+    end;
 end;
 
 Function TKDBConnection.ExecSQL(ASql: String) : integer;
@@ -1664,7 +1684,7 @@ begin
   try
     for i := 0 to FInUse.Count - 1 do
       begin
-      StringAppend(result, (FInUse[i] as TKDBConnection).FUsage+' '+DescribePeriod(now - (FInUse[i] as TKDBConnection).FUsed), ',');
+      StringAppend(result, (FInUse[i] as TKDBConnection).FUsage+' '+DescribePeriod(now - (FInUse[i] as TKDBConnection).FUsed)+' ('+(FInUse[i] as TKDBConnection).SQL+')', ',');
       end;
     if result <> '' then
       begin

@@ -7,7 +7,7 @@ uses
   StringSupport,
   AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
   KDBManager,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
 type
   TUSStateCodeConcept = class (TCodeSystemProviderContext)
@@ -34,6 +34,8 @@ type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
@@ -95,6 +97,11 @@ begin
   end;
 end;
 
+
+function TUSStateCodeServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '';
+end;
 
 function TUSStateCodeServices.system(context : TCodeSystemProviderContext) : String;
 begin
@@ -231,6 +238,11 @@ begin
   raise Exception.Create('locateIsA not supported by USStateCode'); // USStateCode doesn't have formal subsumption property, so this is not used
 end;
 
+
+function TUSStateCodeServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'United States Postal Codes';
+end;
 
 function TUSStateCodeServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin

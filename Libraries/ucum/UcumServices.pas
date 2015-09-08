@@ -36,7 +36,7 @@ Uses
   MathSupport, FileSupport,
   AdvBinaryFilers, AdvFiles, AdvFactories, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
   DecimalSupport, UcumHandlers, UcumValidators, UcumExpressions, Ucum,
-  FHIRResources, FHIRComponents, FHIRTypes, FHIRUtilities, FHIRParser,
+  FHIRResources, FHIRTypes, FHIRUtilities, FHIRParser,
   TerminologyServices;
 
 Type
@@ -78,10 +78,10 @@ Type
 
     Property Model : TUcumModel read FModel;
     Property Key : Integer read FKey write FKey;
-    Property Name : String read FName write FName;
+    Property Title : String read FName write FName;
     Property Path : String read FPath write FPath;
 
-    Function Version : String;
+    Function UcumVersion : String;
 
     Procedure Validate(oErrors : TAdvStringList); Overload;
 
@@ -209,6 +209,8 @@ Type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -478,6 +480,11 @@ begin
   End;
 end;
 
+function TUcumServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'UCUM';
+end;
+
 procedure TUcumServices.Save(const sFilename: String);
 var
   oFile : TAdvFile;
@@ -673,7 +680,12 @@ begin
   End;
 end;
 
-function TUcumServices.Version: String;
+function TUcumServices.Version(context: TCodeSystemProviderContext): String;
+begin
+  result := UcumVersion;
+end;
+
+function TUcumServices.UcumVersion: String;
 begin
   result := FModel.Version;
 end;
@@ -756,7 +768,7 @@ begin
     i := 0;
     While (i < Count) and (result = nil) do
     Begin
-      if SameText(Definition[i].Version, sName) then
+      if SameText(Definition[i].UcumVersion, sName) then
         result := Definition[i];
       inc(i);
     End;

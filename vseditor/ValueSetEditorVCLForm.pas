@@ -1115,8 +1115,10 @@ end;
 procedure TForm5.WelcomeScreen1Click(Sender: TObject);
 begin
   ValueSetEditorWelcomeForm.Context := Context.Link;
-  ValueSetEditorWelcomeForm.showModal;
-  Context.Settings.HasViewedWelcomeScreen := true;
+  if ValueSetEditorWelcomeForm.showModal = mrOk then
+    Context.Settings.HasViewedWelcomeScreen := true
+  else if not Context.Settings.HasViewedWelcomeScreen then
+   close;
 end;
 
 procedure TForm5.tvDefinesBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);

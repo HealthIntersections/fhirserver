@@ -7,7 +7,7 @@ uses
   StringSupport, AdvObjects, AdvObjectLists,
   YuStemmer,
   KDBManager,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
 type
   TUMLSConcept = class (TCodeSystemProviderContext)
@@ -86,12 +86,16 @@ type
   public
     Constructor Create(db : TKDBManager);
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
   end;
 
   TNciMetaServices = class (TUMLSServices)
   public
     Constructor Create(db : TKDBManager);
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
   end;
 
 procedure generateRxStems(db : TKDBManager);
@@ -613,6 +617,7 @@ var
   filter : TUMLSFilter;
 begin
   filter := TUMLSFilter(TUMLSPrep(ctxt).filters[0]);
+  filter.qry.terminate;
   filter.qry.release;
 
 end;
@@ -664,9 +669,19 @@ begin
   inherited create(false, db);
 end;
 
+function TRxNormServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'RxNorm';
+end;
+
 function TRxNormServices.system(context: TCodeSystemProviderContext): String;
 begin
   result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
+end;
+
+function TRxNormServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '??';
 end;
 
 { TNciMetaServices }
@@ -676,9 +691,19 @@ begin
   inherited create(true, db);
 end;
 
+function TNciMetaServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'NCI Metathesaurus';
+end;
+
 function TNciMetaServices.system(context: TCodeSystemProviderContext): String;
 begin
   result := 'http://ncimeta.nci.nih.gov';
+end;
+
+function TNciMetaServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '??';
 end;
 
 end.

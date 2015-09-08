@@ -6,7 +6,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvStringLists,
-  FHIRTypes, FHIRComponents, FHIRResources,
+  FHIRTypes, FHIRResources,
   YuStemmer;
 
 Type
@@ -80,6 +80,7 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; params : TFHIRParameters); virtual;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
@@ -105,6 +106,12 @@ begin
     Close(ctxt);
 end;
 
+
+
+procedure TCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; params: TFHIRParameters);
+begin
+  // nothing here
+end;
 
 function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin

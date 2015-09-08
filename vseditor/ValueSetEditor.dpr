@@ -147,6 +147,21 @@ uses
   QuestionnaireBuilder in '..\Libraries\refplat-dev\QuestionnaireBuilder.pas',
   ShellSupport in '..\Libraries\support\ShellSupport.pas',
   Vcl.Forms,
+  IdSoapMime in '..\Libraries\indysoap\IdSoapMime.pas',
+  IdSoapClasses in '..\Libraries\indysoap\IdSoapClasses.pas',
+  IdSoapDebug in '..\Libraries\indysoap\IdSoapDebug.pas',
+  IdSoapResourceStrings in '..\Libraries\indysoap\IdSoapResourceStrings.pas',
+  IdSoapTracker in '..\Libraries\indysoap\IdSoapTracker.pas',
+  IdSoapBase64 in '..\Libraries\indysoap\IdSoapBase64.pas',
+  IdSoapConsts in '..\Libraries\indysoap\IdSoapConsts.pas',
+  IdSoapUtilities in '..\Libraries\indysoap\IdSoapUtilities.pas',
+  IdSoapExceptions in '..\Libraries\indysoap\IdSoapExceptions.pas',
+  IdSoapMsXml in '..\Libraries\indysoap\IdSoapMsXml.pas',
+  IdSoapXML in '..\Libraries\indysoap\IdSoapXML.pas',
+  IdSoapComponent in '..\Libraries\indysoap\IdSoapComponent.pas',
+  IdSoapNamespaces in '..\Libraries\indysoap\IdSoapNamespaces.pas',
+  LookAheadUnit in '..\Libraries\ui\LookAheadUnit.pas',
+  DProgress in '..\Libraries\ui\DProgress.pas',
   ValueSetEditorRegisterServerForm in 'ValueSetEditorRegisterServerForm.pas' {frmRegisterServer};
 
 {$R *.res}

@@ -5,26 +5,16 @@ interface
 uses
   SysUtils, Classes,
   StringSupport,
-  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
+  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringMatches,
   KDBManager,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
 type
-  TCountryCodeConcept = class (TCodeSystemProviderContext)
-  private
-    FCode : string;
-    FDisplay : String;
-  end;
-
-  TCountryCodeFilter = class (TCodeSystemProviderFilterContext)
-  end;
-
-  TCountryCodePrep = class (TCodeSystemProviderFilterPreparationContext)
-  end;
+  TCountryCodeConcept = class (TCodeSystemProviderContext);
 
   TCountryCodeServices = class (TCodeSystemProvider)
   public
-    db : TKDBManager;
+    FCodes : TAdvStringMatch;
 
     Constructor Create(db : TKDBManager);
     Destructor Destroy; Override;
@@ -66,24 +56,19 @@ implementation
 { TCountryCodeServices }
 
 Constructor TCountryCodeServices.create(db : TKDBManager);
-begin
-  inherited Create;
-
-  self.db := db;
-end;
-
-
-function TCountryCodeServices.TotalCount : integer;
 var
   qry : TKDBConnection;
 begin
-  qry := db.GetConnection('CountryCode.Count');
+  inherited Create;
+  FCodes := TAdvStringMatch.Create;
+
+  qry := db.GetConnection('CountryCodes');
   try
-    qry.SQL := 'Select Count(*) from CountryCodes';
+    qry.SQL := 'Select Code, Display from CountryCodes';
     qry.prepare;
     qry.execute;
-    qry.FetchNext;
-    result := qry.ColInteger[1];
+    while qry.FetchNext do
+      Fcodes.Add(qry.ColStringByName['Code'], qry.ColStringByName['Display']);
     qry.Terminate;
     qry.Release;
   except
@@ -93,6 +78,12 @@ begin
       raise;
     end;
   end;
+end;
+
+
+function TCountryCodeServices.TotalCount : integer;
+begin
+  result := FCodes.Count;
 end;
 
 
@@ -107,26 +98,8 @@ begin
 end;
 
 function TCountryCodeServices.getDisplay(code : String):String;
-var
-  qry : TKDBConnection;
 begin
-  qry := db.GetConnection('CountryCode.display');
-  try
-    qry.SQL := 'Select Display from CountryCodes where Code = :code';
-    qry.prepare;
-    qry.BindString('code', code);
-    qry.execute;
-    qry.FetchNext;
-    result := qry.colString[1];
-    qry.Terminate;
-    qry.Release;
-  except
-    on e : Exception do
-    begin
-      qry.Error(e);
-      raise;
-    end;
-  end;
+  result := FCodes[code];
 end;
 
 function TCountryCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -141,60 +114,30 @@ end;
 
 
 function TCountryCodeServices.locate(code : String) : TCodeSystemProviderContext;
-var
-  qry : TKDBConnection;
-  res : TCountryCodeConcept;
 begin
-  qry := db.GetConnection('CountryCode.locate');
-  try
-    qry.SQL := 'Select CountryCodeKey, Display from CountryCodes where code = :code';
-    qry.prepare;
-    qry.bindString('code', code);
-    qry.execute;
-    if not qry.FetchNext then
-      result := nil
-    else
-    begin
-      res := TCountryCodeConcept.Create;
-      try
-        res.FCode := code;
-        res.FDisplay := qry.ColStringByName['Display'];
-        result := res.Link;
-      finally
-        res.Free;
-      end;
-    end;
-    qry.Terminate;
-    qry.Release;
-  except
-    on e : Exception do
-    begin
-      qry.Error(e);
-      raise;
-    end;
-  end;
+  result := TCodeSystemProviderContext(FCodes.IndexByKey(code));
 end;
 
 
 function TCountryCodeServices.Code(context : TCodeSystemProviderContext) : string;
 begin
-  result := TCountryCodeConcept(context).FCode;
+  result := FCodes.KeyByIndex[integer(context)-1];
 end;
 
 function TCountryCodeServices.Definition(context: TCodeSystemProviderContext): string;
 begin
-  result := '';
+  result := Display(context);
 end;
 
 destructor TCountryCodeServices.Destroy;
 begin
-  db.Free;
+  FCodes.Free;
   inherited;
 end;
 
 function TCountryCodeServices.Display(context : TCodeSystemProviderContext) : string;
 begin
-  result := TCountryCodeConcept(context).FDisplay;
+  result := FCodes.ValueByIndex[integer(context)-1];
 end;
 
 procedure TCountryCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
@@ -219,17 +162,20 @@ end;
 
 function TCountryCodeServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 begin
-  result := 0; // no children
+  if (context = nil) then
+    result := TotalCount
+  else
+    result := 0; // no children
 end;
 
 function TCountryCodeServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  result := TCountryCodeConcept(ndx+1);
 end;
 
 function TCountryCodeServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('locateIsA not supported by CountryCode'); // CountryCode doesn't have formal subsumption property, so this is not used
+  result := nil; // CountryCode doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -270,12 +216,12 @@ end;
 
 procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderContext);
 begin
-  ctxt.free;
+  // nothing
 end;
 
 procedure TCountryCodeServices.Close(ctxt : TCodeSystemProviderFilterContext);
 begin
-  ctxt.free;
+  // nothing
 end;
 
 procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);

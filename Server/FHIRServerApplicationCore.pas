@@ -44,7 +44,7 @@ Uses
 Type
   TFHIRService = class (TSystemService)
   private
-    FStartTime : integer;
+    FStartTime : cardinal;
     TestMode : Boolean;
     FIni : TIniFile;
     FDb : TKDBManager;
@@ -87,7 +87,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
-  dir, dir2, fn : String;
+  dir, dir2, fn, ver, lver : String;
   svc : TFHIRService;
 begin
   CoInitialize(nil);
@@ -133,11 +133,17 @@ begin
     else if FindCmdLineSwitch('tests') then
       svc.ExecuteTests
     else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
-      svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+    begin
+      FindCmdLineSwitch('version', ver, true, [clstValueNextParam]);
+      svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
+    end
     else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
-      svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
-    else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('mafile', dir2, true, [clstValueNextParam]) then
-      svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, dir2, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+    begin
+      FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
+      svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
+    end
+    else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
+      svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
     else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
     begin
       svc.ConnectToDatabase;
@@ -346,7 +352,6 @@ var
   cursor : integer;
 begin
   FNotServing := true;
-  fn := fn.Replace('.dstu', '');
   if FDb = nil then
     ConnectToDatabase;
   CanStart;

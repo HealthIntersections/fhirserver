@@ -7,7 +7,7 @@ uses
   StringSupport,
   AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
   KDBManager,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
 type
   TUniiConcept = class (TCodeSystemProviderContext)
@@ -45,6 +45,8 @@ type
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
     function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function getDefinition(code : String):String; override;
@@ -109,6 +111,11 @@ begin
   end;
 end;
 
+
+function TUniiServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '';
+end;
 
 function TUniiServices.system(context : TCodeSystemProviderContext) : String;
 begin
@@ -325,6 +332,11 @@ begin
   raise Exception.Create('locateIsA not supported by Unii'); // Unii doesn't have formal subsumption property, so this is not used
 end;
 
+
+function TUniiServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'UNII';
+end;
 
 function TUniiServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin

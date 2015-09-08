@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, GuidSupport,
   AdvObjects,
   KDBManager, KDBDialects,
   FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
@@ -145,18 +145,18 @@ begin
        PrimaryKeyType(FConn.owner.Platform, 'PK_Tags', 'TagKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create Unique INDEX SK_Tags_Uri ON Tags (Kind, Uri, Code)');
   // pre-registering common tags
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (1,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''U'', ''Confidentiality = none'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (2,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''L'', ''Confidentiality = Low'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (3,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''M'', ''Confidentiality = Moderate'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (4,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''N'', ''Confidentiality = Normal'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (5,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''R'', ''Confidentiality = Restricted'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (6,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/Confidentiality'', ''V'', ''Confidentiality = Very Restricted'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (7,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''CEL'', ''Celebrity / VIP'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (8,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''EMP'', ''Employee / Staff member'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (9,  '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''TABOO'', ''Patient/Carer Only'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (10, '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''DEMO'', ''Contact/Employment Confidential'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (11, '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''DIA'', ''Diagnosis is/would be Confidential'')');
-  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (12, '+inttostr(ord(tkSecurity))+', ''http://hl7.org/fhir/v3/ActCode'', ''ORCON'', ''Author only'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (1,  1, ''http://hl7.org/fhir/v3/Confidentiality'', ''U'', ''Confidentiality = none'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (2,  1, ''http://hl7.org/fhir/v3/Confidentiality'', ''L'', ''Confidentiality = Low'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (3,  1, ''http://hl7.org/fhir/v3/Confidentiality'', ''M'', ''Confidentiality = Moderate'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (4,  1, ''http://hl7.org/fhir/v3/Confidentiality'', ''N'', ''Confidentiality = Normal'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (5,  1, ''http://hl7.org/fhir/v3/Confidentiality'', ''R'', ''Confidentiality = Restricted'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (6,  1, ''http://hl7.org/fhir/v3/Confidentiality'', ''V'', ''Confidentiality = Very Restricted'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (7,  1, ''http://hl7.org/fhir/v3/ActCode'', ''CEL'', ''Celebrity / VIP'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (8,  1, ''http://hl7.org/fhir/v3/ActCode'', ''EMP'', ''Employee / Staff member'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (9,  1, ''http://hl7.org/fhir/v3/ActCode'', ''TABOO'', ''Patient/Carer Only'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (10, 1, ''http://hl7.org/fhir/v3/ActCode'', ''DEMO'', ''Contact/Employment Confidential'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (11, 1, ''http://hl7.org/fhir/v3/ActCode'', ''DIA'', ''Diagnosis is/would be Confidential'')');
+  FConn.ExecSQL('Insert into Tags (Tagkey, Kind, Uri, Code, Display) values (12, 1, ''http://hl7.org/fhir/v3/ActCode'', ''ORCON'', ''Author only'')');
 end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceTypes;
@@ -221,6 +221,8 @@ Begin
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+BooleanToInt(FSupportSystemHistory)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (4, '''+BooleanToInt(FDoAudit)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (5, '''+inttostr(ServerVersion)+''')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (6, '''+NewGuidURN+''')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (7, ''1'')');
 End;
 
 procedure TFHIRDatabaseInstaller.CreateClosureEntries;
@@ -283,7 +285,7 @@ procedure TFHIRDatabaseInstaller.CreateOAuthLogins;
 begin
   FConn.ExecSQL('CREATE TABLE OAuthLogins( '+#13#10+
        ' Id nchar('+inttostr(ID_LENGTH)+') NOT NULL, '+#13#10+
-       ' Client nchar(12) NOT NULL, '+#13#10+
+       ' Client nchar(48) NOT NULL, '+#13#10+
        ' Scope nchar(255) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
        ' ClientState nchar(255) NOT NULL, '+#13#10+
@@ -345,10 +347,11 @@ Begin
        ' Deleted int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Format int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SessionKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' TextSummary nchar(255) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Tags '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' Content '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' Summary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' XmlContent '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' XmlSummary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' JsonContent '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' JsonSummary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Versions', 'ResourceVersionKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Versions', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_ResKey_IdKey'));
   FConn.ExecSQL('Create INDEX SK_Versions_ResDate ON Versions (ResourceKey, TransactionDate)');
@@ -414,7 +417,7 @@ Begin
        ' SearchKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' SortValue nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
+       ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search'));
@@ -558,14 +561,14 @@ var
 begin
   k := 1;
 
-  // general indexes
-  FConn.Sql := 'insert into Indexes (IndexKey, Name) values (:k, :d)';
-  FConn.prepare;
-  FConn.bindInteger('k', k);
-  FConn.bindString('d', NARRATIVE_INDEX_NAME);
-  FConn.execute;
-  inc(k);
-  FConn.terminate;
+//  // general indexes
+//  FConn.Sql := 'insert into Indexes (IndexKey, Name) values (:k, :d)';
+//  FConn.prepare;
+//  FConn.bindInteger('k', k);
+//  FConn.bindString('d', NARRATIVE_INDEX_NAME);
+//  FConn.execute;
+//  inc(k);
+//  FConn.terminate;
 
   m := TFHIRIndexManager.create(nil);
   names := TStringList.Create;

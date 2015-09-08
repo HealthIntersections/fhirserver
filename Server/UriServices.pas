@@ -7,7 +7,7 @@ uses
   StringSupport,
   AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
   KDBManager,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
 type
   TUriHolder = class (TCodeSystemProviderContext)
@@ -25,6 +25,8 @@ type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
@@ -61,6 +63,11 @@ begin
   result := -1;
 end;
 
+
+function TUriServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := 'n/a';
+end;
 
 function TUriServices.system(context : TCodeSystemProviderContext) : String;
 begin
@@ -141,6 +148,11 @@ begin
   raise Exception.Create('locateIsA not supported by Uri'); // Uri doesn't have formal subsumption property, so this is not used
 end;
 
+
+function TUriServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'Internal URI services';
+end;
 
 function TUriServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin

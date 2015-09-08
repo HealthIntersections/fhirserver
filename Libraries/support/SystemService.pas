@@ -84,6 +84,7 @@ var
   GService : TSystemService = nil; // there can only be one....
 
 procedure writelnt(s : String);
+procedure writet(s : String);
 
 implementation
 
@@ -632,9 +633,35 @@ begin
   DoStop;
 end;
 
+var
+  lastday : integer = 0;
+
 procedure writelnt(s : String);
+var
+  today : integer;
 begin
-  System.Writeln(FormatDateTime('yyyy-mm-dd hh:nn:ss', now)+ ' '+s);
+  today := trunc(now);
+  if today <> lastday then
+  begin
+    System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
+    lastDay := today;
+  end;
+
+  System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+s);
+end;
+
+procedure writet(s : String);
+var
+  today : integer;
+begin
+  today := trunc(now);
+  if today <> lastday then
+  begin
+    System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
+    lastDay := today;
+  end;
+
+  System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+s);
 end;
 
 end.

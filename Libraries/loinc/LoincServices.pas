@@ -35,7 +35,7 @@ Uses
   StringSupport, FileSupport, BytesSupport,
   AdvObjects, AdvObjectLists,
   regexpr, YuStemmer,
-  FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities,
   TerminologyServices, DateAndTime;
 
 {axes
@@ -55,7 +55,7 @@ also:
   v2 & v3 data type
 }
 Const
-  LOINC_CACHE_VERSION = '7';
+  LOINC_CACHE_VERSION = '8';
   NO_PARENT = $FFFFFFFF;
 
 Type
@@ -241,23 +241,40 @@ Type
 //  End;
 
   TLOINCHeirarchyEntryList = class (TAdvObject)
-    Private
-      FMaster : TBytes;
-      FBuilder : TAdvBytesBuilder;
-    Public
-      Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
-      Procedure GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal);
+  Private
+    FMaster : TBytes;
+    FBuilder : TAdvBytesBuilder;
+  Public
+    Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
+    Procedure GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal);
 
-      // we presume that the Codes are registered in order
-      Procedure StartBuild;
-      Function AddEntry(code, text, parent, children, descendents, concepts, descendentConcepts : Cardinal) : Cardinal;
-      Procedure DoneBuild;
+    // we presume that the Codes are registered in order
+    Procedure StartBuild;
+    Function AddEntry(code, text, parent, children, descendents, concepts, descendentConcepts : Cardinal) : Cardinal;
+    Procedure DoneBuild;
 
-      // this needs to be called after Done Build
-      Procedure SetStems(iIndex : Cardinal; iValue : Cardinal);
+    // this needs to be called after Done Build
+    Procedure SetStems(iIndex : Cardinal; iValue : Cardinal);
 
-      Function Count : Integer;
+    Function Count : Integer;
   End;
+
+  TLOINCAnswersList = class (TAdvObject)
+  Private
+    FMaster : TBytes;
+    FBuilder : TAdvBytesBuilder;
+  Public
+    Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
+    Procedure GetEntry(iIndex: Cardinal; var code, description, answers : Cardinal);
+
+    // we presume that the Codes are registered in order
+    Procedure StartBuild;
+    Function AddEntry(code, description, answers : Cardinal) : Cardinal; // value = MAX_INT means this is a list
+    Procedure DoneBuild;
+
+    Function Count : Integer;
+  End;
+
 
   TLoincSubsetId = (lsiNull, lsiAll, lsiOrder, lsiObs, lsiOrderObs, lsiOrderSubset, lsiTypeObservation, lsiTypeClinical, lsiTypeAttachment,
     lsiTypeSurvey, lsiInternal, lsi3rdParty, lsiActive, lsiDeprecated, lsiDiscouraged, lsiTrial);
@@ -282,6 +299,7 @@ Type
     FWords : TLoincWords;
     FStems : TLoincStems;
     FEntries : TLOINCHeirarchyEntryList;
+    FAnswerLists : TLOINCAnswersList;
     FHeirarchyRoots : TCardinalArray;
 
     FRoot : Word;
@@ -315,6 +333,7 @@ Type
     Property Words : TLoincWords read FWords;
     Property Stems : TLoincStems read FStems;
     Property Entries : TLOINCHeirarchyEntryList read FEntries;
+    Property AnswerLists : TLOINCAnswersList read FAnswerLists;
 
 
     Property Root : Word read FRoot write FRoot;
@@ -662,7 +681,7 @@ end;
 Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
 Begin
   if iIndex > FLength div FRecLength - 1 Then
-    Raise Exception.Create('Attempt to access invalid LOINC index');
+    Raise Exception.Create('Attempt to access invalid LOINC index at '+inttostr(iIndex*FRecLength));
   sCode := trim(asCopy(FMaster, iIndex*FRecLength, FCodeLength));
   Move(FMaster[(iIndex*FRecLength)+FCodeLength+0], iDescription, 4);
   Move(FMaster[(iIndex*FRecLength)+FCodeLength+4], iOtherNames, 4);
@@ -702,6 +721,7 @@ begin
   FWords := TLoincWords.Create;
   FStems := TLoincStems.Create;
   FEntries := TLOINCHeirarchyEntryList.create;
+  FAnswerLists := TLOINCAnswersList.create;
 end;
 
 function TLOINCServices.Definition(context: TCodeSystemProviderContext): string;
@@ -711,6 +731,7 @@ end;
 
 destructor TLOINCServices.Destroy;
 begin
+  FAnswerLists.Free;
   FEntries.Free;
   FWords.Free;
   FStems.Free;
@@ -879,6 +900,7 @@ begin
       FStems.FMaster := ReadBytes;
       FStems.FLength := Length(FStems.FMaster);
       FEntries.FMaster := ReadBytes;
+      FAnswerLists.FMaster := ReadBytes;
       FRoot := oRead.ReadInteger;
       FVersion := oRead.ReadString;
       For aLoop := Low(TLoincPropertyType) To High(TLoincPropertyType) Do
@@ -929,6 +951,7 @@ begin
       WriteBytes(FWords.FMaster);
       WriteBytes(FStems.FMaster);
       WriteBytes(FEntries.FMaster);
+      WriteBytes(FAnswerLists.FMaster);
       oWrite.writeInteger(FRoot);
       oWrite.WriteString(FVersion);
       For aLoop := Low(TLoincPropertyType) To High(TLoincPropertyType) Do
@@ -1414,10 +1437,14 @@ end;
 function TLOINCServices.buildValueSet(id: String): TFhirValueSet;
 var
   index : cardinal;
-  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+  code, text, parent, children, descendents, concepts, descendentConcepts, stems, value: Cardinal;
+  answers : TCardinalArray;
   inc : TFhirValueSetComposeInclude;
   filt :  TFhirValueSetComposeIncludeFilter;
+  i : integer;
+  cc : TFhirValueSetComposeIncludeConcept;
 begin
+  result := nil;
   if (id.StartsWith('http://loinc.org/vs/') and FEntries.FindCode(id.Substring(20), index, FDesc)) then
   begin
     FEntries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
@@ -1425,7 +1452,7 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
-      result.status := ValueSetStatusActive;
+      result.status := ConformanceResourceStatusActive;
       result.version := Version(nil);
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text);
@@ -1442,8 +1469,36 @@ begin
       result.free;
     end;
   end
-  else
-    result := nil;
+  else if (id.StartsWith('http://loinc.org/vs/') and FAnswerLists.FindCode(id.Substring(20), index, FDesc)) then
+  begin
+    FAnswerLists.GetEntry(index, code, text, children);
+    if (value = MaxInt) then
+    begin
+      result := TFhirValueSet.Create;
+      try
+        result.url := id;
+        result.status := ConformanceResourceStatusActive;
+        result.version := Version(nil);
+        result.name := 'LOINC Answer List '+id.Substring(20);
+        result.description := 'LOINC Answer list for '+Desc.GetEntry(text);
+        result.date := NowUTC;
+        result.compose := TFhirValueSetCompose.Create;
+        inc := result.compose.includeList.Append;
+        inc.system := 'http://loinc.org';
+        answers := FRefs.GetCardinals(children);
+        for i := 0 to Length(answers) - 1 do
+        begin
+          cc := inc.conceptList.Append;
+          FAnswerLists.GetEntry(answers[i], code, text, children);
+          cc.code := Desc.GetEntry(code);
+          cc.display := Desc.GetEntry(text);
+        end;
+        result.link;
+      finally
+        result.free;
+      end;
+    end;
+  end;
 end;
 
 function TLoincServices.ChildCount(context: TCodeSystemProviderContext): integer;
@@ -1463,30 +1518,43 @@ end;
 function TLoincServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin
   if (context = nil) then
-    result := TCodeSystemProviderContext(ndx)
+    result := TCodeSystemProviderContext(ndx+1) // offset from 0 to avoid ambiguity about nil contxt, and first entry
   else
     raise exception.create('shouldn''t be here');
 end;
 
 function TLoincServices.Code(context: TCodeSystemProviderContext): string;
 var
+  index : integer;
   iDescription, iStems, iOtherNames : Cardinal;
-  iEntry : Cardinal;
+  iEntry, iCode, iValue, iOther : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
 begin
-  CodeList.GetInformation(integer(context), result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+  index := integer(context)-1;
+  if index > CodeList.Count then
+  begin
+    FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther);
+    result := Desc.GetEntry(iCode);
+  end
+  else
+    CodeList.GetInformation(integer(context)-1, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
 end;
 
 function TLoincServices.Display(context: TCodeSystemProviderContext): string;
 var
-  iDescription, iStems, iOtherNames : Cardinal;
+  index : integer;
+  iCode, iDescription, iStems, iOtherNames, iValue, iOther : Cardinal;
   iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
 begin
-  CodeList.GetInformation(integer(context), result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
-  result := Desc.GetEntry(iDescription)
+  index := integer(context)-1;
+  if index > CodeList.Count then
+    FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther)
+  else
+    CodeList.GetInformation(index, result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+  result := Desc.GetEntry(iDescription);
 end;
 
 procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
@@ -1522,7 +1590,9 @@ var
   i : Cardinal;
 begin
   if CodeList.FindCode(code, i) then
-    result := TCodeSystemProviderContext(i)
+    result := TCodeSystemProviderContext(i+1)
+  else if AnswerLists.FindCode(code, i, FDesc) then
+    result := TCodeSystemProviderContext(CodeList.Count+ i+1)
   else
     result := nil;//raise Exception.create('unable to find '+code+' in '+system);
 end;
@@ -1544,7 +1614,7 @@ end;
 
 function TLoincServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  result := THolder(ctxt).HasChild(integer(concept));
+  result := THolder(ctxt).HasChild(integer(concept)-1);
 end;
 
 function THolder.HasChild(v : integer) : boolean;
@@ -1726,7 +1796,7 @@ end;
 
 function TLoincServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TCodeSystemProviderContext(THolder(ctxt).children[THolder(ctxt).ndx-1]);
+  result := TCodeSystemProviderContext(THolder(ctxt).children[THolder(ctxt).ndx-1]+1);
 end;
 
 function TLoincServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
@@ -1756,7 +1826,7 @@ begin
   begin
     holder := THolder(ctxt);
     if CodeList.FindCode(code, i) and holder.hasChild(i) then
-      result := TCodeSystemProviderContext(i)
+      result := TCodeSystemProviderContext(i+1)
     else
       result := nil;
   end;
@@ -1826,6 +1896,8 @@ begin
       C := CompareStr(s, sCode);
       if C < 0 then L := I + 1 else
       begin
+        if i = 0 then
+          break;
         H := I - 1;
         if C = 0 then
         begin
@@ -1836,7 +1908,6 @@ begin
     end;
     iIndex := L;
   End;
-
 end;
 
 procedure TLOINCHeirarchyEntryList.GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal);
@@ -1861,6 +1932,74 @@ begin
 //  result := BytesAsString(b);
 end;
 
+
+{ TLOINCAnswersList }
+
+function TLOINCAnswersList.AddEntry(code, description, answers: Cardinal): Cardinal;
+begin
+  Result := FBuilder.Length div 12;
+  FBuilder.AddCardinal(code);
+  FBuilder.AddCardinal(description);
+  FBuilder.AddCardinal(answers);
+end;
+
+function TLOINCAnswersList.Count: Integer;
+begin
+  result := Length(FMaster) div 12;
+end;
+
+procedure TLOINCAnswersList.DoneBuild;
+begin
+  FMaster := FBuilder.AsBytes;
+  FBuilder.Free;
+end;
+
+function TLOINCAnswersList.FindCode(sCode: String; var iIndex: Cardinal; Strings: TLoincStrings): Boolean;
+var
+  L, H, I, d : Cardinal;
+  C: Integer;
+  s : String;
+begin
+  if Length(FMaster) = 0 Then
+    Result := False
+  Else
+  Begin
+    Result := False;
+    L := 0;
+    H := (Length(FMaster) div (12)) - 1;
+    while L <= H do
+    begin
+      I := (L + H) shr 1;
+      Move(FMaster[i*12], d, 4);
+      s := Strings.GetEntry(d);
+      C := AnsiCompareStr(s, sCode);
+      if C < 0 then L := I + 1 else
+      begin
+        H := I - 1;
+        if C = 0 then
+        begin
+          Result := True;
+          L := I;
+        end;
+      end;
+    end;
+    iIndex := L;
+  End;
+end;
+
+procedure TLOINCAnswersList.GetEntry(iIndex: Cardinal; var code, description, answers: Cardinal);
+begin
+  if iIndex > (Length(FMaster) div 12) Then
+    Raise Exception.Create('Attempt to access invalid LOINC Entry index');
+  Move(FMaster[(iIndex*12)+0], code, 4);
+  Move(FMaster[(iIndex*12)+4], description, 4);
+  Move(FMaster[(iIndex*12)+8], answers, 4);
+end;
+
+procedure TLOINCAnswersList.StartBuild;
+begin
+  FBuilder := TAdvBytesBuilder.Create;
+end;
 
 End.
 

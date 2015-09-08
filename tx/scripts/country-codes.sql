@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[CountryCodes](
+81288128CREATE TABLE [dbo].[CountryCodes](
 	[Display] [nchar](255) NOT NULL,
 	[Code] [nchar](10) NOT NULL,
 	[Status] [nchar](255) NOT NULL,

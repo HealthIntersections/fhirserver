@@ -80,6 +80,7 @@ Type
   End;
 
   TWordCache = class (TObject)
+  public
     Flags : Integer;
     Stem : String;
     constructor create(aStem : String);
@@ -109,7 +110,8 @@ Type
     FDescRef : TSnomedDescriptionIndex;
     FRefsets : TRefSetList;
 
-    FVersion: String;
+    FVersionUri : String;
+    FVersionDate : String;
     Findex_is_a : Cardinal;
     FWordList : TStringList;
     FStemList : TStringList;
@@ -151,6 +153,7 @@ Type
     procedure Progress(msg : String);
     function readDate(s: String): TSnomedDate;
     procedure QuickSortPairsByName(var a: TSnomedReferenceSetMemberArray);
+    procedure SetVersion(s : String);
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -165,8 +168,8 @@ Type
     Property RF2 : boolean read FRF2 write FRF2;
   end;
 
-function importSnomedRF1(dir : String; dest : String) : String;
-function importSnomedRF2(dir : String; dest : String) : String;
+function importSnomedRF1(dir : String; dest, uri : String) : String;
+function importSnomedRF2(dir : String; dest, uri : String) : String;
 
 Implementation
 
@@ -209,12 +212,10 @@ begin
         if (s.StartsWith('CONCEPTID'#9'CONCEPTSTATUS'#9'FULLYSPECIFIEDNAME'#9'CTV3ID'#9'SNOMEDID'#9'ISPRIMITIVE')) then
         begin
           imp.ConceptFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name);
-          if imp.Fversion = '' then
-            imp.Fversion := ExtractFileVersion(imp.ConceptFiles[0]);
         end
         else if (s.StartsWith('DESCRIPTIONID'#9'DESCRIPTIONSTATUS'#9'CONCEPTID'#9'TERM'#9'INITIALCAPITALSTATUS'#9'DESCRIPTIONTYPE'#9'LANGUAGECODE')) then
           imp.DescriptionFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name)
-        else if (s.StartsWith('RELATIONSHIPID'#9'CONCEPTID1'#9'RELATIONSHIPTYPE'#9'CONCEPTID2'#9'CHARACTERISTICTYPE'#9'REFINABILITY'#9'RELATIONSHIPGROUP')) then
+        else if (s.StartsWith('RELATIONSHIPID'#9'CONCEPTID1'#9'RELATIONSHIPTYPE'#9'CONCEPTID2'#9'CHARACTERISTICTYPE'#9'REFINABILITY'#9'RELATIONSHIPGROUP')) and (pos('StatedRelationship', sr.Name) = 0) then
           imp.RelationshipFiles.add(IncludeTrailingPathDelimiter(dir) + sr.Name)
         else
           ;  // we ignore the file
@@ -245,12 +246,10 @@ begin
         if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'definitionStatusId')) then
         begin
           imp.ConceptFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name);
-          if imp.Fversion = '' then
-            imp.Fversion := ExtractFileVersion(imp.ConceptFiles[0]);
         end
         else if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'conceptId'#9'languageCode'#9'typeId'#9'term'#9'caseSignificanceId')) then
           imp.DescriptionFiles.add(IncludeTrailingPathDelimiter(dir) + sr.Name)
-        else if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'sourceId'#9'destinationId'#9'relationshipGroup'#9'typeId'#9'characteristicTypeId'#9'modifierId')) then
+        else if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'sourceId'#9'destinationId'#9'relationshipGroup'#9'typeId'#9'characteristicTypeId'#9'modifierId')) and (pos('StatedRelationship', sr.Name) = 0) then
           imp.RelationshipFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name)
         else
           ;  // we ignore the file
@@ -260,7 +259,7 @@ begin
   end;
 end;
 
-function importSnomedRF1(dir : String; dest : String) : String;
+function importSnomedRF1(dir : String; dest, uri : String) : String;
 var
   imp : TSnomedImporter;
 begin
@@ -268,6 +267,7 @@ begin
   imp := TSnomedImporter.Create;
   try
     imp.CacheDir := dest;
+    imp.setVersion(uri);
     analyseDirectory(dir, imp);
     imp.Go;
     result := imp.outputFile;
@@ -276,7 +276,7 @@ begin
   end;
 end;
 
-function importSnomedRF2(dir : String; dest : String) : String;
+function importSnomedRF2(dir : String; dest, uri : String) : String;
 var
   imp : TSnomedImporter;
 begin
@@ -284,6 +284,7 @@ begin
   imp := TSnomedImporter.Create;
   try
     imp.RF2 := True;
+    imp.setVersion(uri);
     imp.CacheDir := dest;
     analyseDirectoryRF2(dir, imp);
     imp.Go;
@@ -366,10 +367,11 @@ end;
 
 procedure TSnomedImporter.Go;
 begin
+  if FVersionUri = '' then
+    raise Exception.Create('The full version URI must be provided');
+  if FVersionDate = '' then
+    raise Exception.Create('The full version URI must be provided');
   ImportSnomed;
-//    Reg.SetSetting('\Manager\Import\Snomed', 'ConceptCount', inttostr(TotalConcepts));
-//    Reg.SetSetting('\Manager\Import\Snomed', 'RelationshipCount', inttostr(TotalRelationships));
-//    Reg.SetSetting('\Manager\Import\Snomed', 'DescriptionCount', inttostr(TotalDescriptions));
 end;
 
 Function MakeSafeFileName(sName : String; newkey : Integer):String;
@@ -402,7 +404,7 @@ begin
     Frefsets.SortedByName;
     FWordList.Sorted := True;
     FStemList.Sorted := True;
-    oSvc.SCTVersion := FVersion;
+    oSvc.VersionUri := FVersionUri;
     FStrings := oSvc.Strings;
     FRefs := oSvc.Refs;
     FDesc := oSvc.Desc;
@@ -445,7 +447,7 @@ begin
 
     if not DirectoryExists(FCacheDir) then
       CreateDir(ExtractFilePath(FCacheDir));
-    outputFile := IncludeTrailingPathDelimiter(FCacheDir)+'snomed_'+FVersion+'.cache';
+    outputFile := IncludeTrailingPathDelimiter(FCacheDir)+'snomed_'+FVersionDate+'.cache';
     oSvc.Save(outputFile);
     // SetFileReadOnly(sFilename, true);
   Finally
@@ -808,8 +810,6 @@ begin
       end;
 
       iDescId := StrToUInt64(ascopy(s, iStart, (iId - iStart)));
-      if iDescId = 135851013 then
-        writeln('135851013 encountered');
 
       oConcept := GetConcept(StrToUInt64(ascopy(s, iConceptStart+1, (iConcept - iConceptStart)-1)), iConceptIndex);
       if oConcept = nil then
@@ -1318,7 +1318,7 @@ begin
   SetLength(aChildren, 0);
   iDesc := FConcept.GetAllDesc(iConcept);
   if iDesc = MAGIC_IN_PROGRESS Then
-    raise Exception.Create('Circular relationship to '+inttostr(FConcept.getConceptId(iConcept)))
+    raise Exception.Create('Circular relationship to '+inttostr(ic))
   else if iDesc = MAGIC_NO_CHILDREN Then
     result := nil
   Else if iDesc <> 0 Then
@@ -1451,6 +1451,14 @@ begin
   End;
 end;
 
+procedure TSnomedImporter.SetVersion(s: String);
+begin
+  if (s = '') then
+    raise Exception.Create('no snomed version provided');
+  FVersionUri := s;
+  FVersionDate := copy(s, length(s)-7, 8);
+end;
+
 procedure TSnomedImporter.SetDepth(focus: Cardinal; iDepth: Byte);
 var
   aChildren : TCardinalArray;
@@ -1556,7 +1564,6 @@ begin
     until FindNext(sr) <> 0;
     FindClose(sr);
   end;
-  CloseReferenceSets;
 end;
 
 procedure TSnomedImporter.LoadReferenceSets;
@@ -1575,6 +1582,7 @@ begin
     Progress('#13 Importing Reference Sets');
     if FDirectoryReferenceSets <> '' Then
       LoadReferenceSets(FDirectoryReferenceSets);
+    CloseReferenceSets;
     Progress('#14 Sorting Reference Sets');
     FRefsets.SortedBy(CompareRefSetByConcept);
     Progress('');
@@ -1814,7 +1822,12 @@ var
 begin
   s := LoadFile(sFile);
   iCursor := 0;
+  // figure out what kind of reference set this is
   iCursor := Next(13) + 2;
+  sActive := ascopy(s, 1, iCursor);
+  if sActive.contains('map') then
+    exit;
+
   While iCursor < Length(s) Do
   Begin
     iId := Next(9);

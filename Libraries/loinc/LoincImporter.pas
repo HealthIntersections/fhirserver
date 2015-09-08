@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Contnrs, Classes,
-  StringSupport, DateSupport,
+  StringSupport, DateSupport, AdvGenerics,
   AdvObjects, AdvObjectLists, AdvStringLists, AdvIntegerLists, AdvNames, AdvCSVExtractors, AdvFiles,
   YuStemmer, LoincServices;
 
@@ -142,10 +142,42 @@ Type
     Property Entries[iIndex : Integer] : TCode Read GetEntry; Default;
   end;
 
+  TAnswerList = class;
+
+  TAnswer = class (TAdvObject)
+  private
+    FCode: String;
+    FDescription: String;
+    FParents: TAdvList<TAnswerList>;
+    FIndex : integer;
+  public
+    constructor create;
+    destructor destroy;
+    Property Code : String read FCode write FCode;
+    Property Description : String read FDescription write FDescription;
+    Property Index : Integer read FIndex write FIndex;
+    Property Parents : TAdvList<TAnswerList> read FParents;
+  end;
+
+  TAnswerList = class (TAdvObject)
+  private
+    FCode: String;
+    FDescription: String;
+    FAnswers : TAdvList<TAnswer>;
+    FIndex : integer;
+  public
+    Constructor Create; Override;
+    Destructor Destroy; Override;
+
+    Property Code : String read FCode write FCode;
+    Property Description : String read FDescription write FDescription;
+    Property Answers : TAdvList<TAnswer> read FAnswers;
+  end;
+
   TLoincImporter = class (TAdvObject)
   private
     FStart : TDateTime;
-    FFilename: String;
+    FFolder : String;
     TotalConcepts : Integer;
 
     FDesc : TLoincStrings;
@@ -155,6 +187,9 @@ Type
     FWords : TLoincWords;
     FStems : TLoincStems;
     FEntries : TLOINCHeirarchyEntryList;
+    FAnswerLists : TAdvMap<TAnswerList>;
+    FAnswerMap : TAdvMap<TAnswer>;
+    FAnswers : TLOINCAnswersList;
 
     FStrings : TStringList;
     FUnits : TStringList;
@@ -163,28 +198,27 @@ Type
     FStemList : TStringList;
     FStemmer : TYuStemmer_8;
     FOutputFile: String;
-    FMultiAxialFilename: String;
 
     procedure SeeDesc(sDesc: String; oObj : TDescribed; iFlags: Byte);
     procedure SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte);
 
     Function AddDescription(Const s : String):Cardinal;
     Function SeeUnits(Const s : String):Word;
-    function LoadLOINCFile(source : TAdvFile; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
+    function LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
     function ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
     procedure Progress(msg : String);
     procedure ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln : string);
+    procedure ProcessAnswerLine(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln : string);
     procedure StoreHeirarchyEntry(entry : THeirarchyEntry);
   public
     procedure ImportLOINC;
 
-    Property FileName : String read FFilename write FFilename;
-    Property MultiAxialFilename : String read FMultiAxialFilename write FMultiAxialFilename;
+    Property Folder : String read FFolder write FFolder;
     Property OutputFile : String read FOutputFile write FOutputFile;
     Property Version : String read FVersion write FVersion;
   end;
 
-function importLoinc(filename, maFilename : String; dest : String) : String;
+function importLoinc(folder, version, dest : String) : String;
 
 Implementation
 
@@ -212,16 +246,15 @@ begin
     raise Exception.Create('Unable to read the version from '+txtFile);
 end;
 
-function importLoinc(filename, maFilename : String; dest : String) : String;
+function importLoinc(folder, version, dest : String) : String;
 var
   imp : TLoincImporter;
 begin
-  Writeln('Import LOINC from '+filename);
+  Writeln('Import LOINC from '+folder);
   imp := TLoincImporter.Create;
   try
-    imp.Filename := filename;
-    imp.MultiAxialFilename := mafilename;
-    imp.Version := DetermineVersion(filename);
+    imp.Folder := folder;
+    imp.Version := version;
     Writeln('Version: '+imp.Version);
     result := IncludeTrailingPathDelimiter(dest)+'loinc.cache';
     imp.outputFile := result;
@@ -383,7 +416,7 @@ Const
   FLD_HL7_ATTACHMENT_STRUCTURE =            47;
 
 
-Function TLoincImporter.LoadLOINCFile(source : TAdvFile; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
+Function TLoincImporter.LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
 var
   iLength : Integer;
   iCount : Integer;
@@ -413,6 +446,12 @@ var
   a : TLoincSubsetId;
   csv : TAdvCSVExtractor;
   items : TAdvStringList;
+  f : TAdvFile;
+  st, st2 : TStringList;
+  answerlist : TAnswerList;
+  answer : TAnswer;
+  ls, s : String;
+  code, desc, refs : cardinal;
 begin
   result := 0;
   iLength := 0;
@@ -425,6 +464,8 @@ begin
   oScale := TConceptManager.Create;
   oMethod := TConceptManager.Create;
   oClass := TConceptManager.Create;
+  FAnswerLists := TAdvMap<TAnswerList>.Create;
+  FAnswerMap := TAdvMap<TAnswer>.create;
   oHeirarchy := THeirarchyEntryList.Create;
   Try
     oComps.SortedByName;
@@ -443,158 +484,187 @@ begin
     iCount := 0;
     Progress('Loading Concepts');
     items := TAdvStringList.create;
-    csv := TAdvCSVExtractor.Create(source.Link, TEncoding.ASCII);
-    Try
-      // headers
-      csv.ConsumeEntries(items);
-
-      while csv.More do
-      begin
-        items.Clear;
+    f := TAdvFile.Create;
+    try
+      f.Name := IncludeTrailingPathDelimiter(folder)+ 'loinc.csv';
+      f.OpenRead;
+      csv := TAdvCSVExtractor.Create(f.Link, TEncoding.ASCII);
+      Try
+        // headers
         csv.ConsumeEntries(items);
-        if items.count > 0 then
+
+        while csv.More do
         begin
-          oCode := TCode.Create;
-          oCodes.Add(oCode);
-
-          oCode.Names := 0;
-          oCode.Code := Trim(items[FLD_LOINC_NUM]);
-          oCode.Display := Trim(items[FLD_LONG_COMMON_NAME]);
-          if Length(oCode.Code) > iLength Then
-            iLength := Length(oCode.Code);
-
-          oCode.Comps := oComps.See(items[FLD_COMPONENT], oCode);
-          oCode.Props := oProps.See(items[FLD_PROPERTY], oCode);
-          oCode.Time := oTime.See(items[FLD_TIME_ASPCT], oCode);
-          oCode.System := oSystem.See(items[FLD_SYSTEM], oCode);
-          oCode.Scale := oScale.See(items[FLD_SCALE_TYP], oCode);
-          oCode.Method := oMethod.See(items[FLD_METHOD_TYP], oCode);
-          oCode.Class_ := oClass.See(items[FLD_CLASS], oCode);
-
-          oSubsets[lsiAll].add(oCode.Link);
-          oCode.Flags := 0;
-  //        if o.ColIntegerByName['SETROOT'] = 1 Then
-  //          oCode.Flags := oCode.Flags + FLAGS_ROOT;
-          if sameText(items[FLD_ORDER_OBS], 'Both') Then
+          items.Clear;
+          csv.ConsumeEntries(items);
+          if items.count > 0 then
           begin
-            oCode.Flags := oCode.Flags + FLAGS_ORDER + FLAGS_OBS;
-            oSubsets[lsiOrderObs].add(oCode.Link);
-          end
-          else if sameText(items[FLD_ORDER_OBS], 'Observation') Then
-          begin
-            oCode.Flags := oCode.Flags + FLAGS_OBS;
-            oSubsets[lsiObs].add(oCode.Link);
-          end
-          else if sameText(items[FLD_ORDER_OBS], 'Order') Then
-          begin
-            oCode.Flags := oCode.Flags + FLAGS_ORDER;
-            oSubsets[lsiOrder].add(oCode.Link);
-          end
-          else if (items[FLD_ORDER_OBS] <> '') And (items[FLD_ORDER_OBS] <> 'Subset') Then
-            Raise exception.create('unknown order/obs '+items[FLD_ORDER_OBS])
-          else
-            oSubsets[lsiOrderSubset].add(oCode.Link);
+            oCode := TCode.Create;
+            oCodes.Add(oCode);
 
-          if items[FLD_UNITSREQUIRED] = 'Y' Then
-            oCode.Flags := oCode.Flags + FLAGS_UNITS;
-          if items[FLD_EXTERNAL_COPYRIGHT_NOTICE] = '' then
-            oSubsets[lsiInternal].add(oCode.Link)
-          else
-            oSubsets[lsi3rdParty].add(oCode.Link);
-        
-          case StrToInt(items[FLD_CLASSTYPE]) of
-           2: begin
-              oCode.Flags := oCode.Flags + FLAGS_CLIN;
-              oSubsets[lsiTypeClinical].add(oCode.Link);
-              end;
-           3: begin
-              oCode.Flags := oCode.Flags + FLAGS_ATT;
-              oSubsets[lsiTypeAttachment].add(oCode.Link);
-              end;
-           4: begin
-              oCode.Flags := oCode.Flags + FLAGS_SURV;
-              oSubsets[lsiTypeSurvey].add(oCode.Link);
-              end;
-           1: begin
-              oSubsets[lsiTypeObservation].add(oCode.Link);
-              end;
-          else
-            Raise exception.create('unexpected class type '+items[FLD_CLASSTYPE]);
-          End;
-          if SameText(items[FLD_STATUS], 'Active') then
-            oSubsets[lsiActive].add(oCode.Link)
-          else if SameText(items[FLD_STATUS], 'Deprecated') then
-            oSubsets[lsiDeprecated].add(oCode.Link)
-          else if SameText(items[FLD_STATUS], 'Discouraged') then
-            oSubsets[lsiDiscouraged].add(oCode.Link)
-          else if SameText(items[FLD_STATUS], 'Trial') then
-            oSubsets[lsiTrial].add(oCode.Link)
-          else
-            raise Exception.Create('Unknown LOINC Code status '+items[FLD_STATUS]);
+            oCode.Names := 0;
+            oCode.Code := Trim(items[FLD_LOINC_NUM]);
+            oCode.Display := Trim(items[FLD_LONG_COMMON_NAME]);
+            if Length(oCode.Code) > iLength Then
+              iLength := Length(oCode.Code);
 
-          SeeDesc(oCode.Display, oCode, FLAG_LONG_COMMON);
+            oCode.Comps := oComps.See(items[FLD_COMPONENT], oCode);
+            oCode.Props := oProps.See(items[FLD_PROPERTY], oCode);
+            oCode.Time := oTime.See(items[FLD_TIME_ASPCT], oCode);
+            oCode.System := oSystem.See(items[FLD_SYSTEM], oCode);
+            oCode.Scale := oScale.See(items[FLD_SCALE_TYP], oCode);
+            oCode.Method := oMethod.See(items[FLD_METHOD_TYP], oCode);
+            oCode.Class_ := oClass.See(items[FLD_CLASS], oCode);
 
-          oCode.v2dt := SeeUnits(items[FLD_HL7_V2_DATATYPE]);
-          oCode.v3dt := SeeUnits(items[FLD_HL7_V3_DATATYPE]);
+            oSubsets[lsiAll].add(oCode.Link);
+            oCode.Flags := 0;
+    //        if o.ColIntegerByName['SETROOT'] = 1 Then
+    //          oCode.Flags := oCode.Flags + FLAGS_ROOT;
+            if sameText(items[FLD_ORDER_OBS], 'Both') Then
+            begin
+              oCode.Flags := oCode.Flags + FLAGS_ORDER + FLAGS_OBS;
+              oSubsets[lsiOrderObs].add(oCode.Link);
+            end
+            else if sameText(items[FLD_ORDER_OBS], 'Observation') Then
+            begin
+              oCode.Flags := oCode.Flags + FLAGS_OBS;
+              oSubsets[lsiObs].add(oCode.Link);
+            end
+            else if sameText(items[FLD_ORDER_OBS], 'Order') Then
+            begin
+              oCode.Flags := oCode.Flags + FLAGS_ORDER;
+              oSubsets[lsiOrder].add(oCode.Link);
+            end
+            else if (items[FLD_ORDER_OBS] <> '') And (items[FLD_ORDER_OBS] <> 'Subset') Then
+              Raise exception.create('unknown order/obs '+items[FLD_ORDER_OBS])
+            else
+              oSubsets[lsiOrderSubset].add(oCode.Link);
 
-          oNames := TAdvStringList.Create;
-          Try
-            oNames.Symbol := ';';
-            oNames.AsText := items[FLD_RELATEDNAMES2];
-            if items[FLD_SHORTNAME] <> '' Then
-              oNames.Insert(0, items[FLD_SHORTNAME]);
+            if items[FLD_UNITSREQUIRED] = 'Y' Then
+              oCode.Flags := oCode.Flags + FLAGS_UNITS;
+            if items[FLD_EXTERNAL_COPYRIGHT_NOTICE] = '' then
+              oSubsets[lsiInternal].add(oCode.Link)
+            else
+              oSubsets[lsi3rdParty].add(oCode.Link);
 
-            if oNames.Count > 0 Then
-            Begin
-              SetLength(aNames, oNames.Count);
-              For iLoop := 0 to oNames.Count - 1 Do
-                If Trim(oNames[iLoop]) <> '' Then
-                Begin
-                  aNames[iLoop] := addDescription(Trim(oNames[iLoop]));
-                  SeeDesc(oNames[iLoop], oCode, FLAG_LONG_RELATED);
-                End
-                Else
-                  aNames[iLoop] := 0;
-
-              oCode.Names := FRefs.AddCardinals(aNames);
+            case StrToInt(items[FLD_CLASSTYPE]) of
+             2: begin
+                oCode.Flags := oCode.Flags + FLAGS_CLIN;
+                oSubsets[lsiTypeClinical].add(oCode.Link);
+                end;
+             3: begin
+                oCode.Flags := oCode.Flags + FLAGS_ATT;
+                oSubsets[lsiTypeAttachment].add(oCode.Link);
+                end;
+             4: begin
+                oCode.Flags := oCode.Flags + FLAGS_SURV;
+                oSubsets[lsiTypeSurvey].add(oCode.Link);
+                end;
+             1: begin
+                oSubsets[lsiTypeObservation].add(oCode.Link);
+                end;
+            else
+              Raise exception.create('unexpected class type '+items[FLD_CLASSTYPE]);
             End;
-          Finally
-            oNames.Free;
-          End;
+            if SameText(items[FLD_STATUS], 'Active') then
+              oSubsets[lsiActive].add(oCode.Link)
+            else if SameText(items[FLD_STATUS], 'Deprecated') then
+              oSubsets[lsiDeprecated].add(oCode.Link)
+            else if SameText(items[FLD_STATUS], 'Discouraged') then
+              oSubsets[lsiDiscouraged].add(oCode.Link)
+            else if SameText(items[FLD_STATUS], 'Trial') then
+              oSubsets[lsiTrial].add(oCode.Link)
+            else
+              raise Exception.Create('Unknown LOINC Code status '+items[FLD_STATUS]);
 
-          // properties
+            SeeDesc(oCode.Display, oCode, FLAG_LONG_COMMON);
 
-          if iCount mod STEP_COUNT = 0 then
-            Progress('');
-          inc(iCount);
-        end;
+            oCode.v2dt := SeeUnits(items[FLD_HL7_V2_DATATYPE]);
+            oCode.v3dt := SeeUnits(items[FLD_HL7_V3_DATATYPE]);
+
+            oNames := TAdvStringList.Create;
+            Try
+              oNames.Symbol := ';';
+              oNames.AsText := items[FLD_RELATEDNAMES2];
+              if items[FLD_SHORTNAME] <> '' Then
+                oNames.Insert(0, items[FLD_SHORTNAME]);
+
+              if oNames.Count > 0 Then
+              Begin
+                SetLength(aNames, oNames.Count);
+                For iLoop := 0 to oNames.Count - 1 Do
+                  If Trim(oNames[iLoop]) <> '' Then
+                  Begin
+                    aNames[iLoop] := addDescription(Trim(oNames[iLoop]));
+                    SeeDesc(oNames[iLoop], oCode, FLAG_LONG_RELATED);
+                  End
+                  Else
+                    aNames[iLoop] := 0;
+
+                oCode.Names := FRefs.AddCardinals(aNames);
+              End;
+            Finally
+              oNames.Free;
+            End;
+
+            // properties
+
+            if iCount mod STEP_COUNT = 0 then
+              Progress('');
+            inc(iCount);
+          end;
+        End;
+      Finally
+        csv.free;
+        items.Free;
       End;
-    Finally
-      csv.free;
-      items.Free;
-    End;
+    finally
+      f.free;
+    end;
     Progress('Sort Codes');
     oCodes.SortedByCode;
 
     // now, process the multi-axial file
-    Progress('Loading Multi-Axial Source');
-    oHeirarchy.SortedByCode;
-    AssignFile(ma, FMultiAxialFilename);
-    Reset(ma);
-    Readln(ma, ln); // skip header
-
-    iCount := 0;
-    while not eof(ma) do
+    if FileExists(IncludeTrailingPathDelimiter(folder) + 'mafile.csv') then
     begin
-      Readln(ma, ln);
-      ProcessMultiAxialEntry(oHeirarchy, oCodes, ln);
-      if iCount mod STEP_COUNT = 0 then
-        Progress('');
-      inc(iCount);
+      Progress('Loading Multi-Axial Source');
+      oHeirarchy.SortedByCode;
+      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'mafile.csv');
+      Reset(ma);
+      Readln(ma, ln); // skip header
+
+      iCount := 0;
+      while not eof(ma) do
+      begin
+        Readln(ma, ln);
+        ProcessMultiAxialEntry(oHeirarchy, oCodes, ln);
+        if iCount mod STEP_COUNT = 0 then
+          Progress('');
+        inc(iCount);
+      end;
+      CloseFile(ma);
+      for i := 0 to oHeirarchy.Count - 1 do
+        // first, we simply assign them all an index. Then we'll create everything else, and then go and actually store them
+        oHeirarchy[i].index := i;
     end;
-    for i := 0 to oHeirarchy.Count - 1 do
-      // first, we simply assign them all an index. Then we'll create everything else, and then go and actually store them
-      oHeirarchy[i].index := i;
+
+    if FileExists(IncludeTrailingPathDelimiter(folder) + 'answers.csv') then
+    begin
+      Progress('Loading Answer Lists');
+      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'answers.csv');
+      Reset(ma);
+      Readln(ma, ln); // skip header
+      iCount := 0;
+      while not eof(ma) do
+      begin
+        Readln(ma, ln);
+        ProcessAnswerLine(oHeirarchy, oCodes, ln);
+        if iCount mod STEP_COUNT = 0 then
+          Progress('');
+        inc(iCount);
+      end;
+      CloseFile(ma);
+    end;
 
     Progress('Build Cache');
     For iLoop := 0 to oCodes.Count - 1 Do
@@ -669,6 +739,54 @@ begin
         aCardinals[i] := oSubsets[a][i].Index;
       subsets[a] := FRefs.AddCardinals(aCardinals);
     end;
+
+    Progress('Processing Answer Lists');
+    FAnswers.StartBuild;
+    st := TStringList.Create;
+    st2 := TStringList.Create;
+    try
+      for answerlist in FAnswerLists.Values do
+        st.AddObject(answerlist.FCode, answerlist);
+      st.Sort;
+      for answer in FAnswerMap.Values do
+        st2.AddObject(answer.FCode, answer);
+      st2.Sort;
+
+      for i := 0 to st.Count - 1 do
+      begin
+        answerlist := TAnswerList(st.Objects[i]);
+        answerlist.FIndex := i + st2.Count;
+      end;
+
+      for i := 0 to st2.Count - 1 do
+      begin
+        answer := TAnswer(st2.Objects[i]);
+        if answer.FCode = 'LA3-6' then
+          writeln('test');
+        SetLength(aCardinals, answer.FParents.Count);
+        for j := 0 to answer.FParents.Count - 1 do
+          aCardinals[j] := answer.FParents[j].FIndex;
+        answer.Index := FAnswers.AddEntry(AddDescription(answer.Code), AddDescription(answer.FDescription), FRefs.AddCardinals(aCardinals));
+      end;
+      for i := 0 to st.Count - 1 do
+      begin
+        answerlist := TAnswerList(st.Objects[i]);
+        if answerList.FCode = 'LL183-5' then
+          writeln('test');
+        SetLength(aCardinals, answerlist.FAnswers.Count);
+        for j := 0 to answerlist.FAnswers.Count - 1 do
+          aCardinals[j] := answerlist.FAnswers[j].FIndex;
+        j := FAnswers.AddEntry(AddDescription(answerlist.Code), AddDescription(answerlist.FDescription), FRefs.AddCardinals(aCardinals));
+        if (j <> answerlist.FIndex) then
+          raise Exception.Create('Error Message');
+      end;
+    finally
+      st.Free;
+      st2.Free;
+    end;
+    FAnswers.DoneBuild;
+
+
 
     Progress('Processing Words');
     FWords.StartBuild;
@@ -749,26 +867,20 @@ begin
     oScale.Free;
     oMethod.Free;
     oClass.Free;
+    FAnswerLists.Free;
+    FAnswerMap.Free;
+
   End;
 End;
 
 Function TLoincImporter.ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
-var
-  f : TAdvFile;
 Begin
   FStrings := TStringList.Create;
   FStrings.Sorted := True;
   FUnits := TStringList.Create;
   FUnits.Sorted := true;
   try
-    f := TAdvFile.Create;
-    Try
-      f.Name := FFilename;
-      f.OpenRead;
-      result := LoadLOINCFile(f, props, roots, subsets);
-    Finally
-      f.Free;
-    End;
+    result := LoadLOINCFiles(folder, props, roots, subsets);
   Finally
     FUnits.Free;
     FStrings.Free;
@@ -782,6 +894,8 @@ var
   i : integer;
   roots : TCardinalArray;
   subsets : TLoincSubsets;
+  ls, s : String;
+  code, desc, refs : Cardinal;
 begin
   FStart := now;
   FWordList := TStringList.Create;
@@ -793,6 +907,7 @@ begin
     FStemList.Sorted := true;
     Fdesc := oSvc.Desc;
     Fdesc.StartBuild;
+    FDesc.AddEntry('');
     FCode := oSvc.CodeList;
     FCode.StartBuild;
     FRefs := oSvc.Refs;
@@ -802,6 +917,7 @@ begin
     FWords := oSvc.Words;
     FStems := oSvc.Stems;
     FEntries := oSvc.Entries;
+    FAnswers := oSvc.AnswerLists;
 
     Try
       oSvc.Root := ReadLOINCDatabase(props, roots, subsets);
@@ -815,6 +931,16 @@ begin
       Fdesc.doneBuild;
     End;
 
+    ls := '';
+    for I := 0 to FAnswers.Count - 1 do
+    begin
+      FAnswers.GetEntry(i, code, desc, refs);
+      s := FDesc.GetEntry(code);
+      if not((ls = '') or (AnsiCompareText(ls, s) < 0)) then
+        raise Exception.Create('out of order');
+      ls := s;
+    end;
+
     Progress('Save');
     oSvc.Save(FOutputFile);
 
@@ -827,6 +953,119 @@ begin
     FStemmer.Free;
   End;
 End;
+
+Function CSVStringSplit(Const sValue, sDelimiter : String; Var sLeft, sRight: String) : Boolean;
+Var
+  iIndex : Integer;
+  sA, sB : String;
+Begin
+  if (sValue <> '') and (sValue[1] = '"') then
+  begin
+    iIndex := 1;
+    repeat
+      inc(iIndex);
+      if (sValue[iIndex] = '"') then
+        if (iIndex < sValue.Length) and (sValue[iIndex+1] = '"') then
+          inc(iIndex)
+        else
+          break;
+    until iIndex = sValue.Length;
+    Result := iIndex < sValue.Length;
+    if result then
+      inc(iIndex);
+  end
+  else
+  begin
+    // Find the delimiter within the source string
+    iIndex := Pos(sDelimiter, sValue);
+    Result := iIndex <> 0;
+  end;
+
+  If Not Result Then
+  Begin
+    sA := sValue;
+    sB := '';
+  End
+  Else
+  Begin
+    sA := Copy(sValue, 1, iIndex - 1);
+    sB := Copy(sValue, iIndex + Length(sDelimiter), MaxInt);
+  End;
+
+  sLeft := sA;
+  sRight := sB;
+  if (sValue <> '') and (sValue[1] = '"') then
+    sLeft := copy(sLeft, 2, length(sleft)-2).replace('""', '"');
+End;
+
+function isLoinc(s : String) : boolean;
+begin
+  result := (s.Length > 3) and (s[length(s)-1] = '-');
+end;
+
+var
+  gc : integer = 0;
+
+procedure TLoincImporter.ProcessAnswerLine(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln: string);
+var
+  ts : TStringList;
+  s, s1, AnswerListId, AnswerListName, AnswerStringID, AnswerCode, DisplayText : String;
+  list : TAnswerList;
+  answer : TAnswer;
+begin
+  inc(gc);
+  CSVStringSplit(ln, ',', s1, ln);
+  CSVStringSplit(ln, ',', s, ln);
+  CSVStringSplit(ln, ',', AnswerListId, ln);
+  CSVStringSplit(ln, ',', AnswerListName, ln);
+  CSVStringSplit(ln, ',', s, ln);
+  CSVStringSplit(ln, ',', s, ln);
+  CSVStringSplit(ln, ',', s, ln);
+  CSVStringSplit(ln, ',', s, ln);
+  CSVStringSplit(ln, ',', AnswerStringID, ln);
+  CSVStringSplit(ln, ',', AnswerCode, ln);
+  CSVStringSplit(ln, ',', s, ln);
+  CSVStringSplit(ln, ',', DisplayText, ln);
+
+  if isLoinc(s1) and isLoinc(AnswerListId) then
+  begin
+    if FAnswerLists.ContainsKey(AnswerListId) then
+      list := FAnswerLists[AnswerListId]
+    else
+    begin
+      list := TAnswerList.Create;
+      list.FCode := AnswerListId;
+      list.FDescription := AnswerListName;
+      FAnswerLists.Add(list.Code, list);
+    end;
+
+    if (AnswerStringID = '') then
+      writeln('?')
+    else
+    begin
+      if FAnswerMap.ContainsKey(AnswerStringID) then
+      begin
+        answer := FAnswerMap[AnswerStringID];
+        list.Answers.Add(answer.link as TAnswer);
+        answer.Parents.Add(list.Link as TAnswerList);
+        // cross-linking and linking means that they'll leak, but we don't care
+      end
+      else
+      begin
+        answer := TAnswer.Create;
+        try
+          answer.FCode := AnswerStringID;
+          answer.Description := DisplayText;
+          list.Answers.Add(answer.link as TAnswer);
+          answer.Parents.Add(list.Link as TAnswerList);
+          FAnswerMap.Add(AnswerStringID, answer.Link as TAnswer);
+        finally
+          answer.Free;
+        end;
+      end;
+    end;
+  end;
+end;
 
 procedure TLoincImporter.ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln: string);
 var
@@ -954,7 +1193,9 @@ function TLoincImporter.AddDescription(const s: String): Cardinal;
 var
   i : Integer;
 begin
-  if FStrings.Find(s, i) Then
+  if s = '' then
+    result := 0
+  else if FStrings.Find(s, i) Then
     result := Cardinal(FStrings.Objects[i])
   Else
   Begin
@@ -1155,6 +1396,34 @@ begin
   inherited;
 end;
 
+
+{ TAnswerList }
+
+constructor TAnswerList.Create;
+begin
+  inherited;
+  FAnswers := TAdvList<TAnswer>.create();
+end;
+
+destructor TAnswerList.Destroy;
+begin
+  FAnswers.Free;
+  inherited;
+end;
+
+{ TAnswer }
+
+constructor TAnswer.create;
+begin
+  inherited create;
+  FParents := TAdvList<TAnswerList>.create;
+end;
+
+destructor TAnswer.destroy;
+begin
+  FParents.Free;
+  inherited;
+end;
 
 End.
 

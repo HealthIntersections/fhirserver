@@ -1,5 +1,15 @@
 unit SnomedServices;
 
+// URL: http://snomed.info/sct/[module]/version/[e.g. 20150131]'
+//  intl: 900000000000207008
+//  us:  731000124108
+//  AU: 32506021000036107
+//  Spanish: 449081005
+//  Danish: 554471000005108
+//  Dutch: 11000146104
+//  Swedish: 45991000052106
+//  UK: 999000041000000102
+
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -44,11 +54,11 @@ Uses
   StringSupport, FileSupport, BytesSupport,
   AdvStringLists, AdvObjectLists, AdvObjects,
   YuStemmer, DateAndTime,
-  FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities,
   TerminologyServices;
 
 Const
-  SNOMED_CACHE_VERSION = '8';
+  SNOMED_CACHE_VERSION = '9';
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
 
@@ -390,10 +400,11 @@ operations
     FRel : TSnomedRelationshipList;
     FRefSetIndex : TSnomedReferenceSetIndex;
     FRefSetMembers : TSnomedReferenceSetMembers;
+    FVersionUri : String;
+    FVersionDate : String;
 
     FWords : TSnomedWords;
     FStems : TSnomedStems;
-    FVersion : String;
     FLoaded: Boolean;
 
     function filterIn(id : UInt64): TCodeSystemProviderFilterContext;
@@ -439,6 +450,8 @@ operations
     Function GetConceptRefsets(iDesc : Cardinal) : TCardinalArray;
     Function CheckLangSet(sTerm : String) : Cardinal;
     function GetConceptDescendents(index : Cardinal) : TCardinalArray;
+    Function GetPN(iDescriptions : TCardinalArray) : String;
+    Function GetFSN(iDescriptions : TCardinalArray) : String;
 
     // simplified interface for consumers
     Function ConceptExists(conceptId : String) : Boolean;
@@ -452,7 +465,8 @@ operations
 
     // status stuff
     Property Loaded : Boolean read FLoaded write FLoaded;
-    Property SCTVersion : String read FVersion write FVersion;
+    Property VersionUri : String read FVersionUri write FVersionUri;
+    Property VersionDate : String read FVersionDate write FVersionDate;
 
 
     // generic terminology server interface
@@ -482,6 +496,7 @@ operations
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; params : TFHIRParameters); override;
   End;
 
   TSnomedServiceList = class (TAdvObjectList)
@@ -1061,7 +1076,8 @@ begin
     try
       if oRead.ReadString <> SNOMED_CACHE_VERSION Then
         raise exception.create('The Snomed cache "'+sFilename+'" must be rebuilt using -snomed-rf1 or -snomed-rf2');
-      FVersion := oread.ReadString;
+      VersionUri := oread.ReadString;
+      VersionDate := oread.ReadString;
       FStrings.FMaster := ReadBytes;
       FStrings.FLength := Length(FStrings.FMaster);
       FRefs.FMaster := ReadBytes;
@@ -1133,7 +1149,8 @@ begin
     oWrite := TWriter.Create(oFile, 8192);
     try
       oWrite.WriteString(SNOMED_CACHE_VERSION);
-      oWrite.WriteString(SCTVersion);
+      oWrite.WriteString(VersionUri);
+      oWrite.WriteString(VersionDate);
       WriteBytes(FStrings.FMaster);
       WriteBytes(FRefs.FMaster);
       WriteBytes(FDesc.FMaster);
@@ -1592,6 +1609,24 @@ begin
   result := GetDisplayName(iTerm, iLang);
 end;
 
+function TSnomedServices.GetFSN(iDescriptions: TCardinalArray): String;
+var
+  iLoop : Integer;
+  iid : UInt64;
+  iString, iDummy, module, refsets, kind : Cardinal;
+  iFlag : Byte;
+  date : TSnomedDate;
+begin
+  result := '';
+  For iLoop := Low(iDescriptions) To High(iDescriptions) Do
+  Begin
+    Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
+    if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE = VAL_DESC_FullySpecifiedName shl 4) Then
+      result := Strings.GetEntry(iString);
+  End;
+End;
+
+
 Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte);
 var
   aMembers : TSnomedReferenceSetMemberArray;
@@ -1656,6 +1691,38 @@ begin
         break;
   End;
 end;
+function TSnomedServices.GetPN(iDescriptions: TCardinalArray): String;
+var
+  iLoop : Integer;
+  iid : UInt64;
+  iString, iDummy, module, refsets, kind : Cardinal;
+  iFlag : Byte;
+  date : TSnomedDate;
+  iList : TCardinalArray;
+  v : String;
+begin
+  result := '';
+  For iLoop := Low(iDescriptions) To High(iDescriptions) Do
+  Begin
+    Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
+    if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
+      result := Strings.GetEntry(iString);
+  End;
+  if result = '' then // ok, well, we'll pick the first description that's in a value set
+  begin
+    For iLoop := Low(iDescriptions) To High(iDescriptions) Do
+    Begin
+      Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
+      iList := Refs.GetReferences(refsets);
+      v := Strings.GetEntry(iString);
+      if ((result = '') or (length(result) > length(v))) and (iFlag and MASK_DESC_STATUS = FLAG_Active) And (Length(iList) > 0) Then
+        result := v;
+    End;
+  end;
+  if result = '' Then // ok, give up. and use the FSN
+    result := GetFSN(iDescriptions);
+end;
+
 {
 function TSnomedServices.FindWord(s: String; var index : integer): Boolean;
 var
@@ -2006,7 +2073,7 @@ begin
     i := 0;
     While (i < Count) and (result = nil) do
     Begin
-      if SameText(Definition[i].SCTVersion, sName) then
+      if SameText(Definition[i].VersionUri, sName) then
         result := Definition[i];
       inc(i);
     End;
@@ -2199,15 +2266,15 @@ var
   inc : TFhirValueSetComposeInclude;
   filt :  TFhirValueSetComposeIncludeFilter;
 begin
-  if id.StartsWith('http://snomed.info/sct/') And ReferenceSetExists(id.Substring(23)) then
+  if id.StartsWith('http://snomed.info/sct?fhir_vs=refset/') And ReferenceSetExists(id.Substring(38)) then
   begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
-      result.status := ValueSetStatusActive;
-      result.version := SCTVersion;
-      result.name := 'SNOMED CT Reference Set '+id.Substring(23);
-      result.description := GetDisplayName(id.Substring(23), '');
+      result.status := ConformanceResourceStatusActive;
+      result.version := VersionDate;
+      result.name := 'SNOMED CT Reference Set '+id.Substring(38);
+      result.description := GetDisplayName(id.Substring(38), '');
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -2215,21 +2282,21 @@ begin
       filt := inc.filterList.Append;
       filt.property_ := 'concept';
       filt.op := FilterOperatorIn;
-      filt.value := id.Substring(23);
+      filt.value := id.Substring(38);
       result.link;
     finally
       result.free;
     end;
   end
-  else if id.StartsWith('http://snomed.info/id/') And ConceptExists(id.Substring(22)) then
+  else if id.StartsWith('http://snomed.info/sct?fhir_vs=isa/') And ConceptExists(id.Substring(35)) then
   begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
-      result.status := ValueSetStatusActive;
-      result.version := SCTVersion;
-      result.name := 'SNOMED CT Concept '+id.Substring(22)+' and descendents';
-      result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(22), '');
+      result.status := ConformanceResourceStatusActive;
+      result.version := VersionDate;
+      result.name := 'SNOMED CT Concept '+id.Substring(35)+' and descendents';
+      result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(35), '');
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -2237,7 +2304,7 @@ begin
       filt := inc.filterList.Append;
       filt.property_ := 'concept';
       filt.op := FilterOperatorIsA;
-      filt.value := id.Substring(22);
+      filt.value := id.Substring(35);
       result.link;
     finally
       result.free;
@@ -2394,6 +2461,42 @@ begin
   Displays(Code(context), list);
 end;
 
+procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; params: TFHIRParameters);
+var
+  Identity : UInt64;
+  Flags : Byte;
+  ParentIndex : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex : Cardinal;
+  outboundIndex, refsets : Cardinal;
+  Inbounds : TCardinalArray;
+  date : TSnomedDate;
+  Descriptions : TCardinalArray;
+  Parents : TCardinalArray;
+  i : integer;
+  param, p2 : TFhirParametersParameter;
+begin
+  SetLength(inbounds, 0);
+  Concept.GetConcept(Cardinal(ctxt), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+  if ParentIndex <> 0 Then
+  begin
+    Parents := Refs.GetReferences(ParentIndex);
+    for i := 0 to Length(Parents)-1 do
+    begin
+      Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+      Descriptions := Refs.GetReferences(DescriptionIndex);
+      param := params.parameterList.Append;
+      param.name := 'Display';
+      p2 := param.partList.Append;
+      p2.name := 'Code';
+      p2.value := TFhirString.Create(IntToStr(Identity));
+      p2 := param.partList.Append;
+      p2.name := 'Display';
+      p2.value := TFhirString.Create(GetPN(Descriptions));
+    end;
+  end;
+end;
+
 procedure TSnomedServices.Displays(code: String; list: TStringList);
 var
   ctxt : TAdvObject;
@@ -2454,7 +2557,7 @@ end;
 
 function TSnomedServices.version(context: TCodeSystemProviderContext): String;
 begin
-  result := 'http://snomed.info/sct/900000000000207008/version/20150131';
+  result := FVersionUri;
 end;
 
 procedure TSnomedServices.Close(ctxt: TCodeSystemProviderFilterContext);

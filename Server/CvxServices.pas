@@ -8,7 +8,7 @@ uses
   StringSupport,
   AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
   KDBManager,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
 type
   TCvxConcept = class (TCodeSystemProviderContext)
@@ -48,6 +48,8 @@ type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
@@ -110,9 +112,14 @@ begin
 end;
 
 
+function TCvxServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '';
+end;
+
 function TCvxServices.system(context : TCodeSystemProviderContext) : String;
 begin
-  result := 'http://fdasis.nlm.nih.gov';
+  result := 'http://hl7.org/fhir/sid/cvx';
 end;
 
 function TCvxServices.getDefinition(code: String): String;
@@ -246,6 +253,11 @@ begin
   raise Exception.Create('locateIsA not supported by Cvx'); // Cvx doesn't have formal subsumption property, so this is not used
 end;
 
+
+function TCvxServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'CVX';
+end;
 
 function TCvxServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
