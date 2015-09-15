@@ -210,9 +210,9 @@ type
     procedure checkProposedDeletion(request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
 
     function BuildResponseMessage(request : TFHIRRequest; incoming : TFhirMessageHeader) : TFhirMessageHeader;
-    procedure ProcessMessage(request: TFHIRRequest; response : TFHIRResponse; msg, resp : TFhirMessageHeader; feed : TFHIRBundle);
-    procedure ProcessMsgQuery(request: TFHIRRequest; response : TFHIRResponse; feed : TFHIRBundle);
-//    procedure ProcessMsgClaim(request : TFHIRRequest; incoming, outgoing: TFhirMessageHeader; infeed, outfeed: TFHIRBundle);
+    procedure ProcessMessage(request: TFHIRRequest; response : TFHIRResponse; msg, resp : TFhirMessageHeader; bundle : TFHIRBundle);
+    procedure ProcessMsgQuery(request: TFHIRRequest; response : TFHIRResponse; bundle : TFHIRBundle);
+//    procedure ProcessMsgClaim(request : TFHIRRequest; incoming, outgoing: TFhirMessageHeader; inbundle, outbundle: TFHIRBundle);
 //    function MessageCreateResource(context : TFHIRValidatorContext; request : TFHIRRequest; res : TFHIRResource) : string;
     function EncodeResource(r : TFhirResource; xml : boolean; summary : TFHIRSummaryOption) : TBytes;
 
@@ -256,10 +256,10 @@ type
 
     // internal utility functions
     procedure addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamType; tgts : TFhirResourceTypeSet);
-//    function AddDeletedResourceToFeed(feed : TFHIRBundle; sId, sType, base : String) : TFHIRBundleEntry;
+//    function AddDeletedResourceToFeed(bundle : TFHIRBundle; sId, sType, base : String) : TFHIRBundleEntry;
 
-    function AddResourceToFeed(feed : TFHIRBundle; updated : TDateTime; resource : TFHIRResource) : TFHIRBundleEntry; overload;
-    function AddResourceToFeed(feed : TFHIRBundle; field : String; comp : TFHIRParserClass) : TFHIRBundleEntry; overload;
+    function AddResourceTobundle(bundle : TFHIRBundle; base : String; updated : TDateTime; resource : TFHIRResource) : TFHIRBundleEntry; overload;
+    function AddResourceTobundle(bundle : TFHIRBundle; base : String; field : String; comp : TFHIRParserClass) : TFHIRBundleEntry; overload;
     function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String) : Boolean;
     procedure DefineConformanceResources(base : String); // called after database is created
 
@@ -461,7 +461,7 @@ begin
     req.Session := mainRequest.session.Link;
     req.ResourceType := frtBinary;
     req.CommandType := fcmdCreate;
-//    req.categories.AddAll(mainRequest.Feed.categories);
+//    req.categories.AddAll(mainRequest.bundle.categories);
     raise Exception.Create('TODO');
     req.Lang := mainRequest.Lang;
     if mainRequest.PostFormat = ffJson then
@@ -493,11 +493,11 @@ var
   resp : TFHIRResponse;
   attach : TFhirAttachment;
 begin
-  comp := mainRequest.Feed.entryList[0].resource as TFhirComposition;
+  comp := mainRequest.bundle.entryList[0].resource as TFhirComposition;
 
   ref := TFhirDocumentReference.Create;
   try
-    ref.masterIdentifier := FFactory.makeIdentifier('urn:ietf:rfc:3986', mainRequest.Feed.id);
+    ref.masterIdentifier := FFactory.makeIdentifier('urn:ietf:rfc:3986', mainRequest.bundle.id);
     if (comp.identifier <> nil) then
       ref.identifierList.Add(comp.identifier.Clone);
     ref.subject := comp.subject.Clone;
@@ -521,9 +521,9 @@ begin
     ref.securityLabelList.add(FFactory.makeCodeableConcept(FFactory.makeCoding('http://hl7.org/fhir/v3/Confidentiality', comp.statusElement.value, ''), ''));
     // populating DocumentReference.format:
     // we take any tags on the document. We ignore security tags. Always will be at least one - the document tag itself
-//    for i := 0 to mainRequest.Feed.categories.Count - 1 do
-//      if (mainRequest.Feed.categories[i].scheme <> 'http://hl7.org/fhir/tag/security') then
-//        ref.formatList.Add(FFactory.makeUri(mainRequest.Feed.categories[i].term));
+//    for i := 0 to mainRequest.bundle.categories.Count - 1 do
+//      if (mainRequest.bundle.categories[i].scheme <> 'http://hl7.org/fhir/tag/security') then
+//        ref.formatList.Add(FFactory.makeUri(mainRequest.bundle.categories[i].term));
     raise Exception.Create('TODO');
     // todo: ref.hash (HexBinary representation of SHA1)
     attach := TFhirAttachment.create;
@@ -546,7 +546,7 @@ begin
       req.Session := mainRequest.session.Link;
       req.ResourceType := frtDocumentReference;
       req.CommandType := fcmdCreate;
-//      req.categories.AddAll(mainRequest.Feed.categories);
+//      req.categories.AddAll(mainRequest.bundle.categories);
       raise Exception.Create('TODO');
 
       req.Lang := mainRequest.Lang;
@@ -606,14 +606,15 @@ begin
 end;
 
 
-function TFhirOperationManager.AddResourceToFeed(feed : TFHIRBundle; updated : TDateTime; resource : TFHIRResource) : TFHIRBundleEntry;
+function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; base : String; updated : TDateTime; resource : TFHIRResource) : TFHIRBundleEntry;
 var
   entry : TFHIRBundleEntry;
 begin
   entry := TFHIRBundleEntry.Create;
   try
     entry.resource := resource.Link;
-    feed.entryList.add(entry.Link);
+    entry.fullUrl := base+'/'+CODES_TFhirResourceType[resource.ResourceType]+'/'+resource.id;
+    bundle.entryList.add(entry.Link);
     result := entry;
   finally
     entry.Free;
@@ -621,7 +622,7 @@ begin
 end;
 
 
-function TFhirOperationManager.AddResourceToFeed(feed : TFHIRBundle; field : String; comp : TFHIRParserClass) : TFHIRBundleEntry;
+function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; base : String; field : String; comp : TFHIRParserClass) : TFHIRBundleEntry;
 var
   parser : TFhirParser;
   mem : TBytesStream;
@@ -632,13 +633,13 @@ begin
   if (FConnection.ColIntegerByName['Deleted'] = 1) then
   begin
     raise Exception.Create('Not handled yet');
-    // result := AddDeletedResourceToFeed(feed, sId, sType, base)
+    // result := AddDeletedResourceTobundle(bundle, sId, sType, base)
   end
   else
   begin
     if comp = nil then
     begin
-      result := feed.entryList.Append;
+      result := bundle.entryList.Append;
       result.Tag := TAdvBuffer.create;
       TAdvBuffer(result.Tag).AsBytes := FConnection.ColBlobByName[field];
     end
@@ -651,7 +652,7 @@ begin
           parser.source := mem;
           parser.ParserPolicy := xppDrop;
           parser.Parse;
-          result := AddResourceToFeed(feed, TSToDateTime(FConnection.ColTimeStampByName['StatedDate']), parser.resource);
+          result := AddResourceTobundle(bundle, base, TSToDateTime(FConnection.ColTimeStampByName['StatedDate']), parser.resource);
         finally
           parser.free;
         end;
@@ -1418,13 +1419,13 @@ end;
 procedure TFhirOperationManager.ExecuteHistory(request: TFHIRRequest; response: TFHIRResponse);
 var
 //  resourceKey : Integer;
-//  feed : TFHIRBundle;
+//  bundle : TFHIRBundle;
 //  originalId : String;
   offset, count, i : integer;
 //  ok : boolean;
 //  base : String;
 //  cmp : String;
-  feed : TFHIRBundle;
+  bundle : TFHIRBundle;
 //  entry : TFHIRBundleEntry;
 //  includes : TReferenceList;
 //  id, link, base, sql : String;
@@ -1472,25 +1473,25 @@ begin
 
       chooseField(response.Format, soFull, field, comp, needsObject);
 
-      feed := TFHIRBundle.Create(BundleTypeHistory);
+      bundle := TFHIRBundle.Create(BundleTypeHistory);
       try
         if response.Format <> ffAsIs then
           base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
-        feed.total := inttostr(total);
-        feed.Tags['sql'] := sql;
-        feed.link_List.AddRelRef('self', base+link);
+        bundle.total := inttostr(total);
+        bundle.Tags['sql'] := sql;
+        bundle.link_List.AddRelRef('self', base+link);
 
-        feed.link_List.AddRelRef('self', base+link);
+        bundle.link_List.AddRelRef('self', base+link);
 
         if (offset > 0) or (Count < total) then
         begin
-          feed.link_List.AddRelRef('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+          bundle.link_List.AddRelRef('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
           if offset - count >= 0 then
-            feed.link_List.AddRelRef('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            bundle.link_List.AddRelRef('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
           if offset + count < total then
-            feed.link_List.AddRelRef('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            bundle.link_List.AddRelRef('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
           if count < total then
-            feed.link_List.AddRelRef('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            bundle.link_List.AddRelRef('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
         end;
 
         FConnection.SQL := 'Select Ids.ResourceKey, ResourceName, Ids.Id, Versions.ResourceVersionKey, MostRecent, VersionId, StatedDate, Name, Versions.Deleted, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
@@ -1500,20 +1501,20 @@ begin
         try
           FConnection.Execute;
           while FConnection.FetchNext do
-            AddResourceToFeed(feed, field, nil);
+            AddResourceTobundle(bundle, request.baseUrl, field, nil);
         finally
           FConnection.Terminate;
         end;
 
-        feed.id := FhirGUIDToString(CreateGUID);
-        feed.Tags['sql'] := sql;
+        bundle.id := FhirGUIDToString(CreateGUID);
+        bundle.Tags['sql'] := sql;
 
         response.HTTPCode := 200;
         response.Message := 'OK';
         response.Body := '';
-        response.Feed := feed.Link;
+        response.bundle := bundle.Link;
       finally
-        feed.Free;
+        bundle.Free;
       end;
       AuditRest(request.session, request.ip, request.ResourceType, request.id, '', request.CommandType, request.Provenance, response.httpCode, '', response.message);
     end;
@@ -1782,7 +1783,7 @@ end;
 
 procedure TFhirOperationManager.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 var
-  feed : TFHIRBundle;
+  bundle : TFHIRBundle;
   entry : TFHIRBundleEntry;
   includes : TReferenceList;
   id, link, base, sql, field : String;
@@ -1822,13 +1823,13 @@ begin
 
       if ok then
       begin
-        feed := TFHIRBundle.Create(BundleTypeSearchset);
+        bundle := TFHIRBundle.Create(BundleTypeSearchset);
         includes := TReferenceList.create;
         keys := TStringList.Create;
         try
-//          feed.base := request.baseUrl;
-          feed.meta := TFhirMeta.Create;
-          feed.meta.lastUpdated := NowUTC;
+//          bundle.base := request.baseUrl;
+          bundle.meta := TFhirMeta.Create;
+          bundle.meta.lastUpdated := NowUTC;
 
           summaryStatus := request.Summary;
           if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus) then
@@ -1836,13 +1837,13 @@ begin
           else
             id := BuildSearchResultSet(key, request.Session, request.resourceType, request.Parameters, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, summaryStatus);
 
-          feed.total := inttostr(total);
-          feed.Tags['sql'] := sql;
+          bundle.total := inttostr(total);
+          bundle.Tags['sql'] := sql;
 
           base := AppendForwardSlash(Request.baseUrl)+CODES_TFhirResourceType[request.ResourceType]+'/_search?';
           if response.Format <> ffAsIs then
             base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
-          feed.link_List.AddRelRef('self', base+link);
+          bundle.link_List.AddRelRef('self', base+link);
 
           if (summaryStatus <> soCount) then
           begin
@@ -1862,13 +1863,13 @@ begin
 
             if (offset > 0) or (Count < total) then
             begin
-              feed.link_List.AddRelRef('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+              bundle.link_List.AddRelRef('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
               if offset - count >= 0 then
-                feed.link_List.AddRelRef('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                bundle.link_List.AddRelRef('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
               if offset + count < total then
-                feed.link_List.AddRelRef('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                bundle.link_List.AddRelRef('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
               if count < total then
-                feed.link_List.AddRelRef('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                bundle.link_List.AddRelRef('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
             end;
 
             chooseField(response.Format, summaryStatus, field, comp, needsObject);
@@ -1888,7 +1889,7 @@ begin
                 inc(i);
                 if (i > offset) then
                 begin
-                  entry := AddResourceToFeed(feed, field, comp);
+                  entry := AddResourceTobundle(bundle, base, field, comp);
                   keys.Add(FConnection.ColStringByName['ResourceKey']);
 
                   if request.Parameters.VarExists('_include') then
@@ -1903,7 +1904,7 @@ begin
             end;
             // process reverse includes
             if request.Parameters.VarExists('_reverseInclude') then
-              CollectReverseIncludes(request.session, includes, keys, request.Parameters.GetVar('_reverseInclude'), feed, request, response, summaryStatus);
+              CollectReverseIncludes(request.session, includes, keys, request.Parameters.GetVar('_reverseInclude'), bundle, request, response, summaryStatus);
 
             //now, add the includes
             if includes.Count > 0 then
@@ -1915,25 +1916,25 @@ begin
               try
                 FConnection.Execute;
                 while FConnection.FetchNext do
-                  AddResourceToFeed(feed, field, comp);
+                  AddResourceTobundle(bundle, base, field, comp);
               finally
                 FConnection.Terminate;
               end;
             end;
           end;
 
-          feed.id := FhirGUIDToString(CreateGUID);
+          bundle.id := FhirGUIDToString(CreateGUID);
 
-          //feed.link_List['self'] := request.url;
+          //bundle.link_List['self'] := request.url;
           response.HTTPCode := 200;
           response.Message := 'OK';
           response.Body := '';
           response.Resource := nil;
-          response.Feed := feed.Link;
+          response.bundle := bundle.Link;
         finally
           includes.free;
           keys.Free;
-          feed.Free;
+          bundle.Free;
         end;
       end;
     end;
@@ -2100,7 +2101,7 @@ begin
         FRepository.SeeResource(resourceKey, key, request.id, request.Resource, FConnection, false, request.Session);
 
         if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
-          response.Feed.entryList.add(request.Resource.Link)
+          response.bundle.entryList.add(request.Resource.Link)
         else
           response.Resource := request.Resource.Link;
         response.versionId := inttostr(nvid);
@@ -2175,8 +2176,8 @@ begin
           try
             if request.Resource <> nil then
               xml.Compose(vcl, request.resource, true, nil)
-            else if request.feed <> nil then
-              xml.Compose(vcl, request.feed, true)
+            else if request.bundle <> nil then
+              xml.Compose(vcl, request.bundle, true)
             else
               raise Exception.Create('Error: '+response.Message);
           finally
@@ -2602,7 +2603,7 @@ begin
     if not check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
       ok := false;
 
-    if ok and not check(response, request.canWrite(request.ResourceType) and (request.Resource <> nil) or ((request.feed <> nil) and (request.feed.entryList.count > 0)), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
+    if ok and not check(response, request.canWrite(request.ResourceType) and (request.Resource <> nil) or ((request.bundle <> nil) and (request.bundle.entryList.count > 0)), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
       ok := false;
     if ok and (request.Resource <> nil) then
       if not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang)) then
@@ -2612,7 +2613,7 @@ begin
 
     if not ok then
       // do nothing
-    else if request.Feed <> nil then
+    else if request.bundle <> nil then
     begin
       ExecuteTransaction(true, request, response);
       exit;
@@ -3259,32 +3260,32 @@ begin
       request.Source := nil; // ignore that now
       resp := TFHIRBundle.create(BundleTypeTransactionResponse);
       ids := TFHIRTransactionEntryList.create;
-//      base := request.feed.base;
+//      base := request.bundle.base;
 //      if (base = '') then
 //        base := request.baseUrl;
 
 
       context := FRepository.Validator.AcquireContext;
       try
-        ids.FDropDuplicates := request.Feed.Tags['duplicates'] = 'ignore';
+        ids.FDropDuplicates := request.bundle.Tags['duplicates'] = 'ignore';
 //        resp.base := request.baseUrl;
         ids.SortedByName;
         resp.id := FhirGUIDToString(CreateGuid);
 
 
         // first pass: scan ids
-        for i := 0 to request.feed.entryList.count - 1 do
+        for i := 0 to request.bundle.entryList.count - 1 do
         begin
-          request.feed.entryList[i].Tag := scanId(base, request, request.feed.entryList[i], ids, i).Link;
+          request.bundle.entryList[i].Tag := scanId(base, request, request.bundle.entryList[i], ids, i).Link;
         end;
 
         // third pass: reassign references
-        for i := 0 to request.feed.entryList.count - 1 do
-          if not (request.feed.entryList[i].Tag as TFHIRTransactionEntry).ignore and not (request.feed.entryList[i].Tag as TFHIRTransactionEntry).deleted and (base <> '') then
-            adjustReferences(request.feed.entryList[i].Tag as TFHIRTransactionEntry, base, request.feed.entryList[i], ids);
+        for i := 0 to request.bundle.entryList.count - 1 do
+          if not (request.bundle.entryList[i].Tag as TFHIRTransactionEntry).ignore and not (request.bundle.entryList[i].Tag as TFHIRTransactionEntry).deleted and (base <> '') then
+            adjustReferences(request.bundle.entryList[i].Tag as TFHIRTransactionEntry, base, request.bundle.entryList[i], ids);
 
         // four pass: commit resources
-         bundle := request.feed.Link;
+         bundle := request.bundle.Link;
         try
           for i := 0 to bundle.entryList.count - 1 do
           begin
@@ -3319,7 +3320,7 @@ begin
         end;
         response.HTTPCode := 202;
         response.Message := 'Accepted';
-        response.feed := resp.Link;
+        response.bundle := resp.Link;
       finally
         FRepository.Validator.YieldContext(context);
         ids.free;
@@ -3345,30 +3346,30 @@ begin
  // todo: security
   try
     ok := true;
-    if ok and not check(response, (request.Resource <> nil) or ((request.feed <> nil) and (request.feed.entryList.count > 0)), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
+    if ok and not check(response, (request.Resource <> nil) or ((request.bundle <> nil) and (request.bundle.entryList.count > 0)), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
       ok := false;
 
     if ok then
     begin
-      if request.Feed <> nil then
+      if request.bundle <> nil then
       begin
-        if request.Feed.type_ = BundleTypeMessage  then
+        if request.bundle.type_ = BundleTypeMessage  then
         begin
-          if (request.feed.entryList.Count = 0) or not (request.feed.entryList[0].resource is TFhirMessageHeader) then
+          if (request.bundle.entryList.Count = 0) or not (request.bundle.entryList[0].resource is TFhirMessageHeader) then
             raise Exception.Create('Invalid Message - first resource must be message header');
-          response.Feed := TFHIRBundle.create(BundleTypeMessage);
-//          response.feed.base := request.baseUrl;
+          response.bundle := TFHIRBundle.create(BundleTypeMessage);
+//          response.bundle.base := request.baseUrl;
           response.HTTPCode := 200;
-          msg := TFhirMessageHeader(request.feed.entryList[0].resource);
-          response.Feed.id := FhirGUIDToString(CreateGUID);
+          msg := TFhirMessageHeader(request.bundle.entryList[0].resource);
+          response.bundle.id := FhirGUIDToString(CreateGUID);
 
           // todo: check message and envelope ids
           resp := BuildResponseMessage(request, msg);
-          response.Feed.entryList.Append.resource := resp;
+          response.bundle.entryList.Append.resource := resp;
 
-          ProcessMessage(request, response, msg, resp, response.Feed);
+          ProcessMessage(request, response, msg, resp, response.bundle);
         end
-        else if request.Feed.type_ = BundleTypeDocument  then
+        else if request.bundle.type_ = BundleTypeDocument  then
         begin
           // Connectathon 5:
           // The Document Server creates and registers the document as a Binary resource
@@ -3490,7 +3491,7 @@ begin
     FConnection.Execute;
     while FConnection.FetchNext do
     Begin
-      entry := AddResourceToFeed(bundle, field, comp);
+      entry := AddResourceTobundle(bundle, request.baseUrl, field, comp);
       if request.Parameters.VarExists('_include') then
         CollectIncludes(session, includes, entry.resource, request.Parameters.GetVar('_include'));
     end;
@@ -4934,7 +4935,7 @@ begin
   end;
 end;
 
-procedure TFhirOperationManager.ProcessMsgQuery(request: TFHIRRequest; response: TFHIRResponse; feed : TFHIRBundle);
+procedure TFhirOperationManager.ProcessMsgQuery(request: TFHIRRequest; response: TFHIRResponse; bundle : TFHIRBundle);
 begin
   raise exception.create('query-response is not yet supported');
 end;
@@ -4974,7 +4975,7 @@ begin
   end;
 end;
 
-procedure TFhirOperationManager.ProcessMessage(request: TFHIRRequest; response : TFHIRResponse; msg, resp: TFhirMessageHeader; feed: TFHIRBundle);
+procedure TFhirOperationManager.ProcessMessage(request: TFHIRRequest; response : TFHIRResponse; msg, resp: TFhirMessageHeader; bundle: TFHIRBundle);
 var
   s : String;
 begin
@@ -4995,11 +4996,11 @@ begin
     else if s = 'observation-provide' then
       raise exception.create('observation-provide is not yet supported')
     else if s = 'query' then
-      ProcessMsgQuery(request, response, feed)
+      ProcessMsgQuery(request, response, bundle)
     else if s = 'query-response' then
       raise exception.create('query-response is not yet supported')
 //    else if s = 'make-claim' then
-//      ProcessMsgClaim(request, msg, resp, request.feed, feed)
+//      ProcessMsgClaim(request, msg, resp, request.bundle, bundle)
     else
       raise exception.create('Unknown message event: "'+s+'"');
 
@@ -5013,7 +5014,7 @@ begin
 end;
 
 {
-procedure TFhirOperationManager.ProcessMsgClaim(request : TFHIRRequest; incoming, outgoing : TFhirMessageHeader; infeed, outfeed: TFHIRBundle);
+procedure TFhirOperationManager.ProcessMsgClaim(request : TFHIRRequest; incoming, outgoing : TFhirMessageHeader; inbundle, outbundle: TFHIRBundle);
 var
   id : string;
   claim : TFhirClaim;
@@ -5026,7 +5027,7 @@ var
 begin
   context := FRepository.Validator.AcquireContext;
   try
-    claim := GetResourceFromFeed(infeed, incoming.dataList[0]) as TFhirClaim;
+    claim := GetResourceFrombundle(inbundle, incoming.dataList[0]) as TFhirClaim;
     id := MessageCreateResource(context, request, claim);
     rem := TFhirRemittance.create;
     try
@@ -5042,7 +5043,7 @@ begin
       outgoing.dataList.add(FFactory.makeReference(id));
       utc := NowUTC;
       try
-        entry := outfeed.addEntry('remittance', utc, id, id, rem);
+        entry := outbundle.addEntry('remittance', utc, id, id, rem);
       finally
         utc.free;
       end;
@@ -5080,7 +5081,7 @@ end;
 }
 
 (*
-function TFhirOperationManager.AddDeletedResourceToFeed(feed: TFHIRBundle; sId, sType, base : String): TFHIRBundleEntry;
+function TFhirOperationManager.AddDeletedResourceTobundle(bundle: TFHIRBundle; sId, sType, base : String): TFHIRBundleEntry;
 var
   entry : TFHIRBundleEntry;
 begin
@@ -5094,7 +5095,7 @@ begin
 //    entry.published_ := NowUTC;
 //    entry.authorName := FConnection.ColStringByName['Name'];
 //    entry.categories.decodeJson(FConnection.ColBlobByName['Tags']);
-//    feed.entryList.add(entry.Link);
+//    bundle.entryList.add(entry.Link);
 //    result := entry;
 //  finally
 //    entry.Free;
@@ -5108,7 +5109,7 @@ begin
     entry.deleted.resourceId := sId;
     entry.deleted.versionId := FConnection.ColStringByName['VersionId'];
     entry.deleted.instant := TDateAndTime.CreateUTC(TSToDateTime(FConnection.ColTimeStampByName['StatedDate']));
-    feed.entryList.add(entry.Link);
+    bundle.entryList.add(entry.Link);
     result := entry;
   finally
     entry.Free;
@@ -6127,7 +6128,7 @@ end;
 
 procedure TFhirPatientEverythingOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
-  feed : TFHIRBundle;
+  bundle : TFHIRBundle;
   entry : TFHIRBundleEntry;
   includes : TReferenceList;
   id, link, base, sql, field : String;
@@ -6155,18 +6156,18 @@ begin
       if manager.FindResource(frtPatient, request.Id, false, rkey, request, response, '') then
       begin
         request.compartmentId := request.Id;
-        feed := TFHIRBundle.Create(BundleTypeSearchset);
+        bundle := TFHIRBundle.Create(BundleTypeSearchset);
         includes := TReferenceList.create;
         keys := TStringList.Create;
         params := TParseMap.Create('');
         try
-//          feed.base := request.baseUrl;
+//          bundle.base := request.baseUrl;
           if manager.FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
             id := manager.BuildSearchResultSet(0, request.Session, request.resourceType, params, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, wantSummary);
-          feed.total := inttostr(total);
-          feed.Tags['sql'] := sql;
+          bundle.total := inttostr(total);
+          bundle.Tags['sql'] := sql;
           manager.chooseField(response.Format, wantsummary, field, prsr, needsObject);
           if (not needsObject) then
             prsr := nil;
@@ -6179,7 +6180,7 @@ begin
             manager.FConnection.Execute;
             while manager.FConnection.FetchNext do
             Begin
-              entry := manager.AddResourceToFeed(feed, field, prsr);
+              entry := manager.AddResourceTobundle(bundle, request.baseUrl, field, prsr);
               keys.Add(manager.FConnection.ColStringByName['ResourceKey']);
 
               if request.Parameters.VarExists('_include') then
@@ -6208,7 +6209,7 @@ begin
 
           // process reverse includes
           if request.Parameters.VarExists('_reverseInclude') then
-            manager.CollectReverseIncludes(request.Session, includes, keys, request.Parameters.GetVar('_reverseInclude'), feed, request, response, wantsummary);
+            manager.CollectReverseIncludes(request.Session, includes, keys, request.Parameters.GetVar('_reverseInclude'), bundle, request, response, wantsummary);
 
           //now, add the includes
           if includes.Count > 0 then
@@ -6220,7 +6221,7 @@ begin
             try
               manager.FConnection.Execute;
               while manager.FConnection.FetchNext do
-                manager.AddResourceToFeed(feed, field, prsr);
+                manager.AddResourceTobundle(bundle, request.baseUrl, field, prsr);
             finally
               manager.FConnection.Terminate;
             end;
@@ -6228,42 +6229,42 @@ begin
 
           if patient = nil then
             raise Exception.Create('No Patient resource found in patient compartment');
-          feed.deleteEntry(patient);
-          feed.entryList.Insert(0).resource := patient.Link;
+          bundle.deleteEntry(patient);
+          bundle.entryList.Insert(0).resource := patient.Link;
           if listProblems <> nil then
           begin
-            feed.deleteEntry(listProblems);
-            feed.entryList.Insert(1).resource := listProblems.Link;
+            bundle.deleteEntry(listProblems);
+            bundle.entryList.Insert(1).resource := listProblems.Link;
           end
           else
-            feed.entryList.Insert(1).resource := CreateMissingList('11450-4', 'Problem', 'Problems', request.compartmentId);
+            bundle.entryList.Insert(1).resource := CreateMissingList('11450-4', 'Problem', 'Problems', request.compartmentId);
           if listAllergies <> nil then
           begin
-            feed.deleteEntry(listAllergies);
-            feed.entryList.Insert(1).resource := listAllergies.Link;
+            bundle.deleteEntry(listAllergies);
+            bundle.entryList.Insert(1).resource := listAllergies.Link;
           end
           else
-            feed.entryList.Insert(1).resource := CreateMissingList('48765-2', 'Medication Allergy', 'Medication Allergies', request.compartmentId);
+            bundle.entryList.Insert(1).resource := CreateMissingList('48765-2', 'Medication Allergy', 'Medication Allergies', request.compartmentId);
           if listMedications <> nil then
           begin
-            feed.deleteEntry(listMedications);
-            feed.entryList.Insert(1).resource := listMedications.Link;
+            bundle.deleteEntry(listMedications);
+            bundle.entryList.Insert(1).resource := listMedications.Link;
           end
           else
-            feed.entryList.Insert(1).resource := CreateMissingList('10160-0', 'Allergy', 'Allergies', request.compartmentId);
+            bundle.entryList.Insert(1).resource := CreateMissingList('10160-0', 'Allergy', 'Allergies', request.compartmentId);
 
-          feed.meta := TFhirMeta.Create;
-          feed.meta.lastUpdated := NowUTC;
-          feed.id := NewGuidURN;
+          bundle.meta := TFhirMeta.Create;
+          bundle.meta.lastUpdated := NowUTC;
+          bundle.id := NewGuidURN;
           response.HTTPCode := 200;
           response.Message := 'OK';
           response.Body := '';
-          response.Feed := feed.Link;
+          response.bundle := bundle.Link;
         finally
           params.free;
           includes.free;
           keys.Free;
-          feed.Free;
+          bundle.Free;
         end;
     end;
     finally

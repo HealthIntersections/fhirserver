@@ -21,7 +21,7 @@ begin
         as.text = "What to say to users in release"
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix json serialisation bug"
+        as.returnvalue = asdasd
         as.returnvariable = purpose
       end
       action.variables.loadfromini
@@ -37,6 +37,23 @@ begin
                     ""
         variabletypes = "String" +
                         ""
+      end
+      action.gui.messagebox
+      begin
+        actiontypeid = {3D6458F4-1522-48B6-8446-D2DEE0A36D55}
+        customactionname = MessageBox
+        enabletimeout = false
+        id = {94DE765B-D49F-45A1-8AF8-721478D60660}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        terminateontimeout = true
+        timeoutlength = 2
+        as.text = %ftppassword%
+        as.buttons = 0
+        as.icon = 0
+        as.defaultbutton = 0
+        as.systemmodal = 0
+        as.returnvalue = 1
       end
       action.variables.loadfromini
       begin
@@ -249,6 +266,7 @@ begin
       action.ftp.connect
       begin
         connecttimeoutinsec = 0
+        cookie = q3B4xMWDXfAo74OHdw==
         detailedlogging = false
         enablekeepalives = false
         ftpconnectionname = HealthIntersections

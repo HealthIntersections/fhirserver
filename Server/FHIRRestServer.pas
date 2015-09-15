@@ -542,8 +542,8 @@ begin
   req := TFHIRRequest.Create;
   try
     req.CommandType := fcmdTransaction;
-    req.Feed := ProcessZip('en', stream, name, base, init, ini, cursor);
-    req.feed.tags['duplicates'] := 'ignore';
+    req.bundle := ProcessZip('en', stream, name, base, init, ini, cursor);
+    req.bundle.tags['duplicates'] := 'ignore';
     req.session := FFhirStore.CreateImplicitSession('service', true);
     req.session.allowAll;
     req.LoadParams('');
@@ -912,7 +912,7 @@ Begin
                 response.FreeContentStream := true;
                 response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session, secure));
               end
-              else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) and (oRequest.Feed = nil) Then
+              else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) and (oRequest.bundle = nil) Then
               begin
                 response.ResponseNo := 200;
                 response.ContentType := 'text/html; charset=UTF-8';
@@ -1927,7 +1927,7 @@ Begin
         begin
           oRequest.CopyPost(oPostStream);
           if (sContentType = 'application/x-zip-compressed') or (sContentType = 'application/zip') then
-            oRequest.Feed := ProcessZip(lang, oPostStream, NewGuidURN, 'http://hl7.org/fhir', false, nil, cursor)
+            oRequest.bundle := ProcessZip(lang, oPostStream, NewGuidURN, 'http://hl7.org/fhir', false, nil, cursor)
           else
           begin
             oRequest.Source := TAdvBuffer.Create;
@@ -1959,13 +1959,13 @@ Begin
                 parser := MakeParser(lang, oRequest.PostFormat, oPostStream, xppReject);
                 try
                   oRequest.Resource := parser.resource.Link;
-                  if (oRequest.CommandType = fcmdTransaction) and (oRequest.feed = nil) then
+                  if (oRequest.CommandType = fcmdTransaction) and (oRequest.bundle = nil) then
                   begin
-                    oRequest.feed := TFHIRBundle.create(BundleTypeTransactionResponse);
+                    oRequest.bundle := TFHIRBundle.create(BundleTypeTransactionResponse);
 //                    oRequest.Feed.base := oRequest.baseUrl;
-                    oRequest.feed.entryList.add(TFHIRBundleEntry.create);
-                    oRequest.feed.entryList[0].resource := oRequest.Resource.link;
-                    oRequest.feed.entryList[0].resource.id := FhirGUIDToString(CreateGUID);
+                    oRequest.bundle.entryList.add(TFHIRBundleEntry.create);
+                    oRequest.bundle.entryList[0].resource := oRequest.Resource.link;
+                    oRequest.bundle.entryList[0].resource.id := FhirGUIDToString(CreateGUID);
                     oRequest.resource := nil;
                   end;
                 finally
@@ -2761,10 +2761,10 @@ begin
     request.LoadParams(params);
     request.CommandType := fcmdSearch;
     ProcessRequest(request, response, false);
-    if (response.Feed <> nil) and (response.Feed.entryList.Count = 1) then
+    if (response.bundle <> nil) and (response.bundle.entryList.Count = 1) then
     begin
-      result := response.feed.entryList[0].resource.link;
-      id := response.feed.entryList[0].Resource.id.Substring(response.feed.entryList[0].Resource.id.LastIndexOf('/'));
+      result := response.bundle.entryList[0].resource.link;
+      id := response.bundle.entryList[0].Resource.id.Substring(response.bundle.entryList[0].Resource.id.LastIndexOf('/'));
     end
     else
       raise Exception.Create('Unable to find resource '+CODES_TFhirResourceType[rtype]+'?'+params);
