@@ -1,3 +1,4 @@
+// JCL_DEBUG_EXPERT_INSERTJDBG ON
 program FHIRServerDev;
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -90,6 +91,7 @@ uses
   Windows,
   System.SysUtils,
   IdSSLOpenSSLHeaders,
+  JclDebug,
   FHIRServerApplicationCore in 'FHIRServerApplicationCore.pas',
   FHIRRestServer in 'FHIRRestServer.pas',
   EncodeSupport in '..\Libraries\Support\EncodeSupport.pas',
@@ -293,16 +295,21 @@ uses
   FHIRParserTests in '..\Libraries\refplat\FHIRParserTests.pas',
   SnomedAnalysis in '..\Libraries\snomed\SnomedAnalysis.pas',
   AreaCodeServices in 'AreaCodeServices.pas',
-  FHIRTags in '..\Libraries\refplat\FHIRTags.pas';
+  FHIRTags in '..\Libraries\refplat\FHIRTags.pas',
+  FHIRProfileUtilities in '..\Libraries\refplat\FHIRProfileUtilities.pas';
+
 
 begin
+  JclStartExceptionTracking;
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
-    SetConsoleTitle('FHIR Server (Dev)');
+    SetConsoleTitle('FHIR Server DSTU2');
     ExecuteFhirServer;
   except
     on E: Exception do
+    begin
       Writeln(E.ClassName, ': ', E.Message);
+    end;
   end;
 end.
 

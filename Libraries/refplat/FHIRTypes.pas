@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.0.0 generated Tue, Sep 15, 2015 12:58+1000
+// FHIR v1.0.1 generated Thu, Sep 24, 2015 17:07+1000
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -56,25 +56,25 @@ Type
   TFhirNarrativeStatusList = set of TFhirNarrativeStatus;
 
   {@Enum TFhirQuantityComparator
-    How the Quantity should be understood and represented
+    How the Quantity should be understood and represented.
   }
   TFhirQuantityComparator = (
     QuantityComparatorNull,  {@enum.value QuantityComparatorNull Value is missing from Instance }
-    QuantityComparatorLessThan, {@enum.value QuantityComparatorLessThan The actual value is less than the given value }
-    QuantityComparatorLessOrEquals, {@enum.value QuantityComparatorLessOrEquals The actual value is less than or equal to the given value }
-    QuantityComparatorGreaterOrEquals, {@enum.value QuantityComparatorGreaterOrEquals The actual value is greater than or equal to the given value }
-    QuantityComparatorGreaterThan); {@enum.value QuantityComparatorGreaterThan The actual value is greater than the given value }
+    QuantityComparatorLessThan, {@enum.value QuantityComparatorLessThan The actual value is less than the given value. }
+    QuantityComparatorLessOrEquals, {@enum.value QuantityComparatorLessOrEquals The actual value is less than or equal to the given value. }
+    QuantityComparatorGreaterOrEquals, {@enum.value QuantityComparatorGreaterOrEquals The actual value is greater than or equal to the given value. }
+    QuantityComparatorGreaterThan); {@enum.value QuantityComparatorGreaterThan The actual value is greater than the given value. }
   TFhirQuantityComparatorList = set of TFhirQuantityComparator;
 
   {@Enum TFhirIdentifierUse
-    Identifies the purpose for this identifier, if known
+    Identifies the purpose for this identifier, if known .
   }
   TFhirIdentifierUse = (
     IdentifierUseNull,  {@enum.value IdentifierUseNull Value is missing from Instance }
-    IdentifierUseUsual, {@enum.value IdentifierUseUsual the identifier recommended for display and use in real-world interactions }
-    IdentifierUseOfficial, {@enum.value IdentifierUseOfficial the identifier considered to be most trusted for the identification of this item }
-    IdentifierUseTemp, {@enum.value IdentifierUseTemp A temporary identifier }
-    IdentifierUseSecondary); {@enum.value IdentifierUseSecondary An identifier that was assigned in secondary use - it serves to identify the object in a relative context, but cannot be consistently assigned to the same object again in a different context }
+    IdentifierUseUsual, {@enum.value IdentifierUseUsual The identifier recommended for display and use in real-world interactions. }
+    IdentifierUseOfficial, {@enum.value IdentifierUseOfficial The identifier considered to be most trusted for the identification of this item. }
+    IdentifierUseTemp, {@enum.value IdentifierUseTemp A temporary identifier. }
+    IdentifierUseSecondary); {@enum.value IdentifierUseSecondary An identifier that was assigned in secondary use - it serves to identify the object in a relative context, but cannot be consistently assigned to the same object again in a different context. }
   TFhirIdentifierUseList = set of TFhirIdentifierUse;
 
   {@Enum TFhirPropertyRepresentation
@@ -126,7 +126,7 @@ Type
   TFhirBindingStrengthList = set of TFhirBindingStrength;
 
   {@Enum TFhirUnitsOfTime
-    A unit of time (units from UCUM)
+    A unit of time (units from UCUM).
   }
   TFhirUnitsOfTime = (
     UnitsOfTimeNull,  {@enum.value UnitsOfTimeNull Value is missing from Instance }
@@ -140,7 +140,7 @@ Type
   TFhirUnitsOfTimeList = set of TFhirUnitsOfTime;
 
   {@Enum TFhirEventTiming
-    Real world event that the schedule relates to
+    Real world event that the relating to the schedule.
   }
   TFhirEventTiming = (
     EventTimingNull,  {@enum.value EventTimingNull Value is missing from Instance }
@@ -202,9 +202,9 @@ Type
     ContactPointSystemNull,  {@enum.value ContactPointSystemNull Value is missing from Instance }
     ContactPointSystemPhone, {@enum.value ContactPointSystemPhone The value is a telephone number used for voice calls. Use of full international numbers starting with + is recommended to enable automatic dialing support but not required. }
     ContactPointSystemFax, {@enum.value ContactPointSystemFax The value is a fax machine. Use of full international numbers starting with + is recommended to enable automatic dialing support but not required. }
-    ContactPointSystemEmail, {@enum.value ContactPointSystemEmail The value is an email address }
-    ContactPointSystemPager, {@enum.value ContactPointSystemPager The value is a pager number. These may be local pager numbers that are only usable on a particular pager system }
-    ContactPointSystemOther); {@enum.value ContactPointSystemOther A contact that is not a phone, fax, or email address. The format of the value SHOULD be a URL. This is intended for various personal contacts including blogs, Twitter, Facebook, etc. Do not use for email addresses. If this is not a URL, then it will require human interpretation }
+    ContactPointSystemEmail, {@enum.value ContactPointSystemEmail The value is an email address. }
+    ContactPointSystemPager, {@enum.value ContactPointSystemPager The value is a pager number. These may be local pager numbers that are only usable on a particular pager system. }
+    ContactPointSystemOther); {@enum.value ContactPointSystemOther A contact that is not a phone, fax, or email address. The format of the value SHOULD be a URL. This is intended for various personal contacts including blogs, Twitter, Facebook, etc. Do not use for email addresses. If this is not a URL, then it will require human interpretation. }
   TFhirContactPointSystemList = set of TFhirContactPointSystem;
 
   {@Enum TFhirContactPointUse
@@ -215,8 +215,8 @@ Type
     ContactPointUseHome, {@enum.value ContactPointUseHome A communication contact point at a home; attempted contacts for business purposes might intrude privacy and chances are one will contact family or other household members instead of the person one wishes to call. Typically used with urgent cases, or if no other contacts are available. }
     ContactPointUseWork, {@enum.value ContactPointUseWork An office contact point. First choice for business related contacts during business hours. }
     ContactPointUseTemp, {@enum.value ContactPointUseTemp A temporary contact point. The period can provide more detailed information. }
-    ContactPointUseOld, {@enum.value ContactPointUseOld This contact point is no longer in use (or was never correct, but retained for records) }
-    ContactPointUseMobile); {@enum.value ContactPointUseMobile A telecommunication device that moves and stays with its owner. May have characteristics of all other use codes, suitable for urgent matters, not the first choice for routine business }
+    ContactPointUseOld, {@enum.value ContactPointUseOld This contact point is no longer in use (or was never correct, but retained for records). }
+    ContactPointUseMobile); {@enum.value ContactPointUseMobile A telecommunication device that moves and stays with its owner. May have characteristics of all other use codes, suitable for urgent matters, not the first choice for routine business. }
   TFhirContactPointUseList = set of TFhirContactPointUse;
 
   {@Enum TFhirAccountStatus
@@ -313,7 +313,7 @@ Type
     ParticipantrequiredNull,  {@enum.value ParticipantrequiredNull Value is missing from Instance }
     ParticipantrequiredRequired, {@enum.value ParticipantrequiredRequired The participant is required to attend the appointment. }
     ParticipantrequiredOptional, {@enum.value ParticipantrequiredOptional The participant may optionally attend the appointment. }
-    ParticipantrequiredInformationOnly); {@enum.value ParticipantrequiredInformationOnly The participant is excluded from the appointment, and may not be informed of the appointment taking place. (appointment is about them, not for them - such as 2 doctors discussing results about a patient's test). }
+    ParticipantrequiredInformationOnly); {@enum.value ParticipantrequiredInformationOnly The participant is excluded from the appointment, and may not be informed of the appointment taking place. (Appointment is about them, not for them - such as 2 doctors discussing results about a patient's test). }
   TFhirParticipantrequiredList = set of TFhirParticipantrequired;
 
   {@Enum TFhirParticipationstatus
@@ -413,7 +413,7 @@ Type
   TFhirHttpVerbList = set of TFhirHttpVerb;
 
   {@Enum TFhirCarePlanStatus
-    Indicates whether the plan is currently being acted upon, represents future intentions or is now just historical record.
+    Indicates whether the plan is currently being acted upon, represents future intentions or is now a historical record.
   }
   TFhirCarePlanStatus = (
     CarePlanStatusNull,  {@enum.value CarePlanStatusNull Value is missing from Instance }
@@ -476,7 +476,7 @@ Type
   TFhirRemittanceOutcome = (
     RemittanceOutcomeNull,  {@enum.value RemittanceOutcomeNull Value is missing from Instance }
     RemittanceOutcomeComplete, {@enum.value RemittanceOutcomeComplete The processing completed without errors. }
-    RemittanceOutcomeError); {@enum.value RemittanceOutcomeError The processing identified with errors. }
+    RemittanceOutcomeError); {@enum.value RemittanceOutcomeError The processing identified errors. }
   TFhirRemittanceOutcomeList = set of TFhirRemittanceOutcome;
 
   {@Enum TFhirClinicalImpressionStatus
@@ -686,15 +686,15 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
     ConceptMapEquivalenceEqual, {@enum.value ConceptMapEquivalenceEqual The definitions of the concepts are exactly the same (i.e. only grammatical differences) and structural implications of meaning are identical or irrelevant (i.e. intentionally identical). }
     ConceptMapEquivalenceWider, {@enum.value ConceptMapEquivalenceWider The target mapping is wider in meaning than the source concept. }
     ConceptMapEquivalenceSubsumes, {@enum.value ConceptMapEquivalenceSubsumes The target mapping subsumes the meaning of the source concept (e.g. the source is-a target). }
-    ConceptMapEquivalenceNarrower, {@enum.value ConceptMapEquivalenceNarrower The target mapping is narrower in meaning that the source concept. The sense in which the mapping is narrower SHALL be described in the comments in this case, and applications should be careful when atempting to use these mappings operationally. }
+    ConceptMapEquivalenceNarrower, {@enum.value ConceptMapEquivalenceNarrower The target mapping is narrower in meaning that the source concept. The sense in which the mapping is narrower SHALL be described in the comments in this case, and applications should be careful when attempting to use these mappings operationally. }
     ConceptMapEquivalenceSpecializes, {@enum.value ConceptMapEquivalenceSpecializes The target mapping specializes the meaning of the source concept (e.g. the target is-a source). }
-    ConceptMapEquivalenceInexact, {@enum.value ConceptMapEquivalenceInexact The target mapping overlaps with the source concept, but both source and target cover additional meaning, or the definitions are imprecise and it is uncertain whether they have the same boundaries to their meaning. The sense in which the mapping is narrower SHALL be described in the comments in this case, and applications should be careful when atempting to use these mappings operationally. }
+    ConceptMapEquivalenceInexact, {@enum.value ConceptMapEquivalenceInexact The target mapping overlaps with the source concept, but both source and target cover additional meaning, or the definitions are imprecise and it is uncertain whether they have the same boundaries to their meaning. The sense in which the mapping is narrower SHALL be described in the comments in this case, and applications should be careful when attempting to use these mappings operationally. }
     ConceptMapEquivalenceUnmatched, {@enum.value ConceptMapEquivalenceUnmatched There is no match for this concept in the destination concept system. }
     ConceptMapEquivalenceDisjoint); {@enum.value ConceptMapEquivalenceDisjoint This is an explicit assertion that there is no mapping between the source and target concept. }
   TFhirConceptMapEquivalenceList = set of TFhirConceptMapEquivalence;
 
   {@Enum TFhirValuesetConditionClinical
-    The clinical status of the Condition or diagnosis.
+    The clinical status of the condition or diagnosis.
   }
   TFhirValuesetConditionClinical = (
     ValuesetConditionClinicalNull,  {@enum.value ValuesetConditionClinicalNull Value is missing from Instance }
@@ -705,7 +705,7 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
   TFhirValuesetConditionClinicalList = set of TFhirValuesetConditionClinical;
 
   {@Enum TFhirConditionVerStatus
-    The verification status to support or decline the clinical status of the Condition or diagnosis.
+    The verification status to support or decline the clinical status of the condition or diagnosis.
   }
   TFhirConditionVerStatus = (
     ConditionVerStatusNull,  {@enum.value ConditionVerStatusNull Value is missing from Instance }
@@ -713,7 +713,7 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
     ConditionVerStatusDifferential, {@enum.value ConditionVerStatusDifferential One of a set of potential (and typically mutually exclusive) diagnosis asserted to further guide the diagnostic process and preliminary treatment. }
     ConditionVerStatusConfirmed, {@enum.value ConditionVerStatusConfirmed There is sufficient diagnostic and/or clinical evidence to treat this as a confirmed condition. }
     ConditionVerStatusRefuted, {@enum.value ConditionVerStatusRefuted This condition has been ruled out by diagnostic and clinical evidence. }
-    ConditionVerStatusEnteredInError, {@enum.value ConditionVerStatusEnteredInError The statement was entered in error and Is not valid. }
+    ConditionVerStatusEnteredInError, {@enum.value ConditionVerStatusEnteredInError The statement was entered in error and is not valid. }
     ConditionVerStatusUnknown); {@enum.value ConditionVerStatusUnknown The condition status is unknown.  Note that "unknown" is a value of last resort and every attempt should be made to provide a meaningful value other than "unknown". }
   TFhirConditionVerStatusList = set of TFhirConditionVerStatus;
 
@@ -768,8 +768,8 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
   }
   TFhirVersioningPolicy = (
     VersioningPolicyNull,  {@enum.value VersioningPolicyNull Value is missing from Instance }
-    VersioningPolicyNoVersion, {@enum.value VersioningPolicyNoVersion VersionId meta-property is not suppoerted (server) or used (client). }
-    VersioningPolicyVersioned, {@enum.value VersioningPolicyVersioned VersionId meta-property is suppoerted (server) or used (client). }
+    VersioningPolicyNoVersion, {@enum.value VersioningPolicyNoVersion VersionId meta-property is not supported (server) or used (client). }
+    VersioningPolicyVersioned, {@enum.value VersioningPolicyVersioned VersionId meta-property is supported (server) or used (client). }
     VersioningPolicyVersionedUpdate); {@enum.value VersioningPolicyVersionedUpdate VersionId is must be correct for updates (server) or will be specified (If-match header) for updates (client). }
   TFhirVersioningPolicyList = set of TFhirVersioningPolicy;
 
@@ -871,8 +871,8 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
     DataelementStringencyNull,  {@enum.value DataelementStringencyNull Value is missing from Instance }
     DataelementStringencyComparable, {@enum.value DataelementStringencyComparable The data element is sufficiently well-constrained that multiple pieces of data captured according to the constraints of the data element will be comparable (though in some cases, a degree of automated conversion/normalization may be required). }
     DataelementStringencyFullySpecified, {@enum.value DataelementStringencyFullySpecified The data element is fully specified down to a single value set, single unit of measure, single data type, etc.  Multiple pieces of data associated with this data element are fully comparable. }
-    DataelementStringencyEquivalent, {@enum.value DataelementStringencyEquivalent The data element allows multiple units of measure having equivalent meaning; e.g. "cc" (cubic centimeter) and "mL". }
-    DataelementStringencyConvertable, {@enum.value DataelementStringencyConvertable The data element allows multiple units of measure that are convertable between each other (e.g. Inches and centimeters) and/or allows data to be captured in multiple value sets for which a known mapping exists allowing conversion of meaning. }
+    DataelementStringencyEquivalent, {@enum.value DataelementStringencyEquivalent The data element allows multiple units of measure having equivalent meaning; e.g. "cc" (cubic centimeter) and "mL" (milliliter). }
+    DataelementStringencyConvertable, {@enum.value DataelementStringencyConvertable The data element allows multiple units of measure that are convertable between each other (e.g. inches and centimeters) and/or allows data to be captured in multiple value sets for which a known mapping exists allowing conversion of meaning. }
     DataelementStringencyScaleable, {@enum.value DataelementStringencyScaleable A convertable data element where unit conversions are different only by a power of 10; e.g. g, mg, kg. }
     DataelementStringencyFlexible); {@enum.value DataelementStringencyFlexible The data element is unconstrained in units, choice of data types and/or choice of vocabulary such that automated comparison of data captured using the data element is not possible. }
   TFhirDataelementStringencyList = set of TFhirDataelementStringency;
@@ -883,7 +883,7 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
   TFhirDetectedissueSeverity = (
     DetectedissueSeverityNull,  {@enum.value DetectedissueSeverityNull Value is missing from Instance }
     DetectedissueSeverityHigh, {@enum.value DetectedissueSeverityHigh Indicates the issue may be life-threatening or has the potential to cause permanent injury. }
-    DetectedissueSeverityModerate, {@enum.value DetectedissueSeverityModerate Indicates the issue may result in noticable adverse adverse consequences but is unlikely to be life-threatening or cause permanent injury. }
+    DetectedissueSeverityModerate, {@enum.value DetectedissueSeverityModerate Indicates the issue may result in noticeable adverse consequences but is unlikely to be life-threatening or cause permanent injury. }
     DetectedissueSeverityLow); {@enum.value DetectedissueSeverityLow Indicates the issue may result in some adverse consequences but is unlikely to substantially affect the situation of the subject. }
   TFhirDetectedissueSeverityList = set of TFhirDetectedissueSeverity;
 
@@ -903,16 +903,16 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
   TFhirMeasurementPrinciple = (
     MeasurementPrincipleNull,  {@enum.value MeasurementPrincipleNull Value is missing from Instance }
     MeasurementPrincipleOther, {@enum.value MeasurementPrincipleOther Measurement principle isn't in the list. }
-    MeasurementPrincipleChemical, {@enum.value MeasurementPrincipleChemical Measurement is done using chemical. }
-    MeasurementPrincipleElectrical, {@enum.value MeasurementPrincipleElectrical Measurement is done using electrical. }
-    MeasurementPrincipleImpedance, {@enum.value MeasurementPrincipleImpedance Measurement is done using impedance. }
-    MeasurementPrincipleNuclear, {@enum.value MeasurementPrincipleNuclear Measurement is done using nuclear. }
-    MeasurementPrincipleOptical, {@enum.value MeasurementPrincipleOptical Measurement is done using optical. }
-    MeasurementPrincipleThermal, {@enum.value MeasurementPrincipleThermal Measurement is done using thermal. }
-    MeasurementPrincipleBiological, {@enum.value MeasurementPrincipleBiological Measurement is done using biological. }
-    MeasurementPrincipleMechanical, {@enum.value MeasurementPrincipleMechanical Measurement is done using mechanical. }
-    MeasurementPrincipleAcoustical, {@enum.value MeasurementPrincipleAcoustical Measurement is done using acoustical. }
-    MeasurementPrincipleManual); {@enum.value MeasurementPrincipleManual Measurement is done using manual. }
+    MeasurementPrincipleChemical, {@enum.value MeasurementPrincipleChemical Measurement is done using the chemical principle. }
+    MeasurementPrincipleElectrical, {@enum.value MeasurementPrincipleElectrical Measurement is done using the electrical principle. }
+    MeasurementPrincipleImpedance, {@enum.value MeasurementPrincipleImpedance Measurement is done using the impedance principle. }
+    MeasurementPrincipleNuclear, {@enum.value MeasurementPrincipleNuclear Measurement is done using the nuclear principle. }
+    MeasurementPrincipleOptical, {@enum.value MeasurementPrincipleOptical Measurement is done using the optical principle. }
+    MeasurementPrincipleThermal, {@enum.value MeasurementPrincipleThermal Measurement is done using the thermal principle. }
+    MeasurementPrincipleBiological, {@enum.value MeasurementPrincipleBiological Measurement is done using the biological principle. }
+    MeasurementPrincipleMechanical, {@enum.value MeasurementPrincipleMechanical Measurement is done using the mechanical principle. }
+    MeasurementPrincipleAcoustical, {@enum.value MeasurementPrincipleAcoustical Measurement is done using the acoustical principle. }
+    MeasurementPrincipleManual); {@enum.value MeasurementPrincipleManual Measurement is done using the manual principle. }
   TFhirMeasurementPrincipleList = set of TFhirMeasurementPrinciple;
 
   {@Enum TFhirMetricOperationalStatus
@@ -1007,15 +1007,15 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
   TFhirDiagnosticOrderStatus = (
     DiagnosticOrderStatusNull,  {@enum.value DiagnosticOrderStatusNull Value is missing from Instance }
     DiagnosticOrderStatusProposed, {@enum.value DiagnosticOrderStatusProposed The request has been proposed. }
-    DiagnosticOrderStatusDraft, {@enum.value DiagnosticOrderStatusDraft the request is in preliminary form prior to being sent. }
+    DiagnosticOrderStatusDraft, {@enum.value DiagnosticOrderStatusDraft The request is in preliminary form prior to being sent. }
     DiagnosticOrderStatusPlanned, {@enum.value DiagnosticOrderStatusPlanned The request has been planned. }
     DiagnosticOrderStatusRequested, {@enum.value DiagnosticOrderStatusRequested The request has been placed. }
     DiagnosticOrderStatusReceived, {@enum.value DiagnosticOrderStatusReceived The receiving system has received the order, but not yet decided whether it will be performed. }
     DiagnosticOrderStatusAccepted, {@enum.value DiagnosticOrderStatusAccepted The receiving system has accepted the order, but work has not yet commenced. }
     DiagnosticOrderStatusInProgress, {@enum.value DiagnosticOrderStatusInProgress The work to fulfill the order is happening. }
     DiagnosticOrderStatusReview, {@enum.value DiagnosticOrderStatusReview The work is complete, and the outcomes are being reviewed for approval. }
-    DiagnosticOrderStatusCompleted, {@enum.value DiagnosticOrderStatusCompleted The work has been complete, the report(s) released, and no further work is planned. }
-    DiagnosticOrderStatusCancelled, {@enum.value DiagnosticOrderStatusCancelled the request has been withdrawn. }
+    DiagnosticOrderStatusCompleted, {@enum.value DiagnosticOrderStatusCompleted The work has been completed, the report(s) released, and no further work is planned. }
+    DiagnosticOrderStatusCancelled, {@enum.value DiagnosticOrderStatusCancelled The request has been withdrawn. }
     DiagnosticOrderStatusSuspended, {@enum.value DiagnosticOrderStatusSuspended The request has been held by originating system/user request. }
     DiagnosticOrderStatusRejected, {@enum.value DiagnosticOrderStatusRejected The receiving system has declined to fulfill the request. }
     DiagnosticOrderStatusFailed); {@enum.value DiagnosticOrderStatusFailed The diagnostic investigation was attempted, but due to some procedural error, it could not be completed. }
@@ -1043,7 +1043,7 @@ Information for which the patient seeks heightened confidentiality. Sensitive in
     DiagnosticReportStatusCorrected, {@enum.value DiagnosticReportStatusCorrected The report has been modified subsequent to being Final, and is complete and verified by an authorized person. New content has been added, but existing content hasn't changed }
     DiagnosticReportStatusAppended, {@enum.value DiagnosticReportStatusAppended The report has been modified subsequent to being Final, and is complete and verified by an authorized person. New content has been added, but existing content hasn't changed. }
     DiagnosticReportStatusCancelled, {@enum.value DiagnosticReportStatusCancelled The report is unavailable because the measurement was not started or not completed (also sometimes called "aborted"). }
-    DiagnosticReportStatusEnteredInError); {@enum.value DiagnosticReportStatusEnteredInError The report has been withdrawn following previous Final release. }
+    DiagnosticReportStatusEnteredInError); {@enum.value DiagnosticReportStatusEnteredInError The report has been withdrawn following a previous final release. }
   TFhirDiagnosticReportStatusList = set of TFhirDiagnosticReportStatus;
 
   {@Enum TFhirDocumentReferenceStatus
@@ -1186,7 +1186,7 @@ Not to be used when the patient is currently at the location }
   TFhirGroupTypeList = set of TFhirGroupType;
 
   {@Enum TFhirDaysOfWeek
-    The days of the week
+    The days of the week.
   }
   TFhirDaysOfWeek = (
     DaysOfWeekNull,  {@enum.value DaysOfWeekNull Value is missing from Instance }
@@ -1223,40 +1223,40 @@ Not to be used when the patient is currently at the location }
   TFhirMedicationAdminStatusList = set of TFhirMedicationAdminStatus;
 
   {@Enum TFhirGuideDependencyType
-    How a dependency is represented when the guide is published
+    How a dependency is represented when the guide is published.
   }
   TFhirGuideDependencyType = (
     GuideDependencyTypeNull,  {@enum.value GuideDependencyTypeNull Value is missing from Instance }
-    GuideDependencyTypeReference, {@enum.value GuideDependencyTypeReference The guide is referred to by URL }
-    GuideDependencyTypeInclusion); {@enum.value GuideDependencyTypeInclusion The guide is embedded in this guide when published }
+    GuideDependencyTypeReference, {@enum.value GuideDependencyTypeReference The guide is referred to by URL. }
+    GuideDependencyTypeInclusion); {@enum.value GuideDependencyTypeInclusion The guide is embedded in this guide when published. }
   TFhirGuideDependencyTypeList = set of TFhirGuideDependencyType;
 
   {@Enum TFhirGuideResourcePurpose
-    Why a resource is included in the guide
+    Why a resource is included in the guide.
   }
   TFhirGuideResourcePurpose = (
     GuideResourcePurposeNull,  {@enum.value GuideResourcePurposeNull Value is missing from Instance }
-    GuideResourcePurposeExample, {@enum.value GuideResourcePurposeExample The resource is intended as an example }
-    GuideResourcePurposeTerminology, {@enum.value GuideResourcePurposeTerminology The resource defines a value set or concept map used in the Implementation Guide }
-    GuideResourcePurposeProfile, {@enum.value GuideResourcePurposeProfile The resource defines a profile (StructureDefinition) that is used in the implementation guide }
-    GuideResourcePurposeExtension, {@enum.value GuideResourcePurposeExtension The resource defines an extension (StructureDefinition) that is used in the implementation guide }
-    GuideResourcePurposeDictionary, {@enum.value GuideResourcePurposeDictionary The resource contains a dictionary that is part of the implementation guide }
-    GuideResourcePurposeLogical); {@enum.value GuideResourcePurposeLogical The resource defines a logical model (in a StructureDefinition) that is used in the implementation guide }
+    GuideResourcePurposeExample, {@enum.value GuideResourcePurposeExample The resource is intended as an example. }
+    GuideResourcePurposeTerminology, {@enum.value GuideResourcePurposeTerminology The resource defines a value set or concept map used in the implementation guide. }
+    GuideResourcePurposeProfile, {@enum.value GuideResourcePurposeProfile The resource defines a profile (StructureDefinition) that is used in the implementation guide. }
+    GuideResourcePurposeExtension, {@enum.value GuideResourcePurposeExtension The resource defines an extension (StructureDefinition) that is used in the implementation guide. }
+    GuideResourcePurposeDictionary, {@enum.value GuideResourcePurposeDictionary The resource contains a dictionary that is part of the implementation guide. }
+    GuideResourcePurposeLogical); {@enum.value GuideResourcePurposeLogical The resource defines a logical model (in a StructureDefinition) that is used in the implementation guide. }
   TFhirGuideResourcePurposeList = set of TFhirGuideResourcePurpose;
 
   {@Enum TFhirGuidePageKind
-    The kind of an included page
+    The kind of an included page.
   }
   TFhirGuidePageKind = (
     GuidePageKindNull,  {@enum.value GuidePageKindNull Value is missing from Instance }
-    GuidePageKindPage, {@enum.value GuidePageKindPage This is a page of content that is included in the implementation guide. It has no particular function }
-    GuidePageKindExample, {@enum.value GuidePageKindExample This is a page that represents a human readable rendering of an example }
-    GuidePageKindList, {@enum.value GuidePageKindList This is a page that represents a list of resources of one or more types }
-    GuidePageKindInclude, {@enum.value GuidePageKindInclude This is a page that is where an included guide is injected }
-    GuidePageKindDirectory, {@enum.value GuidePageKindDirectory This is a page that lists the resources of a given type, and also creates pages for all the listed types as other pages in the section }
-    GuidePageKindDictionary, {@enum.value GuidePageKindDictionary This is a page that creates the listed resources as a dictionary }
-    GuidePageKindToc, {@enum.value GuidePageKindToc This is a generated page that contains the table of contents }
-    GuidePageKindResource); {@enum.value GuidePageKindResource This is a page that represents a presented resource. This is typically used for generated conformance resource presentations }
+    GuidePageKindPage, {@enum.value GuidePageKindPage This is a page of content that is included in the implementation guide. It has no particular function. }
+    GuidePageKindExample, {@enum.value GuidePageKindExample This is a page that represents a human readable rendering of an example. }
+    GuidePageKindList, {@enum.value GuidePageKindList This is a page that represents a list of resources of one or more types. }
+    GuidePageKindInclude, {@enum.value GuidePageKindInclude This is a page showing where an included guide is injected. }
+    GuidePageKindDirectory, {@enum.value GuidePageKindDirectory This is a page that lists the resources of a given type, and also creates pages for all the listed types as other pages in the section. }
+    GuidePageKindDictionary, {@enum.value GuidePageKindDictionary This is a page that creates the listed resources as a dictionary. }
+    GuidePageKindToc, {@enum.value GuidePageKindToc This is a generated page that contains the table of contents. }
+    GuidePageKindResource); {@enum.value GuidePageKindResource This is a page that represents a presented resource. This is typically used for generated conformance resource presentations. }
   TFhirGuidePageKindList = set of TFhirGuidePageKind;
 
   {@Enum TFhirListStatus
@@ -1270,22 +1270,22 @@ Not to be used when the patient is currently at the location }
   TFhirListStatusList = set of TFhirListStatus;
 
   {@Enum TFhirLocationStatus
-    Indicates whether the location is still in use
+    Indicates whether the location is still in use.
   }
   TFhirLocationStatus = (
     LocationStatusNull,  {@enum.value LocationStatusNull Value is missing from Instance }
-    LocationStatusActive, {@enum.value LocationStatusActive The location is operational }
-    LocationStatusSuspended, {@enum.value LocationStatusSuspended The location is temporarily closed }
-    LocationStatusInactive); {@enum.value LocationStatusInactive The location is no longer used }
+    LocationStatusActive, {@enum.value LocationStatusActive The location is operational. }
+    LocationStatusSuspended, {@enum.value LocationStatusSuspended The location is temporarily closed. }
+    LocationStatusInactive); {@enum.value LocationStatusInactive The location is no longer used. }
   TFhirLocationStatusList = set of TFhirLocationStatus;
 
   {@Enum TFhirLocationMode
-    Indicates whether a resource instance represents a specific location or a class of locations
+    Indicates whether a resource instance represents a specific location or a class of locations.
   }
   TFhirLocationMode = (
     LocationModeNull,  {@enum.value LocationModeNull Value is missing from Instance }
-    LocationModeInstance, {@enum.value LocationModeInstance The Location resource represents a specific instance of a Location (e.g. Operating Theatre 1A) }
-    LocationModeKind); {@enum.value LocationModeKind The Location represents a class of Locations (e.g. Any Operating Theatre). Although this class of locations could be constrained within a specific boundary (such as organization, or parent location, address etc.) }
+    LocationModeInstance, {@enum.value LocationModeInstance The Location resource represents a specific instance of a location (e.g. Operating Theatre 1A). }
+    LocationModeKind); {@enum.value LocationModeKind The Location represents a class of locations (e.g. Any Operating Theatre) although this class of locations could be constrained within a specific boundary (such as organization, or parent location, address etc.). }
   TFhirLocationModeList = set of TFhirLocationMode;
 
   {@Enum TFhirDigitalMediaType
@@ -1320,11 +1320,11 @@ Not to be used when the patient is currently at the location }
     MedicationOrderStatusCompleted, {@enum.value MedicationOrderStatusCompleted All actions that are implied by the prescription have occurred. }
     MedicationOrderStatusEnteredInError, {@enum.value MedicationOrderStatusEnteredInError The prescription was entered in error. }
     MedicationOrderStatusStopped, {@enum.value MedicationOrderStatusStopped Actions implied by the prescription are to be permanently halted, before all of them occurred. }
-    MedicationOrderStatusDraft); {@enum.value MedicationOrderStatusDraft The prescription is not yet 'actionable', i.e. it is a work in progress, requires sign-off or verification, needs to be run through decision support process. }
+    MedicationOrderStatusDraft); {@enum.value MedicationOrderStatusDraft The prescription is not yet 'actionable', i.e. it is a work in progress, requires sign-off or verification, and needs to be run through decision support process. }
   TFhirMedicationOrderStatusList = set of TFhirMedicationOrderStatus;
 
   {@Enum TFhirMedicationStatementStatus
-    A set of codes indicating the current status of a MedicationStatement
+    A set of codes indicating the current status of a MedicationStatement.
   }
   TFhirMedicationStatementStatus = (
     MedicationStatementStatusNull,  {@enum.value MedicationStatementStatusNull Value is missing from Instance }
@@ -1339,30 +1339,30 @@ Not to be used when the patient is currently at the location }
   }
   TFhirResponseCode = (
     ResponseCodeNull,  {@enum.value ResponseCodeNull Value is missing from Instance }
-    ResponseCodeOk, {@enum.value ResponseCodeOk The message was accepted and processed without error }
-    ResponseCodeTransientError, {@enum.value ResponseCodeTransientError Some internal unexpected error occurred - wait and try again. Note - this is usually used for things like database unavailable, which may be expected to resolve, though human intervention may be required }
-    ResponseCodeFatalError); {@enum.value ResponseCodeFatalError The message was rejected because of some content in it. There is no point in re-sending without change. The response narrative SHALL describe what the issue is. }
+    ResponseCodeOk, {@enum.value ResponseCodeOk The message was accepted and processed without error. }
+    ResponseCodeTransientError, {@enum.value ResponseCodeTransientError Some internal unexpected error occurred - wait and try again. Note - this is usually used for things like database unavailable, which may be expected to resolve, though human intervention may be required. }
+    ResponseCodeFatalError); {@enum.value ResponseCodeFatalError The message was rejected because of some content in it. There is no point in re-sending without change. The response narrative SHALL describe the issue. }
   TFhirResponseCodeList = set of TFhirResponseCode;
 
   {@Enum TFhirNamingsystemType
-    Identifies the purpose of the namingsystem
+    Identifies the purpose of the naming system.
   }
   TFhirNamingsystemType = (
     NamingsystemTypeNull,  {@enum.value NamingsystemTypeNull Value is missing from Instance }
     NamingsystemTypeCodesystem, {@enum.value NamingsystemTypeCodesystem The naming system is used to define concepts and symbols to represent those concepts; e.g. UCUM, LOINC, NDC code, local lab codes, etc. }
-    NamingsystemTypeIdentifier, {@enum.value NamingsystemTypeIdentifier The namingsystem is used to manage identifiers (e.g. license numbers, order numbers, etc.) }
-    NamingsystemTypeRoot); {@enum.value NamingsystemTypeRoot The namingsystem is used as the root for other identifiers and namingsystems }
+    NamingsystemTypeIdentifier, {@enum.value NamingsystemTypeIdentifier The naming system is used to manage identifiers (e.g. license numbers, order numbers, etc.). }
+    NamingsystemTypeRoot); {@enum.value NamingsystemTypeRoot The naming system is used as the root for other identifiers and naming systems. }
   TFhirNamingsystemTypeList = set of TFhirNamingsystemType;
 
   {@Enum TFhirNamingsystemIdentifierType
-    Identifies the style of unique identifier used to identify a namepace
+    Identifies the style of unique identifier used to identify a namespace.
   }
   TFhirNamingsystemIdentifierType = (
     NamingsystemIdentifierTypeNull,  {@enum.value NamingsystemIdentifierTypeNull Value is missing from Instance }
-    NamingsystemIdentifierTypeOid, {@enum.value NamingsystemIdentifierTypeOid An ISO object identifier; e.g. 1.2.3.4.5 }
-    NamingsystemIdentifierTypeUuid, {@enum.value NamingsystemIdentifierTypeUuid A universally unique identifier of the form a5afddf4-e880-459b-876e-e4591b0acc11 }
-    NamingsystemIdentifierTypeUri, {@enum.value NamingsystemIdentifierTypeUri A uniform resource identifier (ideally a URL - uniform resource locator); e.g. http://unitsofmeasure.org }
-    NamingsystemIdentifierTypeOther); {@enum.value NamingsystemIdentifierTypeOther Some other type of unique identifier.  E.g. HL7-assigned reserved string such as LN for LOINC }
+    NamingsystemIdentifierTypeOid, {@enum.value NamingsystemIdentifierTypeOid An ISO object identifier; e.g. 1.2.3.4.5. }
+    NamingsystemIdentifierTypeUuid, {@enum.value NamingsystemIdentifierTypeUuid A universally unique identifier of the form a5afddf4-e880-459b-876e-e4591b0acc11. }
+    NamingsystemIdentifierTypeUri, {@enum.value NamingsystemIdentifierTypeUri A uniform resource identifier (ideally a URL - uniform resource locator); e.g. http://unitsofmeasure.org. }
+    NamingsystemIdentifierTypeOther); {@enum.value NamingsystemIdentifierTypeOther Some other type of unique identifier; e.g. HL7-assigned reserved string such as LN for LOINC. }
   TFhirNamingsystemIdentifierTypeList = set of TFhirNamingsystemIdentifierType;
 
   {@Enum TFhirNutritionOrderStatus
@@ -1370,10 +1370,10 @@ Not to be used when the patient is currently at the location }
   }
   TFhirNutritionOrderStatus = (
     NutritionOrderStatusNull,  {@enum.value NutritionOrderStatusNull Value is missing from Instance }
-    NutritionOrderStatusProposed, {@enum.value NutritionOrderStatusProposed The request has been proposed }
-    NutritionOrderStatusDraft, {@enum.value NutritionOrderStatusDraft The request is in preliminary form prior to being sent }
-    NutritionOrderStatusPlanned, {@enum.value NutritionOrderStatusPlanned The request has been planned }
-    NutritionOrderStatusRequested, {@enum.value NutritionOrderStatusRequested The request has been placed }
+    NutritionOrderStatusProposed, {@enum.value NutritionOrderStatusProposed The request has been proposed. }
+    NutritionOrderStatusDraft, {@enum.value NutritionOrderStatusDraft The request is in preliminary form prior to being sent. }
+    NutritionOrderStatusPlanned, {@enum.value NutritionOrderStatusPlanned The request has been planned. }
+    NutritionOrderStatusRequested, {@enum.value NutritionOrderStatusRequested The request has been placed. }
     NutritionOrderStatusActive, {@enum.value NutritionOrderStatusActive The request is 'actionable', but not all actions that are implied by it have occurred yet. }
     NutritionOrderStatusOnHold, {@enum.value NutritionOrderStatusOnHold Actions implied by the request have been temporarily halted, but are expected to continue later. May also be called "suspended". }
     NutritionOrderStatusCompleted, {@enum.value NutritionOrderStatusCompleted All actions that are implied by the order have occurred and no continuation is planned (this will rarely be made explicit). }
@@ -1381,52 +1381,52 @@ Not to be used when the patient is currently at the location }
   TFhirNutritionOrderStatusList = set of TFhirNutritionOrderStatus;
 
   {@Enum TFhirObservationStatus
-    Codes providing the status of an observation
+    Codes providing the status of an observation.
   }
   TFhirObservationStatus = (
     ObservationStatusNull,  {@enum.value ObservationStatusNull Value is missing from Instance }
-    ObservationStatusRegistered, {@enum.value ObservationStatusRegistered The existence of the observation is registered, but there is no result yet available }
-    ObservationStatusPreliminary, {@enum.value ObservationStatusPreliminary This is an initial or interim observation: data may be incomplete or unverified }
-    ObservationStatusFinal, {@enum.value ObservationStatusFinal The observation is complete and verified by an authorized person }
-    ObservationStatusAmended, {@enum.value ObservationStatusAmended The observation has been modified subsequent to being Final, and is complete and verified by an authorized person }
-    ObservationStatusCancelled, {@enum.value ObservationStatusCancelled The observation is unavailable because the measurement was not started or not completed (also sometimes called "aborted") }
-    ObservationStatusEnteredInError, {@enum.value ObservationStatusEnteredInError The observation has been withdrawn following previous Final release }
-    ObservationStatusUnknown); {@enum.value ObservationStatusUnknown The observation status is unknown.  Note that "unknown" is a value of last resort and every attempt should be made to provide a meaningful value other than "unknown" }
+    ObservationStatusRegistered, {@enum.value ObservationStatusRegistered The existence of the observation is registered, but there is no result yet available. }
+    ObservationStatusPreliminary, {@enum.value ObservationStatusPreliminary This is an initial or interim observation: data may be incomplete or unverified. }
+    ObservationStatusFinal, {@enum.value ObservationStatusFinal The observation is complete and verified by an authorized person. }
+    ObservationStatusAmended, {@enum.value ObservationStatusAmended The observation has been modified subsequent to being Final, and is complete and verified by an authorized person. }
+    ObservationStatusCancelled, {@enum.value ObservationStatusCancelled The observation is unavailable because the measurement was not started or not completed (also sometimes called "aborted"). }
+    ObservationStatusEnteredInError, {@enum.value ObservationStatusEnteredInError The observation has been withdrawn following previous final release. }
+    ObservationStatusUnknown); {@enum.value ObservationStatusUnknown The observation status is unknown.  Note that "unknown" is a value of last resort and every attempt should be made to provide a meaningful value other than "unknown". }
   TFhirObservationStatusList = set of TFhirObservationStatus;
 
   {@Enum TFhirObservationRelationshiptypes
-    Codes specifying how two observations are related
+    Codes specifying how two observations are related.
   }
   TFhirObservationRelationshiptypes = (
     ObservationRelationshiptypesNull,  {@enum.value ObservationRelationshiptypesNull Value is missing from Instance }
-    ObservationRelationshiptypesHasMember, {@enum.value ObservationRelationshiptypesHasMember This observation is a group observation (e.g. a battery, a panel of tests, a set of vital sign measurements) that includes the target as a member of the group }
-    ObservationRelationshiptypesDerivedFrom, {@enum.value ObservationRelationshiptypesDerivedFrom The target resource (Observation or QuestionnaireAnswer) is part of the information from which this observation value is derived. (e.g. calculated anion gap, Apgar score)  NOTE:  "derived-from" is only logical choice when referencing QuestionnaireAnswer }
-    ObservationRelationshiptypesSequelTo, {@enum.value ObservationRelationshiptypesSequelTo This observation follows the target observation (e.g. timed tests such as Glucose Tolerance Test) }
-    ObservationRelationshiptypesReplaces, {@enum.value ObservationRelationshiptypesReplaces This observation replaces a previous observation (i.e. a revised value). The target observation is now obsolete }
-    ObservationRelationshiptypesQualifiedBy, {@enum.value ObservationRelationshiptypesQualifiedBy The value of the target observation qualifies (refines) the semantics of the source observation (e.g. a lipemia measure target from a plasma measure) }
-    ObservationRelationshiptypesInterferedBy); {@enum.value ObservationRelationshiptypesInterferedBy The value of the target observation interferes (degrades quality, or prevents valid observation) with the semantics of the source observation (e.g. a hemolysis measure target from a plasma potassium measure which has no value) }
+    ObservationRelationshiptypesHasMember, {@enum.value ObservationRelationshiptypesHasMember This observation is a group observation (e.g. a battery, a panel of tests, a set of vital sign measurements) that includes the target as a member of the group. }
+    ObservationRelationshiptypesDerivedFrom, {@enum.value ObservationRelationshiptypesDerivedFrom The target resource (Observation or QuestionnaireResponse) is part of the information from which this observation value is derived. (e.g. calculated anion gap, Apgar score)  NOTE:  "derived-from" is only logical choice when referencing QuestionnaireResponse. }
+    ObservationRelationshiptypesSequelTo, {@enum.value ObservationRelationshiptypesSequelTo This observation follows the target observation (e.g. timed tests such as Glucose Tolerance Test). }
+    ObservationRelationshiptypesReplaces, {@enum.value ObservationRelationshiptypesReplaces This observation replaces a previous observation (i.e. a revised value). The target observation is now obsolete. }
+    ObservationRelationshiptypesQualifiedBy, {@enum.value ObservationRelationshiptypesQualifiedBy The value of the target observation qualifies (refines) the semantics of the source observation (e.g. a lipemia measure target from a plasma measure). }
+    ObservationRelationshiptypesInterferedBy); {@enum.value ObservationRelationshiptypesInterferedBy The value of the target observation interferes (degrades quality, or prevents valid observation) with the semantics of the source observation (e.g. a hemolysis measure target from a plasma potassium measure which has no value). }
   TFhirObservationRelationshiptypesList = set of TFhirObservationRelationshiptypes;
 
   {@Enum TFhirOperationKind
-    Whether an operation is a normal operation or a query
+    Whether an operation is a normal operation or a query.
   }
   TFhirOperationKind = (
     OperationKindNull,  {@enum.value OperationKindNull Value is missing from Instance }
-    OperationKindOperation, {@enum.value OperationKindOperation This operation is invoked as an operation }
-    OperationKindQuery); {@enum.value OperationKindQuery This operation is a named query, invoked using the search mechanism }
+    OperationKindOperation, {@enum.value OperationKindOperation This operation is invoked as an operation. }
+    OperationKindQuery); {@enum.value OperationKindQuery This operation is a named query, invoked using the search mechanism. }
   TFhirOperationKindList = set of TFhirOperationKind;
 
   {@Enum TFhirOperationParameterUse
-    Whether an operation parameter is an input or an output parameter
+    Whether an operation parameter is an input or an output parameter.
   }
   TFhirOperationParameterUse = (
     OperationParameterUseNull,  {@enum.value OperationParameterUseNull Value is missing from Instance }
-    OperationParameterUseIn, {@enum.value OperationParameterUseIn This is an input parameter }
-    OperationParameterUseOut); {@enum.value OperationParameterUseOut This is an output parameter }
+    OperationParameterUseIn, {@enum.value OperationParameterUseIn This is an input parameter. }
+    OperationParameterUseOut); {@enum.value OperationParameterUseOut This is an output parameter. }
   TFhirOperationParameterUseList = set of TFhirOperationParameterUse;
 
   {@Enum TFhirValuesetOperationParameterType
-    The type of a parameter
+    The type of a parameter.
   }
   TFhirValuesetOperationParameterType = (
     ValuesetOperationParameterTypeNull,  {@enum.value ValuesetOperationParameterTypeNull Value is missing from Instance }
@@ -1445,7 +1445,7 @@ Not to be used when the patient is currently at the location }
     ValuesetOperationParameterTypeBackboneElement, {@enum.value ValuesetOperationParameterTypeBackboneElement Base definition for all elements that are defined inside a resource - but not those in a data type. }
     ValuesetOperationParameterTypeCodeableConcept, {@enum.value ValuesetOperationParameterTypeCodeableConcept A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text. }
     ValuesetOperationParameterTypeCoding, {@enum.value ValuesetOperationParameterTypeCoding A reference to a code defined by a terminology system. }
-    ValuesetOperationParameterTypeContactPoint, {@enum.value ValuesetOperationParameterTypeContactPoint Details for All kinds of technology mediated contact points for a person or organization, including telephone, email, etc. }
+    ValuesetOperationParameterTypeContactPoint, {@enum.value ValuesetOperationParameterTypeContactPoint Details for all kinds of technology mediated contact points for a person or organization, including telephone, email, etc. }
     ValuesetOperationParameterTypeCount, {@enum.value ValuesetOperationParameterTypeCount  }
     ValuesetOperationParameterTypeDistance, {@enum.value ValuesetOperationParameterTypeDistance  }
     ValuesetOperationParameterTypeDuration, {@enum.value ValuesetOperationParameterTypeDuration  }
@@ -1498,10 +1498,10 @@ Not to be used when the patient is currently at the location }
     ValuesetOperationParameterTypeCommunicationRequest, {@enum.value ValuesetOperationParameterTypeCommunicationRequest A request to convey information; e.g. the CDS system proposes that an alert be sent to a responsible provider, the CDS system proposes that the public health agency be notified about a reportable condition. }
     ValuesetOperationParameterTypeComposition, {@enum.value ValuesetOperationParameterTypeComposition A set of healthcare-related information that is assembled together into a single logical document that provides a single coherent statement of meaning, establishes its own context and that has clinical attestation with regard to who is making the statement. While a Composition defines the structure, it does not actually contain the content: rather the full content of a document is contained in a Bundle, of which the Composition is the first resource contained. }
     ValuesetOperationParameterTypeConceptMap, {@enum.value ValuesetOperationParameterTypeConceptMap A statement of relationships from one set of concepts to one or more other concepts - either code systems or data elements, or classes in class models. }
-    ValuesetOperationParameterTypeCondition, {@enum.value ValuesetOperationParameterTypeCondition Use to record detailed information about conditions, problems or diagnoses recognized by a clinician. There are many uses including: recording a Diagnosis during an Encounter; populating a problem List or a Summary Statement, such as a Discharge Summary. }
+    ValuesetOperationParameterTypeCondition, {@enum.value ValuesetOperationParameterTypeCondition Use to record detailed information about conditions, problems or diagnoses recognized by a clinician. There are many uses including: recording a diagnosis during an encounter; populating a problem list or a summary statement, such as a discharge summary. }
     ValuesetOperationParameterTypeConformance, {@enum.value ValuesetOperationParameterTypeConformance A conformance statement is a set of capabilities of a FHIR Server that may be used as a statement of actual server functionality or a statement of required or desired server implementation. }
     ValuesetOperationParameterTypeContract, {@enum.value ValuesetOperationParameterTypeContract A formal agreement between parties regarding the conduct of business, exchange of information or other matters. }
-    ValuesetOperationParameterTypeCoverage, {@enum.value ValuesetOperationParameterTypeCoverage Financial instrument which may be used to pay for or reimburse for health care products and services. }
+    ValuesetOperationParameterTypeCoverage, {@enum.value ValuesetOperationParameterTypeCoverage Financial instrument which may be used to pay for or reimburse health care products and services. }
     ValuesetOperationParameterTypeDataElement, {@enum.value ValuesetOperationParameterTypeDataElement The formal description of a single piece of information that can be gathered and reported. }
     ValuesetOperationParameterTypeDetectedIssue, {@enum.value ValuesetOperationParameterTypeDetectedIssue Indicates an actual or potential clinical issue with or between one or more active or proposed clinical actions for a patient; e.g. Drug-drug interaction, Ineffective treatment frequency, Procedure-condition conflict, etc. }
     ValuesetOperationParameterTypeDevice, {@enum.value ValuesetOperationParameterTypeDevice This resource identifies an instance of a manufactured item that is used in the provision of healthcare without being substantially changed through that activity. The device may be a medical or non-medical device.  Medical devices includes durable (reusable) medical equipment, implantable devices, as well as disposable equipment used for diagnostic, treatment, and research for healthcare and public health.  Non-medical devices may include items such as a machine, cellphone, computer, application, etc. }
@@ -1510,38 +1510,38 @@ Not to be used when the patient is currently at the location }
     ValuesetOperationParameterTypeDeviceUseRequest, {@enum.value ValuesetOperationParameterTypeDeviceUseRequest Represents a request for a patient to employ a medical device. The device may be an implantable device, or an external assistive device, such as a walker. }
     ValuesetOperationParameterTypeDeviceUseStatement, {@enum.value ValuesetOperationParameterTypeDeviceUseStatement A record of a device being used by a patient where the record is the result of a report from the patient or another clinician. }
     ValuesetOperationParameterTypeDiagnosticOrder, {@enum.value ValuesetOperationParameterTypeDiagnosticOrder A record of a request for a diagnostic investigation service to be performed. }
-    ValuesetOperationParameterTypeDiagnosticReport, {@enum.value ValuesetOperationParameterTypeDiagnosticReport The findings and interpretation of diagnostic  tests performed on patients, groups of patients, devices, and locations, and/or specimens derived from these. The report includes clinical context such as requesting and provider information, and some mix of atomic results, images, textual and coded interpretation, and formatted representation of diagnostic reports. }
+    ValuesetOperationParameterTypeDiagnosticReport, {@enum.value ValuesetOperationParameterTypeDiagnosticReport The findings and interpretation of diagnostic  tests performed on patients, groups of patients, devices, and locations, and/or specimens derived from these. The report includes clinical context such as requesting and provider information, and some mix of atomic results, images, textual and coded interpretations, and formatted representation of diagnostic reports. }
     ValuesetOperationParameterTypeDocumentManifest, {@enum.value ValuesetOperationParameterTypeDocumentManifest A manifest that defines a set of documents. }
     ValuesetOperationParameterTypeDocumentReference, {@enum.value ValuesetOperationParameterTypeDocumentReference A reference to a document. }
     ValuesetOperationParameterTypeDomainResource, {@enum.value ValuesetOperationParameterTypeDomainResource --- Abstract Type! ---A resource that includes narrative, extensions, and contained resources. }
     ValuesetOperationParameterTypeEligibilityRequest, {@enum.value ValuesetOperationParameterTypeEligibilityRequest This resource provides the insurance eligibility details from the insurer regarding a specified coverage and optionally some class of service. }
     ValuesetOperationParameterTypeEligibilityResponse, {@enum.value ValuesetOperationParameterTypeEligibilityResponse This resource provides eligibility and plan details from the processing of an Eligibility resource. }
     ValuesetOperationParameterTypeEncounter, {@enum.value ValuesetOperationParameterTypeEncounter An interaction between a patient and healthcare provider(s) for the purpose of providing healthcare service(s) or assessing the health status of a patient. }
-    ValuesetOperationParameterTypeEnrollmentRequest, {@enum.value ValuesetOperationParameterTypeEnrollmentRequest This resource provides the insurance Enrollment details to the insurer regarding a specified coverage. }
-    ValuesetOperationParameterTypeEnrollmentResponse, {@enum.value ValuesetOperationParameterTypeEnrollmentResponse This resource provides Enrollment and plan details from the processing of an Enrollment resource. }
+    ValuesetOperationParameterTypeEnrollmentRequest, {@enum.value ValuesetOperationParameterTypeEnrollmentRequest This resource provides the insurance enrollment details to the insurer regarding a specified coverage. }
+    ValuesetOperationParameterTypeEnrollmentResponse, {@enum.value ValuesetOperationParameterTypeEnrollmentResponse This resource provides enrollment and plan details from the processing of an Enrollment resource. }
     ValuesetOperationParameterTypeEpisodeOfCare, {@enum.value ValuesetOperationParameterTypeEpisodeOfCare An association between a patient and an organization / healthcare provider(s) during which time encounters may occur. The managing organization assumes a level of responsibility for the patient during this time. }
     ValuesetOperationParameterTypeExplanationOfBenefit, {@enum.value ValuesetOperationParameterTypeExplanationOfBenefit This resource provides: the claim details; adjudication details from the processing of a Claim; and optionally account balance information, for informing the subscriber of the benefits provided. }
     ValuesetOperationParameterTypeFamilyMemberHistory, {@enum.value ValuesetOperationParameterTypeFamilyMemberHistory Significant health events and conditions for a person related to the patient relevant in the context of care for the patient. }
     ValuesetOperationParameterTypeFlag, {@enum.value ValuesetOperationParameterTypeFlag Prospective warnings of potential issues when providing care to the patient. }
-    ValuesetOperationParameterTypeGoal, {@enum.value ValuesetOperationParameterTypeGoal Describes the intended objective(s) for a patient, group or organization care, for example, weight loss, restoring an activity of daily living, obtaining herd immunity via immunization, meeting a process improvement objective, etc.;. }
+    ValuesetOperationParameterTypeGoal, {@enum.value ValuesetOperationParameterTypeGoal Describes the intended objective(s) for a patient, group or organization care, for example, weight loss, restoring an activity of daily living, obtaining herd immunity via immunization, meeting a process improvement objective, etc. }
     ValuesetOperationParameterTypeGroup, {@enum.value ValuesetOperationParameterTypeGroup Represents a defined collection of entities that may be discussed or acted upon collectively but which are not expected to act collectively and are not formally or legally recognized; i.e. a collection of entities that isn't an Organization. }
     ValuesetOperationParameterTypeHealthcareService, {@enum.value ValuesetOperationParameterTypeHealthcareService The details of a healthcare service available at a location. }
     ValuesetOperationParameterTypeImagingObjectSelection, {@enum.value ValuesetOperationParameterTypeImagingObjectSelection A manifest of a set of DICOM Service-Object Pair Instances (SOP Instances).  The referenced SOP Instances (images or other content) are for a single patient, and may be from one or more studies. The referenced SOP Instances have been selected for a purpose, such as quality assurance, conference, or consult. Reflecting that range of purposes, typical ImagingObjectSelection resources may include all SOP Instances in a study (perhaps for sharing through a Health Information Exchange); key images from multiple studies (for reference by a referring or treating physician); a multi-frame ultrasound instance ("cine" video clip) and a set of measurements taken from that instance (for inclusion in a teaching file); and so on. }
-    ValuesetOperationParameterTypeImagingStudy, {@enum.value ValuesetOperationParameterTypeImagingStudy Representation of the content produced in a DICOM imaging study. A study comprises a set of Series, each of which includes a set of Service-Object Pair Instances (SOP Instances - images or other data) acquired or produced in a common context.  A Series is of only one modality (e.g. X-ray, CT, MR, ultrasound), but a Study may have multiple Series of different modalities. }
+    ValuesetOperationParameterTypeImagingStudy, {@enum.value ValuesetOperationParameterTypeImagingStudy Representation of the content produced in a DICOM imaging study. A study comprises a set of series, each of which includes a set of Service-Object Pair Instances (SOP Instances - images or other data) acquired or produced in a common context.  A series is of only one modality (e.g. X-ray, CT, MR, ultrasound), but a study may have multiple series of different modalities. }
     ValuesetOperationParameterTypeImmunization, {@enum.value ValuesetOperationParameterTypeImmunization Describes the event of a patient being administered a vaccination or a record of a vaccination as reported by a patient, a clinician or another party and may include vaccine reaction information and what vaccination protocol was followed. }
-    ValuesetOperationParameterTypeImmunizationRecommendation, {@enum.value ValuesetOperationParameterTypeImmunizationRecommendation A patient?s point-in-time immunization and recommendation (i.e. forecasting a patient?s immunization eligibility according to a published schedule) with optional supporting justification. }
+    ValuesetOperationParameterTypeImmunizationRecommendation, {@enum.value ValuesetOperationParameterTypeImmunizationRecommendation A patient's point-in-time immunization and recommendation (i.e. forecasting a patient's immunization eligibility according to a published schedule) with optional supporting justification. }
     ValuesetOperationParameterTypeImplementationGuide, {@enum.value ValuesetOperationParameterTypeImplementationGuide A set of rules or how FHIR is used to solve a particular problem. This resource is used to gather all the parts of an implementation guide into a logical whole, and to publish a computable definition of all the parts. }
     ValuesetOperationParameterTypeList, {@enum.value ValuesetOperationParameterTypeList A set of information summarized from a list of other resources. }
     ValuesetOperationParameterTypeLocation, {@enum.value ValuesetOperationParameterTypeLocation Details and position information for a physical place where services are provided  and resources and participants may be stored, found, contained or accommodated. }
     ValuesetOperationParameterTypeMedia, {@enum.value ValuesetOperationParameterTypeMedia A photo, video, or audio recording acquired or used in healthcare. The actual content may be inline or provided by direct reference. }
     ValuesetOperationParameterTypeMedication, {@enum.value ValuesetOperationParameterTypeMedication This resource is primarily used for the identification and definition of a medication. It covers the ingredients and the packaging for a medication. }
     ValuesetOperationParameterTypeMedicationAdministration, {@enum.value ValuesetOperationParameterTypeMedicationAdministration Describes the event of a patient consuming or otherwise being administered a medication.  This may be as simple as swallowing a tablet or it may be a long running infusion.  Related resources tie this event to the authorizing prescription, and the specific encounter between patient and health care practitioner. }
-    ValuesetOperationParameterTypeMedicationDispense, {@enum.value ValuesetOperationParameterTypeMedicationDispense Indicates that a medication product is to be or has been dispensed for a named person/patient.  This includes a description of the medication product (supply) provided and the instructions for administering the medication.  The medication dispense is the result of a Pharmacy system responding to a Medication Order. }
+    ValuesetOperationParameterTypeMedicationDispense, {@enum.value ValuesetOperationParameterTypeMedicationDispense Indicates that a medication product is to be or has been dispensed for a named person/patient.  This includes a description of the medication product (supply) provided and the instructions for administering the medication.  The medication dispense is the result of a pharmacy system responding to a medication order. }
     ValuesetOperationParameterTypeMedicationOrder, {@enum.value ValuesetOperationParameterTypeMedicationOrder An order for both supply of the medication and the instructions for administration of the medication to a patient. The resource is called "MedicationOrder" rather than "MedicationPrescription" to generalize the use across inpatient and outpatient settings as well as for care plans, etc. }
-    ValuesetOperationParameterTypeMedicationStatement, {@enum.value ValuesetOperationParameterTypeMedicationStatement A record of a medication that is being consumed by a patient.   A medication statements may indicate that the patient may be taking the medication now, or has taken the medication in the past or will be taking the medication in the future.  The source of this information can be the patient, significant other (such as a family member or spouse), or a clinician.  A common scenario where this information is captured is during the history taking process during a patient visit or stay.   The medication information may come from e.g. the patients? memory, from a prescription bottle,  or from a list of medications the patient, clinician or other party maintains.
+    ValuesetOperationParameterTypeMedicationStatement, {@enum.value ValuesetOperationParameterTypeMedicationStatement A record of a medication that is being consumed by a patient.   A MedicationStatement may indicate that the patient may be taking the medication now, or has taken the medication in the past or will be taking the medication in the future.  The source of this information can be the patient, significant other (such as a family member or spouse), or a clinician.  A common scenario where this information is captured is during the history taking process during a patient visit or stay.   The medication information may come from e.g. the patient's memory, from a prescription bottle,  or from a list of medications the patient, clinician or other party maintains 
 
-The primary difference between a medication statement and a medication administration is that the medication administration has complete administration information and is based on actual administration information from the person who administered the medication.  A medication statement is often, if not always less specific.  There is no required date/time when the medication was administered, in fact we only know that a source has reported the patient is taking this medication, where details such as time, quantity, or rate or even medication product may be incomplete or missing or less precise.  As stated earlier, the Medication Statement information may come from the patient?s memory, from a prescription bottle or from a list of medications the patient, clinician or other party maintains.  Medication Administration is more formal and is not missing detailed information. }
-    ValuesetOperationParameterTypeMessageHeader, {@enum.value ValuesetOperationParameterTypeMessageHeader The header for a message exchange that is either requesting or responding to an action.  The Reference(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle. }
+The primary difference between a medication statement and a medication administration is that the medication administration has complete administration information and is based on actual administration information from the person who administered the medication.  A medication statement is often, if not always, less specific.  There is no required date/time when the medication was administered, in fact we only know that a source has reported the patient is taking this medication, where details such as time, quantity, or rate or even medication product may be incomplete or missing or less precise.  As stated earlier, the medication statement information may come from the patient's memory, from a prescription bottle or from a list of medications the patient, clinician or other party maintains.  Medication administration is more formal and is not missing detailed information. }
+    ValuesetOperationParameterTypeMessageHeader, {@enum.value ValuesetOperationParameterTypeMessageHeader The header for a message exchange that is either requesting or responding to an action.  The reference(s) that are the subject of the action as well as other information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle. }
     ValuesetOperationParameterTypeNamingSystem, {@enum.value ValuesetOperationParameterTypeNamingSystem A curated namespace that issues unique symbols within that namespace for the identification of concepts, people, devices, etc.  Represents a "System" used within the Identifier and Coding data types. }
     ValuesetOperationParameterTypeNutritionOrder, {@enum.value ValuesetOperationParameterTypeNutritionOrder A request to supply a diet, formula feeding (enteral) or oral nutritional supplement to a patient/resident. }
     ValuesetOperationParameterTypeObservation, {@enum.value ValuesetOperationParameterTypeObservation Measurements and simple assertions made about a patient, device or other subject. }
@@ -1550,31 +1550,31 @@ The primary difference between a medication statement and a medication administr
     ValuesetOperationParameterTypeOrder, {@enum.value ValuesetOperationParameterTypeOrder A request to perform an action. }
     ValuesetOperationParameterTypeOrderResponse, {@enum.value ValuesetOperationParameterTypeOrderResponse A response to an order. }
     ValuesetOperationParameterTypeOrganization, {@enum.value ValuesetOperationParameterTypeOrganization A formally or informally recognized grouping of people or organizations formed for the purpose of achieving some form of collective action.  Includes companies, institutions, corporations, departments, community groups, healthcare practice groups, etc. }
-    ValuesetOperationParameterTypeParameters, {@enum.value ValuesetOperationParameterTypeParameters This special resource type is used to represent [operation](operations.html] request and response. It has no other use, and there is no RESTful end=point associated with it. }
+    ValuesetOperationParameterTypeParameters, {@enum.value ValuesetOperationParameterTypeParameters This special resource type is used to represent an operation request and response (operations.html). It has no other use, and there is no RESTful endpoint associated with it. }
     ValuesetOperationParameterTypePatient, {@enum.value ValuesetOperationParameterTypePatient Demographics and other administrative information about an individual or animal receiving care or other health-related services. }
     ValuesetOperationParameterTypePaymentNotice, {@enum.value ValuesetOperationParameterTypePaymentNotice This resource provides the status of the payment for goods and services rendered, and the request and response resource references. }
     ValuesetOperationParameterTypePaymentReconciliation, {@enum.value ValuesetOperationParameterTypePaymentReconciliation This resource provides payment details and claim references supporting a bulk payment. }
     ValuesetOperationParameterTypePerson, {@enum.value ValuesetOperationParameterTypePerson Demographics and administrative information about a person independent of a specific health-related context. }
     ValuesetOperationParameterTypePractitioner, {@enum.value ValuesetOperationParameterTypePractitioner A person who is directly or indirectly involved in the provisioning of healthcare. }
-    ValuesetOperationParameterTypeProcedure, {@enum.value ValuesetOperationParameterTypeProcedure An action that is or was performed on a patient. This can be a physical 'thing' like an operation, or less invasive like counseling or hypnotherapy. }
+    ValuesetOperationParameterTypeProcedure, {@enum.value ValuesetOperationParameterTypeProcedure An action that is or was performed on a patient. This can be a physical intervention like an operation, or less invasive like counseling or hypnotherapy. }
     ValuesetOperationParameterTypeProcedureRequest, {@enum.value ValuesetOperationParameterTypeProcedureRequest A request for a procedure to be performed. May be a proposal or an order. }
     ValuesetOperationParameterTypeProcessRequest, {@enum.value ValuesetOperationParameterTypeProcessRequest This resource provides the target, request and response, and action details for an action to be performed by the target on or about existing resources. }
     ValuesetOperationParameterTypeProcessResponse, {@enum.value ValuesetOperationParameterTypeProcessResponse This resource provides processing status, errors and notes from the processing of a resource. }
-    ValuesetOperationParameterTypeProvenance, {@enum.value ValuesetOperationParameterTypeProvenance Provenance of a resource is a record that describes entities and processes involved in producing and delivering or otherwise influencing that resource. Provenance provides a critical foundation for assessing authenticity, enabling trust, and allowing reproducibility. Provenance assertions are a form of contextual metadata and can themselves become important records with their own provenance. Provenance statement indicates clinical significance in terms of confidence in authenticity, reliability, and trustworthiness, integrity, and stage in lifecycle (e.g. Document Completion - has the artifact been legally authenticated), all of which may impact Security, Privacy, and Trust policies. }
+    ValuesetOperationParameterTypeProvenance, {@enum.value ValuesetOperationParameterTypeProvenance Provenance of a resource is a record that describes entities and processes involved in producing and delivering or otherwise influencing that resource. Provenance provides a critical foundation for assessing authenticity, enabling trust, and allowing reproducibility. Provenance assertions are a form of contextual metadata and can themselves become important records with their own provenance. Provenance statement indicates clinical significance in terms of confidence in authenticity, reliability, and trustworthiness, integrity, and stage in lifecycle (e.g. Document Completion - has the artifact been legally authenticated), all of which may impact security, privacy, and trust policies. }
     ValuesetOperationParameterTypeQuestionnaire, {@enum.value ValuesetOperationParameterTypeQuestionnaire A structured set of questions intended to guide the collection of answers. The questions are ordered and grouped into coherent subsets, corresponding to the structure of the grouping of the underlying questions. }
     ValuesetOperationParameterTypeQuestionnaireResponse, {@enum.value ValuesetOperationParameterTypeQuestionnaireResponse A structured set of questions and their answers. The questions are ordered and grouped into coherent subsets, corresponding to the structure of the grouping of the underlying questions. }
-    ValuesetOperationParameterTypeReferralRequest, {@enum.value ValuesetOperationParameterTypeReferralRequest Used to record and send details about a request for referral service or transfer of a patient to the care of another provider or provider organisation. }
+    ValuesetOperationParameterTypeReferralRequest, {@enum.value ValuesetOperationParameterTypeReferralRequest Used to record and send details about a request for referral service or transfer of a patient to the care of another provider or provider organization. }
     ValuesetOperationParameterTypeRelatedPerson, {@enum.value ValuesetOperationParameterTypeRelatedPerson Information about a person that is involved in the care for a patient, but who is not the target of healthcare, nor has a formal responsibility in the care process. }
-    ValuesetOperationParameterTypeResource, {@enum.value ValuesetOperationParameterTypeResource --- Abstract Type! ---Base Resource for everything. }
+    ValuesetOperationParameterTypeResource, {@enum.value ValuesetOperationParameterTypeResource --- Abstract Type! ---This is the base resource type for everything. }
     ValuesetOperationParameterTypeRiskAssessment, {@enum.value ValuesetOperationParameterTypeRiskAssessment An assessment of the likely outcome(s) for a patient or other subject as well as the likelihood of each outcome. }
     ValuesetOperationParameterTypeSchedule, {@enum.value ValuesetOperationParameterTypeSchedule A container for slot(s) of time that may be available for booking appointments. }
-    ValuesetOperationParameterTypeSearchParameter, {@enum.value ValuesetOperationParameterTypeSearchParameter A Search Parameter that defines a named search item that can be used to search/filter on a resource. }
+    ValuesetOperationParameterTypeSearchParameter, {@enum.value ValuesetOperationParameterTypeSearchParameter A search parameter that defines a named search item that can be used to search/filter on a resource. }
     ValuesetOperationParameterTypeSlot, {@enum.value ValuesetOperationParameterTypeSlot A slot of time on a schedule that may be available for booking appointments. }
-    ValuesetOperationParameterTypeSpecimen, {@enum.value ValuesetOperationParameterTypeSpecimen Sample for analysis. }
+    ValuesetOperationParameterTypeSpecimen, {@enum.value ValuesetOperationParameterTypeSpecimen A sample to be used for analysis. }
     ValuesetOperationParameterTypeStructureDefinition, {@enum.value ValuesetOperationParameterTypeStructureDefinition A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions, and constraints on resources and data types. }
     ValuesetOperationParameterTypeSubscription, {@enum.value ValuesetOperationParameterTypeSubscription The subscription resource is used to define a push based subscription from a server to another system. Once a subscription is registered with the server, the server checks every resource that is created or updated, and if the resource matches the given criteria, it sends a message on the defined "channel" so that another system is able to take an appropriate action. }
     ValuesetOperationParameterTypeSubstance, {@enum.value ValuesetOperationParameterTypeSubstance A homogeneous material with a definite composition. }
-    ValuesetOperationParameterTypeSupplyDelivery, {@enum.value ValuesetOperationParameterTypeSupplyDelivery Record of delivery of what is in the supply. }
+    ValuesetOperationParameterTypeSupplyDelivery, {@enum.value ValuesetOperationParameterTypeSupplyDelivery Record of delivery of what is supplied. }
     ValuesetOperationParameterTypeSupplyRequest, {@enum.value ValuesetOperationParameterTypeSupplyRequest A record of a request for a medication, substance or device used in the healthcare setting. }
     ValuesetOperationParameterTypeTestScript, {@enum.value ValuesetOperationParameterTypeTestScript TestScript is a resource that specifies a suite of tests against a FHIR server implementation to determine compliance against the FHIR specification. }
     ValuesetOperationParameterTypeValueSet, {@enum.value ValuesetOperationParameterTypeValueSet A value set specifies a set of codes drawn from one or more code systems. }
@@ -1582,54 +1582,54 @@ The primary difference between a medication statement and a medication administr
   TFhirValuesetOperationParameterTypeList = set of TFhirValuesetOperationParameterType;
 
   {@Enum TFhirIssueSeverity
-    How the issue affects the success of the action
+    How the issue affects the success of the action.
   }
   TFhirIssueSeverity = (
     IssueSeverityNull,  {@enum.value IssueSeverityNull Value is missing from Instance }
-    IssueSeverityFatal, {@enum.value IssueSeverityFatal The issue caused the action to fail, and no further checking could be performed }
-    IssueSeverityError, {@enum.value IssueSeverityError The issue is sufficiently important to cause the action to fail }
-    IssueSeverityWarning, {@enum.value IssueSeverityWarning The issue is not important enough to cause the action to fail, but may cause it to be performed suboptimally or in a way that is not as desired }
-    IssueSeverityInformation); {@enum.value IssueSeverityInformation The issue has no relation to the degree of success of the action }
+    IssueSeverityFatal, {@enum.value IssueSeverityFatal The issue caused the action to fail, and no further checking could be performed. }
+    IssueSeverityError, {@enum.value IssueSeverityError The issue is sufficiently important to cause the action to fail. }
+    IssueSeverityWarning, {@enum.value IssueSeverityWarning The issue is not important enough to cause the action to fail, but may cause it to be performed suboptimally or in a way that is not as desired. }
+    IssueSeverityInformation); {@enum.value IssueSeverityInformation The issue has no relation to the degree of success of the action. }
   TFhirIssueSeverityList = set of TFhirIssueSeverity;
 
   {@Enum TFhirIssueType
-    A code that describes the type of issue
+    A code that describes the type of issue.
   }
   TFhirIssueType = (
     IssueTypeNull,  {@enum.value IssueTypeNull Value is missing from Instance }
-    IssueTypeInvalid, {@enum.value IssueTypeInvalid Content invalid against the Specification or a Profile }
-    IssueTypeStructure, {@enum.value IssueTypeStructure A structural issue in the content such as wrong namespace, or unable to parse the content completely, or invalid json syntax }
-    IssueTypeRequired, {@enum.value IssueTypeRequired A required element is missing }
-    IssueTypeValue, {@enum.value IssueTypeValue element value invalid }
-    IssueTypeInvariant, {@enum.value IssueTypeInvariant A content validation rule failed - e.g. a schematron rule }
-    IssueTypeSecurity, {@enum.value IssueTypeSecurity An authentication/authorization/permissions issueof some kind }
-    IssueTypeLogin, {@enum.value IssueTypeLogin the client needs to initiate an authentication process }
-    IssueTypeUnknown, {@enum.value IssueTypeUnknown The user or system was not able to be authenticated (either there is no process, or the proferred token is unacceptable) }
-    IssueTypeExpired, {@enum.value IssueTypeExpired User session expired; a login may be required }
-    IssueTypeForbidden, {@enum.value IssueTypeForbidden The user does not have the rights to perform this action }
-    IssueTypeSuppressed, {@enum.value IssueTypeSuppressed Some information was not or may not have been returned due to business rules, consent or privacy rules, or access permission constraints.  This information may be accessible through alternate processes }
-    IssueTypeProcessing, {@enum.value IssueTypeProcessing Processing issues. These are expected to be final e.g. there is no point resubmitting the same content unchanged }
-    IssueTypeNotSupported, {@enum.value IssueTypeNotSupported The resource or profile is not supported }
-    IssueTypeDuplicate, {@enum.value IssueTypeDuplicate An attempt was made to create a duplicate record }
-    IssueTypeNotFound, {@enum.value IssueTypeNotFound The reference provided was not found. In a pure RESTful environment, this would be an HTTP 404 error, but this code may be used where the content is not found further into the application architecture }
-    IssueTypeTooLong, {@enum.value IssueTypeTooLong Provided content is too long (typically, this is a denial of service protection type of error) }
-    IssueTypeCodeInvalid, {@enum.value IssueTypeCodeInvalid The code or system could not be understood, or it was not valid in the context of a particular ValueSet }
-    IssueTypeExtension, {@enum.value IssueTypeExtension An extension was found that was not acceptable, or that could not be resolved, or a modifierExtension that was not recognised }
-    IssueTypeTooCostly, {@enum.value IssueTypeTooCostly The operation was stopped to protect server resources; e.g. a request for a value set expansion on all of SNOMED CT }
-    IssueTypeBusinessRule, {@enum.value IssueTypeBusinessRule The content/operation failed to pass some business rule, and so could not proceed }
-    IssueTypeConflict, {@enum.value IssueTypeConflict content could not be accepted because of an edit conflict (i.e. version aware updates) (In a pure RESTful environment, this would be an HTTP 404 error, but this code may be used where the conflict is discovered further into the application architecture) }
-    IssueTypeIncomplete, {@enum.value IssueTypeIncomplete Not all data sources typically accessed could be reached, or responded in time, so the returned information may not be complete }
-    IssueTypeTransient, {@enum.value IssueTypeTransient Transient processing issues. The system receiving the error may be able to resubmit the same content once an underlying issue is resolved }
-    IssueTypeLockError, {@enum.value IssueTypeLockError A resource/record locking failure (usually in an underlying database) }
-    IssueTypeNoStore, {@enum.value IssueTypeNoStore The persistent store unavailable; e.g. the database is down for maintenance or similar }
-    IssueTypeException, {@enum.value IssueTypeException An unexpected internal error }
-    IssueTypeTimeout, {@enum.value IssueTypeTimeout An internal timeout occurred }
-    IssueTypeThrottled, {@enum.value IssueTypeThrottled The system is not prepared to handle this request due to load management }
-    IssueTypeInformational); {@enum.value IssueTypeInformational A message unrelated to the processing success of the completed operation (Examples of the latter include things like reminders of password expiry, system maintenance times, etc.) }
+    IssueTypeInvalid, {@enum.value IssueTypeInvalid Content invalid against the specification or a profile. }
+    IssueTypeStructure, {@enum.value IssueTypeStructure A structural issue in the content such as wrong namespace, or unable to parse the content completely, or invalid json syntax. }
+    IssueTypeRequired, {@enum.value IssueTypeRequired A required element is missing. }
+    IssueTypeValue, {@enum.value IssueTypeValue An element value is invalid. }
+    IssueTypeInvariant, {@enum.value IssueTypeInvariant A content validation rule failed - e.g. a schematron rule. }
+    IssueTypeSecurity, {@enum.value IssueTypeSecurity An authentication/authorization/permissions issue of some kind. }
+    IssueTypeLogin, {@enum.value IssueTypeLogin The client needs to initiate an authentication process. }
+    IssueTypeUnknown, {@enum.value IssueTypeUnknown The user or system was not able to be authenticated (either there is no process, or the proferred token is unacceptable). }
+    IssueTypeExpired, {@enum.value IssueTypeExpired User session expired; a login may be required. }
+    IssueTypeForbidden, {@enum.value IssueTypeForbidden The user does not have the rights to perform this action. }
+    IssueTypeSuppressed, {@enum.value IssueTypeSuppressed Some information was not or may not have been returned due to business rules, consent or privacy rules, or access permission constraints.  This information may be accessible through alternate processes. }
+    IssueTypeProcessing, {@enum.value IssueTypeProcessing Processing issues. These are expected to be final e.g. there is no point resubmitting the same content unchanged. }
+    IssueTypeNotSupported, {@enum.value IssueTypeNotSupported The resource or profile is not supported. }
+    IssueTypeDuplicate, {@enum.value IssueTypeDuplicate An attempt was made to create a duplicate record. }
+    IssueTypeNotFound, {@enum.value IssueTypeNotFound The reference provided was not found. In a pure RESTful environment, this would be an HTTP 404 error, but this code may be used where the content is not found further into the application architecture. }
+    IssueTypeTooLong, {@enum.value IssueTypeTooLong Provided content is too long (typically, this is a denial of service protection type of error). }
+    IssueTypeCodeInvalid, {@enum.value IssueTypeCodeInvalid The code or system could not be understood, or it was not valid in the context of a particular ValueSet.code. }
+    IssueTypeExtension, {@enum.value IssueTypeExtension An extension was found that was not acceptable, could not be resolved, or a modifierExtension was not recognized. }
+    IssueTypeTooCostly, {@enum.value IssueTypeTooCostly The operation was stopped to protect server resources; e.g. a request for a value set expansion on all of SNOMED CT. }
+    IssueTypeBusinessRule, {@enum.value IssueTypeBusinessRule The content/operation failed to pass some business rule, and so could not proceed. }
+    IssueTypeConflict, {@enum.value IssueTypeConflict Content could not be accepted because of an edit conflict (i.e. version aware updates) (In a pure RESTful environment, this would be an HTTP 404 error, but this code may be used where the conflict is discovered further into the application architecture.) }
+    IssueTypeIncomplete, {@enum.value IssueTypeIncomplete Not all data sources typically accessed could be reached, or responded in time, so the returned information may not be complete. }
+    IssueTypeTransient, {@enum.value IssueTypeTransient Transient processing issues. The system receiving the error may be able to resubmit the same content once an underlying issue is resolved. }
+    IssueTypeLockError, {@enum.value IssueTypeLockError A resource/record locking failure (usually in an underlying database). }
+    IssueTypeNoStore, {@enum.value IssueTypeNoStore The persistent store is unavailable; e.g. the database is down for maintenance or similar action. }
+    IssueTypeException, {@enum.value IssueTypeException An unexpected internal error has occurred. }
+    IssueTypeTimeout, {@enum.value IssueTypeTimeout An internal timeout has occurred. }
+    IssueTypeThrottled, {@enum.value IssueTypeThrottled The system is not prepared to handle this request due to load management. }
+    IssueTypeInformational); {@enum.value IssueTypeInformational A message unrelated to the processing success of the completed operation (examples of the latter include things like reminders of password expiry, system maintenance times, etc.). }
   TFhirIssueTypeList = set of TFhirIssueType;
 
   {@Enum TFhirOrderStatus
-    The status of the response to an order
+    The status of the response to an order.
   }
   TFhirOrderStatus = (
     OrderStatusNull,  {@enum.value OrderStatusNull Value is missing from Instance }
@@ -1637,11 +1637,11 @@ The primary difference between a medication statement and a medication administr
     OrderStatusReview, {@enum.value OrderStatusReview The order is undergoing initial processing to determine whether it will be accepted (usually this involves human review) }
     OrderStatusRejected, {@enum.value OrderStatusRejected The order was rejected because of a workflow/business logic reason }
     OrderStatusError, {@enum.value OrderStatusError The order was unable to be processed because of a technical error (i.e. unexpected error) }
-    OrderStatusAccepted, {@enum.value OrderStatusAccepted The order has been accepted, and work is in progress }
-    OrderStatusCancelled, {@enum.value OrderStatusCancelled Processing the order was halted at the initiators request }
-    OrderStatusReplaced, {@enum.value OrderStatusReplaced The order has been cancelled and replaced by another }
-    OrderStatusAborted, {@enum.value OrderStatusAborted Processing the order was stopped because of some workflow/business logic reason }
-    OrderStatusCompleted); {@enum.value OrderStatusCompleted The order has been completed }
+    OrderStatusAccepted, {@enum.value OrderStatusAccepted The order has been accepted, and work is in progress. }
+    OrderStatusCancelled, {@enum.value OrderStatusCancelled Processing the order was halted at the initiators request. }
+    OrderStatusReplaced, {@enum.value OrderStatusReplaced The order has been cancelled and replaced by another. }
+    OrderStatusAborted, {@enum.value OrderStatusAborted Processing the order was stopped because of some workflow/business logic reason. }
+    OrderStatusCompleted); {@enum.value OrderStatusCompleted The order has been completed. }
   TFhirOrderStatusList = set of TFhirOrderStatus;
 
   {@Enum TFhirLinkType
@@ -1649,13 +1649,13 @@ The primary difference between a medication statement and a medication administr
   }
   TFhirLinkType = (
     LinkTypeNull,  {@enum.value LinkTypeNull Value is missing from Instance }
-    LinkTypeReplace, {@enum.value LinkTypeReplace The patient resource containing this link must no longer be used. The link points forward to another patient resource that must be used in lieu of the patient resource that contains the link. }
-    LinkTypeRefer, {@enum.value LinkTypeRefer The patient resource containing this link is in use and valid but not considered the main source of information about a patient. The link points forward to another patient resource that should be consulted to retrieve additional patient information }
+    LinkTypeReplace, {@enum.value LinkTypeReplace The patient resource containing this link must no longer be used. The link points forward to another patient resource that must be used in lieu of the patient resource that contains this link. }
+    LinkTypeRefer, {@enum.value LinkTypeRefer The patient resource containing this link is in use and valid but not considered the main source of information about a patient. The link points forward to another patient resource that should be consulted to retrieve additional patient information. }
     LinkTypeSeealso); {@enum.value LinkTypeSeealso The patient resource containing this link is in use and valid, but points to another patient resource that is known to contain data about the same person. Data in this resource might overlap or contradict information found in the other patient resource. This link does not indicate any relative importance of the resources concerned, and both should be regarded as equally valid. }
   TFhirLinkTypeList = set of TFhirLinkType;
 
   {@Enum TFhirIdentityAssuranceLevel
-    The level of confidence that this link represents the same actual person, based on NIST Authentication Levels
+    The level of confidence that this link represents the same actual person, based on NIST Authentication Levels.
   }
   TFhirIdentityAssuranceLevel = (
     IdentityAssuranceLevelNull,  {@enum.value IdentityAssuranceLevelNull Value is missing from Instance }
@@ -1666,35 +1666,35 @@ The primary difference between a medication statement and a medication administr
   TFhirIdentityAssuranceLevelList = set of TFhirIdentityAssuranceLevel;
 
   {@Enum TFhirProcedureStatus
-    A code specifying the state of the procedure record
+    A code specifying the state of the procedure.
   }
   TFhirProcedureStatus = (
     ProcedureStatusNull,  {@enum.value ProcedureStatusNull Value is missing from Instance }
-    ProcedureStatusInProgress, {@enum.value ProcedureStatusInProgress The procedure is still occurring }
-    ProcedureStatusAborted, {@enum.value ProcedureStatusAborted The procedure was terminated without completing successfully }
-    ProcedureStatusCompleted, {@enum.value ProcedureStatusCompleted All actions involved in the procedure have taken place }
-    ProcedureStatusEnteredInError); {@enum.value ProcedureStatusEnteredInError The statement was entered in error and Is not valid }
+    ProcedureStatusInProgress, {@enum.value ProcedureStatusInProgress The procedure is still occurring. }
+    ProcedureStatusAborted, {@enum.value ProcedureStatusAborted The procedure was terminated without completing successfully. }
+    ProcedureStatusCompleted, {@enum.value ProcedureStatusCompleted All actions involved in the procedure have taken place. }
+    ProcedureStatusEnteredInError); {@enum.value ProcedureStatusEnteredInError The statement was entered in error and Is not valid. }
   TFhirProcedureStatusList = set of TFhirProcedureStatus;
 
   {@Enum TFhirProcedureRequestStatus
-    The status of the request
+    The status of the request.
   }
   TFhirProcedureRequestStatus = (
     ProcedureRequestStatusNull,  {@enum.value ProcedureRequestStatusNull Value is missing from Instance }
-    ProcedureRequestStatusProposed, {@enum.value ProcedureRequestStatusProposed The request has been proposed }
-    ProcedureRequestStatusDraft, {@enum.value ProcedureRequestStatusDraft The request is in preliminary form, prior to being requested }
-    ProcedureRequestStatusRequested, {@enum.value ProcedureRequestStatusRequested The request has been placed }
-    ProcedureRequestStatusReceived, {@enum.value ProcedureRequestStatusReceived The receiving system has received the request but not yet decided whether it will be performed }
-    ProcedureRequestStatusAccepted, {@enum.value ProcedureRequestStatusAccepted The receiving system has accepted the request, but work has not yet commenced }
-    ProcedureRequestStatusInProgress, {@enum.value ProcedureRequestStatusInProgress The work to fulfill the request is happening }
-    ProcedureRequestStatusCompleted, {@enum.value ProcedureRequestStatusCompleted The work has been complete, the report(s) released, and no further work is planned }
-    ProcedureRequestStatusSuspended, {@enum.value ProcedureRequestStatusSuspended The request has been held by originating system/user request }
-    ProcedureRequestStatusRejected, {@enum.value ProcedureRequestStatusRejected The receiving system has declined to fulfill the request }
-    ProcedureRequestStatusAborted); {@enum.value ProcedureRequestStatusAborted The request was attempted, but due to some procedural error, it could not be completed }
+    ProcedureRequestStatusProposed, {@enum.value ProcedureRequestStatusProposed The request has been proposed. }
+    ProcedureRequestStatusDraft, {@enum.value ProcedureRequestStatusDraft The request is in preliminary form, prior to being requested. }
+    ProcedureRequestStatusRequested, {@enum.value ProcedureRequestStatusRequested The request has been placed. }
+    ProcedureRequestStatusReceived, {@enum.value ProcedureRequestStatusReceived The receiving system has received the request but not yet decided whether it will be performed. }
+    ProcedureRequestStatusAccepted, {@enum.value ProcedureRequestStatusAccepted The receiving system has accepted the request, but work has not yet commenced. }
+    ProcedureRequestStatusInProgress, {@enum.value ProcedureRequestStatusInProgress The work to fulfill the request is happening. }
+    ProcedureRequestStatusCompleted, {@enum.value ProcedureRequestStatusCompleted The work has been completed, the report(s) released, and no further work is planned. }
+    ProcedureRequestStatusSuspended, {@enum.value ProcedureRequestStatusSuspended The request has been held by originating system/user request. }
+    ProcedureRequestStatusRejected, {@enum.value ProcedureRequestStatusRejected The receiving system has declined to fulfill the request. }
+    ProcedureRequestStatusAborted); {@enum.value ProcedureRequestStatusAborted The request was attempted, but due to some procedural error, it could not be completed. }
   TFhirProcedureRequestStatusList = set of TFhirProcedureRequestStatus;
 
   {@Enum TFhirProcedureRequestPriority
-    The priority of the request
+    The priority of the request.
   }
   TFhirProcedureRequestPriority = (
     ProcedureRequestPriorityNull,  {@enum.value ProcedureRequestPriorityNull Value is missing from Instance }
@@ -1716,13 +1716,13 @@ The primary difference between a medication statement and a medication administr
   TFhirActionlistList = set of TFhirActionlist;
 
   {@Enum TFhirProvenanceEntityRole
-    How an entity was used in an activity
+    How an entity was used in an activity.
   }
   TFhirProvenanceEntityRole = (
     ProvenanceEntityRoleNull,  {@enum.value ProvenanceEntityRoleNull Value is missing from Instance }
-    ProvenanceEntityRoleDerivation, {@enum.value ProvenanceEntityRoleDerivation A transformation of an entity into another, an update of an entity resulting in a new one, or the construction of a new entity based on a preexisting entity }
+    ProvenanceEntityRoleDerivation, {@enum.value ProvenanceEntityRoleDerivation A transformation of an entity into another, an update of an entity resulting in a new one, or the construction of a new entity based on a preexisting entity. }
     ProvenanceEntityRoleRevision, {@enum.value ProvenanceEntityRoleRevision A derivation for which the resulting entity is a revised version of some original. }
-    ProvenanceEntityRoleQuotation, {@enum.value ProvenanceEntityRoleQuotation The repeat of (some or all of) an entity, such as text or image, by someone who may or may not be its original author }
+    ProvenanceEntityRoleQuotation, {@enum.value ProvenanceEntityRoleQuotation The repeat of (some or all of) an entity, such as text or image, by someone who may or may not be its original author. }
     ProvenanceEntityRoleSource); {@enum.value ProvenanceEntityRoleSource A primary source for a topic refers to something produced by some agent with direct experience and knowledge about the topic, at the time of the topic's study, without benefit from hindsight. }
   TFhirProvenanceEntityRoleList = set of TFhirProvenanceEntityRole;
 
@@ -1759,7 +1759,7 @@ The primary difference between a medication statement and a medication administr
   TFhirAnswerFormatList = set of TFhirAnswerFormat;
 
   {@Enum TFhirQuestionnaireAnswersStatus
-    Lifecycle status of the questionnaire response
+    Lifecycle status of the questionnaire response.
   }
   TFhirQuestionnaireAnswersStatus = (
     QuestionnaireAnswersStatusNull,  {@enum.value QuestionnaireAnswersStatusNull Value is missing from Instance }
@@ -1769,44 +1769,44 @@ The primary difference between a medication statement and a medication administr
   TFhirQuestionnaireAnswersStatusList = set of TFhirQuestionnaireAnswersStatus;
 
   {@Enum TFhirReferralstatus
-    The status of the referral
+    The status of the referral.
   }
   TFhirReferralstatus = (
     ReferralstatusNull,  {@enum.value ReferralstatusNull Value is missing from Instance }
-    ReferralstatusDraft, {@enum.value ReferralstatusDraft A draft referral that has yet to be send }
-    ReferralstatusRequested, {@enum.value ReferralstatusRequested The referral has been transmitted, but not yet acknowledged by the recipient }
-    ReferralstatusActive, {@enum.value ReferralstatusActive The referral has been acknowledged by the recipient, and is in the process of being actioned }
-    ReferralstatusCancelled, {@enum.value ReferralstatusCancelled The referral has been cancelled without being completed. For example it is no longer needed }
-    ReferralstatusAccepted, {@enum.value ReferralstatusAccepted The recipient has agreed to deliver the care requested by the referral }
-    ReferralstatusRejected, {@enum.value ReferralstatusRejected The recipient has declined to accept the referral }
-    ReferralstatusCompleted); {@enum.value ReferralstatusCompleted The referral has been completely actioned }
+    ReferralstatusDraft, {@enum.value ReferralstatusDraft A draft referral that has yet to be send. }
+    ReferralstatusRequested, {@enum.value ReferralstatusRequested The referral has been transmitted, but not yet acknowledged by the recipient. }
+    ReferralstatusActive, {@enum.value ReferralstatusActive The referral has been acknowledged by the recipient, and is in the process of being actioned. }
+    ReferralstatusCancelled, {@enum.value ReferralstatusCancelled The referral has been cancelled without being completed. For example it is no longer needed. }
+    ReferralstatusAccepted, {@enum.value ReferralstatusAccepted The recipient has agreed to deliver the care requested by the referral. }
+    ReferralstatusRejected, {@enum.value ReferralstatusRejected The recipient has declined to accept the referral. }
+    ReferralstatusCompleted); {@enum.value ReferralstatusCompleted The referral has been completely actioned. }
   TFhirReferralstatusList = set of TFhirReferralstatus;
 
   {@Enum TFhirSearchXpathUsage
-    How a search parameter relates to the set of elements returned by evaluating the its xpath query
+    How a search parameter relates to the set of elements returned by evaluating its xpath query.
   }
   TFhirSearchXpathUsage = (
     SearchXpathUsageNull,  {@enum.value SearchXpathUsageNull Value is missing from Instance }
-    SearchXpathUsageNormal, {@enum.value SearchXpathUsageNormal The search parameter is derived directly from the selected nodes based on the type definitions }
-    SearchXpathUsagePhonetic, {@enum.value SearchXpathUsagePhonetic The search parameter is derived by a phonetic transform from the selected nodes }
-    SearchXpathUsageNearby, {@enum.value SearchXpathUsageNearby The search parameter is based on a spatial transform of the selected nodes }
-    SearchXpathUsageDistance, {@enum.value SearchXpathUsageDistance The search parameter is based on a spatial transform of the selected nodes, using physical distance from the middle }
-    SearchXpathUsageOther); {@enum.value SearchXpathUsageOther The interpretation of the xpath statement is unknown (and can't be automated) }
+    SearchXpathUsageNormal, {@enum.value SearchXpathUsageNormal The search parameter is derived directly from the selected nodes based on the type definitions. }
+    SearchXpathUsagePhonetic, {@enum.value SearchXpathUsagePhonetic The search parameter is derived by a phonetic transform from the selected nodes. }
+    SearchXpathUsageNearby, {@enum.value SearchXpathUsageNearby The search parameter is based on a spatial transform of the selected nodes. }
+    SearchXpathUsageDistance, {@enum.value SearchXpathUsageDistance The search parameter is based on a spatial transform of the selected nodes, using physical distance from the middle. }
+    SearchXpathUsageOther); {@enum.value SearchXpathUsageOther The interpretation of the xpath statement is unknown (and can't be automated). }
   TFhirSearchXpathUsageList = set of TFhirSearchXpathUsage;
 
   {@Enum TFhirSlotstatus
-    The free/busy status of a slot
+    The free/busy status of a slot.
   }
   TFhirSlotstatus = (
     SlotstatusNull,  {@enum.value SlotstatusNull Value is missing from Instance }
     SlotstatusBusy, {@enum.value SlotstatusBusy Indicates that the time interval is busy because one  or more events have been scheduled for that interval. }
     SlotstatusFree, {@enum.value SlotstatusFree Indicates that the time interval is free for scheduling. }
     SlotstatusBusyUnavailable, {@enum.value SlotstatusBusyUnavailable Indicates that the time interval is busy and that the interval can not be scheduled. }
-    SlotstatusBusyTentative); {@enum.value SlotstatusBusyTentative Indicates that the time interval is busy because one or more events have been tentatively scheduled for that interval }
+    SlotstatusBusyTentative); {@enum.value SlotstatusBusyTentative Indicates that the time interval is busy because one or more events have been tentatively scheduled for that interval. }
   TFhirSlotstatusList = set of TFhirSlotstatus;
 
   {@Enum TFhirSpecimenStatus
-    Codes providing the status/availability of a specimen
+    Codes providing the status/availability of a specimen.
   }
   TFhirSpecimenStatus = (
     SpecimenStatusNull,  {@enum.value SpecimenStatusNull Value is missing from Instance }
@@ -1817,57 +1817,57 @@ The primary difference between a medication statement and a medication administr
   TFhirSpecimenStatusList = set of TFhirSpecimenStatus;
 
   {@Enum TFhirStructureDefinitionKind
-    Defines the type of structure that a definition is describing
+    Defines the type of structure that a definition is describing.
   }
   TFhirStructureDefinitionKind = (
     StructureDefinitionKindNull,  {@enum.value StructureDefinitionKindNull Value is missing from Instance }
-    StructureDefinitionKindDatatype, {@enum.value StructureDefinitionKindDatatype A data type - either a primitive or complex structure that defines a set of data elements. These can be used throughout Resource and extension definitions }
-    StructureDefinitionKindResource, {@enum.value StructureDefinitionKindResource A resource defined by the FHIR specification }
-    StructureDefinitionKindLogical); {@enum.value StructureDefinitionKindLogical A logical model - a conceptual package of data that will be mapped to resources for implementation }
+    StructureDefinitionKindDatatype, {@enum.value StructureDefinitionKindDatatype A data type - either a primitive or complex structure that defines a set of data elements. These can be used throughout Resource and extension definitions. }
+    StructureDefinitionKindResource, {@enum.value StructureDefinitionKindResource A resource defined by the FHIR specification. }
+    StructureDefinitionKindLogical); {@enum.value StructureDefinitionKindLogical A logical model - a conceptual package of data that will be mapped to resources for implementation. }
   TFhirStructureDefinitionKindList = set of TFhirStructureDefinitionKind;
 
   {@Enum TFhirExtensionContext
-    How an extension context is interpreted
+    How an extension context is interpreted.
   }
   TFhirExtensionContext = (
     ExtensionContextNull,  {@enum.value ExtensionContextNull Value is missing from Instance }
-    ExtensionContextResource, {@enum.value ExtensionContextResource The context is all elements matching a particular resource element path }
-    ExtensionContextDatatype, {@enum.value ExtensionContextDatatype The context is all nodes matching a particular data type element path (root or repeating element) or all elements referencing a particular primitive data type (expressed as the datatype name) }
-    ExtensionContextMapping, {@enum.value ExtensionContextMapping The context is all nodes whose mapping to a specified reference model corresponds to a particular mapping structure.  The context identifies the mapping target. The mapping should clearly identify where such an extension could be used }
-    ExtensionContextExtension); {@enum.value ExtensionContextExtension The context is a particular extension from a particular profile, a uri that identifies the extension definition }
+    ExtensionContextResource, {@enum.value ExtensionContextResource The context is all elements matching a particular resource element path. }
+    ExtensionContextDatatype, {@enum.value ExtensionContextDatatype The context is all nodes matching a particular data type element path (root or repeating element) or all elements referencing a particular primitive data type (expressed as the datatype name). }
+    ExtensionContextMapping, {@enum.value ExtensionContextMapping The context is all nodes whose mapping to a specified reference model corresponds to a particular mapping structure.  The context identifies the mapping target. The mapping should clearly identify where such an extension could be used. }
+    ExtensionContextExtension); {@enum.value ExtensionContextExtension The context is a particular extension from a particular profile, a uri that identifies the extension definition. }
   TFhirExtensionContextList = set of TFhirExtensionContext;
 
   {@Enum TFhirSubscriptionStatus
-    The status of a subscription
+    The status of a subscription.
   }
   TFhirSubscriptionStatus = (
     SubscriptionStatusNull,  {@enum.value SubscriptionStatusNull Value is missing from Instance }
-    SubscriptionStatusRequested, {@enum.value SubscriptionStatusRequested The client has requested the subscription, and the server has not yet set it up }
-    SubscriptionStatusActive, {@enum.value SubscriptionStatusActive The subscription is active }
-    SubscriptionStatusError, {@enum.value SubscriptionStatusError The server has an error executing the notification }
-    SubscriptionStatusOff); {@enum.value SubscriptionStatusOff Too many errors have occurred or the subscription has expired }
+    SubscriptionStatusRequested, {@enum.value SubscriptionStatusRequested The client has requested the subscription, and the server has not yet set it up. }
+    SubscriptionStatusActive, {@enum.value SubscriptionStatusActive The subscription is active. }
+    SubscriptionStatusError, {@enum.value SubscriptionStatusError The server has an error executing the notification. }
+    SubscriptionStatusOff); {@enum.value SubscriptionStatusOff Too many errors have occurred or the subscription has expired. }
   TFhirSubscriptionStatusList = set of TFhirSubscriptionStatus;
 
   {@Enum TFhirSubscriptionChannelType
-    The type of method used to execute a subscription
+    The type of method used to execute a subscription.
   }
   TFhirSubscriptionChannelType = (
     SubscriptionChannelTypeNull,  {@enum.value SubscriptionChannelTypeNull Value is missing from Instance }
-    SubscriptionChannelTypeRestHook, {@enum.value SubscriptionChannelTypeRestHook The channel is executed by making a post to the URI. If a payload is included, the URL is interpreted as the service base, and an update (PUT) is made }
-    SubscriptionChannelTypeWebsocket, {@enum.value SubscriptionChannelTypeWebsocket The channel is executed by sending a packet across a web socket connection maintained by the client. The URL identifies the websocket, and the client binds to this URL }
-    SubscriptionChannelTypeEmail, {@enum.value SubscriptionChannelTypeEmail The channel is executed by sending an email to the email addressed in the URI (which must be a mailto:) }
-    SubscriptionChannelTypeSms, {@enum.value SubscriptionChannelTypeSms The channel is executed by sending an SMS message to the phone number identified in the URL (tel:) }
-    SubscriptionChannelTypeMessage); {@enum.value SubscriptionChannelTypeMessage The channel Is executed by sending a message (e.g. a Bundle with a MessageHeader resource etc.) to the application identified in the URI }
+    SubscriptionChannelTypeRestHook, {@enum.value SubscriptionChannelTypeRestHook The channel is executed by making a post to the URI. If a payload is included, the URL is interpreted as the service base, and an update (PUT) is made. }
+    SubscriptionChannelTypeWebsocket, {@enum.value SubscriptionChannelTypeWebsocket The channel is executed by sending a packet across a web socket connection maintained by the client. The URL identifies the websocket, and the client binds to this URL. }
+    SubscriptionChannelTypeEmail, {@enum.value SubscriptionChannelTypeEmail The channel is executed by sending an email to the email addressed in the URI (which must be a mailto:). }
+    SubscriptionChannelTypeSms, {@enum.value SubscriptionChannelTypeSms The channel is executed by sending an SMS message to the phone number identified in the URL (tel:). }
+    SubscriptionChannelTypeMessage); {@enum.value SubscriptionChannelTypeMessage The channel is executed by sending a message (e.g. a Bundle with a MessageHeader resource etc.) to the application identified in the URI. }
   TFhirSubscriptionChannelTypeList = set of TFhirSubscriptionChannelType;
 
   {@Enum TFhirSupplydeliveryStatus
-    Status of the Supply delivery
+    Status of the supply delivery.
   }
   TFhirSupplydeliveryStatus = (
     SupplydeliveryStatusNull,  {@enum.value SupplydeliveryStatusNull Value is missing from Instance }
-    SupplydeliveryStatusInProgress, {@enum.value SupplydeliveryStatusInProgress Supply has been requested, but not delivered }
-    SupplydeliveryStatusCompleted, {@enum.value SupplydeliveryStatusCompleted Supply has been delivered. ( "completed") }
-    SupplydeliveryStatusAbandoned); {@enum.value SupplydeliveryStatusAbandoned Dispensing was not completed }
+    SupplydeliveryStatusInProgress, {@enum.value SupplydeliveryStatusInProgress Supply has been requested, but not delivered. }
+    SupplydeliveryStatusCompleted, {@enum.value SupplydeliveryStatusCompleted Supply has been delivered ("completed"). }
+    SupplydeliveryStatusAbandoned); {@enum.value SupplydeliveryStatusAbandoned Dispensing was not completed. }
   TFhirSupplydeliveryStatusList = set of TFhirSupplydeliveryStatus;
 
   {@Enum TFhirSupplyrequestStatus
@@ -1875,10 +1875,10 @@ The primary difference between a medication statement and a medication administr
   }
   TFhirSupplyrequestStatus = (
     SupplyrequestStatusNull,  {@enum.value SupplyrequestStatusNull Value is missing from Instance }
-    SupplyrequestStatusRequested, {@enum.value SupplyrequestStatusRequested Supply has been requested, but not dispensed }
-    SupplyrequestStatusCompleted, {@enum.value SupplyrequestStatusCompleted Supply has been received by the requestor }
-    SupplyrequestStatusFailed, {@enum.value SupplyrequestStatusFailed The supply will not be completed because the supplier was unable or unwilling to supply the item }
-    SupplyrequestStatusCancelled); {@enum.value SupplyrequestStatusCancelled The orderer of the supply cancelled the request }
+    SupplyrequestStatusRequested, {@enum.value SupplyrequestStatusRequested Supply has been requested, but not dispensed. }
+    SupplyrequestStatusCompleted, {@enum.value SupplyrequestStatusCompleted Supply has been received by the requestor. }
+    SupplyrequestStatusFailed, {@enum.value SupplyrequestStatusFailed The supply will not be completed because the supplier was unable or unwilling to supply the item. }
+    SupplyrequestStatusCancelled); {@enum.value SupplyrequestStatusCancelled The orderer of the supply cancelled the request. }
   TFhirSupplyrequestStatusList = set of TFhirSupplyrequestStatus;
 
   {@Enum TFhirContentType
@@ -1936,16 +1936,16 @@ The primary difference between a medication statement and a medication administr
   TFhirAssertResponseCodeTypesList = set of TFhirAssertResponseCodeTypes;
 
   {@Enum TFhirFilterOperator
-    The kind of operation to perform as a part of a property based filter
+    The kind of operation to perform as a part of a property based filter.
   }
   TFhirFilterOperator = (
     FilterOperatorNull,  {@enum.value FilterOperatorNull Value is missing from Instance }
-    FilterOperatorEqual, {@enum.value FilterOperatorEqual The specified property of the code equals the provided value }
-    FilterOperatorIsA, {@enum.value FilterOperatorIsA Includes all concept ids that have a transitive is-a relationship with the concept Id provided as the value, including the provided concept itself }
-    FilterOperatorIsNotA, {@enum.value FilterOperatorIsNotA The specified property of the code does not have an is-a relationship with the provided value }
-    FilterOperatorRegex, {@enum.value FilterOperatorRegex The specified property of the code  matches the regex specified in the provided value }
-    FilterOperatorIn, {@enum.value FilterOperatorIn The specified property of the code is in the set of codes or concepts specified in the provided value (comma separated list) }
-    FilterOperatorNotIn); {@enum.value FilterOperatorNotIn The specified property of the code is not in the set of codes or concepts specified in the provided value (comma separated list) }
+    FilterOperatorEqual, {@enum.value FilterOperatorEqual The specified property of the code equals the provided value. }
+    FilterOperatorIsA, {@enum.value FilterOperatorIsA Includes all concept ids that have a transitive is-a relationship with the concept Id provided as the value, including the provided concept itself. }
+    FilterOperatorIsNotA, {@enum.value FilterOperatorIsNotA The specified property of the code does not have an is-a relationship with the provided value. }
+    FilterOperatorRegex, {@enum.value FilterOperatorRegex The specified property of the code  matches the regex specified in the provided value. }
+    FilterOperatorIn, {@enum.value FilterOperatorIn The specified property of the code is in the set of codes or concepts specified in the provided value (comma separated list). }
+    FilterOperatorNotIn); {@enum.value FilterOperatorNotIn The specified property of the code is not in the set of codes or concepts specified in the provided value (comma separated list). }
   TFhirFilterOperatorList = set of TFhirFilterOperator;
 
   {@Enum TFhirVisionEyeCodes
@@ -4969,11 +4969,11 @@ Type
     property startElement : TFhirDateTime read FStart write SetStart;
 
     {@member end_
-      Typed access to The end of the period. If the end of the period is missing, it means that the period is ongoing. The start mey be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
+      Typed access to The end of the period. If the end of the period is missing, it means that the period is ongoing. The start may be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
     }
     property end_ : TDateAndTime read GetEnd_ST write SetEnd_ST;
     {@member end_Element
-      The end of the period. If the end of the period is missing, it means that the period is ongoing. The start mey be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
+      The end of the period. If the end of the period is missing, it means that the period is ongoing. The start may be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
     }
     property end_Element : TFhirDateTime read FEnd_ write SetEnd_;
 
@@ -6971,6 +6971,8 @@ Type
     function Clone : TFhirElementDefinitionSlicing; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
     {!script show}
   published
     {@member discriminatorList
@@ -7101,7 +7103,7 @@ Type
 
 
   {@Class TFhirElementDefinitionBase : TFhirElement
-    Information about the base definition of the element, provided to make it unncessary for tools to trace the derviation of the element through the derived and related profiles. This information is only provided where the element definition represents a constraint on another element definition, and must be present if there is a base element definition.
+    Information about the base definition of the element, provided to make it unncessary for tools to trace the deviation of the element through the derived and related profiles. This information is only provided where the element definition represents a constraint on another element definition, and must be present if there is a base element definition.
   }
   {!.Net HL7Connect.Fhir.ElementDefinitionBase}
   TFhirElementDefinitionBase = class (TFhirElement)
@@ -7130,6 +7132,8 @@ Type
     function Clone : TFhirElementDefinitionBase; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
     {!script show}
   published
     {@member path
@@ -7286,6 +7290,8 @@ Type
     function Clone : TFhirElementDefinitionType; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
     {!script show}
   published
     {@member code
@@ -7304,10 +7310,10 @@ Type
     property hasProfileList : boolean read GetHasProfileList;
 
     {@member aggregation
-      If the type is a reference to another resource, how the resource is or can be aggreated - is it a contained resource, or a reference, and if the context is a bundle, is it included in the bundle.
+      If the type is a reference to another resource, how the resource is or can be aggregated - is it a contained resource, or a reference, and if the context is a bundle, is it included in the bundle.
     }
     property aggregation : TFhirResourceAggregationModeList read GetAggregationST write SetAggregationST;
-    property aggregationElement : TFhirEnumList read GetAggregation;
+    property aggregationList : TFhirEnumList read GetAggregation;
     property hasAggregation : boolean read GetHasAggregation;
   end;
 
@@ -7444,6 +7450,8 @@ Type
     function Clone : TFhirElementDefinitionConstraint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
     {!script show}
   published
     {@member key
@@ -7613,6 +7621,8 @@ Type
     function Clone : TFhirElementDefinitionBinding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
     {!script show}
   published
     {@member strength
@@ -7766,6 +7776,8 @@ Type
     function Clone : TFhirElementDefinitionMapping; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
     {!script show}
   published
     {@member identity
@@ -8026,7 +8038,7 @@ Type
       Codes that define how this element is represented in instances, when the deviation varies from the normal case.
     }
     property representation : TFhirPropertyRepresentationList read GetRepresentationST write SetRepresentationST;
-    property representationElement : TFhirEnumList read GetRepresentation;
+    property representationList : TFhirEnumList read GetRepresentation;
     property hasRepresentation : boolean read GetHasRepresentation;
     {@member name
       Typed access to The name of this element definition (to refer to it from other element definitions using ElementDefinition.nameReference). This is a unique name referring to a specific set of constraints applied to this element. One use of this is to provide a name to different slices of the same element.
@@ -8122,11 +8134,11 @@ Type
     property maxElement : TFhirString read FMax write SetMax;
 
     {@member base
-      Typed access to Information about the base definition of the element, provided to make it unncessary for tools to trace the derviation of the element through the derived and related profiles. This information is only provided where the element definition represents a constraint on another element definition, and must be present if there is a base element definition. (defined for API consistency)
+      Typed access to Information about the base definition of the element, provided to make it unncessary for tools to trace the deviation of the element through the derived and related profiles. This information is only provided where the element definition represents a constraint on another element definition, and must be present if there is a base element definition. (defined for API consistency)
     }
     property base : TFhirElementDefinitionBase read FBase write SetBase;
     {@member baseElement
-      Information about the base definition of the element, provided to make it unncessary for tools to trace the derviation of the element through the derived and related profiles. This information is only provided where the element definition represents a constraint on another element definition, and must be present if there is a base element definition.
+      Information about the base definition of the element, provided to make it unncessary for tools to trace the deviation of the element through the derived and related profiles. This information is only provided where the element definition represents a constraint on another element definition, and must be present if there is a base element definition.
     }
     property baseElement : TFhirElementDefinitionBase read FBase write SetBase;
 
@@ -8164,20 +8176,20 @@ Type
     property meaningWhenMissingElement : TFhirString read FMeaningWhenMissing write SetMeaningWhenMissing;
 
     {@member fixed
-      Typed access to Specifies a value that SHALL be exactly the value  for this element in the instance. For purposes of comparison, non-signficant whitespace is ignored, and all values must be an exact match (case and accent sensitive). Missing elements/attributes must also be missing. (defined for API consistency)
+      Typed access to Specifies a value that SHALL be exactly the value  for this element in the instance. For purposes of comparison, non-significant whitespace is ignored, and all values must be an exact match (case and accent sensitive). Missing elements/attributes must also be missing. (defined for API consistency)
     }
     property fixed : TFhirType read FFixed write SetFixed;
     {@member fixedElement
-      Specifies a value that SHALL be exactly the value  for this element in the instance. For purposes of comparison, non-signficant whitespace is ignored, and all values must be an exact match (case and accent sensitive). Missing elements/attributes must also be missing.
+      Specifies a value that SHALL be exactly the value  for this element in the instance. For purposes of comparison, non-significant whitespace is ignored, and all values must be an exact match (case and accent sensitive). Missing elements/attributes must also be missing.
     }
     property fixedElement : TFhirType read FFixed write SetFixed;
 
     {@member pattern
-      Typed access to Specifies a value that the value in the instance SHALL follow - that is, any value in the pattern must be found in the instance. Other additional values may be found too. This is effectively constraint by example.  The values of elements present in the pattern must match exactly (case-senstive, accent-sensitive, etc.). (defined for API consistency)
+      Typed access to Specifies a value that the value in the instance SHALL follow - that is, any value in the pattern must be found in the instance. Other additional values may be found too. This is effectively constraint by example.  The values of elements present in the pattern must match exactly (case-sensitive, accent-sensitive, etc.). (defined for API consistency)
     }
     property pattern : TFhirType read FPattern write SetPattern;
     {@member patternElement
-      Specifies a value that the value in the instance SHALL follow - that is, any value in the pattern must be found in the instance. Other additional values may be found too. This is effectively constraint by example.  The values of elements present in the pattern must match exactly (case-senstive, accent-sensitive, etc.).
+      Specifies a value that the value in the instance SHALL follow - that is, any value in the pattern must be found in the instance. Other additional values may be found too. This is effectively constraint by example.  The values of elements present in the pattern must match exactly (case-sensitive, accent-sensitive, etc.).
     }
     property patternElement : TFhirType read FPattern write SetPattern;
 
@@ -8428,6 +8440,8 @@ Type
     function Clone : TFhirTimingRepeat; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
     {!script show}
   published
     {@member bounds
@@ -8660,11 +8674,11 @@ Type
     property repeat_Element : TFhirTimingRepeat read FRepeat_ write SetRepeat_;
 
     {@member code
-      Typed access to A code for the timing pattern. Some codes such as BID are uniquitious, but many institutions define their own additional codes. (defined for API consistency)
+      Typed access to A code for the timing pattern. Some codes such as BID are ubiquitous, but many institutions define their own additional codes. (defined for API consistency)
     }
     property code : TFhirCodeableConcept read FCode write SetCode;
     {@member codeElement
-      A code for the timing pattern. Some codes such as BID are uniquitious, but many institutions define their own additional codes.
+      A code for the timing pattern. Some codes such as BID are ubiquitous, but many institutions define their own additional codes.
     }
     property codeElement : TFhirCodeableConcept read FCode write SetCode;
 
@@ -9255,7 +9269,7 @@ Type
     property hasSecurityList : boolean read GetHasSecurityList;
 
     {@member tagList
-      Tags applied to this resource. Tags are intended to to be used to identify and relate resources to process and workflow, and applications are not required to consider the tags when interpreting the meaning of a resource.
+      Tags applied to this resource. Tags are intended to be used to identify and relate resources to process and workflow, and applications are not required to consider the tags when interpreting the meaning of a resource.
     }
     property tagList : TFhirCodingList read GetTagList;
     property hasTagList : boolean read GetHasTagList;
@@ -9358,7 +9372,7 @@ Type
 
 
   {@Class TFhirContactPoint : TFhirType
-    Details for All kinds of technology mediated contact points for a person or organization, including telephone, email, etc.
+    Details for all kinds of technology mediated contact points for a person or organization, including telephone, email, etc.
   }
   {!.Net HL7Connect.Fhir.ContactPoint}
   TFhirContactPoint = class (TFhirType)
@@ -9652,14 +9666,9 @@ Const
   CODES_TFhirObservationRelationshiptypes : Array[TFhirObservationRelationshiptypes] of String = ('', 'has-member', 'derived-from', 'sequel-to', 'replaces', 'qualified-by', 'interfered-by');
   CODES_TFhirOperationKind : Array[TFhirOperationKind] of String = ('', 'operation', 'query');
   CODES_TFhirOperationParameterUse : Array[TFhirOperationParameterUse] of String = ('', 'in', 'out');
-  CODES_TFhirValuesetOperationParameterType : Array[TFhirValuesetOperationParameterType] of String = ('', 'number', 'date', 'string', 'token', 'reference', 'composite', 'quantity', 'uri', 'Address', 'Age',
-  'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta',
-  'Money', 'Narrative', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'base64Binary', 'boolean', 'code', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown',
-  'oid', 'positiveInt', 'time', 'unsignedInt', 'uuid', 'xhtml', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'Communication', 'CommunicationRequest', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage', 'DataElement',
-  'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal',
-   'Group', 'HealthcareService', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome',
-   'Order', 'OrderResponse', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Slot', 'Specimen',
-   'StructureDefinition', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'TestScript', 'ValueSet', 'VisionPrescription');
+  CODES_TFhirValuesetOperationParameterType : Array[TFhirValuesetOperationParameterType] of String = ('', 'number', 'date', 'string', 'token', 'reference', 'composite', 'quantity', 'uri', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'base64Binary', 'boolean', 'code', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'time', 'unsignedInt', 'uuid', 'xhtml', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'Communication', 'CommunicationRequest', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage',
+  'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'HealthcareService', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance',
+  'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Slot', 'Specimen', 'StructureDefinition', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'TestScript', 'ValueSet', 'VisionPrescription');
   CODES_TFhirIssueSeverity : Array[TFhirIssueSeverity] of String = ('', 'fatal', 'error', 'warning', 'information');
   CODES_TFhirIssueType : Array[TFhirIssueType] of String = ('', 'invalid', 'structure', 'required', 'value', 'invariant', 'security', 'login', 'unknown', 'expired', 'forbidden', 'suppressed', 'processing', 'not-supported', 'duplicate', 'not-found', 'too-long', 'code-invalid', 'extension', 'too-costly', 'business-rule', 'conflict', 'incomplete', 'transient', 'lock-error', 'no-store', 'exception', 'timeout', 'throttled', 'informational');
   CODES_TFhirOrderStatus : Array[TFhirOrderStatus] of String = ('', 'pending', 'review', 'rejected', 'error', 'accepted', 'cancelled', 'replaced', 'aborted', 'completed');
@@ -9971,6 +9980,9 @@ Function TFhirVisionBaseCodesListAsInteger(aSet : TFhirVisionBaseCodesList) : In
 Function IntegerAsTFhirVisionBaseCodesList(i : integer) : TFhirVisionBaseCodesList; overload;
 
 implementation
+
+uses
+  FHIRUtilities;
 
 { TFhirElement }
 
@@ -11591,7 +11603,7 @@ end;
 
 function TFhirBase64Binary.AsStringValue : string;
 begin
-  if (length(FValue) = 0) then result := '' else result := EncodeBase64(@FValue[0], length(FValue));
+  if (length(FValue) = 0) then result := '' else result := String(EncodeBase64(@FValue[0], length(FValue)));
 end;
 
 function TFhirBase64Binary.Link : TFhirBase64Binary;
@@ -17720,6 +17732,38 @@ begin
   result := TFhirElementDefinitionSlicing(inherited Clone);
 end;
 
+function TFhirElementDefinitionSlicing.equalsDeep(other : TFHIRObject) : boolean;
+var
+  o : TFhirElementDefinitionSlicing;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionSlicing)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionSlicing(other);
+    result := compareDeep(discriminatorList, o.discriminatorList, true) and compareDeep(descriptionElement, o.descriptionElement, true) and 
+      compareDeep(orderedElement, o.orderedElement, true) and compareDeep(rulesElement, o.rulesElement, true);
+  end;
+end;
+
+function TFhirElementDefinitionSlicing.equalsShallow(other : TFHIRObject) : boolean;
+var
+  o : TFhirElementDefinitionSlicing;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionSlicing)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionSlicing(other);
+    result := compareValues(discriminatorList, o.discriminatorList, true) and compareValues(descriptionElement, o.descriptionElement, true) and 
+      compareValues(orderedElement, o.orderedElement, true) and compareValues(rulesElement, o.rulesElement, true);
+  end;
+end;
+
 { TFhirElementDefinitionSlicing }
 
 Function TFhirElementDefinitionSlicing.GetDiscriminatorList : TFhirStringList;
@@ -17988,6 +18032,38 @@ end;
 function TFhirElementDefinitionBase.Clone : TFhirElementDefinitionBase;
 begin
   result := TFhirElementDefinitionBase(inherited Clone);
+end;
+
+function TFhirElementDefinitionBase.equalsDeep(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionBase;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionBase)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionBase(other);
+    result := compareDeep(pathElement, o.pathElement, true) and compareDeep(minElement, o.minElement, true) and 
+      compareDeep(maxElement, o.maxElement, true);
+  end;
+end;
+
+function TFhirElementDefinitionBase.equalsShallow(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionBase;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionBase)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionBase(other);
+    result := compareValues(pathElement, o.pathElement, true) and compareValues(minElement, o.minElement, true) and 
+      compareValues(maxElement, o.maxElement, true);
+  end;
 end;
 
 { TFhirElementDefinitionBase }
@@ -18281,6 +18357,38 @@ begin
   result := TFhirElementDefinitionType(inherited Clone);
 end;
 
+function TFhirElementDefinitionType.equalsDeep(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionType;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionType)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionType(other);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(profileList, o.profileList, true) and 
+      compareDeep(aggregationList, o.aggregationList, true);
+  end;
+end;
+
+function TFhirElementDefinitionType.equalsShallow(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionType;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionType)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionType(other);
+    result := compareValues(codeElement, o.codeElement, true) and compareValues(profileList, o.profileList, true) and 
+      compareValues(aggregationList, o.aggregationList, true);
+  end;
+end;
+
 { TFhirElementDefinitionType }
 
 Procedure TFhirElementDefinitionType.SetCode(value : TFhirCode);
@@ -18552,6 +18660,40 @@ end;
 function TFhirElementDefinitionConstraint.Clone : TFhirElementDefinitionConstraint;
 begin
   result := TFhirElementDefinitionConstraint(inherited Clone);
+end;
+
+function TFhirElementDefinitionConstraint.equalsDeep(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionConstraint;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionConstraint)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionConstraint(other);
+    result := compareDeep(keyElement, o.keyElement, true) and compareDeep(requirementsElement, o.requirementsElement, true) and 
+      compareDeep(severityElement, o.severityElement, true) and compareDeep(humanElement, o.humanElement, true) and 
+      compareDeep(xpathElement, o.xpathElement, true);
+  end;
+end;
+
+function TFhirElementDefinitionConstraint.equalsShallow(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionConstraint;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionConstraint)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionConstraint(other);
+    result := compareValues(keyElement, o.keyElement, true) and compareValues(requirementsElement, o.requirementsElement, true) and 
+      compareValues(severityElement, o.severityElement, true) and compareValues(humanElement, o.humanElement, true) and 
+      compareValues(xpathElement, o.xpathElement, true);
+  end;
 end;
 
 { TFhirElementDefinitionConstraint }
@@ -18869,6 +19011,37 @@ begin
   result := TFhirElementDefinitionBinding(inherited Clone);
 end;
 
+function TFhirElementDefinitionBinding.equalsDeep(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionBinding;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionBinding)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionBinding(other);
+    result := compareDeep(strengthElement, o.strengthElement, true) and compareDeep(descriptionElement, o.descriptionElement, true) and 
+      compareDeep(valueSetElement, o.valueSetElement, true);
+  end;
+end;
+
+function TFhirElementDefinitionBinding.equalsShallow(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionBinding;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionBinding)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionBinding(other);
+    result := compareValues(strengthElement, o.strengthElement, true) and compareValues(descriptionElement, o.descriptionElement, true);
+  end;
+end;
+
 { TFhirElementDefinitionBinding }
 
 Procedure TFhirElementDefinitionBinding.SetStrength(value : TFhirEnum);
@@ -19116,6 +19289,38 @@ end;
 function TFhirElementDefinitionMapping.Clone : TFhirElementDefinitionMapping;
 begin
   result := TFhirElementDefinitionMapping(inherited Clone);
+end;
+
+function TFhirElementDefinitionMapping.equalsDeep(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionMapping;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionMapping)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionMapping(other);
+    result := compareDeep(identityElement, o.identityElement, true) and compareDeep(languageElement, o.languageElement, true) and 
+      compareDeep(mapElement, o.mapElement, true);
+  end;
+end;
+
+function TFhirElementDefinitionMapping.equalsShallow(other : TFHIRObject) : boolean; 
+var
+  o : TFhirElementDefinitionMapping;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirElementDefinitionMapping)) then
+    result := false
+  else
+  begin
+    o := TFhirElementDefinitionMapping(other);
+    result := compareValues(identityElement, o.identityElement, true) and compareValues(languageElement, o.languageElement, true) and 
+      compareValues(mapElement, o.mapElement, true);
+  end;
 end;
 
 { TFhirElementDefinitionMapping }
@@ -20440,6 +20645,45 @@ end;
 function TFhirTimingRepeat.Clone : TFhirTimingRepeat;
 begin
   result := TFhirTimingRepeat(inherited Clone);
+end;
+
+function TFhirTimingRepeat.equalsDeep(other : TFHIRObject) : boolean; 
+var
+  o : TFhirTimingRepeat;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirTimingRepeat)) then
+    result := false
+  else
+  begin
+    o := TFhirTimingRepeat(other);
+    result := compareDeep(boundsElement, o.boundsElement, true) and compareDeep(countElement, o.countElement, true) and 
+      compareDeep(durationElement, o.durationElement, true) and compareDeep(durationMaxElement, o.durationMaxElement, true) and 
+      compareDeep(durationUnitsElement, o.durationUnitsElement, true) and compareDeep(frequencyElement, o.frequencyElement, true) and 
+      compareDeep(frequencyMaxElement, o.frequencyMaxElement, true) and compareDeep(periodElement, o.periodElement, true) and 
+      compareDeep(periodMaxElement, o.periodMaxElement, true) and compareDeep(periodUnitsElement, o.periodUnitsElement, true) and 
+      compareDeep(whenElement, o.whenElement, true);
+  end;
+end;
+
+function TFhirTimingRepeat.equalsShallow(other : TFHIRObject) : boolean; 
+var
+  o : TFhirTimingRepeat;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirTimingRepeat)) then
+    result := false
+  else
+  begin
+    o := TFhirTimingRepeat(other);
+    result := compareValues(countElement, o.countElement, true) and compareValues(durationElement, o.durationElement, true) and 
+      compareValues(durationMaxElement, o.durationMaxElement, true) and compareValues(durationUnitsElement, o.durationUnitsElement, true) and 
+      compareValues(frequencyElement, o.frequencyElement, true) and compareValues(frequencyMaxElement, o.frequencyMaxElement, true) and 
+      compareValues(periodElement, o.periodElement, true) and compareValues(periodMaxElement, o.periodMaxElement, true) and 
+      compareValues(periodUnitsElement, o.periodUnitsElement, true) and compareValues(whenElement, o.whenElement, true);
+  end;
 end;
 
 { TFhirTimingRepeat }

@@ -32,6 +32,7 @@ interface
 
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
+  AdvExceptions,
   SystemService, SystemSupport,
   SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
   LoincImporter, LoincServices,
@@ -82,93 +83,112 @@ procedure ExecuteFhirServer;
 
 implementation
 
+uses
+  JclDebug;
+
+procedure CauseException;
+begin
+  raise Exception.Create('Test');
+end;
+
 procedure ExecuteFhirServer;
 var
   iniName : String;
   svcName : String;
   dispName : String;
-  dir, dir2, fn, ver, lver : String;
+  dir, fn, ver, lver : String;
   svc : TFHIRService;
+
+  lines : TStringList;
+  s : String;
 begin
-  CoInitialize(nil);
-  if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
-  begin
-    if FileExists(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.local.ini') then
-      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.local.ini'
-    else
-      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.ini';
-  end;
-
-  if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
-    svcName := 'fhirserver';
-  if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
-    dispName := 'FHIR Server';
-  iniName := iniName.replace('.dstu', '.dev');
-  writelnt('FHIR Service (DEV). Using ini file '+iniName);
-  dispName := dispName + ' (DEV)';
-
-
-  svc := TFHIRService.Create(svcName, dispName, iniName);
   try
-    if FindCmdLineSwitch('upgrade') then
-      svc.UpgradeDatabase
-    else if FindCmdLineSwitch('mount') then
-      svc.InstallDatabase
-    else if FindCmdLineSwitch('unmount') then
-      svc.UninstallDatabase
-    else if FindCmdLineSwitch('remount') then
+    CoInitialize(nil);
+    if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
     begin
-      svc.FNotServing := true;
-      svc.UninstallDatabase;
-      svc.InstallDatabase;
-      if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-        svc.LoadByProfile(fn, true)
-      else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
-        svc.Load(fn);
-    end
-    else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-      svc.LoadByProfile(fn, false)
-    else if FindCmdLineSwitch('index') then
-      svc.index
-    else if FindCmdLineSwitch('tests') then
-      svc.ExecuteTests
-    else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
+      if FileExists(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.local.ini') then
+        iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.local.ini'
+      else
+        iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.ini';
+    end;
+
+    if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
+      svcName := 'fhirserver';
+    if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
+      dispName := 'FHIR Server';
+    iniName := iniName.replace('.dstu', '.dev');
+    writelnt('FHIR Service (DEV). Using ini file '+iniName);
+    dispName := dispName + ' (DEV)';
+
+
+    svc := TFHIRService.Create(svcName, dispName, iniName);
+    try
+      if FindCmdLineSwitch('upgrade') then
+        svc.UpgradeDatabase
+      else if FindCmdLineSwitch('mount') then
+        svc.InstallDatabase
+      else if FindCmdLineSwitch('unmount') then
+        svc.UninstallDatabase
+      else if FindCmdLineSwitch('remount') then
+      begin
+        svc.FNotServing := true;
+        svc.UninstallDatabase;
+        svc.InstallDatabase;
+        if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+          svc.LoadByProfile(fn, true)
+        else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
+          svc.Load(fn);
+      end
+      else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+        svc.LoadByProfile(fn, false)
+      else if FindCmdLineSwitch('index') then
+        svc.index
+      else if FindCmdLineSwitch('tests') then
+        svc.ExecuteTests
+      else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
+      begin
+        FindCmdLineSwitch('version', ver, true, [clstValueNextParam]);
+        svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
+      end
+      else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
+      begin
+        FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
+        svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
+      end
+      else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
+        svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+      else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+      begin
+        svc.ConnectToDatabase;
+        ImportUnii(fn, TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
+          svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('database', 'tx', ''),
+          svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')));
+      end
+      else if FindCmdLineSwitch('rxstems', dir, true, []) then
+      begin
+        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
+          svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('RxNorm', 'database', ''),
+          svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
+      end
+      else if FindCmdLineSwitch('ncistems', dir, true, []) then
+      begin
+        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
+          svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('NciMeta', 'database', ''),
+          svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
+      end
+  //    procedure ReIndex;
+  //    procedure clear(types : String);
+      else
+        svc.Execute;
+    finally
+      svc.Free;
+    end;
+  except
+    on e : Exception do
     begin
-      FindCmdLineSwitch('version', ver, true, [clstValueNextParam]);
-      svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
-    end
-    else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
-    begin
-      FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
-      svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
-    end
-    else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
-      svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
-    else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-    begin
-      svc.ConnectToDatabase;
-      ImportUnii(fn, TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
-        svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('database', 'tx', ''),
-        svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')));
-    end
-    else if FindCmdLineSwitch('rxstems', dir, true, []) then
-    begin
-      generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
-        svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('RxNorm', 'database', ''),
-        svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
-    end
-    else if FindCmdLineSwitch('ncistems', dir, true, []) then
-    begin
-      generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
-        svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('NciMeta', 'database', ''),
-        svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
-    end
-//    procedure ReIndex;
-//    procedure clear(types : String);
-    else
-      svc.Execute;
-  finally
-    svc.Free;
+      Writeln(E.ClassName, ': ', E.Message+#13#10#13#10+ExceptionStack(e));
+      raise;
+    end;
   end;
 end;
 
@@ -226,6 +246,7 @@ begin
     on e : Exception do
     begin
       writelnt(e.Message);
+      recordStack(e);
       raise;
     end;
   end;
@@ -349,7 +370,6 @@ end;
 procedure TFHIRService.Load(fn: String);
 var
   f : TFileStream;
-  cursor : integer;
 begin
   FNotServing := true;
   if FDb = nil then
@@ -434,9 +454,7 @@ var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
   scim : TSCIMServer;
-  store : TFHIRDataStore;
-  op : TFhirOperationManager;
-  salt, un, pw, em : String;
+  salt : String;
 begin
   if FDb = nil then
     ConnectToDatabase;
@@ -461,6 +479,7 @@ begin
        begin
          writelnt('Error: '+e.Message);
          conn.Error(e);
+         recordStack(e);
          raise;
        end;
     end;
@@ -492,8 +511,6 @@ var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
   scim : TSCIMServer;
-  store : TFHIRDataStore;
-  op : TFhirOperationManager;
   salt, un, pw, em : String;
 begin
   // check that user account details are provided
@@ -536,6 +553,7 @@ begin
        begin
          writelnt('Error: '+e.Message);
          conn.Error(e);
+         recordStack(e);
          raise;
        end;
     end;
@@ -567,6 +585,7 @@ begin
      begin
        writelnt('Error: '+e.Message);
        conn.Error(e);
+       recordStack(e);
        raise;
      end;
   end;

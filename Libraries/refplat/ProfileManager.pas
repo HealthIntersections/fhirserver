@@ -16,7 +16,7 @@ Type
     lock : TCriticalSection;
     FProfilesById : TAdvMap<TFHIRStructureDefinition>; // all current profiles by identifier (ValueSet.identifier)
     FProfilesByURL : TAdvMap<TFHIRStructureDefinition>; // all current profiles by their URL
-    FExtensions : TAdvStringObjectMatch;
+//    FExtensions : TAdvStringObjectMatch;
     function GetProfileByUrl(url: String): TFHirStructureDefinition;
     function GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition; // all profiles by the key they are known from (mainly to support drop)
 
@@ -86,9 +86,9 @@ begin
 end;
 
 function TProfileManager.getExtensionDefn(source: TFHirStructureDefinition; url: String; var profile: TFHirStructureDefinition; var extension : TFHirStructureDefinition): boolean;
-var
-  id, code : String;
-  i : integer;
+//var
+//  id, code : String;
+//  i : integer;
 begin
   raise Exception.Create('not done yet');
 {  result := false;
@@ -121,22 +121,18 @@ end;
 
 function TProfileManager.getLinks(non_resources : boolean): TAdvStringMatch;
 var
-  i, j : integer;
   p : TFHirStructureDefinition;
   url : String;
 begin
-  raise Exception.Create('not done yet');
-{
   lock.Lock('getLinks');
   try
     result := TAdvStringMatch.Create;
     try
-      for i := 0 to FProfilesByURL.Count - 1 do
+      for url in FProfilesByURL.Keys do
       begin
-        url := FProfilesByURL.KeyByIndex[i];
         if (not url.startsWith('http:')) then
         begin
-          p := TFHirStructureDefinition(FProfilesByURL.ValueByIndex[i]);
+          p := FProfilesByURL[url];
           if non_resources or StringArrayExistsSensitive(CODES_TFhirResourceType, p.snapshot.elementList[0].path) then
             result.Add(url, p.name);
         end;
@@ -148,7 +144,6 @@ begin
   finally
     lock.Unlock;
   end;
-  }
 end;
 
 function TProfileManager.GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition;
@@ -167,10 +162,8 @@ end;
 function TProfileManager.getProfileStructure(source: TFHirStructureDefinition; url: String; var profile: TFHirStructureDefinition): boolean;
 var
   id, code : String;
-  i : integer;
 begin
-  raise Exception.Create('not done yet');
-{  result := false;
+  result := false;
   if url.StartsWith('#') then
   begin
     profile := source;
@@ -181,20 +174,20 @@ begin
     StringSplit(url, '#', id, code);
     lock.Lock;
     try
-      profile := FProfilesByIdentifier.Matches[id] as TFHirStructureDefinition;
+      profile := FProfilesByURL[id].Link;
     finally
       lock.Unlock;
     end;
   end;
 
-{  if (profile <> nil) then
+  if profile = nil then
+    result := false
+  else
   begin
-    structure := nil;
-    for i := 0 to profile.structureList.Count - 1 do
-      if profile.structureList[i].name = code then
-        structure := profile.structureList[i];
-    result := structure <> nil;
-  end;}
+    result := true;
+  end;
+  if (code <> '') then
+    raise Exception.Create('Not Done Yet');
 end;
 
 function TProfileManager.Link: TProfileManager;

@@ -35,26 +35,9 @@ Uses
   IdSoapXml,
   StringSupport, MathSupport,
   AdvObjects, AdvGenerics, AdvJSON, AdvObjectLists, Advbuffers, AdvNameBuffers, AdvMemories, AdvFiles, AdvVclStreams,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRParser;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRParser, FHIRProfileUtilities;
 
 Type
-  TValidationResult = class (TAdvObject)
-  private
-    FSeverity : TFhirIssueSeverity;
-    FMessage  : String;
-  public
-    Property Severity : TFhirIssueSeverity read FSeverity write FSeverity;
-    Property Message : String read FMessage write FMessage;
-    function isOk : boolean;
-  end;
-
-  TValidatorServiceProvider = {abstract} class
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; virtual; abstract;
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; virtual; abstract;
-    function supportsSystem(system : string) : boolean; virtual; abstract;
-    function validateCode(system, code, display : String) : TValidationResult; virtual; abstract;
-  end;
-
   TWrapperElement = class (TAdvObject)
   private
     FOwned : TAdvObjectList;
@@ -91,7 +74,7 @@ Type
     element : TWrapperElement;
     definition : TFHIRElementDefinition;
     type_ : TFHIRElementDefinition;
-    extension : TFHIRElementDefinition;
+//    extension : TFHIRElementDefinition;
     function push(element : TWrapperElement; count : integer;  definition : TFHIRElementDefinition; type_ : TFHIRElementDefinition) : TNodeStack;
 		function addToLiteralPath(path : Array of String) : String;
   public
@@ -135,6 +118,7 @@ Type
   private
     // configuration items
     FContext : TValidatorServiceProvider;
+    Fowns : boolean;
     FCheckDisplay : TCheckDisplayOption;
     FBPWarnings : TBestPracticeWarningLevel;
     FSuppressLoincSnomedMessages : boolean;
@@ -148,7 +132,7 @@ Type
     function hint(errors : TFhirOperationOutcomeIssueList; t : TFhirIssueType; line, col : integer; path : String; thePass : boolean; msg : String) : boolean;
     procedure bpCheck(errors : TFhirOperationOutcomeIssueList; t : TFhirIssueType; line, col : integer; literalPath : String; test : boolean; message : String);
 
-    function isKnownType(code : String) : boolean;
+//    function isKnownType(code : String) : boolean;
     function genFullUrl(bundleBase, entryBase, ty, id : String) : String;
     function empty(element : TWrapperElement) : boolean;
     Function resolveInBundle(entries : TAdvList<TWrapperElement>; ref, fullUrl, type_, id : String) : TWrapperElement;
@@ -166,9 +150,9 @@ Type
     function getContainedById(container : TWrapperElement; id : String) : TWrapperElement;
     function resolveProfile(profile : TFHIRStructureDefinition; pr : String): TFHIRStructureDefinition;
     function checkExtensionContext(errors : TFhirOperationOutcomeIssueList; element : TWrapperElement; definition : TFHIRStructureDefinition; stack : TNodeStack; extensionParent : String) : boolean;
-    function getElementByPath(definition : TFHIRStructureDefinition; path : String) : TFHIRElementDefinition;
+//    function getElementByPath(definition : TFHIRStructureDefinition; path : String) : TFHIRElementDefinition;
     function findElement(profile : TFHIRStructureDefinition; name : String) : TFHIRElementDefinition;
-    function getDefinitionByTailNameChoice(children : TFHIRElementDefinitionList; name : String) : TFHIRElementDefinition;
+//    function getDefinitionByTailNameChoice(children : TFHIRElementDefinitionList; name : String) : TFHIRElementDefinition;
     function resolveBindingReference(reference : TFHIRType) : TFHIRValueSet;
     function getExtensionByUrl(extensions : TAdvList<TWrapperElement>; url : String) : TWrapperElement;
 
@@ -212,7 +196,7 @@ Type
     procedure start(errors : TFhirOperationOutcomeIssueList; element : TWrapperElement; profile : TFHIRStructureDefinition; stack : TNodeStack);
     procedure validateResource(errors : TFhirOperationOutcomeIssueList; element : TWrapperElement; profile : TFHIRStructureDefinition; needsId :  boolean; stack : TNodeStack);
   public
-    Constructor create(context : TValidatorServiceProvider);
+    Constructor create(context : TValidatorServiceProvider; owns : boolean);
     Destructor Destroy; Override;
     Property CheckDisplay : TCheckDisplayOption read FCheckDisplay write FCheckDisplay;
     Property BPWarnings : TBestPracticeWarningLevel read FBPWarnings write FBPWarnings;
@@ -634,15 +618,17 @@ var
     _e := TJsonObject(element).obj['_'+name];
 
   if (e is TJsonValue or ((e = nil) and (_e <> nil) and not (_e is TJsonArray))) then
-          begin
+  begin
     children.add(TJsonWrapperElement.Create(path, name, e, _e, self, children.Count));
-          end
+  end
   else if (e is TJsonArray) or ((e = nil) and (_e <> nil)) then
-          begin
+  begin
     arr := TJsonArray(e);
 		_arr := TJsonArray(_e);
     if arr <> nil then
-      max :=  arr.Count;
+      max :=  arr.Count
+    else
+      max := 0;
     if (_arr <> nil) and (_arr.Count > max) then
       max := _arr.Count;
       for i := 0 to max - 1 do
@@ -933,15 +919,17 @@ end;
 
 { TFHIRInstanceValidator }
 
-constructor TFHIRInstanceValidator.create(context: TValidatorServiceProvider);
+constructor TFHIRInstanceValidator.create(context: TValidatorServiceProvider; owns : boolean);
 begin
   inherited Create;
   FContext := context;
+  FOwns := owns;
 end;
 
 destructor TFHIRInstanceValidator.Destroy;
 begin
-  FContext.Free;
+  if FOwns then
+    FContext.Free;
   inherited;
 end;
 
@@ -1309,16 +1297,6 @@ begin
     SameText(t, 'uri') or SameText(t, 'base64Binary') or SameText(t, 'instant') or SameText(t, 'date') or
     SameText(t, 'uuid') or SameText(t, 'id') or SameText(t, 'xhtml') or SameText(t, 'markdown') or
     SameText(t, 'dateTime') or SameText(t, 'time') or SameText(t, 'code') or SameText(t, 'oid') or SameText(t, 'id');
-end;
-
-function uncapitalize(s : String) : string;
-begin
-  result := Lowercase(s[1])+s.Substring(1);
-end;
-
-function capitalize(s : String) : string;
-begin
-  result := UpperCase(s[1])+s.Substring(1);
 end;
 
 function describeTypes(types : TFhirElementDefinitionTypeList) : String;
@@ -1695,7 +1673,7 @@ end;
 function TFHIRInstanceValidator.getCriteriaForDiscriminator(path : String; ed : TFHIRElementDefinition; discriminator : String; profile : TFHIRStructureDefinition) : TFHIRElementDefinition;
 var
   childDefinitions, snapshot : TFHIRElementDefinitionList;
-  t : TFHIRStructureDefinition;
+//  t : TFHIRStructureDefinition;
   originalPath, goal : String;
   ty : TFHIRStructureDefinition;
   index : integer;
@@ -2024,25 +2002,25 @@ begin
         result := true;
 end;
 
-function TFHIRInstanceValidator.isKnownType(code : String) : boolean;
-begin
-  result := TFHIRStructureDefinition(Fcontext.fetchResource(frtStructureDefinition, code.toLower)) <> nil;
-end;
+//function TFHIRInstanceValidator.isKnownType(code : String) : boolean;
+//begin
+//  result := TFHIRStructureDefinition(Fcontext.fetchResource(frtStructureDefinition, code.toLower)) <> nil;
+//end;
 
-function TFHIRInstanceValidator.getElementByPath(definition : TFHIRStructureDefinition; path : String) : TFHIRElementDefinition;
-var
-  e : TFHIRElementDefinition;
-begin
-  for e in definition.SnapShot.ElementList do
-   begin
-    if (e.Path = path) then
-    begin
-      result := e;
-      exit;
-    end;
-  end;
-  result := nil;
-end;
+//function TFHIRInstanceValidator.getElementByPath(definition : TFHIRStructureDefinition; path : String) : TFHIRElementDefinition;
+//var
+//  e : TFHIRElementDefinition;
+//begin
+//  for e in definition.SnapShot.ElementList do
+//   begin
+//    if (e.Path = path) then
+//    begin
+//      result := e;
+//      exit;
+//    end;
+//  end;
+//  result := nil;
+//end;
 
 function TFHIRInstanceValidator.checkExtensionContext(errors : TFhirOperationOutcomeIssueList; element : TWrapperElement; definition : TFHIRStructureDefinition; stack : TNodeStack; extensionParent : String) : boolean;
 var
@@ -2066,7 +2044,7 @@ begin
     begin
       if b <> '' then b := b + ', ';
       b := b + ct.Value;
-      if (ct.Value = '*') or (stack.LogicalPaths.IndexOf(ct.Value+'.extension') = -1) then
+      if (ct.Value = '*') or (stack.LogicalPaths.IndexOf(ct.Value+'.extension') > -1) then
         ok := true;
     end;
     result := rule(errors, IssueTypeSTRUCTURE, element.line(), element.col(), stack.literalPath, ok, 'The extension '+extUrl+' is not allowed to be used on the logical path set ['+p+'] (allowed: datatype:='+b+')');
@@ -2173,22 +2151,22 @@ begin
   end;
 end;
 
-function TFHIRInstanceValidator.getDefinitionByTailNameChoice(children : TFHIRElementDefinitionList; name : String) : TFHIRElementDefinition;
-var
-  ed : TFHIRElementDefinition;
-  n : string;
-begin
-  result := nil;
-  for ed in children do
-  begin
-    n := tail(ed.Path);
-    if (n.endsWith('[x]') ) and ( name.startsWith(n.substring(0, n.length-3))) then
-    begin
-      result := ed;
-      exit;
-    end;
-end;
-end;
+//function TFHIRInstanceValidator.getDefinitionByTailNameChoice(children : TFHIRElementDefinitionList; name : String) : TFHIRElementDefinition;
+//var
+//  ed : TFHIRElementDefinition;
+//  n : string;
+//begin
+//  result := nil;
+//  for ed in children do
+//  begin
+//    n := tail(ed.Path);
+//    if (n.endsWith('[x]') ) and ( name.startsWith(n.substring(0, n.length-3))) then
+//    begin
+//      result := ed;
+//      exit;
+//    end;
+//  end;
+//end;
 
 
 procedure TFHIRInstanceValidator.validateContains(errors : TFhirOperationOutcomeIssueList; path : String; child : TFHIRElementDefinition; context : TFHIRElementDefinition; element : TWrapperElement; stack : TNodeStack; needsId : boolean);
@@ -2219,26 +2197,26 @@ begin
   begin
     lastWasSpace := true;
     for c in v do
-begin
-     if (c = ' ') then
     begin
-      if (lastWasSpace) then
+      if (c = ' ') then
+      begin
+        if (lastWasSpace) then
+        begin
+          result := false;
+          exit;
+        end
+        else
+          lastWasSpace := true;
+      end
+      else if c.isWhitespace then
       begin
         result := false;
         exit;
       end
-        else
-        lastWasSpace := true;
-      end
-    else if (isWhitespace(c)) then
-      begin
-      result := false;
-      exit;
-    end
-    else
-      lastWasSpace := false;
-      end;
+      else
+        lastWasSpace := false;
     end;
+  end;
   result := true;
 end;
 
@@ -2548,11 +2526,10 @@ end;
 function TFHIRInstanceValidator.checkCode(errors : TFhirOperationOutcomeIssueList; element : TWrapperElement; path : String; code, system, display : String) : boolean;
 var
   s : TValidationResult;
-  vs : TFHIRValueSet;
 begin
   result := true;
   if (Fcontext.supportsSystem(system)) then
-begin
+  begin
     s := Fcontext.validateCode(system, code, display);
     if (s = nil ) or (s.isOk()) then
       result := true
@@ -2570,7 +2547,10 @@ begin
 //    else
 //    begin
 //      vs := FContext.fetchCodeSystem(system);
-//      if (warning(errors, IssueTypeCODEINVALID, element.line(), element.col(), path, vs <> nil, 'Unknown Code System '+system)) begin
+//      if (vs <> nil) then
+//        check vlaue set uri hasn't been used directly
+//        if (warning(errors, IssueTypeCODEINVALID, element.line(), element.col(), path, vs <> nil, 'Unknown Code System '+system))
+//      else begin
 //        ConceptDefinitionComponent def := getCodeDefinition(vs, code);
 //        if (warning(errors, IssueTypeCODEINVALID, element.line(), element.col(), path, def <> nil, 'Unknown Code ('+system+'#'+code+')'))
 //          return warning(errors, IssueTypeCODEINVALID, element.line(), element.col(), path, display = nil ) or ( display = def.getDisplay()), 'Display should be "'+def.getDisplay()+'"');
@@ -3079,13 +3059,6 @@ begin
       end;
     end;
   end;
-
-{ TValidationResult }
-
-function TValidationResult.isOk: boolean;
-begin
-  result := message = '';
-end;
 
 { TChildIterator }
 

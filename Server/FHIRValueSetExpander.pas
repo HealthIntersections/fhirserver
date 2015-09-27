@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, StringSupport, GuidSupport,
-  AdvStringObjectMatches, AdvObjects, AdvObjectLists,
+  AdvStringObjectMatches, AdvObjects, AdvObjectLists, AdvExceptions,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, DateAndTime,
   TerminologyServices, LoincServices, SnomedServices, UcumServices,
   TerminologyServer;
@@ -173,10 +173,16 @@ begin
             result.text.div_.addTag('p').setAttribute('style', 'color: Maroon').addText(e.message);
         end
         else
-          raise
+        begin
+          recordStack(e);
+          raise;
+        end;
       end;
       on e : Exception do
+      begin
+        recordStack(e);
         raise;
+      end;
     end;
     if notClosed then
     begin

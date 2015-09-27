@@ -39,7 +39,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.0.0 generated Tue, Sep 15, 2015 12:58+1000
+// FHIR v1.0.1 generated Thu, Sep 24, 2015 16:54+1000
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -1282,7 +1282,7 @@ Const
      'As defined by affinity domain',
      'Code(s) that apply to the event being documented',
      'Composition editing time',
-     'Context of the composition',
+     'Context of the Composition',
      'A reference to data that supports this section',
      'Logical identifier of composition (version-independent)',
      'Who and/or what the composition is about',
@@ -1334,11 +1334,11 @@ Const
      'Search on the narrative of the resource',
      'A use context assigned to the concept map',
      'The concept map publication date',
-     'Reference to element/field/valueset mapping depends on',
+     'Reference to element/field/ValueSet mapping depends on',
      'Text search in the description of the concept map',
      'Additional identifier for the concept map',
      'Name of the concept map',
-     'Reference to element/field/valueset mapping depends on',
+     'Reference to element/field/ValueSet mapping depends on',
      'Name of the publisher of the concept map',
      'Identifies the source of the concepts which are being mapped',
      'Identifies element being mapped',
@@ -1969,11 +1969,11 @@ Const
      'Security Labels applied to this resource',
      'Tags applied to this resource',
      'Search on the narrative of the resource',
-     'Who/What authenticated the document',
+     'Who/what authenticated the document',
      'Who and/or what authored the document',
      'Categorization of document',
      'Document creation time',
-     'Org which maintains the document',
+     'Organization which maintains the document',
      'Human-readable description (title)',
      'Context of the document  content',
      'Main Clinical Acts Documented',
@@ -2548,7 +2548,7 @@ Const
      'The patient for the vaccination record',
      'The practitioner who administered the vaccination',
      'Additional information on reaction',
-     'When did reaction start?',
+     'When reaction started',
      'Why immunization occurred',
      'Explanation of reason vaccination was not administered',
      'The practitioner who ordered the vaccination',
@@ -2854,7 +2854,7 @@ Const
      'Return administrations of this medication resource',
      'Administrations that were not made',
      'The identity of a patient to list administrations  for',
-     'Who administered substance?',
+     'Who administered substance',
      'The identity of a prescription to list administrations from',
      'MedicationAdministration event status (for example one of active/paused/completed/nullified)');
   TYPES_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of TFhirSearchParamType = ( SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeUri,  SearchParamTypeToken,  SearchParamTypeToken, 
@@ -3691,7 +3691,7 @@ Const
      'Search on the narrative of the resource',
      'A code to identify a  procedure',
      'Date/Period the procedure was performed',
-     'The encounter when procedure performed',
+     'The encounter associated with the procedure',
      'A unique identifier for a procedure',
      'Where the procedure happened',
      'Search by subject - a patient',
@@ -3727,11 +3727,11 @@ Const
      'Security Labels applied to this resource',
      'Tags applied to this resource',
      'Search on the narrative of the resource',
-     'Encounter',
+     'Encounter request created during',
      'A unique identifier of the Procedure Request',
-     'Ordering Party',
+     'Who made request',
      'Search by subject - a patient',
-     'Performer',
+     'Who should perform the procedure',
      'Search by subject');
   TYPES_TSearchParamsProcedureRequest : Array[TSearchParamsProcedureRequest] of TFhirSearchParamType = ( SearchParamTypeString,  SearchParamTypeToken,  SearchParamTypeDate,  SearchParamTypeUri,  SearchParamTypeToken,  SearchParamTypeToken,  SearchParamTypeToken, 
        SearchParamTypeString,  SearchParamTypeReference,  SearchParamTypeToken,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeReference,  SearchParamTypeReference);
@@ -4528,11 +4528,11 @@ Const
      'patient: [frtPatient]',
      'prescriber: [frtPractitioner]');
   TARGETS_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [frtEncounter], [], [frtPatient], [frtPractitioner]);
-  FHIR_GENERATED_VERSION = '1.0.0';
+  FHIR_GENERATED_VERSION = '1.0.1';
 
-  FHIR_GENERATED_REVISION = '6997';
+  FHIR_GENERATED_REVISION = '7108';
 
-  FHIR_GENERATED_DATE = '20150915125827';
+  FHIR_GENERATED_DATE = '20150924165443';
 
 
 

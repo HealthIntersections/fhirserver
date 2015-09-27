@@ -31,11 +31,11 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, IniFiles, ActiveX, AltovaXMLLib_TLB, System.Generics.Collections, IdSoapMsXml, ComObj,
+  SysUtils, Classes, IniFiles, ActiveX, AltovaXMLLib_TLB, System.Generics.Collections, IdSoapMsXml, ComObj, JclDebug,
 
   EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport,
 
-  AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches,
+  AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects, MsXmlParser,
   DCPsha256, AdvJSON, libeay32,
@@ -134,7 +134,7 @@ Type
     function AltFile(path : String) : String;
     Procedure ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path : String);
     Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil);
-    Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
+//    Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
     Procedure ReadTags(header : String; Request : TFHIRRequest); overload;
     function CheckSessionOK(session : TFhirSession; ip : string) : Boolean;
     Function BuildFhirHomePage(comps, lang, host, sBaseURL : String; session : TFhirSession; secure : boolean): String;
@@ -155,7 +155,7 @@ Type
     Procedure StopServer;
     Function ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; var cursor : integer) : TFHIRBundle;
     procedure SSLPassword(var Password: String);
-    procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueType = IssueTypeNull);
+    procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueType = IssueTypeNull);
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse; upload : Boolean);
     function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
@@ -185,7 +185,7 @@ Implementation
 Uses
   Windows, Registry,
 
-  AdvExceptions, SystemService,
+  SystemService,
 
   FileSupport,
   FaceBookSupport;
@@ -649,6 +649,7 @@ end;
 procedure TFhirWebServer.PopulateConformanceAuth(rest: TFhirConformanceRest);
 var
   c : TFHIRCoding;
+  ext : TFhirExtension;
 begin
   if rest.security = nil then
     rest.security := TFhirConformanceRestSecurity.Create;
@@ -660,14 +661,12 @@ begin
     c.code := 'OAuth2';
     rest.security.description := 'This server implements OAuth2 for login';
 
-    rest.security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris#oidc-discovery',
-      TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
-    rest.security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris#register',
-      TFhirUri.Create('mailto:'+FAdminEmail));
-    rest.security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris#authorize',
-      TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath));
-    rest.security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris#token',
-      TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.TokenPath));
+    ext := rest.security.extensionList.Append;
+    ext.url := 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris';
+//     ext.addExtension('dscovery', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
+    ext.addExtension('register', TFhirUri.Create('mailto:'+FAdminEmail));
+    ext.addExtension('authorize',TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath));
+    ext.addExtension('token', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.TokenPath));
   end;
 end;
 
@@ -939,10 +938,16 @@ Begin
                   on e : EAbort do
                   begin
                     if oResponse.HTTPCode < 300 then
+                    begin
+                      recordStack(e);
                       raise;
+                    end;
                   end;
                   on e : Exception do
+                  begin
+                    recordStack(e);
                     raise;
+                  end;
                 end;
                 ProcessOutput(oRequest, oResponse, response, relativeReferenceAdjustment, pretty, request.AcceptEncoding.Contains('gzip'));
   // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
@@ -987,23 +992,23 @@ Begin
           response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, e.Msg, ssl));
         end
         else
-          SendError(response, e.Status, aFormat, lang, e.Message, sPath, session, true, sPath + sDoc, relativeReferenceAdjustment);
+          SendError(response, e.Status, aFormat, lang, e.Message, sPath, e, session, true, sPath + sDoc, relativeReferenceAdjustment);
       end;
       on e : ETooCostly do
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly)
+          SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly)
         else
-          SendError(response, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly);
+          SendError(response, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly);
       on e: ERestfulException do
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment)
+          SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment)
         else
-          SendError(response, e.Status, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment);
+          SendError(response, e.Status, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment);
       on e: Exception do
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment)
+          SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment)
         else
-          SendError(response, HTTP_ERR_INTERNAL, aFormat, lang, e.Message, sPath, session, false, path, relativeReferenceAdjustment);
+          SendError(response, HTTP_ERR_INTERNAL, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment);
     end;
   finally
     session.free;
@@ -1395,16 +1400,16 @@ begin
 end;
 
 
-procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueType = IssueTypeNull);
+procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : Exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueType = IssueTypeNull);
 var
   issue : TFhirOperationOutcome;
   report :  TFhirOperationOutcomeIssue;
   oComp : TFHIRComposer;
-  e : TFhirExtension;
+  ext : TFhirExtension;
+  lines : TStringList;
 begin
   response.ResponseNo := status;
   response.FreeContentStream := true;
-
   if format = ffAsIs then
   begin
     response.ContentType := 'text/plain';
@@ -1421,26 +1426,28 @@ begin
       begin
         if FAuthServer.HL7Appid <> '' then
         begin
-          e := issue.ExtensionList.Append;
-          e.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
-          e.value := TFhirString.create('http://hl7.amg-hq.net/tools/signup_redirect.cfm?apiKey='+FAuthServer.HL7Appid+'&returnURL='+EncodeMime(path)+'/state/'+FAuthServer.MakeLoginToken(path, apHL7));
+          ext := issue.ExtensionList.Append;
+          ext.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
+          ext.value := TFhirString.create('http://hl7.amg-hq.net/tools/signup_redirect.cfm?apiKey='+FAuthServer.HL7Appid+'&returnURL='+EncodeMime(path)+'/state/'+FAuthServer.MakeLoginToken(path, apHL7));
         end;
         if FAuthServer.FacebookAppid <> '' then
         begin
-          e := issue.ExtensionList.Append;
-          e.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
-          e.value := TFhirString.create('https://www.facebook.com/dialog/oauth?client_id='+FAuthServer.FacebookAppid+'&redirect_uri='+path+'&state='+FAuthServer.MakeLoginToken(path, apFacebook));
+          ext := issue.ExtensionList.Append;
+          ext.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
+          ext.value := TFhirString.create('https://www.facebook.com/dialog/oauth?client_id='+FAuthServer.FacebookAppid+'&redirect_uri='+path+'&state='+FAuthServer.MakeLoginToken(path, apFacebook));
         end;
         if FAuthServer.GoogleAppid <> '' then
         begin
-          e := issue.ExtensionList.Append;
-          e.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
-          e.value := TFhirString.create('https://accounts.google.com/o/oauth2/auth?client_id='+FAuthServer.GoogleAppid+'&response_type=code&scope=openid%20email&redirect_uri='+path+'&state='+FAuthServer.MakeLoginToken(path, apGoogle));
+          ext := issue.ExtensionList.Append;
+          ext.url := 'http://www.healthintersections.com.au/fhir/extensions#auth-token';
+          ext.value := TFhirString.create('https://accounts.google.com/o/oauth2/auth?client_id='+FAuthServer.GoogleAppid+'&response_type=code&scope=openid%20email&redirect_uri='+path+'&state='+FAuthServer.MakeLoginToken(path, apGoogle));
         end;
       end;
       report := issue.issueList.Append;
       report.severity := IssueSeverityError;
-      report.diagnostics := message;
+      report.details := TFhirCodeableConcept.Create;
+      report.details.text := message;
+      report.diagnostics := ExceptionStack(e);
       if (code <> IssueTypeNull) then
         report.code := code;
       response.ContentStream := TMemoryStream.Create;
@@ -1976,7 +1983,10 @@ Begin
                   if oRequest.CommandType = fcmdValidate then
                     oResponse.Message := e.Message
                   else
+                  begin
+                    recordStack(e);
                     raise;
+                  end;
               end;
           end;
         end
@@ -2005,7 +2015,6 @@ var
   i, k : integer;
   s : TAdvVCLStream;
   e : TFHIRBundleEntry;
-  f : TFileStream;
   bnd : TFHIRBundle;
   inc : TStringList;
   istart, iend : integer;
@@ -2272,14 +2281,19 @@ begin
         store.Execute(request, response, upload);
         store.Connection.Commit;
       except
-        store.Connection.Rollback;
-        raise
+        on e:exception do
+        begin
+          store.Connection.Rollback;
+          recordStack(e);
+          raise;
+        end;
       end;
       store.Connection.Release;
     except
       on e:exception do
       begin
         store.Connection.Error(e);
+        recordStack(e);
         raise;
       end;
     end;
@@ -2421,6 +2435,7 @@ begin
         on e:exception do
         begin
           db.Error(e);
+          recordStack(e);
           raise;
         end;
       end;
@@ -2613,8 +2628,12 @@ begin
     m.ReadFromStream(request, contentType);
     result := m;
   Except
-    m.free;
-    raise;
+    on e:exception do
+    begin
+      m.free;
+      recordStack(e);
+      raise;
+    end;
   End;
 end;
 
@@ -2633,6 +2652,7 @@ begin
       on e:exception do
       begin
         store.Connection.Error(e);
+        recordStack(e);
         raise;
       end;
     end;
@@ -2871,15 +2891,15 @@ begin
     FFhirStore.EndSession(session.Cookie, ip);
 end;
 
-procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);
-var
-  i : integer;
-begin
-  for i := 0 to Headers.Count - 1 do
-    if Headers.Names[i] = 'Category' then
-      ReadTags(Headers.Strings[i], Request);
-end;
-
+//procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);
+//var
+//  i : integer;
+//begin
+//  for i := 0 to Headers.Count - 1 do
+//    if Headers.Names[i] = 'Category' then
+//      ReadTags(Headers.Strings[i], Request);
+//end;
+//
 Procedure TFhirWebServer.ReadTags(header : String; Request : TFHIRRequest);
 //var
 //  s, s1, l, r, n, v : string;

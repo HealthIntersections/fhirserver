@@ -38,17 +38,17 @@ type
   private
     FSnomed : TSnomedServices;
     FRoots : TCardinalArray;
-    function CreateCC(index : Cardinal) : TFhirCodeableConcept;
-    function CreateRef(root, index : Cardinal) : TFhirReference;
+//    function CreateCC(index : Cardinal) : TFhirCodeableConcept;
+//    function CreateRef(root, index : Cardinal) : TFhirReference;
     procedure listRelationships(iIndex : cardinal; list : TRelationshipList; bnd : TFhirBundle);
     function getRootConcepts(iIndex : cardinal) : TCardinalArray;
-    function intersection(one, two : TCardinalArray) : TCardinalArray;
+//    function intersection(one, two : TCardinalArray) : TCardinalArray;
     procedure registerSCTRoots(ids : Array of String);
 
     procedure assess(b : TAdvStringBuilder; id : String; bnd : TFhirBundle = nil);
   public
     Constructor Create(snomed : TSnomedServices); overload;
-    Destructor destroy; override;
+    Destructor Destroy; override;
 
     function generate : String;
   end;
@@ -61,14 +61,15 @@ procedure TSnomedAnalysis.assess(b: TAdvStringBuilder; id: String; bnd : TFhirBu
 var
   list : TRelationshipList;
   iId : int64;
-  ok : boolean;
-  iIndex, ParentIndex : cardinal;
+//  ok : boolean;
+  iIndex : cardinal;
   allDesc, Inbounds : TCardinalArray;
-  i, j, l, m : integer;
+  i, j : integer;
 //  iId : UInt64;
 //  iIndex : Cardinal;
 //  Identity : UInt64;
-  Flags, Group : Byte;
+  Flags : Byte;
+  Group : integer;
 //  ParentIndex : Cardinal;
 //  DescriptionIndex : Cardinal;
 //  InboundIndex : Cardinal;
@@ -78,7 +79,7 @@ var
 //  Inbounds : TCardinalArray;
 //  outbounds : TCardinalArray;
 //  allDesc : TCardinalArray;
-  iWork, iWork2, iWork3, kind, module, refsets, modifier : Cardinal;
+  iWork, iWork2, iWork3, kind, module, modifier : Cardinal;
 //  FSN : String;
 //  PN : String;
 //  FPaths : TArrayofIdArray;
@@ -179,38 +180,38 @@ begin
   FSnomed := snomed;
 end;
 
-function TSnomedAnalysis.CreateCC(index: Cardinal): TFhirCodeableConcept;
-var
-  c : TFhirCoding;
-begin
-  result := TFhirCodeableConcept.Create;
-  c := result.codingList.Append;
-  c.system := 'http://snomed.info/sct';
-  c.code := FSnomed.GetConceptId(index);
-  c.display := FSnomed.GetDisplayName(index, 0);
-end;
-
-function TSnomedAnalysis.CreateRef(root, index: Cardinal): TFhirReference;
-var
-  rid : String;
-begin
-  result := TFhirReference.Create;
-  result.display := FSnomed.GetDisplayName(index, 0);
-  rid := FSnomed.GetConceptId(root);
-  if (rid = '404684003') or (rid = '78621006') then
-    result.reference := 'ConditionDefinition/'+FSnomed.GetConceptId(index)
-  else if (rid = '123037004')  then
-    result.reference := 'BodySite/'+FSnomed.GetConceptId(index)
-  else if (rid = '410607006')  then
-    result.reference := 'Organism/'+FSnomed.GetConceptId(index)
-  else if (rid = '105590001')  then
-    result.reference := 'Substance/'+FSnomed.GetConceptId(index)
-  else if (rid = '71388002')  then
-    result.reference := 'ProcedureDefinition/'+FSnomed.GetConceptId(index)
-  else
-    result.reference := '??/'+FSnomed.GetConceptId(index)+'/'+rid
-end;
-
+//function TSnomedAnalysis.CreateCC(index: Cardinal): TFhirCodeableConcept;
+//var
+//  c : TFhirCoding;
+//begin
+//  result := TFhirCodeableConcept.Create;
+//  c := result.codingList.Append;
+//  c.system := 'http://snomed.info/sct';
+//  c.code := FSnomed.GetConceptId(index);
+//  c.display := FSnomed.GetDisplayName(index, 0);
+//end;
+//
+//function TSnomedAnalysis.CreateRef(root, index: Cardinal): TFhirReference;
+//var
+//  rid : String;
+//begin
+//  result := TFhirReference.Create;
+//  result.display := FSnomed.GetDisplayName(index, 0);
+//  rid := FSnomed.GetConceptId(root);
+//  if (rid = '404684003') or (rid = '78621006') then
+//    result.reference := 'ConditionDefinition/'+FSnomed.GetConceptId(index)
+//  else if (rid = '123037004')  then
+//    result.reference := 'BodySite/'+FSnomed.GetConceptId(index)
+//  else if (rid = '410607006')  then
+//    result.reference := 'Organism/'+FSnomed.GetConceptId(index)
+//  else if (rid = '105590001')  then
+//    result.reference := 'Substance/'+FSnomed.GetConceptId(index)
+//  else if (rid = '71388002')  then
+//    result.reference := 'ProcedureDefinition/'+FSnomed.GetConceptId(index)
+//  else
+//    result.reference := '??/'+FSnomed.GetConceptId(index)+'/'+rid
+//end;
+//
 destructor TSnomedAnalysis.destroy;
 begin
   FSnomed.Free;
@@ -412,44 +413,44 @@ begin
   end;
 end;
 
-function TSnomedAnalysis.intersection(one, two: TCardinalArray): TCardinalArray;
-var
-  i, j, c : integer;
-  ok : boolean;
-begin
-  c := 0;
-  setLength(result, length(one) + length(two));
-  for i := 0 to Length(one)-1 do
-  begin
-    ok := false;
-    for j := 0 to Length(two) - 1 do
-      if two[j] = one[i] then
-        ok := true;
-    if ok then
-    begin
-      result[c] := one[i];
-      inc(c);
-    end;
-  end;
-  for i := 0 to Length(two)-1 do
-  begin
-    ok := false;
-    for j := 0 to Length(one) - 1 do
-      if one[j] = two[i] then
-        ok := true;
-    if ok then
-      for j := 0 to Length(result) - 1 do
-        if result[j] = two[i] then
-          ok := false;
-    if ok then
-    begin
-      result[c] := two[i];
-      inc(c);
-    end;
-  end;
-  SetLength(result, c);
-end;
-
+//function TSnomedAnalysis.intersection(one, two: TCardinalArray): TCardinalArray;
+//var
+//  i, j, c : integer;
+//  ok : boolean;
+//begin
+//  c := 0;
+//  setLength(result, length(one) + length(two));
+//  for i := 0 to Length(one)-1 do
+//  begin
+//    ok := false;
+//    for j := 0 to Length(two) - 1 do
+//      if two[j] = one[i] then
+//        ok := true;
+//    if ok then
+//    begin
+//      result[c] := one[i];
+//      inc(c);
+//    end;
+//  end;
+//  for i := 0 to Length(two)-1 do
+//  begin
+//    ok := false;
+//    for j := 0 to Length(one) - 1 do
+//      if one[j] = two[i] then
+//        ok := true;
+//    if ok then
+//      for j := 0 to Length(result) - 1 do
+//        if result[j] = two[i] then
+//          ok := false;
+//    if ok then
+//    begin
+//      result[c] := two[i];
+//      inc(c);
+//    end;
+//  end;
+//  SetLength(result, c);
+//end;
+//
 function TSnomedAnalysis.getRootConcepts(iIndex : cardinal) : TCardinalArray;
 var
   c, i, j, k, l : integer;
@@ -503,7 +504,8 @@ procedure TSnomedAnalysis.listRelationships(iIndex: cardinal; list : TRelationsh
 var
 //  iId : UInt64;
   Identity : UInt64;
-  Flags, Group : Byte;
+  Flags : Byte;
+  Group : integer;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;
@@ -518,7 +520,8 @@ var
 //  FSN : String;
 //  PN : String;
 //  FPaths : TArrayofIdArray;
-  i, j, k, c : integer;
+  i, j, k : integer;
+  c : cardinal;
 //  iList : TCardinalArray;
 //  iDummy, iRefSet, iMembers, iDescs, children : Cardinal;
 //  bDescSet : Boolean;
@@ -531,7 +534,7 @@ var
   ok : boolean;
   rootConcepts : TCardinalArray;
 //  cnd : TFhirConditionDefinition;
-  cid, rid : String;
+  cid : String;
 begin
   FSnomed.Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);

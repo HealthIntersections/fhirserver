@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  GUIDSupport, DateAndTime, AdvObjects, ShellSupport, StringSupport, AdvStringMatches,
+  GUIDSupport, DateAndTime, AdvObjects, ShellSupport, StringSupport, AdvStringMatches, AdvExceptions,
   FHIRResources, FHIRTypes, FHIRConstants, FHIRBase, FHIRParser,
   FHIRUtilities, FHIRSupport, ProfileManager;
 
@@ -156,7 +156,6 @@ end;
 
 procedure TQuestionnaireBuilder.build;
 var
-  p : TFHirStructureDefinition;
   list : TFhirElementDefinitionList;
   answerGroups : TFhirQuestionnaireResponseGroupList;
   group : TFhirQuestionnaireGroup;
@@ -319,7 +318,10 @@ begin
           end;
         end;
         on e : Exception do
+        begin
+          recordStack(e);
           raise;
+        end;
       end;
     finally
       dependencies.Free;
@@ -365,7 +367,10 @@ begin
           end;
         end;
         on e : Exception do
+        begin
+          recordStack(e);
           raise;
+        end;
       end;
 
     end
@@ -389,7 +394,10 @@ begin
           end;
         end;
         on e : Exception do
+        begin
+          recordStack(e);
           raise;
+        end;
       end;
   finally
     dependencies.Free;
@@ -434,7 +442,6 @@ end;
 
 procedure TQuestionnaireBuilder.UnBuild;
 var
-  ps : TFHirStructureDefinition;
   defn : TProfileDefinition;
   gen : TNarrativeGenerator;
 begin
@@ -879,7 +886,6 @@ var
   vs : TFhirValueset;
   t : TFhirElementDefinitionType;
   cc : TFhirValueSetExpansionContains;
-  structure : TFHirStructureDefinition;
 begin
   vs := TFhirValueset.Create;
   try
@@ -958,7 +964,6 @@ var
   subg : TFhirQuestionnaireResponseGroup;
   q : TFhirQuestionnaireResponseGroupQuestion;
   cc : TFhirCoding;
-  structure : TFHirStructureDefinition;
   ag : TFhirQuestionnaireResponseGroup;
 begin
   temp := TFhirQuestionnaireResponseGroupList.Create;

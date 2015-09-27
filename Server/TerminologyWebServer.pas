@@ -36,10 +36,10 @@ Type
     Procedure HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     Procedure HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
-    Procedure BuildCsByName(html : THtmlPublisher; id : String);
-    Procedure BuildCsByURL(html : THtmlPublisher; id : String);
-    Procedure BuildVsByName(html : THtmlPublisher; id : String);
-    Procedure BuildVsByURL(html : THtmlPublisher; id : String);
+//    Procedure BuildCsByName(html : THtmlPublisher; id : String);
+//    Procedure BuildCsByURL(html : THtmlPublisher; id : String);
+//    Procedure BuildVsByName(html : THtmlPublisher; id : String);
+//    Procedure BuildVsByURL(html : THtmlPublisher; id : String);
     function processSnomedForTool(code : String) : String;
 
     function sortVsByUrl(pA, pB : Pointer) : Integer;
@@ -48,8 +48,8 @@ Type
     function sortVsByCtxt(pA, pB : Pointer) : Integer;
     function sortVsByPub(pA, pB : Pointer) : Integer;
     function sortVsBySrc(pA, pB : Pointer) : Integer;
-    function sortVsByDefUrl(pA, pB : Pointer) : Integer;
-    function sortVsByDefVer(pA, pB : Pointer) : Integer;
+//    function sortVsByDefUrl(pA, pB : Pointer) : Integer;
+//    function sortVsByDefVer(pA, pB : Pointer) : Integer;
     function sortCmByUrl(pA, pB : Pointer) : Integer;
     function sortCmByVer(pA, pB : Pointer) : Integer;
     function sortCmByName(pA, pB : Pointer) : Integer;
@@ -207,7 +207,6 @@ end;
 procedure TTerminologyWebServer.ProcessCodeSystemsList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
   html: THtmlPublisher;
-  i: Integer;
   cs: TCodeSystemProvider;
   c: Integer;
 var
@@ -618,151 +617,151 @@ begin
   end;
 end;
 
-Procedure TTerminologyWebServer.BuildCsByName(html : THtmlPublisher; id : String);
-{var
-  list : TAdvStringMatch;
-  ts : TStringList;
-  i: Integer;}
-begin
-{  writelnt('Tx: CS By Name '+Id);
-  ts := TStringList.Create;
-  list := FServer.GetCodeSystemList;
-  try
-    html.Header('Terminology Server');
-    html.Heading(2, 'CodeSystems');
-    html.StartList;
-
-    for i := 0 to list.Count - 1 do
-      ts.AddObject(list.ValueByIndex[i], TObject(i));
-    ts.sort;
-    for i := 0 to ts.Count - 1 do
-    begin
-      html.StartListItem;
-      html.URL(ts[i], 'tx/cs/'+list.KeyByIndex[Integer(ts.Objects[i])]);
-      html.EndListItem;
-    end;
-  finally
-    list.Free;
-    ts.Free;
-  end;
-  html.EndList; }
-end;
-
-Procedure TTerminologyWebServer.BuildCsByURL(html : THtmlPublisher; id : String);
-{var
-  list : TAdvStringMatch;
-  ts : TStringList;
-  i: Integer; }
-begin
-{  writelnt('Tx: CS By URL '+Id);
-  ts := TStringList.Create;
-  list := FServer.GetCodeSystemList;
-  try
-    html.Header('Terminology Server');
-    html.Heading(2, 'Code Systems (by URL)');
-    html.StartList;
-    for i := 0 to list.Count - 1 do
-      ts.AddObject(list.KeyByIndex[i], TObject(i));
-    ts.sort;
-    for i := 0 to ts.Count - 1 do
-    begin
-      html.StartListItem;
-      html.URL(ts[i], 'tx/cs/'+ts[i]);
-      html.AddTextPlain(': '+list.ValueByIndex[Integer(ts.Objects[i])]);
-      html.EndListItem;
-    end;
-  finally
-    list.Free;
-    ts.Free;
-  end;
-  html.EndList;}
-end;
-
-Procedure TTerminologyWebServer.BuildVsByName(html : THtmlPublisher; id : String);
-{var
-  list : TAdvStringMatch;
-  ts : TStringList;
-  i: Integer;
-  }
-begin
-{  writelnt('Tx: VS By Name '+Id);
-  ts := TStringList.Create;
-  list := FServer.GetValueSetList;
-  try
-    html.Header('Terminology Server');
-    html.Heading(2, 'Value Sets (By Name)');
-    html.StartList;
-    for i := 0 to list.Count - 1 do
-      ts.AddObject(list.ValueByIndex[i], TObject(i));
-    ts.sort;
-    for i := 0 to ts.Count - 1 do
-    begin
-      html.StartListItem;
-      html.URL(ts[i], 'tx/vs/'+list.KeyByIndex[Integer(ts.Objects[i])]);
-      html.EndListItem;
-    end;
-  finally
-    list.Free;
-    ts.Free;
-  end;
-  html.EndList;}
-end;
-
-Procedure TTerminologyWebServer.BuildVsByURL(html : THtmlPublisher; id : String);
-var
-  list : TAdvStringMatch;
-  ts : TStringList;
-  i: Integer;
-  vs : TFHIRValueSet;
-  xml : TFHIRXmlComposer;
-  s : TStringStream;
-begin
-{  writelnt('Tx: VS By URL '+Id);
-  html.Header('Terminology Server');
-  html.Heading(2, 'Value Sets (By URL)');
-  if (id <> '') then
-  begin
-    vs := FServer.getValueSetByUrl(id);
-    if (vs.text <> nil) and (vs.text.div_ <> nil) then
-    begin
-      html.writeXhtml(vs.text.div_);
-      html.Line;
-    end;
-    s := TStringStream.Create;
-    xml := TFHIRXmlComposer.Create('en');
-    try
-      xml.Compose(s, vs, true, nil);
-      html.startPre;
-      html.AddTextPlain(s.DataString);
-      html.endPre;
-    finally
-      xml.Free;
-      s.Free;
-    end;
-  end
-  else
-  begin
-    ts := TStringList.Create;
-    list := FServer.GetValueSetList;
-    try
-      html.StartList;
-      for i := 0 to list.Count - 1 do
-        ts.AddObject(list.KeyByIndex[i], TObject(i));
-      ts.sort;
-      for i := 0 to ts.Count - 1 do
-      begin
-        html.StartListItem;
-        html.URL(ts[i], 'vs-uri/'+EncodeMime(ts[i]));
-        html.AddTextPlain(': '+list.ValueByIndex[Integer(ts.Objects[i])]);
-        html.EndListItem;
-      end;
-    finally
-      list.Free;
-      ts.Free;
-    end;
-  end;
-  html.EndList;}
-end;
+//Procedure TTerminologyWebServer.BuildCsByName(html : THtmlPublisher; id : String);
+//{var
+//  list : TAdvStringMatch;
+//  ts : TStringList;
+//  i: Integer;}
+//begin
+//{  writelnt('Tx: CS By Name '+Id);
+//  ts := TStringList.Create;
+//  list := FServer.GetCodeSystemList;
+//  try
+//    html.Header('Terminology Server');
+//    html.Heading(2, 'CodeSystems');
+//    html.StartList;
+//
+//    for i := 0 to list.Count - 1 do
+//      ts.AddObject(list.ValueByIndex[i], TObject(i));
+//    ts.sort;
+//    for i := 0 to ts.Count - 1 do
+//    begin
+//      html.StartListItem;
+//      html.URL(ts[i], 'tx/cs/'+list.KeyByIndex[Integer(ts.Objects[i])]);
+//      html.EndListItem;
+//    end;
+//  finally
+//    list.Free;
+//    ts.Free;
+//  end;
+//  html.EndList; }
+//end;
+//
+//Procedure TTerminologyWebServer.BuildCsByURL(html : THtmlPublisher; id : String);
+//{var
+//  list : TAdvStringMatch;
+//  ts : TStringList;
+//  i: Integer; }
+//begin
+//{  writelnt('Tx: CS By URL '+Id);
+//  ts := TStringList.Create;
+//  list := FServer.GetCodeSystemList;
+//  try
+//    html.Header('Terminology Server');
+//    html.Heading(2, 'Code Systems (by URL)');
+//    html.StartList;
+//    for i := 0 to list.Count - 1 do
+//      ts.AddObject(list.KeyByIndex[i], TObject(i));
+//    ts.sort;
+//    for i := 0 to ts.Count - 1 do
+//    begin
+//      html.StartListItem;
+//      html.URL(ts[i], 'tx/cs/'+ts[i]);
+//      html.AddTextPlain(': '+list.ValueByIndex[Integer(ts.Objects[i])]);
+//      html.EndListItem;
+//    end;
+//  finally
+//    list.Free;
+//    ts.Free;
+//  end;
+//  html.EndList;}
+//end;
+//
+//Procedure TTerminologyWebServer.BuildVsByName(html : THtmlPublisher; id : String);
+//{var
+//  list : TAdvStringMatch;
+//  ts : TStringList;
+//  i: Integer;
+//  }
+//begin
+//{  writelnt('Tx: VS By Name '+Id);
+//  ts := TStringList.Create;
+//  list := FServer.GetValueSetList;
+//  try
+//    html.Header('Terminology Server');
+//    html.Heading(2, 'Value Sets (By Name)');
+//    html.StartList;
+//    for i := 0 to list.Count - 1 do
+//      ts.AddObject(list.ValueByIndex[i], TObject(i));
+//    ts.sort;
+//    for i := 0 to ts.Count - 1 do
+//    begin
+//      html.StartListItem;
+//      html.URL(ts[i], 'tx/vs/'+list.KeyByIndex[Integer(ts.Objects[i])]);
+//      html.EndListItem;
+//    end;
+//  finally
+//    list.Free;
+//    ts.Free;
+//  end;
+//  html.EndList;}
+//end;
+//
+//Procedure TTerminologyWebServer.BuildVsByURL(html : THtmlPublisher; id : String);
+////var
+////  list : TAdvStringMatch;
+////  ts : TStringList;
+////  i: Integer;
+////  vs : TFHIRValueSet;
+////  xml : TFHIRXmlComposer;
+////  s : TStringStream;
+//begin
+//{  writelnt('Tx: VS By URL '+Id);
+//  html.Header('Terminology Server');
+//  html.Heading(2, 'Value Sets (By URL)');
+//  if (id <> '') then
+//  begin
+//    vs := FServer.getValueSetByUrl(id);
+//    if (vs.text <> nil) and (vs.text.div_ <> nil) then
+//    begin
+//      html.writeXhtml(vs.text.div_);
+//      html.Line;
+//    end;
+//    s := TStringStream.Create;
+//    xml := TFHIRXmlComposer.Create('en');
+//    try
+//      xml.Compose(s, vs, true, nil);
+//      html.startPre;
+//      html.AddTextPlain(s.DataString);
+//      html.endPre;
+//    finally
+//      xml.Free;
+//      s.Free;
+//    end;
+//  end
+//  else
+//  begin
+//    ts := TStringList.Create;
+//    list := FServer.GetValueSetList;
+//    try
+//      html.StartList;
+//      for i := 0 to list.Count - 1 do
+//        ts.AddObject(list.KeyByIndex[i], TObject(i));
+//      ts.sort;
+//      for i := 0 to ts.Count - 1 do
+//      begin
+//        html.StartListItem;
+//        html.URL(ts[i], 'vs-uri/'+EncodeMime(ts[i]));
+//        html.AddTextPlain(': '+list.ValueByIndex[Integer(ts.Objects[i])]);
+//        html.EndListItem;
+//      end;
+//    finally
+//      list.Free;
+//      ts.Free;
+//    end;
+//  end;
+//  html.EndList;}
+//end;
 
 procedure TTerminologyWebServer.HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
@@ -995,23 +994,23 @@ begin
   result := CompareStr(vA.context, vb.context);
 end;
 
-function TTerminologyWebServer.sortVsByDefUrl(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirValueSet;
-begin
-  vA := TFhirValueSet(pA);
-  vB := TFhirValueSet(pB);
-  result := CompareStr(vA.codeSystem.system, vb.codeSystem.system);
-end;
-
-function TTerminologyWebServer.sortVsByDefVer(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirValueSet;
-begin
-  vA := TFhirValueSet(pA);
-  vB := TFhirValueSet(pB);
-  result := CompareStr(vA.codeSystem.version, vb.codeSystem.version);
-end;
+//function TTerminologyWebServer.sortVsByDefUrl(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TFhirValueSet;
+//begin
+//  vA := TFhirValueSet(pA);
+//  vB := TFhirValueSet(pB);
+//  result := CompareStr(vA.codeSystem.system, vb.codeSystem.system);
+//end;
+//
+//function TTerminologyWebServer.sortVsByDefVer(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TFhirValueSet;
+//begin
+//  vA := TFhirValueSet(pA);
+//  vB := TFhirValueSet(pB);
+//  result := CompareStr(vA.codeSystem.version, vb.codeSystem.version);
+//end;
 
 function TTerminologyWebServer.sortVsByName(pA, pB: Pointer): Integer;
 var

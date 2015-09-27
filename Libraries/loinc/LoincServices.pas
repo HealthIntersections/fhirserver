@@ -269,7 +269,7 @@ Type
 
     // we presume that the Codes are registered in order
     Procedure StartBuild;
-    Function AddEntry(code, description, answers : Cardinal) : Cardinal; // value = MAX_INT means this is a list
+    Function AddEntry(code, description, answers : Cardinal) : Cardinal;
     Procedure DoneBuild;
 
     Function Count : Integer;
@@ -395,7 +395,7 @@ Type
     Property Service[i : integer] : TLOINCServices read GetService; Default;
   End;
 
-function ascopy(s : TBytes; start, length : integer) : AnsiString;
+function ascopy(s : TBytes; start, length : integer) : String;
 
 
 Implementation
@@ -1437,7 +1437,7 @@ end;
 function TLOINCServices.buildValueSet(id: String): TFhirValueSet;
 var
   index : cardinal;
-  code, text, parent, children, descendents, concepts, descendentConcepts, stems, value: Cardinal;
+  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
   answers : TCardinalArray;
   inc : TFhirValueSetComposeInclude;
   filt :  TFhirValueSetComposeIncludeFilter;
@@ -1472,31 +1472,28 @@ begin
   else if (id.StartsWith('http://loinc.org/vs/') and FAnswerLists.FindCode(id.Substring(20), index, FDesc)) then
   begin
     FAnswerLists.GetEntry(index, code, text, children);
-    if (value = MaxInt) then
-    begin
-      result := TFhirValueSet.Create;
-      try
-        result.url := id;
-        result.status := ConformanceResourceStatusActive;
-        result.version := Version(nil);
-        result.name := 'LOINC Answer List '+id.Substring(20);
-        result.description := 'LOINC Answer list for '+Desc.GetEntry(text);
-        result.date := NowUTC;
-        result.compose := TFhirValueSetCompose.Create;
-        inc := result.compose.includeList.Append;
-        inc.system := 'http://loinc.org';
-        answers := FRefs.GetCardinals(children);
-        for i := 0 to Length(answers) - 1 do
-        begin
-          cc := inc.conceptList.Append;
-          FAnswerLists.GetEntry(answers[i], code, text, children);
-          cc.code := Desc.GetEntry(code);
-          cc.display := Desc.GetEntry(text);
-        end;
-        result.link;
-      finally
-        result.free;
+    result := TFhirValueSet.Create;
+    try
+      result.url := id;
+      result.status := ConformanceResourceStatusActive;
+      result.version := Version(nil);
+      result.name := 'LOINC Answer List '+id.Substring(20);
+      result.description := 'LOINC Answer list for '+Desc.GetEntry(text);
+      result.date := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.system := 'http://loinc.org';
+      answers := FRefs.GetCardinals(children);
+      for i := 0 to Length(answers) - 1 do
+      begin
+        cc := inc.conceptList.Append;
+        FAnswerLists.GetEntry(answers[i], code, text, children);
+        cc.code := Desc.GetEntry(code);
+        cc.display := Desc.GetEntry(text);
       end;
+      result.link;
+    finally
+      result.free;
     end;
   end;
 end;
@@ -1527,7 +1524,7 @@ function TLoincServices.Code(context: TCodeSystemProviderContext): string;
 var
   index : integer;
   iDescription, iStems, iOtherNames : Cardinal;
-  iEntry, iCode, iValue, iOther : Cardinal;
+  iEntry, iCode, iOther : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
 begin
@@ -1544,7 +1541,7 @@ end;
 function TLoincServices.Display(context: TCodeSystemProviderContext): string;
 var
   index : integer;
-  iCode, iDescription, iStems, iOtherNames, iValue, iOther : Cardinal;
+  iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
   iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
   iFlags : Byte;
@@ -1592,7 +1589,7 @@ begin
   if CodeList.FindCode(code, i) then
     result := TCodeSystemProviderContext(i+1)
   else if AnswerLists.FindCode(code, i, FDesc) then
-    result := TCodeSystemProviderContext(CodeList.Count+ i+1)
+    result := TCodeSystemProviderContext(cardinal(CodeList.Count)+ i+1)
   else
     result := nil;//raise Exception.create('unable to find '+code+' in '+system);
 end;
@@ -1924,12 +1921,13 @@ begin
   Move(FMaster[(iIndex*32)+28], stems, 4);
 end;
 
-function ascopy(s : TBytes; start, length : integer) : AnsiString;
+function ascopy(s : TBytes; start, length : integer) : String;
+var
+  res : AnsiString;
 begin
-  SetLength(result, length);
-  move(s[start], result[1], length);
-//  b := copy(s, start, length);
-//  result := BytesAsString(b);
+  SetLength(res, length);
+  move(s[start], res[1], length);
+  result := String(res);
 end;
 
 

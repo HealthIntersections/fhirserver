@@ -44,7 +44,7 @@ type
     FLang: String;
     FRepository: TFHIRDataStore;
     FSession : TFhirSession;
-    FLeftOpen: boolean;
+//    FLeftOpen: boolean;
     FcountAllowed: boolean;
 
     function processValueSetMembership(vs : String) : String;
@@ -399,7 +399,7 @@ begin
   c := 0;
   for i := 1 to length(s) do
   begin
-    if TCharacter.IsLetter(s[i]) or TCharacter.IsDigit(s[i]) then
+    if s[i].IsLetter() or s[i].IsDigit() then
     begin
       inc(c);
       result[c] := s[i];
@@ -924,7 +924,7 @@ begin
     begin
       types := filterTypes(FIndexer.GetTargetsByName(types, left));
     end;
-    key := FIndexer.GetKeyByName(types, left);
+    key := FIndexer.GetKeyByName(left);
     if key = 0 then
       raise Exception.create(StringFormat(GetFhirMessage('MSG_PARAM_CHAINED', lang), [left]));
     f := true;
@@ -960,7 +960,7 @@ begin
     end
     else
     begin
-      key := FIndexer.GetKeyByName(types, name);
+      key := FIndexer.GetKeyByName(name);
       if (types = [frtNull]) and not isCommonSearchParameter(name) then
         key := 0;
 
@@ -1152,7 +1152,7 @@ begin
     j := ''
   else
     j := ' and '+n+'.parent = '+parent+'.EntryKey';
-  index := FIndexer.GetKeyByName(types, path.Name);
+  index := FIndexer.GetKeyByName(path.Name);
 
   if path.Next <> nil then
   begin

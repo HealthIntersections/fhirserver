@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.StdCtrls, Vcl.ExtCtrls,
-  FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities,
   ValueSetEditorCore, ValueSetEditorRegisterServerForm;
 
 type
@@ -69,9 +69,9 @@ begin
   else
     FValueSets.Clear;
 
-  for i := 0 to Context.Server.List.Count - 1 do
+  for i := 0 to Context.WorkingServer.List.Count - 1 do
   begin
-    vs := Context.Server.List[i];
+    vs := Context.WorkingServer.List[i];
     if (sFilter = '') or (vs.name.Contains(sFilter)) or (vs.url.Contains(sFilter)) or (vs.description.Contains(sFilter)) then
       FValueSets.Add(vs.Link);
   end;
@@ -100,7 +100,7 @@ begin
   FContext := Value;
   if Context <> nil then
   begin
-    Caption := 'Value Sets on '+Context.Server.URL;
+    Caption := 'Value Sets on '+Context.WorkingServer.URL;
     eFilter.text := Context.Settings.ServerFilter;
     if eFilter.text = '' then
       FilterValueSets();

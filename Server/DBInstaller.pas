@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, GuidSupport,
-  AdvObjects,
+  AdvObjects, AdvExceptions,
   KDBManager, KDBDialects,
   FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
   SCIMServer;
@@ -417,6 +417,7 @@ Begin
        ' SearchKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Sequence int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
@@ -643,8 +644,12 @@ begin
     DefineIndexes;
     FConn.Commit;
   except
-    FConn.Rollback;
-    raise;
+    on e:exception do
+    begin
+      FConn.Rollback;
+      recordStack(e);
+      raise;
+    end;
   end;
   DoPostTransactionInstall;
 end;
@@ -714,8 +719,12 @@ begin
 
       FConn.Commit;
     except
-      FConn.Rollback;
-      raise;
+      on e:exception do
+      begin
+        FConn.Rollback;
+        recordStack(e);
+        raise;
+      end;
     end;
   finally
     meta.free;

@@ -940,6 +940,7 @@ var
   iModuleId : integer;
   iC1Id : Integer;
   iRTId : Integer;
+  iStart : integer;
   iStatus : Integer;
   iC2Id : Integer;
   iCtype : Integer;
@@ -960,7 +961,8 @@ var
   i_c, i_r : Integer;
   iFlag : Byte;
   iGroup : integer;
-  iIndex : integer;
+  grp : integer;
+  iIndex : cardinal;
   sGroup : String;
   active : boolean;
   Function Next(ch : byte) : integer;
@@ -987,13 +989,14 @@ Begin
   for fi := 0 to RelationshipFiles.Count - 1 do
   begin
     s := LoadFile(RelationshipFiles[fi]);
-    iCursor := -1;
+     iCursor := -1;
     iCount := 0;
     iCursor := Next(13) + 2;
     While iCursor < Length(s) Do
     Begin
       if RF2 then
       begin
+        iStart := iCursor;
         iRelId := Next(9);
         iDate := Next(9);
         iStatus := Next(9);
@@ -1019,6 +1022,7 @@ Begin
         kind := GetConceptLocal(iRTId, iCtype).Index;
         modifier := GetConceptLocal(iCtype, iRef).Index;
         iGroup := StrToInt(ascopy(s, iC2Id+1, iGroup - iC2Id-1));
+        grp := iGroup;
       end
       else
       begin
@@ -1038,9 +1042,9 @@ Begin
         iFlag := i_c + i_r shl 4;
         sGroup := ascopy(s, iRef+1, iCursor - iRef -1);
         if pos(#9, sGroup) > 0 Then
-          iGroup := strtoint(copy(sGroup, 1, pos(#9, sGroup) - 1))
+          grp := strtoint(copy(sGroup, 1, pos(#9, sGroup) - 1))
         Else
-          iGroup := strtoint(sGroup);
+          grp := strtoint(sGroup);
         oSource := GetConceptLocal(iRelId, iC1Id);
         oRelType := GetConceptLocal(iC1Id, iRTId);
         oTarget := GetConceptLocal(iRTId, iC2Id);
@@ -1051,7 +1055,7 @@ Begin
       end;
 
 
-      iIndex := FRel.AddRelationship(oSource.Index, oTarget.Index, oRelType.Index, module, kind, modifier, date, iFlag, iGroup);
+      iIndex := FRel.AddRelationship(oSource.Index, oTarget.Index, oRelType.Index, module, kind, modifier, date, iFlag, grp);
       if (oRelType.Index = Findex_is_a) and (active) Then
       Begin
         SetLength(oSource.FParents, Length(oSource.FParents)+1);
@@ -1280,7 +1284,8 @@ var
   o : TCardinalArray;
   src, tgt, rel, w1,w2,w3 : Cardinal;
   date : TSnomedDate;
-  flg, grp : Byte;
+  flg : Byte;
+  grp : Integer;
 Begin
   SetLength(result, 1000);
   l := 0;
@@ -1860,6 +1865,7 @@ begin
       begin
         Writeln('Unknown component '+sRefComp+' in '+sFile);
         ok := false;
+        bDesc := 2;
       end;
 
       if ok then

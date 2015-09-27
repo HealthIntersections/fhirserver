@@ -342,7 +342,6 @@ end;
 procedure TFHIRJsonParserBase.Parse;
 var
   obj : TJsonObject;
-  s : string;
 begin
   obj := TJSONParser.Parse(source);
   try
@@ -1863,8 +1862,8 @@ end;
 function TFHIRXhtmlComposer.PresentTags(aType : TFhirResourceType; target : String; meta: TFhirMeta; c : integer): String;
 var
   i : integer;
-  lbl : string;
-  clss, typ : string;
+//  lbl : string;
+//  clss, typ : string;
 begin
   if tags.count = 0 then
     result := '(no tags)'
@@ -2035,7 +2034,7 @@ end;
 
 function TFHIRComposer.asString(value: TBytes): String;
 begin
-  result := EncodeBase64(@value[0], length(value));
+  result := String(EncodeBase64(@value[0], length(value)));
 end;
 
 //procedure TFHIRComposer.ComposeBinary(xml: TXmlBuilder; binary: TFhirBinary);
@@ -2216,7 +2215,7 @@ end;
 
 function TFHIRParser.toTBytes(s: String): TBytes;
 begin
-  result := DecodeBase64(s);
+  result := DecodeBase64(AnsiString(s));
 end;
 
 function TFHIRParser.toTDateAndTime(s: String): TDateAndTime;

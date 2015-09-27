@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   StringSupport,
-  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
+  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches, AdvExceptions,
   KDBManager,
   FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
@@ -92,6 +92,7 @@ begin
     on e : Exception do
     begin
       qry.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -130,6 +131,7 @@ begin
     on e : Exception do
     begin
       qry.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -176,6 +178,7 @@ begin
     on e : Exception do
     begin
       qry.Error(e);
+      recordStack(e);
       raise;
     end;
   end;

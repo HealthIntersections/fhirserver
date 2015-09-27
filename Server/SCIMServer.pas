@@ -8,7 +8,7 @@ uses
   DCPsha256, ParseMap, TextUtilities,
   KDBManager, AdvJSON, KCritSct, DateAndTime,
   StringSupport, EncodeSupport,  FHIRSupport,
-  AdvObjects, AdvObjectLists,
+  AdvObjects, AdvObjectLists, AdvExceptions,
   SCIMSearch, SCIMObjects;
 
 Const
@@ -119,6 +119,7 @@ begin
     on e:Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -146,6 +147,7 @@ begin
     on e:Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -177,6 +179,7 @@ begin
       on e:Exception do
       begin
         conn.Error(e);
+        recordStack(e);
         raise;
       end;
     end;
@@ -289,7 +292,6 @@ var
   now : TDateAndTime;
   user : TSCIMUser;
   key : integer;
-  list : TStringList;
   s : String;
 begin
   now := NowUTC;
@@ -495,8 +497,12 @@ begin
             IndexUser(conn, result, key);
             conn.Commit;
           except
-            conn.Rollback;
-            raise;
+            on e:exception do
+            begin
+              conn.Rollback;
+              recordStack(e);
+              raise;
+            end;
           end;
         finally
           now.Free;
@@ -513,6 +519,7 @@ begin
     on e:Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -521,7 +528,6 @@ end;
 function TSCIMServer.loadUser(id: String): TSCIMUser;
 var
   conn : TKDBConnection;
-  s : String;
 begin
   conn := db.GetConnection('scim.loadUser');
   try
@@ -540,6 +546,7 @@ begin
     on e:Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -588,6 +595,7 @@ begin
     on e:Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -625,6 +633,7 @@ begin
     on e:Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -688,8 +697,12 @@ begin
           IndexUser(conn, user, key);
           conn.Commit;
         except
-          conn.Rollback;
-          raise;
+          on e:exception do
+          begin
+            conn.Rollback;
+            recordStack(e);
+            raise;
+          end;
         end;
 
         response.CustomHeaders.Add('Location: '+user.location);
@@ -701,6 +714,7 @@ begin
         on e:Exception do
         begin
           conn.Error(e);
+          recordStack(e);
           raise;
         end;
       end;
@@ -786,14 +800,19 @@ begin
           end;
           conn.Commit;
         except
-          conn.Rollback;
-          raise;
+          on e:exception do
+          begin
+            conn.Rollback;
+            recordStack(e);
+            raise;
+          end;
         end;
         conn.Release;
       except
         on e:Exception do
         begin
           conn.Error(e);
+          recordStack(e);
           raise;
         end;
       end;
@@ -863,6 +882,7 @@ begin
         on e:Exception do
         begin
           conn.Error(e);
+          recordStack(e);
           raise;
         end;
       end;
@@ -1020,8 +1040,12 @@ begin
               bDone := true;
               conn.Commit;
             except
-              conn.Rollback;
-              raise;
+              on e:exception do
+              begin
+                conn.Rollback;
+                recordStack(e);
+                raise;
+              end;
             end;
           finally
             st.Free;
@@ -1064,6 +1088,7 @@ begin
       on e:Exception do
       begin
         conn.Error(e);
+        recordStack(e);
         raise;
       end;
     end;
@@ -1139,6 +1164,7 @@ begin
       on e:Exception do
       begin
         conn.Error(e);
+        recordStack(e);
         raise;
       end;
     end;

@@ -12,9 +12,6 @@ type
   TValueSetEditorWelcomeForm = class(TForm)
     Panel1: TPanel;
     Panel2: TPanel;
-    Label1: TLabel;
-    cbxServers: TComboBox;
-    btnAddServer: TButton;
     Panel3: TPanel;
     Image1: TImage;
     Label2: TLabel;
@@ -22,12 +19,13 @@ type
     Button1: TButton;
     btnCancel: TButton;
     Label3: TLabel;
-    Label4: TLabel;
+    cbShowAtStartup: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure btnAddServerClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure cbxServersChange(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure cbShowAtStartupClick(Sender: TObject);
   private
     FContext: TValueSetEditorContext;
     procedure SetContext(const Value: TValueSetEditorContext);
@@ -45,36 +43,41 @@ implementation
 {$R *.dfm}
 
 procedure TValueSetEditorWelcomeForm.btnAddServerClick(Sender: TObject);
-var
-  msg : String;
+//var
+//  msg : String;
 begin
-  if frmRegisterServer1.ShowModal = mrOk then
-  begin
-    if Context.CheckServer(frmRegisterServer1.edtAddress.Text, msg) then
-    begin
-      Context.Settings.AddServer(frmRegisterServer1.edtName.Text, frmRegisterServer1.edtAddress.Text);
-      frmRegisterServer1.edtName.Text := '';
-      frmRegisterServer1.edtAddress.Text := '';
-      Context.Settings.getServers(cbxServers.items);
-      cbxServers.itemindex := cbxServers.items.Count - 1;
-    end
-    else
-    begin
-      ShowMessage('Server Address in error: '+msg);
-      btnAddServerClick(self);
-    end;
-  end;
+//  if frmRegisterServer1.ShowModal = mrOk then
+//  begin
+//    if Context.CheckServer(frmRegisterServer1.edtAddress.Text, msg) then
+//    begin
+//      Context.Settings.AddServer(frmRegisterServer1.edtName.Text, frmRegisterServer1.edtAddress.Text);
+//      frmRegisterServer1.edtName.Text := '';
+//      frmRegisterServer1.edtAddress.Text := '';
+//      Context.Settings.getServers(cbxServers.items);
+//      cbxServers.itemindex := cbxServers.items.Count - 1;
+//    end
+//    else
+//    begin
+//      ShowMessage('Server Address in error: '+msg);
+//      btnAddServerClick(self);
+//    end;
+//  end;
 end;
 
 procedure TValueSetEditorWelcomeForm.Button1Click(Sender: TObject);
 begin
-  ServerOperation(Context.SetNominatedServer, Context.Settings.getServer(cbxServers.ItemIndex), 'Subscribing to Server', false);
+//  ServerOperation(Context.SetNominatedServer, Context.Settings.getServer(cbxServers.ItemIndex), 'Subscribing to Server', false);
   ModalResult := mrOk;
+end;
+
+procedure TValueSetEditorWelcomeForm.cbShowAtStartupClick(Sender: TObject);
+begin
+  Context.Settings.HasViewedWelcomeScreen := not cbShowAtStartup.Checked;
 end;
 
 procedure TValueSetEditorWelcomeForm.cbxServersChange(Sender: TObject);
 begin
-  Button1.Enabled := cbxServers.ItemIndex > -1;
+//  Button1.Enabled := cbxServers.ItemIndex > -1;
 end;
 
 procedure TValueSetEditorWelcomeForm.FormCreate(Sender: TObject);
@@ -96,9 +99,7 @@ procedure TValueSetEditorWelcomeForm.SetContext(const Value: TValueSetEditorCont
 begin
   FContext.Free;
   FContext := Value;
-  Context.Settings.getServers(cbxServers.items);
-  cbxServers.itemindex := 0;
-  cbxServersChange(self);
+  cbShowAtStartup.Checked := not Context.Settings.HasViewedWelcomeScreen;
 end;
 
 end.

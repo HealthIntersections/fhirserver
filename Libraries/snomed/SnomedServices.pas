@@ -58,7 +58,7 @@ Uses
   TerminologyServices;
 
 Const
-  SNOMED_CACHE_VERSION = '9';
+  SNOMED_CACHE_VERSION = '10';
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
 
@@ -302,10 +302,10 @@ Type
       FBuilder : TAdvBytesBuilder;
     Public
       // for Persistence
-      Procedure GetRelationship(iIndex: Cardinal; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags, Group : Byte);
+      Procedure GetRelationship(iIndex: Cardinal; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags : Byte; var Group : Integer);
 
       Procedure StartBuild;
-      Function AddRelationship(Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags, Group : Byte) : Cardinal;
+      Function AddRelationship(Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags : Byte; Group : integer) : Cardinal;
       Procedure DoneBuild;
   End;
 
@@ -1925,7 +1925,7 @@ begin
   FBuilder := TAdvBytesBuilder.Create;
 end;
 
-Function TSnomedRelationshipList.AddRelationship(Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags, Group : Byte) : Cardinal;
+Function TSnomedRelationshipList.AddRelationship(Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags : Byte; Group : integer) : Cardinal;
 begin
   Result := FBuilder.Length;
   FBuilder.AddCardinal(Source);
@@ -1936,7 +1936,7 @@ begin
   FBuilder.AddCardinal(modifier);
   FBuilder.AddWord(date);
   FBuilder.Append(Flags);
-  FBuilder.Append(Group);
+  FBuilder.AddInteger(Group);
 End;
 
 procedure TSnomedRelationshipList.DoneBuild;
@@ -1946,7 +1946,7 @@ begin
   FBuilder.Free;
 end;
 
-procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags, Group : Byte);
+procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags : Byte; var Group : integer);
 // (iIndex: Cardinal; var Source, Target, RelType: Cardinal; var Flags, Group : Byte);
 begin
   if (iIndex >= FLength) then
@@ -1959,7 +1959,7 @@ begin
   Move(FMaster[iIndex+20], modifier, 4);
   Move(FMaster[iIndex+24], date, 2);
   Move(FMaster[iIndex+26], Flags, 1);
-  Move(FMaster[iIndex+27], Group, 1);
+  Move(FMaster[iIndex+27], Group, 4);
 end;
 
 { TSnomedWords }
@@ -2319,7 +2319,8 @@ function TSnomedServices.ChildCount(context: TCodeSystemProviderContext): intege
 var
   i : integer;
   Identity : UInt64;
-  Flags, Group : Byte;
+  Flags : Byte;
+  Group : integer;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;
@@ -2370,7 +2371,8 @@ function TSnomedServices.getcontext(context: TCodeSystemProviderContext; ndx: in
 var
   i, c : integer;
   Identity : UInt64;
-  Flags, Group : Byte;
+  Flags : Byte;
+  Group : integer;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;

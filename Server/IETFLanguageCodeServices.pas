@@ -27,7 +27,7 @@ type
     function describeLanguage(code : string) : String;
     function describeCountry(code : string) : String;
   public
-    Constructor Create;
+    Constructor Create; override;
     Destructor Destroy; Override;
     Function Link : TIETFLanguageCodeServices; overload;
 

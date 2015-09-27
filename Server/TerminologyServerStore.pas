@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, kCritSct,
   StringSupport,
-  AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics,
+  AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
   KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities,
   TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, CvxServices, UriServices,
@@ -42,7 +42,7 @@ Type
   private
     function getMap(iIndex: integer): TLoadedConceptMap;
   protected
-    function itemClass : TAdvObjectClass;
+    function ItemClass : TAdvObjectClass; override;
   public
     Property map[iIndex : integer] : TLoadedConceptMap read getMap; default;
 
@@ -709,6 +709,7 @@ begin
     on e:exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -882,6 +883,7 @@ begin
     on e : Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -1086,7 +1088,6 @@ end;
 
 function TTerminologyServerStore.GetCodeSystemList: TFHIRValueSetList;
 var
-  i: Integer;
   vs : TFhirValueSet;
 begin
   result := TFHIRValueSetList.Create;
@@ -1106,8 +1107,6 @@ end;
 
 
 function TTerminologyServerStore.getConceptMapById( id: String): TLoadedConceptMap;
-var
-  i : integer;
 begin
   FLock.Lock('getValueSetByUrl');
   try
@@ -1122,7 +1121,6 @@ end;
 
 function TTerminologyServerStore.GetConceptMapList: TLoadedConceptMapList;
 var
-  i: Integer;
   cm : TLoadedConceptMap;
 begin
   result := TLoadedConceptMapList.Create;
@@ -1142,7 +1140,6 @@ end;
 
 function TTerminologyServerStore.GetValueSetList: TFHIRValueSetList;
 var
-  i: Integer;
   vs : TFhirValueSet;
 begin
   result := TFHIRValueSetList.Create;
@@ -1186,8 +1183,6 @@ end;
 
 
 function TTerminologyServerStore.getValueSetById(id: String): TFHIRValueSet;
-var
-  i : integer;
 begin
   FLock.Lock('getValueSetByUrl');
   try
@@ -1201,8 +1196,6 @@ begin
 end;
 
 function TTerminologyServerStore.getValueSetByUrl(url : String) : TFHIRValueSet;
-var
-  i : integer;
 begin
   FLock.Lock('getValueSetByUrl');
   try

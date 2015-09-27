@@ -265,7 +265,7 @@ object Form5: TForm5
     Top = 39
     Width = 755
     Height = 561
-    ActivePage = tabComposition
+    ActivePage = tabStart
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
@@ -276,15 +276,14 @@ object Form5: TForm5
     ParentFont = False
     TabHeight = 1
     TabOrder = 2
-    TabPosition = tpRight
     OnChange = LocationChange
     object tabInformation: TTabSheet
       Caption = 'Valueset Information'
       TabVisible = False
       ExplicitLeft = 0
-      ExplicitTop = 0
+      ExplicitTop = 7
       ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 550
       object Panel6: TPanel
         Left = 0
         Top = 300
@@ -380,14 +379,15 @@ object Form5: TForm5
         Left = 0
         Top = 364
         Width = 747
-        Height = 189
+        Height = 187
         Align = alClient
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 1
+        ExplicitHeight = 186
         DesignSize = (
           747
-          189)
+          187)
         object Label9: TLabel
           Left = 16
           Top = 6
@@ -405,7 +405,7 @@ object Form5: TForm5
           Left = 18
           Top = 32
           Width = 702
-          Height = 134
+          Height = 132
           Anchors = [akLeft, akTop, akRight, akBottom]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -415,6 +415,7 @@ object Form5: TForm5
           ParentFont = False
           TabOrder = 0
           OnChange = txtDescriptionChange
+          ExplicitHeight = 131
         end
       end
       object Panel9: TPanel
@@ -686,14 +687,14 @@ object Form5: TForm5
       ImageIndex = 1
       TabVisible = False
       ExplicitLeft = 0
-      ExplicitTop = 0
+      ExplicitTop = 7
       ExplicitWidth = 0
-      ExplicitHeight = 0
-      object tvDefines: TVirtualStringTree
+      ExplicitHeight = 550
+      object tvCodeSystem: TVirtualStringTree
         Left = 0
         Top = 97
         Width = 747
-        Height = 456
+        Height = 454
         Hint = 'test'
         AccessibleName = 'tvDefine'
         Align = alClient
@@ -713,22 +714,23 @@ object Form5: TForm5
         TabOrder = 0
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick, toEditOnDblClick]
         TreeOptions.SelectionOptions = [toExtendedFocus, toRightClickSelect]
-        OnBeforeCellPaint = tvDefinesBeforeCellPaint
-        OnColumnResize = tvDefinesColumnResize
-        OnCreateEditor = tvDefinesCreateEditor
-        OnEditCancelled = tvDefinesEditCancelled
-        OnEdited = tvDefinesEdited
-        OnEditing = tvDefinesEditing
-        OnEnter = tvDefinesEnter
-        OnExit = tvDefinesExit
-        OnFocusChanged = tvDefinesFocusChanged
-        OnGetText = tvDefinesGetText
+        OnBeforeCellPaint = tvCodeSystemBeforeCellPaint
+        OnColumnResize = tvCodeSystemColumnResize
+        OnCreateEditor = tvCodeSystemCreateEditor
+        OnEditCancelled = tvCodeSystemEditCancelled
+        OnEdited = tvCodeSystemEdited
+        OnEditing = tvCodeSystemEditing
+        OnEnter = tvCodeSystemEnter
+        OnExit = tvCodeSystemExit
+        OnFocusChanged = tvCodeSystemFocusChanged
+        OnGetText = tvCodeSystemGetText
         OnGetHintKind = tvAllGetHintKind
         OnGetHint = tvAllGetHint
-        OnInitChildren = tvDefinesInitChildren
-        OnInitNode = tvDefinesInitNode
-        OnKeyDown = tvDefinesKeyDown
-        OnNewText = tvDefinesNewText
+        OnInitChildren = tvCodeSystemInitChildren
+        OnInitNode = tvCodeSystemInitNode
+        OnKeyDown = tvCodeSystemKeyDown
+        OnNewText = tvCodeSystemNewText
+        ExplicitHeight = 453
         Columns = <
           item
             Position = 0
@@ -797,8 +799,8 @@ object Form5: TForm5
             ParentFont = False
             TabOrder = 0
             OnChange = edtDefineVersionChange
-            OnEnter = tvDefinesEnter
-            OnExit = tvDefinesExit
+            OnEnter = tvCodeSystemEnter
+            OnExit = tvCodeSystemExit
           end
           object cbDefineCase: TCheckBox
             Left = 631
@@ -808,8 +810,8 @@ object Form5: TForm5
             Anchors = [akTop, akRight]
             Caption = 'Case Sensitive'
             TabOrder = 1
-            OnEnter = tvDefinesEnter
-            OnExit = tvDefinesExit
+            OnEnter = tvCodeSystemEnter
+            OnExit = tvCodeSystemExit
           end
         end
         object Panel19: TPanel
@@ -851,8 +853,8 @@ object Form5: TForm5
             ParentFont = False
             TabOrder = 0
             OnChange = edtDefineURIChange
-            OnEnter = tvDefinesEnter
-            OnExit = tvDefinesExit
+            OnEnter = tvCodeSystemEnter
+            OnExit = tvCodeSystemExit
           end
         end
       end
@@ -862,14 +864,14 @@ object Form5: TForm5
       ImageIndex = 2
       TabVisible = False
       ExplicitLeft = 0
-      ExplicitTop = 0
+      ExplicitTop = 7
       ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 550
       object Notebook2: TNotebook
         Left = 0
         Top = 0
         Width = 747
-        Height = 553
+        Height = 551
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -879,10 +881,12 @@ object Form5: TForm5
         ParentFont = False
         TabOrder = 0
         OnPageChanged = LocationChange
+        ExplicitHeight = 550
         object TPage
           Left = 0
           Top = 0
           Caption = 'Null'
+          ExplicitHeight = 550
           object Label1: TLabel
             Left = 27
             Top = 33
@@ -1046,14 +1050,16 @@ object Form5: TForm5
           Left = 0
           Top = 0
           Caption = 'Import'
+          ExplicitHeight = 550
           object Panel22: TPanel
             Left = 0
             Top = 0
             Width = 747
-            Height = 553
+            Height = 551
             Align = alClient
             Caption = 'Panel22'
             TabOrder = 0
+            ExplicitHeight = 550
             object Panel25: TPanel
               Left = 1
               Top = 1
@@ -1119,7 +1125,7 @@ object Form5: TForm5
               Left = 1
               Top = 85
               Width = 745
-              Height = 467
+              Height = 465
               Align = alClient
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clBlack
@@ -1143,6 +1149,7 @@ object Form5: TForm5
               OnGetText = tvPreviewGetText
               OnInitChildren = tvPreviewInitChildren
               OnInitNode = tvPreviewInitNode
+              ExplicitHeight = 464
               Columns = <
                 item
                   Position = 0
@@ -1167,17 +1174,18 @@ object Form5: TForm5
           Top = 0
           Caption = 'IncludeExclude'
           ExplicitWidth = 0
-          ExplicitHeight = 0
+          ExplicitHeight = 550
           object Panel26: TPanel
             Left = 0
             Top = 0
             Width = 747
-            Height = 553
+            Height = 551
             Align = alClient
             TabOrder = 0
+            ExplicitHeight = 550
             object Splitter2: TSplitter
               Left = 1
-              Top = 440
+              Top = 438
               Width = 745
               Height = 12
               Cursor = crVSplit
@@ -1187,7 +1195,7 @@ object Form5: TForm5
             end
             object Panel24: TPanel
               Left = 1
-              Top = 452
+              Top = 450
               Width = 745
               Height = 100
               Align = alBottom
@@ -1195,6 +1203,7 @@ object Form5: TForm5
               Constraints.MinHeight = 100
               ParentColor = True
               TabOrder = 0
+              ExplicitTop = 449
               DesignSize = (
                 745
                 100)
@@ -1217,6 +1226,7 @@ object Form5: TForm5
                 Width = 658
                 Height = 67
                 Anchors = [akLeft, akTop, akRight, akBottom]
+                DefaultNodeHeight = 19
                 Header.AutoSizeIndex = 2
                 Header.Font.Charset = DEFAULT_CHARSET
                 Header.Font.Color = clWindowText
@@ -1304,14 +1314,15 @@ object Form5: TForm5
               Left = 1
               Top = 101
               Width = 745
-              Height = 339
+              Height = 337
               Align = alClient
               BevelOuter = bvNone
               ParentColor = True
               TabOrder = 2
+              ExplicitHeight = 336
               DesignSize = (
                 745
-                339)
+                337)
               object Label23: TLabel
                 Left = 5
                 Top = 10
@@ -1329,8 +1340,9 @@ object Form5: TForm5
                 Left = 66
                 Top = 6
                 Width = 658
-                Height = 315
+                Height = 313
                 Anchors = [akLeft, akTop, akRight, akBottom]
+                DefaultNodeHeight = 19
                 EditDelay = 200
                 Header.AutoSizeIndex = 2
                 Header.Font.Charset = DEFAULT_CHARSET
@@ -1361,6 +1373,7 @@ object Form5: TForm5
                 OnInitNode = tvCodesInitNode
                 OnKeyDown = tvCodesKeyDown
                 OnNewText = tvCodesNewText
+                ExplicitHeight = 312
                 Columns = <
                   item
                     Position = 0
@@ -1438,9 +1451,9 @@ object Form5: TForm5
       ImageIndex = 3
       TabVisible = False
       ExplicitLeft = 0
-      ExplicitTop = 0
+      ExplicitTop = 7
       ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 550
       object pnlExpansion: TPanel
         Left = 0
         Top = 0
@@ -1496,7 +1509,7 @@ object Form5: TForm5
         Left = 0
         Top = 65
         Width = 747
-        Height = 488
+        Height = 486
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1522,6 +1535,7 @@ object Form5: TForm5
         OnGetText = tvExpansionGetText
         OnInitChildren = tvExpansionInitChildren
         OnInitNode = tvExpansionInitNode
+        ExplicitHeight = 485
         Columns = <
           item
             Position = 0
@@ -1538,6 +1552,103 @@ object Form5: TForm5
             Width = 297
             WideText = 'Display'
           end>
+      end
+    end
+    object tabStart: TTabSheet
+      Caption = 'Welcome and Choose Value Set'
+      ImageIndex = 4
+      TabVisible = False
+      object Panel1: TPanel
+        Left = 0
+        Top = 0
+        Width = 747
+        Height = 47
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 0
+        object Label27: TLabel
+          Left = 21
+          Top = 12
+          Width = 157
+          Height = 16
+          Cursor = crHandPoint
+          Caption = 'Create a new Value Set'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clNavy
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = [fsUnderline]
+          ParentFont = False
+          OnClick = btnNewClick
+        end
+      end
+      object Panel2: TPanel
+        Left = 0
+        Top = 510
+        Width = 747
+        Height = 41
+        Align = alBottom
+        BevelOuter = bvNone
+        TabOrder = 1
+        object Label28: TLabel
+          Left = 23
+          Top = 14
+          Width = 189
+          Height = 16
+          Cursor = crHandPoint
+          Caption = 'Manage Terminology Servers'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clNavy
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = [fsUnderline]
+          ParentFont = False
+          OnClick = Servers1Click
+        end
+      end
+      object Panel3: TPanel
+        Left = 0
+        Top = 47
+        Width = 747
+        Height = 463
+        Align = alClient
+        BevelOuter = bvNone
+        BorderWidth = 10
+        TabOrder = 2
+        object Panel4: TPanel
+          Left = 10
+          Top = 10
+          Width = 727
+          Height = 26
+          Align = alTop
+          Alignment = taLeftJustify
+          BevelOuter = bvNone
+          Caption = '  Past Value Sets:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+        end
+        object ListBox1: TListBox
+          Left = 10
+          Top = 36
+          Width = 727
+          Height = 417
+          Align = alClient
+          BevelInner = bvNone
+          BevelOuter = bvNone
+          BorderStyle = bsNone
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = [fsUnderline]
+          ParentFont = False
+          TabOrder = 1
+        end
       end
     end
   end
@@ -1690,26 +1801,31 @@ object Form5: TForm5
         OnClick = btnOpenFileClick
       end
       object OpenfromUrl1: TMenuItem
-        Caption = 'Open from &Url'
+        Caption = 'Open from &Server'
+        ShortCut = 16469
         OnClick = OpenfromUrl1Click
-      end
-      object OpenFromServer1: TMenuItem
-        Caption = '&Browse Server'
-        OnClick = btnOpenServerClick
       end
       object Save1: TMenuItem
         Caption = '&Save'
+        ShortCut = 16467
         OnClick = btnSaveClick
       end
       object SaveAs1: TMenuItem
         Caption = 'Save &As...'
+        ShortCut = 49235
         OnClick = btnSaveAsClick
+      end
+      object OpenFromServer1: TMenuItem
+        Caption = '&Close'
+        ShortCut = 16499
+        OnClick = btnOpenServerClick
       end
       object N2: TMenuItem
         Caption = '-'
       end
       object Print1: TMenuItem
         Caption = '&Print...'
+        ShortCut = 16464
       end
       object PrintSetup1: TMenuItem
         Caption = 'P&rint Setup...'
@@ -1770,6 +1886,11 @@ object Form5: TForm5
       object Export1: TMenuItem
         Caption = 'Export'
       end
+      object Servers1: TMenuItem
+        Caption = 'Manage &Servers'
+        ShortCut = 16461
+        OnClick = Servers1Click
+      end
     end
     object Help1: TMenuItem
       Caption = '&Help'
@@ -1799,7 +1920,7 @@ object Form5: TForm5
     Left = 960
     Top = 112
     Bitmap = {
-      494C010128006C00640020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010128006C00780020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060010000010020000000000000C0
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7643,7 +7764,7 @@ object Form5: TForm5
     Left = 1008
     Top = 116
     Bitmap = {
-      494C010127006C00740020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127006C00880020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004001000001002000000000000080
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

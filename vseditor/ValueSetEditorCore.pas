@@ -4,10 +4,10 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, ZLib, Math, RegExpr,
-  SystemSupport, StringSupport, FileSupport, DateAndTime,
-  AdvObjects, AdvStringMatches, AdvStringObjectMatches, AdvObjectLists, AdvBuffers, AdvWinInetClients, AdvMemories, AdvFiles,
+  SystemSupport, StringSupport, FileSupport, DateAndTime, ShellSupport,
+  AdvObjects, AdvStringMatches, AdvStringObjectMatches, AdvObjectLists, AdvBuffers, AdvWinInetClients, AdvMemories, AdvFiles, AdvGenerics,
   IdSoapMsXml, MsXmlParser, IdUri, IdHTTP, AdvJSON,
-  FHIRBase, FHIRTypes, FHIRComponents, FHIRResources, FHIRParser, FHIRParserBase, FHIRConstants,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRUtilities, FHIRClient;
 
 Const
@@ -17,13 +17,15 @@ Const
 
   ExpressionProperty = 'http://healthintersections.com.au/valueseteditor/expression';
   // MASTER_SERVER = 'http://fhir-dev.healthintersections.com.au/open';
-  MASTER_SERVER = 'http://localhost:961/open';
+  MASTER_SERVER_URL = 'http://localhost:961/open';
 
   CS_LIST = 'uri:uuid:185E783F-BE0D-451E-BEC1-2C92971BC762';
   VS_LIST = 'uri:uuid:3BCEFFA8-4FF0-4EAC-9328-1B671CEC0B55';
 
 
 Type
+  ENoServer = class (Exception);
+
   TValidationOutcomeKind = (voOK, voMissing, voError, voWarning, voHint);
   TValidationOutcome = record
     kind : TValidationOutcomeKind;
@@ -96,9 +98,9 @@ Type
     function GetServerFilter: String;
     procedure SetServerFilter(const Value: String);
 
-    property valueSetId : String read GetValueSetId write SetValueSetId;
     property valueSetFilename : String read GetvalueSetFilename write SetvalueSetFilename;
-    property valueSetURL : String read GetValueSetURL write SetValueSetURL;
+    property valueSetServer : String read GetValueSetURL write SetValueSetURL;
+    property valueSetId : String read GetValueSetId write SetValueSetId;
     property VersionHigh : integer read GetVersionHigh write SetVersionHigh;
     Property FormatIsJson : boolean read GetFormatIsJson write SetFormatIsJson;
   public
@@ -117,11 +119,9 @@ Type
 
     // servers
     function ServerCount : integer;
-    procedure getServers(list : TStrings);
-    Function getServer(index : integer) : String;
+    procedure getServer(index : integer; var name, address : String);
     procedure AddServer(name, address : String);
-    function BaseForServer(address : String) : String;
-    property ServerURL : String read GetServerURL write SetServerURL;
+    property WorkingServer : String read GetServerURL write SetServerURL;
 
     // choice browser
     function columnWidth(tree, name : string; default: integer) : integer;
@@ -147,9 +147,9 @@ Type
 
   TValueSetEditorCodeSystemValueSet = class (TValueSetEditorCodeSystem)
   private
-    FConceptList : TFhirValueSetDefineConceptList;
+    FConceptList : TFhirValueSetCodeSystemConceptList;
     FCase : boolean;
-    function InList(list: TFhirValueSetDefineConceptList; code: String): TFhirValueSetDefineConcept;
+    function InList(list: TFhirValueSetCodeSystemConceptList; code: String): TFhirValueSetCodeSystemConcept;
   public
     constructor create(vs : TFhirValueSet); overload;
     destructor destroy; override;
@@ -199,32 +199,43 @@ Type
 
   TValueSetEditorServerCache = class (TAdvObject)
   private
+    FLoaded : boolean;
+    FName: String;
     FUrl : String;
-    base : String; // base name for saved artifacts
     FLastUpdated : String;
+    FKey : integer;
     ini : TInifile;
     Flist : TFHIRValueSetList;
     valuesets : TAdvStringObjectMatch; // uri and actual value set (might be a summary)
-    codesystems : TAdvStringObjectMatch; // uri and actual value set (might be a summary)
+    FCodeSystems : TAdvStringObjectMatch; // uri and actual value set (might be a summary)
     sortedCodesystems : TStringList;
     sortedValueSets : TStringList;
     specialCodeSystems : TAdvStringObjectMatch;
     procedure SeeValueset(vs : TFhirValueSet; isSummary, loading : boolean);
     function LoadFullCodeSystem(uri : String) : TFhirValueSet;
     procedure CheckConnection;
+    procedure SynchroniseServer(event : TFHIRClientStatusEvent);
+    procedure UpdateFromServer(event : TFHIRClientStatusEvent);
   public
-    Constructor Create(url, base : String);
+    Constructor Create(name, url : String; key : integer);
     destructor Destroy; override;
+    Function Link : TValueSetEditorServerCache; overload;
     procedure load(event : TFHIRClientStatusEvent = nil);
+    procedure update(event : TFHIRClientStatusEvent; null : String);
     procedure save;
+    function base : String;
     Property URL : string read FUrl;
     property List : TFHIRValueSetList read FList;
+    Property Name : String read FName;
+    Property CodeSystems : TAdvStringObjectMatch read FCodeSystems;
+    Property LastUpdated : String read FLastUpdated;
   end;
 
   TValueSetEditorContext = class (TAdvObject)
   private
     FSettings: TValueSetEditorCoreSettings;
-    FServer : TValueSetEditorServerCache;
+    FWorkingServer : TValueSetEditorServerCache;
+    FServers : TAdvList<TValueSetEditorServerCache>;
 
     FValueSet : TFhirValueSet; // working value set
     FCodeSystemContexts : TAdvStringObjectMatch;
@@ -239,11 +250,12 @@ Type
     FValidationErrors : TValidationOutcomeMarkList;
     FOnValidate: TNotifyEvent;
     FServerFilter: String;
+    Procedure LoadServers;
     Procedure CompressFile(source, dest : String);
     Procedure DeCompressFile(source, dest : String);
     procedure openValueSet(vs : TFhirValueSet);
-    procedure GetDefinedCodesList(context : TFhirValueSetDefineConceptList; list : TStrings);
-    procedure GetDefinedCodeDisplayList(context : TFhirValueSetDefineConceptList; list : TStrings; code : String);
+    procedure GetDefinedCodesList(context : TFhirValueSetCodeSystemConceptList; list : TStrings);
+    procedure GetDefinedCodeDisplayList(context : TFhirValueSetCodeSystemConceptList; list : TStrings; code : String);
     function FetchValueSetBySystem(uri : String) : TFhirValueSet;
 
     procedure LoadFromFile(fn : String);
@@ -253,9 +265,7 @@ Type
     procedure InternalValidation;
     procedure validateDefine;
     procedure validateInclude(inc : TFhirValueSetComposeInclude);
-    procedure validateDefineConcepts(ts: TStringlist; list: TFhirValueSetDefineConceptList);
-    procedure SynchroniseServer(event : TFHIRClientStatusEvent);
-    procedure UpdateFromServer(event : TFHIRClientStatusEvent);
+    procedure validateDefineConcepts(ts: TStringlist; list: TFhirValueSetCodeSystemConceptList);
     procedure SetServerFilter(const Value: String);
   public
     Constructor Create; Override;
@@ -271,8 +281,9 @@ Type
 
     // registering a server
     function CheckServer(url : String; var msg : String) : boolean;
-    procedure SetNominatedServer(event : TFHIRClientStatusEvent; url : String);
-    Property Server : TValueSetEditorServerCache read FServer;
+    procedure SetNominatedServer(url : String);
+    Property WorkingServer : TValueSetEditorServerCache read FWorkingServer;
+    Property Servers : TAdvList<TValueSetEditorServerCache> read FServers;
 
     // opening a value set
     procedure NewValueset;
@@ -553,7 +564,7 @@ begin
     if (Settings.valueSetId = '') then
       raise Exception.Create('Cannot save to server as value set id has been lost');
 
-    client := TFhirClient.create(Settings.ServerURL, true);
+    client := TFhirClient.create(Settings.valueSetServer, true);
     try
       client.OnClientStatus := nil;
       client.updateResource(Settings.valueSetId, FValueSet);
@@ -576,25 +587,26 @@ end;
 procedure TValueSetEditorContext.SaveAsServerNew;
 var
   client : TFhirClient;
-  entry : TFHIRBundleEntry;
+  vs : TFHIRValueSet;
 begin
   FValueSet.date := NowLocal;
-  client := TFhirClient.create(Settings.ServerURL, true);
+  client := TFhirClient.create(Settings.WorkingServer, true);
   try
     client.OnClientStatus := nil;
-    entry := TFhirBundleEntry.Create;
+    vs := client.createResource(FValueSet) as TFhirValueSet;
     try
-      entry.resource := client.createResource(FValueSet);
-      Settings.valueSetId := entry.id.Substring(Settings.ServerURL.Length+1);
+      Settings.valueSetId := vs.id;
+      FValueSet.free;
+      FValueSet := vs.Link;
     finally
-      entry.Free;
+      vs.Free;
     end;
   finally
     client.free;
   end;
 end;
 
-procedure TValueSetEditorContext.UpdateFromServer(event : TFHIRClientStatusEvent);
+procedure TValueSetEditorServerCache.UpdateFromServer(event : TFHIRClientStatusEvent);
 var
   client : TFhirClient;
   params : TAdvStringMatch;
@@ -602,12 +614,12 @@ var
   i : integer;
   vs : TFhirValueSet;
 begin
-  client := TFhirClient.create(FServer.url, true);
+  client := TFhirClient.create(url, true);
   try
     client.OnClientStatus := Event;
     params := TAdvStringMatch.Create;
     try
-      params.Add('_since', FServer.FLastUpdated);
+      params.Add('_since', FLastUpdated);
       params.Add('_count', '50');
       event(self, 'Fetch Valuesets');
       list := client.historyType(frtValueset, true, params);
@@ -615,13 +627,13 @@ begin
         for i := 0 to list.entryList.Count -1 do
         begin
           event(self, 'Process Valueset '+inttostr(i+1)+' if '+inttostr(list.entryList.Count));
-          FServer.SeeValueset(list.entryList[i].resource as TFhirValueSet, false, false);
+          SeeValueset(list.entryList[i].resource as TFhirValueSet, false, false);
         end;
 //        FServer.FLastUpdated := ;
       finally
         list.Free;
       end;
-      FServer.save;
+      save;
     finally
       params.free;
     end;
@@ -632,7 +644,7 @@ end;
 
 
 
-procedure TValueSetEditorContext.SynchroniseServer(event : TFHIRClientStatusEvent);
+procedure TValueSetEditorServerCache.SynchroniseServer(event : TFHIRClientStatusEvent);
 var
   client : TFhirClient;
   params : TAdvStringMatch;
@@ -640,7 +652,7 @@ var
   i : integer;
   vs : TFhirValueSet;
 begin
-  client := TFhirClient.create(FServer.url, true);
+  client := TFhirClient.create(url, true);
   try
     client.OnClientStatus := event;
     params := TAdvStringMatch.Create;
@@ -653,19 +665,29 @@ begin
         for i := 0 to list.entryList.Count - 1 do
         begin
           event(self, 'Process Valueset '+inttostr(i+1)+' if '+inttostr(list.entryList.Count));
-          FServer.SeeValueset(list.entryList[i].resource as TFhirValueSet, true, false);
+          SeeValueset(list.entryList[i].resource as TFhirValueSet, true, false);
         end;
-        FServer.FLastUpdated := list.meta.lastUpdated.AsXML;
+        FLastUpdated := list.meta.lastUpdated.AsXML;
       finally
         list.Free;
       end;
-      FServer.save;
+      save;
     finally
       params.free;
     end;
   finally
     client.Free;
   end;
+end;
+
+procedure TValueSetEditorServerCache.update(event: TFHIRClientStatusEvent; null: String);
+begin
+  if not FLoaded then
+    load(event);
+  if FLastUpdated = '' then
+    SynchroniseServer(event)
+  else
+    UpdateFromServer(event);
 end;
 
 function TValueSetEditorContext.TryGetDisplay(system, code: String): String;
@@ -677,24 +699,18 @@ begin
     result := '??';
 end;
 
-procedure TValueSetEditorContext.SetNominatedServer(event : TFHIRClientStatusEvent; url : String);
+procedure TValueSetEditorContext.SetNominatedServer(url : String);
 var
-  msg : String;
-  i : integer;
+  i, t : integer;
 begin
-  event(self, 'Fetching Conformance Statement');
-  if not checkServer(url, msg) then
-    raise Exception.Create(msg);
-  Settings.ServerURL := url;
-  FServer.Free;
-  FServer := TValueSetEditorServerCache.Create(url, Settings.BaseForServer(url));
-  event(self, 'Loading Cache');
-  FServer.load(event);
-  event(self, 'Updating From Server');
-  if FServer.FLastUpdated = '' then
-    SynchroniseServer(event)
-  else
-    UpdateFromServer(event);
+  t := -1;
+  for i := 0 to FServers.Count - 1 do
+    if FServers[i].FUrl = url then
+      t := i;
+  if (t = -1) then
+    raise Exception.Create('URL not registered as a server: '+url);
+  FWorkingServer.Free;
+  FWorkingServer := Servers[t].Link;
 end;
 
 procedure TValueSetEditorContext.SetServerFilter(const Value: String);
@@ -721,6 +737,9 @@ begin
       Settings.AddServer('Local Development Server', 'http://local.healthintersections.com.au:980/open')
     else
       Settings.AddServer('Health Intersections General Server', 'http://fhir-dev.healthintersections.com.au/open');
+
+  FServers := TAdvList<TValueSetEditorServerCache>.create;
+  loadServers;
 
   FExpansions := TAdvStringObjectMatch.create;
   ClearAllVersions;
@@ -760,7 +779,8 @@ end;
 
 destructor TValueSetEditorContext.Destroy;
 begin
-  FServer.Free;
+  FWorkingServer.Free;
+  FServers.Free;
   FValidationErrors.Free;
   FExpansions.Free;
   FValueSet.Free;
@@ -792,12 +812,31 @@ begin
   end;
 end;
 
+procedure TValueSetEditorContext.LoadServers;
+var
+  i : integer;
+  name, address : String;
+  server : TValueSetEditorServerCache;
+begin
+  for i := 0 to Settings.ServerCount - 1 do
+  begin
+    settings.getServer(i, name, address);
+    server := TValueSetEditorServerCache.Create(name, address, i);
+    try
+      server.load(nil);
+      FServers.Add(server.Link);
+    finally
+      server.Free;
+    end;
+  end;
+end;
+
 function TValueSetEditorContext.EditName: String;
 begin
   if Settings.valueSetFilename <> '' then
     result := Settings.valueSetFilename
   else if Settings.valueSetId <> '' then
-    result := Settings.valueSetId +' on '+Settings.ServerURL
+    result := Settings.valueSetId +' on '+Settings.valueSetServer
   else
     result := 'New Value Set';
 end;
@@ -808,10 +847,7 @@ var
   params : TAdvStringMatch;
   feed : TFHIRBundle;
 begin
-  if Settings.ServerURL <> '' then
-    client := TFhirClient.create(Settings.ServerURL, true)
-  else
-    client := TFhirClient.create(MASTER_SERVER, true);
+  client := TFhirClient.create(FWorkingServer.FUrl, true);
   try
     client.OnClientStatus := nil;
     params := TAdvStringMatch.Create;
@@ -845,10 +881,7 @@ var
   feed : TFHIRBundle;
 begin
   result := nil;
-  if Settings.ServerURL <> '' then
-    client := TFhirClient.create(Settings.ServerURL, true)
-  else
-    client := TFhirClient.create(MASTER_SERVER, true);
+  client := TFhirClient.create(FWorkingServer.url, true);
   try
     client.OnClientStatus := nil;
     params := TAdvStringMatch.Create;
@@ -858,8 +891,8 @@ begin
       try
         if feed.entryList.Count > 0 then
         begin
-          Server.SeeValueset(feed.entryList[0].resource as TFhirValueSet, false, false);
-          Server.save;
+          FWorkingServer.SeeValueset(feed.entryList[0].resource as TFhirValueSet, false, false);
+          FWorkingServer.save;
           result := feed.entryList[0].resource.link as TFhirValueSet;
         end;
       finally
@@ -887,10 +920,10 @@ begin
     else
       result := TValueSetEditorCodeSystemValueSet.Create(TFHIRValueSet(obj));
   end
-  else if (FServer <> Nil) and (FServer.codesystems.ExistsByKey(uri)) then
+  else if (FWorkingServer <> Nil) and (FWorkingServer.codesystems.ExistsByKey(uri)) then
   begin
     // this means that the server has code system. try and load the local copy
-    vs := FServer.LoadFullCodeSystem(uri);
+    vs := FWorkingServer.LoadFullCodeSystem(uri);
     try
       if vs = nil then
         vs := FetchValueSetBySystem(uri);
@@ -905,13 +938,13 @@ begin
       vs.Free;
     end;
   end
-  else if (FServer <> nil) and FServer.specialCodeSystems.ExistsByKey(uri) then
-    result := FServer.specialCodeSystems.GetValueByKey(uri).Link as TServerCodeSystem
+  else if (FWorkingServer <> nil) and FWorkingServer.specialCodeSystems.ExistsByKey(uri) then
+    result := FWorkingServer.specialCodeSystems.GetValueByKey(uri).Link as TServerCodeSystem
   else
     result := nil; // Not done yet;
 end;
 
-procedure TValueSetEditorContext.GetDefinedCodeDisplayList(context: TFhirValueSetDefineConceptList; list: TStrings; code: String);
+procedure TValueSetEditorContext.GetDefinedCodeDisplayList(context: TFhirValueSetCodeSystemConceptList; list: TStrings; code: String);
 var
   i : integer;
 begin
@@ -924,7 +957,7 @@ begin
   end;
 end;
 
-procedure TValueSetEditorContext.GetDefinedCodesList(context: TFhirValueSetDefineConceptList; list: TStrings);
+procedure TValueSetEditorContext.GetDefinedCodesList(context: TFhirValueSetCodeSystemConceptList; list: TStrings);
 var
   i : integer;
 begin
@@ -952,18 +985,18 @@ begin
   try
 
     if context = CS_LIST then
-      list.AddStrings(FServer.sortedCodesystems)
+      list.AddStrings(FWorkingServer.sortedCodesystems)
     else if context = VS_LIST then
-      list.AddStrings(FServer.sortedValueSets)
+      list.AddStrings(FWorkingServer.sortedValueSets)
     else if FCodeSystemContexts.ExistsByKey(context) then
     begin
       obj := FCodeSystemContexts.Matches[context];
       if obj is TFhirValueSet then
         if code = '' then
-          GetDefinedCodesList(TFhirValueSet(obj).define.conceptList, list)
+          GetDefinedCodesList(TFhirValueSet(obj).codeSystem.conceptList, list)
         else
         begin
-          GetDefinedCodeDisplayList(TFhirValueSet(obj).define.conceptList, list, code);
+          GetDefinedCodeDisplayList(TFhirValueSet(obj).codeSystem.conceptList, list, code);
           if list.IndexOf('') = -1 then
             list.Insert(0, '');
         end;
@@ -1059,10 +1092,7 @@ begin
   else
   begin
     // todo: make this a thread that waits
-    if Settings.ServerURL <> '' then
-      client := TFhirClient.create(Settings.ServerURL, true)
-    else
-      client := TFhirClient.create(MASTER_SERVER, true);
+    client := TFhirClient.create(FWorkingServer.FUrl, true);
     try
       client.OnClientStatus := nil;
       params := TAdvStringMatch.Create;
@@ -1091,10 +1121,10 @@ begin
   end;
 end;
 
-procedure TValueSetEditorContext.validateDefineConcepts(ts : TStringlist; list : TFhirValueSetDefineConceptList);
+procedure TValueSetEditorContext.validateDefineConcepts(ts : TStringlist; list : TFhirValueSetCodeSystemConceptList);
 var
   i : integer;
-  code : TFhirValueSetDefineConcept;
+  code : TFhirValueSetCodeSystemConcept;
 begin
   for I := 0 to list.Count - 1 do
   begin
@@ -1119,7 +1149,7 @@ var
 begin
   ts := TStringList.Create;
   try
-    validateDefineConcepts(ts, FValueSet.define.conceptList);
+    validateDefineConcepts(ts, FValueSet.codeSystem.conceptList);
   finally
     ts.Free;
   end;
@@ -1132,7 +1162,7 @@ begin
   FValidationErrors.Clear;
   if (FValueSet <> nil) then
   begin
-    if FValueSet.define <> nil then
+    if FValueSet.codeSystem <> nil then
       validateDefine;
     if FValueSet.compose <> nil then
     begin
@@ -1176,17 +1206,14 @@ begin
     result := 'ISO 11073'
   else if uri = 'http://nema.org/dicom/dicm' then
     result := 'DICOM codes'
-  else if FServer.codesystems.ExistsByKey(uri) then
-    result := TFhirValueSet(FServer.codesystems.GetValueByKey(uri)).name
+  else if FWorkingServer.codesystems.ExistsByKey(uri) then
+    result := TFhirValueSet(FWorkingServer.codesystems.GetValueByKey(uri)).name
   else if not isURL(uri) then
     result := uri
   else
   begin
     try
-      if Settings.ServerURL <> '' then
-        client := TFhirClient.create(Settings.ServerURL, true)
-      else
-        client := TFhirClient.create(MASTER_SERVER, true);
+      client := TFhirClient.create(FWorkingServer.URL, true);
       try
         client.OnClientStatus := nil;
         params := TAdvStringMatch.Create;
@@ -1197,8 +1224,8 @@ begin
             if list.entryList.Count > 0 then
             begin
               result := (list.entryList[0].resource as TFHIRValueSet).name;
-              FServer.SeeValueset(list.entryList[0].resource as TFHIRValueSet, false, false);
-              FServer.save;
+              FWorkingServer.SeeValueset(list.entryList[0].resource as TFHIRValueSet, false, false);
+              FWorkingServer.save;
             end
             else
               result := uri;
@@ -1226,17 +1253,14 @@ var
 begin
   if (uri = '') then
     result := '??'
-  else if FServer.valuesets.ExistsByKey(uri) then
-    result := TFHIRValueSet(FServer.valuesets.Matches[uri]).name
+  else if FWorkingServer.valuesets.ExistsByKey(uri) then
+    result := TFHIRValueSet(FWorkingServer.valuesets.Matches[uri]).name
   else if not isUrl(uri) then
     result := uri
   else
   begin
     try
-      if Settings.ServerURL <> '' then
-        client := TFhirClient.create(Settings.ServerURL, true)
-      else
-        client := TFhirClient.create(MASTER_SERVER, true);
+      client := TFhirClient.create(FWorkingServer.URL, true);
       try
         client.OnClientStatus := nil;
         params := TAdvStringMatch.Create;
@@ -1247,8 +1271,8 @@ begin
             if list.entryList.Count > 0 then
             begin
               result := (list.entryList[0].resource as TFHIRValueSet).name;
-              FServer.SeeValueset(list.entryList[0].resource as TFhirValueSet, false, false);
-              FServer.save;
+              FWorkingServer.SeeValueset(list.entryList[0].resource as TFhirValueSet, false, false);
+              FWorkingServer.save;
             end
             else
               result := uri;
@@ -1321,7 +1345,7 @@ var
   vs : TFhirValueSet;
 begin
   Settings.valueSetId := id;
-  client := TFhirClient.create(Settings.ServerURL, true);
+  client := TFhirClient.create(FWorkingServer.URL, true);
   try
     client.OnClientStatus := nil;
     vs := client.readResource(frtValueSet, Settings.valueSetId) as TFhirValueSet;
@@ -1354,7 +1378,8 @@ begin
       p := MakeParser('en', ffAsIs, mem, xppAllow);
       try
         vs := p.resource as TFhirValueSet;
-        Settings.valueSetURL := url;
+        Settings.valueSetServer := url;
+        raise Exception.Create('not done yet');
         openValueSet(vs);
       finally
         p.Free;
@@ -1422,7 +1447,7 @@ begin
     result := makeOutcome(voMissing, 'A URL is required')
   else if not isURL(value) then
     result := makeOutcome(voError, 'A URL is required (not a valid url)')
-  else if not FServer.valuesets.ExistsByKey(value) then
+  else if not FWorkingServer.valuesets.ExistsByKey(value) then
     result := makeOutcome(voWarning, 'No value set known by this URI')
   else
     result := makeOutcome(voOk, '');
@@ -1512,7 +1537,7 @@ begin
     result := makeOutcome(voMissing, 'A URL is required')
   else if not isURL(value) then
     result := makeOutcome(voError, 'A URL is required (not a valid url)')
-  else if not FServer.codesystems.ExistsByKey(value) and not FServer.specialCodeSystems.ExistsByKey(value) then
+  else if not FWorkingServer.codesystems.ExistsByKey(value) and not FWorkingServer.specialCodeSystems.ExistsByKey(value) then
     result := makeOutcome(voWarning, 'No code system known by this URI')
   else
     result := makeOutcome(voOk, '');
@@ -1521,7 +1546,7 @@ end;
 function TValueSetEditorContext.validateSystem(
   value: string): TValidationOutcome;
 begin
-  if (value = '') and (FValueSet <> nil) and (FValueSet.define <> nil) and not FValueSet.define.conceptList.IsEmpty then
+  if (value = '') and (FValueSet <> nil) and (FValueSet.codeSystem <> nil) and not FValueSet.codeSystem.conceptList.IsEmpty then
     result := makeOutcome(voMissing, 'A URL is required')
   else if not isURL(value) then
     result := makeOutcome(voError, 'A URL is required (not a valid url)')
@@ -1539,26 +1564,6 @@ begin
   ini.WriteString('servers', name, address);
 end;
 
-function TValueSetEditorCoreSettings.BaseForServer(address: String): String;
-var
-  list : TStringList;
-  i, v : integer;
-begin
-  list := TStringList.Create;
-  try
-    ini.ReadSection('servers', list);
-    v := -1;
-    for i := 0 to list.Count - 1 do
-      if ini.ReadString('servers', list[i], '') = address then
-        v := i;
-    if (v = -1) then
-      raise Exception.Create('Unable to set a server as nominated server when it is not registered');
-    result := Path([ProgData, 'Health Intersections', 'ValueSetEditor' , 'server'+inttostr(v)]);
-  finally
-    list.free;
-  end;
-end;
-
 function TValueSetEditorCoreSettings.columnWidth(tree, name : string; default: integer) : integer;
 begin
   result := ini.ReadInteger(tree, name, default);
@@ -1567,11 +1572,11 @@ end;
 constructor TValueSetEditorCoreSettings.Create;
 begin
   inherited;
-  if not FileExists(Path([ProgData, 'Health Intersections'])) then
-    CreateDir(Path([ProgData, 'Health Intersections']));
-  if not FileExists(Path([ProgData, 'Health Intersections', 'ValueSetEditor'])) then
-    CreateDir(Path([ProgData, 'Health Intersections', 'ValueSetEditor']));
-  ini := TIniFile.create(Path([ProgData, 'Health Intersections', 'ValueSetEditor', 'valueseteditor.ini']));
+  if not FileExists(Path([ShellLocalAppDataFolder, 'Health Intersections'])) then
+    CreateDir(Path([ShellLocalAppDataFolder, 'Health Intersections']));
+  if not FileExists(Path([ShellLocalAppDataFolder, 'Health Intersections', 'ValueSetEditor'])) then
+    CreateDir(Path([ShellLocalAppDataFolder, 'Health Intersections', 'ValueSetEditor']));
+  ini := TIniFile.create(Path([ShellLocalAppDataFolder, 'Health Intersections', 'ValueSetEditor', 'valueseteditor.ini']));
 end;
 
 destructor TValueSetEditorCoreSettings.Destroy;
@@ -1600,14 +1605,15 @@ begin
   result := ini.ReadBool('window', 'HasViewedWelcomeScreen', false);
 end;
 
-function TValueSetEditorCoreSettings.getServer(index: integer): String;
+procedure TValueSetEditorCoreSettings.getServer(index : integer; var name, address : String);
 var
   list : TStringList;
 begin
   list := TStringList.create;
   try
     ini.ReadSection('servers', list);
-    result := ini.ReadString('servers', list[index], '');
+    name := list[index];
+    address := ini.ReadString('servers', name, '');
   finally
     list.free;
   end;
@@ -1616,11 +1622,6 @@ end;
 function TValueSetEditorCoreSettings.GetServerFilter: String;
 begin
   result := ini.ReadString('ui', 'server-filter', '');
-end;
-
-procedure TValueSetEditorCoreSettings.getServers(list: TStrings);
-begin
-  ini.ReadSection('servers', list);
 end;
 
 function TValueSetEditorCoreSettings.GetServerURL: String;
@@ -1684,7 +1685,7 @@ var
 begin
   list := TStringList.Create;
   try
-    getServers(list);
+    ini.ReadSection('servers', list);
     result := list.Count;
   finally
     list.Free;
@@ -1906,8 +1907,8 @@ end;
 constructor TValueSetEditorCodeSystemValueSet.create(vs: TFhirValueSet);
 begin
   Create;
-  FConceptlist := vs.define.conceptList.Link;
-  FCase := vs.define.caseSensitive;
+  FConceptlist := vs.codeSystem.conceptList.Link;
+  FCase := vs.codeSystem.caseSensitive;
 end;
 
 destructor TValueSetEditorCodeSystemValueSet.destroy;
@@ -1933,9 +1934,9 @@ begin
   result := getCodeStatus(value, msg) = cscsOK;
 end;
 
-function TValueSetEditorCodeSystemValueSet.InList(list : TFhirValueSetDefineConceptList; code : String) : TFhirValueSetDefineConcept;
+function TValueSetEditorCodeSystemValueSet.InList(list : TFhirValueSetCodeSystemConceptList; code : String) : TFhirValueSetCodeSystemConcept;
 var
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
   i : integer;
 begin
   result := nil;
@@ -1969,7 +1970,7 @@ end;
 
 function TValueSetEditorCodeSystemValueSet.getDisplay(code: String; var display: String): boolean;
 var
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
 begin
   c := inList(FConceptList, code);
   if (c <> nil) and (c.display <> '') then
@@ -1983,7 +1984,7 @@ end;
 
 function TValueSetEditorCodeSystemValueSet.isWrongDisplay(code, display: String): boolean;
 var
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
 begin
   c := inList(FConceptList, code);
   if (c <> nil) and (c.display <> '') and not SameText(display, c.display) then
@@ -1993,6 +1994,11 @@ begin
 end;
 
 { TValueSetEditorServerCache }
+
+function TValueSetEditorServerCache.base: String;
+begin
+  result := Path([ShellLocalAppDataFolder, 'Health Intersections', 'ValueSetEditor' , 'server'+inttostr(FKey)]);
+end;
 
 procedure TValueSetEditorServerCache.CheckConnection;
 var
@@ -2040,24 +2046,30 @@ begin
   end;
 end;
 
-constructor TValueSetEditorServerCache.Create(url, base : String);
+constructor TValueSetEditorServerCache.Create(name, url : String; key : integer);
 begin
   inherited Create;
-  self.base := base;
-  ini := TIniFile.Create(base+'server.ini');
+  FKey := key;
+  Furl := url;
+  FName := name;
+  FLoaded := false;
+
+  ini := TIniFile.Create(IncludeTrailingPathDelimiter(base)+'server.ini');
   Flist := TFHIRValueSetList.Create;
   valuesets := TAdvStringObjectMatch.Create;
   valuesets.Forced := true;
   valuesets.PreventDuplicates;
-  codesystems := TAdvStringObjectMatch.Create;
-  codesystems.Forced := true;
-  codesystems.PreventDuplicates;
+  Fcodesystems := TAdvStringObjectMatch.Create;
+  Fcodesystems.Forced := true;
+  Fcodesystems.PreventDuplicates;
   sortedCodesystems := TStringList.Create;
   sortedCodesystems.Sorted := true;
   sortedValueSets := TStringList.Create;
   sortedValueSets.Sorted := true;
-  self.Furl := url;
   specialCodeSystems := TAdvStringObjectMatch.create;
+
+//  if not checkServer(url, msg) then
+//    raise Exception.Create(msg);
 end;
 
 destructor TValueSetEditorServerCache.Destroy;
@@ -2070,6 +2082,11 @@ begin
   FList.Free;
   ini.Free;
   inherited;
+end;
+
+function TValueSetEditorServerCache.Link: TValueSetEditorServerCache;
+begin
+  result := TValueSetEditorServerCache(inherited Link);
 end;
 
 procedure TValueSetEditorServerCache.load(event : TFHIRClientStatusEvent);
@@ -2109,6 +2126,7 @@ begin
       json.free;
     end;
   end;
+  FLoaded := true;
 end;
 
 procedure TValueSetEditorServerCache.save;
@@ -2193,12 +2211,12 @@ begin
       finally
         f.free;
       end;
-      if (vs.define <> nil) then
-        ini.WriteString('codeSystems', vs.define.system, id);
+      if (vs.codeSystem <> nil) then
+        ini.WriteString('codeSystems', vs.codeSystem.system, id);
     end;
     // now, make it empty
-    if vs.define <> nil then
-      vs.define.conceptList.Clear;
+    if vs.codeSystem <> nil then
+      vs.codeSystem.conceptList.Clear;
     if vs.compose <> nil then
       for i := 0 to vs.compose.includeList.Count - 1 do
       begin
@@ -2224,11 +2242,11 @@ begin
   if not sortedValueSets.Find(vs.url, i) then
     sortedValueSets.Add(vs.url);
 
-  if vs.define <> nil then
+  if vs.codeSystem <> nil then
   begin
-    codesystems.Matches[vs.define.System] := vs.Link;
-    if not sortedCodesystems.Find(vs.define.System, i) then
-      sortedCodesystems.Add(vs.define.System);
+    codesystems.Matches[vs.codeSystem.System] := vs.Link;
+    if not sortedCodesystems.Find(vs.codeSystem.System, i) then
+      sortedCodesystems.Add(vs.codeSystem.System);
   end;
 end;
 

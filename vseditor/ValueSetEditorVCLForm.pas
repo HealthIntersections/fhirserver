@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, VirtualTrees, Vcl.ComCtrls,
   Math, Clipbrd,
-  FHIRTypes, FHIRComponents, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities,
   ValueSetEditorCore, ValueSetEditorRegisterServerForm, Vcl.Menus, Vcl.Buttons,
   Vcl.ImgList, VirtualStringTreeComboBox, StringSupport, Vcl.Imaging.pngimage,
   Vcl.OleCtrls, SHDocVw, ServerChooser, Vcl.ToolWin, LookAheadUnit, ValueSetEditorAbout,
@@ -63,7 +63,7 @@ type
     Panel14: TPanel;
     Label17: TLabel;
     edtName: TEdit;
-    tvDefines: TVirtualStringTree;
+    tvCodeSystem: TVirtualStringTree;
     Panel17: TPanel;
     Panel18: TPanel;
     Label18: TLabel;
@@ -197,6 +197,15 @@ type
     mnuStructureDown: TMenuItem;
     mnuStructureInsert: TMenuItem;
     mnuStructureDelete: TMenuItem;
+    Servers1: TMenuItem;
+    tabStart: TTabSheet;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    ListBox1: TListBox;
+    Label27: TLabel;
+    Label28: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOpenServerClick(Sender: TObject);
@@ -206,7 +215,7 @@ type
     procedure tvStructureInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
     procedure tvStructurePaintText(Sender: TBaseVirtualTree; const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType);
     procedure tvStructureClick(Sender: TObject);
-    procedure tvDefinesColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+    procedure tvCodeSystemColumnResize(Sender: TVTHeader; Column: TColumnIndex);
     procedure tvCodesColumnResize(Sender: TVTHeader; Column: TColumnIndex);
     procedure tvCodesInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure tvCodesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
@@ -215,9 +224,9 @@ type
     procedure btnAddCodeClick(Sender: TObject);
     procedure btnDeleteCodeClick(Sender: TObject);
     procedure tvFiltersColumnResize(Sender: TVTHeader; Column: TColumnIndex);
-    procedure tvDefinesInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
-    procedure tvDefinesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure tvDefinesCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
+    procedure tvCodeSystemInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure tvCodeSystemGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure tvCodeSystemCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
     procedure GetAbstractList(context : string; list : TStrings);
     procedure btnAddDefineClick(Sender: TObject);
     procedure edtNameChange(Sender: TObject);
@@ -233,13 +242,13 @@ type
     procedure txtDescriptionChange(Sender: TObject);
     procedure edtDefineURIChange(Sender: TObject);
     procedure edtDefineVersionChange(Sender: TObject);
-    procedure tvDefinesNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
+    procedure tvCodeSystemNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
     procedure btnDeleteDefineClick(Sender: TObject);
     procedure btnDefineUpClick(Sender: TObject);
     procedure btnDefineDownClick(Sender: TObject);
     procedure btnDefineRightClick(Sender: TObject);
     procedure btnDefineLeftClick(Sender: TObject);
-    procedure tvDefinesInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
+    procedure tvCodeSystemInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
     procedure btnCodesUpClick(Sender: TObject);
     procedure btnCodesDownClick(Sender: TObject);
     procedure edtSystemReferenceChange(Sender: TObject);
@@ -282,12 +291,12 @@ type
     procedure miCutClick(Sender: TObject);
     procedure miCopyClick(Sender: TObject);
     procedure miPasteClick(Sender: TObject);
-    procedure tvDefinesEnter(Sender: TObject);
-    procedure tvDefinesExit(Sender: TObject);
-    procedure tvDefinesFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
-    procedure tvDefinesEditing(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
-    procedure tvDefinesEdited(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
-    procedure tvDefinesEditCancelled(Sender: TBaseVirtualTree; Column: TColumnIndex);
+    procedure tvCodeSystemEnter(Sender: TObject);
+    procedure tvCodeSystemExit(Sender: TObject);
+    procedure tvCodeSystemFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+    procedure tvCodeSystemEditing(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
+    procedure tvCodeSystemEdited(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+    procedure tvCodeSystemEditCancelled(Sender: TBaseVirtualTree; Column: TColumnIndex);
     procedure pmTreeViewPopup(Sender: TObject);
     procedure tvCodesEnter(Sender: TObject);
     procedure tvCodesExit(Sender: TObject);
@@ -296,7 +305,7 @@ type
     procedure tvFiltersFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
     procedure tvFiltersEnter(Sender: TObject);
     procedure tvFiltersExit(Sender: TObject);
-    procedure tvDefinesKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure tvCodeSystemKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure tvCodesKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure tvFiltersKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure tvAllGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var LineBreakStyle: TVTTooltipLineBreakStyle; var HintText: string);
@@ -308,7 +317,7 @@ type
     procedure WelcomeScreen1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure OpenfromUrl1Click(Sender: TObject);
-    procedure tvDefinesBeforeCellPaint(Sender: TBaseVirtualTree;
+    procedure tvCodeSystemBeforeCellPaint(Sender: TBaseVirtualTree;
       TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
       CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
     procedure tvCodesBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
@@ -322,6 +331,7 @@ type
     procedure btnNewImportClick(Sender: TObject);
     procedure btnNewIncludeClick(Sender: TObject);
     procedure btnNewExcludeClick(Sender: TObject);
+    procedure Servers1Click(Sender: TObject);
   private
     { Private declarations }
     Context : TValueSetEditorContext;
@@ -339,7 +349,7 @@ type
     procedure ValidateEdit(edit : TEdit; outcome : TValidationOutcome);
     procedure ValidateMemo(memo : TMemo; outcome : TValidationOutcome);
     procedure noButtons(sender  : TObject);
-    procedure defineCheckButtons(sender : TObject);
+    procedure codeSystemCheckButtons(sender : TObject);
     procedure codesCheckButtons(sender : TObject);
     procedure filtersCheckButtons(sender: TObject);
     procedure doco(filename : String);
@@ -371,22 +381,22 @@ begin
   if not activated then
   begin
     activated := true;
-    if not Context.Settings.HasViewedWelcomeScreen or (Context.Settings.ServerCount = 0) Or (Context.Settings.ServerURL = '') then
+    if not Context.Settings.HasViewedWelcomeScreen then
       WelcomeScreen1Click(self)
-    else
-    begin
-      try
-        ServerOperation(Context.SetNominatedServer, Context.Settings.ServerURL, 'Connecting to Server '+Context.Settings.ServerURL, false);
-      Except
-        on e : Exception do
-        begin
-          if MessageDlg('Error contacting nominated server: '+e.Message+'. Change Server?', mtError, [mbYes, mbNo], 0) = mrNo then
-            close
-          else
-            WelcomeScreen1Click(self);
-        end;
-      end;
-    end;
+//    else
+//    begin
+//      try
+//        ServerOperation(Context.SetNominatedServer, Context.Settings.ServerURL, 'Connecting to Server '+Context.Settings.ServerURL, false);
+//      Except
+//        on e : Exception do
+//        begin
+//          if MessageDlg('Error contacting nominated server: '+e.Message+'. Change Server?', mtError, [mbYes, mbNo], 0) = mrNo then
+//            close
+//          else
+//            WelcomeScreen1Click(self);
+//        end;
+//      end;
+//    end;
   end;
 end;
 
@@ -437,7 +447,7 @@ begin
 
   MakeFullyVisible;
 
-  btnNewClick(self);
+  // btnNewClick(self);
   Refresh;
   ContextStateChange(nil);
   LocationChange(self);
@@ -452,6 +462,8 @@ procedure TForm5.FormDestroy(Sender: TObject);
 begin
   Context.Free;
   Context := nil;
+  webDoco.Free;
+  webDoco := nil;
 end;
 
 procedure TForm5.FormResize(Sender: TObject);
@@ -476,8 +488,6 @@ procedure TForm5.Refresh;
 begin
   FOnCheckButtons(self);
   LoadValuesetPage;
-  PageControl1.ActivePage := tabInformation;
-  ActiveControl := edtName;
 end;
 
 procedure TForm5.ShowPreview(sender: TObject);
@@ -485,6 +495,12 @@ begin
   tvPreview.RootNodeCount := 0;
   if (Context.Preview <> nil) then
     tvPreview.RootNodeCount := Context.Preview.containsList.Count;
+end;
+
+procedure TForm5.Servers1Click(Sender: TObject);
+begin
+  frmRegisterServer1.Context := Context.Link;
+  frmRegisterServer1.ShowModal;
 end;
 
 procedure TForm5.SetDocoVisibility(visible : boolean);
@@ -590,9 +606,11 @@ end;
 
 procedure TForm5.btnOpenServerClick(Sender: TObject);
 begin
-  ServerChooserForm.Context := Context.link;
-  if ServerChooserForm.ShowModal = mrOk then
+  if not Context.Dirty or (MessageDlg('Lose unsaved edits, are you sure?', mtConfirmation, [mbyes, mbcancel], 0) = mrYes) then
+  begin
+    Context.Close;
     Refresh;
+  end;
 end;
 
 procedure TForm5.btnNewClick(Sender: TObject);
@@ -634,6 +652,10 @@ var
   clip : TClipboard;
   done : boolean;
 begin
+//  ServerChooserForm.Context := Context.link;
+//  if ServerChooserForm.ShowModal = mrOk then
+//    Refresh;
+
   clip := TClipboard.Create;
   try
     s := clip.AsText;
@@ -721,87 +743,99 @@ end;
 
 procedure TForm5.LoadValuesetPage;
 begin
-  edtFilter.Text := Context.Settings.Filter;
-  Caption := Context.EditName+' - ValueSet Editor';
-  Notebook2.PageIndex := 0;
-  tvDefines.Header.Columns[0].Width := Context.Settings.columnWidth('define', 'code', 100);
-  tvDefines.Header.Columns[1].Width := Context.Settings.columnWidth('define', 'abstract', 70);
-  tvDefines.Header.Columns[2].Width := Context.Settings.columnWidth('define', 'display', 200);
-  tvDefines.Header.Columns[3].Width := Context.Settings.columnWidth('define', 'definition', 200);
-  tvCodes.Header.Columns[0].Width := Context.Settings.columnWidth('codes', 'code', 200);
-  tvCodes.Header.Columns[1].Width := Context.Settings.columnWidth('codes', 'display', 200);
-  tvCodes.Header.Columns[2].Width := Context.Settings.columnWidth('codes', 'comments', 200);
-  tvFilters.Header.Columns[0].Width := Context.Settings.columnWidth('filters', 'property', 150);
-  tvFilters.Header.Columns[1].Width := Context.Settings.columnWidth('filters', 'op', 70);
-  tvFilters.Header.Columns[2].Width := Context.Settings.columnWidth('filters', 'value', 200);
-  tvExpansion.Header.Columns[0].Width := Context.Settings.columnWidth('expansion', 'system', 150);
-  tvExpansion.Header.Columns[1].Width := Context.Settings.columnWidth('expansion', 'code', 70);
-  tvExpansion.Header.Columns[2].Width := Context.Settings.columnWidth('expansion', 'display', 200);
-  tvPreview.Header.Columns[0].Width := Context.Settings.columnWidth('preview', 'system', 150);
-  tvPreview.Header.Columns[1].Width := Context.Settings.columnWidth('preview', 'code', 70);
-  tvPreview.Header.Columns[2].Width := Context.Settings.columnWidth('preview', 'display', 200);
-
-  loading := true;
-  try
-    if Context.ValueSet = nil then
-    begin
-      edtName.Text := '';
-      cbxStatus.ItemIndex := 0;
-      cbExperimental.Checked := false;
-      edtIdentifier.Text := '';
-      edtVersion.Text := '';
-      edtPublisher.Text := '';
-      edtCopyright.Text := '';
-      edtPhone.Text := '';
-      edtEmail.Text := '';
-      edtWeb.Text := '';
-      txtDescription.Text := '';
-    end
-    else
-    begin
-      edtName.Text := Context.ValueSet.name;
-      cbxStatus.ItemIndex := Max(ord(Context.ValueSet.status) - 1, 0);
-      cbExperimental.Checked := Context.ValueSet.experimental;
-      edtIdentifier.Text := Context.ValueSet.url;
-      edtVersion.Text := Context.ValueSet.version;
-      edtPublisher.Text := Context.ValueSet.publisher;
-      edtCopyright.Text := Context.ValueSet.copyright;
-      edtPhone.Text := Context.ValueSet.contactList.System(ContactPointSystemPhone);
-      edtEmail.Text := Context.ValueSet.contactList.System(ContactPointSystemEmail);
-      edtWeb.Text := Context.ValueSet.contactList.System(ContactPointSystemUrl);
-      txtDescription.Text := Context.ValueSet.description;
-    end;
-
-    ValidateEdit(edtName, Context.validateName(edtName.Text));
-    ValidateMemo(txtDescription, Context.validateDescription(txtDescription.Text));
-    ValidateEdit(edtIdentifier, Context.validateIdentifier(edtIdentifier.Text));
-
-    if (Context.ValueSet <> nil) and (Context.ValueSet.define <> nil) then
-    begin
-      edtDefineURI.Text := Context.ValueSet.define.system;
-      edtDefineVersion.Text := Context.ValueSet.define.version;
-      cbDefineCase.Checked := Context.ValueSet.define.caseSensitive;
-      tvDefines.RootNodeCount := 0;
-      tvDefines.RootNodeCount := Context.ValueSet.define.conceptList.Count;
-
-      ValidateEdit(edtDefineURI, context.validateSystem(edtDefineURI.Text));
-    end
-    else
-    begin
-      edtDefineURI.Text := '';
-      edtDefineVersion.Text := '';
-      cbDefineCase.Checked := false;
-      tvDefines.RootNodeCount := 0;
-    end;
-
+  if Context.ValueSet = nil then
+  begin
+    Caption := 'ValueSet Editor';
+    Notebook2.PageIndex := 0;
     tvStructure.RootNodeCount := 0;
-    tvStructure.RootNodeCount := 6;
-    tvExpansion.RootNodeCount := 0;
-    if Context.Expansion <> nil then
-      tvExpansion.RootNodeCount := Context.Expansion.containsList.Count;
-    tvStructureClick(self);
-  finally
-    loading := false;
+    PageControl1.ActivePage := TabStart;
+  end
+  else
+  begin
+    edtFilter.Text := Context.Settings.Filter;
+    Caption := Context.EditName+' - ValueSet Editor';
+    Notebook2.PageIndex := 0;
+    tvCodeSystem.Header.Columns[0].Width := Context.Settings.columnWidth('define', 'code', 100);
+    tvCodeSystem.Header.Columns[1].Width := Context.Settings.columnWidth('define', 'abstract', 70);
+    tvCodeSystem.Header.Columns[2].Width := Context.Settings.columnWidth('define', 'display', 200);
+    tvCodeSystem.Header.Columns[3].Width := Context.Settings.columnWidth('define', 'definition', 200);
+    tvCodes.Header.Columns[0].Width := Context.Settings.columnWidth('codes', 'code', 200);
+    tvCodes.Header.Columns[1].Width := Context.Settings.columnWidth('codes', 'display', 200);
+    tvCodes.Header.Columns[2].Width := Context.Settings.columnWidth('codes', 'comments', 200);
+    tvFilters.Header.Columns[0].Width := Context.Settings.columnWidth('filters', 'property', 150);
+    tvFilters.Header.Columns[1].Width := Context.Settings.columnWidth('filters', 'op', 70);
+    tvFilters.Header.Columns[2].Width := Context.Settings.columnWidth('filters', 'value', 200);
+    tvExpansion.Header.Columns[0].Width := Context.Settings.columnWidth('expansion', 'system', 150);
+    tvExpansion.Header.Columns[1].Width := Context.Settings.columnWidth('expansion', 'code', 70);
+    tvExpansion.Header.Columns[2].Width := Context.Settings.columnWidth('expansion', 'display', 200);
+    tvPreview.Header.Columns[0].Width := Context.Settings.columnWidth('preview', 'system', 150);
+    tvPreview.Header.Columns[1].Width := Context.Settings.columnWidth('preview', 'code', 70);
+    tvPreview.Header.Columns[2].Width := Context.Settings.columnWidth('preview', 'display', 200);
+
+    loading := true;
+    try
+      if Context.ValueSet = nil then
+      begin
+        edtName.Text := '';
+        cbxStatus.ItemIndex := 0;
+        cbExperimental.Checked := false;
+        edtIdentifier.Text := '';
+        edtVersion.Text := '';
+        edtPublisher.Text := '';
+        edtCopyright.Text := '';
+        edtPhone.Text := '';
+        edtEmail.Text := '';
+        edtWeb.Text := '';
+        txtDescription.Text := '';
+      end
+      else
+      begin
+        edtName.Text := Context.ValueSet.name;
+        cbxStatus.ItemIndex := Max(ord(Context.ValueSet.status) - 1, 0);
+        cbExperimental.Checked := Context.ValueSet.experimental;
+        edtIdentifier.Text := Context.ValueSet.url;
+        edtVersion.Text := Context.ValueSet.version;
+        edtPublisher.Text := Context.ValueSet.publisher;
+        edtCopyright.Text := Context.ValueSet.copyright;
+        edtPhone.Text := Context.ValueSet.contactList.System(ContactPointSystemPhone);
+        edtEmail.Text := Context.ValueSet.contactList.System(ContactPointSystemEmail);
+        edtWeb.Text := Context.ValueSet.contactList.System(ContactPointSystemOther);
+        txtDescription.Text := Context.ValueSet.description;
+      end;
+
+      ValidateEdit(edtName, Context.validateName(edtName.Text));
+      ValidateMemo(txtDescription, Context.validateDescription(txtDescription.Text));
+      ValidateEdit(edtIdentifier, Context.validateIdentifier(edtIdentifier.Text));
+
+      if (Context.ValueSet <> nil) and (Context.ValueSet.codeSystem <> nil) then
+      begin
+        edtDefineURI.Text := Context.ValueSet.codeSystem.system;
+        edtDefineVersion.Text := Context.ValueSet.codeSystem.version;
+        cbDefineCase.Checked := Context.ValueSet.codeSystem.caseSensitive;
+        tvCodeSystem.RootNodeCount := 0;
+        tvCodeSystem.RootNodeCount := Context.ValueSet.codeSystem.conceptList.Count;
+
+        ValidateEdit(edtDefineURI, context.validateSystem(edtDefineURI.Text));
+      end
+      else
+      begin
+        edtDefineURI.Text := '';
+        edtDefineVersion.Text := '';
+        cbDefineCase.Checked := false;
+        tvCodeSystem.RootNodeCount := 0;
+      end;
+
+      tvStructure.RootNodeCount := 0;
+      tvStructure.RootNodeCount := 6;
+      tvExpansion.RootNodeCount := 0;
+      if Context.Expansion <> nil then
+        tvExpansion.RootNodeCount := Context.Expansion.containsList.Count;
+      tvStructureClick(self);
+      PageControl1.ActivePage := tabInformation;
+      ActiveControl := edtName;
+    finally
+      loading := false;
+    end;
   end;
 end;
 
@@ -836,7 +870,10 @@ procedure TForm5.ContextStateChange(sender: TObject);
 begin
   miUndo.Enabled := Context.CanUndo;
   miRedo.Enabled := Context.CanRedo;
-  Caption := Context.EditName+' - Value Set Editor';
+  if Context.ValueSet = nil then
+    Caption := 'Value Set Editor'
+  else
+    Caption := Context.EditName+' - Value Set Editor';
   FOnCheckButtons(self);
 end;
 
@@ -853,9 +890,9 @@ procedure TForm5.edtDefineURIChange(Sender: TObject);
 begin
   if not loading then
   begin
-    if (Context.ValueSet.define = nil) then
-      Context.ValueSet.define := TFhirValueSetDefine.Create;
-    Context.ValueSet.define.system := edtDefineURI.Text;
+    if (Context.ValueSet.codeSystem = nil) then
+      Context.ValueSet.codeSystem := TFhirValueSetCodeSystem.Create;
+    Context.ValueSet.codeSystem.system := edtDefineURI.Text;
     Context.commit('defineURI');
     ValidateEdit(edtDefineURI, context.validateSystem(edtDefineURI.Text));
   end;
@@ -865,9 +902,9 @@ procedure TForm5.edtDefineVersionChange(Sender: TObject);
 begin
   if not loading then
   begin
-    if (Context.ValueSet.define = nil) then
-      Context.ValueSet.define := TFhirValueSetDefine.Create;
-    Context.ValueSet.define.version := edtDefineVersion.Text;
+    if (Context.ValueSet.codeSystem = nil) then
+      Context.ValueSet.codeSystem := TFhirValueSetCodeSystem.Create;
+    Context.ValueSet.codeSystem.version := edtDefineVersion.Text;
     Context.commit('defineversion');
   end;
 end;
@@ -1014,7 +1051,7 @@ procedure TForm5.edtWebChange(Sender: TObject);
 begin
   if not loading then
   begin
-    Context.ValueSet.contactList.SetSystem(ContactPointSystemUrl, edtWeb.Text);
+    Context.ValueSet.contactList.SetSystem(ContactPointSystemOther, edtWeb.Text);
     Context.commit('web');
   end;
 end;
@@ -1115,21 +1152,18 @@ end;
 procedure TForm5.WelcomeScreen1Click(Sender: TObject);
 begin
   ValueSetEditorWelcomeForm.Context := Context.Link;
-  if ValueSetEditorWelcomeForm.showModal = mrOk then
-    Context.Settings.HasViewedWelcomeScreen := true
-  else if not Context.Settings.HasViewedWelcomeScreen then
-   close;
+  ValueSetEditorWelcomeForm.showModal;
 end;
 
-procedure TForm5.tvDefinesBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+procedure TForm5.tvCodeSystemBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
 var
   p : PTreeDataPointer;
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
   kind : TValidationOutcomeKind;
   msg : String;
 begin
   p := Sender.GetNodeData(Node);
-  c := TFhirValueSetDefineConcept(p.obj);
+  c := TFhirValueSetCodeSystemConcept(p.obj);
   if Context.checkValidation(c, column, kind, msg) and (kind <> voOK) then
   begin
     case kind of
@@ -1143,13 +1177,13 @@ begin
   end;
 end;
 
-procedure TForm5.tvDefinesColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+procedure TForm5.tvCodeSystemColumnResize(Sender: TVTHeader; Column: TColumnIndex);
 begin
   case column of
-    0 : Context.Settings.setColumnWidth('define', 'code', tvDefines.Header.Columns[0].width);
-    1 : Context.Settings.setColumnWidth('define', 'abstract', tvDefines.Header.Columns[1].width);
-    2 : Context.Settings.setColumnWidth('define', 'display', tvDefines.Header.Columns[2].width);
-    3 : Context.Settings.setColumnWidth('define', 'definition', tvDefines.Header.Columns[3].width);
+    0 : Context.Settings.setColumnWidth('define', 'code', tvCodeSystem.Header.Columns[0].width);
+    1 : Context.Settings.setColumnWidth('define', 'abstract', tvCodeSystem.Header.Columns[1].width);
+    2 : Context.Settings.setColumnWidth('define', 'display', tvCodeSystem.Header.Columns[2].width);
+    3 : Context.Settings.setColumnWidth('define', 'definition', tvCodeSystem.Header.Columns[3].width);
   end;
 end;
 
@@ -1213,25 +1247,25 @@ begin
 end;
 
 
-procedure TForm5.tvDefinesInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+procedure TForm5.tvCodeSystemInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
-  list : TFhirValueSetDefineConceptList;
+  list : TFhirValueSetCodeSystemConceptList;
   pp, p : PTreeDataPointer;
 begin
   if parentNode = nil then
-    list := Context.ValueSet.define.conceptList
+    list := Context.ValueSet.codeSystem.conceptList
   else
   begin
-    pp := tvDefines.GetNodeData(parentNode);
-    list := TFhirValueSetDefineConcept(pp.obj).conceptList;
+    pp := tvCodeSystem.GetNodeData(parentNode);
+    list := TFhirValueSetCodeSystemConcept(pp.obj).conceptList;
   end;
-  p := tvDefines.GetNodeData(Node);
+  p := tvCodeSystem.GetNodeData(Node);
   p.obj := list[Node.Index];
   if list[node.Index].conceptList.Count > 0 then
      InitialStates := [ivsHasChildren];
 end;
 
-procedure TForm5.tvDefinesKeyDown(Sender: TObject; var Key: Word;  Shift: TShiftState);
+procedure TForm5.tvCodeSystemKeyDown(Sender: TObject; var Key: Word;  Shift: TShiftState);
 begin
   if CharInSet(AnsiChar(Key), ['A'..'Z', '0'..'9']) then
   begin
@@ -1239,29 +1273,29 @@ begin
       FFirstChar := AnsiChar(Key)
     else
       FFirstChar := lowercase(AnsiChar(Key));
-    tvDefines.EditNode(tvDefines.FocusedNode, tvDefines.FocusedColumn);
+    tvCodeSystem.EditNode(tvCodeSystem.FocusedNode, tvCodeSystem.FocusedColumn);
   end;
 end;
 
-procedure TForm5.tvDefinesInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
+procedure TForm5.tvCodeSystemInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
 var
   p : PTreeDataPointer;
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
 begin
-  p := tvDefines.GetNodeData(node);
-  c := TFhirValueSetDefineConcept(p.obj);
+  p := tvCodeSystem.GetNodeData(node);
+  c := TFhirValueSetCodeSystemConcept(p.obj);
   ChildCount := c.conceptList.Count;
 end;
 
 procedure TForm5.tvAllGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var LineBreakStyle: TVTTooltipLineBreakStyle; var HintText: string);
 var
   p : PTreeDataPointer;
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
   kind : TValidationOutcomeKind;
   msg : String;
 begin
   p := Sender.GetNodeData(Node);
-  c := TFhirValueSetDefineConcept(p.obj);
+  c := TFhirValueSetCodeSystemConcept(p.obj);
   if Context.checkValidation(c, column, kind, msg) then
     HintText := msg;
 end;
@@ -1271,13 +1305,13 @@ begin
   Kind := vhkText;
 end;
 
-procedure TForm5.tvDefinesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+procedure TForm5.tvCodeSystemGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
 begin
-  p := tvDefines.GetNodeData(Node);
-  c := TFhirValueSetDefineConcept(p.obj);
+  p := tvCodeSystem.GetNodeData(Node);
+  c := TFhirValueSetCodeSystemConcept(p.obj);
   case Column of
     0: CellText := c.code;
     1: if c.abstract then CellText := 'abstract' else CellText := '';
@@ -1286,31 +1320,31 @@ begin
   end;
 end;
 
-procedure TForm5.defineCheckButtons(sender : TObject);
+procedure TForm5.codeSystemCheckButtons(sender : TObject);
 var
   p : PTreeDataPointer;
-  ctxt : TFhirValueSetDefineConceptList;
+  ctxt : TFhirValueSetCodeSystemConceptList;
 begin
-  tbInsert.Enabled := not tvDefines.IsEditing and (Context.ValueSet <> nil);
-  tbDelete.Enabled := not tvDefines.IsEditing and (tvDefines.FocusedNode <> nil);
+  tbInsert.Enabled := not tvCodeSystem.IsEditing and (Context.ValueSet <> nil);
+  tbDelete.Enabled := not tvCodeSystem.IsEditing and (tvCodeSystem.FocusedNode <> nil);
   tbUp.Enabled := false;
   tbDown.Enabled := false;
   tbIn.Enabled := false;
   tbOut.Enabled := false;
-  if not tvDefines.IsEditing and (tvDefines.FocusedNode <> nil) then
+  if not tvCodeSystem.IsEditing and (tvCodeSystem.FocusedNode <> nil) then
   begin
     tbIn.Enabled := false;
-    p := tvDefines.GetNodeData(tvDefines.FocusedNode.Parent);
+    p := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode.Parent);
     if (p = nil) then
-      ctxt := Context.ValueSet.define.conceptList
+      ctxt := Context.ValueSet.codeSystem.conceptList
     else
     begin
-      ctxt := TFhirValueSetDefineConcept(p.obj).conceptList;
-      tbIn.Enabled := tvDefines.GetNodeData(tvDefines.FocusedNode.Parent) <> nil;
+      ctxt := TFhirValueSetCodeSystemConcept(p.obj).conceptList;
+      tbIn.Enabled := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode.Parent) <> nil;
     end;
-    tbUp.Enabled := tvDefines.FocusedNode.Index > 0;
-    tbDown.Enabled := (tvDefines.FocusedNode.Index < ctxt.Count - 1);
-    tbOut.Enabled := tvDefines.FocusedNode.Index > 0;
+    tbUp.Enabled := tvCodeSystem.FocusedNode.Index > 0;
+    tbDown.Enabled := (tvCodeSystem.FocusedNode.Index < ctxt.Count - 1);
+    tbOut.Enabled := tvCodeSystem.FocusedNode.Index > 0;
   end;
   miTvInsert.Enabled := tbInsert.Enabled;
   miTvDelete.Enabled := tbDelete.Enabled;
@@ -1342,28 +1376,28 @@ end;
 procedure TForm5.btnAddDefineClick(Sender: TObject);
 var
   p : PTreeDataPointer;
-  ctxt : TFhirValueSetDefineConceptList;
+  ctxt : TFhirValueSetCodeSystemConceptList;
 begin
-  if not tvDefines.IsEditing then
+  if not tvCodeSystem.IsEditing then
   begin
-  if Context.ValueSet.define = nil then
-    Context.ValueSet.define := TFhirValueSetDefine.Create;
-  if tvDefines.FocusedNode = nil then
-    ctxt := Context.ValueSet.define.conceptList
+  if Context.ValueSet.codeSystem = nil then
+    Context.ValueSet.codeSystem := TFhirValueSetCodeSystem.Create;
+  if tvCodeSystem.FocusedNode = nil then
+    ctxt := Context.ValueSet.codeSystem.conceptList
   else
   begin
-    p := tvDefines.GetNodeData(tvDefines.FocusedNode);
-    ctxt := TFhirValueSetDefineConcept(p.obj).conceptList;
+    p := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode);
+    ctxt := TFhirValueSetCodeSystemConcept(p.obj).conceptList;
   end;
 
   ctxt.Append.code := 'code';
   Context.Commit('');
-  if (ctxt <> Context.ValueSet.define.conceptList)  then
-    tvDefines.ReinitNode(tvDefines.FocusedNode, true)
+  if (ctxt <> Context.ValueSet.codeSystem.conceptList)  then
+    tvCodeSystem.ReinitNode(tvCodeSystem.FocusedNode, true)
   else
   begin
-    tvDefines.RootNodeCount := 0;
-    tvDefines.RootNodeCount := Context.ValueSet.define.conceptList.Count;
+    tvCodeSystem.RootNodeCount := 0;
+    tvCodeSystem.RootNodeCount := Context.ValueSet.codeSystem.conceptList.Count;
   end;
   end
   else
@@ -1373,25 +1407,25 @@ end;
 procedure TForm5.btnDeleteDefineClick(Sender: TObject);
 var
   p : PTreeDataPointer;
-  ctxt : TFhirValueSetDefineConcept;
+  ctxt : TFhirValueSetCodeSystemConcept;
 begin
-  if not tvDefines.IsEditing and (tvDefines.FocusedNode <> nil) then
+  if not tvCodeSystem.IsEditing and (tvCodeSystem.FocusedNode <> nil) then
   begin
-    p := tvDefines.GetNodeData(tvDefines.FocusedNode.Parent);
+    p := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode.Parent);
     if (p = nil) then
       ctxt := nil
     else
-      ctxt := TFhirValueSetDefineConcept(p.obj);
+      ctxt := TFhirValueSetCodeSystemConcept(p.obj);
     if ctxt = nil then
     begin
-      Context.ValueSet.define.conceptList.DeleteByIndex(tvDefines.FocusedNode.Index);
-      tvDefines.RootNodeCount := 0;
-      tvDefines.RootNodeCount := Context.ValueSet.define.conceptList.Count;
+      Context.ValueSet.codeSystem.conceptList.DeleteByIndex(tvCodeSystem.FocusedNode.Index);
+      tvCodeSystem.RootNodeCount := 0;
+      tvCodeSystem.RootNodeCount := Context.ValueSet.codeSystem.conceptList.Count;
     end
     else
     begin
-      ctxt.conceptList.DeleteByIndex(tvDefines.FocusedNode.Index);
-      tvDefines.ReInitNode(tvDefines.FocusedNode.Parent, true);
+      ctxt.conceptList.DeleteByIndex(tvCodeSystem.FocusedNode.Index);
+      tvCodeSystem.ReInitNode(tvCodeSystem.FocusedNode.Parent, true);
     end;
     Context.commit('');
   end
@@ -1402,32 +1436,32 @@ end;
 procedure TForm5.btnDefineDownClick(Sender: TObject);
 var
   p : PTreeDataPointer;
-  ctxt : TFhirValueSetDefineConcept;
+  ctxt : TFhirValueSetCodeSystemConcept;
 begin
-  if (tvDefines.FocusedNode <> nil) then
+  if (tvCodeSystem.FocusedNode <> nil) then
   begin
-    p := tvDefines.GetNodeData(tvDefines.FocusedNode.Parent);
+    p := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode.Parent);
     if (p = nil) then
       ctxt := nil
     else
-      ctxt := TFhirValueSetDefineConcept(p.obj);
+      ctxt := TFhirValueSetCodeSystemConcept(p.obj);
     if ctxt = nil then
     begin
-      if (tvDefines.FocusedNode.Index < Context.ValueSet.define.conceptList.Count - 1) then
+      if (tvCodeSystem.FocusedNode.Index < Context.ValueSet.codeSystem.conceptList.Count - 1) then
       begin
-        Context.ValueSet.define.conceptList.Exchange(tvDefines.FocusedNode.Index + 1, tvDefines.FocusedNode.Index);
-        tvDefines.RootNodeCount := 0;
-        tvDefines.RootNodeCount := Context.ValueSet.define.conceptList.Count;
+        Context.ValueSet.codeSystem.conceptList.Exchange(tvCodeSystem.FocusedNode.Index + 1, tvCodeSystem.FocusedNode.Index);
+        tvCodeSystem.RootNodeCount := 0;
+        tvCodeSystem.RootNodeCount := Context.ValueSet.codeSystem.conceptList.Count;
       end
       else
         MessageBeep(MB_ICONEXCLAMATION);
     end
     else
     begin
-      if (tvDefines.FocusedNode.Index < ctxt.conceptList.Count - 1) then
+      if (tvCodeSystem.FocusedNode.Index < ctxt.conceptList.Count - 1) then
       begin
-        ctxt.conceptList.Exchange(tvDefines.FocusedNode.Index + 1, tvDefines.FocusedNode.Index);
-        tvDefines.ReinitNode(tvDefines.FocusedNode.Parent, true);
+        ctxt.conceptList.Exchange(tvCodeSystem.FocusedNode.Index + 1, tvCodeSystem.FocusedNode.Index);
+        tvCodeSystem.ReinitNode(tvCodeSystem.FocusedNode.Parent, true);
       end
       else
         MessageBeep(MB_ICONEXCLAMATION);
@@ -1441,29 +1475,29 @@ end;
 procedure TForm5.btnDefineLeftClick(Sender: TObject);
 var
   p, pp : PTreeDataPointer;
-  ctxt, pCtxt : TFhirValueSetDefineConceptList;
+  ctxt, pCtxt : TFhirValueSetCodeSystemConceptList;
 begin
-  if (tvDefines.FocusedNode <> nil) then
+  if (tvCodeSystem.FocusedNode <> nil) then
   begin
-    p := tvDefines.GetNodeData(tvDefines.FocusedNode.Parent);
+    p := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode.Parent);
     if (p <> nil) then
     begin
-      ctxt := TFhirValueSetDefineConcept(p.obj).ConceptList;
-      pp := tvDefines.GetNodeData(tvDefines.FocusedNode.Parent.Parent);
+      ctxt := TFhirValueSetCodeSystemConcept(p.obj).ConceptList;
+      pp := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode.Parent.Parent);
       if pp = nil then
-        pCtxt := Context.Valueset.Define.ConceptList
+        pCtxt := Context.Valueset.codeSystem.ConceptList
       else
-        pctxt := TFhirValueSetDefineConcept(pp.obj).ConceptList;
+        pctxt := TFhirValueSetCodeSystemConcept(pp.obj).ConceptList;
 
-      pctxt.add(ctxt[tvDefines.FocusedNode.Index].Link);
-      ctxt.DeleteByIndex(tvDefines.FocusedNode.Index);
+      pctxt.add(ctxt[tvCodeSystem.FocusedNode.Index].Link);
+      ctxt.DeleteByIndex(tvCodeSystem.FocusedNode.Index);
       if pp = nil then
       begin
-        tvDefines.RootNodeCount := 0;
-        tvDefines.RootNodeCount := pCtxt.Count;
+        tvCodeSystem.RootNodeCount := 0;
+        tvCodeSystem.RootNodeCount := pCtxt.Count;
       end
       else
-        tvDefines.ReinitNode(tvDefines.FocusedNode.Parent.Parent, true);
+        tvCodeSystem.ReinitNode(tvCodeSystem.FocusedNode.Parent.Parent, true);
       Context.commit('');
     end
     else
@@ -1476,27 +1510,27 @@ end;
 procedure TForm5.btnDefineRightClick(Sender: TObject);
 var
   p : PTreeDataPointer;
-  ctxt : TFhirValueSetDefineConcept;
+  ctxt : TFhirValueSetCodeSystemConcept;
 begin
-  if (tvDefines.FocusedNode <> nil) and (tvDefines.FocusedNode.Index > 0) then
+  if (tvCodeSystem.FocusedNode <> nil) and (tvCodeSystem.FocusedNode.Index > 0) then
   begin
-    p := tvDefines.GetNodeData(tvDefines.FocusedNode.Parent);
+    p := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode.Parent);
     if (p = nil) then
       ctxt := nil
     else
-      ctxt := TFhirValueSetDefineConcept(p.obj);
+      ctxt := TFhirValueSetCodeSystemConcept(p.obj);
     if ctxt = nil then
     begin
-      Context.ValueSet.define.conceptList[tvDefines.FocusedNode.Index - 1].conceptList.add(Context.ValueSet.define.conceptList[tvDefines.FocusedNode.Index].Link);
-      Context.ValueSet.define.conceptList.DeleteByIndex(tvDefines.FocusedNode.Index);
-      tvDefines.RootNodeCount := 0;
-      tvDefines.RootNodeCount := Context.ValueSet.define.conceptList.Count;
+      Context.ValueSet.codeSystem.conceptList[tvCodeSystem.FocusedNode.Index - 1].conceptList.add(Context.ValueSet.codeSystem.conceptList[tvCodeSystem.FocusedNode.Index].Link);
+      Context.ValueSet.codeSystem.conceptList.DeleteByIndex(tvCodeSystem.FocusedNode.Index);
+      tvCodeSystem.RootNodeCount := 0;
+      tvCodeSystem.RootNodeCount := Context.ValueSet.codeSystem.conceptList.Count;
     end
     else
     begin
-      ctxt.conceptList[tvDefines.FocusedNode.Index - 1].conceptList.add(ctxt.conceptList[tvDefines.FocusedNode.Index].Link);
-      ctxt.conceptList.DeleteByIndex(tvDefines.FocusedNode.Index);
-      tvDefines.ReinitNode(tvDefines.FocusedNode.Parent, true);
+      ctxt.conceptList[tvCodeSystem.FocusedNode.Index - 1].conceptList.add(ctxt.conceptList[tvCodeSystem.FocusedNode.Index].Link);
+      ctxt.conceptList.DeleteByIndex(tvCodeSystem.FocusedNode.Index);
+      tvCodeSystem.ReinitNode(tvCodeSystem.FocusedNode.Parent, true);
     end;
     Context.commit('');
   end
@@ -1507,25 +1541,25 @@ end;
 procedure TForm5.btnDefineUpClick(Sender: TObject);
 var
   p : PTreeDataPointer;
-  ctxt : TFhirValueSetDefineConcept;
+  ctxt : TFhirValueSetCodeSystemConcept;
 begin
-  if (tvDefines.FocusedNode <> nil) and (tvDefines.FocusedNode.Index > 0) then
+  if (tvCodeSystem.FocusedNode <> nil) and (tvCodeSystem.FocusedNode.Index > 0) then
   begin
-    p := tvDefines.GetNodeData(tvDefines.FocusedNode.Parent);
+    p := tvCodeSystem.GetNodeData(tvCodeSystem.FocusedNode.Parent);
     if (p = nil) then
       ctxt := nil
     else
-      ctxt := TFhirValueSetDefineConcept(p.obj);
+      ctxt := TFhirValueSetCodeSystemConcept(p.obj);
     if ctxt = nil then
     begin
-      Context.ValueSet.define.conceptList.Exchange(tvDefines.FocusedNode.Index - 1, tvDefines.FocusedNode.Index);
-      tvDefines.RootNodeCount := 0;
-      tvDefines.RootNodeCount := Context.ValueSet.define.conceptList.Count;
+      Context.ValueSet.codeSystem.conceptList.Exchange(tvCodeSystem.FocusedNode.Index - 1, tvCodeSystem.FocusedNode.Index);
+      tvCodeSystem.RootNodeCount := 0;
+      tvCodeSystem.RootNodeCount := Context.ValueSet.codeSystem.conceptList.Count;
     end
     else
     begin
-      ctxt.conceptList.Exchange(tvDefines.FocusedNode.Index - 1, tvDefines.FocusedNode.Index);
-      tvDefines.ReinitNode(tvDefines.FocusedNode.Parent, true);
+      ctxt.conceptList.Exchange(tvCodeSystem.FocusedNode.Index - 1, tvCodeSystem.FocusedNode.Index);
+      tvCodeSystem.ReinitNode(tvCodeSystem.FocusedNode.Parent, true);
     end;
     Context.commit('');
   end
@@ -1534,13 +1568,13 @@ begin
 end;
 
 
-procedure TForm5.tvDefinesCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
+procedure TForm5.tvCodeSystemCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
 var
   p : PTreeDataPointer;
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
 begin
-  p := tvDefines.GetNodeData(Node);
-  c := TFhirValueSetDefineConcept(p.obj);
+  p := tvCodeSystem.GetNodeData(Node);
+  c := TFhirValueSetCodeSystemConcept(p.obj);
   case Column of
     0: EditLink := TVirtualStringTreeEdit.Create(EditValue(c.code), FFirstChar <> '');
     1: if c.abstract then
@@ -1555,24 +1589,24 @@ begin
   FFirstChar := '';
 end;
 
-procedure TForm5.tvDefinesEditCancelled(Sender: TBaseVirtualTree; Column: TColumnIndex);
+procedure TForm5.tvCodeSystemEditCancelled(Sender: TBaseVirtualTree; Column: TColumnIndex);
 begin
-  defineCheckButtons(self);
+  codeSystemCheckButtons(self);
 end;
 
-procedure TForm5.tvDefinesEdited(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+procedure TForm5.tvCodeSystemEdited(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
 begin
-  defineCheckButtons(self);
+  codeSystemCheckButtons(self);
 end;
 
-procedure TForm5.tvDefinesEditing(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
+procedure TForm5.tvCodeSystemEditing(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
 begin
-  defineCheckButtons(self);
+  codeSystemCheckButtons(self);
 end;
 
-procedure TForm5.tvDefinesEnter(Sender: TObject);
+procedure TForm5.tvCodeSystemEnter(Sender: TObject);
 begin
-  FOnCheckButtons := defineCheckButtons;
+  FOnCheckButtons := codeSystemCheckButtons;
   tbInsert.OnClick := btnAddDefineClick;
   tbDelete.OnClick := btnDeleteDefineClick;
   tbUp.OnClick := btnDefineUpClick;
@@ -1585,10 +1619,10 @@ begin
   miTvDown.OnClick := tbDown.OnClick;
   miTvIn.OnClick := tbIn.OnClick;
   miTvOut.OnClick := tbOut.OnClick;
-  defineCheckButtons(self);
+  codeSystemCheckButtons(self);
 end;
 
-procedure TForm5.tvDefinesExit(Sender: TObject);
+procedure TForm5.tvCodeSystemExit(Sender: TObject);
 begin
   tbInsert.OnClick := nil;
   tbDelete.OnClick := nil;
@@ -1606,19 +1640,19 @@ begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.tvDefinesFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+procedure TForm5.tvCodeSystemFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
 begin
   FOnCheckButtons(self);
 end;
 
 
-procedure TForm5.tvDefinesNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
+procedure TForm5.tvCodeSystemNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
 var
   p : PTreeDataPointer;
-  c : TFhirValueSetDefineConcept;
+  c : TFhirValueSetCodeSystemConcept;
 begin
-  p := tvDefines.GetNodeData(Node);
-  c := TFhirValueSetDefineConcept(p.obj);
+  p := tvCodeSystem.GetNodeData(Node);
+  c := TFhirValueSetCodeSystemConcept(p.obj);
   case Column of
     0: c.code := NewText;
     1: c.abstract := NewText <> '';

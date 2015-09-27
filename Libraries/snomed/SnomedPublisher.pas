@@ -587,7 +587,8 @@ var
   iId : UInt64;
   iIndex : Cardinal;
   Identity : UInt64;
-  Flags, Group : Byte;
+  Flags : Byte;
+  Group : integer;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;
@@ -608,7 +609,6 @@ var
   aMembers : TSnomedReferenceSetMemberArray;
   date : TSnomedDate;
   ok : boolean;
-  iRef : Cardinal;
 Begin
   bDescSet := false;
   SetLength(aMembers, 0);
@@ -1620,7 +1620,8 @@ var
   iId : UInt64;
   iIndex : Cardinal;
   Identity : UInt64;
-  Flags, Group : Byte;
+  Flags : Byte;
+  Group: Integer;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;

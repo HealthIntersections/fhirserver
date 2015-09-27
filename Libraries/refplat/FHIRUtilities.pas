@@ -243,6 +243,12 @@ type
     function AddCoding(system, code, display : String) : TFHIRCoding;
   end;
 
+  TFHIRStringListHelper = class helper for TFHIRStringList
+  public
+    function hasValue(value : String) : boolean;
+    procedure add(s : String); overload;
+  end;
+
   TFhirBundleLinkListHelper = class helper for TFhirBundleLinkList
   private
     function getMatch(rel: String): string;
@@ -268,10 +274,17 @@ type
   end;
 
   TFhirResourceMetaHelper = class helper for TFhirMeta
+  private
+    function GetTag(system, code: String): TFhirCoding;
   public
     function HasTag(system, code : String)  : boolean;
     function addTag(system, code, display : String) : TFhirCoding;
     function removeTag(system, code : String) : boolean;
+  end;
+
+  TFHIRTFhirOperationOutcomeIssueHelper = class helper for TFhirOperationOutcomeIssue
+  public
+    constructor create(Severity : TFhirIssueSeverity; Code : TFhirIssueType; Diagnostics : string; location : String); overload;
   end;
 
 function Path(const parts : array of String) : String;
@@ -285,6 +298,8 @@ function gen(coding : TFHIRCoding):String; overload;
 function gen(code : TFhirCodeableConcept):String; overload;
 function gen(t : TFhirType):String; overload;
 
+function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
+function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
 
 implementation
 
@@ -1009,7 +1024,6 @@ end;
 
 function LoadDTFromParam(value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 var
-  ct : String;
   parser : TFHIRParser;
   mem : TStringStream;
 begin
@@ -1773,6 +1787,7 @@ begin
   c.system := system;
   c.code := code;
   c.display := display;
+  result := c;
 end;
 
 //function TFHIRCodingListHelper.AsHeader: String;
@@ -2020,7 +2035,10 @@ begin
     c.system := system;
     c.code := code;
     c.display := display;
-  end;
+    result := c;
+  end
+  else
+    result := getTag(system, code);
 end;
 
 function TFhirResourceMetaHelper.HasTag(system, code: String): boolean;
@@ -2030,6 +2048,19 @@ begin
   result := false;
   for i := 0 to taglist.Count - 1 do
     result := result or (taglist[i].system = system) and (taglist[i].code = code);
+end;
+
+function TFhirResourceMetaHelper.GetTag(system, code: String): TFhirCoding;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to taglist.Count - 1 do
+    if (taglist[i].system = system) and (taglist[i].code = code) then
+    begin
+      result := taglist[i];
+      exit;
+    end;
 end;
 
 function TFhirResourceMetaHelper.removeTag(system, code : String): boolean;
@@ -2306,6 +2337,63 @@ begin
         result.add(e.Link);
     end;
   end;
+end;
+
+function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean;
+var
+  i : integer;
+begin
+  if (e1 = nil) and (e2 = nil) and (allowNull) then
+    result := true
+  else if (e1 = nil) or (e2 = nil) then
+    result := false
+  else if (e1.count <> e2.count) then
+    result := false
+  else
+  begin
+    result := true;
+    for i := 0 to e1.count - 1 do
+      if (not compareValues(e1.get(i) as TFHIRPrimitiveType, e2.get(i) as TFHIRPrimitiveType, allowNull)) then
+        result := false;
+  end;
+end;
+
+function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean;
+begin
+  if (e1 = nil) and (e2 = nil) and (allowNull) then
+    result := true
+  else if (e1 = nil) or (e2 = nil) then
+    result := false
+  else
+    result := e1.equalsShallow(e2);
+end;
+
+{ TFHIRStringListHelper }
+
+procedure TFHIRStringListHelper.add(s: String);
+begin
+  add(TFhirString.Create(s));
+end;
+
+function TFHIRStringListHelper.hasValue(value: String): boolean;
+var
+  v : TFhirString;
+begin
+  result := false;
+  for v in Self do
+    if (v.value = value) then
+      result := true;
+end;
+
+{ TFHIRTFhirOperationOutcomeIssueHelper }
+
+constructor TFHIRTFhirOperationOutcomeIssueHelper.create(Severity: TFhirIssueSeverity; Code: TFhirIssueType; Diagnostics, location: String);
+begin
+  Create;
+  self.severity := Severity;
+  self.code := code;
+  self.diagnostics := Diagnostics;
+  self.locationList.Add(location);
 end;
 
 end.

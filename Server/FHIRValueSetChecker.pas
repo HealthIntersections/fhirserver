@@ -18,7 +18,7 @@ Type
     function check(system, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
     function findCode(code: String; list : TFhirValueSetCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
-    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverity; test : boolean; code : TFhirIssueType; msg : string):boolean;
+//    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverity; test : boolean; code : TFhirIssueType; msg : string):boolean;
     function getName: String;
   public
     constructor Create(store : TTerminologyServerStore; id : String); overload;
@@ -107,20 +107,20 @@ begin
   end;
 end;
 
-function TValueSetChecker.rule(op: TFhirOperationOutcome; severity: TFhirIssueSeverity; test: boolean; code : TFhirIssueType; msg: string): boolean;
-var
-  issue : TFhirOperationOutcomeIssue;
-begin
-  result := test;
-  if not test then
-  begin
-    issue := op.issueList.Append;
-    issue.severity := severity;
-    issue.code := code;
-    issue.diagnostics := msg;
-  end;
-end;
-
+//function TValueSetChecker.rule(op: TFhirOperationOutcome; severity: TFhirIssueSeverity; test: boolean; code : TFhirIssueType; msg: string): boolean;
+//var
+//  issue : TFhirOperationOutcomeIssue;
+//begin
+//  result := test;
+//  if not test then
+//  begin
+//    issue := op.issueList.Append;
+//    issue.severity := severity;
+//    issue.code := code;
+//    issue.diagnostics := msg;
+//  end;
+//end;
+//
 
 function TValueSetChecker.findCode(code: String; list : TFhirValueSetCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
 var

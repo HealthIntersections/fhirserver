@@ -218,8 +218,8 @@ function oAuthSign(secret, s : String) : String;
 var
   bs, bsecret : TBytes;
 begin
-  bs := AnsiStringAsBytes(s);
-  bsecret := AnsiStringAsBytes(secret);
+  bs := AnsiStringAsBytes(AnsiString(s));
+  bsecret := AnsiStringAsBytes(AnsiString(secret));
 //  result := EncodeMIME(BinToBase64(THMACUtils.HMAC_HexStr(TIdHMACSHA256, bsecret, bs)));
 end;
 
@@ -230,7 +230,6 @@ var
   base : String;
   header : String;
   fetch : TInternetFetcher;
-  parsemap : TParseMap;
 begin
   ts := inttostr(SecondsSince1970);
   try

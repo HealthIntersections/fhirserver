@@ -7,7 +7,7 @@ Uses
   IdSoapXml, IdSoapMsXml, MsXmlParser, AltovaXMLLib_TLB,
   StringSupport,
   AdvObjects, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRProfileUtilities,
   TerminologyServer, ProfileManager;
 
 Type
@@ -34,13 +34,11 @@ Type
     procedure SetProfiles(const Value: TProfileManager);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
 
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
-    function supportsSystem(system : string) : boolean; override;
-    function validateCode(system, code, display : String) : TValidationResult; override;
   public
-    Constructor create;
+    Constructor Create; Override;
     Destructor Destroy; Override;
+
+    Function Link : TFHIRValidator; overload;
 
     Property Validator : TFHIRInstanceValidator read FValidator;
     Property Profiles : TProfileManager read FProfiles write SetProfiles;
@@ -55,6 +53,11 @@ Type
     Function validateInstance(context : TFHIRValidatorContext; elem : TIdSoapXmlElement; opDesc : String; profile : TFHirStructureDefinition) : TFHIROperationOutcome; overload;
     Function validateInstance(context : TFHIRValidatorContext; resource : TFhirResource; opDesc : String; profile : TFHirStructureDefinition) : TFHIROperationOutcome; overload;
     Function validateInstance(context : TFHIRValidatorContext; source : TAdvBuffer; opDesc : String; profile : TFHirStructureDefinition) : TFHIROperationOutcome; overload;
+
+    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
+    function supportsSystem(system : string) : boolean; override;
+    function validateCode(system, code, display : String) : TValidationResult; override;
   end;
 
 
@@ -66,7 +69,7 @@ constructor TFHIRValidator.Create;
 begin
   inherited;
   FSources := TAdvNameBufferList.create;
-  FValidator := TFHIRInstanceValidator.create(self);
+  FValidator := TFHIRInstanceValidator.create(self, false);
 end;
 
 destructor TFHIRValidator.Destroy;
@@ -147,6 +150,11 @@ begin
   FCache.add('http://www.w3.org/1999/xhtml', loadDoc('fhir-xhtml.xsd'));
   FCache.add('http://www.w3.org/2000/09/xmldsig#', loadDoc('xmldsig-core-schema.xsd'));
   FCache.add('http://hl7.org/fhir', loadDoc('fhir-single.xsd'));
+end;
+
+function TFHIRValidator.Link: TFHIRValidator;
+begin
+  result := TFHIRValidator(inherited Link);
 end;
 
 procedure TFHIRValidator.Load(feed: TFHIRBundle);

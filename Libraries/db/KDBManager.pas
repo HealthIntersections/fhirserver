@@ -42,6 +42,7 @@ interface
 
 uses
   StringSupport,
+  AdvExceptions,
   kCritSct,
   KSettings,
   KDBLogging,
@@ -1011,10 +1012,14 @@ begin
         ExecSQL(ASql[i]);
       Commit;
     except
-      Rollback;
-      raise;
+      on e : exception do
+      begin
+        Rollback;
+        recordStack(e);
+        raise;
+      end;
     end;
-    end;
+  end;
 end;
 
 function TKDBConnection.GetBlob(ACol: Integer; var VBlob: TMemoryStream): Boolean;
@@ -1547,6 +1552,7 @@ begin
           Finally
             FLock.Leave;
           End;
+          recordStack(e);
           raise;
         end;
       end;
@@ -1747,6 +1753,7 @@ begin
     on e:exception do
       begin
       LConn.Error(e);
+      recordStack(e);
       raise;
       end;
   end;

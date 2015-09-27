@@ -183,6 +183,7 @@ Type
     FBuilder : TAdvStringBuilder;
     FName : String;
     FCache : String;
+    FProperty : Boolean;
     Function UseName : String;
     Function UseCache : String;
     Function JSONString(const value : String) : String;
@@ -371,7 +372,12 @@ End;
 procedure TJSONWriter.DoName(const name : String);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   FName := JSONString(name)+' : ';
 end;
 
@@ -462,7 +468,12 @@ end;
 procedure TJSONWriter.ValueObject;
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   ProduceLine(UseName+ '{');
   LevelDown;
 end;
@@ -600,6 +611,7 @@ begin
   DoName(Name);
   produce(UseName);
   ProduceBytes(bytes);
+  FProperty := true;
 end;
 
 procedure TJSONWriter.FinishArray;
@@ -1095,7 +1107,12 @@ End;
 procedure TJSONWriter.ValueInArray(const value: String);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   if value = '' then
     ValueNullInArray
   Else
@@ -1105,7 +1122,12 @@ end;
 procedure TJSONWriter.ValueNumberInArray(const value: String);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   if value = '' then
     ValueNullInArray
   Else
@@ -1115,7 +1137,12 @@ end;
 procedure TJSONWriter.ValueInArray(value: Boolean);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   if value then
     FCache := 'true'
   else
@@ -1125,7 +1152,12 @@ end;
 procedure TJSONWriter.ValueNullInArray;
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   FCache := 'null';
 end;
 
@@ -1145,21 +1177,36 @@ end;
 procedure TJSONWriter.ValueInArray(value: Int64);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   FCache := inttostr(value);
 end;
 
 procedure TJSONWriter.ValueInArray(value: Double);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   FCache := FloatToStr(value);
 end;
 
 procedure TJSONWriter.ValueInArray(value: Integer);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',');
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
   FCache := inttostr(value);
 end;
 

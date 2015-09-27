@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   StringSupport,
-  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
+  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches, AdvExceptions,
   KDBManager,
   FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
@@ -27,8 +27,6 @@ type
   end;
 
   TUniiPrep = class (TCodeSystemProviderFilterPreparationContext)
-  private
-    filters : TAdvObjectList;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -106,6 +104,7 @@ begin
     on e : Exception do
     begin
       qry.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -145,6 +144,7 @@ begin
     on e : Exception do
     begin
       qry.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -166,7 +166,6 @@ var
   f : TAdvFile;
   s : String;
   cols : TArray<String>;
-  concept : TUniiConcept;
   map : TAdvStringIntegerMatch;
   key, last, lastDesc : integer;
   db : TKDBConnection;
@@ -269,6 +268,7 @@ begin
     on e : Exception do
     begin
       qry.Error(e);
+      recordStack(e);
       raise;
     end;
   end;

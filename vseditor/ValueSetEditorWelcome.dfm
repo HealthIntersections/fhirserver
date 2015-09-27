@@ -3,7 +3,7 @@ object ValueSetEditorWelcomeForm: TValueSetEditorWelcomeForm
   Top = 0
   BorderIcons = []
   BorderStyle = bsSingle
-  Caption = 'FHIR Value set Editor Welcome'
+  Caption = 'FHIR Value Set Editor Help'
   ClientHeight = 406
   ClientWidth = 647
   Color = clBtnFace
@@ -37,39 +37,6 @@ object ValueSetEditorWelcomeForm: TValueSetEditorWelcomeForm
       DesignSize = (
         645
         45)
-      object Label1: TLabel
-        Left = 12
-        Top = 15
-        Width = 36
-        Height = 13
-        Caption = 'Server:'
-      end
-      object cbxServers: TComboBox
-        Left = 54
-        Top = 11
-        Width = 421
-        Height = 21
-        Style = csDropDownList
-        Anchors = [akLeft, akTop, akRight]
-        TabOrder = 0
-        OnChange = cbxServersChange
-      end
-      object btnAddServer: TButton
-        Left = 481
-        Top = 9
-        Width = 75
-        Height = 25
-        Anchors = [akTop, akRight]
-        Caption = 'Add'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        ParentFont = False
-        TabOrder = 1
-        OnClick = btnAddServerClick
-      end
       object Button1: TButton
         Left = 562
         Top = 9
@@ -78,14 +45,13 @@ object ValueSetEditorWelcomeForm: TValueSetEditorWelcomeForm
         Anchors = [akTop, akRight]
         Caption = 'OK'
         Default = True
-        Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Height = -13
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 2
+        TabOrder = 0
         OnClick = Button1Click
       end
       object btnCancel: TButton
@@ -96,7 +62,16 @@ object ValueSetEditorWelcomeForm: TValueSetEditorWelcomeForm
         Cancel = True
         Caption = 'btnCancel'
         ModalResult = 2
-        TabOrder = 3
+        TabOrder = 1
+      end
+      object cbShowAtStartup: TCheckBox
+        Left = 12
+        Top = 16
+        Width = 373
+        Height = 17
+        Caption = 'Show this screen when the Value Set Editor starts'
+        TabOrder = 2
+        OnClick = cbShowAtStartupClick
       end
     end
     object Panel3: TPanel
@@ -443,21 +418,6 @@ object ValueSetEditorWelcomeForm: TValueSetEditorWelcomeForm
         Caption = 
           'This value set editor is released for free use by HL7 members fo' +
           'r working with the FHIR specification of elements.'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        WordWrap = True
-      end
-      object Label4: TLabel
-        Left = 12
-        Top = 313
-        Width = 122
-        Height = 32
-        AutoSize = False
-        Caption = 'ALPHA Test version'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13

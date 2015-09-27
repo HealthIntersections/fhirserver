@@ -7,7 +7,7 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles,
-  AdvObjects, StringSupport,
+  AdvObjects, StringSupport, AdvExceptions,
   KDate, KDBDialects, KDBManager, KSettings,
   OdbcExtras, OdbcHeaders, OdbcCore;
 
@@ -715,8 +715,12 @@ begin
     result.Length := ASrc.Precision;
     result.Nullable := Asrc.Nullable = SQL_NULLABLE;
   except
-    result.free;
-    raise;
+    on e:exception do
+    begin
+      result.free;
+      recordStack(e);
+      raise;
+    end;
   end;
 end;
 
@@ -742,8 +746,12 @@ begin
       LFields.Free;
     end;
   except
-    result.free;
-    raise;
+    on e:exception do
+    begin
+      result.free;
+      recordStack(e);
+      raise;
+    end;
   end;
 end;
 
@@ -758,8 +766,12 @@ begin
     result.DestTable := ForeignTable;
     result.DestColumn := ForeignColumn;
   except
-    result.free;
-    raise;
+    on e:exception do
+    begin
+      result.free;
+      recordStack(e);
+      raise;
+    end;
   end;
 end;
 
@@ -786,8 +798,12 @@ begin
        result.Relationships.Add(FetchRelationshipMetaData(aCat, ASrc.ForeignKeys[i]));
 
   except
-    result.free;
-    raise;
+    on e:exception do
+    begin
+      result.free;
+      recordStack(e);
+      raise;
+    end;
   end;
 end;
 
@@ -978,6 +994,7 @@ begin
       e.Message := 'Error Connecting to "'+DBDetails+'": '+e.Message;
       LStmt.free;
       LHdbc.free;
+      recordStack(e);
       raise;
       end;
   end;

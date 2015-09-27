@@ -89,6 +89,7 @@ Source: "C:\work\org.hl7.fhir\build\publish\validation-min.xml.zip";            
 Source: "C:\ProgramData\FHIRServer\ucum.cache";                       DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\ProgramData\FHIRServer\dicom.cache";                      DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\ProgramData\FHIRServer\loinc.cache";                      DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\work\fhirserver\tx\scripts\*.*";                          DestDir: "{app}\sql"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
 Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion

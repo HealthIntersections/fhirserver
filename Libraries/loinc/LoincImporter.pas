@@ -33,7 +33,7 @@ Interface
 Uses
   SysUtils, Contnrs, Classes,
   StringSupport, DateSupport, AdvGenerics,
-  AdvObjects, AdvObjectLists, AdvStringLists, AdvIntegerLists, AdvNames, AdvCSVExtractors, AdvFiles,
+  AdvObjects, AdvObjectLists, AdvStringLists, AdvIntegerLists, AdvNames, AdvCSVExtractors, AdvFiles, AdvExceptions,
   YuStemmer, LoincServices;
 
 Const
@@ -151,8 +151,8 @@ Type
     FParents: TAdvList<TAnswerList>;
     FIndex : integer;
   public
-    constructor create;
-    destructor destroy;
+    constructor Create; override;
+    destructor Destroy; override;
     Property Code : String read FCode write FCode;
     Property Description : String read FDescription write FDescription;
     Property Index : Integer read FIndex write FIndex;
@@ -450,8 +450,6 @@ var
   st, st2 : TStringList;
   answerlist : TAnswerList;
   answer : TAnswer;
-  ls, s : String;
-  code, desc, refs : cardinal;
 begin
   result := 0;
   iLength := 0;
@@ -691,6 +689,7 @@ begin
         on E:Exception Do
         Begin
           e.Message := e.Message + ' (Code = '+oCode.Code+')';
+          recordStack(e);
           raise;
         End;
       End;
@@ -1008,7 +1007,6 @@ var
 
 procedure TLoincImporter.ProcessAnswerLine(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln: string);
 var
-  ts : TStringList;
   s, s1, AnswerListId, AnswerListName, AnswerStringID, AnswerCode, DisplayText : String;
   list : TAnswerList;
   answer : TAnswer;

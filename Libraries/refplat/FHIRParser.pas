@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.0.0 generated Fri, Sep 11, 2015 15:43+1000
+// FHIR v1.0.1 generated Thu, Sep 24, 2015 17:15+1000
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
@@ -3754,8 +3754,6 @@ begin
 end;
 
 Procedure TFHIRXmlComposer.ComposeResourceChildren(xml : TXmlBuilder; elem : TFhirResource);
-var
-  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeId(xml, 'id', elem.idElement);{x.2}
@@ -3768,8 +3766,6 @@ begin
 end;
 
 Procedure TFHIRJsonComposer.ComposeResourceProperties(json : TJSONWriter; elem : TFhirResource);
-var
-  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeIdValue(json, 'id', elem.idElement, false);
@@ -6270,7 +6266,7 @@ begin
       else if (child.baseName = 'profile') then
         result.profileList.Add(ParseUri(child, path+'/profile')){y.2}
       else if (child.baseName = 'aggregation') then
-        result.aggregationElement.Add(ParseEnum(CODES_TFhirResourceAggregationMode, path+'/aggregation', child)){y.1}
+        result.aggregationList.Add(ParseEnum(CODES_TFhirResourceAggregationMode, path+'/aggregation', child)){y.1}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -6298,8 +6294,8 @@ begin
   for i := 0 to elem.profileList.Count - 1 do
     ComposeUri(xml, 'profile', elem.profileList[i]);
   if SummaryOption in [soFull, soSummary, soData] then
-  for i := 0 to elem.aggregationElement.Count - 1 do
-    ComposeEnum(xml, 'aggregation', elem.aggregationElement[i], CODES_TFhirResourceAggregationMode);
+    for i := 0 to elem.aggregationList.Count - 1 do
+      ComposeEnum(xml, 'aggregation', elem.aggregationList[i], CODES_TFhirResourceAggregationMode);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -6319,7 +6315,7 @@ begin
     if jsn.has('profile') or jsn.has('_profile') then
       iteratePrimitiveArray(jsn.vArr['profile'], jsn.vArr['_profile'], result.profileList, parseUri);
     if jsn.has('aggregation') or jsn.has('_aggregation') then
-      iterateEnumArray(jsn.vArr['aggregation'], jsn.vArr['_aggregation'], jsn.path+'/aggregation', result.aggregationElement, parseEnum, CODES_TFhirResourceAggregationMode);
+      iterateEnumArray(jsn.vArr['aggregation'], jsn.vArr['_aggregation'], jsn.path+'/aggregation', result.aggregationList, parseEnum, CODES_TFhirResourceAggregationMode);
     result.link;
   finally
     result.free;
@@ -6357,21 +6353,21 @@ begin
       json.FinishArray;
     end;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.aggregationElement.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.aggregationList.Count > 0) then
   begin
     json.valueArray('aggregation');
     ext := false;
-    for i := 0 to elem.aggregationElement.Count - 1 do
+    for i := 0 to elem.aggregationList.Count - 1 do
     begin
-      ext := ext or ((elem.aggregationElement[i].id <> '') or (elem.aggregationElement[i].hasExtensionList));
-      ComposeEnumValue(json, '', elem.aggregationElement[i], CODES_TFhirResourceAggregationMode, true);
+      ext := ext or ((elem.aggregationList[i].id <> '') or (elem.aggregationList[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.aggregationList[i], CODES_TFhirResourceAggregationMode, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_aggregation');
-      for i := 0 to elem.aggregationElement.Count - 1 do
-        ComposeEnumProps(json, '', elem.aggregationElement[i], CODES_TFhirResourceAggregationMode, true);
+      for i := 0 to elem.aggregationList.Count - 1 do
+        ComposeEnumProps(json, '', elem.aggregationList[i], CODES_TFhirResourceAggregationMode, true);
       json.FinishArray;
     end;
   end;
@@ -6684,7 +6680,7 @@ begin
       if (child.baseName = 'path') then
         result.pathElement := ParseString(child, path+'/path') {b}
       else if (child.baseName = 'representation') then
-        result.representationElement.Add(ParseEnum(CODES_TFhirPropertyRepresentation, path+'/representation', child)){y.1}
+        result.representationList.Add(ParseEnum(CODES_TFhirPropertyRepresentation, path+'/representation', child)){y.1}
       else if (child.baseName = 'name') then
         result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'label') then
@@ -7175,8 +7171,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeString(xml, 'path', elem.pathElement);{x.2}
   if SummaryOption in [soFull, soSummary, soText, soData] then
-  for i := 0 to elem.representationElement.Count - 1 do
-    ComposeEnum(xml, 'representation', elem.representationElement[i], CODES_TFhirPropertyRepresentation);
+    for i := 0 to elem.representationList.Count - 1 do
+      ComposeEnum(xml, 'representation', elem.representationList[i], CODES_TFhirPropertyRepresentation);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeString(xml, 'name', elem.nameElement);{x.2}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -7666,7 +7662,7 @@ begin
     if jsn.has('path') or jsn.has('_path') then
         result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
     if jsn.has('representation') or jsn.has('_representation') then
-      iterateEnumArray(jsn.vArr['representation'], jsn.vArr['_representation'], jsn.path+'/representation', result.representationElement, parseEnum, CODES_TFhirPropertyRepresentation);
+      iterateEnumArray(jsn.vArr['representation'], jsn.vArr['_representation'], jsn.path+'/representation', result.representationList, parseEnum, CODES_TFhirPropertyRepresentation);
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('label') or jsn.has('_label') then
@@ -8152,21 +8148,21 @@ begin
   ComposeStringValue(json, 'path', elem.pathElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeStringProps(json, 'path', elem.pathElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.representationElement.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.representationList.Count > 0) then
   begin
     json.valueArray('representation');
     ext := false;
-    for i := 0 to elem.representationElement.Count - 1 do
+    for i := 0 to elem.representationList.Count - 1 do
     begin
-      ext := ext or ((elem.representationElement[i].id <> '') or (elem.representationElement[i].hasExtensionList));
-      ComposeEnumValue(json, '', elem.representationElement[i], CODES_TFhirPropertyRepresentation, true);
+      ext := ext or ((elem.representationList[i].id <> '') or (elem.representationList[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.representationList[i], CODES_TFhirPropertyRepresentation, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_representation');
-      for i := 0 to elem.representationElement.Count - 1 do
-        ComposeEnumProps(json, '', elem.representationElement[i], CODES_TFhirPropertyRepresentation, true);
+      for i := 0 to elem.representationList.Count - 1 do
+        ComposeEnumProps(json, '', elem.representationList[i], CODES_TFhirPropertyRepresentation, true);
       json.FinishArray;
     end;
   end;
@@ -17564,7 +17560,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'mode') then
-        result.modeElement.Add(ParseEnum(CODES_TFhirCompositionAttestationMode, path+'/mode', child)){y.1}
+        result.modeList.Add(ParseEnum(CODES_TFhirCompositionAttestationMode, path+'/mode', child)){y.1}
       else if (child.baseName = 'time') then
         result.timeElement := ParseDateTime(child, path+'/time') {b}
       else if (child.baseName = 'party') then
@@ -17591,8 +17587,8 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   if SummaryOption in [soFull, soSummary, soData] then
-  for i := 0 to elem.modeElement.Count - 1 do
-    ComposeEnum(xml, 'mode', elem.modeElement[i], CODES_TFhirCompositionAttestationMode);
+    for i := 0 to elem.modeList.Count - 1 do
+      ComposeEnum(xml, 'mode', elem.modeList[i], CODES_TFhirCompositionAttestationMode);
   if (SummaryOption in [soFull, soSummary, soData]) then
   ComposeDateTime(xml, 'time', elem.timeElement);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -17612,7 +17608,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode') then
-      iterateEnumArray(jsn.vArr['mode'], jsn.vArr['_mode'], jsn.path+'/mode', result.modeElement, parseEnum, CODES_TFhirCompositionAttestationMode);
+      iterateEnumArray(jsn.vArr['mode'], jsn.vArr['_mode'], jsn.path+'/mode', result.modeList, parseEnum, CODES_TFhirCompositionAttestationMode);
     if jsn.has('time') or jsn.has('_time') then
         result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
     if jsn.has('party') then
@@ -17632,21 +17628,21 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.modeElement.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.modeList.Count > 0) then
   begin
     json.valueArray('mode');
     ext := false;
-    for i := 0 to elem.modeElement.Count - 1 do
+    for i := 0 to elem.modeList.Count - 1 do
     begin
-      ext := ext or ((elem.modeElement[i].id <> '') or (elem.modeElement[i].hasExtensionList));
-      ComposeEnumValue(json, '', elem.modeElement[i], CODES_TFhirCompositionAttestationMode, true);
+      ext := ext or ((elem.modeList[i].id <> '') or (elem.modeList[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.modeList[i], CODES_TFhirCompositionAttestationMode, true);
     end;
     json.FinishArray;
     if ext then
   begin
       json.valueArray('_mode');
-      for i := 0 to elem.modeElement.Count - 1 do
-        ComposeEnumProps(json, '', elem.modeElement[i], CODES_TFhirCompositionAttestationMode, true);
+      for i := 0 to elem.modeList.Count - 1 do
+        ComposeEnumProps(json, '', elem.modeList[i], CODES_TFhirCompositionAttestationMode, true);
     json.FinishArray;
   end;
   end;
@@ -20160,7 +20156,7 @@ begin
       else if (child.baseName = 'target') then
         result.targetList.Add(ParseCode(child, path+'/target')){y.2}
       else if (child.baseName = 'modifier') then
-        result.modifierElement.Add(ParseEnum(CODES_TFhirSearchModifierCode, path+'/modifier', child)){y.1}
+        result.modifierList.Add(ParseEnum(CODES_TFhirSearchModifierCode, path+'/modifier', child)){y.1}
       else if (child.baseName = 'chain') then
         result.chainList.Add(ParseString(child, path+'/chain')){y.2}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -20196,8 +20192,8 @@ begin
   for i := 0 to elem.targetList.Count - 1 do
     ComposeCode(xml, 'target', elem.targetList[i]);
   if SummaryOption in [soFull, soData] then
-  for i := 0 to elem.modifierElement.Count - 1 do
-    ComposeEnum(xml, 'modifier', elem.modifierElement[i], CODES_TFhirSearchModifierCode);
+    for i := 0 to elem.modifierList.Count - 1 do
+      ComposeEnum(xml, 'modifier', elem.modifierList[i], CODES_TFhirSearchModifierCode);
   if SummaryOption in [soFull, soData] then
   for i := 0 to elem.chainList.Count - 1 do
     ComposeString(xml, 'chain', elem.chainList[i]);
@@ -20226,7 +20222,7 @@ begin
       if jsn.has('target') or jsn.has('_target') then
       iteratePrimitiveArray(jsn.vArr['target'], jsn.vArr['_target'], result.targetList, parseCode);
     if jsn.has('modifier') or jsn.has('_modifier') then
-      iterateEnumArray(jsn.vArr['modifier'], jsn.vArr['_modifier'], jsn.path+'/modifier', result.modifierElement, parseEnum, CODES_TFhirSearchModifierCode);
+      iterateEnumArray(jsn.vArr['modifier'], jsn.vArr['_modifier'], jsn.path+'/modifier', result.modifierList, parseEnum, CODES_TFhirSearchModifierCode);
       if jsn.has('chain') or jsn.has('_chain') then
       iteratePrimitiveArray(jsn.vArr['chain'], jsn.vArr['_chain'], result.chainList, parseString);
     result.link;
@@ -20278,21 +20274,21 @@ begin
     json.FinishArray;
   end;
   end;
-  if (SummaryOption in [soFull, soData]) and (elem.modifierElement.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
     ext := false;
-    for i := 0 to elem.modifierElement.Count - 1 do
+    for i := 0 to elem.modifierList.Count - 1 do
     begin
-      ext := ext or ((elem.modifierElement[i].id <> '') or (elem.modifierElement[i].hasExtensionList));
-      ComposeEnumValue(json, '', elem.modifierElement[i], CODES_TFhirSearchModifierCode, true);
+      ext := ext or ((elem.modifierList[i].id <> '') or (elem.modifierList[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.modifierList[i], CODES_TFhirSearchModifierCode, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_modifier');
-      for i := 0 to elem.modifierElement.Count - 1 do
-        ComposeEnumProps(json, '', elem.modifierElement[i], CODES_TFhirSearchModifierCode, true);
+      for i := 0 to elem.modifierList.Count - 1 do
+        ComposeEnumProps(json, '', elem.modifierList[i], CODES_TFhirSearchModifierCode, true);
       json.FinishArray;
     end;
   end;
@@ -29101,7 +29097,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'daysOfWeek') then
-        result.daysOfWeekElement.Add(ParseEnum(CODES_TFhirDaysOfWeek, path+'/daysOfWeek', child)){y.1}
+        result.daysOfWeekList.Add(ParseEnum(CODES_TFhirDaysOfWeek, path+'/daysOfWeek', child)){y.1}
       else if (child.baseName = 'allDay') then
         result.allDayElement := ParseBoolean(child, path+'/allDay') {b}
       else if (child.baseName = 'availableStartTime') then
@@ -29130,8 +29126,8 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   if SummaryOption in [soFull, soData] then
-  for i := 0 to elem.daysOfWeekElement.Count - 1 do
-    ComposeEnum(xml, 'daysOfWeek', elem.daysOfWeekElement[i], CODES_TFhirDaysOfWeek);
+    for i := 0 to elem.daysOfWeekList.Count - 1 do
+      ComposeEnum(xml, 'daysOfWeek', elem.daysOfWeekList[i], CODES_TFhirDaysOfWeek);
   if (SummaryOption in [soFull, soData]) then
   ComposeBoolean(xml, 'allDay', elem.allDayElement);{x.2}
   if (SummaryOption in [soFull, soData]) then
@@ -29153,7 +29149,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('daysOfWeek') or jsn.has('_daysOfWeek') then
-      iterateEnumArray(jsn.vArr['daysOfWeek'], jsn.vArr['_daysOfWeek'], jsn.path+'/daysOfWeek', result.daysOfWeekElement, parseEnum, CODES_TFhirDaysOfWeek);
+      iterateEnumArray(jsn.vArr['daysOfWeek'], jsn.vArr['_daysOfWeek'], jsn.path+'/daysOfWeek', result.daysOfWeekList, parseEnum, CODES_TFhirDaysOfWeek);
     if jsn.has('allDay') or jsn.has('_allDay') then
         result.allDayElement := ParseBoolean(jsn['allDay'], jsn.vObj['_allDay']);{q}
     if jsn.has('availableStartTime') or jsn.has('_availableStartTime') then
@@ -29175,21 +29171,21 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) and (elem.daysOfWeekElement.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.daysOfWeekList.Count > 0) then
   begin
     json.valueArray('daysOfWeek');
     ext := false;
-    for i := 0 to elem.daysOfWeekElement.Count - 1 do
+    for i := 0 to elem.daysOfWeekList.Count - 1 do
     begin
-      ext := ext or ((elem.daysOfWeekElement[i].id <> '') or (elem.daysOfWeekElement[i].hasExtensionList));
-      ComposeEnumValue(json, '', elem.daysOfWeekElement[i], CODES_TFhirDaysOfWeek, true);
+      ext := ext or ((elem.daysOfWeekList[i].id <> '') or (elem.daysOfWeekList[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.daysOfWeekList[i], CODES_TFhirDaysOfWeek, true);
     end;
       json.FinishArray;
     if ext then
     begin
       json.valueArray('_daysOfWeek');
-      for i := 0 to elem.daysOfWeekElement.Count - 1 do
-        ComposeEnumProps(json, '', elem.daysOfWeekElement[i], CODES_TFhirDaysOfWeek, true);
+      for i := 0 to elem.daysOfWeekList.Count - 1 do
+        ComposeEnumProps(json, '', elem.daysOfWeekList[i], CODES_TFhirDaysOfWeek, true);
       json.FinishArray;
     end;
     end;

@@ -35,7 +35,7 @@ uses
   kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport,
   ParseMap,
   AdvNames, AdvObjects, AdvStringMatches, AdvExclusiveCriticalSections,
-  AdvStringBuilders, AdvGenerics,
+  AdvStringBuilders, AdvGenerics, AdvExceptions,
   KDBManager, KDBDialects,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport,
@@ -256,6 +256,7 @@ var
   i: integer;
   conn: TKDBConnection;
   a: TFHIRResourceType;
+  fn : String;
 begin
   inherited Create;
   FBases := TStringList.Create;
@@ -385,10 +386,11 @@ begin
       FValidator.TerminologyServer := TerminologyServer.Link;
       FValidator.Profiles := Profiles.Link;
       // the order here is important: specification resources must be loaded prior to stored resources
-      writelnt('Load Validation Pack from ' + IncludeTrailingPathDelimiter
-        (FSourceFolder) + 'validation.xml.zip');
-      FValidator.LoadFromDefinitions(IncludeTrailingPathDelimiter(FSourceFolder)
-        + 'validation.xml.zip');
+      fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation-min.xml.zip';
+      if not FileExists(fn) then
+        fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation.xml.zip';
+      writelnt('Load Validation Pack from ' + fn);
+      FValidator.LoadFromDefinitions(fn);
       writelnt('Load Store');
       LoadExistingResources(conn);
       writelnt('Load Subscription Queue');
@@ -399,6 +401,7 @@ begin
     on e: Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -515,6 +518,7 @@ begin
     on e: Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -560,6 +564,7 @@ begin
       begin
         storage.Connection.Rollback;
         storage.Connection.Error(e);
+        recordStack(e);
         raise;
       end;
     end;
@@ -719,6 +724,7 @@ begin
     on e: Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -1170,6 +1176,7 @@ begin
     on e: Exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -1250,6 +1257,7 @@ begin
       on e: Exception do
       begin
         conn.Error(e);
+        recordStack(e);
         raise;
       end;
     end;
@@ -1272,6 +1280,7 @@ begin
           on e: Exception do
           begin
             storage.Connection.Error(e);
+            recordStack(e);
             raise;
           end;
         end;
@@ -1567,6 +1576,7 @@ begin
       on e: Exception do
       begin
         cback.Error(e);
+        recordStack(e);
         raise;
       end;
     end;

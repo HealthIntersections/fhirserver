@@ -13,7 +13,7 @@ uses
 
   ParseMap, KDBManager, KDBDialects, KCritSct,
 
-  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, AdvJSON, JWT,
+  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, AdvJSON, JWT, AdvExceptions,
 
   FacebookSupport, SCIMServer, SCIMObjects,
 
@@ -392,6 +392,7 @@ begin
     on e:exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -499,8 +500,6 @@ var
   client_id, name, authurl: String;
   conn : TKDBConnection;
   variables : TDictionary<String,String>;
-  c : integer;
-  check : boolean;
   scopes : TStringList;
   redirect, state, scope : String;
 begin
@@ -585,6 +584,7 @@ begin
       on e:exception do
       begin
         conn.Error(e);
+        recordStack(e);
         raise;
       end;
     end;
@@ -743,6 +743,7 @@ begin
     on e:exception do
     begin
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -789,6 +790,7 @@ begin
     on e : Exception do
     begin
       writelnt('Auth Exception: '+e.Message);
+      recordStack(e);
       raise;
     end;
   end;
@@ -846,6 +848,7 @@ begin
     begin
       response.ContentText := 'error: '+e.message;
       conn.Error(e);
+      recordStack(e);
       raise;
     end;
   end;
@@ -937,6 +940,7 @@ begin
           on e:exception do
           begin
             conn.Error(e);
+            recordStack(e);
             raise;
           end;
         end;

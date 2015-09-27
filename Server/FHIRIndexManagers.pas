@@ -487,7 +487,7 @@ Type
     property TerminologyServer : TTerminologyServerStore read FTerminologyServer write SetTerminologyServer;
     property Bases : TStringList read FBases write FBases;
     function execute(key : integer; id: String; resource : TFhirResource; tags : TFHIRTagList) : String;
-    Function GetKeyByName(types : TFhirResourceTypeSet; name : String) : integer;
+    Function GetKeyByName(name : String) : integer;
     Function GetTypeByName(types : TFhirResourceTypeSet; name : String) : TFhirSearchParamType;
     Function GetComposite(types : TFhirResourceTypeSet; name : String; var otypes : TFhirResourceTypeSet) : TFhirComposite;
     Function GetTargetsByName(types : TFhirResourceTypeSet; name : String) : TFhirResourceTypeSet;
@@ -1856,7 +1856,7 @@ begin
     FEntries.add(key, parent, ndx, ref, id, '', target, ndx.SearchType);
 end;
 
-function TFhirIndexManager.GetKeyByName(types: TFhirResourceTypeSet; name: String): integer;
+function TFhirIndexManager.GetKeyByName(name: String): integer;
 var
   i : integer;
 begin
