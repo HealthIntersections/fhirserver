@@ -36,11 +36,13 @@ type
     FContext: TValueSetEditorContext;
     FCurrentServer : String;
     FValueSets : TFhirValueSetList;
+    FId: String;
     procedure SetContext(const Value: TValueSetEditorContext);
     { Private declarations }
   public
     { Public declarations }
     property Context : TValueSetEditorContext read FContext write SetContext;
+    property id : String read FId;
   end;
 
 var
@@ -178,7 +180,7 @@ var
   vs : TFHIRValueSet;
 begin
   vs := TFHIRValueSet(PTreeDataPointer(tvValuesets.GetNodeData(tvValuesets.FocusedNode)).obj);
-  Context.openFromServer(nil, vs.id);
+  FId := vs.id;
   ModalResult := mrOk;
 end;
 

@@ -41,7 +41,7 @@ Type
     function CreateParser(stream : TStream) : TFHIRParser;
     function exchange(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TStream;
     function fetchResource(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TFhirResource;
-//    function makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+    function makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
   public
     constructor Create(url : String; json : boolean); overload;
     destructor Destroy; override;
@@ -60,6 +60,7 @@ Type
     procedure deleteResource(atype : TFhirResourceType; id : String);
     function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle;
+    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
 
     property OnClientStatus : TFHIRClientStatusEvent read FOnClientStatus write FOnClientStatus;
@@ -240,31 +241,43 @@ begin
 end;
 
 function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRBundle;
-//Var
-//  src, frm : TStream;
-//  ct : String;
+Var
+  src, frm : TStream;
+  ct : String;
 begin
-  raise Exception.Create('Not done yet');
-//  src := serialise(resource);
-//  try
-//    src.Position := 0;
-//    ct := makeMultipart(src, 'src', params, frm);
-//    try
-//      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_search', post, frm) as TFhirBundle;
-//      try
-//        result.id := copy(client.response.location, 1, pos('/history', client.response.location)-1);
-//        result.links.AddValue('self', client.response.location);
-//        parseCategories(result.categories);
-//        result.link;
-//      finally
-//        result.free;
-//      end;
-//    finally
-//      frm.Free;
-//    end;
-//  finally
-//    src.free;
-//  end;
+  src := serialise(resource);
+  try
+    src.Position := 0;
+    ct := makeMultipart(src, 'src', params, frm);
+    try
+      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_search', post, frm) as TFhirBundle;
+      try
+        result.id := copy(client.response.location, 1, pos('/history', client.response.location)-1);
+        result.link;
+      finally
+        result.free;
+      end;
+    finally
+      frm.Free;
+    end;
+  finally
+    src.free;
+  end;
+end;
+
+
+function TFhirClient.operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
+Var
+  src, frm : TStream;
+  ct : String;
+begin
+  src := serialise(params);
+  try
+    src.Position := 0;
+    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/$'+opName, post, src);
+  finally
+    src.free;
+  end;
 end;
 
 function TFhirClient.exchange(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TStream;
@@ -431,35 +444,35 @@ begin
   end;
 end;
 
-//function TFhirClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
-//var
-//  m : TIdSoapMimeMessage;
-//  p : TIdSoapMimePart;
-//  i : integer;
-//begin
-//  m := TIdSoapMimeMessage.create;
-//  try
-//    p := m.Parts.AddPart(NewGuidURN);
-//    p.ContentDisposition := 'form-data; name="'+streamName+'"';
-//    p.Content := Stream;
-//    p.OwnsContent := false;
-//    for i := 0 to params.Count - 1 do
-//    begin
-//      p := m.Parts.AddPart(NewGuidURN);
-//      p.ContentDisposition := 'form-data; name="'+params.Keys[i]+'"';
-//      p.Content := TStringStream.Create(params.Matches[params.Keys[i]], TEncoding.UTF8);
-//      p.OwnsContent := true;
-//    end;
-//    m.Boundary := '---'+AnsiString(copy(GUIDToString(CreateGUID), 2, 36));
-//    m.start := m.parts.PartByIndex[0].Id;
-//    result := 'multipart/form-data; boundary='+String(m.Boundary);
-//    mp := TMemoryStream.Create;
-//    m.WriteToStream(mp, false);
-//  finally
-//    m.free;
-//  end;
-//end;
-//
+function TFhirClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+var
+  m : TIdSoapMimeMessage;
+  p : TIdSoapMimePart;
+  i : integer;
+begin
+  m := TIdSoapMimeMessage.create;
+  try
+    p := m.Parts.AddPart(NewGuidURN);
+    p.ContentDisposition := 'form-data; name="'+streamName+'"';
+    p.Content := Stream;
+    p.OwnsContent := false;
+    for i := 0 to params.Count - 1 do
+    begin
+      p := m.Parts.AddPart(NewGuidURN);
+      p.ContentDisposition := 'form-data; name="'+params.Keys[i]+'"';
+      p.Content := TStringStream.Create(params.Matches[params.Keys[i]], TEncoding.UTF8);
+      p.OwnsContent := true;
+    end;
+    m.Boundary := '---'+AnsiString(copy(GUIDToString(CreateGUID), 2, 36));
+    m.start := m.parts.PartByIndex[0].Id;
+    result := 'multipart/form-data; boundary='+String(m.Boundary);
+    mp := TMemoryStream.Create;
+    m.WriteToStream(mp, false);
+  finally
+    m.free;
+  end;
+end;
+
 function TFhirClient.makeUrl(tail: String; params : TAdvStringMatch = nil): String;
 begin
   result := FURL;

@@ -18,22 +18,10 @@
     <Notes>
       <![CDATA[]]>
     </Notes>
-    <LastBuildRun>01:13:36</LastBuildRun>
-    <LastBuildStart>27/09/2015 9:57:58 PM</LastBuildStart>
+    <LastBuildRun>00:36:29</LastBuildRun>
+    <LastBuildStart>28/09/2015 11:48:04 AM</LastBuildStart>
     <LastBuildState>True</LastBuildState>
     <builds>
-      <build>
-        <id>{6616266F-A915-4508-ADD8-34F89F1CD338}</id>
-        <start>27/09/2015 3:36:26 PM</start>
-        <run>00:00:07</run>
-        <result>False</result>
-      </build>
-      <build>
-        <id>{BC163D2C-63C1-4EEC-830F-2B8D79498CC9}</id>
-        <start>27/09/2015 3:39:01 PM</start>
-        <run>00:00:16</run>
-        <result>False</result>
-      </build>
       <build>
         <id>{FE9CA96D-4685-4987-8185-D3611402A878}</id>
         <start>27/09/2015 3:42:46 PM</start>
@@ -80,6 +68,18 @@
         <id>{C5F07B62-02CF-4124-905C-E1D52E421420}</id>
         <start>27/09/2015 9:57:58 PM</start>
         <run>01:13:36</run>
+        <result>True</result>
+      </build>
+      <build>
+        <id>{2B206C51-96B3-420E-B74A-8FC0F3E0980C}</id>
+        <start>28/09/2015 11:47:21 AM</start>
+        <run>00:00:23</run>
+        <result>False</result>
+      </build>
+      <build>
+        <id>{23CC3007-D33F-409F-8594-002E245041B3}</id>
+        <start>28/09/2015 11:48:04 AM</start>
+        <run>00:36:29</run>
         <result>True</result>
       </build>
     </builds>

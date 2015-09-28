@@ -46,6 +46,7 @@ object frmRegisterServer: TfrmRegisterServer
       Width = 105
       Height = 25
       Caption = 'Update Cache'
+      Enabled = False
       TabOrder = 1
       OnClick = btnUpdateClick
     end
@@ -79,10 +80,13 @@ object frmRegisterServer: TfrmRegisterServer
       Header.Options = [hoColumnResize, hoDrag, hoShowImages, hoShowSortGlyphs, hoVisible]
       NodeDataSize = 0
       TabOrder = 0
-      TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toThemeAware, toUseBlendedImages]
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toThemeAware, toUseBlendedImages]
       TreeOptions.SelectionOptions = [toFullRowSelect]
+      OnChecked = tvServersChecked
       OnClick = tvServersClick
       OnGetText = tvServersGetText
+      OnInitNode = tvServersInitNode
       Columns = <
         item
           CheckType = ctRadioButton

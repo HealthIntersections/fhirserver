@@ -597,7 +597,7 @@ end;
 
 procedure TForm5.btnOpenFileClick(Sender: TObject);
 begin
-  if (opnValueSet.execute) then
+  if (not Context.Dirty or (MessageDlg('Lose unsaved edits, are you sure?', mtConfirmation, [mbyes, mbcancel], 0) = mrYes)) and opnValueSet.execute then
   begin
     context.openFromFile(nil, opnValueSet.filename);
     Refresh;
@@ -606,10 +606,15 @@ end;
 
 procedure TForm5.btnOpenServerClick(Sender: TObject);
 begin
-  if not Context.Dirty or (MessageDlg('Lose unsaved edits, are you sure?', mtConfirmation, [mbyes, mbcancel], 0) = mrYes) then
+  if (not Context.Dirty or (MessageDlg('Lose unsaved edits, are you sure?', mtConfirmation, [mbyes, mbcancel], 0) = mrYes)) then
   begin
-    Context.Close;
-    Refresh;
+    ServerChooserForm.Context := Context.Link;
+    if (ServerChooserForm.ShowModal = mrOk) and (ServerChooserForm.id <> '') then
+    begin
+      Context.Close;
+      ServerOperation(Context.openFromServer, ServerChooserForm.id, 'Opening Value Set', true);
+      Refresh;
+    end;
   end;
 end;
 

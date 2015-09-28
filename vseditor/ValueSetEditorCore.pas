@@ -711,6 +711,7 @@ begin
     raise Exception.Create('URL not registered as a server: '+url);
   FWorkingServer.Free;
   FWorkingServer := Servers[t].Link;
+  Settings.WorkingServer := FWorkingServer.FUrl;
 end;
 
 procedure TValueSetEditorContext.SetServerFilter(const Value: String);
@@ -740,6 +741,11 @@ begin
 
   FServers := TAdvList<TValueSetEditorServerCache>.create;
   loadServers;
+  if FSettings.WorkingServer <> '' then
+    SetNominatedServer(FSettings.WorkingServer)
+  else
+    SetNominatedServer(Servers[0].URL);
+
 
   FExpansions := TAdvStringObjectMatch.create;
   ClearAllVersions;
@@ -844,30 +850,39 @@ end;
 function TValueSetEditorContext.Expand(text : String): String;
 var
   client : TFhirClient;
-  params : TAdvStringMatch;
+  pIn, pOut : TFhirParameters;
+  rOut : TFHIRResource;
   feed : TFHIRBundle;
 begin
   client := TFhirClient.create(FWorkingServer.FUrl, true);
   try
     client.OnClientStatus := nil;
-    params := TAdvStringMatch.Create;
+    pIn := TFhirParameters.Create;
     try
-      params.Add('_query', 'expand');
-      params.Add('filter', text);
-      feed := client.searchPost(frtValueset, false, params, ValueSet);
+      if text <> '' then
+        pIn.AddParameter('filter', text);
+      pIn.AddParameter('valueSet', ValueSet.Link);
+      rOut := client.operation(frtValueset, 'expand', pIn);
       try
-        if feed.entryList.Count > 0 then
+        FExpansion.Free;
+        FExpansion := nil;
+        if rOut is TFhirValueSet then
+          FExpansion := (rOut as TFhirValueSet).expansion.Link
+        else if rOut is TFhirParameters then
         begin
-          FExpansion.Free;
-          FExpansion := nil;
-          FExpansion := TFHIRValueset(feed.entryList[0].resource).expansion.link;
-          result := 'As evaluated at '+Expansion.timestamp.GetAsString+' by '+client.url;
-        end;
+          pOut := TFhirParameters(rOut);
+          if pOut.hasParameter('return') then
+            FExpansion := (pOut['return'] as TFHIRValueSet).expansion.Link
+          else
+            raise Exception.Create('Unable to process result from expansion server');
+        end
+        else
+          raise Exception.Create('Unable to process result from expansion server');
       finally
-        feed.Free;
+        rOut.Free;
       end;
     finally
-      params.free;
+      pIn.free;
     end;
   finally
     client.Free;

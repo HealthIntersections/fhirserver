@@ -1406,7 +1406,9 @@ var
   report :  TFhirOperationOutcomeIssue;
   oComp : TFHIRComposer;
   ext : TFhirExtension;
+  p : TFhirXHtmlNode;
   lines : TStringList;
+  l, s, d: String;
 begin
   response.ResponseNo := status;
   response.FreeContentStream := true;
@@ -1447,7 +1449,28 @@ begin
       report.severity := IssueSeverityError;
       report.details := TFhirCodeableConcept.Create;
       report.details.text := message;
-      report.diagnostics := ExceptionStack(e);
+      d := ExceptionStack(e);
+      if d <> '' then
+      begin
+        issue.text.div_.AddTag('hr');
+        issue.text.div_.AddTag('p').AddTag('b').AddText('Stack Dump:');
+        p := issue.text.div_.AddTag('p');
+        lines := TStringList.Create;
+        try
+          lines.Text := d;
+          d := '';
+          for s in lines do
+          begin
+            l := s.subString(s.indexof('}')+1);
+            p.AddText(l);
+            p.AddTag('br');
+            d := d + l+#13#10;
+          end;
+        finally
+          lines.Free;
+        end;
+        report.diagnostics := d;
+      end;
       if (code <> IssueTypeNull) then
         report.code := code;
       response.ContentStream := TMemoryStream.Create;

@@ -117,8 +117,11 @@ begin
     if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
       dispName := 'FHIR Server';
     iniName := iniName.replace('.dstu', '.dev');
-    writelnt('FHIR Service (DEV). Using ini file '+iniName);
-    dispName := dispName + ' (DEV)';
+    if JclExceptionTrackingActive then
+      writelnt('FHIR Service (DSTU2). Using ini file '+iniName+' with stack dumps on')
+    else
+      writelnt('FHIR Service (DSTU2). Using ini file '+iniName+' (no stack dumps)');
+    dispName := dispName + ' (DSTU2)';
 
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
@@ -245,8 +248,7 @@ begin
   except
     on e : Exception do
     begin
-      writelnt(e.Message);
-      recordStack(e);
+      writelnt(E.ClassName+ ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
       raise;
     end;
   end;
@@ -261,7 +263,7 @@ begin
     UnloadTerminologies;
   except
     on e : Exception do
-      writelnt(e.Message);
+      Writelnt(E.ClassName + ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
   end;
 end;
 

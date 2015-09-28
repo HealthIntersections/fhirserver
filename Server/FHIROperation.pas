@@ -5712,8 +5712,8 @@ begin
               vs := manager.GetValueSetByIdentity(request.Parameters.getvar('identifier'), request.Parameters.getvar('version'));
             cacheId := vs.url;
           end
-          else if (request.form <> nil) and request.form.hasParam('valueSet') then
-            vs := LoadFromFormParam(request.form.getparam('valueSet'), request.Lang) as TFhirValueSet
+          else if params.hasParameter('valueSet') then
+            vs := params['valueSet'] as TFhirValueSet
           else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
             vs := request.Resource.Link as TFhirValueSet
           else

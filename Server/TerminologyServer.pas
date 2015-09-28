@@ -98,7 +98,7 @@ var
   fn : string;
   p : TCodeSystemProvider;
 begin
-  writelnt('Load DB Terinologies');
+  writelnt('Load DB Terminologies');
   Unii := TUniiServices.Create(TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('database', 'tx', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));

@@ -78,7 +78,7 @@ object Form5: TForm5
       object tbOpenServer: TToolButton
         Left = 78
         Top = 0
-        Hint = 'Browser the Server'
+        Hint = 'Browse the Server'
         Caption = 'Open a value set from the server'
         ImageIndex = 4
         OnClick = btnOpenServerClick
@@ -280,10 +280,6 @@ object Form5: TForm5
     object tabInformation: TTabSheet
       Caption = 'Valueset Information'
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 7
-      ExplicitWidth = 0
-      ExplicitHeight = 550
       object Panel6: TPanel
         Left = 0
         Top = 300
@@ -384,7 +380,6 @@ object Form5: TForm5
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 1
-        ExplicitHeight = 186
         DesignSize = (
           747
           187)
@@ -415,7 +410,6 @@ object Form5: TForm5
           ParentFont = False
           TabOrder = 0
           OnChange = txtDescriptionChange
-          ExplicitHeight = 131
         end
       end
       object Panel9: TPanel
@@ -686,10 +680,6 @@ object Form5: TForm5
       Caption = 'Codes Defined Here'
       ImageIndex = 1
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 7
-      ExplicitWidth = 0
-      ExplicitHeight = 550
       object tvCodeSystem: TVirtualStringTree
         Left = 0
         Top = 97
@@ -730,7 +720,6 @@ object Form5: TForm5
         OnInitNode = tvCodeSystemInitNode
         OnKeyDown = tvCodeSystemKeyDown
         OnNewText = tvCodeSystemNewText
-        ExplicitHeight = 453
         Columns = <
           item
             Position = 0
@@ -863,10 +852,6 @@ object Form5: TForm5
       Caption = 'Codes From Elsewhere'
       ImageIndex = 2
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 7
-      ExplicitWidth = 0
-      ExplicitHeight = 550
       object Notebook2: TNotebook
         Left = 0
         Top = 0
@@ -881,12 +866,10 @@ object Form5: TForm5
         ParentFont = False
         TabOrder = 0
         OnPageChanged = LocationChange
-        ExplicitHeight = 550
         object TPage
           Left = 0
           Top = 0
           Caption = 'Null'
-          ExplicitHeight = 550
           object Label1: TLabel
             Left = 27
             Top = 33
@@ -1050,7 +1033,6 @@ object Form5: TForm5
           Left = 0
           Top = 0
           Caption = 'Import'
-          ExplicitHeight = 550
           object Panel22: TPanel
             Left = 0
             Top = 0
@@ -1059,7 +1041,6 @@ object Form5: TForm5
             Align = alClient
             Caption = 'Panel22'
             TabOrder = 0
-            ExplicitHeight = 550
             object Panel25: TPanel
               Left = 1
               Top = 1
@@ -1149,7 +1130,6 @@ object Form5: TForm5
               OnGetText = tvPreviewGetText
               OnInitChildren = tvPreviewInitChildren
               OnInitNode = tvPreviewInitNode
-              ExplicitHeight = 464
               Columns = <
                 item
                   Position = 0
@@ -1163,7 +1143,7 @@ object Form5: TForm5
                 end
                 item
                   Position = 2
-                  Width = 295
+                  Width = 291
                   WideText = 'Display'
                 end>
             end
@@ -1173,8 +1153,6 @@ object Form5: TForm5
           Left = 0
           Top = 0
           Caption = 'IncludeExclude'
-          ExplicitWidth = 0
-          ExplicitHeight = 550
           object Panel26: TPanel
             Left = 0
             Top = 0
@@ -1182,7 +1160,6 @@ object Form5: TForm5
             Height = 551
             Align = alClient
             TabOrder = 0
-            ExplicitHeight = 550
             object Splitter2: TSplitter
               Left = 1
               Top = 438
@@ -1203,7 +1180,6 @@ object Form5: TForm5
               Constraints.MinHeight = 100
               ParentColor = True
               TabOrder = 0
-              ExplicitTop = 449
               DesignSize = (
                 745
                 100)
@@ -1267,7 +1243,7 @@ object Form5: TForm5
                   end
                   item
                     Position = 2
-                    Width = 438
+                    Width = 434
                     WideText = 'Value'
                   end>
               end
@@ -1319,7 +1295,6 @@ object Form5: TForm5
               BevelOuter = bvNone
               ParentColor = True
               TabOrder = 2
-              ExplicitHeight = 336
               DesignSize = (
                 745
                 337)
@@ -1373,7 +1348,6 @@ object Form5: TForm5
                 OnInitNode = tvCodesInitNode
                 OnKeyDown = tvCodesKeyDown
                 OnNewText = tvCodesNewText
-                ExplicitHeight = 312
                 Columns = <
                   item
                     Position = 0
@@ -1387,7 +1361,7 @@ object Form5: TForm5
                   end
                   item
                     Position = 2
-                    Width = 185
+                    Width = 181
                     WideText = 'Comments'
                   end>
               end
@@ -1450,10 +1424,6 @@ object Form5: TForm5
       Caption = 'Evaluate Current Content'
       ImageIndex = 3
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 7
-      ExplicitWidth = 0
-      ExplicitHeight = 550
       object pnlExpansion: TPanel
         Left = 0
         Top = 0
@@ -1535,7 +1505,6 @@ object Form5: TForm5
         OnGetText = tvExpansionGetText
         OnInitChildren = tvExpansionInitChildren
         OnInitNode = tvExpansionInitNode
-        ExplicitHeight = 485
         Columns = <
           item
             Position = 0
@@ -1549,7 +1518,7 @@ object Form5: TForm5
           end
           item
             Position = 2
-            Width = 297
+            Width = 293
             WideText = 'Display'
           end>
       end
@@ -1818,7 +1787,7 @@ object Form5: TForm5
       object OpenFromServer1: TMenuItem
         Caption = '&Close'
         ShortCut = 16499
-        OnClick = btnOpenServerClick
+        OnClick = btnCloseClick
       end
       object N2: TMenuItem
         Caption = '-'
@@ -1920,7 +1889,7 @@ object Form5: TForm5
     Left = 960
     Top = 112
     Bitmap = {
-      494C010128006C00780020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010128006C007C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060010000010020000000000000C0
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7764,7 +7733,7 @@ object Form5: TForm5
     Left = 1008
     Top = 116
     Bitmap = {
-      494C010127006C00880020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127006C008C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004001000001002000000000000080
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

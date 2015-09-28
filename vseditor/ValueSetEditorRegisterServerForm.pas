@@ -18,6 +18,9 @@ type
     procedure tvServersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure btnUpdateClick(Sender: TObject);
     procedure tvServersClick(Sender: TObject);
+    procedure tvServersInitNode(Sender: TBaseVirtualTree; ParentNode,
+      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure tvServersChecked(Sender: TBaseVirtualTree; Node: PVirtualNode);
   private
     FContext : TValueSetEditorContext;
     procedure SetContext(const Value: TValueSetEditorContext);
@@ -54,6 +57,7 @@ end;
 
 procedure TfrmRegisterServer.FormShow(Sender: TObject);
 begin
+  tvServers.RootNodeCount := 0;
   tvServers.RootNodeCount := Context.Servers.Count;
 end;
 
@@ -61,6 +65,14 @@ procedure TfrmRegisterServer.SetContext(const Value: TValueSetEditorContext);
 begin
   FContext.free;
   FContext := Value;
+end;
+
+procedure TfrmRegisterServer.tvServersChecked(Sender: TBaseVirtualTree;  Node: PVirtualNode);
+var
+  server : TValueSetEditorServerCache;
+begin
+  server := FContext.Servers[node.Index];
+  Context.SetNominatedServer(server.URL);
 end;
 
 procedure TfrmRegisterServer.tvServersClick(Sender: TObject);
@@ -80,6 +92,18 @@ begin
     3: CellText := inttostr(Server.CodeSystems.Count);
     4: CellText := Server.LastUpdated;
   end
+end;
+
+procedure TfrmRegisterServer.tvServersInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  server : TValueSetEditorServerCache;
+begin
+  server := FContext.Servers[node.Index];
+  Node.CheckType := ctCheckBox;
+  if (server = Context.WorkingServer) then
+    Node.CheckState := csCheckedNormal
+  else
+    Node.CheckState := csUncheckedNormal;
 end;
 
 end.
