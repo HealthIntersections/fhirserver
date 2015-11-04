@@ -40,12 +40,12 @@ Close the FHIR Toolbox
 interface
 
 uses
-  Windows, SysUtils, Classes,
+  Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes,
   NppPlugin, SciSupport,
-  Vcl.Dialogs,
   AdvGenerics, AdvBuffers, XmlBuilder,
   FHIRBase, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase,
-  AboutForms, FHIRToolboxForm, FHIRPluginSettings, FHIRPluginErrors, FHIRPluginValidator;
+  FHIRPluginSettings, FHIRPluginErrors, FHIRPluginValidator,
+  FHIRToolboxForm, AboutForms, SettingsForm;
 
 type
   TFHIRPlugin = class(TNppPlugin)
@@ -92,6 +92,7 @@ type
     procedure FuncPOST;
     procedure FuncTransaction;
     procedure FuncServerValidate;
+    procedure FuncClearClient;
 
     // responding to np++ events
     procedure DoNppnReady; override; // install toolbox if necessary
@@ -116,6 +117,7 @@ procedure _FuncPUT; cdecl;
 procedure _FuncPOST; cdecl;
 procedure _FuncTransaction; cdecl;
 procedure _FuncServerValidate; cdecl;
+procedure _FuncClearClient; cdecl;
 
 var
   Npp: TFHIRPlugin;
@@ -251,6 +253,11 @@ begin
 end;
 
 
+procedure _FuncClearClient; cdecl;
+begin
+  Npp.FuncClearClient;
+end;
+
 function TFHIRPlugin.convertIssue(issue : TFhirOperationOutcomeIssue) : TValidationError;
 var
   s, e : integer;
@@ -350,9 +357,15 @@ procedure TFHIRPlugin.loadValidator;
 begin
   if FValidator = nil then
   begin
-    FValidator := TFHIRValidator.Create;
-    FValidator.SchematronSource := 'C:\work\org.hl7.fhir\build\publish';
-    FValidator.LoadFromDefinitions('C:\work\org.hl7.fhir\build\publish\validation-min.xml.zip');
+    if (Settings.TerminologyServer = '') or (Settings.DefinitionsSource = '') then
+    begin
+      if MessageDlg('Validation is not configured. Would you like to configure it?', mtConfirmation, mbYesNo, 0) = mrYes then
+        _FuncSettings;
+      Abort;
+    end;
+
+    FValidator := TFHIRValidator.Create(Settings.TerminologyServer);
+    FValidator.LoadFromDefinitions(Settings.DefinitionsSource);
   end;
 end;
 
@@ -367,8 +380,15 @@ begin
 end;
 
 procedure TFHIRPlugin.FuncSettings;
+var
+  a: TSettingForm;
 begin
-  ShowMessage('not done yet');
+  a := TSettingForm.Create(self);
+  try
+    a.ShowModal;
+  finally
+    a.Free;
+  end;
 end;
 
 procedure TFHIRPlugin.FuncAbout;
@@ -376,8 +396,17 @@ var
   a: TAboutForm;
 begin
   a := TAboutForm.Create(self);
-  a.ShowModal;
-  a.Free;
+  try
+    a.ShowModal;
+  finally
+    a.Free;
+  end;
+end;
+
+procedure TFHIRPlugin.FuncClearClient;
+begin
+  FValidator.Free;
+  FValidator := nil;
 end;
 
 procedure TFHIRPlugin.FuncConnect;

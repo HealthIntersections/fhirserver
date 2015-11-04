@@ -105,8 +105,8 @@
             <Form>NppDockingForm</Form>
         </DCCReference>
         <DCCReference Include="FHIRPlugin.pas"/>
-        <DCCReference Include="AboutForms.pas">
-            <Form>AboutForm</Form>
+        <DCCReference Include="SettingsForm.pas">
+            <Form>SettingForm</Form>
         </DCCReference>
         <DCCReference Include="FHIRToolboxForm.pas">
             <Form>FHIRToolbox</Form>
@@ -233,6 +233,7 @@
         <DCCReference Include="..\Libraries\refplat\ProfileManager.pas"/>
         <DCCReference Include="..\Libraries\support\kCritSct.pas"/>
         <DCCReference Include="FHIRPluginValidator.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRClient.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -285,7 +286,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -599,16 +609,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

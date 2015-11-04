@@ -23,7 +23,7 @@ uses
   NppForms in 'npplib\NppForms.pas' {NppForm},
   NppDockingForms in 'npplib\NppDockingForms.pas' {NppDockingForm},
   FHIRPlugin in 'FHIRPlugin.pas',
-  AboutForms in 'AboutForms.pas' {AboutForm},
+  SettingsForm in 'SettingsForm.pas' {SettingForm},
   FHIRToolboxForm in 'FHIRToolboxForm.pas' {FHIRToolbox},
   FHIRPluginSettings in 'FHIRPluginSettings.pas',
   FHIRValidator in '..\Libraries\refplat\FHIRValidator.pas',
@@ -146,7 +146,8 @@ uses
   AdvZipWorkers in '..\Libraries\support\AdvZipWorkers.pas',
   ProfileManager in '..\Libraries\refplat\ProfileManager.pas',
   kCritSct in '..\Libraries\support\kCritSct.pas',
-  FHIRPluginValidator in 'FHIRPluginValidator.pas';
+  FHIRPluginValidator in 'FHIRPluginValidator.pas',
+  FHIRClient in '..\Libraries\refplat\FHIRClient.pas';
 
 {$R *.res}
 

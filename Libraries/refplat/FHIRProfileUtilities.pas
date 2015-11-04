@@ -18,6 +18,7 @@ type
     FSeverity : TFhirIssueSeverity;
     FMessage  : String;
   public
+    constructor Create(Severity : TFhirIssueSeverity; Message : String); virtual;
     Property Severity : TFhirIssueSeverity read FSeverity write FSeverity;
     Property Message : String read FMessage write FMessage;
     function isOk : boolean;
@@ -1093,6 +1094,13 @@ begin
 end;
 
 { TValidationResult }
+
+constructor TValidationResult.Create(Severity: TFhirIssueSeverity; Message: String);
+begin
+  inherited create;
+  FSeverity := Severity;
+  FMessage := Message;
+end;
 
 function TValidationResult.isOk: boolean;
 begin

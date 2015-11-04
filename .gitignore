@@ -39,3 +39,5 @@ Exec/certificates/local.healthintersections.com.au.csr
 Exec/certificates/local.healthintersections.com.au.key
 vseditor/Win32/Debug/ValueSetEditor.exe.pec2bac
 Server/Win64/Debug/FHIRServerDev.jdbg
+Exec/FHIRServerDev.jdbg
+npp/fhirnpp.stat
