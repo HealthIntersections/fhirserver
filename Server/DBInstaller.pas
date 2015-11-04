@@ -33,12 +33,12 @@ interface
 uses
   SysUtils, Classes, GuidSupport,
   AdvObjects, AdvExceptions,
-  KDBManager, KDBDialects,
+  KDBManager, KDBDialects, TextUtilities,
   FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
   SCIMServer;
 
 const
-  ServerVersion = 1;
+  ServerDBVersion = 1;
 
 Type
   TFHIRDatabaseInstaller = class (TAdvObject)
@@ -49,6 +49,7 @@ Type
     FBases: TStringList;
     FSupportSystemHistory: boolean;
     FTextIndexing: boolean;
+    FTxPath : String;
     procedure CreateResourceCompartments;
     procedure CreateResourceConfig;
     procedure CreateResourceIndexEntries;
@@ -64,6 +65,7 @@ Type
     procedure CreateResourceVersionsTags;
     procedure CreateSubscriptionQueue;
     procedure CreateNotificationQueue;
+    procedure CreateWebSocketsQueue;
     procedure CreateUsers;
     procedure CreateUserIndexes;
     procedure CreateOAuthLogins;
@@ -76,14 +78,15 @@ Type
     procedure DefineResourceSpaces;
     procedure DoPostTransactionInstall;
     procedure DoPostTransactionUnInstall;
+    procedure CreateCodeSystems;
+    procedure runScript(s : String);
   public
-    Constructor create(conn : TKDBConnection);
+    Constructor create(conn : TKDBConnection; txpath : String);
     Destructor Destroy; override;
     Property Transactions : boolean read FTransactions write FTransactions;
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
     Property DoAudit : boolean read FDoAudit write FDoAudit;
     Property  Bases : TStringList read FBases;
-    procedure Upgrade(scim : TSCIMServer);
     procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
     Property TextIndexing : boolean read FTextIndexing write FTextIndexing;
@@ -103,7 +106,7 @@ Begin
 End;
 
 
-constructor TFHIRDatabaseInstaller.create(conn: TKDBConnection);
+constructor TFHIRDatabaseInstaller.create(conn: TKDBConnection; txpath : String);
 begin
   inherited Create;
   FBases := TStringList.Create;
@@ -111,6 +114,7 @@ begin
   FTransactions := true;
   FSupportSystemHistory := true;
   FConn := conn;
+  FTxPath := txpath;
 end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceSessions;
@@ -220,7 +224,7 @@ Begin
 
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+BooleanToInt(FSupportSystemHistory)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (4, '''+BooleanToInt(FDoAudit)+''')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (5, '''+inttostr(ServerVersion)+''')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (5, '''+inttostr(ServerDBVersion)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (6, '''+NewGuidURN+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (7, ''1'')');
 End;
@@ -253,6 +257,14 @@ begin
   FConn.ExecSQL('Create INDEX SK_Closure_Name ON Closures (Name)');
 end;
 
+procedure TFHIRDatabaseInstaller.CreateCodeSystems;
+begin
+  runScript('tx_db.sql');
+  runScript('us-state-codes.sql');
+  runScript('area-codes.sql');
+  runScript('country-codes.sql');
+end;
+
 procedure TFHIRDatabaseInstaller.CreateConcepts;
 begin
   FConn.ExecSQL('CREATE TABLE Concepts ( '+#13#10+
@@ -270,6 +282,7 @@ begin
        ' NotificationQueueKey '+   DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SubscriptionKey '+        DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+ DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Operation                  int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Entered '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' LastTry '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' ErrorCount int                                          '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
@@ -344,7 +357,7 @@ Begin
        ' StatedDate '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' TransactionDate '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' VersionId nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' Deleted int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Status int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Format int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SessionKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Tags '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -431,6 +444,7 @@ begin
        ' SubscriptionQueueKey '+   DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+        DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+ DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Operation                  int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Entered '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Handled '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_SubscriptionQueue', 'SubscriptionQueueKey')+') '+CreateTableInfo(FConn.owner.platform));
@@ -514,6 +528,17 @@ begin
   FConn.ExecSQL('Create INDEX SK_ValueSets_NeedsIndexing ON ValueSets (NeedsIndexing)');
 end;
 
+procedure TFHIRDatabaseInstaller.CreateWebSocketsQueue;
+begin
+  FConn.ExecSQL('CREATE TABLE WebSocketsQueue ( '+#13#10+
+       ' WebSocketsQueueKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' SubscriptionId     nchar(64)                           '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Handled            int                                 '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Content            '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_WebSocketsQueue', 'WebSocketsQueueKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_WebSocketsQueue_SubscriptionId ON WebSocketsQueue (SubscriptionId, Handled)');
+end;
+
 procedure TFHIRDatabaseInstaller.CreateUserIndexes;
 Begin
   FConn.ExecSQL('CREATE TABLE UserIndexes( '+#13#10+
@@ -555,7 +580,7 @@ end;
 
 procedure TFHIRDatabaseInstaller.DefineIndexes;
 var
-  m : TFHIRIndexManager;
+  m : TFHIRIndexInformation;
   i, k : integer;
   names : TStringList;
 begin
@@ -570,7 +595,7 @@ begin
 //  inc(k);
 //  FConn.terminate;
 
-  m := TFHIRIndexManager.create(nil);
+  m := TFHIRIndexInformation.create();
   names := TStringList.Create;
   try
     for i := 0 to m.Indexes.count - 1 do
@@ -618,6 +643,8 @@ begin
     CreateResourceSessions;
     CreateOAuthLogins;
 
+    CreateCodeSystems;
+
     CreateClosures;
     CreateConcepts;
     CreateValueSets;
@@ -638,6 +665,7 @@ begin
     CreateResourceSearchEntries;
     CreateSubscriptionQueue;
     CreateNotificationQueue;
+    CreateWebSocketsQueue;
 
     DefineResourceSpaces;
     DefineIndexes;
@@ -651,6 +679,30 @@ begin
     end;
   end;
   DoPostTransactionInstall;
+end;
+
+procedure TFHIRDatabaseInstaller.runScript(s: String);
+var
+  lines : TStringList;
+  sql, l : String;
+begin
+  lines := TStringList.create;
+  try
+    lines.Text := FileToString(IncludeTrailingPathDelimiter(Ftxpath)+s, TEncoding.ANSI);
+    sql := '';
+    for l in lines do
+      if l.Trim = 'GO' then
+      begin
+        Fconn.ExecSQL(sql);
+        sql := '';
+      end
+      else
+        sql := sql + l+#13#10;
+    if (sql.trim <> '') then
+      Fconn.ExecSQL(sql);
+  finally
+    lines.free;
+  end;
 end;
 
 procedure TFHIRDatabaseInstaller.Uninstall;
@@ -667,6 +719,8 @@ begin
         else
           FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
 
+      if meta.hasTable('WebSocketsQueue') then
+        FConn.DropTable('WebSocketsQueue');
       if meta.hasTable('NotificationQueue') then
         FConn.DropTable('NotificationQueue');
       if meta.hasTable('SubscriptionQueue') then
@@ -716,6 +770,20 @@ begin
       if meta.hasTable('Concepts') then
         FConn.DropTable('Concepts');
 
+
+      if meta.hasTable('UniiDesc') then
+        FConn.DropTable('UniiDesc');
+      if meta.hasTable('Unii') then
+        FConn.DropTable('Unii');
+      if meta.hasTable('cvx') then
+        FConn.DropTable('cvx');
+      if meta.hasTable('USStateCodes') then
+        FConn.DropTable('USStateCodes');
+      if meta.hasTable('AreaCodes') then
+        FConn.DropTable('AreaCodes');
+      if meta.hasTable('CountryCodes') then
+        FConn.DropTable('CountryCodes');
+
       FConn.Commit;
     except
       on e:exception do
@@ -735,16 +803,6 @@ begin
   end;
 end;
 
-procedure TFHIRDatabaseInstaller.Upgrade(scim: TSCIMServer);
-var
-  ver : Integer;
-begin
-  ver := StrToInt(FConn.Lookup('Config', 'ConfigKey', '5', 'Value', '0'));
-  if ver = 0 then
-    raise Exception.Create('Unable to upgrade this database - it was created proir to the upgrade system existing');
-//  if ver >= 1 then
-//
-end;
 
 end.
 

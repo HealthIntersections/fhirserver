@@ -428,7 +428,7 @@ begin
       result := nil
     else
     begin
-      StreamToFile(ret, 'c:\temp\file.txt');
+//      StreamToFile(ret, 'c:\temp\file.txt');
       p := CreateParser(ret);
       try
         p.parse;

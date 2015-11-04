@@ -44,7 +44,8 @@ Type
 
     function null : Boolean;
     function passes(value : String) : boolean; overload;
-    function passes(stems : TAdvStringList; all : boolean) : boolean; overload;
+    function passes(value : String; var rating : double) : boolean; overload;
+    function passes(stems : TAdvStringList; var rating : double) : boolean; overload;
     property filter : string read FFilter;
     property stems : TStringList read FStems;
   end;
@@ -72,7 +73,7 @@ Type
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; virtual; abstract;
@@ -188,10 +189,18 @@ end;
 
 function TSearchFilterText.passes(value: String): boolean;
 var
+  r : double;
+begin
+  result := passes(value, r);
+end;
+
+function TSearchFilterText.passes(value: String; var rating : double): boolean;
+var
   i, j : integer;
 begin
   result := Null;
   i := 1;
+  rating := 0;
   while (not result) and (i <= length(value)) Do
   begin
     if CharInSet(value[i], ['0'..'9', 'a'..'z', 'A'..'Z']) then
@@ -200,28 +209,36 @@ begin
       while (i <= length(value)) and CharInSet(value[i], ['0'..'9', 'a'..'z', 'A'..'Z']) do
         inc(i);
       result := find(lowercase(FStemmer.calc(copy(value, j, i-j))));
+      if result then
+        rating := rating + length(value) / FStems.Count;
     end
     else
       inc(i);
   End;
 end;
 
-function TSearchFilterText.passes(stems: TAdvStringList; all : boolean): boolean;
+function TSearchFilterText.passes(stems: TAdvStringList; var rating : double): boolean;
 var
   i : integer;
+  all, any, this : boolean;
+  r : Double;
 begin
-  result := Null;
-  if FStems.Count > 0 then
+  rating := 0;
+  if FStems.Count = 0 then
+    result := true
+  else
   begin
-    if all then
+    all := true;
+    any := false;
+    for i := 0 to stems.count - 1 do
     begin
-      result := true;
-      for i := 0 to stems.count - 1 do
-        result := result and find(stems[i]);
-    end
-    else
-      for i := 0 to stems.count - 1 do
-        result := result or find(stems[i]);
+      this := find(stems[i]);
+      all := all and this;
+      any := any or this;
+      if this then
+        rating := rating + length(stems[i])/Fstems.count;
+    end;
+    result := any;
   end;
 end;
 

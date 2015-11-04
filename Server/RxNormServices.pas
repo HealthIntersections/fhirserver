@@ -69,7 +69,7 @@ type
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -445,7 +445,7 @@ begin
   filter.qry.Execute;
 end;
 
-function TUMLSServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TUMLSServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 var
   s : String;
   i : integer;

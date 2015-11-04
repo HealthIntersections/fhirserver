@@ -53,6 +53,7 @@ Uses
   AdvStringLists,
   DateSupport,
   EncodeSupport,
+  XMLBuilder,
   {$IFDEF UNICODE} EncdDecd, {$ENDIF}
   DecimalSupport;
 
@@ -87,6 +88,7 @@ Type
 
     fcmdOperation, {@enum.value fcmdOperation operation, as defined in DSTU2}
 
+    fcmdBatch, {@enum.value fcmdBatch batch as defined in DSTU2}
     fcmdWebUI, {@enum.value fcmdWebUI Special web interface operations - not a valid FHIR operation}
     fcmdNull); {@enum.value fcmdNull Internal use only - not a valid FHIR operation}
 
@@ -138,7 +140,7 @@ Type
 Const
   FHIR_NS = 'http://hl7.org/fhir';
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
-    'Unknown', 'MailBox', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'GetTags', 'UpdateTags', 'DeleteTags', 'Operation', 'WebUI', 'Null');
+    'Unknown', 'MailBox', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'GetTags', 'UpdateTags', 'DeleteTags', 'Operation', 'Batch', 'WebUI', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
   CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('AsIs', 'XML', 'JSON', 'XHTML');
   MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'text/xhtml');
@@ -215,6 +217,8 @@ type
   private
     FTags : TDictionary<String,String>;
     FTag : TAdvObject;
+    FLocationStart : TSourceLocation;
+    FLocationEnd : TSourceLocation;
     procedure SetTag(const Value: TAdvObject);
     procedure SetTags(name: String; const Value: String);
     function getTags(name: String): String;
@@ -229,6 +233,10 @@ type
     Function PerformQuery(path : String):TFHIRObjectList;
     Property Tags[name : String] : String read getTags write SetTags;
     property Tag : TAdvObject read FTag write SetTag;
+
+    // populated by some parsers when parsing
+    property LocationStart : TSourceLocation read FLocationStart;
+    property LocationEnd : TSourceLocation read FLocationEnd;
   end;
 
   TFHIRObjectListEnumerator = class (TAdvObject)
@@ -533,19 +541,6 @@ type
   public
   end;
 
-function noList(e : TFHIRObjectList) : boolean;
-function compareDeep(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
-function compareDeep(e1, e2 : TFHIRBase; allowNull : boolean) : boolean; overload;
-function compareDeep(div1, div2 : TFhirXHtmlNode; allowNull : boolean) : boolean; overload;
-
-Implementation
-
-Uses
-  StringSupport,
-  FHIRUtilities,
-  FHIRTypes,
-  FHIRResources;
-
 type
   TFHIRQueryProcessor = class (TAdvObject)
   private
@@ -562,6 +557,19 @@ type
     property results : TFHIRObjectList read FResults;
   end;
 
+
+function noList(e : TFHIRObjectList) : boolean;
+function compareDeep(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
+function compareDeep(e1, e2 : TFHIRBase; allowNull : boolean) : boolean; overload;
+function compareDeep(div1, div2 : TFhirXHtmlNode; allowNull : boolean) : boolean; overload;
+
+Implementation
+
+Uses
+  StringSupport,
+  FHIRUtilities,
+  FHIRTypes,
+  FHIRResources;
 
 
 { TFHIRBase }
@@ -1176,9 +1184,9 @@ begin
   first := true;
   while (src <> '') do
   begin
-      StringSplit(src, '.', seg, src);
+    StringSplit(src, '.', seg, src);
     if (not IsValidIdent(seg)) Then
-        raise exception.create('unable to parse path "'+FPath+'"');
+      raise exception.create('unable to parse path "'+FPath+'"');
     FResults.clear;
     if first then
       for i := 0 to FSource.count - 1 Do
@@ -1190,6 +1198,9 @@ begin
       for i := 0 to FSource.count - 1 Do
         FSource[i].GetChildrenByName(seg, FResults);
     first := false;
+    for i := FResults.count- 1 downto 0 do
+      if (FResults[i] = nil) then
+        FResults.DeleteByIndex(i);
     if src <> '' then
     begin
       FSource.Free;
@@ -1556,9 +1567,8 @@ end;
 
 function TFhirObjectListEnumerator.MoveNext : boolean;
 begin
+  Inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirObjectListEnumerator.GetCurrent : TFhirObject;

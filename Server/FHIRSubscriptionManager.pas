@@ -1,14 +1,29 @@
 unit FHIRSubscriptionManager;
 
+(*
+
+Notes from Thurs Q0 Atlanta 2015
+- when content is sent as a response to a notification, it should be a bundle - this is for rest-hook, websockets, and messaging
+- payload is mandatory, since a bundle will always be sent
+- the subscription id should be one of the links in the bundle (rel to be determined)
+- unless otherwise specified, the bundle will be empty
+- specify a list of GET operations using the template syntax in the URLS as defined by cds-hook (find somewhere common to specify that)
+- server puts a bundle entry in the bundle for each GET operation
+- same approach to be used in cds-hook
+
+*)
 interface
 
 uses
-  SysUtils, Classes, DateSupport, StringSupport,
-  kCritSct, KDBManager, KDBDialects, KDate, ParseMap,
-  AdvObjects, AdvObjectLists,
-  IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal,
+  SysUtils, Classes, DateSupport, StringSupport, GuidSupport, BytesSupport,
+  kCritSct, KDBManager, KDBDialects, KDate, ParseMap, DateAndTime,
+  AdvObjects, AdvObjectLists, AdvGenerics, AdvSignals, AdvBuffers, AdvJson,
+  IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket,
   FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
   FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase;
+
+const
+  EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
 
 Type
   TSubscriptionTracker = class (TAdvObject)
@@ -22,6 +37,23 @@ Type
     Property Key : Integer read FKey write FKey;
     Property Info : String read FInfo write FInfo;
     Property ErrorCount : Integer read FErrorCount write FErrorCount;
+  end;
+
+  TWebSocketQueueInfo = class (TAdvObject)
+  private
+    FConnected: boolean;
+    FQueue: TAdvList<TAdvBuffer>;
+    FSignal: TAdvSignal;
+    FPersistent: boolean;
+  public
+    constructor create;
+    destructor destroy;
+    function link : TWebSocketQueueInfo; overload;
+
+    property Connected : boolean read FConnected write FConnected;
+    property Persistent : boolean read FPersistent write FPersistent;
+    property Signal : TAdvSignal read FSignal;
+    property Queue : TAdvList<TAdvBuffer> read FQueue;
   end;
 
   TSubscriptionTrackerList = class (TAdvObjectList)
@@ -39,7 +71,6 @@ Type
   private
     FSubscription : TFhirSubscription;
     FKey : Integer;
-    FVersionKey : Integer;
     FResourceType: Integer;
     FId: String;
     procedure SetSubscription(const Value: TFhirSubscription);
@@ -47,7 +78,6 @@ Type
     Constructor Create; Override;
     Destructor Destroy; Override;
     Property Key : integer read FKey write FKey;
-    Property VersionKey : integer read FVersionKey write FVersionKey;
     Property Id : String read FId write FId;
     Property ResourceType : Integer read FResourceType write FResourceType;
     Property Subscription : TFhirSubscription read FSubscription write SetSubscription;
@@ -59,11 +89,12 @@ Type
   protected
     function ItemClass : TAdvObjectClass; override;
   public
-    procedure add(Key, VersionKey, ResourceType : Integer; id : String; Subscription : TFhirSubscription); overload;
+    procedure add(Key, ResourceType : Integer; id : String; Subscription : TFhirSubscription); overload;
     function getByKey(Key : integer) : TSubscriptionEntry;
     property EntryItem[i : integer] : TSubscriptionEntry read GetEntry; default;
   end;
 
+  TGetSessionEvent = function (userkey : Integer) : TFhirSession of object;
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
   TExecuteSearchEvent = function (typekey : integer; compartmentId, compartments : String; params : TParseMap; conn : TKDBConnection): String of object;
 
@@ -72,7 +103,7 @@ Type
     FLock : TCriticalSection;
     FSubscriptions : TSubscriptionEntryList;
     FSubscriptionTrackers  : TSubscriptionTrackerList;
-    FLastSubscriptionKey, FLastNotificationQueueKey : integer;
+    FLastSubscriptionKey, FLastNotificationQueueKey, FLastWebSocketKey : integer;
     FDatabase: TKDBManager;
     EmptyQueue : boolean;
     FSMTPPort: String;
@@ -86,37 +117,61 @@ Type
     FSMSFrom: String;
     FSMSToken: String;
     FSMSAccount: String;
+    FBase : String;
+    FOnGetSessionEvent: TGetSessionEvent;
+
+    FCloseAll : boolean;
+    FSemaphores : TAdvMap<TWebSocketQueueInfo>;
+    function wsWait(id : String) : boolean;
+    function wsConnect(id : String; persistent : boolean) : boolean;
+    procedure wsDisconnect(id : String);
+    procedure wsWakeAll;
+    procedure wsWake(id : String);
+    function wsPersists(id : String; s : TStream) : boolean;
+
+//    procedure go(id : String; content : TAdvBuffer);
+//    procedure goAll;
+//    procedure done(id : String);
 
 //    FMessageQueue : TNotification;
     function determineResourceTypeKey(criteria : String; conn : TKDBConnection) : integer;
     procedure checkAcceptable(subscription : TFhirSubscription; session : TFHIRSession);
-    procedure SeeNewSubscription(key, vkey : Integer; id : String; subscription : TFhirSubscription; session : TFHIRSession; conn : TKDBConnection);
+    procedure SeeNewSubscription(key : Integer; id : String; subscription : TFhirSubscription; session : TFHIRSession; conn : TKDBConnection);
     function ProcessSubscription(conn : TKDBConnection): Boolean;
     function ProcessNotification(conn : TKDBConnection): Boolean;
+    function prepareBundle(userkey : integer; created : boolean; subscription : TFhirSubscription; resource : TFHIRResource) : TFHIRBundle;
     function MeetsCriteria(criteria : String; typekey, key : integer; conn : TKDBConnection) : boolean;
-    procedure createNotification(vkey, skey : integer; conn : TKDBConnection);
-    function LoadResourceFromDBByKey(conn : TKDBConnection; key: integer) : TFhirResource;
+    procedure createNotification(vkey, skey : integer; created : boolean; conn : TKDBConnection);
+    function LoadResourceFromDBByKey(conn : TKDBConnection; key: integer; var userkey : integer) : TFhirResource;
     function LoadResourceFromDBByVer(conn : TKDBConnection; vkey: integer; var id : String) : TFhirResource;
-    procedure sendByRest(id : String; res : TFhirResource; subst : TFhirSubscription);
-    procedure sendByEmail(id : String; res : TFhirResource; subst : TFhirSubscription);
-    procedure sendBySms(id : String; res : TFhirResource; subst : TFhirSubscription);
+
+    procedure sendByRest(id : String; subst : TFhirSubscription; bundle : TFHIRBundle);
+    procedure sendByEmail(id : String; subst : TFhirSubscription; bundle : TFHIRBundle);
+    procedure sendBySms(id : String; subst : TFhirSubscription; bundle : TFHIRBundle);
+    procedure sendByWebSocket(conn : TKDBConnection; id : String; subst : TFhirSubscription; bundle : TFHIRBundle);
+
     procedure saveTags(conn : TKDBConnection; ResourceKey : integer; res : TFHIRResource);
-    procedure NotifySuccess(SubscriptionKey : integer);
-    procedure NotifyFailure(SubscriptionKey : integer; message : string);
+    procedure NotifySuccess(userkey, SubscriptionKey : integer);
+    procedure NotifyFailure(userkey, SubscriptionKey : integer; message : string);
     procedure DoDropResource(key, vkey : Integer; internal : boolean);
     function getSummaryForChannel(subst : TFhirSubscription) : String;
-    procedure ApplyUpdateToResource(id : String; resource : TFhirResource);
+    procedure ApplyUpdateToResource(userkey : integer; id : String; resource : TFhirResource);
+    procedure HandleWebSocketBind(id: String; connection: TIdWebSocket);
+    procedure HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
+    function checkForClose(connection: TIdWebSocket; id : String; worked: boolean): boolean;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
 
     procedure loadQueue(conn : TKDBConnection);
-    procedure SeeResource(key, vkey : Integer; id : String; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFHIRSession);
+    procedure SeeResource(key, vkey : Integer; id : String; created : boolean; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFHIRSession);
     procedure DropResource(key, vkey : Integer);
     procedure Process; // spend up to a minute working on subscriptions
+    procedure HandleWebSocket(connection : TIdWebSocket);
 
     Property Database : TKDBManager read FDatabase write FDatabase;
 
+    Property Base : String read FBase write FBase;
     Property SMTPHost : String read FSMTPHost write FSMTPHost;
     Property SMTPPort : String read FSMTPPort write FSMTPPort;
     Property SMTPUsername : String read FSMTPUsername write FSMTPUsername;
@@ -128,6 +183,7 @@ Type
     Property SMSFrom : String read FSMSFrom write FSMSFrom;
     Property OnExecuteOperation : TExecuteOperationEvent read FOnExecuteOperation write FOnExecuteOperation;
     Property OnExecuteSearch : TExecuteSearchEvent read FOnExecuteSearch write FOnExecuteSearch;
+    Property OnGetSessionEvent : TGetSessionEvent read FOnGetSessionEvent write FOnGetSessionEvent;
   end;
 
 implementation
@@ -144,10 +200,14 @@ begin
   FLock := TCriticalSection.Create('Subscriptions');
   FSubscriptions := TSubscriptionEntryList.Create;
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
+  FSemaphores := TAdvMap<TWebSocketQueueInfo>.Create;
+  FCloseAll := false;
 end;
 
 destructor TSubscriptionManager.Destroy;
 begin
+  wsWakeAll;
+  FSemaphores.Free;
   FSubscriptionTrackers.Free;
   FSubscriptions.Free;
   FLock.Free;
@@ -155,22 +215,22 @@ begin
 end;
 
 
-procedure TSubscriptionManager.ApplyUpdateToResource(id: String; resource: TFhirResource);
+procedure TSubscriptionManager.ApplyUpdateToResource(userkey : integer; id: String; resource: TFhirResource);
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
-  request := TFHIRRequest.Create;
+  request := TFHIRRequest.Create(roSubscription);
   response := TFHIRResponse.Create;
   try
     request.Id := id;
-    request.Session := nil;
+    request.Session := OnGetSessionEvent(userkey);
     request.Resource := resource.Link;
     request.ResourceType := resource.ResourceType;
     request.CommandType := fcmdUpdate;
     request.LoadParams('');
-    OnExecuteOperation(request, response, true);
-    // and we ignore the outcome, because what can we do?   
+    OnExecuteOperation(request, response, false);
+    // and we ignore the outcome, because what can we do?
   finally
     request.Free;
     response.Free;
@@ -194,9 +254,9 @@ begin
   // basic setup stuff
   if subscription.channel.type_ = SubscriptionChannelTypeNull then
     raise Exception.Create('A channel type must be specified');
-  if subscription.channel.type_ in [SubscriptionChannelTypeWebsocket, SubscriptionChannelTypeMessage] then
+  if subscription.channel.type_ in [SubscriptionChannelTypeMessage] then
     raise Exception.Create('The channel type '+CODES_TFhirSubscriptionChannelType[subscription.channel.type_]+' is not supported');
-  if subscription.channel.endpoint = '' then
+  if (subscription.channel.type_ <> SubscriptionChannelTypeWebsocket) and (subscription.channel.endpoint = '') then
     raise Exception.Create('A channel URL must be specified');
   if (subscription.channel.type_ = SubscriptionChannelTypeSms) and not subscription.channel.endpoint.StartsWith('tel:') then
     raise Exception.Create('When the channel type is "sms", then the URL must start with "tel:"');
@@ -211,6 +271,146 @@ end;
 function TSubscriptionManager.getSummaryForChannel(subst: TFhirSubscription): String;
 begin
   result := subst.channel.type_Element.value+#1+subst.channel.endpoint+#1+subst.channel.payload+#0+subst.channel.header;
+end;
+
+function TSubscriptionManager.checkForClose(connection: TIdWebSocket; id : String; worked : boolean) : boolean;
+var
+  i, t : integer;
+  cmd : TIdWebSocketCommand;
+begin
+  if worked then
+    t := 1
+  else
+    t := 100;
+  result := false;
+
+  i := 0;
+  while not wsWait(id) and not result and (i < t) do
+  begin
+    inc(i);
+    if FCloseAll or  not connection.IsOpen then
+      result := true
+    else
+    begin
+      cmd := connection.read(false);
+      if cmd.op <> wsoNoOp then
+      begin
+        if cmd.op = wsoClose then
+          result := true
+        else
+          connection.write('Unexpected operation');
+      end;
+    end;
+  end;
+end;
+
+procedure TSubscriptionManager.HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
+var
+  parser : TFHIRJsonParser;
+  subscription : TFhirSubscription;
+begin
+  parser := TFHIRJsonParser.Create(connection.request.AcceptLanguage);
+  try
+    subscription := parser.ParseFragment(json, 'TFhirSubscription') as TFhirSubscription;
+  finally
+    parser.Free;
+  end;
+  try
+    subscription.id := NewGuidId;
+//    SeeNewSubscription(-1, vkey, id, resource as TFhirSubscription, session, conn);
+//    register subscription
+//    loop until disconnected
+//    unregister subscription
+//    disconnect
+  finally
+    subscription.free;
+  end;
+end;
+
+procedure TSubscriptionManager.HandleWebSocketBind(id : String; connection: TIdWebSocket);
+var
+  conn : TKDBConnection;
+  key : integer;
+  cnt : String;
+begin
+  if (not IsId(id)) then
+    raise Exception.Create('invalid syntax');
+  if not wsConnect(id, true) then
+    raise Exception.Create('There is already a web socket bound to '+id);
+  try
+    connection.write('bound '+id);
+    repeat
+      conn := FDatabase.GetConnection('subscription');
+      try
+        conn.SQL := 'select top 1 WebSocketsQueueKey, Content from WebSocketsQueue where SubscriptionId = :sid and handled = 0 order by WebSocketsQueueKey asc';
+        conn.prepare;
+        conn.BindString('sid', id);
+        conn.Execute;
+        if (conn.FetchNext) then
+        begin
+          key := conn.ColIntegerByName['WebSocketsQueueKey'];
+          cnt := TEncoding.UTF8.GetString(conn.ColBlobByName['Content']);
+          if (cnt = '') then
+            cnt := 'ping '+id;
+          connection.write(cnt);
+          conn.Terminate;
+          conn.ExecSQL('delete from WebSocketsQueue where WebSocketsQueueKey = '+inttostr(key));
+        end
+        else
+        begin
+          key := 0;
+          conn.Terminate;
+        end;
+        conn.Release;
+      except
+        on e : Exception do
+        begin
+          conn.Error(e);
+          raise;
+        end;
+      end;
+    until checkForClose(connection, id, key <> 0);
+  finally
+    wsDisconnect(id);
+  end;
+end;
+
+procedure TSubscriptionManager.HandleWebSocket(connection: TIdWebSocket);
+var
+  cmd : TIdWebSocketCommand;
+  id : String;
+  json : TJsonObject;
+begin
+  try
+    try
+      cmd := connection.read(true);
+      if cmd.op <> wsoText then
+        raise Exception.Create('No Bind Statement');
+      if cmd.text.StartsWith('bind ') then
+        handleWebSocketBind(cmd.text.Substring(5), connection)
+      else if not cmd.text.Trim.StartsWith('{') then
+        raise Exception.Create('invalid syntax - expected bind :id, or a JSON object')
+      else
+      begin
+        json := TJSONParser.Parse(cmd.text);
+        try
+          if (json.str['type'] = 'bind-subscription') then
+            handleWebSocketBind(json.str['id'], connection)
+          else if (json.str['type'] = 'create-subscription') then
+            handleWebSocketSubscribe(json.obj['subscription'], connection)
+          else
+            raise Exception.Create('invalid syntax - expected type "bind-subscription" or "create-subscription"');
+        finally
+          json.Free;
+        end;
+      end;
+    except
+      on e : Exception do
+        connection.write(e.message);
+    end;
+  finally
+    connection.close;
+  end;
 end;
 
 procedure TSubscriptionManager.DoDropResource(key, vkey: Integer; internal : boolean);
@@ -234,14 +434,14 @@ begin
     for i := FSubscriptions.Count - 1 downto 0 do
       if FSubscriptions[i].FKey = key then
         FSubscriptions.DeleteByIndex(i);
-  finally      
+  finally
     FLock.Leave;
   end;
   if not internal and dodelete then
-  begin  
+  begin
     conn := FDatabase.GetConnection('drop subscription');
     try
-      conn.ExecSQL('update NotificationQueue set Abandoned = '+DBGetDate(conn.Owner.Platform)+' where SubscriptionKey = '+inttostr(key));    
+      conn.ExecSQL('update NotificationQueue set Abandoned = '+DBGetDate(conn.Owner.Platform)+' where SubscriptionKey = '+inttostr(key));
       conn.Release;
     except
       on e:exception do
@@ -253,38 +453,44 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.SeeNewSubscription(key, vkey: Integer; id : String; subscription: TFhirSubscription; session: TFHIRSession; conn : TKDBConnection);
+procedure TSubscriptionManager.SeeNewSubscription(key: Integer; id : String; subscription: TFhirSubscription; session: TFHIRSession; conn : TKDBConnection);
 begin
   if subscription.status in [SubscriptionStatusActive, SubscriptionStatusError] then
   begin
     CheckAcceptable(subscription, session);
     DoDropResource(Key, 0, true); // delete any previously existing entry for this subscription
-    FSubscriptions.add(key, vkey, determineResourceTypeKey(subscription.criteria, conn), id, subscription.Link);
+    FSubscriptions.add(key, determineResourceTypeKey(subscription.criteria, conn), id, subscription.Link);
     FSubscriptionTrackers.addorUpdate(key, getSummaryForChannel(subscription), subscription.status);
   end;
 end;
 
-procedure TSubscriptionManager.SeeResource(key, vkey: Integer; id : String; resource: TFHIRResource; conn : TKDBConnection; reload: boolean; session : TFHIRSession);
+procedure TSubscriptionManager.SeeResource(key, vkey: Integer; id : String; created : boolean; resource: TFHIRResource; conn : TKDBConnection; reload: boolean; session : TFHIRSession);
+var
+  op : String;
 begin
+  if created then
+    op := '1'
+  else
+    op := '2';
   FLock.Enter('SeeResource');
   try
-    if not reload then
-      // we evaluate the criteria retrospectively in a different thead, so for now, all we do is add the entry to a queue
+    if not reload then // ignore if we are starting up
     begin
+      // we evaluate the criteria retrospectively in a different thead, so for now, all we do is add the entry to a queue
       inc(FLastSubscriptionKey);
-      conn.ExecSQL('Insert into SubscriptionQueue (SubscriptionQueueKey, ResourceKey, ResourceVersionKey, Entered) values ('+inttostr(FLastSubscriptionKey)+', '+inttostr(key)+', '+inttostr(vkey)+', '+DBGetDate(conn.Owner.Platform)+')');
+      conn.ExecSQL('Insert into SubscriptionQueue (SubscriptionQueueKey, ResourceKey, ResourceVersionKey, Operation, Entered) values ('+inttostr(FLastSubscriptionKey)+', '+inttostr(key)+', '+inttostr(vkey)+', '+op+', '+DBGetDate(conn.Owner.Platform)+')');
       EmptyQueue := false;
     end;
 
     if resource is TFhirSubscription then
-      SeeNewSubscription(key, vkey, id, resource as TFhirSubscription, session, conn);
+      SeeNewSubscription(key, id, resource as TFhirSubscription, session, conn);
   finally
     FLock.Leave;
   end;
 end;
 
 
-procedure TSubscriptionManager.sendByEmail(id : String; res: TFhirResource; subst: TFhirSubscription);
+procedure TSubscriptionManager.sendByEmail(id : String; subst: TFhirSubscription; bundle : TFhirBundle);
 var
   sender : TIdSMTP;
   msg : TIdMessage;
@@ -327,7 +533,7 @@ begin
         try
           bs := TBytesStream.Create;
           try
-            comp.Compose(bs, res, true, nil);
+            comp.Compose(bs, bundle, true, nil);
             msg.Body.Text := TEncoding.UTF8.GetString(bs.Bytes);
           finally
             bs.Free;
@@ -348,7 +554,7 @@ begin
 end;
 
 
-procedure TSubscriptionManager.sendByRest(id : String; res: TFhirResource; subst: TFhirSubscription);
+procedure TSubscriptionManager.sendByRest(id : String; subst: TFhirSubscription; bundle : TFHIRBundle);
 var
   http : TIdHTTP;
   client : TFHIRClient;
@@ -376,14 +582,14 @@ begin
   begin
     client := TFhirClient.create(subst.channel.endpoint, subst.channel.payload.Contains('json'));
     try
-      client.updateResource(id, res);
+      client.transaction(bundle);
     finally
       client.Free;
     end;
   end;
 end;
 
-procedure TSubscriptionManager.sendBySms(id: String; res: TFhirResource; subst: TFhirSubscription);
+procedure TSubscriptionManager.sendBySms(id: String; subst: TFhirSubscription; bundle : TFHIRBundle);
 var
   client : TTwilioClient;
 begin
@@ -399,7 +605,7 @@ begin
     if subst.channel.payload <> '' then
       client.Body := subst.channel.payload
     else
-      client.Body := 'A new matching resource has been received';
+      client.Body := 'A new matching resource has been received for Subscription '+subst.id;
     client.send;
   finally
     client.Free;
@@ -407,13 +613,61 @@ begin
 end;
 
 
+procedure TSubscriptionManager.sendByWebSocket(conn : TKDBConnection; id: String; subst: TFhirSubscription; bundle : TFHIRBundle);
+var
+  key : integer;
+  comp : TFHIRComposer;
+  b : TMemoryStream;
+begin
+  b := TMemoryStream.Create;
+  try
+    if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/xml') then
+      comp := TFHIRXmlComposer.Create('en')
+    else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/json') then
+      comp := TFHIRJsonComposer.Create('en')
+    else
+      raise Exception.Create('unknown payload type '+subst.channel.payload);
+    try
+      comp.Compose(b, bundle, false);
+    finally
+      comp.Free;
+    end;
+    b.position := 0;
+
+    if not wsPersists(id, b) then
+    begin
+      FLock.Lock;
+      try
+        inc(FLastWebSocketKey);
+        key := FLastWebSocketKey;
+      finally
+        FLock.Unlock;
+      end;
+
+      conn.SQL := 'insert into WebSocketsQueue (WebSocketsQueueKey, SubscriptionId, Handled, Content) values ('+inttostr(key)+', '''+SQLWrapString(id)+''', 0, :c)';
+      conn.Prepare;
+      if subst.channel.payload = '' then
+        conn.BindNull('c')
+      else
+      begin
+        conn.BindBlob('c', b);
+      end;
+      conn.Execute;
+      conn.Terminate;
+    end;
+    wsWake(id);
+  finally
+    b.Free;
+  end;
+end;
+
 procedure TSubscriptionManager.Process;
 var
   finish : TDateTime;
   found : boolean;
   conn : TKDBConnection;
 begin
-//  if EmptyQueue then
+  if EmptyQueue then
     exit;
   try
     finish := now + DATETIME_MINUTE_ONE;
@@ -447,16 +701,17 @@ var
   res : TFhirResource;
   id : string;
   subst : TFhirSubscription;
-  done : boolean;
+  done, created : boolean;
   tnow, dnow : TDateTime;
-  i: Integer;
+  i, userkey: Integer;
+  bundle : TFHIRBundle;
 begin
   NotificationnQueueKey := 0;
   SubscriptionKey := 0;
   ResourceKey := 0;
   tNow := now;
 
-  conn.SQL := 'Select NotificationQueueKey, ResourceVersionKey, SubscriptionKey, LastTry, ErrorCount from NotificationQueue where '+
+  conn.SQL := 'Select NotificationQueueKey, ResourceVersionKey, SubscriptionKey, LastTry, ErrorCount, Operation from NotificationQueue where '+
      'Handled is null and Abandoned is null order by NotificationQueueKey';
   conn.Prepare;
   try
@@ -477,59 +732,105 @@ begin
       NotificationnQueueKey := conn.ColIntegerByName['NotificationQueueKey'];
       SubscriptionKey := conn.ColIntegerByName['SubscriptionKey'];
       ResourceKey := conn.ColIntegerByName['ResourceVersionKey'];
+      created := conn.ColIntegerByName['Operation'] = 1;
     end;
   finally
     conn.Terminate;
   end;
   if result then
   begin
-    subst := LoadResourceFromDBByKey(conn, SubscriptionKey) as TFhirSubscription;
     try
-      res := LoadResourceFromDBByVer(conn, ResourceKey, id);
+      subst := LoadResourceFromDBByKey(conn, SubscriptionKey, userkey) as TFhirSubscription;
       try
+        res := LoadResourceFromDBByVer(conn, ResourceKey, id);
         try
-          for i := 0 to subst.meta.tagList.Count - 1 do
-            if (subst.meta.tagList[i].code <> '') and (subst.meta.tagList[i].system <> '') then
-              if not res.meta.HasTag(subst.meta.tagList[i].system, subst.meta.tagList[i].code) then
-                res.meta.tagList.AddCoding(subst.meta.tagList[i].system, subst.meta.tagList[i].code, subst.meta.tagList[i].display);
-          case subst.channel.type_ of
-            SubscriptionChannelTypeRestHook: sendByRest(id, res, subst);
-            SubscriptionChannelTypeEmail: sendByEmail(id, res, subst);
-            SubscriptionChannelTypeSms: sendBySms(id, res, subst);
-          end;
+          bundle := prepareBundle(userkey, created, subst, res);
+          try
+            case subst.channel.type_ of
+              SubscriptionChannelTypeRestHook: sendByRest(id, subst, bundle);
+              SubscriptionChannelTypeEmail: sendByEmail(id, subst, bundle);
+              SubscriptionChannelTypeSms: sendBySms(id, subst, bundle);
+              SubscriptionChannelTypeWebsocket: sendByWebSocket(conn, id, subst, bundle);
+            end;
 
-          saveTags(conn, ResourceKey, res);
-          conn.ExecSQL('update NotificationQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
-          NotifySuccess(SubscriptionKey);
-        except
-          on e:exception do
-          begin
-            conn.ExecSQL('update NotificationQueue set LastTry = '+DBGetDate(conn.Owner.Platform)+', ErrorCount = ErrorCount + 1 where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
-            NotifyFailure(SubscriptionKey, e.message);
+            if (subst.tagList.Count > 0) then
+              saveTags(conn, ResourceKey, res);
+            conn.ExecSQL('update NotificationQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
+          finally
+            bundle.Free;
           end;
+        finally
+          subst.Free;
         end;
       finally
-        subst.Free;
+        res.free;
       end;
-    finally
-      res.free;
+      NotifySuccess(userkey, SubscriptionKey);
+    except
+      on e:exception do
+      begin
+        conn.ExecSQL('update NotificationQueue set LastTry = '+DBGetDate(conn.Owner.Platform)+', ErrorCount = ErrorCount + 1 where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
+        NotifyFailure(userkey, SubscriptionKey, e.message);
+      end;
     end;
   end;
 end;
 
+
+function processUrlTemplate(url : String; resource : TFhirResource) : String;
+var
+  b, e : integer;
+  code, value : String;
+  qry : TFHIRQueryProcessor;
+  o : TFHIRObject;
+begin
+  while url.Contains('{{') do
+  begin
+    b := url.IndexOf('{{');
+    e := url.IndexOf('}}');
+    code := url.Substring(b+2, e-(b+2));
+    if (code = 'id') then
+      value := Codes_TFHIRResourceType[resource.ResourceType]+'/'+resource.id
+    else
+    begin
+      qry := TFHIRQueryProcessor.create;
+      try
+        qry.source.Add(resource.link);
+        qry.path := code;
+        qry.execute;
+        value := '';
+        for o in qry.results do
+        begin
+          if o is TFHIRPrimitiveType then
+            CommaAdd(value, TFHIRPrimitiveType(o).StringValue)
+          else
+            raise Exception.Create('URL templates can only refer to primitive types (found '+o.ClassName+')');
+        end;
+        if (value = '') then
+          value := '(nil)';
+      finally
+        qry.Free;
+      end;
+    end;
+
+    url := url.Substring(0, b)+value+url.Substring(e+2);
+  end;
+  result := url;
+end;
 
 function TSubscriptionManager.ProcessSubscription(conn: TKDBConnection): Boolean;
 var
   SubscriptionQueueKey, ResourceKey, ResourceVersionKey, ResourceTypeKey : integer;
   i : integer;
   list : TSubscriptionEntryList;
+  created : boolean;
 begin
   SubscriptionQueueKey := 0;
   ResourceKey := 0;
   ResourceVersionKey := 0;
   ResourceTypeKey := 0;
 
-  conn.SQL := 'Select Top 1 SubscriptionQueueKey, Ids.ResourceKey, SubscriptionQueue.ResourceVersionKey, Ids.ResourceTypeKey from SubscriptionQueue, Ids where '+
+  conn.SQL := 'Select Top 1 SubscriptionQueueKey, Ids.ResourceKey, SubscriptionQueue.ResourceVersionKey, Operation, Ids.ResourceTypeKey from SubscriptionQueue, Ids where '+
     'Handled is null and Ids.ResourceKey = SubscriptionQueue.ResourceKey order by SubscriptionQueueKey';
   conn.Prepare;
   try
@@ -541,6 +842,7 @@ begin
       ResourceKey := conn.ColIntegerByName['ResourceKey'];
       ResourceVersionKey := conn.ColIntegerByName['ResourceVersionKey'];
       ResourceTypeKey := conn.ColIntegerByName['ResourceTypeKey'];
+      created := conn.ColIntegerByName['Operation'] = 1;
     end;
   finally
     conn.Terminate;
@@ -553,7 +855,7 @@ begin
       FLock.Lock('List Subscriptions');
       try
         for i := 0 to FSubscriptions.Count - 1 do
-          list.Add(FSubscriptions[i].FKey, FSubscriptions[i].FVersionKey, FSubscriptions[i].FResourceType, FSubscriptions[i].FId, FSubscriptions[i].FSubscription.Link); // not clone
+          list.Add(FSubscriptions[i].FKey, FSubscriptions[i].FResourceType, FSubscriptions[i].FId, FSubscriptions[i].FSubscription.Link); // not clone
       finally
         FLock.Leave;
       end;
@@ -561,7 +863,7 @@ begin
       try
         for i := 0 to list.Count - 1 do
           if ((list[i].FResourceType = 0) or (list[i].FResourceType = ResourceTypeKey) ) and MeetsCriteria(list[i].Subscription.criteria, list[i].FResourceType, ResourceKey, conn) then
-            CreateNotification(ResourceVersionKey, list[i].FKey, conn);
+            CreateNotification(ResourceVersionKey, list[i].FKey, created, conn);
          conn.ExecSQL('Update SubscriptionQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where SubscriptionQueueKey = '+inttostr(SubscriptionQueueKey));
          conn.Commit;
       except
@@ -576,7 +878,6 @@ end;
 
 procedure TSubscriptionManager.saveTags(conn: TKDBConnection; ResourceKey: integer; res : TFHIRResource);
 begin
-raise Exception.Create('Error Message');
 {  conn.SQL := 'Update Versions set content = :t where ResourceVersionKey = '+inttostr(ResourceKey);
   conn.Prepare;
   try
@@ -592,13 +893,14 @@ procedure TSubscriptionManager.loadQueue(conn: TKDBConnection);
 begin
   FLastSubscriptionKey := conn.CountSQL('select max(SubscriptionQueueKey) from SubscriptionQueue');
   FLastNotificationQueueKey := conn.CountSQL('select max(NotificationQueueKey) from NotificationQueue');
+  FLastWebSocketKey := conn.CountSQL('select max(WebSocketsQueueKey) from WebSocketsQueue');
 end;
 
 function TSubscriptionManager.LoadResourceFromDBByVer(conn: TKDBConnection; vkey: integer; var id : String): TFhirResource;
 var
   parser : TFHIRParser;
 begin
-  conn.SQL := 'select ResourceName, Ids.Id, Tags, Content From Versions, Ids, Types where ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
+  conn.SQL := 'select ResourceName, Ids.Id, Tags, XmlContent From Versions, Ids, Types where ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
   conn.prepare;
   try
     conn.Execute;
@@ -609,7 +911,7 @@ begin
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser('en', ffXml, ZDecompressBytes(conn.ColBlobByName['Content']), xppDrop);
+      parser := MakeParser('en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
       try
         result := parser.resource.Link as TFHIRResource;
       finally
@@ -621,21 +923,24 @@ begin
   end;
 end;
 
-function TSubscriptionManager.LoadResourceFromDBByKey(conn: TKDBConnection; key: integer): TFhirResource;
+function TSubscriptionManager.LoadResourceFromDBByKey(conn: TKDBConnection; key: integer; var userkey : integer): TFhirResource;
 var
   parser : TFHIRParser;
 begin
-  conn.SQL := 'select ResourceName, Ids.Id, Tags, Content From Versions, Ids, Types where IDs.ResourceKey = '+inttostr(key)+' and Versions.ResourceVersionKey = IDs.MostRecent and IDs.ResourceTypeKey = Types.ResourceTypeKey';
+  conn.SQL := 'select ResourceName, Ids.Id, UserKey, XmlContent From Versions, Ids, Types, Sessions '+
+    'where IDs.ResourceKey = '+inttostr(key)+' and Versions.SessionKey = Sessions.SessionKey and '+
+    'Versions.ResourceVersionKey = IDs.MostRecent and IDs.ResourceTypeKey = Types.ResourceTypeKey';
   conn.prepare;
   try
     conn.Execute;
     if not conn.FetchNext then
       raise Exception.Create('Cannot find resource');
+    userKey := conn.ColIntegerByName['UserKey'];
     if conn.ColStringByName['ResourceName'] = 'Binary' then
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser('en', ffXml, ZDecompressBytes(conn.ColBlobByName['Content']), xppDrop);
+      parser := MakeParser('en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
       try
         result := parser.resource.Link as TFHIRResource;
       finally
@@ -656,9 +961,9 @@ begin
   else
   begin
     if criteria.IndexOf('?') = -1 then
-      t := criteria.Substring(1)
+      t := criteria
     else
-      t := criteria.Substring(1, criteria.IndexOf('?')-1);
+      t := criteria.Substring(0, criteria.IndexOf('?'));
     result := conn.CountSQL('select ResourceTypeKey from Types where ResourceName = '''+SQLWrapString(t)+'''')
   end;
 end;
@@ -678,7 +983,7 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.NotifySuccess(SubscriptionKey: integer);
+procedure TSubscriptionManager.NotifySuccess(userkey, SubscriptionKey: integer);
 var
   tracker : TSubscriptionTracker;
   notify : boolean;
@@ -707,11 +1012,99 @@ begin
   begin
     subst.status := SubscriptionStatusActive;
     subst.error := '';
-    ApplyUpdateToResource(id, subst);
+    ApplyUpdateToResource(userkey, id, subst);
   end;
 end;
 
-procedure TSubscriptionManager.NotifyFailure(SubscriptionKey: integer; message: string);
+function TSubscriptionManager.prepareBundle(userkey : integer; created : boolean; subscription: TFhirSubscription; resource: TFHIRResource): TFHIRBundle;
+var
+  request : TFHIRRequest;
+  response : TFHIRResponse;
+  url : string;
+  i : integer;
+  ex: TFhirExtension;
+  entry : TFhirBundleEntry;
+begin
+  result := TFhirBundle.Create(BundleTypeCollection);
+  try
+    result.id := NewGuidId;
+    result.link_List.AddRelRef('source', AppendForwardSlash(base)+'Subsecription/'+subscription.id);
+    request := TFHIRRequest.Create(roSubscription);
+    response := TFHIRResponse.Create;
+    try
+      request.Session := OnGetSessionEvent(userkey);
+      request.baseUrl := FBase;
+      for ex in subscription.extensionList do
+        if ex.url = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch' then
+        begin
+          entry := Result.entryList.Append;
+          try
+            url := (ex.value as TFHIRPrimitiveType).StringValue;
+            entry.link_List.AddRelRef('source', url);
+            if (url = '{{id}}') then
+            begin
+              // copy the specified tags on the subscription to the resource.
+              for i := 0 to subscription.tagList.Count - 1 do
+                if (subscription.tagList[i].code <> '') and (subscription.tagList[i].system <> '') then
+                  if not resource.meta.HasTag(subscription.tagList[i].system, subscription.tagList[i].code) then
+                    resource.meta.tagList.AddCoding(subscription.tagList[i].system, subscription.tagList[i].code, subscription.tagList[i].display);
+              entry.request := TFhirBundleEntryRequest.Create;
+              if created then
+              begin
+                entry.request.url := CODES_TFHIRResourceType[resource.ResourceType];
+                entry.request.method := HttpVerbPOST;
+              end
+              else
+              begin
+                entry.request.url := CODES_TFHIRResourceType[resource.ResourceType]+'/'+resource.id;
+                entry.request.method := HttpVerbPUT;
+              end;
+              entry.resource := resource.link;
+            end
+            else
+            begin
+              url := processUrlTemplate((ex.value as TFHIRPrimitiveType).StringValue, resource);
+              entry.request := TFhirBundleEntryRequest.Create;
+              entry.request.url := url;
+              entry.request.method := HttpVerbGET;
+              if (url.Contains('?')) then
+                request.CommandType := fcmdSearch
+              else
+                request.CommandType := fcmdRead;
+              FOnExecuteOperation(request, response, false);
+              entry.response := TFhirBundleEntryResponse.Create;
+              entry.response.status := inttostr(response.HTTPCode);
+              entry.response.location := response.Location;
+              entry.response.etag := 'W/'+response.versionId;
+              entry.response.lastModified := TDateAndTime.CreateUTC(response.lastModifiedDate);
+              entry.resource := response.resource.link;
+            end;
+          except
+            on e : ERestfulException do
+            begin
+              entry.response := TFhirBundleEntryResponse.Create;
+              entry.response.status := inttostr(e.Status);
+              entry.resource := BuildOperationOutcome(request.Lang, e);
+            end;
+            on e : Exception do
+            begin
+              entry.response := TFhirBundleEntryResponse.Create;
+              entry.response.status := '500';
+              entry.resource := BuildOperationOutcome(request.Lang, e);
+            end;
+          end;
+        end;
+    finally
+      request.Free;
+      response.Free;
+    end;
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TSubscriptionManager.NotifyFailure(userkey, SubscriptionKey: integer; message: string);
 var
   tracker : TSubscriptionTracker;
   entry : TSubscriptionEntry;
@@ -751,13 +1144,14 @@ begin
     else
       subst.status := SubscriptionStatusOff;
     subst.error := message;
-    ApplyUpdateToResource(id, subst);
+    ApplyUpdateToResource(userkey, id, subst);
   end;
 end;
 
-procedure TSubscriptionManager.createNotification(vkey, skey: integer; conn : TKDBConnection);
+procedure TSubscriptionManager.createNotification(vkey, skey: integer; created : boolean; conn : TKDBConnection);
 var
   k : integer;
+  c : String;
 begin
   FLock.Lock('createNotification');
   try
@@ -766,20 +1160,24 @@ begin
   finally
     FLock.Unlock;
   end;
-  conn.ExecSQL('insert into NotificationQUeue (NotificationQueueKey, SubscriptionKey, ResourceVersionKey, Entered, ErrorCount) values '+
-       '('+inttostr(k)+', '+inttostr(skey)+', '+inttostr(vkey)+', '+DBGetDate(conn.Owner.Platform)+', 0)');
+  if created then
+    c := '1'
+  else
+    c := '2';
+
+  conn.ExecSQL('insert into NotificationQUeue (NotificationQueueKey, SubscriptionKey, ResourceVersionKey, Entered, ErrorCount, Operation) values '+
+       '('+inttostr(k)+', '+inttostr(skey)+', '+inttostr(vkey)+', '+DBGetDate(conn.Owner.Platform)+', 0, '+c+')');
 end;
 
 { TSubscriptionEntryList }
 
-procedure TSubscriptionEntryList.add(Key, VersionKey, ResourceType: Integer; Id : String; Subscription: TFhirSubscription);
+procedure TSubscriptionEntryList.add(Key, ResourceType: Integer; Id : String; Subscription: TFhirSubscription);
 var
   entry : TSubscriptionEntry;
 begin
   entry := TSubscriptionEntry.Create;
   try
     entry.Key := key;
-    entry.VersionKey := Versionkey;
     entry.resourceType := ResourceType;
     entry.Subscription := subscription;
     entry.Id := id;
@@ -860,6 +1258,112 @@ begin
   result := TSubscriptionTracker;
 end;
 
+function TSubscriptionManager.wsConnect(id : String; persistent : boolean) : boolean;
+var
+  info : TWebSocketQueueInfo;
+begin
+  info := TWebSocketQueueInfo.create;
+  try
+    info.Persistent := persistent;
+    FLock.Lock;
+    try
+      result := not FSemaphores.ContainsKey(id);
+      if result then
+        FSemaphores.Add(id, info.Link);
+    finally
+      FLock.Unlock;
+    end;
+  finally
+    info.Free;
+  end;
+end;
+
+procedure TSubscriptionManager.wsDisconnect(id : String);
+begin
+  FLock.Lock;
+  try
+    if not FSemaphores.ContainsKey(id) then
+      raise Exception.Create('WS Queue not found: '+id);
+    FSemaphores.Remove(id);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TSubscriptionManager.wsWait(id : String) : boolean;
+var
+  info : TWebSocketQueueInfo;
+begin
+  FLock.Lock;
+  try
+    info := FSemaphores[id];
+  finally
+    FLock.Unlock;
+  end;
+  // this - using the signal outside the lock - is safe because only the thread waiting here will remove the info from the list
+  result := info.Signal.WaitTimeout(100);
+end;
+
+function TSubscriptionManager.wsPersists(id : String; s : TStream) : boolean;
+var
+  info : TWebSocketQueueInfo;
+  buf : TAdvBuffer;
+begin
+  FLock.Lock;
+  try
+    if not FSemaphores.ContainsKey(id) then
+      result := true // since it doesn't exist, it must be persistent
+    else
+    begin
+      info := FSemaphores[id];
+      result := info.Persistent;
+      if not result then
+      begin
+        buf := TAdvBuffer.Create;
+        info.FQueue.Add(buf);
+        buf.LoadFromStream(s);
+      end;
+    end;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TSubscriptionManager.wsWake(id : String);
+begin
+  FLock.Lock;
+  try
+    if FSemaphores.ContainsKey(id) then
+      FSemaphores[id].Signal.Flash;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TSubscriptionManager.wsWakeAll;
+var
+  info : TWebSocketQueueInfo;
+  ok : boolean;
+begin
+  FCloseAll := true;
+  FLock.Lock;
+  try
+    for info in FSemaphores.Values do
+      info.Signal.OpenShow;
+  finally
+    FLock.Unlock;
+  end;
+  repeat
+    sleep(100);
+    FLock.Lock;
+    try
+      ok := FSemaphores.Count = 0;
+    finally
+      FLock.Unlock;
+    end;
+  until ok;
+end;
+
 { TSubscriptionEntry }
 
 constructor TSubscriptionEntry.Create;
@@ -888,6 +1392,29 @@ begin
     FInfo := info;
     FErrorCount := 0; // reset error count if channel details change
   end;
+end;
+
+{ TWebSocketQueueInfo }
+
+constructor TWebSocketQueueInfo.create;
+begin
+  inherited;
+  FConnected := false;
+  FQueue := TAdvList<TAdvBuffer>.create;
+  FSignal := TAdvSignal.Create;
+  FSignal.OpenHide;
+end;
+
+destructor TWebSocketQueueInfo.destroy;
+begin
+  FQueue.Free;
+  FSignal.Free;
+  inherited;
+end;
+
+function TWebSocketQueueInfo.link: TWebSocketQueueInfo;
+begin
+  result := TWebSocketQueueInfo(inherited link);
 end;
 
 end.

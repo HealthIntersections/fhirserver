@@ -33,7 +33,7 @@ interface
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
   AdvExceptions,
-  SystemService, SystemSupport,
+  SystemService, SystemSupport, FileSupport,
   SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
@@ -74,7 +74,6 @@ Type
     procedure Load(fn : String);
     procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
-    procedure UpgradeDatabase;
     procedure InstallDatabase;
     procedure UnInstallDatabase;
   end;
@@ -105,17 +104,12 @@ begin
   try
     CoInitialize(nil);
     if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
-    begin
-      if FileExists(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.local.ini') then
-        iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.local.ini'
-      else
-        iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhir.dstu.ini';
-    end;
+      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
 
     if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
       svcName := 'fhirserver';
     if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
-      dispName := 'FHIR Server';
+      dispName := 'FHIR Server (DSTU2)';
     iniName := iniName.replace('.dstu', '.dev');
     if JclExceptionTrackingActive then
       writelnt('FHIR Service (DSTU2). Using ini file '+iniName+' with stack dumps on')
@@ -126,10 +120,12 @@ begin
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
     try
-      if FindCmdLineSwitch('upgrade') then
-        svc.UpgradeDatabase
-      else if FindCmdLineSwitch('mount') then
-        svc.InstallDatabase
+      if FindCmdLineSwitch('mount') then
+      begin
+        svc.InstallDatabase;
+        if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+          ImportUnii(fn, svc.Fdb);
+      end
       else if FindCmdLineSwitch('unmount') then
         svc.UninstallDatabase
       else if FindCmdLineSwitch('remount') then
@@ -137,6 +133,8 @@ begin
         svc.FNotServing := true;
         svc.UninstallDatabase;
         svc.InstallDatabase;
+        if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+          ImportUnii(fn, svc.Fdb);
         if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
           svc.LoadByProfile(fn, true)
         else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
@@ -150,7 +148,7 @@ begin
         svc.ExecuteTests
       else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
       begin
-        FindCmdLineSwitch('version', ver, true, [clstValueNextParam]);
+        FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
         svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
       end
       else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
@@ -160,13 +158,6 @@ begin
       end
       else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
         svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
-      else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-      begin
-        svc.ConnectToDatabase;
-        ImportUnii(fn, TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
-          svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('database', 'tx', ''),
-          svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')));
-      end
       else if FindCmdLineSwitch('rxstems', dir, true, []) then
       begin
         generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
@@ -451,46 +442,6 @@ begin
   FTerminologyServer := nil;
 end;
 
-procedure TFHIRService.UpgradeDatabase;
-var
-  db : TFHIRDatabaseInstaller;
-  conn : TKDBConnection;
-  scim : TSCIMServer;
-  salt : String;
-begin
-  if FDb = nil then
-    ConnectToDatabase;
-  writelnt('upgrade database');
-  scim := TSCIMServer.Create(FDB, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
-  try
-    conn := FDb.GetConnection('upgrade');
-    try
-      db := TFHIRDatabaseInstaller.create(conn);
-      try
-        db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
-        db.Bases.Add('http://hl7.org/fhir');
-        db.TextIndexing := not FindCmdLineSwitch('no-text-index');
-        db.upgrade(scim);
-      finally
-        db.free;
-      end;
-      conn.Release;
-      writelnt('done');
-    except
-       on e:exception do
-       begin
-         writelnt('Error: '+e.Message);
-         conn.Error(e);
-         recordStack(e);
-         raise;
-       end;
-    end;
-  finally
-    scim.Free;
-  end;
-
-end;
-
 procedure TFHIRService.Index;
 begin
   FNotServing := true;
@@ -512,13 +463,18 @@ procedure TFHIRService.InstallDatabase;
 var
   db : TFHIRDatabaseInstaller;
   conn : TKDBConnection;
+  conntx : TKDBConnection;
   scim : TSCIMServer;
-  salt, un, pw, em : String;
+  salt, un, pw, em, sql, dr : String;
+
 begin
   // check that user account details are provided
   salt := FIni.ReadString('scim', 'salt', '');
   if (salt = '') then
     raise Exception.Create('You must define a scim salt in the ini file');
+  dr := FIni.ReadString('scim', 'default-rights', '');
+  if (dr = '') then
+    raise Exception.Create('You must define some default rights for SCIM users in the ini file');
   un := FIni.ReadString('admin', 'username', '');
   if (un = '') then
     raise Exception.Create('You must define an admin username in the ini file');
@@ -529,6 +485,10 @@ begin
   if (em = '') then
     raise Exception.Create('You must define an admin email in the ini file');
 
+  sql := 'C:\work\fhirserver\sql';
+  if not DirectoryExists(sql) then
+    sql := IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'sql';
+
 
   if FDb = nil then
     ConnectToDatabase;
@@ -537,7 +497,7 @@ begin
   try
     conn := FDb.GetConnection('setup');
     try
-      db := TFHIRDatabaseInstaller.create(conn);
+      db := TFHIRDatabaseInstaller.create(conn, sql);
       try
         db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
         db.Bases.Add('http://hl7.org/fhir');
@@ -567,14 +527,14 @@ end;
 procedure TFHIRService.UnInstallDatabase;
 var
   db : TFHIRDatabaseInstaller;
-  conn : TKDBConnection;
+  conn, connTx : TKDBConnection;
 begin
   if FDb = nil then
     ConnectToDatabase;
   writelnt('unmount database');
   conn := FDb.GetConnection('setup');
   try
-    db := TFHIRDatabaseInstaller.create(conn);
+    db := TFHIRDatabaseInstaller.create(conn, '');
     try
       db.UnInstall;
     finally

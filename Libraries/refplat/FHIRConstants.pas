@@ -39,7 +39,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.0.1 generated Thu, Sep 24, 2015 16:54+1000
+// FHIR v1.0.2 generated Thu, Oct 22, 2015 11:01+1100
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -4528,11 +4528,11 @@ Const
      'patient: [frtPatient]',
      'prescriber: [frtPractitioner]');
   TARGETS_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of TFhirResourceTypeSet = ([], [], [], [], [], [], [], [], [], [frtEncounter], [], [frtPatient], [frtPractitioner]);
-  FHIR_GENERATED_VERSION = '1.0.1';
+  FHIR_GENERATED_VERSION = '1.0.2';
 
-  FHIR_GENERATED_REVISION = '7108';
+  FHIR_GENERATED_REVISION = '7196';
 
-  FHIR_GENERATED_DATE = '20150924165443';
+  FHIR_GENERATED_DATE = '20151022110103';
 
 
 

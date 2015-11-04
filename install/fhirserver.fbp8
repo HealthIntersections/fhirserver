@@ -38,7 +38,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "debugging release"
+        as.returnvalue = "major upgrade to subscriptions per http://wiki.hl7.org/index.php?title=FHIR_Subscription_Working_Page"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -395,6 +395,11 @@ begin
           begin
             address = Michael.Osborne@mater.org.au
             name = "Michael Osborne"
+          end
+          email.address
+          begin
+            address = raychelle@dynamichealthit.com
+            name = "Raychelle Fernandez "
           end
         end
         email.list

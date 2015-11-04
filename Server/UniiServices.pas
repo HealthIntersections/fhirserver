@@ -60,7 +60,7 @@ type
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -76,6 +76,9 @@ type
 Procedure ImportUnii(filename : String; dbm : TKDBManager);
 
 implementation
+
+uses
+  SystemService;
 
 { TUniiServices }
 
@@ -170,6 +173,7 @@ var
   key, last, lastDesc : integer;
   db : TKDBConnection;
 begin
+  writelnt('Inport UNII from '+filename);
   db := dbm.GetConnection('test');
   try
     last := 0;
@@ -343,7 +347,7 @@ begin
   raise Exception.Create('not done yet');
 end;
 
-function TUniiServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TUniiServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
   raise Exception.Create('not done yet');
 end;

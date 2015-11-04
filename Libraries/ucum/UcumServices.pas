@@ -226,7 +226,7 @@ Type
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -525,7 +525,7 @@ begin
   End;
 end;
 
-function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 begin
   result := nil;
   raise Exception.Create('to do');

@@ -12,15 +12,15 @@ are permitted provided that the following conditions are met:
  * Redistributions in binary form must reproduce the above copyright notice, 
    this list of conditions and the following disclaimer in the documentation 
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
+ * Neither the name of HL7 nor the names of its contributors may be used to
    endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
@@ -41,7 +41,8 @@ uses
   AdvTextExtractors,
   AdvStringObjectMatches,
   AdvObjectLists,
-  AdvStringBuilders;
+  AdvStringBuilders,
+  XMLBuilder;
 
 Function JSONString(const value : String) : String;
 
@@ -55,9 +56,14 @@ Type
   protected
     function nodeType : String; virtual;
   public
+    LocationStart : TSourceLocation;
+    LocationEnd : TSourceLocation;
+
     constructor create(path : String); overload;
+    constructor create(path : String; locStart, locEnd : TSourceLocation); overload;
     Function Link : TJsonNode; Overload;
     property path : String read FPath write FPath;
+
   end;
 
   TJsonProperties = class (TAdvStringObjectMatch)
@@ -120,6 +126,7 @@ Type
     function nodeType : String; override;
   public
     Constructor Create(path : String; value : boolean); overload;
+    Constructor Create(path : String; locStart, locEnd : TSourceLocation; value : boolean); overload;
     Function Link : TJsonBoolean; Overload;
     property value : boolean read FValue write FValue;
   end;
@@ -131,6 +138,7 @@ Type
     function nodeType : String; override;
   public
     Constructor Create(path : String; value : string); overload;
+    Constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
     Function Link : TJsonValue; Overload;
     property value : String read FValue write FValue;
   end;
@@ -240,6 +248,9 @@ Type
     FValue: String;
     FLexType: TJSONLexType;
     FStates : TStringList;
+    FLastLocationBWS : TSourceLocation;
+    FLastLocationAWS : TSourceLocation;
+    FLocation : TSourceLocation;
     Function getNextChar : Char;
     Procedure Push(ch : Char);
     procedure ParseWord(sWord : String; ch : Char; aType : TJSONLexType);
@@ -253,7 +264,6 @@ Type
     Property Value : String read FValue;
     Procedure Next;
     Function Consume(aType : TJsonLexType):String;
-
   End;
 
   TJsonParserItemType = (jpitObject, jpitSimple, jpitBoolean, jpitArray, jpitEnd, jpitEof, jpitNull);
@@ -261,6 +271,10 @@ Type
   TJSONParser = class (TAdvObject)
   Private
     FLex : TJSONLexer;
+    FNameStart : TSourceLocation;
+    FNameEnd : TSourceLocation;
+    FValueStart : TSourceLocation;
+    FValueEnd : TSourceLocation;
     FItemName: String;
     FItemValue: String;
     FItemType: TJsonParserItemType;
@@ -689,9 +703,11 @@ procedure TJSONLexer.Next;
 var
   ch : Char;
 begin
+  FLastLocationBWS := FLocation;
   repeat
     ch := getNextChar;
   Until Not More Or not CharInSet(ch, [' ', #13, #10, #9]);
+  FLastLocationAWS := FLocation;
 
   If Not More Then
     FLexType := jltEof
@@ -758,7 +774,16 @@ begin
     Delete(FPeek, 1, 1);
   End
   Else
+  begin
     result := ConsumeCharacter;
+    if result = #10 then
+    begin
+      inc(FLocation.line);
+      FLocation.col := 1;
+    end
+    else
+      inc(FLocation.col);
+  end;
 end;
 
 function TJSONLexer.Consume(aType: TJsonLexType): String;
@@ -777,6 +802,8 @@ end;
 constructor TJSONLexer.Create(oStream: TAdvStream);
 begin
   Inherited Create(oStream);
+  FLocation.line := 1;
+  FLocation.col := 1;
   FStates := TStringList.Create;
 end;
 
@@ -932,6 +959,8 @@ begin
   try
     result := TJsonObject.Create('$');
     try
+      result.LocationStart := p.FLex.FLastLocationBWS;
+      p.ParseProperty;
       p.readObject(result, true);
       result.Link;
     finally
@@ -951,7 +980,9 @@ procedure TJSONParser.ParseProperty;
 Begin
   If FLex.FStates.Objects[0] = nil Then
   Begin
+    FNameStart := FLex.FLocation;
     FItemName := FLex.Consume(jltString);
+    FNameEnd := FLex.FLocation;
     FItemValue := '';
     FLex.Consume(jltColon);
   End;
@@ -960,24 +991,32 @@ Begin
       Begin
       FItemType := jpitNull;
       FItemValue := FLex.FValue;
+      FValueStart := FLex.FLastLocationAWS;
+      FValueEnd := FLex.FLocation;
       FLex.Next;
       end;
     jltString :
       Begin
       FItemType := jpitSimple;
       FItemValue := FLex.FValue;
+      FValueStart := FLex.FLastLocationAWS;
+      FValueEnd := FLex.FLocation;
       FLex.Next;
       End;
     jltBoolean :
       Begin
       FItemType := jpitBoolean;
       FItemValue := FLex.FValue;
+      FValueStart := FLex.FLastLocationAWS;
+      FValueEnd := FLex.FLocation;
       FLex.Next;
       End;
     jltNumber :
       Begin
       FItemType := jpitSimple;
       FItemValue := FLex.FValue;
+      FValueStart := FLex.FLastLocationAWS;
+      FValueEnd := FLex.FLocation;
       FLex.Next;
       End;
     jltOpen :
@@ -1014,22 +1053,25 @@ begin
         begin
           obj := TJsonObject.Create(arr.path+'['+inttostr(i)+']');
           arr.FItems.Add(obj);
+          obj.LocationStart := FLex.FLocation;
           Next;
           readObject(obj, false);
         end;
       jpitSimple:
-        arr.FItems.Add(TJsonValue.Create(arr.path+'['+inttostr(i)+']', ItemValue));
+        arr.FItems.Add(TJsonValue.Create(arr.path+'['+inttostr(i)+']', FValueStart, FValueEnd, ItemValue));
       jpitNull :
-        arr.FItems.Add(TJsonNull.Create(arr.path+'['+inttostr(i)+']'));
+        arr.FItems.Add(TJsonNull.Create(arr.path+'['+inttostr(i)+']', FValueStart, FValueEnd));
       jpitArray:
         begin
         child := TJsonArray.Create(arr.path+'['+inttostr(i)+']');
         obj.FProperties.Add(ItemName, child);
+        child.LocationStart := FLex.FLocation;
         Next;
         readArray(child);
         end;
       jpitEof : raise Exception.Create('Unexpected End of File');
     end;
+    arr.LocationEnd := FLex.FLocation;
     Next;
     inc(i);
   end;
@@ -1047,24 +1089,27 @@ begin
         begin
           child := TJsonObject.Create(obj.path+'.'+ItemName);
           obj.FProperties.Add(ItemName, child);
+          child.LocationStart := FLex.FLocation;
           Next;
           readObject(child, false);
         end;
       jpitBoolean :
-        obj.FProperties.Add(ItemName, TJsonBoolean.Create(obj.path+'.'+ItemName, StrToBool(ItemValue)));
+        obj.FProperties.Add(ItemName, TJsonBoolean.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd, StrToBool(ItemValue)));
       jpitSimple:
-        obj.FProperties.Add(ItemName, TJsonValue.Create(obj.path+'.'+ItemName, ItemValue));
+        obj.FProperties.Add(ItemName, TJsonValue.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd, ItemValue));
       jpitNull:
-        obj.FProperties.Add(ItemName, TJsonNull.Create(obj.path+'.'+ItemName));
+        obj.FProperties.Add(ItemName, TJsonNull.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd));
       jpitArray:
         begin
         arr := TJsonArray.Create(obj.path+'.'+ItemName);
         obj.FProperties.Add(ItemName, arr);
+        arr.LocationStart := FLex.FLocation;
         Next;
         readArray(arr);
         end;
       jpitEof : raise Exception.Create('Unexpected End of File');
     end;
+    obj.LocationEnd := FLex.FLocation;
     next;
   end;
 end;
@@ -1098,7 +1143,6 @@ begin
   begin
     FLex.Next;
     FLex.FStates.InsertObject(0, '', nil);
-    ParseProperty;
   End
   Else
     FLex.JsonError('Unexpected content at start of JSON: '+Codes_TJSONLexType[FLex.LexType]);
@@ -1236,6 +1280,14 @@ constructor TJsonNode.create(path: String);
 begin
   Create;
   self.path := path;
+end;
+
+constructor TJsonNode.create(path: String; locStart, locEnd: TSourceLocation);
+begin
+  Create;
+  self.path := path;
+  LocationStart := locStart;
+  LocationEnd := locEnd;
 end;
 
 function TJsonNode.Link: TJsonNode;
@@ -1381,6 +1433,14 @@ constructor TJsonValue.Create(path, value: string);
 begin
   Create(path);
   self.value := value;
+end;
+
+constructor TJsonValue.Create(path: String; locStart, locEnd: TSourceLocation; value: string);
+begin
+  Create(path);
+  self.value := value;
+  LocationStart := locStart;
+  LocationEnd := locEnd;
 end;
 
 function TJsonValue.Link: TJsonValue;
@@ -1572,6 +1632,14 @@ constructor TJsonBoolean.Create(path: String; value: boolean);
 begin
   create('path');
   FValue := value;
+end;
+
+constructor TJsonBoolean.Create(path: String; locStart, locEnd: TSourceLocation; value: boolean);
+begin
+  create('path');
+  FValue := value;
+  LocationStart := locStart;
+  LocationEnd := locEnd;
 end;
 
 function TJsonBoolean.Link: TJsonBoolean;

@@ -90,6 +90,7 @@ uses
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
   Windows,
   System.SysUtils,
+  Classes,
   IdSSLOpenSSLHeaders,
   JclDebug,
   FHIRServerApplicationCore in 'FHIRServerApplicationCore.pas',
@@ -296,8 +297,10 @@ uses
   SnomedAnalysis in '..\Libraries\snomed\SnomedAnalysis.pas',
   AreaCodeServices in 'AreaCodeServices.pas',
   FHIRTags in '..\Libraries\refplat\FHIRTags.pas',
-  FHIRProfileUtilities in '..\Libraries\refplat\FHIRProfileUtilities.pas';
-
+  FHIRProfileUtilities in '..\Libraries\refplat\FHIRProfileUtilities.pas',
+  FHIRSubscriptionManager in 'FHIRSubscriptionManager.pas',
+  ServerValidator in 'ServerValidator.pas',
+  IdWebSocket in '..\Libraries\support\IdWebSocket.pas';
 
 begin
   JclStartExceptionTracking;

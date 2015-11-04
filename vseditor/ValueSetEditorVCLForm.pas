@@ -203,9 +203,13 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
-    ListBox1: TListBox;
+    lbPastValueSets: TListBox;
     Label27: TLabel;
     Label28: TLabel;
+    Label29: TLabel;
+    Label30: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOpenServerClick(Sender: TObject);
@@ -521,6 +525,7 @@ end;
 
 procedure TForm5.miDocoClick(Sender: TObject);
 begin
+  raise Exception.Create('test');
   setDocoVisibility(not pnlDocumentation.Visible);
 end;
 
@@ -648,7 +653,10 @@ end;
 
 procedure TForm5.btnSaveClick(Sender: TObject);
 begin
-  Context.Save;
+  if Context.Settings.ValueSetNew then
+    btnSaveAsClick(Sender)
+  else
+    Context.Save
 end;
 
 procedure TForm5.OpenfromUrl1Click(Sender: TObject);
@@ -746,7 +754,26 @@ end;
 
 // --- Edit Page ---------------------------------------------------------------
 
+function displayMRU(s : String) : String;
+var
+  l, r : String;
+begin
+  if s.StartsWith('file:') then
+    result := s.Substring(5)
+  else if s.StartsWith('url:') then
+    result := s.Substring(4)
+  else if s.StartsWith('id:') then
+  begin
+    StringSplit(s.Substring(3), ':', l, r);
+    result := l+' on '+r;
+  end
+  else
+    result := '??';
+end;
+
 procedure TForm5.LoadValuesetPage;
+var
+  s : String;
 begin
   if Context.ValueSet = nil then
   begin
@@ -754,6 +781,9 @@ begin
     Notebook2.PageIndex := 0;
     tvStructure.RootNodeCount := 0;
     PageControl1.ActivePage := TabStart;
+    lbPastValueSets.Items.Clear;
+    for s in Context.Settings.MRUList do
+      lbPastValueSets.Items.add(displayMRU(s));
   end
   else
   begin
@@ -2338,7 +2368,8 @@ end;
 
 procedure TForm5.Button2Click(Sender: TObject);
 begin
-  lblExpansion.Caption := Context.Expand(edtFilter.Text);
+  ServerOperation(Context.Expand, edtFilter.Text, 'Expanding', true);
+  lblExpansion.Caption := inttostr(Context.Expansion.containsList.Count)+' codes';
   tvExpansion.RootNodeCount := 0;
   tvExpansion.RootNodeCount := Max(1, Context.Expansion.containsList.Count);
 end;

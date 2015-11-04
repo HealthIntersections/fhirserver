@@ -99,13 +99,11 @@ var
   p : TCodeSystemProvider;
 begin
   writelnt('Load DB Terminologies');
-  Unii := TUniiServices.Create(TKDBOdbcDirect.create('tx', 100, 'SQL Server Native Client 11.0',
-        Ini.ReadString('database', 'server', ''), Ini.ReadString('database', 'tx', ''),
-        Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
-  Cvx := TCvxServices.Create(unii.db);
-  CountryCode := TCountryCodeServices.Create(unii.db);
-  AreaCode := TAreaCodeServices.Create(unii.db);
-  p := TUSStateCodeServices.Create(unii.db);
+  Unii := TUniiServices.Create(Fdb);
+  Cvx := TCvxServices.Create(Fdb);
+  CountryCode := TCountryCodeServices.Create(Fdb);
+  AreaCode := TAreaCodeServices.Create(Fdb);
+  p := TUSStateCodeServices.Create(Fdb);
   ProviderClasses.Add(p.system(nil), p);
   writelnt(' - done');
 
@@ -392,12 +390,24 @@ function TTerminologyServer.validate(vs : TFHIRValueSet; coding : TFhirCoding; a
 var
   check : TValueSetChecker;
 begin
-  check := TValueSetChecker.create(self.Link, vs.url);
+  if vs = nil then
+  begin
+    vs := TFhirValueSet.Create;
+    vs.url := ANY_CODE_VS;
+  end
+  else
+    vs.Link;
+
   try
-    check.prepare(vs);
-    result := check.check(coding, abstractOk);
+    check := TValueSetChecker.create(self.Link, vs.url);
+    try
+      check.prepare(vs);
+      result := check.check(coding, abstractOk);
+    finally
+      check.Free;
+    end;
   finally
-    check.Free;
+    vs.Free;
   end;
 end;
 
@@ -406,13 +416,25 @@ function TTerminologyServer.validate(vs : TFHIRValueSet; coded : TFhirCodeableCo
 var
   check : TValueSetChecker;
 begin
-  check := TValueSetChecker.create(self.Link, vs.url);
+  if vs = nil then
+  begin
+    vs := TFhirValueSet.Create;
+    vs.url := ANY_CODE_VS;
+  end
+  else
+    vs.Link;
+
   try
-    check.prepare(vs);
-    result := check.check(coded, abstractOk);
+    check := TValueSetChecker.create(self.Link, vs.url);
+    try
+      check.prepare(vs);
+      result := check.check(coded, abstractOk);
+    finally
+      check.Free;
+   end;
   finally
-    check.Free;
- end;
+    vs.Free;
+  end;
 end;
 
 function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;

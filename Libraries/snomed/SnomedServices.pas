@@ -492,7 +492,7 @@ operations
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function buildValueSet(id : String) : TFhirValueSet;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -541,11 +541,11 @@ var
   i : Word;
 begin
   if (iIndex > FLength) then
-    Raise Exception.Create('Wrong length index getting snomed name');
+    Raise ESnomedServices.Create('Wrong length index getting snomed name');
   Move(FMaster[iIndex], i, 2);
   SetLength(Result, i);
   if (Byte(FMaster[iIndex]) + iIndex > FLength) then
-    Raise Exception.Create('Wrong length index getting snomed name (2)');
+    Raise ESnomedServices.Create('Wrong length index getting snomed name (2)');
   Move(FMaster[iIndex+2], result[1], Length(Result)*2);
 end;
 
@@ -554,7 +554,7 @@ var
   i : word;
 begin
   if Length(s) > 65535 Then
-    raise exception.Create('Snomed Description too long: '+String(s));
+    raise ESnomedServices.Create('Snomed Description too long: '+String(s));
   result := FBuilder.Length;
   i := length(s);
   FBuilder.AddWord(i);
@@ -587,11 +587,11 @@ begin
     if (FBuilder <> nil) and (iIndex >= FLength) then
       Post;
     if (iIndex >= FLength) then
-      Raise Exception.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength));
+      Raise ESnomedServices.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength));
     move(FMaster[iIndex], c, 4);
     SetLength(Result, c);
     if (iIndex + 4 + length(result) * 4 > FLength) then
-      Raise Exception.Create('Wrong length index ('+inttostr(iIndex)+', '+inttostr(length(result))+') getting Snomed list (length = '+inttostr(FLength)+')');
+      Raise ESnomedServices.Create('Wrong length index ('+inttostr(iIndex)+', '+inttostr(length(result))+') getting Snomed list (length = '+inttostr(FLength)+')');
     inc(iIndex, 4);
     for i := 0 to Length(result)-1 Do
     Begin
@@ -626,7 +626,7 @@ end;
 function TSnomedReferences.Getlength(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex > FLength) then
-    Raise Exception.Create('Wrong length index getting Snomed list');
+    Raise ESnomedServices.Create('Wrong length index getting Snomed list');
   move(FMaster[iIndex], result, 4);
 end;
 
@@ -641,7 +641,7 @@ end;
 procedure TSnomedDescriptions.SetRefsets(iIndex, refsets: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed Desc Details');
+    Raise ESnomedServices.Create('Wrong length index getting snomed Desc Details');
   assert(iIndex mod 31 = 0);
   Move(refsets, FMaster[iIndex+27], 4);
 end;
@@ -667,7 +667,7 @@ end;
 function TSnomedDescriptions.ConceptByIndex(iIndex: Cardinal): cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed Desc Details');
+    Raise ESnomedServices.Create('Wrong length index getting snomed Desc Details');
   Move(FMaster[iIndex+13], result, 4);
 end;
 
@@ -686,7 +686,7 @@ end;
 procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, refsets : Cardinal; var iflags : Byte);
 Begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed Desc Details');
+    Raise ESnomedServices.Create('Wrong length index getting snomed Desc Details');
   Move(FMaster[iIndex+0], iDesc, 4);
   Move(FMaster[iIndex+4], iFlags, 1);
   Move(FMaster[iIndex+5], ID, 8);
@@ -784,36 +784,36 @@ end;
 Function TSnomedConceptList.getParent(iIndex : Cardinal): Cardinal;
 Begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+9], result, 4);
 End;
 
 function TSnomedConceptList.GetRefsets(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+44], result, 4);
 end;
 
 Function TSnomedConceptList.getIdentity(iIndex : Cardinal): UInt64;
 Begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+0], result, 8);
 End;
 
 procedure TSnomedConceptList.GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
 Begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details (mod = '+inttostr(iIndex mod CONCEPT_SIZE)+')');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details (mod = '+inttostr(iIndex mod CONCEPT_SIZE)+')');
 
   Move(FMaster[iIndex+0], Identity, 8);
   Move(FMaster[iIndex+8], Flags, 1);
@@ -828,70 +828,70 @@ End;
 function TSnomedConceptList.getConceptId(iIndex : Cardinal): UInt64;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index getting snomed Concept Details');
   Move(FMaster[iIndex+0], result, 8);
 end;
 
 procedure TSnomedConceptList.SetParents(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+9], 4);
 end;
 
 procedure TSnomedConceptList.SetRefsets(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+44], 4);
 end;
 
 procedure TSnomedConceptList.SetDescriptions(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+13], 4);
 end;
 
 procedure TSnomedConceptList.SetFlag(iIndex: Cardinal; iFlags: Byte);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(iFlags, FMaster[iIndex+8], 1);
 end;
 
 procedure TSnomedConceptList.SetInbounds(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+17], 4);
 end;
 
 procedure TSnomedConceptList.SetModuleId(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+36], 4);
 end;
 
 procedure TSnomedConceptList.SetOutbounds(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+21], 4);
 end;
 
@@ -904,117 +904,117 @@ end;
 Function TSnomedConceptList.GetAllDesc(iIndex: Cardinal) : Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+25], result, 4);
 end;
 
 procedure TSnomedConceptList.SetAllDesc(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+25], 4);
 end;
 
 function TSnomedConceptList.GetOutbounds(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+21], result, 4);
 end;
 
 function TSnomedConceptList.GetInbounds(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+17], result, 4);
 end;
 
 function TSnomedConceptList.GetModuleId(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+36], result, 4);
 end;
 
 function TSnomedConceptList.GetDepth(iIndex: Cardinal): Byte;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+29], result, 1);
 end;
 
 procedure TSnomedConceptList.SetDate(iIndex: Cardinal; effectiveTime: TSnomedDate);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(effectiveTime, FMaster[iIndex+34], 2);
 end;
 
 procedure TSnomedConceptList.SetDepth(iIndex: Cardinal; Value: Byte);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+29], 1);
 end;
 
 function TSnomedConceptList.GetStatus(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+40], result, 4);
 end;
 
 function TSnomedConceptList.GetStems(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+30], result, 4);
 end;
 
 procedure TSnomedConceptList.SetStatus(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+40], 4);
 end;
 
 procedure TSnomedConceptList.SetStems(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(Value, FMaster[iIndex+30], 4);
 end;
 
 function TSnomedConceptList.GetDescriptions(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise Exception.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ESnomedServices.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
   Move(FMaster[iIndex+13], Result, 4);
 end;
 
@@ -1075,7 +1075,7 @@ begin
     oread := TReader.Create(oFile, 8192);
     try
       if oRead.ReadString <> SNOMED_CACHE_VERSION Then
-        raise exception.create('The Snomed cache "'+sFilename+'" must be rebuilt using -snomed-rf1 or -snomed-rf2');
+        raise ESnomedServices.create('The Snomed cache "'+sFilename+'" must be rebuilt using -snomed-rf1 or -snomed-rf2');
       VersionUri := oread.ReadString;
       VersionDate := oread.ReadString;
       FStrings.FMaster := ReadBytes;
@@ -1176,7 +1176,7 @@ begin
   End;
 end;
 
-function TSnomedServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TSnomedServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 var
   res : TSnomedFilterContext;
 begin
@@ -1443,7 +1443,7 @@ begin
   End;
 
   if Length(words) = 0 then
-    Raise Exception.Create('no usable search text found');
+    Raise ESnomedServices.Create('no usable search text found');
 
   if iLang <> 0 Then
     aLangMembers := FRefSetMembers.GetMembers(iLang);
@@ -1605,7 +1605,7 @@ var
 begin
   iLang := CheckLangSet(sLangSet);
   if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
-    raise Exception.Create('Concept '+sTerm+' not found');
+    raise ESnomedServices.Create('Concept '+sTerm+' not found');
   result := GetDisplayName(iTerm, iLang);
 end;
 
@@ -1867,7 +1867,7 @@ begin
     if StringIsId(sterm, iId) And Concept.FindConcept(iId, result) Then
       result := FRefSetIndex.GetMembersByConcept(result, false);
     if result = 0 Then
-      Raise Exception.Create('Unable to resolve the language reference set '+sTerm);
+      Raise ESnomedServices.Create('Unable to resolve the language reference set '+sTerm);
   End
 end;
 
@@ -1950,7 +1950,7 @@ procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; var Source, 
 // (iIndex: Cardinal; var Source, Target, RelType: Cardinal; var Flags, Group : Byte);
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed relationship Details');
+    Raise ESnomedServices.Create('Wrong length index getting snomed relationship Details');
   Move(FMaster[iIndex+0], Source, 4);
   Move(FMaster[iIndex+4], Target, 4);
   Move(FMaster[iIndex+8], RelType, 4);
@@ -1988,7 +1988,7 @@ var
 begin
   l := (iIndex * 5) + 1;
   if l > FLength - 4 Then
-    raise Exception.create('invalid index');
+    raise ESnomedServices.create('invalid index');
   move(FMaster[l], index, 4);
   move(FMaster[l+4], flags, 1);
 end;
@@ -2031,7 +2031,7 @@ var
 begin
   l := (iIndex * 8);
   if l > FLength - 7 Then
-    raise Exception.create('invalid index');
+    raise ESnomedServices.create('invalid index');
   move(FMaster[l], index, 4);
   move(FMaster[l+4], reference, 4);
 end;
@@ -2140,7 +2140,7 @@ procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; var iDefini
 begin
   iIndex := iIndex * 12;
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting snomed relationship Details');
+    Raise ESnomedServices.Create('Wrong length index getting snomed relationship Details');
   Move(FMaster[iIndex+0], iDefinition, 4);
   Move(FMaster[iIndex+4], iMembersByRef, 4);
   Move(FMaster[iIndex+8], iMembersByName, 4);
@@ -2227,7 +2227,7 @@ begin
   Else
   Begin
     if (iIndex > FLength) then
-      Raise Exception.Create('Wrong length index getting Snomed list');
+      Raise ESnomedServices.Create('Wrong length index getting Snomed list');
     move(FMaster[iIndex], result, 4);
   End;
 end;
@@ -2242,7 +2242,7 @@ begin
   Else
   Begin
     if (iIndex > FLength) then
-      Raise Exception.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength));
+      Raise ESnomedServices.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength));
     move(FMaster[iIndex], c, 4);
     SetLength(Result, c);
     inc(iIndex, 4);
@@ -2505,7 +2505,7 @@ var
 begin
   ctxt := locate(code);
   if (ctxt = nil) then
-    raise Exception.create('Unable to find '+code+' in '+system(nil))
+    raise ESnomedServices.create('Unable to find '+code+' in '+system(nil))
   else
     ListDisplayNames(list, Cardinal(ctxt), 0, $FF);
 end;
@@ -2517,7 +2517,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise Exception.create('Unable to find '+code+' in '+system(nil))
+      raise ESnomedServices.create('Unable to find '+code+' in '+system(nil))
     else
       result := Display(ctxt);
   finally
@@ -2575,7 +2575,7 @@ begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
-      raise Exception.Create('The Snomed Concept '+inttostr(id)+' was not known');
+      raise ESnomedServices.Create('The Snomed Concept '+inttostr(id)+' was not known');
     res.descendents := GetConceptDescendents(index);
     result := TSnomedFilterContext(res.link);
   finally
@@ -2591,9 +2591,9 @@ begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
-      raise Exception.Create('The Snomed Concept '+inttostr(id)+' was not known');
+      raise ESnomedServices.Create('The Snomed Concept '+inttostr(id)+' was not known');
     if GetConceptRefSet(index, false, members) = 0 then
-      raise Exception.Create('The Snomed Concept '+inttostr(id)+' is not a reference set');
+      raise ESnomedServices.Create('The Snomed Concept '+inttostr(id)+' is not a reference set');
     res.members := RefSetMembers.GetMembers(members);
     result := TSnomedFilterContext(res.link);
   finally

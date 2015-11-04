@@ -24,9 +24,9 @@ unit FHIRParser;
   NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-  
+
 }
 
 
@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.0.1 generated Thu, Sep 24, 2015 17:15+1000
+// FHIR v1.0.2 generated Thu, Oct 22, 2015 11:01+1100
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
@@ -3831,9 +3831,9 @@ begin
   if SummaryOption in [soFull, soData] then
   for i := 0 to elem.containedList.Count - 1 do
     ComposeInnerResource(xml, 'contained', elem, elem.containedList[i]);
-  if SummaryOption in [soFull, soData] then
   for i := 0 to elem.extensionList.Count - 1 do
-    ComposeExtension(xml, 'extension', elem.extensionList[i]);
+    if (SummaryOption in [soFull, soData]) or (elem.extensionList[i].Tags['summary'] = 'true') then
+      ComposeExtension(xml, 'extension', elem.extensionList[i]);
   if SummaryOption in [soFull, soData] then
   for i := 0 to elem.modifierExtensionList.Count - 1 do
     ComposeExtension(xml, 'modifierExtension', elem.modifierExtensionList[i]);

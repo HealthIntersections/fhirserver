@@ -25,8 +25,6 @@ object Form2: TForm2
     BevelInner = bvLowered
     BorderWidth = 5
     TabOrder = 0
-    ExplicitWidth = 192
-    ExplicitHeight = 130
     DesignSize = (
       363
       131)

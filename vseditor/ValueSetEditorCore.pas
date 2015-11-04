@@ -63,6 +63,7 @@ Type
   TValueSetEditorCoreSettings = Class (TAdvObject)
   private
     ini : TIniFile;
+    FMRUList : TStringList;
 
     function ValuesetListPath : string;
     function ValuesetItemPath : string;
@@ -107,6 +108,10 @@ Type
     Constructor Create; Override;
     Destructor Destroy; Override;
 
+    // mru list
+    procedure mru(src : String);
+    property MRUList : TStringList read FMRUList;
+
     // window
     function hasWindowState : Boolean;
     Property WindowState : Integer read GetWindowState write SetWindowState;
@@ -126,6 +131,8 @@ Type
     // choice browser
     function columnWidth(tree, name : string; default: integer) : integer;
     procedure setColumnWidth(tree, name : string; value : integer);
+
+    function ValueSetNew : boolean;
 
     // expansion
     Property Filter : String read GetFilter write SetFilter;
@@ -318,7 +325,7 @@ Type
 
     // expansion
     property Expansion : TFhirValueSetExpansion read FExpansion;
-    function Expand(text : String) : String;
+    procedure Expand(event : TFHIRClientStatusEvent; text : String);
     procedure GetPreview(uri : String);
     property Preview : TFhirValueSetExpansion read FPreview;
     property OnPreview : TNotifyEvent read FOnPreview write FOnPreview;
@@ -735,7 +742,7 @@ begin
   FSettings := TValueSetEditorCoreSettings.Create;
   if Settings.ServerCount = 0 then
     if FileExists('C:\work\fhirserver\Exec\fhir.ini') then
-      Settings.AddServer('Local Development Server', 'http://local.healthintersections.com.au:980/open')
+      Settings.AddServer('Local Development Server', 'http://local.healthintersections.com.au:960/open')
     else
       Settings.AddServer('Health Intersections General Server', 'http://fhir-dev.healthintersections.com.au/open');
 
@@ -847,7 +854,7 @@ begin
     result := 'New Value Set';
 end;
 
-function TValueSetEditorContext.Expand(text : String): String;
+procedure TValueSetEditorContext.Expand(event : TFHIRClientStatusEvent; text : String);
 var
   client : TFhirClient;
   pIn, pOut : TFhirParameters;
@@ -1318,6 +1325,8 @@ begin
   finally
     vs.Free;
   end;
+  Settings.valueSetFilename := '';
+  Settings.valueSetId := '';
 end;
 
 
@@ -1327,6 +1336,7 @@ var
   s : AnsiString;
   f : TFileStream;
 begin
+  Settings.mru('file:'+fn);
   Settings.valueSetFilename := fn;
   f := TFileStream.create(fn, fmOpenRead + fmShareDenyWrite);
   try
@@ -1359,6 +1369,7 @@ var
   client : TFhirClient;
   vs : TFhirValueSet;
 begin
+  Settings.mru('id:'+id+':'+FWorkingServer.URL);
   Settings.valueSetId := id;
   client := TFhirClient.create(FWorkingServer.URL, true);
   try
@@ -1381,14 +1392,15 @@ var
   p : TFHIRParser;
   mem : TMemoryStream;
 begin
+  Settings.mru('url:'+url);
   web := TIdHTTP.Create(nil);
   try
     web.HandleRedirects := true;
     mem := TMemoryStream.Create;
     try
       web.Get(url, mem);
-      mem.Position := 0;
-      mem.SaveToFile('c:\temp\test.web');
+//      mem.Position := 0;
+//      mem.SaveToFile('c:\temp\test.web');
       mem.Position := 0;
       p := MakeParser('en', ffAsIs, mem, xppAllow);
       try
@@ -1585,6 +1597,8 @@ begin
 end;
 
 constructor TValueSetEditorCoreSettings.Create;
+var
+  i : integer;
 begin
   inherited;
   if not FileExists(Path([ShellLocalAppDataFolder, 'Health Intersections'])) then
@@ -1592,10 +1606,14 @@ begin
   if not FileExists(Path([ShellLocalAppDataFolder, 'Health Intersections', 'ValueSetEditor'])) then
     CreateDir(Path([ShellLocalAppDataFolder, 'Health Intersections', 'ValueSetEditor']));
   ini := TIniFile.create(Path([ShellLocalAppDataFolder, 'Health Intersections', 'ValueSetEditor', 'valueseteditor.ini']));
+  FMRUList := TStringList.Create;
+  for i := 0 to ini.ReadInteger('mru', 'count', 0) - 1 do
+    FMRUList.add(ini.ReadString('mru', 'item'+inttostr(i), ''));
 end;
 
 destructor TValueSetEditorCoreSettings.Destroy;
 begin
+  FMRUList.Free;
   ini.free;
   inherited;
 end;
@@ -1692,6 +1710,19 @@ end;
 function TValueSetEditorCoreSettings.hasWindowState: Boolean;
 begin
   result := WindowHeight > 0;
+end;
+
+procedure TValueSetEditorCoreSettings.mru(src: String);
+var
+  i : integer;
+begin
+  i := FMRUList.IndexOf(src);
+  if (i > -1) then
+    FMRUList.Delete(i);
+  FMRUList.Insert(0, src);
+  ini.WriteInteger('mru', 'count', FMRUList.Count);
+  for i := 0 to FMRUList.Count - 1 do
+    ini.WriteString('mru', 'item'+inttostr(i), FMRUList[i]);
 end;
 
 function TValueSetEditorCoreSettings.ServerCount: integer;
@@ -1795,6 +1826,11 @@ end;
 function TValueSetEditorCoreSettings.ValuesetListPath: string;
 begin
   result := IncludeTrailingPathDelimiter(SystemTemp)+'vslist.json';
+end;
+
+function TValueSetEditorCoreSettings.ValueSetNew: boolean;
+begin
+  result := (valueSetFilename = '') and (valueSetId = '');
 end;
 
 function IsURL(s : String) : boolean;

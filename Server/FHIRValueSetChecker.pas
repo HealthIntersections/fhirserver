@@ -62,47 +62,52 @@ var
   cs : TCodeSystemProvider;
   other : TFHIRValueSet;
 begin
-  FVs := vs.link;
-  if fvs.codeSystem <> nil then
-    FOthers.Add(fvs.codeSystem.system, TValueSetProvider.create(FVs.Link));
-  if (fvs.compose <> nil) then
+  if (vs = nil) then
+
+  else
   begin
-    for i := 0 to fvs.compose.importList.Count - 1 do
+    FVs := vs.link;
+    if fvs.codeSystem <> nil then
+      FOthers.Add(fvs.codeSystem.system, TValueSetProvider.create(FVs.Link));
+    if (fvs.compose <> nil) then
     begin
-      other := FStore.getValueSetByUrl(fvs.compose.importList[i].value);
-      try
-        if other = nil then
-          raise ETerminologyError.create('Unable to find value set '+fvs.compose.importList[i].value);
-        checker := TValueSetChecker.create(Fstore.link, other.url);
+      for i := 0 to fvs.compose.importList.Count - 1 do
+      begin
+        other := FStore.getValueSetByUrl(fvs.compose.importList[i].value);
         try
-          checker.prepare(other);
-          FOthers.Add(fvs.compose.importList[i].value, checker.Link);
+          if other = nil then
+            raise ETerminologyError.create('Unable to find value set '+fvs.compose.importList[i].value);
+          checker := TValueSetChecker.create(Fstore.link, other.url);
+          try
+            checker.prepare(other);
+            FOthers.Add(fvs.compose.importList[i].value, checker.Link);
+          finally
+            checker.free;
+          end;
         finally
-          checker.free;
+          other.free;
         end;
-      finally
-        other.free;
       end;
-    end;
-    for i := 0 to fvs.compose.includeList.Count - 1 do
-    begin
-      if not FOthers.ExistsByKey(fvs.compose.includeList[i].system) then
-        FOthers.Add(fvs.compose.includeList[i].system, FStore.getProvider(fvs.compose.includeList[i].system));
-      cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
-      for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
-        if not (('concept' = fvs.compose.includeList[i].filterList[j].property_) and (fvs.compose.includeList[i].filterList[j].Op = FilterOperatorIsA)) then
-          if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_, fvs.compose.includeList[i].filterList[j].Op, fvs.compose.includeList[i].filterList[j].value) then
-            raise ETerminologyError.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
-    end;
-    for i := 0 to fvs.compose.excludeList.Count - 1 do
-    begin
-      if not FOthers.ExistsByKey(fvs.compose.excludeList[i].system) then
-        FOthers.Add(fvs.compose.excludeList[i].system, FStore.getProvider(fvs.compose.excludeList[i].system));
-      cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
-      for j := 0 to fvs.compose.excludeList[i].filterList.count - 1 do
-        if not (('concept' = fvs.compose.excludeList[i].filterList[j].property_) and (fvs.compose.excludeList[i].filterList[j].Op = FilterOperatorIsA)) then
-          if not cs.doesFilter(fvs.compose.excludeList[i].filterList[j].property_, fvs.compose.excludeList[i].filterList[j].Op, fvs.compose.excludeList[i].filterList[j].value) then
-            raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.excludeList[i].filterList[j].Op]+ ' '+fvs.compose.excludeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
+      for i := 0 to fvs.compose.includeList.Count - 1 do
+      begin
+        if not FOthers.ExistsByKey(fvs.compose.includeList[i].system) then
+          FOthers.Add(fvs.compose.includeList[i].system, FStore.getProvider(fvs.compose.includeList[i].system));
+        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
+        for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
+          if not (('concept' = fvs.compose.includeList[i].filterList[j].property_) and (fvs.compose.includeList[i].filterList[j].Op = FilterOperatorIsA)) then
+            if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_, fvs.compose.includeList[i].filterList[j].Op, fvs.compose.includeList[i].filterList[j].value) then
+              raise ETerminologyError.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
+      end;
+      for i := 0 to fvs.compose.excludeList.Count - 1 do
+      begin
+        if not FOthers.ExistsByKey(fvs.compose.excludeList[i].system) then
+          FOthers.Add(fvs.compose.excludeList[i].system, FStore.getProvider(fvs.compose.excludeList[i].system));
+        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
+        for j := 0 to fvs.compose.excludeList[i].filterList.count - 1 do
+          if not (('concept' = fvs.compose.excludeList[i].filterList[j].property_) and (fvs.compose.excludeList[i].filterList[j].Op = FilterOperatorIsA)) then
+            if not cs.doesFilter(fvs.compose.excludeList[i].filterList[j].property_, fvs.compose.excludeList[i].filterList[j].Op, fvs.compose.excludeList[i].filterList[j].value) then
+              raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.excludeList[i].filterList[j].Op]+ ' '+fvs.compose.excludeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
+      end;
     end;
   end;
 end;
@@ -271,6 +276,13 @@ begin
 end;
 
 function TValueSetChecker.check(code: TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters;
+  function Summary(code: TFhirCodeableConcept) : String;
+  begin
+    if (code.codingList.Count = 1) then
+      result := 'The code provided is not '
+    else
+      result := 'None of the codes provided are ';
+  end;
 var
   list : TStringList;
   i : integer;
@@ -280,6 +292,8 @@ var
   prov : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
 begin
+  if FVs = nil then
+    raise Exception.Create('Error: cannot validate a CodeableConcept without a nominated valueset');
   result := TFhirParameters.Create;
   try
     list := TStringList.Create;
@@ -329,7 +343,10 @@ begin
         end;
       end;
       if (not ok.value) then
-        result.AddParameter('message', 'None of the supplied codes are in the value set '+fvs.name);
+        if fvs.name = '' then
+          result.AddParameter('message', Summary(code) +' valid')
+        else
+          result.AddParameter('message', Summary(code) +' valid in the value set '+fvs.name);
 
     finally
       list.Free;

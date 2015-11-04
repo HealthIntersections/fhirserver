@@ -77,6 +77,7 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "
 Source: "C:\work\fhirserver\Exec\FHIRServer-dev64.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
+Source: "C:\work\fhirserver\Exec\auth.example.ini";                   DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "auth.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
 
 ; Web resources
@@ -89,7 +90,7 @@ Source: "C:\work\org.hl7.fhir\build\publish\validation-min.xml.zip";            
 Source: "C:\ProgramData\FHIRServer\ucum.cache";                       DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\ProgramData\FHIRServer\dicom.cache";                      DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\ProgramData\FHIRServer\loinc.cache";                      DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\work\fhirserver\tx\scripts\*.*";                          DestDir: "{app}\sql"
+Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
 Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion
@@ -100,8 +101,9 @@ Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    Des
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "source"; String: "{app}\spec"
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "other";  String: "{app}\web"
 Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc.cache"
-Filename: "{app}\fhirserver.ini"; Section: "ucum"; Key: "cache";  String: "{commonappdata}\FHIRServer\ucum.cache"
+Filename: "{app}\fhirserver.ini"; Section: "ucum"; Key: "cache";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
 Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
+Filename: "{app}\fhirserver.ini"; Section: "web";  Key: "clients";  String: "{app}\auth.ini"
 
 [Icons]
 Name: "{group}\FHIR Server";        Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    

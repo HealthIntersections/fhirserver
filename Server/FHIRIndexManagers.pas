@@ -199,26 +199,138 @@ Type
     function ResolveSpace(space : String):integer;
   end;
 
+  TFHIRIndexInformation = class (TAdvObject)
+  private
+    FIndexes : TFhirIndexList;
+    FComposites : TFhirCompositeList;
+    FNarrativeIndex : Integer;
+    procedure buildIndexes;
+    procedure buildIndexesBundle;
+    procedure buildIndexesAllergyIntolerance;
+    procedure buildIndexesCarePlan;
+    procedure buildIndexesConformance;
+    procedure buildIndexesDevice;
+    procedure buildIndexesDiagnosticReport;
+    procedure buildIndexesDiagnosticOrder;
+    procedure buildIndexesComposition;
+    procedure buildIndexesDocumentReference;
+    procedure buildIndexesDocumentManifest;
+    procedure buildIndexesEncounter;
+    procedure buildIndexesGroup;
+    procedure buildIndexesImagingStudy;
+    procedure buildIndexesImmunization;
+    procedure buildIndexesImmunizationRecommendation;
+    procedure buildIndexesOperationOutcome;
+    procedure buildIndexesList;
+    procedure buildIndexesLocation;
+    procedure buildIndexesMedication;
+    procedure buildIndexesMedicationAdministration;
+    procedure buildIndexesMedicationOrder;
+    procedure buildIndexesMedicationDispense;
+    procedure buildIndexesMedicationStatement;
+    procedure buildIndexesMessageHeader;
+    procedure buildIndexesObservation;
+    procedure buildIndexesOrder;
+    procedure buildIndexesOrderResponse;
+    procedure buildIndexesOrganization;
+    procedure buildIndexesPatient;
+    procedure buildIndexesMedia;
+    procedure buildIndexesProcedure;
+    procedure buildIndexesCondition;
+    procedure buildIndexesProvenance;
+    procedure buildIndexesPractitioner;
+    procedure buildIndexesQuestionnaire;
+    procedure buildIndexesValueSet;
+    procedure BuildIndexesConceptMap;
+    procedure buildIndexesSpecimen;
+    procedure buildIndexesSubstance;
+    procedure buildIndexesBinary;
+    procedure BuildIndexesRelatedPerson;
+    procedure BuildIndexesSupplyDelivery;
+    procedure BuildIndexesSupplyRequest;
+    procedure buildIndexesAuditEvent;
+    procedure buildIndexesStructureDefinition;
+    procedure buildIndexesFlag;
+    procedure buildIndexesFamilyMemberHistory;
+    procedure BuildIndexesCoverage;
+    procedure BuildIndexesClaimResponse;
+    procedure BuildIndexesContract;
+    procedure BuildIndexesClaim;
+    procedure BuildIndexesBasic;
+    procedure buildIndexesQuestionnaireResponse;
+    procedure BuildIndexesSlot;
+    procedure BuildIndexesAppointment;
+    procedure BuildIndexesSchedule;
+    procedure BuildIndexesAppointmentResponse;
+    procedure BuildIndexesHealthcareService;
+    procedure BuildIndexesDataElement;
+    procedure BuildIndexesTestScript;
+    procedure BuildIndexesNamingSystem;
+    procedure BuildIndexesSubscription;
+    procedure BuildIndexesDetectedIssue;
+    procedure BuildIndexesRiskAssessment;
+    procedure BuildIndexesOperationDefinition;
+    procedure BuildIndexesReferralRequest;
+    procedure BuildIndexesNutritionOrder;
+    procedure buildIndexesBodySite;
+    procedure buildIndexesClinicalImpression;
+    procedure buildIndexesCommunication;
+    procedure buildIndexesCommunicationRequest;
+    procedure buildIndexesDeviceComponent;
+    procedure buildIndexesDeviceMetric;
+    procedure buildIndexesDeviceUseRequest;
+    procedure buildIndexesDeviceUseStatement;
+    procedure buildIndexesEligibilityRequest;
+    procedure buildIndexesEligibilityResponse;
+    procedure buildIndexesEnrollmentRequest;
+    procedure buildIndexesEnrollmentResponse;
+    procedure buildIndexesEpisodeOfCare;
+    procedure buildIndexesExplanationOfBenefit;
+    procedure buildIndexesExtensionDefinition;
+    procedure buildIndexesGoal;
+    procedure buildIndexesImagingObjectSelection;
+    procedure buildIndexesPaymentNotice;
+    procedure buildIndexesPerson;
+    procedure buildIndexesProcedureRequest;
+    procedure buildIndexesSearchParameter;
+    procedure buildIndexesVisionPrescription;
+    procedure buildIndexesProcessRequest;
+    procedure buildIndexesProcessResponse;
+    procedure buildIndexesPaymentReconciliation;
+    procedure buildIndexesAccount;
+    procedure buildIndexesImplementationGuide;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Link : TFHIRIndexInformation; overload;
+    procedure ReconcileIndexes(connection : TKDBConnection);
+
+    Function GetTargetsByName(types : TFhirResourceTypeSet; name : String) : TFhirResourceTypeSet;
+    Function GetKeyByName(name : String) : integer;
+    Function GetTypeByName(types : TFhirResourceTypeSet; name : String) : TFhirSearchParamType;
+    Function GetComposite(types : TFhirResourceTypeSet; name : String; var otypes : TFhirResourceTypeSet) : TFhirComposite;
+
+    property Indexes : TFhirIndexList read FIndexes;
+    property Composites : TFhirCompositeList read FComposites;
+    Property NarrativeIndex : integer read FNarrativeIndex;
+  end;
+
   {$HINTS OFF}
   TFhirIndexManager = class (TAdvObject)
   private
+    FInfo : TFHIRIndexInformation;
     FKeyEvent : TFHIRGetNextKey;
     FSpaces : TFhirIndexSpaces;
-    FIndexes : TFhirIndexList;
-    FComposites : TFhirCompositeList;
     FPatientCompartments : TFhirCompartmentEntryList;
     FEntries : TFhirIndexEntryList;
     FMasterKey : Integer;
-    FNarrativeIndex : Integer;
     FBases : TStringList;
     FTerminologyServer : TTerminologyServerStore;
 
-    procedure ReconcileIndexes;
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparator; var low, high : String);
 
     function EncodeXhtml(r : TFhirDomainResource) : TBytes;
 
-    procedure buildIndexes;
     procedure buildIndexValues(key : integer; id : String; context, resource : TFhirResource);
 
     procedure patientCompartment(key : integer; reference : TFhirReference); overload;
@@ -375,125 +487,20 @@ Type
     procedure BuildIndexValuesProcessResponse(key : integer; id : string; context : TFhirResource; resource : TFhirProcessResponse);
     procedure BuildIndexValuesPaymentReconciliation(key : integer; id : string; context : TFhirResource; resource : TFhirPaymentReconciliation);
     procedure BuildIndexValuesAccount(key : integer; id : string; context : TFhirResource; resource : TFhirAccount);
+
     procedure BuildIndexValuesImplementationGuide(key : integer; id : string; context : TFhirResource; resource : TFhirImplementationGuide);
-
-    procedure buildIndexesBundle;
-
-    procedure buildIndexesAllergyIntolerance;
-    procedure buildIndexesCarePlan;
-    procedure buildIndexesConformance;
-    procedure buildIndexesDevice;
-    procedure buildIndexesDiagnosticReport;
-    procedure buildIndexesDiagnosticOrder;
-    procedure buildIndexesComposition;
-    procedure buildIndexesDocumentReference;
-    procedure buildIndexesDocumentManifest;
-    procedure buildIndexesEncounter;
-    procedure buildIndexesGroup;
-    procedure buildIndexesImagingStudy;
-    procedure buildIndexesImmunization;
-    procedure buildIndexesImmunizationRecommendation;
-    procedure buildIndexesOperationOutcome;
-    procedure buildIndexesList;
-    procedure buildIndexesLocation;
-    procedure buildIndexesMedication;
-    procedure buildIndexesMedicationAdministration;
-    procedure buildIndexesMedicationOrder;
-    procedure buildIndexesMedicationDispense;
-    procedure buildIndexesMedicationStatement;
-    procedure buildIndexesMessageHeader;
-    procedure buildIndexesObservation;
-    procedure buildIndexesOrder;
-    procedure buildIndexesOrderResponse;
-    procedure buildIndexesOrganization;
-    procedure buildIndexesPatient;
-    procedure buildIndexesMedia;
-    procedure buildIndexesProcedure;
-    procedure buildIndexesCondition;
-    procedure buildIndexesProvenance;
-    procedure buildIndexesPractitioner;
-    procedure buildIndexesQuestionnaire;
-    procedure buildIndexesValueSet;
-    procedure BuildIndexesConceptMap;
-    procedure buildIndexesSpecimen;
-    procedure buildIndexesSubstance;
-    procedure buildIndexesBinary;
-    procedure BuildIndexesRelatedPerson;
-    procedure BuildIndexesSupplyDelivery;
-    procedure BuildIndexesSupplyRequest;
-    procedure buildIndexesAuditEvent;
-    procedure buildIndexesStructureDefinition;
-    procedure buildIndexesFlag;
-    procedure buildIndexesFamilyMemberHistory;
-    procedure BuildIndexesCoverage;
-    procedure BuildIndexesClaimResponse;
-    procedure BuildIndexesContract;
-    procedure BuildIndexesClaim;
-    procedure BuildIndexesBasic;
-    procedure buildIndexesQuestionnaireResponse;
-    procedure BuildIndexesSlot;
-    procedure BuildIndexesAppointment;
-    procedure BuildIndexesSchedule;
-    procedure BuildIndexesAppointmentResponse;
-    procedure BuildIndexesHealthcareService;
-    procedure BuildIndexesDataElement;
-    procedure BuildIndexesTestScript;
-    procedure BuildIndexesNamingSystem;
-    procedure BuildIndexesSubscription;
-    procedure BuildIndexesDetectedIssue;
-    procedure BuildIndexesRiskAssessment;
-    procedure BuildIndexesOperationDefinition;
-    procedure BuildIndexesReferralRequest;
-    procedure BuildIndexesNutritionOrder;
-    procedure buildIndexesBodySite;
-    procedure buildIndexesClinicalImpression;
-    procedure buildIndexesCommunication;
-    procedure buildIndexesCommunicationRequest;
-    procedure buildIndexesDeviceComponent;
-    procedure buildIndexesDeviceMetric;
-    procedure buildIndexesDeviceUseRequest;
-    procedure buildIndexesDeviceUseStatement;
-    procedure buildIndexesEligibilityRequest;
-    procedure buildIndexesEligibilityResponse;
-    procedure buildIndexesEnrollmentRequest;
-    procedure buildIndexesEnrollmentResponse;
-    procedure buildIndexesEpisodeOfCare;
-    procedure buildIndexesExplanationOfBenefit;
-    procedure buildIndexesExtensionDefinition;
-    procedure buildIndexesGoal;
-    procedure buildIndexesImagingObjectSelection;
-    procedure buildIndexesPaymentNotice;
-    procedure buildIndexesPerson;
-    procedure buildIndexesProcedureRequest;
-    procedure buildIndexesSearchParameter;
-    procedure buildIndexesVisionPrescription;
-    procedure buildIndexesProcessRequest;
-    procedure buildIndexesProcessResponse;
-    procedure buildIndexesPaymentReconciliation;
-    procedure buildIndexesAccount;
-    procedure buildIndexesImplementationGuide;
-
-
     procedure processCompartmentTags(key : integer; id: String; tags : TFHIRTagList);
     procedure processUnCompartmentTags(key : integer; id: String; tags : TFHIRTagList);
     procedure SetTerminologyServer(const Value: TTerminologyServerStore);
 
   public
-    constructor Create(aSpaces : TFhirIndexSpaces);
+    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
-    property Indexes : TFhirIndexList read FIndexes;
-    property Composites : TFhirCompositeList read FComposites;
     property TerminologyServer : TTerminologyServerStore read FTerminologyServer write SetTerminologyServer;
     property Bases : TStringList read FBases write FBases;
     function execute(key : integer; id: String; resource : TFhirResource; tags : TFHIRTagList) : String;
-    Function GetKeyByName(name : String) : integer;
-    Function GetTypeByName(types : TFhirResourceTypeSet; name : String) : TFhirSearchParamType;
-    Function GetComposite(types : TFhirResourceTypeSet; name : String; var otypes : TFhirResourceTypeSet) : TFhirComposite;
-    Function GetTargetsByName(types : TFhirResourceTypeSet; name : String) : TFhirResourceTypeSet;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
-    Property NarrativeIndex : integer read FNarrativeIndex;
-    class function noIndexing(a: TFhirResourceType): boolean; static;
   end;
 
 function normaliseDecimal(v : String): String;
@@ -694,18 +701,13 @@ end;
 
 { TFhirIndexManager }
 
-constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces);
+constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation);
 begin
   inherited Create;
   FPatientCompartments := TFhirCompartmentEntryList.create;
-  FSpaces := TFhirIndexSpaces(aSpaces.Link);
-  FIndexes := TFhirIndexList.create;
-  FComposites := TFhirCompositeList.create;
-  buildIndexes;
-
+  FSpaces := aSpaces;
+  FInfo := aInfo;
   FEntries := TFhirIndexEntryList.Create;
-  if FSpaces <> nil then
-    ReconcileIndexes;
 end;
 
 destructor TFhirIndexManager.Destroy;
@@ -714,8 +716,7 @@ begin
   FPatientCompartments.Free;
   FSpaces.Free;
   FEntries.Free;
-  FIndexes.Free;
-  FComposites.Free;
+  FInfo.Free;
   inherited;
 end;
 
@@ -733,122 +734,6 @@ end;
 procedure TFhirIndexManager.deviceCompartmentNot(key: integer; type_,
   id: String);
 begin
-
-end;
-
-class function TFhirIndexManager.noIndexing(a : TFhirResourceType) : boolean;
-begin
-  result := a in [frtParameters];
-
-end;
-
-procedure TFhirIndexManager.buildIndexes;
-var
-  i : TFhirResourceType;
-begin
-  // the order of these matters when building search forms
-  buildIndexesPractitioner;
-  buildIndexesPatient;
-  buildIndexesOrganization;
-
-  buildIndexesAllergyIntolerance;
-  buildIndexesCarePlan;
-  buildIndexesConformance;
-  buildIndexesDevice;
-  buildIndexesDiagnosticReport;
-  buildIndexesDiagnosticOrder;
-  buildIndexesComposition;
-  buildIndexesDocumentReference;
-  buildIndexesDocumentManifest;
-  buildIndexesGroup;
-  buildIndexesImagingStudy;
-  buildIndexesImmunization;
-  buildIndexesImmunizationRecommendation;
-  buildIndexesOperationOutcome;
-  buildIndexesList;
-  buildIndexesLocation;
-  buildIndexesMedicationAdministration;
-  buildIndexesMedication;
-  buildIndexesMedicationOrder;
-  buildIndexesMedicationDispense;
-  buildIndexesMedicationStatement;
-  buildIndexesMessageHeader;
-  buildIndexesObservation;
-  buildIndexesOrder;
-  buildIndexesOrderResponse;
-  buildIndexesMedia;
-  buildIndexesCondition;
-  buildIndexesProcedure;
-  buildIndexesProvenance;
-  buildIndexesQuestionnaire;
-  buildIndexesSpecimen;
-  buildIndexesSubstance;
-  buildIndexesValueSet;
-  buildIndexesConceptMap;
-  buildIndexesEncounter;
-  BuildIndexesRelatedPerson;
-  BuildIndexesSupplyRequest;
-  BuildIndexesSupplyDelivery;
-  buildIndexesAuditEvent;
-  buildIndexesStructureDefinition;
-  buildIndexesFamilyMemberHistory;
-  buildIndexesFlag;
-  buildIndexesBundle;
-  BuildIndexesCoverage;
-  BuildIndexesClaimResponse;
-  BuildIndexesContract;
-  BuildIndexesClaim;
-  BuildIndexesBasic;
-  buildIndexesQuestionnaireResponse;
-  BuildIndexesSlot;
-  BuildIndexesAppointment;
-  BuildIndexesSchedule;
-  BuildIndexesAppointmentResponse;
-  BuildIndexesHealthcareService;
-  BuildIndexesDataElement;
-  BuildIndexesTestScript;
-  BuildIndexesNamingSystem;
-  BuildIndexesSubscription;
-  BuildIndexesDetectedIssue;
-  BuildIndexesRiskAssessment;
-  BuildIndexesOperationDefinition;
-  BuildIndexesReferralRequest;
-  BuildIndexesNutritionOrder;
-  buildIndexesBodySite;
-  buildIndexesClinicalImpression;
-  buildIndexesCommunication;
-  buildIndexesCommunicationRequest;
-  buildIndexesDeviceComponent;
-  buildIndexesDeviceMetric;
-  buildIndexesDeviceUseRequest;
-  buildIndexesDeviceUseStatement;
-  buildIndexesEligibilityRequest;
-  buildIndexesEligibilityResponse;
-  buildIndexesEnrollmentRequest;
-  buildIndexesEnrollmentResponse;
-  buildIndexesEpisodeOfCare;
-  buildIndexesExplanationOfBenefit;
-  buildIndexesExtensionDefinition;
-  buildIndexesGoal;
-  buildIndexesImagingObjectSelection;
-  buildIndexesPaymentNotice;
-  buildIndexesPerson;
-  buildIndexesProcedureRequest;
-  buildIndexesSearchParameter;
-  buildIndexesVisionPrescription;
-  buildIndexesProcessRequest;
-  buildIndexesProcessResponse;
-  buildIndexesPaymentReconciliation;
-  buildIndexesBinary;
-  buildIndexesAccount;
-  buildIndexesImplementationGuide;
-
-  for I := TFhirResourceType(1) to High(TFhirResourceType) do
-    if not noIndexing(I) and (FIndexes.getByName(i, '_id') = nil) then
-    begin
-      writeln('No registration for '+CODES_TFHIRResourceType[i]);
-      raise Exception.Create('No registration for '+CODES_TFHIRResourceType[i]);
-    end;
 
 end;
 
@@ -1035,7 +920,7 @@ var
 begin
   if (value = '') then
     exit;
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
 
@@ -1058,7 +943,7 @@ var
 begin
   if (value = '') then
     exit;
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeReference]) then //todo: fix up text
@@ -1078,7 +963,7 @@ var
 begin
   if (value1 = '') then
     exit;
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
   if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate]) then //todo: fix up text
@@ -1103,7 +988,7 @@ var
   ndx : TFhirIndex;
   concept : integer;
 begin
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
   if not (ndx.SearchType in [SearchParamTypeToken]) then //todo: fix up text
@@ -1122,7 +1007,7 @@ begin
   if (value = nil) or (value.value = '') then
     exit;
 
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
   if not (ndx.SearchType in [SearchParamTypeToken]) then //todo: fix up text
@@ -1145,29 +1030,6 @@ procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integ
 begin
   if (value <> nil) and (value.value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
-end;
-
-procedure TFhirIndexManager.ReconcileIndexes;
-var
-  i : integer;
-begin
-  FSpaces.FDB.SQL := 'select * from Indexes';
-  FSpaces.FDb.prepare;
-  FSpaces.FDb.execute;
-  while FSpaces.FDb.FetchNext do
-  begin
-    for i := 0 to FIndexes.Count - 1 Do
-      if SameText(FIndexes[i].Name, FSpaces.FDb.ColStringByName['Name']) then
-        FIndexes[i].key := FSpaces.FDb.ColIntegerByName['IndexKey'];
-
-    for i := 0 to FComposites.Count - 1 Do
-      if SameText(FComposites[i].Name, FSpaces.FDb.ColStringByName['Name']) then
-        FComposites[i].key := FSpaces.FDb.ColIntegerByName['IndexKey'];
-
-    if FSpaces.FDb.ColStringByName['Name'] = NARRATIVE_INDEX_NAME then
-      FNarrativeIndex := FSpaces.FDb.ColIntegerByName['IndexKey'];
-  end;
-  FSpaces.FDb.terminate;
 end;
 
 procedure TFhirIndexManager.relatedPersonCompartment(key: integer; type_,
@@ -1245,7 +1107,7 @@ begin
   FSpaces.FDB.ExecSQL('update IndexEntries set Flag = 2 where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
   FSpaces.FDB.ExecSQL('update IndexEntries set Flag = 2 where Target in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
   FSpaces.FDB.ExecSQL('delete from SearchEntries where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
-  FSpaces.FDB.ExecSQL('delete from Ids where MasterResourceKey = '+inttostr(key));
+  FSpaces.FDB.ExecSQL('update Ids set deleted = 1 where MasterResourceKey = '+inttostr(key));
   FPatientCompartments.Clear;
 
   processCompartmentTags(key, id, tags);
@@ -1257,7 +1119,7 @@ begin
     FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, Flag, Extension, Xhtml) values (:k, :i, :r, 1, ''html'', :xb)';
     FSpaces.FDB.prepare;
     FSpaces.FDB.BindInteger('k', FKeyEvent(ktEntries, frtNull, dummy));
-    FSpaces.FDB.BindInteger('i', FNarrativeIndex);
+    FSpaces.FDB.BindInteger('i', FInfo.FNarrativeIndex);
     FSpaces.FDB.BindInteger('r', key);
     FSpaces.FDB.BindBlobFromBytes('xb', EncodeXhtml(TFhirDomainResource(resource)));
     FSpaces.FDB.execute;
@@ -1342,7 +1204,7 @@ var
 begin
   if (value = nil) or (value.code = '') then
     exit;
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes <> []) then
@@ -1415,28 +1277,6 @@ begin
 end;
 
 
-function TFhirIndexManager.GetComposite(types: TFhirResourceTypeSet; name: String; var otypes: TFhirResourceTypeSet): TFhirComposite;
-var
-  i : integer;
-begin
-  oTypes := types;
-
-  i := 0;
-  result := nil;
-  while (i < FComposites.Count) do
-  begin
-    if SameText(FComposites.item[i].name, name) and (FComposites.item[i].FResourceType in types) then
-      if result = nil then
-      begin
-        result := FComposites.item[i];
-        oTypes := [FComposites.item[i].FResourceType];
-      end
-      else
-        raise Exception.Create('Ambiguous composite reference "'+name+'"');
-    inc(i);
-  end;
-end;
-
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value : TFhirRange; name : String);
 var
   ndx : TFhirIndex;
@@ -1448,7 +1288,7 @@ begin
   if value = nil then
     exit;
 
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes <> []) then
@@ -1509,7 +1349,7 @@ begin
   if value = nil then
     exit;
 
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes <> []) then
@@ -1580,7 +1420,7 @@ procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integ
 var
   ndx : TFhirIndex;
 begin
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes <> []) then
@@ -1597,7 +1437,7 @@ var
 begin
   if (value = nil) or (value.value = '') then
     exit;
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes <> []) then
@@ -1639,7 +1479,7 @@ var
 begin
   if (value = nil) or (value.value = '') then
     exit;
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes <> []) then
@@ -1780,9 +1620,9 @@ begin
   if (value.reference = '') then
     exit;
 
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) and (name = 'patient') then
-    ndx := FIndexes.getByName(aType, 'subject');
+    ndx := FInfo.FIndexes.getByName(aType, 'subject');
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes = []) then
@@ -1856,48 +1696,12 @@ begin
     FEntries.add(key, parent, ndx, ref, id, '', target, ndx.SearchType);
 end;
 
-function TFhirIndexManager.GetKeyByName(name: String): integer;
-var
-  i : integer;
-begin
-  result := 0;
-  for i := 0 to FIndexes.Count - 1 Do
-    if FIndexes[i].Name = name then
-    begin
-      result := FIndexes[i].Key;
-      exit;
-    end;
-end;
-
-function TFhirIndexManager.GetTargetsByName(types: TFhirResourceTypeSet; name: String): TFhirResourceTypeSet;
-var
-  i : integer;
-begin
-  result := [];
-  for i := 0 to FIndexes.Count - 1 Do
-    if SameText(FIndexes[i].Name, name) and (FIndexes[i].ResourceType in types) then
-      result := result + FIndexes[i].TargetTypes;
-end;
-
-function TFhirIndexManager.GetTypeByName(types: TFhirResourceTypeSet; name: String): TFhirSearchParamType;
-var
-  i : integer;
-begin
-  result := SearchParamTypeNull;
-  for i := 0 to FIndexes.Count - 1 Do
-    if SameText(FIndexes[i].Name, name) and ((FIndexes[i].ResourceType in types) or (types = [frtNull])) then
-      if (result <> SearchParamTypeNull) and (result <> FIndexes[i].FSearchType) And ((FIndexes[i].FSearchType in [SearchParamTypeDate, SearchParamTypeToken]) or (result in [SearchParamTypeDate, SearchParamTypeToken])) then
-        raise Exception.create('Chained Parameters cross resource joins that create disparate index handling requirements')
-      else
-        result := FIndexes[i].FSearchType;
-end;
-
 Const
   CHECK_TSearchParamsEncounter : Array[TSearchParamsEncounter] of TSearchParamsEncounter = (spEncounter__content, spEncounter__id, spEncounter__lastUpdated, spEncounter__profile, spEncounter__query, spEncounter__security, spEncounter__tag, spEncounter__text,
     spEncounter_Appointment, spEncounter_Condition, spEncounter_Date, spEncounter_Episodeofcare, spEncounter_Identifier, spEncounter_Incomingreferral, spEncounter_Indication, spEncounter_Length, spEncounter_Location, spEncounter_Location_period,
     spEncounter_Part_of, spEncounter_Participant, spEncounter_Participant_type, spEncounter_Patient, spEncounter_Practitioner, spEncounter_Procedure, spEncounter_Reason, spEncounter_Special_arrangement, spEncounter_Status, spEncounter_Type);
 
-procedure TFhirIndexManager.buildIndexesEncounter;
+procedure TFhirIndexInformation.buildIndexesEncounter;
 var
   a : TSearchParamsEncounter;
 begin
@@ -1952,7 +1756,7 @@ Const
 
 
 
-procedure TFhirIndexManager.buildIndexesLocation;
+procedure TFhirIndexInformation.buildIndexesLocation;
 var
   a : TSearchParamsLocation;
 begin
@@ -1997,7 +1801,7 @@ Const
 
 
 
-procedure TFhirIndexManager.buildIndexesDocumentReference;
+procedure TFhirIndexInformation.buildIndexesDocumentReference;
 var
   a : TSearchParamsDocumentReference;
 begin
@@ -2068,7 +1872,7 @@ Const
   CHECK_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of TSearchParamsDocumentManifest = (spDocumentManifest__content, spDocumentManifest__id, spDocumentManifest__lastUpdated, spDocumentManifest__profile, spDocumentManifest__query, spDocumentManifest__security, spDocumentManifest__tag, spDocumentManifest__text,
   spDocumentManifest_Author, spDocumentManifest_Content_ref, spDocumentManifest_Created, spDocumentManifest_Description, spDocumentManifest_Identifier, spDocumentManifest_Patient, spDocumentManifest_Recipient, spDocumentManifest_Related_id, spDocumentManifest_Related_ref, spDocumentManifest_Source, spDocumentManifest_Status, spDocumentManifest_Subject, spDocumentManifest_Type);
 
-procedure TFhirIndexManager.buildIndexesDocumentManifest;
+procedure TFhirIndexInformation.buildIndexesDocumentManifest;
 var
   a : TSearchParamsDocumentManifest;
 begin
@@ -2127,7 +1931,7 @@ var
 begin
   if (value = nil) or (value.value = '') then
     exit;
-  ndx := FIndexes.getByName(aType, name);
+  ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes <> []) then
@@ -2141,7 +1945,7 @@ end;
 Const
   CHECK_TSearchParamsBundle : Array[TSearchParamsBundle] of TSearchParamsBundle = (spBundle__content, spBundle__id, spBundle__lastUpdated, spBundle__profile, spBundle__query, spBundle__security, spBundle__tag, spBundle__text, spBundle_Composition, spBundle_Message, spBundle_Type);
 
-procedure TFhirIndexManager.buildIndexesBundle;
+procedure TFhirIndexInformation.buildIndexesBundle;
 var
   a : TSearchParamsBundle;
 begin
@@ -2175,7 +1979,7 @@ begin
 
   if inner <> nil then
   begin
-    ndx := FIndexes.getByName(frtBundle, name);
+    ndx := FInfo.FIndexes.getByName(frtBundle, name);
     if (ndx = nil) then
       raise Exception.create('Unknown index Bundle.'+name);
     if (ndx.TargetTypes = []) then
@@ -2204,7 +2008,7 @@ Const
   CHECK_TSearchParamsFlag : Array[TSearchParamsFlag] of TSearchParamsFlag = (spFlag__content, spFlag__id, spFlag__lastUpdated, spFlag__profile, spFlag__query, spFlag__security, spFlag__tag, spFlag__text,
     spFlag_Author, spFlag_Date, spFlag_Encounter, spFlag_Patient, spFlag_Subject);
 
-procedure TFhirIndexManager.buildIndexesFlag;
+procedure TFhirIndexInformation.buildIndexesFlag;
 var
   a : TSearchParamsFlag;
 begin
@@ -2232,7 +2036,7 @@ Const
     spAllergyIntolerance_Category, spAllergyIntolerance_Criticality, spAllergyIntolerance_Date, spAllergyIntolerance_Identifier, spAllergyIntolerance_Last_date, spAllergyIntolerance_Manifestation, spAllergyIntolerance_Onset, spAllergyIntolerance_Patient,
     spAllergyIntolerance_Recorder, spAllergyIntolerance_Reporter, spAllergyIntolerance_Route, spAllergyIntolerance_Severity, spAllergyIntolerance_Status, spAllergyIntolerance_Substance, spAllergyIntolerance_Type);
 
-procedure TFhirIndexManager.buildIndexesAllergyIntolerance;
+procedure TFhirIndexInformation.buildIndexesAllergyIntolerance;
 var
   a : TSearchParamsAllergyIntolerance;
 begin
@@ -2280,7 +2084,7 @@ Const
     spSubstance_Category, spSubstance_Code, spSubstance_Container_identifier, spSubstance_Expiry, spSubstance_Identifier, spSubstance_Quantity, spSubstance_Substance);
 
 
-procedure TFhirIndexManager.buildIndexesSubstance;
+procedure TFhirIndexInformation.buildIndexesSubstance;
 var
   a : TSearchParamsSubstance;
 begin
@@ -2328,7 +2132,7 @@ Const
      spBasic_Author, spBasic_Code, spBasic_Created, spBasic_Identifier, spBasic_Patient, spBasic_Subject);
 
 
-procedure TFhirIndexManager.buildIndexesBasic;
+procedure TFhirIndexInformation.buildIndexesBasic;
 var
   a : TSearchParamsBasic;
 begin
@@ -2357,7 +2161,7 @@ Const
   CHECK_TSearchParamsCoverage : Array[TSearchParamsCoverage] of TSearchParamsCoverage = ( spCoverage__content, spCoverage__id, spCoverage__lastUpdated, spCoverage__profile, spCoverage__query, spCoverage__security, spCoverage__tag, spCoverage__text,
     spCoverage_Dependent, spCoverage_Group, spCoverage_Identifier, spCoverage_Issuer, spCoverage_Plan, spCoverage_Sequence, spCoverage_Subplan, spCoverage_Type);
 
-procedure TFhirIndexManager.buildIndexesCoverage;
+procedure TFhirIndexInformation.buildIndexesCoverage;
 var
   a : TSearchParamsCoverage;
 begin
@@ -2387,7 +2191,7 @@ Const
   CHECK_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of TSearchParamsClaimResponse = ( spClaimResponse__content, spClaimResponse__id, spClaimResponse__lastUpdated, spClaimResponse__profile, spClaimResponse__query, spClaimResponse__security, spClaimResponse__tag, spClaimResponse__text,
      spClaimResponse_Identifier);
 
-procedure TFhirIndexManager.buildIndexesClaimResponse;
+procedure TFhirIndexInformation.buildIndexesClaimResponse;
 var
   a : TSearchParamsClaimResponse;
 begin
@@ -2410,7 +2214,7 @@ Const
   CHECK_TSearchParamsClaim : Array[TSearchParamsClaim] of TSearchParamsClaim = ( spClaim__content, spClaim__id, spClaim__lastUpdated, spClaim__profile, spClaim__query, spClaim__security, spClaim__tag, spClaim__text,
     spClaim_Identifier, spClaim_Patient, spClaim_Priority, spClaim_Provider, spClaim_Use);
 
-procedure TFhirIndexManager.buildIndexesClaim;
+procedure TFhirIndexInformation.buildIndexesClaim;
 var
   a : TSearchParamsClaim;
 begin
@@ -2436,7 +2240,7 @@ Const
   CHECK_TSearchParamsContract : Array[TSearchParamsContract] of TSearchParamsContract = ( spContract__content, spContract__id, spContract__lastUpdated, spContract__profile, spContract__query, spContract__security, spContract__tag, spContract__text,
      spContract_Actor, spContract_Identifier, spContract_Patient, spContract_Signer, spContract_Subject);
 
-procedure TFhirIndexManager.buildIndexesContract;
+procedure TFhirIndexInformation.buildIndexesContract;
 var
   a : TSearchParamsContract;
 begin
@@ -2478,7 +2282,7 @@ Const
   CHECK_TSearchParamsSupplyDelivery : Array[TSearchParamsSupplyDelivery] of TSearchParamsSupplyDelivery = ( spSupplyDelivery__content, spSupplyDelivery__id, spSupplyDelivery__lastUpdated, spSupplyDelivery__profile, spSupplyDelivery__query, spSupplyDelivery__security, spSupplyDelivery__tag, spSupplyDelivery__text,
     spSupplyDelivery_Identifier, spSupplyDelivery_Patient, spSupplyDelivery_Receiver, spSupplyDelivery_Status, spSupplyDelivery_Supplier);
 
-procedure TFhirIndexManager.buildIndexesSupplyDelivery;
+procedure TFhirIndexInformation.buildIndexesSupplyDelivery;
 var
   a : TSearchParamsSupplyDelivery;
 begin
@@ -2505,7 +2309,7 @@ Const
   CHECK_TSearchParamsSupplyRequest : Array[TSearchParamsSupplyRequest] of TSearchParamsSupplyRequest = ( spSupplyRequest__content, spSupplyRequest__id, spSupplyRequest__lastUpdated, spSupplyRequest__profile, spSupplyRequest__query, spSupplyRequest__security, spSupplyRequest__tag, spSupplyRequest__text,
     spSupplyRequest_Date, spSupplyRequest_Identifier, spSupplyRequest_Kind, spSupplyRequest_Patient, spSupplyRequest_Source, spSupplyRequest_Status, spSupplyRequest_Supplier);
 
-procedure TFhirIndexManager.buildIndexesSupplyRequest;
+procedure TFhirIndexInformation.buildIndexesSupplyRequest;
 var
   a : TSearchParamsSupplyRequest;
 begin
@@ -2535,7 +2339,7 @@ Const
     spRelatedPerson_Address, spRelatedPerson_Address_city, spRelatedPerson_Address_country, spRelatedPerson_Address_postalcode, spRelatedPerson_Address_state, spRelatedPerson_Address_use,
     spRelatedPerson_Birthdate, spRelatedPerson_Email, spRelatedPerson_Gender, spRelatedPerson_Identifier, spRelatedPerson_Name, spRelatedPerson_Patient, spRelatedPerson_Phone, spRelatedPerson_Phonetic, spRelatedPerson_Telecom);
 
-procedure TFhirIndexManager.buildIndexesRelatedPerson;
+procedure TFhirIndexInformation.buildIndexesRelatedPerson;
 var
   a : TSearchParamsRelatedPerson;
 begin
@@ -2650,7 +2454,7 @@ function TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer;
 var
   ndx : TFhirComposite;
 begin
-  ndx := FComposites.getByName(aType, name);
+  ndx := FInfo.FComposites.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown composite index '+name+' on type '+CODES_TFhirResourceType[aType]);
   if (ndx.Key = 0) then
@@ -2731,7 +2535,7 @@ Const
     spConformance_Url, spConformance_Version);
 
 
-procedure TFhirIndexManager.buildIndexesConformance();
+procedure TFhirIndexInformation.buildIndexesConformance();
 var
   a : TSearchParamsConformance;
 begin
@@ -2807,7 +2611,7 @@ Const
     spComposition_Attester, spComposition_Author, spComposition_Class, spComposition_Confidentiality, spComposition_Context, spComposition_Date, spComposition_Encounter, spComposition_Entry, spComposition_Identifier, spComposition_Patient, spComposition_Period, spComposition_Section, spComposition_Status, spComposition_Subject, spComposition_Title, spComposition_Type);
 
 
-procedure TFhirIndexManager.buildIndexesComposition;
+procedure TFhirIndexInformation.buildIndexesComposition;
 var
   a : TSearchParamsComposition;
 begin
@@ -2873,7 +2677,7 @@ Const
     spMessageHeader_Receiver, spMessageHeader_Response_id, spMessageHeader_Responsible, spMessageHeader_Source, spMessageHeader_Source_uri, spMessageHeader_Target, spMessageHeader_Timestamp);
 
 
-procedure TFhirIndexManager.buildIndexesMessageHeader;
+procedure TFhirIndexInformation.buildIndexesMessageHeader;
 var
   a : TSearchParamsMessageHeader;
 begin
@@ -2921,7 +2725,7 @@ Const
     spPractitioner_Address, spPractitioner_Address_city, spPractitioner_Address_country, spPractitioner_Address_postalcode, spPractitioner_Address_state, spPractitioner_Address_use, spPractitioner_Communication, spPractitioner_Email, spPractitioner_Family, spPractitioner_Gender, spPractitioner_Given, spPractitioner_Identifier, spPractitioner_Location, spPractitioner_Name, spPractitioner_Organization, spPractitioner_Phone, spPractitioner_Phonetic, spPractitioner_Role, spPractitioner_Specialty, spPractitioner_Telecom);
 
 
-procedure TFhirIndexManager.buildIndexesPractitioner;
+procedure TFhirIndexInformation.buildIndexesPractitioner;
 var
   a : TSearchParamsPractitioner;
 begin
@@ -2977,7 +2781,7 @@ Const
 
 
 
-procedure TFhirIndexManager.buildIndexesOrganization;
+procedure TFhirIndexInformation.buildIndexesOrganization;
 var
   a : TSearchParamsOrganization;
 begin
@@ -3011,7 +2815,7 @@ Const
      spGroup_Actual, spGroup_Characteristic, spGroup_Characteristic_value, spGroup_Code, spGroup_Exclude, spGroup_Identifier, spGroup_Member, spGroup_Type, spGroup_Value);
 
 
-procedure TFhirIndexManager.buildIndexesGroup;
+procedure TFhirIndexInformation.buildIndexesGroup;
 var
   a : TSearchParamsGroup;
 begin
@@ -3056,7 +2860,7 @@ Const
     spObservation_Device, spObservation_Encounter, spObservation_Identifier, spObservation_Patient, spObservation_Performer, spObservation_Related, spObservation_Related_target, spObservation_Related_type, spObservation_Specimen, spObservation_Status, spObservation_Subject, spObservation_Value_concept, spObservation_Value_date, spObservation_Value_quantity, spObservation_Value_string);
 
 
-procedure TFhirIndexManager.buildIndexesObservation;
+procedure TFhirIndexInformation.buildIndexesObservation;
 var
   a : TSearchParamsObservation;
 begin
@@ -3135,7 +2939,7 @@ Const
     spStructureDefinition_Abstract, spStructureDefinition_Base, spStructureDefinition_Base_path, spStructureDefinition_Code, spStructureDefinition_Context, spStructureDefinition_Context_type, spStructureDefinition_Date, spStructureDefinition_Description, spStructureDefinition_Display, spStructureDefinition_Experimental, spStructureDefinition_Ext_context,
     spStructureDefinition_Identifier, spStructureDefinition_Kind, spStructureDefinition_Name, spStructureDefinition_Path, spStructureDefinition_Publisher, spStructureDefinition_Status, spStructureDefinition_Type, spStructureDefinition_Url, spStructureDefinition_Valueset, spStructureDefinition_Version);
 
-procedure TFhirIndexManager.buildIndexesStructureDefinition;
+procedure TFhirIndexInformation.buildIndexesStructureDefinition;
 var
   a : TSearchParamsStructureDefinition;
 begin
@@ -3201,7 +3005,7 @@ Const
     spPatient_Active, spPatient_Address, spPatient_Address_city, spPatient_Address_country, spPatient_Address_postalcode, spPatient_Address_state, spPatient_Address_use, spPatient_Animal_breed, spPatient_Animal_species, spPatient_Birthdate, spPatient_Careprovider,
     spPatient_Deathdate, spPatient_Deceased, spPatient_Email, spPatient_Family, spPatient_Gender, spPatient_Given, spPatient_Identifier, spPatient_Language, spPatient_Link, spPatient_Name, spPatient_Organization, spPatient_Phone, spPatient_Phonetic, spPatient_Telecom);
 
-procedure TFhirIndexManager.buildIndexesPatient;
+procedure TFhirIndexInformation.buildIndexesPatient;
 var
   a : TSearchParamsPatient;
 begin
@@ -3295,7 +3099,7 @@ Const
     spDiagnosticReport__content, spDiagnosticReport__id, spDiagnosticReport__lastUpdated, spDiagnosticReport__profile, spDiagnosticReport__query, spDiagnosticReport__security, spDiagnosticReport__tag, spDiagnosticReport__text,
     spDiagnosticReport_Category, spDiagnosticReport_Code, spDiagnosticReport_Date, spDiagnosticReport_Diagnosis, spDiagnosticReport_Encounter, spDiagnosticReport_Identifier, spDiagnosticReport_Image, spDiagnosticReport_Issued, spDiagnosticReport_Patient, spDiagnosticReport_Performer, spDiagnosticReport_Request, spDiagnosticReport_Result, spDiagnosticReport_Specimen, spDiagnosticReport_Status, spDiagnosticReport_Subject);
 
-procedure TFhirIndexManager.buildIndexesDiagnosticReport;
+procedure TFhirIndexInformation.buildIndexesDiagnosticReport;
 var
   a : TSearchParamsDiagnosticReport;
 begin
@@ -3352,7 +3156,7 @@ Const
 
 
 
-procedure TFhirIndexManager.buildIndexesDiagnosticOrder;
+procedure TFhirIndexInformation.buildIndexesDiagnosticOrder;
 var
   a : TSearchParamsDiagnosticOrder;
 begin
@@ -3419,7 +3223,7 @@ const
     spValueSet_Code, spValueSet_Context, spValueSet_Date, spValueSet_Description, spValueSet_Expansion, spValueSet_Identifier, spValueSet_Name, spValueSet_Publisher, spValueSet_Reference, spValueSet_Status, spValueSet_System, spValueSet_Url, spValueSet_Version);
 
 
-procedure TFhirIndexManager.buildIndexesValueset;
+procedure TFhirIndexInformation.buildIndexesValueset;
 var
   a : TSearchParamsValueset;
 begin
@@ -3479,7 +3283,7 @@ const
     spConceptMap_Context, spConceptMap_Date, spConceptMap_Dependson, spConceptMap_Description, spConceptMap_Identifier, spConceptMap_Name, spConceptMap_Product, spConceptMap_Publisher, spConceptMap_Source,
     spConceptMap_Sourcecode, spConceptMap_Sourcesystem, spConceptMap_Sourceuri, spConceptMap_Status, spConceptMap_Target, spConceptMap_Targetcode, spConceptMap_Targetsystem, spConceptMap_Url, spConceptMap_Version);
 
-procedure TFhirIndexManager.buildIndexesConceptMap;
+procedure TFhirIndexInformation.buildIndexesConceptMap;
 var
   a : TSearchParamsConceptMap;
 begin
@@ -3540,7 +3344,7 @@ const
     spDevice_Identifier, spDevice_Location, spDevice_Manufacturer, spDevice_Model, spDevice_Organization, spDevice_Patient, spDevice_Type, spDevice_Udi, spDevice_Url);
 
 
-procedure TFhirIndexManager.buildIndexesDevice;
+procedure TFhirIndexInformation.buildIndexesDevice;
 var
   a : TSearchParamsDevice;
 begin
@@ -3573,7 +3377,7 @@ const
     spAuditEvent__content, spAuditEvent__id, spAuditEvent__lastUpdated, spAuditEvent__profile, spAuditEvent__query, spAuditEvent__security, spAuditEvent__tag, spAuditEvent__text,
     spAuditEvent_Action, spAuditEvent_Address, spAuditEvent_Altid, spAuditEvent_Date, spAuditEvent_Desc, spAuditEvent_Identity, spAuditEvent_Name, spAuditEvent_Object_type, spAuditEvent_Participant, spAuditEvent_Patient, spAuditEvent_Policy, spAuditEvent_Reference, spAuditEvent_Site, spAuditEvent_Source, spAuditEvent_Subtype, spAuditEvent_Type, spAuditEvent_User);
 
-procedure TFhirIndexManager.buildIndexesAuditEvent;
+procedure TFhirIndexInformation.buildIndexesAuditEvent;
 var
   a : TSearchParamsAuditEvent;
 begin
@@ -3634,7 +3438,7 @@ const
     spCondition_Asserter, spCondition_Body_site, spCondition_Category, spCondition_Clinicalstatus, spCondition_Code, spCondition_Date_recorded, spCondition_Encounter, spCondition_Evidence, spCondition_Identifier, spCondition_Onset, spCondition_Onset_info, spCondition_Patient, spCondition_Severity, spCondition_Stage);
 
 
-procedure TFhirIndexManager.buildIndexesCondition;
+procedure TFhirIndexInformation.buildIndexesCondition;
 var
   a : TSearchParamsCondition;
 begin
@@ -3691,7 +3495,7 @@ end;
 const
   CHECK_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of TSearchParamsOperationOutcome = (spOperationOutcome__content, spOperationOutcome__id, spOperationOutcome__lastUpdated, spOperationOutcome__profile, spOperationOutcome__query, spOperationOutcome__security, spOperationOutcome__tag, spOperationOutcome__text);
 
-procedure TFhirIndexManager.buildIndexesOperationOutcome;
+procedure TFhirIndexInformation.buildIndexesOperationOutcome;
 var
   a : TSearchParamsOperationOutcome;
 begin
@@ -3712,7 +3516,7 @@ const
   CHECK_TSearchParamsBinary : Array[TSearchParamsBinary] of TSearchParamsBinary = (spBinary__content, spBinary__id, spBinary__lastUpdated, spBinary__profile, spBinary__query, spBinary__security, spBinary__tag,  spBinary__text,spBinary_Contenttype);
 
 
-procedure TFhirIndexManager.buildIndexesBinary;
+procedure TFhirIndexInformation.buildIndexesBinary;
 var
   a : TSearchParamsBinary;
 begin
@@ -3736,7 +3540,7 @@ const
     spProvenance_Agent, spProvenance_End, spProvenance_Entity, spProvenance_Entitytype, spProvenance_Location, spProvenance_Patient, spProvenance_Sigtype, spProvenance_Start, spProvenance_Target, spProvenance_Userid);
 
 
-procedure TFhirIndexManager.buildIndexesProvenance;
+procedure TFhirIndexInformation.buildIndexesProvenance;
 var
   a : TSearchParamsProvenance;
 begin
@@ -3785,7 +3589,7 @@ const
      spMedication_Code, spMedication_Container, spMedication_Content, spMedication_Form, spMedication_Ingredient, spMedication_Manufacturer);
 
 
-procedure TFhirIndexManager.buildIndexesMedication;
+procedure TFhirIndexInformation.buildIndexesMedication;
 var
   a : TSearchParamsMedication;
 begin
@@ -3825,7 +3629,7 @@ const
 
 
 
-procedure TFhirIndexManager.buildIndexesMedicationAdministration;
+procedure TFhirIndexInformation.buildIndexesMedicationAdministration;
 var
   a : TSearchParamsMedicationAdministration;
 begin
@@ -3871,7 +3675,7 @@ const
     spMedicationOrder_Code, spMedicationOrder_Datewritten, spMedicationOrder_Encounter, spMedicationOrder_Identifier, spMedicationOrder_Medication, spMedicationOrder_Patient, spMedicationOrder_Prescriber, spMedicationOrder_Status);
 
 
-procedure TFhirIndexManager.buildIndexesMedicationOrder;
+procedure TFhirIndexInformation.buildIndexesMedicationOrder;
 var
   a : TSearchParamsMedicationOrder;
 begin
@@ -3904,10 +3708,10 @@ end;
 const
   CHECK_TSearchParamsMedicationDispense : Array[TSearchParamsMedicationDispense] of TSearchParamsMedicationDispense = ( spMedicationDispense__content, spMedicationDispense__id, spMedicationDispense__lastUpdated, spMedicationDispense__profile, spMedicationDispense__query, spMedicationDispense__security, spMedicationDispense__tag, spMedicationDispense__text,
     spMedicationDispense_Code, spMedicationDispense_Destination, spMedicationDispense_Dispenser, spMedicationDispense_Identifier, spMedicationDispense_Medication, spMedicationDispense_Patient, spMedicationDispense_Prescription, spMedicationDispense_Receiver,
-    spMedicationDispense_Responsibleparty, spMedicationDispense_Status, spMedicationDispense_Type, spMedicationDispense_Whenhandedover, spMedicationDispense_Whenprepared); 
+    spMedicationDispense_Responsibleparty, spMedicationDispense_Status, spMedicationDispense_Type, spMedicationDispense_Whenhandedover, spMedicationDispense_Whenprepared);
 
 
-procedure TFhirIndexManager.buildIndexesMedicationDispense;
+procedure TFhirIndexInformation.buildIndexesMedicationDispense;
 var
   a : TSearchParamsMedicationDispense;
 begin
@@ -3953,7 +3757,7 @@ const
     spMedicationStatement_Code,  spMedicationStatement_Effectivedate,  spMedicationStatement_Identifier,  spMedicationStatement_Medication,  spMedicationStatement_Patient,  spMedicationStatement_Source,  spMedicationStatement_Status);
 
 
-procedure TFhirIndexManager.buildIndexesMedicationStatement;
+procedure TFhirIndexInformation.buildIndexesMedicationStatement;
 var
   a : TSearchParamsMedicationStatement;
 begin
@@ -3992,7 +3796,7 @@ const
   CHECK_TSearchParamsList : Array[TSearchParamsList] of TSearchParamsList = ( spList__content, spList__id, spList__lastUpdated, spList__profile, spList__query, spList__security, spList__tag, spList__text,
     spList_Code, spList_Date, spList_Empty_reason, spList_Encounter, spList_Item, spList_Notes, spList_Patient, spList_Source, spList_Status, spList_Subject, spList_Title);
 
-procedure TFhirIndexManager.buildIndexesList;
+procedure TFhirIndexInformation.buildIndexesList;
 var
   a : TSearchParamsList;
 begin
@@ -4032,7 +3836,7 @@ const
     spCarePlan_Patient, spCarePlan_Performer, spCarePlan_Related, spCarePlan_Relatedcode, spCarePlan_Relatedplan, spCarePlan_Subject);
 
 
-procedure TFhirIndexManager.buildIndexesCarePlan;
+procedure TFhirIndexInformation.buildIndexesCarePlan;
 var
   a : TSearchParamsCarePlan;
 begin
@@ -4092,7 +3896,7 @@ const
     spImagingStudy_Accession, spImagingStudy_Bodysite, spImagingStudy_Dicom_class, spImagingStudy_Modality, spImagingStudy_Order, spImagingStudy_Patient, spImagingStudy_Series, spImagingStudy_Started, spImagingStudy_Study, spImagingStudy_Uid);
 
 
-procedure TFhirIndexManager.buildIndexesImagingStudy;
+procedure TFhirIndexInformation.buildIndexesImagingStudy;
 var
   a : TSearchParamsImagingStudy;
 begin
@@ -4139,7 +3943,7 @@ const
     spImmunization_Date, spImmunization_Dose_sequence, spImmunization_Identifier, spImmunization_Location, spImmunization_Lot_number, spImmunization_Manufacturer, spImmunization_Notgiven, spImmunization_Patient,
     spImmunization_Performer, spImmunization_Reaction, spImmunization_Reaction_date, spImmunization_Reason, spImmunization_Reason_not_given, spImmunization_Requester, spImmunization_Status, spImmunization_Vaccine_code);
 
-procedure TFhirIndexManager.buildIndexesImmunization;
+procedure TFhirIndexInformation.buildIndexesImmunization;
 var
   a : TSearchParamsImmunization;
 begin
@@ -4189,7 +3993,7 @@ const
   CHECK_TSearchParamsOrder : Array[TSearchParamsOrder] of TSearchParamsOrder = (spOrder__content, spOrder__id, spOrder__lastUpdated, spOrder__profile, spOrder__query, spOrder__security, spOrder__tag, spOrder__text,
     spOrder_Date, spOrder_Detail, spOrder_Identifier, spOrder_Patient, spOrder_Source, spOrder_Subject, spOrder_Target, spOrder_When, spOrder_When_code);
 
-procedure TFhirIndexManager.buildIndexesOrder;
+procedure TFhirIndexInformation.buildIndexesOrder;
 var
   a : TSearchParamsOrder;
 begin
@@ -4224,7 +4028,7 @@ const
   CHECK_TSearchParamsOrderResponse : Array[TSearchParamsOrderResponse] of TSearchParamsOrderResponse = ( spOrderResponse__content, spOrderResponse__id, spOrderResponse__lastUpdated, spOrderResponse__profile, spOrderResponse__query, spOrderResponse__security, spOrderResponse__tag, spOrderResponse__text,
      spOrderResponse_Code, spOrderResponse_Date, spOrderResponse_Fulfillment, spOrderResponse_Identifier, spOrderResponse_Request, spOrderResponse_Who);
 
-procedure TFhirIndexManager.buildIndexesOrderResponse;
+procedure TFhirIndexInformation.buildIndexesOrderResponse;
 var
   a : TSearchParamsOrderResponse;
 begin
@@ -4255,7 +4059,7 @@ const
 
 
 
-procedure TFhirIndexManager.buildIndexesMedia;
+procedure TFhirIndexInformation.buildIndexesMedia;
 var
   a : TSearchParamsMedia;
 begin
@@ -4289,7 +4093,7 @@ const
   CHECK_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of TSearchParamsFamilyMemberHistory = ( spFamilyMemberHistory__content, spFamilyMemberHistory__id, spFamilyMemberHistory__lastUpdated, spFamilyMemberHistory__profile, spFamilyMemberHistory__query, spFamilyMemberHistory__security, spFamilyMemberHistory__tag, spFamilyMemberHistory__text,
     spFamilyMemberHistory_Code, spFamilyMemberHistory_Date, spFamilyMemberHistory_Gender, spFamilyMemberHistory_Identifier, spFamilyMemberHistory_Patient, spFamilyMemberHistory_Relationship);
 
-procedure TFhirIndexManager.buildIndexesFamilyMemberHistory;
+procedure TFhirIndexInformation.buildIndexesFamilyMemberHistory;
 var
   a : TSearchParamsFamilyMemberHistory;
 begin
@@ -4331,7 +4135,7 @@ const
     spProcedure_Code, spProcedure_Date, spProcedure_Encounter, spProcedure_Identifier, spProcedure_Location, spProcedure_Patient, spProcedure_Performer, spProcedure_Subject);
 
 
-procedure TFhirIndexManager.buildIndexesProcedure;
+procedure TFhirIndexInformation.buildIndexesProcedure;
 var
   a : TSearchParamsProcedure;
 begin
@@ -4368,7 +4172,7 @@ const
     spSpecimen__content, spSpecimen__id, spSpecimen__lastUpdated, spSpecimen__profile, spSpecimen__query, spSpecimen__security, spSpecimen__tag, spSpecimen__text,
     spSpecimen_Accession, spSpecimen_Bodysite, spSpecimen_Collected, spSpecimen_Collector, spSpecimen_Container, spSpecimen_Container_id, spSpecimen_Identifier, spSpecimen_Parent, spSpecimen_Patient, spSpecimen_Subject, spSpecimen_Type);
 
-procedure TFhirIndexManager.buildIndexesSpecimen;
+procedure TFhirIndexInformation.buildIndexesSpecimen;
 var
   a : TSearchParamsSpecimen;
 begin
@@ -4413,7 +4217,7 @@ const
     spImmunizationRecommendation_Date, spImmunizationRecommendation_Dose_number, spImmunizationRecommendation_Dose_sequence, spImmunizationRecommendation_Identifier, spImmunizationRecommendation_Information, spImmunizationRecommendation_Patient, spImmunizationRecommendation_Status, spImmunizationRecommendation_Support, spImmunizationRecommendation_Vaccine_type);
 
 
-procedure TFhirIndexManager.buildIndexesImmunizationRecommendation;
+procedure TFhirIndexInformation.buildIndexesImmunizationRecommendation;
 var
   a : TSearchParamsImmunizationRecommendation;
 begin
@@ -4454,7 +4258,7 @@ Const
   CHECK_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of TSearchParamsQuestionnaire = (spQuestionnaire__content, spQuestionnaire__id, spQuestionnaire__lastUpdated, spQuestionnaire__profile, spQuestionnaire__query, spQuestionnaire__security, spQuestionnaire__tag, spQuestionnaire__text,
     spQuestionnaire_Code, spQuestionnaire_Date, spQuestionnaire_Identifier, spQuestionnaire_Publisher, spQuestionnaire_Status, spQuestionnaire_Title, spQuestionnaire_Version);
 
-procedure TFhirIndexManager.buildIndexesQuestionnaire;
+procedure TFhirIndexInformation.buildIndexesQuestionnaire;
 var
   a : TSearchParamsQuestionnaire;
 begin
@@ -4490,7 +4294,7 @@ Const
     spQuestionnaireResponse__content, spQuestionnaireResponse__id, spQuestionnaireResponse__lastUpdated, spQuestionnaireResponse__profile, spQuestionnaireResponse__query, spQuestionnaireResponse__security, spQuestionnaireResponse__tag, spQuestionnaireResponse__text,
     spQuestionnaireResponse_Author, spQuestionnaireResponse_Authored, spQuestionnaireResponse_Encounter, spQuestionnaireResponse_Patient, spQuestionnaireResponse_Questionnaire, spQuestionnaireResponse_Source, spQuestionnaireResponse_Status, spQuestionnaireResponse_Subject);
 
-procedure TFhirIndexManager.buildIndexesQuestionnaireResponse;
+procedure TFhirIndexInformation.buildIndexesQuestionnaireResponse;
 var
   a : TSearchParamsQuestionnaireResponse;
 begin
@@ -4522,7 +4326,7 @@ Const
     spSlot__content, spSlot__id, spSlot__lastUpdated, spSlot__profile, spSlot__query, spSlot__security, spSlot__tag, spSlot__text,
     spSlot_Fb_type, spSlot_Identifier, spSlot_Schedule, spSlot_Slot_type, spSlot_Start);
 
-procedure TFhirIndexManager.buildIndexesSlot;
+procedure TFhirIndexInformation.buildIndexesSlot;
 var
   a : TSearchParamsSlot;
 begin
@@ -4547,7 +4351,7 @@ Const
     spAppointment__content, spAppointment__id, spAppointment__lastUpdated, spAppointment__profile, spAppointment__query, spAppointment__security, spAppointment__tag, spAppointment__text,
     spAppointment_Actor, spAppointment_Date, spAppointment_Identifier, spAppointment_Location, spAppointment_Part_status, spAppointment_Patient, spAppointment_Practitioner, spAppointment_Status);
 
-procedure TFhirIndexManager.buildIndexesAppointment;
+procedure TFhirIndexInformation.buildIndexesAppointment;
 var
   a : TSearchParamsAppointment;
 begin
@@ -4584,7 +4388,7 @@ Const
     spSchedule__content, spSchedule__id, spSchedule__lastUpdated, spSchedule__profile, spSchedule__query, spSchedule__security, spSchedule__tag, spSchedule__text,
     spSchedule_Actor, spSchedule_Date, spSchedule_Identifier, spSchedule_Type);
 
-procedure TFhirIndexManager.buildIndexesSchedule;
+procedure TFhirIndexInformation.buildIndexesSchedule;
 var
   a : TSearchParamsSchedule;
 begin
@@ -4612,7 +4416,7 @@ Const
     spAppointmentResponse__content, spAppointmentResponse__id, spAppointmentResponse__lastUpdated, spAppointmentResponse__profile, spAppointmentResponse__query, spAppointmentResponse__security, spAppointmentResponse__tag, spAppointmentResponse__text,
     spAppointmentResponse_Actor, spAppointmentResponse_Appointment, spAppointmentResponse_Identifier, spAppointmentResponse_Location, spAppointmentResponse_Part_status, spAppointmentResponse_Patient, spAppointmentResponse_Practitioner);
 
-procedure TFhirIndexManager.buildIndexesAppointmentResponse;
+procedure TFhirIndexInformation.buildIndexesAppointmentResponse;
 var
   a : TSearchParamsAppointmentResponse;
 begin
@@ -4645,7 +4449,7 @@ Const
     spHealthcareService__content, spHealthcareService__id, spHealthcareService__lastUpdated, spHealthcareService__profile, spHealthcareService__query, spHealthcareService__security, spHealthcareService__tag, spHealthcareService__text,
     spHealthcareService_Characteristic, spHealthcareService_Identifier, spHealthcareService_Location, spHealthcareService_Name, spHealthcareService_Organization, spHealthcareService_Programname, spHealthcareService_Servicecategory, spHealthcareService_Servicetype);
 
-procedure TFhirIndexManager.buildIndexesHealthcareService;
+procedure TFhirIndexInformation.buildIndexesHealthcareService;
 var
   a : TSearchParamsHealthcareService;
 begin
@@ -4677,7 +4481,7 @@ Const
     spDataElement__content, spDataElement__id, spDataElement__lastUpdated, spDataElement__profile, spDataElement__query, spDataElement__security, spDataElement__tag, spDataElement__text,
     spDataElement_Code, spDataElement_Context, spDataElement_Date, spDataElement_Description, spDataElement_Identifier, spDataElement_Name, spDataElement_Publisher, spDataElement_Status, spDataElement_Stringency, spDataElement_Url, spDataElement_Version);
 
-procedure TFhirIndexManager.buildIndexesDataElement;
+procedure TFhirIndexInformation.buildIndexesDataElement;
 var
   a : TSearchParamsDataElement;
 begin
@@ -4715,7 +4519,7 @@ Const
     spTestScript__content, spTestScript__id, spTestScript__lastUpdated, spTestScript__profile, spTestScript__query, spTestScript__security, spTestScript__tag, spTestScript__text,
     spTestScript_Description, spTestScript_Identifier, spTestScript_Name, spTestScript_Testscript_capability, spTestScript_Testscript_setup_capability, spTestScript_Testscript_test_capability, spTestScript_Url);
 
-procedure TFhirIndexManager.buildIndexesTestScript;
+procedure TFhirIndexInformation.buildIndexesTestScript;
 var
   a : TSearchParamsTestScript;
 begin
@@ -4757,7 +4561,7 @@ Const
     spNamingSystem_Contact, spNamingSystem_Context, spNamingSystem_Date, spNamingSystem_Id_type, spNamingSystem_Kind, spNamingSystem_Name, spNamingSystem_Period, spNamingSystem_Publisher,
     spNamingSystem_Replaced_by, spNamingSystem_Responsible, spNamingSystem_Status, spNamingSystem_Telecom, spNamingSystem_Type, spNamingSystem_Value);
 
-procedure TFhirIndexManager.buildIndexesNamingSystem;
+procedure TFhirIndexInformation.buildIndexesNamingSystem;
 var
   a : TSearchParamsNamingSystem;
 begin
@@ -4800,7 +4604,7 @@ Const
     spSubscription__content, spSubscription__id, spSubscription__lastUpdated, spSubscription__profile, spSubscription__query, spSubscription__security, spSubscription__tag, spSubscription__text,
      spSubscription_Contact, spSubscription_Criteria, spSubscription_Payload, spSubscription_Status, spSubscription_Tag, spSubscription_Type, spSubscription_Url);
 
-procedure TFhirIndexManager.buildIndexesSubscription;
+procedure TFhirIndexInformation.buildIndexesSubscription;
 var
   a : TSearchParamsSubscription;
 begin
@@ -4831,7 +4635,7 @@ Const
     spDetectedIssue__content, spDetectedIssue__id, spDetectedIssue__lastUpdated, spDetectedIssue__profile, spDetectedIssue__query, spDetectedIssue__security, spDetectedIssue__tag, spDetectedIssue__text,
     spDetectedIssue_Author, spDetectedIssue_Category, spDetectedIssue_Date, spDetectedIssue_Identifier, spDetectedIssue_Implicated, spDetectedIssue_Patient);
 
-procedure TFhirIndexManager.buildIndexesDetectedIssue;
+procedure TFhirIndexInformation.buildIndexesDetectedIssue;
 var
   a : TSearchParamsDetectedIssue;
 begin
@@ -4862,7 +4666,7 @@ Const
   CHECK_TSearchParamsRiskAssessment : Array[TSearchParamsRiskAssessment] of TSearchParamsRiskAssessment = (spRiskAssessment__content, spRiskAssessment__id, spRiskAssessment__lastUpdated, spRiskAssessment__profile, spRiskAssessment__query, spRiskAssessment__security, spRiskAssessment__tag, spRiskAssessment__text,
      spRiskAssessment_Condition, spRiskAssessment_Date, spRiskAssessment_Encounter, spRiskAssessment_Identifier, spRiskAssessment_Method, spRiskAssessment_Patient, spRiskAssessment_Performer, spRiskAssessment_Subject);
 
-procedure TFhirIndexManager.buildIndexesRiskAssessment;
+procedure TFhirIndexInformation.buildIndexesRiskAssessment;
 var
   a : TSearchParamsRiskAssessment;
 begin
@@ -4894,7 +4698,7 @@ const
     spOperationDefinition_Date, spOperationDefinition_Instance, spOperationDefinition_Kind, spOperationDefinition_Name, spOperationDefinition_Profile, spOperationDefinition_Publisher, spOperationDefinition_Status, spOperationDefinition_System,
     spOperationDefinition_Type, spOperationDefinition_Url, spOperationDefinition_Version);
 
-procedure TFhirIndexManager.buildIndexesOperationDefinition;
+procedure TFhirIndexInformation.buildIndexesOperationDefinition;
 var
   a : TSearchParamsOperationDefinition;
 begin
@@ -4930,7 +4734,7 @@ const
   CHECK_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TSearchParamsReferralRequest = ( spReferralRequest__content, spReferralRequest__id, spReferralRequest__lastUpdated, spReferralRequest__profile, spReferralRequest__query, spReferralRequest__security, spReferralRequest__tag, spReferralRequest__text,
     spReferralRequest_Date, spReferralRequest_Patient, spReferralRequest_Priority, spReferralRequest_Recipient, spReferralRequest_Requester, spReferralRequest_Specialty, spReferralRequest_Status, spReferralRequest_Type);
 
-procedure TFhirIndexManager.buildIndexesReferralRequest;
+procedure TFhirIndexInformation.buildIndexesReferralRequest;
 var
   a : TSearchParamsReferralRequest;
 begin
@@ -4962,7 +4766,7 @@ const
     spNutritionOrder__content, spNutritionOrder__id, spNutritionOrder__lastUpdated, spNutritionOrder__profile, spNutritionOrder__query, spNutritionOrder__security, spNutritionOrder__tag, spNutritionOrder__text,
     spNutritionOrder_Additive, spNutritionOrder_Datetime, spNutritionOrder_Encounter, spNutritionOrder_Formula, spNutritionOrder_Identifier, spNutritionOrder_Oraldiet, spNutritionOrder_Patient, spNutritionOrder_Provider, spNutritionOrder_Status, spNutritionOrder_Supplement);
 
-procedure TFhirIndexManager.buildIndexesNutritionOrder;
+procedure TFhirIndexInformation.buildIndexesNutritionOrder;
 var
   a : TSearchParamsNutritionOrder;
 begin
@@ -5001,7 +4805,7 @@ const
   CHECK_TSearchParamsBodySite : Array[TSearchParamsBodySite] of TSearchParamsBodySite = (spBodySite__content, spBodySite__id, spBodySite__lastUpdated, spBodySite__profile, spBodySite__query, spBodySite__security, spBodySite__tag, spBodySite__text,
   spBodySite_Code, spBodySite_Identifier, spBodySite_Patient);
 
-procedure TFhirIndexManager.buildIndexesBodySite;
+procedure TFhirIndexInformation.buildIndexesBodySite;
 var
   a : TSearchParamsBodySite;
 begin
@@ -5025,7 +4829,7 @@ const
     spClinicalImpression_Action, spClinicalImpression_Assessor, spClinicalImpression_Date, spClinicalImpression_Finding, spClinicalImpression_Investigation, spClinicalImpression_Patient, spClinicalImpression_Plan, spClinicalImpression_Previous,
     spClinicalImpression_Problem, spClinicalImpression_Resolved, spClinicalImpression_Ruledout, spClinicalImpression_Status, spClinicalImpression_Trigger, spClinicalImpression_Trigger_code);
 
-procedure TFhirIndexManager.buildIndexesClinicalImpression;
+procedure TFhirIndexInformation.buildIndexesClinicalImpression;
 var
   a : TSearchParamsClinicalImpression;
 begin
@@ -5076,7 +4880,7 @@ const
     spCommunication_Category, spCommunication_Encounter, spCommunication_Identifier, spCommunication_Medium, spCommunication_Patient, spCommunication_Received,
     spCommunication_Recipient, spCommunication_Request, spCommunication_Sender, spCommunication_Sent, spCommunication_Status, spCommunication_Subject);
 
-procedure TFhirIndexManager.buildIndexesCommunication;
+procedure TFhirIndexInformation.buildIndexesCommunication;
 var
   a : TSearchParamsCommunication;
 begin
@@ -5124,7 +4928,7 @@ const
     spCommunicationRequest_Category, spCommunicationRequest_Encounter, spCommunicationRequest_Identifier, spCommunicationRequest_Medium, spCommunicationRequest_Patient, spCommunicationRequest_Priority, spCommunicationRequest_Recipient,
     spCommunicationRequest_Requested, spCommunicationRequest_Requester, spCommunicationRequest_Sender, spCommunicationRequest_Status, spCommunicationRequest_Subject, spCommunicationRequest_Time);
 
-procedure TFhirIndexManager.buildIndexesCommunicationRequest;
+procedure TFhirIndexInformation.buildIndexesCommunicationRequest;
 var
   a : TSearchParamsCommunicationRequest;
 begin
@@ -5170,7 +4974,7 @@ const
     spDeviceComponent__content, spDeviceComponent__id, spDeviceComponent__lastUpdated, spDeviceComponent__profile, spDeviceComponent__query, spDeviceComponent__security, spDeviceComponent__tag, spDeviceComponent__text,
     spDeviceComponent_Parent, spDeviceComponent_Source, spDeviceComponent_Type);
 
-procedure TFhirIndexManager.buildIndexesDeviceComponent;
+procedure TFhirIndexInformation.buildIndexesDeviceComponent;
 var
   a : TSearchParamsDeviceComponent;
 begin
@@ -5195,7 +4999,7 @@ const
   CHECK_TSearchParamsDeviceMetric : Array[TSearchParamsDeviceMetric] of TSearchParamsDeviceMetric = ( spDeviceMetric__content, spDeviceMetric__id, spDeviceMetric__lastUpdated, spDeviceMetric__profile, spDeviceMetric__query, spDeviceMetric__security, spDeviceMetric__tag, spDeviceMetric__text,
     spDeviceMetric_Category, spDeviceMetric_Identifier, spDeviceMetric_Parent, spDeviceMetric_Source, spDeviceMetric_Type);
 
-procedure TFhirIndexManager.buildIndexesDeviceMetric;
+procedure TFhirIndexInformation.buildIndexesDeviceMetric;
 var
   a : TSearchParamsDeviceMetric;
 begin
@@ -5222,7 +5026,7 @@ const
   CHECK_TSearchParamsDeviceUseRequest : Array[TSearchParamsDeviceUseRequest] of TSearchParamsDeviceUseRequest = ( spDeviceUseRequest__content, spDeviceUseRequest__id, spDeviceUseRequest__lastUpdated, spDeviceUseRequest__profile, spDeviceUseRequest__query, spDeviceUseRequest__security, spDeviceUseRequest__tag, spDeviceUseRequest__text,
     spDeviceUseRequest_Device, spDeviceUseRequest_Patient, spDeviceUseRequest_Subject);
 
-procedure TFhirIndexManager.buildIndexesDeviceUseRequest;
+procedure TFhirIndexInformation.buildIndexesDeviceUseRequest;
 var
   a : TSearchParamsDeviceUseRequest;
 begin
@@ -5248,7 +5052,7 @@ const
   CHECK_TSearchParamsDeviceUseStatement : Array[TSearchParamsDeviceUseStatement] of TSearchParamsDeviceUseStatement = ( spDeviceUseStatement__content, spDeviceUseStatement__id, spDeviceUseStatement__lastUpdated, spDeviceUseStatement__profile, spDeviceUseStatement__query, spDeviceUseStatement__security, spDeviceUseStatement__tag, spDeviceUseStatement__text,
     spDeviceUseStatement_Device, spDeviceUseStatement_Patient, spDeviceUseStatement_Subject);
 
-procedure TFhirIndexManager.buildIndexesDeviceUseStatement;
+procedure TFhirIndexInformation.buildIndexesDeviceUseStatement;
 var
   a : TSearchParamsDeviceUseStatement;
 begin
@@ -5274,7 +5078,7 @@ const
   CHECK_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of TSearchParamsEligibilityRequest = ( spEligibilityRequest__content, spEligibilityRequest__id, spEligibilityRequest__lastUpdated, spEligibilityRequest__profile, spEligibilityRequest__query, spEligibilityRequest__security, spEligibilityRequest__tag, spEligibilityRequest__text,
     spEligibilityRequest_Identifier);
 
-procedure TFhirIndexManager.buildIndexesEligibilityRequest;
+procedure TFhirIndexInformation.buildIndexesEligibilityRequest;
 var
   a : TSearchParamsEligibilityRequest;
 begin
@@ -5294,7 +5098,7 @@ const
   CHECK_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of TSearchParamsEligibilityResponse = ( spEligibilityResponse__content, spEligibilityResponse__id, spEligibilityResponse__lastUpdated, spEligibilityResponse__profile, spEligibilityResponse__query, spEligibilityResponse__security, spEligibilityResponse__tag, spEligibilityResponse__text,
     spEligibilityResponse_Identifier);
 
-procedure TFhirIndexManager.buildIndexesEligibilityResponse;
+procedure TFhirIndexInformation.buildIndexesEligibilityResponse;
 var
   a : TSearchParamsEligibilityResponse;
 begin
@@ -5314,7 +5118,7 @@ const
   CHECK_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of TSearchParamsEnrollmentRequest = ( spEnrollmentRequest__content, spEnrollmentRequest__id, spEnrollmentRequest__lastUpdated, spEnrollmentRequest__profile, spEnrollmentRequest__query, spEnrollmentRequest__security, spEnrollmentRequest__tag, spEnrollmentRequest__text,
     spEnrollmentRequest_Identifier, spEnrollmentRequest_Patient, spEnrollmentRequest_Subject);
 
-procedure TFhirIndexManager.buildIndexesEnrollmentRequest;
+procedure TFhirIndexInformation.buildIndexesEnrollmentRequest;
 var
   a : TSearchParamsEnrollmentRequest;
 begin
@@ -5337,7 +5141,7 @@ const
   CHECK_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of TSearchParamsEnrollmentResponse = ( spEnrollmentResponse__content, spEnrollmentResponse__id, spEnrollmentResponse__lastUpdated, spEnrollmentResponse__profile, spEnrollmentResponse__query, spEnrollmentResponse__security, spEnrollmentResponse__tag, spEnrollmentResponse__text,
     spEnrollmentResponse_Identifier);
 
-procedure TFhirIndexManager.buildIndexesEnrollmentResponse;
+procedure TFhirIndexInformation.buildIndexesEnrollmentResponse;
 var
   a : TSearchParamsEnrollmentResponse;
 begin
@@ -5358,7 +5162,7 @@ const
     spEpisodeOfCare_Care_manager, spEpisodeOfCare_Condition, spEpisodeOfCare_Date, spEpisodeOfCare_Identifier, spEpisodeOfCare_Incomingreferral, spEpisodeOfCare_Organization,
     spEpisodeOfCare_Patient, spEpisodeOfCare_Status, spEpisodeOfCare_Team_member, spEpisodeOfCare_Type);
 
-procedure TFhirIndexManager.buildIndexesEpisodeOfCare;
+procedure TFhirIndexInformation.buildIndexesEpisodeOfCare;
 var
   a : TSearchParamsEpisodeOfCare;
 begin
@@ -5393,7 +5197,7 @@ const
     spExplanationOfBenefit__content, spExplanationOfBenefit__id, spExplanationOfBenefit__lastUpdated, spExplanationOfBenefit__profile, spExplanationOfBenefit__query, spExplanationOfBenefit__security, spExplanationOfBenefit__tag, spExplanationOfBenefit__text,
     spExplanationOfBenefit_Identifier);
 
-procedure TFhirIndexManager.buildIndexesExplanationOfBenefit;
+procedure TFhirIndexInformation.buildIndexesExplanationOfBenefit;
 var
   a : TSearchParamsExplanationOfBenefit;
 begin
@@ -5404,7 +5208,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexManager.buildIndexesExtensionDefinition;
+procedure TFhirIndexInformation.buildIndexesExtensionDefinition;
 begin
 
 end;
@@ -5421,7 +5225,7 @@ const
     spGoal__content, spGoal__id, spGoal__lastUpdated, spGoal__profile, spGoal__query, spGoal__security, spGoal__tag, spGoal__text,
     spGoal_Category, spGoal_Identifier, spGoal_Patient, spGoal_Status, spGoal_Subject, spGoal_Targetdate);
 
-procedure TFhirIndexManager.buildIndexesGoal;
+procedure TFhirIndexInformation.buildIndexesGoal;
 var
   a : TSearchParamsGoal;
 begin
@@ -5446,7 +5250,7 @@ const
     spImagingObjectSelection__content, spImagingObjectSelection__id, spImagingObjectSelection__lastUpdated, spImagingObjectSelection__profile, spImagingObjectSelection__query, spImagingObjectSelection__security, spImagingObjectSelection__tag, spImagingObjectSelection__text,
     spImagingObjectSelection_Author, spImagingObjectSelection_Authoring_time, spImagingObjectSelection_Identifier, spImagingObjectSelection_Patient, spImagingObjectSelection_Selected_study, spImagingObjectSelection_Title);
 
-procedure TFhirIndexManager.buildIndexesImagingObjectSelection;
+procedure TFhirIndexInformation.buildIndexesImagingObjectSelection;
 var
   a : TSearchParamsImagingObjectSelection;
 begin
@@ -5476,7 +5280,7 @@ const
   CHECK_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of TSearchParamsPaymentNotice = ( spPaymentNotice__content, spPaymentNotice__id, spPaymentNotice__lastUpdated, spPaymentNotice__profile, spPaymentNotice__query, spPaymentNotice__security, spPaymentNotice__tag, spPaymentNotice__text,
     spPaymentNotice_Identifier);
 
-procedure TFhirIndexManager.buildIndexesPaymentNotice;
+procedure TFhirIndexInformation.buildIndexesPaymentNotice;
 var
   a : TSearchParamsPaymentNotice;
 begin
@@ -5500,7 +5304,7 @@ const
     spPerson_Address, spPerson_Address_city, spPerson_Address_country, spPerson_Address_postalcode, spPerson_Address_state, spPerson_Address_use, spPerson_Birthdate, spPerson_Email, spPerson_Gender, spPerson_Identifier, spPerson_Link,
     spPerson_Name, spPerson_Organization, spPerson_Patient, spPerson_Phone, spPerson_Phonetic, spPerson_Practitioner, spPerson_Relatedperson, spPerson_Telecom);
 
-procedure TFhirIndexManager.buildIndexesPerson;
+procedure TFhirIndexInformation.buildIndexesPerson;
 var
   a : TSearchParamsPerson;
 begin
@@ -5550,7 +5354,7 @@ const
   CHECK_TSearchParamsProcedureRequest : Array[TSearchParamsProcedureRequest] of TSearchParamsProcedureRequest = ( spProcedureRequest__content, spProcedureRequest__id, spProcedureRequest__lastUpdated, spProcedureRequest__profile, spProcedureRequest__query, spProcedureRequest__security, spProcedureRequest__tag, spProcedureRequest__text,
     spProcedureRequest_Encounter, spProcedureRequest_Identifier, spProcedureRequest_Orderer, spProcedureRequest_Patient, spProcedureRequest_Performer, spProcedureRequest_Subject);
 
-procedure TFhirIndexManager.buildIndexesProcedureRequest;
+procedure TFhirIndexInformation.buildIndexesProcedureRequest;
 var
   a : TSearchParamsProcedureRequest;
 begin
@@ -5580,7 +5384,7 @@ const
     spSearchParameter__content, spSearchParameter__id, spSearchParameter__lastUpdated, spSearchParameter__profile, spSearchParameter__query, spSearchParameter__security, spSearchParameter__tag, spSearchParameter__text,
     spSearchParameter_Base, spSearchParameter_Code, spSearchParameter_Description, spSearchParameter_Name, spSearchParameter_Target, spSearchParameter_Type, spSearchParameter_Url);
 
-procedure TFhirIndexManager.buildIndexesSearchParameter;
+procedure TFhirIndexInformation.buildIndexesSearchParameter;
 var
   a : TSearchParamsSearchParameter;
 begin
@@ -5610,7 +5414,7 @@ const
   CHECK_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of TSearchParamsVisionPrescription = ( spVisionPrescription__content, spVisionPrescription__id, spVisionPrescription__lastUpdated, spVisionPrescription__profile, spVisionPrescription__query, spVisionPrescription__security, spVisionPrescription__tag, spVisionPrescription__text,
     spVisionPrescription_Datewritten, spVisionPrescription_Encounter, spVisionPrescription_Identifier, spVisionPrescription_Patient, spVisionPrescription_Prescriber);
 
-procedure TFhirIndexManager.buildIndexesVisionPrescription;
+procedure TFhirIndexInformation.buildIndexesVisionPrescription;
 var
   a : TSearchParamsVisionPrescription;
 begin
@@ -5637,7 +5441,7 @@ const
   CHECK_TSearchParamsProcessRequest : Array[TSearchParamsProcessRequest] of TSearchParamsProcessRequest = ( spProcessRequest__content, spProcessRequest__id, spProcessRequest__lastUpdated, spProcessRequest__profile, spProcessRequest__query, spProcessRequest__security, spProcessRequest__tag, spProcessRequest__text,
     spProcessRequest_Action, spProcessRequest_Identifier, spProcessRequest_Organization, spProcessRequest_Provider);
 
-procedure TFhirIndexManager.buildIndexesProcessRequest;
+procedure TFhirIndexInformation.buildIndexesProcessRequest;
 var
   a : TSearchParamsProcessRequest;
 begin
@@ -5662,7 +5466,7 @@ const
   CHECK_TSearchParamsProcessResponse : Array[TSearchParamsProcessResponse] of TSearchParamsProcessResponse = ( spProcessResponse__content, spProcessResponse__id, spProcessResponse__lastUpdated, spProcessResponse__profile, spProcessResponse__query, spProcessResponse__security, spProcessResponse__tag, spProcessResponse__text,
     spProcessResponse_Identifier, spProcessResponse_Organization, spProcessResponse_Request, spProcessResponse_Requestorganization, spProcessResponse_Requestprovider);
 
-procedure TFhirIndexManager.buildIndexesProcessResponse;
+procedure TFhirIndexInformation.buildIndexesProcessResponse;
 var
   a : TSearchParamsProcessResponse;
 begin
@@ -5689,7 +5493,7 @@ const
     spPaymentReconciliation__content, spPaymentReconciliation__id, spPaymentReconciliation__lastUpdated, spPaymentReconciliation__profile, spPaymentReconciliation__query, spPaymentReconciliation__security, spPaymentReconciliation__tag, spPaymentReconciliation__text,
     spPaymentReconciliation_Identifier);
 
-procedure TFhirIndexManager.buildIndexesPaymentReconciliation;
+procedure TFhirIndexInformation.buildIndexesPaymentReconciliation;
 var
   a : TSearchParamsPaymentReconciliation;
 begin
@@ -5713,7 +5517,7 @@ const
     spAccount__content, spAccount__id, spAccount__lastUpdated, spAccount__profile, spAccount__query, spAccount__security, spAccount__tag, spAccount__text,
     spAccount_Balance, spAccount_Identifier, spAccount_Name, spAccount_Owner, spAccount_Patient, spAccount_Period, spAccount_Status, spAccount_Subject, spAccount_Type);
 
-procedure TFhirIndexManager.buildIndexesAccount;
+procedure TFhirIndexInformation.buildIndexesAccount;
 var
   a : TSearchParamsAccount;
 begin
@@ -5745,7 +5549,7 @@ const
     spImplementationGuide__content, spImplementationGuide__id, spImplementationGuide__lastUpdated, spImplementationGuide__profile, spImplementationGuide__query, spImplementationGuide__security, spImplementationGuide__tag, spImplementationGuide__text,
     spImplementationGuide_Context, spImplementationGuide_Date, spImplementationGuide_Dependency, spImplementationGuide_Description, spImplementationGuide_Experimental, spImplementationGuide_Name, spImplementationGuide_Publisher, spImplementationGuide_Status, spImplementationGuide_Url, spImplementationGuide_Version);
 
-procedure TFhirIndexManager.buildIndexesImplementationGuide;
+procedure TFhirIndexInformation.buildIndexesImplementationGuide;
 var
   a : TSearchParamsImplementationGuide;
 begin
@@ -5901,8 +5705,221 @@ begin
 end;
 
 
+{ TFHIRIndexInformation }
+
+constructor TFHIRIndexInformation.Create;
+begin
+  inherited Create;
+  FIndexes := TFhirIndexList.create;
+  FComposites := TFhirCompositeList.create;
+  buildIndexes;
+end;
+
+destructor TFHIRIndexInformation.Destroy;
+begin
+  FIndexes.Free;
+  FComposites.Free;
+  inherited;
+end;
+
+function TFHIRIndexInformation.Link: TFHIRIndexInformation;
+begin
+  result := TFHIRIndexInformation(inherited Link);
+end;
+
+procedure TFHIRIndexInformation.ReconcileIndexes(connection: TKDBConnection);
+var
+  i : integer;
+begin
+  connection.SQL := 'select * from Indexes';
+  connection.prepare;
+  connection.execute;
+  while connection.FetchNext do
+  begin
+    for i := 0 to FIndexes.Count - 1 Do
+      if SameText(FIndexes[i].Name, connection.ColStringByName['Name']) then
+        FIndexes[i].key := connection.ColIntegerByName['IndexKey'];
+
+    for i := 0 to FComposites.Count - 1 Do
+      if SameText(FComposites[i].Name, connection.ColStringByName['Name']) then
+        FComposites[i].key := connection.ColIntegerByName['IndexKey'];
+
+    if connection.ColStringByName['Name'] = NARRATIVE_INDEX_NAME then
+      FNarrativeIndex := connection.ColIntegerByName['IndexKey'];
+  end;
+  connection.terminate;
+end;
+
+procedure TFHIRIndexInformation.buildIndexes;
+var
+  i : TFhirResourceType;
+begin
+  // the order of these matters when building search forms
+  buildIndexesPractitioner;
+  buildIndexesPatient;
+  buildIndexesOrganization;
+
+  buildIndexesAllergyIntolerance;
+  buildIndexesCarePlan;
+  buildIndexesConformance;
+  buildIndexesDevice;
+  buildIndexesDiagnosticReport;
+  buildIndexesDiagnosticOrder;
+  buildIndexesComposition;
+  buildIndexesDocumentReference;
+  buildIndexesDocumentManifest;
+  buildIndexesGroup;
+  buildIndexesImagingStudy;
+  buildIndexesImmunization;
+  buildIndexesImmunizationRecommendation;
+  buildIndexesOperationOutcome;
+  buildIndexesList;
+  buildIndexesLocation;
+  buildIndexesMedicationAdministration;
+  buildIndexesMedication;
+  buildIndexesMedicationOrder;
+  buildIndexesMedicationDispense;
+  buildIndexesMedicationStatement;
+  buildIndexesMessageHeader;
+  buildIndexesObservation;
+  buildIndexesOrder;
+  buildIndexesOrderResponse;
+  buildIndexesMedia;
+  buildIndexesCondition;
+  buildIndexesProcedure;
+  buildIndexesProvenance;
+  buildIndexesQuestionnaire;
+  buildIndexesSpecimen;
+  buildIndexesSubstance;
+  buildIndexesValueSet;
+  buildIndexesConceptMap;
+  buildIndexesEncounter;
+  BuildIndexesRelatedPerson;
+  BuildIndexesSupplyRequest;
+  BuildIndexesSupplyDelivery;
+  buildIndexesAuditEvent;
+  buildIndexesStructureDefinition;
+  buildIndexesFamilyMemberHistory;
+  buildIndexesFlag;
+  buildIndexesBundle;
+  BuildIndexesCoverage;
+  BuildIndexesClaimResponse;
+  BuildIndexesContract;
+  BuildIndexesClaim;
+  BuildIndexesBasic;
+  buildIndexesQuestionnaireResponse;
+  BuildIndexesSlot;
+  BuildIndexesAppointment;
+  BuildIndexesSchedule;
+  BuildIndexesAppointmentResponse;
+  BuildIndexesHealthcareService;
+  BuildIndexesDataElement;
+  BuildIndexesTestScript;
+  BuildIndexesNamingSystem;
+  BuildIndexesSubscription;
+  BuildIndexesDetectedIssue;
+  BuildIndexesRiskAssessment;
+  BuildIndexesOperationDefinition;
+  BuildIndexesReferralRequest;
+  BuildIndexesNutritionOrder;
+  buildIndexesBodySite;
+  buildIndexesClinicalImpression;
+  buildIndexesCommunication;
+  buildIndexesCommunicationRequest;
+  buildIndexesDeviceComponent;
+  buildIndexesDeviceMetric;
+  buildIndexesDeviceUseRequest;
+  buildIndexesDeviceUseStatement;
+  buildIndexesEligibilityRequest;
+  buildIndexesEligibilityResponse;
+  buildIndexesEnrollmentRequest;
+  buildIndexesEnrollmentResponse;
+  buildIndexesEpisodeOfCare;
+  buildIndexesExplanationOfBenefit;
+  buildIndexesExtensionDefinition;
+  buildIndexesGoal;
+  buildIndexesImagingObjectSelection;
+  buildIndexesPaymentNotice;
+  buildIndexesPerson;
+  buildIndexesProcedureRequest;
+  buildIndexesSearchParameter;
+  buildIndexesVisionPrescription;
+  buildIndexesProcessRequest;
+  buildIndexesProcessResponse;
+  buildIndexesPaymentReconciliation;
+  buildIndexesBinary;
+  buildIndexesAccount;
+  buildIndexesImplementationGuide;
+
+  for I := TFhirResourceType(1) to High(TFhirResourceType) do
+    if not (i in [frtParameters]) and (FIndexes.getByName(i, '_id') = nil) then
+    begin
+      writeln('No registration for '+CODES_TFHIRResourceType[i]);
+      raise Exception.Create('No registration for '+CODES_TFHIRResourceType[i]);
+    end;
+end;
+
+function TFhirIndexInformation.GetTargetsByName(types: TFhirResourceTypeSet; name: String): TFhirResourceTypeSet;
+var
+  i : integer;
+begin
+  result := [];
+  for i := 0 to FIndexes.Count - 1 Do
+    if SameText(FIndexes[i].Name, name) and (FIndexes[i].ResourceType in types) then
+      result := result + FIndexes[i].TargetTypes;
+end;
+
+function TFhirIndexInformation.GetKeyByName(name: String): integer;
+var
+  i : integer;
+begin
+  result := 0;
+  for i := 0 to FIndexes.Count - 1 Do
+    if FIndexes[i].Name = name then
+    begin
+      result := FIndexes[i].Key;
+      exit;
+    end;
+end;
+
+function TFhirIndexInformation.GetTypeByName(types: TFhirResourceTypeSet; name: String): TFhirSearchParamType;
+var
+  i : integer;
+begin
+  result := SearchParamTypeNull;
+  for i := 0 to FIndexes.Count - 1 Do
+    if SameText(FIndexes[i].Name, name) and ((FIndexes[i].ResourceType in types) or (types = [frtNull])) then
+      if (result <> SearchParamTypeNull) and (result <> FIndexes[i].FSearchType) And ((FIndexes[i].FSearchType in [SearchParamTypeDate, SearchParamTypeToken]) or (result in [SearchParamTypeDate, SearchParamTypeToken])) then
+        raise Exception.create('Chained Parameters cross resource joins that create disparate index handling requirements')
+      else
+        result := FIndexes[i].FSearchType;
+end;
+
+function TFhirIndexInformation.GetComposite(types: TFhirResourceTypeSet; name: String; var otypes: TFhirResourceTypeSet): TFhirComposite;
+var
+  i : integer;
+begin
+  oTypes := types;
+
+  i := 0;
+  result := nil;
+  while (i < FComposites.Count) do
+  begin
+    if SameText(FComposites.item[i].name, name) and (FComposites.item[i].FResourceType in types) then
+      if result = nil then
+      begin
+        result := FComposites.item[i];
+        oTypes := [FComposites.item[i].FResourceType];
+      end
+      else
+        raise Exception.Create('Ambiguous composite reference "'+name+'"');
+    inc(i);
+  end;
+end;
+
+
 initialization
-  TFhirIndexManager.Create(nil).free;
+  TFHIRIndexInformation.Create.free;
 end.
 
 

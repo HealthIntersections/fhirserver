@@ -1531,7 +1531,7 @@ object Form5: TForm5
         Left = 0
         Top = 0
         Width = 747
-        Height = 47
+        Height = 65
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
@@ -1549,6 +1549,74 @@ object Form5: TForm5
           Font.Style = [fsUnderline]
           ParentFont = False
           OnClick = btnNewClick
+        end
+        object Label29: TLabel
+          Left = 21
+          Top = 38
+          Width = 397
+          Height = 16
+          Cursor = crArrow
+          Caption = 'Open a value set from a File, the current server, or any URL'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = []
+          ParentFont = False
+          OnClick = btnNewClick
+        end
+        object Label30: TLabel
+          Left = 187
+          Top = 38
+          Width = 22
+          Height = 16
+          Cursor = crHandPoint
+          Caption = 'File'
+          Color = clWhite
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clNavy
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = [fsUnderline]
+          ParentColor = False
+          ParentFont = False
+          Transparent = False
+          OnClick = btnOpenFileClick
+        end
+        object Label31: TLabel
+          Left = 245
+          Top = 38
+          Width = 94
+          Height = 16
+          Cursor = crHandPoint
+          Caption = 'current server'
+          Color = clWhite
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clNavy
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = [fsUnderline]
+          ParentColor = False
+          ParentFont = False
+          Transparent = False
+          OnClick = btnOpenServerClick
+        end
+        object Label32: TLabel
+          Left = 364
+          Top = 38
+          Width = 53
+          Height = 16
+          Cursor = crHandPoint
+          Caption = 'any URL'
+          Color = clWhite
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clNavy
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = [fsUnderline]
+          ParentColor = False
+          ParentFont = False
+          Transparent = False
         end
       end
       object Panel2: TPanel
@@ -1577,9 +1645,9 @@ object Form5: TForm5
       end
       object Panel3: TPanel
         Left = 0
-        Top = 47
+        Top = 65
         Width = 747
-        Height = 463
+        Height = 445
         Align = alClient
         BevelOuter = bvNone
         BorderWidth = 10
@@ -1601,11 +1669,11 @@ object Form5: TForm5
           ParentFont = False
           TabOrder = 0
         end
-        object ListBox1: TListBox
+        object lbPastValueSets: TListBox
           Left = 10
           Top = 36
           Width = 727
-          Height = 417
+          Height = 399
           Align = alClient
           BevelInner = bvNone
           BevelOuter = bvNone
@@ -1617,6 +1685,7 @@ object Form5: TForm5
           Font.Style = [fsUnderline]
           ParentFont = False
           TabOrder = 1
+          StyleElements = [seFont, seClient]
         end
       end
     end
@@ -1889,7 +1958,7 @@ object Form5: TForm5
     Left = 960
     Top = 112
     Bitmap = {
-      494C010128006C007C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010128006C00880020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060010000010020000000000000C0
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7733,7 +7802,7 @@ object Form5: TForm5
     Left = 1008
     Top = 116
     Bitmap = {
-      494C010127006C008C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127006C00980020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004001000001002000000000000080
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

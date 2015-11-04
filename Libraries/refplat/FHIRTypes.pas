@@ -38,7 +38,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.0.1 generated Thu, Sep 24, 2015 17:07+1000
+// FHIR v1.0.2 generated Thu, Oct 22, 2015 11:01+1100
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;

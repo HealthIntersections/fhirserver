@@ -73,8 +73,9 @@ Type
     Function Link : TSCIMServer; overload;
 
     Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession);
-    Function loadUser(id : String) : TSCIMUser;
-    function loadOrCreateUser(id, name, email : String) : TSCIMUser;
+    Function loadUser(key : integer) : TSCIMUser; overload;
+    Function loadUser(id : String; var key : integer) : TSCIMUser; overload;
+    function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser;
     function CheckLogin(username, password : String) : boolean;
     function CheckId(id : String; var username, hash : String) : boolean;
 
@@ -406,12 +407,11 @@ begin
   result := TJSONParser.Parse(request.PostStream);
 end;
 
-function TSCIMServer.loadOrCreateUser(id, name, email: String): TSCIMUser;
+function TSCIMServer.loadOrCreateUser(id, name, email: String; var key : integer): TSCIMUser;
 var
   conn : TKDBConnection;
   new, upd : boolean;
   now : TDateAndTime;
-  key : integer;
   s : String;
 begin
   upd := false;
@@ -419,9 +419,9 @@ begin
   conn := db.GetConnection('scim.loadOrCreateUser');
   try
     if id = SCIM_ANONYMOUS_User then
-      conn.SQL := 'Select Content from Users where Status = 1 and UserKey = 1'
+      conn.SQL := 'Select UserKey, Content from Users where Status = 1 and UserKey = 1'
     else
-      conn.SQL := 'Select Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
+      conn.SQL := 'Select UserKey, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
 
     conn.Prepare;
     result := nil;
@@ -429,7 +429,10 @@ begin
       conn.Execute;
       new := not conn.FetchNext;
       if not new then
-        result := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']))
+      begin
+        result := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
+        key := conn.ColIntegerByName['UserKey'];
+      end
       else
       begin
         result := TSCIMUser.Create(TJsonObject.Create);
@@ -525,19 +528,47 @@ begin
   end;
 end;
 
-function TSCIMServer.loadUser(id: String): TSCIMUser;
+function TSCIMServer.loadUser(key: integer): TSCIMUser;
 var
   conn : TKDBConnection;
 begin
   conn := db.GetConnection('scim.loadUser');
   try
-    conn.SQL := 'Select Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
+    conn.SQL := 'Select Content from Users where Status = 1 and UserKey = '''+inttostr(key)+'''';
+    conn.Prepare;
+    try
+      conn.Execute;
+      if not conn.FetchNext then
+        raise ESCIMException.Create(404, 'Not Found', '', 'UserKey '+inttostr(key)+' not found');
+      result := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
+    finally
+      conn.Terminate;
+    end;
+    conn.Release;
+  except
+    on e:Exception do
+    begin
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TSCIMServer.loadUser(id: String; var key : integer): TSCIMUser;
+var
+  conn : TKDBConnection;
+begin
+  conn := db.GetConnection('scim.loadUser');
+  try
+    conn.SQL := 'Select UserKey, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
     conn.Prepare;
     try
       conn.Execute;
       if not conn.FetchNext then
         raise ESCIMException.Create(404, 'Not Found', '', 'User '+id+' not found');
       result := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
+      Key := conn.ColIntegerByName['UserKey'];
     finally
       conn.Terminate;
     end;

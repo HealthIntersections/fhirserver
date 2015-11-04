@@ -40,7 +40,7 @@ type
     FParams: TParseMap;
     FType: TFHIRResourceType;
     FBaseURL: String;
-    FIndexer: TFhirIndexManager;
+    FIndexes: TFhirIndexInformation;
     FLang: String;
     FRepository: TFHIRDataStore;
     FSession : TFhirSession;
@@ -53,7 +53,7 @@ type
     function BuildFilterLogical  (filter : TFSFilterLogical;   parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
     Function ProcessSearchFilter(value : String) : String;
     Function ProcessParam(types : TFHIRResourceTypeSet; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
-    procedure SetIndexer(const Value: TFhirIndexManager);
+    procedure SetIndexes(const Value: TFhirIndexInformation);
     procedure SetRepository(const Value: TFHIRDataStore);
     procedure SplitByCommas(value: String; list: TStringList);
     function findPrefix(var value: String; subst: String): boolean;
@@ -89,7 +89,7 @@ type
     property baseURL : String read FBaseURL write FBaseURL;
     property lang : String read FLang write FLang;
     property params : TParseMap read FParams write FParams;
-    property indexer : TFhirIndexManager read FIndexer write SetIndexer;
+    property indexes : TFhirIndexInformation read FIndexes write SetIndexes;
     property repository : TFHIRDataStore read FRepository write SetRepository;
     property session : TFhirSession read FSession write SetSession;
     property countAllowed : boolean read FcountAllowed write FcountAllowed;
@@ -183,7 +183,7 @@ begin
 
   if params.VarExists(SEARCH_PARAM_NAME_SORT) and (params.Value[SEARCH_PARAM_NAME_SORT] <> '_id') then
   begin
-    ix := FIndexer.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT]);
+    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT]);
     if (ix = nil) then
       Raise Exception.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
     sort :='(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
@@ -271,7 +271,7 @@ begin
   begin
     if IsId(value) then
     begin
-      targets := Findexer.GetTargetsByName(types, name);
+      targets := Findexes.GetTargetsByName(types, name);
       i := 0;
       for a := low(TFHIRResourceType) to HIgh(TFHIRResourceType) do
         if a in targets then
@@ -907,7 +907,7 @@ begin
   end
   else if (name = '_text') then
   begin
-    result := '(IndexKey = '+inttostr(FIndexer.NarrativeIndex)+' and CONTAINS(Xhtml, '''+SQLWrapString(value)+'''))';
+    result := '(IndexKey = '+inttostr(FIndexes.NarrativeIndex)+' and CONTAINS(Xhtml, '''+SQLWrapString(value)+'''))';
   end
   else if pos('.', name) > 0 then
   begin
@@ -922,9 +922,9 @@ begin
     end
     else
     begin
-      types := filterTypes(FIndexer.GetTargetsByName(types, left));
+      types := filterTypes(FIndexes.GetTargetsByName(types, left));
     end;
-    key := FIndexer.GetKeyByName(left);
+    key := FIndexes.GetKeyByName(left);
     if key = 0 then
       raise Exception.create(StringFormat(GetFhirMessage('MSG_PARAM_CHAINED', lang), [left]));
     f := true;
@@ -960,13 +960,13 @@ begin
     end
     else
     begin
-      key := FIndexer.GetKeyByName(name);
+      key := FIndexes.GetKeyByName(name);
       if (types = [frtNull]) and not isCommonSearchParameter(name) then
         key := 0;
 
       if key > 0 then
       begin
-        type_ := FIndexer.GetTypeByName(types, name);
+        type_ := FIndexes.GetTypeByName(types, name);
         if modifier = 'missing' then
         begin
           bHandled := true;
@@ -1083,9 +1083,10 @@ begin
     replaceNames(TFSFilterParameter(filter).ParamPath, components);
 end;
 
-procedure TSearchProcessor.SetIndexer(const Value: TFhirIndexManager);
+procedure TSearchProcessor.SetIndexes(const Value: TFhirIndexInformation);
 begin
-  FIndexer := Value;
+  FIndexes.Free;
+  FIndexes := Value;
 end;
 
 procedure TSearchProcessor.SetRepository(const Value: TFHIRDataStore);
@@ -1152,11 +1153,11 @@ begin
     j := ''
   else
     j := ' and '+n+'.parent = '+parent+'.EntryKey';
-  index := FIndexer.GetKeyByName(path.Name);
+  index := FIndexes.GetKeyByName(path.Name);
 
   if path.Next <> nil then
   begin
-    comp := FIndexer.getComposite(types, path.Name, types);
+    comp := FIndexes.getComposite(types, path.Name, types);
     if (comp <> nil) then
     begin
       if (filter = nil) then
@@ -1176,14 +1177,14 @@ begin
         raise Exception.Create('Not handled yet');
      //   + ' and ' + n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(parts[0]) + ''')'
     // result := result +'  and ' + n + '.target in ()' + j + ')';
-      result := result + ' and '+n+'.target in (select ResourceKey from IndexEntries where Flag <> 2 and ('+BuildFilterParameter(filter, path.Next, parent, issuer, FIndexer.GetTargetsByName(types, path.name))+')))'+j;
+      result := result + ' and '+n+'.target in (select ResourceKey from IndexEntries where Flag <> 2 and ('+BuildFilterParameter(filter, path.Next, parent, issuer, FIndexes.GetTargetsByName(types, path.name))+')))'+j;
     end;
   end
   else
   begin
     // do we recognise the attribute path?
     assert(path.Filter = nil); // not allowed in the grammar
-    stype := FIndexer.GetTypeByName(types, path.Name);
+    stype := FIndexes.GetTypeByName(types, path.Name);
 
     if filter.Operation = fscoPR then
     begin
@@ -1239,6 +1240,7 @@ destructor TSearchProcessor.Destroy;
 begin
   FRepository.Free;
   FSession.Free;
+  FIndexes.Free;
   inherited;
 end;
 

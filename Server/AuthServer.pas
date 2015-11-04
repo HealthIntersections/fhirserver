@@ -382,7 +382,7 @@ begin
   if not isAllowedAud(client_id, aud) then
     raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'"');
 
-  id := GUIDToString(CreateGUID).ToLower.Substring(1, 36);
+  id := newguidid;
   conn := FFhirStore.DB.GetConnection('oatuh2');
   try
     conn.ExecSQL('insert into OAuthLogins (Id, Client, Scope, Redirect, ClientState, Status, DateAdded) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', '''+SQLWrapString(state)+''', 1, '+DBGetDate(conn.Owner.Platform)+')');

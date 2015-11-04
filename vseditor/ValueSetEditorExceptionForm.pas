@@ -1,28 +1,3 @@
-{**************************************************************************************************}
-{                                                                                                  }
-{ Project JEDI Code Library (JCL)                                                                  }
-{                                                                                                  }
-{ The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License"); }
-{ you may not use this file except in compliance with the License. You may obtain a copy of the    }
-{ License at http://www.mozilla.org/MPL/                                                           }
-{                                                                                                  }
-{ Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF   }
-{ ANY KIND, either express or implied. See the License for the specific language governing rights  }
-{ and limitations under the License.                                                               }
-{                                                                                                  }
-{ The Original Code is ExceptDlg.pas.                                                              }
-{                                                                                                  }
-{ The Initial Developer of the Original Code is Petr Vones.                                        }
-{ Portions created by Petr Vones are Copyright (C) of Petr Vones.                                  }
-{                                                                                                  }
-{**************************************************************************************************}
-{                                                                                                  }
-{ Last modified: $Date::                                                                         $ }
-{ Revision:      $Rev::                                                                          $ }
-{ Author:        $Author::                                                                       $ }
-{                                                                                                  }
-{**************************************************************************************************}
-
 unit ValueSetEditorExceptionForm;
 
 interface
@@ -44,6 +19,8 @@ type
     DetailsBtn: TButton;
     BevelDetails: TBevel;
     DetailsMemo: TMemo;
+    Label1: TLabel;
+    Edit1: TEdit;
     procedure SendBtnClick(Sender: TObject);
     procedure FormPaint(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -115,7 +92,7 @@ resourcestring
   RsThreadCallStack = 'Call stack for thread %d %s "%s"';
   RsExceptionThreadCallStack = 'Call stack for exception thread %s';
   RsErrorMessage = 'There was an error during the execution of this program.' + NativeLineBreak +
-                   'The application might become unstable and even useless.' + NativeLineBreak +
+                   'The application may now be unstable and/or useless.' + NativeLineBreak +
                    'It''s recommended that you save your work and close this application.' + NativeLineBreak + NativeLineBreak;
   RsDetailsIntro = 'Exception log with detailed tech info. Generated on %s.' + NativeLineBreak +
                    'You may send it to the application vendor, helping him to understand what had happened.' + NativeLineBreak +

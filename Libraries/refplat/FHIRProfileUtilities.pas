@@ -28,13 +28,31 @@ type
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; virtual; abstract;
     function expand(vs : TFhirValueSet) : TFHIRValueSet; virtual; abstract;
     function supportsSystem(system : string) : boolean; virtual; abstract;
-    function validateCode(system, code, display : String) : TValidationResult; virtual; abstract;
+    function validateCode(system, code, display : String) : TValidationResult; overload; virtual; abstract;
+    function validateCode(system, code, version : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
   end;
+
+  { for when we add table generation }
+//  TExtensionContext = class (TAdvObject)
+//  private
+//    FDefinition : TFhirStructureDefinition;
+//    FElement : TFhirElementDefinition;
+//
+//  public
+//    Constructor Create(definition : TFhirStructureDefinition; element : TFhirElementDefinition);
+//    Destructor Destroy; override;
+//
+//    Property Element : TFhirElementDefinition read FElement;
+//    Property Definition : TFhirStructureDefinition read FDefinition;
+//  end;
 
   TProfileUtilities = class (TAdvObject)
   private
     context : TValidatorServiceProvider;
     messages : TFhirOperationOutcomeIssueList;
+    procedure log(message : String);
     function fixedPath(contextPath, pathSimple : String) : String;
     function  getDiffMatches(context : TFhirStructureDefinitionDifferential; path : String; istart, iend : integer;  profileName : String) : TAdvList<TFhirElementDefinition>;
     function updateURLs(url : String; element : TFhirElementDefinition) : TFhirElementDefinition;
@@ -58,8 +76,7 @@ type
     function summariseSlicing(slice : TFhirElementDefinitionSlicing) : String;
     procedure updateFromSlicing(dst, src : TFhirElementDefinitionSlicing);
     function getSiblings(list : TFhirElementDefinitionList; current : TFhirElementDefinition) : TAdvList<TFhirElementDefinition>;
-    procedure processPaths(result, base : TFhirStructureDefinitionSnapshot; differential: TFhirStructureDefinitionDifferential; baseCursor, diffCursor, baseLimit, diffLimit : integer;
-      url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String);
+    procedure processPaths(result, base : TFhirStructureDefinitionSnapshot; differential: TFhirStructureDefinitionDifferential; baseCursor, diffCursor, baseLimit, diffLimit : integer; url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String; slicingHandled : boolean);
   public
     Constructor create(context : TValidatorServiceProvider; messages : TFhirOperationOutcomeIssueList);
     {
@@ -110,18 +127,32 @@ begin
   diffCursor := 0; // we need a diff cursor because we can only look ahead, in the bound scoped by longer paths
 
   // we actually delegate the work to a subroutine so we can re-enter it with a different cursors
-  processPaths(derived.Snapshot, base.Snapshot, derived.Differential, baseCursor, diffCursor, base.Snapshot.elementList.Count-1, derived.differential.elementList.Count-1, url, derived.Id+'.'+profileName+'.'+derived.Name, '', false, base.Url, '');
+  processPaths(derived.Snapshot, base.Snapshot, derived.Differential, baseCursor, diffCursor, base.Snapshot.elementList.Count-1, derived.differential.elementList.Count-1, url, derived.Id, '', false, base.Url, '', false);
 
 end;
 
+function pathTail(d : TFHIRElementDefinition) : String;
+var
+  s : String;
+begin
+  if d.Path.contains('.') then
+    s := d.Path.substring(d.Path.lastIndexOf('.')+1)
+  else
+    s := d.Path;
+  if (d.type_List.Count > 0) and (d.type_List[0].profileList.Count > 0) then
+    result := '.' + s
+  else
+    result := '.' + s + '['+d.type_List[0].profileList[0].value+']';
+end;
+
 procedure TProfileUtilities.processPaths(result, base : TFhirStructureDefinitionSnapshot; differential: TFhirStructureDefinitionDifferential; baseCursor, diffCursor, baseLimit, diffLimit : integer;
-      url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String);
+      url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String; slicingHandled : boolean);
 var
   currentBase : TFhirElementDefinition;
-  cpath, path : String;
+  cpath, path, p : String;
   diffMatches : TAdvList<TFhirElementDefinition>;
-  outcome, original, baseItem, diffItem : TFhirElementDefinition;
-  dt : TFHIRStructureDefinition;
+  outcome, original, baseItem, diffItem, template : TFhirElementDefinition;
+  dt, sd : TFHIRStructureDefinition;
   nbl, ndc, ndl, start, i, diffpos : integer;
   closed, isExt : boolean;
   dSlice, bSlice : TFhirElementDefinitionSlicing;
@@ -140,6 +171,7 @@ begin
     begin
       if (diffMatches.count = 0) then
       begin // the differential doesn't say anything about this item
+        log(cpath+': no match in the differential');
         // so we just copy it in
         outcome := updateURLs(url, currentBase.Clone());
         outcome.path := fixedPath(contextPath, outcome.path);
@@ -152,9 +184,28 @@ begin
         result.elementList.add(outcome);
         inc(baseCursor);
       end
-      else if (diffMatches.Count = 1) then
+      else if (diffMatches.Count = 1) and (slicingHandled or (diffMatches[0].slicing = nil)) then
       begin // one matching element in the differential
-        outcome := updateURLs(url, currentBase.clone());
+        log(cpath+': single match in the differential at '+inttostr(diffCursor));
+        template := nil;
+        if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profileList.count > 0) and (diffMatches[0].type_List[0].Code <> 'Reference') then
+        begin
+          p := diffMatches[0].type_List[0].profileList[0].value;
+          sd := context.fetchResource(frtStructureDefinition, p) as TFhirStructureDefinition;
+          if (sd <> nil) then
+          begin
+            template := sd.Snapshot.elementList[0].Clone;
+            template.Path := currentBase.path;
+            if (diffMatches[0].type_List[0].Code <> 'Extension') then
+            begin
+              template.min := currentBase.min;
+              template.max := currentBase.max;
+            end;
+          end;
+        end;
+        if (template = nil) then
+          template := currentBase.Clone;
+        outcome := updateURLs(url, template);
         outcome.path := fixedPath(contextPath, outcome.path);
         updateFromBase(outcome, currentBase);
         outcome.name := diffMatches[0].Name;
@@ -172,24 +223,27 @@ begin
         diffCursor := differential.elementList.indexOf(diffMatches[0])+1;
         if (differential.elementList.Count > diffCursor ) and ( outcome.path.contains('.') ) and ( isDataType(outcome.type_List)) then
         begin  // don't want to do this for the root, since that's base, and we're already processing it
-          if (pathStartsWith(differential.elementList[diffCursor].path, diffMatches[0].path+'.')) then
+          if (pathStartsWith(differential.elementList[diffCursor].path, fixedPath(contextPath, diffMatches[0].path+'.'))) then
           begin
             if (outcome.type_List.Count > 1) then
               raise Exception.create(diffMatches[0].path+' has children ('+differential.elementList[diffCursor].path+') and multiple types ('+typeCode(outcome.type_List)+') in profile '+profileName);
             dt := getProfileForDataType(outcome.type_List[0]);
             if (dt = nil) then
               raise Exception.create(diffMatches[0].path+' has children ('+differential.elementList[diffCursor].path+') for type '+typeCode(outcome.type_List)+' in profile '+profileName+', but can''t find type');
+            log(cpath+': now walk into the profile '+dt.url);
             contextName := dt.url;
             start := diffCursor;
             while (differential.elementList.Count > diffCursor ) and ( pathStartsWith(differential.elementList[diffCursor].path, diffMatches[0].path+'.')) do
               inc(diffCursor);
             processPaths(result, dt.snapshot, differential, 1 { starting again on the data type, but skip the root }, start-1, dt.Snapshot.elementList.Count-1,
-                diffCursor - 1, url, profileName+'/'+dt.Name, diffMatches[0].path, trimDifferential, contextName, resultPathBase);
+                diffCursor - 1, url, profileName+pathTail(diffMatches[0]), diffMatches[0].path, trimDifferential, contextName, resultPathBase, false);
           end;
         end;
       end
       else
       begin
+        log(cpath+': differential slices this');
+
         // ok, the differential slices the item. Let's check our pre-conditions to ensure that this is correct
         if (not unbounded(currentBase)) and (not isSlicedToOneOnly(diffMatches[0])) then
           // you can only slice an element that doesn't repeat if the sum total of your slices is limited to 1
@@ -233,7 +287,7 @@ begin
           ndc := differential.elementList.indexOf(diffMatches[i]);
           ndl := findEndOfElement(differential, ndc);
           // now we process the base scope repeatedly for each instance of the item in the differential list
-          processPaths(result, base, differential, baseCursor, ndc, nbl, ndl, url, profileName, contextPath, trimDifferential, contextName, resultPathBase);
+          processPaths(result, base, differential, baseCursor, ndc, nbl, ndl, url, profileName+pathTail(diffMatches[i]), contextPath, trimDifferential, contextName, resultPathBase, true);
         end;
         // ok, done with that - next in the base list
         baseCursor := nbl+1;
@@ -305,7 +359,12 @@ begin
           outcome.slicing := nil;
           if (not outcome.path.startsWith(resultPathBase)) then
             raise Exception.create('Adding wrong path');
-          if (diffpos < diffMatches.Count ) and (diffMatches[diffpos].name = outcome.name) then
+          if (diffMatches[diffpos].name = '') and (diffMatches[diffpos].slicing <> nil) then
+          begin
+            inc(diffpos);
+            // todo: check slicing details match
+          end;
+          if (diffpos < diffMatches.Count) and (diffMatches[diffpos].name = outcome.name) then
           begin
             // if there's a diff, we update the outcome with diff
             // no? updateFromDefinition(outcome, diffMatches.get(diffpos), profileName, pkp, closed, url);
@@ -314,7 +373,7 @@ begin
             ndc := differential.elementList.indexOf(diffMatches[diffpos]);
             ndl := findEndOfElement(differential, ndc);
             // now we process the base scope repeatedly for each instance of the item in the differential list
-            processPaths(result, base, differential, baseCursor, ndc, nbl, ndl, url, profileName, contextPath, closed, contextName, resultPathBase);
+            processPaths(result, base, differential, baseCursor, ndc, nbl, ndl, url, profileName+pathTail(diffMatches[diffpos]), contextPath, closed, contextName, resultPathBase, true);
             // ok, done with that - now set the cursors for if this is the end
             baseCursor := nbl+1;
             diffCursor := ndl+1;
@@ -488,7 +547,7 @@ end;
 
 function isPrimitive(value : String) : boolean;
 begin
-  result := StringArrayExistsInSensitive(['boolean', 'integer', 'decimal', 'base64Binary', 'instant', 'string', 'date', 'dateTime', 'code', 'oid', 'uuid', 'id', 'uri'], value);
+  result := (value = '') or StringArrayExistsInSensitive(['boolean', 'integer', 'decimal', 'base64Binary', 'instant', 'string', 'date', 'dateTime', 'code', 'oid', 'uuid', 'id', 'uri'], value);
 end;
 
 
@@ -505,7 +564,7 @@ begin
     for type_ in types do
     begin
     t := type_.code;
-      if (not isDataType(t)) and (t <> 'Reference') and (t <> 'Narrative') and (t <> 'Extension') and not isPrimitive(t) then
+      if (not isDataType(t)) and (t <> 'Reference') and (t <> 'Narrative') and (t <> 'Extension') and (t <> 'ElementDefinition') and not isPrimitive(t) then
         result := false;
     end;
   end;
@@ -598,6 +657,11 @@ end;
 function TProfileUtilities.isSlicedToOneOnly(definition : TFhirElementDefinition) : boolean;
 begin
   result := (definition.slicing <> nil) and (definition.MaxElement <> Nil) and (definition.max = '1');
+end;
+
+procedure TProfileUtilities.log(message: String);
+begin
+
 end;
 
 function TProfileUtilities.makeExtensionSlicing : TFhirElementDefinitionSlicing;
@@ -1035,5 +1099,21 @@ begin
   result := message = '';
 end;
 
+
+//{ TExtensionContext }
+//
+//constructor TExtensionContext.Create(definition: TFhirStructureDefinition;
+//  element: TFhirElementDefinition);
+//begin
+//  FDefinition := definition;
+//  FElement := element;
+//end;
+//
+//destructor TExtensionContext.Destroy;
+//begin
+//  FDefinition.Free;
+//  FElement.Free;
+//  inherited;
+//end;
 
 end.

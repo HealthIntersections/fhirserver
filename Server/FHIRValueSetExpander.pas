@@ -367,7 +367,7 @@ begin
           notClosed := true;
         prep := cs.getPrepContext;
         try
-          ctxt := cs.searchFilter(filter, prep);
+          ctxt := cs.searchFilter(filter, prep, false);
           try
             cs.prepare(prep);
             i := 0;
@@ -410,7 +410,7 @@ begin
         begin
           SetLength(filters, cset.filterList.count+1);
           offset := 1;
-          filters[0] := cs.searchFilter(filter, prep); // this comes first, because it imposes order
+          filters[0] := cs.searchFilter(filter, prep, true); // this comes first, because it imposes order
         end;
 
         for i := 0 to cset.filterList.count - 1 do

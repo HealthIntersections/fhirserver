@@ -263,6 +263,22 @@ type
   private
     function GetNamedParameter(name: String): TFhirBase;
     function GetStringParameter(name: String): String;
+    function GetBooleanParameter(name: String): boolean;
+  public
+    function hasParameter(name : String):Boolean;
+    Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
+    Property str[name : String] : String read GetStringParameter;
+    Property bool[name : String] : boolean read GetBooleanParameter;
+    procedure AddParameter(name: String; value: TFhirType); overload;
+    procedure AddParameter(name: String; value: TFhirResource); overload;
+    procedure AddParameter(name: String; value: boolean); overload;
+    procedure AddParameter(name, value: string); overload;
+  end;
+
+  TFhirParametersParameterHelper = class helper for TFhirParametersParameter
+  private
+    function GetNamedParameter(name: String): TFhirBase;
+    function GetStringParameter(name: String): String;
   public
     function hasParameter(name : String):Boolean;
     Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
@@ -271,6 +287,7 @@ type
     procedure AddParameter(name: String; value: TFhirResource); overload;
     procedure AddParameter(name: String; value: boolean); overload;
     procedure AddParameter(name, value: string); overload;
+    function AddParameter(name: String) : TFhirParametersParameter; overload;
   end;
 
   TFhirResourceMetaHelper = class helper for TFhirMeta
@@ -1928,6 +1945,7 @@ begin
   history := url.Substring(url.IndexOf('/_history/')+10);
   url := url.Substring(0, url.IndexOf('/_history/'));
 end;
+
 { TFhirParametersHelper }
 
 procedure TFhirParametersHelper.AddParameter(name: String; value: TFhirType);
@@ -1936,7 +1954,7 @@ var
 begin
   p := self.parameterList.Append;
   p.name := name;
-  p.value := value.Link;
+  p.value := value;
 end;
 
 procedure TFhirParametersHelper.AddParameter(name: String; value: TFhirResource);
@@ -1945,7 +1963,7 @@ var
 begin
   p := self.parameterList.Append;
   p.name := name;
-  p.resource := value.Link;
+  p.resource := value;
 end;
 
 procedure TFhirParametersHelper.AddParameter(name: String; value: boolean);
@@ -1966,6 +1984,25 @@ begin
   p.value := TFhirString.Create(value);
 end;
 
+function TFhirParametersHelper.GetBooleanParameter(name: String): boolean;
+var
+  v : TFhirBase;
+begin
+  v := NamedParameter[name];
+  if (v = nil) then
+    result := false
+  else if not (v is TFhirBoolean) then
+  begin
+    try
+      raise Exception.Create('Attempt to read "'+name+'" as a boolean, when it is a '+NamedParameter[name].FhirType);
+    finally
+      v.free;
+    end;
+  end
+  else
+    result := (v as TFhirBoolean).value;
+end;
+
 function TFhirParametersHelper.GetNamedParameter(name: String): TFhirBase;
 var
   i: Integer;
@@ -1983,8 +2020,22 @@ begin
 end;
 
 function TFhirParametersHelper.GetStringParameter(name: String): String;
+var
+  v : TFhirBase;
 begin
-  result := (NamedParameter[name] as TFhirPrimitiveType).StringValue;
+  v := NamedParameter[name];
+  if (v = nil) then
+    result := ''
+  else if not (v is TFhirPrimitiveType) then
+  begin
+    try
+      raise Exception.Create('Attempt to read "'+name+'" as a string, when it is a '+NamedParameter[name].FhirType);
+    finally
+      v.free;
+    end;
+  end
+  else
+    result := (v as TFhirPrimitiveType).StringValue;
 end;
 
 function TFhirParametersHelper.hasParameter(name: String): Boolean;
@@ -1998,6 +2049,84 @@ begin
       exit;
     end;
   result := false;
+end;
+
+{ TFhirParametersParameterHelper }
+
+procedure TFhirParametersParameterHelper.AddParameter(name: String; value: TFhirType);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.partList.Append;
+  p.name := name;
+  p.value := value;
+end;
+
+procedure TFhirParametersParameterHelper.AddParameter(name: String; value: TFhirResource);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.partList.Append;
+  p.name := name;
+  p.resource := value;
+end;
+
+procedure TFhirParametersParameterHelper.AddParameter(name: String; value: boolean);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.partList.Append;
+  p.name := name;
+  p.value := TFhirBoolean.Create(value);
+end;
+
+procedure TFhirParametersParameterHelper.AddParameter(name, value: string);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.partList.Append;
+  p.name := name;
+  p.value := TFhirString.Create(value);
+end;
+
+function TFhirParametersParameterHelper.GetNamedParameter(name: String): TFhirBase;
+var
+  i: Integer;
+begin
+  for i := 0 to partList.Count - 1 do
+    if (partList[i].name = name) then
+    begin
+      if partList[i].valueElement <> nil then
+        result := partList[i].valueElement.Link
+      else
+        result := partList[i].resourceElement.Link;
+      exit;
+    end;
+  result := nil;
+end;
+
+function TFhirParametersParameterHelper.GetStringParameter(name: String): String;
+begin
+  result := (NamedParameter[name] as TFhirPrimitiveType).StringValue;
+end;
+
+function TFhirParametersParameterHelper.hasParameter(name: String): Boolean;
+var
+  i: Integer;
+begin
+  for i := 0 to partList.Count - 1 do
+    if (partList[i].name = name) then
+    begin
+      result := true;
+      exit;
+    end;
+  result := false;
+end;
+
+function TFhirParametersParameterHelper.AddParameter(name: String): TFhirParametersParameter;
+begin
+  result := self.partList.Append;
+  result.name := name;
 end;
 
 { TFHIRCodeableConceptHelper }

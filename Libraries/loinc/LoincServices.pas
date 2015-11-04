@@ -366,7 +366,7 @@ Type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function buildValueSet(id : String) : TFhirValueSet;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
@@ -969,7 +969,7 @@ begin
   End;
 end;
 
-function TLOINCServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TLOINCServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 var
   matches : TMatchArray;
   children : TCardinalArray;

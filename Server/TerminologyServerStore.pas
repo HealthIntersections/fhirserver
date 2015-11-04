@@ -3,7 +3,7 @@ unit TerminologyServerStore;
 interface
 
 uses
-  SysUtils, Classes, kCritSct,
+  SysUtils, Classes, kCritSct, System.Generics.Defaults,
   StringSupport,
   AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
   KDBManager,
@@ -55,13 +55,25 @@ Type
     destructor Destroy; override;
   end;
 
-  TValueSetProviderFilterContext = class (TCodeSystemProviderFilterContext)
+  TFhirValueSetCodeSystemConceptMatch = class (TAdvObject)
+  private
+    FItem : TFhirValueSetCodeSystemConcept;
+    FRating : double;
+  public
+    Constructor Create(item : TFhirValueSetCodeSystemConcept; rating : double);
+    Destructor Destroy; override;
+  end;
+
+  TValueSetProviderFilterContext = class (TCodeSystemProviderFilterContext, IComparer<TFhirValueSetCodeSystemConceptMatch>)
   private
     ndx : integer;
-    total : Integer;
-    concepts : TFhirValueSetCodeSystemConceptList;
+    concepts : TAdvList<TFhirValueSetCodeSystemConceptMatch>;
+
+    procedure Add(item : TFhirValueSetCodeSystemConcept; rating : double);
+    function Compare(const Left, Right: TFhirValueSetCodeSystemConceptMatch): Integer;
+    procedure sort;
   public
-    constructor Create(concepts : TFhirValueSetCodeSystemConceptList); overload;
+    constructor Create; overload;
     destructor Destroy; override;
   end;
 
@@ -69,7 +81,7 @@ Type
   private
     FVs : TFhirValueSet;
     function doLocate(list : TFhirValueSetCodeSystemConceptList; code : String) : TValueSetProviderContext;
-    procedure FilterCodes(dest, source : TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText; all : boolean);
+    procedure FilterCodes(dest : TValueSetProviderFilterContext; source : TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText);
   public
     constructor Create(vs : TFHIRValueSet); overload;
     destructor Destroy; override;
@@ -95,7 +107,7 @@ Type
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; overload; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
   end;
 
@@ -106,7 +118,6 @@ Type
   TTerminologyServerStore = class (TAdvObject)
   private
     FLoading : boolean;
-    FDB : TKDBManager;
     FLoinc : TLOINCServices;
     FSnomed : TSnomedServices;
     FUcum : TUcumServices;
@@ -155,6 +166,7 @@ Type
     function TrackValueSet(id : String; bOnlyIfNew : boolean) : integer;
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
+    FDB : TKDBManager;
     procedure invalidateVS(id : String); virtual;
     function NextConceptKey : integer;
     function NextClosureKey : integer;
@@ -262,7 +274,7 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList); overload; override;
     procedure Displays(code : String; list : TStringList); overload; override;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
@@ -437,7 +449,7 @@ begin
   raise Exception.Create('Not Created Yet');
 end;
 
-function TAllCodeSystemsProvider.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TAllCodeSystemsProvider.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 var
   ctxt : TAllCodeSystemsProviderFilter;
 begin
@@ -448,13 +460,13 @@ begin
     ctxt := TAllCodeSystemsProviderFilter.create;
     try
       if FStore.RxNorm <> nil then
-        ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm);
+        ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm, sort);
       if FStore.NciMeta <> nil then
-        ctxt.NciMeta := FStore.NciMeta.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).NciMeta);
-      ctxt.unii := FStore.Unii.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).unii);
-      ctxt.snomed := FStore.snomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed);
-      ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc);
-      ctxt.actcode := FActCode.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).actcode);
+        ctxt.NciMeta := FStore.NciMeta.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).NciMeta, sort);
+      ctxt.unii := FStore.Unii.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).unii, sort);
+      ctxt.snomed := FStore.snomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed, sort);
+      ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc, sort);
+      ctxt.actcode := FActCode.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).actcode, sort);
       result := ctxt.Link;
     finally
       ctxt.free;
@@ -724,6 +736,7 @@ begin
   for cp in FProviderClasses.Values do
   begin
     e := oConf.addExtension('http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system', nil);
+    e.Tags['summary'] := 'true';
     s := cp.system(nil);
     e.addExtension('system', s);
     s := cp.version(nil);
@@ -1344,12 +1357,17 @@ end;
 
 function TValueSetProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext): Boolean;
 var
-  cl : TFhirValueSetCodeSystemConceptList;
+  cm : TFhirValueSetCodeSystemConceptMatch;
   c : TFhirValueSetCodeSystemConcept;
 begin
-  cl := TValueSetProviderFilterContext(ctxt).concepts;
+  result := false;
   c := TValueSetProviderContext(concept).context;
-  result := cl.IndexByReference(c) > -1;
+  for cm in TValueSetProviderFilterContext(ctxt).concepts do
+    if cm.FItem = c then
+    begin
+      result := true;
+      exit;
+    end;
 end;
 
 function TValueSetProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -1417,14 +1435,14 @@ begin
   result := DoLocate(FVS.codeSystem.conceptList, code);
 end;
 
-function TValueSetProvider.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TValueSetProvider.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 var
   res : TValueSetProviderFilterContext;
 begin
-  res := TValueSetProviderFilterContext.Create(TFhirValueSetCodeSystemConceptList.Create);
+  res := TValueSetProviderFilterContext.Create;
   try
-    FilterCodes(res.concepts, Fvs.codeSystem.conceptList, filter, true);
-    res.total := res.concepts.Count;
+    FilterCodes(res, Fvs.codeSystem.conceptList, filter);
+    res.sort;
     result := res.Link;
   finally
     res.Free;
@@ -1458,11 +1476,11 @@ begin
   ctxt.Free;
 end;
 
-procedure iterateCodes(base : TFhirValueSetCodeSystemConcept; list : TFhirValueSetCodeSystemConceptList);
+procedure iterateCodes(base : TFhirValueSetCodeSystemConcept; list : TValueSetProviderFilterContext);
 var
   i : integer;
 begin
-  list.Add(base.Link);
+  list.Add(base.Link, 0);
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list);
 end;
@@ -1470,7 +1488,6 @@ end;
 function TValueSetProvider.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   code : TValueSetProviderContext;
-  cl : TFhirValueSetCodeSystemConceptList;
   ts : TStringList;
   i: Integer;
 begin
@@ -1482,12 +1499,12 @@ begin
         raise Exception.Create('Unable to locate code '+value)
       else
       begin
-        cl := TFhirValueSetCodeSystemConceptList.Create;
+        result := TValueSetProviderFilterContext.create;
         try
-          iterateCodes(code.context, cl);
-          result := TValueSetProviderFilterContext.create(cl.link);
+          iterateCodes(code.context, result as TValueSetProviderFilterContext);
+          result.link;
         finally
-          cl.Free;
+          result.Free;
         end;
       end;
     finally
@@ -1496,7 +1513,7 @@ begin
   end
   else if (op = FilterOperatorIn) and (prop = 'concept') then
   begin
-    cl := TFhirValueSetCodeSystemConceptList.Create;
+    result := TValueSetProviderFilterContext.Create;
     try
       ts := TStringList.Create;
       try
@@ -1508,7 +1525,7 @@ begin
             if code = nil then
               raise Exception.Create('Unable to locate code '+value)
             else
-              cl.Add(code.context.Link);
+              TValueSetProviderFilterContext(result).Add(code.context.Link, 0);
           finally
             Close(code)
           end;
@@ -1516,33 +1533,34 @@ begin
       finally
         ts.Free;
       end;
-      result := TValueSetProviderFilterContext.create(cl.link);
+      result.link;
     finally
-      cl.Free;
+      result.Free;
     end;
   end
   else
     result := nil;
 end;
 
-procedure TValueSetProvider.FilterCodes(dest, source: TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText; all : boolean);
+procedure TValueSetProvider.FilterCodes(dest : TValueSetProviderFilterContext; source: TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText);
 var
   i : integer;
   code : TFhirValueSetCodeSystemConcept;
+  rating : double;
 begin
   for i := 0 to source.Count - 1 do
   begin
     code := source[i];
-    if filter.passes(code.tag as TAdvStringList, all) then
-      dest.Add(code.Link);
-    filterCodes(dest, code.conceptList, filter, all);
+    if filter.passes(code.tag as TAdvStringList, rating) then
+      dest.Add(code.Link, rating);
+    filterCodes(dest, code.conceptList, filter);
   end;
 end;
 
 function TValueSetProvider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
   inc(TValueSetProviderFilterContext(ctxt).ndx);
-  result := TValueSetProviderFilterContext(ctxt).ndx < TValueSetProviderFilterContext(ctxt).total;
+  result := TValueSetProviderFilterContext(ctxt).ndx < TValueSetProviderFilterContext(ctxt).concepts.Count;
 end;
 
 function TValueSetProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
@@ -1550,7 +1568,7 @@ var
   context : TValueSetProviderFilterContext;
 begin
   context := TValueSetProviderFilterContext(ctxt);
-  result := TValueSetProviderContext.Create(context.concepts[context.ndx].Link)
+  result := TValueSetProviderContext.Create(context.concepts[context.ndx].FItem.Link)
 end;
 
 function TValueSetProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
@@ -1561,9 +1579,9 @@ begin
   result := nil;
   context := TValueSetProviderFilterContext(ctxt);
   for i := 0 to context.concepts.Count - 1 do
-    if context.concepts[i].code = code  then
+    if context.concepts[i].FItem.code = code  then
     begin
-      result := TValueSetProviderContext.Create( context.concepts[i].Link);
+      result := TValueSetProviderContext.Create(context.concepts[i].FItem.Link);
       break;
     end;
 end;
@@ -1640,11 +1658,25 @@ end;
 
 { TValueSetProviderFilterContext }
 
-constructor TValueSetProviderFilterContext.Create(concepts: TFhirValueSetCodeSystemConceptList);
+procedure TValueSetProviderFilterContext.Add(item: TFhirValueSetCodeSystemConcept; rating : double);
+begin
+  concepts.Add(TFhirValueSetCodeSystemConceptMatch.Create(item, rating));
+end;
+
+function TValueSetProviderFilterContext.Compare(const Left, Right: TFhirValueSetCodeSystemConceptMatch): Integer;
+begin
+  if right.FRating > left.FRating then
+    result := 1
+  else if left.FRating > right.FRating then
+    result := -1
+  else
+    result := 0;
+end;
+
+constructor TValueSetProviderFilterContext.Create;
 begin
   inherited Create;
-  self.concepts := concepts;
-  total := self.concepts.Count;
+  self.concepts := TAdvList<TFhirValueSetCodeSystemConceptMatch>.create;
   ndx := -1;
 end;
 
@@ -1652,6 +1684,15 @@ destructor TValueSetProviderFilterContext.Destroy;
 begin
   concepts.Free;
   inherited;
+end;
+
+procedure TValueSetProviderFilterContext.sort;
+var
+  m : TFhirValueSetCodeSystemConceptMatch;
+begin
+  concepts.sort(self);
+  for m in concepts do
+    writeln(m.FItem.code+' ('+m.FItem.display+'): '+FloatToStr(m.FRating));
 end;
 
 { TValueSetProviderContext }
@@ -1678,6 +1719,21 @@ end;
 function TLoadedConceptMapList.itemClass: TAdvObjectClass;
 begin
   result := TLoadedConceptMap;
+end;
+
+{ TFhirValueSetCodeSystemConceptMatch }
+
+constructor TFhirValueSetCodeSystemConceptMatch.Create(item: TFhirValueSetCodeSystemConcept; rating: double);
+begin
+  inherited Create;
+  FItem := item;
+  FRating := rating;
+end;
+
+destructor TFhirValueSetCodeSystemConceptMatch.Destroy;
+begin
+  FItem.Free;
+  inherited;
 end;
 
 end.

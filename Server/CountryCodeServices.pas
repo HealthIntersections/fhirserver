@@ -38,7 +38,7 @@ type
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -184,7 +184,7 @@ begin
   raise Exception.Create('not done yet');
 end;
 
-function TCountryCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TCountryCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
   raise Exception.Create('not done yet');
 end;
