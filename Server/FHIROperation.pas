@@ -65,7 +65,7 @@ uses
 
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore,
-  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities,
+  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator,
   ServerValidator, QuestionnaireBuilder, SearchProcessor;
 
 const
@@ -452,6 +452,27 @@ type
     procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
+  TFhirGenerateTemplateOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+  end;
+
+  TFhirGenerateNarrativeOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+  end;
 
 implementation
 
@@ -492,6 +513,8 @@ begin
   FOperations.add(TFhirProcessClaimOperation.create);
   FOperations.add(TFhirGenerateSnapshotOperation.create);
   FOperations.add(TFhirGenerateCDSHookOperation.create);
+  FOperations.add(TFhirGenerateTemplateOperation.create);
+  FOperations.add(TFhirGenerateNarrativeOperation.create);
 end;
 
 function TFhirOperationManager.CreateDocumentAsBinary(mainRequest : TFhirRequest): String;
@@ -879,11 +902,14 @@ begin
     oConf.restList.add(TFhirConformanceRest.Create);
     oConf.restList[0].mode := RestfulConformanceModeServer;
     oConf.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/conformance-websockets', request.baseUrl+'websockets');
+    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
+    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
+    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
     oConf.text := TFhirNarrative.create;
     oConf.text.status := NarrativeStatusGenerated;
 
     FRepository.TerminologyServer.declareSystems(oConf);
-    if assigned(FOnPopulateConformance) then
+    if assigned(FOnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
       FOnPopulateConformance(self, oConf);
 
     html := TAdvStringBuilder.Create;
@@ -1015,6 +1041,7 @@ begin
     finally
       html.free;
     end;
+
     AuditRest(request.session, request.ip, request.ResourceType, '', '', request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
@@ -1797,7 +1824,7 @@ var
 begin
   id := FhirGUIDToString(CreateGuid);
   result := inttostr(FRepository.NextSearchKey);
-  if params.VarExists('_query') then
+  if params.VarExists('_query') and (params.getVar('_query') <> '') then
   begin
     raise exception.create('The query "'+params.getVar('_query')+'" is not known');
   end
@@ -2899,7 +2926,7 @@ function TFhirOperationManager.scanId(request : TFHIRRequest; entry : TFHIRBundl
 var
   id : TFHIRTransactionEntry;
   i, k : integer;
-  sId, s : String;
+  sId, s, b : String;
   sParts : TArray<String>;
   baseok : boolean;
   aType : TFHIRResourceType;
@@ -3093,7 +3120,15 @@ begin
         raise Exception.create('resource cannot be missing (entry '+inttostr(index+1)+')');
       if (entry.resource.id <> '') and not IsId(entry.resource.id) then
         raise Exception.create('resource id is illegal ("'+entry.resource.id+'") (entry '+inttostr(index+1)+')');
-      baseok := entry.fullUrl = '';
+      if (entry.fullUrl = '') or (entry.fullUrl.StartsWith(request.baseUrl)) then
+        baseok := true
+      else
+      begin
+        baseok := false;
+        for b in FRepository.bases do
+          if entry.fullUrl.StartsWith(b) then
+            baseOk := true;
+      end;
       if (baseOk and (entry.resource.id <> '')) or (isGuid(entry.resource.id)) then
       begin
         id.id := entry.resource.id;
@@ -3464,6 +3499,9 @@ var
   src, dest : TFhirBundleEntry;
   url : String;
   dummy : integer;
+  mem : TAdvMemoryStream;
+  comp : TFHIRXmlComposer;
+  m : TVCLStream;
 begin
   try
     req := request.Bundle.Link;
@@ -3475,6 +3513,7 @@ begin
       begin
         dest := resp.entryList.Append;
         try
+          write('.');
           if src.request = nil then
             raise Exception.Create('No request details');
           dest.request := src.request.Clone;
@@ -3486,6 +3525,24 @@ begin
             request.IfModifiedSince := src.request.ifModifiedSince.AsUTCDateTime;
           request.IfMatch := src.request.ifMatch;
           request.IfNoneExist := src.request.ifNoneExist;
+          request.resource := src.resource.link;
+          request.Source := TAdvBuffer.Create;
+          request.PostFormat := ffXml;
+          if FRepository.validate then
+          begin
+            comp := TFHIRXmlComposer.Create('en');
+            mem := TAdvMemoryStream.Create;
+            m := TVCLStream.Create;
+            try
+              m.Stream := mem.Link;
+              mem.Buffer := request.source.Link;
+              comp.compose(m, request.resource, true);
+            finally
+              m.Free;
+              comp.Free;
+              mem.Free;
+            end;
+          end;
           Execute(request, response, false);
           dest.response := TFhirBundleEntryResponse.Create;
           dest.response.status := inttostr(response.HTTPCode);
@@ -3511,6 +3568,7 @@ begin
       response.HTTPCode := 202;
       response.Message := 'Accepted';
       response.bundle := resp.Link;
+      writeln('done');
     finally
       FRepository.Validator.YieldContext(context);
       req.free;
@@ -5650,7 +5708,7 @@ begin
       begin
         profile := nil;
         try
-          // first, we have to identify the value set.
+          // first, we have to identify the structure definition
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
             profile := manager.GetProfileById(request, request.Id, request.baseUrl)
@@ -5721,7 +5779,6 @@ begin
       end;
     end;
     inc(iCount);
-    TFHIRXhtmlComposer.Create('en').Compose(TFileStream.Create('c:\temp\q'+inttostr(iCount)+'.xml', fmCreate), response.Resource, true, nil);
     manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
@@ -7027,6 +7084,168 @@ begin
   finally
     patient.Free;
   end;
+end;
+
+{ TFhirGenerateTemplateOperation }
+
+function TFhirGenerateTemplateOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirGenerateTemplateOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  profile : TFHirStructureDefinition;
+  op : TFhirOperationOutcome;
+  resourceKey : integer;
+  id, fid : String;
+  builder : TProfileUtilities;
+  template : TFHIRResource;
+  narr : TFHIRNarrativeGenerator;
+begin
+  try
+    manager.NotFound(request, response);
+    if manager.check(response, request.Session.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    begin
+      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(frtStructureDefinition, request.Id, false, resourceKey, request, response, request.compartments)) then
+      begin
+        profile := nil;
+        try
+          // first, we have to identify the structure definition
+          id := request.Id;
+          if request.Id <> '' then // and it must exist, because of the check above
+            profile := manager.GetProfileById(request, request.Id, request.baseUrl)
+          else if request.Parameters.VarExists('identifier') then
+            profile := manager.GetProfileByURL(request.Parameters.getvar('identifier'), id)
+          else if (request.form <> nil) and request.form.hasParam('profile') then
+            profile := LoadFromFormParam(request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
+          else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
+            profile := request.Resource.Link as TFHirStructureDefinition
+          else
+            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly');
+
+          template := nil;
+          try
+            builder := TProfileUtilities.create(manager.FRepository.Validator.Link, nil);
+            try
+              template := builder.populateByProfile(profile);
+              if template is TFhirDomainResource then
+              begin
+                narr := TFHIRNarrativeGenerator.create(manager.FRepository.Validator.Link);
+                try
+                  narr.generate(template as TFhirDomainResource);
+                finally
+                  narr.Free;
+                end;
+              end;
+            finally
+              builder.Free;
+            end;
+            response.HTTPCode := 200;
+            response.Message := 'OK';
+            response.Body := '';
+            response.LastModifiedDate := now;
+            response.Resource := template.Link;
+          finally
+            template.Free;
+          end;
+        finally
+          profile.free;
+        end;
+      end;
+    end;
+    inc(iCount);
+    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirGenerateTemplateOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirGenerateTemplateOperation.Name: String;
+begin
+  result := 'generate-template';
+end;
+
+function TFhirGenerateTemplateOperation.owningResource: TFhirResourceType;
+begin
+  result := frtStructureDefinition;
+end;
+
+function TFhirGenerateTemplateOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtStructureDefinition];
+end;
+
+{ TFhirGenerateNarrativeOperation }
+
+function TFhirGenerateNarrativeOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirGenerateNarrativeOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  narr : TFHIRNarrativeGenerator;
+  r : TFHIRResource;
+begin
+  try
+    r := request.Resource;
+    if (r = nil) then
+      raise Exception.Create('No resource found');
+    if r is TFhirDomainResource then
+    begin
+      (r as TFhirDomainResource).text := nil;
+      narr := TFHIRNarrativeGenerator.create(manager.FRepository.Validator.Link);
+      try
+        narr.generate(r as TFhirDomainResource);
+      finally
+        narr.Free;
+      end;
+    end;
+    response.HTTPCode := 200;
+    response.Message := 'OK';
+    response.Body := '';
+    response.LastModifiedDate := now;
+    response.Resource := r.Link;
+    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirGenerateNarrativeOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirGenerateNarrativeOperation.Name: String;
+begin
+  result := 'generate-narrative';
+end;
+
+function TFhirGenerateNarrativeOperation.owningResource: TFhirResourceType;
+begin
+  result := frtNull;
+end;
+
+function TFhirGenerateNarrativeOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtNull];
 end;
 
 end.

@@ -1,4 +1,4 @@
-library helloworld;
+library fhirnpp;
 
 { Important note about DLL memory management: ShareMem must be the
   first unit in your library's USES clause AND your project's (select
@@ -112,7 +112,6 @@ uses
   IdSoapBase64 in '..\Libraries\indysoap\IdSoapBase64.pas',
   TextUtilities in '..\Libraries\support\TextUtilities.pas',
   FHIRSupport in '..\Libraries\refplat\FHIRSupport.pas',
-  ParseMap in '..\Libraries\support\ParseMap.pas',
   JWT in '..\Libraries\support\JWT.pas',
   HMAC in '..\Libraries\support\HMAC.pas',
   libeay32 in '..\Libraries\support\libeay32.pas',
@@ -137,7 +136,6 @@ uses
   AdvXMLFormatters in '..\Libraries\support\AdvXMLFormatters.pas',
   AdvXMLEntities in '..\Libraries\support\AdvXMLEntities.pas',
   FHIRProfileUtilities in '..\Libraries\refplat\FHIRProfileUtilities.pas',
-  FHIRPluginErrors in 'FHIRPluginErrors.pas',
   AltovaXMLLib_TLB in '..\Libraries\support\AltovaXMLLib_TLB.pas',
   AdvZipReaders in '..\Libraries\support\AdvZipReaders.pas',
   AdvZipDeclarations in '..\Libraries\support\AdvZipDeclarations.pas',
@@ -147,7 +145,17 @@ uses
   ProfileManager in '..\Libraries\refplat\ProfileManager.pas',
   kCritSct in '..\Libraries\support\kCritSct.pas',
   FHIRPluginValidator in 'FHIRPluginValidator.pas',
-  FHIRClient in '..\Libraries\refplat\FHIRClient.pas';
+  FHIRClient in '..\Libraries\refplat\FHIRClient.pas',
+  NewResourceForm in 'NewResourceForm.pas' {ResourceNewForm},
+  FHIRNarrativeGenerator in '..\Libraries\refplat\FHIRNarrativeGenerator.pas',
+  NewServerForm in 'NewServerForm.pas' {RegisterServerForm},
+  SmartOnFhirLogin in '..\Libraries\refplat\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm},
+  ParseMap in '..\Libraries\support\ParseMap.pas',
+  SmartOnFhirUtilities in '..\Libraries\refplat\SmartOnFhirUtilities.pas',
+  FetchResourceForm in 'FetchResourceForm.pas' {FetchResourceFrm},
+  VirtualTrees in '..\..\Components\vtree\Source\VirtualTrees.pas',
+  FhirPath in '..\Libraries\refplat\FhirPath.pas',
+  FHIRPathDocumentation in 'FHIRPathDocumentation.pas' {FHIRPathDocumentationForm};
 
 {$R *.res}
 

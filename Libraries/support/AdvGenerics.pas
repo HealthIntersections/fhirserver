@@ -45,6 +45,7 @@ Type
   // Actually, T must be TAdvObject, but this doesn't work because of forwards class definitions
   TAdvList<T : class> = class (TAdvEnumerable<T>)
   private
+    function GetEmpty: boolean;
   type
     arrayofT = array of T;
   var
@@ -100,6 +101,7 @@ Type
     procedure Pack; overload;
 
     function Remove(const Value: T): Integer;
+    procedure RemoveAll(list : TAdvList<T>);
     function RemoveItem(const Value: T; Direction: TDirection): Integer;
     procedure Delete(Index: Integer);
     procedure DeleteRange(AIndex, ACount: Integer);
@@ -134,6 +136,7 @@ Type
 
     property Capacity: Integer read GetCapacity write SetCapacity;
     property Count: Integer read FCount write SetCount;
+    property Empty : boolean read GetEmpty;
     property Items[Index: Integer]: T read GetItem write SetItem; default;
     property List: arrayofT read FItems;
 
@@ -654,6 +657,14 @@ begin
     Delete(Result);
 end;
 
+procedure TAdvList<T>.RemoveAll(list: TAdvList<T>);
+var
+  item: T;
+begin
+  for item in list do
+    Remove(TAdvObject(item));
+end;
+
 function TAdvList<T>.RemoveItem(const Value: T; Direction: TDirection): Integer;
 begin
   Result := IndexOfItem(Value, Direction);
@@ -846,6 +857,11 @@ end;
 procedure TAdvList<T>.TrimExcess;
 begin
   Capacity := Count;
+end;
+
+function TAdvList<T>.GetEmpty: boolean;
+begin
+  result := Count = 0;
 end;
 
 function TAdvList<T>.GetEnumerator: TAdvEnumerator;

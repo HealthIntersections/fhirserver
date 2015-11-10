@@ -41,3 +41,6 @@ vseditor/Win32/Debug/ValueSetEditor.exe.pec2bac
 Server/Win64/Debug/FHIRServerDev.jdbg
 Exec/FHIRServerDev.jdbg
 npp/fhirnpp.stat
+install/fhirserver.fbpInf
+Server/FHIRServerDev.stat
+Libraries/refplat/openehr.xml

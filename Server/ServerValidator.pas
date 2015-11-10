@@ -62,7 +62,9 @@ end;
 procedure TFHIRValidator.SeeResource(r : TFhirResource);
 begin
   if (r.ResourceType in [frtValueSet, frtConceptMap]) then
-    FTerminologyServer.SeeSpecificationResource(r);
+    FTerminologyServer.SeeSpecificationResource(r)
+  else
+    inherited SeeResource(r);
 end;
 
 function TFHIRValidator.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
@@ -128,12 +130,15 @@ begin
   try
     result := TValidationResult.Create;
     try
-      if FTerminologyServer.checkCode(op, '', system, code, display) then
+      if FTerminologyServer.checkCode(op, '', code, system, display) then
         result.Severity := IssueSeverityNull
       else if op.issueList.Count = 1 then
       begin
         result.Severity := op.issueList[0].severity;
-        result.Message := op.issueList[0].details.text;
+        if op.issueList[0].details = nil then
+          result.Message := op.issueList[0].diagnostics
+        else
+          result.Message := op.issueList[0].details.text;
       end
       else
       begin

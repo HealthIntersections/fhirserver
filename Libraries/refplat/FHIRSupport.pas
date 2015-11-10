@@ -254,6 +254,7 @@ Type
     FIfNoneExist: String;
     FSummary: TFHIRSummaryOption;
     FOrigin : TFHIRRequestOrigin;
+    FSecure : Boolean;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -304,6 +305,11 @@ Type
       The full URL of the original request, if the request was made on a RESTful interface (else empty)
     }
     property url : String read FUrl write FUrl;
+
+    {@member secure
+      Whether the request was made on an SSL interface or not (SSL = smart on fhir as well)
+    }
+    property secure : Boolean read FSecure write FSecure;
 
     {@member baseUrl
       The baseURL (see the FHIR specification under "HTTP REST interface) of the interface,

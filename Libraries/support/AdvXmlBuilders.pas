@@ -329,8 +329,8 @@ begin
   else
   begin
     result := StringTrimSet(s, [' ', #13, #10, #9]);
-    if result = '' then
-      result := ' ';
+    if ((result = '') and (s <> '')) or (s.endsWith(' ')) then
+      result := result + ' ';
   end;
 end;
 

@@ -379,8 +379,8 @@ begin
     begin
       // the expander is tied to what's on the system
       FTerminologyServer := TerminologyServer;
-      FProfiles := TProfileManager.Create;
       FValidator := TFHIRValidator.Create;
+      FProfiles := FValidator.Profiles.Link;
       FValidator.SchematronSource := WebFolder;
       FValidator.TerminologyServer := TerminologyServer.Link;
       FValidator.Profiles := Profiles.Link;

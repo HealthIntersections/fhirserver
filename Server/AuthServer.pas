@@ -875,6 +875,7 @@ end;
 procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   code, clientId, clientSecret, uri, errCode : string;
+  psecret, pclientid, s : String;
   conn : TKDBConnection;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;
@@ -883,42 +884,58 @@ begin
   buffer := TAdvMemoryStream.Create;
   try
     try
-      errCode := 'invalid_request';
-      code := checkNotEmpty(params.getVar('code'), 'code');
-      clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
-      clientSecret := params.getVar('client_secret');
-      uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri');
+      // first, we check the fixed value
       errCode := 'unsupported_grant_type';
       if params.getVar('grant_type') <> 'authorization_code' then
         raise Exception.Create('Invalid grant_type - must be authorization_code');
 
-      errCode := 'invalid_grant';
-      if not FFhirStore.GetSessionByToken(code, session) then
+      // now, check the code
+      errCode := 'invalid_request';
+      code := checkNotEmpty(params.getVar('code'), 'code');
+      if not FFhirStore.GetSessionByToken(code, session) then // todo: why is session passed in too?
         raise Exception.Create('Authorization Code not recognized');
-
-      errCode := 'invalid_client';
-      if FIni.ReadString(clientId, 'secret', '') <> clientSecret then
-        raise Exception.Create('Client Id or secret is wrong ("'+clientId+'")');
-
       try
-        errCode := 'invalid_request';
         conn := FFhirStore.DB.GetConnection('OAuth2');
         try
-          conn.SQL := 'select Redirect, Scope from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 3 and OAuthLogins.SessionKey = Sessions.SessionKey';
+          conn.SQL := 'select Client, Redirect, Scope from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 3 and OAuthLogins.SessionKey = Sessions.SessionKey';
           conn.prepare;
           conn.execute;
-
-          errCode := 'invalid_grant';
           if not conn.fetchnext then
             raise Exception.Create('Authorization Code not recognized (2)');
 
+          pclientid := conn.ColStringByName['Client'];
+          psecret := FIni.ReadString(pclientId, 'secret', '');
+
+          // what happens now depends on whether there's a client secret or not
+          if (psecret = '') then
+          begin
+            // user must supply the correct client id
+            errCode := 'invalid_client';
+            clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
+            if clientId <> pclientid then
+              raise Exception.Create('Client Id is wrong ("'+clientId+'")');
+          end
+          else
+          begin
+            // client id and client secret must be in the basic header. Check them
+            clientId := request.AuthUsername;
+            clientSecret := request.AuthPassword;
+            if clientId <> pclientid then
+              raise Exception.Create('Client Id is wrong ("'+clientId+'")');
+            if clientSecret <> psecret then
+              raise Exception.Create('Client Secret is wrong ("'+clientSecret+'")');
+          end;
+
+          // now check the redirect URL
+          uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri');
           errCode := 'invalid_request';
           if conn.ColStringByName['Redirect'] <> uri then
             raise Exception.Create('Mismatch between claimed and actual redirection URIs');
+
+          // ok, well, it's passed.
           scope := conn.ColStringByName['Scope'];
           launch := readFromScope(scope, 'launch');
           conn.terminate;
-
 
           conn.ExecSQL('Update OAuthLogins set Status = 4, DateTokenAccessed = '+DBGetDate(conn.owner.platform)+' where Id = '''+session.OuterToken+'''');
 
@@ -930,6 +947,7 @@ begin
             json.Value('token_type', 'Bearer');
             json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
             json.Value('id_token', session.JWTPacked);
+            json.Value('scope', scope);
             json.Value('patient', launch);
             json.Finish;
           finally

@@ -3,6 +3,7 @@ inherited AboutForm: TAboutForm
   Caption = 'FHIR NPP Plugin'
   ClientHeight = 201
   ClientWidth = 454
+  Scaled = False
   OnShow = FormShow
   ExplicitWidth = 460
   ExplicitHeight = 230
@@ -362,6 +363,12 @@ inherited AboutForm: TAboutForm
       Width = 210
       Height = 13
       Caption = 'Developed by the FHIR Core Team && friends'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
     end
     object Label3: TLabel
       Left = 14
@@ -369,6 +376,12 @@ inherited AboutForm: TAboutForm
       Width = 154
       Height = 13
       Caption = 'Copyright '#169' HL7 && http://fhir.org'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
     end
     object lblVersion: TLabel
       Left = 14
@@ -376,6 +389,12 @@ inherited AboutForm: TAboutForm
       Width = 89
       Height = 13
       Caption = 'FHIR Version: xxxx'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
     end
     object Label5: TLabel
       Left = 14
@@ -386,6 +405,12 @@ inherited AboutForm: TAboutForm
       Caption = 
         'Portions of this software are Copyright (c) 1993 - 2015, the Ind' +
         'y Pit Crew - http://www.IndyProject.org/'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
       WordWrap = True
     end
   end

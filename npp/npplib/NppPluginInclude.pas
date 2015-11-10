@@ -8,7 +8,7 @@ begin
   end;
   DLL_PROCESS_DETACH:
   begin
-    if (Assigned(Npp)) then Npp.Destroy;
+    if (Assigned(FNpp)) then FNpp.Destroy;
   end;
   //DLL_THREAD_ATTACH: MessageBeep(0);
   //DLL_THREAD_DETACH: MessageBeep(0);
@@ -17,22 +17,22 @@ end;
 
 procedure setInfo(NppData: TNppData); cdecl; export;
 begin
-  Npp.SetInfo(NppData);
+  FNpp.SetInfo(NppData);
 end;
 
 function getName(): nppPchar; cdecl; export;
 begin
-  Result := Npp.GetName;
+  Result := FNpp.GetName;
 end;
 
 function getFuncsArray(var nFuncs:integer):Pointer;cdecl; export;
 begin
-  Result := Npp.GetFuncsArray(nFuncs);
+  Result := FNpp.GetFuncsArray(nFuncs);
 end;
 
 procedure beNotified(sn: PSCNotification); cdecl; export;
 begin
-  Npp.BeNotified(sn);
+  FNpp.BeNotified(sn);
 end;
 
 function messageProc(msg: Integer; _wParam: WPARAM; _lParam: LPARAM): LRESULT; cdecl; export;
@@ -42,7 +42,7 @@ begin
   xmsg.WParam := _wParam;
   xmsg.LParam := _lParam;
   xmsg.Result := 0;
-  Npp.MessageProc(xmsg);
+  FNpp.MessageProc(xmsg);
   Result := xmsg.Result;
 end;
 

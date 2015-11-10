@@ -40,35 +40,37 @@ icons
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin,
-  Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls;
+  Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
+  FHIRPathDocumentation;
 
 type
   TFHIRToolbox = class(TNppDockingForm)
-    Memo1: TMemo;
+    mPath: TMemo;
     ImageList1: TImageList;
     ToolBar1: TToolBar;
-    ToolButton2: TToolButton;
+    tbConnect: TToolButton;
     ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
-    ToolButton7: TToolButton;
+    tbOpen: TToolButton;
+    tbPut: TToolButton;
+    tbTransaction: TToolButton;
+    tbServerValidate: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
     ToolButton12: TToolButton;
-    ToolButton13: TToolButton;
+    tbPost: TToolButton;
     ToolButton14: TToolButton;
     ToolButton15: TToolButton;
-    ComboBox1: TComboBox;
-    ToolButton1: TToolButton;
+    cbxServers: TComboBox;
     Panel1: TPanel;
     ToolButton16: TToolButton;
     ToolButton17: TToolButton;
     ToolButton18: TToolButton;
     ToolButton19: TToolButton;
     ToolButton20: TToolButton;
+    ToolButton21: TToolButton;
+    pnlMessage: TPanel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -83,23 +85,35 @@ type
     procedure ToolButton10Click(Sender: TObject);
     procedure ToolButton15Click(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
-    procedure ToolButton2Click(Sender: TObject);
+    procedure tbConnectClick(Sender: TObject);
     procedure ToolButton9Click(Sender: TObject);
-    procedure ToolButton4Click(Sender: TObject);
-    procedure ToolButton5Click(Sender: TObject);
-    procedure ToolButton13Click(Sender: TObject);
-    procedure ToolButton6Click(Sender: TObject);
-    procedure ToolButton7Click(Sender: TObject);
+    procedure tbOpenClick(Sender: TObject);
+    procedure tbPutClick(Sender: TObject);
+    procedure tbPostClick(Sender: TObject);
+    procedure tbTransactionClick(Sender: TObject);
+    procedure tbServerValidateClick(Sender: TObject);
     procedure ToolButton16Click(Sender: TObject);
     procedure ToolButton17Click(Sender: TObject);
+    procedure ToolButton21Click(Sender: TObject);
+    procedure cbxServersChange(Sender: TObject);
+    procedure mPathKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure mPathEnter(Sender: TObject);
+    procedure mPathChange(Sender: TObject);
   private
     { Private declarations }
+    FMessageShort, FMessageLong : String;
+    FFirstPathEdit : boolean;
   public
     { Public declarations }
+    procedure connected(name, url, user, scopes : String);
+    procedure disconnected;
+    procedure loadServers;
   end;
 
 var
   FHIRToolbox: TFHIRToolbox;
+
+procedure OpMessage(msgShort, msgLong : String);
 
 implementation
 
@@ -107,7 +121,22 @@ implementation
 
 Uses
   FHIRPluginSettings,
+  NewServerForm,
   FHIRPlugin;
+
+procedure OpMessage(msgShort, msgLong : String);
+begin
+  if (assigned(FHIRToolbox)) then
+  begin
+    if msgShort = '' then
+      msgShort := FHIRToolbox.FMessageShort;
+    if msgLong = '' then
+      msgLong := FHIRToolbox.FMessageLong;
+    FHIRToolbox.pnlMessage.Caption := '  '+msgShort;
+    FHIRToolbox.pnlMessage.Hint := msgLong;
+    FHIRToolbox.Update;
+  end;
+end;
 
 procedure TFHIRToolbox.FormCreate(Sender: TObject);
 begin
@@ -115,6 +144,13 @@ begin
   self.KeyPreview := true; // special hack for input forms
   self.OnFloat := self.FormFloat;
   self.OnDock := self.FormDock;
+  if mPath.Text = Settings.Path then
+  begin
+    mPath.Text := 'Path...';
+    FFirstPathEdit := true;
+  end
+  else
+    mPath.Text := Settings.Path;
   inherited;
 end;
 
@@ -130,6 +166,63 @@ begin
   self.Hide;
 end;
 
+procedure TFHIRToolbox.cbxServersChange(Sender: TObject);
+begin
+  inherited;
+  _FuncDisconnect;
+  if cbxServers.ItemIndex = cbxServers.Items.Count - 1 then
+  begin
+    RegisterServerForm := TRegisterServerForm.create(npp);
+    try
+      if RegisterServerForm.ShowModal = mrOk then
+      begin
+        cbxServers.items.Insert(cbxServers.ItemIndex, RegisterServerForm.edtName.Text+' ('+RegisterServerForm.edtServer.Text+')');
+        cbxServers.ItemIndex := cbxServers.Items.Count - 2;
+      end
+      else
+        cbxServers.ItemIndex := 0;
+    finally
+      RegisterServerForm.Free;
+    end;
+  end;
+end;
+
+procedure TFHIRToolbox.connected(name, url, user, scopes : String);
+begin
+  tbConnect.ImageIndex := 15;
+  tbConnect.Hint := 'Disconnect from '+name;
+  if (scopes = '') then
+  begin
+    FMessageShort := 'Connected';
+    FMessageLong := 'Connected to '+name+' ('+url+', no security)'
+  end
+  else
+  begin
+    FMessageShort := 'Connected as '+user;
+    FMessageLong := 'Connected to '+name+' ('+url+', user = '+user+', scopes = "'+scopes+'")';
+  end;
+  OpMessage('', '');
+  tbOpen.Enabled := true;
+  tbPut.Enabled := true;
+  tbPost.Enabled := true;
+  tbTransaction.Enabled := true;
+  tbServerValidate.Enabled := true;
+end;
+
+procedure TFHIRToolbox.disconnected;
+begin
+  tbConnect.ImageIndex := 0;
+  ToolBar1.Color := clBtnFace;
+  FMessageShort := '';
+  FMessageLong := '';
+  OpMessage('', '');
+  tbOpen.Enabled := false;
+  tbPut.Enabled := false;
+  tbPost.Enabled := false;
+  tbTransaction.Enabled := false;
+  tbServerValidate.Enabled := false;
+end;
+
 // special hack for input forms
 // This is the best possible hack I could came up for
 // memo boxes that don't process enter keys for reasons
@@ -139,7 +232,7 @@ procedure TFHIRToolbox.FormKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
-  if (Key = #13) and (self.Memo1.Focused) then self.Memo1.Perform(WM_CHAR, 10, 0);
+  if (Key = #13) and (self.mPath.Focused) then self.mPath.Perform(WM_CHAR, 10, 0);
 end;
 
 // Docking code calls this when the form is hidden by either "x" or self.Hide
@@ -165,6 +258,43 @@ begin
   inherited;
   SendMessage(self.Npp.NppData.NppHandle, NPPM_SETMENUITEMCHECK, self.CmdID, 1);
   Settings.ToolboxVisible := true;
+  loadServers;
+end;
+
+procedure TFHIRToolbox.loadServers;
+begin
+  cbxServers.Items.Clear;
+  Settings.listServers(cbxServers.Items);
+  cbxServers.Items.Add('Register...');
+  cbxServers.ItemIndex := 0;
+  SendMessage(cbxServers.Handle, CB_SETDROPPEDWIDTH, 300, 0);
+end;
+
+procedure TFHIRToolbox.mPathChange(Sender: TObject);
+begin
+  Settings.Path := mPath.Text;
+end;
+
+procedure TFHIRToolbox.mPathEnter(Sender: TObject);
+begin
+  inherited;
+  if FFirstPathEdit then
+    mPath.Clear;
+  FFirstPathEdit := false;
+end;
+
+procedure TFHIRToolbox.mPathKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if key = VK_F1 then
+  begin
+    FHIRPathDocumentationForm := TFHIRPathDocumentationForm.Create(self);
+    try
+      FHIRPathDocumentationForm.ShowModal;
+    finally
+      FHIRPathDocumentationForm.Free;
+    end;
+  end;
 end;
 
 procedure TFHIRToolbox.ToolButton10Click(Sender: TObject);
@@ -177,7 +307,7 @@ begin
   _FuncValidate;
 end;
 
-procedure TFHIRToolbox.ToolButton13Click(Sender: TObject);
+procedure TFHIRToolbox.tbPostClick(Sender: TObject);
 begin
   _FuncPOST;
 end;
@@ -189,7 +319,7 @@ end;
 
 procedure TFHIRToolbox.ToolButton15Click(Sender: TObject);
 begin
-  _FuncPath;
+  FNpp.FuncPath;
 end;
 
 procedure TFHIRToolbox.ToolButton16Click(Sender: TObject);
@@ -212,27 +342,35 @@ begin
   _FuncServers;
 end;
 
-procedure TFHIRToolbox.ToolButton2Click(Sender: TObject);
+procedure TFHIRToolbox.ToolButton21Click(Sender: TObject);
 begin
-  _FuncConnect;
+  _FuncNarrative;
 end;
 
-procedure TFHIRToolbox.ToolButton4Click(Sender: TObject);
+procedure TFHIRToolbox.tbConnectClick(Sender: TObject);
+begin
+  if FNpp.connected then
+    _FuncDisconnect
+  else
+    _FuncConnect;
+end;
+
+procedure TFHIRToolbox.tbOpenClick(Sender: TObject);
 begin
   _FuncOpen;
 end;
 
-procedure TFHIRToolbox.ToolButton5Click(Sender: TObject);
+procedure TFHIRToolbox.tbPutClick(Sender: TObject);
 begin
   _FuncPUT;
 end;
 
-procedure TFHIRToolbox.ToolButton6Click(Sender: TObject);
+procedure TFHIRToolbox.tbTransactionClick(Sender: TObject);
 begin
   _FuncTransaction;
 end;
 
-procedure TFHIRToolbox.ToolButton7Click(Sender: TObject);
+procedure TFHIRToolbox.tbServerValidateClick(Sender: TObject);
 begin
   _FuncServerValidate;
 end;
@@ -241,5 +379,6 @@ procedure TFHIRToolbox.ToolButton9Click(Sender: TObject);
 begin
   _FuncNewResource;
 end;
+
 
 end.

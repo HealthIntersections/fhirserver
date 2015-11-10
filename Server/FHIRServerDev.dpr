@@ -300,7 +300,10 @@ uses
   FHIRProfileUtilities in '..\Libraries\refplat\FHIRProfileUtilities.pas',
   FHIRSubscriptionManager in 'FHIRSubscriptionManager.pas',
   ServerValidator in 'ServerValidator.pas',
-  IdWebSocket in '..\Libraries\support\IdWebSocket.pas';
+  IdWebSocket in '..\Libraries\support\IdWebSocket.pas',
+  FHIRNarrativeGenerator in '..\Libraries\refplat\FHIRNarrativeGenerator.pas',
+  SmartOnFhirUtilities in '..\Libraries\refplat\SmartOnFhirUtilities.pas',
+  FhirPath in '..\Libraries\refplat\FhirPath.pas';
 
 begin
   JclStartExceptionTracking;

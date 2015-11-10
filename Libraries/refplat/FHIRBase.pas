@@ -160,17 +160,19 @@ type
     FName : String;
     FType : String;
     FList : TFHIRObjectList;
+    FClass : TClass;
     function GetHasValue: Boolean;
   Public
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; oObject : TFHIRObject); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; oList : TFHIRObjectList); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; sValue : String); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; Value : TBytes); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; cClass : TClass; oObject : TFHIRObject); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; cClass : TClass; oList : TFHIRObjectList); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; cClass : TClass; sValue : String); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; cClass : TClass; Value : TBytes); Overload;
     Destructor Destroy; Override;
 
     Property hasValue : Boolean read GetHasValue;
     Property Name : String read FName;
     Property Type_ : String read FType;
+    Property Class_ : TClass read FClass;
     Property List : TFHIRObjectList read FList;
   End;
 
@@ -226,18 +228,21 @@ type
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); virtual;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Virtual;
   public
+    Constructor Create; override;
     Destructor Destroy; override;
     function createIterator(bInheritedProperties : Boolean) : TFHIRPropertyIterator;
+    function createPropertyList : TFHIRPropertyList;
     procedure ListChildrenByName(name : string; list : TFHIRObjectList);
     procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
-    Function PerformQuery(path : String):TFHIRObjectList;
     Property Tags[name : String] : String read getTags write SetTags;
     property Tag : TAdvObject read FTag write SetTag;
 
     // populated by some parsers when parsing
-    property LocationStart : TSourceLocation read FLocationStart;
-    property LocationEnd : TSourceLocation read FLocationEnd;
+    property LocationStart : TSourceLocation read FLocationStart write FLocationStart;
+    property LocationEnd : TSourceLocation read FLocationEnd write FLocationEnd;
   end;
+
+  TFHIRObjectClass = class of TFHIRObject;
 
   TFHIRObjectListEnumerator = class (TAdvObject)
   private
@@ -499,6 +504,8 @@ type
     Property Nodes[index : Integer] : TFHIRXHtmlNode read GetItemN write SetItemN; default;
   End;
 
+  TFHIRBaseList = class;
+
   {@Class TFHIRBase
     A base FHIR element - can have an id on it
   }
@@ -524,6 +531,7 @@ type
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
     function FhirType : String; virtual;
+    Function PerformQuery(path : String):TFHIRBaseList;
   published
     {@member comments
       comments from the XML stream. No support for comments in JSON
@@ -536,11 +544,37 @@ type
     function equalsShallow(other : TFHIRObject) : boolean; virtual;
   end;
 
+  TFHIRBaseListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFHIRBaseList;
+    function GetCurrent : TFHIRBase;
+  public
+    Constructor Create(list : TFHIRBaseList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFHIRBase read GetCurrent;
+  end;
+
+  TFHIRBaseList = class (TFHIRObjectList)
+  private
+    Function GetItemN(index : Integer) : TFHIRBase;
+  protected
+    function ItemClass : TAdvObjectClass; override;
+  public
+    Destructor Destroy; override;
+    function Link : TFHIRBaseList; Overload;
+    function Clone : TFHIRBaseList; Overload;
+    function GetEnumerator : TFHIRBaseListEnumerator;
+    Property ObjByIndex[index : Integer] : TFHIRBase read GetItemN; default;
+  end;
+
   TFHIRBaseFactory = class (TAdvObject)
   private
   public
   end;
 
+(*
 type
   TFHIRQueryProcessor = class (TAdvObject)
   private
@@ -556,6 +590,7 @@ type
     procedure execute;
     property results : TFHIRObjectList read FResults;
   end;
+*)
 
 
 function noList(e : TFHIRObjectList) : boolean;
@@ -569,7 +604,8 @@ Uses
   StringSupport,
   FHIRUtilities,
   FHIRTypes,
-  FHIRResources;
+  FHIRResources,
+  FHIRPath;
 
 
 { TFHIRBase }
@@ -837,8 +873,8 @@ procedure TFHIRAttribute.ListProperties(oList: TFHIRPropertyList; bInheritedProp
 begin
   if (bInheritedProperties) Then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', FName));
-  oList.add(TFHIRProperty.create(self, 'value', 'string', FValue));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', nil, FName));
+  oList.add(TFHIRProperty.create(self, 'value', 'string', nil, FValue));
 end;
 
 { TFhirXHtmlNode }
@@ -1008,11 +1044,11 @@ procedure TFhirXHtmlNode.ListProperties(oList: TFHIRPropertyList; bInheritedProp
 begin
   if (bInheritedProperties) Then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'string', CODES_TFHIRHtmlNodeType[FNodeType]));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', FName));
-  oList.add(TFHIRProperty.create(self, 'attribute', 'Attribute', FAttributes.Link));
-  oList.add(TFHIRProperty.create(self, 'childNode', 'Node', FChildNodes.Link));
-  oList.add(TFHIRProperty.create(self, 'content', 'string', FContent));
+  oList.add(TFHIRProperty.create(self, 'type', 'string', nil, CODES_TFHIRHtmlNodeType[FNodeType]));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', nil, FName));
+  oList.add(TFHIRProperty.create(self, 'attribute', 'Attribute', nil, FAttributes.Link));
+  oList.add(TFHIRProperty.create(self, 'childNode', 'Node', nil, FChildNodes.Link));
+  oList.add(TFHIRProperty.create(self, 'content', 'string', nil, FContent));
 end;
 
 function TFhirXHtmlNode.SetAttribute(name, value: String) : TFhirXHtmlNode;
@@ -1041,9 +1077,27 @@ end;
 
 { TFHIRObject }
 
+constructor TFHIRObject.Create;
+begin
+  inherited;
+  FLocationStart := nullLoc;
+  FLocationEnd := nullLoc;
+end;
+
 function TFHIRObject.createIterator(bInheritedProperties: Boolean): TFHIRPropertyIterator;
 begin
   Result := TFHIRPropertyIterator.create(self, bInheritedProperties);
+end;
+
+function TFHIRObject.createPropertyList: TFHIRPropertyList;
+begin
+  result := TFHIRPropertyList.Create;
+  try
+    ListProperties(result, true);
+    result.Link;
+  finally
+    result.Free;
+  end;
 end;
 
 destructor TFHIRObject.destroy;
@@ -1077,21 +1131,6 @@ end;
 procedure TFHIRObject.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
 begin
   // nothing to add here
-end;
-
-function TFHIRObject.PerformQuery(path: String): TFHIRObjectList;
-var
-  qry : TFHIRQueryProcessor;
-begin
-  qry := TFHIRQueryProcessor.create;
-  try
-    qry.source.Add(self.Link);
-    qry.path := path;
-    qry.execute;
-    result := qry.results.Link;
-  finally
-    qry.free;
-  end;
 end;
 
 procedure TFHIRObject.setProperty(propName : string; propValue: TFHIRObject);
@@ -1142,75 +1181,8 @@ procedure TFHIRObjectText.ListProperties(oList: TFHIRPropertyList; bInheritedPro
 begin
   if (bInheritedProperties) Then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'value', 'string', FValue));
+  oList.add(TFHIRProperty.create(self, 'value', 'string', nil, FValue));
 end;
-
-{ TFHIRQueryProcessor }
-
-constructor TFHIRQueryProcessor.Create;
-begin
-  inherited;
-  FResults := TFHIRObjectList.Create;
-  FSource := TFHIRObjectList.Create;
-end;
-
-destructor TFHIRQueryProcessor.Destroy;
-begin
-  FSource.Free;
-  FResults.Free;
-  inherited;
-end;
-
-procedure TFHIRQueryProcessor.execute;
-var
-  src, seg : String;
-  i : integer;
-  first : boolean;
-  list : TFhirReferenceList;
-begin
-  src := FPath;
-  if (src = '*') and (FSource[0] is TFHIRResource) then
-  begin
-    list := TFhirReferenceList.Create;
-    try
-      listReferences(FSource[0] as TFHIRResource, list);
-      FResults.AddAll(list);
-    finally
-      list.Free;
-    end;
-  end
-  else
-begin
-  first := true;
-  while (src <> '') do
-  begin
-    StringSplit(src, '.', seg, src);
-    if (not IsValidIdent(seg)) Then
-      raise exception.create('unable to parse path "'+FPath+'"');
-    FResults.clear;
-    if first then
-      for i := 0 to FSource.count - 1 Do
-      begin
-        if FSource[i].ClassName = 'TFhir'+seg then
-          FResults.add(FSource[i].Link);
-      end
-    else
-      for i := 0 to FSource.count - 1 Do
-        FSource[i].GetChildrenByName(seg, FResults);
-    first := false;
-    for i := FResults.count- 1 downto 0 do
-      if (FResults[i] = nil) then
-        FResults.DeleteByIndex(i);
-    if src <> '' then
-    begin
-      FSource.Free;
-      FSource := FResults;
-      FResults := TFHIRObjectList.Create;
-      end;
-    end;
-  end;
-end;
-
 
 { TFHIRObjectList }
 
@@ -1260,6 +1232,40 @@ begin
     FTags := TDictionary<String,String>.create;
   FTags.AddOrSetValue(name, value);
 end;
+
+{ TFHIRBaseList }
+
+function TFHIRBaseList.Clone: TFHIRBaseList;
+begin
+  result := TFHIRBaseList(Inherited Clone);
+end;
+
+destructor TFHIRBaseList.Destroy;
+begin
+  FTags.Free;
+  inherited;
+end;
+
+function TFHIRBaseList.GetEnumerator: TFHIRBaseListEnumerator;
+begin
+  result := TFHIRBaseListEnumerator.Create(self.link);
+end;
+
+function TFHIRBaseList.GetItemN(index: Integer): TFHIRBase;
+begin
+  result := TFHIRBase(ObjectByIndex[index]);
+end;
+
+function TFHIRBaseList.ItemClass: TAdvObjectClass;
+begin
+  result := TFHIRBase;
+end;
+
+function TFHIRBaseList.Link: TFHIRBaseList;
+begin
+  result := TFHIRBaseList(Inherited Link);
+end;
+
 
 (*
 
@@ -1420,29 +1426,32 @@ end;
 
 { TFHIRProperty }
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; oObject: TFHIRObject);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; cClass : TClass; oObject: TFHIRObject);
 begin
   Create;
   FName := sName;
   FType := sType;
+  FClass := cClass;
   FList := TFHIRObjectList.Create;
   if (oObject <> nil) then
     FList.Add(oObject);
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; oList: TFHIRObjectList);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; cClass : TClass; oList: TFHIRObjectList);
 begin
   Create;
   FName := sName;
   FType := sType;
+  FClass := cClass;
   FList := oList.Link;
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; sValue: String);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; cClass : TClass; sValue: String);
 begin
   Create;
   FName := sName;
   FType := sType;
+  FClass := cClass;
   FList := TFHIRObjectList.Create;
   if (sValue <> '') then
     FList.Add(TFhirString.Create(sValue));
@@ -1459,11 +1468,12 @@ begin
   result := (FList <> nil) and (Flist.Count > 0);
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; Value: TBytes);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; cClass : TClass; Value: TBytes);
 begin
   Create;
   FName := sName;
   FType := sType;
+  FClass := cClass;
   FList := TFHIRObjectList.Create;
   if (length(value) > 0) then
     FList.Add(TFhirString.Create(String(EncodeBase64(@value[0], length(value)))));
@@ -1540,9 +1550,8 @@ end;
 
 function TFhirPropertyListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirPropertyListEnumerator.GetCurrent : TFhirProperty;
@@ -1575,6 +1584,33 @@ function TFhirObjectListEnumerator.GetCurrent : TFhirObject;
 begin
   Result := FList[FIndex];
 end;
+
+{ TFHIRBaseListEnumerator }
+
+Constructor TFHIRBaseListEnumerator.Create(list : TFHIRBaseList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFHIRBaseListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFHIRBaseListEnumerator.MoveNext : boolean;
+begin
+  Inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFHIRBaseListEnumerator.GetCurrent : TFHIRBase;
+begin
+  Result := FList[FIndex];
+end;
+
 
 
 { TFhirAttributeListEnumerator }
@@ -1678,5 +1714,18 @@ begin
     raise Exception.Create('Not done yet');
   end;
 end;
+
+function TFHIRBase.PerformQuery(path: String): TFHIRBaseList;
+var
+  qry : TFHIRPathEvaluator;
+begin
+  qry := TFHIRPathEvaluator.create;
+  try
+    result := qry.evaluate(self, path);
+  finally
+    qry.free;
+  end;
+end;
+
 
 End.

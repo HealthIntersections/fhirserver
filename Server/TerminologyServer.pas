@@ -444,21 +444,8 @@ var
   d : String;
 begin
   result := false;
-  if system.StartsWith('http://hl7.org/fhir') then
-  begin
-    if (system = 'http://hl7.org/fhir/sid/icd-10') then
-      result := true// nothing for now....
-    else
-    begin
-      vs := getCodeSystem(system);
-      if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, vs <> nil, 'Unknown Code System '+system) then
-      begin
-        def := getCodeDefinition(vs, code);
-        if (op.warning('InstanceValidator', IssueTypeCodeInvalid, path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
-            result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
-      end;
-    end;
-  end
+  if (system = 'http://hl7.org/fhir/sid/icd-10') then
+    result := true// nothing for now....
   else if system.StartsWith('http://snomed.info/sct') and (Snomed <> nil) then
   begin
     if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, Snomed.IsValidConcept(code), 'The SNOMED-CT term "'+code+'" is unknown') then
@@ -480,7 +467,15 @@ begin
     // we don't make rules about display for UCUM.
   end
   else
-    result := true;
+  begin
+    vs := getCodeSystem(system);
+    if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, vs <> nil, 'Unknown Code System '+system) then
+    begin
+      def := getCodeDefinition(vs, code);
+      if (op.error('InstanceValidator', IssueTypeCodeInvalid, path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
+        result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
+    end;
+  end;
 end;
 
 

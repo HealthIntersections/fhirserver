@@ -879,7 +879,7 @@ begin
   if element is TJsonObject then
     _e := TJsonObject(element).obj['_' + name];
 
-  if (e is TJsonValue or ((e = nil) and (_e <> nil) and not(_e is TJsonArray))) then
+  if (((e is TJsonValue) or (e is TJsonBoolean)) or ((e = nil) and (_e <> nil) and not(_e is TJsonArray))) then
   begin
     children.Add(TJsonWrapperElement.Create(path, name, e, _e, self, children.count));
   end
@@ -898,9 +898,9 @@ begin
       a := nil;
       _a := nil;
       if not((arr = nil) or (arr.count < i)) then
-        a := arr[i];
+        a := arr.Item[i];
       if not((_arr = nil) or (_arr.count < i)) then
-        a := _arr[i];
+        a := _arr.Item[i];
       children.Add(TJsonWrapperElement.Create(path, name, a, _a, self, children.count));
     end
   end
@@ -909,7 +909,7 @@ begin
     children.Add(TJsonWrapperElement.Create(path, name, e, nil, self, children.count));
   end
   else
-    raise Exception.Create('not done yet: ' + e.ClassName);
+    raise Exception.Create('not done yet (1): ' + e.ClassName);
 end;
 
 function TJsonWrapperElement.getNamedChild(name: String): TWrapperElement;
@@ -995,7 +995,7 @@ begin
       result := c.getAttribute('value');
   end
   else
-    raise Exception.Create('not done yet: ' + name);
+    raise Exception.Create('not done yet (2): ' + name);
 end;
 
 procedure TJsonWrapperElement.getNamedChildrenWithWildcard(name: String; list: TAdvList<TWrapperElement>);
@@ -1019,7 +1019,7 @@ begin
     result := getNamedChild('id') <> nil;
   end
   else
-    raise Exception.Create('not done yet: ' + name);
+    raise Exception.Create('not done yet (3): ' + name);
 end;
 
 function TJsonWrapperElement.getNamespace(): String;
@@ -1261,6 +1261,7 @@ begin
     ms.Free;
   end;
 end;
+
 procedure TFHIRInstanceValidator.validate(errors: TFhirOperationOutcomeIssueList; element: TIdSoapXmlElement; profile: TFHIRStructureDefinition);
 begin
   validateResource(errors, TDOMWrapperElement.create(element), profile, FRequireResourceId, nil);
@@ -3745,12 +3746,13 @@ var
   dom : TIdSoapMSXmlDom;
   json : TJsonObject;
   wrapper : TWrapperElement;
+  comp : TFHIRXmlComposer;
+  mem : TAdvMemoryStream;
   procedure load;
   var
     mem : TAdvMemoryStream;
     vcl : TVCLStream;
   begin
-    source.SaveToFileName('c:\temp\text.xml');
     mem := TAdvMemoryStream.create;
     try
       mem.Buffer := source.Link;
@@ -3768,7 +3770,7 @@ var
 begin
   result := TFhirOperationOutcome.create;
   try
-    if format = ffXml then
+    if (format = ffXml) then
     begin
       dom := TIdSoapMSXmlDom.create;
       try

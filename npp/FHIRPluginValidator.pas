@@ -18,6 +18,7 @@ Type
     FValueSets : TAdvMap<TFHIRValueSet>;
     FCodeSystems : TAdvMap<TFHIRValueSet>;
     procedure checkClient;
+    function  findCode(vs : TFhirValueSetCodeSystemConceptList; code : String; caseSensitive : boolean) : TFhirValueSetCodeSystemConcept;
   protected
     procedure SeeResource(r : TFhirResource); override;
   public
@@ -70,9 +71,18 @@ begin
 end;
 
 function TFHIRValidator.expand(vs: TFhirValueSet): TFHIRValueSet;
+var
+  pIn : TFhirParameters;
 begin
   CheckClient;
-  result := nil;
+  pIn := TFhirParameters.Create;
+  try
+    pIn.AddParameter('valueSet', vs.Link);
+    result := FServer.operation(frtValueSet, 'expand', pIn) as TFhirValueSet;
+  finally
+    pIn.Free;
+  end;
+
 end;
 
 function TFHIRValidator.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
@@ -81,6 +91,29 @@ begin
     result := FValueSets[url]
   else
     result := inherited fetchResource(t, url);
+end;
+
+function TFHIRValidator.findCode(vs: TFhirValueSetCodeSystemConceptList; code: String; caseSensitive : boolean): TFhirValueSetCodeSystemConcept;
+var
+  d, d1 : TFhirValueSetCodeSystemConcept;
+begin
+  result := nil;
+  for d in vs do
+  begin
+    if (caseSensitive and (d.code = code)) then
+    begin
+      result := d;
+      exit;
+    end;
+    if (not caseSensitive and (d.code.ToLower = code.ToLower)) then
+    begin
+      result := d;
+      exit;
+    end;
+    result := findCode(d.conceptList, code, caseSensitive);
+    if (result <> nil) then
+      exit;
+  end;
 end;
 
 function TFHIRValidator.Link: TFHIRValidator;
@@ -117,49 +150,75 @@ end;
 function TFHIRValidator.validateCode(system, code, display: String): TValidationResult;
 var
   pIn, pOut : TFhirParameters;
+  vs : TFHIRValueSet;
+  def : TFhirValueSetCodeSystemConcept;
 begin
-  checkClient;
-  pIn := TFhirParameters.Create;
-  try
-    pIn.AddParameter('system', system);
-    pIn.AddParameter('code', code);
-    pIn.AddParameter('display', display);
-    pOut := FServer.operation(frtValueSet, 'validate-code', pIn) as TFhirParameters;
+  if FCodeSystems.ContainsKey(system) then
+  begin
+    vs := FCodeSystems[system];
+    def := FindCode(vs.codeSystem.conceptList, code, vs.codeSystem.caseSensitive);
+    if (def = nil) then
+      result := TValidationResult.Create(IssueSeverityError, 'Unknown code ' +code)
+    else
+      result := TValidationResult.Create(def.display);
+  end
+  else
+  begin
+    checkClient;
+    pIn := TFhirParameters.Create;
     try
-      if pOut.bool['result'] then
-        result := TValidationResult.Create(IssueSeverityInformation, pOut.str['message'])
-      else
-        result := TValidationResult.Create(IssueSeverityInformation, pOut.str['message']);
+      pIn.AddParameter('system', system);
+      pIn.AddParameter('code', code);
+      pIn.AddParameter('display', display);
+      pOut := FServer.operation(frtValueSet, 'validate-code', pIn) as TFhirParameters;
+      try
+        if pOut.bool['result'] then
+          result := TValidationResult.Create(IssueSeverityInformation, pOut.str['message'])
+        else
+          result := TValidationResult.Create(IssueSeverityInformation, pOut.str['message']);
+      finally
+        pOut.Free;
+      end;
     finally
-      pOut.Free;
+      pIn.Free;
     end;
-  finally
-    pIn.Free;
   end;
 end;
 
 function TFHIRValidator.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
 var
   pIn, pOut : TFhirParameters;
+  def : TFhirValueSetCodeSystemConcept;
 begin
-  checkClient;
-  pIn := TFhirParameters.Create;
-  try
-    pIn.AddParameter('system', system);
-    pIn.AddParameter('code', code);
-    pIn.AddParameter('version', version);
-    pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(frtValueSet, 'validate-code', pIn) as TFhirParameters;
+  if (vs.codeSystem <> nil) and (vs.compose = nil) and ((system = '') or (system = vs.codeSystem.system)) then
+  begin
+    def := FindCode(vs.codeSystem.conceptList, code, vs.codeSystem.caseSensitive);
+    if (def = nil) then
+      result := TValidationResult.Create(IssueSeverityError, 'Unknown code ' +code)
+    else
+      result := TValidationResult.Create(def.display);
+  end
+  else
+  begin
+    checkClient;
+    pIn := TFhirParameters.Create;
     try
-      if pOut.bool['result'] then
-        result := TValidationResult.Create(IssueSeverityInformation, pOut.str['message'])
-      else
-        result := TValidationResult.Create(IssueSeverityInformation, pOut.str['message']);
+      pIn.AddParameter('system', system);
+      pIn.AddParameter('code', code);
+      pIn.AddParameter('version', version);
+      pIn.AddParameter('valueSet', vs.Link);
+      pOut := FServer.operation(frtValueSet, 'validate-code', pIn) as TFhirParameters;
+      try
+        if pOut.bool['result'] then
+          result := TValidationResult.Create(IssueSeverityInformation, pOut.str['message'])
+        else
+          result := TValidationResult.Create(IssueSeverityInformation, pOut.str['message']);
+      finally
+        pOut.Free;
+      end;
     finally
-      pOut.Free;
+      pIn.Free;
     end;
-  finally
-    pIn.Free;
   end;
 end;
 

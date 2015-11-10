@@ -1,5 +1,35 @@
 unit FHIRClient;
 
+
+{
+Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+
 interface
 
 uses
@@ -8,7 +38,7 @@ uses
   IdHTTP, IdSSLOpenSSL, IdSoapMime,
   AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches,
   FHIRParser, FHIRResources, FHIRUtilities, DateAndTime,
-  FHIRConstants, FHIRSupport, FHIRParserBase, FHIRBase;
+  FHIRConstants, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
 
 Type
   EFHIRClientException = class (Exception)
@@ -33,6 +63,7 @@ Type
     client : TIdHTTP;
     ssl : TIdSSLIOHandlerSocketOpenSSL;
     FOnClientStatus : TFHIRClientStatusEvent;
+    FSmartToken: TSmartOnFhirAccessToken;
 //    FLastUpdated : TDateAndTime;
     procedure status(msg : String);
     function serialise(resource : TFhirResource):TStream; overload;
@@ -42,23 +73,28 @@ Type
     function exchange(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TStream;
     function fetchResource(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TFhirResource;
     function makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+    procedure SetSmartToken(const Value: TSmartOnFhirAccessToken);
   public
     constructor Create(url : String; json : boolean); overload;
     destructor Destroy; override;
     property url : String read FUrl;
 
+    property Json : boolean read FJson write FJson;
+
+    function link : TFHIRClient; overload;
+    property smartToken : TSmartOnFhirAccessToken read FSmartToken write SetSmartToken;
 
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
 
     function conformance(summary : boolean) : TFhirConformance;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle;
-    function createResource(resource : TFhirResource) : TFHIRResource;
+    function createResource(resource : TFhirResource; var id : String) : TFHIRResource;
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
-    function updateResource(id : String; resource : TFhirResource) : TFHIRResource; overload;
-    function updateResource(id, ver : String; resource : TFhirResource) : TFHIRResource; overload; // version specific update - this is encouraged where possible
+    function updateResource(resource : TFhirResource) : TFHIRResource; overload;
     procedure deleteResource(atype : TFhirResourceType; id : String);
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; overload;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
@@ -101,6 +137,7 @@ end;
 
 destructor TFhirClient.destroy;
 begin
+  FSmartToken.Free;
   ssl.Free;
   client.free;
   inherited;
@@ -121,7 +158,17 @@ begin
 end;
 
 
-function TFhirClient.createResource(resource: TFhirResource): TFHIRResource;
+function readIdFromLocation(location : String) : String;
+var
+  a : TArray<String>;
+begin
+  a := location.split(['/']);
+  if length(a) < 4 then
+    raise Exception.Create('Unable to process location header');
+  result := a[length(a)-3]; // 1 for offset, 2 for _history and vers
+end;
+
+function TFhirClient.createResource(resource: TFhirResource; var id : String): TFHIRResource;
 Var
   src : TStream;
 begin
@@ -130,7 +177,7 @@ begin
     result := nil;
     try
       result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]), post, src);
-      result.id := copy(client.response.location, 1, pos('/history', client.response.location)-1);
+      id := readIdFromLocation(client.response.location);
       result.link;
     finally
       result.free;
@@ -140,24 +187,18 @@ begin
   end;
 end;
 
-function TFhirClient.updateResource(id : String; resource : TFhirResource) : TFHIRResource;
-begin
-  result := updateResource(id, '', resource);
-end;
-
-
-function TFhirClient.updateResource(id, ver : String; resource : TFhirResource) : TFHIRResource;
+function TFhirClient.updateResource(resource : TFhirResource) : TFHIRResource;
 Var
   src : TStream;
 begin
-  if ver <> '' then
-    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
+  if (resource.meta <> nil) and (resource.meta.versionId <> '') then
+    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+resource.id+'/history/'+resource.meta.versionId);
 
   src := serialise(resource);
   try
     result := nil;
     try
-      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]+'/'+id), put, src);
+      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]+'/'+resource.id), put, src);
       result.link;
     finally
       result.free;
@@ -199,6 +240,13 @@ begin
   end;
 end;
 
+procedure TFhirClient.SetSmartToken(const Value: TSmartOnFhirAccessToken);
+begin
+  FSmartToken.Free;
+  FSmartToken := Value;
+  // todo: set the header for the access token
+end;
+
 procedure TFhirClient.status(msg: String);
 begin
   if assigned(FOnClientStatus) then
@@ -215,12 +263,17 @@ begin
 end;
 
 function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+begin
+  result := search(atype, allrecords, encodeParams(params));
+end;
+
+function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
 var
   s : String;
   feed : TFHIRBundle;
 begin
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
-  result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'?'+encodeParams(params), get, nil) as TFHIRBundle;
+  result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'?'+params, get, nil) as TFHIRBundle;
   try
     s := result.links['next'];
     while AllRecords and (s <> '') do
@@ -242,7 +295,7 @@ begin
 end;
 
 function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRBundle;
-Var
+var
   src, frm : TStream;
   ct : String;
 begin
@@ -508,7 +561,6 @@ begin
   result := nil;
   try
     result := fetchResource(MakeUrl(CODES_TFhirResourceType[AType]+'/'+id), get, nil);
-    result.id := copy(client.response.location, 1, pos('/history', client.response.location)-1);
     result.link;
   finally
     result.free;
@@ -573,6 +625,11 @@ begin
   finally
     result.Free;
   end;
+end;
+
+function TFhirClient.link: TFHIRClient;
+begin
+  result := TFHIRClient(inherited Link);
 end;
 
 end.

@@ -20,7 +20,7 @@ uses
   AdvObjects, AdvObjectLists, AdvGenerics, AdvSignals, AdvBuffers, AdvJson,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket,
   FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
-  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase;
+  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
@@ -781,8 +781,9 @@ function processUrlTemplate(url : String; resource : TFhirResource) : String;
 var
   b, e : integer;
   code, value : String;
-  qry : TFHIRQueryProcessor;
+  qry : TFHIRPathEvaluator;
   o : TFHIRObject;
+  results : TFHIRBaseList;
 begin
   while url.Contains('{{') do
   begin
@@ -793,21 +794,23 @@ begin
       value := Codes_TFHIRResourceType[resource.ResourceType]+'/'+resource.id
     else
     begin
-      qry := TFHIRQueryProcessor.create;
+      qry := TFHIRPathEvaluator.create;
       try
-        qry.source.Add(resource.link);
-        qry.path := code;
-        qry.execute;
-        value := '';
-        for o in qry.results do
-        begin
-          if o is TFHIRPrimitiveType then
-            CommaAdd(value, TFHIRPrimitiveType(o).StringValue)
-          else
-            raise Exception.Create('URL templates can only refer to primitive types (found '+o.ClassName+')');
+        results := qry.evaluate(resource, code);
+        try
+          value := '';
+          for o in results do
+          begin
+            if o is TFHIRPrimitiveType then
+              CommaAdd(value, TFHIRPrimitiveType(o).StringValue)
+            else
+              raise Exception.Create('URL templates can only refer to primitive types (found '+o.ClassName+')');
+          end;
+          if (value = '') then
+            value := '(nil)';
+        finally
+          results.Free;
         end;
-        if (value = '') then
-          value := '(nil)';
       finally
         qry.Free;
       end;

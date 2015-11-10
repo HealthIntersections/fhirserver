@@ -1,5 +1,35 @@
 unit FHIRProfileUtilities;
 
+
+{
+Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+
 interface
 
 uses
@@ -17,11 +47,16 @@ type
   private
     FSeverity : TFhirIssueSeverity;
     FMessage  : String;
+    FDisplay: String;
   public
-    constructor Create(Severity : TFhirIssueSeverity; Message : String); virtual;
+    constructor Create; overload; virtual;
+    constructor Create(Severity : TFhirIssueSeverity; Message : String); overload; virtual;
+    constructor Create(display : String); overload; virtual;
     Property Severity : TFhirIssueSeverity read FSeverity write FSeverity;
     Property Message : String read FMessage write FMessage;
+    Property Display : String read FDisplay write FDisplay;
     function isOk : boolean;
+
   end;
 
   TValidatorServiceProvider = {abstract} class (TAdvObject)
@@ -78,6 +113,8 @@ type
     procedure updateFromSlicing(dst, src : TFhirElementDefinitionSlicing);
     function getSiblings(list : TFhirElementDefinitionList; current : TFhirElementDefinition) : TAdvList<TFhirElementDefinition>;
     procedure processPaths(result, base : TFhirStructureDefinitionSnapshot; differential: TFhirStructureDefinitionDifferential; baseCursor, diffCursor, baseLimit, diffLimit : integer; url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String; slicingHandled : boolean);
+    function populate(profile: TFHIRStructureDefinition; item: TFHIRObject; definition: TFHIRElementDefinition; stack: TAdvList<TFhirElementDefinition>): TFHIRResource;
+    function getFirstCode(ed: TFHIRElementDefinition): TFhirCoding;
   public
     Constructor create(context : TValidatorServiceProvider; messages : TFhirOperationOutcomeIssueList);
     {
@@ -90,6 +127,7 @@ type
        * @throws Exception
        }
     procedure generateSnapshot(base, derived : TFHIRStructureDefinition; url, profileName : String);
+    function populateByProfile(profile : TFHIRStructureDefinition) : TFHIRResource;
   end;
 
 
@@ -485,6 +523,175 @@ end;
 function TProfileUtilities.pathStartsWith(p1, p2 : String) : boolean;
 begin
   result := p1.startsWith(p2);
+end;
+
+function GetProperty(props : TFHIRPropertyList; ed : TFhirElementDefinition) : TFhirProperty;
+var
+  t : String;
+  i : integer;
+begin
+  if ed.path.Contains('.') then
+    t := ed.path.Substring(ed.path.LastIndexOf('.')+1)
+  else
+    t := ed.path;
+  for i := 0 to props.Count - 1 do
+  begin
+    if (props[i].Name = t) or ((props[i].Name.EndsWith('[x]') and t.StartsWith(props[i].Name.Substring(0, props[i].Name.Length-3)))) then
+    begin
+      result := props[i];
+      exit;
+    end;
+  end;
+  raise Exception.Create('Unable to find property for '+ed.path);
+end;
+
+function wantGenerate(name, path : String) : boolean;
+begin
+  if (name = 'language') and (path.CountChar('.') = 1) then // don't generate language for resources, but otherwise generate it
+    result := false
+  else
+    result := StringArrayIndexOfInsensitive(['contained', 'extension', 'modifierExtension', 'resource', 'id', 'implicitRules'], name) = -1;
+end;
+
+function TProfileUtilities.getFirstCode(ed : TFHIRElementDefinition) : TFHIRCoding;
+var
+  vs : TFHIRValueSet;
+begin
+  if (ed.binding = nil) or (ed.binding.valueSet = nil) or (ed.binding.valueSet is TFHIRUri) then
+    result := nil
+  else
+  begin
+    vs := context.fetchResource(frtValueSet, (ed.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+    if vs.codeSystem <> nil then
+    begin
+      result := TFhirCoding.Create;
+      result.system := vs.codeSystem.system;
+      result.code := vs.codeSystem.conceptList[0].code;
+      result.display := vs.codeSystem.conceptList[0].display;
+    end
+    else
+    begin
+      vs := context.expand(vs);
+      try
+        if (vs = nil) then
+          result := nil
+        else
+        begin
+          result := TFhirCoding.Create;
+          result.system := vs.expansion.containsList[0].system;
+          result.code := vs.expansion.containsList[0].code;
+          result.display := vs.expansion.containsList[0].display;
+        end;
+      finally
+        vs.Free;
+      end;
+    end;
+  end;
+end;
+
+function TProfileUtilities.populate(profile: TFHIRStructureDefinition; item : TFHIRObject; definition : TFHIRElementDefinition; stack : TAdvList<TFhirElementDefinition>): TFHIRResource;
+var
+  children : TFhirElementDefinitionList;
+  ed : TFhirElementDefinition;
+  pn, t, pr : String;
+  props : TFHIRPropertyList;
+  prop : TFHIRProperty;
+  value : TFhirElement;
+  coding : TFhirCoding;
+begin
+  if stack.Contains(definition) then
+    exit; // prevent recursion
+  stack.Add(definition.Link);
+  try
+    props := item.createPropertyList;
+    try
+      children := getChildMap(profile, definition.name, definition.path, definition.NameReference);
+      try
+        if children.Count = 0 then
+        begin
+          coding := getFirstCode(definition);
+          try
+            if item is TFhirElement then
+              createBasicChildren(item as TFhirElement, coding);
+          finally
+            coding.Free;
+          end;
+        end
+        else
+          for ed in children do
+            if ed.max <> '0' then
+            begin
+              prop := getProperty(props, ed);
+              if (ed.fixed <> nil) then
+                item.setProperty(prop.Name, ed.fixed.link)
+              else if (ed.pattern <> nil) then
+                item.setProperty(prop.Name, ed.pattern.link)
+              else if (ed.defaultValue <> nil) then
+                item.setProperty(prop.Name, ed.defaultValue.link)
+              else if (wantGenerate(prop.name, ed.path) or (ed.min <> '0')) then
+              begin
+                case ed.type_List.Count of
+                  0 : t := '';
+                  1 : t := ed.type_List[0].code;
+                else
+                  t := ed.type_List[random(ed.type_List.Count)].code;
+                end;
+                if (t = '') or (t = 'Element') or (t = 'BackboneElement') then
+                  value := TFHIRObjectClass(prop.Class_).Create as TFHIRElement
+                else
+                  value := CreateTypeByName(t);
+                try
+                  populate(profile, value, ed, stack);
+                  item.setProperty(prop.Name, value.Link);
+                finally
+                  value.Free;
+                end;
+              end;
+            end;
+      finally
+        children.Free;
+      end;
+    finally
+      props.Free;
+    end;
+  finally
+    stack.Delete(stack.Count - 1);
+  end;
+end;
+
+function TProfileUtilities.populateByProfile(profile: TFHIRStructureDefinition): TFHIRResource;
+var
+  path : String;
+  estack : TAdvList<TFhirElementDefinition>;
+begin
+  if profile.kind <> StructureDefinitionKindResource then
+    raise Exception.Create('Unsuitable type of profile for creating a resource');
+  if profile.snapshot = nil then
+    raise Exception.Create('Unsuitable profile for creating a resource - no snapshot');
+
+  if profile.constrainedType <> '' then
+    path := profile.constrainedType
+  else
+    path := profile.name;
+  estack := TAdvList<TFhirElementDefinition>.create;
+  try
+    result := CreateResourceByName(path);
+    try
+      populate(profile, result, profile.snapshot.elementList[0], estack);
+      if profile.constrainedType <> '' then
+      begin
+        if result.meta = nil then
+          result.meta := TFhirMeta.Create;
+        result.meta.profileList.Append.value := profile.url;
+      end;
+
+      result.Link;
+    finally
+      result.Free;
+    end;
+  finally
+    estack.free;
+  end;
 end;
 
 function pathMatches(p1, p2 : string) : boolean;
@@ -1100,6 +1307,17 @@ begin
   inherited create;
   FSeverity := Severity;
   FMessage := Message;
+end;
+
+constructor TValidationResult.Create;
+begin
+  Inherited Create;
+end;
+
+constructor TValidationResult.Create(display: String);
+begin
+  inherited Create;
+  FDisplay := display;
 end;
 
 function TValidationResult.isOk: boolean;

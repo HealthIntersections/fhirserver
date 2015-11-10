@@ -2106,6 +2106,7 @@ end;
 
 Procedure TFHIRXmlParser.ParseElementAttributes(value : TFhirElement; path : string; element : IXmlDomElement);
 begin
+  GetObjectLocation(value, element);
   TakeCommentsStart(value);
   value.Id := GetAttribute(element, 'id');
 end;
@@ -2131,6 +2132,8 @@ end;
 procedure TFHIRJsonParser.ParseElementProperties(jsn : TJsonObject; element : TFhirElement);
 begin
   parseComments(element, jsn);
+  element.LocationStart := jsn.LocationStart;
+  element.LocationEnd := jsn.LocationEnd;
 
   if jsn.has('id') then
     element.Id := jsn['id']
@@ -3720,6 +3723,8 @@ end;
 
 Procedure TFHIRXmlParser.ParseResourceAttributes(resource : TFhirResource; path : string; element : IXmlDomElement);
 begin
+  TakeCommentsStart(resource);
+  GetObjectLocation(resource, element);
 end;
 
 Function TFHIRXmlParser.ParseResourceChild(resource : TFhirResource; path : string; child : IXmlDomElement) : boolean;
@@ -3739,6 +3744,9 @@ end;
 
 procedure TFHIRJsonParser.ParseResourceProperties(jsn : TJsonObject; resource : TFhirResource);
 begin
+  parseComments(resource, jsn);
+  resource.LocationStart := jsn.LocationStart;
+  resource.LocationEnd := jsn.LocationEnd;
   if jsn.has('id') or jsn.has('_id') then
     resource.idElement := ParseId(jsn['id'], jsn.vObj['_id']);{q}
   if jsn.has('meta') then

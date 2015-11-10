@@ -114,6 +114,9 @@ Type
     function add(value : TJsonObject): TJsonArray; overload;
     function addObject : TJsonObject; overload;
 
+    procedure remove(index : integer);
+    procedure move(index, delta : integer);
+
     function GetEnumerator : TJsonArrayEnumerator; // can only use this when the array members are objects
   end;
 
@@ -929,7 +932,7 @@ begin
     jpitEof :
         FLex.JsonError('JSON Syntax Error - attempt to read past end of json stream');
   else
-    FLex.JsonError('not done yet: '+Codes_TJsonParserItemType[ItemType]);
+    FLex.JsonError('not done yet (a): '+Codes_TJsonParserItemType[ItemType]);
   End;
 end;
 
@@ -1033,7 +1036,7 @@ Begin
       End;
     // jltClose, , jltColon, jltComma, jltOpenArray,       !
   else
-    FLex.JsonError('not done yet: '+Codes_TJSONLexType[FLex.LexType]);
+    FLex.JsonError('not done yet (b): '+Codes_TJSONLexType[FLex.LexType]);
   End;
 End;
 
@@ -1407,9 +1410,19 @@ begin
   result := TJsonArray(Inherited Link);
 end;
 
+procedure TJsonArray.move(index, delta: integer);
+begin
+  FItems.Move(index, index+delta);
+end;
+
 function TJsonArray.nodeType: String;
 begin
   result := 'array';
+end;
+
+procedure TJsonArray.remove(index: integer);
+begin
+  FItems.DeleteByIndex(index);
 end;
 
 procedure TJsonArray.SetItem(i: integer; const Value: TJsonNode);

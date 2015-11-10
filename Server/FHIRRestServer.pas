@@ -653,7 +653,8 @@ begin
   begin
     c := rest.security.serviceList.Append.codingList.Append;
     c.system := 'http://hl7.org/fhir/restful-security-service';
-    c.code := 'OAuth2';
+    c.code := 'SMART-on-FHIR';
+    c.display := 'SMART-on-FHIR';
     rest.security.description := 'This server implements OAuth2 for login';
 
     ext := rest.security.extensionList.Append;
@@ -1544,6 +1545,7 @@ Begin
     oResponse.origin := sOrigin;
     oRequest.PostFormat := ffAsIs;
     oResponse.Format := ffAsIs;
+    oRequest.secure := secure;
     aFormat := ffAsIs;
     oRequest.baseUrl := sHost + AppendForwardSlash(sBaseURL);
     oRequest.url := sHost + sResource;
