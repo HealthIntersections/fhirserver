@@ -11,7 +11,7 @@ inherited AboutForm: TAboutForm
   TextHeight = 13
   object Button1: TButton
     Left = 358
-    Top = 155
+    Top = 160
     Width = 75
     Height = 25
     Caption = 'Ok'
@@ -413,5 +413,14 @@ inherited AboutForm: TAboutForm
       ParentFont = False
       WordWrap = True
     end
+  end
+  object Button2: TButton
+    Left = 8
+    Top = 160
+    Width = 75
+    Height = 25
+    Caption = 'Tests'
+    TabOrder = 3
+    OnClick = Button2Click
   end
 end

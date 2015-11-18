@@ -333,6 +333,7 @@ destructor TSCIMServer.Destroy;
 begin
   lock.Free;
   FAnonymousRights.Free;
+  db.Free;
   inherited;
 end;
 

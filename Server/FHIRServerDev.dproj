@@ -123,7 +123,7 @@
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <Icon_MainIcon>FHIRServerDev_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>-debug -xremount -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-us&quot; -sver &quot;http://snomed.info/sct/731000124108/version/20150901&quot; -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.50&quot; -lver 2.50 -load C:\work\org.hl7.fhir\build\publish\examples.zip -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-xremount -validate -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-us&quot; -sver &quot;http://snomed.info/sct/731000124108/version/20150901&quot; -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.50&quot; -lver 2.50 -load C:\work\org.hl7.fhir\build\publish\examples.zip -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot; -debug </Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -265,7 +265,6 @@
         <DCCReference Include="..\Libraries\ucum\UcumValidators.pas"/>
         <DCCReference Include="..\Libraries\ucum\UcumExpressions.pas"/>
         <DCCReference Include="..\Libraries\ucum\UcumSearch.pas"/>
-        <DCCReference Include="..\Libraries\Support\AltovaXMLLib_TLB.pas"/>
         <DCCReference Include="FHIRValueSetExpander.pas"/>
         <DCCReference Include="..\Libraries\Stem\YuStemmer.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincServices.pas"/>
@@ -285,7 +284,6 @@
         <DCCReference Include="..\Libraries\Support\AdvMethods.pas"/>
         <DCCReference Include="DBInstaller.pas"/>
         <DCCReference Include="..\Libraries\Support\KDBDialects.pas"/>
-        <DCCReference Include="..\Libraries\Support\kCritSct.pas"/>
         <DCCReference Include="..\Libraries\db\KDBLogging.pas"/>
         <DCCReference Include="..\Libraries\db\KDBManager.pas"/>
         <DCCReference Include="..\Libraries\db\KDBOdbcExpress.pas"/>
@@ -312,19 +310,6 @@
         <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
         <DCCReference Include="FHIRValueSetChecker.pas"/>
         <DCCReference Include="TerminologyWebServer.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapConsts.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapClasses.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapDebug.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapResourceStrings.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapTracker.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapUtilities.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapExceptions.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapMsXml.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapXML.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapComponent.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapNamespaces.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapMime.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapBase64.pas"/>
         <DCCReference Include="FHIRServerConstants.pas"/>
         <DCCReference Include="..\Libraries\tests\DecimalTests.pas"/>
         <DCCReference Include="..\Libraries\tests\UcumTests.pas"/>
@@ -341,7 +326,6 @@
         <DCCReference Include="..\Libraries\refplat\SCIMObjects.pas"/>
         <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
         <DCCReference Include="FHIRSearchSyntax.pas"/>
-        <DCCReference Include="..\Libraries\refplat\ProfileManager.pas"/>
         <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
         <DCCReference Include="RectSupport.pas"/>
         <DCCReference Include="CoordinateSupport.pas"/>
@@ -368,6 +352,9 @@
         <DCCReference Include="..\Libraries\refplat\FHIRNarrativeGenerator.pas"/>
         <DCCReference Include="..\Libraries\refplat\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\Libraries\refplat\FhirPath.pas"/>
+        <DCCReference Include="..\Libraries\support\MsXML.pas"/>
+        <DCCReference Include="..\Libraries\support\MimeMessage.pas"/>
+        <DCCReference Include="..\Libraries\Support\kCritSct.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

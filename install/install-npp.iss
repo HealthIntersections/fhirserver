@@ -40,3 +40,7 @@ Source: "C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins\fhirnpp.dll";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
+[Registry]
+Root: HKLM; Subkey: "HKEY_LOCAL_MACHINE\SOFTWARE\(Wow6432Node\)Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION"; ValueType: dword; ValueName: "notepad++.exe"; ValueData: "10000"
+
+

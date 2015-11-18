@@ -360,6 +360,7 @@ Begin
        ' Status int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Format int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SessionKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' AuditKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Tags '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' XmlContent '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' XmlSummary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -367,6 +368,7 @@ Begin
        ' JsonSummary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Versions', 'ResourceVersionKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Versions', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_ResKey_IdKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'Versions', 'AuditKey', 'Ids', 'ResourceKey', 'FK_ResKey_AuditKey'));
   FConn.ExecSQL('Create INDEX SK_Versions_ResDate ON Versions (ResourceKey, TransactionDate)');
   FConn.ExecSQL('Create UNIQUE INDEX SK_Versions_ResVer ON Versions (ResourceKey, VersionId)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'Ids', 'MostRecent', 'Versions', 'ResourceVersionKey', 'FK_ResCurrent_VersionKey'));

@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   StringSupport, EncodeSupport, GuidSupport,
-  IdHTTP, IdSSLOpenSSL, IdSoapMime,
+  IdHTTP, IdSSLOpenSSL, MimeMessage,
   AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches,
   FHIRParser, FHIRResources, FHIRUtilities, DateAndTime,
   FHIRConstants, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
@@ -500,25 +500,23 @@ end;
 
 function TFhirClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
 var
-  m : TIdSoapMimeMessage;
-  p : TIdSoapMimePart;
+  m : TMimeMessage;
+  p : TMimePart;
   i : integer;
 begin
-  m := TIdSoapMimeMessage.create;
+  m := TMimeMessage.create;
   try
-    p := m.Parts.AddPart(NewGuidURN);
+    p := m.AddPart(NewGuidURN);
     p.ContentDisposition := 'form-data; name="'+streamName+'"';
-    p.Content := Stream;
-    p.OwnsContent := false;
+    p.Content.LoadFromStream(stream);
     for i := 0 to params.Count - 1 do
     begin
-      p := m.Parts.AddPart(NewGuidURN);
+      p := m.AddPart(NewGuidURN);
       p.ContentDisposition := 'form-data; name="'+params.Keys[i]+'"';
-      p.Content := TStringStream.Create(params.Matches[params.Keys[i]], TEncoding.UTF8);
-      p.OwnsContent := true;
+      p.Content.AsBytes := TEncoding.UTF8.GetBytes(params.Matches[params.Keys[i]]);
     end;
     m.Boundary := '---'+AnsiString(copy(GUIDToString(CreateGUID), 2, 36));
-    m.start := m.parts.PartByIndex[0].Id;
+    m.start := m.parts[0].Id;
     result := 'multipart/form-data; boundary='+String(m.Boundary);
     mp := TMemoryStream.Create;
     m.WriteToStream(mp, false);

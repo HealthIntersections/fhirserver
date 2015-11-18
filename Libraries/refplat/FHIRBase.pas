@@ -59,6 +59,7 @@ Uses
 
 Const
   ID_LENGTH = 64;
+  SYSTEM_NOT_APPLICABLE = '%%null%%';
 
 Type
   {@Enum TFHIRCommandType
@@ -235,6 +236,7 @@ type
     procedure ListChildrenByName(name : string; list : TFHIRObjectList);
     procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
     Property Tags[name : String] : String read getTags write SetTags;
+    function HasTag(name : String): boolean;
     property Tag : TAdvObject read FTag write SetTag;
 
     // populated by some parsers when parsing
@@ -1122,6 +1124,11 @@ begin
     result := '';
 end;
 
+function TFHIRObject.HasTag(name: String): boolean;
+begin
+  result := (FTags <> nil) and FTags.ContainsKey(name);
+end;
+
 procedure TFHIRObject.ListChildrenByName(name: string; list: TFHIRObjectList);
 begin
   if self <> nil then
@@ -1242,7 +1249,6 @@ end;
 
 destructor TFHIRBaseList.Destroy;
 begin
-  FTags.Free;
   inherited;
 end;
 
@@ -1719,7 +1725,7 @@ function TFHIRBase.PerformQuery(path: String): TFHIRBaseList;
 var
   qry : TFHIRPathEvaluator;
 begin
-  qry := TFHIRPathEvaluator.create;
+  qry := TFHIRPathEvaluator.create(nil);
   try
     result := qry.evaluate(self, path);
   finally

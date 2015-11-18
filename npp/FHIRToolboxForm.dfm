@@ -3403,16 +3403,8 @@ inherited FHIRToolbox: TFHIRToolbox
       ImageIndex = 11
       OnClick = ToolButton16Click
     end
-    object ToolButton17: TToolButton
-      Left = 497
-      Top = 0
-      Hint = 'Close the FHIR Toolbox'
-      Caption = 'ToolButton17'
-      ImageIndex = 12
-      OnClick = ToolButton17Click
-    end
     object pnlMessage: TPanel
-      Left = 520
+      Left = 497
       Top = 0
       Width = 201
       Height = 22
@@ -3436,7 +3428,7 @@ inherited FHIRToolbox: TFHIRToolbox
     Left = 532
     Top = 4
     Bitmap = {
-      494C010111006800840010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010111006800880010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       00000000001E454545AB4B4B4BD1363736DB323332D9383838DC22647CFF2264

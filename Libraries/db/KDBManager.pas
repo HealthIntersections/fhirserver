@@ -48,13 +48,12 @@ uses
   KDBLogging,
   Classes,
   Contnrs,
-  IdSoapClasses,
-  IdSoapDebug,
   IniFiles,
   KDBDialects,
   SysUtils,
   DateAndTime,
-  KDate;
+  KDate,
+  AdvObjects, AdvGenerics;
 
 {!Script Hide}
 const
@@ -75,7 +74,7 @@ type
   // access is odbc but settings are done differently
   TKDBProvider = (kdbpUnknown,    kdbpDSN,        kdbpODBC,     kdbpFirebird,    kdbpDBIsam,
                   kdbpDBXpress,   kdbpSoapClient, kdbpMySQL,    kdbpAccess);
-                  
+
   TKDBProviderSet = set of TKDBProvider;
 
 const
@@ -94,22 +93,14 @@ type
   // Meta data
   TKDBTableType = (kdbUser, kdbView, kdbSystem);
 
-  TKDBObject = class (TIdBaseObject);
-  TKDBObjectList = class (TIdObjectList)
-  private
-    function GetObject(Index: integer): TObject;
-  public
-    property Objects[Index : integer] : TObject read GetObject;
-    function Valid(AIndex : Integer) : Boolean;
-  end;
-
-  TKDBColumn = class (TKDBObject)
+  TKDBColumn = class (TAdvObject)
   private
     FName: String;
     FLength: Integer;
     FDataType: TKDBColumnType;
     FNullable: Boolean;
   public
+    constructor Create(name : String); overload;
     property Name : String read FName write FName;
     property DataType : TKDBColumnType read FDataType write FDataType;
     property Length : Integer read FLength write FLength;
@@ -117,36 +108,21 @@ type
     function Describe : String;
   end;
 
-  TKDBColumns = class (TKDBObjectList)
-  private
-    function GetColumn(AName : string):TKDBColumn;
-  public
-    property Column[AName : String]:TKDBColumn read GetColumn;
-    function GetByIndex(iIndex : Integer):TKDBColumn;
-  end;
-
-  TKDBIndex = class (TKDBObject)
+  TKDBIndex = class (TAdvObject)
   private
     FUnique: Boolean;
     FName: String;
-    FColumns: TStringList;
+    FColumns: TAdvList<TKDBColumn>;
   public
     constructor create;
     destructor Destroy; override;
     property Name : String read FName write FName;
     property Unique : Boolean read FUnique write FUnique;
-    property Columns : TStringList read FColumns;
+    property Columns : TAdvList<TKDBColumn> read FColumns;
     function Describe : String;
   end;
 
-  TKDBIndexes = class (TKDBObjectList)
-  private
-    function GetIndex(AName : string):TKDBIndex;
-  public
-    property IIndex[AName : String]:TKDBIndex read GetIndex; //II because Index is a reserved word
-  end;
-
-  TKDBRelationship = class (TKDBObject)
+  TKDBRelationship = class (TAdvObject)
   private
     FColumn: String;
     FDestTable : String;
@@ -158,19 +134,12 @@ type
     function Describe : String;
   end;
 
-  TKDBRelationships = class (TKDBObjectList)
-  private
-    function GetIndex(AName : string):TKDBRelationship;
-  public
-    property Relationship[AName : String]:TKDBRelationship read GetIndex;
-  end;
-
-  TKDBTable = class (TKDBObject)
+  TKDBTable = class (TAdvObject)
   private
     FName: String;
-    FColumns: TKDBColumns;
-    FIndexes: TKDBIndexes;
-    FRelationships : TKDBRelationships;
+    FColumns: TAdvList<TKDBColumn>;
+    FIndexes: TAdvList<TKDBIndex>;
+    FRelationships : TAdvList<TKDBRelationship>;
     FTableType: TKDBTableType;
     FOwner: String;
     FDescription: String;
@@ -179,9 +148,9 @@ type
   public
     constructor create;
     destructor Destroy; override;
-    property Columns : TKDBColumns read FColumns;
-    property Indexes : TKDBIndexes read FIndexes;
-    Property Relationships : TKDBRelationships read FRelationships;
+    property Columns : TAdvList<TKDBColumn> read FColumns;
+    property Indexes : TAdvList<TKDBIndex> read FIndexes;
+    Property Relationships : TAdvList<TKDBRelationship> read FRelationships;
     property Name : String read FName write FName;
     property TableType : TKDBTableType read FTableType write FTableType;
     property Owner : String read FOwner write FOwner;
@@ -189,24 +158,16 @@ type
     Property OrderMatters : Boolean read FOrderMatters write FOrderMatters;
   end;
 
-  TKDBTables = class (TKDBObjectList)
+  TKDBMetaData = class (TAdvObject)
   private
-    function GetTable(AName : string):TKDBTable;
-  public
-    property Table[AName : String]:TKDBTable read GetTable; default;
-    function GetByIndex(iIndex : Integer):TKDBTable;
-  end;
-
-  TKDBMetaData = class (TKDBObject)
-  private
-    FTables: TKDBTables;
+    FTables: TAdvList<TKDBTable>;
     FProcedures : TStringList;
     FSupportsProcedures : Boolean;
   public
     constructor create;
     destructor Destroy; override;
 
-    property Tables : TKDBTables read FTables;
+    property Tables : TAdvList<TKDBTable> read FTables;
     property Procedures : TStringList read FProcedures;
     property SupportsProcedures : Boolean read FSupportsProcedures write FSupportsProcedures;
 
@@ -224,7 +185,7 @@ type
     to get a connection. The connection must always be returned using
     TDBConnPool.YieldConnection otherwise the connection will leak.
   }
-  TKDBConnection = class (TKDBObject)
+  TKDBConnection = class (TAdvObject)
   Private
     FOwner: TKDBManager;
     FNoFree : Boolean;
@@ -232,7 +193,7 @@ type
     FBoundItems : TStringList;
     FUsage : String;
     FUsed : TDateTime;
-    FTables : TStringList;
+    FTables : TStrings;
     FRowCount : integer;
     FPrepareCount : integer;
     FInTransaction : Boolean;
@@ -244,7 +205,7 @@ type
     // execution
     FSQL : string;
     FTerminated: Boolean;
-    function GetTables : TStringList;
+    function GetTables : TStrings;
     procedure ClearCache; // call this on fetchnext and terminate
     function LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String; bAsString: Boolean): String;
   Protected
@@ -298,6 +259,8 @@ type
   Public
     constructor Create(AOwner: TKDBManager);
     destructor Destroy; Override;
+
+    function link : TKDBConnection; overload;
 
     {@member Prepare
       After setting the SQL content, prepare the statement so Parameter
@@ -466,7 +429,7 @@ type
     {@member Tables
       A List of all the tables in the database
     }
-    property Tables : TStringList Read GetTables;
+    property Tables : TStrings Read GetTables;
 
     {@member ClearDatabase
       Completely drop non system content in database. For obvious reasons, this
@@ -702,12 +665,13 @@ type
 
   end;
 
-  TKDBManager = class(TKDBObject)
+  TKDBManager = class(TAdvObject)
   Private
     FSemaphore: TSemaphore;
     FWaitCreate : boolean;
-    FAvail: TObjectList;
-    FInUse : TObjectList;
+    FConnections : TAdvList<TKDBConnection>;
+    FAvail: TAdvList<TKDBConnection>;
+    FInUse : TAdvList<TKDBConnection>;
     FDBLogger : TKDBLogger;
     FClosing : boolean;
     FOnChangeConnectionCount : TOnChangeConnectionCount;
@@ -716,7 +680,6 @@ type
     FLastServerError : String;
 
     FMaxConnCount : Integer;
-    FCurrConnCount : Integer;
     FName : string;
     FTag : integer;
     function PopAvail : TKDBConnection;
@@ -726,7 +689,7 @@ type
     function GetCurrentUse: Integer;
     procedure SetMaxConnCount(const Value: Integer);
   Protected
-    FLock : TIdCriticalSection;
+    FLock : TCriticalSection;
 
     function ConnectionFactory: TKDBConnection; Virtual; Abstract;
     function GetDBPlatform: TKDBPlatform; Virtual; Abstract;
@@ -736,6 +699,8 @@ type
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
     constructor create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; virtual; abstract;
     destructor Destroy; Override;
+
+    function Link : TKDBManager; overload;
 
     procedure ExecSQL(ASql, AName : String);
     function GetConnection(const AUsage: String): TKDBConnection;
@@ -765,10 +730,19 @@ type
 
   TKDBManagerEvent = procedure (AConnMan : TKDBManager; ABeingCreated : Boolean) of object;
 
-  TKDBManagerList = class (TIdStringList)
+  TKDBHook = class (TAdvObject)
   private
-    FLock : TIdCriticalSection;
-    FHooks : TStringList;
+    FHook : TKDBManagerEvent;
+    FName : String;
+  public
+    constructor create(Name : String; Hook : TKDBManagerEvent);
+  end;
+
+  TKDBManagerList = class (TAdvObject)
+  private
+    FLock : TCriticalSection;
+    FHooks : TAdvList<TKDBHook>;
+    FList : TAdvList<TKDBManager>;
     procedure AddConnMan(AConnMan : TKDBManager);
     procedure RemoveConnMan(AConnMan : TKDBManager);
     function GetConnMan(i : Integer):TKDBManager;
@@ -834,17 +808,15 @@ begin
     FCachedObjects[i] := nil;
     end;
   FInTransaction := false;
-  FBoundItems := TIdStringList.create(true);
+  FBoundItems := TStringList.create(true);
   FBoundItems.sorted := true;
   FBoundItems.Duplicates := dupError;
-  FTables := TIdStringList.create(false);
+  FTables := TStringList.create;
 end;
 
 destructor TKDBConnection.Destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.Destroy';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(not FNoFree or FOwner.FClosing, ASSERT_LOCATION+': invalid state - must destroy through Connection Manager');
   ClearCache;
   FBoundItems.free;
   FTables.free;
@@ -857,11 +829,9 @@ var
   LMem: TMemoryStream;
   b : TBytes;
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': name is not valid');
 
   b := TEncoding.UTF8.GetBytes(AParamValue);
-  LMem := TIdMemoryStream.Create;
+  LMem := TMemoryStream.Create;
   KeepBoundObj(AParamName, lMem);
   if AParamValue <> '' then
     begin
@@ -876,10 +846,8 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.BindBinaryFromString';
 var
   LMem: TMemoryStream;
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': name is not valid');
 
-  LMem := TIdMemoryStream.Create;
+  LMem := TMemoryStream.Create;
   KeepBoundObj(AParamName, lMem);
   if Length(AParamValue) > 0 then
     begin
@@ -892,8 +860,6 @@ end;
 procedure TKDBConnection.BindIntegerFromBoolean(AParamName: String; AParamValue: Boolean);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.BindIntegerFromBoolean';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': name is not valid');
 
   if AParamValue then
     begin
@@ -910,9 +876,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.CacheBlob';
 var
   i, j: integer;
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(ACol > 0, ASSERT_LOCATION+': Col "'+inttostr(ACol)+'" is not valid');
-  assert(Assigned(ABlob), ASSERT_LOCATION+': Blob is not valid');
   if ACol >= length(FCachedObjects) then
     begin
     i := length(FCachedObjects);
@@ -932,8 +895,6 @@ end;
 function TKDBConnection.CountSQL(ASql: String): Cardinal;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.CountSQL';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(ASql <> '', ASSERT_LOCATION+': self is not valid');
 
   FSQL := ASql;
   Prepare;
@@ -951,17 +912,12 @@ end;
 procedure TKDBConnection.Error(AException: Exception; AErrMsg : string ='');
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.Error';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(FOwner.TestValid(TKDBManager), ASSERT_LOCATION+': owner is not valid');
   FOwner.Error(self, AException, AErrMsg);
 end;
 
 function TKDBConnection.ExecSQL(ASql: String; rows : integer) : integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.ExecSQL.1';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(ASql <> '', ASSERT_LOCATION+': sql statement is missing');
-  assert(not SQLHasResultSet(ASql), ASSERT_LOCATION+': sql would have results');
 
   FSQL := ASql;
   Prepare;
@@ -978,9 +934,6 @@ end;
 Function TKDBConnection.ExecSQL(ASql: String) : integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.ExecSQL';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(ASql <> '', ASSERT_LOCATION+': sql statement is missing');
-  assert(not SQLHasResultSet(ASql), ASSERT_LOCATION+': sql would have results');
 
   FSQL := ASql;
   Prepare;
@@ -997,7 +950,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.ExecSQLBatch';
 var
   i: Integer;
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
 
   if InTransaction then
     begin
@@ -1025,8 +977,6 @@ end;
 function TKDBConnection.GetBlob(ACol: Integer; var VBlob: TMemoryStream): Boolean;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetBlob';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(ACol > 0, 'ACol < 1 in TBaseKDBConnManager.');
   Result := (ACol < Length(FCachedObjects)) and assigned(FCachedObjects[ACol]);
   if Result then
     begin
@@ -1037,63 +987,54 @@ end;
 function TKDBConnection.GetColDoubleByName(AName: String): Double;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColDoubleByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColDouble(ColByName(AName));
 end;
 
 function TKDBConnection.GetColInt64ByName(AName: String): Int64;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColInt64ByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColInt64(ColByName(AName));
 end;
 
 function TKDBConnection.GetColIntegerByName(AName: String): Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColIntegerByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColInteger(ColByName(AName));
 end;
 
 function TKDBConnection.GetColKeyByName(AName: String): Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColKeyByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColKey(ColByName(AName));
 end;
 
 function TKDBConnection.GetColMemoryByName(AName: String): TMemoryStream;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColMemoryByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColMemory(ColByName(AName));
 end;
 
 function TKDBConnection.GetColNullByName(AName: String): Boolean;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColNullByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColNull(ColByName(AName));
 end;
 
 function TKDBConnection.GetColStringByName(AName: String): String;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColStringByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColString(ColByName(AName));
 end;
 
 function TKDBConnection.GetColTimeStampByName(AName: String): KDate.TTimestamp;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColTimeStampByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColTimestamp(ColByName(AName));
 end;
 
 function TKDBConnection.GetColDateAndTimeByName(AName: String): TDateAndTime;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColTimeStampByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := TDateAndTime.Create;
   Result.Timestamp := GetColTimestamp(ColByName(AName));
 end;
@@ -1101,15 +1042,12 @@ end;
 function TKDBConnection.GetColTypeByName(AName: String): TKDBColumnType;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColTypeByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColType(ColByName(AName));
 end;
 
 procedure TKDBConnection.Release;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.Release';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(FOwner.TestValid(TKDBManager), ASSERT_LOCATION+': owner is not valid');
   FOwner.Release(self);
 end;
 
@@ -1118,7 +1056,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.ClearCache';
 var
   i : integer;
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   for i := low(FCachedObjects) to High(FCachedObjects) do
     begin
     FCachedObjects[i].free;
@@ -1141,9 +1078,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.Lookup';
 var
   FVal : Double;
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(ATableName <> '', ASSERT_LOCATION+': Table Name is not valid');
-  assert(AValueField <> '', ASSERT_LOCATION+': Value Field is not valid');
 
   if StringIsInteger32(AKeyValue) and not bAsString then
     FSQL := 'Select ' + AValueField + ' from ' + ATableName + ' where ' + AKeyField + ' = ' + AKeyValue
@@ -1197,7 +1131,6 @@ end;
 procedure TKDBConnection.Prepare;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.Prepare';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   FTerminated := false;
   FBoundItems.Clear;
   ClearCache;
@@ -1208,7 +1141,6 @@ end;
 function TKDBConnection.FetchNext: Boolean;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.FetchNext';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   inc(FRowCount);
   ClearCache;
   result := FetchNextV;
@@ -1217,7 +1149,6 @@ end;
 procedure TKDBConnection.Terminate;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.Terminate';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   FTerminated := true;
   TerminateV;
 end;
@@ -1225,8 +1156,6 @@ end;
 procedure TKDBConnection.StartTransact;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.StartTransact';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  Assert(not FInTransaction, ASSERT_LOCATION+': Reentrancy of transactions is not supported');
   StartTransactV;
   FInTransaction := true;
 end;
@@ -1234,8 +1163,6 @@ end;
 procedure TKDBConnection.Commit;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.Commit';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  Assert(FInTransaction, ASSERT_LOCATION+': Commit but not in transaction');
   // order here is important.
   // if the commit fails, then a rollback is required, so we are still in the transaction
   CommitV;
@@ -1245,8 +1172,6 @@ end;
 procedure TKDBConnection.Rollback;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.Rollback';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  Assert(FInTransaction, ASSERT_LOCATION+': Rollback but not in transaction');
   FInTransaction := False;
   RollbackV;
 end;
@@ -1256,7 +1181,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.KeepBoundObj';
 var
   i : integer;
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   i := FBoundItems.indexof(sName);
   if i <> -1 then
     begin
@@ -1267,10 +1191,14 @@ begin
     FBoundItems.AddObject(sName, AObj);
 end;
 
-function TKDBConnection.GetTables : TStringList;
+function TKDBConnection.link: TKDBConnection;
+begin
+  result := TKDBConnection(inherited link);
+end;
+
+function TKDBConnection.GetTables : TStrings;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetTables';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   FTables.Clear;
   ListTables(FTables);
   result := FTables;
@@ -1359,7 +1287,6 @@ end;
 function TKDBConnection.GetColBlobByName(AName: String): TBytes;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColBlobByName';
 begin
-  assert(self.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
   result := GetColBlob(ColByName(AName));
 end;
 
@@ -1474,35 +1401,36 @@ begin
 
   FName := AName;
   FMaxConnCount := AMaxConnCount;
-  FCurrConnCount := 0;
 
-  FLock := TIdCriticalSection.create;
+  FLock := TCriticalSection.create;
   FDBLogger := TKDBLogger.create;
-  FSemaphore := TSemaphore.Create(FCurrConnCount);
+  FSemaphore := TSemaphore.Create(0);
   FWaitCreate := false;
 
-  FAvail := TObjectList.create(false);
-  FInUse := TObjectList.create(false);
+  FConnections := TAdvList<TKDBConnection>.create;
+  FAvail := TAdvList<TKDBConnection>.create;
+  FInUse := TAdvList<TKDBConnection>.create;
 
   FClosing := false;
   GManagers.AddConnMan(self);
+  Free; // special case - can't free if it's linked in the manager, so manually undo that
 end;
 
 destructor TKDBManager.Destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.Destroy';
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
 
   FClosing := true;
+  Link; // see note above
+  Link;
+  if GManagers <> nil then
+
   GManagers.RemoveConnMan(self);
 
-  Assert(FInUse.Count = 0, 'Connections are still in use in Database Pool '+FName+': '+GetConnSummary);
 
-  // too bad for anyone still trying to use us...
-  FAvail.OwnsObjects := true;
-  FInUse.OwnsObjects := true;
   FAvail.free;
   FInUse.free;
+  FConnections.Free;
   FSemaphore.free;
   FDBLogger.free;
   FLock.Free;
@@ -1512,10 +1440,9 @@ end;
 function TKDBManager.GetCurrentCount: Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.GetCurrentCount';
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
   FLock.Enter;
   try
-    result := FCurrConnCount;
+    result := FConnections.Count;
   finally
     FLock.Leave;
   end;
@@ -1526,8 +1453,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.GetConnection';
 var
   LCreateNew: Boolean;
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
-  assert(AUsage <> '', ASSERT_LOCATION+': Usage is not valid');
   if FWaitCreate and (FSemaphore.Wait(DEFAULT_CONNECTION_WAIT_LENGTH) = wrError) then
     begin
     raise EKDBException.Create('['+Name+'] KDBManager Wait Failed - ' + ErrorAsString(GetLastError));
@@ -1558,6 +1483,7 @@ begin
       end;
       FLock.Enter;
       Try
+        FConnections.Add(result);
         FServerIsAvailable := true;
         FLastServerError := '';
       Finally
@@ -1567,8 +1493,7 @@ begin
       result.FNoFree := true;
       FLock.Enter;
       try
-        inc(FCurrConnCount);
-        FWaitCreate := (FMaxConnCount > 0) and (FCurrConnCount > FMaxConnCount div 2);
+        FWaitCreate := (FMaxConnCount > 0) and (FConnections.Count > FMaxConnCount div 2);
       finally
         FLock.Leave;
       end;
@@ -1587,7 +1512,7 @@ begin
     result.FRowCount := 0;
     result.FPrepareCount := 0;
     result.Sql := '';
-    FInUse.Add(result);
+    FInUse.Add(result.Link);
   finally
     FLock.Leave;
   end;
@@ -1599,16 +1524,12 @@ var
   LDispose : boolean;
   LIndex : integer;
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
-  assert(AConn.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AConn.FTerminated, ASSERT_LOCATION+': Connection has not been terminated');
 
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, nil, '');
   FLock.Enter; // must lock because of the debugger
   try
-    LDispose := (FCurrConnCount > FMaxConnCount) and (FMaxConnCount > 0);
+    LDispose := (FConnections.count > FMaxConnCount) and (FMaxConnCount > 0);
     LIndex := FInUse.IndexOf(AConn);
-    assert(LIndex > -1, ASSERT_LOCATION+': return Conn "'+AConn.FUsage+'" not recorded as in use');
     FInUse.Delete(LIndex);
     FLastServerGood := now;
     FServerIsAvailable := true;
@@ -1616,12 +1537,12 @@ begin
     AConn.FUsed := 0;
     if LDispose then
       begin
-      dec(FCurrConnCount);
-      FWaitCreate := (FMaxConnCount > 0) and (FCurrConnCount > FMaxConnCount div 2);
+      FConnections.Remove(AConn);
+      FWaitCreate := (FMaxConnCount > 0) and (FConnections.count > FMaxConnCount div 2);
       end
     else
       begin
-      FAvail.Add(AConn);
+      FAvail.Add(AConn.Link);
       FSemaphore.Release;
       end;
   finally
@@ -1645,8 +1566,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.Error';
 var
   LIndex : integer;
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
-  assert(AConn.TestValid(TKDBConnection), ASSERT_LOCATION+': self is not valid');
 
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
 
@@ -1657,8 +1576,8 @@ begin
       begin
       FInUse.Delete(LIndex);
       end;
-    dec(FCurrConnCount);
-    FWaitCreate := (FMaxConnCount > 0) and (FCurrConnCount > FMaxConnCount div 2);
+    FConnections.Remove(AConn);
+    FWaitCreate := (FMaxConnCount > 0) and (FConnections.count > FMaxConnCount div 2);
     FSemaphore.Release;
     if FAvail.Count = 0 then
     begin
@@ -1667,13 +1586,6 @@ begin
     End;
   finally
     FLock.Leave;
-  end;
-
-  try
-    AConn.FNoFree := false;
-    AConn.free;
-  except
-    // it was already in error, and we are in an error handling block - just suppress anything
   end;
   if Assigned(FOnChangeConnectionCount) Then
     FOnChangeConnectionCount(self);
@@ -1684,7 +1596,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.GetConnSummary:';
 var
   i : integer;
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
   result := '';
   FLock.Enter;
   try
@@ -1694,11 +1605,11 @@ begin
       end;
     if result <> '' then
       begin
-      result := 'InUse '+inttostr(FInUse.Count)+' of '+inttostr(FCurrConnCount)+': '+result;
+      result := 'InUse '+inttostr(FInUse.Count)+' of '+inttostr(FConnections.count)+': '+result;
       end
     else
       begin
-      result := inttostr(FCurrConnCount)+' Connections Resting';
+      result := inttostr(FConnections.count)+' Connections Resting';
       end;
   finally
     FLock.Leave;
@@ -1708,7 +1619,6 @@ end;
 function TKDBManager.GetCurrentUse: Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.GetCurrentUse:';
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
   FLock.Enter;
   try
     result := FInUse.Count;
@@ -1717,15 +1627,19 @@ begin
   end;
 end;
 
+function TKDBManager.Link: TKDBManager;
+begin
+  result := TKDBManager(inherited link);
+end;
+
 function TKDBManager.PopAvail: TKDBConnection;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.PopAvail:';
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
   FLock.Enter;
   try
     if FAvail.Count > 0 then
       begin
-      result := FAvail[FAvail.count - 1] as TKDBConnection;
+      result := FAvail[FAvail.count - 1];
       FAvail.Delete(FAvail.count - 1);
       end
     else
@@ -1742,9 +1656,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.ExecSQL';
 var
   LConn : TKDBConnection;
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
-  assert(ASql <> '', ASSERT_LOCATION+': sql is not valid');
-  assert(AName <> '', ASSERT_LOCATION+': Name is not valid');
   LConn := GetConnection(AName);
   try
     LConn.ExecSQL(ASql);
@@ -1764,7 +1675,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.ExecSQL';
 var
   LConn : TKDBConnection;
 begin
-  assert(self.TestValid(TKDBManager), ASSERT_LOCATION+': self is not valid');
   LConn := GetConnection('CheckConnection');
   try
     Result := LConn.CheckConnection;
@@ -1830,14 +1740,6 @@ begin
     end;
 end;
 
-Type
-  TKDBHook = class (TKDBObject)
-  private
-    FHook : TKDBManagerEvent;
-  public
-    constructor create(AHook : TKDBManagerEvent);
-  end;
-
 procedure TKDBManager.SetMaxConnCount(const Value: Integer);
 begin
   FLock.Enter;
@@ -1853,17 +1755,18 @@ end;
 constructor TKDBManagerList.create;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.create';
 begin
-  inherited create(false);
-  FLock := TIdCriticalSection.create;
-  FHooks := TIdStringList.create(true);
+  inherited create;
+  FLock := TCriticalSection.create;
+  FHooks := TAdvList<TKDBHook>.create;
+  FList := TAdvList<TKDBManager>.create;
 end;
 
 destructor TKDBManagerList.destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.destroy';
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
   FLock.free;
   FHooks.free;
+  FList.Free;
   inherited;
 end;
 
@@ -1872,8 +1775,8 @@ var
   i : integer;
 begin
   result := '';
-  for i := 0 to Count - 1 do
-    result := result + Strings[i] + ': ' + TKDBManager(Objects[i]).GetConnSummary+#13#10;
+  for i := 0 to FList.Count - 1 do
+    result := result + FList[i].FName+' : '+ FList[i].GetConnSummary+#13#10;
 end;
 
 procedure TKDBManagerList.AddConnMan(AConnMan : TKDBManager);
@@ -1881,15 +1784,11 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.AddConnMan';
 var
   i : integer;
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
   Lock;
   try
-    assert(indexOf(AConnMan.Name) = -1, ASSERT_LOCATION+': attempt to add a duplicate ConnMan "'+AConnMan.Name+'"');
-    AddObject(AConnMan.Name, AConnMan);
+    FList.Add(AConnMan.Link);
     for i := 0 to FHooks.count -1 do
-      begin
-      TKDBHook(FHooks.Objects[i]).FHook(AConnMan, true);
-      end;
+      FHooks[i].FHook(AConnMan, true);
   finally
     Unlock;
   end;
@@ -1900,16 +1799,11 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.RemoveConnMan';
 var
   i : integer;
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
   Lock;
   try
     for i := 0 to FHooks.count -1 do
-      begin
-      TKDBHook(FHooks.Objects[i]).FHook(AConnMan, false);
-      end;
-    i := indexOf(AConnMan.Name);
-    assert(i > -1, ASSERT_LOCATION+': attempt to add a duplicate ConnMan "'+AConnMan.Name+'"');
-    Delete(i);
+      FHooks[i].FHook(AConnMan, false);
+    FList.Remove(AConnMan);
   finally
     Unlock;
   end;
@@ -1918,50 +1812,43 @@ end;
 function TKDBManagerList.GetConnMan(i : Integer):TKDBManager;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.GetConnMan';
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
-  assert((i >= 0) and (i < Count), ASSERT_LOCATION+': i is not valid ('+inttostr(i)+'/'+inttostr(Count)+')');
-  result := objects[i] as TKDBManager;
+  result := FList[i];
 end;
 
 function TKDBManagerList.HasConnManByName(s : String) : Boolean;
 begin
-  result := IndexOf(s) > -1;
+  result := GetConnManByName(s) <> nil;
 End;
 
 function TKDBManagerList.GetConnManByName(s : String):TKDBManager;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.GetConnManByName';
 var
-  i : integer;
+  k : TKDBManager;
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
-  i := IndexOf(s);
-  if i = -1 then
-    raise exception.create('Unable to find database connection "'+s+'" in '+CommaText);
-  result := GetConnMan(i);
+  result := nil;
+  for k in FList do
+    if k.Name = s then
+    begin
+      result := k;
+      exit;
+    end;
 end;
 
 procedure TKDBManagerList.Lock;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.Lock';
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
   FLock.Enter;
 end;
 
 procedure TKDBManagerList.UnLock;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.UnLock';
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
-  assert(FLock.LockedToMe, ASSERT_LOCATION+': lock is not locked');
   FLock.Leave;
 end;
 
 procedure TKDBManagerList.RegisterHook(AName : String; AHook : TKDBManagerEvent);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.RegisterHook';
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
-  assert(assigned(AHook), ASSERT_LOCATION+': Hook "'+AName+'" is not assigned');
-  assert(FHooks.indexOf(AName) = -1, ASSERT_LOCATION+': attempt to register duplicate hook "'+AName+'"');
-  FHooks.AddObject(AName, TKDBHook.create(AHook));
+  FHooks.Add(TKDBHook.create(AName, AHook));
 end;
 
 procedure TKDBManagerList.UnRegisterHook(AName : String);
@@ -1969,21 +1856,27 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManagerList.UnRegisterHook';
 var
   i : integer;
 begin
-  assert(self.TestValid(TKDBManagerList), ASSERT_LOCATION+': self is not valid');
-  i := FHooks.indexOf(AName);
-  assert(i > -1, ASSERT_LOCATION+': attempt to unregister unknown hook "'+AName+'"');
-  FHooks.Delete(i);
+  for i := FHooks.Count - 1 downto 0 do
+    if FHooks[i].FName = AName then
+      FHooks.Delete(i);
 end;
 
 { TKDBHook }
 
-constructor TKDBHook.create(AHook : TKDBManagerEvent);
+constructor TKDBHook.create(Name : String; Hook : TKDBManagerEvent);
 begin
   inherited create;
-  FHook := AHook;
+  FName := name;
+  FHook := Hook;
 end;
 
 { TKDBColumn }
+
+constructor TKDBColumn.Create(name: String);
+begin
+  inherited create;
+  self.Name := name;
+end;
 
 function TKDBColumn.Describe : String;
 begin
@@ -2006,24 +1899,26 @@ begin
     end;
 end;
 
-{ TKDBColumns }
-
-function TKDBColumns.GetByIndex(iIndex: Integer): TKDBColumn;
-begin
-  result := Objects[iIndex] as TKDBColumn;
-end;
-
-function TKDBColumns.GetColumn(AName : string):TKDBColumn;
+function CommaText(list : TAdvList<TKDBColumn>) : String;
 var
-  i :  Integer;
+  s : TStringBuilder;
+  b : boolean;
+  c : TKDBColumn;
 begin
-  result := nil;
-  for i := 0 to Count - 1 do
-    if SameText((items[i] as TKDBColumn).Name, AName) then
-      begin
-      result := items[i] as TKDBColumn;
-      exit;
-      end;
+  b := false;
+  s := TStringBuilder.Create;
+  try
+    for C in list do
+    begin
+      if (b) then
+        s.Append(',')
+      else
+        b := true;
+      s.Append(C.Name);
+    end;
+  finally
+    s.Free;
+  end;
 end;
 
 { TKDBIndex }
@@ -2031,7 +1926,7 @@ end;
 constructor TKDBIndex.create;
 begin
   inherited;
-  FColumns := TStringList.create;
+  FColumns := TAdvList<TKDBColumn>.create;
 end;
 
 destructor TKDBIndex.destroy;
@@ -2051,7 +1946,8 @@ begin
     Result := '';
     end;
 
-  Result := Result + 'INDEX ' + FName + ' ON (' + FColumns.CommaText + ')';
+
+  Result := Result + 'INDEX ' + FName + ' ON (' + CommaText(FColumns) + ')';
 end;
 
 function TKDBRelationship.Describe : String;
@@ -2059,29 +1955,14 @@ Begin
   result := FColumn + ' -> '+FDestTable+'.'+FDestColumn;
 End;
 
-{ TKDBIndexes }
-
-function TKDBIndexes.GetIndex(AName : string):TKDBIndex;
-var
-  i :  Integer;
-begin
-  result := nil;
-  for i := 0 to count - 1 do
-    if SameText((Items[i] as TKDBIndex).Name, AName) then
-      begin
-      result := Items[i] as TKDBIndex;
-      exit;
-      end;
-end;
-
 { TKDBTable }
 
 constructor TKDBTable.create;
 begin
   inherited;
-  FColumns := TKDBColumns.create(True);
-  FIndexes := TKDBIndexes.create(True);
-  FRelationships := TKDBRelationships.create(True);
+  FColumns := TAdvList<TKDBColumn>.CREATE;
+  FIndexes := TAdvList<TKDBIndex>.create;
+  FRelationships := TAdvList<TKDBRelationship>.create;
 end;
 
 destructor TKDBTable.destroy;
@@ -2092,32 +1973,12 @@ begin
   inherited;
 end;
 
-{ TKDBTables }
-
-function TKDBTables.GetByIndex(iIndex: Integer): TKDBTable;
-begin
-  result := Objects[iIndex] as TKDBTable;
-end;
-
-function TKDBTables.GetTable(AName : string):TKDBTable;
-var
-  i :  Integer;
-begin
-  result := nil;
-  for i := 0 to Count - 1 do
-    if SameText((Items[i] as TKDBTable).Name, AName) then
-      begin
-      result := Items[i] as TKDBTable;
-      exit;
-      end;
-end;
-
 { TKDBMetaData }
 
 constructor TKDBMetaData.create;
 begin
   inherited;
-  FTables := TKDBTables.create(True);
+  FTables := TAdvList<TKDBTable>.create;
   FProcedures := TStringList.create;
 end;
 
@@ -2135,34 +1996,10 @@ var
 begin
   result := false;
   for i := 0 to Tables.Count - 1 do
-    if Tables.GetByIndex(i).Name = name then
+    if Tables[i].Name = name then
       result := true;
 end;
 
-{ TKDBObjectList }
-
-function TKDBObjectList.GetObject(Index: integer): TObject;
-begin
-  result := items[Index];
-end;
-
-function TKDBObjectList.Valid(AIndex: Integer): Boolean;
-begin
-  Result := (AIndex >= 0) And (AIndex < Count);
-end;
-
-function TKDBRelationships.GetIndex(AName : string):TKDBRelationship;
-var
-  i :  Integer;
-begin
-  result := nil;
-  for i := 0 to count - 1 do
-    if SameText((Items[i] as TKDBRelationship).Column, AName) then
-      begin
-      result := Items[i] as TKDBRelationship;
-      exit;
-      end;
-End;
 
 Function TKDBManager.ServerErrorStatus : String;
 Begin
@@ -2177,9 +2014,17 @@ Begin
   End;
 End;
 
+procedure CloseUPGManagers;
+var
+  m : TKDBManagerList;
+begin
+  m := GManagers;
+  GManagers := nil;
+  m.free;
+end;
+
 initialization
   GManagers := TKDBManagerList.create;
 finalization
-  GManagers.free;
-  GManagers := nil;
+  CloseUPGManagers;
 end.

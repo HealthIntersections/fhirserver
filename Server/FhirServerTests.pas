@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, ShellSupport,
   IniFiles,
   AdvObjects, GuidSupport, AdvXmlBuilders,
-  FHIRTypes, FHIRResources, FHIRParser, ProfileManager,
+  FHIRTypes, FHIRResources, FHIRParser,
   TerminologyServer, FHIRDataStore;
 
 Type
@@ -191,21 +191,21 @@ begin
   thisOut := TQuestionnaireBuilder.Create;
   thisIn := TQuestionnaireBuilder.Create;
   try
-    thisOut.Profiles := FDataStore.profiles.Link;
+    thisOut.Profiles := FDataStore.ValidatorContext.profiles.Link;
     thisOut.OnExpand := FDataStore.ExpandVS;
-    thisIn.Profiles := FDataStore.profiles.Link;
+    thisIn.Profiles := FDataStore.ValidatorContext.profiles.Link;
     thisIn.OnExpand := FDataStore.ExpandVS;
     thisOut.QuestionnaireId := NewGuidURN;
 
     thisOut.Resource := LoadJsonResource(filename) as TFhirDomainResource;
     thisOut.Resource.text := nil;
-    thisOut.Profile := FDataStore.profiles['http://hl7.org/fhir/Profile/'+name].Link;
+    thisOut.Profile := FDataStore.ValidatorContext.profiles['http://hl7.org/fhir/Profile/'+name].Link;
     thisOut.Build;
     saveResource(thisOut.Resource, 'c:\temp\start.json');
     saveResource(thisOut.Answers, 'c:\temp\qa.json');
 
     thisIn.answers := thisOut.Answers.Link;
-    thisIn.Profile := FDataStore.profiles['http://hl7.org/fhir/Profile/'+name].Link;
+    thisIn.Profile := FDataStore.ValidatorContext.profiles['http://hl7.org/fhir/Profile/'+name].Link;
     thisIn.UnBuild;
     saveResource(thisIn.Resource, 'c:\temp\end.json');
 

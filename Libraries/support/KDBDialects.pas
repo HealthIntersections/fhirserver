@@ -45,6 +45,8 @@ Type
 
 const
   KDB_ALL_PLATFORMS = [Low(TKDBPlatform) .. High(TKDBPlatform)];
+  EOL_WINDOWS = #13#10;
+  EOL_PLATFORM = EOL_WINDOWS;
 
 // platform Recognition
 function RecogniseDriver(ADriverDesc: String): TKDBPlatform;
@@ -82,7 +84,6 @@ function CreateTableIndex(ADBIndexType: String; ADBIndexName: String; ADBTableNa
 implementation
 
 uses
-  IdSoapConsts,
   StringSupport,
   SysUtils;
 
@@ -901,7 +902,7 @@ end;
 
 function SQLHasResultSet(AStr: String): Boolean;
 begin
-  AStr := StringTrimSet(AStr, [LF, CR, TAB, ' ']);
+  AStr := StringTrimSet(AStr, [#10, #13, #9, ' ']);
   Result := SameText('SELECT', Copy(AStr, 1, 6)) or SameText('SHOW ', Copy(AStr, 1, 5));
 end;
 

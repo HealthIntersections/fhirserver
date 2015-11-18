@@ -31,10 +31,10 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections,
+  SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections, System.Character,
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport,
   AdvBuffers, AdvStringLists, DateAndTime, AdvStringMatches, TextUtilities, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
-  IdSoapMsXml, IdSoapXml, MsXmlParser, XmlBuilder, MsXmlBuilder, AdvXmlBuilders, AdvJSON,
+  MsXml, MsXmlParser, XmlBuilder, MsXmlBuilder, AdvXmlBuilders, AdvJSON,
   FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport, FHIRTags, FHIRLang;
 
 const
@@ -103,8 +103,9 @@ Type
     FLastStart : TSourceLocation;
     FLocations : TAdvList<TSourceLocationObject>;
   public
-    constructor create;
+    constructor create(locations : TAdvList<TSourceLocationObject>);
     destructor destroy; override;
+    property DOm : IXMLDOMDocument2 read FDom;
     procedure startElement(sourceLocation : TSourceLocation; uri, localname : string; attrs : IVBSAXAttributes); override;
     procedure endElement(sourceLocation : TSourceLocation); overload; override;
     procedure text(chars : String; sourceLocation : TSourceLocation); override;
@@ -176,7 +177,8 @@ Type
     procedure ParseInnerResource(jsn : TJsonObject; ctxt : TFHIRObjectList);  overload;
     function ParseInnerResource(jsn: TJsonObject) : TFhirResource; overload;
   Public
-    procedure Parse; Override;
+    procedure Parse; Overload; Override;
+    procedure Parse(obj : TJsonObject); Overload;
     function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
     class function ParseFragment(fragment, type_, lang : String) : TFHIRBase; overload;
   End;
@@ -324,8 +326,7 @@ begin
     // we're going to parse with SAX, building a DOM, and we're also goigng to populate a map of source locations. Slow, but that's how it is in the microsoft land
     ms := TMsXmlParser.Create;
     try
-      sax := TFHIRSaxToDomParser.create; // no try...finally..., this is interface
-      sax.FLocations := FLocations.Link;
+      sax := TFHIRSaxToDomParser.create(FLocations.Link); // no try...finally..., this is interface
       result := sax.FDom;
       ms.Parse(stream, sax);
     finally
@@ -527,6 +528,11 @@ end;
 //    result.free;
 //  end;
 //end;
+
+procedure TFHIRJsonParserBase.Parse(obj: TJsonObject);
+begin
+  resource := ParseResource(obj);
+end;
 
 procedure TFHIRJsonParserBase.ParseComments(base: TFHIRBase; jsn : TJsonObject);
 begin
@@ -1131,6 +1137,38 @@ begin
   end;
 end;
 
+function normaliseWhitespace(s : String) : String;
+var
+  w : boolean;
+  b : TStringBuilder;
+  c : Char;
+begin
+  w := false;
+  b := TStringBuilder.Create;
+  try
+    for c in s do
+    begin
+      if not System.Character.isWhitespace(c) then
+      begin
+        b.Append(c);
+        w := false;
+      end
+      else if not w then
+      begin
+        b.append(' ');
+        w := true;
+      end;
+      // else
+        // ignore
+
+
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
 procedure TFHIRComposer.ComposeXHtmlNode(xml : TXmlBuilder; node: TFhirXHtmlNode; ignoreRoot : boolean);
 var
   i : Integer;
@@ -1146,7 +1184,7 @@ begin
   else
   begin
     case node.NodeType of
-      fhntText : xml.Text(node.Content);
+      fhntText : xml.Text(normaliseWhitespace(node.Content));
       fhntComment : xml.Comment(node.Content);
       fhntElement :
         begin
@@ -1551,6 +1589,7 @@ var
   xml : TFHIRXmlComposer;
   r : TFhirResource;
   t, link, text, sl, ul : String;
+  a : TArray<String>;
 begin
   s := TAdvStringBuilder.create;
   try
@@ -1601,7 +1640,7 @@ Header(Session, FBaseURL, lang)+
         s.append(' ('+bundle.Total+' '+GetFhirMessage('FOUND', lang)+'). ');
       s.append('<span style="color: grey">'+GetFhirMessage('NAME_SEARCH', lang)+': '+bundle.link_List.Matches['self']+'</span>&nbsp;</p>');
       if bundle.tags['sql'] <> '' then
-        s.append('<p>SQL: <span style="color: maroon">'+FormatTextToXML(bundle.tags['sql'])+'</span></p>');
+        s.append('<p>SQL (for debugging): <span style="color: maroon">'+FormatTextToXML(bundle.tags['sql'])+'</span></p>');
     end;
 
     for i := 0 to bundle.entryList.Count - 1 do
@@ -1609,7 +1648,20 @@ Header(Session, FBaseURL, lang)+
       e := bundle.entryList[i];
       r := e.resource;
       if (r = nil) then
-        s.append('<h2>nil?</h2>'+#13#10)
+      begin
+        if (e.request <> nil) and (e.request.method = HttpVerbDELETE) then
+        begin
+          a := e.request.url.Split(['/']);
+          s.append('<h2>'+a[length(a)-2]+' '+a[length(a)-1]+' deleted</h2>'+#13#10);
+          s.append('<p>'+FormatTextToXML(e.tags['opdesc']));
+          if e.link_List.Matches['audit'] <> '' then
+
+            s.append(' (<a href="'+BaseURL+e.link_List.Matches['audit']+'">Audit</a>)');
+          s.append('</p>'+#13#10);
+        end
+        else
+          s.append('<h2>nil?</h2>'+#13#10)
+      end
       else
       begin
       t := GetFhirMessage(CODES_TFHIRResourceType[r.ResourceType], lang)+' "'+r.id+'"';
@@ -1626,6 +1678,13 @@ Header(Session, FBaseURL, lang)+
       end;
 
       s.append('<h2>'+FormatTextToXml(t)+'</h2>'+#13#10);
+      if e.tags['opdesc'] <>'' then
+      begin
+        s.append('<p>'+FormatTextToXML(e.tags['opdesc']));
+        if e.link_List.Matches['audit'] <> '' then
+          s.append(' (<a href="'+BaseURL+e.link_List.Matches['audit']+'">Audit</a>)');
+        s.append('</p>'+#13#10);
+      end;
       if (r.meta <> nil) then
         s.append('<p><a href="'+e.id+'/_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(r.ResourceType, sl+'/_tags', r.meta, i+1)+'</p>'+#13#10);
 
@@ -2340,11 +2399,13 @@ end;
 
 { TFHIRSaxToDomParser }
 
-constructor TFHIRSaxToDomParser.create;
+constructor TFHIRSaxToDomParser.create(locations : TAdvList<TSourceLocationObject>);
 begin
   FStack := TList<IXMLDOMElement>.create;
   FDom := CoDOMDocument.Create;
+  FLocations := locations;
 end;
+
 
 destructor TFHIRSaxToDomParser.destroy;
 begin

@@ -44,7 +44,7 @@ uses
   FHIRBase, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
   FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath,
   SmartOnFhirUtilities, SmartOnFhirLogin,
-  FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm;
+  FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms;
 
 const
   INDIC_INFORMATION = 25;
@@ -330,7 +330,6 @@ var
   src : String;
   buffer : TAdvBuffer;
   error : TFHIRAnnotation;
-  context : TFHIRValidatorContext;
   op : TFHIROperationOutcome;
   iss : TFhirOperationOutcomeIssue;
   fmt : TFHIRFormat;
@@ -345,12 +344,7 @@ begin
       try
         buffer.AsUnicode := src;
         loadValidator;
-        context := FValidator.AcquireContext;
-        try
-          op := FValidator.validateInstance(context, buffer, fmt, 'validate', nil);
-        finally
-          FValidator.YieldContext(context);
-        end;
+        op := FValidator.validateInstance(buffer, fmt, false, 'validate', nil);
       finally
         buffer.Free;
       end;
@@ -425,8 +419,8 @@ begin
 
     OpMessage('Loading', 'Loading Definition Source');
     try
-      FValidator := TFHIRValidator.Create(Settings.TerminologyServer);
-      FValidator.LoadFromDefinitions(Settings.DefinitionsSource);
+      FValidator := TFHIRValidator.Create(TFHIRPluginValidatorContext.Create(Settings.TerminologyServer));
+      FValidator.Context.LoadFromDefinitions(Settings.DefinitionsSource);
     finally
       OpMessage('', '');
     end;
@@ -607,7 +601,7 @@ begin
         d := prsr.resource as TFhirDomainResource;
         d.text := nil;
         loadValidator;
-        narr := TFHIRNarrativeGenerator.Create(FValidator.Link);
+        narr := TFHIRNarrativeGenerator.Create(FValidator.Context.link);
         try
           narr.generate(d);
         finally
@@ -640,7 +634,7 @@ begin
   loadValidator;
   ResourceNewForm := TResourceNewForm.Create(self);
   try
-    ResourceNewForm.Validator := FValidator.Link;
+    ResourceNewForm.Context := FValidator.Context.Link;
     ResourceNewForm.ShowModal;
   finally
     FreeAndNil(ResourceNewForm);
@@ -663,7 +657,7 @@ begin
     FetchResourceFrm := TFetchResourceFrm.create(self);
   FetchResourceFrm.Conformance := FConformance.link;
   FetchResourceFrm.Client := FClient.link;
-  FetchResourceFrm.Profiles := FValidator.Profiles.Link;
+  FetchResourceFrm.Profiles := FValidator.Context.Profiles.Link;
   if FetchResourceFrm.ShowModal = mrOk then
   begin
     res := FClient.readResource(FetchResourceFrm.SelectedType, FetchResourceFrm.SelectedId);
@@ -705,8 +699,10 @@ var
   allSource : boolean;
   sp, ep : integer;
   annot : TFHIRAnnotation;
+  types : TArray<string>;
 begin
   FuncMatchesClear;
+  loadValidator;
 
   src := CurrentText;
   fmt := determineFormat(src);
@@ -722,35 +718,46 @@ begin
       prsr.KeepLineNumbers := true;
       prsr.source := s;
       prsr.Parse;
-      query := TFHIRPathEvaluator.Create;
       try
-        items := query.evaluate(prsr.resource, FHIRToolbox.mPath.Text);
+        query := TFHIRPathEvaluator.Create(FValidator.Context.Link);
         try
-          allSource := true;
-          for item in items do
-            allSource := allSource and not isNullLoc(item.LocationStart);
-          if Items.Count = 0 then
-            MessageDlg('no items matched', mtInformation, [mbok], 0)
-          else if not allSource then
-            MessageDlg(query.convertToString(items), mtInformation, [mbok], 0)
-          else
-          begin
+          types := query.check(CODES_TFHIRResourceType[prsr.resource.ResourceType], CODES_TFHIRResourceType[prsr.resource.ResourceType], FHIRToolbox.mPath.Text);
+          items := query.evaluate(prsr.resource, FHIRToolbox.mPath.Text);
+          try
+            allSource := true;
             for item in items do
+              allSource := allSource and not isNullLoc(item.LocationStart);
+
+            if Items.Count = 0 then
+              pathOutcomeDialog(self, FHIRToolbox.mPath.Text, CODES_TFHIRResourceType[prsr.resource.ResourceType], types, pomNoMatch, 'no items matched')
+            else if not allSource then
+              pathOutcomeDialog(self, FHIRToolbox.mPath.Text, CODES_TFHIRResourceType[prsr.resource.ResourceType], types, pomNoMatch, query.convertToString(items))
+            else
             begin
-              sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.LocationStart.line - 1, item.LocationStart.col-1);
-              ep := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.LocationEnd.line - 1, item.LocationEnd.col-1);
-              if (ep = sp) then
-                ep := sp + 1;
-              matches.Add(TFHIRAnnotation.create(INDIC_MATCH, sp, ep, 'This element is a match to path "'+FHIRToolbox.mPath.Text+'"'));
+              for item in items do
+              begin
+                sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.LocationStart.line - 1, item.LocationStart.col-1);
+                ep := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.LocationEnd.line - 1, item.LocationEnd.col-1);
+                if (ep = sp) then
+                  ep := sp + 1;
+                matches.Add(TFHIRAnnotation.create(INDIC_MATCH, sp, ep, 'This element is a match to path "'+FHIRToolbox.mPath.Text+'"'));
+              end;
+              for annot in matches do
+                squiggle(annot.level, annot.start, annot.stop - annot.start);
+              if (items.Count = 1) then
+                pathOutcomeDialog(self, FHIRToolbox.mPath.Text, CODES_TFHIRResourceType[prsr.resource.ResourceType], types, pomMatch, '1 matching item')
+              else
+                pathOutcomeDialog(self, FHIRToolbox.mPath.Text, CODES_TFHIRResourceType[prsr.resource.ResourceType], types, pomMatch, inttostr(items.Count)+' matching items');
             end;
-            for annot in matches do
-              squiggle(annot.level, annot.start, annot.stop - annot.start);
+          finally
+            items.Free;
           end;
         finally
-          items.Free;
+          query.Free;
         end;
-      finally
-        query.Free;
+      except
+        on e : Exception do
+         pathOutcomeDialog(self, FHIRToolbox.mPath.Text, CODES_TFHIRResourceType[prsr.resource.ResourceType], types, pomError, e.Message);
       end;
     finally
       prsr.Free;

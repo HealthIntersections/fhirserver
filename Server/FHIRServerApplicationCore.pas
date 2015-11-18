@@ -38,7 +38,7 @@ Uses
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
-  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests, FHIROperation, FHIRDataStore,
+  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests, FHIROperation, FHIRDataStore, FHIRBase,
   FHIRServerConstants,
   SCIMServer;
 
@@ -62,6 +62,7 @@ Type
     procedure CloseDatabase;
     procedure CheckWebSource;
     function dbExists : Boolean;
+    procedure validate;
   protected
     function CanStart : boolean; Override;
     procedure DoStop; Override;
@@ -142,6 +143,11 @@ begin
       end
       else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
         svc.LoadByProfile(fn, false)
+      else if FindCmdLineSwitch('validate') then
+      begin
+        svc.FNotServing := true;
+        svc.validate;
+      end
       else if FindCmdLineSwitch('index') then
         svc.index
       else if FindCmdLineSwitch('tests') then
@@ -205,7 +211,7 @@ begin
   try
     meta := conn.FetchMetaData;
     try
-      result := meta.Tables.Table['Config'] <> nil;
+      result := meta.HasTable('Config');
     finally
       meta.free;
     end;
@@ -432,7 +438,7 @@ end;
 
 procedure TFHIRService.LoadTerminologies;
 begin
-  FTerminologyServer := TTerminologyServer.create(FDB);
+  FTerminologyServer := TTerminologyServer.create(FDB.Link);
   FTerminologyServer.load(FIni);
 end;
 
@@ -453,10 +459,22 @@ begin
   DoStop;
 end;
 
+procedure TFHIRService.validate;
+begin
+  FNotServing := true;
+  if FDb = nil then
+    ConnectToDatabase;
+  CanStart;
+  writelnt('validate resources');
+  FWebServer.DataStore.RunValidation;
+  DoStop;
+end;
+
 procedure TFHIRService.InitialiseRestServer;
 begin
   FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer);
   FWebServer.Start(not FNotServing);
+  FWebServer.DataStore.ForLoad := FindCmdLineSwitch('forload')
 end;
 
 procedure TFHIRService.InstallDatabase;
@@ -493,7 +511,7 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   writelnt('mount database');
-  scim := TSCIMServer.Create(FDB, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
+  scim := TSCIMServer.Create(FDB.Link, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
   try
     conn := FDb.GetConnection('setup');
     try

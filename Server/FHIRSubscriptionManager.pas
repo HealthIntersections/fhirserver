@@ -211,6 +211,7 @@ begin
   FSubscriptionTrackers.Free;
   FSubscriptions.Free;
   FLock.Free;
+  FDatabase.Free;
   inherited;
 end;
 
@@ -794,7 +795,7 @@ begin
       value := Codes_TFHIRResourceType[resource.ResourceType]+'/'+resource.id
     else
     begin
-      qry := TFHIRPathEvaluator.create;
+      qry := TFHIRPathEvaluator.create(nil);
       try
         results := qry.evaluate(resource, code);
         try

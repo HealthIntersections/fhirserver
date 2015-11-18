@@ -35,13 +35,13 @@ uses
   kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport,
   ParseMap,
   AdvNames, AdvObjects, AdvStringMatches, AdvExclusiveCriticalSections,
-  AdvStringBuilders, AdvGenerics, AdvExceptions,
+  AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers,
   KDBManager, KDBDialects,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport,
-  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang,
+  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities,
 
-  ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, ProfileManager, DBInstaller;
+  ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller;
 
 const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -112,7 +112,7 @@ Type
     FLastResourceId: array [TFHIRResourceType] of integer;
     FLastEntryKey: integer;
     FLastCompartmentKey: integer;
-    FProfiles: TProfileManager;
+    FValidatorContext : TFHIRServerValidatorContext;
     FValidator: TFHIRValidator;
     FResConfig: TConfigArray;
     FSupportTransaction: Boolean;
@@ -134,6 +134,7 @@ Type
     FNextSearchSweep: TDateTime;
     FSystemId: String;
     FIndexes : TFHIRIndexInformation;
+    FForLoad : boolean;
 
     procedure LoadExistingResources(conn: TKDBConnection);
     procedure SaveResource(res: TFhirResource; dateTime: TDateAndTime; origin : TFHIRRequestOrigin);
@@ -146,6 +147,7 @@ Type
     function getTypeForKey(key: integer): TFHIRResourceType;
     procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
     procedure RegisterAuditEvent(session: TFhirSession; ip: String);
+    procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TAdvBuffer; b : TStringBuilder);
   public
     constructor Create(DB: TKDBManager; SourceFolder, WebFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer);
     Destructor Destroy; Override;
@@ -198,7 +200,7 @@ Type
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
 
     Property OwnerName: String read FOwnerName write FOwnerName;
-    Property Profiles: TProfileManager read FProfiles;
+    Property ValidatorContext : TFHIRServerValidatorContext read FValidatorContext;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit: integer;
       allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
     function LookupCode(system, code: String): String;
@@ -206,10 +208,13 @@ Type
     Property Validate: Boolean read FValidate write FValidate;
     procedure QueueResource(r: TFhirResource); overload;
     procedure QueueResource(r: TFhirResource; dateTime: TDateAndTime); overload;
+    procedure RunValidation;
     property SystemId: String read FSystemId;
+
 
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager;
     property Indexes : TFHIRIndexInformation read FIndexes;
+    property ForLoad : boolean read FForLoad write FForLoad;
   end;
 
 implementation
@@ -266,7 +271,7 @@ begin
   FClaimQueue := TFHIRClaimList.Create;
 
   FSubscriptionManager := TSubscriptionManager.Create;
-  FSubscriptionManager.dataBase := FDB;
+  FSubscriptionManager.dataBase := FDB.Link;
   FSubscriptionManager.Base := 'http://localhost/';
   FSubscriptionManager.SMTPHost := ini.ReadString('email', 'Host', '');
   FSubscriptionManager.SMTPPort := ini.ReadString('email', 'Port', '');
@@ -375,22 +380,21 @@ begin
 
     FIndexes.ReconcileIndexes(conn);
 
+    FValidatorContext := TFHIRServerValidatorContext.Create;
+    FValidator := TFHIRValidator.Create(FValidatorContext.link);
+
     if TerminologyServer <> nil then
     begin
       // the expander is tied to what's on the system
-      FTerminologyServer := TerminologyServer;
-      FValidator := TFHIRValidator.Create;
-      FProfiles := FValidator.Profiles.Link;
-      FValidator.SchematronSource := WebFolder;
-      FValidator.TerminologyServer := TerminologyServer.Link;
-      FValidator.Profiles := Profiles.Link;
+      FTerminologyServer := TerminologyServer.Link;
+      FValidatorContext.TerminologyServer := TerminologyServer.Link;
 
       // the order here is important: specification resources must be loaded prior to stored resources
       fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation-min.xml.zip';
       if not FileExists(fn) then
         fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation.xml.zip';
       writelnt('Load Validation Pack from ' + fn);
-      FValidator.LoadFromDefinitions(fn);
+      FValidatorContext.LoadFromDefinitions(fn);
       writelnt('Load Store');
       LoadExistingResources(conn);
       writelnt('Load Subscription Queue');
@@ -532,7 +536,6 @@ destructor TFHIRDataStore.Destroy;
 begin
   FAudits.free;
   FBases.free;
-  FProfiles.free;
   FTagsByKey.free;
   FSessions.free;
   FTags.free;
@@ -540,9 +543,12 @@ begin
   FQuestionnaireCache.free;
   FClaimQueue.free;
   FLock.free;
+  FIndexes.free;
   FSCIMServer.free;
   FValidator.free;
+  FValidatorContext.Free;
   FTerminologyServer.free;
+  FDB.Free;
   inherited;
 end;
 
@@ -1253,6 +1259,101 @@ begin
   result := FResConfig[TFHIRResourceType(i)].key;
 end;
 
+procedure TFHIRDataStore.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TAdvBuffer; b : TStringBuilder);
+var
+  opJ : TFHIROperationOutcome;
+  opX : TFHIROperationOutcome;
+  issue : TFHIROperationOutcomeIssue;
+begin
+  try
+    opj := nil;
+    opx := nil;
+    try
+      opX := FValidator.validateInstance(bufXml, ffXml, true, 'validate check', nil);
+      opJ := FValidator.validateInstance(bufJson, ffJson, true, 'validate check', nil);
+      if (opX.issueList.errorCount + opJ.issueList.errorCount = 0) then
+      begin
+        writeln(inttostr(i)+': '+rtype+'/'+id+': passed validation');
+    //      b.Append(inttostr(i)+': '+'http://local.healthintersections.com.au:960/open/'+rtype+'/'+id+': passed validation'+#13#10);
+      end
+      else
+      begin
+        writeln(inttostr(i)+': '+rtype+'/'+id+': failed validation');
+        b.Append(inttostr(i)+': '+'http://fhir2.healthintersections.com.au/open/'+rtype+'/'+id+' : failed validation'+#13#10);
+        for issue in opX.issueList do
+          if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
+            b.Append('  xml: '+issue.Summary+#13#10);
+        for issue in opJ.issueList do
+          if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
+            b.Append('  json: '+issue.Summary+#13#10);
+      end;
+    finally
+      opj.Free;
+      opx.free;
+    end;
+  except
+    on e:exception do
+    begin
+      writeln(inttostr(i)+': '+rtype+'/'+id+': exception validating: '+e.message);
+      b.Append(inttostr(i)+': '+'http://fhir2.healthintersections.com.au/open/'+rtype+'/'+id+' : exception validating: '+e.message+#13#10);
+    end;
+  end;
+end;
+
+procedure TFHIRDataStore.RunValidation;
+var
+  conn : TKDBConnection;
+  bufJ, bufX : TAdvBuffer;
+  b : TStringBuilder;
+  i : integer;
+begin
+  b := TStringBuilder.Create;
+  try
+    conn := FDB.GetConnection('Run Validation');
+    try
+      conn.SQL := 'select ResourceTypeKey, Ids.Id, JsonContent, XmlContent from Ids, Versions where Ids.MostRecent = Versions.ResourceVersionKey';
+      conn.Prepare;
+      try
+        conn.Execute;
+        i := 0;
+        while conn.FetchNext do
+        begin
+          bufJ := TAdvBuffer.create;
+          bufX := TAdvBuffer.create;
+          try
+            bufJ.asBytes := conn.ColBlobByName['JsonContent'];
+            bufX.asBytes := conn.ColBlobByName['XmlContent'];
+            inc(i);
+            RunValidateResource(i, CODES_TFHIRResourceType[getTypeForKey(conn.ColIntegerByName['ResourceTypeKey'])], conn.ColStringByName['Id'], bufJ, bufX, b);
+          finally
+            bufJ.free;
+            bufX.free;
+          end;
+          break;
+        end;
+      finally
+        conn.terminate;
+      end;
+      conn.release;
+    except
+      on e:exception do
+      begin
+        conn.error(e);
+        raise;
+      end;
+    end;
+    bufJ := TAdvBuffer.Create;
+    try
+      bufJ.AsUnicode := b.ToString;
+      bufJ.SaveToFileName('c:\temp\validation.txt');
+    finally
+      bufJ.free;
+    end;
+  finally
+    b.Free;
+  end;
+end;
+
 procedure TFHIRDataStore.Sweep;
 var
   key, i: integer;
@@ -1372,9 +1473,8 @@ begin
     if resource.ResourceType in [frtValueSet, frtConceptMap] then
       TerminologyServer.SeeTerminologyResource(resource)
     else if resource.ResourceType = frtStructureDefinition then
-      FProfiles.seeProfile(key, resource as TFhirStructureDefinition);
-    FSubscriptionManager.SeeResource(key, vkey, id, created, resource, conn,
-      reload, session);
+      FValidatorContext.Profiles.seeProfile(key, resource as TFhirStructureDefinition);
+    FSubscriptionManager.SeeResource(key, vkey, id, created, resource, conn, reload, session);
     FQuestionnaireCache.clear(resource.ResourceType, id);
     if resource.ResourceType = frtValueSet then
       FQuestionnaireCache.clearVS(TFHIRValueSet(resource).url);
@@ -1395,7 +1495,7 @@ begin
     if aType in [frtValueSet, frtConceptMap] then
       TerminologyServer.DropTerminologyResource(aType, id)
     else if aType = frtStructureDefinition then
-      FProfiles.DropProfile(aType, id);
+      FValidatorContext.Profiles.DropProfile(aType, id);
     FSubscriptionManager.DropResource(key, vkey);
     FQuestionnaireCache.clear(aType, id);
     for i := FClaimQueue.Count - 1 downto 0 do
@@ -1442,7 +1542,7 @@ var
 begin
   builder := TAdvStringBuilder.Create;
   try
-    Profiles := FProfiles.getLinks(false);
+    Profiles := FValidatorContext.Profiles.getLinks(false);
     try
       for i := 0 to Profiles.Count - 1 do
       begin

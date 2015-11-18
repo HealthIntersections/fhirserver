@@ -7,7 +7,7 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles,
-  AdvObjects, StringSupport, AdvExceptions,
+  AdvObjects, StringSupport, AdvExceptions, AdvGenerics,
   KDate, KDBDialects, KDBManager, KSettings,
   OdbcExtras, OdbcHeaders, OdbcCore;
 
@@ -125,10 +125,6 @@ function StandardODBCDriverName(APlatform: TKDBPlatform): String;
 
 implementation
 
-uses
-  IdSoapClasses,
-  IdSoapUtilities;
-
 const
   ASSERT_UNIT = 'KDBOdbcExpress';
 
@@ -144,7 +140,6 @@ end;
 destructor TOdbcConnection.destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.destroy;';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   FStmt.free;
   FHdbc.free;
   inherited;
@@ -167,7 +162,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColBlob';
 var
   mem : TMemoryStream;
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   mem := FStmt.ColMemory[ACol];
   if (mem = nil) or (mem.size = 0) then
     setLength(result, 0)
@@ -182,56 +176,48 @@ end;
 function TOdbcConnection.GetColCountV: Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColCount';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColCount;
 end;
 
 function TOdbcConnection.GetColStringV(ACol: Word): String;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColString';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColString[ACol];
 end;
 
 function TOdbcConnection.GetColIntegerV(ACol: Word): Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColInteger';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColInteger[ACol];
 end;
 
 function TOdbcConnection.GetColInt64V(ACol: Word): Int64;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColInt64';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColInt64[ACol];
 end;
 
 function TOdbcConnection.GetColDoubleV(ACol: Word): Double;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColDouble';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColDouble[ACol];
 end;
 
 function TOdbcConnection.GetColMemoryV(ACol: Word): TMemoryStream;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColMemory';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColMemory[ACol];
 end;
 
 function TOdbcConnection.GetColNullV(ACol: Word): Boolean;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColNull';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColNull[ACol];
 end;
 
 function TOdbcConnection.GetColTimestampV(ACol: Word): KDate.TTimestamp;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColTimestamp';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColTimestamp[ACol];
 end;
 
@@ -309,28 +295,24 @@ end;
 function TOdbcConnection.GetColTypeV(ACol: Word): TKDBColumnType;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColType';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := ConvertColType(FStmt.ColType[ACol])
 end;
 
 function TOdbcConnection.GetColKeyV(ACol: Word): Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColKey';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := GetColInteger(ACol);
 end;
 
 function TOdbcConnection.GetRowsAffectedV: Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetRowsAffected';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.RowsAffected;
 end;
 
 procedure TOdbcConnection.RenameTableV(AOldTableName, ANewTableName: String);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.RenameTable';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   if Owner.Platform = kdbASA then
     FStmt.SQL := 'ALTER TABLE ' + AOldTableName + ' RENAME ' + ANewTableName
   else if Owner.Platform in [kdbDB2, kdbCtree] then
@@ -345,7 +327,6 @@ end;
 procedure TOdbcConnection.DropTableV(ATableName : String);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.RenameColumn';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   SQL := 'Drop Table ' + ATableName;
   Prepare;
   Execute;
@@ -355,7 +336,6 @@ end;
 procedure TOdbcConnection.DropColumnV(ATableName, aColumnName : String);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.RenameColumn';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   SQL := 'ALTER TABLE ' + ATableName+' DROP COLUMN  ' + aColumnName;
   Prepare;
   Execute;
@@ -365,7 +345,6 @@ end;
 procedure TOdbcConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName: String; AColumnDetails: String = '');
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.RenameColumn';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   if Owner.Platform = kdbASA then
     FStmt.SQL := 'ALTER TABLE ' + ATableName + ' RENAME ' + AOldColumnName+' TO '+ANewColumnName
   else
@@ -378,6 +357,7 @@ end;
 procedure TOdbcConnection.ListTablesV(AList : TStrings);
 var
   LCat: TOECatalog;
+  s : String;
 begin
   LCat := TOECatalog.Create(NIL);
   try
@@ -396,7 +376,6 @@ var
   i: Integer;
   iErrs : Integer;
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
 
   LTables := TStringList.Create;
   try
@@ -430,7 +409,6 @@ end;
 procedure TOdbcConnection.PrepareV;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Prepare;';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   if Owner.Platform = kdbASA then
     begin
     if SQLHasResultSet(SQL) then
@@ -445,28 +423,24 @@ end;
 procedure TOdbcConnection.ExecuteV;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Execute;';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   FStmt.Execute;
 end;
 
 procedure TOdbcConnection.TerminateV;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Terminate;';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   FStmt.Terminate;
 end;
 
 procedure TOdbcConnection.StartTransactV;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.StartTransact;';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   FHdbc.StartTransact;
 end;
 
 procedure TOdbcConnection.CommitV;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Commit;';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   FHdbc.Commit;
   FHdbc.EndTransact;
 end;
@@ -474,7 +448,6 @@ end;
 procedure TOdbcConnection.RollbackV;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Rollback;';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   FHdbc.rollback;
   FHdbc.EndTransact;
 end;
@@ -482,21 +455,18 @@ end;
 function TOdbcConnection.FetchNextV: Boolean;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.FetchNext';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.FetchNext;
 end;
 
 function TOdbcConnection.ColByNameV(AColName: String): Integer;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.ColByName';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColByName(AColName);
 end;
 
 function TOdbcConnection.ColNameV(ACol: Integer): String;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.ColByName';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
   Result := FStmt.ColNames[ACol-1];
 end;
 
@@ -533,8 +503,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindInt64';
 var
   LBind: TOdbcBoundInt64;
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': ParamName is not valid');
   LBind := TOdbcBoundInt64.Create;
   LBind.FInt64 := AParamValue;
   FStmt.BindInt64ByName(AParamName, LBind.FInt64);
@@ -546,8 +514,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindInteger';
 var
   LBind: TOdbcBoundInt;
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': ParamName is not valid');
   LBind := TOdbcBoundInt.Create;
   LBind.FInt := AParamValue;
   FStmt.BindIntegerByName(AParamName, LBind.FInt);
@@ -557,8 +523,6 @@ end;
 procedure TOdbcConnection.BindKeyV(AParamName: String; AParamValue: Integer);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindKey';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': ParamName is not valid');
   BindInteger(AParamName, AParamValue);
 end;
 
@@ -567,8 +531,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindDouble';
 var
   LBind: TOdbcBoundDouble;
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': ParamName is not valid');
   LBind := TOdbcBoundDouble.Create;
   LBind.FDouble := AParamValue;
   FStmt.BindDoubleByName(AParamName, LBind.FDouble);
@@ -580,8 +542,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindString';
 var
   LBind: TOdbcBoundString;
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': ParamName is not valid');
   LBind := TOdbcBoundString.Create;
   LBind.FString := AParamValue;
   FStmt.BindStringByName(AParamName, LBind.FString);
@@ -593,8 +553,6 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindTimeStamp';
 var
   LBind: TOdbcBoundDate;
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': ParamName is not valid');
   if Owner.Platform = kdbSybase12 then
     begin
     AParamValue.Fraction := 0;
@@ -610,9 +568,7 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindBinary';
 var
   LBind: TMemoryStream;
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': ParamName is not valid');
-  LBind := TIdMemoryStream.Create;
+  LBind := TMemoryStream.Create;
   LBind.CopyFrom(AParamValue, 0);
   LBind.Position := 0;
   FStmt.BindBinaryByName(AParamName, LBind);
@@ -622,8 +578,6 @@ end;
 procedure TOdbcConnection.BindNullV(AParamName: String);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindNull';
 begin
-  assert(self.TestValid(TOdbcConnection), ASSERT_LOCATION+': self is not valid');
-  assert(AParamName <> '', ASSERT_LOCATION+': ParamName is not valid');
   FStmt.BindNullByName(AParamName);
 end;
 
@@ -740,7 +694,7 @@ begin
       result.Unique := LIndexUnique;
       for i := 0 to LFields.Count - 1 do
         begin
-        result.Columns.add(LFields[i]);
+        result.Columns.add(TKDBColumn.Create(LFields[i]));
         end;
     finally
       LFields.Free;
@@ -847,7 +801,7 @@ constructor TKDBOdbcDSN.create(AName : String; AMaxConnCount: Integer; ADSN, AUs
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcDSN.create';
 begin
   inherited create(AName, AMaxConnCount);
-  FAttributes := TIdStringList.create;
+  FAttributes := TStringList.create;
   FDsn := ADSN;
   FUsername := AUsername;
   FPassword := APassword;
@@ -862,8 +816,8 @@ end;
 
 procedure TKDBOdbcDSN.SaveSettings(ASettings : TSettingsAdapter);
 begin
-  ASettings.WriteString('Platform', IdEnumToString(TypeInfo(TKDBPlatform), ord(GetDBPlatform)));
-  ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TKDBProvider), ord(kdbpDSN)));
+  ASettings.WriteString('Platform', EnumToString(TypeInfo(TKDBPlatform), ord(GetDBPlatform)));
+  ASettings.WriteString('Provider', EnumToString(TypeInfo(TKDBProvider), ord(kdbpDSN)));
   ASettings.WriteInteger('MaxConnections', MaxConnCount);
   ASettings.WriteString('DSN', FDsn);
   ASettings.WriteString('Username', FUsername);
@@ -873,7 +827,6 @@ end;
 function TKDBOdbcDSN.GetDBProvider: TKDBProvider;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcDSN.GetDBPlrovider';
 begin
-  assert(self.TestValid(TOdbcExpressConnManBase), ASSERT_LOCATION+': self is not valid');
   result := kdbpDSN;
 end;
 
@@ -888,8 +841,8 @@ end;
 
 procedure TKDBOdbcDirect.SaveSettings(ASettings : TSettingsAdapter);
 begin
-  ASettings.WriteString('Platform', IdEnumToString(TypeInfo(TKDBPlatform), ord(GetDBPlatform)));
-  ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TKDBProvider), ord(kdbpODBC)));
+  ASettings.WriteString('Platform', EnumToString(TypeInfo(TKDBPlatform), ord(GetDBPlatform)));
+  ASettings.WriteString('Provider', EnumToString(TypeInfo(TKDBProvider), ord(kdbpODBC)));
   ASettings.WriteInteger('MaxConnections', MaxConnCount);
   ASettings.WriteString('Driver', FDriver);
   ASettings.WriteString('Server', FServer);
@@ -902,7 +855,7 @@ constructor TKDBOdbcDirect.create(AName : String; AMaxConnCount: Integer; ADrive
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcDirect.create';
 begin
   inherited create(Aname, AMaxConnCount);
-  FAttributes := TIdStringList.create;
+  FAttributes := TStringList.create;
   FDriver := ADriver;
   FServer := AServer;
   FDatabase := ADatabase;
@@ -939,7 +892,6 @@ end;
 function TKDBOdbcDirect.GetDBProvider: TKDBProvider;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcDirect.GetDBPlrovider';
 begin
-  assert(self.TestValid(TOdbcExpressConnManBase), ASSERT_LOCATION+': self is not valid');
   result := kdbpODBC;
 end;
 
@@ -948,7 +900,6 @@ end;
 destructor TOdbcExpressConnManBase.Destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcExpressConnManBase.Destroy';
 begin
-  assert(self.TestValid(TOdbcExpressConnManBase), ASSERT_LOCATION+': self is not valid');
   FAttributes.free;
   inherited;
 end;
@@ -960,7 +911,6 @@ var
   LStmt : THStmt;
   i : integer;
 begin
-  assert(self.TestValid(TOdbcExpressConnManBase), ASSERT_LOCATION+': self is not valid');
   LStmt := nil;
   LHdbc := THdbc.Create(NIL);
   try
@@ -1003,14 +953,12 @@ end;
 function TOdbcExpressConnManBase.GetDBPlatform: TKDBPlatform;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcExpressConnManBase.GetDBPlatform:';
 begin
-  assert(self.TestValid(TOdbcExpressConnManBase), ASSERT_LOCATION+': self is not valid');
   result := FPlatform;
 end;
 
 function TOdbcExpressConnManBase.GetDBDetails: String;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcExpressConnManBase.GetDBDetails:';
 begin
-  assert(self.TestValid(TOdbcExpressConnManBase), ASSERT_LOCATION+': self is not valid');
   if FDsn = '' then
     Result := '\\' + FDriver + '\' + FServer + '\' + FDatabase + ' [' + FUsername + ']'
   else

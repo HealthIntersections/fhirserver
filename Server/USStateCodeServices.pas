@@ -197,7 +197,7 @@ end;
 
 destructor TUSStateCodeServices.Destroy;
 begin
-// this does not own it:   db.Free;
+  db.Free;
   inherited;
 end;
 

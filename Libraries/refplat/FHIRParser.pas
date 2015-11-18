@@ -36,10 +36,10 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.0.2 generated Thu, Oct 22, 2015 11:01+1100
+// FHIR v1.0.2 generated Wed, Nov 18, 2015 20:09+1100
 
 uses
-  SysUtils, Classes, ActiveX, StringSupport, DateSupport, IdSoapMsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
+  SysUtils, Classes, ActiveX, StringSupport, DateSupport, MsXML, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
 
 Type
 
@@ -2106,7 +2106,6 @@ end;
 
 Procedure TFHIRXmlParser.ParseElementAttributes(value : TFhirElement; path : string; element : IXmlDomElement);
 begin
-  GetObjectLocation(value, element);
   TakeCommentsStart(value);
   value.Id := GetAttribute(element, 'id');
 end;
@@ -2132,8 +2131,6 @@ end;
 procedure TFHIRJsonParser.ParseElementProperties(jsn : TJsonObject; element : TFhirElement);
 begin
   parseComments(element, jsn);
-  element.LocationStart := jsn.LocationStart;
-  element.LocationEnd := jsn.LocationEnd;
 
   if jsn.has('id') then
     element.Id := jsn['id']
@@ -2336,7 +2333,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeInteger(xml : TXmlBuilder; name : String; value : TFhirInteger);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -2588,7 +2585,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeDecimal(xml : TXmlBuilder; name : String; value : TFhirDecimal);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -2672,7 +2669,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeUri(xml : TXmlBuilder; name : String; value : TFhirUri);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -2840,7 +2837,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeTime(xml : TXmlBuilder; name : String; value : TFhirTime);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -2924,7 +2921,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeString(xml : TXmlBuilder; name : String; value : TFhirString);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -3176,7 +3173,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeMarkdown(xml : TXmlBuilder; name : String; value : TFhirMarkdown);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -3260,7 +3257,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeUnsignedInt(xml : TXmlBuilder; name : String; value : TFhirUnsignedInt);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -3344,7 +3341,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeCode(xml : TXmlBuilder; name : String; value : TFhirCode);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -3428,7 +3425,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeId(xml : TXmlBuilder; name : String; value : TFhirId);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -3512,7 +3509,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeOid(xml : TXmlBuilder; name : String; value : TFhirOid);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -3596,7 +3593,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposePositiveInt(xml : TXmlBuilder; name : String; value : TFhirPositiveInt);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -3680,7 +3677,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeUuid(xml : TXmlBuilder; name : String; value : TFhirUuid);
 begin
-  if (value = nil) or (value.value = '') then
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
@@ -3723,8 +3720,6 @@ end;
 
 Procedure TFHIRXmlParser.ParseResourceAttributes(resource : TFhirResource; path : string; element : IXmlDomElement);
 begin
-  TakeCommentsStart(resource);
-  GetObjectLocation(resource, element);
 end;
 
 Function TFHIRXmlParser.ParseResourceChild(resource : TFhirResource; path : string; child : IXmlDomElement) : boolean;
@@ -3744,9 +3739,6 @@ end;
 
 procedure TFHIRJsonParser.ParseResourceProperties(jsn : TJsonObject; resource : TFhirResource);
 begin
-  parseComments(resource, jsn);
-  resource.LocationStart := jsn.LocationStart;
-  resource.LocationEnd := jsn.LocationEnd;
   if jsn.has('id') or jsn.has('_id') then
     resource.idElement := ParseId(jsn['id'], jsn.vObj['_id']);{q}
   if jsn.has('meta') then
@@ -3762,6 +3754,8 @@ begin
 end;
 
 Procedure TFHIRXmlComposer.ComposeResourceChildren(xml : TXmlBuilder; elem : TFhirResource);
+var
+  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeId(xml, 'id', elem.idElement);{x.2}
@@ -3774,6 +3768,8 @@ begin
 end;
 
 Procedure TFHIRJsonComposer.ComposeResourceProperties(json : TJSONWriter; elem : TFhirResource);
+var
+  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeIdValue(json, 'id', elem.idElement, false);
@@ -3839,8 +3835,8 @@ begin
   if SummaryOption in [soFull, soData] then
   for i := 0 to elem.containedList.Count - 1 do
     ComposeInnerResource(xml, 'contained', elem, elem.containedList[i]);
+  if SummaryOption in [soFull, soData] then
   for i := 0 to elem.extensionList.Count - 1 do
-    if (SummaryOption in [soFull, soData]) or (elem.extensionList[i].Tags['summary'] = 'true') then
       ComposeExtension(xml, 'extension', elem.extensionList[i]);
   if SummaryOption in [soFull, soData] then
   for i := 0 to elem.modifierExtensionList.Count - 1 do

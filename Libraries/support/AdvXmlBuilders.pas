@@ -34,7 +34,7 @@ Uses
   SysUtils, Classes, ActiveX, Variants,
   StringSupport, EncodeSupport,
   AdvStreams, AdvVCLStreams,  AdvBuffers, AdvObjects, AdvXmlFormatters, AdvMemories, AdvStringMatches, AdvGenerics,
-  XmlBuilder, IdSoapMsXml, MsXmlParser, Xml.xmlintf, Xml.XMLDoc, Xml.adomxmldom;
+  XmlBuilder, MsXml, MsXmlParser, Xml.xmlintf, Xml.XMLDoc, Xml.adomxmldom;
 
 Type
 

@@ -772,6 +772,7 @@ begin
   FNciMeta.Free;
   FCountryCode.Free;
   FAreaCode.Free;
+  FDB.free;
   inherited;
 end;
 

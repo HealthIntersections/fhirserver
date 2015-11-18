@@ -99,9 +99,9 @@ var
   p : TCodeSystemProvider;
 begin
   writelnt('Load DB Terminologies');
-  Unii := TUniiServices.Create(Fdb);
-  Cvx := TCvxServices.Create(Fdb);
-  CountryCode := TCountryCodeServices.Create(Fdb);
+  Unii := TUniiServices.Create(Fdb.Link);
+  Cvx := TCvxServices.Create(Fdb.Link);
+  CountryCode := TCountryCodeServices.Create(Fdb.Link);
   AreaCode := TAreaCodeServices.Create(Fdb);
   p := TUSStateCodeServices.Create(Fdb);
   ProviderClasses.Add(p.system(nil), p);

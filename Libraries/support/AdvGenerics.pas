@@ -307,6 +307,38 @@ Type
     Function Link : TAdvStringDictionary; Overload;
   end;
 
+  TAdvStringSet = class (TAdvObject)
+  private
+    // not sorted - this doesn't get long enough to make it worth sorting
+    FItems : TArray<String>;
+  public
+    Constructor Create(initial : String); overload;
+    Constructor Create(c1, c2 : TAdvStringSet); overload;
+    function Link : TAdvStringSet; overload;
+
+    procedure addAll(collection : TAdvStringSet);
+    procedure add(value : String);
+
+    function contains(s : String) : boolean;
+
+    type
+      TAdvStringSetEnumerator = class(TEnumerator<string>)
+      private
+        FSet: TAdvStringSet;
+        FIndex: Integer;
+        function GetCurrent: string;
+      protected
+        function DoGetCurrent: string; override;
+        function DoMoveNext: Boolean; override;
+      public
+        constructor Create(const aSet: TAdvStringSet);
+        property Current: String read GetCurrent;
+        function MoveNext: Boolean;
+      end;
+
+    function GetEnumerator: TAdvStringSetEnumerator;
+  end;
+
 implementation
 
 { TAdvEnumerable<T> }
@@ -1517,6 +1549,91 @@ begin
     LResult := LResult xor UInt32(Key[I]);
   end;
   Result := LResult
+end;
+
+{ TAdvStringSet }
+
+constructor TAdvStringSet.Create(c1, c2: TAdvStringSet);
+begin
+  create;
+  addAll(c1);
+  addAll(c2);
+end;
+
+function TAdvStringSet.GetEnumerator: TAdvStringSetEnumerator;
+begin
+  Result := TAdvStringSetEnumerator.Create(Self);
+end;
+
+constructor TAdvStringSet.Create(initial: String);
+begin
+  create;
+  add(initial);
+end;
+
+function TAdvStringSet.Link: TAdvStringSet;
+begin
+  result := TAdvStringSet(inherited Link);
+end;
+
+procedure TAdvStringSet.add(value: String);
+begin
+  if not contains(value) then
+  begin
+    SetLength(FItems, length(FItems)+1);
+    FItems[length(FItems)-1] := value;
+  end;
+end;
+
+procedure TAdvStringSet.addAll(collection: TAdvStringSet);
+var
+  s : String;
+begin
+  for s in collection.FItems do
+    add(s);
+end;
+
+function TAdvStringSet.contains(s: String): boolean;
+var
+  i : String;
+begin
+  result := true;
+  for i in FItems do
+    if i = s then
+      exit;
+  result := false;
+end;
+
+{ TAdvStringSet.TAdvStringSetEnumerator }
+
+constructor TAdvStringSet.TAdvStringSetEnumerator.Create(const aSet: TAdvStringSet);
+begin
+  inherited Create;
+  FSet := aSet;
+  FIndex := -1;
+end;
+
+function TAdvStringSet.TAdvStringSetEnumerator.DoGetCurrent: String;
+begin
+  Result := GetCurrent;
+end;
+
+function TAdvStringSet.TAdvStringSetEnumerator.DoMoveNext: Boolean;
+begin
+  Result := MoveNext;
+end;
+
+function TAdvStringSet.TAdvStringSetEnumerator.GetCurrent: String;
+begin
+  Result := FSet.FItems[FIndex];
+end;
+
+function TAdvStringSet.TAdvStringSetEnumerator.MoveNext: Boolean;
+begin
+  if FIndex >= Length(FSet.FItems) then
+    Exit(False);
+  Inc(FIndex);
+  Result := FIndex < Length(FSet.FItems);
 end;
 
 end.

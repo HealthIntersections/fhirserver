@@ -18,11 +18,13 @@ type
     function GetDefinitionsSource: string;
     function GetTerminologyServer: string;
     function GetPath: String;
+    function GetNoPathSummary: boolean;
 
     procedure SetDefinitionsSource(const Value: string);
     procedure SetTerminologyServer(const Value: string);
     procedure SetPath(const Value: String);
     procedure SetToolboxVisible(const Value: boolean);
+    procedure SetNoPathSummary(const Value: boolean);
 
     procedure RegisterKnownServers;
   public
@@ -46,6 +48,7 @@ type
     property TerminologyServer : string read GetTerminologyServer write SetTerminologyServer;
     property DefinitionsSource : string read GetDefinitionsSource write SetDefinitionsSource;
     property Path : String read GetPath write SetPath;
+    property NoPathSummary : boolean read GetNoPathSummary write SetNoPathSummary;
   end;
 
 var
@@ -109,6 +112,11 @@ begin
   result := json.vStr['DefinitionsSource'];
 end;
 
+function TFHIRPluginSettings.GetNoPathSummary: boolean;
+begin
+  result := json.bool['NoPathSummary'];
+end;
+
 function TFHIRPluginSettings.GetPath: String;
 begin
   result := json.vStr['Path'];
@@ -139,6 +147,12 @@ end;
 procedure TFHIRPluginSettings.SetDefinitionsSource(const Value: string);
 begin
   json.vStr['DefinitionsSource'] := Value;
+  Save;
+end;
+
+procedure TFHIRPluginSettings.SetNoPathSummary(const Value: boolean);
+begin
+  json.bool['NoPathSummary'] := Value;
   Save;
 end;
 

@@ -4,13 +4,14 @@ interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-  IdSoapXml, IdSoapMsXml, MsXmlParser, AltovaXMLLib_TLB,
+  MsXml, MsXmlParser,
   StringSupport,
   AdvObjects, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts, AdvGenerics,
-  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRProfileUtilities, ProfileManager, FHIRConstants, FHIRClient;
+  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRProfileUtilities,
+  FHIRConstants, FHIRClient, FHIRBase;
 
 Type
-  TFHIRValidator = class (TFHIRBaseValidator)
+  TFHIRPluginValidatorContext = class (TValidatorServiceProvider)
   private
     FUrl : String;
     FServer : TFHIRClient;
@@ -25,7 +26,7 @@ Type
     Constructor Create(terminologyServer : String); virtual;
     Destructor Destroy; Override;
 
-    Function Link : TFHIRValidator; overload;
+    Function Link : TFHIRPluginValidatorContext; overload;
 
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
 
@@ -40,9 +41,9 @@ Type
 
 implementation
 
-{ TFHIRValidator }
+{ TFHIRPluginValidatorContext }
 
-procedure TFHIRValidator.checkClient;
+procedure TFHIRPluginValidatorContext.checkClient;
 begin
   if (FServer = nil) then
   begin
@@ -53,7 +54,7 @@ begin
   end;
 end;
 
-constructor TFHIRValidator.Create(terminologyServer : String);
+constructor TFHIRPluginValidatorContext.Create(terminologyServer : String);
 begin
   inherited Create;
   FValueSets := TAdvMap<TFHIRValueSet>.create;
@@ -61,7 +62,7 @@ begin
   FUrl := terminologyServer;
 end;
 
-destructor TFHIRValidator.Destroy;
+destructor TFHIRPluginValidatorContext.Destroy;
 begin
   FValueSets.Free;
   FServer.Free;
@@ -70,7 +71,7 @@ begin
   inherited;
 end;
 
-function TFHIRValidator.expand(vs: TFhirValueSet): TFHIRValueSet;
+function TFHIRPluginValidatorContext.expand(vs: TFhirValueSet): TFHIRValueSet;
 var
   pIn : TFhirParameters;
 begin
@@ -78,6 +79,8 @@ begin
   pIn := TFhirParameters.Create;
   try
     pIn.AddParameter('valueSet', vs.Link);
+    pIn.AddParameter('_incomplete', true);
+    pIn.AddParameter('_limit', '10');
     result := FServer.operation(frtValueSet, 'expand', pIn) as TFhirValueSet;
   finally
     pIn.Free;
@@ -85,7 +88,7 @@ begin
 
 end;
 
-function TFHIRValidator.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TFHIRPluginValidatorContext.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
 begin
   if (t = frtValueSet) then
     result := FValueSets[url]
@@ -93,7 +96,7 @@ begin
     result := inherited fetchResource(t, url);
 end;
 
-function TFHIRValidator.findCode(vs: TFhirValueSetCodeSystemConceptList; code: String; caseSensitive : boolean): TFhirValueSetCodeSystemConcept;
+function TFHIRPluginValidatorContext.findCode(vs: TFhirValueSetCodeSystemConceptList; code: String; caseSensitive : boolean): TFhirValueSetCodeSystemConcept;
 var
   d, d1 : TFhirValueSetCodeSystemConcept;
 begin
@@ -116,12 +119,12 @@ begin
   end;
 end;
 
-function TFHIRValidator.Link: TFHIRValidator;
+function TFHIRPluginValidatorContext.Link: TFHIRPluginValidatorContext;
 begin
-  result := TFHIRValidator(inherited Link);
+  result := TFHIRPluginValidatorContext(inherited Link);
 end;
 
-procedure TFHIRValidator.SeeResource(r: TFhirResource);
+procedure TFHIRPluginValidatorContext.SeeResource(r: TFhirResource);
 var
   vs : TFhirValueset;
 begin
@@ -136,7 +139,7 @@ begin
     inherited;
 end;
 
-function TFHIRValidator.supportsSystem(system: string): boolean;
+function TFHIRPluginValidatorContext.supportsSystem(system: string): boolean;
 var
   ex : TFhirExtension;
 begin
@@ -147,7 +150,7 @@ begin
         result := true;
 end;
 
-function TFHIRValidator.validateCode(system, code, display: String): TValidationResult;
+function TFHIRPluginValidatorContext.validateCode(system, code, display: String): TValidationResult;
 var
   pIn, pOut : TFhirParameters;
   vs : TFHIRValueSet;
@@ -185,12 +188,12 @@ begin
   end;
 end;
 
-function TFHIRValidator.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
+function TFHIRPluginValidatorContext.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
 var
   pIn, pOut : TFhirParameters;
   def : TFhirValueSetCodeSystemConcept;
 begin
-  if (vs.codeSystem <> nil) and (vs.compose = nil) and ((system = '') or (system = vs.codeSystem.system)) then
+  if (vs.codeSystem <> nil) and (vs.compose = nil) and (system = SYSTEM_NOT_APPLICABLE) then
   begin
     def := FindCode(vs.codeSystem.conceptList, code, vs.codeSystem.caseSensitive);
     if (def = nil) then
@@ -222,7 +225,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
+function TFHIRPluginValidatorContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 var
   pIn, pOut : TFhirParameters;
 begin
@@ -245,7 +248,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
+function TFHIRPluginValidatorContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 var
   pIn, pOut : TFhirParameters;
 begin

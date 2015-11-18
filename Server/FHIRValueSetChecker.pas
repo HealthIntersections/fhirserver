@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   AdvObjects, AdvStringObjectMatches,
-  FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities, FHIRBase,
   TerminologyServices, TerminologyServerStore;
 
 Type
@@ -204,7 +204,7 @@ begin
   end
   else
   begin
-    if (fvs.codeSystem <> nil) and (system = fvs.codeSystem.system) then
+    if (fvs.codeSystem <> nil) and ((system = fvs.codeSystem.system) or (system = SYSTEM_NOT_APPLICABLE)) then
     begin
       result := FindCode(code, fvs.codeSystem.conceptList, displays, isabstract);
       if result then
@@ -228,7 +228,7 @@ begin
         if not result then
         begin
           cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
-          result := (cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.includeList[i], code, abstractOk, displays);
+          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, fvs.compose.includeList[i], code, abstractOk, displays);
         end;
       end;
       for i := 0 to fvs.compose.excludeList.Count - 1 do

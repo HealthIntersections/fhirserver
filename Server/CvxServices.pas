@@ -212,6 +212,7 @@ end;
 
 destructor TCvxServices.Destroy;
 begin
+  DB.Free;
   inherited;
 end;
 

@@ -56,15 +56,17 @@ type
 implementation
 
 uses
-  IdSoapConsts,
   KDate,
   Math,
+  IdGlobal,
   StringSupport;
 
 const
   ASSERT_UNIT = 'KDBLogger';
   MAX_EXCEPTION_LIST = 20;
   MILLI_SECOND_LENGTH = SECOND_LENGTH / 1000;
+  EOL_WINDOWS = CR + LF;
+  EOL_PLATFORM = EOL_WINDOWS;
 
 { TKDBLogger }
 

@@ -388,7 +388,7 @@ begin
     while s <> '' do
       begin
       StringSplit(s, ';', t, s);
-      result.Columns.Add(t);
+      result.Columns.Add(TKDBColumn.create(t));
       end;
   except
     on e:exception do

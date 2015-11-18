@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes,
   AdvStreams, AdvStringMatches, AdvObjectLists, AdvObjects,
-  IdSoapMsXml, Xml.xmlintf;
+  XMLIntf, MsXML;
 
 type
   TSourceLocation = record

@@ -117,17 +117,6 @@
         <DCCReference Include="FHIRPluginSettings.pas"/>
         <DCCReference Include="..\Libraries\refplat\FHIRValidator.pas"/>
         <DCCReference Include="..\Libraries\support\RegExpr.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapXML.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapComponent.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapDebug.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapResourceStrings.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapTracker.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapMsXml.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapClasses.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapUtilities.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapConsts.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapExceptions.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapNamespaces.pas"/>
         <DCCReference Include="..\Libraries\support\StringSupport.pas"/>
         <DCCReference Include="..\Libraries\support\MathSupport.pas"/>
         <DCCReference Include="..\Libraries\support\AdvObjects.pas"/>
@@ -197,8 +186,6 @@
         <DCCReference Include="..\Libraries\support\AdvStringMatches.pas"/>
         <DCCReference Include="..\Libraries\refplat\FHIRUtilities.pas"/>
         <DCCReference Include="..\Libraries\support\OIDSupport.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapMime.pas"/>
-        <DCCReference Include="..\Libraries\indysoap\IdSoapBase64.pas"/>
         <DCCReference Include="..\Libraries\support\TextUtilities.pas"/>
         <DCCReference Include="..\Libraries\refplat\FHIRSupport.pas"/>
         <DCCReference Include="..\Libraries\support\JWT.pas"/>
@@ -225,13 +212,11 @@
         <DCCReference Include="..\Libraries\support\AdvXMLFormatters.pas"/>
         <DCCReference Include="..\Libraries\support\AdvXMLEntities.pas"/>
         <DCCReference Include="..\Libraries\refplat\FHIRProfileUtilities.pas"/>
-        <DCCReference Include="..\Libraries\support\AltovaXMLLib_TLB.pas"/>
         <DCCReference Include="..\Libraries\support\AdvZipReaders.pas"/>
         <DCCReference Include="..\Libraries\support\AdvZipDeclarations.pas"/>
         <DCCReference Include="..\Libraries\support\AdvZipParts.pas"/>
         <DCCReference Include="..\Libraries\support\AdvZipUtilities.pas"/>
         <DCCReference Include="..\Libraries\support\AdvZipWorkers.pas"/>
-        <DCCReference Include="..\Libraries\refplat\ProfileManager.pas"/>
         <DCCReference Include="..\Libraries\support\kCritSct.pas"/>
         <DCCReference Include="FHIRPluginValidator.pas"/>
         <DCCReference Include="..\Libraries\refplat\FHIRClient.pas"/>
@@ -258,6 +243,11 @@
         <DCCReference Include="..\Libraries\refplat\FhirPath.pas"/>
         <DCCReference Include="FHIRPathDocumentation.pas">
             <Form>FHIRPathDocumentationForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\Libraries\support\MimeMessage.pas"/>
+        <DCCReference Include="PathDialogForms.pas">
+            <Form>PathDialogForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Debug">

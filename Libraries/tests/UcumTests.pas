@@ -8,7 +8,7 @@ Interface
 Uses
   Sysutils,
   DecimalSupport,
-  IdSoapMsXml,
+  MsXml,
   UcumServices,
   MsXmlParser,
   AdvObjects;

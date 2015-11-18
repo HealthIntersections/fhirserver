@@ -2,41 +2,6 @@ unit FHIRToolboxForm;
 
 interface
 
-{
-On the toolbox:
-  ----
-  Change Server
-  <server>
-  Open by Client
-  Put / Post / Transaction (if bundle)
-  Validate on Server
-  ----
-  New from Template
-  JSON <-> XML
-  Validation/Intellisense on/off
-  ----
-  <path>
-  EvaluatePath
-  ----
-  Settings
-  Close
-
-
-icons
-  0  server
-  1  client open
-  2  post
-  3  put
-  4  transaction
-  5  validate
-  6  new
-  7  format change
-  8  evaluate path
-  9  settings
-  10 close
-
-}
-
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin,
@@ -65,7 +30,6 @@ type
     cbxServers: TComboBox;
     Panel1: TPanel;
     ToolButton16: TToolButton;
-    ToolButton17: TToolButton;
     ToolButton18: TToolButton;
     ToolButton19: TToolButton;
     ToolButton20: TToolButton;
@@ -122,7 +86,8 @@ implementation
 Uses
   FHIRPluginSettings,
   NewServerForm,
-  FHIRPlugin;
+  FHIRPlugin,
+  FHIRPath;
 
 procedure OpMessage(msgShort, msgLong : String);
 begin
@@ -271,8 +236,27 @@ begin
 end;
 
 procedure TFHIRToolbox.mPathChange(Sender: TObject);
+var
+  qry : TFHIRPathEvaluator;
 begin
   Settings.Path := mPath.Text;
+  try
+    qry := TFHIRPathEvaluator.create(nil);
+    try
+      qry.parse(mPath.Text).free;
+      mPath.Color := clWindow;
+      mPath.Hint := 'FHIR Path Statement';
+    finally
+      qry.Free;
+    end;
+  except
+    on e: exception do
+    begin
+      mPath.Color := $edebfa;
+      mPath.Hint := e.Message;
+    end;
+  end;
+
 end;
 
 procedure TFHIRToolbox.mPathEnter(Sender: TObject);

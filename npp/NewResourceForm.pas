@@ -31,14 +31,14 @@ type
     procedure lbProfilesClick(Sender: TObject);
   private
     { Private declarations }
-    FValidator : TFHIRValidator;
+    FContext : TValidatorServiceProvider;
     procedure loadLists;
-    procedure SetValidator(const Value: TFHIRValidator);
+    procedure SetContext(const Value: TValidatorServiceProvider);
   public
     { Public declarations }
     destructor Destroy; override;
 
-    property Validator : TFHIRValidator read FValidator write SetValidator;
+    property Context : TValidatorServiceProvider read FContext write SetContext;
   end;
 
 var
@@ -63,7 +63,7 @@ begin
     sd := lbResources.items.objects[lbResources.ItemIndex] as TFhirStructureDefinition
   else
     sd := lbProfiles.items.objects[lbProfiles.ItemIndex] as TFhirStructureDefinition;
-  pu := TProfileUtilities.create(FValidator, nil);
+  pu := TProfileUtilities.create(FContext.Link, nil);
   try
     res := pu.populateByProfile(sd);
     try
@@ -93,14 +93,14 @@ end;
 
 destructor TResourceNewForm.Destroy;
 begin
-  FValidator.Free;
+  FContext.Free;
   inherited;
 end;
 
-procedure TResourceNewForm.SetValidator(const Value: TFHIRValidator);
+procedure TResourceNewForm.SetContext(const Value: TValidatorServiceProvider);
 begin
-  FValidator.Free;
-  FValidator := Value;
+  FContext.Free;
+  FContext := Value;
 end;
 
 procedure TResourceNewForm.edtFilterChange(Sender: TObject);
@@ -132,7 +132,7 @@ begin
   lbProfiles.Clear;
   s := edtFilter.Text;
   s := s.toLower;
-  for sd in FValidator.Profiles.ProfilesByURL.Values do
+  for sd in FContext.Profiles.ProfilesByURL.Values do
     if (sd.kind = StructureDefinitionKindResource) and ((edtFilter.Text = '') or sd.name.ToLower.Contains(s)) then
       if sd.constrainedType = '' then
         lbResources.Items.AddObject(sd.name, sd)

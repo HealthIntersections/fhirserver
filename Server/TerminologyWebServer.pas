@@ -66,7 +66,7 @@ Type
     procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
   public
     constructor create(server : TTerminologyServer; FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
-
+    destructor Destroy; Override;
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 
@@ -87,6 +87,12 @@ begin
   FFHIRPath := FHIRPath;
   FWebDir := WebDir;
   FReturnProcessFileEvent := ReturnProcessFileEvent;
+end;
+
+destructor TTerminologyWebServer.Destroy;
+begin
+  FServer.free;
+  inherited;
 end;
 
 function TTerminologyWebServer.HandlesRequest(path: String): boolean;

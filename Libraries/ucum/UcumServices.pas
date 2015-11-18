@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  IdSoapMsXml,
+  MsXml,
   MathSupport, FileSupport,
   AdvBinaryFilers, AdvFiles, AdvFactories, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
   DecimalSupport, UcumHandlers, UcumValidators, UcumExpressions, Ucum,

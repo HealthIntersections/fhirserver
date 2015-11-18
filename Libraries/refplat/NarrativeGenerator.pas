@@ -33,7 +33,7 @@ uses
   SysUtils, Generics.Collections,
   AdvObjects, StringSupport,
   FHIRResources, FHIRTypes, FHIRBase, FHIRCOnstants, FHIRUtilities, FHIRSupport,
-  ProfileManager, QuestionnaireBuilder;
+  FHIRProfileUtilities, QuestionnaireBuilder;
 
 type
 

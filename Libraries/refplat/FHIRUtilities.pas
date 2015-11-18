@@ -33,9 +33,9 @@ interface
 uses
   SysUtils, Classes, Soap.EncdDecd,
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport,
-  AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,
+  AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories,
 
-  IdSoapMime, TextUtilities, ZLib,
+  MimeMessage, TextUtilities, ZLib,
 
   FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants;
 
@@ -74,8 +74,8 @@ procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
 Function FhirHtmlToText(html : TFhirXHtmlNode):String;
 function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource;
-function LoadFromFormParam(part : TIdSoapMimePart; lang : String) : TFhirResource;
-function LoadDTFromFormParam(part : TIdSoapMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadFromFormParam(part : TMimePart; lang : String) : TFhirResource;
+function LoadDTFromFormParam(part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 function LoadDTFromParam(value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 
 function BuildOperationOutcome(lang : String; e : exception) : TFhirOperationOutcome; overload;
@@ -254,6 +254,7 @@ type
   public
     function hasValue(value : String) : boolean;
     procedure add(s : String); overload;
+    function summary : String;
   end;
 
   TFhirBundleLinkListHelper = class helper for TFhirBundleLinkList
@@ -306,9 +307,15 @@ type
     function removeTag(system, code : String) : boolean;
   end;
 
-  TFHIRTFhirOperationOutcomeIssueHelper = class helper for TFhirOperationOutcomeIssue
+  TFhirOperationOutcomeIssueHelper = class helper for TFhirOperationOutcomeIssue
   public
     constructor create(Severity : TFhirIssueSeverity; Code : TFhirIssueType; Diagnostics : string; location : String); overload;
+    function summary : String;
+  end;
+
+  TFhirOperationOutcomeIssueListHelper = class helper for TFhirOperationOutcomeIssueList
+  public
+    function errorCount : integer;
   end;
 
 function Path(const parts : array of String) : String;
@@ -369,7 +376,7 @@ begin
 end;
 
 
-function DetectFormat(oContent : TStream) : TFHIRParserClass;
+function DetectFormat(oContent : TStream) : TFHIRParserClass; overload;
 var
   i : integer;
   s : String;
@@ -378,6 +385,19 @@ begin
   setlength(s, ocontent.Size - oContent.Position);
   ocontent.Read(s[1], length(s));
   oContent.Position := i;
+  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
+    result := TFHIRXmlParser
+  else
+    result := TFHIRJsonParser;
+
+end;
+
+function DetectFormat(oContent : TAdvBuffer) : TFHIRParserClass; overload;
+var
+  i : integer;
+  s : String;
+begin
+  s := oContent.AsUnicode;
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
     result := TFHIRXmlParser
   else
@@ -1198,10 +1218,12 @@ begin
   end;
 end;
 
-function LoadDTFromFormParam(part : TIdSoapMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromFormParam(part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 var
   ct : String;
   parser : TFHIRParser;
+  mem : TAdvMemoryStream;
+  s : TVCLStream;
 begin
   parser := nil;
   try
@@ -1217,8 +1239,21 @@ begin
     end;
     if parser = nil then
       parser := DetectFormat(part.content).Create(lang);
-    parser.source := part.Content;
-    result := parser.ParseDT(name, type_);
+    mem := TAdvMemoryStream.Create;
+    try
+      mem.Buffer := part.content.Link;
+      s := TVCLStream.Create;
+      try
+        s.Stream := mem.Link;
+        parser.source := s;
+        result := parser.ParseDT(name, type_);
+      finally
+        s.Free;
+      end;
+    finally
+      mem.Free;
+
+    end;
   finally
     parser.Free;
   end;
@@ -1228,6 +1263,7 @@ function LoadDTFromParam(value : String; lang, name : String; type_ : TFHIRTypeC
 var
   parser : TFHIRParser;
   mem : TStringStream;
+  s : TVCLStream;
 begin
   parser := TFHIRJsonParser.Create(lang);
   try
@@ -1244,14 +1280,15 @@ begin
   end;
 end;
 
-function LoadFromFormParam(part : TIdSoapMimePart; lang : String) : TFhirResource;
+function LoadFromFormParam(part : TMimePart; lang : String) : TFhirResource;
 var
   ct : String;
   parser : TFHIRParser;
+  s : TVCLStream;
+  mem : TAdvMemoryStream;
 begin
   parser := nil;
   try
-    part.content.position := 0;
     // first, figure out the format
     ct := part.Headers.Values['Content-Type'];
     if ct <> '' then
@@ -1264,9 +1301,21 @@ begin
     end;
     if parser = nil then
       parser := DetectFormat(part.content).Create(lang);
-    parser.source := part.Content;
-    parser.Parse;
-    result := parser.resource.Link;
+    mem := TAdvMemoryStream.Create;
+    try
+      mem.Buffer := part.content.Link;
+      s := TVCLStream.Create;
+      try
+        s.Stream := mem.Link;
+        parser.source := s;
+        parser.Parse;
+        result := parser.resource.Link;
+      finally
+        s.Free;
+      end;
+    finally
+      mem.Free;
+    end;
   finally
     parser.Free;
   end;
@@ -2752,9 +2801,32 @@ begin
       result := true;
 end;
 
-{ TFHIRTFhirOperationOutcomeIssueHelper }
+function TFHIRStringListHelper.summary: String;
+var
+  b : TStringBuilder;
+  f : boolean;
+  v : TFHIRString;
+begin
+  f := true;
+  b := TStringBuilder.Create;
+  try
+    for v in self do
+    begin
+      if (f) then
+        f := false
+      else
+        b.Append(', ');
+      b.Append(v.value);
+    end;
+    result := b.ToString;
+  finally
+    b.Free
+  end;
+end;
 
-constructor TFHIRTFhirOperationOutcomeIssueHelper.create(Severity: TFhirIssueSeverity; Code: TFhirIssueType; Diagnostics, location: String);
+{ TFhirOperationOutcomeIssueHelper }
+
+constructor TFhirOperationOutcomeIssueHelper.create(Severity: TFhirIssueSeverity; Code: TFhirIssueType; Diagnostics, location: String);
 begin
   Create;
   self.severity := Severity;
@@ -3026,6 +3098,26 @@ begin
     obj.Free;
     raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
   end;
+end;
+
+function TFhirOperationOutcomeIssueHelper.summary: String;
+begin
+  if details <> nil then
+    result := CODES_TFhirIssueSeverity[severity]+': '+details.text.Trim+' ('+CODES_TFhirIssueType[code]+') @ '+locationList.summary
+  else
+    result := CODES_TFhirIssueSeverity[severity]+': '+diagnostics.Trim+' ('+CODES_TFhirIssueType[code]+') @ '+locationList.summary;
+end;
+
+{ TFhirOperationOutcomeIssueListHelper }
+
+function TFhirOperationOutcomeIssueListHelper.errorCount: integer;
+var
+  issue : TFhirOperationOutcomeIssue;
+begin
+  result := 0;
+  for issue in self do
+    if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
+      inc(result);
 end;
 
 end.

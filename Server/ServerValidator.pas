@@ -4,15 +4,15 @@ Interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-  IdSoapXml, IdSoapMsXml, MsXmlParser, AltovaXMLLib_TLB,
+  MsXml, MsXmlParser,
   StringSupport,
   AdvObjects, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
   FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRProfileUtilities,
-  TerminologyServer, ProfileManager;
+  TerminologyServer;
 
 Type
 
-  TFHIRValidator = class (TFHIRBaseValidator)
+  TFHIRServerValidatorContext = class (TValidatorServiceProvider)
   private
     FTerminologyServer : TTerminologyServer;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -23,7 +23,7 @@ Type
     Constructor Create; Override;
     Destructor Destroy; Override;
 
-    Function Link : TFHIRValidator; overload;
+    Function Link : TFHIRServerValidatorContext; overload;
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
 
@@ -40,26 +40,26 @@ Type
 
 Implementation
 
-{ TFHIRValidator }
+{ TFHIRServerValidatorContext }
 
-constructor TFHIRValidator.Create;
+constructor TFHIRServerValidatorContext.Create;
 begin
   inherited;
 end;
 
-destructor TFHIRValidator.Destroy;
+destructor TFHIRServerValidatorContext.Destroy;
 begin
   FTerminologyServer.Free;
   inherited;
 end;
 
 
-function TFHIRValidator.Link: TFHIRValidator;
+function TFHIRServerValidatorContext.Link: TFHIRServerValidatorContext;
 begin
-  result := TFHIRValidator(inherited Link);
+  result := TFHIRServerValidatorContext(inherited Link);
 end;
 
-procedure TFHIRValidator.SeeResource(r : TFhirResource);
+procedure TFHIRServerValidatorContext.SeeResource(r : TFhirResource);
 begin
   if (r.ResourceType in [frtValueSet, frtConceptMap]) then
     FTerminologyServer.SeeSpecificationResource(r)
@@ -67,7 +67,7 @@ begin
     inherited SeeResource(r);
 end;
 
-function TFHIRValidator.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
+function TFHIRServerValidatorContext.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
 var
   c : TFHIRCoding;
   p : TFHIRParameters;
@@ -98,13 +98,13 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.SetTerminologyServer(const Value: TTerminologyServer);
+procedure TFHIRServerValidatorContext.SetTerminologyServer(const Value: TTerminologyServer);
 begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
 end;
 
-function TFHIRValidator.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
+function TFHIRServerValidatorContext.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
 begin
   if t = frtValueSet then
     result := FTerminologyServer.getValueSetByUrl(url)
@@ -112,17 +112,17 @@ begin
     result := inherited fetchResource(t, url);
 end;
 
-function TFHIRValidator.expand(vs : TFhirValueSet) : TFHIRValueSet;
+function TFHIRServerValidatorContext.expand(vs : TFhirValueSet) : TFHIRValueSet;
 begin
   result := FTerminologyServer.expandVS(vs, '', '', '', 0, true);
 end;
 
-function TFHIRValidator.supportsSystem(system : string) : boolean;
+function TFHIRServerValidatorContext.supportsSystem(system : string) : boolean;
 begin
   result := FTerminologyServer.supportsSystem(system);
 end;
 
-function TFHIRValidator.validateCode(system, code, display : String) : TValidationResult;
+function TFHIRServerValidatorContext.validateCode(system, code, display : String) : TValidationResult;
 var
   op : TFHIROperationOutcome;
 begin
@@ -155,7 +155,7 @@ begin
 end;
 
 
-function TFHIRValidator.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
+function TFHIRServerValidatorContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 var
   p : TFhirParameters;
 begin
@@ -178,7 +178,7 @@ begin
 end;
 
 
-function TFHIRValidator.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
+function TFHIRServerValidatorContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 var
   p : TFhirParameters;
 begin
@@ -186,7 +186,7 @@ begin
   try
     p := FTerminologyServer.validate(vs, code, false);
     try
-      result.Message := p.str['result'];
+      result.Message := p.str['message'];
       if p.bool['result'] then
         result.Severity := IssueSeverityInformation
       else

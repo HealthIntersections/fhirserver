@@ -35,6 +35,10 @@ type
     btnUp: TButton;
     btnDown: TButton;
     Label5: TLabel;
+    TabSheet3: TTabSheet;
+    Panel4: TPanel;
+    GroupBox3: TGroupBox;
+    cbPathSummary: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -77,6 +81,7 @@ procedure TSettingForm.Button1Click(Sender: TObject);
 begin
   Settings.TerminologyServer := edtServer.Text;
   Settings.DefinitionsSource := edtFile.Text;
+  Settings.NoPathSummary := not cbPathSummary.checked;
   Settings.CommitChanges;
   _FuncDisconnect;
 
@@ -185,6 +190,7 @@ begin
   edtServer.Text := Settings.TerminologyServer;
   edtFile.Text := Settings.DefinitionsSource;
   vtServers.RootNodeCount := Settings.ServerCount;
+  cbPathSummary.checked := not Settings.NoPathSummary;
 end;
 
 procedure TSettingForm.SpeedButton1Click(Sender: TObject);

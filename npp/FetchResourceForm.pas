@@ -10,7 +10,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.StdCtrls, Vcl.ExtCtrls, NppForms, FHIRClient,
   FHIRResources, FHIRTypes, FHIRUtilities, FHIRBase, AdvObjects, AdvGenerics, Math, StringSupport,
-  EncodeSupport, clipbrd, parsemap, profilemanager, Generics.Collections,
+  EncodeSupport, clipbrd, parsemap, Generics.Collections,  FHIRProfileUtilities,
   Vcl.Samples.Spin, fhirpath;
 
 const
@@ -442,7 +442,7 @@ function TFetchResourceFrm.GetCell(res: TFhirResource; path: String): String;
 var
   query : TFHIRPathEvaluator;
 begin
-  query := TFHIRPathEvaluator.create;
+  query := TFHIRPathEvaluator.create(nil);
   try
     result := query.evaluateToString(res, path);
   finally

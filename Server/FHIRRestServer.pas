@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, IniFiles, ActiveX, AltovaXMLLib_TLB, System.Generics.Collections, IdSoapMsXml, ComObj, JclDebug, EncdDecd,  HMAC,  NetEncoding,
+  SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, MsXml, ComObj, JclDebug, EncdDecd,  HMAC,  NetEncoding,
 
   EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport,
 
@@ -41,7 +41,7 @@ Uses
   DCPsha256, AdvJSON, libeay32,
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
-  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdSoapMime, IdCookie, IdHashSHA,
+  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie, IdHashSHA,
   IdZLibCompressorBase, IdCompressorZLib, IdZlib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
 
   TerminologyServer, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
@@ -151,20 +151,20 @@ Type
     Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment : integer; pretty, gzip : boolean);
-    function extractFileData(form : TIdSoapMimeMessage; const name: String; var sContentType : String): TStream;
+    function extractFileData(form : TMimeMessage; const name: String; var sContentType : String): TStream;
     Procedure StartServer(active : boolean);
     Procedure StopServer;
     Function ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; var cursor : integer) : TFHIRBundle;
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueType = IssueTypeNull);
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse; upload : Boolean);
-    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
+    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc : String;
     function EndPointDesc(secure : boolean) : String;
     procedure GetWebUILink(resource : TFhirResource; base, statedType, id, ver : String; var link, text : String);
-    function loadMultipartForm(const request: TStream; const contentType : String): TIdSoapMimeMessage;
+    function loadMultipartForm(const request: TStream; const contentType : String): TMimeMessage;
     function processProvenanceHeader(header, lang : String) : TFhirProvenance;
     function DoVerifyPeer(Certificate: TIdX509; AOk: Boolean; ADepth, AError: Integer): Boolean;
   Public
@@ -265,7 +265,7 @@ Begin
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
   writelnt('Load User Sub-system');
-  FSCIMServer := TSCIMServer.Create(db, FAltPath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
+  FSCIMServer := TSCIMServer.Create(db.link, FAltPath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
   FSCIMServer.OnProcessFile := ReturnProcessedFile;
 
   writelnt('Load & Cache Store: ');
@@ -295,7 +295,7 @@ Begin
 
   FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FBasePath+'/', FAltPath, ReturnProcessedFile);
 
-  FFhirStore := TFHIRDataStore.Create(db, FSpecPath, FAltPath, terminologyServer, FINi, FSCIMServer.Link);
+  FFhirStore := TFHIRDataStore.Create(db.Link, FSpecPath, FAltPath, terminologyServer, FINi, FSCIMServer.Link);
   FFhirStore.ownername := FOwnerName;
   FFhirStore.Validate := FIni.ReadBool('fhir', 'validate', true);
   if FIni.ReadString('web', 'host', '') <> '' then
@@ -806,7 +806,7 @@ var
   sPath : String;
   session : TFhirSession;
   redirect : Boolean;
-  form : TIdSoapMimeMessage;
+  form : TMimeMessage;
   relativeReferenceAdjustment : integer;
   pretty : boolean;
   c : integer;
@@ -1523,7 +1523,7 @@ end;
 
 
 Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
-   var redirect : boolean; form : TIdSoapMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean) : TFHIRRequest;
+   var redirect : boolean; form : TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean) : TFHIRRequest;
 Var
   sURL, sId, sType, msg : String;
   aResourceType : TFHIRResourceType;
@@ -2338,11 +2338,11 @@ result := result +
 end;
 
 
-function TFhirWebServer.loadMultipartForm(const request : TStream; const contentType : String) : TIdSoapMimeMessage;
+function TFhirWebServer.loadMultipartForm(const request : TStream; const contentType : String) : TMimeMessage;
 var
-  m : TIdSoapMimeMessage;
+  m : TMimeMessage;
 begin
-  m := TIdSoapMimeMessage.Create;
+  m := TMimeMessage.Create;
   Try
     m.ReadFromStream(request, contentType);
     result := m;
@@ -2405,11 +2405,11 @@ begin
   end;
 end;
 
-function TFhirWebServer.extractFileData(form : TIdSoapMimeMessage; const name: String; var sContentType : String): TStream;
+function TFhirWebServer.extractFileData(form : TMimeMessage; const name: String; var sContentType : String): TStream;
 var
   sLeft, sRight: String;
   iLoop : Integer;
-  oPart : TIdSoapMimePart;
+  oPart : TMimePart;
   sHeader : String;
   sName : String;
   sFilename : String;
@@ -2418,7 +2418,7 @@ begin
   result := nil;
   For iLoop := 0 To form.Parts.Count - 1 Do
   Begin
-    oPart := form.Parts.PartByIndex[iLoop];
+    oPart := form.Parts[iLoop];
     sHeader := oPart.ContentDisposition;
     StringSplit(sHeader, ';', sLeft, sHeader);
     If trim(sLeft) = 'form-data' Then
@@ -2432,13 +2432,13 @@ begin
         sFileName := RemoveQuotes(Trim(sRight));
       If (result = nil) and (sName <> '') And (sFileName <> '') And (oPart.Content.Size > 0) Then
       begin
-        result := TBytesStream.Create(StreamToBytes(oPart.Content));
+        result := TBytesStream.Create(oPart.Content.AsBytes);
         sContentType := oPart.Mediatype;
       end
       else if (result = nil) and (sName = 'src') then
       begin
-        sContent := BytesAsString(StreamToBytes(oPart.Content));
-        result := TStringStream.create(StreamToBytes(oPart.Content)); // trim
+        sContent := BytesAsString(oPart.Content.AsBytes);
+        result := TStringStream.create(oPart.Content.AsBytes); // trim
         if StringStartsWith(sContent, '<', false) then
           sContentType := 'application/xml'
         else if StringStartsWith(sContent, '{', false) then
@@ -2742,22 +2742,25 @@ begin
   CoInitialize(nil);
   repeat
     sleep(1000);
-    if FServer.FActive then
-      FServer.FFhirStore.ProcessSubscriptions;
-    if (not terminated) then
+    if not FServer.DataStore.ForLoad then
     begin
-      try
-        FServer.FFhirStore.TerminologyServer.BuildIndexes(false);
-      except
+      if FServer.FActive then
+        FServer.FFhirStore.ProcessSubscriptions;
+      if (not terminated) then
+      begin
+        try
+          FServer.FFhirStore.TerminologyServer.BuildIndexes(false);
+        except
+        end;
       end;
-    end;
-    if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
-    begin
-      try
-        FServer.FFhirStore.Sweep;
-      except
+      if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
+      begin
+        try
+          FServer.FFhirStore.Sweep;
+        except
+        end;
+        FLastSweep := now;
       end;
-      FLastSweep := now;
     end;
   until Terminated;
   CoUninitialize;

@@ -22,36 +22,26 @@ const
 type
   TIdDebugObjectList = class;
 
-  {$IFDEF CLR}
-  TIdSoapObjRec = class
-    FPtr : integer;
-    FBreakpoint : boolean;
-  end;
-  pIdSoapObjRec = TIdSoapObjRec;
-  TObjArray = array of TIdSoapObjRec;
-  pObjArray = TObjArray;
-  {$ELSE}
   TIdSoapObjRec = packed record
-    FPtr : integer;
+    FPtr : NativeInt;
     FBreakpoint : boolean;
   end;
   pIdSoapObjRec = ^TIdSoapObjRec;
 
-  // this used to be 0..0 but range checking doesn't like that
-  TObjArray = array [0.. MAXINT div (SizeOf(integer) * 2)] of TIdSoapObjRec;
+  TObjArray = array [0..0] of TIdSoapObjRec;
   pObjArray = ^TObjArray;
-  {$ENDIF}
+
 
   TIdDebugObjectSubList = class(TObject)
   Private
     FVal: Cardinal;
     FCount, FAllocated: Cardinal;
     FItems: pObjArray;
-    procedure AddItem(AObj: Integer);
-    procedure DeleteItem(AObj: Integer);
-    function FindItem(AObj: Integer; var VIndex: Cardinal): Boolean;
+    procedure AddItem(AObj: NativeInt);
+    procedure DeleteItem(AObj: NativeInt);
+    function FindItem(AObj: NativeInt; var VIndex: Cardinal): Boolean;
     procedure Grow;
-    function GetRec(AObj : Integer):pIdSoapObjRec;
+    function GetRec(AObj : NativeInt):pIdSoapObjRec;
   Public
     constructor Create;
     destructor Destroy; Override;
@@ -88,6 +78,7 @@ type
   end;
 
 function PadString(const AStr: String; AWidth: Integer): String;
+procedure IdBreakpoint;
 
 {$IFNDEF VCL5ORABOVE}
 procedure FreeAndNil(var Obj);
@@ -96,9 +87,6 @@ procedure FreeAndNil(var Obj);
 implementation
 
 uses
-  {$IFDEF CLR}
-  System.Diagnostics,
-  {$ENDIF}
   SysUtils;
 
 const
@@ -106,11 +94,8 @@ const
 
 //break point into the debugger if there is one;
 procedure IdBreakpoint;
+{$IFDEF WIN32}
 begin
-  {$IFDEF CLR}
-  Debugger.Break;
-  {$ELSE}
-  {$IFDEF WIN32}
   try
     asm
     int $03
@@ -119,8 +104,10 @@ begin
     // on some poorly configured Windows systems int $03 can cause unhandled
     // exceptions with improperly installed Dr Watsons etc....
   end;
-  {$ENDIF}
-  {$ENDIF}
+{$ELSE}
+asm
+  db $CC
+{$ENDIF}
 end;
 
 {$IFNDEF VCL5ORABOVE}
@@ -131,194 +118,6 @@ begin
 end;
 {$ENDIF}
 
-
-{ TIdDebugObjectSubList }
-
-constructor TIdDebugObjectSubList.Create;
-Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.Create';
-{$IFDEF CLR}
-var
-  i : integer;
-{$ENDIF}
-begin
-  inherited Create;
-  FCount := 0;
-  FAllocated := GROW_SIZE;
-  {$IFDEF CLR}
-  SetLength(FItems, FAllocated);
-  for i := 0 to FAllocated - 1 do
-    begin
-    FItems[i] := TIdSoapObjRec.create;
-    end;
-  {$ELSE}
-  GetMem(FItems, FAllocated * sizeof(TIdSoapObjRec));
-  {$ENDIF}
-end;
-
-destructor TIdDebugObjectSubList.Destroy;
-Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.Destroy';
-{$IFDEF CLR}
-var
-  i : integer;
-{$ENDIF}
-begin
-  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
-  {$IFDEF CLR}
-  for i := Low(FItems) to HIgh(FItems) do
-    begin
-    FItems[i].free;
-    end;
-  SetLength(FItems, 0);
-  {$ELSE}
-  FreeMem(FItems);
-  {$ENDIF}
-  inherited Destroy;
-end;
-
-procedure TIdDebugObjectSubList.AddItem(AObj: Integer);
-Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.AddItem';
-var
-  i: Cardinal;
-  {$IFDEF CLR}
-  j : integer;
-  {$ENDIF}
-begin
-  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
-  // no check on AObj
-  if FindItem(AObj, i) then
-    begin
-    assert(False, ASSERT_LOCATION+': Attempt to re-register an object')
-    end
-  else
-    begin
-    if FCount = FAllocated then
-      Grow;
-    assert(i < FAllocated, ASSERT_LOCATION+': i >= allocated');
-    {$IFDEF CLR}
-    if I < FCount then
-      begin
-      for j := FCount - 1 downto i do
-        begin
-        FItems[j+1] := FItems[j];
-        end;
-      end;
-    FItems[i] := TIdSoapObjRec.create;
-    FItems[i].FPtr := AObj;
-    FItems[i].FBreakpoint := false;
-    {$ELSE}
-    if I < FCount then
-      System.Move(FItems^[i], FItems^[i + 1], (FCount - I) * SizeOf(TIdSoapObjRec));
-    FItems^[i].FPtr := AObj;
-    FItems^[i].FBreakpoint := false;
-    {$ENDIF}
-    Inc(FCount);
-    end;
-end;
-
-function TIdDebugObjectSubList.GetRec(AObj: Integer): pIdSoapObjRec;
-var
-  LIndex : Cardinal;
-begin
-  if FindItem(AObj, LIndex) then
-    begin
-    {$IFDEF CLR}
-    result := FItems[LIndex];
-    {$ELSE}
-    result := @FItems[LIndex];
-    {$ENDIF}
-    end
-  else
-    begin
-    result := nil;
-    end;
-end;
-
-function TIdDebugObjectSubList.FindItem(AObj: Integer; var VIndex: Cardinal): Boolean;
-Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.FindItem';
-var
-  L, H, I, C: Integer;
-begin
-  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
-  // no check on AObj
-  Result := False;
-  L := 0;
-  H := integer(FCount) - 1; // workaround a bad pascal range checking bug
-  while L <= H do
-    begin
-    I := (L + H) shr 1;
-    {$IFDEF CLR}
-    C := FItems[I].FPtr - AObj;
-    {$ELSE}
-    C := FItems^[I].FPtr - AObj;
-    {$ENDIF}
-    if C < 0 then
-      begin
-      L := I + 1
-      end
-    else
-      begin
-      H := I - 1;
-      if C = 0 then
-        begin
-        Result := True;
-        L := I;
-        end;
-      end;
-    end;
-  VIndex := L;
-end;
-
-procedure TIdDebugObjectSubList.Grow;
-Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.Grow';
-{$IFDEF CLR}
-var
-  i : integer;
-{$ENDIF}
-begin
-  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
-  inc(FAllocated, GROW_SIZE);
-  {$IFDEF CLR}
-  SetLength(FItems, FAllocated);
-  for i := FAllocated - GROW_SIZE to FAllocated - 1 do
-    begin
-    FItems[i] := nil;
-    end;
-  {$ELSE}
-  ReallocMem(FItems, FAllocated * SizeOf(TIdSoapObjRec));
-  Assert(FItems <> NIL, ASSERT_LOCATION+': Grow failed to reallocate it''s memory');
-  {$ENDIF}
-end;
-
-procedure TIdDebugObjectSubList.DeleteItem(AObj: Integer);
-Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.DeleteItem';
-var
-  i: Cardinal;
-  {$IFDEF CLR}
-  j : integer;
-  {$ENDIF}
-begin
-  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
-  // no check on AObj
-  if FindItem(AObj, i) then
-    begin
-    Dec(FCount);
-    {$IFDEF CLR}
-    FItems[i].Free;
-    for j := i to FCount - 1 do
-      begin
-      FItems[j] := FItems[j+1];
-      end;
-    FItems[FCount] := nil;
-    {$ELSE}
-    if I < FCount then
-      System.Move(FItems^[I + 1], FItems^[I], (FCount - I) * SizeOf(TIdSoapObjRec));
-    {$ENDIF}
-    end
-  else
-    begin
-    assert(False, ASSERT_LOCATION+': Attempt to de-register an object that doesn''t exist ("'+TObject(AObj).ClassName+'")');
-    end;
-end;
 
 { TIdDebugObjectList }
 
@@ -366,7 +165,7 @@ begin
   assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
   // no check on AObj
 
-  Result := FHashTable[(Cardinal(AObj) shr 3) and HASH_MASK].FindItem(Integer(AObj), LDummy);
+  Result := FHashTable[(Cardinal(AObj) shr 3) and HASH_MASK].FindItem(NativeInt(AObj), LDummy);
 end;
 
 function TIdDebugObjectList.ClassCount(AClassName : String): Integer;
@@ -416,7 +215,7 @@ begin
     assert(Exists[AObject]);
     LRec := FHashTable[(Cardinal(AObject) shr 3) and HASH_MASK].GetRec(Integer(AObject));
     assert(Assigned(LRec));
-    if LRec{$IFNDEF CLR}^{$ENDIF}.FBreakPoint then
+    if LRec^.FBreakPoint then
       begin
       IdBreakPoint;
       end;
@@ -441,8 +240,8 @@ var
   LRec : pIdSoapObjRec;
 begin
   assert(Exists[AObj]);
-  LRec := FHashTable[(Cardinal(AObj) shr 3) and HASH_MASK].GetRec(Integer(AObj));
-  result := Assigned(LRec) and LRec{$IFNDEF CLR}^{$ENDIF}.FBreakPoint;
+  LRec := FHashTable[(Cardinal(AObj) shr 3) and HASH_MASK].GetRec(NativeInt(AObj));
+  result := Assigned(LRec) and LRec^.FBreakPoint;
 end;
 
 procedure TIdDebugObjectList.SetBreakPoint(AObj: TObject; const AValue: Boolean);
@@ -450,9 +249,9 @@ var
   LRec : pIdSoapObjRec;
 begin
   assert(Exists[AObj]);
-  LRec := FHashTable[(Cardinal(AObj) shr 3) and HASH_MASK].GetRec(Integer(AObj));
+  LRec := FHashTable[(Cardinal(AObj) shr 3) and HASH_MASK].GetRec(NativeInt(AObj));
   assert(Assigned(LRec));
-  LRec{$IFNDEF CLR}^{$ENDIF}.FBreakPoint := AValue;
+  LRec^.FBreakPoint := AValue;
 end;
 
 function TIdDebugObjectList.DescribeLiveObjects: String;
@@ -481,20 +280,12 @@ begin
     end
   else
     begin
-    {$IFDEF CLR}
-    result := AStr;
-    while length(result) < AWidth do
-      begin
-      result := result + ' ';
-      end;
-    {$ELSE}
     SetLength(Result, AWidth);
     FillChar(Result[1], AWidth, ' ');
     if AStr <> '' then
       begin
       Move(AStr[1], Result[1], Length(AStr))
       end;
-    {$ENDIF}
     end;
 end;
 
@@ -512,6 +303,131 @@ begin
   finally
     FLock.Leave;
   end;
+end;
+
+{$R-}
+{ TIdDebugObjectSubList }
+
+constructor TIdDebugObjectSubList.Create;
+Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.Create';
+begin
+  inherited Create;
+  FCount := 0;
+  FAllocated := GROW_SIZE;
+  GetMem(FItems, FAllocated * sizeof(TIdSoapObjRec));
+end;
+
+destructor TIdDebugObjectSubList.Destroy;
+Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.Destroy';
+var
+  i : integer;
+begin
+  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
+  FreeMem(FItems);
+  inherited Destroy;
+end;
+
+procedure TIdDebugObjectSubList.AddItem(AObj: NativeInt);
+Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.AddItem';
+var
+  i: Cardinal;
+begin
+  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
+  // no check on AObj
+  if FindItem(AObj, i) then
+    begin
+    assert(False, ASSERT_LOCATION+': Attempt to re-register an object')
+    end
+  else
+    begin
+    if FCount = FAllocated then
+      Grow;
+    assert(i < FAllocated, ASSERT_LOCATION+': i >= allocated');
+    if I < FCount then
+      System.Move(FItems^[i], FItems^[i + 1], (FCount - I) * SizeOf(TIdSoapObjRec));
+    FItems^[i].FPtr := AObj;
+    FItems^[i].FBreakpoint := false;
+    Inc(FCount);
+    end;
+end;
+
+function TIdDebugObjectSubList.GetRec(AObj: NativeInt): pIdSoapObjRec;
+var
+  LIndex : Cardinal;
+begin
+  if FindItem(AObj, LIndex) then
+    begin
+    result := @FItems[LIndex];
+    end
+  else
+    begin
+    result := nil;
+    end;
+end;
+
+{$R-}
+function TIdDebugObjectSubList.FindItem(AObj: NativeInt; var VIndex: Cardinal): Boolean;
+Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.FindItem';
+var
+  L, H, I: Integer;
+  c : Int64;
+begin
+  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
+  // no check on AObj
+  Result := False;
+  L := 0;
+  H := integer(FCount) - 1; // workaround a bad pascal range checking bug
+  while L <= H do
+    begin
+    I := (L + H) shr 1;
+    try
+      C := FItems^[I].FPtr - AObj;
+    except
+      writeln(FItems^[I].FPtr, AObj);
+    end;
+    if C < 0 then
+      begin
+      L := I + 1
+      end
+    else
+      begin
+      H := I - 1;
+      if C = 0 then
+        begin
+        Result := True;
+        L := I;
+        end;
+      end;
+    end;
+  VIndex := L;
+end;
+
+procedure TIdDebugObjectSubList.Grow;
+Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.Grow';
+begin
+  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
+  inc(FAllocated, GROW_SIZE);
+  ReallocMem(FItems, FAllocated * SizeOf(TIdSoapObjRec));
+  Assert(FItems <> NIL, ASSERT_LOCATION+': Grow failed to reallocate it''s memory');
+end;
+
+procedure TIdDebugObjectSubList.DeleteItem(AObj: NativeInt);
+Const ASSERT_LOCATION = ASSERT_UNIT+'.TIdDebugObjectSubList.DeleteItem';
+var
+  i: Cardinal;
+begin
+  assert(self <> NIL, ASSERT_LOCATION+': Self is nil');
+  // no check on AObj
+  if FindItem(AObj, i) then
+    begin
+    Dec(FCount);
+    if I < FCount then
+      System.Move(FItems^[I + 1], FItems^[I], (FCount - I) * SizeOf(TIdSoapObjRec));
+    end
+  else
+    begin
+    assert(False, ASSERT_LOCATION+': Attempt to de-register an object that doesn''t exist ("'+TObject(AObj).ClassName+'")');
+    end;
 end;
 
 end.
