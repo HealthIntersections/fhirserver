@@ -39,6 +39,13 @@ type
     Panel4: TPanel;
     GroupBox3: TGroupBox;
     cbPathSummary: TCheckBox;
+    GroupBox4: TGroupBox;
+    cbValidationSummary: TCheckBox;
+    GroupBox5: TGroupBox;
+    Label6: TLabel;
+    Label7: TLabel;
+    SpeedButton2: TSpeedButton;
+    edtFolder: TEdit;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -81,7 +88,9 @@ procedure TSettingForm.Button1Click(Sender: TObject);
 begin
   Settings.TerminologyServer := edtServer.Text;
   Settings.DefinitionsSource := edtFile.Text;
+  Settings.AdditionalDefinitions := edtFolder.Text;
   Settings.NoPathSummary := not cbPathSummary.checked;
+  Settings.NoValidationSummary := not cbValidationSummary.checked;
   Settings.CommitChanges;
   _FuncDisconnect;
 
@@ -191,12 +200,13 @@ begin
   edtFile.Text := Settings.DefinitionsSource;
   vtServers.RootNodeCount := Settings.ServerCount;
   cbPathSummary.checked := not Settings.NoPathSummary;
+  cbValidationSummary.checked := not Settings.NoValidationSummary;
+  edtFolder.Text := Settings.AdditionalDefinitions;
 end;
 
 procedure TSettingForm.SpeedButton1Click(Sender: TObject);
 begin
-  if od.Execute then
-    edtFile.Text := od.FileName;
+  showmessage('not done yet');
 end;
 
 procedure TSettingForm.vtServersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
@@ -212,3 +222,4 @@ begin
 end;
 
 end.
+

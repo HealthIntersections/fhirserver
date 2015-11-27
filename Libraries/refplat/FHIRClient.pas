@@ -130,6 +130,7 @@ begin
   FUrl := URL;
   FJson := json;
   client := TIdHTTP.create(nil);
+  client.HandleRedirects := true;
   ssl := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
   client.IOHandler := ssl;
   ssl.SSLOptions.Mode := sslmClient;
@@ -343,13 +344,13 @@ var
 begin
   if FJson then
   begin
-    client.Request.ContentType := 'application/json';
-    client.Request.Accept := 'application/json';
+    client.Request.ContentType := 'application/json+fhir; charset=utf-8';
+    client.Request.Accept := 'application/json+fhir; charset=utf-8';
   end
   else
   begin
-    client.Request.ContentType := 'text/xml';
-    client.Request.Accept := 'text/xml';
+    client.Request.ContentType := 'application/xml+fhir; charset=utf-8';
+    client.Request.Accept := 'application/xml+fhir; charset=utf-8';
   end;
   if ct <> '' then
     client.Request.ContentType := ct;

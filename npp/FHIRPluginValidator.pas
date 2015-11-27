@@ -91,7 +91,7 @@ end;
 function TFHIRPluginValidatorContext.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
 begin
   if (t = frtValueSet) then
-    result := FValueSets[url]
+    result := FValueSets[url].link
   else
     result := inherited fetchResource(t, url);
 end;

@@ -1,18 +1,10 @@
 library fhirnpp;
 
-{ Important note about DLL memory management: ShareMem must be the
-  first unit in your library's USES clause AND your project's (select
-  Project-View Source) USES clause if your DLL exports any procedures or
-  functions that pass strings as parameters or function results. This
-  applies to all strings passed to and from your DLL--even those that
-  are nested in records and classes. ShareMem is the interface unit to
-  the BORLNDMM.DLL shared memory manager, which must be deployed along
-  with your DLL. To avoid using BORLNDMM.DLL, pass string information
-  using PChar or ShortString parameters. }
-
 {$R 'helloworldres.res' 'helloworldres.rc'}
 
 uses
+  FastMM4 in '..\Libraries\FMM\FastMM4.pas',
+  FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
   SysUtils,
   Classes,
   Types,
@@ -139,10 +131,16 @@ uses
   SmartOnFhirUtilities in '..\Libraries\refplat\SmartOnFhirUtilities.pas',
   FetchResourceForm in 'FetchResourceForm.pas' {FetchResourceFrm},
   VirtualTrees in '..\..\Components\vtree\Source\VirtualTrees.pas',
-  FhirPath in '..\Libraries\refplat\FhirPath.pas',
+  FHIRPath in '..\Libraries\refplat\FHIRPath.pas',
   FHIRPathDocumentation in 'FHIRPathDocumentation.pas' {FHIRPathDocumentationForm},
   MimeMessage in '..\Libraries\support\MimeMessage.pas',
-  PathDialogForms in 'PathDialogForms.pas' {PathDialogForm};
+  PathDialogForms in 'PathDialogForms.pas' {PathDialogForm},
+  ValidationOutcomes in 'ValidationOutcomes.pas' {ValidationOutcomeForm},
+  FHIRVisualiser in 'FHIRVisualiser.pas' {FHIRVisualizer},
+  FHIRPathDebugger in '..\Libraries\refplat\FHIRPathDebugger.pas' {FHIRPathDebuggerForm},
+  WelcomeScreen in 'WelcomeScreen.pas' {WelcomeScreenForm},
+  nppbuildcount in 'nppbuildcount.pas',
+  UpgradePrompt in 'UpgradePrompt.pas' {UpgradePromptForm};
 
 {$R *.res}
 

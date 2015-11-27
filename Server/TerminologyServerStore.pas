@@ -738,7 +738,7 @@ begin
     e := oConf.addExtension('http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system', nil);
     e.Tags['summary'] := 'true';
     s := cp.system(nil);
-    e.addExtension('system', s);
+    e.addExtension('system', TFHIRUri.Create(s));
     s := cp.version(nil);
     if (s <> '') then
       e.addExtension('version', s);
@@ -1595,10 +1595,14 @@ begin
   result := nil;
   p := Locate(parent) as TValueSetProviderContext;
   if (p <> nil) then
-    if (p.context.code = code) then
-      result := p
-    else
-      result := doLocate(p.context.conceptList, code);
+    try
+      if (p.context.code = code) then
+        result := p.Link
+      else
+        result := doLocate(p.context.conceptList, code);
+    finally
+      p.free;
+    end;
 end;
 
 { TLoadedConceptMap }

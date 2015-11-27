@@ -28,20 +28,7 @@ Unit FHIRValidator;
   POSSIBILITY OF SUCH DAMAGE.
 }
 
-{
 
-
-
-procedure TFHIRBaseValidator.LoadFromDefinitions(filename: string);
-
-end;
-
-
-function TFHIRBaseValidator.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
-begin
-end;
-
-}
 interface
 
 
@@ -60,6 +47,8 @@ Type
   private
     FMap : TAdvMap<TWrapperElement>;
     FOwnsMap : boolean;
+    FProfile : TFHIRStructureDefinition;
+    FDefinition : TFHIRElementDefinition;
   public
     Constructor Create(map : TAdvMap<TWrapperElement>); Virtual;
     Destructor Destroy; Override;
@@ -81,27 +70,47 @@ Type
     function hasProcessingInstruction(): boolean; virtual; abstract;
     function locStart: TSourceLocation; virtual; abstract;
     function locEnd: TSourceLocation; virtual; abstract;
+
+    property Definition : TFhirElementDefinition read FDefinition write FDefinition; // no ownership
+    property Profile : TFhirStructureDefinition read FProfile write FProfile;
   end;
 
   TFHIRBaseOnWrapper = class (TFHIRBase)
   private
+    FServices : TValidatorServiceProvider;
     FWrapper : TWrapperElement;
+    FElementList : TFHIRElementDefinitionList;
+    FProfile: TFHIRStructureDefinition;
+    FDefinition : TFHIRElementDefinition;
+    FTypeName, FTypeProfile : String;
+    childDefinitions: TFHIRElementDefinitionList;
+    function getDefinition(name : String; var tn, tp : String) : TFhirElementDefinition;
+    function IsAbstractType(pn: String): Boolean;
+    procedure log(msg : String);
   public
-    Constructor Create(wrapper : TWrapperElement);
+    Constructor Create(services : TValidatorServiceProvider; wrapper : TWrapperElement; profile: TFHIRStructureDefinition; definition : TFhirElementDefinition; TypeName, TypeProfile : String);
     Destructor Destroy; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     function FhirType : string; override;
+    function IsPrimitive : boolean; override;
+    function primitiveValue : string; override;
   end;
 
   TFHIRResourceOnWrapper = class (TFHIRResource)
   private
+    FServices : TValidatorServiceProvider;
     FWrapper : TWrapperElement;
+    FElementList : TFHIRElementDefinitionList;
+    FProfile: TFHIRStructureDefinition;
+    FDefinition : TFHIRElementDefinition;
+    childDefinitions: TFHIRElementDefinitionList;
+    function getDefinition(name : String; var tn, tp : String) : TFhirElementDefinition;
   public
+    Constructor Create(services : TValidatorServiceProvider; wrapper : TWrapperElement; profile: TFHIRStructureDefinition);
+    Destructor Destroy; override;
+
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     function FhirType : string; override;
-
-    Constructor Create(wrapper : TWrapperElement);
-    Destructor Destroy; override;
   end;
 
   TNodeStack = class(TAdvObject)
@@ -128,6 +137,7 @@ Type
     path: String;
     definition: TFHIRElementDefinition;
     count: integer;
+
     function locStart: TSourceLocation;
     function locEnd: TSourceLocation;
   public
@@ -143,6 +153,7 @@ Type
 
   public
     constructor Create(path: String; element: TWrapperElement);
+    destructor Destroy; override;
     function next: boolean;
     function name: String;
     function element: TWrapperElement;
@@ -232,7 +243,7 @@ Type
     procedure validateContains(errors: TFhirOperationOutcomeIssueList; path: String; child: TFHIRElementDefinition; context: TFHIRElementDefinition; element: TWrapperElement; stack: TNodeStack; needsId: boolean);
     function allowUnknownExtension(url: String): boolean;
 
-    procedure checkInvariants(errors: TFhirOperationOutcomeIssueList; path : String; ed : TFhirElementDefinition; resource, element : TWrapperElement);
+    procedure checkInvariants(errors: TFhirOperationOutcomeIssueList; path : String; profile: TFHIRStructureDefinition; ed: TFhirElementDefinition; typename, typeProfile : String; resource, element: TWrapperElement);
     procedure validateSections(errors: TFhirOperationOutcomeIssueList; entries: TAdvList<TWrapperElement>; focus: TWrapperElement; stack: TNodeStack; fullUrl, id: String);
     procedure validateBundleReference(errors: TFhirOperationOutcomeIssueList; entries: TAdvList<TWrapperElement>; ref: TWrapperElement; name: String; stack: TNodeStack; fullUrl, type_, id: String);
     procedure validateDocument(errors: TFhirOperationOutcomeIssueList; entries: TAdvList<TWrapperElement>; composition: TWrapperElement; stack: TNodeStack; fullUrl, id: String);
@@ -483,11 +494,13 @@ end;
 procedure TDOMWrapperElement.getNamedChildren(name: String; list: TAdvList<TWrapperElement>);
 var
   res: IXMLDOMElement;
+  n : String;
 begin
   res := TMsXmlParser.FirstChild(FElement);
   while (res <> nil) do
   begin
-    if (res.tagname = name) OR (res.tagname = name) then
+    n := res.tagName;
+    if (n = name) then
       list.Add(wrap(res).link);
     res := TMsXmlParser.NextSibling(res);
   end;
@@ -586,15 +599,31 @@ begin
 end;
 
 function TDOMWrapperElement.locStart: TSourceLocation;
+var
+  i : integer;
 begin
-  result.line := -1;
-  result.col := -1;
+  i := StrToIntDef(Felement.getAttribute(MAP_ATTR_NAME), -1);
+  if i = -1 then
+  begin
+    result.line := -1;
+    result.col := -1;
+  end
+  else
+    result := FLocations[i].locationStart;
 end;
 
 function TDOMWrapperElement.locEnd: TSourceLocation;
+var
+  i : integer;
 begin
-  result.line := -1;
-  result.col := -1;
+  i := StrToIntDef(Felement.getAttribute(MAP_ATTR_NAME), -1);
+  if i = -1 then
+  begin
+    result.line := -1;
+    result.col := -1;
+  end
+  else
+    result := FLocations[i].locationEnd;
 end;
 
 type
@@ -612,7 +641,8 @@ type
     procedure createChildren;
   public
     Constructor Create(element: TJsonObject); overload;
-    Constructor Create(path, name: String; element, _element: TJsonNode; parent: TJsonWrapperElement; index: integer); overload;
+    Constructor Create(map : TAdvMap<TWrapperElement>; path, name: String; element, _element: TJsonNode; parent: TJsonWrapperElement; index: integer); overload;
+    Destructor Destroy; override;
     function getNamedChild(name: String): TWrapperElement; override;
     function getFirstChild(): TWrapperElement; override;
     function getNextSibling(): TWrapperElement; override;
@@ -634,9 +664,9 @@ type
 
 { TJsonWrapperElement }
 
-Constructor TJsonWrapperElement.Create(path, name: String; element, _element: TJsonNode; parent: TJsonWrapperElement; index: integer);
+Constructor TJsonWrapperElement.Create(map : TAdvMap<TWrapperElement>; path, name: String; element, _element: TJsonNode; parent: TJsonWrapperElement; index: integer);
 begin
-  inherited Create(nil);
+  inherited Create(map);
   self.path := path + '/' + name;
   self.name := name;
   self.element := element;
@@ -694,6 +724,14 @@ begin
   end;
 end;
 
+destructor TJsonWrapperElement.Destroy;
+begin
+  element.Free;
+  _element.Free;
+  children.Free;
+  inherited;
+end;
+
 procedure TJsonWrapperElement.processChild(name: String; e: TJsonNode);
 var
   _e: TJsonNode;
@@ -711,11 +749,12 @@ begin
   end;
 
   if element is TJsonObject then
-    _e := TJsonObject(element).obj['_' + name];
+    if TJsonObject(element).has('_' + name) then
+      _e := TJsonObject(element).properties['_' + name];
 
   if (((e is TJsonValue) or (e is TJsonBoolean)) or ((e = nil) and (_e <> nil) and not(_e is TJsonArray))) then
   begin
-    children.Add(TJsonWrapperElement.Create(path, name, e, _e, self, children.count));
+    children.Add(TJsonWrapperElement.Create(FMap, path, name, e.link, _e.link, self, children.count));
   end
   else if (e is TJsonArray) or ((e = nil) and (_e <> nil)) then
   begin
@@ -735,12 +774,12 @@ begin
         a := arr.Item[i];
       if not((_arr = nil) or (_arr.count < i)) then
         a := _arr.Item[i];
-      children.Add(TJsonWrapperElement.Create(path, name, a, _a, self, children.count));
+      children.Add(TJsonWrapperElement.Create(FMap, path, name, a.link, _a.link, self, children.count));
     end
   end
   else if (e is TJsonObject) then
   begin
-    children.Add(TJsonWrapperElement.Create(path, name, e, nil, self, children.count));
+    children.Add(TJsonWrapperElement.Create(FMap, path, name, e.link, nil, self, children.count));
   end
   else
     raise Exception.Create('not done yet (1): ' + e.ClassName);
@@ -809,6 +848,11 @@ begin
       result := ''
     else if (element is TJsonValue) then
       result := TJsonValue(element).value
+    else if (element is TJsonBoolean) then
+      if TJsonBoolean(element).value then
+        result := 'true'
+      else
+        result := 'false'
     else
       result := ''
   end
@@ -833,8 +877,16 @@ begin
 end;
 
 procedure TJsonWrapperElement.getNamedChildrenWithWildcard(name: String; list: TAdvList<TWrapperElement>);
+var
+  j: TJsonWrapperElement;
+  n : String;
 begin
-  raise Exception.Create('not done yet');
+  for j in children do
+  begin
+    n := j.name;
+    if (n = name) or ((name.endsWith('[x]') and (n.startsWith(name.substring(0, name.length - 3))))) then
+      list.Add(j.Link);
+  end;
 end;
 
 function TJsonWrapperElement.hasAttribute(name: String): boolean;
@@ -929,50 +981,46 @@ end;
 function TNodeStack.push(element: TWrapperElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
 var
   t, lp: String;
+  n : String;
 begin
   result := TNodeStack.Create(element.isXml());
-  result.parent := self;
-  result.element := element;
-  result.definition := definition;
-  if (element.isXml()) then
-  begin
-    if element.getNamespace() = XHTML_NS then
-      result.literalPath := literalPath + '/h:' + element.getName()
+  try
+    result.parent := self;
+    result.element := element;
+    result.definition := definition;
+    n := element.getName();
+    if n = '' then
+      n := element.getResourceType;
+    if LiteralPath = '' then
+      result.literalPath := n
     else
-      result.literalPath := literalPath + '/f:' + element.getName();
+      result.literalPath := literalPath + '.' + n;
     if (count > -1) then
-      result.literalPath := result.literalPath + '[' + integer.toString(count) + ']';
-  end
-  else
-  begin
-    if (element.getName() = '') then
-      result.literalPath := ''
-    else
-      result.literalPath := literalPath + '/' + element.getName();
-    if (count > -1) then
-      result.literalPath := result.literalPath + '/' + inttostr(count);
-  end;
-  result.logicalPaths := TStringList.Create;
-  if (type_ <> nil) then
-  begin
-    // type will be bull if we on a stitching point of a contained resource, or if....
-    result.type_ := type_;
-    t := tail(definition.path);
-    for lp in logicalPaths do
+      result.literalPath := result.literalPath + '.item(' + integer.toString(count-1) + ')';
+    if (type_ <> nil) then
     begin
-      result.logicalPaths.Add(lp + '.' + t);
-      if (t.endsWith('[x]')) then
-        result.logicalPaths.Add(lp + '.' + t.substring(0, t.length - 3) + type_.path);
-    end;
-    result.logicalPaths.Add(type_.path);
-  end
-  else if (definition <> nil) then
-  begin
-    for lp in logicalPaths do
-      result.logicalPaths.Add(lp + '.' + element.getName());
-  end
-  else
-    result.logicalPaths.AddStrings(logicalPaths);
+      // type will be bull if we on a stitching point of a contained resource, or if....
+      result.type_ := type_;
+      t := tail(definition.path);
+      for lp in logicalPaths do
+      begin
+        result.logicalPaths.Add(lp + '.' + t);
+        if (t.endsWith('[x]')) then
+          result.logicalPaths.Add(lp + '.' + t.substring(0, t.length - 3) + type_.path);
+      end;
+      result.logicalPaths.Add(type_.path);
+    end
+    else if (definition <> nil) then
+    begin
+      for lp in logicalPaths do
+        result.logicalPaths.Add(lp + '.' + element.getName());
+    end
+    else
+      result.logicalPaths.AddStrings(logicalPaths);
+    result.Link;
+  finally
+    result.Free;
+  end;
 end;
 
 function TNodeStack.addToLiteralPath(path: Array of String): String;
@@ -983,36 +1031,18 @@ begin
   b := TStringBuilder.Create;
   try
     b.append(literalPath);
-    if (xml) then
+    for p in path do
     begin
-      for p in path do
+      if (p.startsWith(':')) then
       begin
-        if (p.startsWith(':')) then
-        begin
-          b.append('[');
-          b.append(p.substring(1));
-          b.append(']');
-        end
-        else
-        begin
-          b.append('/f:');
-          b.append(p);
-        end
+        b.append('.item(');
+        b.append(p.substring(1));
+        b.append(')');
       end
-    end
-    else
-    begin
-      for p in path do
+      else
       begin
-        b.append('/');
-        if p.startsWith(':') then
-        begin
-          b.append(p.substring(1));
-        end
-        else
-        begin
-          b.append(p);
-        end
+        b.append('.');
+        b.append(p);
       end
     end;
     result := b.toString();
@@ -1101,7 +1131,7 @@ procedure TFHIRValidator.validate(errors: TFhirOperationOutcomeIssueList; obj: T
 var
   w : TWrapperElement;
 begin
-  w := TJsonWrapperElement.Create(obj);
+  w := TJsonWrapperElement.Create(obj.link);
   try
     validateResource(errors, w, profile, FRequireResourceId, nil);
   finally
@@ -1174,54 +1204,65 @@ var
   type_: String;
   first: TWrapperElement;
   result : boolean;
+  stack1 : TNodeStack;
 begin
   if (stack = nil) then
-    stack := TNodeStack.Create(element.isXml());
+    stack := TNodeStack.Create(element.isXml())
+  else
+    stack.Link;
+  try
 
-  // getting going - either we got a profile, or not.
-  result := true;
-  if (element.isXml()) then
-    result := rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), '/', element.getNamespace().equals(FHIR_NS),
-      'Namespace mismatch - expected "' + FHIR_NS + '", found "' + element.getNamespace() + '"');
-  if (result) then
-  begin
-    resourceName := element.getResourceType();
-    if (profile = nil) then
-    begin
-      profile := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
-      Fowned.add(profile);
-      rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), stack.addToLiteralPath(resourceName), profile <> nil, 'No profile found for resource type "' + resourceName + '"');
-    end;
-    if (profile <> nil) then
-    begin
-      if profile.ConstrainedType <> '' then
-        type_ := profile.ConstrainedType
-      else
-        type_ := profile.name;
-
-      // special case: we have a bundle, and the profile is not for a bundle. We'll try the first entry instead
-      if (type_ = resourceName) and (resourceName = 'Bundle') then
-      begin
-        first := getFirstEntry(element);
-        if (first <> nil) and (first.getResourceType() = type_) then
-        begin
-          element := first;
-          resourceName := element.getResourceType();
-          needsId := false;
-        end;
-      end;
-
-      result := rule(errors, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + profile.ConstrainedType +
-        '", but resource type was "' + resourceName + '"');
-    end;
-
+    // getting going - either we got a profile, or not.
+    result := true;
+    if (element.isXml()) then
+      result := rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), '/', element.getNamespace().equals(FHIR_NS),
+        'Namespace mismatch - expected "' + FHIR_NS + '", found "' + element.getNamespace() + '"');
     if (result) then
     begin
-      stack := stack.push(element, -1, profile.Snapshot.ElementList[0], profile.Snapshot.ElementList[0]);
-      if (needsId) and ((element.getNamedChild('id') = nil)) then
-        rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), stack.literalPath, false, 'Resource has no id');
-      start(errors, element, element, profile, stack); // root is both definition and type
+      resourceName := element.getResourceType();
+      if (profile = nil) then
+      begin
+        profile := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
+        Fowned.add(profile);
+        rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), stack.addToLiteralPath(resourceName), profile <> nil, 'No profile found for resource type "' + resourceName + '"');
+      end;
+      if (profile <> nil) then
+      begin
+        if profile.ConstrainedType <> '' then
+          type_ := profile.ConstrainedType
+        else
+          type_ := profile.name;
+
+        // special case: we have a bundle, and the profile is not for a bundle. We'll try the first entry instead
+        if (type_ = resourceName) and (resourceName = 'Bundle') then
+        begin
+          first := getFirstEntry(element);
+          if (first <> nil) and (first.getResourceType() = type_) then
+          begin
+            element := first;
+            resourceName := element.getResourceType();
+            needsId := false;
+          end;
+        end;
+
+        result := rule(errors, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + profile.ConstrainedType +
+          '", but resource type was "' + resourceName + '"');
+      end;
+
+      if (result) then
+      begin
+        stack1 := stack.push(element, -1, profile.Snapshot.ElementList[0], profile.Snapshot.ElementList[0]);
+        try
+          if (needsId) and ((element.getNamedChild('id') = nil)) then
+            rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), stack1.literalPath, false, 'Resource has no id');
+          start(errors, element, element, profile, stack1); // root is both definition and type
+        finally
+          stack1.Free;
+        end;
+      end;
     end;
+  finally
+    stack.Free;
   end;
 end;
 
@@ -1258,26 +1299,30 @@ begin
   if (meta <> nil) then
   begin
     profiles := TAdvList<TWrapperElement>.Create();
-    meta.getNamedChildren('profile', profiles);
-    i := 0;
-    for profile in profiles do
-    begin
-      ref := profile.getAttribute('value');
-      p := stack.addToLiteralPath(['meta', 'profile', ':' + inttostr(i)]);
-      if (rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), p, ref <> '', 'StructureDefinition reference invalid')) then
+    try
+      meta.getNamedChildren('profile', profiles);
+      i := 0;
+      for profile in profiles do
       begin
-        pr := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, ref));
-        FOwned.add(pr);
-        if (warning(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), p, pr <> nil, 'StructureDefinition reference could not be resolved')) then
+        ref := profile.getAttribute('value');
+        p := stack.addToLiteralPath(['meta', 'profile', ':' + inttostr(i)]);
+        if (rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), p, ref <> '', 'StructureDefinition reference invalid')) then
         begin
-          if (rule(errors, IssueTypeSTRUCTURE, element.locStart(), element.locEnd(), p, pr.Snapshot <> nil,
-            'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
+          pr := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, ref));
+          FOwned.add(pr);
+          if (warning(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), p, pr <> nil, 'StructureDefinition reference could not be resolved')) then
           begin
-            validateElement(errors, pr, pr.Snapshot.ElementList[0], nil, nil, resource, element, element.getName, stack, false);
+            if (rule(errors, IssueTypeSTRUCTURE, element.locStart(), element.locEnd(), p, pr.Snapshot <> nil,
+              'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
+            begin
+              validateElement(errors, pr, pr.Snapshot.ElementList[0], nil, nil, resource, element, element.getName, stack, false);
+            end;
           end;
+          inc(i);
         end;
-        inc(i);
       end;
+    finally
+      profiles.free;
     end;
   end;
 end;
@@ -1290,37 +1335,56 @@ var
   firstStack: TNodeStack;
   fullUrl: String;
   resource, res: TWrapperElement;
-  localStack: TNodeStack;
+  localStack, t: TNodeStack;
 begin
   entries := TAdvList<TWrapperElement>.Create();
-  bundle.getNamedChildren('entry', entries);
-  type_ := bundle.getNamedChildValue('type');
-  if (entries.count = 0) then
-  begin
-    rule(errors, IssueTypeINVALID, stack.literalPath, (type_ <> 'document') and (type_ <> 'message'), 'Documents or Messages must contain at least one entry');
-  end
-  else
-  begin
-    firstEntry := entries[0];
-    firstStack := stack.push(firstEntry, 0, nil, nil);
-    fullUrl := firstEntry.getNamedChildValue('fullUrl');
-
-    if (type_ = 'document') then
+  try
+    bundle.getNamedChildren('entry', entries);
+    type_ := bundle.getNamedChildValue('type');
+    if (entries.count = 0) then
     begin
-      res := firstEntry.getNamedChild('resource');
-      localStack := firstStack.push(res, -1, nil, nil);
-      resource := res.getFirstChild();
-      id := resource.getNamedChildValue('id');
-      if (rule(errors, IssueTypeINVALID, firstEntry.locStart(), firstEntry.locEnd(), stack.addToLiteralPath(['entry', ':0']), res <> nil, 'No resource on first entry')) then
-      begin
-        if (bundle.isXml()) then
-          validateDocument(errors, entries, resource, localStack.push(resource, -1, nil, nil), fullUrl, id)
-        else
-          validateDocument(errors, entries, res, localStack, fullUrl, id);
+      rule(errors, IssueTypeINVALID, stack.literalPath, (type_ <> 'document') and (type_ <> 'message'), 'Documents or Messages must contain at least one entry');
+    end
+    else
+    begin
+      firstEntry := entries[0];
+      firstStack := stack.push(firstEntry, 0, nil, nil);
+      try
+        fullUrl := firstEntry.getNamedChildValue('fullUrl');
+
+        if (type_ = 'document') then
+        begin
+          res := firstEntry.getNamedChild('resource');
+          localStack := firstStack.push(res, -1, nil, nil);
+          try
+            resource := res.getFirstChild();
+            id := resource.getNamedChildValue('id');
+            if (rule(errors, IssueTypeINVALID, firstEntry.locStart(), firstEntry.locEnd(), stack.addToLiteralPath(['entry', ':0']), res <> nil, 'No resource on first entry')) then
+            begin
+              if (bundle.isXml()) then
+              begin
+                t := localStack.push(resource, -1, nil, nil);
+                try
+                  validateDocument(errors, entries, resource, t, fullUrl, id);
+                finally
+                  t.Free;
+                end;
+              end
+              else
+                validateDocument(errors, entries, res, localStack, fullUrl, id);
+            end;
+          finally
+            localstack.free;
+          end;
+        end;
+        if (type_ = 'message') then
+          validateMessage(errors, bundle);
+      finally
+        firstStack.Free;
       end;
     end;
-    if (type_ = 'message') then
-      validateMessage(errors, bundle);
+  finally
+    entries.free;
   end;
 end;
 
@@ -1328,16 +1392,21 @@ procedure TFHIRValidator.validateMessage(errors: TFhirOperationOutcomeIssueList;
 begin
 end;
 
-procedure TFHIRValidator.validateDocument(errors: TFhirOperationOutcomeIssueList; entries: TAdvList<TWrapperElement>; composition: TWrapperElement; stack: TNodeStack;
-  fullUrl, id: String);
+procedure TFHIRValidator.validateDocument(errors: TFhirOperationOutcomeIssueList; entries: TAdvList<TWrapperElement>; composition: TWrapperElement; stack: TNodeStack; fullUrl, id: String);
+var
+  ns : TNodeStack;
 begin
   // first entry must be a composition
   if (rule(errors, IssueTypeINVALID, composition.locStart(), composition.locEnd(), stack.literalPath, composition.getResourceType() = 'Composition',
     'The first entry in a document must be a composition')) then
   begin
     // the composition subject and section references must resolve in the bundle
-    validateBundleReference(errors, entries, composition.getNamedChild('subject'), 'Composition Subject', stack.push(composition.getNamedChild('subject'), -1, nil, nil), fullUrl,
-      'Composition', id);
+    ns := stack.push(composition.getNamedChild('subject'), -1, nil, nil);
+    try
+      validateBundleReference(errors, entries, composition.getNamedChild('subject'), 'Composition Subject', ns, fullUrl, 'Composition', id);
+    finally
+      ns.Free;
+    end;
     validateSections(errors, entries, composition, stack, fullUrl, id);
   end;
 end;
@@ -1356,14 +1425,22 @@ var
   localStack: TNodeStack;
 begin
   sections := TAdvList<TWrapperElement>.Create();
-  focus.getNamedChildren('entry', sections);
-  i := 0;
-  for section in sections do
-  begin
-    localStack := stack.push(section, 1, nil, nil);
-    validateBundleReference(errors, entries, section.getNamedChild('content'), 'Section Content', localStack, fullUrl, 'Composition', id);
-    validateSections(errors, entries, section, localStack, fullUrl, id);
-    inc(i);
+  try
+    focus.getNamedChildren('entry', sections);
+    i := 0;
+    for section in sections do
+    begin
+      localStack := stack.push(section, 1, nil, nil);
+      try
+        validateBundleReference(errors, entries, section.getNamedChild('content'), 'Section Content', localStack, fullUrl, 'Composition', id);
+        validateSections(errors, entries, section, localStack, fullUrl, id);
+        inc(i);
+      finally
+        localStack.Free;
+      end;
+    end;
+  finally
+    sections.free;
   end;
 end;
 
@@ -1568,13 +1645,8 @@ function isBundleEntry(path: String): boolean;
 var
   parts: TArray<String>;
 begin
-  parts := path.split(['/']);
-  if (path.startsWith('/f:')) then
-    result := (length(parts) > 2) and (parts[length(parts) - 1].startsWith('f:resource')) and ((parts[length(parts) - 2] = 'f:entry')) or
-      (parts[length(parts) - 2].startsWith('f:entry['))
-  else
-    result := (length(parts) > 2) and (parts[length(parts) - 1] = 'resource') and (((length(parts) > 2) and (parts[length(parts) - 3] = 'entry'))) or
-      (parts[length(parts) - 2] = 'entry');
+  parts := path.split(['.']);
+  result := (length(parts) > 2) and (parts[length(parts) - 1].startsWith('resource')) and ((parts[length(parts) - 2] = 'entry')) or (parts[length(parts) - 2].startsWith('entry['));
 end;
 
 procedure TFHIRValidator.validateElement(errors: TFhirOperationOutcomeIssueList; profile: TFHIRStructureDefinition; definition: TFHIRElementDefinition;
@@ -1593,6 +1665,11 @@ var
   localStack: TNodeStack;
   thisIsCodeableConcept: boolean;
 begin
+  assert(profile.snapshot.elementList.ExistsByReference(definition));
+  // for later re-use
+  element.Definition := definition;
+  element.Profile := profile;
+
   // irrespective of what element it is, it cannot be empty
   if (element.isXml()) then
   begin
@@ -1605,180 +1682,193 @@ begin
   rule(errors, IssueTypeINVALID, element.locStart(), element.locEnd(), stack.literalPath, not empty(element),
     'Elements must have some content (@value, extensions, or children elements)');
 
-  checkInvariants(errors, stack.literalPath, definition, resource, element);
+  checkInvariants(errors, stack.literalPath, profile, definition, '', '', resource, element);
 
   // get the list of direct defined children, including slices
-  childDefinitions := getChildMap(profile, definition.name, definition.path, definition.NameReference);
-
-  // 1. List the children, and remember their exact path (convenience)
   children := TAdvList<TElementInfo>.Create();
-  iter := TChildIterator.Create(stack.literalPath, element);
-  while (iter.next()) do
-    children.Add(TElementInfo.Create(iter.name(), iter.element(), iter.path(), iter.count()));
+  childDefinitions := getChildMap(profile, definition.name, definition.path, definition.NameReference);
+  try
 
-  // 2. assign children to a definition
-  // for each definition, for each child, check whether it belongs in the slice
-  slice := nil;
-  for ed in childDefinitions do
-  begin
-    process := true;
-    // where are we with slicing
-    if (ed.Slicing <> nil) then
-    begin
-      if (slice <> nil) and (slice.path = ed.path) then
-        raise Exception.Create('Slice encountered midway through path on ' + slice.path);
-      slice := ed;
-      process := false;
-    end
-    else if (slice <> nil) and (slice.path <> ed.path) then
-      slice := nil;
-
-    if (process) then
-    begin
-      for ei in children do
-      begin
-        match := false;
-        if (slice = nil) then
-        begin
-          match := nameMatches(ei.name, tail(ed.path));
-        end
-        else
-        begin
-          if nameMatches(ei.name, tail(ed.path)) then
-            match := sliceMatches(ei.element, ei.path, slice, ed, profile);
-        end;
-        if (match) then
-        begin
-          if (rule(errors, IssueTypeINVALID, ei.locStart(), ei.locEnd(), ei.path, ei.definition = nil, 'Element matches more than one slice')) then
-            ei.definition := ed;
-        end;
-      end;
+    // 1. List the children, and remember their exact path (convenience)
+    iter := TChildIterator.Create(stack.literalPath, element.link);
+    try
+      while (iter.next()) do
+        children.Add(TElementInfo.Create(iter.name(), iter.element(), iter.path(), iter.count()));
+    finally
+      iter.Free;
     end;
-  end;
 
-  for ei in children do
-    if (ei.path.endsWith('.extension')) then
-      rule(errors, IssueTypeINVALID, ei.locStart(), ei.locEnd(), ei.path, ei.definition <> nil, 'Element is unknown or does not match any slice (url:="' +
-        ei.element.getAttribute('url') + '")')
-    else
-      rule(errors, IssueTypeINVALID, ei.locStart(), ei.locEnd(), ei.path, (ei.definition <> nil) or (not ei.element.isXml() and (ei.element.getName() = 'fhir_comments')),
-        'Element is unknown or does not match any slice');
-
-  // 3. report any definitions that have a cardinality problem
-  for ed in childDefinitions do
-  begin
-    if (ed.representation = []) then
-    begin // ignore xml attributes
-      count := 0;
-      for ei in children do
-        if (ei.definition = ed) then
-          inc(count);
-      if (ed.Min <> '0') then
-        rule(errors, IssueTypeSTRUCTURE, element.locStart(), element.locEnd(), stack.literalPath, count >= StrToInt(ed.Min), 'Element "' + stack.literalPath + '.' + tail(ed.path) +
-          '": minimum required = ' + ed.Min + ', but only found ' + inttostr(count));
-      if (ed.max <> '*') then
-        rule(errors, IssueTypeSTRUCTURE, element.locStart(), element.locEnd(), stack.literalPath, count <= StrToInt(ed.max), 'Element ' + tail(ed.path) + ' @ ' + stack.literalPath
-          + ': max allowed = ' + ed.max + ', but found ' + inttostr(count));
-
-    end;
-  end;
-  // 4. check order if any slices are orderd. (todo)
-
-  // 5. inspect each child for validity
-  for ei in children do
-  begin
-    if (ei.definition <> nil) then
+    // 2. assign children to a definition
+    // for each definition, for each child, check whether it belongs in the slice
+    slice := nil;
+    for ed in childDefinitions do
     begin
-      t := '';
-      td := nil;
-      if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code <> '*') and (ei.definition.Type_List[0].code <> 'Element') and
-        (ei.definition.Type_List[0].code <> 'BackboneElement') then
-        t := ei.definition.Type_List[0].code
-      else if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code = '*') then
+      process := true;
+      // where are we with slicing
+      if (ed.Slicing <> nil) then
       begin
-        prefix := tail(ei.definition.path);
-        assert(prefix.endsWith('[x]'));
-        t := ei.name.substring(prefix.length - 3);
-        if (isPrimitiveType(t)) then
-          t := uncapitalize(t);
+        if (slice <> nil) and (slice.path = ed.path) then
+          raise Exception.Create('Slice encountered midway through path on ' + slice.path);
+        slice := ed;
+        process := false;
       end
-      else if (ei.definition.Type_List.count > 1) then
+      else if (slice <> nil) and (slice.path <> ed.path) then
+        slice := nil;
+
+      if (process) then
       begin
-        prefix := tail(ei.definition.path);
-        prefix := prefix.substring(0, prefix.length - 3);
-        for tc in ei.definition.Type_List do
-          if ((prefix + capitalize(tc.code)) = ei.name) then
-            t := tc.code;
-        if (t = '') then
+        for ei in children do
         begin
-          trc := ei.definition.Type_List[0];
-          if (trc.code = 'Reference') then
-            t := 'Reference'
-          else
+          match := false;
+          if (slice = nil) then
           begin
-            assert(prefix.endsWith('[x]'));
-            rule(errors, IssueTypeSTRUCTURE, ei.locStart(), ei.locEnd(), stack.literalPath, false, 'The element ' + ei.name + ' is illegal. Valid types at this point are ' +
-              describeTypes(ei.definition.Type_List));
-          end;
-        end;
-      end
-      else if (ei.definition.NameReference <> '') then
-        td := resolveNameReference(profile.Snapshot, ei.definition.NameReference);
-
-      if (t <> '') then
-      begin
-        if (t.startsWith('@')) then
-        begin
-          ei.definition := findElement(profile, t.substring(1));
-          t := '';
-        end;
-      end;
-      if (t = '') then
-        localStack := stack.push(ei.element, ei.count, ei.definition, td)
-      else
-        localStack := stack.push(ei.element, ei.count, ei.definition, resolveType(t));
-      if ei.path <> localStack.literalPath then
-        raise Exception.Create('paths differ: ' + ei.path + ' vs ' + localStack.literalPath);
-
-      assert(ei.path = localStack.literalPath);
-      thisIsCodeableConcept := false;
-
-      if (t <> '') then
-      begin
-        if (isPrimitiveType(t)) then
-          checkPrimitive(errors, ei.path, t, ei.definition, ei.element)
-        else
-        begin
-          if (t = 'Identifier') then
-            checkIdentifier(errors, ei.path, ei.element, ei.definition)
-          else if (t = 'Coding') then
-            checkCoding(errors, ei.path, ei.element, profile, ei.definition, inCodeableConcept)
-          else if (t = 'CodeableConcept') then
-          begin
-            checkCodeableConcept(errors, ei.path, ei.element, profile, ei.definition);
-            thisIsCodeableConcept := true;
+            match := nameMatches(ei.name, tail(ed.path));
           end
-          else if (t = 'Reference') then
-            checkReference(errors, ei.path, ei.element, profile, ei.definition, actualType, localStack);
-
-          if (t = 'Extension') then
-            checkExtension(errors, ei.path, ei.element, ei.definition, profile, localStack)
-          else if (t = 'Resource') then
-            validateContains(errors, ei.path, ei.definition, definition, ei.element, localStack, not isBundleEntry(ei.path))
           else
           begin
-            p := getProfileForType(t);
-            if (rule(errors, IssueTypeSTRUCTURE, ei.locStart(), ei.locEnd(), ei.path, p <> nil, 'Unknown type ' + t)) then
-              validateElement(errors, p, p.Snapshot.ElementList[0], profile, ei.definition, resource, ei.element, t, localStack, thisIsCodeableConcept);
+            if nameMatches(ei.name, tail(ed.path)) then
+              match := sliceMatches(ei.element, ei.path, slice, ed, profile);
+          end;
+          if (match) then
+          begin
+            if (rule(errors, IssueTypeINVALID, ei.locStart(), ei.locEnd(), ei.path, ei.definition = nil, 'Element matches more than one slice')) then
+              ei.definition := ed;
           end;
         end;
-      end
-      else
-      begin
-        if (rule(errors, IssueTypeSTRUCTURE, ei.locStart(), ei.locEnd(), stack.literalPath, ei.definition <> nil, 'Unrecognised Content ' + ei.name)) then
-          validateElement(errors, profile, ei.definition, nil, nil, resource, ei.element, t, localStack, false);
       end;
     end;
+
+    for ei in children do
+      if (ei.path.endsWith('.extension')) then
+        rule(errors, IssueTypeINVALID, ei.locStart(), ei.locEnd(), ei.path, ei.definition <> nil, 'Element is unknown or does not match any slice (url:="' +
+          ei.element.getAttribute('url') + '")')
+      else
+        rule(errors, IssueTypeINVALID, ei.locStart(), ei.locEnd(), ei.path, (ei.definition <> nil) or (not ei.element.isXml() and (ei.element.getName() = 'fhir_comments')),
+          'Element is unknown or does not match any slice');
+
+    // 3. report any definitions that have a cardinality problem
+    for ed in childDefinitions do
+    begin
+      if (ed.representation = []) then
+      begin // ignore xml attributes
+        count := 0;
+        for ei in children do
+          if (ei.definition = ed) then
+            inc(count);
+        if (ed.Min <> '0') then
+          rule(errors, IssueTypeSTRUCTURE, element.locStart(), element.locEnd(), stack.literalPath, count >= StrToInt(ed.Min), 'Element "' + stack.literalPath + '.' + tail(ed.path) +
+            '": minimum required = ' + ed.Min + ', but only found ' + inttostr(count));
+        if (ed.max <> '*') then
+          rule(errors, IssueTypeSTRUCTURE, element.locStart(), element.locEnd(), stack.literalPath, count <= StrToInt(ed.max), 'Element ' + tail(ed.path) + ' @ ' + stack.literalPath
+            + ': max allowed = ' + ed.max + ', but found ' + inttostr(count));
+
+      end;
+    end;
+    // 4. check order if any slices are orderd. (todo)
+
+    // 5. inspect each child for validity
+    for ei in children do
+    begin
+      if (ei.definition <> nil) then
+      begin
+        t := '';
+        td := nil;
+        if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code <> '*') and (ei.definition.Type_List[0].code <> 'Element') and
+          (ei.definition.Type_List[0].code <> 'BackboneElement') then
+          t := ei.definition.Type_List[0].code
+        else if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code = '*') then
+        begin
+          prefix := tail(ei.definition.path);
+          assert(prefix.endsWith('[x]'));
+          t := ei.name.substring(prefix.length - 3);
+          if (isPrimitiveType(t)) then
+            t := uncapitalize(t);
+        end
+        else if (ei.definition.Type_List.count > 1) then
+        begin
+          prefix := tail(ei.definition.path);
+          prefix := prefix.substring(0, prefix.length - 3);
+          for tc in ei.definition.Type_List do
+            if ((prefix + capitalize(tc.code)) = ei.name) then
+              t := tc.code;
+          if (t = '') then
+          begin
+            trc := ei.definition.Type_List[0];
+            if (trc.code = 'Reference') then
+              t := 'Reference'
+            else
+            begin
+              assert(prefix.endsWith('[x]'));
+              rule(errors, IssueTypeSTRUCTURE, ei.locStart(), ei.locEnd(), stack.literalPath, false, 'The element ' + ei.name + ' is illegal. Valid types at this point are ' +
+                describeTypes(ei.definition.Type_List));
+            end;
+          end;
+        end
+        else if (ei.definition.NameReference <> '') then
+          td := resolveNameReference(profile.Snapshot, ei.definition.NameReference);
+
+        if (t <> '') then
+        begin
+          if (t.startsWith('@')) then
+          begin
+            ei.definition := findElement(profile, t.substring(1));
+            t := '';
+          end;
+        end;
+        if (t = '') then
+          localStack := stack.push(ei.element, ei.count, ei.definition, td)
+        else
+          localStack := stack.push(ei.element, ei.count, ei.definition, resolveType(t));
+        try
+          if ei.path <> localStack.literalPath then
+            raise Exception.Create('paths differ: ' + ei.path + ' vs ' + localStack.literalPath);
+
+          assert(ei.path = localStack.literalPath);
+          thisIsCodeableConcept := false;
+
+          if (t <> '') then
+          begin
+            if (isPrimitiveType(t)) then
+              checkPrimitive(errors, ei.path, t, ei.definition, ei.element)
+            else
+            begin
+              if (t = 'Identifier') then
+                checkIdentifier(errors, ei.path, ei.element, ei.definition)
+              else if (t = 'Coding') then
+                checkCoding(errors, ei.path, ei.element, profile, ei.definition, inCodeableConcept)
+              else if (t = 'CodeableConcept') then
+              begin
+                checkCodeableConcept(errors, ei.path, ei.element, profile, ei.definition);
+                thisIsCodeableConcept := true;
+              end
+              else if (t = 'Reference') then
+                checkReference(errors, ei.path, ei.element, profile, ei.definition, actualType, localStack);
+
+              if (t = 'Extension') then
+                checkExtension(errors, ei.path, ei.element, ei.definition, profile, localStack)
+              else if (t = 'Resource') then
+                validateContains(errors, ei.path, ei.definition, definition, ei.element, localStack, not isBundleEntry(ei.path))
+              else
+              begin
+                p := getProfileForType(t);
+                if (rule(errors, IssueTypeSTRUCTURE, ei.locStart(), ei.locEnd(), ei.path, p <> nil, 'Unknown type ' + t)) then
+                  validateElement(errors, p, p.Snapshot.ElementList[0], profile, ei.definition, resource, ei.element, t, localStack, thisIsCodeableConcept);
+              end;
+            end;
+          end
+          else
+          begin
+            if (rule(errors, IssueTypeSTRUCTURE, ei.locStart(), ei.locEnd(), stack.literalPath, ei.definition <> nil, 'Unrecognised Content ' + ei.name)) then
+              validateElement(errors, profile, ei.definition, nil, nil, resource, ei.element, t, localStack, false);
+          end;
+        finally
+          localStack.Free;
+        end;
+      end;
+    end;
+  finally
+    childDefinitions.Free;
+    children.Free;
   end;
 end;
 
@@ -1925,59 +2015,52 @@ var
 begin
   result := nil;
   childDefinitions := getChildMap(profile, ed.name, ed.path, '');
-
-  Snapshot := nil;
-  if (childDefinitions.count = 0) then
-  begin
-    // going to look at the type
-    if (ed.Type_List.count = 0) then
-      raise Exception.Create('Error in profile for ' + path + ' no children, no type');
-    if (ed.Type_List.count > 1) then
-      raise Exception.Create('Error in profile for ' + path + ' multiple types defined in slice discriminator');
-    if (ed.Type_List[0].profileList.count > 0) then
+  try
+    Snapshot := nil;
+    if (childDefinitions.count = 0) then
     begin
-      // need to do some special processing for reference here...
-      if (ed.Type_List[0].code = 'Reference') then
-        discriminator := discriminator.substring(discriminator.indexOf('.') + 1);
-      ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profileList[0].value));
+      // going to look at the type
+      if (ed.Type_List.count = 0) then
+        raise Exception.Create('Error in profile for ' + path + ' no children, no type');
+      if (ed.Type_List.count > 1) then
+        raise Exception.Create('Error in profile for ' + path + ' multiple types defined in slice discriminator');
+      if (ed.Type_List[0].profileList.count > 0) then
+      begin
+        // need to do some special processing for reference here...
+        if (ed.Type_List[0].code = 'Reference') then
+          discriminator := discriminator.substring(discriminator.indexOf('.') + 1);
+        ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profileList[0].value));
+      end
+      else
+        ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
+      FOwned.add(ty);
+      Snapshot := ty.Snapshot.ElementList;
+      ed := Snapshot[0];
     end
     else
-      ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
-    FOwned.add(ty);
-    Snapshot := ty.Snapshot.ElementList;
-    ed := Snapshot[0];
-  end
-  else
-  begin
-    Snapshot := profile.Snapshot.ElementList;
-  end;
-  originalPath := ed.path;
-  goal := originalPath + '.' + discriminator;
-
-  index := Snapshot.indexOf(ed);
-  assert(index > -1);
-  inc(index);
-  while (index < Snapshot.count) and (Snapshot[index].path <> originalPath) do
-  begin
-    if (Snapshot[index].path = goal) then
     begin
-      result := Snapshot[index];
-      exit;
+      Snapshot := profile.Snapshot.ElementList;
     end;
-    inc(index);
-  end;
-  raise Exception.Create('Unable to find discriminator definition for ' + goal + ' in ' + discriminator + ' at ' + path);
-end;
+    originalPath := ed.path;
+    goal := originalPath + '.' + discriminator;
 
-// private String mergePath(String path1, String path2) begin
-// // path1 is xpath path
-// // path2 is dotted path
-// TArray<String> parts := path2.split('\\.');
-// StringBuilder b := new StringBuilder(path1);
-// for (int i := 1; i < parts.length -1; i++)
-// b.append('/f:'+parts[i]);
-// return b.toString();
-// end;
+    index := Snapshot.indexOf(ed);
+    assert(index > -1);
+    inc(index);
+    while (index < Snapshot.count) and (Snapshot[index].path <> originalPath) do
+    begin
+      if (Snapshot[index].path = goal) then
+      begin
+        result := Snapshot[index];
+        exit;
+      end;
+      inc(index);
+    end;
+    raise Exception.Create('Unable to find discriminator definition for ' + goal + ' in ' + discriminator + ' at ' + path);
+  finally
+    childDefinitions.Free;
+  end;
+end;
 
 function TFHIRValidator.checkResourceType(ty: String): String;
 var
@@ -2118,21 +2201,25 @@ var
   url: String;
 begin
   entries := TAdvList<TWrapperElement>.Create();
-  bundle.getNamedChildren('entry', entries);
-  for we in entries do
-  begin
-    res := we.getNamedChild('resource').getFirstChild();
-    if (res <> nil) then
+  try
+    bundle.getNamedChildren('entry', entries);
+    for we in entries do
     begin
-      url := genFullUrl(bundle.getNamedChildValue('base'), we.getNamedChildValue('base'), res.getName(), res.getNamedChildValue('id'));
-      if (url.endsWith(ref)) then
+      res := we.getNamedChild('resource').getFirstChild();
+      if (res <> nil) then
       begin
-        result := res;
-        exit;
+        url := genFullUrl(bundle.getNamedChildValue('base'), we.getNamedChildValue('base'), res.getName(), res.getNamedChildValue('id'));
+        if (url.endsWith(ref)) then
+        begin
+          result := res;
+          exit;
+        end;
       end;
     end;
+    result := nil;
+  finally
+    entries.free;
   end;
-  result := nil;
 end;
 
 function TFHIRValidator.genFullUrl(bundleBase, entryBase, ty, id: String): String;
@@ -2157,20 +2244,24 @@ var
   we, res: TWrapperElement;
 begin
   contained := TAdvList<TWrapperElement>.Create();
-  container.getNamedChildren('contained', contained);
-  for we in contained do
-  begin
-    if we.isXml() then
-      res := we.getFirstChild()
-    else
-      res := we;
-    if (id = res.getNamedChildValue('id')) then
+  try
+    container.getNamedChildren('contained', contained);
+    for we in contained do
     begin
-      result := res;
-      exit;
+      if we.isXml() then
+        res := we.getFirstChild()
+      else
+        res := we;
+      if (id = res.getNamedChildValue('id')) then
+      begin
+        result := res;
+        exit;
+      end;
     end;
+    result := nil;
+  finally
+    contained.free;
   end;
-  result := nil;
 end;
 
 function TFHIRValidator.getBaseType(profile: TFHIRStructureDefinition; pr: String): String;
@@ -2726,24 +2817,28 @@ begin
             begin
               try
                 c := readAsCoding(element);
-                res := FContext.validateCode(c, vs);
                 try
-                  if (not res.isOk()) then
-                    if (Binding.Strength = BindingStrengthREQUIRED) then
-                      warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
-                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is required from this value set')
-                    else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-                      warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
-                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
-                    else if (Binding.Strength = BindingStrengthPREFERRED) then
-                      hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
-                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is recommended to come from this value set');
+                  res := FContext.validateCode(c, vs);
+                  try
+                    if (not res.isOk()) then
+                      if (Binding.Strength = BindingStrengthREQUIRED) then
+                        warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
+                          describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is required from this value set')
+                      else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
+                        warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
+                          describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
+                      else if (Binding.Strength = BindingStrengthPREFERRED) then
+                        hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
+                          describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is recommended to come from this value set');
+                  finally
+                    res.free;
+                  end;
                 finally
-                  res.free;
+                  c.Free;
                 end;
               except
                 on e: Exception do
-                  warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Error ' + e.message + ' validating CodeableConcept');
+                  warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Error ' + e.message + ' validating Coding');
               end;
             end
             else if (Binding.ValueSet <> nil) then
@@ -2810,47 +2905,51 @@ begin
         begin
           try
             cc := readAsCodeableConcept(element);
-            if (cc.CodingList.IsEmpty) then
-            begin
-              if (Binding.Strength = BindingStrengthREQUIRED) then
-                rule(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'No code provided, and a code is required from the value set ' +
-                  describeReference(Binding.ValueSet) + ' (' + vs.url)
-              else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-                warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'No code provided, and a code should be provided from the value set ' +
-                  describeReference(Binding.ValueSet) + ' (' + vs.url);
-            end
-            else
-            begin
-              res := FContext.validateCode(cc, vs);
-              try
-                if (not res.isOk) then
-                begin
-                  if (Binding.Strength = BindingStrengthREQUIRED) then
-                    rule(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'None of the codes provided are in the value set ' +
-                      describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code from this value set is required')
-                  else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-                    warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'None of the codes provided are in the value set ' +
-                      describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
-                  else if (Binding.Strength = BindingStrengthPREFERRED) then
-                    hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'None of the codes provided are in the value set ' +
-                      describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is recommended to come from this value set');
+            try
+              if (cc.CodingList.IsEmpty) then
+              begin
+                if (Binding.Strength = BindingStrengthREQUIRED) then
+                  rule(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'No code provided, and a code is required from the value set ' +
+                    describeReference(Binding.ValueSet) + ' (' + vs.url)
+                else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
+                  warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'No code provided, and a code should be provided from the value set ' +
+                    describeReference(Binding.ValueSet) + ' (' + vs.url);
+              end
+              else
+              begin
+                res := FContext.validateCode(cc, vs);
+                try
+                  if (not res.isOk) then
+                  begin
+                    if (Binding.Strength = BindingStrengthREQUIRED) then
+                      rule(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'None of the codes provided are in the value set ' +
+                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code from this value set is required')
+                    else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
+                      warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'None of the codes provided are in the value set ' +
+                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
+                    else if (Binding.Strength = BindingStrengthPREFERRED) then
+                      hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'None of the codes provided are in the value set ' +
+                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is recommended to come from this value set');
+                  end;
+                finally
+                  res.free;
                 end;
-              finally
-                res.free;
               end;
+            except
+              on e: Exception do
+                warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Error ' + e.message + ' validating CodeableConcept');
             end;
-          except
-            on e: Exception do
-              warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Error ' + e.message + ' validating CodeableConcept');
+          finally
+            cc.free;
           end;
         end;
-      end;
-    end;
-  end
-  else if (Binding.ValueSet <> nil) then
-    hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Binding by URI TFHIRReference cannot be checked')
-  else
-    hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Binding has no source, so can''t be checked');
+      end
+      else if (Binding.ValueSet <> nil) then
+        hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Binding by URI rReference cannot be checked')
+      else
+        hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Binding has no source, so can''t be checked');
+    end
+  end;
 end;
 
 function TFHIRValidator.checkCode(errors: TFhirOperationOutcomeIssueList; element: TWrapperElement; path: String; code, System, display: String): boolean;
@@ -3210,20 +3309,24 @@ begin
     else
       rule(errors, IssueTypeException, focus.locStart(), focus.locEnd(), path, false, 'Unhandled fixed value type ' + fixed.ClassName);
     extensions := TAdvList<TWrapperElement>.Create();
-    focus.getNamedChildren('extension', extensions);
-    if (fixed.extensionList.count = 0) then
-    begin
-      rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, extensions.count = 0, 'No extensions allowed');
-    end
-    else if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, extensions.count = fixed.extensionList.count,
-      'Extensions count mismatch: expected ' + inttostr(fixed.extensionList.count) + ' but found ' + inttostr(extensions.count))) then
-    begin
-      for e in fixed.extensionList do
+    try
+      focus.getNamedChildren('extension', extensions);
+      if (fixed.extensionList.count = 0) then
       begin
-        ex := getExtensionByUrl(extensions, e.url);
-        if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, ex <> nil, 'Extension count mismatch: unable to find extension: ' + e.url)) then
-          checkFixedValue(errors, path, ex.getFirstChild().getNextSibling(), e.value, 'extension.value');
+        rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, extensions.count = 0, 'No extensions allowed');
+      end
+      else if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, extensions.count = fixed.extensionList.count,
+        'Extensions count mismatch: expected ' + inttostr(fixed.extensionList.count) + ' but found ' + inttostr(extensions.count))) then
+      begin
+        for e in fixed.extensionList do
+        begin
+          ex := getExtensionByUrl(extensions, e.url);
+          if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, ex <> nil, 'Extension count mismatch: unable to find extension: ' + e.url)) then
+            checkFixedValue(errors, path, ex.getFirstChild().getNextSibling(), e.value, 'extension.value');
+        end;
       end;
+    finally
+      extensions.free;
     end;
   end;
 end;
@@ -3241,12 +3344,16 @@ begin
   checkFixedValue(errors, path + '.zip', focus.getNamedChild('zip'), fixed.PostalCodeElement, 'postalCode');
 
   lines := TAdvList<TWrapperElement>.Create();
-  focus.getNamedChildren('line', lines);
-  if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, lines.count = fixed.lineList.count, 'Expected ' + inttostr(fixed.lineList.count) + ' but found ' +
-    inttostr(lines.count) + ' line elements')) then
-  begin
-    for i := 0 to lines.count - 1 do
-      checkFixedValue(errors, path + '.coding', lines[i], fixed.lineList[i], 'coding');
+  try
+    focus.getNamedChildren('line', lines);
+    if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, lines.count = fixed.lineList.count, 'Expected ' + inttostr(fixed.lineList.count) + ' but found ' +
+      inttostr(lines.count) + ' line elements')) then
+    begin
+      for i := 0 to lines.count - 1 do
+        checkFixedValue(errors, path + '.coding', lines[i], fixed.lineList[i], 'coding');
+    end;
+  finally
+    lines.free;
   end;
 end;
 
@@ -3279,29 +3386,28 @@ begin
   checkFixedValue(errors, path + '.assigner', focus.getNamedChild('assigner'), fixed.Assigner, 'assigner');
 end;
 
-procedure TFHIRValidator.checkInvariants(errors: TFhirOperationOutcomeIssueList; path : String; ed: TFhirElementDefinition; resource, element: TWrapperElement);
+procedure TFHIRValidator.checkInvariants(errors: TFhirOperationOutcomeIssueList; path : String; profile: TFHIRStructureDefinition; ed: TFhirElementDefinition; typename, typeProfile : String; resource, element: TWrapperElement);
 var
   inv : TFhirElementDefinitionConstraint;
   ok : boolean;
   res : TFHIRResourceOnWrapper;
   e : TFHIRBaseOnWrapper;
 begin
-  exit;
   for inv in ed.constraintList do
     if inv.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression') then
     begin
-      res := TFHIRResourceOnWrapper.create(resource.Link);
-      e := TFHIRBaseOnWrapper.create(element.Link);
+      res := TFHIRResourceOnWrapper.create(FContext.link, resource.Link, resource.profile.Link);
+      e := TFHIRBaseOnWrapper.create(FContext.link, element.Link, profile.Link, ed.Link, typename, typeProfile);
       try
-        ok := FPathEvaluator.evaluateToBoolean(res, e, inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression'));
+        ok := FPathEvaluator.evaluateToBoolean(nil, res, e, inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression'));
       finally
         e.free;
         res.free;
       end;
       if not ok then
         case inv.severity of
-          ConstraintSeverityError: rule(errors, IssueTypeInvariant, element.LocStart, element.LocEnd, path, ok, inv.human);
-          ConstraintSeverityWarning: warning(errors, IssueTypeInvariant, element.LocStart, element.LocEnd, path, ok, inv.human);
+          ConstraintSeverityError: rule(errors, IssueTypeInvariant, element.LocStart, element.LocEnd, path, ok, inv.human+' ('+inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression')+')');
+          ConstraintSeverityWarning: warning(errors, IssueTypeInvariant, element.LocStart, element.LocEnd, path, ok, inv.human+' ('+inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression')+')');
         end;
     end;
 end;
@@ -3324,33 +3430,37 @@ begin
   checkFixedValue(errors, path + '.period', focus.getNamedChild('period'), fixed.Period, 'period');
 
   parts := TAdvList<TWrapperElement>.Create();
-  focus.getNamedChildren('family', parts);
-  if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, parts.count = fixed.familyList.count, 'Expected ' + inttostr(fixed.familyList.count) + ' but found ' +
-    inttostr(parts.count) + ' family elements')) then
-  begin
-    for i := 0 to parts.count - 1 do
-      checkFixedValue(errors, path + '.family', parts[i], fixed.familyList[i], 'family');
-  end;
-  focus.getNamedChildren('given', parts);
-  if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, parts.count = fixed.GivenList.count, 'Expected ' + inttostr(fixed.GivenList.count) + ' but found ' +
-    inttostr(parts.count) + ' given elements')) then
-  begin
-    for i := 0 to parts.count - 1 do
-      checkFixedValue(errors, path + '.given', parts[i], fixed.GivenList[i], 'given');
-  end;
-  focus.getNamedChildren('prefix', parts);
-  if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, parts.count = fixed.prefixList.count, 'Expected ' + inttostr(fixed.prefixList.count) + ' but found ' +
-    inttostr(parts.count) + ' prefix elements')) then
-  begin
-    for i := 0 to parts.count - 1 do
-      checkFixedValue(errors, path + '.prefix', parts[i], fixed.prefixList[i], 'prefix');
-  end;
-  focus.getNamedChildren('suffix', parts);
-  if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, parts.count = fixed.suffixList.count, 'Expected ' + inttostr(fixed.suffixList.count) + ' but found ' +
-    inttostr(parts.count) + ' suffix elements')) then
-  begin
-    for i := 0 to parts.count - 1 do
-      checkFixedValue(errors, path + '.suffix', parts[i], fixed.suffixList[i], 'suffix');
+  try
+    focus.getNamedChildren('family', parts);
+    if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, parts.count = fixed.familyList.count, 'Expected ' + inttostr(fixed.familyList.count) + ' but found ' +
+      inttostr(parts.count) + ' family elements')) then
+    begin
+      for i := 0 to parts.count - 1 do
+        checkFixedValue(errors, path + '.family', parts[i], fixed.familyList[i], 'family');
+    end;
+    focus.getNamedChildren('given', parts);
+    if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, parts.count = fixed.GivenList.count, 'Expected ' + inttostr(fixed.GivenList.count) + ' but found ' +
+      inttostr(parts.count) + ' given elements')) then
+    begin
+      for i := 0 to parts.count - 1 do
+        checkFixedValue(errors, path + '.given', parts[i], fixed.GivenList[i], 'given');
+    end;
+    focus.getNamedChildren('prefix', parts);
+    if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, parts.count = fixed.prefixList.count, 'Expected ' + inttostr(fixed.prefixList.count) + ' but found ' +
+      inttostr(parts.count) + ' prefix elements')) then
+    begin
+      for i := 0 to parts.count - 1 do
+        checkFixedValue(errors, path + '.prefix', parts[i], fixed.prefixList[i], 'prefix');
+    end;
+    focus.getNamedChildren('suffix', parts);
+    if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, parts.count = fixed.suffixList.count, 'Expected ' + inttostr(fixed.suffixList.count) + ' but found ' +
+      inttostr(parts.count) + ' suffix elements')) then
+    begin
+      for i := 0 to parts.count - 1 do
+        checkFixedValue(errors, path + '.suffix', parts[i], fixed.suffixList[i], 'suffix');
+    end;
+  finally
+    parts.free;
   end;
 end;
 
@@ -3361,12 +3471,16 @@ var
 begin
   checkFixedValue(errors, path + '.text', focus.getNamedChild('text'), fixed.TextElement, 'text');
   codings := TAdvList<TWrapperElement>.Create();
-  focus.getNamedChildren('coding', codings);
-  if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, codings.count = fixed.CodingList.count, 'Expected ' + inttostr(fixed.CodingList.count) + ' but found ' +
-    inttostr(codings.count) + ' coding elements')) then
-  begin
-    for i := 0 to codings.count - 1 do
-      checkFixedValue(errors, path + '.coding', codings[i], fixed.CodingList[i], 'coding');
+  try
+    focus.getNamedChildren('coding', codings);
+    if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, codings.count = fixed.CodingList.count, 'Expected ' + inttostr(fixed.CodingList.count) + ' but found ' +
+      inttostr(codings.count) + ' coding elements')) then
+    begin
+      for i := 0 to codings.count - 1 do
+        checkFixedValue(errors, path + '.coding', codings[i], fixed.CodingList[i], 'coding');
+    end;
+  finally
+    codings.free;
   end;
 end;
 
@@ -3378,12 +3492,16 @@ begin
   checkFixedValue(errors, path + '.repeat', focus.getNamedChild('repeat'), fixed.repeat_, 'value');
 
   events := TAdvList<TWrapperElement>.Create();
-  focus.getNamedChildren('event', events);
-  if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, events.count = fixed.eventList.count, 'Expected ' + inttostr(fixed.eventList.count) + ' but found ' +
-    inttostr(events.count) + ' event elements')) then
-  begin
-    for i := 0 to events.count - 1 do
-      checkFixedValue(errors, path + '.event', events[i], fixed.eventList[i], 'event');
+  try
+    focus.getNamedChildren('event', events);
+    if (rule(errors, IssueTypeVALUE, focus.locStart(), focus.locEnd(), path, events.count = fixed.eventList.count, 'Expected ' + inttostr(fixed.eventList.count) + ' but found ' +
+      inttostr(events.count) + ' event elements')) then
+    begin
+      for i := 0 to events.count - 1 do
+        checkFixedValue(errors, path + '.event', events[i], fixed.eventList[i], 'event');
+    end;
+  finally
+    events.free;
   end;
 end;
 
@@ -3448,6 +3566,12 @@ begin
   basePath := path;
 end;
 
+destructor TChildIterator.Destroy;
+begin
+  parent.Free;
+  inherited;
+end;
+
 function TChildIterator.count: integer;
 var
   n: TWrapperElement;
@@ -3496,23 +3620,12 @@ var
   sfx: String;
 begin
   n := child.getNextSibling();
-  if (parent.isXml()) then
-  begin
-    sfx := '';
-    if (n <> nil) and (n.getName() = child.getName()) then
-      sfx := '[' + inttostr(lastCount + 1) + ']';
-    if (child.getNamespace = XHTML_NS) then
-      result := basePath + '/h:' + name() + sfx
-    else
-      result := basePath + '/f:' + name() + sfx;
-  end
+  if basePath = '' then
+    result := name()
+  else if (n <> nil) and (n.getName() = child.getName()) then
+    result := basePath + '.' + name() + '.item(' + inttostr(lastCount) + ')'
   else
-  begin
-    sfx := '';
-    if (n <> nil) and (n.getName() = child.getName()) then
-      sfx := '/' + integer.toString(lastCount + 1);
-    result := basePath + '/' + name() + sfx;
-  end;
+    result := basePath + '.' + name();
 end;
 
 function TFHIRValidator.validateXml(source : TAdvBuffer; outcome : TFHIROperationOutcome) : boolean;
@@ -3588,7 +3701,7 @@ begin
     begin
       json := TJSONParser.Parse(source.AsBytes);
       try
-        wrapper := TJsonWrapperElement.Create(json);
+        wrapper := TJsonWrapperElement.Create(json.link);
         try
           validateResource(result.issueList, wrapper, profile, needId, nil);
         finally
@@ -3633,60 +3746,210 @@ end;
 
 { TFHIRBaseOnWrapper }
 
-constructor TFHIRBaseOnWrapper.Create(wrapper: TWrapperElement);
+constructor TFHIRBaseOnWrapper.Create(services : TValidatorServiceProvider; wrapper: TWrapperElement; profile: TFHIRStructureDefinition; definition : TFhirElementDefinition; TypeName, TypeProfile : String);
 begin
   inherited create;
+  FServices := services;
   FWrapper := wrapper;
+  FProfile := profile;
+  FDefinition := definition;
+  FTypeName := TypeName;
+  FTypeProfile := TypeProfile;
 end;
 
 destructor TFHIRBaseOnWrapper.Destroy;
 begin
+  childDefinitions.Free;
+  FElementList.Free;
+  FProfile.Free;
+  FDefinition.Free;
   FWrapper.Free;
+  FServices.Free;
   inherited;
 end;
 
 function TFHIRBaseOnWrapper.FhirType: string;
 begin
-  raise Exception.Create('Not Done Yet');
+  if FTypeName <> '' then
+    result := FTypeName
+  else
+    result := FDefinition.type_List[0].code;
 end;
 
 procedure TFHIRBaseOnWrapper.GetChildrenByName(child_name: string; list: TFHIRObjectList);
 var
   children : TAdvList<TWrapperElement>;
   child : TWrapperElement;
+  definition : TFhirElementDefinition;
+  tn, tp : String;
 begin
   children := TAdvList<TWrapperElement>.create;
   try
-    FWrapper.getNamedChildren(child_name, children);
+    FWrapper.getNamedChildrenWithWildcard(child_name, children);
     for child in children do
-      list.Add(TFHIRBaseOnWrapper.Create(child.Link));
+    begin
+      definition := getDefinition(child.getName, tn, tp);
+      if (definition = nil) then
+        log('no definition found for '+FDefinition.path+'.'+child_name+' (en= '+child.getName+')')
+      else if definition.hasType('Resource') and FWrapper.isXml then // special case for DomainResource.contained and Bundle.entry
+        list.Add(TFHIRBaseOnWrapper.Create(FServices.link, child.getFirstChild.Link, Fprofile.Link, definition.Link, tn, tp))
+      else
+        list.Add(TFHIRBaseOnWrapper.Create(FServices.link, child.Link, Fprofile.Link, definition.Link, tn, tp));
+    end;
   finally
     children.Free;
   end;
 end;
 
+function TFHIRBaseOnWrapper.IsAbstractType(pn : String) : Boolean;
+var
+  p : TFhirStructureDefinition;
+begin
+  p := FServices.fetchResource(frtStructureDefinition, pn) as TFhirStructureDefinition;
+  try
+    result := (p <> nil) and (p.abstract);
+  finally
+    p.free;
+  end;
+end;
+
+function TFHIRBaseOnWrapper.getDefinition(name: String; var tn, tp: String): TFhirElementDefinition;
+var
+  ed : TFHIRElementDefinition;
+  tail : String;
+  profile : TFhirStructureDefinition;
+  pn : String;
+begin
+  if childDefinitions = nil then
+    childDefinitions := getChildMap(Fprofile, Fdefinition.name, Fdefinition.path, Fdefinition.NameReference);
+  if (childDefinitions.Count = 0) then
+  begin
+    pn := FTypeProfile;
+    if (pn = '') and (FTypeName <> '') then
+      pn := 'http://hl7.org/fhir/StructureDefinition/'+FTypeName;
+    if (pn = '') and (FDefinition.type_List.Count = 1) then
+    begin
+      if FDefinition.type_List[0].profileList.Count > 0 then
+        pn := FDefinition.type_List[0].profileList[0].value
+      else
+        pn := 'http://hl7.org/fhir/StructureDefinition/'+ FDefinition.type_List[0].code;
+    end;
+    if (pn <> '') then
+    begin
+      profile := FServices.fetchResource(frtStructureDefinition, pn) as TFhirStructureDefinition;
+      try
+        if (profile <> nil) then
+        begin
+          FProfile.Free;
+          FProfile := profile.link;
+          childDefinitions.Free;
+          childDefinitions := getChildMap(profile, '', profile.snapshot.elementList[0].path, '');
+        end;
+      finally
+        profile.Free;
+      end;
+    end;
+  end;
+
+  for ed in childDefinitions do
+  begin
+    tail := ed.path.Substring(ed.path.LastIndexOf('.')+1);
+    if tail = name then
+      exit(ed);
+    if tail.EndsWith('[x]') and (tail.Substring(0, tail.Length-3) = name.Substring(0, tail.Length-3)) and ed.hasType(name.Substring(tail.Length-3), tp) then
+    begin
+      tn := name.Substring(tail.Length-3);
+      exit(ed);
+    end;
+  end;
+  result := nil;
+end;
+
+function TFHIRBaseOnWrapper.IsPrimitive: boolean;
+begin
+  result := isPrimitiveType(fhirType);
+end;
+
+procedure TFHIRBaseOnWrapper.log(msg: String);
+begin
+
+end;
+
+function TFHIRBaseOnWrapper.primitiveValue: string;
+begin
+  result := FWrapper.getAttribute('value');
+end;
+
 { TFHIRResourceOnWrapper }
 
-constructor TFHIRResourceOnWrapper.Create(wrapper: TWrapperElement);
+constructor TFHIRResourceOnWrapper.Create(services : TValidatorServiceProvider; wrapper : TWrapperElement; profile: TFHIRStructureDefinition);
 begin
   inherited create;
+  FServices := services;
   FWrapper := wrapper;
+  FProfile := profile;
+  FDefinition := profile.snapshot.elementList[0].Link;
 end;
 
 destructor TFHIRResourceOnWrapper.Destroy;
 begin
+  FServices.Free;
+  childDefinitions.Free;
+  FElementList.Free;
+  FProfile.Free;
+  FDefinition.Free;
   FWrapper.Free;
   inherited;
 end;
 
 function TFHIRResourceOnWrapper.FhirType: string;
 begin
-  raise Exception.Create('Not Done Yet');
+  result := FWrapper.getResourceType;
 end;
 
 procedure TFHIRResourceOnWrapper.GetChildrenByName(child_name: string; list: TFHIRObjectList);
+var
+  children : TAdvList<TWrapperElement>;
+  child : TWrapperElement;
+  definition : TFhirElementDefinition;
+  tn, tp : String;
 begin
-  raise Exception.Create('Not Done Yet');
+  children := TAdvList<TWrapperElement>.create;
+  try
+    FWrapper.getNamedChildren(child_name, children);
+    for child in children do
+    begin
+      definition := getDefinition(child.getName, tn, tp);
+      if (definition <> nil) then
+        if definition.hasType('Resource') and FWrapper.isXml then // special case for DomainResource.contained and Bundle.entry
+          list.Add(TFHIRBaseOnWrapper.Create(FServices.link, child.getFirstChild.Link, Fprofile.Link, definition.Link, tn, tp))
+        else
+          list.Add(TFHIRBaseOnWrapper.Create(FServices.link, child.Link, Fprofile.Link, definition.Link, tn, tp));
+    end;
+  finally
+    children.Free;
+  end;
+end;
+
+function TFHIRResourceOnWrapper.getDefinition(name: String; var tn, tp: String): TFhirElementDefinition;
+var
+  ed : TFHIRElementDefinition;
+  tail : String;
+begin
+  if childDefinitions = nil then
+    childDefinitions := getChildMap(Fprofile, Fdefinition.name, Fdefinition.path, Fdefinition.NameReference);
+  for ed in childDefinitions do
+  begin
+    tail := ed.path.Substring(ed.path.LastIndexOf('.')+1);
+    if tail = name then
+      exit(ed);
+    if tail.EndsWith('[x]') and (tail.Substring(0, tail.Length-3) = name.Substring(0, tail.Length-3)) and ed.hasType(name.Substring(tail.Length-3), tp) then
+    begin
+      tn := name.Substring(tail.Length-3);
+      exit(ed);
+    end;
+  end;
+  result := nil;
 end;
 
 end.

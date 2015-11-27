@@ -1279,7 +1279,7 @@ begin
       else
       begin
         writeln(inttostr(i)+': '+rtype+'/'+id+': failed validation');
-        b.Append(inttostr(i)+': '+'http://fhir2.healthintersections.com.au/open/'+rtype+'/'+id+' : failed validation'+#13#10);
+        b.Append(inttostr(i)+': '+'http://local.healthintersections.com.au:960/open/'+rtype+'/'+id+' : failed validation'+#13#10);
         for issue in opX.issueList do
           if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
             b.Append('  xml: '+issue.Summary+#13#10);
@@ -1294,6 +1294,7 @@ begin
   except
     on e:exception do
     begin
+      recordStack(e);
       writeln(inttostr(i)+': '+rtype+'/'+id+': exception validating: '+e.message);
       b.Append(inttostr(i)+': '+'http://fhir2.healthintersections.com.au/open/'+rtype+'/'+id+' : exception validating: '+e.message+#13#10);
     end;
@@ -1324,12 +1325,12 @@ begin
             bufJ.asBytes := conn.ColBlobByName['JsonContent'];
             bufX.asBytes := conn.ColBlobByName['XmlContent'];
             inc(i);
+//            if (i = 57) then
             RunValidateResource(i, CODES_TFHIRResourceType[getTypeForKey(conn.ColIntegerByName['ResourceTypeKey'])], conn.ColStringByName['Id'], bufJ, bufX, b);
           finally
             bufJ.free;
             bufX.free;
           end;
-          break;
         end;
       finally
         conn.terminate;
@@ -1473,7 +1474,7 @@ begin
     if resource.ResourceType in [frtValueSet, frtConceptMap] then
       TerminologyServer.SeeTerminologyResource(resource)
     else if resource.ResourceType = frtStructureDefinition then
-      FValidatorContext.Profiles.seeProfile(key, resource as TFhirStructureDefinition);
+      FValidatorContext.seeResource(resource as TFhirStructureDefinition);
     FSubscriptionManager.SeeResource(key, vkey, id, created, resource, conn, reload, session);
     FQuestionnaireCache.clear(resource.ResourceType, id);
     if resource.ResourceType = frtValueSet then

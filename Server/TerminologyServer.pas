@@ -469,11 +469,15 @@ begin
   else
   begin
     vs := getCodeSystem(system);
-    if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, vs <> nil, 'Unknown Code System '+system) then
-    begin
-      def := getCodeDefinition(vs, code);
-      if (op.error('InstanceValidator', IssueTypeCodeInvalid, path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
-        result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
+    try
+      if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, vs <> nil, 'Unknown Code System '+system) then
+      begin
+        def := getCodeDefinition(vs, code);
+        if (op.error('InstanceValidator', IssueTypeCodeInvalid, path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
+          result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
+      end;
+    finally
+      vs.free;
     end;
   end;
 end;

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>FHIR Server (reference server) Release history</title>
+    <link>http://www.healthintersections.com.au/FhirServer</link>
+    <item>
+      <title>FHIR Server release 1.0.2 27-Nov 2015</title>
+      <link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.2.exe</link>
+      <description>27-Nov 2015 (v1.0.2): Update validation to use FHIR Path Expressions</description>
+    </item>
+    <item>
+      <title>FHIR Server release 1.0.0 (Prior to Versioned Releases)</title>
+      <link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.0.exe</link>
+      <description>Last Version Prior to Versioned Releases</description>
+    </item>
+  </channel>
+</rss>

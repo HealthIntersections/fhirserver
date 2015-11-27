@@ -38,7 +38,7 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches, AdvBuffers, ADvMemories,
   AdvObjectLists, AdvNameBuffers,
   AdvFiles, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRUtilities, FHIRConstants, FHIRParser;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRUtilities, FHIRConstants, FHIRParser, FHIRParserBase;
 
 Const
   DERIVATION_EQUALS = 'derivation.equals';
@@ -125,18 +125,20 @@ Type
     FSources : TAdvNameBufferList;
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
-  protected
-    procedure SeeResource(r : TFhirResource); virtual;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
     function link : TValidatorServiceProvider; overload;
 
+    procedure SeeResource(r : TFhirResource); virtual;
     function GetSourceByName(name : String) : TAdvNameBuffer;
     Property Profiles : TProfileManager read FProfiles write SetProfiles;
     procedure LoadFromDefinitions(filename : string);
+    procedure LoadFromFolder(folder : string);
+    procedure LoadFromFile(filename : string); overload;
+    procedure LoadFromFile(filename: string; parser : TFHIRParser); overload;
 
-    function getResourceNames : TAdvStringSet; virtual; abstract;
+    function getResourceNames : TAdvStringSet; virtual;
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; virtual;
     function expand(vs : TFhirValueSet) : TFHIRValueSet; virtual; abstract;
     function supportsSystem(system : string) : boolean; virtual; abstract;
@@ -294,15 +296,19 @@ begin
         begin
           p := diffMatches[0].type_List[0].profileList[0].value;
           sd := context.fetchResource(frtStructureDefinition, p) as TFhirStructureDefinition;
-          if (sd <> nil) then
-          begin
-            template := sd.Snapshot.elementList[0].Clone;
-            template.Path := currentBase.path;
-            if (diffMatches[0].type_List[0].Code <> 'Extension') then
+          try
+            if (sd <> nil) then
             begin
-              template.min := currentBase.min;
-              template.max := currentBase.max;
+              template := sd.Snapshot.elementList[0].Clone;
+              template.Path := currentBase.path;
+              if (diffMatches[0].type_List[0].Code <> 'Extension') then
+              begin
+                template.min := currentBase.min;
+                template.max := currentBase.max;
+              end;
             end;
+          finally
+            sd.Free;
           end;
         end;
         if (template = nil) then
@@ -332,13 +338,17 @@ begin
             dt := getProfileForDataType(outcome.type_List[0]);
             if (dt = nil) then
               raise Exception.create(diffMatches[0].path+' has children ('+differential.elementList[diffCursor].path+') for type '+typeCode(outcome.type_List)+' in profile '+profileName+', but can''t find type');
-            log(cpath+': now walk into the profile '+dt.url);
-            contextName := dt.url;
-            start := diffCursor;
-            while (differential.elementList.Count > diffCursor ) and ( pathStartsWith(differential.elementList[diffCursor].path, diffMatches[0].path+'.')) do
-              inc(diffCursor);
-            processPaths(result, dt.snapshot, differential, 1 { starting again on the data type, but skip the root }, start-1, dt.Snapshot.elementList.Count-1,
-                diffCursor - 1, url, profileName+pathTail(diffMatches[0]), diffMatches[0].path, trimDifferential, contextName, resultPathBase, false);
+            try
+              log(cpath+': now walk into the profile '+dt.url);
+              contextName := dt.url;
+              start := diffCursor;
+              while (differential.elementList.Count > diffCursor ) and ( pathStartsWith(differential.elementList[diffCursor].path, diffMatches[0].path+'.')) do
+                inc(diffCursor);
+              processPaths(result, dt.snapshot, differential, 1 { starting again on the data type, but skip the root }, start-1, dt.Snapshot.elementList.Count-1,
+                  diffCursor - 1, url, profileName+pathTail(diffMatches[0]), diffMatches[0].path, trimDifferential, contextName, resultPathBase, false);
+            finally
+              dt.Free;
+            end;
           end;
         end;
       end
@@ -618,36 +628,40 @@ end;
 
 function TProfileUtilities.getFirstCode(ed : TFHIRElementDefinition) : TFHIRCoding;
 var
-  vs : TFHIRValueSet;
+  vs, vs1 : TFHIRValueSet;
 begin
   if (ed.binding = nil) or (ed.binding.valueSet = nil) or (ed.binding.valueSet is TFHIRUri) then
     result := nil
   else
   begin
     vs := context.fetchResource(frtValueSet, (ed.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
-    if vs.codeSystem <> nil then
-    begin
-      result := TFhirCoding.Create;
-      result.system := vs.codeSystem.system;
-      result.code := vs.codeSystem.conceptList[0].code;
-      result.display := vs.codeSystem.conceptList[0].display;
-    end
-    else
-    begin
-      vs := context.expand(vs);
-      try
-        if (vs = nil) then
-          result := nil
-        else
-        begin
-          result := TFhirCoding.Create;
-          result.system := vs.expansion.containsList[0].system;
-          result.code := vs.expansion.containsList[0].code;
-          result.display := vs.expansion.containsList[0].display;
+    try
+      if vs.codeSystem <> nil then
+      begin
+        result := TFhirCoding.Create;
+        result.system := vs.codeSystem.system;
+        result.code := vs.codeSystem.conceptList[0].code;
+        result.display := vs.codeSystem.conceptList[0].display;
+      end
+      else
+      begin
+        vs1 := context.expand(vs);
+        try
+          if (vs1 = nil) then
+            result := nil
+          else
+          begin
+            result := TFhirCoding.Create;
+            result.system := vs1.expansion.containsList[0].system;
+            result.code := vs1.expansion.containsList[0].code;
+            result.display := vs1.expansion.containsList[0].display;
+          end;
+        finally
+          vs1.Free;
         end;
-      finally
-        vs.Free;
       end;
+    finally
+      vs.Free;
     end;
   end;
 end;
@@ -666,7 +680,7 @@ begin
     exit; // prevent recursion
   stack.Add(definition.Link);
   try
-    props := item.createPropertyList;
+    props := item.createPropertyList(true);
     try
       children := getChildMap(profile, definition.name, definition.path, definition.NameReference);
       try
@@ -782,7 +796,7 @@ begin
   if (result = nil) then
     result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code) as TFhirStructureDefinition;
   if (result = nil) then
-    writeln('XX: failed to find profle for type: ' + type_.code); // debug GJM
+    writeln('XX: failed to find profile for type: ' + type_.code); // debug GJM
 end;
 
 function TProfileUtilities.typeCode(types : TFhirElementDefinitionTypeList) : String;
@@ -1068,11 +1082,12 @@ var
   base, derived : TFhirElementDefinition;
   isExtension, ok : boolean;
   s : TFHIRString;
-  expBase, expDerived: TFHIRValueSet;
+  expBase, expDerived, vsBase, vsDerived: TFHIRValueSet;
   ts, td : TFhirElementDefinitionType;
   b : TStringList;
   ms, md : TFhirElementDefinitionMapping;
   cs : TFhirElementDefinitionConstraint;
+
 begin
   // we start with a clone of the base profile ('dest') and we copy from the profile ('source')
   // over the top for anything the source has
@@ -1264,14 +1279,27 @@ begin
 //            raise Exception.create('StructureDefinition '+pn+' at '+derived.path+': illegal attempt to change a binding from '+base.binding.strength.toCode()+' to '+derived.binding.strength.toCode());
         else if (base.binding <> nil) and (derived.binding <> nil) and (base.binding.strength = BindingStrengthREQUIRED) then
         begin
-          expBase := context.expand(context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference) as TFhirValueSet);
-          expDerived := context.expand(context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference) as TFhirValueSet);
-          if (expBase = nil) then
-            messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+base.path, 'Binding '+(base.binding.valueSet as TFhirReference).reference+' could not be expanded'))
-          else if (expDerived = nil) then
-            messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' could not be expanded'))
-          else if not isSubset(expBase, expDerived) then
-            messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' is not a subset of binding '+(base.binding.valueSet as TFhirReference).reference));
+          expBase := nil;
+          expDerived := nil;
+          vsBase := nil;
+          vsDerived := nil;
+          try
+            vsBase := context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+            vsDerived := context.fetchResource(frtValueSet, (derived.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+            expBase := context.expand(vsBase);
+            expDerived := context.expand(vsDerived);
+            if (expBase = nil) then
+              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+base.path, 'Binding '+(base.binding.valueSet as TFhirReference).reference+' could not be expanded'))
+            else if (expDerived = nil) then
+              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' could not be expanded'))
+            else if not isSubset(expBase, expDerived) then
+              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' is not a subset of binding '+(base.binding.valueSet as TFhirReference).reference));
+          finally
+            expBase.Free;
+            expDerived.Free;
+            vsBase.Free;
+            vsDerived.Free;
+          end;
         end;
         base.binding := derived.binding.clone();
       end
@@ -1439,6 +1467,21 @@ begin
   end;
 end;
 
+function TValidatorServiceProvider.getResourceNames: TAdvStringSet;
+var
+  a : TFhirResourceType;
+begin
+  result := TAdvStringSet.Create;
+  try
+    for a := Low(TFhirResourceType) to High(TFhirResourceType) do
+      if a <> frtNull then
+        result.add(CODES_TFhirResourceType[a]);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
 function TValidatorServiceProvider.GetSourceByName(name: String): TAdvNameBuffer;
 begin
   result := FSources.GetByName(name);
@@ -1509,6 +1552,63 @@ begin
   end;
 end;
 
+procedure TValidatorServiceProvider.LoadFromFile(filename: string; parser : TFHIRParser);
+var
+  fn : TFileStream;
+  be : TFhirBundleEntry;
+begin
+  try
+    fn := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
+    try
+      parser.source := fn;
+      parser.Parse;
+      if parser.resource is TFhirBundle then
+      begin
+        for be in TFhirBundle(parser.resource).entryList do
+          SeeResource(be.resource)
+      end
+      else
+        SeeResource(parser.resource);
+    finally
+      fn.Free;
+    end;
+  finally
+    parser.Free;
+  end;
+end;
+
+procedure TValidatorServiceProvider.LoadFromFile(filename: string);
+begin
+  filename := LowerCase(filename);
+  if ExtractFileExt(filename) = '.json' then
+    LoadFromFile(filename, TFHIRJsonParser.create('en'))
+  else if ExtractFileExt(filename) = '.xml' then
+    LoadFromFile(filename, TFHIRXmlParser.create('en'))
+end;
+
+procedure TValidatorServiceProvider.LoadFromFolder(folder: string);
+var
+  list : TStringList;
+  sr : TSearchRec;
+  fn : String;
+begin
+  list := TStringList.Create;
+  try
+    if FindFirst(IncludeTrailingBackslash(folder) + '*.*', faArchive, sr) = 0 then
+    begin
+      repeat
+        list.Add(sr.Name); //Fill the list
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+
+    for fn in list do
+      loadFromFile(IncludeTrailingBackslash(folder)+fn);
+  finally
+    list.Free;
+  end;
+end;
+
 procedure TValidatorServiceProvider.Load(feed: TFHIRBundle);
 var
   i : integer;
@@ -1526,10 +1626,35 @@ end;
 procedure TValidatorServiceProvider.SeeResource(r: TFhirResource);
 var
   p : TFhirStructureDefinition;
+  pu : TProfileUtilities;
+  messages : TFhirOperationOutcomeIssueList;
+  message : TFhirOperationOutcomeIssue;
+  sd : TFhirStructureDefinition;
 begin
   if r is TFHirStructureDefinition then
   begin
     p := r as TFHirStructureDefinition;
+    if (p.snapshot = nil) then
+    begin
+      sd := fetchResource(frtStructureDefinition, p.base) as TFhirStructureDefinition;
+      if sd = nil then
+        raise Exception.Create('Unknown base profile: "'+p.base+'"');
+      try
+        messages := TFhirOperationOutcomeIssueList.create;
+        pu := TProfileUtilities.create(self.link, messages.link);
+        try
+          pu.generateSnapshot(sd, p, p.url, p.Name);
+          for message in messages do
+            if (message.severity in [IssueSeverityFatal, IssueSeverityError]) then
+              raise Exception.Create('Error generating snapshot: '+message.details.text);
+        finally
+          pu.Free;
+          messages.free;
+        end;
+      finally
+        sd.Free;
+      end;
+    end;
     FProfiles.SeeProfile(0, p);
   end;
 end;

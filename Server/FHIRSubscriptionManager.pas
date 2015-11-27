@@ -797,7 +797,7 @@ begin
     begin
       qry := TFHIRPathEvaluator.create(nil);
       try
-        results := qry.evaluate(resource, code);
+        results := qry.evaluate(nil, resource, code);
         try
           value := '';
           for o in results do

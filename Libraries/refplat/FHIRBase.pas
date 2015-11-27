@@ -40,22 +40,9 @@ This is the dev branch of the FHIR code
 Interface
 
 Uses
-  Classes,
-  DateAndTime,
-  Generics.Collections,
-  SysUtils,
-  AdvNames,
-  AdvExceptions,
-  AdvObjects,
-  AdvObjectLists,
-  AdvBuffers,
-  AdvStringMatches,
-  AdvStringLists,
-  DateSupport,
-  EncodeSupport,
-  XMLBuilder,
-  {$IFDEF UNICODE} EncdDecd, {$ENDIF}
-  DecimalSupport;
+  SysUtils, Classes, Generics.Collections,
+  AdvNames, AdvExceptions, AdvObjects, AdvObjectLists, AdvBuffers, AdvStringMatches, AdvStringLists, AdvGenerics,
+  DateAndTime, DateSupport, EncodeSupport, XMLBuilder, EncdDecd, DecimalSupport;
 
 Const
   ID_LENGTH = 64;
@@ -160,21 +147,23 @@ type
   Private
     FName : String;
     FType : String;
+    FIsList : boolean;
     FList : TFHIRObjectList;
     FClass : TClass;
     function GetHasValue: Boolean;
   Public
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; cClass : TClass; oObject : TFHIRObject); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; cClass : TClass; oList : TFHIRObjectList); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; cClass : TClass; sValue : String); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; cClass : TClass; Value : TBytes); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
     Destructor Destroy; Override;
 
     Property hasValue : Boolean read GetHasValue;
     Property Name : String read FName;
     Property Type_ : String read FType;
     Property Class_ : TClass read FClass;
-    Property List : TFHIRObjectList read FList;
+    Property IsList : boolean read FIsList;
+    Property Values : TFHIRObjectList read FList;
   End;
 
 
@@ -207,7 +196,7 @@ type
     FCursor : Integer;
     Function GetCurrent : TFHIRProperty;
   public
-    Constructor Create(oFocus : TFHIRObject; bInheritedProperties : Boolean); overload;
+    Constructor Create(oFocus : TFHIRObject; bInheritedProperties, bPrimitiveValues : Boolean); overload;
     Destructor Destroy; Override;
     Procedure Next;
     Procedure Reset;
@@ -227,12 +216,12 @@ type
     function getTags(name: String): String;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); virtual;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Virtual;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Virtual;
   public
     Constructor Create; override;
     Destructor Destroy; override;
-    function createIterator(bInheritedProperties : Boolean) : TFHIRPropertyIterator;
-    function createPropertyList : TFHIRPropertyList;
+    function createIterator(bInheritedProperties, bPrimitiveValues : Boolean) : TFHIRPropertyIterator;
+    function createPropertyList(bPrimitiveValues : boolean) : TFHIRPropertyList;
     procedure ListChildrenByName(name : string; list : TFHIRObjectList);
     procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
     Property Tags[name : String] : String read getTags write SetTags;
@@ -279,7 +268,7 @@ type
   private
     FValue : String;
   protected
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor create(value : String); Overload;
     constructor create(value : TDateAndTime); Overload;
@@ -296,7 +285,7 @@ type
     FName : String;
     FValue : String;
   protected
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     Constructor Create(Name : String; Value : String); Overload;
 
@@ -333,6 +322,81 @@ type
     Procedure SetValue(name : String; value :String);
   End;
 
+  TFHIRBaseList = class;
+
+  {@Class TFHIRBase
+    A base FHIR element - can have an id on it
+  }
+  {!.Net HL7Connect.Fhir.Base}
+  TFHIRBase = class (TFHIRObject)
+  private
+    FCommentsStart: TAdvStringList;
+    FCommentsEnd: TAdvStringList;
+    FFormat : TFHIRFormat;
+    function GetCommentsStart: TAdvStringList;
+    function GetCommentsEnd: TAdvStringList;
+  protected
+//    Procedure GetChildrenByName(name : string; list : TFHIRObjectList); override;
+//   Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+  public
+    Destructor Destroy; override;
+    {!script hide}
+    Function Link : TFHIRBase; Overload;
+    Function Clone : TFHIRBase; Overload;
+    procedure Assign(oSource : TAdvObject); override;
+    {!script show}
+    function HasXmlCommentsStart : Boolean;
+    function HasXmlCommentsEnd : Boolean;
+    function HasComments : Boolean;
+    function FhirType : String; virtual;
+    function isPrimitive : boolean; virtual;
+    function primitiveValue : string; virtual;
+    Function PerformQuery(path : String):TFHIRBaseList;
+
+  published
+    {@member comments
+      comments from the XML stream. No support for comments in JSON
+    }
+    Property xml_commentsStart : TAdvStringList read GetCommentsStart;
+    Property xml_commentsEnd : TAdvStringList read GetCommentsEnd;
+
+    Property _source_format : TFHIRFormat read FFormat write FFormat;
+    function equalsDeep(other : TFHIRObject) : boolean; virtual;
+    function equalsShallow(other : TFHIRObject) : boolean; virtual;
+  end;
+
+  TFHIRBaseListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFHIRBaseList;
+    function GetCurrent : TFHIRBase;
+  public
+    Constructor Create(list : TFHIRBaseList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFHIRBase read GetCurrent;
+  end;
+
+  TFHIRBaseList = class (TFHIRObjectList)
+  private
+    Function GetItemN(index : Integer) : TFHIRBase;
+  protected
+    function ItemClass : TAdvObjectClass; override;
+  public
+    Constructor Create(item : TFHIRBase); overload;
+    Constructor Create(items : TFHIRBaseList); overload;
+    Destructor Destroy; override;
+    function Link : TFHIRBaseList; Overload;
+    function Clone : TFHIRBaseList; Overload;
+    function GetEnumerator : TFHIRBaseListEnumerator;
+    Property ObjByIndex[index : Integer] : TFHIRBase read GetItemN; default;
+  end;
+
+  TFHIRBaseFactory = class (TAdvObject)
+  private
+  public
+  end;
+
   TFhirXHtmlNodeList = class;
 
   {@Class TFhirXHtmlNode
@@ -340,7 +404,7 @@ type
     or a different type of node with text (usually text or comment)
   }
   {!.Net HL7Connect.Fhir.XhtmlNode}
-  TFhirXHtmlNode = class (TFHIRObject)
+  TFhirXHtmlNode = class (TFHIRBase)
   private
     FNodeType : TFHIRHtmlNodeType;
     FName : String;
@@ -351,7 +415,7 @@ type
     function GetChildNodes: TFhirXHtmlNodeList;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     Constructor Create; Override;
     Constructor Create(name : String) ; Overload;
@@ -362,6 +426,9 @@ type
     procedure Assign(oSource : TAdvObject); override;
     property Attributes : TFHIRAttributeList read FAttributes;
     function allChildrenAreText : boolean;
+    function isPrimitive : boolean; override;
+    function primitiveValue : string; override;
+    function FhirType : String; override;
     {!script show}
 
     {@member AsPlainText
@@ -506,93 +573,79 @@ type
     Property Nodes[index : Integer] : TFHIRXHtmlNode read GetItemN write SetItemN; default;
   End;
 
-  TFHIRBaseList = class;
+  TFHIRPathOperation = (opNull, poEquals, poEquivalent, poNotEquals, poNotEquivalent, poLessThen, poGreater, poLessOrEqual, poGreaterOrEqual,
+     poUnion, poIn, poAnd, poOr, poXor, poImplies, poPlus, poMinus, poConcatenate);
+  TFHIRPathOperationSet = set of TFHIRPathOperation;
+  TFHIRPathFunction = (pfNull, pfEmpty, pfNot, pfWhere, pfAll, pfAny, pfItem, pfFirst, pfLast, pfTail, pfCount, pfAsInteger, pfStartsWith, pfSubString, pfLength, pfMatches, pfDistinct, pfResolve, pfContains, pfExtension);
+  TFHIRExpressionNodeType = (entName, entFunction, entConstant, entGroup);
 
-  {@Class TFHIRBase
-    A base FHIR element - can have an id on it
-  }
-  {!.Net HL7Connect.Fhir.Base}
-  TFHIRBase = class (TFHIRObject)
-  private
-    FCommentsStart: TAdvStringList;
-    FCommentsEnd: TAdvStringList;
-    FFormat : TFHIRFormat;
-    function GetCommentsStart: TAdvStringList;
-    function GetCommentsEnd: TAdvStringList;
-  protected
-//    Procedure GetChildrenByName(name : string; list : TFHIRObjectList); override;
-//   Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
-  public
-    Destructor Destroy; override;
-    {!script hide}
-    Function Link : TFHIRBase; Overload;
-    Function Clone : TFHIRBase; Overload;
-    procedure Assign(oSource : TAdvObject); override;
-    {!script show}
-    function HasXmlCommentsStart : Boolean;
-    function HasXmlCommentsEnd : Boolean;
-    function HasComments : Boolean;
-    function FhirType : String; virtual;
-    Function PerformQuery(path : String):TFHIRBaseList;
-  published
-    {@member comments
-      comments from the XML stream. No support for comments in JSON
-    }
-    Property xml_commentsStart : TAdvStringList read GetCommentsStart;
-    Property xml_commentsEnd : TAdvStringList read GetCommentsEnd;
+const
+  CODES_TFHIRPathOperation : array [TFHIRPathOperation] of String = ('', '=' , '~' , '!=' , '!~' , '<' , '>' , '<=' , '>=' , '|' , 'in' , 'and' , 'or' , 'xor', 'implies', '+' , '-' , '&');
+  CODES_TFHIRPathFunctions : array [TFHIRPathFunction] of String = ('', 'empty' , 'not' , 'where' , 'all' , 'any' , 'item' , 'first' , 'last' , 'tail' , 'count' , 'asInteger' , 'startsWith' , 'substring', 'length' , 'matches' , 'distinct' , 'resolve' , 'contains', 'extension');
 
-    Property _source_format : TFHIRFormat read FFormat write FFormat;
-    function equalsDeep(other : TFHIRObject) : boolean; virtual;
-    function equalsShallow(other : TFHIRObject) : boolean; virtual;
-  end;
-
-  TFHIRBaseListEnumerator = class (TAdvObject)
-  private
-    FIndex : integer;
-    FList : TFHIRBaseList;
-    function GetCurrent : TFHIRBase;
-  public
-    Constructor Create(list : TFHIRBaseList);
-    Destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFHIRBase read GetCurrent;
-  end;
-
-  TFHIRBaseList = class (TFHIRObjectList)
-  private
-    Function GetItemN(index : Integer) : TFHIRBase;
-  protected
-    function ItemClass : TAdvObjectClass; override;
-  public
-    Destructor Destroy; override;
-    function Link : TFHIRBaseList; Overload;
-    function Clone : TFHIRBaseList; Overload;
-    function GetEnumerator : TFHIRBaseListEnumerator;
-    Property ObjByIndex[index : Integer] : TFHIRBase read GetItemN; default;
-  end;
-
-  TFHIRBaseFactory = class (TAdvObject)
-  private
-  public
-  end;
-
-(*
 type
-  TFHIRQueryProcessor = class (TAdvObject)
+  TFHIRExpressionNode = class (TAdvObject)
   private
-    FPath: String;
-    FResults: TFHIRObjectList;
-    FSource: TFHIRObjectList;
-  public
-    constructor Create; Override;
-    destructor Destroy; Override;
+    FTag : integer;
+    FName: String;
+    FConstant : string;
+    FFunctionId : TFHIRPathFunction;
+    FParameters : TAdvList<TFHIRExpressionNode>;
+    FInner: TFHIRExpressionNode;
+    FGroup: TFHIRExpressionNode;
+    FOperation : TFHIRPathOperation;
+    FProximal : boolean;
+    FOpNext: TFHIRExpressionNode;
+    FTypes : TAdvStringSet;
+    FOpTypes : TAdvStringSet;
+    FKind: TFHIRExpressionNodeType;
+    FUniqueId : integer;
+    FSourceLocationStart : TSourceLocation;
+    FSourceLocationEnd : TSourceLocation;
+    FOpSourceLocationStart : TSourceLocation;
+    FOpSourceLocationEnd : TSourceLocation;
 
-    property source : TFHIRObjectList read FSource;
-    property path : String read FPath write FPath;
-    procedure execute;
-    property results : TFHIRObjectList read FResults;
+    procedure SetOpNext(const Value: TFHIRExpressionNode);
+    procedure SetInner(const Value: TFHIRExpressionNode);
+    procedure SetGroup(const Value: TFHIRExpressionNode);
+    procedure SetFunctionId(const Value: TFHIRPathFunction);
+    procedure SetTypes(const Value: TAdvStringSet);
+    procedure SetOpTypes(const Value: TAdvStringSet);
+    procedure write(b : TStringBuilder);
+  public
+    Constructor Create(uniqueId : Integer);
+    Destructor Destroy; override;
+
+    function Link : TFHIRExpressionNode; overload;
+    function checkName : boolean;
+
+    property uniqueId : integer read FUniqueId;
+    property SourceLocationStart : TSourceLocation read FSourceLocationStart write FSourceLocationStart;
+    property SourceLocationEnd : TSourceLocation read FSourceLocationEnd write FSourceLocationEnd;
+    property OpSourceLocationStart : TSourceLocation read FOpSourceLocationStart write FOpSourceLocationStart;
+    property OpSourceLocationEnd : TSourceLocation read FOPSourceLocationEnd write FOpSourceLocationEnd;
+
+    function summary : String;
+    function ParameterCount : integer;
+    function Canonical : String;
+    function check(out msg : String; refCount : integer): boolean;
+    function location : String;
+    function opLocation : String;
+
+    property tag : integer read FTag write FTag;
+    property kind : TFHIRExpressionNodeType read FKind write FKind;
+    property name : String read FName write FName;
+    property constant : String read FConstant write FConstant;
+    property FunctionId : TFHIRPathFunction read FFunctionId write SetFunctionId;
+    property Parameters : TAdvList<TFHIRExpressionNode> read FParameters;
+    property Inner : TFHIRExpressionNode read FInner write SetInner;
+    property Group : TFHIRExpressionNode read FGroup write SetGroup;
+    property Operation : TFHIRPathOperation read FOperation write FOperation;
+    property Proximal : boolean read FProximal write FProximal;
+    property OpNext : TFHIRExpressionNode read FOpNext write SetOpNext;
+    property Types : TAdvStringSet read FTypes write SetTypes;
+    property OpTypes : TAdvStringSet read FOpTypes write SetOpTypes;
   end;
-*)
 
 
 function noList(e : TFHIRObjectList) : boolean;
@@ -645,7 +698,7 @@ end;
 
 function TFHIRBase.equalsDeep(other: TFHIRObject): boolean;
 begin
-  result := other <> nil;
+  result := (other <> nil) and (other.className = className);
 end;
 
 function TFHIRBase.equalsShallow(other: TFHIRObject): boolean;
@@ -655,7 +708,7 @@ end;
 
 function TFHIRBase.FhirType: String;
 begin
-  raise Exception.Create('"FhirType" is not overridden');
+  raise Exception.Create('"FhirType" is not overridden in '+className);
 end;
 
 function TFHIRBase.GetCommentsStart: TAdvStringList;
@@ -668,6 +721,11 @@ end;
 function TFHIRBase.HasXmlCommentsStart: Boolean;
 begin
   result := (FCommentsStart <> nil) and (FCommentsStart.count > 0);
+end;
+
+function TFHIRBase.isPrimitive: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRBase.GetCommentsEnd: TAdvStringList;
@@ -871,12 +929,12 @@ begin
   result := TFHIRAttribute(inherited Link);
 end;
 
-procedure TFHIRAttribute.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFHIRAttribute.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   if (bInheritedProperties) Then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', nil, FName));
-  oList.add(TFHIRProperty.create(self, 'value', 'string', nil, FValue));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, nil, FName));
+  oList.add(TFHIRProperty.create(self, 'value', 'string', false, nil, FValue));
 end;
 
 { TFhirXHtmlNode }
@@ -1002,6 +1060,11 @@ begin
   inherited;
 end;
 
+function TFhirXHtmlNode.FhirType: String;
+begin
+  result := 'xhtml';
+end;
+
 function TFhirXHtmlNode.GetAttribute(name: String): String;
 var
   i : integer;
@@ -1037,20 +1100,33 @@ begin
     list.add(TFHIRObjectText.create(FContent));
 end;
 
+function TFhirXHtmlNode.isPrimitive: boolean;
+begin
+  result := true;
+end;
+
 function TFhirXHtmlNode.Link: TFhirXHtmlNode;
 begin
   result := TFhirXHtmlNode(inherited Link);
 end;
 
-procedure TFhirXHtmlNode.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFhirXHtmlNode.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   if (bInheritedProperties) Then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'string', nil, CODES_TFHIRHtmlNodeType[FNodeType]));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', nil, FName));
-  oList.add(TFHIRProperty.create(self, 'attribute', 'Attribute', nil, FAttributes.Link));
-  oList.add(TFHIRProperty.create(self, 'childNode', 'Node', nil, FChildNodes.Link));
-  oList.add(TFHIRProperty.create(self, 'content', 'string', nil, FContent));
+  if (bPrimitiveValues) then
+  begin
+    oList.add(TFHIRProperty.create(self, 'type', 'string', false, nil, CODES_TFHIRHtmlNodeType[FNodeType]));
+    oList.add(TFHIRProperty.create(self, 'name', 'string', false, nil, FName));
+    oList.add(TFHIRProperty.create(self, 'attribute', 'Attribute', true, nil, FAttributes.Link));
+    oList.add(TFHIRProperty.create(self, 'childNode', 'Node', true, nil, FChildNodes.Link));
+    oList.add(TFHIRProperty.create(self, 'content', 'string', false, nil, FContent));
+  end;
+end;
+
+function TFhirXHtmlNode.primitiveValue: string;
+begin
+  result := FhirHtmlToText(self);
 end;
 
 function TFhirXHtmlNode.SetAttribute(name, value: String) : TFhirXHtmlNode;
@@ -1086,16 +1162,16 @@ begin
   FLocationEnd := nullLoc;
 end;
 
-function TFHIRObject.createIterator(bInheritedProperties: Boolean): TFHIRPropertyIterator;
+function TFHIRObject.createIterator(bInheritedProperties, bPrimitiveValues: Boolean): TFHIRPropertyIterator;
 begin
-  Result := TFHIRPropertyIterator.create(self, bInheritedProperties);
+  Result := TFHIRPropertyIterator.create(self, bInheritedProperties, bPrimitiveValues);
 end;
 
-function TFHIRObject.createPropertyList: TFHIRPropertyList;
+function TFHIRObject.createPropertyList(bPrimitiveValues : boolean): TFHIRPropertyList;
 begin
   result := TFHIRPropertyList.Create;
   try
-    ListProperties(result, true);
+    ListProperties(result, true, bPrimitiveValues);
     result.Link;
   finally
     result.Free;
@@ -1135,7 +1211,7 @@ begin
     GetChildrenByName(name, list);
 end;
 
-procedure TFHIRObject.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFHIRObject.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   // nothing to add here
 end;
@@ -1184,11 +1260,11 @@ begin
   self.value := String(EncodeBase64(@value[0], length(value)));
 end;
 
-procedure TFHIRObjectText.ListProperties(oList: TFHIRPropertyList; bInheritedProperties: Boolean);
+procedure TFHIRObjectText.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   if (bInheritedProperties) Then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'value', 'string', nil, FValue));
+  oList.add(TFHIRProperty.create(self, 'value', 'string', false, nil, FValue));
 end;
 
 { TFHIRObjectList }
@@ -1245,6 +1321,18 @@ end;
 function TFHIRBaseList.Clone: TFHIRBaseList;
 begin
   result := TFHIRBaseList(Inherited Clone);
+end;
+
+constructor TFHIRBaseList.Create(item: TFHIRBase);
+begin
+  Create;
+  add(item);
+end;
+
+constructor TFHIRBaseList.Create(items: TFHIRBaseList);
+begin
+  Create;
+  AddAll(items);
 end;
 
 destructor TFHIRBaseList.Destroy;
@@ -1432,32 +1520,35 @@ end;
 
 { TFHIRProperty }
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; cClass : TClass; oObject: TFHIRObject);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; oObject: TFHIRObject);
 begin
   Create;
   FName := sName;
   FType := sType;
   FClass := cClass;
+  FIsList := bList;
   FList := TFHIRObjectList.Create;
   if (oObject <> nil) then
     FList.Add(oObject);
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; cClass : TClass; oList: TFHIRObjectList);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; oList: TFHIRObjectList);
 begin
   Create;
   FName := sName;
   FType := sType;
   FClass := cClass;
+  FIsList := bList;
   FList := oList.Link;
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; cClass : TClass; sValue: String);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; sValue: String);
 begin
   Create;
   FName := sName;
   FType := sType;
   FClass := cClass;
+  FIsList := bList;
   FList := TFHIRObjectList.Create;
   if (sValue <> '') then
     FList.Add(TFhirString.Create(sValue));
@@ -1474,12 +1565,13 @@ begin
   result := (FList <> nil) and (Flist.Count > 0);
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; cClass : TClass; Value: TBytes);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; Value: TBytes);
 begin
   Create;
   FName := sName;
   FType := sType;
   FClass := cClass;
+  FIsList := bList;
   FList := TFHIRObjectList.Create;
   if (length(value) > 0) then
     FList.Add(TFhirString.Create(String(EncodeBase64(@value[0], length(value)))));
@@ -1504,13 +1596,13 @@ end;
 
 { TFHIRPropertyIterator }
 
-constructor TFHIRPropertyIterator.Create(oFocus: TFHIRObject; bInheritedProperties: Boolean);
+constructor TFHIRPropertyIterator.Create(oFocus: TFHIRObject; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   Create;
   FFocus := oFocus;
   FProperties := TFHIRPropertyList.Create;
   if FFocus <> nil Then
-    FFocus.ListProperties(FProperties, bInheritedProperties);
+    FFocus.ListProperties(FProperties, bInheritedProperties, bPrimitiveValues);
 end;
 
 destructor TFHIRPropertyIterator.Destroy;
@@ -1727,10 +1819,218 @@ var
 begin
   qry := TFHIRPathEvaluator.create(nil);
   try
-    result := qry.evaluate(self, path);
+    result := qry.evaluate(nil, self, path);
   finally
     qry.free;
   end;
+end;
+
+function TFHIRBase.primitiveValue: string;
+begin
+  result := '';
+end;
+
+{ TFHIRExpressionNode }
+
+function TFHIRExpressionNode.Canonical: String;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.Create;
+  try
+    write(b);
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function TFHIRExpressionNode.check(out msg: String; refCount : integer): boolean;
+var
+  n : TFHIRExpressionNode;
+begin
+  msg := '';
+  if refCount <> AdvObjectReferenceCount then
+    msg := 'Reference Count mistmatch'
+  else
+    case kind of
+    entName:
+      if Name = '' then
+        msg := 'No Name provided @ '+location;
+    entFunction:
+      begin
+        if FFunctionId = pfNull then
+          msg := 'No Function id provided @ '+location;
+        for n in parameters do
+          if not n.check(msg, 0) then
+            break;
+      end;
+    entConstant:
+      if FConstant = '' then
+        msg := 'No Constant provided @ '+location;
+    entGroup:
+      if FGroup = nil then
+        msg := 'No Group provided @ '+location
+      else
+        FGroup.check(msg, 0);
+  end;
+  if (msg = '') and (FInner <> nil) then
+    FInner.check(msg, 0);
+  if (msg = '') then
+    begin
+    if FOperation = opNull then
+    begin
+      if FOpNext <> nil then
+        msg := 'Next provided when it shouldn''t be @ '+location
+    end
+    else
+      if FOpNext = nil then
+        msg := 'No Next provided @ '+location
+      else
+        FOpNext.check(msg, 0);
+    end;
+  result := msg = '';
+end;
+
+function TFHIRExpressionNode.checkName: boolean;
+begin
+  if (name.StartsWith('$')) then
+    result := StringArrayExistsSensitive(['$context', '$parent', '$resource'], name)
+  else
+    result := true;
+end;
+
+constructor TFHIRExpressionNode.Create;
+begin
+  inherited Create;
+  FUniqueId := uniqueId
+end;
+
+destructor TFHIRExpressionNode.Destroy;
+begin
+  FParameters.free;
+  FOpNext.Free;
+  FInner.Free;
+  FGroup.Free;
+  FTypes.Free;
+  FOpTypes.Free;
+  inherited;
+end;
+
+function TFHIRExpressionNode.Link: TFHIRExpressionNode;
+begin
+  result := TFHIRExpressionNode(inherited Link);
+end;
+
+function TFHIRExpressionNode.location: String;
+begin
+  result := inttostr(SourceLocationStart.line)+', '+inttostr(SourceLocationStart.col);
+end;
+
+function TFHIRExpressionNode.opLocation: String;
+begin
+  result := inttostr(OpSourceLocationStart.line)+', '+inttostr(OpSourceLocationStart.col);
+end;
+
+function TFHIRExpressionNode.ParameterCount: integer;
+begin
+  if FParameters = nil then
+    result := 0
+  else
+    result := FParameters.Count;
+end;
+
+procedure TFHIRExpressionNode.SetFunctionId(const Value: TFHIRPathFunction);
+begin
+  FFunctionId := Value;
+  if FParameters = nil then
+    FParameters := TAdvList<TFHIRExpressionNode>.create;
+end;
+
+procedure TFHIRExpressionNode.SetOpNext(const Value: TFHIRExpressionNode);
+begin
+  FOpNext.Free;
+  FOpNext := Value;
+end;
+
+procedure TFHIRExpressionNode.SetTypes(const Value: TAdvStringSet);
+begin
+  FTypes.Free;
+  FTypes := Value;
+end;
+
+function TFHIRExpressionNode.summary: String;
+begin
+  case FKind of
+    entName: result := inttostr(uniqueId)+': '+FName;
+    entFunction: result := inttostr(uniqueId)+': '+CODES_TFHIRPathFunctions[FFunctionId]+'()';
+    entConstant: result := inttostr(uniqueId)+': "'+FConstant+'"';
+    entGroup: result := inttostr(uniqueId)+': (Group)';
+  end;
+end;
+
+procedure TFHIRExpressionNode.write(b: TStringBuilder);
+var
+  f : boolean;
+  n : TFHIRExpressionNode;
+begin
+  case fKind of
+    entName:
+      b.Append(FName);
+    entConstant:
+      b.Append(FConstant);
+    entFunction:
+      begin
+        b.Append(CODES_TFHIRPathFunctions[FFunctionId]);
+        b.Append('(');
+        f := true;
+        for n in Parameters do
+        begin
+          if f then
+            f := false
+          else
+            b.Append(', ');
+          n.write(b);
+        end;
+        b.Append(')');
+      end;
+    entGroup:
+      begin
+        b.Append('(');
+        FGroup.write(b);
+        b.Append(')');
+      end;
+  end;
+  if inner <> nil then
+  begin
+    b.Append('.');
+    inner.write(b);
+  end;
+  if Operation <> opNull then
+  begin
+    b.Append(' ');
+    b.Append(CODES_TFHIRPathOperation[Operation]);
+    b.Append(' ');
+    OpNext.write(b);
+  end;
+end;
+
+procedure TFHIRExpressionNode.SetOpTypes(const Value: TAdvStringSet);
+begin
+  FOpTypes.Free;
+  FOpTypes := Value;
+end;
+
+procedure TFHIRExpressionNode.SetInner(const Value: TFHIRExpressionNode);
+begin
+  FInner.free;
+  FInner := Value;
+end;
+
+procedure TFHIRExpressionNode.SetGroup(const Value: TFHIRExpressionNode);
+begin
+  FGroup.Free;
+  FGroup := Value;
 end;
 
 

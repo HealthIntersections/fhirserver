@@ -35,6 +35,8 @@ type
     ToolButton20: TToolButton;
     ToolButton21: TToolButton;
     pnlMessage: TPanel;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -63,15 +65,18 @@ type
     procedure mPathKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure mPathEnter(Sender: TObject);
     procedure mPathChange(Sender: TObject);
+    procedure ToolButton2Click(Sender: TObject);
   private
     { Private declarations }
     FMessageShort, FMessageLong : String;
     FFirstPathEdit : boolean;
+    FHasValidPath : boolean;
   public
     { Public declarations }
     procedure connected(name, url, user, scopes : String);
     procedure disconnected;
     procedure loadServers;
+    property HasValidPath : boolean read FHasValidPath;
   end;
 
 var
@@ -109,6 +114,8 @@ begin
   self.KeyPreview := true; // special hack for input forms
   self.OnFloat := self.FormFloat;
   self.OnDock := self.FormDock;
+  mPath.font.Name := Settings.FontName;
+  mPath.font.Size := Settings.FontSize;
   if mPath.Text = Settings.Path then
   begin
     mPath.Text := 'Path...';
@@ -240,23 +247,34 @@ var
   qry : TFHIRPathEvaluator;
 begin
   Settings.Path := mPath.Text;
-  try
-    qry := TFHIRPathEvaluator.create(nil);
+  if mPath.text = '' then
+  begin
+    FHasValidPath := false;
+    FNpp.DoNppnTextModified;
+  end
+  else
+  begin
     try
-      qry.parse(mPath.Text).free;
-      mPath.Color := clWindow;
-      mPath.Hint := 'FHIR Path Statement';
-    finally
-      qry.Free;
-    end;
-  except
-    on e: exception do
-    begin
-      mPath.Color := $edebfa;
-      mPath.Hint := e.Message;
+      qry := TFHIRPathEvaluator.create(nil);
+      try
+        qry.parse(mPath.Text).free;
+        mPath.Color := clWindow;
+        mPath.Hint := 'FHIR Path Statement';
+      finally
+        qry.Free;
+      end;
+      FHasValidPath := true;
+      FNpp.reset;
+      FNpp.DoNppnTextModified;
+    except
+      on e: exception do
+      begin
+        mPath.Color := $edebfa;
+        mPath.Hint := e.Message;
+        FHasValidPath := false;
+      end;
     end;
   end;
-
 end;
 
 procedure TFHIRToolbox.mPathEnter(Sender: TObject);
@@ -303,7 +321,7 @@ end;
 
 procedure TFHIRToolbox.ToolButton15Click(Sender: TObject);
 begin
-  FNpp.FuncPath;
+  FNpp.FuncJumpToPath;
 end;
 
 procedure TFHIRToolbox.ToolButton16Click(Sender: TObject);
@@ -323,12 +341,17 @@ end;
 
 procedure TFHIRToolbox.ToolButton1Click(Sender: TObject);
 begin
-  _FuncServers;
+  FNpp.FuncDebugPath;
 end;
 
 procedure TFHIRToolbox.ToolButton21Click(Sender: TObject);
 begin
   _FuncNarrative;
+end;
+
+procedure TFHIRToolbox.ToolButton2Click(Sender: TObject);
+begin
+  FNpp.FuncExtractPath;
 end;
 
 procedure TFHIRToolbox.tbConnectClick(Sender: TObject);

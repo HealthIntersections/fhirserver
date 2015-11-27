@@ -99,6 +99,8 @@
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>
+        <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
+        <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
         <DCCReference Include="npplib\nppplugin.pas"/>
         <DCCReference Include="npplib\SciSupport.pas"/>
         <DCCReference Include="npplib\NppForms.pas">
@@ -222,33 +224,43 @@
         <DCCReference Include="..\Libraries\refplat\FHIRClient.pas"/>
         <DCCReference Include="NewResourceForm.pas">
             <Form>ResourceNewForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\Libraries\refplat\FHIRNarrativeGenerator.pas"/>
         <DCCReference Include="NewServerForm.pas">
             <Form>RegisterServerForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\Libraries\refplat\SmartOnFhirLogin.pas">
             <Form>SmartOnFhirLoginForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\Libraries\support\ParseMap.pas"/>
         <DCCReference Include="..\Libraries\refplat\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="FetchResourceForm.pas">
             <Form>FetchResourceFrm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\Components\vtree\Source\VirtualTrees.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FhirPath.pas"/>
+        <DCCReference Include="..\Libraries\refplat\FHIRPath.pas"/>
         <DCCReference Include="FHIRPathDocumentation.pas">
             <Form>FHIRPathDocumentationForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\Libraries\support\MimeMessage.pas"/>
         <DCCReference Include="PathDialogForms.pas">
             <Form>PathDialogForm</Form>
-            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="ValidationOutcomes.pas">
+            <Form>ValidationOutcomeForm</Form>
+        </DCCReference>
+        <DCCReference Include="FHIRVisualiser.pas">
+            <Form>FHIRVisualizer</Form>
+        </DCCReference>
+        <DCCReference Include="..\Libraries\refplat\FHIRPathDebugger.pas">
+            <Form>FHIRPathDebuggerForm</Form>
+        </DCCReference>
+        <DCCReference Include="WelcomeScreen.pas">
+            <Form>WelcomeScreenForm</Form>
+        </DCCReference>
+        <DCCReference Include="nppbuildcount.pas"/>
+        <DCCReference Include="UpgradePrompt.pas">
+            <Form>UpgradePromptForm</Form>
         </DCCReference>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

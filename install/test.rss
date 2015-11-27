@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<rss version="2.0">
+  <channel>
+    <title>FHIR Notepad++ Plug-in Release history</title>
+    <link>http://www.healthintersections.com.au/FhirServer</link>
+    <item><title>FHIR Notepad++ Plug-in release 1.0.2 23-Dec 2015</title><link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.2.exe</link><description>Date 23-Dec 2015. changes: this is a testing change</description></item><item><title>FHIR Notepad++ Plug-in release 1.0.2 23-Dec 2015</title><link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.2.exe</link><description>Date 23-Dec 2015. changes: this is a testing change</description></item><item><title>FHIR Notepad++ Plug-in release 1.0.2 23-Dec 2015</title><link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.2.exe</link><description>Date 23-Dec 2015. changes: this is a testing change</description></item><item><title>FHIR Notepad++ Plug-in release 1.0.2 23-Dec 2015</title><link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.2.exe</link><description>Date 23-Dec 2015. changes: Just Testing</description></item><item>
+      <title>FHIR NPP+ released</title>
+      <link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.2.exe</link>
+      <description>Original Release at DevDays 2015</description>
+    </item>
+  </channel>
+</rss>

@@ -1899,7 +1899,10 @@ function TSnomedServices.IsValidConcept(const sTerm: String): Boolean;
 var
   iTerm : Cardinal;
 begin
-  result := Concept.FindConcept(StringToId(sTerm), iTerm);
+  if not StringIsInteger64(sTerm) then
+    result := false
+  else
+    result := Concept.FindConcept(StringToId(sTerm), iTerm);
 end;
 
 function TSnomedServices.IsValidDescription(const sTerm: String; var concept: UInt64; var description: String): Boolean;

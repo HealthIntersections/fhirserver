@@ -2,11 +2,18 @@ unit FHIRServerConstants;
 
 interface
 
-Const
-  SERVER_VERSION = '1.00.000';
-  SERVER_RELEASE_DATE = '2014-07-23';
+{
+[settings]
+} const
+BuildCount='2';
+BuildDate='2015-11-27';
+
+
+  SERVER_VERSION = '1.0.'+buildCount;
+  SERVER_RELEASE_DATE = BuildDate;
 
 
 implementation
 
 end.
+

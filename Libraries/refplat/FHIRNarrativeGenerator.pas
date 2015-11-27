@@ -250,7 +250,7 @@ begin
   if (FList = nil) then
   begin
     FList := TAdvList<TBaseWrapper>.create();
-    for b in FWrapped.list do
+    for b in FWrapped.Values do
       if b = nil then
         FList.add(nil)
       else
@@ -305,7 +305,7 @@ begin
   if (FList = nil) then
   begin
     FList := TAdvList<TPropertyWrapper>.create();
-    list := FWrapped.createPropertyList;
+    list := FWrapped.createPropertyList(false);
     try
       for p in list do
         FList.add(TPropertyWrapperDirect.create(p.Link as TFHIRProperty));
@@ -325,7 +325,7 @@ begin
   if (FList = nil) then
   begin
     FList := TAdvList<TPropertyWrapper>.create();
-    list := FWrapped.createPropertyList;
+    list := FWrapped.createPropertyList(false);
     try
       for p in list do
         if (p.name = tail) then
@@ -397,7 +397,7 @@ var
   list: TAdvList<TPropertyWrapper>;
   pList: TFHIRPropertyList;
 begin
-  pList := FWrapped.createPropertyList;
+  pList := FWrapped.createPropertyList(false);
   try
     list := TAdvList<TPropertyWrapper>.create();
     try
@@ -431,16 +431,20 @@ begin
   else
   begin
     p := nil;
-    if (r.Meta <> nil) then
-      for pu in r.Meta.profileList do
-        if (p = nil) then
-          p := context.fetchResource(frtStructureDefinition, pu.value) as TFHIRStructureDefinition;
-    if (p = nil) then
-      p := context.fetchResource(frtStructureDefinition, CODES_TFHIRREsourceType[r.ResourceType]) as TFHIRStructureDefinition;
-    if (p = nil) then
-      p := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + CODES_TFHIRREsourceType[r.ResourceType]) as TFHIRStructureDefinition;
-    if (p <> nil) then
-      generateByProfile(r, p, true);
+    try
+      if (r.Meta <> nil) then
+        for pu in r.Meta.profileList do
+          if (p = nil) then
+            p := context.fetchResource(frtStructureDefinition, pu.value) as TFHIRStructureDefinition;
+      if (p = nil) then
+        p := context.fetchResource(frtStructureDefinition, CODES_TFHIRREsourceType[r.ResourceType]) as TFHIRStructureDefinition;
+      if (p = nil) then
+        p := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + CODES_TFHIRREsourceType[r.ResourceType]) as TFHIRStructureDefinition;
+      if (p <> nil) then
+        generateByProfile(r, p, true);
+    finally
+      p.Free;
+    end;
   end;
 end;
 
@@ -693,30 +697,34 @@ begin
               ex := TFHIRExtension(v.getBase());
               url := ex.url;
               ed := context.fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
-              if (p.getName() = 'modifierExtension') and (ed = nil) then
-                raise Exception.create('Unknown modifier extension ' + url);
-              pe := map[p.getName() + '[' + url + ']'];
-              if (pe = nil) then
-              begin
-                if (ed = nil) then
+              try
+                if (p.getName() = 'modifierExtension') and (ed = nil) then
+                  raise Exception.create('Unknown modifier extension ' + url);
+                pe := map[p.getName() + '[' + url + ']'];
+                if (pe = nil) then
                 begin
-                  if (url.startsWith('http://hl7.org/fhir')) then
-                    raise Exception.create('unknown extension ' + url);
-                  // writeln('unknown extension '+url);
-                  pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', p.getTypeCode(), TFHIRExtension,
-                    { p.getDefinition(), p.getMinCardinality(), p.getMaxCardinality(), } ex));
+                  if (ed = nil) then
+                  begin
+                    if (url.startsWith('http://hl7.org/fhir')) then
+                      raise Exception.create('unknown extension ' + url);
+                    // writeln('unknown extension '+url);
+                    pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', p.getTypeCode(), true, TFHIRExtension,
+                      { p.getDefinition(), p.getMinCardinality(), p.getMaxCardinality(), } ex));
+                  end
+                  else
+                  begin
+                    def := ed.snapshot.ElementList[0];
+                    pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', 'Extension', true, TFHIRExtension,
+                      { def.getDefinition(), def.getMin(), def.getMax().equals('*') ? Integer.MAX_VALUE : Integer.parseInt(def.getMax()), } ex));
+                    // TPropertyWrapperDirect(pe).Fwrapped.Structure := ed;
+                  end;
+                  results.add(pe);
                 end
                 else
-                begin
-                  def := ed.snapshot.ElementList[0];
-                  pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', 'Extension', TFHIRExtension,
-                    { def.getDefinition(), def.getMin(), def.getMax().equals('*') ? Integer.MAX_VALUE : Integer.parseInt(def.getMax()), } ex));
-                  // TPropertyWrapperDirect(pe).Fwrapped.Structure := ed;
-                end;
-                results.add(pe);
-              end
-              else
-                pe.getValues().add(v);
+                  pe.getValues().add(v);
+              finally
+                ed.Free;
+              end;
             end;
           end;
         end
@@ -1193,33 +1201,37 @@ begin
   end;
   path := res.getName();
   profile := context.fetchResource(frtStructureDefinition, path) as TFHIRStructureDefinition;
-  if (profile = nil) then
-    x.addText('unknown resource ' + path)
-  else
-  begin
-    firstElement := true;
-    last := false;
-    for p in res.children() do
+  try
+    if (profile = nil) then
+      x.addText('unknown resource ' + path)
+    else
     begin
-      child := getElementDefinition(profile.snapshot.ElementList, path + '.' + p.getName(), p);
-      if (p.getValues().Count > 0) and (p.getValues()[0] <> nil) and (child <> nil) and (isPrimitive(child)) and (includeInSummary(child)) then
+      firstElement := true;
+      last := false;
+      for p in res.children() do
       begin
-        if (firstElement) then
-          firstElement := false
-        else if (last) then
-          x.addText('; ');
-        first := true;
-        last := false;
-        for v in p.getValues() do
+        child := getElementDefinition(profile.snapshot.ElementList, path + '.' + p.getName(), p);
+        if (p.getValues().Count > 0) and (p.getValues()[0] <> nil) and (child <> nil) and (isPrimitive(child)) and (includeInSummary(child)) then
         begin
-          if (first) then
-            first := false
+          if (firstElement) then
+            firstElement := false
           else if (last) then
-            x.addText(', ');
-          last := displayLeaf(res, v, child, x, p.getName(), showCodeDetails) or (last);
+            x.addText('; ');
+          first := true;
+          last := false;
+          for v in p.getValues() do
+          begin
+            if (first) then
+              first := false
+            else if (last) then
+              x.addText(', ');
+            last := displayLeaf(res, v, child, x, p.getName(), showCodeDetails) or (last);
+          end;
         end;
       end;
     end;
+  finally
+    profile.Free;
   end;
 end;
 
@@ -1283,10 +1295,14 @@ begin
   end;
 
   ae := context.fetchResource(frtNull, url);
-  if (ae <> nil) then
-  begin
-    result.reference := url;
-    result.resource := TResourceWrapperDirect.create(ae);
+  try
+    if (ae <> nil) then
+    begin
+      result.reference := url;
+      result.resource := TResourceWrapperDirect.create(ae);
+    end;
+  finally
+    ae.free;
   end;
 end;
 

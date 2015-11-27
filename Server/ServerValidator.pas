@@ -17,13 +17,13 @@ Type
     FTerminologyServer : TTerminologyServer;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
 
-  protected
-    procedure SeeResource(r : TFhirResource); override;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
 
     Function Link : TFHIRServerValidatorContext; overload;
+
+    procedure SeeResource(r : TFhirResource); override;
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
 

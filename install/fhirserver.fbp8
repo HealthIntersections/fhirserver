@@ -16,17 +16,41 @@ begin
         ignorefilenotfound = false
         inifile = C:\\work\\ftp.ini
         sectionname = settings
-        variables = "ftppassword" +
+        variables = "BuildCount" +
+                    "ftppassword" +
                     "purpose" +
                     ""
         variabletypes = "String" +
                         "String" +
+                        "String" +
                         ""
+      end
+      action.variable.set
+      begin
+        applytoexisting = false
+        doexpandexpression = true
+        forcetype = ftInteger
+        id = {D316F26D-A0A7-4E2C-A0A1-F206ACDB630B}
+        modifier = smIncrement
+        newvalue = %BuildCount%
+        variablename = BuildCount
+      end
+      action.datetime.get
+      begin
+        dateformat = yyyy-mm-dd
+        fbvariable = BuildDate
+        forceseparators = false
+        id = {3B4C8BA9-F1F2-4955-A3CA-3BAB96226949}
+        manipulationtype = Add
+        manipulationunit = Seconds
+        thedate = 42335.7506611574
+        usenow = true
       end
       action.gui.inputbox
       begin
         actiontypeid = {95261620-BBED-49FE-89A2-B623F678C1F0}
         customactionname = InputBox
+        description = "InputBox [ Release Notes ]"
         enabletimeout = false
         id = {8B8614C2-7840-427F-BBE6-6E990A24F9A6}
         impersonateusenetcredonly = false
@@ -38,11 +62,12 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "major upgrade to subscriptions per http://wiki.hl7.org/index.php?title=FHIR_Subscription_Working_Page"
+        as.returnvalue = Test
         as.returnvariable = purpose
       end
       action.variables.savetoini
       begin
+        description = "Save Purpose"
         erasesection = false
         id = {5E945733-DF55-43B4-88EA-EC690412E720}
         inifile = C:\\work\\ftp.ini
@@ -59,12 +84,46 @@ begin
         failifvariablenotininifile = true
         id = {25828604-726F-4115-89FB-03799A67707B}
         ignorefilenotfound = false
-        inifile = C:\\work\\org.hl7.fhir\\build\\publish\\version.info
+        inifile = C:\\work\\org.hl7.fhir.dstu2\\build\\publish\\version.info
         sectionname = FHIR
         variables = "FhirVersion" +
                     ""
         variabletypes = "String" +
                         ""
+      end
+      action.variables.logvalues
+      begin
+        failifnotdefined = true
+        id = {8BC7945E-952D-4E59-92DC-FED847E39B62}
+        logallvariables = false
+        variablestoragestring = "BuildCount" +
+                                "FhirVersion" +
+                                "purpose" +
+                                ""
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Save BuildCount to server source"
+        id = {ECBCB9BE-4F4B-4B65-8249-4756507B88AB}
+        inifile = C:\\work\\fhirserver\\Server\\FHIRServerConstants.pas
+        newvalue = '%BuildCount%';
+        section = settings
+        valuename = BuildCount
+        valuetype = vtString
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Save BuildDate to server source"
+        id = {CD741CDE-5045-4EC9-A680-35808E92481A}
+        inifile = C:\\work\\fhirserver\\Server\\FHIRServerConstants.pas
+        newvalue = '%BuildDate%';
+        section = settings
+        valuename = BuildDate
+        valuetype = vtString
       end
       action.files.delete
       begin
@@ -246,6 +305,30 @@ begin
         useerrordialogmonitor = false
         waitforcompletion = true
       end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Set AppVerName in Inno Script"
+        id = {65390809-00BE-4438-AAFE-E3C27A4F4177}
+        inifile = C:\\work\\fhirserver\\install\\install.iss
+        newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion%)"
+        section = Setup
+        valuename = AppVerName
+        valuetype = vtString
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Set OutputFilename in Inno Script"
+        id = {15C08B77-3163-47F9-B471-664C5CD23E97}
+        inifile = C:\\work\\fhirserver\\install\\install.iss
+        newvalue = fhirserver-1.0.%BuildCount%
+        section = Setup
+        valuename = OutputBaseFilename
+        valuetype = vtString
+      end
       action.innosetup.execute
       begin
         description = "Build the server install"
@@ -260,18 +343,18 @@ begin
       action.process.execute
       begin
         captureoutput = true
-        description = "Sign the server nstall"
+        description = "Sign the server install"
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
         expandimpersonationtoken = false
         hidewindow = true
-        id = {558736BC-993B-4201-95DD-D5280B95116C}
+        id = {3A297C4D-78A3-4974-A55C-897DBC01099E}
         impersonateusenetcredonly = false
         impersonateuser = false
         logoutput = true
         logprocessparameters = true
-        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\FHIRServer_Install_DSTU2.exe\""
+        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver-1.0.%BuildCount%.exe\""
         programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
         redirectstderr = true
         returncodecomparator = rcEqualTo
@@ -310,13 +393,13 @@ begin
         connectionname = HealthIntersections
         detailedlogging = false
         enabletimeout = false
-        filespec = FHIRServer_Install_DSTU2.exe
+        filespec = fhirserver-1.0.%BuildCount%.exe
         forcenextclockskewupdate = true
         gaplength = 5
-        id = {73EE9861-9B29-4EDF-B7F7-18F44D1B2B95}
+        id = {D39D7CF3-7021-424E-8AD7-112C4AE57185}
         localdir = C:\\work\\fhirserver\\install\\build
         recursive = false
-        remotefile = public_html/FhirServer/FHIRServer_Install_DSTU2.exe
+        remotefile = public_html/FhirServer/fhirserver-1.0.%BuildCount%.exe
         retryifuploadfails = true
         serverclockskew = 0
         throttlespeed = 128
@@ -325,91 +408,103 @@ begin
         updateonly = false
         usefilespec = true
       end
-      action.smtp.send
+      action.process.execute
       begin
-        authenticate = false
-        bccsource = asSpecify
-        bodyobject = "A new version of the Dev FHIR Server has been posted at " +
-                     "" +
-                     "http://www.healthintersections.com.au/FhirServer/FHIRServer_Install_DSTU2.exe" +
-                     "" +
-                     "In this release:" +
-                     "  %purpose%" +
-                     "" +
-                     ".. FHIR Server Build Process" +
-                     "" +
-                     "" +
-                     ""
-        copytosource = asSpecify
-        encryptedpassword = 3R\+g9NnIZyx/OFFW
-        host = smtp.gmail.com
-        htmlmessage = false
-        id = {21040135-AB86-4642-8C17-290A44768977}
-        logsslnegotiation = false
-        port = 465
-        recipientssource = asSpecify
-        replytosource = asSpecify
-        subject = "New FHIR Server Posted"
-        useehlo = false
-        useglobaloptions = false
-        userid = fhir-server@healthintersections.com.au
-        usessl = true
-        usetls = utUseExplicitTLS
-        email.address
-        begin
-          address = server@healthintersections.com.au
-          addresstype = from
-          name = "FHIR Server"
-        end
-        email.address
-        begin
-          addresstype = sender
-        end
-        email.list
-        begin
-          listtype = replyto
-        end
-        email.address
-        begin
-          addresstype = ReceiptRecipient
-        end
-        email.list
-        begin
-          listtype = recipients
-          email.address
-          begin
-            address = patrick.werner@hs-heilbronn.de
-            name = "Patrick Werner"
-          end
-          email.address
-          begin
-            address = grahame@healthintersections.com.au
-            name = "Grahame Grieve"
-          end
-          email.address
-          begin
-            address = john.carey@kestral.com.au
-            name = "John Carey"
-          end
-          email.address
-          begin
-            address = Michael.Osborne@mater.org.au
-            name = "Michael Osborne"
-          end
-          email.address
-          begin
-            address = raychelle@dynamichealthit.com
-            name = "Raychelle Fernandez "
-          end
-        end
-        email.list
-        begin
-          listtype = copyto
-        end
-        email.list
-        begin
-          listtype = blindcopyto
-        end
+        captureoutput = true
+        description = "update RSS"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = false
+        id = {1FBEB9CA-0FE3-44E6-AE68-30D03BA9D42D}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "-base fhirserver -title \"Server\" -filename C:\\work\\fhirserver\\install\\fhirserver.rss -version \"1.0.%BuildCount%\" -change \"%purpose%\""
+        programname = C:\\work\\RssUpdate.exe
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        terminateontimeout = false
+        timeoutlength = 0
+        useerrordialogmonitor = false
+        waitforcompletion = true
+      end
+      action.variables.savetoini
+      begin
+        description = "Save BuildCount"
+        erasesection = false
+        id = {4F98E56B-5E79-4601-9312-F9B2D7BD0FBD}
+        inifile = C:\\work\\ftp.ini
+        saveall = false
+        sectionname = settings
+        variables = "BuildCount" +
+                    ""
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = fhirserver.rss
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {ED9AC6CC-690A-48DB-A2BD-5ABEE6AFB29B}
+        localdir = C:\\work\\fhirserver\\install
+        recursive = false
+        remotefile = public_html/FhirServer/fhirserver.rss
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.xml.document.transform
+      begin
+        allowdtds = false
+        expanddocumentnodenamespace = false
+        id = {CBD9C18F-C5C9-467B-8F29-5A7A94DB7945}
+        outputfile = C:\\work\\fhirserver\\install\\fhirserver.htm
+        overwriteoutputfile = true
+        parserver = HighestMSXML
+        preservewhitespace = false
+        resolveexternal = true
+        usexmldocobject = false
+        validateonparse = true
+        xmlfile = C:\\work\\fhirserver\\install\\fhirserver.rss
+        xsltfile = C:\\work\\fhirserver\\install\\rsss.xslt
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = fhirserver.htm
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {5F9410EF-2277-4D2F-AD1A-37033D0FC7ED}
+        localdir = C:\\work\\fhirserver\\install
+        recursive = false
+        remotefile = public_html/FhirServer/fhirserver.htm
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
       end
       action.ftp.disconnect
       begin
@@ -419,6 +514,21 @@ begin
         id = {58346928-77F3-4C2F-A158-2DF37D0A7337}
       end
     end
+  end
+  variable
+  begin
+    defaultvalue = 0
+    name = BuildCount
+    variablescope = vtProject
+    variabletype = btInteger
+  end
+  variable
+  begin
+    defaultvalue = 0
+    formatstring = yyyy-mm-dd
+    name = BuildDate
+    variablescope = vtProject
+    variabletype = btDateTime
   end
   variable
   begin

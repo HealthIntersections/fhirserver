@@ -175,7 +175,7 @@ begin
     end
     else
     begin
-      iter := e.createIterator(true);
+      iter := e.createIterator(true, true);
       try
         while (iter.More) do
         begin
@@ -187,7 +187,7 @@ begin
             begin
               grandChildren := getChildrenForPath(allElements, path+'.'+iter.Current.Name);
               try
-                if (iter.current.List <> nil) and not iter.Current.List.IsEmpty and (child <> nil) then
+                if (iter.current.values <> nil) and not iter.Current.values.IsEmpty and (child <> nil) then
                 begin
                   if (isPrimitive(child)) then
                   begin
@@ -195,26 +195,26 @@ begin
                     name := iter.current.Name;
                     if (name.endsWith('[x]')) then
                       name := name.substring(0, name.length - 3);
-                    if (showCodeDetails or not isDefaultValue(displayHints, iter.Current.List)) then
+                    if (showCodeDetails or not isDefaultValue(displayHints, iter.Current.Values)) then
                     begin
                       para.addTag('b').addText(name);
                       para.addText(': ');
-                      if (renderAsList(child) and (iter.Current.List.count > 1)) then
+                      if (renderAsList(child) and (iter.Current.values.count > 1)) then
                       begin
                         list := x.addTag('ul');
-                        for i := 0 to iter.Current.List.Count - 1 do
-                          renderLeaf(res, iter.Current.List[i] as TFhirElement, child, list.addTag('li'), false, showCodeDetails, displayHints);
+                        for i := 0 to iter.Current.values.Count - 1 do
+                          renderLeaf(res, iter.Current.values[i] as TFhirElement, child, list.addTag('li'), false, showCodeDetails, displayHints);
                       end
                       else
                       begin
                         first := true;
-                        for i := 0 to iter.Current.List.Count - 1 do
+                        for i := 0 to iter.Current.values.Count - 1 do
                         begin
                           if (first) then
                             first := false
                           else
                             para.addText(', ');
-                          renderLeaf(res, iter.Current.List[i] as TFhirElement, child, para, false, showCodeDetails, displayHints);
+                          renderLeaf(res, iter.Current.Values[i] as TFhirElement, child, para, false, showCodeDetails, displayHints);
                         end;
                       end;
                     end
@@ -223,19 +223,19 @@ begin
                       x.addTag('h3').addText(capitalize(camelCase(pluralizeMe(iter.current.Name))));
                       tbl := x.addTag('table').setAttribute('class', 'grid');
                       addColumnHeadings(tbl.addTag('tr'), grandChildren);
-                      for i := 0 to iter.Current.List.Count - 1 do
-                        if (iter.Current.List[i] <> nil) then
-                          addColumnValues(res, tbl.addTag('tr'), grandChildren, iter.Current.List[i] as TFhirElement, showCodeDetails, displayHints);
+                      for i := 0 to iter.Current.Values.Count - 1 do
+                        if (iter.Current.Values[i] <> nil) then
+                          addColumnValues(res, tbl.addTag('tr'), grandChildren, iter.Current.Values[i] as TFhirElement, showCodeDetails, displayHints);
                     end;
                   end
                   else
                   begin
-                    for i := 0 to iter.Current.List.Count - 1 do
-                      if (iter.Current.List[i] <> nil) then
+                    for i := 0 to iter.Current.Values.Count - 1 do
+                      if (iter.Current.Values[i] <> nil) then
                       begin
                       bq := x.addTag('blockquote');
                       bq.addTag('p').addTag('b').addText(iter.Current.Name);
-                      generateByProfile(res, iter.Current.List[i] as TFhirElement, allElements, child, grandChildren, bq, path+'.'+iter.Current.Name, showCodeDetails);
+                      generateByProfile(res, iter.Current.Values[i] as TFhirElement, allElements, child, grandChildren, bq, path+'.'+iter.Current.Name, showCodeDetails);
                     end;
                   end;
                 end;
@@ -362,10 +362,10 @@ var
   v : TFhirElement;
   iter : TFHIRPropertyIterator;
 begin
-  for i := 0 to p.List.Count - 1 do
+  for i := 0 to p.Values.Count - 1 do
   begin
-    v := p.List[i] as TFhirElement;
-    iter := v.createIterator(true);
+    v := p.Values[i] as TFhirElement;
+    iter := v.createIterator(true, true);
     try
       while iter.More do
       begin
@@ -744,12 +744,12 @@ begin
     firstElement := true;
     last := false;
 
-    iter := res.createIterator(true);
+    iter := res.createIterator(true, true);
     try
       while iter.More do
       begin
         child := getElementDefinition(struc.ElementList, path+'.'+iter.current.Name);
-        if (iter.current.List <> nil) and (iter.current.List.count > 0) and (iter.current.List[0] <> nil) and (child <> nil) and (isPrimitive(child)) and (includeInSummary(child)) then
+        if (iter.current.Values <> nil) and (iter.current.Values.count > 0) and (iter.current.Values[0] <> nil) and (child <> nil) and (isPrimitive(child)) and (includeInSummary(child)) then
         begin
           if (firstElement) then
             firstElement := false
@@ -757,9 +757,9 @@ begin
             x.addText('; ');
           first := true;
           last := false;
-          for i := 0  to iter.Current.List.Count - 1 do
+          for i := 0  to iter.Current.Values.Count - 1 do
           begin
-            v := iter.Current.List[i] as TFhirElement;
+            v := iter.Current.Values[i] as TFhirElement;
             if (first) then
               first := false
             else if (last) then

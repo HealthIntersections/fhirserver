@@ -117,6 +117,7 @@ type
     procedure layoutSearchParameters;
     function asURL : String;
     procedure readURL(pm : TParseMap);
+    procedure fetchUrl(s : String);
 
     // columns
     procedure clearColumns;
@@ -280,13 +281,18 @@ begin
   Clipboard.Open;
   s := Clipboard.AsText;
   Clipboard.Close;
-  if s.Contains('?') then
-    s := s.Substring(s.IndexOf('?')+1);
-  pm := TParseMap.create(s);
-  try
-    readURL(pm);
-  finally
-    pm.Free;
+  if (s.StartsWith(FClient.url)) and not s.Contains('?') then
+    fetchUrl(s.Substring(FClient.url.Length+1))
+  else
+  begin
+    if s.Contains('?') then
+      s := s.Substring(s.IndexOf('?')+1);
+    pm := TParseMap.create(s);
+    try
+      readURL(pm);
+    finally
+      pm.Free;
+    end;
   end;
 end;
 
@@ -402,6 +408,38 @@ begin
   end;
 end;
 
+procedure TFetchResourceFrm.fetchUrl(s: String);
+var
+  pm : TParseMap;
+  a : TArray<String>;
+  bundle : TFHIRBundle;
+begin
+  pm := TParseMap.create('');
+  try
+    readURL(pm);
+  finally
+    pm.free;
+  end;
+  clearSearch;
+  clearColumns;
+  a := s.Split(['/']);
+  if (Length(a) >= 1) then
+  begin
+    cbxType.ItemIndex := cbxType.Items.IndexOf(a[0]);
+    changeSelectedType;
+  end;
+  if (Length(a) >= 2) and (cbxType.ItemIndex > -1) then
+  begin
+    FMatches.Add(FClient.readResource(ResourceTypeByName(cbxType.Text), a[1]));
+    btnFirst.Enabled := false;
+    btnNext.Enabled := false;
+    btnPrev.Enabled := false;
+    btnLast.Enabled := false;
+    vtMatches.RootNodeCount := FMatches.Count;
+    vtMatches.Invalidate;
+  end;
+end;
+
 procedure TFetchResourceFrm.FormCreate(Sender: TObject);
 begin
   FSearchItems := TAdvList<TSearchEntryPanel>.create;
@@ -444,7 +482,7 @@ var
 begin
   query := TFHIRPathEvaluator.create(nil);
   try
-    result := query.evaluateToString(res, path);
+    result := query.evaluateToString(nil, res, path);
   finally
     query.free;
   end;

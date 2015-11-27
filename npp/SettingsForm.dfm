@@ -1,14 +1,14 @@
 inherited SettingForm: TSettingForm
   BorderIcons = []
   BorderStyle = bsDialog
-  Caption = 'FHIR NPP Plugin'
-  ClientHeight = 317
+  Caption = 'FHIR notepad++ Plugin Settings'
+  ClientHeight = 414
   ClientWidth = 617
   Scaled = False
   OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 623
-  ExplicitHeight = 346
+  ExplicitHeight = 443
   PixelsPerInch = 96
   TextHeight = 13
   object TButton
@@ -24,9 +24,15 @@ inherited SettingForm: TSettingForm
     Left = 0
     Top = 0
     Width = 617
-    Height = 276
-    ActivePage = TabSheet1
+    Height = 373
+    ActivePage = TabSheet3
     Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -34,7 +40,7 @@ inherited SettingForm: TSettingForm
         Left = 0
         Top = 0
         Width = 609
-        Height = 248
+        Height = 345
         Align = alClient
         BevelOuter = bvNone
         ParentBackground = False
@@ -42,15 +48,21 @@ inherited SettingForm: TSettingForm
         TabOrder = 0
         DesignSize = (
           609
-          248)
+          345)
         object Label5: TLabel
           Left = 10
-          Top = 212
+          Top = 314
           Width = 337
           Height = 13
           Caption = 
             'The changes on this page only take effect when notepad++ is rest' +
             'arted'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
         end
         object GroupBox1: TGroupBox
           Left = -2
@@ -59,6 +71,12 @@ inherited SettingForm: TSettingForm
           Height = 91
           Anchors = [akLeft, akTop, akRight]
           Caption = ' Terminology Server '
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
           TabOrder = 0
           DesignSize = (
             606
@@ -69,6 +87,12 @@ inherited SettingForm: TSettingForm
             Width = 25
             Height = 13
             Caption = 'URL:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
           end
           object Label2: TLabel
             Left = 12
@@ -81,6 +105,12 @@ inherited SettingForm: TSettingForm
               'The server must be a FHIR terminology server running the same ve' +
               'rsion of FHIR as this client, and must not require authenticatio' +
               'n'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             WordWrap = True
             ExplicitWidth = 397
           end
@@ -90,6 +120,12 @@ inherited SettingForm: TSettingForm
             Width = 539
             Height = 21
             Anchors = [akLeft, akTop, akRight]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             TabOrder = 0
             Text = 'edtServer'
           end
@@ -101,6 +137,12 @@ inherited SettingForm: TSettingForm
           Height = 91
           Anchors = [akLeft, akTop, akRight]
           Caption = ' Definitions Source '
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
           TabOrder = 1
           DesignSize = (
             606
@@ -111,6 +153,12 @@ inherited SettingForm: TSettingForm
             Width = 19
             Height = 13
             Caption = 'File:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
           end
           object Label4: TLabel
             Left = 12
@@ -122,6 +170,12 @@ inherited SettingForm: TSettingForm
             Caption = 
               'This is the validation.min.xml.zip file downloaded from the spec' +
               'ification (downloads page). This also must have the same version'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             WordWrap = True
             ExplicitWidth = 397
           end
@@ -167,8 +221,114 @@ inherited SettingForm: TSettingForm
             Width = 509
             Height = 21
             Anchors = [akLeft, akTop, akRight]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             TabOrder = 0
             Text = 'Edit1'
+          end
+        end
+        object GroupBox5: TGroupBox
+          Left = -2
+          Top = 197
+          Width = 606
+          Height = 91
+          Anchors = [akLeft, akTop, akRight]
+          Caption = '  Additional Definitions  '
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 2
+          DesignSize = (
+            606
+            91)
+          object Label6: TLabel
+            Left = 12
+            Top = 26
+            Width = 32
+            Height = 13
+            Caption = 'Folder:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label7: TLabel
+            Left = 12
+            Top = 52
+            Width = 577
+            Height = 31
+            Anchors = [akLeft, akTop, akRight]
+            AutoSize = False
+            Caption = 
+              'The validation engine looks in this folder for additional profil' +
+              'es and value sets to use when validating'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            WordWrap = True
+          end
+          object SpeedButton2: TSpeedButton
+            Left = 560
+            Top = 18
+            Width = 29
+            Height = 28
+            Anchors = [akTop, akRight]
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+              078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+              BEFF00FFFF00FFFF00FF078DBE25A1D171C6E884D7FA66CDF965CDF965CDF965
+              CDF965CDF865CDF965CDF866CEF93AADD81999C9FF00FFFF00FF078DBE4CBCE7
+              39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+              D9C9F0F3078DBEFF00FF078DBE72D6FA078DBEAEE9FC79DCFB79DCFB79DCFB79
+              DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9C9F0F3078DBEFF00FF078DBE79DDFB
+              1899C79ADFF392E7FC84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+              DAC9F0F31496C4FF00FF078DBE82E3FC43B7DC65C2E0ABF0FC8DEBFC8DEBFC8D
+              EBFD8DEBFD8DEBFC8DEBFD8DEBFC4CBBDAC9F0F3C9F0F3078DBE078DBE8AEAFC
+              77DCF3219CC7FEFFFFC8F7FDC9F7FDC9F7FDC9F7FEC8F7FEC9F7FDC8F7FE9BD5
+              E6EAFEFED2F3F8078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+              8DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE9BF5FE
+              9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE9AF6FD9BF5FE9AF6FE9AF6FE0989
+              BAFF00FFFF00FFFF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFEA0
+              FAFEA1FBFEA1FBFFA0FBFFA1FBFF0989BAFF00FFFF00FFFF00FFFF00FF078DBE
+              FEFEFEA5FEFFA5FEFFA5FEFF078DBE078DBE078DBE078DBE078DBE078DBEFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            OnClick = SpeedButton1Click
+            ExplicitLeft = 563
+          end
+          object edtFolder: TEdit
+            Left = 50
+            Top = 21
+            Width = 509
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            Text = 'edtFolder'
           end
         end
       end
@@ -180,7 +340,7 @@ inherited SettingForm: TSettingForm
         Left = 0
         Top = 0
         Width = 609
-        Height = 248
+        Height = 345
         Align = alClient
         BevelOuter = bvNone
         ParentBackground = False
@@ -188,7 +348,7 @@ inherited SettingForm: TSettingForm
         TabOrder = 0
         DesignSize = (
           609
-          248)
+          345)
         object GroupBox3: TGroupBox
           Left = 0
           Top = 8
@@ -196,6 +356,12 @@ inherited SettingForm: TSettingForm
           Height = 67
           Anchors = [akLeft, akTop, akRight]
           Caption = '  Path Summary Dialog  '
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
           TabOrder = 0
           DesignSize = (
             606
@@ -207,6 +373,45 @@ inherited SettingForm: TSettingForm
             Height = 17
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Show Summary Dialog after evaluating a FHIR Path'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object GroupBox4: TGroupBox
+          Left = 0
+          Top = 88
+          Width = 606
+          Height = 67
+          Anchors = [akLeft, akTop, akRight]
+          Caption = '  Validation Summary Dialog  '
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
+          DesignSize = (
+            606
+            67)
+          object cbValidationSummary: TCheckBox
+            Left = 12
+            Top = 27
+            Width = 576
+            Height = 17
+            Anchors = [akLeft, akTop, akRight]
+            Caption = 'Show Summary Dialog after performing validation'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             TabOrder = 0
           end
         end
@@ -215,10 +420,6 @@ inherited SettingForm: TSettingForm
     object TabSheet2: TTabSheet
       Caption = 'Servers'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 612
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -228,7 +429,6 @@ inherited SettingForm: TSettingForm
         BevelOuter = bvLowered
         ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 612
         object btnAdd: TButton
           Left = 3
           Top = 6
@@ -279,7 +479,7 @@ inherited SettingForm: TSettingForm
         Left = 0
         Top = 37
         Width = 609
-        Height = 211
+        Height = 308
         Align = alClient
         Header.AutoSizeIndex = 1
         Header.Font.Charset = DEFAULT_CHARSET
@@ -291,7 +491,6 @@ inherited SettingForm: TSettingForm
         TabOrder = 1
         TreeOptions.SelectionOptions = [toFullRowSelect]
         OnGetText = vtServersGetText
-        ExplicitWidth = 612
         Columns = <
           item
             Position = 0
@@ -300,7 +499,7 @@ inherited SettingForm: TSettingForm
           end
           item
             Position = 1
-            Width = 359
+            Width = 355
             WideText = 'URL'
           end
           item
@@ -313,7 +512,7 @@ inherited SettingForm: TSettingForm
   end
   object Panel1: TPanel
     Left = 0
-    Top = 276
+    Top = 373
     Width = 617
     Height = 41
     Align = alBottom
@@ -362,7 +561,7 @@ inherited SettingForm: TSettingForm
     Filter = '*.zip'
     Options = [ofHideReadOnly, ofFileMustExist, ofEnableSizing]
     Title = 'Select Definitions Source'
-    Left = 96
-    Top = 398
+    Left = 88
+    Top = 378
   end
 end

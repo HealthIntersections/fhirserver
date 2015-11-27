@@ -148,6 +148,12 @@ type
     property profile : String read GetProfile;
   end;
 
+  TFhirElementDefinitionHelper = class helper for TFhirElementDefinition
+  public
+    function hasType(t : String; out profile : String) : boolean;  overload;
+    function hasType(t : String) : boolean; overload;
+  end;
+
   TFHIRResourceHelper = class helper for TFHIRResource
   private
     function GetXmlId: String;
@@ -171,6 +177,7 @@ type
     function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
+    function narrativeAsWebPage : String;
   end;
 
   TFhirProfileStructureSnapshotElementDefinitionTypeListHelper = class helper for TFhirElementDefinitionList
@@ -539,26 +546,26 @@ var
   iter : TFHIRPropertyIterator;
   i : integer;
 begin
-  iter := node.createIterator(true);
+  iter := node.createIterator(true, true);
   try
     while iter.More do
     begin
-      if (iter.Current.list <> nil)  then
+      if (iter.Current.Values <> nil)  then
       begin
         if StringStartsWith(iter.Current.Type_, 'Reference(') then
         begin
-          for i := 0 to iter.Current.List.count - 1 do
-            if (iter.current.list[i] <> nil)  and not StringStartsWith(TFhirReference(iter.current.list[i]).reference, '#') then
-              list.add(iter.Current.list[i].Link)
+          for i := 0 to iter.Current.Values.count - 1 do
+            if (iter.current.Values[i] <> nil)  and not StringStartsWith(TFhirReference(iter.current.Values[i]).reference, '#') then
+              list.add(iter.Current.Values[i].Link)
         end
         else if (iter.Current.Type_ = 'Resource') then
         begin
-          for i := 0 to iter.Current.List.count - 1 do
-            iterateReferences(path+'/'+iter.Current.Name, TFhirReference(iter.current.list[i]), list)
+          for i := 0 to iter.Current.Values.count - 1 do
+            iterateReferences(path+'/'+iter.Current.Name, TFhirReference(iter.current.Values[i]), list)
         end
         else if not ((node is TFHIRPrimitiveType) and (iter.current.name = 'value')) then
-          for i := 0 to iter.Current.list.Count - 1 Do
-            iterateReferences(path+'/'+iter.Current.Name, iter.Current.list[i], list);
+          for i := 0 to iter.Current.Values.Count - 1 Do
+            iterateReferences(path+'/'+iter.Current.Name, iter.Current.Values[i], list);
       end;
       iter.Next;
     end;
@@ -577,16 +584,16 @@ var
   iter : TFHIRPropertyIterator;
   i : integer;
 begin
-  iter := node.createIterator(true);
+  iter := node.createIterator(true, true);
   try
     while iter.More do
     begin
-      if (iter.Current.List <> nil)  then
-        for i := 0 to iter.Current.List.Count - 1 do
+      if (iter.Current.Values <> nil)  then
+        for i := 0 to iter.Current.Values.Count - 1 do
           if (iter.Current.Type_ = 'Attachment') then
-            list.add(iter.Current.list[i].Link)
+            list.add(iter.Current.Values[i].Link)
           else if not ((node is TFHIRPrimitiveType) and (iter.current.name = 'value'))  then
-            iterateAttachments(path+'/'+iter.Current.Name, iter.Current.list[i], list);
+            iterateAttachments(path+'/'+iter.Current.Name, iter.Current.Values[i], list);
       iter.Next;
     end;
   finally
@@ -1763,6 +1770,14 @@ begin
   result := getExtension(url) > -1;
 end;
 
+function TFHIRDomainResourceHelper.narrativeAsWebPage: String;
+begin
+  if (text = nil) or (text.div_ = nil) then
+    result := '<html><body>No Narrative</body></html>'
+  else
+    result := '<html><body>'+ComposeXHtml(text.div_)+'</body></html>'
+end;
+
 procedure TFHIRDomainResourceHelper.removeExtension(url: String);
 var
   ndx : integer;
@@ -2270,9 +2285,9 @@ begin
     if (parameterList[i].name = name) then
     begin
       if parameterList[i].valueElement <> nil then
-        result := parameterList[i].valueElement.Link
+        result := parameterList[i].valueElement
       else
-        result := parameterList[i].resourceElement.Link;
+        result := parameterList[i].resourceElement;
       exit;
     end;
   result := nil;
@@ -3118,6 +3133,34 @@ begin
   for issue in self do
     if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
       inc(result);
+end;
+
+{ TFhirElementDefinitionHelper }
+
+function TFhirElementDefinitionHelper.hasType(t: String): boolean;
+var
+  edt : TFhirElementDefinitionType;
+begin
+  result := false;
+  for edt in type_List do
+    if edt.code = t then
+      exit(true);
+end;
+
+function TFhirElementDefinitionHelper.hasType(t: String; out profile: String): boolean;
+var
+  edt : TFhirElementDefinitionType;
+begin
+  result := false;
+  for edt in type_List do
+    if SameText(edt.code, t) then
+    begin
+      if edt.profileList.Count > 0 then
+        profile := edt.profileList[0].value
+      else
+        profile := '';
+      exit(true);
+    end;
 end;
 
 end.

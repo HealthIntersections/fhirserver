@@ -4,6 +4,7 @@ inherited AboutForm: TAboutForm
   ClientHeight = 201
   ClientWidth = 454
   Scaled = False
+  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 460
   ExplicitHeight = 230
@@ -422,5 +423,14 @@ inherited AboutForm: TAboutForm
     Caption = 'Tests'
     TabOrder = 3
     OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 222
+    Top = 160
+    Width = 127
+    Height = 25
+    Caption = 'Documentation'
+    TabOrder = 4
+    OnClick = Button3Click
   end
 end

@@ -225,7 +225,6 @@ object FetchResourceFrm: TFetchResourceFrm
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'Paste URL'
-        Enabled = False
         TabOrder = 2
         OnClick = btnPasteClick
       end

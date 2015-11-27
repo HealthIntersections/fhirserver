@@ -110,13 +110,13 @@ begin
     if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
       svcName := 'fhirserver';
     if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
-      dispName := 'FHIR Server (DSTU2)';
+      dispName := 'FHIR Server';
     iniName := iniName.replace('.dstu', '.dev');
     if JclExceptionTrackingActive then
-      writelnt('FHIR Service (DSTU2). Using ini file '+iniName+' with stack dumps on')
+      writelnt('FHIR Service '+SERVER_VERSION+' (DSTU2). Using ini file '+iniName+' with stack dumps on')
     else
-      writelnt('FHIR Service (DSTU2). Using ini file '+iniName+' (no stack dumps)');
-    dispName := dispName + ' (DSTU2)';
+      writelnt('FHIR Service '+SERVER_VERSION+' (DSTU2). Using ini file '+iniName+' (no stack dumps)');
+    dispName := dispName + ' '+SERVER_VERSION+' (DSTU2)';
 
 
     svc := TFHIRService.Create(svcName, dispName, iniName);

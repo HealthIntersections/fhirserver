@@ -19,8 +19,8 @@ unit FHIRParser;
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
   NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
@@ -36,10 +36,10 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.0.2 generated Wed, Nov 18, 2015 20:09+1100
+// FHIR v1.0.2 generated Sat, Nov 21, 2015 09:08+1100
 
 uses
-  SysUtils, Classes, ActiveX, StringSupport, DateSupport, MsXML, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
+  SysUtils, Classes, ActiveX, StringSupport, DateSupport, MsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
 
 Type
 
@@ -804,6 +804,7 @@ Type
     procedure ComposeVisionPrescriptionDispense(xml : TXmlBuilder; name : string; elem : TFhirVisionPrescriptionDispense);
     procedure ComposeVisionPrescription(xml : TXmlBuilder; name : string; elem : TFhirVisionPrescription);
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource; links : TFhirBundleLinkList); override;
+    procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRBase); override;
   end;
 
   TFHIRJsonParser = class (TFHIRJsonParserBase)
@@ -1937,6 +1938,7 @@ Type
     procedure ComposeVisionPrescriptionDispense(json : TJSONWriter; name : string; elem : TFhirVisionPrescriptionDispense; noObj : boolean = false);
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; elem : TFhirVisionPrescription; noObj : boolean = false);
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource; links : TFhirBundleLinkList); override;
+    procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRBase); override;
   end;
 
 
@@ -2107,6 +2109,7 @@ end;
 Procedure TFHIRXmlParser.ParseElementAttributes(value : TFhirElement; path : string; element : IXmlDomElement);
 begin
   TakeCommentsStart(value);
+  GetObjectLocation(value, element);
   value.Id := GetAttribute(element, 'id');
 end;
 
@@ -2131,6 +2134,8 @@ end;
 procedure TFHIRJsonParser.ParseElementProperties(jsn : TJsonObject; element : TFhirElement);
 begin
   parseComments(element, jsn);
+  element.LocationStart := jsn.LocationStart;
+  element.LocationEnd := jsn.LocationEnd;
 
   if jsn.has('id') then
     element.Id := jsn['id']
@@ -3720,6 +3725,7 @@ end;
 
 Procedure TFHIRXmlParser.ParseResourceAttributes(resource : TFhirResource; path : string; element : IXmlDomElement);
 begin
+  GetObjectLocation(resource, element);
 end;
 
 Function TFHIRXmlParser.ParseResourceChild(resource : TFhirResource; path : string; child : IXmlDomElement) : boolean;
@@ -3739,6 +3745,8 @@ end;
 
 procedure TFHIRJsonParser.ParseResourceProperties(jsn : TJsonObject; resource : TFhirResource);
 begin
+  resource.LocationStart := jsn.LocationStart;
+  resource.LocationEnd := jsn.LocationEnd;
   if jsn.has('id') or jsn.has('_id') then
     resource.idElement := ParseId(jsn['id'], jsn.vObj['_id']);{q}
   if jsn.has('meta') then
@@ -52081,6 +52089,1446 @@ begin
     result := parseContactPoint(element, name)
   else
     raise Exception.create('Unknown Type');
+end;
+
+procedure TFHIRXmlComposer.ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRBase);
+begin
+  if (base is TFhirEnum) then
+    composeEnum(xml, name,  TFhirEnum(base), [])
+  else if (base is TFhirXhtmlNode) then
+    ComposeXHtmlNode(xml, name,  TFhirXhtmlNode(base))
+  else if (base is TFhirDateTime) then
+    composeDateTime(xml, name,  TFhirDateTime(base))
+  else if (base is TFhirInteger) then
+    composeInteger(xml, name,  TFhirInteger(base))
+  else if (base is TFhirDate) then
+    composeDate(xml, name,  TFhirDate(base))
+  else if (base is TFhirDecimal) then
+    composeDecimal(xml, name,  TFhirDecimal(base))
+  else if (base is TFhirUri) then
+    composeUri(xml, name,  TFhirUri(base))
+  else if (base is TFhirBase64Binary) then
+    composeBase64Binary(xml, name,  TFhirBase64Binary(base))
+  else if (base is TFhirTime) then
+    composeTime(xml, name,  TFhirTime(base))
+  else if (base is TFhirString) then
+    composeString(xml, name,  TFhirString(base))
+  else if (base is TFhirBoolean) then
+    composeBoolean(xml, name,  TFhirBoolean(base))
+  else if (base is TFhirInstant) then
+    composeInstant(xml, name,  TFhirInstant(base))
+  else if (base is TFhirMarkdown) then
+    composeMarkdown(xml, name,  TFhirMarkdown(base))
+  else if (base is TFhirUnsignedInt) then
+    composeUnsignedInt(xml, name,  TFhirUnsignedInt(base))
+  else if (base is TFhirCode) then
+    composeCode(xml, name,  TFhirCode(base))
+  else if (base is TFhirId) then
+    composeId(xml, name,  TFhirId(base))
+  else if (base is TFhirOid) then
+    composeOid(xml, name,  TFhirOid(base))
+  else if (base is TFhirPositiveInt) then
+    composePositiveInt(xml, name,  TFhirPositiveInt(base))
+  else if (base is TFhirUuid) then
+    composeUuid(xml, name,  TFhirUuid(base))
+  else if (base is TFhirParametersParameter) then
+    composeParametersParameter(xml, name,  TFhirParametersParameter(base))
+  else if (base is TFhirParameters) then
+    composeParameters(xml, name,  TFhirParameters(base))
+  else if (base is TFhirExtension) then
+    composeExtension(xml, name,  TFhirExtension(base))
+  else if (base is TFhirNarrative) then
+    composeNarrative(xml, name,  TFhirNarrative(base))
+  else if (base is TFhirPeriod) then
+    composePeriod(xml, name,  TFhirPeriod(base))
+  else if (base is TFhirCoding) then
+    composeCoding(xml, name,  TFhirCoding(base))
+  else if (base is TFhirRange) then
+    composeRange(xml, name,  TFhirRange(base))
+  else if (base is TFhirQuantity) then
+    composeQuantity(xml, name,  TFhirQuantity(base))
+  else if (base is TFhirAttachment) then
+    composeAttachment(xml, name,  TFhirAttachment(base))
+  else if (base is TFhirRatio) then
+    composeRatio(xml, name,  TFhirRatio(base))
+  else if (base is TFhirAnnotation) then
+    composeAnnotation(xml, name,  TFhirAnnotation(base))
+  else if (base is TFhirSampledData) then
+    composeSampledData(xml, name,  TFhirSampledData(base))
+  else if (base is TFhirReference) then
+    composeReference(xml, name,  TFhirReference(base))
+  else if (base is TFhirCodeableConcept) then
+    composeCodeableConcept(xml, name,  TFhirCodeableConcept(base))
+  else if (base is TFhirIdentifier) then
+    composeIdentifier(xml, name,  TFhirIdentifier(base))
+  else if (base is TFhirSignature) then
+    composeSignature(xml, name,  TFhirSignature(base))
+  else if (base is TFhirElementDefinitionSlicing) then
+    composeElementDefinitionSlicing(xml, name,  TFhirElementDefinitionSlicing(base))
+  else if (base is TFhirElementDefinitionBase) then
+    composeElementDefinitionBase(xml, name,  TFhirElementDefinitionBase(base))
+  else if (base is TFhirElementDefinitionType) then
+    composeElementDefinitionType(xml, name,  TFhirElementDefinitionType(base))
+  else if (base is TFhirElementDefinitionConstraint) then
+    composeElementDefinitionConstraint(xml, name,  TFhirElementDefinitionConstraint(base))
+  else if (base is TFhirElementDefinitionBinding) then
+    composeElementDefinitionBinding(xml, name,  TFhirElementDefinitionBinding(base))
+  else if (base is TFhirElementDefinitionMapping) then
+    composeElementDefinitionMapping(xml, name,  TFhirElementDefinitionMapping(base))
+  else if (base is TFhirElementDefinition) then
+    composeElementDefinition(xml, name,  TFhirElementDefinition(base))
+  else if (base is TFhirTimingRepeat) then
+    composeTimingRepeat(xml, name,  TFhirTimingRepeat(base))
+  else if (base is TFhirTiming) then
+    composeTiming(xml, name,  TFhirTiming(base))
+  else if (base is TFhirAddress) then
+    composeAddress(xml, name,  TFhirAddress(base))
+  else if (base is TFhirHumanName) then
+    composeHumanName(xml, name,  TFhirHumanName(base))
+  else if (base is TFhirMeta) then
+    composeMeta(xml, name,  TFhirMeta(base))
+  else if (base is TFhirContactPoint) then
+    composeContactPoint(xml, name,  TFhirContactPoint(base))
+  else if (base is TFhirAccount) then
+    composeAccount(xml, name,  TFhirAccount(base))
+  else if (base is TFhirAllergyIntoleranceReaction) then
+    composeAllergyIntoleranceReaction(xml, name,  TFhirAllergyIntoleranceReaction(base))
+  else if (base is TFhirAllergyIntolerance) then
+    composeAllergyIntolerance(xml, name,  TFhirAllergyIntolerance(base))
+  else if (base is TFhirAppointmentParticipant) then
+    composeAppointmentParticipant(xml, name,  TFhirAppointmentParticipant(base))
+  else if (base is TFhirAppointment) then
+    composeAppointment(xml, name,  TFhirAppointment(base))
+  else if (base is TFhirAppointmentResponse) then
+    composeAppointmentResponse(xml, name,  TFhirAppointmentResponse(base))
+  else if (base is TFhirAuditEventEvent) then
+    composeAuditEventEvent(xml, name,  TFhirAuditEventEvent(base))
+  else if (base is TFhirAuditEventParticipant) then
+    composeAuditEventParticipant(xml, name,  TFhirAuditEventParticipant(base))
+  else if (base is TFhirAuditEventParticipantNetwork) then
+    composeAuditEventParticipantNetwork(xml, name,  TFhirAuditEventParticipantNetwork(base))
+  else if (base is TFhirAuditEventSource) then
+    composeAuditEventSource(xml, name,  TFhirAuditEventSource(base))
+  else if (base is TFhirAuditEventObject) then
+    composeAuditEventObject(xml, name,  TFhirAuditEventObject(base))
+  else if (base is TFhirAuditEventObjectDetail) then
+    composeAuditEventObjectDetail(xml, name,  TFhirAuditEventObjectDetail(base))
+  else if (base is TFhirAuditEvent) then
+    composeAuditEvent(xml, name,  TFhirAuditEvent(base))
+  else if (base is TFhirBasic) then
+    composeBasic(xml, name,  TFhirBasic(base))
+  else if (base is TFhirBinary) then
+    composeBinary(xml, name,  TFhirBinary(base))
+  else if (base is TFhirBodySite) then
+    composeBodySite(xml, name,  TFhirBodySite(base))
+  else if (base is TFhirBundleLink) then
+    composeBundleLink(xml, name,  TFhirBundleLink(base))
+  else if (base is TFhirBundleEntry) then
+    composeBundleEntry(xml, name,  TFhirBundleEntry(base))
+  else if (base is TFhirBundleEntrySearch) then
+    composeBundleEntrySearch(xml, name,  TFhirBundleEntrySearch(base))
+  else if (base is TFhirBundleEntryRequest) then
+    composeBundleEntryRequest(xml, name,  TFhirBundleEntryRequest(base))
+  else if (base is TFhirBundleEntryResponse) then
+    composeBundleEntryResponse(xml, name,  TFhirBundleEntryResponse(base))
+  else if (base is TFhirBundle) then
+    composeBundle(xml, name,  TFhirBundle(base))
+  else if (base is TFhirCarePlanRelatedPlan) then
+    composeCarePlanRelatedPlan(xml, name,  TFhirCarePlanRelatedPlan(base))
+  else if (base is TFhirCarePlanParticipant) then
+    composeCarePlanParticipant(xml, name,  TFhirCarePlanParticipant(base))
+  else if (base is TFhirCarePlanActivity) then
+    composeCarePlanActivity(xml, name,  TFhirCarePlanActivity(base))
+  else if (base is TFhirCarePlanActivityDetail) then
+    composeCarePlanActivityDetail(xml, name,  TFhirCarePlanActivityDetail(base))
+  else if (base is TFhirCarePlan) then
+    composeCarePlan(xml, name,  TFhirCarePlan(base))
+  else if (base is TFhirClaimPayee) then
+    composeClaimPayee(xml, name,  TFhirClaimPayee(base))
+  else if (base is TFhirClaimDiagnosis) then
+    composeClaimDiagnosis(xml, name,  TFhirClaimDiagnosis(base))
+  else if (base is TFhirClaimCoverage) then
+    composeClaimCoverage(xml, name,  TFhirClaimCoverage(base))
+  else if (base is TFhirClaimItem) then
+    composeClaimItem(xml, name,  TFhirClaimItem(base))
+  else if (base is TFhirClaimItemDetail) then
+    composeClaimItemDetail(xml, name,  TFhirClaimItemDetail(base))
+  else if (base is TFhirClaimItemDetailSubDetail) then
+    composeClaimItemDetailSubDetail(xml, name,  TFhirClaimItemDetailSubDetail(base))
+  else if (base is TFhirClaimItemProsthesis) then
+    composeClaimItemProsthesis(xml, name,  TFhirClaimItemProsthesis(base))
+  else if (base is TFhirClaimMissingTeeth) then
+    composeClaimMissingTeeth(xml, name,  TFhirClaimMissingTeeth(base))
+  else if (base is TFhirClaim) then
+    composeClaim(xml, name,  TFhirClaim(base))
+  else if (base is TFhirClaimResponseItem) then
+    composeClaimResponseItem(xml, name,  TFhirClaimResponseItem(base))
+  else if (base is TFhirClaimResponseItemAdjudication) then
+    composeClaimResponseItemAdjudication(xml, name,  TFhirClaimResponseItemAdjudication(base))
+  else if (base is TFhirClaimResponseItemDetail) then
+    composeClaimResponseItemDetail(xml, name,  TFhirClaimResponseItemDetail(base))
+  else if (base is TFhirClaimResponseItemDetailAdjudication) then
+    composeClaimResponseItemDetailAdjudication(xml, name,  TFhirClaimResponseItemDetailAdjudication(base))
+  else if (base is TFhirClaimResponseItemDetailSubDetail) then
+    composeClaimResponseItemDetailSubDetail(xml, name,  TFhirClaimResponseItemDetailSubDetail(base))
+  else if (base is TFhirClaimResponseItemDetailSubDetailAdjudication) then
+    composeClaimResponseItemDetailSubDetailAdjudication(xml, name,  TFhirClaimResponseItemDetailSubDetailAdjudication(base))
+  else if (base is TFhirClaimResponseAddItem) then
+    composeClaimResponseAddItem(xml, name,  TFhirClaimResponseAddItem(base))
+  else if (base is TFhirClaimResponseAddItemAdjudication) then
+    composeClaimResponseAddItemAdjudication(xml, name,  TFhirClaimResponseAddItemAdjudication(base))
+  else if (base is TFhirClaimResponseAddItemDetail) then
+    composeClaimResponseAddItemDetail(xml, name,  TFhirClaimResponseAddItemDetail(base))
+  else if (base is TFhirClaimResponseAddItemDetailAdjudication) then
+    composeClaimResponseAddItemDetailAdjudication(xml, name,  TFhirClaimResponseAddItemDetailAdjudication(base))
+  else if (base is TFhirClaimResponseError) then
+    composeClaimResponseError(xml, name,  TFhirClaimResponseError(base))
+  else if (base is TFhirClaimResponseNote) then
+    composeClaimResponseNote(xml, name,  TFhirClaimResponseNote(base))
+  else if (base is TFhirClaimResponseCoverage) then
+    composeClaimResponseCoverage(xml, name,  TFhirClaimResponseCoverage(base))
+  else if (base is TFhirClaimResponse) then
+    composeClaimResponse(xml, name,  TFhirClaimResponse(base))
+  else if (base is TFhirClinicalImpressionInvestigations) then
+    composeClinicalImpressionInvestigations(xml, name,  TFhirClinicalImpressionInvestigations(base))
+  else if (base is TFhirClinicalImpressionFinding) then
+    composeClinicalImpressionFinding(xml, name,  TFhirClinicalImpressionFinding(base))
+  else if (base is TFhirClinicalImpressionRuledOut) then
+    composeClinicalImpressionRuledOut(xml, name,  TFhirClinicalImpressionRuledOut(base))
+  else if (base is TFhirClinicalImpression) then
+    composeClinicalImpression(xml, name,  TFhirClinicalImpression(base))
+  else if (base is TFhirCommunicationPayload) then
+    composeCommunicationPayload(xml, name,  TFhirCommunicationPayload(base))
+  else if (base is TFhirCommunication) then
+    composeCommunication(xml, name,  TFhirCommunication(base))
+  else if (base is TFhirCommunicationRequestPayload) then
+    composeCommunicationRequestPayload(xml, name,  TFhirCommunicationRequestPayload(base))
+  else if (base is TFhirCommunicationRequest) then
+    composeCommunicationRequest(xml, name,  TFhirCommunicationRequest(base))
+  else if (base is TFhirCompositionAttester) then
+    composeCompositionAttester(xml, name,  TFhirCompositionAttester(base))
+  else if (base is TFhirCompositionEvent) then
+    composeCompositionEvent(xml, name,  TFhirCompositionEvent(base))
+  else if (base is TFhirCompositionSection) then
+    composeCompositionSection(xml, name,  TFhirCompositionSection(base))
+  else if (base is TFhirComposition) then
+    composeComposition(xml, name,  TFhirComposition(base))
+  else if (base is TFhirConceptMapContact) then
+    composeConceptMapContact(xml, name,  TFhirConceptMapContact(base))
+  else if (base is TFhirConceptMapElement) then
+    composeConceptMapElement(xml, name,  TFhirConceptMapElement(base))
+  else if (base is TFhirConceptMapElementTarget) then
+    composeConceptMapElementTarget(xml, name,  TFhirConceptMapElementTarget(base))
+  else if (base is TFhirConceptMapElementTargetDependsOn) then
+    composeConceptMapElementTargetDependsOn(xml, name,  TFhirConceptMapElementTargetDependsOn(base))
+  else if (base is TFhirConceptMap) then
+    composeConceptMap(xml, name,  TFhirConceptMap(base))
+  else if (base is TFhirConditionStage) then
+    composeConditionStage(xml, name,  TFhirConditionStage(base))
+  else if (base is TFhirConditionEvidence) then
+    composeConditionEvidence(xml, name,  TFhirConditionEvidence(base))
+  else if (base is TFhirCondition) then
+    composeCondition(xml, name,  TFhirCondition(base))
+  else if (base is TFhirConformanceContact) then
+    composeConformanceContact(xml, name,  TFhirConformanceContact(base))
+  else if (base is TFhirConformanceSoftware) then
+    composeConformanceSoftware(xml, name,  TFhirConformanceSoftware(base))
+  else if (base is TFhirConformanceImplementation) then
+    composeConformanceImplementation(xml, name,  TFhirConformanceImplementation(base))
+  else if (base is TFhirConformanceRest) then
+    composeConformanceRest(xml, name,  TFhirConformanceRest(base))
+  else if (base is TFhirConformanceRestSecurity) then
+    composeConformanceRestSecurity(xml, name,  TFhirConformanceRestSecurity(base))
+  else if (base is TFhirConformanceRestSecurityCertificate) then
+    composeConformanceRestSecurityCertificate(xml, name,  TFhirConformanceRestSecurityCertificate(base))
+  else if (base is TFhirConformanceRestResource) then
+    composeConformanceRestResource(xml, name,  TFhirConformanceRestResource(base))
+  else if (base is TFhirConformanceRestResourceInteraction) then
+    composeConformanceRestResourceInteraction(xml, name,  TFhirConformanceRestResourceInteraction(base))
+  else if (base is TFhirConformanceRestResourceSearchParam) then
+    composeConformanceRestResourceSearchParam(xml, name,  TFhirConformanceRestResourceSearchParam(base))
+  else if (base is TFhirConformanceRestInteraction) then
+    composeConformanceRestInteraction(xml, name,  TFhirConformanceRestInteraction(base))
+  else if (base is TFhirConformanceRestOperation) then
+    composeConformanceRestOperation(xml, name,  TFhirConformanceRestOperation(base))
+  else if (base is TFhirConformanceMessaging) then
+    composeConformanceMessaging(xml, name,  TFhirConformanceMessaging(base))
+  else if (base is TFhirConformanceMessagingEndpoint) then
+    composeConformanceMessagingEndpoint(xml, name,  TFhirConformanceMessagingEndpoint(base))
+  else if (base is TFhirConformanceMessagingEvent) then
+    composeConformanceMessagingEvent(xml, name,  TFhirConformanceMessagingEvent(base))
+  else if (base is TFhirConformanceDocument) then
+    composeConformanceDocument(xml, name,  TFhirConformanceDocument(base))
+  else if (base is TFhirConformance) then
+    composeConformance(xml, name,  TFhirConformance(base))
+  else if (base is TFhirContractActor) then
+    composeContractActor(xml, name,  TFhirContractActor(base))
+  else if (base is TFhirContractValuedItem) then
+    composeContractValuedItem(xml, name,  TFhirContractValuedItem(base))
+  else if (base is TFhirContractSigner) then
+    composeContractSigner(xml, name,  TFhirContractSigner(base))
+  else if (base is TFhirContractTerm) then
+    composeContractTerm(xml, name,  TFhirContractTerm(base))
+  else if (base is TFhirContractTermActor) then
+    composeContractTermActor(xml, name,  TFhirContractTermActor(base))
+  else if (base is TFhirContractTermValuedItem) then
+    composeContractTermValuedItem(xml, name,  TFhirContractTermValuedItem(base))
+  else if (base is TFhirContractFriendly) then
+    composeContractFriendly(xml, name,  TFhirContractFriendly(base))
+  else if (base is TFhirContractLegal) then
+    composeContractLegal(xml, name,  TFhirContractLegal(base))
+  else if (base is TFhirContractRule) then
+    composeContractRule(xml, name,  TFhirContractRule(base))
+  else if (base is TFhirContract) then
+    composeContract(xml, name,  TFhirContract(base))
+  else if (base is TFhirCoverage) then
+    composeCoverage(xml, name,  TFhirCoverage(base))
+  else if (base is TFhirDataElementContact) then
+    composeDataElementContact(xml, name,  TFhirDataElementContact(base))
+  else if (base is TFhirDataElementMapping) then
+    composeDataElementMapping(xml, name,  TFhirDataElementMapping(base))
+  else if (base is TFhirDataElement) then
+    composeDataElement(xml, name,  TFhirDataElement(base))
+  else if (base is TFhirDetectedIssueMitigation) then
+    composeDetectedIssueMitigation(xml, name,  TFhirDetectedIssueMitigation(base))
+  else if (base is TFhirDetectedIssue) then
+    composeDetectedIssue(xml, name,  TFhirDetectedIssue(base))
+  else if (base is TFhirDevice) then
+    composeDevice(xml, name,  TFhirDevice(base))
+  else if (base is TFhirDeviceComponentProductionSpecification) then
+    composeDeviceComponentProductionSpecification(xml, name,  TFhirDeviceComponentProductionSpecification(base))
+  else if (base is TFhirDeviceComponent) then
+    composeDeviceComponent(xml, name,  TFhirDeviceComponent(base))
+  else if (base is TFhirDeviceMetricCalibration) then
+    composeDeviceMetricCalibration(xml, name,  TFhirDeviceMetricCalibration(base))
+  else if (base is TFhirDeviceMetric) then
+    composeDeviceMetric(xml, name,  TFhirDeviceMetric(base))
+  else if (base is TFhirDeviceUseRequest) then
+    composeDeviceUseRequest(xml, name,  TFhirDeviceUseRequest(base))
+  else if (base is TFhirDeviceUseStatement) then
+    composeDeviceUseStatement(xml, name,  TFhirDeviceUseStatement(base))
+  else if (base is TFhirDiagnosticOrderEvent) then
+    composeDiagnosticOrderEvent(xml, name,  TFhirDiagnosticOrderEvent(base))
+  else if (base is TFhirDiagnosticOrderItem) then
+    composeDiagnosticOrderItem(xml, name,  TFhirDiagnosticOrderItem(base))
+  else if (base is TFhirDiagnosticOrder) then
+    composeDiagnosticOrder(xml, name,  TFhirDiagnosticOrder(base))
+  else if (base is TFhirDiagnosticReportImage) then
+    composeDiagnosticReportImage(xml, name,  TFhirDiagnosticReportImage(base))
+  else if (base is TFhirDiagnosticReport) then
+    composeDiagnosticReport(xml, name,  TFhirDiagnosticReport(base))
+  else if (base is TFhirDocumentManifestContent) then
+    composeDocumentManifestContent(xml, name,  TFhirDocumentManifestContent(base))
+  else if (base is TFhirDocumentManifestRelated) then
+    composeDocumentManifestRelated(xml, name,  TFhirDocumentManifestRelated(base))
+  else if (base is TFhirDocumentManifest) then
+    composeDocumentManifest(xml, name,  TFhirDocumentManifest(base))
+  else if (base is TFhirDocumentReferenceRelatesTo) then
+    composeDocumentReferenceRelatesTo(xml, name,  TFhirDocumentReferenceRelatesTo(base))
+  else if (base is TFhirDocumentReferenceContent) then
+    composeDocumentReferenceContent(xml, name,  TFhirDocumentReferenceContent(base))
+  else if (base is TFhirDocumentReferenceContext) then
+    composeDocumentReferenceContext(xml, name,  TFhirDocumentReferenceContext(base))
+  else if (base is TFhirDocumentReferenceContextRelated) then
+    composeDocumentReferenceContextRelated(xml, name,  TFhirDocumentReferenceContextRelated(base))
+  else if (base is TFhirDocumentReference) then
+    composeDocumentReference(xml, name,  TFhirDocumentReference(base))
+  else if (base is TFhirEligibilityRequest) then
+    composeEligibilityRequest(xml, name,  TFhirEligibilityRequest(base))
+  else if (base is TFhirEligibilityResponse) then
+    composeEligibilityResponse(xml, name,  TFhirEligibilityResponse(base))
+  else if (base is TFhirEncounterStatusHistory) then
+    composeEncounterStatusHistory(xml, name,  TFhirEncounterStatusHistory(base))
+  else if (base is TFhirEncounterParticipant) then
+    composeEncounterParticipant(xml, name,  TFhirEncounterParticipant(base))
+  else if (base is TFhirEncounterHospitalization) then
+    composeEncounterHospitalization(xml, name,  TFhirEncounterHospitalization(base))
+  else if (base is TFhirEncounterLocation) then
+    composeEncounterLocation(xml, name,  TFhirEncounterLocation(base))
+  else if (base is TFhirEncounter) then
+    composeEncounter(xml, name,  TFhirEncounter(base))
+  else if (base is TFhirEnrollmentRequest) then
+    composeEnrollmentRequest(xml, name,  TFhirEnrollmentRequest(base))
+  else if (base is TFhirEnrollmentResponse) then
+    composeEnrollmentResponse(xml, name,  TFhirEnrollmentResponse(base))
+  else if (base is TFhirEpisodeOfCareStatusHistory) then
+    composeEpisodeOfCareStatusHistory(xml, name,  TFhirEpisodeOfCareStatusHistory(base))
+  else if (base is TFhirEpisodeOfCareCareTeam) then
+    composeEpisodeOfCareCareTeam(xml, name,  TFhirEpisodeOfCareCareTeam(base))
+  else if (base is TFhirEpisodeOfCare) then
+    composeEpisodeOfCare(xml, name,  TFhirEpisodeOfCare(base))
+  else if (base is TFhirExplanationOfBenefit) then
+    composeExplanationOfBenefit(xml, name,  TFhirExplanationOfBenefit(base))
+  else if (base is TFhirFamilyMemberHistoryCondition) then
+    composeFamilyMemberHistoryCondition(xml, name,  TFhirFamilyMemberHistoryCondition(base))
+  else if (base is TFhirFamilyMemberHistory) then
+    composeFamilyMemberHistory(xml, name,  TFhirFamilyMemberHistory(base))
+  else if (base is TFhirFlag) then
+    composeFlag(xml, name,  TFhirFlag(base))
+  else if (base is TFhirGoalOutcome) then
+    composeGoalOutcome(xml, name,  TFhirGoalOutcome(base))
+  else if (base is TFhirGoal) then
+    composeGoal(xml, name,  TFhirGoal(base))
+  else if (base is TFhirGroupCharacteristic) then
+    composeGroupCharacteristic(xml, name,  TFhirGroupCharacteristic(base))
+  else if (base is TFhirGroupMember) then
+    composeGroupMember(xml, name,  TFhirGroupMember(base))
+  else if (base is TFhirGroup) then
+    composeGroup(xml, name,  TFhirGroup(base))
+  else if (base is TFhirHealthcareServiceServiceType) then
+    composeHealthcareServiceServiceType(xml, name,  TFhirHealthcareServiceServiceType(base))
+  else if (base is TFhirHealthcareServiceAvailableTime) then
+    composeHealthcareServiceAvailableTime(xml, name,  TFhirHealthcareServiceAvailableTime(base))
+  else if (base is TFhirHealthcareServiceNotAvailable) then
+    composeHealthcareServiceNotAvailable(xml, name,  TFhirHealthcareServiceNotAvailable(base))
+  else if (base is TFhirHealthcareService) then
+    composeHealthcareService(xml, name,  TFhirHealthcareService(base))
+  else if (base is TFhirImagingObjectSelectionStudy) then
+    composeImagingObjectSelectionStudy(xml, name,  TFhirImagingObjectSelectionStudy(base))
+  else if (base is TFhirImagingObjectSelectionStudySeries) then
+    composeImagingObjectSelectionStudySeries(xml, name,  TFhirImagingObjectSelectionStudySeries(base))
+  else if (base is TFhirImagingObjectSelectionStudySeriesInstance) then
+    composeImagingObjectSelectionStudySeriesInstance(xml, name,  TFhirImagingObjectSelectionStudySeriesInstance(base))
+  else if (base is TFhirImagingObjectSelectionStudySeriesInstanceFrames) then
+    composeImagingObjectSelectionStudySeriesInstanceFrames(xml, name,  TFhirImagingObjectSelectionStudySeriesInstanceFrames(base))
+  else if (base is TFhirImagingObjectSelection) then
+    composeImagingObjectSelection(xml, name,  TFhirImagingObjectSelection(base))
+  else if (base is TFhirImagingStudySeries) then
+    composeImagingStudySeries(xml, name,  TFhirImagingStudySeries(base))
+  else if (base is TFhirImagingStudySeriesInstance) then
+    composeImagingStudySeriesInstance(xml, name,  TFhirImagingStudySeriesInstance(base))
+  else if (base is TFhirImagingStudy) then
+    composeImagingStudy(xml, name,  TFhirImagingStudy(base))
+  else if (base is TFhirImmunizationExplanation) then
+    composeImmunizationExplanation(xml, name,  TFhirImmunizationExplanation(base))
+  else if (base is TFhirImmunizationReaction) then
+    composeImmunizationReaction(xml, name,  TFhirImmunizationReaction(base))
+  else if (base is TFhirImmunizationVaccinationProtocol) then
+    composeImmunizationVaccinationProtocol(xml, name,  TFhirImmunizationVaccinationProtocol(base))
+  else if (base is TFhirImmunization) then
+    composeImmunization(xml, name,  TFhirImmunization(base))
+  else if (base is TFhirImmunizationRecommendationRecommendation) then
+    composeImmunizationRecommendationRecommendation(xml, name,  TFhirImmunizationRecommendationRecommendation(base))
+  else if (base is TFhirImmunizationRecommendationRecommendationDateCriterion) then
+    composeImmunizationRecommendationRecommendationDateCriterion(xml, name,  TFhirImmunizationRecommendationRecommendationDateCriterion(base))
+  else if (base is TFhirImmunizationRecommendationRecommendationProtocol) then
+    composeImmunizationRecommendationRecommendationProtocol(xml, name,  TFhirImmunizationRecommendationRecommendationProtocol(base))
+  else if (base is TFhirImmunizationRecommendation) then
+    composeImmunizationRecommendation(xml, name,  TFhirImmunizationRecommendation(base))
+  else if (base is TFhirImplementationGuideContact) then
+    composeImplementationGuideContact(xml, name,  TFhirImplementationGuideContact(base))
+  else if (base is TFhirImplementationGuideDependency) then
+    composeImplementationGuideDependency(xml, name,  TFhirImplementationGuideDependency(base))
+  else if (base is TFhirImplementationGuidePackage) then
+    composeImplementationGuidePackage(xml, name,  TFhirImplementationGuidePackage(base))
+  else if (base is TFhirImplementationGuidePackageResource) then
+    composeImplementationGuidePackageResource(xml, name,  TFhirImplementationGuidePackageResource(base))
+  else if (base is TFhirImplementationGuideGlobal) then
+    composeImplementationGuideGlobal(xml, name,  TFhirImplementationGuideGlobal(base))
+  else if (base is TFhirImplementationGuidePage) then
+    composeImplementationGuidePage(xml, name,  TFhirImplementationGuidePage(base))
+  else if (base is TFhirImplementationGuide) then
+    composeImplementationGuide(xml, name,  TFhirImplementationGuide(base))
+  else if (base is TFhirListEntry) then
+    composeListEntry(xml, name,  TFhirListEntry(base))
+  else if (base is TFhirList) then
+    composeList(xml, name,  TFhirList(base))
+  else if (base is TFhirLocationPosition) then
+    composeLocationPosition(xml, name,  TFhirLocationPosition(base))
+  else if (base is TFhirLocation) then
+    composeLocation(xml, name,  TFhirLocation(base))
+  else if (base is TFhirMedia) then
+    composeMedia(xml, name,  TFhirMedia(base))
+  else if (base is TFhirMedicationProduct) then
+    composeMedicationProduct(xml, name,  TFhirMedicationProduct(base))
+  else if (base is TFhirMedicationProductIngredient) then
+    composeMedicationProductIngredient(xml, name,  TFhirMedicationProductIngredient(base))
+  else if (base is TFhirMedicationProductBatch) then
+    composeMedicationProductBatch(xml, name,  TFhirMedicationProductBatch(base))
+  else if (base is TFhirMedicationPackage) then
+    composeMedicationPackage(xml, name,  TFhirMedicationPackage(base))
+  else if (base is TFhirMedicationPackageContent) then
+    composeMedicationPackageContent(xml, name,  TFhirMedicationPackageContent(base))
+  else if (base is TFhirMedication) then
+    composeMedication(xml, name,  TFhirMedication(base))
+  else if (base is TFhirMedicationAdministrationDosage) then
+    composeMedicationAdministrationDosage(xml, name,  TFhirMedicationAdministrationDosage(base))
+  else if (base is TFhirMedicationAdministration) then
+    composeMedicationAdministration(xml, name,  TFhirMedicationAdministration(base))
+  else if (base is TFhirMedicationDispenseDosageInstruction) then
+    composeMedicationDispenseDosageInstruction(xml, name,  TFhirMedicationDispenseDosageInstruction(base))
+  else if (base is TFhirMedicationDispenseSubstitution) then
+    composeMedicationDispenseSubstitution(xml, name,  TFhirMedicationDispenseSubstitution(base))
+  else if (base is TFhirMedicationDispense) then
+    composeMedicationDispense(xml, name,  TFhirMedicationDispense(base))
+  else if (base is TFhirMedicationOrderDosageInstruction) then
+    composeMedicationOrderDosageInstruction(xml, name,  TFhirMedicationOrderDosageInstruction(base))
+  else if (base is TFhirMedicationOrderDispenseRequest) then
+    composeMedicationOrderDispenseRequest(xml, name,  TFhirMedicationOrderDispenseRequest(base))
+  else if (base is TFhirMedicationOrderSubstitution) then
+    composeMedicationOrderSubstitution(xml, name,  TFhirMedicationOrderSubstitution(base))
+  else if (base is TFhirMedicationOrder) then
+    composeMedicationOrder(xml, name,  TFhirMedicationOrder(base))
+  else if (base is TFhirMedicationStatementDosage) then
+    composeMedicationStatementDosage(xml, name,  TFhirMedicationStatementDosage(base))
+  else if (base is TFhirMedicationStatement) then
+    composeMedicationStatement(xml, name,  TFhirMedicationStatement(base))
+  else if (base is TFhirMessageHeaderResponse) then
+    composeMessageHeaderResponse(xml, name,  TFhirMessageHeaderResponse(base))
+  else if (base is TFhirMessageHeaderSource) then
+    composeMessageHeaderSource(xml, name,  TFhirMessageHeaderSource(base))
+  else if (base is TFhirMessageHeaderDestination) then
+    composeMessageHeaderDestination(xml, name,  TFhirMessageHeaderDestination(base))
+  else if (base is TFhirMessageHeader) then
+    composeMessageHeader(xml, name,  TFhirMessageHeader(base))
+  else if (base is TFhirNamingSystemContact) then
+    composeNamingSystemContact(xml, name,  TFhirNamingSystemContact(base))
+  else if (base is TFhirNamingSystemUniqueId) then
+    composeNamingSystemUniqueId(xml, name,  TFhirNamingSystemUniqueId(base))
+  else if (base is TFhirNamingSystem) then
+    composeNamingSystem(xml, name,  TFhirNamingSystem(base))
+  else if (base is TFhirNutritionOrderOralDiet) then
+    composeNutritionOrderOralDiet(xml, name,  TFhirNutritionOrderOralDiet(base))
+  else if (base is TFhirNutritionOrderOralDietNutrient) then
+    composeNutritionOrderOralDietNutrient(xml, name,  TFhirNutritionOrderOralDietNutrient(base))
+  else if (base is TFhirNutritionOrderOralDietTexture) then
+    composeNutritionOrderOralDietTexture(xml, name,  TFhirNutritionOrderOralDietTexture(base))
+  else if (base is TFhirNutritionOrderSupplement) then
+    composeNutritionOrderSupplement(xml, name,  TFhirNutritionOrderSupplement(base))
+  else if (base is TFhirNutritionOrderEnteralFormula) then
+    composeNutritionOrderEnteralFormula(xml, name,  TFhirNutritionOrderEnteralFormula(base))
+  else if (base is TFhirNutritionOrderEnteralFormulaAdministration) then
+    composeNutritionOrderEnteralFormulaAdministration(xml, name,  TFhirNutritionOrderEnteralFormulaAdministration(base))
+  else if (base is TFhirNutritionOrder) then
+    composeNutritionOrder(xml, name,  TFhirNutritionOrder(base))
+  else if (base is TFhirObservationReferenceRange) then
+    composeObservationReferenceRange(xml, name,  TFhirObservationReferenceRange(base))
+  else if (base is TFhirObservationRelated) then
+    composeObservationRelated(xml, name,  TFhirObservationRelated(base))
+  else if (base is TFhirObservationComponent) then
+    composeObservationComponent(xml, name,  TFhirObservationComponent(base))
+  else if (base is TFhirObservation) then
+    composeObservation(xml, name,  TFhirObservation(base))
+  else if (base is TFhirOperationDefinitionContact) then
+    composeOperationDefinitionContact(xml, name,  TFhirOperationDefinitionContact(base))
+  else if (base is TFhirOperationDefinitionParameter) then
+    composeOperationDefinitionParameter(xml, name,  TFhirOperationDefinitionParameter(base))
+  else if (base is TFhirOperationDefinitionParameterBinding) then
+    composeOperationDefinitionParameterBinding(xml, name,  TFhirOperationDefinitionParameterBinding(base))
+  else if (base is TFhirOperationDefinition) then
+    composeOperationDefinition(xml, name,  TFhirOperationDefinition(base))
+  else if (base is TFhirOperationOutcomeIssue) then
+    composeOperationOutcomeIssue(xml, name,  TFhirOperationOutcomeIssue(base))
+  else if (base is TFhirOperationOutcome) then
+    composeOperationOutcome(xml, name,  TFhirOperationOutcome(base))
+  else if (base is TFhirOrderWhen) then
+    composeOrderWhen(xml, name,  TFhirOrderWhen(base))
+  else if (base is TFhirOrder) then
+    composeOrder(xml, name,  TFhirOrder(base))
+  else if (base is TFhirOrderResponse) then
+    composeOrderResponse(xml, name,  TFhirOrderResponse(base))
+  else if (base is TFhirOrganizationContact) then
+    composeOrganizationContact(xml, name,  TFhirOrganizationContact(base))
+  else if (base is TFhirOrganization) then
+    composeOrganization(xml, name,  TFhirOrganization(base))
+  else if (base is TFhirPatientContact) then
+    composePatientContact(xml, name,  TFhirPatientContact(base))
+  else if (base is TFhirPatientAnimal) then
+    composePatientAnimal(xml, name,  TFhirPatientAnimal(base))
+  else if (base is TFhirPatientCommunication) then
+    composePatientCommunication(xml, name,  TFhirPatientCommunication(base))
+  else if (base is TFhirPatientLink) then
+    composePatientLink(xml, name,  TFhirPatientLink(base))
+  else if (base is TFhirPatient) then
+    composePatient(xml, name,  TFhirPatient(base))
+  else if (base is TFhirPaymentNotice) then
+    composePaymentNotice(xml, name,  TFhirPaymentNotice(base))
+  else if (base is TFhirPaymentReconciliationDetail) then
+    composePaymentReconciliationDetail(xml, name,  TFhirPaymentReconciliationDetail(base))
+  else if (base is TFhirPaymentReconciliationNote) then
+    composePaymentReconciliationNote(xml, name,  TFhirPaymentReconciliationNote(base))
+  else if (base is TFhirPaymentReconciliation) then
+    composePaymentReconciliation(xml, name,  TFhirPaymentReconciliation(base))
+  else if (base is TFhirPersonLink) then
+    composePersonLink(xml, name,  TFhirPersonLink(base))
+  else if (base is TFhirPerson) then
+    composePerson(xml, name,  TFhirPerson(base))
+  else if (base is TFhirPractitionerPractitionerRole) then
+    composePractitionerPractitionerRole(xml, name,  TFhirPractitionerPractitionerRole(base))
+  else if (base is TFhirPractitionerQualification) then
+    composePractitionerQualification(xml, name,  TFhirPractitionerQualification(base))
+  else if (base is TFhirPractitioner) then
+    composePractitioner(xml, name,  TFhirPractitioner(base))
+  else if (base is TFhirProcedurePerformer) then
+    composeProcedurePerformer(xml, name,  TFhirProcedurePerformer(base))
+  else if (base is TFhirProcedureFocalDevice) then
+    composeProcedureFocalDevice(xml, name,  TFhirProcedureFocalDevice(base))
+  else if (base is TFhirProcedure) then
+    composeProcedure(xml, name,  TFhirProcedure(base))
+  else if (base is TFhirProcedureRequest) then
+    composeProcedureRequest(xml, name,  TFhirProcedureRequest(base))
+  else if (base is TFhirProcessRequestItem) then
+    composeProcessRequestItem(xml, name,  TFhirProcessRequestItem(base))
+  else if (base is TFhirProcessRequest) then
+    composeProcessRequest(xml, name,  TFhirProcessRequest(base))
+  else if (base is TFhirProcessResponseNotes) then
+    composeProcessResponseNotes(xml, name,  TFhirProcessResponseNotes(base))
+  else if (base is TFhirProcessResponse) then
+    composeProcessResponse(xml, name,  TFhirProcessResponse(base))
+  else if (base is TFhirProvenanceAgent) then
+    composeProvenanceAgent(xml, name,  TFhirProvenanceAgent(base))
+  else if (base is TFhirProvenanceAgentRelatedAgent) then
+    composeProvenanceAgentRelatedAgent(xml, name,  TFhirProvenanceAgentRelatedAgent(base))
+  else if (base is TFhirProvenanceEntity) then
+    composeProvenanceEntity(xml, name,  TFhirProvenanceEntity(base))
+  else if (base is TFhirProvenance) then
+    composeProvenance(xml, name,  TFhirProvenance(base))
+  else if (base is TFhirQuestionnaireGroup) then
+    composeQuestionnaireGroup(xml, name,  TFhirQuestionnaireGroup(base))
+  else if (base is TFhirQuestionnaireGroupQuestion) then
+    composeQuestionnaireGroupQuestion(xml, name,  TFhirQuestionnaireGroupQuestion(base))
+  else if (base is TFhirQuestionnaire) then
+    composeQuestionnaire(xml, name,  TFhirQuestionnaire(base))
+  else if (base is TFhirQuestionnaireResponseGroup) then
+    composeQuestionnaireResponseGroup(xml, name,  TFhirQuestionnaireResponseGroup(base))
+  else if (base is TFhirQuestionnaireResponseGroupQuestion) then
+    composeQuestionnaireResponseGroupQuestion(xml, name,  TFhirQuestionnaireResponseGroupQuestion(base))
+  else if (base is TFhirQuestionnaireResponseGroupQuestionAnswer) then
+    composeQuestionnaireResponseGroupQuestionAnswer(xml, name,  TFhirQuestionnaireResponseGroupQuestionAnswer(base))
+  else if (base is TFhirQuestionnaireResponse) then
+    composeQuestionnaireResponse(xml, name,  TFhirQuestionnaireResponse(base))
+  else if (base is TFhirReferralRequest) then
+    composeReferralRequest(xml, name,  TFhirReferralRequest(base))
+  else if (base is TFhirRelatedPerson) then
+    composeRelatedPerson(xml, name,  TFhirRelatedPerson(base))
+  else if (base is TFhirRiskAssessmentPrediction) then
+    composeRiskAssessmentPrediction(xml, name,  TFhirRiskAssessmentPrediction(base))
+  else if (base is TFhirRiskAssessment) then
+    composeRiskAssessment(xml, name,  TFhirRiskAssessment(base))
+  else if (base is TFhirSchedule) then
+    composeSchedule(xml, name,  TFhirSchedule(base))
+  else if (base is TFhirSearchParameterContact) then
+    composeSearchParameterContact(xml, name,  TFhirSearchParameterContact(base))
+  else if (base is TFhirSearchParameter) then
+    composeSearchParameter(xml, name,  TFhirSearchParameter(base))
+  else if (base is TFhirSlot) then
+    composeSlot(xml, name,  TFhirSlot(base))
+  else if (base is TFhirSpecimenCollection) then
+    composeSpecimenCollection(xml, name,  TFhirSpecimenCollection(base))
+  else if (base is TFhirSpecimenTreatment) then
+    composeSpecimenTreatment(xml, name,  TFhirSpecimenTreatment(base))
+  else if (base is TFhirSpecimenContainer) then
+    composeSpecimenContainer(xml, name,  TFhirSpecimenContainer(base))
+  else if (base is TFhirSpecimen) then
+    composeSpecimen(xml, name,  TFhirSpecimen(base))
+  else if (base is TFhirStructureDefinitionContact) then
+    composeStructureDefinitionContact(xml, name,  TFhirStructureDefinitionContact(base))
+  else if (base is TFhirStructureDefinitionMapping) then
+    composeStructureDefinitionMapping(xml, name,  TFhirStructureDefinitionMapping(base))
+  else if (base is TFhirStructureDefinitionSnapshot) then
+    composeStructureDefinitionSnapshot(xml, name,  TFhirStructureDefinitionSnapshot(base))
+  else if (base is TFhirStructureDefinitionDifferential) then
+    composeStructureDefinitionDifferential(xml, name,  TFhirStructureDefinitionDifferential(base))
+  else if (base is TFhirStructureDefinition) then
+    composeStructureDefinition(xml, name,  TFhirStructureDefinition(base))
+  else if (base is TFhirSubscriptionChannel) then
+    composeSubscriptionChannel(xml, name,  TFhirSubscriptionChannel(base))
+  else if (base is TFhirSubscription) then
+    composeSubscription(xml, name,  TFhirSubscription(base))
+  else if (base is TFhirSubstanceInstance) then
+    composeSubstanceInstance(xml, name,  TFhirSubstanceInstance(base))
+  else if (base is TFhirSubstanceIngredient) then
+    composeSubstanceIngredient(xml, name,  TFhirSubstanceIngredient(base))
+  else if (base is TFhirSubstance) then
+    composeSubstance(xml, name,  TFhirSubstance(base))
+  else if (base is TFhirSupplyDelivery) then
+    composeSupplyDelivery(xml, name,  TFhirSupplyDelivery(base))
+  else if (base is TFhirSupplyRequestWhen) then
+    composeSupplyRequestWhen(xml, name,  TFhirSupplyRequestWhen(base))
+  else if (base is TFhirSupplyRequest) then
+    composeSupplyRequest(xml, name,  TFhirSupplyRequest(base))
+  else if (base is TFhirTestScriptContact) then
+    composeTestScriptContact(xml, name,  TFhirTestScriptContact(base))
+  else if (base is TFhirTestScriptMetadata) then
+    composeTestScriptMetadata(xml, name,  TFhirTestScriptMetadata(base))
+  else if (base is TFhirTestScriptMetadataLink) then
+    composeTestScriptMetadataLink(xml, name,  TFhirTestScriptMetadataLink(base))
+  else if (base is TFhirTestScriptMetadataCapability) then
+    composeTestScriptMetadataCapability(xml, name,  TFhirTestScriptMetadataCapability(base))
+  else if (base is TFhirTestScriptFixture) then
+    composeTestScriptFixture(xml, name,  TFhirTestScriptFixture(base))
+  else if (base is TFhirTestScriptVariable) then
+    composeTestScriptVariable(xml, name,  TFhirTestScriptVariable(base))
+  else if (base is TFhirTestScriptSetup) then
+    composeTestScriptSetup(xml, name,  TFhirTestScriptSetup(base))
+  else if (base is TFhirTestScriptSetupAction) then
+    composeTestScriptSetupAction(xml, name,  TFhirTestScriptSetupAction(base))
+  else if (base is TFhirTestScriptSetupActionOperation) then
+    composeTestScriptSetupActionOperation(xml, name,  TFhirTestScriptSetupActionOperation(base))
+  else if (base is TFhirTestScriptSetupActionOperationRequestHeader) then
+    composeTestScriptSetupActionOperationRequestHeader(xml, name,  TFhirTestScriptSetupActionOperationRequestHeader(base))
+  else if (base is TFhirTestScriptSetupActionAssert) then
+    composeTestScriptSetupActionAssert(xml, name,  TFhirTestScriptSetupActionAssert(base))
+  else if (base is TFhirTestScriptTest) then
+    composeTestScriptTest(xml, name,  TFhirTestScriptTest(base))
+  else if (base is TFhirTestScriptTestAction) then
+    composeTestScriptTestAction(xml, name,  TFhirTestScriptTestAction(base))
+  else if (base is TFhirTestScriptTeardown) then
+    composeTestScriptTeardown(xml, name,  TFhirTestScriptTeardown(base))
+  else if (base is TFhirTestScriptTeardownAction) then
+    composeTestScriptTeardownAction(xml, name,  TFhirTestScriptTeardownAction(base))
+  else if (base is TFhirTestScript) then
+    composeTestScript(xml, name,  TFhirTestScript(base))
+  else if (base is TFhirValueSetContact) then
+    composeValueSetContact(xml, name,  TFhirValueSetContact(base))
+  else if (base is TFhirValueSetCodeSystem) then
+    composeValueSetCodeSystem(xml, name,  TFhirValueSetCodeSystem(base))
+  else if (base is TFhirValueSetCodeSystemConcept) then
+    composeValueSetCodeSystemConcept(xml, name,  TFhirValueSetCodeSystemConcept(base))
+  else if (base is TFhirValueSetCodeSystemConceptDesignation) then
+    composeValueSetCodeSystemConceptDesignation(xml, name,  TFhirValueSetCodeSystemConceptDesignation(base))
+  else if (base is TFhirValueSetCompose) then
+    composeValueSetCompose(xml, name,  TFhirValueSetCompose(base))
+  else if (base is TFhirValueSetComposeInclude) then
+    composeValueSetComposeInclude(xml, name,  TFhirValueSetComposeInclude(base))
+  else if (base is TFhirValueSetComposeIncludeConcept) then
+    composeValueSetComposeIncludeConcept(xml, name,  TFhirValueSetComposeIncludeConcept(base))
+  else if (base is TFhirValueSetComposeIncludeFilter) then
+    composeValueSetComposeIncludeFilter(xml, name,  TFhirValueSetComposeIncludeFilter(base))
+  else if (base is TFhirValueSetExpansion) then
+    composeValueSetExpansion(xml, name,  TFhirValueSetExpansion(base))
+  else if (base is TFhirValueSetExpansionParameter) then
+    composeValueSetExpansionParameter(xml, name,  TFhirValueSetExpansionParameter(base))
+  else if (base is TFhirValueSetExpansionContains) then
+    composeValueSetExpansionContains(xml, name,  TFhirValueSetExpansionContains(base))
+  else if (base is TFhirValueSet) then
+    composeValueSet(xml, name,  TFhirValueSet(base))
+  else if (base is TFhirVisionPrescriptionDispense) then
+    composeVisionPrescriptionDispense(xml, name,  TFhirVisionPrescriptionDispense(base))
+  else if (base is TFhirVisionPrescription) then
+    composeVisionPrescription(xml, name,  TFhirVisionPrescription(base))
+  else
+    raise Exception.create('Unknown Type '+base.className);
+end;
+
+procedure TFHIRJsonComposer.ComposeBase(json: TJSONWriter; name: String; base: TFHIRBase);
+begin
+  if (base is TFhirEnum) then
+    composeEnumValue(json, name, TFhirEnum(base), [], false)
+  else if (base is TFhirXhtmlNode) then
+    ComposeXHtmlNode(json, name, TFhirXhtmlNode(base))
+  else if (base is TFhirInteger) then
+    composeIntegerValue(json, name, TFhirInteger(base), false)
+  else if (base is TFhirDateTime) then
+    composeDateTimeValue(json, name, TFhirDateTime(base), false)
+  else if (base is TFhirDate) then
+    composeDateValue(json, name, TFhirDate(base), false)
+  else if (base is TFhirDecimal) then
+    composeDecimalValue(json, name, TFhirDecimal(base), false)
+  else if (base is TFhirUri) then
+    composeUriValue(json, name, TFhirUri(base), false)
+  else if (base is TFhirBase64Binary) then
+    composeBase64BinaryValue(json, name, TFhirBase64Binary(base), false)
+  else if (base is TFhirTime) then
+    composeTimeValue(json, name, TFhirTime(base), false)
+  else if (base is TFhirString) then
+    composeStringValue(json, name, TFhirString(base), false)
+  else if (base is TFhirBoolean) then
+    composeBooleanValue(json, name, TFhirBoolean(base), false)
+  else if (base is TFhirInstant) then
+    composeInstantValue(json, name, TFhirInstant(base), false)
+  else if (base is TFhirMarkdown) then
+    composeMarkdownValue(json, name, TFhirMarkdown(base), false)
+  else if (base is TFhirUnsignedInt) then
+    composeUnsignedIntValue(json, name, TFhirUnsignedInt(base), false)
+  else if (base is TFhirCode) then
+    composeCodeValue(json, name, TFhirCode(base), false)
+  else if (base is TFhirId) then
+    composeIdValue(json, name, TFhirId(base), false)
+  else if (base is TFhirOid) then
+    composeOidValue(json, name, TFhirOid(base), false)
+  else if (base is TFhirPositiveInt) then
+    composePositiveIntValue(json, name, TFhirPositiveInt(base), false)
+  else if (base is TFhirUuid) then
+    composeUuidValue(json, name, TFhirUuid(base), false)
+  else if (base is TFhirParametersParameter) then
+    composeParametersParameter(json, name, TFhirParametersParameter(base), false)
+  else if (base is TFhirParameters) then
+    composeParameters(json, name, TFhirParameters(base), false)
+  else if (base is TFhirExtension) then
+    composeExtension(json, name, TFhirExtension(base), false)
+  else if (base is TFhirNarrative) then
+    composeNarrative(json, name, TFhirNarrative(base), false)
+  else if (base is TFhirPeriod) then
+    composePeriod(json, name, TFhirPeriod(base), false)
+  else if (base is TFhirCoding) then
+    composeCoding(json, name, TFhirCoding(base), false)
+  else if (base is TFhirRange) then
+    composeRange(json, name, TFhirRange(base), false)
+  else if (base is TFhirQuantity) then
+    composeQuantity(json, name, TFhirQuantity(base), false)
+  else if (base is TFhirAttachment) then
+    composeAttachment(json, name, TFhirAttachment(base), false)
+  else if (base is TFhirRatio) then
+    composeRatio(json, name, TFhirRatio(base), false)
+  else if (base is TFhirAnnotation) then
+    composeAnnotation(json, name, TFhirAnnotation(base), false)
+  else if (base is TFhirSampledData) then
+    composeSampledData(json, name, TFhirSampledData(base), false)
+  else if (base is TFhirReference) then
+    composeReference(json, name, TFhirReference(base), false)
+  else if (base is TFhirCodeableConcept) then
+    composeCodeableConcept(json, name, TFhirCodeableConcept(base), false)
+  else if (base is TFhirIdentifier) then
+    composeIdentifier(json, name, TFhirIdentifier(base), false)
+  else if (base is TFhirSignature) then
+    composeSignature(json, name, TFhirSignature(base), false)
+  else if (base is TFhirElementDefinitionSlicing) then
+    composeElementDefinitionSlicing(json, name, TFhirElementDefinitionSlicing(base), false)
+  else if (base is TFhirElementDefinitionBase) then
+    composeElementDefinitionBase(json, name, TFhirElementDefinitionBase(base), false)
+  else if (base is TFhirElementDefinitionType) then
+    composeElementDefinitionType(json, name, TFhirElementDefinitionType(base), false)
+  else if (base is TFhirElementDefinitionConstraint) then
+    composeElementDefinitionConstraint(json, name, TFhirElementDefinitionConstraint(base), false)
+  else if (base is TFhirElementDefinitionBinding) then
+    composeElementDefinitionBinding(json, name, TFhirElementDefinitionBinding(base), false)
+  else if (base is TFhirElementDefinitionMapping) then
+    composeElementDefinitionMapping(json, name, TFhirElementDefinitionMapping(base), false)
+  else if (base is TFhirElementDefinition) then
+    composeElementDefinition(json, name, TFhirElementDefinition(base), false)
+  else if (base is TFhirTimingRepeat) then
+    composeTimingRepeat(json, name, TFhirTimingRepeat(base), false)
+  else if (base is TFhirTiming) then
+    composeTiming(json, name, TFhirTiming(base), false)
+  else if (base is TFhirAddress) then
+    composeAddress(json, name, TFhirAddress(base), false)
+  else if (base is TFhirHumanName) then
+    composeHumanName(json, name, TFhirHumanName(base), false)
+  else if (base is TFhirMeta) then
+    composeMeta(json, name, TFhirMeta(base), false)
+  else if (base is TFhirContactPoint) then
+    composeContactPoint(json, name, TFhirContactPoint(base), false)
+  else if (base is TFhirAccount) then
+    composeAccount(json, name, TFhirAccount(base), false)
+  else if (base is TFhirAllergyIntoleranceReaction) then
+    composeAllergyIntoleranceReaction(json, name, TFhirAllergyIntoleranceReaction(base), false)
+  else if (base is TFhirAllergyIntolerance) then
+    composeAllergyIntolerance(json, name, TFhirAllergyIntolerance(base), false)
+  else if (base is TFhirAppointmentParticipant) then
+    composeAppointmentParticipant(json, name, TFhirAppointmentParticipant(base), false)
+  else if (base is TFhirAppointment) then
+    composeAppointment(json, name, TFhirAppointment(base), false)
+  else if (base is TFhirAppointmentResponse) then
+    composeAppointmentResponse(json, name, TFhirAppointmentResponse(base), false)
+  else if (base is TFhirAuditEventEvent) then
+    composeAuditEventEvent(json, name, TFhirAuditEventEvent(base), false)
+  else if (base is TFhirAuditEventParticipant) then
+    composeAuditEventParticipant(json, name, TFhirAuditEventParticipant(base), false)
+  else if (base is TFhirAuditEventParticipantNetwork) then
+    composeAuditEventParticipantNetwork(json, name, TFhirAuditEventParticipantNetwork(base), false)
+  else if (base is TFhirAuditEventSource) then
+    composeAuditEventSource(json, name, TFhirAuditEventSource(base), false)
+  else if (base is TFhirAuditEventObject) then
+    composeAuditEventObject(json, name, TFhirAuditEventObject(base), false)
+  else if (base is TFhirAuditEventObjectDetail) then
+    composeAuditEventObjectDetail(json, name, TFhirAuditEventObjectDetail(base), false)
+  else if (base is TFhirAuditEvent) then
+    composeAuditEvent(json, name, TFhirAuditEvent(base), false)
+  else if (base is TFhirBasic) then
+    composeBasic(json, name, TFhirBasic(base), false)
+  else if (base is TFhirBinary) then
+    composeBinary(json, name, TFhirBinary(base), false)
+  else if (base is TFhirBodySite) then
+    composeBodySite(json, name, TFhirBodySite(base), false)
+  else if (base is TFhirBundleLink) then
+    composeBundleLink(json, name, TFhirBundleLink(base), false)
+  else if (base is TFhirBundleEntry) then
+    composeBundleEntry(json, name, TFhirBundleEntry(base), false)
+  else if (base is TFhirBundleEntrySearch) then
+    composeBundleEntrySearch(json, name, TFhirBundleEntrySearch(base), false)
+  else if (base is TFhirBundleEntryRequest) then
+    composeBundleEntryRequest(json, name, TFhirBundleEntryRequest(base), false)
+  else if (base is TFhirBundleEntryResponse) then
+    composeBundleEntryResponse(json, name, TFhirBundleEntryResponse(base), false)
+  else if (base is TFhirBundle) then
+    composeBundle(json, name, TFhirBundle(base), false)
+  else if (base is TFhirCarePlanRelatedPlan) then
+    composeCarePlanRelatedPlan(json, name, TFhirCarePlanRelatedPlan(base), false)
+  else if (base is TFhirCarePlanParticipant) then
+    composeCarePlanParticipant(json, name, TFhirCarePlanParticipant(base), false)
+  else if (base is TFhirCarePlanActivity) then
+    composeCarePlanActivity(json, name, TFhirCarePlanActivity(base), false)
+  else if (base is TFhirCarePlanActivityDetail) then
+    composeCarePlanActivityDetail(json, name, TFhirCarePlanActivityDetail(base), false)
+  else if (base is TFhirCarePlan) then
+    composeCarePlan(json, name, TFhirCarePlan(base), false)
+  else if (base is TFhirClaimPayee) then
+    composeClaimPayee(json, name, TFhirClaimPayee(base), false)
+  else if (base is TFhirClaimDiagnosis) then
+    composeClaimDiagnosis(json, name, TFhirClaimDiagnosis(base), false)
+  else if (base is TFhirClaimCoverage) then
+    composeClaimCoverage(json, name, TFhirClaimCoverage(base), false)
+  else if (base is TFhirClaimItem) then
+    composeClaimItem(json, name, TFhirClaimItem(base), false)
+  else if (base is TFhirClaimItemDetail) then
+    composeClaimItemDetail(json, name, TFhirClaimItemDetail(base), false)
+  else if (base is TFhirClaimItemDetailSubDetail) then
+    composeClaimItemDetailSubDetail(json, name, TFhirClaimItemDetailSubDetail(base), false)
+  else if (base is TFhirClaimItemProsthesis) then
+    composeClaimItemProsthesis(json, name, TFhirClaimItemProsthesis(base), false)
+  else if (base is TFhirClaimMissingTeeth) then
+    composeClaimMissingTeeth(json, name, TFhirClaimMissingTeeth(base), false)
+  else if (base is TFhirClaim) then
+    composeClaim(json, name, TFhirClaim(base), false)
+  else if (base is TFhirClaimResponseItem) then
+    composeClaimResponseItem(json, name, TFhirClaimResponseItem(base), false)
+  else if (base is TFhirClaimResponseItemAdjudication) then
+    composeClaimResponseItemAdjudication(json, name, TFhirClaimResponseItemAdjudication(base), false)
+  else if (base is TFhirClaimResponseItemDetail) then
+    composeClaimResponseItemDetail(json, name, TFhirClaimResponseItemDetail(base), false)
+  else if (base is TFhirClaimResponseItemDetailAdjudication) then
+    composeClaimResponseItemDetailAdjudication(json, name, TFhirClaimResponseItemDetailAdjudication(base), false)
+  else if (base is TFhirClaimResponseItemDetailSubDetail) then
+    composeClaimResponseItemDetailSubDetail(json, name, TFhirClaimResponseItemDetailSubDetail(base), false)
+  else if (base is TFhirClaimResponseItemDetailSubDetailAdjudication) then
+    composeClaimResponseItemDetailSubDetailAdjudication(json, name, TFhirClaimResponseItemDetailSubDetailAdjudication(base), false)
+  else if (base is TFhirClaimResponseAddItem) then
+    composeClaimResponseAddItem(json, name, TFhirClaimResponseAddItem(base), false)
+  else if (base is TFhirClaimResponseAddItemAdjudication) then
+    composeClaimResponseAddItemAdjudication(json, name, TFhirClaimResponseAddItemAdjudication(base), false)
+  else if (base is TFhirClaimResponseAddItemDetail) then
+    composeClaimResponseAddItemDetail(json, name, TFhirClaimResponseAddItemDetail(base), false)
+  else if (base is TFhirClaimResponseAddItemDetailAdjudication) then
+    composeClaimResponseAddItemDetailAdjudication(json, name, TFhirClaimResponseAddItemDetailAdjudication(base), false)
+  else if (base is TFhirClaimResponseError) then
+    composeClaimResponseError(json, name, TFhirClaimResponseError(base), false)
+  else if (base is TFhirClaimResponseNote) then
+    composeClaimResponseNote(json, name, TFhirClaimResponseNote(base), false)
+  else if (base is TFhirClaimResponseCoverage) then
+    composeClaimResponseCoverage(json, name, TFhirClaimResponseCoverage(base), false)
+  else if (base is TFhirClaimResponse) then
+    composeClaimResponse(json, name, TFhirClaimResponse(base), false)
+  else if (base is TFhirClinicalImpressionInvestigations) then
+    composeClinicalImpressionInvestigations(json, name, TFhirClinicalImpressionInvestigations(base), false)
+  else if (base is TFhirClinicalImpressionFinding) then
+    composeClinicalImpressionFinding(json, name, TFhirClinicalImpressionFinding(base), false)
+  else if (base is TFhirClinicalImpressionRuledOut) then
+    composeClinicalImpressionRuledOut(json, name, TFhirClinicalImpressionRuledOut(base), false)
+  else if (base is TFhirClinicalImpression) then
+    composeClinicalImpression(json, name, TFhirClinicalImpression(base), false)
+  else if (base is TFhirCommunicationPayload) then
+    composeCommunicationPayload(json, name, TFhirCommunicationPayload(base), false)
+  else if (base is TFhirCommunication) then
+    composeCommunication(json, name, TFhirCommunication(base), false)
+  else if (base is TFhirCommunicationRequestPayload) then
+    composeCommunicationRequestPayload(json, name, TFhirCommunicationRequestPayload(base), false)
+  else if (base is TFhirCommunicationRequest) then
+    composeCommunicationRequest(json, name, TFhirCommunicationRequest(base), false)
+  else if (base is TFhirCompositionAttester) then
+    composeCompositionAttester(json, name, TFhirCompositionAttester(base), false)
+  else if (base is TFhirCompositionEvent) then
+    composeCompositionEvent(json, name, TFhirCompositionEvent(base), false)
+  else if (base is TFhirCompositionSection) then
+    composeCompositionSection(json, name, TFhirCompositionSection(base), false)
+  else if (base is TFhirComposition) then
+    composeComposition(json, name, TFhirComposition(base), false)
+  else if (base is TFhirConceptMapContact) then
+    composeConceptMapContact(json, name, TFhirConceptMapContact(base), false)
+  else if (base is TFhirConceptMapElement) then
+    composeConceptMapElement(json, name, TFhirConceptMapElement(base), false)
+  else if (base is TFhirConceptMapElementTarget) then
+    composeConceptMapElementTarget(json, name, TFhirConceptMapElementTarget(base), false)
+  else if (base is TFhirConceptMapElementTargetDependsOn) then
+    composeConceptMapElementTargetDependsOn(json, name, TFhirConceptMapElementTargetDependsOn(base), false)
+  else if (base is TFhirConceptMap) then
+    composeConceptMap(json, name, TFhirConceptMap(base), false)
+  else if (base is TFhirConditionStage) then
+    composeConditionStage(json, name, TFhirConditionStage(base), false)
+  else if (base is TFhirConditionEvidence) then
+    composeConditionEvidence(json, name, TFhirConditionEvidence(base), false)
+  else if (base is TFhirCondition) then
+    composeCondition(json, name, TFhirCondition(base), false)
+  else if (base is TFhirConformanceContact) then
+    composeConformanceContact(json, name, TFhirConformanceContact(base), false)
+  else if (base is TFhirConformanceSoftware) then
+    composeConformanceSoftware(json, name, TFhirConformanceSoftware(base), false)
+  else if (base is TFhirConformanceImplementation) then
+    composeConformanceImplementation(json, name, TFhirConformanceImplementation(base), false)
+  else if (base is TFhirConformanceRest) then
+    composeConformanceRest(json, name, TFhirConformanceRest(base), false)
+  else if (base is TFhirConformanceRestSecurity) then
+    composeConformanceRestSecurity(json, name, TFhirConformanceRestSecurity(base), false)
+  else if (base is TFhirConformanceRestSecurityCertificate) then
+    composeConformanceRestSecurityCertificate(json, name, TFhirConformanceRestSecurityCertificate(base), false)
+  else if (base is TFhirConformanceRestResource) then
+    composeConformanceRestResource(json, name, TFhirConformanceRestResource(base), false)
+  else if (base is TFhirConformanceRestResourceInteraction) then
+    composeConformanceRestResourceInteraction(json, name, TFhirConformanceRestResourceInteraction(base), false)
+  else if (base is TFhirConformanceRestResourceSearchParam) then
+    composeConformanceRestResourceSearchParam(json, name, TFhirConformanceRestResourceSearchParam(base), false)
+  else if (base is TFhirConformanceRestInteraction) then
+    composeConformanceRestInteraction(json, name, TFhirConformanceRestInteraction(base), false)
+  else if (base is TFhirConformanceRestOperation) then
+    composeConformanceRestOperation(json, name, TFhirConformanceRestOperation(base), false)
+  else if (base is TFhirConformanceMessaging) then
+    composeConformanceMessaging(json, name, TFhirConformanceMessaging(base), false)
+  else if (base is TFhirConformanceMessagingEndpoint) then
+    composeConformanceMessagingEndpoint(json, name, TFhirConformanceMessagingEndpoint(base), false)
+  else if (base is TFhirConformanceMessagingEvent) then
+    composeConformanceMessagingEvent(json, name, TFhirConformanceMessagingEvent(base), false)
+  else if (base is TFhirConformanceDocument) then
+    composeConformanceDocument(json, name, TFhirConformanceDocument(base), false)
+  else if (base is TFhirConformance) then
+    composeConformance(json, name, TFhirConformance(base), false)
+  else if (base is TFhirContractActor) then
+    composeContractActor(json, name, TFhirContractActor(base), false)
+  else if (base is TFhirContractValuedItem) then
+    composeContractValuedItem(json, name, TFhirContractValuedItem(base), false)
+  else if (base is TFhirContractSigner) then
+    composeContractSigner(json, name, TFhirContractSigner(base), false)
+  else if (base is TFhirContractTerm) then
+    composeContractTerm(json, name, TFhirContractTerm(base), false)
+  else if (base is TFhirContractTermActor) then
+    composeContractTermActor(json, name, TFhirContractTermActor(base), false)
+  else if (base is TFhirContractTermValuedItem) then
+    composeContractTermValuedItem(json, name, TFhirContractTermValuedItem(base), false)
+  else if (base is TFhirContractFriendly) then
+    composeContractFriendly(json, name, TFhirContractFriendly(base), false)
+  else if (base is TFhirContractLegal) then
+    composeContractLegal(json, name, TFhirContractLegal(base), false)
+  else if (base is TFhirContractRule) then
+    composeContractRule(json, name, TFhirContractRule(base), false)
+  else if (base is TFhirContract) then
+    composeContract(json, name, TFhirContract(base), false)
+  else if (base is TFhirCoverage) then
+    composeCoverage(json, name, TFhirCoverage(base), false)
+  else if (base is TFhirDataElementContact) then
+    composeDataElementContact(json, name, TFhirDataElementContact(base), false)
+  else if (base is TFhirDataElementMapping) then
+    composeDataElementMapping(json, name, TFhirDataElementMapping(base), false)
+  else if (base is TFhirDataElement) then
+    composeDataElement(json, name, TFhirDataElement(base), false)
+  else if (base is TFhirDetectedIssueMitigation) then
+    composeDetectedIssueMitigation(json, name, TFhirDetectedIssueMitigation(base), false)
+  else if (base is TFhirDetectedIssue) then
+    composeDetectedIssue(json, name, TFhirDetectedIssue(base), false)
+  else if (base is TFhirDevice) then
+    composeDevice(json, name, TFhirDevice(base), false)
+  else if (base is TFhirDeviceComponentProductionSpecification) then
+    composeDeviceComponentProductionSpecification(json, name, TFhirDeviceComponentProductionSpecification(base), false)
+  else if (base is TFhirDeviceComponent) then
+    composeDeviceComponent(json, name, TFhirDeviceComponent(base), false)
+  else if (base is TFhirDeviceMetricCalibration) then
+    composeDeviceMetricCalibration(json, name, TFhirDeviceMetricCalibration(base), false)
+  else if (base is TFhirDeviceMetric) then
+    composeDeviceMetric(json, name, TFhirDeviceMetric(base), false)
+  else if (base is TFhirDeviceUseRequest) then
+    composeDeviceUseRequest(json, name, TFhirDeviceUseRequest(base), false)
+  else if (base is TFhirDeviceUseStatement) then
+    composeDeviceUseStatement(json, name, TFhirDeviceUseStatement(base), false)
+  else if (base is TFhirDiagnosticOrderEvent) then
+    composeDiagnosticOrderEvent(json, name, TFhirDiagnosticOrderEvent(base), false)
+  else if (base is TFhirDiagnosticOrderItem) then
+    composeDiagnosticOrderItem(json, name, TFhirDiagnosticOrderItem(base), false)
+  else if (base is TFhirDiagnosticOrder) then
+    composeDiagnosticOrder(json, name, TFhirDiagnosticOrder(base), false)
+  else if (base is TFhirDiagnosticReportImage) then
+    composeDiagnosticReportImage(json, name, TFhirDiagnosticReportImage(base), false)
+  else if (base is TFhirDiagnosticReport) then
+    composeDiagnosticReport(json, name, TFhirDiagnosticReport(base), false)
+  else if (base is TFhirDocumentManifestContent) then
+    composeDocumentManifestContent(json, name, TFhirDocumentManifestContent(base), false)
+  else if (base is TFhirDocumentManifestRelated) then
+    composeDocumentManifestRelated(json, name, TFhirDocumentManifestRelated(base), false)
+  else if (base is TFhirDocumentManifest) then
+    composeDocumentManifest(json, name, TFhirDocumentManifest(base), false)
+  else if (base is TFhirDocumentReferenceRelatesTo) then
+    composeDocumentReferenceRelatesTo(json, name, TFhirDocumentReferenceRelatesTo(base), false)
+  else if (base is TFhirDocumentReferenceContent) then
+    composeDocumentReferenceContent(json, name, TFhirDocumentReferenceContent(base), false)
+  else if (base is TFhirDocumentReferenceContext) then
+    composeDocumentReferenceContext(json, name, TFhirDocumentReferenceContext(base), false)
+  else if (base is TFhirDocumentReferenceContextRelated) then
+    composeDocumentReferenceContextRelated(json, name, TFhirDocumentReferenceContextRelated(base), false)
+  else if (base is TFhirDocumentReference) then
+    composeDocumentReference(json, name, TFhirDocumentReference(base), false)
+  else if (base is TFhirEligibilityRequest) then
+    composeEligibilityRequest(json, name, TFhirEligibilityRequest(base), false)
+  else if (base is TFhirEligibilityResponse) then
+    composeEligibilityResponse(json, name, TFhirEligibilityResponse(base), false)
+  else if (base is TFhirEncounterStatusHistory) then
+    composeEncounterStatusHistory(json, name, TFhirEncounterStatusHistory(base), false)
+  else if (base is TFhirEncounterParticipant) then
+    composeEncounterParticipant(json, name, TFhirEncounterParticipant(base), false)
+  else if (base is TFhirEncounterHospitalization) then
+    composeEncounterHospitalization(json, name, TFhirEncounterHospitalization(base), false)
+  else if (base is TFhirEncounterLocation) then
+    composeEncounterLocation(json, name, TFhirEncounterLocation(base), false)
+  else if (base is TFhirEncounter) then
+    composeEncounter(json, name, TFhirEncounter(base), false)
+  else if (base is TFhirEnrollmentRequest) then
+    composeEnrollmentRequest(json, name, TFhirEnrollmentRequest(base), false)
+  else if (base is TFhirEnrollmentResponse) then
+    composeEnrollmentResponse(json, name, TFhirEnrollmentResponse(base), false)
+  else if (base is TFhirEpisodeOfCareStatusHistory) then
+    composeEpisodeOfCareStatusHistory(json, name, TFhirEpisodeOfCareStatusHistory(base), false)
+  else if (base is TFhirEpisodeOfCareCareTeam) then
+    composeEpisodeOfCareCareTeam(json, name, TFhirEpisodeOfCareCareTeam(base), false)
+  else if (base is TFhirEpisodeOfCare) then
+    composeEpisodeOfCare(json, name, TFhirEpisodeOfCare(base), false)
+  else if (base is TFhirExplanationOfBenefit) then
+    composeExplanationOfBenefit(json, name, TFhirExplanationOfBenefit(base), false)
+  else if (base is TFhirFamilyMemberHistoryCondition) then
+    composeFamilyMemberHistoryCondition(json, name, TFhirFamilyMemberHistoryCondition(base), false)
+  else if (base is TFhirFamilyMemberHistory) then
+    composeFamilyMemberHistory(json, name, TFhirFamilyMemberHistory(base), false)
+  else if (base is TFhirFlag) then
+    composeFlag(json, name, TFhirFlag(base), false)
+  else if (base is TFhirGoalOutcome) then
+    composeGoalOutcome(json, name, TFhirGoalOutcome(base), false)
+  else if (base is TFhirGoal) then
+    composeGoal(json, name, TFhirGoal(base), false)
+  else if (base is TFhirGroupCharacteristic) then
+    composeGroupCharacteristic(json, name, TFhirGroupCharacteristic(base), false)
+  else if (base is TFhirGroupMember) then
+    composeGroupMember(json, name, TFhirGroupMember(base), false)
+  else if (base is TFhirGroup) then
+    composeGroup(json, name, TFhirGroup(base), false)
+  else if (base is TFhirHealthcareServiceServiceType) then
+    composeHealthcareServiceServiceType(json, name, TFhirHealthcareServiceServiceType(base), false)
+  else if (base is TFhirHealthcareServiceAvailableTime) then
+    composeHealthcareServiceAvailableTime(json, name, TFhirHealthcareServiceAvailableTime(base), false)
+  else if (base is TFhirHealthcareServiceNotAvailable) then
+    composeHealthcareServiceNotAvailable(json, name, TFhirHealthcareServiceNotAvailable(base), false)
+  else if (base is TFhirHealthcareService) then
+    composeHealthcareService(json, name, TFhirHealthcareService(base), false)
+  else if (base is TFhirImagingObjectSelectionStudy) then
+    composeImagingObjectSelectionStudy(json, name, TFhirImagingObjectSelectionStudy(base), false)
+  else if (base is TFhirImagingObjectSelectionStudySeries) then
+    composeImagingObjectSelectionStudySeries(json, name, TFhirImagingObjectSelectionStudySeries(base), false)
+  else if (base is TFhirImagingObjectSelectionStudySeriesInstance) then
+    composeImagingObjectSelectionStudySeriesInstance(json, name, TFhirImagingObjectSelectionStudySeriesInstance(base), false)
+  else if (base is TFhirImagingObjectSelectionStudySeriesInstanceFrames) then
+    composeImagingObjectSelectionStudySeriesInstanceFrames(json, name, TFhirImagingObjectSelectionStudySeriesInstanceFrames(base), false)
+  else if (base is TFhirImagingObjectSelection) then
+    composeImagingObjectSelection(json, name, TFhirImagingObjectSelection(base), false)
+  else if (base is TFhirImagingStudySeries) then
+    composeImagingStudySeries(json, name, TFhirImagingStudySeries(base), false)
+  else if (base is TFhirImagingStudySeriesInstance) then
+    composeImagingStudySeriesInstance(json, name, TFhirImagingStudySeriesInstance(base), false)
+  else if (base is TFhirImagingStudy) then
+    composeImagingStudy(json, name, TFhirImagingStudy(base), false)
+  else if (base is TFhirImmunizationExplanation) then
+    composeImmunizationExplanation(json, name, TFhirImmunizationExplanation(base), false)
+  else if (base is TFhirImmunizationReaction) then
+    composeImmunizationReaction(json, name, TFhirImmunizationReaction(base), false)
+  else if (base is TFhirImmunizationVaccinationProtocol) then
+    composeImmunizationVaccinationProtocol(json, name, TFhirImmunizationVaccinationProtocol(base), false)
+  else if (base is TFhirImmunization) then
+    composeImmunization(json, name, TFhirImmunization(base), false)
+  else if (base is TFhirImmunizationRecommendationRecommendation) then
+    composeImmunizationRecommendationRecommendation(json, name, TFhirImmunizationRecommendationRecommendation(base), false)
+  else if (base is TFhirImmunizationRecommendationRecommendationDateCriterion) then
+    composeImmunizationRecommendationRecommendationDateCriterion(json, name, TFhirImmunizationRecommendationRecommendationDateCriterion(base), false)
+  else if (base is TFhirImmunizationRecommendationRecommendationProtocol) then
+    composeImmunizationRecommendationRecommendationProtocol(json, name, TFhirImmunizationRecommendationRecommendationProtocol(base), false)
+  else if (base is TFhirImmunizationRecommendation) then
+    composeImmunizationRecommendation(json, name, TFhirImmunizationRecommendation(base), false)
+  else if (base is TFhirImplementationGuideContact) then
+    composeImplementationGuideContact(json, name, TFhirImplementationGuideContact(base), false)
+  else if (base is TFhirImplementationGuideDependency) then
+    composeImplementationGuideDependency(json, name, TFhirImplementationGuideDependency(base), false)
+  else if (base is TFhirImplementationGuidePackage) then
+    composeImplementationGuidePackage(json, name, TFhirImplementationGuidePackage(base), false)
+  else if (base is TFhirImplementationGuidePackageResource) then
+    composeImplementationGuidePackageResource(json, name, TFhirImplementationGuidePackageResource(base), false)
+  else if (base is TFhirImplementationGuideGlobal) then
+    composeImplementationGuideGlobal(json, name, TFhirImplementationGuideGlobal(base), false)
+  else if (base is TFhirImplementationGuidePage) then
+    composeImplementationGuidePage(json, name, TFhirImplementationGuidePage(base), false)
+  else if (base is TFhirImplementationGuide) then
+    composeImplementationGuide(json, name, TFhirImplementationGuide(base), false)
+  else if (base is TFhirListEntry) then
+    composeListEntry(json, name, TFhirListEntry(base), false)
+  else if (base is TFhirList) then
+    composeList(json, name, TFhirList(base), false)
+  else if (base is TFhirLocationPosition) then
+    composeLocationPosition(json, name, TFhirLocationPosition(base), false)
+  else if (base is TFhirLocation) then
+    composeLocation(json, name, TFhirLocation(base), false)
+  else if (base is TFhirMedia) then
+    composeMedia(json, name, TFhirMedia(base), false)
+  else if (base is TFhirMedicationProduct) then
+    composeMedicationProduct(json, name, TFhirMedicationProduct(base), false)
+  else if (base is TFhirMedicationProductIngredient) then
+    composeMedicationProductIngredient(json, name, TFhirMedicationProductIngredient(base), false)
+  else if (base is TFhirMedicationProductBatch) then
+    composeMedicationProductBatch(json, name, TFhirMedicationProductBatch(base), false)
+  else if (base is TFhirMedicationPackage) then
+    composeMedicationPackage(json, name, TFhirMedicationPackage(base), false)
+  else if (base is TFhirMedicationPackageContent) then
+    composeMedicationPackageContent(json, name, TFhirMedicationPackageContent(base), false)
+  else if (base is TFhirMedication) then
+    composeMedication(json, name, TFhirMedication(base), false)
+  else if (base is TFhirMedicationAdministrationDosage) then
+    composeMedicationAdministrationDosage(json, name, TFhirMedicationAdministrationDosage(base), false)
+  else if (base is TFhirMedicationAdministration) then
+    composeMedicationAdministration(json, name, TFhirMedicationAdministration(base), false)
+  else if (base is TFhirMedicationDispenseDosageInstruction) then
+    composeMedicationDispenseDosageInstruction(json, name, TFhirMedicationDispenseDosageInstruction(base), false)
+  else if (base is TFhirMedicationDispenseSubstitution) then
+    composeMedicationDispenseSubstitution(json, name, TFhirMedicationDispenseSubstitution(base), false)
+  else if (base is TFhirMedicationDispense) then
+    composeMedicationDispense(json, name, TFhirMedicationDispense(base), false)
+  else if (base is TFhirMedicationOrderDosageInstruction) then
+    composeMedicationOrderDosageInstruction(json, name, TFhirMedicationOrderDosageInstruction(base), false)
+  else if (base is TFhirMedicationOrderDispenseRequest) then
+    composeMedicationOrderDispenseRequest(json, name, TFhirMedicationOrderDispenseRequest(base), false)
+  else if (base is TFhirMedicationOrderSubstitution) then
+    composeMedicationOrderSubstitution(json, name, TFhirMedicationOrderSubstitution(base), false)
+  else if (base is TFhirMedicationOrder) then
+    composeMedicationOrder(json, name, TFhirMedicationOrder(base), false)
+  else if (base is TFhirMedicationStatementDosage) then
+    composeMedicationStatementDosage(json, name, TFhirMedicationStatementDosage(base), false)
+  else if (base is TFhirMedicationStatement) then
+    composeMedicationStatement(json, name, TFhirMedicationStatement(base), false)
+  else if (base is TFhirMessageHeaderResponse) then
+    composeMessageHeaderResponse(json, name, TFhirMessageHeaderResponse(base), false)
+  else if (base is TFhirMessageHeaderSource) then
+    composeMessageHeaderSource(json, name, TFhirMessageHeaderSource(base), false)
+  else if (base is TFhirMessageHeaderDestination) then
+    composeMessageHeaderDestination(json, name, TFhirMessageHeaderDestination(base), false)
+  else if (base is TFhirMessageHeader) then
+    composeMessageHeader(json, name, TFhirMessageHeader(base), false)
+  else if (base is TFhirNamingSystemContact) then
+    composeNamingSystemContact(json, name, TFhirNamingSystemContact(base), false)
+  else if (base is TFhirNamingSystemUniqueId) then
+    composeNamingSystemUniqueId(json, name, TFhirNamingSystemUniqueId(base), false)
+  else if (base is TFhirNamingSystem) then
+    composeNamingSystem(json, name, TFhirNamingSystem(base), false)
+  else if (base is TFhirNutritionOrderOralDiet) then
+    composeNutritionOrderOralDiet(json, name, TFhirNutritionOrderOralDiet(base), false)
+  else if (base is TFhirNutritionOrderOralDietNutrient) then
+    composeNutritionOrderOralDietNutrient(json, name, TFhirNutritionOrderOralDietNutrient(base), false)
+  else if (base is TFhirNutritionOrderOralDietTexture) then
+    composeNutritionOrderOralDietTexture(json, name, TFhirNutritionOrderOralDietTexture(base), false)
+  else if (base is TFhirNutritionOrderSupplement) then
+    composeNutritionOrderSupplement(json, name, TFhirNutritionOrderSupplement(base), false)
+  else if (base is TFhirNutritionOrderEnteralFormula) then
+    composeNutritionOrderEnteralFormula(json, name, TFhirNutritionOrderEnteralFormula(base), false)
+  else if (base is TFhirNutritionOrderEnteralFormulaAdministration) then
+    composeNutritionOrderEnteralFormulaAdministration(json, name, TFhirNutritionOrderEnteralFormulaAdministration(base), false)
+  else if (base is TFhirNutritionOrder) then
+    composeNutritionOrder(json, name, TFhirNutritionOrder(base), false)
+  else if (base is TFhirObservationReferenceRange) then
+    composeObservationReferenceRange(json, name, TFhirObservationReferenceRange(base), false)
+  else if (base is TFhirObservationRelated) then
+    composeObservationRelated(json, name, TFhirObservationRelated(base), false)
+  else if (base is TFhirObservationComponent) then
+    composeObservationComponent(json, name, TFhirObservationComponent(base), false)
+  else if (base is TFhirObservation) then
+    composeObservation(json, name, TFhirObservation(base), false)
+  else if (base is TFhirOperationDefinitionContact) then
+    composeOperationDefinitionContact(json, name, TFhirOperationDefinitionContact(base), false)
+  else if (base is TFhirOperationDefinitionParameter) then
+    composeOperationDefinitionParameter(json, name, TFhirOperationDefinitionParameter(base), false)
+  else if (base is TFhirOperationDefinitionParameterBinding) then
+    composeOperationDefinitionParameterBinding(json, name, TFhirOperationDefinitionParameterBinding(base), false)
+  else if (base is TFhirOperationDefinition) then
+    composeOperationDefinition(json, name, TFhirOperationDefinition(base), false)
+  else if (base is TFhirOperationOutcomeIssue) then
+    composeOperationOutcomeIssue(json, name, TFhirOperationOutcomeIssue(base), false)
+  else if (base is TFhirOperationOutcome) then
+    composeOperationOutcome(json, name, TFhirOperationOutcome(base), false)
+  else if (base is TFhirOrderWhen) then
+    composeOrderWhen(json, name, TFhirOrderWhen(base), false)
+  else if (base is TFhirOrder) then
+    composeOrder(json, name, TFhirOrder(base), false)
+  else if (base is TFhirOrderResponse) then
+    composeOrderResponse(json, name, TFhirOrderResponse(base), false)
+  else if (base is TFhirOrganizationContact) then
+    composeOrganizationContact(json, name, TFhirOrganizationContact(base), false)
+  else if (base is TFhirOrganization) then
+    composeOrganization(json, name, TFhirOrganization(base), false)
+  else if (base is TFhirPatientContact) then
+    composePatientContact(json, name, TFhirPatientContact(base), false)
+  else if (base is TFhirPatientAnimal) then
+    composePatientAnimal(json, name, TFhirPatientAnimal(base), false)
+  else if (base is TFhirPatientCommunication) then
+    composePatientCommunication(json, name, TFhirPatientCommunication(base), false)
+  else if (base is TFhirPatientLink) then
+    composePatientLink(json, name, TFhirPatientLink(base), false)
+  else if (base is TFhirPatient) then
+    composePatient(json, name, TFhirPatient(base), false)
+  else if (base is TFhirPaymentNotice) then
+    composePaymentNotice(json, name, TFhirPaymentNotice(base), false)
+  else if (base is TFhirPaymentReconciliationDetail) then
+    composePaymentReconciliationDetail(json, name, TFhirPaymentReconciliationDetail(base), false)
+  else if (base is TFhirPaymentReconciliationNote) then
+    composePaymentReconciliationNote(json, name, TFhirPaymentReconciliationNote(base), false)
+  else if (base is TFhirPaymentReconciliation) then
+    composePaymentReconciliation(json, name, TFhirPaymentReconciliation(base), false)
+  else if (base is TFhirPersonLink) then
+    composePersonLink(json, name, TFhirPersonLink(base), false)
+  else if (base is TFhirPerson) then
+    composePerson(json, name, TFhirPerson(base), false)
+  else if (base is TFhirPractitionerPractitionerRole) then
+    composePractitionerPractitionerRole(json, name, TFhirPractitionerPractitionerRole(base), false)
+  else if (base is TFhirPractitionerQualification) then
+    composePractitionerQualification(json, name, TFhirPractitionerQualification(base), false)
+  else if (base is TFhirPractitioner) then
+    composePractitioner(json, name, TFhirPractitioner(base), false)
+  else if (base is TFhirProcedurePerformer) then
+    composeProcedurePerformer(json, name, TFhirProcedurePerformer(base), false)
+  else if (base is TFhirProcedureFocalDevice) then
+    composeProcedureFocalDevice(json, name, TFhirProcedureFocalDevice(base), false)
+  else if (base is TFhirProcedure) then
+    composeProcedure(json, name, TFhirProcedure(base), false)
+  else if (base is TFhirProcedureRequest) then
+    composeProcedureRequest(json, name, TFhirProcedureRequest(base), false)
+  else if (base is TFhirProcessRequestItem) then
+    composeProcessRequestItem(json, name, TFhirProcessRequestItem(base), false)
+  else if (base is TFhirProcessRequest) then
+    composeProcessRequest(json, name, TFhirProcessRequest(base), false)
+  else if (base is TFhirProcessResponseNotes) then
+    composeProcessResponseNotes(json, name, TFhirProcessResponseNotes(base), false)
+  else if (base is TFhirProcessResponse) then
+    composeProcessResponse(json, name, TFhirProcessResponse(base), false)
+  else if (base is TFhirProvenanceAgent) then
+    composeProvenanceAgent(json, name, TFhirProvenanceAgent(base), false)
+  else if (base is TFhirProvenanceAgentRelatedAgent) then
+    composeProvenanceAgentRelatedAgent(json, name, TFhirProvenanceAgentRelatedAgent(base), false)
+  else if (base is TFhirProvenanceEntity) then
+    composeProvenanceEntity(json, name, TFhirProvenanceEntity(base), false)
+  else if (base is TFhirProvenance) then
+    composeProvenance(json, name, TFhirProvenance(base), false)
+  else if (base is TFhirQuestionnaireGroup) then
+    composeQuestionnaireGroup(json, name, TFhirQuestionnaireGroup(base), false)
+  else if (base is TFhirQuestionnaireGroupQuestion) then
+    composeQuestionnaireGroupQuestion(json, name, TFhirQuestionnaireGroupQuestion(base), false)
+  else if (base is TFhirQuestionnaire) then
+    composeQuestionnaire(json, name, TFhirQuestionnaire(base), false)
+  else if (base is TFhirQuestionnaireResponseGroup) then
+    composeQuestionnaireResponseGroup(json, name, TFhirQuestionnaireResponseGroup(base), false)
+  else if (base is TFhirQuestionnaireResponseGroupQuestion) then
+    composeQuestionnaireResponseGroupQuestion(json, name, TFhirQuestionnaireResponseGroupQuestion(base), false)
+  else if (base is TFhirQuestionnaireResponseGroupQuestionAnswer) then
+    composeQuestionnaireResponseGroupQuestionAnswer(json, name, TFhirQuestionnaireResponseGroupQuestionAnswer(base), false)
+  else if (base is TFhirQuestionnaireResponse) then
+    composeQuestionnaireResponse(json, name, TFhirQuestionnaireResponse(base), false)
+  else if (base is TFhirReferralRequest) then
+    composeReferralRequest(json, name, TFhirReferralRequest(base), false)
+  else if (base is TFhirRelatedPerson) then
+    composeRelatedPerson(json, name, TFhirRelatedPerson(base), false)
+  else if (base is TFhirRiskAssessmentPrediction) then
+    composeRiskAssessmentPrediction(json, name, TFhirRiskAssessmentPrediction(base), false)
+  else if (base is TFhirRiskAssessment) then
+    composeRiskAssessment(json, name, TFhirRiskAssessment(base), false)
+  else if (base is TFhirSchedule) then
+    composeSchedule(json, name, TFhirSchedule(base), false)
+  else if (base is TFhirSearchParameterContact) then
+    composeSearchParameterContact(json, name, TFhirSearchParameterContact(base), false)
+  else if (base is TFhirSearchParameter) then
+    composeSearchParameter(json, name, TFhirSearchParameter(base), false)
+  else if (base is TFhirSlot) then
+    composeSlot(json, name, TFhirSlot(base), false)
+  else if (base is TFhirSpecimenCollection) then
+    composeSpecimenCollection(json, name, TFhirSpecimenCollection(base), false)
+  else if (base is TFhirSpecimenTreatment) then
+    composeSpecimenTreatment(json, name, TFhirSpecimenTreatment(base), false)
+  else if (base is TFhirSpecimenContainer) then
+    composeSpecimenContainer(json, name, TFhirSpecimenContainer(base), false)
+  else if (base is TFhirSpecimen) then
+    composeSpecimen(json, name, TFhirSpecimen(base), false)
+  else if (base is TFhirStructureDefinitionContact) then
+    composeStructureDefinitionContact(json, name, TFhirStructureDefinitionContact(base), false)
+  else if (base is TFhirStructureDefinitionMapping) then
+    composeStructureDefinitionMapping(json, name, TFhirStructureDefinitionMapping(base), false)
+  else if (base is TFhirStructureDefinitionSnapshot) then
+    composeStructureDefinitionSnapshot(json, name, TFhirStructureDefinitionSnapshot(base), false)
+  else if (base is TFhirStructureDefinitionDifferential) then
+    composeStructureDefinitionDifferential(json, name, TFhirStructureDefinitionDifferential(base), false)
+  else if (base is TFhirStructureDefinition) then
+    composeStructureDefinition(json, name, TFhirStructureDefinition(base), false)
+  else if (base is TFhirSubscriptionChannel) then
+    composeSubscriptionChannel(json, name, TFhirSubscriptionChannel(base), false)
+  else if (base is TFhirSubscription) then
+    composeSubscription(json, name, TFhirSubscription(base), false)
+  else if (base is TFhirSubstanceInstance) then
+    composeSubstanceInstance(json, name, TFhirSubstanceInstance(base), false)
+  else if (base is TFhirSubstanceIngredient) then
+    composeSubstanceIngredient(json, name, TFhirSubstanceIngredient(base), false)
+  else if (base is TFhirSubstance) then
+    composeSubstance(json, name, TFhirSubstance(base), false)
+  else if (base is TFhirSupplyDelivery) then
+    composeSupplyDelivery(json, name, TFhirSupplyDelivery(base), false)
+  else if (base is TFhirSupplyRequestWhen) then
+    composeSupplyRequestWhen(json, name, TFhirSupplyRequestWhen(base), false)
+  else if (base is TFhirSupplyRequest) then
+    composeSupplyRequest(json, name, TFhirSupplyRequest(base), false)
+  else if (base is TFhirTestScriptContact) then
+    composeTestScriptContact(json, name, TFhirTestScriptContact(base), false)
+  else if (base is TFhirTestScriptMetadata) then
+    composeTestScriptMetadata(json, name, TFhirTestScriptMetadata(base), false)
+  else if (base is TFhirTestScriptMetadataLink) then
+    composeTestScriptMetadataLink(json, name, TFhirTestScriptMetadataLink(base), false)
+  else if (base is TFhirTestScriptMetadataCapability) then
+    composeTestScriptMetadataCapability(json, name, TFhirTestScriptMetadataCapability(base), false)
+  else if (base is TFhirTestScriptFixture) then
+    composeTestScriptFixture(json, name, TFhirTestScriptFixture(base), false)
+  else if (base is TFhirTestScriptVariable) then
+    composeTestScriptVariable(json, name, TFhirTestScriptVariable(base), false)
+  else if (base is TFhirTestScriptSetup) then
+    composeTestScriptSetup(json, name, TFhirTestScriptSetup(base), false)
+  else if (base is TFhirTestScriptSetupAction) then
+    composeTestScriptSetupAction(json, name, TFhirTestScriptSetupAction(base), false)
+  else if (base is TFhirTestScriptSetupActionOperation) then
+    composeTestScriptSetupActionOperation(json, name, TFhirTestScriptSetupActionOperation(base), false)
+  else if (base is TFhirTestScriptSetupActionOperationRequestHeader) then
+    composeTestScriptSetupActionOperationRequestHeader(json, name, TFhirTestScriptSetupActionOperationRequestHeader(base), false)
+  else if (base is TFhirTestScriptSetupActionAssert) then
+    composeTestScriptSetupActionAssert(json, name, TFhirTestScriptSetupActionAssert(base), false)
+  else if (base is TFhirTestScriptTest) then
+    composeTestScriptTest(json, name, TFhirTestScriptTest(base), false)
+  else if (base is TFhirTestScriptTestAction) then
+    composeTestScriptTestAction(json, name, TFhirTestScriptTestAction(base), false)
+  else if (base is TFhirTestScriptTeardown) then
+    composeTestScriptTeardown(json, name, TFhirTestScriptTeardown(base), false)
+  else if (base is TFhirTestScriptTeardownAction) then
+    composeTestScriptTeardownAction(json, name, TFhirTestScriptTeardownAction(base), false)
+  else if (base is TFhirTestScript) then
+    composeTestScript(json, name, TFhirTestScript(base), false)
+  else if (base is TFhirValueSetContact) then
+    composeValueSetContact(json, name, TFhirValueSetContact(base), false)
+  else if (base is TFhirValueSetCodeSystem) then
+    composeValueSetCodeSystem(json, name, TFhirValueSetCodeSystem(base), false)
+  else if (base is TFhirValueSetCodeSystemConcept) then
+    composeValueSetCodeSystemConcept(json, name, TFhirValueSetCodeSystemConcept(base), false)
+  else if (base is TFhirValueSetCodeSystemConceptDesignation) then
+    composeValueSetCodeSystemConceptDesignation(json, name, TFhirValueSetCodeSystemConceptDesignation(base), false)
+  else if (base is TFhirValueSetCompose) then
+    composeValueSetCompose(json, name, TFhirValueSetCompose(base), false)
+  else if (base is TFhirValueSetComposeInclude) then
+    composeValueSetComposeInclude(json, name, TFhirValueSetComposeInclude(base), false)
+  else if (base is TFhirValueSetComposeIncludeConcept) then
+    composeValueSetComposeIncludeConcept(json, name, TFhirValueSetComposeIncludeConcept(base), false)
+  else if (base is TFhirValueSetComposeIncludeFilter) then
+    composeValueSetComposeIncludeFilter(json, name, TFhirValueSetComposeIncludeFilter(base), false)
+  else if (base is TFhirValueSetExpansion) then
+    composeValueSetExpansion(json, name, TFhirValueSetExpansion(base), false)
+  else if (base is TFhirValueSetExpansionParameter) then
+    composeValueSetExpansionParameter(json, name, TFhirValueSetExpansionParameter(base), false)
+  else if (base is TFhirValueSetExpansionContains) then
+    composeValueSetExpansionContains(json, name, TFhirValueSetExpansionContains(base), false)
+  else if (base is TFhirValueSet) then
+    composeValueSet(json, name, TFhirValueSet(base), false)
+  else if (base is TFhirVisionPrescriptionDispense) then
+    composeVisionPrescriptionDispense(json, name, TFhirVisionPrescriptionDispense(base), false)
+  else if (base is TFhirVisionPrescription) then
+    composeVisionPrescription(json, name, TFhirVisionPrescription(base), false)
+  else
+    raise Exception.create('Unknown Type '+base.className);
 end;
 
 procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; resource: TFhirResource; links : TFhirBundleLinkList);

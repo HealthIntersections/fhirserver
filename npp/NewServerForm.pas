@@ -4,35 +4,46 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.ExtCtrls, StringSupport;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.ExtCtrls, StringSupport,
+  Vcl.ComCtrls, Vcl.CheckLst;
 
 type
   TRegisterServerForm = class(TNppForm)
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
+    Panel1: TPanel;
     btnOk: TButton;
     Button2: TButton;
-    Label1: TLabel;
-    edtServer: TEdit;
-    Label2: TLabel;
-    Label3: TLabel;
-    edtName: TEdit;
-    GroupBox1: TGroupBox;
+    Panel2: TPanel;
+    btnFetch: TButton;
+    Label13: TLabel;
+    edtToken: TEdit;
+    edtAuthorize: TEdit;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label10: TLabel;
+    Bevel1: TBevel;
+    Label9: TLabel;
+    edtRedirect: TEdit;
+    Label8: TLabel;
+    Label7: TLabel;
+    edtClientSecret: TEdit;
+    Label6: TLabel;
     Label4: TLabel;
     edtClientId: TEdit;
     Label5: TLabel;
-    Label6: TLabel;
-    edtClientSecret: TEdit;
-    Label7: TLabel;
-    Label8: TLabel;
-    edtRedirect: TEdit;
-    Label9: TLabel;
-    Bevel1: TBevel;
-    Label10: TLabel;
-    Label11: TLabel;
-    edtAuthorize: TEdit;
-    Label12: TLabel;
-    edtToken: TEdit;
-    btnFetch: TButton;
-    Label13: TLabel;
+    Panel3: TPanel;
+    edtName: TEdit;
+    Label3: TLabel;
+    Label1: TLabel;
+    edtServer: TEdit;
+    Label2: TLabel;
+    Panel4: TPanel;
+    CheckBox1: TCheckBox;
+    Label14: TLabel;
+    CheckListBox1: TCheckListBox;
     procedure edtNameChange(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure btnFetchClick(Sender: TObject);
