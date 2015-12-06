@@ -63,6 +63,7 @@ type
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -511,7 +512,6 @@ begin
   else
     authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2';
 
-  writelnt('a_c 1: '+authurl);
   try
     conn := FFhirStore.DB.GetConnection('OAuth2');
     try
@@ -526,7 +526,6 @@ begin
       state := conn.ColStringByName['ClientState'];
       scope := conn.ColStringByName['Scope'];
       conn.Terminate;
-   writelnt('a_c 2: '+redirect);
 
       if params.getVar('form') = 'true' then
       begin
@@ -571,9 +570,7 @@ begin
         try
           variables.Add('client', FIni.ReadString(client_id, 'name', ''));
           variables.Add('username', name);
-   writelnt('a_c 3: '+redirect);
           loadScopeVariables(variables, scope, session.User);
-   writelnt('a_c 4: '+redirect);
           OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
         finally
           variables.free;
@@ -781,6 +778,8 @@ begin
         HandleKey(AContext, request, session, params, response)
       else if (request.Document = '/oauth2/discovery') then
         HandleDiscovery(AContext, request, response)
+      else if (request.Document = '/oauth2/userdetails') then
+        HandleUserDetails(AContext, request, session, params, response)
       else
         raise Exception.Create('Invalid URL');
     finally
@@ -923,7 +922,7 @@ begin
             if clientId <> pclientid then
               raise Exception.Create('Client Id is wrong ("'+clientId+'")');
             if clientSecret <> psecret then
-              raise Exception.Create('Client Secret is wrong ("'+clientSecret+'")');
+              raise Exception.Create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
           end;
 
           // now check the redirect URL
@@ -1072,6 +1071,31 @@ begin
   end;
 end;
 
+
+procedure TAuth2Server.HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+var
+  variables : TDictionary<String,String>;
+begin
+  if session = nil then
+    response.Redirect('/oauth2/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+EndPoint+'/internal&aud='+EndPoint+'&state='+MakeLoginToken(EndPoint, apGoogle))
+  else
+  begin
+    if params.getVar('form') = 'true' then
+    begin
+      raise Exception.Create('Not done yet');
+    end
+    else
+    begin
+      variables := TDictionary<String,String>.create;
+      try
+        variables.Add('username', session.User.username);
+        OnProcessFile(response, session, '/oauth_userdetails.html', AltFile('/oauth_userdetails.html'), true, variables)
+      finally
+        variables.free;
+      end;
+    end;
+  end;
+end;
 
 function TAuth2Server.AuthPath: String;
 begin

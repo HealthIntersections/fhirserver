@@ -117,6 +117,8 @@ begin
   Add(TUcumHoldingHandler.Create('[hp''_X]', '1'));
   Add(TUcumHoldingHandler.Create('[hp''_M]', '1'));
   Add(TUcumHoldingHandler.Create('[hp''_Q]', '1'));
+  Add(TUcumHoldingHandler.Create('[degRe]', '1'));
+  Add(TUcumHoldingHandler.Create('[m/s2/Hz^(1/2)]', '1'));
 end;
 
 { TUcumUnitHandler }

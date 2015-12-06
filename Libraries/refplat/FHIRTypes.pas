@@ -2089,8 +2089,8 @@ Type
     function Clone : TFhirElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member id
@@ -2226,8 +2226,8 @@ Type
     function Clone : TFhirBackboneElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member modifierExtensionList
@@ -2380,8 +2380,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -2514,8 +2514,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -2648,8 +2648,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
@@ -2782,8 +2782,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
@@ -2916,8 +2916,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3050,8 +3050,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3184,8 +3184,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : TBytes); overload;
     Destructor Destroy; override;
@@ -3318,8 +3318,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3452,8 +3452,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3586,8 +3586,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : Boolean); overload;
     Destructor Destroy; override;
@@ -3720,8 +3720,8 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
@@ -4704,8 +4704,8 @@ Type
     function Clone : TFhirExtension; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member url
@@ -4847,8 +4847,8 @@ Type
     function Clone : TFhirNarrative; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member status
@@ -4989,8 +4989,8 @@ Type
     function Clone : TFhirPeriod; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member start
@@ -5146,8 +5146,8 @@ Type
     function Clone : TFhirCoding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member system
@@ -5314,8 +5314,8 @@ Type
     function Clone : TFhirRange; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member low
@@ -5471,8 +5471,8 @@ Type
     function Clone : TFhirQuantity; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member value
@@ -5664,8 +5664,8 @@ Type
     function Clone : TFhirAttachment; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member contentType
@@ -5859,8 +5859,8 @@ Type
     function Clone : TFhirRatio; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member numerator
@@ -6006,8 +6006,8 @@ Type
     function Clone : TFhirAnnotation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member author
@@ -6178,8 +6178,8 @@ Type
     function Clone : TFhirSampledData; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member origin
@@ -6368,8 +6368,8 @@ Type
     function Clone : TFhirReference; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member reference
@@ -6512,8 +6512,8 @@ Type
     function Clone : TFhirCodeableConcept; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member codingList
@@ -6664,8 +6664,8 @@ Type
     function Clone : TFhirIdentifier; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member use
@@ -6851,8 +6851,8 @@ Type
     function Clone : TFhirSignature; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member type_List
@@ -7027,8 +7027,8 @@ Type
     function Clone : TFhirElementDefinitionSlicing; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member discriminatorList
@@ -7188,8 +7188,8 @@ Type
     function Clone : TFhirElementDefinitionBase; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member path
@@ -7346,8 +7346,8 @@ Type
     function Clone : TFhirElementDefinitionType; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member code
@@ -7506,8 +7506,8 @@ Type
     function Clone : TFhirElementDefinitionConstraint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member key
@@ -7677,8 +7677,8 @@ Type
     function Clone : TFhirElementDefinitionBinding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member strength
@@ -7832,8 +7832,8 @@ Type
     function Clone : TFhirElementDefinitionMapping; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member identity
@@ -8079,8 +8079,8 @@ Type
     function Clone : TFhirElementDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member path
@@ -8498,8 +8498,8 @@ Type
     function Clone : TFhirTimingRepeat; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member bounds
@@ -8714,8 +8714,8 @@ Type
     function Clone : TFhirTiming; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member eventList
@@ -8894,8 +8894,8 @@ Type
     function Clone : TFhirAddress; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member use
@@ -9116,8 +9116,8 @@ Type
     function Clone : TFhirHumanName; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member use
@@ -9300,8 +9300,8 @@ Type
     function Clone : TFhirMeta; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member versionId
@@ -9473,8 +9473,8 @@ Type
     function Clone : TFhirContactPoint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member system
@@ -10108,7 +10108,7 @@ begin
   result := 'Element';
 end;
 
-function TFhirElement.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirElement.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirElement;
 begin
@@ -10123,7 +10123,7 @@ begin
   end;
 end;
 
-function TFhirElement.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirElement.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirElement;
 begin
@@ -10362,7 +10362,7 @@ begin
   result := 'BackboneElement';
 end;
 
-function TFhirBackboneElement.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirBackboneElement.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirBackboneElement;
 begin
@@ -10377,7 +10377,7 @@ begin
   end;
 end;
 
-function TFhirBackboneElement.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirBackboneElement.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirBackboneElement;
 begin
@@ -10629,7 +10629,7 @@ begin
   result := FValue;
 end;
 
-function TFhirEnum.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirEnum.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirEnum;
 begin
@@ -10644,7 +10644,7 @@ begin
   end;
 end;
 
-function TFhirEnum.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirEnum.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirEnum;
 begin
@@ -10845,7 +10845,7 @@ begin
   result := FValue;
 end;
 
-function TFhirInteger.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirInteger.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirInteger;
 begin
@@ -10860,7 +10860,7 @@ begin
   end;
 end;
 
-function TFhirInteger.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirInteger.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirInteger;
 begin
@@ -11062,7 +11062,7 @@ begin
   result := FValue.toString;
 end;
 
-function TFhirDateTime.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirDateTime.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirDateTime;
 begin
@@ -11077,7 +11077,7 @@ begin
   end;
 end;
 
-function TFhirDateTime.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirDateTime.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirDateTime;
 begin
@@ -11280,7 +11280,7 @@ begin
   result := FValue.toString;
 end;
 
-function TFhirDate.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirDate.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirDate;
 begin
@@ -11295,7 +11295,7 @@ begin
   end;
 end;
 
-function TFhirDate.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirDate.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirDate;
 begin
@@ -11497,7 +11497,7 @@ begin
   result := FValue;
 end;
 
-function TFhirDecimal.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirDecimal.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirDecimal;
 begin
@@ -11512,7 +11512,7 @@ begin
   end;
 end;
 
-function TFhirDecimal.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirDecimal.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirDecimal;
 begin
@@ -11713,7 +11713,7 @@ begin
   result := FValue;
 end;
 
-function TFhirUri.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirUri.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirUri;
 begin
@@ -11728,7 +11728,7 @@ begin
   end;
 end;
 
-function TFhirUri.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirUri.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirUri;
 begin
@@ -11929,7 +11929,7 @@ begin
   if (length(FValue) = 0) then result := '' else result := EncodeBase64(@FValue[0], length(FValue));
 end;
 
-function TFhirBase64Binary.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirBase64Binary.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirBase64Binary;
 begin
@@ -11944,7 +11944,7 @@ begin
   end;
 end;
 
-function TFhirBase64Binary.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirBase64Binary.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirBase64Binary;
 begin
@@ -12145,7 +12145,7 @@ begin
   result := FValue;
 end;
 
-function TFhirTime.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirTime.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirTime;
 begin
@@ -12160,7 +12160,7 @@ begin
   end;
 end;
 
-function TFhirTime.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirTime.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirTime;
 begin
@@ -12361,7 +12361,7 @@ begin
   result := FValue;
 end;
 
-function TFhirString.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirString.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirString;
 begin
@@ -12376,7 +12376,7 @@ begin
   end;
 end;
 
-function TFhirString.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirString.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirString;
 begin
@@ -12577,7 +12577,7 @@ begin
   result := LCBooleanToString(FValue);
 end;
 
-function TFhirBoolean.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirBoolean.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirBoolean;
 begin
@@ -12592,7 +12592,7 @@ begin
   end;
 end;
 
-function TFhirBoolean.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirBoolean.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirBoolean;
 begin
@@ -12794,7 +12794,7 @@ begin
   result := FValue.toString;
 end;
 
-function TFhirInstant.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirInstant.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirInstant;
 begin
@@ -12809,7 +12809,7 @@ begin
   end;
 end;
 
-function TFhirInstant.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirInstant.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirInstant;
 begin
@@ -14112,7 +14112,7 @@ begin
   result := 'Extension';
 end;
 
-function TFhirExtension.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirExtension.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirExtension;
 begin
@@ -14127,7 +14127,7 @@ begin
   end;
 end;
 
-function TFhirExtension.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirExtension.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirExtension;
 begin
@@ -14384,7 +14384,7 @@ begin
   result := 'Narrative';
 end;
 
-function TFhirNarrative.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirNarrative.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirNarrative;
 begin
@@ -14399,7 +14399,7 @@ begin
   end;
 end;
 
-function TFhirNarrative.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirNarrative.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirNarrative;
 begin
@@ -14625,7 +14625,7 @@ begin
   result := 'Period';
 end;
 
-function TFhirPeriod.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirPeriod.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirPeriod;
 begin
@@ -14640,7 +14640,7 @@ begin
   end;
 end;
 
-function TFhirPeriod.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirPeriod.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirPeriod;
 begin
@@ -14908,7 +14908,7 @@ begin
   result := 'Coding';
 end;
 
-function TFhirCoding.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirCoding.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirCoding;
 begin
@@ -14925,7 +14925,7 @@ begin
   end;
 end;
 
-function TFhirCoding.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirCoding.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirCoding;
 begin
@@ -15250,7 +15250,7 @@ begin
   result := 'Range';
 end;
 
-function TFhirRange.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirRange.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirRange;
 begin
@@ -15265,7 +15265,7 @@ begin
   end;
 end;
 
-function TFhirRange.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirRange.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirRange;
 begin
@@ -15520,7 +15520,7 @@ begin
   result := 'Quantity';
 end;
 
-function TFhirQuantity.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirQuantity.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirQuantity;
 begin
@@ -15537,7 +15537,7 @@ begin
   end;
 end;
 
-function TFhirQuantity.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirQuantity.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirQuantity;
 begin
@@ -15899,7 +15899,7 @@ begin
   result := 'Attachment';
 end;
 
-function TFhirAttachment.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirAttachment.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirAttachment;
 begin
@@ -15917,7 +15917,7 @@ begin
   end;
 end;
 
-function TFhirAttachment.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirAttachment.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirAttachment;
 begin
@@ -16326,7 +16326,7 @@ begin
   result := 'Ratio';
 end;
 
-function TFhirRatio.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirRatio.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirRatio;
 begin
@@ -16341,7 +16341,7 @@ begin
   end;
 end;
 
-function TFhirRatio.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirRatio.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirRatio;
 begin
@@ -16557,7 +16557,7 @@ begin
   result := 'Annotation';
 end;
 
-function TFhirAnnotation.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirAnnotation.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirAnnotation;
 begin
@@ -16573,7 +16573,7 @@ begin
   end;
 end;
 
-function TFhirAnnotation.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirAnnotation.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirAnnotation;
 begin
@@ -16859,7 +16859,7 @@ begin
   result := 'SampledData';
 end;
 
-function TFhirSampledData.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirSampledData.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirSampledData;
 begin
@@ -16877,7 +16877,7 @@ begin
   end;
 end;
 
-function TFhirSampledData.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirSampledData.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirSampledData;
 begin
@@ -17239,7 +17239,7 @@ begin
   result := 'Reference';
 end;
 
-function TFhirReference.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirReference.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirReference;
 begin
@@ -17254,7 +17254,7 @@ begin
   end;
 end;
 
-function TFhirReference.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirReference.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirReference;
 begin
@@ -17513,7 +17513,7 @@ begin
   result := 'CodeableConcept';
 end;
 
-function TFhirCodeableConcept.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirCodeableConcept.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirCodeableConcept;
 begin
@@ -17528,7 +17528,7 @@ begin
   end;
 end;
 
-function TFhirCodeableConcept.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirCodeableConcept.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirCodeableConcept;
 begin
@@ -17815,7 +17815,7 @@ begin
   result := 'Identifier';
 end;
 
-function TFhirIdentifier.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirIdentifier.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirIdentifier;
 begin
@@ -17832,7 +17832,7 @@ begin
   end;
 end;
 
-function TFhirIdentifier.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirIdentifier.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirIdentifier;
 begin
@@ -18150,7 +18150,7 @@ begin
   result := 'Signature';
 end;
 
-function TFhirSignature.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirSignature.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirSignature;
 begin
@@ -18167,7 +18167,7 @@ begin
   end;
 end;
 
-function TFhirSignature.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirSignature.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirSignature;
 begin
@@ -18628,7 +18628,7 @@ begin
   result := TFhirElementDefinitionSlicing(inherited Clone);
 end;
 
-function TFhirElementDefinitionSlicing.equalsDeep(other : TFHIRObject) : boolean;
+function TFhirElementDefinitionSlicing.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionSlicing;
 begin
@@ -18644,7 +18644,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionSlicing.equalsShallow(other : TFHIRObject) : boolean;
+function TFhirElementDefinitionSlicing.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionSlicing;
 begin
@@ -18930,7 +18930,7 @@ begin
   result := TFhirElementDefinitionBase(inherited Clone);
 end;
 
-function TFhirElementDefinitionBase.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionBase.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionBase;
 begin
@@ -18946,7 +18946,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionBase.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionBase.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionBase;
 begin
@@ -19247,7 +19247,7 @@ begin
   result := TFhirElementDefinitionType(inherited Clone);
 end;
 
-function TFhirElementDefinitionType.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionType.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionType;
 begin
@@ -19263,7 +19263,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionType.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionType.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionType;
 begin
@@ -19552,7 +19552,7 @@ begin
   result := TFhirElementDefinitionConstraint(inherited Clone);
 end;
 
-function TFhirElementDefinitionConstraint.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionConstraint.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionConstraint;
 begin
@@ -19569,7 +19569,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionConstraint.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionConstraint.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionConstraint;
 begin
@@ -19901,7 +19901,7 @@ begin
   result := TFhirElementDefinitionBinding(inherited Clone);
 end;
 
-function TFhirElementDefinitionBinding.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionBinding.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionBinding;
 begin
@@ -19917,7 +19917,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionBinding.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionBinding.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionBinding;
 begin
@@ -20175,7 +20175,7 @@ begin
   result := TFhirElementDefinitionMapping(inherited Clone);
 end;
 
-function TFhirElementDefinitionMapping.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionMapping.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionMapping;
 begin
@@ -20191,7 +20191,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionMapping.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirElementDefinitionMapping.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinitionMapping;
 begin
@@ -20695,7 +20695,7 @@ begin
   result := 'ElementDefinition';
 end;
 
-function TFhirElementDefinition.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirElementDefinition.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinition;
 begin
@@ -20725,7 +20725,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinition.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirElementDefinition.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirElementDefinition;
 begin
@@ -21585,7 +21585,7 @@ begin
   result := TFhirTimingRepeat(inherited Clone);
 end;
 
-function TFhirTimingRepeat.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirTimingRepeat.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirTimingRepeat;
 begin
@@ -21605,7 +21605,7 @@ begin
   end;
 end;
 
-function TFhirTimingRepeat.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirTimingRepeat.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirTimingRepeat;
 begin
@@ -22066,7 +22066,7 @@ begin
   result := 'Timing';
 end;
 
-function TFhirTiming.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirTiming.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirTiming;
 begin
@@ -22082,7 +22082,7 @@ begin
   end;
 end;
 
-function TFhirTiming.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirTiming.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirTiming;
 begin
@@ -22415,7 +22415,7 @@ begin
   result := 'Address';
 end;
 
-function TFhirAddress.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirAddress.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirAddress;
 begin
@@ -22434,7 +22434,7 @@ begin
   end;
 end;
 
-function TFhirAddress.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirAddress.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirAddress;
 begin
@@ -22947,7 +22947,7 @@ begin
   result := 'HumanName';
 end;
 
-function TFhirHumanName.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirHumanName.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirHumanName;
 begin
@@ -22965,7 +22965,7 @@ begin
   end;
 end;
 
-function TFhirHumanName.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirHumanName.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirHumanName;
 begin
@@ -23312,7 +23312,7 @@ begin
   result := 'Meta';
 end;
 
-function TFhirMeta.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirMeta.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirMeta;
 begin
@@ -23329,7 +23329,7 @@ begin
   end;
 end;
 
-function TFhirMeta.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirMeta.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirMeta;
 begin
@@ -23688,7 +23688,7 @@ begin
   result := 'ContactPoint';
 end;
 
-function TFhirContactPoint.equalsDeep(other : TFHIRObject) : boolean; 
+function TFhirContactPoint.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirContactPoint;
 begin
@@ -23705,7 +23705,7 @@ begin
   end;
 end;
 
-function TFhirContactPoint.equalsShallow(other : TFHIRObject) : boolean; 
+function TFhirContactPoint.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirContactPoint;
 begin

@@ -414,7 +414,7 @@ begin
       try
         buffer.AsUnicode := src;
         loadValidator;
-        op := FValidator.validateInstance(buffer, fmt, false, 'validate', nil);
+        op := FValidator.validateInstance(buffer, fmt, risOptional, 'validate', nil);
       finally
         buffer.Free;
       end;
@@ -738,7 +738,7 @@ var
   prsr : TFHIRParser;
   items : TFHIRBaseList;
   expr : TFHIRExpressionNode;
-  engine : TFHIRPathEvaluator;
+  engine : TFHIRExpressionEngine;
   sp, ep : integer;
 begin
   src := CurrentText;
@@ -755,7 +755,7 @@ begin
       prsr.KeepLineNumbers := true;
       prsr.source := s;
       prsr.Parse;
-      engine := TFHIRPathEvaluator.Create(FValidator.Context.Link);
+      engine := TFHIRExpressionEngine.Create(FValidator.Context.Link);
       try
         expr := engine.parse(FHIRToolbox.mPath.Text);
         try
@@ -907,7 +907,7 @@ var
   fmt : TFHIRFormat;
   s : TStringStream;
   prsr : TFHIRParser;
-  query : TFHIRPathEvaluator;
+  query : TFHIRExpressionEngine;
   item : TFHIRObject;
   allSource : boolean;
   sp, ep : integer;
@@ -1324,10 +1324,10 @@ end;
 
 procedure TFHIRPlugin.evaluatePath(r : TFHIRResource; out items : TFHIRBaseList; out expr : TFHIRExpressionNode; out types : TAdvStringSet);
 var
-  engine : TFHIRPathEvaluator;
+  engine : TFHIRExpressionEngine;
 begin
   loadValidator;
-  engine := TFHIRPathEvaluator.Create(FValidator.Context.Link);
+  engine := TFHIRExpressionEngine.Create(FValidator.Context.Link);
   try
     expr := engine.parse(FHIRToolbox.mPath.Text);
     try
@@ -1454,8 +1454,8 @@ begin
         prsr.Free;
       end;
     except
-      on e: exception do
-      showmessage(e.message);
+//      on e: exception do
+//        showmessage(e.message);
     end;
   end;
 end;

@@ -2348,7 +2348,7 @@ begin
       outcome := TFhirOperationOutcome.create;
     end
     else if (request.Source <> nil) then
-      outcome := FRepository.validator.validateInstance(request.Source, request.PostFormat, false, opDesc, nil)
+      outcome := FRepository.validator.validateInstance(request.Source, request.PostFormat, risOptional, opDesc, nil)
     else
     begin
       buffer := TAdvBuffer.create;
@@ -2374,7 +2374,7 @@ begin
           vcl.free;
           mem.free;
         end;
-        outcome := FRepository.validator.validateInstance(buffer, ffXml, false, opDesc, nil);
+        outcome := FRepository.validator.validateInstance(buffer, ffXml, risOptional, opDesc, nil);
       finally
         buffer.free;
       end;
@@ -5804,7 +5804,7 @@ begin
         finally
           profile.free;
         end;
-        op := manager.FRepository.validator.validateInstance(response.Resource, false, 'Produce Questionnaire', nil);
+        op := manager.FRepository.validator.validateInstance(response.Resource, risOptional, 'Produce Questionnaire', nil);
         try
           if (op.hasErrors) then
           begin
@@ -6115,7 +6115,7 @@ begin
       opDesc := 'Validate resource '+request.id;
 
     if (request.Source <> nil) and not (request.Resource is TFhirParameters) then
-      outcome := manager.FRepository.validator.validateInstance(request.Source, request.PostFormat, false, opDesc, profile)
+      outcome := manager.FRepository.validator.validateInstance(request.Source, request.PostFormat, risOptional, opDesc, profile)
     else
     begin
       buffer := TAdvBuffer.create;
@@ -6140,7 +6140,7 @@ begin
           vcl.free;
           mem.free;
         end;
-        outcome := manager.FRepository.validator.validateInstance(buffer, ffXml, false, opDesc, profile);
+        outcome := manager.FRepository.validator.validateInstance(buffer, ffXml, risOptional, opDesc, profile);
       finally
         buffer.free;
       end;
@@ -6463,6 +6463,7 @@ begin
             raise Exception.Create('No Patient resource found in patient compartment');
           bundle.deleteEntry(patient);
           bundle.entryList.Insert(0).resource := patient.Link;
+          bundle.entryList[0].fullurl := AppendForwardSlash(base)+'Patient/'+id;
 
           bundle.meta := TFhirMeta.Create;
           bundle.meta.lastUpdated := NowUTC;

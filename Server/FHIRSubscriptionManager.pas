@@ -782,7 +782,7 @@ function processUrlTemplate(url : String; resource : TFhirResource) : String;
 var
   b, e : integer;
   code, value : String;
-  qry : TFHIRPathEvaluator;
+  qry : TFHIRExpressionEngine;
   o : TFHIRObject;
   results : TFHIRBaseList;
 begin
@@ -795,7 +795,7 @@ begin
       value := Codes_TFHIRResourceType[resource.ResourceType]+'/'+resource.id
     else
     begin
-      qry := TFHIRPathEvaluator.create(nil);
+      qry := TFHIRExpressionEngine.create(nil);
       try
         results := qry.evaluate(nil, resource, code);
         try

@@ -578,9 +578,9 @@ End;
 
 Function TUcumLexer.isValidSymbolChar(ch : Char; allowDigits, inSquares : boolean): boolean;
 Begin
-        result := ((allowDigits) and (ch >= '0') and (ch <= '9')) or ((ch >= 'a') and (ch <= 'z')) or ((ch >= 'A') and (ch <= 'Z')) or
+        result := ((allowDigits) and (ch >= '0') and (ch <= '9')) or (inSquares or ((ch >= 'a') and (ch <= 'z')) or ((ch >= 'A') and (ch <= 'Z')) or
              (ch = '[') or (ch = ']') or (ch = '%') or (ch = '*') or (ch = '^') or (ch = '''') or
-             (ch = '"') or (ch = '_') or (inSquares and (ch = '.'));
+             (ch = '"') or (ch = '_'));
 End;
 
 Function TUcumLexer.checkAnnotation(ch : Char) : boolean;
@@ -824,7 +824,7 @@ begin
     if unit_.isSpecial Then
     Begin
       if not Fhandlers.ExistsByName(unit_.Code) Then
-        raise Exception.Create('Not handled yet (special unit)')
+        raise Exception.Create('Not handled yet (special unit: '+unit_.Code+')')
       else
       Begin
         u := Fhandlers.HandlerByCode[unit_.code].Units;

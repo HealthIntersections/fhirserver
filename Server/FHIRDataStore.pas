@@ -1269,8 +1269,8 @@ begin
     opj := nil;
     opx := nil;
     try
-      opX := FValidator.validateInstance(bufXml, ffXml, true, 'validate check', nil);
-      opJ := FValidator.validateInstance(bufJson, ffJson, true, 'validate check', nil);
+      opX := FValidator.validateInstance(bufXml, ffXml, risRequired, 'validate check', nil);
+      opJ := FValidator.validateInstance(bufJson, ffJson, risRequired, 'validate check', nil);
       if (opX.issueList.errorCount + opJ.issueList.errorCount = 0) then
       begin
         writeln(inttostr(i)+': '+rtype+'/'+id+': passed validation');

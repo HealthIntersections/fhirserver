@@ -112,7 +112,7 @@ type
     FContext : TFHIRBase;
     FFormat : TFHIRFormat;
     FExpression : TFHIRExpressionNode;
-    FEngine : TFHIRPathEvaluator;
+    FEngine : TFHIRExpressionEngine;
     FServices : TValidatorServiceProvider;
     FLog : String;
     FLayoutInProgress : boolean;
@@ -139,7 +139,7 @@ type
     procedure Go;
     procedure Init(var Msg: TMessage); message UMSG;
     function WantStop(package : TFHIRPathDebugPackage) : boolean;
-    procedure DoDebug(source : TFHIRPathEvaluator; package : TFHIRPathDebugPackage);
+    procedure DoDebug(source : TFHIRExpressionEngine; package : TFHIRPathDebugPackage);
 
   public
     { Public declarations }
@@ -311,7 +311,7 @@ begin
   mInput2.Text := '';
   mOutcome.Text := '';
   mConsole.Text := '';
-  FEngine := TFHIRPathEvaluator.create(FServices.link);
+  FEngine := TFHIRExpressionEngine.create(FServices.link);
   FEngine.OnDebug := DoDebug;
   try
     FExpression := FEngine.parse(mSource.Text);
@@ -485,7 +485,7 @@ begin
   end;
 end;
 
-procedure TFHIRPathDebuggerForm.DoDebug(source : TFHIRPathEvaluator; package : TFHIRPathDebugPackage);
+procedure TFHIRPathDebuggerForm.DoDebug(source : TFHIRExpressionEngine; package : TFHIRPathDebugPackage);
 var
   id : string;
   tc : Int64;

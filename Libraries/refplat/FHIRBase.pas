@@ -351,7 +351,10 @@ type
     function FhirType : String; virtual;
     function isPrimitive : boolean; virtual;
     function primitiveValue : string; virtual;
+    function isMetaDataBased : boolean; virtual;
     Function PerformQuery(path : String):TFHIRBaseList;
+    function hasType(t : String) : boolean; overload;
+    function hasType(tl : Array of String) : boolean; overload;
 
   published
     {@member comments
@@ -361,8 +364,8 @@ type
     Property xml_commentsEnd : TAdvStringList read GetCommentsEnd;
 
     Property _source_format : TFHIRFormat read FFormat write FFormat;
-    function equalsDeep(other : TFHIRObject) : boolean; virtual;
-    function equalsShallow(other : TFHIRObject) : boolean; virtual;
+    function equalsDeep(other : TFHIRBase) : boolean; virtual;
+    function equalsShallow(other : TFHIRBase) : boolean; virtual;
   end;
 
   TFHIRBaseListEnumerator = class (TAdvObject)
@@ -576,12 +579,12 @@ type
   TFHIRPathOperation = (opNull, poEquals, poEquivalent, poNotEquals, poNotEquivalent, poLessThen, poGreater, poLessOrEqual, poGreaterOrEqual,
      poUnion, poIn, poAnd, poOr, poXor, poImplies, poPlus, poMinus, poConcatenate);
   TFHIRPathOperationSet = set of TFHIRPathOperation;
-  TFHIRPathFunction = (pfNull, pfEmpty, pfNot, pfWhere, pfAll, pfAny, pfItem, pfFirst, pfLast, pfTail, pfCount, pfAsInteger, pfStartsWith, pfSubString, pfLength, pfMatches, pfDistinct, pfResolve, pfContains, pfExtension);
+  TFHIRPathFunction = (pfNull, pfEmpty, pfNot, pfWhere, pfAll, pfAny, pfItem, pfFirst, pfLast, pfTail, pfCount, pfAsInteger, pfStartsWith, pfSubString, pfLength, pfMatches, pfDistinct, pfResolve, pfContains, pfExtension, pfLog);
   TFHIRExpressionNodeType = (entName, entFunction, entConstant, entGroup);
 
 const
   CODES_TFHIRPathOperation : array [TFHIRPathOperation] of String = ('', '=' , '~' , '!=' , '!~' , '<' , '>' , '<=' , '>=' , '|' , 'in' , 'and' , 'or' , 'xor', 'implies', '+' , '-' , '&');
-  CODES_TFHIRPathFunctions : array [TFHIRPathFunction] of String = ('', 'empty' , 'not' , 'where' , 'all' , 'any' , 'item' , 'first' , 'last' , 'tail' , 'count' , 'asInteger' , 'startsWith' , 'substring', 'length' , 'matches' , 'distinct' , 'resolve' , 'contains', 'extension');
+  CODES_TFHIRPathFunctions : array [TFHIRPathFunction] of String = ('', 'empty' , 'not' , 'where' , 'all' , 'any' , 'item' , 'first' , 'last' , 'tail' , 'count' , 'asInteger' , 'startsWith' , 'substring', 'length' , 'matches' , 'distinct' , 'resolve' , 'contains', 'extension', 'log');
 
 type
   TFHIRExpressionNode = class (TAdvObject)
@@ -696,12 +699,12 @@ begin
   inherited;
 end;
 
-function TFHIRBase.equalsDeep(other: TFHIRObject): boolean;
+function TFHIRBase.equalsDeep(other: TFHIRBase): boolean;
 begin
   result := (other <> nil) and (other.className = className);
 end;
 
-function TFHIRBase.equalsShallow(other: TFHIRObject): boolean;
+function TFHIRBase.equalsShallow(other: TFHIRBase): boolean;
 begin
   result := other <> nil;
 end;
@@ -723,6 +726,11 @@ begin
   result := (FCommentsStart <> nil) and (FCommentsStart.count > 0);
 end;
 
+function TFHIRBase.isMetaDataBased: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRBase.isPrimitive: boolean;
 begin
   result := false;
@@ -738,6 +746,21 @@ end;
 function TFHIRBase.HasComments: Boolean;
 begin
   result := HasXmlCommentsStart or HasXmlCommentsEnd;
+end;
+
+function TFHIRBase.hasType(t: String): boolean;
+begin
+  result := t = FhirType;
+end;
+
+function TFHIRBase.hasType(tl: array of String): boolean;
+var
+  t : String;
+begin
+  for t in tl do
+    if hasType(t) then
+      exit(true);
+  exit(false);
 end;
 
 function TFHIRBase.HasXmlCommentsEnd: Boolean;
@@ -1796,6 +1819,8 @@ begin
     result := true
   else if (e1 = nil) or (e2 = nil) then
     result := false
+  else if (e2.isMetaDataBased) then
+    result := e2.equalsDeep(e1)
   else
     result := e1.equalsDeep(e2);
 end;
@@ -1815,9 +1840,9 @@ end;
 
 function TFHIRBase.PerformQuery(path: String): TFHIRBaseList;
 var
-  qry : TFHIRPathEvaluator;
+  qry : TFHIRExpressionEngine;
 begin
-  qry := TFHIRPathEvaluator.create(nil);
+  qry := TFHIRExpressionEngine.create(nil);
   try
     result := qry.evaluate(nil, self, path);
   finally

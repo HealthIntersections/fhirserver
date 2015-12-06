@@ -1,21 +1,58 @@
-<?xml version="1.0"?><rss version="2.0">
-  <channel>
-    <title>FHIR Notepad++ Plug-in Release history</title>
-    <link>http://www.healthintersections.com.au/FhirServer</link>
-    <item><title>FHIR Notepad++ Plug-in release 1.0.6 27-Nov 2015</title><link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.6.exe</link><description>27-Nov 2015 (v1.0.6): further corrections to validation rules</description></item><item><title>FHIR Notepad++ Plug-in release 1.0.5 27-Nov 2015</title><link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.5.exe</link><description>27-Nov 2015 (v1.0.5): fix pth handling errors &amp; extend functionality. Further work on validation accuracy for invariants</description></item><item><title>FHIR Notepad++ Plug-in release 1.0.4 24-Nov 2015</title><link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.4.exe</link><description>24-Nov 2015 (v1.0.4): Fix issue with upgrade release / notification system</description></item><item><title>FHIR Notepad++ Plug-in release 1.0.3 24-Nov 2015</title><link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.3.exe</link><description>24-Nov 2015 (v1.0.3): Set up release version/upgrade system</description></item><item>
-      <title>FHIR Notepad++ Plug-in release 1.0.2 24-Nov 2015</title>
-      <link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.2.exe</link>
-      <description>24-Nov 2015 (v1.0.2): Add FHIRPath debugger</description>
-    </item>
-    <item>
-      <title>FHIR Notepad++ Plug-in release 1.0.1 20-Nov 2015</title>
-      <link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.1.exe</link>
-      <description>20-Nov 2015  (v1.0.1): Fix for content type on request to server</description>
-    </item>
-    <item>
-      <title>FHIR Notepad++ Plug-in release 1.0.0 18-Nov 2015</title>
-      <link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.0.exe</link>
-      <description>18-Nov 2015  (v1.0.0): Original Release at DevDays 2015</description>
-    </item>
-  </channel>
+<?xml version="1.0"?>
+<rss version="2.0">
+	<channel>
+		<title>FHIR Notepad++ Plug-in Release history</title>
+		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><item>
+				<title>Notepad++ Plugin release 1.0.9 1/12/2015</title>
+				<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.9.exe</link>
+				<description>1/12/2015 (v1.0.9): testing rss</description>
+			</item>
+		</item>
+<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.8 01-Dec 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.8.exe</link>
+			<description>01-Dec 2015 (v1.0.8): fix validation of ids in resources in bundles (https://github.com/grahamegrieve/fhirserver/issues/31)</description>
+		</item>
+		<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.7 30-Nov 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.7.exe</link>
+			<description>30-Nov 2015 (v1.0.7): Complete Validation Development (+ bug #30)</description>
+		</item>
+		<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.6 27-Nov 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.6.exe</link>
+			<description>27-Nov 2015 (v1.0.6): further corrections to validation rules</description>
+		</item>
+		<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.5 27-Nov 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.5.exe</link>
+			<description>27-Nov 2015 (v1.0.5): fix pth handling errors &amp; extend functionality. Further work on validation accuracy for invariants</description>
+		</item>
+		<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.4 24-Nov 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.4.exe</link>
+			<description>24-Nov 2015 (v1.0.4): Fix issue with upgrade release / notification system</description>
+		</item>
+		<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.3 24-Nov 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.3.exe</link>
+			<description>24-Nov 2015 (v1.0.3): Set up release version/upgrade system</description>
+		</item>
+		<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.2 24-Nov 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.2.exe</link>
+			<description>24-Nov 2015 (v1.0.2): Add FHIRPath debugger</description>
+		</item>
+		<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.1 20-Nov 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.1.exe</link>
+			<description>20-Nov 2015  (v1.0.1): Fix for content type on request to server</description>
+		</item>
+		<item>
+			<title>FHIR Notepad++ Plug-in release 1.0.0 18-Nov 2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.0.exe</link>
+			<description>18-Nov 2015  (v1.0.0): Original Release at DevDays 2015</description>
+		</item>
+	</channel>
 </rss>

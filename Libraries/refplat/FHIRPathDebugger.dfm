@@ -360,6 +360,10 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
       OnChange = PageControl1Change
       object TabSheet1: TTabSheet
         Caption = 'Resource'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mResource: TMemo
           Left = 0
           Top = 0
@@ -472,7 +476,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
     Left = 12
     Top = 104
     Bitmap = {
-      494C010103000C001C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000C00200010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
