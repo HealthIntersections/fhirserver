@@ -83,6 +83,7 @@ begin
         failifvariablenotdefined = true
         failifvariablenotininifile = true
         id = {25828604-726F-4115-89FB-03799A67707B}
+        ignorefailure = true
         ignorefilenotfound = false
         inifile = C:\\work\\org.hl7.fhir.dstu2\\build\\publish\\version.info
         sectionname = FHIR
@@ -408,29 +409,31 @@ begin
         updateonly = false
         usefilespec = true
       end
-      action.process.execute
+      action.xml.node.create
       begin
-        captureoutput = true
+        addnewline = true
+        allowdtds = false
         description = "update RSS"
-        enablelivecapture = true
-        enablereturncodecheck = true
-        enabletimeout = false
-        expandimpersonationtoken = false
-        hidewindow = false
-        id = {1FBEB9CA-0FE3-44E6-AE68-30D03BA9D42D}
-        impersonateusenetcredonly = false
-        impersonateuser = false
-        logoutput = true
-        logprocessparameters = true
-        params = "-base fhirserver -title \"Server\" -filename C:\\work\\fhirserver\\install\\fhirserver.rss -version \"1.0.%BuildCount%\" -change \"%purpose%\""
-        programname = C:\\work\\RssUpdate.exe
-        redirectstderr = true
-        returncodecomparator = rcEqualTo
-        returncodetocheck = 0
-        terminateontimeout = false
-        timeoutlength = 0
-        useerrordialogmonitor = false
-        waitforcompletion = true
+        existsbehaviour = neCreate
+        expanddocumentnodenamespace = false
+        failifmultiple = false
+        id = {CB06B685-9BE8-47AE-9C44-5509594CA287}
+        insertat = inAfterXPath
+        insertatxpath = /rss/channel/link
+        nodename = item
+        nodetext = "<item>" +
+                   "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate%</title>" +
+                   "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe</link>" +
+                   "      <description>%BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
+                   "    </item>" +
+                   ""
+        parentxpath = /rss/channel
+        parserver = HighestMSXML
+        resolveexternal = true
+        treatastext = false
+        usexmldocobject = false
+        validateonparse = true
+        xmlsourcefile = C:\\work\\fhirserver\\install\\fhirserver.rss
       end
       action.variables.savetoini
       begin

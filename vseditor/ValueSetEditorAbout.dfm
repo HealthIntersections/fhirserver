@@ -28,8 +28,6 @@ object ValueSetEditorAboutForm: TValueSetEditorAboutForm
     ParentBackground = False
     TabOrder = 0
     OnClick = lblFHIRVersionClick
-    ExplicitWidth = 439
-    ExplicitHeight = 230
     object Panel2: TPanel
       Left = 12
       Top = 12
@@ -41,10 +39,6 @@ object ValueSetEditorAboutForm: TValueSetEditorAboutForm
       ParentBackground = False
       TabOrder = 0
       OnClick = lblFHIRVersionClick
-      ExplicitLeft = 280
-      ExplicitTop = 188
-      ExplicitWidth = 185
-      ExplicitHeight = 41
       object Image1: TImage
         Left = 8
         Top = 12
@@ -370,7 +364,7 @@ object ValueSetEditorAboutForm: TValueSetEditorAboutForm
         ParentFont = False
         OnClick = lblFHIRVersionClick
       end
-      object Label2: TLabel
+      object lblVSEVersion: TLabel
         Left = 152
         Top = 84
         Width = 116

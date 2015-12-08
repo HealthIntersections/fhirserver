@@ -227,6 +227,7 @@ Type
     Constructor Create(name, url : String; key : integer);
     destructor Destroy; override;
     Function Link : TValueSetEditorServerCache; overload;
+    procedure checkLoad(event : TFHIRClientStatusEvent; null : String);
     procedure load(event : TFHIRClientStatusEvent = nil);
     procedure update(event : TFHIRClientStatusEvent; null : String);
     procedure save;
@@ -372,7 +373,7 @@ begin
   try
     client.OnClientStatus := nil;
     try
-      conf := client.conformance;
+      conf := client.conformance(true);
       try
         if (conf.fhirVersion <> FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION) then
           raise Exception.Create('The server is the wrong version. Expected '+FHIR_GENERATED_VERSION+', found '+conf.fhirVersion);
@@ -574,7 +575,8 @@ begin
     client := TFhirClient.create(Settings.valueSetServer, true);
     try
       client.OnClientStatus := nil;
-      client.updateResource(Settings.valueSetId, FValueSet);
+      FValueSet.id := Settings.valueSetId;
+      client.updateResource(FValueSet);
     finally
       client.free;
     end;
@@ -595,14 +597,15 @@ procedure TValueSetEditorContext.SaveAsServerNew;
 var
   client : TFhirClient;
   vs : TFHIRValueSet;
+  id : String;
 begin
   FValueSet.date := NowLocal;
   client := TFhirClient.create(Settings.WorkingServer, true);
   try
     client.OnClientStatus := nil;
-    vs := client.createResource(FValueSet) as TFhirValueSet;
+    vs := client.createResource(FValueSet, id) as TFhirValueSet;
     try
-      Settings.valueSetId := vs.id;
+      Settings.valueSetId := id;
       FValueSet.free;
       FValueSet := vs.Link;
     finally
@@ -648,7 +651,6 @@ begin
     client.Free;
   end;
 end;
-
 
 
 procedure TValueSetEditorServerCache.SynchroniseServer(event : TFHIRClientStatusEvent);
@@ -2064,7 +2066,7 @@ begin
   client := TFhirClient.create(url, true);
   try
     client.OnClientStatus := nil;
-    conf := client.conformance;
+    conf := client.conformance(false);
     try
       if not conf.fhirVersion.StartsWith(FHIR_GENERATED_VERSION+'-') then
         raise Exception.Create('Version Mismatch');
@@ -2097,6 +2099,15 @@ begin
   end;
 end;
 
+procedure TValueSetEditorServerCache.checkLoad(event: TFHIRClientStatusEvent; null : String);
+begin
+  if not FLoaded then
+  begin
+    load(event);
+    update(event, null);
+  end;
+end;
+
 constructor TValueSetEditorServerCache.Create(name, url : String; key : integer);
 begin
   inherited Create;
@@ -2118,9 +2129,6 @@ begin
   sortedValueSets := TStringList.Create;
   sortedValueSets.Sorted := true;
   specialCodeSystems := TAdvStringObjectMatch.create;
-
-//  if not checkServer(url, msg) then
-//    raise Exception.Create(msg);
 end;
 
 destructor TValueSetEditorServerCache.Destroy;
@@ -2154,6 +2162,7 @@ begin
   end
   else if (ini.ReadString('id', 'url', '') <> url) then
     raise Exception.Create('Ini mismatch');
+
   FLastUpdated := ini.ReadString('id', 'last-updated', '');
   if FileExists(base+'list.json') then
   begin
@@ -2176,8 +2185,8 @@ begin
     finally
       json.free;
     end;
+    FLoaded := true;
   end;
-  FLoaded := true;
 end;
 
 procedure TValueSetEditorServerCache.save;

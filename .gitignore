@@ -44,3 +44,5 @@ npp/fhirnpp.stat
 install/fhirserver.fbpInf
 Server/FHIRServerDev.stat
 Libraries/refplat/openehr.xml
+install/fhirvse.fbpInf
+install/fhirvse.fbpbrk

@@ -52,6 +52,9 @@ implementation
 
 {$R *.dfm}
 
+uses
+  ServerOperationForm;
+
 procedure TServerChooserForm.eFilterChange(Sender: TObject);
 begin
   Context.Settings.ServerFilter := eFilter.text;
@@ -70,6 +73,8 @@ begin
     FValueSets := TFhirValueSetList.Create
   else
     FValueSets.Clear;
+
+  ServerOperation(Context.WorkingServer.checkLoad, 'Load from Server', 'Open', true);
 
   for i := 0 to Context.WorkingServer.List.Count - 1 do
   begin

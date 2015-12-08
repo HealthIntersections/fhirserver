@@ -35,6 +35,17 @@ begin
         newvalue = %BuildCount%
         variablename = BuildCount
       end
+      action.datetime.get
+      begin
+        dateformat = yyyy-mm-dd
+        fbvariable = BuildDate
+        forceseparators = false
+        id = {0F85BD3E-237A-4675-9E67-5D73A445C023}
+        manipulationtype = Add
+        manipulationunit = Seconds
+        thedate = 42335.7506611574
+        usenow = true
+      end
       action.gui.inputbox
       begin
         actiontypeid = {95261620-BBED-49FE-89A2-B623F678C1F0}
@@ -50,7 +61,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "further corrections to validation rules"
+        as.returnvalue = "testing rss"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -329,29 +340,31 @@ begin
         updateonly = false
         usefilespec = true
       end
-      action.process.execute
+      action.xml.node.create
       begin
-        captureoutput = true
+        addnewline = true
+        allowdtds = false
         description = "update RSS"
-        enablelivecapture = true
-        enablereturncodecheck = true
-        enabletimeout = false
-        expandimpersonationtoken = false
-        hidewindow = false
-        id = {CD502183-E315-4ACA-8207-4383E1CEE31E}
-        impersonateusenetcredonly = false
-        impersonateuser = false
-        logoutput = true
-        logprocessparameters = true
-        params = "-base npp-install -title \"Notepad\+\+ Plug-in\" -filename C:\\work\\fhirserver\\install\\fhirnpp.rss -version \"1.0.%BuildCount%\" -change \"%npp-purpose%\""
-        programname = C:\\work\\RssUpdate.exe
-        redirectstderr = true
-        returncodecomparator = rcEqualTo
-        returncodetocheck = 0
-        terminateontimeout = false
-        timeoutlength = 0
-        useerrordialogmonitor = false
-        waitforcompletion = true
+        existsbehaviour = neCreate
+        expanddocumentnodenamespace = false
+        failifmultiple = false
+        id = {E807F1E3-4644-4916-B43D-461B8D69B597}
+        insertat = inAfterXPath
+        insertatxpath = /rss/channel/link
+        nodename = item
+        nodetext = "<item>" +
+                   "      <title>Notepad\+\+ Plugin release 1.0.%BuildCount% %BuildDate%</title>" +
+                   "      <link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.%BuildCount%.exe</link>" +
+                   "      <description>%BuildDate% (v1.0.%BuildCount%): %npp-purpose%</description>" +
+                   "    </item>" +
+                   ""
+        parentxpath = /rss/channel
+        parserver = HighestMSXML
+        resolveexternal = true
+        treatastext = false
+        usexmldocobject = false
+        validateonparse = true
+        xmlsourcefile = C:\\work\\fhirserver\\install\\fhirnpp.rss
       end
       action.variables.savetoini
       begin
@@ -442,6 +455,14 @@ begin
     name = BuildCount
     variablescope = vtProject
     variabletype = btInteger
+  end
+  variable
+  begin
+    defaultvalue = 0
+    formatstring = c
+    name = BuildDate
+    variablescope = vtProject
+    variabletype = btDateTime
   end
   variable
   begin

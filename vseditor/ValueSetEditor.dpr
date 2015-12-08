@@ -162,7 +162,11 @@ uses
   LookAheadUnit in '..\Libraries\ui\LookAheadUnit.pas',
   DProgress in '..\Libraries\ui\DProgress.pas',
   ValueSetEditorExceptionForm in 'ValueSetEditorExceptionForm.pas' {ExceptionDialog},
-  ValueSetEditorRegisterServerForm in 'ValueSetEditorRegisterServerForm.pas' {frmRegisterServer};
+  ValueSetEditorRegisterServerForm in 'ValueSetEditorRegisterServerForm.pas' {frmRegisterServer},
+  MimeMessage in '..\Libraries\support\MimeMessage.pas',
+  FhirPath in '..\Libraries\refplat\FhirPath.pas',
+  FHIRProfileUtilities in '..\Libraries\refplat\FHIRProfileUtilities.pas',
+  SmartOnFhirUtilities in '..\Libraries\refplat\SmartOnFhirUtilities.pas';
 
 {$R *.res}
 
@@ -170,8 +174,8 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TForm5, Form5);
-  Application.CreateForm(TfrmRegisterServer, frmRegisterServer1);
   Application.CreateForm(TServerChooserForm, ServerChooserForm);
+  Application.CreateForm(TfrmRegisterServer, frmRegisterServer1);
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TValueSetEditorAboutForm, ValueSetEditorAboutForm);
   Application.CreateForm(TValueSetEditorWelcomeForm, ValueSetEditorWelcomeForm);

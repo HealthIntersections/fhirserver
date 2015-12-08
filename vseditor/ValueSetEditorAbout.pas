@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.pngimage,
-  Vcl.ExtCtrls;
+  Vcl.ExtCtrls, vseBuildCount;
 
 type
   TValueSetEditorAboutForm = class(TForm)
@@ -13,7 +13,7 @@ type
     Panel2: TPanel;
     Image1: TImage;
     Label1: TLabel;
-    Label2: TLabel;
+    lblVSEVersion: TLabel;
     lblFHIRVersion: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure lblFHIRVersionClick(Sender: TObject);
@@ -36,6 +36,7 @@ uses
 procedure TValueSetEditorAboutForm.FormCreate(Sender: TObject);
 begin
   lblFHIRVersion.Caption := 'FHIR Version: '+ FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
+  lblVSEVersion.Caption := 'ValueSet Editor Version: 1.0.'+ inttostr(BuildCount);
 end;
 
 procedure TValueSetEditorAboutForm.lblFHIRVersionClick(Sender: TObject);

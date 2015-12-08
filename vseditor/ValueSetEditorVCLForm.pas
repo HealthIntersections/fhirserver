@@ -210,6 +210,7 @@ type
     Label30: TLabel;
     Label31: TLabel;
     Label32: TLabel;
+    OpenfromURL2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOpenServerClick(Sender: TObject);
@@ -336,6 +337,7 @@ type
     procedure btnNewIncludeClick(Sender: TObject);
     procedure btnNewExcludeClick(Sender: TObject);
     procedure Servers1Click(Sender: TObject);
+    procedure OpenfromURL2Click(Sender: TObject);
   private
     { Private declarations }
     Context : TValueSetEditorContext;
@@ -660,15 +662,16 @@ begin
 end;
 
 procedure TForm5.OpenfromUrl1Click(Sender: TObject);
+begin
+  btnOpenServerClick(self);
+end;
+
+procedure TForm5.OpenfromURL2Click(Sender: TObject);
 var
   s : String;
   clip : TClipboard;
   done : boolean;
 begin
-//  ServerChooserForm.Context := Context.link;
-//  if ServerChooserForm.ShowModal = mrOk then
-//    Refresh;
-
   clip := TClipboard.Create;
   try
     s := clip.AsText;
@@ -678,6 +681,7 @@ begin
   if not IsURL(s) then
     s := '';
   done := false;
+
   while not done and InputQuery('Open from URL', 'URL to open', s) do
     try
       ServerOperation(context.openFromURL, s, 'Opening', true);
@@ -691,7 +695,7 @@ begin
       end;
     end;
   if done then
-   Refresh;
+    Refresh;
 end;
 
 procedure TForm5.OSer1Click(Sender: TObject);

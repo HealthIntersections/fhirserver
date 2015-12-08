@@ -179,6 +179,8 @@ Type
     procedure processPaths(result, base : TFhirStructureDefinitionSnapshot; differential: TFhirStructureDefinitionDifferential; baseCursor, diffCursor, baseLimit, diffLimit : integer; url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String; slicingHandled : boolean);
     function populate(profile: TFHIRStructureDefinition; item: TFHIRObject; definition: TFHIRElementDefinition; stack: TAdvList<TFhirElementDefinition>): TFHIRResource;
     function getFirstCode(ed: TFHIRElementDefinition): TFhirCoding;
+    function overWriteWithCurrent(profile,
+      usage: TFHIRElementDefinition): TFHIRElementDefinition;
   public
     Constructor create(context : TValidatorServiceProvider; messages : TFhirOperationOutcomeIssueList);
     Destructor Destroy; override;
@@ -249,6 +251,63 @@ begin
     result := '.' + s + '['+d.type_List[0].profileList[0].value+']';
 end;
 
+function TProfileUtilities.overWriteWithCurrent(profile, usage : TFHIRElementDefinition) : TFHIRElementDefinition;
+var
+  c : TFHIRCoding;
+  s : TFHIRString;
+  cc : TFhirElementDefinitionConstraint;
+begin
+  result := profile.Clone;
+  try
+    if (usage.NameElement <> nil) then
+      result.Name := usage.Name;
+    if (usage.Label_Element <> nil) then
+      result.Label_ := usage.Label_;
+    for c in usage.codeList do
+      result.Codelist.add(c.clone);
+
+    if (usage.DefinitionElement <> nil) then
+      result.Definition := usage.Definition;
+    if (usage.ShortElement <> nil) then
+      result.Short := usage.Short;
+    if (usage.CommentsElement <> nil) then
+      result.Comments := usage.Comments;
+    if (usage.RequirementsElement <> nil) then
+      result.Requirements := usage.Requirements;
+    for s in usage.aliasList do
+      result.aliasList.add(s.Clone);
+    if (usage.MinElement <> nil) then
+      result.Min := usage.Min;
+    if (usage.MaxElement <> nil) then
+      result.Max := usage.Max;
+
+    if (usage.FixedElement <> nil) then
+      result.Fixed := usage.Fixed;
+    if (usage.PatternElement <> nil) then
+      result.Pattern := usage.Pattern;
+    if (usage.ExampleElement <> nil) then
+      result.Example := usage.Example;
+    if (usage.MinValueElement <> nil) then
+      result.MinValue := usage.MinValue;
+    if (usage.MaxValueElement <> nil) then
+      result.MaxValue := usage.MaxValue;
+    if (usage.MaxLengthElement <> nil) then
+      result.MaxLength := usage.MaxLength;
+    if (usage.MustSupportElement <> nil) then
+      result.MustSupport := usage.MustSupport;
+    if (usage.BindingElement <> nil) then
+      result.Binding := usage.Binding.Clone;
+    for cc in usage.constraintList do
+      result.constraintList.add(c.clone);
+
+    result.link;
+    profile.free;
+  finally
+    result.free;
+  end;
+end;
+
+
 procedure TProfileUtilities.processPaths(result, base : TFhirStructureDefinitionSnapshot; differential: TFhirStructureDefinitionDifferential; baseCursor, diffCursor, baseLimit, diffLimit : integer;
       url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String; slicingHandled : boolean);
 var
@@ -312,7 +371,11 @@ begin
           end;
         end;
         if (template = nil) then
-          template := currentBase.Clone;
+          template := currentBase.Clone
+        else
+          // some of what's in currentBase overrides template
+          template := overWriteWithCurrent(template, currentBase);
+
         outcome := updateURLs(url, template);
         outcome.path := fixedPath(contextPath, outcome.path);
         updateFromBase(outcome, currentBase);

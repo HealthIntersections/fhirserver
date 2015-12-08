@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+	<channel>
+		<title>FHIR Notepad++ Plug-in Release history</title>
+		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>Value Set Editor release 1.0.1 8/12/2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/vse-install-1.0.1.exe</link>
+			<description>8/12/2015 (v1.0.1): First Release</description>
+		</item>
+</channel>
+</rss>
