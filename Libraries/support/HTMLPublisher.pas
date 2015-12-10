@@ -17,6 +17,7 @@ Type
     FBuilder : TStringBuilder;
     FBaseURL: String;
     FLang: String;
+    FVersion: String;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -68,6 +69,7 @@ Type
     function output : String;
     Property BaseURL : String read FBaseURL write FBaseURL;
     Property Lang : String read FLang write FLang;
+    Property Version : String read FVersion write FVersion;
   end;
 
 
@@ -205,7 +207,7 @@ begin
   '</head>'#13#10+
   ''#13#10+
   '<body>'#13#10+
-  TFHIRXhtmlComposer.Header(nil, BaseURL, Lang)+
+  TFHIRXhtmlComposer.Header(nil, BaseURL, Lang, Version)+
   '<h1>'+s+'</h1>'#13#10);
 end;
 

@@ -10,7 +10,7 @@ uses
   IdContext, IdCustomHTTPServer,
   FHIRLang, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes,
   HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions, SnomedAnalysis,
-  TerminologyServer, TerminologyServices, TerminologyServerStore;
+  TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants;
 
 Type
   TReturnProcessFileEvent = procedure (response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
@@ -222,6 +222,7 @@ begin
   try
     html := THtmlPublisher.Create;
     try
+      html.Version := SERVER_VERSION;
       html.StartTable(true);
       html.StartTableRow;
       html.AddTableCell('URL', true);
@@ -267,6 +268,7 @@ begin
   try
     html := THtmlPublisher.Create;
     try
+      html.Version := SERVER_VERSION;
       html.StartTable(true);
       html.StartTableRow;
       html.AddTableCellURL('URL', '/tx/vsdefines?sort=url');
@@ -330,6 +332,7 @@ begin
       // build the table
       html := THtmlPublisher.Create;
       try
+        html.Version := SERVER_VERSION;
         html.StartTable(true);
         html.StartTableRow;
         html.AddTableCellURL('URL', '/tx/maps?sort=url');
@@ -458,6 +461,7 @@ begin
       // build the table
       html := THtmlPublisher.Create;
       try
+        html.Version := SERVER_VERSION;
         html.StartTable(true);
         html.StartTableRow;
         html.AddTableCellURL('URL', '/tx/valuesets?sort=url');
@@ -561,6 +565,7 @@ var
 begin
   html := THtmlPublisher.Create;
   try
+    html.Version := SERVER_VERSION;
     html.StartTable(true);
     for pp in p.parameterList do
     begin
@@ -809,6 +814,7 @@ begin
       html := THtmlPublisher.Create;
       pub := TSnomedPublisher.create(FServer.Snomed, FFHIRPath);
       try
+        html.Version := SERVER_VERSION;
         html.BaseURL := '/snomed/doco/';
         html.Lang := request.AcceptLanguage;
         pub.PublishDict(code, '/snomed/doco/', html);
@@ -849,6 +855,7 @@ begin
       html := THtmlPublisher.Create;
       pub := TLoincPublisher.create(FServer.Loinc, FFHIRPath);
       try
+        html.Version := SERVER_VERSION;
         html.BaseURL := '/loinc/doco/';
         html.Lang := request.AcceptLanguage;
         pub.PublishDict(code, '/loinc/doco/', html);

@@ -49,7 +49,7 @@ Uses
 
   FHIRTypes, fhirresources, fhirparser, fhirconstants,
   fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity,
-  QuestionnaireBuilder, FHIRClient, SCIMServer;
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants;
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -1061,7 +1061,7 @@ begin
 
     // insert page headers:
     s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
-    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang)+
+    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION)+
       '<p><a href="'+builder.QuestionnaireId+'">Questionnaire for this form</a>.'+
       ' The QuestionnaireAnswers should be submitted as a POST to <i>'+request.baseUrl+'$qa-post</i> with a questionnaire reference of <a href="'+builder.QuestionnaireId+'">'+builder.QuestionnaireId+'</a></p>'#13#10);
     s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
@@ -1125,7 +1125,7 @@ begin
         ''+#13#10+
         '<body>'+#13#10+
         ''+#13#10+
-        TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang)+
+        TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION)+
         '<h2>Direct Edit for '+request.Id+'</h2>'+#13#10+
         '<form action="'+request.baseUrl+'_web/'+typ+'/'+id+'/$post" method="POST">'#13#10+
         '  <input type="hidden" name="srcformat" value="'+request.Parameters.GetVar('srcformat')+'"/>'#13#10+
@@ -1233,7 +1233,7 @@ begin
     end;
     // insert page headers:
     s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
-    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang));
+    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION));
     s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
     s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'$qa-post";');
     response.body := s;
@@ -1302,7 +1302,7 @@ begin
     s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', false);
     // insert page headers:
     s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
-    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang));
+    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION));
     s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
     s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'/QuestionnaireAnswers";');
     response.body := s;
@@ -1362,7 +1362,7 @@ begin
 
       // insert page headers:
       s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
-      s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang));
+      s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION));
       s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
       // insert the answer:
       s := s.Replace('var QuestionnaireResponse=null;', 'var QuestionnaireResponse='+j+';');
@@ -1490,6 +1490,7 @@ begin
           begin
           oComp := TFHIRXhtmlComposer.Create(lang);
           TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(url);
+          TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
           TFHIRXhtmlComposer(oComp).Session := Session.Link;
           TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           end;
@@ -1639,7 +1640,7 @@ Begin
         if (oRequest.Session <> nil) and (oRequest.Session.User <> nil) and (oRequest.Session.PatientList.Count > 0) then
           oRequest.compartments := BuildCompartmentList(oRequest.Session);
 
-        if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdValidate, fcmdCreate, fcmdMailbox]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
+        if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdValidate, fcmdCreate]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
           or ((oRequest.CommandType in [fcmdDelete]) and ((sCommand = 'DELETE')) and (oPostStream <> nil) and (oPostStream.size > 0) and (sContentType <> '')) Then
         begin
           oRequest.CopyPost(oPostStream);
@@ -1866,6 +1867,7 @@ begin
           begin
             oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
             TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
+            TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
             TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
             TFHIRXhtmlComposer(oComp).Tags := oResponse.Tags.Link;
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
@@ -1900,6 +1902,7 @@ begin
         begin
           oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
           TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
+          TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
           TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
           TFHIRXhtmlComposer(oComp).Tags := oResponse.Tags.Link;
           TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
@@ -2079,7 +2082,7 @@ FHIR_JS+
 ''#13#10+
 '<body>'#13#10+
 ''#13#10+
-TFHIRXhtmlComposer.Header(nil, FBasePath, lang)+
+TFHIRXhtmlComposer.Header(nil, FBasePath, lang, SERVER_VERSION)+
 '<h2>'+FOwnerName+' '+GetFhirMessage('NAME_SERVER', lang)+'</h2>'#13#10;
 
 
@@ -2176,7 +2179,7 @@ begin
   '</head>'#13#10+
   ''#13#10+
   '<body>'#13#10+
-  TFHIRXhtmlComposer.Header(Session, sBaseURL, lang));
+  TFHIRXhtmlComposer.Header(Session, sBaseURL, lang, SERVER_VERSION));
 
   b.Append(
   '<h2>'+FOwnerName+' '+GetFhirMessage('NAME_SERVER', lang)+'</h2>'#13#10);
@@ -2268,7 +2271,6 @@ begin
   '<table class="none"><tr><td>Operation:</td><td> <select size="1" name="op">'+#13#10+
   ' <option value="transaction">Transaction</option>'+#13#10+
   ' <option value="validation">Validation</option>'+#13#10+
-  ' <option value="mailbox">MailBox Submission</option>'+#13#10+
   '</select></td></tr>'+#13#10+
   '<tr><td>Profile:</td><td> <select size="1" name="profile">'+#13#10+
   '<option value=""></option>'+#13#10+

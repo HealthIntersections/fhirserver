@@ -140,7 +140,8 @@ uses
   FHIRPathDebugger in '..\Libraries\refplat\FHIRPathDebugger.pas' {FHIRPathDebuggerForm},
   WelcomeScreen in 'WelcomeScreen.pas' {WelcomeScreenForm},
   nppbuildcount in 'nppbuildcount.pas',
-  UpgradePrompt in 'UpgradePrompt.pas' {UpgradePromptForm};
+  UpgradePrompt in 'UpgradePrompt.pas' {UpgradePromptForm},
+  PluginUtilities in 'PluginUtilities.pas';
 
 {$R *.res}
 

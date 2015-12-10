@@ -288,6 +288,7 @@ Type
     FrelativeReferenceAdjustment: integer;
     FOnGetLink: TFHIRXhtmlComposerGetLink;
     FOperationName : String;
+    FVersion: String;
     procedure SetSession(const Value: TFhirSession);
     function PresentTags(aType : TFhirResourceType; target : String; tags : TFHIRTagList; c : integer):String; overload;
     function PresentTags(aType : TFhirResourceType; target : String; meta: TFhirMeta; c : integer):String; overload;
@@ -304,6 +305,7 @@ Type
     Destructor Destroy; override;
     property BaseURL : String read FBaseURL write FBaseURL;
     Property Session : TFhirSession read FSession write SetSession;
+    Property Version : String read FVersion write FVersion;
     property Tags : TFHIRTagList read FTags write SetTags;
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
@@ -315,7 +317,7 @@ Type
 
     class function ResourceLinks(a : TFhirResourceType; lang, base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
     class function PageLinks : String;
-    class function Header(Session : TFhirSession; base, lang : String) : String;
+    class function Header(Session : TFhirSession; base, lang, version : String) : String;
     class function Footer(base, lang : String; tail : boolean = true) : string;
   end;
 
@@ -1619,7 +1621,7 @@ FHIR_JS+
 ''+#13#10+
 '<body>'+#13#10+
 ''+#13#10+
-Header(Session, FBaseURL, lang)+
+Header(Session, FBaseURL, lang, version)+
 '<h2>'+title+'</h2>'+#13#10);
 
     if oResource is TFhirBinary then
@@ -1960,7 +1962,7 @@ FHIR_JS+#13#10+
 ''+#13#10+
 '<body>'+#13#10+
 ''+#13#10+
-Header(Session, FBaseURL, lang)+
+Header(Session, FBaseURL, lang, FVersion)+
 '<h1>'+TYPE_TITLE[bundle.type_]+'</h1>'+#13#10);
 
   ul := bundle.link_List.Matches['self'];
@@ -2214,7 +2216,7 @@ if tail then
 '</html>'+#13#10;
 end;
 
-class function TFHIRXhtmlComposer.Header(Session : TFhirSession; base, lang : String): String;
+class function TFHIRXhtmlComposer.Header(Session : TFhirSession; base, lang, version: String): String;
 begin
   result :=
 '	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
@@ -2231,7 +2233,7 @@ begin
   '  &nbsp;|&nbsp;'#13#10+
   '  <a href="/" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a> '+
   '  &nbsp;|&nbsp;'#13#10+
-  '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+''#13#10+
+  '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
   '  &nbsp;|&nbsp;'#13#10+
   '  <a href="/index.html" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</a>'#13#10;
 
@@ -2372,7 +2374,7 @@ begin
     result := result +'&nbsp; <a id="tb'+inttostr(c)+'" class="tag" title="Add a tag" href="javascript:addTag(''tb'+inttostr(c)+''', '''+FBaseUrl+''', '''+target+''')">+</a>';
 end;
 
-class function TFHIRXhtmlComposer.ResourceLinks(a : TFhirResourceType; lang, base: String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
+class function TFHIRXhtmlComposer.ResourceLinks(a : TFhirResourceType; lang, base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
 var
   bef, aft, pfx, pfxp : String;
 begin

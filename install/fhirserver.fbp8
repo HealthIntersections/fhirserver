@@ -421,11 +421,10 @@ begin
         insertat = inAfterXPath
         insertatxpath = /rss/channel/link
         nodename = item
-        nodetext = "<item>" +
+        nodetext = "" +
                    "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate%</title>" +
                    "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe</link>" +
                    "      <description>%BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
-                   "    </item>" +
                    ""
         parentxpath = /rss/channel
         parserver = HighestMSXML

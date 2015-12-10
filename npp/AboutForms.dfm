@@ -1,20 +1,20 @@
 inherited AboutForm: TAboutForm
   BorderStyle = bsDialog
   Caption = 'FHIR NPP Plugin'
-  ClientHeight = 201
-  ClientWidth = 454
+  ClientHeight = 231
+  ClientWidth = 443
   Scaled = False
   OnDestroy = FormDestroy
   OnShow = FormShow
-  ExplicitWidth = 460
-  ExplicitHeight = 230
+  ExplicitWidth = 449
+  ExplicitHeight = 260
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
     Left = 358
-    Top = 160
+    Top = 151
     Width = 75
-    Height = 25
+    Height = 42
     Caption = 'Ok'
     ModalResult = 1
     TabOrder = 0
@@ -416,21 +416,83 @@ inherited AboutForm: TAboutForm
     end
   end
   object Button2: TButton
-    Left = 8
-    Top = 160
+    Left = 358
+    Top = 196
     Width = 75
-    Height = 25
+    Height = 27
+    Hint = 'Run internal tests'
     Caption = 'Tests'
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 3
     OnClick = Button2Click
   end
-  object Button3: TButton
-    Left = 222
-    Top = 160
-    Width = 127
-    Height = 25
-    Caption = 'Documentation'
+  object GroupBox1: TGroupBox
+    Left = 8
+    Top = 151
+    Width = 281
+    Height = 70
+    Caption = 'Links'
     TabOrder = 4
-    OnClick = Button3Click
+    object lnkDoco: TLabel
+      Left = 26
+      Top = 20
+      Width = 90
+      Height = 16
+      Cursor = crHandPoint
+      Caption = 'Documentation'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clNavy
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+      OnClick = lnkDocoClick
+    end
+    object lnkIssue: TLabel
+      Left = 26
+      Top = 42
+      Width = 82
+      Height = 16
+      Cursor = crHandPoint
+      Caption = 'Issue Tracker'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clNavy
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+      OnClick = lnkIssueClick
+    end
+    object lnkSpec: TLabel
+      Left = 150
+      Top = 20
+      Width = 111
+      Height = 16
+      Cursor = crHandPoint
+      Caption = 'FHIR Specification'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clNavy
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+      OnClick = lnkSpecClick
+    end
+    object lnkUpdates: TLabel
+      Left = 150
+      Top = 42
+      Width = 52
+      Height = 16
+      Cursor = crHandPoint
+      Caption = 'Updates'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clNavy
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+      OnClick = lnkUpdatesClick
+    end
   end
 end

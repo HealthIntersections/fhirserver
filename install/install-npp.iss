@@ -28,7 +28,7 @@ SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.9 (FHIR Version 1.0.2.7345)
+AppVerName=1.0.9 (FHIR Version 1.0.2.7355)
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

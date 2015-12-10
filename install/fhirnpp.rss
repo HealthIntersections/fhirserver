@@ -3,13 +3,12 @@
 	<channel>
 		<title>FHIR Notepad++ Plug-in Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><item>
-				<title>Notepad++ Plugin release 1.0.9 1/12/2015</title>
+		<item>
+				<title>Notepad++ Plugin release 1.0.9 9/12/2015</title>
 				<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.9.exe</link>
-				<description>1/12/2015 (v1.0.9): testing rss</description>
-			</item>
+				<description>9/12/2015 (v1.0.9): Improve validation and path in the visualizer</description>
 		</item>
-<item>
+		<item>
 			<title>FHIR Notepad++ Plug-in release 1.0.8 01-Dec 2015</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.8.exe</link>
 			<description>01-Dec 2015 (v1.0.8): fix validation of ids in resources in bundles (https://github.com/grahamegrieve/fhirserver/issues/31)</description>

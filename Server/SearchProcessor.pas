@@ -277,7 +277,7 @@ begin
         if a in targets then
           inc(i);
       if (i <> 1) then
-        raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID', lang), [name]))
+        raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID_TARGETTYPE', lang), [name, i]))
       else
         result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
     end

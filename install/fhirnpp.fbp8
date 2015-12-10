@@ -352,11 +352,11 @@ begin
         insertat = inAfterXPath
         insertatxpath = /rss/channel/link
         nodename = item
-        nodetext = "<item>" +
+        nodetext = "" +
                    "      <title>Notepad\+\+ Plugin release 1.0.%BuildCount% %BuildDate%</title>" +
                    "      <link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.%BuildCount%.exe</link>" +
                    "      <description>%BuildDate% (v1.0.%BuildCount%): %npp-purpose%</description>" +
-                   "    </item>" +
+                   "" +
                    ""
         parentxpath = /rss/channel
         parserver = HighestMSXML

@@ -3199,6 +3199,7 @@ inherited FHIRVisualizer: TFHIRVisualizer
     00000000000000000000000000000000000000000000}
   Scaled = False
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnHide = FormHide
   OnKeyPress = FormKeyPress
   OnShow = FormShow
@@ -3206,28 +3207,215 @@ inherited FHIRVisualizer: TFHIRVisualizer
   ExplicitHeight = 614
   PixelsPerInch = 96
   TextHeight = 13
-  object TabControl1: TTabControl
+  object PageControl1: TPageControl
     Left = 0
     Top = 0
     Width = 318
-    Height = 21
-    Align = alTop
-    TabOrder = 0
-    Tabs.Strings = (
-      'Narrative'
-      'Path'
-      'Element'
-      '')
-    TabIndex = 0
-    OnChange = TabControl1Change
-  end
-  object pnlContent: TPanel
-    Left = 0
-    Top = 21
-    Width = 318
-    Height = 554
+    Height = 575
+    ActivePage = TabSheet1
     Align = alClient
-    BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'Narrative'
+      object webNarrative: TWebBrowser
+        Left = 0
+        Top = 0
+        Width = 310
+        Height = 547
+        Align = alClient
+        TabOrder = 0
+        ExplicitLeft = 104
+        ExplicitTop = 100
+        ExplicitWidth = 300
+        ExplicitHeight = 150
+        ControlData = {
+          4C0000000A200000893800000000000000000000000000000000000000000000
+          000000004C000000000000000000000001000000E0D057007335CF11AE690800
+          2B2E126208000000000000004C0000000114020000000000C000000000000046
+          8000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000100000000000000000000000000000000000000}
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Validation'
+      ImageIndex = 1
+      object Panel4: TPanel
+        Left = 0
+        Top = 0
+        Width = 310
+        Height = 31
+        Align = alTop
+        Alignment = taLeftJustify
+        BevelOuter = bvNone
+        Caption = '  Results'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 0
+        ExplicitTop = 2
+        DesignSize = (
+          310
+          31)
+        object cbErrorsOnly: TCheckBox
+          Left = 234
+          Top = 4
+          Width = 73
+          Height = 17
+          Anchors = [akTop, akRight]
+          Caption = 'Only Errors'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+        end
+      end
+      object lstValidation: TListView
+        Left = 0
+        Top = 31
+        Width = 310
+        Height = 516
+        Align = alClient
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        Columns = <
+          item
+            AutoSize = True
+            Caption = 'Message'
+          end>
+        Items.ItemData = {
+          05440000000100000000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF000000
+          00154E006F002000560061006C00690064006100740069006F006E0020005200
+          6500730075006C0074007300}
+        ReadOnly = True
+        ShowColumnHeaders = False
+        TabOrder = 1
+        ViewStyle = vsReport
+        OnCustomDrawItem = lstValidationCustomDrawItem
+        OnSelectItem = lstValidationSelectItem
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Path'
+      ImageIndex = 2
+      object Splitter1: TSplitter
+        Left = 0
+        Top = 309
+        Width = 310
+        Height = 3
+        Cursor = crVSplit
+        Align = alBottom
+        ExplicitTop = 0
+        ExplicitWidth = 312
+      end
+      object ListView1: TListView
+        Left = 0
+        Top = 31
+        Width = 310
+        Height = 278
+        Align = alClient
+        Columns = <>
+        TabOrder = 0
+        ExplicitLeft = 106
+        ExplicitTop = 104
+        ExplicitWidth = 250
+        ExplicitHeight = 150
+      end
+      object Panel1: TPanel
+        Left = 0
+        Top = 312
+        Width = 310
+        Height = 235
+        Align = alBottom
+        TabOrder = 1
+        object Panel3: TPanel
+          Left = 1
+          Top = 1
+          Width = 308
+          Height = 26
+          Align = alTop
+          Alignment = taLeftJustify
+          Caption = '  Expression Tree'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object vtExpressions: TVirtualStringTree
+          Left = 1
+          Top = 27
+          Width = 308
+          Height = 207
+          Align = alClient
+          Header.AutoSizeIndex = 0
+          Header.Font.Charset = DEFAULT_CHARSET
+          Header.Font.Color = clWindowText
+          Header.Font.Height = -11
+          Header.Font.Name = 'Tahoma'
+          Header.Font.Style = []
+          Header.MainColumn = -1
+          NodeDataSize = 4
+          TabOrder = 1
+          TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+          TreeOptions.SelectionOptions = [toFullRowSelect]
+          OnGetText = vtExpressionsGetText
+          OnInitChildren = vtExpressionsInitChildren
+          OnInitNode = vtExpressionsInitNode
+          ExplicitLeft = 4
+          ExplicitTop = 23
+          ExplicitWidth = 203
+          ExplicitHeight = 353
+          Columns = <>
+        end
+      end
+      object lstMatches: TListView
+        Left = 0
+        Top = 31
+        Width = 310
+        Height = 278
+        Align = alClient
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        Columns = <
+          item
+            AutoSize = True
+          end>
+        ReadOnly = True
+        ShowColumnHeaders = False
+        TabOrder = 2
+        ViewStyle = vsReport
+        OnCustomDrawItem = lstValidationCustomDrawItem
+        OnSelectItem = lstValidationSelectItem
+        ExplicitLeft = 30
+        ExplicitTop = 28
+        ExplicitWidth = 250
+        ExplicitHeight = 150
+      end
+      object Panel2: TPanel
+        Left = 0
+        Top = 0
+        Width = 310
+        Height = 31
+        Align = alTop
+        Alignment = taLeftJustify
+        Caption = '  Results'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 3
+      end
+    end
   end
 end

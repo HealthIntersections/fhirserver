@@ -54,7 +54,6 @@ Type
   }
   TFHIRCommandType = (
     fcmdUnknown, {@enum.value fcmdUnknown Unknown command}
-    fcmdMailbox, {@enum.value fcmdMailbox Mailbox submission}
     fcmdRead, {@enum.value fcmdRead Read the resource}
     fcmdVersionRead, {@enum.value fcmdVersionRead Read a particular version of the resource}
     fcmdUpdate, {@enum.value fcmdUpdate Update the resource}
@@ -128,7 +127,7 @@ Type
 Const
   FHIR_NS = 'http://hl7.org/fhir';
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
-    'Unknown', 'MailBox', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'GetTags', 'UpdateTags', 'DeleteTags', 'Operation', 'Batch', 'WebUI', 'Null');
+    'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'GetTags', 'UpdateTags', 'DeleteTags', 'Operation', 'Batch', 'WebUI', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
   CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('AsIs', 'XML', 'JSON', 'XHTML');
   MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'text/xhtml');
@@ -355,6 +354,7 @@ type
     Function PerformQuery(path : String):TFHIRBaseList;
     function hasType(t : String) : boolean; overload;
     function hasType(tl : Array of String) : boolean; overload;
+    function describe : String;
 
   published
     {@member comments
@@ -690,6 +690,13 @@ end;
 function TFHIRBase.Clone: TFHIRBase;
 begin
   result := TFHIRBase(Inherited Clone);
+end;
+
+function TFHIRBase.describe: String;
+begin
+  result := FhirType;
+  if isPrimitive then
+    result := result + ': '+primitiveValue;
 end;
 
 destructor TFHIRBase.Destroy;

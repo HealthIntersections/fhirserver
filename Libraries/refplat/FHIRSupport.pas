@@ -843,8 +843,6 @@ begin
           CommandType := fcmdTransaction
         else if (s = 'validation') or (s = 'validate') then
           CommandType := fcmdValidate
-        else if (s = 'mailBox') then
-          CommandType := fcmdMailBox
         else
           raise Exception.create('Unknown Operation: '+s);
       end
@@ -891,11 +889,6 @@ begin
   begin
     CommandType := fcmdConformanceStmt;
     ForceMethod('GET');
-  end
-  else if (sType = 'Mailbox') then
-  begin
-    CommandType := fcmdMailbox;
-    ForceMethod('POST');
   end
   else if (sType = 'validation') then
   begin

@@ -43,7 +43,6 @@ ucum search
 To check:
 
     procedure ExecuteTransaction(upload : boolean; request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteMailBox(request: TFHIRRequest; response : TFHIRResponse);
 
   TFhirGenerateQAOperation = class (TFHIROperation)
   TFhirHandleQAPostOperation = class (TFHIROperation)
@@ -261,7 +260,6 @@ type
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean;
     procedure ExecuteTransaction(upload : boolean; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteBatch(request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteMailBox(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteOperation(request: TFHIRRequest; response : TFHIRResponse);
     procedure SetConnection(const Value: TKDBConnection);
     procedure ReIndex;
@@ -830,7 +828,6 @@ begin
  // assert(FConnection.InTransaction);
   result := Request.Id;
   case request.CommandType of
-    fcmdMailbox : ExecuteMailBox(request, response);
     fcmdRead : ExecuteRead(request, response);
     fcmdUpdate : ExecuteUpdate(upload, request, response);
     fcmdVersionRead : ExecuteVersionRead(request, response);
@@ -928,6 +925,7 @@ begin
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
+    oConf.restList[0].transactionMode := TransactionModeBoth;
     oConf.text := TFhirNarrative.create;
     oConf.text.status := NarrativeStatusGenerated;
 
@@ -2661,7 +2659,7 @@ FHIR_JS+
 ''#13#10+
 '<body>'#13#10+
 ''#13#10+
-TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.lang)+
+TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.lang, SERVER_VERSION)+
 '<h2>'+GetFhirMessage('SEARCH_TITLE', lang)+'</h2>'#13#10+
 '</p>'#13#10;
 if Request.DefaultSearch then
@@ -3619,66 +3617,66 @@ begin
   end;
 end;
 
-procedure TFhirOperationManager.ExecuteMailBox(request: TFHIRRequest; response: TFHIRResponse);
-var
-  ok : boolean;
-  msg, resp : TFhirMessageHeader;
-  sId : String;
-begin
- // todo: security
-  try
-    ok := true;
-    if ok and not check(response, (request.Resource <> nil) or ((request.bundle <> nil) and (request.bundle.entryList.count > 0)), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
-      ok := false;
-
-    if ok then
-    begin
-      if request.bundle <> nil then
-      begin
-        if request.bundle.type_ = BundleTypeMessage  then
-        begin
-          if (request.bundle.entryList.Count = 0) or not (request.bundle.entryList[0].resource is TFhirMessageHeader) then
-            raise Exception.Create('Invalid Message - first resource must be message header');
-          response.bundle := TFHIRBundle.create(BundleTypeMessage);
-//          response.bundle.base := request.baseUrl;
-          response.HTTPCode := 200;
-          msg := TFhirMessageHeader(request.bundle.entryList[0].resource);
-          response.bundle.id := FhirGUIDToString(CreateGUID);
-
-          // todo: check message and envelope ids
-          resp := BuildResponseMessage(request, msg);
-          response.bundle.entryList.Append.resource := resp;
-
-          ProcessMessage(request, response, msg, resp, response.bundle);
-        end
-        else if request.bundle.type_ = BundleTypeDocument  then
-        begin
-          // Connectathon 5:
-          // The Document Server creates and registers the document as a Binary resource
-          sId := CreateDocumentAsBinary(request);
-          // The Document Server creates and registers a DocumentReference instance using information from the Composition resource
-          // in the bundle and pointing to the Binary resource created in the preceding step
-          CreateDocumentReference(request, sId);
-        end
-        else
-          Raise Exception.create('Unknown content for mailbox');
-      end
-      else
-        Raise Exception.create('Unknown content for mailbox');
-      response.HTTPCode := 202;
-      response.Message := 'Accepted';
-      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
-    end;
-  except
-    on e: exception do
-    begin
-      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
-      recordStack(e);
-      raise;
-    end;
-  end;
-end;
-
+//procedure TFhirOperationManager.ExecuteMailBox(request: TFHIRRequest; response: TFHIRResponse);
+//var
+//  ok : boolean;
+//  msg, resp : TFhirMessageHeader;
+//  sId : String;
+//begin
+// // todo: security
+//  try
+//    ok := true;
+//    if ok and not check(response, (request.Resource <> nil) or ((request.bundle <> nil) and (request.bundle.entryList.count > 0)), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
+//      ok := false;
+//
+//    if ok then
+//    begin
+//      if request.bundle <> nil then
+//      begin
+//        if request.bundle.type_ = BundleTypeMessage  then
+//        begin
+//          if (request.bundle.entryList.Count = 0) or not (request.bundle.entryList[0].resource is TFhirMessageHeader) then
+//            raise Exception.Create('Invalid Message - first resource must be message header');
+//          response.bundle := TFHIRBundle.create(BundleTypeMessage);
+////          response.bundle.base := request.baseUrl;
+//          response.HTTPCode := 200;
+//          msg := TFhirMessageHeader(request.bundle.entryList[0].resource);
+//          response.bundle.id := FhirGUIDToString(CreateGUID);
+//
+//          // todo: check message and envelope ids
+//          resp := BuildResponseMessage(request, msg);
+//          response.bundle.entryList.Append.resource := resp;
+//
+//          ProcessMessage(request, response, msg, resp, response.bundle);
+//        end
+//        else if request.bundle.type_ = BundleTypeDocument  then
+//        begin
+//          // Connectathon 5:
+//          // The Document Server creates and registers the document as a Binary resource
+//          sId := CreateDocumentAsBinary(request);
+//          // The Document Server creates and registers a DocumentReference instance using information from the Composition resource
+//          // in the bundle and pointing to the Binary resource created in the preceding step
+//          CreateDocumentReference(request, sId);
+//        end
+//        else
+//          Raise Exception.create('Unknown content for mailbox');
+//      end
+//      else
+//        Raise Exception.create('Unknown content for mailbox');
+//      response.HTTPCode := 202;
+//      response.Message := 'Accepted';
+//      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+//    end;
+//  except
+//    on e: exception do
+//    begin
+//      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+//      recordStack(e);
+//      raise;
+//    end;
+//  end;
+//end;
+//
 procedure TFhirOperationManager.ExecuteOperation(request: TFHIRRequest; response: TFHIRResponse);
 
 var
@@ -3739,7 +3737,6 @@ function TFhirOperationManager.opAllowed(resource: TFHIRResourceType; command: T
 begin
   case command of
     fcmdUnknown : result := false;
-    fcmdMailbox : result := false;
     fcmdRead : result := FRepository.ResConfig[resource].Supported;
     fcmdVersionRead : result := FRepository.ResConfig[resource].Supported;
     fcmdUpdate : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdUpdate;
@@ -4364,7 +4361,7 @@ var
 //          else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
 //            profile := request.Resource.Link as TFHirStructureDefinition
 //          else
-//            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly');
+//            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly)');
 //
 //          if id <> '' then
 //          begin
@@ -4800,7 +4797,6 @@ begin
       se.Tags['verkey'] := inttostr(verkey);
     se.event := TFhirAuditEventEvent.create;
     case op of
-      fcmdMailbox :        event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'mailbox', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
       fcmdRead:            event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'read',    'http://hl7.org/fhir/restful-operation', AuditEventActionR);
       fcmdVersionRead:     event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'vread',   'http://hl7.org/fhir/restful-operation', AuditEventActionR);
       fcmdUpdate:          event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'update',  'http://hl7.org/fhir/restful-operation', AuditEventActionU);
@@ -4879,7 +4875,6 @@ begin
       o.lifecycle := TFhirCoding.Create;
       o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
       case op of
-        fcmdMailbox :        o.lifecycle.code := '6';
         fcmdRead:            o.lifecycle.code := '6';
         fcmdVersionRead:     o.lifecycle.code := '6';
         fcmdUpdate:          o.lifecycle.code := '3';
@@ -5760,7 +5755,7 @@ begin
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
             profile := request.Resource.Link as TFHirStructureDefinition
           else
-            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly');
+            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly)');
 
           if id <> '' then
           begin
@@ -5883,9 +5878,9 @@ begin
             vs := manager.GetValueSetById(request, request.Id, request.baseUrl);
             cacheId := vs.url;
           end
-          else if request.Parameters.VarExists('identifier') then
+          else if params.hasParameter('identifier') then
           begin
-            url := request.Parameters.getvar('identifier');
+            url := params.str['identifier'];
             if (url.startsWith('ValueSet/')) then
               vs := manager.GetValueSetById(request, url.substring(9), request.baseUrl)
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
@@ -5901,7 +5896,7 @@ begin
           else if params.hasParameter('context') then
             raise Exception.Create('the "context" parameter is not yet supported')
           else
-            raise Exception.Create('Unable to find value set to expand (not provided by id, identifier, or directly');
+            raise Exception.Create('Unable to find value set to expand (not provided by id, identifier, or directly)');
 
           profile := params.str['profile'];
           filter := params.str['filter'];
@@ -6241,13 +6236,13 @@ begin
                 vs := manager.GetValueSetByIdentity(params.str['identifier'], params.str['version']);
               cacheId := vs.url;
             end
-//            else if params.hasParameter('valueSet') then
-//              vs := GetValueSetByIdentity(params.str['valueSet'], request.Lang) as TFhirValueSet
+            else if params.hasParameter('valueSet') then
+              vs := (params.res['valueSet']) as TFhirValueSet
             else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
               vs := request.Resource.Link as TFhirValueSet
             else
               vs := nil;
-              // raise Exception.Create('Unable to find valueset to validate against (not provided by id, identifier, or directly');
+              // raise Exception.Create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
 
             coded := nil;
             try
@@ -6691,7 +6686,7 @@ begin
           else if (request.Resource <> nil) and (request.Resource is TFHIRClaim) then
             claim := request.Resource.Link as TFHIRClaim
           else
-            raise Exception.Create('Unable to find claim to expand (not provided by id, identifier, or directly');
+            raise Exception.Create('Unable to find claim to process (not provided by id, identifier, or directly)');
 
           resp := manager.FRepository.GenerateClaimResponse(claim);
           try
@@ -6797,7 +6792,7 @@ begin
               if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['target'], vsS) then
                 vsS := manager.GetValueSetByIdentity(params.str['target'], params.str['targetversion']);
             if vst = nil then
-              raise Exception.Create('Unable to find target value set (not provided by id, identifier, or directly');
+              raise Exception.Create('Unable to find target value set (not provided by id, identifier, or directly)');
 
             coded := nil;
             try
@@ -7194,7 +7189,7 @@ begin
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
             profile := request.Resource.Link as TFHirStructureDefinition
           else
-            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly');
+            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly)');
 
           template := nil;
           try

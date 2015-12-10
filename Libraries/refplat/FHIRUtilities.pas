@@ -279,9 +279,11 @@ type
     function GetNamedParameter(name: String): TFhirBase;
     function GetStringParameter(name: String): String;
     function GetBooleanParameter(name: String): boolean;
+    function GetResourceParameter(name: String): TFHIRResource;
   public
     function hasParameter(name : String):Boolean;
     Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
+    Property res[name : String] : TFHIRResource read GetResourceParameter;
     Property str[name : String] : String read GetStringParameter;
     Property bool[name : String] : boolean read GetBooleanParameter;
     procedure AddParameter(name: String; value: TFhirType); overload;
@@ -2287,6 +2289,20 @@ begin
       if parameterList[i].valueElement <> nil then
         result := parameterList[i].valueElement
       else
+        result := parameterList[i].resourceElement;
+      exit;
+    end;
+  result := nil;
+end;
+
+function TFhirParametersHelper.GetResourceParameter(name: String): TFHIRResource;
+var
+  i: Integer;
+begin
+  for i := 0 to parameterList.Count - 1 do
+    if (parameterList[i].name = name) then
+    begin
+      if parameterList[i].resourceElement <> nil then
         result := parameterList[i].resourceElement;
       exit;
     end;

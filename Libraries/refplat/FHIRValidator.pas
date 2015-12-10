@@ -3680,6 +3680,7 @@ var
   vcl : TVCLStream;
   dom : IXMLDomDocument2;
   LAdapter : Variant;
+  s, e : TSourceLocation;
 begin
   if FCache = nil then
     loadSchema;
@@ -3698,7 +3699,13 @@ begin
       LAdapter := TStreamAdapter.Create(vcl) As IStream;
       result := dom.load(LAdapter);
       if not result then
-        outcome.error('Schema', IssueTypeInvalid, 'line '+inttostr(dom.ParseError.line)+', Col '+inttostr(dom.ParseError.linepos), false, dom.ParseError.reason);
+      begin
+        s.line := dom.ParseError.line;
+        s.col := dom.ParseError.linepos;
+        e.line := dom.ParseError.line;
+        e.col := dom.ParseError.linepos;
+        rule(outcome.issueList, IssueTypeInvalid, s, e, 'line '+inttostr(dom.ParseError.line)+', Col '+inttostr(dom.ParseError.linepos), false, dom.ParseError.reason);
+      end;
     finally
       vcl.free;
     end;

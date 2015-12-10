@@ -3821,6 +3821,8 @@ begin
   index(frtList, key, 0, resource.codeElement, 'code');
   index(context, frtList, key, 0, resource.subject, 'subject');
   index(context, frtList, key, 0, resource.subject, 'patient', frtPatient);
+  patientCompartment(key, resource.subject);
+  deviceCompartment(key, resource.subject);
   index(context, frtList, key, 0, resource.encounter, 'encounter');
   index(frtList, key, 0, resource.noteElement, 'notes');
   index(frtList, key, 0, resource.titleElement, 'title');

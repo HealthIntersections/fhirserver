@@ -307,7 +307,6 @@ begin
   end;
 end;
 
-
 procedure TProfileUtilities.processPaths(result, base : TFhirStructureDefinitionSnapshot; differential: TFhirStructureDefinitionDifferential; baseCursor, diffCursor, baseLimit, diffLimit : integer;
       url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String; slicingHandled : boolean);
 var
@@ -347,7 +346,7 @@ begin
         result.elementList.add(outcome);
         inc(baseCursor);
       end
-      else if (diffMatches.Count = 1) and (slicingHandled or (diffMatches[0].slicing = nil)) then
+      else if (diffMatches.Count = 1) and (slicingHandled or ((diffMatches[0].slicing = nil) and not (isExtension(diffMatches[0]) and (diffMatches[0].name = '')))) then
       begin // one matching element in the differential
         log(cpath+': single match in the differential at '+inttostr(diffCursor));
         template := nil;

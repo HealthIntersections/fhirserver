@@ -37,18 +37,12 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} NppForms,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Buttons, Vcl.ComCtrls, VirtualTrees, FHIRResources, FHIRBase, FHIRTypes, nppplugin, FHIRPath, FHIRProfileUtilities,
-  FHIRParserBase, FHIRParser, System.ImageList, Vcl.ImgList, AdvObjectLists, AdvGenerics;
+  FHIRParserBase, FHIRParser, System.ImageList, Vcl.ImgList, AdvObjectLists, AdvGenerics, pluginutilities;
 
 const
   UMSG = WM_USER + 1;
 
 type
-  TTreeDataPointer = record
-    expr : TFHIRExpressionNode;
-    op : boolean;
-  end;
-  PTreeDataPointer = ^TTreeDataPointer;
-
   TExecutionMode = (emWaiting, emNext, emBreak, emAbort, emFinish);
 
   TFHIRPathDebuggerForm = class({$IFDEF NPPUNICODE}TNppForm{$ELSE} TForm {$ENDIF})

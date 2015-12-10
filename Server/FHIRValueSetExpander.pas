@@ -48,14 +48,14 @@ Type
   private
     FLimit : integer;
     FStore : TTerminologyServer;
-    procedure processCodeAndDescendents(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext);
+    procedure processCodeAndDescendents(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; params : TFhirValueSetExpansionParameterList);
 
-    procedure handleDefine(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCodeSystem; defines : TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText);
-    procedure importValueSet(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; uri : TFhirUri; profile : String; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; var notClosed : boolean);
-    procedure processCodes(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude; profile : String; filter : TSearchFilterText; allowIncomplete : boolean; var notClosed : boolean);
-    procedure handleCompose(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCompose; profile : String; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; var notClosed : boolean);
+    procedure handleDefine(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCodeSystem; defines : TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText; params : TFhirValueSetExpansionParameterList);
+    procedure importValueSet(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; uri : TFhirUri; profile : String; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
+    procedure processCodes(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude; profile : String; filter : TSearchFilterText; allowIncomplete : boolean; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
+    procedure handleCompose(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCompose; profile : String; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
 
-    procedure processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, code, display, definition: string);
+    procedure processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, version, code, display, definition: string; params : TFhirValueSetExpansionParameterList);
     procedure addDefinedCode(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; system : string; c : TFhirValueSetCodeSystemConcept);
     function key(system, code : String): string; overload;
     function key(c : TFhirValueSetExpansionContains) : string;  overload;
@@ -95,6 +95,7 @@ var
   ref : TFhirReference;
   table : TFhirXHtmlNode;
   tr : TFhirXHtmlNode;
+  param : TFhirValueSetExpansionParameter;
 begin
   result := source.Clone;
   if profile.startsWith('http://www.healthintersections.com.au/fhir/expansion/no-details') then
@@ -143,26 +144,20 @@ begin
     result.expansion := TFhirValueSetExpansion.create;
     result.expansion.timestamp := NowUTC;
     result.expansion.identifier := NewGuidURN;
+
     if source.id <> '' then
     begin
-      ref := TFhirReference.Create;
-      try
-        ref.reference := 'ValueSet/'+source.id;
-        result.expansion.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-expansionSource', ref.Link);
-      finally
-        ref.Free;
-      end;
+      param := result.expansion.parameterList.Append;
+      param.name := 'expansion-source';
+      param.value := TFHIRString.Create('ValueSet/'+source.id);
     end;
-
-//    result.expansion.url :=
-    //e := result.expansion.ExtensionList.Append;
 
     try
       if (source.codeSystem <> nil) then
-        handleDefine(list, map, source.codeSystem, source.codeSystem.conceptList, filter);
+        handleDefine(list, map, source.codeSystem, source.codeSystem.conceptList, filter, result.expansion.parameterList);
       notClosed := false;
       if (source.compose <> nil) then
-        handleCompose(list, map, source.compose, profile, filter, dependencies, allowIncomplete, notClosed);
+        handleCompose(list, map, source.compose, profile, filter, dependencies, allowIncomplete, result.expansion.parameterList, notClosed);
     except
       on e : ETooCostly do
       begin
@@ -224,29 +219,36 @@ begin
   result := key(c.System, c.Code);
 end;
 
-procedure TFHIRValueSetExpander.handleCompose(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source: TFhirValueSetCompose; profile : String; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; var notClosed : boolean);
+procedure TFHIRValueSetExpander.handleCompose(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source: TFhirValueSetCompose; profile : String; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
 var
   i : integer;
 begin
   for i := 0 to source.importList.count - 1 do
-    importValueSet(list, map, source.importList[i], profile, filter, dependencies, allowIncomplete, notClosed);
+    importValueSet(list, map, source.importList[i], profile, filter, dependencies, allowIncomplete, params, notClosed);
   for i := 0 to source.includeList.count - 1 do
-    processCodes(false, list, map, source.includeList[i], profile, filter, allowIncomplete, notClosed);
+    processCodes(false, list, map, source.includeList[i], profile, filter, allowIncomplete, params, notClosed);
   for i := 0 to source.excludeList.count - 1 do
-    processCodes(true, list, map, source.excludeList[i], profile, filter, allowIncomplete, notClosed);
+    processCodes(true, list, map, source.excludeList[i], profile, filter, allowIncomplete, params, notClosed);
 end;
 
-procedure TFHIRValueSetExpander.handleDefine(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source : TFhirValueSetCodeSystem; defines : TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText);
+procedure TFHIRValueSetExpander.handleDefine(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source : TFhirValueSetCodeSystem; defines : TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText; params : TFhirValueSetExpansionParameterList);
 var
   i : integer;
   cm : TFhirValueSetCodeSystemConcept;
+  param : TFhirValueSetExpansionParameter;
 begin
+  if (defines.Count > 0) and (params <> nil) and (source.version <> '') then
+  begin
+    param := params.Append;
+    param.name := 'version';
+    param.value := TFHIRUri.Create(source.system+'?version='+source.version);
+  end;
   for i := 0 to defines.count - 1 do
   begin
     cm := defines[i];
     if filter.passes(cm.display) or filter.passes(cm.code) then
       addDefinedCode(list, map, source.system, cm);
-    handleDefine(list, map, source, cm.conceptList, filter);
+    handleDefine(list, map, source, cm.conceptList, filter, nil);
   end;
 end;
 
@@ -255,18 +257,35 @@ var
   i : integer;
 begin
   if (c.abstractElement = nil) or not c.Abstract then
-    processCode(false, list, map, system, c.Code, c.Display, c.definition);
+    processCode(false, list, map, system, '', c.Code, c.Display, c.definition, nil);
   for i := 0 to c.conceptList.count - 1 do
     addDefinedCode(list, map, system, c.conceptList[i]);
 end;
 
-procedure TFHIRValueSetExpander.processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, code, display, definition: string);
+procedure TFHIRValueSetExpander.processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, version, code, display, definition: string; params : TFhirValueSetExpansionParameterList);
 var
   n : TFHIRValueSetExpansionContains;
   s : String;
+  f : boolean;
+  param : TFhirValueSetExpansionParameter;
 begin
   if (map.Count >= FLimit) and not doDelete then
     raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
+
+  if (params <> nil) and (version <> '') then
+  begin
+    f := false;
+    s := system+'?version='+version;
+    for param in params do
+      if (param.name = 'version') and (param.value.primitiveValue = s) then
+        f := true;
+    if not f then
+    begin
+      param := params.Append;
+      param.name := 'version';
+      param.value := TFHIRUri.Create(s);
+    end;
+  end;
 
   n := TFHIRValueSetExpansionContains.create;
   try
@@ -298,13 +317,14 @@ begin
 end;
 
 
-procedure TFHIRValueSetExpander.importValueSet(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; uri: TFhirUri; profile : String; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; var notClosed : boolean);
+procedure TFHIRValueSetExpander.importValueSet(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; uri: TFhirUri; profile : String; filter : TSearchFilterText; dependencies : TStringList; allowIncomplete : boolean; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
 var
   vs : TFHIRValueSet;
   i : integer;
   c : TFhirValueSetExpansionContains;
   s : String;
   dep : TStringList;
+  param : TFhirValueSetExpansionParameter;
 begin
   if (uri = nil) then
     raise Exception.create('unable to find value set with no identity');
@@ -316,6 +336,9 @@ begin
     try
       if vs.expansion.hasextension('http://hl7.org/fhir/Profile/questionnaire-extensions#closed') then
         notClosed := true;
+
+      for param in vs.expansion.parameterList do
+        params.Add(param.Link);
 
       for i := 0 to vs.expansion.containsList.Count - 1 do
       begin
@@ -336,7 +359,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCodes(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude; profile : String; filter : TSearchFilterText; allowIncomplete : boolean; var notClosed : boolean);
+procedure TFHIRValueSetExpander.processCodes(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude; profile : String; filter : TSearchFilterText; allowIncomplete : boolean; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
 var
   cs : TCodeSystemProvider;
   i, offset : integer;
@@ -359,7 +382,7 @@ begin
         if (cs.TotalCount > FLimit) and not (allowIncomplete) then
           raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
         for i := 0 to cs.ChildCount(nil) - 1 do
-          processCodeAndDescendents(doDelete, list, map, cs, cs.getcontext(nil, i))
+          processCodeAndDescendents(doDelete, list, map, cs, cs.getcontext(nil, i), params)
       end
       else
       begin
@@ -377,7 +400,7 @@ begin
               if i > FLimit then
                 raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
               c := cs.FilterConcept(ctxt);
-              processCode(doDelete, list, map, cs.system(c), cs.code(c), cs.display(c), cs.definition(c));
+              processCode(doDelete, list, map, cs.system(c), cs.version(c), cs.code(c), cs.display(c), cs.definition(c), params);
             end;
           finally
             cs.Close(ctxt);
@@ -394,7 +417,7 @@ begin
       if display = '' then
         display := cs.getDisplay(cset.conceptList[i].code);
       if filter.passes(display) or filter.passes(cset.conceptList[i].code) then
-        processCode(doDelete, list, map, cs.system(nil), cset.conceptList[i].code, display, cs.getDefinition(cset.conceptList[i].code));
+        processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cset.conceptList[i].code, display, cs.getDefinition(cset.conceptList[i].code), params);
     end;
 
     if cset.filterList.Count > 0 then
@@ -432,7 +455,7 @@ begin
             for i := 1 to length(filters) - 1 do
               ok := ok and cs.InFilter(filters[i], c);
           if ok then
-            processCode(doDelete, list, map, cs.system(nil), cs.code(c), cs.display(c), cs.definition(c));
+            processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cs.code(c), cs.display(c), cs.definition(c), params);
         end;
         for i := 0 to length(filters) - 1 do
           cs.Close(filters[i]);
@@ -445,14 +468,22 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCodeAndDescendents(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cs: TCodeSystemProvider; context: TCodeSystemProviderContext);
+procedure TFHIRValueSetExpander.processCodeAndDescendents(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; params : TFhirValueSetExpansionParameterList);
 var
   i : integer;
+  param : TFhirValueSetExpansionParameter;
 begin
+  if (cs.version(nil) <> '') and (params <> nil) then
+  begin
+    param := params.Append;
+    param.name := 'version';
+    param.value := TFHIRUri.Create(cs.system(nil)+'?version='+cs.version(nil));
+  end;
+
   if not cs.IsAbstract(context) then
-    processCode(doDelete, list, map, cs.system(context), cs.Code(context), cs.Display(context), cs.definition(context));
+    processCode(doDelete, list, map, cs.system(context), '', cs.Code(context), cs.Display(context), cs.definition(context), nil);
   for i := 0 to cs.ChildCount(context) - 1 do
-    processCodeAndDescendents(doDelete, list, map, cs, cs.getcontext(context, i));
+    processCodeAndDescendents(doDelete, list, map, cs, cs.getcontext(context, i), nil);
 end;
 
 

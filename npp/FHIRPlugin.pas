@@ -44,7 +44,7 @@ uses
 
   FHIRBase, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
   FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath,
-  SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount,
+  SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes,
   FHIRVisualiser, FHIRPathDebugger, WelcomeScreen, UpgradePrompt;
 
@@ -53,30 +53,10 @@ const
   INDIC_WARNING = 22;
   INDIC_ERROR = 23;
   INDIC_MATCH = 24;
+  LEVEL_INDICATORS : array [TFHIRAnnotationLevel] of Integer = (INDIC_INFORMATION, INDIC_WARNING, INDIC_ERROR, INDIC_MATCH);
+
 
 type
-  TFHIRAnnotation = class (TAdvObject)
-  private
-    FLevel: integer;
-    FMessage: String;
-    FLine : integer;
-    FStop: integer;
-    FStart: integer;
-  public
-    Constructor create(level : integer; line : integer; start, stop : integer; message : String); overload;
-
-    property level : integer read FLevel write FLevel;
-    property start : integer read FStart write FStart;
-    property stop : integer read FStop write FStop;
-    property message : String read FMessage write FMessage;
-    property line : integer read FLine write FLine;
-  end;
-
-  TFHIRAnnotationComparer = class (TAdvObject, IComparer<TFHIRAnnotation>)
-  public
-    function Compare(const Left, Right: TFHIRAnnotation): Integer;
-  end;
-
   TFHIRPlugin = class;
 
   TUpgradeCheckThread = class(TThread)
@@ -166,6 +146,7 @@ type
     procedure FuncDisconnect;
 
     procedure reset;
+    procedure SetSelection(start, stop : integer);
 
     // responding to np++ events
     procedure DoNppnReady; override; // install toolbox if necessary
@@ -388,10 +369,10 @@ begin
   if (issue.details <> nil) and (issue.details.text <> '') then
     msg := issue.details.text;
   case issue.severity of
-    IssueSeverityWarning : result := TFHIRAnnotation.create(INDIC_WARNING, StrToIntDef(issue.Tags['s-l'], 1)-1, s, e, msg);
-    IssueSeverityInformation : result := TFHIRAnnotation.create(INDIC_INFORMATION, StrToIntDef(issue.Tags['s-l'], 1)-1, s, e, msg);
+    IssueSeverityWarning : result := TFHIRAnnotation.create(alWarning, StrToIntDef(issue.Tags['s-l'], 1)-1, s, e, msg, msg);
+    IssueSeverityInformation : result := TFHIRAnnotation.create(alHint, StrToIntDef(issue.Tags['s-l'], 1)-1, s, e, msg, msg);
   else
-    result := TFHIRAnnotation.create(INDIC_ERROR, StrToIntDef(issue.Tags['s-l'], 1)-1, s, e, msg);
+    result := TFHIRAnnotation.create(alError, StrToIntDef(issue.Tags['s-l'], 1)-1, s, e, msg, msg);
   end;
 end;
 
@@ -426,15 +407,17 @@ begin
       on e: Exception do
       begin
         if not ValidationError(self, e.message) then
-          errors.Add(TFHIRAnnotation.create(INDIC_ERROR, 0, 0, 4, e.Message));
+          errors.Add(TFHIRAnnotation.create(alError, 0, 0, 4, e.Message, e.Message));
       end;
     end;
   end
   else if not ValidationError(self, 'This does not appear to be valid FHIR content') then
-    errors.Add(TFHIRAnnotation.create(INDIC_ERROR, 0, 0, 4, 'This does not appear to be valid FHIR content'));
+    errors.Add(TFHIRAnnotation.create(alError, 0, 0, 4, 'This does not appear to be valid FHIR content', ''));
   setUpSquiggles;
   for error in errors do
-    squiggle(error.level, error.line, error.start, error.stop - error.start, error.message);
+    squiggle(LEVEL_INDICATORS[error.level], error.line, error.start, error.stop - error.start, error.message);
+  if FHIRVisualizer <> nil then
+    FHIRVisualizer.setValidationOutcomes(errors);
 end;
 
 procedure TFHIRPlugin.FuncMatchesClear;
@@ -442,7 +425,7 @@ var
   annot : TFHIRAnnotation;
 begin
   for annot in matches do
-    clearSquiggle(annot.level, annot.line, annot.start, annot.stop - annot.start);
+    clearSquiggle(LEVEL_INDICATORS[annot.level], annot.line, annot.start, annot.stop - annot.start);
   matches.Clear;
   if tipShowing then
     mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_CALLTIPCANCEL, 0, 0));
@@ -454,7 +437,7 @@ var
   annot : TFHIRAnnotation;
 begin
   for annot in errors do
-    clearSquiggle(annot.level, annot.line, annot.start, annot.stop - annot.start);
+    clearSquiggle(LEVEL_INDICATORS[annot.level], annot.line, annot.start, annot.stop - annot.start);
   errors.Clear;
   if tipShowing then
     mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_CALLTIPCANCEL, 0, 0));
@@ -765,7 +748,7 @@ begin
             begin
               sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, items[0].LocationStart.line - 1, items[0].LocationStart.col-1);
               ep := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, items[0].LocationEnd.line - 1, items[0].LocationEnd.col-1);
-              SendMessage(NppData.ScintillaMainHandle, SCI_SETSEL, sp, ep);
+              SetSelection(sp, ep);
             end
             else
               MessageBeep(MB_ICONERROR);
@@ -1149,6 +1132,11 @@ begin
  FLastSrc := #1;
 end;
 
+procedure TFHIRPlugin.SetSelection(start, stop: integer);
+begin
+  SendMessage(NppData.ScintillaMainHandle, SCI_SETSEL, start, stop);
+end;
+
 procedure TFHIRPlugin.setUpSquiggles;
 begin
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_INDICSETSTYLE, INDIC_INFORMATION, INDIC_SQUIGGLE));
@@ -1258,15 +1246,10 @@ begin
 end;
 
 procedure TFHIRPlugin.DoNppnBufferChange;
-//var
-//  s : String;
 begin
   FuncValidateClear;
   FuncMatchesClear;
-//  s := GetCurrentText;
-//  NotifyContent(s, true);
-//  if (Assigned(FHIRToolbox)) then
-//    FHIRToolbox.Memo1.Text := s;
+  DoNppnTextModified;
 end;
 
 procedure TFHIRPlugin.DoNppnDwellEnd;
@@ -1378,7 +1361,7 @@ var
   items : TFHIRBaseList;
   expr : TFHIRExpressionNode;
   types : TAdvStringSet;
-  item : TFHIRObject;
+  item : TFHIRBase;
   sp, ep : integer;
   annot : TFHIRAnnotation;
 begin
@@ -1396,7 +1379,7 @@ begin
     if (FHIRVisualizer <> nil) then
       case VisualiserMode of
         vmNarrative: FHIRVisualizer.setNarrative(prepNarrative(''));
-        vmPath: FHIRVisualizer.setPathOutcomes('');
+        vmPath: FHIRVisualizer.setPathOutcomes(nil, nil);
       end
   end
     // we need to parse if:
@@ -1428,19 +1411,19 @@ begin
           begin
             evaluatePath(prsr.resource, items, expr, types);
             try
-              if VisualiserMode = vmPath then
-                FHIRVisualizer.setPathOutcomes(showOutcomes(fmt, items, expr, types));
               for item in items do
               begin
                 sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.LocationStart.line - 1, item.LocationStart.col-1);
                 ep := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.LocationEnd.line - 1, item.LocationEnd.col-1);
                 if (ep = sp) then
                   ep := sp + 1;
-                matches.Add(TFHIRAnnotation.create(INDIC_MATCH, item.LocationStart.line - 1, sp, ep, 'This element is a match to path "'+FHIRToolbox.mPath.Text+'"'));
+                matches.Add(TFHIRAnnotation.create(alMatch, item.LocationStart.line - 1, sp, ep, 'This element is a match to path "'+FHIRToolbox.mPath.Text+'"', item.describe));
               end;
+              if VisualiserMode = vmPath then
+                FHIRVisualizer.setPathOutcomes(matches, expr);
               setUpSquiggles;
               for annot in matches do
-                squiggle(annot.level, annot.line, annot.start, annot.stop - annot.start, annot.message);
+                squiggle(LEVEL_INDICATORS[annot.level], annot.line, annot.start, annot.stop - annot.start, annot.message);
             finally
               items.Free;
               expr.Free;
@@ -1448,7 +1431,7 @@ begin
             end;
           end
           else
-            FHIRVisualizer.setPathOutcomes('');
+            FHIRVisualizer.setPathOutcomes(nil, nil);
         end;
       finally
         prsr.Free;
@@ -1485,39 +1468,6 @@ begin
     SmartOnFhirLoginForm.Free;
   end;
 end;
-
-{ TFHIRAnnotationComparer }
-
-function TFHIRAnnotationComparer.Compare(const Left, Right: TFHIRAnnotation): Integer;
-begin
-  if (left.FStart < Right.FStart) then
-    result := -1
-  else if (left.FStart > Right.FStart) then
-    result := 1
-  else if (left.FStop < Right.FStop) then
-    result := -1
-  else if (left.FStop > Right.FStop) then
-    result := 1
-  else if (left.FLevel < Right.FLevel) then
-    result := -1
-  else if (left.FLevel > Right.FLevel) then
-    result := 1
-  else
-    result := 0;
-end;
-
-{ TFHIRAnnotation }
-
-constructor TFHIRAnnotation.create(level: integer; line, start, stop: integer; message: String);
-begin
-  Create;
-  self.level := level;
-  self.line := line;
-  self.start := start;
-  self.stop := stop;
-  self.message := message;
-end;
-
 
 { TUpgradeCheckThread }
 
