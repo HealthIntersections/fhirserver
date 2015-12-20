@@ -63,7 +63,7 @@ Type
     FKey: Integer;
     FName: String;
     FDescription : String;
-    FSearchType: TFhirSearchParamType;
+    FSearchType: TFhirSearchParamTypeEnum;
     FTargetTypes : TFhirResourceTypeSet;
     FURI: String;
   public
@@ -75,7 +75,7 @@ Type
     property Name : String read FName write FName;
     Property Description : String read FDescription write FDescription;
     Property Key : Integer read FKey write FKey;
-    Property SearchType : TFhirSearchParamType read FSearchType write FSearchType;
+    Property SearchType : TFhirSearchParamTypeEnum read FSearchType write FSearchType;
     Property TargetTypes : TFhirResourceTypeSet read FTargetTypes write FTargetTypes;
     Property URI : String read FURI write FURI;
   end;
@@ -89,8 +89,8 @@ Type
     function Link : TFhirIndexList; Overload;
 
     function getByName(atype : TFhirResourceType; name : String): TFhirIndex;
-    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamType; aTargetTypes : TFhirResourceTypeSet); overload;
-    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamType; aTargetTypes : TFhirResourceTypeSet; url : String); overload;
+    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet); overload;
+    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet; url : String); overload;
     Property Item[iIndex : integer] : TFhirIndex read GetItemN; default;
   end;
 
@@ -137,7 +137,7 @@ Type
     FRefType: integer;
     FTarget: integer;
     FConcept : integer;
-    FType: TFhirSearchParamType;
+    FType: TFhirSearchParamTypeEnum;
     FParent: Integer;
     FFlag: boolean;
   public
@@ -150,7 +150,7 @@ Type
     property RefType : integer read FRefType write FRefType;
     Property target : integer read FTarget write FTarget;
     Property concept : integer read FConcept write FConcept;
-    Property type_ : TFhirSearchParamType read FType write FType;
+    Property type_ : TFhirSearchParamTypeEnum read FType write FType;
     Property flag : boolean read FFlag write FFlag;
   end;
 
@@ -161,7 +161,7 @@ Type
   protected
     function ItemClass : TAdvObjectClass; override;
   public
-    function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer; overload;
+    function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer; overload;
     function add(key, parent : integer; index : TFhirComposite) : integer; overload;
     Property Item[iIndexEntry : integer] : TFhirIndexEntry read GetItemN; default;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
@@ -286,7 +286,6 @@ Type
     procedure buildIndexesEnrollmentResponse;
     procedure buildIndexesEpisodeOfCare;
     procedure buildIndexesExplanationOfBenefit;
-    procedure buildIndexesExtensionDefinition;
     procedure buildIndexesGoal;
     procedure buildIndexesImagingObjectSelection;
     procedure buildIndexesPaymentNotice;
@@ -299,15 +298,28 @@ Type
     procedure buildIndexesPaymentReconciliation;
     procedure buildIndexesAccount;
     procedure buildIndexesImplementationGuide;
+    {$IFDEF DSTU21}
+    procedure BuildIndexesDecisionSupportRule;
+    procedure BuildIndexesDecisionSupportServiceModule;
+    procedure BuildIndexesExpansionProfile;
+    procedure BuildIndexesGuidanceResponse;
+    procedure BuildIndexesLibrary;
+    procedure BuildIndexesMeasure;
+    procedure BuildIndexesModuleDefinition;
+    procedure BuildIndexesModuleMetadata;
+    procedure BuildIndexesOrderSet;
+    procedure BuildIndexesSequence;
+    {$ENDIF}
+
   public
-    constructor Create;
+    constructor Create; Override;
     destructor Destroy; override;
     function Link : TFHIRIndexInformation; overload;
     procedure ReconcileIndexes(connection : TKDBConnection);
 
     Function GetTargetsByName(types : TFhirResourceTypeSet; name : String) : TFhirResourceTypeSet;
     Function GetKeyByName(name : String) : integer;
-    Function GetTypeByName(types : TFhirResourceTypeSet; name : String) : TFhirSearchParamType;
+    Function GetTypeByName(types : TFhirResourceTypeSet; name : String) : TFhirSearchParamTypeEnum;
     Function GetComposite(types : TFhirResourceTypeSet; name : String; var otypes : TFhirResourceTypeSet) : TFhirComposite;
 
     property Indexes : TFhirIndexList read FIndexes;
@@ -327,7 +339,7 @@ Type
     FBases : TStringList;
     FTerminologyServer : TTerminologyServerStore;
 
-    procedure GetBoundaries(value : String; comparator: TFhirQuantityComparator; var low, high : String);
+    procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 
     function EncodeXhtml(r : TFhirDomainResource) : TBytes;
 
@@ -487,6 +499,18 @@ Type
     procedure BuildIndexValuesProcessResponse(key : integer; id : string; context : TFhirResource; resource : TFhirProcessResponse);
     procedure BuildIndexValuesPaymentReconciliation(key : integer; id : string; context : TFhirResource; resource : TFhirPaymentReconciliation);
     procedure BuildIndexValuesAccount(key : integer; id : string; context : TFhirResource; resource : TFhirAccount);
+    {$IFDEF DSTU21}
+    procedure buildIndexValuesDecisionSupportRule(key : integer; id : string; context : TFhirResource; resource : TFhirDecisionSupportRule);
+    procedure BuildIndexValuesDecisionSupportServiceModule(key : integer; id : string; context : TFhirResource; resource : TFhirDecisionSupportServiceModule);
+    procedure BuildIndexValuesExpansionProfile(key : integer; id : string; context : TFhirResource; resource : TFhirExpansionProfile);
+    procedure BuildIndexValuesGuidanceResponse(key : integer; id : string; context : TFhirResource; resource : TFhirGuidanceResponse);
+    procedure BuildIndexValuesLibrary(key : integer; id : string; context : TFhirResource; resource : TFhirLibrary);
+    procedure BuildIndexValuesMeasure(key : integer; id : string; context : TFhirResource; resource : TFhirMeasure);
+    procedure BuildIndexValuesModuleDefinition(key : integer; id : string; context : TFhirResource; resource : TFhirModuleDefinition);
+    procedure BuildIndexValuesModuleMetadata(key : integer; id : string; context : TFhirResource; resource : TFhirModuleMetadata);
+    procedure BuildIndexValuesOrderSet(key : integer; id : string; context : TFhirResource; resource : TFhirOrderSet);
+    procedure BuildIndexValuesSequence(key : integer; id : string; context : TFhirResource; resource : TFhirSequence);
+    {$ENDIF}
 
     procedure BuildIndexValuesImplementationGuide(key : integer; id : string; context : TFhirResource; resource : TFhirImplementationGuide);
     procedure processCompartmentTags(key : integer; id: String; tags : TFHIRTagList);
@@ -509,6 +533,9 @@ implementation
 
 Function EncodeNYSIISValue(value : TFhirString) : String; overload;
 begin
+  if value = nil then
+    result := ''
+  else
   result := EncodeNYSIIS(value.value);
 end;
 
@@ -537,13 +564,13 @@ end;
 
 { TFhirIndexList }
 
-procedure TFhirIndexList.add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamType; aTargetTypes : TFhirResourceTypeSet);
+procedure TFhirIndexList.add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet);
 begin
   add(aResourceType, name, description, aType, aTargetTypes, 'http://hl7.org/fhir/SearchParameter/'+CODES_TFHIRResourceType[aResourceType]+'-'+name.Replace('[', '').Replace(']', ''));
 end;
 
 
-procedure TFhirIndexList.add(aResourceType: TFhirResourceType; name, description: String; aType: TFhirSearchParamType; aTargetTypes: TFhirResourceTypeSet; url: String);
+procedure TFhirIndexList.add(aResourceType: TFhirResourceType; name, description: String; aType: TFhirSearchParamTypeEnum; aTargetTypes: TFhirResourceTypeSet; url: String);
 var
   ndx : TFhirIndex;
 begin
@@ -614,7 +641,7 @@ end;
 
 { TFhirIndexEntryList }
 
-function TFhirIndexEntryList.add(key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer;
+function TFhirIndexEntryList.add(key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer;
 var
   entry : TFhirIndexEntry;
   dummy : string;
@@ -833,8 +860,21 @@ begin
     frtOperationDefinition : BuildIndexValuesOperationDefinition(key, id, context, TFhirOperationDefinition(resource));
     frtReferralRequest : BuildIndexValuesReferralRequest(key, id, context, TFhirReferralRequest(resource));
     frtNutritionOrder : BuildIndexValuesNutritionOrder(key, id, context, TFhirNutritionOrder(resource));
+    {$IFDEF DSTU21}
+    frtDecisionSupportRule : buildIndexValuesDecisionSupportRule(key, id, context, TFhirDecisionSupportRule(resource));
+    frtDecisionSupportServiceModule : buildIndexValuesDecisionSupportServiceModule(key, id, context, TFHIRDecisionSupportServiceModule(resource));
+    frtExpansionProfile : buildIndexValuesExpansionProfile(key, id, context, TFHIRExpansionProfile(resource));
+    frtGuidanceResponse : buildIndexValuesGuidanceResponse(key, id, context, TFHIRGuidanceResponse(resource));
+    frtLibrary : buildIndexValuesLibrary(key, id, context, TFHIRLibrary(resource));
+    frtMeasure : buildIndexValuesMeasure(key, id, context, TFHIRMeasure(resource));
+    frtModuleDefinition : buildIndexValuesModuleDefinition(key, id, context, TFHIRModuleDefinition(resource));
+    frtModuleMetadata : buildIndexValuesModuleMetadata(key, id, context, TFHIRModuleMetadata(resource));
+    frtOrderSet : buildIndexValuesOrderSet(key, id, context, TFHIROrderSet(resource));
+    frtSequence : buildIndexValuesSequence(key, id, context, TFHIRSequence(resource));
+    {$ENDIF}
+
   else
-    raise Exception.create('resource type indexing not implemented yet for '+CODES_TFhirResourceType[resource.ResourceType]);
+    raise Exception.create('resource type indexing not implemented yet for '+CODES_TFHIRResourceType[resource.ResourceType]);
   end;
 end;
 
@@ -854,7 +894,7 @@ begin
       try
         x.NodeType := fhntElement;
         x.Name := 'html';
-        x.AddChild('head').AddChild('title').AddText(CODES_TFhirResourceType[r.ResourceType]);
+        x.AddChild('head').AddChild('title').AddText(CODES_TFHIRResourceType[r.ResourceType]);
         body := x.AddChild('body');
         if (r.language = '') then
           body.SetAttribute('lang', 'en')
@@ -915,21 +955,21 @@ end;
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value, name: String);
 var
   ndx : TFhirIndex;
-  types : TFhirSearchParamTypeList;
+  types : TFhirSearchParamTypeEnumList;
 
 begin
   if (value = '') then
     exit;
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
 
   if StringIsInteger32(value) then
     types := [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference, SearchParamTypeNumber, SearchParamTypeUri]
   else
     types := [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference, SearchParamTypeUri];
   if not (ndx.SearchType in types) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
   if ndx.SearchType = SearchParamTypeString then
     value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)))
   else if (length(value) > INDEX_ENTRY_LENGTH) then
@@ -945,9 +985,9 @@ begin
     exit;
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeReference]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
   value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
   FEntries.add(key, parent, ndx, 0, '', value, 0, SearchParamTypeString);
 end;
@@ -965,9 +1005,9 @@ begin
     exit;
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
   if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
 
   if ndx.SearchType = SearchParamTypeString then
     value1 := lowercase(RemoveAccents(copy(value1, 1, INDEX_ENTRY_LENGTH)))
@@ -990,10 +1030,10 @@ var
 begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
   if not (ndx.SearchType in [SearchParamTypeToken]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing enumeration on '+CODES_TFHIRResourceType[aType]);
-  concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFhirResourceType[aType]+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
+    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+CODES_TFHIRResourceType[aType]);
+  concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFHIRResourceType[aType]+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
   assert(concept <> 0);
   FEntries.add(key, parent, ndx, 0, BooleanToString(value), '', 0, ndx.SearchType, false, concept);
 end;
@@ -1009,14 +1049,14 @@ begin
 
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFhirResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
   if not (ndx.SearchType in [SearchParamTypeToken]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing enumeration on '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+CODES_TFHIRResourceType[aType]);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
      raise exception.create('string too long for indexing: '+value.value+ ' ('+inttostr(length(value.value))+' chars)');
   if system <> '' then
   begin
-    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFhirResourceType[aType]+'.'+name, system, value.value);
+    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFHIRResourceType[aType]+'.'+name, system, value.value);
     assert(concept <> 0);
   end
   else
@@ -1210,11 +1250,11 @@ begin
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if ndx.SearchType <> SearchParamTypeToken then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Coding');
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Coding');
   if (value.system <> '') then
   begin
     ref := FSpaces.ResolveSpace(value.system);
-    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFhirResourceType[aType]+'.'+name, value.system, value.code);
+    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFHIRResourceType[aType]+'.'+name, value.system, value.code);
   end
   else
   begin
@@ -1230,7 +1270,7 @@ begin
     FEntries.add(key, parent, ndx, ref, value.code, '', 0, ndx.SearchType, false, concept);
 end;
 
-Function ComparatorPrefix(v : String; c : TFhirQuantityComparator) : String;
+Function ComparatorPrefix(v : String; c : TFhirQuantityComparatorEnum) : String;
 begin
   case c of
     QuantityComparatorLessThan : result := '<'+v;
@@ -1242,7 +1282,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexManager.GetBoundaries(value : String; comparator: TFhirQuantityComparator; var low, high : String);
+procedure TFhirIndexManager.GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 var
   dec : TSmartDecimal;
 begin
@@ -1294,7 +1334,7 @@ begin
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join: "'+name+'"');
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber, SearchParamTypeQuantity]) then
-    raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing range');
+    raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing range');
 
   GetBoundaries(value.low.value, QuantityComparatorNull, v1, crap);
   GetBoundaries(value.high.value, QuantityComparatorNull, crap, v2);
@@ -1355,7 +1395,7 @@ begin
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join: "'+name+'"');
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber, SearchParamTypeQuantity]) then
-    raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing quantity');
+    raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing quantity');
 
   GetBoundaries(value.value, value.comparator, v1, v2);
 
@@ -1426,7 +1466,7 @@ begin
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType = SearchParamTypeDate) then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing date');
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing date');
   FEntries.add(key, parent, ndx, 0, HL7DateToString(min, 'yyyymmddhhnnss', false), HL7DateToString(max, 'yyyymmddhhnnss', false), 0, ndx.SearchType);
 end;
 
@@ -1443,7 +1483,7 @@ begin
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeToken]) then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Identifier');
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Identifier');
   ref := 0;
   if (value.system <> '') then
     ref := FSpaces.ResolveSpace(value.system);
@@ -1485,7 +1525,7 @@ begin
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeString]) then
-    raise Exception.create('Unsuitable index '+name+':'+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Contact on '+CODES_TFhirResourceType[aType]);
+    raise Exception.create('Unsuitable index '+name+':'+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Contact on '+CODES_TFHIRResourceType[aType]);
   ref := 0;
   if (value.systemElement <> nil) and (value.systemElement.value <> '') then
     ref := FSpaces.ResolveSpace(value.systemElement.value);
@@ -1572,7 +1612,7 @@ begin
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeToken]) then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing decimal');
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing decimal');
   FEntries.add(key, ndx, 0, value.value, '', 0, ndx.SearchType);
 end;
 }
@@ -1583,8 +1623,8 @@ var
   i : TFhirResourceType;
 begin
   result := false;
-  for i := Low(CODES_TFhirResourceType) to High(CODES_TFhirResourceType) do
-    if url.StartsWith(CODES_TFhirResourceType[i]+'/') and IsId(url.Substring(url.IndexOf('/')+1)) then
+  for i := Low(CODES_TFHIRResourceType) to High(CODES_TFHIRResourceType) do
+    if url.StartsWith(CODES_TFHIRResourceType[i]+'/') and IsId(url.Substring(url.IndexOf('/')+1)) then
       result := true;
   if result then
     StringSplit(url, '/', type_, id);
@@ -1626,9 +1666,9 @@ begin
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (ndx.TargetTypes = []) then
-    raise Exception.create('Attempt to index a resource join in an index ('+CODES_TFhirResourceType[aType]+'/'+name+') that is a not a join (has no target types)');
+    raise Exception.create('Attempt to index a resource join in an index ('+CODES_TFHIRResourceType[aType]+'/'+name+') that is a not a join (has no target types)');
   if ndx.SearchType <> SearchParamTypeReference then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing reference on a '+CODES_TFhirResourceType[aType]);
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing reference on a '+CODES_TFHIRResourceType[aType]);
 
   if (length(value.reference) > INDEX_ENTRY_LENGTH) then
     raise exception.create('resource url too long for indexing: '+value.reference);
@@ -1649,10 +1689,10 @@ begin
     else
       raise exception.create('Reference to contained resource found in a resource that does not have contained resources"');
     if contained = nil then
-      raise exception.create('No contained resource found in resource for "'+value.reference+'", list from '+CODES_TFhirResourceType[context.ResourceType]+' = "'+sumContainedResources(TFhirDomainResource(context))+'"');
+      raise exception.create('No contained resource found in resource for "'+value.reference+'", list from '+CODES_TFHIRResourceType[context.ResourceType]+' = "'+sumContainedResources(TFhirDomainResource(context))+'"');
     if (specificType = frtNull) or (contained.ResourceType = specificType) then
     begin
-      ref := FSpaces.ResolveSpace(CODES_TFhirResourceType[contained.ResourceType]);
+      ref := FSpaces.ResolveSpace(CODES_TFHIRResourceType[contained.ResourceType]);
       target := FKeyEvent(ktResource, contained.ResourceType, id);
       FSpaces.FDB.execSql('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(ref)+' and LastId < '+id);
       FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
@@ -1676,7 +1716,7 @@ begin
     end;
     if isLocalTypeReference(url, type_, id) then
     begin
-      if (specificType = frtNull) or (type_ = CODES_TFhirResourceType[specificType]) then
+      if (specificType = frtNull) or (type_ = CODES_TFHIRResourceType[specificType]) then
       begin
         ref := FSpaces.ResolveSpace(type_);
         FSpaces.FDB.sql := 'Select ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
@@ -1937,7 +1977,7 @@ begin
   if (ndx.TargetTypes <> []) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeNumber, SearchParamTypeToken]) then
-    raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing integer');
+    raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing integer');
   FEntries.add(key, parent, ndx, 0, value.value, '', 0, ndx.SearchType);
 end;
 
@@ -1985,9 +2025,9 @@ begin
     if (ndx.TargetTypes = []) then
       raise Exception.create('Attempt to index a resource join in an index (Bundle.'+name+') that is a not a join (has no target types)');
     if ndx.SearchType <> SearchParamTypeReference then
-      raise Exception.create('Unsuitable index Bundle.'+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing inner');
+      raise Exception.create('Unsuitable index Bundle.'+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing inner');
 
-    ref := FSpaces.ResolveSpace(CODES_TFhirResourceType[inner.ResourceType]);
+    ref := FSpaces.ResolveSpace(CODES_TFHIRResourceType[inner.ResourceType]);
     // ignore the existing id because this is a virtual entry; we don't want the real id to appear twice if the resource also really exists
     target := FKeyEvent(ktResource, inner.ResourceType, id); //FSpaces.FDB.CountSQL('select Max(ResourceKey) from Ids') + 1;
     FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
@@ -2157,6 +2197,33 @@ begin
 end;
 
 
+{$IFDEF DSTU2}
+Const
+  CHECK_TSearchParamsClaim : Array[TSearchParamsClaim] of TSearchParamsClaim = ( spClaim__content, spClaim__id, spClaim__lastUpdated, spClaim__profile, spClaim__query, spClaim__security, spClaim__tag, spClaim__text,
+    spClaim_Identifier, spClaim_Patient, spClaim_Priority, spClaim_Provider, spClaim_Use);
+
+procedure TFhirIndexInformation.buildIndexesClaim;
+var
+  a : TSearchParamsClaim;
+begin
+  for a := low(TSearchParamsClaim) to high(TSearchParamsClaim) do
+  begin
+    assert(CHECK_TSearchParamsClaim[a] = a);
+    indexes.add(frtClaim, CODES_TSearchParamsClaim[a], DESC_TSearchParamsClaim[a], TYPES_TSearchParamsClaim[a], TARGETS_TSearchParamsClaim[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesClaim(key: integer; id : String; context : TFhirResource; resource: TFhirClaim);
+begin
+  index(frtClaim, key, 0, resource.identifierList, 'identifier');
+  index(frtClaim, key, 0, resource.priorityElement, 'priority');
+  index(frtClaim, key, 0, resource.useElement, 'http://hl7.org/fhir/use-link', 'use');
+  index(context, frtClaim, key, 0, resource.patientElement, 'patient');
+  index(context, frtClaim, key, 0, resource.provider, 'provider');
+  patientCompartment(key, resource.patient);
+end;
+
+
 Const
   CHECK_TSearchParamsCoverage : Array[TSearchParamsCoverage] of TSearchParamsCoverage = ( spCoverage__content, spCoverage__id, spCoverage__lastUpdated, spCoverage__profile, spCoverage__query, spCoverage__security, spCoverage__tag, spCoverage__text,
     spCoverage_Dependent, spCoverage_Group, spCoverage_Identifier, spCoverage_Issuer, spCoverage_Plan, spCoverage_Sequence, spCoverage_Subplan, spCoverage_Type);
@@ -2184,9 +2251,6 @@ begin
 //  index(context, frtCoverage, key, 0, resource.subjectList, 'subject');
   index(context, frtCoverage, key, 0, resource.issuerElement, 'issuer');
 end;
-
-
-
 Const
   CHECK_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of TSearchParamsClaimResponse = ( spClaimResponse__content, spClaimResponse__id, spClaimResponse__lastUpdated, spClaimResponse__profile, spClaimResponse__query, spClaimResponse__security, spClaimResponse__tag, spClaimResponse__text,
      spClaimResponse_Identifier);
@@ -2209,10 +2273,218 @@ begin
   index(context, frtClaimResponse, key, 0, resource.request, 'request');
 end;
 
+const
+  CHECK_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of TSearchParamsEligibilityRequest = ( spEligibilityRequest__content, spEligibilityRequest__id, spEligibilityRequest__lastUpdated, spEligibilityRequest__profile, spEligibilityRequest__query, spEligibilityRequest__security, spEligibilityRequest__tag, spEligibilityRequest__text,
+    spEligibilityRequest_Identifier);
+
+procedure TFhirIndexInformation.buildIndexesEligibilityRequest;
+var
+  a : TSearchParamsEligibilityRequest;
+begin
+  for a := low(TSearchParamsEligibilityRequest) to high(TSearchParamsEligibilityRequest) do
+  begin
+    assert(CHECK_TSearchParamsEligibilityRequest[a] = a);
+    indexes.add(frtEligibilityRequest, CODES_TSearchParamsEligibilityRequest[a], DESC_TSearchParamsEligibilityRequest[a], TYPES_TSearchParamsEligibilityRequest[a], TARGETS_TSearchParamsEligibilityRequest[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesEligibilityRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityRequest);
+begin
+  index(frtEligibilityRequest, key, 0, resource.identifierList, 'identifier');
+end;
+
+const
+  CHECK_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of TSearchParamsEligibilityResponse = ( spEligibilityResponse__content, spEligibilityResponse__id, spEligibilityResponse__lastUpdated, spEligibilityResponse__profile, spEligibilityResponse__query, spEligibilityResponse__security, spEligibilityResponse__tag, spEligibilityResponse__text,
+    spEligibilityResponse_Identifier);
+
+procedure TFhirIndexInformation.buildIndexesEligibilityResponse;
+var
+  a : TSearchParamsEligibilityResponse;
+begin
+  for a := low(TSearchParamsEligibilityResponse) to high(TSearchParamsEligibilityResponse) do
+  begin
+    assert(CHECK_TSearchParamsEligibilityResponse[a] = a);
+    indexes.add(frtEligibilityResponse, CODES_TSearchParamsEligibilityResponse[a], DESC_TSearchParamsEligibilityResponse[a], TYPES_TSearchParamsEligibilityResponse[a], TARGETS_TSearchParamsEligibilityResponse[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesEligibilityResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityResponse);
+begin
+  index(frtEligibilityResponse, key, 0, resource.identifierList, 'identifier');
+end;
+
+const
+  CHECK_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of TSearchParamsEnrollmentRequest = ( spEnrollmentRequest__content, spEnrollmentRequest__id, spEnrollmentRequest__lastUpdated, spEnrollmentRequest__profile, spEnrollmentRequest__query, spEnrollmentRequest__security, spEnrollmentRequest__tag, spEnrollmentRequest__text,
+    spEnrollmentRequest_Identifier, spEnrollmentRequest_Patient, spEnrollmentRequest_Subject);
+
+procedure TFhirIndexInformation.buildIndexesEnrollmentRequest;
+var
+  a : TSearchParamsEnrollmentRequest;
+begin
+  for a := low(TSearchParamsEnrollmentRequest) to high(TSearchParamsEnrollmentRequest) do
+  begin
+    assert(CHECK_TSearchParamsEnrollmentRequest[a] = a);
+    indexes.add(frtEnrollmentRequest, CODES_TSearchParamsEnrollmentRequest[a], DESC_TSearchParamsEnrollmentRequest[a], TYPES_TSearchParamsEnrollmentRequest[a], TARGETS_TSearchParamsEnrollmentRequest[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesEnrollmentRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentRequest);
+begin
+  index(frtEnrollmentRequest, key, 0, resource.identifierList, 'identifier');
+  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'subject');
+  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'patient');
+  patientCompartment(key, resource.subject);
+end;
+
+const
+  CHECK_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of TSearchParamsEnrollmentResponse = ( spEnrollmentResponse__content, spEnrollmentResponse__id, spEnrollmentResponse__lastUpdated, spEnrollmentResponse__profile, spEnrollmentResponse__query, spEnrollmentResponse__security, spEnrollmentResponse__tag, spEnrollmentResponse__text,
+    spEnrollmentResponse_Identifier);
+
+procedure TFhirIndexInformation.buildIndexesEnrollmentResponse;
+var
+  a : TSearchParamsEnrollmentResponse;
+begin
+  for a := low(TSearchParamsEnrollmentResponse) to high(TSearchParamsEnrollmentResponse) do
+  begin
+    assert(CHECK_TSearchParamsEnrollmentResponse[a] = a);
+    indexes.add(frtEnrollmentResponse, CODES_TSearchParamsEnrollmentResponse[a], DESC_TSearchParamsEnrollmentResponse[a], TYPES_TSearchParamsEnrollmentResponse[a], TARGETS_TSearchParamsEnrollmentResponse[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesEnrollmentResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentResponse);
+begin
+  index(frtEnrollmentResponse, key, 0, resource.identifierList, 'identifier');
+end;
+
+
+const
+  CHECK_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of TSearchParamsExplanationOfBenefit = (
+    spExplanationOfBenefit__content, spExplanationOfBenefit__id, spExplanationOfBenefit__lastUpdated, spExplanationOfBenefit__profile, spExplanationOfBenefit__query, spExplanationOfBenefit__security, spExplanationOfBenefit__tag, spExplanationOfBenefit__text,
+    spExplanationOfBenefit_Identifier);
+
+procedure TFhirIndexInformation.buildIndexesExplanationOfBenefit;
+var
+  a : TSearchParamsExplanationOfBenefit;
+begin
+  for a := low(TSearchParamsExplanationOfBenefit) to high(TSearchParamsExplanationOfBenefit) do
+  begin
+    assert(CHECK_TSearchParamsExplanationOfBenefit[a] = a);
+    indexes.add(frtExplanationOfBenefit, CODES_TSearchParamsExplanationOfBenefit[a], DESC_TSearchParamsExplanationOfBenefit[a], TYPES_TSearchParamsExplanationOfBenefit[a], TARGETS_TSearchParamsExplanationOfBenefit[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesExplanationOfBenefit(key: integer; id : String; context : TFhirResource; resource: TFhirExplanationOfBenefit);
+var
+  i : integer;
+begin
+  index(frtExplanationOfBenefit, key, 0, resource.identifierList, 'identifier');
+end;
+
+const
+  CHECK_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of TSearchParamsPaymentNotice = ( spPaymentNotice__content, spPaymentNotice__id, spPaymentNotice__lastUpdated, spPaymentNotice__profile, spPaymentNotice__query, spPaymentNotice__security, spPaymentNotice__tag, spPaymentNotice__text,
+    spPaymentNotice_Identifier);
+
+procedure TFhirIndexInformation.buildIndexesPaymentNotice;
+var
+  a : TSearchParamsPaymentNotice;
+begin
+  for a := low(TSearchParamsPaymentNotice) to high(TSearchParamsPaymentNotice) do
+  begin
+    assert(CHECK_TSearchParamsPaymentNotice[a] = a);
+    indexes.add(frtPaymentNotice, CODES_TSearchParamsPaymentNotice[a], DESC_TSearchParamsPaymentNotice[a], TYPES_TSearchParamsPaymentNotice[a], TARGETS_TSearchParamsPaymentNotice[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesPaymentNotice(key: integer; id : String; context : TFhirResource; resource: TFhirPaymentNotice);
+var
+  i : integer;
+begin
+  index(frtPaymentNotice, key, 0, resource.identifierList, 'identifier');
+end;
+
+
+const
+  CHECK_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of TSearchParamsPaymentReconciliation = (
+    spPaymentReconciliation__content, spPaymentReconciliation__id, spPaymentReconciliation__lastUpdated, spPaymentReconciliation__profile, spPaymentReconciliation__query, spPaymentReconciliation__security, spPaymentReconciliation__tag, spPaymentReconciliation__text,
+    spPaymentReconciliation_Identifier);
+
+procedure TFhirIndexInformation.buildIndexesPaymentReconciliation;
+var
+  a : TSearchParamsPaymentReconciliation;
+begin
+  for a := low(TSearchParamsPaymentReconciliation) to high(TSearchParamsPaymentReconciliation) do
+  begin
+    assert(CHECK_TSearchParamsPaymentReconciliation[a] = a);
+    indexes.add(frtPaymentReconciliation, CODES_TSearchParamsPaymentReconciliation[a], DESC_TSearchParamsPaymentReconciliation[a], TYPES_TSearchParamsPaymentReconciliation[a], TARGETS_TSearchParamsPaymentReconciliation[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesPaymentReconciliation(key: integer; id : String; context : TFhirResource; resource: TFhirPaymentReconciliation);
+var
+  i : integer;
+begin
+  index(frtPaymentReconciliation, key, 0, resource.identifierList, 'identifier');
+end;
+
+
+{$ELSE}
+Const
+  CHECK_TSearchParamsCoverage : Array[TSearchParamsCoverage] of TSearchParamsCoverage = ( spCoverage__content, spCoverage__id, spCoverage__lastUpdated, spCoverage__profile, spCoverage__query, spCoverage__security, spCoverage__tag, spCoverage__text,
+    spCoverage_Dependent, spCoverage_Group, spCoverage_Identifier, spCoverage_Issuer, spCoverage_Plan, spCoverage_Sequence, spCoverage_Subplan, spCoverage_Subscriber, spCoverage_Type);
+
+procedure TFhirIndexInformation.buildIndexesCoverage;
+var
+  a : TSearchParamsCoverage;
+begin
+  for a := low(TSearchParamsCoverage) to high(TSearchParamsCoverage) do
+  begin
+    assert(CHECK_TSearchParamsCoverage[a] = a);
+    indexes.add(frtCoverage, CODES_TSearchParamsCoverage[a], DESC_TSearchParamsCoverage[a], TYPES_TSearchParamsCoverage[a], TARGETS_TSearchParamsCoverage[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesCoverage(key: integer; id : String; context : TFhirResource; resource: TFhirCoverage);
+begin
+  index(frtCoverage, key, 0, resource.dependentElement, 'dependent');
+  index(frtCoverage, key, 0, resource.groupElement, 'group');
+  index(frtCoverage, key, 0, resource.identifierList, 'identifier');
+  index(frtCoverage, key, 0, resource.planElement, 'plan');
+  index(frtCoverage, key, 0, resource.sequenceElement, 'sequence');
+  index(frtCoverage, key, 0, resource.subplanElement, 'subplan');
+  index(frtCoverage, key, 0, resource.type_Element, 'type');
+  index(frtCoverage, key, 0, resource.subscriberId, 'subscriber');
+  index(context, frtCoverage, key, 0, resource.issuerElement, 'issuer');
+end;
+Const
+  CHECK_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of TSearchParamsClaimResponse = ( spClaimResponse__content, spClaimResponse__id, spClaimResponse__lastUpdated, spClaimResponse__profile, spClaimResponse__query, spClaimResponse__security, spClaimResponse__tag, spClaimResponse__text,
+    spClaimResponse_Created, spClaimResponse_Disposition, spClaimResponse_Identifier, spClaimResponse_Organization, spClaimResponse_Outcome, spClaimResponse_Paymentdate, spClaimResponse_Request);
+
+procedure TFhirIndexInformation.buildIndexesClaimResponse;
+var
+  a : TSearchParamsClaimResponse;
+begin
+  for a := low(TSearchParamsClaimResponse) to high(TSearchParamsClaimResponse) do
+  begin
+    assert(CHECK_TSearchParamsClaimResponse[a] = a);
+    indexes.add(frtClaimResponse, CODES_TSearchParamsClaimResponse[a], DESC_TSearchParamsClaimResponse[a], TYPES_TSearchParamsClaimResponse[a], TARGETS_TSearchParamsClaimResponse[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesClaimResponse(key: integer; id : String; context : TFhirResource; resource: TFhirClaimResponse);
+begin
+  index(frtClaimResponse, key, 0, resource.identifierList, 'identifier');
+  index(frtClaimResponse, key, 0, resource.createdElement, 'created');
+  index(frtClaimResponse, key, 0, resource.dispositionElement, 'disposition');
+  index(context, frtClaimResponse, key, 0, resource.organization, 'organization');
+  index(frtClaimResponse, key, 0, resource.outcomeElement, 'http://hl7.org/fhir/remittance-outcome', 'outcome');
+  index(frtClaimResponse, key, 0, resource.paymentDateElement, 'paymentdate');
+  index(context, frtClaimResponse, key, 0, resource.request, 'request');
+end;
 
 Const
   CHECK_TSearchParamsClaim : Array[TSearchParamsClaim] of TSearchParamsClaim = ( spClaim__content, spClaim__id, spClaim__lastUpdated, spClaim__profile, spClaim__query, spClaim__security, spClaim__tag, spClaim__text,
-    spClaim_Identifier, spClaim_Patient, spClaim_Priority, spClaim_Provider, spClaim_Use);
+    spClaim_Created, spClaim_Facility, spClaim_Identifier, spClaim_Organization, spClaim_Patient, spClaim_Priority, spClaim_Provider, spClaim_Target, spClaim_Use);
+
 
 procedure TFhirIndexInformation.buildIndexesClaim;
 var
@@ -2229,11 +2501,437 @@ procedure TFhirIndexManager.buildIndexValuesClaim(key: integer; id : String; con
 begin
   index(frtClaim, key, 0, resource.identifierList, 'identifier');
   index(frtClaim, key, 0, resource.priorityElement, 'priority');
+  index(frtClaim, key, 0, resource.createdElement, 'created');
+  index(context, frtClaim, key, 0, resource.facility, 'facility');
   index(frtClaim, key, 0, resource.useElement, 'http://hl7.org/fhir/use-link', 'use');
   index(context, frtClaim, key, 0, resource.patientElement, 'patient');
   index(context, frtClaim, key, 0, resource.provider, 'provider');
+  index(context, frtClaim, key, 0, resource.organization, 'organization');
+  index(context, frtClaim, key, 0, resource.target, 'target');
   patientCompartment(key, resource.patient);
 end;
+
+const
+  CHECK_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of TSearchParamsEligibilityRequest = ( spEligibilityRequest__content, spEligibilityRequest__id, spEligibilityRequest__lastUpdated, spEligibilityRequest__profile, spEligibilityRequest__query, spEligibilityRequest__security, spEligibilityRequest__tag, spEligibilityRequest__text,
+    spEligibilityRequest_Created, spEligibilityRequest_Facility, spEligibilityRequest_Identifier, spEligibilityRequest_Organization, spEligibilityRequest_Patient, spEligibilityRequest_Provider);
+
+procedure TFhirIndexInformation.buildIndexesEligibilityRequest;
+var
+  a : TSearchParamsEligibilityRequest;
+begin
+  for a := low(TSearchParamsEligibilityRequest) to high(TSearchParamsEligibilityRequest) do
+  begin
+    assert(CHECK_TSearchParamsEligibilityRequest[a] = a);
+    indexes.add(frtEligibilityRequest, CODES_TSearchParamsEligibilityRequest[a], DESC_TSearchParamsEligibilityRequest[a], TYPES_TSearchParamsEligibilityRequest[a], TARGETS_TSearchParamsEligibilityRequest[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesEligibilityRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityRequest);
+begin
+  index(frtEligibilityRequest, key, 0, resource.identifierList, 'identifier');
+  index(frtEligibilityRequest, key, 0, resource.createdElement, 'created');
+  index(context, frtEligibilityRequest, key, 0, resource.facility, 'facility');
+  index(context, frtEligibilityRequest, key, 0, resource.organization, 'organization');
+  index(context, frtEligibilityRequest, key, 0, resource.patientElement, 'patient');
+  index(context, frtEligibilityRequest, key, 0, resource.provider, 'provider');
+end;
+
+const
+  CHECK_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of TSearchParamsEligibilityResponse = ( spEligibilityResponse__content, spEligibilityResponse__id, spEligibilityResponse__lastUpdated, spEligibilityResponse__profile, spEligibilityResponse__query, spEligibilityResponse__security, spEligibilityResponse__tag, spEligibilityResponse__text,
+    spEligibilityResponse_Created, spEligibilityResponse_Disposition, spEligibilityResponse_Identifier, spEligibilityResponse_Organization, spEligibilityResponse_Outcome, spEligibilityResponse_Request, spEligibilityResponse_Requestorganization, spEligibilityResponse_Requestprovider);
+
+procedure TFhirIndexInformation.buildIndexesEligibilityResponse;
+var
+  a : TSearchParamsEligibilityResponse;
+begin
+  for a := low(TSearchParamsEligibilityResponse) to high(TSearchParamsEligibilityResponse) do
+  begin
+    assert(CHECK_TSearchParamsEligibilityResponse[a] = a);
+    indexes.add(frtEligibilityResponse, CODES_TSearchParamsEligibilityResponse[a], DESC_TSearchParamsEligibilityResponse[a], TYPES_TSearchParamsEligibilityResponse[a], TARGETS_TSearchParamsEligibilityResponse[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesEligibilityResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityResponse);
+begin
+  index(frtEligibilityResponse, key, 0, resource.identifierList, 'identifier');
+  index(frtEligibilityResponse, key, 0, resource.createdElement, 'created');
+  index(context, frtEligibilityResponse, key, 0, resource.organization, 'organization');
+  index(context, frtEligibilityResponse, key, 0, resource.request, 'request');
+  index(context, frtEligibilityResponse, key, 0, resource.requestOrganization, 'requestorganization');
+  index(frtEligibilityResponse, key, 0, resource.dispositionElement, 'disposition');
+  index(frtEligibilityResponse, key, 0, resource.outcomeElement, 'http://hl7.org/fhir/remittance-outcome', 'outcome');
+end;
+
+const
+  CHECK_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of TSearchParamsEnrollmentRequest = ( spEnrollmentRequest__content, spEnrollmentRequest__id, spEnrollmentRequest__lastUpdated, spEnrollmentRequest__profile, spEnrollmentRequest__query, spEnrollmentRequest__security, spEnrollmentRequest__tag, spEnrollmentRequest__text,
+    spEnrollmentRequest_Identifier, spEnrollmentRequest_Patient, spEnrollmentRequest_Subject);
+
+procedure TFhirIndexInformation.buildIndexesEnrollmentRequest;
+var
+  a : TSearchParamsEnrollmentRequest;
+begin
+  for a := low(TSearchParamsEnrollmentRequest) to high(TSearchParamsEnrollmentRequest) do
+  begin
+    assert(CHECK_TSearchParamsEnrollmentRequest[a] = a);
+    indexes.add(frtEnrollmentRequest, CODES_TSearchParamsEnrollmentRequest[a], DESC_TSearchParamsEnrollmentRequest[a], TYPES_TSearchParamsEnrollmentRequest[a], TARGETS_TSearchParamsEnrollmentRequest[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesEnrollmentRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentRequest);
+begin
+  index(frtEnrollmentRequest, key, 0, resource.identifierList, 'identifier');
+  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'subject');
+  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'patient');
+  patientCompartment(key, resource.subject);
+end;
+
+const
+  CHECK_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of TSearchParamsEnrollmentResponse = ( spEnrollmentResponse__content, spEnrollmentResponse__id, spEnrollmentResponse__lastUpdated, spEnrollmentResponse__profile, spEnrollmentResponse__query, spEnrollmentResponse__security, spEnrollmentResponse__tag, spEnrollmentResponse__text,
+    spEnrollmentResponse_Identifier);
+
+procedure TFhirIndexInformation.buildIndexesEnrollmentResponse;
+var
+  a : TSearchParamsEnrollmentResponse;
+begin
+  for a := low(TSearchParamsEnrollmentResponse) to high(TSearchParamsEnrollmentResponse) do
+  begin
+    assert(CHECK_TSearchParamsEnrollmentResponse[a] = a);
+    indexes.add(frtEnrollmentResponse, CODES_TSearchParamsEnrollmentResponse[a], DESC_TSearchParamsEnrollmentResponse[a], TYPES_TSearchParamsEnrollmentResponse[a], TARGETS_TSearchParamsEnrollmentResponse[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesEnrollmentResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentResponse);
+begin
+  index(frtEnrollmentResponse, key, 0, resource.identifierList, 'identifier');
+end;
+
+const
+  CHECK_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of TSearchParamsExplanationOfBenefit = (
+    spExplanationOfBenefit__content, spExplanationOfBenefit__id, spExplanationOfBenefit__lastUpdated, spExplanationOfBenefit__profile, spExplanationOfBenefit__query, spExplanationOfBenefit__security, spExplanationOfBenefit__tag, spExplanationOfBenefit__text,
+    spExplanationOfBenefit_Claim, spExplanationOfBenefit_Created, spExplanationOfBenefit_Disposition, spExplanationOfBenefit_Facility, spExplanationOfBenefit_Identifier, spExplanationOfBenefit_Organization, spExplanationOfBenefit_Patient, spExplanationOfBenefit_Provider);
+
+procedure TFhirIndexInformation.buildIndexesExplanationOfBenefit;
+var
+  a : TSearchParamsExplanationOfBenefit;
+begin
+  for a := low(TSearchParamsExplanationOfBenefit) to high(TSearchParamsExplanationOfBenefit) do
+  begin
+    assert(CHECK_TSearchParamsExplanationOfBenefit[a] = a);
+    indexes.add(frtExplanationOfBenefit, CODES_TSearchParamsExplanationOfBenefit[a], DESC_TSearchParamsExplanationOfBenefit[a], TYPES_TSearchParamsExplanationOfBenefit[a], TARGETS_TSearchParamsExplanationOfBenefit[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesExplanationOfBenefit(key: integer; id : String; context : TFhirResource; resource: TFhirExplanationOfBenefit);
+var
+  i : integer;
+begin
+  index(frtExplanationOfBenefit, key, 0, resource.identifierList, 'identifier');
+  index(frtExplanationOfBenefit, key, 0, resource.createdElement, 'created');
+  index(frtExplanationOfBenefit, key, 0, resource.dispositionElement, 'disposition');
+  index(context, frtExplanationOfBenefit, key, 0, resource.organization, 'organization');
+  index(context, frtExplanationOfBenefit, key, 0, resource.claim, 'claim');
+  index(context, frtExplanationOfBenefit, key, 0, resource.facility, 'facility');
+  index(context, frtExplanationOfBenefit, key, 0, resource.patient, 'patient');
+  index(context, frtExplanationOfBenefit, key, 0, resource.provider, 'provider');
+end;
+
+const
+  CHECK_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of TSearchParamsPaymentNotice = ( spPaymentNotice__content, spPaymentNotice__id, spPaymentNotice__lastUpdated, spPaymentNotice__profile, spPaymentNotice__query, spPaymentNotice__security, spPaymentNotice__tag, spPaymentNotice__text,
+    spPaymentNotice_Created, spPaymentNotice_Identifier, spPaymentNotice_Organization, spPaymentNotice_Paymentstatus, spPaymentNotice_Provider, spPaymentNotice_Request, spPaymentNotice_Response, spPaymentNotice_Statusdate);
+
+procedure TFhirIndexInformation.buildIndexesPaymentNotice;
+var
+  a : TSearchParamsPaymentNotice;
+begin
+  for a := low(TSearchParamsPaymentNotice) to high(TSearchParamsPaymentNotice) do
+  begin
+    assert(CHECK_TSearchParamsPaymentNotice[a] = a);
+    indexes.add(frtPaymentNotice, CODES_TSearchParamsPaymentNotice[a], DESC_TSearchParamsPaymentNotice[a], TYPES_TSearchParamsPaymentNotice[a], TARGETS_TSearchParamsPaymentNotice[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesPaymentNotice(key: integer; id : String; context : TFhirResource; resource: TFhirPaymentNotice);
+var
+  i : integer;
+begin
+  index(frtPaymentNotice, key, 0, resource.identifierList, 'identifier');
+  index(frtPaymentNotice, key, 0, resource.createdElement, 'created');
+  index(frtPaymentNotice, key, 0, resource.statusDateElement, 'statusdate');
+  index(frtPaymentNotice, key, 0, resource.paymentStatusElement, 'paymentstatus');
+  index(context, frtPaymentNotice, key, 0, resource.organization, 'organization');
+  index(context, frtPaymentNotice, key, 0, resource.provider, 'provider');
+  index(context, frtPaymentNotice, key, 0, resource.request, 'request');
+  index(context, frtPaymentNotice, key, 0, resource.response, 'response');
+end;
+
+const
+  CHECK_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of TSearchParamsPaymentReconciliation = (
+    spPaymentReconciliation__content, spPaymentReconciliation__id, spPaymentReconciliation__lastUpdated, spPaymentReconciliation__profile, spPaymentReconciliation__query, spPaymentReconciliation__security, spPaymentReconciliation__tag, spPaymentReconciliation__text,
+    spPaymentReconciliation_Created, spPaymentReconciliation_Disposition, spPaymentReconciliation_Identifier, spPaymentReconciliation_Organization, spPaymentReconciliation_Outcome, spPaymentReconciliation_Request, spPaymentReconciliation_Requestorganization, spPaymentReconciliation_Requestprovider);
+
+procedure TFhirIndexInformation.buildIndexesPaymentReconciliation;
+var
+  a : TSearchParamsPaymentReconciliation;
+begin
+  for a := low(TSearchParamsPaymentReconciliation) to high(TSearchParamsPaymentReconciliation) do
+  begin
+    assert(CHECK_TSearchParamsPaymentReconciliation[a] = a);
+    indexes.add(frtPaymentReconciliation, CODES_TSearchParamsPaymentReconciliation[a], DESC_TSearchParamsPaymentReconciliation[a], TYPES_TSearchParamsPaymentReconciliation[a], TARGETS_TSearchParamsPaymentReconciliation[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesPaymentReconciliation(key: integer; id : String; context : TFhirResource; resource: TFhirPaymentReconciliation);
+var
+  i : integer;
+begin
+  index(frtPaymentReconciliation, key, 0, resource.identifierList, 'identifier');
+  index(frtPaymentReconciliation, key, 0, resource.createdElement, 'created');
+  index(frtPaymentReconciliation, key, 0, resource.dispositionElement, 'disposition');
+  index(frtPaymentReconciliation, key, 0, resource.outcomeElement, 'http://hl7.org/fhir/remittance-outcome', 'outcome');
+  index(context, frtPaymentReconciliation, key, 0, resource.organization, 'organization');
+  index(context, frtPaymentReconciliation, key, 0, resource.request, 'request');
+  index(context, frtPaymentReconciliation, key, 0, resource.requestOrganization, 'requestorganization');
+  index(context, frtPaymentReconciliation, key, 0, resource.requestProvider, 'requestprovider');
+end;
+
+
+const
+  CHECK_TSearchParamsDecisionSupportRule : Array[TSearchParamsDecisionSupportRule] of TSearchParamsDecisionSupportRule = (
+    spDecisionSupportRule__content, spDecisionSupportRule__id, spDecisionSupportRule__lastUpdated, spDecisionSupportRule__profile, spDecisionSupportRule__query, spDecisionSupportRule__security, spDecisionSupportRule__tag, spDecisionSupportRule__text);
+
+procedure TFhirIndexInformation.BuildIndexesDecisionSupportRule;
+var
+  a : TSearchParamsDecisionSupportRule;
+begin
+  for a := low(TSearchParamsDecisionSupportRule) to high(TSearchParamsDecisionSupportRule) do
+  begin
+    assert(CHECK_TSearchParamsDecisionSupportRule[a] = a);
+    indexes.add(frtDecisionSupportRule, CODES_TSearchParamsDecisionSupportRule[a], DESC_TSearchParamsDecisionSupportRule[a], TYPES_TSearchParamsDecisionSupportRule[a], TARGETS_TSearchParamsDecisionSupportRule[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesDecisionSupportRule(key: integer; id : String; context : TFhirResource; resource: TFhirDecisionSupportRule);
+begin
+end;
+
+
+const
+  CHECK_TSearchParamsDecisionSupportServiceModule : Array[TSearchParamsDecisionSupportServiceModule] of TSearchParamsDecisionSupportServiceModule = (
+    spDecisionSupportServiceModule__content, spDecisionSupportServiceModule__id, spDecisionSupportServiceModule__lastUpdated, spDecisionSupportServiceModule__profile, spDecisionSupportServiceModule__query, spDecisionSupportServiceModule__security, spDecisionSupportServiceModule__tag, spDecisionSupportServiceModule__text);
+
+procedure TFhirIndexInformation.BuildIndexesDecisionSupportServiceModule;
+var
+  a : TSearchParamsDecisionSupportServiceModule;
+begin
+  for a := low(TSearchParamsDecisionSupportServiceModule) to high(TSearchParamsDecisionSupportServiceModule) do
+  begin
+    assert(CHECK_TSearchParamsDecisionSupportServiceModule[a] = a);
+    indexes.add(frtDecisionSupportServiceModule, CODES_TSearchParamsDecisionSupportServiceModule[a], DESC_TSearchParamsDecisionSupportServiceModule[a], TYPES_TSearchParamsDecisionSupportServiceModule[a], TARGETS_TSearchParamsDecisionSupportServiceModule[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesDecisionSupportServiceModule(key: integer; id : String; context : TFhirResource; resource: TFhirDecisionSupportServiceModule);
+begin
+end;
+
+
+const
+  CHECK_TSearchParamsExpansionProfile : Array[TSearchParamsExpansionProfile] of TSearchParamsExpansionProfile = (
+    spExpansionProfile__content, spExpansionProfile__id, spExpansionProfile__lastUpdated, spExpansionProfile__profile, spExpansionProfile__query, spExpansionProfile__security, spExpansionProfile__tag, spExpansionProfile__text,
+    spExpansionProfile_Date, spExpansionProfile_Description, spExpansionProfile_Identifier, spExpansionProfile_Name, spExpansionProfile_Publisher, spExpansionProfile_Status, spExpansionProfile_Url, spExpansionProfile_Version);
+
+procedure TFhirIndexInformation.BuildIndexesExpansionProfile;
+var
+  a : TSearchParamsExpansionProfile;
+begin
+  for a := low(TSearchParamsExpansionProfile) to high(TSearchParamsExpansionProfile) do
+  begin
+    assert(CHECK_TSearchParamsExpansionProfile[a] = a);
+    indexes.add(frtExpansionProfile, CODES_TSearchParamsExpansionProfile[a], DESC_TSearchParamsExpansionProfile[a], TYPES_TSearchParamsExpansionProfile[a], TARGETS_TSearchParamsExpansionProfile[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesExpansionProfile(key: integer; id : String; context : TFhirResource; resource: TFhirExpansionProfile);
+begin
+  index(frtExpansionProfile, key, 0, resource.dateElement, 'date');
+  index(frtExpansionProfile, key, 0, resource.descriptionElement, 'description');
+  index(frtExpansionProfile, key, 0, resource.identifierElement, 'identifier');
+  index(frtExpansionProfile, key, 0, resource.nameElement, 'name');
+  index(frtExpansionProfile, key, 0, resource.publisherElement, 'publisher');
+  index(frtExpansionProfile, key, 0, resource.urlElement, 'url');
+  index(frtExpansionProfile, key, 0, resource.versionElement, 'version');
+  index(frtExpansionProfile, key, 0, resource.statusElement, 'http://hl7.org/fhir/conformance-resource-status', 'status');
+end;
+
+
+const
+  CHECK_TSearchParamsGuidanceResponse : Array[TSearchParamsGuidanceResponse] of TSearchParamsGuidanceResponse = (
+    spGuidanceResponse__content, spGuidanceResponse__id, spGuidanceResponse__lastUpdated, spGuidanceResponse__profile, spGuidanceResponse__query, spGuidanceResponse__security, spGuidanceResponse__tag, spGuidanceResponse__text);
+
+procedure TFhirIndexInformation.BuildIndexesGuidanceResponse;
+var
+  a : TSearchParamsGuidanceResponse;
+begin
+  for a := low(TSearchParamsGuidanceResponse) to high(TSearchParamsGuidanceResponse) do
+  begin
+    assert(CHECK_TSearchParamsGuidanceResponse[a] = a);
+    indexes.add(frtGuidanceResponse, CODES_TSearchParamsGuidanceResponse[a], DESC_TSearchParamsGuidanceResponse[a], TYPES_TSearchParamsGuidanceResponse[a], TARGETS_TSearchParamsGuidanceResponse[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesGuidanceResponse(key: integer; id : String; context : TFhirResource; resource: TFhirGuidanceResponse);
+begin
+end;
+
+
+const
+  CHECK_TSearchParamsLibrary : Array[TSearchParamsLibrary] of TSearchParamsLibrary = (
+    spLibrary__content, spLibrary__id, spLibrary__lastUpdated, spLibrary__profile, spLibrary__query, spLibrary__security, spLibrary__tag, spLibrary__text);
+
+procedure TFhirIndexInformation.BuildIndexesLibrary;
+var
+  a : TSearchParamsLibrary;
+begin
+  for a := low(TSearchParamsLibrary) to high(TSearchParamsLibrary) do
+  begin
+    assert(CHECK_TSearchParamsLibrary[a] = a);
+    indexes.add(frtLibrary, CODES_TSearchParamsLibrary[a], DESC_TSearchParamsLibrary[a], TYPES_TSearchParamsLibrary[a], TARGETS_TSearchParamsLibrary[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesLibrary(key: integer; id : String; context : TFhirResource; resource: TFhirLibrary);
+begin
+end;
+
+
+const
+  CHECK_TSearchParamsMeasure : Array[TSearchParamsMeasure] of TSearchParamsMeasure = (
+    spMeasure__content, spMeasure__id, spMeasure__lastUpdated, spMeasure__profile, spMeasure__query, spMeasure__security, spMeasure__tag, spMeasure__text);
+
+procedure TFhirIndexInformation.BuildIndexesMeasure;
+var
+  a : TSearchParamsMeasure;
+begin
+  for a := low(TSearchParamsMeasure) to high(TSearchParamsMeasure) do
+  begin
+    assert(CHECK_TSearchParamsMeasure[a] = a);
+    indexes.add(frtMeasure, CODES_TSearchParamsMeasure[a], DESC_TSearchParamsMeasure[a], TYPES_TSearchParamsMeasure[a], TARGETS_TSearchParamsMeasure[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesMeasure(key: integer; id : String; context : TFhirResource; resource: TFhirMeasure);
+begin
+end;
+
+
+const
+  CHECK_TSearchParamsModuleDefinition : Array[TSearchParamsModuleDefinition] of TSearchParamsModuleDefinition = (
+    spModuleDefinition__content, spModuleDefinition__id, spModuleDefinition__lastUpdated, spModuleDefinition__profile, spModuleDefinition__query, spModuleDefinition__security, spModuleDefinition__tag, spModuleDefinition__text);
+
+procedure TFhirIndexInformation.BuildIndexesModuleDefinition;
+var
+  a : TSearchParamsModuleDefinition;
+begin
+  for a := low(TSearchParamsModuleDefinition) to high(TSearchParamsModuleDefinition) do
+  begin
+    assert(CHECK_TSearchParamsModuleDefinition[a] = a);
+    indexes.add(frtModuleDefinition, CODES_TSearchParamsModuleDefinition[a], DESC_TSearchParamsModuleDefinition[a], TYPES_TSearchParamsModuleDefinition[a], TARGETS_TSearchParamsModuleDefinition[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesModuleDefinition(key: integer; id : String; context : TFhirResource; resource: TFhirModuleDefinition);
+begin
+end;
+
+
+const
+  CHECK_TSearchParamsModuleMetadata : Array[TSearchParamsModuleMetadata] of TSearchParamsModuleMetadata = (
+    spModuleMetadata__content, spModuleMetadata__id, spModuleMetadata__lastUpdated, spModuleMetadata__profile, spModuleMetadata__query, spModuleMetadata__security, spModuleMetadata__tag, spModuleMetadata__text,
+    spModuleMetadata_Description, spModuleMetadata_Identifier, spModuleMetadata_Keyword, spModuleMetadata_Status, spModuleMetadata_Title, spModuleMetadata_Topic, spModuleMetadata_Version);
+
+
+procedure TFhirIndexInformation.BuildIndexesModuleMetadata;
+var
+  a : TSearchParamsModuleMetadata;
+begin
+  for a := low(TSearchParamsModuleMetadata) to high(TSearchParamsModuleMetadata) do
+  begin
+    assert(CHECK_TSearchParamsModuleMetadata[a] = a);
+    indexes.add(frtModuleMetadata, CODES_TSearchParamsModuleMetadata[a], DESC_TSearchParamsModuleMetadata[a], TYPES_TSearchParamsModuleMetadata[a], TARGETS_TSearchParamsModuleMetadata[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesModuleMetadata(key: integer;id : String; context : TFhirResource; resource: TFhirModuleMetadata);
+var
+  s : TFHIRString;
+begin
+  index(frtModuleMetadata, key, 0, resource.descriptionElement, 'description');
+  index(frtModuleMetadata, key, 0, resource.identifierList, 'identifier');
+  for s in resource.keywordList do
+    index(frtModuleMetadata, key, 0, s, 'keyword');
+  index(frtModuleMetadata, key, 0, resource.titleElement, 'title');
+  index(frtModuleMetadata, key, 0, resource.topicList, 'topic');
+  index(frtModuleMetadata, key, 0, resource.versionElement, 'version');
+  index(frtModuleMetadata, key, 0, resource.statusElement, 'http://hl7.org/fhir/module-metadata-status', 'status');
+end;
+
+
+const
+  CHECK_TSearchParamsOrderSet : Array[TSearchParamsOrderSet] of TSearchParamsOrderSet = (
+    spOrderSet__content, spOrderSet__id, spOrderSet__lastUpdated, spOrderSet__profile, spOrderSet__query, spOrderSet__security, spOrderSet__tag, spOrderSet__text);
+
+procedure TFhirIndexInformation.BuildIndexesOrderSet;
+var
+  a : TSearchParamsOrderSet;
+begin
+  for a := low(TSearchParamsOrderSet) to high(TSearchParamsOrderSet) do
+  begin
+    assert(CHECK_TSearchParamsOrderSet[a] = a);
+    indexes.add(frtOrderSet, CODES_TSearchParamsOrderSet[a], DESC_TSearchParamsOrderSet[a], TYPES_TSearchParamsOrderSet[a], TARGETS_TSearchParamsOrderSet[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesOrderSet(key: integer; id : String; context : TFhirResource; resource: TFhirOrderSet);
+begin
+end;
+
+
+const
+  CHECK_TSearchParamsSequence : Array[TSearchParamsSequence] of TSearchParamsSequence = (
+    spSequence__content, spSequence__id, spSequence__lastUpdated, spSequence__profile, spSequence__query, spSequence__security, spSequence__tag, spSequence__text,
+    spSequence_Chromosome, spSequence_Coordinate, spSequence_End, spSequence_Species, spSequence_Start, spSequence_Type, spSequence_Variationid);
+
+procedure TFhirIndexInformation.BuildIndexesSequence;
+var
+  a : TSearchParamsSequence;
+begin
+  for a := low(TSearchParamsSequence) to high(TSearchParamsSequence) do
+  begin
+    assert(CHECK_TSearchParamsSequence[a] = a);
+    indexes.add(frtSequence, CODES_TSearchParamsSequence[a], DESC_TSearchParamsSequence[a], TYPES_TSearchParamsSequence[a], TARGETS_TSearchParamsSequence[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesSequence(key: integer; id : String; context : TFhirResource; resource: TFhirSequence);
+var
+  c : TFhirSequenceCoordinate;
+begin
+  index(frtSequence, key, 0, resource.species, 'species');
+  index(frtSequence, key, 0, resource.type_Element, 'http://hl7.org/fhir/sequence-type', 'type');
+  index(frtSequence, key, 0, resource.variationIDList, 'variationid');
+  for c in resource.coordinateList do
+  begin
+    index(frtSequence, key, 0, c.chromosome, 'chromosome');
+    index(frtSequence, key, 0, c.startElement, 'start');
+    index(frtSequence, key, 0, c.end_Element, 'end');
+// spSequence_Coordinate, {@enum.value "coordinate" spSequence_Coordinate Genomic coordinate of the sequence. For example, a search for sequence in region 1:123-345 can be represented as `coordinate=1$lt345$gt123` }
+  end;
+end;
+
+
+{$ENDIF}
+
+
 
 
 Const
@@ -2456,7 +3154,7 @@ var
 begin
   ndx := FInfo.FComposites.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown composite index '+name+' on type '+CODES_TFhirResourceType[aType]);
+    raise Exception.create('Unknown composite index '+name+' on type '+CODES_TFHIRResourceType[aType]);
   if (ndx.Key = 0) then
     raise Exception.create('unknown composite index '+ndx.Name);
   result := FEntries.add(key, parent, ndx);
@@ -4256,6 +4954,7 @@ begin
   end;
 end;
 
+{$IFDEF DSTU2}
 Const
   CHECK_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of TSearchParamsQuestionnaire = (spQuestionnaire__content, spQuestionnaire__id, spQuestionnaire__lastUpdated, spQuestionnaire__profile, spQuestionnaire__query, spQuestionnaire__security, spQuestionnaire__tag, spQuestionnaire__text,
     spQuestionnaire_Code, spQuestionnaire_Date, spQuestionnaire_Identifier, spQuestionnaire_Publisher, spQuestionnaire_Status, spQuestionnaire_Title, spQuestionnaire_Version);
@@ -4289,7 +4988,44 @@ begin
   index(frtQuestionnaire, key, 0, resource.group.titleElement, 'title');
   IndexGroup(resource.group);
 end;
+{$ELSE}
+Const
+  CHECK_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of TSearchParamsQuestionnaire = (spQuestionnaire__content, spQuestionnaire__id, spQuestionnaire__lastUpdated, spQuestionnaire__profile, spQuestionnaire__query, spQuestionnaire__security, spQuestionnaire__tag, spQuestionnaire__text,
+    spQuestionnaire_Code, spQuestionnaire_Date, spQuestionnaire_Identifier, spQuestionnaire_Publisher, spQuestionnaire_Status, spQuestionnaire_Title, spQuestionnaire_Version);
 
+procedure TFhirIndexInformation.buildIndexesQuestionnaire;
+var
+  a : TSearchParamsQuestionnaire;
+begin
+  for a := low(TSearchParamsQuestionnaire) to high(TSearchParamsQuestionnaire) do
+  begin
+    assert(CHECK_TSearchParamsQuestionnaire[a] = a);
+    indexes.add(frtQuestionnaire, CODES_TSearchParamsQuestionnaire[a], DESC_TSearchParamsQuestionnaire[a], TYPES_TSearchParamsQuestionnaire[a], TARGETS_TSearchParamsQuestionnaire[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesQuestionnaire(key: integer; id : String; context : TFhirResource; resource: TFhirQuestionnaire);
+  procedure IndexGroup(group : TFhirQuestionnaireItem);
+  var
+    i : integer;
+  begin
+    index(frtQuestionnaire, key, 0, group.conceptList, 'code');
+    for I := 0 to group.itemList.Count - 1 do
+      indexGroup(group.itemList[i]);
+  end;
+var
+  i : integer;
+begin
+  index(frtQuestionnaire, key, 0, resource.publisherElement, 'publisher');
+  index(frtQuestionnaire, key, 0, resource.statusElement, 'http://hl7.org/fhir/questionnaire-status', 'status');
+  index(frtQuestionnaire, key, 0, resource.identifierList, 'identifier');
+  index(frtQuestionnaire, key, 0, resource.dateElement, 'date');
+  index(frtQuestionnaire, key, 0, resource.versionElement, 'version');
+  index(frtQuestionnaire, key, 0, resource.titleElement, 'title');
+  for I := 0 to resource.itemList.Count - 1 do
+    indexGroup(resource.itemList[i]);
+end;
+{$ENDIF}
 
 Const
   CHECK_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of TSearchParamsQuestionnaireResponse = (
@@ -5077,89 +5813,6 @@ begin
 end;
 
 const
-  CHECK_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of TSearchParamsEligibilityRequest = ( spEligibilityRequest__content, spEligibilityRequest__id, spEligibilityRequest__lastUpdated, spEligibilityRequest__profile, spEligibilityRequest__query, spEligibilityRequest__security, spEligibilityRequest__tag, spEligibilityRequest__text,
-    spEligibilityRequest_Identifier);
-
-procedure TFhirIndexInformation.buildIndexesEligibilityRequest;
-var
-  a : TSearchParamsEligibilityRequest;
-begin
-  for a := low(TSearchParamsEligibilityRequest) to high(TSearchParamsEligibilityRequest) do
-  begin
-    assert(CHECK_TSearchParamsEligibilityRequest[a] = a);
-    indexes.add(frtEligibilityRequest, CODES_TSearchParamsEligibilityRequest[a], DESC_TSearchParamsEligibilityRequest[a], TYPES_TSearchParamsEligibilityRequest[a], TARGETS_TSearchParamsEligibilityRequest[a]);
-  end;
-end;
-
-procedure TFhirIndexManager.buildIndexValuesEligibilityRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityRequest);
-begin
-  index(frtEligibilityRequest, key, 0, resource.identifierList, 'identifier');
-end;
-
-const
-  CHECK_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of TSearchParamsEligibilityResponse = ( spEligibilityResponse__content, spEligibilityResponse__id, spEligibilityResponse__lastUpdated, spEligibilityResponse__profile, spEligibilityResponse__query, spEligibilityResponse__security, spEligibilityResponse__tag, spEligibilityResponse__text,
-    spEligibilityResponse_Identifier);
-
-procedure TFhirIndexInformation.buildIndexesEligibilityResponse;
-var
-  a : TSearchParamsEligibilityResponse;
-begin
-  for a := low(TSearchParamsEligibilityResponse) to high(TSearchParamsEligibilityResponse) do
-  begin
-    assert(CHECK_TSearchParamsEligibilityResponse[a] = a);
-    indexes.add(frtEligibilityResponse, CODES_TSearchParamsEligibilityResponse[a], DESC_TSearchParamsEligibilityResponse[a], TYPES_TSearchParamsEligibilityResponse[a], TARGETS_TSearchParamsEligibilityResponse[a]);
-  end;
-end;
-
-procedure TFhirIndexManager.buildIndexValuesEligibilityResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityResponse);
-begin
-  index(frtEligibilityResponse, key, 0, resource.identifierList, 'identifier');
-end;
-
-const
-  CHECK_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of TSearchParamsEnrollmentRequest = ( spEnrollmentRequest__content, spEnrollmentRequest__id, spEnrollmentRequest__lastUpdated, spEnrollmentRequest__profile, spEnrollmentRequest__query, spEnrollmentRequest__security, spEnrollmentRequest__tag, spEnrollmentRequest__text,
-    spEnrollmentRequest_Identifier, spEnrollmentRequest_Patient, spEnrollmentRequest_Subject);
-
-procedure TFhirIndexInformation.buildIndexesEnrollmentRequest;
-var
-  a : TSearchParamsEnrollmentRequest;
-begin
-  for a := low(TSearchParamsEnrollmentRequest) to high(TSearchParamsEnrollmentRequest) do
-  begin
-    assert(CHECK_TSearchParamsEnrollmentRequest[a] = a);
-    indexes.add(frtEnrollmentRequest, CODES_TSearchParamsEnrollmentRequest[a], DESC_TSearchParamsEnrollmentRequest[a], TYPES_TSearchParamsEnrollmentRequest[a], TARGETS_TSearchParamsEnrollmentRequest[a]);
-  end;
-end;
-
-procedure TFhirIndexManager.buildIndexValuesEnrollmentRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentRequest);
-begin
-  index(frtEnrollmentRequest, key, 0, resource.identifierList, 'identifier');
-  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'subject');
-  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'patient');
-  patientCompartment(key, resource.subject);
-end;
-
-const
-  CHECK_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of TSearchParamsEnrollmentResponse = ( spEnrollmentResponse__content, spEnrollmentResponse__id, spEnrollmentResponse__lastUpdated, spEnrollmentResponse__profile, spEnrollmentResponse__query, spEnrollmentResponse__security, spEnrollmentResponse__tag, spEnrollmentResponse__text,
-    spEnrollmentResponse_Identifier);
-
-procedure TFhirIndexInformation.buildIndexesEnrollmentResponse;
-var
-  a : TSearchParamsEnrollmentResponse;
-begin
-  for a := low(TSearchParamsEnrollmentResponse) to high(TSearchParamsEnrollmentResponse) do
-  begin
-    assert(CHECK_TSearchParamsEnrollmentResponse[a] = a);
-    indexes.add(frtEnrollmentResponse, CODES_TSearchParamsEnrollmentResponse[a], DESC_TSearchParamsEnrollmentResponse[a], TYPES_TSearchParamsEnrollmentResponse[a], TARGETS_TSearchParamsEnrollmentResponse[a]);
-  end;
-end;
-
-procedure TFhirIndexManager.buildIndexValuesEnrollmentResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentResponse);
-begin
-  index(frtEnrollmentResponse, key, 0, resource.identifierList, 'identifier');
-end;
-
-const
   CHECK_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of TSearchParamsEpisodeOfCare = ( spEpisodeOfCare__content, spEpisodeOfCare__id, spEpisodeOfCare__lastUpdated, spEpisodeOfCare__profile, spEpisodeOfCare__query, spEpisodeOfCare__security, spEpisodeOfCare__tag, spEpisodeOfCare__text,
     spEpisodeOfCare_Care_manager, spEpisodeOfCare_Condition, spEpisodeOfCare_Date, spEpisodeOfCare_Identifier, spEpisodeOfCare_Incomingreferral, spEpisodeOfCare_Organization,
     spEpisodeOfCare_Patient, spEpisodeOfCare_Status, spEpisodeOfCare_Team_member, spEpisodeOfCare_Type);
@@ -5192,34 +5845,6 @@ begin
     index(context, frtEpisodeOfCare, key, 0, resource.conditionList[i], 'condition');
   for i := 0 to resource.careTeamList.Count - 1 do
     index(context, frtEpisodeOfCare, key, 0, resource.careTeamList[i].member, 'team-member');
-end;
-
-const
-  CHECK_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of TSearchParamsExplanationOfBenefit = (
-    spExplanationOfBenefit__content, spExplanationOfBenefit__id, spExplanationOfBenefit__lastUpdated, spExplanationOfBenefit__profile, spExplanationOfBenefit__query, spExplanationOfBenefit__security, spExplanationOfBenefit__tag, spExplanationOfBenefit__text,
-    spExplanationOfBenefit_Identifier);
-
-procedure TFhirIndexInformation.buildIndexesExplanationOfBenefit;
-var
-  a : TSearchParamsExplanationOfBenefit;
-begin
-  for a := low(TSearchParamsExplanationOfBenefit) to high(TSearchParamsExplanationOfBenefit) do
-  begin
-    assert(CHECK_TSearchParamsExplanationOfBenefit[a] = a);
-    indexes.add(frtExplanationOfBenefit, CODES_TSearchParamsExplanationOfBenefit[a], DESC_TSearchParamsExplanationOfBenefit[a], TYPES_TSearchParamsExplanationOfBenefit[a], TARGETS_TSearchParamsExplanationOfBenefit[a]);
-  end;
-end;
-
-procedure TFhirIndexInformation.buildIndexesExtensionDefinition;
-begin
-
-end;
-
-procedure TFhirIndexManager.buildIndexValuesExplanationOfBenefit(key: integer; id : String; context : TFhirResource; resource: TFhirExplanationOfBenefit);
-var
-  i : integer;
-begin
-  index(frtExplanationOfBenefit, key, 0, resource.identifierList, 'identifier');
 end;
 
 const
@@ -5277,28 +5902,6 @@ begin
     index(frtImagingObjectSelection, key, 0, resource.studyList[i].uid, 'selected-study');
 end;
 
-
-const
-  CHECK_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of TSearchParamsPaymentNotice = ( spPaymentNotice__content, spPaymentNotice__id, spPaymentNotice__lastUpdated, spPaymentNotice__profile, spPaymentNotice__query, spPaymentNotice__security, spPaymentNotice__tag, spPaymentNotice__text,
-    spPaymentNotice_Identifier);
-
-procedure TFhirIndexInformation.buildIndexesPaymentNotice;
-var
-  a : TSearchParamsPaymentNotice;
-begin
-  for a := low(TSearchParamsPaymentNotice) to high(TSearchParamsPaymentNotice) do
-  begin
-    assert(CHECK_TSearchParamsPaymentNotice[a] = a);
-    indexes.add(frtPaymentNotice, CODES_TSearchParamsPaymentNotice[a], DESC_TSearchParamsPaymentNotice[a], TYPES_TSearchParamsPaymentNotice[a], TARGETS_TSearchParamsPaymentNotice[a]);
-  end;
-end;
-
-procedure TFhirIndexManager.buildIndexValuesPaymentNotice(key: integer; id : String; context : TFhirResource; resource: TFhirPaymentNotice);
-var
-  i : integer;
-begin
-  index(frtPaymentNotice, key, 0, resource.identifierList, 'identifier');
-end;
 
 const
   CHECK_TSearchParamsPerson : Array[TSearchParamsPerson] of TSearchParamsPerson = (
@@ -5488,29 +6091,6 @@ begin
   index(context, frtProcessResponse, key, 0, resource.organization, 'organization');
   index(context, frtProcessResponse, key, 0, resource.requestOrganization, 'requestorganization');
   index(context, frtProcessResponse, key, 0, resource.requestProvider, 'requestprovider');
-end;
-
-const
-  CHECK_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of TSearchParamsPaymentReconciliation = (
-    spPaymentReconciliation__content, spPaymentReconciliation__id, spPaymentReconciliation__lastUpdated, spPaymentReconciliation__profile, spPaymentReconciliation__query, spPaymentReconciliation__security, spPaymentReconciliation__tag, spPaymentReconciliation__text,
-    spPaymentReconciliation_Identifier);
-
-procedure TFhirIndexInformation.buildIndexesPaymentReconciliation;
-var
-  a : TSearchParamsPaymentReconciliation;
-begin
-  for a := low(TSearchParamsPaymentReconciliation) to high(TSearchParamsPaymentReconciliation) do
-  begin
-    assert(CHECK_TSearchParamsPaymentReconciliation[a] = a);
-    indexes.add(frtPaymentReconciliation, CODES_TSearchParamsPaymentReconciliation[a], DESC_TSearchParamsPaymentReconciliation[a], TYPES_TSearchParamsPaymentReconciliation[a], TARGETS_TSearchParamsPaymentReconciliation[a]);
-  end;
-end;
-
-procedure TFhirIndexManager.buildIndexValuesPaymentReconciliation(key: integer; id : String; context : TFhirResource; resource: TFhirPaymentReconciliation);
-var
-  i : integer;
-begin
-  index(frtPaymentReconciliation, key, 0, resource.identifierList, 'identifier');
 end;
 
 
@@ -5755,6 +6335,7 @@ end;
 procedure TFHIRIndexInformation.buildIndexes;
 var
   i : TFhirResourceType;
+  s : String;
 begin
   // the order of these matters when building search forms
   buildIndexesPractitioner;
@@ -5838,7 +6419,6 @@ begin
   buildIndexesEnrollmentResponse;
   buildIndexesEpisodeOfCare;
   buildIndexesExplanationOfBenefit;
-  buildIndexesExtensionDefinition;
   buildIndexesGoal;
   buildIndexesImagingObjectSelection;
   buildIndexesPaymentNotice;
@@ -5852,12 +6432,33 @@ begin
   buildIndexesBinary;
   buildIndexesAccount;
   buildIndexesImplementationGuide;
+  {$IFDEF DSTU21}
+  BuildIndexesDecisionSupportRule;
+  BuildIndexesDecisionSupportServiceModule;
+  BuildIndexesExpansionProfile;
+  BuildIndexesGuidanceResponse;
+  BuildIndexesLibrary;
+  BuildIndexesMeasure;
+  BuildIndexesModuleDefinition;
+  BuildIndexesModuleMetadata;
+  BuildIndexesOrderSet;
+  BuildIndexesSequence;
+  {$ENDIF}
 
+
+
+  s := '';
   for I := TFhirResourceType(1) to High(TFhirResourceType) do
     if not (i in [frtParameters]) and (FIndexes.getByName(i, '_id') = nil) then
+      if s = '' then
+        s := CODES_TFHIRResourceType[i]
+      else
+        s := s +', '+CODES_TFHIRResourceType[i];
+
+  if s <> '' then
     begin
-      writeln('No registration for '+CODES_TFHIRResourceType[i]);
-      raise Exception.Create('No registration for '+CODES_TFHIRResourceType[i]);
+    writeln('No registration for '+s);
+    raise Exception.Create('No registration for '+s);
     end;
 end;
 
@@ -5884,7 +6485,7 @@ begin
     end;
 end;
 
-function TFhirIndexInformation.GetTypeByName(types: TFhirResourceTypeSet; name: String): TFhirSearchParamType;
+function TFhirIndexInformation.GetTypeByName(types: TFhirResourceTypeSet; name: String): TFhirSearchParamTypeEnum;
 var
   i : integer;
 begin

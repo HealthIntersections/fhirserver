@@ -41,7 +41,6 @@ Running
 
 System Pre-requisites
 * you need MSSQL 2012+ (express version will do)
-* install this: http://www.healthintersections.com.au/AltovaXmlCom.msi
 * you need a copy of the full specification for the same version as the generated reference implementation code 
   (download file http://hl7.org/fhir/fhir-spec.zip for DSTU version, or get from svn (see http://wiki.hl7.org/index.php?title=FHIR : update svn, run a build, in build\publish)) 
 * when the executable runs, it takes parameters on the command line, in either order: an optional ini filename, and an optional command

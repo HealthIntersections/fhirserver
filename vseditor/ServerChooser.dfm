@@ -61,7 +61,7 @@ object ServerChooserForm: TServerChooserForm
       end
       item
         Position = 4
-        Width = 180
+        Width = 184
         WideText = 'Description'
       end>
   end

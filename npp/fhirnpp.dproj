@@ -117,7 +117,7 @@
             <Form>FHIRToolbox</Form>
         </DCCReference>
         <DCCReference Include="FHIRPluginSettings.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRValidator.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRValidator.pas"/>
         <DCCReference Include="..\Libraries\support\RegExpr.pas"/>
         <DCCReference Include="..\Libraries\support\StringSupport.pas"/>
         <DCCReference Include="..\Libraries\support\MathSupport.pas"/>
@@ -178,7 +178,7 @@
         <DCCReference Include="..\Libraries\support\AdvStringObjectMatches.pas"/>
         <DCCReference Include="..\Libraries\support\AdvNameBuffers.pas"/>
         <DCCReference Include="..\Libraries\support\AdvMemories.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRBase.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRBase.pas"/>
         <DCCReference Include="..\Libraries\support\DateAndTime.pas"/>
         <DCCReference Include="..\Libraries\support\DecimalSupport.pas"/>
         <DCCReference Include="..\Libraries\support\GUIDSupport.pas"/>
@@ -186,26 +186,26 @@
         <DCCReference Include="..\Libraries\support\HL7V2DateSupport.pas"/>
         <DCCReference Include="..\Libraries\support\AdvNames.pas"/>
         <DCCReference Include="..\Libraries\support\AdvStringMatches.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRUtilities.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRUtilities.pas"/>
         <DCCReference Include="..\Libraries\support\OIDSupport.pas"/>
         <DCCReference Include="..\Libraries\support\TextUtilities.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRSupport.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRSupport.pas"/>
         <DCCReference Include="..\Libraries\support\JWT.pas"/>
         <DCCReference Include="..\Libraries\support\HMAC.pas"/>
         <DCCReference Include="..\Libraries\support\libeay32.pas"/>
-        <DCCReference Include="..\Libraries\refplat\SCIMObjects.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRResources.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRTypes.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRConstants.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRSecurity.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRTags.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRLang.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\SCIMObjects.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRResources.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRTypes.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRConstants.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRSecurity.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRTags.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRLang.pas"/>
         <DCCReference Include="..\Libraries\support\AfsResourceVolumes.pas"/>
         <DCCReference Include="..\Libraries\support\AfsVolumes.pas"/>
         <DCCReference Include="..\Libraries\support\AfsStreamManagers.pas"/>
         <DCCReference Include="..\Libraries\support\AdvObjectMatches.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRParser.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRParserBase.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRParser.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRParserBase.pas"/>
         <DCCReference Include="..\Libraries\support\MsXmlParser.pas"/>
         <DCCReference Include="..\Libraries\support\XMLBuilder.pas"/>
         <DCCReference Include="..\Libraries\support\AdvWinInetClients.pas"/>
@@ -213,7 +213,7 @@
         <DCCReference Include="..\Libraries\support\AdvXmlBuilders.pas"/>
         <DCCReference Include="..\Libraries\support\AdvXMLFormatters.pas"/>
         <DCCReference Include="..\Libraries\support\AdvXMLEntities.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRProfileUtilities.pas"/>
         <DCCReference Include="..\Libraries\support\AdvZipReaders.pas"/>
         <DCCReference Include="..\Libraries\support\AdvZipDeclarations.pas"/>
         <DCCReference Include="..\Libraries\support\AdvZipParts.pas"/>
@@ -221,24 +221,24 @@
         <DCCReference Include="..\Libraries\support\AdvZipWorkers.pas"/>
         <DCCReference Include="..\Libraries\support\kCritSct.pas"/>
         <DCCReference Include="FHIRPluginValidator.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRClient.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRClient.pas"/>
         <DCCReference Include="NewResourceForm.pas">
             <Form>ResourceNewForm</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\refplat\FHIRNarrativeGenerator.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRNarrativeGenerator.pas"/>
         <DCCReference Include="NewServerForm.pas">
             <Form>RegisterServerForm</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\refplat\SmartOnFhirLogin.pas">
+        <DCCReference Include="..\Libraries\refplat2\SmartOnFhirLogin.pas">
             <Form>SmartOnFhirLoginForm</Form>
         </DCCReference>
         <DCCReference Include="..\Libraries\support\ParseMap.pas"/>
-        <DCCReference Include="..\Libraries\refplat\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="FetchResourceForm.pas">
             <Form>FetchResourceFrm</Form>
         </DCCReference>
         <DCCReference Include="..\..\Components\vtree\Source\VirtualTrees.pas"/>
-        <DCCReference Include="..\Libraries\refplat\FHIRPath.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRPath.pas"/>
         <DCCReference Include="FHIRPathDocumentation.pas">
             <Form>FHIRPathDocumentationForm</Form>
         </DCCReference>
@@ -252,7 +252,7 @@
         <DCCReference Include="FHIRVisualiser.pas">
             <Form>FHIRVisualizer</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\refplat\FHIRPathDebugger.pas">
+        <DCCReference Include="..\Libraries\refplat2\FHIRPathDebugger.pas">
             <Form>FHIRPathDebuggerForm</Form>
         </DCCReference>
         <DCCReference Include="WelcomeScreen.pas">
@@ -314,7 +314,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -628,16 +637,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

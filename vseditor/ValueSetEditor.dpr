@@ -32,21 +32,21 @@ uses
   VTAccessibility in '..\Libraries\treeview\Source\VTAccessibility.pas',
   VTAccessibilityFactory in '..\Libraries\treeview\Source\VTAccessibilityFactory.pas',
   VTHeaderPopup in '..\Libraries\treeview\Source\VTHeaderPopup.pas',
-  FHIRBase in '..\Libraries\refplat\FHIRBase.pas',
-  FHIRClient in '..\Libraries\refplat\FHIRClient.pas',
-  FHIRConstants in '..\Libraries\refplat\FHIRConstants.pas',
-  FHIRDigitalSignatures in '..\Libraries\refplat\FHIRDigitalSignatures.pas',
-  FHIRLang in '..\Libraries\refplat\FHIRLang.pas',
-  FHIRParser in '..\Libraries\refplat\FHIRParser.pas',
-  FHIRParserBase in '..\Libraries\refplat\FHIRParserBase.pas',
-  FHIRResources in '..\Libraries\refplat\FHIRResources.pas',
-  FHIRSupport in '..\Libraries\refplat\FHIRSupport.pas',
-  FHIRTags in '..\Libraries\refplat\FHIRTags.pas',
-  FHIRTypes in '..\Libraries\refplat\FHIRTypes.pas',
-  FHIRUtilities in '..\Libraries\refplat\FHIRUtilities.pas',
-  FHIRWorkerContext in '..\Libraries\refplat\FHIRWorkerContext.pas',
-  NarrativeGenerator in '..\Libraries\refplat\NarrativeGenerator.pas',
-  SCIMObjects in '..\Libraries\refplat\SCIMObjects.pas',
+  FHIRBase in '..\Libraries\refplat2\FHIRBase.pas',
+  FHIRClient in '..\Libraries\refplat2\FHIRClient.pas',
+  FHIRConstants in '..\Libraries\refplat2\FHIRConstants.pas',
+  FHIRDigitalSignatures in '..\Libraries\refplat2\FHIRDigitalSignatures.pas',
+  FHIRLang in '..\Libraries\refplat2\FHIRLang.pas',
+  FHIRParser in '..\Libraries\refplat2\FHIRParser.pas',
+  FHIRParserBase in '..\Libraries\refplat2\FHIRParserBase.pas',
+  FHIRResources in '..\Libraries\refplat2\FHIRResources.pas',
+  FHIRSupport in '..\Libraries\refplat2\FHIRSupport.pas',
+  FHIRTags in '..\Libraries\refplat2\FHIRTags.pas',
+  FHIRTypes in '..\Libraries\refplat2\FHIRTypes.pas',
+  FHIRUtilities in '..\Libraries\refplat2\FHIRUtilities.pas',
+  FHIRWorkerContext in '..\Libraries\refplat2\FHIRWorkerContext.pas',
+  NarrativeGenerator in '..\Libraries\refplat2\NarrativeGenerator.pas',
+  SCIMObjects in '..\Libraries\refplat2\SCIMObjects.pas',
   DecimalSupport in '..\Libraries\support\DecimalSupport.pas',
   GUIDSupport in '..\Libraries\support\GUIDSupport.pas',
   StringSupport in '..\Libraries\support\StringSupport.pas',
@@ -117,7 +117,7 @@ uses
   AdvStringObjectMatches in '..\Libraries\support\AdvStringObjectMatches.pas',
   HMAC in '..\Libraries\support\HMAC.pas',
   libeay32 in '..\Libraries\support\libeay32.pas',
-  FHIRSecurity in '..\Libraries\refplat\FHIRSecurity.pas',
+  FHIRSecurity in '..\Libraries\refplat2\FHIRSecurity.pas',
   MsXmlParser in '..\Libraries\support\MsXmlParser.pas',
   AdvMemories in '..\Libraries\support\AdvMemories.pas',
   XMLBuilder in '..\Libraries\support\XMLBuilder.pas',
@@ -142,8 +142,8 @@ uses
   AdvZipUtilities in '..\Libraries\support\AdvZipUtilities.pas',
   AdvZipWorkers in '..\Libraries\support\AdvZipWorkers.pas',
   AltovaXMLLib_TLB in '..\Libraries\support\AltovaXMLLib_TLB.pas',
-  ProfileManager in '..\Libraries\refplat\ProfileManager.pas',
-  QuestionnaireBuilder in '..\Libraries\refplat\QuestionnaireBuilder.pas',
+  ProfileManager in '..\Libraries\refplat2\ProfileManager.pas',
+  QuestionnaireBuilder in '..\Libraries\refplat2\QuestionnaireBuilder.pas',
   ShellSupport in '..\Libraries\support\ShellSupport.pas',
   Vcl.Forms,
   IdSoapMime in '..\Libraries\indysoap\IdSoapMime.pas',
@@ -164,16 +164,16 @@ uses
   ValueSetEditorExceptionForm in 'ValueSetEditorExceptionForm.pas' {ExceptionDialog},
   ValueSetEditorRegisterServerForm in 'ValueSetEditorRegisterServerForm.pas' {frmRegisterServer},
   MimeMessage in '..\Libraries\support\MimeMessage.pas',
-  FhirPath in '..\Libraries\refplat\FhirPath.pas',
-  FHIRProfileUtilities in '..\Libraries\refplat\FHIRProfileUtilities.pas',
-  SmartOnFhirUtilities in '..\Libraries\refplat\SmartOnFhirUtilities.pas';
+  FhirPath in '..\Libraries\refplat2\FhirPath.pas',
+  FHIRProfileUtilities in '..\Libraries\refplat2\FHIRProfileUtilities.pas',
+  SmartOnFhirUtilities in '..\Libraries\refplat2\SmartOnFhirUtilities.pas',
+  ClosureManagerFrm in 'ClosureManagerFrm.pas' {ClosureManagerForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TForm5, Form5);
   Application.CreateForm(TServerChooserForm, ServerChooserForm);
   Application.CreateForm(TfrmRegisterServer, frmRegisterServer1);
   Application.CreateForm(TForm1, Form1);

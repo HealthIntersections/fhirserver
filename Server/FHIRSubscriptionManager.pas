@@ -62,7 +62,7 @@ Type
   protected
     function ItemClass : TAdvObjectClass; override;
   public
-    procedure addOrUpdate(Key : integer; info : String; status : TFhirSubscriptionStatus); overload;
+    procedure addOrUpdate(Key : integer; info : String; status : TFhirSubscriptionStatusEnum); overload;
     function getByKey(Key : integer) : TSubscriptionTracker;
     property TrackerItem[i : integer] : TSubscriptionTracker read GetTracker; default;
   end;
@@ -256,7 +256,7 @@ begin
   if subscription.channel.type_ = SubscriptionChannelTypeNull then
     raise Exception.Create('A channel type must be specified');
   if subscription.channel.type_ in [SubscriptionChannelTypeMessage] then
-    raise Exception.Create('The channel type '+CODES_TFhirSubscriptionChannelType[subscription.channel.type_]+' is not supported');
+    raise Exception.Create('The channel type '+CODES_TFhirSubscriptionChannelTypeEnum[subscription.channel.type_]+' is not supported');
   if (subscription.channel.type_ <> SubscriptionChannelTypeWebsocket) and (subscription.channel.endpoint = '') then
     raise Exception.Create('A channel URL must be specified');
   if (subscription.channel.type_ = SubscriptionChannelTypeSms) and not subscription.channel.endpoint.StartsWith('tel:') then
@@ -1216,7 +1216,7 @@ end;
 
 { TSubscriptionTrackerList }
 
-procedure TSubscriptionTrackerList.addOrUpdate(Key: integer; info: String; status : TFhirSubscriptionStatus);
+procedure TSubscriptionTrackerList.addOrUpdate(Key: integer; info: String; status : TFhirSubscriptionStatusEnum);
 var
   t : TSubscriptionTracker;
 begin

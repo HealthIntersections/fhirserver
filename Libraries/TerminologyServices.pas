@@ -10,7 +10,7 @@ uses
   YuStemmer;
 
 Type
-  TFhirFilterOperator = FHIRTypes.TFhirFilterOperator;
+  TFhirFilterOperatorEnum = FHIRTypes.TFhirFilterOperatorEnum;
 
   TCodeSystemProviderContext = class (TAdvObject)
   public
@@ -70,11 +70,11 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList); overload; virtual; abstract;
     procedure Displays(code : String; list : TStringList); overload; virtual; abstract;
-    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
+    function doesFilter(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; virtual;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
+    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; virtual; abstract;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; virtual; abstract;
@@ -97,7 +97,7 @@ begin
   // do nothing
 end;
 
-function TCodeSystemProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TCodeSystemProvider.doesFilter(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 var
   ctxt : TCodeSystemProviderFilterContext;
 begin

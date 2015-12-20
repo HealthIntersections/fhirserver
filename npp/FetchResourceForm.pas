@@ -112,7 +112,7 @@ type
     procedure AddSearchAll;
     procedure AddSearch(rr : TFhirConformanceRestResource);
     procedure loadSortCombo;
-    function createSearchParam(name, definition : String; type_ : TFhirSearchParamType) : TFhirConformanceRestResourceSearchParam;
+    function createSearchParam(name, definition : String; type_ : TFhirSearchParamTypeEnum) : TFhirConformanceRestResourceSearchParam;
     procedure SetProfiles(const Value: TProfileManager);
     procedure layoutSearchParameters;
     function asURL : String;
@@ -355,7 +355,7 @@ begin
   FSearchItems.Clear;
 end;
 
-function TFetchResourceFrm.createSearchParam(name, definition: String; type_: TFhirSearchParamType): TFhirConformanceRestResourceSearchParam;
+function TFetchResourceFrm.createSearchParam(name, definition: String; type_: TFhirSearchParamTypeEnum): TFhirConformanceRestResourceSearchParam;
 begin
   result := TFhirConformanceRestResourceSearchParam.Create;
   try
@@ -719,7 +719,7 @@ end;
 procedure TSearchEntryPanel.build;
 var
   hasMod : boolean;
-  modc : TFhirSearchModifierCode;
+  modc : TFhirSearchModifierCodeEnum;
 begin
   panel := TPanel.Create(form);
   panel.Parent := form.ScrollBox1;
@@ -742,7 +742,7 @@ begin
   lbl.Width := form.Canvas.TextWidth(lbl.Caption);
 
   hasMod := false;
-  for modc := low(TFhirSearchModifierCode) to high(TFhirSearchModifierCode) do
+  for modc := low(TFhirSearchModifierCodeEnum) to high(TFhirSearchModifierCodeEnum) do
     if modc in definition.modifier then
       hasMod := true;
 
@@ -755,9 +755,9 @@ begin
     modlist.Width := 50;
     modlist.Style := csDropDownList;
     modlist.Items.Add('');
-    for modc := low(TFhirSearchModifierCode) to high(TFhirSearchModifierCode) do
+    for modc := low(TFhirSearchModifierCodeEnum) to high(TFhirSearchModifierCodeEnum) do
       if modc in definition.modifier then
-        modlist.Items.Add(':'+CODES_TFhirSearchModifierCode[modc]);
+        modlist.Items.Add(':'+CODES_TFhirSearchModifierCodeEnum[modc]);
   end;
   case definition.type_ of
     SearchParamTypeString: buildEdit('Text to search by');

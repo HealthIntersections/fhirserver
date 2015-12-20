@@ -280,6 +280,10 @@ object Form5: TForm5
     object tabInformation: TTabSheet
       Caption = 'Valueset Information'
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel6: TPanel
         Left = 0
         Top = 300
@@ -680,6 +684,10 @@ object Form5: TForm5
       Caption = 'Codes Defined Here'
       ImageIndex = 1
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object tvCodeSystem: TVirtualStringTree
         Left = 0
         Top = 97
@@ -852,6 +860,10 @@ object Form5: TForm5
       Caption = 'Codes From Elsewhere'
       ImageIndex = 2
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Notebook2: TNotebook
         Left = 0
         Top = 0
@@ -1143,7 +1155,7 @@ object Form5: TForm5
                 end
                 item
                   Position = 2
-                  Width = 291
+                  Width = 295
                   WideText = 'Display'
                 end>
             end
@@ -1153,6 +1165,8 @@ object Form5: TForm5
           Left = 0
           Top = 0
           Caption = 'IncludeExclude'
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Panel26: TPanel
             Left = 0
             Top = 0
@@ -1243,7 +1257,7 @@ object Form5: TForm5
                   end
                   item
                     Position = 2
-                    Width = 434
+                    Width = 438
                     WideText = 'Value'
                   end>
               end
@@ -1361,7 +1375,7 @@ object Form5: TForm5
                   end
                   item
                     Position = 2
-                    Width = 181
+                    Width = 185
                     WideText = 'Comments'
                   end>
               end
@@ -1424,6 +1438,10 @@ object Form5: TForm5
       Caption = 'Evaluate Current Content'
       ImageIndex = 3
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pnlExpansion: TPanel
         Left = 0
         Top = 0
@@ -1518,7 +1536,7 @@ object Form5: TForm5
           end
           item
             Position = 2
-            Width = 293
+            Width = 297
             WideText = 'Display'
           end>
       end
@@ -1929,6 +1947,10 @@ object Form5: TForm5
       object Export1: TMenuItem
         Caption = 'Export'
       end
+      object ClosureManager1: TMenuItem
+        Caption = '&Closure Manager'
+        OnClick = ClosureManager1Click
+      end
       object Servers1: TMenuItem
         Caption = 'Manage &Servers'
         ShortCut = 16461
@@ -1963,7 +1985,7 @@ object Form5: TForm5
     Left = 960
     Top = 112
     Bitmap = {
-      494C010128006C008C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010128006C00940020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060010000010020000000000000C0
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7807,7 +7829,7 @@ object Form5: TForm5
     Left = 1008
     Top = 116
     Bitmap = {
-      494C010127006C009C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127006C00A40020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004001000001002000000000000080
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

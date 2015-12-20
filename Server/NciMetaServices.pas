@@ -65,7 +65,7 @@ type
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -439,7 +439,7 @@ const
     'inverse_isa', 'isa', 'mapped_from', 'mapped_to', 'may_be_diagnosed_by', 'may_be_prevented_by', 'may_be_treated_by', 'may_diagnose', 'may_inhibit_effect_of', 'may_prevent', 'may_treat', 'mechanism_of_action_of', 'member_of', 'metabolic_site_of', 'participates_in', 'part_of', 'permuted_term_of', 'pharmacokinetics_of', 'physiologic_effect_of', 'precise_ingredient_of', 'print_name_of', 'product_component_of', 'quantified_form_of', 'reformulated_to', 'reformulation_of', 'site_of_metabolism', 'sort_version_of', 'therapeutic_class_of', 'tradename_of'
   );
 
-function TNciMetaServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TNciMetaServices.filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   res : TNciMetaFilter;
   ok : boolean;

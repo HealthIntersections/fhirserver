@@ -441,7 +441,7 @@ begin
           fc := cset.filterList[i];
           filters[i+offset] := cs.filter(fc.property_, fc.Op, fc.value, prep);
           if filters[i+offset] = nil then
-            raise Exception.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
+            raise Exception.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperatorEnum[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
           if cs.isNotClosed(filter, filters[i+offset]) then
             notClosed := true;
         end;

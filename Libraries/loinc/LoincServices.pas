@@ -307,9 +307,9 @@ Type
     FVersion: String;
     FKey: integer;
     function FindStem(s: String; var index: Integer): Boolean;
-    function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
-    function FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
-    function FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
+    function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperatorEnum; value: String): TCodeSystemProviderFilterContext;
+    function FilterBySubset(op: TFhirFilterOperatorEnum; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
+    function FilterByHeirarchy(op: TFhirFilterOperatorEnum; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -358,7 +358,7 @@ Type
     function Display(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(code : String; list : TStringList); override;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
@@ -1632,14 +1632,14 @@ begin
   THolder(ctxt).free;
 end;
 
-function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperatorEnum; value: String): TCodeSystemProviderFilterContext;
 var
   id : word;
   iName, iChildren, iCodes : Cardinal;
   aChildren : LoincServices.TCardinalArray;
 begin
   if op <> FilterOperatorEqual then
-    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
+    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
 
   result := THolder.create;
   try
@@ -1657,10 +1657,10 @@ begin
 end;
 
 // this is a rare operation. But even so, is it worth pre-calculating this one on import?
-function TLoincServices.FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
+function TLoincServices.FilterBySubset(op: TFhirFilterOperatorEnum; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
 begin
   if op <> FilterOperatorEqual then
-    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
+    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
 
   result := THolder.create;
   THolder(result).Children := FRefs.GetCardinals(FSubsets[subset]);
@@ -1718,7 +1718,7 @@ begin
     result := lsiNull;
 end;
 
-function TLoincServices.FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive : boolean): TCodeSystemProviderFilterContext;
+function TLoincServices.FilterByHeirarchy(op: TFhirFilterOperatorEnum; value: String; transitive : boolean): TCodeSystemProviderFilterContext;
 var
   index : Cardinal;
   aChildren, c : LoincServices.TCardinalArray;
@@ -1730,7 +1730,7 @@ begin
     if (op = FilterOperatorEqual) and (value.Contains(',')) then
       raise Exception.Create('Value is illegal - no commas');
     if (not (op in [FilterOperatorEqual, FilterOperatorIn])) then
-      raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
+      raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
 
     while (value <> '') do
     begin
@@ -1757,7 +1757,7 @@ begin
   end;
 end;
 
-function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TLoincServices.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   if prop = 'SCALE_TYP' then
     result := FilterByPropertyId(lptScales, op, value)

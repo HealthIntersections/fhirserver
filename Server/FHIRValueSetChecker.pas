@@ -18,7 +18,7 @@ Type
     function check(system, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
     function findCode(code: String; list : TFhirValueSetCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
-//    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverity; test : boolean; code : TFhirIssueType; msg : string):boolean;
+//    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverityEnum; test : boolean; code : TFhirIssueTypeEnum; msg : string):boolean;
     function getName: String;
   public
     constructor Create(store : TTerminologyServerStore; id : String); overload;
@@ -96,7 +96,7 @@ begin
         for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
           if not (('concept' = fvs.compose.includeList[i].filterList[j].property_) and (fvs.compose.includeList[i].filterList[j].Op = FilterOperatorIsA)) then
             if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_, fvs.compose.includeList[i].filterList[j].Op, fvs.compose.includeList[i].filterList[j].value) then
-              raise ETerminologyError.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
+              raise ETerminologyError.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperatorEnum[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
       end;
       for i := 0 to fvs.compose.excludeList.Count - 1 do
       begin
@@ -106,13 +106,13 @@ begin
         for j := 0 to fvs.compose.excludeList[i].filterList.count - 1 do
           if not (('concept' = fvs.compose.excludeList[i].filterList[j].property_) and (fvs.compose.excludeList[i].filterList[j].Op = FilterOperatorIsA)) then
             if not cs.doesFilter(fvs.compose.excludeList[i].filterList[j].property_, fvs.compose.excludeList[i].filterList[j].Op, fvs.compose.excludeList[i].filterList[j].value) then
-              raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperator[fvs.compose.excludeList[i].filterList[j].Op]+ ' '+fvs.compose.excludeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
+              raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperatorEnum[fvs.compose.excludeList[i].filterList[j].Op]+ ' '+fvs.compose.excludeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
       end;
     end;
   end;
 end;
 
-//function TValueSetChecker.rule(op: TFhirOperationOutcome; severity: TFhirIssueSeverity; test: boolean; code : TFhirIssueType; msg: string): boolean;
+//function TValueSetChecker.rule(op: TFhirOperationOutcome; severity: TFhirIssueSeverityEnum; test: boolean; code : TFhirIssueTypeEnum; msg: string): boolean;
 //var
 //  issue : TFhirOperationOutcomeIssue;
 //begin

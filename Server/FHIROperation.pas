@@ -65,7 +65,7 @@ uses
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore,
   FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator,
-  ServerValidator, QuestionnaireBuilder, SearchProcessor;
+  ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager;
 
 const
   MAGIC_NUMBER = 941364592;
@@ -273,11 +273,11 @@ type
     Property Repository : TFHIRDataStore read FRepository;
 
     // internal utility functions
-    procedure addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamType; tgts : TFhirResourceTypeSet);
+    procedure addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : TFhirResourceTypeSet);
 //    function AddDeletedResourceToFeed(bundle : TFHIRBundle; sId, sType, base : String) : TFHIRBundleEntry;
 
-    function AddResourceTobundle(bundle : TFHIRBundle; base : String; updated : TDateTime; resource : TFHIRResource; purpose : TFhirSearchEntryMode) : TFHIRBundleEntry; overload;
-    function AddResourceTobundle(bundle : TFHIRBundle; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryMode; makeRequest : boolean; var type_ : TFhirResourceType) : TFHIRBundleEntry; overload;
+    function AddResourceTobundle(bundle : TFHIRBundle; base : String; updated : TDateTime; resource : TFHIRResource; purpose : TFhirSearchEntryModeEnum) : TFHIRBundleEntry; overload;
+    function AddResourceTobundle(bundle : TFHIRBundle; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : TFhirResourceType) : TFHIRBundleEntry; overload;
     function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String) : Boolean;
     procedure DefineConformanceResources(base : String); // called after database is created
 
@@ -375,6 +375,19 @@ type
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
+
+  TFhirConceptMapClosureOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+    function checkName(request: TFHIRRequest; response : TFHIRResponse; var name : String) : boolean;
   public
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
@@ -509,6 +522,7 @@ begin
   FOperations.add(TFhirLookupValueSetOperation.create);
   FOperations.add(TFhirValueSetValidationOperation.create);
   FOperations.add(TFhirConceptMapTranslationOperation.create);
+  FOperations.add(TFhirConceptMapClosureOperation.create);
   FOperations.add(TFhirValidationOperation.create);
   FOperations.add(TFhirGenerateDocumentOperation.create);
   FOperations.add(TFhirPatientEverythingOperation.create);
@@ -677,7 +691,7 @@ begin
 end;
 
 
-function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; base : String; updated : TDateTime; resource : TFHIRResource; purpose : TFhirSearchEntryMode) : TFHIRBundleEntry;
+function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; base : String; updated : TDateTime; resource : TFHIRResource; purpose : TFhirSearchEntryModeEnum) : TFHIRBundleEntry;
 var
   entry : TFHIRBundleEntry;
 begin
@@ -698,7 +712,7 @@ begin
 end;
 
 
-function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryMode; makeRequest : boolean; var type_ : TFhirResourceType) : TFHIRBundleEntry;
+function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : TFhirResourceType) : TFHIRBundleEntry;
 var
   parser : TFhirParser;
   mem : TBytesStream;
@@ -844,7 +858,7 @@ begin
   End;
 end;
 
-procedure TFhirOperationManager.addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamType; tgts : TFhirResourceTypeSet);
+procedure TFhirOperationManager.addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : TFhirResourceTypeSet);
 var
   param : TFhirConformanceRestResourceSearchParam;
   a : TFhirResourceType;
@@ -3552,7 +3566,7 @@ begin
           dest.request := src.request.Clone;
           request.reset;
           url := request.preAnalyse(src.request.url);
-          request.analyse(CODES_TFhirHttpVerb[src.request.method], url, dummy);
+          request.analyse(CODES_TFhirHttpVerbEnum[src.request.method], url, dummy);
           request.IfNoneMatch := src.request.ifNoneMatch;
           if src.request.ifModifiedSince <> nil then
             request.IfModifiedSince := src.request.ifModifiedSince.AsUTCDateTime;
@@ -3601,7 +3615,7 @@ begin
       response.HTTPCode := 202;
       response.Message := 'Accepted';
       response.bundle := resp.Link;
-      writeln('done');
+      writelnt('done');
     finally
       req.free;
       resp.free;
@@ -4674,7 +4688,7 @@ end;
 
 
 
-function ReadOperator(s : String) : TFhirFilterOperator;
+function ReadOperator(s : String) : TFhirFilterOperatorEnum;
 begin
   s := LowerCase(s);
   if s = '' then
@@ -4775,7 +4789,7 @@ var
   c : TFhirCoding;
   p : TFhirAuditEventParticipant;
   o : TFhirAuditEventObject;
-  procedure event(t, ts, td, s, sc : String; a : TFhirAuditEventAction);
+  procedure event(t, ts, td, s, sc : String; a : TFhirAuditEventActionEnum);
   begin
     se.event.type_ := TFhirCoding.create;
     c := se.event.type_;
@@ -7313,6 +7327,121 @@ end;
 function TFhirGenerateNarrativeOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtNull];
+end;
+
+{ TFhirConceptMapClosureOperation }
+
+function TFhirConceptMapClosureOperation.checkName(request: TFHIRRequest; response: TFHIRResponse; var name: String) : boolean;
+begin
+  if request.Session.anonymous then
+    result := IsGuid(name)
+  else
+  begin
+    result := IsId(name);
+    if result then
+      name := inttostr(request.Session.UserKey)+'|'+name;
+  end;
+  if not result then
+  begin
+    response.HTTPCode := 400;
+    response.Message := StringFormat('invalid closure name %s', [CODES_TFHIRResourceType[request.ResourceType]+':'+request.Id]);
+    response.Body := response.Message;
+    response.Resource := BuildOperationOutcome(request.lang, response.Message);
+  end;
+end;
+
+function TFhirConceptMapClosureOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirConceptMapClosureOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  params, res : TFhirParameters;
+  p : TFhirParametersParameter;
+  n : String;
+  init : boolean;
+  cm : TClosureManager;
+begin
+  try
+    manager.NotFound(request, response);
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    begin
+      res := TFHIRParameters.Create;
+      params := makeParams(request);
+      cm := nil;
+      try
+        n := params.str['name'];
+        if checkName(request, response, n) then
+        begin
+          init := true;
+          for p in params.parameterList do
+            if p.Name = 'concept' then
+            begin
+              init := false;
+              if cm = nil then
+                if not manager.FRepository.TerminologyServer.UseClosure(p.name, cm) then
+                begin
+                  response.HTTPCode := 404;
+                  response.Message := StringFormat('closure name %s not known', [CODES_TFHIRResourceType[request.ResourceType]+':'+request.Id]);
+                  response.Body := response.Message;
+                  response.Resource := BuildOperationOutcome(request.lang, response.Message);
+                end;
+
+
+            end;
+              // handle concept
+
+          if init then
+          begin
+            manager.FRepository.TerminologyServer.InitClosure(n);
+            res.AddParameter('outcome', true);
+          end;
+          response.HTTPCode := 200;
+          response.Message := 'OK';
+          response.Body := '';
+          response.resource := res.Link;
+        end;
+      finally
+        params.free;
+        res.free;
+        cm.Free;
+      end;
+    end;
+    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirConceptMapClosureOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/ConceptMap-closure';
+end;
+
+function TFhirConceptMapClosureOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirConceptMapClosureOperation.Name: String;
+begin
+  result := 'closure';
+end;
+
+function TFhirConceptMapClosureOperation.owningResource: TFhirResourceType;
+begin
+  result := frtConceptMap;
+end;
+
+function TFhirConceptMapClosureOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtConceptMap];
 end;
 
 end.

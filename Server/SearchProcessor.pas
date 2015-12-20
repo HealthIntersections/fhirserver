@@ -884,7 +884,7 @@ var
   pfx, sfx : String;
   date : TDateAndTime;
   a : TFHIRResourceType;
-  type_ : TFhirSearchParamType;
+  type_ : TFhirSearchParamTypeEnum;
 begin
   a := frtNull;
   date := nil;
@@ -999,7 +999,7 @@ begin
                 SearchParamTypeQuantity : ProcessQuantityParam(Result, name, modifier, value, key, types);
                 SearchParamTypeNumber : ProcessNumberParam(Result, name, modifier, value, key, types);
               else if type_ <> SearchParamTypeNull then
-                raise exception.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
+                raise exception.create('not done yet: type = '+CODES_TFhirSearchParamTypeEnum[type_]);
               end;
             end;
           if ts.count > 1 then
@@ -1145,7 +1145,7 @@ var
   index : integer;
   n : char;
   j : string;
-  stype : TFhirSearchParamType;
+  stype : TFhirSearchParamTypeEnum;
   comp : TFhirComposite;
 begin
   n := issuer.next;

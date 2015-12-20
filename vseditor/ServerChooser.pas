@@ -157,7 +157,7 @@ begin
   vs := TFhirValueSet(p.obj);
   case Column of
     0: CellText := vs.name;
-    1: CellText := CODES_TFhirConformanceResourceStatus[vs.status];
+    1: CellText := CODES_TFhirConformanceResourceStatusEnum[vs.status];
     2: CellText := vs.url;
     3: CellText := vs.publisher;
     4: CellText := vs.description;
@@ -172,7 +172,7 @@ begin
   vs2 := TFhirValueSet(PTreeDataPointer(tvValuesets.GetNodeData(node2)).obj);
   case column of
     0 : result := CompareText(vs1.name, vs2.name);
-    1 : result := CompareText(CODES_TFhirConformanceResourceStatus[vs1.status], CODES_TFhirConformanceResourceStatus[vs2.status]);
+    1 : result := CompareText(CODES_TFhirConformanceResourceStatusEnum[vs1.status], CODES_TFhirConformanceResourceStatusEnum[vs2.status]);
     2 : result := CompareText(vs1.url, vs2.url);
     3 : result := CompareText(vs1.publisher, vs2.publisher);
     4 : result := CompareText(vs1.description, vs2.description);

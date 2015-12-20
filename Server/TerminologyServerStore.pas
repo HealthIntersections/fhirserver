@@ -99,7 +99,7 @@ Type
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
@@ -169,8 +169,6 @@ Type
     FDB : TKDBManager;
     procedure invalidateVS(id : String); virtual;
     function NextConceptKey : integer;
-    function NextClosureKey : integer;
-    function NextClosureEntryKey : integer;
     function NextValueSetKey : integer;
     function NextValueSetMemberKey : integer;
   public
@@ -213,6 +211,8 @@ Type
     function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
     procedure declareSystems(oConf : TFHIRConformance);
     function supportsSystem(s : String) : boolean;
+    function NextClosureKey : integer;
+    function NextClosureEntryKey : integer;
   end;
 
 implementation
@@ -275,7 +275,7 @@ Type
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList); overload; override;
     procedure Displays(code : String; list : TStringList); overload; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -474,7 +474,7 @@ begin
   end;
 end;
 
-function TAllCodeSystemsProvider.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TAllCodeSystemsProvider.filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
   raise Exception.Create('Not Created Yet');
 end;
@@ -1486,7 +1486,7 @@ begin
     iterateCodes(base.conceptList[i], list);
 end;
 
-function TValueSetProvider.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TValueSetProvider.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   code : TValueSetProviderContext;
   ts : TStringList;

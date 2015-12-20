@@ -635,11 +635,14 @@ end;
 
 var
   lastday : integer = 0;
+  starttime : TDateTime = 0;
 
 procedure writelnt(s : String);
 var
   today : integer;
 begin
+  if starttime = 0 then
+    starttime := now;
   today := trunc(now);
   if today <> lastday then
   begin
@@ -647,7 +650,7 @@ begin
     lastDay := today;
   end;
 
-  System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+s);
+  System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s);
 end;
 
 procedure writet(s : String);

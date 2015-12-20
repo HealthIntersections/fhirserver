@@ -5,12 +5,12 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   StringSupport,
-  AdvObjects, AdvStringObjectMatches, AdvStringLists,
+  AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   KDBManager, KDBOdbcExpress,
   FHIRTypes, FHIRResources, FHIRUtilities,
   TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices,
   CountryCodeServices, AreaCodeServices,
-  FHIRValueSetChecker,
+  FHIRValueSetChecker, ClosureManager,
   TerminologyServerStore;
 
 Type
@@ -18,6 +18,7 @@ Type
   private
     FExpansions : TAdvStringObjectMatch;
     FDependencies : TAdvStringObjectMatch; // object is TAdvStringList of identity
+    FClosures : TAdvMap<TClosureManager>;
 
     procedure AddDependency(name, value : String);
     function getCodeDefinition(c : TFhirValueSetCodeSystemConcept; code : string) : TFhirValueSetCodeSystemConcept; overload;
@@ -62,6 +63,9 @@ Type
     function getDisplayForCode(system, code : String): String;
     function checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
 
+    procedure InitClosure(name : String);
+    function UseClosure(name : String; out cm : TClosureManager) : boolean;
+
     // database maintenance
     procedure BuildIndexes(prog : boolean);
 
@@ -84,10 +88,12 @@ begin
   FExpansions.PreventDuplicates;
   FDependencies := TAdvStringObjectMatch.create;
   FDependencies.PreventDuplicates;
+  FClosures := TAdvMap<TClosureManager>.create;
 end;
 
 destructor TTerminologyServer.Destroy;
 begin
+  FClosures.Free;
   FDependencies.Free;
   FExpansions.free;
   inherited;
@@ -189,7 +195,7 @@ begin
     begin
       op := TFhirOperationOutcome.Create;
       try
-        op.error('terminology', TFhirIssueType.IssueTypeCodeInvalid, 'coding', false, e.Message);
+        op.error('terminology', TFhirIssueTypeEnum.IssueTypeCodeInvalid, 'coding', false, e.Message);
         result := op.Link;
       finally
         op.Free;
@@ -538,6 +544,36 @@ begin
   end;
 end;
 
+procedure TTerminologyServer.InitClosure(name: String);
+var
+  conn : TKDBConnection;
+  closure : TClosureManager;
+begin
+  conn := FDB.GetConnection('InitClosure');
+  try
+    FLock.Lock;
+    try
+      if FClosures.ContainsKey(name) then
+        closure := FClosures[name]
+      else
+      begin
+        closure := TClosureManager.create(name);
+        FClosures.Add(name, closure.Link);
+      end;
+    finally
+      FLock.Unlock;
+    end;
+    closure.Init(self, conn);
+    conn.Release;
+  except
+    on e : exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
+end;
+
 function TTerminologyServer.isOkTarget(cm : TLoadedConceptMap; vs : TFHIRValueSet) : boolean;
 begin
   if cm.Target <> nil then
@@ -644,6 +680,37 @@ end;
 function TTerminologyServer.translate(source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters;
 begin
   raise Exception.Create('Not done yet');
+end;
+
+function TTerminologyServer.UseClosure(name: String; out cm: TClosureManager): boolean;
+var
+  conn : TKDBConnection;
+  closure : TClosureManager;
+begin
+  conn := FDB.GetConnection('Closure');
+  try
+    FLock.Lock;
+    try
+      if FClosures.ContainsKey(name) then
+        closure := FClosures[name]
+      else
+      begin
+        closure := TClosureManager.create(name);
+        FClosures.Add(name, closure.Link);
+      end;
+    finally
+      FLock.Unlock;
+    end;
+    closure.Init(self, conn);
+    conn.Release;
+  except
+    on e : exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
+
 end;
 
 (*function TTerminologyServer.translate(vs: TFHIRValueSet; coding: TFhirCoding; dest : String): TFHIRParameters;

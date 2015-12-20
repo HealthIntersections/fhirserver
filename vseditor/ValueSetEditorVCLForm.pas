@@ -10,7 +10,7 @@ uses
   ValueSetEditorCore, ValueSetEditorRegisterServerForm, Vcl.Menus, Vcl.Buttons,
   Vcl.ImgList, VirtualStringTreeComboBox, StringSupport, Vcl.Imaging.pngimage,
   Vcl.OleCtrls, SHDocVw, ServerChooser, Vcl.ToolWin, LookAheadUnit, ValueSetEditorAbout,
-  ServerOperationForm, System.ImageList;
+  ServerOperationForm, System.ImageList, ClosureManagerFrm;
 
 Const
   NAME_INFORMATION = 'Value Set Information';
@@ -211,6 +211,7 @@ type
     Label31: TLabel;
     Label32: TLabel;
     OpenfromURL2: TMenuItem;
+    ClosureManager1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOpenServerClick(Sender: TObject);
@@ -338,6 +339,7 @@ type
     procedure btnNewExcludeClick(Sender: TObject);
     procedure Servers1Click(Sender: TObject);
     procedure OpenfromURL2Click(Sender: TObject);
+    procedure ClosureManager1Click(Sender: TObject);
   private
     { Private declarations }
     Context : TValueSetEditorContext;
@@ -900,9 +902,15 @@ procedure TForm5.cbxStatusChange(Sender: TObject);
 begin
   if not loading then
   begin
-    Context.ValueSet.status := TFhirConformanceResourceStatus(cbxStatus.ItemIndex + 1);
+    Context.ValueSet.status := TFhirConformanceResourceStatusEnum(cbxStatus.ItemIndex + 1);
     Context.commit('status');
   end;
+end;
+
+procedure TForm5.ClosureManager1Click(Sender: TObject);
+begin
+  ClosureManagerForm.Context := Context.Link;
+  ClosureManagerForm.ShowModal;
 end;
 
 procedure TForm5.ContextStateChange(sender: TObject);
@@ -2256,7 +2264,7 @@ begin
   filter := TFhirValueSetComposeIncludeFilter(p.obj);
   case Column of
     0: CellText := filter.property_;
-    1: CellText := CODES_TFhirFilterOperator[filter.op];
+    1: CellText := CODES_TFhirFilterOperatorEnum[filter.op];
     2: CellText := filter.value;
   end;
 end;
@@ -2276,7 +2284,7 @@ begin
   if Column = 0 then
     EditLink := TVirtualStringTreeComboBox.create(EditValue(filter.property_), false, Context.GetList, ValueSetEditorCore.ExpressionProperty+'#'+ctxt.system)
   else if Column = 1 then
-    EditLink := TVirtualStringTreeComboBox.create(CODES_TFhirFilterOperator[filter.op], true, Context.GetList, 'http://hl7.org/fhir/filter-operator')
+    EditLink := TVirtualStringTreeComboBox.create(CODES_TFhirFilterOperatorEnum[filter.op], true, Context.GetList, 'http://hl7.org/fhir/filter-operator')
   else // value - just a plain string editor
     EditLink := TVirtualStringTreeEdit.Create(EditValue(filter.value), FFirstChar <> '');
   FFirstChar := '';
@@ -2357,7 +2365,7 @@ begin
   filter := ctxt.filterList[node.Index];
   case Column of
     0: filter.property_ := NewText;
-    1: filter.op := TFhirFilterOperator(Max(0, StringArrayIndexOf(CODES_TFhirFilterOperator, NewText)));
+    1: filter.op := TFhirFilterOperatorEnum(Max(0, StringArrayIndexOf(CODES_TFhirFilterOperatorEnum, NewText)));
     2: filter.value := NewText;
   end;
   Context.commit('');

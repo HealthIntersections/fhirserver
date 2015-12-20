@@ -46,3 +46,4 @@ Server/FHIRServerDev.stat
 Libraries/refplat/openehr.xml
 install/fhirvse.fbpInf
 install/fhirvse.fbpbrk
+*.jdbg

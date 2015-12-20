@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, ZLib, Math, RegExpr,
-  SystemSupport, StringSupport, FileSupport, DateAndTime, ShellSupport,
+  SystemSupport, StringSupport, FileSupport, DateAndTime, ShellSupport, GuidSupport,
   AdvObjects, AdvStringMatches, AdvStringObjectMatches, AdvObjectLists, AdvBuffers, AdvWinInetClients, AdvMemories, AdvFiles, AdvGenerics,
   IdSoapMsXml, MsXmlParser, IdUri, IdHTTP, AdvJSON,
   FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRParserBase, FHIRConstants,
@@ -147,9 +147,9 @@ Type
     function isWrongDisplay(code : String; display : String) : boolean; virtual;
     function getDisplay(code : String; var display : String) : boolean; virtual;
 
-    function filterPropertyOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
-    function filterOperationOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
-    function filterValueOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
+    function filterPropertyOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; virtual;
+    function filterOperationOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; virtual;
+    function filterValueOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; virtual;
   end;
 
   TValueSetEditorCodeSystemValueSet = class (TValueSetEditorCodeSystem)
@@ -165,9 +165,9 @@ Type
     function isWrongDisplay(code : String; display : String) : boolean; override;
     function getDisplay(code : String; var display : String) : boolean; override;
 
-    function filterPropertyOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
-    function filterOperationOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
-    function filterValueOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
+    function filterPropertyOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
+    function filterOperationOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
+    function filterValueOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
   end;
 
   TServerCodeSystemCacheItem = class (TAdvObject)
@@ -199,9 +199,9 @@ Type
     function isWrongDisplay(code : String; display : String) : boolean; override;
     function getDisplay(code : String; var display : String) : boolean; override;
 
-    function filterPropertyOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
-    function filterOperationOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
-    function filterValueOK(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
+    function filterPropertyOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
+    function filterOperationOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
+    function filterValueOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
   end;
 
   TValueSetEditorServerCache = class (TAdvObject)
@@ -237,6 +237,9 @@ Type
     Property Name : String read FName;
     Property CodeSystems : TAdvStringObjectMatch read FCodeSystems;
     Property LastUpdated : String read FLastUpdated;
+
+    procedure loadClosures(list : TStrings);
+    procedure addClosure(s : String);
   end;
 
   TValueSetEditorContext = class (TAdvObject)
@@ -339,6 +342,10 @@ Type
     function validateName(value : string) : TValidationOutcome;
     function validateDescription(value: string): TValidationOutcome;
     function checkValidation(elem : TFHIRElement; field : integer; var kind : TValidationOutcomeKind; var msg : String): boolean;
+
+    // closures
+    procedure loadClosures(list : TStrings);
+    procedure AddClosure(name : String);
   end;
 
 function IsURL(s : String) : boolean;
@@ -346,6 +353,11 @@ function IsURL(s : String) : boolean;
 implementation
 
 { TValueSetEditorContext }
+
+procedure TValueSetEditorContext.AddClosure(name: String);
+begin
+  WorkingServer.AddClosure(name);
+end;
 
 function TValueSetEditorContext.CanRedo: boolean;
 begin
@@ -1204,6 +1216,11 @@ begin
   result := TValueSetEditorContext(inherited Link);
 end;
 
+procedure TValueSetEditorContext.loadClosures(list: TStrings);
+begin
+  WorkingServer.loadClosures(list);
+end;
+
 function TValueSetEditorContext.NameCodeSystem(uri: String): String;
 var
   client : TFhirClient;
@@ -1925,17 +1942,17 @@ end;
 
 { TValueSetEditorCodeSystem }
 
-function TValueSetEditorCodeSystem.filterPropertyOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TValueSetEditorCodeSystem.filterPropertyOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 begin
   result := false;
 end;
 
-function TValueSetEditorCodeSystem.filterOperationOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TValueSetEditorCodeSystem.filterOperationOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 begin
   result := false;
 end;
 
-function TValueSetEditorCodeSystem.filterValueOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TValueSetEditorCodeSystem.filterValueOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 begin
   result := false;
 end;
@@ -1970,17 +1987,17 @@ begin
   inherited;
 end;
 
-function TValueSetEditorCodeSystemValueSet.filterPropertyOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TValueSetEditorCodeSystemValueSet.filterPropertyOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 begin
   result := prop = 'concept';
 end;
 
-function TValueSetEditorCodeSystemValueSet.filterOperationOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TValueSetEditorCodeSystemValueSet.filterOperationOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 begin
   result := op = FilterOperatorIsA;
 end;
 
-function TValueSetEditorCodeSystemValueSet.filterValueOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TValueSetEditorCodeSystemValueSet.filterValueOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 var
   msg : String;
 begin
@@ -2047,6 +2064,28 @@ begin
 end;
 
 { TValueSetEditorServerCache }
+
+procedure TValueSetEditorServerCache.addClosure(s: String);
+var
+  id : string;
+  client : TFhirClient;
+  params : TFhirParameters;
+begin
+  id := NewGuidId;
+  client := TFhirClient.create(url, true);
+  try
+    params := TFhirParameters.Create;
+    try
+      params.AddParameter('name', id);
+      client.operation(frtConceptMap, 'closure', params).Free;
+    finally
+      params.Free;
+    end;
+  finally
+    client.Free;
+  end;
+  ini.WriteString('closures', id, s);
+end;
 
 function TValueSetEditorServerCache.base: String;
 begin
@@ -2186,6 +2225,22 @@ begin
       json.free;
     end;
     FLoaded := true;
+  end;
+end;
+
+procedure TValueSetEditorServerCache.loadClosures(list: TStrings);
+var
+  ts : TStringList;
+  i : integer;
+begin
+  list.Clear;
+  ts := TStringList.Create;
+  try
+    ini.ReadSection('closures', ts);
+    for i := 0 to ts.Count - 1 do
+      list.Add(ini.ReadString('closures', ts[i], ''));
+  finally
+    ts.Free;
   end;
 end;
 
@@ -2331,7 +2386,7 @@ begin
 end;
 
 
-function TServerCodeSystem.filterPropertyOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TServerCodeSystem.filterPropertyOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 begin
   result := false;
   if FSystem = 'http://snomed.info' then
@@ -2345,7 +2400,7 @@ begin
   end;
 end;
 
-function TServerCodeSystem.filterOperationOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TServerCodeSystem.filterOperationOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 begin
   result := false;
   if FSystem = 'http://snomed.info' then
@@ -2360,7 +2415,7 @@ begin
   end;
 end;
 
-function TServerCodeSystem.filterValueOK(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TServerCodeSystem.filterValueOK(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
 var
   msg : String;
 begin

@@ -483,7 +483,7 @@ operations
     function Display(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(code : String; list : TStringList); override;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
@@ -2604,7 +2604,7 @@ begin
   end;
 end;
 
-function TSnomedServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TSnomedServices.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   id : UInt64;
 begin
