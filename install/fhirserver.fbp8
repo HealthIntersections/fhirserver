@@ -62,7 +62,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = Test
+        as.returnvalue = "implement $closure operation"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -169,7 +169,7 @@ begin
         majorversion = 0
         minorversion = 0
         platform = Win64
-        projectfile = C:\\work\\fhirserver\\Server\\FHIRServerDev.dpr
+        projectfile = C:\\work\\fhirserver\\Server\\FHIRServer2.dpr
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
@@ -206,6 +206,7 @@ begin
                              "-w-UNSAFE_CODE=0" +
                              "-w-UNSAFE_CAST=0" +
                              ""
+          conditionals = DSTU2
           consoleapp = false
           debuginfo = false
           definitionsonly = true
@@ -264,7 +265,7 @@ begin
         impersonateuser = false
         logoutput = true
         logprocessparameters = true
-        params = "-j -e C:\\work\\fhirserver\\Exec\\FhirServerDev.map"
+        params = "-j -e C:\\work\\fhirserver\\Exec\\FhirServer2.map"
         programname = C:\\tools\\MakeJclDbg.exe
         redirectstderr = true
         returncodecomparator = rcEqualTo
@@ -279,7 +280,7 @@ begin
         id = {296F3AA1-BCDF-472D-9C91-B3ED07F898D0}
         newdirname = FHIRServer-dev64.exe
         renamedir = false
-        sourcefile = C:\\work\\fhirserver\\Exec\\FHIRServerDev.exe
+        sourcefile = C:\\work\\fhirserver\\Exec\\FHIRServer2.exe
       end
       action.process.execute
       begin

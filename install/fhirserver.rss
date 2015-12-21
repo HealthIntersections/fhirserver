@@ -3,21 +3,25 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item>
-				<title>FHIRServer release 1.0.7 2015-12-10</title>
-				<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.7.exe</link>
-				<description>2015-12-10 (v1.0.7): fix error generating extension snapshots wrongly</description>
+		<item><title>FHIRServer release 1.0.8 2015-12-21</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.8.exe</link>
+			<description>2015-12-21 (v1.0.8): implement $closure operation</description>
 		</item>
-    <item>
-				<title>FHIRServer release 1.0.6 2015-12-09</title>
-				<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.6.exe</link>
-				<description>2015-12-09 (v1.0.6): bug fixes in validation and terminology service</description>
+<item>
+			<title>FHIRServer release 1.0.7 2015-12-10</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.7.exe</link>
+			<description>2015-12-10 (v1.0.7): fix error generating extension snapshots wrongly</description>
 		</item>
 		<item>
-				<title>FHIRServer release 1.0.5 2015-12-06</title>
-				<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.5.exe</link>
-				<description>2015-12-06 (v1.0.5): fix validation of structure definitions, add fullUrl to Patient in $everything</description>
-  	</item>
+			<title>FHIRServer release 1.0.6 2015-12-09</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.6.exe</link>
+			<description>2015-12-09 (v1.0.6): bug fixes in validation and terminology service</description>
+		</item>
+		<item>
+			<title>FHIRServer release 1.0.5 2015-12-06</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.5.exe</link>
+			<description>2015-12-06 (v1.0.5): fix validation of structure definitions, add fullUrl to Patient in $everything</description>
+		</item>
 		<item><title>FHIR Server release 1.0.4 01-Dec 2015</title><link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.4.exe</link><description>01-Dec 2015 (v1.0.4): Fix validation of ids in resources in bundles, and update UCUM support</description></item><item><title>FHIR Server release 1.0.3 30-Nov 2015</title><link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.3.exe</link><description>30-Nov 2015 (v1.0.3): Complete Validation Development using FHIRPath</description></item><item>
 			<title>FHIRServer release 1.0.2 27-Nov 2015</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.2.exe</link>

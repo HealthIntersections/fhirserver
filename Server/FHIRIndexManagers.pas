@@ -45,7 +45,7 @@ uses
   EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport,
   KDBManager,
   FHIRBase, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser,
-  TerminologyServerStore,
+  TerminologyServer,
   UcumServices;
 
 Const
@@ -337,7 +337,7 @@ Type
     FEntries : TFhirIndexEntryList;
     FMasterKey : Integer;
     FBases : TStringList;
-    FTerminologyServer : TTerminologyServerStore;
+    FTerminologyServer : TTerminologyServer;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 
@@ -515,13 +515,13 @@ Type
     procedure BuildIndexValuesImplementationGuide(key : integer; id : string; context : TFhirResource; resource : TFhirImplementationGuide);
     procedure processCompartmentTags(key : integer; id: String; tags : TFHIRTagList);
     procedure processUnCompartmentTags(key : integer; id: String; tags : TFHIRTagList);
-    procedure SetTerminologyServer(const Value: TTerminologyServerStore);
+    procedure SetTerminologyServer(const Value: TTerminologyServer);
 
   public
     constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
-    property TerminologyServer : TTerminologyServerStore read FTerminologyServer write SetTerminologyServer;
+    property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
     property Bases : TStringList read FBases write FBases;
     function execute(key : integer; id: String; resource : TFhirResource; tags : TFHIRTagList) : String;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
@@ -1090,7 +1090,7 @@ begin
 
 end;
 
-procedure TFhirIndexManager.SetTerminologyServer(const Value: TTerminologyServerStore);
+procedure TFhirIndexManager.SetTerminologyServer(const Value: TTerminologyServer);
 begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;

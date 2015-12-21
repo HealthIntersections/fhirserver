@@ -26,12 +26,11 @@ Type
     function makeAnyValueSet: TFhirValueSet;
 
     // database maintenance
-    procedure processClosureEntry(ClosureEntryKey, ClosureKey, ConceptKey : integer; conn2, conn3 : TKDBConnection; uri, code : String);
-    function subsumes(uri1, code1, uri2, code2 : String) : boolean;
     procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TKDBConnection);
     procedure processConcept(ConceptKey : integer; URL, Code : String; conn2, conn3 : TKDBConnection);
     function isOkTarget(cm: TLoadedConceptMap; vs: TFHIRValueSet): boolean;
     function isOkSource(cm: TLoadedConceptMap; vs: TFHIRValueSet; coding: TFHIRCoding; out match : TFhirConceptMapElement): boolean;
+    procedure LoadClosures;
   protected
     procedure invalidateVS(id : String); override;
   public
@@ -63,8 +62,10 @@ Type
     function getDisplayForCode(system, code : String): String;
     function checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
 
+    // closures
     procedure InitClosure(name : String);
     function UseClosure(name : String; out cm : TClosureManager) : boolean;
+    function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
 
     // database maintenance
     procedure BuildIndexes(prog : boolean);
@@ -150,6 +151,47 @@ begin
     Ucum := TUcumServices.Create;
     Ucum.Import(fn);
     writelnt(' - done');
+  end;
+  LoadClosures;
+end;
+
+procedure TTerminologyServer.LoadClosures;
+var
+  conn : TKDBConnection;
+  m : TKDBMetaData;
+  t : TKDBTable;
+begin
+  conn := FDB.GetConnection('LoadClosures');
+  try
+    m := conn.FetchMetaData;
+    try
+      t := m.getTable('Closures');
+      if not t.hasColumn('Version') then
+      begin
+        conn.ExecSQL('ALTER TABLE Closures ADD Version int NULL');
+        conn.ExecSQL('update Closures set Version = 1');
+      end;
+      t := m.getTable('ClosureEntries');
+      if t.hasColumn('NeedsIndexing') then
+      begin
+        conn.ExecSQL('sp_RENAME ''ClosureEntries.NeedsIndexing'' , ''IndexedVersion'', ''COLUMN''');
+        conn.ExecSQL('update ClosureEntries set IndexedVersion = 1');
+      end;
+    finally
+      m.Free;
+    end;
+    conn.SQL := 'Select ClosureKey, Name, Version from Closures';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      FClosures.Add(conn.ColStringByName['name'], TClosureManager.create(conn.ColStringByName['name'], conn.ColIntegerByName['ClosureKey'], conn.ColIntegerByName['Version'], self));
+    conn.Release;
+  except
+    on e : exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
   end;
 end;
 
@@ -255,6 +297,30 @@ begin
     ts.free;
   end;
 end;
+
+function TTerminologyServer.enterIntoClosure(conn: TKDBConnection; name, uri, code: String): integer;
+var
+  exists : boolean;
+  cm : TClosureManager;
+begin
+  FLock.Lock;
+  try
+    exists := FClosures.ContainsKey(name);
+    if exists then
+      cm := FClosures[name]
+    else
+    begin
+      cm := TClosureManager.create(name, 0, 0, self);
+      FClosures.Add(name, cm);
+    end;
+    if not exists then
+      cm.Init(conn);
+    cm.enterCode(conn, uri, code);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 
 function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : String; textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
@@ -557,13 +623,13 @@ begin
         closure := FClosures[name]
       else
       begin
-        closure := TClosureManager.create(name);
-        FClosures.Add(name, closure.Link);
+        closure := TClosureManager.create(name, 0, 0, self);
+        FClosures.Add(name, closure);
       end;
     finally
       FLock.Unlock;
     end;
-    closure.Init(self, conn);
+    closure.Init(conn);
     conn.Release;
   except
     on e : exception do
@@ -683,34 +749,15 @@ begin
 end;
 
 function TTerminologyServer.UseClosure(name: String; out cm: TClosureManager): boolean;
-var
-  conn : TKDBConnection;
-  closure : TClosureManager;
 begin
-  conn := FDB.GetConnection('Closure');
+  FLock.Lock;
   try
-    FLock.Lock;
-    try
-      if FClosures.ContainsKey(name) then
-        closure := FClosures[name]
-      else
-      begin
-        closure := TClosureManager.create(name);
-        FClosures.Add(name, closure.Link);
-      end;
-    finally
-      FLock.Unlock;
-    end;
-    closure.Init(self, conn);
-    conn.Release;
-  except
-    on e : exception do
-    begin
-      conn.Error(e);
-      raise;
-    end;
+    result := FClosures.ContainsKey(name);
+    if result then
+      cm := FClosures[name].Link
+  finally
+    FLock.Unlock;
   end;
-
 end;
 
 (*function TTerminologyServer.translate(vs: TFHIRValueSet; coding: TFhirCoding; dest : String): TFHIRParameters;
@@ -823,17 +870,16 @@ begin
         conn1.Terminate;
         if (prog) then Writeln;
 
-
         // last, for each entry in the closure entry table that needs closureing, do it
         if (prog) then Writet('Generating Closures');
-        conn1.SQL := 'select ClosureEntryKey, ClosureKey, SubsumesKey, URL, Code from ClosureEntries, Concepts where ClosureEntries.NeedsIndexing = 1 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
+        conn1.SQL := 'select ClosureEntryKey, ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts where ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
         conn1.Prepare;
         conn1.Execute;
         while conn1.FetchNext do
         begin
           inc(i);
           if (prog and (i mod 100 = 0)) then Write('.');
-          processClosureEntry(conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['ClosureKey'], conn1.ColIntegerByName['SubsumesKey'], conn2, conn3, conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
+          FClosures[conn1.ColStringByName['Name']].processEntry(conn2, conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['SubsumesKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
         end;
         conn1.Terminate;
         if (prog) then Writeln;
@@ -860,56 +906,6 @@ begin
       conn1.Error(e);
     end;
   end;
-end;
-
-function TTerminologyServer.subsumes(uri1, code1, uri2, code2: String): boolean;
-var
-  prov : TCodeSystemProvider;
-  loc :  TCodeSystemProviderContext;
-begin
-  result := false;
-  if (uri1 <> uri2) then
-    result := false // todo later - check that concept maps
-  else if (snomed <> nil) and (uri1 = Snomed.system(nil)) then
-    result := Snomed.Subsumes(code1, code2)
-  else
-  begin
-    prov := getProvider(uri1, true);
-    if prov <> nil then
-    begin
-      try
-        loc := prov.locateIsA(code2, code1);
-        result := Loc <> nil;
-        prov.Close(loc);
-      finally
-        prov.Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TTerminologyServer.processClosureEntry(ClosureEntryKey, ClosureKey, ConceptKey: integer; conn2, conn3: TKDBConnection; uri, code : String);
-var
-  b : boolean;
-begin
-  conn2.SQL := 'select ConceptKey, URL, Code from Concepts where ConceptKey in (select SubsumesKey from ClosureEntries where ClosureKey = '+inttostr(ClosureKey)+' and ClosureEntryKey <> '+inttostr(ClosureEntryKey)+')';
-  conn2.prepare;
-  try
-    conn2.execute;
-    while conn2.fetchnext do
-    begin
-      try
-        b := subsumes(uri, code, conn2.ColStringByName['URL'],conn2.ColStringByName['Code']) ;
-      except
-        b := false;
-      end;
-      if b then
-        conn3.execSQL('Insert into ClosureEntries (ClosureEntryKey, ClosureKey, SubsumesKey, SubsumedKey, NeedsIndexing) values ('+inttostr(NextClosureEntryKey)+', '+inttostr(ClosureKey)+', '+inttostr(ConceptKey)+', '+conn2.colStringByName['ConceptKey']+', 0)');
-    end;
-  finally
-    conn2.terminate;
-  end;
-  conn2.ExecSQL('Update ClosureEntries set NeedsIndexing = 0 where ClosureEntryKey = '+inttostr(ClosureEntryKey));
 end;
 
 procedure TTerminologyServer.processConcept(ConceptKey: integer; URL, Code: String; conn2, conn3: TKDBConnection);

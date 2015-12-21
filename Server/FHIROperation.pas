@@ -7338,7 +7338,7 @@ begin
   else
   begin
     result := IsId(name);
-    if result then
+    if result and not IsGUID(name) then
       name := inttostr(request.Session.UserKey)+'|'+name;
   end;
   if not result then
@@ -7359,9 +7359,18 @@ procedure TFhirConceptMapClosureOperation.Execute(manager: TFhirOperationManager
 var
   params, res : TFhirParameters;
   p : TFhirParametersParameter;
-  n : String;
+  n, v : String;
   init : boolean;
   cm : TClosureManager;
+  map : TFhirConceptMap;
+  concepts : TAdvList<TFHIRCoding>;
+  procedure errorResp(code : integer; message : String);
+  begin
+    response.HTTPCode := code;
+    response.Message := message;
+    response.Body := response.Message;
+    response.Resource := BuildOperationOutcome(request.lang, response.Message);
+  end;
 begin
   try
     manager.NotFound(request, response);
@@ -7370,42 +7379,68 @@ begin
       res := TFHIRParameters.Create;
       params := makeParams(request);
       cm := nil;
+      map := nil;
       try
         n := params.str['name'];
         if checkName(request, response, n) then
         begin
-          init := true;
-          for p in params.parameterList do
-            if p.Name = 'concept' then
-            begin
-              init := false;
-              if cm = nil then
-                if not manager.FRepository.TerminologyServer.UseClosure(p.name, cm) then
-                begin
-                  response.HTTPCode := 404;
-                  response.Message := StringFormat('closure name %s not known', [CODES_TFHIRResourceType[request.ResourceType]+':'+request.Id]);
-                  response.Body := response.Message;
-                  response.Resource := BuildOperationOutcome(request.lang, response.Message);
-                end;
-
-
-            end;
-              // handle concept
-
-          if init then
+          v := params.str['version'];
+          if (v = '') and not params.hasParameter('concept') then
           begin
             manager.FRepository.TerminologyServer.InitClosure(n);
             res.AddParameter('outcome', true);
+            response.HTTPCode := 200;
+            response.Message := 'OK';
+            response.Body := '';
+            response.resource := res.Link;
+          end
+          else
+          begin
+            if not manager.FRepository.TerminologyServer.UseClosure(n, cm) then
+              errorResp(404, StringFormat('closure name ''%s'' not known', [CODES_TFHIRResourceType[request.ResourceType]+':'+request.Id]))
+            else if (v <> '') and params.hasParameter('concept') then
+              errorResp(404, StringFormat('closure ''%s'': cannot combine version and concept', [n]))
+            else if (v <> '') and not StringIsInteger32(v) then
+              errorResp(404, StringFormat('closure ''%s'': version %s is not valid', [n, v]))
+            else
+            begin
+              response.HTTPCode := 200;
+              response.Message := 'OK';
+              response.Body := '';
+              map := TFhirConceptMap.Create;
+              response.resource := map.Link;
+              map.id := NewGuidId;
+              map.version := inttostr(cm.version);
+              map.status := ConformanceResourceStatusActive;
+              map.experimental := true; // for now
+              map.date := NowUTC;
+              map.name := 'Updates for Closure Table '+n;
+              if (v <> '') then
+              begin
+                map.name := 'Replay for Closure Table '+n+' from version '+v;
+                cm.rerun(manager.connection, map, StrToInt(v))
+              end
+              else
+              begin
+                map.name := 'Updates for Closure Table '+n;
+                concepts := TAdvList<TFHIRCoding>.create;
+                try
+                  for p in params.parameterList do
+                    if p.Name = 'concept' then
+                      concepts.Add((p.value as TFHIRCoding).link);
+                  cm.processConcepts(manager.Connection, concepts, map);
+                finally
+                  concepts.Free;
+                end;
+              end;
+            end;
           end;
-          response.HTTPCode := 200;
-          response.Message := 'OK';
-          response.Body := '';
-          response.resource := res.Link;
         end;
       finally
         params.free;
         res.free;
         cm.Free;
+        map.Free;
       end;
     end;
     manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);

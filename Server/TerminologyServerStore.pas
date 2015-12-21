@@ -168,9 +168,6 @@ Type
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TKDBManager;
     procedure invalidateVS(id : String); virtual;
-    function NextConceptKey : integer;
-    function NextValueSetKey : integer;
-    function NextValueSetMemberKey : integer;
   public
     Constructor Create(db : TKDBManager); virtual;
     Destructor Destroy; Override;
@@ -208,11 +205,14 @@ Type
 
     // database maintenance
     Property Loading : boolean read FLoading write FLoading;
-    function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
     procedure declareSystems(oConf : TFHIRConformance);
     function supportsSystem(s : String) : boolean;
+    function subsumes(uri1, code1, uri2, code2 : String) : boolean;
     function NextClosureKey : integer;
     function NextClosureEntryKey : integer;
+    function NextConceptKey : integer;
+    function NextValueSetKey : integer;
+    function NextValueSetMemberKey : integer;
   end;
 
 implementation
@@ -1045,30 +1045,6 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.enterIntoClosure(conn: TKDBConnection; name, uri, code: String): integer;
-var
-  ck : Integer;
-begin
-  result := conn.CountSQL('select ConceptKey from Concepts where URL = '''+SQLWrapString(uri)+''' and Code = '''+SQLWrapString(code)+'''');
-  if result = 0 then
-  begin
-    result := NextConceptKey;
-    conn.execSQL('insert into Concepts (ConceptKey, URL, Code, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(uri)+''', '''+SQLWrapString(code)+''', 1)');
-  end;
-  // now, check that it is in the closure
-  ck := conn.CountSQL('select ClosureKey from Closures where Name = '''+SQLWrapString(name)+'''');
-  if ck = 0 then
-  begin
-    ck := NextClosureKey;
-    conn.ExecSQL('insert into Closures (ClosureKey, Name) values ('+inttostr(ck)+', '''+SQLWrapString(name)+''')');
-  end;
-  if conn.CountSQL('select Count(*) from ClosureEntries where ClosureKey = '+inttostr(ck)+' and SubsumesKey = '+inttostr(result)) = 0 then
-  begin
-    // enter it into the closure table
-    conn.ExecSQL('insert into ClosureEntries (ClosureEntryKey, ClosureKey, SubsumesKey, SubsumedKey, NeedsIndexing) values ('+inttostr(NextClosureEntryKey)+', '+inttostr(ck)+', '+inttostr(result)+', '+inttostr(result)+', 1)');
-  end;
-end;
-
 procedure TTerminologyServerStore.UpdateConceptMaps;
 var
   cm : TLoadedConceptMap;
@@ -1295,6 +1271,33 @@ begin
     FLock.Unlock;
   end;
 end;
+
+function TTerminologyServerStore.subsumes(uri1, code1, uri2, code2: String): boolean;
+var
+  prov : TCodeSystemProvider;
+  loc :  TCodeSystemProviderContext;
+begin
+  result := false;
+  if (uri1 <> uri2) then
+    result := false // todo later - check that concept maps
+  else if (snomed <> nil) and (uri1 = Snomed.system(nil)) then
+    result := Snomed.Subsumes(code1, code2)
+  else
+  begin
+    prov := getProvider(uri1, true);
+    if prov <> nil then
+    begin
+      try
+        loc := prov.locateIsA(code2, code1);
+        result := Loc <> nil;
+        prov.Close(loc);
+      finally
+        prov.Free;
+      end;
+    end;
+  end;
+end;
+
 
 { TValueSetProvider }
 

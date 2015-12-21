@@ -156,6 +156,8 @@ type
     property Owner : String read FOwner write FOwner;
     property Description : String read FDescription write FDescription;
     Property OrderMatters : Boolean read FOrderMatters write FOrderMatters;
+
+    function hasColumn(name : String) : boolean;
   end;
 
   TKDBMetaData = class (TAdvObject)
@@ -172,6 +174,7 @@ type
     property SupportsProcedures : Boolean read FSupportsProcedures write FSupportsProcedures;
 
     function HasTable(name : String) : boolean;
+    function GetTable(name : String) : TKDBTable;
   end;
 
   TKDBManager = class;
@@ -1973,6 +1976,15 @@ begin
   inherited;
 end;
 
+function TKDBTable.hasColumn(name: String): boolean;
+var
+  c : TKDBColumn;
+begin
+  result := false;
+  for c in FColumns do
+    result := result or (c.Name = name);
+end;
+
 { TKDBMetaData }
 
 constructor TKDBMetaData.create;
@@ -1989,6 +2001,16 @@ begin
   inherited;
 end;
 
+
+function TKDBMetaData.GetTable(name: String): TKDBTable;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to Tables.Count - 1 do
+    if Tables[i].Name = name then
+      result := Tables[i];
+end;
 
 function TKDBMetaData.HasTable(name: String): boolean;
 var

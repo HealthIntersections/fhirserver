@@ -236,12 +236,12 @@ begin
        ' ClosureKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SubsumesKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SubsumedKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' NeedsIndexing int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' IndexedVersion int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_ClosureEntries', 'ClosureEntryKey')+') '+CreateTableInfo(FConn.owner.platform));
 
   FConn.ExecSQL('Create INDEX SK_ClosureEntries_Subsumes ON ClosureEntries (ClosureKey, SubsumesKey)');
   FConn.ExecSQL('Create INDEX SK_ClosureEntries_Subsumed ON ClosureEntries (ClosureKey, SubsumedKey)');
-  FConn.ExecSQL('Create INDEX SK_ClosureEntries_NeedsIndexing ON ClosureEntries (NeedsIndexing)');
+  FConn.ExecSQL('Create INDEX SK_ClosureEntries_IndexedVersion ON ClosureEntries (IndexedVersion)');
 
   FConn.ExecSQL(ForeignKeySql(FConn, 'ClosureEntries', 'ClosureKey',  'Closures', 'ClosureKey', 'FK_ClosureEntries_ConceptKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'ClosureEntries', 'SubsumesKey', 'Concepts', 'ConceptKey', 'FK_ClosureEntries_SubsumesKey'));
@@ -253,6 +253,7 @@ begin
   FConn.ExecSQL('CREATE TABLE Closures ( '+#13#10+
        ' ClosureKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' Name nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       ' Version int '+ColCanBeNull(FConn.owner.platform, False)+', '+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Closures', 'ClosureKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_Closure_Name ON Closures (Name)');
 end;

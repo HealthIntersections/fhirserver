@@ -1506,9 +1506,12 @@ begin
   while (e2.nodeName <> 'item') do
     e2 := TMsXmlParser.NextSibling(e2);
   e3 := TMsXmlParser.FirstChild(e2);
-  while (e3.nodeName <> 'link') do
+  while (e3 <> nil) and (e3.nodeName <> 'link') do
     e3 := TMsXmlParser.NextSibling(e3);
-  result := e3.text;
+  if (e3 = nil) then
+    result := ''
+  else
+    result := e3.text;
 end;
 
 function TUpgradeCheckThread.getUpgradeNotes(doc : IXMLDOMDocument2; current : String) : string;
