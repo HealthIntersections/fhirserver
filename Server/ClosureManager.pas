@@ -210,7 +210,7 @@ begin
             target := element.targetList.Append;
             target.codeSystem := match.uritgt;
             target.code := match.codetgt;
-            target.equivalence := ConceptMapEquivalenceSubsumes;
+            target.equivalence := ConceptMapEquivalenceSpecializes;
           end;
         end;
       end;

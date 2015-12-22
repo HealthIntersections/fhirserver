@@ -174,7 +174,7 @@ var
   db : TKDBConnection;
 begin
   writelnt('Inport UNII from '+filename);
-  db := dbm.GetConnection('test');
+  db := dbm.GetConnection('unii');
   try
     last := 0;
     lastDesc := 0;
@@ -206,7 +206,7 @@ begin
               db.ExecSQL('insert into UNII (UniiKey, Code)  values ('+inttostr(key)+', '''+SQLWrapString(cols[2])+''')');
               map[cols[2]] := key;
             end;
-            if (cols[1]= 'PT') then
+            if (cols[1]= 'PT') and (length(cols) >= 4) then
               db.ExecSQL('update UNII set Display = '''+SQLWrapString(cols[3])+'''  where UniiKey= '+inttostr(key))
             else
             begin
@@ -225,7 +225,6 @@ begin
     end;
   finally
     db.Release;
-    dbm.Free;
   end;
 end;
 

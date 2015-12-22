@@ -1070,7 +1070,7 @@ var
     oread.Read(result, 8);
   end;
 begin
-  oFile := TFileStream.Create(sFilename, fmOpenread);
+  oFile := TFileStream.Create(sFilename, fmOpenread+fmShareDenyWrite);
   try
     oread := TReader.Create(oFile, 8192);
     try

@@ -178,6 +178,11 @@ begin
       end
   //    procedure ReIndex;
   //    procedure clear(types : String);
+      else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+      begin
+       svc.ConnectToDatabase;
+       ImportUnii(fn, svc.Fdb)
+      end
       else
         svc.Execute;
     finally

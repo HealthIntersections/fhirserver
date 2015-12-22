@@ -872,7 +872,8 @@ begin
 
         // last, for each entry in the closure entry table that needs closureing, do it
         if (prog) then Writet('Generating Closures');
-        conn1.SQL := 'select ClosureEntryKey, ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts where ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
+        conn1.SQL := 'select ClosureEntryKey, Closures.ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts, Closures '+
+           'where Closures.ClosureKey = ClosureEntries.ClosureKey and ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
         conn1.Prepare;
         conn1.Execute;
         while conn1.FetchNext do
