@@ -5872,7 +5872,7 @@ var
   vs, dst : TFHIRValueSet;
   resourceKey : integer;
   url, cacheId, profile, filter : String;
-  _limit : integer;
+  limit, count, offset : integer;
   incomplete : boolean;
   params : TFhirParameters;
 begin
@@ -5914,10 +5914,12 @@ begin
 
           profile := params.str['profile'];
           filter := params.str['filter'];
-          _limit := StrToIntDef(params.str['_limit'], 0);
+          count := StrToIntDef(params.str['count'], 0);
+          offset := StrToIntDef(params.str['offset'], 0);
+          limit := StrToIntDef(params.str['_limit'], 0);
           incomplete := StrToBoolDef(params.str['_incomplete'], false);
 
-          dst := manager.FRepository.TerminologyServer.expandVS(vs, cacheId, profile, filter, _limit, incomplete);
+          dst := manager.FRepository.TerminologyServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, incomplete);
           try
             response.HTTPCode := 200;
             response.Message := 'OK';

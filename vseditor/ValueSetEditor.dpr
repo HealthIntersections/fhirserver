@@ -12,7 +12,7 @@ todo:
 }
 uses
   FastMM4 in '..\Libraries\FMM\FastMM4.pas',
-  ValueSetEditorVCLForm in 'ValueSetEditorVCLForm.pas' {Form5},
+  ValueSetEditorVCLForm in 'ValueSetEditorVCLForm.pas' {ValueSetEditorForm},
   ValueSetEditorCore in 'ValueSetEditorCore.pas',
   VirtualStringTreeComboBox in 'VirtualStringTreeComboBox.pas',
   ServerChooser in 'ServerChooser.pas' {ServerChooserForm},
@@ -167,18 +167,22 @@ uses
   FhirPath in '..\Libraries\refplat2\FhirPath.pas',
   FHIRProfileUtilities in '..\Libraries\refplat2\FHIRProfileUtilities.pas',
   SmartOnFhirUtilities in '..\Libraries\refplat2\SmartOnFhirUtilities.pas',
-  ClosureManagerFrm in 'ClosureManagerFrm.pas' {ClosureManagerForm};
+  ClosureManagerFrm in 'ClosureManagerFrm.pas' {ClosureManagerForm},
+  ConceptLookupFrm in 'ConceptLookupFrm.pas' {ConceptLookupForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TValueSetEditorForm, ValueSetEditorForm);
   Application.CreateForm(TServerChooserForm, ServerChooserForm);
   Application.CreateForm(TfrmRegisterServer, frmRegisterServer1);
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TValueSetEditorAboutForm, ValueSetEditorAboutForm);
   Application.CreateForm(TValueSetEditorWelcomeForm, ValueSetEditorWelcomeForm);
   Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TClosureManagerForm, ClosureManagerForm);
+  Application.CreateForm(TConceptLookupForm, ConceptLookupForm);
   Application.Run;
 end.

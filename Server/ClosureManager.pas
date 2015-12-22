@@ -13,14 +13,20 @@ Uses
 Type
   TSubsumptionMatch = class (TAdvObject)
   private
-    FKey: integer;
-    Fcode: String;
-    Furi: String;
+    FKeySrc: integer;
+    FcodeSrc: String;
+    FuriSrc: String;
+    FKeyTgt: integer;
+    FcodeTgt: String;
+    FuriTgt: String;
   public
-    Constructor Create(key : integer; uri, code : String);
-    property Key : integer read FKey write FKey;
-    property uri : String read Furi write Furi;
-    property code : String read Fcode write Fcode;
+    Constructor Create(keysrc : integer; urisrc, codesrc : String; keytgt : integer; uritgt, codetgt : String);
+    property KeySrc : integer read FKeySrc write FKeySrc;
+    property uriSrc : String read FuriSrc write FuriSrc;
+    property codeSrc : String read FcodeSrc write FcodeSrc;
+    property KeyTgt : integer read FKeyTgt write FKeyTgt;
+    property uriTgt : String read FuriTgt write FuriTgt;
+    property codeTgt : String read FcodeTgt write FcodeTgt;
   end;
 
   TClosureManager = class (TAdvObject)
@@ -89,7 +95,7 @@ begin
   if result = 0 then
   begin
     result := FStore.NextConceptKey;
-    conn.execSQL('insert into Concepts (ConceptKey, URL, Code, IndexedVersion) values ('+inttostr(result)+', '''+SQLWrapString(uri)+''', '''+SQLWrapString(code)+''', 0)');
+    conn.execSQL('insert into Concepts (ConceptKey, URL, Code, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(uri)+''', '''+SQLWrapString(code)+''', 1)');
   end;
 end;
 
@@ -156,8 +162,8 @@ var
   version : integer;
   matches : TAdvList<TSubsumptionMatch>;
   match : TSubsumptionMatch;
-  element : TFhirConceptMapElement;
-  target : TFhirConceptMapElementTarget;
+  element, e : TFhirConceptMapElement;
+  target, t : TFhirConceptMapElementTarget;
 begin
   matches := TAdvList<TSubsumptionMatch>.create;
   try
@@ -168,7 +174,9 @@ begin
     begin
       try
         if FStore.subsumes(uri, code, conn.ColStringByName['URL'], conn.ColStringByName['Code']) then
-          matches.Add(TSubsumptionMatch.Create(conn.colIntegerByName['ConceptKey'], conn.ColStringByName['URL'], conn.ColStringByName['Code']));
+          matches.Add(TSubsumptionMatch.Create(ConceptKey, uri, code, conn.colIntegerByName['ConceptKey'], conn.ColStringByName['URL'], conn.ColStringByName['Code']))
+        else if FStore.subsumes(conn.ColStringByName['URL'], conn.ColStringByName['Code'], uri, code) then
+          matches.Add(TSubsumptionMatch.Create(conn.colIntegerByName['ConceptKey'], conn.ColStringByName['URL'], conn.ColStringByName['Code'], ConceptKey, uri, code));
       except
         // not much we can do but ignore this?
       end;
@@ -177,21 +185,33 @@ begin
 
     if matches.Count > 0 then
     begin
-      if (map <> nil) then
-      begin
-        element := map.elementList.Append;
-        element.codeSystem := uri;
-        element.code := code;
-      end;
       for match in matches do
       begin
-        conn.execSQL('Insert into ClosureEntries (ClosureEntryKey, ClosureKey, SubsumesKey, SubsumedKey, IndexedVersion) values ('+inttostr(FStore.NextClosureEntryKey)+', '+inttostr(FKey)+', '+inttostr(ConceptKey)+', '+inttostr(match.key)+', '+inttostr(FVersion)+')');
+        conn.execSQL('Insert into ClosureEntries (ClosureEntryKey, ClosureKey, SubsumesKey, SubsumedKey, IndexedVersion) values '+
+                 '('+inttostr(FStore.NextClosureEntryKey)+', '+inttostr(FKey)+', '+inttostr(match.KeySrc)+', '+inttostr(match.KeyTgt)+', '+inttostr(FVersion)+')');
         if (map <> nil) then
         begin
-          target := element.targetList.Append;
-          target.codeSystem := match.uri;
-          target.code := match.code;
-          target.equivalence := ConceptMapEquivalenceSubsumes;
+          element := nil;
+          for e in map.elementList do
+            if (e.codeSystem = match.uriSrc) and (e.code = match.codeSrc) then
+              element := e;
+          if element = nil then
+          begin
+            element := map.elementList.Append;
+            element.codeSystem := match.uriSrc;
+            element.code := match.codeSrc;
+          end;
+          target := nil;
+          for t in element.targetList do
+            if (t.codeSystem = match.uriTgt) and (t.code = match.codeTgt) then
+              target := t;
+          if (target = nil) then
+          begin
+            target := element.targetList.Append;
+            target.codeSystem := match.uritgt;
+            target.code := match.codetgt;
+            target.equivalence := ConceptMapEquivalenceSubsumes;
+          end;
         end;
       end;
     end;
@@ -240,12 +260,15 @@ end;
 
 { TSubsumptionMatch }
 
-constructor TSubsumptionMatch.Create(key: integer; uri, code: String);
+constructor TSubsumptionMatch.Create(keysrc : integer; urisrc, codesrc : String; keytgt : integer; uritgt, codetgt : String);
 begin
    inherited create;
-   FKey := key;
-   FUri := uri;
-   FCode := code;
+   FKeysrc := keysrc;
+   FUrisrc := urisrc;
+   FCodesrc := codesrc;
+   FKeytgt := keytgt;
+   FUritgt := uritgt;
+   FCodetgt := codetgt;
 end;
 
 end.

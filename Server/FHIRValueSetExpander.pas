@@ -47,6 +47,9 @@ Type
   TFHIRValueSetExpander = class (TAdvObject)
   private
     FLimit : integer;
+    FCount : integer;
+    FOffset : integer;
+
     FStore : TTerminologyServer;
     procedure processCodeAndDescendents(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; params : TFhirValueSetExpansionParameterList);
 
@@ -63,7 +66,7 @@ Type
     constructor Create(store : TTerminologyServer); overload;
     destructor Destroy; override;
 
-    function expand(source : TFHIRValueSet; profile : String; textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean) : TFHIRValueSet;
+    function expand(source : TFHIRValueSet; profile : String; textFilter : String; dependencies : TStringList; limit, count, offset : integer; allowIncomplete : boolean) : TFHIRValueSet;
   end;
 
 
@@ -83,11 +86,11 @@ begin
   inherited;
 end;
 
-function TFHIRValueSetExpander.Expand(source: TFHIRValueSet; profile : String; textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TFHIRValueSetExpander.Expand(source: TFHIRValueSet; profile : String; textFilter : String; dependencies : TStringList; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
   list : TFhirValueSetExpansionContainsList;
   map : TAdvStringObjectMatch;
-  i : integer;
+  i, t, o : integer;
   c : TFhirValueSetExpansionContains;
   //e : TFhirExtension;
   filter : TSearchFilterText;
@@ -140,6 +143,8 @@ begin
 
     if (limit > 0) and (limit < FLimit) then
       FLimit := limit;
+    FCount := count;
+    FOffset := offset;
 
     result.expansion := TFhirValueSetExpansion.create;
     result.expansion.timestamp := NowUTC;
@@ -186,17 +191,26 @@ begin
         result.text.div_.addTag('p').setAttribute('style', 'color: Navy').addText('Because of the way that this value set is defined, not all the possible codes can be listed in advance');
     end;
 
+    t := 0;
+    o := 0;
     for i := 0 to list.count - 1 do
     begin
       c := list[i];
       if map.ExistsByKey(key(c)) then
-        result.Expansion.containsList.add(c.link);
-      if (table <> nil) then
       begin
-        tr := table.AddChild('tr');
-        tr.AddChild('td').AddText(c.system);
-        tr.AddChild('td').AddText(c.code);
-        tr.AddChild('td').AddText(c.display);
+        inc(o);
+        if (o >= offset) and ((count = 0) or (t < count)) then
+        begin
+          inc(t);
+          result.Expansion.containsList.add(c.link);
+          if (table <> nil) then
+          begin
+            tr := table.AddChild('tr');
+            tr.AddChild('td').AddText(c.system);
+            tr.AddChild('td').AddText(c.code);
+            tr.AddChild('td').AddText(c.display);
+          end;
+        end;
       end;
     end;
 
@@ -330,7 +344,7 @@ begin
     raise Exception.create('unable to find value set with no identity');
   dep := TStringList.Create;
   try
-    vs := FStore.expandVS(uri.value, profile, filter.filter, dep, FLimit, allowIncomplete);
+    vs := FStore.expandVS(uri.value, profile, filter.filter, dep, FLimit, 0, 0, allowIncomplete);
     if (vs = nil) then
       raise Exception.create('unable to find value set '+uri.value);
     try

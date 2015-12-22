@@ -389,7 +389,7 @@ end;
 
 procedure TUniiServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise Exception.Create('not done yet');
+  // raise Exception.Create('not done yet');
 end;
 
 { TUniiPrep }

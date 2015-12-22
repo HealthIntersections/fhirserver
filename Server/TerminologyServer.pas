@@ -46,12 +46,12 @@ Type
     function isKnownValueSet(id : String; out vs : TFHIRValueSet): Boolean;
 
     // given a value set, expand it
-    function expandVS(vs : TFHIRValueSet; cacheId : String; profile, textFilter : String; limit : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
-    function expandVS(uri : String; profile, textFilter : String; limit : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
+    function expandVS(vs : TFHIRValueSet; cacheId : String; profile, textFilter : String; limit, count, offset : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
+    function expandVS(uri : String; profile, textFilter : String; limit, count, offset : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
 
     // these are internal services - not for use outside the terminology server
-    function expandVS(uri: String; profile, textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
-    function expandVS(vs: TFHIRValueSet; cacheId : String; profile, textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet; overload;
+    function expandVS(uri: String; profile, textFilter : String; dependencies : TStringList; limit, count, offset : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
+    function expandVS(vs: TFHIRValueSet; cacheId : String; profile, textFilter : String; dependencies : TStringList; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet; overload;
 
     function lookupCode(coding : TFhirCoding) : TFhirResource;
     function validate(vs : TFHIRValueSet; coding : TFhirCoding; abstractOk : boolean) : TFhirParameters; overload;
@@ -286,13 +286,13 @@ begin
      FExpansions.DeleteByIndex(i);
 end;
 
-function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : String; textFilter : String; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : String; textFilter : String; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
   ts : TStringList;
 begin
   ts := TStringList.create;
   try
-    result := expandVS(vs, cacheId, profile, textFilter, ts, limit, allowIncomplete);
+    result := expandVS(vs, cacheId, profile, textFilter, ts, limit, count, offset, allowIncomplete);
   finally
     ts.free;
   end;
@@ -322,7 +322,7 @@ begin
 end;
 
 
-function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : String; textFilter : String; dependencies : TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : String; textFilter : String; dependencies : TStringList; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
   s, d : String;
   p : TArray<String>;
@@ -333,9 +333,9 @@ begin
   begin
     FLock.Lock('expandVS.1');
     try
-      if FExpansions.ExistsByKey(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)) then
+      if FExpansions.ExistsByKey(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
       begin
-        result := (FExpansions.matches[cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)] as TFhirValueSet).link;
+        result := (FExpansions.matches[cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)] as TFhirValueSet).link;
         p := result.Tags['cache'].Split([#1]);
         for s in p do
           if (s <> '') then
@@ -349,14 +349,14 @@ begin
   begin
     exp := TFHIRValueSetExpander.create(self.Link);
     try
-      result := exp.expand(vs, profile, textFilter, dependencies, limit, allowIncomplete);
+      result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset, allowIncomplete);
       if (dependencies.Count > 0) and (cacheId <> '') then
       begin
         FLock.Lock('expandVS.2');
         try
-          if not FExpansions.ExistsByKey(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)) then
+          if not FExpansions.ExistsByKey(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
           begin
-            FExpansions.Add(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit), result.Link);
+            FExpansions.Add(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset), result.Link);
             // in addition, we trace the dependencies so we can expire the cache
             d := '';
             for s in dependencies do
@@ -378,7 +378,7 @@ end;
 
 
 
-function TTerminologyServer.expandVS(uri: String; profile : String; textFilter : String; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TTerminologyServer.expandVS(uri: String; profile : String; textFilter : String; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
   vs : TFHIRValueSet;
   ts : TStringList;
@@ -387,7 +387,7 @@ begin
   try
     vs := getValueSetByUrl(uri);
     try
-      result := expandVS(vs, uri, profile, textFilter, ts, limit, allowIncomplete);
+      result := expandVS(vs, uri, profile, textFilter, ts, limit, count, offset, allowIncomplete);
     finally
       vs.Free;
     end;
@@ -396,7 +396,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(uri: String; profile : String; textFilter : String; dependencies: TStringList; limit : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TTerminologyServer.expandVS(uri: String; profile : String; textFilter : String; dependencies: TStringList; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
 var
   vs : TFHIRValueSet;
 begin
@@ -404,7 +404,7 @@ begin
   try
     if vs = nil then
       raise Exception.Create('Unable to find value set "'+uri+'"');
-    result := expandVS(vs, uri, profile, textFilter, limit, allowIncomplete);
+    result := expandVS(vs, uri, profile, textFilter, limit, count, offset, allowIncomplete);
   finally
     vs.Free;
   end;

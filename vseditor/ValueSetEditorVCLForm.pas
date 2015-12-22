@@ -27,7 +27,7 @@ Const
   COLOUR_HINT = $EEFFEE;
 
 type
-  TForm5 = class(TForm)
+  TValueSetEditorForm = class(TForm)
     pnlToolbar: TPanel;
     opnValueSet: TFileOpenDialog;
     PageControl1: TPageControl;
@@ -367,7 +367,7 @@ type
   end;
 
 var
-  Form5: TForm5;
+  ValueSetEditorForm: TValueSetEditorForm;
 
 implementation
 
@@ -378,13 +378,13 @@ uses ValueSetEditorWelcome;
 
 // --- general -----------------------------------------------------------------
 
-procedure TForm5.File1Click(Sender: TObject);
+procedure TValueSetEditorForm.File1Click(Sender: TObject);
 begin
   if svValueSet.Execute then
     Context.saveAsFile(svValueSet.FileName);
 end;
 
-procedure TForm5.FormActivate(Sender: TObject);
+procedure TValueSetEditorForm.FormActivate(Sender: TObject);
 begin
   if not activated then
   begin
@@ -408,13 +408,13 @@ begin
   end;
 end;
 
-procedure TForm5.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TValueSetEditorForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Context.Close;
   FormResize(self);
 end;
 
-procedure TForm5.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+procedure TValueSetEditorForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   if (Context <> nil) and (Context.Dirty) then
     CanClose := MessageDlg('Close and lose changes?', mtConfirmation, [mbYes, mbCancel], 0) = mrYes
@@ -422,7 +422,7 @@ begin
     CanClose := true;
 end;
 
-procedure TForm5.FormCreate(Sender: TObject);
+procedure TValueSetEditorForm.FormCreate(Sender: TObject);
 var
   l, t, h, w : integer;
   s : TWindowState;
@@ -461,12 +461,12 @@ begin
   LocationChange(self);
 end;
 
-procedure TForm5.Exit1Click(Sender: TObject);
+procedure TValueSetEditorForm.Exit1Click(Sender: TObject);
 begin
   Close;
 end;
 
-procedure TForm5.FormDestroy(Sender: TObject);
+procedure TValueSetEditorForm.FormDestroy(Sender: TObject);
 begin
   Context.Free;
   Context := nil;
@@ -474,7 +474,7 @@ begin
   webDoco := nil;
 end;
 
-procedure TForm5.FormResize(Sender: TObject);
+procedure TValueSetEditorForm.FormResize(Sender: TObject);
 begin
   if (context <> nil) then
   begin
@@ -486,32 +486,32 @@ begin
   end;
 end;
 
-procedure TForm5.GetAbstractList(context: string; list: TStrings);
+procedure TValueSetEditorForm.GetAbstractList(context: string; list: TStrings);
 begin
   list.Add('');
   list.Add('abstract');
 end;
 
-procedure TForm5.Refresh;
+procedure TValueSetEditorForm.Refresh;
 begin
   FOnCheckButtons(self);
   LoadValuesetPage;
 end;
 
-procedure TForm5.ShowPreview(sender: TObject);
+procedure TValueSetEditorForm.ShowPreview(sender: TObject);
 begin
   tvPreview.RootNodeCount := 0;
   if (Context.Preview <> nil) then
     tvPreview.RootNodeCount := Context.Preview.containsList.Count;
 end;
 
-procedure TForm5.Servers1Click(Sender: TObject);
+procedure TValueSetEditorForm.Servers1Click(Sender: TObject);
 begin
   frmRegisterServer1.Context := Context.Link;
   frmRegisterServer1.ShowModal;
 end;
 
-procedure TForm5.SetDocoVisibility(visible : boolean);
+procedure TValueSetEditorForm.SetDocoVisibility(visible : boolean);
 begin
   if visible then
   begin
@@ -527,13 +527,13 @@ begin
   end;
 end;
 
-procedure TForm5.miDocoClick(Sender: TObject);
+procedure TValueSetEditorForm.miDocoClick(Sender: TObject);
 begin
   raise Exception.Create('test');
   setDocoVisibility(not pnlDocumentation.Visible);
 end;
 
-procedure TForm5.miPasteClick(Sender: TObject);
+procedure TValueSetEditorForm.miPasteClick(Sender: TObject);
 begin
   if ActiveControl is TEdit then
     TEdit(ActiveControl).PasteFromClipboard
@@ -541,7 +541,7 @@ begin
     TMemo(ActiveControl).PasteFromClipboard;
 end;
 
-procedure TForm5.noButtons(sender: TObject);
+procedure TValueSetEditorForm.noButtons(sender: TObject);
 begin
   tbInsert.Enabled := false;
   tbDelete.Enabled := false;
@@ -557,12 +557,12 @@ begin
   miTvOut.Enabled := false;
 end;
 
-procedure TForm5.miAboutClick(Sender: TObject);
+procedure TValueSetEditorForm.miAboutClick(Sender: TObject);
 begin
   ValueSetEditorAboutForm.showModal;
 end;
 
-procedure TForm5.miCopyClick(Sender: TObject);
+procedure TValueSetEditorForm.miCopyClick(Sender: TObject);
 begin
   if ActiveControl is TEdit then
     TEdit(ActiveControl).CopyToClipboard
@@ -570,7 +570,7 @@ begin
     TMemo(ActiveControl).CopyToClipboard;
 end;
 
-procedure TForm5.miCutClick(Sender: TObject);
+procedure TValueSetEditorForm.miCutClick(Sender: TObject);
 begin
   if ActiveControl is TEdit then
     TEdit(ActiveControl).CutToClipboard
@@ -578,7 +578,7 @@ begin
     TMemo(ActiveControl).CutToClipboard;
 end;
 
-procedure TForm5.btnSaveAsClick(Sender: TObject);
+procedure TValueSetEditorForm.btnSaveAsClick(Sender: TObject);
 var
   button: TControl;
   lowerLeft: TPoint;
@@ -592,7 +592,7 @@ begin
   end;
 end;
 
-procedure TForm5.btnCloseClick(Sender: TObject);
+procedure TValueSetEditorForm.btnCloseClick(Sender: TObject);
 begin
   if not Context.Dirty or (MessageDlg('Close and lose unsaved edits, are you sure?', mtConfirmation, [mbyes, mbcancel], 0) = mrYes) then
   begin
@@ -604,7 +604,7 @@ end;
 
 // --- Welcome page ------------------------------------------------------------
 
-procedure TForm5.btnOpenFileClick(Sender: TObject);
+procedure TValueSetEditorForm.btnOpenFileClick(Sender: TObject);
 begin
   if (not Context.Dirty or (MessageDlg('Lose unsaved edits, are you sure?', mtConfirmation, [mbyes, mbcancel], 0) = mrYes)) and opnValueSet.execute then
   begin
@@ -613,7 +613,7 @@ begin
   end;
 end;
 
-procedure TForm5.btnOpenServerClick(Sender: TObject);
+procedure TValueSetEditorForm.btnOpenServerClick(Sender: TObject);
 begin
   if (not Context.Dirty or (MessageDlg('Lose unsaved edits, are you sure?', mtConfirmation, [mbyes, mbcancel], 0) = mrYes)) then
   begin
@@ -627,7 +627,7 @@ begin
   end;
 end;
 
-procedure TForm5.btnNewClick(Sender: TObject);
+procedure TValueSetEditorForm.btnNewClick(Sender: TObject);
 begin
   if not Context.Dirty or (MessageDlg('Lose unsaved edits, are you sure?', mtConfirmation, [mbyes, mbcancel], 0) = mrYes) then
   begin
@@ -637,7 +637,7 @@ begin
 end;
 
 
-procedure TForm5.btnNewExcludeClick(Sender: TObject);
+procedure TValueSetEditorForm.btnNewExcludeClick(Sender: TObject);
 var
   n : PVirtualNode;
 begin
@@ -647,7 +647,7 @@ begin
   btnAddRuleClick(self);
 end;
 
-procedure TForm5.btnRedoClick(Sender: TObject);
+procedure TValueSetEditorForm.btnRedoClick(Sender: TObject);
 begin
   if Context.Redo then
     LoadValuesetPage
@@ -655,7 +655,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.btnSaveClick(Sender: TObject);
+procedure TValueSetEditorForm.btnSaveClick(Sender: TObject);
 begin
   if Context.Settings.ValueSetNew then
     btnSaveAsClick(Sender)
@@ -663,12 +663,12 @@ begin
     Context.Save
 end;
 
-procedure TForm5.OpenfromUrl1Click(Sender: TObject);
+procedure TValueSetEditorForm.OpenfromUrl1Click(Sender: TObject);
 begin
   btnOpenServerClick(self);
 end;
 
-procedure TForm5.OpenfromURL2Click(Sender: TObject);
+procedure TValueSetEditorForm.OpenfromURL2Click(Sender: TObject);
 var
   s : String;
   clip : TClipboard;
@@ -700,18 +700,18 @@ begin
     Refresh;
 end;
 
-procedure TForm5.OSer1Click(Sender: TObject);
+procedure TValueSetEditorForm.OSer1Click(Sender: TObject);
 begin
   Context.SaveAsServerNew;
 end;
 
-procedure TForm5.oServerasExisting1Click(Sender: TObject);
+procedure TValueSetEditorForm.oServerasExisting1Click(Sender: TObject);
 begin
   raise Exception.Create('Not Done Yet');
 end;
 
 
-procedure TForm5.LocationChange(Sender: TObject);
+procedure TValueSetEditorForm.LocationChange(Sender: TObject);
 begin
   case PageControl1.ActivePageIndex of
     0:doco('metadata.htm');
@@ -727,12 +727,12 @@ begin
   end;
 end;
 
-procedure TForm5.pmTreeViewPopup(Sender: TObject);
+procedure TValueSetEditorForm.pmTreeViewPopup(Sender: TObject);
 begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.pmtvStructurePopup(Sender: TObject);
+procedure TValueSetEditorForm.pmtvStructurePopup(Sender: TObject);
 var
   p : PTreeDataPointer;
 begin
@@ -777,7 +777,7 @@ begin
     result := '??';
 end;
 
-procedure TForm5.LoadValuesetPage;
+procedure TValueSetEditorForm.LoadValuesetPage;
 var
   s : String;
 begin
@@ -880,7 +880,7 @@ begin
   end;
 end;
 
-procedure TForm5.btnUndoClick(Sender: TObject);
+procedure TValueSetEditorForm.btnUndoClick(Sender: TObject);
 begin
   if Context.Undo then
     LoadValuesetPage
@@ -889,7 +889,7 @@ begin
 end;
 
 
-procedure TForm5.cbExperimentalClick(Sender: TObject);
+procedure TValueSetEditorForm.cbExperimentalClick(Sender: TObject);
 begin
   if not loading then
   begin
@@ -898,7 +898,7 @@ begin
   end;
 end;
 
-procedure TForm5.cbxStatusChange(Sender: TObject);
+procedure TValueSetEditorForm.cbxStatusChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -907,13 +907,13 @@ begin
   end;
 end;
 
-procedure TForm5.ClosureManager1Click(Sender: TObject);
+procedure TValueSetEditorForm.ClosureManager1Click(Sender: TObject);
 begin
   ClosureManagerForm.Context := Context.Link;
   ClosureManagerForm.ShowModal;
 end;
 
-procedure TForm5.ContextStateChange(sender: TObject);
+procedure TValueSetEditorForm.ContextStateChange(sender: TObject);
 begin
   miUndo.Enabled := Context.CanUndo;
   miRedo.Enabled := Context.CanRedo;
@@ -924,7 +924,7 @@ begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.edtCopyrightChange(Sender: TObject);
+procedure TValueSetEditorForm.edtCopyrightChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -933,7 +933,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtDefineURIChange(Sender: TObject);
+procedure TValueSetEditorForm.edtDefineURIChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -945,7 +945,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtDefineVersionChange(Sender: TObject);
+procedure TValueSetEditorForm.edtDefineVersionChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -956,7 +956,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtEmailChange(Sender: TObject);
+procedure TValueSetEditorForm.edtEmailChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -965,12 +965,12 @@ begin
   end;
 end;
 
-procedure TForm5.edtFilterChange(Sender: TObject);
+procedure TValueSetEditorForm.edtFilterChange(Sender: TObject);
 begin
   Context.Settings.Filter := edtFilter.Text;
 end;
 
-procedure TForm5.edtIdentifierChange(Sender: TObject);
+procedure TValueSetEditorForm.edtIdentifierChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -980,7 +980,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtImportUriChange(Sender: TObject);
+procedure TValueSetEditorForm.edtImportUriChange(Sender: TObject);
 var
   pr : PTreeDataPointer;
   p : PTreeDataPointer;
@@ -1002,13 +1002,13 @@ begin
   end;
 end;
 
-procedure TForm5.edtImportUriEnter(Sender: TObject);
+procedure TValueSetEditorForm.edtImportUriEnter(Sender: TObject);
 begin
   Context.GetList(VS_LIST, edtImportUri.StoredItems);
   edtImportUri.Items.Assign(edtImportUri.StoredItems);
 end;
 
-procedure TForm5.edtNameChange(Sender: TObject);
+procedure TValueSetEditorForm.edtNameChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -1021,7 +1021,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtPhoneChange(Sender: TObject);
+procedure TValueSetEditorForm.edtPhoneChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -1030,7 +1030,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtPublisherChange(Sender: TObject);
+procedure TValueSetEditorForm.edtPublisherChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -1039,7 +1039,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtSystemReferenceChange(Sender: TObject);
+procedure TValueSetEditorForm.edtSystemReferenceChange(Sender: TObject);
 var
   pr : PTreeDataPointer;
   p : PTreeDataPointer;
@@ -1060,13 +1060,13 @@ begin
   end;
 end;
 
-procedure TForm5.edtSystemReferenceEnter(Sender: TObject);
+procedure TValueSetEditorForm.edtSystemReferenceEnter(Sender: TObject);
 begin
   Context.GetList(CS_LIST, edtSystemReference.StoredItems);
   edtSystemReference.Items.Assign(edtSystemReference.StoredItems);
 end;
 
-procedure TForm5.edtSystemRefVersionChange(Sender: TObject);
+procedure TValueSetEditorForm.edtSystemRefVersionChange(Sender: TObject);
 var
   pr : PTreeDataPointer;
   p : PTreeDataPointer;
@@ -1085,7 +1085,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtVersionChange(Sender: TObject);
+procedure TValueSetEditorForm.edtVersionChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -1094,7 +1094,7 @@ begin
   end;
 end;
 
-procedure TForm5.edtWebChange(Sender: TObject);
+procedure TValueSetEditorForm.edtWebChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -1103,7 +1103,7 @@ begin
   end;
 end;
 
-procedure TForm5.txtDescriptionChange(Sender: TObject);
+procedure TValueSetEditorForm.txtDescriptionChange(Sender: TObject);
 begin
   if not loading then
   begin
@@ -1117,7 +1117,7 @@ begin
 end;
 
 
-procedure TForm5.Validate(sender: TObject);
+procedure TValueSetEditorForm.Validate(sender: TObject);
 begin
   FOnCheckButtons(self);
   ValidateEdit(edtIdentifier, Context.validateIdentifier(edtIdentifier.Text));
@@ -1128,7 +1128,7 @@ begin
   ValidateMemo(txtDescription, Context.validateDescription(txtDescription.Text));
 end;
 
-procedure TForm5.ValidateEdit(edit: TEdit; outcome : TValidationOutcome);
+procedure TValueSetEditorForm.ValidateEdit(edit: TEdit; outcome : TValidationOutcome);
 begin
   if outcome.kind = voOk then
   begin
@@ -1151,7 +1151,7 @@ begin
   end;
 end;
 
-procedure TForm5.ValidateCombo(combo: TCombobox; outcome : TValidationOutcome);
+procedure TValueSetEditorForm.ValidateCombo(combo: TCombobox; outcome : TValidationOutcome);
 begin
   if outcome.kind = voOk then
   begin
@@ -1174,7 +1174,7 @@ begin
   end;
 end;
 
-procedure TForm5.ValidateMemo(memo : TMemo; outcome : TValidationOutcome);
+procedure TValueSetEditorForm.ValidateMemo(memo : TMemo; outcome : TValidationOutcome);
 begin
   if outcome.kind = voOk then
   begin
@@ -1196,13 +1196,13 @@ begin
   end;
 end;
 
-procedure TForm5.WelcomeScreen1Click(Sender: TObject);
+procedure TValueSetEditorForm.WelcomeScreen1Click(Sender: TObject);
 begin
   ValueSetEditorWelcomeForm.Context := Context.Link;
   ValueSetEditorWelcomeForm.showModal;
 end;
 
-procedure TForm5.tvCodeSystemBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+procedure TValueSetEditorForm.tvCodeSystemBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetCodeSystemConcept;
@@ -1224,7 +1224,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvCodeSystemColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvCodeSystemColumnResize(Sender: TVTHeader; Column: TColumnIndex);
 begin
   case column of
     0 : Context.Settings.setColumnWidth('define', 'code', tvCodeSystem.Header.Columns[0].width);
@@ -1234,7 +1234,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvCodesBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+procedure TValueSetEditorForm.tvCodesBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
 var
   p : PTreeDataPointer;
   c : TFhirCode;
@@ -1256,7 +1256,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvCodesColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvCodesColumnResize(Sender: TVTHeader; Column: TColumnIndex);
 begin
   case column of
     0 : Context.Settings.setColumnWidth('codes', 'code', tvCodes.Header.Columns[0].width);
@@ -1265,7 +1265,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvFiltersColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvFiltersColumnResize(Sender: TVTHeader; Column: TColumnIndex);
 begin
   case column of
     0 : Context.Settings.setColumnWidth('filters', 'property', tvFilters.Header.Columns[0].width);
@@ -1275,7 +1275,7 @@ begin
 end;
 
 
-procedure TForm5.tvExpansionColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvExpansionColumnResize(Sender: TVTHeader; Column: TColumnIndex);
 begin
   case column of
     0 : Context.Settings.setColumnWidth('expansion', 'system', tvExpansion.Header.Columns[0].width);
@@ -1284,7 +1284,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvPreviewColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvPreviewColumnResize(Sender: TVTHeader; Column: TColumnIndex);
 begin
   case column of
     0 : Context.Settings.setColumnWidth('preview', 'system', tvPreview.Header.Columns[0].width);
@@ -1294,7 +1294,7 @@ begin
 end;
 
 
-procedure TForm5.tvCodeSystemInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+procedure TValueSetEditorForm.tvCodeSystemInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   list : TFhirValueSetCodeSystemConceptList;
   pp, p : PTreeDataPointer;
@@ -1312,7 +1312,7 @@ begin
      InitialStates := [ivsHasChildren];
 end;
 
-procedure TForm5.tvCodeSystemKeyDown(Sender: TObject; var Key: Word;  Shift: TShiftState);
+procedure TValueSetEditorForm.tvCodeSystemKeyDown(Sender: TObject; var Key: Word;  Shift: TShiftState);
 begin
   if CharInSet(AnsiChar(Key), ['A'..'Z', '0'..'9']) then
   begin
@@ -1324,7 +1324,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvCodeSystemInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
+procedure TValueSetEditorForm.tvCodeSystemInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetCodeSystemConcept;
@@ -1334,7 +1334,7 @@ begin
   ChildCount := c.conceptList.Count;
 end;
 
-procedure TForm5.tvAllGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var LineBreakStyle: TVTTooltipLineBreakStyle; var HintText: string);
+procedure TValueSetEditorForm.tvAllGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var LineBreakStyle: TVTTooltipLineBreakStyle; var HintText: string);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetCodeSystemConcept;
@@ -1347,12 +1347,12 @@ begin
     HintText := msg;
 end;
 
-procedure TForm5.tvAllGetHintKind(sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Kind: TVTHintKind);
+procedure TValueSetEditorForm.tvAllGetHintKind(sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Kind: TVTHintKind);
 begin
   Kind := vhkText;
 end;
 
-procedure TForm5.tvCodeSystemGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+procedure TValueSetEditorForm.tvCodeSystemGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetCodeSystemConcept;
@@ -1367,7 +1367,7 @@ begin
   end;
 end;
 
-procedure TForm5.codeSystemCheckButtons(sender : TObject);
+procedure TValueSetEditorForm.codeSystemCheckButtons(sender : TObject);
 var
   p : PTreeDataPointer;
   ctxt : TFhirValueSetCodeSystemConceptList;
@@ -1402,7 +1402,7 @@ begin
 end;
 
 
-procedure TForm5.doco(filename: String);
+procedure TValueSetEditorForm.doco(filename: String);
 var
   fn : String;
 begin
@@ -1412,7 +1412,7 @@ begin
   webDoco.Navigate2('file:'+fn);
 end;
 
-function TForm5.EditValue(text: String): String;
+function TValueSetEditorForm.EditValue(text: String): String;
 begin
   if (FFirstChar <> '') then
     result := FFirstChar
@@ -1420,7 +1420,7 @@ begin
     result := text;
 end;
 
-procedure TForm5.btnAddDefineClick(Sender: TObject);
+procedure TValueSetEditorForm.btnAddDefineClick(Sender: TObject);
 var
   p : PTreeDataPointer;
   ctxt : TFhirValueSetCodeSystemConceptList;
@@ -1451,7 +1451,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.btnDeleteDefineClick(Sender: TObject);
+procedure TValueSetEditorForm.btnDeleteDefineClick(Sender: TObject);
 var
   p : PTreeDataPointer;
   ctxt : TFhirValueSetCodeSystemConcept;
@@ -1480,7 +1480,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.btnDefineDownClick(Sender: TObject);
+procedure TValueSetEditorForm.btnDefineDownClick(Sender: TObject);
 var
   p : PTreeDataPointer;
   ctxt : TFhirValueSetCodeSystemConcept;
@@ -1519,7 +1519,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.btnDefineLeftClick(Sender: TObject);
+procedure TValueSetEditorForm.btnDefineLeftClick(Sender: TObject);
 var
   p, pp : PTreeDataPointer;
   ctxt, pCtxt : TFhirValueSetCodeSystemConceptList;
@@ -1554,7 +1554,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.btnDefineRightClick(Sender: TObject);
+procedure TValueSetEditorForm.btnDefineRightClick(Sender: TObject);
 var
   p : PTreeDataPointer;
   ctxt : TFhirValueSetCodeSystemConcept;
@@ -1585,7 +1585,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.btnDefineUpClick(Sender: TObject);
+procedure TValueSetEditorForm.btnDefineUpClick(Sender: TObject);
 var
   p : PTreeDataPointer;
   ctxt : TFhirValueSetCodeSystemConcept;
@@ -1615,7 +1615,7 @@ begin
 end;
 
 
-procedure TForm5.tvCodeSystemCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
+procedure TValueSetEditorForm.tvCodeSystemCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetCodeSystemConcept;
@@ -1636,22 +1636,22 @@ begin
   FFirstChar := '';
 end;
 
-procedure TForm5.tvCodeSystemEditCancelled(Sender: TBaseVirtualTree; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvCodeSystemEditCancelled(Sender: TBaseVirtualTree; Column: TColumnIndex);
 begin
   codeSystemCheckButtons(self);
 end;
 
-procedure TForm5.tvCodeSystemEdited(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvCodeSystemEdited(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
 begin
   codeSystemCheckButtons(self);
 end;
 
-procedure TForm5.tvCodeSystemEditing(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
+procedure TValueSetEditorForm.tvCodeSystemEditing(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
 begin
   codeSystemCheckButtons(self);
 end;
 
-procedure TForm5.tvCodeSystemEnter(Sender: TObject);
+procedure TValueSetEditorForm.tvCodeSystemEnter(Sender: TObject);
 begin
   FOnCheckButtons := codeSystemCheckButtons;
   tbInsert.OnClick := btnAddDefineClick;
@@ -1669,7 +1669,7 @@ begin
   codeSystemCheckButtons(self);
 end;
 
-procedure TForm5.tvCodeSystemExit(Sender: TObject);
+procedure TValueSetEditorForm.tvCodeSystemExit(Sender: TObject);
 begin
   tbInsert.OnClick := nil;
   tbDelete.OnClick := nil;
@@ -1687,13 +1687,13 @@ begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.tvCodeSystemFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvCodeSystemFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
 begin
   FOnCheckButtons(self);
 end;
 
 
-procedure TForm5.tvCodeSystemNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
+procedure TValueSetEditorForm.tvCodeSystemNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetCodeSystemConcept;
@@ -1709,7 +1709,7 @@ begin
   Context.commit('');
 end;
 
-procedure TForm5.tvStructureInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+procedure TValueSetEditorForm.tvStructureInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   p, pp : PTreeDataPointer;
   c : integer;
@@ -1735,7 +1735,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvStructureInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
+procedure TValueSetEditorForm.tvStructureInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
 var
   p : PTreeDataPointer;
 begin
@@ -1752,7 +1752,7 @@ begin
 end;
 
 
-procedure TForm5.tvStructurePaintText(Sender: TBaseVirtualTree; const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType);
+procedure TValueSetEditorForm.tvStructurePaintText(Sender: TBaseVirtualTree; const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType);
 var
   p : PTreeDataPointer;
 begin
@@ -1763,7 +1763,7 @@ begin
     TargetCanvas.Font.Style := [];
 end;
 
-procedure TForm5.tvStructureGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+procedure TValueSetEditorForm.tvStructureGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
   elem : TFhirElement;
@@ -1792,12 +1792,12 @@ begin
   end;
 end;
 
-procedure TForm5.tvStructureFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvStructureFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
 begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.btnAddRuleClick(sender : TObject);
+procedure TValueSetEditorForm.btnAddRuleClick(sender : TObject);
 var
   n : PVirtualNode;
   p : PTreeDataPointer;
@@ -1830,7 +1830,7 @@ begin
 end;
 
 
-procedure TForm5.btnDeleteRuleClick(sender : TObject);
+procedure TValueSetEditorForm.btnDeleteRuleClick(sender : TObject);
 var
   n : PVirtualNode;
   p : PTreeDataPointer;
@@ -1855,17 +1855,17 @@ begin
   end;
 end;
 
-procedure TForm5.btnRuleUpClick(sender : TObject);
+procedure TValueSetEditorForm.btnRuleUpClick(sender : TObject);
 begin
   raise Exception.Create('To Do');
 end;
 
-procedure TForm5.btnRuleDownClick(sender : TObject);
+procedure TValueSetEditorForm.btnRuleDownClick(sender : TObject);
 begin
   raise Exception.Create('To Do');
 end;
 
-procedure TForm5.tvStructureClick(Sender: TObject);
+procedure TValueSetEditorForm.tvStructureClick(Sender: TObject);
 var
   p : PTreeDataPointer;
   elem : TFhirElement;
@@ -1927,7 +1927,7 @@ end;
 
 // up to here --------------------------------------------------------------------------------------
 
-procedure TForm5.tvCodesEnter(Sender: TObject);
+procedure TValueSetEditorForm.tvCodesEnter(Sender: TObject);
 begin
   FOnCheckButtons := codesCheckButtons;
   tbInsert.OnClick := btnAddCodeClick;
@@ -1941,7 +1941,7 @@ begin
   codesCheckButtons(self);
 end;
 
-procedure TForm5.tvCodesExit(Sender: TObject);
+procedure TValueSetEditorForm.tvCodesExit(Sender: TObject);
 begin
   tbInsert.OnClick := nil;
   tbDelete.OnClick := nil;
@@ -1959,12 +1959,12 @@ begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.tvCodesFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvCodesFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
 begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.codesCheckButtons(sender : TObject);
+procedure TValueSetEditorForm.codesCheckButtons(sender : TObject);
 var
   p : PTreeDataPointer;
 begin
@@ -1989,7 +1989,7 @@ begin
 end;
 
 
-procedure TForm5.tvCodesInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+procedure TValueSetEditorForm.tvCodesInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   pr : PTreeDataPointer;
   p : PTreeDataPointer;
@@ -2001,7 +2001,7 @@ begin
   p.obj := ctxt.conceptList[Node.Index];
 end;
 
-procedure TForm5.tvCodesKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TValueSetEditorForm.tvCodesKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if CharInSet(AnsiChar(Key), ['A'..'Z', '0'..'9']) then
   begin
@@ -2013,7 +2013,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvCodesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+procedure TValueSetEditorForm.tvCodesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
   pr : PTreeDataPointer;
@@ -2041,7 +2041,7 @@ begin
   end;
 end;
 
-procedure TForm5.btnAddCodeClick(Sender: TObject);
+procedure TValueSetEditorForm.btnAddCodeClick(Sender: TObject);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2055,7 +2055,7 @@ begin
 end;
 
 
-procedure TForm5.btnDeleteCodeClick(Sender: TObject);
+procedure TValueSetEditorForm.btnDeleteCodeClick(Sender: TObject);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2068,7 +2068,7 @@ begin
   tvCodes.RootNodeCount := ctxt.conceptList.Count;
 end;
 
-procedure TForm5.btnCodesDownClick(Sender: TObject);
+procedure TValueSetEditorForm.btnCodesDownClick(Sender: TObject);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2086,7 +2086,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.btnCodesUpClick(Sender: TObject);
+procedure TValueSetEditorForm.btnCodesUpClick(Sender: TObject);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2104,7 +2104,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.tvCodesCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
+procedure TValueSetEditorForm.tvCodesCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2125,7 +2125,7 @@ begin
   FFirstChar := '';
 end;
 
-procedure TForm5.tvCodesDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+procedure TValueSetEditorForm.tvCodesDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
 var
   p : PTreeDataPointer;
   c : TFhirCode;
@@ -2144,7 +2144,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvCodesNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
+procedure TValueSetEditorForm.tvCodesNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2168,7 +2168,7 @@ end;
 
 // -----------------------------------------------------------------------------
 
-procedure TForm5.tvFiltersEnter(Sender: TObject);
+procedure TValueSetEditorForm.tvFiltersEnter(Sender: TObject);
 begin
   FOnCheckButtons := filtersCheckButtons;
   tbInsert.OnClick := btnAddFilterClick;
@@ -2182,7 +2182,7 @@ begin
   filtersCheckButtons(self);
 end;
 
-procedure TForm5.tvFiltersExit(Sender: TObject);
+procedure TValueSetEditorForm.tvFiltersExit(Sender: TObject);
 begin
   tbInsert.OnClick := nil;
   tbDelete.OnClick := nil;
@@ -2200,7 +2200,7 @@ begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.filtersCheckButtons(sender : TObject);
+procedure TValueSetEditorForm.filtersCheckButtons(sender : TObject);
 var
   p : PTreeDataPointer;
 begin
@@ -2225,12 +2225,12 @@ begin
 end;
 
 
-procedure TForm5.tvFiltersFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+procedure TValueSetEditorForm.tvFiltersFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
 begin
   FOnCheckButtons(self);
 end;
 
-procedure TForm5.tvFiltersInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+procedure TValueSetEditorForm.tvFiltersInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   pr : PTreeDataPointer;
   p : PTreeDataPointer;
@@ -2243,7 +2243,7 @@ begin
 end;
 
 
-procedure TForm5.tvFiltersKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TValueSetEditorForm.tvFiltersKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if CharInSet(AnsiChar(Key), ['A'..'Z', '0'..'9']) then
   begin
@@ -2255,7 +2255,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvFiltersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+procedure TValueSetEditorForm.tvFiltersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
   filter : TFhirValueSetComposeIncludeFilter;
@@ -2269,7 +2269,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvFiltersCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
+procedure TValueSetEditorForm.tvFiltersCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; out EditLink: IVTEditLink);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2291,7 +2291,7 @@ begin
 end;
 
 
-procedure TForm5.btnAddFilterClick(Sender: TObject);
+procedure TValueSetEditorForm.btnAddFilterClick(Sender: TObject);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2304,7 +2304,7 @@ begin
   tvFilters.RootNodeCount := ctxt.FilterList.Count;
 end;
 
-procedure TForm5.btnDeleteFilterClick(Sender: TObject);
+procedure TValueSetEditorForm.btnDeleteFilterClick(Sender: TObject);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2317,7 +2317,7 @@ begin
   tvFilters.RootNodeCount := ctxt.FilterList.Count;
 end;
 
-procedure TForm5.btnFiltersUpClick(Sender: TObject);
+procedure TValueSetEditorForm.btnFiltersUpClick(Sender: TObject);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2335,7 +2335,7 @@ begin
     MessageBeep(MB_ICONEXCLAMATION);
 end;
 
-procedure TForm5.btnFiltersDownClick(Sender: TObject);
+procedure TValueSetEditorForm.btnFiltersDownClick(Sender: TObject);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2354,7 +2354,7 @@ begin
 end;
 
 
-procedure TForm5.tvFiltersNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
+procedure TValueSetEditorForm.tvFiltersNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
 var
   pr : PTreeDataPointer;
   ctxt : TFhirValueSetComposeInclude;
@@ -2373,12 +2373,12 @@ end;
 
 // expansion--------------
 
-procedure TForm5.btnEditCodesClick(Sender: TObject);
+procedure TValueSetEditorForm.btnEditCodesClick(Sender: TObject);
 begin
   PageControl1.ActivePage := tabDefined;
 end;
 
-procedure TForm5.Button2Click(Sender: TObject);
+procedure TValueSetEditorForm.Button2Click(Sender: TObject);
 begin
   ServerOperation(Context.Expand, edtFilter.Text, 'Expanding', true);
   lblExpansion.Caption := inttostr(Context.Expansion.containsList.Count)+' codes';
@@ -2387,7 +2387,7 @@ begin
 end;
 
 
-procedure TForm5.btnNewImportClick(Sender: TObject);
+procedure TValueSetEditorForm.btnNewImportClick(Sender: TObject);
 var
   n : PVirtualNode;
 begin
@@ -2397,7 +2397,7 @@ begin
   btnAddRuleClick(self);
 end;
 
-procedure TForm5.btnNewIncludeClick(Sender: TObject);
+procedure TValueSetEditorForm.btnNewIncludeClick(Sender: TObject);
 var
   n : PVirtualNode;
 begin
@@ -2407,7 +2407,7 @@ begin
   btnAddRuleClick(self);
 end;
 
-procedure TForm5.tvExpansionInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+procedure TValueSetEditorForm.tvExpansionInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   list : TFhirValueSetExpansionContainsList;
   pp, p : PTreeDataPointer;
@@ -2428,7 +2428,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvExpansionInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
+procedure TValueSetEditorForm.tvExpansionInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetExpansionContains;
@@ -2439,7 +2439,7 @@ begin
     ChildCount := c.containsList.Count;
 end;
 
-procedure TForm5.tvExpansionGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+procedure TValueSetEditorForm.tvExpansionGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetExpansionContains;
@@ -2458,7 +2458,7 @@ begin
     CellText := '';
 end;
 
-procedure TForm5.tvExpansionCompareNodes(Sender: TBaseVirtualTree; Node1, Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
+procedure TValueSetEditorForm.tvExpansionCompareNodes(Sender: TBaseVirtualTree; Node1, Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
 var
   c1, c2 : TFhirValueSetExpansionContains;
 begin
@@ -2471,7 +2471,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvPreviewCompareNodes(Sender: TBaseVirtualTree; Node1, Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
+procedure TValueSetEditorForm.tvPreviewCompareNodes(Sender: TBaseVirtualTree; Node1, Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
 var
   c1, c2 : TFhirValueSetExpansionContains;
 begin
@@ -2484,7 +2484,7 @@ begin
   end;
 end;
 
-procedure TForm5.tvPreviewGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+procedure TValueSetEditorForm.tvPreviewGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetExpansionContains;
@@ -2503,7 +2503,7 @@ begin
     CellText := '';
 end;
 
-procedure TForm5.tvPreviewInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
+procedure TValueSetEditorForm.tvPreviewInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
 var
   p : PTreeDataPointer;
   c : TFhirValueSetExpansionContains;
@@ -2514,7 +2514,7 @@ begin
     ChildCount := c.containsList.Count;
 end;
 
-procedure TForm5.tvPreviewInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+procedure TValueSetEditorForm.tvPreviewInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   list : TFhirValueSetExpansionContainsList;
   pp, p : PTreeDataPointer;

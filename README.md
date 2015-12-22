@@ -70,4 +70,26 @@ Commands
 - '-unii 'file'` - fill the unii database from the unii text distribution format (tab delimited)
 
 
+Importing LOINC
+---------------
 
+To import LOINC, you need 3 files:
+
+loinc.csv - download the main LOINC csv distribution from loinc.org
+mafile.csv - download the LOINC Multiaxial Hierarchy File and rename it to mafile.csv
+answers.csv - download the Panels and forms file, then use excel to save the answers tab to answers.csv
+
+all these 3 files go in the one directory, and you nominate that directory as the -loinc parameter, 
+Also, you need a -lver parameter with the version.
+
+Currently supported: versions 2.52 and 2.54
+
+Importing SNOMED CT
+-------------------
+
+Choose the snapshot directory from your RF2 distribution for the -snomed-rft2 parameter. 
+Provide the snomed version URI in the -sver parameter. For Australia:
+
+-snomed-rf2 "[snapshot location]" -sver "http://snomed.info/sct/32506021000036107/version/[release date]" 
+
+The import is tested with US and AU releases. Volunteers to test with other distributions are welcome.

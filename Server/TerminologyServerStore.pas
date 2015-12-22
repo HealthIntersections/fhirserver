@@ -344,7 +344,7 @@ begin
       ctxt.rxnorm := FStore.RxNorm.getPrepContext;
     if FStore.NciMeta <> nil then
       ctxt.NciMeta := FStore.NciMeta.getPrepContext;
-    ctxt.unii := FStore.Unii.getPrepContext;
+    ctxt.unii := nil;
     ctxt.loinc := FStore.Loinc.getPrepContext;
     ctxt.snomed := FStore.Snomed.getPrepContext;
     ctxt.actcode := Factcode.getPrepContext;
@@ -463,7 +463,7 @@ begin
         ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm, sort);
       if FStore.NciMeta <> nil then
         ctxt.NciMeta := FStore.NciMeta.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).NciMeta, sort);
-      ctxt.unii := FStore.Unii.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).unii, sort);
+      ctxt.unii := nil; // FStore.Unii.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).unii, sort);
       ctxt.snomed := FStore.snomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed, sort);
       ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc, sort);
       ctxt.actcode := FActCode.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).actcode, sort);
@@ -492,7 +492,7 @@ begin
       FStore.RxNorm.prepare(ctxt.rxnorm);
     if FStore.NciMeta <> nil then
       FStore.NciMeta.prepare(ctxt.NciMeta);
-    FStore.FUnii.prepare(ctxt.unii);
+//    FStore.FUnii.prepare(ctxt.unii);
     FActCode.prepare(ctxt.actcode);
   end;
 end;
@@ -525,7 +525,7 @@ begin
         if c.loincDone then
         begin
           if not c.uniiDone then
-            c.uniiDone := not FStore.unii.FilterMore(c.unii);
+            c.uniiDone := true; // not FStore.unii.FilterMore(c.unii);
           if c.uniiDone then
           begin
             if FStore.RxNorm = nil then

@@ -390,7 +390,7 @@ begin
       profile := 'http://www.healthintersections.com.au/fhir/expansion/no-details-web';
 
     try
-      res := FServer.expandVS(vs, vs.url, profile, pm.GetVar('filter'), 1000, true);
+      res := FServer.expandVS(vs, vs.url, profile, pm.GetVar('filter'), 1000, 0, 0, true);
       try
         result := asHtml(res)+#13#10;
         if (profile <> '') then

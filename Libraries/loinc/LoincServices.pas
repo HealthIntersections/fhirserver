@@ -181,8 +181,6 @@ Type
 //    Scale : word
 //    Method : word
 //    Class : word
-//    v2dt : word
-//    v3dt : word
 //    flags : byte
 //    stems : Cardinal
 //  End;
@@ -207,11 +205,11 @@ Type
     Public
       Function FindCode(sCode : String; var iIndex : Cardinal) : Boolean;
 
-      Procedure GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
+      Procedure GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word; var iFlags : Byte);
 
       // we presume that the Codes are registered in order
       Procedure StartBuild;
-      Function AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iv2dt, iv3dt : Word; iFlags : Byte) : Cardinal;
+      Function AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iFlags : Byte) : Cardinal;
       Procedure DoneBuild;
 
       // these need to be called after Done Build
@@ -566,7 +564,7 @@ begin
 end;
 
 
-Function TLOINCCodeList.AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iv2dt, iv3dt : Word; iFlags : Byte) : Cardinal;
+Function TLOINCCodeList.AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iFlags : Byte) : Cardinal;
 var
   s : AnsiString;
   i : integer;
@@ -587,17 +585,15 @@ begin
 {16}  FBuilder.AddWord(0); // Scale
 {18}  FBuilder.AddWord(0); // Method
 {20}  FBuilder.AddWord(0); // Class
-{22}  FBuilder.AddWord(iv2dt);
-{24}  FBuilder.AddWord(iv3dt);
-{26}  FBuilder.Append(iFlags);
-{27}  FBuilder.AddCardinal(0); // stems
-{31}  FBuilder.AddCardinal(iEntry);
+{22}  FBuilder.Append(iFlags);
+{23}  FBuilder.AddCardinal(0); // stems
+{27}  FBuilder.AddCardinal(iEntry);
 end;
 
 procedure TLOINCCodeList.SetCodeLength(const Value: Cardinal);
 begin
   FCodeLength := Value;
-  FRecLength := FCodeLength+35;
+  FRecLength := FCodeLength+31;
 end;
 
 Procedure TLOINCCodeList.SetComponent(iIndex : Cardinal; iValue : Word);
@@ -678,7 +674,7 @@ begin
 end;
 
 
-Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word; var iFlags : Byte);
+Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word; var iFlags : Byte);
 Begin
   if iIndex > FLength div FRecLength - 1 Then
     Raise Exception.Create('Attempt to access invalid LOINC index at '+inttostr(iIndex*FRecLength));
@@ -692,11 +688,9 @@ Begin
   Move(FMaster[(iIndex*FRecLength)+FCodeLength+16], iScale, 2);
   Move(FMaster[(iIndex*FRecLength)+FCodeLength+18], iMethod, 2);
   Move(FMaster[(iIndex*FRecLength)+FCodeLength+20], iClass, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+22], iv2dt, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+24], iv3dt, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+26], iFlags, 1);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+27], iStems, 4);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+31], iEntry, 4);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength+22], iFlags, 1);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength+23], iStems, 4);
+  Move(FMaster[(iIndex*FRecLength)+FCodeLength+37], iEntry, 4);
 end;
 
 function TLOINCCodeList.Count: Integer;
@@ -758,14 +752,14 @@ var
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
   names : TCardinalArray;
   name : Cardinal;
 begin
   if CodeList.FindCode(sCode, iIndex) then
   Begin
-    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
     list.Add(Desc.GetEntry(iDescription));
     if iOtherNames <> 0 then
@@ -789,7 +783,7 @@ var
 begin
   if CodeList.FindCode(sCode, iIndex) then
   Begin
-    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
     result := Desc.GetEntry(iDescription)
   End
@@ -1103,7 +1097,7 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
     matches : integer;
     ok : boolean;
   Begin
-    CodeList.GetInformation(iCodeIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(iCodeIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     r1 := 0;
     matches := 0;
     Desc := Refs.GetCardinals(iStems);
@@ -1525,7 +1519,7 @@ var
   index : integer;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry, iCode, iOther : Cardinal;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
 begin
   index := integer(context)-1;
@@ -1535,7 +1529,7 @@ begin
     result := Desc.GetEntry(iCode);
   end
   else
-    CodeList.GetInformation(integer(context)-1, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(integer(context)-1, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
 end;
 
 function TLoincServices.Display(context: TCodeSystemProviderContext): string;
@@ -1543,14 +1537,14 @@ var
   index : integer;
   iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
   iEntry : Cardinal;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
 begin
   index := integer(context)-1;
   if index > CodeList.Count then
     FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther)
   else
-    CodeList.GetInformation(index, result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    CodeList.GetInformation(index, result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
   result := Desc.GetEntry(iDescription);
 end;
 

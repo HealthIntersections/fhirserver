@@ -94,6 +94,8 @@ end;
 
 procedure TServerChooserForm.FormShow(Sender: TObject);
 begin
+  if Context = nil then
+    exit;
   tvValuesets.Header.Columns[0].Width := Context.Settings.columnWidth('choice', 'name', 150);
   tvValuesets.Header.Columns[1].Width := Context.Settings.columnWidth('choice', 'status', 50);
   tvValuesets.Header.Columns[2].Width := Context.Settings.columnWidth('choice', 'identifier', 200);
@@ -130,6 +132,8 @@ end;
 
 procedure TServerChooserForm.tvValuesetsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
 begin
+  if Context = nil then
+    exit;
   case column of
     0 : Context.Settings.setColumnWidth('choice', 'name', tvValuesets.Header.Columns[0].width);
     1 : Context.Settings.setColumnWidth('choice', 'status', tvValuesets.Header.Columns[1].width);

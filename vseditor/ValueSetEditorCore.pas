@@ -32,6 +32,52 @@ Type
     msg : String;
   end;
 
+  TClosureDirection = (cdNull, cdSubsumes, cdSubsumed);
+
+  TClosureTableRecordSource = class (TFHIRCoding)
+  private
+    FTargets: TAdvList<TFHIRCoding>;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link :  TClosureTableRecordSource; overload;
+
+    property targets : TAdvList<TFHIRCoding> read FTargets;
+    procedure add(uri, code : String);
+  end;
+
+  TClosureTableRecord = class (TAdvObject)
+  private
+    FConcepts: TAdvList<TFHIRCoding>;
+    FMaps : TAdvList<TClosureTableRecordSource>;
+
+    FId: string;
+    FName: String;
+    FFilename : String;
+    FVersion: String;
+    function GetLinks(row, col: integer): TClosureDirection;
+    function hasMap(src, tgt : TFHIRCoding) : boolean;
+    procedure save;
+    procedure process(cm : TFHIRConceptMap);
+    function getSource(uri, code : String) : TClosureTableRecordSource;
+    function GetMapCount: integer;
+  public
+    constructor create; overload; override;
+    constructor create(filename : String); overload;
+    constructor create(filename, id, name : String); overload;
+    destructor Destroy; override;
+
+    function link :  TClosureTableRecord; overload;
+
+    property id : string read FId write FId;
+    property name : String read FName write FName;
+    property version : String read FVersion write FVersion;
+    property concepts : TAdvList<TFHIRCoding> read FConcepts;
+    property maps : TAdvList<TClosureTableRecordSource> read FMaps;
+    property links[row, col: integer] : TClosureDirection read GetLinks;
+    property mapCount : integer read GetMapCount;
+  end;
+
   TValidationOutcomeMark = class (TAdvObject)
   private
     FMessage: string;
@@ -218,6 +264,7 @@ Type
     sortedCodesystems : TStringList;
     sortedValueSets : TStringList;
     specialCodeSystems : TAdvStringObjectMatch;
+    closures : TAdvMap<TClosureTableRecord>;
     procedure SeeValueset(vs : TFhirValueSet; isSummary, loading : boolean);
     function LoadFullCodeSystem(uri : String) : TFhirValueSet;
     procedure CheckConnection;
@@ -240,6 +287,10 @@ Type
 
     procedure loadClosures(list : TStrings);
     procedure addClosure(s : String);
+    procedure ResetClosure(name : String);
+    procedure updateClosure(name : String);
+    procedure AddToClosure(name : String; coding : TFhirCoding);
+    function expand(url, filter : String; count : integer; allowIncomplete : boolean): TFHIRValueSet;
   end;
 
   TValueSetEditorContext = class (TAdvObject)
@@ -346,6 +397,10 @@ Type
     // closures
     procedure loadClosures(list : TStrings);
     procedure AddClosure(name : String);
+    procedure ResetClosure(name : String);
+    procedure UpdateClosure(name : String);
+    procedure AddToClosure(name : String; coding : TFhirCoding);
+    function ClosureDetails(name : String): TClosureTableRecord;
   end;
 
 function IsURL(s : String) : boolean;
@@ -357,6 +412,11 @@ implementation
 procedure TValueSetEditorContext.AddClosure(name: String);
 begin
   WorkingServer.AddClosure(name);
+end;
+
+procedure TValueSetEditorContext.AddToClosure(name: String; coding: TFhirCoding);
+begin
+  WorkingServer.AddToClosure(name, coding);
 end;
 
 function TValueSetEditorContext.CanRedo: boolean;
@@ -454,6 +514,14 @@ begin
     FOnStateChange(self);
 end;
 
+function TValueSetEditorContext.ClosureDetails(name: String): TClosureTableRecord;
+begin
+  if WorkingServer.closures.ContainsKey(name) then
+    result := WorkingServer.closures[name]
+  else
+    result := nil;
+end;
+
 procedure TValueSetEditorContext.commit(source : string);
 var
   c : TFHIRJsonComposer;
@@ -536,6 +604,11 @@ begin
   FLastCommitSource := '';
 end;
 
+procedure TValueSetEditorContext.UpdateClosure(name: String);
+begin
+  WorkingServer.UpdateClosure(name);
+end;
+
 function TValueSetEditorContext.Redo: boolean;
 begin
   result := CanRedo;
@@ -554,6 +627,11 @@ begin
   end;
 end;
 
+
+procedure TValueSetEditorContext.ResetClosure(name: String);
+begin
+  WorkingServer.ResetClosure(name);
+end;
 
 procedure TValueSetEditorContext.Save;
 var
@@ -709,6 +787,38 @@ begin
     SynchroniseServer(event)
   else
     UpdateFromServer(event);
+end;
+
+procedure TValueSetEditorServerCache.updateClosure(name: String);
+var
+  client : TFhirClient;
+  pin : TFhirParameters;
+  pout : TFhirResource;
+  ct : TClosureTableRecord;
+begin
+  ct := closures[name];
+  client := TFhirClient.create(url, true);
+  try
+    pin := TFhirParameters.Create;
+    try
+      pin.AddParameter('name', ct.id);
+      pin.AddParameter('version', ct.version);
+      pout := client.operation(frtConceptMap, 'closure', pin);
+      try
+        if pout is TFHIRConceptMap then
+          ct.process(pout as TFHIRConceptMap)
+        else
+          raise Exception.Create('Unexpected response from server');
+      finally
+        pout.Free;
+      end;
+    finally
+      pin.Free;
+    end;
+  finally
+    client.Free;
+  end;
+  ct.save;
 end;
 
 function TValueSetEditorContext.TryGetDisplay(system, code: String): String;
@@ -2067,24 +2177,75 @@ end;
 
 procedure TValueSetEditorServerCache.addClosure(s: String);
 var
-  id : string;
   client : TFhirClient;
-  params : TFhirParameters;
+  pin : TFhirParameters;
+  pout : TFhirResource;
+  ct : TClosureTableRecord;
 begin
-  id := NewGuidId;
+  ct := TClosureTableRecord.create;
+  try
+    ct.id := NewGuidId;
+    ct.Name := s;
+    ct.version := '0';
+    ct.FFilename := IncludeTrailingBackslash(base)+'ct-'+ct.id+'.json';
+    client := TFhirClient.create(url, true);
+    try
+      pin := TFhirParameters.Create;
+      try
+        pin.AddParameter('name', ct.id);
+        pout := client.operation(frtConceptMap, 'closure', pin);
+        try
+          if not (pout as TFhirParameters).bool['outcome'] then
+            raise Exception.Create('Unexpected response from server');
+        finally
+          pout.Free;
+        end;
+      finally
+        pin.Free;
+      end;
+    finally
+      client.Free;
+    end;
+    ct.save;
+    ini.WriteString('closures', ct.id, ct.name);
+    closures.Add(s, ct.link);
+  finally
+    ct.Free;
+  end;
+end;
+
+procedure TValueSetEditorServerCache.AddToClosure(name: String; coding: TFhirCoding);
+var
+  ct : TClosureTableRecord;
+  client : TFhirClient;
+  pin : TFhirParameters;
+  pout : TFhirResource;
+  fn : String;
+begin
+  ct := closures[name];
+  ct.FConcepts.Add(coding.link);
   client := TFhirClient.create(url, true);
   try
-    params := TFhirParameters.Create;
+    pin := TFhirParameters.Create;
     try
-      params.AddParameter('name', id);
-      client.operation(frtConceptMap, 'closure', params).Free;
+      pin.AddParameter('name', ct.id);
+      pin.AddParameter('concept', coding.Link);
+      pout := client.operation(frtConceptMap, 'closure', pin);
+      try
+        if pout is TFHIRConceptMap then
+          ct.process(pout as TFHIRConceptMap)
+        else
+          raise Exception.Create('Unexpected response from server');
+      finally
+        pout.Free;
+      end;
     finally
-      params.Free;
+      pin.Free;
     end;
   finally
     client.Free;
   end;
-  ini.WriteString('closures', id, s);
+  ct.save;
 end;
 
 function TValueSetEditorServerCache.base: String;
@@ -2168,10 +2329,12 @@ begin
   sortedValueSets := TStringList.Create;
   sortedValueSets.Sorted := true;
   specialCodeSystems := TAdvStringObjectMatch.create;
+  closures := TAdvMap<TClosureTableRecord>.create;
 end;
 
 destructor TValueSetEditorServerCache.Destroy;
 begin
+  closures.Free;
   specialCodeSystems.Free;
   valuesets.Free;
   codesystems.Free;
@@ -2180,6 +2343,51 @@ begin
   FList.Free;
   ini.Free;
   inherited;
+end;
+
+function TValueSetEditorServerCache.expand(url, filter: String; count: integer; allowIncomplete : boolean): TFHIRValueSet;
+var
+  client : TFhirClient;
+  pIn, pOut : TFhirParameters;
+  rOut : TFHIRResource;
+  feed : TFHIRBundle;
+begin
+  client := TFhirClient.create(FUrl, true);
+  try
+    client.OnClientStatus := nil;
+    pIn := TFhirParameters.Create;
+    try
+      pIn.AddParameter('identifier', url);
+      if filter <> '' then
+        pIn.AddParameter('filter', filter);
+      if count <> 0 then
+        pIn.AddParameter('count', inttostr(count));
+      if allowIncomplete then
+        pIn.AddParameter('_incomplete', 'true');
+
+      rOut := client.operation(frtValueset, 'expand', pIn);
+      try
+        if rOut is TFhirValueSet then
+          result := (rOut as TFhirValueSet).Link
+        else if rOut is TFhirParameters then
+        begin
+          pOut := TFhirParameters(rOut);
+          if pOut.hasParameter('return') then
+            result := (pOut['return'] as TFHIRValueSet).Link
+          else
+            raise Exception.Create('Unable to process result from expansion server');
+        end
+        else
+          raise Exception.Create('Unable to process result from expansion server');
+      finally
+        rOut.Free;
+      end;
+    finally
+      pIn.free;
+    end;
+  finally
+    client.Free;
+  end;
 end;
 
 function TValueSetEditorServerCache.Link: TValueSetEditorServerCache;
@@ -2193,6 +2401,8 @@ var
   f : TFileStream;
   i : integer;
   bundle : TFHIRBundle;
+  ts : TStringList;
+  fn : String;
 begin
   if not FileExists(ExtractFilePath(ini.FileName)) then
   begin
@@ -2226,22 +2436,30 @@ begin
     end;
     FLoaded := true;
   end;
-end;
 
-procedure TValueSetEditorServerCache.loadClosures(list: TStrings);
-var
-  ts : TStringList;
-  i : integer;
-begin
-  list.Clear;
   ts := TStringList.Create;
   try
     ini.ReadSection('closures', ts);
     for i := 0 to ts.Count - 1 do
-      list.Add(ini.ReadString('closures', ts[i], ''));
+    begin
+      fn := IncludeTrailingBackslash(base)+'ct-'+ts[i]+'.json';
+      if FileExists(fn) then
+        closures.Add(ts[i], TClosureTableRecord.Create(fn))
+      else
+        closures.Add(ts[i], TClosureTableRecord.Create(fn, ts[i], ini.ReadString('closures', ts[i], '')));
+    end;
   finally
     ts.Free;
   end;
+end;
+
+procedure TValueSetEditorServerCache.loadClosures(list: TStrings);
+var
+  s : String;
+begin
+  list.Clear;
+  for s in closures.Keys do
+    list.Add(s);
 end;
 
 procedure TValueSetEditorServerCache.save;
@@ -2298,6 +2516,37 @@ begin
       f.Free;
     end;
   end;
+end;
+
+procedure TValueSetEditorServerCache.ResetClosure(name: String);
+var
+  client : TFhirClient;
+  pin : TFhirParameters;
+  pout : TFhirResource;
+  ct : TClosureTableRecord;
+begin
+  ct := closures[name];
+  client := TFhirClient.create(url, true);
+  try
+    pin := TFhirParameters.Create;
+    try
+      pin.AddParameter('name', ct.id);
+      pout := client.operation(frtConceptMap, 'closure', pin);
+      try
+        if not (pout as TFhirParameters).bool['outcome'] then
+          raise Exception.Create('Unexpected response from server');
+      finally
+        pout.Free;
+      end;
+    finally
+      pin.Free;
+    end;
+  finally
+    client.Free;
+  end;
+  ct.FConcepts.Clear;
+  ct.FMaps.Clear;
+  ct.save;
 end;
 
 procedure TValueSetEditorServerCache.SeeValueset(vs : TFHIRValueSet; isSummary, loading : boolean);
@@ -2616,6 +2865,244 @@ destructor TServerCodeSystemCacheItem.Destroy;
 begin
   displays.Free;
   inherited;
+end;
+
+{ TClosureTableRecord }
+
+constructor TClosureTableRecord.create(filename: String);
+var
+  f : TFileStream;
+  json, ao, ao1 : TJsonObject;
+  a, a1 : TJsonNode;
+  c : TFhirCoding;
+  s : TClosureTableRecordSource;
+begin
+  Create;
+  FFilename := filename;
+  f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
+  try
+    json := TJSONParser.Parse(f);
+    try
+      id := json.str['id'];
+      name := json.str['name'];
+      version := json.str['version'];
+      for a in json.arr['concepts'] do
+      begin
+        ao := a as TJsonObject;
+        c := TFhirCoding.Create;
+        FConcepts.Add(c);
+        c.system := ao.str['system'];
+        c.code := ao.str['code'];
+        c.display := ao.str['display'];
+      end;
+      for a in json.arr['maps'] do
+      begin
+        ao := a as TJsonObject;
+        s := TClosureTableRecordSource.Create;
+        FMaps.Add(s);
+        s.system := ao.str['system'];
+        s.code := ao.str['code'];
+        for a1 in ao.arr['targets'] do
+        begin
+          ao1 := a1 as TJsonObject;
+          c := TFhirCoding.Create;
+          s.targets.Add(c);
+          c.system := ao1.str['system'];
+          c.code := ao1.str['code'];
+        end;
+      end;
+    finally
+      json.Free;
+    end;
+  finally
+    f.Free;
+  end;
+end;
+
+procedure TClosureTableRecord.save;
+var
+  f : TFileStream;
+  json, ao, ao1 : TJsonObject;
+  arr, arr1 : TJsonArray;
+  c : TFhirCoding;
+  s : TClosureTableRecordSource;
+begin
+  json := TJsonObject.Create;
+  try
+    json.str['id'] := id;
+    json.str['name'] := name;
+    json.str['version'] := version;
+    arr := json.forceArr['concepts'];
+    for c in FConcepts do
+    begin
+      ao := arr.addObject;
+      ao.str['system'] := c.system;
+      ao.str['code'] := c.code;
+      ao.str['display'] := c.display;
+    end;
+    arr := json.forceArr['maps'];
+    for s in FMaps do
+    begin
+      ao := arr.addObject;
+      ao.str['system'] := s.system;
+      ao.str['code'] := s.code;
+      arr1 := ao.forceArr['targets'];
+      for c in s.targets do
+      begin
+        ao1 := arr1.addObject;
+        ao1.str['system'] := c.system;
+        ao1.str['code'] := c.code;
+      end;
+    end;
+
+    f := TFileStream.Create(Ffilename, fmCreate);
+    try
+      TJSONWriter.writeObject(f, json, true);
+    finally
+      f.Free;
+    end;
+  finally
+    json.Free;
+  end;
+end;
+
+constructor TClosureTableRecord.create(filename, id, name: String);
+begin
+  Create;
+  FFilename := filename;
+  self.id := id;
+  self.name := name;
+  version := '0';
+end;
+
+destructor TClosureTableRecord.Destroy;
+begin
+  FMaps.Free;
+  FConcepts.Free;
+  inherited;
+end;
+
+constructor TClosureTableRecord.create;
+begin
+  inherited;
+  FMaps := TAdvList<TClosureTableRecordSource>.create;
+  FConcepts := TAdvList<TFHIRCoding>.create;
+end;
+
+function TClosureTableRecord.GetLinks(row, col: integer): TClosureDirection;
+var
+  r, c : TFHIRCoding;
+begin
+  r := FConcepts[row];
+  c := FConcepts[col];
+  if hasMap(r, c) then
+    result := cdSubsumes
+  else if hasMap(c, r) then
+    result := cdSubsumed
+  else
+    result := cdNull;
+end;
+
+function TClosureTableRecord.GetMapCount: integer;
+var
+  s : TClosureTableRecordSource;
+begin
+  result := FMaps.Count;
+  for s in FMaps do
+    result := result + s.targets.Count;
+
+end;
+
+function TClosureTableRecord.getSource(uri, code: String): TClosureTableRecordSource;
+begin
+  for result in FMaps do
+    if (result.system = uri) and (result.code = code) then
+      exit;
+  result := TClosureTableRecordSource.Create;
+  try
+    result.system := uri;
+    result.code := code;
+    FMaps.Add(result.link);
+  finally
+    result.Free;
+  end;
+end;
+
+function TClosureTableRecord.hasMap(src, tgt: TFHIRCoding): boolean;
+var
+  s : TClosureTableRecordSource;
+  c : TFHIRCoding;
+begin
+  result := false;
+  for s in FMaps do
+    if (s.system = src.system) and (s.code = src.code) then
+      for c in s.targets do
+        if (c.system = tgt.system) and (c.code = tgt.code) then
+          exit(true);
+end;
+
+function TClosureTableRecord.link: TClosureTableRecord;
+begin
+  result := TClosureTableRecord(inherited Link);
+end;
+
+procedure TClosureTableRecord.process(cm: TFHIRConceptMap);
+var
+  element : TFhirConceptMapElement;
+  src : TClosureTableRecordSource;
+  target : TFhirConceptMapElementTarget;
+begin
+  version := cm.version;
+  for element in cm.elementList do
+    for target in element.targetList do
+      if target.equivalence = ConceptMapEquivalenceSubsumes then
+      begin
+        src := getSource(element.codeSystem, element.code);
+        src.add(target.codeSystem, target.code);
+      end
+      else if target.equivalence = ConceptMapEquivalenceSpecializes then
+      begin
+        src := getSource(target.codeSystem, target.code);
+        src.add(element.codeSystem, element.code);
+      end
+      else
+        raise Exception.Create('Unhandled equivalance '+CODES_TFhirConceptMapEquivalenceEnum[target.equivalence]);
+end;
+
+{ TClosureTableRecordSource }
+
+procedure TClosureTableRecordSource.add(uri, code: String);
+var
+  c : TFhirCoding;
+begin
+  for c in targets do
+    if (c.system = uri) and (c.code = code) then
+      exit;
+  c := TFhirCoding.Create;
+  try
+    c.system := uri;
+    c.code := code;
+    targets.Add(c.link);
+  finally
+    c.Free;
+  end;
+end;
+
+constructor TClosureTableRecordSource.Create;
+begin
+  inherited;
+  FTargets := TAdvList<TFHIRCoding>.create;
+end;
+
+destructor TClosureTableRecordSource.Destroy;
+begin
+  FTargets.Free;
+  inherited;
+end;
+
+function TClosureTableRecordSource.link: TClosureTableRecordSource;
+begin
+  result := TClosureTableRecordSource(inherited Link);
 end;
 
 end.

@@ -291,7 +291,7 @@ begin
         html.StartList;
         b := true;
       End;
-      FLoinc.CodeList.GetInformation(arr[i], sCode1, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      FLoinc.CodeList.GetInformation(arr[i], sCode1, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.StartListItem;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
@@ -441,7 +441,7 @@ var
   iDescription, iOtherNames, iStems : Cardinal;
   sCode1 : String;
   iEntry : Cardinal;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
   iRefs : TCardinalArray;
   i : integer;
@@ -450,7 +450,7 @@ Begin
   iRefs := nil;
   if FLoinc.CodeList.FindCode(sCode, iIndex) Then
   Begin
-    FLoinc.CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+    FLoinc.CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
     html.Header('LOINC Code '+sCode+' : '+FLoinc.Desc.GetEntry(iDescription));
     html.StartTable(true);
@@ -509,22 +509,6 @@ Begin
       html.StartRowFlip(iCount);
       html.AddTableCell('Class');
       html.AddTableCell(GetConceptDesc(iClass));
-      html.EndTableRow;
-    End;
-    if iv2dt <> 0 Then
-    Begin
-      inc(iCount);
-      html.StartRowFlip(iCount);
-      html.AddTableCell('v2 Data Type');
-      html.AddTableCell(GetConceptDesc(iv2dt));
-      html.EndTableRow;
-    End;
-    if iv3dt <> 0 Then
-    Begin
-      inc(iCount);
-      html.StartRowFlip(iCount);
-      html.AddTableCell('v3 Data Type');
-      html.AddTableCell(GetConceptDesc(iv3dt));
       html.EndTableRow;
     End;
 
@@ -621,7 +605,7 @@ var
 
   iDescription, iOtherNames, iStems : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
   iEntry : Cardinal;
 
@@ -709,7 +693,7 @@ begin
         html.StartTableCell;
         b := true;
       End;
-      FLoinc.CodeList.GetInformation(aCodes[i], sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      FLoinc.CodeList.GetInformation(aCodes[i], sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.StartParagraph;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
@@ -762,7 +746,7 @@ var
   iDescription, iOtherNames, iStems : Cardinal;
   iEntry : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
 begin
   b := false;
@@ -790,7 +774,7 @@ begin
         html.StartList;
         b := true;
       End;
-      FLoinc.CodeList.GetInformation(i, sCode1, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      FLoinc.CodeList.GetInformation(i, sCode1, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.StartListItem;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription));
@@ -882,7 +866,7 @@ var
   iDescription, iOtherNames, iStems : Cardinal;
   iEntry : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
   code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
 begin
@@ -923,7 +907,7 @@ begin
     html.StartTableRow;
     if a[i].iscode then
     begin
-      FLoinc.CodeList.GetInformation(a[i].index, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      FLoinc.CodeList.GetInformation(a[i].index, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTableCell(FLoinc.Desc.GetEntry(iDescription));
       html.AddTableCell(GetConceptDesc(iComponent));

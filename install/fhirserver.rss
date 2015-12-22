@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.8 2015-12-21</title>
+		<item><title>FHIRServer release 1.0.9 2015-12-22</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.9.exe</link>
+			<description>2015-12-22 (v1.0.9): fis bug in $closure operation - only checking subsumption in one direction</description>
+		</item>
+<item><title>FHIRServer release 1.0.8 2015-12-21</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.8.exe</link>
 			<description>2015-12-21 (v1.0.8): implement $closure operation</description>
 		</item>
-<item>
+		<item>
 			<title>FHIRServer release 1.0.7 2015-12-10</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.7.exe</link>
 			<description>2015-12-10 (v1.0.7): fix error generating extension snapshots wrongly</description>

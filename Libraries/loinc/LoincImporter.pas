@@ -119,7 +119,6 @@ Type
     Scale : TConcept;
     Method : TConcept;
     Class_ : TConcept;
-    v2dt, v3dt : Word;
     Flags : byte;
     entry : THeirarchyEntry;
   public
@@ -366,54 +365,51 @@ begin
 end;
 
 Const
-  FLD_LOINC_NUM =                            0;
-  FLD_COMPONENT =                            1;
-  FLD_PROPERTY =                             2;
-  FLD_TIME_ASPCT =                           3;
-  FLD_SYSTEM =                               4;
-  FLD_SCALE_TYP =                            5;
-  FLD_METHOD_TYP =                           6;
-  FLD_CLASS =                                7;
-  FLD_SOURCE =                               8;
-  FLD_DATE_LAST_CHANGED =                    9;
-  FLD_CHNG_TYPE =                           10;
-  FLD_COMMENTS =                            11;
-  FLD_STATUS =                              12;
-  FLD_CONSUMER_NAME =                       13;
-  FLD_MOLAR_MASS =                          14;
-  FLD_CLASSTYPE =                           15;
-  FLD_FORMULA =                             16;
-  FLD_SPECIES =                             17;
-  FLD_EXMPL_ANSWERS =                       18;
-  FLD_ACSSYM =                              19;
-  FLD_BASE_NAME =                           20;
-  FLD_NAACCR_ID =                           21;
-  FLD_CODE_TABLE =                          22;
-  FLD_SURVEY_QUEST_TEXT =                   23;
-  FLD_SURVEY_QUEST_SRC =                    24;
-  FLD_UNITSREQUIRED =                       25;
-  FLD_SUBMITTED_UNITS =                     26;
-  FLD_RELATEDNAMES2 =                       27;
-  FLD_SHORTNAME =                           28;
-  FLD_ORDER_OBS =                           29;
-  FLD_CDISC_COMMON_TESTS =                  30;
-  FLD_HL7_FIELD_SUBFIELD_ID =               31;
-  FLD_EXTERNAL_COPYRIGHT_NOTICE =           32;
-  FLD_EXAMPLE_UNITS =                       33;
-  FLD_LONG_COMMON_NAME =                    34;
-  FLD_HL7_V2_DATATYPE =                     35;
-  FLD_HL7_V3_DATATYPE =                     36;
-  FLD_CURATED_RANGE_AND_UNITS =             37;
-  FLD_DOCUMENT_SECTION =                    38;
-  FLD_EXAMPLE_UCUM_UNITS =                  39;
-  FLD_EXAMPLE_SI_UCUM_UNITS =               40;
-  FLD_STATUS_REASON =                       41;
-  FLD_STATUS_TEXT =                         42;
-  FLD_CHANGE_REASON_PUBLIC =                43;
-  FLD_COMMON_TEST_RANK =                    44;
-  FLD_COMMON_ORDER_RANK =                   45;
-  FLD_COMMON_SI_TEST_RANK =                 46;
-  FLD_HL7_ATTACHMENT_STRUCTURE =            47;
+  FLD_LOINC_NUM =                             0;
+  FLD_COMPONENT =                             1;
+  FLD_PROPERTY =                              2;
+  FLD_TIME_ASPCT =                            3;
+  FLD_SYSTEM =                                4;
+  FLD_SCALE_TYP =                             5;
+  FLD_METHOD_TYP =                            6;
+  FLD_CLASS =                                 7;
+  FLD_SOURCE =                                8;
+  FLD_VersionLastChanged =                    9;
+  FLD_CHNG_TYPE =                             10;
+  FLD_DefinitionDescription =                 11;
+  FLD_STATUS =                                12;
+  FLD_CONSUMER_NAME =                         13;
+  FLD_CLASSTYPE =                             14;
+  FLD_FORMULA =                               15;
+  FLD_SPECIES =                               16;
+  FLD_EXMPL_ANSWERS =                         17;
+  FLD_SURVEY_QUEST_TEXT =                     18;
+  FLD_SURVEY_QUEST_SRC =                      19;
+  FLD_UNITSREQUIRED =                         20;
+  FLD_SUBMITTED_UNITS =                       21;
+  FLD_RELATEDNAMES2 =                         22;
+  FLD_SHORTNAME =                             23;
+  FLD_ORDER_OBS =                             24;
+  FLD_CDISC_COMMON_TESTS =                    25;
+  FLD_HL7_FIELD_SUBFIELD_ID =                 26;
+  FLD_EXTERNAL_COPYRIGHT_NOTICE =             27;
+  FLD_EXAMPLE_UNITS =                         28;
+  FLD_LONG_COMMON_NAME =                      29;
+  FLD_UnitsAndRange =                         30;
+  FLD_DOCUMENT_SECTION =                      31;
+  FLD_EXAMPLE_UCUM_UNITS =                    32;
+  FLD_EXAMPLE_SI_UCUM_UNITS =                 33;
+  FLD_STATUS_REASON =                         34;
+  FLD_STATUS_TEXT =                           35;
+  FLD_CHANGE_REASON_PUBLIC =                  36;
+  FLD_COMMON_TEST_RANK =                      37;
+  FLD_COMMON_ORDER_RANK =                     38;
+  FLD_COMMON_SI_TEST_RANK =                   39;
+  FLD_HL7_ATTACHMENT_STRUCTURE =              30;
+  FLD_EXTERNAL_COPYRIGHT_LINK =               41;
+  FLD_PanelType =                             42;
+  FLD_AskAtOrderEntry =                       43;
+  FLD_AssociatedObservations =                44;
 
 
 Function TLoincImporter.LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
@@ -486,7 +482,7 @@ begin
     try
       f.Name := IncludeTrailingPathDelimiter(folder)+ 'loinc.csv';
       f.OpenRead;
-      csv := TAdvCSVExtractor.Create(f.Link, TEncoding.ASCII);
+      csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8);
       Try
         // headers
         csv.ConsumeEntries(items);
@@ -545,6 +541,9 @@ begin
             else
               oSubsets[lsi3rdParty].add(oCode.Link);
 
+              if not StringIsInteger32(items[FLD_CLASSTYPE]) then
+                raise Exception.Create('Error');
+
             case StrToInt(items[FLD_CLASSTYPE]) of
              2: begin
                 oCode.Flags := oCode.Flags + FLAGS_CLIN;
@@ -576,9 +575,6 @@ begin
               raise Exception.Create('Unknown LOINC Code status '+items[FLD_STATUS]);
 
             SeeDesc(oCode.Display, oCode, FLAG_LONG_COMMON);
-
-            oCode.v2dt := SeeUnits(items[FLD_HL7_V2_DATATYPE]);
-            oCode.v3dt := SeeUnits(items[FLD_HL7_V3_DATATYPE]);
 
             oNames := TAdvStringList.Create;
             Try
@@ -684,7 +680,7 @@ begin
         else
           e := 0;
           
-        oCode.Index := FCode.AddCode(oCode.Code, AddDescription(oCode.Display), oCode.Names, e, oCode.v2dt, oCode.v3dt, oCode.Flags);
+        oCode.Index := FCode.AddCode(oCode.Code, AddDescription(oCode.Display), oCode.Names, e, oCode.Flags);
       Except
         on E:Exception Do
         Begin

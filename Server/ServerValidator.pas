@@ -114,7 +114,7 @@ end;
 
 function TFHIRServerValidatorContext.expand(vs : TFhirValueSet) : TFHIRValueSet;
 begin
-  result := FTerminologyServer.expandVS(vs, '', '', '', 0, true);
+  result := FTerminologyServer.expandVS(vs, '', '', '', 0, 0, 0, true);
 end;
 
 function TFHIRServerValidatorContext.supportsSystem(system : string) : boolean;

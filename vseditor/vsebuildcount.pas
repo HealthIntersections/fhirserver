@@ -5,7 +5,7 @@ interface
 {
 [vse-settings]
 } const
-BuildCount=1
+BuildCount=2
 ;
 
 implementation

@@ -201,7 +201,7 @@ Type
 
     Property OwnerName: String read FOwnerName write FOwnerName;
     Property ValidatorContext : TFHIRServerValidatorContext read FValidatorContext;
-    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit: integer;
+    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer;
       allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
     function LookupCode(system, code: String): String;
     property QuestionnaireCache: TQuestionnaireCache read FQuestionnaireCache;
@@ -688,17 +688,16 @@ begin
 end;
 
 function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference;
-  limit: integer; allowIncomplete: Boolean; dependencies: TStringList)
+  limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList)
   : TFHIRValueSet;
 begin
   if (vs <> nil) then
-    result := FTerminologyServer.ExpandVS(vs, '', '', '', dependencies, limit,
-      allowIncomplete)
+    result := FTerminologyServer.ExpandVS(vs, '', '', '', dependencies, limit, count, offset, allowIncomplete)
   else
   begin
     if FTerminologyServer.isKnownValueSet(ref.reference, vs) then
       result := FTerminologyServer.ExpandVS(vs, ref.reference, '', '',
-        dependencies, limit, allowIncomplete)
+        dependencies, limit, count, offset, allowIncomplete)
     else
     begin
       vs := FTerminologyServer.getValueSetByUrl(ref.reference);
@@ -708,7 +707,7 @@ begin
         result := nil
       else
         result := FTerminologyServer.ExpandVS(vs, ref.reference, '', '',
-          dependencies, limit, allowIncomplete)
+          dependencies, limit, count, offset, allowIncomplete)
     end;
   end;
 end;

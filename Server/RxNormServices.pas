@@ -4,7 +4,8 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport, AdvObjects, AdvObjectLists, AdvExceptions,
+  StringSupport,
+  AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
   YuStemmer,
   KDBManager,
   FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
@@ -27,11 +28,12 @@ type
     qry : TKDBConnection;
   public
     Destructor Destroy; Override;
+    function Link : TUMLSFilter; overload;
   end;
 
   TUMLSPrep = class (TCodeSystemProviderFilterPreparationContext)
   private
-    filters : TAdvObjectList;
+    filters : TAdvList<TUMLSFilter>;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -622,10 +624,14 @@ procedure TUMLSServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext)
 var
   filter : TUMLSFilter;
 begin
-  filter := TUMLSFilter(TUMLSPrep(ctxt).filters[0]);
-  filter.qry.terminate;
-  filter.qry.release;
-
+  for filter in TUMLSPrep(ctxt).filters do
+  begin
+    if filter.qry <> nil then
+    begin
+      filter.qry.terminate;
+      filter.qry.release;
+    end;
+  end;
 end;
 
 { TUMLSPrep }
@@ -633,7 +639,7 @@ end;
 constructor TUMLSPrep.Create;
 begin
   inherited;
-  filters := TAdvObjectList.Create;
+  filters := TAdvList<TUMLSFilter>.Create;
 end;
 
 destructor TUMLSPrep.Destroy;
@@ -652,6 +658,11 @@ begin
     qry.Release;
   end;
   inherited;
+end;
+
+function TUMLSFilter.Link: TUMLSFilter;
+begin
+  result := TUMLSFilter(inherited Link);
 end;
 
 { TUMLSConcept }
