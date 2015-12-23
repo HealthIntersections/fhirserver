@@ -100,6 +100,9 @@ var
   tr : TFhirXHtmlNode;
   param : TFhirValueSetExpansionParameter;
 begin
+  source.checkNoImplicitRules('ValueSetExpander.Expand', 'ValueSet');
+  source.checkNoModifiers('ValueSetExpander.Expand', 'ValueSet');
+
   result := source.Clone;
   if profile.startsWith('http://www.healthintersections.com.au/fhir/expansion/no-details') then
   begin
@@ -159,10 +162,16 @@ begin
 
     try
       if (source.codeSystem <> nil) then
+      begin
+        source.codeSystem.checkNoModifiers('ValueSetExpander.Expand', 'code system');
         handleDefine(list, map, source.codeSystem, source.codeSystem.conceptList, filter, result.expansion.parameterList);
+      end;
       notClosed := false;
       if (source.compose <> nil) then
+      begin
+        source.compose.checkNoModifiers('ValueSetExpander.Expand', 'compose');
         handleCompose(list, map, source.compose, profile, filter, dependencies, allowIncomplete, result.expansion.parameterList, notClosed);
+      end;
     except
       on e : ETooCostly do
       begin
@@ -260,6 +269,7 @@ begin
   for i := 0 to defines.count - 1 do
   begin
     cm := defines[i];
+    cm.checkNoModifiers('ValueSetExpander.handleDefine', 'concept');
     if filter.passes(cm.display) or filter.passes(cm.code) then
       addDefinedCode(list, map, source.system, cm);
     handleDefine(list, map, source, cm.conceptList, filter, nil);
@@ -386,6 +396,7 @@ var
   inner : boolean;
   display : String;
 begin
+  cset.checkNoModifiers('ValueSetExpander.processCodes', 'set');
   cs := FStore.getProvider(cset.system);
   try
     if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then
@@ -427,6 +438,7 @@ begin
 
     for i := 0 to cset.conceptList.count - 1 do
     begin
+      cset.conceptList[i].checkNoModifiers('ValueSetExpander.processCodes', 'set concept reference');
       display := cset.conceptList[i].display;
       if display = '' then
         display := cs.getDisplay(cset.conceptList[i].code);
@@ -453,6 +465,7 @@ begin
         for i := 0 to cset.filterList.count - 1 do
         begin
           fc := cset.filterList[i];
+          fc.checkNoModifiers('ValueSetExpander.processCodes', 'filter');
           filters[i+offset] := cs.filter(fc.property_, fc.Op, fc.value, prep);
           if filters[i+offset] = nil then
             raise Exception.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperatorEnum[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));

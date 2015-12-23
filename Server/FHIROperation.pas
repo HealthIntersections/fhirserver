@@ -1890,7 +1890,7 @@ var
   s : String;
   csql : String;
 begin
-  if session.canReadAll then
+  if (session = nil) or session.canReadAll then
     s := 'null'
   else
     s := inttostr(Session.Key);
@@ -2106,7 +2106,7 @@ begin
             end;
 
             chooseField(response.Format, summaryStatus, field, comp, needsObject);
-            if (not needsObject) then
+            if (not needsObject) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
               comp := nil;
 
             FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
@@ -3631,66 +3631,6 @@ begin
   end;
 end;
 
-//procedure TFhirOperationManager.ExecuteMailBox(request: TFHIRRequest; response: TFHIRResponse);
-//var
-//  ok : boolean;
-//  msg, resp : TFhirMessageHeader;
-//  sId : String;
-//begin
-// // todo: security
-//  try
-//    ok := true;
-//    if ok and not check(response, (request.Resource <> nil) or ((request.bundle <> nil) and (request.bundle.entryList.count > 0)), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
-//      ok := false;
-//
-//    if ok then
-//    begin
-//      if request.bundle <> nil then
-//      begin
-//        if request.bundle.type_ = BundleTypeMessage  then
-//        begin
-//          if (request.bundle.entryList.Count = 0) or not (request.bundle.entryList[0].resource is TFhirMessageHeader) then
-//            raise Exception.Create('Invalid Message - first resource must be message header');
-//          response.bundle := TFHIRBundle.create(BundleTypeMessage);
-////          response.bundle.base := request.baseUrl;
-//          response.HTTPCode := 200;
-//          msg := TFhirMessageHeader(request.bundle.entryList[0].resource);
-//          response.bundle.id := FhirGUIDToString(CreateGUID);
-//
-//          // todo: check message and envelope ids
-//          resp := BuildResponseMessage(request, msg);
-//          response.bundle.entryList.Append.resource := resp;
-//
-//          ProcessMessage(request, response, msg, resp, response.bundle);
-//        end
-//        else if request.bundle.type_ = BundleTypeDocument  then
-//        begin
-//          // Connectathon 5:
-//          // The Document Server creates and registers the document as a Binary resource
-//          sId := CreateDocumentAsBinary(request);
-//          // The Document Server creates and registers a DocumentReference instance using information from the Composition resource
-//          // in the bundle and pointing to the Binary resource created in the preceding step
-//          CreateDocumentReference(request, sId);
-//        end
-//        else
-//          Raise Exception.create('Unknown content for mailbox');
-//      end
-//      else
-//        Raise Exception.create('Unknown content for mailbox');
-//      response.HTTPCode := 202;
-//      response.Message := 'Accepted';
-//      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
-//    end;
-//  except
-//    on e: exception do
-//    begin
-//      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
-//      recordStack(e);
-//      raise;
-//    end;
-//  end;
-//end;
-//
 procedure TFhirOperationManager.ExecuteOperation(request: TFHIRRequest; response: TFHIRResponse);
 
 var
@@ -5771,10 +5711,15 @@ begin
           else
             raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly)');
 
+          profile.checkNoImplicitRules('QuestionnaireGeneration', 'profile');
+          profile.checkNoModifiers('QuestionnaireGeneration', 'profile');
+
           if id <> '' then
           begin
             fid := request.baseUrl+'Profile/'+id+'/$questionnaire';
             questionnaire := manager.FRepository.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
+            questionnaire.checkNoImplicitRules('QuestionnaireGeneration', 'questionnaire');
+            questionnaire.checkNoModifiers('QuestionnaireGeneration', 'questionnaire');
           end
           else
           begin
@@ -5911,6 +5856,9 @@ begin
             raise Exception.Create('the "context" parameter is not yet supported')
           else
             raise Exception.Create('Unable to find value set to expand (not provided by id, identifier, or directly)');
+
+          vs.checkNoImplicitRules('ExpandValueSet', 'ValueSet');
+          vs.checkNoModifiers('ExpandValueSet', 'ValueSet');
 
           profile := params.str['profile'];
           filter := params.str['filter'];
@@ -6253,7 +6201,7 @@ begin
               cacheId := vs.url;
             end
             else if params.hasParameter('valueSet') then
-              vs := (params.res['valueSet']) as TFhirValueSet
+              vs := (params.res['valueSet'] as TFhirValueSet).Link
             else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
               vs := request.Resource.Link as TFhirValueSet
             else
@@ -6310,6 +6258,12 @@ begin
 
               if (coded = nil) then
                 raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
+
+              if vs <> nil then
+              begin
+                vs.checkNoImplicitRules('ValueSetValidation', 'ValueSet');
+                vs.checkNoModifiers('ValueSetValidation', 'ValueSet');
+              end;
 
               response.resource := manager.FRepository.TerminologyServer.validate(vs, coded, abstractOk);
               response.HTTPCode := 200;
@@ -6587,6 +6541,9 @@ begin
       begin
         composition := manager.GetResourceByKey(resourceKey) as TFhirComposition;
         try
+          composition.checkNoImplicitRules('GenerateDocument', 'composition');
+          composition.checkNoModifiers('GenerateDocument', 'composition');
+
           bundle := TFhirBundle.Create(BundleTypeDocument);
           try
             bundle.id := copy(GUIDToString(CreateGUID), 2, 36).ToLower;
@@ -6704,6 +6661,8 @@ begin
           else
             raise Exception.Create('Unable to find claim to process (not provided by id, identifier, or directly)');
 
+          claim.checkNoImplicitRules('ProcessClaim', 'claim');
+          claim.checkNoModifiers('ProcessClaim', 'claim');
           resp := manager.FRepository.GenerateClaimResponse(claim);
           try
             response.HTTPCode := 200;
@@ -6831,6 +6790,10 @@ begin
               end
               else
                 raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
+              vsS.checkNoImplicitRules('ConceptMapTranslation', 'Source ValueSet');
+              vsS.checkNoModifiers('ConceptMapTranslation', 'Source ValueSet');
+              vsT.checkNoImplicitRules('ConceptMapTranslation', 'Target ValueSet');
+              vsT.checkNoModifiers('ConceptMapTranslation', 'Target ValueSet');
               response.resource := manager.FRepository.TerminologyServer.translate(vsS, coded, vsT);
               response.HTTPCode := 200;
               response.Message := 'OK';
@@ -6929,6 +6892,8 @@ begin
         else
           raise Exception.Create('Unable to find profile to generate snapshot for');
 
+        sdParam.checkNoImplicitRules('GenerateSnapshot', 'profile');
+        sdParam.checkNoModifiers('GenerateSnapshot', 'profile');
         if sdParam.base <> '' then
         begin
           if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, sdParam.base, sdBase) then
@@ -7207,6 +7172,9 @@ begin
           else
             raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly)');
 
+          profile.checkNoImplicitRules('GenerateTemplate', 'profile');
+          profile.checkNoModifiers('GenerateTemplate', 'profile');
+
           template := nil;
           try
             builder := TProfileUtilities.create(manager.FRepository.ValidatorContext.Link, nil);
@@ -7287,6 +7255,8 @@ begin
       raise Exception.Create('No resource found');
     if r is TFhirDomainResource then
     begin
+      r.checkNoImplicitRules('GenerateNarrative', 'resource');
+      TFhirDomainResource(r).checkNoModifiers('GenerateNarrative', 'resource');
       (r as TFhirDomainResource).text := nil;
       narr := TFHIRNarrativeGenerator.create(manager.FRepository.ValidatorContext.Link);
       try

@@ -253,6 +253,8 @@ begin
 //  end;                                                                           9
 
   // basic setup stuff
+  subscription.checkNoModifiers('SubscriptionManager.checkAcceptable', 'subscription');
+  subscription.channel.checkNoModifiers('SubscriptionManager.checkAcceptable', 'subscription');
   if subscription.channel.type_ = SubscriptionChannelTypeNull then
     raise Exception.Create('A channel type must be specified');
   if subscription.channel.type_ in [SubscriptionChannelTypeMessage] then
@@ -456,6 +458,7 @@ end;
 
 procedure TSubscriptionManager.SeeNewSubscription(key: Integer; id : String; subscription: TFhirSubscription; session: TFHIRSession; conn : TKDBConnection);
 begin
+  subscription.checkNoImplicitRules('SubscriptionManager.SeeNewSubscription', 'subscription');
   if subscription.status in [SubscriptionStatusActive, SubscriptionStatusError] then
   begin
     CheckAcceptable(subscription, session);

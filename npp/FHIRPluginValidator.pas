@@ -143,6 +143,7 @@ function TFHIRPluginValidatorContext.supportsSystem(system: string): boolean;
 var
   ex : TFhirExtension;
 begin
+  CheckClient;
   result := FCodeSystems.ContainsKey(system);
   if (not result) then
     for ex in FConfStmt.extensionList do

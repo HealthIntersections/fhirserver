@@ -118,7 +118,8 @@ Type
     function BuildCompartmentList(session : TFHIRSession) : String;
 
     function GetResource(session : TFhirSession; rtype : TFhirResourceType; lang, id, ver, op : String) : TFhirResource;
-    function FindResource(session : TFhirSession; rtype : TFhirResourceType; lang, params : String; var id : String) : TFhirResource;
+    function FindResource(session : TFhirSession; rtype : TFhirResourceType; lang, params : String) : TFhirResource;
+    function DoSearch(session : TFhirSession; rtype : TFhirResourceType; lang, params : String) : TFHIRBundle;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
     function transform1(resource : TFhirResource; lang, xslt : String; saveOnly : boolean) : string;
     function HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse; secure : boolean) : TDateTime;
@@ -318,6 +319,7 @@ Begin
   FAuthServer := TAuth2Server.Create(FIni.readString('web', 'clients', ''), FAltPath, FHost, inttostr(FSSLPort), FSCIMServer.Link);
   FAuthServer.FHIRStore := FFhirStore.Link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
+  FAuthServer.OnDoSearch := DoSearch;
   FAuthServer.RootCert := FRootCertFile;
   FAuthServer.SSLCert := FCertFile;
   FAuthServer.SSLPassword := FSSLPassword;
@@ -384,6 +386,27 @@ begin
     FLock.Unlock;
   end;
   CoUninitialize;
+end;
+
+function TFhirWebServer.DoSearch(session: TFhirSession; rtype: TFhirResourceType; lang, params: String): TFHIRBundle;
+var
+  request : TFHIRRequest;
+  response : TFHIRResponse;
+begin
+  request := TFHIRRequest.create(roRest);
+  response := TFHIRResponse.Create;
+  try
+    request.Session := session.link;
+    request.ResourceType := rType;
+    request.Lang := lang;
+    request.LoadParams(params);
+    request.CommandType := fcmdSearch;
+    ProcessRequest(request, response, false);
+    result := response.bundle.Link;
+  finally
+    response.free;
+    request.Free;
+  end;
 end;
 
 function TFhirWebServer.DoVerifyPeer(Certificate: TIdX509; AOk: Boolean; ADepth, AError: Integer): Boolean;
@@ -1025,8 +1048,9 @@ begin
     profile := GetResource(request.Session, frtStructureDefinition, request.Lang, id, '','') as TFHirStructureDefinition;
   end
   else
-    profile := FindResource(request.Session, frtStructureDefinition, request.Lang, 'url='+request.Parameters.GetVar('profile'), id) as TFHirStructureDefinition;
+    profile := FindResource(request.Session, frtStructureDefinition, request.Lang, 'url='+request.Parameters.GetVar('profile')) as TFHirStructureDefinition;
   try
+    id := profile.id;
     fid := request.baseUrl+'StructureDefinition/'+id+'/$questionnaire';
     s := FFhirStore.QuestionnaireCache.getForm(frtStructureDefinition, id);
     if s = '' then
@@ -2021,7 +2045,10 @@ begin
   finally
     store.Free;
   end;
-  writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(gettickCount - t));
+  if request.session = nil then // during OAuth only
+    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user=(in-oauth), params='+request.Parameters.Source+'. rt = '+inttostr(gettickCount - t))
+  else
+    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(gettickCount - t));
 end;
 
 procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -2488,7 +2515,7 @@ begin
   end;
 end;
 
-function TFhirWebServer.FindResource(session : TFhirSession; rtype: TFhirResourceType; lang, params: String; var id : String): TFhirResource;
+function TFhirWebServer.FindResource(session : TFhirSession; rtype: TFhirResourceType; lang, params: String): TFhirResource;
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
@@ -2503,10 +2530,7 @@ begin
     request.CommandType := fcmdSearch;
     ProcessRequest(request, response, false);
     if (response.bundle <> nil) and (response.bundle.entryList.Count = 1) then
-    begin
-      result := response.bundle.entryList[0].resource.link;
-      id := response.bundle.entryList[0].Resource.id.Substring(response.bundle.entryList[0].Resource.id.LastIndexOf('/'));
-    end
+      result := response.bundle.entryList[0].resource.link
     else
       raise Exception.Create('Unable to find resource '+CODES_TFhirResourceType[rtype]+'?'+params);
   finally
@@ -2715,16 +2739,12 @@ end;
 //end;
 //
 function TFhirWebServer.BuildCompartmentList(session: TFHIRSession): String;
-  function tail(s : String):String;
-  begin
-    result := copy(s, 10, $FF);
-  end;
 var
   i : integer;
 begin
-  result := ''''+tail(session.patientList[0])+'''';
+  result := ''''+session.patientList[0]+'''';
   for i := 1 to session.patientList.count - 1 do
-    result := result+', '''+tail(session.patientList[i])+'''';
+    result := result+', '''+session.patientList[i]+'''';
   for i := 0 to session.TaggedCompartments.count - 1 do
     result := result+', '''+session.TaggedCompartments[i]+'''';
 end;

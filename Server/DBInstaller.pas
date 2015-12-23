@@ -38,7 +38,7 @@ uses
   SCIMServer;
 
 const
-  ServerDBVersion = 1;
+  ServerDBVersion = 2;
 
 Type
   TFHIRDatabaseInstaller = class (TAdvObject)
@@ -89,6 +89,7 @@ Type
     Property  Bases : TStringList read FBases;
     procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
+    Procedure Upgrade(version : integer);
     Property TextIndexing : boolean read FTextIndexing write FTextIndexing;
 
   end;
@@ -303,6 +304,7 @@ begin
        ' Scope nchar(255) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
        ' ClientState nchar(255) NOT NULL, '+#13#10+
+       ' Patient nchar(64) NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
        ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' DateSignedIn '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
@@ -806,6 +808,40 @@ begin
   end;
 end;
 
+
+procedure TFHIRDatabaseInstaller.Upgrade(version : integer);
+var
+  m : TKDBMetaData;
+  t : TKDBTable;
+begin
+  // 1- > 2 upgrade - add Patient to OAuthLogins. Also, clean up changes to Closures
+  if version = 1 then
+  begin
+    Fconn.ExecSQL('ALTER TABLE OAuthLogins ADD Patient char(64) NULL');
+
+    m := Fconn.FetchMetaData;
+    try
+      t := m.getTable('Closures');
+      if not t.hasColumn('Version') then
+      begin
+        Fconn.ExecSQL('ALTER TABLE Closures ADD Version int NULL');
+        Fconn.ExecSQL('update Closures set Version = 1');
+      end;
+      t := m.getTable('ClosureEntries');
+      if t.hasColumn('NeedsIndexing') then
+      begin
+        Fconn.ExecSQL('sp_RENAME ''ClosureEntries.NeedsIndexing'' , ''IndexedVersion'', ''COLUMN''');
+        Fconn.ExecSQL('update ClosureEntries set IndexedVersion = 1');
+      end;
+    finally
+      m.Free;
+    end;
+  end;
+  Fconn.ExecSQL('update Config set value = 2 where ConfigKey = 5');
+
+//  raise Exception.Create('Database Version mismatch: you must re-install the database');
+
+end;
 
 end.
 

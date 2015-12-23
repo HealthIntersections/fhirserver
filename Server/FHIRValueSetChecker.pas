@@ -62,15 +62,21 @@ var
   cs : TCodeSystemProvider;
   other : TFHIRValueSet;
 begin
+  vs.checkNoImplicitRules('ValueSetChecker.prepare', 'ValueSet');
+  vs.checkNoModifiers('ValueSetChecker.prepare', 'ValueSet');
   if (vs = nil) then
 
   else
   begin
     FVs := vs.link;
     if fvs.codeSystem <> nil then
+    begin
+      fvs.codeSystem.checkNoModifiers('ValueSetChecker.prepare', 'CodeSystem');
       FOthers.Add(fvs.codeSystem.system, TValueSetProvider.create(FVs.Link));
+    end;
     if (fvs.compose <> nil) then
     begin
+      fvs.compose.checkNoModifiers('ValueSetChecker.prepare', 'compose');
       for i := 0 to fvs.compose.importList.Count - 1 do
       begin
         other := FStore.getValueSetByUrl(fvs.compose.importList[i].value);
@@ -90,23 +96,31 @@ begin
       end;
       for i := 0 to fvs.compose.includeList.Count - 1 do
       begin
+        fvs.compose.includeList[i].checkNoModifiers('ValueSetChecker.prepare', 'include');
         if not FOthers.ExistsByKey(fvs.compose.includeList[i].system) then
           FOthers.Add(fvs.compose.includeList[i].system, FStore.getProvider(fvs.compose.includeList[i].system));
         cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
         for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
+        begin
+          fvs.compose.includeList[i].filterList[j].checkNoModifiers('ValueSetChecker.prepare', 'include.filter');
           if not (('concept' = fvs.compose.includeList[i].filterList[j].property_) and (fvs.compose.includeList[i].filterList[j].Op = FilterOperatorIsA)) then
             if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_, fvs.compose.includeList[i].filterList[j].Op, fvs.compose.includeList[i].filterList[j].value) then
               raise ETerminologyError.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperatorEnum[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
+        end;
       end;
       for i := 0 to fvs.compose.excludeList.Count - 1 do
       begin
+        fvs.compose.excludeList[i].checkNoModifiers('ValueSetChecker.prepare', 'exclude');
         if not FOthers.ExistsByKey(fvs.compose.excludeList[i].system) then
           FOthers.Add(fvs.compose.excludeList[i].system, FStore.getProvider(fvs.compose.excludeList[i].system));
         cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
         for j := 0 to fvs.compose.excludeList[i].filterList.count - 1 do
+        begin
+          fvs.compose.excludeList[i].filterList[j].checkNoModifiers('ValueSetChecker.prepare', 'include.filter');
           if not (('concept' = fvs.compose.excludeList[i].filterList[j].property_) and (fvs.compose.excludeList[i].filterList[j].Op = FilterOperatorIsA)) then
             if not cs.doesFilter(fvs.compose.excludeList[i].filterList[j].property_, fvs.compose.excludeList[i].filterList[j].Op, fvs.compose.excludeList[i].filterList[j].value) then
               raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperatorEnum[fvs.compose.excludeList[i].filterList[j].Op]+ ' '+fvs.compose.excludeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
+        end;
       end;
     end;
   end;

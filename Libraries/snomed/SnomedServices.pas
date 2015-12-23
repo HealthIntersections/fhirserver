@@ -2470,28 +2470,31 @@ procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; params:
 var
   Identity : UInt64;
   Flags : Byte;
-  ParentIndex : Cardinal;
+  ParentIndex, iWork, iWork2, iWork3, module, modifier, kind : Cardinal;
   DescriptionIndex : Cardinal;
-  InboundIndex : Cardinal;
+  InboundIndex, InboundIndex2 : Cardinal;
   outboundIndex, refsets : Cardinal;
   Inbounds : TCardinalArray;
   date : TSnomedDate;
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
-  i : integer;
+  i, group : integer;
   param, p2 : TFhirParametersParameter;
 begin
   SetLength(inbounds, 0);
   Concept.GetConcept(Cardinal(ctxt), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+  Inbounds := Refs.GetReferences(InboundIndex);
+
+  // parents:
   if ParentIndex <> 0 Then
   begin
     Parents := Refs.GetReferences(ParentIndex);
     for i := 0 to Length(Parents)-1 do
     begin
-      Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+      Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
       Descriptions := Refs.GetReferences(DescriptionIndex);
       param := params.parameterList.Append;
-      param.name := 'Display';
+      param.name := 'Parent';
       p2 := param.partList.Append;
       p2.name := 'Code';
       p2.value := TFhirString.Create(IntToStr(Identity));
@@ -2500,6 +2503,25 @@ begin
       p2.value := TFhirString.Create(GetPN(Descriptions));
     end;
   end;
+
+  // children: (inbound relationships with type is-a)
+  For i := 0 to High(Inbounds) Do
+  Begin
+    Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+    if iWork3 = FIs_a_Index then
+    begin
+      Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+      Descriptions := Refs.GetReferences(DescriptionIndex);
+      param := params.parameterList.Append;
+      param.name := 'Child';
+      p2 := param.partList.Append;
+      p2.name := 'Code';
+      p2.value := TFhirString.Create(IntToStr(Identity));
+      p2 := param.partList.Append;
+      p2.name := 'Display';
+      p2.value := TFhirString.Create(GetPN(Descriptions));
+    End;
+  End;
 end;
 
 procedure TSnomedServices.Displays(code: String; list: TStringList);

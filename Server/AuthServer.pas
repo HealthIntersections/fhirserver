@@ -17,12 +17,14 @@ uses
 
   FacebookSupport, SCIMServer, SCIMObjects,
 
-  FHIRDataStore, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity;
+  FHIRDataStore, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities;
 
 Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
 
 type
+  TDoSearchEvent = function (session : TFhirSession; rtype : TFhirResourceType; lang, params : String) : TFHIRBundle of object;
+
   TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther);
 
   TFhirLoginToken = Class (TAdvObject)
@@ -60,6 +62,8 @@ type
     FAdminEmail : String;
     FSCIMServer : TSCIMServer;
     FEndPoint: String;
+    FOnDoSearch : TDoSearchEvent;
+    function GetPatientListAsOptions : String;
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -105,6 +109,7 @@ type
     function TokenPath : String;
     Property EndPoint : String read FEndPoint write FEndPoint;
     Property Ini : TIniFile read FIni;
+    property OnDoSearch : TDoSearchEvent read FOnDoSearch write FOnDoSearch;
   end;
 
 
@@ -362,6 +367,35 @@ begin
 end;
 
 
+function TAuth2Server.GetPatientListAsOptions: String;
+var
+  bundle : TFhirBundle;
+  entry : TFhirBundleEntry;
+  patient : TFhirPatient;
+  b : TStringBuilder;
+begin
+  bundle := OnDoSearch(nil, frtPatient, 'en', '_summary=true&__wantObject=true');
+  b := TStringBuilder.create;
+  try
+    b.Append('<option value=""/>');
+    for entry in bundle.entryList do
+    begin
+      patient := entry.resource as TFhirPatient;
+      b.Append('<option value="');
+      b.Append(patient.id);
+      b.Append('">');
+      b.Append(HumanNamesAsText(patient.nameList));
+      b.Append(' (');
+      b.Append(patient.id);
+      b.Append(')</option>');
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+    bundle.Free;
+  end;
+end;
+
 function TAuth2Server.BasePath: String;
 begin
   if FSSLPort = '443' then
@@ -582,7 +616,8 @@ begin
   if (params.getVar('useradmin') = '1') then
     scopes.add(SCIM_ADMINISTRATOR);
 
-  if (params.GetVar('userlevel') = '1') then
+  // if there's a patient, then the scopes a patient specific
+  if (params.getVar('patient') = '') then
     pfx := 'User/'
   else
     pfx := 'Patient/';
@@ -651,6 +686,7 @@ begin
           session.jwt.issuedAt := now;
           session.jwt.id := FHost+'/sessions/'+inttostr(Session.Key);
 
+
           if params.getVar('user') = '1' then
           begin
           // if user rights granted
@@ -661,10 +697,17 @@ begin
           end;
           session.JWTPacked := TJWTUtils.rsa_pack(session.jwt, jwt_hmac_rsa256, ChangeFileExt(FSSLCert, '.key'), FSSLPassword);
 
-          conn.SQL := 'Update OAuthLogins set Status = 3, DateChosen = '+DBGetDate(conn.Owner.Platform)+', Rights = :r, Jwt = :jwt where Id = '''+SQLWrapString(Session.OuterToken)+'''';
+          conn.SQL := 'Update OAuthLogins set Status = 3, DateChosen = '+DBGetDate(conn.Owner.Platform)+', Rights = :r, Patient = :p, Jwt = :jwt where Id = '''+SQLWrapString(Session.OuterToken)+'''';
           conn.prepare;
           conn.BindBlobFromString('r', scopes.CommaText);
           conn.BindBlobFromString('jwt', session.JWTPacked);
+          if params.getVar('patient') = '' then
+            conn.BindNull('p')
+          else
+          begin
+            conn.BindString('p', params.GetVar('patient'));
+            session.PatientList.Add(params.GetVar('patient'));
+          end;
           conn.Execute;
           conn.Terminate;
 
@@ -681,6 +724,7 @@ begin
         try
           variables.Add('client', FIni.ReadString(client_id, 'name', ''));
           variables.Add('username', name);
+          variables.Add('patient-list', GetPatientListAsOptions);
           loadScopeVariables(variables, scope, session.User);
           OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
         finally

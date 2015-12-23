@@ -958,6 +958,8 @@ var
   vs : TFhirValueSet;
   cm : TLoadedConceptMap;
 begin
+  resource.checkNoImplicitRules('Repository.SeeResource', 'Resource');
+  TFhirDomainResource(resource).checkNoModifiers('Repository.SeeResource', 'Resource');
   FLock.Lock('SeeTerminologyResource');
   try
     if (resource.ResourceType = frtValueSet) then

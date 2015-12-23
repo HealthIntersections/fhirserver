@@ -85,7 +85,6 @@ Welcome [%username%]. What rights you want the [%client%] to have?
 <form method="POST" action="/oauth2/auth_choice">
   <input type="hidden" name="form" value="true"/>
   <p>
-    <input type="checkbox" name="userlevel" value="1" [%userlevel%]/> Change Patient focus <br/>
     <input type="checkbox" name="userinfo" value="1" [%userinfo%]/> Share User Details <br/>
     [%useradmin%]
   </p>
@@ -139,6 +138,15 @@ Welcome [%username%]. What rights you want the [%client%] to have?
       <td><input type="checkbox" name="writeOther" value="1" [%writeOther%] [%writeOtherdisabled%]/> write</td>
     </tr>
   </table>
+
+  <p><b>Patient Choice</b></p>  
+  <p>
+    Choose Patient: <select name="patient" size="1"/>[%patient-list%]</select>
+  </p>
+  <p>
+    Note: if you do not choose a patient, the [%client%] will have open access to the patient list.
+  </p>
+  
   <input type="submit" value="Authorise" />
 </form>
 

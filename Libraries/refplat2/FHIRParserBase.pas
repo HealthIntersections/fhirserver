@@ -2217,6 +2217,9 @@ if tail then
 end;
 
 class function TFHIRXhtmlComposer.Header(Session : TFhirSession; base, lang, version: String): String;
+var
+   id : String;
+   f : boolean;
 begin
   result :=
 '	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
@@ -2246,6 +2249,22 @@ begin
       result := result +'User: [n/a]';
     if not session.anonymous then
       result := result +'&nbsp; <a href="'+base+'/logout" title="Log Out"><img src="/logout.png"></a>';
+    if session.PatientList.Count > 0 then
+    begin
+      if session.PatientList.Count = 1 then
+        result := result+'  &nbsp;'#13#10+'</div><div style="background-color: #e5e600; padding: 6px; color: black;"> This session limited to patient '
+      else
+        result := result+'  &nbsp;'#13#10+'</div><div style="background-color: #e5e600; padding: 6px; color: black;"> . This session limited to the following patients: ';
+      f := true;
+      for id in session.PatientList do
+      begin
+        if f then
+          f := false
+        else
+          result := result +', ';
+        result := result + id;
+      end;
+    end;
   end;
 
   result := result +

@@ -247,10 +247,11 @@ constructor TFHIRDataStore.Create(DB: TKDBManager;
   SourceFolder, WebFolder: String; TerminologyServer: TTerminologyServer;
   ini: TIniFile; SCIMServer: TSCIMServer);
 var
-  i: integer;
+  i, ver: integer;
   conn: TKDBConnection;
   a: TFHIRResourceType;
   fn : String;
+  dbi : TFHIRDatabaseInstaller;
 begin
   inherited Create;
   LoadMessages; // load while thread safe
@@ -311,6 +312,18 @@ begin
     end;
     conn.terminate;
 
+    // db version check
+    ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
+    if (ver <> ServerDBVersion) then
+    begin
+      dbi := TFHIRDatabaseInstaller.create(conn, '');
+      try
+        dbi.upgrade(ver);
+      finally
+        dbi.Free;
+      end;
+    end;
+
     conn.SQL := 'Select * from Config';
     conn.Prepare;
     conn.Execute;
@@ -326,11 +339,7 @@ begin
       else if conn.ColIntegerByName['ConfigKey'] = 6 then
         FSystemId := conn.ColStringByName['Value']
       else if conn.ColIntegerByName['ConfigKey'] = 7 then
-        FResConfig[frtNull].cmdSearch := conn.ColStringByName['Value'] = '1'
-      else if conn.ColIntegerByName['ConfigKey'] = 5 then
-        if conn.ColIntegerByName['Value'] <> ServerDBVersion then
-          raise Exception.Create('Database Version mismatch: you must re-install the database');
-
+        FResConfig[frtNull].cmdSearch := conn.ColStringByName['Value'] = '1';
     conn.terminate;
     conn.SQL := 'Select * from Types';
     conn.Prepare;

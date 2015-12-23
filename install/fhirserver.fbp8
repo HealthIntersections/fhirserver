@@ -62,7 +62,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "implement $closure operation"
+        as.returnvalue = "change Smart on FHIR login to support patient specific login, and extend SCT support in $lookup operation"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -423,9 +423,9 @@ begin
         insertatxpath = /rss/channel/link
         nodename = item
         nodetext = "" +
-                   "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate%</title>" +
+                   "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU2)</title>" +
                    "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe</link>" +
-                   "      <description>%BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
+                   "      <description>DSTU2. %BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
                    ""
         parentxpath = /rss/channel
         parserver = HighestMSXML

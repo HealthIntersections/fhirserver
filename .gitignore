@@ -47,3 +47,5 @@ Libraries/refplat/openehr.xml
 install/fhirvse.fbpInf
 install/fhirvse.fbpbrk
 *.jdbg
+install/fhirserver2.fbl8
+install/fhirserver2.fbpbrk

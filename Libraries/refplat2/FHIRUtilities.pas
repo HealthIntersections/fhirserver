@@ -41,6 +41,7 @@ uses
 
 Type
   ETooCostly = class (Exception);
+  EUnsafeOperation = class (Exception);
 
 const
   MIN_DATE = DATETIME_MIN;
@@ -48,6 +49,7 @@ const
   ANY_CODE_VS = 'http://www.healthintersections.com.au/fhir/ValueSet/anything';
 
 
+function HumanNamesAsText(names : TFhirHumanNameList):String;
 function HumanNameAsText(name : TFhirHumanName):String;
 function GetEmailAddress(contacts : TFhirContactPointList):String;
 function ResourceTypeByName(name : String) : TFhirResourceType;
@@ -141,6 +143,11 @@ type
     procedure setExtensionString(url, value : String);
   end;
 
+  TFHIRBackboneElementHelper = class helper for TFHIRBackboneElement
+  public
+    procedure checkNoModifiers(place, role : String);
+  end;
+
   TFhirElementDefinitionTypeHelper = class helper for TFhirElementDefinitionType
   private
     function GetProfile: String;
@@ -160,6 +167,8 @@ type
     procedure SetmlId(const Value: String);
   public
     property xmlId : String read GetXmlId write SetmlId;
+
+    procedure checkNoImplicitRules(place, role : String);
   end;
 
   TFHIRDomainResourceHelper = class helper (TFHIRResourceHelper) for TFHIRDomainResource
@@ -178,6 +187,7 @@ type
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
     function narrativeAsWebPage : String;
+    procedure checkNoModifiers(place, role : String);
   end;
 
   TFhirProfileStructureSnapshotElementDefinitionTypeListHelper = class helper for TFhirElementDefinitionList
@@ -1209,6 +1219,14 @@ begin
         result := contacts[i].value;
 end;
 
+function HumanNamesAsText(names : TFhirHumanNameList):String;
+begin
+  if (names = nil) or (names.Count = 0) then
+    result := '??'
+  else
+    result := HumanNameAsText(names[0]);
+end;
+
 function HumanNameAsText(name : TFhirHumanName):String;
 var
   i : integer;
@@ -1625,6 +1643,7 @@ begin
   addExtension(url, TFhirString.Create(v));
 end;
 
+
 function TFHIRElementHelper.getExtension(url: String): Integer;
 var
   i : integer;
@@ -1965,6 +1984,12 @@ end;
 
 { TFHIRDomainResourceHelper }
 
+procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String);
+begin
+  if modifierExtensionList.Count > 0 then
+    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+end;
+
 procedure TFHIRDomainResourceHelper.collapseAllContained;
 var
   i : integer;
@@ -2029,6 +2054,12 @@ end;
 
 
 { TFHIRResourceHelper }
+
+procedure TFHIRResourceHelper.checkNoImplicitRules(place, role: String);
+begin
+  if implicitRules <> '' then
+    raise EUnsafeOperation.Create('The resource '+role+' has an unknown implicitRules tag at '+place);
+end;
 
 function TFHIRResourceHelper.GetXmlId: String;
 begin
@@ -3177,6 +3208,14 @@ begin
         profile := '';
       exit(true);
     end;
+end;
+
+{ TFHIRBackboneElementHelper }
+
+procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String);
+begin
+  if modifierExtensionList.Count > 0 then
+    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
 end.

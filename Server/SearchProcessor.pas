@@ -290,6 +290,8 @@ begin
       begin
         result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(parts[0]) + ''')  and Value = ''' + sqlwrapString(parts[1]) + ''')';
       end
+      else if value.startsWith('http:') or value.startsWith('https:') then
+        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
       else
         raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID', lang), [name]));
     end

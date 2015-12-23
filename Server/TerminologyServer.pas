@@ -158,28 +158,9 @@ end;
 procedure TTerminologyServer.LoadClosures;
 var
   conn : TKDBConnection;
-  m : TKDBMetaData;
-  t : TKDBTable;
 begin
   conn := FDB.GetConnection('LoadClosures');
   try
-    m := conn.FetchMetaData;
-    try
-      t := m.getTable('Closures');
-      if not t.hasColumn('Version') then
-      begin
-        conn.ExecSQL('ALTER TABLE Closures ADD Version int NULL');
-        conn.ExecSQL('update Closures set Version = 1');
-      end;
-      t := m.getTable('ClosureEntries');
-      if t.hasColumn('NeedsIndexing') then
-      begin
-        conn.ExecSQL('sp_RENAME ''ClosureEntries.NeedsIndexing'' , ''IndexedVersion'', ''COLUMN''');
-        conn.ExecSQL('update ClosureEntries set IndexedVersion = 1');
-      end;
-    finally
-      m.Free;
-    end;
     conn.SQL := 'Select ClosureKey, Name, Version from Closures';
     conn.Prepare;
     conn.Execute;
@@ -315,7 +296,7 @@ begin
     end;
     if not exists then
       cm.Init(conn);
-    cm.enterCode(conn, uri, code);
+    result := cm.enterCode(conn, uri, code);
   finally
     FLock.Unlock;
   end;

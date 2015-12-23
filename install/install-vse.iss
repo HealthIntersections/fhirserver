@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\vselicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\vsereadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=vse-install-1.0.1
+OutputBaseFilename=vse-install-1.0.2
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.1 (FHIR Version 1.0.2.7355)
+AppVerName=1.0.2 (FHIR Version 1.0.2.7467)
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

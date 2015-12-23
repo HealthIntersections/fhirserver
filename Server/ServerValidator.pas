@@ -61,6 +61,8 @@ end;
 
 procedure TFHIRServerValidatorContext.SeeResource(r : TFhirResource);
 begin
+  r.checkNoImplicitRules('Repository.SeeResource', 'Resource');
+  TFhirDomainResource(r).checkNoModifiers('Repository.SeeResource', 'Resource');
   if (r.ResourceType in [frtValueSet, frtConceptMap]) then
     FTerminologyServer.SeeSpecificationResource(r)
   else

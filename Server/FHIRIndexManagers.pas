@@ -1729,6 +1729,11 @@ begin
         FSpaces.FDB.Terminate;
         ok := true;
       end;
+    end
+    else if url.startsWith('http:') or url.startsWith('https:') then
+    begin
+      id := url;
+      ok := true;
     end;
   end;
 
