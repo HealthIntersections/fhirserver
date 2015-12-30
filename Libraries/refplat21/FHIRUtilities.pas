@@ -41,6 +41,7 @@ uses
 
 Type
   ETooCostly = class (Exception);
+  EUnsafeOperation = class (Exception);
 
 const
   MIN_DATE = DATETIME_MIN;
@@ -48,6 +49,7 @@ const
   ANY_CODE_VS = 'http://www.healthintersections.com.au/fhir/ValueSet/anything';
 
 
+function HumanNamesAsText(names : TFhirHumanNameList):String;
 function HumanNameAsText(name : TFhirHumanName):String;
 function GetEmailAddress(contacts : TFhirContactPointList):String;
 function ResourceTypeByName(name : String) : TFhirResourceType;
@@ -69,6 +71,7 @@ function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
 function isHistoryURL(url : String) : boolean;
 procedure splitHistoryUrl(var url : String; var history : String);
 procedure RemoveBOM(var s : String);
+function isAbsoluteUrl(s: String): boolean;
 
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
@@ -130,6 +133,7 @@ type
 
   TFHIRElementHelper = class helper for TFHIRElement
   public
+    function addExtension(url : String) : TFHIRExtension; overload;
     procedure addExtension(url : String; t : TFhirType); overload;
     procedure addExtension(url : String; v : String); overload;
     function hasExtension(url : String) : boolean;
@@ -139,6 +143,11 @@ type
     function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
+  end;
+
+  TFHIRBackboneElementHelper = class helper for TFHIRBackboneElement
+  public
+    procedure checkNoModifiers(place, role : String);
   end;
 
   TFhirElementDefinitionTypeHelper = class helper for TFhirElementDefinitionType
@@ -160,6 +169,8 @@ type
     procedure SetmlId(const Value: String);
   public
     property xmlId : String read GetXmlId write SetmlId;
+
+    procedure checkNoImplicitRules(place, role : String);
   end;
 
   TFHIRDomainResourceHelper = class helper (TFHIRResourceHelper) for TFHIRDomainResource
@@ -169,6 +180,7 @@ type
     property Contained[id : String] : TFhirResource read GetContained; default;
     procedure collapseAllContained;
     function addExtension(url : String; t : TFhirType) : TFhirExtension; overload;
+    function addExtension(url : String) : TFhirExtension; overload;
     function addExtension(url : String; v : String) : TFhirExtension; overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
@@ -178,6 +190,12 @@ type
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
     function narrativeAsWebPage : String;
+    procedure checkNoModifiers(place, role : String);
+  end;
+
+  TFhirCodeListHelper = class helper for TFhirCodeList
+  public
+    function hasCode(code : String) : boolean;
   end;
 
   TFhirProfileStructureSnapshotElementDefinitionTypeListHelper = class helper for TFhirElementDefinitionList
@@ -280,11 +298,13 @@ type
     function GetStringParameter(name: String): String;
     function GetBooleanParameter(name: String): boolean;
     function GetResourceParameter(name: String): TFHIRResource;
+    function GetParameterParameter(name: String): TFhirParametersParameter;
   public
     function hasParameter(name : String):Boolean;
     Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
     Property res[name : String] : TFHIRResource read GetResourceParameter;
     Property str[name : String] : String read GetStringParameter;
+    Property param[name : String] : TFhirParametersParameter read GetParameterParameter;
     Property bool[name : String] : boolean read GetBooleanParameter;
     procedure AddParameter(name: String; value: TFhirType); overload;
     procedure AddParameter(name: String; value: TFhirResource); overload;
@@ -296,10 +316,12 @@ type
   private
     function GetNamedParameter(name: String): TFhirBase;
     function GetStringParameter(name: String): String;
+    function GetParameterParameter(name: String): TFhirParametersParameter;
   public
     function hasParameter(name : String):Boolean;
     Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
     Property str[name : String] : String read GetStringParameter;
+    Property param[name : String] : TFhirParametersParameter read GetParameterParameter;
     procedure AddParameter(name: String; value: TFhirType); overload;
     procedure AddParameter(name: String; value: TFhirResource); overload;
     procedure AddParameter(name: String; value: boolean); overload;
@@ -325,6 +347,11 @@ type
   TFhirOperationOutcomeIssueListHelper = class helper for TFhirOperationOutcomeIssueList
   public
     function errorCount : integer;
+  end;
+
+  TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
+  public
+    function hash : String;
   end;
 
 function Path(const parts : array of String) : String;
@@ -1209,6 +1236,14 @@ begin
         result := contacts[i].value;
 end;
 
+function HumanNamesAsText(names : TFhirHumanNameList):String;
+begin
+  if (names = nil) or (names.Count = 0) then
+    result := '??'
+  else
+    result := HumanNameAsText(names[0]);
+end;
+
 function HumanNameAsText(name : TFhirHumanName):String;
 var
   i : integer;
@@ -1625,6 +1660,13 @@ begin
   addExtension(url, TFhirString.Create(v));
 end;
 
+
+function TFHIRElementHelper.addExtension(url: String): TFHIRExtension;
+begin
+  result := self.ExtensionList.Append;
+  result.url := url;
+end;
+
 function TFHIRElementHelper.getExtension(url: String): Integer;
 var
   i : integer;
@@ -1965,6 +2007,18 @@ end;
 
 { TFHIRDomainResourceHelper }
 
+function TFHIRDomainResourceHelper.addExtension(url: String): TFhirExtension;
+begin
+  result := self.ExtensionList.Append;
+  result.url := url;
+end;
+
+procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String);
+begin
+  if modifierExtensionList.Count > 0 then
+    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+end;
+
 procedure TFHIRDomainResourceHelper.collapseAllContained;
 var
   i : integer;
@@ -2029,6 +2083,12 @@ end;
 
 
 { TFHIRResourceHelper }
+
+procedure TFHIRResourceHelper.checkNoImplicitRules(place, role: String);
+begin
+  if implicitRules <> '' then
+    raise EUnsafeOperation.Create('The resource '+role+' has an unknown implicitRules tag at '+place);
+end;
 
 function TFHIRResourceHelper.GetXmlId: String;
 begin
@@ -2295,6 +2355,19 @@ begin
   result := nil;
 end;
 
+function TFhirParametersHelper.GetParameterParameter(name: String): TFhirParametersParameter;
+var
+  i: Integer;
+begin
+  for i := 0 to parameterList.Count - 1 do
+    if (parameterList[i].name = name) then
+    begin
+      result := parameterList[i];
+      exit;
+    end;
+  result := nil;
+end;
+
 function TFhirParametersHelper.GetResourceParameter(name: String): TFHIRResource;
 var
   i: Integer;
@@ -2390,6 +2463,19 @@ begin
         result := partList[i].valueElement.Link
       else
         result := partList[i].resourceElement.Link;
+      exit;
+    end;
+  result := nil;
+end;
+
+function TFhirParametersParameterHelper.GetParameterParameter(name: String): TFhirParametersParameter;
+var
+  i: Integer;
+begin
+  for i := 0 to partList.Count - 1 do
+    if (partList[i].name = name) then
+    begin
+      result := partList[i];
       exit;
     end;
   result := nil;
@@ -2946,6 +3032,8 @@ begin
     result := TFHIRNarrative.create
   else if name = 'Meta' then
     result := TFHIRMeta.create
+  else if name = 'xhtml' then
+    result := nil
   else
     raise Exception.Create('Unknown type: '+name);
 end;
@@ -3177,6 +3265,39 @@ begin
         profile := '';
       exit(true);
     end;
+end;
+
+{ TFHIRBackboneElementHelper }
+
+procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String);
+begin
+  if modifierExtensionList.Count > 0 then
+    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+end;
+
+{ TFhirCodeListHelper }
+
+function TFhirCodeListHelper.hasCode(code: String): boolean;
+var
+   c : TFhirCode;
+begin
+  result := false;
+  for c in self do
+    if c.value = code then
+      exit(true);
+end;
+
+function isAbsoluteUrl(s: String): boolean;
+begin
+  result := s.StartsWith('urn:') or s.StartsWith('http:') or s.StartsWith('https:') or s.StartsWith('ftp:');
+end;
+
+
+{ TFhirExpansionProfileHelper }
+
+function TFhirExpansionProfileHelper.hash: String;
+begin
+  result := BooleanToString(includeDefinition)+'|'+BooleanToString(limitedExpansion);
 end;
 
 end.

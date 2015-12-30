@@ -6,9 +6,10 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
-  YuStemmer,
+  YuStemmer, DateAndTime,
   KDBManager,
-  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, CDSHooksUtilities,
+  TerminologyServices;
 
 type
   TUMLSConcept = class (TCodeSystemProviderContext)
@@ -78,6 +79,7 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
@@ -399,6 +401,11 @@ end;
 function TUMLSServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 begin
   raise Exception.Create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
+end;
+
+procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; code, display: String);
+begin
+  card.detail := 'Not done yet';
 end;
 
 function TUMLSServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;

@@ -45,8 +45,10 @@ implementation
 
 procedure TFHIRPluginValidatorContext.checkClient;
 begin
-  if (FServer = nil) then
+  if (FServer = nil) or (FConfStmt = nil) then
   begin
+    if FServer <> nil then
+      FServer.Free;
     FServer := TFhirClient.Create(FUrl, true);
     FConfStmt := FServer.conformance(true);
     if FConfStmt.fhirVersion <> FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION then

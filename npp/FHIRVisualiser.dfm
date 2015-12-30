@@ -3215,6 +3215,7 @@ inherited FHIRVisualizer: TFHIRVisualizer
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    OnChange = TabControl1Change
     object TabSheet1: TTabSheet
       Caption = 'Narrative'
       object webNarrative: TWebBrowser
@@ -3239,6 +3240,10 @@ inherited FHIRVisualizer: TFHIRVisualizer
     object TabSheet2: TTabSheet
       Caption = 'Validation'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -3256,7 +3261,6 @@ inherited FHIRVisualizer: TFHIRVisualizer
         ParentBackground = False
         ParentFont = False
         TabOrder = 0
-        ExplicitTop = 2
         DesignSize = (
           310
           31)
@@ -3304,6 +3308,10 @@ inherited FHIRVisualizer: TFHIRVisualizer
     object TabSheet3: TTabSheet
       Caption = 'Path'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Splitter1: TSplitter
         Left = 0
         Top = 309
@@ -3322,10 +3330,6 @@ inherited FHIRVisualizer: TFHIRVisualizer
         Align = alClient
         Columns = <>
         TabOrder = 0
-        ExplicitLeft = 106
-        ExplicitTop = 104
-        ExplicitWidth = 250
-        ExplicitHeight = 150
       end
       object Panel1: TPanel
         Left = 0
@@ -3370,10 +3374,6 @@ inherited FHIRVisualizer: TFHIRVisualizer
           OnGetText = vtExpressionsGetText
           OnInitChildren = vtExpressionsInitChildren
           OnInitNode = vtExpressionsInitNode
-          ExplicitLeft = 4
-          ExplicitTop = 23
-          ExplicitWidth = 203
-          ExplicitHeight = 353
           Columns = <>
         end
       end
@@ -3395,10 +3395,6 @@ inherited FHIRVisualizer: TFHIRVisualizer
         ViewStyle = vsReport
         OnCustomDrawItem = lstValidationCustomDrawItem
         OnSelectItem = lstValidationSelectItem
-        ExplicitLeft = 30
-        ExplicitTop = 28
-        ExplicitWidth = 250
-        ExplicitHeight = 150
       end
       object Panel2: TPanel
         Left = 0
@@ -3415,6 +3411,29 @@ inherited FHIRVisualizer: TFHIRVisualizer
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 3
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'Focus'
+      ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object webFocus: TWebBrowser
+        Left = 0
+        Top = 0
+        Width = 310
+        Height = 547
+        Align = alClient
+        TabOrder = 0
+        ExplicitLeft = 1
+        ControlData = {
+          4C0000000A200000893800000000000000000000000000000000000000000000
+          000000004C000000000000000000000001000000E0D057007335CF11AE690800
+          2B2E126208000000000000004C0000000114020000000000C000000000000046
+          8000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000100000000000000000000000000000000000000}
       end
     end
   end

@@ -43,7 +43,8 @@ implementation
 
 uses
   SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax, FHIRParserTests,
-  DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures, QuestionnaireBuilder;
+  DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures, QuestionnaireBuilder,
+  MarkdownDaringFireballTests;
 
 { TFhirServerTests }
 
@@ -55,12 +56,17 @@ end;
 procedure TFhirServerTests.executeLibrary;
 begin
   // TTwilioClient.RunTests;
-  TFHIRParserTests.runTests;
+  {$IFDEF DSTU2}
+  TFHIRParserTests.runTests('C:\work\org.hl7.fhir.dstu2\build\publish\examples');
+  {$ELSE}
+  TFHIRParserTests.runTests('C:\work\org.hl7.fhir\build\publish\examples');
+  {$ENDIF}
   TSCIMSearchParser.runTests;
   TFSFilterParser.runTests;
   TDecimalTests.runTests;
   TAdvXmlBuilderCanonicalizationTests.test;
   TJWTTests.runTests;
+  TMarkdownDaringFireballTests.tests('C:\work\markdown\resources\df');
  // TDigitalSignatureTests.test;
 //  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
   WriteLn('Library tests Passed');

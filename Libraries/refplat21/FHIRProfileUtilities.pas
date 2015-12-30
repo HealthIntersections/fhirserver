@@ -782,7 +782,8 @@ begin
                 else
                   value := CreateTypeByName(t);
                 try
-                  populate(profile, value, ed, stack);
+                  if value <> nil then
+                    populate(profile, value, ed, stack);
                   item.setProperty(prop.Name, value.Link);
                 finally
                   value.Free;

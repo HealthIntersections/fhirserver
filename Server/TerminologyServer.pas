@@ -7,7 +7,7 @@ uses
   StringSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   KDBManager, KDBOdbcExpress,
-  FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
   TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices,
   CountryCodeServices, AreaCodeServices,
   FHIRValueSetChecker, ClosureManager,
@@ -46,12 +46,12 @@ Type
     function isKnownValueSet(id : String; out vs : TFHIRValueSet): Boolean;
 
     // given a value set, expand it
-    function expandVS(vs : TFHIRValueSet; cacheId : String; profile, textFilter : String; limit, count, offset : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
-    function expandVS(uri : String; profile, textFilter : String; limit, count, offset : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
+    function expandVS(vs : TFHIRValueSet; cacheId : String; profile : TFhirExpansionProfile; textFilter : String; limit, count, offset : integer) : TFHIRValueSet; overload;
+    function expandVS(uri : String; profile : TFhirExpansionProfile; textFilter : String; limit, count, offset : integer) : TFHIRValueSet; overload;
 
     // these are internal services - not for use outside the terminology server
-    function expandVS(uri: String; profile, textFilter : String; dependencies : TStringList; limit, count, offset : integer; allowIncomplete : boolean) : TFHIRValueSet; overload;
-    function expandVS(vs: TFHIRValueSet; cacheId : String; profile, textFilter : String; dependencies : TStringList; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet; overload;
+    function expandVS(uri: String; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSet; overload;
+    function expandVS(vs: TFHIRValueSet; cacheId : String; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFHIRValueSet; overload;
 
     function lookupCode(coding : TFhirCoding) : TFhirResource;
     function validate(vs : TFHIRValueSet; coding : TFhirCoding; abstractOk : boolean) : TFhirParameters; overload;
@@ -67,6 +67,8 @@ Type
     function UseClosure(name : String; out cm : TClosureManager) : boolean;
     function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
 
+    procedure getTerminologyInfo(coding : TFHIRCoding; response : TCDSHookResponse); overload;
+    procedure getTerminologyInfo(coding : TFhirCodeableConcept; response : TCDSHookResponse); overload;
     // database maintenance
     procedure BuildIndexes(prog : boolean);
 
@@ -267,13 +269,13 @@ begin
      FExpansions.DeleteByIndex(i);
 end;
 
-function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : String; textFilter : String; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : TFhirExpansionProfile; textFilter : String; limit, count, offset : integer): TFHIRValueSet;
 var
   ts : TStringList;
 begin
   ts := TStringList.create;
   try
-    result := expandVS(vs, cacheId, profile, textFilter, ts, limit, count, offset, allowIncomplete);
+    result := expandVS(vs, cacheId, profile, textFilter, ts, limit, count, offset);
   finally
     ts.free;
   end;
@@ -303,7 +305,7 @@ begin
 end;
 
 
-function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : String; textFilter : String; dependencies : TStringList; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TTerminologyServer.expandVS(vs: TFHIRValueSet; cacheId : String; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFHIRValueSet;
 var
   s, d : String;
   p : TArray<String>;
@@ -314,9 +316,9 @@ begin
   begin
     FLock.Lock('expandVS.1');
     try
-      if FExpansions.ExistsByKey(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
+      if FExpansions.ExistsByKey(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
       begin
-        result := (FExpansions.matches[cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)] as TFhirValueSet).link;
+        result := (FExpansions.matches[cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)] as TFhirValueSet).link;
         p := result.Tags['cache'].Split([#1]);
         for s in p do
           if (s <> '') then
@@ -330,14 +332,14 @@ begin
   begin
     exp := TFHIRValueSetExpander.create(self.Link);
     try
-      result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset, allowIncomplete);
+      result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
       if (dependencies.Count > 0) and (cacheId <> '') then
       begin
         FLock.Lock('expandVS.2');
         try
-          if not FExpansions.ExistsByKey(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
+          if not FExpansions.ExistsByKey(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
           begin
-            FExpansions.Add(cacheId+#1+profile+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset), result.Link);
+            FExpansions.Add(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset), result.Link);
             // in addition, we trace the dependencies so we can expire the cache
             d := '';
             for s in dependencies do
@@ -359,7 +361,7 @@ end;
 
 
 
-function TTerminologyServer.expandVS(uri: String; profile : String; textFilter : String; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TTerminologyServer.expandVS(uri: String; profile : TFhirExpansionProfile; textFilter : String; limit, count, offset : integer): TFHIRValueSet;
 var
   vs : TFHIRValueSet;
   ts : TStringList;
@@ -368,7 +370,7 @@ begin
   try
     vs := getValueSetByUrl(uri);
     try
-      result := expandVS(vs, uri, profile, textFilter, ts, limit, count, offset, allowIncomplete);
+      result := expandVS(vs, uri, profile, textFilter, ts, limit, count, offset);
     finally
       vs.Free;
     end;
@@ -377,7 +379,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(uri: String; profile : String; textFilter : String; dependencies: TStringList; limit, count, offset : integer; allowIncomplete : boolean): TFHIRValueSet;
+function TTerminologyServer.expandVS(uri: String; profile : TFhirExpansionProfile; textFilter : String; dependencies: TStringList; limit, count, offset : integer): TFHIRValueSet;
 var
   vs : TFHIRValueSet;
 begin
@@ -385,7 +387,7 @@ begin
   try
     if vs = nil then
       raise Exception.Create('Unable to find value set "'+uri+'"');
-    result := expandVS(vs, uri, profile, textFilter, limit, count, offset, allowIncomplete);
+    result := expandVS(vs, uri, profile, textFilter, limit, count, offset);
   finally
     vs.Free;
   end;
@@ -589,6 +591,31 @@ begin
   finally
     provider.Free;
   end;
+end;
+
+procedure TTerminologyServer.getTerminologyInfo(coding: TFHIRCoding; response: TCDSHookResponse);
+var
+  card : TCDSHookCard;
+  cs : TCodeSystemProvider;
+begin
+  cs := getProvider(coding.system, true);
+  if cs <> nil then
+  begin
+    try
+      card := response.addCard;
+      cs.getCDSInfo(card, coding.code, coding.display);
+    finally
+      cs.Free;
+    end;
+  end;
+end;
+
+procedure TTerminologyServer.getTerminologyInfo(coding: TFhirCodeableConcept; response: TCDSHookResponse);
+var
+  c : TFhirCoding;
+begin
+  for c in coding.codingList do
+    getTerminologyInfo(c, response);
 end;
 
 procedure TTerminologyServer.InitClosure(name: String);

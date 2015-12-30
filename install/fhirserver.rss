@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.13 2015-12-30 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.13.exe</link>
+			<description>DSTU2. 2015-12-30 (v1.0.13): update cds-hooks support in preparation for Connectathon</description>
+		</item>
+<item><title>FHIRServer release 1.0.12 2015-12-23 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.12.exe</link>
+			<description>DSTU2. 2015-12-23 (v1.0.12): change Smart on FHIR login to support patient specific login, and extend SCT support in $lookup operation</description>
+		</item>
 		<item><title>FHIRServer release 1.0.11 2015-12-22 (DSTU2)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.11.exe</link>
 			<description>DSTU2. 2015-12-22 (v1.0.11): Fix additional bug in closure table, and fix unii import</description>
 		</item>
-<item><title>FHIRServer release 1.0.10 2015-12-22</title>
+		<item><title>FHIRServer release 1.0.10 2015-12-22</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.10.exe</link>
 			<description>2015-12-22 (v1.0.10): Add support for LOINC 2.54</description>
 		</item>

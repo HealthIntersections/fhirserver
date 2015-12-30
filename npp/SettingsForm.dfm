@@ -3,11 +3,11 @@ inherited SettingForm: TSettingForm
   BorderStyle = bsDialog
   Caption = 'FHIR notepad++ Plugin Settings'
   ClientHeight = 414
-  ClientWidth = 617
+  ClientWidth = 699
   Scaled = False
   OnCreate = FormCreate
   OnShow = FormShow
-  ExplicitWidth = 623
+  ExplicitWidth = 705
   ExplicitHeight = 443
   PixelsPerInch = 96
   TextHeight = 13
@@ -23,9 +23,9 @@ inherited SettingForm: TSettingForm
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 617
+    Width = 699
     Height = 373
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -39,7 +39,7 @@ inherited SettingForm: TSettingForm
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 609
+        Width = 691
         Height = 345
         Align = alClient
         BevelOuter = bvNone
@@ -47,7 +47,7 @@ inherited SettingForm: TSettingForm
         ParentColor = True
         TabOrder = 0
         DesignSize = (
-          609
+          691
           345)
         object Label5: TLabel
           Left = 10
@@ -67,7 +67,7 @@ inherited SettingForm: TSettingForm
         object GroupBox1: TGroupBox
           Left = -2
           Top = 6
-          Width = 606
+          Width = 688
           Height = 91
           Anchors = [akLeft, akTop, akRight]
           Caption = ' Terminology Server '
@@ -79,7 +79,7 @@ inherited SettingForm: TSettingForm
           ParentFont = False
           TabOrder = 0
           DesignSize = (
-            606
+            688
             91)
           object Label1: TLabel
             Left = 12
@@ -97,7 +97,7 @@ inherited SettingForm: TSettingForm
           object Label2: TLabel
             Left = 12
             Top = 50
-            Width = 577
+            Width = 659
             Height = 31
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
@@ -117,7 +117,7 @@ inherited SettingForm: TSettingForm
           object edtServer: TEdit
             Left = 50
             Top = 21
-            Width = 539
+            Width = 621
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
@@ -133,7 +133,7 @@ inherited SettingForm: TSettingForm
         object GroupBox2: TGroupBox
           Left = -2
           Top = 103
-          Width = 606
+          Width = 688
           Height = 91
           Anchors = [akLeft, akTop, akRight]
           Caption = ' Definitions Source '
@@ -145,7 +145,7 @@ inherited SettingForm: TSettingForm
           ParentFont = False
           TabOrder = 1
           DesignSize = (
-            606
+            688
             91)
           object Label3: TLabel
             Left = 12
@@ -163,7 +163,7 @@ inherited SettingForm: TSettingForm
           object Label4: TLabel
             Left = 12
             Top = 48
-            Width = 577
+            Width = 659
             Height = 31
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
@@ -180,7 +180,7 @@ inherited SettingForm: TSettingForm
             ExplicitWidth = 397
           end
           object SpeedButton1: TSpeedButton
-            Left = 560
+            Left = 642
             Top = 18
             Width = 29
             Height = 28
@@ -218,7 +218,7 @@ inherited SettingForm: TSettingForm
           object edtFile: TEdit
             Left = 50
             Top = 21
-            Width = 509
+            Width = 591
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
@@ -234,7 +234,7 @@ inherited SettingForm: TSettingForm
         object GroupBox5: TGroupBox
           Left = -2
           Top = 197
-          Width = 606
+          Width = 688
           Height = 91
           Anchors = [akLeft, akTop, akRight]
           Caption = '  Additional Definitions  '
@@ -246,7 +246,7 @@ inherited SettingForm: TSettingForm
           ParentFont = False
           TabOrder = 2
           DesignSize = (
-            606
+            688
             91)
           object Label6: TLabel
             Left = 12
@@ -264,7 +264,7 @@ inherited SettingForm: TSettingForm
           object Label7: TLabel
             Left = 12
             Top = 52
-            Width = 577
+            Width = 659
             Height = 31
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
@@ -278,9 +278,10 @@ inherited SettingForm: TSettingForm
             Font.Style = []
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 577
           end
           object SpeedButton2: TSpeedButton
-            Left = 560
+            Left = 642
             Top = 18
             Width = 29
             Height = 28
@@ -318,7 +319,7 @@ inherited SettingForm: TSettingForm
           object edtFolder: TEdit
             Left = 50
             Top = 21
-            Width = 509
+            Width = 591
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
@@ -339,7 +340,7 @@ inherited SettingForm: TSettingForm
       object Panel4: TPanel
         Left = 0
         Top = 0
-        Width = 609
+        Width = 691
         Height = 345
         Align = alClient
         BevelOuter = bvNone
@@ -347,12 +348,12 @@ inherited SettingForm: TSettingForm
         ParentColor = True
         TabOrder = 0
         DesignSize = (
-          609
+          691
           345)
         object GroupBox3: TGroupBox
           Left = 0
           Top = 8
-          Width = 606
+          Width = 688
           Height = 67
           Anchors = [akLeft, akTop, akRight]
           Caption = '  Path Summary Dialog  '
@@ -364,12 +365,12 @@ inherited SettingForm: TSettingForm
           ParentFont = False
           TabOrder = 0
           DesignSize = (
-            606
+            688
             67)
           object cbPathSummary: TCheckBox
             Left = 12
             Top = 27
-            Width = 576
+            Width = 658
             Height = 17
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Show Summary Dialog after evaluating a FHIR Path'
@@ -385,7 +386,7 @@ inherited SettingForm: TSettingForm
         object GroupBox4: TGroupBox
           Left = 0
           Top = 88
-          Width = 606
+          Width = 688
           Height = 67
           Anchors = [akLeft, akTop, akRight]
           Caption = '  Validation Summary Dialog  '
@@ -397,12 +398,12 @@ inherited SettingForm: TSettingForm
           ParentFont = False
           TabOrder = 1
           DesignSize = (
-            606
+            688
             67)
           object cbValidationSummary: TCheckBox
             Left = 12
             Top = 27
-            Width = 576
+            Width = 658
             Height = 17
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Show Summary Dialog after performing validation'
@@ -423,7 +424,7 @@ inherited SettingForm: TSettingForm
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 609
+        Width = 691
         Height = 37
         Align = alTop
         BevelOuter = bvLowered
@@ -478,7 +479,7 @@ inherited SettingForm: TSettingForm
       object vtServers: TVirtualStringTree
         Left = 0
         Top = 37
-        Width = 609
+        Width = 691
         Height = 308
         Align = alClient
         Header.AutoSizeIndex = 1
@@ -499,13 +500,18 @@ inherited SettingForm: TSettingForm
           end
           item
             Position = 1
-            Width = 355
+            Width = 337
             WideText = 'URL'
           end
           item
             Position = 2
             Width = 100
             WideText = 'Smart on FHIR'
+          end
+          item
+            Position = 3
+            Width = 100
+            WideText = 'CDS-Hooks'
           end>
       end
     end
@@ -513,16 +519,16 @@ inherited SettingForm: TSettingForm
   object Panel1: TPanel
     Left = 0
     Top = 373
-    Width = 617
+    Width = 699
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      617
+      699
       41)
     object Button1: TButton
-      Left = 453
+      Left = 535
       Top = 8
       Width = 75
       Height = 25
@@ -533,7 +539,7 @@ inherited SettingForm: TSettingForm
       OnClick = Button1Click
     end
     object Button2: TButton
-      Left = 534
+      Left = 616
       Top = 8
       Width = 75
       Height = 25

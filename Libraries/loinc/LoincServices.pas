@@ -35,7 +35,7 @@ Uses
   StringSupport, FileSupport, BytesSupport,
   AdvObjects, AdvObjectLists,
   regexpr, YuStemmer,
-  FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
   TerminologyServices, DateAndTime;
 
 {axes
@@ -308,6 +308,7 @@ Type
     function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperatorEnum; value: String): TCodeSystemProviderFilterContext;
     function FilterBySubset(op: TFhirFilterOperatorEnum; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
     function FilterByHeirarchy(op: TFhirFilterOperatorEnum; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
+    function GetConceptDesc(iConcept : Word):String;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -369,6 +370,7 @@ Type
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
 
   End;
 
@@ -1428,6 +1430,94 @@ begin
 end;
 
 
+procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; code, display: String);
+var
+  s : String;
+  b : TStringBuilder;
+  iIndex : Cardinal;
+  iDescription, iOtherNames, iStems : Cardinal;
+  sCode1 : String;
+  iEntry : Cardinal;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+  iFlags : Byte;
+  iRefs : TCardinalArray;
+  i : integer;
+  first : boolean;
+begin
+  b := TStringBuilder.Create;
+  try
+    iRefs := nil;
+    if not CodeList.FindCode(code, iIndex) Then
+      b.Append('* Error: Code '+code+' not known')
+    else
+    Begin
+      CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+      b.Append('* LOINC Code '+code+' : '+Desc.GetEntry(iDescription)+#13#10);
+      if iComponent <> 0 Then
+        b.Append('* Component: '+GetConceptDesc(iComponent)+#13#10);
+      if iProperty <> 0 Then
+        b.Append('* Property: '+GetConceptDesc(iProperty)+#13#10);
+      if iTimeAspect <> 0 Then
+        b.Append('* Time Aspect: '+GetConceptDesc(iTimeAspect)+#13#10);
+      if iSystem <> 0 Then
+        b.Append('* System: '+GetConceptDesc(iSystem)+#13#10);
+      if iScale <> 0 Then
+        b.Append('* Scale: '+GetConceptDesc(iScale)+#13#10);
+      if iMethod <> 0 Then
+        b.Append('* Method: '+GetConceptDesc(iMethod)+#13#10);
+      if iClass <> 0 Then
+        b.Append('* Class: '+GetConceptDesc(iClass)+#13#10);
+
+      b.Append('* Type: ');
+      if iFlags and FLAGS_CLIN > 0 Then
+        b.Append('Clinical'+#13#10)
+      Else if iFlags and FLAGS_ATT > 0 Then
+        b.Append('Attachment'+#13#10)
+      Else if iFlags and FLAGS_SURV > 0 Then
+        b.Append('Survey'+#13#10)
+      Else
+        b.Append('Lab'+#13#10);
+
+      b.Append('* Status: ');
+      if iFlags and FLAGS_HOLD > 0 Then
+        b.Append('Not yet final'+#13#10)
+      Else
+        b.Append('Final'+#13#10);
+
+      if iFlags and FLAGS_UNITS > 0 Then
+        b.Append('* Units are required'+#13#10);
+
+      b.Append('* Order/Obs Status: ');
+      if (iFlags and FLAGS_ORDER> 0 ) and (iFlags and FLAGS_OBS> 0 ) Then
+        b.Append('Both'+#13#10)
+      Else if iFlags and FLAGS_ORDER > 0 Then
+        b.Append('Order'+#13#10)
+      Else if iFlags and FLAGS_OBS > 0 Then
+        b.Append('Observation'+#13#10);
+
+      if iOtherNames <> 0 Then
+      begin
+        first := true;
+        b.Append('* Other Names: ');
+        iRefs := Refs.GetCardinals(iOtherNames);
+        for i := Low(iRefs) To High(iRefs) Do
+          if iRefs[i] <> 0 Then
+          begin
+            if first then
+              first := false
+            else
+              b.Append(', ');
+            b.Append(desc.GetEntry(iRefs[i]));
+          End;
+        b.Append(#13#10);
+      End;
+    End;
+    card.detail := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
 function TLOINCServices.buildValueSet(id: String): TFhirValueSet;
 var
   index : cardinal;
@@ -1992,6 +2082,22 @@ procedure TLOINCAnswersList.StartBuild;
 begin
   FBuilder := TAdvBytesBuilder.Create;
 end;
+
+function TLOINCServices.GetConceptDesc(iConcept : Word):String;
+var
+  iName : Cardinal;
+  iChildren : Cardinal;
+  iCodes : Cardinal;
+Begin
+  if iConcept = 0 then
+    result := ''
+  Else
+  Begin
+    Concepts.GetConcept(iConcept, iName, iChildren, iCodes);
+    result := Desc.GetEntry(iname);
+  End;
+End;
+
 
 End.
 

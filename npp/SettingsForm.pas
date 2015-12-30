@@ -76,6 +76,7 @@ uses
   FHIRPluginSettings,
   FHIRConstants,
   FHIRPlugin,
+  FHIRVisualiser,
   FHIRToolboxForm;
 
 procedure TSettingForm.btnEditAsTextClick(Sender: TObject);
@@ -96,6 +97,8 @@ begin
 
   if FHIRToolbox <> nil then
     FHIRToolbox.loadServers;
+  if FHIRVisualizer <> nil then
+    FHIRVisualizer.reregisterAllCDSServers;
 end;
 
 procedure TSettingForm.Button2Click(Sender: TObject);
@@ -211,13 +214,18 @@ end;
 
 procedure TSettingForm.vtServersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
-  rec : TRegisteredServer;
+  server : TRegisteredFHIRServer;
 begin
-  rec := Settings.serverInfo(Node.Index);
-  case Column of
-  0: CellText := rec.name;
-  1: CellText := rec.fhirEndpoint;
-  2: CellText := BoolToStr(rec.SmartOnFHIR, true);
+  server := Settings.serverInfo(Node.Index);
+  try
+    case Column of
+    0: CellText := server.name;
+    1: CellText := server.fhirEndpoint;
+    2: CellText := BoolToStr(server.SmartOnFHIR, true);
+    3: CellText := server.cdshookSummary;
+    end;
+  finally
+    server.free;
   end;
 end;
 

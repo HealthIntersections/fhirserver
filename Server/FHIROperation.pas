@@ -40,18 +40,6 @@ http://hl7connect.healthintersections.com.au/svc/fhir/condition/search?subject=p
 cross resource search
 ucum search
 
-To check:
-
-    procedure ExecuteTransaction(upload : boolean; request: TFHIRRequest; response : TFHIRResponse);
-
-  TFhirGenerateQAOperation = class (TFHIROperation)
-  TFhirHandleQAPostOperation = class (TFHIROperation)
-  TFhirQuestionnaireGenerationOperation = class (TFHIROperation)
-  TFhirExpandValueSetOperation = class (TFHIROperation)
-  TFhirValueSetValidationOperation = class (TFHIROperation)
-  TFhirPatientEverythingOperation = class (TFHIROperation)
-  TFhirGenerateDocumentOperation = class (TFHIROperation)
-  TFhirValidationOperation = class (TFHIROperation)
 }
 
 uses
@@ -64,7 +52,7 @@ uses
 
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore,
-  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator,
+  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities,
   ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager;
 
 const
@@ -181,6 +169,7 @@ type
     procedure checkNotRedacted(meta : TFhirMeta; msg : String);
     procedure markRedacted(meta : TFhirMeta);
     procedure unmarkRedacted(meta : TFhirMeta);
+    procedure AddCDSHooks(conf : TFhirConformanceRest);
 
     procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
     function opAllowed(resource : TFHIRResourceType; command : TFHIRCommandType) : Boolean;
@@ -189,13 +178,12 @@ type
     function BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
     procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption);
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
+
     function GetResourceByKey(key : integer): TFHIRResource;
     function getResourceByReference(url, compartments : string): TFHIRResource;
-    function GetProfileByURL(url: String; var id : String) : TFHirStructureDefinition;
-    function GetValueSetById(request: TFHIRRequest; id, base : String) : TFHIRValueSet;
     function GetResourceById(request: TFHIRRequest; aType : TFhirResourceType; id, base : String) : TFHIRResource;
-    function GetProfileById(request: TFHIRRequest; id, base : String) : TFHirStructureDefinition;
-    function GetValueSetByIdentity(id, version : String) : TFHIRValueSet;
+    function getResourceByUrl(aType : TFhirResourceType; url, version : string): TFHIRResource;
+
 //    function constructValueSet(params : TParseMap; var used : String; allowNull : Boolean) : TFhirValueset;
 
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
@@ -339,6 +327,7 @@ type
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
+    function buildExpansionProfile(request: TFHIRRequest; manager: TFhirOperationManager; params : TFhirParameters) : TFHIRExpansionProfile;
   public
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
@@ -424,8 +413,11 @@ type
 
   TFhirGenerateCDSHookOperation = class (TFHIROperation)
   private
-    procedure addCard(params : TFhirParameters; base, message, source, sourceurl, indicator : String);
-    procedure processPatientView(manager: TFhirOperationManager; request : TFHIRRequest; context : TFHIRPatient; params : TFhirParameters);
+    procedure processPatientView(manager: TFhirOperationManager; request: TFHIRRequest; req : TCDSHookRequest; context : TFHIRPatient; resp : TCDSHookResponse);
+
+    procedure executeIdentifierInfo(manager: TFhirOperationManager; request: TFHIRRequest; req : TCDSHookRequest; resp : TCDSHookResponse);
+    procedure executeTerminologyInfo(manager: TFhirOperationManager; request: TFHIRRequest; req : TCDSHookRequest; resp : TCDSHookResponse);
+    procedure executePatientView(manager: TFhirOperationManager; request: TFHIRRequest; req : TCDSHookRequest; resp : TCDSHookResponse);
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -492,6 +484,17 @@ type
     procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
+  TFhirSuggestKeyWordsOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+  end;
+
 implementation
 
 uses
@@ -534,6 +537,7 @@ begin
   FOperations.add(TFhirGenerateCDSHookOperation.create);
   FOperations.add(TFhirGenerateTemplateOperation.create);
   FOperations.add(TFhirGenerateNarrativeOperation.create);
+  FOperations.add(TFhirSuggestKeyWordsOperation.create);
 end;
 
 function TFhirOperationManager.CreateDocumentAsBinary(mainRequest : TFhirRequest): String;
@@ -946,6 +950,7 @@ begin
     FRepository.TerminologyServer.declareSystems(oConf);
     if assigned(FOnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
       FOnPopulateConformance(self, oConf);
+    AddCDSHooks(oConf.restList[0]);
 
     html := TAdvStringBuilder.Create;
     try
@@ -2505,6 +2510,24 @@ begin
   else if response <> nil then
     check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [CODES_TFHIRResourceType[request.ResourceType]+'/'+request.id]));
   FConnection.terminate;
+end;
+
+procedure TFhirOperationManager.AddCDSHooks(conf: TFhirConformanceRest);
+var
+  ext : TFhirExtension;
+begin
+  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+  ext.addExtension('name', 'Fetch Patient Alerts');
+  ext.addExtension('activity', TCDSHooks.patientView);
+  ext.addExtension('preFetchOptional', 'Patient/{{Patient.id}}');
+
+  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+  ext.addExtension('name', 'Get Terminology Information');
+  ext.addExtension('activity', TCDSHooks.terminologyInfo);
+
+  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+  ext.addExtension('name', 'Get identifier Information');
+  ext.addExtension('activity', TCDSHooks.identifierInfo);
 end;
 
 function TFhirOperationManager.AddNewResourceId(aType : TFHIRResourceType; id : string; var resourceKey : integer) : Boolean;
@@ -4386,48 +4409,8 @@ var
 //  end;
 //end;
 //
-function TFhirOperationManager.GetValueSetById(request: TFHIRRequest; id, base: String): TFHIRValueSet;
-var
-  resourceKey : integer;
-  parser : TFHIRParser;
-  b : String;
-  s : TBytes;
-begin
-  if id.StartsWith(base) then
-    id := id.Substring(base.Length)
-  else for b in FRepository.Bases do
-    if id.StartsWith(b) then
-      id := id.Substring(b.Length);
-  if id.startsWith('ValueSet/') then
-    id := id.Substring(9);
 
-  if (length(request.id) <= ID_LENGTH) and FindResource(frtValueSet, id, false, resourceKey, request, nil, '') then
-  begin
-    FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
-    FConnection.Prepare;
-    try
-      FConnection.Execute;
-      if FConnection.FetchNext then
-      begin
-        s := FConnection.ColBlobByName['XmlContent'];
-        parser := MakeParser(lang, ffXml, s, xppDrop);
-        try
-          result := parser.resource.Link as TFHIRValueSet;
-        finally
-          parser.free;
-        end;
-      end
-      else
-        raise Exception.Create('Unable to find value set '+id);
-    finally
-      FConnection.Terminate;
-    end;
-  end
-  else
-    raise Exception.create('Unknown Value Set '+id);
-end;
-
-function TFhirOperationManager.GetValueSetByIdentity(id, version: String): TFHIRValueSet;
+function TFhirOperationManager.GetResourceByUrl(aType : TFhirResourceType; url, version: String): TFHIRResource;
 var
   s : TBytes;
   parser : TFHIRParser;
@@ -4445,19 +4428,19 @@ begin
       'order by ResourceVersionKey desc';
   FConnection.Prepare;
   try
-    FConnection.BindString('id', id);
+    FConnection.BindString('id', url);
     if version <> '' then
       FConnection.BindString('ver', version);
     FConnection.Execute;
     if not FConnection.FetchNext then
-      raise Exception.create('Unknown Value Set '+id);
-    s := FConnection.ColBlobByName['XmlContent'];
-    parser := MakeParser(lang, ffXml, s, xppDrop);
+      raise Exception.create('Unknown '+CODES_TFHIRResourceType[aType]+' '+url);
+    s := FConnection.ColBlobByName['JsonContent'];
+    parser := MakeParser(lang, ffJson, s, xppDrop);
     try
       result := parser.resource.Link as TFHIRValueSet;
       try
         if FConnection.FetchNext then
-          raise Exception.create('Found multiple matches for ValueSet '+id+'. Pick one by the resource id');
+          raise Exception.create('Found multiple matches for '+CODES_TFHIRResourceType[aType]+' '+url+'. Pick one by the resource id');
         result.link;
       finally
         result.free;
@@ -4470,39 +4453,6 @@ begin
   end;
 end;
 
-
-function TFhirOperationManager.GetProfileByURL(url: String; var id : String): TFHirStructureDefinition;
-var
-  s : TBytes;
-  parser : TFHIRParser;
-begin
-  FConnection.SQL := 'Select Id, XmlContent from Ids, Versions where Ids.Resourcekey = Versions.ResourceKey and Versions.ResourceKey in (select ResourceKey from '+
-    'IndexEntries where Flag <> 2 and IndexKey in (Select IndexKey from Indexes where name = ''url'') and Value = :url) order by ResourceVersionKey desc';
-  FConnection.Prepare;
-  try
-    FConnection.BindString('url', url);
-    FConnection.Execute;
-    if not FConnection.FetchNext then
-      raise Exception.create('Unknown Profile '+url);
-    id := FConnection.ColStringByName['Id'];
-    s := FConnection.ColBlobByName['XmlContent'];
-    parser := MakeParser(lang, ffXml, s, xppDrop);
-    try
-      result := parser.resource.Link as TFHirStructureDefinition;
-      try
-        if FConnection.FetchNext then
-          raise Exception.create('Found multiple matches for Profile '+url+'. Pick one by the resource id');
-        result.link;
-      finally
-        result.free;
-      end;
-    finally
-      parser.free;
-    end;
-  finally
-    FConnection.Terminate;
-  end;
-end;
 
 function TFhirOperationManager.GetResourceById(request: TFHIRRequest; aType : TFhirResourceType; id, base: String): TFHIRResource;
 var
@@ -4511,15 +4461,15 @@ var
   b : String;
   s : TBytes;
 begin
-  if id.StartsWith(base) then
+  if id.StartsWith(base) and (base <> '') then
     id := id.Substring(base.Length)
   else for b in FRepository.Bases do
     if id.StartsWith(b) then
       id := id.Substring(b.Length);
-  if id.startsWith('ValueSet/') then
-    id := id.Substring(9);
+  if id.startsWith(Codes_TFHIRResourceType[aType]+'/') then
+    id := id.Substring(length(Codes_TFHIRResourceType[aType])+1);
 
-  if (length(request.id) <= ID_LENGTH) and FindResource(aType, id, false, resourceKey, request, nil, '') then
+  if (length(id) <= ID_LENGTH) and FindResource(aType, id, false, resourceKey, request, nil, '') then
   begin
     FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
     FConnection.Prepare;
@@ -4527,8 +4477,8 @@ begin
       FConnection.Execute;
       if FConnection.FetchNext then
       begin
-        s := FConnection.ColBlobByName['XmlContent'];
-        parser := MakeParser(lang, ffXml, s, xppDrop);
+        s := FConnection.ColBlobByName['JsonContent'];
+        parser := MakeParser(lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
         finally
@@ -4536,13 +4486,13 @@ begin
         end;
       end
       else
-        raise Exception.Create('Unable to find '+Codes_TFHIRResourceType[aType]+' '+id);
+        raise Exception.Create('Unable to find '+Codes_TFHIRResourceType[aType]+'/'+id);
     finally
       FConnection.Terminate;
     end;
   end
   else
-    raise Exception.create('Unknown '+Codes_TFHIRResourceType[aType]+' '+id);
+    raise Exception.create('Unknown resource '+Codes_TFHIRResourceType[aType]+'/'+id);
 
 end;
 
@@ -5024,48 +4974,6 @@ begin
     end;
   end;
   Reindex;
-end;
-
-function TFhirOperationManager.GetProfileById(request: TFHIRRequest; id, base: String): TFHirStructureDefinition;
-var
-  resourceKey : integer;
-  parser : TFHIRParser;
-  b : String;
-  blob : TBytes;
-begin
-  result := nil;
-
-  if id.StartsWith(base) then
-    id := id.Substring(base.Length)
-  else for b in FRepository.Bases do
-    if id.StartsWith(b) then
-      id := id.Substring(b.Length);
-  if id.startsWith('StructureDefinition/') then
-    id := id.Substring(20);
-
-  if id <> '' then
-  begin
-    if (length(request.id) <= ID_LENGTH) and FindResource(frtStructureDefinition, id, false, resourceKey, request, nil, '') then
-    begin
-      FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
-      FConnection.Prepare;
-      try
-        FConnection.Execute;
-        FConnection.FetchNext;
-        blob := FConnection.ColBlobByName['XmlContent'];
-        parser := MakeParser(lang, ffXml, blob, xppDrop);
-        try
-          result := parser.resource.Link as TFHirStructureDefinition;
-        finally
-          parser.free;
-        end;
-      finally
-        FConnection.Terminate;
-      end;
-    end
-    else
-      raise Exception.create('Unknown Profile '+id);
-  end;
 end;
 
 procedure TFhirOperationManager.CheckCompartments(actual, allowed: String);
@@ -5701,9 +5609,9 @@ begin
           // first, we have to identify the structure definition
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
-            profile := manager.GetProfileById(request, request.Id, request.baseUrl)
+            profile := manager.GetResourceById(request, frtStructureDefinition, request.Id, request.baseUrl) as TFhirStructureDefinition
           else if request.Parameters.VarExists('identifier') then
-            profile := manager.GetProfileByURL(request.Parameters.getvar('identifier'), id)
+            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '') as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -5807,6 +5715,23 @@ begin
   result := [frtValueSet];
 end;
 
+function TFhirExpandValueSetOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFhirOperationManager; params: TFhirParameters): TFHIRExpansionProfile;
+begin
+  {$IFDEF DSTU21}
+  if (params.str['profile'] = '') then
+    result := TFhirExpansionProfile.Create
+  else if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
+    result := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '') as TFhirExpansionProfile
+  else
+    result := manager.GetResourceById(request, frtExpansionProfile, params.str['profile'], request.baseUrl) as TFhirExpansionProfile;
+  {$ELSE}
+  result := TFhirExpansionProfile.Create;
+  result.includeDefinition := (params.str['profile'] <> 'http://www.healthintersections.com.au/fhir/expansion/no-details');
+  {$ENDIF}
+  if params.hasParameter('_incomplete') then
+    result.limitedExpansion := StrToBoolDef(params.str['_incomplete'], false);
+end;
+
 function TFhirExpandValueSetOperation.CreateDefinition(base : String): TFHIROperationDefinition;
 begin
   result := nil;
@@ -5816,9 +5741,9 @@ procedure TFhirExpandValueSetOperation.Execute(manager: TFhirOperationManager; r
 var
   vs, dst : TFHIRValueSet;
   resourceKey : integer;
-  url, cacheId, profile, filter : String;
+  url, cacheId, filter : String;
+  profile : TFhirExpansionProfile;
   limit, count, offset : integer;
-  incomplete : boolean;
   params : TFhirParameters;
 begin
   try
@@ -5834,18 +5759,18 @@ begin
           // first, we have to identify the value set.
           if request.Id <> '' then // and it must exist, because of the check above
           begin
-            vs := manager.GetValueSetById(request, request.Id, request.baseUrl);
+            vs := manager.GetResourceById(request, frtValueSet, request.Id, request.baseUrl) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('identifier') then
           begin
             url := params.str['identifier'];
             if (url.startsWith('ValueSet/')) then
-              vs := manager.GetValueSetById(request, url.substring(9), request.baseUrl)
+              vs := manager.GetResourceById(request, frtValueSet, url.substring(9), request.baseUrl) as TFHIRValueSet
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
-              vs := manager.GetValueSetById(request, url.substring(9), request.baseUrl)
+              vs := manager.GetResourceById(request, frtValueSet, url.substring(9), request.baseUrl) as TFHIRValueSet
             else if not manager.FRepository.TerminologyServer.isKnownValueSet(url, vs) then
-              vs := manager.GetValueSetByIdentity(request.Parameters.getvar('identifier'), request.Parameters.getvar('version'));
+              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('identifier'), request.Parameters.getvar('version')) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('valueSet') then
@@ -5860,23 +5785,26 @@ begin
           vs.checkNoImplicitRules('ExpandValueSet', 'ValueSet');
           vs.checkNoModifiers('ExpandValueSet', 'ValueSet');
 
-          profile := params.str['profile'];
-          filter := params.str['filter'];
-          count := StrToIntDef(params.str['count'], 0);
-          offset := StrToIntDef(params.str['offset'], 0);
-          limit := StrToIntDef(params.str['_limit'], 0);
-          incomplete := StrToBoolDef(params.str['_incomplete'], false);
-
-          dst := manager.FRepository.TerminologyServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, incomplete);
+          profile := buildExpansionProfile(request, manager, params);
           try
-            response.HTTPCode := 200;
-            response.Message := 'OK';
-            response.Body := '';
-            response.LastModifiedDate := now;
-            response.Resource := dst.Link;
-            // response.categories.... no tags to go on this resource
+            filter := params.str['filter'];
+            count := StrToIntDef(params.str['count'], 0);
+            offset := StrToIntDef(params.str['offset'], 0);
+            limit := StrToIntDef(params.str['_limit'], 0);
+
+            dst := manager.FRepository.TerminologyServer.expandVS(vs, cacheId, profile, filter, limit, count, offset);
+            try
+              response.HTTPCode := 200;
+              response.Message := 'OK';
+              response.Body := '';
+              response.LastModifiedDate := now;
+              response.Resource := dst.Link;
+              // response.categories.... no tags to go on this resource
+            finally
+              dst.free;
+            end;
           finally
-            dst.free;
+            profile.Free;
           end;
         finally
           vs.free;
@@ -5931,9 +5859,6 @@ procedure TFhirLookupValueSetOperation.Execute(manager: TFhirOperationManager; r
 var
   coding : TFhirCoding;
   params : TFhirParameters;
-//  vs, dst : TFHIRValueSet;
-//  resourceKey : integer;
-//  url, cacheId : String;
 begin
   try
     manager.NotFound(request, response);
@@ -6058,13 +5983,13 @@ begin
       raise Exception.Create('Mode parameter is not (yet) supported');
 
     if StringStartsWith(ProfileId, 'http://localhost/Profile/') then
-      profile := manager.GetProfileById(request, copy(ProfileId, 27, $FF), request.baseUrl)
+      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, 27, $FF), request.baseUrl) as TFhirStructureDefinition
     else if StringStartsWith(ProfileId, 'Profile/') then
-      profile := manager.GetProfileById(request, copy(ProfileId, 9, $FF), request.baseUrl)
+      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, 9, $FF), request.baseUrl) as TFhirStructureDefinition
     else if StringStartsWith(ProfileId, request.baseUrl+'Profile/') then
-      profile := manager.GetProfileById(request, copy(ProfileId, length(request.baseUrl)+9, $FF), request.baseUrl)
+      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, length(request.baseUrl)+9, $FF), request.baseUrl) as TFhirStructureDefinition
     else if (profileId <> '') then
-      profile := manager.GetProfileByURL(profileId, id);
+      profile := manager.GetResourceByURL(frtStructureDefinition, profileId, '') as TFhirStructureDefinition;
 
     if Profile <> nil then
       opDesc := 'Validate resource '+request.id+' against profile '+profileId
@@ -6191,13 +6116,13 @@ begin
             // first, we have to identify the value set.
             if request.Id <> '' then // and it must exist, because of the check above
             begin
-              vs := manager.GetValueSetById(request, request.Id, request.baseUrl);
+              vs := manager.GetResourceById(request, frtValueSet, request.Id, request.baseUrl) as TFHIRValueSet;
               cacheId := vs.url;
             end
             else if params.hasParameter('identifier') then
             begin
               if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['identifier'], vs) then
-                vs := manager.GetValueSetByIdentity(params.str['identifier'], params.str['version']);
+                vs := manager.GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version']) as TFHIRValueSet;
               cacheId := vs.url;
             end
             else if params.hasParameter('valueSet') then
@@ -6762,10 +6687,10 @@ begin
             // first, we have to identify the value sets
             if params.hasParameter('valueset') then
               if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['valueset'], vsS) then
-                vsS := manager.GetValueSetByIdentity(params.str['valueset'], params.str['version']);
+                vsS := manager.GetResourceByUrl(frtValueSet, params.str['valueset'], params.str['version']) as TFhirValueSet;
             if params.hasParameter('target') then
               if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['target'], vsS) then
-                vsS := manager.GetValueSetByIdentity(params.str['target'], params.str['targetversion']);
+                vsS := manager.GetResourceByUrl(frtValueSet, params.str['target'], params.str['targetversion']) as TFhirValueSet;
             if vst = nil then
               raise Exception.Create('Unable to find target value set (not provided by id, identifier, or directly)');
 
@@ -6978,30 +6903,6 @@ end;
 
 { TFhirGenerateCDSHookOperation }
 
-procedure TFhirGenerateCDSHookOperation.addCard(params: TFhirParameters; base, message, source, sourceurl, indicator: String);
-var
-  p, p2 : TFhirParametersParameter;
-begin
-  p := TFhirParametersParameter.create;
-  try
-    p.Name := 'card';
-    params.parameterList.Add(p.Link);
-    p.addParameter('summary', message);
-    if (source <> '') or (sourceurl <> '') then
-    begin
-      p2 := p.addParameter('source');
-      if (source <> '') then
-        p2.addParameter('label', source);
-      if (sourceurl <> '') then
-        p2.addParameter('url', sourceurl);
-    end;
-    if (indicator <> '') then
-      p.addParameter('indicater', TFHIRCode.create(indicator));
-  finally
-    p.Free;
-  end;
-end;
-
 function TFhirGenerateCDSHookOperation.CreateDefinition(base: String): TFHIROperationDefinition;
 begin
   result := nil;
@@ -7029,44 +6930,89 @@ end;
 
 procedure TFhirGenerateCDSHookOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
-  pIn, pOut : TFhirParameters;
-  activityInstance : String;
-  activity : TFHIRCoding;
-  patient : String;
-  preFetch : TFHIRBundle;
-  entry : TFhirBundleEntry;
-  pat : TFhirPatient;
+  req : TCDSHookRequest;
+  resp : TCDSHookResponse;
 begin
   if not(request.Resource is TFhirParameters) then
     raise Exception.Create('Expected Parameters Resource for a cds-hook operation ');
 
-  pIn := request.Resource as TFhirParameters;
-  activity := pIn['activity'] as TFHIRCoding;
-  if activity = nil then
-    raise Exception.Create('No activity found');
-  activityInstance := pIn.str['activityInstance'];
-  patient := pIn.str['patient'];
-  preFetch := pIn['preFetchData'] as TFHIRBundle;
+  req := TCDSHookRequest.Create(request.Resource as TFhirParameters);
+  try
+    if req.activity = nil then
+      raise Exception.Create('No activity found');
 
-  pOut := TFhirParameters.Create;
-  response.Resource := pOut;
-  if (activity.system = 'http://cds-hooks.smarthealthit.org/activity') and (activity.code = 'patient-view') then
-  begin
-    pat := nil;
-    for entry in preFetch.entryList do
-      if (entry.resource <> nil) and (entry.resource is TFhirPatient) and (entry.resource.id = patient) then
-        pat := entry.resource as TFhirPatient;
-    if pat = nil then
-      raise Exception.Create('Expected a patient in the pre-fetch for a cds-hook operation with activity = patient-view');
-    processPatientView(manager, request, pat, pOut);
+    resp := TCDSHookResponse.Create;
+    try
+      if TCDSHooks.isIdentifierInfo(req.activity) then
+        executeIdentifierInfo(manager, request, req, resp)
+      else if TCDSHooks.isTerminologyInfo(req.activity) then
+        executeTerminologyInfo(manager, request, req, resp)
+      else if TCDSHooks.isPatientView(req.activity) then
+        executePatientView(manager, request, req, resp)
+      else
+        raise Exception.Create('Unsupported activity: '+req.activity.system+'##'+req.activity.code);
+      response.HTTPCode := 200;
+      response.Message := 'OK';
+      response.Resource := resp.AsParams;
+      response.LastModifiedDate := now;
+    finally
+      resp.Free;
+    end;
+  finally
+    req.Free;
   end;
-  response.HTTPCode := 200;
-  response.Message := 'OK';
-  response.Body := '';
-  response.LastModifiedDate := now;
 end;
 
-procedure TFhirGenerateCDSHookOperation.processPatientView(manager: TFhirOperationManager; request : TFHIRRequest; context: TFHIRPatient; params: TFhirParameters);
+procedure TFhirGenerateCDSHookOperation.executeIdentifierInfo(manager: TFhirOperationManager; request: TFHIRRequest; req: TCDSHookRequest; resp: TCDSHookResponse);
+begin
+  with resp.addCard do
+  begin
+    summary := 'Not Done Yet';
+    sourceLabel := manager.FRepository.OwnerName;
+    sourceURL := request.baseUrl;
+    indicator := 'info';
+  end;
+end;
+
+procedure TFhirGenerateCDSHookOperation.executePatientView(manager: TFhirOperationManager; request: TFHIRRequest; req: TCDSHookRequest; resp: TCDSHookResponse);
+var
+  pat : TFhirPatient;
+  entry : TFhirBundleEntry;
+begin
+  pat := nil;
+
+  if req.preFetchData = nil then
+    for entry in req.preFetchData.entryList do
+      if (entry.resource <> nil) and (entry.resource is TFhirPatient) and (entry.resource.id = req.patient) then
+        pat := entry.resource as TFhirPatient;
+  processPatientView(manager, request, req, pat, resp);
+end;
+
+procedure TFhirGenerateCDSHookOperation.executeTerminologyInfo(manager: TFhirOperationManager; request: TFHIRRequest; req: TCDSHookRequest; resp: TCDSHookResponse);
+var
+  code : TFhirType;
+  r : TFhirResource;
+  card : TCDSHookCard;
+begin
+  code := nil;
+  for r in req.context do
+    if r is TFHIRParameters then
+      code := TFHIRParameters(r).param['code'].value;
+  if code = nil then
+    raise Exception.Create('No Code found for terminology-info');
+  if code is TFhirCoding then
+    manager.FRepository.TerminologyServer.getTerminologyInfo(code as TFHIRCoding, resp)
+  else
+    manager.FRepository.TerminologyServer.getTerminologyInfo(code as TFHIRCodeableConcept, resp);
+  for card in resp.cards do
+  begin
+    card.sourceLabel := manager.FRepository.OwnerName;
+    card.sourceURL := request.baseUrl;
+    card.indicator := 'info';
+  end;
+end;
+
+procedure TFhirGenerateCDSHookOperation.processPatientView(manager: TFhirOperationManager; request: TFHIRRequest; req : TCDSHookRequest; context : TFHIRPatient; resp : TCDSHookResponse);
 var
   patient : TFhirPatient;
   resourceKey : integer;
@@ -7074,14 +7020,14 @@ var
   id : TFhirIdentifier;
   flag : TFhirFlag;
   i : integer;
-  su, sl : String;
+  card : TCDSHookCard;
 begin
   patient := nil;
   try
     // first, do we know the patient?
     if manager.FindResource(frtPatient, context.id, false, resourceKey, request, nil, request.compartments) then
       patient := manager.GetResourceById(request, frtPatient, context.Id, request.baseUrl) as TFHIRPatient
-    else
+    else if context <> nil then
     begin
       matches := TMatchingResourceList.create;
       try
@@ -7109,20 +7055,21 @@ begin
           flag := manager.GetResourceByKey(m[i].key) as TFhirFlag;
           if flag.status = FlagStatusActive then
           begin
+            card := resp.addCard;
+            card.indicator := 'info';
             if flag.author <> nil then
             begin
-              sl := flag.author.display;
-              su := flag.author.reference;
-            end
-            else
-            begin
-              sl := '';
-              su := '';
+              card.sourceLabel := flag.author.display;
+              card.sourceURL := flag.author.reference;
             end;
+            if card.sourceLabel = '' then
+              card.sourceLabel := manager.FRepository.OwnerName;
+            if card.sourceURL = '' then
+              card.sourceURL := request.baseUrl;
             if flag.code.text <> '' then
-              addCard(params, request.baseUrl, flag.code.text, sl, su, 'info')
+              card.summary := flag.code.text
             else if flag.code.codingList.Count > 0 then
-              addCard(params, request.baseUrl, flag.code.codingList[0].display, sl, su, 'info');
+              card.summary := flag.code.codingList[0].display
           end;
         end;
       finally
@@ -7133,6 +7080,7 @@ begin
     patient.Free;
   end;
 end;
+
 
 { TFhirGenerateTemplateOperation }
 
@@ -7162,9 +7110,9 @@ begin
           // first, we have to identify the structure definition
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
-            profile := manager.GetProfileById(request, request.Id, request.baseUrl)
+            profile := manager.GetResourceById(request, frtStructureDefinition, request.Id, request.baseUrl) as TFhirStructureDefinition
           else if request.Parameters.VarExists('identifier') then
-            profile := manager.GetProfileByURL(request.Parameters.getvar('identifier'), id)
+            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '') as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -7449,6 +7397,38 @@ end;
 function TFhirConceptMapClosureOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtConceptMap];
+end;
+
+{ TFhirSuggestKeyWordsOperation }
+
+function TFhirSuggestKeyWordsOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirSuggestKeyWordsOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFhirSuggestKeyWordsOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirSuggestKeyWordsOperation.Name: String;
+begin
+  result := 'suggest-keywords';
+end;
+
+function TFhirSuggestKeyWordsOperation.owningResource: TFhirResourceType;
+begin
+  result := frtSearchParameter;
+end;
+
+function TFhirSuggestKeyWordsOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtSearchParameter];
 end;
 
 end.

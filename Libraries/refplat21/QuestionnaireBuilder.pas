@@ -46,7 +46,7 @@ Const
 
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : TFhirReference; limit : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : TFhirReference; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
   TLookupCodeEvent = function(system, code : String) : String of object;
   TLookupReferenceEvent = function(Context : TFHIRRequest; uri : String) : TResourceWithReference of object;
 
@@ -332,7 +332,7 @@ begin
     try
       ref.reference := url;
       try
-        result := OnExpand(nil, ref, MaxListboxCodings, false, dependencies);
+        result := OnExpand(nil, ref, MaxListboxCodings, 0, 0, false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
@@ -381,7 +381,7 @@ begin
     begin
       vs := TFhirValueSet(Fprofile.contained[ref.reference.Substring(1)]);
       try
-        result := OnExpand(vs, nil, MaxListboxCodings, false, dependencies);
+        result := OnExpand(vs, nil, MaxListboxCodings, 0, 0, false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
@@ -408,7 +408,7 @@ begin
       result := FQuestionnaire.contained[vsCache.GetValueByKey(ref.reference)].link as TFhirValueSet
     else
       try
-        result := OnExpand(nil, ref, MaxListboxCodings, false, dependencies);
+        result := OnExpand(nil, ref, MaxListboxCodings, 0, 0,false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);

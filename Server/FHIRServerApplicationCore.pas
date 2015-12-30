@@ -322,20 +322,26 @@ begin
 end;
 
 Procedure TFHIRService.ConnectToDatabase;
+var
+  dbn : String;
 begin
+  dbn := FIni.ReadString('database', 'database', '');
+  if FIni.ValueExists('database', 'database'+FHIR_GENERATED_VERSION) then
+     dbn := FIni.ReadString('database', 'database'+FHIR_GENERATED_VERSION, '');
   if TestMode then
     FDb := TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0', '(local)', 'fhir-test', '', '')
   else if FIni.ReadString('database', 'type', '') = 'mssql' then
   begin
-    writelnt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+FIni.ReadString('database', 'database', ''));
+    writelnt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
     FDb := TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
-      FIni.ReadString('database', 'server', ''), FIni.ReadString('database', 'database', ''),
+      FIni.ReadString('database', 'server', ''), dbn,
       FIni.ReadString('database', 'username', ''), FIni.ReadString('database', 'password', ''));
   end
   else if FIni.ReadString('database', 'type', '') = 'mysql' then
   begin
-    writelnt('Database mysql://'+FIni.ReadString('database', 'server', '')+'/'+FIni.ReadString('database', 'database', ''));
-    raise Exception.Create('Not Done Yet')
+    writelnt('Database mysql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
+    raise Exception.Create('Not Done Yet');
+    // principally because of text indexing, but also because I don't know how to connect to a mysql server in an open source way
   end
   else
   begin

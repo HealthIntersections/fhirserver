@@ -329,6 +329,9 @@ begin
   src := serialise(params);
   try
     src.Position := 0;
+    if aType = frtNull then
+      result := fetchResource(makeUrl('$'+opName), post, src)
+    else
     result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/$'+opName, post, src);
   finally
     src.free;

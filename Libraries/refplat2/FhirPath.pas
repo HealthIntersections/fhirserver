@@ -2469,10 +2469,10 @@ begin
   try
     this.FServices := services.link;
 
-//  this.test('aggregation.empty() or (code = "Reference")');
-//  this.test('binding.empty() or type.code.empty() or type.any((code = ''code'') or (code = ''Coding'') or (code=''CodeableConcept'') or (code = ''Quantity'') or (code = ''Extension'') or (code = ''string'') or (code = ''uri''))');
-//  this.test('(low.empty() or ((low.code = "%") and (low.system = %ucum))) and (high.empty() or ((high.code = "%") and (high.system = %ucum)))');
-//  this.test('kind != ''root'' or uniqueId in (''uuid'' | ''ruid'')');
+    this.test('aggregation.empty() or (code = "Reference")');
+    this.test('binding.empty() or type.code.empty() or type.any((code = ''code'') or (code = ''Coding'') or (code=''CodeableConcept'') or (code = ''Quantity'') or (code = ''Extension'') or (code = ''string'') or (code = ''uri''))');
+    this.test('(low.empty() or ((low.code = "%") and (low.system = %ucum))) and (high.empty() or ((high.code = "%") and (high.system = %ucum)))');
+    this.test('kind != ''root'' or uniqueId in (''uuid'' | ''ruid'')');
     this.test('reference.startsWith("#").not() or $resource.contained.where(id = $context.reference.substring(1))');
     this.test('(name.item(1).family | name.item(2).family).count() < 4');
     result := this.FHIRPathTests;
@@ -2485,12 +2485,12 @@ procedure TFHIRPathTests.test(expr: String);
 var
   parser : TFHIRExpressionEngine;
 begin
-  parser := TFHIRExpressionEngine.create(nil);
-  try
-    parser.parse(expr).Free;
-  finally
-    parser.Free;
-  end;
+    parser := TFHIRExpressionEngine.create(nil);
+    try
+      parser.parse(expr).Free;
+    finally
+      parser.Free;
+    end;
 end;
 
 { TFHIRPathExecutionTypeContext }

@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   AdvObjects, AdvJson,
-  SmartOnFhirUtilities;
+  FHIRTypes, SmartOnFhirUtilities, CDSHooksUtilities;
 
 const
   DEF_ActivePage = 0;
@@ -71,8 +71,9 @@ type
     function SourceFile : String;
 
     procedure ListServers(items : TStrings);
-    procedure registerServer(server : TRegisteredServer);
-    function serverInfo(index : integer) : TRegisteredServer;
+    procedure registerServer(server : TRegisteredFHIRServer);
+    procedure updateServerInfo(index : integer; server : TRegisteredFHIRServer);
+    function serverInfo(index : integer) : TRegisteredFHIRServer;
     function ServerCount : integer;
     procedure DeleteServer(index : integer);
     procedure moveServer(index, delta : integer);
@@ -441,6 +442,25 @@ begin
   result := filename;
 end;
 
+procedure TFHIRPluginSettings.updateServerInfo(index: integer; server: TRegisteredFHIRServer);
+var
+  arr : TJsonArray;
+  o : TJsonObject;
+  i : integer;
+  c : TFHIRCoding;
+begin
+  arr := json.arr['Servers'];
+
+  for i := 0 to arr.Count - 1 do
+    if i <> index then
+      if (arr.Obj[i].str['Name'] = server.name) then
+        raise exception.Create('Duplicate Server Name '+server.name);
+
+  o := arr.Obj[index];
+  server.writeToJson(o);
+  Save;
+end;
+
 procedure TFHIRPluginSettings.ListServers(items: TStrings);
 var
   arr : TJsonArray;
@@ -462,45 +482,48 @@ end;
 
 procedure TFHIRPluginSettings.RegisterKnownServers;
 var
-  server : TRegisteredServer;
+  server : TRegisteredFHIRServer;
 begin
-  FillChar(server, sizeof(TRegisteredServer), 0);
-  server.name := 'Reference Server';
-  server.fhirEndpoint := 'http://fhir2.healthintersections.com.au/open';
-  registerServer(server);
+  server := TRegisteredFHIRServer.Create;
+  try
+    server.name := 'Reference Server';
+    server.fhirEndpoint := 'http://fhir2.healthintersections.com.au/open';
+    server.addCdsHook('Get Terminology Information', TCDSHooks.terminologyInfo);
+    server.addCdsHook('Get Identifier Information', TCDSHooks.identifierInfo);
+    server.addCdsHook('Fetch Patient Alerts', TCDSHooks.patientView).preFetch.Add('Patient/{{Patient.id}}');
+    server.autoUseHooks := true;
+    registerServer(server);
 
-  server.name := 'Secure Reference Server';
-  server.fhirEndpoint := 'https://fhir2.healthintersections.com.au/closed';
-  server.SmartOnFHIR := true;
-  server.clientid := '458EA027-CDCC-4E89-B103-997965132D0C';
-  server.redirectport := 23145;
-  server.tokenEndpoint := 'https://authorize-dstu2.smarthealthit.org/token';
-  server.authorizeEndpoint := 'https://authorize-dstu2.smarthealthit.org/authorize';
-  registerServer(server);
+    server.clear;
+    server.name := 'Secure Reference Server';
+    server.fhirEndpoint := 'https://fhir2.healthintersections.com.au/closed';
+    server.SmartOnFHIR := true;
+    server.clientid := '458EA027-CDCC-4E89-B103-997965132D0C';
+    server.redirectport := 23145;
+    server.tokenEndpoint := 'https://authorize-dstu2.smarthealthit.org/token';
+    server.authorizeEndpoint := 'https://authorize-dstu2.smarthealthit.org/authorize';
+    server.addCdsHook('Get Terminology Information', TCDSHooks.terminologyInfo);
+    server.addCdsHook('Get Identifier Information', TCDSHooks.identifierInfo);
+    server.addCdsHook('Fetch Patient Alerts', TCDSHooks.patientView).preFetch.Add('Patient/{{Patient.id}}');
+    registerServer(server);
+  finally
+    server.free;
+  end;
 end;
 
-procedure TFHIRPluginSettings.registerServer(server : TRegisteredServer);
+procedure TFHIRPluginSettings.registerServer(server : TRegisteredFHIRServer);
 var
   arr : TJsonArray;
   i : integer;
   o : TJsonObject;
+  c : TFHIRCoding;
 begin
   arr := json.forceArr['Servers'];
   for i := 0 to arr.Count - 1 do
     if (arr.Obj[i].str['Name'] = server.name) then
       raise exception.Create('Duplicate Server Name '+server.name);
   o := arr.addObject;
-  o.vStr['name'] := server.name;
-  o.vStr['fhir'] := server.fhirEndpoint;
-  o.bool['smart'] := server.SmartOnFHIR;
-  if server.SmartOnFHIR then
-  begin
-    o.vStr['token'] := server.tokenEndpoint;
-    o.vStr['authorize'] := server.authorizeEndpoint;
-    o.vStr['clientid'] := server.clientid;
-    o.vStr['port'] := inttostr(server.redirectport);
-    o.vStr['secret'] := server.clientsecret;
-  end;
+  server.writeToJson(o);
   Save;
 end;
 
@@ -525,22 +548,17 @@ begin
   result := json.forceArr['Servers'].Count;
 end;
 
-function TFHIRPluginSettings.serverInfo(index: integer): TRegisteredServer;
+function TFHIRPluginSettings.serverInfo(index: integer): TRegisteredFHIRServer;
 var
   o : TJsonObject;
 begin
-  FillChar(result, sizeof(TRegisteredServer), 0);
-  o := json.forceArr['Servers'].Obj[index];
-  result.name := o.vStr['name'];
-  result.fhirEndpoint := o.vStr['fhir'];
-  result.SmartOnFHIR := o.bool['smart'];
-  if result.SmartOnFHIR then
-  begin
-    result.tokenEndpoint := o.vStr['token'];
-    result.authorizeEndpoint := o.vStr['authorize'];
-    result.clientid := o.vStr['clientid'];
-    result.redirectport := StrToInt(o.vStr['port']);
-    result.clientsecret := o.vStr['secret'];
+  result := TRegisteredFHIRServer.Create;
+  try
+    o := json.forceArr['Servers'].Obj[index];
+    result.readFromJson(o);
+    result.Link;
+  finally
+    result.Free;
   end;
 end;
 

@@ -7,7 +7,7 @@ uses
   StringSupport,
   AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
   KDBManager,
-  FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
   TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, CvxServices, UriServices,
   USStateCodeServices, CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices,
   YuStemmer;
@@ -109,6 +109,7 @@ Type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
   end;
 
 
@@ -1336,6 +1337,11 @@ end;
 function TValueSetProvider.Code(context: TCodeSystemProviderContext): string;
 begin
   result := TValueSetProviderContext(context).context.code;
+end;
+
+procedure TValueSetProvider.getCDSInfo(card: TCDSHookCard; code, display: String);
+begin
+  card.detail := 'Not done yet';
 end;
 
 function TValueSetProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;

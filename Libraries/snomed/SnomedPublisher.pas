@@ -21,7 +21,6 @@ Type
     Lock : TAdvExclusiveCriticalSection;
     FSearchCache : TStringList;
     FFHIRPath : String;
-    Function GetPNForConcept(iIndex : Cardinal) : String;
     Function GetPaths(iIndex : Cardinal) : TArrayofIdArray;
     Function ConceptForDesc(iDesc : Cardinal; var iDescs : Cardinal):Cardinal;
     Procedure ConceptRef(html : THtmlPublisher; const sPrefix : String; iIndex : cardinal; bShowId : Boolean; rRating : Double);
@@ -47,6 +46,7 @@ Type
     Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishTerm(Const sTerm : String; html : THtmlPublisher); Overload; Virtual;
   End;
+
 
 Implementation
 
@@ -278,10 +278,10 @@ Procedure TSnomedPublisher.SortRefsets(var a : TCardinalArray);
       K := (L + R) Shr 1;
 
       Repeat
-        While GetPNForConcept(GetConceptForRefset(a[I])) < GetPNForConcept(GetConceptForRefset(a[K])) Do
+        While FSnomed.GetPNForConcept(GetConceptForRefset(a[I])) < FSnomed.GetPNForConcept(GetConceptForRefset(a[K])) Do
           Inc(I);
 
-        While GetPNForConcept(GetConceptForRefset(a[J])) > GetPNForConcept(GetConceptForRefset(a[K])) Do
+        While FSnomed.GetPNForConcept(GetConceptForRefset(a[J])) > FSnomed.GetPNForConcept(GetConceptForRefset(a[K])) Do
           Dec(J);
 
         If I <= J Then
@@ -312,24 +312,6 @@ Begin
   If length(a) > 1 Then
     QuickSort(0, length(a) - 1);
 End;
-
-
-Function TSnomedPublisher.GetPNForConcept(iIndex : Cardinal) : String;
-var
-  Identity : UInt64;
-  Flags : Byte;
-  ParentIndex : Cardinal;
-  DescriptionIndex : Cardinal;
-  InboundIndex : Cardinal;
-  outboundIndex, refsets : Cardinal;
-  Descriptions : TCardinalArray;
-  date : TSnomedDate;
-Begin
-  FSnomed.Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
-  Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);
-  result := FSnomed.GetPN(Descriptions);
-End;
-
 
 
 Function TSnomedPublisher.GetPaths(iIndex : Cardinal): TArrayofIdArray;
@@ -367,56 +349,6 @@ begin
   End;
 End;
 
-Function GetDescType(Flags : Byte) : String;
-Begin
-  case (flags and MASK_DESC_STYLE) shr 4 of
-    VAL_DESC_Unspecified : result := 'Unspecified';
-    VAL_DESC_Preferred : result := 'Preferred';
-    VAL_DESC_Synonym : result := 'Synonym';
-    VAL_DESC_FullySpecifiedName : result := 'FSN';
-  End;
-End;
-
-Function GetDescStatus(Flags : Byte) : String;
-Begin
-  case (flags and MASK_DESC_STATUS) of
-    FLAG_Active : Result := 'Active';
-    FLAG_RetiredWithoutStatedReason : Result := 'Retired Without Stated Reason';
-    FLAG_Duplicate : Result := 'Duplicate';
-    FLAG_Outdated : Result := 'Outdated';
-    FLAG_Ambiguous : Result := 'Ambiguous';
-    FLAG_Erroneous : Result := 'Erroneous';
-    FLAG_Limited : Result := 'Limited';
-    FLAG_Inappropriate : Result := 'Inappropriate';
-    FLAG_ConceptInactive : Result := 'Concept Inactive';
-    FLAG_MovedElswhere : Result := 'Moved Elswhere';
-    FLAG_PendingMove : Result := 'Pending Move';
-  End;
-End;
-
-Function GetRelChar(Flags : Byte) : String;
-Begin
-  case (flags and MASK_REL_CHARACTERISTIC) of
-    VAL_REL_Defining : result := 'Defining';
-    VAL_REL_Qualifying : result := 'Qualifying';
-    VAL_REL_Historical : result := 'Historical';
-    VAL_REL_Additional : result := 'Additional';
-  else
-    result := '';
-  End;
-End;
-
-Function GetRelRefinability(Flags : Byte) : String;
-Begin
-  case (flags and MASK_REL_REFINABILITY) shr 4 of
-    VAL_REL_NotRefinable : result := 'No';
-    VAL_REL_Optional : result := 'Optional';
-    VAL_REL_Mandatory : result := 'Mandatory';
-  else
-    result := '';
-  End;
-End;
-
 
 Function GetRelGroup(iGroup : Byte):String;
 Begin
@@ -429,9 +361,9 @@ End;
 Procedure TSnomedPublisher.ConceptRef(html : THtmlPublisher; const sPrefix : String; iIndex : cardinal; bShowId : Boolean; rRating : Double);
 Begin
   if bShowId Then
-    html.URL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+Screen(GetPNForConcept(iIndex), ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
+    html.URL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+Screen(FSnomed.GetPNForConcept(iIndex), ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
   Else
-    html.URL(Screen(GetPNForConcept(iIndex), ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)));
+    html.URL(Screen(FSnomed.GetPNForConcept(iIndex), ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)));
   if rRating > 0 then
     html.AddTextPlain(' '+inttostr(Trunc(rRating * 10)));
 
@@ -444,7 +376,7 @@ Begin
   if iDesc <> 0 Then
     s := FSnomed.Strings.GetEntry(iDesc)
   Else
-    s := GetPNForConcept(iIndex);
+    s := FSnomed.GetPNForConcept(iIndex);
 
   if bShowId Then
     html.AddTableCellURL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+Screen(s, ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
@@ -524,7 +456,7 @@ Begin
       if j > 0 Then
         html.AddTextPlain('\');
       if aPaths[iLow][j] = iFocus Then
-        html.AddText(Screen(GetPNForConcept(iFocus), ''), false, true)
+        html.AddText(Screen(FSnomed.GetPNForConcept(iFocus), ''), false, true)
       Else
         ConceptRef(html, sPrefix, aPaths[iLow][j], false, 0);
     End;
@@ -553,7 +485,7 @@ Begin
         if j > 0 Then
           html.AddTextPlain('\');
         if aPaths[i][j] = iFocus Then
-          html.AddText(Screen(GetPNForConcept(iFocus), ''), false, true)
+          html.AddText(Screen(FSnomed.GetPNForConcept(iFocus), ''), false, true)
         Else
           ConceptRef(html, sPrefix, aPaths[i][j], false, 0);
       End;
@@ -1711,7 +1643,7 @@ var
 begin
   FSnomed.RefSetIndex.GetReferenceSet(iIndex, iDefinition, iMembersByName, iMembersByRef);
   id := inttostr(FSnomed.Concept.GetIdentity(iDefinition));
-  html.URL(Screen(id+' '+GetPNForConcept(iDefinition), ' reference set'), sPrefix+'id='+id);
+  html.URL(Screen(id+' '+FSnomed.GetPNForConcept(iDefinition), ' reference set'), sPrefix+'id='+id);
   html.AddTextPlain('(');
   html.AddTextPlain(inttostr(FSnomed.RefSetMembers.GetMemberCount(iMembersByRef))+' members)');
 end;

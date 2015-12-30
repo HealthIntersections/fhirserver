@@ -3,10 +3,14 @@
 	<channel>
 		<title>FHIR Notepad++ Plug-in Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item>
-				<title>Notepad++ Plugin release 1.0.9 9/12/2015</title>
-				<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.9.exe</link>
-				<description>9/12/2015 (v1.0.9): Improve validation and path in the visualizer</description>
+		<item><title>Notepad++ Plugin release 1.0.10 30/12/2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.10.exe</link>
+			<description>30/12/2015 (v1.0.10): several stability related fixes + add focus tab in visualizer with cds-hook support</description>
+		</item>
+<item>
+			<title>Notepad++ Plugin release 1.0.9 9/12/2015</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.9.exe</link>
+			<description>9/12/2015 (v1.0.9): Improve validation and path in the visualizer</description>
 		</item>
 		<item>
 			<title>FHIR Notepad++ Plug-in release 1.0.8 01-Dec 2015</title>

@@ -270,8 +270,6 @@ uses
   MsXML in '..\Libraries\support\MsXML.pas',
   MimeMessage in '..\Libraries\support\MimeMessage.pas',
   kCritSct in '..\Libraries\Support\kCritSct.pas',
-
-
   QuestionnaireBuilder in '..\Libraries\refplat2\QuestionnaireBuilder.pas',
   SCIMObjects in '..\Libraries\refplat2\SCIMObjects.pas',
   NarrativeGenerator in '..\Libraries\refplat2\NarrativeGenerator.pas',
@@ -293,8 +291,11 @@ uses
   FHIRUtilities in '..\Libraries\refplat2\FHIRUtilities.pas',
   FHIRClient in '..\Libraries\refplat2\FHIRClient.pas',
   FHIRValidator in '..\Libraries\refplat2\FHIRValidator.pas',
-
-  ClosureManager in 'ClosureManager.pas';
+  ClosureManager in 'ClosureManager.pas',
+  MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
+  MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
+  MarkdownDaringFireballTests in '..\..\markdown\source\MarkdownDaringFireballTests.pas',
+  CDSHooksUtilities in '..\Libraries\refplat2\CDSHooksUtilities.pas';
 
 begin
   JclStartExceptionTracking;

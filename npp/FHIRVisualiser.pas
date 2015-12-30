@@ -5,9 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin, SystemSupport,
+  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
   FHIRPathDocumentation, Vcl.Buttons, Vcl.OleCtrls, SHDocVw, TextUtilities, FHIRBase,
-  AdvGenerics, PluginUtilities, VirtualTrees;
+  AdvGenerics, PluginUtilities, VirtualTrees, kCritSct, AdvBuffers,
+  IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer, SmartOnFhirUtilities, GUIDSupport;
+
+const
+  UMSG = WM_USER + 1;
 
 type
   TVisualiserMode = (
@@ -15,9 +20,16 @@ type
     vmNarrative, // show the narrative of the resource
     vmValidation, // show validation outcomes
     vmPath, // show the path output
-    vmMessages, // show messages about the content
-    vmElement // information about the current selected element
+    vmFocus // information about the current selected element
   );
+
+  TWebBuffer = class (TAdvBuffer)
+  private
+    FContentType: String;
+  public
+    function link : TWebBuffer; overload;
+    property ContentType : String read FContentType write FContentType;
+  end;
 
   TFHIRVisualizer = class(TNppDockingForm)
     PageControl1: TPageControl;
@@ -35,6 +47,8 @@ type
     lstValidation: TListView;
     cbErrorsOnly: TCheckBox;
     vtExpressions: TVirtualStringTree;
+    TabSheet4: TTabSheet;
+    webFocus: TWebBrowser;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormFloat(Sender: TObject);
     procedure FormDock(Sender: TObject);
@@ -55,11 +69,38 @@ type
     FValList : TAdvList<TFHIRAnnotation>;
     FMatchList : TAdvList<TFHIRAnnotation>;
     FExpression : TFHIRExpressionNode;
+    FFocusPath : String;
+    FFocusObjects : TAdvList<TFHIRBase>;
+    FCDSManager : TCDSHooksManager;
+
+    FLock : TCriticalSection;
+    FCards : TAdvList<TCDSHookCard>;
+    FCDSErrors : TStringList;
+    FWebServer : TIdHTTPServer;
+    FWebCache : TAdvMap<TWebBuffer>;
+
+    function generateBasicCard(path: String; focus: TFHIRBase): TCDSHookCard;
+    procedure generateTypeCard(focus, next: TFHIRBase);
+    function differentObjects(focus: array of TFHIRObject): boolean;
+    procedure queryCDS(coding : TFHIRCoding; context : TFhirResource);
+    procedure queryCDSPatient(coding : TFHIRCoding; patient : TFhirPatient);
+
+    procedure DoCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    function postToWeb(contentType : String; bytes : TBytes) : String; overload;
+    function postToWeb(page : String) : String; overload;
+
+    procedure OnCDSResponse(manager : TCDSHooksManager; server : TRegisteredFHIRServer; context : TObject; response : TCDSHookResponse; error : String);
+    procedure DoUpdateCards(var Msg: TMessage); message UMSG;
+    procedure UpdateCards;
   public
     { Public declarations }
     procedure setNarrative(s : String);
     procedure setValidationOutcomes(errors : TAdvList<TFHIRAnnotation>);
     procedure setPathOutcomes(matches : TAdvList<TFHIRAnnotation>; expression : TFHIRExpressionNode);
+    procedure setFocusInfo(path : String; focus : Array of TFHIRObject);
+
+    property CDSManager : TCDSHooksManager read FCDSManager;
+    procedure reregisterAllCDSServers;
   end;
 
 var
@@ -75,6 +116,19 @@ Uses
   FHIRToolboxForm,
   FHIRPlugin;
 
+{
+Card Visualisers for data types:
+
+Attachment - if it's an image, show the image
+markdown - markdown display
+
+Identifier - use cds-hook to look up information
+code/Coding/CodeableConcept/Quantity - use cds-hook to look up information
+contact point - clickable link if it's valid
+Signature - use it to validate the content and report whether it's valid?
+Timing - interpret?
+}
+
 procedure TFHIRVisualizer.FormKeyPress(Sender: TObject;
   var Key: Char);
 begin
@@ -82,10 +136,102 @@ begin
 end;
 
 // Docking code calls this when the form is hidden by either "x" or self.Hide
+procedure TFHIRVisualizer.DoCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+var
+  doc : string;
+  wb : TWebBuffer;
+  bytes : TBytes;
+  ct : String;
+begin
+  doc := ARequestInfo.Document.Substring(1);
+  FLock.Lock;
+  try
+    if FWebCache.TryGetValue(doc, wb) then
+    begin
+      bytes := wb.AsBytes;
+      ct := wb.ContentType;
+      FWebCache.Remove(doc);
+    end;
+  finally
+    FLock.Unlock;
+  end;
+  if length(bytes) > 0 then
+  begin
+    AResponseInfo.ResponseNo := 200;
+    AResponseInfo.ResponseText := 'OK';
+    AResponseInfo.ContentLength := length(bytes);
+    AResponseInfo.FreeContentStream := true;
+    AResponseInfo.ContentStream := TBytesStream.Create(bytes);
+  end
+  else
+  begin
+    AResponseInfo.ResponseNo := 404;
+    AResponseInfo.ResponseText := 'Not Found';
+    AResponseInfo.ContentText := 'Not Found';
+  end
+end;
+
+procedure TFHIRVisualizer.DoUpdateCards(var Msg: TMessage);
+begin
+  UpdateCards;
+end;
+
+procedure TFHIRVisualizer.UpdateCards;
+var
+  ts : TStringList;
+begin
+  FLock.Lock;
+  try
+    ts := TStringList.Create;
+    try
+      FCDSManager.listInProgress(ts);
+      webFocus.Navigate('http://localhost:45654/'+postToWeb(presentAsHtml(FCards, ts, FCDSErrors)));
+    finally
+      ts.Free;
+    end;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TFHIRVisualizer.FormCreate(Sender: TObject);
+var
+  SHandle: TIdSocketHandle;
 begin
   inherited;
   VisualiserMode := TVisualiserMode(PageControl1.TabIndex+1);
+  FCards := TAdvList<TCDSHookCard>.create;
+  FCDSErrors := TStringList.Create;
+  FFocusObjects := TAdvList<TFHIRBase>.create;
+
+  FLock := TCriticalSection.Create('vis.web');
+  FWebCache := TAdvMap<TWebBuffer>.create;
+  FWebserver := TIdHTTPServer.Create(nil);
+  SHandle := FWebserver.Bindings.Add;
+  SHandle.IP := '127.0.0.1';
+  SHandle.Port := 45654;
+  FWebserver.OnCommandGet := DoCommandGet;
+  FWebserver.Active := true;
+  FCDSManager := TCDSHooksManager.create;
+  reregisterAllCDSServers;
+end;
+
+procedure TFHIRVisualizer.reregisterAllCDSServers;
+var
+  i : integer;
+  server : TRegisteredFHIRServer;
+begin
+  FCDSManager.clearServers;
+  for i := 0 to Settings.ServerCount - 1 do
+  begin
+    server := Settings.serverInfo(i);
+    try
+      if server.cdshooks.Count > 1 then
+        FCDSManager.registerServer(server);
+    finally
+      server.Free;
+    end;
+  end;
 end;
 
 procedure TFHIRVisualizer.FormDestroy(Sender: TObject);
@@ -96,6 +242,11 @@ begin
   FMatchList.Free;
   FExpression.Free;
   FExpression := nil;
+  FFocusObjects.Free;
+  FFocusObjects := nil;
+  FCDSManager.Free;
+  FCDSErrors.Free;
+  FCards.Free;
 end;
 
 procedure TFHIRVisualizer.FormDock(Sender: TObject);
@@ -154,15 +305,223 @@ begin
     FNpp.SetSelection(TFHIRAnnotation(item.Data).start, TFHIRAnnotation(item.Data).stop);
 end;
 
-procedure TFHIRVisualizer.setNarrative(s: String);
+procedure TFHIRVisualizer.OnCDSResponse(manager: TCDSHooksManager; server: TRegisteredFHIRServer; context: TObject; response: TCDSHookResponse; error: String);
+begin
+  FLock.Lock;
+  try
+    if error <> '' then
+      FCDSErrors.add(error+' (from '+server.name+')')
+    else
+      FCards.AddAll(response.cards);
+  finally
+    FLock.UnLock;
+  end;
+  PostMessage(handle, UMSG, 0, 0);
+end;
+
+function TFHIRVisualizer.postToWeb(page: String): String;
 var
-  fn : String;
+  wb : TWebBuffer;
+begin
+  result := NewGuidId;
+  wb := TWebBuffer.Create;
+  try
+    wb.ContentType := 'text/html';
+    wb.AsUnicode := page;
+    FLock.Lock;
+    try
+      FWebCache.Add(result, wb.Link);
+    finally
+      FLock.Unlock;
+    end;
+  finally
+    wb.Free;
+  end;
+end;
+
+function TFHIRVisualizer.postToWeb(contentType: String; bytes: TBytes): String;
+var
+  wb : TWebBuffer;
+begin
+  result := NewGuidId;
+  wb := TWebBuffer.Create;
+  try
+    wb.ContentType := contentType;
+    wb.AsBytes := bytes;
+    FLock.Lock;
+    try
+      FWebCache.Add(result, wb.Link);
+    finally
+      FLock.Unlock;
+    end;
+  finally
+    wb.Free;
+  end;
+end;
+
+procedure TFHIRVisualizer.queryCDS(coding : TFHIRCoding; context: TFhirResource);
+var
+  req : TCDSHookRequest;
+begin
+  req := TCDSHookRequest.Create;
+  try
+    req.activity := coding;
+    req.activityInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
+    req.context.Add(context.Link);
+    if context is TFHIRPatient then
+      req.patient := TFHIRPatient(context).id;
+    FCDSManager.makeRequest(req, OnCDSResponse, nil);
+  finally
+    req.Free;
+  end;
+end;
+
+procedure TFHIRVisualizer.queryCDSPatient(coding: TFHIRCoding; patient: TFhirPatient);
+var
+  req : TCDSHookRequest;
+  entry : TFHIRBundleEntry;
+begin
+  req := TCDSHookRequest.Create;
+  try
+    req.activity := coding;
+    req.activityInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
+    req.patient := patient.id;
+    req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
+    req.preFetchData.id := NewGuidId;
+    entry := req.preFetchData.entryList.Append;
+    entry.resource := patient.Link;
+    FCDSManager.makeRequest(req, OnCDSResponse, nil);
+  finally
+    req.Free;
+  end;
+end;
+
+function TFHIRVisualizer.generateBasicCard(path: String; focus: TFHIRBase) : TCDSHookCard;
+begin
+  result := TCDSHookCard.Create;
+  try
+    result.summary := path+' : '+TFHIRBase(focus).FhirType;
+    result.sourceLabel := 'Object Model';
+
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+procedure TFHIRVisualizer.generateTypeCard(focus, next: TFHIRBase);
+var
+  att : TFhirAttachment;
+  md : TFhirMarkdown;
+  p : TFhirParameters;
+  card : TCDSHookCard;
+begin
+  if (focus.FhirType = 'Attachment') then
+  begin
+    att := TFhirAttachment(focus);
+    if att.contentType.StartsWith('image/') then
+    begin
+      // ok we're going to return a card that displays the image
+      if length(att.data) > 0 then
+        FCards.Add(TCDSHookCard.Create('Image Preview', '![Preview](http://localhost:45654/'+postToWeb(att.contentType, att.data)+')', 'Element Visualizer'))
+      else if isAbsoluteUrl(att.url) then
+        FCards.Add(TCDSHookCard.Create('Image Preview', '![Preview]('+att.url+')', 'Element Visualizer'));
+    end;
+  end;
+
+  if (focus.FhirType = 'CodeableConcept') or ((focus.FhirType = 'Coding') and (next.FhirType <> 'CodeableConcept')) then
+  begin
+    p := TFhirParameters.Create;
+    try
+       p.AddParameter('code', focus.Link as TFHIRType);
+       queryCDS(TCDSHooks.terminologyInfo, p);
+    finally
+      p.Free;
+    end;
+  end;
+
+  if (focus.FhirType = 'Identifier') then
+  begin
+    p := TFhirParameters.Create;
+    try
+       p.AddParameter('code', focus.Link as TFHIRType);
+       queryCDS(TCDSHooks.identifierInfo, p);
+    finally
+      p.Free;
+    end;
+  end;
+
+  if (focus.FhirType = 'Patient') then
+  begin
+    queryCDSPatient(TCDSHooks.patientView, focus as TFHIRPatient);
+  end;
+
+  {
+  if (base.FhirType = 'markdown') then
+  begin
+    md := TFhirMarkdown(base);
+    // ok we're going to return a card that displays the image
+  end;
+
+}
+end;
+
+function TFHIRVisualizer.differentObjects(focus: array of TFHIRObject) : boolean;
+var
+  i : integer;
+begin
+  if length(focus) <> FFocusObjects.Count then
+    exit(false);
+  for I := 0 to length(focus) - 1 do
+    if focus[i] <> FFocusObjects[i] then
+      exit(false);
+  result := true;
+end;
+
+procedure TFHIRVisualizer.setFocusInfo(path: String; focus: array of TFHIRObject);
+var
+  f : TFHIRObject;
+  i : integer;
+begin
+  if (path <> FFocusPath) or differentObjects(focus) then
+  begin
+    FCDSManager.cancelAllRequests;
+    sleep(1);
+    FFocusPath := path;
+    FFocusObjects.clear;
+    for f in focus do
+      if f is TFHIRBase then
+      FFocusObjects.Add(TFHIRBase(f).Link);
+    FLock.Lock;
+    try
+      FCards.Clear;
+      FCDSErrors.Clear;
+      if FFocusPath <> '' then
+      begin
+        FCards.Add(generateBasicCard(path, FFocusObjects.Last));
+        for i := FFocusObjects.Count - 1 downto 0 do
+        begin
+          if i = 0  then
+            generateTypeCard(FFocusObjects[i], nil)
+          else
+            generateTypeCard(FFocusObjects[i], FFocusObjects[i-1]);
+        end;
+      end;
+    finally
+      FLock.Unlock;
+    end;
+    if FFocusPath <> '' then
+      UpdateCards
+    else
+      webFocus.Navigate('about:blank');
+  end;
+end;
+
+procedure TFHIRVisualizer.setNarrative(s: String);
 begin
   if (s <> FLastHtml) then
   begin
-    fn := IncludeTrailingBackslash(SystemTemp)+'validation-outcomes-npp-fhir.html';
-    StringToFile(s, fn, TEncoding.UTF8);
-    webNarrative.Navigate('file://'+fn);
+    webNarrative.Navigate('http://localhost:45654/'+postToWeb(s));
     FLastHtml := s;
   end;
 end;
@@ -321,6 +680,13 @@ begin
     node.CheckState := csCheckedNormal;
   if not p.op and ((p.expr.Inner <> nil) or (p.expr.Group <> nil) or (p.expr.ParameterCount > 0) or (p.expr.OpNext <> nil)) then
      InitialStates := [ivsHasChildren];
+end;
+
+{ TWebBuffer }
+
+function TWebBuffer.link: TWebBuffer;
+begin
+  result := TWebBuffer(inherited Link);
 end;
 
 end.

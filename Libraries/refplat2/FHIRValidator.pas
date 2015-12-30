@@ -1468,11 +1468,6 @@ begin
   end;
 end;
 
-function isAbsoluteUrl(s: String): boolean;
-begin
-  result := false;
-end;
-
 Function TFHIRValidator.resolveInBundle(entries: TAdvList<TWrapperElement>; ref, fullUrl, type_, id: String): TWrapperElement;
 var
   entry, res, resource: TWrapperElement;
@@ -3734,7 +3729,7 @@ begin
         ms := TMsXmlParser.Create;
         locations := TAdvList<TSourceLocationObject>.create;
         try
-          sax := TFHIRSaxToDomParser.create(locations.Link); // no try...finally..., this is interface
+          sax := TFHIRSaxToDomParser.create(locations.Link, 0); // no try...finally..., this is interface
           dom := sax.DOM;
           ms.Parse(source, sax);
           wrapper := TDOMWrapperElement.Create(nil, dom.documentElement);

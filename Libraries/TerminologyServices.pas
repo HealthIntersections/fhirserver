@@ -6,7 +6,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvStringLists,
-  FHIRTypes, FHIRResources,
+  FHIRTypes, FHIRResources, CDSHooksUtilities,
   YuStemmer;
 
 Type
@@ -83,6 +83,9 @@ Type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
     procedure extendLookup(ctxt : TCodeSystemProviderContext; params : TFHIRParameters); virtual;
 
+    function SpecialEnumeration : String; virtual;
+    procedure getCDSInfo(card : TCDSHookCard; code, display : String); virtual;
+
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
     procedure Close(ctxt : TCodeSystemProviderContext); overload; virtual; abstract;
@@ -114,6 +117,11 @@ begin
   // nothing here
 end;
 
+procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; code, display: String);
+begin
+  card.summary := 'No CDSHook Implemeentation for code system '+system(nil)+' for code '+code+' ('+display+')';
+end;
+
 function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
@@ -132,6 +140,11 @@ end;
 function TCodeSystemProvider.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   result := false;
+end;
+
+function TCodeSystemProvider.SpecialEnumeration: String;
+begin
+  result := '';
 end;
 
 function TCodeSystemProvider.version(context: TCodeSystemProviderContext): String;

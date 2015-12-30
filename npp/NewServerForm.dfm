@@ -2,8 +2,8 @@ object RegisterServerForm: TRegisterServerForm
   Left = 0
   Top = 0
   Caption = 'Register a new Server'
-  ClientHeight = 400
-  ClientWidth = 411
+  ClientHeight = 445
+  ClientWidth = 449
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,40 +12,37 @@ object RegisterServerForm: TRegisterServerForm
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 411
-    Height = 359
+    Width = 449
+    Height = 404
     ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 146
-    ExplicitTop = 104
-    ExplicitWidth = 463
-    ExplicitHeight = 439
     object TabSheet1: TTabSheet
       Caption = 'Server Identity'
-      ExplicitWidth = 281
-      ExplicitHeight = 165
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 403
-        Height = 331
+        Width = 441
+        Height = 376
         Align = alClient
         BevelOuter = bvNone
         ParentBackground = False
         TabOrder = 0
-        ExplicitLeft = 8
-        ExplicitTop = 238
-        ExplicitWidth = 444
-        ExplicitHeight = 113
         DesignSize = (
-          403
-          331)
+          441
+          376)
         object Label3: TLabel
           Left = 14
           Top = 16
@@ -68,49 +65,75 @@ object RegisterServerForm: TRegisterServerForm
           Caption = 'The URL must be a FHIR server [base] URL'
           WordWrap = True
         end
+        object Formt: TLabel
+          Left = 14
+          Top = 122
+          Width = 38
+          Height = 13
+          Caption = 'Format:'
+        end
         object edtName: TEdit
-          Left = 52
+          Left = 62
           Top = 13
-          Width = 337
+          Width = 365
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
           OnChange = edtNameChange
-          ExplicitWidth = 359
         end
         object edtServer: TEdit
-          Left = 52
+          Left = 62
           Top = 43
-          Width = 337
+          Width = 365
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
           OnChange = edtNameChange
-          ExplicitWidth = 359
+        end
+        object cbxFormat: TComboBox
+          Left = 62
+          Top = 119
+          Width = 365
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 2
+          Items.Strings = (
+            'Whatever'
+            'XML'
+            'JSON')
+        end
+        object Button3: TButton
+          Left = 6
+          Top = 347
+          Width = 105
+          Height = 25
+          Anchors = [akLeft, akBottom]
+          Caption = 'Check Format'
+          TabOrder = 3
+          OnClick = Button3Click
         end
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Smart on FHIR'
       ImageIndex = 1
-      ExplicitWidth = 281
-      ExplicitHeight = 165
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 403
-        Height = 331
+        Width = 441
+        Height = 376
         Align = alClient
         BevelOuter = bvNone
         ParentBackground = False
         TabOrder = 0
-        ExplicitLeft = 254
-        ExplicitTop = 340
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         DesignSize = (
-          403
-          331)
+          441
+          376)
         object Label13: TLabel
           Left = 12
           Top = 262
@@ -197,19 +220,18 @@ object RegisterServerForm: TRegisterServerForm
         end
         object btnFetch: TButton
           Left = 4
-          Top = 300
+          Top = 345
           Width = 105
           Height = 25
           Anchors = [akLeft, akBottom]
           Caption = 'Fetch Endpoints'
           TabOrder = 0
           OnClick = btnFetchClick
-          ExplicitTop = 348
         end
         object edtToken: TEdit
           Left = 86
           Top = 227
-          Width = 301
+          Width = 339
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
@@ -218,7 +240,7 @@ object RegisterServerForm: TRegisterServerForm
         object edtAuthorize: TEdit
           Left = 86
           Top = 200
-          Width = 301
+          Width = 339
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
@@ -235,7 +257,7 @@ object RegisterServerForm: TRegisterServerForm
         object edtClientSecret: TEdit
           Left = 86
           Top = 58
-          Width = 301
+          Width = 339
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 4
@@ -244,7 +266,7 @@ object RegisterServerForm: TRegisterServerForm
         object edtClientId: TEdit
           Left = 86
           Top = 26
-          Width = 301
+          Width = 339
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 5
@@ -255,24 +277,18 @@ object RegisterServerForm: TRegisterServerForm
     object TabSheet3: TTabSheet
       Caption = 'CDS-Hooks'
       ImageIndex = 2
-      ExplicitWidth = 281
-      ExplicitHeight = 165
       object Panel4: TPanel
         Left = 0
         Top = 0
-        Width = 403
-        Height = 331
+        Width = 441
+        Height = 376
         Align = alClient
         BevelOuter = bvNone
         ParentBackground = False
         TabOrder = 0
-        ExplicitLeft = 240
-        ExplicitTop = 184
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         DesignSize = (
-          403
-          331)
+          441
+          376)
         object Label14: TLabel
           Left = 6
           Top = 10
@@ -281,45 +297,51 @@ object RegisterServerForm: TRegisterServerForm
           Caption = 'Use this server for the following CDS Hooks:'
         end
         object CheckBox1: TCheckBox
-          Left = 6
-          Top = 290
-          Width = 383
+          Left = 14
+          Top = 335
+          Width = 421
           Height = 17
           Anchors = [akLeft, akRight, akBottom]
           Caption = 'Only use this server when connected'
           TabOrder = 0
-          ExplicitTop = 338
-          ExplicitWidth = 385
         end
-        object CheckListBox1: TCheckListBox
+        object clHooks: TCheckListBox
           Left = 14
           Top = 32
-          Width = 375
-          Height = 241
+          Width = 413
+          Height = 286
           Anchors = [akLeft, akTop, akRight, akBottom]
           ItemHeight = 13
+          Items.Strings = (
+            'terminology-info (look up information about a code)'
+            'identifier-info (look up information about an identifier)')
           TabOrder = 1
-          ExplicitWidth = 377
-          ExplicitHeight = 289
+        end
+        object Button1: TButton
+          Left = 326
+          Top = 331
+          Width = 99
+          Height = 25
+          Anchors = [akRight, akBottom]
+          Caption = 'Query Server'
+          TabOrder = 2
+          OnClick = Button1Click
         end
       end
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 359
-    Width = 411
+    Top = 404
+    Width = 449
     Height = 41
     Align = alBottom
     TabOrder = 1
-    ExplicitLeft = 256
-    ExplicitTop = 562
-    ExplicitWidth = 185
     DesignSize = (
-      411
+      449
       41)
     object btnOk: TButton
-      Left = 246
+      Left = 284
       Top = 6
       Width = 75
       Height = 25
@@ -328,10 +350,9 @@ object RegisterServerForm: TRegisterServerForm
       ModalResult = 1
       TabOrder = 0
       OnClick = btnOkClick
-      ExplicitLeft = 494
     end
     object Button2: TButton
-      Left = 327
+      Left = 365
       Top = 6
       Width = 75
       Height = 25
@@ -340,7 +361,6 @@ object RegisterServerForm: TRegisterServerForm
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 575
     end
   end
 end

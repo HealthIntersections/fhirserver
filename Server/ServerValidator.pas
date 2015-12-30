@@ -15,6 +15,7 @@ Type
   TFHIRServerValidatorContext = class (TValidatorServiceProvider)
   private
     FTerminologyServer : TTerminologyServer;
+    FProfile : TFhirExpansionProfile;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
 
   public
@@ -45,10 +46,14 @@ Implementation
 constructor TFHIRServerValidatorContext.Create;
 begin
   inherited;
+  FProfile := TFhirExpansionProfile.create;
+  FProfile.includeDefinition := false;
+  FProfile.limitedExpansion := false;
 end;
 
 destructor TFHIRServerValidatorContext.Destroy;
 begin
+  FProfile.Free;
   FTerminologyServer.Free;
   inherited;
 end;
@@ -116,7 +121,7 @@ end;
 
 function TFHIRServerValidatorContext.expand(vs : TFhirValueSet) : TFHIRValueSet;
 begin
-  result := FTerminologyServer.expandVS(vs, '', '', '', 0, 0, 0, true);
+  result := FTerminologyServer.expandVS(vs, '', FProfile, '', 0, 0, 0);
 end;
 
 function TFHIRServerValidatorContext.supportsSystem(system : string) : boolean;

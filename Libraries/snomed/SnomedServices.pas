@@ -54,7 +54,7 @@ Uses
   StringSupport, FileSupport, BytesSupport,
   AdvStringLists, AdvObjectLists, AdvObjects,
   YuStemmer, DateAndTime,
-  FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
   TerminologyServices;
 
 Const
@@ -452,6 +452,7 @@ operations
     function GetConceptDescendents(index : Cardinal) : TCardinalArray;
     Function GetPN(iDescriptions : TCardinalArray) : String;
     Function GetFSN(iDescriptions : TCardinalArray) : String;
+    function GetPNForConcept(iIndex: Cardinal): String;
 
     // simplified interface for consumers
     Function ConceptExists(conceptId : String) : Boolean;
@@ -497,6 +498,8 @@ operations
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure extendLookup(ctxt : TCodeSystemProviderContext; params : TFHIRParameters); override;
+
+    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
   End;
 
   TSnomedServiceList = class (TAdvObjectList)
@@ -531,6 +534,10 @@ members
 }
 function FindMember(aMembers : TSnomedReferenceSetMemberArray; iRef : Cardinal; var iIndex: integer): boolean;
 function FindCardinalInArray(a : TCardinalArray; iValue : Cardinal; var iIndex : Integer):Boolean;
+Function GetDescType(Flags : Byte) : String;
+Function GetDescStatus(Flags : Byte) : String;
+Function GetRelChar(Flags : Byte) : String;
+Function GetRelRefinability(Flags : Byte) : String;
 
 Implementation
 
@@ -1779,6 +1786,86 @@ begin
   index := L;
 end;
 
+procedure TSnomedServices.getCDSInfo(card: TCDSHookCard; code, display: String);
+var
+  b : TStringBuilder;
+  Identity : UInt64;
+  Flags : Byte;
+  ParentIndex, iWork, iWork2, iWork3, module, modifier, kind, iDummy : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex, InboundIndex2 : Cardinal;
+  outboundIndex, refsets : Cardinal;
+  Inbounds : TCardinalArray;
+  date : TSnomedDate;
+  Descriptions : TCardinalArray;
+  Parents : TCardinalArray;
+  i, group : integer;
+  param, p2 : TFhirParametersParameter;
+  iId : Int64;
+  iIndex : cardinal;
+  first : boolean;
+begin
+  b := TStringBuilder.Create;
+  try
+    SetLength(inbounds, 0);
+    iId := StrToUInt64Def(code, 0);
+    if not Concept.FindConcept(iId, iIndex) then
+      b.Append('Error: Code '+code+' not known')
+    else
+    begin
+      Concept.GetConcept(IIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+      Inbounds := Refs.GetReferences(InboundIndex);
+
+      Descriptions := Refs.GetReferences(DescriptionIndex);
+      for i := Low(Descriptions) To High(Descriptions) Do
+      Begin
+        Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, Flags);
+        b.Append('Descriptions: '+#13#10#13#10);
+        if flags and MASK_DESC_STATUS = Flag_Active Then
+          if ((flags and MASK_DESC_STYLE) shr 4 = VAL_DESC_Unspecified) and (kind <> 0) then
+            b.Append('* '+Strings.GetEntry(iWork)+' ('+GetPNForConcept(kind)+')'+#13#10)
+          else
+            b.Append('* '+Strings.GetEntry(iWork)+' ('+GetDescType(Flags)+')'+#13#10);
+        b.Append(#13#10);
+      End;
+
+      // parents:
+      if ParentIndex <> 0 Then
+      begin
+        Parents := Refs.GetReferences(ParentIndex);
+        Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
+        Descriptions := Refs.GetReferences(DescriptionIndex);
+        b.Append('Parents: '+#13#10#13#10);
+        for i := 0 to Length(Parents)-1 do
+          b.Append('* '+GetPN(Descriptions)+#13#10);
+        b.Append(#13#10);
+      end;
+
+      // children: (inbound relationships with type is-a)
+      first := true;
+      For i := 0 to High(Inbounds) Do
+      Begin
+        Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+        if iWork3 = FIs_a_Index then
+        begin
+          if first then
+          begin
+            b.Append('Children: '+#13#10#13#10);
+            first := false;
+          end;
+          Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+          Descriptions := Refs.GetReferences(DescriptionIndex);
+          b.Append('* '+GetPN(Descriptions)+#13#10);
+        end;
+        b.Append(#13#10);
+      End;
+    End;
+    card.detail := b.ToString;
+  finally
+    b.free;
+  end;
+end;
+
 function TSnomedServices.Link: TSnomedServices;
 begin
   result := TSnomedServices(inherited link);
@@ -2470,7 +2557,7 @@ procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; params:
 var
   Identity : UInt64;
   Flags : Byte;
-  ParentIndex, iWork, iWork2, iWork3, module, modifier, kind : Cardinal;
+  ParentIndex, iWork, iWork2, iWork3, module, modifier, kind, iDummy : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex, InboundIndex2 : Cardinal;
   outboundIndex, refsets : Cardinal;
@@ -2484,6 +2571,31 @@ begin
   SetLength(inbounds, 0);
   Concept.GetConcept(Cardinal(ctxt), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Inbounds := Refs.GetReferences(InboundIndex);
+
+  // descriptions
+  Descriptions := Refs.GetReferences(DescriptionIndex);
+  for i := Low(Descriptions) To High(Descriptions) Do
+  Begin
+    Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, Flags);
+    if flags and MASK_DESC_STATUS = Flag_Active Then
+    Begin
+      param := params.parameterList.Append;
+      param.name := 'Designation';
+      p2 := param.partList.Append;
+      p2.name := 'Id';
+      p2.value := TFhirString.Create(IntToStr(Identity));
+      p2 := param.partList.Append;
+      p2.name := 'Value';
+      p2.value := TFhirString.Create(Strings.GetEntry(iWork));
+      p2 := param.partList.Append;
+      p2.name := 'Type';
+      if ((flags and MASK_DESC_STYLE) shr 4 = VAL_DESC_Unspecified) and (kind <> 0) then
+        p2.value := TFhirCode.Create(GetPNForConcept(kind))
+      else
+        p2.value := TFhirCode.Create(GetDescType(Flags));
+    End;
+  End;
+
 
   // parents:
   if ParentIndex <> 0 Then
@@ -2691,5 +2803,72 @@ function TSnomedServices.name(context: TCodeSystemProviderContext): String;
 begin
   result := 'SNOMED CT';
 end;
+
+Function TSnomedServices.GetPNForConcept(iIndex : Cardinal) : String;
+var
+  Identity : UInt64;
+  Flags : Byte;
+  ParentIndex : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex : Cardinal;
+  outboundIndex, refsets : Cardinal;
+  Descriptions : TCardinalArray;
+  date : TSnomedDate;
+Begin
+  Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+  Descriptions := Refs.GetReferences(DescriptionIndex);
+  result := GetPN(Descriptions);
+End;
+
+Function GetDescType(Flags : Byte) : String;
+Begin
+  case (flags and MASK_DESC_STYLE) shr 4 of
+    VAL_DESC_Unspecified : result := 'Unspecified';
+    VAL_DESC_Preferred : result := 'Preferred';
+    VAL_DESC_Synonym : result := 'Synonym';
+    VAL_DESC_FullySpecifiedName : result := 'FSN';
+  End;
+End;
+
+Function GetDescStatus(Flags : Byte) : String;
+Begin
+  case (flags and MASK_DESC_STATUS) of
+    FLAG_Active : Result := 'Active';
+    FLAG_RetiredWithoutStatedReason : Result := 'Retired Without Stated Reason';
+    FLAG_Duplicate : Result := 'Duplicate';
+    FLAG_Outdated : Result := 'Outdated';
+    FLAG_Ambiguous : Result := 'Ambiguous';
+    FLAG_Erroneous : Result := 'Erroneous';
+    FLAG_Limited : Result := 'Limited';
+    FLAG_Inappropriate : Result := 'Inappropriate';
+    FLAG_ConceptInactive : Result := 'Concept Inactive';
+    FLAG_MovedElswhere : Result := 'Moved Elswhere';
+    FLAG_PendingMove : Result := 'Pending Move';
+  End;
+End;
+
+Function GetRelChar(Flags : Byte) : String;
+Begin
+  case (flags and MASK_REL_CHARACTERISTIC) of
+    VAL_REL_Defining : result := 'Defining';
+    VAL_REL_Qualifying : result := 'Qualifying';
+    VAL_REL_Historical : result := 'Historical';
+    VAL_REL_Additional : result := 'Additional';
+  else
+    result := '';
+  End;
+End;
+
+Function GetRelRefinability(Flags : Byte) : String;
+Begin
+  case (flags and MASK_REL_REFINABILITY) shr 4 of
+    VAL_REL_NotRefinable : result := 'No';
+    VAL_REL_Optional : result := 'Optional';
+    VAL_REL_Mandatory : result := 'Mandatory';
+  else
+    result := '';
+  End;
+End;
+
 
 End.

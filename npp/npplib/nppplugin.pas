@@ -765,6 +765,7 @@ type
     procedure DoNppnTextModified; virtual;
     procedure DoNppnDwellStart(offset : integer); virtual;
     procedure DoNppnDwellEnd; virtual;
+    procedure DoStateChanged; virtual;
 
     // df
     property CurrentText : String read GetCurrentText write SetCurrentText;
@@ -931,6 +932,10 @@ begin
   begin
     self.DoNppnTextModified;
   end
+  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_UPDATEUI) then
+  begin
+    self.DoStateChanged;
+  end
   else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_DWELLSTART) then
   begin
     self.DoNppnDwellStart(sn^.position);
@@ -1021,6 +1026,11 @@ begin
   if (r) then
     SendMessage(self.NppData.ScintillaMainHandle, SciSupport.SCI_GOTOLINE, Line,0);
   Result := r;
+end;
+
+procedure TNppPlugin.DoStateChanged;
+begin
+  // override these
 end;
 
 // overrides

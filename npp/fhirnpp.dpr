@@ -141,7 +141,10 @@ uses
   WelcomeScreen in 'WelcomeScreen.pas' {WelcomeScreenForm},
   nppbuildcount in 'nppbuildcount.pas',
   UpgradePrompt in 'UpgradePrompt.pas' {UpgradePromptForm},
-  PluginUtilities in 'PluginUtilities.pas';
+  PluginUtilities in 'PluginUtilities.pas',
+  CDSHooksUtilities in '..\Libraries\refplat2\CDSHooksUtilities.pas',
+  MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
+  MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas';
 
 {$R *.res}
 

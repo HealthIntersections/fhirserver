@@ -381,19 +381,19 @@ function TTerminologyWebServer.processExpand(pm: TParseMap): String;
 var
   res : TFHIRValueSet;
   vs : TFHIRValueSet;
-  profile : String;
+  profile : TFhirExpansionProfile;
 begin
   vs := FServer.getValueSetById(pm.GetVar('valueset'));
+  profile := TFhirExpansionProfile.Create;
   try
-    profile := '';
-    if (pm.GetVar('nodetails') = '1') then
-      profile := 'http://www.healthintersections.com.au/fhir/expansion/no-details-web';
+    profile.includeDefinition := pm.GetVar('nodetails') <> '1';
+    profile.limitedExpansion := true;
 
     try
-      res := FServer.expandVS(vs, vs.url, profile, pm.GetVar('filter'), 1000, 0, 0, true);
+      res := FServer.expandVS(vs, vs.url, profile, pm.GetVar('filter'), 1000, 0, 0);
       try
         result := asHtml(res)+#13#10;
-        if (profile <> '') then
+        if (not profile.includeDefinition) then
           res.text := nil;
         result := result + '<pre class="json">'+asJson(res)+'</pre>'#13#10+'<pre class="xml">'+asXml(res)+'</pre>';
       finally
@@ -405,6 +405,7 @@ begin
     end;
   finally
     vs.Free;
+    profile.Free;
   end;
 end;
 

@@ -316,6 +316,7 @@ begin
     ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
     if (ver <> ServerDBVersion) then
     begin
+      writelnt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
       dbi := TFHIRDatabaseInstaller.create(conn, '');
       try
         dbi.upgrade(ver);
@@ -339,7 +340,11 @@ begin
       else if conn.ColIntegerByName['ConfigKey'] = 6 then
         FSystemId := conn.ColStringByName['Value']
       else if conn.ColIntegerByName['ConfigKey'] = 7 then
-        FResConfig[frtNull].cmdSearch := conn.ColStringByName['Value'] = '1';
+        FResConfig[frtNull].cmdSearch := conn.ColStringByName['Value'] = '1'
+      else if conn.ColIntegerByName['ConfigKey'] = 8 then
+        if conn.ColStringByName['Value'] <> FHIR_GENERATED_VERSION then
+          raise Exception.Create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+FHIR_GENERATED_VERSION);
+
     conn.terminate;
     conn.SQL := 'Select * from Types';
     conn.Prepare;
@@ -696,28 +701,33 @@ begin
     CloseFhirSession(key);
 end;
 
-function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference;
-  limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList)
-  : TFHIRValueSet;
+function TFHIRDataStore.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSet;
+var
+  profile : TFhirExpansionProfile;
 begin
-  if (vs <> nil) then
-    result := FTerminologyServer.ExpandVS(vs, '', '', '', dependencies, limit, count, offset, allowIncomplete)
-  else
-  begin
-    if FTerminologyServer.isKnownValueSet(ref.reference, vs) then
-      result := FTerminologyServer.ExpandVS(vs, ref.reference, '', '',
-        dependencies, limit, count, offset, allowIncomplete)
+  profile := TFhirExpansionProfile.Create;
+  try
+    profile.limitedExpansion := allowIncomplete;
+    if (vs <> nil) then
+      result := FTerminologyServer.ExpandVS(vs, '', profile, '', dependencies, limit, count, offset)
     else
     begin
-      vs := FTerminologyServer.getValueSetByUrl(ref.reference);
-      if vs = nil then
-        vs := FTerminologyServer.getValueSetByid(ref.reference);
-      if vs = nil then
-        result := nil
+      if FTerminologyServer.isKnownValueSet(ref.reference, vs) then
+        result := FTerminologyServer.ExpandVS(vs, ref.reference, profile, '', dependencies, limit, count, offset)
       else
-        result := FTerminologyServer.ExpandVS(vs, ref.reference, '', '',
-          dependencies, limit, count, offset, allowIncomplete)
+      begin
+        vs := FTerminologyServer.getValueSetByUrl(ref.reference);
+        if vs = nil then
+          vs := FTerminologyServer.getValueSetByid(ref.reference);
+        if vs = nil then
+          result := nil
+        else
+          result := FTerminologyServer.ExpandVS(vs, ref.reference, profile, '',
+            dependencies, limit, count, offset)
+      end;
     end;
+  finally
+    profile.free;
   end;
 end;
 

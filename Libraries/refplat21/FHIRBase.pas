@@ -219,6 +219,7 @@ type
   public
     Constructor Create; override;
     Destructor Destroy; override;
+    function Link : TFHIRObject;
     function createIterator(bInheritedProperties, bPrimitiveValues : Boolean) : TFHIRPropertyIterator;
     function createPropertyList(bPrimitiveValues : boolean) : TFHIRPropertyList;
     procedure ListChildrenByName(name : string; list : TFHIRObjectList);
@@ -1233,6 +1234,11 @@ end;
 function TFHIRObject.HasTag(name: String): boolean;
 begin
   result := (FTags <> nil) and FTags.ContainsKey(name);
+end;
+
+function TFHIRObject.Link: TFHIRObject;
+begin
+  result := TFHIRObject(inherited Link);
 end;
 
 procedure TFHIRObject.ListChildrenByName(name: string; list: TFHIRObjectList);

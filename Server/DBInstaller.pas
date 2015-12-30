@@ -38,7 +38,18 @@ uses
   SCIMServer;
 
 const
-  ServerDBVersion = 2;
+  ServerDBVersion = 3;
+
+  // config table keys
+  CK_Transactions = 1;   // whether transactions and batches are allowed or not
+  CK_Bases = 2;          // (multiple) list of base urls the server accepts ids for (in addition to itself)
+  CK_SystemHistory = 3;  // whether to support history at the system level or not
+  CK_KeepAuditTrail = 4; // whether to populate the an AuditEvent history
+  CK_ServerVersion = 5;  // version of the database (database upgrade tracking)
+  CK_UniqueUri = 6; // Unique uri created when the database is installed
+  CK_GlobalSearch = 7; // whether search across all types is allowed
+  CK_FHIRVersion = 8; // the version of FHIR for which the database is configured
+
 
 Type
   TFHIRDatabaseInstaller = class (TAdvObject)
@@ -228,6 +239,7 @@ Begin
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (5, '''+inttostr(ServerDBVersion)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (6, '''+NewGuidURN+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (7, ''1'')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (8, '''+FHIR_GENERATED_VERSION+''')');
 End;
 
 procedure TFHIRDatabaseInstaller.CreateClosureEntries;
@@ -814,8 +826,11 @@ var
   m : TKDBMetaData;
   t : TKDBTable;
 begin
+  if version > ServerDBVersion then
+    raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-3): you must re-install the database');
+
   // 1- > 2 upgrade - add Patient to OAuthLogins. Also, clean up changes to Closures
-  if version = 1 then
+  if version < 2 then
   begin
     Fconn.ExecSQL('ALTER TABLE OAuthLogins ADD Patient char(64) NULL');
 
@@ -837,10 +852,9 @@ begin
       m.Free;
     end;
   end;
-  Fconn.ExecSQL('update Config set value = 2 where ConfigKey = 5');
-
-//  raise Exception.Create('Database Version mismatch: you must re-install the database');
-
+  if version < 3 then
+    Fconn.ExecSQL('insert into Config (ConfigKey, Value) values (8, '''+FHIR_GENERATED_VERSION+''')');
+  Fconn.ExecSQL('update Config set value = 3 where ConfigKey = 5');
 end;
 
 end.

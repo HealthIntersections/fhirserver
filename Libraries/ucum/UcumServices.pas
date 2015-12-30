@@ -36,7 +36,7 @@ Uses
   MathSupport, FileSupport,
   AdvBinaryFilers, AdvFiles, AdvFactories, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
   DecimalSupport, UcumHandlers, UcumValidators, UcumExpressions, Ucum,
-  FHIRResources, FHIRTypes, FHIRUtilities, FHIRParser,
+  FHIRResources, FHIRTypes, FHIRUtilities, FHIRParser, CDSHooksUtilities,
   TerminologyServices;
 
 Type
@@ -230,6 +230,8 @@ Type
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    function SpecialEnumeration : String; override;
+    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
   End;
 
   TUcumServiceList = class (TAdvObjectList)
@@ -394,6 +396,24 @@ begin
   Finally
     t.Free;
   End;
+end;
+
+procedure TUcumServices.getCDSInfo(card: TCDSHookCard; code, display: String);
+var
+  s : String;
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append('* Analysis: '+analyse(code)+#13#10);
+    b.Append('* Canonical Form: '+getCanonicalUnits(code)+#13#10);
+    s := validate(code);
+    if s <> '' then
+      b.Append('* Error: '+s+#13#10);
+    card.detail := b.ToString;
+  finally
+    b.Free;
+  end;
 end;
 
 function TUcumServices.getDefinedForms(code: String): TUcumDefinedUnitList;
@@ -561,6 +581,14 @@ begin
 //  finally
 //    f.free;
 //  end;
+end;
+
+function TUcumServices.SpecialEnumeration: String;
+begin
+  if FCommonUnits <> nil then
+    result := FCommonUnits.url
+  else
+    result := '';
 end;
 
 function TUcumServices.Validate(code: String): String;
@@ -915,10 +943,7 @@ end;
 function TUcumServices.TotalCount: integer;
 begin
   // this is not true, but this is not too big to expand (the primary purpose of this function)
-  if FCommonUnits <> nil then
-    result := FCommonUnits.compose.includeList[0].conceptList.count
-  else
-    result := 0;
+  result := 0;
 end;
 
 procedure TUcumServices.Close(ctxt: TCodeSystemProviderFilterContext);

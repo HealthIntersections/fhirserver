@@ -49,3 +49,5 @@ install/fhirvse.fbpbrk
 *.jdbg
 install/fhirserver2.fbl8
 install/fhirserver2.fbpbrk
+Server/FHIRServer21.stat
+Libraries/refplat2/openehr.xml

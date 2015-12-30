@@ -4,13 +4,13 @@ Unit AdvJSON;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
  * Neither the name of HL7 nor the names of its contributors may be used to
    endorse or promote products derived from this software without specific
@@ -31,6 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
+  Windows,
   SysUtils,
   Classes,
   AdvStreams,
@@ -281,6 +282,7 @@ Type
     FItemName: String;
     FItemValue: String;
     FItemType: TJsonParserItemType;
+    FTimeToAbort : cardinal;
     Procedure Start;
     Procedure ParseProperty;
     Procedure SkipInner;
@@ -300,10 +302,10 @@ Type
     Procedure Skip;
     Procedure JsonError(sMsg : String);
     Procedure CheckState(aState : TJsonParserItemType);
-    class Function Parse(stream : TAdvStream): TJsonObject; overload;
-    class Function Parse(stream : TStream): TJsonObject; overload;
-    class Function Parse(b : TBytes): TJsonObject; overload;
-    class Function Parse(s : String): TJsonObject; overload;
+    class Function Parse(stream : TAdvStream; timeToAbort : cardinal = 0): TJsonObject; overload;
+    class Function Parse(stream : TStream; timeToAbort : cardinal = 0): TJsonObject; overload;
+    class Function Parse(b : TBytes; timeToAbort : cardinal = 0): TJsonObject; overload;
+    class Function Parse(s : String; timeToAbort : cardinal = 0): TJsonObject; overload;
   End;
 
 Const
@@ -886,6 +888,9 @@ end;
 
 procedure TJSONParser.Next;
 begin
+  if (FTimeToAbort > 0) and (FTimeToAbort < GetTickCount) then
+    abort;
+
   case FItemType of
     jpitObject :
       Begin
@@ -936,12 +941,13 @@ begin
   End;
 end;
 
-class function TJSONParser.Parse(stream: TAdvStream): TJsonObject;
+class function TJSONParser.Parse(stream: TAdvStream; timeToAbort : cardinal = 0): TJsonObject;
 var
   p : TJSONParser;
 begin
   p := TJSONParser.Create(stream);
   try
+    p.FtimeToAbort := timeToAbort;
     result := TJsonObject.Create('$');
     try
       p.readObject(result, true);
@@ -954,12 +960,13 @@ begin
   end;
 end;
 
-class function TJSONParser.Parse(stream: TStream): TJsonObject;
+class function TJSONParser.Parse(stream: TStream; timeToAbort : cardinal = 0): TJsonObject;
 var
   p : TJSONParser;
 begin
   p := TJSONParser.Create(stream);
   try
+    p.FtimeToAbort := timeToAbort;
     result := TJsonObject.Create('$');
     try
       result.LocationStart := p.FLex.FLastLocationBWS;
@@ -974,9 +981,9 @@ begin
   end;
 end;
 
-class function TJSONParser.Parse(s: String): TJsonObject;
+class function TJSONParser.Parse(s: String; timeToAbort : cardinal = 0): TJsonObject;
 begin
-  result := Parse(TEncoding.UTF8.GetBytes(s));
+  result := Parse(TEncoding.UTF8.GetBytes(s), timeToAbort);
 end;
 
 procedure TJSONParser.ParseProperty;
@@ -1265,13 +1272,13 @@ begin
 end;
 
 
-class function TJSONParser.Parse(b: TBytes): TJsonObject;
+class function TJSONParser.Parse(b: TBytes; timeToAbort : cardinal = 0): TJsonObject;
 var
   s : TBytesStream;
 begin
   s := TBytesStream.Create(b);
   try
-    result := Parse(s);
+    result := Parse(s, timeToAbort);
   finally
     s.Free;
   end;
