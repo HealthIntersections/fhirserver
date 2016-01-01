@@ -46,8 +46,8 @@ Type
     FSignal: TAdvSignal;
     FPersistent: boolean;
   public
-    constructor create;
-    destructor destroy;
+    constructor Create; override;
+    destructor Destroy; override;
     function link : TWebSocketQueueInfo; overload;
 
     property Connected : boolean read FConnected write FConnected;
@@ -381,7 +381,6 @@ end;
 procedure TSubscriptionManager.HandleWebSocket(connection: TIdWebSocket);
 var
   cmd : TIdWebSocketCommand;
-  id : String;
   json : TJsonObject;
 begin
   try
@@ -707,13 +706,14 @@ var
   subst : TFhirSubscription;
   done, created : boolean;
   tnow, dnow : TDateTime;
-  i, userkey: Integer;
+  userkey: Integer;
   bundle : TFHIRBundle;
 begin
   NotificationnQueueKey := 0;
   SubscriptionKey := 0;
   ResourceKey := 0;
   tNow := now;
+  created := false;
 
   conn.SQL := 'Select NotificationQueueKey, ResourceVersionKey, SubscriptionKey, LastTry, ErrorCount, Operation from NotificationQueue where '+
      'Handled is null and Abandoned is null order by NotificationQueueKey';
@@ -836,6 +836,7 @@ begin
   ResourceKey := 0;
   ResourceVersionKey := 0;
   ResourceTypeKey := 0;
+  created := false;
 
   conn.SQL := 'Select Top 1 SubscriptionQueueKey, Ids.ResourceKey, SubscriptionQueue.ResourceVersionKey, Operation, Ids.ResourceTypeKey from SubscriptionQueue, Ids where '+
     'Handled is null and Ids.ResourceKey = SubscriptionQueue.ResourceKey order by SubscriptionQueueKey';

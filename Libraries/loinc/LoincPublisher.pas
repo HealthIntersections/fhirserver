@@ -205,7 +205,7 @@ var
   iDescription, iOtherNames, iStems : Cardinal;
   iEntry : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
 begin
   index := FLoinc.findMAConcept(sCode);

@@ -5,8 +5,8 @@ interface
 {
 [settings]
 } const
-BuildCount='13';
-BuildDate='2015-12-30';
+BuildCount='17';
+BuildDate='2016-01-02';
 
 
   SERVER_VERSION = '1.0.'+buildCount;

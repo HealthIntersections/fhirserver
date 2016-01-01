@@ -159,7 +159,6 @@ end;
 
 procedure TClosureManager.processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMap);
 var
-  version : integer;
   matches : TAdvList<TSubsumptionMatch>;
   match : TSubsumptionMatch;
   element, e : TFhirConceptMapElement;

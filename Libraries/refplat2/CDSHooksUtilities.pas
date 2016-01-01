@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes,
-  TextUtilities, MarkDownProcessor, KCritSct, HashSupport,
+  TextUtilities, MarkDownProcessor, KCritSct, HashSupport, EncodeSupport,
   AdvObjects, AdvGenerics, AdvThreads,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, SmartOnFhirUtilities, FHIRClient, FHIRParser;
 
@@ -14,11 +14,11 @@ type
     class function patientView : TFhirCoding;
     class function isPatientView(c : TFhirCoding) : boolean;
 
-    class function terminologyInfo : TFhirCoding;
-    class function isTerminologyInfo(c : TFhirCoding) : boolean;
+    class function codeView : TFhirCoding;
+    class function isCodeView(c : TFhirCoding) : boolean;
 
-    class function identifierInfo : TFhirCoding;
-    class function isIdentifierInfo(c : TFhirCoding) : boolean;
+    class function identifierView : TFhirCoding;
+    class function isIdentifierView(c : TFhirCoding) : boolean;
 
     class function allHooks : TAdvList<TFhirCoding>;
     class function isKnownHook(c : TFhirCoding) : boolean;
@@ -119,14 +119,12 @@ type
     property sourceURL : String read FSourceURL write FSourceURL;
     property suggestions : TAdvList<TCDSHookCardSuggestion> read FSuggestions;
     property links : TAdvList<TCDSHookCardLink> read FLinks;
+
+    procedure addLink(label_, uri : String);
   end;
 
   TCDSHookResponse = class (TAdvObject)
   private
-    FSourceURL: String;
-    Fdetail: String;
-    FsourceLabel: String;
-    Fsummary: String;
     FCards: TAdvList<TCDSHookCard>;
   public
     constructor Create; Overload; Override;
@@ -192,6 +190,8 @@ type
     Fserver: TRegisteredFHIRServer;
     FToken: TSmartOnFhirAccessToken;
     FHash : String;
+    FClient : TFHIRCLient;
+    FAlive : boolean;
     procedure Setrequest(const Value: TCDSHookRequest);
     procedure Setserver(const Value: TRegisteredFHIRServer);
     procedure SetToken(const Value: TSmartOnFhirAccessToken);
@@ -201,6 +201,8 @@ type
     Constructor Create(manager : TCDSHooksManager);
     destructor Destroy; override;
     function Link : TCDSHooksManagerWorkThread; overload;
+
+    procedure Cancel;
 
     property request : TCDSHookRequest read Frequest write Setrequest;
     property server : TRegisteredFHIRServer read Fserver write Setserver;
@@ -366,10 +368,15 @@ const
 '    }'+#13#10+
 '    .card-summary {'+#13#10+
 '        font-weight: 200;'+#13#10+
-'        font-size: 0.9em;'+#13#10+
+'        font-size: 0.8em;'+#13#10+
 '        flex-grow: 1'+#13#10+
 '    }'+#13#10+
 '    .card-source {'+#13#10+
+'        font-size: .7em;'+#13#10+
+'        font-style: italic'+#13#10+
+'        text-alignment: right'+#13#10+
+'    }'+#13#10+
+'    .card-links {'+#13#10+
 '        font-size: .7em;'+#13#10+
 '        font-style: italic'+#13#10+
 '        text-alignment: right'+#13#10+
@@ -392,8 +399,15 @@ const
 
   CARDS_HTML_FOOT =
 '</body>'+#13#10+
-'</html>'+#13#10
-  ;
+'</html>'+#13#10;
+
+function makeUrlSafe(url : String) : string;
+begin
+  if url.startsWith('http:') or url.startsWith('https:')  then
+    result := url.replace('"', '%22').replace('>', '%3E')
+  else
+    result := 'about:security-risk';
+end;
 
 function presentAsHtml(cards : TAdvList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 var
@@ -401,6 +415,8 @@ var
   card : TCDSHookCard;
   md : TMarkdownProcessor;
   s : String;
+  l : TCDSHookCardLink;
+  first : boolean;
 begin
   b := TStringBuilder.Create;
   try
@@ -414,6 +430,7 @@ begin
       begin
         md := TMarkdownProcessor.CreateDialect(mdDaringFireball);
         try
+          md.UnSafe := false;
           b.Append(md.process(card.detail));
         finally
           md.Free;
@@ -422,6 +439,20 @@ begin
       else
         b.Append(FormatTextToHTML(card.summary));
       b.Append('</div>'#13#10);
+      if card.links.Count > 0 then
+      begin
+        b.Append('  <div class="card-links"><p>Links: ');
+        first := true;
+        for l in card.links do
+        begin
+          if first then
+            first := false
+          else
+            b.append(' | ');
+          b.Append('<a href="'+makeUrlSafe(l.FUrl)+'">'+FormatTextToHTML(l.label_)+'</a>');
+        end;
+        b.Append('   </p></div>');
+      end;
       b.Append('  <div class="card-source">');
       b.Append(FormatTextToHTML(card.sourceLabel));
       b.Append('</div>'#13#10);
@@ -640,11 +671,23 @@ end;
 
 { TCDSHookCard }
 
+procedure TCDSHookCard.addLink(label_, uri: String);
+var
+  link : TCDSHookCardLink;
+begin
+  link := TCDSHookCardLink.Create;
+  try
+    link.label_ := label_;
+    link.url := uri;
+    links.Add(link.Link);
+  finally
+    link.Free;
+  end;
+end;
+
 function TCDSHookCard.AsParam: TFHIRParametersParameter;
 var
   p : TFhirParametersParameter;
-  s : String;
-  suggestion : TCDSHookCardSuggestion;
   link : TCDSHookCardLink;
 begin
   result := TFhirParametersParameter.Create;
@@ -802,27 +845,27 @@ end;
 class function TCDSHooks.allHooks: TAdvList<TFhirCoding>;
 begin
   result := TAdvList<TFhirCoding>.create;
-  result.Add(terminologyInfo);
-  result.Add(identifierInfo);
+  result.Add(codeView);
+  result.Add(identifierView);
   result.Add(patientView);
 end;
 
-class function TCDSHooks.identifierInfo: TFhirCoding;
+class function TCDSHooks.identifierView: TFhirCoding;
 begin
   result := TFhirCoding.Create;
-  result.system := 'http://healthintersections.com.au/fhir/CodeSystem/cds-activity';
-  result.code := 'identifier-info';
+  result.system := 'http://cds-hooks.smarthealthit.org/activity';
+  result.code := 'identifier-view';
   result.display := 'Provide any available information about an Identifier';
 end;
 
-class function TCDSHooks.isIdentifierInfo(c: TFhirCoding): boolean;
+class function TCDSHooks.isIdentifierView(c: TFhirCoding): boolean;
 begin
-  result := (c.system = 'http://healthintersections.com.au/fhir/CodeSystem/cds-activity') and (c.code = 'identifier-info');
+  result := (c.system = 'http://cds-hooks.smarthealthit.org/activity') and (c.code = 'identifier-view');
 end;
 
 class function TCDSHooks.isKnownHook(c: TFhirCoding): boolean;
 begin
-  result := isPatientView(c) or isTerminologyInfo(c) or isIdentifierInfo(c);
+  result := isPatientView(c) or isCodeView(c) or isIdentifierView(c);
 end;
 
 class function TCDSHooks.patientView: TFhirCoding;
@@ -838,17 +881,17 @@ begin
   result := (c.system = 'http://cds-hooks.smarthealthit.org/activity') and (c.code = 'patient-view');
 end;
 
-class function TCDSHooks.terminologyInfo: TFhirCoding;
+class function TCDSHooks.codeView: TFhirCoding;
 begin
   result := TFhirCoding.Create;
-  result.system := 'http://healthintersections.com.au/fhir/CodeSystem/cds-activity';
-  result.code := 'terminology-info';
+  result.system := 'http://cds-hooks.smarthealthit.org/activity';
+  result.code := 'code-view';
   result.display := 'Provide any available information about a Coding/CodeableConcept';
 end;
 
-class function TCDSHooks.isTerminologyInfo(c: TFhirCoding): boolean;
+class function TCDSHooks.isCodeView(c: TFhirCoding): boolean;
 begin
-  result := (c.system = 'http://healthintersections.com.au/fhir/CodeSystem/cds-activity') and (c.code = 'terminology-info');
+  result := (c.system = 'http://cds-hooks.smarthealthit.org/activity') and (c.code = 'code-view');
 end;
 
 { TCDSHooksManager }
@@ -884,7 +927,8 @@ begin
   FLock.Lock;
   try
     for thread in FThreads do
-      list.Add(thread.server.name);
+      if thread.FAlive then
+        list.Add(thread.server.name);
   finally
     FLock.Unlock;
   end;
@@ -1051,10 +1095,7 @@ begin
   FLock.Lock;
   try
     for thread in FThreads do
-    begin
-      thread.Fmanager := nil;
-      thread.KillTimeout(0);
-    end;
+      thread.Cancel;
   finally
     FLock.Unlock;
   end;
@@ -1093,10 +1134,19 @@ end;
 
 { TCDSHooksManagerWorkThread }
 
+procedure TCDSHooksManagerWorkThread.Cancel;
+begin
+  try
+    FAlive := false;
+  except
+  end;
+end;
+
 constructor TCDSHooksManagerWorkThread.Create(manager: TCDSHooksManager);
 begin
   inherited create;
   FManager := manager;
+  FAlive := true;
 end;
 
 destructor TCDSHooksManagerWorkThread.Destroy;
@@ -1109,26 +1159,26 @@ end;
 
 procedure TCDSHooksManagerWorkThread.Execute;
 var
-  client : TFhirClient;
   pin, pout : TFhirParameters;
   resp : TCDSHookResponse;
 begin
   try
     try
       try
-        client := TFhirClient.Create(server.fhirEndpoint, server.format = ffJson);
+        FClient := TFhirClient.Create(server.fhirEndpoint, server.format = ffJson);
         try
-          client.smartToken := token.link;
+          FClient.smartToken := token.link;
           pin := Frequest.AsParams;
           try
-            pout := client.operation(frtNull, 'cds-hook', pin) as TFhirParameters;
+            pout := FClient.operation(frtNull, 'cds-hook', pin) as TFhirParameters;
             try
               resp := TCDSHookResponse.Create(pout);
               try
                if FManager <> nil then
                begin
                  FManager.cacheResponse(hash, server, resp);
-                 event(FManager, server, FContext, resp, '');
+                 if (FAlive) then
+                   event(FManager, server, FContext, resp, '');
                end;
               finally
                 resp.Free;
@@ -1140,18 +1190,19 @@ begin
             pin.Free;
           end;
         finally
-          client.Free;
+          FClient.Free;
         end;
       except
         on e : Exception do
           if FManager <> nil then
           begin
             FManager.cacheResponse(hash, server, e.message);
-            event(FManager, server, FContext, nil, e.message);
+            if (FAlive) then
+              event(FManager, server, FContext, nil, e.message);
           end;
       end;
     finally
-      if FManager <> nil then
+      if (FAlive) then
         Fmanager.closeThread(self);
     end;
   except

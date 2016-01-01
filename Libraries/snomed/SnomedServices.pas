@@ -499,7 +499,7 @@ operations
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure extendLookup(ctxt : TCodeSystemProviderContext; params : TFHIRParameters); override;
 
-    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
   End;
 
   TSnomedServiceList = class (TAdvObjectList)
@@ -1786,7 +1786,7 @@ begin
   index := L;
 end;
 
-procedure TSnomedServices.getCDSInfo(card: TCDSHookCard; code, display: String);
+procedure TSnomedServices.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
 var
   b : TStringBuilder;
   Identity : UInt64;
@@ -1800,7 +1800,6 @@ var
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
-  param, p2 : TFhirParametersParameter;
   iId : Int64;
   iIndex : cardinal;
   first : boolean;
@@ -1810,34 +1809,43 @@ begin
     SetLength(inbounds, 0);
     iId := StrToUInt64Def(code, 0);
     if not Concept.FindConcept(iId, iIndex) then
-      b.Append('Error: Code '+code+' not known')
+    begin
+      b.Append('Snomed Code '+code+#13#10#13#10);
+      b.Append('* Error: Code not known')
+    end
     else
     begin
+      card.addLink('Further Detail', baseURL+'/snomed/doco/?srch='+code);
+
       Concept.GetConcept(IIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
       Inbounds := Refs.GetReferences(InboundIndex);
 
+      b.Append('Snomed Code '+code+' : '+GetPNForConcept(iIndex)+#13#10#13#10);
+
       Descriptions := Refs.GetReferences(DescriptionIndex);
+      b.Append('Descriptions: '+#13#10#13#10);
       for i := Low(Descriptions) To High(Descriptions) Do
       Begin
         Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, Flags);
-        b.Append('Descriptions: '+#13#10#13#10);
         if flags and MASK_DESC_STATUS = Flag_Active Then
           if ((flags and MASK_DESC_STYLE) shr 4 = VAL_DESC_Unspecified) and (kind <> 0) then
             b.Append('* '+Strings.GetEntry(iWork)+' ('+GetPNForConcept(kind)+')'+#13#10)
           else
             b.Append('* '+Strings.GetEntry(iWork)+' ('+GetDescType(Flags)+')'+#13#10);
-        b.Append(#13#10);
       End;
+      b.Append(#13#10);
 
       // parents:
       if ParentIndex <> 0 Then
       begin
         Parents := Refs.GetReferences(ParentIndex);
-        Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
-        Descriptions := Refs.GetReferences(DescriptionIndex);
         b.Append('Parents: '+#13#10#13#10);
         for i := 0 to Length(Parents)-1 do
-          b.Append('* '+GetPN(Descriptions)+#13#10);
+        begin
+          Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
+          Descriptions := Refs.GetReferences(DescriptionIndex);
+          b.Append('* '+GetPN(Descriptions)+' ('+IntToStr(Identity)+')'+#13#10);
+        end;
         b.Append(#13#10);
       end;
 
@@ -1855,11 +1863,12 @@ begin
           end;
           Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
           Descriptions := Refs.GetReferences(DescriptionIndex);
-          b.Append('* '+GetPN(Descriptions)+#13#10);
+          b.Append('* '+GetPN(Descriptions)+' ('+IntToStr(Identity)+')'+#13#10);
         end;
-        b.Append(#13#10);
       End;
+      b.Append(#13#10);
     End;
+    b.Append(#13#10+'This term definition is derived from SNOMED CT, which is copyright &copy; 2002+ International Health Terminology Standards Development Organisation (IHTSDO)'#13#10);
     card.detail := b.ToString;
   finally
     b.free;

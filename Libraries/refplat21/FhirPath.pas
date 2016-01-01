@@ -89,7 +89,7 @@ type
     procedure Setinput2(const Value: TFHIRBaseList);
     procedure Setoutcome(const Value: TFHIRBaseList);
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     function Link : TFHIRPathDebugPackage; overload;
     property SourceStart : TSourceLocation read FSourceStart write FSourceStart;
     property SourceEnd : TSourceLocation read FSourceEnd write FSourceEnd;
@@ -162,7 +162,7 @@ type
     function funcSubString(ctxt : TFHIRPathExecutionContext; context : TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
     function funcExtension(ctxt : TFHIRPathExecutionContext; context : TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
 
-    function equals(left, right : TFHIRBase) : boolean;
+    function equals(left, right : TFHIRBase) : boolean;  overload;
 
     function opEquals(left, right : TFHIRBaseList) : TFHIRBaseList;
     function opNotEquals(left, right : TFHIRBaseList) : TFHIRBaseList;
@@ -184,8 +184,8 @@ type
     function areDistinct(a1, a2: array of TFHIRBaseList): boolean;
 
   public
-    constructor create(context : TValidatorServiceProvider);
-    destructor destroy; override;
+    constructor Create(context : TValidatorServiceProvider);
+    destructor Destroy; override;
     property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
 
     // Parse a path for later use using execute
@@ -714,7 +714,7 @@ end;
 function TFHIRExpressionEngine.funcContains(ctxt : TFHIRPathExecutionContext; context: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
   item : TFHIRBase;
-  pc, res : TFHIRBaseList;
+  res : TFHIRBaseList;
   s, sw : String;
 begin
   result := TFHIRBaseList.Create;
@@ -836,7 +836,6 @@ end;
 function TFHIRExpressionEngine.funcLength(ctxt : TFHIRPathExecutionContext; context: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
   item : TFHIRBase;
-  pc, res : TFHIRBaseList;
   s : String;
   l : integer;
 begin
@@ -851,7 +850,6 @@ end;
 
 function TFHIRExpressionEngine.funcLog(ctxt: TFHIRPathExecutionContext; context: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
-  item : TFHIRBase;
   n1 : TFHIRBaseList;
   name : String;
 begin
@@ -868,7 +866,7 @@ end;
 function TFHIRExpressionEngine.funcMatches(ctxt : TFHIRPathExecutionContext; context: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
   item : TFHIRBase;
-  pc, res : TFHIRBaseList;
+  res : TFHIRBaseList;
   s, p : String;
   reg : TRegExpr;
 begin
@@ -911,7 +909,7 @@ end;
 function TFHIRExpressionEngine.funcStartsWith(ctxt : TFHIRPathExecutionContext; context: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
   item : TFHIRBase;
-  pc, res : TFHIRBaseList;
+  res : TFHIRBaseList;
   s, sw : String;
 begin
   result := TFHIRBaseList.Create;
@@ -939,7 +937,6 @@ end;
 function TFHIRExpressionEngine.funcSubString(ctxt : TFHIRPathExecutionContext; context: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
   item : TFHIRBase;
-  pc, res : TFHIRBaseList;
   s, sw : String;
   n1, n2 : TFhirBaseList;
   i1, i2 : integer;
@@ -978,9 +975,9 @@ end;
 function TFHIRExpressionEngine.funcExtension(ctxt : TFHIRPathExecutionContext; context: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
   item, ex : TFHIRBase;
-  pc, res, vl : TFHIRBaseList;
-  s, url : String;
-  n1, ext, v : TFhirBaseList;
+  vl : TFHIRBaseList;
+  url : String;
+  n1, ext : TFhirBaseList;
 begin
   n1 := nil;
   result := TFHIRBaseList.Create;
@@ -1985,7 +1982,6 @@ end;
 function TFHIRExpressionEngine.parse(path: String): TFHIRExpressionNode;
 var
   lexer : TFHIRPathLexer;
-  focus : TFHIRExpressionNode;
   msg : String;
 begin
   lexer := TFHIRPathLexer.Create(path);
@@ -2456,7 +2452,7 @@ begin
       end;
     end;
   finally
-    result := IncludeTrailingBackslash(SystemTemp)+'fpt-'+FormatDateTime('yyyymmddhhnnss', now)+'.txt';
+    result := IncludeTrailingPathDelimiter(SystemTemp)+'fpt-'+FormatDateTime('yyyymmddhhnnss', now)+'.txt';
     StringToFile(b.ToString, result, TEncoding.UTF8);
   end;
 end;
@@ -2581,72 +2577,3 @@ end;
 
 end.
 
-(*
-{ TFHIRQueryProcessor }
-
-constructor TFHIRQueryProcessor.Create;
-begin
-  inherited;
-  FResults := TFHIRObjectList.Create;
-  FSource := TFHIRObjectList.Create;
-end;
-
-destructor TFHIRQueryProcessor.Destroy;
-begin
-  FSource.Free;
-  FResults.Free;
-  inherited;
-end;
-
-procedure TFHIRQueryProcessor.execute;
-var
-  src, seg : String;
-  i : integer;
-  first : boolean;
-  list : TFhirReferenceList;
-begin
-  src := FPath;
-  if (src = '*') and (FSource[0] is TFHIRResource) then
-  begin
-    list := TFhirReferenceList.Create;
-    try
-      listReferences(FSource[0] as TFHIRResource, list);
-      FResults.AddAll(list);
-    finally
-      list.Free;
-    end;
-  end
-  else
-begin
-  first := true;
-  while (src <> '') do
-  begin
-    StringSplit(src, '.', seg, src);
-    if (not IsValidIdent(seg)) Then
-      raise exception.create('unable to parse path "'+FPath+'"');
-    FResults.clear;
-    if first then
-      for i := 0 to FSource.count - 1 Do
-      begin
-        if FSource[i].ClassName = 'TFhir'+seg then
-          FResults.add(FSource[i].Link);
-      end
-    else
-      for i := 0 to FSource.count - 1 Do
-        FSource[i].GetChildrenByName(seg, FResults);
-    first := false;
-    for i := FResults.count- 1 downto 0 do
-      if (FResults[i] = nil) then
-        FResults.DeleteByIndex(i);
-    if src <> '' then
-    begin
-      FSource.Free;
-      FSource := FResults;
-      FResults := TFHIRObjectList.Create;
-      end;
-    end;
-  end;
-end;
-
-
-*)

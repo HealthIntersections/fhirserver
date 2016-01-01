@@ -62,7 +62,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "change Smart on FHIR login to support patient specific login, and extend SCT support in $lookup operation"
+        as.returnvalue = "fix start up issues"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -92,13 +92,50 @@ begin
         variabletypes = "String" +
                         ""
       end
+      action.variable.set
+      begin
+        applytoexisting = false
+        doexpandexpression = true
+        forcetype = ftDefault
+        id = {D8A889FD-00CA-41F7-9620-D53CAF5FAC5B}
+        modifier = smNone
+        newvalue = %FhirVersion%
+        variablename = FhirVersion2
+      end
+      action.variables.loadfromini
+      begin
+        createvarininiifnotexists = false
+        description = "Read FHIR Version"
+        failifvariablenotdefined = true
+        failifvariablenotininifile = true
+        id = {ABC38458-9A84-45F8-A2DD-4396E14C1F74}
+        ignorefailure = true
+        ignorefilenotfound = false
+        inifile = C:\\work\\org.hl7.fhir\\build\\publish\\version.info
+        sectionname = FHIR
+        variables = "FhirVersion" +
+                    ""
+        variabletypes = "String" +
+                        ""
+      end
+      action.variable.set
+      begin
+        applytoexisting = false
+        doexpandexpression = true
+        forcetype = ftString
+        id = {E9FDCF56-5FC3-4C92-BFE6-FF1E5C436F78}
+        modifier = smNone
+        newvalue = %FhirVersion%
+        variablename = FhirVersion21
+      end
       action.variables.logvalues
       begin
         failifnotdefined = true
         id = {8BC7945E-952D-4E59-92DC-FED847E39B62}
         logallvariables = false
         variablestoragestring = "BuildCount" +
-                                "FhirVersion" +
+                                "FhirVersion2" +
+                                "FhirVersion21" +
                                 "purpose" +
                                 ""
       end
@@ -131,8 +168,16 @@ begin
         deletehidden = false
         deletereadonly = false
         failifnofile = false
-        filespec = C:\\work\\fhirserver\\Exec\\FHIRServer-dev64.exe
+        filespec = C:\\work\\fhirserver\\Exec\\FHIRServer2.exe
         id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
+      end
+      action.files.delete
+      begin
+        deletehidden = false
+        deletereadonly = false
+        failifnofile = false
+        filespec = C:\\work\\fhirserver\\Exec\\FHIRServer21.exe
+        id = {91E95BB6-0B1C-46FB-B761-F29762E59894}
       end
       action.delphi.build
       begin
@@ -149,7 +194,7 @@ begin
         configname = Release
         debugversionnumbers = false
         delphiversion = Delphi10Seattle
-        description = "Compile the Server (64)"
+        description = "Compile the Server (DSTU2)"
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -239,7 +284,125 @@ begin
           recordfieldalign = fa8
           referenceinfo = false
           safedivide = false
-          searchpath = C:\\HL7Connect\\indysoap\\source;C:\\work\\fhirserver\\Libraries\\jcl
+          searchpath = C:\\work\\fhirserver\\Libraries\\jcl
+          showhints = true
+          showwarnings = true
+          stackframes = false
+          stringchecks = true
+          typedpointers = false
+          unitaliases = WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+          unitoutputdir = C:\\work\\fhirserver\\Exec\\Temp
+          usedebugdcu = false
+          usepackages = false
+          varstringchecks = true
+        end
+      end
+      action.delphi.build
+      begin
+        allowimplicitimport = true
+        alwaysuseconditionalsfromdof = false
+        autoincbuild = true
+        autoupdatefileversion = true
+        autoupdateproductversion = false
+        buildall = true
+        buildversion = 0
+        codepage = 1252
+        compileprojectresources = false
+        compileridl = true
+        configname = Release
+        debugversionnumbers = false
+        delphiversion = Delphi10Seattle
+        description = "Compile the Server (DSTU21)"
+        eurekalogverboselogging = false
+        frameworktype = VCL
+        hintsaserror = false
+        iconfile = C:\\work\\fhirserver\\Server\\fhir.ico
+        id = {41244D2C-A6C4-4F27-B8C7-32EBE9867AF0}
+        includecompiledate = false
+        includemanifest = false
+        includeverinfo = false
+        isdebug = false
+        isdll = false
+        isprerelease = false
+        isprivate = false
+        isspecial = false
+        keepcfg = false
+        linkproductversiontofileversion = true
+        locale = 3081
+        majorversion = 0
+        minorversion = 0
+        platform = Win64
+        projectfile = C:\\work\\fhirserver\\Server\\FHIRServer21.dpr
+        regenerateresource = true
+        releaseversion = 0
+        resourcecompilertype = rcBorland
+        startingdir = C:\\work\\fhirserver\\Server\\
+        updatedoffile = false
+        updatepackagesource = false
+        updateversioninfokeys = false
+        useeurekalogcompiler = false
+        useprojectsettings = []
+        usepropertyset = false
+        useversionfromdof = false
+        versioninfokeys = "CompanyName=" +
+                          "FileDescription=" +
+                          "FileVersion=0.0.0.0" +
+                          "InternalName=" +
+                          "LegalCopyright=" +
+                          "LegalTrademarks=" +
+                          "OriginalFilename=" +
+                          "ProductName=" +
+                          "ProductVersion=0.0.0.0" +
+                          "Comments=" +
+                          ""
+        warningsaserror = false
+        workaroundd5bug = false
+        delphi.compileroptions
+        begin
+          alwaysuseconditionalsfromdof = false
+          alwaysusedelphilibrarypath = false
+          alwaysusedofsearchpath = false
+          assertions = false
+          assignableconst = false
+          booleval = false
+          compilerwarnings = "-w-UNSAFE_TYPE=0" +
+                             "-w-UNSAFE_CODE=0" +
+                             "-w-UNSAFE_CAST=0" +
+                             ""
+          conditionals = DSTU21
+          consoleapp = false
+          debuginfo = false
+          definitionsonly = true
+          emitruntimetypeinformation = false
+          exportallsymbols = false
+          extendedsyntax = true
+          externaltd32 = true
+          frameworktype = None
+          generatedocumentation = false
+          generatehpp = false
+          hugestrings = true
+          imagebase = 4194304
+          includenamespaces = false
+          includeremotesymbols = false
+          includetd32 = false
+          inlining = inOn
+          iochecking = true
+          librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+          linkeroutput = 0
+          localsymbols = false
+          mapfile = 3
+          maxstacksize = 1048576
+          minstacksize = 16384
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+          openstrings = true
+          optimisation = false
+          outputdir = C:\\work\\fhirserver\\Exec
+          overflowchecking = false
+          rangechecking = false
+          recordfieldalign = fa8
+          referenceinfo = false
+          safedivide = false
+          searchpath = C:\\work\\fhirserver\\Libraries\\jcl
           showhints = true
           showwarnings = true
           stackframes = false
@@ -255,6 +418,7 @@ begin
       action.process.execute
       begin
         captureoutput = true
+        description = "Add Map (2)"
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -275,12 +439,29 @@ begin
         useerrordialogmonitor = false
         waitforcompletion = true
       end
-      action.directory.rename
+      action.process.execute
       begin
-        id = {296F3AA1-BCDF-472D-9C91-B3ED07F898D0}
-        newdirname = FHIRServer-dev64.exe
-        renamedir = false
-        sourcefile = C:\\work\\fhirserver\\Exec\\FHIRServer2.exe
+        captureoutput = true
+        description = "Add Map (21)"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {E70CAA18-0B08-4994-901F-EF34C8EF6020}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "-j -e C:\\work\\fhirserver\\Exec\\FhirServer21.map"
+        programname = C:\\tools\\MakeJclDbg.exe
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        terminateontimeout = false
+        timeoutlength = 0
+        useerrordialogmonitor = false
+        waitforcompletion = true
       end
       action.process.execute
       begin
@@ -296,7 +477,32 @@ begin
         impersonateuser = false
         logoutput = true
         logprocessparameters = true
-        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer-dev64.exe\""
+        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer2.exe\""
+        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        startindir = "C:\\Program Files (x86)\\kSign"
+        terminateontimeout = false
+        timeoutlength = 1
+        useerrordialogmonitor = false
+        waitforcompletion = true
+      end
+      action.process.execute
+      begin
+        captureoutput = true
+        description = "Sign the Server (64)"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {B54E0CBB-BBAB-4991-A124-8EFA94DD9C69}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer21.exe\""
         programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
         redirectstderr = true
         returncodecomparator = rcEqualTo
@@ -313,8 +519,20 @@ begin
         deleteifblank = false
         description = "Set AppVerName in Inno Script"
         id = {65390809-00BE-4438-AAFE-E3C27A4F4177}
-        inifile = C:\\work\\fhirserver\\install\\install.iss
-        newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion%)"
+        inifile = C:\\work\\fhirserver\\install\\install2.iss
+        newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion2%)"
+        section = Setup
+        valuename = AppVerName
+        valuetype = vtString
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Set AppVerName in Inno Script"
+        id = {E3A38EAF-30F3-4B06-9770-C111B7E0A1E7}
+        inifile = C:\\work\\fhirserver\\install\\install21.iss
+        newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion21%)"
         section = Setup
         valuename = AppVerName
         valuetype = vtString
@@ -325,8 +543,20 @@ begin
         deleteifblank = false
         description = "Set OutputFilename in Inno Script"
         id = {15C08B77-3163-47F9-B471-664C5CD23E97}
-        inifile = C:\\work\\fhirserver\\install\\install.iss
-        newvalue = fhirserver-1.0.%BuildCount%
+        inifile = C:\\work\\fhirserver\\install\\install2.iss
+        newvalue = fhirserver2-1.0.%BuildCount%
+        section = Setup
+        valuename = OutputBaseFilename
+        valuetype = vtString
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Set OutputFilename in Inno Script"
+        id = {4CCDCB7F-C397-47A0-A936-0D320AF5B9D9}
+        inifile = C:\\work\\fhirserver\\install\\install21.iss
+        newvalue = fhirserver21-1.0.%BuildCount%
         section = Setup
         valuename = OutputBaseFilename
         valuetype = vtString
@@ -336,7 +566,18 @@ begin
         description = "Build the server install"
         id = {DB9CE85D-5959-4FD8-94EC-33ED5C16CE3A}
         innoversion = Inno5
-        scriptfile = C:\\work\\fhirserver\\install\\install.iss
+        scriptfile = C:\\work\\fhirserver\\install\\install2.iss
+        showprogress = true
+        unicode = false
+        usecommandline = true
+        usepreprocessor = false
+      end
+      action.innosetup.execute
+      begin
+        description = "Build the server install"
+        id = {8413CA91-F62B-48D7-952E-8CEF6C236C73}
+        innoversion = Inno5
+        scriptfile = C:\\work\\fhirserver\\install\\install21.iss
         showprogress = true
         unicode = false
         usecommandline = true
@@ -356,7 +597,32 @@ begin
         impersonateuser = false
         logoutput = true
         logprocessparameters = true
-        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver-1.0.%BuildCount%.exe\""
+        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver2-1.0.%BuildCount%.exe\""
+        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        startindir = "C:\\Program Files (x86)\\kSign"
+        terminateontimeout = false
+        timeoutlength = 1
+        useerrordialogmonitor = false
+        waitforcompletion = true
+      end
+      action.process.execute
+      begin
+        captureoutput = true
+        description = "Sign the server install"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {AA3BB9B0-F4A4-478F-8D47-80366B463656}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver21-1.0.%BuildCount%.exe\""
         programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
         redirectstderr = true
         returncodecomparator = rcEqualTo
@@ -395,13 +661,37 @@ begin
         connectionname = HealthIntersections
         detailedlogging = false
         enabletimeout = false
-        filespec = fhirserver-1.0.%BuildCount%.exe
+        filespec = fhirserver2-1.0.%BuildCount%.exe
         forcenextclockskewupdate = true
         gaplength = 5
         id = {D39D7CF3-7021-424E-8AD7-112C4AE57185}
         localdir = C:\\work\\fhirserver\\install\\build
         recursive = false
-        remotefile = public_html/FhirServer/fhirserver-1.0.%BuildCount%.exe
+        remotefile = public_html/FhirServer/fhirserver2-1.0.%BuildCount%.exe
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = fhirserver21-1.0.%BuildCount%.exe
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {616E5E3D-0227-428E-ABAE-E5FE924B32D3}
+        localdir = C:\\work\\fhirserver\\install\\build
+        recursive = false
+        remotefile = public_html/FhirServer/fhirserver21-1.0.%BuildCount%.exe
         retryifuploadfails = true
         serverclockskew = 0
         throttlespeed = 128
@@ -424,8 +714,33 @@ begin
         nodename = item
         nodetext = "" +
                    "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU2)</title>" +
-                   "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe</link>" +
+                   "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.%BuildCount%.exe</link>" +
                    "      <description>DSTU2. %BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
+                   ""
+        parentxpath = /rss/channel
+        parserver = HighestMSXML
+        resolveexternal = true
+        treatastext = false
+        usexmldocobject = false
+        validateonparse = true
+        xmlsourcefile = C:\\work\\fhirserver\\install\\fhirserver.rss
+      end
+      action.xml.node.create
+      begin
+        addnewline = true
+        allowdtds = false
+        description = "update RSS"
+        existsbehaviour = neCreate
+        expanddocumentnodenamespace = false
+        failifmultiple = false
+        id = {4EB5B17E-F3B3-4C5C-B55D-7A19D21A1F53}
+        insertat = inAfterXPath
+        insertatxpath = /rss/channel/link
+        nodename = item
+        nodetext = "" +
+                   "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU21)</title>" +
+                   "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.%BuildCount%.exe</link>" +
+                   "      <description>DSTU2.1. %BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
                    ""
         parentxpath = /rss/channel
         parserver = HighestMSXML
@@ -536,6 +851,16 @@ begin
   variable
   begin
     name = FhirVersion
+    variablescope = vtProject
+  end
+  variable
+  begin
+    name = FhirVersion2
+    variablescope = vtProject
+  end
+  variable
+  begin
+    name = FhirVersion21
     variablescope = vtProject
   end
   variable

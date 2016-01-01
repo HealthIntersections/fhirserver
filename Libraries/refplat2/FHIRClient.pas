@@ -323,8 +323,7 @@ end;
 
 function TFhirClient.operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
 Var
-  src, frm : TStream;
-  ct : String;
+  src : TStream;
 begin
   src := serialise(params);
   try

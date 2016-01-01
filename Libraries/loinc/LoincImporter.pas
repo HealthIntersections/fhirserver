@@ -202,7 +202,6 @@ Type
     procedure SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte);
 
     Function AddDescription(Const s : String):Cardinal;
-    Function SeeUnits(Const s : String):Word;
     function LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
     function ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
     procedure Progress(msg : String);
@@ -1198,20 +1197,6 @@ begin
   End;
 end;
 
-function TLoincImporter.SeeUnits(const s: String): Word;
-var
-  i : Integer;
-begin
-  if s = '' then
-    result := 0
-  else if FUnits.Find(s, i) Then
-    result := Cardinal(FUnits.Objects[i])
-  Else
-  Begin
-    result := FConcepts.AddConcept(AddDescription(s), 0, 0);
-    FUnits.AddObject(s, TObject(result));
-  End;
-end;
 
 { THeirarchyEntry }
 

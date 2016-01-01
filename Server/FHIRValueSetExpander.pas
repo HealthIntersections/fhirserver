@@ -97,7 +97,6 @@ var
   //e : TFhirExtension;
   filter : TSearchFilterText;
   notClosed : boolean;
-  ref : TFhirReference;
   table : TFhirXHtmlNode;
   tr : TFhirXHtmlNode;
   param : TFhirValueSetExpansionParameter;

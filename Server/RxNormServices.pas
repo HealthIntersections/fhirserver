@@ -79,7 +79,7 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
@@ -403,8 +403,9 @@ begin
   raise Exception.Create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
-procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; code, display: String);
+procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
 begin
+//    b.Append(#13#10+'This term definition is derived from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO)'#13#10);
   card.detail := 'Not done yet';
 end;
 

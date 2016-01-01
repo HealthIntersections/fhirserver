@@ -69,9 +69,6 @@ Type
     fcmdTransaction, {@enum.value fcmdTransaction Update or create a set of resources}
     fcmdHistorySystem, {@enum.value fcmdUpdate get updates for the resource type}
     fcmdUpload, {@enum.value fcmdUpload Manual upload (Server extension)}
-    fcmdGetMeta, {@enum.value fcmdGetTags get a list of tags fixed to a resource version, resource, used with a resource type, or used on the system}
-    fcmdUpdateMeta, {@enum.value fcmdAddTags add to the list of tags attached to a resource or version}
-    fcmdDeleteMeta, {@enum.value fcmdDeleteTags delete from the list of tags attached to a resource or version}
 
     fcmdOperation, {@enum.value fcmdOperation operation, as defined in DSTU2}
 
@@ -127,7 +124,7 @@ Type
 Const
   FHIR_NS = 'http://hl7.org/fhir';
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
-    'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'GetTags', 'UpdateTags', 'DeleteTags', 'Operation', 'Batch', 'WebUI', 'Null');
+    'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Batch', 'WebUI', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
   CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('AsIs', 'XML', 'JSON', 'XHTML');
   MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'text/xhtml');

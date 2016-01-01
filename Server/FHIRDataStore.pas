@@ -137,7 +137,6 @@ Type
     FForLoad : boolean;
 
     procedure LoadExistingResources(conn: TKDBConnection);
-    procedure SaveResource(res: TFhirResource; dateTime: TDateAndTime; origin : TFHIRRequestOrigin);
     procedure RecordFhirSession(session: TFhirSession);
     procedure CloseFhirSession(key: integer);
     function GetSessionByKey(userkey : integer) : TFhirSession;
@@ -153,6 +152,7 @@ Type
     Destructor Destroy; Override;
     Function Link: TFHIRDataStore; virtual;
     procedure CloseAll;
+    procedure SaveResource(res: TFhirResource; dateTime: TDateAndTime; origin : TFHIRRequestOrigin);
     function GetSession(sCookie: String; var session: TFhirSession; var check: Boolean): Boolean;
     function GetSessionByToken(outerToken: String; var session: TFhirSession): Boolean;
     Function CreateImplicitSession(clientInfo: String; server: Boolean) : TFhirSession;
@@ -174,7 +174,7 @@ Type
     procedure SeeResource(key, vkey: integer; id: string; created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
     procedure DropResource(key, vkey: integer; id: string; aType: TFHIRResourceType; indexer: TFhirIndexManager);
     procedure RegisterConsentRecord(session: TFhirSession);
-    function KeyForTag(system, code: String): integer;
+    function KeyForTag(category : TFHIRTagCategory; system, code: String): integer;
     Property Validator: TFHIRValidator read FValidator;
     function GetTagByKey(key: integer): TFHIRTag;
     Property DB: TKDBManager read FDB;
@@ -308,22 +308,9 @@ begin
     conn.Execute;
     while conn.FetchNext do
     begin
-      FTags.addTag(conn.ColIntegerByName['TagKey'], TFHIRTagCategory(conn.ColIntegerByName['TagKey']), conn.ColStringByName['Uri'], conn.ColStringByName['Code'], conn.ColStringByName['Display']);
+      FTags.addTag(conn.ColIntegerByName['TagKey'], TFHIRTagCategory(conn.ColIntegerByName['Kind']), conn.ColStringByName['Uri'], conn.ColStringByName['Code'], conn.ColStringByName['Display']);
     end;
     conn.terminate;
-
-    // db version check
-    ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
-    if (ver <> ServerDBVersion) then
-    begin
-      writelnt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
-      dbi := TFHIRDatabaseInstaller.create(conn, '');
-      try
-        dbi.upgrade(ver);
-      finally
-        dbi.Free;
-      end;
-    end;
 
     conn.SQL := 'Select * from Config';
     conn.Prepare;
@@ -1006,13 +993,13 @@ begin
   end;
 end;
 
-function TFHIRDataStore.KeyForTag(system, code: String): integer;
+function TFHIRDataStore.KeyForTag(category : TFHIRTagCategory; system, code: String): integer;
 var
   p: TFHIRTag;
 begin
   FLock.Lock('KeyForTag');
   try
-    p := FTags.findTag(system, code);
+    p := FTags.findTag(category, system, code);
     if (p = nil) then
       result := 0
     else
@@ -1215,7 +1202,7 @@ var
 begin
   FLock.Lock('RegisterTag');
   try
-    C := FTags.findTag(tag.system, tag.code);
+    C := FTags.findTag(tag.Category, tag.system, tag.code);
     if C <> nil then
     begin
       tag.key := C.key;

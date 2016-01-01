@@ -144,7 +144,8 @@ uses
   PluginUtilities in 'PluginUtilities.pas',
   CDSHooksUtilities in '..\Libraries\refplat2\CDSHooksUtilities.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
-  MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas';
+  MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
+  ShellSupport in '..\Libraries\support\ShellSupport.pas';
 
 {$R *.res}
 

@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$WARN SYMBOL_DEPRECATED OFF}
+
 Interface
 
 uses
@@ -110,7 +112,7 @@ Type
     FTimeToAbort : Cardinal;
   public
     constructor create(locations : TAdvList<TSourceLocationObject>; timeToAbort : cardinal);
-    destructor destroy; override;
+    destructor Destroy; override;
     property DOm : IXMLDOMDocument2 read FDom;
     procedure startElement(sourceLocation : TSourceLocation; uri, localname : string; attrs : IVBSAXAttributes); override;
     procedure endElement(sourceLocation : TSourceLocation); overload; override;
@@ -184,7 +186,7 @@ Type
     function ParseInnerResource(jsn: TJsonObject) : TFhirResource; overload;
   Public
     procedure Parse; Overload; Override;
-    procedure Parse(obj : TJsonObject); Overload;
+    procedure Parse(obj : TJsonObject); Overload; Virtual;
     function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
     class function ParseFragment(fragment, type_, lang : String) : TFHIRBase; overload;
   End;
@@ -238,7 +240,7 @@ Type
     Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFhirDomainResource; value : TFhirResource); overload;
     Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFHIRElement; value : TFhirResource); overload;
     procedure ComposeExpression(stream : TStream; expr : TFHIRExpressionNode; items : TFHIRBaseList; types : TAdvStringSet; isPretty : Boolean); overload; override;
-    procedure ComposeExpression(xml : TXmlBuilder; expr : TFHIRExpressionNode); overload;
+    procedure ComposeExpression(xml : TXmlBuilder; expr : TFHIRExpressionNode); overload; virtual;
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRBase); virtual;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRBaseList; isPretty : Boolean); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRBase; isPretty : Boolean); override;
@@ -272,7 +274,7 @@ Type
 //    Procedure ComposeExtension(json : TJSONWriter; name : String; extension : TFhirExtension; noObj : boolean = false); virtual;
 //    Procedure ComposeBinary(json : TJSONWriter; binary : TFhirBinary);
     procedure ComposeExpression(stream : TStream; expr : TFHIRExpressionNode; items : TFHIRBaseList; types : TAdvStringSet; isPretty : Boolean); overload; override;
-    procedure ComposeExpression(json: TJSONWriter; expr : TFHIRExpressionNode); overload;
+    procedure ComposeExpression(json: TJSONWriter; expr : TFHIRExpressionNode); overload; virtual;
     procedure ComposeBase(json: TJSONWriter; name : String; base : TFHIRBase); virtual;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRBaseList; isPretty : Boolean); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRBase; isPretty : Boolean); override;
@@ -1437,7 +1439,6 @@ end;
 procedure TFHIRXmlComposerBase.ComposeItem(stream: TStream; name: String; item: TFHIRBase; isPretty: Boolean);
 var
   xml : TXmlBuilder;
-  base : TFHIRBase;
 begin
   xml := TAdvXmlBuilder.Create;
   try
@@ -1456,7 +1457,6 @@ end;
 procedure TFHIRXmlComposerBase.ComposeItems(stream: TStream; name: String; items: TFHIRBaseList; isPretty: Boolean);
 var
   xml : TXmlBuilder;
-  base : TFHIRBase;
   item : TFHIRBase;
 begin
   xml := TAdvXmlBuilder.Create;

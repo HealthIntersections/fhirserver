@@ -8,7 +8,7 @@ uses
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
   FHIRPathDocumentation, Vcl.Buttons, Vcl.OleCtrls, SHDocVw, TextUtilities, FHIRBase,
-  AdvGenerics, PluginUtilities, VirtualTrees, kCritSct, AdvBuffers,
+  AdvGenerics, PluginUtilities, VirtualTrees, kCritSct, AdvBuffers, ShellSupport,
   IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer, SmartOnFhirUtilities, GUIDSupport;
 
 const
@@ -49,6 +49,8 @@ type
     vtExpressions: TVirtualStringTree;
     TabSheet4: TTabSheet;
     webFocus: TWebBrowser;
+    Panel5: TPanel;
+    Button1: TButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormFloat(Sender: TObject);
     procedure FormDock(Sender: TObject);
@@ -62,6 +64,10 @@ type
     procedure vtExpressionsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure vtExpressionsInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
     procedure vtExpressionsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure Button1Click(Sender: TObject);
+    procedure webFocusBeforeNavigate2(ASender: TObject; const pDisp: IDispatch;
+      const URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
+      var Cancel: WordBool);
   private
     { Private declarations }
 
@@ -434,7 +440,7 @@ begin
     p := TFhirParameters.Create;
     try
        p.AddParameter('code', focus.Link as TFHIRType);
-       queryCDS(TCDSHooks.terminologyInfo, p);
+       queryCDS(TCDSHooks.codeView, p);
     finally
       p.Free;
     end;
@@ -444,8 +450,8 @@ begin
   begin
     p := TFhirParameters.Create;
     try
-       p.AddParameter('code', focus.Link as TFHIRType);
-       queryCDS(TCDSHooks.identifierInfo, p);
+       p.AddParameter('identifier', focus.Link as TFHIRType);
+       queryCDS(TCDSHooks.identifierView, p);
     finally
       p.Free;
     end;
@@ -464,6 +470,11 @@ begin
   end;
 
 }
+end;
+
+procedure TFHIRVisualizer.Button1Click(Sender: TObject);
+begin
+  FCDSManager.dropCache;
 end;
 
 function TFHIRVisualizer.differentObjects(focus: array of TFHIRObject) : boolean;
@@ -680,6 +691,26 @@ begin
     node.CheckState := csCheckedNormal;
   if not p.op and ((p.expr.Inner <> nil) or (p.expr.Group <> nil) or (p.expr.ParameterCount > 0) or (p.expr.OpNext <> nil)) then
      InitialStates := [ivsHasChildren];
+end;
+
+procedure TFHIRVisualizer.webFocusBeforeNavigate2(ASender: TObject; const pDisp: IDispatch; const URL, Flags, TargetFrameName, PostData, Headers: OleVariant; var Cancel: WordBool);
+var
+  u : String;
+begin
+  u := URL;
+  if u = 'about:security-risk' then
+  begin
+    ShowMessage('This link was deemed a security risk and cannot be used');
+    Cancel := true;
+  end
+  else if not u.startsWith('http://localhost:45654') then
+  begin
+    u := StringReplace(u, '"', '%22', [rfReplaceAll]);
+    ExecuteLaunch('open', pchar(u), '', true, true);
+    Cancel := true;
+  end
+  else
+    Cancel := false;
 end;
 
 { TWebBuffer }

@@ -90,7 +90,6 @@ var
   fin, msk : boolean;
   op : byte;
   mk : TIdBytes;
-  l2 : cardinal;
   len : cardinal;
   i : integer;
 begin

@@ -138,7 +138,6 @@ class procedure TFHIRParserTests.runTests(folder : String);
 var
   this : TFHIRParserTests;
   SR: TSearchRec;
-  s : String;
 begin
   writeln('FHIR Parser Tests');
   this := TFHIRParserTests.Create;

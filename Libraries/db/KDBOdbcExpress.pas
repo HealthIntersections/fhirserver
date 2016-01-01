@@ -357,7 +357,6 @@ end;
 procedure TOdbcConnection.ListTablesV(AList : TStrings);
 var
   LCat: TOECatalog;
-  s : String;
 begin
   LCat := TOECatalog.Create(NIL);
   try

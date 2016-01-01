@@ -3212,12 +3212,16 @@ inherited FHIRVisualizer: TFHIRVisualizer
     Top = 0
     Width = 318
     Height = 575
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     OnChange = TabControl1Change
     object TabSheet1: TTabSheet
       Caption = 'Narrative'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object webNarrative: TWebBrowser
         Left = 0
         Top = 0
@@ -3422,18 +3426,44 @@ inherited FHIRVisualizer: TFHIRVisualizer
       ExplicitHeight = 0
       object webFocus: TWebBrowser
         Left = 0
-        Top = 0
+        Top = 29
         Width = 310
-        Height = 547
+        Height = 518
         Align = alClient
         TabOrder = 0
+        OnBeforeNavigate2 = webFocusBeforeNavigate2
         ExplicitLeft = 1
+        ExplicitTop = 56
+        ExplicitHeight = 491
         ControlData = {
-          4C0000000A200000893800000000000000000000000000000000000000000000
+          4C0000000A200000893500000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
           00000000000000000100000000000000000000000000000000000000}
+      end
+      object Panel5: TPanel
+        Left = 0
+        Top = 0
+        Width = 310
+        Height = 29
+        Align = alTop
+        BevelOuter = bvLowered
+        ParentBackground = False
+        TabOrder = 1
+        DesignSize = (
+          310
+          29)
+        object Button1: TButton
+          Left = 238
+          Top = 4
+          Width = 71
+          Height = 21
+          Anchors = [akTop, akRight]
+          Caption = 'Clear Cache'
+          TabOrder = 0
+          OnClick = Button1Click
+        end
       end
     end
   end

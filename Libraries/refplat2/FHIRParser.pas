@@ -3762,8 +3762,6 @@ begin
 end;
 
 Procedure TFHIRXmlComposer.ComposeResourceChildren(xml : TXmlBuilder; elem : TFhirResource);
-var
-  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeId(xml, 'id', elem.idElement);{x.2}
@@ -3776,8 +3774,6 @@ begin
 end;
 
 Procedure TFHIRJsonComposer.ComposeResourceProperties(json : TJSONWriter; elem : TFhirResource);
-var
-  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
   ComposeIdValue(json, 'id', elem.idElement, false);

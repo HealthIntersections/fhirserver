@@ -231,7 +231,7 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
   End;
 
   TUcumServiceList = class (TAdvObjectList)
@@ -398,7 +398,7 @@ begin
   End;
 end;
 
-procedure TUcumServices.getCDSInfo(card: TCDSHookCard; code, display: String);
+procedure TUcumServices.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
 var
   s : String;
   b : TStringBuilder;
@@ -410,6 +410,7 @@ begin
     s := validate(code);
     if s <> '' then
       b.Append('* Error: '+s+#13#10);
+    b.Append(#13#10+'Copyright: UCUM is Copyright &copy; 1999-2013 Regenstrief Institute, Inc. and The UCUM Organization, Indianapolis, IN. See [Terms Of Use](http://unitsofmeasure.org/trac//wiki/TermsOfUse)'+#13#10);
     card.detail := b.ToString;
   finally
     b.Free;

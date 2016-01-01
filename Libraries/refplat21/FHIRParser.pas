@@ -45957,7 +45957,7 @@ begin
       else if (child.baseName = 'version') then
         result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'name') then
-        result.nameElement := ParseString(child, path+'/name') {b}
+         result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'status') then
         result.statusElement := ParseEnum(CODES_TFhirConformanceResourceStatusEnum, path+'/status', child){1a}
       else if (child.baseName = 'kind') then

@@ -425,7 +425,7 @@ end;
 
 procedure TRegisteredFHIRServer.readFromJson(o: TJsonObject);
 var
-  arr, arr2 : TJsonArray;
+  arr : TJsonArray;
   n, n2 : TJsonNode;
   o1 : TJsonObject;
   c : TRegisteredCDSHook;
@@ -472,7 +472,6 @@ end;
 procedure TRegisteredFHIRServer.writeToJson(o: TJsonObject);
 var
   arr, arr2 : TJsonArray;
-  o2 :  TJsonObject;
   c : TRegisteredCDSHook;
   s : String;
 begin

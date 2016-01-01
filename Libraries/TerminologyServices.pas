@@ -84,7 +84,7 @@ Type
     procedure extendLookup(ctxt : TCodeSystemProviderContext; params : TFHIRParameters); virtual;
 
     function SpecialEnumeration : String; virtual;
-    procedure getCDSInfo(card : TCDSHookCard; code, display : String); virtual;
+    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); virtual;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
@@ -117,7 +117,7 @@ begin
   // nothing here
 end;
 
-procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; code, display: String);
+procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
 begin
   card.summary := 'No CDSHook Implemeentation for code system '+system(nil)+' for code '+code+' ('+display+')';
 end;
@@ -234,7 +234,6 @@ function TSearchFilterText.passes(stems: TAdvStringList; var rating : double): b
 var
   i : integer;
   all, any, this : boolean;
-  r : Double;
 begin
   rating := 0;
   if FStems.Count = 0 then

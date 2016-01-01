@@ -114,7 +114,7 @@ type
     FName: String;
     FColumns: TAdvList<TKDBColumn>;
   public
-    constructor create;
+    constructor Create; override;
     destructor Destroy; override;
     property Name : String read FName write FName;
     property Unique : Boolean read FUnique write FUnique;
@@ -146,7 +146,7 @@ type
     FOrderMatters : Boolean;
 
   public
-    constructor create;
+    constructor Create; override;
     destructor Destroy; override;
     property Columns : TAdvList<TKDBColumn> read FColumns;
     property Indexes : TAdvList<TKDBIndex> read FIndexes;
@@ -166,7 +166,7 @@ type
     FProcedures : TStringList;
     FSupportsProcedures : Boolean;
   public
-    constructor create;
+    constructor Create; override;
     destructor Destroy; override;
 
     property Tables : TAdvList<TKDBTable> read FTables;
@@ -751,7 +751,7 @@ type
     function GetConnMan(i : Integer):TKDBManager;
     function GetConnManByName(s : String):TKDBManager;
   public
-    constructor create;
+    constructor Create; override;
     destructor Destroy; override;
     procedure Lock;
     procedure UnLock;

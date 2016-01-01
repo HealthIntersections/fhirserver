@@ -109,7 +109,7 @@ Type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
   end;
 
 
@@ -1339,10 +1339,85 @@ begin
   result := TValueSetProviderContext(context).context.code;
 end;
 
-procedure TValueSetProvider.getCDSInfo(card: TCDSHookCard; code, display: String);
+function markdownNoPara(s : String) : String;
 begin
-  card.detail := 'Not done yet';
+  result := s.Replace('#13#10', '  '+#10);
 end;
+
+function spacer(s : String) : String;
+begin
+  if s = '' then
+    result := s
+  else
+    result := s+' ';
+end;
+
+procedure TValueSetProvider.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
+var
+  b : TStringBuilder;
+  ctxt : TValueSetProviderContext;
+  concept, c : TFhirValueSetCodeSystemConcept;
+  d : TFhirValueSetCodeSystemConceptDesignation;
+  codes : TFhirValueSetCodeSystemConceptList;
+begin
+  b := TStringBuilder.Create;
+  try
+    ctxt := TValueSetProviderContext(locate(code));
+    if ctxt = nil Then
+      b.Append('Error: Code '+code+' not known')
+    else
+    try
+      card.addLink('Further Detail', baseURL+'/tx/valuesets/'+FVs.id+'#'+code);
+      concept := ctxt.context;
+
+      b.Append(FVS.name+' Code '+code+' : '+concept.display+#13#10#13#10);
+      b.Append('* Definition: '+markdownNoPara(concept.definition)+#13#10);
+      b.Append('* System Definition: '+markdownNoPara(FVs.description)+#13#10);
+      b.Append(#13#10);
+
+      if concept.designationList.Count > 0 then
+      begin
+        b.Append('Designations: '+#13#10#13#10);
+        for d in concept.designationList do
+          b.Append('* '+spacer(d.language)+spacer(gen(d.use))+d.value+#13#10);
+        b.Append(#13#10);
+      end;
+
+      codes := FVS.codeSystem.getParents(concept);
+      try
+        if codes.count > 0 then
+        begin
+          b.Append('Parents: '+#13#10#13#10);
+          for c in codes do
+            b.Append('* '+c.code+': '+c.display+#13#10);
+          b.Append(#13#10);
+        end;
+      finally
+        codes.Free;
+      end;
+
+      codes := FVS.codeSystem.getChildren(concept);
+      try
+        if codes.count > 0 then
+        begin
+          b.Append('Childrem: '+#13#10#13#10);
+          for c in codes do
+            b.Append('* '+c.code+': '+c.display+#13#10);
+          b.Append(#13#10);
+        end;
+      finally
+        codes.Free;
+      end;
+
+    finally
+      close(ctxt);
+    End;
+    if FVs.copyright <> '' then
+      b.Append(FVs.copyright+#13#10);
+    card.detail := b.ToString;
+  finally
+    b.Free;
+  end;end;
 
 function TValueSetProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin

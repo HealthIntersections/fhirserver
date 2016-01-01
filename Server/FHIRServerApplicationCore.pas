@@ -98,9 +98,6 @@ var
   dispName : String;
   dir, fn, ver, lver : String;
   svc : TFHIRService;
-
-  lines : TStringList;
-  s : String;
 begin
   try
     CoInitialize(nil);
@@ -324,6 +321,10 @@ end;
 Procedure TFHIRService.ConnectToDatabase;
 var
   dbn : String;
+  ver : integer;
+  conn : TKDBConnection;
+  dbi : TFHIRDatabaseInstaller;
+  meta : TKDBMetaData;
 begin
   dbn := FIni.ReadString('database', 'database', '');
   if FIni.ValueExists('database', 'database'+FHIR_GENERATED_VERSION) then
@@ -348,6 +349,36 @@ begin
     writelnt('Database not configured');
     raise Exception.Create('Database Access not configured');
   end;
+  conn := FDb.GetConnection('check version');
+  try
+    meta := conn.FetchMetaData;
+    try
+      if meta.HasTable('Config') then
+      begin
+        // db version check
+        ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
+        if (ver <> ServerDBVersion) then
+        begin
+          writelnt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
+          dbi := TFHIRDatabaseInstaller.create(conn, '');
+          try
+            dbi.upgrade(ver);
+          finally
+            dbi.Free;
+          end;
+        end;
+      end;
+    finally
+      meta.Free;
+    end;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
 end;
 
 procedure TFHIRService.CheckWebSource;
@@ -355,7 +386,9 @@ var
   ini : TIniFile;
   s : String;
 begin
-  FWebSource := FIni.ReadString('fhir', 'source', '');
+  FWebSource := FIni.ReadString('fhir', 'source'+FHIR_GENERATED_VERSION, '');
+  if FWebSource = '' then
+    FWebSource := FIni.ReadString('fhir', 'source', '');
   writelnt('Using FHIR Specification at '+FWebSource);
 
   if not FileExists(IncludeTrailingPathDelimiter(FWebSource)+'version.info') then
@@ -364,9 +397,9 @@ begin
   try
     s := ini.ReadString('FHIR', 'version', '');
     if s <> FHIR_GENERATED_VERSION then
-      raise Exception.Create('FHIR Publication version mismatch: expected '+FHIR_GENERATED_VERSION+', found "'+ini.ReadString('FHIR', 'version', '')+'"');
-  //  if ini.ReadString('FHIR', 'revision', '??') <> FHIR_GENERATED_REVISION then
-  //    raise Exception.Create('FHIR Publication version mismatch: expected '+FHIR_GENERATED_REVISION+', found '+ini.ReadString('FHIR', 'revision', '??'));
+      raise Exception.Create('FHIR Publication version mismatch: expected '+FHIR_GENERATED_VERSION+', found "'+ini.ReadString('FHIR', 'version', '')+'"')
+    else
+      writelnt('Version ok ('+s+')');
   finally
     ini.Free;
   end;
@@ -491,10 +524,9 @@ end;
 procedure TFHIRService.InstallDatabase;
 var
   db : TFHIRDatabaseInstaller;
-  conn : TKDBConnection;
-  conntx : TKDBConnection;
   scim : TSCIMServer;
   salt, un, pw, em, sql, dr : String;
+  conn : TKDBConnection;
 
 begin
   // check that user account details are provided
@@ -556,7 +588,7 @@ end;
 procedure TFHIRService.UnInstallDatabase;
 var
   db : TFHIRDatabaseInstaller;
-  conn, connTx : TKDBConnection;
+  conn : TKDBConnection;
 begin
   if FDb = nil then
     ConnectToDatabase;

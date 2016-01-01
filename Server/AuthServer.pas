@@ -1029,7 +1029,7 @@ end;
 procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   code, clientId, clientSecret, uri, errCode : string;
-  psecret, pclientid, s : String;
+  psecret, pclientid : String;
   conn : TKDBConnection;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;

@@ -19,6 +19,7 @@ Type
     FExpansions : TAdvStringObjectMatch;
     FDependencies : TAdvStringObjectMatch; // object is TAdvStringList of identity
     FClosures : TAdvMap<TClosureManager>;
+    FWebBase : String;
 
     procedure AddDependency(name, value : String);
     function getCodeDefinition(c : TFhirValueSetCodeSystemConcept; code : string) : TFhirValueSetCodeSystemConcept; overload;
@@ -37,6 +38,7 @@ Type
     constructor Create(db : TKDBManager); override;
     Destructor Destroy; override;
     function Link: TTerminologyServer; overload;
+    property webBase : String read FWebBase write FWebBase;
 
     // load external terminology resources (snomed, Loinc, etc)
     procedure load(ini : TIniFile);
@@ -67,8 +69,8 @@ Type
     function UseClosure(name : String; out cm : TClosureManager) : boolean;
     function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
 
-    procedure getTerminologyInfo(coding : TFHIRCoding; response : TCDSHookResponse); overload;
-    procedure getTerminologyInfo(coding : TFhirCodeableConcept; response : TCDSHookResponse); overload;
+    procedure getCodeView(coding : TFHIRCoding; response : TCDSHookResponse); overload;
+    procedure getCodeView(coding : TFhirCodeableConcept; response : TCDSHookResponse); overload;
     // database maintenance
     procedure BuildIndexes(prog : boolean);
 
@@ -593,7 +595,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServer.getTerminologyInfo(coding: TFHIRCoding; response: TCDSHookResponse);
+procedure TTerminologyServer.getCodeView(coding: TFHIRCoding; response: TCDSHookResponse);
 var
   card : TCDSHookCard;
   cs : TCodeSystemProvider;
@@ -603,19 +605,19 @@ begin
   begin
     try
       card := response.addCard;
-      cs.getCDSInfo(card, coding.code, coding.display);
+      cs.getCDSInfo(card, webBase, coding.code, coding.display);
     finally
       cs.Free;
     end;
   end;
 end;
 
-procedure TTerminologyServer.getTerminologyInfo(coding: TFhirCodeableConcept; response: TCDSHookResponse);
+procedure TTerminologyServer.getCodeView(coding: TFhirCodeableConcept; response: TCDSHookResponse);
 var
   c : TFhirCoding;
 begin
   for c in coding.codingList do
-    getTerminologyInfo(c, response);
+    getCodeView(c, response);
 end;
 
 procedure TTerminologyServer.InitClosure(name: String);

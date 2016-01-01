@@ -210,6 +210,12 @@ type
     function hasCode(code : String) : boolean;
   end;
 
+  TFhirUriListHelper = class helper for TFhirUriList
+  public
+    function hasUri(uri : String) : boolean;
+    procedure removeUri(uri : String);
+  end;
+
   TFhirProfileStructureSnapshotElementDefinitionTypeListHelper = class helper for TFhirElementDefinitionList
   public
     function summary : String;
@@ -285,6 +291,7 @@ type
   TFHIRCodingListHelper = class helper for TFHIRCodingList
   public
     function AddCoding(system, code, display : String) : TFHIRCoding;
+    procedure RemoveCoding(system, code : String);
   end;
 
   TFHIRStringListHelper = class helper for TFHIRStringList
@@ -322,6 +329,7 @@ type
     procedure AddParameter(name: String; value: TFhirResource); overload;
     procedure AddParameter(name: String; value: boolean); overload;
     procedure AddParameter(name, value: string); overload;
+    function AddParameter(name: String) : TFhirParametersParameter; overload;
   end;
 
   TFhirParametersParameterHelper = class helper for TFhirParametersParameter
@@ -359,6 +367,16 @@ type
   TFhirOperationOutcomeIssueListHelper = class helper for TFhirOperationOutcomeIssueList
   public
     function errorCount : integer;
+  end;
+
+  TFhirValueSetCodeSystemHelper = class helper for TFhirValueSetCodeSystem
+  private
+    function locate(parent: TFhirValueSetCodeSystemConcept; list: TFhirValueSetCodeSystemConceptList; code : String; var foundParent, foundConcept: TFhirValueSetCodeSystemConcept): boolean;
+    procedure scanForSubsumes(parentList, conceptList : TFhirValueSetCodeSystemConceptList; code : String);
+
+  public
+    function getParents(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
+    function getChildren(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
   end;
 
 function Path(const parts : array of String) : String;
@@ -437,7 +455,6 @@ end;
 
 function DetectFormat(oContent : TAdvBuffer) : TFHIRParserClass; overload;
 var
-  i : integer;
   s : String;
 begin
   s := oContent.AsUnicode;
@@ -1314,7 +1331,6 @@ function LoadDTFromParam(value : String; lang, name : String; type_ : TFHIRTypeC
 var
   parser : TFHIRParser;
   mem : TStringStream;
-  s : TVCLStream;
 begin
   parser := TFHIRJsonParser.Create(lang);
   try
@@ -2187,6 +2203,15 @@ end;
 //  raise Exception.Create('todo');
 //end;
 //
+procedure TFHIRCodingListHelper.RemoveCoding(system, code: String);
+var
+  i : integer;
+begin
+ for i := Count - 1 downto 0 do
+   if (Item(i).system = system) and (Item(i).code = code) then
+     Remove(i);
+end;
+
 { TFhirBundleLinkListHelper }
 
 procedure TFhirBundleLinkListHelper.AddRelRef(rel, ref: String);
@@ -2327,6 +2352,12 @@ begin
   p.value := TFhirString.Create(value);
 end;
 
+function TFhirParametersHelper.AddParameter(name: String): TFhirParametersParameter;
+begin
+  result := self.parameterList.Append;
+  result.name := name;
+end;
+
 function TFhirParametersHelper.GetBooleanParameter(name: String): boolean;
 var
   v : TFhirBase;
@@ -2383,8 +2414,10 @@ begin
     if (parameterList[i].name = name) then
     begin
       if parameterList[i].resourceElement <> nil then
+      begin
         result := parameterList[i].resourceElement;
-      exit;
+        exit;
+      end;
     end;
   result := nil;
 end;
@@ -3309,6 +3342,100 @@ begin
   for c in self do
     if c.value = code then
       exit(true);
+end;
+
+{ TFhirUriListHelper }
+
+function TFhirUriListHelper.hasUri(uri: String): boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := Count - 1 downto 0 do
+    if (Item(i).value = uri) then
+      Exit(true);
+end;
+
+procedure TFhirUriListHelper.removeUri(uri: String);
+var
+  i : integer;
+begin
+ for i := Count - 1 downto 0 do
+   if (Item(i).value = uri) then
+     Remove(i);
+end;
+
+{ TFhirValueSetCodeSystemHelper }
+
+function TFhirValueSetCodeSystemHelper.locate(parent : TFhirValueSetCodeSystemConcept; list : TFhirValueSetCodeSystemConceptList; code : String; var foundParent, foundConcept : TFhirValueSetCodeSystemConcept) : boolean;
+var
+  i : integer;
+  c : TFhirValueSetCodeSystemConcept;
+begin
+  result := false;
+  for c in list do
+  begin
+    if (c.code = code) then
+    begin
+      foundParent := parent;
+      foundConcept := c;
+      exit(true);
+    end;
+    result := Locate(c, c.conceptList, code, foundParent, foundConcept);
+    if result then
+      exit;
+  end;
+end;
+
+
+procedure TFhirValueSetCodeSystemHelper.scanForSubsumes(parentList, conceptList: TFhirValueSetCodeSystemConceptList; code: String);
+var
+  ext : TFHIRExtension;
+  c : TFhirValueSetCodeSystemConcept;
+begin
+  for c in conceptList do
+  begin
+    for ext in c.modifierExtensionList do
+      if (ext.url = 'http://hl7.org/fhir/StructureDefinition/valueset-subsumes') then
+        if (ext.value as TFHIRCode).value = code then
+          parentList.Add(c.link);
+    scanForSubsumes(parentList, c.conceptList, code);
+  end;
+end;
+
+function TFhirValueSetCodeSystemHelper.getChildren(concept: TFhirValueSetCodeSystemConcept): TFhirValueSetCodeSystemConceptList;
+var
+  ext : TFHIRExtension;
+  p, c : TFhirValueSetCodeSystemConcept;
+begin
+  result := TFhirValueSetCodeSystemConceptList.Create;
+  try
+    result.AddAll(concept.conceptList);
+    for ext in concept.modifierExtensionList do
+      if (ext.url= 'http://hl7.org/fhir/StructureDefinition/valueset-subsumes') then
+        if locate(nil, conceptList, (ext.value as TFHIRCode).value, p, c) then
+          result.Add(c.link);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirValueSetCodeSystemHelper.getParents(concept: TFhirValueSetCodeSystemConcept): TFhirValueSetCodeSystemConceptList;
+var
+  p, c : TFhirValueSetCodeSystemConcept;
+begin
+  result := TFhirValueSetCodeSystemConceptList.Create;
+  try
+    if locate(nil, conceptList, concept.code, p, c) then
+      if (p <> nil) then
+        result.Add(p.Link);
+    scanForSubsumes(result, conceptList, concept.code);
+    result.Link;
+  finally
+    result.Free;
+  end;
+
 end;
 
 end.

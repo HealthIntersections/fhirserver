@@ -51,3 +51,6 @@ install/fhirserver2.fbl8
 install/fhirserver2.fbpbrk
 Server/FHIRServer21.stat
 Libraries/refplat2/openehr.xml
+Server/FHIRServer21.rc
+Server/__recovery/__recovery.ini
+Server/__recovery/

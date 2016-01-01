@@ -86,14 +86,14 @@ Type
     FTypeName, FTypeProfile : String;
     childDefinitions: TFHIRElementDefinitionList;
     function getDefinition(name : String; var tn, tp : String) : TFhirElementDefinition;
-    function IsAbstractType(pn: String): Boolean;
+//    function IsAbstractType(pn: String): Boolean;
     procedure log(msg : String);
   public
     Constructor Create(services : TValidatorServiceProvider; wrapper : TWrapperElement; profile: TFHIRStructureDefinition; definition : TFhirElementDefinition; TypeName, TypeProfile : String);
     Destructor Destroy; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     function FhirType : string; override;
-    function IsPrimitive : boolean; override;
+    function isPrimitive : boolean; override;
     function primitiveValue : string; override;
     function isMetaDataBased : boolean; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
@@ -237,7 +237,7 @@ Type
     procedure checkFixedValue(errors: TFhirOperationOutcomeIssueList; path: String; focus: TWrapperElement; fixed: TFhirElement; propName: String);
 
     function checkCode(errors: TFhirOperationOutcomeIssueList; element: TWrapperElement; path: String; code, System, display: String): boolean;
-    procedure checkQuantity(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; context: TFHIRElementDefinition; b: boolean);
+    procedure checkQuantity(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; context: TFHIRElementDefinition);
     procedure checkPrimitiveBinding(errors: TFhirOperationOutcomeIssueList; path: String; ty: String; context: TFHIRElementDefinition; element: TWrapperElement);
     procedure checkPrimitive(errors: TFhirOperationOutcomeIssueList; path, ty: String; context: TFHIRElementDefinition; e: TWrapperElement);
     procedure checkIdentifier(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; context: TFHIRElementDefinition);
@@ -574,7 +574,7 @@ end;
 function TDOMWrapperElement.hasNamespace(s: String): boolean;
 var
   i: integer;
-  n, ns, t: String;
+  n, t: String;
 begin
   result := false;
   for i := 0 to FElement.attributes.length - 1 do
@@ -1850,6 +1850,8 @@ begin
                 checkIdentifier(errors, ei.path, ei.element, ei.definition)
               else if (t = 'Coding') then
                 checkCoding(errors, ei.path, ei.element, profile, ei.definition, inCodeableConcept)
+              else if (t = 'Quantity') then
+                checkQuantity(errors, ei.path, ei.element, ei.definition)
               else if (t = 'CodeableConcept') then
               begin
                 checkCodeableConcept(errors, ei.path, ei.element, profile, ei.definition);
@@ -2739,7 +2741,6 @@ var
   value: String;
   Binding: TFhirElementDefinitionBinding;
   vs: TFHIRValueSet;
-  ok: boolean;
   res: TValidationResult;
 begin
   if (not element.hasAttribute('value')) then
@@ -2797,7 +2798,7 @@ begin
   rule(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, isAbsolute(System), 'Identifier.system must be an absolute reference, not a local reference');
 end;
 
-procedure TFHIRValidator.checkQuantity(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; context: TFHIRElementDefinition; b: boolean);
+procedure TFHIRValidator.checkQuantity(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; context: TFHIRElementDefinition);
 var
   code: String;
   System: String;
@@ -2929,10 +2930,7 @@ procedure TFHIRValidator.checkCodeableConcept(errors: TFhirOperationOutcomeIssue
 var
   Binding: TFhirElementDefinitionBinding;
   vs: TFHIRValueSet;
-  found, any: boolean;
-  c: TWrapperElement;
   res: TValidationResult;
-  code, System, Version: string;
   cc: TFHIRCodeableConcept;
 begin
   if (context <> nil) and (context.Binding <> nil) then
@@ -3657,8 +3655,7 @@ end;
 
 function TChildIterator.path: String;
 var
-  n, p: TWrapperElement;
-  sfx: String;
+  n: TWrapperElement;
 begin
   n := child.getNextSibling();
   if basePath = '' then
@@ -3717,7 +3714,6 @@ var
   locations : TAdvList<TSourceLocationObject>;
   ms : TMsXmlParser;
   dom : IXMLDOMDocument2;
-  s : String;
 begin
   result := TFhirOperationOutcome.create;
   try
@@ -3775,7 +3771,6 @@ function TFHIRValidator.validateInstance(resource: TFhirResource; idRule : TReso
 var
   x : TFHIRXmlComposer;
   b : TAdvBuffer;
-  m : TAdvMemoryStream;
 begin
   b := TAdvBuffer.Create;
   try
@@ -3785,7 +3780,7 @@ begin
     finally
       x.Free;
     end;
-    validateInstance(b, ffXml, idRule, opDesc, profile);
+    result := validateInstance(b, ffXml, idRule, opDesc, profile);
   finally
     b.Free;
   end;
@@ -3894,18 +3889,18 @@ begin
   end;
 end;
 
-function TFHIRBaseOnWrapper.IsAbstractType(pn : String) : Boolean;
-var
-  p : TFhirStructureDefinition;
-begin
-  p := FServices.fetchResource(frtStructureDefinition, pn) as TFhirStructureDefinition;
-  try
-    result := (p <> nil) and (p.abstract);
-  finally
-    p.free;
-  end;
-end;
-
+//function TFHIRBaseOnWrapper.IsAbstractType(pn : String) : Boolean;
+//var
+//  p : TFhirStructureDefinition;
+//begin
+//  p := FServices.fetchResource(frtStructureDefinition, pn) as TFhirStructureDefinition;
+//  try
+//    result := (p <> nil) and (p.abstract);
+//  finally
+//    p.free;
+//  end;
+//end;
+//
 function TFHIRBaseOnWrapper.isMetaDataBased: boolean;
 begin
   result := true;

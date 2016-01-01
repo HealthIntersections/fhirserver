@@ -370,7 +370,7 @@ Type
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
 
   End;
 
@@ -780,7 +780,7 @@ var
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
 begin
   if CodeList.FindCode(sCode, iIndex) then
@@ -1094,7 +1094,7 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
     iDescription, iStems, iOtherNames : Cardinal;
     iEntry : Cardinal;
     sCode1 : String;
-    iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
+    iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
     iFlags : Byte;
     matches : integer;
     ok : boolean;
@@ -1430,9 +1430,8 @@ begin
 end;
 
 
-procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; code, display: String);
+procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
 var
-  s : String;
   b : TStringBuilder;
   iIndex : Cardinal;
   iDescription, iOtherNames, iStems : Cardinal;
@@ -1451,8 +1450,10 @@ begin
       b.Append('* Error: Code '+code+' not known')
     else
     Begin
+      card.addLink('Further Detail', baseURL+'/loinc/doco/?type=loinc&code='+code);
+
       CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
-      b.Append('* LOINC Code '+code+' : '+Desc.GetEntry(iDescription)+#13#10);
+      b.Append('LOINC Code '+code+' : '+Desc.GetEntry(iDescription)+#13#10#13#10);
       if iComponent <> 0 Then
         b.Append('* Component: '+GetConceptDesc(iComponent)+#13#10);
       if iProperty <> 0 Then
@@ -1493,7 +1494,9 @@ begin
       Else if iFlags and FLAGS_ORDER > 0 Then
         b.Append('Order'+#13#10)
       Else if iFlags and FLAGS_OBS > 0 Then
-        b.Append('Observation'+#13#10);
+        b.Append('Observation'+#13#10)
+      else
+        b.Append(#13#10);
 
       if iOtherNames <> 0 Then
       begin
@@ -1512,6 +1515,7 @@ begin
         b.Append(#13#10);
       End;
     End;
+    b.Append(#13#10+'This LOINC&copy; content is copyright &copy; 1995 Regenstrief Institute, Inc. and the LOINC Committee, and available at no cost under the license at <http://loinc.org/terms-of-use>'#13#10);
     card.detail := b.ToString;
   finally
     b.Free;

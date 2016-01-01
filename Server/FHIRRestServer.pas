@@ -254,7 +254,7 @@ end;
 
 Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
 var
-  s : String;
+  s, txu : String;
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
@@ -294,7 +294,11 @@ Begin
   else
     nonSecureTypes := ALL_RESOURCE_TYPES;
 
-  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FBasePath+'/', FAltPath, ReturnProcessedFile);
+  if FPort = 80 then
+    txu := 'http://'+FHost
+  else
+    txu := 'http://'+FHost+':'+inttostr(FPort);
+  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, txu, FBasePath+'/', FAltPath, ReturnProcessedFile);
 
   FFhirStore := TFHIRDataStore.Create(db.Link, FSpecPath, FAltPath, terminologyServer, FINi, FSCIMServer.Link);
   FFhirStore.ownername := FOwnerName;
@@ -1439,9 +1443,7 @@ var
   report :  TFhirOperationOutcomeIssue;
   oComp : TFHIRComposer;
   ext : TFhirExtension;
-  p : TFhirXHtmlNode;
-  lines : TStringList;
-  l, s, d: String;
+  d: String;
 begin
   response.ResponseNo := status;
   response.FreeContentStream := true;
@@ -1550,14 +1552,11 @@ end;
 Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
    var redirect : boolean; form : TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean) : TFHIRRequest;
 Var
-  sURL, sId, sType, msg : String;
-  aResourceType : TFHIRResourceType;
+  sURL, msg : String;
   oRequest : TFHIRRequest;
   parser : TFHIRParser;
-  i : integer;
   session : TFhirSession;
   check : boolean;
-  s : String;
   comp : TIdCompressorZLib;
   mem : TMemoryStream;
   cursor : integer;
@@ -1723,15 +1722,6 @@ Begin
                     raise;
                   end;
               end;
-          end;
-        end
-        else if (oRequest.CommandType in [fcmdUpdateMeta, fcmdDeleteMeta]) then
-        begin
-          parser := MakeParser(lang, oRequest.PostFormat, oPostStream, xppDrop);
-          try
-            oRequest.Resource := parser.resource.Link;
-          finally
-            parser.free;
           end;
         end;
       end;
@@ -1915,38 +1905,6 @@ begin
           end;
         end;
       end
-      else if oRequest.CommandType in [fcmdGetMeta, fcmdUpdateMeta, fcmdDeleteMeta] then
-      begin
-        response.Expires := Now; //don't want anyone caching anything
-        assert(oResponse.Meta <> nil);
-        response.Pragma := 'no-cache';
-        if oResponse.Format = ffJson then
-          oComp := TFHIRJsonComposer.Create(oRequest.lang)
-        else if oResponse.Format = ffXhtml then
-        begin
-          oComp := TFHIRXhtmlComposer.Create(oRequest.lang);
-          TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
-          TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
-          TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
-          TFHIRXhtmlComposer(oComp).Tags := oResponse.Tags.Link;
-          TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
-          TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
-  //          response.Expires := 0;
-        response.Pragma := '';
-        end
-        else if oResponse.Format = ffXml then
-          oComp := TFHIRXmlComposer.Create(oRequest.lang)
-        else if oResponse.Resource._source_format = ffJson then
-          oComp := TFHIRJsonComposer.Create(oRequest.lang)
-        else
-          oComp := TFHIRXmlComposer.Create(oRequest.lang);
-        try
-          response.ContentType := oComp.MimeType;
-          oComp.Compose(stream, oResponse.Resource, pretty, oresponse.link_List);
-        finally
-          oComp.Free;
-        end;
-      end;
     end
     else
     begin
@@ -2226,7 +2184,7 @@ begin
   ''#13#10+
   '<p>'+GetFhirMessage('SYSTEM_OPERATIONS', lang)+':</p><ul><li> <a href="'+sBaseUrl+'/metadata">'+GetFhirMessage('CONF_PROFILE', lang)+'</a> '+
    '('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> ('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10+
-  '<li><a class="tag" href="'+sBaseUrl+'/'+META_CMD_NAME+'">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>'+
+  '<li><a class="tag" href="'+sBaseUrl+'/$meta">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>'+
   '<li><a href="'+sBaseUrl+'/_search">'+GetFhirMessage('GENERAL_SEARCH', lang)+'</a></li>'+
   '<li><a href="'+sBaseUrl+'/_history">'+StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)])+'</a> (History of all resources)</li>'+#13#10+
   '<li><a href="#upload">'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</a></li>'+#13#10);

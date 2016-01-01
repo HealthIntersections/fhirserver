@@ -488,8 +488,8 @@ begin
   try
     server.name := 'Reference Server';
     server.fhirEndpoint := 'http://fhir2.healthintersections.com.au/open';
-    server.addCdsHook('Get Terminology Information', TCDSHooks.terminologyInfo);
-    server.addCdsHook('Get Identifier Information', TCDSHooks.identifierInfo);
+    server.addCdsHook('Get Terminology Information', TCDSHooks.codeView);
+    server.addCdsHook('Get Identifier Information', TCDSHooks.identifierView);
     server.addCdsHook('Fetch Patient Alerts', TCDSHooks.patientView).preFetch.Add('Patient/{{Patient.id}}');
     server.autoUseHooks := true;
     registerServer(server);
@@ -502,8 +502,8 @@ begin
     server.redirectport := 23145;
     server.tokenEndpoint := 'https://authorize-dstu2.smarthealthit.org/token';
     server.authorizeEndpoint := 'https://authorize-dstu2.smarthealthit.org/authorize';
-    server.addCdsHook('Get Terminology Information', TCDSHooks.terminologyInfo);
-    server.addCdsHook('Get Identifier Information', TCDSHooks.identifierInfo);
+    server.addCdsHook('Get Terminology Information', TCDSHooks.codeView);
+    server.addCdsHook('Get Identifier Information', TCDSHooks.identifierView);
     server.addCdsHook('Fetch Patient Alerts', TCDSHooks.patientView).preFetch.Add('Patient/{{Patient.id}}');
     registerServer(server);
   finally

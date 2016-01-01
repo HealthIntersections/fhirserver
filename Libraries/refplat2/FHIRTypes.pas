@@ -2380,8 +2380,6 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -2391,6 +2389,8 @@ Type
     Function Clone : TFhirEnum; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -2514,17 +2514,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirInteger; Overload;
     Function Clone : TFhirInteger; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -2648,17 +2648,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirDateTime; Overload;
     Function Clone : TFhirDateTime; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -2782,17 +2782,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirDate; Overload;
     Function Clone : TFhirDate; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -2916,17 +2916,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirDecimal; Overload;
     Function Clone : TFhirDecimal; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -3050,17 +3050,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirUri; Overload;
     Function Clone : TFhirUri; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -3184,17 +3184,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : TBytes); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirBase64Binary; Overload;
     Function Clone : TFhirBase64Binary; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -3318,17 +3318,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirTime; Overload;
     Function Clone : TFhirTime; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -3452,17 +3452,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : String); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirString; Overload;
     Function Clone : TFhirString; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -3586,17 +3586,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : Boolean); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirBoolean; Overload;
     Function Clone : TFhirBoolean; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value
@@ -3720,17 +3720,17 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
   Public
     Constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirInstant; Overload;
     Function Clone : TFhirInstant; Overload;
     procedure Assign(oSource : TAdvObject); override;
     function FhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   Published
     {@member value

@@ -65,7 +65,7 @@ Type
     procedure ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
   public
-    constructor create(server : TTerminologyServer; FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
+    constructor create(server : TTerminologyServer; BaseURL, FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -80,13 +80,14 @@ uses
 
 { TTerminologyWebServer }
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; BaseURL, FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
   create;
   FServer := server;
   FFHIRPath := FHIRPath;
   FWebDir := WebDir;
   FReturnProcessFileEvent := ReturnProcessFileEvent;
+  FServer.webBase := BaseURl;
 end;
 
 destructor TTerminologyWebServer.Destroy;
