@@ -982,10 +982,15 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := TFhirConceptMap(resource).Link;
-        cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
-        cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
-        FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
-        FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
+        if cm.Resource.source is TFHIRReference then
+          cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
+        if cm.Resource.target is TFHIRReference then
+          cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
+        if (cm.Source <> nil) and (cm.Target <> nil) then
+        begin
+          FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
+          FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
+        end;
       finally
         cm.Free;
       end;

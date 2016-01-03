@@ -352,6 +352,7 @@
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireballTests.pas"/>
         <DCCReference Include="..\Libraries\refplat2\CDSHooksUtilities.pas"/>
+        <DCCReference Include="..\Libraries\refplat2\FHIRPatch.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

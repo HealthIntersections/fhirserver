@@ -6497,7 +6497,7 @@ begin
 
     if ns.useContextList.Count > 0 then
     begin
-      b.Append('Contexts of Use'#13#10);
+      b.Append('Contexts of Use'#13#10#13#10);
       for cc in ns.useContextList do
         b.Append('* '+gen(cc)+#13#10);
       b.append(#13#10);
@@ -6505,7 +6505,7 @@ begin
 
     if ns.contactList.Count > 0 then
     begin
-      b.Append('Contacts'#13#10);
+      b.Append('Contacts'#13#10#13#10);
       for cp in ns.contactList do
         b.Append('* '+cp.name+#13#10);
       b.append(#13#10);
@@ -6538,7 +6538,7 @@ begin
 
     if realm > '' then
     begin
-      b.Append('Contexts of Use'#13#10);
+      b.Append('Contexts of Use'#13#10#13#10);
       b.Append('* '+realm+#13#10);
       b.append(#13#10);
     end;
@@ -6638,11 +6638,7 @@ begin
     end;
   end;
   if (id.system = 'urn:ietf:rfc:3986') then
-    addSystemCard(resp, 'URI', '', 'W3C', '(any)', 'For when the identifir is any valid URI', '');
-  if (id.system = 'http://hl7.org/fhir/sid/us-ssn') then
-    addSystemCard(resp, 'United States Social Security Number', '', 'US Govt', 'Social Beneficiary Identifier', 'The SSN is represented in resources with dashes removed', 'USA');
-  if (id.system = 'urn:ietf:rfc:3986') then
-    addSystemCard(resp, 'United States National Provider Identifier', '', 'US Govt', 'Provider number', '', 'USA');
+    addSystemCard(resp, 'URI', '', 'W3C', '(any)', 'For when the identifier is any valid URI', '');
 
   for card in resp.cards do
   begin

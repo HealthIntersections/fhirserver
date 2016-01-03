@@ -263,7 +263,9 @@ Begin
   FHost := FIni.ReadString('web', 'host', '');
   FTracks := TDictionary<String, String>.create();
 
-  FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
+  FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source'+FHIR_GENERATED_VERSION, ''));
+  if FSpecPath = '' then
+    FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
   writelnt('Load User Sub-system');
   FSCIMServer := TSCIMServer.Create(db.link, FAltPath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);

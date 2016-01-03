@@ -295,7 +295,8 @@ uses
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownDaringFireballTests in '..\..\markdown\source\MarkdownDaringFireballTests.pas',
-  CDSHooksUtilities in '..\Libraries\refplat2\CDSHooksUtilities.pas';
+  CDSHooksUtilities in '..\Libraries\refplat2\CDSHooksUtilities.pas',
+  FHIRPatch in '..\Libraries\refplat2\FHIRPatch.pas';
 
 begin
   JclStartExceptionTracking;
