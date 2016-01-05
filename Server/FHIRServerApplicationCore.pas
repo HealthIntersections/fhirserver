@@ -270,7 +270,6 @@ procedure TFHIRService.dump;
 begin
   inherited;
   writelnt(KDBManagers.Dump);
-  writelnt(FWebServer.dump);
 end;
 
 procedure TFHIRService.ExecuteTests;

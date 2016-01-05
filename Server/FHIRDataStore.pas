@@ -209,6 +209,7 @@ Type
     procedure RunValidation;
     property SystemId: String read FSystemId;
 
+    function DumpSessions : String;
 
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager;
     property Indexes : TFHIRIndexInformation read FIndexes;
@@ -1386,6 +1387,7 @@ begin
   list := nil;
   claim := nil;
   d := UniversalDateTime;
+  TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
   FLock.Lock('sweep2');
   try
     for i := FSessions.Count - 1 downto 0 do
@@ -1414,6 +1416,7 @@ begin
   finally
     FLock.Unlock;
   end;
+  TerminologyServer.BackgroundThreadStatus := 'Sweeping Search';
   if FNextSearchSweep < d then
   begin
     conn := FDB.GetConnection('Sweep.search');
@@ -1443,11 +1446,13 @@ begin
     FNextSearchSweep := d + 10 * MINUTE_LENGTH;
   end;
 
+  TerminologyServer.BackgroundThreadStatus := 'Sweeping - Closing';
   try
     if key > 0 then
       CloseFhirSession(key);
     if list <> nil then
     begin
+      TerminologyServer.BackgroundThreadStatus := 'Sweeping - audits';
       storage := TFhirOperationManager.Create('en', self.Link);
       try
         storage.OwnerName := OwnerName;
@@ -1469,6 +1474,7 @@ begin
     end;
     if (claim <> nil) then
     begin
+      TerminologyServer.BackgroundThreadStatus := 'Sweeping - claims';
       resp := GenerateClaimResponse(claim);
       try
         QueueResource(resp, resp.created);
@@ -1522,6 +1528,46 @@ begin
         FClaimQueue.DeleteByIndex(i);
   finally
     FLock.Unlock;
+  end;
+end;
+
+function TFHIRDataStore.DumpSessions: String;
+var
+  i: integer;
+  session: TFhirSession;
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append('<table>'#13#10);
+    b.Append('<tr>');
+    b.Append('<td>Session Key</td>');
+    b.Append('<td>user Identity</td>');
+    b.Append('<td>UserKey</td>');
+    b.Append('<td>Name</td>');
+    b.Append('<td>Created</td>');
+    b.Append('<td>Expires</td>');
+    b.Append('<td>Check Time</td>');
+    b.Append('<td>Use Count</td>');
+    b.Append('<td>Scopes</td>');
+    b.Append('<td>Component</td>');
+    b.Append('</tr>'#13#10);
+
+    FLock.Lock('DumpSessions');
+    try
+      for i := FSessions.Count - 1 downto 0 do
+      begin
+        session := TFhirSession(FSessions.Objects[i]);
+        session.describe(b);
+        b.Append(#13#10);
+      end;
+    finally
+      FLock.Unlock;
+    end;
+    b.Append('</table>'#13#10);
+    result := b.ToString;
+  finally
+    b.Free;
   end;
 end;
 

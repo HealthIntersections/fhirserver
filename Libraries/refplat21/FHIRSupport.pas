@@ -114,6 +114,7 @@ Type
     Constructor Create(secure : boolean);
     destructor Destroy; Override;
     function Link : TFhirSession; overload;
+    procedure describe(b : TStringBuilder);
     Property scopes : String read GetScopes write SetScopes;
 
     {@member Key
@@ -1735,6 +1736,57 @@ begin
   FFirstCreated := now;
   FTaggedCompartments := TStringList.create;
   FPatientList := TStringList.create;
+end;
+
+procedure TFhirSession.describe(b: TStringBuilder);
+begin
+  b.Append('<tr>');
+//  session key
+  b.Append('<td>');
+  b.Append(inttostr(FKey));
+  b.Append('</td>');
+//  identity
+  b.Append('<td>');
+  if Fanonymous then
+    b.Append('(anonymous)')
+  else if FProvider = apNone then
+    b.Append(FId)
+  else
+    b.Append(Names_TFHIRAuthProvider[FProvider]+'\'+FId);
+  b.Append('</td>');
+//  userkey
+  b.Append('<td>');
+  b.Append(inttostr(FUserKey));
+  b.Append('</td>');
+//  name
+  b.Append('<td>');
+  b.Append(FormatTextToHTML(FName));
+  b.Append('</td>');
+//  created
+  b.Append('<td>');
+  b.Append(FormatDateTime('c', FFirstCreated));
+  b.Append('</td>');
+//  expires
+  b.Append('<td>');
+  b.Append(FormatDateTime('c', FExpires));
+  b.Append('</td>');
+//  next check time
+  b.Append('<td>');
+  b.Append(FormatDateTime('c', FNextTokenCheck));
+  b.Append('</td>');
+//  next use count
+  b.Append('<td>');
+  b.Append(inttostr(FUseCount));
+  b.Append('</td>');
+//  scopes
+  b.Append('<td>');
+  b.Append(FSecurity.source);
+  b.Append('</td>');
+//  compartments
+  b.Append('<td>');
+  b.Append(FTaggedCompartments.CommaText +' '+FPatientList.CommaText);
+  b.Append('</td>');
+  b.Append('</tr>'#13#10);
 end;
 
 destructor TFhirSession.Destroy;

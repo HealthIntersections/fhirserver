@@ -35,7 +35,7 @@ Uses
 
   EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport,
 
-  AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions,
+  AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions, AdvGenerics,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects, MsXmlParser,
   DCPsha256, AdvJSON, libeay32,
@@ -72,12 +72,27 @@ Type
     constructor create(server : TFHIRWebServer);
   end;
 
+  TFHIRWebServerClientInfo = class (TAdvObject)
+  private
+    FContext: TIdContext;
+    FActivity: String;
+    FSession: TFHIRSession;
+    FCount: integer;
+    FStart : cardinal;
+    procedure SetSession(const Value: TFHIRSession);
+  public
+    Destructor Destroy; Override;
+    property Context : TIdContext read FContext write FContext;
+    property Session : TFHIRSession read FSession write SetSession;
+    property Activity : String read FActivity write FActivity;
+    property Count : integer read FCount write FCount;
+  end;
+
   TFhirWebServer = Class(TAdvObject)
   Private
     FIni : TIniFile;
     FLock : TCriticalSection;
     FLastTrack : integer;
-    FTracks : TDictionary<String, String>;
 
     FPort : Integer;
     FSSLPort : Integer;
@@ -98,9 +113,13 @@ Type
     FOwnerName : String;
     FAdminEmail : String;
     FSCIMServer : TSCIMServer;
+    FTotalCount : cardinal;
+    FRestCount : cardinal;
+    FStartTime : integer;
+    FTotalTime : cardinal;
+    FRestTime : cardinal;
 
-    FClientCount : Integer;
-
+    FClients : TAdvList<TFHIRWebServerClientInfo>;
     FFhirStore : TFHIRDataStore;
     FFacebookLike : boolean;
     FTerminologyWebServer : TTerminologyWebServer;
@@ -114,6 +133,7 @@ Type
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirConformanceRest);
     procedure PopulateConformance(sender : TObject; conf : TFhirConformance);
+    function WebDump : String;
 
     function BuildCompartmentList(session : TFHIRSession) : String;
 
@@ -144,8 +164,8 @@ Type
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
     Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: Boolean);
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    function MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : integer;
-    procedure MarkExit(track : integer);
+    procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    procedure MarkExit(AContext: TIdContext);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
@@ -168,6 +188,7 @@ Type
     function loadMultipartForm(const request: TStream; const contentType : String): TMimeMessage;
     function processProvenanceHeader(header, lang : String) : TFhirProvenance;
     function DoVerifyPeer(Certificate: TIdX509; AOk: Boolean; ADepth, AError: Integer): Boolean;
+    Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
   Public
     Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
     Destructor Destroy; Override;
@@ -175,8 +196,6 @@ Type
     Procedure Start(active : boolean);
     Procedure Stop;
     Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TIniFile);
-
-    function dump : String;
 
     Property DataStore : TFHIRDataStore read FFhirStore;
   End;
@@ -261,7 +280,7 @@ Begin
   FName := Name;
   FIni := TIniFile.Create(ini);
   FHost := FIni.ReadString('web', 'host', '');
-  FTracks := TDictionary<String, String>.create();
+  FClients := TAdvList<TFHIRWebServerClientInfo>.create;
 
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source'+FHIR_GENERATED_VERSION, ''));
   if FSpecPath = '' then
@@ -367,17 +386,22 @@ Begin
     FFhirStore.CloseAll;
     FFhirStore.Free;
   end;
-  FTracks.Free;
+  FClients.Free;
   FLock.Free;
   Inherited;
 End;
 
 procedure TFhirWebServer.DoConnect(AContext: TIdContext);
+var
+  ci : TFHIRWebServerClientInfo;
 begin
   CoInitialize(nil);
   FLock.Lock;
   try
-    inc(FClientCount);
+    ci := TFHIRWebServerClientInfo.create;
+    FClients.Add(ci);
+    AContext.Data := ci;
+    ci.Context := AContext;
   finally
     FLock.Unlock;
   end;
@@ -387,7 +411,8 @@ procedure TFhirWebServer.DoDisconnect(AContext: TIdContext);
 begin
   FLock.Lock;
   try
-    dec(FClientCount);
+    FClients.Remove(TFHIRWebServerClientInfo(AContext.Data));
+    AContext.Data := nil;
   finally
     FLock.Unlock;
   end;
@@ -420,20 +445,6 @@ begin
   result := true;
 end;
 
-function TFhirWebServer.dump : String;
-var
-  s : String;
-begin
-  result := 'Current Web Requests: '+#13#10;
-  FLock.Lock;
-  try
-    for s in FTracks.Keys do
-      result := result + FTracks[s]+#13#10;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
 function port(port, default : integer): String;
 begin
   if (port = default) then
@@ -464,6 +475,7 @@ end;
 Procedure TFhirWebServer.Start(active : boolean);
 Begin
   FActive := active;
+  FStartTime := GetTickCount;
   StartServer(active);
   if (active) then
     FThread := TFhirServerMaintenanceThread.create(self);
@@ -605,6 +617,43 @@ begin
     result := 'HTTPS is supported on Port '+inttostr(FSSLPort)+'. HTTP is supported on Port '+inttostr(FPort)+'.'
 end;
 
+function TFhirWebServer.WebDump: String;
+var
+  b : TStringBuilder;
+  ci : TFHIRWebServerClientInfo;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append('<table>'#13#10);
+    b.append('<tr><td>IP address</td><td>Count</td><td>Session</td><td>Activity</td><td>Length</td></tr>'#13#10);
+    FLock.Lock;
+    try
+      for ci in FClients do
+      begin
+        b.append('<tr><td>');
+        b.append(ci.Context.Binding.PeerIP);
+        b.append('</td><td>');
+        b.append(inttostr(ci.Count));
+        b.append('</td><td>');
+        if (ci.Session <> nil) then
+          b.append(inttostr(ci.Session.Key));
+        b.append('</td><td>');
+        b.append(ci.FActivity);
+        b.append('</td><td>');
+        if ci.FStart > 0 then
+          b.append(inttostr(GetTickCount - ci.FStart));
+        b.append('</td></tr>'#13#10);
+      end;
+    finally
+      FLock.Unlock;
+    end;
+    b.Append('</table>'#13#10);
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
 Procedure TFhirWebServer.CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
 Begin
   VPostStream := TMemoryStream.Create;
@@ -622,10 +671,9 @@ var
   session : TFHIRSession;
   c : integer;
   check : boolean;
-  track : integer;
 begin
   session := nil;
-  track := MarkEntry(AContext, request, response);
+  MarkEntry(AContext, request, response);
   try
     c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
     if c > -1 then
@@ -654,6 +702,8 @@ begin
       HandleWebSockets(AContext, request, response, false, false, FSecurePath)
     else if request.Document.StartsWith(FSecurePath, false) then
       HandleRequest(AContext, request, response, false, false, FSecurePath)
+    else if request.Document = '/diagnostics' then
+      ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
 
     else if request.Document = '/' then
       ReturnProcessedFile(response, session, '/homepage.html', AltFile('/homepage.html'), false)
@@ -666,7 +716,7 @@ begin
       writelnt('miss: '+request.Document);
     end;
   finally
-    MarkExit(track);
+    MarkExit(AContext);
   end;
 end;
 
@@ -728,10 +778,9 @@ var
   session : TFHIRSession;
   check : boolean;
   c : integer;
-  track : integer;
 begin
   session := nil;
-  track := MarkEntry(AContext, request, response);
+  MarkEntry(AContext, request, response);
   try
     c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
     if c > -1 then
@@ -782,7 +831,7 @@ begin
       writelnt('miss: '+request.Document);
     end;
   finally
-    markExit(track)
+    markExit(AContext);
   end;
 end;
 
@@ -907,6 +956,9 @@ Begin
                request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, request.RawHeaders.Values['Provenance'], sBearer,
                oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
             try
+              if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
+                TFHIRWebServerClientInfo(AContext.Data).Session := oRequest.Session.Link;
+
               oRequest.IfMatch := processIfMatch(request.RawHeaders.Values['If-Match']);
               oRequest.IfNoneMatch := processIfMatch(request.RawHeaders.Values['If-None-Match']);
               oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
@@ -1979,6 +2031,12 @@ var
   store : TFhirOperationManager;
   t : cardinal;
 begin
+  FLock.Lock;
+  try
+    inc(FRestCount);
+  finally
+    FLock.Unlock;
+  end;
   t := gettickCount;
   store := TFhirOperationManager.Create(request.Lang, FFhirStore.Link);
   try
@@ -2010,10 +2068,22 @@ begin
   finally
     store.Free;
   end;
+  FLock.Lock;
+  try
+    inc(FRestCount);
+  finally
+    FLock.Unlock;
+  end;
+  t := gettickCount - t;
+  try
+    inc(FRestTime, t);
+  finally
+    FLock.Unlock;
+  end;
   if request.session = nil then // during OAuth only
-    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user=(in-oauth), params='+request.Parameters.Source+'. rt = '+inttostr(gettickCount - t))
+    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user=(in-oauth), params='+request.Parameters.Source+'. rt = '+inttostr(t))
   else
-    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(gettickCount - t));
+    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(t));
 end;
 
 procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -2374,26 +2444,34 @@ begin
   end;
 end;
 
-function TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): integer;
+procedure TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  s : string;
+  ci : TFHIRWebServerClientInfo;
 begin
-  s := AContext.Binding.PeerIP + ' ' + request.Document+'?'+request.UnparsedParams;
+  ci := TFHIRWebServerClientInfo(AContext.Data);
+
   FLock.Lock;
   try
-     inc(FLastTrack);
-     result := FLastTrack;
-     FTracks.Add(inttostr(result), s);
+     ci.Activity := request.Command+' '+ request.Document+'?'+request.UnparsedParams;
+     ci.Count := ci.Count + 1;
+     inc(FTotalCount);
+     ci.FStart := GetTickCount;
   finally
     FLock.Unlock;
   end;
 end;
 
-procedure TFhirWebServer.MarkExit(track: integer);
+procedure TFhirWebServer.MarkExit(AContext: TIdContext);
+var
+  ci : TFHIRWebServerClientInfo;
 begin
+  ci := TFHIRWebServerClientInfo(AContext.Data);
+
   FLock.Lock;
   try
-     FTracks.Remove(inttostr(track));
+     ci.Activity := '';
+     inc(FTotalTime, getTickCount - ci.FStart);
+     ci.FStart := 0;
   finally
     FLock.Unlock;
   end;
@@ -2619,6 +2697,31 @@ begin
 end;
 
 
+procedure TFhirWebServer.ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: Boolean; path: String);
+var
+  vars : TDictionary<String, String>;
+begin
+  vars := TDictionary<String, String>.create;
+  try
+    vars.Add('status.db', FormatTextToHTML(KDBManagers.dump));
+    vars.Add('status.locks', FormatTextToHTML(DumpLocks));
+    vars.Add('status.thread', DataStore.TerminologyServer.BackgroundThreadStatus);
+    vars.Add('status.sessions', DataStore.DumpSessions);
+    vars.Add('status.web', WebDump);
+    vars.Add('status.tx', DataStore.TerminologyServer.Summary);
+    vars.Add('status.web-total-count', inttostr(FTotalCount));
+    vars.Add('status.web-rest-count', inttostr(FRestCount));
+    vars.Add('status.web-total-time', inttostr(FTotalTime));
+    vars.Add('status.web-rest-time', inttostr(FRestTime));
+    vars.Add('status.run-time', DescribePeriod((GetTickCount - FStartTime) * DATETIME_MILLISECOND_ONE));
+    vars.Add('status.run-time.ms', inttostr(GetTickCount - FStartTime));
+    ReturnProcessedFile(response, nil, 'Diagnostics', AltFile('/diagnostics.html'), false, vars);
+  finally
+    vars.free;
+  end;
+
+end;
+
 procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String> = nil);
 var
   s, n : String;
@@ -2728,14 +2831,19 @@ procedure TFhirServerMaintenanceThread.Execute;
 begin
   CoInitialize(nil);
   repeat
+    FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'sleeping';
     sleep(1000);
     if not FServer.DataStore.ForLoad then
     begin
       if FServer.FActive then
+      begin
+        FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'processing subscriptions';
         FServer.FFhirStore.ProcessSubscriptions;
+      end;
       if (not terminated) then
       begin
         try
+          FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Building Indexes';
           FServer.FFhirStore.TerminologyServer.BuildIndexes(false);
         except
         end;
@@ -2743,6 +2851,7 @@ begin
       if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
       begin
         try
+          FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
           FServer.FFhirStore.Sweep;
         except
         end;
@@ -2750,6 +2859,10 @@ begin
       end;
     end;
   until Terminated;
+  try
+    FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'dead';
+  except
+  end;
   CoUninitialize;
 end;
 
@@ -2843,6 +2956,20 @@ end;
 //  xslt2 := nil;
 //  AltovaXml := nil;
 //end;
+
+{ TFHIRWebServerClientInfo }
+
+destructor TFHIRWebServerClientInfo.Destroy;
+begin
+  FSession.Free;
+  inherited;
+end;
+
+procedure TFHIRWebServerClientInfo.SetSession(const Value: TFHIRSession);
+begin
+  FSession.Free;
+  FSession := Value;
+end;
 
 Initialization
   IdSSLOpenSSLHeaders.Load;

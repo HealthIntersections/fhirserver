@@ -71,9 +71,10 @@ Type
 
     procedure getCodeView(coding : TFHIRCoding; response : TCDSHookResponse); overload;
     procedure getCodeView(coding : TFhirCodeableConcept; response : TCDSHookResponse); overload;
+
     // database maintenance
     procedure BuildIndexes(prog : boolean);
-
+    function Summary : String;
   end;
 
 implementation
@@ -847,10 +848,12 @@ begin
     try
       conn3 := DB.GetConnection('BuildIndexes');
       try
+        BackgroundThreadStatus := 'BI: counting';
         if conn1.CountSQL('Select Count(*) from ValueSets where NeedsIndexing = 0') = 0 then
           conn1.ExecSQL('Update Concepts set NeedsIndexing = 0'); // we're going to index them all anwyay
 
         // first, update value set member information
+        BackgroundThreadStatus := 'BI: Updating ValueSet Members';
         if (prog) then Writet('Updating ValueSet Members');
         conn1.SQL := 'Select ValueSetKey, URL from ValueSets where NeedsIndexing = 1';
         conn1.Prepare;
@@ -860,6 +863,7 @@ begin
         begin
           inc(i);
           if (prog and (i mod 10 = 0)) then Write('.');
+          BackgroundThreadStatus := 'BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey'];
           processValueSet(conn1.ColIntegerByName['ValueSetKey'], conn1.ColStringByName['URL'], conn2, conn3);
         end;
         conn1.Terminate;
@@ -867,6 +871,7 @@ begin
 
         // second, for each concept that needs indexing, check it's value set information
         if (prog) then Writet('Indexing Concepts');
+        BackgroundThreadStatus := 'BI: Indexing Concepts';
         conn1.SQL := 'Select ConceptKey, URL, Code from Concepts where NeedsIndexing = 1';
         conn1.Prepare;
         conn1.Execute;
@@ -875,6 +880,7 @@ begin
         begin
           inc(i);
           if (prog and (i mod 10 = 0)) then Write('.');
+          BackgroundThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
           processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code'], conn2, conn3);
         end;
         conn1.Terminate;
@@ -882,6 +888,7 @@ begin
 
         // last, for each entry in the closure entry table that needs closureing, do it
         if (prog) then Writet('Generating Closures');
+        BackgroundThreadStatus := 'BI: Generating Closures';
         conn1.SQL := 'select ClosureEntryKey, Closures.ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts, Closures '+
            'where Closures.ClosureKey = ClosureEntries.ClosureKey and ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
         conn1.Prepare;
@@ -890,17 +897,20 @@ begin
         begin
           inc(i);
           if (prog and (i mod 100 = 0)) then Write('.');
+          BackgroundThreadStatus := 'BI: Generating Closures for '+conn1.ColStringByName['Name'];
           FClosures[conn1.ColStringByName['Name']].processEntry(conn2, conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['SubsumesKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
         end;
         conn1.Terminate;
         if (prog) then Writeln;
 
         if (prog) then Writelnt('Done');
+        BackgroundThreadStatus := 'BI: ';
         conn3.Release;
       except
         on e : exception do
         begin
           conn3.Error(e);
+          raise;
         end;
       end;
       conn2.Release;
@@ -908,6 +918,7 @@ begin
       on e : exception do
       begin
         conn2.Error(e);
+        raise;
       end;
     end;
     conn1.Release;
@@ -915,6 +926,7 @@ begin
     on e : exception do
     begin
       conn1.Error(e);
+      raise;
     end;
   end;
 end;
@@ -1002,5 +1014,20 @@ begin
     end;
 end;
 
+
+function TTerminologyServer.Summary: String;
+var
+  b  : TStringBuilder;
+begin
+  b := TStringBuilder.Create;
+  try
+    getSummary(b);
+    b.append('<li>Cached Expansions : '+inttostr(FExpansions.Count)+'</li>');
+    b.append('<li>Closures : '+inttostr(FClosures.Count)+'</li>');
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
 
 end.

@@ -150,6 +150,7 @@ Type
     FConceptMapsByURL : TAdvMap<TLoadedConceptMap>;
 
     FProviderClasses : TAdvMap<TCodeSystemProvider>;
+    FBackgroundThreadStatus : String;
 
     procedure UpdateConceptMaps;
     procedure BuildStems(list : TFhirValueSetCodeSystemConceptList);
@@ -165,10 +166,13 @@ Type
     procedure SetCvx(const Value: TCvxServices);
 
     function TrackValueSet(id : String; bOnlyIfNew : boolean) : integer;
+    function GetBackgroundThreadStatus: String;
+    procedure SetBackgroundThreadStatus(const Value: String);
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TKDBManager;
     procedure invalidateVS(id : String); virtual;
+    procedure getSummary(b : TStringBuilder);
   public
     Constructor Create(db : TKDBManager); virtual;
     Destructor Destroy; Override;
@@ -214,6 +218,7 @@ Type
     function NextConceptKey : integer;
     function NextValueSetKey : integer;
     function NextValueSetMemberKey : integer;
+    Property BackgroundThreadStatus : String read GetBackgroundThreadStatus write SetBackgroundThreadStatus;
   end;
 
 implementation
@@ -849,6 +854,16 @@ begin
     FProviderClasses.add(FAreaCode.system(nil), FAreaCode.Link);
 end;
 
+procedure TTerminologyServerStore.SetBackgroundThreadStatus(const Value: String);
+begin
+  FLock.Lock;
+  try
+    FBackgroundThreadStatus := Value;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TTerminologyServerStore.SetCvx(const Value: TCvxServices);
 begin
   if FCvx <> nil then
@@ -1053,6 +1068,16 @@ begin
   end;
 end;
 
+function TTerminologyServerStore.GetBackgroundThreadStatus: String;
+begin
+  FLock.Lock;
+  try
+    result := FBackgroundThreadStatus;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TTerminologyServerStore.UpdateConceptMaps;
 var
   cm : TLoadedConceptMap;
@@ -1179,6 +1204,59 @@ begin
     raise ETerminologySetup.create('unable to provide support for code system '+system);
 end;
 
+
+procedure TTerminologyServerStore.getSummary(b: TStringBuilder);
+begin
+  if FLoinc = nil then
+    b.append('<li>LOINC: not loaded</li>')
+  else
+    b.append('<li>LOINC: '+FLoinc.version(nil));
+
+
+  if FSnomed = nil then
+    b.append('<li>Snomed: not loaded</li>')
+  else
+    b.append('<li>Snomed: '+FSnomed.version(nil));
+
+  if FUcum = nil then
+    b.append('<li>Ucum: not loaded</li>')
+  else
+    b.append('<li>Ucum: '+FUcum.version(nil));
+
+  if FRxNorm = nil then
+    b.append('<li>RxNorm: not loaded</li>')
+  else
+    b.append('<li>RxNorm: '+FRxNorm.version(nil));
+
+  if FNciMeta = nil then
+    b.append('<li>NciMeta: not loaded</li>')
+  else
+    b.append('<li>NciMeta: '+FNciMeta.version(nil));
+
+  if FUnii = nil then
+    b.append('<li>Unii: not loaded</li>')
+  else
+    b.append('<li>Unii: '+FUnii.version(nil));
+
+  if FCountryCode = nil then
+    b.append('<li>CountryCode: not loaded</li>')
+  else
+    b.append('<li>CountryCode: '+FCountryCode.version(nil));
+
+  if FAreaCode = nil then
+    b.append('<li>AreaCode: not loaded</li>')
+  else
+    b.append('<li>AreaCode: '+FAreaCode.version(nil));
+
+  if FCvx = nil then
+    b.append('<li>Cvx: not loaded</li>')
+  else
+    b.append('<li>Cvx: '+FCvx.version(nil));
+
+  b.append('<li>ValueSets : '+inttostr(FValueSetsById.Count)+'</li>');
+  b.append('<li>Code Systems : '+inttostr(FCodeSystems.Count)+'</li>');
+  b.append('<li>Concept Maps : '+inttostr(FBaseConceptMaps.Count)+'</li>');
+end;
 
 function TTerminologyServerStore.getValueSetById(id: String): TFHIRValueSet;
 begin
