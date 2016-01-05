@@ -3,11 +3,35 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.21 2016-01-05 (DSTU21)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.21.exe</link>
+			<description>DSTU2.1. 2016-01-05 (v1.0.21): Add Patch support for Connectathon 11</description>
+		</item>
+<item><title>FHIRServer release 1.0.21 2016-01-05 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.21.exe</link>
+			<description>DSTU2. 2016-01-05 (v1.0.21): Add Patch support for Connectathon 11</description>
+		</item>
+		<item><title>FHIRServer release 1.0.20 2016-01-05 (DSTU21)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.20.exe</link>
+			<description>DSTU2.1. 2016-01-05 (v1.0.20): add questionnaire response validation against a questionnaire</description>
+		</item>
+		<item><title>FHIRServer release 1.0.19 2016-01-04 (DSTU21)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.19.exe</link>
+			<description>DSTU2.1. 2016-01-04 (v1.0.19): fix validation issues discovered in SDC testing</description>
+		</item>
+		<item><title>FHIRServer release 1.0.18 2016-01-04 (DSTU21)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.18.exe</link>
+			<description>DSTU2.1. 2016-01-04 (v1.0.18): fix error handling conceptmaps with no value set reference</description>
+		</item>
+		<item><title>FHIRServer release 1.0.18 2016-01-04 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.18.exe</link>
+			<description>DSTU2. 2016-01-04 (v1.0.18): fix error handling conceptmaps with no value set reference</description>
+		</item>
 		<item><title>FHIRServer release 1.0.17 2016-01-02 (DSTU21)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.17.exe</link>
 			<description>DSTU2.1. 2016-01-02 (v1.0.17): Complete implementaton of cds-hooks for terminology and identifiers</description>
 		</item>
-<item><title>FHIRServer release 1.0.17 2016-01-02 (DSTU2)</title>
+		<item><title>FHIRServer release 1.0.17 2016-01-02 (DSTU2)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.17.exe</link>
 			<description>DSTU2. 2016-01-02 (v1.0.17): Complete implementaton of cds-hooks for terminology and identifiers</description>
 		</item>

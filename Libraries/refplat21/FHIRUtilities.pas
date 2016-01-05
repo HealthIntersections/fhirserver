@@ -2852,56 +2852,77 @@ var
    found : boolean;
    e : TFhirElementDefinition;
    p, tail : String;
+   inScope : boolean;
 begin
   result := TFHIRElementDefinitionList.create();
-  // if we have a name reference, we have to find it, and iterate it's children
-  if (nameReference <> '') then
-  begin
-    found := false;
+  try
+    // if we have a name reference, we have to find it, and iterate it's children
+    if (nameReference <> '') then
+    begin
+      found := false;
+      for e in profile.Snapshot.ElementList do
+      begin
+        if (nameReference = e.Name) then
+        begin
+          found := true;
+          path := e.Path;
+        end;
+      end;
+      if (not found) then
+        raise Exception.create('Unable to resolve name reference '+nameReference+' at path '+path);
+    end;
+
+    inScope := false;
     for e in profile.Snapshot.ElementList do
     begin
-      if (nameReference = e.Name) then
-      begin
-        found := true;
-        path := e.Path;
-      end;
-    end;
-    if (not found) then
-      raise Exception.create('Unable to resolve name reference '+nameReference+' at path '+path);
-  end;
+      p := e.Path;
 
-  for e in profile.Snapshot.ElementList do
-  begin
-    p := e.Path;
-    if (path <> '') and (e.NameReference <> '') and (path.startsWith(p)) then
-    begin
-      {* The path we are navigating to is on or below this element, but the element defers its definition to another named part of the
-       * structure.
-       *}
-      if (path.length > p.length) then
+      if (path <> '') and (e.NameReference <> '') and (path.startsWith(p)) then
       begin
-        // The path navigates further into the referenced element, so go ahead along the path over there
-        result.free;
-        result := getChildMap(profile, name, e.NameReference+'.'+path.substring(p.length+1), '');
-        exit;
+        {* The path we are navigating to is on or below this element, but the element defers its definition to another named part of the
+         * structure.
+         *}
+        if (path.length > p.length) then
+        begin
+          // The path navigates further into the referenced element, so go ahead along the path over there
+          result.free;
+          result := getChildMap(profile, name, e.NameReference+'.'+path.substring(p.length+1), '');
+          exit;
+        end
+        else
+        begin
+          // The path we are looking for is actually this element, but since it defers it definition, go get the referenced element
+          result.free;
+          result := getChildMap(profile, name, e.NameReference, '');
+          exit;
+        end;
       end
       else
       begin
-        // The path we are looking for is actually this element, but since it defers it definition, go get the referenced element
-        result.free;
-        result := getChildMap(profile, name, e.NameReference, '');
-        exit;
+        if (p = path) then
+        begin
+          if (name = '') or (e.name = name) then
+            inscope := true
+          else
+            inscope := false;
+        end;
+
+        if inScope and (p.startsWith(path+'.')) then
+        begin
+          // The path of the element is a child of the path we're looking for (i.e. the parent),
+          // so add this element to the result.
+          tail := p.substring(path.length+1);
+          // Only add direct children, not any deeper paths
+          if (not tail.contains('.')) then
+            result.add(e.Link);
+        end
+        else if (p.Length < path.Length) then
+          inScope := false;
       end;
-    end
-    else if (p.startsWith(path+'.')) then
-    begin
-      // The path of the element is a child of the path we're looking for (i.e. the parent),
-      // so add this element to the result.
-      tail := p.substring(path.length+1);
-      // Only add direct children, not any deeper paths
-      if (not tail.contains('.')) then
-        result.add(e.Link);
     end;
+    result.link;
+  finally
+    result.free;
   end;
 end;
 

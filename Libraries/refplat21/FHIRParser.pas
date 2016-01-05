@@ -2334,9 +2334,9 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('id') or jsn.has('_id') then
-        result.idElement := ParseId(jsn['id'], jsn.vObj['_id']);{q}
+        result.idElement := ParseId(jsn.str['id'], jsn.obj['_id']);{q}
     if jsn.has('extension') then
-      iterateArray(jsn.vArr['extension'], result.extensionList, parseExtension);
+      iterateArray(jsn.arr['extension'], result.extensionList, parseExtension);
     result.link;
   finally
     result.free;

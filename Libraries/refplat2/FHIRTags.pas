@@ -54,10 +54,16 @@ type
   private
     FKey : integer;
     FCategory : TFHIRTagCategory;
+    FTransactionId: String;
+    FConfirmedStored: boolean;
   public
     function Link : TFHIRTag;
     property Key : integer read Fkey write FKey;
     property Category : TFHIRTagCategory read FCategory write FCategory;
+
+    // operational stuff to do with transaction scope management
+    property TransactionId : String read FTransactionId write FTransactionId;
+    property ConfirmedStored : boolean read FConfirmedStored write FConfirmedStored;
   end;
 
   TFHIRTagList = class (TAdvObject)
@@ -79,7 +85,7 @@ type
     function findTag(category : TFHIRTagCategory; system, code : String) : TFHIRTag;
     procedure removeTag(category : TFHIRTagCategory; system, code : String);
     function hasTag(category : TFHIRTagCategory; system, code : String) : boolean;
-    procedure addTag(key : integer; kind : TFHIRTagCategory; system, code, display : String);
+    function addTag(key : integer; kind : TFHIRTagCategory; system, code, display : String) : TFHIRTag;
     procedure add(tag : TFHIRTag);
     function asHeader : String;
   end;
@@ -135,7 +141,7 @@ begin
   FList.Add(tag);
 end;
 
-procedure TFHIRTagList.addTag(key: integer; kind: TFHIRTagCategory; system, code, display: String);
+function TFHIRTagList.addTag(key: integer; kind: TFHIRTagCategory; system, code, display: String) : TFHIRTag;
 var
   tag : TFHIRTag;
 begin
@@ -147,6 +153,7 @@ begin
     tag.code := code;
     tag.display := display;
     FList.Add(tag.Link);
+    result := tag;
   finally
     tag.free;
   end;

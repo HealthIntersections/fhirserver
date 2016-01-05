@@ -78,13 +78,10 @@ Type
     Constructor Create; Override;
     Destructor Destroy; Override;
 
-    procedure putQuestionnaire(rtype: TFHIRResourceType; id: String;
-      q: TFhirQuestionnaire; dependencies: TList<String>);
-    procedure putForm(rtype: TFHIRResourceType; id: String; form: String;
-      dependencies: TList<String>);
+    procedure putQuestionnaire(rtype: TFHIRResourceType; id: String; q: TFhirQuestionnaire; dependencies: TList<String>);
+    procedure putForm(rtype: TFHIRResourceType; id: String; form: String; dependencies: TList<String>);
 
-    function getQuestionnaire(rtype: TFHIRResourceType; id: String)
-      : TFhirQuestionnaire;
+    function getQuestionnaire(rtype: TFHIRResourceType; id: String) : TFhirQuestionnaire;
     function getForm(rtype: TFHIRResourceType; id: String): String;
 
     procedure clear(rtype: TFHIRResourceType; id: String); overload;
@@ -145,6 +142,7 @@ Type
     function DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn: TKDBConnection): String;
     function getTypeForKey(key: integer): TFHIRResourceType;
     procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
+    procedure checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
     procedure RegisterAuditEvent(session: TFhirSession; ip: String);
     procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TAdvBuffer; b : TStringBuilder);
   public
@@ -308,7 +306,7 @@ begin
     conn.Execute;
     while conn.FetchNext do
     begin
-      FTags.addTag(conn.ColIntegerByName['TagKey'], TFHIRTagCategory(conn.ColIntegerByName['Kind']), conn.ColStringByName['Uri'], conn.ColStringByName['Code'], conn.ColStringByName['Display']);
+      FTags.addTag(conn.ColIntegerByName['TagKey'], TFHIRTagCategory(conn.ColIntegerByName['Kind']), conn.ColStringByName['Uri'], conn.ColStringByName['Code'], conn.ColStringByName['Display']).ConfirmedStored := true;
     end;
     conn.terminate;
 
@@ -1208,6 +1206,7 @@ begin
       tag.key := C.key;
       if tag.Display = '' then
         tag.Display := C.Display;
+      checkRegisterTag(tag, conn); // this is required because of a mis-match between the cached tags and the commit scope of doRegisterTag
     end
     else
     begin
@@ -1234,6 +1233,18 @@ begin
   conn.BindString('d', tag.Display);
   conn.Execute;
   conn.terminate;
+  tag.TransactionId := conn.transactionId;
+end;
+
+procedure TFHIRDataStore.checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
+begin
+  if tag.ConfirmedStored then
+    exit;
+
+  if conn.CountSQL('select Count(*) from Tags where TagKey = '+inttostr(tag.key)) = 0 then
+    doRegisterTag(tag, conn)
+  else if conn.transactionId <> tag.TransactionId then
+    tag.ConfirmedStored := true;
 end;
 
 procedure TFHIRDataStore.RegisterTag(tag: TFHIRTag);
@@ -1479,7 +1490,9 @@ begin
     if resource.ResourceType in [frtValueSet, frtConceptMap] then
       TerminologyServer.SeeTerminologyResource(resource)
     else if resource.ResourceType = frtStructureDefinition then
-      FValidatorContext.seeResource(resource as TFhirStructureDefinition);
+      FValidatorContext.seeResource(resource as TFhirStructureDefinition)
+    else if resource.ResourceType = frtQuestionnaire then
+      FValidatorContext.seeResource(resource as TFhirQuestionnaire);
     FSubscriptionManager.SeeResource(key, vkey, id, created, resource, conn, reload, session);
     FQuestionnaireCache.clear(resource.ResourceType, id);
     if resource.ResourceType = frtValueSet then
@@ -1721,7 +1734,7 @@ begin
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, XmlContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
-    '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''ConceptMap'' or Types.ResourceName = ''Profile'' or Types.ResourceName = ''User''or Types.ResourceName = ''Subscription'') and Versions.Status < 2';
+    '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''ConceptMap'' or Types.ResourceName = ''StructureDefinition'' or Types.ResourceName = ''Questionnaire'' or Types.ResourceName = ''User''or Types.ResourceName = ''Subscription'') and Versions.Status < 2';
   conn.Prepare;
   try
     cback := FDB.GetConnection('load2');

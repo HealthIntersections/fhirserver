@@ -5,9 +5,9 @@ Interface
 Uses
   SysUtils, Classes, ActiveX, ComObj,
   MsXml, MsXmlParser,
-  StringSupport,
-  AdvObjects, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRProfileUtilities,
+  StringSupport, kCritSct,
+  AdvObjects, AdvGenerics, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
+  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRProfileUtilities, FHIRConstants,
   TerminologyServer;
 
 Type
@@ -16,8 +16,11 @@ Type
   private
     FTerminologyServer : TTerminologyServer;
     FProfile : TFhirExpansionProfile;
-    procedure SetTerminologyServer(const Value: TTerminologyServer);
+    FLock : TCriticalSection;
+    FQuestionnaires : TAdvMap<TFhirQuestionnaire>;
 
+    procedure SetTerminologyServer(const Value: TTerminologyServer);
+    function getQuestionnaire(url : string) : TFhirQuestionnaire;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -46,15 +49,19 @@ Implementation
 constructor TFHIRServerValidatorContext.Create;
 begin
   inherited;
+  FLock := TCriticalSection.Create('Validation.questionnaire');
   FProfile := TFhirExpansionProfile.create;
   FProfile.includeDefinition := false;
   FProfile.limitedExpansion := false;
+  FQuestionnaires := TAdvMap<TFhirQuestionnaire>.create;
 end;
 
 destructor TFHIRServerValidatorContext.Destroy;
 begin
+  FQuestionnaires.Free;
   FProfile.Free;
   FTerminologyServer.Free;
+  FLock.Free;
   inherited;
 end;
 
@@ -70,6 +77,18 @@ begin
   TFhirDomainResource(r).checkNoModifiers('Repository.SeeResource', 'Resource');
   if (r.ResourceType in [frtValueSet, frtConceptMap]) then
     FTerminologyServer.SeeSpecificationResource(r)
+  else if r.resourceType = frtQuestionnaire then
+  begin
+    FLock.lock;
+    try
+      if FQuestionnaires.ContainsKey(r.id) then
+        FQuestionnaires[r.id] := (r as TFhirQuestionnaire).link
+      else
+        FQuestionnaires.add(r.id, (r as TFhirQuestionnaire).link)
+    finally
+      FLock.Unlock;
+    end;
+  end
   else
     inherited SeeResource(r);
 end;
@@ -115,8 +134,28 @@ function TFHIRServerValidatorContext.fetchResource(t : TFhirResourceType; url : 
 begin
   if t = frtValueSet then
     result := FTerminologyServer.getValueSetByUrl(url)
+  else if t = frtQuestionnaire then
+    result := getQuestionnaire(url)
   else
     result := inherited fetchResource(t, url);
+end;
+
+function TFHIRServerValidatorContext.getQuestionnaire(url: string): TFhirQuestionnaire;
+var
+  q : TFhirQuestionnaire;
+begin
+  result := nil;
+  if url.StartsWith('Questionnaire/') then
+    url := url.Substring(14);
+  FLock.lock;
+  try
+    if FQuestionnaires.TryGetValue(url, q) then
+      exit(q.Link)
+    else
+      exit(nil);
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 function TFHIRServerValidatorContext.expand(vs : TFhirValueSet) : TFHIRValueSet;

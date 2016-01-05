@@ -44,7 +44,7 @@ implementation
 uses
   SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax, FHIRParserTests,
   DecimalTests, UcumTests, JWTTests, TwilioClient, DigitalSignatures, QuestionnaireBuilder,
-  MarkdownDaringFireballTests;
+  MarkdownDaringFireballTests, AdvJson;
 
 { TFhirServerTests }
 
@@ -67,6 +67,7 @@ begin
   TAdvXmlBuilderCanonicalizationTests.test;
   TJWTTests.runTests;
   TMarkdownDaringFireballTests.tests('C:\work\markdown\resources\df');
+  TJsonPatchEngine.tests('C:\work\fhirserver\tests\json-patch-tests.json');
  // TDigitalSignatureTests.test;
 //  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
   WriteLn('Library tests Passed');

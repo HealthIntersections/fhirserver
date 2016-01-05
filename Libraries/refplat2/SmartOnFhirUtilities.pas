@@ -465,7 +465,7 @@ begin
       arr := o.arr['prefetch'];
       if arr <> nil then
         for n2 in arr do
-          c.preFetch.Add((n2 as TJsonValue).value)
+          c.preFetch.Add((n2 as TJsonString).value)
     end;
 end;
 

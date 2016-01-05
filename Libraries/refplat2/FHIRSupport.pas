@@ -40,8 +40,8 @@ uses
   IdGlobal,
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport,
-  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, MimeMessage,
-  DateAndTime, JWT, SCIMObjects,
+  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson,
+  MimeMessage, DateAndTime, JWT, SCIMObjects,
   FHirBase, FHirResources, FHIRConstants, FHIRTypes, FHIRSecurity, FHIRTags, FHIRLang;
 
 Const
@@ -252,6 +252,7 @@ Type
     FSummary: TFHIRSummaryOption;
     FOrigin : TFHIRRequestOrigin;
     FSecure : Boolean;
+    FPatch: TJsonArray;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -260,6 +261,7 @@ Type
     procedure SetProvenance(const Value: TFhirProvenance);
     procedure processParams;
     procedure SetForm(const Value: TMimeMessage);
+    procedure SetPatch(const Value: TJsonArray);
   Public
     Constructor Create(origin : TFHIRRequestOrigin);
     Destructor Destroy; Override;
@@ -357,8 +359,8 @@ Type
       part of the FHIR specification
     }
     Property Resource : TFhirResource read FResource write SetResource;
-    Property Bundle : TFhirBundle read GetBundle write SetBundle;
 
+    Property patch : TJsonArray read FPatch write SetPatch;
     {@member Tags
       Tags on the request - if it's a resource directly
     }
@@ -906,11 +908,6 @@ begin
       end
       else if sCommand = 'POST' then
         CommandType := fcmdCreate
-      else if (scommand = 'PUT') then
-      begin
-        CommandType := fcmdUpdate;
-        DefaultSearch := true;
-      end
       else if (scommand = 'DELETE') then
       begin
         CommandType := fcmdDelete;
@@ -938,6 +935,8 @@ begin
           CommandType := fcmdRead
         else if sCommand = 'PUT' Then
           CommandType := fcmdUpdate
+        else if sCommand = 'PATCH' Then
+          CommandType := fcmdPatch
         else if sCommand = 'DELETE' Then
           CommandType := fcmdDelete
         else if sCommand = 'OPTIONS' then // CORS
@@ -1123,6 +1122,7 @@ end;
 
 destructor TFHIRRequest.Destroy;
 begin
+  FPatch.Free;
   FTags.free;
   FSession.Free;
   FSource.Free;
@@ -1229,6 +1229,12 @@ end;
 procedure TFHIRRequest.SetForm(const Value: TMimeMessage);
 begin
   FForm := Value;
+end;
+
+procedure TFHIRRequest.SetPatch(const Value: TJsonArray);
+begin
+  FPatch.Free;
+  FPatch := Value;
 end;
 
 procedure TFHIRRequest.SetProvenance(const Value: TFhirProvenance);

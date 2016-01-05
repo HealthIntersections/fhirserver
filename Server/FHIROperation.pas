@@ -48,7 +48,7 @@ uses
   DateSupport, StringSupport, EncodeSupport, GuidSupport, BytesSupport,
   KDBManager, KDBDialects,
   AdvObjects, AdvIntegerObjectMatches, AdvMemories, AdvBuffers, AdvVclStreams, AdvStringObjectMatches, AdvStringMatches, AdvGenerics, AdvExceptions,
-  AdvStringBuilders, AdvObjectLists, AdvNames, AdvXmlBuilders,
+  AdvStringBuilders, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvJson,
 
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore,
@@ -219,6 +219,7 @@ type
     procedure processIncludes(session : TFhirSession; _includes, _reverseIncludes : String; bundle : TFHIRBundle; keys : TKeyList; field : String; comp : TFHIRParserClass);
 
     function  ExecuteUpdate(upload : boolean; request: TFHIRRequest; response : TFHIRResponse) : Boolean;
+    function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean;
     procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteDelete(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse);
@@ -761,6 +762,7 @@ begin
     fcmdTransaction : ExecuteTransaction(upload, request, response);
     fcmdOperation : ExecuteOperation(request, response);
     fcmdUpload : ExecuteUpload(request, response);
+    fcmdPatch : ExecutePatch(request, response);
   else
     Raise Exception.Create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
   End;
@@ -824,7 +826,7 @@ begin
     oConf.date := TDateAndTime.CreateUTC(UniversalDateTime);
     oConf.software := TFhirConformanceSoftware.Create;
     oConf.software.name := 'Reference Server';
-    oConf.software.version := SERVER_VERSION;
+    oConf.software.version := SERVER_VERSION+'.';
     oConf.software.releaseDate := TDateAndTime.createXML(SERVER_RELEASE_DATE);
     if FRepository.FormalURLPlainOpen <> '' then
     begin
@@ -2203,6 +2205,202 @@ begin
   end;
 end;
 
+function TFhirOperationManager.ExecutePatch(request: TFHIRRequest; response: TFHIRResponse) : boolean;
+var
+  resourceKey : Integer;
+  key, nvid, i : Integer;
+  s : String;
+  tags : TFHIRTagList;
+  ok : boolean;
+  tnow : TDateTime;
+  list : TMatchingResourceList;
+  parser : TFHIRJsonParser;
+  json, json2 : TJsonObject;
+  ms : TAdvMemoryStream;
+begin
+  nvid := 0;
+  key := 0;
+  try
+    ok := true;
+    if ok and not check(response, request.canWrite(request.ResourceType) or opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+      ok := false;
+
+    if ok and (not check(response, request.patch <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) or
+       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]))) then
+      ok := false;
+
+    if ok and request.DefaultSearch then // conditional update
+    begin
+      list := ResolveSearchId(request.ResourceType, request.compartmentId, request.compartments, request.baseUrl, request.Parameters.Source);
+      try
+        if check(response, list.count = 1, 412, lang, GetFhirMessage('UPDATE_NOT_ONE_MATCH', lang)) then
+          request.Id := list[0].name
+        else
+          ok := false;
+      finally
+        list.Free;
+      end;
+    end;
+
+    if ok then
+      if not FindResource(request.ResourceType, request.Id, true, resourceKey, request, response, request.compartments) Then
+        ok := false;
+
+    if ok and not check(response, not FRepository.ResConfig[request.ResourceType].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang)) then
+      ok := false;
+
+
+    if ok then
+    begin
+      key := FRepository.NextVersionKey;
+      nvid := FConnection.CountSQL('Select Max(Cast(VersionId as '+DBIntType(FConnection.Owner.Platform)+')) from Versions where ResourceKey = '+IntToStr(resourceKey)) + 1;
+
+      if  (request.IfMatch <> '') or  FRepository.ResConfig[request.ResourceType].versionUpdates then
+      begin
+        s := request.IfMatch;
+
+        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s])) then
+          ok := false;
+      end;
+    end;
+
+    // ok, now time to actually get the resource, so we can patch it
+    FConnection.SQL := 'Select StatedDate, VersionId, JsonContent from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
+    FConnection.Prepare;
+    try
+      FConnection.Execute;
+      if check(response, FConnection.FetchNext, 500, lang, 'Not Found internally') then
+        json := TJSONParser.Parse(FConnection.ColBlobByName['JsonContent'])
+      else
+        ok := false;
+    finally
+      FConnection.Terminate;
+    end;
+    if ok then
+    begin
+      try
+        json2 := TJsonPatchEngine.applyPatch(json, request.patch);
+        try
+          parser := TFHIRJsonParser.Create(request.lang);
+          try
+            parser.parse(json2);
+            request.Resource := parser.resource.Link;
+            ms := TAdvMemoryStream.Create;
+            try
+              request.Source.Clear;
+              ms.Buffer := request.Source.Link;
+              TJSONWriter.writeObject(ms, json2, true);
+            finally
+              ms.free;
+            end;
+          finally
+            parser.Free;
+          end;
+        finally
+          json2.Free;
+        end;
+      finally
+        json.Free;
+      end;
+
+      // ok, now we have a resource.....
+      CheckCreateNarrative(request);
+      if ok and FRepository.Validate then
+      begin
+        if not ExecuteValidation(request, response, 'Update Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/'+request.Id) then
+          ok := false
+      else
+        response.Resource := nil;
+      end;
+
+      if ok and not check(response, request.resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)') Then
+        ok := false;
+      if ok and not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang)) then
+        ok := false;
+      if ok and not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)') Then
+        ok := false;
+
+      if ok then
+      begin
+        result := true;
+        tags := TFHIRTagList.create;
+        try
+          if request.resource.meta = nil then
+            request.resource.meta := TFhirMeta.Create;
+          tags.ReadTags(request.resource.meta);
+          LoadTags(tags, ResourceKey);
+          tags.writeTags(request.resource.meta);
+          request.resource.meta.lastUpdated := NowUTC;
+          request.resource.meta.versionId := inttostr(nvid);
+          CheckNotRedacted(request.resource.meta, 'Updating Resource');
+          updateProvenance(request.Provenance, CODES_TFHIRResourceType[request.ResourceType], request.Id, inttostr(nvid));
+          tnow := request.resource.meta.lastUpdated.AsUTCDateTime;
+
+          checkProposedContent(request, request.resource, tags);
+          for i := 0 to tags.count - 1 do
+            FRepository.RegisterTag(tags[i], FConnection);
+          FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
+
+          FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, TransactionDate, StatedDate, Format, VersionId, Status, '+
+            'SessionKey, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :tb, :xc, :xs, :jc, :js)';
+          FConnection.prepare;
+          try
+            FConnection.BindInteger('k', key);
+            FConnection.BindInteger('rk', resourceKey);
+            FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
+            FConnection.BindTimeStamp('sd', DateTimeToTS(tnow));
+            FConnection.BindString('v', inttostr(nvid));
+            request.SubId := inttostr(nvid);
+            if request.Session = nil then
+              FConnection.BindNull('s')
+            else
+              FConnection.BindInteger('s', request.Session.Key);
+            FConnection.BindInteger('f', 2);
+            FConnection.BindBlobFromBytes('tb', tags.json);
+            FConnection.BindBlobFromBytes('xc', EncodeResource(request.resource, true, soFull));
+            FConnection.BindBlobFromBytes('jc', EncodeResource(request.resource, false, soFull));
+            markRedacted(request.resource.meta);
+            FConnection.BindBlobFromBytes('xs', EncodeResource(request.resource, true, soSummary));
+            FConnection.BindBlobFromBytes('js', EncodeResource(request.resource, false, soSummary));
+            unmarkRedacted(request.resource.meta);
+            FConnection.Execute;
+          finally
+            FConnection.Terminate;
+          end;
+          FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
+          CommitTags(tags, key);
+          CreateIndexer;
+          FIndexer.execute(resourceKey, request.id, request.resource, tags);
+          FRepository.SeeResource(resourceKey, key, request.id, false, request.resource, FConnection, false, request.Session);
+
+          if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
+            response.bundle.entryList.add(request.resource.Link)
+          else
+            response.Resource := request.resource.Link;
+          response.versionId := inttostr(nvid);
+
+        finally
+          tags.free;
+        end;
+        response.HTTPCode := 200;
+        response.Message := 'OK';
+        response.lastModifiedDate := tnow;
+        response.Location := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.Id+'/_history/'+inttostr(nvid);
+        if request.Provenance <> nil then
+          SaveProvenance(request.Session, request.Provenance);
+      end;
+    end;
+    AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message)
+  except
+    on e: exception do
+    begin
+      AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
 
 function TFhirOperationManager.ExecuteValidation(request: TFHIRRequest; response: TFHIRResponse; opDesc : String) : boolean;
 var
@@ -2237,8 +2435,6 @@ begin
           try
             if request.Resource <> nil then
               xml.Compose(vcl, request.resource, true, nil)
-            else if request.bundle <> nil then
-              xml.Compose(vcl, request.bundle, true)
             else
               raise Exception.Create('Error: '+response.Message);
           finally
@@ -2685,7 +2881,7 @@ begin
     if not check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
       ok := false;
 
-    if ok and not check(response, request.canWrite(request.ResourceType) and (request.Resource <> nil) or ((request.bundle <> nil) and (request.bundle.entryList.count > 0)), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
+    if ok and not check(response, request.canWrite(request.ResourceType) and (request.Resource <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
       ok := false;
     if ok and (request.Resource <> nil) then
       if not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang)) then
@@ -2695,7 +2891,7 @@ begin
 
     if not ok then
       // do nothing
-    else if request.bundle <> nil then
+    else if request.resource is TFhirBundle then
     begin
       ExecuteTransaction(true, request, response);
       exit;
@@ -3337,7 +3533,8 @@ begin
       ok := false;
 
     if ok then
-    if request.Bundle.type_ = BundleTypeBatch then
+    bundle := request.Resource as TFhirBundle;
+    if bundle.type_ = BundleTypeBatch then
       executeBatch(request, response)
     else
     begin
@@ -3345,29 +3542,29 @@ begin
       resp := TFHIRBundle.create(BundleTypeTransactionResponse);
       ids := TFHIRTransactionEntryList.create;
       try
-        ids.FDropDuplicates := request.bundle.Tags['duplicates'] = 'ignore';
-//        resp.base := request.baseUrl;
+        ids.FDropDuplicates := bundle.Tags['duplicates'] = 'ignore';
+//        resp.base := baseUrl;
         ids.SortedByName;
         resp.id := FhirGUIDToString(CreateGuid);
 
 
         // first pass: scan ids
-        for i := 0 to request.bundle.entryList.count - 1 do
+        for i := 0 to bundle.entryList.count - 1 do
         begin
-          request.bundle.entryList[i].Tag := scanId(request, request.bundle.entryList[i], ids, i).Link;
+          bundle.entryList[i].Tag := scanId(request, bundle.entryList[i], ids, i).Link;
         end;
 
         // third pass: reassign references
-        for i := 0 to request.bundle.entryList.count - 1 do
+        for i := 0 to bundle.entryList.count - 1 do
         begin
-          entry := request.bundle.entryList[i].Tag as TFHIRTransactionEntry;
+          entry := bundle.entryList[i].Tag as TFHIRTransactionEntry;
 
           if not entry.ignore and not entry.deleted then
-            adjustReferences(request.bundle.entryList[i].Tag as TFHIRTransactionEntry, request.baseUrl, request.bundle.entryList[i], ids);
+            adjustReferences(bundle.entryList[i].Tag as TFHIRTransactionEntry, request.baseUrl, bundle.entryList[i], ids);
         end;
 
         // four pass: commit resources
-         bundle := request.bundle.Link;
+         bundle := bundle.Link;
         try
           for i := 0 to bundle.entryList.count - 1 do
           begin
@@ -3432,7 +3629,7 @@ var
   m : TVCLStream;
 begin
   try
-    req := request.Bundle.Link;
+    req := (request.resource as TFHIRBundle).Link;
     resp := TFHIRBundle.create(BundleTypeBatchResponse);
     try
       resp.id := GUIDToString(CreateGUID).ToLower;
@@ -3748,7 +3945,7 @@ end;
 //
 //          profile := GetProfileByURL('http://hl7.org/fhir/Profile/'+Codes_TFHIRResourceType[source.ResourceType], id);
 //          try
-//            fid := request.baseUrl+'Profile/'+id+'/$questionnaire';
+//            fid := baseUrl+'Profile/'+id+'/$questionnaire';
 //            questionnaire := FRepository.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
 //            try
 //              builder := TQuestionnaireBuilder.Create;
@@ -3771,7 +3968,7 @@ end;
 //                response.Message := 'OK';
 //                response.Body := '';
 //                response.LastModifiedDate := now;
-//                response.link_List.AddRelRef('edit-post', request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/$qa-post');
+//                response.link_List.AddRelRef('edit-post', baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.id+'/$qa-post');
 //                response.Resource := builder.Answers.Link;
 //              finally
 //                builder.Free;
@@ -3872,7 +4069,7 @@ var
 //          // first, we have to identify the value set.
 //          id := request.Id;
 //          if request.Id <> '' then // and it must exist, because of the check above
-//            profile := GetProfileById(request, request.Id, request.baseUrl)
+//            profile := GetProfileById(request, request.Id, baseUrl)
 //          else if request.Parameters.VarExists('identifier') then
 //            profile := GetProfileByURL(request.Parameters.getvar('identifier'), id)
 //          else if (request.form <> nil) and request.form.hasParam('profile') then
@@ -3884,7 +4081,7 @@ var
 //
 //          if id <> '' then
 //          begin
-//            fid := request.baseUrl+'Profile/'+id+'/$questionnaire';
+//            fid := baseUrl+'Profile/'+id+'/$questionnaire';
 //            questionnaire := FRepository.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
 //          end
 //          else
@@ -4288,7 +4485,8 @@ begin
       fcmdValidate:        event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'validate', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
       fcmdConformanceStmt: event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'conformance',    'http://hl7.org/fhir/restful-operation', AuditEventActionE);
       fcmdTransaction:     event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'transaction', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
-      fcmdBatch:           event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'transaction', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
+      fcmdBatch:           event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'batch', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
+      fcmdPatch:           event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'patch', 'http://hl7.org/fhir/restful-operation', AuditEventActionU);
       fcmdHistorySystem:   event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'history-system', 'http://hl7.org/fhir/restful-operation', AuditEventActionR);
       fcmdUpload:          event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'upload', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
       fcmdOperation:       event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'operation', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
@@ -4628,7 +4826,7 @@ end;
 //      dst.endpoint := 'http://example.com/unknown';
 //    end;
 //    result.source := TFhirMessageHeaderSource.create;
-//    result.source.endpoint := request.baseUrl+'/mailbox';
+//    result.source.endpoint := baseUrl+'/mailbox';
 //    result.source.name := 'Health Intersections';
 //    result.source.software := FOwnerName;
 //    result.source.version := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
@@ -4664,7 +4862,7 @@ end;
 //    else if s = 'query-response' then
 //      raise exception.create('query-response is not yet supported')
 ////    else if s = 'make-claim' then
-////      ProcessMsgClaim(request, msg, resp, request.bundle, bundle)
+////      ProcessMsgClaim(request, msg, resp, bundle, bundle)
 //    else
 //      raise exception.create('Unknown message event: "'+s+'"');
 //
@@ -4703,7 +4901,7 @@ begin
         svc.rate := '0.8';
         svc.benefit := floatToStr(0.8 * StrToFloat(claim.serviceList[i].instance));
       end;
-      id := request.BaseURL+'/remittance/'+MessageCreateResource(context, request, rem);
+      id := baseURL+'/remittance/'+MessageCreateResource(context, request, rem);
       outgoing.dataList.add(FFactory.makeReference(id));
       utc := NowUTC;
       try
@@ -4730,7 +4928,7 @@ begin
     req.CommandType := fcmdCreate;
     req.ResourceType := res.ResourceType;
     req.Resource := res.Link;
-    req.baseUrl := request.BaseUrl;
+    req.baseUrl := baseUrl;
     resp := TFHIRResponse.create;
     try
       ExecuteCreate(context, false, req, resp, idNoNew, 0);
@@ -5912,7 +6110,7 @@ begin
 //            try
 //              manager.FConnection.Execute;
 //              while manager.FConnection.FetchNext do
-//                manager.AddResourceTobundle(bundle, request.baseUrl, field, prsr);
+//                manager.AddResourceTobundle(bundle, baseUrlrequest.request.request., field, prsr);
 //            finally
 //              manager.FConnection.Terminate;
 //            end;
@@ -6141,9 +6339,9 @@ begin
 //          begin
 //            url := request.Parameters.getvar('identifier');
 //            if (url.startsWith('ValueSet/')) then
-//              vs := manager.GetValueSetById(request, url.substring(9), request.baseUrl)
-//            else if (url.startsWith(request.baseURL+'ValueSet/')) then
-//              vs := manager.GetValueSetById(request, url.substring(9), request.baseUrl)
+//              vs := manager.GetValueSetById(request, url.substring(9), baseUrlrequest.request.request.request.request.)
+//            else if (url.startsWith(baseURLrequest.request.request.request.request.request.+'ValueSet/')) then
+//              vs := manager.GetValueSetById(request, url.substring(9), baseUrlrequest.request.request.request.request.)
 //            else if not manager.FRepository.TerminologyServer.isKnownValueSet(url, vs) then
 //              vs := manager.GetValueSetByIdentity(request.Parameters.getvar('identifier'), request.Parameters.getvar('version'));
 //            cacheId := vs.url;

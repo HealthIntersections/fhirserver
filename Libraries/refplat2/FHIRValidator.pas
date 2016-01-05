@@ -217,7 +217,7 @@ Type
     // function getElementByPath(definition : TFHIRStructureDefinition; path : String) : TFHIRElementDefinition;
     function findElement(profile: TFHIRStructureDefinition; name: String): TFHIRElementDefinition;
     // function getDefinitionByTailNameChoice(children : TFHIRElementDefinitionList; name : String) : TFHIRElementDefinition;
-    function resolveBindingReference(reference: TFHIRType): TFHIRValueSet;
+    function resolveBindingReference(context : TFHIRDomainResource; reference: TFHIRType): TFHIRValueSet;
     function getExtensionByUrl(extensions: TAdvList<TWrapperElement>; url: String): TWrapperElement;
 
     procedure checkQuantityValue(errors: TFhirOperationOutcomeIssueList; path: String; focus: TWrapperElement; fixed: TFHIRQuantity);
@@ -238,8 +238,8 @@ Type
 
     function checkCode(errors: TFhirOperationOutcomeIssueList; element: TWrapperElement; path: String; code, System, display: String): boolean;
     procedure checkQuantity(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; context: TFHIRElementDefinition);
-    procedure checkPrimitiveBinding(errors: TFhirOperationOutcomeIssueList; path: String; ty: String; context: TFHIRElementDefinition; element: TWrapperElement);
-    procedure checkPrimitive(errors: TFhirOperationOutcomeIssueList; path, ty: String; context: TFHIRElementDefinition; e: TWrapperElement);
+    procedure checkPrimitiveBinding(errors: TFhirOperationOutcomeIssueList; path: String; ty: String; context: TFHIRElementDefinition; element: TWrapperElement; profile : TFhirStructureDefinition);
+    procedure checkPrimitive(errors: TFhirOperationOutcomeIssueList; path, ty: String; context: TFHIRElementDefinition; e: TWrapperElement; profile : TFhirStructureDefinition);
     procedure checkIdentifier(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; context: TFHIRElementDefinition);
     procedure checkCoding(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; profile: TFHIRStructureDefinition; context: TFHIRElementDefinition; inCodeableConcept: boolean);
     procedure checkCodeableConcept(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; profile: TFHIRStructureDefinition; context: TFHIRElementDefinition);
@@ -696,30 +696,30 @@ end;
 
 procedure TJsonWrapperElement.createChildren;
 var
-  i: integer;
   obj: TJsonObject;
+  n : string;
 begin
   children := TAdvList<TJsonWrapperElement>.create;
   // we''re going to make this look like the XML
   if (element <> nil) then
   begin
 
-    if (element is TJsonValue) or (element is TJsonBoolean) then
+    if (element is TJsonString) or (element is TJsonNumber) or (element is TJsonBoolean) then
     begin
       // we may have an element_ too
       if (_element <> nil) and (_element is TJsonObject) then
       begin
         obj := TJsonObject(_element);
-        for i := 0 to obj.properties.count - 1 do
-          processChild(obj.properties.Keys[i], obj.properties[obj.properties.Keys[i]]);
+        for n in obj.properties.keys do
+          processChild(n, obj.properties[n]);
       end;
     end
     else if (element is TJsonObject) then
     begin
       obj := TJsonObject(element);
-      for i := 0 to obj.properties.count - 1 do
-        if obj.properties.Keys[i] <> 'resourceType' then
-          processChild(obj.properties.Keys[i], obj.properties[obj.properties.Keys[i]]);
+        for n in obj.properties.keys do
+          if n <> 'resourceType' then
+            processChild(n, obj.properties[n]);
     end
     else if (element is TJsonNull) then
     begin
@@ -758,7 +758,7 @@ begin
     if TJsonObject(element).has('_' + name) then
       _e := TJsonObject(element).properties['_' + name];
 
-  if (((e is TJsonValue) or (e is TJsonBoolean)) or ((e = nil) and (_e <> nil) and not(_e is TJsonArray))) then
+  if (((e is TJsonString) or (e is TJsonNumber) or (e is TJsonBoolean)) or ((e = nil) and (_e <> nil) and not(_e is TJsonArray))) then
   begin
     children.Add(TJsonWrapperElement.Create(FMap, path, name, e.link, _e.link, self, children.count));
   end
@@ -852,8 +852,10 @@ begin
   begin
     if (element = nil) then
       result := ''
-    else if (element is TJsonValue) then
-      result := TJsonValue(element).value
+    else if (element is TJsonString) then
+      result := TJsonString(element).value
+    else if (element is TJsonNumber) then
+      result := TJsonNumber(element).value
     else if (element is TJsonBoolean) then
       if TJsonBoolean(element).value then
         result := 'true'
@@ -901,7 +903,7 @@ begin
   begin
     if (element = nil) then
       result := false
-    else if (element is TJsonValue) then
+    else if (element is TJsonString) or (element is TJsonNumber) then
       result := true
     else
       result := false;
@@ -1177,6 +1179,33 @@ begin
   validate(errors, document.documentElement, profile);
 end;
 
+function describeReference(reference: TFHIRType): String;
+begin
+  if (reference = nil) then
+    result := 'nil'
+  else if (reference is TFHIRUri) then
+    result := TFHIRUri(reference).value
+  else if (reference is TFHIRReference) then
+    result := TFHIRReference(reference).reference
+  else
+    result := '??';
+end;
+
+function readAsCoding(item: TWrapperElement): TFHIRCoding;
+var
+  c: TFHIRCoding;
+begin
+  c := TFHIRCoding.Create;
+  try
+    c.System := item.getNamedChildValue('system');
+    c.Version := item.getNamedChildValue('version');
+    c.code := item.getNamedChildValue('code');
+    c.display := item.getNamedChildValue('display');
+    result := c.Link;
+  finally
+    c.Free;
+  end;
+end;
 
 function getFirstEntry(bundle: TWrapperElement): TWrapperElement;
 var
@@ -1843,7 +1872,7 @@ begin
           if (t <> '') then
           begin
             if (isPrimitiveType(t)) then
-              checkPrimitive(errors, ei.path, t, ei.definition, ei.element)
+              checkPrimitive(errors, ei.path, t, ei.definition, ei.element, profile)
             else
             begin
               if (t = 'Identifier') then
@@ -1912,7 +1941,7 @@ begin
     begin
       discriminator := s.value;
       criteria := getCriteriaForDiscriminator(path, ed, discriminator, profile);
-      if (discriminator = 'url') and (criteria.path = 'Extension.url') then
+      if (discriminator = 'url') and criteria.path.endsWith('xtension.url') then
       begin
         if (element.getAttribute('url') <> TFHIRUri(criteria.fixed).value) then
         begin
@@ -2081,16 +2110,16 @@ begin
       FOwned.add(ty);
       Snapshot := ty.Snapshot.ElementList;
       ed := Snapshot[0];
+      index := 0;
     end
     else
     begin
-      Snapshot := profile.Snapshot.ElementList;
+      Snapshot := ChildDefinitions;
+      index := -1;
     end;
     originalPath := ed.path;
     goal := originalPath + '.' + discriminator;
 
-    index := Snapshot.indexOf(ed);
-    assert(index > -1);
     inc(index);
     while (index < Snapshot.count) and (Snapshot[index].path <> originalPath) do
     begin
@@ -2573,22 +2602,7 @@ begin
   end;
 end;
 
-// function TFHIRValidator.getDefinitionByTailNameChoice(children : TFHIRElementDefinitionList; name : String) : TFHIRElementDefinition;
-// var
-// ed : TFHIRElementDefinition;
-// n : string;
-// begin
-// result := nil;
-// for ed in children do
-// begin
-// n := tail(ed.Path);
-// if (n.endsWith('[x]') ) and ( name.startsWith(n.substring(0, n.length-3))) then
-// begin
-// result := ed;
-// exit;
-// end;
-// end;
-// end;
+
 
 procedure TFHIRValidator.validateContains(errors: TFhirOperationOutcomeIssueList; path: String; child: TFHIRElementDefinition; context: TFHIRElementDefinition; resource, element: TWrapperElement; stack: TNodeStack; idRule: TResourceIdStatus);
 var
@@ -2665,7 +2679,7 @@ begin
   result := fmt.contains('T');
 end;
 
-procedure TFHIRValidator.checkPrimitive(errors: TFhirOperationOutcomeIssueList; path: String; ty: String; context: TFHIRElementDefinition; e: TWrapperElement);
+procedure TFHIRValidator.checkPrimitive(errors: TFhirOperationOutcomeIssueList; path: String; ty: String; context: TFHIRElementDefinition; e: TWrapperElement; profile : TFhirStructureDefinition);
 var
   regex: TRegExpr;
 begin
@@ -2718,25 +2732,13 @@ begin
 
   if (context.Binding <> nil) then
   begin
-    checkPrimitiveBinding(errors, path, ty, context, e);
+    checkPrimitiveBinding(errors, path, ty, context, e, profile);
   end;
   // for nothing to check
 end;
 
-function describeReference(reference: TFHIRType): String;
-begin
-  if (reference = nil) then
-    result := 'nil'
-  else if (reference is TFHIRUri) then
-    result := TFHIRUri(reference).value
-  else if (reference is TFHIRReference) then
-    result := TFHIRReference(reference).reference
-  else
-    result := '??';
-end;
-
 // note that we don"t check the type here; it could be string, uri or code.
-procedure TFHIRValidator.checkPrimitiveBinding(errors: TFhirOperationOutcomeIssueList; path: String; ty: String; context: TFHIRElementDefinition; element: TWrapperElement);
+procedure TFHIRValidator.checkPrimitiveBinding(errors: TFhirOperationOutcomeIssueList; path: String; ty: String; context: TFHIRElementDefinition; element: TWrapperElement; profile : TFhirStructureDefinition);
 var
   value: String;
   Binding: TFhirElementDefinitionBinding;
@@ -2753,7 +2755,7 @@ begin
   Binding := context.Binding;
   if (Binding.ValueSet <> nil) and (Binding.ValueSet is TFHIRReference) then
   begin
-    vs := resolveBindingReference(Binding.ValueSet);
+    vs := resolveBindingReference(profile, Binding.ValueSet);
     if (warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
     begin
       res := FContext.validateCode(SYSTEM_NOT_APPLICABLE, value, '', vs);
@@ -2812,22 +2814,6 @@ begin
     checkCode(errors, element, path, code, System, units);
 end;
 
-function readAsCoding(item: TWrapperElement): TFHIRCoding;
-var
-  c: TFHIRCoding;
-begin
-  c := TFHIRCoding.Create;
-  try
-    c.System := item.getNamedChildValue('system');
-    c.Version := item.getNamedChildValue('version');
-    c.code := item.getNamedChildValue('code');
-    c.display := item.getNamedChildValue('display');
-    result := c.Link;
-  finally
-    c.Free;
-  end;
-end;
-
 procedure TFHIRValidator.checkCoding(errors: TFhirOperationOutcomeIssueList; path: String; element: TWrapperElement; profile: TFHIRStructureDefinition;
   context: TFHIRElementDefinition; inCodeableConcept: boolean);
 var
@@ -2853,9 +2839,9 @@ begin
         Binding := context.Binding;
         if (warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, Binding <> nil, 'Binding for ' + path + ' missing')) then
         begin
-          if (Binding.ValueSet <> nil) and (Binding.ValueSet is TFHIRReference) then
+          if (Binding.ValueSet <> nil) then
           begin
-            vs := resolveBindingReference(Binding.ValueSet);
+            vs := resolveBindingReference(profile, Binding.ValueSet);
             if (warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
             begin
               try
@@ -2894,12 +2880,26 @@ begin
   end;
 end;
 
-function TFHIRValidator.resolveBindingReference(reference: TFHIRType): TFHIRValueSet;
+function TFHIRValidator.resolveBindingReference(context : TFHIRDomainResource; reference: TFHIRType): TFHIRValueSet;
+var
+  s : String;
+  c : TFHIRResource;
 begin
   if (reference is TFHIRUri) then
     result := TFHIRValueSet(FContext.fetchResource(frtValueSet, TFHIRUri(reference).value))
   else if (reference is TFHIRReference) then
-    result := TFHIRValueSet(FContext.fetchResource(frtValueSet, TFHIRReference(reference).reference))
+  begin
+    s := TFHIRReference(reference).reference;
+    if s.StartsWith('#') then
+    begin
+      for c in context.containedList do
+        if (c.id = s.Substring(1)) and (c is TFHIRValueSet) then
+          exit(TFHIRValueSet(c).link);
+      result := nil;
+    end
+    else
+      result := TFHIRValueSet(FContext.fetchResource(frtValueSet, s))
+  end
   else
     result := nil;
   FOwned.add(result);
@@ -2940,7 +2940,7 @@ begin
     begin
       if (Binding.ValueSet <> nil) and (Binding.ValueSet is TFHIRReference) then
       begin
-        vs := resolveBindingReference(Binding.ValueSet);
+        vs := resolveBindingReference(profile, Binding.ValueSet);
         if (warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
         begin
           try

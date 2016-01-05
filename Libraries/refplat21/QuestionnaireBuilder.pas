@@ -38,10 +38,10 @@ uses
   FHIRUtilities, FHIRSupport, FHIRProfileUtilities;
 
 Const
-  TYPE_EXTENSION = 'http://www.healthintersections.com.au/fhir/StructureDefinition/metadata#type';
-  TYPE_REFERENCE = 'http://www.healthintersections.com.au/fhir/StructureDefinition/metadata#reference';
-  FLYOVER_REFERENCE = 'http://hl7.org/fhir/StructureDefinition/questionnaire-extensions#flyover';
-  EXTENSION_FILTER_ONLY = 'http://www.healthintersections.com.au/fhir/StructureDefinition/metadata#expandNeedsFilter';
+  TYPE_EXTENSION = 'http://www.healthintersections.com.au/fhir/StructureDefinition/questionnnaire-type';
+  TYPE_REFERENCE = 'http://www.healthintersections.com.au/fhir/StructureDefinition/questionnnaire-reference';
+  FLYOVER_REFERENCE = 'http://www.healthintersections.com.au/fhir/StructureDefinition/questionnnaire-flyover';
+  EXTENSION_FILTER_ONLY = 'http://www.healthintersections.com.au/fhir/StructureDefinition/expandNeedsFilter';
   MaxListboxCodings = 20;
 
 

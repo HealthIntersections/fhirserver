@@ -2859,8 +2859,10 @@ var
    found : boolean;
    e : TFhirElementDefinition;
    p, tail : String;
+   inScope : boolean;
 begin
   result := TFHIRElementDefinitionList.create();
+  try
   // if we have a name reference, we have to find it, and iterate it's children
   if (nameReference <> '') then
   begin
@@ -2877,6 +2879,7 @@ begin
       raise Exception.create('Unable to resolve name reference '+nameReference+' at path '+path);
   end;
 
+    inScope := false;
   for e in profile.Snapshot.ElementList do
   begin
     p := e.Path;
@@ -2900,7 +2903,17 @@ begin
         exit;
       end;
     end
-    else if (p.startsWith(path+'.')) then
+      else
+      begin
+        if (p = path) then
+        begin
+          if (name = '') or (e.name = name) then
+            inscope := true
+          else
+            inscope := false;
+        end;
+
+        if inScope and (p.startsWith(path+'.')) then
     begin
       // The path of the element is a child of the path we're looking for (i.e. the parent),
       // so add this element to the result.
@@ -2908,7 +2921,14 @@ begin
       // Only add direct children, not any deeper paths
       if (not tail.contains('.')) then
         result.add(e.Link);
+        end
+        else if (p.Length < path.Length) then
+          inScope := false;
     end;
+  end;
+    result.link;
+  finally
+    result.free;
   end;
 end;
 

@@ -72,6 +72,8 @@ Type
 
     fcmdOperation, {@enum.value fcmdOperation operation, as defined in DSTU2}
 
+    fcmdPatch, {@enum.value fcmdPatch Patch (trial for Connectathon 11)}
+
     fcmdBatch, {@enum.value fcmdBatch batch as defined in DSTU2}
     fcmdWebUI, {@enum.value fcmdWebUI Special web interface operations - not a valid FHIR operation}
     fcmdNull); {@enum.value fcmdNull Internal use only - not a valid FHIR operation}
@@ -124,7 +126,7 @@ Type
 Const
   FHIR_NS = 'http://hl7.org/fhir';
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
-    'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Batch', 'WebUI', 'Null');
+    'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Patch', 'Batch', 'WebUI', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
   CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('AsIs', 'XML', 'JSON', 'XHTML');
   MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'text/xhtml');

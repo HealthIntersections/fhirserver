@@ -1197,8 +1197,15 @@ function TTerminologyServerStore.getValueSetByUrl(url : String) : TFHIRValueSet;
 begin
   FLock.Lock('getValueSetByUrl');
   try
-    if FValueSetsByUrl.ContainsKey(url) then
-      result := FValueSetsByUrl[url].Link
+    if url.StartsWith('ValueSet/') then
+    begin
+      if FValueSetsById.TryGetValue(url.Substring(9), result) then
+        result.Link
+      else
+        result := nil;
+    end
+    else if FValueSetsByUrl.TryGetValue(url, result) then
+      result.Link
     else
       result := nil;
   finally

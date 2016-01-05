@@ -522,19 +522,17 @@ procedure TSCIMUser.copyFrom(source: TSCIMUser);
 var
   i : integer;
   n : string;
+  jn : TJsonNode;
 begin
   // copy from the source unless exists in the dest
-  for i := 0 to source.FJson.properties.Count - 1 do
-  begin
-    n := source.FJson.properties.KeyByIndex[i];
+  for n in source.FJson.properties.Keys do
     if not FJson.has(n) then
       FJson.properties.Add(n, source.FJson.properties[n].Link);
-  end;
 
   // now delete anything in the dest that is null
-  for i := FJson.properties.Count - 1 downto 0 do
-    if FJson.properties.ValueByIndex[i] is TJsonNull then
-      FJson.properties.DeleteByIndex(i);
+  for n in source.FJson.properties.Keys do
+    if FJson.properties[n] is TJsonNull then
+      FJson.properties.Remove(n);
 end;
 
 constructor TSCIMUser.Create(FJson: TJsonObject);
@@ -939,7 +937,7 @@ end;
 
 function TSCIMContact.GetPrimary: Boolean;
 begin
-  result := JsonStringToBool(FJson['primary'], false);
+  result := FJson.bool['primary'];
 end;
 
 function TSCIMContact.GetType: String;
@@ -954,10 +952,7 @@ end;
 
 procedure TSCIMContact.SetPrimary(const Value: Boolean);
 begin
-  if value then
-    FJson['primary'] := 'true'
-  else
-    FJson['primary'] := 'false';
+  FJson.bool['primary'] := value;
 end;
 
 procedure TSCIMContact.SetType(const Value: String);
@@ -1021,7 +1016,7 @@ end;
 
 function TSCIMAddress.GetPrimary: Boolean;
 begin
-  result := StrToBoolDef(FJson['primary'], false);
+  result := FJson.bool['primary'];
 end;
 
 function TSCIMAddress.GetRegion: String;
@@ -1061,10 +1056,7 @@ end;
 
 procedure TSCIMAddress.SetPrimary(const Value: Boolean);
 begin
-  if value then
-    FJson['primary'] := 'true'
-  else
-    FJson['primary'] := 'false';
+  FJson.bool['primary'] := value;
 end;
 
 procedure TSCIMAddress.SetRegion(const Value: String);

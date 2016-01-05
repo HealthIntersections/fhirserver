@@ -3719,10 +3719,8 @@ begin
   end;
   composites.add(frtPatient, 'name', ['given', 'given', 'family', 'family']);
   // DAF:
-  indexes.add(frtPatient, 'city', 'Search based on City', SearchParamTypeString, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-city');
-  indexes.add(frtPatient, 'postalCode', 'Search based on zip code', SearchParamTypeString, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-postalCode');
-  indexes.add(frtPatient, 'state', 'Search based on state', SearchParamTypeString, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-state');
   indexes.add(frtPatient, 'mothersMaidenName', 'Search based on Patient mother''s Maiden Name', SearchParamTypeString, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
+  indexes.add(frtPatient, 'birthOrderBoolean', 'Search based on Patient''s birth order (boolean or integer)', SearchParamTypeString, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
   indexes.add(frtPatient, 'age', 'Search based on Patient''s age', SearchParamTypeNumber, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-age');
   indexes.add(frtPatient, 'race', 'Search based on patient''s race (US Realm)', SearchParamTypeToken, [], 'http://hl7.org/fhir/SearchParameter/us-core-Patient-race');
   indexes.add(frtPatient, 'ethnicity', 'Search based on Patient mother''s Maiden Name', SearchParamTypeToken, [], 'http://hl7.org/fhir/SearchParameter/us-core-Patient-ethnicity');
@@ -3783,7 +3781,11 @@ begin
   end;
   patientCompartment(key, 'patient', id);
 
-  // DAF:
+  // DAF / HL7 extensions:
+  if resource.multipleBirth is TFhirBoolean then
+    index(frtPatient, key, 0, resource.multipleBirth as TFhirBoolean, 'birthOrderBoolean')
+  else if resource.multipleBirth is TFhirInteger then
+    index(frtPatient, key, 0, resource.multipleBirth as TFhirInteger, 'birthOrderBoolean');
   for ex in resource.extensionList do
   begin
     if ex.url = 'http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName' then

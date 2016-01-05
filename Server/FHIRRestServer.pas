@@ -572,8 +572,8 @@ begin
   req := TFHIRRequest.Create(roUpload);
   try
     req.CommandType := fcmdTransaction;
-    req.bundle := ProcessZip('en', stream, name, base, init, ini, cursor);
-    req.bundle.tags['duplicates'] := 'ignore';
+    req.resource := ProcessZip('en', stream, name, base, init, ini, cursor);
+    req.resource.tags['duplicates'] := 'ignore';
     req.session := FFhirStore.CreateImplicitSession('service', true);
     req.session.allowAll;
     req.LoadParams('');
@@ -742,9 +742,9 @@ begin
       response.ResponseNo := 200;
       response.ContentText := 'ok';
       response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-  //  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+  //  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
       response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
-      response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+      response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
   //  response.CustomHeaders.add('Access-Control-Expose-Headers: *');
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
@@ -887,7 +887,7 @@ Begin
           response.CustomHeaders.add('Access-Control-Allow-Origin: *');
 //          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
           response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
-          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 //          response.CustomHeaders.add('Access-Control-Expose-Headers: *');
           if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
             response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
@@ -927,7 +927,7 @@ Begin
               end
               else if oRequest.CommandType = fcmdNull then
               begin
-                response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, DELETE');
+                response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
               end
               else if oRequest.CommandType = fcmdUnknown then
               begin
@@ -936,7 +936,7 @@ Begin
                 response.FreeContentStream := true;
                 response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session, secure));
               end
-              else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) and (oRequest.bundle = nil) Then
+              else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) Then
               begin
                 response.ResponseNo := 200;
                 response.ContentType := 'text/html; charset=UTF-8';
@@ -948,7 +948,7 @@ Begin
                 response.ResponseNo := 200;
                 response.ContentType := 'text/html; charset=UTF-8';
   // no - just use *              response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
-                response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, DELETE');
+                response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
                 response.FreeContentStream := true;
                 response.ContentStream := StringToUTF8Stream('OK');
               end
@@ -1562,6 +1562,7 @@ Var
   comp : TIdCompressorZLib;
   mem : TMemoryStream;
   cursor : integer;
+  bundle : TFHIRBundle;
 Begin
   relativeReferenceAdjustment := 0;
   Result := nil;
@@ -1665,12 +1666,12 @@ Begin
         if (oRequest.Session <> nil) and (oRequest.Session.User <> nil) and (oRequest.Session.PatientList.Count > 0) then
           oRequest.compartments := BuildCompartmentList(oRequest.Session);
 
-        if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdValidate, fcmdCreate]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
+        if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdPatch, fcmdValidate, fcmdCreate]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
           or ((oRequest.CommandType in [fcmdDelete]) and ((sCommand = 'DELETE')) and (oPostStream <> nil) and (oPostStream.size > 0) and (sContentType <> '')) Then
         begin
           oRequest.CopyPost(oPostStream);
           if (sContentType = 'application/x-zip-compressed') or (sContentType = 'application/zip') then
-            oRequest.bundle := ProcessZip(lang, oPostStream, NewGuidURN, 'http://hl7.org/fhir', false, nil, cursor)
+            oRequest.resource := ProcessZip(lang, oPostStream, NewGuidURN, 'http://hl7.org/fhir', false, nil, cursor)
           else
           begin
             oRequest.Source := TAdvBuffer.Create;
@@ -1697,19 +1698,23 @@ Begin
 //!              TFhirBinary(oRequest.Resource).Content.loadFromStream(oPostStream);
 //!              TFhirBinary(oRequest.Resource).ContentType := sContentType;
             end
+            else if (oRequest.CommandType = fcmdPatch) and (sContentType = 'application/json-patch+json') then
+            begin
+              oRequest.patch := TJsonParser.ParseNode(oPostStream) as TJsonArray
+            end
             else if oRequest.CommandType <> fcmdWebUI then
               try
                 parser := MakeParser(lang, oRequest.PostFormat, oPostStream, xppReject);
                 try
                   oRequest.Resource := parser.resource.Link;
-                  if (oRequest.CommandType = fcmdTransaction) and (oRequest.bundle = nil) then
+                  if (oRequest.CommandType = fcmdTransaction) and not (oRequest.resource is TFHIRBundle) then
                   begin
-                    oRequest.bundle := TFHIRBundle.create(BundleTypeTransactionResponse);
+                    bundle := TFHIRBundle.create(BundleTypeTransactionResponse);
 //                    oRequest.Feed.base := oRequest.baseUrl;
-                    oRequest.bundle.entryList.add(TFHIRBundleEntry.create);
-                    oRequest.bundle.entryList[0].resource := oRequest.Resource.link;
-                    oRequest.bundle.entryList[0].resource.id := FhirGUIDToString(CreateGUID);
-                    oRequest.resource := nil;
+                    bundle.entryList.add(TFHIRBundleEntry.create);
+                    bundle.entryList[0].resource := oRequest.Resource.link;
+                    bundle.entryList[0].resource.id := FhirGUIDToString(CreateGUID);
+                    oRequest.resource := bundle;
                   end;
                 finally
                   parser.free;

@@ -53,6 +53,7 @@ uses
   SysUtils,
   DateAndTime,
   KDate,
+  GuidSupport,
   AdvObjects, AdvGenerics;
 
 {!Script Hide}
@@ -208,6 +209,7 @@ type
     // execution
     FSQL : string;
     FTerminated: Boolean;
+    FTransactionId: String;
     function GetTables : TStrings;
     procedure ClearCache; // call this on fetchnext and terminate
     function LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String; bAsString: Boolean): String;
@@ -660,6 +662,8 @@ type
       not valid after a select
     }
     property RowsAffected: Integer Read GetRowsAffected;
+
+    property transactionId : String read FTransactionId write FTransactionId;
   published
     {@member SQL
       The SQL string to execute
@@ -1161,6 +1165,7 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.StartTransact';
 begin
   StartTransactV;
   FInTransaction := true;
+  FTransactionId := NewGuidId;
 end;
 
 procedure TKDBConnection.Commit;
