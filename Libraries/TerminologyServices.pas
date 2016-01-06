@@ -51,6 +51,8 @@ Type
   end;
 
   TCodeSystemProvider = {abstract} class (TAdvObject)
+  private
+    FUseCount : cardinal;
   public
     function Link : TCodeSystemProvider; overload;
 
@@ -89,6 +91,9 @@ Type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
     procedure Close(ctxt : TCodeSystemProviderContext); overload; virtual; abstract;
+
+    procedure RecordUse;
+    property UseCount : cardinal read FUseCount;
   end;
 
 implementation
@@ -140,6 +145,11 @@ end;
 function TCodeSystemProvider.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   result := false;
+end;
+
+procedure TCodeSystemProvider.RecordUse;
+begin
+  inc(FUseCount);
 end;
 
 function TCodeSystemProvider.SpecialEnumeration: String;

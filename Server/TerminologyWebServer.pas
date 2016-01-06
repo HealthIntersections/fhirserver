@@ -783,6 +783,7 @@ var
   html : THtmlPublisher;
   analysis : TSnomedAnalysis;
 begin
+  FServer.Snomed.RecordUse;
   if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin
     response.ContentType := 'text/xml';
@@ -848,6 +849,7 @@ var
   pub : TLoincPublisher;
   html : THtmlPublisher;
 begin
+  FServer.Loinc.RecordUse;
   if request.Document.StartsWith('/loinc/doco/')  then
   begin
     code := request.UnparsedParams;

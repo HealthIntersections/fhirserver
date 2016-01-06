@@ -1200,6 +1200,16 @@ begin
     end;
   end;
 
+  if (result <> nil) then
+  begin
+    FLock.Lock('getProvider');
+    try
+      result.RecordUse;
+    finally
+      FLock.Unlock;
+    end;
+  end;
+
   if (result = nil) and not noException then
     raise ETerminologySetup.create('unable to provide support for code system '+system);
 end;
@@ -1210,48 +1220,48 @@ begin
   if FLoinc = nil then
     b.append('<li>LOINC: not loaded</li>')
   else
-    b.append('<li>LOINC: '+FLoinc.version(nil));
+    b.append('<li>LOINC: '+FLoinc.version(nil)+' ('+inttostr(FLoinc.UseCount)+' uses)');
 
 
   if FSnomed = nil then
     b.append('<li>Snomed: not loaded</li>')
   else
-    b.append('<li>Snomed: '+FSnomed.version(nil));
+    b.append('<li>Snomed: '+FSnomed.version(nil)+' ('+inttostr(FSnomed.UseCount)+' uses)');
 
   if FUcum = nil then
     b.append('<li>Ucum: not loaded</li>')
   else
-    b.append('<li>Ucum: '+FUcum.version(nil));
+    b.append('<li>Ucum: '+FUcum.version(nil)+' ('+inttostr(FUcum.UseCount)+' uses)');
 
   if FRxNorm = nil then
     b.append('<li>RxNorm: not loaded</li>')
   else
-    b.append('<li>RxNorm: '+FRxNorm.version(nil));
+    b.append('<li>RxNorm: '+FRxNorm.version(nil)+' ('+inttostr(FRxNorm.UseCount)+' uses)');
 
   if FNciMeta = nil then
     b.append('<li>NciMeta: not loaded</li>')
   else
-    b.append('<li>NciMeta: '+FNciMeta.version(nil));
+    b.append('<li>NciMeta: '+FNciMeta.version(nil)+' ('+inttostr(FNciMeta.UseCount)+' uses)');
 
   if FUnii = nil then
     b.append('<li>Unii: not loaded</li>')
   else
-    b.append('<li>Unii: '+FUnii.version(nil));
+    b.append('<li>Unii: '+FUnii.version(nil)+' ('+inttostr(FUnii.UseCount)+' uses)');
 
   if FCountryCode = nil then
     b.append('<li>CountryCode: not loaded</li>')
   else
-    b.append('<li>CountryCode: '+FCountryCode.version(nil));
+    b.append('<li>CountryCode: '+FCountryCode.version(nil)+' ('+inttostr(FCountryCode.UseCount)+' uses)');
 
   if FAreaCode = nil then
     b.append('<li>AreaCode: not loaded</li>')
   else
-    b.append('<li>AreaCode: '+FAreaCode.version(nil));
+    b.append('<li>AreaCode: '+FAreaCode.version(nil)+' ('+inttostr(FAreaCode.UseCount)+' uses)');
 
   if FCvx = nil then
     b.append('<li>Cvx: not loaded</li>')
   else
-    b.append('<li>Cvx: '+FCvx.version(nil));
+    b.append('<li>Cvx: '+FCvx.version(nil)+' ('+inttostr(FCvx.UseCount)+' uses)');
 
   b.append('<li>ValueSets : '+inttostr(FValueSetsById.Count)+'</li>');
   b.append('<li>Code Systems : '+inttostr(FCodeSystems.Count)+'</li>');
