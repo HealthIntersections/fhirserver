@@ -50,6 +50,7 @@ begin
     if FServer <> nil then
       FServer.Free;
     FServer := TFhirClient.Create(FUrl, true);
+    FServer.timeout := 5000;
     FConfStmt := FServer.conformance(true);
     if FConfStmt.fhirVersion <> FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION then
       raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FConfStmt.fhirVersion+' / '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+')');

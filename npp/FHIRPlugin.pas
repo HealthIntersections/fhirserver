@@ -590,6 +590,7 @@ begin
       try
         OpMessage('Connecting to Server', 'Connecting to Server '+server.fhirEndpoint);
         FClient := TFhirClient.Create(server.fhirEndpoint, false);
+        FClient.timeout := 5000;
         ok := true;
         if server.SmartOnFHIR then
           if not DoSmartOnFHIR(server) then

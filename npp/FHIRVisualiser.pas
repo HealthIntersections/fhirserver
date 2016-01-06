@@ -703,7 +703,7 @@ begin
     ShowMessage('This link was deemed a security risk and cannot be used');
     Cancel := true;
   end
-  else if not u.startsWith('http://localhost:45654') then
+  else if not (u.startsWith('http://localhost:45654') or u.StartsWith('about:')) then
   begin
     u := StringReplace(u, '"', '%22', [rfReplaceAll]);
     ExecuteLaunch('open', pchar(u), '', true, true);

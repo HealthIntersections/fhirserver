@@ -3783,9 +3783,9 @@ begin
 
   // DAF / HL7 extensions:
   if resource.multipleBirth is TFhirBoolean then
-    index(frtPatient, key, 0, resource.multipleBirth as TFhirBoolean, 'birthOrderBoolean')
+    index(frtPatient, key, 0, BoolToStr((resource.multipleBirth as TFhirBoolean).value, true).ToLower, 'birthOrderBoolean')
   else if resource.multipleBirth is TFhirInteger then
-    index(frtPatient, key, 0, resource.multipleBirth as TFhirInteger, 'birthOrderBoolean');
+    index(frtPatient, key, 0, (resource.multipleBirth as TFhirInteger).value, 'birthOrderBoolean');
   for ex in resource.extensionList do
   begin
     if ex.url = 'http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName' then

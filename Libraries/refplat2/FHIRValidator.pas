@@ -1435,19 +1435,24 @@ end;
 procedure TFHIRValidator.validateDocument(errors: TFhirOperationOutcomeIssueList; entries: TAdvList<TWrapperElement>; composition: TWrapperElement; stack: TNodeStack; fullUrl, id: String);
 var
   ns : TNodeStack;
+  elem : TWrapperElement;
 begin
   // first entry must be a composition
   if (rule(errors, IssueTypeINVALID, composition.locStart(), composition.locEnd(), stack.literalPath, composition.getResourceType() = 'Composition',
     'The first entry in a document must be a composition')) then
   begin
-    // the composition subject and section references must resolve in the bundle
-    ns := stack.push(composition.getNamedChild('subject'), -1, nil, nil);
-    try
-      validateBundleReference(errors, entries, composition.getNamedChild('subject'), 'Composition Subject', ns, fullUrl, 'Composition', id);
-    finally
-      ns.Free;
+    elem := composition.getNamedChild('subject');
+    if rule(errors, IssueTypeINVALID, composition.locStart(), composition.locEnd(), stack.literalPath, elem <> nil, 'In a document, a compsosition must have a subject') then
+    begin
+      // the composition subject and section references must resolve in the bundle
+      ns := stack.push(elem, -1, nil, nil);
+      try
+        validateBundleReference(errors, entries, composition.getNamedChild('subject'), 'Composition Subject', ns, fullUrl, 'Composition', id);
+      finally
+        ns.Free;
+      end;
+      validateSections(errors, entries, composition, stack, fullUrl, id);
     end;
-    validateSections(errors, entries, composition, stack, fullUrl, id);
   end;
 end;
 // rule(errors, IssueTypeINVALID, bundle.locStart(), bundle.locEnd(), 'Bundle', !'urn:guid:' = base), 'The base "urn:guid:" is not valid (use urn:uuid:)');

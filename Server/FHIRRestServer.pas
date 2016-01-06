@@ -283,7 +283,7 @@ Begin
   FClients := TAdvList<TFHIRWebServerClientInfo>.create;
 
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source'+FHIR_GENERATED_VERSION, ''));
-  if FSpecPath = '' then
+  if (FSpecPath = '') or (FSpecPath = '\') then
     FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
   writelnt('Load User Sub-system');

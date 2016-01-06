@@ -62,7 +62,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "add questionnaire response validation against a questionnaire"
+        as.returnvalue = "fix bug in validating documents"
         as.returnvariable = purpose
       end
       action.variables.savetoini

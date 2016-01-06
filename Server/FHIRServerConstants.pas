@@ -5,7 +5,7 @@ interface
 {
 [settings]
 } const
-BuildCount='22';
+BuildCount='24';
 BuildDate='2016-01-06';
 
 
