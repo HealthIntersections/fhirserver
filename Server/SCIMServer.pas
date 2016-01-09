@@ -420,9 +420,9 @@ begin
   conn := db.GetConnection('scim.loadOrCreateUser');
   try
     if id = SCIM_ANONYMOUS_User then
-      conn.SQL := 'Select UserKey, Content from Users where Status = 1 and UserKey = 1'
+      conn.SQL := 'Select UserKey, Password, Content from Users where Status = 1 and UserKey = 1'
     else
-      conn.SQL := 'Select UserKey, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
+      conn.SQL := 'Select UserKey, Password, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
 
     conn.Prepare;
     result := nil;
@@ -432,6 +432,7 @@ begin
       if not new then
       begin
         result := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
+        result.hash := conn.ColStringByName['Password'];
         key := conn.ColIntegerByName['UserKey'];
       end
       else
@@ -535,13 +536,14 @@ var
 begin
   conn := db.GetConnection('scim.loadUser');
   try
-    conn.SQL := 'Select Content from Users where Status = 1 and UserKey = '''+inttostr(key)+'''';
+    conn.SQL := 'Select Password, Content from Users where Status = 1 and UserKey = '''+inttostr(key)+'''';
     conn.Prepare;
     try
       conn.Execute;
       if not conn.FetchNext then
         raise ESCIMException.Create(404, 'Not Found', '', 'UserKey '+inttostr(key)+' not found');
       result := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
+      result.hash := conn.ColStringByName['Password'];
     finally
       conn.Terminate;
     end;
@@ -562,7 +564,7 @@ var
 begin
   conn := db.GetConnection('scim.loadUser');
   try
-    conn.SQL := 'Select UserKey, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
+    conn.SQL := 'Select UserKey, Password, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
     conn.Prepare;
     try
       conn.Execute;
@@ -570,6 +572,7 @@ begin
         raise ESCIMException.Create(404, 'Not Found', '', 'User '+id+' not found');
       result := TSCIMUser.Create(TJSONParser.Parse(conn.ColBlobByName['Content']));
       Key := conn.ColIntegerByName['UserKey'];
+      result.hash := conn.ColStringByName['Password'];
     finally
       conn.Terminate;
     end;

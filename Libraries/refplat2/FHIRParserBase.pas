@@ -2072,6 +2072,16 @@ Header(Session, FBaseURL, lang, FVersion)+
       if (r.meta <> nil) then
         s.append('<p><a href="'+e.id+'/_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(r.ResourceType, sl+'/_tags', r.meta, i+1)+'</p>'+#13#10);
 
+      if e.search <> nil then
+      begin
+        s.Append('<p>Search Information: Mode = '+CODES_TFhirSearchEntryModeEnum[e.search.mode]);
+        if e.search.scoreElement <> nil then
+          s.Append(', score = '+e.search.score);
+        if e.search.hasExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match') then
+          s.Append(', mpi says '+e.search.getExtensionString('http://hl7.org/fhir/StructureDefinition/patient-mpi-match'));
+        s.Append('</p>');
+      end;
+
       if (sl <> '')  then
       begin
         s.append('<p><a href="'+sl+'">'+GetFhirMessage('THIS_RESOURCE', lang)+'</a> ');

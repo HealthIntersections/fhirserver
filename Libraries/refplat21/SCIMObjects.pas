@@ -166,6 +166,7 @@ Type
     FPhoneNums : TSCIMContactList;
     FIMs : TSCIMContactList;
     FAddresses : TSCIMAddressList;
+    FHash: string;
 
     function GetPassword: String;
     procedure SetPassword(const Value: String);
@@ -214,6 +215,7 @@ Type
     procedure check;
     procedure copyFrom(source : TSCIMUser);
 
+    property hash : string read FHash write FHash; // an internal property of the user that is never serialised
     Property password : String read GetPassword write SetPassword;
     Property username : String read GetUsername write SetUsername;
 

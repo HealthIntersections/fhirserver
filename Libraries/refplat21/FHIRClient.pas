@@ -64,6 +64,7 @@ Type
     ssl : TIdSSLIOHandlerSocketOpenSSL;
     FOnClientStatus : TFHIRClientStatusEvent;
     FSmartToken: TSmartOnFhirAccessToken;
+    FTimeout: cardinal;
 //    FLastUpdated : TDateAndTime;
     procedure status(msg : String);
     function serialise(resource : TFhirResource):TStream; overload;
@@ -74,6 +75,7 @@ Type
     function fetchResource(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TFhirResource;
     function makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
     procedure SetSmartToken(const Value: TSmartOnFhirAccessToken);
+    procedure SetTimeout(const Value: cardinal);
   public
     constructor Create(url : String; json : boolean); overload;
     destructor Destroy; override;
@@ -83,6 +85,7 @@ Type
 
     function link : TFHIRClient; overload;
     property smartToken : TSmartOnFhirAccessToken read FSmartToken write SetSmartToken;
+    property timeout : cardinal read FTimeout write SetTimeout;
 
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
@@ -246,6 +249,13 @@ begin
   FSmartToken.Free;
   FSmartToken := Value;
   // todo: set the header for the access token
+end;
+
+procedure TFhirClient.SetTimeout(const Value: cardinal);
+begin
+  FTimeout := Value;
+  client.IOHandler.ReadTimeout := Value;
+  client.ReadTimeout := Value;
 end;
 
 procedure TFhirClient.status(msg: String);

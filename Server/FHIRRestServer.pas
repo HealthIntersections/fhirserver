@@ -177,7 +177,7 @@ Type
     Procedure StopServer;
     Function ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; var cursor : integer) : TFHIRBundle;
     procedure SSLPassword(var Password: String);
-    procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueTypeEnum = IssueTypeNull);
+    procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueTypeEnum);
     Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse; upload : Boolean);
     function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
@@ -1069,7 +1069,7 @@ Begin
           response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, e.Msg, ssl));
         end
         else
-          SendError(response, e.Status, aFormat, lang, e.Message, sPath, e, session, true, sPath + sDoc, relativeReferenceAdjustment);
+          SendError(response, e.Status, aFormat, lang, e.Message, sPath, e, session, true, sPath + sDoc, relativeReferenceAdjustment, IssueTypeLogin);
       end;
       on e : ETooCostly do
         if noErrCode then
@@ -1078,14 +1078,14 @@ Begin
           SendError(response, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly);
       on e: ERestfulException do
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment)
+          SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, e.Code)
         else
-          SendError(response, e.Status, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment);
+          SendError(response, e.Status, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, e.Code);
       on e: Exception do
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment)
+          SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeNull)
         else
-          SendError(response, HTTP_ERR_INTERNAL, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment);
+          SendError(response, HTTP_ERR_INTERNAL, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeNull);
     end;
   finally
     session.free;
@@ -1491,7 +1491,7 @@ begin
 end;
 
 
-procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : Exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueTypeEnum = IssueTypeNull);
+procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : Exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueTypeEnum);
 var
   issue : TFhirOperationOutcome;
   report :  TFhirOperationOutcomeIssue;
@@ -1560,8 +1560,7 @@ begin
         end;*)
         report.diagnostics := d;
       end;
-      if (code <> IssueTypeNull) then
-        report.code := code;
+      report.code := code;
       response.ContentStream := TMemoryStream.Create;
       oComp := nil;
       case format of
@@ -1636,9 +1635,9 @@ Begin
     If Not StringStartsWithSensitive(sResource, sBaseURL) Then
     begin
       if StringStartsWith(sResource, '/images/', false) then
-        Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', 'images not served', HTTP_ERR_NOTFOUND)
+        Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', 'images not served', HTTP_ERR_NOTFOUND, IssueTypeNotFound)
       else
-        Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_NO_MODULE', lang), [sResource]), HTTP_ERR_NOTFOUND);
+        Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_NO_MODULE', lang), [sResource]), HTTP_ERR_NOTFOUND, IssueTypeNotFound);
     end;
 
     sURL := Copy(sResource, length(sBaseURL)+1, $FFF);
@@ -2248,7 +2247,13 @@ begin
 
     if session <> nil then
       if secure then
-        b.Append('<p>Welcome '+FormatTextToXml(session.Name)+'</p>'#13#10)
+      begin
+        b.Append('<p>Welcome '+FormatTextToXml(session.Name)+'</p>'#13#10);
+        if session.canGetUser and (session.User <> nil) then
+        begin
+          b.Append('<p>You bearer token is '+inttostr(session.UserKey)+'.'+session.User.hash+'. Use this to get access to the secure API without needing OAuth login</p>');
+        end;
+      end
       else
         b.Append('<p>Welcome '+FormatTextToXml(session.Name)+' (or use <a href="https://'+FHost+port(FSSLPort, 443)+FSecurePath+'">Secure API</a>)</p></p>'#13#10);
 
@@ -2656,7 +2661,7 @@ end;
 
 constructor ERestfulAuthenticationNeeded.Create(const sSender, sMethod, sReason, sMsg: String; aStatus : Word);
 begin
-  Create(sSender, sMethod, sReason, aStatus);
+  Create(sSender, sMethod, sReason, aStatus, IssueTypeLogin);
   FMsg := sMsg;
 end;
 

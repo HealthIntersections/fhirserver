@@ -1273,11 +1273,16 @@ var
   child : TJsonObject;
   arr : TJsonArray;
 begin
+  // this is a choice; in some senses, it's logical that the object ends where it actually ends.
+  // but this looks weird because all the inner content of an object is identified. So we call the object
+  // the area till it's properties start
+  obj.LocationEnd := FLex.FLocation;
+
   while not ((ItemType = jpitEnd) or (root and (ItemType = jpitEof))) do
   begin
     if obj.FProperties.ContainsKey(itemName) then
       raise Exception.Create('DuplicateKey: '+itemName);
-    
+
     case ItemType of
       jpitObject:
         begin
@@ -1305,7 +1310,6 @@ begin
         end;
       jpitEof : raise Exception.Create('Unexpected End of File');
     end;
-    obj.LocationEnd := FLex.FLocation;
     next;
   end;
 end;

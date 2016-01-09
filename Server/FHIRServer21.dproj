@@ -352,6 +352,8 @@
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireballTests.pas"/>
+        <DCCReference Include="AccessControlEngine.pas"/>
+        <DCCReference Include="MPISearch.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

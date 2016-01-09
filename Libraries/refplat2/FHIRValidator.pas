@@ -2768,13 +2768,13 @@ begin
         if (not res.isOk()) then
         begin
           if (Binding.Strength = BindingStrengthREQUIRED) then
-            warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
+            warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided ('+value+') is not in the value set ' +
               describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is required from this value set')
           else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-            warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
+            warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided ('+value+') is not in the value set ' +
               describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
           else if (Binding.Strength = BindingStrengthPREFERRED) then
-            hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' + describeReference(Binding.ValueSet)
+            hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided ('+value+') is not in the value set ' + describeReference(Binding.ValueSet)
               + ' (' + vs.url + ', and a code is recommended to come from this value set');
         end;
       finally
@@ -2783,7 +2783,7 @@ begin
     end;
   end
   else
-    hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'Binding has no source, so can''t be checked');
+    hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, ty <> 'code', 'Binding has no source, so can''t be checked');
 end;
 
 function isValidFHIRUrn(uri: String): boolean;
@@ -2856,13 +2856,13 @@ begin
                   try
                     if (not res.isOk()) then
                       if (Binding.Strength = BindingStrengthREQUIRED) then
-                        warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
+                        warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
                           describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is required from this value set')
                       else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-                        warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
+                        warning(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
                           describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
                       else if (Binding.Strength = BindingStrengthPREFERRED) then
-                        hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided is not in the value set ' +
+                        hint(errors, IssueTypeCODEINVALID, element.locStart(), element.locEnd(), path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
                           describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is recommended to come from this value set');
                   finally
                     res.free;
@@ -3725,25 +3725,23 @@ begin
     if (format = ffXml) then
     begin
       // we have to parse twice: once for the schema check, and once with line tracking
-      if validateXml(source, result) then
-      begin
-        ms := TMsXmlParser.Create;
-        locations := TAdvList<TSourceLocationObject>.create;
+      validateXml(source, result);
+      ms := TMsXmlParser.Create;
+      locations := TAdvList<TSourceLocationObject>.create;
+      try
+        sax := TFHIRSaxToDomParser.create(locations.Link, 0); // no try...finally..., this is interfaced
+        dom := sax.DOM;
+        ms.Parse(source, sax);
+        wrapper := TDOMWrapperElement.Create(nil, dom.documentElement);
         try
-          sax := TFHIRSaxToDomParser.create(locations.Link, 0); // no try...finally..., this is interface
-          dom := sax.DOM;
-          ms.Parse(source, sax);
-          wrapper := TDOMWrapperElement.Create(nil, dom.documentElement);
-          try
-            TDOMWrapperElement(wrapper).FLocations := locations;
-            validateResource(result.issueList, wrapper, wrapper, profile, idRule, nil);
-          finally
-            wrapper.Free;
-          end;
+          TDOMWrapperElement(wrapper).FLocations := locations;
+          validateResource(result.issueList, wrapper, wrapper, profile, idRule, nil);
         finally
-          locations.Free;
-          ms.Free;
+          wrapper.Free;
         end;
+      finally
+        locations.Free;
+        ms.Free;
       end;
     end
     else if format = ffJson then

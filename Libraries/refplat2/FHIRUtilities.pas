@@ -48,19 +48,6 @@ const
   MAX_DATE = DATETIME_MAX;
   ANY_CODE_VS = 'http://www.healthintersections.com.au/fhir/ValueSet/anything';
 
-type
-  TFhirExpansionProfile = class (TAdvObject)
-  private
-    FincludeDefinition: boolean;
-    FlimitedExpansion: boolean;
-  public
-    function Link : TFhirExpansionProfile; overload;
-    function hash : string;
-
-    property includeDefinition : boolean read FincludeDefinition write FincludeDefinition;
-    property limitedExpansion : boolean read FlimitedExpansion write FlimitedExpansion;
-  end;
-
 function HumanNamesAsText(names : TFhirHumanNameList):String;
 function HumanNameAsText(name : TFhirHumanName):String;
 function GetEmailAddress(contacts : TFhirContactPointList):String;
@@ -93,8 +80,8 @@ function LoadFromFormParam(part : TMimePart; lang : String) : TFhirResource;
 function LoadDTFromFormParam(part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 function LoadDTFromParam(value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 
-function BuildOperationOutcome(lang : String; e : exception) : TFhirOperationOutcome; overload;
-Function BuildOperationOutcome(lang, message : String) : TFhirOperationOutcome; overload;
+function BuildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+Function BuildOperationOutcome(lang, message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 
 function getChildMap(profile : TFHIRStructureDefinition; name, path, nameReference : String) : TFHIRElementDefinitionList;
 function CreateResourceByName(name : String) : TFhirResource;
@@ -379,6 +366,19 @@ type
     function getChildren(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
   end;
 
+type
+  TFhirExpansionProfile = class (TAdvObject)
+  private
+    FincludeDefinition: boolean;
+    FlimitedExpansion: boolean;
+  public
+    function Link : TFhirExpansionProfile; overload;
+    function hash : string;
+
+    property includeDefinition : boolean read FincludeDefinition write FincludeDefinition;
+    property limitedExpansion : boolean read FlimitedExpansion write FlimitedExpansion;
+  end;
+
 function Path(const parts : array of String) : String;
 
 
@@ -560,7 +560,7 @@ Begin
   else if sName = '' then
     result := ffAsIs
   else
-    raise ERestfulException.create('FHIRBase', 'RecogniseFHIRFormat', 'Unknown format '+sName, HTTP_ERR_BAD_REQUEST);
+    raise ERestfulException.create('FHIRBase', 'RecogniseFHIRFormat', 'Unknown format '+sName, HTTP_ERR_BAD_REQUEST, IssueTypeStructure);
 End;
 
 
@@ -819,12 +819,12 @@ begin
   result := html.AsPlainText;
 end;
 
-function BuildOperationOutcome(lang : String; e : exception) : TFhirOperationOutcome;
+function BuildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome;
 begin
-  result := BuildOperationOutcome(lang, e.message);
+  result := BuildOperationOutcome(lang, e.message, issueCode);
 end;
 
-Function BuildOperationOutcome(lang, message : String) : TFhirOperationOutcome; overload;
+Function BuildOperationOutcome(lang, message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 var
   outcome : TFhirOperationOutcome;
   report :  TFhirOperationOutcomeIssue;
@@ -836,6 +836,7 @@ begin
     outcome.text.div_ := ParseXhtml(lang, '<div><p>'+FormatTextToHTML(message)+'</p></div>', xppReject);
     report := outcome.issueList.Append;
     report.severity := issueSeverityError;
+    report.code := issueCode;
     report.diagnostics := message;
     result := outcome.Link;
   finally
@@ -3335,18 +3336,6 @@ begin
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
-{ TFhirExpansionProfile }
-
-function TFhirExpansionProfile.hash: string;
-begin
-  result := BooleanToString(FincludeDefinition)+'|'+BooleanToString(FlimitedExpansion);
-end;
-
-function TFhirExpansionProfile.Link: TFhirExpansionProfile;
-begin
-  result := TFhirExpansionProfile(inherited Link);
-end;
-
 function isAbsoluteUrl(s: String): boolean;
 begin
   result := s.StartsWith('urn:') or s.StartsWith('http:') or s.StartsWith('https:') or s.StartsWith('ftp:');
@@ -3457,6 +3446,19 @@ begin
   end;
 
 end;
+
+{ TFhirExpansionProfile }
+
+function TFhirExpansionProfile.hash: string;
+begin
+  result := BooleanToString(FincludeDefinition)+'|'+BooleanToString(FlimitedExpansion);
+end;
+
+function TFhirExpansionProfile.Link: TFhirExpansionProfile;
+begin
+  result := TFhirExpansionProfile(inherited Link);
+end;
+
 
 end.
 

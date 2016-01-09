@@ -1167,6 +1167,7 @@ begin
       try
         FClient := TFhirClient.Create(server.fhirEndpoint, server.format = ffJson);
         try
+          FClient.timeout := 5000;
           FClient.smartToken := token.link;
           pin := Frequest.AsParams;
           try

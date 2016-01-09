@@ -169,7 +169,7 @@ Type
     Function GetNextKey(keytype: TKeyType; aType: TFHIRResourceType; var id: string): integer;
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
-    procedure SeeResource(key, vkey: integer; id: string; created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
+    procedure SeeResource(key, vkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
     procedure DropResource(key, vkey: integer; id: string; aType: TFHIRResourceType; indexer: TFhirIndexManager);
     procedure RegisterConsentRecord(session: TFhirSession);
     function KeyForTag(category : TFHIRTagCategory; system, code: String): integer;
@@ -1487,10 +1487,11 @@ begin
   end;
 end;
 
-procedure TFHIRDataStore.SeeResource(key, vkey: integer; id: string; created : boolean;
-  resource: TFhirResource; conn: TKDBConnection; reload: Boolean;
-  session: TFhirSession);
+procedure TFHIRDataStore.SeeResource(key, vkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
 begin
+  if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
+    raise ERestfulException.Create('TFHIRDataStore', 'SeeResource', 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', 400, IssueTypeBusinessRule);
+
   FLock.Lock('SeeResource');
   try
     if resource.ResourceType in [frtValueSet, frtConceptMap] then
@@ -1777,7 +1778,7 @@ var
 begin
   FTerminologyServer.Loading := true;
   conn.SQL :=
-    'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, XmlContent from Ids, Types, Versions where '
+    'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
     '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''ConceptMap'' or Types.ResourceName = ''StructureDefinition'' or Types.ResourceName = ''Questionnaire'' or Types.ResourceName = ''User''or Types.ResourceName = ''Subscription'') and Versions.Status < 2';
@@ -1790,13 +1791,15 @@ begin
       while conn.FetchNext do
       begin
         inc(i);
-        mem := conn.ColBlobByName['XmlContent'];
+        mem := conn.ColBlobByName['JsonContent'];
 
-        parser := MakeParser('en', ffXml, mem, xppDrop);
+        parser := MakeParser('en', ffJson, mem, xppDrop);
         try
           SeeResource(conn.ColIntegerByName['ResourceKey'],
             conn.ColIntegerByName['ResourceVersionKey'],
-            conn.ColStringByName['Id'], false, parser.resource, cback, true, nil);
+            conn.ColStringByName['Id'],
+            conn.ColIntegerByName['Secure'] = 1,
+            false, parser.resource, cback, true, nil);
         finally
           parser.free;
         end;

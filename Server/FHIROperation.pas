@@ -53,7 +53,7 @@ uses
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore,
   FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities,
-  ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager;
+  ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
 
 const
   MAGIC_NUMBER = 941364592;
@@ -61,6 +61,8 @@ const
   CURRENT_FHIR_STORAGE_VERSION = 2;
 
   RELEASE_DATE = '20131103';
+
+  OP_MASK_TAG = 'this-tag-used-for-the-mask-operation-outcome';
 
 type
   TCreateIdState = (idNoNew, idMaybeNew, idIsNew);
@@ -171,19 +173,25 @@ type
     procedure unmarkRedacted(meta : TFhirMeta);
     procedure AddCDSHooks(conf : TFhirConformanceRest);
 
+    function checkOkToStore(request: TFHIRRequest; response: TFHIRResponse; var secure : boolean) : boolean;
+    function isOkToDeleteSecurityLabel(request: TFHIRRequest; response: TFHIRResponse; c : TFHIRCoding) : boolean;
+    function hasActCodeSecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
+    function hasConfidentialitySecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
+
     procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
     function opAllowed(resource : TFHIRResourceType; command : TFHIRCommandType) : Boolean;
     function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption): boolean;
     function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption):String;
     function BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
     procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption);
+    procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption);
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
 
-    function GetResourceByKey(key : integer): TFHIRResource;
-    function getResourceByReference(url, compartments : string): TFHIRResource;
-    function GetResourceById(request: TFHIRRequest; aType : TFhirResourceType; id, base : String) : TFHIRResource;
-    function getResourceByUrl(aType : TFhirResourceType; url, version : string): TFHIRResource;
-    function getResourcesByParam(aType : TFhirResourceType; name, value : string): TAdvList<TFHIRResource>;
+    function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource;
+    function getResourceByReference(url, compartments : string; var needSecure : boolean): TFHIRResource;
+    function GetResourceById(request: TFHIRRequest; aType : TFhirResourceType; id, base : String; var needSecure : boolean) : TFHIRResource;
+    function getResourceByUrl(aType : TFhirResourceType; url, version : string; var needSecure : boolean): TFHIRResource;
+    function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>;
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
 
     function FindResource(aType : TFHIRResourceType; sId : String; bAllowDeleted : boolean; var resourceKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean;
@@ -216,7 +224,7 @@ type
     procedure ExecuteRead(request: TFHIRRequest; response : TFHIRResponse);
     procedure executeReadInTransaction(entry : TFhirBundleEntryRequest; request: TFHIRRequest; response : TFHIRResponse);
 
-    procedure processIncludes(session : TFhirSession; _includes, _reverseIncludes : String; bundle : TFHIRBundle; keys : TKeyList; field : String; comp : TFHIRParserClass);
+    procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundle; keys : TKeyList; field : String; comp : TFHIRParserClass);
 
     function  ExecuteUpdate(upload : boolean; request: TFHIRRequest; response : TFHIRResponse) : Boolean;
     function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean;
@@ -244,9 +252,8 @@ type
     // internal utility functions
     procedure addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : TFhirResourceTypeSet);
 
-    function AddResourceTobundle(bundle : TFHIRBundle; base : String; updated : TDateTime; resource : TFHIRResource; purpose : TFhirSearchEntryModeEnum) : TFHIRBundleEntry; overload;
-    function AddResourceTobundle(bundle : TFHIRBundle; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : TFhirResourceType) : TFHIRBundleEntry; overload;
-    function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String) : Boolean;
+    function AddResourceTobundle(bundle : TFHIRBundle; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : TFhirResourceType) : TFHIRBundleEntry; overload;
+    function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TFhirIssueTypeEnum) : Boolean;
     procedure DefineConformanceResources(base : String); // called after database is created
 
     // when want an MRN to store the resource against
@@ -382,8 +389,8 @@ type
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
   private
-    procedure addResource(manager: TFhirOperationManager; bundle : TFHIRBundle; reference : TFhirReference; required : boolean; compartments : String);
-    procedure addSections(manager: TFhirOperationManager; bundle : TFHIRBundle; sections : TFhirCompositionSectionList; compartments : String);
+    procedure addResource(manager: TFhirOperationManager; secure : boolean; bundle : TFHIRBundle; reference : TFhirReference; required : boolean; compartments : String);
+    procedure addSections(manager: TFhirOperationManager; secure : boolean; bundle : TFHIRBundle; sections : TFhirCompositionSectionList; compartments : String);
   public
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
@@ -599,33 +606,13 @@ begin
   inherited;
 end;
 
-
-function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; base : String; updated : TDateTime; resource : TFHIRResource; purpose : TFhirSearchEntryModeEnum) : TFHIRBundleEntry;
-var
-  entry : TFHIRBundleEntry;
-begin
-  entry := TFHIRBundleEntry.Create;
-  try
-    entry.resource := resource.Link;
-    entry.fullUrl := AppendForwardSlash(base)+CODES_TFhirResourceType[resource.ResourceType]+'/'+resource.id;
-    if (purpose <> SearchEntryModeNull) then
-    begin
-      entry.search := TFhirBundleEntrySearch.Create;
-      entry.search.mode := purpose;
-    end;
-    bundle.entryList.add(entry.Link);
-    result := entry;
-  finally
-    entry.Free;
-  end;
-end;
-
-
-function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : TFhirResourceType) : TFHIRBundleEntry;
+function TFhirOperationManager.AddResourceTobundle(bundle : TFHIRBundle; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : TFhirResourceType) : TFHIRBundleEntry;
 var
   parser : TFhirParser;
   mem : TBytesStream;
   sId, sType, sAud : String;
+  entry : TFHIRBundleEntry;
+  op : TFhirOperationOutcome;
 begin
   sId := FConnection.ColStringByName['Id'];
   sType := FConnection.colStringByName['ResourceName'];
@@ -650,6 +637,15 @@ begin
       result.Free;
     end;
   end
+  else if not isSecure and (FConnection.ColIntegerByName['Secure'] = 1) then
+  begin
+    for entry in bundle.entryList do
+      if (entry.resource <> nil) and entry.HasTag(OP_MASK_TAG) then
+        exit;
+    op := BuildOperationOutcome('en', 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed);
+    bundle.entryList.Append.resource := op;
+    op.Tags[OP_MASK_TAG] := 'secure';
+  end
   else
   begin
     if comp = nil then
@@ -662,6 +658,12 @@ begin
       begin
         result.search := TFhirBundleEntrySearch.Create;
         result.search.mode := purpose;
+        if (purpose = SearchEntryModeMatch) and not FConnection.ColNullByName['Score1'] then
+        begin
+          result.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
+          if FConnection.ColIntegerByName['Score2'] > 0 then
+            result.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
+        end;
       end;
     end
     else
@@ -673,7 +675,26 @@ begin
           parser.source := mem;
           parser.ParserPolicy := xppDrop;
           parser.Parse;
-          result := AddResourceTobundle(bundle, base, TSToDateTime(FConnection.ColTimeStampByName['StatedDate']), parser.resource, purpose);
+          entry := TFHIRBundleEntry.Create;
+          try
+            entry.resource := parser.resource.Link;
+            entry.fullUrl := AppendForwardSlash(base)+CODES_TFhirResourceType[parser.resource.ResourceType]+'/'+parser.resource.id;
+            if (purpose <> SearchEntryModeNull) then
+            begin
+              entry.search := TFhirBundleEntrySearch.Create;
+              entry.search.mode := purpose;
+              if (purpose = SearchEntryModeMatch) and not FConnection.ColNullByName['Score1'] then
+              begin
+                entry.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
+                if FConnection.ColIntegerByName['Score2'] > 0 then
+                  entry.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
+              end;
+            end;
+            bundle.entryList.add(entry.Link);
+            result := entry;
+          finally
+            entry.Free;
+          end;
         finally
           parser.free;
         end;
@@ -707,7 +728,7 @@ begin
   end;
 end;
 
-function TFhirOperationManager.check(response: TFHIRResponse; test: boolean; code : Integer; lang, message: String): Boolean;
+function TFhirOperationManager.check(response: TFHIRResponse; test: boolean; code : Integer; lang, message: String; issueCode : TFhirIssueTypeEnum): Boolean;
 begin
   result := test;
   if not test then
@@ -716,7 +737,7 @@ begin
     response.Message := message;
     response.ContentType := 'text/plain';
     response.Body := message;
-    response.Resource := BuildOperationOutcome(lang, message);
+    response.Resource := BuildOperationOutcome(lang, message, issueCode);
   end;
 end;
 
@@ -1010,17 +1031,22 @@ var
   tags : TFHIRTagList;
   ok : boolean;
   tnow : TDateTime;
+  needSecure : boolean;
   list : TMatchingResourceList;
 begin
   key := 0;
   CheckCreateNarrative(request);
   try
     ok := true;
-    if not check(response, request.canWrite(request.ResourceType) and opAllowed(request.ResourceType, fcmdCreate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if not check(response, request.canWrite(request.ResourceType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
+      ok := false;
+    if ok and not check(response, opAllowed(request.ResourceType, fcmdCreate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
       ok := false;
 
-    if ok and not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) or not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang)) then
+    if ok and not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired) or not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid) then
       ok := false;
+
+    ok := checkOkToStore(request, response, needSecure);
 
     if ok and FRepository.Validate and not upload and (request.Session <> nil) then
     begin
@@ -1043,7 +1069,7 @@ begin
           response.HTTPCode := 200;
         end
         else if list.Count > 1 then
-          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang))
+          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), IssueTypeNotFound)
         else
           ok := true;
       finally
@@ -1056,7 +1082,7 @@ begin
     else if (idState = idMaybeNew) and (request.Id <> '') then
     begin
       sId := request.Id;
-      if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceType, sId, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang)) then
+      if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceType, sId, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
         ok := false;
     end
     else if (idState = idIsNew) then
@@ -1064,14 +1090,14 @@ begin
       sid := request.id;
       resourceKey := iAssignedKey;
     end
-    else if not check(response, GetNewResourceId(request.ResourceType, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, CODES_TFHIRResourceType[request.resourceType]])) then
+    else if not check(response, GetNewResourceId(request.ResourceType, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, CODES_TFHIRResourceType[request.resourceType]]), IssueTypeDuplicate) then
        ok := false
 
     else
       request.resource.id := sId;
 
     if ok then
-      if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)') then
+      if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
         ok := false;
 
     if ok then
@@ -1096,8 +1122,8 @@ begin
         for i := 0 to tags.count - 1 do
           FRepository.RegisterTag(tags[i], FConnection);
 
-        FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, '+
-                'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :tb, :xc, :xs, :jc, :js)';
+        FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Secure, '+
+                'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :sec, :tb, :xc, :xs, :jc, :js)';
         FConnection.prepare;
         try
           FConnection.BindInteger('k', key);
@@ -1106,6 +1132,7 @@ begin
           FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
           request.SubId := '1';
           FConnection.BindString('v', '1');
+          FConnection.BindIntegerFromBoolean('sec', needSecure);
           if request.Session <> nil then
             FConnection.BindInteger('s', request.Session.Key)
           else
@@ -1129,7 +1156,7 @@ begin
 
         CreateIndexer;
         CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.compartments);
-        FRepository.SeeResource(resourceKey, key, sId, true, request.Resource, FConnection, false, request.Session);
+        FRepository.SeeResource(resourceKey, key, sId, needSecure, true, request.Resource, FConnection, false, request.Session);
         if request.resourceType = frtPatient then
           FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
         response.HTTPCode := 201;
@@ -1175,7 +1202,7 @@ begin
   nvid := 0;
   try
     ok := true;
-    if not check(response, request.canWrite(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if not check(response, request.canWrite(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
       ok := false;
 
       if (request.DefaultSearch) then
@@ -1186,7 +1213,7 @@ begin
           if list.count = 0 then
             NoMatch(request, response)
           else if list.Count > 1 then
-            check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang))
+            check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), IssueTypeNotFound)
           else
           begin
             request.Id := list[0].name;
@@ -1198,15 +1225,15 @@ begin
       end;
 
 
-    if ok and (not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id])) or
+    if ok and (not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), IssueTypeInvalid) or
        not FindResource(request.ResourceType, request.Id, true, resourceKey, request, response, request.compartments)) then
       ok := false;
 
-    if ok and FTestServer and not check(response, request.id <> 'example', 400, lang, GetFhirMessage('MSG_RESOURCE_EXAMPLE_PROTECTED', lang)) then
+    if ok and FTestServer and not check(response, request.id <> 'example', 400, lang, GetFhirMessage('MSG_RESOURCE_EXAMPLE_PROTECTED', lang), IssueTypeForbidden) then
       ok := false;
 
 
-    if ok and (request.Resource <> nil) and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (2)') Then
+    if ok and (request.Resource <> nil) and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (2)', IssueTypeInvalid) Then
       ok := false;
 
 
@@ -1243,8 +1270,8 @@ begin
         for i := 0 to tags.count - 1 do
           FRepository.RegisterTag(tags[i], FConnection);
 
-        FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Tags) values '+
-                                                             '(:k,:rk, :sd, :td, :v, :f, 2, :s, :t)';
+        FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Secure, Tags) values '+
+                                                             '(:k,:rk, :sd, :td, :v, :f, 2, :s, 0, :t)';
         FConnection.prepare;
         try
           FConnection.BindInteger('k', key);
@@ -1322,12 +1349,12 @@ begin
     fcmdHistoryInstance :
       begin
         TypeNotFound(request, response);
-        if not check(response, request.canRead(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+        if not check(response, request.canRead(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
           result := false
         else if (length(request.id) > ID_LENGTH) or not FindResource(request.ResourceType, request.Id, true, resourceKey, request, response, request.compartments) then
           result := false
         else
-          FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort ' +
+          FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
            'from Versions, Ids, Sessions '+
            'where Versions.ResourceKey = '+inttostr(resourceKey)+' '+cmp+' and Versions.ResourceKey = Ids.ResourceKey and Versions.SessionKey = Sessions.SessionKey';
         title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [CODES_TFHIRResourceType[request.ResourceType]+' '+GetFhirMessage('NAME_RESOURCE', lang)+' '+request.Id]);
@@ -1336,11 +1363,11 @@ begin
     fcmdHistoryType :
       begin
         TypeNotFound(request, response);
-        if not check(response, request.canRead(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+        if not check(response, request.canRead(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
           result := false
         else
         begin
-          FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort ' +
+          FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
           'from Versions, Ids, Sessions '+
           'where Ids.ResourceTypeKey = '+inttostr(FRepository.ResConfig[request.ResourceType].key)+' '+cmp+' and Versions.ResourceKey = Ids.ResourceKey and Versions.SessionKey = Sessions.SessionKey';
           title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [CODES_TFHIRResourceType[request.ResourceType]]);
@@ -1350,7 +1377,7 @@ begin
     fcmdHistorySystem :
       begin
         if request.Session.canReadAll then
-          FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort ' +
+          FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
             'from Versions, Ids, Sessions '+
             'where Versions.ResourceKey = Ids.ResourceKey '+cmp+' and Versions.SessionKey = Sessions.SessionKey'
         else
@@ -1359,7 +1386,7 @@ begin
           for a in ALL_RESOURCE_TYPES do
             if request.canRead(a) then
               lt := lt+','+inttostr(FRepository.ResourceTypeKeyForName(CODES_TFHIRResourceType[a]));
-          FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort ' +
+          FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
             'from Versions, Ids, Sessions '+
             'where Versions.ResourceKey = Ids.ResourceKey '+cmp+' and Versions.SessionKey = Sessions.SessionKey and Ids.ResourceTypeKey in ('+lt.Substring(1)+')';
         end;
@@ -1458,7 +1485,7 @@ begin
     if request.parameters.value[HISTORY_PARAM_NAME_ID] <> '' then
     begin
       ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy);
-      if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]])) then
+      if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), IssueTypeProcessing) then
         link := HISTORY_PARAM_NAME_ID+'='+request.parameters.value[HISTORY_PARAM_NAME_ID]
     end
     else
@@ -1507,7 +1534,7 @@ begin
 
         FConnection.SQL :=
           'Select '+
-          '  Ids.ResourceKey, ResourceName, Ids.Id, v.ResourceVersionKey, Audits.Id as AuditId, Ids.MostRecent, VersionId, StatedDate, Name, v.Status, Tags, '+field+' '+
+          '  Ids.ResourceKey, ResourceName, Ids.Id, v.ResourceVersionKey, Audits.Id as AuditId, Ids.MostRecent, VersionId, Secure, StatedDate, Name, v.Status, Secure, Tags, '+field+' '+
           'from '+
           '  Ids, Sessions, SearchEntries, Types, Versions as v '+
           'left outer join Ids as Audits on v.AuditKey = Audits.ResourceKey '+
@@ -1521,7 +1548,7 @@ begin
         try
           FConnection.Execute;
           while FConnection.FetchNext do
-            AddResourceTobundle(bundle, request.baseUrl, field, comp, SearchEntryModeNull, true, type_);
+            AddResourceTobundle(bundle, request.secure, request.baseUrl, field, comp, SearchEntryModeNull, true, type_);
         finally
           FConnection.Terminate;
         end;
@@ -1558,18 +1585,20 @@ var
 begin
   try
     NotFound(request, response);
-    if request.canRead(request.ResourceType) and check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if request.canRead(request.ResourceType) and check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (length(request.id) <= ID_LENGTH) and FindResource(request.ResourceType, request.Id, false, resourceKey, request, response, request.compartments) then
       begin
         chooseField(response.Format, request.Summary, field, comp, needsObject);
-        FConnection.SQL := 'Select StatedDate, VersionId, '+field+' from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
+        FConnection.SQL := 'Select Secure, StatedDate, VersionId, '+field+' from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
         FConnection.Prepare;
         try
           FConnection.Execute;
           if FConnection.FetchNext then
           Begin
-            if (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
+            if (FConnection.ColIntegerByName['Secure'] = 1) and not request.secure then
+              check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed)
+            else if (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
             begin
               response.HTTPCode := 304;
               response.Message := 'Not Modified';
@@ -1742,7 +1771,10 @@ begin
   result := inttostr(FRepository.NextSearchKey);
   if params.VarExists('_query') and (params.getVar('_query') <> '') then
   begin
-    raise exception.create('The query "'+params.getVar('_query')+'" is not known');
+    if (params.getVar('_query') = 'mpi') and (aType = frtPatient) then
+      ProcessMPISearch(typekey, session, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, summaryStatus)
+    else
+      raise exception.create('The query "'+params.getVar('_query')+'" is not known');
   end
   else
     ProcessDefaultSearch(typekey, session, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, summaryStatus);
@@ -1775,7 +1807,7 @@ begin
     sp.countAllowed := true;
 
     sp.build;
-    sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+' from Ids where Deleted = 0 and '+sp.filter+' order by ResourceKey DESC';
+    sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+', null, null from Ids where Deleted = 0 and '+sp.filter+' order by ResourceKey DESC';
     csql := 'Select count(ResourceKey) from Ids where Deleted = 0 and '+sp.filter;
     link := SEARCH_PARAM_NAME_ID+'='+id+'&'+sp.link_;
   finally
@@ -1803,8 +1835,53 @@ begin
   end;
 end;
 
+procedure TFhirOperationManager.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption);
+var
+  mpi : TMPISearchProcessor;
+  s : String;
+  csql : String;
+begin
+  if (session = nil) then
+    raise Exception.Create('no session?');
+  s := inttostr(Session.Key);
+  FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary, SessionKey) values ('+key+', '''+id+''', 0, 1, '+DBGetDate(FConnection.Owner.Platform)+', '+inttostr(ord(summaryStatus))+', '+s+')');
 
-procedure TFhirOperationManager.processIncludes(session: TFhirSession; _includes, _reverseIncludes: String; bundle: TFHIRBundle; keys : TKeyList; field: String; comp: TFHIRParserClass);
+  mpi := TMPISearchProcessor.create;
+  try
+    mpi.typekey := typekey;
+    mpi.compartmentId := compartmentId;
+    mpi.compartments := compartments;
+    mpi.baseURL := baseURL;
+    mpi.lang := lang;
+    mpi.params := params;
+    CreateIndexer;
+    mpi.indexes := FRepository.Indexes.Link;
+    mpi.repository := FRepository.Link;
+    mpi.session := session.link;
+    mpi.Connection := FConnection.link;
+    mpi.key := key;
+    mpi.execute;
+    link := SEARCH_PARAM_NAME_ID+'='+id+'&'+mpi.link_;
+    sql := '..mpi..';
+  finally
+    mpi.free;
+  end;
+
+  total := FConnection.CountSQL('Select count(*) from SearchEntries where SearchKey = '+key);
+
+  FConnection.Sql := 'update Searches set Link = :l, SqlCode = :s, count = '+inttostr(total)+', Summary = '+inttostr(ord(summaryStatus))+' where SearchKey = '+key;
+  FConnection.Prepare;
+  try
+    FConnection.BindBlobFromString('l', link);
+    FConnection.BindBlobFromString('s', sql);
+    FConnection.Execute;
+  finally
+    FConnection.Terminate;
+  end;
+end;
+
+
+procedure TFhirOperationManager.processIncludes(session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundle; keys : TKeyList; field: String; comp: TFHIRParserClass);
 var
   s, sql : String;
   p : TArray<String>;
@@ -1863,7 +1940,7 @@ begin
     for i := 1 to sel.Count - 1 do
       sql := sql +' or ('+sel[i]+')';
 
-    sql := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, Types '+
+    sql := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, Types '+
           'where Ids.Deleted = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and Versions.SessionKey = Sessions.SessionKey and Versions.ResourceVersionKey = Ids.MostRecent and ('+sql+'))';
   finally
     sel.Free;
@@ -1874,7 +1951,7 @@ begin
   try
     FConnection.Execute;
     while FConnection.FetchNext do
-      AddResourceTobundle(bundle, '', field, comp, SearchEntryModeInclude, false, type_);
+      AddResourceTobundle(bundle, secure, '', field, comp, SearchEntryModeInclude, false, type_);
   finally
     FConnection.Terminate;
   end;
@@ -1903,7 +1980,7 @@ begin
      conformance
      quantity searches
     }
-    if not check(response, request.canRead(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if not check(response, request.canRead(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
       // ok := false
     else if (request.Parameters.getItemCount = 0) and (response.Format = ffXhtml) and (request.compartmentId = '') then
       BuildSearchForm(request, response)
@@ -1913,8 +1990,8 @@ begin
       if request.resourceType <> frtNull then
       begin
         key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+CODES_TFHIRResourceType[request.resourceType]+'''');
-        if not check(response, key > 0, 404, lang, 'Resource Type '+CODES_TFHIRResourceType[request.resourceType]+' not known') then
-          ok := false;
+        if not check(response, key > 0, 404, lang, 'Resource Type '+CODES_TFHIRResourceType[request.resourceType]+' not known', IssueTypeNotSupported) then
+            ok := false;
       end
       else
         key := 0;
@@ -1973,7 +2050,7 @@ begin
             if (not needsObject) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
               comp := nil;
 
-            FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
+            FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
                 'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id+' '+
                 'order by SortValue ASC';
             FConnection.Prepare;
@@ -1986,7 +2063,7 @@ begin
                 inc(i);
                 if (i > offset) then
                 begin
-                  AddResourceTobundle(bundle, request.baseUrl, field, comp, SearchEntryModeMatch, false, type_);
+                  AddResourceTobundle(bundle, request.secure, request.baseUrl, field, comp, SearchEntryModeMatch, false, type_);
                   keys.Add(TKeyPair.Create(type_, FConnection.ColStringByName['ResourceKey']));
                   inc(t);
                 end;
@@ -1997,7 +2074,7 @@ begin
               FConnection.Terminate;
             end;
 
-            processIncludes(request.session, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
+            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
           end;
 
           bundle.id := FhirGUIDToString(CreateGUID);
@@ -2033,6 +2110,7 @@ var
   s : String;
   tags : TFHIRTagList;
   ok : boolean;
+  needSecure : boolean;
   tnow : TDateTime;
   list : TMatchingResourceList;
 begin
@@ -2042,15 +2120,16 @@ begin
   key := 0;
   try
     ok := true;
-    if ok and not check(response, request.canWrite(request.ResourceType) or opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if ok and not check(response, request.canWrite(request.ResourceType) or opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
       ok := false;
 
-    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) or
-       not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang)) or
-       not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+'('+request.id +' / '+request.resource.id+')') or
-       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]))) then
+    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired) or
+       not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid) or
+       not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+'('+request.id +' / '+request.resource.id+')', IssueTypeInvalid) or
+       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), IssueTypeInvalid)) then
       ok := false;
 
+    ok := checkOkToStore(request, response, needSecure);
     if ok and FRepository.Validate and not upload then
     begin
       if not ExecuteValidation(request, response, 'Update Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/'+request.Id) then
@@ -2074,7 +2153,7 @@ begin
         if (list.Count > 1) then
         begin
           ok := false;
-          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang));
+          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), IssueTypeNotFound);
         end
         else
         begin
@@ -2086,9 +2165,9 @@ begin
       end;
     end;
 
-    if ok and not check(response, request.Resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)') Then
+    if ok and not check(response, request.Resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)', IssueTypeRequired) Then
       ok := false;
-    if ok and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)') Then
+    if ok and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)', IssueTypeInvalid) Then
       ok := false;
 
 
@@ -2102,7 +2181,7 @@ begin
     end;
 
 
-    if ok and not check(response, not FRepository.ResConfig[request.ResourceType].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang)) then
+    if ok and not check(response, not FRepository.ResConfig[request.ResourceType].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), IssueTypeBusinessRule) then
       ok := false;
 
 
@@ -2115,7 +2194,7 @@ begin
       begin
         s := request.IfMatch;
 
-        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s])) then
+        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), IssueTypeConflict) then
           ok := false;
       end;
     end;
@@ -2129,70 +2208,73 @@ begin
         tags.ReadTags(request.resource.meta);
         LoadTags(tags, ResourceKey);
         tags.writeTags(request.resource.meta);
-        request.Resource.meta.lastUpdated := NowUTC;
-        request.Resource.meta.versionId := inttostr(nvid);
-        CheckNotRedacted(request.Resource.meta, 'Updating Resource');
-        updateProvenance(request.Provenance, CODES_TFHIRResourceType[request.ResourceType], request.Id, inttostr(nvid));
-        tnow := request.Resource.meta.lastUpdated.AsUTCDateTime;
+        if checkOkToStore(request, response, needSecure) then
+        begin
+          request.Resource.meta.lastUpdated := NowUTC;
+          request.Resource.meta.versionId := inttostr(nvid);
+          CheckNotRedacted(request.Resource.meta, 'Updating Resource');
+          updateProvenance(request.Provenance, CODES_TFHIRResourceType[request.ResourceType], request.Id, inttostr(nvid));
+          tnow := request.Resource.meta.lastUpdated.AsUTCDateTime;
 
 
-        checkProposedContent(request, request.Resource, tags);
+          checkProposedContent(request, request.Resource, tags);
 
-        for i := 0 to tags.count - 1 do
-          FRepository.RegisterTag(tags[i], FConnection);
+          for i := 0 to tags.count - 1 do
+            FRepository.RegisterTag(tags[i], FConnection);
 
-        FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
+          FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
 
-        // check whether originalId matches?
-        // to do: merging
+          // check whether originalId matches?
+          // to do: merging
 
-        FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, TransactionDate, StatedDate, Format, VersionId, Status, '+
-          'SessionKey, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :tb, :xc, :xs, :jc, :js)';
-        FConnection.prepare;
-        try
-          FConnection.BindInteger('k', key);
-          FConnection.BindInteger('rk', resourceKey);
-          FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
-          FConnection.BindTimeStamp('sd', DateTimeToTS(tnow));
-          FConnection.BindString('v', inttostr(nvid));
-          request.SubId := inttostr(nvid);
-          if request.Session = nil then
-            FConnection.BindNull('s')
+          FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, TransactionDate, StatedDate, Format, VersionId, Status, '+
+            'SessionKey, Secure, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :sec, :tb, :xc, :xs, :jc, :js)';
+          FConnection.prepare;
+          try
+            FConnection.BindInteger('k', key);
+            FConnection.BindInteger('rk', resourceKey);
+            FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
+            FConnection.BindTimeStamp('sd', DateTimeToTS(tnow));
+            FConnection.BindString('v', inttostr(nvid));
+            FConnection.BindIntegerFromBoolean('sec', needSecure);
+            request.SubId := inttostr(nvid);
+            if request.Session = nil then
+              FConnection.BindNull('s')
+            else
+              FConnection.BindInteger('s', request.Session.Key);
+            FConnection.BindInteger('f', 2);
+            FConnection.BindBlobFromBytes('tb', tags.json);
+            FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
+            FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
+            markRedacted(request.Resource.meta);
+            FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
+            FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
+            unmarkRedacted(request.Resource.meta);
+            FConnection.Execute;
+          finally
+            FConnection.Terminate;
+          end;
+          FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
+          CommitTags(tags, key);
+          CreateIndexer;
+          FIndexer.execute(resourceKey, request.id, request.resource, tags);
+          FRepository.SeeResource(resourceKey, key, request.id, needSecure, false, request.Resource, FConnection, false, request.Session);
+
+          if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
+            response.bundle.entryList.add(request.Resource.Link)
           else
-            FConnection.BindInteger('s', request.Session.Key);
-          FConnection.BindInteger('f', 2);
-          FConnection.BindBlobFromBytes('tb', tags.json);
-          FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
-          FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
-          markRedacted(request.Resource.meta);
-          FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
-          FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
-          unmarkRedacted(request.Resource.meta);
-          FConnection.Execute;
-        finally
-          FConnection.Terminate;
+            response.Resource := request.Resource.Link;
+          response.versionId := inttostr(nvid);
+          response.HTTPCode := 200;
+          response.Message := 'OK';
+          response.lastModifiedDate := tnow;
+          response.Location := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.Id+'/_history/'+inttostr(nvid);
+          if request.Provenance <> nil then
+            SaveProvenance(request.Session, request.Provenance);
         end;
-        FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
-        CommitTags(tags, key);
-        CreateIndexer;
-        FIndexer.execute(resourceKey, request.id, request.resource, tags);
-        FRepository.SeeResource(resourceKey, key, request.id, false, request.Resource, FConnection, false, request.Session);
-
-        if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
-          response.bundle.entryList.add(request.Resource.Link)
-        else
-          response.Resource := request.Resource.Link;
-        response.versionId := inttostr(nvid);
-
       finally
         tags.free;
       end;
-      response.HTTPCode := 200;
-      response.Message := 'OK';
-      response.lastModifiedDate := tnow;
-      response.Location := request.baseUrl+CODES_TFhirResourceType[request.ResourceType]+'/'+request.Id+'/_history/'+inttostr(nvid);
-      if request.Provenance <> nil then
-        SaveProvenance(request.Session, request.Provenance);
     end;
     AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
@@ -2212,6 +2294,7 @@ var
   s : String;
   tags : TFHIRTagList;
   ok : boolean;
+  needSecure : boolean;
   tnow : TDateTime;
   list : TMatchingResourceList;
   parser : TFHIRJsonParser;
@@ -2222,18 +2305,18 @@ begin
   key := 0;
   try
     ok := true;
-    if ok and not check(response, request.canWrite(request.ResourceType) or opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if ok and not check(response, request.canWrite(request.ResourceType) or opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
       ok := false;
 
-    if ok and (not check(response, request.patch <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) or
-       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]))) then
+    if ok and (not check(response, request.patch <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired) or
+       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), IssueTypeInvalid)) then
       ok := false;
 
     if ok and request.DefaultSearch then // conditional update
     begin
       list := ResolveSearchId(request.ResourceType, request.compartmentId, request.compartments, request.baseUrl, request.Parameters.Source);
       try
-        if check(response, list.count = 1, 412, lang, GetFhirMessage('UPDATE_NOT_ONE_MATCH', lang)) then
+        if check(response, list.count = 1, 412, lang, GetFhirMessage('UPDATE_NOT_ONE_MATCH', lang), IssueTypeNotFound) then
           request.Id := list[0].name
         else
           ok := false;
@@ -2246,7 +2329,7 @@ begin
       if not FindResource(request.ResourceType, request.Id, true, resourceKey, request, response, request.compartments) Then
         ok := false;
 
-    if ok and not check(response, not FRepository.ResConfig[request.ResourceType].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang)) then
+    if ok and not check(response, not FRepository.ResConfig[request.ResourceType].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), IssueTypeBusinessRule) then
       ok := false;
 
 
@@ -2259,17 +2342,17 @@ begin
       begin
         s := request.IfMatch;
 
-        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s])) then
+        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), IssueTypeConflict) then
           ok := false;
       end;
     end;
 
     // ok, now time to actually get the resource, so we can patch it
-    FConnection.SQL := 'Select StatedDate, VersionId, JsonContent from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
+    FConnection.SQL := 'Select Secure, StatedDate, VersionId, JsonContent from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
     FConnection.Prepare;
     try
       FConnection.Execute;
-      if check(response, FConnection.FetchNext, 500, lang, 'Not Found internally') then
+      if check(response, FConnection.FetchNext, 500, lang, 'Not Found internally', IssueTypeNotFound) then
         json := TJSONParser.Parse(FConnection.ColBlobByName['JsonContent'])
       else
         ok := false;
@@ -2305,6 +2388,7 @@ begin
 
       // ok, now we have a resource.....
       CheckCreateNarrative(request);
+      ok := checkOkToStore(request, response, needSecure);
       if ok and FRepository.Validate then
       begin
         if not ExecuteValidation(request, response, 'Update Resource '+CODES_TFHIRResourceType[request.ResourceType]+'/'+request.Id) then
@@ -2313,11 +2397,11 @@ begin
         response.Resource := nil;
       end;
 
-      if ok and not check(response, request.resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)') Then
+      if ok and not check(response, request.resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)', IssueTypeRequired) Then
         ok := false;
-      if ok and not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang)) then
+      if ok and not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid) then
         ok := false;
-      if ok and not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)') Then
+      if ok and not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)', IssueTypeInvalid) Then
         ok := false;
 
       if ok then
@@ -2330,9 +2414,10 @@ begin
           tags.ReadTags(request.resource.meta);
           LoadTags(tags, ResourceKey);
           tags.writeTags(request.resource.meta);
+          // don't need to recheck the approval on the tags, they must already have been loaded before the earlier check
           request.resource.meta.lastUpdated := NowUTC;
           request.resource.meta.versionId := inttostr(nvid);
-          CheckNotRedacted(request.resource.meta, 'Updating Resource');
+          CheckNotRedacted(request.resource.meta, 'Patching Resource');
           updateProvenance(request.Provenance, CODES_TFHIRResourceType[request.ResourceType], request.Id, inttostr(nvid));
           tnow := request.resource.meta.lastUpdated.AsUTCDateTime;
 
@@ -2342,7 +2427,7 @@ begin
           FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
 
           FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, TransactionDate, StatedDate, Format, VersionId, Status, '+
-            'SessionKey, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :tb, :xc, :xs, :jc, :js)';
+            'SessionKey, Secure, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :sec, :tb, :xc, :xs, :jc, :js)';
           FConnection.prepare;
           try
             FConnection.BindInteger('k', key);
@@ -2350,6 +2435,7 @@ begin
             FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
             FConnection.BindTimeStamp('sd', DateTimeToTS(tnow));
             FConnection.BindString('v', inttostr(nvid));
+            FConnection.BindIntegerFromBoolean('sec', needSecure);
             request.SubId := inttostr(nvid);
             if request.Session = nil then
               FConnection.BindNull('s')
@@ -2371,7 +2457,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags);
-          FRepository.SeeResource(resourceKey, key, request.id, false, request.resource, FConnection, false, request.Session);
+          FRepository.SeeResource(resourceKey, key, request.id, needSecure, false, request.resource, FConnection, false, request.Session);
 
           if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
             response.bundle.entryList.add(request.resource.Link)
@@ -2480,21 +2566,23 @@ var
 begin
   try
     NotFound(request, response);
-    if check(response, request.canRead(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if check(response, request.canRead(request.ResourceType) and opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (length(request.id) <= ID_LENGTH) and (length(request.subid) <= ID_LENGTH) and FindResource(request.ResourceType, request.Id, true, resourceKey, request, response, request.compartments) then
       begin
         VersionNotFound(request, response);
         chooseField(response.Format, request.Summary, field, comp, needsObject);
 
-        FConnection.SQL := 'Select VersionId, StatedDate, '+field+' from Versions where ResourceKey = '+inttostr(resourceKey)+' and VersionId = :v';
+        FConnection.SQL := 'Select Secure, VersionId, StatedDate, '+field+' from Versions where ResourceKey = '+inttostr(resourceKey)+' and VersionId = :v';
         FConnection.Prepare;
         try
           FConnection.BindString('v', request.SubId);
           FConnection.Execute;
           if FConnection.FetchNext then
           Begin
-            if (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
+            if (FConnection.ColIntegerByName['Secure'] = 1) and not request.secure then
+              check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed)
+            else if (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
             begin
               response.HTTPCode := 304;
               response.Message := 'Not Modified';
@@ -2556,12 +2644,12 @@ begin
     else
     begin
       if response <> nil then
-        check(response, false, 410, lang, StringFormat(GetFhirMessage('MSG_DELETED_ID', lang), [request.id]));
+        check(response, false, 410, lang, StringFormat(GetFhirMessage('MSG_DELETED_ID', lang), [request.id]), IssueTypeNotFound);
       result := false;
     end;
   end
   else if response <> nil then
-    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [CODES_TFHIRResourceType[request.ResourceType]+'/'+request.id]));
+    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [CODES_TFHIRResourceType[request.ResourceType]+'/'+request.id]), IssueTypeNotFound);
   FConnection.terminate;
 end;
 
@@ -2687,6 +2775,65 @@ procedure TFhirOperationManager.checkNotRedacted(meta: TFhirMeta; msg: String);
 begin
   if meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'REDACTED') then
     raise Exception.Create('Error '+msg+': This resource has been redacted, and cannot be used as the basis for this operation');
+end;
+
+function TFhirOperationManager.hasActCodeSecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
+var
+  c : TFhirCoding;
+begin
+  result := false;
+  if (res <> nil) and (res.meta <> nil) then
+    for c in res.meta.securityList do
+      if (c.system = 'http://hl7.org/fhir/v3/ActCode') and StringArrayExistsSensitive(codes, c.code) then
+        exit(true);
+end;
+
+function TFhirOperationManager.hasConfidentialitySecurityLabel(res: TFHIRResource; codes: array of string): boolean;
+var
+  c : TFhirCoding;
+begin
+  result := false;
+  if (res <> nil) and (res.meta <> nil) then
+    for c in res.meta.securityList do
+      if (c.system = 'http://hl7.org/fhir/v3/Confidentiality') and StringArrayExistsSensitive(codes, c.code) then
+        exit(true);
+end;
+
+function TFhirOperationManager.isOkToDeleteSecurityLabel(request: TFHIRRequest; response: TFHIRResponse; c: TFHIRCoding): boolean;
+begin
+  if c = nil then
+    exit(true);
+
+  result := check(response, request.secure or (c.system <> 'http://hl7.org/fhir/v3/ActCode') or not
+    StringArrayExistsSensitive(['CPLYCD', 'CPLYJPP', 'CPLYOPP', 'CPLYOSP', 'CPLYPOL', 'ENCRYPT', 'ENCRYPTR', 'ENCRYPTT', 'ENCRYPTU',
+                'ETH', 'GDIS', 'HIV', 'PSY', 'SCA', 'SDV', 'SEX', 'STD', 'TBOO', 'SICKLE', 'DEMO', 'DOB', 'GENDER', 'LIVARG', 'MARST', 'RACE', 'REL',
+                'B', 'EMPL', 'LOCIS', 'SSP', 'ADOL', 'CEL', 'DIA', 'DRGIS', 'EMP', 'PDS', 'PRS'], c.code),
+        403, lang, 'This security label can only be deleted on a secure connection', IssueTypeSuppressed);
+  if result then
+    result := check(response, request.secure or (c.system <> 'http://hl7.org/fhir/v3/Confidentiality') or not
+            StringArrayExistsSensitive(['L', 'M', 'N', 'R', 'U', 'V', 'B', 'D', 'I', 'ETH', 'HIV', 'PSY', 'SDV', 'C', 'S', 'T'], c.code),
+        403, lang, 'This security label can only be deleted on a secure connection', IssueTypeSuppressed);
+end;
+
+function TFhirOperationManager.checkOkToStore(request: TFHIRRequest; response: TFHIRResponse; var secure : boolean): boolean;
+begin
+  // check the security labels
+  secure := false;
+  result := check(response,
+      not hasActCodeSecurityLabel(request.Resource, ['CPLYCD', 'CPLYJPP', 'CPLYOPP', 'CPLYOSP', 'CPLYPOL']),
+        403, lang, 'This resource is labelled with a security tag that requires compliance with a policy, but no policy is known', IssueTypeNotSupported);
+  if result then
+    if hasActCodeSecurityLabel(request.Resource, ['ENCRYPT', 'ENCRYPTR', 'ENCRYPTT', 'ENCRYPTU']) then
+    begin
+      secure := true;
+      result := check(response, request.secure, 403, lang, 'This resource is labelled with a security tag that requires encryption, but encryption was not used', IssueTypeBusinessRule);
+    end;
+  // extra conditions
+  if result and not secure then
+    secure :=
+      hasActCodeSecurityLabel(request.Resource, ['ETH', 'GDIS', 'HIV', 'PSY', 'SCA', 'SDV', 'SEX', 'STD', 'TBOO', 'SICKLE', 'DEMO', 'DOB', 'GENDER', 'LIVARG',
+                  'MARST', 'RACE', 'REL', 'B', 'EMPL', 'LOCIS', 'SSP', 'ADOL', 'CEL', 'DIA', 'DRGIS', 'EMP', 'PDS', 'PRS']) or
+      hasConfidentialitySecurityLabel(request.Resource, ['R', 'U', 'V', 'B', 'D', 'I', 'ETH', 'HIV', 'PSY', 'SDV', 'C', 'S', 'T']);
 end;
 
 procedure TFhirOperationManager.markRedacted(meta: TFhirMeta);
@@ -2878,13 +3025,13 @@ var
 begin
   try
     ok := true;
-    if not check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if not check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
       ok := false;
 
-    if ok and not check(response, request.canWrite(request.ResourceType) and (request.Resource <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang)) then
+    if ok and not check(response, request.canWrite(request.ResourceType) and (request.Resource <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired) then
       ok := false;
     if ok and (request.Resource <> nil) then
-      if not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang)) then
+      if not check(response, request.ResourceType = request.resource.ResourceType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid) then
         ok := false;
     // todo: check version id integrity
     // todo: check version integrity
@@ -3494,7 +3641,7 @@ begin
   else if response.Resource is TFhirOperationOutcome then
     result := false
   else
-    result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message);
+    result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message, IssueTypeNull);
   ne := id.entry;
   ne.resource := response.resource.Link;
   ne.response := TFhirBundleEntryResponse.Create;
@@ -3527,9 +3674,9 @@ var
 begin
   try
     ok := true;
-    if not check(response, FRepository.SupportTransaction, 405, lang, 'Transaction Operations not allowed') then
+    if not check(response, FRepository.SupportTransaction, 405, lang, 'Transaction Operations not allowed', IssueTypeNotSupported) then
       ok := false;
-    if ok and not check(response, request.Resource is TFhirBundle, 400, lang, 'A bundle is required for a Transaction operation') then
+    if ok and not check(response, request.Resource is TFhirBundle, 400, lang, 'A bundle is required for a Transaction operation', IssueTypeInvalid) then
       ok := false;
 
     if ok then
@@ -3907,8 +4054,8 @@ begin
       FConnection.Execute;
       if FConnection.FetchNext then
       begin
-        s := FConnection.ColBlobByName['XmlContent'];
-        parser := MakeParser(lang, ffXml, s, xppDrop);
+        s := FConnection.ColBlobByName['JsonContent'];
+        parser := MakeParser(lang, ffJson, s, xppDrop);
         try
           result := TResourceWithReference.Create(id, parser.resource.Link);
         finally
@@ -3933,7 +4080,7 @@ end;
 //begin
 //  try
 //    NotFound(request, response);
-//    if check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+//    if check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
 //    begin
 //      if FindResource(request.ResourceType, request.Id, false, resourceKey, request, response, request.compartments) then
 //      begin
@@ -4011,7 +4158,7 @@ begin
   if result then
     resourceVersionKey := FConnection.ColIntegerByName['ResourceVersionKey']
   else
-    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.subid]));
+    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.subid]), IssueTypeNotFound);
   FConnection.terminate;
 end;
 
@@ -4060,7 +4207,7 @@ var
 //begin
 //  try
 //    NotFound(request, response);
-//    if check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+//    if check(response, opAllowed(request.ResourceType, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
 //    begin
 //      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and FindResource(frtStructureDefinition, request.Id, false, resourceKey, request, response, request.compartments)) then
 //      begin
@@ -4149,19 +4296,19 @@ var
 //end;
 //
 
-function TFhirOperationManager.GetResourceByUrl(aType : TFhirResourceType; url, version: String): TFHIRResource;
+function TFhirOperationManager.GetResourceByUrl(aType : TFhirResourceType; url, version: String; var needSecure : boolean): TFHIRResource;
 var
   s : TBytes;
   parser : TFHIRParser;
 begin
   if version <> '' then
-    FConnection.SQL := 'Select * from Versions where '+
+    FConnection.SQL := 'Select Secure, JsonContent from Versions where '+
       'ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and IndexKey in (Select IndexKey from Indexes where name = ''identifier'') and Value = :id) '+
       'and ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and IndexKey in (Select IndexKey from Indexes where name = ''version'') and Value = :ver) '+
       'and ResourceVersionKey in (select MostRecent from Ids) '+
       'order by ResourceVersionKey desc'
   else
-    FConnection.SQL := 'Select * from Versions where '+
+    FConnection.SQL := 'Select Secure, JsonContent from Versions where '+
       'ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and IndexKey in (Select IndexKey from Indexes where name = ''url'') and Value = :id) '+
       'and ResourceVersionKey in (select MostRecent from Ids) '+
       'order by ResourceVersionKey desc';
@@ -4173,10 +4320,11 @@ begin
     FConnection.Execute;
     if not FConnection.FetchNext then
       raise Exception.create('Unknown '+CODES_TFHIRResourceType[aType]+' '+url);
+    needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
     parser := MakeParser(lang, ffJson, s, xppDrop);
     try
-      result := parser.resource.Link as TFHIRValueSet;
+      result := parser.resource.Link as TFHIRResource;
       try
         if FConnection.FetchNext then
           raise Exception.create('Found multiple matches for '+CODES_TFHIRResourceType[aType]+' '+url+'. Pick one by the resource id');
@@ -4192,14 +4340,14 @@ begin
   end;
 end;
 
-function TFhirOperationManager.GetResourcesByParam(aType : TFhirResourceType; name, value: String): TAdvList<TFHIRResource>;
+function TFhirOperationManager.GetResourcesByParam(aType : TFhirResourceType; name, value: String; var needSecure : boolean): TAdvList<TFHIRResource>;
 var
   s : TBytes;
   parser : TFHIRParser;
 begin
   result := TAdvList<TFHIRResource>.create;
   try
-    FConnection.SQL := 'Select * from Versions where '+
+    FConnection.SQL := 'Select Secure, JsonContent from Versions where '+
       'ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and IndexKey in (Select IndexKey from Indexes where name = '''+name+''') and Value = :v) '+
       'and ResourceVersionKey in (select MostRecent from Ids) '+
         'order by ResourceVersionKey desc';
@@ -4210,6 +4358,7 @@ begin
       while FConnection.FetchNext do
       begin
         s := FConnection.ColBlobByName['JsonContent'];
+        needSecure := FConnection.ColIntegerByName['Secure'] = 1;
         parser := MakeParser(lang, ffJson, s, xppDrop);
         try
           result.Add(parser.resource.Link);
@@ -4227,7 +4376,7 @@ begin
 end;
 
 
-function TFhirOperationManager.GetResourceById(request: TFHIRRequest; aType : TFhirResourceType; id, base: String): TFHIRResource;
+function TFhirOperationManager.GetResourceById(request: TFHIRRequest; aType : TFhirResourceType; id, base: String; var needSecure : boolean): TFHIRResource;
 var
   resourceKey : integer;
   parser : TFHIRParser;
@@ -4244,13 +4393,14 @@ begin
 
   if (length(id) <= ID_LENGTH) and FindResource(aType, id, false, resourceKey, request, nil, '') then
   begin
-    FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
+    FConnection.SQL := 'Select Secure, JsonContent from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
     FConnection.Prepare;
     try
       FConnection.Execute;
       if FConnection.FetchNext then
       begin
         s := FConnection.ColBlobByName['JsonContent'];
+        needSecure := FConnection.ColIntegerByName['Secure'] = 1;
         parser := MakeParser(lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
@@ -4269,19 +4419,20 @@ begin
 
 end;
 
-function TFhirOperationManager.GetResourceByKey(key: integer): TFHIRResource;
+function TFhirOperationManager.GetResourceByKey(key: integer; var needSecure : boolean): TFHIRResource;
 var
   parser : TFHIRParser;
   s : TBytes;
 begin
-  FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(key)+' order by ResourceVersionKey desc';
+  FConnection.SQL := 'Select Secure, JsonContent from Versions where ResourceKey = '+inttostr(key)+' order by ResourceVersionKey desc';
   FConnection.Prepare;
   try
     FConnection.Execute;
     if FConnection.FetchNext then
     begin
-      s := FConnection.ColBlobByName['XmlContent'];
-      parser := MakeParser(lang, ffXml, s, xppDrop);
+      needSecure := FConnection.ColIntegerByName['Secure'] = 1;
+      s := FConnection.ColBlobByName['JsonContent'];
+      parser := MakeParser(lang, ffJson, s, xppDrop);
       try
         result := parser.resource.Link;
       finally
@@ -4295,7 +4446,7 @@ begin
   end;
 end;
 
-function TFhirOperationManager.getResourceByReference(url, compartments: string): TFHIRResource;
+function TFhirOperationManager.getResourceByReference(url, compartments: string; var needSecure : boolean): TFHIRResource;
 var
   parser : TFHIRParser;
   s : TBytes;
@@ -4325,14 +4476,15 @@ begin
 
   if FindResource(rtype, id, false, key, nil, nil, compartments) then
   begin
-    FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(key)+' order by ResourceVersionKey desc';
+    FConnection.SQL := 'Select Secure, JsonContent from Versions where ResourceKey = '+inttostr(key)+' order by ResourceVersionKey desc';
     FConnection.Prepare;
     try
       FConnection.Execute;
       if FConnection.FetchNext then
       begin
-        s := FConnection.ColBlobByName['XmlContent'];
-        parser := MakeParser(lang, ffXml, s, xppDrop);
+        s := FConnection.ColBlobByName['JsonContent'];
+        needSecure := FConnection.ColIntegerByName['Secure'] = 1;
+        parser := MakeParser(lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
         finally
@@ -4666,7 +4818,7 @@ begin
       begin
         tags := TFHIRTagList.create;
         try
-          parser := MakeParser('en', ffXml, Connection.ColMemoryByName['XmlContent'], xppDrop);
+          parser := MakeParser('en', ffJson, Connection.ColMemoryByName['JsonContent'], xppDrop);
           try
             r := parser.resource;
             FConnection.terminate;
@@ -5365,10 +5517,11 @@ var
   id, fid : String;
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
+  needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, request.Session.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, request.Session.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(frtStructureDefinition, request.Id, false, resourceKey, request, response, request.compartments)) then
       begin
@@ -5377,9 +5530,9 @@ begin
           // first, we have to identify the structure definition
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
-            profile := manager.GetResourceById(request, frtStructureDefinition, request.Id, request.baseUrl) as TFhirStructureDefinition
+            profile := manager.GetResourceById(request, frtStructureDefinition, request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
           else if request.Parameters.VarExists('identifier') then
-            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '') as TFhirStructureDefinition
+            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -5484,14 +5637,16 @@ begin
 end;
 
 function TFhirExpandValueSetOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFhirOperationManager; params: TFhirParameters): TFHIRExpansionProfile;
+var
+  needSecure : boolean;
 begin
   {$IFDEF DSTU21}
   if (params.str['profile'] = '') then
     result := TFhirExpansionProfile.Create
   else if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
-    result := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '') as TFhirExpansionProfile
+    result := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', needSecure) as TFhirExpansionProfile
   else
-    result := manager.GetResourceById(request, frtExpansionProfile, params.str['profile'], request.baseUrl) as TFhirExpansionProfile;
+    result := manager.GetResourceById(request, frtExpansionProfile, params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile;
   {$ELSE}
   result := TFhirExpansionProfile.Create;
   result.includeDefinition := (params.str['profile'] <> 'http://www.healthintersections.com.au/fhir/expansion/no-details');
@@ -5513,10 +5668,11 @@ var
   profile : TFhirExpansionProfile;
   limit, count, offset : integer;
   params : TFhirParameters;
+  needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceType, request.Id, false, resourceKey, request, response, request.compartments)) then
       begin
@@ -5527,18 +5683,18 @@ begin
           // first, we have to identify the value set.
           if request.Id <> '' then // and it must exist, because of the check above
           begin
-            vs := manager.GetResourceById(request, frtValueSet, request.Id, request.baseUrl) as TFHIRValueSet;
+            vs := manager.GetResourceById(request, frtValueSet, request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('identifier') then
           begin
             url := params.str['identifier'];
             if (url.startsWith('ValueSet/')) then
-              vs := manager.GetResourceById(request, frtValueSet, url.substring(9), request.baseUrl) as TFHIRValueSet
+              vs := manager.GetResourceById(request, frtValueSet, url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
-              vs := manager.GetResourceById(request, frtValueSet, url.substring(9), request.baseUrl) as TFHIRValueSet
+              vs := manager.GetResourceById(request, frtValueSet, url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if not manager.FRepository.TerminologyServer.isKnownValueSet(url, vs) then
-              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('identifier'), request.Parameters.getvar('version')) as TFHIRValueSet;
+              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('identifier'), request.Parameters.getvar('version'), needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('valueSet') then
@@ -5630,7 +5786,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (request.id <> '') then
         raise Exception.Create('Lookup does not take an identified value set');
@@ -5726,6 +5882,7 @@ var
   profile : TFHirStructureDefinition;
   opDesc : string;
   result : boolean;
+  needSecure : boolean;
   function getParam(name : String) : String;
   var
     params : TFhirParameters;
@@ -5751,13 +5908,13 @@ begin
       raise Exception.Create('Mode parameter is not (yet) supported');
 
     if StringStartsWith(ProfileId, 'http://localhost/Profile/') then
-      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, 27, $FF), request.baseUrl) as TFhirStructureDefinition
+      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, 27, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
     else if StringStartsWith(ProfileId, 'Profile/') then
-      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, 9, $FF), request.baseUrl) as TFhirStructureDefinition
+      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, 9, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
     else if StringStartsWith(ProfileId, request.baseUrl+'Profile/') then
-      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, length(request.baseUrl)+9, $FF), request.baseUrl) as TFhirStructureDefinition
+      profile := manager.GetResourceById(request, frtStructureDefinition, copy(ProfileId, length(request.baseUrl)+9, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
     else if (profileId <> '') then
-      profile := manager.GetResourceByURL(frtStructureDefinition, profileId, '') as TFhirStructureDefinition;
+      profile := manager.GetResourceByURL(frtStructureDefinition, profileId, '', needSecure) as TFhirStructureDefinition;
 
     if Profile <> nil then
       opDesc := 'Validate resource '+request.id+' against profile '+profileId
@@ -5869,10 +6026,11 @@ var
   coding : TFhirCoding;
   abstractOk : boolean;
   params : TFhirParameters;
+  needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceType, request.Id, false, resourceKey, request, response, request.compartments)) then
       begin
@@ -5884,13 +6042,13 @@ begin
             // first, we have to identify the value set.
             if request.Id <> '' then // and it must exist, because of the check above
             begin
-              vs := manager.GetResourceById(request, frtValueSet, request.Id, request.baseUrl) as TFHIRValueSet;
+              vs := manager.GetResourceById(request, frtValueSet, request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
               cacheId := vs.url;
             end
             else if params.hasParameter('identifier') then
             begin
               if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['identifier'], vs) then
-                vs := manager.GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version']) as TFHIRValueSet;
+                vs := manager.GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version'], needSecure) as TFHIRValueSet;
               cacheId := vs.url;
             end
             else if params.hasParameter('valueSet') then
@@ -6071,7 +6229,7 @@ begin
           bundle.Tags['sql'] := sql;
           manager.chooseField(response.Format, wantsummary, field, prsr, needsObject);
 
-          manager.FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
+          manager.FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
               'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+'and SearchEntries.ResourceKey = Ids.ResourceKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and SearchEntries.SearchKey = '+id+' '+
               'order by SortValue ASC';
           manager.FConnection.Prepare;
@@ -6079,7 +6237,7 @@ begin
             manager.FConnection.Execute;
             while manager.FConnection.FetchNext do
             Begin
-              entry := manager.AddResourceTobundle(bundle, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_);
+              entry := manager.AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_);
               keys.Add(TKeyPair.create(type_, manager.FConnection.ColStringByName['ResourceKey']));
 
               if request.Parameters.VarExists('_include') then
@@ -6103,7 +6261,7 @@ begin
 //          //now, add the includes
 //          if includes.Count > 0 then
 //          begin
-//            manager.FConnection.SQL := 'Select ResourceTypeKey, Ids.Id, VersionId, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Sessions, Ids '+
+//            manager.FConnection.SQL := 'Select ResourceTypeKey, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Sessions, Ids '+
 //                'where Ids.Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+
 //                'and Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+includes.asSql+') order by ResourceVersionKey DESC';
 //            manager.FConnection.Prepare;
@@ -6165,16 +6323,25 @@ end;
 
 { TFhirGenerateDocumentOperation }
 
-procedure TFhirGenerateDocumentOperation.addResource(manager: TFhirOperationManager; bundle: TFHIRBundle; reference: TFhirReference; required: boolean; compartments : String);
+procedure TFhirGenerateDocumentOperation.addResource(manager: TFhirOperationManager; secure : boolean; bundle: TFHIRBundle; reference: TFhirReference; required: boolean; compartments : String);
 var
   res : TFHIRResource;
+  needSecure : boolean;
 begin
   if reference = nil then
     exit;
-  res := manager.getResourceByReference(reference.reference, compartments);
+  res := manager.getResourceByReference(reference.reference, compartments, needSecure);
   try
     if res <> nil then
-      bundle.entryList.Append.resource := res.Link
+    begin
+      if needSecure and not secure then
+      begin
+        if required then
+          raise ERestfulException.Create('TFhirGenerateDocumentOperation', 'Execute', 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', 403, IssueTypeSuppressed);
+      end
+      else
+        bundle.entryList.Append.resource := res.Link
+    end
     else if required then
       raise Exception.Create('Unable to resolve reference '''+reference.reference+'''');
   finally
@@ -6182,16 +6349,16 @@ begin
   end;
 end;
 
-procedure TFhirGenerateDocumentOperation.addSections(manager: TFhirOperationManager; bundle: TFHIRBundle; sections: TFhirCompositionSectionList; compartments : String);
+procedure TFhirGenerateDocumentOperation.addSections(manager: TFhirOperationManager; secure : boolean; bundle: TFHIRBundle; sections: TFhirCompositionSectionList; compartments : String);
 var
   i, j : integer;
 begin
   for i := 0 to sections.Count - 1 do
   begin
     for j := 0 to sections[i].entryList.Count - 1 do
-      addResource(manager, bundle, sections[i].entryList[j], true, compartments);
+      addResource(manager, secure, bundle, sections[i].entryList[j], true, compartments);
     if (sections[i].hasSectionList) then
-      addSections(manager, bundle, sections[i].sectionList, compartments);
+      addSections(manager, secure, bundle, sections[i].sectionList, compartments);
   end;
 end;
 
@@ -6224,17 +6391,20 @@ var
   bundle : TFhirBundle;
   resourceKey : integer;
   i, j : integer;
+  needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if manager.FindResource(request.ResourceType, request.Id, false, resourceKey, request, response, request.compartments) then
       begin
-        composition := manager.GetResourceByKey(resourceKey) as TFhirComposition;
+        composition := manager.GetResourceByKey(resourceKey, needSecure) as TFhirComposition;
         try
           composition.checkNoImplicitRules('GenerateDocument', 'composition');
           composition.checkNoModifiers('GenerateDocument', 'composition');
+          if needSecure and not request.secure then
+            raise ERestfulException.Create('TFhirGenerateDocumentOperation', 'Execute', 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', 403, IssueTypeSuppressed);
 
           bundle := TFhirBundle.Create(BundleTypeDocument);
           try
@@ -6243,19 +6413,18 @@ begin
             bundle.meta.lastUpdated := NowUTC;
 //            bundle.base := manager.FRepository.FormalURLPlain;
             bundle.entryList.Append.resource := composition.Link;
-            addResource(manager, bundle, composition.subject, true, request.compartments);
-            addSections(manager, bundle, composition.sectionList, request.compartments);
+            addResource(manager, request.secure, bundle, composition.subject, true, request.compartments);
+            addSections(manager, request.secure, bundle, composition.sectionList, request.compartments);
 
             for i := 0 to composition.authorList.Count - 1 do
-              addResource(manager, bundle, composition.authorList[i], false, request.compartments);
+              addResource(manager, request.secure, bundle, composition.authorList[i], false, request.compartments);
             for i := 0 to composition.attesterList.Count - 1 do
-              addResource(manager, bundle, composition.attesterList[i].party, false, request.compartments);
-            addResource(manager, bundle, composition.custodian, false, request.compartments);
+              addResource(manager, request.secure, bundle, composition.attesterList[i].party, false, request.compartments);
+            addResource(manager, request.secure, bundle, composition.custodian, false, request.compartments);
             for i := 0 to composition.eventList.Count - 1 do
               for j := 0 to composition.eventList[i].detailList.Count - 1 do
-                addResource(manager, bundle, composition.eventList[i].detailList[j], false, request.compartments);
-            addResource(manager, bundle, composition.encounter, false, request.compartments);
-
+                addResource(manager, request.secure, bundle, composition.eventList[i].detailList[j], false, request.compartments);
+            addResource(manager, request.secure, bundle, composition.encounter, false, request.compartments);
 
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -6322,10 +6491,11 @@ var
   params : TFhirParameters;
   claim : TFhirClaim;
   resp : TFhirClaimResponse;
+  needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceType, request.Id, false, resourceKey, request, response, request.compartments)) then
       begin
@@ -6334,7 +6504,7 @@ begin
         try
           // first, we have to identify the value set.
           if request.Id <> '' then // and it must exist, because of the check above
-            claim := manager.GetResourceById(request, frtClaim, request.Id, request.baseUrl) as TFhirClaim
+            claim := manager.GetResourceById(request, frtClaim, request.Id, request.baseUrl, needSecure) as TFhirClaim
 //          else if request.Parameters.VarExists('identifier') then
 //          begin
 //            url := request.Parameters.getvar('identifier');
@@ -6439,10 +6609,11 @@ var
   coding : TFhirCoding;
 //  abstractOk : boolean;
   params : TFhirParameters;
+  needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (request.id = '') then // or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceType, request.Id, false, resourceKey, request, response, request.compartments)) then
       begin
@@ -6454,10 +6625,10 @@ begin
             // first, we have to identify the value sets
             if params.hasParameter('valueset') then
               if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['valueset'], vsS) then
-                vsS := manager.GetResourceByUrl(frtValueSet, params.str['valueset'], params.str['version']) as TFhirValueSet;
+                vsS := manager.GetResourceByUrl(frtValueSet, params.str['valueset'], params.str['version'], needSecure) as TFhirValueSet;
             if params.hasParameter('target') then
               if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['target'], vsS) then
-                vsS := manager.GetResourceByUrl(frtValueSet, params.str['target'], params.str['targetversion']) as TFhirValueSet;
+                vsS := manager.GetResourceByUrl(frtValueSet, params.str['target'], params.str['targetversion'], needSecure) as TFhirValueSet;
             if vst = nil then
               raise Exception.Create('Unable to find target value set (not provided by id, identifier, or directly)');
 
@@ -6571,7 +6742,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       sdParam := nil;
       sdBase := nil;
@@ -6814,6 +6985,7 @@ var
   id : TFhirIdentifier;
   r : TFHIRResource;
   card : TCDSHookCard;
+  needSecure : boolean;
 begin
   id := nil;
   for r in req.context do
@@ -6827,7 +6999,7 @@ begin
 
   if (id.system <> '') then
   begin
-    systems := Manager.getResourcesByParam(frtNamingSystem, 'value', id.system);
+    systems := Manager.getResourcesByParam(frtNamingSystem, 'value', id.system, needSecure);
     try
       for r in systems do
         addNamingSystemInfo(r as TFHIRNamingSystem, request.baseUrl, resp);
@@ -6893,12 +7065,13 @@ var
   flag : TFhirFlag;
   i : integer;
   card : TCDSHookCard;
+  needSecure : boolean;
 begin
   patient := nil;
   try
     // first, do we know the patient?
     if manager.FindResource(frtPatient, context.id, false, resourceKey, request, nil, request.compartments) then
-      patient := manager.GetResourceById(request, frtPatient, context.Id, request.baseUrl) as TFHIRPatient
+      patient := manager.GetResourceById(request, frtPatient, context.Id, request.baseUrl, needSecure) as TFHIRPatient
     else if context <> nil then
     begin
       matches := TMatchingResourceList.create;
@@ -6913,19 +7086,19 @@ begin
           end;
         end;
         if matches.Count = 1 then
-          patient := manager.GetResourceByKey(matches[0].key) as TFhirPatient;
+          patient := manager.GetResourceByKey(matches[0].key, needSecure) as TFhirPatient;
       finally
         matches.Free;
       end;
     end;
-    if (patient <> nil) then
+    if (patient <> nil) and (request.secure or not needSecure)  then
     begin
       m := manager.ResolveSearchId(frtFlag, request.compartmentId, request.compartments, request.baseURL, 'patient='+patient.id);
       try
         for i := 0 to m.Count - 1 do
         begin
-          flag := manager.GetResourceByKey(m[i].key) as TFhirFlag;
-          if flag.status = FlagStatusActive then
+          flag := manager.GetResourceByKey(m[i].key, needSecure) as TFhirFlag;
+          if (flag.status = FlagStatusActive) and (request.secure or not needSecure) then
           begin
             card := resp.addCard;
             card.indicator := 'info';
@@ -6969,10 +7142,11 @@ var
   builder : TProfileUtilities;
   template : TFHIRResource;
   narr : TFHIRNarrativeGenerator;
+  needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, request.Session.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, request.Session.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(frtStructureDefinition, request.Id, false, resourceKey, request, response, request.compartments)) then
       begin
@@ -6981,9 +7155,9 @@ begin
           // first, we have to identify the structure definition
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
-            profile := manager.GetResourceById(request, frtStructureDefinition, request.Id, request.baseUrl) as TFhirStructureDefinition
+            profile := manager.GetResourceById(request, frtStructureDefinition, request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
           else if request.Parameters.VarExists('identifier') then
-            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '') as TFhirStructureDefinition
+            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -7164,7 +7338,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
     begin
       res := TFHIRParameters.Create;
       params := makeParams(request);
@@ -7325,14 +7499,14 @@ begin
     end
     else if request.Id = '' then
     begin
-      if not manager.check(response, request.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdRead) and manager.FRepository.ResConfig[request.ResourceType].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+      if not manager.check(response, request.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdRead) and manager.FRepository.ResConfig[request.ResourceType].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
         ok := false
       else
         manager.Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(manager.FRepository.ResConfig[request.ResourceType].Key)+')) as usecount  from Tags where TagKey in (Select TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(manager.FRepository.ResConfig[request.ResourceType].Key)+')) order by Kind, Uri, Code'
     end
     else if request.SubId = '' then
     begin
-      if not manager.check(response, request.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+      if not manager.check(response, request.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
          Ok := false
       else
         manager.Connection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount from Tags, VersionTags '+
@@ -7340,7 +7514,7 @@ begin
     end
     else
     begin
-      if not manager.check(response, request.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdVersionRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+      if not manager.check(response, request.canRead(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdVersionRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
         ok := false
       else
         manager.FConnection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount  from Tags, VersionTags '+
@@ -7467,7 +7641,7 @@ begin
   currentResourceVersionKey := 0;
   try
     ok := true;
-    if not manager.check(response, request.canWrite(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if not manager.check(response, request.canWrite(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
       ok := false;
     if ok then
       manager.NotFound(request, response);
@@ -7480,7 +7654,7 @@ begin
       CurrentResourceVersionKey := StrToInt(manager.Connection.Lookup('Ids', 'ResourceKey', inttostr(Resourcekey), 'MostRecent', '0'));
       if request.SubId <> '' then
       begin
-        if not manager.check(response, manager.opAllowed(request.ResourceType, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+        if not manager.check(response, manager.opAllowed(request.ResourceType, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
           ok := false;
        if ok and Not manager.FindResourceVersion(request.ResourceType, request.Id, request.SubId, false, resourceVersionKey, request, response) then
          ok := false;
@@ -7616,12 +7790,13 @@ var
   parser : TFHIRParser;
   deleted : boolean;
   meta : TFhirMeta;
+  c : TFhirCoding;
 begin
   meta := nil;
   currentResourceVersionKey := 0;
   try
     ok := true;
-    if not manager.check(response, request.canWrite(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+    if not manager.check(response, request.canWrite(request.ResourceType) and manager.opAllowed(request.ResourceType, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
       ok := false;
     if ok then
       manager.NotFound(request, response);
@@ -7634,7 +7809,7 @@ begin
       CurrentResourceVersionKey := StrToInt(manager.Connection.Lookup('Ids', 'ResourceKey', inttostr(Resourcekey), 'MostRecent', '0'));
       if request.SubId <> '' then
       begin
-        if not manager.check(response, manager.opAllowed(request.ResourceType, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]])) then
+        if not manager.check(response, manager.opAllowed(request.ResourceType, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
           ok := false;
        if ok and Not manager.FindResourceVersion(request.ResourceType, request.Id, request.SubId, false, resourceVersionKey, request, response) then
          ok := false;
@@ -7648,6 +7823,11 @@ begin
         meta := TFHIRParameters(request.Resource)['meta'] as TFHIRMeta
       else
         ok := false;
+
+    if ok then
+      for c in meta.securityList do
+        if ok and not manager.isOkToDeleteSecurityLabel(request, response, c) then
+          ok := false;
 
     if ok then
     begin

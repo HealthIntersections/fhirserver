@@ -1485,7 +1485,7 @@ end;
 
 function TValidationResult.isOk: boolean;
 begin
-  result := message = '';
+  result := not (Severity in [IssueSeverityError, IssueSeverityFatal]);
 end;
 
 

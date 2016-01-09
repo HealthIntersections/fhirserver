@@ -38,7 +38,9 @@ uses
   SCIMServer;
 
 const
-  ServerDBVersion = 3;
+//  ServerDBVersion = 3;
+//  ServerDBVersion = 4; // added secure flag in versions table
+  ServerDBVersion = 5; // added scores to search entries table
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -374,6 +376,7 @@ Begin
        ' VersionId nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Status int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Format int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Secure int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SessionKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' AuditKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Tags '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -447,7 +450,9 @@ Begin
        ' SearchKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
+       ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform)+', '+#13#10+
+       ' Score1 int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Score2 int '+ColCanBeNull(FConn.owner.platform, True));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search'));
@@ -827,7 +832,7 @@ var
   t : TKDBTable;
 begin
   if version > ServerDBVersion then
-    raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-3): you must re-install the database');
+    raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
 
   // 1- > 2 upgrade - add Patient to OAuthLogins. Also, clean up changes to Closures
   if version < 2 then
@@ -854,7 +859,17 @@ begin
   end;
   if version < 3 then
     Fconn.ExecSQL('insert into Config (ConfigKey, Value) values (8, '''+FHIR_GENERATED_VERSION+''')');
-  Fconn.ExecSQL('update Config set value = 3 where ConfigKey = 5');
+  if version < 4 then
+  begin
+    Fconn.ExecSQL('ALTER TABLE Versions ADD Secure int NULL');
+    Fconn.ExecSQL('update Versions set Secure = 0');
+  end;
+  if version < 5 then
+  begin
+    Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score1 int NULL');
+    Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score2 int NULL');
+  end;
+  Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
 end;
 
 end.

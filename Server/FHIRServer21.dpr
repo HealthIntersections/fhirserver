@@ -295,7 +295,9 @@ uses
   CDSHooksUtilities in '..\Libraries\refplat21\CDSHooksUtilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
-  MarkdownDaringFireballTests in '..\..\markdown\source\MarkdownDaringFireballTests.pas';
+  MarkdownDaringFireballTests in '..\..\markdown\source\MarkdownDaringFireballTests.pas',
+  AccessControlEngine in 'AccessControlEngine.pas',
+  MPISearch in 'MPISearch.pas';
 
 begin
   JclStartExceptionTracking;
