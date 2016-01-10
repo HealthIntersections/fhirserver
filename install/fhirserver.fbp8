@@ -62,7 +62,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix bug in validating documents"
+        as.returnvalue = "fix LOINC search problem"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -190,6 +190,7 @@ begin
         begin
           deletehidden = false
           deletereadonly = false
+          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\FHIRServer2.exe
           id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
@@ -210,6 +211,7 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Seattle
           description = "Compile the Server (DSTU2)"
+          enabled = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -316,6 +318,7 @@ begin
         begin
           captureoutput = true
           description = "Add Map (2)"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -340,6 +343,7 @@ begin
         begin
           captureoutput = true
           description = "Sign the Server (64)"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -366,6 +370,7 @@ begin
           allowcreate = false
           deleteifblank = false
           description = "Set AppVerName in Inno Script"
+          enabled = false
           id = {65390809-00BE-4438-AAFE-E3C27A4F4177}
           inifile = C:\\work\\fhirserver\\install\\install2.iss
           newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion2%)"
@@ -378,6 +383,7 @@ begin
           allowcreate = false
           deleteifblank = false
           description = "Set OutputFilename in Inno Script"
+          enabled = false
           id = {15C08B77-3163-47F9-B471-664C5CD23E97}
           inifile = C:\\work\\fhirserver\\install\\install2.iss
           newvalue = fhirserver2-1.0.%BuildCount%
@@ -388,6 +394,7 @@ begin
         action.innosetup.execute
         begin
           description = "Build the server install"
+          enabled = false
           id = {DB9CE85D-5959-4FD8-94EC-33ED5C16CE3A}
           innoversion = Inno5
           scriptfile = C:\\work\\fhirserver\\install\\install2.iss

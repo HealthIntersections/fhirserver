@@ -746,6 +746,16 @@ begin
     if modc in definition.modifier then
       hasMod := true;
 
+  case definition.type_ of
+    SearchParamTypeString: buildEdit('Text to search by');
+    SearchParamTypeToken: buildEdit('Code or text to search by');
+    SearchParamTypeComposite: buildEdit('Composite value to search by');
+    SearchParamTypeUri: buildEdit('URI to search by');
+    SearchParamTypeReference: buildEdit('ID to search by');
+    SearchParamTypeNumber: buildNumberEdit('Number to search by', false);
+    SearchParamTypeDate: buildNumberEdit('Date to search by (variable precision, in the format yyyy-mm-ddThh:mm:ss[TS], where TX is Z or +/-hh:mm)', true);
+    SearchParamTypeQuantity: buildQuantityEdit;
+  end;
   if (hasMod) then
   begin
     modList := TComboBox.Create(form);
@@ -758,16 +768,6 @@ begin
     for modc := low(TFhirSearchModifierCodeEnum) to high(TFhirSearchModifierCodeEnum) do
       if modc in definition.modifier then
         modlist.Items.Add(':'+CODES_TFhirSearchModifierCodeEnum[modc]);
-  end;
-  case definition.type_ of
-    SearchParamTypeString: buildEdit('Text to search by');
-    SearchParamTypeToken: buildEdit('Code or text to search by');
-    SearchParamTypeComposite: buildEdit('Composite value to search by');
-    SearchParamTypeUri: buildEdit('URI to search by');
-    SearchParamTypeReference: buildEdit('ID to search by');
-    SearchParamTypeNumber: buildNumberEdit('Number to search by', false);
-    SearchParamTypeDate: buildNumberEdit('Date to search by (variable precision, in the format yyyy-mm-ddThh:mm:ss[TS], where TX is Z or +/-hh:mm)', true);
-    SearchParamTypeQuantity: buildQuantityEdit;
   end;
 end;
 

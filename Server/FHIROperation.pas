@@ -803,6 +803,31 @@ begin
     for a := Low(TFhirResourceType) to High(TFhirResourceType) do
       if a in tgts then
         param.targetList.Append.value := CODES_TFhirResourceType[a];
+    param.modifierList.Append.value := 'missing';
+    case t of
+      SearchParamTypeNumber: ; // no params
+      SearchParamTypeDate: ; // no params
+      SearchParamTypeString:
+        begin
+        param.modifierList.Append.value := 'exact';
+        param.modifierList.Append.value := 'contains';
+        end;
+      SearchParamTypeToken:
+        begin
+        param.modifierList.Append.value := 'text';
+        param.modifierList.Append.value := 'in';
+        param.modifierList.Append.value := 'not-in';
+        end;
+      SearchParamTypeReference:
+        param.modifierList.Append.value := 'type';
+      SearchParamTypeComposite: ; // nothing
+      SearchParamTypeQuantity: ; // no params
+      SearchParamTypeUri:
+        begin
+        param.modifierList.Append.value := 'above';
+        param.modifierList.Append.value := 'below';
+        end;
+    end;
     srch.add(param.link);
   finally
     param.free;
@@ -1902,10 +1927,10 @@ begin
       begin
         t_ := ResourceTypeByName(p[0]);
         if t_ = frtNull then
-          raise Exception.Create('Unknown Resource Type '+p[0]);
+          raise Exception.Create('Unknown Resource Type '''+p[0]+'''');
         key2 := FRepository.Indexes.GetKeyByName(p[1]);
         if (key2 = 0) then
-          raise Exception.Create('Unknown Resource Parameter '+p[0]);
+          raise Exception.Create('Unknown Resource Search Parameter '''+p[1]+'''');
         if (length(p) = 3) then
         begin
           t1 := ResourceTypeByName(p[2]);
@@ -7025,7 +7050,7 @@ var
 begin
   pat := nil;
 
-  if req.preFetchData = nil then
+  if req.preFetchData <> nil then
     for entry in req.preFetchData.entryList do
       if (entry.resource <> nil) and (entry.resource is TFhirPatient) and (entry.resource.id = req.patient) then
         pat := entry.resource as TFhirPatient;

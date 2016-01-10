@@ -53,9 +53,9 @@ object frmRegisterServer: TfrmRegisterServer
   end
   object Panel2: TPanel
     Left = 0
-    Top = 0
+    Top = 35
     Width = 819
-    Height = 288
+    Height = 253
     Margins.Left = 6
     Margins.Top = 6
     Margins.Right = 6
@@ -65,11 +65,13 @@ object frmRegisterServer: TfrmRegisterServer
     BorderWidth = 6
     Caption = 'Panel2'
     TabOrder = 1
+    ExplicitTop = 84
+    ExplicitHeight = 204
     object tvServers: TVirtualStringTree
       Left = 6
       Top = 6
       Width = 807
-      Height = 276
+      Height = 241
       Align = alClient
       Header.AutoSizeIndex = -1
       Header.Font.Charset = DEFAULT_CHARSET
@@ -87,6 +89,7 @@ object frmRegisterServer: TfrmRegisterServer
       OnClick = tvServersClick
       OnGetText = tvServersGetText
       OnInitNode = tvServersInitNode
+      ExplicitHeight = 276
       Columns = <
         item
           CheckType = ctRadioButton
@@ -114,6 +117,25 @@ object frmRegisterServer: TfrmRegisterServer
           Width = 121
           WideText = 'Last Checked'
         end>
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Top = 0
+    Width = 819
+    Height = 35
+    Align = alTop
+    BevelInner = bvLowered
+    BevelOuter = bvNone
+    TabOrder = 2
+    object Button1: TButton
+      Left = 10
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'Add'
+      TabOrder = 0
+      OnClick = Button1Click
     end
   end
 end

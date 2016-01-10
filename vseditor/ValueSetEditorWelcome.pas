@@ -43,25 +43,8 @@ implementation
 {$R *.dfm}
 
 procedure TValueSetEditorWelcomeForm.btnAddServerClick(Sender: TObject);
-//var
-//  msg : String;
 begin
-//  if frmRegisterServer1.ShowModal = mrOk then
-//  begin
-//    if Context.CheckServer(frmRegisterServer1.edtAddress.Text, msg) then
-//    begin
-//      Context.Settings.AddServer(frmRegisterServer1.edtName.Text, frmRegisterServer1.edtAddress.Text);
-//      frmRegisterServer1.edtName.Text := '';
-//      frmRegisterServer1.edtAddress.Text := '';
-//      Context.Settings.getServers(cbxServers.items);
-//      cbxServers.itemindex := cbxServers.items.Count - 1;
-//    end
-//    else
-//    begin
-//      ShowMessage('Server Address in error: '+msg);
-//      btnAddServerClick(self);
-//    end;
-//  end;
+//todo
 end;
 
 procedure TValueSetEditorWelcomeForm.Button1Click(Sender: TObject);

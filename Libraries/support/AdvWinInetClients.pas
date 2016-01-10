@@ -32,12 +32,9 @@ Interface
 
 
 Uses
-  Windows,
-  SysUtils,
+  Windows, SysUtils, Generics.Collections,
   StringSupport,
-  AdvBuffers,
-  AdvMemories,
-  AdvObjects;
+  AdvBuffers, AdvMemories, AdvObjects;
 
 
 Type
@@ -69,9 +66,11 @@ Type
       FUsername: String;
       FProxyPassword: String;
       FProxyUsername: String;
+      FHeaders : TDictionary<String, String>;
+      FReqHandle : HINTERNET;
 
       FIgnoreContentTypeHeader : Boolean;
-    FOnProgress: TProgressEvent;
+      FOnProgress: TProgressEvent;
 
       Procedure Check(ACondition : Boolean; Const ALocation, ADescription, ADetail : String; iError : Cardinal);
       Procedure SetResponse(Const Value: TAdvBuffer);
@@ -101,6 +100,7 @@ Type
 
       Procedure Execute;
 
+      Property Headers : TDictionary<String, String> read FHeaders;
 
       Procedure SetAddress(Const Value : String);
 
@@ -130,6 +130,7 @@ Type
 
       Property IgnoreContentTypeHeader : Boolean Read FIgnoreContentTypeHeader Write FIgnoreContentTypeHeader;
       Property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
+      function getResponseHeader(name : string) : String;
   End;
 
   EAdvWinInetClient = Class(EAdvException);
@@ -158,6 +159,7 @@ Const
 
   HTTP_QUERY_CONTENT_TYPE = 1;
   HTTP_QUERY_STATUS_CODE = 19;
+  HTTP_QUERY_LOCATION = 33;
   INTERNET_DEFAULT_HTTP_PORT = 80;
   INTERNET_DEFAULT_HTTPS_PORT = 443;
   INTERNET_SERVICE_HTTP = 3;
@@ -347,6 +349,7 @@ End;
 Constructor TAdvWinInetClient.Create;
 Begin
   Inherited;
+  FHeaders := TDictionary<String, String>.create;;
 
 {$IFDEF VER130}
   Check(@mInternetOpen <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenA', 0);
@@ -374,6 +377,10 @@ End;
 
 Destructor TAdvWinInetClient.Destroy;
 Begin
+  if FReqHandle <> nil then
+    mInternetCloseHandle(FReqHandle);
+
+  FHeaders.Free;
   Disconnect;
 
   FResponse.Free;
@@ -411,7 +418,6 @@ End;
 
 Procedure TAdvWinInetClient.Execute;
 Var
-  aReqHandle : HINTERNET;
   sHeaders : String;
   pData : Pointer;
   iSize : DWord;
@@ -420,6 +426,9 @@ Var
   dwFlags : DWORD;
   dwBuffLen : DWORD;
 Begin
+  if FReqHandle <> nil then
+    mInternetCloseHandle(FReqHandle);
+
   Assert(Invariants('Execute', FResponse, TAdvBuffer, 'Response'));
   if assigned(FOnProgress) then
     FOnProgress(self, 'Connecting');
@@ -432,89 +441,87 @@ Begin
 
   If FRequestType <> '' Then
     sHeaders := sHeaders + 'Content-Type: '+ FRequestType +cReturn;
+  If FResponseType <> '' Then
+    sHeaders := sHeaders + 'Accept: '+ FResponseType +cReturn;
 
   If FSecure Then
-    aReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
+    FReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
         INTERNET_FLAG_SECURE Or INTERNET_FLAG_IGNORE_CERT_CN_INVALID Or INTERNET_FLAG_IGNORE_CERT_DATE_INVALID Or INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP Or
         INTERNET_FLAG_KEEP_CONNECTION Or INTERNET_FLAG_NO_AUTO_REDIRECT Or INTERNET_FLAG_NO_CACHE_WRITE Or INTERNET_FLAG_PRAGMA_NOCACHE, 0)
   Else
-    aReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
+    FReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
         INTERNET_FLAG_KEEP_CONNECTION Or INTERNET_FLAG_NO_AUTO_REDIRECT Or INTERNET_FLAG_NO_CACHE_WRITE Or INTERNET_FLAG_PRAGMA_NOCACHE, 0);
 
-  Check(aReqHandle <> Nil, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_OPEN, FResource, GetLastError);
+  Check(FReqHandle <> Nil, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_OPEN, FResource, GetLastError);
+  If FSecure Then
+  Begin
+    dwBuffLen := 4;
+    bOk := mInternetQueryOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, pointer(@dwFlags), dwBuffLen);
+    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
+    dwFlags := dwFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, @dwFlags, dwBuffLen);
+    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+  End;
+
+  // username and password
+  If FUsername <> '' Then
+  Begin
+    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_USERNAME, pchar(FUsername), Length(FUsername));
+    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+  End;
+  If FPassword <> '' Then
+  Begin
+    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PASSWORD, pchar(FPassword), Length(FPassword));
+    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+  End;
+  If FProxyUsername <> '' Then
+  Begin
+    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PROXY_USERNAME, pchar(FProxyUsername), Length(FProxyUsername));
+    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+  End;
+  If FProxyPassword <> '' Then
+  Begin
+    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PROXY_PASSWORD, pchar(FProxyPassword), Length(FProxyPassword));
+    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+  End;
+
+  If Assigned(FRequest) Then
+    bOk := mHttpSendRequest(FReqHandle, pchar(sHeaders), Length(sHeaders), FRequest.Data, FRequest.Capacity)
+  Else
+    bOk := mHttpSendRequest(FReqHandle, pchar(sHeaders), Length(sHeaders), Nil, 0);
+
+  Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_SEND, FResource, GetLastError);
+
+  oResponse := TAdvMemoryStream.Create;
+  GetMem(pData, 1024);
   Try
-    If FSecure Then
-    Begin
-      dwBuffLen := 4;
-      bOk := mInternetQueryOption(aReqHandle, INTERNET_OPTION_SECURITY_FLAGS, pointer(@dwFlags), dwBuffLen);
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
-      dwFlags := dwFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA;
-      bOk := mInternetSetOption(aReqHandle, INTERNET_OPTION_SECURITY_FLAGS, @dwFlags, dwBuffLen);
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-    End;
+    FResponseCode := GetHeader(FReqHandle, HTTP_QUERY_STATUS_CODE);
 
-    // username and password
-    If FUsername <> '' Then
-    Begin
-      bOk := mInternetSetOption(aReqHandle, INTERNET_OPTION_USERNAME, pchar(FUsername), Length(FUsername));
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-    End;
-    If FPassword <> '' Then
-    Begin
-      bOk := mInternetSetOption(aReqHandle, INTERNET_OPTION_PASSWORD, pchar(FPassword), Length(FPassword));
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-    End;
-    If FProxyUsername <> '' Then
-    Begin
-      bOk := mInternetSetOption(aReqHandle, INTERNET_OPTION_PROXY_USERNAME, pchar(FProxyUsername), Length(FProxyUsername));
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-    End;
-    If FProxyPassword <> '' Then
-    Begin
-      bOk := mInternetSetOption(aReqHandle, INTERNET_OPTION_PROXY_PASSWORD, pchar(FProxyPassword), Length(FProxyPassword));
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-    End;
+    If Not IgnoreContentTypeHeader Then
+      FResponseType := GetHeader(FReqHandle, HTTP_QUERY_CONTENT_TYPE);
 
-    If Assigned(FRequest) Then
-      bOk := mHttpSendRequest(aReqHandle, pchar(sHeaders), Length(sHeaders), FRequest.Data, FRequest.Capacity)
-    Else
-      bOk := mHttpSendRequest(aReqHandle, pchar(sHeaders), Length(sHeaders), Nil, 0);
+    If Pos(';', FResponseType) > 0 Then
+      FResponseType := Copy(FResponseType, 1, Pos(';', FResponseType) - 1);
 
-    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_SEND, FResource, GetLastError);
+    Repeat
+      FillChar(pData^, 1024, #0);
 
-    oResponse := TAdvMemoryStream.Create;
-    GetMem(pData, 1024);
-    Try
-      FResponseCode := GetHeader(aReqHandle, HTTP_QUERY_STATUS_CODE);
+      bOk := mInternetReadFile(FReqHandle, pData, 1024, iSize);
 
-      If Not IgnoreContentTypeHeader Then
-        FResponseType := GetHeader(aReqHandle, HTTP_QUERY_CONTENT_TYPE);
+      // TODO: non-exception when reponse fails?
+      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_READ, FResource, GetLastError);
 
-      If Pos(';', FResponseType) > 0 Then
-        FResponseType := Copy(FResponseType, 1, Pos(';', FResponseType) - 1);
+      if assigned(FOnProgress) then
+        FOnProgress(self, 'Receiving ('+ inttostr(oResponse.Size)+' bytes)');
 
-      Repeat
-        FillChar(pData^, 1024, #0);
+      If iSize > 0 Then
+        oResponse.Write(pData^, iSize);
+    Until bOk And (iSize = 0);
 
-        bOk := mInternetReadFile(aReqHandle, pData, 1024, iSize);
-
-        // TODO: non-exception when reponse fails?
-        Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_READ, FResource, GetLastError);
-
-        if assigned(FOnProgress) then
-          FOnProgress(self, 'Receiving ('+ inttostr(oResponse.Size)+' bytes)');
-
-        If iSize > 0 Then
-          oResponse.Write(pData^, iSize);
-      Until bOk And (iSize = 0);
-
-      FResponse.Copy(oResponse.Buffer);
-    Finally
-      FreeMem(pData);
-      oResponse.Free;
-    End;
+    FResponse.Copy(oResponse.Buffer);
   Finally
-    mInternetCloseHandle(aReqHandle);
+    FreeMem(pData);
+    oResponse.Free;
   End;
 End;
 
@@ -548,7 +555,7 @@ Begin
 
     If iSize <> 0 Then
     Begin
-      SetLength(Result, iSize);
+      SetLength(Result, iSize div sizeof(char));
       move(pData^, Result[1], iSize);
     End
     Else
@@ -560,6 +567,16 @@ Begin
   End;
 End;
 
+
+function TAdvWinInetClient.getResponseHeader(name : string): String;
+begin
+  if name = 'Content-Type' then
+    result := GetHeader(FReqHandle, HTTP_QUERY_CONTENT_TYPE)
+  else if name = 'Location' then
+    result := GetHeader(FReqHandle, HTTP_QUERY_LOCATION)
+  else
+    raise Exception.Create('unknown header');
+end;
 
 Procedure TAdvWinInetClient.Connect;
 Var

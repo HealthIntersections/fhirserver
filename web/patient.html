@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xml:lang="en" lang="en">
 <head>
     <title>FHIR Server [%id%] Version [%ver%]</title>
   <meta charset="utf-8"/>
@@ -84,6 +82,19 @@ Patient Details:
 [%patient-details%]
 
 <hr/>
+<h2>CDS Hooks:</h2>
+
+<script>
+jQuery.get("[%root%]/_web/PatientHooks/[%hookid%]", function (data) {  
+  jQuery("#hooks").html(data);
+})
+
+</script>
+<div id="hooks">
+<p><i>Loading</i></p>
+</div>
+
+<hr/>
 
 <p>
 Patient Focused Applications:
@@ -140,4 +151,5 @@ Patient Focused Applications:
 
 
 </body>
+
 </html>

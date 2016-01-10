@@ -1111,7 +1111,10 @@ begin
           prsr.Parse;
         except
           // actually, we don't care why this excepted.
-          exit(false);
+          on e : Exception do
+          begin
+            exit(false);
+          end;
         end;
         res := prsr.resource.Link;
       finally
@@ -1382,7 +1385,7 @@ begin
 //          (assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath)) or
 //          (VisualiserMode in [vmNarrative, vmFocus])) then
   try
-    if not (parse(50, fmt, res)) then
+    if not (parse(500, fmt, res)) then
     begin
       if (FHIRVisualizer <> nil) then
         case VisualiserMode of

@@ -3,7 +3,7 @@ unit CDSHooksUtilities;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, ActiveX,
   TextUtilities, MarkDownProcessor, KCritSct, HashSupport, EncodeSupport,
   AdvObjects, AdvGenerics, AdvThreads,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, SmartOnFhirUtilities, FHIRClient, FHIRParser;
@@ -46,7 +46,7 @@ type
     destructor Destroy; override;
 
     function Link : TCDSHookRequest; overload;
-    function hash : Cardinal;
+    function hash : Integer;
 
     function AsParams : TFHIRParameters;
     property activity : TFHIRCoding read Factivity write Setactivity;
@@ -259,6 +259,7 @@ type
 
     // user has changd
     procedure cancelAllRequests;
+    function waiting : boolean;
 
     // not sure why you'd need this...
     procedure dropCache;
@@ -417,12 +418,15 @@ var
   s : String;
   l : TCDSHookCardLink;
   first : boolean;
+  cnt : boolean;
 begin
   b := TStringBuilder.Create;
   try
     b.Append(CARDS_HTML_HEAD);
+    cnt := false;
     for card in cards do
     begin
+      cnt := true;
       b.Append('<div class="decision-card alert alert-info">'#13#10);
       b.Append(' <div class="card-top">'#13#10);
       b.Append('  <div class="card-summary">');
@@ -459,8 +463,9 @@ begin
       b.Append(' </div>'#13#10);
       b.Append('</div>'#13#10);
     end;
-    if inprogress.Count > 0 then
+    if (inprogress <> nil) and (inprogress.Count > 0) then
     begin
+      cnt := true;
       b.Append('<p>In Progress:</p>'#13#10+'<ul>'#13#10);
       for s in inprogress do
         b.Append(' <li>'+s+'</li>'#13#10);
@@ -469,11 +474,14 @@ begin
 
     if errors.Count > 0 then
     begin
+      cnt := true;
       b.Append('<p>Errors:</p>'#13#10+'<ul>'#13#10);
       for s in errors do
         b.Append(' <li>'+s+'</li>'#13#10);
       b.Append('</ul>'#13#10);
     end;
+    if not cnt then
+      b.append('<p><i>Nothing to display</i></p>');
     b.Append(CARDS_HTML_FOOT);
     result := b.toString();
   finally
@@ -492,20 +500,20 @@ begin
   result := TFHIRParameters.create;
   try
     result.AddParameter('activity', Factivity.Link);
-    result.AddParameter('activityInstance', FactivityInstance);
-    result.AddParameter('fhirServer', FfhirServer);
+    result.AddParameter('activityInstance', TFHIRString.Create(FactivityInstance));
+    result.AddParameter('fhirServer', TFHIRUri.Create(FfhirServer));
     if (FoauthToken <> '') then
     begin
       p := Result.parameterList.Append;
       p.name := 'oauth';
-      p.AddParameter('token', FoauthToken);
-      p.AddParameter('scope', FoauthScope);
-      p.AddParameter('expires', inttostr(FoauthExpires));
+      p.AddParameter('token', TFHIRString.Create(FoauthToken));
+      p.AddParameter('scope', TFHIRString.Create(FoauthScope));
+      p.AddParameter('expires', TFhirInteger.Create(inttostr(FoauthExpires)));
     end;
-    result.AddParameter('redirect', Fredirect);
-    result.AddParameter('user', Fuser);
-    result.AddParameter('patient', Fpatient);
-    result.AddParameter('encounter', Fencounter);
+    result.AddParameter('redirect', TFHIRUri.Create(Fredirect));
+    result.AddParameter('user', TFHIRString.Create(Fuser));
+    result.AddParameter('patient', TFhirId.Create(Fpatient));
+    result.AddParameter('encounter', TFhirId.Create(Fencounter));
     for c in context do
       result.AddParameter('context', c.Link);
     if preFetchData <> nil then
@@ -556,7 +564,7 @@ begin
   inherited;
 end;
 
-function TCDSHookRequest.hash: Cardinal;
+function TCDSHookRequest.hash: Integer;
 var
   params : TFhirParameters;
   json : TFHIRJsonComposer;
@@ -693,7 +701,7 @@ begin
   result := TFhirParametersParameter.Create;
   try
     result.AddParameter('summary', Fsummary);
-    result.AddParameter('indicator', Findicator);
+    result.AddParameter('indicator', TFHIRCode.create(Findicator));
     result.AddParameter('detail', Fdetail);
     if (sourceLabel <> '') then
     begin
@@ -948,6 +956,24 @@ begin
   end;
 end;
 
+function TCDSHooksManager.waiting: boolean;
+var
+  thread : TCDSHooksManagerWorkThread;
+begin
+  result := false;
+  FLock.Lock;
+  try
+    for thread in FThreads do
+      if thread.FAlive then
+      begin
+        result := true;
+        break;
+      end;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TCDSHooksManager.checkConnectServer(server: TCDSHooksManagerServerInfo);
 begin
   if not server.info.SmartOnFHIR then
@@ -1026,7 +1052,7 @@ var
   hash : String;
   cached : TCDSHooksManagerCachedResponse;
 begin
-  hash := IntToStr(request.hash);
+  hash := inttostr(request.hash);
   for server in FServers do
   begin
     if server.info.doesHook(request.activity) then
@@ -1162,52 +1188,57 @@ var
   pin, pout : TFhirParameters;
   resp : TCDSHookResponse;
 begin
+  CoInitialize(nil);
   try
     try
       try
-        FClient := TFhirClient.Create(server.fhirEndpoint, server.format = ffJson);
         try
-          FClient.timeout := 5000;
-          FClient.smartToken := token.link;
-          pin := Frequest.AsParams;
+          FClient := TFhirClient.Create(server.fhirEndpoint, true);
           try
-            pout := FClient.operation(frtNull, 'cds-hook', pin) as TFhirParameters;
+            FClient.timeout := 15000;
+            FClient.smartToken := token.link;
+            pin := Frequest.AsParams;
             try
-              resp := TCDSHookResponse.Create(pout);
+              pout := FClient.operation(frtNull, 'cds-hook', pin) as TFhirParameters;
               try
-               if FManager <> nil then
-               begin
-                 FManager.cacheResponse(hash, server, resp);
-                 if (FAlive) then
-                 event(FManager, server, FContext, resp, '');
-               end;
+                resp := TCDSHookResponse.Create(pout);
+                try
+                 if FManager <> nil then
+                 begin
+                   FManager.cacheResponse(hash, server, resp);
+                   if (FAlive) then
+                   event(FManager, server, FContext, resp, '');
+                 end;
+                finally
+                  resp.Free;
+                end;
               finally
-                resp.Free;
+                pout.Free;
               end;
             finally
-              pout.Free;
+              pin.Free;
             end;
           finally
-            pin.Free;
+            FClient.Free;
           end;
-        finally
-          FClient.Free;
+        except
+          on e : Exception do
+            if FManager <> nil then
+            begin
+              FManager.cacheResponse(hash, server, e.message);
+              if (FAlive) then
+              event(FManager, server, FContext, nil, e.message);
+            end;
         end;
-      except
-        on e : Exception do
-          if FManager <> nil then
-          begin
-            FManager.cacheResponse(hash, server, e.message);
-            if (FAlive) then
-            event(FManager, server, FContext, nil, e.message);
-          end;
+      finally
+        if (FAlive) then
+          Fmanager.closeThread(self);
       end;
-    finally
-      if (FAlive) then
-        Fmanager.closeThread(self);
+    except
+      // nothing. just suppress this
     end;
-  except
-    // nothing. just suppress this
+  finally
+    CoUninitialize;
   end;
 end;
 

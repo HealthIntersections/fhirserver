@@ -168,7 +168,8 @@ uses
   FHIRProfileUtilities in '..\Libraries\refplat2\FHIRProfileUtilities.pas',
   SmartOnFhirUtilities in '..\Libraries\refplat2\SmartOnFhirUtilities.pas',
   ClosureManagerFrm in 'ClosureManagerFrm.pas' {ClosureManagerForm},
-  ConceptLookupFrm in 'ConceptLookupFrm.pas' {ConceptLookupForm};
+  ConceptLookupFrm in 'ConceptLookupFrm.pas' {ConceptLookupForm},
+  NewServerForm in 'NewServerForm.pas' {frmNewServer};
 
 {$R *.res}
 
@@ -177,12 +178,13 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TValueSetEditorForm, ValueSetEditorForm);
   Application.CreateForm(TServerChooserForm, ServerChooserForm);
-  Application.CreateForm(TfrmRegisterServer, frmRegisterServer1);
+  Application.CreateForm(TfrmRegisterServer, frmRegisterServer);
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TValueSetEditorAboutForm, ValueSetEditorAboutForm);
   Application.CreateForm(TValueSetEditorWelcomeForm, ValueSetEditorWelcomeForm);
   Application.CreateForm(TForm2, Form2);
   Application.CreateForm(TClosureManagerForm, ClosureManagerForm);
   Application.CreateForm(TConceptLookupForm, ConceptLookupForm);
+  Application.CreateForm(TfrmNewServer, frmNewServer);
   Application.Run;
 end.

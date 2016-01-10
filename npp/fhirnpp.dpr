@@ -145,7 +145,8 @@ uses
   CDSHooksUtilities in '..\Libraries\refplat2\CDSHooksUtilities.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
-  ShellSupport in '..\Libraries\support\ShellSupport.pas';
+  ShellSupport in '..\Libraries\support\ShellSupport.pas',
+  CDSBrowserForm in 'CDSBrowserForm.pas' {CDSBrowser};
 
 {$R *.res}
 

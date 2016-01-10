@@ -9,7 +9,8 @@ uses
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
   FHIRPathDocumentation, Vcl.Buttons, Vcl.OleCtrls, SHDocVw, TextUtilities, FHIRBase,
   AdvGenerics, PluginUtilities, VirtualTrees, kCritSct, AdvBuffers, ShellSupport,
-  IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer, SmartOnFhirUtilities, GUIDSupport;
+  IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer, SmartOnFhirUtilities,
+  GUIDSupport, CDSBrowserForm;
 
 const
   UMSG = WM_USER + 1;
@@ -232,7 +233,7 @@ begin
   begin
     server := Settings.serverInfo(i);
     try
-      if server.cdshooks.Count > 1 then
+      if server.cdshooks.Count > 0 then
         FCDSManager.registerServer(server);
     finally
       server.Free;
@@ -373,6 +374,7 @@ begin
   try
     req.activity := coding;
     req.activityInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
+    req.redirect := 'http://localhost:45654/redirect';
     req.context.Add(context.Link);
     if context is TFHIRPatient then
       req.patient := TFHIRPatient(context).id;
@@ -391,6 +393,7 @@ begin
   try
     req.activity := coding;
     req.activityInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
+    req.redirect := 'http://localhost:45654/redirect';
     req.patient := patient.id;
     req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
     req.preFetchData.id := NewGuidId;
@@ -706,7 +709,11 @@ begin
   else if not (u.startsWith('http://localhost:45654') or u.StartsWith('about:')) then
   begin
     u := StringReplace(u, '"', '%22', [rfReplaceAll]);
-    ExecuteLaunch('open', pchar(u), '', true, true);
+    if CDSBrowser = nil then
+      CDSBrowser := TCDSBrowser.Create(self);
+    CDSBrowser.WebBrowser1.Navigate(u);
+    CDSBrowser.ShowModal;
+//    ExecuteLaunch('open', pchar(u), '', true, true);
     Cancel := true;
   end
   else

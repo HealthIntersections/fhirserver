@@ -55,7 +55,7 @@ also:
   v2 & v3 data type
 }
 Const
-  LOINC_CACHE_VERSION = '8';
+  LOINC_CACHE_VERSION = '9';
   NO_PARENT = $FFFFFFFF;
 
 Type
@@ -65,7 +65,7 @@ type
   // We store LOINC as five structures.
   //   the first structure is a simply a list of strings which are variable length names - referred to from the other structures
   //   the second structure is a list of lists of word or cardinal references.
-  //   the third structure is a list of concepts. each concept has a refernce to a name and a contained list of references which are either children
+  //   the third structure is a list of concepts. each concept has a ref0ernce to a name and a contained list of references which are either children
   //   the fourth structure is the code list - a list of loinc concepts, with codes and references to names and properties
   //   the fifth structure is the multi-axial heirarchy - parent, children, descendents, concepts, and descendent concepts
 
@@ -572,7 +572,7 @@ var
   i : integer;
 begin
   Result := FBuilder.Length;
-  Result := Result div (FCodeLength+35);
+  Result := Result div (FCodeLength+31);
   SetLength(s, FCodeLength);
   FillChar(s[1], FCodeLength, 32);
   for I := 1 to length(sCode) do
@@ -590,6 +590,7 @@ begin
 {22}  FBuilder.Append(iFlags);
 {23}  FBuilder.AddCardinal(0); // stems
 {27}  FBuilder.AddCardinal(iEntry);
+{31}
 end;
 
 procedure TLOINCCodeList.SetCodeLength(const Value: Cardinal);
@@ -681,18 +682,18 @@ Begin
   if iIndex > FLength div FRecLength - 1 Then
     Raise Exception.Create('Attempt to access invalid LOINC index at '+inttostr(iIndex*FRecLength));
   sCode := trim(asCopy(FMaster, iIndex*FRecLength, FCodeLength));
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+0], iDescription, 4);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+4], iOtherNames, 4);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+8], iComponent, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+10], iProperty, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+12], iTimeAspect, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+14], iSystem, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+16], iScale, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+18], iMethod, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+20], iClass, 2);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+22], iFlags, 1);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+23], iStems, 4);
-  Move(FMaster[(iIndex*FRecLength)+FCodeLength+37], iEntry, 4);
+{0}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+0], iDescription, 4);
+{4}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+4], iOtherNames, 4);
+{8}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+8], iComponent, 2);
+{10}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+10], iProperty, 2);
+{12}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+12], iTimeAspect, 2);
+{14}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+14], iSystem, 2);
+{16}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+16], iScale, 2);
+{18}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+18], iMethod, 2);
+{20}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+20], iClass, 2);
+{22}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+22], iFlags, 1);
+{23}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+23], iStems, 4);
+{27}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+27], iEntry, 4);
 end;
 
 function TLOINCCodeList.Count: Integer;
@@ -702,7 +703,7 @@ end;
 
 procedure TLOINCCodeList.SetStems(iIndex, iValue: Cardinal);
 begin
-  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+27], 4);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+23], 4);
 end;
 
 { TLOINCServices }
@@ -1113,6 +1114,7 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
           begin
             r1 := r1 + 20 + (20 / length(desc));
             ok := true;
+            assert(FDesc.GetEntry(words[i].stem) = FDesc.GetEntry(desc[j]));
           end
           else
             assert(FDesc.GetEntry(words[i].stem) <> FDesc.GetEntry(desc[j]));
@@ -1533,7 +1535,25 @@ var
   cc : TFhirValueSetComposeIncludeConcept;
 begin
   result := nil;
-  if (id.StartsWith('http://loinc.org/vs/') and FEntries.FindCode(id.Substring(20), index, FDesc)) then
+  if (id = '') then
+  begin
+    result := TFhirValueSet.Create;
+    try
+      result.url := id;
+      result.status := ConformanceResourceStatusActive;
+      result.version := Version(nil);
+      result.name := 'LOINC Value Set - all LOINC codes';
+      result.description := 'All LOINC codes';
+      result.date := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.system := 'http://loinc.org';
+      result.link;
+    finally
+      result.free;
+    end;
+  end
+  else if (id.StartsWith('http://loinc.org/vs/') and FEntries.FindCode(id.Substring(20), index, FDesc)) then
   begin
     FEntries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
 

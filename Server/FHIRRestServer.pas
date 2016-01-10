@@ -48,8 +48,8 @@ Uses
   TerminologyWebServer, AuthServer,
 
   FHIRTypes, fhirresources, fhirparser, fhirconstants,
-  fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants;
+  fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities;
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -86,6 +86,20 @@ Type
     property Session : TFHIRSession read FSession write SetSession;
     property Activity : String read FActivity write FActivity;
     property Count : integer read FCount write FCount;
+  end;
+
+  TFHIRWebServerPatientViewContext = class (TAdvObject)
+  private
+    FCards: TAdvList<TCDSHookCard>;
+    FManager: TCDSHooksManager;
+    FErrors : TStringList;
+    procedure SetManager(const Value: TCDSHooksManager);
+  public
+    constructor create; Override;
+    Destructor Destroy; Override;
+    property manager : TCDSHooksManager read FManager write SetManager;
+    property Errors : TStringList read FErrors;
+    property cards : TAdvList<TCDSHookCard> read FCards;
   end;
 
   TFhirWebServer = Class(TAdvObject)
@@ -129,6 +143,8 @@ Type
 
     carry : TAdvZipReader;
     carryName : String;
+    FPatientViewServers : TDictionary<String, String>;
+    FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
 
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirConformanceRest);
@@ -137,6 +153,7 @@ Type
 
     function BuildCompartmentList(session : TFHIRSession) : String;
 
+    procedure OnCDSResponse(manager : TCDSHooksManager; server : TRegisteredFHIRServer; context : TObject; response : TCDSHookResponse; error : String);
     function GetResource(session : TFhirSession; rtype : TFhirResourceType; lang, id, ver, op : String) : TFhirResource;
     function FindResource(session : TFhirSession; rtype : TFhirResourceType; lang, params : String) : TFhirResource;
     function DoSearch(session : TFhirSession; rtype : TFhirResourceType; lang, params : String) : TFHIRBundle;
@@ -148,7 +165,10 @@ Type
     function HandleWebEdit(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
     function HandleWebPost(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
     function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+    procedure startHooks(ctxt: TFHIRWebServerPatientViewContext; patient : TFHIRPatient; url : String);
+
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
+    function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 
     function SpecFile(path : String) : String;
@@ -274,6 +294,7 @@ end;
 Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
 var
   s, txu : String;
+  ts : TStringList;
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
@@ -281,6 +302,8 @@ Begin
   FIni := TIniFile.Create(ini);
   FHost := FIni.ReadString('web', 'host', '');
   FClients := TAdvList<TFHIRWebServerClientInfo>.create;
+  FPatientViewServers := TDictionary<String, String>.create;
+  FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.create;
 
   FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source'+FHIR_GENERATED_VERSION, ''));
   if (FSpecPath = '') or (FSpecPath = '\') then
@@ -339,6 +362,17 @@ Begin
   FFhirStore.FormalURLSecureClosed := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FSSLPort) + FSecurePath;
 
 
+  if FIni.SectionExists('patient-view') then
+  begin
+    ts := TStringList.create;
+    try
+      FIni.ReadSection('patient-view', ts);
+      for s in ts do
+        FPatientViewServers.Add(s, FIni.ReadString('patient-view', s, ''));
+    finally
+      ts.free;
+    end;
+  end;
   if FIni.readString('web', 'clients', '') = '' then
     raise Exception.Create('No Authorization file found');
   FAuthServer := TAuth2Server.Create(FIni.readString('web', 'clients', ''), FAltPath, FHost, inttostr(FSSLPort), FSCIMServer.Link);
@@ -386,7 +420,9 @@ Begin
     FFhirStore.CloseAll;
     FFhirStore.Free;
   end;
+  FPatientViewServers.Free;
   FClients.Free;
+  FPatientHooks.Free;
   FLock.Free;
   Inherited;
 End;
@@ -480,6 +516,41 @@ Begin
   if (active) then
     FThread := TFhirServerMaintenanceThread.create(self);
 End;
+
+procedure TFhirWebServer.startHooks(ctxt: TFHIRWebServerPatientViewContext; patient: TFHIRPatient; url : String);
+var
+  server : TRegisteredFHIRServer;
+  req : TCDSHookRequest;
+  entry : TFHIRBundleEntry;
+  s : String;
+begin
+  for s in FPatientViewServers.Keys do
+  begin
+    server := TRegisteredFHIRServer.Create;
+    try
+      server.name := s;
+      server.fhirEndpoint := FPatientViewServers[s];
+      server.addCdsHook('patient-view', TCDSHooks.patientView);
+      ctxt.manager.registerServer(server);
+    finally
+      server.Free;
+    end;
+  end;
+
+  req := TCDSHookRequest.Create;
+  try
+    req.activity := TCDSHooks.patientView;
+    req.activityInstance := FFhirStore.FormalURLPlain;  // arbitrary global
+    req.patient := patient.id;
+    req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
+    req.preFetchData.id := NewGuidId;
+    entry := req.preFetchData.entryList.Append;
+    entry.resource := patient.Link;
+    ctxt.manager.makeRequest(req, OnCDSResponse, ctxt);
+  finally
+    req.Free;
+  end;
+end;
 
 Procedure TFhirWebServer.Stop;
 Begin
@@ -1331,18 +1402,33 @@ var
   id, ver : String;
   s, xhtml : String;
   patient : TFHIRPatient;
+  hookid : String;
+  hooks : TFHIRWebServerPatientViewContext;
 begin
   result := 0;
   StringSplit(request.Id.Substring(8), '/', id, ver);
+  hookid := NewGuidId;
+  hooks := TFHIRWebServerPatientViewContext.Create;
+  hooks.manager := TCDSHooksManager.Create;
+  FLock.Lock;
+  try
+    FPatientHooks.Add(hookid, hooks);
+  finally
+    FLock.Unlock;
+  end;
+
   patient := GetResource(request.Session, frtPatient, request.Lang, id, ver, '') as TFHIRPatient;
   try
     xhtml := FhirHtmlToText(patient.text.div_);
+    startHooks(hooks, patient, request.baseUrl);
   finally
     patient.Free;
   end;
 
+
   s := FileToString(FAltPath+'patient.html', TEncoding.UTF8);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
+  s := s.Replace('[%hookid%]', hookid, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%patient-details%]', xhtml, [rfReplaceAll]);
@@ -1364,10 +1450,54 @@ begin
     s := s.Replace('[%baseSecure%]', FHost+FSecurePath, [rfReplaceAll])
   else
     s := s.Replace('[%baseSecure%]', FHost+':'+inttostr(FSSLPort)+FSecurePath, [rfReplaceAll]);
+  if request.secure then
+    s := s.Replace('[%root%]', FSecurePath, [rfReplaceAll])
+  else
+    s := s.Replace('[%root%]', FBasePath, [rfReplaceAll]);
+
   s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
 
   response.Body := s;
   response.ContentType := 'text/html; charset=UTF-8';
+end;
+
+function TFhirWebServer.HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+var
+  id : String;
+//  s, xhtml : String;
+//  patient : TFHIRPatient;
+//  hookid : String;
+  hooks : TFHIRWebServerPatientViewContext;
+begin
+  id := request.Id.Substring(13);
+  FLock.Lock;
+  try
+    if FPatientHooks.TryGetValue(id, hooks) then
+      hooks.Link
+    else
+      hooks := nil;
+  finally
+    FLock.Unlock;
+  end;
+
+  if hooks <> nil then
+  begin
+    try
+      while hooks.manager.waiting do
+        sleep(1000);
+      FLock.Lock;
+      try
+        response.Body := presentAsHtml(hooks.Cards, nil, hooks.Errors);
+        FPatientHooks.Remove(id);
+      finally
+        FLock.Unlock;
+      end;
+      response.HTTPCode := 200;
+      response.ContentType := 'text/html; charset=UTF-8';
+    finally
+      hooks.Free;
+    end;
+  end;
 end;
 
 function TFhirWebServer.HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
@@ -1484,6 +1614,8 @@ begin
     result := HandleWebProfile(request, response)
   else if request.Id.StartsWith('Patient/') then
     result := HandleWebPatient(request, response, secure)
+  else if request.Id.StartsWith('PatientHooks/') then
+    result := HandleWebPatientHooks(request, response, secure)
   else if request.Id ='Create' then
     result := HandleWebCreate(request, response)
   else
@@ -2641,6 +2773,26 @@ begin
   end;
 end;
 
+procedure TFhirWebServer.OnCDSResponse(manager: TCDSHooksManager;
+  server: TRegisteredFHIRServer; context: TObject; response: TCDSHookResponse;
+  error: String);
+var
+  ctxt : TFHIRWebServerPatientViewContext;
+begin
+  ctxt := TFHIRWebServerPatientViewContext(context);
+
+  FLock.Lock;
+  try
+    if error <> '' then
+      ctxt.Errors.add(error+' (from '+server.name+')')
+    else
+      ctxt.Cards.AddAll(response.cards);
+  finally
+    FLock.Unlock;
+  end;
+
+end;
+
 function HashPword(s : String): AnsiString;
 var
   hash : TDCP_sha256;
@@ -2718,6 +2870,7 @@ begin
     vars.Add('status.web-rest-count', inttostr(FRestCount));
     vars.Add('status.web-total-time', inttostr(FTotalTime));
     vars.Add('status.web-rest-time', inttostr(FRestTime));
+    vars.Add('status.cds.client', inttostr(FPatientHooks.count));
     vars.Add('status.run-time', DescribePeriod((GetTickCount - FStartTime) * DATETIME_MILLISECOND_ONE));
     vars.Add('status.run-time.ms', inttostr(GetTickCount - FStartTime));
     ReturnProcessedFile(response, nil, 'Diagnostics', AltFile('/diagnostics.html'), false, vars);
@@ -2974,6 +3127,29 @@ procedure TFHIRWebServerClientInfo.SetSession(const Value: TFHIRSession);
 begin
   FSession.Free;
   FSession := Value;
+end;
+
+{ TFHIRWebServerPatientViewContext }
+
+constructor TFHIRWebServerPatientViewContext.create;
+begin
+  inherited;
+  FCards := TAdvList<TCDSHookCard>.create;
+  FErrors := TStringList.create;
+end;
+
+destructor TFHIRWebServerPatientViewContext.Destroy;
+begin
+  FErrors.Free;
+  FCards.free;
+  FManager.Free;
+  inherited;
+end;
+
+procedure TFHIRWebServerPatientViewContext.SetManager(const Value: TCDSHooksManager);
+begin
+  FManager.Free;
+  FManager := Value;
 end;
 
 Initialization

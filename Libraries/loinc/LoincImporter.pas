@@ -814,6 +814,8 @@ begin
       SetLength(aCardinals, oCode.Stems.Count);
       for j := 0 to oCode.Stems.Count - 1 do
         aCardinals[j] := oCode.Stems[j];
+      if (oCode.Index = 0) then
+        writeln('.');
       FCode.SetStems(oCode.Index, FRefs.AddCardinals(aCardinals));
     End;
     For i := 0 to oHeirarchy.Count - 1 Do

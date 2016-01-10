@@ -2457,7 +2457,7 @@ begin
   index(frtCoverage, key, 0, resource.sequenceElement, 'sequence');
   index(frtCoverage, key, 0, resource.subplanElement, 'subplan');
   index(frtCoverage, key, 0, resource.type_Element, 'type');
-  index(frtCoverage, key, 0, resource.subscriberId, 'subscriber');
+  index(context, frtCoverage, key, 0, resource.subscriber, 'subscriber');
   index(context, frtCoverage, key, 0, resource.issuerElement, 'issuer');
 end;
 Const

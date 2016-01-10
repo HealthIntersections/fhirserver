@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, VirtualTrees, ValueSetEditorCore;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, VirtualTrees, ValueSetEditorCore,
+  NewServerForm;
 
 type
   TfrmRegisterServer = class(TForm)
@@ -13,6 +14,8 @@ type
     Panel2: TPanel;
     tvServers: TVirtualStringTree;
     btnUpdate: TButton;
+    Panel3: TPanel;
+    Button1: TButton;
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure tvServersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
@@ -21,6 +24,7 @@ type
     procedure tvServersInitNode(Sender: TBaseVirtualTree; ParentNode,
       Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure tvServersChecked(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure Button1Click(Sender: TObject);
   private
     FContext : TValueSetEditorContext;
     procedure SetContext(const Value: TValueSetEditorContext);
@@ -30,7 +34,7 @@ type
   end;
 
 var
-  frmRegisterServer1: TfrmRegisterServer;
+  frmRegisterServer: TfrmRegisterServer;
 
 implementation
 
@@ -47,6 +51,23 @@ begin
   begin
     server := FContext.Servers[tvServers.FocusedNode.Index];
     ServerOperation(server.update, '', 'updating', true);
+  end;
+end;
+
+procedure TfrmRegisterServer.Button1Click(Sender: TObject);
+var
+  msg : String;
+begin
+  if frmNewServer.ShowModal = mrOk then
+  begin
+    if Context.CheckServer(frmNewServer.edtAddress.Text, msg) then
+    begin
+      Context.Settings.AddServer(frmNewServer.edtName.Text, frmNewServer.edtAddress.Text);
+      frmNewServer.edtName.Text := '';
+      frmNewServer.edtAddress.Text := '';
+      tvServers.RootNodeCount := Context.Servers.Count;
+      tvServers.Invalidate;
+    end
   end;
 end;
 

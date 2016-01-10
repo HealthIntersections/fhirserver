@@ -51,6 +51,7 @@ Type
     function evaluatePointer(path : String) : TJsonNode; virtual;
   public
     LocationStart : TSourceLocation;
+    LocationInner : TSourceLocation; // where inner content starts
     LocationEnd : TSourceLocation;
 
     constructor create(path : String); overload;
@@ -789,6 +790,7 @@ End;
 procedure TJSONLexer.Next;
 var
   ch : Char;
+  hex : String;
 begin
   FLastLocationBWS := FLocation;
   repeat
@@ -819,6 +821,15 @@ begin
             'n':FValue := FValue + #10;
             'r':FValue := FValue + #13;
             't':FValue := FValue + #09;
+            'u':
+              begin
+              setLength(hex, 4);
+              hex[1] := getNextChar;
+              hex[2] := getNextChar;
+              hex[3] := getNextChar;
+              hex[4] := getNextChar;
+              FValue := FValue + chr(StrToInt('$'+hex));
+              end
           Else
             JsonError('not supported: \'+ch);
           End;
@@ -970,8 +981,8 @@ end;
 
 procedure TJSONParser.Next;
 begin
-  if (FTimeToAbort > 0) and (FTimeToAbort < GetTickCount) then
-    abort;
+//  if (FTimeToAbort > 0) and (FTimeToAbort < GetTickCount) then
+//    abort;
 
   case FItemType of
     jpitObject :
@@ -1264,7 +1275,7 @@ begin
     jltNull : raise Exception.Create('Not implemented yet');
     jltBoolean : raise Exception.Create('Not implemented yet');
   else
-    raise Exception.Create('Unexpected Token '+Codes_TJSONLexType[FLex.LexType]+' at start of Json Stream');  
+    raise Exception.Create('Unexpected Token '+Codes_TJSONLexType[FLex.LexType]+' at start of Json Stream');
   end;
 end;
 
@@ -1273,10 +1284,7 @@ var
   child : TJsonObject;
   arr : TJsonArray;
 begin
-  // this is a choice; in some senses, it's logical that the object ends where it actually ends.
-  // but this looks weird because all the inner content of an object is identified. So we call the object
-  // the area till it's properties start
-  obj.LocationEnd := FLex.FLocation;
+  obj.LocationInner := FLex.FLocation;
 
   while not ((ItemType = jpitEnd) or (root and (ItemType = jpitEof))) do
   begin
@@ -1310,6 +1318,7 @@ begin
         end;
       jpitEof : raise Exception.Create('Unexpected End of File');
     end;
+    obj.LocationEnd := FLex.FLocation;
     next;
   end;
 end;

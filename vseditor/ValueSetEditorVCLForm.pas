@@ -507,8 +507,8 @@ end;
 
 procedure TValueSetEditorForm.Servers1Click(Sender: TObject);
 begin
-  frmRegisterServer1.Context := Context.Link;
-  frmRegisterServer1.ShowModal;
+  frmRegisterServer.Context := Context.Link;
+  frmRegisterServer.ShowModal;
 end;
 
 procedure TValueSetEditorForm.SetDocoVisibility(visible : boolean);

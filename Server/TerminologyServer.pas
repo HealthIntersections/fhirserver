@@ -421,6 +421,8 @@ begin
     vs := Snomed.buildValueSet(id)
   else if id.StartsWith('http://loinc.org/vs/LP') or id.StartsWith('http://loinc.org/vs/LL') then
     vs := Loinc.buildValueSet(id)
+  else if id = 'http://loinc.org/vs' then
+    vs := Loinc.buildValueSet('')
   else if id = ANY_CODE_VS then
     vs := makeAnyValueSet;
   result := vs <> nil;

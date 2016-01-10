@@ -64,6 +64,8 @@ Using SMART on FHIR consists of 2 main phases:
   // HKEY_LOCAL_MACHINE\SOFTWARE\(Wow6432Node\)Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION\[your exe name] = 10000
   see https://msdn.microsoft.com/en-us/library/ee330730(v=vs.85).aspx or http://blogs.msdn.com/b/patricka/archive/2015/01/12/controlling-webbrowser-control-compatibility.aspx
 
+  (alternate approach: put <meta http-equiv="X-UA-Compatible" content="IE=edge"> in every page...)
+
 - Show the form (.showmodal).
 
 - the form will create an HTTP Server that only binds to the local host. This
@@ -367,7 +369,7 @@ begin
   try
     result.name := name;
     result.activity := activity;
-    result.link;
+    cdshooks.add(result.link);
   finally
     result.Free;
   end;

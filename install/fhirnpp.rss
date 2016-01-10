@@ -3,11 +3,27 @@
 	<channel>
 		<title>FHIR Notepad++ Plug-in Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>Notepad++ Plugin release 1.0.17 11/01/2016</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.17.exe</link>
+			<description>11/01/2016 (v1.0.17): handle links in CDS-hook Cards properly</description>
+		</item>
+<item><title>Notepad++ Plugin release 1.0.16 11/01/2016</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.16.exe</link>
+			<description>11/01/2016 (v1.0.16): Replace client layer for better SSL support</description>
+		</item>
+		<item><title>Notepad++ Plugin release 1.0.15 11/01/2016</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.15.exe</link>
+			<description>11/01/2016 (v1.0.15): fix parameter type in CDS Hook request</description>
+		</item>
+		<item><title>Notepad++ Plugin release 1.0.14 10/01/2016</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.14.exe</link>
+			<description>10/01/2016 (v1.0.14): fix client SSL version</description>
+		</item>
 		<item><title>Notepad++ Plugin release 1.0.13 6/01/2016</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.13.exe</link>
 			<description>6/01/2016 (v1.0.13): Set timeout to 5s</description>
 		</item>
-<item><title>Notepad++ Plugin release 1.0.12 6/01/2016</title>
+		<item><title>Notepad++ Plugin release 1.0.12 6/01/2016</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.12.exe</link>
 			<description>6/01/2016 (v1.0.12): fix bug in focus view for terminology viewing</description>
 		</item>

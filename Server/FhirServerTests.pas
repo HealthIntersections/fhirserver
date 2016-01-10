@@ -7,7 +7,7 @@ uses
   IniFiles,
   AdvObjects, GuidSupport, AdvXmlBuilders,
   FHIRTypes, FHIRResources, FHIRParser,
-  TerminologyServer, FHIRDataStore;
+  TerminologyServer, FHIRDataStore, FHIRClient;
 
 Type
   TFhirServerTests = class (TAdvObject)
@@ -67,7 +67,12 @@ begin
   TAdvXmlBuilderCanonicalizationTests.test;
   TJWTTests.runTests;
   TMarkdownDaringFireballTests.tests('C:\work\markdown\resources\df');
-  TJsonPatchEngine.tests('C:\work\fhirserver\tests\json-patch-tests.json');
+//  TJsonPatchEngine.tests('C:\work\fhirserver\tests\json-patch-tests.json');
+  {$IFDEF DSTU2}
+  TFHIRClientTests.tests('http://local.healthintersections.com.au:960/open');
+  {$ELSE}
+  TFHIRClientTests.tests('http://fhir21.healthintersections.com.au');
+  {$ENDIF}
  // TDigitalSignatureTests.test;
 //  TUcumTests.runTests(ExtractFilePath(FIni.FileName));
   WriteLn('Library tests Passed');

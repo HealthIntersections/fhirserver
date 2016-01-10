@@ -195,6 +195,10 @@ begin
     cbxFormat.ItemIndex := 2
   else if FConformance.formatList.hasCode('application/xml+fhir') then
     cbxFormat.ItemIndex := 1
+  else if FConformance.formatList.hasCode('json') then
+    cbxFormat.ItemIndex := 2
+  else if FConformance.formatList.hasCode('xml') then
+    cbxFormat.ItemIndex := 1
   else
     ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
 end;
@@ -316,7 +320,11 @@ begin
     edtServer.Text := server.fhirEndpoint;
     cbxFormat.ItemIndex := ord(server.format);
 
-    loadConformance;
+    try
+      loadConformance;
+    except
+
+    end;
     for i := 0 to clHooks.Items.Count - 1 do
       clHooks.checked[i] := false;
     for c in server.cdshooks do
