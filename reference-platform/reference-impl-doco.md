@@ -1,12 +1,6 @@
 FHIR Delphi/Pascal Library
 ==========================
 
-Contents:
-# License
-# Delphi / Lazarus Versions supported
-# Using the Library 
-# Object life-cycle management
-
 The delphi library is maintained by Grahame Grieve (grahame@healthintersections.com.au).
 Bug reports, use the GitHub issues page.
 
