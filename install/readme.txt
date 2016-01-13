@@ -1,6 +1,8 @@
 Welcome to the FHIR server install
 
-This program will install the fhir server, and configure it's service settings.
+This program will install the fhir server, and configure some of it's service settings.
+
+Note: in order to use the FHIRServer, you need MSSQL 2012+ (express version will do)
 
 One the installation is complete you must do the following things: 
 
@@ -13,7 +15,9 @@ One the installation is complete you must do the following things:
 (2) possibly edit auth.ini to configure oauth relationships etc
 (3) initialise the database: run fhirserver.exe -mount -password yourpassword 
 
-Note: you do not need to run SSL, but if you want to, you need to use openSSL to create or get valid certificates (public / privsate key in DER format, along with the public key of the CA server)    
+Note: you do not need to run SSL, but if you want to, you need to use openSSL 
+to create or get valid certificates (public / privsate key in DER format, 
+along with the public key of the CA server)    
    
 Server Command Line Parameters:
 -------------------------------
@@ -35,7 +39,7 @@ commands (these are mutually exclusive):
 -rxstems - after using the import rxnorm script, finish processing the content 
 -ncistems - after using the import ncimeta script, finish processing the content
 
-if you run the server without any of these comamnds, it will do nothing
+If you run the server without any of these comamnds, it will do nothing
 
 options:
 -ini [filename]. the name of the ini file for settings. Default is fhirwerver.ini in the same directory as the executable
@@ -49,4 +53,26 @@ options:
 -password [pword]. Use with -mount of -remount to specify the password of the administrator account (required)
 -no-text-index. Use to specify not to create a text index (for Azure versions of SQL Server)
 
+Importing LOINC
+---------------
 
+To import LOINC, you need 3 files:
+
+loinc.csv - download the main LOINC csv distribution from loinc.org
+mafile.csv - download the LOINC Multiaxial Hierarchy File and rename it to mafile.csv
+answers.csv - download the Panels and forms file, then use excel to save the answers tab to answers.csv
+
+all these 3 files go in the one directory, and you nominate that directory as the -loinc parameter, 
+Also, you need a -lver parameter with the version.
+
+Currently supported: versions 2.52 and 2.54
+
+Importing SNOMED CT
+-------------------
+
+Choose the snapshot directory from your RF2 distribution for the -snomed-rft2 parameter. 
+Provide the snomed version URI in the -sver parameter. For Australia:
+
+-snomed-rf2 "[snapshot location]" -sver "http://snomed.info/sct/32506021000036107/version/[release date]" 
+
+The import is tested with US and AU releases. Volunteers to test with other distributions are welcome.

@@ -896,7 +896,7 @@ begin
   if (value = '') then
     exit;
 
-  if (name = '_include') or (name = '_reverseInclude') then
+  if (name = '_include') or (name = '_revInclude') then
     bHandled := true
   else if (name = '_summary') then
   begin

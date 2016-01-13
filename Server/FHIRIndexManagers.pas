@@ -41,10 +41,10 @@ combinations to enable:
 }
 uses
   SysUtils, Classes, Generics.Collections,
-  AdvObjects, AdvObjectLists, AdvNames, AdvXmlBuilders,
+  AdvObjects, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvGenerics,
   EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport,
   KDBManager,
-  FHIRBase, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser,
+  FHIRBase, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities,
   TerminologyServer,
   UcumServices;
 
@@ -66,6 +66,8 @@ Type
     FSearchType: TFhirSearchParamTypeEnum;
     FTargetTypes : TFhirResourceTypeSet;
     FURI: String;
+    FPath : String;
+    FUsage : TFhirSearchXpathUsageEnum;
   public
     function Link : TFhirIndex; Overload;
     function Clone : TFhirIndex; Overload;
@@ -78,6 +80,8 @@ Type
     Property SearchType : TFhirSearchParamTypeEnum read FSearchType write FSearchType;
     Property TargetTypes : TFhirResourceTypeSet read FTargetTypes write FTargetTypes;
     Property URI : String read FURI write FURI;
+    Property Path : String read FPath;
+    Property Usage : TFhirSearchXpathUsageEnum read FUsage;
   end;
 
   TFhirIndexList = class (TAdvObjectList)
@@ -89,8 +93,8 @@ Type
     function Link : TFhirIndexList; Overload;
 
     function getByName(atype : TFhirResourceType; name : String): TFhirIndex;
-    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet); overload;
-    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet; url : String); overload;
+    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet; path : String; usage : TFhirSearchXpathUsageEnum); overload;
+    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet; path : String; usage : TFhirSearchXpathUsageEnum; url : String); overload;
     Property Item[iIndex : integer] : TFhirIndex read GetItemN; default;
   end;
 
@@ -140,6 +144,7 @@ Type
     FType: TFhirSearchParamTypeEnum;
     FParent: Integer;
     FFlag: boolean;
+    FName : String;
   public
     Property EntryKey : Integer Read FEntryKey write FEntryKey;
     Property IndexKey : Integer Read FIndexKey write FIndexKey;
@@ -158,6 +163,7 @@ Type
   private
     FKeyEvent : TFHIRGetNextKey;
     function GetItemN(iIndex: integer): TFhirIndexEntry;
+    procedure filter(indexes : TFhirIndexList; name : String; list : TAdvList<TFhirIndexEntry>);
   protected
     function ItemClass : TAdvObjectClass; override;
   public
@@ -335,8 +341,10 @@ Type
     FSpaces : TFhirIndexSpaces;
     FPatientCompartments : TFhirCompartmentEntryList;
     FEntries : TFhirIndexEntryList;
+    FPathEntries : TFhirIndexEntryList;
     FMasterKey : Integer;
     FBases : TStringList;
+    FValidationInfo : TValidatorServiceProvider;
     FTerminologyServer : TTerminologyServer;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
@@ -517,8 +525,11 @@ Type
     procedure processUnCompartmentTags(key : integer; id: String; tags : TFHIRTagList);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
 
+    procedure checkTags(resource : TFhirResource; tags : TFHIRTagList);
+    procedure compareIndexEntries(rt, n : string);
+    procedure evaluateByFHIRPath(resource : TFhirResource);
   public
-    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation);
+    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TValidatorServiceProvider);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -564,13 +575,13 @@ end;
 
 { TFhirIndexList }
 
-procedure TFhirIndexList.add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet);
+procedure TFhirIndexList.add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet; path : String; usage : TFhirSearchXpathUsageEnum);
 begin
-  add(aResourceType, name, description, aType, aTargetTypes, 'http://hl7.org/fhir/SearchParameter/'+CODES_TFHIRResourceType[aResourceType]+'-'+name.Replace('[', '').Replace(']', ''));
+  add(aResourceType, name, description, aType, aTargetTypes, path, usage, 'http://hl7.org/fhir/SearchParameter/'+CODES_TFHIRResourceType[aResourceType]+'-'+name.Replace('[', '').Replace(']', ''));
 end;
 
 
-procedure TFhirIndexList.add(aResourceType: TFhirResourceType; name, description: String; aType: TFhirSearchParamTypeEnum; aTargetTypes: TFhirResourceTypeSet; url: String);
+procedure TFhirIndexList.add(aResourceType: TFhirResourceType; name, description: String; aType: TFhirSearchParamTypeEnum; aTargetTypes: TFhirResourceTypeSet; path : String; usage : TFhirSearchXpathUsageEnum; url: String);
 var
   ndx : TFhirIndex;
 begin
@@ -582,6 +593,8 @@ begin
     ndx.TargetTypes := aTargetTypes;
     ndx.URI := url;
     ndx.description := description;
+    ndx.FPath := path;
+    ndx.FUsage := usage;
     inherited add(ndx.Link);
   finally
     ndx.free;
@@ -676,6 +689,7 @@ begin
 
   entry := TFhirIndexEntry.create;
   try
+    entry.FName := index.Name;
     entry.EntryKey := KeyEvent(ktEntries, frtNull, dummy);
     result := entry.EntryKey;
     entry.IndexKey := index.Key;
@@ -716,6 +730,15 @@ begin
   end;
 end;
 
+procedure TFhirIndexEntryList.filter(indexes : TFhirIndexList;  name: String; list: TAdvList<TFhirIndexEntry>);
+var
+  i : integer;
+begin
+  for i := 0 to Count - 1 do
+    if Item[i].FName = name then
+      list.Add(Item[i].Link as TFhirIndexEntry);
+end;
+
 function TFhirIndexEntryList.GetItemN(iIndex: integer): TFhirIndexEntry;
 begin
   result := TFhirIndexEntry(objectByindex[iIndex]);
@@ -728,21 +751,25 @@ end;
 
 { TFhirIndexManager }
 
-constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation);
+constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TValidatorServiceProvider);
 begin
   inherited Create;
   FPatientCompartments := TFhirCompartmentEntryList.create;
+  FValidationInfo := ValidationInfo;
   FSpaces := aSpaces;
   FInfo := aInfo;
   FEntries := TFhirIndexEntryList.Create;
+  FPathEntries := TFhirIndexEntryList.Create;
 end;
 
 destructor TFhirIndexManager.Destroy;
 begin
+  FValidationInfo.Free;
   FTerminologyServer.free;
   FPatientCompartments.Free;
   FSpaces.Free;
   FEntries.Free;
+  FPathEntries.Free;
   FInfo.Free;
   inherited;
 end;
@@ -1114,13 +1141,50 @@ begin
 
 end;
 
+procedure TFhirIndexManager.evaluateByFHIRPath(resource: TFhirResource);
+var
+  path : TFHIRExpressionEngine;
+  i : integer;
+  ndx : TFhirIndex;
+  matches : TFHIRBaseList;
+  match : TFHIRBase;
+begin
+  path := TFHIRExpressionEngine.Create(FValidationInfo.link);
+  try
+    for i := 0 to FInfo.Indexes.Count - 1 do
+    begin
+      ndx := FInfo.Indexes[i];
+      if ndx.Path <> '' then
+      begin
+        matches := path.evaluate(nil, resource, ndx.Path);
+        for match in matches do
+        begin
+          case ndx.Usage of
+            SearchXpathUsageNull: raise Exception.create('Path is not defined properly');
+            SearchXpathUsageNormal: raise Exception.create('not supported');
+            SearchXpathUsagePhonetic: raise Exception.create('not supported');
+            SearchXpathUsageNearby:  raise Exception.create('not supported');
+            SearchXpathUsageDistance: raise Exception.create('not supported');
+            SearchXpathUsageOther: raise Exception.create('not supported');
+          end;
+        end;
+      end;
+      compareIndexEntries(CODES_TFHIRResourceType[resource.ResourceType], ndx.Name);
+    end;
+  finally
+    path.Free;
+  end;
+end;
+
 function TFhirIndexManager.execute(key : integer; id : String; resource : TFhirResource; tags : TFHIRTagList) : String;
 var
   i : integer;
   entry : TFhirIndexEntry;
   dummy : string;
 begin
+  checkTags(resource, tags);
   FEntries.clear;
+  FPathEntries.clear;
   FEntries.FKeyEvent := FKeyEvent;
 
   // base indexes
@@ -1234,6 +1298,8 @@ begin
     end;
     FSpaces.FDB.terminate;
   end;
+
+  evaluateByFHIRPath(resource);
 end;
 
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirCoding; name: String);
@@ -1753,7 +1819,7 @@ begin
   for a := low(TSearchParamsEncounter) to high(TSearchParamsEncounter) do
   begin
     assert(CHECK_TSearchParamsEncounter[a] = a);
-    indexes.add(frtEncounter, CODES_TSearchParamsEncounter[a], DESC_TSearchParamsEncounter[a], TYPES_TSearchParamsEncounter[a], TARGETS_TSearchParamsEncounter[a]);
+    indexes.add(frtEncounter, CODES_TSearchParamsEncounter[a], DESC_TSearchParamsEncounter[a], TYPES_TSearchParamsEncounter[a], TARGETS_TSearchParamsEncounter[a], PATHS_TSearchParamsEncounter[a], USES_TSearchParamsEncounter[a]);
   end;
 end;
 
@@ -1808,7 +1874,7 @@ begin
   for a := low(TSearchParamsLocation) to high(TSearchParamsLocation) do
   begin
     assert(CHECK_TSearchParamsLocation[a] = a);
-    indexes.add(frtLocation, CODES_TSearchParamsLocation[a], DESC_TSearchParamsLocation[a], TYPES_TSearchParamsLocation[a], TARGETS_TSearchParamsLocation[a]);
+    indexes.add(frtLocation, CODES_TSearchParamsLocation[a], DESC_TSearchParamsLocation[a], TYPES_TSearchParamsLocation[a], TARGETS_TSearchParamsLocation[a], PATHS_TSearchParamsLocation[a], USES_TSearchParamsLocation[a]);
   end;
 end;
 
@@ -1853,7 +1919,7 @@ begin
   for a := low(TSearchParamsDocumentReference) to high(TSearchParamsDocumentReference) do
   begin
     assert(CHECK_TSearchParamsDocumentReference[a] = a);
-    indexes.add(frtDocumentReference, CODES_TSearchParamsDocumentReference[a], DESC_TSearchParamsDocumentReference[a], TYPES_TSearchParamsDocumentReference[a], TARGETS_TSearchParamsDocumentReference[a]);
+    indexes.add(frtDocumentReference, CODES_TSearchParamsDocumentReference[a], DESC_TSearchParamsDocumentReference[a], TYPES_TSearchParamsDocumentReference[a], TARGETS_TSearchParamsDocumentReference[a], PATHS_TSearchParamsDocumentReference[a], USES_TSearchParamsDocumentReference[a]);
   end;
   composites.add(frtDocumentReference, 'relatesTo', ['code', 'relation', 'target', 'relatesTo']);
 end;
@@ -1924,7 +1990,7 @@ begin
   for a := low(TSearchParamsDocumentManifest) to high(TSearchParamsDocumentManifest) do
   begin
     assert(CHECK_TSearchParamsDocumentManifest[a] = a);
-    indexes.add(frtDocumentManifest, CODES_TSearchParamsDocumentManifest[a], DESC_TSearchParamsDocumentManifest[a], TYPES_TSearchParamsDocumentManifest[a], TARGETS_TSearchParamsDocumentManifest[a]);
+    indexes.add(frtDocumentManifest, CODES_TSearchParamsDocumentManifest[a], DESC_TSearchParamsDocumentManifest[a], TYPES_TSearchParamsDocumentManifest[a], TARGETS_TSearchParamsDocumentManifest[a], PATHS_TSearchParamsDocumentManifest[a], USES_TSearchParamsDocumentManifest[a]);
   end;
 end;
 
@@ -1997,7 +2063,7 @@ begin
   for a := low(TSearchParamsBundle) to high(TSearchParamsBundle) do
   begin
     assert(CHECK_TSearchParamsBundle[a] = a);
-    indexes.add(frtBundle, CODES_TSearchParamsBundle[a], DESC_TSearchParamsBundle[a], TYPES_TSearchParamsBundle[a], TARGETS_TSearchParamsBundle[a]);
+    indexes.add(frtBundle, CODES_TSearchParamsBundle[a], DESC_TSearchParamsBundle[a], TYPES_TSearchParamsBundle[a], TARGETS_TSearchParamsBundle[a], PATHS_TSearchParamsBundle[a], USES_TSearchParamsBundle[a]);
   end;
 end;
 
@@ -2060,7 +2126,7 @@ begin
   for a := low(TSearchParamsFlag) to high(TSearchParamsFlag) do
   begin
     assert(CHECK_TSearchParamsFlag[a] = a);
-    indexes.add(frtFlag, CODES_TSearchParamsFlag[a], DESC_TSearchParamsFlag[a], TYPES_TSearchParamsFlag[a], TARGETS_TSearchParamsFlag[a]);
+    indexes.add(frtFlag, CODES_TSearchParamsFlag[a], DESC_TSearchParamsFlag[a], TYPES_TSearchParamsFlag[a], TARGETS_TSearchParamsFlag[a], PATHS_TSearchParamsFlag[a], USES_TSearchParamsFlag[a]);
   end;
 end;
 
@@ -2088,7 +2154,7 @@ begin
   for a := low(TSearchParamsAllergyIntolerance) to high(TSearchParamsAllergyIntolerance) do
   begin
     assert(CHECK_TSearchParamsAllergyIntolerance[a] = a);
-    indexes.add(frtAllergyIntolerance, CODES_TSearchParamsAllergyIntolerance[a], DESC_TSearchParamsAllergyIntolerance[a], TYPES_TSearchParamsAllergyIntolerance[a], TARGETS_TSearchParamsAllergyIntolerance[a]);
+    indexes.add(frtAllergyIntolerance, CODES_TSearchParamsAllergyIntolerance[a], DESC_TSearchParamsAllergyIntolerance[a], TYPES_TSearchParamsAllergyIntolerance[a], TARGETS_TSearchParamsAllergyIntolerance[a], PATHS_TSearchParamsAllergyIntolerance[a], USES_TSearchParamsAllergyIntolerance[a]);
   end;
 end;
 
@@ -2136,7 +2202,7 @@ begin
   for a := low(TSearchParamsSubstance) to high(TSearchParamsSubstance) do
   begin
     assert(CHECK_TSearchParamsSubstance[a] = a);
-    indexes.add(frtSubstance, CODES_TSearchParamsSubstance[a], DESC_TSearchParamsSubstance[a], TYPES_TSearchParamsSubstance[a], TARGETS_TSearchParamsSubstance[a]);
+    indexes.add(frtSubstance, CODES_TSearchParamsSubstance[a], DESC_TSearchParamsSubstance[a], TYPES_TSearchParamsSubstance[a], TARGETS_TSearchParamsSubstance[a], PATHS_TSearchParamsSubstance[a], USES_TSearchParamsSubstance[a]);
   end;
 end;
 
@@ -2184,7 +2250,7 @@ begin
   for a := low(TSearchParamsBasic) to high(TSearchParamsBasic) do
   begin
     assert(CHECK_TSearchParamsBasic[a] = a);
-    indexes.add(frtBasic, CODES_TSearchParamsBasic[a], DESC_TSearchParamsBasic[a], TYPES_TSearchParamsBasic[a], TARGETS_TSearchParamsBasic[a]);
+    indexes.add(frtBasic, CODES_TSearchParamsBasic[a], DESC_TSearchParamsBasic[a], TYPES_TSearchParamsBasic[a], TARGETS_TSearchParamsBasic[a], PATHS_TSearchParamsBasic[a], USES_TSearchParamsBasic[a]);
   end;
 end;
 
@@ -2214,7 +2280,7 @@ begin
   for a := low(TSearchParamsClaim) to high(TSearchParamsClaim) do
   begin
     assert(CHECK_TSearchParamsClaim[a] = a);
-    indexes.add(frtClaim, CODES_TSearchParamsClaim[a], DESC_TSearchParamsClaim[a], TYPES_TSearchParamsClaim[a], TARGETS_TSearchParamsClaim[a]);
+    indexes.add(frtClaim, CODES_TSearchParamsClaim[a], DESC_TSearchParamsClaim[a], TYPES_TSearchParamsClaim[a], TARGETS_TSearchParamsClaim[a], PATHS_TSearchParamsClaim[a], USES_TSearchParamsClaim[a]);
   end;
 end;
 
@@ -2240,7 +2306,7 @@ begin
   for a := low(TSearchParamsCoverage) to high(TSearchParamsCoverage) do
   begin
     assert(CHECK_TSearchParamsCoverage[a] = a);
-    indexes.add(frtCoverage, CODES_TSearchParamsCoverage[a], DESC_TSearchParamsCoverage[a], TYPES_TSearchParamsCoverage[a], TARGETS_TSearchParamsCoverage[a]);
+    indexes.add(frtCoverage, CODES_TSearchParamsCoverage[a], DESC_TSearchParamsCoverage[a], TYPES_TSearchParamsCoverage[a], TARGETS_TSearchParamsCoverage[a], PATHS_TSearchParamsCoverage[a], USES_TSearchParamsCoverage[a]);
   end;
 end;
 
@@ -2267,9 +2333,9 @@ begin
   for a := low(TSearchParamsClaimResponse) to high(TSearchParamsClaimResponse) do
   begin
     assert(CHECK_TSearchParamsClaimResponse[a] = a);
-    indexes.add(frtClaimResponse, CODES_TSearchParamsClaimResponse[a], DESC_TSearchParamsClaimResponse[a], TYPES_TSearchParamsClaimResponse[a], TARGETS_TSearchParamsClaimResponse[a]);
+    indexes.add(frtClaimResponse, CODES_TSearchParamsClaimResponse[a], DESC_TSearchParamsClaimResponse[a], TYPES_TSearchParamsClaimResponse[a], TARGETS_TSearchParamsClaimResponse[a], PATHS_TSearchParamsClaimResponse[a], USES_TSearchParamsClaimResponse[a]);
   end;
-  indexes.add(frtClaimResponse, 'request', 'request claim link', SearchParamTypeReference, [frtClaim]);
+  indexes.add(frtClaimResponse, 'request', 'request claim link', SearchParamTypeReference, [frtClaim], '', SearchXpathUsageNull);
 end;
 
 procedure TFhirIndexManager.buildIndexValuesClaimResponse(key: integer; id : String; context : TFhirResource; resource: TFhirClaimResponse);
@@ -2289,7 +2355,7 @@ begin
   for a := low(TSearchParamsEligibilityRequest) to high(TSearchParamsEligibilityRequest) do
   begin
     assert(CHECK_TSearchParamsEligibilityRequest[a] = a);
-    indexes.add(frtEligibilityRequest, CODES_TSearchParamsEligibilityRequest[a], DESC_TSearchParamsEligibilityRequest[a], TYPES_TSearchParamsEligibilityRequest[a], TARGETS_TSearchParamsEligibilityRequest[a]);
+    indexes.add(frtEligibilityRequest, CODES_TSearchParamsEligibilityRequest[a], DESC_TSearchParamsEligibilityRequest[a], TYPES_TSearchParamsEligibilityRequest[a], TARGETS_TSearchParamsEligibilityRequest[a], PATHS_TSearchParamsEligibilityRequest[a], USES_TSearchParamsEligibilityRequest[a]);
   end;
 end;
 
@@ -2309,7 +2375,7 @@ begin
   for a := low(TSearchParamsEligibilityResponse) to high(TSearchParamsEligibilityResponse) do
   begin
     assert(CHECK_TSearchParamsEligibilityResponse[a] = a);
-    indexes.add(frtEligibilityResponse, CODES_TSearchParamsEligibilityResponse[a], DESC_TSearchParamsEligibilityResponse[a], TYPES_TSearchParamsEligibilityResponse[a], TARGETS_TSearchParamsEligibilityResponse[a]);
+    indexes.add(frtEligibilityResponse, CODES_TSearchParamsEligibilityResponse[a], DESC_TSearchParamsEligibilityResponse[a], TYPES_TSearchParamsEligibilityResponse[a], TARGETS_TSearchParamsEligibilityResponse[a], PATHS_TSearchParamsEligibilityResponse[a], USES_TSearchParamsEligibilityResponse[a]);
   end;
 end;
 
@@ -2329,7 +2395,7 @@ begin
   for a := low(TSearchParamsEnrollmentRequest) to high(TSearchParamsEnrollmentRequest) do
   begin
     assert(CHECK_TSearchParamsEnrollmentRequest[a] = a);
-    indexes.add(frtEnrollmentRequest, CODES_TSearchParamsEnrollmentRequest[a], DESC_TSearchParamsEnrollmentRequest[a], TYPES_TSearchParamsEnrollmentRequest[a], TARGETS_TSearchParamsEnrollmentRequest[a]);
+    indexes.add(frtEnrollmentRequest, CODES_TSearchParamsEnrollmentRequest[a], DESC_TSearchParamsEnrollmentRequest[a], TYPES_TSearchParamsEnrollmentRequest[a], TARGETS_TSearchParamsEnrollmentRequest[a], PATHS_TSearchParamsEnrollmentRequest[a], USES_TSearchParamsEnrollmentRequest[a]);
   end;
 end;
 
@@ -2352,7 +2418,7 @@ begin
   for a := low(TSearchParamsEnrollmentResponse) to high(TSearchParamsEnrollmentResponse) do
   begin
     assert(CHECK_TSearchParamsEnrollmentResponse[a] = a);
-    indexes.add(frtEnrollmentResponse, CODES_TSearchParamsEnrollmentResponse[a], DESC_TSearchParamsEnrollmentResponse[a], TYPES_TSearchParamsEnrollmentResponse[a], TARGETS_TSearchParamsEnrollmentResponse[a]);
+    indexes.add(frtEnrollmentResponse, CODES_TSearchParamsEnrollmentResponse[a], DESC_TSearchParamsEnrollmentResponse[a], TYPES_TSearchParamsEnrollmentResponse[a], TARGETS_TSearchParamsEnrollmentResponse[a], PATHS_TSearchParamsEnrollmentResponse[a], USES_TSearchParamsEnrollmentResponse[a]);
   end;
 end;
 
@@ -2374,7 +2440,7 @@ begin
   for a := low(TSearchParamsExplanationOfBenefit) to high(TSearchParamsExplanationOfBenefit) do
   begin
     assert(CHECK_TSearchParamsExplanationOfBenefit[a] = a);
-    indexes.add(frtExplanationOfBenefit, CODES_TSearchParamsExplanationOfBenefit[a], DESC_TSearchParamsExplanationOfBenefit[a], TYPES_TSearchParamsExplanationOfBenefit[a], TARGETS_TSearchParamsExplanationOfBenefit[a]);
+    indexes.add(frtExplanationOfBenefit, CODES_TSearchParamsExplanationOfBenefit[a], DESC_TSearchParamsExplanationOfBenefit[a], TYPES_TSearchParamsExplanationOfBenefit[a], TARGETS_TSearchParamsExplanationOfBenefit[a], PATHS_TSearchParamsExplanationOfBenefit[a], USES_TSearchParamsExplanationOfBenefit[a]);
   end;
 end;
 
@@ -2396,7 +2462,7 @@ begin
   for a := low(TSearchParamsPaymentNotice) to high(TSearchParamsPaymentNotice) do
   begin
     assert(CHECK_TSearchParamsPaymentNotice[a] = a);
-    indexes.add(frtPaymentNotice, CODES_TSearchParamsPaymentNotice[a], DESC_TSearchParamsPaymentNotice[a], TYPES_TSearchParamsPaymentNotice[a], TARGETS_TSearchParamsPaymentNotice[a]);
+    indexes.add(frtPaymentNotice, CODES_TSearchParamsPaymentNotice[a], DESC_TSearchParamsPaymentNotice[a], TYPES_TSearchParamsPaymentNotice[a], TARGETS_TSearchParamsPaymentNotice[a], PATHS_TSearchParamsPaymentNotice[a], USES_TSearchParamsPaymentNotice[a]);
   end;
 end;
 
@@ -2420,7 +2486,7 @@ begin
   for a := low(TSearchParamsPaymentReconciliation) to high(TSearchParamsPaymentReconciliation) do
   begin
     assert(CHECK_TSearchParamsPaymentReconciliation[a] = a);
-    indexes.add(frtPaymentReconciliation, CODES_TSearchParamsPaymentReconciliation[a], DESC_TSearchParamsPaymentReconciliation[a], TYPES_TSearchParamsPaymentReconciliation[a], TARGETS_TSearchParamsPaymentReconciliation[a]);
+    indexes.add(frtPaymentReconciliation, CODES_TSearchParamsPaymentReconciliation[a], DESC_TSearchParamsPaymentReconciliation[a], TYPES_TSearchParamsPaymentReconciliation[a], TARGETS_TSearchParamsPaymentReconciliation[a], PATHS_TSearchParamsPaymentReconciliation[a], USES_TSearchParamsPaymentReconciliation[a]);
   end;
 end;
 
@@ -2444,7 +2510,7 @@ begin
   for a := low(TSearchParamsCoverage) to high(TSearchParamsCoverage) do
   begin
     assert(CHECK_TSearchParamsCoverage[a] = a);
-    indexes.add(frtCoverage, CODES_TSearchParamsCoverage[a], DESC_TSearchParamsCoverage[a], TYPES_TSearchParamsCoverage[a], TARGETS_TSearchParamsCoverage[a]);
+    indexes.add(frtCoverage, CODES_TSearchParamsCoverage[a], DESC_TSearchParamsCoverage[a], TYPES_TSearchParamsCoverage[a], TARGETS_TSearchParamsCoverage[a], PATHS_TSearchParamsCoverage[a], USES_TSearchParamsCoverage[a]);
   end;
 end;
 
@@ -2471,7 +2537,7 @@ begin
   for a := low(TSearchParamsClaimResponse) to high(TSearchParamsClaimResponse) do
   begin
     assert(CHECK_TSearchParamsClaimResponse[a] = a);
-    indexes.add(frtClaimResponse, CODES_TSearchParamsClaimResponse[a], DESC_TSearchParamsClaimResponse[a], TYPES_TSearchParamsClaimResponse[a], TARGETS_TSearchParamsClaimResponse[a]);
+    indexes.add(frtClaimResponse, CODES_TSearchParamsClaimResponse[a], DESC_TSearchParamsClaimResponse[a], TYPES_TSearchParamsClaimResponse[a], TARGETS_TSearchParamsClaimResponse[a], PATHS_TSearchParamsClaimResponse[a], USES_TSearchParamsClaimResponse[a]);
   end;
 end;
 
@@ -2498,7 +2564,7 @@ begin
   for a := low(TSearchParamsClaim) to high(TSearchParamsClaim) do
   begin
     assert(CHECK_TSearchParamsClaim[a] = a);
-    indexes.add(frtClaim, CODES_TSearchParamsClaim[a], DESC_TSearchParamsClaim[a], TYPES_TSearchParamsClaim[a], TARGETS_TSearchParamsClaim[a]);
+    indexes.add(frtClaim, CODES_TSearchParamsClaim[a], DESC_TSearchParamsClaim[a], TYPES_TSearchParamsClaim[a], TARGETS_TSearchParamsClaim[a], PATHS_TSearchParamsClaim[a], USES_TSearchParamsClaim[a]);
   end;
 end;
 
@@ -2527,7 +2593,7 @@ begin
   for a := low(TSearchParamsEligibilityRequest) to high(TSearchParamsEligibilityRequest) do
   begin
     assert(CHECK_TSearchParamsEligibilityRequest[a] = a);
-    indexes.add(frtEligibilityRequest, CODES_TSearchParamsEligibilityRequest[a], DESC_TSearchParamsEligibilityRequest[a], TYPES_TSearchParamsEligibilityRequest[a], TARGETS_TSearchParamsEligibilityRequest[a]);
+    indexes.add(frtEligibilityRequest, CODES_TSearchParamsEligibilityRequest[a], DESC_TSearchParamsEligibilityRequest[a], TYPES_TSearchParamsEligibilityRequest[a], TARGETS_TSearchParamsEligibilityRequest[a], PATHS_TSearchParamsEligibilityRequest[a], USES_TSearchParamsEligibilityRequest[a]);
   end;
 end;
 
@@ -2552,7 +2618,7 @@ begin
   for a := low(TSearchParamsEligibilityResponse) to high(TSearchParamsEligibilityResponse) do
   begin
     assert(CHECK_TSearchParamsEligibilityResponse[a] = a);
-    indexes.add(frtEligibilityResponse, CODES_TSearchParamsEligibilityResponse[a], DESC_TSearchParamsEligibilityResponse[a], TYPES_TSearchParamsEligibilityResponse[a], TARGETS_TSearchParamsEligibilityResponse[a]);
+    indexes.add(frtEligibilityResponse, CODES_TSearchParamsEligibilityResponse[a], DESC_TSearchParamsEligibilityResponse[a], TYPES_TSearchParamsEligibilityResponse[a], TARGETS_TSearchParamsEligibilityResponse[a], PATHS_TSearchParamsEligibilityResponse[a], USES_TSearchParamsEligibilityResponse[a]);
   end;
 end;
 
@@ -2578,7 +2644,7 @@ begin
   for a := low(TSearchParamsEnrollmentRequest) to high(TSearchParamsEnrollmentRequest) do
   begin
     assert(CHECK_TSearchParamsEnrollmentRequest[a] = a);
-    indexes.add(frtEnrollmentRequest, CODES_TSearchParamsEnrollmentRequest[a], DESC_TSearchParamsEnrollmentRequest[a], TYPES_TSearchParamsEnrollmentRequest[a], TARGETS_TSearchParamsEnrollmentRequest[a]);
+    indexes.add(frtEnrollmentRequest, CODES_TSearchParamsEnrollmentRequest[a], DESC_TSearchParamsEnrollmentRequest[a], TYPES_TSearchParamsEnrollmentRequest[a], TARGETS_TSearchParamsEnrollmentRequest[a], PATHS_TSearchParamsEnrollmentRequest[a], USES_TSearchParamsEnrollmentRequest[a]);
   end;
 end;
 
@@ -2601,7 +2667,7 @@ begin
   for a := low(TSearchParamsEnrollmentResponse) to high(TSearchParamsEnrollmentResponse) do
   begin
     assert(CHECK_TSearchParamsEnrollmentResponse[a] = a);
-    indexes.add(frtEnrollmentResponse, CODES_TSearchParamsEnrollmentResponse[a], DESC_TSearchParamsEnrollmentResponse[a], TYPES_TSearchParamsEnrollmentResponse[a], TARGETS_TSearchParamsEnrollmentResponse[a]);
+    indexes.add(frtEnrollmentResponse, CODES_TSearchParamsEnrollmentResponse[a], DESC_TSearchParamsEnrollmentResponse[a], TYPES_TSearchParamsEnrollmentResponse[a], TARGETS_TSearchParamsEnrollmentResponse[a], PATHS_TSearchParamsEnrollmentResponse[a], USES_TSearchParamsEnrollmentResponse[a]);
   end;
 end;
 
@@ -2622,7 +2688,7 @@ begin
   for a := low(TSearchParamsExplanationOfBenefit) to high(TSearchParamsExplanationOfBenefit) do
   begin
     assert(CHECK_TSearchParamsExplanationOfBenefit[a] = a);
-    indexes.add(frtExplanationOfBenefit, CODES_TSearchParamsExplanationOfBenefit[a], DESC_TSearchParamsExplanationOfBenefit[a], TYPES_TSearchParamsExplanationOfBenefit[a], TARGETS_TSearchParamsExplanationOfBenefit[a]);
+    indexes.add(frtExplanationOfBenefit, CODES_TSearchParamsExplanationOfBenefit[a], DESC_TSearchParamsExplanationOfBenefit[a], TYPES_TSearchParamsExplanationOfBenefit[a], TARGETS_TSearchParamsExplanationOfBenefit[a], PATHS_TSearchParamsExplanationOfBenefit[a], USES_TSearchParamsExplanationOfBenefit[a]);
   end;
 end;
 
@@ -2651,7 +2717,7 @@ begin
   for a := low(TSearchParamsPaymentNotice) to high(TSearchParamsPaymentNotice) do
   begin
     assert(CHECK_TSearchParamsPaymentNotice[a] = a);
-    indexes.add(frtPaymentNotice, CODES_TSearchParamsPaymentNotice[a], DESC_TSearchParamsPaymentNotice[a], TYPES_TSearchParamsPaymentNotice[a], TARGETS_TSearchParamsPaymentNotice[a]);
+    indexes.add(frtPaymentNotice, CODES_TSearchParamsPaymentNotice[a], DESC_TSearchParamsPaymentNotice[a], TYPES_TSearchParamsPaymentNotice[a], TARGETS_TSearchParamsPaymentNotice[a], PATHS_TSearchParamsPaymentNotice[a], USES_TSearchParamsPaymentNotice[a]);
   end;
 end;
 
@@ -2681,7 +2747,7 @@ begin
   for a := low(TSearchParamsPaymentReconciliation) to high(TSearchParamsPaymentReconciliation) do
   begin
     assert(CHECK_TSearchParamsPaymentReconciliation[a] = a);
-    indexes.add(frtPaymentReconciliation, CODES_TSearchParamsPaymentReconciliation[a], DESC_TSearchParamsPaymentReconciliation[a], TYPES_TSearchParamsPaymentReconciliation[a], TARGETS_TSearchParamsPaymentReconciliation[a]);
+    indexes.add(frtPaymentReconciliation, CODES_TSearchParamsPaymentReconciliation[a], DESC_TSearchParamsPaymentReconciliation[a], TYPES_TSearchParamsPaymentReconciliation[a], TARGETS_TSearchParamsPaymentReconciliation[a], PATHS_TSearchParamsPaymentReconciliation[a], USES_TSearchParamsPaymentReconciliation[a]);
   end;
 end;
 
@@ -2711,7 +2777,7 @@ begin
   for a := low(TSearchParamsDecisionSupportRule) to high(TSearchParamsDecisionSupportRule) do
   begin
     assert(CHECK_TSearchParamsDecisionSupportRule[a] = a);
-    indexes.add(frtDecisionSupportRule, CODES_TSearchParamsDecisionSupportRule[a], DESC_TSearchParamsDecisionSupportRule[a], TYPES_TSearchParamsDecisionSupportRule[a], TARGETS_TSearchParamsDecisionSupportRule[a]);
+    indexes.add(frtDecisionSupportRule, CODES_TSearchParamsDecisionSupportRule[a], DESC_TSearchParamsDecisionSupportRule[a], TYPES_TSearchParamsDecisionSupportRule[a], TARGETS_TSearchParamsDecisionSupportRule[a], PATHS_TSearchParamsDecisionSupportRule[a], USES_TSearchParamsDecisionSupportRule[a]);
   end;
 end;
 
@@ -2731,7 +2797,7 @@ begin
   for a := low(TSearchParamsDecisionSupportServiceModule) to high(TSearchParamsDecisionSupportServiceModule) do
   begin
     assert(CHECK_TSearchParamsDecisionSupportServiceModule[a] = a);
-    indexes.add(frtDecisionSupportServiceModule, CODES_TSearchParamsDecisionSupportServiceModule[a], DESC_TSearchParamsDecisionSupportServiceModule[a], TYPES_TSearchParamsDecisionSupportServiceModule[a], TARGETS_TSearchParamsDecisionSupportServiceModule[a]);
+    indexes.add(frtDecisionSupportServiceModule, CODES_TSearchParamsDecisionSupportServiceModule[a], DESC_TSearchParamsDecisionSupportServiceModule[a], TYPES_TSearchParamsDecisionSupportServiceModule[a], TARGETS_TSearchParamsDecisionSupportServiceModule[a], PATHS_TSearchParamsDecisionSupportServiceModule[a], USES_TSearchParamsDecisionSupportServiceModule[a]);
   end;
 end;
 
@@ -2752,7 +2818,7 @@ begin
   for a := low(TSearchParamsExpansionProfile) to high(TSearchParamsExpansionProfile) do
   begin
     assert(CHECK_TSearchParamsExpansionProfile[a] = a);
-    indexes.add(frtExpansionProfile, CODES_TSearchParamsExpansionProfile[a], DESC_TSearchParamsExpansionProfile[a], TYPES_TSearchParamsExpansionProfile[a], TARGETS_TSearchParamsExpansionProfile[a]);
+    indexes.add(frtExpansionProfile, CODES_TSearchParamsExpansionProfile[a], DESC_TSearchParamsExpansionProfile[a], TYPES_TSearchParamsExpansionProfile[a], TARGETS_TSearchParamsExpansionProfile[a], PATHS_TSearchParamsExpansionProfile[a], USES_TSearchParamsExpansionProfile[a]);
   end;
 end;
 
@@ -2780,7 +2846,7 @@ begin
   for a := low(TSearchParamsGuidanceResponse) to high(TSearchParamsGuidanceResponse) do
   begin
     assert(CHECK_TSearchParamsGuidanceResponse[a] = a);
-    indexes.add(frtGuidanceResponse, CODES_TSearchParamsGuidanceResponse[a], DESC_TSearchParamsGuidanceResponse[a], TYPES_TSearchParamsGuidanceResponse[a], TARGETS_TSearchParamsGuidanceResponse[a]);
+    indexes.add(frtGuidanceResponse, CODES_TSearchParamsGuidanceResponse[a], DESC_TSearchParamsGuidanceResponse[a], TYPES_TSearchParamsGuidanceResponse[a], TARGETS_TSearchParamsGuidanceResponse[a], PATHS_TSearchParamsGuidanceResponse[a], USES_TSearchParamsGuidanceResponse[a]);
   end;
 end;
 
@@ -2800,7 +2866,7 @@ begin
   for a := low(TSearchParamsLibrary) to high(TSearchParamsLibrary) do
   begin
     assert(CHECK_TSearchParamsLibrary[a] = a);
-    indexes.add(frtLibrary, CODES_TSearchParamsLibrary[a], DESC_TSearchParamsLibrary[a], TYPES_TSearchParamsLibrary[a], TARGETS_TSearchParamsLibrary[a]);
+    indexes.add(frtLibrary, CODES_TSearchParamsLibrary[a], DESC_TSearchParamsLibrary[a], TYPES_TSearchParamsLibrary[a], TARGETS_TSearchParamsLibrary[a], PATHS_TSearchParamsLibrary[a], USES_TSearchParamsLibrary[a]);
   end;
 end;
 
@@ -2820,7 +2886,7 @@ begin
   for a := low(TSearchParamsMeasure) to high(TSearchParamsMeasure) do
   begin
     assert(CHECK_TSearchParamsMeasure[a] = a);
-    indexes.add(frtMeasure, CODES_TSearchParamsMeasure[a], DESC_TSearchParamsMeasure[a], TYPES_TSearchParamsMeasure[a], TARGETS_TSearchParamsMeasure[a]);
+    indexes.add(frtMeasure, CODES_TSearchParamsMeasure[a], DESC_TSearchParamsMeasure[a], TYPES_TSearchParamsMeasure[a], TARGETS_TSearchParamsMeasure[a], PATHS_TSearchParamsMeasure[a], USES_TSearchParamsMeasure[a]);
   end;
 end;
 
@@ -2840,7 +2906,7 @@ begin
   for a := low(TSearchParamsModuleDefinition) to high(TSearchParamsModuleDefinition) do
   begin
     assert(CHECK_TSearchParamsModuleDefinition[a] = a);
-    indexes.add(frtModuleDefinition, CODES_TSearchParamsModuleDefinition[a], DESC_TSearchParamsModuleDefinition[a], TYPES_TSearchParamsModuleDefinition[a], TARGETS_TSearchParamsModuleDefinition[a]);
+    indexes.add(frtModuleDefinition, CODES_TSearchParamsModuleDefinition[a], DESC_TSearchParamsModuleDefinition[a], TYPES_TSearchParamsModuleDefinition[a], TARGETS_TSearchParamsModuleDefinition[a], PATHS_TSearchParamsModuleDefinition[a], USES_TSearchParamsModuleDefinition[a]);
   end;
 end;
 
@@ -2862,7 +2928,7 @@ begin
   for a := low(TSearchParamsModuleMetadata) to high(TSearchParamsModuleMetadata) do
   begin
     assert(CHECK_TSearchParamsModuleMetadata[a] = a);
-    indexes.add(frtModuleMetadata, CODES_TSearchParamsModuleMetadata[a], DESC_TSearchParamsModuleMetadata[a], TYPES_TSearchParamsModuleMetadata[a], TARGETS_TSearchParamsModuleMetadata[a]);
+    indexes.add(frtModuleMetadata, CODES_TSearchParamsModuleMetadata[a], DESC_TSearchParamsModuleMetadata[a], TYPES_TSearchParamsModuleMetadata[a], TARGETS_TSearchParamsModuleMetadata[a], PATHS_TSearchParamsModuleMetadata[a], USES_TSearchParamsModuleMetadata[a]);
   end;
 end;
 
@@ -2892,7 +2958,7 @@ begin
   for a := low(TSearchParamsOrderSet) to high(TSearchParamsOrderSet) do
   begin
     assert(CHECK_TSearchParamsOrderSet[a] = a);
-    indexes.add(frtOrderSet, CODES_TSearchParamsOrderSet[a], DESC_TSearchParamsOrderSet[a], TYPES_TSearchParamsOrderSet[a], TARGETS_TSearchParamsOrderSet[a]);
+    indexes.add(frtOrderSet, CODES_TSearchParamsOrderSet[a], DESC_TSearchParamsOrderSet[a], TYPES_TSearchParamsOrderSet[a], TARGETS_TSearchParamsOrderSet[a], PATHS_TSearchParamsOrderSet[a], USES_TSearchParamsOrderSet[a]);
   end;
 end;
 
@@ -2913,7 +2979,7 @@ begin
   for a := low(TSearchParamsSequence) to high(TSearchParamsSequence) do
   begin
     assert(CHECK_TSearchParamsSequence[a] = a);
-    indexes.add(frtSequence, CODES_TSearchParamsSequence[a], DESC_TSearchParamsSequence[a], TYPES_TSearchParamsSequence[a], TARGETS_TSearchParamsSequence[a]);
+    indexes.add(frtSequence, CODES_TSearchParamsSequence[a], DESC_TSearchParamsSequence[a], TYPES_TSearchParamsSequence[a], TARGETS_TSearchParamsSequence[a], PATHS_TSearchParamsSequence[a], USES_TSearchParamsSequence[a]);
   end;
 end;
 
@@ -2938,10 +3004,15 @@ end;
 
 
 
-
+{$IFDEF DSTU21}
 Const
   CHECK_TSearchParamsContract : Array[TSearchParamsContract] of TSearchParamsContract = ( spContract__content, spContract__id, spContract__lastUpdated, spContract__profile, spContract__query, spContract__security, spContract__tag, spContract__text,
-     spContract_Actor, spContract_Identifier, spContract_Patient, spContract_Signer, spContract_Subject);
+    spContract_Identifier, spContract_Party, spContract_Patient, spContract_Signer, spContract_Subject);
+{$ELSE}
+Const
+  CHECK_TSearchParamsContract : Array[TSearchParamsContract] of TSearchParamsContract = ( spContract__content, spContract__id, spContract__lastUpdated, spContract__profile, spContract__query, spContract__security, spContract__tag, spContract__text,
+    spContract_Actor, spContract_Identifier, spContract_Patient, spContract_Signer, spContract_Subject);
+{$ENDIF}
 
 procedure TFhirIndexInformation.buildIndexesContract;
 var
@@ -2950,7 +3021,7 @@ begin
   for a := low(TSearchParamsContract) to high(TSearchParamsContract) do
   begin
     assert(CHECK_TSearchParamsContract[a] = a);
-    indexes.add(frtContract, CODES_TSearchParamsContract[a], DESC_TSearchParamsContract[a], TYPES_TSearchParamsContract[a], TARGETS_TSearchParamsContract[a]);
+    indexes.add(frtContract, CODES_TSearchParamsContract[a], DESC_TSearchParamsContract[a], TYPES_TSearchParamsContract[a], TARGETS_TSearchParamsContract[a], PATHS_TSearchParamsContract[a], USES_TSearchParamsContract[a]);
   end;
 end;
 
@@ -2964,6 +3035,15 @@ begin
     patientCompartment(key, resource.subjectList[i]);
     index(context, frtContract, key, 0, resource.subjectList[i], 'patient');
   end;
+  {$IFDEF DSTU21}
+  for i := 0 to resource.partyList.Count - 1 do
+  begin
+    index(context, frtContract, key, 0, resource.partyList[i].entity, 'party');
+    practitionerCompartment(key, resource.partyList[i].entity);
+    relatedPersonCompartment(key, resource.partyList[i].entity);
+    deviceCompartment(key, resource.partyList[i].entity);
+  end;
+  {$ELSE}
   for i := 0 to resource.actorList.Count - 1 do
   begin
     index(context, frtContract, key, 0, resource.actorList[i].entity, 'actor');
@@ -2971,6 +3051,7 @@ begin
     relatedPersonCompartment(key, resource.actorList[i].entity);
     deviceCompartment(key, resource.actorList[i].entity);
   end;
+  {$ENDIF}
   for i := 0 to resource.signerList.Count - 1 do
   begin
     index(context, frtContract, key, 0, resource.signerList[i].party, 'signer');
@@ -2992,7 +3073,7 @@ begin
   for a := low(TSearchParamsSupplyDelivery) to high(TSearchParamsSupplyDelivery) do
   begin
     assert(CHECK_TSearchParamsSupplyDelivery[a] = a);
-    indexes.add(frtSupplyDelivery, CODES_TSearchParamsSupplyDelivery[a], DESC_TSearchParamsSupplyDelivery[a], TYPES_TSearchParamsSupplyDelivery[a], TARGETS_TSearchParamsSupplyDelivery[a]);
+    indexes.add(frtSupplyDelivery, CODES_TSearchParamsSupplyDelivery[a], DESC_TSearchParamsSupplyDelivery[a], TYPES_TSearchParamsSupplyDelivery[a], TARGETS_TSearchParamsSupplyDelivery[a], PATHS_TSearchParamsSupplyDelivery[a], USES_TSearchParamsSupplyDelivery[a]);
   end;
 end;
 
@@ -3019,7 +3100,7 @@ begin
   for a := low(TSearchParamsSupplyRequest) to high(TSearchParamsSupplyRequest) do
   begin
     assert(CHECK_TSearchParamsSupplyRequest[a] = a);
-    indexes.add(frtSupplyRequest, CODES_TSearchParamsSupplyRequest[a], DESC_TSearchParamsSupplyRequest[a], TYPES_TSearchParamsSupplyRequest[a], TARGETS_TSearchParamsSupplyRequest[a]);
+    indexes.add(frtSupplyRequest, CODES_TSearchParamsSupplyRequest[a], DESC_TSearchParamsSupplyRequest[a], TYPES_TSearchParamsSupplyRequest[a], TARGETS_TSearchParamsSupplyRequest[a], PATHS_TSearchParamsSupplyRequest[a], USES_TSearchParamsSupplyRequest[a]);
   end;
 end;
 
@@ -3049,7 +3130,7 @@ begin
   for a := low(TSearchParamsRelatedPerson) to high(TSearchParamsRelatedPerson) do
   begin
     assert(CHECK_TSearchParamsRelatedPerson[a] = a);
-    indexes.add(frtRelatedPerson, CODES_TSearchParamsRelatedPerson[a], DESC_TSearchParamsRelatedPerson[a], TYPES_TSearchParamsRelatedPerson[a], TARGETS_TSearchParamsRelatedPerson[a]);
+    indexes.add(frtRelatedPerson, CODES_TSearchParamsRelatedPerson[a], DESC_TSearchParamsRelatedPerson[a], TYPES_TSearchParamsRelatedPerson[a], TARGETS_TSearchParamsRelatedPerson[a], PATHS_TSearchParamsRelatedPerson[a], USES_TSearchParamsRelatedPerson[a]);
   end;
 end;
 
@@ -3245,7 +3326,7 @@ begin
   for a := low(TSearchParamsConformance) to high(TSearchParamsConformance) do
   begin
     assert(CHECK_TSearchParamsConformance[a] = a);
-    indexes.add(frtConformance, CODES_TSearchParamsConformance[a], DESC_TSearchParamsConformance[a], TYPES_TSearchParamsConformance[a], TARGETS_TSearchParamsConformance[a]);
+    indexes.add(frtConformance, CODES_TSearchParamsConformance[a], DESC_TSearchParamsConformance[a], TYPES_TSearchParamsConformance[a], TARGETS_TSearchParamsConformance[a], PATHS_TSearchParamsConformance[a], USES_TSearchParamsConformance[a]);
   end;
 end;
 
@@ -3321,7 +3402,7 @@ begin
   for a := low(TSearchParamsComposition) to high(TSearchParamsComposition) do
   begin
     assert(CHECK_TSearchParamsComposition[a] = a);
-    indexes.add(frtComposition, CODES_TSearchParamsComposition[a], DESC_TSearchParamsComposition[a], TYPES_TSearchParamsComposition[a], TARGETS_TSearchParamsComposition[a]);
+    indexes.add(frtComposition, CODES_TSearchParamsComposition[a], DESC_TSearchParamsComposition[a], TYPES_TSearchParamsComposition[a], TARGETS_TSearchParamsComposition[a], PATHS_TSearchParamsComposition[a], USES_TSearchParamsComposition[a]);
   end;
 end;
 
@@ -3387,7 +3468,7 @@ begin
   for a := low(TSearchParamsMessageHeader) to high(TSearchParamsMessageHeader) do
   begin
     assert(CHECK_TSearchParamsMessageHeader[a] = a);
-    indexes.add(frtMessageHeader, CODES_TSearchParamsMessageHeader[a], DESC_TSearchParamsMessageHeader[a], TYPES_TSearchParamsMessageHeader[a], TARGETS_TSearchParamsMessageHeader[a]);
+    indexes.add(frtMessageHeader, CODES_TSearchParamsMessageHeader[a], DESC_TSearchParamsMessageHeader[a], TYPES_TSearchParamsMessageHeader[a], TARGETS_TSearchParamsMessageHeader[a], PATHS_TSearchParamsMessageHeader[a], USES_TSearchParamsMessageHeader[a]);
   end;
 end;
 
@@ -3435,7 +3516,7 @@ begin
   for a := low(TSearchParamsPractitioner) to high(TSearchParamsPractitioner) do
   begin
     assert(CHECK_TSearchParamsPractitioner[a] = a);
-    indexes.add(frtPractitioner, CODES_TSearchParamsPractitioner[a], DESC_TSearchParamsPractitioner[a], TYPES_TSearchParamsPractitioner[a], TARGETS_TSearchParamsPractitioner[a]);
+    indexes.add(frtPractitioner, CODES_TSearchParamsPractitioner[a], DESC_TSearchParamsPractitioner[a], TYPES_TSearchParamsPractitioner[a], TARGETS_TSearchParamsPractitioner[a], PATHS_TSearchParamsPractitioner[a], USES_TSearchParamsPractitioner[a]);
   end;
 end;
 
@@ -3491,7 +3572,7 @@ begin
   for a := low(TSearchParamsOrganization) to high(TSearchParamsOrganization) do
   begin
     assert(CHECK_TSearchParamsOrganization[a] = a);
-    indexes.add(frtOrganization, CODES_TSearchParamsOrganization[a], DESC_TSearchParamsOrganization[a], TYPES_TSearchParamsOrganization[a], TARGETS_TSearchParamsOrganization[a]);
+    indexes.add(frtOrganization, CODES_TSearchParamsOrganization[a], DESC_TSearchParamsOrganization[a], TYPES_TSearchParamsOrganization[a], TARGETS_TSearchParamsOrganization[a], PATHS_TSearchParamsOrganization[a], USES_TSearchParamsOrganization[a]);
   end;
 end;
 
@@ -3525,7 +3606,7 @@ begin
   for a := low(TSearchParamsGroup) to high(TSearchParamsGroup) do
   begin
     assert(CHECK_TSearchParamsGroup[a] = a);
-    indexes.add(frtGroup, CODES_TSearchParamsGroup[a], DESC_TSearchParamsGroup[a], TYPES_TSearchParamsGroup[a], TARGETS_TSearchParamsGroup[a]);
+    indexes.add(frtGroup, CODES_TSearchParamsGroup[a], DESC_TSearchParamsGroup[a], TYPES_TSearchParamsGroup[a], TARGETS_TSearchParamsGroup[a], PATHS_TSearchParamsGroup[a], USES_TSearchParamsGroup[a]);
   end;
   composites.add(frtGroup, 'characteristic', ['value', 'value', 'code', 'characteristic']);
 end;
@@ -3570,7 +3651,7 @@ begin
   for a := low(TSearchParamsObservation) to high(TSearchParamsObservation) do
   begin
     assert(CHECK_TSearchParamsObservation[a] = a);
-    indexes.add(frtObservation, CODES_TSearchParamsObservation[a], DESC_TSearchParamsObservation[a], TYPES_TSearchParamsObservation[a], TARGETS_TSearchParamsObservation[a]);
+    indexes.add(frtObservation, CODES_TSearchParamsObservation[a], DESC_TSearchParamsObservation[a], TYPES_TSearchParamsObservation[a], TARGETS_TSearchParamsObservation[a], PATHS_TSearchParamsObservation[a], USES_TSearchParamsObservation[a]);
   end;
   composites.add(frtObservation, 'related', ['target', 'related-target', 'type', 'related-type']);
 end;
@@ -3649,7 +3730,7 @@ begin
   for a := low(TSearchParamsStructureDefinition) to high(TSearchParamsStructureDefinition) do
   begin
     assert(CHECK_TSearchParamsStructureDefinition[a] = a);
-    indexes.add(frtStructureDefinition, CODES_TSearchParamsStructureDefinition[a], DESC_TSearchParamsStructureDefinition[a], TYPES_TSearchParamsStructureDefinition[a], TARGETS_TSearchParamsStructureDefinition[a]);
+    indexes.add(frtStructureDefinition, CODES_TSearchParamsStructureDefinition[a], DESC_TSearchParamsStructureDefinition[a], TYPES_TSearchParamsStructureDefinition[a], TARGETS_TSearchParamsStructureDefinition[a], PATHS_TSearchParamsStructureDefinition[a], USES_TSearchParamsStructureDefinition[a]);
   end;
 end;
 
@@ -3715,15 +3796,15 @@ begin
   for a := low(TSearchParamsPatient) to high(TSearchParamsPatient) do
   begin
     assert(CHECK_TSearchParamsPatient[a] = a);
-    indexes.add(frtPatient, CODES_TSearchParamsPatient[a], DESC_TSearchParamsPatient[a], TYPES_TSearchParamsPatient[a], TARGETS_TSearchParamsPatient[a]);
+    indexes.add(frtPatient, CODES_TSearchParamsPatient[a], DESC_TSearchParamsPatient[a], TYPES_TSearchParamsPatient[a], TARGETS_TSearchParamsPatient[a], PATHS_TSearchParamsPatient[a], USES_TSearchParamsPatient[a]);
   end;
   composites.add(frtPatient, 'name', ['given', 'given', 'family', 'family']);
   // DAF:
-  indexes.add(frtPatient, 'mothersMaidenName', 'Search based on Patient mother''s Maiden Name', SearchParamTypeString, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
-  indexes.add(frtPatient, 'birthOrderBoolean', 'Search based on Patient''s birth order (boolean or integer)', SearchParamTypeString, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
-  indexes.add(frtPatient, 'age', 'Search based on Patient''s age', SearchParamTypeNumber, [], 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-age');
-  indexes.add(frtPatient, 'race', 'Search based on patient''s race (US Realm)', SearchParamTypeToken, [], 'http://hl7.org/fhir/SearchParameter/us-core-Patient-race');
-  indexes.add(frtPatient, 'ethnicity', 'Search based on Patient mother''s Maiden Name', SearchParamTypeToken, [], 'http://hl7.org/fhir/SearchParameter/us-core-Patient-ethnicity');
+  indexes.add(frtPatient, 'mothersMaidenName', 'Search based on Patient mother''s Maiden Name', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
+  indexes.add(frtPatient, 'birthOrderBoolean', 'Search based on Patient''s birth order (boolean or integer)', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
+  indexes.add(frtPatient, 'age', 'Search based on Patient''s age', SearchParamTypeNumber, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-age');
+  indexes.add(frtPatient, 'race', 'Search based on patient''s race (US Realm)', SearchParamTypeToken, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/us-core-Patient-race');
+  indexes.add(frtPatient, 'ethnicity', 'Search based on Patient mother''s Maiden Name', SearchParamTypeToken, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/us-core-Patient-ethnicity');
 end;
 
 procedure TFhirIndexManager.buildIndexValuesPatient(key : integer; id : String; context : TFhirResource; resource: TFhirPatient);
@@ -3811,7 +3892,7 @@ begin
   for a := low(TSearchParamsDiagnosticReport) to high(TSearchParamsDiagnosticReport) do
   begin
     assert(CHECK_TSearchParamsDiagnosticReport[a] = a);
-    indexes.add(frtDiagnosticReport, CODES_TSearchParamsDiagnosticReport[a], DESC_TSearchParamsDiagnosticReport[a], TYPES_TSearchParamsDiagnosticReport[a], TARGETS_TSearchParamsDiagnosticReport[a]);
+    indexes.add(frtDiagnosticReport, CODES_TSearchParamsDiagnosticReport[a], DESC_TSearchParamsDiagnosticReport[a], TYPES_TSearchParamsDiagnosticReport[a], TARGETS_TSearchParamsDiagnosticReport[a], PATHS_TSearchParamsDiagnosticReport[a], USES_TSearchParamsDiagnosticReport[a]);
   end;
 end;
 
@@ -3868,7 +3949,7 @@ begin
   for a := low(TSearchParamsDiagnosticOrder) to high(TSearchParamsDiagnosticOrder) do
   begin
     assert(CHECK_TSearchParamsDiagnosticOrder[a] = a);
-    indexes.add(frtDiagnosticOrder, CODES_TSearchParamsDiagnosticOrder[a], DESC_TSearchParamsDiagnosticOrder[a], TYPES_TSearchParamsDiagnosticOrder[a], TARGETS_TSearchParamsDiagnosticOrder[a]);
+    indexes.add(frtDiagnosticOrder, CODES_TSearchParamsDiagnosticOrder[a], DESC_TSearchParamsDiagnosticOrder[a], TYPES_TSearchParamsDiagnosticOrder[a], TARGETS_TSearchParamsDiagnosticOrder[a], PATHS_TSearchParamsDiagnosticOrder[a], USES_TSearchParamsDiagnosticOrder[a]);
   end;
   composites.add(frtDiagnosticOrder, 'event', ['status', 'event-status', 'date', 'event-date']);
   composites.add(frtDiagnosticOrder, 'item', ['status', 'item-status', 'code', 'item-code', 'site', 'bodysite', 'event', 'item-event']);
@@ -3935,7 +4016,7 @@ begin
   for a := low(TSearchParamsValueset) to high(TSearchParamsValueset) do
   begin
     assert(CHECK_TSearchParamsValueSet[a] = a);
-    indexes.add(frtValueset, CODES_TSearchParamsValueset[a], DESC_TSearchParamsValueset[a], TYPES_TSearchParamsValueset[a], TARGETS_TSearchParamsValueset[a]);
+    indexes.add(frtValueset, CODES_TSearchParamsValueset[a], DESC_TSearchParamsValueset[a], TYPES_TSearchParamsValueset[a], TARGETS_TSearchParamsValueset[a], PATHS_TSearchParamsValueset[a], USES_TSearchParamsValueset[a]);
   end;
 end;
 
@@ -3995,7 +4076,7 @@ begin
   for a := low(TSearchParamsConceptMap) to high(TSearchParamsConceptMap) do
   begin
     assert(CHECK_TSearchParamsConceptMap[a] = a);
-    indexes.add(frtConceptMap, CODES_TSearchParamsConceptMap[a], DESC_TSearchParamsConceptMap[a], TYPES_TSearchParamsConceptMap[a], TARGETS_TSearchParamsConceptMap[a]);
+    indexes.add(frtConceptMap, CODES_TSearchParamsConceptMap[a], DESC_TSearchParamsConceptMap[a], TYPES_TSearchParamsConceptMap[a], TARGETS_TSearchParamsConceptMap[a], PATHS_TSearchParamsConceptMap[a], USES_TSearchParamsConceptMap[a]);
   end;
 end;
 
@@ -4056,7 +4137,7 @@ begin
   for a := low(TSearchParamsDevice) to high(TSearchParamsDevice) do
   begin
     assert(CHECK_TSearchParamsDevice[a] = a);
-    indexes.add(frtDevice, CODES_TSearchParamsDevice[a], DESC_TSearchParamsDevice[a], TYPES_TSearchParamsDevice[a], TARGETS_TSearchParamsDevice[a]);
+    indexes.add(frtDevice, CODES_TSearchParamsDevice[a], DESC_TSearchParamsDevice[a], TYPES_TSearchParamsDevice[a], TARGETS_TSearchParamsDevice[a], PATHS_TSearchParamsDevice[a], USES_TSearchParamsDevice[a]);
   end;
 end;
 
@@ -4089,7 +4170,7 @@ begin
   for a := low(TSearchParamsAuditEvent) to high(TSearchParamsAuditEvent) do
   begin
     assert(CHECK_TSearchParamsAuditEvent[a] = a);
-    indexes.add(frtAuditEvent, CODES_TSearchParamsAuditEvent[a], DESC_TSearchParamsAuditEvent[a], TYPES_TSearchParamsAuditEvent[a], TARGETS_TSearchParamsAuditEvent[a]);
+    indexes.add(frtAuditEvent, CODES_TSearchParamsAuditEvent[a], DESC_TSearchParamsAuditEvent[a], TYPES_TSearchParamsAuditEvent[a], TARGETS_TSearchParamsAuditEvent[a], PATHS_TSearchParamsAuditEvent[a], USES_TSearchParamsAuditEvent[a]);
   end;
 end;
 
@@ -4098,6 +4179,43 @@ procedure TFhirIndexManager.buildIndexValuesAuditEvent(key : integer; id : Strin
 var
   i, j : integer;
 begin
+  {$IFDEF DSTU21}
+  index(frtAuditEvent, key, 0, resource.type_, 'type');
+  index(frtAuditEvent, key, 0, resource.actionElement, 'http://hl7.org/fhir/security-event-action', 'action');
+  index(frtAuditEvent, key, 0, resource.recordedElement, 'date');
+  for i := 0 to resource.subTypeList.count - 1 do
+    index(frtAuditEvent, key, 0, resource.subtypeList[i], 'subtype');
+
+  for i := 0 to resource.agentList.count - 1 do
+  begin
+    index(context, frtAuditEvent, key, 0, resource.agentList[i].reference, 'participant');
+    deviceCompartment(key, resource.agentList[i].reference);
+    practitionerCompartment(key, resource.agentList[i].reference);
+    index(context, frtAuditEvent, key, 0, resource.agentList[i].reference, 'patient', frtPatient);
+    index(frtAuditEvent, key, 0, resource.agentList[i].userIdElement, 'user');
+    index(frtAuditEvent, key, 0, resource.agentList[i].altIdElement, 'altid');
+    index(frtAuditEvent, key, 0, resource.agentList[i].nameElement, 'name');
+    for j := 0 to resource.agentList[i].policyList.Count - 1 do
+      index(frtAuditEvent, key, 0, resource.agentList[i].policyList[j], 'policy');
+    if resource.agentList[i].network <> nil then
+      index(frtAuditEvent, key, 0, resource.agentList[i].network.addressElement, 'address');
+  end;
+
+  if resource.source <> nil Then
+  begin
+    index(frtAuditEvent, key, 0, resource.source.identifierElement, 'source');
+    index(frtAuditEvent, key, 0, resource.source.siteElement, 'site');
+  end;
+
+  for i := 0 to resource.entityList.count - 1 do
+  begin
+    index(frtAuditEvent, key, 0, resource.entityList[i].type_, 'object-type');
+    index(frtAuditEvent, key, 0, resource.entityList[i].identifier, 'identity');
+    index(context, frtAuditEvent, key, 0, resource.entityList[i].reference, 'reference');
+    patientCompartment(key, resource.entityList[i].reference);
+    index(frtAuditEvent, key, 0, resource.entityList[i].nameElement, 'desc');
+  end;
+  {$ELSE}
   index(frtAuditEvent, key, 0, resource.event.type_, 'type');
   index(frtAuditEvent, key, 0, resource.event.actionElement, 'http://hl7.org/fhir/security-event-action', 'action');
   index(frtAuditEvent, key, 0, resource.event.dateTimeElement, 'date');
@@ -4133,6 +4251,7 @@ begin
     patientCompartment(key, resource.object_List[i].reference);
     index(frtAuditEvent, key, 0, resource.object_List[i].nameElement, 'desc');
   end;
+  {$ENDIF}
 end;
 
 
@@ -4150,10 +4269,10 @@ begin
   for a := low(TSearchParamsCondition) to high(TSearchParamsCondition) do
   begin
     assert(CHECK_TSearchParamsCondition[a] = a);
-    indexes.add(frtCondition, CODES_TSearchParamsCondition[a], DESC_TSearchParamsCondition[a], TYPES_TSearchParamsCondition[a], TARGETS_TSearchParamsCondition[a]);
+    indexes.add(frtCondition, CODES_TSearchParamsCondition[a], DESC_TSearchParamsCondition[a], TYPES_TSearchParamsCondition[a], TARGETS_TSearchParamsCondition[a], PATHS_TSearchParamsCondition[a], USES_TSearchParamsCondition[a]);
   end;
   // DAF
-  indexes.add(frtCondition, 'identifier', 'identifier', SearchParamTypeToken, []);
+  indexes.add(frtCondition, 'identifier', 'identifier', SearchParamTypeToken, [], '', SearchXpathUsageNull);
 end;
 
 procedure TFhirIndexManager.buildIndexValuesCondition(key : integer; id : String; context : TFhirResource; resource: TFhirCondition);
@@ -4207,7 +4326,7 @@ begin
   for a := low(TSearchParamsOperationOutcome) to high(TSearchParamsOperationOutcome) do
   begin
     assert(CHECK_TSearchParamsOperationOutcome[a] = a);
-    indexes.add(frtOperationOutcome, CODES_TSearchParamsOperationOutcome[a], DESC_TSearchParamsOperationOutcome[a], TYPES_TSearchParamsOperationOutcome[a], TARGETS_TSearchParamsOperationOutcome[a]);
+    indexes.add(frtOperationOutcome, CODES_TSearchParamsOperationOutcome[a], DESC_TSearchParamsOperationOutcome[a], TYPES_TSearchParamsOperationOutcome[a], TARGETS_TSearchParamsOperationOutcome[a], PATHS_TSearchParamsOperationOutcome[a], USES_TSearchParamsOperationOutcome[a]);
   end;
 end;
 
@@ -4228,7 +4347,7 @@ begin
   for a := low(TSearchParamsBinary) to high(TSearchParamsBinary) do
   begin
     assert(CHECK_TSearchParamsBinary[a] = a);
-    indexes.add(frtBinary, CODES_TSearchParamsBinary[a], DESC_TSearchParamsBinary[a], TYPES_TSearchParamsBinary[a], TARGETS_TSearchParamsBinary[a]);
+    indexes.add(frtBinary, CODES_TSearchParamsBinary[a], DESC_TSearchParamsBinary[a], TYPES_TSearchParamsBinary[a], TARGETS_TSearchParamsBinary[a], PATHS_TSearchParamsBinary[a], USES_TSearchParamsBinary[a]);
   end;
 
 end;
@@ -4252,7 +4371,7 @@ begin
   for a := low(TSearchParamsProvenance) to high(TSearchParamsProvenance) do
   begin
     assert(CHECK_TSearchParamsProvenance[a] = a);
-    indexes.add(frtProvenance, CODES_TSearchParamsProvenance[a], DESC_TSearchParamsProvenance[a], TYPES_TSearchParamsProvenance[a], TARGETS_TSearchParamsProvenance[a]);
+    indexes.add(frtProvenance, CODES_TSearchParamsProvenance[a], DESC_TSearchParamsProvenance[a], TYPES_TSearchParamsProvenance[a], TARGETS_TSearchParamsProvenance[a], PATHS_TSearchParamsProvenance[a], USES_TSearchParamsProvenance[a]);
   end;
 end;
 
@@ -4301,7 +4420,7 @@ begin
   for a := low(TSearchParamsMedication) to high(TSearchParamsMedication) do
   begin
     assert(CHECK_TSearchParamsMedication[a] = a);
-    indexes.add(frtMedication, CODES_TSearchParamsMedication[a], DESC_TSearchParamsMedication[a], TYPES_TSearchParamsMedication[a], TARGETS_TSearchParamsMedication[a]);
+    indexes.add(frtMedication, CODES_TSearchParamsMedication[a], DESC_TSearchParamsMedication[a], TYPES_TSearchParamsMedication[a], TARGETS_TSearchParamsMedication[a], PATHS_TSearchParamsMedication[a], USES_TSearchParamsMedication[a]);
   end;
 end;
 
@@ -4341,7 +4460,7 @@ begin
   for a := low(TSearchParamsMedicationAdministration) to high(TSearchParamsMedicationAdministration) do
   begin
     assert(CHECK_TSearchParamsMedicationAdministration[a] = a);
-    indexes.add(frtMedicationAdministration, CODES_TSearchParamsMedicationAdministration[a], DESC_TSearchParamsMedicationAdministration[a], TYPES_TSearchParamsMedicationAdministration[a], TARGETS_TSearchParamsMedicationAdministration[a]);
+    indexes.add(frtMedicationAdministration, CODES_TSearchParamsMedicationAdministration[a], DESC_TSearchParamsMedicationAdministration[a], TYPES_TSearchParamsMedicationAdministration[a], TARGETS_TSearchParamsMedicationAdministration[a], PATHS_TSearchParamsMedicationAdministration[a], USES_TSearchParamsMedicationAdministration[a]);
   end;
 end;
 
@@ -4387,7 +4506,7 @@ begin
   for a := low(TSearchParamsMedicationOrder) to high(TSearchParamsMedicationOrder) do
   begin
     assert(CHECK_TSearchParamsMedicationOrder[a] = a);
-    indexes.add(frtMedicationOrder, CODES_TSearchParamsMedicationOrder[a], DESC_TSearchParamsMedicationOrder[a], TYPES_TSearchParamsMedicationOrder[a], TARGETS_TSearchParamsMedicationOrder[a]);
+    indexes.add(frtMedicationOrder, CODES_TSearchParamsMedicationOrder[a], DESC_TSearchParamsMedicationOrder[a], TYPES_TSearchParamsMedicationOrder[a], TARGETS_TSearchParamsMedicationOrder[a], PATHS_TSearchParamsMedicationOrder[a], USES_TSearchParamsMedicationOrder[a]);
   end;
 end;
 
@@ -4423,7 +4542,7 @@ begin
   for a := low(TSearchParamsMedicationDispense) to high(TSearchParamsMedicationDispense) do
   begin
     assert(CHECK_TSearchParamsMedicationDispense[a] = a);
-    indexes.add(frtMedicationDispense, CODES_TSearchParamsMedicationDispense[a], DESC_TSearchParamsMedicationDispense[a], TYPES_TSearchParamsMedicationDispense[a], TARGETS_TSearchParamsMedicationDispense[a]);
+    indexes.add(frtMedicationDispense, CODES_TSearchParamsMedicationDispense[a], DESC_TSearchParamsMedicationDispense[a], TYPES_TSearchParamsMedicationDispense[a], TARGETS_TSearchParamsMedicationDispense[a], PATHS_TSearchParamsMedicationDispense[a], USES_TSearchParamsMedicationDispense[a]);
   end;
 end;
 
@@ -4469,7 +4588,7 @@ begin
   for a := low(TSearchParamsMedicationStatement) to high(TSearchParamsMedicationStatement) do
   begin
     assert(CHECK_TSearchParamsMedicationStatement[a] = a);
-    indexes.add(frtMedicationStatement, CODES_TSearchParamsMedicationStatement[a], DESC_TSearchParamsMedicationStatement[a], TYPES_TSearchParamsMedicationStatement[a], TARGETS_TSearchParamsMedicationStatement[a]);
+    indexes.add(frtMedicationStatement, CODES_TSearchParamsMedicationStatement[a], DESC_TSearchParamsMedicationStatement[a], TYPES_TSearchParamsMedicationStatement[a], TARGETS_TSearchParamsMedicationStatement[a], PATHS_TSearchParamsMedicationStatement[a], USES_TSearchParamsMedicationStatement[a]);
   end;
 end;
 
@@ -4508,10 +4627,10 @@ begin
   for a := low(TSearchParamsList) to high(TSearchParamsList) do
   begin
     assert(CHECK_TSearchParamsList[a] = a);
-    indexes.add(frtList, CODES_TSearchParamsList[a], DESC_TSearchParamsList[a], TYPES_TSearchParamsList[a], TARGETS_TSearchParamsList[a]);
+    indexes.add(frtList, CODES_TSearchParamsList[a], DESC_TSearchParamsList[a], TYPES_TSearchParamsList[a], TARGETS_TSearchParamsList[a], PATHS_TSearchParamsList[a], USES_TSearchParamsList[a]);
   end;
   // DAF:
-  indexes.add(frtList, 'identifier', 'identifier', SearchParamTypeToken, []);
+  indexes.add(frtList, 'identifier', 'identifier', SearchParamTypeToken, [], '', SearchXpathUsageNull);
 end;
 
 procedure TFhirIndexManager.buildIndexValuesList(key : integer; id : String; context : TFhirResource; resource: TFhirList);
@@ -4550,7 +4669,7 @@ begin
   for a := low(TSearchParamsCarePlan) to high(TSearchParamsCarePlan) do
   begin
     assert(CHECK_TSearchParamsCarePlan[a] = a);
-    indexes.add(frtCarePlan, CODES_TSearchParamsCarePlan[a], DESC_TSearchParamsCarePlan[a], TYPES_TSearchParamsCarePlan[a], TARGETS_TSearchParamsCarePlan[a]);
+    indexes.add(frtCarePlan, CODES_TSearchParamsCarePlan[a], DESC_TSearchParamsCarePlan[a], TYPES_TSearchParamsCarePlan[a], TARGETS_TSearchParamsCarePlan[a], PATHS_TSearchParamsCarePlan[a], USES_TSearchParamsCarePlan[a]);
   end;
 end;
 
@@ -4610,7 +4729,7 @@ begin
   for a := low(TSearchParamsImagingStudy) to high(TSearchParamsImagingStudy) do
   begin
     assert(CHECK_TSearchParamsImagingStudy[a] = a);
-    indexes.add(frtImagingStudy, CODES_TSearchParamsImagingStudy[a], DESC_TSearchParamsImagingStudy[a], TYPES_TSearchParamsImagingStudy[a], TARGETS_TSearchParamsImagingStudy[a]);
+    indexes.add(frtImagingStudy, CODES_TSearchParamsImagingStudy[a], DESC_TSearchParamsImagingStudy[a], TYPES_TSearchParamsImagingStudy[a], TARGETS_TSearchParamsImagingStudy[a], PATHS_TSearchParamsImagingStudy[a], USES_TSearchParamsImagingStudy[a]);
   end;
 end;
 
@@ -4657,7 +4776,7 @@ begin
   for a := low(TSearchParamsImmunization) to high(TSearchParamsImmunization) do
   begin
     assert(CHECK_TSearchParamsImmunization[a] = a);
-    indexes.add(frtImmunization, CODES_TSearchParamsImmunization[a], DESC_TSearchParamsImmunization[a], TYPES_TSearchParamsImmunization[a], TARGETS_TSearchParamsImmunization[a]);
+    indexes.add(frtImmunization, CODES_TSearchParamsImmunization[a], DESC_TSearchParamsImmunization[a], TYPES_TSearchParamsImmunization[a], TARGETS_TSearchParamsImmunization[a], PATHS_TSearchParamsImmunization[a], USES_TSearchParamsImmunization[a]);
   end;
 end;
 
@@ -4707,7 +4826,7 @@ begin
   for a := low(TSearchParamsOrder) to high(TSearchParamsOrder) do
   begin
     assert(CHECK_TSearchParamsOrder[a] = a);
-    indexes.add(frtOrder, CODES_TSearchParamsOrder[a], DESC_TSearchParamsOrder[a], TYPES_TSearchParamsOrder[a], TARGETS_TSearchParamsOrder[a]);
+    indexes.add(frtOrder, CODES_TSearchParamsOrder[a], DESC_TSearchParamsOrder[a], TYPES_TSearchParamsOrder[a], TARGETS_TSearchParamsOrder[a], PATHS_TSearchParamsOrder[a], USES_TSearchParamsOrder[a]);
   end;
 end;
 
@@ -4742,7 +4861,7 @@ begin
   for a := low(TSearchParamsOrderResponse) to high(TSearchParamsOrderResponse) do
   begin
     assert(CHECK_TSearchParamsOrderResponse[a] = a);
-    indexes.add(frtOrderResponse, CODES_TSearchParamsOrderResponse[a], DESC_TSearchParamsOrderResponse[a], TYPES_TSearchParamsOrderResponse[a], TARGETS_TSearchParamsOrderResponse[a]);
+    indexes.add(frtOrderResponse, CODES_TSearchParamsOrderResponse[a], DESC_TSearchParamsOrderResponse[a], TYPES_TSearchParamsOrderResponse[a], TARGETS_TSearchParamsOrderResponse[a], PATHS_TSearchParamsOrderResponse[a], USES_TSearchParamsOrderResponse[a]);
   end;
 end;
 
@@ -4773,7 +4892,7 @@ begin
   for a := low(TSearchParamsMedia) to high(TSearchParamsMedia) do
   begin
     assert(CHECK_TSearchParamsMedia[a] = a);
-    indexes.add(frtMedia, CODES_TSearchParamsMedia[a], DESC_TSearchParamsMedia[a], TYPES_TSearchParamsMedia[a], TARGETS_TSearchParamsMedia[a]);
+    indexes.add(frtMedia, CODES_TSearchParamsMedia[a], DESC_TSearchParamsMedia[a], TYPES_TSearchParamsMedia[a], TARGETS_TSearchParamsMedia[a], PATHS_TSearchParamsMedia[a], USES_TSearchParamsMedia[a]);
   end;
 end;
 
@@ -4807,11 +4926,11 @@ begin
   for a := low(TSearchParamsFamilyMemberHistory) to high(TSearchParamsFamilyMemberHistory) do
   begin
     assert(CHECK_TSearchParamsFamilyMemberHistory[a] = a);
-    indexes.add(frtFamilyMemberHistory, CODES_TSearchParamsFamilyMemberHistory[a], DESC_TSearchParamsFamilyMemberHistory[a], TYPES_TSearchParamsFamilyMemberHistory[a], TARGETS_TSearchParamsFamilyMemberHistory[a]);
+    indexes.add(frtFamilyMemberHistory, CODES_TSearchParamsFamilyMemberHistory[a], DESC_TSearchParamsFamilyMemberHistory[a], TYPES_TSearchParamsFamilyMemberHistory[a], TARGETS_TSearchParamsFamilyMemberHistory[a], PATHS_TSearchParamsFamilyMemberHistory[a], USES_TSearchParamsFamilyMemberHistory[a]);
   end;
 
   // DAF:
-    indexes.add(frtFamilyMemberHistory, 'familymemberhistorycondition', 'Search for a history of a particular condition within a patient''s family', SearchParamTypeToken, []);
+  indexes.add(frtFamilyMemberHistory, 'familymemberhistorycondition', 'Search for a history of a particular condition within a patient''s family', SearchParamTypeToken, [], '', SearchXpathUsageNull);
 end;
 
 procedure TFhirIndexManager.buildIndexValuesFamilyMemberHistory(key: integer; id : String; context : TFhirResource; resource: TFhirFamilyMemberHistory);
@@ -4849,7 +4968,7 @@ begin
   for a := low(TSearchParamsProcedure) to high(TSearchParamsProcedure) do
   begin
     assert(CHECK_TSearchParamsProcedure[a] = a);
-    indexes.add(frtProcedure, CODES_TSearchParamsProcedure[a], DESC_TSearchParamsProcedure[a], TYPES_TSearchParamsProcedure[a], TARGETS_TSearchParamsProcedure[a]);
+    indexes.add(frtProcedure, CODES_TSearchParamsProcedure[a], DESC_TSearchParamsProcedure[a], TYPES_TSearchParamsProcedure[a], TARGETS_TSearchParamsProcedure[a], PATHS_TSearchParamsProcedure[a], USES_TSearchParamsProcedure[a]);
   end;
 end;
 
@@ -4886,7 +5005,7 @@ begin
   for a := low(TSearchParamsSpecimen) to high(TSearchParamsSpecimen) do
   begin
     assert(CHECK_TSearchParamsSpecimen[a] = a);
-    indexes.add(frtSpecimen, CODES_TSearchParamsSpecimen[a], DESC_TSearchParamsSpecimen[a], TYPES_TSearchParamsSpecimen[a], TARGETS_TSearchParamsSpecimen[a]);
+    indexes.add(frtSpecimen, CODES_TSearchParamsSpecimen[a], DESC_TSearchParamsSpecimen[a], TYPES_TSearchParamsSpecimen[a], TARGETS_TSearchParamsSpecimen[a], PATHS_TSearchParamsSpecimen[a], USES_TSearchParamsSpecimen[a]);
   end;
 end;
 
@@ -4931,7 +5050,7 @@ begin
   for a := low(TSearchParamsImmunizationRecommendation) to high(TSearchParamsImmunizationRecommendation) do
   begin
     assert(CHECK_TSearchParamsImmunizationRecommendation[a] = a);
-    indexes.add(frtImmunizationRecommendation, CODES_TSearchParamsImmunizationRecommendation[a], DESC_TSearchParamsImmunizationRecommendation[a], TYPES_TSearchParamsImmunizationRecommendation[a], TARGETS_TSearchParamsImmunizationRecommendation[a]);
+    indexes.add(frtImmunizationRecommendation, CODES_TSearchParamsImmunizationRecommendation[a], DESC_TSearchParamsImmunizationRecommendation[a], TYPES_TSearchParamsImmunizationRecommendation[a], TARGETS_TSearchParamsImmunizationRecommendation[a], PATHS_TSearchParamsImmunizationRecommendation[a], USES_TSearchParamsImmunizationRecommendation[a]);
   end;
 end;
 
@@ -4973,7 +5092,7 @@ begin
   for a := low(TSearchParamsQuestionnaire) to high(TSearchParamsQuestionnaire) do
   begin
     assert(CHECK_TSearchParamsQuestionnaire[a] = a);
-    indexes.add(frtQuestionnaire, CODES_TSearchParamsQuestionnaire[a], DESC_TSearchParamsQuestionnaire[a], TYPES_TSearchParamsQuestionnaire[a], TARGETS_TSearchParamsQuestionnaire[a]);
+    indexes.add(frtQuestionnaire, CODES_TSearchParamsQuestionnaire[a], DESC_TSearchParamsQuestionnaire[a], TYPES_TSearchParamsQuestionnaire[a], TARGETS_TSearchParamsQuestionnaire[a], PATHS_TSearchParamsQuestionnaire[a], USES_TSearchParamsQuestionnaire[a]);
   end;
 end;
 
@@ -5007,7 +5126,7 @@ begin
   for a := low(TSearchParamsQuestionnaire) to high(TSearchParamsQuestionnaire) do
   begin
     assert(CHECK_TSearchParamsQuestionnaire[a] = a);
-    indexes.add(frtQuestionnaire, CODES_TSearchParamsQuestionnaire[a], DESC_TSearchParamsQuestionnaire[a], TYPES_TSearchParamsQuestionnaire[a], TARGETS_TSearchParamsQuestionnaire[a]);
+    indexes.add(frtQuestionnaire, CODES_TSearchParamsQuestionnaire[a], DESC_TSearchParamsQuestionnaire[a], TYPES_TSearchParamsQuestionnaire[a], TARGETS_TSearchParamsQuestionnaire[a], PATHS_TSearchParamsQuestionnaire[a], USES_TSearchParamsQuestionnaire[a]);
   end;
 end;
 
@@ -5046,7 +5165,7 @@ begin
   for a := low(TSearchParamsQuestionnaireResponse) to high(TSearchParamsQuestionnaireResponse) do
   begin
     assert(CHECK_TSearchParamsQuestionnaireResponse[a] = a);
-    indexes.add(frtQuestionnaireResponse, CODES_TSearchParamsQuestionnaireResponse[a], DESC_TSearchParamsQuestionnaireResponse[a], TYPES_TSearchParamsQuestionnaireResponse[a], TARGETS_TSearchParamsQuestionnaireResponse[a]);
+    indexes.add(frtQuestionnaireResponse, CODES_TSearchParamsQuestionnaireResponse[a], DESC_TSearchParamsQuestionnaireResponse[a], TYPES_TSearchParamsQuestionnaireResponse[a], TARGETS_TSearchParamsQuestionnaireResponse[a], PATHS_TSearchParamsQuestionnaireResponse[a], USES_TSearchParamsQuestionnaireResponse[a]);
   end;
 end;
 
@@ -5078,7 +5197,7 @@ begin
   for a := low(TSearchParamsSlot) to high(TSearchParamsSlot) do
   begin
     assert(CHECK_TSearchParamsSlot[a] = a);
-    indexes.add(frtSlot, CODES_TSearchParamsSlot[a], DESC_TSearchParamsSlot[a], TYPES_TSearchParamsSlot[a], TARGETS_TSearchParamsSlot[a]);
+    indexes.add(frtSlot, CODES_TSearchParamsSlot[a], DESC_TSearchParamsSlot[a], TYPES_TSearchParamsSlot[a], TARGETS_TSearchParamsSlot[a], PATHS_TSearchParamsSlot[a], USES_TSearchParamsSlot[a]);
   end;
 end;
 
@@ -5103,7 +5222,7 @@ begin
   for a := low(TSearchParamsAppointment) to high(TSearchParamsAppointment) do
   begin
     assert(CHECK_TSearchParamsAppointment[a] = a);
-    indexes.add(frtAppointment, CODES_TSearchParamsAppointment[a], DESC_TSearchParamsAppointment[a], TYPES_TSearchParamsAppointment[a], TARGETS_TSearchParamsAppointment[a]);
+    indexes.add(frtAppointment, CODES_TSearchParamsAppointment[a], DESC_TSearchParamsAppointment[a], TYPES_TSearchParamsAppointment[a], TARGETS_TSearchParamsAppointment[a], PATHS_TSearchParamsAppointment[a], USES_TSearchParamsAppointment[a]);
   end;
 end;
 
@@ -5140,7 +5259,7 @@ begin
   for a := low(TSearchParamsSchedule) to high(TSearchParamsSchedule) do
   begin
     assert(CHECK_TSearchParamsSchedule[a] = a);
-    indexes.add(frtSchedule, CODES_TSearchParamsSchedule[a], DESC_TSearchParamsSchedule[a], TYPES_TSearchParamsSchedule[a], TARGETS_TSearchParamsSchedule[a]);
+    indexes.add(frtSchedule, CODES_TSearchParamsSchedule[a], DESC_TSearchParamsSchedule[a], TYPES_TSearchParamsSchedule[a], TARGETS_TSearchParamsSchedule[a], PATHS_TSearchParamsSchedule[a], USES_TSearchParamsSchedule[a]);
   end;
 end;
 
@@ -5168,7 +5287,7 @@ begin
   for a := low(TSearchParamsAppointmentResponse) to high(TSearchParamsAppointmentResponse) do
   begin
     assert(CHECK_TSearchParamsAppointmentResponse[a] = a);
-    indexes.add(frtAppointmentResponse, CODES_TSearchParamsAppointmentResponse[a], DESC_TSearchParamsAppointmentResponse[a], TYPES_TSearchParamsAppointmentResponse[a], TARGETS_TSearchParamsAppointmentResponse[a]);
+    indexes.add(frtAppointmentResponse, CODES_TSearchParamsAppointmentResponse[a], DESC_TSearchParamsAppointmentResponse[a], TYPES_TSearchParamsAppointmentResponse[a], TARGETS_TSearchParamsAppointmentResponse[a], PATHS_TSearchParamsAppointmentResponse[a], USES_TSearchParamsAppointmentResponse[a]);
   end;
 end;
 
@@ -5201,7 +5320,7 @@ begin
   for a := low(TSearchParamsHealthcareService) to high(TSearchParamsHealthcareService) do
   begin
     assert(CHECK_TSearchParamsHealthcareService[a] = a);
-    indexes.add(frtHealthcareService, CODES_TSearchParamsHealthcareService[a], DESC_TSearchParamsHealthcareService[a], TYPES_TSearchParamsHealthcareService[a], TARGETS_TSearchParamsHealthcareService[a]);
+    indexes.add(frtHealthcareService, CODES_TSearchParamsHealthcareService[a], DESC_TSearchParamsHealthcareService[a], TYPES_TSearchParamsHealthcareService[a], TARGETS_TSearchParamsHealthcareService[a], PATHS_TSearchParamsHealthcareService[a], USES_TSearchParamsHealthcareService[a]);
   end;
 end;
 
@@ -5233,7 +5352,7 @@ begin
   for a := low(TSearchParamsDataElement) to high(TSearchParamsDataElement) do
   begin
     assert(CHECK_TSearchParamsDataElement[a] = a);
-    indexes.add(frtDataElement, CODES_TSearchParamsDataElement[a], DESC_TSearchParamsDataElement[a], TYPES_TSearchParamsDataElement[a], TARGETS_TSearchParamsDataElement[a]);
+    indexes.add(frtDataElement, CODES_TSearchParamsDataElement[a], DESC_TSearchParamsDataElement[a], TYPES_TSearchParamsDataElement[a], TARGETS_TSearchParamsDataElement[a], PATHS_TSearchParamsDataElement[a], USES_TSearchParamsDataElement[a]);
   end;
 end;
 
@@ -5271,7 +5390,7 @@ begin
   for a := low(TSearchParamsTestScript) to high(TSearchParamsTestScript) do
   begin
     assert(CHECK_TSearchParamsTestScript[a] = a);
-    indexes.add(frtTestScript, CODES_TSearchParamsTestScript[a], DESC_TSearchParamsTestScript[a], TYPES_TSearchParamsTestScript[a], TARGETS_TSearchParamsTestScript[a]);
+    indexes.add(frtTestScript, CODES_TSearchParamsTestScript[a], DESC_TSearchParamsTestScript[a], TYPES_TSearchParamsTestScript[a], TARGETS_TSearchParamsTestScript[a], PATHS_TSearchParamsTestScript[a], USES_TSearchParamsTestScript[a]);
   end;
   // todo
 end;
@@ -5313,7 +5432,7 @@ begin
   for a := low(TSearchParamsNamingSystem) to high(TSearchParamsNamingSystem) do
   begin
     assert(CHECK_TSearchParamsNamingSystem[a] = a);
-    indexes.add(frtNamingSystem, CODES_TSearchParamsNamingSystem[a], DESC_TSearchParamsNamingSystem[a], TYPES_TSearchParamsNamingSystem[a], TARGETS_TSearchParamsNamingSystem[a]);
+    indexes.add(frtNamingSystem, CODES_TSearchParamsNamingSystem[a], DESC_TSearchParamsNamingSystem[a], TYPES_TSearchParamsNamingSystem[a], TARGETS_TSearchParamsNamingSystem[a], PATHS_TSearchParamsNamingSystem[a], USES_TSearchParamsNamingSystem[a]);
   end;
 end;
 
@@ -5356,7 +5475,7 @@ begin
   for a := low(TSearchParamsSubscription) to high(TSearchParamsSubscription) do
   begin
     assert(CHECK_TSearchParamsSubscription[a] = a);
-    indexes.add(frtSubscription, CODES_TSearchParamsSubscription[a], DESC_TSearchParamsSubscription[a], TYPES_TSearchParamsSubscription[a], TARGETS_TSearchParamsSubscription[a]);
+    indexes.add(frtSubscription, CODES_TSearchParamsSubscription[a], DESC_TSearchParamsSubscription[a], TYPES_TSearchParamsSubscription[a], TARGETS_TSearchParamsSubscription[a], PATHS_TSearchParamsSubscription[a], USES_TSearchParamsSubscription[a]);
   end;
 end;
 
@@ -5387,7 +5506,7 @@ begin
   for a := low(TSearchParamsDetectedIssue) to high(TSearchParamsDetectedIssue) do
   begin
     assert(CHECK_TSearchParamsDetectedIssue[a] = a);
-    indexes.add(frtDetectedIssue, CODES_TSearchParamsDetectedIssue[a], DESC_TSearchParamsDetectedIssue[a], TYPES_TSearchParamsDetectedIssue[a], TARGETS_TSearchParamsDetectedIssue[a]);
+    indexes.add(frtDetectedIssue, CODES_TSearchParamsDetectedIssue[a], DESC_TSearchParamsDetectedIssue[a], TYPES_TSearchParamsDetectedIssue[a], TARGETS_TSearchParamsDetectedIssue[a], PATHS_TSearchParamsDetectedIssue[a], USES_TSearchParamsDetectedIssue[a]);
   end;
 end;
 
@@ -5418,7 +5537,7 @@ begin
   for a := low(TSearchParamsRiskAssessment) to high(TSearchParamsRiskAssessment) do
   begin
     assert(CHECK_TSearchParamsRiskAssessment[a] = a);
-    indexes.add(frtRiskAssessment, CODES_TSearchParamsRiskAssessment[a], DESC_TSearchParamsRiskAssessment[a], TYPES_TSearchParamsRiskAssessment[a], TARGETS_TSearchParamsRiskAssessment[a]);
+    indexes.add(frtRiskAssessment, CODES_TSearchParamsRiskAssessment[a], DESC_TSearchParamsRiskAssessment[a], TYPES_TSearchParamsRiskAssessment[a], TARGETS_TSearchParamsRiskAssessment[a], PATHS_TSearchParamsRiskAssessment[a], USES_TSearchParamsRiskAssessment[a]);
   end;
 end;
 
@@ -5450,7 +5569,7 @@ begin
   for a := low(TSearchParamsOperationDefinition) to high(TSearchParamsOperationDefinition) do
   begin
     assert(CHECK_TSearchParamsOperationDefinition[a] = a);
-    indexes.add(frtOperationDefinition, CODES_TSearchParamsOperationDefinition[a], DESC_TSearchParamsOperationDefinition[a], TYPES_TSearchParamsOperationDefinition[a], TARGETS_TSearchParamsOperationDefinition[a]);
+    indexes.add(frtOperationDefinition, CODES_TSearchParamsOperationDefinition[a], DESC_TSearchParamsOperationDefinition[a], TYPES_TSearchParamsOperationDefinition[a], TARGETS_TSearchParamsOperationDefinition[a], PATHS_TSearchParamsOperationDefinition[a], USES_TSearchParamsOperationDefinition[a]);
   end;
 end;
 
@@ -5486,7 +5605,7 @@ begin
   for a := low(TSearchParamsReferralRequest) to high(TSearchParamsReferralRequest) do
   begin
     assert(CHECK_TSearchParamsReferralRequest[a] = a);
-    indexes.add(frtReferralRequest, CODES_TSearchParamsReferralRequest[a], DESC_TSearchParamsReferralRequest[a], TYPES_TSearchParamsReferralRequest[a], TARGETS_TSearchParamsReferralRequest[a]);
+    indexes.add(frtReferralRequest, CODES_TSearchParamsReferralRequest[a], DESC_TSearchParamsReferralRequest[a], TYPES_TSearchParamsReferralRequest[a], TARGETS_TSearchParamsReferralRequest[a], PATHS_TSearchParamsReferralRequest[a], USES_TSearchParamsReferralRequest[a]);
   end;
 end;
 
@@ -5518,7 +5637,7 @@ begin
   for a := low(TSearchParamsNutritionOrder) to high(TSearchParamsNutritionOrder) do
   begin
     assert(CHECK_TSearchParamsNutritionOrder[a] = a);
-    indexes.add(frtNutritionOrder, CODES_TSearchParamsNutritionOrder[a], DESC_TSearchParamsNutritionOrder[a], TYPES_TSearchParamsNutritionOrder[a], TARGETS_TSearchParamsNutritionOrder[a]);
+    indexes.add(frtNutritionOrder, CODES_TSearchParamsNutritionOrder[a], DESC_TSearchParamsNutritionOrder[a], TYPES_TSearchParamsNutritionOrder[a], TARGETS_TSearchParamsNutritionOrder[a], PATHS_TSearchParamsNutritionOrder[a], USES_TSearchParamsNutritionOrder[a]);
   end;
 end;
 
@@ -5557,7 +5676,7 @@ begin
   for a := low(TSearchParamsBodySite) to high(TSearchParamsBodySite) do
   begin
     assert(CHECK_TSearchParamsBodySite[a] = a);
-    indexes.add(frtBodySite, CODES_TSearchParamsBodySite[a], DESC_TSearchParamsBodySite[a], TYPES_TSearchParamsBodySite[a], TARGETS_TSearchParamsBodySite[a]);
+    indexes.add(frtBodySite, CODES_TSearchParamsBodySite[a], DESC_TSearchParamsBodySite[a], TYPES_TSearchParamsBodySite[a], TARGETS_TSearchParamsBodySite[a], PATHS_TSearchParamsBodySite[a], USES_TSearchParamsBodySite[a]);
   end;
 end;
 
@@ -5581,7 +5700,7 @@ begin
   for a := low(TSearchParamsClinicalImpression) to high(TSearchParamsClinicalImpression) do
   begin
     assert(CHECK_TSearchParamsClinicalImpression[a] = a);
-    indexes.add(frtClinicalImpression, CODES_TSearchParamsClinicalImpression[a], DESC_TSearchParamsClinicalImpression[a], TYPES_TSearchParamsClinicalImpression[a], TARGETS_TSearchParamsClinicalImpression[a]);
+    indexes.add(frtClinicalImpression, CODES_TSearchParamsClinicalImpression[a], DESC_TSearchParamsClinicalImpression[a], TYPES_TSearchParamsClinicalImpression[a], TARGETS_TSearchParamsClinicalImpression[a], PATHS_TSearchParamsClinicalImpression[a], USES_TSearchParamsClinicalImpression[a]);
   end;
 end;
 
@@ -5632,7 +5751,7 @@ begin
   for a := low(TSearchParamsCommunication) to high(TSearchParamsCommunication) do
   begin
     assert(CHECK_TSearchParamsCommunication[a] = a);
-    indexes.add(frtCommunication, CODES_TSearchParamsCommunication[a], DESC_TSearchParamsCommunication[a], TYPES_TSearchParamsCommunication[a], TARGETS_TSearchParamsCommunication[a]);
+    indexes.add(frtCommunication, CODES_TSearchParamsCommunication[a], DESC_TSearchParamsCommunication[a], TYPES_TSearchParamsCommunication[a], TARGETS_TSearchParamsCommunication[a], PATHS_TSearchParamsCommunication[a], USES_TSearchParamsCommunication[a]);
   end;
 end;
 
@@ -5680,7 +5799,7 @@ begin
   for a := low(TSearchParamsCommunicationRequest) to high(TSearchParamsCommunicationRequest) do
   begin
     assert(CHECK_TSearchParamsCommunicationRequest[a] = a);
-    indexes.add(frtCommunicationRequest, CODES_TSearchParamsCommunicationRequest[a], DESC_TSearchParamsCommunicationRequest[a], TYPES_TSearchParamsCommunicationRequest[a], TARGETS_TSearchParamsCommunicationRequest[a]);
+    indexes.add(frtCommunicationRequest, CODES_TSearchParamsCommunicationRequest[a], DESC_TSearchParamsCommunicationRequest[a], TYPES_TSearchParamsCommunicationRequest[a], TARGETS_TSearchParamsCommunicationRequest[a], PATHS_TSearchParamsCommunicationRequest[a], USES_TSearchParamsCommunicationRequest[a]);
   end;
 end;
 
@@ -5726,7 +5845,7 @@ begin
   for a := low(TSearchParamsDeviceComponent) to high(TSearchParamsDeviceComponent) do
   begin
     assert(CHECK_TSearchParamsDeviceComponent[a] = a);
-    indexes.add(frtDeviceComponent, CODES_TSearchParamsDeviceComponent[a], DESC_TSearchParamsDeviceComponent[a], TYPES_TSearchParamsDeviceComponent[a], TARGETS_TSearchParamsDeviceComponent[a]);
+    indexes.add(frtDeviceComponent, CODES_TSearchParamsDeviceComponent[a], DESC_TSearchParamsDeviceComponent[a], TYPES_TSearchParamsDeviceComponent[a], TARGETS_TSearchParamsDeviceComponent[a], PATHS_TSearchParamsDeviceComponent[a], USES_TSearchParamsDeviceComponent[a]);
   end;
 end;
 
@@ -5751,7 +5870,7 @@ begin
   for a := low(TSearchParamsDeviceMetric) to high(TSearchParamsDeviceMetric) do
   begin
     assert(CHECK_TSearchParamsDeviceMetric[a] = a);
-    indexes.add(frtDeviceMetric, CODES_TSearchParamsDeviceMetric[a], DESC_TSearchParamsDeviceMetric[a], TYPES_TSearchParamsDeviceMetric[a], TARGETS_TSearchParamsDeviceMetric[a]);
+    indexes.add(frtDeviceMetric, CODES_TSearchParamsDeviceMetric[a], DESC_TSearchParamsDeviceMetric[a], TYPES_TSearchParamsDeviceMetric[a], TARGETS_TSearchParamsDeviceMetric[a], PATHS_TSearchParamsDeviceMetric[a], USES_TSearchParamsDeviceMetric[a]);
   end;
 end;
 
@@ -5778,7 +5897,7 @@ begin
   for a := low(TSearchParamsDeviceUseRequest) to high(TSearchParamsDeviceUseRequest) do
   begin
     assert(CHECK_TSearchParamsDeviceUseRequest[a] = a);
-    indexes.add(frtDeviceUseRequest, CODES_TSearchParamsDeviceUseRequest[a], DESC_TSearchParamsDeviceUseRequest[a], TYPES_TSearchParamsDeviceUseRequest[a], TARGETS_TSearchParamsDeviceUseRequest[a]);
+    indexes.add(frtDeviceUseRequest, CODES_TSearchParamsDeviceUseRequest[a], DESC_TSearchParamsDeviceUseRequest[a], TYPES_TSearchParamsDeviceUseRequest[a], TARGETS_TSearchParamsDeviceUseRequest[a], PATHS_TSearchParamsDeviceUseRequest[a], USES_TSearchParamsDeviceUseRequest[a]);
   end;
 end;
 
@@ -5804,7 +5923,7 @@ begin
   for a := low(TSearchParamsDeviceUseStatement) to high(TSearchParamsDeviceUseStatement) do
   begin
     assert(CHECK_TSearchParamsDeviceUseStatement[a] = a);
-    indexes.add(frtDeviceUseStatement, CODES_TSearchParamsDeviceUseStatement[a], DESC_TSearchParamsDeviceUseStatement[a], TYPES_TSearchParamsDeviceUseStatement[a], TARGETS_TSearchParamsDeviceUseStatement[a]);
+    indexes.add(frtDeviceUseStatement, CODES_TSearchParamsDeviceUseStatement[a], DESC_TSearchParamsDeviceUseStatement[a], TYPES_TSearchParamsDeviceUseStatement[a], TARGETS_TSearchParamsDeviceUseStatement[a], PATHS_TSearchParamsDeviceUseStatement[a], USES_TSearchParamsDeviceUseStatement[a]);
   end;
 end;
 
@@ -5831,7 +5950,7 @@ begin
   for a := low(TSearchParamsEpisodeOfCare) to high(TSearchParamsEpisodeOfCare) do
   begin
     assert(CHECK_TSearchParamsEpisodeOfCare[a] = a);
-    indexes.add(frtEpisodeOfCare, CODES_TSearchParamsEpisodeOfCare[a], DESC_TSearchParamsEpisodeOfCare[a], TYPES_TSearchParamsEpisodeOfCare[a], TARGETS_TSearchParamsEpisodeOfCare[a]);
+    indexes.add(frtEpisodeOfCare, CODES_TSearchParamsEpisodeOfCare[a], DESC_TSearchParamsEpisodeOfCare[a], TYPES_TSearchParamsEpisodeOfCare[a], TARGETS_TSearchParamsEpisodeOfCare[a], PATHS_TSearchParamsEpisodeOfCare[a], USES_TSearchParamsEpisodeOfCare[a]);
   end;
 end;
 
@@ -5866,7 +5985,7 @@ begin
   for a := low(TSearchParamsGoal) to high(TSearchParamsGoal) do
   begin
     assert(CHECK_TSearchParamsGoal[a] = a);
-    indexes.add(frtGoal, CODES_TSearchParamsGoal[a], DESC_TSearchParamsGoal[a], TYPES_TSearchParamsGoal[a], TARGETS_TSearchParamsGoal[a]);
+    indexes.add(frtGoal, CODES_TSearchParamsGoal[a], DESC_TSearchParamsGoal[a], TYPES_TSearchParamsGoal[a], TARGETS_TSearchParamsGoal[a], PATHS_TSearchParamsGoal[a], USES_TSearchParamsGoal[a]);
   end;
 end;
 
@@ -5891,7 +6010,7 @@ begin
   for a := low(TSearchParamsImagingObjectSelection) to high(TSearchParamsImagingObjectSelection) do
   begin
     assert(CHECK_TSearchParamsImagingObjectSelection[a] = a);
-    indexes.add(frtImagingObjectSelection, CODES_TSearchParamsImagingObjectSelection[a], DESC_TSearchParamsImagingObjectSelection[a], TYPES_TSearchParamsImagingObjectSelection[a], TARGETS_TSearchParamsImagingObjectSelection[a]);
+    indexes.add(frtImagingObjectSelection, CODES_TSearchParamsImagingObjectSelection[a], DESC_TSearchParamsImagingObjectSelection[a], TYPES_TSearchParamsImagingObjectSelection[a], TARGETS_TSearchParamsImagingObjectSelection[a], PATHS_TSearchParamsImagingObjectSelection[a], USES_TSearchParamsImagingObjectSelection[a]);
   end;
 end;
 
@@ -5923,7 +6042,7 @@ begin
   for a := low(TSearchParamsPerson) to high(TSearchParamsPerson) do
   begin
     assert(CHECK_TSearchParamsPerson[a] = a);
-    indexes.add(frtPerson, CODES_TSearchParamsPerson[a], DESC_TSearchParamsPerson[a], TYPES_TSearchParamsPerson[a], TARGETS_TSearchParamsPerson[a]);
+    indexes.add(frtPerson, CODES_TSearchParamsPerson[a], DESC_TSearchParamsPerson[a], TYPES_TSearchParamsPerson[a], TARGETS_TSearchParamsPerson[a], PATHS_TSearchParamsPerson[a], USES_TSearchParamsPerson[a]);
   end;
 end;
 
@@ -5973,7 +6092,7 @@ begin
   for a := low(TSearchParamsProcedureRequest) to high(TSearchParamsProcedureRequest) do
   begin
     assert(CHECK_TSearchParamsProcedureRequest[a] = a);
-    indexes.add(frtProcedureRequest, CODES_TSearchParamsProcedureRequest[a], DESC_TSearchParamsProcedureRequest[a], TYPES_TSearchParamsProcedureRequest[a], TARGETS_TSearchParamsProcedureRequest[a]);
+    indexes.add(frtProcedureRequest, CODES_TSearchParamsProcedureRequest[a], DESC_TSearchParamsProcedureRequest[a], TYPES_TSearchParamsProcedureRequest[a], TARGETS_TSearchParamsProcedureRequest[a], PATHS_TSearchParamsProcedureRequest[a], USES_TSearchParamsProcedureRequest[a]);
   end;
 end;
 
@@ -6003,7 +6122,7 @@ begin
   for a := low(TSearchParamsSearchParameter) to high(TSearchParamsSearchParameter) do
   begin
     assert(CHECK_TSearchParamsSearchParameter[a] = a);
-    indexes.add(frtSearchParameter, CODES_TSearchParamsSearchParameter[a], DESC_TSearchParamsSearchParameter[a], TYPES_TSearchParamsSearchParameter[a], TARGETS_TSearchParamsSearchParameter[a]);
+    indexes.add(frtSearchParameter, CODES_TSearchParamsSearchParameter[a], DESC_TSearchParamsSearchParameter[a], TYPES_TSearchParamsSearchParameter[a], TARGETS_TSearchParamsSearchParameter[a], PATHS_TSearchParamsSearchParameter[a], USES_TSearchParamsSearchParameter[a]);
   end;
 end;
 
@@ -6033,7 +6152,7 @@ begin
   for a := low(TSearchParamsVisionPrescription) to high(TSearchParamsVisionPrescription) do
   begin
     assert(CHECK_TSearchParamsVisionPrescription[a] = a);
-    indexes.add(frtVisionPrescription, CODES_TSearchParamsVisionPrescription[a], DESC_TSearchParamsVisionPrescription[a], TYPES_TSearchParamsVisionPrescription[a], TARGETS_TSearchParamsVisionPrescription[a]);
+    indexes.add(frtVisionPrescription, CODES_TSearchParamsVisionPrescription[a], DESC_TSearchParamsVisionPrescription[a], TYPES_TSearchParamsVisionPrescription[a], TARGETS_TSearchParamsVisionPrescription[a], PATHS_TSearchParamsVisionPrescription[a], USES_TSearchParamsVisionPrescription[a]);
   end;
 end;
 
@@ -6049,6 +6168,45 @@ begin
   index(context, frtVisionPrescription, key, 0, resource.prescriber, 'prescriber');
 end;
 
+procedure TFhirIndexManager.checkTags(resource: TFhirResource; tags: TFHIRTagList);
+var
+  c : integer;
+begin
+  c := 0;
+  if (resource.meta <> nil) then
+    c := resource.meta.tagList.Count;
+  if c <> tags.Count then
+    raise Exception.Create('Tags out of sync');
+end;
+
+procedure TFhirIndexManager.compareIndexEntries(rt, n: string);
+var
+  manual, auto : TAdvList<TFhirIndexEntry>;
+  m, a : TFhirIndexEntry;
+  ok : boolean;
+begin
+  manual := TAdvList<TFhirIndexEntry>.create;
+  auto := TAdvList<TFhirIndexEntry>.create;
+  try
+    FEntries.filter(FInfo.Indexes, n, manual);
+    FPathEntries.filter(FInfo.Indexes, n, manual);
+    if manual.Count <> auto.Count then
+      raise Exception.Create('manual and auto counts differ for '+rt+':'+n);
+    for m in manual do
+    begin
+      ok := false;
+      for a in auto do
+        if (a.FValue1 = m.FValue1) and (a.FValue2 = m.FValue2) and (a.FType = m.FType) then
+          ok := true;
+      if not ok then
+        raise Exception.Create('manual and auto counts differ for '+rt+':'+n);
+    end;
+  finally
+    manual.free;
+    auto.free;
+  end;
+end;
+
 const
   CHECK_TSearchParamsProcessRequest : Array[TSearchParamsProcessRequest] of TSearchParamsProcessRequest = ( spProcessRequest__content, spProcessRequest__id, spProcessRequest__lastUpdated, spProcessRequest__profile, spProcessRequest__query, spProcessRequest__security, spProcessRequest__tag, spProcessRequest__text,
     spProcessRequest_Action, spProcessRequest_Identifier, spProcessRequest_Organization, spProcessRequest_Provider);
@@ -6060,7 +6218,7 @@ begin
   for a := low(TSearchParamsProcessRequest) to high(TSearchParamsProcessRequest) do
   begin
     assert(CHECK_TSearchParamsProcessRequest[a] = a);
-    indexes.add(frtProcessRequest, CODES_TSearchParamsProcessRequest[a], DESC_TSearchParamsProcessRequest[a], TYPES_TSearchParamsProcessRequest[a], TARGETS_TSearchParamsProcessRequest[a]);
+    indexes.add(frtProcessRequest, CODES_TSearchParamsProcessRequest[a], DESC_TSearchParamsProcessRequest[a], TYPES_TSearchParamsProcessRequest[a], TARGETS_TSearchParamsProcessRequest[a], PATHS_TSearchParamsProcessRequest[a], USES_TSearchParamsProcessRequest[a]);
   end;
 end;
 
@@ -6085,7 +6243,7 @@ begin
   for a := low(TSearchParamsProcessResponse) to high(TSearchParamsProcessResponse) do
   begin
     assert(CHECK_TSearchParamsProcessResponse[a] = a);
-    indexes.add(frtProcessResponse, CODES_TSearchParamsProcessResponse[a], DESC_TSearchParamsProcessResponse[a], TYPES_TSearchParamsProcessResponse[a], TARGETS_TSearchParamsProcessResponse[a]);
+    indexes.add(frtProcessResponse, CODES_TSearchParamsProcessResponse[a], DESC_TSearchParamsProcessResponse[a], TYPES_TSearchParamsProcessResponse[a], TARGETS_TSearchParamsProcessResponse[a], PATHS_TSearchParamsProcessResponse[a], USES_TSearchParamsProcessResponse[a]);
   end;
 end;
 
@@ -6113,7 +6271,7 @@ begin
   for a := low(TSearchParamsAccount) to high(TSearchParamsAccount) do
   begin
     assert(CHECK_TSearchParamsAccount[a] = a);
-    indexes.add(frtAccount, CODES_TSearchParamsAccount[a], DESC_TSearchParamsAccount[a], TYPES_TSearchParamsAccount[a], TARGETS_TSearchParamsAccount[a]);
+    indexes.add(frtAccount, CODES_TSearchParamsAccount[a], DESC_TSearchParamsAccount[a], TYPES_TSearchParamsAccount[a], TARGETS_TSearchParamsAccount[a], PATHS_TSearchParamsAccount[a], USES_TSearchParamsAccount[a]);
   end;
 end;
 
@@ -6145,7 +6303,7 @@ begin
   for a := low(TSearchParamsImplementationGuide) to high(TSearchParamsImplementationGuide) do
   begin
     assert(CHECK_TSearchParamsImplementationGuide[a] = a);
-    indexes.add(frtImplementationGuide, CODES_TSearchParamsImplementationGuide[a], DESC_TSearchParamsImplementationGuide[a], TYPES_TSearchParamsImplementationGuide[a], TARGETS_TSearchParamsImplementationGuide[a]);
+    indexes.add(frtImplementationGuide, CODES_TSearchParamsImplementationGuide[a], DESC_TSearchParamsImplementationGuide[a], TYPES_TSearchParamsImplementationGuide[a], TARGETS_TSearchParamsImplementationGuide[a], PATHS_TSearchParamsImplementationGuide[a], USES_TSearchParamsImplementationGuide[a]);
   end;
 end;
 

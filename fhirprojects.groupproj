@@ -1,0 +1,84 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{09AF4F3A-3C40-46E9-AB64-2E0AA7A9EEFF}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Server\FHIRServer2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Server\FHIRServer21.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="npp\fhirnpp.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="vseditor\ValueSetEditor.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="tests\FHIRTest.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="FHIRServer2">
+        <MSBuild Projects="Server\FHIRServer2.dproj"/>
+    </Target>
+    <Target Name="FHIRServer2:Clean">
+        <MSBuild Projects="Server\FHIRServer2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRServer2:Make">
+        <MSBuild Projects="Server\FHIRServer2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRServer21">
+        <MSBuild Projects="Server\FHIRServer21.dproj"/>
+    </Target>
+    <Target Name="FHIRServer21:Clean">
+        <MSBuild Projects="Server\FHIRServer21.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRServer21:Make">
+        <MSBuild Projects="Server\FHIRServer21.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="fhirnpp">
+        <MSBuild Projects="npp\fhirnpp.dproj"/>
+    </Target>
+    <Target Name="fhirnpp:Clean">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirnpp:Make">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ValueSetEditor">
+        <MSBuild Projects="vseditor\ValueSetEditor.dproj"/>
+    </Target>
+    <Target Name="ValueSetEditor:Clean">
+        <MSBuild Projects="vseditor\ValueSetEditor.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ValueSetEditor:Make">
+        <MSBuild Projects="vseditor\ValueSetEditor.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRTest">
+        <MSBuild Projects="tests\FHIRTest.dproj"/>
+    </Target>
+    <Target Name="FHIRTest:Clean">
+        <MSBuild Projects="tests\FHIRTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRTest:Make">
+        <MSBuild Projects="tests\FHIRTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="FHIRServer2;FHIRServer21;fhirnpp;ValueSetEditor;FHIRTest"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="FHIRServer2:Clean;FHIRServer21:Clean;fhirnpp:Clean;ValueSetEditor:Clean;FHIRTest:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="FHIRServer2:Make;FHIRServer21:Make;fhirnpp:Make;ValueSetEditor:Make;FHIRTest:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

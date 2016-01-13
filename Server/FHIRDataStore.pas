@@ -494,7 +494,7 @@ begin
       p.network.address := clientInfo;
       p.network.type_ := NetworkType2;
 
-      QueueResource(se, se.event.dateTimeElement.value);
+      QueueResource(se, se.event.dateTime);
     finally
       se.free;
     end;
@@ -670,7 +670,7 @@ begin
             p.requestor := true;
           end;
 
-          QueueResource(se, se.event.dateTimeElement.value);
+          QueueResource(se, se.event.dateTime);
         finally
           se.free;
         end;
@@ -982,7 +982,7 @@ begin
         p.network := TFhirAuditEventParticipantNetwork.Create;
         p.network.address := clientInfo;
         p.network.type_ := NetworkType2;
-        QueueResource(se, se.event.dateTimeElement.value);
+        QueueResource(se, se.event.dateTime);
       finally
         se.free;
       end;

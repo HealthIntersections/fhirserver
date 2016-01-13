@@ -1067,7 +1067,7 @@ begin
             errCode := 'invalid_client';
             clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
             if clientId <> pclientid then
-              raise Exception.Create('Client Id is wrong ("'+clientId+'")');
+              raise Exception.Create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
           end
           else
           begin
@@ -1075,7 +1075,7 @@ begin
             clientId := request.AuthUsername;
             clientSecret := request.AuthPassword;
             if clientId <> pclientid then
-              raise Exception.Create('Client Id is wrong ("'+clientId+'")');
+              raise Exception.Create('Client Id is wrong ("'+clientId+'") in Authorization Header');
             if clientSecret <> psecret then
               raise Exception.Create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
           end;

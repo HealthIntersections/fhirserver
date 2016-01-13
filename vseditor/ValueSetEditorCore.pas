@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, IniFiles, ZLib, Math, RegExpr,
   SystemSupport, StringSupport, FileSupport, DateAndTime, ShellSupport, GuidSupport,
   AdvObjects, AdvStringMatches, AdvStringObjectMatches, AdvObjectLists, AdvBuffers, AdvWinInetClients, AdvMemories, AdvFiles, AdvGenerics,
-  IdSoapMsXml, MsXmlParser, IdUri, IdHTTP, AdvJSON,
+  MsXmlParser, IdUri, IdHTTP, AdvJSON,
   FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRUtilities, FHIRClient;
 
@@ -3090,7 +3090,7 @@ end;
 
 constructor TClosureTableRecordSource.Create;
 begin
-  inherited;
+  inherited Create;
   FTargets := TAdvList<TFHIRCoding>.create;
 end;
 

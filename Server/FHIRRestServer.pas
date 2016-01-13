@@ -209,6 +209,7 @@ Type
     function processProvenanceHeader(header, lang : String) : TFhirProvenance;
     function DoVerifyPeer(Certificate: TIdX509; AOk: Boolean; ADepth, AError: Integer): Boolean;
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
+    Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
   Public
     Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
     Destructor Destroy; Override;
@@ -1097,6 +1098,7 @@ Begin
                     raise;
                   end;
                 end;
+                RecordExchange(oRequest, oResponse);
                 ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, pretty, request.AcceptEncoding.Contains('gzip'));
   // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
   //                 response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
@@ -1132,6 +1134,7 @@ Begin
     except
       on e : ERestfulAuthenticationNeeded do
       begin
+        RecordExchange(oRequest, oResponse, e);
         if aFormat = ffXhtml then
         begin
           response.ResponseNo := 200;
@@ -1143,20 +1146,29 @@ Begin
           SendError(response, e.Status, aFormat, lang, e.Message, sPath, e, session, true, sPath + sDoc, relativeReferenceAdjustment, IssueTypeLogin);
       end;
       on e : ETooCostly do
+      begin
+        RecordExchange(oRequest, oResponse, e);
         if noErrCode then
           SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly)
         else
           SendError(response, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly);
+      end;
       on e: ERestfulException do
+      begin
+        RecordExchange(oRequest, oResponse, e);
         if noErrCode then
           SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, e.Code)
         else
           SendError(response, e.Status, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, e.Code);
+      end;
       on e: Exception do
+      begin
+        RecordExchange(oRequest, oResponse, e);
         if noErrCode then
           SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeNull)
         else
           SendError(response, HTTP_ERR_INTERNAL, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeNull);
+      end;
     end;
   finally
     session.free;
@@ -2853,6 +2865,42 @@ begin
  // raise Exception.Create('todo');
 end;
 
+
+procedure TFhirWebServer.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: Exception);
+var
+  op : TFhirTestScriptSetupActionOperation;
+begin
+  if req.Session = nil then
+    exit;
+  if req.Session.TestScript = nil then
+    exit;
+  op := TFhirTestScriptSetupActionOperation.Create;
+  req.Session.TestScript.testList.Append.actionList.Append.operation := op;
+  if req.CommandType = fcmdOperation then
+    op.type_ := TFhirCoding.Create('http://hl7.org/fhir/testscript-operation-codes', req.OperationName)
+  else
+    op.type_ := TFhirCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
+  op.resource := CODES_TFhirResourceType[req.ResourceType];
+  if resp.Format = ffJson then
+    op.accept := ContentTypeJson
+  else
+    op.accept := ContentTypeXml;
+  op.params := req.Parameters.Source;
+  op.requestHeaderList.add('Host', req.baseUrl);
+  op.requestHeaderList.add('Content-Type', MIMETYPES_TFHIRFormat[req.PostFormat]);
+  if (req.lastModifiedDate <> 0) then
+    op.requestHeaderList.add('Last-Modified', DateTimeToXMLDateTimeTimeZoneString(req.lastModifiedDate, TimeZoneBias));
+  op.requestHeaderList.add('Language', req.Lang);
+  op.requestHeaderList.add('if-match', req.IfMatch);
+  op.requestHeaderList.add('if-none-match', req.IfNoneMatch);
+  if (req.IfModifiedSince <> 0) then
+   op.requestHeaderList.add('if-modified-since', DateTimeToXMLDateTimeTimeZoneString(req.IfModifiedSince, TimeZoneBias));
+  op.requestHeaderList.add('if-none-exist', req.IfNoneExist);
+  if req.Provenance <> nil then
+    op.requestHeaderList.add('x-provenance', ComposeJson(req.Provenance));
+  op.url := req.Url;
+
+end;
 
 procedure TFhirWebServer.ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: Boolean; path: String);
 var

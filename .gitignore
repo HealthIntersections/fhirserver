@@ -54,3 +54,9 @@ Libraries/refplat2/openehr.xml
 Server/FHIRServer21.rc
 Server/__recovery/__recovery.ini
 Server/__recovery/
+fhirprojects_prjgroup.tvsconfig
+install/fhirnpp.fb8lck
+install/fhirserver.fb8lck
+tests/FHIRTest.dof
+tests/FHIRTest.cfg
+tests/FHIRTest.stat

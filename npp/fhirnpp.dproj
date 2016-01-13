@@ -117,132 +117,132 @@
             <Form>FHIRToolbox</Form>
         </DCCReference>
         <DCCReference Include="FHIRPluginSettings.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRValidator.pas"/>
-        <DCCReference Include="..\Libraries\support\RegExpr.pas"/>
-        <DCCReference Include="..\Libraries\support\StringSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\MathSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvObjects.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvExceptions.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvFactories.pas"/>
-        <DCCReference Include="..\Libraries\support\FileSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\MemorySupport.pas"/>
-        <DCCReference Include="..\Libraries\support\DateSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\ErrorSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\SystemSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\ThreadSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\EncodeSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvControllers.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvPersistents.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvFilers.pas"/>
-        <DCCReference Include="..\Libraries\support\ColourSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\CurrencySupport.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvPersistentLists.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvObjectLists.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvItems.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvCollections.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvIterators.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvClassHashes.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvHashes.pas"/>
-        <DCCReference Include="..\Libraries\support\HashSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStringHashes.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvProfilers.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStringIntegerMatches.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStreams.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvParameters.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvExclusiveCriticalSections.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvThreads.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvSignals.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvSynchronizationRegistries.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvTimeControllers.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvIntegerMatches.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvBuffers.pas"/>
-        <DCCReference Include="..\Libraries\support\BytesSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStringBuilders.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvFiles.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvLargeIntegerMatches.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStringLargeIntegerMatches.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStringLists.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvCSVFormatters.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvTextFormatters.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvFormatters.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvCSVExtractors.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvTextExtractors.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvExtractors.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvCharacterSets.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvOrdinalSets.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStreamReaders.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStringStreams.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvGenerics.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvJSON.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvVCLStreams.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStringObjectMatches.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvNameBuffers.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvMemories.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRBase.pas"/>
-        <DCCReference Include="..\Libraries\support\DateAndTime.pas"/>
-        <DCCReference Include="..\Libraries\support\DecimalSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\GUIDSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\KDate.pas"/>
-        <DCCReference Include="..\Libraries\support\HL7V2DateSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvNames.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvStringMatches.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRUtilities.pas"/>
-        <DCCReference Include="..\Libraries\support\OIDSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\TextUtilities.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRSupport.pas"/>
-        <DCCReference Include="..\Libraries\support\JWT.pas"/>
-        <DCCReference Include="..\Libraries\support\HMAC.pas"/>
-        <DCCReference Include="..\Libraries\support\libeay32.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\SCIMObjects.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRResources.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRTypes.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRConstants.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRSecurity.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRTags.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRLang.pas"/>
-        <DCCReference Include="..\Libraries\support\AfsResourceVolumes.pas"/>
-        <DCCReference Include="..\Libraries\support\AfsVolumes.pas"/>
-        <DCCReference Include="..\Libraries\support\AfsStreamManagers.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvObjectMatches.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRParser.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRParserBase.pas"/>
-        <DCCReference Include="..\Libraries\support\MsXmlParser.pas"/>
-        <DCCReference Include="..\Libraries\support\XMLBuilder.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvWinInetClients.pas"/>
-        <DCCReference Include="..\Libraries\support\MsXmlBuilder.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvXmlBuilders.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvXMLFormatters.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvXMLEntities.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRProfileUtilities.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvZipReaders.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvZipDeclarations.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvZipParts.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvZipUtilities.pas"/>
-        <DCCReference Include="..\Libraries\support\AdvZipWorkers.pas"/>
-        <DCCReference Include="..\Libraries\support\kCritSct.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRValidator.pas"/>
+        <DCCReference Include="..\reference-platform\Support\RegExpr.pas"/>
+        <DCCReference Include="..\reference-platform\Support\StringSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\MathSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvObjects.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvExceptions.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvFactories.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FileSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\MemorySupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\DateSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\ErrorSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\SystemSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\ThreadSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\EncodeSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvControllers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvPersistents.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvFilers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\ColourSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\CurrencySupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvPersistentLists.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvObjectLists.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvItems.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvCollections.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvIterators.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvClassHashes.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvHashes.pas"/>
+        <DCCReference Include="..\reference-platform\Support\HashSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStringHashes.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvProfilers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStringIntegerMatches.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStreams.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvParameters.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvExclusiveCriticalSections.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvThreads.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvSignals.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvSynchronizationRegistries.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvTimeControllers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvIntegerMatches.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvBuffers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\BytesSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStringBuilders.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvFiles.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvLargeIntegerMatches.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStringLargeIntegerMatches.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStringLists.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvCSVFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvTextFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvCSVExtractors.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvTextExtractors.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvExtractors.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvCharacterSets.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvOrdinalSets.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStreamReaders.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStringStreams.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvGenerics.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvJSON.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvVCLStreams.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStringObjectMatches.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvNameBuffers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvMemories.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRBase.pas"/>
+        <DCCReference Include="..\reference-platform\Support\DateAndTime.pas"/>
+        <DCCReference Include="..\reference-platform\Support\DecimalSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\GUIDSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\KDate.pas"/>
+        <DCCReference Include="..\reference-platform\Support\HL7V2DateSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvNames.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvStringMatches.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\Support\OIDSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\TextUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\JWT.pas"/>
+        <DCCReference Include="..\reference-platform\Support\HMAC.pas"/>
+        <DCCReference Include="..\reference-platform\Support\libeay32.pas"/>
+        <DCCReference Include="..\reference-platform\SCIMObjects.pas"/>
+        <DCCReference Include="..\reference-platform\gen2\FHIRResources.pas"/>
+        <DCCReference Include="..\reference-platform\gen2\FHIRTypes.pas"/>
+        <DCCReference Include="..\reference-platform\gen2\FHIRConstants.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRSecurity.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRTags.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRLang.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AfsResourceVolumes.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AfsVolumes.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AfsStreamManagers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvObjectMatches.pas"/>
+        <DCCReference Include="..\reference-platform\gen2\FHIRParser.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\Support\MsXmlParser.pas"/>
+        <DCCReference Include="..\reference-platform\Support\XMLBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvWinInetClients.pas"/>
+        <DCCReference Include="..\reference-platform\Support\MsXmlBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvXmlBuilders.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvXMLFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvXMLEntities.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvZipReaders.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvZipDeclarations.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvZipParts.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvZipUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\Support\AdvZipWorkers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\kCritSct.pas"/>
         <DCCReference Include="FHIRPluginValidator.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRClient.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRClient.pas"/>
         <DCCReference Include="NewResourceForm.pas">
             <Form>ResourceNewForm</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\refplat2\FHIRNarrativeGenerator.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRNarrativeGenerator.pas"/>
         <DCCReference Include="NewServerForm.pas">
             <Form>RegisterServerForm</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\refplat2\SmartOnFhirLogin.pas">
+        <DCCReference Include="..\reference-platform\SmartOnFhirLogin.pas">
             <Form>SmartOnFhirLoginForm</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\support\ParseMap.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\Support\ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="FetchResourceForm.pas">
             <Form>FetchResourceFrm</Form>
         </DCCReference>
         <DCCReference Include="..\..\Components\vtree\Source\VirtualTrees.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\FHIRPath.pas"/>
+        <DCCReference Include="..\reference-platform\FHIRPath.pas"/>
         <DCCReference Include="FHIRPathDocumentation.pas">
             <Form>FHIRPathDocumentationForm</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\support\MimeMessage.pas"/>
+        <DCCReference Include="..\reference-platform\Support\MimeMessage.pas"/>
         <DCCReference Include="PathDialogForms.pas">
             <Form>PathDialogForm</Form>
         </DCCReference>
@@ -252,7 +252,7 @@
         <DCCReference Include="FHIRVisualiser.pas">
             <Form>FHIRVisualizer</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\refplat2\FHIRPathDebugger.pas">
+        <DCCReference Include="..\reference-platform\FHIRPathDebugger.pas">
             <Form>FHIRPathDebuggerForm</Form>
         </DCCReference>
         <DCCReference Include="WelcomeScreen.pas">
@@ -263,10 +263,10 @@
             <Form>UpgradePromptForm</Form>
         </DCCReference>
         <DCCReference Include="PluginUtilities.pas"/>
-        <DCCReference Include="..\Libraries\refplat2\CDSHooksUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
-        <DCCReference Include="..\Libraries\support\ShellSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\ShellSupport.pas"/>
         <DCCReference Include="CDSBrowserForm.pas">
             <Form>CDSBrowser</Form>
             <FormType>dfm</FormType>
@@ -322,7 +322,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -636,16 +645,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

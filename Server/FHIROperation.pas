@@ -440,6 +440,17 @@ type
     procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
+  TFhirCurrentTestScriptOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+  end;
+
   TFhirGenerateSnapshotOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -558,6 +569,7 @@ begin
   FOperations.add(TFhirHandleQAPostOperation.create);
   FOperations.add(TFhirQuestionnaireGenerationOperation.create);
   FOperations.add(TFhirProcessClaimOperation.create);
+  FOperations.add(TFhirCurrentTestScriptOperation.create);
   FOperations.add(TFhirGenerateSnapshotOperation.create);
   FOperations.add(TFhirGenerateCDSHookOperation.create);
   FOperations.add(TFhirGenerateTemplateOperation.create);
@@ -2099,7 +2111,7 @@ begin
               FConnection.Terminate;
             end;
 
-            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
+            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revincludey'), bundle, keys, field, comp);
           end;
 
           bundle.id := FhirGUIDToString(CreateGUID);
@@ -3031,7 +3043,7 @@ begin
   if FIndexer = nil then
   begin
     FSpaces := TFHIRIndexSpaces.Create(FConnection);
-    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, FRepository.Indexes.Link);
+    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, FRepository.Indexes.Link, FRepository.ValidatorContext.Link);
     FIndexer.TerminologyServer := FRepository.TerminologyServer.Link;
     FIndexer.Bases := FRepository.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
@@ -7953,6 +7965,55 @@ end;
 function TFhirDeleteMetaDataOperation.Types: TFhirResourceTypeSet;
 begin
   result := ALL_RESOURCE_TYPES;
+end;
+
+{ TFhirCurrentTestScriptOperation }
+
+function TFhirCurrentTestScriptOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirCurrentTestScriptOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  if request.Session = nil then
+  begin
+    response.HTTPCode := 404;
+    response.Resource := BuildOperationOutcome('en', 'no Session, so no observed test script')
+  end
+  else
+  begin
+    if request.Session.TestScript = nil then
+      request.Session.TestScript := TFhirTestScript.Create;
+    request.Session.TestScript.id := inttostr(request.Session.Key);
+    request.Session.TestScript.name := 'Observed Test Script for Session for '+request.Session.Name;
+    request.Session.TestScript.status := ConformanceResourceStatusActive;
+    request.Session.TestScript.publisher := manager.Repository.OwnerName;
+    request.Session.TestScript.date := NowLocal;
+    response.HTTPCode := 200;
+    response.Resource := request.Session.TestScript.Link;
+  end;
+end;
+
+function TFhirCurrentTestScriptOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirCurrentTestScriptOperation.Name: String;
+begin
+  result := 'current';
+end;
+
+function TFhirCurrentTestScriptOperation.owningResource: TFhirResourceType;
+begin
+  result := frtTestScript;
+
+end;
+
+function TFhirCurrentTestScriptOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtTestScript];
 end;
 
 end.

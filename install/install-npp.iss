@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.17
+OutputBaseFilename=npp-install-1.0.18
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.17 (FHIR Version 1.0.2.7468)
+AppVerName=1.0.18 (FHIR Version 1.0.2.7468)
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -42,6 +42,6 @@ Source: "C:\work\fhirserver\install\ssl32\libeay32.dll"; DestDir: "{app}\ssl"; F
 Source: "C:\work\fhirserver\install\ssl32\ssleay32.dll"; DestDir: "{app}\ssl"; Flags: ignoreversion
 
 [Registry]
-Root: HKLM; Subkey: "HKEY_LOCAL_MACHINE\SOFTWARE\(Wow6432Node\)Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION"; ValueType: dword; ValueName: "notepad++.exe"; ValueData: "10000"; Flags: createvalueifdoesntexist noerror
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION"; ValueType: dword; ValueName: "notepad++.exe"; ValueData: "10000"; Flags: createvalueifdoesntexist 
 
 
