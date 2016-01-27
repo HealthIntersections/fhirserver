@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.29 2016-01-12 (DSTU21)</title>
+		<item><title>FHIRServer release 1.0.30 2016-01-16 (DSTU21)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.30.exe</link>
+			<description>DSTU2.1. 2016-01-16 (v1.0.30): Fix issues with post connectathon versioning</description>
+		</item>
+<item><title>FHIRServer release 1.0.29 2016-01-12 (DSTU21)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.29.exe</link>
 			<description>DSTU2.1. 2016-01-12 (v1.0.29): Fix bug in processing _revinclude</description>
 		</item>
-<item><title>FHIRServer release 1.0.29 2016-01-12 (DSTU2)</title>
+		<item><title>FHIRServer release 1.0.29 2016-01-12 (DSTU2)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.29.exe</link>
 			<description>DSTU2. 2016-01-12 (v1.0.29): Fix bug in processing _revinclude</description>
 		</item>

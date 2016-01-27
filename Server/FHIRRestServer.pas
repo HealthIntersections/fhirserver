@@ -1441,7 +1441,7 @@ begin
   s := FileToString(FAltPath+'patient.html', TEncoding.UTF8);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%hookid%]', hookid, [rfReplaceAll]);
-  s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%patient-details%]', xhtml, [rfReplaceAll]);
   s := s.Replace('[%patient-id%]', id, [rfReplaceAll]);
@@ -2280,7 +2280,7 @@ result :=
 ''#13#10+
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
 '<head>'#13#10+
-'    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</title>'#13#10+
+'    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
 TFHIRXhtmlComposer.PageLinks+#13#10+
 FHIR_JS+
 '</head>'#13#10+
@@ -2378,7 +2378,7 @@ begin
   ''#13#10+
   '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
   '<head>'#13#10+
-  '    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</title>'#13#10+
+  '    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
   TFHIRXhtmlComposer.pagelinks+
   FHIR_JS+
   '</head>'#13#10+
@@ -2526,7 +2526,7 @@ FHIR_JS+
 '  &nbsp;'#13#10+
 '  '+FOwnerName+' '+GetFhirMessage('NAME_SERVER', lang)+''#13#10+
 '  &nbsp;'#13#10+
-'  FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+''#13#10;
+'  FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+''#13#10;
 
 if session <> nil then
   result := result +'&nbsp;&nbsp;'+FormatTextToXml(Session.Name);
@@ -2880,7 +2880,7 @@ begin
     op.type_ := TFhirCoding.Create('http://hl7.org/fhir/testscript-operation-codes', req.OperationName)
   else
     op.type_ := TFhirCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
-  op.resource := CODES_TFhirResourceType[req.ResourceType];
+  op.resourceElement := TFhirEnum.Create('', CODES_TFhirResourceType[req.ResourceType]);
   if resp.Format = ffJson then
     op.accept := ContentTypeJson
   else
@@ -2939,7 +2939,7 @@ begin
   writelnt('script: '+named);
   s := FileToString(path, TEncoding.UTF8);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
-  s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
   if (session = nil) then

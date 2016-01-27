@@ -297,7 +297,8 @@ uses
   MarkdownDaringFireballTests in '..\..\markdown\source\MarkdownDaringFireballTests.pas',
   CDSHooksUtilities in '..\reference-platform\CDSHooksUtilities.pas',
   FHIRPatch in '..\reference-platform\FHIRPatch.pas',
-  MPISearch in 'MPISearch.pas';
+  MPISearch in 'MPISearch.pas',
+  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas';
 
 begin
   JclStartExceptionTracking;

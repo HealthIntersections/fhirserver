@@ -508,7 +508,7 @@ begin
   try
     if atEntry and (CharInSet(exp.name[1], ['A'..'Z'])) then // special case for start up
     begin
-      if item.FhirType = exp.name then
+      if (item.FhirType = exp.name) or StringArrayExistsSensitive(['Resource', 'DomainResource'], exp.name) then
         result.Add(item.Link);
     end
     else if (exp.name = '**') then
@@ -2039,9 +2039,9 @@ begin
       else
         for t in ed.type_List do
         begin
-          dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t.Code) as TFhirStructureDefinition;
+          dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+CODES_TFhirDefinedTypesEnum[t.Code]) as TFhirStructureDefinition;
           if (dt = nil) then
-            raise Exception.create('unknown data type '+t.code);
+            raise Exception.create('unknown data type '+CODES_TFhirDefinedTypesEnum[t.code]);
           sdl.add(dt);
         end;
     end
@@ -2062,10 +2062,10 @@ begin
           if (ed.path.startsWith(path)) then
             for t in ed.type_List do
             begin
-              if (t.code.equals('Element') or t.code.equals('BackboneElement')) then
+              if (t.code = DefinedTypesElement) or (t.code = DefinedTypesBackboneElement) then
                 tn := ed.path
               else
-                tn := t.code;
+                tn := CODES_TFhirDefinedTypesEnum[t.code];
               if (not result.contains(tn)) and (tn <> '') then
               begin
                 result.add(tn);
@@ -2080,12 +2080,12 @@ begin
         begin
           if (ed.path.startsWith(path) and not ed.path.substring(path.length).contains('.')) then
             for t in ed.type_List do
-              if (t.code.equals('Element') or t.code.equals('BackboneElement')) then
+              if (t.code = DefinedTypesElement) or (t.code = DefinedTypesBackboneElement) then
                 result.add(ed.path)
-              else if (t.code.equals('Resource')) then
+              else if (t.code = DefinedTypesResource) then
                 result.addAll(worker.getResourceNames())
               else
-                result.add(t.code);
+                result.add(CODES_TFhirDefinedTypesEnum[t.code]);
         end;
       end
       else
@@ -2104,15 +2104,15 @@ begin
           begin
             for t in ed.type_list do
             begin
-              if (t.code = '') then
+              if (t.code = DefinedTypesNull) then
                 raise Exception.create('Illegal reference to primative value attribute @ '+path);
 
-              if (t.code.equals('Element') or t.code.equals('BackboneElement')) then
+              if (t.code = DefinedTypesElement) or (t.code = DefinedTypesBackboneElement) then
                 result.add(path)
-              else if (t.code.equals('Resource')) then
+              else if (t.code = DefinedTypesResource) then
                 result.addAll(worker.getResourceNames())
               else
-                result.add(t.code);
+                result.add(CODES_TFhirDefinedTypesEnum[t.code]);
             end;
           end;
         end;
@@ -2139,7 +2139,7 @@ var
 begin
 	result := false;
 	for t in ed.type_List do
-		if (s.equals(t.code)) then
+		if (s.equals(CODES_TFhirDefinedTypesEnum[t.code])) then
 			exit(true);
 end;
 
@@ -2174,7 +2174,7 @@ end;
 
 function TFHIRExpressionEngine.hasDataType(ed : TFhirElementDefinition) : boolean;
 begin
-  result := (ed.type_List.Count > 0) and not (ed.type_list[0].code.equals('Element') or ed.type_list[0].code.equals('BackboneElement'));
+  result := (ed.type_List.Count > 0) and not (ed.type_list[0].code = DefinedTypesElement) or (ed.type_list[0].code = DefinedTypesBackboneElement);
 end;
 
 function TFHIRExpressionEngine.getElementDefinitionByName(sd : TFHIRStructureDefinition; name : String) : TFHIRElementDefinition;

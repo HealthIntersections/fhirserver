@@ -62,7 +62,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix LOINC search problem"
+        as.returnvalue = test
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -185,11 +185,13 @@ begin
       action.group
       begin
         description = "Build DSTU 2"
+        enabled = false
         id = {673A1E74-E928-4C1F-A6EF-29EA4FF617A0}
         action.files.delete
         begin
           deletehidden = false
           deletereadonly = false
+          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\FHIRServer2.exe
           id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}

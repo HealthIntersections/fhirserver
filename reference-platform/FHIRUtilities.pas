@@ -101,7 +101,7 @@ function asUTCMin(value : TFhirTiming) : TDateTime; overload;
 function asUTCMax(value : TFhirTiming) : TDateTime; overload;
 
 function asCode(obj : TFHIRObject) : TFHIRCode;
-function asEnum(obj : TFHIRObject) : TFHIREnum;
+function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 
 function HasExtension(element : TFhirElement; url : string):Boolean;
 function GetExtension(element : TFhirElement; url : string) : TFhirExtension;
@@ -1929,7 +1929,7 @@ begin
   res := res.Substring(0, res.LastIndexOf('.'));
   code := FHIR_GENERATED_VERSION.Substring(0, FHIR_GENERATED_VERSION.LastIndexOf('.'));
   if (code <> res) then
-    raise Exception.Create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+', but the server is version '+fhirVersion);
+    raise Exception.Create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+', but the server is version '+fhirVersion);
 end;
 
 function TFHIRConformanceHelper.rest(type_: TFhirResourceType): TFhirConformanceRestResource;
@@ -1941,7 +1941,7 @@ begin
   for I := 0 to self.restlist.count - 1 do
     if self.restlist[i].mode = RestfulConformanceModeServer then
       for j := 0 to self.restlist[i].resourceList.count - 1 do
-        if self.restlist[i].resourceList[j].type_ = CODES_TFhirResourceType[type_] then
+        if CODES_TFhirResourceTypesEnum[self.restlist[i].resourceList[j].type_] = CODES_TFhirResourceType[type_] then
         begin
           result := self.restlist[i].resourceList[j];
           exit;
@@ -3313,13 +3313,13 @@ begin
   end;
 end;
 
-function asEnum(obj : TFHIRObject) : TFHIREnum;
+function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 begin
   if obj is TFHIREnum then
     result := obj as TFHIREnum
   else if obj is TFHIRCode then
   begin
-    result := TFHIREnum.create(TFHIRCode(obj).value);
+    result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRCode(obj).value)], TFHIRCode(obj).value);
     obj.Free;
   end
   else
@@ -3369,7 +3369,7 @@ var
 begin
   result := false;
   for edt in type_List do
-    if edt.code = t then
+    if CODES_TFhirDefinedTypesEnum[edt.code] = t then
       exit(true);
 end;
 
@@ -3379,7 +3379,7 @@ var
 begin
   result := false;
   for edt in type_List do
-    if SameText(edt.code, t) then
+    if SameText(CODES_TFhirDefinedTypesEnum[edt.code], t) then
     begin
       if edt.profileList.Count > 0 then
         profile := edt.profileList[0].value

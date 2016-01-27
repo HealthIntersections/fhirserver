@@ -450,9 +450,9 @@ Begin
        ' SearchKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
-       ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform)+', '+#13#10+
+       ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Score1 int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' Score2 int '+ColCanBeNull(FConn.owner.platform, True));
+       ' Score2 int '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search'));

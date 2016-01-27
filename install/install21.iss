@@ -7,11 +7,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server (DEV)
-AppVerName=1.0.29 (FHIR Version 1.3.0.7546)
+AppVerName=1.0.30 (FHIR Version 1.3.0.7546)
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver21-1.0.29
+OutputBaseFilename=fhirserver21-1.0.30
 Compression=lzma2/ultra64
 
 ; 64 bit

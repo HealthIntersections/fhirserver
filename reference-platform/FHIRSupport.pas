@@ -1337,14 +1337,14 @@ end;
 
 { TFHIRFactory }
 
-function CheckEnum(Names: array of String; value : String): TFhirEnum;
+function CheckEnum(Systems, Names: array of String; value : String): TFhirEnum;
 begin
   if value = '' then
     result := nil
   else if StringIsInteger32(value) then
-    result := TFhirEnum.create(Names[StrToInt(value)])
+    result := TFhirEnum.create(Systems[StrToInt(value)], Names[StrToInt(value)])
   else if StringArrayIndexOfSensitive(Names, value) > -1 then
-    result := TFhirEnum.create(value)
+    result := TFhirEnum.create(Systems[StringArrayIndexOfSensitive(Names, value)], value)
   else
     Raise Exception.create('Invalid enumeration value "'+value+'"');
 end;
@@ -1419,8 +1419,8 @@ function TFHIRFactory.makeContactPoint(system, value, use: String): TFhirContact
 begin
   result := TFhirContactPoint.create;
   try
-    result.useElement := CheckEnum(CODES_TFhirContactPointUseEnum, use);
-    result.systemElement := CheckEnum(CODES_TFhirContactPointSystemEnum, system);
+    result.useElement := CheckEnum(SYSTEMS_TFhirContactPointUseEnum, CODES_TFhirContactPointUseEnum, use);
+    result.systemElement := CheckEnum(SYSTEMS_TFhirContactPointSystemEnum, CODES_TFhirContactPointSystemEnum, system);
     result.value := value;
     result.link;
   finally
@@ -1432,7 +1432,7 @@ function TFHIRFactory.makeAddress(use, street, city, state, postalCode, country 
 begin
   result := TFhirAddress.create;
   try
-    result.useElement := CheckEnum(CODES_TFhirAddressUseEnum, use);
+    result.useElement := CheckEnum(SYSTEMS_TFhirAddressUseEnum, CODES_TFhirAddressUseEnum, use);
     result.lineList.AddItem(street);
     result.city := city;
     result.state := state;
@@ -1448,7 +1448,7 @@ function TFHIRFactory.makeIdentifierWithLabel(use : string; label_, idSystem, id
 begin
   result := TFhirIdentifier.create;
   try
-    result.useElement := CheckEnum(CODES_TFhirIdentifierUseEnum, use);
+    result.useElement := CheckEnum(SYSTEMS_TFhirIdentifierUseEnum, CODES_TFhirIdentifierUseEnum, use);
     result.type_ := TFhirCodeableConcept.Create;
     result.type_.text := label_;
     result.system := idsystem;
@@ -1463,7 +1463,7 @@ function TFHIRFactory.makeHumanName(use, family, given, prefix, suffix: String):
 begin
   result := TFhirHumanName.create;
   try
-    result.useElement := CheckEnum(CODES_TFhirNameUseEnum, use);
+    result.useElement := CheckEnum(SYSTEMS_TFhirNameUseEnum, CODES_TFhirNameUseEnum, use);
     result.familyList.addItem(family);
     result.givenList.addItem(given);
     result.prefixList.addItem(prefix);
@@ -1482,7 +1482,7 @@ begin
     result.value := key;
     result.type_ := TFhirCodeableConcept.Create;
     result.type_.text := label_;
-    result.useElement := CheckEnum(CODES_TFhirIdentifierUseEnum, use);
+    result.useElement := CheckEnum(SYSTEMS_TFhirIdentifierUseEnum, CODES_TFhirIdentifierUseEnum, use);
     result.link;
   finally
     result.free;
@@ -1602,7 +1602,7 @@ function TFHIRFactory.makeNarrative(status, html: String; policy : TFHIRXhtmlPar
 begin
   result := TFhirNarrative.create;
   try
-    result.statusElement := CheckEnum(CODES_TFhirNarrativeStatusEnum, status);
+    result.statusElement := CheckEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, status);
     result.div_ := parseHTML(html, policy);
     result.link;
   finally
@@ -1668,7 +1668,7 @@ function TFHIRFactory.makeHumanNameText(use, text: String): TFhirHumanName;
 begin
   result := TFhirHumanName.create;
   try
-    result.useElement := CheckEnum(CODES_TFhirNameUseEnum, use);
+    result.useElement := CheckEnum(SYSTEMS_TFhirNameUseEnum, CODES_TFhirNameUseEnum, use);
     result.text := text;
     result.link;
   finally
@@ -1681,7 +1681,7 @@ function TFHIRFactory.makeAddressText(use, text: String): TFhirAddress;
 begin
   result := TFhirAddress.create;
   try
-    result.useElement := CheckEnum(CODES_TFhirAddressUseEnum, use);
+    result.useElement := CheckEnum(SYSTEMS_TFhirAddressUseEnum, CODES_TFhirAddressUseEnum, use);
     result.text := text;
     result.link;
   finally

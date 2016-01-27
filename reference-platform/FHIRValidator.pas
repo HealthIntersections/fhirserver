@@ -1604,8 +1604,8 @@ begin
       end;
       if (profile <> nil) then
       begin
-        if profile.ConstrainedType <> '' then
-          type_ := profile.ConstrainedType
+        if profile.ConstrainedType <> DefinedTypesNull then
+          type_ := CODES_TFhirDefinedTypesEnum[profile.ConstrainedType]
         else
           type_ := profile.name;
 
@@ -1621,7 +1621,7 @@ begin
           end;
         end;
 
-        result := rule(errors, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + profile.ConstrainedType +
+        result := rule(errors, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + CODES_TFhirDefinedTypesEnum[profile.ConstrainedType] +
           '", but resource type was "' + resourceName + '"');
       end;
 
@@ -1940,7 +1940,7 @@ var
 begin
   result := '';
   for tc in types do
-    CommaAdd(result, tc.code);
+    CommaAdd(result, CODES_TFhirDefinedTypesEnum[tc.code]);
 end;
 
 function resolveNameReference(Snapshot: TFhirStructureDefinitionSnapshot; name: String): TFHIRElementDefinition;
@@ -2163,10 +2163,10 @@ begin
       begin
         t := '';
         td := nil;
-        if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code <> '*') and (ei.definition.Type_List[0].code <> 'Element') and
-          (ei.definition.Type_List[0].code <> 'BackboneElement') then
-          t := ei.definition.Type_List[0].code
-        else if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code = '*') then
+        if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code <> DefinedTypesNull) and (ei.definition.Type_List[0].code <> DefinedTypesElement) and
+          (ei.definition.Type_List[0].code <> definedTypesBackboneElement) then
+          t := CODES_TFhirDefinedTypesEnum[ei.definition.Type_List[0].code]
+        else if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code = DefinedTypesNull) then
         begin
           prefix := tail(ei.definition.path);
           assert(prefix.endsWith('[x]'));
@@ -2179,12 +2179,12 @@ begin
           prefix := tail(ei.definition.path);
           prefix := prefix.substring(0, prefix.length - 3);
           for tc in ei.definition.Type_List do
-            if ((prefix + capitalize(tc.code)) = ei.name) then
-              t := tc.code;
+            if ((prefix + capitalize(CODES_TFhirDefinedTypesEnum[tc.code])) = ei.name) then
+              t := CODES_TFhirDefinedTypesEnum[tc.code];
           if (t = '') then
           begin
             trc := ei.definition.Type_List[0];
-            if (trc.code = 'Reference') then
+            if (trc.code = DefinedTypesReference) then
               t := 'Reference'
             else
             begin
@@ -2448,12 +2448,12 @@ begin
       if (ed.Type_List[0].profileList.count > 0) then
       begin
         // need to do some special processing for reference here...
-        if (ed.Type_List[0].code = 'Reference') then
+        if (ed.Type_List[0].code = DefinedTypesReference) then
           discriminator := discriminator.substring(discriminator.indexOf('.') + 1);
         ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profileList[0].value));
       end
       else
-        ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
+        ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + CODES_TFhirDefinedTypesEnum[ed.Type_List[0].code]));
       FOwned.add(ty);
       Snapshot := ty.Snapshot.ElementList;
       ed := Snapshot[0];
@@ -2543,7 +2543,7 @@ begin
     b := '';
     for ty in container.Type_List do
     begin
-      if (not ok) and (ty.code = 'Reference') then
+      if (not ok) and (ty.code = DefinedTypesReference) then
       begin
         // we validate as much as we can. First, can we infer a type from the profile?
         if (ty.profileList.count = 0) or (ty.profileList[0].value = 'http://hl7.org/fhir/StructureDefinition/Resource') then
@@ -2563,7 +2563,7 @@ begin
             ok := true; // suppress following check
         end;
       end;
-      if (not ok) and (ty.code = '*') then
+      if (not ok) and (ty.code = DefinedTypesNull) then
       begin
         ok := true; // can refer to anything
       end;
@@ -2699,7 +2699,7 @@ begin
   else if (p.Kind = StructureDefinitionKindRESOURCE) then
     result := p.Snapshot.ElementList[0].path
   else
-    result := p.Snapshot.ElementList[0].Type_List[0].code;
+    result := CODES_TFhirDefinedTypesEnum[p.Snapshot.ElementList[0].Type_List[0].code];
   // end;
 end;
 
@@ -4206,7 +4206,7 @@ begin
   if FTypeName <> '' then
     result := FTypeName
   else
-    result := FDefinition.type_List[0].code;
+    result := CODES_TFhirDefinedTypesEnum[FDefinition.type_List[0].code];
 end;
 
 procedure TFHIRBaseOnWrapper.GetChildrenByName(child_name: string; list: TFHIRObjectList);
@@ -4270,7 +4270,7 @@ begin
       if FDefinition.type_List[0].profileList.Count > 0 then
         pn := FDefinition.type_List[0].profileList[0].value
       else
-        pn := 'http://hl7.org/fhir/StructureDefinition/'+ FDefinition.type_List[0].code;
+        pn := 'http://hl7.org/fhir/StructureDefinition/'+ CODES_TFhirDefinedTypesEnum[FDefinition.type_List[0].code];
     end;
     if (pn <> '') then
     begin

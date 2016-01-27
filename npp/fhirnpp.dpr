@@ -146,7 +146,8 @@ uses
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   ShellSupport in '..\reference-platform\Support\ShellSupport.pas',
-  CDSBrowserForm in 'CDSBrowserForm.pas' {CDSBrowser};
+  CDSBrowserForm in 'CDSBrowserForm.pas' {CDSBrowser},
+  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas';
 
 {$R *.res}
 

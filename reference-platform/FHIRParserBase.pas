@@ -36,7 +36,7 @@ uses
   Windows, SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections, System.Character,
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport,
   AdvBuffers, AdvStringLists, DateAndTime, AdvStringMatches, TextUtilities, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
-  MsXml, MsXmlParser, XmlBuilder, MsXmlBuilder, AdvXmlBuilders, AdvJSON,
+  MsXml, MsXmlParser, XmlBuilder, MsXmlBuilder, AdvXmlBuilders, AdvJSON, RDFUtilities,
   FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport, FHIRTags, FHIRLang;
 
 const
@@ -166,7 +166,7 @@ Type
 
   TJsonObjectHandler = procedure (jsn : TJsonObject; ctxt : TFHIRObjectList) of object;
   TJsonObjectPrimitiveHandler = procedure (value : String; jsn : TJsonObject; ctxt : TFHIRObjectList) of object;
-  TJsonObjectEnumHandler = procedure (path, value : String; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames : Array Of String) of object;
+  TJsonObjectEnumHandler = procedure (path, value : String; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aSystems, aNames : Array Of String) of object;
 
   TFHIRJsonParserBase = class (TFHIRParser)
   Protected
@@ -178,7 +178,7 @@ Type
 
     procedure iterateArray(arr : TJsonArray; ctxt : TFHIRObjectList; handler : TJsonObjectHandler);
     procedure iteratePrimitiveArray(arr1, arr2 : TJsonArray; ctxt : TFHIRObjectList; handler : TJsonObjectPrimitiveHandler);
-    procedure iterateEnumArray(arr1, arr2 : TJsonArray; path : String; ctxt : TFHIRObjectList; handler : TJsonObjectEnumHandler; Const aNames : Array Of String);
+    procedure iterateEnumArray(arr1, arr2 : TJsonArray; path : String; ctxt : TFHIRObjectList; handler : TJsonObjectEnumHandler; Const aSystems, aNames : Array Of String);
 
     // handlers
     procedure parseDomainResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -205,6 +205,8 @@ Type
 
     function asString(value : TDateAndTime):String; overload;
     function asString(value : TBytes):String; overload;
+    function asString(value : string):String; overload;
+    function asString(value : boolean):String; overload;
     procedure ComposeExpression(stream : TStream; expr : TFHIRExpressionNode; items : TFHIRBaseList; types : TAdvStringSet; isPretty : Boolean); Virtual;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRBaseList; isPretty : Boolean); Virtual;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRBase; isPretty : Boolean); Virtual;
@@ -285,6 +287,26 @@ Type
     Function MimeType : String; Override;
     Property Comments : Boolean read FComments write FComments;
   End;
+
+  TFHIRRDFComposerBase = class (TFHIRComposer)
+  private
+    FURL: String;
+    FFormat: TRDFFormat;
+  protected
+    procedure ComposeXHtmlNode(complex : TRDFComplex; parentType, name : String; node: TFhirXHtmlNode; index : integer); overload;
+
+    Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList); overload; override;
+    procedure ComposeExpression(stream : TStream; expr : TFHIRExpressionNode; items : TFHIRBaseList; types : TAdvStringSet; isPretty : Boolean); overload; override;
+    procedure ComposeItems(stream : TStream; name : String; items : TFHIRBaseList; isPretty : Boolean); override;
+    procedure ComposeItem(stream : TStream; name : String; item : TFHIRBase; isPretty : Boolean); override;
+
+    Procedure ComposeResource(parent :  TRDFComplex; oResource : TFhirResource); overload; virtual;
+  public
+    Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
+    Function MimeType : String; Override;
+    property URL : String read FURL write FURL;
+    property RDFFormat : TRDFFormat read FFormat write FFormat;
+  end;
 
   TFHIRXhtmlComposerGetLink = procedure (resource : TFhirResource; base, statedType, id, ver : String; var link, text : String) of object;
 
@@ -617,14 +639,14 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParserBase.iterateEnumArray(arr1, arr2 : TJsonArray; path : String; ctxt : TFHIRObjectList; handler : TJsonObjectEnumHandler; Const aNames : Array Of String);
+procedure TFHIRJsonParserBase.iterateEnumArray(arr1, arr2 : TJsonArray; path : String; ctxt : TFHIRObjectList; handler : TJsonObjectEnumHandler; Const aSystems, aNames : Array Of String);
 var
   i : integer;
 begin
   if (arr1 <> nil) or (arr2 <> nil) then
   begin
     for i := 0 to max(arr1.Count, arr2.Count) - 1 do
-      handler(path+'['+inttostr(i+1)+']', arr1.Value[i], arr2.Obj[i], ctxt, aNames);
+      handler(path+'['+inttostr(i+1)+']', arr1.Value[i], arr2.Obj[i], ctxt, aSystems, aNames);
   end;
 end;
 
@@ -1381,6 +1403,19 @@ begin
   finally
     stream.Free;
   end;
+end;
+
+function TFHIRComposer.asString(value: string): String;
+begin
+  result := value;
+end;
+
+function TFHIRComposer.asString(value: boolean): String;
+begin
+  if value then
+    result := 'true'
+  else
+    result := 'false';
 end;
 
 function TFHIRComposer.Compose(name : String; item : TFHIRBase; isPretty : Boolean = true): String;
@@ -2217,7 +2252,7 @@ begin
 '		<div class="container">  <!-- container -->'+#13#10+
 '			<div class="inner-wrapper">'+#13#10+
 '				<p>'+#13#10+
-'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011 - 2013. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="/index.html" style="color: gold">'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</a>'+#13#10+
+'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011 - 2013. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="/index.html" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
 '        </span>'+#13#10+
 '        </p>'+#13#10+
 '			</div>  <!-- /inner-wrapper -->'+#13#10+
@@ -2277,7 +2312,7 @@ begin
   '  &nbsp;|&nbsp;'#13#10+
   '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
   '  &nbsp;|&nbsp;'#13#10+
-  '  <a href="/index.html" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</a>'#13#10;
+  '  <a href="/index.html" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
 
   if (session <> nil)  then
   begin
@@ -2895,5 +2930,76 @@ begin
   FLastStart := sourceLocation;
 end;
 
+
+{ TFHIRRDFComposerBase }
+
+procedure TFHIRRDFComposerBase.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList);
+var
+  ttl : TRDFGenerator;
+  section : TRDFSection;
+  subject : TRDFSubject;
+  this : TRDFComplex;
+  b : TStringBuilder;
+  bytes : TBytes;
+begin
+  ttl := TRDFGenerator.create;
+  try
+    ttl.format := FFormat;
+    ttl.prefix('fhir', 'http://hl7.org/fhir/');
+    ttl.prefix('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
+    section := ttl.section('resource');
+    if URL <> '' then
+      subject := section.triple('<'+URL+'>', 'a', 'fhir:'+CODES_TFHIRResourceType[oResource.ResourceType])
+    else
+      subject := section.triple('_', 'a', 'fhir:'+CODES_TFHIRResourceType[oResource.ResourceType]);
+
+    composeResource(subject, oResource);
+    b := TStringBuilder.Create;
+    try
+      ttl.generate(b, true);
+      bytes := TEncoding.UTF8.GetBytes(b.ToString);
+    finally
+      b.Free;
+    end;
+    stream.Write(bytes, length(bytes));
+  finally
+    ttl.Free;
+  end;
+end;
+
+procedure TFHIRRDFComposerBase.ComposeExpression(stream: TStream; expr: TFHIRExpressionNode; items: TFHIRBaseList; types: TAdvStringSet; isPretty: Boolean);
+begin
+  raise Exception.Create('not implemented yet');
+end;
+
+procedure TFHIRRDFComposerBase.ComposeItem(stream: TStream; name: String; item: TFHIRBase; isPretty: Boolean);
+begin
+  raise Exception.Create('not implemented yet');
+end;
+
+procedure TFHIRRDFComposerBase.ComposeItems(stream: TStream; name: String; items: TFHIRBaseList; isPretty: Boolean);
+begin
+  raise Exception.Create('not implemented yet');
+end;
+
+procedure TFHIRRDFComposerBase.ComposeResource(parent :  TRDFComplex; oResource: TFhirResource);
+begin
+  raise Exception.Create('do not instantiate TFHIRRDFComposerBase directly');
+end;
+
+procedure TFHIRRDFComposerBase.ComposeXHtmlNode(complex: TRDFComplex; parentType, name: String; node: TFhirXHtmlNode; index: integer);
+begin
+  // todo
+end;
+
+procedure TFHIRRDFComposerBase.ComposeResource(xml: TXmlBuilder; oResource: TFhirResource; links: TFhirBundleLinkList);
+begin
+  raise Exception.Create('not implemented yet');
+end;
+
+function TFHIRRDFComposerBase.MimeType: String;
+begin
+  result := 'text/turtle';
+end;
 
 End.

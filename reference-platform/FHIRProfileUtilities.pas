@@ -350,7 +350,7 @@ begin
       begin // one matching element in the differential
         log(cpath+': single match in the differential at '+inttostr(diffCursor));
         template := nil;
-        if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profileList.count > 0) and (diffMatches[0].type_List[0].Code <> 'Reference') then
+        if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profileList.count > 0) and (diffMatches[0].type_List[0].Code <> DefinedTypesReference) then
         begin
           p := diffMatches[0].type_List[0].profileList[0].value;
           sd := context.fetchResource(frtStructureDefinition, p) as TFhirStructureDefinition;
@@ -359,7 +359,7 @@ begin
             begin
               template := sd.Snapshot.elementList[0].Clone;
               template.Path := currentBase.path;
-              if (diffMatches[0].type_List[0].Code <> 'Extension') then
+              if (diffMatches[0].type_List[0].Code <> DefinedTypesExtension) then
               begin
                 template.min := currentBase.min;
                 template.max := currentBase.max;
@@ -381,9 +381,9 @@ begin
         outcome.name := diffMatches[0].Name;
         outcome.slicing := nil;
         updateFromDefinition(outcome, diffMatches[0], profileName, trimDifferential, url);
-        if (outcome.path.endsWith('[x]')) and (outcome.type_List.Count = 1 ) and (outcome.type_List[0].code <> '*') then
+        if (outcome.path.endsWith('[x]')) and (outcome.type_List.Count = 1 ) and (outcome.type_List[0].code <> DefinedTypesNull) then
           // if the base profile allows multiple types, but the profile only allows one, rename it
-          outcome.path := outcome.path.substring(0, outcome.path.length-3)+ capitalize(outcome.type_List[0].code);
+          outcome.path := outcome.path.substring(0, outcome.path.length-3)+ capitalize(CODES_TFhirDefinedTypesEnum[outcome.type_List[0].code]);
         if (resultPathBase = '') then
           resultPathBase := outcome.path
         else if (not outcome.path.startsWith(resultPathBase)) then
@@ -773,9 +773,9 @@ begin
               begin
                 case ed.type_List.Count of
                   0 : t := '';
-                  1 : t := ed.type_List[0].code;
+                  1 : t := CODES_TFhirDefinedTypesEnum[ed.type_List[0].code];
                 else
-                  t := ed.type_List[random(ed.type_List.Count)].code;
+                  t := CODES_TFhirDefinedTypesEnum[ed.type_List[random(ed.type_List.Count)].code];
                 end;
                 if (t = '') or (t = 'Element') or (t = 'BackboneElement') then
                   value := TFHIRObjectClass(prop.Class_).Create as TFHIRElement
@@ -811,8 +811,8 @@ begin
   if profile.snapshot = nil then
     raise Exception.Create('Unsuitable profile for creating a resource - no snapshot');
 
-  if profile.constrainedType <> '' then
-    path := profile.constrainedType
+  if profile.constrainedType <> DefinedTypesNull then
+    path := CODES_TFhirDefinedTypesEnum[profile.constrainedType]
   else
     path := profile.name;
   estack := TAdvList<TFhirElementDefinition>.create;
@@ -820,7 +820,7 @@ begin
     result := CreateResourceByName(path);
     try
       populate(profile, result, profile.snapshot.elementList[0], estack);
-      if profile.constrainedType <> '' then
+      if profile.constrainedType <> DefinedTypesNull then
       begin
         if result.meta = nil then
           result.meta := TFhirMeta.Create;
@@ -857,9 +857,9 @@ begin
   if (type_.profileList.Count > 0) then
     result := context.fetchResource(frtStructureDefinition, type_.profileList[0].StringValue) as TFhirStructureDefinition;
   if (result = nil) then
-    result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code) as TFhirStructureDefinition;
+    result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+CODES_TFhirDefinedTypesEnum[type_.code]) as TFhirStructureDefinition;
   if (result = nil) then
-    writeln('XX: failed to find profile for type: ' + type_.code); // debug GJM
+    writeln('XX: failed to find profile for type: ' + CODES_TFhirDefinedTypesEnum[type_.code]); // debug GJM
 end;
 
 function TProfileUtilities.typeCode(types : TFhirElementDefinitionTypeList) : String;
@@ -877,7 +877,7 @@ begin
         first := false
       else
         b.append(', ');
-      b.append(type_.code);
+      b.append(CODES_TFhirDefinedTypesEnum[type_.code]);
       if (type_.profileList.count > 1) then
         b.append('{'+type_.profileList[0].StringValue+'}');
     end;
@@ -913,7 +913,7 @@ begin
     result := true;
     for type_ in types do
     begin
-    t := type_.code;
+    t := CODES_TFhirDefinedTypesEnum[type_.code];
       if (not isDataType(t)) and (t <> 'Reference') and (t <> 'Narrative') and (t <> 'Extension') and (t <> 'ElementDefinition') and not isPrimitive(t) then
         result := false;
     end;
@@ -1395,13 +1395,13 @@ begin
             try
               for td in base.type_List do
               begin
-                b.add(td.code);
-                if (td.code= ts.code) or (td.code = 'Extension') or (td.code = 'Element') or (td.code = '*') or
-                    (((td.code = 'Resource') or (td.code = 'DomainResource')) and isResource(ts.code)) then
+                b.add(CODES_TFhirDefinedTypesEnum[td.code]);
+                if (td.code= ts.code) or (td.code = DefinedTypesExtension) or (td.code = DefinedTypesElement) or
+                    (((td.code = DefinedTypesResource) or (td.code = DefinedTypesDomainResource)) and isResource(CODES_TFhirDefinedTypesEnum[ts.code])) then
                   ok := true;
               end;
               if (not ok) then
-                raise Exception.create('StructureDefinition '+pn+' at '+derived.path+': illegal constrained type '+ts.code+' from '+b.CommaText);
+                raise Exception.create('StructureDefinition '+pn+' at '+derived.path+': illegal constrained type '+CODES_TFhirDefinedTypesEnum[ts.code]+' from '+b.CommaText);
             finally
               b.Free;
             end;
@@ -1931,26 +1931,26 @@ begin
   if id.endsWith('/1') then
     id := id.subString(0, id.length-2);
 
-  if (Types.Count = 0) or (Types[0].code = 'Resource') then
+  if (Types.Count = 0) or (Types[0].code = DefinedTypesResource) then
   begin
     path := id;
     profile := FProfile;
   end
   else if Types.Count = 1 then
   begin
-    profile := FProfiles['http://hl7.org/fhir/Profile/'+Types[0].code];
+    profile := FProfiles['http://hl7.org/fhir/Profile/'+CODES_TFhirDefinedTypesEnum[Types[0].code]];
     if (profile = nil) then
-      raise Exception.Create('Unable to find profile for '+Types[0].code+' @ '+id);
-    path := Types[0].code+id.Substring(statedPath.Length);
+      raise Exception.Create('Unable to find profile for '+CODES_TFhirDefinedTypesEnum[Types[0].code]+' @ '+id);
+    path := CODES_TFhirDefinedTypesEnum[Types[0].code]+id.Substring(statedPath.Length);
   end
   else if FType <> nil then
   begin
-    profile := FProfiles['http://hl7.org/fhir/Profile/'+FType.code];
+    profile := FProfiles['http://hl7.org/fhir/Profile/'+CODES_TFhirDefinedTypesEnum[FType.code]];
     if (profile = nil) then
-      raise Exception.Create('Unable to find profile for '+FType.code+' @ '+id);
+      raise Exception.Create('Unable to find profile for '+CODES_TFhirDefinedTypesEnum[FType.code]+' @ '+id);
     if not id.startsWith(statedPath+'._'+FType.tags['type']) then
       raise Exception.Create('Internal logic error');
-    path := Types[0].code+id.Substring(statedPath.Length+2+FType.tags['type'].length);
+    path := CODES_TFhirDefinedTypesEnum[Types[0].code]+id.Substring(statedPath.Length+2+FType.tags['type'].length);
   end
   else
     raise Exception.Create('not handled - multiple types');

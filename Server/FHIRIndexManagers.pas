@@ -341,6 +341,7 @@ Type
     FSpaces : TFhirIndexSpaces;
     FPatientCompartments : TFhirCompartmentEntryList;
     FEntries : TFhirIndexEntryList;
+    FManualEntries : TFhirIndexEntryList;
     FPathEntries : TFhirIndexEntryList;
     FMasterKey : Integer;
     FBases : TStringList;
@@ -526,7 +527,7 @@ Type
     procedure SetTerminologyServer(const Value: TTerminologyServer);
 
     procedure checkTags(resource : TFhirResource; tags : TFHIRTagList);
-    procedure compareIndexEntries(rt, n : string);
+    procedure compareIndexEntries(rt, n, expr : string);
     procedure evaluateByFHIRPath(resource : TFhirResource);
   public
     constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TValidatorServiceProvider);
@@ -758,7 +759,7 @@ begin
   FValidationInfo := ValidationInfo;
   FSpaces := aSpaces;
   FInfo := aInfo;
-  FEntries := TFhirIndexEntryList.Create;
+  FManualEntries := TFhirIndexEntryList.Create;
   FPathEntries := TFhirIndexEntryList.Create;
 end;
 
@@ -768,7 +769,7 @@ begin
   FTerminologyServer.free;
   FPatientCompartments.Free;
   FSpaces.Free;
-  FEntries.Free;
+  FManualEntries.Free;
   FPathEntries.Free;
   FInfo.Free;
   inherited;
@@ -1074,6 +1075,10 @@ begin
   if (value = nil) or (value.value = '') then
     exit;
 
+  if (value.system <> system) and (system <> '') then
+    raise Exception.Create('mismatch in systems');
+  system := value.system;
+
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
@@ -1154,22 +1159,68 @@ begin
     for i := 0 to FInfo.Indexes.Count - 1 do
     begin
       ndx := FInfo.Indexes[i];
-      if ndx.Path <> '' then
+      if (ndx.Path <> '') and (ndx.ResourceType = resource.ResourceType) then
       begin
         matches := path.evaluate(nil, resource, ndx.Path);
         for match in matches do
         begin
           case ndx.Usage of
             SearchXpathUsageNull: raise Exception.create('Path is not defined properly');
-            SearchXpathUsageNormal: raise Exception.create('not supported');
+            SearchXpathUsageNormal:
+              begin
+              if match is TFhirString then
+                index(resource.ResourceType, ndx.Key, 0, TFhirString(match), ndx.Name)
+              else if match is TFhirUri then
+                index(resource.ResourceType, ndx.key, 0, TFhirUri(match), ndx.Name)
+              else if match is TFhirEnum then
+                index(resource.ResourceType, ndx.key, 0, TFhirEnum(match), TFhirEnum(match).system, ndx.Name)
+              else if match is TFhirInteger  then
+                index(resource.ResourceType, ndx.key, 0, TFhirInteger(match), ndx.Name)
+              else if match is TFhirBoolean  then
+                index(resource.ResourceType, ndx.key, 0, TFhirBoolean(match), ndx.Name)
+              else if match is TFhirInstant  then
+                index(resource.ResourceType, ndx.key, 0, TFhirInstant(match), ndx.Name)
+              else if match is TFhirDateTime  then
+                index(resource.ResourceType, ndx.key, 0, TFhirDateTime(match), ndx.Name)
+              else if match is TFhirDate  then
+                index(resource.ResourceType, ndx.key, 0, TFhirDate(match), ndx.Name)
+              else if match is TFhirPeriod  then
+                index(resource.ResourceType, ndx.key, 0, TFhirPeriod(match), ndx.Name)
+              else if match is TFhirTiming  then
+                index(resource.ResourceType, ndx.key, 0, TFhirTiming(match), ndx.Name)
+              else if match is TFhirRatio  then
+                index(resource.ResourceType, ndx.key, 0, TFhirRatio(match), ndx.Name)
+              else if match is TFhirQuantity  then
+                index(resource.ResourceType, ndx.key, 0, TFhirQuantity(match), ndx.Name)
+              else if match is TFhirRange  then
+                index(resource.ResourceType, ndx.key, 0, TFhirRange(match), ndx.Name)
+              else if match is TFhirSampledData  then
+                index(resource.ResourceType, ndx.key, 0, TFhirSampledData(match), ndx.Name)
+              else if match is TFhirCoding  then
+                index(resource.ResourceType, ndx.key, 0, TFhirCoding(match), ndx.Name)
+              else if match is TFhirCodeableConcept  then
+                index(resource.ResourceType, ndx.key, 0, TFhirCodeableConcept(match), ndx.Name)
+              else if match is TFhirIdentifier  then
+                index(resource.ResourceType, ndx.key, 0, TFhirIdentifier(match), ndx.Name)
+              else if match is TFhirHumanName  then
+                index(resource.ResourceType, ndx.key, 0, TFhirHumanName(match), ndx.Name, '')
+              else if match is TFhirAddress  then
+                index(resource.ResourceType, ndx.key, 0, TFhirAddress(match), ndx.Name)
+              else if match is TFhirContactPoint  then
+                index(resource.ResourceType, ndx.key, 0, TFhirContactPoint(match), ndx.Name)
+              else if match is TFhirReference then
+                index(resource, resource.ResourceType, ndx.key, 0, TFhirReference(match), ndx.Name)
+              else
+                raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager');
+              end;
             SearchXpathUsagePhonetic: raise Exception.create('not supported');
             SearchXpathUsageNearby:  raise Exception.create('not supported');
             SearchXpathUsageDistance: raise Exception.create('not supported');
             SearchXpathUsageOther: raise Exception.create('not supported');
           end;
         end;
+        compareIndexEntries(CODES_TFHIRResourceType[resource.ResourceType], ndx.Name, ndx.Path);
       end;
-      compareIndexEntries(CODES_TFHIRResourceType[resource.ResourceType], ndx.Name);
     end;
   finally
     path.Free;
@@ -1183,9 +1234,12 @@ var
   dummy : string;
 begin
   checkTags(resource, tags);
-  FEntries.clear;
+  FManualEntries.clear;
   FPathEntries.clear;
-  FEntries.FKeyEvent := FKeyEvent;
+  FManualEntries.FKeyEvent := FKeyEvent;
+  FPathEntries.FKeyEvent := FKeyEvent;
+
+  FEntries := FManualEntries;
 
   // base indexes
   index(resource.ResourceType, key, 0, id, '_id');
@@ -1299,7 +1353,10 @@ begin
     FSpaces.FDB.terminate;
   end;
 
+  FEntries := FPathEntries;
+  {$IFDEF DSTU21}
   evaluateByFHIRPath(resource);
+  {$ENDIF}
 end;
 
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirCoding; name: String);
@@ -2239,9 +2296,13 @@ end;
 
 
 Const
+  {$IFDEF DSTU2}
   CHECK_TSearchParamsBasic : Array[TSearchParamsBasic] of TSearchParamsBasic = ( spBasic__content, spBasic__id, spBasic__lastUpdated, spBasic__profile, spBasic__query, spBasic__security, spBasic__tag, spBasic__text,
-     spBasic_Author, spBasic_Code, spBasic_Created, spBasic_Identifier, spBasic_Patient, spBasic_Subject);
-
+    spBasic_Author, spBasic_Code, spBasic_Created, spBasic_Description, spBasic_Identifier, spBasic_Keyword, spBasic_MinScore, spBasic_Patient, spBasic_Status, spBasic_Subject, spBasic_Title, spBasic_Topic, spBasic_Version);
+  {$ELSE}
+  CHECK_TSearchParamsBasic : Array[TSearchParamsBasic] of TSearchParamsBasic = ( spBasic__content, spBasic__id, spBasic__lastUpdated, spBasic__profile, spBasic__query, spBasic__security, spBasic__tag, spBasic__text,
+    spBasic_Author, spBasic_Code, spBasic_Created, spBasic_Identifier, spBasic_Patient, spBasic_Subject);
+  {$ENDIF}
 
 procedure TFhirIndexInformation.buildIndexesBasic;
 var
@@ -2988,7 +3049,7 @@ var
   c : TFhirSequenceCoordinate;
 begin
   index(frtSequence, key, 0, resource.species, 'species');
-  index(frtSequence, key, 0, resource.type_Element, 'http://hl7.org/fhir/sequence-type', 'type');
+  index(frtSequence, key, 0, resource.type_Element, 'type');
   index(frtSequence, key, 0, resource.variationIDList, 'variationid');
   for c in resource.coordinateList do
   begin
@@ -3365,7 +3426,7 @@ begin
     for i := 0 to resource.restList[j].resourceList.count - 1 do
     begin
       index(context, frtConformance, key, 0, resource.restList[j].resourceList[i].profile, 'profile');
-      index(frtConformance, key, 0, resource.restList[j].resourceList[i].type_Element, 'resource');
+      index(frtConformance, key, 0, resource.restList[j].resourceList[i].type_Element, 'http://hl7.org/fhir/resource-types', 'resource');
     end;
     index(frtConformance, key, 0, resource.restList[j].modeElement, 'http://hl7.org/fhir/restful-conformance-mode', 'mode');
   end;
@@ -3374,7 +3435,7 @@ begin
   begin
     for i := 0 to resource.messagingList[j].EventList.count - 1 do
     begin
-      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].focusElement, 'resource');
+      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].focusElement, 'http://hl7.org/fhir/resource-types', 'resource');
       index(context, frtConformance, key, 0, resource.messagingList[j].EventList[i].request, 'profile');
       index(context, frtConformance, key, 0, resource.messagingList[j].EventList[i].response, 'profile');
       index(frtConformance, key, 0, resource.messagingList[j].EventList[i].modeElement, 'http://hl7.org/fhir/message-conformance-event-mode', 'mode');
@@ -3752,7 +3813,7 @@ begin
   index(frtStructureDefinition, key, 0, resource.identifierList, 'identifier');
   index(frtStructureDefinition, key, 0, resource.urlElement, 'url');
   index(frtStructureDefinition, key, 0, resource.baseElement, 'base');
-  index(frtStructureDefinition, key, 0, resource.constrainedType, 'type');
+  index(frtStructureDefinition, key, 0, resource.constrainedTypeElement, '', 'type');
   index(frtStructureDefinition, key, 0, resource.nameElement, 'name');
   index(frtStructureDefinition, key, 0, resource.useContextList, 'context');
   index(frtStructureDefinition, key, 0, resource.contextTypeElement, 'http://hl7.org/fhir/extension-context', 'context-type');
@@ -3787,7 +3848,7 @@ Const
   CHECK_TSearchParamsPatient : Array[TSearchParamsPatient] of TSearchParamsPatient = (
     spPatient__content, spPatient__id, spPatient__lastUpdated, spPatient__profile, spPatient__query, spPatient__security, spPatient__tag, spPatient__text,
     spPatient_Active, spPatient_Address, spPatient_Address_city, spPatient_Address_country, spPatient_Address_postalcode, spPatient_Address_state, spPatient_Address_use, spPatient_Animal_breed, spPatient_Animal_species, spPatient_Birthdate, spPatient_Careprovider,
-    spPatient_Deathdate, spPatient_Deceased, spPatient_Email, spPatient_Family, spPatient_Gender, spPatient_Given, spPatient_Identifier, spPatient_Language, spPatient_Link, spPatient_Name, spPatient_Organization, spPatient_Phone, spPatient_Phonetic, spPatient_Telecom);
+    spPatient_Deathdate, spPatient_Deceased, spPatient_Email, spPatient_Ethnicity, spPatient_Family, spPatient_Gender, spPatient_Given, spPatient_Identifier, spPatient_Language, spPatient_Link, spPatient_Name, spPatient_Organization, spPatient_Phone, spPatient_Phonetic, spPatient_Race, spPatient_Telecom);
 
 procedure TFhirIndexInformation.buildIndexesPatient;
 var
@@ -3803,8 +3864,6 @@ begin
   indexes.add(frtPatient, 'mothersMaidenName', 'Search based on Patient mother''s Maiden Name', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
   indexes.add(frtPatient, 'birthOrderBoolean', 'Search based on Patient''s birth order (boolean or integer)', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
   indexes.add(frtPatient, 'age', 'Search based on Patient''s age', SearchParamTypeNumber, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-age');
-  indexes.add(frtPatient, 'race', 'Search based on patient''s race (US Realm)', SearchParamTypeToken, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/us-core-Patient-race');
-  indexes.add(frtPatient, 'ethnicity', 'Search based on Patient mother''s Maiden Name', SearchParamTypeToken, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/us-core-Patient-ethnicity');
 end;
 
 procedure TFhirIndexManager.buildIndexValuesPatient(key : integer; id : String; context : TFhirResource; resource: TFhirPatient);
@@ -4259,8 +4318,7 @@ end;
 const
   CHECK_TSearchParamsCondition : Array[TSearchParamsCondition] of TSearchParamsCondition = (
     spCondition__content, spCondition__id, spCondition__lastUpdated, spCondition__profile, spCondition__query, spCondition__security, spCondition__tag, spCondition__text,
-    spCondition_Asserter, spCondition_Body_site, spCondition_Category, spCondition_Clinicalstatus, spCondition_Code, spCondition_Date_recorded, spCondition_Encounter, spCondition_Evidence, spCondition_Identifier, spCondition_Onset, spCondition_Onset_info, spCondition_Patient, spCondition_Severity, spCondition_Stage);
-
+    spCondition_Age, spCondition_Asserter, spCondition_Body_site, spCondition_Category, spCondition_Clinicalstatus, spCondition_Code, spCondition_Date_recorded, spCondition_Encounter, spCondition_Evidence, spCondition_Identifier, spCondition_Onset, spCondition_Onset_info, spCondition_Patient, spCondition_Severity, spCondition_Stage);
 
 procedure TFhirIndexInformation.buildIndexesCondition;
 var
@@ -4280,7 +4338,7 @@ var
   i : integer;
 begin
   index(frtCondition, key, 0, resource.code, 'code');
-  index(frtCondition, key, 0, resource.clinicalStatusElement, 'http://hl7.org/fhir/condition-status', 'clinicalstatus');
+  index(frtCondition, key, 0, resource.clinicalStatusElement, 'clinicalstatus');
   index(frtCondition, key, 0, resource.severity, 'severity');
   index(frtCondition, key, 0, resource.category, 'category');
   index(frtCondition, key, 0, resource.identifierList, 'identifier');
@@ -4295,8 +4353,8 @@ begin
     index(frtCondition, key, 0, resource.onsetElement as TFHIRDateTime, 'onset')
   else if (resource.onsetElement is TFHIRPeriod) then
     index(frtCondition, key, 0, resource.onsetElement as TFHIRPeriod, 'onset')
-//  else if (resource.onsetElement is TFhirAge) then
-//    index(frtCondition, key, 0, resource.onsetElement as TFhirAge, 'onset-info')
+  else if (resource.onsetElement is TFhirQuantity) then
+    index(frtCondition, key, 0, resource.onsetElement as TFhirQuantity, 'age')
   else if (resource.onsetElement is TFhirRange) then
     index(frtCondition, key, 0, resource.onsetElement as TFhirRange, 'onset-info')
   else if (resource.onsetElement is TFhirString) then
@@ -4917,7 +4975,7 @@ end;
 
 const
   CHECK_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of TSearchParamsFamilyMemberHistory = ( spFamilyMemberHistory__content, spFamilyMemberHistory__id, spFamilyMemberHistory__lastUpdated, spFamilyMemberHistory__profile, spFamilyMemberHistory__query, spFamilyMemberHistory__security, spFamilyMemberHistory__tag, spFamilyMemberHistory__text,
-    spFamilyMemberHistory_Code, spFamilyMemberHistory_Date, spFamilyMemberHistory_Gender, spFamilyMemberHistory_Identifier, spFamilyMemberHistory_Patient, spFamilyMemberHistory_Relationship);
+    spFamilyMemberHistory_Code, spFamilyMemberHistory_Condition, spFamilyMemberHistory_Date, spFamilyMemberHistory_Gender, spFamilyMemberHistory_Identifier, spFamilyMemberHistory_Patient, spFamilyMemberHistory_Relationship);
 
 procedure TFhirIndexInformation.buildIndexesFamilyMemberHistory;
 var
@@ -4946,6 +5004,7 @@ begin
   for cond in resource.conditionList do
   begin
     index(frtFamilyMemberHistory, key, 0, cond.code, 'code');
+    index(frtFamilyMemberHistory, key, 0, cond.code, 'condition');
 
   // DAF:
     index(frtFamilyMemberHistory, key, 0, cond.code, 'familymemberhistorycondition');
@@ -5343,7 +5402,7 @@ end;
 Const
   CHECK_TSearchParamsDataElement : Array[TSearchParamsDataElement] of TSearchParamsDataElement = (
     spDataElement__content, spDataElement__id, spDataElement__lastUpdated, spDataElement__profile, spDataElement__query, spDataElement__security, spDataElement__tag, spDataElement__text,
-    spDataElement_Code, spDataElement_Context, spDataElement_Date, spDataElement_Description, spDataElement_Identifier, spDataElement_Name, spDataElement_Publisher, spDataElement_Status, spDataElement_Stringency, spDataElement_Url, spDataElement_Version);
+    spDataElement_Code, spDataElement_Context, spDataElement_Date, spDataElement_Description, spDataElement_Identifier, spDataElement_Name, spDataElement_ObjectClass, spDataElement_ObjectClassProperty, spDataElement_Publisher, spDataElement_Status, spDataElement_Stringency, spDataElement_Url, spDataElement_Version);
 
 procedure TFhirIndexInformation.buildIndexesDataElement;
 var
@@ -5588,7 +5647,7 @@ begin
   index(frtOperationDefinition, key, 0, resource.kindElement, 'http://hl7.org/fhir/operation-kind', 'kind');
   index(frtOperationDefinition, key, 0, resource.system, 'system');
   for i := 0 to resource.type_List.count - 1 Do
-    index(frtOperationDefinition, key, 0, resource.type_List[i], 'type');
+    index(frtOperationDefinition, key, 0, resource.type_List[i], 'http://hl7.org/fhir/resource-types', 'type');
   index(frtOperationDefinition, key, 0, resource.instance, 'instance');
   for i := 0 to resource.parameterList.count - 1 Do
     index(context, frtOperationDefinition, key, 0, resource.parameterList[i].profile, 'profile');
@@ -6130,12 +6189,12 @@ procedure TFhirIndexManager.buildIndexValuesSearchParameter(key: integer; id : S
 var
   i : integer;
 begin
-  index(frtSearchParameter, key, 0, resource.base, 'base');
+  index(frtSearchParameter, key, 0, resource.baseElement, 'http://hl7.org/fhir/resource-types', 'base');
   index(frtSearchParameter, key, 0, resource.description, 'description');
   index(frtSearchParameter, key, 0, resource.name, 'name');
   index(frtSearchParameter, key, 0, resource.code, 'code');
   for i := 0 to resource.targetList.count - 1  do
-    index(frtSearchParameter, key, 0, resource.targetList[i], 'name');
+    index(frtSearchParameter, key, 0, resource.targetList[i], 'http://hl7.org/fhir/resource-types', 'name');
   index(frtSearchParameter, key, 0, resource.type_Element, 'http://hl7.org/fhir/search-param-type', 'type');
   index(frtSearchParameter, key, 0, resource.url, 'url');
 end;
@@ -6179,7 +6238,7 @@ begin
     raise Exception.Create('Tags out of sync');
 end;
 
-procedure TFhirIndexManager.compareIndexEntries(rt, n: string);
+procedure TFhirIndexManager.compareIndexEntries(rt, n, expr: string);
 var
   manual, auto : TAdvList<TFhirIndexEntry>;
   m, a : TFhirIndexEntry;
@@ -6188,10 +6247,10 @@ begin
   manual := TAdvList<TFhirIndexEntry>.create;
   auto := TAdvList<TFhirIndexEntry>.create;
   try
-    FEntries.filter(FInfo.Indexes, n, manual);
-    FPathEntries.filter(FInfo.Indexes, n, manual);
+    FManualEntries.filter(FInfo.Indexes, n, manual);
+    FPathEntries.filter(FInfo.Indexes, n, auto);
     if manual.Count <> auto.Count then
-      raise Exception.Create('manual and auto counts differ for '+rt+':'+n);
+      raise Exception.Create('manual and auto counts differ for '+rt+':'+n+' for expression: '+expr);
     for m in manual do
     begin
       ok := false;
@@ -6287,7 +6346,7 @@ begin
   index(context, frtAccount, key, 0, resource.owner, 'patient', frtPatient);
   index(frtAccount, key, 0, resource.type_, 'type');
   index(frtAccount, key, 0, resource.activePeriod, 'period');
-  index(frtAccount, key, 0, resource.statusElement, 'http://hl7.org/fhir/ValueSet/account-status', 'status');
+  index(frtAccount, key, 0, resource.statusElement, 'status');
 end;
 
 

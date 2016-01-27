@@ -293,7 +293,7 @@ begin
   result := true;
   if (child.Type_List.count <> 1) then
   begin
-    t := child.Type_List[0].Code;
+    t := CODES_TFhirDefinedTypesEnum[child.Type_List[0].Code];
     if (t = 'Address') or (t = 'Reference') then
       result := true;
   end;
@@ -461,7 +461,7 @@ begin
     renderUri(TFHIRUri(e), x)
   else if (e is TFHIRTiming) then
     renderSchedule(TFHIRTiming(e), x)
-  else if (e is TFHIRQuantity) or (e is TFHIRDuration) then
+  else if (e is TFHIRQuantity) then
     renderQuantity(TFHIRQuantity(e), x, showCodeDetails)
   else if (e is TFHIRRatio) then
   begin
@@ -633,7 +633,7 @@ begin
       renderSchedule(TFHIRTiming(e), x);
       result := true;
     end
-    else if (e is TFHIRQuantity) or (e is TFHIRDuration) then
+    else if (e is TFHIRQuantity) then
     begin
       renderQuantity(TFHIRQuantity(e), x, showCodeDetails);
       result := true;
@@ -785,7 +785,7 @@ begin
   else if (child.Type_List.count <> 1) then
   begin
     result := true;
-    t := child.Type_List[0].Code;
+    t := CODES_TFhirDefinedTypesEnum[child.Type_List[0].Code];
     if (t = 'Address')or (t = 'Contact') or (t = 'Reference') or (t = 'Uri') then
       result := false;
   end

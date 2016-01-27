@@ -875,7 +875,7 @@ begin
     else
       oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
 
-    oConf.version := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+    oConf.version := FHIR_GENERATED_VERSION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
     oConf.name := 'Health Intersections FHIR Server Conformance Statement';
     oConf.publisher := 'Health Intersections'; //
     oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
@@ -900,7 +900,7 @@ begin
     oConf.formatList.Append.value := 'application/json+fhir';
 
 
-    oConf.fhirVersion := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
+    oConf.fhirVersion := FHIR_GENERATED_VERSION;
     oConf.restList.add(TFhirConformanceRest.Create);
     oConf.restList[0].mode := RestfulConformanceModeServer;
     oConf.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/conformance-websockets', request.baseUrl+'websockets');
@@ -918,7 +918,7 @@ begin
 
     html := TAdvStringBuilder.Create;
     try
-      html.append('<div><h2>FHIR Reference Server Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+' released '+RELEASE_DATE+'. '+
+      html.append('<div><h2>FHIR Reference Server Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+' released '+RELEASE_DATE+'. '+
        'Reference Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th><th>Validate</th></tr>'+#13#10);
       for a := TFHIRResourceType(1)  to High(TFHIRResourceType) do
       begin
@@ -932,7 +932,7 @@ begin
             '<td><a href="'+request.baseUrl+'profile/'+lowercase(CODES_TFHIRResourceType[a])+'?format=text/html">'+lowercase(CODES_TFHIRResourceType[a])+'</a></td>');
           res := TFhirConformanceRestResource.create;
           try
-            res.type_ := CODES_TFHIRResourceType[a];
+            res.type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', CODES_TFHIRResourceType[a]);
             if a <> frtBinary then
               res.profile := FFactory.makeReference(request.baseUrl+'Profile/'+lowercase(CODES_TFHIRResourceType[a]));
             if not (a in [frtMessageHeader, frtParameters]) Then
@@ -2926,7 +2926,7 @@ begin
 ''#13#10+
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
 '<head>'#13#10+
-'    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+'</title>'#13#10+
+'    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
 TFHIRXhtmlComposer.PageLinks+
 FHIR_JS+
 '</head>'#13#10+
@@ -3111,7 +3111,7 @@ begin
     '  &nbsp;'#13#10+
     '  '+FOwnerName+' FHIR '+GetFhirMessage('NAME_IMPLEMENTATION', lang)+#13#10+
     '  &nbsp;'#13#10+
-    '  '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION+#13#10;
+    '  '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+#13#10;
 
     if request.session <> nil then
       response.Body := response.Body +'&nbsp;&nbsp;'+FormatTextToXml(request.Session.Name);
@@ -5018,7 +5018,7 @@ end;
 //    result.source.endpoint := baseUrl+'/mailbox';
 //    result.source.name := 'Health Intersections';
 //    result.source.software := FOwnerName;
-//    result.source.version := FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
+//    result.source.version := FHIR_GENERATED_VERSION;
 //    result.source.contact := FFactory.makeContactPoint('email', 'grahame@healthintersections.com.au', '');
 //    result.link;
 //  finally
@@ -5378,7 +5378,7 @@ begin
     result.id := 'fso-'+name;
     result.meta := TFhirMeta.Create;
     result.meta.lastUpdated := TDateAndTime.CreateHL7(FHIR_GENERATED_DATE);
-    result.meta.versionId := FHIR_GENERATED_REVISION;
+    result.meta.versionId := SERVER_VERSION;
     result.url := AppendForwardSlash(base)+'OperationDefinition/fso-'+name;
     result.version := FHIR_GENERATED_VERSION;
     result.name := 'Operation Definition for "'+name+'"';
@@ -6217,7 +6217,7 @@ begin
       min := '1';
       max := '1';
       documentation := 'Patient record as a bundle';
-      type_ := ValuesetOperationParameterTypeBundle;
+      type_ := OperationParameterTypeBundle;
     end;
     result.Link;
   finally
@@ -6414,7 +6414,7 @@ begin
       min := '1';
       max := '1';
       documentation := 'Composition as a bundle (document)';
-      type_ := ValuesetOperationParameterTypeBundle;;
+      type_ := OperationParameterTypeBundle;
     end;
     result.Link;
   finally
@@ -6806,8 +6806,8 @@ begin
         end
         else
         begin
-          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, 'http://hl7.org/fhir/StructureDefinition/'+sdBase.constrainedType, sdBase) then
-            raise Exception.Create('Implicit base type "'+sdBase.constrainedType+'" not found');
+          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, 'http://hl7.org/fhir/StructureDefinition/'+CODES_TFHIRDefinedTypesEnum[sdBase.constrainedType], sdBase) then
+            raise Exception.Create('Implicit base type "'+CODES_TFHIRDefinedTypesEnum[sdBase.constrainedType]+'" not found');
         end;
 
         op := TFhirOperationOutcome.Create;

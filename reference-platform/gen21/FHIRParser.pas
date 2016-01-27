@@ -36,7 +36,7 @@ This is the dev branch of the FHIR code
 
 interface
 
-// FHIR v1.3.0 generated Tue, Jan 12, 2016 04:46+1100
+// FHIR v1.3.0 generated 2016-01-16T06:08:13+11:00
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, MsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
@@ -82,15 +82,17 @@ Type
     function ParsePeriod(element : IXmlDomElement; path : string) : TFhirPeriod;
     function ParseCoding(element : IXmlDomElement; path : string) : TFhirCoding;
     function ParseRange(element : IXmlDomElement; path : string) : TFhirRange;
-    function ParseQuantity(element : IXmlDomElement; path : string) : TFhirQuantity;
     function ParseAttachment(element : IXmlDomElement; path : string) : TFhirAttachment;
-    function ParseRatio(element : IXmlDomElement; path : string) : TFhirRatio;
+    function ParseQuantity(element : IXmlDomElement; path : string) : TFhirQuantity;
     function ParseAnnotation(element : IXmlDomElement; path : string) : TFhirAnnotation;
+    function ParseRatio(element : IXmlDomElement; path : string) : TFhirRatio;
     function ParseSampledData(element : IXmlDomElement; path : string) : TFhirSampledData;
-    function ParseReference(element : IXmlDomElement; path : string) : TFhirReference;
     function ParseCodeableConcept(element : IXmlDomElement; path : string) : TFhirCodeableConcept;
+    function ParseReference(element : IXmlDomElement; path : string) : TFhirReference;
     function ParseIdentifier(element : IXmlDomElement; path : string) : TFhirIdentifier;
     function ParseSignature(element : IXmlDomElement; path : string) : TFhirSignature;
+    function ParseTimingRepeat(element : IXmlDomElement; path : string) : TFhirTimingRepeat;
+    function ParseTiming(element : IXmlDomElement; path : string) : TFhirTiming;
     function ParseElementDefinitionSlicing(element : IXmlDomElement; path : string) : TFhirElementDefinitionSlicing;
     function ParseElementDefinitionBase(element : IXmlDomElement; path : string) : TFhirElementDefinitionBase;
     function ParseElementDefinitionType(element : IXmlDomElement; path : string) : TFhirElementDefinitionType;
@@ -98,18 +100,10 @@ Type
     function ParseElementDefinitionBinding(element : IXmlDomElement; path : string) : TFhirElementDefinitionBinding;
     function ParseElementDefinitionMapping(element : IXmlDomElement; path : string) : TFhirElementDefinitionMapping;
     function ParseElementDefinition(element : IXmlDomElement; path : string) : TFhirElementDefinition;
-    function ParseTimingRepeat(element : IXmlDomElement; path : string) : TFhirTimingRepeat;
-    function ParseTiming(element : IXmlDomElement; path : string) : TFhirTiming;
-    function ParseAddress(element : IXmlDomElement; path : string) : TFhirAddress;
     function ParseHumanName(element : IXmlDomElement; path : string) : TFhirHumanName;
+    function ParseAddress(element : IXmlDomElement; path : string) : TFhirAddress;
     function ParseMeta(element : IXmlDomElement; path : string) : TFhirMeta;
     function ParseContactPoint(element : IXmlDomElement; path : string) : TFhirContactPoint;
-    function ParseAge(element : IXmlDomElement; path : string) : TFhirAge;
-    function ParseCount(element : IXmlDomElement; path : string) : TFhirCount;
-    function ParseMoney(element : IXmlDomElement; path : string) : TFhirMoney;
-    function ParseDistance(element : IXmlDomElement; path : string) : TFhirDistance;
-    function ParseDuration(element : IXmlDomElement; path : string) : TFhirDuration;
-    function ParseSimpleQuantity(element : IXmlDomElement; path : string) : TFhirSimpleQuantity;
 
     function ParseAccount(element : IXmlDomElement; path : string) : TFhirAccount;
     function ParseAllergyIntoleranceReaction(element : IXmlDomElement; path : string) : TFhirAllergyIntoleranceReaction;
@@ -531,15 +525,17 @@ Type
     procedure ComposePeriod(xml : TXmlBuilder; name : string; elem : TFhirPeriod);
     procedure ComposeCoding(xml : TXmlBuilder; name : string; elem : TFhirCoding);
     procedure ComposeRange(xml : TXmlBuilder; name : string; elem : TFhirRange);
-    procedure ComposeQuantity(xml : TXmlBuilder; name : string; elem : TFhirQuantity);
     procedure ComposeAttachment(xml : TXmlBuilder; name : string; elem : TFhirAttachment);
-    procedure ComposeRatio(xml : TXmlBuilder; name : string; elem : TFhirRatio);
+    procedure ComposeQuantity(xml : TXmlBuilder; name : string; elem : TFhirQuantity);
     procedure ComposeAnnotation(xml : TXmlBuilder; name : string; elem : TFhirAnnotation);
+    procedure ComposeRatio(xml : TXmlBuilder; name : string; elem : TFhirRatio);
     procedure ComposeSampledData(xml : TXmlBuilder; name : string; elem : TFhirSampledData);
-    procedure ComposeReference(xml : TXmlBuilder; name : string; elem : TFhirReference);
     procedure ComposeCodeableConcept(xml : TXmlBuilder; name : string; elem : TFhirCodeableConcept);
+    procedure ComposeReference(xml : TXmlBuilder; name : string; elem : TFhirReference);
     procedure ComposeIdentifier(xml : TXmlBuilder; name : string; elem : TFhirIdentifier);
     procedure ComposeSignature(xml : TXmlBuilder; name : string; elem : TFhirSignature);
+    procedure ComposeTimingRepeat(xml : TXmlBuilder; name : string; elem : TFhirTimingRepeat);
+    procedure ComposeTiming(xml : TXmlBuilder; name : string; elem : TFhirTiming);
     procedure ComposeElementDefinitionSlicing(xml : TXmlBuilder; name : string; elem : TFhirElementDefinitionSlicing);
     procedure ComposeElementDefinitionBase(xml : TXmlBuilder; name : string; elem : TFhirElementDefinitionBase);
     procedure ComposeElementDefinitionType(xml : TXmlBuilder; name : string; elem : TFhirElementDefinitionType);
@@ -547,18 +543,10 @@ Type
     procedure ComposeElementDefinitionBinding(xml : TXmlBuilder; name : string; elem : TFhirElementDefinitionBinding);
     procedure ComposeElementDefinitionMapping(xml : TXmlBuilder; name : string; elem : TFhirElementDefinitionMapping);
     procedure ComposeElementDefinition(xml : TXmlBuilder; name : string; elem : TFhirElementDefinition);
-    procedure ComposeTimingRepeat(xml : TXmlBuilder; name : string; elem : TFhirTimingRepeat);
-    procedure ComposeTiming(xml : TXmlBuilder; name : string; elem : TFhirTiming);
-    procedure ComposeAddress(xml : TXmlBuilder; name : string; elem : TFhirAddress);
     procedure ComposeHumanName(xml : TXmlBuilder; name : string; elem : TFhirHumanName);
+    procedure ComposeAddress(xml : TXmlBuilder; name : string; elem : TFhirAddress);
     procedure ComposeMeta(xml : TXmlBuilder; name : string; elem : TFhirMeta);
     procedure ComposeContactPoint(xml : TXmlBuilder; name : string; elem : TFhirContactPoint);
-    procedure ComposeAge(xml : TXmlBuilder; name : string; elem : TFhirAge);
-    procedure ComposeCount(xml : TXmlBuilder; name : string; elem : TFhirCount);
-    procedure ComposeMoney(xml : TXmlBuilder; name : string; elem : TFhirMoney);
-    procedure ComposeDistance(xml : TXmlBuilder; name : string; elem : TFhirDistance);
-    procedure ComposeDuration(xml : TXmlBuilder; name : string; elem : TFhirDuration);
-    procedure ComposeSimpleQuantity(xml : TXmlBuilder; name : string; elem : TFhirSimpleQuantity);
 
     procedure ComposeAccount(xml : TXmlBuilder; name : string; elem : TFhirAccount);
     procedure ComposeAllergyIntoleranceReaction(xml : TXmlBuilder; name : string; elem : TFhirAllergyIntoleranceReaction);
@@ -948,8 +936,8 @@ Type
 
     procedure ParseElementProperties(jsn : TJsonObject; element : TFhirElement);
     procedure ParseBackboneElementProperties(jsn : TJsonObject; element : TFhirBackboneElement);
-    procedure ParseEnum(path, value : string; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames : Array Of String); overload;
-    function ParseEnum(path, value : string; jsn : TJsonObject; Const aNames : Array Of String) : TFHIREnum; overload;
+    procedure ParseEnum(path, value : string; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String); overload;
+    function ParseEnum(path, value : string; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;
     procedure ParseInteger(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseInteger(value : string; jsn : TJsonObject) : TFHIRInteger; overload;
     procedure ParseDateTime(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
@@ -1002,24 +990,28 @@ Type
     procedure ParseCoding(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseRange(jsn : TJsonObject) : TFhirRange; overload;
     procedure ParseRange(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseQuantity(jsn : TJsonObject) : TFhirQuantity; overload;
-    procedure ParseQuantity(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAttachment(jsn : TJsonObject) : TFhirAttachment; overload;
     procedure ParseAttachment(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseRatio(jsn : TJsonObject) : TFhirRatio; overload;
-    procedure ParseRatio(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseQuantity(jsn : TJsonObject) : TFhirQuantity; overload;
+    procedure ParseQuantity(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAnnotation(jsn : TJsonObject) : TFhirAnnotation; overload;
     procedure ParseAnnotation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseRatio(jsn : TJsonObject) : TFhirRatio; overload;
+    procedure ParseRatio(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSampledData(jsn : TJsonObject) : TFhirSampledData; overload;
     procedure ParseSampledData(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseReference(jsn : TJsonObject) : TFhirReference; overload;
-    procedure ParseReference(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseCodeableConcept(jsn : TJsonObject) : TFhirCodeableConcept; overload;
     procedure ParseCodeableConcept(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseReference(jsn : TJsonObject) : TFhirReference; overload;
+    procedure ParseReference(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseIdentifier(jsn : TJsonObject) : TFhirIdentifier; overload;
     procedure ParseIdentifier(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSignature(jsn : TJsonObject) : TFhirSignature; overload;
     procedure ParseSignature(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat; overload; {b\}
+    procedure ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseTiming(jsn : TJsonObject) : TFhirTiming; overload;
+    procedure ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseElementDefinitionSlicing(jsn : TJsonObject) : TFhirElementDefinitionSlicing; overload; {b\}
     procedure ParseElementDefinitionSlicing(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseElementDefinitionBase(jsn : TJsonObject) : TFhirElementDefinitionBase; overload; {b\}
@@ -1034,24 +1026,14 @@ Type
     procedure ParseElementDefinitionMapping(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseElementDefinition(jsn : TJsonObject) : TFhirElementDefinition; overload;
     procedure ParseElementDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat; overload; {b\}
-    procedure ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseTiming(jsn : TJsonObject) : TFhirTiming; overload;
-    procedure ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseAddress(jsn : TJsonObject) : TFhirAddress; overload;
-    procedure ParseAddress(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseHumanName(jsn : TJsonObject) : TFhirHumanName; overload;
     procedure ParseHumanName(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseAddress(jsn : TJsonObject) : TFhirAddress; overload;
+    procedure ParseAddress(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseMeta(jsn : TJsonObject) : TFhirMeta; overload;
     procedure ParseMeta(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseContactPoint(jsn : TJsonObject) : TFhirContactPoint; overload;
     procedure ParseContactPoint(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseAge(jsn : TJsonObject) : TFhirAge; overload;
-    function ParseCount(jsn : TJsonObject) : TFhirCount; overload;
-    function ParseMoney(jsn : TJsonObject) : TFhirMoney; overload;
-    function ParseDistance(jsn : TJsonObject) : TFhirDistance; overload;
-    function ParseDuration(jsn : TJsonObject) : TFhirDuration; overload;
-    function ParseSimpleQuantity(jsn : TJsonObject) : TFhirSimpleQuantity; overload;
 
     function ParseAccount(jsn : TJsonObject) : TFhirAccount; overload;
     procedure ParseAccount(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1863,15 +1845,17 @@ Type
     procedure ComposePeriod(json : TJSONWriter; name : string; elem : TFhirPeriod; noObj : boolean = false);
     procedure ComposeCoding(json : TJSONWriter; name : string; elem : TFhirCoding; noObj : boolean = false);
     procedure ComposeRange(json : TJSONWriter; name : string; elem : TFhirRange; noObj : boolean = false);
-    procedure ComposeQuantity(json : TJSONWriter; name : string; elem : TFhirQuantity; noObj : boolean = false);
     procedure ComposeAttachment(json : TJSONWriter; name : string; elem : TFhirAttachment; noObj : boolean = false);
-    procedure ComposeRatio(json : TJSONWriter; name : string; elem : TFhirRatio; noObj : boolean = false);
+    procedure ComposeQuantity(json : TJSONWriter; name : string; elem : TFhirQuantity; noObj : boolean = false);
     procedure ComposeAnnotation(json : TJSONWriter; name : string; elem : TFhirAnnotation; noObj : boolean = false);
+    procedure ComposeRatio(json : TJSONWriter; name : string; elem : TFhirRatio; noObj : boolean = false);
     procedure ComposeSampledData(json : TJSONWriter; name : string; elem : TFhirSampledData; noObj : boolean = false);
-    procedure ComposeReference(json : TJSONWriter; name : string; elem : TFhirReference; noObj : boolean = false);
     procedure ComposeCodeableConcept(json : TJSONWriter; name : string; elem : TFhirCodeableConcept; noObj : boolean = false);
+    procedure ComposeReference(json : TJSONWriter; name : string; elem : TFhirReference; noObj : boolean = false);
     procedure ComposeIdentifier(json : TJSONWriter; name : string; elem : TFhirIdentifier; noObj : boolean = false);
     procedure ComposeSignature(json : TJSONWriter; name : string; elem : TFhirSignature; noObj : boolean = false);
+    procedure ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
+    procedure ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
     procedure ComposeElementDefinitionSlicing(json : TJSONWriter; name : string; elem : TFhirElementDefinitionSlicing; noObj : boolean = false);
     procedure ComposeElementDefinitionBase(json : TJSONWriter; name : string; elem : TFhirElementDefinitionBase; noObj : boolean = false);
     procedure ComposeElementDefinitionType(json : TJSONWriter; name : string; elem : TFhirElementDefinitionType; noObj : boolean = false);
@@ -1879,18 +1863,10 @@ Type
     procedure ComposeElementDefinitionBinding(json : TJSONWriter; name : string; elem : TFhirElementDefinitionBinding; noObj : boolean = false);
     procedure ComposeElementDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirElementDefinitionMapping; noObj : boolean = false);
     procedure ComposeElementDefinition(json : TJSONWriter; name : string; elem : TFhirElementDefinition; noObj : boolean = false);
-    procedure ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
-    procedure ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
-    procedure ComposeAddress(json : TJSONWriter; name : string; elem : TFhirAddress; noObj : boolean = false);
     procedure ComposeHumanName(json : TJSONWriter; name : string; elem : TFhirHumanName; noObj : boolean = false);
+    procedure ComposeAddress(json : TJSONWriter; name : string; elem : TFhirAddress; noObj : boolean = false);
     procedure ComposeMeta(json : TJSONWriter; name : string; elem : TFhirMeta; noObj : boolean = false);
     procedure ComposeContactPoint(json : TJSONWriter; name : string; elem : TFhirContactPoint; noObj : boolean = false);
-    procedure ComposeAge(json : TJSONWriter; name : string; elem : TFhirAge; noObj : boolean = false);
-    procedure ComposeCount(json : TJSONWriter; name : string; elem : TFhirCount; noObj : boolean = false);
-    procedure ComposeMoney(json : TJSONWriter; name : string; elem : TFhirMoney; noObj : boolean = false);
-    procedure ComposeDistance(json : TJSONWriter; name : string; elem : TFhirDistance; noObj : boolean = false);
-    procedure ComposeDuration(json : TJSONWriter; name : string; elem : TFhirDuration; noObj : boolean = false);
-    procedure ComposeSimpleQuantity(json : TJSONWriter; name : string; elem : TFhirSimpleQuantity; noObj : boolean = false);
 
     procedure ComposeAccount(json : TJSONWriter; name : string; elem : TFhirAccount; noObj : boolean = false);
     procedure ComposeAllergyIntoleranceReaction(json : TJSONWriter; name : string; elem : TFhirAllergyIntoleranceReaction; noObj : boolean = false);
@@ -2562,12 +2538,12 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames : Array Of String);
+procedure TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String);
 begin
-  ctxt.add(ParseEnum(path, value, jsn, aNames));
+  ctxt.add(ParseEnum(path, value, jsn, aNames, aSystems));
 end;
 
-function TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; Const aNames : Array Of String) : TFHIREnum;
+function TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum;
 begin
   if (value <> '') and (StringArrayIndexOfSensitive(aNames, value) < 0) then
     raise Exception.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
@@ -4247,10 +4223,10 @@ begin
         result.value := ParseTime(child, path+'.valueTime') {c}
       else if (child.baseName = 'valueOid') then
         result.value := ParseOid(child, path+'.valueOid') {c}
-      else if (child.baseName = 'valuePositiveInt') then
-        result.value := ParsePositiveInt(child, path+'.valuePositiveInt') {c}
       else if (child.baseName = 'valueString') then
         result.value := ParseString(child, path+'.valueString') {c}
+      else if (child.baseName = 'valuePositiveInt') then
+        result.value := ParsePositiveInt(child, path+'.valuePositiveInt') {c}
       else if (child.baseName = 'valueBoolean') then
         result.value := ParseBoolean(child, path+'.valueBoolean') {c}
       else if (child.baseName = 'valueUuid') then
@@ -4263,32 +4239,32 @@ begin
         result.value := ParseCoding(child, path+'.valueCoding') {eCoding}
       else if (child.baseName = 'valueRange') then
         result.value := ParseRange(child, path+'.valueRange') {eRange}
-      else if (child.baseName = 'valueQuantity') then
-        result.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
       else if (child.baseName = 'valueAttachment') then
         result.value := ParseAttachment(child, path+'.valueAttachment') {eAttachment}
-      else if (child.baseName = 'valueRatio') then
-        result.value := ParseRatio(child, path+'.valueRatio') {eRatio}
+      else if (child.baseName = 'valueQuantity') then
+        result.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
       else if (child.baseName = 'valueAnnotation') then
         result.value := ParseAnnotation(child, path+'.valueAnnotation') {eAnnotation}
+      else if (child.baseName = 'valueRatio') then
+        result.value := ParseRatio(child, path+'.valueRatio') {eRatio}
       else if (child.baseName = 'valueSampledData') then
         result.value := ParseSampledData(child, path+'.valueSampledData') {eSampledData}
-      else if (child.baseName = 'valueReference') then
-        result.value := ParseReference(child, path+'.valueReference') {eReference}
       else if (child.baseName = 'valueCodeableConcept') then
         result.value := ParseCodeableConcept(child, path+'.valueCodeableConcept') {eCodeableConcept}
+      else if (child.baseName = 'valueReference') then
+        result.value := ParseReference(child, path+'.valueReference') {eReference}
       else if (child.baseName = 'valueIdentifier') then
         result.value := ParseIdentifier(child, path+'.valueIdentifier') {eIdentifier}
       else if (child.baseName = 'valueSignature') then
         result.value := ParseSignature(child, path+'.valueSignature') {eSignature}
-      else if (child.baseName = 'valueElementDefinition') then
-        result.value := ParseElementDefinition(child, path+'/valueElementDefinition') {f}
       else if (child.baseName = 'valueTiming') then
         result.value := ParseTiming(child, path+'/valueTiming') {f}
-      else if (child.baseName = 'valueAddress') then
-        result.value := ParseAddress(child, path+'/valueAddress') {f}
+      else if (child.baseName = 'valueElementDefinition') then
+        result.value := ParseElementDefinition(child, path+'/valueElementDefinition') {f}
       else if (child.baseName = 'valueHumanName') then
         result.value := ParseHumanName(child, path+'/valueHumanName') {f}
+      else if (child.baseName = 'valueAddress') then
+        result.value := ParseAddress(child, path+'/valueAddress') {f}
       else if (child.baseName = 'valueMeta') then
         result.value := ParseMeta(child, path+'/valueMeta') {f}
       else if (child.baseName = 'valueContactPoint') then
@@ -4344,10 +4320,10 @@ begin
     ComposeTime(xml, 'valueTime', TFhirTime(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirOid) {1} then
     ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) {1} then
-    ComposePositiveInt(xml, 'valuePositiveInt', TFhirPositiveInt(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) {1} then
     ComposeString(xml, 'valueString', TFhirString(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) {1} then
+    ComposePositiveInt(xml, 'valuePositiveInt', TFhirPositiveInt(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirBoolean) {1} then
     ComposeBoolean(xml, 'valueBoolean', TFhirBoolean(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUuid) {1} then
@@ -4360,32 +4336,32 @@ begin
     ComposeCoding(xml, 'valueCoding', TFhirCoding(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRange) {8} then
     ComposeRange(xml, 'valueRange', TFhirRange(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'valueAttachment', TFhirAttachment(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) {8} then
-    ComposeRatio(xml, 'valueRatio', TFhirRatio(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAnnotation) {8} then
     ComposeAnnotation(xml, 'valueAnnotation', TFhirAnnotation(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) {8} then
+    ComposeRatio(xml, 'valueRatio', TFhirRatio(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirReference) {8} then
-    ComposeReference(xml, 'valueReference', TFhirReference(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCodeableConcept) {8} then
     ComposeCodeableConcept(xml, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirReference) {8} then
+    ComposeReference(xml, 'valueReference', TFhirReference(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirIdentifier) {8} then
     ComposeIdentifier(xml, 'valueIdentifier', TFhirIdentifier(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSignature) {8} then
     ComposeSignature(xml, 'valueSignature', TFhirSignature(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'valueElementDefinition', TFhirElementDefinition(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
     ComposeTiming(xml, 'valueTiming', TFhirTiming(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) {9} then
-    ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) {9} then
+    ComposeElementDefinition(xml, 'valueElementDefinition', TFhirElementDefinition(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) {9} then
+    ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) {9} then
     ComposeMeta(xml, 'valueMeta', TFhirMeta(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
@@ -4435,10 +4411,10 @@ begin
         result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueOid') or jsn.has('_valueOid') then
         result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
-    if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
-        result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
     if jsn.has('valueString') or jsn.has('_valueString') then
         result.value := ParseString(jsn['valueString'], jsn.vObj['_valueString']);
+    if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
+        result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
     if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
         result.value := ParseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
     if jsn.has('valueUuid') or jsn.has('_valueUuid') then
@@ -4451,32 +4427,32 @@ begin
         result.value := ParseCoding(jsn.vObj['valueCoding']);
     if jsn.has('valueRange') {a7} then
         result.value := ParseRange(jsn.vObj['valueRange']);
-    if jsn.has('valueQuantity') {a7} then
-        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valueAttachment') {a7} then
         result.value := ParseAttachment(jsn.vObj['valueAttachment']);
-    if jsn.has('valueRatio') {a7} then
-        result.value := ParseRatio(jsn.vObj['valueRatio']);
+    if jsn.has('valueQuantity') {a7} then
+        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valueAnnotation') {a7} then
         result.value := ParseAnnotation(jsn.vObj['valueAnnotation']);
+    if jsn.has('valueRatio') {a7} then
+        result.value := ParseRatio(jsn.vObj['valueRatio']);
     if jsn.has('valueSampledData') {a7} then
         result.value := ParseSampledData(jsn.vObj['valueSampledData']);
-    if jsn.has('valueReference') {a7} then
-        result.value := ParseReference(jsn.vObj['valueReference']);
     if jsn.has('valueCodeableConcept') {a7} then
         result.value := ParseCodeableConcept(jsn.vObj['valueCodeableConcept']);
+    if jsn.has('valueReference') {a7} then
+        result.value := ParseReference(jsn.vObj['valueReference']);
     if jsn.has('valueIdentifier') {a7} then
         result.value := ParseIdentifier(jsn.vObj['valueIdentifier']);
     if jsn.has('valueSignature') {a7} then
         result.value := ParseSignature(jsn.vObj['valueSignature']);
-    if jsn.has('valueElementDefinition') {a9} then
-        result.value := ParseElementDefinition(jsn.vObj['valueElementDefinition']);
     if jsn.has('valueTiming') {a9} then
         result.value := ParseTiming(jsn.vObj['valueTiming']);
-    if jsn.has('valueAddress') {a9} then
-        result.value := ParseAddress(jsn.vObj['valueAddress']);
+    if jsn.has('valueElementDefinition') {a9} then
+        result.value := ParseElementDefinition(jsn.vObj['valueElementDefinition']);
     if jsn.has('valueHumanName') {a9} then
         result.value := ParseHumanName(jsn.vObj['valueHumanName']);
+    if jsn.has('valueAddress') {a9} then
+        result.value := ParseAddress(jsn.vObj['valueAddress']);
     if jsn.has('valueMeta') {a9} then
         result.value := ParseMeta(jsn.vObj['valueMeta']);
     if jsn.has('valueContactPoint') {a9} then
@@ -4563,15 +4539,15 @@ begin
     ComposeOidValue(json, 'valueOid', TFhirOid(elem.value), false);
     ComposeOidProps(json, 'valueOid', TFhirOid(elem.value), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) then
-  begin
-    ComposePositiveIntValue(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false);
-    ComposePositiveIntProps(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) then
   begin
     ComposeStringValue(json, 'valueString', TFhirString(elem.value), false);
     ComposeStringProps(json, 'valueString', TFhirString(elem.value), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) then
+  begin
+    ComposePositiveIntValue(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false);
+    ComposePositiveIntProps(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirBoolean) then
   begin
@@ -4594,32 +4570,32 @@ begin
     ComposeCoding(json, 'valueCoding', TFhirCoding(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRange) then
     ComposeRange(json, 'valueRange', TFhirRange(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) then
-    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) then
     ComposeAttachment(json, 'valueAttachment', TFhirAttachment(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) then
-    ComposeRatio(json, 'valueRatio', TFhirRatio(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) then
+    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAnnotation) then
     ComposeAnnotation(json, 'valueAnnotation', TFhirAnnotation(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) then
+    ComposeRatio(json, 'valueRatio', TFhirRatio(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) then
     ComposeSampledData(json, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirReference) then
-    ComposeReference(json, 'valueReference', TFhirReference(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCodeableConcept) then
     ComposeCodeableConcept(json, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirReference) then
+    ComposeReference(json, 'valueReference', TFhirReference(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirIdentifier) then
     ComposeIdentifier(json, 'valueIdentifier', TFhirIdentifier(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSignature) then
     ComposeSignature(json, 'valueSignature', TFhirSignature(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'valueElementDefinition', TFhirElementDefinition(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) then
     ComposeTiming(json, 'valueTiming', TFhirTiming(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) then
-    ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) then
+    ComposeElementDefinition(json, 'valueElementDefinition', TFhirElementDefinition(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) then
     ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) then
+    ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) then
     ComposeMeta(json, 'valueMeta', TFhirMeta(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) then
@@ -4745,10 +4721,10 @@ begin
         result.value := ParseTime(child, path+'.valueTime') {c}
       else if (child.baseName = 'valueOid') then
         result.value := ParseOid(child, path+'.valueOid') {c}
-      else if (child.baseName = 'valuePositiveInt') then
-        result.value := ParsePositiveInt(child, path+'.valuePositiveInt') {c}
       else if (child.baseName = 'valueString') then
         result.value := ParseString(child, path+'.valueString') {c}
+      else if (child.baseName = 'valuePositiveInt') then
+        result.value := ParsePositiveInt(child, path+'.valuePositiveInt') {c}
       else if (child.baseName = 'valueBoolean') then
         result.value := ParseBoolean(child, path+'.valueBoolean') {c}
       else if (child.baseName = 'valueUuid') then
@@ -4761,32 +4737,32 @@ begin
         result.value := ParseCoding(child, path+'.valueCoding') {eCoding}
       else if (child.baseName = 'valueRange') then
         result.value := ParseRange(child, path+'.valueRange') {eRange}
-      else if (child.baseName = 'valueQuantity') then
-        result.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
       else if (child.baseName = 'valueAttachment') then
         result.value := ParseAttachment(child, path+'.valueAttachment') {eAttachment}
-      else if (child.baseName = 'valueRatio') then
-        result.value := ParseRatio(child, path+'.valueRatio') {eRatio}
+      else if (child.baseName = 'valueQuantity') then
+        result.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
       else if (child.baseName = 'valueAnnotation') then
         result.value := ParseAnnotation(child, path+'.valueAnnotation') {eAnnotation}
+      else if (child.baseName = 'valueRatio') then
+        result.value := ParseRatio(child, path+'.valueRatio') {eRatio}
       else if (child.baseName = 'valueSampledData') then
         result.value := ParseSampledData(child, path+'.valueSampledData') {eSampledData}
-      else if (child.baseName = 'valueReference') then
-        result.value := ParseReference(child, path+'.valueReference') {eReference}
       else if (child.baseName = 'valueCodeableConcept') then
         result.value := ParseCodeableConcept(child, path+'.valueCodeableConcept') {eCodeableConcept}
+      else if (child.baseName = 'valueReference') then
+        result.value := ParseReference(child, path+'.valueReference') {eReference}
       else if (child.baseName = 'valueIdentifier') then
         result.value := ParseIdentifier(child, path+'.valueIdentifier') {eIdentifier}
       else if (child.baseName = 'valueSignature') then
         result.value := ParseSignature(child, path+'.valueSignature') {eSignature}
-      else if (child.baseName = 'valueElementDefinition') then
-        result.value := ParseElementDefinition(child, path+'/valueElementDefinition') {f}
       else if (child.baseName = 'valueTiming') then
         result.value := ParseTiming(child, path+'/valueTiming') {f}
-      else if (child.baseName = 'valueAddress') then
-        result.value := ParseAddress(child, path+'/valueAddress') {f}
+      else if (child.baseName = 'valueElementDefinition') then
+        result.value := ParseElementDefinition(child, path+'/valueElementDefinition') {f}
       else if (child.baseName = 'valueHumanName') then
         result.value := ParseHumanName(child, path+'/valueHumanName') {f}
+      else if (child.baseName = 'valueAddress') then
+        result.value := ParseAddress(child, path+'/valueAddress') {f}
       else if (child.baseName = 'valueMeta') then
         result.value := ParseMeta(child, path+'/valueMeta') {f}
       else if (child.baseName = 'valueContactPoint') then
@@ -4835,10 +4811,10 @@ begin
     ComposeTime(xml, 'valueTime', TFhirTime(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirOid) {1} then
     ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) {1} then
-    ComposePositiveInt(xml, 'valuePositiveInt', TFhirPositiveInt(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) {1} then
     ComposeString(xml, 'valueString', TFhirString(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) {1} then
+    ComposePositiveInt(xml, 'valuePositiveInt', TFhirPositiveInt(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirBoolean) {1} then
     ComposeBoolean(xml, 'valueBoolean', TFhirBoolean(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUuid) {1} then
@@ -4851,32 +4827,32 @@ begin
     ComposeCoding(xml, 'valueCoding', TFhirCoding(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRange) {8} then
     ComposeRange(xml, 'valueRange', TFhirRange(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'valueAttachment', TFhirAttachment(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) {8} then
-    ComposeRatio(xml, 'valueRatio', TFhirRatio(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAnnotation) {8} then
     ComposeAnnotation(xml, 'valueAnnotation', TFhirAnnotation(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) {8} then
+    ComposeRatio(xml, 'valueRatio', TFhirRatio(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirReference) {8} then
-    ComposeReference(xml, 'valueReference', TFhirReference(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCodeableConcept) {8} then
     ComposeCodeableConcept(xml, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirReference) {8} then
+    ComposeReference(xml, 'valueReference', TFhirReference(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirIdentifier) {8} then
     ComposeIdentifier(xml, 'valueIdentifier', TFhirIdentifier(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSignature) {8} then
     ComposeSignature(xml, 'valueSignature', TFhirSignature(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'valueElementDefinition', TFhirElementDefinition(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
     ComposeTiming(xml, 'valueTiming', TFhirTiming(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) {9} then
-    ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) {9} then
+    ComposeElementDefinition(xml, 'valueElementDefinition', TFhirElementDefinition(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) {9} then
+    ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) {9} then
     ComposeMeta(xml, 'valueMeta', TFhirMeta(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
@@ -4921,10 +4897,10 @@ begin
         result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueOid') or jsn.has('_valueOid') then
         result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
-    if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
-        result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
     if jsn.has('valueString') or jsn.has('_valueString') then
         result.value := ParseString(jsn['valueString'], jsn.vObj['_valueString']);
+    if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
+        result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
     if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
         result.value := ParseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
     if jsn.has('valueUuid') or jsn.has('_valueUuid') then
@@ -4937,32 +4913,32 @@ begin
         result.value := ParseCoding(jsn.vObj['valueCoding']);
     if jsn.has('valueRange') {a7} then
         result.value := ParseRange(jsn.vObj['valueRange']);
-    if jsn.has('valueQuantity') {a7} then
-        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valueAttachment') {a7} then
         result.value := ParseAttachment(jsn.vObj['valueAttachment']);
-    if jsn.has('valueRatio') {a7} then
-        result.value := ParseRatio(jsn.vObj['valueRatio']);
+    if jsn.has('valueQuantity') {a7} then
+        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valueAnnotation') {a7} then
         result.value := ParseAnnotation(jsn.vObj['valueAnnotation']);
+    if jsn.has('valueRatio') {a7} then
+        result.value := ParseRatio(jsn.vObj['valueRatio']);
     if jsn.has('valueSampledData') {a7} then
         result.value := ParseSampledData(jsn.vObj['valueSampledData']);
-    if jsn.has('valueReference') {a7} then
-        result.value := ParseReference(jsn.vObj['valueReference']);
     if jsn.has('valueCodeableConcept') {a7} then
         result.value := ParseCodeableConcept(jsn.vObj['valueCodeableConcept']);
+    if jsn.has('valueReference') {a7} then
+        result.value := ParseReference(jsn.vObj['valueReference']);
     if jsn.has('valueIdentifier') {a7} then
         result.value := ParseIdentifier(jsn.vObj['valueIdentifier']);
     if jsn.has('valueSignature') {a7} then
         result.value := ParseSignature(jsn.vObj['valueSignature']);
-    if jsn.has('valueElementDefinition') {a9} then
-        result.value := ParseElementDefinition(jsn.vObj['valueElementDefinition']);
     if jsn.has('valueTiming') {a9} then
         result.value := ParseTiming(jsn.vObj['valueTiming']);
-    if jsn.has('valueAddress') {a9} then
-        result.value := ParseAddress(jsn.vObj['valueAddress']);
+    if jsn.has('valueElementDefinition') {a9} then
+        result.value := ParseElementDefinition(jsn.vObj['valueElementDefinition']);
     if jsn.has('valueHumanName') {a9} then
         result.value := ParseHumanName(jsn.vObj['valueHumanName']);
+    if jsn.has('valueAddress') {a9} then
+        result.value := ParseAddress(jsn.vObj['valueAddress']);
     if jsn.has('valueMeta') {a9} then
         result.value := ParseMeta(jsn.vObj['valueMeta']);
     if jsn.has('valueContactPoint') {a9} then
@@ -5043,15 +5019,15 @@ begin
     ComposeOidValue(json, 'valueOid', TFhirOid(elem.value), false);
     ComposeOidProps(json, 'valueOid', TFhirOid(elem.value), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) then
-  begin
-    ComposePositiveIntValue(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false);
-    ComposePositiveIntProps(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) then
   begin
     ComposeStringValue(json, 'valueString', TFhirString(elem.value), false);
     ComposeStringProps(json, 'valueString', TFhirString(elem.value), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) then
+  begin
+    ComposePositiveIntValue(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false);
+    ComposePositiveIntProps(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirBoolean) then
   begin
@@ -5074,32 +5050,32 @@ begin
     ComposeCoding(json, 'valueCoding', TFhirCoding(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRange) then
     ComposeRange(json, 'valueRange', TFhirRange(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) then
-    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) then
     ComposeAttachment(json, 'valueAttachment', TFhirAttachment(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) then
-    ComposeRatio(json, 'valueRatio', TFhirRatio(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) then
+    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAnnotation) then
     ComposeAnnotation(json, 'valueAnnotation', TFhirAnnotation(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) then
+    ComposeRatio(json, 'valueRatio', TFhirRatio(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) then
     ComposeSampledData(json, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirReference) then
-    ComposeReference(json, 'valueReference', TFhirReference(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCodeableConcept) then
     ComposeCodeableConcept(json, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirReference) then
+    ComposeReference(json, 'valueReference', TFhirReference(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirIdentifier) then
     ComposeIdentifier(json, 'valueIdentifier', TFhirIdentifier(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSignature) then
     ComposeSignature(json, 'valueSignature', TFhirSignature(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'valueElementDefinition', TFhirElementDefinition(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) then
     ComposeTiming(json, 'valueTiming', TFhirTiming(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) then
-    ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) then
+    ComposeElementDefinition(json, 'valueElementDefinition', TFhirElementDefinition(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) then
     ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) then
+    ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) then
     ComposeMeta(json, 'valueMeta', TFhirMeta(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) then
@@ -5159,7 +5135,7 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatusEnum, SYSTEMS_TFhirNarrativeStatusEnum);
     if jsn.has('div') then
         result.div_ := ParseXHtmlNode(jsn.path+'.div', jsn['div']);{q}
     result.link;
@@ -5443,114 +5419,6 @@ begin
   if not noObj then json.finishObject;
 end;
 
-function TFHIRXmlParser.ParseQuantity(element : IXmlDomElement; path : string) : TFhirQuantity;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirQuantity.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'value') then
-        result.valueElement := ParseDecimal(child, path+'/value') {b}
-      else if (child.baseName = 'comparator') then
-        result.comparatorElement := ParseEnum(CODES_TFhirQuantityComparatorEnum, path+'/comparator', child){1a}
-      else if (child.baseName = 'unit') then
-        result.unit_Element := ParseString(child, path+'/unit') {b}
-      else if (child.baseName = 'system') then
-        result.systemElement := ParseUri(child, path+'/system') {b}
-      else if (child.baseName = 'code') then
-        result.codeElement := ParseCode(child, path+'/code') {b}
-      else if Not ParseElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeQuantity(xml : TXmlBuilder; name : string; elem : TFhirQuantity);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeDecimal(xml, 'value', elem.valueElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnum(xml, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparatorEnum);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'unit', elem.unit_Element);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeUri(xml, 'system', elem.systemElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeCode(xml, 'code', elem.codeElement);{x.2}
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseQuantity(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseQuantity(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseQuantity(jsn : TJsonObject) : TFhirQuantity;
-begin
-  result := TFhirQuantity.create;
-  try
-    ParseElementProperties(jsn, result);
-    if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
-    if jsn.has('comparator') or jsn.has('_comparator')  then
-      result.comparatorElement := parseEnum(jsn.path+'/comparator', jsn['comparator'], jsn.vObj['_comparator'], CODES_TFhirQuantityComparatorEnum);
-    if jsn.has('unit') or jsn.has('_unit') then
-        result.unit_Element := ParseString(jsn['unit'], jsn.vObj['_unit']);{q}
-    if jsn.has('system') or jsn.has('_system') then
-        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
-    if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeQuantity(json : TJSONWriter; name : string; elem : TFhirQuantity; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeDecimalValue(json, 'value', elem.valueElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeDecimalProps(json, 'value', elem.valueElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumValue(json, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparatorEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumProps(json, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparatorEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'unit', elem.unit_Element, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'unit', elem.unit_Element, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeUriValue(json, 'system', elem.systemElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeUriProps(json, 'system', elem.systemElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeCodeValue(json, 'code', elem.codeElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeCodeProps(json, 'code', elem.codeElement, false);
-  if not noObj then json.finishObject;
-end;
-
 function TFHIRXmlParser.ParseAttachment(element : IXmlDomElement; path : string) : TFhirAttachment;
 var
   child : IXMLDOMElement;
@@ -5689,20 +5557,26 @@ begin
   if not noObj then json.finishObject;
 end;
 
-function TFHIRXmlParser.ParseRatio(element : IXmlDomElement; path : string) : TFhirRatio;
+function TFHIRXmlParser.ParseQuantity(element : IXmlDomElement; path : string) : TFhirQuantity;
 var
   child : IXMLDOMElement;
 begin
-  result := TFhirRatio.create;
+  result := TFhirQuantity.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if (child.baseName = 'numerator') then
-        result.numerator := ParseQuantity(child, path+'/numerator') {b}
-      else if (child.baseName = 'denominator') then
-        result.denominator := ParseQuantity(child, path+'/denominator') {b}
+      if (child.baseName = 'value') then
+        result.valueElement := ParseDecimal(child, path+'/value') {b}
+      else if (child.baseName = 'comparator') then
+        result.comparatorElement := ParseEnum(CODES_TFhirQuantityComparatorEnum, path+'/comparator', child){1a}
+      else if (child.baseName = 'unit') then
+        result.unit_Element := ParseString(child, path+'/unit') {b}
+      else if (child.baseName = 'system') then
+        result.systemElement := ParseUri(child, path+'/system') {b}
+      else if (child.baseName = 'code') then
+        result.codeElement := ParseCode(child, path+'/code') {b}
       else if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -5715,7 +5589,7 @@ begin
   end;
 end;
 
-procedure TFHIRXmlComposer.ComposeRatio(xml : TXmlBuilder; name : string; elem : TFhirRatio);
+procedure TFHIRXmlComposer.ComposeQuantity(xml : TXmlBuilder; name : string; elem : TFhirQuantity);
 begin
   if (elem = nil) then
     exit;
@@ -5723,43 +5597,71 @@ begin
   xml.open(name);
   composeElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeQuantity(xml, 'numerator', elem.numerator);{x.2}
+     ComposeDecimal(xml, 'value', elem.valueElement);{x.2}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeQuantity(xml, 'denominator', elem.denominator);{x.2}
+     ComposeEnum(xml, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparatorEnum);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'unit', elem.unit_Element);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeUri(xml, 'system', elem.systemElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeCode(xml, 'code', elem.codeElement);{x.2}
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRJsonParser.ParseRatio(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseQuantity(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseRatio(jsn)); {2}
+  ctxt.add(ParseQuantity(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseRatio(jsn : TJsonObject) : TFhirRatio;
+function TFHIRJsonParser.ParseQuantity(jsn : TJsonObject) : TFhirQuantity;
 begin
-  result := TFhirRatio.create;
+  result := TFhirQuantity.create;
   try
     ParseElementProperties(jsn, result);
-    if jsn.has('numerator') then
-        result.numerator := ParseQuantity(jsn.vObj['numerator']);{q}
-    if jsn.has('denominator') then
-        result.denominator := ParseQuantity(jsn.vObj['denominator']);{q}
+    if jsn.has('value') or jsn.has('_value') then
+        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
+    if jsn.has('comparator') or jsn.has('_comparator')  then
+      result.comparatorElement := parseEnum(jsn.path+'/comparator', jsn['comparator'], jsn.vObj['_comparator'], CODES_TFhirQuantityComparatorEnum, SYSTEMS_TFhirQuantityComparatorEnum);
+    if jsn.has('unit') or jsn.has('_unit') then
+        result.unit_Element := ParseString(jsn['unit'], jsn.vObj['_unit']);{q}
+    if jsn.has('system') or jsn.has('_system') then
+        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+    if jsn.has('code') or jsn.has('_code') then
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonComposer.ComposeRatio(json : TJSONWriter; name : string; elem : TFhirRatio; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeQuantity(json : TJSONWriter; name : string; elem : TFhirQuantity; noObj : boolean = false);
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeQuantity(json, 'numerator', elem.numerator); {a}
+     ComposeDecimalValue(json, 'value', elem.valueElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeQuantity(json, 'denominator', elem.denominator); {a}
+     ComposeDecimalProps(json, 'value', elem.valueElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumValue(json, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparatorEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumProps(json, 'comparator', elem.ComparatorElement, CODES_TFhirQuantityComparatorEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'unit', elem.unit_Element, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'unit', elem.unit_Element, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeUriValue(json, 'system', elem.systemElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeUriProps(json, 'system', elem.systemElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeCodeValue(json, 'code', elem.codeElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeCodeProps(json, 'code', elem.codeElement, false);
   if not noObj then json.finishObject;
 end;
 
@@ -5857,6 +5759,80 @@ begin
      ComposeStringValue(json, 'text', elem.textElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
      ComposeStringProps(json, 'text', elem.textElement, false);
+  if not noObj then json.finishObject;
+end;
+
+function TFHIRXmlParser.ParseRatio(element : IXmlDomElement; path : string) : TFhirRatio;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirRatio.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'numerator') then
+        result.numerator := ParseQuantity(child, path+'/numerator') {b}
+      else if (child.baseName = 'denominator') then
+        result.denominator := ParseQuantity(child, path+'/denominator') {b}
+      else if Not ParseElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeRatio(xml : TXmlBuilder; name : string; elem : TFhirRatio);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeQuantity(xml, 'numerator', elem.numerator);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeQuantity(xml, 'denominator', elem.denominator);{x.2}
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseRatio(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseRatio(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseRatio(jsn : TJsonObject) : TFhirRatio;
+begin
+  result := TFhirRatio.create;
+  try
+    ParseElementProperties(jsn, result);
+    if jsn.has('numerator') then
+        result.numerator := ParseQuantity(jsn.vObj['numerator']);{q}
+    if jsn.has('denominator') then
+        result.denominator := ParseQuantity(jsn.vObj['denominator']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeRatio(json : TJSONWriter; name : string; elem : TFhirRatio; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeQuantity(json, 'numerator', elem.numerator); {a}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeQuantity(json, 'denominator', elem.denominator); {a}
   if not noObj then json.finishObject;
 end;
 
@@ -5986,84 +5962,6 @@ begin
   if not noObj then json.finishObject;
 end;
 
-function TFHIRXmlParser.ParseReference(element : IXmlDomElement; path : string) : TFhirReference;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirReference.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'reference') then
-        result.referenceElement := ParseString(child, path+'/reference') {b}
-      else if (child.baseName = 'display') then
-        result.displayElement := ParseString(child, path+'/display') {b}
-      else if Not ParseElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeReference(xml : TXmlBuilder; name : string; elem : TFhirReference);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'reference', elem.referenceElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'display', elem.displayElement);{x.2}
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseReference(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseReference(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseReference(jsn : TJsonObject) : TFhirReference;
-begin
-  result := TFhirReference.create;
-  try
-    ParseElementProperties(jsn, result);
-    if jsn.has('reference') or jsn.has('_reference') then
-        result.referenceElement := ParseString(jsn['reference'], jsn.vObj['_reference']);{q}
-    if jsn.has('display') or jsn.has('_display') then
-        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeReference(json : TJSONWriter; name : string; elem : TFhirReference; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'reference', elem.referenceElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'reference', elem.referenceElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'display', elem.displayElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'display', elem.displayElement, false);
-  if not noObj then json.finishObject;
-end;
-
 function TFHIRXmlParser.ParseCodeableConcept(element : IXmlDomElement; path : string) : TFhirCodeableConcept;
 var
   child : IXMLDOMElement;
@@ -6150,6 +6048,84 @@ begin
   if not noObj then json.finishObject;
 end;
 
+function TFHIRXmlParser.ParseReference(element : IXmlDomElement; path : string) : TFhirReference;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirReference.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'reference') then
+        result.referenceElement := ParseString(child, path+'/reference') {b}
+      else if (child.baseName = 'display') then
+        result.displayElement := ParseString(child, path+'/display') {b}
+      else if Not ParseElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeReference(xml : TXmlBuilder; name : string; elem : TFhirReference);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'reference', elem.referenceElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'display', elem.displayElement);{x.2}
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseReference(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseReference(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseReference(jsn : TJsonObject) : TFhirReference;
+begin
+  result := TFhirReference.create;
+  try
+    ParseElementProperties(jsn, result);
+    if jsn.has('reference') or jsn.has('_reference') then
+        result.referenceElement := ParseString(jsn['reference'], jsn.vObj['_reference']);{q}
+    if jsn.has('display') or jsn.has('_display') then
+        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeReference(json : TJSONWriter; name : string; elem : TFhirReference; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'reference', elem.referenceElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'reference', elem.referenceElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'display', elem.displayElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'display', elem.displayElement, false);
+  if not noObj then json.finishObject;
+end;
+
 function TFHIRXmlParser.ParseIdentifier(element : IXmlDomElement; path : string) : TFhirIdentifier;
 var
   child : IXMLDOMElement;
@@ -6218,7 +6194,7 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirIdentifierUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirIdentifierUseEnum, SYSTEMS_TFhirIdentifierUseEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('system') or jsn.has('_system') then
@@ -6387,6 +6363,292 @@ begin
   if not noObj then json.finishObject;
 end;
 
+function TFHIRXmlParser.ParseTimingRepeat(element : IXmlDomElement; path : string) : TFhirTimingRepeat;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirTimingRepeat.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'boundsQuantity') then
+        result.bounds := ParseQuantity(child, path+'/boundsQuantity'){x.3}
+      else if (child.baseName = 'boundsRange') then
+        result.bounds := ParseRange(child, path+'/boundsRange'){x.3}
+      else if (child.baseName = 'boundsPeriod') then
+        result.bounds := ParsePeriod(child, path+'/boundsPeriod'){x.3}
+      else if (child.baseName = 'count') then
+        result.countElement := ParseInteger(child, path+'/count') {b}
+      else if (child.baseName = 'duration') then
+        result.durationElement := ParseDecimal(child, path+'/duration') {b}
+      else if (child.baseName = 'durationMax') then
+        result.durationMaxElement := ParseDecimal(child, path+'/durationMax') {b}
+      else if (child.baseName = 'durationUnits') then
+        result.durationUnitsElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, path+'/durationUnits', child){1a}
+      else if (child.baseName = 'frequency') then
+        result.frequencyElement := ParseInteger(child, path+'/frequency') {b}
+      else if (child.baseName = 'frequencyMax') then
+        result.frequencyMaxElement := ParseInteger(child, path+'/frequencyMax') {b}
+      else if (child.baseName = 'period') then
+        result.periodElement := ParseDecimal(child, path+'/period') {b}
+      else if (child.baseName = 'periodMax') then
+        result.periodMaxElement := ParseDecimal(child, path+'/periodMax') {b}
+      else if (child.baseName = 'periodUnits') then
+        result.periodUnitsElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, path+'/periodUnits', child){1a}
+      else if (child.baseName = 'when') then
+        result.whenElement := ParseEnum(CODES_TFhirEventTimingEnum, path+'/when', child){1a}
+      else if Not ParseElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeTimingRepeat(xml : TXmlBuilder; name : string; elem : TFhirTimingRepeat);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) {6} then
+    ComposeQuantity(xml, 'boundsQuantity', TFhirQuantity(elem.bounds))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) {6} then
+    ComposeRange(xml, 'boundsRange', TFhirRange(elem.bounds))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) {6} then
+    ComposePeriod(xml, 'boundsPeriod', TFhirPeriod(elem.bounds));
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeInteger(xml, 'count', elem.countElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimal(xml, 'duration', elem.durationElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimal(xml, 'durationMax', elem.durationMaxElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeInteger(xml, 'frequency', elem.frequencyElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeInteger(xml, 'frequencyMax', elem.frequencyMaxElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimal(xml, 'period', elem.periodElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimal(xml, 'periodMax', elem.periodMaxElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseTimingRepeat(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat;
+begin
+  result := TFhirTimingRepeat.create;
+  try
+    ParseElementProperties(jsn, result);
+    if jsn.has('boundsQuantity') {a4} then
+      result.bounds := ParseQuantity(jsn.vObj['boundsQuantity']);
+    if jsn.has('boundsRange') {a4} then
+      result.bounds := ParseRange(jsn.vObj['boundsRange']);
+    if jsn.has('boundsPeriod') {a4} then
+      result.bounds := ParsePeriod(jsn.vObj['boundsPeriod']);
+    if jsn.has('count') or jsn.has('_count') then
+        result.countElement := ParseInteger(jsn['count'], jsn.vObj['_count']);{q}
+    if jsn.has('duration') or jsn.has('_duration') then
+        result.durationElement := ParseDecimal(jsn['duration'], jsn.vObj['_duration']);{q}
+    if jsn.has('durationMax') or jsn.has('_durationMax') then
+        result.durationMaxElement := ParseDecimal(jsn['durationMax'], jsn.vObj['_durationMax']);{q}
+    if jsn.has('durationUnits') or jsn.has('_durationUnits')  then
+      result.durationUnitsElement := parseEnum(jsn.path+'/durationUnits', jsn['durationUnits'], jsn.vObj['_durationUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
+    if jsn.has('frequency') or jsn.has('_frequency') then
+        result.frequencyElement := ParseInteger(jsn['frequency'], jsn.vObj['_frequency']);{q}
+    if jsn.has('frequencyMax') or jsn.has('_frequencyMax') then
+        result.frequencyMaxElement := ParseInteger(jsn['frequencyMax'], jsn.vObj['_frequencyMax']);{q}
+    if jsn.has('period') or jsn.has('_period') then
+        result.periodElement := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
+    if jsn.has('periodMax') or jsn.has('_periodMax') then
+        result.periodMaxElement := ParseDecimal(jsn['periodMax'], jsn.vObj['_periodMax']);{q}
+    if jsn.has('periodUnits') or jsn.has('_periodUnits')  then
+      result.periodUnitsElement := parseEnum(jsn.path+'/periodUnits', jsn['periodUnits'], jsn.vObj['_periodUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
+    if jsn.has('when') or jsn.has('_when')  then
+      result.whenElement := parseEnum(jsn.path+'/when', jsn['when'], jsn.vObj['_when'], CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) then 
+    ComposeQuantity(json, 'boundsQuantity', TFhirQuantity(elem.bounds)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) then 
+    ComposeRange(json, 'boundsRange', TFhirRange(elem.bounds)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) then 
+    ComposePeriod(json, 'boundsPeriod', TFhirPeriod(elem.bounds)) ;
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeIntegerValue(json, 'count', elem.countElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeIntegerProps(json, 'count', elem.countElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimalValue(json, 'duration', elem.durationElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimalProps(json, 'duration', elem.durationElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimalValue(json, 'durationMax', elem.durationMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimalProps(json, 'durationMax', elem.durationMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeIntegerValue(json, 'frequency', elem.frequencyElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeIntegerProps(json, 'frequency', elem.frequencyElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeIntegerValue(json, 'frequencyMax', elem.frequencyMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeIntegerProps(json, 'frequencyMax', elem.frequencyMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimalValue(json, 'period', elem.periodElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimalProps(json, 'period', elem.periodElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimalValue(json, 'periodMax', elem.periodMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeDecimalProps(json, 'periodMax', elem.periodMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, false);
+  if not noObj then json.finishObject;
+end;
+
+function TFHIRXmlParser.ParseTiming(element : IXmlDomElement; path : string) : TFhirTiming;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirTiming.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'event') then
+        result.eventList.Add(ParseDateTime(child, path+'/event')){y.2}
+      else if (child.baseName = 'repeat') then
+        result.repeat_ := ParseTimingRepeat(child, path+'/repeat') {b}
+      else if (child.baseName = 'code') then
+        result.code := ParseCodeableConcept(child, path+'/code') {b}
+      else if Not ParseElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeTiming(xml : TXmlBuilder; name : string; elem : TFhirTiming);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeElementChildren(xml, elem);
+  if SummaryOption in [soFull, soSummary, soText, soData] then
+    for i := 0 to elem.eventList.Count - 1 do
+      ComposeDateTime(xml, 'event', elem.eventList[i]);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeTimingRepeat(xml, 'repeat', elem.repeat_);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseTiming(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseTiming(jsn : TJsonObject) : TFhirTiming;
+begin
+  result := TFhirTiming.create;
+  try
+    ParseElementProperties(jsn, result);
+      if jsn.has('event') or jsn.has('_event') then
+      iteratePrimitiveArray(jsn.vArr['event'], jsn.vArr['_event'], result.eventList, parseDateTime);
+    if jsn.has('repeat') then
+        result.repeat_ := ParseTimingRepeat(jsn.vObj['repeat']);{q}
+    if jsn.has('code') then
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.eventList.Count > 0) then
+  begin
+    json.valueArray('event');
+    ext := false;
+    for i := 0 to elem.eventList.Count - 1 do
+    begin
+      ext := ext or ((elem.eventList[i].id <> '') or (elem.eventList[i].hasExtensionList));
+      ComposeDateTimeValue(json, '',elem.eventList[i], true);
+    end;
+    json.FinishArray;
+    if ext then
+    begin
+      json.valueArray('_event');
+      for i := 0 to elem.eventList.Count - 1 do
+        ComposeDateTimeProps(json, '',elem.eventList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeTimingRepeat(json, 'repeat', elem.repeat_); {a}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeCodeableConcept(json, 'code', elem.code); {a}
+  if not noObj then json.finishObject;
+end;
+
 function TFHIRXmlParser.ParseElementDefinitionSlicing(element : IXmlDomElement; path : string) : TFhirElementDefinitionSlicing;
 var
   child : IXMLDOMElement;
@@ -6456,7 +6718,7 @@ begin
     if jsn.has('ordered') or jsn.has('_ordered') then
         result.orderedElement := ParseBoolean(jsn['ordered'], jsn.vObj['_ordered']);{q}
     if jsn.has('rules') or jsn.has('_rules')  then
-      result.rulesElement := parseEnum(jsn.path+'/rules', jsn['rules'], jsn.vObj['_rules'], CODES_TFhirResourceSlicingRulesEnum);
+      result.rulesElement := parseEnum(jsn.path+'/rules', jsn['rules'], jsn.vObj['_rules'], CODES_TFhirResourceSlicingRulesEnum, SYSTEMS_TFhirResourceSlicingRulesEnum);
     result.link;
   finally
     result.free;
@@ -6604,7 +6866,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'code') then
-        result.codeElement := ParseCode(child, path+'/code') {b}
+        result.codeElement := ParseEnum(CODES_TFhirDefinedTypesEnum, path+'/code', child){1a}
       else if (child.baseName = 'profile') then
         result.profileList.Add(ParseUri(child, path+'/profile')){y.2}
       else if (child.baseName = 'aggregation') then
@@ -6631,7 +6893,7 @@ begin
   xml.open(name);
   composeElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCode(xml, 'code', elem.codeElement);{x.2}
+     ComposeEnum(xml, 'code', elem.CodeElement, CODES_TFhirDefinedTypesEnum);
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.profileList.Count - 1 do
       ComposeUri(xml, 'profile', elem.profileList[i]);
@@ -6652,12 +6914,12 @@ begin
   result := TFhirElementDefinitionType.create;
   try
     ParseElementProperties(jsn, result);
-    if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+    if jsn.has('code') or jsn.has('_code')  then
+      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirDefinedTypesEnum, SYSTEMS_TFhirDefinedTypesEnum);
       if jsn.has('profile') or jsn.has('_profile') then
       iteratePrimitiveArray(jsn.vArr['profile'], jsn.vArr['_profile'], result.profileList, parseUri);
     if jsn.has('aggregation') or jsn.has('_aggregation') then
-      iterateEnumArray(jsn.vArr['aggregation'], jsn.vArr['_aggregation'], jsn.path+'/aggregation', result.aggregationList, parseEnum, CODES_TFhirResourceAggregationModeEnum);
+      iterateEnumArray(jsn.vArr['aggregation'], jsn.vArr['_aggregation'], jsn.path+'/aggregation', result.aggregationList, parseEnum, CODES_TFhirResourceAggregationModeEnum, SYSTEMS_TFhirResourceAggregationModeEnum);
     result.link;
   finally
     result.free;
@@ -6674,9 +6936,9 @@ begin
   if not noObj then json.valueObject(name);
   ComposeElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeValue(json, 'code', elem.codeElement, false);
+     ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirDefinedTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeProps(json, 'code', elem.codeElement, false);
+     ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirDefinedTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.profileList.Count > 0) then
   begin
     json.valueArray('profile');
@@ -6784,7 +7046,7 @@ begin
     if jsn.has('requirements') or jsn.has('_requirements') then
         result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirConstraintSeverityEnum);
+      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirConstraintSeverityEnum, SYSTEMS_TFhirConstraintSeverityEnum);
     if jsn.has('human') or jsn.has('_human') then
         result.humanElement := ParseString(jsn['human'], jsn.vObj['_human']);{q}
     if jsn.has('xpath') or jsn.has('_xpath') then
@@ -6884,7 +7146,7 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('strength') or jsn.has('_strength')  then
-      result.strengthElement := parseEnum(jsn.path+'/strength', jsn['strength'], jsn.vObj['_strength'], CODES_TFhirBindingStrengthEnum);
+      result.strengthElement := parseEnum(jsn.path+'/strength', jsn['strength'], jsn.vObj['_strength'], CODES_TFhirBindingStrengthEnum, SYSTEMS_TFhirBindingStrengthEnum);
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('valueSetUri') or jsn.has('_valueSetUri') then
@@ -7075,10 +7337,10 @@ begin
         result.defaultValue := ParseTime(child, path+'.defaultValueTime') {c}
       else if (child.baseName = 'defaultValueOid') then
         result.defaultValue := ParseOid(child, path+'.defaultValueOid') {c}
-      else if (child.baseName = 'defaultValuePositiveInt') then
-        result.defaultValue := ParsePositiveInt(child, path+'.defaultValuePositiveInt') {c}
       else if (child.baseName = 'defaultValueString') then
         result.defaultValue := ParseString(child, path+'.defaultValueString') {c}
+      else if (child.baseName = 'defaultValuePositiveInt') then
+        result.defaultValue := ParsePositiveInt(child, path+'.defaultValuePositiveInt') {c}
       else if (child.baseName = 'defaultValueBoolean') then
         result.defaultValue := ParseBoolean(child, path+'.defaultValueBoolean') {c}
       else if (child.baseName = 'defaultValueUuid') then
@@ -7091,32 +7353,32 @@ begin
         result.defaultValue := ParseCoding(child, path+'.defaultValueCoding') {eCoding}
       else if (child.baseName = 'defaultValueRange') then
         result.defaultValue := ParseRange(child, path+'.defaultValueRange') {eRange}
-      else if (child.baseName = 'defaultValueQuantity') then
-        result.defaultValue := ParseQuantity(child, path+'.defaultValueQuantity') {eQuantity}
       else if (child.baseName = 'defaultValueAttachment') then
         result.defaultValue := ParseAttachment(child, path+'.defaultValueAttachment') {eAttachment}
-      else if (child.baseName = 'defaultValueRatio') then
-        result.defaultValue := ParseRatio(child, path+'.defaultValueRatio') {eRatio}
+      else if (child.baseName = 'defaultValueQuantity') then
+        result.defaultValue := ParseQuantity(child, path+'.defaultValueQuantity') {eQuantity}
       else if (child.baseName = 'defaultValueAnnotation') then
         result.defaultValue := ParseAnnotation(child, path+'.defaultValueAnnotation') {eAnnotation}
+      else if (child.baseName = 'defaultValueRatio') then
+        result.defaultValue := ParseRatio(child, path+'.defaultValueRatio') {eRatio}
       else if (child.baseName = 'defaultValueSampledData') then
         result.defaultValue := ParseSampledData(child, path+'.defaultValueSampledData') {eSampledData}
-      else if (child.baseName = 'defaultValueReference') then
-        result.defaultValue := ParseReference(child, path+'.defaultValueReference') {eReference}
       else if (child.baseName = 'defaultValueCodeableConcept') then
         result.defaultValue := ParseCodeableConcept(child, path+'.defaultValueCodeableConcept') {eCodeableConcept}
+      else if (child.baseName = 'defaultValueReference') then
+        result.defaultValue := ParseReference(child, path+'.defaultValueReference') {eReference}
       else if (child.baseName = 'defaultValueIdentifier') then
         result.defaultValue := ParseIdentifier(child, path+'.defaultValueIdentifier') {eIdentifier}
       else if (child.baseName = 'defaultValueSignature') then
         result.defaultValue := ParseSignature(child, path+'.defaultValueSignature') {eSignature}
-      else if (child.baseName = 'defaultValueElementDefinition') then
-        result.defaultValue := ParseElementDefinition(child, path+'/defaultValueElementDefinition') {f}
       else if (child.baseName = 'defaultValueTiming') then
         result.defaultValue := ParseTiming(child, path+'/defaultValueTiming') {f}
-      else if (child.baseName = 'defaultValueAddress') then
-        result.defaultValue := ParseAddress(child, path+'/defaultValueAddress') {f}
+      else if (child.baseName = 'defaultValueElementDefinition') then
+        result.defaultValue := ParseElementDefinition(child, path+'/defaultValueElementDefinition') {f}
       else if (child.baseName = 'defaultValueHumanName') then
         result.defaultValue := ParseHumanName(child, path+'/defaultValueHumanName') {f}
+      else if (child.baseName = 'defaultValueAddress') then
+        result.defaultValue := ParseAddress(child, path+'/defaultValueAddress') {f}
       else if (child.baseName = 'defaultValueMeta') then
         result.defaultValue := ParseMeta(child, path+'/defaultValueMeta') {f}
       else if (child.baseName = 'defaultValueContactPoint') then
@@ -7147,10 +7409,10 @@ begin
         result.fixed := ParseTime(child, path+'.fixedTime') {c}
       else if (child.baseName = 'fixedOid') then
         result.fixed := ParseOid(child, path+'.fixedOid') {c}
-      else if (child.baseName = 'fixedPositiveInt') then
-        result.fixed := ParsePositiveInt(child, path+'.fixedPositiveInt') {c}
       else if (child.baseName = 'fixedString') then
         result.fixed := ParseString(child, path+'.fixedString') {c}
+      else if (child.baseName = 'fixedPositiveInt') then
+        result.fixed := ParsePositiveInt(child, path+'.fixedPositiveInt') {c}
       else if (child.baseName = 'fixedBoolean') then
         result.fixed := ParseBoolean(child, path+'.fixedBoolean') {c}
       else if (child.baseName = 'fixedUuid') then
@@ -7163,32 +7425,32 @@ begin
         result.fixed := ParseCoding(child, path+'.fixedCoding') {eCoding}
       else if (child.baseName = 'fixedRange') then
         result.fixed := ParseRange(child, path+'.fixedRange') {eRange}
-      else if (child.baseName = 'fixedQuantity') then
-        result.fixed := ParseQuantity(child, path+'.fixedQuantity') {eQuantity}
       else if (child.baseName = 'fixedAttachment') then
         result.fixed := ParseAttachment(child, path+'.fixedAttachment') {eAttachment}
-      else if (child.baseName = 'fixedRatio') then
-        result.fixed := ParseRatio(child, path+'.fixedRatio') {eRatio}
+      else if (child.baseName = 'fixedQuantity') then
+        result.fixed := ParseQuantity(child, path+'.fixedQuantity') {eQuantity}
       else if (child.baseName = 'fixedAnnotation') then
         result.fixed := ParseAnnotation(child, path+'.fixedAnnotation') {eAnnotation}
+      else if (child.baseName = 'fixedRatio') then
+        result.fixed := ParseRatio(child, path+'.fixedRatio') {eRatio}
       else if (child.baseName = 'fixedSampledData') then
         result.fixed := ParseSampledData(child, path+'.fixedSampledData') {eSampledData}
-      else if (child.baseName = 'fixedReference') then
-        result.fixed := ParseReference(child, path+'.fixedReference') {eReference}
       else if (child.baseName = 'fixedCodeableConcept') then
         result.fixed := ParseCodeableConcept(child, path+'.fixedCodeableConcept') {eCodeableConcept}
+      else if (child.baseName = 'fixedReference') then
+        result.fixed := ParseReference(child, path+'.fixedReference') {eReference}
       else if (child.baseName = 'fixedIdentifier') then
         result.fixed := ParseIdentifier(child, path+'.fixedIdentifier') {eIdentifier}
       else if (child.baseName = 'fixedSignature') then
         result.fixed := ParseSignature(child, path+'.fixedSignature') {eSignature}
-      else if (child.baseName = 'fixedElementDefinition') then
-        result.fixed := ParseElementDefinition(child, path+'/fixedElementDefinition') {f}
       else if (child.baseName = 'fixedTiming') then
         result.fixed := ParseTiming(child, path+'/fixedTiming') {f}
-      else if (child.baseName = 'fixedAddress') then
-        result.fixed := ParseAddress(child, path+'/fixedAddress') {f}
+      else if (child.baseName = 'fixedElementDefinition') then
+        result.fixed := ParseElementDefinition(child, path+'/fixedElementDefinition') {f}
       else if (child.baseName = 'fixedHumanName') then
         result.fixed := ParseHumanName(child, path+'/fixedHumanName') {f}
+      else if (child.baseName = 'fixedAddress') then
+        result.fixed := ParseAddress(child, path+'/fixedAddress') {f}
       else if (child.baseName = 'fixedMeta') then
         result.fixed := ParseMeta(child, path+'/fixedMeta') {f}
       else if (child.baseName = 'fixedContactPoint') then
@@ -7217,10 +7479,10 @@ begin
         result.pattern := ParseTime(child, path+'.patternTime') {c}
       else if (child.baseName = 'patternOid') then
         result.pattern := ParseOid(child, path+'.patternOid') {c}
-      else if (child.baseName = 'patternPositiveInt') then
-        result.pattern := ParsePositiveInt(child, path+'.patternPositiveInt') {c}
       else if (child.baseName = 'patternString') then
         result.pattern := ParseString(child, path+'.patternString') {c}
+      else if (child.baseName = 'patternPositiveInt') then
+        result.pattern := ParsePositiveInt(child, path+'.patternPositiveInt') {c}
       else if (child.baseName = 'patternBoolean') then
         result.pattern := ParseBoolean(child, path+'.patternBoolean') {c}
       else if (child.baseName = 'patternUuid') then
@@ -7233,32 +7495,32 @@ begin
         result.pattern := ParseCoding(child, path+'.patternCoding') {eCoding}
       else if (child.baseName = 'patternRange') then
         result.pattern := ParseRange(child, path+'.patternRange') {eRange}
-      else if (child.baseName = 'patternQuantity') then
-        result.pattern := ParseQuantity(child, path+'.patternQuantity') {eQuantity}
       else if (child.baseName = 'patternAttachment') then
         result.pattern := ParseAttachment(child, path+'.patternAttachment') {eAttachment}
-      else if (child.baseName = 'patternRatio') then
-        result.pattern := ParseRatio(child, path+'.patternRatio') {eRatio}
+      else if (child.baseName = 'patternQuantity') then
+        result.pattern := ParseQuantity(child, path+'.patternQuantity') {eQuantity}
       else if (child.baseName = 'patternAnnotation') then
         result.pattern := ParseAnnotation(child, path+'.patternAnnotation') {eAnnotation}
+      else if (child.baseName = 'patternRatio') then
+        result.pattern := ParseRatio(child, path+'.patternRatio') {eRatio}
       else if (child.baseName = 'patternSampledData') then
         result.pattern := ParseSampledData(child, path+'.patternSampledData') {eSampledData}
-      else if (child.baseName = 'patternReference') then
-        result.pattern := ParseReference(child, path+'.patternReference') {eReference}
       else if (child.baseName = 'patternCodeableConcept') then
         result.pattern := ParseCodeableConcept(child, path+'.patternCodeableConcept') {eCodeableConcept}
+      else if (child.baseName = 'patternReference') then
+        result.pattern := ParseReference(child, path+'.patternReference') {eReference}
       else if (child.baseName = 'patternIdentifier') then
         result.pattern := ParseIdentifier(child, path+'.patternIdentifier') {eIdentifier}
       else if (child.baseName = 'patternSignature') then
         result.pattern := ParseSignature(child, path+'.patternSignature') {eSignature}
-      else if (child.baseName = 'patternElementDefinition') then
-        result.pattern := ParseElementDefinition(child, path+'/patternElementDefinition') {f}
       else if (child.baseName = 'patternTiming') then
         result.pattern := ParseTiming(child, path+'/patternTiming') {f}
-      else if (child.baseName = 'patternAddress') then
-        result.pattern := ParseAddress(child, path+'/patternAddress') {f}
+      else if (child.baseName = 'patternElementDefinition') then
+        result.pattern := ParseElementDefinition(child, path+'/patternElementDefinition') {f}
       else if (child.baseName = 'patternHumanName') then
         result.pattern := ParseHumanName(child, path+'/patternHumanName') {f}
+      else if (child.baseName = 'patternAddress') then
+        result.pattern := ParseAddress(child, path+'/patternAddress') {f}
       else if (child.baseName = 'patternMeta') then
         result.pattern := ParseMeta(child, path+'/patternMeta') {f}
       else if (child.baseName = 'patternContactPoint') then
@@ -7287,10 +7549,10 @@ begin
         result.example := ParseTime(child, path+'.exampleTime') {c}
       else if (child.baseName = 'exampleOid') then
         result.example := ParseOid(child, path+'.exampleOid') {c}
-      else if (child.baseName = 'examplePositiveInt') then
-        result.example := ParsePositiveInt(child, path+'.examplePositiveInt') {c}
       else if (child.baseName = 'exampleString') then
         result.example := ParseString(child, path+'.exampleString') {c}
+      else if (child.baseName = 'examplePositiveInt') then
+        result.example := ParsePositiveInt(child, path+'.examplePositiveInt') {c}
       else if (child.baseName = 'exampleBoolean') then
         result.example := ParseBoolean(child, path+'.exampleBoolean') {c}
       else if (child.baseName = 'exampleUuid') then
@@ -7303,32 +7565,32 @@ begin
         result.example := ParseCoding(child, path+'.exampleCoding') {eCoding}
       else if (child.baseName = 'exampleRange') then
         result.example := ParseRange(child, path+'.exampleRange') {eRange}
-      else if (child.baseName = 'exampleQuantity') then
-        result.example := ParseQuantity(child, path+'.exampleQuantity') {eQuantity}
       else if (child.baseName = 'exampleAttachment') then
         result.example := ParseAttachment(child, path+'.exampleAttachment') {eAttachment}
-      else if (child.baseName = 'exampleRatio') then
-        result.example := ParseRatio(child, path+'.exampleRatio') {eRatio}
+      else if (child.baseName = 'exampleQuantity') then
+        result.example := ParseQuantity(child, path+'.exampleQuantity') {eQuantity}
       else if (child.baseName = 'exampleAnnotation') then
         result.example := ParseAnnotation(child, path+'.exampleAnnotation') {eAnnotation}
+      else if (child.baseName = 'exampleRatio') then
+        result.example := ParseRatio(child, path+'.exampleRatio') {eRatio}
       else if (child.baseName = 'exampleSampledData') then
         result.example := ParseSampledData(child, path+'.exampleSampledData') {eSampledData}
-      else if (child.baseName = 'exampleReference') then
-        result.example := ParseReference(child, path+'.exampleReference') {eReference}
       else if (child.baseName = 'exampleCodeableConcept') then
         result.example := ParseCodeableConcept(child, path+'.exampleCodeableConcept') {eCodeableConcept}
+      else if (child.baseName = 'exampleReference') then
+        result.example := ParseReference(child, path+'.exampleReference') {eReference}
       else if (child.baseName = 'exampleIdentifier') then
         result.example := ParseIdentifier(child, path+'.exampleIdentifier') {eIdentifier}
       else if (child.baseName = 'exampleSignature') then
         result.example := ParseSignature(child, path+'.exampleSignature') {eSignature}
-      else if (child.baseName = 'exampleElementDefinition') then
-        result.example := ParseElementDefinition(child, path+'/exampleElementDefinition') {f}
       else if (child.baseName = 'exampleTiming') then
         result.example := ParseTiming(child, path+'/exampleTiming') {f}
-      else if (child.baseName = 'exampleAddress') then
-        result.example := ParseAddress(child, path+'/exampleAddress') {f}
+      else if (child.baseName = 'exampleElementDefinition') then
+        result.example := ParseElementDefinition(child, path+'/exampleElementDefinition') {f}
       else if (child.baseName = 'exampleHumanName') then
         result.example := ParseHumanName(child, path+'/exampleHumanName') {f}
+      else if (child.baseName = 'exampleAddress') then
+        result.example := ParseAddress(child, path+'/exampleAddress') {f}
       else if (child.baseName = 'exampleMeta') then
         result.example := ParseMeta(child, path+'/exampleMeta') {f}
       else if (child.baseName = 'exampleContactPoint') then
@@ -7357,10 +7619,10 @@ begin
         result.minValue := ParseTime(child, path+'.minValueTime') {c}
       else if (child.baseName = 'minValueOid') then
         result.minValue := ParseOid(child, path+'.minValueOid') {c}
-      else if (child.baseName = 'minValuePositiveInt') then
-        result.minValue := ParsePositiveInt(child, path+'.minValuePositiveInt') {c}
       else if (child.baseName = 'minValueString') then
         result.minValue := ParseString(child, path+'.minValueString') {c}
+      else if (child.baseName = 'minValuePositiveInt') then
+        result.minValue := ParsePositiveInt(child, path+'.minValuePositiveInt') {c}
       else if (child.baseName = 'minValueBoolean') then
         result.minValue := ParseBoolean(child, path+'.minValueBoolean') {c}
       else if (child.baseName = 'minValueUuid') then
@@ -7373,32 +7635,32 @@ begin
         result.minValue := ParseCoding(child, path+'.minValueCoding') {eCoding}
       else if (child.baseName = 'minValueRange') then
         result.minValue := ParseRange(child, path+'.minValueRange') {eRange}
-      else if (child.baseName = 'minValueQuantity') then
-        result.minValue := ParseQuantity(child, path+'.minValueQuantity') {eQuantity}
       else if (child.baseName = 'minValueAttachment') then
         result.minValue := ParseAttachment(child, path+'.minValueAttachment') {eAttachment}
-      else if (child.baseName = 'minValueRatio') then
-        result.minValue := ParseRatio(child, path+'.minValueRatio') {eRatio}
+      else if (child.baseName = 'minValueQuantity') then
+        result.minValue := ParseQuantity(child, path+'.minValueQuantity') {eQuantity}
       else if (child.baseName = 'minValueAnnotation') then
         result.minValue := ParseAnnotation(child, path+'.minValueAnnotation') {eAnnotation}
+      else if (child.baseName = 'minValueRatio') then
+        result.minValue := ParseRatio(child, path+'.minValueRatio') {eRatio}
       else if (child.baseName = 'minValueSampledData') then
         result.minValue := ParseSampledData(child, path+'.minValueSampledData') {eSampledData}
-      else if (child.baseName = 'minValueReference') then
-        result.minValue := ParseReference(child, path+'.minValueReference') {eReference}
       else if (child.baseName = 'minValueCodeableConcept') then
         result.minValue := ParseCodeableConcept(child, path+'.minValueCodeableConcept') {eCodeableConcept}
+      else if (child.baseName = 'minValueReference') then
+        result.minValue := ParseReference(child, path+'.minValueReference') {eReference}
       else if (child.baseName = 'minValueIdentifier') then
         result.minValue := ParseIdentifier(child, path+'.minValueIdentifier') {eIdentifier}
       else if (child.baseName = 'minValueSignature') then
         result.minValue := ParseSignature(child, path+'.minValueSignature') {eSignature}
-      else if (child.baseName = 'minValueElementDefinition') then
-        result.minValue := ParseElementDefinition(child, path+'/minValueElementDefinition') {f}
       else if (child.baseName = 'minValueTiming') then
         result.minValue := ParseTiming(child, path+'/minValueTiming') {f}
-      else if (child.baseName = 'minValueAddress') then
-        result.minValue := ParseAddress(child, path+'/minValueAddress') {f}
+      else if (child.baseName = 'minValueElementDefinition') then
+        result.minValue := ParseElementDefinition(child, path+'/minValueElementDefinition') {f}
       else if (child.baseName = 'minValueHumanName') then
         result.minValue := ParseHumanName(child, path+'/minValueHumanName') {f}
+      else if (child.baseName = 'minValueAddress') then
+        result.minValue := ParseAddress(child, path+'/minValueAddress') {f}
       else if (child.baseName = 'minValueMeta') then
         result.minValue := ParseMeta(child, path+'/minValueMeta') {f}
       else if (child.baseName = 'minValueContactPoint') then
@@ -7427,10 +7689,10 @@ begin
         result.maxValue := ParseTime(child, path+'.maxValueTime') {c}
       else if (child.baseName = 'maxValueOid') then
         result.maxValue := ParseOid(child, path+'.maxValueOid') {c}
-      else if (child.baseName = 'maxValuePositiveInt') then
-        result.maxValue := ParsePositiveInt(child, path+'.maxValuePositiveInt') {c}
       else if (child.baseName = 'maxValueString') then
         result.maxValue := ParseString(child, path+'.maxValueString') {c}
+      else if (child.baseName = 'maxValuePositiveInt') then
+        result.maxValue := ParsePositiveInt(child, path+'.maxValuePositiveInt') {c}
       else if (child.baseName = 'maxValueBoolean') then
         result.maxValue := ParseBoolean(child, path+'.maxValueBoolean') {c}
       else if (child.baseName = 'maxValueUuid') then
@@ -7443,32 +7705,32 @@ begin
         result.maxValue := ParseCoding(child, path+'.maxValueCoding') {eCoding}
       else if (child.baseName = 'maxValueRange') then
         result.maxValue := ParseRange(child, path+'.maxValueRange') {eRange}
-      else if (child.baseName = 'maxValueQuantity') then
-        result.maxValue := ParseQuantity(child, path+'.maxValueQuantity') {eQuantity}
       else if (child.baseName = 'maxValueAttachment') then
         result.maxValue := ParseAttachment(child, path+'.maxValueAttachment') {eAttachment}
-      else if (child.baseName = 'maxValueRatio') then
-        result.maxValue := ParseRatio(child, path+'.maxValueRatio') {eRatio}
+      else if (child.baseName = 'maxValueQuantity') then
+        result.maxValue := ParseQuantity(child, path+'.maxValueQuantity') {eQuantity}
       else if (child.baseName = 'maxValueAnnotation') then
         result.maxValue := ParseAnnotation(child, path+'.maxValueAnnotation') {eAnnotation}
+      else if (child.baseName = 'maxValueRatio') then
+        result.maxValue := ParseRatio(child, path+'.maxValueRatio') {eRatio}
       else if (child.baseName = 'maxValueSampledData') then
         result.maxValue := ParseSampledData(child, path+'.maxValueSampledData') {eSampledData}
-      else if (child.baseName = 'maxValueReference') then
-        result.maxValue := ParseReference(child, path+'.maxValueReference') {eReference}
       else if (child.baseName = 'maxValueCodeableConcept') then
         result.maxValue := ParseCodeableConcept(child, path+'.maxValueCodeableConcept') {eCodeableConcept}
+      else if (child.baseName = 'maxValueReference') then
+        result.maxValue := ParseReference(child, path+'.maxValueReference') {eReference}
       else if (child.baseName = 'maxValueIdentifier') then
         result.maxValue := ParseIdentifier(child, path+'.maxValueIdentifier') {eIdentifier}
       else if (child.baseName = 'maxValueSignature') then
         result.maxValue := ParseSignature(child, path+'.maxValueSignature') {eSignature}
-      else if (child.baseName = 'maxValueElementDefinition') then
-        result.maxValue := ParseElementDefinition(child, path+'/maxValueElementDefinition') {f}
       else if (child.baseName = 'maxValueTiming') then
         result.maxValue := ParseTiming(child, path+'/maxValueTiming') {f}
-      else if (child.baseName = 'maxValueAddress') then
-        result.maxValue := ParseAddress(child, path+'/maxValueAddress') {f}
+      else if (child.baseName = 'maxValueElementDefinition') then
+        result.maxValue := ParseElementDefinition(child, path+'/maxValueElementDefinition') {f}
       else if (child.baseName = 'maxValueHumanName') then
         result.maxValue := ParseHumanName(child, path+'/maxValueHumanName') {f}
+      else if (child.baseName = 'maxValueAddress') then
+        result.maxValue := ParseAddress(child, path+'/maxValueAddress') {f}
       else if (child.baseName = 'maxValueMeta') then
         result.maxValue := ParseMeta(child, path+'/maxValueMeta') {f}
       else if (child.baseName = 'maxValueContactPoint') then
@@ -7570,10 +7832,10 @@ begin
     ComposeTime(xml, 'defaultValueTime', TFhirTime(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirOid) {1} then
     ComposeOid(xml, 'defaultValueOid', TFhirOid(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPositiveInt) {1} then
-    ComposePositiveInt(xml, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirString) {1} then
     ComposeString(xml, 'defaultValueString', TFhirString(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPositiveInt) {1} then
+    ComposePositiveInt(xml, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirBoolean) {1} then
     ComposeBoolean(xml, 'defaultValueBoolean', TFhirBoolean(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUuid) {1} then
@@ -7586,32 +7848,32 @@ begin
     ComposeCoding(xml, 'defaultValueCoding', TFhirCoding(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRange) {8} then
     ComposeRange(xml, 'defaultValueRange', TFhirRange(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'defaultValueQuantity', TFhirQuantity(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'defaultValueAttachment', TFhirAttachment(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRatio) {8} then
-    ComposeRatio(xml, 'defaultValueRatio', TFhirRatio(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'defaultValueQuantity', TFhirQuantity(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAnnotation) {8} then
     ComposeAnnotation(xml, 'defaultValueAnnotation', TFhirAnnotation(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRatio) {8} then
+    ComposeRatio(xml, 'defaultValueRatio', TFhirRatio(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'defaultValueSampledData', TFhirSampledData(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirReference) {8} then
-    ComposeReference(xml, 'defaultValueReference', TFhirReference(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCodeableConcept) {8} then
     ComposeCodeableConcept(xml, 'defaultValueCodeableConcept', TFhirCodeableConcept(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirReference) {8} then
+    ComposeReference(xml, 'defaultValueReference', TFhirReference(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirIdentifier) {8} then
     ComposeIdentifier(xml, 'defaultValueIdentifier', TFhirIdentifier(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirSignature) {8} then
     ComposeSignature(xml, 'defaultValueSignature', TFhirSignature(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) {9} then
     ComposeTiming(xml, 'defaultValueTiming', TFhirTiming(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAddress) {9} then
-    ComposeAddress(xml, 'defaultValueAddress', TFhirAddress(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirElementDefinition) {9} then
+    ComposeElementDefinition(xml, 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'defaultValueHumanName', TFhirHumanName(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAddress) {9} then
+    ComposeAddress(xml, 'defaultValueAddress', TFhirAddress(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirMeta) {9} then
     ComposeMeta(xml, 'defaultValueMeta', TFhirMeta(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirContactPoint) {9} then
@@ -7642,10 +7904,10 @@ begin
     ComposeTime(xml, 'fixedTime', TFhirTime(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirOid) {1} then
     ComposeOid(xml, 'fixedOid', TFhirOid(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPositiveInt) {1} then
-    ComposePositiveInt(xml, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirString) {1} then
     ComposeString(xml, 'fixedString', TFhirString(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPositiveInt) {1} then
+    ComposePositiveInt(xml, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirBoolean) {1} then
     ComposeBoolean(xml, 'fixedBoolean', TFhirBoolean(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUuid) {1} then
@@ -7658,32 +7920,32 @@ begin
     ComposeCoding(xml, 'fixedCoding', TFhirCoding(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRange) {8} then
     ComposeRange(xml, 'fixedRange', TFhirRange(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'fixedQuantity', TFhirQuantity(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'fixedAttachment', TFhirAttachment(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRatio) {8} then
-    ComposeRatio(xml, 'fixedRatio', TFhirRatio(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'fixedQuantity', TFhirQuantity(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAnnotation) {8} then
     ComposeAnnotation(xml, 'fixedAnnotation', TFhirAnnotation(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRatio) {8} then
+    ComposeRatio(xml, 'fixedRatio', TFhirRatio(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'fixedSampledData', TFhirSampledData(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirReference) {8} then
-    ComposeReference(xml, 'fixedReference', TFhirReference(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCodeableConcept) {8} then
     ComposeCodeableConcept(xml, 'fixedCodeableConcept', TFhirCodeableConcept(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirReference) {8} then
+    ComposeReference(xml, 'fixedReference', TFhirReference(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirIdentifier) {8} then
     ComposeIdentifier(xml, 'fixedIdentifier', TFhirIdentifier(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirSignature) {8} then
     ComposeSignature(xml, 'fixedSignature', TFhirSignature(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) {9} then
     ComposeTiming(xml, 'fixedTiming', TFhirTiming(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAddress) {9} then
-    ComposeAddress(xml, 'fixedAddress', TFhirAddress(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) {9} then
+    ComposeElementDefinition(xml, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'fixedHumanName', TFhirHumanName(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAddress) {9} then
+    ComposeAddress(xml, 'fixedAddress', TFhirAddress(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirMeta) {9} then
     ComposeMeta(xml, 'fixedMeta', TFhirMeta(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirContactPoint) {9} then
@@ -7712,10 +7974,10 @@ begin
     ComposeTime(xml, 'patternTime', TFhirTime(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirOid) {1} then
     ComposeOid(xml, 'patternOid', TFhirOid(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPositiveInt) {1} then
-    ComposePositiveInt(xml, 'patternPositiveInt', TFhirPositiveInt(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirString) {1} then
     ComposeString(xml, 'patternString', TFhirString(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPositiveInt) {1} then
+    ComposePositiveInt(xml, 'patternPositiveInt', TFhirPositiveInt(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirBoolean) {1} then
     ComposeBoolean(xml, 'patternBoolean', TFhirBoolean(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUuid) {1} then
@@ -7728,32 +7990,32 @@ begin
     ComposeCoding(xml, 'patternCoding', TFhirCoding(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRange) {8} then
     ComposeRange(xml, 'patternRange', TFhirRange(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'patternQuantity', TFhirQuantity(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'patternAttachment', TFhirAttachment(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRatio) {8} then
-    ComposeRatio(xml, 'patternRatio', TFhirRatio(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'patternQuantity', TFhirQuantity(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAnnotation) {8} then
     ComposeAnnotation(xml, 'patternAnnotation', TFhirAnnotation(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRatio) {8} then
+    ComposeRatio(xml, 'patternRatio', TFhirRatio(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'patternSampledData', TFhirSampledData(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirReference) {8} then
-    ComposeReference(xml, 'patternReference', TFhirReference(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCodeableConcept) {8} then
     ComposeCodeableConcept(xml, 'patternCodeableConcept', TFhirCodeableConcept(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirReference) {8} then
+    ComposeReference(xml, 'patternReference', TFhirReference(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirIdentifier) {8} then
     ComposeIdentifier(xml, 'patternIdentifier', TFhirIdentifier(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirSignature) {8} then
     ComposeSignature(xml, 'patternSignature', TFhirSignature(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'patternElementDefinition', TFhirElementDefinition(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) {9} then
     ComposeTiming(xml, 'patternTiming', TFhirTiming(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAddress) {9} then
-    ComposeAddress(xml, 'patternAddress', TFhirAddress(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) {9} then
+    ComposeElementDefinition(xml, 'patternElementDefinition', TFhirElementDefinition(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'patternHumanName', TFhirHumanName(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAddress) {9} then
+    ComposeAddress(xml, 'patternAddress', TFhirAddress(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirMeta) {9} then
     ComposeMeta(xml, 'patternMeta', TFhirMeta(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirContactPoint) {9} then
@@ -7782,10 +8044,10 @@ begin
     ComposeTime(xml, 'exampleTime', TFhirTime(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirOid) {1} then
     ComposeOid(xml, 'exampleOid', TFhirOid(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPositiveInt) {1} then
-    ComposePositiveInt(xml, 'examplePositiveInt', TFhirPositiveInt(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirString) {1} then
     ComposeString(xml, 'exampleString', TFhirString(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPositiveInt) {1} then
+    ComposePositiveInt(xml, 'examplePositiveInt', TFhirPositiveInt(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirBoolean) {1} then
     ComposeBoolean(xml, 'exampleBoolean', TFhirBoolean(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUuid) {1} then
@@ -7798,32 +8060,32 @@ begin
     ComposeCoding(xml, 'exampleCoding', TFhirCoding(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRange) {8} then
     ComposeRange(xml, 'exampleRange', TFhirRange(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'exampleQuantity', TFhirQuantity(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'exampleAttachment', TFhirAttachment(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRatio) {8} then
-    ComposeRatio(xml, 'exampleRatio', TFhirRatio(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'exampleQuantity', TFhirQuantity(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAnnotation) {8} then
     ComposeAnnotation(xml, 'exampleAnnotation', TFhirAnnotation(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRatio) {8} then
+    ComposeRatio(xml, 'exampleRatio', TFhirRatio(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'exampleSampledData', TFhirSampledData(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirReference) {8} then
-    ComposeReference(xml, 'exampleReference', TFhirReference(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCodeableConcept) {8} then
     ComposeCodeableConcept(xml, 'exampleCodeableConcept', TFhirCodeableConcept(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirReference) {8} then
+    ComposeReference(xml, 'exampleReference', TFhirReference(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirIdentifier) {8} then
     ComposeIdentifier(xml, 'exampleIdentifier', TFhirIdentifier(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirSignature) {8} then
     ComposeSignature(xml, 'exampleSignature', TFhirSignature(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'exampleElementDefinition', TFhirElementDefinition(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) {9} then
     ComposeTiming(xml, 'exampleTiming', TFhirTiming(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAddress) {9} then
-    ComposeAddress(xml, 'exampleAddress', TFhirAddress(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) {9} then
+    ComposeElementDefinition(xml, 'exampleElementDefinition', TFhirElementDefinition(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'exampleHumanName', TFhirHumanName(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAddress) {9} then
+    ComposeAddress(xml, 'exampleAddress', TFhirAddress(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirMeta) {9} then
     ComposeMeta(xml, 'exampleMeta', TFhirMeta(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirContactPoint) {9} then
@@ -7852,10 +8114,10 @@ begin
     ComposeTime(xml, 'minValueTime', TFhirTime(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirOid) {1} then
     ComposeOid(xml, 'minValueOid', TFhirOid(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPositiveInt) {1} then
-    ComposePositiveInt(xml, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirString) {1} then
     ComposeString(xml, 'minValueString', TFhirString(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPositiveInt) {1} then
+    ComposePositiveInt(xml, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirBoolean) {1} then
     ComposeBoolean(xml, 'minValueBoolean', TFhirBoolean(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUuid) {1} then
@@ -7868,32 +8130,32 @@ begin
     ComposeCoding(xml, 'minValueCoding', TFhirCoding(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRange) {8} then
     ComposeRange(xml, 'minValueRange', TFhirRange(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'minValueQuantity', TFhirQuantity(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'minValueAttachment', TFhirAttachment(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRatio) {8} then
-    ComposeRatio(xml, 'minValueRatio', TFhirRatio(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'minValueQuantity', TFhirQuantity(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAnnotation) {8} then
     ComposeAnnotation(xml, 'minValueAnnotation', TFhirAnnotation(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRatio) {8} then
+    ComposeRatio(xml, 'minValueRatio', TFhirRatio(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'minValueSampledData', TFhirSampledData(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirReference) {8} then
-    ComposeReference(xml, 'minValueReference', TFhirReference(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCodeableConcept) {8} then
     ComposeCodeableConcept(xml, 'minValueCodeableConcept', TFhirCodeableConcept(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirReference) {8} then
+    ComposeReference(xml, 'minValueReference', TFhirReference(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirIdentifier) {8} then
     ComposeIdentifier(xml, 'minValueIdentifier', TFhirIdentifier(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirSignature) {8} then
     ComposeSignature(xml, 'minValueSignature', TFhirSignature(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) {9} then
     ComposeTiming(xml, 'minValueTiming', TFhirTiming(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAddress) {9} then
-    ComposeAddress(xml, 'minValueAddress', TFhirAddress(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) {9} then
+    ComposeElementDefinition(xml, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'minValueHumanName', TFhirHumanName(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAddress) {9} then
+    ComposeAddress(xml, 'minValueAddress', TFhirAddress(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirMeta) {9} then
     ComposeMeta(xml, 'minValueMeta', TFhirMeta(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirContactPoint) {9} then
@@ -7922,10 +8184,10 @@ begin
     ComposeTime(xml, 'maxValueTime', TFhirTime(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirOid) {1} then
     ComposeOid(xml, 'maxValueOid', TFhirOid(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPositiveInt) {1} then
-    ComposePositiveInt(xml, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirString) {1} then
     ComposeString(xml, 'maxValueString', TFhirString(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPositiveInt) {1} then
+    ComposePositiveInt(xml, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirBoolean) {1} then
     ComposeBoolean(xml, 'maxValueBoolean', TFhirBoolean(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUuid) {1} then
@@ -7938,32 +8200,32 @@ begin
     ComposeCoding(xml, 'maxValueCoding', TFhirCoding(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRange) {8} then
     ComposeRange(xml, 'maxValueRange', TFhirRange(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'maxValueQuantity', TFhirQuantity(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'maxValueAttachment', TFhirAttachment(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRatio) {8} then
-    ComposeRatio(xml, 'maxValueRatio', TFhirRatio(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'maxValueQuantity', TFhirQuantity(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAnnotation) {8} then
     ComposeAnnotation(xml, 'maxValueAnnotation', TFhirAnnotation(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRatio) {8} then
+    ComposeRatio(xml, 'maxValueRatio', TFhirRatio(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'maxValueSampledData', TFhirSampledData(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirReference) {8} then
-    ComposeReference(xml, 'maxValueReference', TFhirReference(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCodeableConcept) {8} then
     ComposeCodeableConcept(xml, 'maxValueCodeableConcept', TFhirCodeableConcept(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirReference) {8} then
+    ComposeReference(xml, 'maxValueReference', TFhirReference(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirIdentifier) {8} then
     ComposeIdentifier(xml, 'maxValueIdentifier', TFhirIdentifier(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirSignature) {8} then
     ComposeSignature(xml, 'maxValueSignature', TFhirSignature(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirTiming) {9} then
     ComposeTiming(xml, 'maxValueTiming', TFhirTiming(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAddress) {9} then
-    ComposeAddress(xml, 'maxValueAddress', TFhirAddress(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirElementDefinition) {9} then
+    ComposeElementDefinition(xml, 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'maxValueHumanName', TFhirHumanName(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAddress) {9} then
+    ComposeAddress(xml, 'maxValueAddress', TFhirAddress(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirMeta) {9} then
     ComposeMeta(xml, 'maxValueMeta', TFhirMeta(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirContactPoint) {9} then
@@ -8004,7 +8266,7 @@ begin
     if jsn.has('path') or jsn.has('_path') then
         result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
     if jsn.has('representation') or jsn.has('_representation') then
-      iterateEnumArray(jsn.vArr['representation'], jsn.vArr['_representation'], jsn.path+'/representation', result.representationList, parseEnum, CODES_TFhirPropertyRepresentationEnum);
+      iterateEnumArray(jsn.vArr['representation'], jsn.vArr['_representation'], jsn.path+'/representation', result.representationList, parseEnum, CODES_TFhirPropertyRepresentationEnum, SYSTEMS_TFhirPropertyRepresentationEnum);
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('label') or jsn.has('_label') then
@@ -8057,10 +8319,10 @@ begin
         result.defaultValue := ParseTime(jsn['defaultValueTime'], jsn.vObj['_defaultValueTime']);
     if jsn.has('defaultValueOid') or jsn.has('_defaultValueOid') then
         result.defaultValue := ParseOid(jsn['defaultValueOid'], jsn.vObj['_defaultValueOid']);
-    if jsn.has('defaultValuePositiveInt') or jsn.has('_defaultValuePositiveInt') then
-        result.defaultValue := ParsePositiveInt(jsn['defaultValuePositiveInt'], jsn.vObj['_defaultValuePositiveInt']);
     if jsn.has('defaultValueString') or jsn.has('_defaultValueString') then
         result.defaultValue := ParseString(jsn['defaultValueString'], jsn.vObj['_defaultValueString']);
+    if jsn.has('defaultValuePositiveInt') or jsn.has('_defaultValuePositiveInt') then
+        result.defaultValue := ParsePositiveInt(jsn['defaultValuePositiveInt'], jsn.vObj['_defaultValuePositiveInt']);
     if jsn.has('defaultValueBoolean') or jsn.has('_defaultValueBoolean') then
         result.defaultValue := ParseBoolean(jsn['defaultValueBoolean'], jsn.vObj['_defaultValueBoolean']);
     if jsn.has('defaultValueUuid') or jsn.has('_defaultValueUuid') then
@@ -8073,32 +8335,32 @@ begin
         result.defaultValue := ParseCoding(jsn.vObj['defaultValueCoding']);
     if jsn.has('defaultValueRange') {a7} then
         result.defaultValue := ParseRange(jsn.vObj['defaultValueRange']);
-    if jsn.has('defaultValueQuantity') {a7} then
-        result.defaultValue := ParseQuantity(jsn.vObj['defaultValueQuantity']);
     if jsn.has('defaultValueAttachment') {a7} then
         result.defaultValue := ParseAttachment(jsn.vObj['defaultValueAttachment']);
-    if jsn.has('defaultValueRatio') {a7} then
-        result.defaultValue := ParseRatio(jsn.vObj['defaultValueRatio']);
+    if jsn.has('defaultValueQuantity') {a7} then
+        result.defaultValue := ParseQuantity(jsn.vObj['defaultValueQuantity']);
     if jsn.has('defaultValueAnnotation') {a7} then
         result.defaultValue := ParseAnnotation(jsn.vObj['defaultValueAnnotation']);
+    if jsn.has('defaultValueRatio') {a7} then
+        result.defaultValue := ParseRatio(jsn.vObj['defaultValueRatio']);
     if jsn.has('defaultValueSampledData') {a7} then
         result.defaultValue := ParseSampledData(jsn.vObj['defaultValueSampledData']);
-    if jsn.has('defaultValueReference') {a7} then
-        result.defaultValue := ParseReference(jsn.vObj['defaultValueReference']);
     if jsn.has('defaultValueCodeableConcept') {a7} then
         result.defaultValue := ParseCodeableConcept(jsn.vObj['defaultValueCodeableConcept']);
+    if jsn.has('defaultValueReference') {a7} then
+        result.defaultValue := ParseReference(jsn.vObj['defaultValueReference']);
     if jsn.has('defaultValueIdentifier') {a7} then
         result.defaultValue := ParseIdentifier(jsn.vObj['defaultValueIdentifier']);
     if jsn.has('defaultValueSignature') {a7} then
         result.defaultValue := ParseSignature(jsn.vObj['defaultValueSignature']);
-    if jsn.has('defaultValueElementDefinition') {a9} then
-        result.defaultValue := ParseElementDefinition(jsn.vObj['defaultValueElementDefinition']);
     if jsn.has('defaultValueTiming') {a9} then
         result.defaultValue := ParseTiming(jsn.vObj['defaultValueTiming']);
-    if jsn.has('defaultValueAddress') {a9} then
-        result.defaultValue := ParseAddress(jsn.vObj['defaultValueAddress']);
+    if jsn.has('defaultValueElementDefinition') {a9} then
+        result.defaultValue := ParseElementDefinition(jsn.vObj['defaultValueElementDefinition']);
     if jsn.has('defaultValueHumanName') {a9} then
         result.defaultValue := ParseHumanName(jsn.vObj['defaultValueHumanName']);
+    if jsn.has('defaultValueAddress') {a9} then
+        result.defaultValue := ParseAddress(jsn.vObj['defaultValueAddress']);
     if jsn.has('defaultValueMeta') {a9} then
         result.defaultValue := ParseMeta(jsn.vObj['defaultValueMeta']);
     if jsn.has('defaultValueContactPoint') {a9} then
@@ -8129,10 +8391,10 @@ begin
         result.fixed := ParseTime(jsn['fixedTime'], jsn.vObj['_fixedTime']);
     if jsn.has('fixedOid') or jsn.has('_fixedOid') then
         result.fixed := ParseOid(jsn['fixedOid'], jsn.vObj['_fixedOid']);
-    if jsn.has('fixedPositiveInt') or jsn.has('_fixedPositiveInt') then
-        result.fixed := ParsePositiveInt(jsn['fixedPositiveInt'], jsn.vObj['_fixedPositiveInt']);
     if jsn.has('fixedString') or jsn.has('_fixedString') then
         result.fixed := ParseString(jsn['fixedString'], jsn.vObj['_fixedString']);
+    if jsn.has('fixedPositiveInt') or jsn.has('_fixedPositiveInt') then
+        result.fixed := ParsePositiveInt(jsn['fixedPositiveInt'], jsn.vObj['_fixedPositiveInt']);
     if jsn.has('fixedBoolean') or jsn.has('_fixedBoolean') then
         result.fixed := ParseBoolean(jsn['fixedBoolean'], jsn.vObj['_fixedBoolean']);
     if jsn.has('fixedUuid') or jsn.has('_fixedUuid') then
@@ -8145,32 +8407,32 @@ begin
         result.fixed := ParseCoding(jsn.vObj['fixedCoding']);
     if jsn.has('fixedRange') {a7} then
         result.fixed := ParseRange(jsn.vObj['fixedRange']);
-    if jsn.has('fixedQuantity') {a7} then
-        result.fixed := ParseQuantity(jsn.vObj['fixedQuantity']);
     if jsn.has('fixedAttachment') {a7} then
         result.fixed := ParseAttachment(jsn.vObj['fixedAttachment']);
-    if jsn.has('fixedRatio') {a7} then
-        result.fixed := ParseRatio(jsn.vObj['fixedRatio']);
+    if jsn.has('fixedQuantity') {a7} then
+        result.fixed := ParseQuantity(jsn.vObj['fixedQuantity']);
     if jsn.has('fixedAnnotation') {a7} then
         result.fixed := ParseAnnotation(jsn.vObj['fixedAnnotation']);
+    if jsn.has('fixedRatio') {a7} then
+        result.fixed := ParseRatio(jsn.vObj['fixedRatio']);
     if jsn.has('fixedSampledData') {a7} then
         result.fixed := ParseSampledData(jsn.vObj['fixedSampledData']);
-    if jsn.has('fixedReference') {a7} then
-        result.fixed := ParseReference(jsn.vObj['fixedReference']);
     if jsn.has('fixedCodeableConcept') {a7} then
         result.fixed := ParseCodeableConcept(jsn.vObj['fixedCodeableConcept']);
+    if jsn.has('fixedReference') {a7} then
+        result.fixed := ParseReference(jsn.vObj['fixedReference']);
     if jsn.has('fixedIdentifier') {a7} then
         result.fixed := ParseIdentifier(jsn.vObj['fixedIdentifier']);
     if jsn.has('fixedSignature') {a7} then
         result.fixed := ParseSignature(jsn.vObj['fixedSignature']);
-    if jsn.has('fixedElementDefinition') {a9} then
-        result.fixed := ParseElementDefinition(jsn.vObj['fixedElementDefinition']);
     if jsn.has('fixedTiming') {a9} then
         result.fixed := ParseTiming(jsn.vObj['fixedTiming']);
-    if jsn.has('fixedAddress') {a9} then
-        result.fixed := ParseAddress(jsn.vObj['fixedAddress']);
+    if jsn.has('fixedElementDefinition') {a9} then
+        result.fixed := ParseElementDefinition(jsn.vObj['fixedElementDefinition']);
     if jsn.has('fixedHumanName') {a9} then
         result.fixed := ParseHumanName(jsn.vObj['fixedHumanName']);
+    if jsn.has('fixedAddress') {a9} then
+        result.fixed := ParseAddress(jsn.vObj['fixedAddress']);
     if jsn.has('fixedMeta') {a9} then
         result.fixed := ParseMeta(jsn.vObj['fixedMeta']);
     if jsn.has('fixedContactPoint') {a9} then
@@ -8199,10 +8461,10 @@ begin
         result.pattern := ParseTime(jsn['patternTime'], jsn.vObj['_patternTime']);
     if jsn.has('patternOid') or jsn.has('_patternOid') then
         result.pattern := ParseOid(jsn['patternOid'], jsn.vObj['_patternOid']);
-    if jsn.has('patternPositiveInt') or jsn.has('_patternPositiveInt') then
-        result.pattern := ParsePositiveInt(jsn['patternPositiveInt'], jsn.vObj['_patternPositiveInt']);
     if jsn.has('patternString') or jsn.has('_patternString') then
         result.pattern := ParseString(jsn['patternString'], jsn.vObj['_patternString']);
+    if jsn.has('patternPositiveInt') or jsn.has('_patternPositiveInt') then
+        result.pattern := ParsePositiveInt(jsn['patternPositiveInt'], jsn.vObj['_patternPositiveInt']);
     if jsn.has('patternBoolean') or jsn.has('_patternBoolean') then
         result.pattern := ParseBoolean(jsn['patternBoolean'], jsn.vObj['_patternBoolean']);
     if jsn.has('patternUuid') or jsn.has('_patternUuid') then
@@ -8215,32 +8477,32 @@ begin
         result.pattern := ParseCoding(jsn.vObj['patternCoding']);
     if jsn.has('patternRange') {a7} then
         result.pattern := ParseRange(jsn.vObj['patternRange']);
-    if jsn.has('patternQuantity') {a7} then
-        result.pattern := ParseQuantity(jsn.vObj['patternQuantity']);
     if jsn.has('patternAttachment') {a7} then
         result.pattern := ParseAttachment(jsn.vObj['patternAttachment']);
-    if jsn.has('patternRatio') {a7} then
-        result.pattern := ParseRatio(jsn.vObj['patternRatio']);
+    if jsn.has('patternQuantity') {a7} then
+        result.pattern := ParseQuantity(jsn.vObj['patternQuantity']);
     if jsn.has('patternAnnotation') {a7} then
         result.pattern := ParseAnnotation(jsn.vObj['patternAnnotation']);
+    if jsn.has('patternRatio') {a7} then
+        result.pattern := ParseRatio(jsn.vObj['patternRatio']);
     if jsn.has('patternSampledData') {a7} then
         result.pattern := ParseSampledData(jsn.vObj['patternSampledData']);
-    if jsn.has('patternReference') {a7} then
-        result.pattern := ParseReference(jsn.vObj['patternReference']);
     if jsn.has('patternCodeableConcept') {a7} then
         result.pattern := ParseCodeableConcept(jsn.vObj['patternCodeableConcept']);
+    if jsn.has('patternReference') {a7} then
+        result.pattern := ParseReference(jsn.vObj['patternReference']);
     if jsn.has('patternIdentifier') {a7} then
         result.pattern := ParseIdentifier(jsn.vObj['patternIdentifier']);
     if jsn.has('patternSignature') {a7} then
         result.pattern := ParseSignature(jsn.vObj['patternSignature']);
-    if jsn.has('patternElementDefinition') {a9} then
-        result.pattern := ParseElementDefinition(jsn.vObj['patternElementDefinition']);
     if jsn.has('patternTiming') {a9} then
         result.pattern := ParseTiming(jsn.vObj['patternTiming']);
-    if jsn.has('patternAddress') {a9} then
-        result.pattern := ParseAddress(jsn.vObj['patternAddress']);
+    if jsn.has('patternElementDefinition') {a9} then
+        result.pattern := ParseElementDefinition(jsn.vObj['patternElementDefinition']);
     if jsn.has('patternHumanName') {a9} then
         result.pattern := ParseHumanName(jsn.vObj['patternHumanName']);
+    if jsn.has('patternAddress') {a9} then
+        result.pattern := ParseAddress(jsn.vObj['patternAddress']);
     if jsn.has('patternMeta') {a9} then
         result.pattern := ParseMeta(jsn.vObj['patternMeta']);
     if jsn.has('patternContactPoint') {a9} then
@@ -8269,10 +8531,10 @@ begin
         result.example := ParseTime(jsn['exampleTime'], jsn.vObj['_exampleTime']);
     if jsn.has('exampleOid') or jsn.has('_exampleOid') then
         result.example := ParseOid(jsn['exampleOid'], jsn.vObj['_exampleOid']);
-    if jsn.has('examplePositiveInt') or jsn.has('_examplePositiveInt') then
-        result.example := ParsePositiveInt(jsn['examplePositiveInt'], jsn.vObj['_examplePositiveInt']);
     if jsn.has('exampleString') or jsn.has('_exampleString') then
         result.example := ParseString(jsn['exampleString'], jsn.vObj['_exampleString']);
+    if jsn.has('examplePositiveInt') or jsn.has('_examplePositiveInt') then
+        result.example := ParsePositiveInt(jsn['examplePositiveInt'], jsn.vObj['_examplePositiveInt']);
     if jsn.has('exampleBoolean') or jsn.has('_exampleBoolean') then
         result.example := ParseBoolean(jsn['exampleBoolean'], jsn.vObj['_exampleBoolean']);
     if jsn.has('exampleUuid') or jsn.has('_exampleUuid') then
@@ -8285,32 +8547,32 @@ begin
         result.example := ParseCoding(jsn.vObj['exampleCoding']);
     if jsn.has('exampleRange') {a7} then
         result.example := ParseRange(jsn.vObj['exampleRange']);
-    if jsn.has('exampleQuantity') {a7} then
-        result.example := ParseQuantity(jsn.vObj['exampleQuantity']);
     if jsn.has('exampleAttachment') {a7} then
         result.example := ParseAttachment(jsn.vObj['exampleAttachment']);
-    if jsn.has('exampleRatio') {a7} then
-        result.example := ParseRatio(jsn.vObj['exampleRatio']);
+    if jsn.has('exampleQuantity') {a7} then
+        result.example := ParseQuantity(jsn.vObj['exampleQuantity']);
     if jsn.has('exampleAnnotation') {a7} then
         result.example := ParseAnnotation(jsn.vObj['exampleAnnotation']);
+    if jsn.has('exampleRatio') {a7} then
+        result.example := ParseRatio(jsn.vObj['exampleRatio']);
     if jsn.has('exampleSampledData') {a7} then
         result.example := ParseSampledData(jsn.vObj['exampleSampledData']);
-    if jsn.has('exampleReference') {a7} then
-        result.example := ParseReference(jsn.vObj['exampleReference']);
     if jsn.has('exampleCodeableConcept') {a7} then
         result.example := ParseCodeableConcept(jsn.vObj['exampleCodeableConcept']);
+    if jsn.has('exampleReference') {a7} then
+        result.example := ParseReference(jsn.vObj['exampleReference']);
     if jsn.has('exampleIdentifier') {a7} then
         result.example := ParseIdentifier(jsn.vObj['exampleIdentifier']);
     if jsn.has('exampleSignature') {a7} then
         result.example := ParseSignature(jsn.vObj['exampleSignature']);
-    if jsn.has('exampleElementDefinition') {a9} then
-        result.example := ParseElementDefinition(jsn.vObj['exampleElementDefinition']);
     if jsn.has('exampleTiming') {a9} then
         result.example := ParseTiming(jsn.vObj['exampleTiming']);
-    if jsn.has('exampleAddress') {a9} then
-        result.example := ParseAddress(jsn.vObj['exampleAddress']);
+    if jsn.has('exampleElementDefinition') {a9} then
+        result.example := ParseElementDefinition(jsn.vObj['exampleElementDefinition']);
     if jsn.has('exampleHumanName') {a9} then
         result.example := ParseHumanName(jsn.vObj['exampleHumanName']);
+    if jsn.has('exampleAddress') {a9} then
+        result.example := ParseAddress(jsn.vObj['exampleAddress']);
     if jsn.has('exampleMeta') {a9} then
         result.example := ParseMeta(jsn.vObj['exampleMeta']);
     if jsn.has('exampleContactPoint') {a9} then
@@ -8339,10 +8601,10 @@ begin
         result.minValue := ParseTime(jsn['minValueTime'], jsn.vObj['_minValueTime']);
     if jsn.has('minValueOid') or jsn.has('_minValueOid') then
         result.minValue := ParseOid(jsn['minValueOid'], jsn.vObj['_minValueOid']);
-    if jsn.has('minValuePositiveInt') or jsn.has('_minValuePositiveInt') then
-        result.minValue := ParsePositiveInt(jsn['minValuePositiveInt'], jsn.vObj['_minValuePositiveInt']);
     if jsn.has('minValueString') or jsn.has('_minValueString') then
         result.minValue := ParseString(jsn['minValueString'], jsn.vObj['_minValueString']);
+    if jsn.has('minValuePositiveInt') or jsn.has('_minValuePositiveInt') then
+        result.minValue := ParsePositiveInt(jsn['minValuePositiveInt'], jsn.vObj['_minValuePositiveInt']);
     if jsn.has('minValueBoolean') or jsn.has('_minValueBoolean') then
         result.minValue := ParseBoolean(jsn['minValueBoolean'], jsn.vObj['_minValueBoolean']);
     if jsn.has('minValueUuid') or jsn.has('_minValueUuid') then
@@ -8355,32 +8617,32 @@ begin
         result.minValue := ParseCoding(jsn.vObj['minValueCoding']);
     if jsn.has('minValueRange') {a7} then
         result.minValue := ParseRange(jsn.vObj['minValueRange']);
-    if jsn.has('minValueQuantity') {a7} then
-        result.minValue := ParseQuantity(jsn.vObj['minValueQuantity']);
     if jsn.has('minValueAttachment') {a7} then
         result.minValue := ParseAttachment(jsn.vObj['minValueAttachment']);
-    if jsn.has('minValueRatio') {a7} then
-        result.minValue := ParseRatio(jsn.vObj['minValueRatio']);
+    if jsn.has('minValueQuantity') {a7} then
+        result.minValue := ParseQuantity(jsn.vObj['minValueQuantity']);
     if jsn.has('minValueAnnotation') {a7} then
         result.minValue := ParseAnnotation(jsn.vObj['minValueAnnotation']);
+    if jsn.has('minValueRatio') {a7} then
+        result.minValue := ParseRatio(jsn.vObj['minValueRatio']);
     if jsn.has('minValueSampledData') {a7} then
         result.minValue := ParseSampledData(jsn.vObj['minValueSampledData']);
-    if jsn.has('minValueReference') {a7} then
-        result.minValue := ParseReference(jsn.vObj['minValueReference']);
     if jsn.has('minValueCodeableConcept') {a7} then
         result.minValue := ParseCodeableConcept(jsn.vObj['minValueCodeableConcept']);
+    if jsn.has('minValueReference') {a7} then
+        result.minValue := ParseReference(jsn.vObj['minValueReference']);
     if jsn.has('minValueIdentifier') {a7} then
         result.minValue := ParseIdentifier(jsn.vObj['minValueIdentifier']);
     if jsn.has('minValueSignature') {a7} then
         result.minValue := ParseSignature(jsn.vObj['minValueSignature']);
-    if jsn.has('minValueElementDefinition') {a9} then
-        result.minValue := ParseElementDefinition(jsn.vObj['minValueElementDefinition']);
     if jsn.has('minValueTiming') {a9} then
         result.minValue := ParseTiming(jsn.vObj['minValueTiming']);
-    if jsn.has('minValueAddress') {a9} then
-        result.minValue := ParseAddress(jsn.vObj['minValueAddress']);
+    if jsn.has('minValueElementDefinition') {a9} then
+        result.minValue := ParseElementDefinition(jsn.vObj['minValueElementDefinition']);
     if jsn.has('minValueHumanName') {a9} then
         result.minValue := ParseHumanName(jsn.vObj['minValueHumanName']);
+    if jsn.has('minValueAddress') {a9} then
+        result.minValue := ParseAddress(jsn.vObj['minValueAddress']);
     if jsn.has('minValueMeta') {a9} then
         result.minValue := ParseMeta(jsn.vObj['minValueMeta']);
     if jsn.has('minValueContactPoint') {a9} then
@@ -8409,10 +8671,10 @@ begin
         result.maxValue := ParseTime(jsn['maxValueTime'], jsn.vObj['_maxValueTime']);
     if jsn.has('maxValueOid') or jsn.has('_maxValueOid') then
         result.maxValue := ParseOid(jsn['maxValueOid'], jsn.vObj['_maxValueOid']);
-    if jsn.has('maxValuePositiveInt') or jsn.has('_maxValuePositiveInt') then
-        result.maxValue := ParsePositiveInt(jsn['maxValuePositiveInt'], jsn.vObj['_maxValuePositiveInt']);
     if jsn.has('maxValueString') or jsn.has('_maxValueString') then
         result.maxValue := ParseString(jsn['maxValueString'], jsn.vObj['_maxValueString']);
+    if jsn.has('maxValuePositiveInt') or jsn.has('_maxValuePositiveInt') then
+        result.maxValue := ParsePositiveInt(jsn['maxValuePositiveInt'], jsn.vObj['_maxValuePositiveInt']);
     if jsn.has('maxValueBoolean') or jsn.has('_maxValueBoolean') then
         result.maxValue := ParseBoolean(jsn['maxValueBoolean'], jsn.vObj['_maxValueBoolean']);
     if jsn.has('maxValueUuid') or jsn.has('_maxValueUuid') then
@@ -8425,32 +8687,32 @@ begin
         result.maxValue := ParseCoding(jsn.vObj['maxValueCoding']);
     if jsn.has('maxValueRange') {a7} then
         result.maxValue := ParseRange(jsn.vObj['maxValueRange']);
-    if jsn.has('maxValueQuantity') {a7} then
-        result.maxValue := ParseQuantity(jsn.vObj['maxValueQuantity']);
     if jsn.has('maxValueAttachment') {a7} then
         result.maxValue := ParseAttachment(jsn.vObj['maxValueAttachment']);
-    if jsn.has('maxValueRatio') {a7} then
-        result.maxValue := ParseRatio(jsn.vObj['maxValueRatio']);
+    if jsn.has('maxValueQuantity') {a7} then
+        result.maxValue := ParseQuantity(jsn.vObj['maxValueQuantity']);
     if jsn.has('maxValueAnnotation') {a7} then
         result.maxValue := ParseAnnotation(jsn.vObj['maxValueAnnotation']);
+    if jsn.has('maxValueRatio') {a7} then
+        result.maxValue := ParseRatio(jsn.vObj['maxValueRatio']);
     if jsn.has('maxValueSampledData') {a7} then
         result.maxValue := ParseSampledData(jsn.vObj['maxValueSampledData']);
-    if jsn.has('maxValueReference') {a7} then
-        result.maxValue := ParseReference(jsn.vObj['maxValueReference']);
     if jsn.has('maxValueCodeableConcept') {a7} then
         result.maxValue := ParseCodeableConcept(jsn.vObj['maxValueCodeableConcept']);
+    if jsn.has('maxValueReference') {a7} then
+        result.maxValue := ParseReference(jsn.vObj['maxValueReference']);
     if jsn.has('maxValueIdentifier') {a7} then
         result.maxValue := ParseIdentifier(jsn.vObj['maxValueIdentifier']);
     if jsn.has('maxValueSignature') {a7} then
         result.maxValue := ParseSignature(jsn.vObj['maxValueSignature']);
-    if jsn.has('maxValueElementDefinition') {a9} then
-        result.maxValue := ParseElementDefinition(jsn.vObj['maxValueElementDefinition']);
     if jsn.has('maxValueTiming') {a9} then
         result.maxValue := ParseTiming(jsn.vObj['maxValueTiming']);
-    if jsn.has('maxValueAddress') {a9} then
-        result.maxValue := ParseAddress(jsn.vObj['maxValueAddress']);
+    if jsn.has('maxValueElementDefinition') {a9} then
+        result.maxValue := ParseElementDefinition(jsn.vObj['maxValueElementDefinition']);
     if jsn.has('maxValueHumanName') {a9} then
         result.maxValue := ParseHumanName(jsn.vObj['maxValueHumanName']);
+    if jsn.has('maxValueAddress') {a9} then
+        result.maxValue := ParseAddress(jsn.vObj['maxValueAddress']);
     if jsn.has('maxValueMeta') {a9} then
         result.maxValue := ParseMeta(jsn.vObj['maxValueMeta']);
     if jsn.has('maxValueContactPoint') {a9} then
@@ -8640,15 +8902,15 @@ begin
     ComposeOidValue(json, 'defaultValueOid', TFhirOid(elem.defaultValue), false);
     ComposeOidProps(json, 'defaultValueOid', TFhirOid(elem.defaultValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPositiveInt) then
-  begin
-    ComposePositiveIntValue(json, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue), false);
-    ComposePositiveIntProps(json, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirString) then
   begin
     ComposeStringValue(json, 'defaultValueString', TFhirString(elem.defaultValue), false);
     ComposeStringProps(json, 'defaultValueString', TFhirString(elem.defaultValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPositiveInt) then
+  begin
+    ComposePositiveIntValue(json, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue), false);
+    ComposePositiveIntProps(json, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirBoolean) then
   begin
@@ -8671,32 +8933,32 @@ begin
     ComposeCoding(json, 'defaultValueCoding', TFhirCoding(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRange) then
     ComposeRange(json, 'defaultValueRange', TFhirRange(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) then
-    ComposeQuantity(json, 'defaultValueQuantity', TFhirQuantity(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAttachment) then
     ComposeAttachment(json, 'defaultValueAttachment', TFhirAttachment(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRatio) then
-    ComposeRatio(json, 'defaultValueRatio', TFhirRatio(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) then
+    ComposeQuantity(json, 'defaultValueQuantity', TFhirQuantity(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAnnotation) then
     ComposeAnnotation(json, 'defaultValueAnnotation', TFhirAnnotation(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRatio) then
+    ComposeRatio(json, 'defaultValueRatio', TFhirRatio(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirSampledData) then
     ComposeSampledData(json, 'defaultValueSampledData', TFhirSampledData(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirReference) then
-    ComposeReference(json, 'defaultValueReference', TFhirReference(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCodeableConcept) then
     ComposeCodeableConcept(json, 'defaultValueCodeableConcept', TFhirCodeableConcept(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirReference) then
+    ComposeReference(json, 'defaultValueReference', TFhirReference(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirIdentifier) then
     ComposeIdentifier(json, 'defaultValueIdentifier', TFhirIdentifier(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirSignature) then
     ComposeSignature(json, 'defaultValueSignature', TFhirSignature(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) then
     ComposeTiming(json, 'defaultValueTiming', TFhirTiming(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAddress) then
-    ComposeAddress(json, 'defaultValueAddress', TFhirAddress(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirElementDefinition) then
+    ComposeElementDefinition(json, 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirHumanName) then
     ComposeHumanName(json, 'defaultValueHumanName', TFhirHumanName(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAddress) then
+    ComposeAddress(json, 'defaultValueAddress', TFhirAddress(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirMeta) then
     ComposeMeta(json, 'defaultValueMeta', TFhirMeta(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirContactPoint) then
@@ -8765,15 +9027,15 @@ begin
     ComposeOidValue(json, 'fixedOid', TFhirOid(elem.fixed), false);
     ComposeOidProps(json, 'fixedOid', TFhirOid(elem.fixed), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPositiveInt) then
-  begin
-    ComposePositiveIntValue(json, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed), false);
-    ComposePositiveIntProps(json, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirString) then
   begin
     ComposeStringValue(json, 'fixedString', TFhirString(elem.fixed), false);
     ComposeStringProps(json, 'fixedString', TFhirString(elem.fixed), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPositiveInt) then
+  begin
+    ComposePositiveIntValue(json, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed), false);
+    ComposePositiveIntProps(json, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirBoolean) then
   begin
@@ -8796,32 +9058,32 @@ begin
     ComposeCoding(json, 'fixedCoding', TFhirCoding(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRange) then
     ComposeRange(json, 'fixedRange', TFhirRange(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) then
-    ComposeQuantity(json, 'fixedQuantity', TFhirQuantity(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAttachment) then
     ComposeAttachment(json, 'fixedAttachment', TFhirAttachment(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRatio) then
-    ComposeRatio(json, 'fixedRatio', TFhirRatio(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) then
+    ComposeQuantity(json, 'fixedQuantity', TFhirQuantity(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAnnotation) then
     ComposeAnnotation(json, 'fixedAnnotation', TFhirAnnotation(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRatio) then
+    ComposeRatio(json, 'fixedRatio', TFhirRatio(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirSampledData) then
     ComposeSampledData(json, 'fixedSampledData', TFhirSampledData(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirReference) then
-    ComposeReference(json, 'fixedReference', TFhirReference(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCodeableConcept) then
     ComposeCodeableConcept(json, 'fixedCodeableConcept', TFhirCodeableConcept(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirReference) then
+    ComposeReference(json, 'fixedReference', TFhirReference(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirIdentifier) then
     ComposeIdentifier(json, 'fixedIdentifier', TFhirIdentifier(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirSignature) then
     ComposeSignature(json, 'fixedSignature', TFhirSignature(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) then
     ComposeTiming(json, 'fixedTiming', TFhirTiming(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAddress) then
-    ComposeAddress(json, 'fixedAddress', TFhirAddress(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) then
+    ComposeElementDefinition(json, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirHumanName) then
     ComposeHumanName(json, 'fixedHumanName', TFhirHumanName(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAddress) then
+    ComposeAddress(json, 'fixedAddress', TFhirAddress(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirMeta) then
     ComposeMeta(json, 'fixedMeta', TFhirMeta(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirContactPoint) then
@@ -8886,15 +9148,15 @@ begin
     ComposeOidValue(json, 'patternOid', TFhirOid(elem.pattern), false);
     ComposeOidProps(json, 'patternOid', TFhirOid(elem.pattern), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPositiveInt) then
-  begin
-    ComposePositiveIntValue(json, 'patternPositiveInt', TFhirPositiveInt(elem.pattern), false);
-    ComposePositiveIntProps(json, 'patternPositiveInt', TFhirPositiveInt(elem.pattern), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirString) then
   begin
     ComposeStringValue(json, 'patternString', TFhirString(elem.pattern), false);
     ComposeStringProps(json, 'patternString', TFhirString(elem.pattern), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPositiveInt) then
+  begin
+    ComposePositiveIntValue(json, 'patternPositiveInt', TFhirPositiveInt(elem.pattern), false);
+    ComposePositiveIntProps(json, 'patternPositiveInt', TFhirPositiveInt(elem.pattern), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirBoolean) then
   begin
@@ -8917,32 +9179,32 @@ begin
     ComposeCoding(json, 'patternCoding', TFhirCoding(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRange) then
     ComposeRange(json, 'patternRange', TFhirRange(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) then
-    ComposeQuantity(json, 'patternQuantity', TFhirQuantity(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAttachment) then
     ComposeAttachment(json, 'patternAttachment', TFhirAttachment(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRatio) then
-    ComposeRatio(json, 'patternRatio', TFhirRatio(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) then
+    ComposeQuantity(json, 'patternQuantity', TFhirQuantity(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAnnotation) then
     ComposeAnnotation(json, 'patternAnnotation', TFhirAnnotation(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRatio) then
+    ComposeRatio(json, 'patternRatio', TFhirRatio(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirSampledData) then
     ComposeSampledData(json, 'patternSampledData', TFhirSampledData(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirReference) then
-    ComposeReference(json, 'patternReference', TFhirReference(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCodeableConcept) then
     ComposeCodeableConcept(json, 'patternCodeableConcept', TFhirCodeableConcept(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirReference) then
+    ComposeReference(json, 'patternReference', TFhirReference(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirIdentifier) then
     ComposeIdentifier(json, 'patternIdentifier', TFhirIdentifier(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirSignature) then
     ComposeSignature(json, 'patternSignature', TFhirSignature(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'patternElementDefinition', TFhirElementDefinition(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) then
     ComposeTiming(json, 'patternTiming', TFhirTiming(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAddress) then
-    ComposeAddress(json, 'patternAddress', TFhirAddress(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) then
+    ComposeElementDefinition(json, 'patternElementDefinition', TFhirElementDefinition(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirHumanName) then
     ComposeHumanName(json, 'patternHumanName', TFhirHumanName(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAddress) then
+    ComposeAddress(json, 'patternAddress', TFhirAddress(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirMeta) then
     ComposeMeta(json, 'patternMeta', TFhirMeta(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirContactPoint) then
@@ -9007,15 +9269,15 @@ begin
     ComposeOidValue(json, 'exampleOid', TFhirOid(elem.example), false);
     ComposeOidProps(json, 'exampleOid', TFhirOid(elem.example), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPositiveInt) then
-  begin
-    ComposePositiveIntValue(json, 'examplePositiveInt', TFhirPositiveInt(elem.example), false);
-    ComposePositiveIntProps(json, 'examplePositiveInt', TFhirPositiveInt(elem.example), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirString) then
   begin
     ComposeStringValue(json, 'exampleString', TFhirString(elem.example), false);
     ComposeStringProps(json, 'exampleString', TFhirString(elem.example), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPositiveInt) then
+  begin
+    ComposePositiveIntValue(json, 'examplePositiveInt', TFhirPositiveInt(elem.example), false);
+    ComposePositiveIntProps(json, 'examplePositiveInt', TFhirPositiveInt(elem.example), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirBoolean) then
   begin
@@ -9038,32 +9300,32 @@ begin
     ComposeCoding(json, 'exampleCoding', TFhirCoding(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRange) then
     ComposeRange(json, 'exampleRange', TFhirRange(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) then
-    ComposeQuantity(json, 'exampleQuantity', TFhirQuantity(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAttachment) then
     ComposeAttachment(json, 'exampleAttachment', TFhirAttachment(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRatio) then
-    ComposeRatio(json, 'exampleRatio', TFhirRatio(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) then
+    ComposeQuantity(json, 'exampleQuantity', TFhirQuantity(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAnnotation) then
     ComposeAnnotation(json, 'exampleAnnotation', TFhirAnnotation(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRatio) then
+    ComposeRatio(json, 'exampleRatio', TFhirRatio(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirSampledData) then
     ComposeSampledData(json, 'exampleSampledData', TFhirSampledData(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirReference) then
-    ComposeReference(json, 'exampleReference', TFhirReference(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCodeableConcept) then
     ComposeCodeableConcept(json, 'exampleCodeableConcept', TFhirCodeableConcept(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirReference) then
+    ComposeReference(json, 'exampleReference', TFhirReference(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirIdentifier) then
     ComposeIdentifier(json, 'exampleIdentifier', TFhirIdentifier(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirSignature) then
     ComposeSignature(json, 'exampleSignature', TFhirSignature(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'exampleElementDefinition', TFhirElementDefinition(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) then
     ComposeTiming(json, 'exampleTiming', TFhirTiming(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAddress) then
-    ComposeAddress(json, 'exampleAddress', TFhirAddress(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) then
+    ComposeElementDefinition(json, 'exampleElementDefinition', TFhirElementDefinition(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirHumanName) then
     ComposeHumanName(json, 'exampleHumanName', TFhirHumanName(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAddress) then
+    ComposeAddress(json, 'exampleAddress', TFhirAddress(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirMeta) then
     ComposeMeta(json, 'exampleMeta', TFhirMeta(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirContactPoint) then
@@ -9128,15 +9390,15 @@ begin
     ComposeOidValue(json, 'minValueOid', TFhirOid(elem.minValue), false);
     ComposeOidProps(json, 'minValueOid', TFhirOid(elem.minValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPositiveInt) then
-  begin
-    ComposePositiveIntValue(json, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue), false);
-    ComposePositiveIntProps(json, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirString) then
   begin
     ComposeStringValue(json, 'minValueString', TFhirString(elem.minValue), false);
     ComposeStringProps(json, 'minValueString', TFhirString(elem.minValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPositiveInt) then
+  begin
+    ComposePositiveIntValue(json, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue), false);
+    ComposePositiveIntProps(json, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirBoolean) then
   begin
@@ -9159,32 +9421,32 @@ begin
     ComposeCoding(json, 'minValueCoding', TFhirCoding(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRange) then
     ComposeRange(json, 'minValueRange', TFhirRange(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) then
-    ComposeQuantity(json, 'minValueQuantity', TFhirQuantity(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAttachment) then
     ComposeAttachment(json, 'minValueAttachment', TFhirAttachment(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRatio) then
-    ComposeRatio(json, 'minValueRatio', TFhirRatio(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) then
+    ComposeQuantity(json, 'minValueQuantity', TFhirQuantity(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAnnotation) then
     ComposeAnnotation(json, 'minValueAnnotation', TFhirAnnotation(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRatio) then
+    ComposeRatio(json, 'minValueRatio', TFhirRatio(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirSampledData) then
     ComposeSampledData(json, 'minValueSampledData', TFhirSampledData(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirReference) then
-    ComposeReference(json, 'minValueReference', TFhirReference(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCodeableConcept) then
     ComposeCodeableConcept(json, 'minValueCodeableConcept', TFhirCodeableConcept(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirReference) then
+    ComposeReference(json, 'minValueReference', TFhirReference(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirIdentifier) then
     ComposeIdentifier(json, 'minValueIdentifier', TFhirIdentifier(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirSignature) then
     ComposeSignature(json, 'minValueSignature', TFhirSignature(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) then
     ComposeTiming(json, 'minValueTiming', TFhirTiming(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAddress) then
-    ComposeAddress(json, 'minValueAddress', TFhirAddress(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) then
+    ComposeElementDefinition(json, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirHumanName) then
     ComposeHumanName(json, 'minValueHumanName', TFhirHumanName(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAddress) then
+    ComposeAddress(json, 'minValueAddress', TFhirAddress(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirMeta) then
     ComposeMeta(json, 'minValueMeta', TFhirMeta(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirContactPoint) then
@@ -9249,15 +9511,15 @@ begin
     ComposeOidValue(json, 'maxValueOid', TFhirOid(elem.maxValue), false);
     ComposeOidProps(json, 'maxValueOid', TFhirOid(elem.maxValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPositiveInt) then
-  begin
-    ComposePositiveIntValue(json, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue), false);
-    ComposePositiveIntProps(json, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirString) then
   begin
     ComposeStringValue(json, 'maxValueString', TFhirString(elem.maxValue), false);
     ComposeStringProps(json, 'maxValueString', TFhirString(elem.maxValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPositiveInt) then
+  begin
+    ComposePositiveIntValue(json, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue), false);
+    ComposePositiveIntProps(json, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirBoolean) then
   begin
@@ -9280,32 +9542,32 @@ begin
     ComposeCoding(json, 'maxValueCoding', TFhirCoding(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRange) then
     ComposeRange(json, 'maxValueRange', TFhirRange(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) then
-    ComposeQuantity(json, 'maxValueQuantity', TFhirQuantity(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAttachment) then
     ComposeAttachment(json, 'maxValueAttachment', TFhirAttachment(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRatio) then
-    ComposeRatio(json, 'maxValueRatio', TFhirRatio(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) then
+    ComposeQuantity(json, 'maxValueQuantity', TFhirQuantity(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAnnotation) then
     ComposeAnnotation(json, 'maxValueAnnotation', TFhirAnnotation(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRatio) then
+    ComposeRatio(json, 'maxValueRatio', TFhirRatio(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirSampledData) then
     ComposeSampledData(json, 'maxValueSampledData', TFhirSampledData(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirReference) then
-    ComposeReference(json, 'maxValueReference', TFhirReference(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCodeableConcept) then
     ComposeCodeableConcept(json, 'maxValueCodeableConcept', TFhirCodeableConcept(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirReference) then
+    ComposeReference(json, 'maxValueReference', TFhirReference(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirIdentifier) then
     ComposeIdentifier(json, 'maxValueIdentifier', TFhirIdentifier(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirSignature) then
     ComposeSignature(json, 'maxValueSignature', TFhirSignature(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirTiming) then
     ComposeTiming(json, 'maxValueTiming', TFhirTiming(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAddress) then
-    ComposeAddress(json, 'maxValueAddress', TFhirAddress(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirElementDefinition) then
+    ComposeElementDefinition(json, 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirHumanName) then
     ComposeHumanName(json, 'maxValueHumanName', TFhirHumanName(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAddress) then
+    ComposeAddress(json, 'maxValueAddress', TFhirAddress(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirMeta) then
     ComposeMeta(json, 'maxValueMeta', TFhirMeta(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirContactPoint) then
@@ -9360,468 +9622,6 @@ begin
       ComposeElementDefinitionMapping(json, '', elem.mappingList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseTimingRepeat(element : IXmlDomElement; path : string) : TFhirTimingRepeat;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirTimingRepeat.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'boundsQuantity') then
-        result.bounds := ParseDuration(child, path+'/boundsDuration'){x.3}
-      else if (child.baseName = 'boundsRange') then
-        result.bounds := ParseRange(child, path+'/boundsRange'){x.3}
-      else if (child.baseName = 'boundsPeriod') then
-        result.bounds := ParsePeriod(child, path+'/boundsPeriod'){x.3}
-      else if (child.baseName = 'count') then
-        result.countElement := ParseInteger(child, path+'/count') {b}
-      else if (child.baseName = 'duration') then
-        result.durationElement := ParseDecimal(child, path+'/duration') {b}
-      else if (child.baseName = 'durationMax') then
-        result.durationMaxElement := ParseDecimal(child, path+'/durationMax') {b}
-      else if (child.baseName = 'durationUnits') then
-        result.durationUnitsElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, path+'/durationUnits', child){1a}
-      else if (child.baseName = 'frequency') then
-        result.frequencyElement := ParseInteger(child, path+'/frequency') {b}
-      else if (child.baseName = 'frequencyMax') then
-        result.frequencyMaxElement := ParseInteger(child, path+'/frequencyMax') {b}
-      else if (child.baseName = 'period') then
-        result.periodElement := ParseDecimal(child, path+'/period') {b}
-      else if (child.baseName = 'periodMax') then
-        result.periodMaxElement := ParseDecimal(child, path+'/periodMax') {b}
-      else if (child.baseName = 'periodUnits') then
-        result.periodUnitsElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, path+'/periodUnits', child){1a}
-      else if (child.baseName = 'when') then
-        result.whenElement := ParseEnum(CODES_TFhirEventTimingEnum, path+'/when', child){1a}
-      else if Not ParseElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeTimingRepeat(xml : TXmlBuilder; name : string; elem : TFhirTimingRepeat);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) {6} then
-    ComposeDuration(xml, 'boundsQuantity', TFhirQuantity(elem.bounds))
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) {6} then
-    ComposeRange(xml, 'boundsRange', TFhirRange(elem.bounds))
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) {6} then
-    ComposePeriod(xml, 'boundsPeriod', TFhirPeriod(elem.bounds));
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeInteger(xml, 'count', elem.countElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimal(xml, 'duration', elem.durationElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimal(xml, 'durationMax', elem.durationMaxElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeInteger(xml, 'frequency', elem.frequencyElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeInteger(xml, 'frequencyMax', elem.frequencyMaxElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimal(xml, 'period', elem.periodElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimal(xml, 'periodMax', elem.periodMaxElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseTimingRepeat(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat;
-begin
-  result := TFhirTimingRepeat.create;
-  try
-    ParseElementProperties(jsn, result);
-    if jsn.has('boundsQuantity') {a4} then
-      result.bounds := ParseDuration(jsn.vObj['boundsQuantity']);
-    if jsn.has('boundsRange') {a4} then
-      result.bounds := ParseRange(jsn.vObj['boundsRange']);
-    if jsn.has('boundsPeriod') {a4} then
-      result.bounds := ParsePeriod(jsn.vObj['boundsPeriod']);
-    if jsn.has('count') or jsn.has('_count') then
-        result.countElement := ParseInteger(jsn['count'], jsn.vObj['_count']);{q}
-    if jsn.has('duration') or jsn.has('_duration') then
-        result.durationElement := ParseDecimal(jsn['duration'], jsn.vObj['_duration']);{q}
-    if jsn.has('durationMax') or jsn.has('_durationMax') then
-        result.durationMaxElement := ParseDecimal(jsn['durationMax'], jsn.vObj['_durationMax']);{q}
-    if jsn.has('durationUnits') or jsn.has('_durationUnits')  then
-      result.durationUnitsElement := parseEnum(jsn.path+'/durationUnits', jsn['durationUnits'], jsn.vObj['_durationUnits'], CODES_TFhirUnitsOfTimeEnum);
-    if jsn.has('frequency') or jsn.has('_frequency') then
-        result.frequencyElement := ParseInteger(jsn['frequency'], jsn.vObj['_frequency']);{q}
-    if jsn.has('frequencyMax') or jsn.has('_frequencyMax') then
-        result.frequencyMaxElement := ParseInteger(jsn['frequencyMax'], jsn.vObj['_frequencyMax']);{q}
-    if jsn.has('period') or jsn.has('_period') then
-        result.periodElement := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
-    if jsn.has('periodMax') or jsn.has('_periodMax') then
-        result.periodMaxElement := ParseDecimal(jsn['periodMax'], jsn.vObj['_periodMax']);{q}
-    if jsn.has('periodUnits') or jsn.has('_periodUnits')  then
-      result.periodUnitsElement := parseEnum(jsn.path+'/periodUnits', jsn['periodUnits'], jsn.vObj['_periodUnits'], CODES_TFhirUnitsOfTimeEnum);
-    if jsn.has('when') or jsn.has('_when')  then
-      result.whenElement := parseEnum(jsn.path+'/when', jsn['when'], jsn.vObj['_when'], CODES_TFhirEventTimingEnum);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) then 
-    ComposeDuration(json, 'boundsQuantity', TFhirQuantity(elem.bounds)) 
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) then 
-    ComposeRange(json, 'boundsRange', TFhirRange(elem.bounds)) 
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) then 
-    ComposePeriod(json, 'boundsPeriod', TFhirPeriod(elem.bounds)) ;
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeIntegerValue(json, 'count', elem.countElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeIntegerProps(json, 'count', elem.countElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimalValue(json, 'duration', elem.durationElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimalProps(json, 'duration', elem.durationElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimalValue(json, 'durationMax', elem.durationMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimalProps(json, 'durationMax', elem.durationMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeIntegerValue(json, 'frequency', elem.frequencyElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeIntegerProps(json, 'frequency', elem.frequencyElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeIntegerValue(json, 'frequencyMax', elem.frequencyMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeIntegerProps(json, 'frequencyMax', elem.frequencyMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimalValue(json, 'period', elem.periodElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimalProps(json, 'period', elem.periodElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimalValue(json, 'periodMax', elem.periodMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeDecimalProps(json, 'periodMax', elem.periodMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, false);
-  if not noObj then json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseTiming(element : IXmlDomElement; path : string) : TFhirTiming;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirTiming.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'event') then
-        result.eventList.Add(ParseDateTime(child, path+'/event')){y.2}
-      else if (child.baseName = 'repeat') then
-        result.repeat_ := ParseTimingRepeat(child, path+'/repeat') {b}
-      else if (child.baseName = 'code') then
-        result.code := ParseCodeableConcept(child, path+'/code') {b}
-      else if Not ParseElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeTiming(xml : TXmlBuilder; name : string; elem : TFhirTiming);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeElementChildren(xml, elem);
-  if SummaryOption in [soFull, soSummary, soText, soData] then
-    for i := 0 to elem.eventList.Count - 1 do
-      ComposeDateTime(xml, 'event', elem.eventList[i]);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeTimingRepeat(xml, 'repeat', elem.repeat_);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeCodeableConcept(xml, 'code', elem.code);{x.2}
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseTiming(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseTiming(jsn : TJsonObject) : TFhirTiming;
-begin
-  result := TFhirTiming.create;
-  try
-    ParseElementProperties(jsn, result);
-      if jsn.has('event') or jsn.has('_event') then
-      iteratePrimitiveArray(jsn.vArr['event'], jsn.vArr['_event'], result.eventList, parseDateTime);
-    if jsn.has('repeat') then
-        result.repeat_ := ParseTimingRepeat(jsn.vObj['repeat']);{q}
-    if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.eventList.Count > 0) then
-  begin
-    json.valueArray('event');
-    ext := false;
-    for i := 0 to elem.eventList.Count - 1 do
-    begin
-      ext := ext or ((elem.eventList[i].id <> '') or (elem.eventList[i].hasExtensionList));
-      ComposeDateTimeValue(json, '',elem.eventList[i], true);
-    end;
-    json.FinishArray;
-    if ext then
-    begin
-      json.valueArray('_event');
-      for i := 0 to elem.eventList.Count - 1 do
-        ComposeDateTimeProps(json, '',elem.eventList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeTimingRepeat(json, 'repeat', elem.repeat_); {a}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not noObj then json.finishObject;
-end;
-
-function TFHIRXmlParser.ParseAddress(element : IXmlDomElement; path : string) : TFhirAddress;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirAddress.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if (child.baseName = 'use') then
-        result.useElement := ParseEnum(CODES_TFhirAddressUseEnum, path+'/use', child){1a}
-      else if (child.baseName = 'type') then
-        result.type_Element := ParseEnum(CODES_TFhirAddressTypeEnum, path+'/type', child){1a}
-      else if (child.baseName = 'text') then
-        result.textElement := ParseString(child, path+'/text') {b}
-      else if (child.baseName = 'line') then
-        result.lineList.Add(ParseString(child, path+'/line')){y.2}
-      else if (child.baseName = 'city') then
-        result.cityElement := ParseString(child, path+'/city') {b}
-      else if (child.baseName = 'district') then
-        result.districtElement := ParseString(child, path+'/district') {b}
-      else if (child.baseName = 'state') then
-        result.stateElement := ParseString(child, path+'/state') {b}
-      else if (child.baseName = 'postalCode') then
-        result.postalCodeElement := ParseString(child, path+'/postalCode') {b}
-      else if (child.baseName = 'country') then
-        result.countryElement := ParseString(child, path+'/country') {b}
-      else if (child.baseName = 'period') then
-        result.period := ParsePeriod(child, path+'/period') {b}
-      else if Not ParseElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRXmlComposer.ComposeAddress(xml : TXmlBuilder; name : string; elem : TFhirAddress);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirAddressUseEnum);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirAddressTypeEnum);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'text', elem.textElement);{x.2}
-  if SummaryOption in [soFull, soSummary, soText, soData] then
-    for i := 0 to elem.lineList.Count - 1 do
-      ComposeString(xml, 'line', elem.lineList[i]);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'city', elem.cityElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'district', elem.districtElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'state', elem.stateElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'postalCode', elem.postalCodeElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeString(xml, 'country', elem.countryElement);{x.2}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposePeriod(xml, 'period', elem.period);{x.2}
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRJsonParser.ParseAddress(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseAddress(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseAddress(jsn : TJsonObject) : TFhirAddress;
-begin
-  result := TFhirAddress.create;
-  try
-    ParseElementProperties(jsn, result);
-    if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirAddressUseEnum);
-    if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAddressTypeEnum);
-    if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
-      if jsn.has('line') or jsn.has('_line') then
-      iteratePrimitiveArray(jsn.vArr['line'], jsn.vArr['_line'], result.lineList, parseString);
-    if jsn.has('city') or jsn.has('_city') then
-        result.cityElement := ParseString(jsn['city'], jsn.vObj['_city']);{q}
-    if jsn.has('district') or jsn.has('_district') then
-        result.districtElement := ParseString(jsn['district'], jsn.vObj['_district']);{q}
-    if jsn.has('state') or jsn.has('_state') then
-        result.stateElement := ParseString(jsn['state'], jsn.vObj['_state']);{q}
-    if jsn.has('postalCode') or jsn.has('_postalCode') then
-        result.postalCodeElement := ParseString(jsn['postalCode'], jsn.vObj['_postalCode']);{q}
-    if jsn.has('country') or jsn.has('_country') then
-        result.countryElement := ParseString(jsn['country'], jsn.vObj['_country']);{q}
-    if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonComposer.ComposeAddress(json : TJSONWriter; name : string; elem : TFhirAddress; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirAddressUseEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirAddressUseEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirAddressTypeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirAddressTypeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'text', elem.textElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'text', elem.textElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.lineList.Count > 0) then
-  begin
-    json.valueArray('line');
-    ext := false;
-    for i := 0 to elem.lineList.Count - 1 do
-    begin
-      ext := ext or ((elem.lineList[i].id <> '') or (elem.lineList[i].hasExtensionList));
-      ComposeStringValue(json, '',elem.lineList[i], true);
-    end;
-    json.FinishArray;
-    if ext then
-    begin
-      json.valueArray('_line');
-      for i := 0 to elem.lineList.Count - 1 do
-        ComposeStringProps(json, '',elem.lineList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'city', elem.cityElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'city', elem.cityElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'district', elem.districtElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'district', elem.districtElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'state', elem.stateElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'state', elem.stateElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'postalCode', elem.postalCodeElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'postalCode', elem.postalCodeElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringValue(json, 'country', elem.countryElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeStringProps(json, 'country', elem.countryElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposePeriod(json, 'period', elem.period); {a}
   if not noObj then json.finishObject;
 end;
 
@@ -9903,7 +9703,7 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirNameUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirNameUseEnum, SYSTEMS_TFhirNameUseEnum);
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
       if jsn.has('family') or jsn.has('_family') then
@@ -10011,6 +9811,182 @@ begin
       json.FinishArray;
     end;
   end;
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposePeriod(json, 'period', elem.period); {a}
+  if not noObj then json.finishObject;
+end;
+
+function TFHIRXmlParser.ParseAddress(element : IXmlDomElement; path : string) : TFhirAddress;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirAddress.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if (child.baseName = 'use') then
+        result.useElement := ParseEnum(CODES_TFhirAddressUseEnum, path+'/use', child){1a}
+      else if (child.baseName = 'type') then
+        result.type_Element := ParseEnum(CODES_TFhirAddressTypeEnum, path+'/type', child){1a}
+      else if (child.baseName = 'text') then
+        result.textElement := ParseString(child, path+'/text') {b}
+      else if (child.baseName = 'line') then
+        result.lineList.Add(ParseString(child, path+'/line')){y.2}
+      else if (child.baseName = 'city') then
+        result.cityElement := ParseString(child, path+'/city') {b}
+      else if (child.baseName = 'district') then
+        result.districtElement := ParseString(child, path+'/district') {b}
+      else if (child.baseName = 'state') then
+        result.stateElement := ParseString(child, path+'/state') {b}
+      else if (child.baseName = 'postalCode') then
+        result.postalCodeElement := ParseString(child, path+'/postalCode') {b}
+      else if (child.baseName = 'country') then
+        result.countryElement := ParseString(child, path+'/country') {b}
+      else if (child.baseName = 'period') then
+        result.period := ParsePeriod(child, path+'/period') {b}
+      else if Not ParseElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRXmlComposer.ComposeAddress(xml : TXmlBuilder; name : string; elem : TFhirAddress);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirAddressUseEnum);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirAddressTypeEnum);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'text', elem.textElement);{x.2}
+  if SummaryOption in [soFull, soSummary, soText, soData] then
+    for i := 0 to elem.lineList.Count - 1 do
+      ComposeString(xml, 'line', elem.lineList[i]);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'city', elem.cityElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'district', elem.districtElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'state', elem.stateElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'postalCode', elem.postalCodeElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeString(xml, 'country', elem.countryElement);{x.2}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposePeriod(xml, 'period', elem.period);{x.2}
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRJsonParser.ParseAddress(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseAddress(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseAddress(jsn : TJsonObject) : TFhirAddress;
+begin
+  result := TFhirAddress.create;
+  try
+    ParseElementProperties(jsn, result);
+    if jsn.has('use') or jsn.has('_use')  then
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirAddressUseEnum, SYSTEMS_TFhirAddressUseEnum);
+    if jsn.has('type') or jsn.has('_type')  then
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAddressTypeEnum, SYSTEMS_TFhirAddressTypeEnum);
+    if jsn.has('text') or jsn.has('_text') then
+        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+      if jsn.has('line') or jsn.has('_line') then
+      iteratePrimitiveArray(jsn.vArr['line'], jsn.vArr['_line'], result.lineList, parseString);
+    if jsn.has('city') or jsn.has('_city') then
+        result.cityElement := ParseString(jsn['city'], jsn.vObj['_city']);{q}
+    if jsn.has('district') or jsn.has('_district') then
+        result.districtElement := ParseString(jsn['district'], jsn.vObj['_district']);{q}
+    if jsn.has('state') or jsn.has('_state') then
+        result.stateElement := ParseString(jsn['state'], jsn.vObj['_state']);{q}
+    if jsn.has('postalCode') or jsn.has('_postalCode') then
+        result.postalCodeElement := ParseString(jsn['postalCode'], jsn.vObj['_postalCode']);{q}
+    if jsn.has('country') or jsn.has('_country') then
+        result.countryElement := ParseString(jsn['country'], jsn.vObj['_country']);{q}
+    if jsn.has('period') then
+        result.period := ParsePeriod(jsn.vObj['period']);{q}
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonComposer.ComposeAddress(json : TJSONWriter; name : string; elem : TFhirAddress; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirAddressUseEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirAddressUseEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirAddressTypeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirAddressTypeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'text', elem.textElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'text', elem.textElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.lineList.Count > 0) then
+  begin
+    json.valueArray('line');
+    ext := false;
+    for i := 0 to elem.lineList.Count - 1 do
+    begin
+      ext := ext or ((elem.lineList[i].id <> '') or (elem.lineList[i].hasExtensionList));
+      ComposeStringValue(json, '',elem.lineList[i], true);
+    end;
+    json.FinishArray;
+    if ext then
+    begin
+      json.valueArray('_line');
+      for i := 0 to elem.lineList.Count - 1 do
+        ComposeStringProps(json, '',elem.lineList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'city', elem.cityElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'city', elem.cityElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'district', elem.districtElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'district', elem.districtElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'state', elem.stateElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'state', elem.stateElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'postalCode', elem.postalCodeElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'postalCode', elem.postalCodeElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringValue(json, 'country', elem.countryElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeStringProps(json, 'country', elem.countryElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
      ComposePeriod(json, 'period', elem.period); {a}
   if not noObj then json.finishObject;
@@ -10216,11 +10192,11 @@ begin
   try
     ParseElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system')  then
-      result.systemElement := parseEnum(jsn.path+'/system', jsn['system'], jsn.vObj['_system'], CODES_TFhirContactPointSystemEnum);
+      result.systemElement := parseEnum(jsn.path+'/system', jsn['system'], jsn.vObj['_system'], CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum);
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirContactPointUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum);
     if jsn.has('rank') or jsn.has('_rank') then
         result.rankElement := ParsePositiveInt(jsn['rank'], jsn.vObj['_rank']);{q}
     if jsn.has('period') then
@@ -10258,126 +10234,6 @@ begin
   if not noObj then json.finishObject;
 end;
 
-function TFHIRXmlParser.ParseAge(element : IXmlDomElement; path : string) : TFhirAge;
-begin
-  result := ParseQuantity(element, path);
-end;
-
-procedure TFHIRXmlComposer.ComposeAge(xml : TXmlBuilder; name : string; elem : TFhirAge);
-begin
-  ComposeQuantity(xml, name, elem);
-end;
-
-function TFHIRJsonParser.ParseAge(jsn : TJsonObject) : TFhirAge;
-begin
-  result := ParseQuantity(jsn);
-end;
-
-procedure TFHIRJsonComposer.ComposeAge(json : TJSONWriter; name : string; elem : TFhirAge; noObj : boolean = false);
-begin
-  ComposeQuantity(json, name, elem, noObj);
-end;
-
-function TFHIRXmlParser.ParseCount(element : IXmlDomElement; path : string) : TFhirCount;
-begin
-  result := ParseQuantity(element, path);
-end;
-
-procedure TFHIRXmlComposer.ComposeCount(xml : TXmlBuilder; name : string; elem : TFhirCount);
-begin
-  ComposeQuantity(xml, name, elem);
-end;
-
-function TFHIRJsonParser.ParseCount(jsn : TJsonObject) : TFhirCount;
-begin
-  result := ParseQuantity(jsn);
-end;
-
-procedure TFHIRJsonComposer.ComposeCount(json : TJSONWriter; name : string; elem : TFhirCount; noObj : boolean = false);
-begin
-  ComposeQuantity(json, name, elem, noObj);
-end;
-
-function TFHIRXmlParser.ParseMoney(element : IXmlDomElement; path : string) : TFhirMoney;
-begin
-  result := ParseQuantity(element, path);
-end;
-
-procedure TFHIRXmlComposer.ComposeMoney(xml : TXmlBuilder; name : string; elem : TFhirMoney);
-begin
-  ComposeQuantity(xml, name, elem);
-end;
-
-function TFHIRJsonParser.ParseMoney(jsn : TJsonObject) : TFhirMoney;
-begin
-  result := ParseQuantity(jsn);
-end;
-
-procedure TFHIRJsonComposer.ComposeMoney(json : TJSONWriter; name : string; elem : TFhirMoney; noObj : boolean = false);
-begin
-  ComposeQuantity(json, name, elem, noObj);
-end;
-
-function TFHIRXmlParser.ParseDistance(element : IXmlDomElement; path : string) : TFhirDistance;
-begin
-  result := ParseQuantity(element, path);
-end;
-
-procedure TFHIRXmlComposer.ComposeDistance(xml : TXmlBuilder; name : string; elem : TFhirDistance);
-begin
-  ComposeQuantity(xml, name, elem);
-end;
-
-function TFHIRJsonParser.ParseDistance(jsn : TJsonObject) : TFhirDistance;
-begin
-  result := ParseQuantity(jsn);
-end;
-
-procedure TFHIRJsonComposer.ComposeDistance(json : TJSONWriter; name : string; elem : TFhirDistance; noObj : boolean = false);
-begin
-  ComposeQuantity(json, name, elem, noObj);
-end;
-
-function TFHIRXmlParser.ParseDuration(element : IXmlDomElement; path : string) : TFhirDuration;
-begin
-  result := ParseQuantity(element, path);
-end;
-
-procedure TFHIRXmlComposer.ComposeDuration(xml : TXmlBuilder; name : string; elem : TFhirDuration);
-begin
-  ComposeQuantity(xml, name, elem);
-end;
-
-function TFHIRJsonParser.ParseDuration(jsn : TJsonObject) : TFhirDuration;
-begin
-  result := ParseQuantity(jsn);
-end;
-
-procedure TFHIRJsonComposer.ComposeDuration(json : TJSONWriter; name : string; elem : TFhirDuration; noObj : boolean = false);
-begin
-  ComposeQuantity(json, name, elem, noObj);
-end;
-
-function TFHIRXmlParser.ParseSimpleQuantity(element : IXmlDomElement; path : string) : TFhirSimpleQuantity;
-begin
-  result := ParseQuantity(element, path);
-end;
-
-procedure TFHIRXmlComposer.ComposeSimpleQuantity(xml : TXmlBuilder; name : string; elem : TFhirSimpleQuantity);
-begin
-  ComposeQuantity(xml, name, elem);
-end;
-
-function TFHIRJsonParser.ParseSimpleQuantity(jsn : TJsonObject) : TFhirSimpleQuantity;
-begin
-  result := ParseQuantity(jsn);
-end;
-
-procedure TFHIRJsonComposer.ComposeSimpleQuantity(json : TJSONWriter; name : string; elem : TFhirSimpleQuantity; noObj : boolean = false);
-begin
-  ComposeQuantity(json, name, elem, noObj);
-end;
-
 function TFHIRXmlParser.ParseAccount(element : IXmlDomElement; path : string) : TFhirAccount;
 var
   child : IXMLDOMElement;
@@ -10395,7 +10251,7 @@ begin
       else if (child.baseName = 'type') then
         result.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.baseName = 'status') then
-        result.statusElement := ParseEnum(CODES_TFhirAccountStatusEnum, path+'/status', child){1a}
+        result.statusElement := ParseCode(child, path+'/status') {b}
       else if (child.baseName = 'activePeriod') then
         result.activePeriod := ParsePeriod(child, path+'/activePeriod') {b}
       else if (child.baseName = 'currency') then
@@ -10439,7 +10295,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeCodeableConcept(xml, 'type', elem.type_);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirAccountStatusEnum);
+     ComposeCode(xml, 'status', elem.statusElement);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposePeriod(xml, 'activePeriod', elem.activePeriod);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -10474,8 +10330,8 @@ begin
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
-    if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAccountStatusEnum);
+    if jsn.has('status') or jsn.has('_status') then
+        result.statusElement := ParseCode(jsn['status'], jsn.vObj['_status']);{q}
     if jsn.has('activePeriod') then
         result.activePeriod := ParsePeriod(jsn.vObj['activePeriod']);{q}
     if jsn.has('currency') then
@@ -10517,9 +10373,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirAccountStatusEnum, false);
+     ComposeCodeValue(json, 'status', elem.statusElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirAccountStatusEnum, false);
+     ComposeCodeProps(json, 'status', elem.statusElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposePeriod(json, 'activePeriod', elem.activePeriod); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -10619,7 +10475,7 @@ begin
     if jsn.has('substance') then
         result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q}
     if jsn.has('certainty') or jsn.has('_certainty')  then
-      result.certaintyElement := parseEnum(jsn.path+'/certainty', jsn['certainty'], jsn.vObj['_certainty'], CODES_TFhirReactionEventCertaintyEnum);
+      result.certaintyElement := parseEnum(jsn.path+'/certainty', jsn['certainty'], jsn.vObj['_certainty'], CODES_TFhirReactionEventCertaintyEnum, SYSTEMS_TFhirReactionEventCertaintyEnum);
     if jsn.has('manifestation') then
       iterateArray(jsn.vArr['manifestation'], result.manifestationList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
@@ -10627,7 +10483,7 @@ begin
     if jsn.has('onset') or jsn.has('_onset') then
         result.onsetElement := ParseDateTime(jsn['onset'], jsn.vObj['_onset']);{q}
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirReactionEventSeverityEnum);
+      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirReactionEventSeverityEnum, SYSTEMS_TFhirReactionEventSeverityEnum);
     if jsn.has('exposureRoute') then
         result.exposureRoute := ParseCodeableConcept(jsn.vObj['exposureRoute']);{q}
     if jsn.has('note') then
@@ -10796,13 +10652,13 @@ begin
     if jsn.has('substance') then
         result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAllergyIntoleranceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAllergyIntoleranceStatusEnum, SYSTEMS_TFhirAllergyIntoleranceStatusEnum);
     if jsn.has('criticality') or jsn.has('_criticality')  then
-      result.criticalityElement := parseEnum(jsn.path+'/criticality', jsn['criticality'], jsn.vObj['_criticality'], CODES_TFhirAllergyIntoleranceCriticalityEnum);
+      result.criticalityElement := parseEnum(jsn.path+'/criticality', jsn['criticality'], jsn.vObj['_criticality'], CODES_TFhirAllergyIntoleranceCriticalityEnum, SYSTEMS_TFhirAllergyIntoleranceCriticalityEnum);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAllergyIntoleranceTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAllergyIntoleranceTypeEnum, SYSTEMS_TFhirAllergyIntoleranceTypeEnum);
     if jsn.has('category') or jsn.has('_category')  then
-      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirAllergyIntoleranceCategoryEnum);
+      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirAllergyIntoleranceCategoryEnum, SYSTEMS_TFhirAllergyIntoleranceCategoryEnum);
     if jsn.has('lastOccurence') or jsn.has('_lastOccurence') then
         result.lastOccurenceElement := ParseDateTime(jsn['lastOccurence'], jsn.vObj['_lastOccurence']);{q}
     if jsn.has('note') then
@@ -10943,9 +10799,9 @@ begin
     if jsn.has('actor') then
         result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q}
     if jsn.has('required') or jsn.has('_required')  then
-      result.requiredElement := parseEnum(jsn.path+'/required', jsn['required'], jsn.vObj['_required'], CODES_TFhirParticipantrequiredEnum);
+      result.requiredElement := parseEnum(jsn.path+'/required', jsn['required'], jsn.vObj['_required'], CODES_TFhirParticipantrequiredEnum, SYSTEMS_TFhirParticipantrequiredEnum);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirParticipationstatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirParticipationstatusEnum, SYSTEMS_TFhirParticipationstatusEnum);
     result.link;
   finally
     result.free;
@@ -11079,7 +10935,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAppointmentstatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAppointmentstatusEnum, SYSTEMS_TFhirAppointmentstatusEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('reason') then
@@ -11260,7 +11116,7 @@ begin
     if jsn.has('actor') then
         result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q}
     if jsn.has('participantStatus') or jsn.has('_participantStatus')  then
-      result.participantStatusElement := parseEnum(jsn.path+'/participantStatus', jsn['participantStatus'], jsn.vObj['_participantStatus'], CODES_TFhirParticipantstatusEnum);
+      result.participantStatusElement := parseEnum(jsn.path+'/participantStatus', jsn['participantStatus'], jsn.vObj['_participantStatus'], CODES_TFhirParticipantstatusEnum, SYSTEMS_TFhirParticipantstatusEnum);
     if jsn.has('comment') or jsn.has('_comment') then
         result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
     result.link;
@@ -11552,7 +11408,7 @@ begin
     if jsn.has('address') or jsn.has('_address') then
         result.addressElement := ParseString(jsn['address'], jsn.vObj['_address']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirNetworkTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirNetworkTypeEnum, SYSTEMS_TFhirNetworkTypeEnum);
     result.link;
   finally
     result.free;
@@ -12002,11 +11858,11 @@ begin
     if jsn.has('subtype') then
       iterateArray(jsn.vArr['subtype'], result.subtypeList, parseCoding);
     if jsn.has('action') or jsn.has('_action')  then
-      result.actionElement := parseEnum(jsn.path+'/action', jsn['action'], jsn.vObj['_action'], CODES_TFhirAuditEventActionEnum);
+      result.actionElement := parseEnum(jsn.path+'/action', jsn['action'], jsn.vObj['_action'], CODES_TFhirAuditEventActionEnum, SYSTEMS_TFhirAuditEventActionEnum);
     if jsn.has('recorded') or jsn.has('_recorded') then
         result.recordedElement := ParseInstant(jsn['recorded'], jsn.vObj['_recorded']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirAuditEventOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirAuditEventOutcomeEnum, SYSTEMS_TFhirAuditEventOutcomeEnum);
     if jsn.has('outcomeDesc') or jsn.has('_outcomeDesc') then
         result.outcomeDescElement := ParseString(jsn['outcomeDesc'], jsn.vObj['_outcomeDesc']);{q}
     if jsn.has('purposeOfEvent') then
@@ -12640,7 +12496,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirSearchEntryModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirSearchEntryModeEnum, SYSTEMS_TFhirSearchEntryModeEnum);
     if jsn.has('score') or jsn.has('_score') then
         result.scoreElement := ParseDecimal(jsn['score'], jsn.vObj['_score']);{q}
     result.link;
@@ -12734,7 +12590,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('method') or jsn.has('_method')  then
-      result.methodElement := parseEnum(jsn.path+'/method', jsn['method'], jsn.vObj['_method'], CODES_TFhirHttpVerbEnum);
+      result.methodElement := parseEnum(jsn.path+'/method', jsn['method'], jsn.vObj['_method'], CODES_TFhirHttpVerbEnum, SYSTEMS_TFhirHttpVerbEnum);
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('ifNoneMatch') or jsn.has('_ifNoneMatch') then
@@ -12950,7 +12806,7 @@ begin
   try
     ParseResourceProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirBundleTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirBundleTypeEnum, SYSTEMS_TFhirBundleTypeEnum);
     if jsn.has('total') or jsn.has('_total') then
         result.totalElement := ParseUnsignedInt(jsn['total'], jsn.vObj['_total']);{q}
     if jsn.has('link') then
@@ -13050,7 +12906,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirCarePlanRelationshipEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirCarePlanRelationshipEnum, SYSTEMS_TFhirCarePlanRelationshipEnum);
     if jsn.has('plan') then
         result.plan := ParseReference{TFhirCarePlan}(jsn.vObj['plan']);{q}
     result.link;
@@ -13386,7 +13242,7 @@ begin
     if jsn.has('goal') then
       iterateArray(jsn.vArr['goal'], result.goalList, parseReference{TFhirGoal});
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanActivityStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanActivityStatusEnum, SYSTEMS_TFhirCarePlanActivityStatusEnum);
     if jsn.has('statusReason') then
         result.statusReason := ParseCodeableConcept(jsn.vObj['statusReason']);{q}
     if jsn.has('prohibited') or jsn.has('_prohibited') then
@@ -13616,7 +13472,7 @@ begin
     if jsn.has('subject') then
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanStatusEnum, SYSTEMS_TFhirCarePlanStatusEnum);
     if jsn.has('context') then
         result.context := ParseReference{Resource}(jsn.vObj['context']);{q}
     if jsn.has('period') then
@@ -14988,7 +14844,7 @@ begin
   try
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirClaimTypeLinkEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirClaimTypeLinkEnum, SYSTEMS_TFhirClaimTypeLinkEnum);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
@@ -15006,7 +14862,7 @@ begin
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirClaimUseLinkEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirClaimUseLinkEnum, SYSTEMS_TFhirClaimUseLinkEnum);
     if jsn.has('priority') then
         result.priority := ParseCoding(jsn.vObj['priority']);{q}
     if jsn.has('fundsReserve') then
@@ -16709,7 +16565,7 @@ begin
     if jsn.has('requestOrganization') then
         result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('payeeType') then
@@ -17214,7 +17070,7 @@ begin
     if jsn.has('assessor') then
         result.assessor := ParseReference{TFhirPractitioner}(jsn.vObj['assessor']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirClinicalImpressionStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirClinicalImpressionStatusEnum, SYSTEMS_TFhirClinicalImpressionStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -17543,7 +17399,7 @@ begin
     if jsn.has('medium') then
       iterateArray(jsn.vArr['medium'], result.mediumList, parseCodeableConcept);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCommunicationStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCommunicationStatusEnum, SYSTEMS_TFhirCommunicationStatusEnum);
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
     if jsn.has('sent') or jsn.has('_sent') then
@@ -17838,7 +17694,7 @@ begin
     if jsn.has('requester') then
         result.requester := ParseReference{Resource}(jsn.vObj['requester']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCommunicationRequestStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCommunicationRequestStatusEnum, SYSTEMS_TFhirCommunicationRequestStatusEnum);
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
     if jsn.has('scheduledDateTime') or jsn.has('_scheduledDateTime') then
@@ -17989,7 +17845,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode') then
-      iterateEnumArray(jsn.vArr['mode'], jsn.vArr['_mode'], jsn.path+'/mode', result.modeList, parseEnum, CODES_TFhirCompositionAttestationModeEnum);
+      iterateEnumArray(jsn.vArr['mode'], jsn.vArr['_mode'], jsn.path+'/mode', result.modeList, parseEnum, CODES_TFhirCompositionAttestationModeEnum, SYSTEMS_TFhirCompositionAttestationModeEnum);
     if jsn.has('time') or jsn.has('_time') then
         result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
     if jsn.has('party') then
@@ -18220,7 +18076,7 @@ begin
     if jsn.has('text') then
         result.text := ParseNarrative(jsn.vObj['text']);{q}
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum);
     if jsn.has('orderedBy') then
         result.orderedBy := ParseCodeableConcept(jsn.vObj['orderedBy']);{q}
     if jsn.has('entry') then
@@ -18392,9 +18248,9 @@ begin
     if jsn.has('title') or jsn.has('_title') then
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCompositionStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum);
     if jsn.has('confidentiality') or jsn.has('_confidentiality')  then
-      result.confidentialityElement := parseEnum(jsn.path+'/confidentiality', jsn['confidentiality'], jsn.vObj['_confidentiality'], CODES_TFhirV3ConfidentialityEnum);
+      result.confidentialityElement := parseEnum(jsn.path+'/confidentiality', jsn['confidentiality'], jsn.vObj['_confidentiality'], CODES_TFhirV3ConfidentialityEnum, SYSTEMS_TFhirV3ConfidentialityEnum);
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q}
     if jsn.has('author') then
@@ -18738,7 +18594,7 @@ begin
     if jsn.has('code') or jsn.has('_code') then
         result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
     if jsn.has('equivalence') or jsn.has('_equivalence')  then
-      result.equivalenceElement := parseEnum(jsn.path+'/equivalence', jsn['equivalence'], jsn.vObj['_equivalence'], CODES_TFhirConceptMapEquivalenceEnum);
+      result.equivalenceElement := parseEnum(jsn.path+'/equivalence', jsn['equivalence'], jsn.vObj['_equivalence'], CODES_TFhirConceptMapEquivalenceEnum, SYSTEMS_TFhirConceptMapEquivalenceEnum);
     if jsn.has('comments') or jsn.has('_comments') then
         result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
     if jsn.has('dependsOn') then
@@ -19009,7 +18865,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -19321,7 +19177,7 @@ begin
       else if (child.baseName = 'category') then
         result.category := ParseCodeableConcept(child, path+'/category') {b}
       else if (child.baseName = 'clinicalStatus') then
-        result.clinicalStatusElement := ParseEnum(CODES_TFhirValuesetConditionClinicalEnum, path+'/clinicalStatus', child){1a}
+        result.clinicalStatusElement := ParseCode(child, path+'/clinicalStatus') {b}
       else if (child.baseName = 'verificationStatus') then
         result.verificationStatusElement := ParseEnum(CODES_TFhirConditionVerStatusEnum, path+'/verificationStatus', child){1a}
       else if (child.baseName = 'severity') then
@@ -19329,7 +19185,7 @@ begin
       else if (child.baseName = 'onsetDateTime') then
         result.onset := ParseDateTime(child, path+'/onsetDateTime'){x.3}
       else if (child.baseName = 'onsetQuantity') then
-        result.onset := ParseAge(child, path+'/onsetAge'){x.3}
+        result.onset := ParseQuantity(child, path+'/onsetQuantity'){x.3}
       else if (child.baseName = 'onsetPeriod') then
         result.onset := ParsePeriod(child, path+'/onsetPeriod'){x.3}
       else if (child.baseName = 'onsetRange') then
@@ -19339,7 +19195,7 @@ begin
       else if (child.baseName = 'abatementDateTime') then
         result.abatement := ParseDateTime(child, path+'/abatementDateTime'){x.3}
       else if (child.baseName = 'abatementQuantity') then
-        result.abatement := ParseAge(child, path+'/abatementAge'){x.3}
+        result.abatement := ParseQuantity(child, path+'/abatementQuantity'){x.3}
       else if (child.baseName = 'abatementBoolean') then
         result.abatement := ParseBoolean(child, path+'/abatementBoolean'){x.3}
       else if (child.baseName = 'abatementPeriod') then
@@ -19393,7 +19249,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeCodeableConcept(xml, 'category', elem.category);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirValuesetConditionClinicalEnum);
+     ComposeCode(xml, 'clinicalStatus', elem.clinicalStatusElement);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(xml, 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirConditionVerStatusEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -19401,7 +19257,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirDateTime) {6} then
     ComposeDateTime(xml, 'onsetDateTime', TFhirDateTime(elem.onset))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirQuantity) {6} then
-    ComposeAge(xml, 'onsetQuantity', TFhirQuantity(elem.onset))
+    ComposeQuantity(xml, 'onsetQuantity', TFhirQuantity(elem.onset))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirPeriod) {6} then
     ComposePeriod(xml, 'onsetPeriod', TFhirPeriod(elem.onset))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirRange) {6} then
@@ -19411,7 +19267,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.abatement is TFhirDateTime) {6} then
     ComposeDateTime(xml, 'abatementDateTime', TFhirDateTime(elem.abatement))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.abatement is TFhirQuantity) {6} then
-    ComposeAge(xml, 'abatementQuantity', TFhirQuantity(elem.abatement))
+    ComposeQuantity(xml, 'abatementQuantity', TFhirQuantity(elem.abatement))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.abatement is TFhirBoolean) {6} then
     ComposeBoolean(xml, 'abatementBoolean', TFhirBoolean(elem.abatement))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.abatement is TFhirPeriod) {6} then
@@ -19458,16 +19314,16 @@ begin
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
-    if jsn.has('clinicalStatus') or jsn.has('_clinicalStatus')  then
-      result.clinicalStatusElement := parseEnum(jsn.path+'/clinicalStatus', jsn['clinicalStatus'], jsn.vObj['_clinicalStatus'], CODES_TFhirValuesetConditionClinicalEnum);
+    if jsn.has('clinicalStatus') or jsn.has('_clinicalStatus') then
+        result.clinicalStatusElement := ParseCode(jsn['clinicalStatus'], jsn.vObj['_clinicalStatus']);{q}
     if jsn.has('verificationStatus') or jsn.has('_verificationStatus')  then
-      result.verificationStatusElement := parseEnum(jsn.path+'/verificationStatus', jsn['verificationStatus'], jsn.vObj['_verificationStatus'], CODES_TFhirConditionVerStatusEnum);
+      result.verificationStatusElement := parseEnum(jsn.path+'/verificationStatus', jsn['verificationStatus'], jsn.vObj['_verificationStatus'], CODES_TFhirConditionVerStatusEnum, SYSTEMS_TFhirConditionVerStatusEnum);
     if jsn.has('severity') then
         result.severity := ParseCodeableConcept(jsn.vObj['severity']);{q}
     if jsn.has('onsetDateTime') or jsn.has('_onsetDateTime') then
       result.onset := parseDateTime(jsn['onsetDateTime'], jsn.vObj['_onsetDateTime']);
     if jsn.has('onsetQuantity') {a4} then
-      result.onset := ParseAge(jsn.vObj['onsetQuantity']);
+      result.onset := ParseQuantity(jsn.vObj['onsetQuantity']);
     if jsn.has('onsetPeriod') {a4} then
       result.onset := ParsePeriod(jsn.vObj['onsetPeriod']);
     if jsn.has('onsetRange') {a4} then
@@ -19477,7 +19333,7 @@ begin
     if jsn.has('abatementDateTime') or jsn.has('_abatementDateTime') then
       result.abatement := parseDateTime(jsn['abatementDateTime'], jsn.vObj['_abatementDateTime']);
     if jsn.has('abatementQuantity') {a4} then
-      result.abatement := ParseAge(jsn.vObj['abatementQuantity']);
+      result.abatement := ParseQuantity(jsn.vObj['abatementQuantity']);
     if jsn.has('abatementBoolean') or jsn.has('_abatementBoolean') then
       result.abatement := parseBoolean(jsn['abatementBoolean'], jsn.vObj['_abatementBoolean']);
     if jsn.has('abatementPeriod') {a4} then
@@ -19529,9 +19385,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirValuesetConditionClinicalEnum, false);
+     ComposeCodeValue(json, 'clinicalStatus', elem.clinicalStatusElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirValuesetConditionClinicalEnum, false);
+     ComposeCodeProps(json, 'clinicalStatus', elem.clinicalStatusElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirConditionVerStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -19544,7 +19400,7 @@ begin
     ComposeDateTimeProps(json, 'onsetDateTime', TFhirDateTime(elem.onset), false);
   end
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirQuantity) then 
-    ComposeAge(json, 'onsetQuantity', TFhirQuantity(elem.onset)) 
+    ComposeQuantity(json, 'onsetQuantity', TFhirQuantity(elem.onset)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirPeriod) then 
     ComposePeriod(json, 'onsetPeriod', TFhirPeriod(elem.onset)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirRange) then 
@@ -19560,7 +19416,7 @@ begin
     ComposeDateTimeProps(json, 'abatementDateTime', TFhirDateTime(elem.abatement), false);
   end
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.abatement is TFhirQuantity) then 
-    ComposeAge(json, 'abatementQuantity', TFhirQuantity(elem.abatement)) 
+    ComposeQuantity(json, 'abatementQuantity', TFhirQuantity(elem.abatement)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.abatement is TFhirBoolean) then 
   begin
     ComposeBooleanValue(json, 'abatementBoolean', TFhirBoolean(elem.abatement), false);
@@ -19936,7 +19792,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirRestfulConformanceModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirRestfulConformanceModeEnum, SYSTEMS_TFhirRestfulConformanceModeEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('security') then
@@ -19946,7 +19802,7 @@ begin
     if jsn.has('interaction') then
       iterateArray(jsn.vArr['interaction'], result.interactionList, parseConformanceRestInteraction);
     if jsn.has('transactionMode') or jsn.has('_transactionMode')  then
-      result.transactionModeElement := parseEnum(jsn.path+'/transactionMode', jsn['transactionMode'], jsn.vObj['_transactionMode'], CODES_TFhirTransactionModeEnum);
+      result.transactionModeElement := parseEnum(jsn.path+'/transactionMode', jsn['transactionMode'], jsn.vObj['_transactionMode'], CODES_TFhirTransactionModeEnum, SYSTEMS_TFhirTransactionModeEnum);
     if jsn.has('searchParam') then
       iterateArray(jsn.vArr['searchParam'], result.searchParamList, parseConformanceRestResourceSearchParam);
     if jsn.has('operation') then
@@ -20230,7 +20086,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Element := ParseCode(child, path+'/type') {b}
+        result.type_Element := ParseEnum(CODES_TFhirResourceTypesEnum, path+'/type', child){1a}
       else if (child.baseName = 'profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(child, path+'/profile') {b}
       else if (child.baseName = 'interaction') then
@@ -20275,7 +20131,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCode(xml, 'type', elem.type_Element);{x.2}
+     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum);
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirStructureDefinition}(xml, 'profile', elem.profile);{x.2}
   if SummaryOption in [soFull, soData] then
@@ -20316,14 +20172,14 @@ begin
   result := TFhirConformanceRestResource.create;
   try
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') or jsn.has('_type') then
-        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
+    if jsn.has('type') or jsn.has('_type')  then
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
     if jsn.has('interaction') then
       iterateArray(jsn.vArr['interaction'], result.interactionList, parseConformanceRestResourceInteraction);
     if jsn.has('versioning') or jsn.has('_versioning')  then
-      result.versioningElement := parseEnum(jsn.path+'/versioning', jsn['versioning'], jsn.vObj['_versioning'], CODES_TFhirVersioningPolicyEnum);
+      result.versioningElement := parseEnum(jsn.path+'/versioning', jsn['versioning'], jsn.vObj['_versioning'], CODES_TFhirVersioningPolicyEnum, SYSTEMS_TFhirVersioningPolicyEnum);
     if jsn.has('readHistory') or jsn.has('_readHistory') then
         result.readHistoryElement := ParseBoolean(jsn['readHistory'], jsn.vObj['_readHistory']);{q}
     if jsn.has('updateCreate') or jsn.has('_updateCreate') then
@@ -20333,7 +20189,7 @@ begin
     if jsn.has('conditionalUpdate') or jsn.has('_conditionalUpdate') then
         result.conditionalUpdateElement := ParseBoolean(jsn['conditionalUpdate'], jsn.vObj['_conditionalUpdate']);{q}
     if jsn.has('conditionalDelete') or jsn.has('_conditionalDelete')  then
-      result.conditionalDeleteElement := parseEnum(jsn.path+'/conditionalDelete', jsn['conditionalDelete'], jsn.vObj['_conditionalDelete'], CODES_TFhirConditionalDeleteStatusEnum);
+      result.conditionalDeleteElement := parseEnum(jsn.path+'/conditionalDelete', jsn['conditionalDelete'], jsn.vObj['_conditionalDelete'], CODES_TFhirConditionalDeleteStatusEnum, SYSTEMS_TFhirConditionalDeleteStatusEnum);
       if jsn.has('searchInclude') or jsn.has('_searchInclude') then
       iteratePrimitiveArray(jsn.vArr['searchInclude'], jsn.vArr['_searchInclude'], result.searchIncludeList, parseString);
       if jsn.has('searchRevInclude') or jsn.has('_searchRevInclude') then
@@ -20356,9 +20212,9 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeValue(json, 'type', elem.type_Element, false);
+     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeProps(json, 'type', elem.type_Element, false);
+     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirStructureDefinition}(json, 'profile', elem.profile); {a}
   if (SummaryOption in [soFull, soData]) and (elem.interactionList.Count > 0) then
@@ -20490,7 +20346,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirTypeRestfulInteractionEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirTypeRestfulInteractionEnum, SYSTEMS_TFhirTypeRestfulInteractionEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     result.link;
@@ -20535,7 +20391,7 @@ begin
       else if (child.baseName = 'documentation') then
         result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'target') then
-        result.targetList.Add(ParseCode(child, path+'/target')){y.2}
+        result.target.Add(ParseEnum(CODES_TFhirResourceTypesEnum, path+'/target', child)){y.1}
       else if (child.baseName = 'modifier') then
         result.modifierList.Add(ParseEnum(CODES_TFhirSearchModifierCodeEnum, path+'/modifier', child)){y.1}
       else if (child.baseName = 'chain') then
@@ -20570,8 +20426,8 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   if SummaryOption in [soFull, soData] then
-    for i := 0 to elem.targetList.Count - 1 do
-      ComposeCode(xml, 'target', elem.targetList[i]);
+    for i := 0 to elem.target.Count - 1 do
+      ComposeEnum(xml, 'target', elem.target[i], CODES_TFhirResourceTypesEnum);
   if SummaryOption in [soFull, soData] then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeEnum(xml, 'modifier', elem.modifierList[i], CODES_TFhirSearchModifierCodeEnum);
@@ -20597,13 +20453,13 @@ begin
     if jsn.has('definition') or jsn.has('_definition') then
         result.definitionElement := ParseUri(jsn['definition'], jsn.vObj['_definition']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
-      if jsn.has('target') or jsn.has('_target') then
-      iteratePrimitiveArray(jsn.vArr['target'], jsn.vArr['_target'], result.targetList, parseCode);
+    if jsn.has('target') or jsn.has('_target') then
+      iterateEnumArray(jsn.vArr['target'], jsn.vArr['_target'], jsn.path+'/target', result.target, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('modifier') or jsn.has('_modifier') then
-      iterateEnumArray(jsn.vArr['modifier'], jsn.vArr['_modifier'], jsn.path+'/modifier', result.modifierList, parseEnum, CODES_TFhirSearchModifierCodeEnum);
+      iterateEnumArray(jsn.vArr['modifier'], jsn.vArr['_modifier'], jsn.path+'/modifier', result.modifierList, parseEnum, CODES_TFhirSearchModifierCodeEnum, SYSTEMS_TFhirSearchModifierCodeEnum);
       if jsn.has('chain') or jsn.has('_chain') then
       iteratePrimitiveArray(jsn.vArr['chain'], jsn.vArr['_chain'], result.chainList, parseString);
     result.link;
@@ -20637,21 +20493,21 @@ begin
      ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if (SummaryOption in [soFull, soData]) and (elem.targetList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.target.Count > 0) then
   begin
     json.valueArray('target');
     ext := false;
-    for i := 0 to elem.targetList.Count - 1 do
+    for i := 0 to elem.target.Count - 1 do
     begin
-      ext := ext or ((elem.targetList[i].id <> '') or (elem.targetList[i].hasExtensionList));
-      ComposeCodeValue(json, '',elem.targetList[i], true);
+      ext := ext or ((elem.target[i].id <> '') or (elem.target[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.target[i], CODES_TFhirResourceTypesEnum, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_target');
-      for i := 0 to elem.targetList.Count - 1 do
-        ComposeCodeProps(json, '',elem.targetList[i], true);
+      for i := 0 to elem.target.Count - 1 do
+        ComposeEnumProps(json, '', elem.target[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -20746,7 +20602,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirSystemRestfulInteractionEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirSystemRestfulInteractionEnum, SYSTEMS_TFhirSystemRestfulInteractionEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     result.link;
@@ -21051,7 +20907,7 @@ begin
       else if (child.baseName = 'mode') then
         result.modeElement := ParseEnum(CODES_TFhirMessageConformanceEventModeEnum, path+'/mode', child){1a}
       else if (child.baseName = 'focus') then
-        result.focusElement := ParseCode(child, path+'/focus') {b}
+        result.focusElement := ParseEnum(CODES_TFhirResourceTypesEnum, path+'/focus', child){1a}
       else if (child.baseName = 'request') then
         result.request := ParseReference{TFhirStructureDefinition}(child, path+'/request') {b}
       else if (child.baseName = 'response') then
@@ -21084,7 +20940,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeEnum(xml, 'mode', elem.ModeElement, CODES_TFhirMessageConformanceEventModeEnum);
   if (SummaryOption in [soFull, soData]) then
-     ComposeCode(xml, 'focus', elem.focusElement);{x.2}
+     ComposeEnum(xml, 'focus', elem.FocusElement, CODES_TFhirResourceTypesEnum);
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirStructureDefinition}(xml, 'request', elem.request);{x.2}
   if (SummaryOption in [soFull, soData]) then
@@ -21108,11 +20964,11 @@ begin
     if jsn.has('code') then
         result.code := ParseCoding(jsn.vObj['code']);{q}
     if jsn.has('category') or jsn.has('_category')  then
-      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMessageSignificanceCategoryEnum);
+      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMessageSignificanceCategoryEnum, SYSTEMS_TFhirMessageSignificanceCategoryEnum);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirMessageConformanceEventModeEnum);
-    if jsn.has('focus') or jsn.has('_focus') then
-        result.focusElement := ParseCode(jsn['focus'], jsn.vObj['_focus']);{q}
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirMessageConformanceEventModeEnum, SYSTEMS_TFhirMessageConformanceEventModeEnum);
+    if jsn.has('focus') or jsn.has('_focus')  then
+      result.focusElement := parseEnum(jsn.path+'/focus', jsn['focus'], jsn.vObj['_focus'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('request') then
         result.request := ParseReference{TFhirStructureDefinition}(jsn.vObj['request']);{q}
     if jsn.has('response') then
@@ -21142,9 +20998,9 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirMessageConformanceEventModeEnum, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeCodeValue(json, 'focus', elem.focusElement, false);
+     ComposeEnumValue(json, 'focus', elem.FocusElement, CODES_TFhirResourceTypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeCodeProps(json, 'focus', elem.focusElement, false);
+     ComposeEnumProps(json, 'focus', elem.FocusElement, CODES_TFhirResourceTypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirStructureDefinition}(json, 'request', elem.request); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -21212,7 +21068,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirDocumentModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirDocumentModeEnum, SYSTEMS_TFhirDocumentModeEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('profile') then
@@ -21384,7 +21240,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -21400,7 +21256,7 @@ begin
     if jsn.has('copyright') or jsn.has('_copyright') then
         result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirConformanceStatementKindEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirConformanceStatementKindEnum, SYSTEMS_TFhirConformanceStatementKindEnum);
     if jsn.has('software') then
         result.software := ParseConformanceSoftware(jsn.vObj['software']);{q}
     if jsn.has('implementation') then
@@ -21408,7 +21264,7 @@ begin
     if jsn.has('fhirVersion') or jsn.has('_fhirVersion') then
         result.fhirVersionElement := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
     if jsn.has('acceptUnknown') or jsn.has('_acceptUnknown')  then
-      result.acceptUnknownElement := parseEnum(jsn.path+'/acceptUnknown', jsn['acceptUnknown'], jsn.vObj['_acceptUnknown'], CODES_TFhirUnknownContentCodeEnum);
+      result.acceptUnknownElement := parseEnum(jsn.path+'/acceptUnknown', jsn['acceptUnknown'], jsn.vObj['_acceptUnknown'], CODES_TFhirUnknownContentCodeEnum, SYSTEMS_TFhirUnknownContentCodeEnum);
       if jsn.has('format') or jsn.has('_format') then
       iteratePrimitiveArray(jsn.vArr['format'], jsn.vArr['_format'], result.formatList, parseCode);
     if jsn.has('profile') then
@@ -23275,7 +23131,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -23289,7 +23145,7 @@ begin
     if jsn.has('copyright') or jsn.has('_copyright') then
         result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('stringency') or jsn.has('_stringency')  then
-      result.stringencyElement := parseEnum(jsn.path+'/stringency', jsn['stringency'], jsn.vObj['_stringency'], CODES_TFhirDataelementStringencyEnum);
+      result.stringencyElement := parseEnum(jsn.path+'/stringency', jsn['stringency'], jsn.vObj['_stringency'], CODES_TFhirDataelementStringencyEnum, SYSTEMS_TFhirDataelementStringencyEnum);
     if jsn.has('mapping') then
       iterateArray(jsn.vArr['mapping'], result.mappingList, parseDataElementMapping);
     if jsn.has('element') then
@@ -23448,7 +23304,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirCdsRuleTriggerTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirCdsRuleTriggerTypeEnum, SYSTEMS_TFhirCdsRuleTriggerTypeEnum);
     if jsn.has('eventName') or jsn.has('_eventName') then
         result.eventNameElement := ParseString(jsn['eventName'], jsn.vObj['_eventName']);{q}
     if jsn.has('eventTimingTiming') {a4} then
@@ -23525,7 +23381,7 @@ begin
       else if (child.baseName = 'concept') then
         result.conceptList.Add(ParseCodeableConcept(child, path+'/concept')){y.2}
       else if (child.baseName = 'type') then
-        result.type_Element := ParseEnum(CODES_TFhirCdsRuleActionTypeEnum, path+'/type', child){1a}
+        result.type_Element := ParseCode(child, path+'/type') {b}
       else if (child.baseName = 'resource') then
         result.resource := ParseReference{TFhirReference}(child, path+'/resource') {b}
       else if (child.baseName = 'customization') then
@@ -23576,7 +23432,7 @@ begin
     for i := 0 to elem.conceptList.Count - 1 do
       ComposeCodeableConcept(xml, 'concept', elem.conceptList[i]);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirCdsRuleActionTypeEnum);
+     ComposeCode(xml, 'type', elem.type_Element);{x.2}
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirReference}(xml, 'resource', elem.resource);{x.2}
   if SummaryOption in [soFull, soData] then
@@ -23608,7 +23464,7 @@ begin
     if jsn.has('documentation') then
       iterateArray(jsn.vArr['documentation'], result.documentationList, parseAttachment);
     if jsn.has('participantType') or jsn.has('_participantType') then
-      iterateEnumArray(jsn.vArr['participantType'], jsn.vArr['_participantType'], jsn.path+'/participantType', result.participantTypeList, parseEnum, CODES_TFhirCdsRuleParticipantEnum);
+      iterateEnumArray(jsn.vArr['participantType'], jsn.vArr['_participantType'], jsn.path+'/participantType', result.participantTypeList, parseEnum, CODES_TFhirCdsRuleParticipantEnum, SYSTEMS_TFhirCdsRuleParticipantEnum);
     if jsn.has('title') or jsn.has('_title') then
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -23617,8 +23473,8 @@ begin
         result.textEquivalentElement := ParseString(jsn['textEquivalent'], jsn.vObj['_textEquivalent']);{q}
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseCodeableConcept);
-    if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirCdsRuleActionTypeEnum);
+    if jsn.has('type') or jsn.has('_type') then
+        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('resource') then
         result.resource := ParseReference{TFhirReference}(jsn.vObj['resource']);{q}
     if jsn.has('customization') then
@@ -23698,9 +23554,9 @@ begin
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirCdsRuleActionTypeEnum, false);
+     ComposeCodeValue(json, 'type', elem.type_Element, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirCdsRuleActionTypeEnum, false);
+     ComposeCodeProps(json, 'type', elem.type_Element, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirReference}(json, 'resource', elem.resource); {a}
   if (SummaryOption in [soFull, soData]) and (elem.customizationList.Count > 0) then
@@ -24025,11 +23881,11 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseCode(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUseEnum, SYSTEMS_TFhirOperationParameterUseEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum, SYSTEMS_TFhirOperationParameterTypeEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
       if jsn.has('mustSupport') or jsn.has('_mustSupport') then
@@ -24580,7 +24436,7 @@ begin
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirDetectedissueSeverityEnum);
+      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirDetectedissueSeverityEnum, SYSTEMS_TFhirDetectedissueSeverityEnum);
     if jsn.has('implicated') then
       iterateArray(jsn.vArr['implicated'], result.implicatedList, parseReference{TFhirReference});
     if jsn.has('detail') or jsn.has('_detail') then
@@ -24767,7 +24623,7 @@ begin
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDevicestatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDevicestatusEnum, SYSTEMS_TFhirDevicestatusEnum);
     if jsn.has('manufacturer') or jsn.has('_manufacturer') then
         result.manufacturerElement := ParseString(jsn['manufacturer'], jsn.vObj['_manufacturer']);{q}
     if jsn.has('model') or jsn.has('_model') then
@@ -25058,7 +24914,7 @@ begin
     if jsn.has('parameterGroup') then
         result.parameterGroup := ParseCodeableConcept(jsn.vObj['parameterGroup']);{q}
     if jsn.has('measurementPrinciple') or jsn.has('_measurementPrinciple')  then
-      result.measurementPrincipleElement := parseEnum(jsn.path+'/measurementPrinciple', jsn['measurementPrinciple'], jsn.vObj['_measurementPrinciple'], CODES_TFhirMeasurementPrincipleEnum);
+      result.measurementPrincipleElement := parseEnum(jsn.path+'/measurementPrinciple', jsn['measurementPrinciple'], jsn.vObj['_measurementPrinciple'], CODES_TFhirMeasurementPrincipleEnum, SYSTEMS_TFhirMeasurementPrincipleEnum);
     if jsn.has('productionSpecification') then
       iterateArray(jsn.vArr['productionSpecification'], result.productionSpecificationList, parseDeviceComponentProductionSpecification);
     if jsn.has('languageCode') then
@@ -25168,9 +25024,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirMetricCalibrationTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirMetricCalibrationTypeEnum, SYSTEMS_TFhirMetricCalibrationTypeEnum);
     if jsn.has('state') or jsn.has('_state')  then
-      result.stateElement := parseEnum(jsn.path+'/state', jsn['state'], jsn.vObj['_state'], CODES_TFhirMetricCalibrationStateEnum);
+      result.stateElement := parseEnum(jsn.path+'/state', jsn['state'], jsn.vObj['_state'], CODES_TFhirMetricCalibrationStateEnum, SYSTEMS_TFhirMetricCalibrationStateEnum);
     if jsn.has('time') or jsn.has('_time') then
         result.timeElement := ParseInstant(jsn['time'], jsn.vObj['_time']);{q}
     result.link;
@@ -25297,11 +25153,11 @@ begin
     if jsn.has('parent') then
         result.parent := ParseReference{TFhirDeviceComponent}(jsn.vObj['parent']);{q}
     if jsn.has('operationalStatus') or jsn.has('_operationalStatus')  then
-      result.operationalStatusElement := parseEnum(jsn.path+'/operationalStatus', jsn['operationalStatus'], jsn.vObj['_operationalStatus'], CODES_TFhirMetricOperationalStatusEnum);
+      result.operationalStatusElement := parseEnum(jsn.path+'/operationalStatus', jsn['operationalStatus'], jsn.vObj['_operationalStatus'], CODES_TFhirMetricOperationalStatusEnum, SYSTEMS_TFhirMetricOperationalStatusEnum);
     if jsn.has('color') or jsn.has('_color')  then
-      result.colorElement := parseEnum(jsn.path+'/color', jsn['color'], jsn.vObj['_color'], CODES_TFhirMetricColorEnum);
+      result.colorElement := parseEnum(jsn.path+'/color', jsn['color'], jsn.vObj['_color'], CODES_TFhirMetricColorEnum, SYSTEMS_TFhirMetricColorEnum);
     if jsn.has('category') or jsn.has('_category')  then
-      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMetricCategoryEnum);
+      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMetricCategoryEnum, SYSTEMS_TFhirMetricCategoryEnum);
     if jsn.has('measurementPeriod') then
         result.measurementPeriod := ParseTiming(jsn.vObj['measurementPeriod']);{q}
     if jsn.has('calibration') then
@@ -25470,7 +25326,7 @@ begin
     if jsn.has('bodySiteReference') {a3} then
       result.bodySite := ParseReference(jsn.vObj['bodySiteReference']);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDeviceUseRequestStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDeviceUseRequestStatusEnum, SYSTEMS_TFhirDeviceUseRequestStatusEnum);
     if jsn.has('device') then
         result.device := ParseReference{TFhirDevice}(jsn.vObj['device']);{q}
     if jsn.has('encounter') then
@@ -25496,7 +25352,7 @@ begin
     if jsn.has('timingDateTime') or jsn.has('_timingDateTime') then
       result.timing := parseDateTime(jsn['timingDateTime'], jsn.vObj['_timingDateTime']);
     if jsn.has('priority') or jsn.has('_priority')  then
-      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDeviceUseRequestPriorityEnum);
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum);
     result.link;
   finally
     result.free;
@@ -25838,7 +25694,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
     if jsn.has('description') then
         result.description := ParseCodeableConcept(jsn.vObj['description']);{q}
     if jsn.has('dateTime') or jsn.has('_dateTime') then
@@ -25946,7 +25802,7 @@ begin
     if jsn.has('bodySite') then
         result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseDiagnosticOrderEvent);
     result.link;
@@ -26103,9 +25959,9 @@ begin
     if jsn.has('specimen') then
       iterateArray(jsn.vArr['specimen'], result.specimenList, parseReference{TFhirSpecimen});
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
     if jsn.has('priority') or jsn.has('_priority')  then
-      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDiagnosticOrderPriorityEnum);
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDiagnosticOrderPriorityEnum, SYSTEMS_TFhirDiagnosticOrderPriorityEnum);
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseDiagnosticOrderEvent);
     if jsn.has('item') then
@@ -26394,7 +26250,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticReportStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticReportStatusEnum, SYSTEMS_TFhirDiagnosticReportStatusEnum);
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
     if jsn.has('code') then
@@ -26790,7 +26646,7 @@ begin
     if jsn.has('source') or jsn.has('_source') then
         result.sourceElement := ParseUri(jsn['source'], jsn.vObj['_source']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum);
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('content') then
@@ -26921,7 +26777,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirDocumentRelationshipTypeEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirDocumentRelationshipTypeEnum, SYSTEMS_TFhirDocumentRelationshipTypeEnum);
     if jsn.has('target') then
         result.target := ParseReference{TFhirDocumentReference}(jsn.vObj['target']);{q}
     result.link;
@@ -27372,7 +27228,7 @@ begin
     if jsn.has('indexed') or jsn.has('_indexed') then
         result.indexedElement := ParseInstant(jsn['indexed'], jsn.vObj['_indexed']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum);
     if jsn.has('docStatus') then
         result.docStatus := ParseCodeableConcept(jsn.vObj['docStatus']);{q}
     if jsn.has('relatesTo') then
@@ -27815,11 +27671,11 @@ begin
       else if (child.baseName = 'benefitUnsignedInt') then
         result.benefit := ParseUnsignedInt(child, path+'/benefitUnsignedInt'){x.3}
       else if (child.baseName = 'benefitQuantity') then
-        result.benefit := ParseMoney(child, path+'/benefitMoney'){x.3}
+        result.benefit := ParseQuantity(child, path+'/benefitQuantity'){x.3}
       else if (child.baseName = 'benefitUsedUnsignedInt') then
         result.benefitUsed := ParseUnsignedInt(child, path+'/benefitUsedUnsignedInt'){x.3}
       else if (child.baseName = 'benefitUsedQuantity') then
-        result.benefitUsed := ParseMoney(child, path+'/benefitUsedMoney'){x.3}
+        result.benefitUsed := ParseQuantity(child, path+'/benefitUsedQuantity'){x.3}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -27844,11 +27700,11 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefit is TFhirUnsignedInt) {6} then
     ComposeUnsignedInt(xml, 'benefitUnsignedInt', TFhirUnsignedInt(elem.benefit))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefit is TFhirQuantity) {6} then
-    ComposeMoney(xml, 'benefitQuantity', TFhirQuantity(elem.benefit));
+    ComposeQuantity(xml, 'benefitQuantity', TFhirQuantity(elem.benefit));
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefitUsed is TFhirUnsignedInt) {6} then
     ComposeUnsignedInt(xml, 'benefitUsedUnsignedInt', TFhirUnsignedInt(elem.benefitUsed))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefitUsed is TFhirQuantity) {6} then
-    ComposeMoney(xml, 'benefitUsedQuantity', TFhirQuantity(elem.benefitUsed));
+    ComposeQuantity(xml, 'benefitUsedQuantity', TFhirQuantity(elem.benefitUsed));
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -27868,11 +27724,11 @@ begin
     if jsn.has('benefitUnsignedInt') or jsn.has('_benefitUnsignedInt') then
       result.benefit := parseUnsignedInt(jsn['benefitUnsignedInt'], jsn.vObj['_benefitUnsignedInt']);
     if jsn.has('benefitQuantity') {a4} then
-      result.benefit := ParseMoney(jsn.vObj['benefitQuantity']);
+      result.benefit := ParseQuantity(jsn.vObj['benefitQuantity']);
     if jsn.has('benefitUsedUnsignedInt') or jsn.has('_benefitUsedUnsignedInt') then
       result.benefitUsed := parseUnsignedInt(jsn['benefitUsedUnsignedInt'], jsn.vObj['_benefitUsedUnsignedInt']);
     if jsn.has('benefitUsedQuantity') {a4} then
-      result.benefitUsed := ParseMoney(jsn.vObj['benefitUsedQuantity']);
+      result.benefitUsed := ParseQuantity(jsn.vObj['benefitUsedQuantity']);
     result.link;
   finally
     result.free;
@@ -27893,14 +27749,14 @@ begin
     ComposeUnsignedIntProps(json, 'benefitUnsignedInt', TFhirUnsignedInt(elem.benefit), false);
   end
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefit is TFhirQuantity) then 
-    ComposeMoney(json, 'benefitQuantity', TFhirQuantity(elem.benefit)) ;
+    ComposeQuantity(json, 'benefitQuantity', TFhirQuantity(elem.benefit)) ;
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefitUsed is TFhirUnsignedInt) then 
   begin
     ComposeUnsignedIntValue(json, 'benefitUsedUnsignedInt', TFhirUnsignedInt(elem.benefitUsed), false);
     ComposeUnsignedIntProps(json, 'benefitUsedUnsignedInt', TFhirUnsignedInt(elem.benefitUsed), false);
   end
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefitUsed is TFhirQuantity) then 
-    ComposeMoney(json, 'benefitUsedQuantity', TFhirQuantity(elem.benefitUsed)) ;
+    ComposeQuantity(json, 'benefitUsedQuantity', TFhirQuantity(elem.benefitUsed)) ;
   if not noObj then json.finishObject;
 end;
 
@@ -28083,7 +27939,7 @@ begin
     if jsn.has('request') then
         result.request := ParseReference{TFhirEligibilityRequest}(jsn.vObj['request']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
@@ -28228,7 +28084,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum, SYSTEMS_TFhirEncounterStateEnum);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     result.link;
@@ -28582,7 +28438,7 @@ begin
     if jsn.has('location') then
         result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterLocationStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterLocationStatusEnum, SYSTEMS_TFhirEncounterLocationStatusEnum);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     result.link;
@@ -28741,11 +28597,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum, SYSTEMS_TFhirEncounterStateEnum);
     if jsn.has('statusHistory') then
       iterateArray(jsn.vArr['statusHistory'], result.statusHistoryList, parseEncounterStatusHistory);
     if jsn.has('class') or jsn.has('_class')  then
-      result.class_Element := parseEnum(jsn.path+'/class', jsn['class'], jsn.vObj['_class'], CODES_TFhirEncounterClassEnum);
+      result.class_Element := parseEnum(jsn.path+'/class', jsn['class'], jsn.vObj['_class'], CODES_TFhirEncounterClassEnum, SYSTEMS_TFhirEncounterClassEnum);
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('priority') then
@@ -29117,7 +28973,7 @@ begin
     if jsn.has('request') then
         result.request := ParseReference{TFhirEnrollmentRequest}(jsn.vObj['request']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
@@ -29230,7 +29086,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum, SYSTEMS_TFhirEpisodeOfCareStatusEnum);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     result.link;
@@ -29444,7 +29300,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum, SYSTEMS_TFhirEpisodeOfCareStatusEnum);
     if jsn.has('statusHistory') then
       iterateArray(jsn.vArr['statusHistory'], result.statusHistoryList, parseEpisodeOfCareStatusHistory);
     if jsn.has('type') then
@@ -30513,7 +30369,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -32606,11 +32462,11 @@ begin
       else if (child.baseName = 'benefitUnsignedInt') then
         result.benefit := ParseUnsignedInt(child, path+'/benefitUnsignedInt'){x.3}
       else if (child.baseName = 'benefitQuantity') then
-        result.benefit := ParseMoney(child, path+'/benefitMoney'){x.3}
+        result.benefit := ParseQuantity(child, path+'/benefitQuantity'){x.3}
       else if (child.baseName = 'benefitUsedUnsignedInt') then
         result.benefitUsed := ParseUnsignedInt(child, path+'/benefitUsedUnsignedInt'){x.3}
       else if (child.baseName = 'benefitUsedQuantity') then
-        result.benefitUsed := ParseMoney(child, path+'/benefitUsedMoney'){x.3}
+        result.benefitUsed := ParseQuantity(child, path+'/benefitUsedQuantity'){x.3}
       else if Not ParseBackboneElementChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -32635,11 +32491,11 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefit is TFhirUnsignedInt) {6} then
     ComposeUnsignedInt(xml, 'benefitUnsignedInt', TFhirUnsignedInt(elem.benefit))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefit is TFhirQuantity) {6} then
-    ComposeMoney(xml, 'benefitQuantity', TFhirQuantity(elem.benefit));
+    ComposeQuantity(xml, 'benefitQuantity', TFhirQuantity(elem.benefit));
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefitUsed is TFhirUnsignedInt) {6} then
     ComposeUnsignedInt(xml, 'benefitUsedUnsignedInt', TFhirUnsignedInt(elem.benefitUsed))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefitUsed is TFhirQuantity) {6} then
-    ComposeMoney(xml, 'benefitUsedQuantity', TFhirQuantity(elem.benefitUsed));
+    ComposeQuantity(xml, 'benefitUsedQuantity', TFhirQuantity(elem.benefitUsed));
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -32659,11 +32515,11 @@ begin
     if jsn.has('benefitUnsignedInt') or jsn.has('_benefitUnsignedInt') then
       result.benefit := parseUnsignedInt(jsn['benefitUnsignedInt'], jsn.vObj['_benefitUnsignedInt']);
     if jsn.has('benefitQuantity') {a4} then
-      result.benefit := ParseMoney(jsn.vObj['benefitQuantity']);
+      result.benefit := ParseQuantity(jsn.vObj['benefitQuantity']);
     if jsn.has('benefitUsedUnsignedInt') or jsn.has('_benefitUsedUnsignedInt') then
       result.benefitUsed := parseUnsignedInt(jsn['benefitUsedUnsignedInt'], jsn.vObj['_benefitUsedUnsignedInt']);
     if jsn.has('benefitUsedQuantity') {a4} then
-      result.benefitUsed := ParseMoney(jsn.vObj['benefitUsedQuantity']);
+      result.benefitUsed := ParseQuantity(jsn.vObj['benefitUsedQuantity']);
     result.link;
   finally
     result.free;
@@ -32684,14 +32540,14 @@ begin
     ComposeUnsignedIntProps(json, 'benefitUnsignedInt', TFhirUnsignedInt(elem.benefit), false);
   end
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefit is TFhirQuantity) then 
-    ComposeMoney(json, 'benefitQuantity', TFhirQuantity(elem.benefit)) ;
+    ComposeQuantity(json, 'benefitQuantity', TFhirQuantity(elem.benefit)) ;
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefitUsed is TFhirUnsignedInt) then 
   begin
     ComposeUnsignedIntValue(json, 'benefitUsedUnsignedInt', TFhirUnsignedInt(elem.benefitUsed), false);
     ComposeUnsignedIntProps(json, 'benefitUsedUnsignedInt', TFhirUnsignedInt(elem.benefitUsed), false);
   end
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.benefitUsed is TFhirQuantity) then 
-    ComposeMoney(json, 'benefitUsedQuantity', TFhirQuantity(elem.benefitUsed)) ;
+    ComposeQuantity(json, 'benefitUsedQuantity', TFhirQuantity(elem.benefitUsed)) ;
   if not noObj then json.finishObject;
 end;
 
@@ -33238,7 +33094,7 @@ begin
       else if (child.baseName = 'outcome') then
         result.outcome := ParseCodeableConcept(child, path+'/outcome') {b}
       else if (child.baseName = 'onsetQuantity') then
-        result.onset := ParseAge(child, path+'/onsetAge'){x.3}
+        result.onset := ParseQuantity(child, path+'/onsetQuantity'){x.3}
       else if (child.baseName = 'onsetRange') then
         result.onset := ParseRange(child, path+'/onsetRange'){x.3}
       else if (child.baseName = 'onsetPeriod') then
@@ -33271,7 +33127,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeCodeableConcept(xml, 'outcome', elem.outcome);{x.2}
   if (SummaryOption in [soFull, soData]) and (elem.onset is TFhirQuantity) {6} then
-    ComposeAge(xml, 'onsetQuantity', TFhirQuantity(elem.onset))
+    ComposeQuantity(xml, 'onsetQuantity', TFhirQuantity(elem.onset))
   else if (SummaryOption in [soFull, soData]) and (elem.onset is TFhirRange) {6} then
     ComposeRange(xml, 'onsetRange', TFhirRange(elem.onset))
   else if (SummaryOption in [soFull, soData]) and (elem.onset is TFhirPeriod) {6} then
@@ -33299,7 +33155,7 @@ begin
     if jsn.has('outcome') then
         result.outcome := ParseCodeableConcept(jsn.vObj['outcome']);{q}
     if jsn.has('onsetQuantity') {a4} then
-      result.onset := ParseAge(jsn.vObj['onsetQuantity']);
+      result.onset := ParseQuantity(jsn.vObj['onsetQuantity']);
     if jsn.has('onsetRange') {a4} then
       result.onset := ParseRange(jsn.vObj['onsetRange']);
     if jsn.has('onsetPeriod') {a4} then
@@ -33325,7 +33181,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeCodeableConcept(json, 'outcome', elem.outcome); {a}
   if (SummaryOption in [soFull, soData]) and (elem.onset is TFhirQuantity) then 
-    ComposeAge(json, 'onsetQuantity', TFhirQuantity(elem.onset)) 
+    ComposeQuantity(json, 'onsetQuantity', TFhirQuantity(elem.onset)) 
   else if (SummaryOption in [soFull, soData]) and (elem.onset is TFhirRange) then 
     ComposeRange(json, 'onsetRange', TFhirRange(elem.onset)) 
   else if (SummaryOption in [soFull, soData]) and (elem.onset is TFhirPeriod) then 
@@ -33371,7 +33227,7 @@ begin
       else if (child.baseName = 'bornString') then
         result.born := ParseString(child, path+'/bornString'){x.3}
       else if (child.baseName = 'ageQuantity') then
-        result.age := ParseAge(child, path+'/ageAge'){x.3}
+        result.age := ParseQuantity(child, path+'/ageQuantity'){x.3}
       else if (child.baseName = 'ageRange') then
         result.age := ParseRange(child, path+'/ageRange'){x.3}
       else if (child.baseName = 'ageString') then
@@ -33379,7 +33235,7 @@ begin
       else if (child.baseName = 'deceasedBoolean') then
         result.deceased := ParseBoolean(child, path+'/deceasedBoolean'){x.3}
       else if (child.baseName = 'deceasedQuantity') then
-        result.deceased := ParseAge(child, path+'/deceasedAge'){x.3}
+        result.deceased := ParseQuantity(child, path+'/deceasedQuantity'){x.3}
       else if (child.baseName = 'deceasedRange') then
         result.deceased := ParseRange(child, path+'/deceasedRange'){x.3}
       else if (child.baseName = 'deceasedDate') then
@@ -33433,7 +33289,7 @@ begin
   else if (SummaryOption in [soFull, soData]) and (elem.born is TFhirString) {6} then
     ComposeString(xml, 'bornString', TFhirString(elem.born));
   if (SummaryOption in [soFull, soData]) and (elem.age is TFhirQuantity) {6} then
-    ComposeAge(xml, 'ageQuantity', TFhirQuantity(elem.age))
+    ComposeQuantity(xml, 'ageQuantity', TFhirQuantity(elem.age))
   else if (SummaryOption in [soFull, soData]) and (elem.age is TFhirRange) {6} then
     ComposeRange(xml, 'ageRange', TFhirRange(elem.age))
   else if (SummaryOption in [soFull, soData]) and (elem.age is TFhirString) {6} then
@@ -33441,7 +33297,7 @@ begin
   if (SummaryOption in [soFull, soData]) and (elem.deceased is TFhirBoolean) {6} then
     ComposeBoolean(xml, 'deceasedBoolean', TFhirBoolean(elem.deceased))
   else if (SummaryOption in [soFull, soData]) and (elem.deceased is TFhirQuantity) {6} then
-    ComposeAge(xml, 'deceasedQuantity', TFhirQuantity(elem.deceased))
+    ComposeQuantity(xml, 'deceasedQuantity', TFhirQuantity(elem.deceased))
   else if (SummaryOption in [soFull, soData]) and (elem.deceased is TFhirRange) {6} then
     ComposeRange(xml, 'deceasedRange', TFhirRange(elem.deceased))
   else if (SummaryOption in [soFull, soData]) and (elem.deceased is TFhirDate) {6} then
@@ -33474,13 +33330,13 @@ begin
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirHistoryStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirHistoryStatusEnum, SYSTEMS_TFhirHistoryStatusEnum);
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('relationship') then
         result.relationship := ParseCodeableConcept(jsn.vObj['relationship']);{q}
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('bornPeriod') {a4} then
       result.born := ParsePeriod(jsn.vObj['bornPeriod']);
     if jsn.has('bornDate') or jsn.has('_bornDate') then
@@ -33488,7 +33344,7 @@ begin
     if jsn.has('bornString') or jsn.has('_bornString') then
       result.born := parseString(jsn['bornString'], jsn.vObj['_bornString']);
     if jsn.has('ageQuantity') {a4} then
-      result.age := ParseAge(jsn.vObj['ageQuantity']);
+      result.age := ParseQuantity(jsn.vObj['ageQuantity']);
     if jsn.has('ageRange') {a4} then
       result.age := ParseRange(jsn.vObj['ageRange']);
     if jsn.has('ageString') or jsn.has('_ageString') then
@@ -33496,7 +33352,7 @@ begin
     if jsn.has('deceasedBoolean') or jsn.has('_deceasedBoolean') then
       result.deceased := parseBoolean(jsn['deceasedBoolean'], jsn.vObj['_deceasedBoolean']);
     if jsn.has('deceasedQuantity') {a4} then
-      result.deceased := ParseAge(jsn.vObj['deceasedQuantity']);
+      result.deceased := ParseQuantity(jsn.vObj['deceasedQuantity']);
     if jsn.has('deceasedRange') {a4} then
       result.deceased := ParseRange(jsn.vObj['deceasedRange']);
     if jsn.has('deceasedDate') or jsn.has('_deceasedDate') then
@@ -33560,7 +33416,7 @@ begin
     ComposeStringProps(json, 'bornString', TFhirString(elem.born), false);
   end;
   if (SummaryOption in [soFull, soData]) and (elem.age is TFhirQuantity) then 
-    ComposeAge(json, 'ageQuantity', TFhirQuantity(elem.age)) 
+    ComposeQuantity(json, 'ageQuantity', TFhirQuantity(elem.age)) 
   else if (SummaryOption in [soFull, soData]) and (elem.age is TFhirRange) then 
     ComposeRange(json, 'ageRange', TFhirRange(elem.age)) 
   else if (SummaryOption in [soFull, soData]) and (elem.age is TFhirString) then 
@@ -33574,7 +33430,7 @@ begin
     ComposeBooleanProps(json, 'deceasedBoolean', TFhirBoolean(elem.deceased), false);
   end
   else if (SummaryOption in [soFull, soData]) and (elem.deceased is TFhirQuantity) then 
-    ComposeAge(json, 'deceasedQuantity', TFhirQuantity(elem.deceased)) 
+    ComposeQuantity(json, 'deceasedQuantity', TFhirQuantity(elem.deceased)) 
   else if (SummaryOption in [soFull, soData]) and (elem.deceased is TFhirRange) then 
     ComposeRange(json, 'deceasedRange', TFhirRange(elem.deceased)) 
   else if (SummaryOption in [soFull, soData]) and (elem.deceased is TFhirDate) then 
@@ -33681,7 +33537,7 @@ begin
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirFlagStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirFlagStatusEnum, SYSTEMS_TFhirFlagStatusEnum);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q}
     if jsn.has('subject') then
@@ -33825,7 +33681,7 @@ begin
       else if (child.baseName = 'targetDate') then
         result.target := ParseDate(child, path+'/targetDate'){x.3}
       else if (child.baseName = 'targetQuantity') then
-        result.target := ParseDuration(child, path+'/targetDuration'){x.3}
+        result.target := ParseQuantity(child, path+'/targetQuantity'){x.3}
       else if (child.baseName = 'category') then
         result.categoryList.Add(ParseCodeableConcept(child, path+'/category')){y.2}
       else if (child.baseName = 'description') then
@@ -33879,7 +33735,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.target is TFhirDate) {6} then
     ComposeDate(xml, 'targetDate', TFhirDate(elem.target))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.target is TFhirQuantity) {6} then
-    ComposeDuration(xml, 'targetQuantity', TFhirQuantity(elem.target));
+    ComposeQuantity(xml, 'targetQuantity', TFhirQuantity(elem.target));
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(xml, 'category', elem.categoryList[i]);
@@ -33929,13 +33785,13 @@ begin
     if jsn.has('targetDate') or jsn.has('_targetDate') then
       result.target := parseDate(jsn['targetDate'], jsn.vObj['_targetDate']);
     if jsn.has('targetQuantity') {a4} then
-      result.target := ParseDuration(jsn.vObj['targetQuantity']);
+      result.target := ParseQuantity(jsn.vObj['targetQuantity']);
     if jsn.has('category') then
       iterateArray(jsn.vArr['category'], result.categoryList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirGoalStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirGoalStatusEnum, SYSTEMS_TFhirGoalStatusEnum);
     if jsn.has('statusDate') or jsn.has('_statusDate') then
         result.statusDateElement := ParseDate(jsn['statusDate'], jsn.vObj['_statusDate']);{q}
     if jsn.has('statusReason') then
@@ -33985,7 +33841,7 @@ begin
     ComposeDateProps(json, 'targetDate', TFhirDate(elem.target), false);
   end
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.target is TFhirQuantity) then 
-    ComposeDuration(json, 'targetQuantity', TFhirQuantity(elem.target)) ;
+    ComposeQuantity(json, 'targetQuantity', TFhirQuantity(elem.target)) ;
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
@@ -34320,7 +34176,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGroupTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGroupTypeEnum, SYSTEMS_TFhirGroupTypeEnum);
     if jsn.has('actual') or jsn.has('_actual') then
         result.actualElement := ParseBoolean(jsn['actual'], jsn.vObj['_actual']);{q}
     if jsn.has('code') then
@@ -34504,7 +34360,7 @@ begin
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseCodeableConcept);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGuidanceResponseActionTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGuidanceResponseActionTypeEnum, SYSTEMS_TFhirGuidanceResponseActionTypeEnum);
     if jsn.has('resource') then
         result.resource := ParseReference{TFhirReference}(jsn.vObj['resource']);{q}
     if jsn.has('actions') then
@@ -34661,7 +34517,7 @@ begin
     if jsn.has('module') then
         result.module := ParseReference{Resource}(jsn.vObj['module']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirGuidanceResponseStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirGuidanceResponseStatusEnum, SYSTEMS_TFhirGuidanceResponseStatusEnum);
     if jsn.has('evaluationMessage') then
       iterateArray(jsn.vArr['evaluationMessage'], result.evaluationMessageList, parseReference{TFhirOperationOutcome});
     if jsn.has('outputParameters') then
@@ -34856,7 +34712,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('daysOfWeek') or jsn.has('_daysOfWeek') then
-      iterateEnumArray(jsn.vArr['daysOfWeek'], jsn.vArr['_daysOfWeek'], jsn.path+'/daysOfWeek', result.daysOfWeekList, parseEnum, CODES_TFhirDaysOfWeekEnum);
+      iterateEnumArray(jsn.vArr['daysOfWeek'], jsn.vArr['_daysOfWeek'], jsn.path+'/daysOfWeek', result.daysOfWeekList, parseEnum, CODES_TFhirDaysOfWeekEnum, SYSTEMS_TFhirDaysOfWeekEnum);
     if jsn.has('allDay') or jsn.has('_allDay') then
         result.allDayElement := ParseBoolean(jsn['allDay'], jsn.vObj['_allDay']);{q}
     if jsn.has('availableStartTime') or jsn.has('_availableStartTime') then
@@ -35942,7 +35798,7 @@ begin
     if jsn.has('numberOfInstances') or jsn.has('_numberOfInstances') then
         result.numberOfInstancesElement := ParseUnsignedInt(jsn['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
     if jsn.has('availability') or jsn.has('_availability')  then
-      result.availabilityElement := parseEnum(jsn.path+'/availability', jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum);
+      result.availabilityElement := parseEnum(jsn.path+'/availability', jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum, SYSTEMS_TFhirInstanceAvailabilityEnum);
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('bodySite') then
@@ -36268,7 +36124,7 @@ begin
     if jsn.has('referrer') then
         result.referrer := ParseReference{TFhirPractitioner}(jsn.vObj['referrer']);{q}
     if jsn.has('availability') or jsn.has('_availability')  then
-      result.availabilityElement := parseEnum(jsn.path+'/availability', jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum);
+      result.availabilityElement := parseEnum(jsn.path+'/availability', jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum, SYSTEMS_TFhirInstanceAvailabilityEnum);
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('numberOfSeries') or jsn.has('_numberOfSeries') then
@@ -36821,7 +36677,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum, SYSTEMS_TFhirMedicationAdminStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('vaccineCode') then
@@ -37503,7 +37359,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGuideDependencyTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGuideDependencyTypeEnum, SYSTEMS_TFhirGuideDependencyTypeEnum);
     if jsn.has('uri') or jsn.has('_uri') then
         result.uriElement := ParseUri(jsn['uri'], jsn.vObj['_uri']);{q}
     result.link;
@@ -37697,7 +37553,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('purpose') or jsn.has('_purpose')  then
-      result.purposeElement := parseEnum(jsn.path+'/purpose', jsn['purpose'], jsn.vObj['_purpose'], CODES_TFhirGuideResourcePurposeEnum);
+      result.purposeElement := parseEnum(jsn.path+'/purpose', jsn['purpose'], jsn.vObj['_purpose'], CODES_TFhirGuideResourcePurposeEnum, SYSTEMS_TFhirGuideResourcePurposeEnum);
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -37761,7 +37617,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Element := ParseCode(child, path+'/type') {b}
+        result.type_Element := ParseEnum(CODES_TFhirResourceTypesEnum, path+'/type', child){1a}
       else if (child.baseName = 'profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(child, path+'/profile') {b}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -37784,7 +37640,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCode(xml, 'type', elem.type_Element);{x.2}
+     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeReference{TFhirStructureDefinition}(xml, 'profile', elem.profile);{x.2}
   closeOutElement(xml, elem);
@@ -37801,8 +37657,8 @@ begin
   result := TFhirImplementationGuideGlobal.create;
   try
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') or jsn.has('_type') then
-        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
+    if jsn.has('type') or jsn.has('_type')  then
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
     result.link;
@@ -37818,9 +37674,9 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeValue(json, 'type', elem.type_Element, false);
+     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeProps(json, 'type', elem.type_Element, false);
+     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeReference{TFhirStructureDefinition}(json, 'profile', elem.profile); {a}
   if not noObj then json.finishObject;
@@ -37843,7 +37699,7 @@ begin
       else if (child.baseName = 'kind') then
         result.kindElement := ParseEnum(CODES_TFhirGuidePageKindEnum, path+'/kind', child){1a}
       else if (child.baseName = 'type') then
-        result.type_List.Add(ParseCode(child, path+'/type')){y.2}
+        result.type_.Add(ParseEnum(CODES_TFhirResourceTypesEnum, path+'/type', child)){y.1}
       else if (child.baseName = 'package') then
         result.packageList.Add(ParseString(child, path+'/package')){y.2}
       else if (child.baseName = 'format') then
@@ -37878,8 +37734,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(xml, 'kind', elem.KindElement, CODES_TFhirGuidePageKindEnum);
   if SummaryOption in [soFull, soData] then
-    for i := 0 to elem.type_List.Count - 1 do
-      ComposeCode(xml, 'type', elem.type_List[i]);
+    for i := 0 to elem.type_.Count - 1 do
+      ComposeEnum(xml, 'type', elem.type_[i], CODES_TFhirResourceTypesEnum);
   if SummaryOption in [soFull, soData] then
     for i := 0 to elem.packageList.Count - 1 do
       ComposeString(xml, 'package', elem.packageList[i]);
@@ -37907,9 +37763,9 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirGuidePageKindEnum);
-      if jsn.has('type') or jsn.has('_type') then
-      iteratePrimitiveArray(jsn.vArr['type'], jsn.vArr['_type'], result.type_List, parseCode);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirGuidePageKindEnum, SYSTEMS_TFhirGuidePageKindEnum);
+    if jsn.has('type') or jsn.has('_type') then
+      iterateEnumArray(jsn.vArr['type'], jsn.vArr['_type'], jsn.path+'/type', result.type_, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
       if jsn.has('package') or jsn.has('_package') then
       iteratePrimitiveArray(jsn.vArr['package'], jsn.vArr['_package'], result.packageList, parseString);
     if jsn.has('format') or jsn.has('_format') then
@@ -37943,21 +37799,21 @@ begin
      ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirGuidePageKindEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirGuidePageKindEnum, false);
-  if (SummaryOption in [soFull, soData]) and (elem.type_List.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.type_.Count > 0) then
   begin
     json.valueArray('type');
     ext := false;
-    for i := 0 to elem.type_List.Count - 1 do
+    for i := 0 to elem.type_.Count - 1 do
     begin
-      ext := ext or ((elem.type_List[i].id <> '') or (elem.type_List[i].hasExtensionList));
-      ComposeCodeValue(json, '',elem.type_List[i], true);
+      ext := ext or ((elem.type_[i].id <> '') or (elem.type_[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.type_[i], CODES_TFhirResourceTypesEnum, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_type');
-      for i := 0 to elem.type_List.Count - 1 do
-        ComposeCodeProps(json, '',elem.type_List[i], true);
+      for i := 0 to elem.type_.Count - 1 do
+        ComposeEnumProps(json, '', elem.type_[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -38119,7 +37975,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -38571,13 +38427,13 @@ begin
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirListStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirListStatusEnum, SYSTEMS_TFhirListStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('orderedBy') then
         result.orderedBy := ParseCodeableConcept(jsn.vObj['orderedBy']);{q}
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum);
     if jsn.has('note') or jsn.has('_note') then
         result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
     if jsn.has('entry') then
@@ -38831,13 +38687,13 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirLocationStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirLocationStatusEnum, SYSTEMS_TFhirLocationStatusEnum);
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirLocationModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirLocationModeEnum, SYSTEMS_TFhirLocationModeEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('telecom') then
@@ -38969,7 +38825,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirMeasurePopulationEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirMeasurePopulationEnum, SYSTEMS_TFhirMeasurePopulationEnum);
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -39136,10 +38992,10 @@ begin
   if (SummaryOption in [soFull, soData]) and (elem.populationList.Count > 0) then
   begin
     json.valueArray('population');
-      for i := 0 to elem.populationList.Count - 1 do
+    for i := 0 to elem.populationList.Count - 1 do
       ComposeMeasurePopulation(json, '', elem.populationList[i]); {z - }
-      json.FinishArray;
-    end;
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) and (elem.stratifierList.Count > 0) then
   begin
     json.valueArray('stratifier');
@@ -39273,7 +39129,7 @@ begin
   try
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirDigitalMediaTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirDigitalMediaTypeEnum, SYSTEMS_TFhirDigitalMediaTypeEnum);
     if jsn.has('subtype') then
         result.subtype := ParseCodeableConcept(jsn.vObj['subtype']);{q}
     if jsn.has('identifier') then
@@ -40098,7 +39954,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum, SYSTEMS_TFhirMedicationAdminStatusEnum);
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
     if jsn.has('practitioner') then
@@ -40234,7 +40090,7 @@ begin
       else if (child.baseName = 'doseRange') then
         result.dose := ParseRange(child, path+'/doseRange'){x.3}
       else if (child.baseName = 'doseQuantity') then
-        result.dose := ParseSimpleQuantity(child, path+'/doseSimpleQuantity'){x.3}
+        result.dose := ParseQuantity(child, path+'/doseQuantity'){x.3}
       else if (child.baseName = 'rateRatio') then
         result.rate := ParseRatio(child, path+'/rateRatio'){x.3}
       else if (child.baseName = 'rateRange') then
@@ -40281,7 +40137,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.dose is TFhirRange) {6} then
     ComposeRange(xml, 'doseRange', TFhirRange(elem.dose))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.dose is TFhirQuantity) {6} then
-    ComposeSimpleQuantity(xml, 'doseQuantity', TFhirQuantity(elem.dose));
+    ComposeQuantity(xml, 'doseQuantity', TFhirQuantity(elem.dose));
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRatio) {6} then
     ComposeRatio(xml, 'rateRatio', TFhirRatio(elem.rate))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRange) {6} then
@@ -40323,7 +40179,7 @@ begin
     if jsn.has('doseRange') {a4} then
       result.dose := ParseRange(jsn.vObj['doseRange']);
     if jsn.has('doseQuantity') {a4} then
-      result.dose := ParseSimpleQuantity(jsn.vObj['doseQuantity']);
+      result.dose := ParseQuantity(jsn.vObj['doseQuantity']);
     if jsn.has('rateRatio') {a4} then
       result.rate := ParseRatio(jsn.vObj['rateRatio']);
     if jsn.has('rateRange') {a4} then
@@ -40368,7 +40224,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.dose is TFhirRange) then 
     ComposeRange(json, 'doseRange', TFhirRange(elem.dose)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.dose is TFhirQuantity) then 
-    ComposeSimpleQuantity(json, 'doseQuantity', TFhirQuantity(elem.dose)) ;
+    ComposeQuantity(json, 'doseQuantity', TFhirQuantity(elem.dose)) ;
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRatio) then 
     ComposeRatio(json, 'rateRatio', TFhirRatio(elem.rate)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRange) then 
@@ -40595,7 +40451,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatusEnum, SYSTEMS_TFhirMedicationDispenseStatusEnum);
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
     if jsn.has('dispenser') then
@@ -40729,7 +40585,7 @@ begin
       else if (child.baseName = 'doseRange') then
         result.dose := ParseRange(child, path+'/doseRange'){x.3}
       else if (child.baseName = 'doseQuantity') then
-        result.dose := ParseSimpleQuantity(child, path+'/doseSimpleQuantity'){x.3}
+        result.dose := ParseQuantity(child, path+'/doseQuantity'){x.3}
       else if (child.baseName = 'rateRatio') then
         result.rate := ParseRatio(child, path+'/rateRatio'){x.3}
       else if (child.baseName = 'rateRange') then
@@ -40776,7 +40632,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.dose is TFhirRange) {6} then
     ComposeRange(xml, 'doseRange', TFhirRange(elem.dose))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.dose is TFhirQuantity) {6} then
-    ComposeSimpleQuantity(xml, 'doseQuantity', TFhirQuantity(elem.dose));
+    ComposeQuantity(xml, 'doseQuantity', TFhirQuantity(elem.dose));
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRatio) {6} then
     ComposeRatio(xml, 'rateRatio', TFhirRatio(elem.rate))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRange) {6} then
@@ -40818,7 +40674,7 @@ begin
     if jsn.has('doseRange') {a4} then
       result.dose := ParseRange(jsn.vObj['doseRange']);
     if jsn.has('doseQuantity') {a4} then
-      result.dose := ParseSimpleQuantity(jsn.vObj['doseQuantity']);
+      result.dose := ParseQuantity(jsn.vObj['doseQuantity']);
     if jsn.has('rateRatio') {a4} then
       result.rate := ParseRatio(jsn.vObj['rateRatio']);
     if jsn.has('rateRange') {a4} then
@@ -40863,7 +40719,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.dose is TFhirRange) then 
     ComposeRange(json, 'doseRange', TFhirRange(elem.dose)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.dose is TFhirQuantity) then 
-    ComposeSimpleQuantity(json, 'doseQuantity', TFhirQuantity(elem.dose)) ;
+    ComposeQuantity(json, 'doseQuantity', TFhirQuantity(elem.dose)) ;
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRatio) then 
     ComposeRatio(json, 'rateRatio', TFhirRatio(elem.rate)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRange) then 
@@ -41175,7 +41031,7 @@ begin
     if jsn.has('dateWritten') or jsn.has('_dateWritten') then
         result.dateWrittenElement := ParseDateTime(jsn['dateWritten'], jsn.vObj['_dateWritten']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationOrderStatusEnum, SYSTEMS_TFhirMedicationOrderStatusEnum);
     if jsn.has('dateEnded') or jsn.has('_dateEnded') then
         result.dateEndedElement := ParseDateTime(jsn['dateEnded'], jsn.vObj['_dateEnded']);{q}
     if jsn.has('reasonEnded') then
@@ -41298,7 +41154,7 @@ begin
       else if (child.baseName = 'method') then
         result.method := ParseCodeableConcept(child, path+'/method') {b}
       else if (child.baseName = 'quantityQuantity') then
-        result.quantity := ParseSimpleQuantity(child, path+'/quantitySimpleQuantity'){x.3}
+        result.quantity := ParseQuantity(child, path+'/quantityQuantity'){x.3}
       else if (child.baseName = 'quantityRange') then
         result.quantity := ParseRange(child, path+'/quantityRange'){x.3}
       else if (child.baseName = 'rateRatio') then
@@ -41343,7 +41199,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeCodeableConcept(xml, 'method', elem.method);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirQuantity) {6} then
-    ComposeSimpleQuantity(xml, 'quantityQuantity', TFhirQuantity(elem.quantity))
+    ComposeQuantity(xml, 'quantityQuantity', TFhirQuantity(elem.quantity))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirRange) {6} then
     ComposeRange(xml, 'quantityRange', TFhirRange(elem.quantity));
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRatio) {6} then
@@ -41383,7 +41239,7 @@ begin
     if jsn.has('method') then
         result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
     if jsn.has('quantityQuantity') {a4} then
-      result.quantity := ParseSimpleQuantity(jsn.vObj['quantityQuantity']);
+      result.quantity := ParseQuantity(jsn.vObj['quantityQuantity']);
     if jsn.has('quantityRange') {a4} then
       result.quantity := ParseRange(jsn.vObj['quantityRange']);
     if jsn.has('rateRatio') {a4} then
@@ -41426,7 +41282,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeCodeableConcept(json, 'method', elem.method); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirQuantity) then 
-    ComposeSimpleQuantity(json, 'quantityQuantity', TFhirQuantity(elem.quantity)) 
+    ComposeQuantity(json, 'quantityQuantity', TFhirQuantity(elem.quantity)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirRange) then 
     ComposeRange(json, 'quantityRange', TFhirRange(elem.quantity)) ;
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.rate is TFhirRatio) then 
@@ -41560,7 +41416,7 @@ begin
     if jsn.has('dateAsserted') or jsn.has('_dateAsserted') then
         result.dateAssertedElement := ParseDateTime(jsn['dateAsserted'], jsn.vObj['_dateAsserted']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationStatementStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationStatementStatusEnum, SYSTEMS_TFhirMedicationStatementStatusEnum);
     if jsn.has('wasNotTaken') or jsn.has('_wasNotTaken') then
         result.wasNotTakenElement := ParseBoolean(jsn['wasNotTaken'], jsn.vObj['_wasNotTaken']);{q}
     if jsn.has('reasonNotTaken') then
@@ -41719,7 +41575,7 @@ begin
     if jsn.has('identifier') or jsn.has('_identifier') then
         result.identifierElement := ParseId(jsn['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirResponseCodeEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirResponseCodeEnum, SYSTEMS_TFhirResponseCodeEnum);
     if jsn.has('details') then
         result.details := ParseReference{TFhirOperationOutcome}(jsn.vObj['details']);{q}
     result.link;
@@ -42565,11 +42421,11 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseCode(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUseEnum, SYSTEMS_TFhirOperationParameterUseEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum, SYSTEMS_TFhirOperationParameterTypeEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
     result.link;
@@ -42674,7 +42530,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum, SYSTEMS_TFhirOperationParameterTypeEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
       if jsn.has('mustSupport') or jsn.has('_mustSupport') then
@@ -43110,7 +42966,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'focus') then
-        result.focusElement := ParseEnum(CODES_TFhirModuleMetadataFocusTypeEnum, path+'/focus', child){1a}
+        result.focusElement := ParseCode(child, path+'/focus') {b}
       else if (child.baseName = 'description') then
         result.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.baseName = 'value') then
@@ -43135,7 +42991,7 @@ begin
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnum(xml, 'focus', elem.FocusElement, CODES_TFhirModuleMetadataFocusTypeEnum);
+     ComposeCode(xml, 'focus', elem.focusElement);{x.2}
   if (SummaryOption in [soFull, soData]) then
      ComposeString(xml, 'description', elem.descriptionElement);{x.2}
   if (SummaryOption in [soFull, soData]) then
@@ -43154,8 +43010,8 @@ begin
   result := TFhirModuleMetadataCoverage.create;
   try
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('focus') or jsn.has('_focus')  then
-      result.focusElement := parseEnum(jsn.path+'/focus', jsn['focus'], jsn.vObj['_focus'], CODES_TFhirModuleMetadataFocusTypeEnum);
+    if jsn.has('focus') or jsn.has('_focus') then
+        result.focusElement := ParseCode(jsn['focus'], jsn.vObj['_focus']);{q}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('value') then
@@ -43173,9 +43029,9 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnumValue(json, 'focus', elem.FocusElement, CODES_TFhirModuleMetadataFocusTypeEnum, false);
+     ComposeCodeValue(json, 'focus', elem.focusElement, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnumProps(json, 'focus', elem.FocusElement, CODES_TFhirModuleMetadataFocusTypeEnum, false);
+     ComposeCodeProps(json, 'focus', elem.focusElement, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeStringValue(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soData]) then
@@ -43237,7 +43093,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirModuleMetadataContributorEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirModuleMetadataContributorEnum, SYSTEMS_TFhirModuleMetadataContributorEnum);
     if jsn.has('party') then
         result.party := ParseReference{Resource}(jsn.vObj['party']);{q}
     result.link;
@@ -43321,7 +43177,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirModuleMetadataResourceTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirModuleMetadataResourceTypeEnum, SYSTEMS_TFhirModuleMetadataResourceTypeEnum);
     if jsn.has('uri') or jsn.has('_uri') then
         result.uriElement := ParseUri(jsn['uri'], jsn.vObj['_uri']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -43374,7 +43230,7 @@ begin
       else if (child.baseName = 'title') then
         result.titleElement := ParseString(child, path+'/title') {b}
       else if (child.baseName = 'type') then
-        result.type_Element := ParseEnum(CODES_TFhirModuleMetadataTypeEnum, path+'/type', child){1a}
+        result.type_Element := ParseCode(child, path+'/type') {b}
       else if (child.baseName = 'status') then
         result.statusElement := ParseEnum(CODES_TFhirModuleMetadataStatusEnum, path+'/status', child){1a}
       else if (child.baseName = 'description') then
@@ -43434,7 +43290,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeString(xml, 'title', elem.titleElement);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirModuleMetadataTypeEnum);
+     ComposeCode(xml, 'type', elem.type_Element);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirModuleMetadataStatusEnum);
   if (SummaryOption in [soFull, soData]) then
@@ -43490,10 +43346,10 @@ begin
         result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('title') or jsn.has('_title') then
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
-    if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirModuleMetadataTypeEnum);
+    if jsn.has('type') or jsn.has('_type') then
+        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirModuleMetadataStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirModuleMetadataStatusEnum, SYSTEMS_TFhirModuleMetadataStatusEnum);
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('purpose') or jsn.has('_purpose') then
@@ -43552,9 +43408,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeStringProps(json, 'title', elem.titleElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirModuleMetadataTypeEnum, false);
+     ComposeCodeValue(json, 'type', elem.type_Element, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirModuleMetadataTypeEnum, false);
+     ComposeCodeProps(json, 'type', elem.type_Element, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirModuleMetadataStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -43616,10 +43472,10 @@ begin
   if (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
   begin
     json.valueArray('contributor');
-      for i := 0 to elem.contributorList.Count - 1 do
+    for i := 0 to elem.contributorList.Count - 1 do
       ComposeModuleMetadataContributor(json, '', elem.contributorList[i]); {z - }
-      json.FinishArray;
-    end;
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirOrganization}(json, 'publisher', elem.publisher); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -43783,7 +43639,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirNamingsystemIdentifierTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirNamingsystemIdentifierTypeEnum, SYSTEMS_TFhirNamingsystemIdentifierTypeEnum);
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
     if jsn.has('preferred') or jsn.has('_preferred') then
@@ -43922,9 +43778,9 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirNamingsystemTypeEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirNamingsystemTypeEnum, SYSTEMS_TFhirNamingsystemTypeEnum);
     if jsn.has('publisher') or jsn.has('_publisher') then
         result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
@@ -44580,7 +44436,7 @@ begin
       else if (child.baseName = 'quantity') then
         result.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.baseName = 'rateQuantity') then
-        result.rate := ParseSimpleQuantity(child, path+'/rateSimpleQuantity'){x.3}
+        result.rate := ParseQuantity(child, path+'/rateQuantity'){x.3}
       else if (child.baseName = 'rateRatio') then
         result.rate := ParseRatio(child, path+'/rateRatio'){x.3}
       else if Not ParseBackboneElementChild(result, path, child) then
@@ -44607,7 +44463,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeQuantity(xml, 'quantity', elem.quantity);{x.2}
   if (SummaryOption in [soFull, soData]) and (elem.rate is TFhirQuantity) {6} then
-    ComposeSimpleQuantity(xml, 'rateQuantity', TFhirQuantity(elem.rate))
+    ComposeQuantity(xml, 'rateQuantity', TFhirQuantity(elem.rate))
   else if (SummaryOption in [soFull, soData]) and (elem.rate is TFhirRatio) {6} then
     ComposeRatio(xml, 'rateRatio', TFhirRatio(elem.rate));
   closeOutElement(xml, elem);
@@ -44629,7 +44485,7 @@ begin
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
     if jsn.has('rateQuantity') {a4} then
-      result.rate := ParseSimpleQuantity(jsn.vObj['rateQuantity']);
+      result.rate := ParseQuantity(jsn.vObj['rateQuantity']);
     if jsn.has('rateRatio') {a4} then
       result.rate := ParseRatio(jsn.vObj['rateRatio']);
     result.link;
@@ -44649,7 +44505,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeQuantity(json, 'quantity', elem.quantity); {a}
   if (SummaryOption in [soFull, soData]) and (elem.rate is TFhirQuantity) then 
-    ComposeSimpleQuantity(json, 'rateQuantity', TFhirQuantity(elem.rate)) 
+    ComposeQuantity(json, 'rateQuantity', TFhirQuantity(elem.rate)) 
   else if (SummaryOption in [soFull, soData]) and (elem.rate is TFhirRatio) then 
     ComposeRatio(json, 'rateRatio', TFhirRatio(elem.rate)) ;
   if not noObj then json.finishObject;
@@ -44764,7 +44620,7 @@ begin
     if jsn.has('dateTime') or jsn.has('_dateTime') then
         result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirNutritionOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirNutritionOrderStatusEnum, SYSTEMS_TFhirNutritionOrderStatusEnum);
     if jsn.has('allergyIntolerance') then
       iterateArray(jsn.vArr['allergyIntolerance'], result.allergyIntoleranceList, parseReference{TFhirAllergyIntolerance});
     if jsn.has('foodPreferenceModifier') then
@@ -44997,7 +44853,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirObservationRelationshiptypesEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirObservationRelationshiptypesEnum, SYSTEMS_TFhirObservationRelationshiptypesEnum);
     if jsn.has('target') then
         result.target := ParseReference{Resource}(jsn.vObj['target']);{q}
     result.link;
@@ -45375,7 +45231,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirObservationStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirObservationStatusEnum, SYSTEMS_TFhirObservationStatusEnum);
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
     if jsn.has('code') then
@@ -45657,7 +45513,7 @@ begin
       else if (child.baseName = 'documentation') then
         result.documentationElement := ParseString(child, path+'/documentation') {b}
       else if (child.baseName = 'type') then
-        result.type_Element := ParseEnum(CODES_TFhirValuesetOperationParameterTypeEnum, path+'/type', child){1a}
+        result.type_Element := ParseEnum(CODES_TFhirOperationParameterTypeEnum, path+'/type', child){1a}
       else if (child.baseName = 'profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(child, path+'/profile') {b}
       else if (child.baseName = 'binding') then
@@ -45696,7 +45552,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeString(xml, 'documentation', elem.documentationElement);{x.2}
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirValuesetOperationParameterTypeEnum);
+     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirOperationParameterTypeEnum);
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirStructureDefinition}(xml, 'profile', elem.profile);{x.2}
   if (SummaryOption in [soFull, soData]) then
@@ -45721,7 +45577,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseCode(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUseEnum, SYSTEMS_TFhirOperationParameterUseEnum);
     if jsn.has('min') or jsn.has('_min') then
         result.minElement := ParseInteger(jsn['min'], jsn.vObj['_min']);{q}
     if jsn.has('max') or jsn.has('_max') then
@@ -45729,7 +45585,7 @@ begin
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirValuesetOperationParameterTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum, SYSTEMS_TFhirOperationParameterTypeEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
     if jsn.has('binding') then
@@ -45771,9 +45627,9 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirValuesetOperationParameterTypeEnum, false);
+     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirOperationParameterTypeEnum, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirValuesetOperationParameterTypeEnum, false);
+     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirOperationParameterTypeEnum, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeReference{TFhirStructureDefinition}(json, 'profile', elem.profile); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -45844,7 +45700,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('strength') or jsn.has('_strength')  then
-      result.strengthElement := parseEnum(jsn.path+'/strength', jsn['strength'], jsn.vObj['_strength'], CODES_TFhirBindingStrengthEnum);
+      result.strengthElement := parseEnum(jsn.path+'/strength', jsn['strength'], jsn.vObj['_strength'], CODES_TFhirBindingStrengthEnum, SYSTEMS_TFhirBindingStrengthEnum);
     if jsn.has('valueSetUri') or jsn.has('_valueSetUri') then
       result.valueSet := parseUri(jsn['valueSetUri'], jsn.vObj['_valueSetUri']);
     if jsn.has('valueSetReference') {a3} then
@@ -45890,7 +45746,7 @@ begin
       else if (child.baseName = 'version') then
         result.versionElement := ParseString(child, path+'/version') {b}
       else if (child.baseName = 'name') then
-         result.nameElement := ParseString(child, path+'/name') {b}
+        result.nameElement := ParseString(child, path+'/name') {b}
       else if (child.baseName = 'status') then
         result.statusElement := ParseEnum(CODES_TFhirConformanceResourceStatusEnum, path+'/status', child){1a}
       else if (child.baseName = 'kind') then
@@ -45918,7 +45774,7 @@ begin
       else if (child.baseName = 'system') then
         result.systemElement := ParseBoolean(child, path+'/system') {b}
       else if (child.baseName = 'type') then
-        result.type_List.Add(ParseCode(child, path+'/type')){y.2}
+        result.type_.Add(ParseEnum(CODES_TFhirResourceTypesEnum, path+'/type', child)){y.1}
       else if (child.baseName = 'instance') then
         result.instanceElement := ParseBoolean(child, path+'/instance') {b}
       else if (child.baseName = 'parameter') then
@@ -45978,8 +45834,8 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeBoolean(xml, 'system', elem.systemElement);{x.2}
   if SummaryOption in [soFull, soData] then
-    for i := 0 to elem.type_List.Count - 1 do
-      ComposeCode(xml, 'type', elem.type_List[i]);
+    for i := 0 to elem.type_.Count - 1 do
+      ComposeEnum(xml, 'type', elem.type_[i], CODES_TFhirResourceTypesEnum);
   if (SummaryOption in [soFull, soData]) then
      ComposeBoolean(xml, 'instance', elem.instanceElement);{x.2}
   if SummaryOption in [soFull, soData] then
@@ -46006,9 +45862,9 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirOperationKindEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirOperationKindEnum, SYSTEMS_TFhirOperationKindEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -46031,8 +45887,8 @@ begin
         result.base := ParseReference{TFhirOperationDefinition}(jsn.vObj['base']);{q}
     if jsn.has('system') or jsn.has('_system') then
         result.systemElement := ParseBoolean(jsn['system'], jsn.vObj['_system']);{q}
-      if jsn.has('type') or jsn.has('_type') then
-      iteratePrimitiveArray(jsn.vArr['type'], jsn.vArr['_type'], result.type_List, parseCode);
+    if jsn.has('type') or jsn.has('_type') then
+      iterateEnumArray(jsn.vArr['type'], jsn.vArr['_type'], jsn.path+'/type', result.type_, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('instance') or jsn.has('_instance') then
         result.instanceElement := ParseBoolean(jsn['instance'], jsn.vObj['_instance']);{q}
     if jsn.has('parameter') then
@@ -46116,21 +45972,21 @@ begin
      ComposeBooleanValue(json, 'system', elem.systemElement, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeBooleanProps(json, 'system', elem.systemElement, false);
-  if (SummaryOption in [soFull, soData]) and (elem.type_List.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.type_.Count > 0) then
   begin
     json.valueArray('type');
     ext := false;
-    for i := 0 to elem.type_List.Count - 1 do
+    for i := 0 to elem.type_.Count - 1 do
     begin
-      ext := ext or ((elem.type_List[i].id <> '') or (elem.type_List[i].hasExtensionList));
-      ComposeCodeValue(json, '',elem.type_List[i], true);
+      ext := ext or ((elem.type_[i].id <> '') or (elem.type_[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.type_[i], CODES_TFhirResourceTypesEnum, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_type');
-      for i := 0 to elem.type_List.Count - 1 do
-        ComposeCodeProps(json, '',elem.type_List[i], true);
+      for i := 0 to elem.type_.Count - 1 do
+        ComposeEnumProps(json, '', elem.type_[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -46214,9 +46070,9 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirIssueSeverityEnum);
+      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirIssueSeverityEnum, SYSTEMS_TFhirIssueSeverityEnum);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirIssueTypeEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirIssueTypeEnum, SYSTEMS_TFhirIssueTypeEnum);
     if jsn.has('details') then
         result.details := ParseCodeableConcept(jsn.vObj['details']);{q}
     if jsn.has('diagnostics') or jsn.has('_diagnostics') then
@@ -46651,7 +46507,7 @@ begin
     if jsn.has('who') then
         result.who := ParseReference{Resource}(jsn.vObj['who']);{q}
     if jsn.has('orderStatus') or jsn.has('_orderStatus')  then
-      result.orderStatusElement := parseEnum(jsn.path+'/orderStatus', jsn['orderStatus'], jsn.vObj['_orderStatus'], CODES_TFhirOrderStatusEnum);
+      result.orderStatusElement := parseEnum(jsn.path+'/orderStatus', jsn['orderStatus'], jsn.vObj['_orderStatus'], CODES_TFhirOrderStatusEnum, SYSTEMS_TFhirOrderStatusEnum);
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('fulfillment') then
@@ -46730,7 +46586,7 @@ begin
       else if (child.baseName = 'concept') then
         result.conceptList.Add(ParseCodeableConcept(child, path+'/concept')){y.2}
       else if (child.baseName = 'type') then
-        result.type_Element := ParseEnum(CODES_TFhirOrderSetItemTypeEnum, path+'/type', child){1a}
+        result.type_Element := ParseCode(child, path+'/type') {b}
       else if (child.baseName = 'groupingBehavior') then
         result.groupingBehaviorElement := ParseEnum(CODES_TFhirGroupingBehaviorEnum, path+'/groupingBehavior', child){1a}
       else if (child.baseName = 'selectionBehavior') then
@@ -46791,7 +46647,7 @@ begin
     for i := 0 to elem.conceptList.Count - 1 do
       ComposeCodeableConcept(xml, 'concept', elem.conceptList[i]);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirOrderSetItemTypeEnum);
+     ComposeCode(xml, 'type', elem.type_Element);{x.2}
   if (SummaryOption in [soFull, soData]) then
      ComposeEnum(xml, 'groupingBehavior', elem.GroupingBehaviorElement, CODES_TFhirGroupingBehaviorEnum);
   if (SummaryOption in [soFull, soData]) then
@@ -46839,21 +46695,21 @@ begin
     if jsn.has('documentation') then
       iterateArray(jsn.vArr['documentation'], result.documentationList, parseAttachment);
     if jsn.has('participantType') or jsn.has('_participantType') then
-      iterateEnumArray(jsn.vArr['participantType'], jsn.vArr['_participantType'], jsn.path+'/participantType', result.participantTypeList, parseEnum, CODES_TFhirOrderSetParticipantEnum);
+      iterateEnumArray(jsn.vArr['participantType'], jsn.vArr['_participantType'], jsn.path+'/participantType', result.participantTypeList, parseEnum, CODES_TFhirOrderSetParticipantEnum, SYSTEMS_TFhirOrderSetParticipantEnum);
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseCodeableConcept);
-    if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOrderSetItemTypeEnum);
+    if jsn.has('type') or jsn.has('_type') then
+        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('groupingBehavior') or jsn.has('_groupingBehavior')  then
-      result.groupingBehaviorElement := parseEnum(jsn.path+'/groupingBehavior', jsn['groupingBehavior'], jsn.vObj['_groupingBehavior'], CODES_TFhirGroupingBehaviorEnum);
+      result.groupingBehaviorElement := parseEnum(jsn.path+'/groupingBehavior', jsn['groupingBehavior'], jsn.vObj['_groupingBehavior'], CODES_TFhirGroupingBehaviorEnum, SYSTEMS_TFhirGroupingBehaviorEnum);
     if jsn.has('selectionBehavior') or jsn.has('_selectionBehavior')  then
-      result.selectionBehaviorElement := parseEnum(jsn.path+'/selectionBehavior', jsn['selectionBehavior'], jsn.vObj['_selectionBehavior'], CODES_TFhirSelectionBehaviorEnum);
+      result.selectionBehaviorElement := parseEnum(jsn.path+'/selectionBehavior', jsn['selectionBehavior'], jsn.vObj['_selectionBehavior'], CODES_TFhirSelectionBehaviorEnum, SYSTEMS_TFhirSelectionBehaviorEnum);
     if jsn.has('requiredBehavior') or jsn.has('_requiredBehavior')  then
-      result.requiredBehaviorElement := parseEnum(jsn.path+'/requiredBehavior', jsn['requiredBehavior'], jsn.vObj['_requiredBehavior'], CODES_TFhirRequiredBehaviorEnum);
+      result.requiredBehaviorElement := parseEnum(jsn.path+'/requiredBehavior', jsn['requiredBehavior'], jsn.vObj['_requiredBehavior'], CODES_TFhirRequiredBehaviorEnum, SYSTEMS_TFhirRequiredBehaviorEnum);
     if jsn.has('precheckBehavior') or jsn.has('_precheckBehavior')  then
-      result.precheckBehaviorElement := parseEnum(jsn.path+'/precheckBehavior', jsn['precheckBehavior'], jsn.vObj['_precheckBehavior'], CODES_TFhirPrecheckBehaviorEnum);
+      result.precheckBehaviorElement := parseEnum(jsn.path+'/precheckBehavior', jsn['precheckBehavior'], jsn.vObj['_precheckBehavior'], CODES_TFhirPrecheckBehaviorEnum, SYSTEMS_TFhirPrecheckBehaviorEnum);
     if jsn.has('cardinalityBehavior') or jsn.has('_cardinalityBehavior')  then
-      result.cardinalityBehaviorElement := parseEnum(jsn.path+'/cardinalityBehavior', jsn['cardinalityBehavior'], jsn.vObj['_cardinalityBehavior'], CODES_TFhirCardinalityBehaviorEnum);
+      result.cardinalityBehaviorElement := parseEnum(jsn.path+'/cardinalityBehavior', jsn['cardinalityBehavior'], jsn.vObj['_cardinalityBehavior'], CODES_TFhirCardinalityBehaviorEnum, SYSTEMS_TFhirCardinalityBehaviorEnum);
     if jsn.has('resource') then
         result.resource := ParseReference{TFhirReference}(jsn.vObj['resource']);{q}
     if jsn.has('customization') then
@@ -46933,9 +46789,9 @@ begin
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirOrderSetItemTypeEnum, false);
+     ComposeCodeValue(json, 'type', elem.type_Element, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirOrderSetItemTypeEnum, false);
+     ComposeCodeProps(json, 'type', elem.type_Element, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'groupingBehavior', elem.GroupingBehaviorElement, CODES_TFhirGroupingBehaviorEnum, false);
   if (SummaryOption in [soFull, soData]) then
@@ -47509,7 +47365,7 @@ begin
     if jsn.has('address') then
         result.address := ParseAddress(jsn.vObj['address']);{q}
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
     if jsn.has('period') then
@@ -47769,7 +47625,7 @@ begin
     if jsn.has('other') then
         result.other := ParseReference{TFhirPatient}(jsn.vObj['other']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirLinkTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirLinkTypeEnum, SYSTEMS_TFhirLinkTypeEnum);
     result.link;
   finally
     result.free;
@@ -47930,7 +47786,7 @@ begin
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
         result.birthDateElement := ParseDate(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('deceasedBoolean') or jsn.has('_deceasedBoolean') then
@@ -48538,7 +48394,7 @@ begin
     if jsn.has('request') then
         result.request := ParseReference{TFhirProcessRequest}(jsn.vObj['request']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
@@ -48683,7 +48539,7 @@ begin
     if jsn.has('target') then
         result.target := ParseReference{Resource}(jsn.vObj['target']);{q}
     if jsn.has('assurance') or jsn.has('_assurance')  then
-      result.assuranceElement := parseEnum(jsn.path+'/assurance', jsn['assurance'], jsn.vObj['_assurance'], CODES_TFhirIdentityAssuranceLevelEnum);
+      result.assuranceElement := parseEnum(jsn.path+'/assurance', jsn['assurance'], jsn.vObj['_assurance'], CODES_TFhirIdentityAssuranceLevelEnum, SYSTEMS_TFhirIdentityAssuranceLevelEnum);
     result.link;
   finally
     result.free;
@@ -48802,7 +48658,7 @@ begin
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
         result.birthDateElement := ParseDate(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('address') then
@@ -49216,7 +49072,7 @@ begin
     if jsn.has('address') then
       iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
         result.birthDateElement := ParseDate(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('photo') then
@@ -49605,7 +49461,7 @@ begin
     if jsn.has('subject') then
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirProcedureStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirProcedureStatusEnum, SYSTEMS_TFhirProcedureStatusEnum);
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
     if jsn.has('code') then
@@ -49907,7 +49763,7 @@ begin
     if jsn.has('performer') then
         result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirProcedureRequestStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirProcedureRequestStatusEnum, SYSTEMS_TFhirProcedureRequestStatusEnum);
     if jsn.has('notes') then
       iterateArray(jsn.vArr['notes'], result.notesList, parseAnnotation);
     if jsn.has('asNeededBoolean') or jsn.has('_asNeededBoolean') then
@@ -49919,7 +49775,7 @@ begin
     if jsn.has('orderer') then
         result.orderer := ParseReference{Resource}(jsn.vObj['orderer']);{q}
     if jsn.has('priority') or jsn.has('_priority')  then
-      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirProcedureRequestPriorityEnum);
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirProcedureRequestPriorityEnum, SYSTEMS_TFhirProcedureRequestPriorityEnum);
     result.link;
   finally
     result.free;
@@ -50180,7 +50036,7 @@ begin
   try
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('action') or jsn.has('_action')  then
-      result.actionElement := parseEnum(jsn.path+'/action', jsn['action'], jsn.vObj['_action'], CODES_TFhirActionlistEnum);
+      result.actionElement := parseEnum(jsn.path+'/action', jsn['action'], jsn.vObj['_action'], CODES_TFhirActionlistEnum, SYSTEMS_TFhirActionlistEnum);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
@@ -50811,7 +50667,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('role') or jsn.has('_role')  then
-      result.roleElement := parseEnum(jsn.path+'/role', jsn['role'], jsn.vObj['_role'], CODES_TFhirProvenanceEntityRoleEnum);
+      result.roleElement := parseEnum(jsn.path+'/role', jsn['role'], jsn.vObj['_role'], CODES_TFhirProvenanceEntityRoleEnum, SYSTEMS_TFhirProvenanceEntityRoleEnum);
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q}
     if jsn.has('reference') or jsn.has('_reference') then
@@ -51132,7 +50988,7 @@ begin
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirItemTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirItemTypeEnum, SYSTEMS_TFhirItemTypeEnum);
     if jsn.has('required') or jsn.has('_required') then
         result.requiredElement := ParseBoolean(jsn['required'], jsn.vObj['_required']);{q}
     if jsn.has('repeats') or jsn.has('_repeats') then
@@ -51230,7 +51086,7 @@ begin
       else if (child.baseName = 'concept') then
         result.conceptList.Add(ParseCoding(child, path+'/concept')){y.2}
       else if (child.baseName = 'subjectType') then
-        result.subjectTypeList.Add(ParseCode(child, path+'/subjectType')){y.2}
+        result.subjectType.Add(ParseEnum(CODES_TFhirResourceTypesEnum, path+'/subjectType', child)){y.1}
       else if (child.baseName = 'item') then
         result.itemList.Add(ParseQuestionnaireItem(child, path+'/item')){y.2}
       else if Not ParseDomainResourceChild(result, path, child) then
@@ -51274,8 +51130,8 @@ begin
     for i := 0 to elem.conceptList.Count - 1 do
       ComposeCoding(xml, 'concept', elem.conceptList[i]);
   if SummaryOption in [soFull, soSummary, soData] then
-    for i := 0 to elem.subjectTypeList.Count - 1 do
-      ComposeCode(xml, 'subjectType', elem.subjectTypeList[i]);
+    for i := 0 to elem.subjectType.Count - 1 do
+      ComposeEnum(xml, 'subjectType', elem.subjectType[i], CODES_TFhirResourceTypesEnum);
   if SummaryOption in [soFull, soData] then
     for i := 0 to elem.itemList.Count - 1 do
       ComposeQuestionnaireItem(xml, 'item', elem.itemList[i]);
@@ -51298,7 +51154,7 @@ begin
     if jsn.has('version') or jsn.has('_version') then
         result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireStatusEnum, SYSTEMS_TFhirQuestionnaireStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -51309,8 +51165,8 @@ begin
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseCoding);
-      if jsn.has('subjectType') or jsn.has('_subjectType') then
-      iteratePrimitiveArray(jsn.vArr['subjectType'], jsn.vArr['_subjectType'], result.subjectTypeList, parseCode);
+    if jsn.has('subjectType') or jsn.has('_subjectType') then
+      iterateEnumArray(jsn.vArr['subjectType'], jsn.vArr['_subjectType'], jsn.path+'/subjectType', result.subjectType, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('item') then
       iterateArray(jsn.vArr['item'], result.itemList, parseQuestionnaireItem);
     result.link;
@@ -51368,21 +51224,21 @@ begin
       ComposeCoding(json, '', elem.conceptList[i]); {z - Coding}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.subjectTypeList.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.subjectType.Count > 0) then
   begin
     json.valueArray('subjectType');
     ext := false;
-    for i := 0 to elem.subjectTypeList.Count - 1 do
+    for i := 0 to elem.subjectType.Count - 1 do
     begin
-      ext := ext or ((elem.subjectTypeList[i].id <> '') or (elem.subjectTypeList[i].hasExtensionList));
-      ComposeCodeValue(json, '',elem.subjectTypeList[i], true);
+      ext := ext or ((elem.subjectType[i].id <> '') or (elem.subjectType[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.subjectType[i], CODES_TFhirResourceTypesEnum, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_subjectType');
-      for i := 0 to elem.subjectTypeList.Count - 1 do
-        ComposeCodeProps(json, '',elem.subjectTypeList[i], true);
+      for i := 0 to elem.subjectType.Count - 1 do
+        ComposeEnumProps(json, '', elem.subjectType[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -51807,7 +51663,7 @@ begin
     if jsn.has('questionnaire') then
         result.questionnaire := ParseReference{TFhirQuestionnaire}(jsn.vObj['questionnaire']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireAnswersStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireAnswersStatusEnum, SYSTEMS_TFhirQuestionnaireAnswersStatusEnum);
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q}
     if jsn.has('author') then
@@ -51976,7 +51832,7 @@ begin
   try
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirReferralstatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirReferralstatusEnum, SYSTEMS_TFhirReferralstatusEnum);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('date') or jsn.has('_date') then
@@ -52182,7 +52038,7 @@ begin
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
         result.birthDateElement := ParseDate(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('address') then
@@ -52764,7 +52620,7 @@ begin
       else if (child.baseName = 'code') then
         result.codeElement := ParseCode(child, path+'/code') {b}
       else if (child.baseName = 'base') then
-        result.baseElement := ParseCode(child, path+'/base') {b}
+        result.baseElement := ParseEnum(CODES_TFhirResourceTypesEnum, path+'/base', child){1a}
       else if (child.baseName = 'type') then
         result.type_Element := ParseEnum(CODES_TFhirSearchParamTypeEnum, path+'/type', child){1a}
       else if (child.baseName = 'description') then
@@ -52774,7 +52630,7 @@ begin
       else if (child.baseName = 'xpathUsage') then
         result.xpathUsageElement := ParseEnum(CODES_TFhirSearchXpathUsageEnum, path+'/xpathUsage', child){1a}
       else if (child.baseName = 'target') then
-        result.targetList.Add(ParseCode(child, path+'/target')){y.2}
+        result.target.Add(ParseEnum(CODES_TFhirResourceTypesEnum, path+'/target', child)){y.1}
       else if Not ParseDomainResourceChild(result, path, child) then
          UnknownContent(child, path);
       child := NextSibling(child);
@@ -52816,7 +52672,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeCode(xml, 'code', elem.codeElement);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCode(xml, 'base', elem.baseElement);{x.2}
+     ComposeEnum(xml, 'base', elem.BaseElement, CODES_TFhirResourceTypesEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirSearchParamTypeEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -52826,8 +52682,8 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeEnum(xml, 'xpathUsage', elem.XpathUsageElement, CODES_TFhirSearchXpathUsageEnum);
   if SummaryOption in [soFull, soData] then
-    for i := 0 to elem.targetList.Count - 1 do
-      ComposeCode(xml, 'target', elem.targetList[i]);
+    for i := 0 to elem.target.Count - 1 do
+      ComposeEnum(xml, 'target', elem.target[i], CODES_TFhirResourceTypesEnum);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
@@ -52847,7 +52703,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -52860,18 +52716,18 @@ begin
         result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('code') or jsn.has('_code') then
         result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
-    if jsn.has('base') or jsn.has('_base') then
-        result.baseElement := ParseCode(jsn['base'], jsn.vObj['_base']);{q}
+    if jsn.has('base') or jsn.has('_base')  then
+      result.baseElement := parseEnum(jsn.path+'/base', jsn['base'], jsn.vObj['_base'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum);
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('xpath') or jsn.has('_xpath') then
         result.xpathElement := ParseString(jsn['xpath'], jsn.vObj['_xpath']);{q}
     if jsn.has('xpathUsage') or jsn.has('_xpathUsage')  then
-      result.xpathUsageElement := parseEnum(jsn.path+'/xpathUsage', jsn['xpathUsage'], jsn.vObj['_xpathUsage'], CODES_TFhirSearchXpathUsageEnum);
-      if jsn.has('target') or jsn.has('_target') then
-      iteratePrimitiveArray(jsn.vArr['target'], jsn.vArr['_target'], result.targetList, parseCode);
+      result.xpathUsageElement := parseEnum(jsn.path+'/xpathUsage', jsn['xpathUsage'], jsn.vObj['_xpathUsage'], CODES_TFhirSearchXpathUsageEnum, SYSTEMS_TFhirSearchXpathUsageEnum);
+    if jsn.has('target') or jsn.has('_target') then
+      iterateEnumArray(jsn.vArr['target'], jsn.vArr['_target'], jsn.path+'/target', result.target, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     result.link;
   finally
     result.free;
@@ -52926,9 +52782,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeCodeProps(json, 'code', elem.codeElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeValue(json, 'base', elem.baseElement, false);
+     ComposeEnumValue(json, 'base', elem.BaseElement, CODES_TFhirResourceTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeProps(json, 'base', elem.baseElement, false);
+     ComposeEnumProps(json, 'base', elem.BaseElement, CODES_TFhirResourceTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirSearchParamTypeEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -52945,21 +52801,21 @@ begin
      ComposeEnumValue(json, 'xpathUsage', elem.XpathUsageElement, CODES_TFhirSearchXpathUsageEnum, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'xpathUsage', elem.XpathUsageElement, CODES_TFhirSearchXpathUsageEnum, false);
-  if (SummaryOption in [soFull, soData]) and (elem.targetList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.target.Count > 0) then
   begin
     json.valueArray('target');
     ext := false;
-    for i := 0 to elem.targetList.Count - 1 do
+    for i := 0 to elem.target.Count - 1 do
     begin
-      ext := ext or ((elem.targetList[i].id <> '') or (elem.targetList[i].hasExtensionList));
-      ComposeCodeValue(json, '',elem.targetList[i], true);
+      ext := ext or ((elem.target[i].id <> '') or (elem.target[i].hasExtensionList));
+      ComposeEnumValue(json, '', elem.target[i], CODES_TFhirResourceTypesEnum, true);
     end;
     json.FinishArray;
     if ext then
     begin
       json.valueArray('_target');
-      for i := 0 to elem.targetList.Count - 1 do
-        ComposeCodeProps(json, '',elem.targetList[i], true);
+      for i := 0 to elem.target.Count - 1 do
+        ComposeEnumProps(json, '', elem.target[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -53360,7 +53216,7 @@ begin
     while (child <> nil) do
     begin
       if (child.baseName = 'type') then
-        result.type_Element := ParseEnum(CODES_TFhirSequenceTypeEnum, path+'/type', child){1a}
+        result.type_Element := ParseCode(child, path+'/type') {b}
       else if (child.baseName = 'variationID') then
         result.variationIDList.Add(ParseCodeableConcept(child, path+'/variationID')){y.2}
       else if (child.baseName = 'referenceSeq') then
@@ -53413,7 +53269,7 @@ begin
   xml.open(name);
   composeDomainResourceChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirSequenceTypeEnum);
+     ComposeCode(xml, 'type', elem.type_Element);{x.2}
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.variationIDList.Count - 1 do
       ComposeCodeableConcept(xml, 'variationID', elem.variationIDList[i]);
@@ -53462,8 +53318,8 @@ begin
   result := TFhirSequence.create;
   try
     ParseDomainResourceProperties(jsn, result);
-    if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSequenceTypeEnum);
+    if jsn.has('type') or jsn.has('_type') then
+        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('variationID') then
       iterateArray(jsn.vArr['variationID'], result.variationIDList, parseCodeableConcept);
     if jsn.has('referenceSeq') then
@@ -53508,9 +53364,9 @@ begin
     exit;
   ComposeDomainResourceProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirSequenceTypeEnum, false);
+     ComposeCodeValue(json, 'type', elem.type_Element, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirSequenceTypeEnum, false);
+     ComposeCodeProps(json, 'type', elem.type_Element, false);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.variationIDList.Count > 0) then
   begin
     json.valueArray('variationID');
@@ -53658,7 +53514,7 @@ begin
     if jsn.has('schedule') then
         result.schedule := ParseReference{TFhirSchedule}(jsn.vObj['schedule']);{q}
     if jsn.has('freeBusyType') or jsn.has('_freeBusyType')  then
-      result.freeBusyTypeElement := parseEnum(jsn.path+'/freeBusyType', jsn['freeBusyType'], jsn.vObj['_freeBusyType'], CODES_TFhirSlotstatusEnum);
+      result.freeBusyTypeElement := parseEnum(jsn.path+'/freeBusyType', jsn['freeBusyType'], jsn.vObj['_freeBusyType'], CODES_TFhirSlotstatusEnum, SYSTEMS_TFhirSlotstatusEnum);
     if jsn.has('start') or jsn.has('_start') then
         result.startElement := ParseInstant(jsn['start'], jsn.vObj['_start']);{q}
     if jsn.has('end') or jsn.has('_end') then
@@ -54164,7 +54020,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSpecimenStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSpecimenStatusEnum, SYSTEMS_TFhirSpecimenStatusEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
     if jsn.has('parent') then
@@ -54623,7 +54479,7 @@ begin
       else if (child.baseName = 'kind') then
         result.kindElement := ParseEnum(CODES_TFhirStructureDefinitionKindEnum, path+'/kind', child){1a}
       else if (child.baseName = 'constrainedType') then
-        result.constrainedTypeElement := ParseCode(child, path+'/constrainedType') {b}
+        result.constrainedTypeElement := ParseEnum(CODES_TFhirDefinedTypesEnum, path+'/constrainedType', child){1a}
       else if (child.baseName = 'abstract') then
         result.abstractElement := ParseBoolean(child, path+'/abstract') {b}
       else if (child.baseName = 'contextType') then
@@ -54699,7 +54555,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(xml, 'kind', elem.KindElement, CODES_TFhirStructureDefinitionKindEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCode(xml, 'constrainedType', elem.constrainedTypeElement);{x.2}
+     ComposeEnum(xml, 'constrainedType', elem.ConstrainedTypeElement, CODES_TFhirDefinedTypesEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeBoolean(xml, 'abstract', elem.abstractElement);{x.2}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -54738,7 +54594,7 @@ begin
     if jsn.has('display') or jsn.has('_display') then
         result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -54762,13 +54618,13 @@ begin
     if jsn.has('mapping') then
       iterateArray(jsn.vArr['mapping'], result.mappingList, parseStructureDefinitionMapping);
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirStructureDefinitionKindEnum);
-    if jsn.has('constrainedType') or jsn.has('_constrainedType') then
-        result.constrainedTypeElement := ParseCode(jsn['constrainedType'], jsn.vObj['_constrainedType']);{q}
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirStructureDefinitionKindEnum, SYSTEMS_TFhirStructureDefinitionKindEnum);
+    if jsn.has('constrainedType') or jsn.has('_constrainedType')  then
+      result.constrainedTypeElement := parseEnum(jsn.path+'/constrainedType', jsn['constrainedType'], jsn.vObj['_constrainedType'], CODES_TFhirDefinedTypesEnum, SYSTEMS_TFhirDefinedTypesEnum);
     if jsn.has('abstract') or jsn.has('_abstract') then
         result.abstractElement := ParseBoolean(jsn['abstract'], jsn.vObj['_abstract']);{q}
     if jsn.has('contextType') or jsn.has('_contextType')  then
-      result.contextTypeElement := parseEnum(jsn.path+'/contextType', jsn['contextType'], jsn.vObj['_contextType'], CODES_TFhirExtensionContextEnum);
+      result.contextTypeElement := parseEnum(jsn.path+'/contextType', jsn['contextType'], jsn.vObj['_contextType'], CODES_TFhirExtensionContextEnum, SYSTEMS_TFhirExtensionContextEnum);
       if jsn.has('context') or jsn.has('_context') then
       iteratePrimitiveArray(jsn.vArr['context'], jsn.vArr['_context'], result.contextList, parseString);
     if jsn.has('base') or jsn.has('_base') then
@@ -54879,9 +54735,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirStructureDefinitionKindEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeValue(json, 'constrainedType', elem.constrainedTypeElement, false);
+     ComposeEnumValue(json, 'constrainedType', elem.ConstrainedTypeElement, CODES_TFhirDefinedTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeCodeProps(json, 'constrainedType', elem.constrainedTypeElement, false);
+     ComposeEnumProps(json, 'constrainedType', elem.ConstrainedTypeElement, CODES_TFhirDefinedTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
      ComposeBooleanValue(json, 'abstract', elem.abstractElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -54978,7 +54834,7 @@ begin
   try
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSubscriptionChannelTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSubscriptionChannelTypeEnum, SYSTEMS_TFhirSubscriptionChannelTypeEnum);
     if jsn.has('endpoint') or jsn.has('_endpoint') then
         result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
     if jsn.has('payload') or jsn.has('_payload') then
@@ -55102,7 +54958,7 @@ begin
     if jsn.has('reason') or jsn.has('_reason') then
         result.reasonElement := ParseString(jsn['reason'], jsn.vObj['_reason']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSubscriptionStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSubscriptionStatusEnum, SYSTEMS_TFhirSubscriptionStatusEnum);
     if jsn.has('error') or jsn.has('_error') then
         result.errorElement := ParseString(jsn['error'], jsn.vObj['_error']);{q}
     if jsn.has('channel') then
@@ -55547,7 +55403,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSupplydeliveryStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSupplydeliveryStatusEnum, SYSTEMS_TFhirSupplydeliveryStatusEnum);
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
     if jsn.has('type') then
@@ -55785,7 +55641,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSupplyrequestStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSupplyrequestStatusEnum, SYSTEMS_TFhirSupplyrequestStatusEnum);
     if jsn.has('kind') then
         result.kind := ParseCodeableConcept(jsn.vObj['kind']);{q}
     if jsn.has('orderedItem') then
@@ -56313,7 +56169,7 @@ begin
     if jsn.has('index') or jsn.has('_index') then
         result.indexElement := ParseInteger(jsn['index'], jsn.vObj['_index']);{q}
     if jsn.has('profile') or jsn.has('_profile')  then
-      result.profileElement := parseEnum(jsn.path+'/profile', jsn['profile'], jsn.vObj['_profile'], CODES_TFhirProfileOriginTypesEnum);
+      result.profileElement := parseEnum(jsn.path+'/profile', jsn['profile'], jsn.vObj['_profile'], CODES_TFhirProfileOriginTypesEnum, SYSTEMS_TFhirProfileOriginTypesEnum);
     result.link;
   finally
     result.free;
@@ -56391,7 +56247,7 @@ begin
     if jsn.has('index') or jsn.has('_index') then
         result.indexElement := ParseInteger(jsn['index'], jsn.vObj['_index']);{q}
     if jsn.has('profile') or jsn.has('_profile')  then
-      result.profileElement := parseEnum(jsn.path+'/profile', jsn['profile'], jsn.vObj['_profile'], CODES_TFhirProfileDestinationTypesEnum);
+      result.profileElement := parseEnum(jsn.path+'/profile', jsn['profile'], jsn.vObj['_profile'], CODES_TFhirProfileDestinationTypesEnum, SYSTEMS_TFhirProfileDestinationTypesEnum);
     result.link;
   finally
     result.free;
@@ -56780,7 +56636,7 @@ begin
       if (child.baseName = 'type') then
         result.type_ := ParseCoding(child, path+'/type') {b}
       else if (child.baseName = 'resource') then
-        result.resourceElement := ParseCode(child, path+'/resource') {b}
+        result.resourceElement := ParseEnum(CODES_TFhirDefinedTypesEnum, path+'/resource', child){1a}
       else if (child.baseName = 'label') then
         result.label_Element := ParseString(child, path+'/label') {b}
       else if (child.baseName = 'description') then
@@ -56831,7 +56687,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeCoding(xml, 'type', elem.type_);{x.2}
   if (SummaryOption in [soFull, soData]) then
-     ComposeCode(xml, 'resource', elem.resourceElement);{x.2}
+     ComposeEnum(xml, 'resource', elem.ResourceElement, CODES_TFhirDefinedTypesEnum);
   if (SummaryOption in [soFull, soData]) then
      ComposeString(xml, 'label', elem.label_Element);{x.2}
   if (SummaryOption in [soFull, soData]) then
@@ -56875,16 +56731,16 @@ begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q}
-    if jsn.has('resource') or jsn.has('_resource') then
-        result.resourceElement := ParseCode(jsn['resource'], jsn.vObj['_resource']);{q}
+    if jsn.has('resource') or jsn.has('_resource')  then
+      result.resourceElement := parseEnum(jsn.path+'/resource', jsn['resource'], jsn.vObj['_resource'], CODES_TFhirDefinedTypesEnum, SYSTEMS_TFhirDefinedTypesEnum);
     if jsn.has('label') or jsn.has('_label') then
         result.label_Element := ParseString(jsn['label'], jsn.vObj['_label']);{q}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('accept') or jsn.has('_accept')  then
-      result.acceptElement := parseEnum(jsn.path+'/accept', jsn['accept'], jsn.vObj['_accept'], CODES_TFhirContentTypeEnum);
+      result.acceptElement := parseEnum(jsn.path+'/accept', jsn['accept'], jsn.vObj['_accept'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
     if jsn.has('contentType') or jsn.has('_contentType')  then
-      result.contentTypeElement := parseEnum(jsn.path+'/contentType', jsn['contentType'], jsn.vObj['_contentType'], CODES_TFhirContentTypeEnum);
+      result.contentTypeElement := parseEnum(jsn.path+'/contentType', jsn['contentType'], jsn.vObj['_contentType'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
     if jsn.has('destination') or jsn.has('_destination') then
         result.destinationElement := ParseInteger(jsn['destination'], jsn.vObj['_destination']);{q}
     if jsn.has('encodeRequestUrl') or jsn.has('_encodeRequestUrl') then
@@ -56920,9 +56776,9 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeCoding(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soData]) then
-     ComposeCodeValue(json, 'resource', elem.resourceElement, false);
+     ComposeEnumValue(json, 'resource', elem.ResourceElement, CODES_TFhirDefinedTypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeCodeProps(json, 'resource', elem.resourceElement, false);
+     ComposeEnumProps(json, 'resource', elem.ResourceElement, CODES_TFhirDefinedTypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeStringValue(json, 'label', elem.label_Element, false);
   if (SummaryOption in [soFull, soData]) then
@@ -57092,7 +56948,7 @@ begin
       else if (child.baseName = 'path') then
         result.pathElement := ParseString(child, path+'/path') {b}
       else if (child.baseName = 'resource') then
-        result.resourceElement := ParseCode(child, path+'/resource') {b}
+        result.resourceElement := ParseEnum(CODES_TFhirDefinedTypesEnum, path+'/resource', child){1a}
       else if (child.baseName = 'response') then
         result.responseElement := ParseEnum(CODES_TFhirAssertResponseCodeTypesEnum, path+'/response', child){1a}
       else if (child.baseName = 'responseCode') then
@@ -57147,7 +57003,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeString(xml, 'path', elem.pathElement);{x.2}
   if (SummaryOption in [soFull, soData]) then
-     ComposeCode(xml, 'resource', elem.resourceElement);{x.2}
+     ComposeEnum(xml, 'resource', elem.ResourceElement, CODES_TFhirDefinedTypesEnum);
   if (SummaryOption in [soFull, soData]) then
      ComposeEnum(xml, 'response', elem.ResponseElement, CODES_TFhirAssertResponseCodeTypesEnum);
   if (SummaryOption in [soFull, soData]) then
@@ -57179,13 +57035,13 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('direction') or jsn.has('_direction')  then
-      result.directionElement := parseEnum(jsn.path+'/direction', jsn['direction'], jsn.vObj['_direction'], CODES_TFhirAssertDirectionCodesEnum);
+      result.directionElement := parseEnum(jsn.path+'/direction', jsn['direction'], jsn.vObj['_direction'], CODES_TFhirAssertDirectionCodesEnum, SYSTEMS_TFhirAssertDirectionCodesEnum);
     if jsn.has('compareToSourceId') or jsn.has('_compareToSourceId') then
         result.compareToSourceIdElement := ParseString(jsn['compareToSourceId'], jsn.vObj['_compareToSourceId']);{q}
     if jsn.has('compareToSourcePath') or jsn.has('_compareToSourcePath') then
         result.compareToSourcePathElement := ParseString(jsn['compareToSourcePath'], jsn.vObj['_compareToSourcePath']);{q}
     if jsn.has('contentType') or jsn.has('_contentType')  then
-      result.contentTypeElement := parseEnum(jsn.path+'/contentType', jsn['contentType'], jsn.vObj['_contentType'], CODES_TFhirContentTypeEnum);
+      result.contentTypeElement := parseEnum(jsn.path+'/contentType', jsn['contentType'], jsn.vObj['_contentType'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
     if jsn.has('headerField') or jsn.has('_headerField') then
         result.headerFieldElement := ParseString(jsn['headerField'], jsn.vObj['_headerField']);{q}
     if jsn.has('minimumId') or jsn.has('_minimumId') then
@@ -57193,13 +57049,13 @@ begin
     if jsn.has('navigationLinks') or jsn.has('_navigationLinks') then
         result.navigationLinksElement := ParseBoolean(jsn['navigationLinks'], jsn.vObj['_navigationLinks']);{q}
     if jsn.has('operator') or jsn.has('_operator')  then
-      result.operatorElement := parseEnum(jsn.path+'/operator', jsn['operator'], jsn.vObj['_operator'], CODES_TFhirAssertOperatorCodesEnum);
+      result.operatorElement := parseEnum(jsn.path+'/operator', jsn['operator'], jsn.vObj['_operator'], CODES_TFhirAssertOperatorCodesEnum, SYSTEMS_TFhirAssertOperatorCodesEnum);
     if jsn.has('path') or jsn.has('_path') then
         result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
-    if jsn.has('resource') or jsn.has('_resource') then
-        result.resourceElement := ParseCode(jsn['resource'], jsn.vObj['_resource']);{q}
+    if jsn.has('resource') or jsn.has('_resource')  then
+      result.resourceElement := parseEnum(jsn.path+'/resource', jsn['resource'], jsn.vObj['_resource'], CODES_TFhirDefinedTypesEnum, SYSTEMS_TFhirDefinedTypesEnum);
     if jsn.has('response') or jsn.has('_response')  then
-      result.responseElement := parseEnum(jsn.path+'/response', jsn['response'], jsn.vObj['_response'], CODES_TFhirAssertResponseCodeTypesEnum);
+      result.responseElement := parseEnum(jsn.path+'/response', jsn['response'], jsn.vObj['_response'], CODES_TFhirAssertResponseCodeTypesEnum, SYSTEMS_TFhirAssertResponseCodeTypesEnum);
     if jsn.has('responseCode') or jsn.has('_responseCode') then
         result.responseCodeElement := ParseString(jsn['responseCode'], jsn.vObj['_responseCode']);{q}
     if jsn.has('sourceId') or jsn.has('_sourceId') then
@@ -57267,9 +57123,9 @@ begin
   if (SummaryOption in [soFull, soData]) then
      ComposeStringProps(json, 'path', elem.pathElement, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeCodeValue(json, 'resource', elem.resourceElement, false);
+     ComposeEnumValue(json, 'resource', elem.ResourceElement, CODES_TFhirDefinedTypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
-     ComposeCodeProps(json, 'resource', elem.resourceElement, false);
+     ComposeEnumProps(json, 'resource', elem.ResourceElement, CODES_TFhirDefinedTypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'response', elem.ResponseElement, CODES_TFhirAssertResponseCodeTypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
@@ -57769,7 +57625,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
     if jsn.has('experimental') or jsn.has('_experimental') then
@@ -58719,7 +58575,7 @@ begin
     if jsn.has('property') or jsn.has('_property') then
         result.property_Element := ParseCode(jsn['property'], jsn.vObj['_property']);{q}
     if jsn.has('op') or jsn.has('_op')  then
-      result.opElement := parseEnum(jsn.path+'/op', jsn['op'], jsn.vObj['_op'], CODES_TFhirFilterOperatorEnum);
+      result.opElement := parseEnum(jsn.path+'/op', jsn['op'], jsn.vObj['_op'], CODES_TFhirFilterOperatorEnum, SYSTEMS_TFhirFilterOperatorEnum);
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseCode(jsn['value'], jsn.vObj['_value']);{q}
     result.link;
@@ -59271,7 +59127,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -59495,7 +59351,7 @@ begin
     if jsn.has('product') then
         result.product := ParseCoding(jsn.vObj['product']);{q}
     if jsn.has('eye') or jsn.has('_eye')  then
-      result.eyeElement := parseEnum(jsn.path+'/eye', jsn['eye'], jsn.vObj['_eye'], CODES_TFhirVisionEyeCodesEnum);
+      result.eyeElement := parseEnum(jsn.path+'/eye', jsn['eye'], jsn.vObj['_eye'], CODES_TFhirVisionEyeCodesEnum, SYSTEMS_TFhirVisionEyeCodesEnum);
     if jsn.has('sphere') or jsn.has('_sphere') then
         result.sphereElement := ParseDecimal(jsn['sphere'], jsn.vObj['_sphere']);{q}
     if jsn.has('cylinder') or jsn.has('_cylinder') then
@@ -59505,7 +59361,7 @@ begin
     if jsn.has('prism') or jsn.has('_prism') then
         result.prismElement := ParseDecimal(jsn['prism'], jsn.vObj['_prism']);{q}
     if jsn.has('base') or jsn.has('_base')  then
-      result.baseElement := parseEnum(jsn.path+'/base', jsn['base'], jsn.vObj['_base'], CODES_TFhirVisionBaseCodesEnum);
+      result.baseElement := parseEnum(jsn.path+'/base', jsn['base'], jsn.vObj['_base'], CODES_TFhirVisionBaseCodesEnum, SYSTEMS_TFhirVisionBaseCodesEnum);
     if jsn.has('add') or jsn.has('_add') then
         result.addElement := ParseDecimal(jsn['add'], jsn.vObj['_add']);{q}
     if jsn.has('power') or jsn.has('_power') then
@@ -60296,32 +60152,32 @@ begin
     result := parseCoding(jsn)
   else if (type_ = 'TFhirRange') then
     result := parseRange(jsn)
-  else if (type_ = 'TFhirQuantity') then
-    result := parseQuantity(jsn)
   else if (type_ = 'TFhirAttachment') then
     result := parseAttachment(jsn)
-  else if (type_ = 'TFhirRatio') then
-    result := parseRatio(jsn)
+  else if (type_ = 'TFhirQuantity') then
+    result := parseQuantity(jsn)
   else if (type_ = 'TFhirAnnotation') then
     result := parseAnnotation(jsn)
+  else if (type_ = 'TFhirRatio') then
+    result := parseRatio(jsn)
   else if (type_ = 'TFhirSampledData') then
     result := parseSampledData(jsn)
-  else if (type_ = 'TFhirReference') then
-    result := parseReference(jsn)
   else if (type_ = 'TFhirCodeableConcept') then
     result := parseCodeableConcept(jsn)
+  else if (type_ = 'TFhirReference') then
+    result := parseReference(jsn)
   else if (type_ = 'TFhirIdentifier') then
     result := parseIdentifier(jsn)
   else if (type_ = 'TFhirSignature') then
     result := parseSignature(jsn)
-  else if (type_ = 'TFhirElementDefinition') then
-    result := parseElementDefinition(jsn)
   else if (type_ = 'TFhirTiming') then
     result := parseTiming(jsn)
-  else if (type_ = 'TFhirAddress') then
-    result := parseAddress(jsn)
+  else if (type_ = 'TFhirElementDefinition') then
+    result := parseElementDefinition(jsn)
   else if (type_ = 'TFhirHumanName') then
     result := parseHumanName(jsn)
+  else if (type_ = 'TFhirAddress') then
+    result := parseAddress(jsn)
   else if (type_ = 'TFhirMeta') then
     result := parseMeta(jsn)
   else if (type_ = 'TFhirContactPoint') then
@@ -60554,32 +60410,32 @@ begin
     result := parseCoding(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirRange') then
     result := parseRange(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirQuantity') then
-    result := parseQuantity(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirAttachment') then
     result := parseAttachment(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirRatio') then
-    result := parseRatio(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirQuantity') then
+    result := parseQuantity(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirAnnotation') then
     result := parseAnnotation(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirRatio') then
+    result := parseRatio(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirSampledData') then
     result := parseSampledData(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirReference') then
-    result := parseReference(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirCodeableConcept') then
     result := parseCodeableConcept(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirReference') then
+    result := parseReference(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirIdentifier') then
     result := parseIdentifier(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirSignature') then
     result := parseSignature(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirElementDefinition') then
-    result := parseElementDefinition(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirTiming') then
     result := parseTiming(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirAddress') then
-    result := parseAddress(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirElementDefinition') then
+    result := parseElementDefinition(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirHumanName') then
     result := parseHumanName(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirAddress') then
+    result := parseAddress(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirMeta') then
     result := parseMeta(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirContactPoint') then
@@ -60806,32 +60662,32 @@ begin
     result := parseCoding(jsn)
   else if (type_ = TFhirRange) then
     result := parseRange(jsn)
-  else if (type_ = TFhirQuantity) then
-    result := parseQuantity(jsn)
   else if (type_ = TFhirAttachment) then
     result := parseAttachment(jsn)
-  else if (type_ = TFhirRatio) then
-    result := parseRatio(jsn)
+  else if (type_ = TFhirQuantity) then
+    result := parseQuantity(jsn)
   else if (type_ = TFhirAnnotation) then
     result := parseAnnotation(jsn)
+  else if (type_ = TFhirRatio) then
+    result := parseRatio(jsn)
   else if (type_ = TFhirSampledData) then
     result := parseSampledData(jsn)
-  else if (type_ = TFhirReference) then
-    result := parseReference(jsn)
   else if (type_ = TFhirCodeableConcept) then
     result := parseCodeableConcept(jsn)
+  else if (type_ = TFhirReference) then
+    result := parseReference(jsn)
   else if (type_ = TFhirIdentifier) then
     result := parseIdentifier(jsn)
   else if (type_ = TFhirSignature) then
     result := parseSignature(jsn)
-  else if (type_ = TFhirElementDefinition) then
-    result := parseElementDefinition(jsn)
   else if (type_ = TFhirTiming) then
     result := parseTiming(jsn)
-  else if (type_ = TFhirAddress) then
-    result := parseAddress(jsn)
+  else if (type_ = TFhirElementDefinition) then
+    result := parseElementDefinition(jsn)
   else if (type_ = TFhirHumanName) then
     result := parseHumanName(jsn)
+  else if (type_ = TFhirAddress) then
+    result := parseAddress(jsn)
   else if (type_ = TFhirMeta) then
     result := parseMeta(jsn)
   else if (type_ = TFhirContactPoint) then
@@ -60854,32 +60710,32 @@ begin
     result := parseCoding(element, name)
   else if (type_ = TFhirRange) then
     result := parseRange(element, name)
-  else if (type_ = TFhirQuantity) then
-    result := parseQuantity(element, name)
   else if (type_ = TFhirAttachment) then
     result := parseAttachment(element, name)
-  else if (type_ = TFhirRatio) then
-    result := parseRatio(element, name)
+  else if (type_ = TFhirQuantity) then
+    result := parseQuantity(element, name)
   else if (type_ = TFhirAnnotation) then
     result := parseAnnotation(element, name)
+  else if (type_ = TFhirRatio) then
+    result := parseRatio(element, name)
   else if (type_ = TFhirSampledData) then
     result := parseSampledData(element, name)
-  else if (type_ = TFhirReference) then
-    result := parseReference(element, name)
   else if (type_ = TFhirCodeableConcept) then
     result := parseCodeableConcept(element, name)
+  else if (type_ = TFhirReference) then
+    result := parseReference(element, name)
   else if (type_ = TFhirIdentifier) then
     result := parseIdentifier(element, name)
   else if (type_ = TFhirSignature) then
     result := parseSignature(element, name)
-  else if (type_ = TFhirElementDefinition) then
-    result := parseElementDefinition(element, name)
   else if (type_ = TFhirTiming) then
     result := parseTiming(element, name)
-  else if (type_ = TFhirAddress) then
-    result := parseAddress(element, name)
+  else if (type_ = TFhirElementDefinition) then
+    result := parseElementDefinition(element, name)
   else if (type_ = TFhirHumanName) then
     result := parseHumanName(element, name)
+  else if (type_ = TFhirAddress) then
+    result := parseAddress(element, name)
   else if (type_ = TFhirMeta) then
     result := parseMeta(element, name)
   else if (type_ = TFhirContactPoint) then
@@ -60938,24 +60794,28 @@ begin
     composeCoding(xml, name,  TFhirCoding(base))
   else if (base is TFhirRange) then
     composeRange(xml, name,  TFhirRange(base))
-  else if (base is TFhirQuantity) then
-    composeQuantity(xml, name,  TFhirQuantity(base))
   else if (base is TFhirAttachment) then
     composeAttachment(xml, name,  TFhirAttachment(base))
-  else if (base is TFhirRatio) then
-    composeRatio(xml, name,  TFhirRatio(base))
+  else if (base is TFhirQuantity) then
+    composeQuantity(xml, name,  TFhirQuantity(base))
   else if (base is TFhirAnnotation) then
     composeAnnotation(xml, name,  TFhirAnnotation(base))
+  else if (base is TFhirRatio) then
+    composeRatio(xml, name,  TFhirRatio(base))
   else if (base is TFhirSampledData) then
     composeSampledData(xml, name,  TFhirSampledData(base))
-  else if (base is TFhirReference) then
-    composeReference(xml, name,  TFhirReference(base))
   else if (base is TFhirCodeableConcept) then
     composeCodeableConcept(xml, name,  TFhirCodeableConcept(base))
+  else if (base is TFhirReference) then
+    composeReference(xml, name,  TFhirReference(base))
   else if (base is TFhirIdentifier) then
     composeIdentifier(xml, name,  TFhirIdentifier(base))
   else if (base is TFhirSignature) then
     composeSignature(xml, name,  TFhirSignature(base))
+  else if (base is TFhirTimingRepeat) then
+    composeTimingRepeat(xml, name,  TFhirTimingRepeat(base))
+  else if (base is TFhirTiming) then
+    composeTiming(xml, name,  TFhirTiming(base))
   else if (base is TFhirElementDefinitionSlicing) then
     composeElementDefinitionSlicing(xml, name,  TFhirElementDefinitionSlicing(base))
   else if (base is TFhirElementDefinitionBase) then
@@ -60970,14 +60830,10 @@ begin
     composeElementDefinitionMapping(xml, name,  TFhirElementDefinitionMapping(base))
   else if (base is TFhirElementDefinition) then
     composeElementDefinition(xml, name,  TFhirElementDefinition(base))
-  else if (base is TFhirTimingRepeat) then
-    composeTimingRepeat(xml, name,  TFhirTimingRepeat(base))
-  else if (base is TFhirTiming) then
-    composeTiming(xml, name,  TFhirTiming(base))
-  else if (base is TFhirAddress) then
-    composeAddress(xml, name,  TFhirAddress(base))
   else if (base is TFhirHumanName) then
     composeHumanName(xml, name,  TFhirHumanName(base))
+  else if (base is TFhirAddress) then
+    composeAddress(xml, name,  TFhirAddress(base))
   else if (base is TFhirMeta) then
     composeMeta(xml, name,  TFhirMeta(base))
   else if (base is TFhirContactPoint) then
@@ -61786,24 +61642,28 @@ begin
     composeCoding(json, name, TFhirCoding(base), false)
   else if (base is TFhirRange) then
     composeRange(json, name, TFhirRange(base), false)
-  else if (base is TFhirQuantity) then
-    composeQuantity(json, name, TFhirQuantity(base), false)
   else if (base is TFhirAttachment) then
     composeAttachment(json, name, TFhirAttachment(base), false)
-  else if (base is TFhirRatio) then
-    composeRatio(json, name, TFhirRatio(base), false)
+  else if (base is TFhirQuantity) then
+    composeQuantity(json, name, TFhirQuantity(base), false)
   else if (base is TFhirAnnotation) then
     composeAnnotation(json, name, TFhirAnnotation(base), false)
+  else if (base is TFhirRatio) then
+    composeRatio(json, name, TFhirRatio(base), false)
   else if (base is TFhirSampledData) then
     composeSampledData(json, name, TFhirSampledData(base), false)
-  else if (base is TFhirReference) then
-    composeReference(json, name, TFhirReference(base), false)
   else if (base is TFhirCodeableConcept) then
     composeCodeableConcept(json, name, TFhirCodeableConcept(base), false)
+  else if (base is TFhirReference) then
+    composeReference(json, name, TFhirReference(base), false)
   else if (base is TFhirIdentifier) then
     composeIdentifier(json, name, TFhirIdentifier(base), false)
   else if (base is TFhirSignature) then
     composeSignature(json, name, TFhirSignature(base), false)
+  else if (base is TFhirTimingRepeat) then
+    composeTimingRepeat(json, name, TFhirTimingRepeat(base), false)
+  else if (base is TFhirTiming) then
+    composeTiming(json, name, TFhirTiming(base), false)
   else if (base is TFhirElementDefinitionSlicing) then
     composeElementDefinitionSlicing(json, name, TFhirElementDefinitionSlicing(base), false)
   else if (base is TFhirElementDefinitionBase) then
@@ -61818,14 +61678,10 @@ begin
     composeElementDefinitionMapping(json, name, TFhirElementDefinitionMapping(base), false)
   else if (base is TFhirElementDefinition) then
     composeElementDefinition(json, name, TFhirElementDefinition(base), false)
-  else if (base is TFhirTimingRepeat) then
-    composeTimingRepeat(json, name, TFhirTimingRepeat(base), false)
-  else if (base is TFhirTiming) then
-    composeTiming(json, name, TFhirTiming(base), false)
-  else if (base is TFhirAddress) then
-    composeAddress(json, name, TFhirAddress(base), false)
   else if (base is TFhirHumanName) then
     composeHumanName(json, name, TFhirHumanName(base), false)
+  else if (base is TFhirAddress) then
+    composeAddress(json, name, TFhirAddress(base), false)
   else if (base is TFhirMeta) then
     composeMeta(json, name, TFhirMeta(base), false)
   else if (base is TFhirContactPoint) then

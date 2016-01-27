@@ -120,7 +120,8 @@ uses
   FHIRSecurity in '..\reference-platform\FHIRSecurity.pas',
   FHIRTags in '..\reference-platform\FHIRTags.pas',
   FhirPath in '..\reference-platform\FhirPath.pas',
-  FHIRProfileUtilities in '..\reference-platform\FHIRProfileUtilities.pas';
+  FHIRProfileUtilities in '..\reference-platform\FHIRProfileUtilities.pas',
+  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas';
 
 procedure SaveStringToFile(s : AnsiString; fn : String);
 var
@@ -190,6 +191,31 @@ begin
     try
       c := TFHIRXMLComposer.Create('en');
       try
+        c.Compose(f, r, true, nil);
+      finally
+        c.free;
+      end;
+    finally
+      f.free;
+    end;
+    f := TFileStream.Create(dest+'.rdf', fmCreate);
+    try
+      c := TFHIRRDFComposer.Create('en');
+      try
+        TFHIRRDFComposer(c).URL := 'http://hl7.org/fhir/Condition/f202';
+        c.Compose(f, r, true, nil);
+      finally
+        c.free;
+      end;
+    finally
+      f.free;
+    end;
+    f := TFileStream.Create(dest+'.rdf1', fmCreate);
+    try
+      c := TFHIRRDFComposer.Create('en');
+      try
+        TFHIRRDFComposer(c).RDFFormat := rdfNTriple;
+        TFHIRRDFComposer(c).URL := 'http://hl7.org/fhir/Condition/f202';
         c.Compose(f, r, true, nil);
       finally
         c.free;
@@ -312,9 +338,9 @@ begin
   try
     CoInitialize(nil);
     IdSSLOpenSSLHeaders.load;
-    LoadEAYExtensions;
-    ERR_load_crypto_strings;
-    OpenSSL_add_all_algorithms;
+//    LoadEAYExtensions;
+//    ERR_load_crypto_strings;
+//    OpenSSL_add_all_algorithms;
     try
       if (paramstr(1) = '-signatom') then
       begin
@@ -387,6 +413,7 @@ begin
 end;
 
 begin
+  IdOpenSSLSetLibPath(ExtractFilePath(paramstr(0)));
   if paramstr(1) = '-test' then
     TAdvGenericsTests.execute
   else
