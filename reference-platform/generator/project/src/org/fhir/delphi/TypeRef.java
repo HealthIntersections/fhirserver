@@ -31,8 +31,6 @@ package org.fhir.delphi;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hl7.fhir.dstu2.model.ElementDefinition.TypeRefComponent;
-
 
 
 /*

@@ -6,12 +6,12 @@ import java.util.Map;
 
 import org.hl7.fhir.dstu21.formats.XmlParser;
 import org.hl7.fhir.dstu21.model.Bundle;
+import org.hl7.fhir.dstu21.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu21.model.Conformance;
 import org.hl7.fhir.dstu21.model.OperationDefinition;
 import org.hl7.fhir.dstu21.model.SearchParameter;
 import org.hl7.fhir.dstu21.model.StructureDefinition;
 import org.hl7.fhir.dstu21.model.ValueSet;
-import org.hl7.fhir.dstu21.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu21.utils.ToolingExtensions;
 import org.hl7.fhir.utilities.Utilities;
 

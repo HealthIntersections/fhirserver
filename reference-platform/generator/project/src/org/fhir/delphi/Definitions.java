@@ -39,9 +39,8 @@ import java.util.Set;
 import org.hl7.fhir.dstu2.model.ConceptMap;
 import org.hl7.fhir.dstu2.model.DateTimeType;
 import org.hl7.fhir.dstu2.model.NamingSystem;
-import org.hl7.fhir.dstu2.model.StructureDefinition;
-import org.hl7.fhir.dstu2.model.ValueSet;
 import org.hl7.fhir.dstu2.model.StructureDefinition.ExtensionContext;
+import org.hl7.fhir.dstu2.model.ValueSet;
 
 /**
  * This class is the root to all the definitions in FHIR. There are the

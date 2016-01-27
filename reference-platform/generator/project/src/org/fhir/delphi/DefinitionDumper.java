@@ -3,13 +3,10 @@ package org.fhir.delphi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hl7.fhir.dstu2.model.ConceptMap;
-import org.hl7.fhir.dstu2.model.ValueSet;
 import org.hl7.fhir.dstu2.model.Enumerations.BindingStrength;
 
 public class DefinitionDumper {
