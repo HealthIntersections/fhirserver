@@ -6,7 +6,7 @@
         <Projects Include="Server\FHIRServer2.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Server\FHIRServer21.dproj">
+        <Projects Include="Server\FHIRServer3.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="npp\fhirnpp.dproj">
@@ -15,7 +15,13 @@
         <Projects Include="vseditor\ValueSetEditor.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="tests\FHIRTest.dproj">
+        <Projects Include="reference-platform\dstu1\dstu1.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="reference-platform\dstu2\dstu2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="reference-platform\dstu3\dstu3.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -35,14 +41,14 @@
     <Target Name="FHIRServer2:Make">
         <MSBuild Projects="Server\FHIRServer2.dproj" Targets="Make"/>
     </Target>
-    <Target Name="FHIRServer21">
-        <MSBuild Projects="Server\FHIRServer21.dproj"/>
+    <Target Name="FHIRServer3">
+        <MSBuild Projects="Server\FHIRServer3.dproj"/>
     </Target>
-    <Target Name="FHIRServer21:Clean">
-        <MSBuild Projects="Server\FHIRServer21.dproj" Targets="Clean"/>
+    <Target Name="FHIRServer3:Clean">
+        <MSBuild Projects="Server\FHIRServer3.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="FHIRServer21:Make">
-        <MSBuild Projects="Server\FHIRServer21.dproj" Targets="Make"/>
+    <Target Name="FHIRServer3:Make">
+        <MSBuild Projects="Server\FHIRServer3.dproj" Targets="Make"/>
     </Target>
     <Target Name="fhirnpp">
         <MSBuild Projects="npp\fhirnpp.dproj"/>
@@ -62,23 +68,41 @@
     <Target Name="ValueSetEditor:Make">
         <MSBuild Projects="vseditor\ValueSetEditor.dproj" Targets="Make"/>
     </Target>
-    <Target Name="FHIRTest">
-        <MSBuild Projects="tests\FHIRTest.dproj"/>
+    <Target Name="dstu1">
+        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj"/>
     </Target>
-    <Target Name="FHIRTest:Clean">
-        <MSBuild Projects="tests\FHIRTest.dproj" Targets="Clean"/>
+    <Target Name="dstu1:Clean">
+        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="FHIRTest:Make">
-        <MSBuild Projects="tests\FHIRTest.dproj" Targets="Make"/>
+    <Target Name="dstu1:Make">
+        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dstu2">
+        <MSBuild Projects="reference-platform\dstu2\dstu2.dproj"/>
+    </Target>
+    <Target Name="dstu2:Clean">
+        <MSBuild Projects="reference-platform\dstu2\dstu2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dstu2:Make">
+        <MSBuild Projects="reference-platform\dstu2\dstu2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dstu3">
+        <MSBuild Projects="reference-platform\dstu3\dstu3.dproj"/>
+    </Target>
+    <Target Name="dstu3:Clean">
+        <MSBuild Projects="reference-platform\dstu3\dstu3.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dstu3:Make">
+        <MSBuild Projects="reference-platform\dstu3\dstu3.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRServer2;FHIRServer21;fhirnpp;ValueSetEditor;FHIRTest"/>
+        <CallTarget Targets="FHIRServer2;FHIRServer3;fhirnpp;ValueSetEditor;dstu1;dstu2;dstu3"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRServer2:Clean;FHIRServer21:Clean;fhirnpp:Clean;ValueSetEditor:Clean;FHIRTest:Clean"/>
+        <CallTarget Targets="FHIRServer2:Clean;FHIRServer3:Clean;fhirnpp:Clean;ValueSetEditor:Clean;dstu1:Clean;dstu2:Clean;dstu3:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRServer2:Make;FHIRServer21:Make;fhirnpp:Make;ValueSetEditor:Make;FHIRTest:Make"/>
+        <CallTarget Targets="FHIRServer2:Make;FHIRServer3:Make;fhirnpp:Make;ValueSetEditor:Make;dstu1:Make;dstu2:Make;dstu3:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

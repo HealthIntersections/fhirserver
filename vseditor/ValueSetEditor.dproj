@@ -72,7 +72,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_Define>DSTU2;$(DCC_Define)</DCC_Define>
+        <DCC_Define>FHIR_DSTU2;$(DCC_Define)</DCC_Define>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <DCC_MapFile>3</DCC_MapFile>
         <Icon_MainIcon>ValueSetEditor_Icon.ico</Icon_MainIcon>
@@ -123,21 +123,21 @@
         <DCCReference Include="..\Libraries\treeview\Source\VTAccessibility.pas"/>
         <DCCReference Include="..\Libraries\treeview\Source\VTAccessibilityFactory.pas"/>
         <DCCReference Include="..\Libraries\treeview\Source\VTHeaderPopup.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRBase.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRClient.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\FHIRConstants.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRDigitalSignatures.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRLang.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\FHIRParser.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRParserBase.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\FHIRResources.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRSupport.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRTags.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\FHIRTypes.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRWorkerContext.pas"/>
-        <DCCReference Include="..\reference-platform\NarrativeGenerator.pas"/>
-        <DCCReference Include="..\reference-platform\SCIMObjects.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRClient.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRConstants.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRDigitalSignatures.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRLang.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParser.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRResources.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRTags.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRTypes.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRWorkerContext.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\NarrativeGenerator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\SCIMObjects.pas"/>
         <DCCReference Include="..\reference-platform\Support\DecimalSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\GUIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\StringSupport.pas"/>
@@ -208,7 +208,7 @@
         <DCCReference Include="..\reference-platform\Support\AdvStringObjectMatches.pas"/>
         <DCCReference Include="..\reference-platform\Support\HMAC.pas"/>
         <DCCReference Include="..\reference-platform\Support\libeay32.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRSecurity.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRSecurity.pas"/>
         <DCCReference Include="..\reference-platform\Support\MsXmlParser.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvMemories.pas"/>
         <DCCReference Include="..\reference-platform\Support\XMLBuilder.pas"/>
@@ -238,29 +238,25 @@
         <DCCReference Include="..\Libraries\ui\DProgress.pas"/>
         <DCCReference Include="ValueSetEditorExceptionForm.pas">
             <Form>ExceptionDialog</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="ValueSetEditorRegisterServerForm.pas">
             <Form>frmRegisterServer</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\reference-platform\Support\MimeMessage.pas"/>
-        <DCCReference Include="..\reference-platform\FhirPath.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRProfileUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRPath.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="ClosureManagerFrm.pas">
             <Form>ClosureManagerForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="ConceptLookupFrm.pas">
             <Form>ConceptLookupForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="NewServerForm.pas">
             <Form>frmNewServer</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\gen2\QuestionnaireBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\QuestionnaireBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -328,12 +324,27 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules">
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
@@ -687,27 +698,12 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
+                <DeployClass Name="ProjectiOSDeviceResourceRules">
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS</RemoteDir>
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>

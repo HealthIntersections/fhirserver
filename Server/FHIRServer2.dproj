@@ -105,7 +105,7 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
-        <DCC_Define>DSTU2;$(DCC_Define)</DCC_Define>
+        <DCC_Define>FHIR_DSTU2;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
@@ -326,33 +326,33 @@
         <DCCReference Include="..\reference-platform\Support\MsXML.pas"/>
         <DCCReference Include="..\reference-platform\Support\MimeMessage.pas"/>
         <DCCReference Include="..\reference-platform\Support\kCritSct.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\QuestionnaireBuilder.pas"/>
-        <DCCReference Include="..\reference-platform\SCIMObjects.pas"/>
-        <DCCReference Include="..\reference-platform\NarrativeGenerator.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRSecurity.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\QuestionnaireBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\SCIMObjects.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\NarrativeGenerator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRSecurity.pas"/>
         <DCCReference Include="..\tests\FHIRParserTests.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRNarrativeGenerator.pas"/>
-        <DCCReference Include="..\reference-platform\SmartOnFhirUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\FhirPath.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRTags.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRProfileUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRBase.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\FHIRTypes.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\FHIRResources.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\FHIRParser.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRParserBase.pas"/>
-        <DCCReference Include="..\reference-platform\gen2\FHIRConstants.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRSupport.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRLang.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRClient.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRValidator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRNarrativeGenerator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRPath.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRTags.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRTypes.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRResources.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParser.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRConstants.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRLang.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRClient.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRValidator.pas"/>
         <DCCReference Include="ClosureManager.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireballTests.pas"/>
-        <DCCReference Include="..\reference-platform\CDSHooksUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\FHIRPatch.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\CDSHooksUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRPatch.pas"/>
         <DCCReference Include="MPISearch.pas"/>
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
@@ -423,14 +423,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>FHIRServer2.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -440,7 +440,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -756,16 +765,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

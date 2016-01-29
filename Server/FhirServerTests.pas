@@ -56,7 +56,7 @@ end;
 procedure TFhirServerTests.executeLibrary;
 begin
   // TTwilioClient.RunTests;
-  {$IFDEF DSTU2}
+  {$IFDEF FHIR_DSTU2}
   TFHIRParserTests.runTests('C:\work\org.hl7.fhir.dstu2\build\publish\examples');
   {$ELSE}
   TFHIRParserTests.runTests('C:\work\org.hl7.fhir\build\publish\examples');
@@ -68,7 +68,7 @@ begin
   TJWTTests.runTests;
   TMarkdownDaringFireballTests.tests('C:\work\markdown\resources\df');
 //  TJsonPatchEngine.tests('C:\work\fhirserver\tests\json-patch-tests.json');
-  {$IFDEF DSTU2}
+  {$IFDEF FHIR_DSTU2}
   TFHIRClientTests.tests('http://local.healthintersections.com.au:960/open');
   {$ELSE}
   TFHIRClientTests.tests('http://fhir21.healthintersections.com.au');

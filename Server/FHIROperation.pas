@@ -5677,7 +5677,7 @@ function TFhirExpandValueSetOperation.buildExpansionProfile(request: TFHIRReques
 var
   needSecure : boolean;
 begin
-  {$IFDEF DSTU21}
+  {$IFDEF FHIR_DSTU3}
   if (params.str['profile'] = '') then
     result := TFhirExpansionProfile.Create
   else if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then

@@ -36,7 +36,7 @@ type
     procedure readParamValue(s : String);
   public
     constructor create(form : TFetchResourceFrm; definition : TFhirConformanceRestResourceSearchParam);
-    destructor destroy; override;
+    destructor Destroy; override;
 
     procedure AdjustPosition(top, left, width : integer);
     procedure addToUrl(b : TStringBuilder);
@@ -204,7 +204,7 @@ begin
   AddColumn('date', 'meta.lastUpdated');
   AddColumn('profile', 'meta.profile');
   AddColumn('security', 'meta.security');
-  if not Profiles.getProfileStructure(nil, 'http://hl7.org/fhir/StructureDefinition/'+rr.type_, st) then
+  if not Profiles.getProfileStructure(nil, 'http://hl7.org/fhir/StructureDefinition/'+CODES_TFHIRResourceTypesEnum[rr.type_], st) then
     AddColumn('text', 'text.div')
   else
     try
@@ -326,7 +326,7 @@ begin
   end
   else
   begin
-    FType := ResourceTypeByName((obj as TFhirConformanceRestResource).type_);
+    FType := ResourceTypeByName(CODES_TFHIRResourceTypesEnum[(obj as TFhirConformanceRestResource).type_]);
     AddSearch(obj as TFhirConformanceRestResource);
   end;
   btnCopy.Enabled := true;
@@ -552,7 +552,7 @@ begin
           if (int.code in [TypeRestfulInteractionRead, TypeRestfulInteractionSearchType]) then
             ok := true;
         if ok then
-          cbxType.Items.AddObject(rr.type_, rr);
+          cbxType.Items.AddObject(CODES_TFHIRResourceTypesEnum[rr.type_], rr);
       end;
     end;
   for fmt in FConformance.formatList do

@@ -35,7 +35,7 @@ uses
 
 procedure TValueSetEditorAboutForm.FormCreate(Sender: TObject);
 begin
-  lblFHIRVersion.Caption := 'FHIR Version: '+ FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
+  lblFHIRVersion.Caption := 'FHIR Version: '+ FHIR_GENERATED_VERSION;
   lblVSEVersion.Caption := 'ValueSet Editor Version: 1.0.'+ inttostr(BuildCount);
 end;
 

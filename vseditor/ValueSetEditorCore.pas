@@ -447,7 +447,7 @@ begin
     try
       conf := client.conformance(true);
       try
-        if (conf.fhirVersion <> FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION) then
+        if (conf.fhirVersion <> FHIR_GENERATED_VERSION) then
           raise Exception.Create('The server is the wrong version. Expected '+FHIR_GENERATED_VERSION+', found '+conf.fhirVersion);
         rest := conf.rest(frtValueset);
         if (rest = nil) or (rest.interaction(TypeRestfulInteractionSearchType) = nil) or (rest.interaction(TypeRestfulInteractionRead) = nil) then

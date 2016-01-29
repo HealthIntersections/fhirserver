@@ -304,7 +304,7 @@ Type
     procedure buildIndexesPaymentReconciliation;
     procedure buildIndexesAccount;
     procedure buildIndexesImplementationGuide;
-    {$IFDEF DSTU21}
+    {$IFDEF FHIR_DSTU3}
     procedure BuildIndexesDecisionSupportRule;
     procedure BuildIndexesDecisionSupportServiceModule;
     procedure BuildIndexesExpansionProfile;
@@ -312,7 +312,6 @@ Type
     procedure BuildIndexesLibrary;
     procedure BuildIndexesMeasure;
     procedure BuildIndexesModuleDefinition;
-    procedure BuildIndexesModuleMetadata;
     procedure BuildIndexesOrderSet;
     procedure BuildIndexesSequence;
     {$ENDIF}
@@ -508,7 +507,7 @@ Type
     procedure BuildIndexValuesProcessResponse(key : integer; id : string; context : TFhirResource; resource : TFhirProcessResponse);
     procedure BuildIndexValuesPaymentReconciliation(key : integer; id : string; context : TFhirResource; resource : TFhirPaymentReconciliation);
     procedure BuildIndexValuesAccount(key : integer; id : string; context : TFhirResource; resource : TFhirAccount);
-    {$IFDEF DSTU21}
+    {$IFDEF FHIR_DSTU3}
     procedure buildIndexValuesDecisionSupportRule(key : integer; id : string; context : TFhirResource; resource : TFhirDecisionSupportRule);
     procedure BuildIndexValuesDecisionSupportServiceModule(key : integer; id : string; context : TFhirResource; resource : TFhirDecisionSupportServiceModule);
     procedure BuildIndexValuesExpansionProfile(key : integer; id : string; context : TFhirResource; resource : TFhirExpansionProfile);
@@ -516,7 +515,6 @@ Type
     procedure BuildIndexValuesLibrary(key : integer; id : string; context : TFhirResource; resource : TFhirLibrary);
     procedure BuildIndexValuesMeasure(key : integer; id : string; context : TFhirResource; resource : TFhirMeasure);
     procedure BuildIndexValuesModuleDefinition(key : integer; id : string; context : TFhirResource; resource : TFhirModuleDefinition);
-    procedure BuildIndexValuesModuleMetadata(key : integer; id : string; context : TFhirResource; resource : TFhirModuleMetadata);
     procedure BuildIndexValuesOrderSet(key : integer; id : string; context : TFhirResource; resource : TFhirOrderSet);
     procedure BuildIndexValuesSequence(key : integer; id : string; context : TFhirResource; resource : TFhirSequence);
     {$ENDIF}
@@ -888,7 +886,7 @@ begin
     frtOperationDefinition : BuildIndexValuesOperationDefinition(key, id, context, TFhirOperationDefinition(resource));
     frtReferralRequest : BuildIndexValuesReferralRequest(key, id, context, TFhirReferralRequest(resource));
     frtNutritionOrder : BuildIndexValuesNutritionOrder(key, id, context, TFhirNutritionOrder(resource));
-    {$IFDEF DSTU21}
+    {$IFDEF FHIR_DSTU3}
     frtDecisionSupportRule : buildIndexValuesDecisionSupportRule(key, id, context, TFhirDecisionSupportRule(resource));
     frtDecisionSupportServiceModule : buildIndexValuesDecisionSupportServiceModule(key, id, context, TFHIRDecisionSupportServiceModule(resource));
     frtExpansionProfile : buildIndexValuesExpansionProfile(key, id, context, TFHIRExpansionProfile(resource));
@@ -896,7 +894,6 @@ begin
     frtLibrary : buildIndexValuesLibrary(key, id, context, TFHIRLibrary(resource));
     frtMeasure : buildIndexValuesMeasure(key, id, context, TFHIRMeasure(resource));
     frtModuleDefinition : buildIndexValuesModuleDefinition(key, id, context, TFHIRModuleDefinition(resource));
-    frtModuleMetadata : buildIndexValuesModuleMetadata(key, id, context, TFHIRModuleMetadata(resource));
     frtOrderSet : buildIndexValuesOrderSet(key, id, context, TFHIROrderSet(resource));
     frtSequence : buildIndexValuesSequence(key, id, context, TFHIRSequence(resource));
     {$ENDIF}
@@ -1354,7 +1351,7 @@ begin
   end;
 
   FEntries := FPathEntries;
-  {$IFDEF DSTU21}
+  {$IFDEF FHIR_DSTU3}
   evaluateByFHIRPath(resource);
   {$ENDIF}
 end;
@@ -2296,7 +2293,7 @@ end;
 
 
 Const
-  {$IFDEF DSTU2}
+  {$IFDEF FHIR_DSTU2}
   CHECK_TSearchParamsBasic : Array[TSearchParamsBasic] of TSearchParamsBasic = ( spBasic__content, spBasic__id, spBasic__lastUpdated, spBasic__profile, spBasic__query, spBasic__security, spBasic__tag, spBasic__text,
     spBasic_Author, spBasic_Code, spBasic_Created, spBasic_Description, spBasic_Identifier, spBasic_Keyword, spBasic_MinScore, spBasic_Patient, spBasic_Status, spBasic_Subject, spBasic_Title, spBasic_Topic, spBasic_Version);
   {$ELSE}
@@ -2329,7 +2326,7 @@ begin
 end;
 
 
-{$IFDEF DSTU2}
+{$IFDEF FHIR_DSTU2}
 Const
   CHECK_TSearchParamsClaim : Array[TSearchParamsClaim] of TSearchParamsClaim = ( spClaim__content, spClaim__id, spClaim__lastUpdated, spClaim__profile, spClaim__query, spClaim__security, spClaim__tag, spClaim__text,
     spClaim_Identifier, spClaim_Patient, spClaim_Priority, spClaim_Provider, spClaim_Use);
@@ -2977,38 +2974,6 @@ end;
 
 
 const
-  CHECK_TSearchParamsModuleMetadata : Array[TSearchParamsModuleMetadata] of TSearchParamsModuleMetadata = (
-    spModuleMetadata__content, spModuleMetadata__id, spModuleMetadata__lastUpdated, spModuleMetadata__profile, spModuleMetadata__query, spModuleMetadata__security, spModuleMetadata__tag, spModuleMetadata__text,
-    spModuleMetadata_Description, spModuleMetadata_Identifier, spModuleMetadata_Keyword, spModuleMetadata_Status, spModuleMetadata_Title, spModuleMetadata_Topic, spModuleMetadata_Version);
-
-
-procedure TFhirIndexInformation.BuildIndexesModuleMetadata;
-var
-  a : TSearchParamsModuleMetadata;
-begin
-  for a := low(TSearchParamsModuleMetadata) to high(TSearchParamsModuleMetadata) do
-  begin
-    assert(CHECK_TSearchParamsModuleMetadata[a] = a);
-    indexes.add(frtModuleMetadata, CODES_TSearchParamsModuleMetadata[a], DESC_TSearchParamsModuleMetadata[a], TYPES_TSearchParamsModuleMetadata[a], TARGETS_TSearchParamsModuleMetadata[a], PATHS_TSearchParamsModuleMetadata[a], USES_TSearchParamsModuleMetadata[a]);
-  end;
-end;
-
-procedure TFhirIndexManager.buildIndexValuesModuleMetadata(key: integer;id : String; context : TFhirResource; resource: TFhirModuleMetadata);
-var
-  s : TFHIRString;
-begin
-  index(frtModuleMetadata, key, 0, resource.descriptionElement, 'description');
-  index(frtModuleMetadata, key, 0, resource.identifierList, 'identifier');
-  for s in resource.keywordList do
-    index(frtModuleMetadata, key, 0, s, 'keyword');
-  index(frtModuleMetadata, key, 0, resource.titleElement, 'title');
-  index(frtModuleMetadata, key, 0, resource.topicList, 'topic');
-  index(frtModuleMetadata, key, 0, resource.versionElement, 'version');
-  index(frtModuleMetadata, key, 0, resource.statusElement, 'http://hl7.org/fhir/module-metadata-status', 'status');
-end;
-
-
-const
   CHECK_TSearchParamsOrderSet : Array[TSearchParamsOrderSet] of TSearchParamsOrderSet = (
     spOrderSet__content, spOrderSet__id, spOrderSet__lastUpdated, spOrderSet__profile, spOrderSet__query, spOrderSet__security, spOrderSet__tag, spOrderSet__text);
 
@@ -3065,7 +3030,7 @@ end;
 
 
 
-{$IFDEF DSTU21}
+{$IFDEF FHIR_DSTU3}
 Const
   CHECK_TSearchParamsContract : Array[TSearchParamsContract] of TSearchParamsContract = ( spContract__content, spContract__id, spContract__lastUpdated, spContract__profile, spContract__query, spContract__security, spContract__tag, spContract__text,
     spContract_Identifier, spContract_Party, spContract_Patient, spContract_Signer, spContract_Subject);
@@ -3096,7 +3061,7 @@ begin
     patientCompartment(key, resource.subjectList[i]);
     index(context, frtContract, key, 0, resource.subjectList[i], 'patient');
   end;
-  {$IFDEF DSTU21}
+  {$IFDEF FHIR_DSTU3}
   for i := 0 to resource.partyList.Count - 1 do
   begin
     index(context, frtContract, key, 0, resource.partyList[i].entity, 'party');
@@ -3374,11 +3339,17 @@ end;
 // --------- actual indexes -----------------------------------------------------------------------------------------------
 
 Const
+  {$IFDEF FHIR_DSTU3}
+  CHECK_TSearchParamsConformance : Array[TSearchParamsConformance] of TSearchParamsConformance = (
+    spConformance__content, spConformance__id, spConformance__lastUpdated, spConformance__profile, spConformance__query, spConformance__security, spConformance__tag,  spConformance__text,spConformance_Date, spConformance_Description, spConformance_Event, spConformance_Fhirversion,
+    spConformance_Format, spConformance_Mode, spConformance_Name, spConformance_ResourceProfile, spConformance_Publisher, spConformance_Resource, spConformance_Securityservice, spConformance_Software, spConformance_Status, spConformance_Supported_profile,
+    spConformance_Url, spConformance_Version);
+  {$ELSE}
   CHECK_TSearchParamsConformance : Array[TSearchParamsConformance] of TSearchParamsConformance = (
     spConformance__content, spConformance__id, spConformance__lastUpdated, spConformance__profile, spConformance__query, spConformance__security, spConformance__tag,  spConformance__text,spConformance_Date, spConformance_Description, spConformance_Event, spConformance_Fhirversion,
     spConformance_Format, spConformance_Mode, spConformance_Name, spConformance_Profile, spConformance_Publisher, spConformance_Resource, spConformance_Security, spConformance_Software, spConformance_Status, spConformance_Supported_profile,
     spConformance_Url, spConformance_Version);
-
+  {$ENDIF}
 
 procedure TFhirIndexInformation.buildIndexesConformance();
 var
@@ -4238,7 +4209,7 @@ procedure TFhirIndexManager.buildIndexValuesAuditEvent(key : integer; id : Strin
 var
   i, j : integer;
 begin
-  {$IFDEF DSTU21}
+  {$IFDEF FHIR_DSTU3}
   index(frtAuditEvent, key, 0, resource.type_, 'type');
   index(frtAuditEvent, key, 0, resource.actionElement, 'http://hl7.org/fhir/security-event-action', 'action');
   index(frtAuditEvent, key, 0, resource.recordedElement, 'date');
@@ -4467,8 +4438,13 @@ end;
 
 
 const
+  {$IFDEF FHIR_DSTU3}
+  CHECK_TSearchParamsMedication : Array[TSearchParamsMedication] of TSearchParamsMedication = ( spMedication__content, spMedication__id, spMedication__lastUpdated, spMedication__profile, spMedication__query, spMedication__security, spMedication__tag, spMedication__text,
+     spMedication_Code, spMedication_Container, spMedication_Packageitem, spMedication_Form, spMedication_Ingredient, spMedication_Manufacturer);
+  {$ELSE}
   CHECK_TSearchParamsMedication : Array[TSearchParamsMedication] of TSearchParamsMedication = ( spMedication__content, spMedication__id, spMedication__lastUpdated, spMedication__profile, spMedication__query, spMedication__security, spMedication__tag, spMedication__text,
      spMedication_Code, spMedication_Container, spMedication_Content, spMedication_Form, spMedication_Ingredient, spMedication_Manufacturer);
+  {$ENDIF}
 
 
 procedure TFhirIndexInformation.buildIndexesMedication;
@@ -4675,8 +4651,14 @@ end;
 
 
 const
+  {$IFDEF FHIR_DSTU3}
+  CHECK_TSearchParamsList : Array[TSearchParamsList] of TSearchParamsList = ( spList__content, spList__id, spList__lastUpdated, spList__profile, spList__query, spList__security, spList__tag, spList__text,
+    spList_Code, spList_Date, spList_Empty_reason, spList_Encounter, spList_Identifier, spList_Item, spList_Notes, spList_Patient, spList_Source, spList_Status, spList_Subject, spList_Title);
+  {$ELSE}
   CHECK_TSearchParamsList : Array[TSearchParamsList] of TSearchParamsList = ( spList__content, spList__id, spList__lastUpdated, spList__profile, spList__query, spList__security, spList__tag, spList__text,
     spList_Code, spList_Date, spList_Empty_reason, spList_Encounter, spList_Item, spList_Notes, spList_Patient, spList_Source, spList_Status, spList_Subject, spList_Title);
+  {$ENDIF}
+
 
 procedure TFhirIndexInformation.buildIndexesList;
 var
@@ -4688,7 +4670,9 @@ begin
     indexes.add(frtList, CODES_TSearchParamsList[a], DESC_TSearchParamsList[a], TYPES_TSearchParamsList[a], TARGETS_TSearchParamsList[a], PATHS_TSearchParamsList[a], USES_TSearchParamsList[a]);
   end;
   // DAF:
+  {$IFNDEF FHIR_DSTU3}
   indexes.add(frtList, 'identifier', 'identifier', SearchParamTypeToken, [], '', SearchXpathUsageNull);
+  {$ENDIF}
 end;
 
 procedure TFhirIndexManager.buildIndexValuesList(key : integer; id : String; context : TFhirResource; resource: TFhirList);
@@ -4706,10 +4690,14 @@ begin
   patientCompartment(key, resource.subject);
   deviceCompartment(key, resource.subject);
   index(context, frtList, key, 0, resource.encounter, 'encounter');
+  {$IFDEF FHIR_DSTU3}
+  for i := 0 to resource.noteList.Count - 1 do
+    index(frtList, key, 0, resource.noteList[i].text, 'notes');
+  {$ELSE}
   index(frtList, key, 0, resource.noteElement, 'notes');
+  {$ENDIF}
   index(frtList, key, 0, resource.titleElement, 'title');
   index(frtList, key, 0, resource.statusElement, 'http://hl7.org/fhir/list-status', 'status');
-  // DAF:
   index(frtList, key, 0, resource.identifierList, 'identifier');
 end;
 
@@ -5139,7 +5127,7 @@ begin
   end;
 end;
 
-{$IFDEF DSTU2}
+{$IFDEF FHIR_DSTU2}
 Const
   CHECK_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of TSearchParamsQuestionnaire = (spQuestionnaire__content, spQuestionnaire__id, spQuestionnaire__lastUpdated, spQuestionnaire__profile, spQuestionnaire__query, spQuestionnaire__security, spQuestionnaire__tag, spQuestionnaire__text,
     spQuestionnaire_Code, spQuestionnaire_Date, spQuestionnaire_Identifier, spQuestionnaire_Publisher, spQuestionnaire_Status, spQuestionnaire_Title, spQuestionnaire_Version);
@@ -6656,7 +6644,7 @@ begin
   buildIndexesBinary;
   buildIndexesAccount;
   buildIndexesImplementationGuide;
-  {$IFDEF DSTU21}
+  {$IFDEF FHIR_DSTU3}
   BuildIndexesDecisionSupportRule;
   BuildIndexesDecisionSupportServiceModule;
   BuildIndexesExpansionProfile;
@@ -6664,7 +6652,6 @@ begin
   BuildIndexesLibrary;
   BuildIndexesMeasure;
   BuildIndexesModuleDefinition;
-  BuildIndexesModuleMetadata;
   BuildIndexesOrderSet;
   BuildIndexesSequence;
   {$ENDIF}

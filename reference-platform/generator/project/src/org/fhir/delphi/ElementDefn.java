@@ -497,7 +497,7 @@ public class ElementDefn {
     }
   }
 
-  public void loadFrom(org.hl7.fhir.dstu21.model.ElementDefinition ed, org.hl7.fhir.dstu21.model.StructureDefinition sd, Map<String, org.hl7.fhir.dstu21.model.ValueSet> vsmap) throws FHIRException {
+  public void loadFrom(org.hl7.fhir.dstu21.model.ElementDefinition ed, org.hl7.fhir.dstu21.model.StructureDefinition sd, Map<String, org.hl7.fhir.dstu21.model.ValueSet> vsmap) throws FHIRException, org.hl7.fhir.dstu21.exceptions.FHIRException {
     path = ed.getPath();
     name = Utilities.oidTail(ed.getPath());
     shortDefn = ed.getShort();
@@ -558,6 +558,8 @@ public class ElementDefn {
     bs.setStrength(BindingStrength.REQUIRED);
     if (b.hasValueSetReference()) {
       ValueSet vs = vsmap.get(b.getValueSetReference().getReference());
+      if (vs == null)
+        throw new Error("Value Set "+b.getValueSetReference().getReference()+" not found");
       bs.loadFromExpansion(vs);
       bs.setName(vs.getName().replace(" ", ""));
       bs.setReference(urlTail(vs.getUrl()));
@@ -567,7 +569,7 @@ public class ElementDefn {
     return bs;
   }
 
-  private BindingSpecification convert(org.hl7.fhir.dstu21.model.ElementDefinition.ElementDefinitionBindingComponent b, Map<String, org.hl7.fhir.dstu21.model.ValueSet> vsmap) throws FHIRException {
+  private BindingSpecification convert(org.hl7.fhir.dstu21.model.ElementDefinition.ElementDefinitionBindingComponent b, Map<String, org.hl7.fhir.dstu21.model.ValueSet> vsmap) throws FHIRException, org.hl7.fhir.dstu21.exceptions.FHIRException {
     BindingSpecification bs = new BindingSpecification(null, declaredTypeName, false);
     bs.setBindingMethod(BindingMethod.CodeList);
     bs.setDefinition(b.getDescription());

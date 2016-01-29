@@ -38,7 +38,7 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
 
   public static final String FULL_LICENSE_CODE = 
 
-      "  Copyright (c) 2011+, HL7, Inc.\r\n"+
+      "  Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)\r\n"+
           "  All rights reserved.\r\n"+
           "  \r\n"+
           "  Redistribution and use in source and binary forms, with or without modification, \r\n" +
@@ -65,6 +65,12 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
           "  POSSIBILITY OF SUCH DAMAGE.\r\n"+
           "  \r\n";
 
+  public static final String VERSION_MARK = 
+      "{$IFNDEF FHIR_DSTU%%}\r\n"+
+          "This is the dstu%% version of the FHIR code\r\n"+
+          "{$ENDIF}\r\n";
+
+
   // fragments
   public String name;
   public List<String> uses = new ArrayList<String>();
@@ -81,8 +87,11 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
   public List<String> procs = new ArrayList<String>();
   public List<String> procsPub = new ArrayList<String>();
 
-  public DelphiCodeGenerator(OutputStream out) throws UnsupportedEncodingException {
+  private int dstuID;
+
+  public DelphiCodeGenerator(OutputStream out, int dstuID) throws UnsupportedEncodingException {
     super(out, "ASCII");
+    this.dstuID = dstuID;
   }
 
   public void start() throws Exception {
@@ -118,11 +127,8 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
     }
     write("unit "+name+";\r\n");
     write("\r\n");
-    write("{\r\n"+FULL_LICENSE_CODE+"}\r\n\r\n");
-    write("\r\n");
-    write("{$IFDEF FHIR-DSTU}\r\n");
-    write("This is the dev branch of the FHIR code\r\n");
-    write("{$ENDIF}\r\n");
+    write("{\r\n"+FULL_LICENSE_CODE+"}\r\n");
+    write("\r\n"+VERSION_MARK.replace("%%", Integer.toString(dstuID))+"\r\n");
     write("\r\n");
     write("interface\r\n");
     write("\r\n");

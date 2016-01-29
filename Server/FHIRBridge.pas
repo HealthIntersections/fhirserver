@@ -6,7 +6,7 @@ uses
   FHIRResources, FHIRComponents;
 
 type
-  {$IFDEF FHIR-DSTU}
+  {$IFDEF FHIR_DSTU}
   TFHIRProfileStructureHolder = TFHIRProfileStructure;
   {$ELSE}
   TFHIRProfileStructureHolder = TFhirProfileStructureSnapshot;

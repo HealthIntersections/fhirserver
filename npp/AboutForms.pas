@@ -68,7 +68,7 @@ end;
 procedure TAboutForm.FormShow(Sender: TObject);
 begin
   inherited;
-  lblVersion.Caption := 'Plugin Version 1.0.'+inttostr(buildcount)+', FHIR Version '+FHIR_GENERATED_VERSION+'-'+FHIR_GENERATED_REVISION;
+  lblVersion.Caption := 'Plugin Version 1.0.'+inttostr(buildcount)+', FHIR Version '+FHIR_GENERATED_VERSION
 end;
 
 procedure TAboutForm.lnkDocoClick(Sender: TObject);

@@ -134,7 +134,7 @@ begin
   s := s.toLower;
   for sd in FContext.Profiles.ProfilesByURL.Values do
     if (sd.kind = StructureDefinitionKindResource) and ((edtFilter.Text = '') or sd.name.ToLower.Contains(s)) then
-      if sd.constrainedType = '' then
+      if sd.constrainedType = DefinedTypesNull then
         lbResources.Items.AddObject(sd.name, sd)
       else
         lbProfiles.Items.AddObject(sd.name, sd)

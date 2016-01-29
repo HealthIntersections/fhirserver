@@ -1,15 +1,21 @@
-FHIR Delphi/Pascal Library
-==========================
+Delphi/Pascal FHIR Reference Implementation
+===========================================
 
-The delphi library is maintained by Grahame Grieve (grahame@healthintersections.com.au).
-Bug reports, use the GitHub issues page.
+This Delphi/Pascal reference implementation is maintained by Grahame Grieve 
+(grahame@healthintersections.com.au) and used in the following tools:
+* FHIR Reference Server
+* Notepad++ Plug-in for FHIR
+* FHIR Value Set Editor 
+
+For bug reports concerning the reference implementation, use the 
+GitHub issues page at https://github.com/grahamegrieve/fhirserver/issues.
 
 License
 -------
 
 The license is standard BSD-3:
 
-Copyright (c) 2011-2013, HL7, Inc
+Copyright (c) 2011+, HL7, Inc and Health Intersections Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, 
@@ -43,6 +49,21 @@ The library depends on msxml, so won't work on anything but windows
 Free Pascal / Lazarus: this code doesn't compile under FPC because I can't
 figure out how to maintain dual source around the Unicode issue. If anyone
 wants to help, assistance will be welcome. 
+
+FHIR Versions
+-------------
+This reference implementation supports 3 FHIR versions:
+* FHIR DSTU 1 - no longer maintained actively
+* FHIR DSTU 2 - stable supported release 
+* FHIR DSTU 3 - current trunk. This is unstable and may not work at times
+
+To save implementers from confusion, you must add one of the following
+defines to your project options: FHIR_DSTU1, FHIR_DSTU2, or FHIR_DSTU3 
+depending on which version you want to support (as well as including the 
+correct files)
+
+Note: this does mean you can't support more than one version of FHIR 
+in the same executable, and is under further consideration.
 
 Using the library 
 -----------------
@@ -146,7 +167,8 @@ So once the object is in the list, and you want to work with it:
     end;
 
 The list automatically owns the object, and manages it's own reference to it
-correctly. You don't have to count the reference:
+correctly. You don't have to increment the reference count when you use an
+object:
 
     procedure UseObject(list : TAdvObjectList; i : integer);
     var
