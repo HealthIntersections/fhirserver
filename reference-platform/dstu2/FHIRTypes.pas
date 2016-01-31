@@ -11086,7 +11086,7 @@ begin
   inherited create;
   SetLength(FSystems, length(systems));
   SetLength(FCodes, length(codes));
-  for i := 0 to length(systems) do
+  for i := 0 to length(systems) - 1 do
   begin
     FSystems[i] := systems[i];
     FCodes[i] := codes[i];

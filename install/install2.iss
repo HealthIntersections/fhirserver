@@ -101,7 +101,7 @@ Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    Des
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "source"; String: "{app}\spec"
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "other";  String: "{app}\web"
 Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc.cache"
-Filename: "{app}\fhirserver.ini"; Section: "ucum"; Key: "cache";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
+Filename: "{app}\fhirserver.ini"; Section: "ucum"; Key: "source";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
 Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
 Filename: "{app}\fhirserver.ini"; Section: "web";  Key: "clients";  String: "{app}\auth.ini"
 

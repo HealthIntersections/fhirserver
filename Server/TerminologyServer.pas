@@ -150,13 +150,12 @@ begin
     writelnt(' - done');
   end;
   fn := ini.ReadString('ucum', 'source', '');
-  if fn <> '' then
-  begin
-    writelnt('Load Ucum from '+fn);
-    Ucum := TUcumServices.Create;
-    Ucum.Import(fn);
-    writelnt(' - done');
-  end;
+  if fn = '' then
+    raise Exception.Create('Unable to start because [ucum] source= is not specified in the ini file');
+  writelnt('Load Ucum from '+fn);
+  Ucum := TUcumServices.Create;
+  Ucum.Import(fn);
+  writelnt(' - done');
   LoadClosures;
 end;
 

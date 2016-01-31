@@ -5377,7 +5377,7 @@ begin
   try
     result.id := 'fso-'+name;
     result.meta := TFhirMeta.Create;
-    result.meta.lastUpdated := TDateAndTime.CreateHL7(FHIR_GENERATED_DATE);
+    result.meta.lastUpdated := TDateAndTime.CreateXML(FHIR_GENERATED_DATE);
     result.meta.versionId := SERVER_VERSION;
     result.url := AppendForwardSlash(base)+'OperationDefinition/fso-'+name;
     result.version := FHIR_GENERATED_VERSION;
@@ -5392,7 +5392,7 @@ begin
     result.description := 'Reference FHIR Server Operation Definition for "'+name+'"';
     result.status := ConformanceResourceStatusDraft;
     result.experimental := false;
-    result.date := TDateAndTime.CreateHL7(FHIR_GENERATED_DATE+'Z');
+    result.date := TDateAndTime.CreateXML(FHIR_GENERATED_DATE);
     result.kind := OperationKindOperation;
     result.code := name;
     result.base := TFhirReference.Create;
@@ -6208,7 +6208,7 @@ begin
   try
     result.notes := 'This server has little idea what a valid patient record is; it returns everything in the patient compartment, and any resource directly referred to from one of these';
     result.system := False;
-    result.type_List.Append.value := 'Patient';
+    result.type_List.AddItem('Patient');
     result.instance := true;
     with result.parameterList.Append do
     begin
@@ -6405,7 +6405,7 @@ begin
   try
     result.notes := '';
     result.system := False;
-    result.type_List.Append.value := 'Composition';
+    result.type_List.AddItem('Composition');
     result.instance := true;
     with result.parameterList.Append do
     begin

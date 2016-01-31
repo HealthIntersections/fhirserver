@@ -2952,11 +2952,19 @@ begin
     ttl.format := FFormat;
     ttl.prefix('fhir', 'http://hl7.org/fhir/');
     ttl.prefix('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
+    ttl.prefix('owl' ,'http://www.w3.org/2002/07/owl#');
+    ttl.prefix('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+
     section := ttl.section('resource');
     if URL <> '' then
       subject := section.triple('<'+URL+'>', 'a', 'fhir:'+CODES_TFHIRResourceType[oResource.ResourceType])
     else
       subject := section.triple('_', 'a', 'fhir:'+CODES_TFHIRResourceType[oResource.ResourceType]);
+
+    subject.predicate('a', 'owl:Ontology');
+    subject.predicate('a', 'owl:NamedIndividual');
+    subject.predicate('a', 'fhir:EntryPoint');
+    subject.predicate('owl:imports', 'http://hl7.org/fhir');
 
     composeResource(subject, oResource);
     b := TStringBuilder.Create;

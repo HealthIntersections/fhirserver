@@ -38,7 +38,7 @@ Uses
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions, AdvGenerics,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects, MsXmlParser,
-  DCPsha256, AdvJSON, libeay32,
+  DCPsha256, AdvJSON, libeay32, RDFUtilities,
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie, IdHashSHA,
@@ -1005,120 +1005,129 @@ Begin
         oStream := TStringStream.Create(request.UnparsedParams);
 
         try
-          response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-//          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-          response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
-          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
-//          response.CustomHeaders.add('Access-Control-Expose-Headers: *');
-          if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-            response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
-          oResponse := TFHIRResponse.Create;
-          Try
-            if request.AuthUsername = 'Bearer' then
-              sCookie := request.AuthPassword
-            else
-            begin
-              c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
-              if c > -1 then
-                sCookie := request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1);
-            end;
-            sBearer := sCookie;
-
-            oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP, request.CustomHeaders.Values['content-location'],
-               request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, request.RawHeaders.Values['Provenance'], sBearer,
-               oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
-            try
-              if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
-                TFHIRWebServerClientInfo(AContext.Data).Session := oRequest.Session.Link;
-
-              oRequest.IfMatch := processIfMatch(request.RawHeaders.Values['If-Match']);
-              oRequest.IfNoneMatch := processIfMatch(request.RawHeaders.Values['If-None-Match']);
-              oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
-              oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
-
-              noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('nohttperr')) or StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('_nohttperr'));
-              ReadTags(request.RawHeaders.Values['Category'], oRequest);
-              session := oRequest.Session.Link;
-              if redirect then
-              begin
-                if oRequest.Session <> nil then
-                begin
-                  FAuthServer.setCookie(response, FHIR_COOKIE_NAME, oRequest.Session.Cookie, domain, '', oRequest.Session.Expires, false);
-                  response.Redirect(oRequest.Session.OriginalUrl);
-                end
-                else
-                  response.Redirect(oRequest.baseUrl);
-              end
-              else if oRequest.CommandType = fcmdNull then
-              begin
-                response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
-              end
-              else if oRequest.CommandType = fcmdUnknown then
-              begin
-                response.ResponseNo := 200;
-                response.ContentType := 'text/html; charset=UTF-8';
-                response.FreeContentStream := true;
-                response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session, secure));
-              end
-              else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) Then
-              begin
-                response.ResponseNo := 200;
-                response.ContentType := 'text/html; charset=UTF-8';
-                response.FreeContentStream := true;
-                response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceType, oRequest.Session));
-              end
-              else if (oRequest.CommandType = fcmdConformanceStmt) and (oRequest.ResourceType <> frtNull) then
-              begin
-                response.ResponseNo := 200;
-                response.ContentType := 'text/html; charset=UTF-8';
-  // no - just use *              response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
-                response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
-                response.FreeContentStream := true;
-                response.ContentStream := StringToUTF8Stream('OK');
-              end
+          try
+            response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+  //          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+            response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
+            response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  //          response.CustomHeaders.add('Access-Control-Expose-Headers: *');
+            if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+              response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
+            oResponse := TFHIRResponse.Create;
+            Try
+              if request.AuthUsername = 'Bearer' then
+                sCookie := request.AuthPassword
               else
               begin
-                try
-                  if oRequest.CommandType = fcmdWebUI then
-                    HandleWebUIRequest(oRequest, oResponse, secure)
-                  else
-                    ProcessRequest(oRequest, oResponse, false);
-                except
-                  on e : EAbort do
+                c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
+                if c > -1 then
+                  sCookie := request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1);
+              end;
+              sBearer := sCookie;
+
+              oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP, request.CustomHeaders.Values['content-location'],
+                 request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, request.RawHeaders.Values['Provenance'], sBearer,
+                 oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
+              try
+                if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
+                  TFHIRWebServerClientInfo(AContext.Data).Session := oRequest.Session.Link;
+
+                oRequest.IfMatch := processIfMatch(request.RawHeaders.Values['If-Match']);
+                oRequest.IfNoneMatch := processIfMatch(request.RawHeaders.Values['If-None-Match']);
+                oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
+                oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
+
+                noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('nohttperr')) or StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('_nohttperr'));
+                ReadTags(request.RawHeaders.Values['Category'], oRequest);
+                session := oRequest.Session.Link;
+                if redirect then
+                begin
+                  if oRequest.Session <> nil then
                   begin
-                    if oResponse.HTTPCode < 300 then
+                    FAuthServer.setCookie(response, FHIR_COOKIE_NAME, oRequest.Session.Cookie, domain, '', oRequest.Session.Expires, false);
+                    response.Redirect(oRequest.Session.OriginalUrl);
+                  end
+                  else
+                    response.Redirect(oRequest.baseUrl);
+                end
+                else if oRequest.CommandType = fcmdNull then
+                begin
+                  response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
+                end
+                else if oRequest.CommandType = fcmdUnknown then
+                begin
+                  response.ResponseNo := 200;
+                  response.ContentType := 'text/html; charset=UTF-8';
+                  response.FreeContentStream := true;
+                  response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session, secure));
+                end
+                else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) Then
+                begin
+                  response.ResponseNo := 200;
+                  response.ContentType := 'text/html; charset=UTF-8';
+                  response.FreeContentStream := true;
+                  response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceType, oRequest.Session));
+                end
+                else if (oRequest.CommandType = fcmdConformanceStmt) and (oRequest.ResourceType <> frtNull) then
+                begin
+                  response.ResponseNo := 200;
+                  response.ContentType := 'text/html; charset=UTF-8';
+    // no - just use *              response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
+                  response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
+                  response.FreeContentStream := true;
+                  response.ContentStream := StringToUTF8Stream('OK');
+                end
+                else
+                begin
+                  try
+                    if oRequest.CommandType = fcmdWebUI then
+                      HandleWebUIRequest(oRequest, oResponse, secure)
+                    else
+                      ProcessRequest(oRequest, oResponse, false);
+                  except
+                    on e : EAbort do
+                    begin
+                      if oResponse.HTTPCode < 300 then
+                      begin
+                        recordStack(e);
+                        raise;
+                      end;
+                    end;
+                    on e : Exception do
                     begin
                       recordStack(e);
                       raise;
                     end;
                   end;
-                  on e : Exception do
-                  begin
-                    recordStack(e);
-                    raise;
-                  end;
+                  RecordExchange(oRequest, oResponse);
+                  ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, pretty, request.AcceptEncoding.Contains('gzip'));
+    // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
+    //                 response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
+                  if oResponse.versionId <> '' then
+                    response.ETag := 'W/"'+oResponse.versionId+'"';
+                  response.LastModified := oResponse.lastModifiedDate; // todo: timezone
+                  if oResponse.Tags.count > 0 then
+                    response.CustomHeaders.add('Category: '+ oResponse.Tags.AsHeader);
+                  if oResponse.link_List.count > 0 then
+                    response.CustomHeaders.add('Link: '+ oResponse.link_List.AsHeader);
+                  if oResponse.originalId <> '' then
+                    response.CustomHeaders.add('X-Original-Location: '+oResponse.originalId);
+                  if oResponse.ContentLocation <> '' then
+                    response.CustomHeaders.add('Content-Location: '+oResponse.ContentLocation);
+                  if oResponse.Location <> '' then
+                    response.Location := oResponse.Location;
                 end;
+                if noErrCode then
+                  response.ResponseNo := 200;
+                response.WriteContent;
                 RecordExchange(oRequest, oResponse);
-                ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, pretty, request.AcceptEncoding.Contains('gzip'));
-  // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
-  //                 response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
-                if oResponse.versionId <> '' then
-                  response.ETag := 'W/"'+oResponse.versionId+'"';
-                response.LastModified := oResponse.lastModifiedDate; // todo: timezone
-                if oResponse.Tags.count > 0 then
-                  response.CustomHeaders.add('Category: '+ oResponse.Tags.AsHeader);
-                if oResponse.link_List.count > 0 then
-                  response.CustomHeaders.add('Link: '+ oResponse.link_List.AsHeader);
-                if oResponse.originalId <> '' then
-                  response.CustomHeaders.add('X-Original-Location: '+oResponse.originalId);
-                if oResponse.ContentLocation <> '' then
-                  response.CustomHeaders.add('Content-Location: '+oResponse.ContentLocation);
-                if oResponse.Location <> '' then
-                  response.Location := oResponse.Location;
+              except
+                on e : Exception do
+                begin
+                  RecordExchange(oRequest, oResponse, e);
+                  raise;
+                end;
               end;
-              if noErrCode then
-                response.ResponseNo := 200;
-              response.WriteContent;
             finally
               oRequest.Free;
             end;
@@ -1134,7 +1143,6 @@ Begin
     except
       on e : ERestfulAuthenticationNeeded do
       begin
-        RecordExchange(oRequest, oResponse, e);
         if aFormat = ffXhtml then
         begin
           response.ResponseNo := 200;
@@ -1147,7 +1155,6 @@ Begin
       end;
       on e : ETooCostly do
       begin
-        RecordExchange(oRequest, oResponse, e);
         if noErrCode then
           SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly)
         else
@@ -1155,7 +1162,6 @@ Begin
       end;
       on e: ERestfulException do
       begin
-        RecordExchange(oRequest, oResponse, e);
         if noErrCode then
           SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, e.Code)
         else
@@ -1163,7 +1169,6 @@ Begin
       end;
       on e: Exception do
       begin
-        RecordExchange(oRequest, oResponse, e);
         if noErrCode then
           SendError(response, 200, aFormat, lang, e.Message, sPath, e, session, false, path, relativeReferenceAdjustment, IssueTypeNull)
         else
@@ -1808,12 +1813,16 @@ Begin
       oResponse.Format := ffXML
     else if StringExistsSensitive(sContentAccept, 'text/html') Then
       oResponse.Format := ffXhtml
+    else if StringExistsSensitive(sContentAccept, 'text/turtle') Then
+      oResponse.Format := ffTurtle
     else if StringExistsSensitive(sContentAccept, 'application/xml') Then
       oResponse.Format := ffXML
     else if StringExistsInsensitive(sContentAccept, 'xml') Then
       oResponse.Format := ffXML
     else if StringExistsInsensitive(sContentAccept, 'html') Then
       oResponse.Format := ffXhtml
+    else if StringExistsInsensitive(sContentAccept, 'rdf') Then
+      oResponse.Format := ffTurtle
     else if oRequest.PostFormat <> ffAsIs then
       oResponse.Format := oRequest.PostFormat;
 
@@ -2094,6 +2103,13 @@ begin
           end
           else if oResponse.Format = ffXml then
             oComp := TFHIRXmlComposer.Create(oRequest.lang)
+          else if (oResponse.Format = ffTurtle) or (oResponse.Resource._source_format = ffTurtle) then
+          begin
+            oComp := TFHIRRDFComposer.Create(oRequest.lang);
+            TFHIRRDFComposer(oComp).RDFFormat := rdfTurtle;
+            if (oResponse.Resource <> nil) and (oResponse.Resource.id <> '') then
+              TFHIRRDFComposer(oComp).URL :=  oRequest.baseUrl+'/'+CODES_TFhirResourceType[oResponse.Resource.ResourceType]+'/'+oResponse.Resource.id;
+          end
           else if oResponse.Resource._source_format = ffJson then
             oComp := TFHIRJsonComposer.Create(oRequest.lang)
           else
