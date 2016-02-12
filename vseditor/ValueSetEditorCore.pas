@@ -4,7 +4,8 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, ZLib, Math, RegExpr,
-  SystemSupport, StringSupport, FileSupport, DateAndTime, ShellSupport, GuidSupport,
+  Dialogs,
+  SystemSupport, StringSupport, FileSupport, DateAndTime, ShellSupport, GuidSupport, EncodeSupport,
   AdvObjects, AdvStringMatches, AdvStringObjectMatches, AdvObjectLists, AdvBuffers, AdvWinInetClients, AdvMemories, AdvFiles, AdvGenerics,
   MsXmlParser, IdUri, IdHTTP, AdvJSON,
   FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRParserBase, FHIRConstants,
@@ -16,8 +17,7 @@ Const
   UIState_Edit = 2;
 
   ExpressionProperty = 'http://healthintersections.com.au/valueseteditor/expression';
-  // MASTER_SERVER = 'http://fhir-dev.healthintersections.com.au/open';
-  MASTER_SERVER_URL = 'http://localhost:961/open';
+  MASTER_SERVER = 'http://fhir2.healthintersections.com.au/open';
 
   CS_LIST = 'uri:uuid:185E783F-BE0D-451E-BEC1-2C92971BC762';
   VS_LIST = 'uri:uuid:3BCEFFA8-4FF0-4EAC-9328-1B671CEC0B55';
@@ -170,8 +170,10 @@ Type
 
     // servers
     function ServerCount : integer;
-    procedure getServer(index : integer; var name, address : String);
-    procedure AddServer(name, address : String);
+    procedure getServer(index : integer; var name, address, username, password : String; var doesSearch : boolean);
+    procedure AddServer(name, address, username, password : String; doesSearch : boolean);
+    procedure UpdateServer(name, address, username, password : String);
+    procedure DeleteServer(name : String);
     property WorkingServer : String read GetServerURL write SetServerURL;
 
     // choice browser
@@ -253,8 +255,11 @@ Type
   TValueSetEditorServerCache = class (TAdvObject)
   private
     FLoaded : boolean;
+    FDoesSearch : boolean;
     FName: String;
     FUrl : String;
+    Fusername : String;
+    Fpassword : String;
     FLastUpdated : String;
     FKey : integer;
     ini : TInifile;
@@ -271,7 +276,7 @@ Type
     procedure SynchroniseServer(event : TFHIRClientStatusEvent);
     procedure UpdateFromServer(event : TFHIRClientStatusEvent);
   public
-    Constructor Create(name, url : String; key : integer);
+    Constructor Create(name, url, username, password : String; doesSearch : boolean; key : integer);
     destructor Destroy; override;
     Function Link : TValueSetEditorServerCache; overload;
     procedure checkLoad(event : TFHIRClientStatusEvent; null : String);
@@ -279,7 +284,7 @@ Type
     procedure update(event : TFHIRClientStatusEvent; null : String);
     procedure save;
     function base : String;
-    Property URL : string read FUrl;
+    Property URL : string read FUrl write FUrl;
     property List : TFHIRValueSetList read FList;
     Property Name : String read FName;
     Property CodeSystems : TAdvStringObjectMatch read FCodeSystems;
@@ -291,6 +296,8 @@ Type
     procedure updateClosure(name : String);
     procedure AddToClosure(name : String; coding : TFhirCoding);
     function expand(url, filter : String; count : integer; allowIncomplete : boolean): TFHIRValueSet;
+    property username : String read Fusername write Fusername;
+    property password : String read Fpassword write Fpassword;
   end;
 
   TValueSetEditorContext = class (TAdvObject)
@@ -342,10 +349,13 @@ Type
     Property Dirty : boolean read FDirty;
 
     // registering a server
-    function CheckServer(url : String; var msg : String) : boolean;
+    function CheckServer(url : String; var msg : String; var doesSearch : boolean) : boolean;
     procedure SetNominatedServer(url : String);
     Property WorkingServer : TValueSetEditorServerCache read FWorkingServer;
     Property Servers : TAdvList<TValueSetEditorServerCache> read FServers;
+    procedure AddServer(name, address, username, password : String; doesSearch : boolean);
+    procedure DeleteServer(name : String);
+    procedure UpdateServer(server : TValueSetEditorServerCache);
 
     // opening a value set
     procedure NewValueset;
@@ -414,6 +424,20 @@ begin
   WorkingServer.AddClosure(name);
 end;
 
+procedure TValueSetEditorContext.AddServer(name, address, username, password: String; doesSearch : boolean);
+var
+  server : TValueSetEditorServerCache;
+begin
+  Settings.AddServer(name, address, username, password, doesSearch);
+  server := TValueSetEditorServerCache.Create(name, address, username, password, doesSearch, FServers.Count - 1);
+  try
+    server.load(nil);
+    FServers.Add(server.Link);
+  finally
+    server.Free;
+  end;
+end;
+
 procedure TValueSetEditorContext.AddToClosure(name: String; coding: TFhirCoding);
 begin
   WorkingServer.AddToClosure(name, coding);
@@ -434,7 +458,7 @@ begin
   result := FileExists(Settings.ValuesetItemPath+'-'+inttostr(FVersionCount-1)+'.z')
 end;
 
-function TValueSetEditorContext.CheckServer(url: String; var msg: String): boolean;
+function TValueSetEditorContext.CheckServer(url: String; var msg: String; var doesSearch : boolean): boolean;
 var
   client : TFhirClient;
   conf : TFhirConformance;
@@ -443,15 +467,17 @@ begin
   result := false;
   client := TFhirClient.create(url, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := nil;
     try
-      conf := client.conformance(true);
+      conf := client.conformance(false);
       try
         if (conf.fhirVersion <> FHIR_GENERATED_VERSION) then
           raise Exception.Create('The server is the wrong version. Expected '+FHIR_GENERATED_VERSION+', found '+conf.fhirVersion);
         rest := conf.rest(frtValueset);
-        if (rest = nil) or (rest.interaction(TypeRestfulInteractionSearchType) = nil) or (rest.interaction(TypeRestfulInteractionRead) = nil) then
+        if (rest = nil) {or (rest.interaction(TypeRestfulInteractionSearchType) = nil) }or (rest.interaction(TypeRestfulInteractionRead) = nil) then
           raise Exception.Create('The server does not support the required opeerations for value sets');
+        doesSearch := rest.interaction(TypeRestfulInteractionSearchType) <> nil;
         result := true;
       finally
         conf.free;
@@ -609,6 +635,11 @@ begin
   WorkingServer.UpdateClosure(name);
 end;
 
+procedure TValueSetEditorContext.UpdateServer(server: TValueSetEditorServerCache);
+begin
+  FSettings.updateServer(server.Name, server.URL, server.username, server.password);
+end;
+
 function TValueSetEditorContext.Redo: boolean;
 begin
   result := CanRedo;
@@ -664,6 +695,7 @@ begin
 
     client := TFhirClient.create(Settings.valueSetServer, true);
     try
+      client.UseIndy := true;
       client.OnClientStatus := nil;
       FValueSet.id := Settings.valueSetId;
       client.updateResource(FValueSet);
@@ -692,6 +724,7 @@ begin
   FValueSet.date := NowLocal;
   client := TFhirClient.create(Settings.WorkingServer, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := nil;
     vs := client.createResource(FValueSet, id) as TFhirValueSet;
     try
@@ -716,6 +749,7 @@ var
 begin
   client := TFhirClient.create(url, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := Event;
     params := TAdvStringMatch.Create;
     try
@@ -753,6 +787,7 @@ var
 begin
   client := TFhirClient.create(url, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := event;
     params := TAdvStringMatch.Create;
     try
@@ -799,6 +834,7 @@ begin
   ct := closures[name];
   client := TFhirClient.create(url, true);
   try
+    client.UseIndy := true;
     pin := TFhirParameters.Create;
     try
       pin.AddParameter('name', ct.id);
@@ -866,9 +902,9 @@ begin
   FSettings := TValueSetEditorCoreSettings.Create;
   if Settings.ServerCount = 0 then
     if FileExists('C:\work\fhirserver\Exec\fhir.ini') then
-      Settings.AddServer('Local Development Server', 'http://local.healthintersections.com.au:960/open')
+      Settings.AddServer('Local Development Server', 'http://local.healthintersections.com.au:960/open', '', '', true)
     else
-      Settings.AddServer('Health Intersections General Server', 'http://fhir-dev.healthintersections.com.au/open');
+      Settings.AddServer('Health Intersections General Server', 'http://fhir-dev.healthintersections.com.au/open', '', '', true);
 
   FServers := TAdvList<TValueSetEditorServerCache>.create;
   loadServers;
@@ -883,8 +919,12 @@ begin
   FVersionCount := 0;
   if FileExists(FSettings.ValuesetItemPath) then
   begin
-    LoadFromFile(FSettings.ValuesetItemPath);
-    Commit('load');
+    try
+      LoadFromFile(FSettings.ValuesetItemPath);
+      Commit('load');
+    except
+      showmessage('unable to load previous valueset');
+    end;
   end
   else
     FValueSet := nil;
@@ -912,6 +952,23 @@ begin
   finally
     LOutput.Free;
   end;
+end;
+
+procedure TValueSetEditorContext.DeleteServer(name: String);
+var
+  i : integer;
+  done : boolean;
+begin
+  done := false;
+  for i := FServers.Count -1 downto 0 do
+    if FServers[i].Name = name then
+    begin
+      FServers.Delete(i);
+      done := true;
+    end;
+  if not done then
+    raise Exception.Create('Server not found');
+  Settings.DeleteServer(name);
 end;
 
 destructor TValueSetEditorContext.Destroy;
@@ -952,13 +1009,14 @@ end;
 procedure TValueSetEditorContext.LoadServers;
 var
   i : integer;
-  name, address : String;
+  name, address, username, password : String;
+  doesSearch : boolean;
   server : TValueSetEditorServerCache;
 begin
   for i := 0 to Settings.ServerCount - 1 do
   begin
-    settings.getServer(i, name, address);
-    server := TValueSetEditorServerCache.Create(name, address, i);
+    settings.getServer(i, name, address, username, password, doesSearch);
+    server := TValueSetEditorServerCache.Create(name, address, username, password, doesSearch, i);
     try
       server.load(nil);
       FServers.Add(server.Link);
@@ -987,6 +1045,7 @@ var
 begin
   client := TFhirClient.create(FWorkingServer.FUrl, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := nil;
     pIn := TFhirParameters.Create;
     try
@@ -1029,6 +1088,7 @@ begin
   result := nil;
   client := TFhirClient.create(FWorkingServer.url, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := nil;
     params := TAdvStringMatch.Create;
     try
@@ -1240,6 +1300,7 @@ begin
     // todo: make this a thread that waits
     client := TFhirClient.create(FWorkingServer.FUrl, true);
     try
+      client.UseIndy := true;
       client.OnClientStatus := nil;
       params := TAdvStringMatch.Create;
       try
@@ -1366,6 +1427,7 @@ begin
     try
       client := TFhirClient.create(FWorkingServer.URL, true);
       try
+        client.UseIndy := true;
         client.OnClientStatus := nil;
         params := TAdvStringMatch.Create;
         try
@@ -1413,6 +1475,7 @@ begin
     try
       client := TFhirClient.create(FWorkingServer.URL, true);
       try
+        client.UseIndy := true;
         client.OnClientStatus := nil;
         params := TAdvStringMatch.Create;
         try
@@ -1502,6 +1565,7 @@ begin
   Settings.valueSetId := id;
   client := TFhirClient.create(FWorkingServer.URL, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := nil;
     vs := client.readResource(frtValueSet, Settings.valueSetId) as TFhirValueSet;
     try
@@ -1699,8 +1763,7 @@ begin
     result := makeOutcome(voOk, '');
 end;
 
-function TValueSetEditorContext.validateSystem(
-  value: string): TValidationOutcome;
+function TValueSetEditorContext.validateSystem(value: string): TValidationOutcome;
 begin
   if (value = '') and (FValueSet <> nil) and (FValueSet.codeSystem <> nil) and not FValueSet.codeSystem.conceptList.IsEmpty then
     result := makeOutcome(voMissing, 'A URL is required')
@@ -1715,9 +1778,12 @@ end;
 
 { TValueSetEditorCoreSettings }
 
-procedure TValueSetEditorCoreSettings.AddServer(name, address: String);
+procedure TValueSetEditorCoreSettings.AddServer(name, address, username, password: String; doesSearch : boolean);
 begin
   ini.WriteString('servers', name, address);
+  ini.WriteBool('servers-search', name, doesSearch);
+  if username <> '' then
+    ini.WriteString('servers-sec', name, EncodeMIME(username)+':'+EncodeMIME(password));
 end;
 
 function TValueSetEditorCoreSettings.columnWidth(tree, name : string; default: integer) : integer;
@@ -1738,6 +1804,11 @@ begin
   FMRUList := TStringList.Create;
   for i := 0 to ini.ReadInteger('mru', 'count', 0) - 1 do
     FMRUList.add(ini.ReadString('mru', 'item'+inttostr(i), ''));
+end;
+
+procedure TValueSetEditorCoreSettings.DeleteServer(name: String);
+begin
+  ini.DeleteKey('servers', name);
 end;
 
 destructor TValueSetEditorCoreSettings.Destroy;
@@ -1767,15 +1838,24 @@ begin
   result := ini.ReadBool('window', 'HasViewedWelcomeScreen', false);
 end;
 
-procedure TValueSetEditorCoreSettings.getServer(index : integer; var name, address : String);
+procedure TValueSetEditorCoreSettings.getServer(index : integer; var name, address, username, password : String; var doesSearch : boolean);
 var
   list : TStringList;
+  s, l, r : String;
 begin
   list := TStringList.create;
   try
     ini.ReadSection('servers', list);
     name := list[index];
     address := ini.ReadString('servers', name, '');
+    doesSearch := ini.ReadBool('servers-search', name, false);
+    s := ini.ReadString('servers-sec', name, '');
+    if (s <> '') then
+    begin
+      StringSplit(s, [':'], l, r);
+      username := DecodeMIME(l);
+      password := DecodeMIME(r);
+    end;
   finally
     list.free;
   end;
@@ -1945,6 +2025,13 @@ end;
 procedure TValueSetEditorCoreSettings.SetWindowWidth(const Value: Integer);
 begin
   ini.WriteInteger('window', 'width', value);
+end;
+
+procedure TValueSetEditorCoreSettings.UpdateServer(name, address, username, password: String);
+begin
+  ini.WriteString('servers', name, address);
+  if username <> '' then
+    ini.WriteString('servers-sec', name, EncodeMIME(username)+':'+EncodeMIME(password));
 end;
 
 function TValueSetEditorCoreSettings.ValuesetItemPath: string;
@@ -2190,6 +2277,7 @@ begin
     ct.FFilename := IncludeTrailingBackslash(base)+'ct-'+ct.id+'.json';
     client := TFhirClient.create(url, true);
     try
+      client.UseIndy := true;
       pin := TFhirParameters.Create;
       try
         pin.AddParameter('name', ct.id);
@@ -2226,6 +2314,7 @@ begin
   ct.FConcepts.Add(coding.link);
   client := TFhirClient.create(url, true);
   try
+    client.UseIndy := true;
     pin := TFhirParameters.Create;
     try
       pin.AddParameter('name', ct.id);
@@ -2265,6 +2354,7 @@ var
 begin
   client := TFhirClient.create(url, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := nil;
     conf := client.conformance(false);
     try
@@ -2308,14 +2398,16 @@ begin
   end;
 end;
 
-constructor TValueSetEditorServerCache.Create(name, url : String; key : integer);
+constructor TValueSetEditorServerCache.Create(name, url, username, password : String; doesSearch : boolean; key : integer);
 begin
   inherited Create;
   FKey := key;
   Furl := url;
   FName := name;
   FLoaded := false;
-
+  Fusername := username;
+  Fpassword := password;
+  FDoesSearch := doesSearch;
   ini := TIniFile.Create(IncludeTrailingPathDelimiter(base)+'server.ini');
   Flist := TFHIRValueSetList.Create;
   valuesets := TAdvStringObjectMatch.Create;
@@ -2330,6 +2422,7 @@ begin
   sortedValueSets.Sorted := true;
   specialCodeSystems := TAdvStringObjectMatch.create;
   closures := TAdvMap<TClosureTableRecord>.create;
+
 end;
 
 destructor TValueSetEditorServerCache.Destroy;
@@ -2354,6 +2447,7 @@ var
 begin
   client := TFhirClient.create(FUrl, true);
   try
+    client.UseIndy := true;
     client.OnClientStatus := nil;
     pIn := TFhirParameters.Create;
     try
@@ -2528,6 +2622,7 @@ begin
   ct := closures[name];
   client := TFhirClient.create(url, true);
   try
+    client.UseIndy := true;
     pin := TFhirParameters.Create;
     try
       pin.AddParameter('name', ct.id);
@@ -2621,6 +2716,7 @@ begin
   Create;
   FSystem := uri;
   FClient := TFhirClient.create(url, true);
+  Fclient.UseIndy := true;
   FCache := TAdvStringObjectMatch.create;
   FFilename := filename;
   if FileExists(FFilename) then
@@ -3158,6 +3254,7 @@ begin
 
   client := TFhirClient.create(url, true);
   try
+    client.UseIndy := true;
     params := TAdvStringMatch.Create;
     try
       params.Add('_summary', 'true');

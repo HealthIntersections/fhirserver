@@ -276,7 +276,7 @@ uses
   FHIRParserTests in '..\tests\FHIRParserTests.pas',
   FHIRNarrativeGenerator in '..\reference-platform\dstu2\FHIRNarrativeGenerator.pas',
   SmartOnFhirUtilities in '..\reference-platform\dstu2\SmartOnFhirUtilities.pas',
-  FhirPath in '..\reference-platform\dstu2\FHIRPath.pas',
+  FHIRPath in '..\reference-platform\dstu2\FHIRPath.pas',
   FHIRTags in '..\reference-platform\dstu2\FHIRTags.pas',
   FHIRProfileUtilities in '..\reference-platform\dstu2\FHIRProfileUtilities.pas',
   FHIRBase in '..\reference-platform\dstu2\FHIRBase.pas',
@@ -297,7 +297,9 @@ uses
   CDSHooksUtilities in '..\reference-platform\dstu2\CDSHooksUtilities.pas',
   FHIRPatch in '..\reference-platform\dstu2\FHIRPatch.pas',
   MPISearch in 'MPISearch.pas',
-  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas';
+  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
+  FHIROperations in '..\reference-platform\dstu2\FHIROperations.pas',
+  FHIRIndexConstants in '..\reference-platform\dstu2\FHIRIndexConstants.pas';
 
 begin
   JclStartExceptionTracking;

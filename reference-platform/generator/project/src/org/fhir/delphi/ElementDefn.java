@@ -493,7 +493,7 @@ public class ElementDefn {
     }
       
     if (ed.hasBinding() && ed.getBinding().getStrength() == BindingStrength.REQUIRED && "code".equals(typeCode())) {
-      setBinding(convert(ed.getBinding(), vsmap));
+      setBinding(convert(ed.getBinding(), vsmap, path));
     }
   }
 
@@ -551,7 +551,7 @@ public class ElementDefn {
     }
   }
   
-  private BindingSpecification convert(ElementDefinitionBindingComponent b, Map<String, ValueSet> vsmap) throws FHIRException {
+  private BindingSpecification convert(ElementDefinitionBindingComponent b, Map<String, ValueSet> vsmap, String path) throws FHIRException {
     BindingSpecification bs = new BindingSpecification(null, declaredTypeName, false);
     bs.setBindingMethod(BindingMethod.CodeList);
     bs.setDefinition(b.getDescription());
@@ -559,7 +559,7 @@ public class ElementDefn {
     if (b.hasValueSetReference()) {
       ValueSet vs = vsmap.get(b.getValueSetReference().getReference());
       if (vs == null)
-        throw new Error("Value Set "+b.getValueSetReference().getReference()+" not found");
+        throw new Error("Value Set "+b.getValueSetReference().getReference()+" not found, referenced from "+path);
       bs.loadFromExpansion(vs);
       bs.setName(vs.getName().replace(" ", ""));
       bs.setReference(urlTail(vs.getUrl()));

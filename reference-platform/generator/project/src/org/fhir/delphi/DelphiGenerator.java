@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hl7.fhir.dstu2.model.DateTimeType;
+import org.hl7.fhir.dstu21.model.OperationDefinition;
+import org.hl7.fhir.dstu21.model.OperationDefinition.OperationDefinitionParameterComponent;
+import org.hl7.fhir.dstu21.model.OperationDefinition.OperationParameterUse;
 import org.hl7.fhir.utilities.Utilities;
 
 /**
@@ -38,7 +41,9 @@ public class DelphiGenerator {
 
   private DelphiCodeGenerator defCodeType;
   private DelphiCodeGenerator defCodeRes;
-  private DelphiCodeGenerator defCodeConst;
+  private DelphiCodeGenerator defCodeConstGen;
+  private DelphiCodeGenerator defCodeConstNdx;
+  private DelphiCodeGenerator defCodeOp;
   private DelphiCodeGenerator prsrCode;
   private Definitions definitions;
 
@@ -88,6 +93,7 @@ public class DelphiGenerator {
 
   private List<String> types = new ArrayList<String>();
   private List<String> constants = new ArrayList<String>();
+  private List<String> opNames = new ArrayList<String>();
   private String destDir;
   
   
@@ -172,8 +178,11 @@ public class DelphiGenerator {
       srlsRegR.append("    frt"+n.getName()+": Compose"+n.getName()+"(this, '%%%%', '"+n.getName()+"', TFhir"+n.getName()+"(resource), -1);\r\n");
     }
 
-    defCodeConst.enumConsts.add("  FHIR_GENERATED_VERSION = '"+version+"';\r\n");
-    defCodeConst.enumConsts.add("  FHIR_GENERATED_DATE = '"+dateTimeType.asStringValue()+"';\r\n");
+    opStart();
+    for (OperationDefinition op : definitions.getOperations()) 
+      genOp(op);
+    defCodeConstGen.enumConsts.add("  FHIR_GENERATED_VERSION = '"+version+"';\r\n");
+    defCodeConstGen.enumConsts.add("  FHIR_GENERATED_DATE = '"+dateTimeType.asStringValue()+"';\r\n");
     defCodeRes.classDefs.add("  {@Class TFhirResourceFactory : TFHIRBaseFactory\r\n");
     defCodeRes.classDefs.add("     FHIR factory: class constructors and general useful builders\r\n");
     defCodeRes.classDefs.add("  }\r\n");
@@ -183,11 +192,275 @@ public class DelphiGenerator {
     defCodeRes.classImpls.add("function TFHIRResourceFactory.makeByName(const name : String) : TFHIRBase;\r\nbegin\r\n  "+factoryByName.toString().substring(7)+"  else\r\n    result := nil;\r\nend;\r\n\r\n");
     defCodeType.finish();
     defCodeRes.finish();
-    defCodeConst.finish();
+    defCodeOp.finish();
+    defCodeConstGen.finish();
+    defCodeConstNdx.finish();
 
     prsrCode.classDefs.add(buildParser());
     prsrCode.classImpls.add(prsrImpl.toString());
     prsrCode.finish();
+  }
+
+  private void opStart() {
+    defCodeOp.classDefs.add(
+        "  TFHIROperationRequest = class (TAdvObject)\r\n"+
+        "  public\r\n"+
+        "    constructor create(params : TFHIRParameters); overload; virtual;\r\n"+
+        "    constructor create(); overload; override;\r\n"+
+        "    function AsParams : TFHIRParameters; virtual;\r\n"+
+        "  end;\r\n"+
+        "\r\n"+
+        "  TFHIROperationResponse = class (TAdvObject)\r\n"+
+        "  public\r\n"+
+        "    constructor create(params : TFHIRParameters); overload; virtual;\r\n"+
+        "    constructor create(); overload; override;\r\n"+
+        "    function AsParams : TFHIRParameters; virtual;\r\n"+
+        "  end;\r\n\r\n");
+    defCodeOp.classImpls.add(
+        "function TFHIROperationRequest.AsParams: TFHIRParameters;\r\n"+
+            "begin\r\n"+
+            "  raise Exception.Create('Must be overriden');\r\n"+
+            "end;\r\n"+
+            "\r\n"+
+            "constructor TFHIROperationRequest.create(params: TFHIRParameters);\r\n"+
+            "begin\r\n"+
+            "  inherited Create;\r\n"+
+            "end;\r\n"+
+            "\r\n"+
+            "constructor TFHIROperationRequest.create;\r\n"+
+            "begin\r\n"+
+            "  inherited Create;\r\n"+
+            "end;\r\n"+
+            "\r\n"+
+            "function TFHIROperationResponse.AsParams: TFHIRParameters;\r\n"+
+            "begin\r\n"+
+            "  raise Exception.Create('Must be overriden');\r\n"+
+            "end;\r\n"+
+            "\r\n"+
+            "constructor TFHIROperationResponse.create(params: TFHIRParameters);\r\n"+
+            "begin\r\n"+
+            "  inherited Create;\r\n"+
+            "end;\r\n"+
+            "\r\n"+
+            "constructor TFHIROperationResponse.create;\r\n"+
+            "begin\r\n"+
+            "  inherited Create;\r\n"+
+            "end;\r\n"+
+    "\r\n");
+  }
+  
+  private void genOp(OperationDefinition op) throws IOException {
+    String name = Utilities.capitalize(getPascalName(op.getCode()));
+    if (opNames.contains(name))
+      return;
+    opNames.add(name);
+
+    defCodeOp.classDefs.add("  //Operation "+op.getCode()+" ("+op.getName()+")");
+
+    genOp(op, op.getParameter(), OperationParameterUse.IN, "Request");
+    genOp(op, op.getParameter(), OperationParameterUse.OUT, "Response");
+  }
+  
+  private void genOp(OperationDefinition op, List<OperationDefinitionParameterComponent> plist, OperationParameterUse use, String suffix) throws IOException {
+    String name = Utilities.capitalize(getPascalName(op.getCode()));
+    StringBuilder fields = new StringBuilder();
+    StringBuilder accessors = new StringBuilder();
+    StringBuilder properties = new StringBuilder();
+    StringBuilder destroy = new StringBuilder();
+    StringBuilder create = new StringBuilder();
+    StringBuilder params = new StringBuilder();
+    StringBuilder gencreate = new StringBuilder();;
+    List<String> vars = new ArrayList<String>();
+    
+    for (OperationDefinitionParameterComponent p : plist) {
+      if (use == null || p.getUse() == use) {
+        String pn = getPascalName(p.getName());
+        String pt = null;
+        boolean complex = false;
+        if (p.getType() == null) {
+          pt = "TFHIR"+name+"Op"+Utilities.capitalize(pn);
+          genOp(op, p.getPart(), null, Utilities.capitalize(pn));
+          complex = true;
+        }
+        if (pt == null)
+          pt = simpleTypes.get("TFhir"+Utilities.capitalize(p.getType()));
+        if (pt == null)
+          pt = "TFhir"+p.getType();
+        if (pt.equals("TFhirtoken"))
+          pt = "String";
+        if (pt.equals("TFhirAny"))
+          pt = "TFhirResource";
+        boolean obj = !Utilities.existsInList(pt, "String", "Boolean", "Integer");
+        boolean list = (p.getMax().equals("*") || Integer.parseInt(p.getMax()) > 1);
+       
+        if (list) {
+          if (!obj) {
+            fields.append("    F"+Utilities.capitalize(pn)+"List : TList<"+pt+">;\r\n");
+            gencreate.append("  F"+Utilities.capitalize(pn)+"List := TList<"+pt+">.create;\r\n");
+            destroy.append("  F"+Utilities.capitalize(pn)+"List.free;\r\n");
+            properties.append("    property "+pn+"List : TList<"+pt+"> read F"+Utilities.capitalize(pn)+"List;\r\n");
+
+            vars.add(pt);
+            String v = "v"+Integer.toString(vars.size());
+            create.append("  for p in params."+( use == null ? "partList" : "parameterList")+" do\r\n"+
+                "    if p.name = '"+p.getName()+"' then\r\n");
+            params.append("    for "+v+" in F"+Utilities.capitalize(pn)+"List do\r\n");
+            create.append("      F"+Utilities.capitalize(pn)+"List.Add((p.value as TFhir"+Utilities.capitalize(p.getType())+").value);{ob.1}\r\n");
+            params.append("      result.AddParameter('"+p.getName()+"', TFhir"+Utilities.capitalize(p.getType())+".create("+v+"));\r\n");
+           
+          } else {
+            fields.append("    F"+Utilities.capitalize(pn)+"List : TAdvList<"+pt+">;\r\n");
+            gencreate.append("  F"+Utilities.capitalize(pn)+"List := TAdvList<"+pt+">.create;\r\n");
+            destroy.append("  F"+Utilities.capitalize(pn)+"List.free;\r\n");
+            properties.append("    property "+pn+"List : TAdvList<"+pt+"> read F"+Utilities.capitalize(pn)+"List;\r\n");
+
+            vars.add(pt);
+            String v = "v"+Integer.toString(vars.size());
+            create.append("  for p in params."+( use == null ? "partList" : "parameterList")+" do\r\n"+
+                "    if p.name = '"+p.getName()+"' then\r\n");
+            params.append("    for "+v+" in F"+Utilities.capitalize(pn)+"List do\r\n");
+            if (isResource(pt.substring(5))) {
+              create.append("      F"+Utilities.capitalize(pn)+"List.Add((p.resource as "+pt+").Link);{ob.2}\r\n");
+              params.append("      result.AddParameter('"+p.getName()+"', "+v+".Link);\r\n");
+            } else if (isPrimitive(p.getType())) {
+              create.append("      F"+Utilities.capitalize(pn)+"List.Add(p.value.Link);{c}\r\n");
+              params.append("      result.AddParameter('"+p.getName()+"', "+v+".Link);\r\n");
+            } else if (complex) {
+              create.append("      F"+Utilities.capitalize(pn)+"List.Add("+pt+".create(p));{a}\r\n");
+              params.append("      result.AddParameter("+v+".asParams('"+p.getName()+"'));\r\n");
+            } else {
+              create.append("      F"+Utilities.capitalize(pn)+"List.Add((p.value as "+pt+").Link);{a}\r\n");
+              params.append("      result.AddParameter('"+p.getName()+"', "+v+".Link);\r\n");
+            }
+          }
+        } else {
+          fields.append("    F"+Utilities.capitalize(pn)+" : "+pt+";\r\n");
+          if (obj) {
+            accessors.append("    procedure Set"+Utilities.capitalize(pn)+"(value : "+pt+");\r\n");
+            destroy.append("  F"+Utilities.capitalize(pn)+".free;\r\n");
+            defCodeOp.classImpls.add("procedure TFHIR"+name+"Op"+suffix+".Set"+Utilities.capitalize(pn)+"(value : "+pt+");\r\nbegin\r\n  F"+Utilities.capitalize(pn)+".free;\r\n  F"+Utilities.capitalize(pn)+" := value;\r\nend;\r\n");
+          }
+          properties.append("    property "+pn+" : "+pt+" read F"+Utilities.capitalize(pn)+" write "+(obj ? "Set" : "F")+Utilities.capitalize(pn)+";\r\n");
+          
+          if (!pt.equals("Boolean")) {
+            if (pt.equals("String"))
+              params.append("    if (F"+Utilities.capitalize(pn)+" <> '') then\r\n");
+            else
+              params.append("    if (F"+Utilities.capitalize(pn)+" <> nil) then\r\n");
+          }
+          if (!isPrimitive(p.getType()) && !"token".equals(p.getType())) {
+            if (isResource(pt.substring(5))) {
+              params.append("      result.addParameter('"+p.getName()+"', F"+Utilities.capitalize(pn)+".Link);{oz.5a}\r\n");
+              create.append("  F"+Utilities.capitalize(pn)+" := (params.res['"+p.getName()+"'] as "+pt+").Link;{ob.5a}\r\n");
+            } else if (pt.equals("String")) {
+              params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType())+".create(F"+Utilities.capitalize(pn)+"));{oz.5b}\r\n");
+              create.append("  F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as TFHIR"+Utilities.capitalize(p.getType())+").Value; {ob.5b}\r\n");
+            } else if (complex) {
+              params.append("      result.addParameter(F"+Utilities.capitalize(pn)+".asParams('"+p.getName()+"'));{oz.5c}\r\n");
+              create.append("  F"+Utilities.capitalize(pn)+" := "+pt+".create(params.param['"+p.getName()+"']); {ob.5c}\r\n");
+            } else {
+              params.append("      result.addParameter('"+p.getName()+"', F"+Utilities.capitalize(pn)+".Link);{oz.5d}\r\n");
+              create.append("  F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as "+pt+").Link; {ob.5d}\r\n");
+            }
+          } else if (obj) {
+            params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType())+".create(F"+Utilities.capitalize(pn)+"));{oz.5e}\r\n");
+            create.append("  F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as TFHIR"+Utilities.capitalize(p.getType())+").value;\r\n");
+          } else {
+            params.append("      result.addParameter('"+p.getName()+"', TFHIR"+pt+".create(F"+Utilities.capitalize(pn)+"));{oz.5f}\r\n");
+            if (pt.equals("Boolean"))
+              create.append("  F"+Utilities.capitalize(pn)+" := params.bool['"+p.getName()+"'];\r\n");
+            else
+              create.append("  F"+Utilities.capitalize(pn)+" := params.str['"+p.getName()+"'];\r\n");
+          }
+        }
+      }
+    }
+
+    if (use == null) 
+    defCodeOp.classDefs.add(
+        "  TFHIR"+name+"Op"+suffix+" = class (TAdvObject)\r\n  private\r\n"+
+            fields.toString()+
+            accessors.toString()+
+            "  public\r\n"+
+            "    constructor create(params : TFhirParametersParameter); overload;\r\n"+
+            "    constructor create; overload; override;\r\n"+
+            "    destructor Destroy; override;\r\n"+
+            "    function AsParams(name : String) : TFHIRParametersParameter;\r\n"+
+            properties.toString()+
+        "  end;\r\n");
+    else
+      defCodeOp.classDefs.add(
+        "  TFHIR"+name+"Op"+suffix+" = class (TFHIROperation"+suffix+")\r\n  private\r\n"+
+            fields.toString()+
+            accessors.toString()+
+            "  public\r\n"+
+            "    constructor create(params : TFHIRParameters); overload; override;\r\n"+
+            "    constructor create; overload; override;\r\n"+
+            "    destructor Destroy; override;\r\n"+
+            "    function AsParams : TFHIRParameters; override;\r\n"+
+            properties.toString()+
+        "  end;\r\n");
+    defCodeOp.classImpls.add("constructor TFHIR"+name+"Op"+suffix+".create;\r\n"+
+        "begin\r\n"+
+        "  inherited create();\r\n"+
+        gencreate.toString()+
+        "end;\r\n");
+    defCodeOp.classImpls.add("constructor TFHIR"+name+"Op"+suffix+".create(params : "+(use == null ? "TFhirParametersParameter" : "TFHIRParameters")+");\r\n"+
+        (gencreate.length() > 0 ? "var\r\n  p : TFhirParametersParameter;\r\n" : "")+
+        "begin\r\n"+
+        "  inherited create();\r\n"+
+        gencreate.toString()+
+        create.toString()+
+        "end;\r\n");
+    defCodeOp.classImpls.add("destructor TFHIR"+name+"Op"+suffix+".Destroy;\r\nbegin\r\n"+destroy.toString()+"  inherited;\r\nend;\r\n");
+    if (use == null) 
+      defCodeOp.classImpls.add("function TFHIR"+name+"Op"+suffix+".AsParams(name : String) : TFhirParametersParameter;");
+    else
+      defCodeOp.classImpls.add("function TFHIR"+name+"Op"+suffix+".AsParams : TFhirParameters;");
+    if (vars.size() > 0) {
+      defCodeOp.classImpls.add("var");
+      for (int i = 0; i < vars.size(); i++) {
+        defCodeOp.classImpls.add("  v"+Integer.toString(i+1)+" : "+vars.get(i)+";");
+      }
+    }
+    if (use == null) 
+    defCodeOp.classImpls.add(
+        "begin\r\n"+
+        "  result := TFHIRParametersParameter.create;\r\n"+
+        "  try\r\n"+
+        "    result.name := name;\r\n"+
+        params.toString()+
+        "    result.link;\r\n  finally\r\n    result.free;\r\n  end;\r\nend;\r\n");
+    else
+    defCodeOp.classImpls.add(
+        "begin\r\n"+
+        "  result := TFHIRParameters.create;\r\n"+
+        "  try\r\n"+
+        params.toString()+
+        "    result.link;\r\n  finally\r\n    result.free;\r\n  end;\r\nend;\r\n");
+  }
+
+  private boolean isResource(String name) {
+    return definitions.hasResource(name) || name.equals("Resource") || name.equals("DomainResource") || name.equals("Parameters");
+  }
+
+  private String getPascalName(String code) {
+    StringBuilder b = new StringBuilder();
+    boolean up = false;
+    for (char ch : code.toCharArray()) {
+      if (Character.isAlphabetic(ch)) {
+        if (up)
+          b.append(Character.toUpperCase(ch));
+        else
+          b.append(ch);
+        up = false;
+      } else 
+        up = true;
+    }
+    if (GeneratorUtils.isDelphiReservedWord(b.toString()))
+      return b.toString()+"_";
+    else
+      return b.toString();
   }
 
   private void parserGap() {
@@ -218,23 +491,42 @@ public class DelphiGenerator {
     defCodeRes.uses.add("FHIRTypes");
     defCodeRes.usesImpl.add("FHIRUtilities");
 
-    defCodeConst = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRConstants.pas")), dstuID);
-    defCodeConst.start();
-    defCodeConst.name = "FHIRConstants";
-    defCodeConst.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
-    defCodeConst.precomments.add("!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, FHIRResources, FHIRResources_Wrapper");
-    defCodeConst.precomments.add("!ignore ALL_RESOURCE_TYPES");
-    defCodeConst.uses.add("SysUtils");
-    defCodeConst.uses.add("Classes");
-    defCodeConst.uses.add("StringSupport");
-    defCodeConst.uses.add("DecimalSupport");
-    defCodeConst.uses.add("AdvBuffers");
+    defCodeConstGen = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRConstants.pas")), dstuID);
+    defCodeConstGen.start();
+    defCodeConstGen.name = "FHIRConstants";
+    defCodeConstGen.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
+    defCodeConstGen.precomments.add("!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, FHIRResources, FHIRResources_Wrapper");
+    defCodeConstGen.precomments.add("!ignore ALL_RESOURCE_TYPES");
+    defCodeConstGen.uses.add("SysUtils");
+    defCodeConstGen.uses.add("Classes");
+    defCodeConstGen.uses.add("StringSupport");
+    defCodeConstGen.uses.add("DecimalSupport");
+    defCodeConstGen.uses.add("AdvBuffers");
     if (generics)
-      defCodeConst.uses.add("AdvGenerics");
-    defCodeConst.uses.add("DateAndTime");
-    defCodeConst.uses.add("FHIRBase");
-    defCodeConst.uses.add("FHIRTypes");
-    defCodeConst.uses.add("FHIRResources");
+      defCodeConstGen.uses.add("AdvGenerics");
+    defCodeConstGen.uses.add("DateAndTime");
+    defCodeConstGen.uses.add("FHIRBase");
+    defCodeConstGen.uses.add("FHIRTypes");
+    defCodeConstGen.uses.add("FHIRResources");
+
+    defCodeConstNdx = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRIndexConstants.pas")), dstuID);
+    defCodeConstNdx.start();
+    defCodeConstNdx.name = "FHIRIndexConstants";
+    defCodeConstNdx.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
+    defCodeConstNdx.precomments.add("!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, FHIRResources, FHIRResources_Wrapper");
+    defCodeConstNdx.precomments.add("!ignore ALL_RESOURCE_TYPES");
+    defCodeConstNdx.uses.add("SysUtils");
+    defCodeConstNdx.uses.add("Classes");
+    defCodeConstNdx.uses.add("StringSupport");
+    defCodeConstNdx.uses.add("DecimalSupport");
+    defCodeConstNdx.uses.add("AdvBuffers");
+    if (generics)
+      defCodeConstNdx.uses.add("AdvGenerics");
+    defCodeConstNdx.uses.add("DateAndTime");
+    defCodeConstNdx.uses.add("FHIRBase");
+    defCodeConstNdx.uses.add("FHIRTypes");
+    defCodeConstNdx.uses.add("FHIRResources");
+    defCodeConstNdx.uses.add("FHIRConstants");
 
     defCodeType = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRTypes.pas")), dstuID);
     defCodeType.start();
@@ -262,6 +554,24 @@ public class DelphiGenerator {
     prsrCode = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParser.pas")), dstuID);
     prsrCode.start();
     prsrCode.name = "FHIRParser";
+    
+    defCodeOp = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIROperations.pas")), dstuID);
+    defCodeOp.start();
+    defCodeOp.name = "FHIROperations";
+    defCodeOp.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
+    defCodeOp.precomments.add("!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, DateAndTime, DateAndTime_Wrapper");
+    defCodeOp.uses.add("SysUtils");
+    defCodeOp.uses.add("Classes");
+    defCodeOp.uses.add("Generics.Collections");
+    defCodeOp.uses.add("StringSupport");
+    defCodeOp.uses.add("DecimalSupport");
+    defCodeOp.uses.add("AdvBuffers");
+    defCodeOp.uses.add("AdvGenerics");
+    defCodeOp.uses.add("DateAndTime");
+    defCodeOp.uses.add("FHIRBase");
+    defCodeOp.uses.add("FHIRTypes");
+    defCodeOp.uses.add("FHIRResources");
+    defCodeOp.usesImpl.add("FHIRUtilities");
   }
 
   private void generate(ElementDefn root, String superClass, boolean resource, ClassCategory category, boolean isAbstract) throws Exception {
@@ -826,6 +1136,7 @@ public class DelphiGenerator {
       con7.append("  TARGETS_"+tn+" : Array["+tn+"] of TFhirResourceTypeSet = (");
       int l4 = 0;
       int l2 = 0;
+      int l7 = 0;
 
       List<String> names = new ArrayList<String>();
       Map<String, SearchParameterDefn> params = new HashMap<String, SearchParameterDefn>();
@@ -847,8 +1158,20 @@ public class DelphiGenerator {
         i++;
         String n = p.getCode().replace("$", "_");
         String d = makeDocoSafe(p.getDescription());
-        String nf = n.replace("-", "_").replace("[x]", "x");
+        String nf = n.replace("-", "").replace("[x]", "x");
         String t = getTarget(p.getWorkingTargets());
+        if (900 - l7 < t.length()) {
+          l7 = 10;
+          t = "\r\n    "+t;
+        }
+        if (t.length() + l7 > 900) {
+          int c = 900 - l7;
+          while (t.charAt(c) != ' ')
+            c--;
+          t = t.substring(0, c)+"\r\n        "+t.substring(c);
+          l7 = t.length() - c;
+        }
+          
         if (i == l) {
           def.append("    "+prefix+getTitle(nf)+"); {@enum.value \""+p.getCode()+"\" "+prefix+getTitle(nf)+" "+d+" }\r\n");
           con2.append(" "+prefix+getTitle(nf)+");");
@@ -876,17 +1199,21 @@ public class DelphiGenerator {
             con2.append("\r\n      // ");
             l2 = con2.length();
           }
+          if (con7.length() - l7 > 250) {
+            con7.append("\r\n      ");
+            l7 = con7.length();
+          }
         }
       }
 
-      defCodeRes.enumDefs.add(def.toString());
-      defCodeConst.enumConsts.add(con3.toString());
-      defCodeConst.enumConsts.add(con1.toString());
-      defCodeConst.enumConsts.add(con4.toString());
-      defCodeConst.enumConsts.add(con2.toString());
-      defCodeConst.enumConsts.add(con6.toString());
-      defCodeConst.enumConsts.add(con6a.toString());
-      defCodeConst.enumConsts.add(con7.toString());
+      defCodeConstGen.enumDefs.add(def.toString());
+      defCodeConstGen.enumConsts.add(con3.toString());
+      defCodeConstGen.enumConsts.add(con1.toString());
+      defCodeConstNdx.enumConsts.add(con4.toString());
+      defCodeConstGen.enumConsts.add(con2.toString());
+      defCodeConstNdx.enumConsts.add(con6.toString());
+      defCodeConstNdx.enumConsts.add(con6a.toString());
+      defCodeConstNdx.enumConsts.add(con7.toString());
     }
   }
 
@@ -1311,6 +1638,10 @@ public class DelphiGenerator {
   }
 
   protected boolean isPrimitive(String name) {
+    if (Utilities.noString(name))
+      return false;
+    if (name.equals("token"))
+      return false;
     return definitions.hasPrimitiveType(name) || (name.endsWith("Type") && definitions.getPrimitives().containsKey(name.substring(0, name.length()-4)));
   }
 
@@ -3358,6 +3689,7 @@ public class DelphiGenerator {
     con.append("  CODES_TFhirResourceType : Array[TFhirResourceType] of String = (");
     def.append("    frtNull, {@enum.value Resource type not known / not Specified }\r\n");
     con.append("'', ");
+    int conl = con.length(); 
     constants.add("TFhirResourceType");
 
     List<String> types = new ArrayList<String>();
@@ -3378,6 +3710,11 @@ public class DelphiGenerator {
       if (i < types.size() - 1) {
         def.append("    "+s2+", {@enum.value "+makeDocoSafe(definitions.getResourceByName(s).getDefinition())+" }\r\n");
         con.append("', ");
+        conl = conl + s.length()+4;
+        if (conl > 1000) {
+          con.append("\r\n      ");
+          conl = 6;
+        }
       } else {
         def.append("    "+s2+"); {@enum.value "+makeDocoSafe(definitions.getResourceByName(s).getDefinition())+" }\r\n");
         con.append("');");
@@ -3462,8 +3799,8 @@ public class DelphiGenerator {
 
 
     defCodeRes.enumDefs.add(def.toString());
-    defCodeConst.enumConsts.add(con.toString());
-    defCodeConst.enumConsts.add(cmp.toString());
+    defCodeConstGen.enumConsts.add(con.toString());
+    defCodeConstGen.enumConsts.add(cmp.toString());
 
 
   }

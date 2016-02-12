@@ -323,6 +323,7 @@ Begin
     12041 : {ERROR_INTERNET_MIXED_SECURITY} Result := 'Indicates that the content is not entirely secure. Some of the content being viewed may have come from unsecured servers.';
     12042 : {ERROR_INTERNET_CHG_POST_IS_NON_SECURE} Result := 'The application is posting and attempting to change multiple lines of text on a server that is not secure.';
     12043 : {ERROR_INTERNET_POST_IS_NON_SECURE} Result := 'The application is posting data to a server that is not secure.';
+    12045 : {ERROR_INTERNET_INVALID_CA} Result := 'Invalid CA';
     12110 : {ERROR_FTP_TRANSFER_IN_PROGRESS} Result := 'The requested operation cannot be made on the FTP session handle because an operation is already in progress.';
     12111 : {ERROR_FTP_DROPPED} Result := 'The FTP operation was not completed because the session was aborted.';
     12130 : {ERROR_GOPHER_PROTOCOL_ERROR} Result := 'An error was detected while parsing data returned from the gopher server.';
@@ -420,11 +421,12 @@ Procedure TAdvWinInetClient.Execute;
 Var
   sHeaders : String;
   pData : Pointer;
-  iSize : DWord;
+  iSize, err : DWord;
   bOk : Boolean;
   oResponse : TAdvMemoryStream;
   dwFlags : DWORD;
   dwBuffLen : DWORD;
+  again : boolean;
 Begin
   if FReqHandle <> nil then
     mInternetCloseHandle(FReqHandle);
@@ -444,53 +446,74 @@ Begin
   If FResponseType <> '' Then
     sHeaders := sHeaders + 'Accept: '+ FResponseType +cReturn;
 
-  If FSecure Then
-    FReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
-        INTERNET_FLAG_SECURE Or INTERNET_FLAG_IGNORE_CERT_CN_INVALID Or INTERNET_FLAG_IGNORE_CERT_DATE_INVALID Or INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP Or
-        INTERNET_FLAG_KEEP_CONNECTION Or INTERNET_FLAG_NO_AUTO_REDIRECT Or INTERNET_FLAG_NO_CACHE_WRITE Or INTERNET_FLAG_PRAGMA_NOCACHE, 0)
-  Else
-    FReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
-        INTERNET_FLAG_KEEP_CONNECTION Or INTERNET_FLAG_NO_AUTO_REDIRECT Or INTERNET_FLAG_NO_CACHE_WRITE Or INTERNET_FLAG_PRAGMA_NOCACHE, 0);
+  repeat
+    bok := true;
+    again := false;
+    If FSecure Then
+      FReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
+          INTERNET_FLAG_SECURE Or INTERNET_FLAG_IGNORE_CERT_CN_INVALID Or INTERNET_FLAG_IGNORE_CERT_DATE_INVALID Or INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP Or
+          INTERNET_FLAG_KEEP_CONNECTION Or INTERNET_FLAG_NO_CACHE_WRITE Or INTERNET_FLAG_PRAGMA_NOCACHE, 0)
+    Else
+      FReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
+          INTERNET_FLAG_KEEP_CONNECTION Or INTERNET_FLAG_NO_CACHE_WRITE Or INTERNET_FLAG_PRAGMA_NOCACHE, 0);
 
-  Check(FReqHandle <> Nil, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_OPEN, FResource, GetLastError);
-  If FSecure Then
-  Begin
-    dwBuffLen := 4;
-    bOk := mInternetQueryOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, pointer(@dwFlags), dwBuffLen);
-    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
-    dwFlags := dwFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA;
-    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, @dwFlags, dwBuffLen);
-    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-  End;
+    Check(FReqHandle <> Nil, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_OPEN, FResource, GetLastError);
+//    If FSecure Then
+//    Begin
+//      err := GetLastError;
+//      dwBuffLen := 4;
+//      bOk := mInternetQueryOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, pointer(@dwFlags), dwBuffLen);
+//      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
+//      dwFlags := dwFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+//      bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, @dwFlags, dwBuffLen);
+//      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+//      again := true;
+//    End;
 
-  // username and password
-  If FUsername <> '' Then
-  Begin
-    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_USERNAME, pchar(FUsername), Length(FUsername));
-    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-  End;
-  If FPassword <> '' Then
-  Begin
-    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PASSWORD, pchar(FPassword), Length(FPassword));
-    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-  End;
-  If FProxyUsername <> '' Then
-  Begin
-    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PROXY_USERNAME, pchar(FProxyUsername), Length(FProxyUsername));
-    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-  End;
-  If FProxyPassword <> '' Then
-  Begin
-    bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PROXY_PASSWORD, pchar(FProxyPassword), Length(FProxyPassword));
-    Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
-  End;
+    // username and password
+    If FUsername <> '' Then
+    Begin
+      bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_USERNAME, pchar(FUsername), Length(FUsername));
+      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+    End;
+    If FPassword <> '' Then
+    Begin
+      bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PASSWORD, pchar(FPassword), Length(FPassword));
+      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+    End;
+    If FProxyUsername <> '' Then
+    Begin
+      bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PROXY_USERNAME, pchar(FProxyUsername), Length(FProxyUsername));
+      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+    End;
+    If FProxyPassword <> '' Then
+    Begin
+      bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PROXY_PASSWORD, pchar(FProxyPassword), Length(FProxyPassword));
+      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+    End;
 
-  If Assigned(FRequest) Then
-    bOk := mHttpSendRequest(FReqHandle, pchar(sHeaders), Length(sHeaders), FRequest.Data, FRequest.Capacity)
-  Else
-    bOk := mHttpSendRequest(FReqHandle, pchar(sHeaders), Length(sHeaders), Nil, 0);
+    If Assigned(FRequest) Then
+      bOk := mHttpSendRequest(FReqHandle, pchar(sHeaders), Length(sHeaders), FRequest.Data, FRequest.Capacity)
+    Else
+      bOk := mHttpSendRequest(FReqHandle, pchar(sHeaders), Length(sHeaders), Nil, 0);
 
-  Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_SEND, FResource, GetLastError);
+    err := GetLastError;
+    if (err = 12045) then
+      Begin
+        err := GetLastError;
+        dwBuffLen := 4;
+        bOk := mInternetQueryOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, pointer(@dwFlags), dwBuffLen);
+        Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
+        dwFlags := dwFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+        bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, @dwFlags, dwBuffLen);
+        Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+        FSecure := true;
+        again := true;
+      End;
+
+  until not again;
+
+  Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_SEND, FResource, err);
 
   oResponse := TAdvMemoryStream.Create;
   GetMem(pData, 1024);

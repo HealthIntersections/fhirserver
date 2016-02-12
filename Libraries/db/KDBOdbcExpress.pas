@@ -143,6 +143,7 @@ destructor TOdbcConnection.destroy;
 begin
   FStmt.free;
   FStmt := Nil;
+  FHdbc.Disconnect;
   FHdbc.free;
   FHdbc := Nil;
   inherited;
@@ -890,8 +891,8 @@ end;
 destructor TOdbcExpressConnManBase.Destroy;
 begin
   FAttributes.free;
-  FEnv.Free;
   inherited;
+  FEnv.Free;
 end;
 
 procedure TOdbcExpressConnManBase.init;

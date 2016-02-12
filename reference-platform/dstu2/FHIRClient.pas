@@ -595,7 +595,7 @@ var
   end;
 begin
   if FJson then
-begin
+  begin
     http.RequestType := 'application/json+fhir; charset=utf-8';
     http.ResponseType := 'application/json+fhir; charset=utf-8';
   end
@@ -607,51 +607,57 @@ begin
   if ct <> '' then
     http.RequestType := ct;
 
-  http.SetAddress(url);
-  ok := false;
-      case verb of
-        get :
-          begin
-          http.RequestMethod := 'GET';
-          end;
-        post :
-          begin
-          http.RequestMethod := 'POST';
-          http.Request := TADvBuffer.create;
-          http.Request.LoadFromStream(source);
-          end;
-        put :
-          begin
-          http.RequestMethod := 'PUT';
-          http.Request.LoadFromStream(source);
-          end;
-        delete :
-          http.RequestMethod := 'DELETE';
-        patch :
-          begin
-          http.RequestMethod := 'PATCH';
-          http.RequestType := 'application/json-patch+json; charset=utf-8';
-          end;
-        options :
-          begin
-          http.RequestMethod := 'OPTIONS';
-          end;
-      end;
+  repeat
+    http.SetAddress(url);
+    ok := false;
+    case verb of
+      get :
+        begin
+        http.RequestMethod := 'GET';
+        end;
+      post :
+        begin
+        http.RequestMethod := 'POST';
+        http.Request := TADvBuffer.create;
+        http.Request.LoadFromStream(source);
+        end;
+      put :
+        begin
+        http.RequestMethod := 'PUT';
+        http.Request.LoadFromStream(source);
+        end;
+      delete :
+        http.RequestMethod := 'DELETE';
+      patch :
+        begin
+        http.RequestMethod := 'PATCH';
+        http.RequestType := 'application/json-patch+json; charset=utf-8';
+        end;
+      options :
+        begin
+        http.RequestMethod := 'OPTIONS';
+        end;
+    end;
 
-      http.Response := TAdvBuffer.create;
-      http.Execute;
+    http.Response := TAdvBuffer.create;
+    http.Execute;
 
-      code := StrToInt(http.ResponseCode);
-      if (code < 200) or (code >= 600) Then
-        raise exception.create('unexpected condition');
+    code := StrToInt(http.ResponseCode);
+    if (code < 200) or (code >= 600) Then
+      raise exception.create('unexpected condition');
+    if (code >= 300) and (code < 400) then
+      url := http.getResponseHeader('Location');
+  until (code < 300) or (code >= 400);
+
   if code >= 300 then
     processException;
-      ok := true;
-      result := TMemoryStream.Create;
-  // if this breaks, the stream leaks
-      http.Response.SaveToStream(result);
-      result.Position := 0;
-  end;
+
+  ok := true;
+  result := TMemoryStream.Create;
+// if this breaks, the stream leaks
+  http.Response.SaveToStream(result);
+  result.Position := 0;
+end;
 
 function TFhirClient.exchangeIndy(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String) : TStream;
 var

@@ -65,8 +65,6 @@ object frmRegisterServer: TfrmRegisterServer
     BorderWidth = 6
     Caption = 'Panel2'
     TabOrder = 1
-    ExplicitTop = 84
-    ExplicitHeight = 204
     object tvServers: TVirtualStringTree
       Left = 6
       Top = 6
@@ -85,11 +83,13 @@ object frmRegisterServer: TfrmRegisterServer
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toThemeAware, toUseBlendedImages]
       TreeOptions.SelectionOptions = [toFullRowSelect]
+      OnAddToSelection = tvServersAddToSelection
       OnChecked = tvServersChecked
       OnClick = tvServersClick
+      OnDblClick = tvServersDblClick
       OnGetText = tvServersGetText
       OnInitNode = tvServersInitNode
-      ExplicitHeight = 276
+      OnRemoveFromSelection = tvServersRemoveFromSelection
       Columns = <
         item
           CheckType = ctRadioButton
@@ -136,6 +136,15 @@ object frmRegisterServer: TfrmRegisterServer
       Caption = 'Add'
       TabOrder = 0
       OnClick = Button1Click
+    end
+    object btnDelete: TButton
+      Left = 91
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'Delete'
+      TabOrder = 1
+      OnClick = btnDeleteClick
     end
   end
 end

@@ -3,7 +3,7 @@ object ValueSetEditorForm: TValueSetEditorForm
   Top = 0
   Caption = 'FHIR ValueSet Editor'
   ClientHeight = 600
-  ClientWidth = 1266
+  ClientWidth = 1084
   Color = clBtnFace
   Constraints.MinHeight = 600
   Constraints.MinWidth = 1100
@@ -24,9 +24,9 @@ object ValueSetEditorForm: TValueSetEditorForm
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 201
-    Top = 39
+    Top = 76
     Width = 10
-    Height = 561
+    Height = 524
     ExplicitLeft = 8
     ExplicitTop = 8
     ExplicitHeight = 486
@@ -34,7 +34,7 @@ object ValueSetEditorForm: TValueSetEditorForm
   object pnlToolbar: TPanel
     Left = 0
     Top = 0
-    Width = 1266
+    Width = 1084
     Height = 39
     Align = alTop
     Alignment = taLeftJustify
@@ -46,10 +46,11 @@ object ValueSetEditorForm: TValueSetEditorForm
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
+    ExplicitWidth = 1266
     object ToolBar1: TToolBar
       Left = 1
       Top = 1
-      Width = 1264
+      Width = 1082
       Height = 48
       ButtonHeight = 38
       ButtonWidth = 39
@@ -59,6 +60,7 @@ object ValueSetEditorForm: TValueSetEditorForm
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      ExplicitWidth = 1264
       object tbNew: TToolButton
         Left = 0
         Top = 0
@@ -262,9 +264,9 @@ object ValueSetEditorForm: TValueSetEditorForm
   end
   object PageControl1: TPageControl
     Left = 211
-    Top = 39
-    Width = 755
-    Height = 561
+    Top = 76
+    Width = 573
+    Height = 524
     ActivePage = tabStart
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -277,22 +279,25 @@ object ValueSetEditorForm: TValueSetEditorForm
     TabHeight = 1
     TabOrder = 2
     OnChange = LocationChange
+    ExplicitLeft = 236
+    ExplicitTop = 130
+    ExplicitWidth = 730
+    ExplicitHeight = 470
     object tabInformation: TTabSheet
       Caption = 'Valueset Information'
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 747
+      ExplicitHeight = 551
       object Panel6: TPanel
         Left = 0
         Top = 300
-        Width = 747
+        Width = 565
         Height = 64
         Align = alTop
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 0
+        ExplicitWidth = 747
         object Label8: TLabel
           Left = 18
           Top = 6
@@ -378,15 +383,17 @@ object ValueSetEditorForm: TValueSetEditorForm
       object Panel8: TPanel
         Left = 0
         Top = 364
-        Width = 747
-        Height = 187
+        Width = 565
+        Height = 150
         Align = alClient
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 1
+        ExplicitWidth = 747
+        ExplicitHeight = 187
         DesignSize = (
-          747
-          187)
+          565
+          150)
         object Label9: TLabel
           Left = 16
           Top = 6
@@ -403,8 +410,8 @@ object ValueSetEditorForm: TValueSetEditorForm
         object txtDescription: TMemo
           Left = 18
           Top = 32
-          Width = 702
-          Height = 132
+          Width = 520
+          Height = 95
           Anchors = [akLeft, akTop, akRight, akBottom]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -414,19 +421,22 @@ object ValueSetEditorForm: TValueSetEditorForm
           ParentFont = False
           TabOrder = 0
           OnChange = txtDescriptionChange
+          ExplicitWidth = 702
+          ExplicitHeight = 132
         end
       end
       object Panel9: TPanel
         Left = 0
         Top = 96
-        Width = 747
+        Width = 565
         Height = 51
         Align = alTop
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 2
+        ExplicitWidth = 747
         DesignSize = (
-          747
+          565
           51)
         object Label10: TLabel
           Left = 16
@@ -444,7 +454,7 @@ object ValueSetEditorForm: TValueSetEditorForm
         object edtIdentifier: TEdit
           Left = 92
           Top = 16
-          Width = 628
+          Width = 446
           Height = 24
           Anchors = [akLeft, akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
@@ -455,19 +465,21 @@ object ValueSetEditorForm: TValueSetEditorForm
           ParentFont = False
           TabOrder = 0
           OnChange = edtIdentifierChange
+          ExplicitWidth = 628
         end
       end
       object Panel10: TPanel
         Left = 0
         Top = 147
-        Width = 747
+        Width = 565
         Height = 49
         Align = alTop
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 3
+        ExplicitWidth = 747
         DesignSize = (
-          747
+          565
           49)
         object Label11: TLabel
           Left = 16
@@ -485,7 +497,7 @@ object ValueSetEditorForm: TValueSetEditorForm
         object edtVersion: TEdit
           Left = 92
           Top = 16
-          Width = 628
+          Width = 446
           Height = 24
           Anchors = [akLeft, akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
@@ -496,19 +508,21 @@ object ValueSetEditorForm: TValueSetEditorForm
           ParentFont = False
           TabOrder = 0
           OnChange = edtVersionChange
+          ExplicitWidth = 628
         end
       end
       object Panel11: TPanel
         Left = 0
         Top = 196
-        Width = 747
+        Width = 565
         Height = 52
         Align = alTop
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 4
+        ExplicitWidth = 747
         DesignSize = (
-          747
+          565
           52)
         object Label12: TLabel
           Left = 16
@@ -526,7 +540,7 @@ object ValueSetEditorForm: TValueSetEditorForm
         object edtPublisher: TEdit
           Left = 92
           Top = 16
-          Width = 628
+          Width = 446
           Height = 24
           Anchors = [akLeft, akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
@@ -537,19 +551,21 @@ object ValueSetEditorForm: TValueSetEditorForm
           ParentFont = False
           TabOrder = 0
           OnChange = edtPublisherChange
+          ExplicitWidth = 628
         end
       end
       object Panel12: TPanel
         Left = 0
         Top = 248
-        Width = 747
+        Width = 565
         Height = 52
         Align = alTop
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 5
+        ExplicitWidth = 747
         DesignSize = (
-          747
+          565
           52)
         object Label13: TLabel
           Left = 16
@@ -567,7 +583,7 @@ object ValueSetEditorForm: TValueSetEditorForm
         object edtCopyright: TEdit
           Left = 92
           Top = 16
-          Width = 628
+          Width = 446
           Height = 24
           Anchors = [akLeft, akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
@@ -578,19 +594,21 @@ object ValueSetEditorForm: TValueSetEditorForm
           ParentFont = False
           TabOrder = 0
           OnChange = edtCopyrightChange
+          ExplicitWidth = 628
         end
       end
       object Panel13: TPanel
         Left = 0
         Top = 45
-        Width = 747
+        Width = 565
         Height = 51
         Align = alTop
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 6
+        ExplicitWidth = 747
         DesignSize = (
-          747
+          565
           51)
         object Label16: TLabel
           Left = 16
@@ -606,7 +624,7 @@ object ValueSetEditorForm: TValueSetEditorForm
           ParentFont = False
         end
         object cbExperimental: TCheckBox
-          Left = 583
+          Left = 401
           Top = 20
           Width = 185
           Height = 17
@@ -614,11 +632,12 @@ object ValueSetEditorForm: TValueSetEditorForm
           Caption = 'Not for production usage'
           TabOrder = 0
           OnClick = cbExperimentalClick
+          ExplicitLeft = 583
         end
         object cbxStatus: TComboBox
           Left = 92
           Top = 16
-          Width = 476
+          Width = 294
           Height = 24
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -636,19 +655,21 @@ object ValueSetEditorForm: TValueSetEditorForm
             'draft - still being designed'
             'active - ready for normal use'
             'retired - no longer expected to be used')
+          ExplicitWidth = 476
         end
       end
       object Panel14: TPanel
         Left = 0
         Top = 0
-        Width = 747
+        Width = 565
         Height = 45
         Align = alTop
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 7
+        ExplicitWidth = 747
         DesignSize = (
-          747
+          565
           45)
         object Label17: TLabel
           Left = 16
@@ -666,7 +687,7 @@ object ValueSetEditorForm: TValueSetEditorForm
         object edtName: TEdit
           Left = 92
           Top = 16
-          Width = 628
+          Width = 446
           Height = 24
           Anchors = [akLeft, akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
@@ -677,6 +698,7 @@ object ValueSetEditorForm: TValueSetEditorForm
           ParentFont = False
           TabOrder = 0
           OnChange = edtNameChange
+          ExplicitWidth = 628
         end
       end
     end
@@ -684,11 +706,13 @@ object ValueSetEditorForm: TValueSetEditorForm
       Caption = 'Codes Defined Here'
       ImageIndex = 1
       TabVisible = False
+      ExplicitWidth = 747
+      ExplicitHeight = 551
       object tvCodeSystem: TVirtualStringTree
         Left = 0
         Top = 97
-        Width = 747
-        Height = 454
+        Width = 565
+        Height = 417
         Hint = 'test'
         AccessibleName = 'tvDefine'
         Align = alClient
@@ -724,6 +748,8 @@ object ValueSetEditorForm: TValueSetEditorForm
         OnInitNode = tvCodeSystemInitNode
         OnKeyDown = tvCodeSystemKeyDown
         OnNewText = tvCodeSystemNewText
+        ExplicitWidth = 747
+        ExplicitHeight = 454
         Columns = <
           item
             Position = 0
@@ -749,21 +775,23 @@ object ValueSetEditorForm: TValueSetEditorForm
       object Panel17: TPanel
         Left = 0
         Top = 0
-        Width = 747
+        Width = 565
         Height = 97
         Align = alTop
         TabOrder = 1
+        ExplicitWidth = 747
         object Panel18: TPanel
           Left = 1
           Top = 46
-          Width = 745
+          Width = 563
           Height = 45
           Align = alTop
           BevelOuter = bvNone
           ParentColor = True
           TabOrder = 0
+          ExplicitWidth = 745
           DesignSize = (
-            745
+            563
             45)
           object Label18: TLabel
             Left = 12
@@ -781,7 +809,7 @@ object ValueSetEditorForm: TValueSetEditorForm
           object edtDefineVersion: TEdit
             Left = 74
             Top = 16
-            Width = 542
+            Width = 360
             Height = 24
             Anchors = [akLeft, akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
@@ -794,9 +822,10 @@ object ValueSetEditorForm: TValueSetEditorForm
             OnChange = edtDefineVersionChange
             OnEnter = tvCodeSystemEnter
             OnExit = tvCodeSystemExit
+            ExplicitWidth = 542
           end
           object cbDefineCase: TCheckBox
-            Left = 631
+            Left = 449
             Top = 20
             Width = 89
             Height = 17
@@ -805,19 +834,21 @@ object ValueSetEditorForm: TValueSetEditorForm
             TabOrder = 1
             OnEnter = tvCodeSystemEnter
             OnExit = tvCodeSystemExit
+            ExplicitLeft = 631
           end
         end
         object Panel19: TPanel
           Left = 1
           Top = 1
-          Width = 745
+          Width = 563
           Height = 45
           Align = alTop
           BevelOuter = bvNone
           ParentColor = True
           TabOrder = 1
+          ExplicitWidth = 745
           DesignSize = (
-            745
+            563
             45)
           object Label19: TLabel
             Left = 12
@@ -835,7 +866,7 @@ object ValueSetEditorForm: TValueSetEditorForm
           object edtDefineURI: TEdit
             Left = 74
             Top = 16
-            Width = 646
+            Width = 464
             Height = 24
             Anchors = [akLeft, akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
@@ -848,6 +879,7 @@ object ValueSetEditorForm: TValueSetEditorForm
             OnChange = edtDefineURIChange
             OnEnter = tvCodeSystemEnter
             OnExit = tvCodeSystemExit
+            ExplicitWidth = 646
           end
         end
       end
@@ -856,11 +888,13 @@ object ValueSetEditorForm: TValueSetEditorForm
       Caption = 'Codes From Elsewhere'
       ImageIndex = 2
       TabVisible = False
+      ExplicitWidth = 747
+      ExplicitHeight = 551
       object Notebook2: TNotebook
         Left = 0
         Top = 0
-        Width = 747
-        Height = 551
+        Width = 565
+        Height = 514
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -870,12 +904,14 @@ object ValueSetEditorForm: TValueSetEditorForm
         ParentFont = False
         TabOrder = 0
         OnPageChanged = LocationChange
+        ExplicitWidth = 747
+        ExplicitHeight = 551
         object TPage
           Left = 0
           Top = 0
           Caption = 'Null'
-          ExplicitWidth = 0
-          ExplicitHeight = 0
+          ExplicitWidth = 747
+          ExplicitHeight = 551
           object Label1: TLabel
             Left = 27
             Top = 33
@@ -1039,18 +1075,22 @@ object ValueSetEditorForm: TValueSetEditorForm
           Left = 0
           Top = 0
           Caption = 'Import'
+          ExplicitWidth = 747
+          ExplicitHeight = 551
           object Panel22: TPanel
             Left = 0
             Top = 0
-            Width = 747
-            Height = 551
+            Width = 565
+            Height = 514
             Align = alClient
             Caption = 'Panel22'
             TabOrder = 0
+            ExplicitWidth = 747
+            ExplicitHeight = 551
             object Panel25: TPanel
               Left = 1
               Top = 1
-              Width = 745
+              Width = 563
               Height = 48
               Align = alTop
               BevelOuter = bvNone
@@ -1062,8 +1102,9 @@ object ValueSetEditorForm: TValueSetEditorForm
               ParentColor = True
               ParentFont = False
               TabOrder = 0
+              ExplicitWidth = 745
               DesignSize = (
-                745
+                563
                 48)
               object Label20: TLabel
                 Left = 10
@@ -1081,7 +1122,7 @@ object ValueSetEditorForm: TValueSetEditorForm
               object edtImportUri: TLookAheadEdit
                 Left = 72
                 Top = 13
-                Width = 653
+                Width = 471
                 Height = 21
                 AutoComplete = False
                 Anchors = [akLeft, akTop, akRight]
@@ -1090,12 +1131,13 @@ object ValueSetEditorForm: TValueSetEditorForm
                 Text = 'edtImportUri'
                 OnChange = edtImportUriChange
                 OnEnter = edtImportUriEnter
+                ExplicitWidth = 653
               end
             end
             object Panel23: TPanel
               Left = 1
               Top = 49
-              Width = 745
+              Width = 563
               Height = 36
               Align = alTop
               Alignment = taLeftJustify
@@ -1107,12 +1149,13 @@ object ValueSetEditorForm: TValueSetEditorForm
               Font.Style = []
               ParentFont = False
               TabOrder = 1
+              ExplicitWidth = 745
             end
             object tvPreview: TVirtualStringTree
               Left = 1
               Top = 85
-              Width = 745
-              Height = 465
+              Width = 563
+              Height = 428
               Align = alClient
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clBlack
@@ -1136,6 +1179,8 @@ object ValueSetEditorForm: TValueSetEditorForm
               OnGetText = tvPreviewGetText
               OnInitChildren = tvPreviewInitChildren
               OnInitNode = tvPreviewInitNode
+              ExplicitWidth = 745
+              ExplicitHeight = 465
               Columns = <
                 item
                   Position = 0
@@ -1149,7 +1194,7 @@ object ValueSetEditorForm: TValueSetEditorForm
                 end
                 item
                   Position = 2
-                  Width = 295
+                  Width = 109
                   WideText = 'Display'
                 end>
             end
@@ -1159,17 +1204,21 @@ object ValueSetEditorForm: TValueSetEditorForm
           Left = 0
           Top = 0
           Caption = 'IncludeExclude'
+          ExplicitWidth = 747
+          ExplicitHeight = 551
           object Panel26: TPanel
             Left = 0
             Top = 0
-            Width = 747
-            Height = 551
+            Width = 565
+            Height = 514
             Align = alClient
             TabOrder = 0
+            ExplicitWidth = 747
+            ExplicitHeight = 551
             object Splitter2: TSplitter
               Left = 1
-              Top = 438
-              Width = 745
+              Top = 401
+              Width = 563
               Height = 12
               Cursor = crVSplit
               Align = alBottom
@@ -1178,16 +1227,18 @@ object ValueSetEditorForm: TValueSetEditorForm
             end
             object Panel24: TPanel
               Left = 1
-              Top = 450
-              Width = 745
+              Top = 413
+              Width = 563
               Height = 100
               Align = alBottom
               BevelOuter = bvNone
               Constraints.MinHeight = 100
               ParentColor = True
               TabOrder = 0
+              ExplicitTop = 450
+              ExplicitWidth = 745
               DesignSize = (
-                745
+                563
                 100)
               object Label21: TLabel
                 Left = 6
@@ -1205,7 +1256,7 @@ object ValueSetEditorForm: TValueSetEditorForm
               object tvFilters: TVirtualStringTree
                 Left = 66
                 Top = 18
-                Width = 658
+                Width = 476
                 Height = 67
                 Anchors = [akLeft, akTop, akRight, akBottom]
                 DefaultNodeHeight = 19
@@ -1236,6 +1287,7 @@ object ValueSetEditorForm: TValueSetEditorForm
                 OnInitNode = tvFiltersInitNode
                 OnKeyDown = tvFiltersKeyDown
                 OnNewText = tvFiltersNewText
+                ExplicitWidth = 658
                 Columns = <
                   item
                     Position = 0
@@ -1249,7 +1301,7 @@ object ValueSetEditorForm: TValueSetEditorForm
                   end
                   item
                     Position = 2
-                    Width = 438
+                    Width = 252
                     WideText = 'Value'
                   end>
               end
@@ -1257,14 +1309,15 @@ object ValueSetEditorForm: TValueSetEditorForm
             object Panel27: TPanel
               Left = 1
               Top = 1
-              Width = 745
+              Width = 563
               Height = 52
               Align = alTop
               BevelOuter = bvNone
               ParentColor = True
               TabOrder = 1
+              ExplicitWidth = 745
               DesignSize = (
-                745
+                563
                 52)
               object Label22: TLabel
                 Left = 6
@@ -1282,7 +1335,7 @@ object ValueSetEditorForm: TValueSetEditorForm
               object edtSystemReference: TLookAheadEdit
                 Left = 66
                 Top = 17
-                Width = 657
+                Width = 475
                 Height = 27
                 AutoComplete = False
                 Anchors = [akLeft, akTop, akRight]
@@ -1290,20 +1343,23 @@ object ValueSetEditorForm: TValueSetEditorForm
                 TabOrder = 0
                 OnChange = edtSystemReferenceChange
                 OnEnter = edtSystemReferenceEnter
+                ExplicitWidth = 657
               end
             end
             object Panel28: TPanel
               Left = 1
               Top = 101
-              Width = 745
-              Height = 337
+              Width = 563
+              Height = 300
               Align = alClient
               BevelOuter = bvNone
               ParentColor = True
               TabOrder = 2
+              ExplicitWidth = 745
+              ExplicitHeight = 337
               DesignSize = (
-                745
-                337)
+                563
+                300)
               object Label23: TLabel
                 Left = 5
                 Top = 10
@@ -1320,8 +1376,8 @@ object ValueSetEditorForm: TValueSetEditorForm
               object tvCodes: TVirtualStringTree
                 Left = 66
                 Top = 6
-                Width = 658
-                Height = 313
+                Width = 476
+                Height = 276
                 Anchors = [akLeft, akTop, akRight, akBottom]
                 DefaultNodeHeight = 19
                 EditDelay = 200
@@ -1354,6 +1410,8 @@ object ValueSetEditorForm: TValueSetEditorForm
                 OnInitNode = tvCodesInitNode
                 OnKeyDown = tvCodesKeyDown
                 OnNewText = tvCodesNewText
+                ExplicitWidth = 658
+                ExplicitHeight = 313
                 Columns = <
                   item
                     Position = 0
@@ -1367,7 +1425,7 @@ object ValueSetEditorForm: TValueSetEditorForm
                   end
                   item
                     Position = 2
-                    Width = 185
+                    Width = 10
                     WideText = 'Comments'
                   end>
               end
@@ -1375,14 +1433,15 @@ object ValueSetEditorForm: TValueSetEditorForm
             object Panel29: TPanel
               Left = 1
               Top = 53
-              Width = 745
+              Width = 563
               Height = 48
               Align = alTop
               BevelOuter = bvNone
               ParentColor = True
               TabOrder = 3
+              ExplicitWidth = 745
               DesignSize = (
-                745
+                563
                 48)
               object Label24: TLabel
                 Left = 8
@@ -1400,7 +1459,7 @@ object ValueSetEditorForm: TValueSetEditorForm
               object edtSystemRefVersion: TEdit
                 Left = 66
                 Top = 6
-                Width = 658
+                Width = 476
                 Height = 24
                 Anchors = [akLeft, akTop, akRight]
                 Font.Charset = DEFAULT_CHARSET
@@ -1411,15 +1470,17 @@ object ValueSetEditorForm: TValueSetEditorForm
                 ParentFont = False
                 TabOrder = 0
                 OnChange = edtSystemRefVersionChange
+                ExplicitWidth = 658
               end
               object CheckBox1: TCheckBox
-                Left = 818
+                Left = 636
                 Top = 20
                 Width = 113
                 Height = 17
                 Anchors = [akTop, akRight]
                 Caption = 'Case Sensitive'
                 TabOrder = 1
+                ExplicitLeft = 818
               end
             end
           end
@@ -1430,16 +1491,19 @@ object ValueSetEditorForm: TValueSetEditorForm
       Caption = 'Evaluate Current Content'
       ImageIndex = 3
       TabVisible = False
+      ExplicitWidth = 747
+      ExplicitHeight = 551
       object pnlExpansion: TPanel
         Left = 0
         Top = 0
-        Width = 747
+        Width = 565
         Height = 65
         Align = alTop
         Alignment = taLeftJustify
         TabOrder = 0
+        ExplicitWidth = 747
         DesignSize = (
-          747
+          565
           65)
         object lblExpansion: TLabel
           Left = 16
@@ -1468,7 +1532,7 @@ object ValueSetEditorForm: TValueSetEditorForm
         object edtFilter: TEdit
           Left = 235
           Top = 6
-          Width = 497
+          Width = 315
           Height = 27
           Anchors = [akLeft, akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
@@ -1479,13 +1543,14 @@ object ValueSetEditorForm: TValueSetEditorForm
           ParentFont = False
           TabOrder = 1
           OnChange = edtFilterChange
+          ExplicitWidth = 497
         end
       end
       object tvExpansion: TVirtualStringTree
         Left = 0
         Top = 65
-        Width = 747
-        Height = 486
+        Width = 565
+        Height = 449
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1511,6 +1576,8 @@ object ValueSetEditorForm: TValueSetEditorForm
         OnGetText = tvExpansionGetText
         OnInitChildren = tvExpansionInitChildren
         OnInitNode = tvExpansionInitNode
+        ExplicitWidth = 747
+        ExplicitHeight = 486
         Columns = <
           item
             Position = 0
@@ -1524,7 +1591,7 @@ object ValueSetEditorForm: TValueSetEditorForm
           end
           item
             Position = 2
-            Width = 297
+            Width = 111
             WideText = 'Display'
           end>
       end
@@ -1533,14 +1600,17 @@ object ValueSetEditorForm: TValueSetEditorForm
       Caption = 'Welcome and Choose Value Set'
       ImageIndex = 4
       TabVisible = False
+      ExplicitWidth = 747
+      ExplicitHeight = 551
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 747
+        Width = 565
         Height = 65
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
+        ExplicitWidth = 747
         object Label27: TLabel
           Left = 21
           Top = 12
@@ -1627,41 +1697,33 @@ object ValueSetEditorForm: TValueSetEditorForm
       end
       object Panel2: TPanel
         Left = 0
-        Top = 510
-        Width = 747
+        Top = 473
+        Width = 565
         Height = 41
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        object Label28: TLabel
-          Left = 23
-          Top = 14
-          Width = 189
-          Height = 16
-          Cursor = crHandPoint
-          Caption = 'Manage Terminology Servers'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clNavy
-          Font.Height = -13
-          Font.Name = 'Verdana'
-          Font.Style = [fsUnderline]
-          ParentFont = False
-          OnClick = Servers1Click
-        end
+        ExplicitTop = 510
+        ExplicitWidth = 747
       end
       object Panel3: TPanel
         Left = 0
         Top = 65
-        Width = 747
-        Height = 445
+        Width = 565
+        Height = 408
         Align = alClient
         BevelOuter = bvNone
         BorderWidth = 10
         TabOrder = 2
+        ExplicitWidth = 747
+        ExplicitHeight = 445
+        DesignSize = (
+          565
+          408)
         object Panel4: TPanel
           Left = 10
           Top = 10
-          Width = 727
+          Width = 545
           Height = 26
           Align = alTop
           Alignment = taLeftJustify
@@ -1674,41 +1736,42 @@ object ValueSetEditorForm: TValueSetEditorForm
           Font.Style = []
           ParentFont = False
           TabOrder = 0
+          ExplicitWidth = 727
         end
-        object lbPastValueSets: TListBox
-          Left = 10
-          Top = 36
-          Width = 727
-          Height = 399
-          Align = alClient
-          BevelInner = bvNone
-          BevelOuter = bvNone
-          BorderStyle = bsNone
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Verdana'
-          Font.Style = [fsUnderline]
-          ParentFont = False
+        object webMRU: TWebBrowser
+          Left = 21
+          Top = 42
+          Width = 494
+          Height = 360
+          Anchors = [akLeft, akTop, akRight, akBottom]
           TabOrder = 1
-          StyleElements = [seFont, seClient]
+          ExplicitWidth = 676
+          ControlData = {
+            4C0000000E330000352500000000000000000000000000000000000000000000
+            000000004C000000000000000000000001000000E0D057007335CF11AE690800
+            2B2E126208000000000000004C0000000114020000000000C000000000000046
+            8000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000100000000000000000000000000000000000000}
         end
       end
     end
   end
   object pnlDocumentation: TPanel
-    Left = 966
-    Top = 39
+    Left = 784
+    Top = 76
     Width = 300
-    Height = 561
+    Height = 524
     Align = alRight
     BorderWidth = 6
     TabOrder = 1
+    ExplicitLeft = 966
+    ExplicitTop = 39
+    ExplicitHeight = 561
     object webDoco: TWebBrowser
       Left = 7
       Top = 7
       Width = 286
-      Height = 547
+      Height = 510
       Margins.Left = 8
       Margins.Top = 8
       Margins.Right = 8
@@ -1718,7 +1781,7 @@ object ValueSetEditorForm: TValueSetEditorForm
       ExplicitWidth = 184
       ExplicitHeight = 788
       ControlData = {
-        4C0000008F1D0000893800000000000000000000000000000000000000000000
+        4C0000008F1D0000B63400000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E12620B000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -1727,12 +1790,14 @@ object ValueSetEditorForm: TValueSetEditorForm
   end
   object Panel20: TPanel
     Left = 0
-    Top = 39
+    Top = 76
     Width = 201
-    Height = 561
+    Height = 524
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 3
+    ExplicitTop = 39
+    ExplicitHeight = 561
     object Panel21: TPanel
       Left = 0
       Top = 0
@@ -1748,7 +1813,7 @@ object ValueSetEditorForm: TValueSetEditorForm
       Left = 0
       Top = 37
       Width = 201
-      Height = 524
+      Height = 487
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -1775,7 +1840,75 @@ object ValueSetEditorForm: TValueSetEditorForm
       OnPaintText = tvStructurePaintText
       OnInitChildren = tvStructureInitChildren
       OnInitNode = tvStructureInitNode
+      ExplicitHeight = 524
       Columns = <>
+    end
+  end
+  object Panel5: TPanel
+    Left = 0
+    Top = 39
+    Width = 1084
+    Height = 37
+    Align = alTop
+    TabOrder = 4
+    ExplicitWidth = 1266
+    DesignSize = (
+      1084
+      37)
+    object Label33: TLabel
+      Left = 10
+      Top = 10
+      Width = 72
+      Height = 13
+      Caption = 'Current Server'
+    end
+    object cbxServer: TComboBox
+      Left = 92
+      Top = 6
+      Width = 949
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 0
+      Text = 'cbxServer'
+      ExplicitWidth = 1131
+    end
+    object btnManageServers: TBitBtn
+      Left = 1048
+      Top = 4
+      Width = 30
+      Height = 25
+      Hint = 'Manage Servers'
+      Anchors = [akTop, akRight]
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        1800000000000003000000000000000000000000000000000000F8E6FE393838
+        393838393838393838F8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6
+        FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00C77B479A542A633B2439383839383839
+        3838F8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00
+        DCA878EBB788C77B479A542A633B24393838393838393838F8E6FEF8E6FEF8E6
+        FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00E5B996FFF0DBFEE2C3FDDBB7F3BA83CA
+        87499A542A533625393838F8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00
+        E5C0A9FEEAD4FEE2C3FDDBB7FDE7B9FFD186FBAD5D773814393838F8E6FEF8E6
+        FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00E6C9B7FFF0DBCCD7CC0098CBFDDBB7FF
+        C25BF2B777633B24333333F8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00
+        FDDEC0D9E4DC0098CB0098CBBABDA7919175D5976581491A333333333333F8E6
+        FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00FEE6D10098CBBCD7D9ABD1D40098CBA7
+        9C81EBB788F9CA93CA874995673B333333333333F8E6FEF8E6FEF8E6FEC45C00
+        F4EBE5F7F6EEFEF1E3D9E4DC0098CBFFEBCAE4AC72CA8749F9CA93F9CA93BD96
+        6A5B5C83333333F8E6FEF8E6FEC45C00FEF6F0FEF9F5FEF5EAFEF1E30098CBF6
+        ECDBE5B99666381A333333DCA878AC9E9C3059D14C57B1F8E6FEF8E6FEC45C00
+        FEFEFDFEFEFDFEF9F5FFF9ECABD1D4C9E2E2F4BD93533625333333F8E6FEF8E6
+        FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00FEFEFDFEFEFDFEFEFDFEFEFDD4EAECC9
+        E2E2F3BA83533625333333F8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEC45C00
+        C67339D59765D9B69BE8CEC1F4EBE5FEFEFDE5B9965A4029333333F8E6FEF8E6
+        FEF8E6FEF8E6FEF8E6FEF8E6FEE4892ED26C09C45C00C45C00B85301C05D10C7
+        7B47C673395A4837333333F8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FE
+        F8E6FE656565656565CA8749D88736D47618D26C09715F4EF8E6FEF8E6FEF8E6
+        FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8
+        E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FEF8E6FE}
+      TabOrder = 1
+      OnClick = btnManageServersClick
+      ExplicitLeft = 1229
     end
   end
   object opnValueSet: TFileOpenDialog
@@ -1973,7 +2106,7 @@ object ValueSetEditorForm: TValueSetEditorForm
     Left = 960
     Top = 112
     Bitmap = {
-      494C010128006C009C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010128006C00A00020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060010000010020000000000000C0
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7817,7 +7950,7 @@ object ValueSetEditorForm: TValueSetEditorForm
     Left = 1008
     Top = 116
     Bitmap = {
-      494C010127006C00AC0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127006C00B00020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004001000001002000000000000080
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

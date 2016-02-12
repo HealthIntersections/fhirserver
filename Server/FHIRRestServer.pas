@@ -1013,6 +1013,8 @@ Begin
   //          response.CustomHeaders.add('Access-Control-Expose-Headers: *');
             if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
               response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
+            if request.RawHeaders.Values['X-Request-Id'] <> '' then
+              response.CustomHeaders.add('X-Request-Id: '+request.RawHeaders.Values['X-Request-Id']);
             oResponse := TFHIRResponse.Create;
             Try
               if request.AuthUsername = 'Bearer' then
@@ -1029,6 +1031,7 @@ Begin
                  request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, request.RawHeaders.Values['Provenance'], sBearer,
                  oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
               try
+                oRequest.requestId := request.RawHeaders.Values['X-Request-Id'];
                 if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
                   TFHIRWebServerClientInfo(AContext.Data).Session := oRequest.Session.Link;
 

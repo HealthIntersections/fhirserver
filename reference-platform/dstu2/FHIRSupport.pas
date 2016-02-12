@@ -262,6 +262,7 @@ Type
     FOrigin : TFHIRRequestOrigin;
     FSecure : Boolean;
     FPatch: TJsonArray;
+    FrequestId: String;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -422,6 +423,8 @@ Type
 
     Property Provenance : TFhirProvenance read FProvenance write SetProvenance;
     Property Origin : TFHIRRequestOrigin read FOrigin;
+
+    property requestId : String read FrequestId write FrequestId;
   End;
 
   {@Class TFHIRResponse

@@ -654,7 +654,6 @@ type
     property OpTypes : TAdvStringSet read FOpTypes write SetOpTypes;
   end;
 
-
 function noList(e : TFHIRObjectList) : boolean;
 function compareDeep(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareDeep(e1, e2 : TFHIRBase; allowNull : boolean) : boolean; overload;

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hl7.fhir.dstu2.model.CodeType;
 import org.hl7.fhir.dstu2.model.Enumerations.SearchParamType;
 import org.hl7.fhir.dstu2.model.SearchParameter;
 
@@ -70,12 +71,24 @@ public class SearchParameterDefn {
     return type;
   }
   
-  public SearchParameterDefn(String code, String description, SearchParamType type, SearchParameter.XPathUsageType xPathUsage) {
+  public SearchParameterDefn(String code, String description, SearchParamType type, SearchParameter.XPathUsageType xPathUsage, List<org.hl7.fhir.dstu2.model.CodeType> targets) {
     super();
     this.code = code;
     this.description = description;
     this.type = type;
     this.xPathUsage = xPathUsage; 
+    for (CodeType c : targets)
+      getWorkingTargets().add(c.getValue());
+  }
+    
+  public SearchParameterDefn(String code, String description, SearchParamType type, List<org.hl7.fhir.dstu21.model.CodeType> targets, SearchParameter.XPathUsageType xPathUsage) {
+    super();
+    this.code = code;
+    this.description = description;
+    this.type = type;
+    this.xPathUsage = xPathUsage; 
+    for (org.hl7.fhir.dstu21.model.CodeType c : targets)
+      getWorkingTargets().add(c.getValue());
   }
     
   public List<String> getPaths() {

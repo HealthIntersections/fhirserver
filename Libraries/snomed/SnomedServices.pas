@@ -2364,8 +2364,36 @@ function TSnomedServices.buildValueSet(id : String): TFhirValueSet;
 var
   inc : TFhirValueSetComposeInclude;
   filt :  TFhirValueSetComposeIncludeFilter;
+  cc : TFhirValueSetComposeIncludeConcept;
+  i : integer;
+  code, iDummy : Cardinal;
 begin
-  if id.StartsWith('http://snomed.info/sct?fhir_vs=refset/') And ReferenceSetExists(id.Substring(38)) then
+  if id = 'http://snomed.info/sct?fhir_vs=refset' then
+  begin
+    result := TFhirValueSet.Create;
+    try
+      result.url := id;
+      result.status := ConformanceResourceStatusActive;
+      result.version := VersionDate;
+      result.name := 'SNOMED CT Reference Set List';
+      result.description := 'Reference Sets defined in this SNOMED-CT version';
+      result.date := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.system := 'http://snomed.info/sct';
+      // get the list of reference sets
+      for i := 0 to RefSetIndex.Count - 1 Do
+      begin
+        cc := inc.conceptList.Append;
+        RefSetIndex.GetReferenceSet(i, code, iDummy, iDummy);
+        cc.code := GetConceptId(code);
+      end;
+      result.link;
+    finally
+      result.free;
+    end;
+  end
+  else if id.StartsWith('http://snomed.info/sct?fhir_vs=refset/') And ReferenceSetExists(id.Substring(38)) then
   begin
     result := TFhirValueSet.Create;
     try
@@ -2589,15 +2617,15 @@ begin
     if flags and MASK_DESC_STATUS = Flag_Active Then
     Begin
       param := params.parameterList.Append;
-      param.name := 'Designation';
+      param.name := 'designation';
       p2 := param.partList.Append;
-      p2.name := 'Id';
+      p2.name := 'id';
       p2.value := TFhirString.Create(IntToStr(Identity));
       p2 := param.partList.Append;
-      p2.name := 'Value';
+      p2.name := 'value';
       p2.value := TFhirString.Create(Strings.GetEntry(iWork));
       p2 := param.partList.Append;
-      p2.name := 'Type';
+      p2.name := 'type';
       if ((flags and MASK_DESC_STYLE) shr 4 = VAL_DESC_Unspecified) and (kind <> 0) then
         p2.value := TFhirCode.Create(GetPNForConcept(kind))
       else

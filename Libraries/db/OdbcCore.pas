@@ -298,6 +298,7 @@ Type
     Procedure SetConnected(AConnected: Boolean);
     Function GetVersion: String;
     Procedure SetVersion(AVersion: String);
+    procedure TerminateHandle;
   Protected
     { Protected declarations }
     Function Init: Boolean;
@@ -2390,6 +2391,7 @@ Begin
   FAttributes.Free;
   ClearDrivers;
   FDrivers.Free;
+  TerminateHandle;
 End;
 
 Function THdbc.Init: Boolean;
@@ -2535,6 +2537,14 @@ Begin
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
+
+procedure THdbc.TerminateHandle;
+begin
+  FRetCode:= SQLFreeHandle(SQL_HANDLE_DBC, FHdbc);
+  If Not FEnv.FError.Success(FRetCode) Then
+    FEnv.FError.RaiseError(Self, FRetCode);
+  FHdbc := Nil;
+end;
 
 Procedure THdbc.EndTransact;
 Begin

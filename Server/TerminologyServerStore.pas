@@ -164,10 +164,12 @@ Type
     procedure SetCountryCode(const Value: TCountryCodeServices);
     procedure SetAreaCode(const Value: TAreaCodeServices);
     procedure SetCvx(const Value: TCvxServices);
+    procedure checkValueSet(vs : TFHIRValueSet);
 
     function TrackValueSet(id : String; bOnlyIfNew : boolean) : integer;
     function GetBackgroundThreadStatus: String;
     procedure SetBackgroundThreadStatus(const Value: String);
+    procedure checkForDuplicates(codes: TStringList; list: TFhirValueSetCodeSystemConceptList; url : String);
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TKDBManager;
@@ -688,6 +690,56 @@ begin
   end;
 end;
 
+procedure TTerminologyServerStore.checkForDuplicates(codes : TStringList; list : TFhirValueSetCodeSystemConceptList; url : String);
+var
+  cc : TFhirValueSetCodeSystemConcept;
+  i : integer;
+begin
+  for cc in list do
+  begin
+    if cc.code <> '' then
+    begin
+      if codes.Find(cc.code, i) then
+        raise Exception.Create('Duplicate code: '+cc.code+' in value set '+url);
+      codes.Add(cc.code);
+    end;
+    checkForDuplicates(codes, cc.conceptList, url);
+  end;
+end;
+
+function exempt(vs : TFHIRValueSet) : boolean;
+begin
+  {$IFDEF FHIR_DSTU2}
+
+  if vs.URL.startsWith('http://hl7.org/fhir/ValueSet/v2-')
+    and StringArrayExists(['0003', '0207', '0277', '0278', '0279', '0281', '0294', '0396'],
+        vs.URL.Substring(vs.url.Length-4)) then
+      result := true
+  else
+  {$ENDIF}
+  result := false;
+end;
+
+procedure TTerminologyServerStore.checkValueSet(vs: TFHIRValueSet);
+var
+  list : TStringList;
+begin
+  if (exempt(vs)) then
+    exit;
+
+  if (vs.codeSystem <> nil) then
+  begin
+    list := TStringList.Create;
+    try
+      list.Sorted := true;
+      list.CaseSensitive := vs.codeSystem.caseSensitive;
+      checkForDuplicates(list, vs.codeSystem.conceptList, vs.url);
+    finally
+      list.Free;
+    end;
+  end;
+end;
+
 constructor TTerminologyServerStore.Create(db : TKDBManager);
 var
   conn : TKDBConnection;
@@ -976,6 +1028,9 @@ var
 begin
   resource.checkNoImplicitRules('Repository.SeeResource', 'Resource');
   TFhirDomainResource(resource).checkNoModifiers('Repository.SeeResource', 'Resource');
+  if (resource.ResourceType = frtValueSet) then
+    checkValueSet(resource as TFHIRValueSet);
+
   FLock.Lock('SeeTerminologyResource');
   try
     if (resource.ResourceType = frtValueSet) then

@@ -124,12 +124,10 @@ type
   TFHIRProfileStructureElement = TFhirElementDefinition;
   TFhirProfileStructureElementList = TFhirElementDefinitionList;
   TFhirProfileStructureElementDefinitionBinding = TFhirElementDefinitionBinding;
-{$IFDEF FHIR_DSTU3}
   TFhirAuditEventParticipant = TFhirAuditEventAgent;
   TFhirAuditEventObject = TFhirAuditEventEntity;
   TFhirAuditEventEvent = TFhirAuditEvent;
   TFhirAuditEventParticipantNetwork  = TFhirAuditEventAgentNetwork;
-{$ENDIF}
 
   TResourceWithReference = class (TAdvObject)
   private
@@ -143,7 +141,6 @@ type
     property Resource : TFHIRResource read FResource write SetResource;
   end;
 
-{$IFDEF FHIR_DSTU3}
   TFhirAuditEventHelper = class helper for TFhirAuditEvent
   private
     function getevent: TFhirAuditEvent;
@@ -165,7 +162,7 @@ type
   public
     property actorList : TFhirContractPartyList read getActorList;
   end;
-{$ENDIF}
+
 
   TFHIRElementHelper = class helper for TFHIRElement
   public
@@ -364,6 +361,7 @@ type
     procedure AddParameter(name: String; value: boolean); overload;
     procedure AddParameter(name, value: string); overload;
     function AddParameter(name: String) : TFhirParametersParameter; overload;
+    procedure AddParameter(p :  TFhirParametersParameter); overload;
   end;
 
   TFhirParametersParameterHelper = class helper for TFhirParametersParameter
@@ -381,6 +379,7 @@ type
     procedure AddParameter(name: String; value: boolean); overload;
     procedure AddParameter(name, value: string); overload;
     function AddParameter(name: String) : TFhirParametersParameter; overload;
+    procedure AddParameter(p :  TFhirParametersParameter); overload;
   end;
 
   TFhirResourceMetaHelper = class helper for TFhirMeta
@@ -412,6 +411,7 @@ type
     function getParents(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
     function getChildren(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
   end;
+
 {$IFDEF FHIR_DSTU3}
   TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
   public
@@ -2508,6 +2508,11 @@ begin
   result := false;
 end;
 
+procedure TFhirParametersHelper.AddParameter(p: TFhirParametersParameter);
+begin
+  self.parameterList.Add(p);
+end;
+
 { TFhirParametersParameterHelper }
 
 procedure TFhirParametersParameterHelper.AddParameter(name: String; value: TFhirType);
@@ -2597,6 +2602,11 @@ function TFhirParametersParameterHelper.AddParameter(name: String): TFhirParamet
 begin
   result := self.partList.Append;
   result.name := name;
+end;
+
+procedure TFhirParametersParameterHelper.AddParameter(p: TFhirParametersParameter);
+begin
+  self.partList.Add(p);
 end;
 
 { TFHIRCodeableConceptHelper }

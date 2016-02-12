@@ -216,8 +216,8 @@ type
     procedure checkProposedDeletion(request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
 
     function EncodeResource(r : TFhirResource; xml : boolean; summary : TFHIRSummaryOption) : TBytes;
-    procedure AuditRest(session : TFhirSession; ip : string; resourceType : TFhirResourceType; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload;
-    procedure AuditRest(session : TFhirSession; ip : string; resourceType : TFhirResourceType; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload;
+    procedure AuditRest(session : TFhirSession; reqid, ip : string; resourceType : TFhirResourceType; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload;
+    procedure AuditRest(session : TFhirSession; reqid, ip : string; resourceType : TFhirResourceType; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload;
     procedure SaveProvenance(session : TFhirSession; prv : TFHIRProvenance);
 
     procedure CheckCompartments(actual, allowed : String);
@@ -1049,11 +1049,11 @@ begin
       html.free;
     end;
 
-    AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -1210,12 +1210,12 @@ begin
         SaveProvenance(request.Session, request.Provenance);
     end;
     if request.ResourceType <> frtAuditEvent then // else you never stop
-      AuditRest(request.session, request.ip, request.ResourceType, sid, '1', key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, sid, '1', key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
       if request.ResourceType <> frtAuditEvent then // else you never stop
-        AuditRest(request.session, request.ip, request.ResourceType, sid, '1', 0, request.CommandType, request.Provenance, 500, '', e.message);
+        AuditRest(request.session, request.requestId, request.ip, request.ResourceType, sid, '1', 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -1350,11 +1350,11 @@ begin
         rp.Free;
       end;
     end;
-    AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -1600,12 +1600,12 @@ begin
       finally
         bundle.Free;
       end;
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
     end;
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -1667,11 +1667,11 @@ begin
         end;
       end;
     end;
-    AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -2128,11 +2128,11 @@ begin
         end;
       end;
     end;
-    AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
       recordStack(e);
       raise;
     end;
@@ -2313,11 +2313,11 @@ begin
         tags.free;
       end;
     end;
-    AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -2513,11 +2513,11 @@ begin
           SaveProvenance(request.Session, request.Provenance);
       end;
     end;
-    AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message)
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message)
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -2582,12 +2582,12 @@ begin
     else
       response.HTTPCode := 400;
     if request.ResourceType <> frtAuditEvent then
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
       if request.ResourceType <> frtAuditEvent then
-        AuditRest(request.session, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+        AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -2646,11 +2646,11 @@ begin
         end;
       end;
     end;
-    AuditRest(request.session, request.ip, request.ResourceType, request.id, request.SubId, 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, request.SubId, 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, request.id, request.SubId, 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, request.SubId, 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -3131,11 +3131,11 @@ begin
     ''#13#10;
       response.ContentType:= 'text/html';
     end;
-    AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -3790,12 +3790,12 @@ begin
       end;
     end;
     if request.Resource <> nil then // batch
-      AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
       if request.Resource <> nil then // batch
-        AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+        AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -3816,7 +3816,7 @@ begin
     req := (request.resource as TFHIRBundle).Link;
     resp := TFHIRBundle.create(BundleTypeBatchResponse);
     try
-      resp.id := GUIDToString(CreateGUID).ToLower;
+      resp.id := NewGuidId;
       for src in req.entryList do
       begin
         dest := resp.entryList.Append;
@@ -3881,11 +3881,11 @@ begin
       req.free;
       resp.free;
     end;
-    AuditRest(request.session, request.ip, frtNull, '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.requestId, request.ip, frtNull, '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.ip, frtNull, '', '', 0, fcmdBatch, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.requestId, request.ip, frtNull, '', '', 0, fcmdBatch, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -4168,11 +4168,11 @@ end;
 //        end;
 //      end;
 //    end;
-//    AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+//    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
 //  except
 //    on e: exception do
 //    begin
-//      AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+//      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
 //      recordStack(e);
 // raise;
 //    end;
@@ -4321,11 +4321,11 @@ var
 //    end;
 //    inc(iCount);
 //    TFHIRXhtmlComposer.Create('en').Compose(TFileStream.Create('c:\temp\q'+inttostr(iCount)+'.xml', fmCreate), response.Resource, true, nil);
-//    AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+//    AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
 //  except
 //    on e: exception do
 //    begin
-//      AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+//      AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
 //      recordStack(e);
 // raise;
 //    end;
@@ -4630,12 +4630,12 @@ end;
 //    result := nil;
 //end;
 //
-procedure TFhirOperationManager.AuditRest(session: TFhirSession; ip: string; resourceType: TFhirResourceType; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFhirProvenance; httpCode: Integer; name, message: String);
+procedure TFhirOperationManager.AuditRest(session: TFhirSession; reqid, ip: string; resourceType: TFhirResourceType; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFhirProvenance; httpCode: Integer; name, message: String);
 begin
-  AuditRest(session, ip, resourceType, id, ver, verkey, op, provenance, '', httpCode, name, message);
+  AuditRest(session, reqid, ip, resourceType, id, ver, verkey, op, provenance, '', httpCode, name, message);
 end;
 
-procedure TFhirOperationManager.AuditRest(session: TFhirSession; ip: string; resourceType: TFhirResourceType; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode: Integer; name, message: String);
+procedure TFhirOperationManager.AuditRest(session: TFhirSession; reqid, ip: string; resourceType: TFhirResourceType; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode: Integer; name, message: String);
 var
   se : TFhirAuditEvent;
   c : TFhirCoding;
@@ -4661,6 +4661,9 @@ begin
   try
     if verkey <> 0 then
       se.Tags['verkey'] := inttostr(verkey);
+    if reqid <> '' then
+      se.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/request-id', reqid);
+
     se.event := TFhirAuditEventEvent.create;
     case op of
       fcmdRead:            event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'read',    'http://hl7.org/fhir/restful-operation', AuditEventActionR);
@@ -5640,11 +5643,11 @@ begin
       end;
     end;
     inc(iCount);
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -5773,11 +5776,11 @@ begin
         end;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -5862,11 +5865,11 @@ begin
         params.Free;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -6004,12 +6007,12 @@ begin
     else
       response.HTTPCode := 400;
     if request.ResourceType <> frtAuditEvent then
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
       if request.ResourceType <> frtAuditEvent then
-        manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+        manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -6169,11 +6172,11 @@ begin
         end;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -6334,11 +6337,11 @@ begin
     finally
       patient.free;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
       recordStack(e);
       raise;
     end;
@@ -6476,11 +6479,11 @@ begin
         end;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -6579,11 +6582,11 @@ begin
         end;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -6711,11 +6714,11 @@ begin
         end;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -6844,11 +6847,11 @@ begin
         params.Free;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -7236,11 +7239,11 @@ begin
       end;
     end;
     inc(iCount);
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -7300,11 +7303,11 @@ begin
     response.Body := '';
     response.LastModifiedDate := now;
     response.Resource := r.Link;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -7444,11 +7447,11 @@ begin
         map.Free;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -7616,11 +7619,11 @@ begin
       response.Message := 'OK';
       response.Body := '';
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
       recordStack(e);
  raise;
     end;
@@ -7771,11 +7774,11 @@ begin
         tags.free;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, response.httpCode, t, response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, response.httpCode, t, response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, 500, t, e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, 500, t, e.message);
       recordStack(e);
       raise;
     end;
@@ -7931,11 +7934,11 @@ begin
         tags.free;
       end;
     end;
-    manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, response.httpCode, t, response.message);
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, response.httpCode, t, response.message);
   except
     on e: exception do
     begin
-      manager.AuditRest(request.session, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, 500, t, e.message);
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, request.subid, 0, request.CommandType, request.Provenance, 500, t, e.message);
       recordStack(e);
       raise;
     end;

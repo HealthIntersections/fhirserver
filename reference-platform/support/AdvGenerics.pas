@@ -532,7 +532,7 @@ end;
 
 destructor TAdvList<T>.Destroy;
 begin
-  Capacity := 0;
+  Clear;
   FArrayManager.Free;
   inherited;
 end;

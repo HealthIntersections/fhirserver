@@ -39,7 +39,9 @@ public class DefinitionsLoader2 {
         processResource(def, (StructureDefinition) entry.getResource(), vsmap);
       else if (entry.getResource() instanceof Conformance) 
         processConformance(def, (Conformance) entry.getResource());
-      else if (!(entry.getResource() instanceof OperationDefinition) )
+      else if (entry.getResource() instanceof OperationDefinition)
+        def.getOperations().add(VersionConverter.convertOperationDefinition((OperationDefinition) entry.getResource())); 
+      else
         System.out.println("unhandled entry in resources: "+entry.getResource().fhirType());
     }
     for (BundleEntryComponent entry : searchParams.getEntry()) {
@@ -57,7 +59,7 @@ public class DefinitionsLoader2 {
   }
 
   private static void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
-    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), sp.getType(), sp.getXpathUsage());
+    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), sp.getType(), sp.getXpathUsage(), sp.getTarget());
     def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
   }
 

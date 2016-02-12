@@ -470,7 +470,7 @@ begin
       qopGreaterEqual: result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
       qopStartsAfter:  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
       qopEndsBefore:   result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
-      qopApproximate:  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
+      qopApproximate:  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value <= ''' + date.AsUTCDateTimeMaxHL7 + ''' and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
     end;
   finally
     date.free;
@@ -1212,6 +1212,7 @@ end;
 procedure TSearchProcessor.checkDateFormat(s: string);
 var
   ok : boolean;
+  tz : String;
 begin
   ok := false;
   if (length(s) = 4) and StringIsCardinal16(s) then
@@ -1225,6 +1226,23 @@ begin
   else if (length(s) > 11) and (s[5] = '-') and (s[8] = '-') and (s[11] = 'T') and
           StringIsCardinal16(copy(s, 1, 4)) and StringIsCardinal16(copy(s, 6, 2)) and StringIsCardinal16(copy(s, 9, 2)) then
   begin
+    tz := '';
+    if s.EndsWith('Z') then
+      s := s.Substring(0, s.length-1)
+    else if (s.Substring(11).Contains('-')) then
+    begin
+      tz := s.Substring(s.LastIndexOf('-'));
+      s := s.Substring(0, s.LastIndexOf('-'))
+    end
+    else if (s.Substring(11).Contains('+')) then
+    begin
+      tz := s.Substring(s.LastIndexOf('+'));
+      s := s.Substring(0, s.LastIndexOf('+'))
+    end;
+    if (tz <> '') then
+     if (tz.Length <> 6) or (tz[4] <> ':') or not StringIsCardinal16(copy(tz, 2, 2)) or not StringIsCardinal16(copy(tz, 5, 2)) then
+       raise exception.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));
+
     if (length(s) = 16) and (s[14] = ':') and StringIsCardinal16(copy(s, 12, 2)) and StringIsCardinal16(copy(s, 15, 2)) then
       ok := true
     else if (length(s) = 19) and (s[14] = ':') and (s[17] = ':') and
@@ -1234,9 +1252,6 @@ begin
   if not ok then
     raise exception.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));
 end;
-
-
-
 
 destructor TSearchProcessor.Destroy;
 begin

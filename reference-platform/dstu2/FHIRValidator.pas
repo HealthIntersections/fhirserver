@@ -553,7 +553,7 @@ begin
     res := TMsXmlParser.NextSibling(res);
   if res = nil then
     result := ''
-  else
+  else if res.getAttributeNode('value') <> nil then
     result := res.getAttribute('value');
 end;
 

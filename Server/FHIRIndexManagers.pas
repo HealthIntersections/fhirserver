@@ -44,7 +44,7 @@ uses
   AdvObjects, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvGenerics,
   EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport,
   KDBManager,
-  FHIRBase, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities,
+  FHIRBase, FhirSupport, FHIRResources, FHIRIndexConstants, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities,
   TerminologyServer,
   UcumServices;
 
@@ -305,6 +305,8 @@ Type
     procedure buildIndexesAccount;
     procedure buildIndexesImplementationGuide;
     {$IFDEF FHIR_DSTU3}
+    procedure buildIndexesCodeSystem;
+    procedure buildIndexesLinkage;
     procedure BuildIndexesDecisionSupportRule;
     procedure BuildIndexesDecisionSupportServiceModule;
     procedure BuildIndexesExpansionProfile;
@@ -313,6 +315,7 @@ Type
     procedure BuildIndexesMeasure;
     procedure BuildIndexesModuleDefinition;
     procedure BuildIndexesOrderSet;
+    procedure BuildIndexesProtocol;
     procedure BuildIndexesSequence;
     {$ENDIF}
 
@@ -508,6 +511,8 @@ Type
     procedure BuildIndexValuesPaymentReconciliation(key : integer; id : string; context : TFhirResource; resource : TFhirPaymentReconciliation);
     procedure BuildIndexValuesAccount(key : integer; id : string; context : TFhirResource; resource : TFhirAccount);
     {$IFDEF FHIR_DSTU3}
+    procedure BuildIndexValuesCodeSystem(key : integer; id : string; context : TFhirResource; resource : TFhirCodeSystem);
+    procedure BuildIndexValuesLinkage(key : integer; id : string; context : TFhirResource; resource : TFhirLinkage);
     procedure buildIndexValuesDecisionSupportRule(key : integer; id : string; context : TFhirResource; resource : TFhirDecisionSupportRule);
     procedure BuildIndexValuesDecisionSupportServiceModule(key : integer; id : string; context : TFhirResource; resource : TFhirDecisionSupportServiceModule);
     procedure BuildIndexValuesExpansionProfile(key : integer; id : string; context : TFhirResource; resource : TFhirExpansionProfile);
@@ -516,6 +521,7 @@ Type
     procedure BuildIndexValuesMeasure(key : integer; id : string; context : TFhirResource; resource : TFhirMeasure);
     procedure BuildIndexValuesModuleDefinition(key : integer; id : string; context : TFhirResource; resource : TFhirModuleDefinition);
     procedure BuildIndexValuesOrderSet(key : integer; id : string; context : TFhirResource; resource : TFhirOrderSet);
+    procedure BuildIndexValuesProtocol(key : integer; id : string; context : TFhirResource; resource : TFhirProtocol);
     procedure BuildIndexValuesSequence(key : integer; id : string; context : TFhirResource; resource : TFhirSequence);
     {$ENDIF}
 
@@ -887,6 +893,8 @@ begin
     frtReferralRequest : BuildIndexValuesReferralRequest(key, id, context, TFhirReferralRequest(resource));
     frtNutritionOrder : BuildIndexValuesNutritionOrder(key, id, context, TFhirNutritionOrder(resource));
     {$IFDEF FHIR_DSTU3}
+    frtCodeSystem : buildIndexValuesCodeSystem(key, id, context, TFhirCodeSystem(resource));
+    frtLinkage : buildIndexValuesLinkage(key, id, context, TFhirLinkage(resource));
     frtDecisionSupportRule : buildIndexValuesDecisionSupportRule(key, id, context, TFhirDecisionSupportRule(resource));
     frtDecisionSupportServiceModule : buildIndexValuesDecisionSupportServiceModule(key, id, context, TFHIRDecisionSupportServiceModule(resource));
     frtExpansionProfile : buildIndexValuesExpansionProfile(key, id, context, TFHIRExpansionProfile(resource));
@@ -895,6 +903,7 @@ begin
     frtMeasure : buildIndexValuesMeasure(key, id, context, TFHIRMeasure(resource));
     frtModuleDefinition : buildIndexValuesModuleDefinition(key, id, context, TFHIRModuleDefinition(resource));
     frtOrderSet : buildIndexValuesOrderSet(key, id, context, TFHIROrderSet(resource));
+    frtProtocol : buildIndexValuesProtocol(key, id, context, TFHIRProtocol(resource));
     frtSequence : buildIndexValuesSequence(key, id, context, TFHIRSequence(resource));
     {$ENDIF}
 
@@ -1863,8 +1872,8 @@ end;
 
 Const
   CHECK_TSearchParamsEncounter : Array[TSearchParamsEncounter] of TSearchParamsEncounter = (spEncounter__content, spEncounter__id, spEncounter__lastUpdated, spEncounter__profile, spEncounter__query, spEncounter__security, spEncounter__tag, spEncounter__text,
-    spEncounter_Appointment, spEncounter_Condition, spEncounter_Date, spEncounter_Episodeofcare, spEncounter_Identifier, spEncounter_Incomingreferral, spEncounter_Indication, spEncounter_Length, spEncounter_Location, spEncounter_Location_period,
-    spEncounter_Part_of, spEncounter_Participant, spEncounter_Participant_type, spEncounter_Patient, spEncounter_Practitioner, spEncounter_Procedure, spEncounter_Reason, spEncounter_Special_arrangement, spEncounter_Status, spEncounter_Type);
+    spEncounter_Appointment, spEncounter_Condition, spEncounter_Date, spEncounter_Episodeofcare, spEncounter_Identifier, spEncounter_Incomingreferral, spEncounter_Indication, spEncounter_Length, spEncounter_Location, spEncounter_Locationperiod,
+    spEncounter_Partof, spEncounter_Participant, spEncounter_Participanttype, spEncounter_Patient, spEncounter_Practitioner, spEncounter_Procedure, spEncounter_Reason, spEncounter_Specialarrangement, spEncounter_Status, spEncounter_Type);
 
 procedure TFhirIndexInformation.buildIndexesEncounter;
 var
@@ -1917,7 +1926,7 @@ end;
 
 Const
 
-  CHECK_TSearchParamsLocation : Array[TSearchParamsLocation] of TSearchParamsLocation = (spLocation__content, spLocation__id, spLocation__lastUpdated, spLocation__profile, spLocation__query, spLocation__security, spLocation__tag, spLocation__text, spLocation_Address, spLocation_Address_city, spLocation_Address_country, spLocation_Address_postalcode, spLocation_Address_state, spLocation_Address_use, spLocation_Identifier, spLocation_Name, spLocation_Near, spLocation_Near_distance, spLocation_Organization, spLocation_Partof, spLocation_Status, spLocation_Type);
+  CHECK_TSearchParamsLocation : Array[TSearchParamsLocation] of TSearchParamsLocation = (spLocation__content, spLocation__id, spLocation__lastUpdated, spLocation__profile, spLocation__query, spLocation__security, spLocation__tag, spLocation__text, spLocation_Address, spLocation_Addresscity, spLocation_Addresscountry, spLocation_Addresspostalcode, spLocation_Addressstate, spLocation_Addressuse, spLocation_Identifier, spLocation_Name, spLocation_Near, spLocation_Neardistance, spLocation_Organization, spLocation_Partof, spLocation_Status, spLocation_Type);
 
 
 
@@ -1961,7 +1970,7 @@ Const
     spDocumentReference__content, spDocumentReference__id, spDocumentReference__lastUpdated, spDocumentReference__profile, spDocumentReference__query, spDocumentReference__security, spDocumentReference__tag,
     spDocumentReference__text, spDocumentReference_Authenticator, spDocumentReference_Author, spDocumentReference_Class, spDocumentReference_Created, spDocumentReference_Custodian, spDocumentReference_Description, spDocumentReference_Encounter,
     spDocumentReference_Event, spDocumentReference_Facility, spDocumentReference_Format, spDocumentReference_Identifier, spDocumentReference_Indexed, spDocumentReference_Language, spDocumentReference_Location, spDocumentReference_Patient,
-    spDocumentReference_Period, spDocumentReference_Related_id, spDocumentReference_Related_ref, spDocumentReference_Relatesto, spDocumentReference_Relation, spDocumentReference_Relationship, spDocumentReference_Securitylabel,
+    spDocumentReference_Period, spDocumentReference_Relatedid, spDocumentReference_Relatedref, spDocumentReference_Relatesto, spDocumentReference_Relation, spDocumentReference_Relationship, spDocumentReference_Securitylabel,
     spDocumentReference_Setting, spDocumentReference_Status, spDocumentReference_Subject, spDocumentReference_Type);
 
 
@@ -2035,7 +2044,7 @@ end;
 
 Const
   CHECK_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of TSearchParamsDocumentManifest = (spDocumentManifest__content, spDocumentManifest__id, spDocumentManifest__lastUpdated, spDocumentManifest__profile, spDocumentManifest__query, spDocumentManifest__security, spDocumentManifest__tag, spDocumentManifest__text,
-  spDocumentManifest_Author, spDocumentManifest_Content_ref, spDocumentManifest_Created, spDocumentManifest_Description, spDocumentManifest_Identifier, spDocumentManifest_Patient, spDocumentManifest_Recipient, spDocumentManifest_Related_id, spDocumentManifest_Related_ref, spDocumentManifest_Source, spDocumentManifest_Status, spDocumentManifest_Subject, spDocumentManifest_Type);
+  spDocumentManifest_Author, spDocumentManifest_Contentref, spDocumentManifest_Created, spDocumentManifest_Description, spDocumentManifest_Identifier, spDocumentManifest_Patient, spDocumentManifest_Recipient, spDocumentManifest_Relatedid, spDocumentManifest_Relatedref, spDocumentManifest_Source, spDocumentManifest_Status, spDocumentManifest_Subject, spDocumentManifest_Type);
 
 procedure TFhirIndexInformation.buildIndexesDocumentManifest;
 var
@@ -2198,7 +2207,7 @@ end;
 
 Const
   CHECK_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of TSearchParamsAllergyIntolerance = ( spAllergyIntolerance__content, spAllergyIntolerance__id, spAllergyIntolerance__lastUpdated, spAllergyIntolerance__profile, spAllergyIntolerance__query, spAllergyIntolerance__security, spAllergyIntolerance__tag, spAllergyIntolerance__text,
-    spAllergyIntolerance_Category, spAllergyIntolerance_Criticality, spAllergyIntolerance_Date, spAllergyIntolerance_Identifier, spAllergyIntolerance_Last_date, spAllergyIntolerance_Manifestation, spAllergyIntolerance_Onset, spAllergyIntolerance_Patient,
+    spAllergyIntolerance_Category, spAllergyIntolerance_Criticality, spAllergyIntolerance_Date, spAllergyIntolerance_Identifier, spAllergyIntolerance_Lastdate, spAllergyIntolerance_Manifestation, spAllergyIntolerance_Onset, spAllergyIntolerance_Patient,
     spAllergyIntolerance_Recorder, spAllergyIntolerance_Reporter, spAllergyIntolerance_Route, spAllergyIntolerance_Severity, spAllergyIntolerance_Status, spAllergyIntolerance_Substance, spAllergyIntolerance_Type);
 
 procedure TFhirIndexInformation.buildIndexesAllergyIntolerance;
@@ -2246,7 +2255,7 @@ end;
 Const
   CHECK_TSearchParamsSubstance : Array[TSearchParamsSubstance] of TSearchParamsSubstance = (
     spSubstance__content, spSubstance__id, spSubstance__lastUpdated, spSubstance__profile, spSubstance__query, spSubstance__security, spSubstance__tag, spSubstance__text,
-    spSubstance_Category, spSubstance_Code, spSubstance_Container_identifier, spSubstance_Expiry, spSubstance_Identifier, spSubstance_Quantity, spSubstance_Substance);
+    spSubstance_Category, spSubstance_Code, spSubstance_Containeridentifier, spSubstance_Expiry, spSubstance_Identifier, spSubstance_Quantity, spSubstance_Substance);
 
 
 procedure TFhirIndexInformation.buildIndexesSubstance;
@@ -2889,7 +2898,7 @@ begin
   index(frtExpansionProfile, key, 0, resource.publisherElement, 'publisher');
   index(frtExpansionProfile, key, 0, resource.urlElement, 'url');
   index(frtExpansionProfile, key, 0, resource.versionElement, 'version');
-  index(frtExpansionProfile, key, 0, resource.statusElement, 'status', 'status');
+  index(frtExpansionProfile, key, 0, resource.statusElement, 'status');
 end;
 
 
@@ -2989,6 +2998,26 @@ begin
 end;
 
 procedure TFhirIndexManager.buildIndexValuesOrderSet(key: integer; id : String; context : TFhirResource; resource: TFhirOrderSet);
+begin
+end;
+
+const
+  CHECK_TSearchParamsProtocol : Array[TSearchParamsProtocol] of TSearchParamsProtocol = (
+    spProtocol__content, spProtocol__id, spProtocol__lastUpdated, spProtocol__profile, spProtocol__query, spProtocol__security, spProtocol__tag, spProtocol__text,
+    spProtocol_Identifier, spProtocol_Subject);
+
+procedure TFhirIndexInformation.BuildIndexesProtocol;
+var
+  a : TSearchParamsProtocol;
+begin
+  for a := low(TSearchParamsProtocol) to high(TSearchParamsProtocol) do
+  begin
+    assert(CHECK_TSearchParamsProtocol[a] = a);
+    indexes.add(frtProtocol, CODES_TSearchParamsProtocol[a], DESC_TSearchParamsProtocol[a], TYPES_TSearchParamsProtocol[a], TARGETS_TSearchParamsProtocol[a], PATHS_TSearchParamsProtocol[a], USES_TSearchParamsProtocol[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesProtocol(key: integer; id : String; context : TFhirResource; resource: TFhirProtocol);
 begin
 end;
 
@@ -3146,7 +3175,7 @@ end;
 
 Const
   CHECK_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of TSearchParamsRelatedPerson = (spRelatedPerson__content, spRelatedPerson__id, spRelatedPerson__lastUpdated, spRelatedPerson__profile, spRelatedPerson__query, spRelatedPerson__security, spRelatedPerson__tag, spRelatedPerson__text,
-    spRelatedPerson_Address, spRelatedPerson_Address_city, spRelatedPerson_Address_country, spRelatedPerson_Address_postalcode, spRelatedPerson_Address_state, spRelatedPerson_Address_use,
+    spRelatedPerson_Address, spRelatedPerson_Addresscity, spRelatedPerson_Addresscountry, spRelatedPerson_Addresspostalcode, spRelatedPerson_Addressstate, spRelatedPerson_Addressuse,
     spRelatedPerson_Birthdate, spRelatedPerson_Email, spRelatedPerson_Gender, spRelatedPerson_Identifier, spRelatedPerson_Name, spRelatedPerson_Patient, spRelatedPerson_Phone, spRelatedPerson_Phonetic, spRelatedPerson_Telecom);
 
 procedure TFhirIndexInformation.buildIndexesRelatedPerson;
@@ -3341,13 +3370,13 @@ end;
 Const
   {$IFDEF FHIR_DSTU3}
   CHECK_TSearchParamsConformance : Array[TSearchParamsConformance] of TSearchParamsConformance = (
-    spConformance__content, spConformance__id, spConformance__lastUpdated, spConformance__profile, spConformance__query, spConformance__security, spConformance__tag,  spConformance__text,spConformance_Date, spConformance_Description, spConformance_Event, spConformance_Fhirversion,
-    spConformance_Format, spConformance_Mode, spConformance_Name, spConformance_ResourceProfile, spConformance_Publisher, spConformance_Resource, spConformance_Securityservice, spConformance_Software, spConformance_Status, spConformance_Supported_profile,
-    spConformance_Url, spConformance_Version);
+    spConformance__content, spConformance__id, spConformance__lastUpdated, spConformance__profile, spConformance__query, spConformance__security, spConformance__tag,  spConformance__text,
+    spConformance_Date, spConformance_Description, spConformance_Event, spConformance_Fhirversion, spConformance_Format, spConformance_Mode, spConformance_Name, spConformance_Publisher,
+    spConformance_Resource, spConformance_Resourceprofile, spConformance_Securityservice, spConformance_Software, spConformance_Status, spConformance_Supportedprofile, spConformance_Url, spConformance_Version);
   {$ELSE}
   CHECK_TSearchParamsConformance : Array[TSearchParamsConformance] of TSearchParamsConformance = (
     spConformance__content, spConformance__id, spConformance__lastUpdated, spConformance__profile, spConformance__query, spConformance__security, spConformance__tag,  spConformance__text,spConformance_Date, spConformance_Description, spConformance_Event, spConformance_Fhirversion,
-    spConformance_Format, spConformance_Mode, spConformance_Name, spConformance_Profile, spConformance_Publisher, spConformance_Resource, spConformance_Security, spConformance_Software, spConformance_Status, spConformance_Supported_profile,
+    spConformance_Format, spConformance_Mode, spConformance_Name, spConformance_Profile, spConformance_Publisher, spConformance_Resource, spConformance_Security, spConformance_Software, spConformance_Status, spConformance_Supportedprofile,
     spConformance_Url, spConformance_Version);
   {$ENDIF}
 
@@ -3489,8 +3518,8 @@ end;
 
 Const
   CHECK_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of TSearchParamsMessageHeader = ( spMessageHeader__content, spMessageHeader__id, spMessageHeader__lastUpdated, spMessageHeader__profile, spMessageHeader__query, spMessageHeader__security, spMessageHeader__tag, spMessageHeader__text,
-    spMessageHeader_Author, spMessageHeader_Code, spMessageHeader_Data, spMessageHeader_Destination, spMessageHeader_Destination_uri, spMessageHeader_Enterer, spMessageHeader_Event,
-    spMessageHeader_Receiver, spMessageHeader_Response_id, spMessageHeader_Responsible, spMessageHeader_Source, spMessageHeader_Source_uri, spMessageHeader_Target, spMessageHeader_Timestamp);
+    spMessageHeader_Author, spMessageHeader_Code, spMessageHeader_Data, spMessageHeader_Destination, spMessageHeader_Destinationuri, spMessageHeader_Enterer, spMessageHeader_Event,
+    spMessageHeader_Receiver, spMessageHeader_Responseid, spMessageHeader_Responsible, spMessageHeader_Source, spMessageHeader_Sourceuri, spMessageHeader_Target, spMessageHeader_Timestamp);
 
 
 procedure TFhirIndexInformation.buildIndexesMessageHeader;
@@ -3538,7 +3567,7 @@ end;
 
 Const
   CHECK_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of TSearchParamsPractitioner = (spPractitioner__content, spPractitioner__id, spPractitioner__lastUpdated, spPractitioner__profile, spPractitioner__query, spPractitioner__security, spPractitioner__tag, spPractitioner__text,
-    spPractitioner_Address, spPractitioner_Address_city, spPractitioner_Address_country, spPractitioner_Address_postalcode, spPractitioner_Address_state, spPractitioner_Address_use, spPractitioner_Communication, spPractitioner_Email, spPractitioner_Family, spPractitioner_Gender, spPractitioner_Given, spPractitioner_Identifier, spPractitioner_Location, spPractitioner_Name, spPractitioner_Organization, spPractitioner_Phone, spPractitioner_Phonetic, spPractitioner_Role, spPractitioner_Specialty, spPractitioner_Telecom);
+    spPractitioner_Address, spPractitioner_Addresscity, spPractitioner_Addresscountry, spPractitioner_Addresspostalcode, spPractitioner_Addressstate, spPractitioner_Addressuse, spPractitioner_Communication, spPractitioner_Email, spPractitioner_Family, spPractitioner_Gender, spPractitioner_Given, spPractitioner_Identifier, spPractitioner_Location, spPractitioner_Name, spPractitioner_Organization, spPractitioner_Phone, spPractitioner_Phonetic, spPractitioner_Role, spPractitioner_Specialty, spPractitioner_Telecom);
 
 
 procedure TFhirIndexInformation.buildIndexesPractitioner;
@@ -3593,7 +3622,7 @@ end;
 
 Const
   CHECK_TSearchParamsOrganization : Array[TSearchParamsOrganization] of TSearchParamsOrganization = ( spOrganization__content, spOrganization__id, spOrganization__lastUpdated, spOrganization__profile, spOrganization__query, spOrganization__security, spOrganization__tag, spOrganization__text,
-    spOrganization_Active, spOrganization_Address, spOrganization_Address_city, spOrganization_Address_country, spOrganization_Address_postalcode, spOrganization_Address_state, spOrganization_Address_use, spOrganization_Identifier, spOrganization_Name, spOrganization_Partof, spOrganization_Phonetic, spOrganization_Type);
+    spOrganization_Active, spOrganization_Address, spOrganization_Addresscity, spOrganization_Addresscountry, spOrganization_Addresspostalcode, spOrganization_Addressstate, spOrganization_Addressuse, spOrganization_Identifier, spOrganization_Name, spOrganization_Partof, spOrganization_Phonetic, spOrganization_Type);
 
 
 
@@ -3628,7 +3657,7 @@ end;
 
 Const
   CHECK_TSearchParamsGroup : Array[TSearchParamsGroup] of TSearchParamsGroup = ( spGroup__content, spGroup__id, spGroup__lastUpdated, spGroup__profile, spGroup__query, spGroup__security, spGroup__tag, spGroup__text,
-     spGroup_Actual, spGroup_Characteristic, spGroup_Characteristic_value, spGroup_Code, spGroup_Exclude, spGroup_Identifier, spGroup_Member, spGroup_Type, spGroup_Value);
+     spGroup_Actual, spGroup_Characteristic, spGroup_Characteristicvalue, spGroup_Code, spGroup_Exclude, spGroup_Identifier, spGroup_Member, spGroup_Type, spGroup_Value);
 
 
 procedure TFhirIndexInformation.buildIndexesGroup;
@@ -3672,8 +3701,8 @@ end;
 Const
   CHECK_TSearchParamsObservation : Array[TSearchParamsObservation] of TSearchParamsObservation = (
     spObservation__content, spObservation__id, spObservation__lastUpdated, spObservation__profile, spObservation__query, spObservation__security, spObservation__tag,  spObservation__text,
-    spObservation_Category, spObservation_Code, spObservation_Code_value_x, spObservation_Component_code, spObservation_Component_code_value_x, spObservation_Component_data_absent_reason, spObservation_Component_value_concept, spObservation_Component_value_quantity, spObservation_Component_value_string, spObservation_Data_absent_reason, spObservation_Date,
-    spObservation_Device, spObservation_Encounter, spObservation_Identifier, spObservation_Patient, spObservation_Performer, spObservation_Related, spObservation_Related_target, spObservation_Related_type, spObservation_Specimen, spObservation_Status, spObservation_Subject, spObservation_Value_concept, spObservation_Value_date, spObservation_Value_quantity, spObservation_Value_string);
+    spObservation_Category, spObservation_Code, spObservation_Codevaluex, spObservation_Componentcode, spObservation_Componentcodevaluex, spObservation_Componentdataabsentreason, spObservation_Componentvalueconcept, spObservation_Componentvaluequantity, spObservation_Componentvaluestring, spObservation_Dataabsentreason, spObservation_Date,
+    spObservation_Device, spObservation_Encounter, spObservation_Identifier, spObservation_Patient, spObservation_Performer, spObservation_Related, spObservation_Relatedtarget, spObservation_Relatedtype, spObservation_Specimen, spObservation_Status, spObservation_Subject, spObservation_Valueconcept, spObservation_Valuedate, spObservation_Valuequantity, spObservation_Valuestring);
 
 
 procedure TFhirIndexInformation.buildIndexesObservation;
@@ -3752,7 +3781,7 @@ end;
 Const
   CHECK_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of TSearchParamsStructureDefinition = (
     spStructureDefinition__content, spStructureDefinition__id, spStructureDefinition__lastUpdated, spStructureDefinition__profile, spStructureDefinition__query, spStructureDefinition__security, spStructureDefinition__tag, spStructureDefinition__text,
-    spStructureDefinition_Abstract, spStructureDefinition_Base, spStructureDefinition_Base_path, spStructureDefinition_Code, spStructureDefinition_Context, spStructureDefinition_Context_type, spStructureDefinition_Date, spStructureDefinition_Description, spStructureDefinition_Display, spStructureDefinition_Experimental, spStructureDefinition_Ext_context,
+    spStructureDefinition_Abstract, spStructureDefinition_Base, spStructureDefinition_Basepath, spStructureDefinition_Code, spStructureDefinition_Context, spStructureDefinition_Contexttype, spStructureDefinition_Date, spStructureDefinition_Description, spStructureDefinition_Display, spStructureDefinition_Experimental, spStructureDefinition_Extcontext,
     spStructureDefinition_Identifier, spStructureDefinition_Kind, spStructureDefinition_Name, spStructureDefinition_Path, spStructureDefinition_Publisher, spStructureDefinition_Status, spStructureDefinition_Type, spStructureDefinition_Url, spStructureDefinition_Valueset, spStructureDefinition_Version);
 
 procedure TFhirIndexInformation.buildIndexesStructureDefinition;
@@ -3818,7 +3847,7 @@ end;
 Const
   CHECK_TSearchParamsPatient : Array[TSearchParamsPatient] of TSearchParamsPatient = (
     spPatient__content, spPatient__id, spPatient__lastUpdated, spPatient__profile, spPatient__query, spPatient__security, spPatient__tag, spPatient__text,
-    spPatient_Active, spPatient_Address, spPatient_Address_city, spPatient_Address_country, spPatient_Address_postalcode, spPatient_Address_state, spPatient_Address_use, spPatient_Animal_breed, spPatient_Animal_species, spPatient_Birthdate, spPatient_Careprovider,
+    spPatient_Active, spPatient_Address, spPatient_Addresscity, spPatient_Addresscountry, spPatient_Addresspostalcode, spPatient_Addressstate, spPatient_Addressuse, spPatient_Animalbreed, spPatient_Animalspecies, spPatient_Birthdate, spPatient_Careprovider,
     spPatient_Deathdate, spPatient_Deceased, spPatient_Email, spPatient_Ethnicity, spPatient_Family, spPatient_Gender, spPatient_Given, spPatient_Identifier, spPatient_Language, spPatient_Link, spPatient_Name, spPatient_Organization, spPatient_Phone, spPatient_Phonetic, spPatient_Race, spPatient_Telecom);
 
 procedure TFhirIndexInformation.buildIndexesPatient;
@@ -3968,7 +3997,7 @@ end;
 
 Const
   CHECK_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of TSearchParamsDiagnosticOrder = ( spDiagnosticOrder__content, spDiagnosticOrder__id, spDiagnosticOrder__lastUpdated, spDiagnosticOrder__profile, spDiagnosticOrder__query, spDiagnosticOrder__security, spDiagnosticOrder__tag, spDiagnosticOrder__text,
-    spDiagnosticOrder_Actor, spDiagnosticOrder_Bodysite, spDiagnosticOrder_Code, spDiagnosticOrder_Encounter, spDiagnosticOrder_Event_date, spDiagnosticOrder_Event_status, spDiagnosticOrder_Event_status_date, spDiagnosticOrder_Identifier, spDiagnosticOrder_Item_date, spDiagnosticOrder_Item_past_status, spDiagnosticOrder_Item_status, spDiagnosticOrder_Item_status_date, spDiagnosticOrder_Orderer, spDiagnosticOrder_Patient, spDiagnosticOrder_Specimen, spDiagnosticOrder_Status, spDiagnosticOrder_Subject);
+    spDiagnosticOrder_Actor, spDiagnosticOrder_Bodysite, spDiagnosticOrder_Code, spDiagnosticOrder_Encounter, spDiagnosticOrder_Eventdate, spDiagnosticOrder_Eventstatus, spDiagnosticOrder_Eventstatusdate, spDiagnosticOrder_Identifier, spDiagnosticOrder_Itemdate, spDiagnosticOrder_Itempaststatus, spDiagnosticOrder_Itemstatus, spDiagnosticOrder_Itemstatusdate, spDiagnosticOrder_Orderer, spDiagnosticOrder_Patient, spDiagnosticOrder_Specimen, spDiagnosticOrder_Status, spDiagnosticOrder_Subject);
 
 
 
@@ -4093,6 +4122,82 @@ begin
     index(frtValueSet, key, 0, resource.expansion.identifier, 'expansion');
 end;
 
+{$IFDEF FHIR_DSTU3}
+const
+  CHECK_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of TSearchParamsCodeSystem = (
+    spCodeSystem__content, spCodeSystem__id, spCodeSystem__lastUpdated, spCodeSystem__profile, spCodeSystem__query, spCodeSystem__security, spCodeSystem__tag, spCodeSystem__text,
+    spCodeSystem_Code, spCodeSystem_Context, spCodeSystem_Date, spCodeSystem_Description, spCodeSystem_Identifier, spCodeSystem_Language, spCodeSystem_Name, spCodeSystem_Publisher, spCodeSystem_Status, spCodeSystem_System, spCodeSystem_Url, spCodeSystem_Version);
+
+procedure TFhirIndexInformation.buildIndexesCodeSystem;
+var
+  a : TSearchParamsCodeSystem;
+begin
+  for a := low(TSearchParamsCodeSystem) to high(TSearchParamsCodeSystem) do
+  begin
+    assert(CHECK_TSearchParamsCodeSystem[a] = a);
+    indexes.add(frtCodeSystem, CODES_TSearchParamsCodeSystem[a], DESC_TSearchParamsCodeSystem[a], TYPES_TSearchParamsCodeSystem[a], TARGETS_TSearchParamsCodeSystem[a], PATHS_TSearchParamsCodeSystem[a], USES_TSearchParamsCodeSystem[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesCodeSystem(key : integer; id : String; context : TFhirResource; resource: TFhirCodeSystem);
+  procedure indexConcepts(list : TFhirCodeSystemConceptList);
+  var
+    i : integer;
+  begin
+    for i := 0 to list.Count - 1 do
+    begin
+      index(frtCodeSystem, key, 0, list[i].codeElement, 'code');
+      indexConcepts(list[i].conceptList);
+    end;
+  end;
+var
+  i : integer;
+begin
+  index(frtCodeSystem, key, 0, resource.identifierElement, 'identifier');
+  index(frtCodeSystem, key, 0, resource.versionElement, 'version');
+  index(frtCodeSystem, key, 0, resource.nameElement, 'name');
+
+  index(frtCodeSystem, key, 0, resource.statusElement, 'status');
+  index(frtCodeSystem, key, 0, resource.urlElement, 'url');
+  index(frtCodeSystem, key, 0, resource.useContextList, 'context');
+
+  index(frtCodeSystem, key, 0, resource.dateElement, 'date');
+  index(frtCodeSystem, key, 0, resource.publisherElement, 'publisher');
+  index(frtCodeSystem, key, 0, resource.descriptionElement, 'description');
+  indexConcepts(resource.conceptList);
+end;
+
+const
+  CHECK_TSearchParamsLinkage : Array[TSearchParamsLinkage] of TSearchParamsLinkage = (
+    spLinkage__content, spLinkage__id, spLinkage__lastUpdated, spLinkage__profile, spLinkage__query, spLinkage__security, spLinkage__tag, spLinkage__text,
+    spLinkage_Author, spLinkage_Item, spLinkage_Source);
+
+
+procedure TFhirIndexInformation.buildIndexesLinkage;
+var
+  a : TSearchParamsLinkage;
+begin
+  for a := low(TSearchParamsLinkage) to high(TSearchParamsLinkage) do
+  begin
+    assert(CHECK_TSearchParamsLinkage[a] = a);
+    indexes.add(frtLinkage, CODES_TSearchParamsLinkage[a], DESC_TSearchParamsLinkage[a], TYPES_TSearchParamsLinkage[a], TARGETS_TSearchParamsLinkage[a], PATHS_TSearchParamsLinkage[a], USES_TSearchParamsLinkage[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesLinkage(key : integer; id : String; context : TFhirResource; resource: TFhirLinkage);
+var
+  i : TFhirLinkageItem;
+begin
+  index(context, frtLinkage, key, 0, resource.author, 'author');
+  for i in resource.itemList do
+  begin
+    index(context, frtLinkage, key, 0, i.resource, 'item');
+    if i.type_ = LinkageTypeSource then
+      index(context, frtLinkage, key, 0, i.resource, 'source');
+  end;
+end;
+{$ENDIF}
+
 const
   CHECK_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of TSearchParamsConceptMap = (
     spConceptMap__content, spConceptMap__id, spConceptMap__lastUpdated, spConceptMap__profile, spConceptMap__query, spConceptMap__security, spConceptMap__tag, spConceptMap__text,
@@ -4157,7 +4262,7 @@ end;
 
 const
   CHECK_TSearchParamsDevice : Array[TSearchParamsDevice] of TSearchParamsDevice = ( spDevice__content, spDevice__id, spDevice__lastUpdated, spDevice__profile, spDevice__query, spDevice__security, spDevice__tag, spDevice__text,
-    spDevice_Identifier, spDevice_Location, spDevice_Manufacturer, spDevice_Model, spDevice_Organization, spDevice_Patient, spDevice_Type, spDevice_Udi, spDevice_Url);
+    spDevice_Identifier, spDevice_Location, spDevice_Manufacturer, spDevice_Model, spDevice_Organization, spDevice_Patient, spDevice_Type, {$IFDEF FHIR_DSTU2}spDevice_Udi{$ELSE}spDevice_Udicarrier{$ENDIF}, spDevice_Url);
 
 
 procedure TFhirIndexInformation.buildIndexesDevice;
@@ -4182,7 +4287,11 @@ begin
   index(frtDevice, key, 0, resource.modelElement, 'model');
   index(context, frtDevice, key, 0, resource.owner, 'organization');
   index(context, frtDevice, key, 0, resource.patient, 'patient');
+  {$IFDEF FHIR_DSTU2}
   index(frtDevice, key, 0, resource.udiElement, 'udi');
+  {$ELSE}
+  index(frtDevice, key, 0, resource.udiCarrierElement, 'udi');
+  {$ENDIF}
   index(frtDevice, key, 0, resource.urlElement, 'url');
   index(frtDevice, key, 0, resource.type_, 'type');
   patientCompartment(key, resource.patient);
@@ -4191,7 +4300,7 @@ end;
 const
   CHECK_TSearchParamsAuditEvent : Array[TSearchParamsAuditEvent] of TSearchParamsAuditEvent = (
     spAuditEvent__content, spAuditEvent__id, spAuditEvent__lastUpdated, spAuditEvent__profile, spAuditEvent__query, spAuditEvent__security, spAuditEvent__tag, spAuditEvent__text,
-    spAuditEvent_Action, spAuditEvent_Address, spAuditEvent_Altid, spAuditEvent_Date, spAuditEvent_Desc, spAuditEvent_Identity, spAuditEvent_Name, spAuditEvent_Object_type, spAuditEvent_Participant, spAuditEvent_Patient, spAuditEvent_Policy, spAuditEvent_Reference, spAuditEvent_Site, spAuditEvent_Source, spAuditEvent_Subtype, spAuditEvent_Type, spAuditEvent_User);
+    spAuditEvent_Action, spAuditEvent_Address, spAuditEvent_Altid, spAuditEvent_Date, spAuditEvent_Desc, spAuditEvent_Identity, spAuditEvent_Name, spAuditEvent_Objecttype, spAuditEvent_Participant, spAuditEvent_Patient, spAuditEvent_Policy, spAuditEvent_Reference, spAuditEvent_Site, spAuditEvent_Source, spAuditEvent_Subtype, spAuditEvent_Type, spAuditEvent_User);
 
 procedure TFhirIndexInformation.buildIndexesAuditEvent;
 var
@@ -4211,7 +4320,7 @@ var
 begin
   {$IFDEF FHIR_DSTU3}
   index(frtAuditEvent, key, 0, resource.type_, 'type');
-  index(frtAuditEvent, key, 0, resource.actionElement, 'action', 'action');
+  index(frtAuditEvent, key, 0, resource.actionElement, 'action');
   index(frtAuditEvent, key, 0, resource.recordedElement, 'date');
   for i := 0 to resource.subTypeList.count - 1 do
     index(frtAuditEvent, key, 0, resource.subtypeList[i], 'subtype');
@@ -4289,7 +4398,7 @@ end;
 const
   CHECK_TSearchParamsCondition : Array[TSearchParamsCondition] of TSearchParamsCondition = (
     spCondition__content, spCondition__id, spCondition__lastUpdated, spCondition__profile, spCondition__query, spCondition__security, spCondition__tag, spCondition__text,
-    spCondition_Age, spCondition_Asserter, spCondition_Body_site, spCondition_Category, spCondition_Clinicalstatus, spCondition_Code, spCondition_Date_recorded, spCondition_Encounter, spCondition_Evidence, spCondition_Identifier, spCondition_Onset, spCondition_Onset_info, spCondition_Patient, spCondition_Severity, spCondition_Stage);
+    spCondition_Age, spCondition_Asserter, spCondition_Bodysite, spCondition_Category, spCondition_Clinicalstatus, spCondition_Code, spCondition_Daterecorded, spCondition_Encounter, spCondition_Evidence, spCondition_Identifier, spCondition_Onset, spCondition_Onsetinfo, spCondition_Patient, spCondition_Severity, spCondition_Stage);
 
 procedure TFhirIndexInformation.buildIndexesCondition;
 var
@@ -4440,7 +4549,7 @@ end;
 const
   {$IFDEF FHIR_DSTU3}
   CHECK_TSearchParamsMedication : Array[TSearchParamsMedication] of TSearchParamsMedication = ( spMedication__content, spMedication__id, spMedication__lastUpdated, spMedication__profile, spMedication__query, spMedication__security, spMedication__tag, spMedication__text,
-     spMedication_Code, spMedication_Container, spMedication_Packageitem, spMedication_Form, spMedication_Ingredient, spMedication_Manufacturer);
+     spMedication_Code, spMedication_Container, spMedication_Form, spMedication_Ingredient, spMedication_Manufacturer, spMedication_Packageitem);
   {$ELSE}
   CHECK_TSearchParamsMedication : Array[TSearchParamsMedication] of TSearchParamsMedication = ( spMedication__content, spMedication__id, spMedication__lastUpdated, spMedication__profile, spMedication__query, spMedication__security, spMedication__tag, spMedication__text,
      spMedication_Code, spMedication_Container, spMedication_Content, spMedication_Form, spMedication_Ingredient, spMedication_Manufacturer);
@@ -4480,8 +4589,13 @@ end;
 
 
 const
+  {$IFDEF FHIR_DSTU3}
+  CHECK_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of TSearchParamsMedicationAdministration = ( spMedicationAdministration__content, spMedicationAdministration__id, spMedicationAdministration__lastUpdated, spMedicationAdministration__profile, spMedicationAdministration__query, spMedicationAdministration__security, spMedicationAdministration__tag, spMedicationAdministration__text,
+     spMedicationAdministration_Code, spMedicationAdministration_Device, spMedicationAdministration_Effectivetime, spMedicationAdministration_Encounter, spMedicationAdministration_Identifier, spMedicationAdministration_Medication, spMedicationAdministration_Patient, spMedicationAdministration_Practitioner, spMedicationAdministration_Prescription, spMedicationAdministration_Status, spMedicationAdministration_Wasnotgiven);
+  {$ELSE}
   CHECK_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of TSearchParamsMedicationAdministration = ( spMedicationAdministration__content, spMedicationAdministration__id, spMedicationAdministration__lastUpdated, spMedicationAdministration__profile, spMedicationAdministration__query, spMedicationAdministration__security, spMedicationAdministration__tag, spMedicationAdministration__text,
      spMedicationAdministration_Code, spMedicationAdministration_Device, spMedicationAdministration_Effectivetime, spMedicationAdministration_Encounter, spMedicationAdministration_Identifier, spMedicationAdministration_Medication, spMedicationAdministration_Notgiven, spMedicationAdministration_Patient, spMedicationAdministration_Practitioner, spMedicationAdministration_Prescription, spMedicationAdministration_Status);
+  {$ENDIF}
 
 
 
@@ -4612,7 +4726,7 @@ end;
 const
   CHECK_TSearchParamsMedicationStatement : Array[TSearchParamsMedicationStatement] of TSearchParamsMedicationStatement = (
     spMedicationStatement__content, spMedicationStatement__id, spMedicationStatement__lastUpdated, spMedicationStatement__profile, spMedicationStatement__query, spMedicationStatement__security, spMedicationStatement__tag, spMedicationStatement__text,
-    spMedicationStatement_Code,  spMedicationStatement_Effectivedate,  spMedicationStatement_Identifier,  spMedicationStatement_Medication,  spMedicationStatement_Patient,  spMedicationStatement_Source,  spMedicationStatement_Status);
+    spMedicationStatement_Code,  {$IFDEF FHIR_DSTU3}spMedicationStatement_Effective {$ELSE} spMedicationStatement_Effectivedate{$ENDIF},  spMedicationStatement_Identifier,  spMedicationStatement_Medication,  spMedicationStatement_Patient,  spMedicationStatement_Source,  spMedicationStatement_Status);
 
 
 procedure TFhirIndexInformation.buildIndexesMedicationStatement;
@@ -4653,10 +4767,10 @@ end;
 const
   {$IFDEF FHIR_DSTU3}
   CHECK_TSearchParamsList : Array[TSearchParamsList] of TSearchParamsList = ( spList__content, spList__id, spList__lastUpdated, spList__profile, spList__query, spList__security, spList__tag, spList__text,
-    spList_Code, spList_Date, spList_Empty_reason, spList_Encounter, spList_Identifier, spList_Item, spList_Notes, spList_Patient, spList_Source, spList_Status, spList_Subject, spList_Title);
+    spList_Code, spList_Date, spList_Emptyreason, spList_Encounter, spList_Identifier, spList_Item, spList_Notes, spList_Patient, spList_Source, spList_Status, spList_Subject, spList_Title);
   {$ELSE}
   CHECK_TSearchParamsList : Array[TSearchParamsList] of TSearchParamsList = ( spList__content, spList__id, spList__lastUpdated, spList__profile, spList__query, spList__security, spList__tag, spList__text,
-    spList_Code, spList_Date, spList_Empty_reason, spList_Encounter, spList_Item, spList_Notes, spList_Patient, spList_Source, spList_Status, spList_Subject, spList_Title);
+    spList_Code, spList_Date, spList_Emptyreason, spList_Encounter, spList_Item, spList_Notes, spList_Patient, spList_Source, spList_Status, spList_Subject, spList_Title);
   {$ENDIF}
 
 
@@ -4765,7 +4879,7 @@ end;
 
 const
   CHECK_TSearchParamsImagingStudy : Array[TSearchParamsImagingStudy] of TSearchParamsImagingStudy = ( spImagingStudy__content, spImagingStudy__id, spImagingStudy__lastUpdated, spImagingStudy__profile, spImagingStudy__query, spImagingStudy__security, spImagingStudy__tag, spImagingStudy__text,
-    spImagingStudy_Accession, spImagingStudy_Bodysite, spImagingStudy_Dicom_class, spImagingStudy_Modality, spImagingStudy_Order, spImagingStudy_Patient, spImagingStudy_Series, spImagingStudy_Started, spImagingStudy_Study, spImagingStudy_Uid);
+    spImagingStudy_Accession, spImagingStudy_Bodysite, spImagingStudy_Dicomclass, spImagingStudy_Modality, spImagingStudy_Order, spImagingStudy_Patient, spImagingStudy_Series, spImagingStudy_Started, spImagingStudy_Study, spImagingStudy_Uid);
 
 
 procedure TFhirIndexInformation.buildIndexesImagingStudy;
@@ -4812,8 +4926,8 @@ end;
 const
   CHECK_TSearchParamsImmunization : Array[TSearchParamsImmunization] of TSearchParamsImmunization = (
     spImmunization__content, spImmunization__id, spImmunization__lastUpdated, spImmunization__profile, spImmunization__query, spImmunization__security, spImmunization__tag,  spImmunization__text,
-    spImmunization_Date, spImmunization_Dose_sequence, spImmunization_Identifier, spImmunization_Location, spImmunization_Lot_number, spImmunization_Manufacturer, spImmunization_Notgiven, spImmunization_Patient,
-    spImmunization_Performer, spImmunization_Reaction, spImmunization_Reaction_date, spImmunization_Reason, spImmunization_Reason_not_given, spImmunization_Requester, spImmunization_Status, spImmunization_Vaccine_code);
+    spImmunization_Date, spImmunization_Dosesequence, spImmunization_Identifier, spImmunization_Location, spImmunization_Lotnumber, spImmunization_Manufacturer, spImmunization_Notgiven, spImmunization_Patient,
+    spImmunization_Performer, spImmunization_Reaction, spImmunization_Reactiondate, spImmunization_Reason, spImmunization_Reasonnotgiven, spImmunization_Requester, spImmunization_Status, spImmunization_Vaccinecode);
 
 procedure TFhirIndexInformation.buildIndexesImmunization;
 var
@@ -5043,7 +5157,7 @@ end;
 const
   CHECK_TSearchParamsSpecimen : Array[TSearchParamsSpecimen] of TSearchParamsSpecimen = (
     spSpecimen__content, spSpecimen__id, spSpecimen__lastUpdated, spSpecimen__profile, spSpecimen__query, spSpecimen__security, spSpecimen__tag, spSpecimen__text,
-    spSpecimen_Accession, spSpecimen_Bodysite, spSpecimen_Collected, spSpecimen_Collector, spSpecimen_Container, spSpecimen_Container_id, spSpecimen_Identifier, spSpecimen_Parent, spSpecimen_Patient, spSpecimen_Subject, spSpecimen_Type);
+    spSpecimen_Accession, spSpecimen_Bodysite, spSpecimen_Collected, spSpecimen_Collector, spSpecimen_Container, spSpecimen_Containerid, spSpecimen_Identifier, spSpecimen_Parent, spSpecimen_Patient, spSpecimen_Subject, spSpecimen_Type);
 
 procedure TFhirIndexInformation.buildIndexesSpecimen;
 var
@@ -5087,7 +5201,7 @@ end;
 const
   CHECK_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of TSearchParamsImmunizationRecommendation = (
     spImmunizationRecommendation__content, spImmunizationRecommendation__id, spImmunizationRecommendation__lastUpdated, spImmunizationRecommendation__profile, spImmunizationRecommendation__query, spImmunizationRecommendation__security, spImmunizationRecommendation__tag, spImmunizationRecommendation__text,
-    spImmunizationRecommendation_Date, spImmunizationRecommendation_Dose_number, spImmunizationRecommendation_Dose_sequence, spImmunizationRecommendation_Identifier, spImmunizationRecommendation_Information, spImmunizationRecommendation_Patient, spImmunizationRecommendation_Status, spImmunizationRecommendation_Support, spImmunizationRecommendation_Vaccine_type);
+    spImmunizationRecommendation_Date, spImmunizationRecommendation_Dosenumber, spImmunizationRecommendation_Dosesequence, spImmunizationRecommendation_Identifier, spImmunizationRecommendation_Information, spImmunizationRecommendation_Patient, spImmunizationRecommendation_Status, spImmunizationRecommendation_Support, spImmunizationRecommendation_Vaccinetype);
 
 
 procedure TFhirIndexInformation.buildIndexesImmunizationRecommendation;
@@ -5235,7 +5349,7 @@ end;
 Const
   CHECK_TSearchParamsSlot : Array[TSearchParamsSlot] of TSearchParamsSlot = (
     spSlot__content, spSlot__id, spSlot__lastUpdated, spSlot__profile, spSlot__query, spSlot__security, spSlot__tag, spSlot__text,
-    spSlot_Fb_type, spSlot_Identifier, spSlot_Schedule, spSlot_Slot_type, spSlot_Start);
+    spSlot_Fbtype, spSlot_Identifier, spSlot_Schedule, spSlot_Slottype, spSlot_Start);
 
 procedure TFhirIndexInformation.buildIndexesSlot;
 var
@@ -5260,7 +5374,7 @@ end;
 Const
   CHECK_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TSearchParamsAppointment = (
     spAppointment__content, spAppointment__id, spAppointment__lastUpdated, spAppointment__profile, spAppointment__query, spAppointment__security, spAppointment__tag, spAppointment__text,
-    spAppointment_Actor, spAppointment_Date, spAppointment_Identifier, spAppointment_Location, spAppointment_Part_status, spAppointment_Patient, spAppointment_Practitioner, spAppointment_Status);
+    spAppointment_Actor, spAppointment_Date, spAppointment_Identifier, spAppointment_Location, spAppointment_Partstatus, spAppointment_Patient, spAppointment_Practitioner, spAppointment_Status);
 
 procedure TFhirIndexInformation.buildIndexesAppointment;
 var
@@ -5325,7 +5439,7 @@ end;
 Const
   CHECK_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of TSearchParamsAppointmentResponse = (
     spAppointmentResponse__content, spAppointmentResponse__id, spAppointmentResponse__lastUpdated, spAppointmentResponse__profile, spAppointmentResponse__query, spAppointmentResponse__security, spAppointmentResponse__tag, spAppointmentResponse__text,
-    spAppointmentResponse_Actor, spAppointmentResponse_Appointment, spAppointmentResponse_Identifier, spAppointmentResponse_Location, spAppointmentResponse_Part_status, spAppointmentResponse_Patient, spAppointmentResponse_Practitioner);
+    spAppointmentResponse_Actor, spAppointmentResponse_Appointment, spAppointmentResponse_Identifier, spAppointmentResponse_Location, spAppointmentResponse_Partstatus, spAppointmentResponse_Patient, spAppointmentResponse_Practitioner);
 
 procedure TFhirIndexInformation.buildIndexesAppointmentResponse;
 var
@@ -5428,7 +5542,7 @@ end;
 Const
   CHECK_TSearchParamsTestScript : Array[TSearchParamsTestScript] of TSearchParamsTestScript = (
     spTestScript__content, spTestScript__id, spTestScript__lastUpdated, spTestScript__profile, spTestScript__query, spTestScript__security, spTestScript__tag, spTestScript__text,
-    spTestScript_Description, spTestScript_Identifier, spTestScript_Name, spTestScript_Testscript_capability, spTestScript_Testscript_setup_capability, spTestScript_Testscript_test_capability, spTestScript_Url);
+    spTestScript_Description, spTestScript_Identifier, spTestScript_Name, spTestScript_Testscriptcapability, spTestScript_Testscriptsetupcapability, spTestScript_Testscripttestcapability, spTestScript_Url);
 
 procedure TFhirIndexInformation.buildIndexesTestScript;
 var
@@ -5469,8 +5583,8 @@ end;
 
 Const
   CHECK_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of TSearchParamsNamingSystem = (spNamingSystem__content, spNamingSystem__id, spNamingSystem__lastUpdated, spNamingSystem__profile, spNamingSystem__query, spNamingSystem__security, spNamingSystem__tag, spNamingSystem__text,
-    spNamingSystem_Contact, spNamingSystem_Context, spNamingSystem_Date, spNamingSystem_Id_type, spNamingSystem_Kind, spNamingSystem_Name, spNamingSystem_Period, spNamingSystem_Publisher,
-    spNamingSystem_Replaced_by, spNamingSystem_Responsible, spNamingSystem_Status, spNamingSystem_Telecom, spNamingSystem_Type, spNamingSystem_Value);
+    spNamingSystem_Contact, spNamingSystem_Context, spNamingSystem_Date, spNamingSystem_Idtype, spNamingSystem_Kind, spNamingSystem_Name, spNamingSystem_Period, spNamingSystem_Publisher,
+    spNamingSystem_Replacedby, spNamingSystem_Responsible, spNamingSystem_Status, spNamingSystem_Telecom, spNamingSystem_Type, spNamingSystem_Value);
 
 procedure TFhirIndexInformation.buildIndexesNamingSystem;
 var
@@ -5738,7 +5852,7 @@ const
   CHECK_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of TSearchParamsClinicalImpression = (
     spClinicalImpression__content, spClinicalImpression__id, spClinicalImpression__lastUpdated, spClinicalImpression__profile, spClinicalImpression__query, spClinicalImpression__security, spClinicalImpression__tag, spClinicalImpression__text,
     spClinicalImpression_Action, spClinicalImpression_Assessor, spClinicalImpression_Date, spClinicalImpression_Finding, spClinicalImpression_Investigation, spClinicalImpression_Patient, spClinicalImpression_Plan, spClinicalImpression_Previous,
-    spClinicalImpression_Problem, spClinicalImpression_Resolved, spClinicalImpression_Ruledout, spClinicalImpression_Status, spClinicalImpression_Trigger, spClinicalImpression_Trigger_code);
+    spClinicalImpression_Problem, spClinicalImpression_Resolved, spClinicalImpression_Ruledout, spClinicalImpression_Status, spClinicalImpression_Trigger, spClinicalImpression_Triggercode);
 
 procedure TFhirIndexInformation.buildIndexesClinicalImpression;
 var
@@ -5987,8 +6101,8 @@ end;
 
 const
   CHECK_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of TSearchParamsEpisodeOfCare = ( spEpisodeOfCare__content, spEpisodeOfCare__id, spEpisodeOfCare__lastUpdated, spEpisodeOfCare__profile, spEpisodeOfCare__query, spEpisodeOfCare__security, spEpisodeOfCare__tag, spEpisodeOfCare__text,
-    spEpisodeOfCare_Care_manager, spEpisodeOfCare_Condition, spEpisodeOfCare_Date, spEpisodeOfCare_Identifier, spEpisodeOfCare_Incomingreferral, spEpisodeOfCare_Organization,
-    spEpisodeOfCare_Patient, spEpisodeOfCare_Status, spEpisodeOfCare_Team_member, spEpisodeOfCare_Type);
+    spEpisodeOfCare_Caremanager, spEpisodeOfCare_Condition, spEpisodeOfCare_Date, spEpisodeOfCare_Identifier, spEpisodeOfCare_Incomingreferral, spEpisodeOfCare_Organization,
+    spEpisodeOfCare_Patient, spEpisodeOfCare_Status, spEpisodeOfCare_Teammember, spEpisodeOfCare_Type);
 
 procedure TFhirIndexInformation.buildIndexesEpisodeOfCare;
 var
@@ -6048,7 +6162,7 @@ end;
 const
   CHECK_TSearchParamsImagingObjectSelection : Array[TSearchParamsImagingObjectSelection] of TSearchParamsImagingObjectSelection = (
     spImagingObjectSelection__content, spImagingObjectSelection__id, spImagingObjectSelection__lastUpdated, spImagingObjectSelection__profile, spImagingObjectSelection__query, spImagingObjectSelection__security, spImagingObjectSelection__tag, spImagingObjectSelection__text,
-    spImagingObjectSelection_Author, spImagingObjectSelection_Authoring_time, spImagingObjectSelection_Identifier, spImagingObjectSelection_Patient, spImagingObjectSelection_Selected_study, spImagingObjectSelection_Title);
+    spImagingObjectSelection_Author, spImagingObjectSelection_Authoringtime, spImagingObjectSelection_Identifier, spImagingObjectSelection_Patient, spImagingObjectSelection_Selectedstudy, spImagingObjectSelection_Title);
 
 procedure TFhirIndexInformation.buildIndexesImagingObjectSelection;
 var
@@ -6079,7 +6193,7 @@ end;
 const
   CHECK_TSearchParamsPerson : Array[TSearchParamsPerson] of TSearchParamsPerson = (
     spPerson__content, spPerson__id, spPerson__lastUpdated, spPerson__profile, spPerson__query, spPerson__security, spPerson__tag, spPerson__text,
-    spPerson_Address, spPerson_Address_city, spPerson_Address_country, spPerson_Address_postalcode, spPerson_Address_state, spPerson_Address_use, spPerson_Birthdate, spPerson_Email, spPerson_Gender, spPerson_Identifier, spPerson_Link,
+    spPerson_Address, spPerson_Addresscity, spPerson_Addresscountry, spPerson_Addresspostalcode, spPerson_Addressstate, spPerson_Addressuse, spPerson_Birthdate, spPerson_Email, spPerson_Gender, spPerson_Identifier, spPerson_Link,
     spPerson_Name, spPerson_Organization, spPerson_Patient, spPerson_Phone, spPerson_Phonetic, spPerson_Practitioner, spPerson_Relatedperson, spPerson_Telecom);
 
 procedure TFhirIndexInformation.buildIndexesPerson;
@@ -6645,6 +6759,8 @@ begin
   buildIndexesAccount;
   buildIndexesImplementationGuide;
   {$IFDEF FHIR_DSTU3}
+  buildIndexesCodeSystem;
+  buildIndexesLinkage;
   BuildIndexesDecisionSupportRule;
   BuildIndexesDecisionSupportServiceModule;
   BuildIndexesExpansionProfile;
@@ -6653,6 +6769,7 @@ begin
   BuildIndexesMeasure;
   BuildIndexesModuleDefinition;
   BuildIndexesOrderSet;
+  BuildIndexesProtocol;
   BuildIndexesSequence;
   {$ENDIF}
 

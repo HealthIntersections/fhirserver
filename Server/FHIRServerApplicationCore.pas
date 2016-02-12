@@ -163,13 +163,13 @@ begin
         svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
       else if FindCmdLineSwitch('rxstems', dir, true, []) then
       begin
-        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
+        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
           svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('RxNorm', 'database', ''),
           svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
       end
       else if FindCmdLineSwitch('ncistems', dir, true, []) then
       begin
-        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
+        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
           svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('NciMeta', 'database', ''),
           svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
       end
@@ -329,11 +329,11 @@ begin
   if FIni.ValueExists('database', 'database'+FHIR_GENERATED_VERSION) then
      dbn := FIni.ReadString('database', 'database'+FHIR_GENERATED_VERSION, '');
   if TestMode then
-    FDb := TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0', '(local)', 'fhir-test', '', '')
+    FDb := TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0', '(local)', 'fhir-test', '', '')
   else if FIni.ReadString('database', 'type', '') = 'mssql' then
   begin
     writelnt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
-    FDb := TKDBOdbcDirect.create('fhir', 100, 'SQL Server Native Client 11.0',
+    FDb := TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
       FIni.ReadString('database', 'server', ''), dbn,
       FIni.ReadString('database', 'username', ''), FIni.ReadString('database', 'password', ''));
   end

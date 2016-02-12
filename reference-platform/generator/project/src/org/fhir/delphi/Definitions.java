@@ -41,6 +41,7 @@ import org.hl7.fhir.dstu2.model.DateTimeType;
 import org.hl7.fhir.dstu2.model.NamingSystem;
 import org.hl7.fhir.dstu2.model.StructureDefinition.ExtensionContext;
 import org.hl7.fhir.dstu2.model.ValueSet;
+import org.hl7.fhir.dstu21.model.OperationDefinition;
 
 /**
  * This class is the root to all the definitions in FHIR. There are the
@@ -84,6 +85,9 @@ public class Definitions {
   private Map<String, ValueSet> codeSystems = new HashMap<String, ValueSet>();
   private Map<String, ValueSet> extraValuesets = new HashMap<String, ValueSet>();
   private Set<String> styleExemptions = new HashSet<String>();
+  
+  // operations
+  private List<OperationDefinition> operations = new ArrayList<OperationDefinition>();
   
   private List<Compartment> compartments = new ArrayList<Compartment>();
   
@@ -412,6 +416,10 @@ public class Definitions {
       if (c.getName().equals(n))
         return c;
     return null;
+  }
+
+  public List<OperationDefinition> getOperations() {
+    return operations;
   }
 
 

@@ -203,15 +203,18 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
-    lbPastValueSets: TListBox;
     Label27: TLabel;
-    Label28: TLabel;
     Label29: TLabel;
     Label30: TLabel;
     Label31: TLabel;
     Label32: TLabel;
     OpenfromURL2: TMenuItem;
     ClosureManager1: TMenuItem;
+    Panel5: TPanel;
+    webMRU: TWebBrowser;
+    Label33: TLabel;
+    cbxServer: TComboBox;
+    btnManageServers: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOpenServerClick(Sender: TObject);
@@ -340,6 +343,7 @@ type
     procedure Servers1Click(Sender: TObject);
     procedure OpenfromURL2Click(Sender: TObject);
     procedure ClosureManager1Click(Sender: TObject);
+    procedure btnManageServersClick(Sender: TObject);
   private
     { Private declarations }
     Context : TValueSetEditorContext;
@@ -362,6 +366,7 @@ type
     procedure filtersCheckButtons(sender: TObject);
     procedure doco(filename : String);
     function EditValue(text : String):String;
+    procedure loadServerList;
   public
     { Public declarations }
   end;
@@ -389,8 +394,10 @@ begin
   if not activated then
   begin
     activated := true;
+    loadServerList;
     if not Context.Settings.HasViewedWelcomeScreen then
-      WelcomeScreen1Click(self)
+      WelcomeScreen1Click(self);
+
 //    else
 //    begin
 //      try
@@ -490,6 +497,19 @@ procedure TValueSetEditorForm.GetAbstractList(context: string; list: TStrings);
 begin
   list.Add('');
   list.Add('abstract');
+end;
+
+procedure TValueSetEditorForm.loadServerList;
+var
+  server : TValueSetEditorServerCache;
+begin
+  cbxServer.Items.clear;
+  for server in context.Servers do
+  begin
+    cbxServer.Items.Add(server.Name);
+    if server = Context.WorkingServer then
+      cbxServer.ItemIndex := cbxServer.Items.Count - 1;
+  end;
 end;
 
 procedure TValueSetEditorForm.Refresh;
@@ -787,9 +807,7 @@ begin
     Notebook2.PageIndex := 0;
     tvStructure.RootNodeCount := 0;
     PageControl1.ActivePage := TabStart;
-    lbPastValueSets.Items.Clear;
-    for s in Context.Settings.MRUList do
-      lbPastValueSets.Items.add(displayMRU(s));
+    webMRU.Navigate('about:blank');
   end
   else
   begin
@@ -2039,6 +2057,13 @@ begin
        end;
     2: CellText := code.getExtensionString('http://hl7.org/fhir/Profile/tools-extensions#comment');
   end;
+end;
+
+procedure TValueSetEditorForm.btnManageServersClick(Sender: TObject);
+begin
+  frmRegisterServer.Context := Context.Link;
+  frmRegisterServer.ShowModal;
+  loadServerList;
 end;
 
 procedure TValueSetEditorForm.btnAddCodeClick(Sender: TObject);

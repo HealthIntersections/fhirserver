@@ -2,8 +2,8 @@ object frmNewServer: TfrmNewServer
   Left = 0
   Top = 0
   Caption = 'frmNewServer'
-  ClientHeight = 129
-  ClientWidth = 542
+  ClientHeight = 192
+  ClientWidth = 540
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,36 +11,34 @@ object frmNewServer: TfrmNewServer
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 88
-    Width = 542
+    Top = 151
+    Width = 540
     Height = 41
     Align = alBottom
+    Alignment = taLeftJustify
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitLeft = 248
-    ExplicitTop = 150
-    ExplicitWidth = 185
     DesignSize = (
-      542
+      540
       41)
     object Button1: TButton
-      Left = 377
+      Left = 375
       Top = 8
       Width = 75
       Height = 25
       Anchors = [akTop, akRight]
       Caption = 'Add'
       Default = True
-      ModalResult = 1
       TabOrder = 0
-      ExplicitLeft = 465
+      OnClick = Button1Click
     end
     object Button2: TButton
-      Left = 458
+      Left = 456
       Top = 8
       Width = 75
       Height = 25
@@ -48,21 +46,19 @@ object frmNewServer: TfrmNewServer
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 546
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 542
-    Height = 88
+    Width = 540
+    Height = 151
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 196
-    ExplicitTop = 86
-    ExplicitWidth = 185
-    ExplicitHeight = 41
+    DesignSize = (
+      540
+      151)
     object Label1: TLabel
       Left = 26
       Top = 22
@@ -77,11 +73,26 @@ object frmNewServer: TfrmNewServer
       Height = 13
       Caption = 'Address:'
     end
+    object Label3: TLabel
+      Left = 26
+      Top = 92
+      Width = 56
+      Height = 13
+      Caption = 'User Name:'
+    end
+    object Label4: TLabel
+      Left = 26
+      Top = 128
+      Width = 50
+      Height = 13
+      Caption = 'Password:'
+    end
     object edtName: TEdit
       Left = 84
       Top = 20
       Width = 445
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
     end
     object edtAddress: TEdit
@@ -89,7 +100,35 @@ object frmNewServer: TfrmNewServer
       Top = 55
       Width = 445
       Height = 21
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
+    end
+    object edtUsername: TEdit
+      Left = 84
+      Top = 89
+      Width = 445
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 2
+    end
+    object edtPassword: TEdit
+      Left = 84
+      Top = 125
+      Width = 393
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      PasswordChar = '*'
+      TabOrder = 3
+    end
+    object CheckBox1: TCheckBox
+      Left = 483
+      Top = 128
+      Width = 97
+      Height = 17
+      Anchors = [akTop, akRight]
+      Caption = 'Show'
+      TabOrder = 4
+      OnClick = CheckBox1Click
     end
   end
 end
