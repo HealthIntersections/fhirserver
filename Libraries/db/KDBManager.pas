@@ -702,6 +702,7 @@ type
     function GetDBPlatform: TKDBPlatform; Virtual; Abstract;
     function GetDBProvider: TKDBProvider; Virtual; Abstract;
     function GetDBDetails: String; Virtual; Abstract;
+    procedure init; virtual;
   Public
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
     constructor create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; virtual; abstract;
@@ -1422,6 +1423,11 @@ begin
   FClosing := false;
   GManagers.AddConnMan(self);
   Free; // special case - can't free if it's linked in the manager, so manually undo that
+  init;
+end;
+
+procedure TKDBManager.init;
+begin
 end;
 
 destructor TKDBManager.Destroy;

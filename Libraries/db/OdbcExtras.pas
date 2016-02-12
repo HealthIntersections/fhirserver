@@ -98,6 +98,8 @@ type
 
     constructor Create;
     destructor Destroy; override;
+  published
+    { Published declarations }
   end;
 
   { TSchemaColumns }
@@ -125,6 +127,8 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
+  published
+    { Published declarations }
   end;
 
   TSchemaIndex = class;
@@ -157,6 +161,8 @@ type
     destructor Destroy; override;
     procedure LoadIndex;
     procedure DropIndex;
+  published
+    { Published declarations }
   end;
 
   { TSchemaIndexes }
@@ -185,6 +191,8 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
+  published
+    { Published declarations }
   end;
 
   { TSchemaTable }
@@ -214,6 +222,8 @@ type
     procedure DropTable;
     procedure LoadIndexes;
     procedure DropIndexes(IgnoreErrors: Boolean);
+  published
+    { Published declarations }
   end;
 
   { TSchemaTables }
@@ -245,6 +255,8 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
+  published
+    { Published declarations }
   end;
 
   { TSchemaView }
@@ -271,6 +283,8 @@ type
     destructor Destroy; override;
     procedure LoadView;
     procedure DropView;
+  published
+    { Published declarations }
   end;
 
   { TSchemaViews }
@@ -302,10 +316,12 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
+  published
+    { Published declarations }
   end;
 
   { TOESchema }
-  TOESchema = class(TComponent)
+  TOESchema = class(TODBCContext)
   private
     { Private declarations }
     FHdbc: THdbc;
@@ -328,15 +344,13 @@ type
     function ReadLine: String;
   protected
     { Protected declarations }
-    procedure Notification(AComponent: TComponent;
-                           Operation: TOperation); override;
     procedure SplitColumn(AIndexColumn: string;
                           var AColumn: String;
                           var AType: String);
     procedure DoProgress(Info: String); virtual;
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent); override;
+    constructor Create(Env : THEnv); override;
     destructor Destroy; override;
 
     procedure LoadTables;
@@ -362,7 +376,7 @@ type
   end;
 
   { TOEAdministrator }
-  TOEAdministrator = class(TComponent)
+  TOEAdministrator = class(TODBCContext)
   private
     { Private declarations }
     FPrompt: Boolean;
@@ -391,7 +405,7 @@ type
     { Protected declarations }
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent); override;
+    constructor Create(Env : THEnv); override;
     destructor Destroy; override;
 
     function Add: Boolean;
@@ -447,6 +461,8 @@ type
 
     constructor Create;
     destructor Destroy; override;
+  published
+    { Published declarations }
   end;
 
   { TCatalogColumns }
@@ -470,10 +486,12 @@ type
 
     constructor Create;
     destructor Destroy; override;
+  published
+    { Published declarations }
   end;
 
   { TCatalogTable }
-  TCatalogTable = class
+  TCatalogTable = class (TODBCContext)
   private
     { Private declarations }
     FCatalog: TOECatalog;
@@ -525,14 +543,16 @@ type
     property Indexes: TStrings read GetIndexes;
     property UniqueKey: String read GetUniqueKey;
 
-    constructor Create;
+    constructor Create(Env : THenv); override;
     destructor Destroy; override;
     function ColumnByName(AColumnName: String): TCatalogColumn;
     procedure Refresh;
+  published
+    { Published declarations }
   end;
 
   { TCatalogTables }
-  TCatalogTables = class
+  TCatalogTables = class (TODBCContext)
   private
     { Private declarations }
     FCatalog: TOECatalog;
@@ -551,12 +571,14 @@ type
     property Items[Index: Integer]: TCatalogTable read GetItem write SetItem; default;
     property ItemCount: Integer read GetCount;
 
-    constructor Create;
+    constructor Create(Env : THenv); override;
     destructor Destroy; override;
+  published
+    { Published declarations }
   end;
 
   { TCatalogProcedure }
-  TCatalogProcedure = class
+  TCatalogProcedure = class (TODBCContext)
   private
     { Private declarations }
     FCatalog: TOECatalog;
@@ -583,14 +605,16 @@ type
     property Columns: TCatalogColumns read GetColumns;
     property ColumnNames: TStrings read GetColumnNames;
 
-    constructor Create;
+    constructor Create(Env : THenv);  override;
     destructor Destroy; override;
     function ColumnByName(AColumnName: String): TCatalogColumn;
     procedure Refresh;
+  published
+    { Published declarations }
   end;
 
   { TCatalogProcedures }
-  TCatalogProcedures = class
+  TCatalogProcedures = class (TODBCContext)
   private
     { Private declarations }
     FCatalog: TOECatalog;
@@ -609,12 +633,14 @@ type
     property Items[Index: Integer]: TCatalogProcedure read GetItem write SetItem; default;
     property ItemCount: Integer read GetCount;
 
-    constructor Create;
+    constructor Create(Env : THenv); override;
     destructor Destroy; override;
+  published
+    { Published declarations }
   end;
 
   { TOECatalog }
-  TOECatalog = class(TComponent)
+  TOECatalog = class(TODBCContext)
   private
     { Private declarations }
     FHdbc: THdbc;
@@ -645,12 +671,9 @@ type
     procedure SetProcedureOwner(AProcedureOwner: String);
     procedure SetProcedureName(AProcedureName: String);
   protected
-    { Protected declarations }
-    procedure Notification(AComponent: TComponent;
-                           Operation: TOperation); override;
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent); override;
+    constructor Create(Env : THEnv; dbc : THdbc); reintroduce; virtual;
     destructor Destroy; override;
 
     function TableByName(ATableOwner, ATableName: String): TCatalogTable;
@@ -687,63 +710,6 @@ type
                           Table: String;
                           Hstmt: THstmt) of object;
 
-  { TOEBulkCopy }
-  TOEBulkCopy = class(TComponent)
-  private
-    { Private declarations }
-    FHdbcSource, FHdbcTarget: THdbc;
-    FHstmtSource, FHstmtTarget: THstmt;
-    FSQLSource, FSQLTarget: String;
-    FAborted: Boolean;
-    FExecMarker: String;
-    FRowSetSize: SQLUINTEGER;
-    FRowsAffected: SQLINTEGER;
-    FMaxRows: SQLUINTEGER;
-    FCommitCount: SQLUINTEGER;
-    FOnProgress: TStepEvent;
-    FOnBindParams: TBindEvent;
-
-    function GetRowsAffected: SQLINTEGER;
-    procedure SetExecMarker(AExecMarker: String);
-    procedure SetRowSetSize(ARowSetSize: SQLUINTEGER);
-    procedure ExecuteCopy(ASQLSource, ASQLTarget: String);
-  protected
-    { Protected declarations }
-    procedure Notification(AComponent: TComponent;
-                           Operation: TOperation); override;
-    procedure DoProgress(Info: String); virtual;
-    procedure DoBindParams(Table: String;
-                           Hstmt: THstmt); virtual;
-  public
-    { Public declarations }
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
-
-    procedure Execute;
-    procedure RunScript(FileName: String);
-    procedure Terminate;
-    procedure Abort;
-
-    property RowsAffected: SQLINTEGER read GetRowsAffected;
-    property Aborted: Boolean read FAborted;
-  published
-    { Published declarations }
-    property hDbcSource: THdbc read FHdbcSource write FHdbcSource
-      default nil;
-    property hDbcTarget: THdbc read FHdbcTarget write FHdbcTarget
-      default nil;
-    property SQLSource: String read FSQLSource write FSQLSource;
-    property SQLTarget: String read FSQLTarget write FSQLTarget;
-    property ExecMarker: String read FExecMarker write SetExecMarker;
-    property RowSetSize: SQLUINTEGER read FRowSetSize write SetRowSetSize
-      default DefRowSetSize;
-    property MaxRows: SQLUINTEGER read FMaxRows write FMaxRows
-      default DefMaxRows;
-    property CommitCount: SQLUINTEGER read FCommitCount write FCommitCount
-      default DefCommitCount;
-    property OnProgress: TStepEvent read FOnProgress write FOnProgress;
-    property OnBindParams: TBindEvent read FOnBindParams write FOnBindParams;
-  end;
 
 { Private Utilities }
 function TableTypeToString(TableType: TTableType): String;
@@ -1628,35 +1594,13 @@ begin
     Result:= AOwner+'.'+ATable;
 end;
 
-procedure TOESchema.Notification(AComponent: TComponent;
-                                 Operation: TOperation);
+constructor TOESchema.Create(Env : THenv);
 begin
-  inherited Notification(AComponent, Operation);
-
-  if (Operation = opInsert) and (AComponent is THdbc) and (FHdbc = nil) then
-    Hdbc:= THdbc(AComponent);
-
-  if (Operation = opRemove) and (AComponent = FHdbc) then
-    Hdbc:= nil;
-end;
-
-constructor TOESchema.Create(AOwner: TComponent);
-var
-  i: Integer;
-begin
-  inherited Create(AOwner);
+  inherited Create(Env);
 
   FHdbc:= nil;
-  if AOwner <> nil then
-    for i:= 0 to AOwner.ComponentCount-1 do
-      if AOwner.Components[i] is THdbc then
-      begin
-        FHdbc:= THdbc(AOwner.Components[i]);
-        Break;
-      end;
 
-  FHstmt:= THstmt.Create(nil);
-  FHstmt.Hdbc:= FHdbc;
+  FHstmt:= THstmt.Create(FEnv, FHdbc);
   FTables:= TSchemaTables.Create;
   FTables.FSchema:= Self;
   FViews:= TSchemaViews.Create;
@@ -1945,7 +1889,7 @@ begin
       Direction:= SQL_FETCH_FIRST;
   end;
 
-  while GlobalHenv.Error.Success(SQLDataSources(GlobalHenv.Handle, Direction,
+  while FEnv.Error.Success(SQLDataSources(FEnv.Handle, Direction,
                                                 @DSName, SizeOf(DSName), @StringLength1,
                                                 @DSDriver, SizeOf(DSDriver), @StringLength2)) do
   begin
@@ -1966,7 +1910,7 @@ begin
 
   Direction:= SQL_FETCH_FIRST;
 
-  while GlobalHenv.Error.Success(SQLDrivers(GlobalHenv.Handle, Direction,
+  while FEnv.Error.Success(SQLDrivers(FEnv.Handle, Direction,
                                             @DName, SizeOf(DName), @StringLength1,
                                             @DAttr, SizeOf(DAttr), @StringLength2)) do
   begin
@@ -2035,9 +1979,9 @@ begin
   Result:= FDriverNames;
 end;
 
-constructor TOEAdministrator.Create(AOwner: TComponent);
+constructor TOEAdministrator.Create(Env : THenv);
 begin
-  inherited Create(AOwner);
+  inherited Create(Env);
 
   FPrompt:= DefPrompt;
   FDataSourceType:= DefDataSourceType;
@@ -2201,8 +2145,8 @@ begin
   FCatalog.FHstmt.Terminate;
   RetCode:= SQLColumns(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
     Pointer(PChar(FTableName)), Length(FTableName), nil, 0);
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FCatalog.FHstmt, RetCode);
+//!  if not FEnv.Error.Success(RetCode) then
+//!    FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FColumns.FreeItems;
   while FCatalog.FHstmt.FetchNext do
@@ -2235,8 +2179,8 @@ begin
   FCatalog.FHstmt.Terminate;
   RetCode:= SQLPrimaryKeys(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
     Pointer(PChar(FTableName)), Length(FTableName));
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FCatalog.FHstmt, RetCode);
+  if not FEnv.Error.Success(RetCode) then
+    FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FPrimaryKeys.Clear;
   while FCatalog.FHstmt.FetchNext do
@@ -2265,8 +2209,8 @@ begin
   FCatalog.FHstmt.Terminate;
   RetCode:= SQLForeignKeys(FCatalog.FHstmt.Handle, nil, 0, nil, 0, nil, 0,
                                                    nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName));
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FCatalog.FHstmt, RetCode);
+  if not FEnv.Error.Success(RetCode) then
+    FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FForeignKeys.Clear;
   with FCatalog.FHstmt do
@@ -2297,8 +2241,8 @@ begin
   FCatalog.FHstmt.Terminate;
   RetCode:= SQLForeignKeys(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName),
                                                    nil, 0, nil, 0, nil, 0);
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FCatalog.FHstmt, RetCode);
+  if not FEnv.Error.Success(RetCode) then
+    FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FForeignReferences.Clear;
   with FCatalog.FHstmt do
@@ -2323,8 +2267,8 @@ begin
   FCatalog.FHstmt.Terminate;
   RetCode:= SQLStatistics(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
     Pointer(PChar(FTableName)), Length(FTableName), SQL_INDEX_ALL, SQL_ENSURE);
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FCatalog.FHstmt, RetCode);
+  if not FEnv.Error.Success(RetCode) then
+    FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FIndexes.Clear;
   AIndex:= '';
@@ -2374,8 +2318,8 @@ begin
   FCatalog.FHstmt.Terminate;
   RetCode:= SQLSpecialColumns(FCatalog.FHstmt.Handle, SQL_BEST_ROWID, nil, 0, ATableOwner, Length(FTableOwner),
     Pointer(PChar(FTableName)), Length(FTableName), SQL_SCOPE_CURROW, SQL_NULLABLE);
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FCatalog.FHstmt, RetCode);
+  if not FEnv.Error.Success(RetCode) then
+    FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FUniqueKey:= '';
   while FCatalog.FHstmt.FetchNext do
@@ -2446,6 +2390,7 @@ end;
 
 constructor TCatalogTable.Create;
 begin
+  inherited Create(Env);
   FTableOwner:= '';
   FTableName:= '';
   FTableType:= ttTable;
@@ -2514,7 +2459,7 @@ end;
 
 function TCatalogTables.AddItem: TCatalogTable;
 begin
-  Result:= TCatalogTable.Create;
+  Result:= TCatalogTable.Create(FEnv);
   Result.FCatalog:= FCatalog;
   FList.Add(Result);
 end;
@@ -2536,6 +2481,7 @@ end;
 
 constructor TCatalogTables.Create;
 begin
+  inherited Create(Env);
   FList:= TList.Create;
   FList.Clear;
 end;
@@ -2564,8 +2510,8 @@ begin
   FCatalog.FHstmt.Terminate;
   RetCode:= SQLProcedureColumns(FCatalog.FHstmt.Handle, nil, 0, AProcedureOwner, Length(FProcedureOwner),
     Pointer(PChar(FProcedureName)), Length(FProcedureName), nil, 0);
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FCatalog.FHstmt, RetCode);
+  if not FEnv.Error.Success(RetCode) then
+    FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FColumns.FreeItems;
   while FCatalog.FHstmt.FetchNext do
@@ -2605,6 +2551,7 @@ end;
 
 constructor TCatalogProcedure.Create;
 begin
+  inherited Create(Env);
   FProcedureOwner:= '';
   FProcedureName:= '';
   FProcedureType:= 0;
@@ -2654,7 +2601,7 @@ end;
 
 function TCatalogProcedures.AddItem: TCatalogProcedure;
 begin
-  Result:= TCatalogProcedure.Create;
+  Result:= TCatalogProcedure.Create(FEnv);
   Result.FCatalog:= FCatalog;
   FList.Add(Result);
 end;
@@ -2676,6 +2623,7 @@ end;
 
 constructor TCatalogProcedures.Create;
 begin
+  inherited Create(Env);
   FList:= TList.Create;
   FList.Clear;
 end;
@@ -2708,7 +2656,7 @@ var
     RetCode:= SQLTables(FHstmt.Handle, Pointer(PChar(Empty)), 0, Pointer(PChar(Empty)), 0, Pointer(PChar(Empty)), 0,
       Pointer(PChar(ATableType)), Length(ATableType));
     temp:= [];
-    if GlobalHenv.Error.Success(RetCode) then
+    if FEnv.Error.Success(RetCode) then
       while FHstmt.FetchNext do
       begin
         if (FHstmt.ColString[4] = TableStr) and (ttTable in FTableType) then
@@ -2723,8 +2671,6 @@ var
   end;
 
 begin
-  if FHdbc = nil then
-    raise EODBCExpress.Create('Property Hdbc of '+Name+' not set.');
 
   FTableOwner:= Trim(FTableOwner);
   if FTableOwner = '' then
@@ -2766,8 +2712,8 @@ begin
   else
     RetCode:= SQLTables(FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
       ATableName, Length(FTableName), Pointer(PChar(ATableType)), Length(ATableType));
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FHstmt, RetCode);
+  if not FEnv.Error.Success(RetCode) then
+    FEnv.Error.RaiseError(FHstmt, RetCode);
 
   FTables.FreeItems;
   while FHstmt.FetchNext do
@@ -2799,8 +2745,6 @@ var
   end;
 
 begin
-  if FHdbc = nil then
-    raise EODBCExpress.Create('Property Hdbc of '+Name+' not set.');
 
   FProcedureOwner:= Trim(FProcedureOwner);
   if FProcedureOwner = '' then
@@ -2817,8 +2761,8 @@ begin
   FHstmt.Terminate;
   RetCode:= SQLProcedures(FHstmt.Handle, nil, 0, AProcedureOwner, Length(FProcedureOwner),
     AProcedureName, Length(FProcedureName));
-  if not GlobalHenv.Error.Success(RetCode) then
-    GlobalHenv.Error.RaiseError(FHstmt, RetCode);
+  if not FEnv.Error.Success(RetCode) then
+    FEnv.Error.RaiseError(FHstmt, RetCode);
 
   FProcedures.FreeItems;
   while FHstmt.FetchNext do
@@ -2921,39 +2865,18 @@ begin
   end;
 end;
 
-procedure TOECatalog.Notification(AComponent: TComponent;
-                                  Operation: TOperation);
+
+constructor TOECatalog.Create(Env : THenv; dbc : THdbc);
 begin
-  inherited Notification(AComponent, Operation);
+  inherited Create(Env);
 
-  if (Operation = opInsert) and (AComponent is THdbc) and (FHdbc = nil) then
-    Hdbc:= THdbc(AComponent);
+  FHdbc:= dbc;
 
-  if (Operation = opRemove) and (AComponent = FHdbc) then
-    Hdbc:= nil;
-end;
+  FHstmt:= THstmt.Create(env, dbc);
 
-constructor TOECatalog.Create(AOwner: TComponent);
-var
-  i: Integer;
-begin
-  inherited Create(AOwner);
-
-  FHdbc:= nil;
-  if AOwner <> nil then
-    for i:= 0 to AOwner.ComponentCount-1 do
-      if AOwner.Components[i] is THdbc then
-      begin
-        FHdbc:= THdbc(AOwner.Components[i]);
-        Break;
-      end;
-
-  FHstmt:= THstmt.Create(nil);
-  FHstmt.Hdbc:= FHdbc;
-
-  FTables:= TCatalogTables.Create;
+  FTables:= TCatalogTables.Create(env);
   FTables.FCatalog:= Self;
-  FProcedures:= TCatalogProcedures.Create;
+  FProcedures:= TCatalogProcedures.Create(env);
   FProcedures.FCatalog:= Self;
 
   FTableNames:= TStringList.Create;
@@ -3093,252 +3016,6 @@ begin
   SplitList(Trim(UniqueKey), ',', ColumnNames);
 end;
 
-{ TOEBulkCopy }
-
-procedure TOEBulkCopy.Notification(AComponent: TComponent;
-                                   Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-
-  if (Operation = opInsert) and (AComponent is THdbc) then
-  begin
-    if HdbcSource = nil then
-      HdbcSource:= THdbc(AComponent)
-    else if HdbcTarget = nil then
-      HdbcTarget:= THdbc(AComponent);
-  end;
-
-  if Operation = opRemove then
-  begin
-    if AComponent = HdbcSource then
-      HdbcSource:= nil
-    else if AComponent = HdbcTarget then
-      HdbcTarget:= nil;
-  end;
-end;
-
-procedure TOEBulkCopy.DoProgress(Info: String);
-begin
-  if Assigned(FOnProgress) then
-    FOnProgress(Self, Info);
-end;
-
-procedure TOEBulkCopy.DoBindParams(Table: String;
-                                   Hstmt: THstmt);
-begin
-  if Assigned(FOnBindParams) then
-    FOnBindParams(Self, Table, Hstmt);
-end;
-
-constructor TOEBulkCopy.Create(AOwner: TComponent);
-var
-  i: Integer;
-begin
-  inherited Create(AOwner);
-
-  FHdbcSource:= nil;
-  FHdbcTarget:= nil;
-  FHstmtSource:= THstmt.Create(nil);
-  FHstmtTarget:= THstmt.Create(nil);
-  FSQLSource:= '';
-  FSQLTarget:= '';
-  FAborted:= False;
-  FExecMarker:= DefExecMarker;
-  FRowSetSize:= DefRowSetSize;
-  FRowsAffected:= 0;
-  FMaxRows:= DefMaxRows;
-  FCommitCount:= DefCommitCount;
-
-  if AOwner <> nil then
-    for i:= 0 to AOwner.ComponentCount-1 do
-      if AOwner.Components[i] is THdbc then
-      begin
-        FHdbcSource:= THdbc(AOwner.Components[i]);
-        Break;
-      end;
-end;
-
-destructor TOEBulkCopy.Destroy;
-begin
-  FHstmtSource.Free;
-  FHstmtTarget.Free;
-
-  inherited Destroy;
-end;
-
-procedure TOEBulkCopy.Execute;
-begin
-  ExecuteCopy(FSQLSource, FSQLTarget);
-end;
-
-procedure TOEBulkCopy.ExecuteCopy(ASQLSource, ASQLTarget: String);
-var
-  j, k, LastCommitted: Integer;
-  Info: String;
-begin
-  if FHdbcSource = nil then
-    raise Exception.Create('Source not set.');
-  if FHdbcTarget = nil then
-    raise Exception.Create('Target not set.');
-
-  FHstmtSource.Hdbc:= FHdbcSource;
-  FHstmtSource.RowSetSize:= FRowSetSize;
-  FHstmtSource.BulkData:= FRowSetSize > 1;
-  if FMaxRows > 0 then
-    FHstmtSource.MaxRows:= FMaxRows;
-  FHstmtTarget.Hdbc:= FHdbcTarget;
-  FHstmtTarget.BulkData:= FRowSetSize > 1;
-
-  FAborted:= False;
-  Info:= '';
-
-  if FCommitCount <> 1 then
-    FHdbcTarget.StartTransact;
-
-  try
-
-    with FHstmtSource do
-    begin
-      //SELECT
-      Info:= ExtractTable(ASQLSource, 'FROM');
-      SQL:= ASQLSource;
-      if Assigned(FOnBindParams) then
-      begin
-        Prepare;
-        DoBindParams(Info, FHstmtSource);
-      end;
-      Execute;
-    end;
-
-    with FHstmtTarget do
-    begin
-      //INSERT
-      FRowsAffected:= 0;
-      LastCommitted:= 0;
-      Info:= ExtractTable(ASQLTarget, 'INTO');
-      SQL:= ASQLTarget;
-      Prepare;
-      for j:= 1 to FHstmtSource.ColCount do
-        if FHstmtSource.RowSetSize = 1 then
-        begin
-          if not FHstmtSource.BlobCol[j] then
-            FHstmtTarget.BindParam(j, FHstmtSource.ColType[j], FHstmtSource.ColValue[j], FHstmtSource.SqlType[j]);
-        end
-        else
-        begin
-          if FHstmtSource.BlobCol[j] then
-            FHstmtTarget.BindNulls(j)
-          else
-            FHstmtTarget.BindParams(j, FHstmtSource.ColType[j], FHstmtSource.ColValue[j], FHstmtSource.RowSetSize);
-        end;
-      while FHstmtSource.FetchNext do
-      begin
-        if FAborted then
-          Break;
-        FHstmtTarget.BulkSize:= FHstmtSource.RowsFetched;
-        Inc(FRowsAffected, FHstmtSource.RowsFetched);
-        Inc(LastCommitted, FHstmtSource.RowsFetched);
-        DoProgress(Info);
-        for j:= 1 to FHstmtSource.ColCount do
-          if FHstmtSource.RowSetSize = 1 then
-          begin
-            if FHstmtSource.BlobCol[j] then
-              FHstmtTarget.BindParam(j, FHstmtSource.ColType[j], FHstmtSource.ColValue[j], FHstmtSource.SqlType[j]);
-            FHstmtTarget.ParamSize[j]:= FHstmtSource.ColSize[j];
-          end
-          else
-          begin
-            for k:= 1 to FHstmtSource.RowsFetched do
-              if not FHstmtSource.BlobCol[j] then
-                FHstmtTarget.BulkParamSize[j,k]:= FHstmtSource.CellSize[j,k];
-          end;
-        FHstmtTarget.Execute;
-        if (FCommitCount > 1) and (LastCommitted >= Integer(FCommitCount)) then
-        begin
-          FHdbcTarget.Commit;
-          LastCommitted:= 0;
-        end;
-        if (FMaxRows > 0) and (FRowsAffected >= SQLINTEGER(FMaxRows)) then
-          Break;
-      end;
-      DoProgress(Info);
-    end;
-
-  finally
-    if FCommitCount <> 1 then
-      FHdbcTarget.EndTransact;
-    FHstmtSource.Close;
-  end;
-end;
-
-procedure TOEBulkCopy.RunScript(FileName: String);
-var
-  i, Count: Integer;
-  F: TStringList;
-  ASQL, ASQLSource, ASQLTarget: String;
-begin
-  FAborted:= False;
-
-  F:= TStringList.Create;
-
-  try
-
-    F.LoadFromFile(FileName);
-    Count:= 0;
-    ASQL:= '';
-    for i:= 0 to F.Count-1 do
-    begin
-      if FAborted then
-        Break;
-      if UpperCase(Trim(F.Strings[i])) = UpperCase(FExecMarker) then
-      begin
-        Inc(Count);
-
-        if (Count mod 2) = 1 then
-          ASQLSource:= ASQL
-        else
-        begin
-          ASQLTarget:= ASQL;
-          ExecuteCopy(ASQLSource, ASQLTarget);
-        end;
-        ASQL:= '';
-      end
-      else
-        ASQL:= ASQL+' '+F[i];
-    end;
-
-  finally
-    F.Free;
-  end;
-end;
-
-procedure TOEBulkCopy.Terminate;
-begin
-  FHstmtSource.Terminate;
-  FHstmtTarget.Terminate;
-end;
-
-procedure TOEBulkCopy.Abort;
-begin
-  FAborted:= True;
-end;
-
-function TOEBulkCopy.GetRowsAffected: SQLINTEGER;
-begin
-  Result:= FRowsAffected;
-end;
-
-procedure TOEBulkCopy.SetExecMarker(AExecMarker: String);
-begin
-  if (AExecMarker <> FExecMarker) and (Trim(AExecmarker) <> '') then
-    FExecMarker:= Trim(AExecMarker);
-end;
-
-procedure TOEBulkCopy.SetRowSetSize(ARowSetSize: SQLUINTEGER);
-begin
-  if ARowSetSize > 0 then
-    FRowSetSize:= ARowSetSize;
-end;
 
 end.
 

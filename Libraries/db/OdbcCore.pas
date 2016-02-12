@@ -56,7 +56,6 @@ Const
   NullData = '';
 
   DefRaiseSoftErrors = False;
-  DefResolve = True;
   DefConnectionPooling = cpDefault;
   DefIsolationLevel = SQL_TXN_READ_COMMITTED;
   DefConnected = False;
@@ -134,7 +133,6 @@ Type
   TTimeStampPtr = ^TTimeStamp;
 
   { Non-Visual Components }
-  THbase = Class;
   THenv = Class;
   THdbc = Class;
   THstmt = Class;
@@ -147,11 +145,15 @@ Type
     FMessage: String;
   End;
 
+  TODBCObject = class (TObject)
+
+  end;
+
   { EODBC }
   EODBC = Class(EODBCExpress)
   Private                            
     { Private declarations }
-    FOwner: THbase;
+    FOwner: TODBCObject;
     FRetCode: SQLRETURN;
     FCursor: Integer;
     FErrors: TList;
@@ -162,100 +164,32 @@ Type
     Procedure SetMessage(AMessage: String);
   Public
     { Public declarations }
-    Property Owner: THbase Read FOwner;
+    Property Owner: TODBCObject Read FOwner;
     Property RetCode: SQLRETURN Read FRetCode;
     Property State: String Read GetState;
     Property Native: SQLINTEGER Read GetNative;
     Property Message: String Read GetMessage Write SetMessage;
 
-    Constructor Create(AOwner: THbase;
+    Constructor Create(AOwner: TODBCObject;
                        ARetCode: SQLRETURN;
                        AErrors: TList);
     Destructor Destroy; Override;
-    Procedure BeforeDestruction; Override;
     Procedure First;
     Procedure Last;
     Function Next: Boolean;
     Function Prev: Boolean;
   End;
 
-  { TODBCExceptionEvent }
-  TODBCExceptionEvent = Function (Sender: THbase;
-                                  E: EODBC): Boolean Of Object;
+  { TODBCErrorHandler }
 
-
-  TODBCExceptionEventDispatcher = Class(TAdvDispatcher)
-  Public
-    Function Fire(AoSender: THbase; E: EODBC) : Boolean;
-
-    Procedure AddListener(   ApListener : TODBCExceptionEvent);
-    Procedure RemoveListener(ApListener : TODBCExceptionEvent);
-  End;
-
-  TODBCConnectionFailureEventDispatcher = Class(TAdvDispatcher)
-  Public
-    Procedure Fire(AoSender: TObject);
-
-    Procedure AddListener(   ApListener : TNotifyEvent);
-    Procedure RemoveListener(ApListener : TNotifyEvent);
-  End;
-
-  { TODBCError }
-  TODBCError = Class
+  TODBCErrorHandler = Class
   Private
-    { Private declarations }
-    FHandleType: SQLSMALLINT;
-    FHandle: SQLHANDLE;
-    FRaiseSoftErrors: Boolean;
-    FResolve: Boolean;
-
-    FoExceptionEventDispatcher : TODBCExceptionEventDispatcher;
-    FoConnectionFailureEventDispatcher : TODBCConnectionFailureEventDispatcher;
-
-    //FOnException: TODBCExceptionEvent;
-    //FOnConnectionFailure: TNotifyEvent;
-
-    Function Errors(ARetCode: SQLRETURN): TList;
-    Function DoException(Sender: THbase;
-                         E: EODBC): Boolean;
-    Procedure DoConnectionFailure(Sender: TObject);
+    Function Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): TList;
   Public
     { Public declarations }
-    Constructor Create;
-    Destructor Destroy; Override;
-    Procedure RaiseError(AOwner: THbase;
-                         ARetCode: SQLRETURN);
+    Procedure RaiseError(AOwner: TODBCObject; ARetCode: SQLRETURN);
     Function Success(RetCode: SQLRETURN): Boolean;
     Function SuccessOnly(RetCode: SQLRETURN): Boolean;
-
-    Property RaiseSoftErrors: Boolean Read FRaiseSoftErrors Write FRaiseSoftErrors
-      Default DefRaiseSoftErrors;
-    Property Resolve: Boolean Read FResolve Write FResolve
-      Default DefResolve;
-
-    Property ExceptionEventDispatcher: TODBCExceptionEventDispatcher Read FoExceptionEventDispatcher Write FoExceptionEventDispatcher;
-    Property ConnectionFailureEventDispatcher: TODBCConnectionFailureEventDispatcher Read FoConnectionFailureEventDispatcher Write FoConnectionFailureEventDispatcher;
-    //property OnException: TODBCExceptionEvent read FOnException write FOnException;
-    //property OnConnectionFailure: TNotifyEvent read FOnConnectionFailure write FOnConnectionFailure;
-  End;
-
-  { THbase }
-  THbase = Class(TComponent)
-  Private
-    { Private declarations }
-    FOnInit: TNotifyEvent;
-    FOnTerminate: TNotifyEvent;
-  Protected
-    { Protected declarations }
-    Function Init: Boolean; Virtual;
-
-    Property OnInit: TNotifyEvent Read FOnInit Write FOnInit;
-    Property OnTerminate: TNotifyEvent Read FOnTerminate Write FOnTerminate;
-  Public
-    { Public declarations }
-    Function Terminate: Boolean; Virtual;
-  Published
-    { Published declarations }
   End;
 
   { TChildPtr }
@@ -265,53 +199,39 @@ Type
     Next: TChildPtr;
   End;
 
-  { TChildren }
-  TChildren = Class
-  Private
-    { Private declarations }
-    FList: TChildPtr;
-
-    Procedure Clear;
-    Procedure AddChild(Child: TObject);
-    Procedure RemChild(Child: TObject);
-    Function Terminate: Boolean;
-  Public
-    { Public declarations }
-    Constructor Create;
-    Destructor Destroy; Override;
-  End;
-
   { THenv }
-  THenv = Class(THbase)
+  THenv = Class(TODBCObject)
   Private
     { Private declarations }
-    FError: TODBCError;
+    FError: TODBCErrorHandler;
     FHenv: SQLHENV;
     FActive: Boolean;
     FRetCode: SQLRETURN;
-    FChildren: TChildren;
     FConnectionPooling: TConnectionPooling;
-    FResolve: Boolean;
 
     Function TerminateHandle: Boolean;
     Procedure SetConnectionPooling(AConnectionPooling: TConnectionPooling);
   Protected
     { Protected declarations }
-    Function Init: Boolean; Override;
+    Function Init: Boolean;
   Public
     { Public declarations }
     Property Handle: SQLHENV Read FHenv;
     Property Active: Boolean Read FActive;
-    Property Error: TODBCError Read FError Write FError;
+    Property Error: TODBCErrorHandler Read FError Write FError;
     Property ConnectionPooling: TConnectionPooling Read FConnectionPooling Write SetConnectionPooling
       Default DefConnectionPooling;
 
-    Constructor Create(AOwner: TComponent); Override;
+    Constructor Create;
     Destructor Destroy; Override;
-    Function Terminate: Boolean; Override;
-    Procedure Resolve;
-  Published
-    { Published declarations }
+  End;
+
+  { TODBCContext }
+  TODBCContext = Class (TODBCObject)
+  Protected
+    FEnv : THenv;
+  Public
+    Constructor Create(Env : THEnv); Virtual;
   End;
 
   { TDriverPtr }
@@ -333,14 +253,12 @@ Type
   End;
 
   { THdbc }
-  THdbc = Class(THbase)
+  THdbc = Class (TODBCContext)
   Private
     { Private declarations }
     FHdbc: SQLHDBC;
     FActive: Boolean;
     FRetCode: SQLRETURN;
-    FChildren: TChildren;
-    FSetConnectionPooling: Boolean;
     FConnectionPooling: TConnectionPooling;
     FConnected, FStreamedConnected: Boolean;
     FDriver: String;
@@ -380,15 +298,9 @@ Type
     Procedure SetConnected(AConnected: Boolean);
     Function GetVersion: String;
     Procedure SetVersion(AVersion: String);
-    Procedure DesignDisconnect;
-    Procedure ReaderError(Reader: TReader;
-              Const Message: String;
-              Var Handled: Boolean);
   Protected
     { Protected declarations }
-    Function Init: Boolean; Override;
-    Procedure ReadState(Reader: TReader); Override;
-    Procedure Loaded; Override;
+    Function Init: Boolean;
     Procedure DoBeforeConnect; Virtual;
     Procedure DoAfterConnect; Virtual;
     Procedure DoBeforeDisconnect; Virtual;
@@ -404,10 +316,10 @@ Type
       Default DefTracing;
     Property InTransaction: Boolean Read GetInTransaction;
 
-    Constructor Create(AOwner: TComponent); Override;
+    Constructor Create(Env : THEnv); Override;
     Destructor Destroy; Override;
-    Function Terminate: Boolean; Override;
-    Procedure Resolve;
+//    Function Terminate: Boolean; Override;
+//    Procedure Resolve;
     Procedure Connect;
     Procedure Disconnect;
     Procedure StartTransact;
@@ -529,7 +441,7 @@ Type
   TRowCountEvent = Function (Sender: TObject): Integer Of Object;
 
   { THstmt }
-  THstmt = Class(THbase)
+  THstmt = Class (TODBCContext)
   Private
     { Private declarations }
     FHdbc: THdbc;
@@ -1006,15 +918,9 @@ Type
                                    Row: SQLUSMALLINT;
                                    AValue: Variant);
 
-    Procedure ReaderError(Reader: TReader;
-              Const Message: String;
-              Var Handled: Boolean);
   Protected
     { Protected declarations }
-    Function Init: Boolean; Override;
-    Procedure ReadState(Reader: TReader); Override;
-    Procedure Notification(AComponent: TComponent;
-                           Operation: TOperation); Override;
+    Function Init: Boolean;
     Procedure DoBeforePrepare; Virtual;
     Procedure DoAfterPrepare; Virtual;
     Procedure DoBeforeExecute; Virtual;
@@ -1040,9 +946,9 @@ Type
     Property IgnoreColNames: String Read GetIgnoreColNames;
   Public
     { Public declarations }
-    Constructor Create(AOwner: TComponent); Override;
+    Constructor Create(Env : THEnv; dbc : THdbc); reintroduce; virtual;
     Destructor Destroy; Override;
-    Function Terminate: Boolean; Override;
+    Function Terminate: Boolean;
     Procedure Close; Virtual;
     Procedure CloseCursor; Virtual;
     Function ParamByName(ParamName: String): SQLUSMALLINT;
@@ -1463,11 +1369,6 @@ Function OffsetPointer(P: Pointer;
 Function TrimString(S: String;
                     StringTrimming: TStringTrimming): String;
 
-{ GlobalHenv }
-
-Function GlobalHenv: THenv;
-Procedure ClearHenv;
-
 Implementation
 
 {$IFNDEF VER130}
@@ -1478,43 +1379,6 @@ Uses
 Const
   MinBlobSize = 1024;
   Fractional = 9;  //yyyy-mm-dd hh:mm:ss.fffffffff = 20+Fractional  
-
-{ GlobalHenv }
-Var
-  MainHenv: THenv;
-
-ThreadVar
-  ThreadHenv: THenv;
-
-//This must always be false since we locally cache connections and use them across different threads
-Var
-  ThreadedHenv: Boolean = False;
-
-Function GlobalHenv: THenv;
-Begin
-  If ThreadedHenv Then
-  Begin
-    If ThreadHenv = Nil Then
-      ThreadHenv:= THenv.Create(Nil);
-    Result:= ThreadHenv;
-  End
-  Else
-  Begin
-    If MainHenv = Nil Then
-      MainHenv:= THenv.Create(Nil);
-    Result:= MainHenv;
-  End;
-End;
-
-Procedure ClearHenv;
-Begin
-  If ThreadHenv <> Nil Then
-  Begin
-    ThreadHenv.FResolve:= True;
-    ThreadHenv.Free;
-  End;
-  ThreadHenv:= Nil;
-End;
 
 { Public Utilities }
 
@@ -2018,7 +1882,7 @@ End;
 
 { EODBC }
 
-Constructor EODBC.Create(AOwner: THbase;
+Constructor EODBC.Create(AOwner: TODBCObject;
                          ARetCode: SQLRETURN;
                          AErrors: TList);
 Begin
@@ -2041,37 +1905,6 @@ Begin
   Inherited Destroy;
 End;
 
-Procedure EODBC.BeforeDestruction;
-Var
-  i: Integer;
-  Resolve: Boolean;
-Begin
-  Inherited BeforeDestruction;
-
-  Resolve:= False;
-  For i:= 0 To FErrors.Count-1 Do
-    If Pos('08', TErrorPtr(FErrors[i]).FState) = 1 Then
-    Begin
-      Resolve:= True;
-      Break;
-    End;
-
-  If Resolve Then
-  Begin
-    If GlobalHenv.Error.Resolve Then
-    Begin
-      If csDestroying In FOwner.ComponentState Then
-        GlobalHenv.Resolve
-      Else If FOwner Is THenv Then
-        THenv(FOwner).Resolve
-      Else If FOwner Is THdbc Then
-        THdbc(FOwner).Resolve
-      Else If FOwner Is THstmt Then
-        THstmt(FOwner).Hdbc.Resolve;
-    End;
-    GlobalHenv.Error.DoConnectionFailure(FOwner);
-  End;
-End;
 
 Procedure EODBC.First;
 Begin
@@ -2123,82 +1956,10 @@ Begin
   Inherited Message:= AMessage;
 End;
 
-{ TODBCExceptionEventDispatcher }
 
-Function TODBCExceptionEventDispatcher.Fire(AoSender: THbase; E: EODBC) : Boolean;
-Var
-  i : Integer;
-  LoDispatched : TAdvDispatched;
-Begin
-  //Assert(E        - we dont care what this is - anything is valid
-  //Assert(AoSender - we dont care what this is - anything is valid
+{ TODBCErrorHandler }
 
-  Result := True;
-
-  LoDispatched := GetDispatched('TODBCExceptionEvent');
-
-  If Assigned(LoDispatched) Then
-    Begin
-    For i := 0 To Pred(LoDispatched.Events.Count) Do
-      Begin
-      Result := TODBCExceptionEvent(LoDispatched.Events[i])(AoSender, E);
-      If Not Result Then
-        Begin
-        Break;
-        End;
-      End;
-    End;
-
-  //Assert(Result - don't care what this is
-End;
-
-Procedure TODBCExceptionEventDispatcher.AddListener(ApListener : TODBCExceptionEvent);
-Begin
-  Assert(Assigned(ApListener), 'ApListener = Nil. This is not considered valid');
-  AddDispatched('TODBCExceptionEvent', TAdvEvent(ApListener));
-End;
-
-Procedure TODBCExceptionEventDispatcher.RemoveListener(ApListener : TODBCExceptionEvent);
-Begin
-  Assert(Assigned(ApListener), 'ApListener = Nil. This is not considered valid');
-  RemoveDispatched('TODBCExceptionEvent', TAdvEvent(ApListener));
-End;
-
-{ TODBCConnectionFailureEventDispatcher }
-
-Procedure TODBCConnectionFailureEventDispatcher.Fire(AoSender: TObject);
-Var
-  i : Integer;
-  LoDispatched : TAdvDispatched;
-Begin
-  //Assert(AoSender - we dont care what this is - anything is valid
-
-  LoDispatched := GetDispatched('TNotifyEvent');
-
-  If Assigned(LoDispatched) Then
-    Begin
-    For i := 0 To Pred(LoDispatched.Events.Count) Do
-      Begin
-      TNotifyEvent(LoDispatched.Events[i])(AoSender);
-      End;
-    End;
-End;
-
-Procedure TODBCConnectionFailureEventDispatcher.AddListener(ApListener : TNotifyEvent);
-Begin
-  Assert(Assigned(ApListener), 'ApListener = Nil. This is not considered valid');
-  AddDispatched('TNotifyEvent', TAdvEvent(ApListener));
-End;
-
-Procedure TODBCConnectionFailureEventDispatcher.RemoveListener(ApListener : TNotifyEvent);
-Begin
-  Assert(Assigned(ApListener), 'ApListener = Nil. This is not considered valid');
-  RemoveDispatched('TNotifyEvent', TAdvEvent(ApListener));
-End;
-
-{ TODBCError }
-
-Function TODBCError.Errors(ARetCode: SQLRETURN): TList;
+Function TODBCErrorHandler.Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): TList;
 Var
   ErrorNum: Integer;
   ErrorPtr: TErrorPtr;
@@ -2221,7 +1982,7 @@ Begin
         Inc(ErrorNum);
 
         //depreciated RetCode:= _SQLError(FErrHenv, FErrHdbc, FErrHstmt, SqlState, NativeError, ErrorMsg);
-        RetCode:= SQLGetDiagRec(FHandleType, FHandle, ErrorNum, @State, @Native, @Message, SizeOf(Message), @StringLength);
+        RetCode:= SQLGetDiagRec(aHandleType, aHandle, ErrorNum, @State, @Native, @Message, SizeOf(Message), @StringLength);
 
         If Success(RetCode) Then
         Begin
@@ -2259,192 +2020,41 @@ Begin
   End;
 End;
 
-Function TODBCError.DoException(Sender: THbase;
-                                E: EODBC): Boolean;
-Begin
-  Result := ExceptionEventDispatcher.Fire(Sender, E);
-//  if Assigned(FOnException) then
-//    Result:= FOnException(Sender, E)
-//  else
-//    Result:= True;
-End;
-
-Procedure TODBCError.DoConnectionFailure(Sender: TObject);
-Begin
-  ConnectionFailureEventDispatcher.Fire(Sender);
-//  if Assigned(FOnConnectionFailure) then
-//    FOnConnectionFailure(Sender);
-End;
-
-Procedure TODBCError.RaiseError(AOwner: THbase;
-                                ARetCode: SQLRETURN);
+Procedure TODBCErrorHandler.RaiseError(AOwner: TODBCObject; ARetCode: SQLRETURN);
 Var
-  E: EODBC;
-  LbDoException : Boolean;
+  aHandleType: SQLSMALLINT;
+  aHandle: SQLHANDLE;
 Begin
-  If GlobalHenv.FResolve Then
-    Exit;
-
   If AOwner Is THenv Then
   Begin
-    FHandleType:= SQL_HANDLE_ENV;
-    FHandle:= THenv(AOwner).Handle
+    aHandleType := SQL_HANDLE_ENV;
+    aHandle:= THenv(AOwner).Handle
   End
   Else If AOwner Is THdbc Then
   Begin
-    FHandleType:= SQL_HANDLE_DBC;
-    FHandle:= THdbc(AOwner).Handle
-  End
-  Else If AOwner Is THstmt Then
-  Begin
-    FHandleType:= SQL_HANDLE_STMT;
-    FHandle:= THstmt(AOwner).Handle;
-  End;
-
-  E:= EODBC.Create(AOwner, ARetCode, Errors(ARetCode));
-  Try
-    If (AOwner Is THstmt) And THstmt(AOwner).FAsyncEnabled Then
-      Begin
-      THstmt(AOwner).AsyncEnable(False);
-      End;
-    LbDoException := DoException(AOwner, E);
-  Except
-    E.Free;
-    Raise;
-    End;
-
-  If LbDoException Then
-    Begin
-    Raise E
+    aHandleType:= SQL_HANDLE_DBC;
+    aHandle:= THdbc(AOwner).Handle
     End
-  Else
+  Else // If AOwner Is THstmt Then
     Begin
-    E.Free;
-    End;
+    aHandleType:= SQL_HANDLE_STMT;
+    aHandle:= THstmt(AOwner).Handle;
+  end;
+
+  raise EODBC.Create(AOwner, ARetCode, Errors(ARetCode, aHandleType, aHandle));
 End;
 
-Constructor TODBCError.Create;
+
+Function TODBCErrorHandler.Success(RetCode: SQLRETURN): Boolean;
 Begin
-  FRaiseSoftErrors:= DefRaiseSoftErrors;
-  FResolve:= DefResolve;
-  FoExceptionEventDispatcher := TODBCExceptionEventDispatcher.Create;
-  FoConnectionFailureEventDispatcher := TODBCConnectionFailureEventDispatcher.Create;
-End;
-
-Destructor TODBCError.Destroy;
-Begin
-  FoExceptionEventDispatcher.Free;
-  FoConnectionFailureEventDispatcher.Free;
-
-  FoExceptionEventDispatcher         := Nil;
-  FoConnectionFailureEventDispatcher := Nil;
-
-  Inherited Destroy;
-End;
-
-Function TODBCError.Success(RetCode: SQLRETURN): Boolean;
-Begin
-  If RaiseSoftErrors Then
-    Result:= RetCode = SQL_SUCCESS
-  Else
     Result:= (RetCode = SQL_SUCCESS) Or (RetCode = SQL_SUCCESS_WITH_INFO);
 End;
 
-Function TODBCError.SuccessOnly(RetCode: SQLRETURN): Boolean;
+Function TODBCErrorHandler.SuccessOnly(RetCode: SQLRETURN): Boolean;
 Begin
   Result:= RetCode = SQL_SUCCESS;
 End;
 
-{ THbase }
-
-Function THbase.Init: Boolean;
-Begin
-  If Assigned(FOnInit) Then
-    FOnInit(Self);
-
-  Result:= True;
-End;
-
-Function THbase.Terminate: Boolean;
-Begin
-  If Assigned(FOnTerminate) Then
-    FOnTerminate(Self);
-
-  Result:= True;
-End;
-
-{ TChildren }
-
-Procedure TChildren.Clear;
-Var
-  temp: TChildPtr;
-Begin
-  While FList <> Nil Do
-  Begin
-    temp:= FList;
-    FList:= FList^.Next;
-    Dispose(temp);
-  End;
-End;
-
-Procedure TChildren.AddChild(Child: TObject);
-Var
-  temp: TChildPtr;
-Begin
-  New(temp);
-  temp^.Child:= Child;
-  temp^.Next:= FList;
-  FList:= temp;
-End;
-
-Procedure TChildren.RemChild(Child: TObject);
-Var
-  Success: Boolean;
-  prev, temp: TChildPtr;
-Begin
-  Success:= False;
-  prev:= Nil;
-  temp:= FList;
-  While (Not Success) And (temp <> Nil) Do
-  Begin
-    If temp^.Child = Child Then
-      Success:= True
-    Else
-    Begin
-      prev:= temp;
-      temp:= temp^.Next;
-    End;
-  End;
-
-  If Success Then
-  Begin
-    If prev = Nil Then
-      FList:= temp^.Next
-    Else
-      prev^.Next:= temp^.Next;
-    Dispose(temp);
-  End;
-End;
-
-Function TChildren.Terminate: Boolean;
-Begin
-  While FList <> Nil Do
-    THbase(FList^.Child).Terminate;
-
-  Result:= True;
-End;
-
-Constructor TChildren.Create;
-Begin
-  FList:= Nil;
-End;
-
-Destructor TChildren.Destroy;
-Begin
-  Clear;
-
-  Inherited Destroy;
-End;
 
 { THenv }
 
@@ -2458,33 +2068,15 @@ Begin
   End;
 End;
 
-Constructor THenv.Create(AOwner: TComponent);
-Var
-  i: Integer;
+Constructor THenv.Create;
 Begin
-  //for backward compatibility
-  If (AOwner <> Nil) And (csDesigning In ComponentState) Then
-    For i:= 0 To AOwner.ComponentCount-1 Do
-      If AOwner.Components[i] Is THenv Then
-      Begin
-        If AOwner.Components[i] <> Self Then
-        Begin
-          Raise Exception.Create('You only need one environment class');
-          Break;
-        End;
-      End;
-
-  Inherited Create(AOwner);
+  Inherited Create;
 
   { Create Error Object }
-  FError:= TODBCError.Create;
-
-  { Create Children }
-  FChildren:= TChildren.Create;
+  FError := TODBCErrorHandler.Create;
 
   FActive:= False;
   FConnectionPooling:= DefConnectionPooling;
-  FResolve:= False;
 
   Init;
 End;
@@ -2496,30 +2088,60 @@ Begin
   { Terminate Self }
   TerminateHandle;
 
-  FChildren.Free;
   FError.Free;
 End;
 
-Function THenv.Terminate: Boolean;
+Function THenv.Init: Boolean;
+Var
+  LConnectionPooling, AConnectionPooling: SQLUINTEGER;
 Begin
-  Log(1, 'THenv.Terminate');
+  Log(1, 'THenv.Init');
 
-  Inherited Terminate;
+  If FActive Then
+  Begin
+    Init:= FActive;
+    Exit;
+  End;
 
-  { Terminate Children }
-  FChildren.Terminate;
+  If FConnectionPooling <> cpDefault Then
+  Begin
+    { Set Connection Pooling }
+    AConnectionPooling:= SQL_CP_OFF;
+    Case FConnectionPooling Of
+      cpOff:
+        AConnectionPooling:= SQL_CP_OFF;
+      cpOnePerDriver:
+        AConnectionPooling:= SQL_CP_ONE_PER_DRIVER;
+      cpOnePerEnv:
+        AConnectionPooling:= SQL_CP_ONE_PER_HENV;
+    End;
 
-  Result:= Not FActive;
+    FRetCode:= SQLGetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, @LConnectionPooling, 0, Nil);
+    If FError.Success(FRetCode) And (LConnectionPooling <> AConnectionPooling) Then
+    Begin
+      FRetCode:= SQLSetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, Pointer(AConnectionPooling), 0);
+      If Not FError.Success(FRetCode) Then
+        FError.RaiseError(Self, FRetCode);
+    End;
 End;
 
-Procedure THenv.Resolve;
+  { Create Handle }
+  FRetCode:= SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), @FHenv);
+  If Not FError.Success(FRetCode) Then
 Begin
-  FResolve:= True;
-  Try
-    Terminate;
-  Finally
-    FResolve:= False;
+    FHenv := Nil;
+    FError.RaiseError(Self, FRetCode);
   End;
+
+  { Set ODBC Version }
+  FRetCode:= SQLSetEnvAttr(FHenv, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0);
+  If Not FError.Success(FRetCode) Then
+    FError.RaiseError(Self, FRetCode);
+
+  { Set Active Field }
+  FActive:= True;
+
+  Result:= FActive;
 End;
 
 Function THenv.TerminateHandle: Boolean;
@@ -2527,13 +2149,11 @@ Begin
   { Terminate Self }
   If FActive Then
   Begin
-    { Terminate Children }
-    Terminate;
-
     { Free Handle }
     FRetCode:= SQLFreeHandle(SQL_HANDLE_ENV, FHenv);
     If Not FError.Success(FRetCode) Then
       FError.RaiseError(Self, FRetCode);
+    FHenv := Nil;
 
     { Set Active Field }
     FActive:= False;
@@ -2563,8 +2183,8 @@ Begin
   Init;
 
   FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_LOGIN_TIMEOUT, @Result, SizeOf(Result), Nil);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THdbc.SetSpecialSQLConnectionAttribute(AAttribute: SQLINTEGER; AValue: SQLPOINTER; AStringLength: SQLINTEGER);
@@ -2572,8 +2192,8 @@ Begin
   Init;
 
   FRetCode := SQLSetConnectAttr(FHdbc, AAttribute, AValue, AStringLength);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THdbc.SetLoginTimeOut(ALoginTimeOut: SQLUINTEGER);
@@ -2581,8 +2201,8 @@ Begin
   Init;
 
   FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_LOGIN_TIMEOUT, Pointer(ALoginTimeOut), SizeOf(ALoginTimeOut));
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THdbc.SetCursorLib(ACursorLib: SQLUINTEGER);
@@ -2600,11 +2220,11 @@ Begin
   If FActive Then
   Begin
     FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, @LCursorLib, SizeOf(LCursorLib), Nil);
-    If GlobalHenv.Error.Success(FRetCode) And (LCursorLib <> FCursorLib) Then
+    If FEnv.Error.Success(FRetCode) And (LCursorLib <> FCursorLib) Then
     Begin
       FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, Pointer(FCursorLib), SizeOf(FCursorLib));
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End;
   End;
 End;
@@ -2620,19 +2240,19 @@ Begin
     If ATracing Then
     Begin
       FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_TRACE, Pointer(SQL_OPT_TRACE_ON), SizeOf(SQLUINTEGER));
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
 
       TraceFile:= 'TRACE.OE';
       FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_TRACEFILE, Pointer(PChar(TraceFile)), SQL_NTS);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End
     Else
     Begin
       FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_TRACE, Pointer(SQL_OPT_TRACE_OFF), SizeOf(SQLUINTEGER));
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End;
     FTracing:= ATracing;
   End;
@@ -2643,7 +2263,7 @@ Var
   LInTransaction: SQLUINTEGER;
 Begin
   FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, @LInTransaction, SizeOf(LInTransaction), Nil);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
+  If Not FEnv.Error.Success(FRetCode) Then
     Result:= False
   Else
     Result:= LInTransaction = SQL_AUTOCOMMIT_OFF;
@@ -2651,51 +2271,40 @@ End;
 
 Function THdbc.GetConnectionPooling: TConnectionPooling;
 Begin
-  Result:= GlobalHenv.ConnectionPooling;
+  Result:= FEnv.ConnectionPooling;
 End;
 
 Procedure THdbc.SetConnectionPooling(AConnectionPooling: TConnectionPooling);
 Begin
-  If csReading In ComponentState Then
-  Begin
-    FSetConnectionPooling:= True;
     FConnectionPooling:= AConnectionPooling;
-  End
-  Else
-    GlobalHenv.ConnectionPooling:= AConnectionPooling;
 End;
 
 Procedure THdbc.SetDriver(ADriver: String);
 Begin
-  DesignDisconnect;
 
   FDriver:= ADriver;
 End;
 
 Procedure THdbc.SetDataSource(ADataSource: String);
 Begin
-  DesignDisconnect;
 
   FDataSource:= ADataSource;
 End;
 
 Procedure THdbc.SetUserName(AUserName: String);
 Begin
-  DesignDisconnect;
 
   FUserName:= AUserName;
 End;
 
 Procedure THdbc.SetPassword(APassword: String);
 Begin
-  DesignDisconnect;
 
   FPassword:= APassword;
 End;
 
 Procedure THdbc.SetAttributes(AAttributes: TStrings);
 Begin
-  DesignDisconnect;
 
   FAttributes.Assign(AAttributes);
 End;
@@ -2712,37 +2321,15 @@ Begin
   If FActive Then
   Begin
     FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, @LIsolationLevel, SizeOf(LIsolationLevel), Nil);
-    If GlobalHenv.Error.Success(FRetCode) And (LIsolationLevel <> FIsolationLevel) Then
+    If FEnv.Error.Success(FRetCode) And (LIsolationLevel <> FIsolationLevel) Then
     Begin
       FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, Pointer(FIsolationLevel), 0);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
-    End;
-  End;
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
+End;
+End;
 End;
 
-Procedure THdbc.ReaderError(Reader: TReader;
-                            Const Message: String;
-                            Var Handled: Boolean);
-Begin
-  Handled:= (Pos('ConnectionPooling', Message) > 0) Or
-            (Pos('OnConnect', Message) > 0) Or
-            (Pos('OnDisconnect', Message) > 0);
-End;
-
-Procedure THdbc.ReadState(Reader: TReader);
-Begin
-  Reader.OnError:= ReaderError;
-
-  Inherited ReadState(Reader);
-End;
-
-Procedure THdbc.Loaded;
-Begin
-  Inherited Loaded;
-  If FStreamedConnected Then
-    Connect;
-End;
 
 Procedure THdbc.DoBeforeConnect;
 Begin
@@ -2768,16 +2355,13 @@ Begin
     FAfterDisconnect(Self);
 End;
 
-Constructor THdbc.Create(AOwner: TComponent);
+Constructor THdbc.Create(Env : THEnv);
 Begin
-  Inherited Create(AOwner);
+  Inherited Create(Env);
 
-  { Create Children }
-  FChildren:= TChildren.Create;
 
   { Set Defaults }
   FActive:= False;
-  FSetConnectionPooling:= False;
   FConnectionPooling:= DefConnectionPooling;
   FConnected:= DefConnected;
   FStreamedConnected:= DefConnected;
@@ -2794,6 +2378,8 @@ Begin
   FCore:= DefCore;
   FDrivers:= TList.Create;
   RefreshDrivers;
+
+  Init;
 End;
 
 Destructor THdbc.Destroy;
@@ -2801,9 +2387,6 @@ Begin
   Inherited Destroy;
 
   { Terminate Self }
-  Terminate;
-
-  FChildren.Free;
   FAttributes.Free;
   ClearDrivers;
   FDrivers.Free;
@@ -2819,20 +2402,13 @@ Begin
     Exit;
   End;
 
-  { Set ConnectionPooling }
-  If FSetConnectionPooling Then
-  Begin
-    FSetConnectionPooling:= False;
-    GlobalHenv.ConnectionPooling:= FConnectionPooling;
-  End;
-
-  { Add Self to Parent }
-  GlobalHenv.FChildren.AddChild(Self);
-
   { Create Handle }
-  FRetCode:= SQLAllocHandle(SQL_HANDLE_DBC, GlobalHenv.Handle, @FHdbc);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  FRetCode:= SQLAllocHandle(SQL_HANDLE_DBC, FEnv.Handle, @FHdbc);
+  If Not FEnv.Error.Success(FRetCode) Then
+  Begin
+    FHdbc := Nil;
+    FEnv.Error.RaiseError(Self, FRetCode);
+  End;
 
   { Set Active Field }
   FActive:= True;
@@ -2842,47 +2418,6 @@ Begin
 
   Result:= FActive;
 
-  Inherited Init;
-End;
-
-Function THdbc.Terminate: Boolean;
-Begin
-  Log(1, 'THdbc.Terminate');
-
-  Inherited Terminate;
-
-  If FActive Then
-  Begin
-    { Terminate Children }
-    FChildren.Terminate;
-
-    { Disconnect from Data Source }
-    If FConnected Then
-      Disconnect;
-
-    { Remove Self from Parent }
-    GlobalHenv.FChildren.RemChild(Self);
-
-    { Free Handle }
-    FRetCode:= SQLFreeHandle(SQL_HANDLE_DBC, FHdbc);
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
-
-    { Set Active Field }
-    FActive:= False;
-  End;
-
-  Result:= Not FActive;
-End;
-
-Procedure THdbc.Resolve;
-Begin
-  GlobalHenv.FResolve:= True;
-  Try
-    Terminate;
-  Finally
-    GlobalHenv.FResolve:= False;
-  End;
 End;
 
 Function THdbc.GetHandle: SQLHDBC;
@@ -2893,12 +2428,6 @@ Begin
   Result:= FHdbc;
 End;
 
-Procedure THdbc.DesignDisconnect;
-Begin
-  If (csDesigning In ComponentState) And Connected Then
-    Connected:= False;
-End;
-
 Function THdbc.GetConnected: Boolean;
 Begin
   Result:= FConnected;
@@ -2906,16 +2435,11 @@ End;
 
 Procedure THdbc.SetConnected(AConnected: Boolean);
 Begin
-  If csReading In ComponentState Then
-    FStreamedConnected:= AConnected
-  Else
-  Begin
     If AConnected Then
       Connect
     Else
       Disconnect;
   End;
-End;
 
 Procedure THdbc.Connect;
 Var
@@ -2964,8 +2488,8 @@ Begin
                                                                @ConnectStrOut, SizeOf(ConnectStrOut), @StringLength,
                                                                FInfoPrompt);
     End;
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
 
     { Set Connected Field }
     FConnected:= True;
@@ -2990,16 +2514,10 @@ Begin
   Begin
     DoBeforeDisconnect;
 
-    { Terminate Children }
-    FChildren.Terminate;
-
-    //if InTransaction then
-    //  EndTransact;
-
     { Remove Connection }
     FRetCode:= SQLDisconnect(FHdbc);
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
 
     { Set Connected Field }
     FConnected:= False;
@@ -3014,8 +2532,8 @@ Begin
   Connect;
 
   FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, Pointer(SQL_AUTOCOMMIT_OFF), SizeOf(SQLUINTEGER));
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THdbc.EndTransact;
@@ -3023,8 +2541,8 @@ Begin
   Commit;
 
   FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, Pointer(SQL_AUTOCOMMIT_ON), SizeOf(SQLUINTEGER));
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THdbc.Commit;
@@ -3032,8 +2550,8 @@ Begin
   Connect;
 
   FRetCode:= SQLEndTran(SQL_HANDLE_DBC, FHdbc, SQL_COMMIT);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THdbc.Rollback;
@@ -3041,8 +2559,8 @@ Begin
   Connect;
 
   FRetCode:= SQLEndTran(SQL_HANDLE_DBC, FHdbc, SQL_ROLLBACK);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Function THdbc.GetFunction(FunctionID: SQLUSMALLINT): Boolean;
@@ -3056,7 +2574,7 @@ Begin
   Connect;
 
   FRetCode:= SQLGetFunctions(FHdbc, FunctionID, @Supported);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
+  If Not FEnv.Error.Success(FRetCode) Then
     Supported:= 0;
 
   Result:= Supported <> 0;
@@ -3070,7 +2588,7 @@ Begin
   Connect;
 
   FRetCode:= SQLGetInfo(FHdbc, InfoType, @Supported, SizeOf(Supported), @StringLength);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
+  If Not FEnv.Error.Success(FRetCode) Then
     Result:= ''
   Else
     Result:= StrPas(Supported);
@@ -3083,7 +2601,7 @@ Begin
   Connect;
 
   FRetCode:= SQLGetInfo(FHdbc, InfoType, @Supported, SizeOf(Supported), Nil);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
+  If Not FEnv.Error.Success(FRetCode) Then
     Result:= 0
   Else
     Result:= Supported;
@@ -3096,7 +2614,7 @@ Begin
   Connect;
 
   FRetCode:= SQLGetInfo(FHdbc, InfoType, @Supported, SizeOf(Supported), Nil);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
+  If Not FEnv.Error.Success(FRetCode) Then
     Result:= 0
   Else
     Result:= Supported;
@@ -3335,8 +2853,8 @@ Begin
   If FActive Then
   Begin
     FRetCode:= SQLFreeStmt(FHstmt, SQL_RESET_PARAMS);
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
   End;
 End;
 
@@ -3383,8 +2901,8 @@ Begin
   If FActive Then
   Begin
     FRetCode:= SQLFreeStmt(FHstmt, SQL_UNBIND);
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
   End;
 
   FreeColBinds;
@@ -3998,7 +3516,7 @@ Begin
     Else
     Begin
       FRetCode:= SQLSetPos(FHstmt, 1, SQL_POSITION, SQL_LOCK_NO_CHANGE);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
+      If Not FEnv.Error.Success(FRetCode) Then
       Begin
         FreeMem(Result, BookmarkSize);
         Result:= Nil;
@@ -4007,8 +3525,8 @@ Begin
 
       //depreciated FRetCode:= SQLGetStmtOption(FHstmt, SQL_GET_BOOKMARK, @Bookmark);
       FRetCode:= SQLGetData(FHstmt, 0, SQL_C_VARBOOKMARK, Result, BookmarkSize, @StringLength);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End;
   End;
 End;
@@ -4035,8 +3553,8 @@ Begin
   Init;
 
   FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_QUERY_TIMEOUT, @Result, SizeOf(Result), Nil);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THstmt.SetQueryTimeOut(AQueryTimeOut: SQLUINTEGER);
@@ -4044,8 +3562,8 @@ Begin
   Init;
 
   FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_QUERY_TIMEOUT, Pointer(AQueryTimeOut), SizeOf(AQueryTimeOut));
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THstmt.SetSpecialSQLStatementAttribute(AAttribute: SQLINTEGER; AValue: SQLPOINTER; AStringLength: SQLINTEGER);
@@ -4053,8 +3571,8 @@ Begin
   Init;
 
   FRetCode:= SQLSetStmtAttr(FHstmt, AAttribute, AValue, AStringLength);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Function THstmt.GetMaxRows: SQLUINTEGER;
@@ -4062,8 +3580,8 @@ Begin
   Init;
 
   FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_MAX_ROWS, @Result, SizeOf(Result), Nil);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THstmt.SetMaxRows(AMaxRows: SQLUINTEGER);
@@ -4071,8 +3589,8 @@ Begin
   Init;
 
   FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_MAX_ROWS, Pointer(AMaxRows), SizeOf(AMaxRows));
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THstmt.SetConcurrencyType(AConcurrencyType: SQLUINTEGER);
@@ -4088,11 +3606,11 @@ Begin
     Close;
 
     FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, @LConcurrencyType, SizeOf(LConcurrencyType), Nil);
-    If GlobalHenv.Error.Success(FRetCode) And (LConcurrencyType <> FConcurrencyType) Then
+    If FEnv.Error.Success(FRetCode) And (LConcurrencyType <> FConcurrencyType) Then
     Begin
       FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, Pointer(FConcurrencyType), SizeOf(FConcurrencyType));
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End;
   End;
 End;
@@ -4128,11 +3646,11 @@ Begin
     GetCursorAttr;
 
     FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_CURSOR_TYPE, @LCursorType, SizeOf(LCursorType), Nil);
-    If GlobalHenv.Error.Success(FRetCode) And (LCursorType <> FCursorType) Then
+    If FEnv.Error.Success(FRetCode) And (LCursorType <> FCursorType) Then
     Begin
       FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_CURSOR_TYPE, Pointer(FCursorType), SizeOf(FCursorType));
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End;
   End;
 End;
@@ -4153,11 +3671,11 @@ Begin
       Close;
 
       FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_ROW_ARRAY_SIZE, @LRowSetSize, SizeOf(LRowSetSize), Nil);
-      If GlobalHenv.Error.Success(FRetCode) And (LRowSetSize <> FRowSetSize) Then
+      If FEnv.Error.Success(FRetCode) And (LRowSetSize <> FRowSetSize) Then
       Begin
         FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_ROW_ARRAY_SIZE, Pointer(FRowSetSize), SizeOf(FRowSetSize));
-        If Not GlobalHenv.Error.Success(FRetCode) Then
-          GlobalHenv.Error.RaiseError(Self, FRetCode);
+        If Not FEnv.Error.Success(FRetCode) Then
+          FEnv.Error.RaiseError(Self, FRetCode);
       End;
     End;
   End;
@@ -4174,8 +3692,8 @@ Begin
     Try
       //Set the row array size to the new value
       FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_ROW_ARRAY_SIZE, Pointer(FRowSetSize), SizeOf(FRowSetSize));
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     Finally
       BindCols;
       End;
@@ -4190,46 +3708,12 @@ Begin
     FBlobSize:= ABlobSize;
 End;
 
-Procedure THstmt.ReaderError(Reader: TReader;
-                             Const Message: String;
-                             Var Handled: Boolean);
+Constructor THstmt.Create(Env : THEnv; dbc : THdbc);
 Begin
-  Handled:= (Pos('OnPrepare', Message) > 0) Or
-            (Pos('OnExecute', Message) > 0) Or
-            (Pos('OnFetch', Message) > 0) Or
-            (Pos('StringTrimming', Message) > 0);
-
-  If Handled And (Pos('StringTrimming', Message) > 0) Then
-    StringTrimming:= stTrimNone;
-End;
-
-Procedure THstmt.ReadState(Reader: TReader);
-Begin
-  Reader.OnError:= ReaderError;
-
-  Inherited ReadState(Reader);
-End;
-
-Procedure THstmt.Notification(AComponent: TComponent;
-                              Operation: TOperation);
-Begin
-  Inherited Notification(AComponent, Operation);
-
-  If (Operation = opInsert) And (AComponent Is THdbc) And (Hdbc = Nil) Then
-    Hdbc:= THdbc(AComponent);
-
-  If (Operation = opRemove) And (AComponent = Hdbc) Then
-    Hdbc:= Nil;
-End;
-
-Constructor THstmt.Create(AOwner: TComponent);
-Var
-  i: Integer;
-Begin
-  Inherited Create(AOwner);
+  Inherited Create(Env);
 
   { Set Defaults }
-  FHdbc:= Nil;
+  FHdbc:= dbc;
   FHdesc:= Nil;
   FActive:= False;
   FRetCode:= SQL_SUCCESS;
@@ -4284,14 +3768,6 @@ Begin
   FNoRowsAffected:= DefNoRowsAffected;
   FAborted:= False;
   FAsyncEnabled:= False;
-
-  If AOwner <> Nil Then
-    For i:= 0 To AOwner.ComponentCount-1 Do
-      If AOwner.Components[i] Is THdbc Then
-      Begin
-        FHdbc:= THdbc(AOwner.Components[i]);
-        Break;
-      End;
 End;
 
 Destructor THstmt.Destroy;
@@ -4327,18 +3803,15 @@ Begin
     Exit;
   End;
 
-  If Hdbc = Nil  Then
-    Raise EODBCExpress.Create('Property Hdbc of '+Name+' not set.');
-
   Hdbc.Connect;
-
-  { Add Self to Parent }
-  Hdbc.FChildren.AddChild(Self);
 
   { Create Handle }
   FRetCode:= SQLAllocHandle(SQL_HANDLE_STMT, Hdbc.Handle, @FHstmt);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+  Begin
+    FHstmt := Nil;
+    FEnv.Error.RaiseError(Self, FRetCode);
+  End;
 
   { Set Active Field }
   FActive:= True;
@@ -4348,13 +3821,13 @@ Begin
   CursorType:= FCursorType;
   RowSetSize:= FRowSetSize;
 
-  Inherited Init;  //call before enabling bookmarks to avoid bookmarksize retrieval problem
+  Init;  //call before enabling bookmarks to avoid bookmarksize retrieval problem
 
   If (FCursorAttr And SQL_CA1_BOOKMARK) = SQL_CA1_BOOKMARK Then
   Begin
     FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_USE_BOOKMARKS, Pointer(SQL_UB_VARIABLE), SizeOf(SQLUINTEGER));
     If FBindBookmarks Then
-      FBindBookmarks:= GlobalHenv.Error.Success(FRetCode);
+      FBindBookmarks:= FEnv.Error.Success(FRetCode);
   End
   Else
     FBindBookmarks:= False;
@@ -4366,20 +3839,19 @@ Function THstmt.Terminate: Boolean;
 Begin
   Log(1, 'THstmt.Terminate');
 
-  Inherited Terminate;
+  //Inherited Terminate;
 
   If FActive Then
   Begin
-    { Remove Self from Parent }
-    Hdbc.FChildren.RemChild(Self);
 
     { Dispose Storage }
     Close;
 
     { Free Handle }
     FRetCode:= SQLFreeHandle(SQL_HANDLE_STMT, FHstmt);
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
+    FHstmt := Nil;
 
     { Set Active Field }
     FActive:= False;
@@ -4394,8 +3866,8 @@ Begin
 
   { Reset Statement Handle }
   FRetCode:= SQLFreeStmt(FHstmt, SQL_CLOSE);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 Procedure THstmt.Close;
@@ -4444,7 +3916,7 @@ Begin
   If FRowCountMethod = rcFunction Then
   Begin
     FRetCode:= SQLGetDiagField(SQL_HANDLE_STMT, FHstmt, 0, SQL_DIAG_CURSOR_ROW_COUNT, @Result, SizeOf(Result), Nil);
-    If GlobalHenv.Error.Success(FRetCode) And (Result >= 0) Then
+    If FEnv.Error.Success(FRetCode) And (Result >= 0) Then
       Exit;
   End;
 
@@ -4457,8 +3929,7 @@ Begin
 
   Result:= 0;
 
-  tempHstmt:= THstmt.Create(Nil);
-  tempHstmt.Hdbc:= Hdbc;
+  tempHstmt:= THstmt.Create(FEnv, FHdbc);
   tempHstmt.MaxRows:= MaxRows;
 
   Try
@@ -4554,8 +4025,8 @@ Begin
   Log(1, 'THstmt.NumRowsAffected');
 
   FRetCode:= SQLRowCount(FHstmt, @Result);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
   {$IFDEF WIN64}
   if result = $FFFFFFFFFFFFFFFF then
     result := 0;
@@ -4721,8 +4192,8 @@ Begin
 
   { Prepare SQL Statement }
   FRetCode:= SQLPrepare(FHstmt, Pointer(PChar(ParsedSQL)), SQL_NTS);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   DoAfterPrepare;
 
@@ -4851,12 +4322,6 @@ Begin
       Else
         temp^.FSize^:= 0;
 
-      (*
-      If Bulk = 0 Then
-        BufferLength:= ParameterSize
-      Else
-        BufferLength:= MaxNullString+1;
-      *)
     End;
     SQL_LONGVARBINARY:
     Begin
@@ -4883,16 +4348,16 @@ Begin
   FRetCode:= SQLBindParameter(FHstmt, Param, FParamType, ParamType, SqlType,
     ParameterSize, DecimalDigits, ParamValue, BufferLength, temp^.FSize);
   FParamType:= DefParamType;
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   If FBindByName And (Param <= FParamNames.Count) Then
   Begin
     If FHdesc = Nil Then
     Begin
       FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_IMP_PARAM_DESC, @FHdesc, SizeOf(FHdesc), Nil);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End;
     ParamName:= FParamNames[Param-1];
     SQLSetDescField(FHdesc, Param, SQL_DESC_NAME, Pointer(PChar(ParamName)), SQL_NTS);
@@ -4955,7 +4420,7 @@ Begin
   Else
   Begin
     FRetCode:= SQLDescribeParam(FHstmt, Param, @SqlType, @ParameterSize, @DecimalDigits, @Nullable);
-    If Not GlobalHenv.Error.Success(FRetCode) Then
+    If Not FEnv.Error.Success(FRetCode) Then
       DescribeParam(Param, SqlType, ParameterSize, DecimalDigits, Nullable, True);
   End;
 End;
@@ -5570,8 +5035,8 @@ Begin
 
   { Start/End Asynchronous Functionality }
   FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_ASYNC_ENABLE, Pointer(LAsyncEnable), SizeOf(LAsyncEnable));
-  If (Not GlobalHenv.Error.Success(FRetCode)) And (Not Enabled) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If (Not FEnv.Error.Success(FRetCode)) And (Not Enabled) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
   FAsyncEnabled:= Enabled;
 End;
 
@@ -5589,8 +5054,8 @@ Begin
   { Set Bulk Size }
   //depreciated FRetCode:= SQLParamOptions(FHstmt, FNumParams, @irow);
   FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_PARAMSET_SIZE, Pointer(FNumParams), SizeOf(FNumParams));
-  If (Not GlobalHenv.Error.Success(FRetCode)) And (FNumParams > 1) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If (Not FEnv.Error.Success(FRetCode)) And (FNumParams > 1) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   FExecuted:= False;
   FAborted:= False;
@@ -5644,8 +5109,8 @@ Begin
   End;
   If (FRetCode <> SQL_NEED_DATA) And
      (FRetCode <> SQL_NO_DATA) And  //no rows affected by operation
-     (Not GlobalHenv.Error.Success(FRetCode)) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+     (Not FEnv.Error.Success(FRetCode)) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
   If FExecAsync Then
     AsyncEnable(False);
 
@@ -5653,7 +5118,7 @@ Begin
   If FRetCode = SQL_NEED_DATA Then
     DataAtExecution(TCommonPtr(FParams));
 
-  If GlobalHenv.Error.Success(FRetCode) Then
+  If FEnv.Error.Success(FRetCode) Then
     DoAfterExecute;
 
   { Bind NumRowsFetched }
@@ -5670,8 +5135,8 @@ Var
   StringLength: SQLSMALLINT;
 Begin
   FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, @CharAttr, SizeOf(CharAttr), @StringLength, @NumAttr);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   Result:= CharAttr;
 End;
@@ -5684,8 +5149,8 @@ Var
   StringLength: SQLSMALLINT;
 Begin
   FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, @CharAttr, SizeOf(NumAttr), @StringLength, @NumAttr);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   Result:= NumAttr;
 End;
@@ -5733,8 +5198,8 @@ Begin
     Begin
       FRetCode:= SQLDescribeCol(FHstmt, icol, @ColumnName, SizeOf(ColumnName), @NameLength,
                                 @SqlType, @ColumnSize, @DecimalDigits, @Nullable);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
 
       { Set Column Name }
       FColNames.Add(ColumnName);
@@ -5906,8 +5371,8 @@ Begin
       Else
       Begin
         FRetCode:= SQLBindCol(FHstmt, icol, CType, SqlValue, BufferLength, FTail^.FSize);
-        If Not GlobalHenv.Error.Success(FRetCode) Then
-          GlobalHenv.Error.RaiseError(Self, FRetCode);
+        If Not FEnv.Error.Success(FRetCode) Then
+          FEnv.Error.RaiseError(Self, FRetCode);
       End;
     End;
 
@@ -5939,8 +5404,8 @@ Begin
       FRowBookmark:= FTail;
 
       FRetCode:= SQLBindCol(FHstmt, 0, CType, SqlValue, BufferLength, FTail^.FSize);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End
     Else
       FRowBookmark:= Nil;
@@ -5989,8 +5454,8 @@ Begin
       Else
         tempCol^.FValue:= Nil;
       FRetCode:= SQLBindCol(FHstmt, icol, tempCol^.FType, tempCol^.FValue, BufferLength, tempCol^.FSize);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End;
 
     tempCol:= tempCol^.Next;
@@ -6020,8 +5485,8 @@ Begin
     TotalSize:= BSize;
 
   FRetCode:= SQLGetData(FHstmt, Col, ColType, Buffer, TotalSize, @ColSize);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
   If ColStream Is TMemoryStream Then
     TMemoryStream(ColStream).Clear;
   If ColSize < BSize Then
@@ -6056,8 +5521,8 @@ Begin
         GCursor:= GCursor + BSize;
       End;
     End;
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
   End;
 
   Finally
@@ -6079,8 +5544,8 @@ Begin
     If (FCursorAttr And SQL_CA1_POS_POSITION) = SQL_CA1_POS_POSITION Then
     Begin
       FRetCode:= SQLSetPos(FHstmt, Row, SQL_POSITION, SQL_LOCK_NO_CHANGE);
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(Self, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(Self, FRetCode);
     End
     Else
       Exit;
@@ -6126,8 +5591,8 @@ Var
   OffsetPtr: Pointer;
 Begin
   FRetCode:= SQLParamData(FHstmt, @PValue);
-  If (FRetCode <> SQL_NEED_DATA) And (Not GlobalHenv.Error.Success(FRetCode)) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If (FRetCode <> SQL_NEED_DATA) And (Not FEnv.Error.Success(FRetCode)) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   Repeat
     { Retrieve Blob Information }
@@ -6146,15 +5611,15 @@ Begin
       OffsetPtr:= OffsetPointer(PValue, PCursor);
       FRetCode:= SQLPutData(FHstmt, OffsetPtr, BSize);
       PCursor:= PCursor + BSize;
-    Until (PCursor = PSize) Or (Not GlobalHenv.Error.Success(FRetCode));
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+    Until (PCursor = PSize) Or (Not FEnv.Error.Success(FRetCode));
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
 
     FRetCode:= SQLParamData(FHstmt, @PValue);
     If (FRetCode <> SQL_NEED_DATA) And
        (FRetCode <> SQL_NO_DATA)   And  //no rows affected by operation
-       (Not GlobalHenv.Error.Success(FRetCode)) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+       (Not FEnv.Error.Success(FRetCode)) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
   Until FRetCode <> SQL_NEED_DATA;
 End;
 
@@ -6188,8 +5653,8 @@ Begin
 
     Exit;
   End;
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   { Fetch Unbound Columns in Result Set }
   If FBlobs Then
@@ -6249,8 +5714,8 @@ End;
 Function THstmt.FetchBookmark(Bookmark: SQLPOINTER): Boolean;
 Begin
   FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_FETCH_BOOKMARK_PTR, Bookmark, BookmarkSize);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   Result:= Fetch(SQL_FETCH_BOOKMARK, 0);
 End;
@@ -6258,8 +5723,8 @@ End;
 Function THstmt.MoreResults: Boolean;
 Begin
   FRetCode:= SQLMoreResults(FHstmt);
-  If (Not GlobalHenv.Error.Success(FRetCode)) And (FRetCode <> SQL_NO_DATA) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If (Not FEnv.Error.Success(FRetCode)) And (FRetCode <> SQL_NO_DATA) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   Result:= FRetCode <> SQL_NO_DATA;
   If Result Then
@@ -6396,7 +5861,7 @@ Begin
   Begin
     FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_SCHEMA_NAME, @CharAttr, SizeOf(CharAttr), @StringLength, @NumAttr);
     FTableOwner:= Trim(CharAttr);
-    If Not GlobalHenv.Error.Success(FRetCode) Then
+    If Not FEnv.Error.Success(FRetCode) Then
       FTableOwner:= '';
 
     FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_TABLE_NAME, @CharAttr, SizeOf(CharAttr), @StringLength, @NumAttr);
@@ -6415,7 +5880,7 @@ Begin
       Else
         FTableName:= '';
     End;
-    If (Not GlobalHenv.Error.Success(FRetCode)) Or (FTableName = '') Then
+    If (Not FEnv.Error.Success(FRetCode)) Or (FTableName = '') Then
       Raise EODBCExpress.Create('Unable to determine table name:  set TargetTable property.');
   End
   Else
@@ -6445,8 +5910,7 @@ Begin
 
   DetermineTargetTable;
 
-  tempHstmt:= THstmt.Create(Nil);
-  tempHstmt.Hdbc:= FHdbc;
+  tempHstmt:= THstmt.Create(FEnv, FHdbc);
 
   Try
 
@@ -6462,8 +5926,8 @@ Begin
 
     FRetCode:= SQLSpecialColumns(tempHstmt.Handle, SQL_BEST_ROWID, Nil, 0, ATableOwner, Length(FTableOwner),
       ATableName, Length(FTableName), SQL_SCOPE_CURROW, SQL_NULLABLE);
-    If Not GlobalHenv.Error.Success(FRetCode) Then
-      GlobalHenv.Error.RaiseError(tempHstmt, FRetCode);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(tempHstmt, FRetCode);
 
     Found:= False;
     While tempHstmt.FetchNext Do
@@ -6479,8 +5943,8 @@ Begin
 
       FRetCode:= SQLPrimaryKeys(tempHstmt.Handle, Nil, 0, ATableOwner, Length(FTableOwner),
         ATableName, Length(FTableName));
-      If Not GlobalHenv.Error.Success(FRetCode) Then
-        GlobalHenv.Error.RaiseError(tempHstmt, FRetCode);
+      If Not FEnv.Error.Success(FRetCode) Then
+        FEnv.Error.RaiseError(tempHstmt, FRetCode);
 
       While tempHstmt.FetchNext Do
         ColPrimary[ColByName(tempHstmt.ColString[4])]:= True;
@@ -6564,8 +6028,8 @@ Var
 Begin
   { Determine Cursor Name }
   FRetCode:= SQLGetCursorName(FHstmt, @CurName, SizeOf(CurName), @StringLength);
-  If Not GlobalHenv.Error.Success(FRetCode) Then
-    GlobalHenv.Error.RaiseError(Self, FRetCode);
+  If Not FEnv.Error.Success(FRetCode) Then
+    FEnv.Error.RaiseError(Self, FRetCode);
 
   Result:= CurName;
 End;
@@ -6654,8 +6118,7 @@ Var
 Begin
   If FHstmtInsert = Nil Then
   Begin
-    FHstmtInsert:= THstmt.Create(Nil);
-    FHstmtInsert.Hdbc:= Hdbc;
+    FHstmtInsert:= THstmt.Create(FEnv, FHdbc);
     FHstmtInsert.BlobSize:= BlobSize;
   End;
 
@@ -6700,7 +6163,7 @@ Begin
   FHstmtInsert.Execute;
 
   If (FHstmtInsert.RowsAffected = 0) And (nrByInsert In NoRowsAffected) Then
-    GlobalHenv.Error.RaiseError(Self, SQL_NO_DATA);
+    FEnv.Error.RaiseError(Self, SQL_NO_DATA);
 End;
 
 Procedure THstmt.UpdateFields(WhereClause: String;
@@ -6713,8 +6176,7 @@ Var
 Begin
   If FHstmtUpdate = Nil Then
   Begin
-    FHstmtUpdate:= THstmt.Create(Nil);
-    FHstmtUpdate.Hdbc:= Hdbc;
+    FHstmtUpdate:= THstmt.Create(FEnv, FHdbc);
     FHstmtUpdate.BlobSize:= BlobSize;
   End;
 
@@ -6758,7 +6220,7 @@ Begin
   FHstmtUpdate.Execute;
 
   If (FHstmtUpdate.RowsAffected = 0) And (nrByUpdate In NoRowsAffected) Then
-    GlobalHenv.Error.RaiseError(Self, SQL_NO_DATA);
+    FEnv.Error.RaiseError(Self, SQL_NO_DATA);
 End;
 
 Procedure THstmt.DeleteFields(WhereClause: String;
@@ -6769,8 +6231,7 @@ Var
 Begin
   If FHstmtDelete = Nil Then
   Begin
-    FHstmtDelete:= THstmt.Create(Nil);
-    FHstmtDelete.Hdbc:= Hdbc;
+    FHstmtDelete:= THstmt.Create(FEnv, FHdbc);
     FHstmtDelete.BlobSize:= BlobSize;
   End;
 
@@ -6798,7 +6259,7 @@ Begin
   FHstmtDelete.Execute;
 
   If (FHstmtDelete.RowsAffected = 0) And (nrByDelete In NoRowsAffected) Then
-    GlobalHenv.Error.RaiseError(Self, SQL_NO_DATA);
+    FEnv.Error.RaiseError(Self, SQL_NO_DATA);
 End;
 
 Procedure THstmt.RefreshFields(WhereClause: String);
@@ -6811,8 +6272,7 @@ Var
 Begin
   If FHstmtRefresh = Nil Then
   Begin
-    FHstmtRefresh:= THstmt.Create(Nil);
-    FHstmtRefresh.Hdbc:= Hdbc;
+    FHstmtRefresh:= THstmt.Create(FEnv, FHdbc);
     FHstmtRefresh.BlobSize:= BlobSize;
   End;
 
@@ -6875,7 +6335,7 @@ Begin
     End;
   End
   Else If nrByRefresh In NoRowsAffected Then
-    GlobalHenv.Error.RaiseError(Self, SQL_NO_DATA);
+    FEnv.Error.RaiseError(Self, SQL_NO_DATA);
 End;
 
 { ActionRow }
@@ -6888,10 +6348,10 @@ Begin
 
     //depreciated FRetCode:= SQLSetPos(FHstmt, Row, SQL_ADD, SQL_LOCK_NO_CHANGE);
     FRetCode:= SQLBulkOperations(FHstmt, SQL_ADD);
-    If (Not GlobalHenv.Error.Success(FRetCode)) And
+    If (Not FEnv.Error.Success(FRetCode)) And
        (FRetCode <> SQL_NEED_DATA) And
        ((FRetCode <> SQL_NO_DATA) Or ((FRetCode = SQL_NO_DATA) And (nrByInsert In NoRowsAffected))) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+      FEnv.Error.RaiseError(Self, FRetCode);
 
     { Handle Data-At-Execution Parameters }
     If FRetCode = SQL_NEED_DATA Then
@@ -6924,10 +6384,10 @@ Begin
     BindBlobCols(True);
 
     FRetCode:= SQLSetPos(FHstmt, Row, SQL_UPDATE, SQL_LOCK_NO_CHANGE);
-    If (Not GlobalHenv.Error.Success(FRetCode)) And
+    If (Not FEnv.Error.Success(FRetCode)) And
        (FRetCode <> SQL_NEED_DATA) And
        ((FRetCode <> SQL_NO_DATA) Or ((FRetCode = SQL_NO_DATA) And (nrByUpdate In NoRowsAffected))) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+      FEnv.Error.RaiseError(Self, FRetCode);
 
     { Handle Data-At-Execution Parameters }
     If FRetCode = SQL_NEED_DATA Then
@@ -6958,10 +6418,10 @@ Begin
     BindBlobCols(True);
 
     FRetCode:= SQLSetPos(FHstmt, Row, SQL_DELETE, SQL_LOCK_NO_CHANGE);
-    If (Not GlobalHenv.Error.Success(FRetCode)) And
+    If (Not FEnv.Error.Success(FRetCode)) And
        (FRetCode <> SQL_NEED_DATA) And
        ((FRetCode <> SQL_NO_DATA) Or ((FRetCode = SQL_NO_DATA) And (nrByDelete In NoRowsAffected))) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+      FEnv.Error.RaiseError(Self, FRetCode);
 
     { Handle Data-At-Execution Parameters }
     If FRetCode = SQL_NEED_DATA Then
@@ -6984,9 +6444,9 @@ Begin
   If (GetPosOpts And SQL_CA1_POS_REFRESH) = SQL_CA1_POS_REFRESH Then
   Begin
     FRetCode:= SQLSetPos(FHstmt, Row, SQL_REFRESH, SQL_LOCK_NO_CHANGE);
-    If (Not GlobalHenv.Error.Success(FRetCode)) And
+    If (Not FEnv.Error.Success(FRetCode)) And
        ((FRetCode <> SQL_NO_DATA) Or ((FRetCode = SQL_NO_DATA) And (nrByRefresh In NoRowsAffected))) Then
-      GlobalHenv.Error.RaiseError(Self, FRetCode);
+      FEnv.Error.RaiseError(Self, FRetCode);
   End
   Else
     RefreshFields(WhereClause);
@@ -8801,7 +8261,7 @@ Begin
   Close;
 
   FRetCode:= SQLGetTypeInfo(FHstmt, SqlType);
-  If GlobalHenv.Error.Success(FRetCode) And FetchNext Then
+  If FEnv.Error.Success(FRetCode) And FetchNext Then
   Begin
     Result:= ColString[1];
     Log(0, ColString[3]+' '+ColString[15]);  //max precision and scale
@@ -8835,70 +8295,13 @@ Begin
   UnPrepareHstmts;
 End;
 
-// this is lst so it's optimisation setting doesn't change anything else
+{ TODBCContext }
 
-{$OPTIMIZATION OFF}
-Function THenv.Init: Boolean;
-Var
-  LConnectionPooling, AConnectionPooling: SQLUINTEGER;
-Begin
-  Log(1, 'THenv.Init');
+Constructor TODBCContext.Create(Env : THEnv);
+begin
+  inherited Create;
+  FEnv := env;
+end;
 
-  If FActive Then
-  Begin
-    Init:= FActive;
-    Exit;
-  End;
-
-  If FConnectionPooling <> cpDefault Then
-  Begin
-    { Set Connection Pooling }
-    AConnectionPooling:= SQL_CP_OFF;
-    Case FConnectionPooling Of
-      cpOff:
-        AConnectionPooling:= SQL_CP_OFF;
-      cpOnePerDriver:
-        AConnectionPooling:= SQL_CP_ONE_PER_DRIVER;
-      cpOnePerEnv:
-        AConnectionPooling:= SQL_CP_ONE_PER_HENV;
-    End;
-
-    FRetCode:= SQLGetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, @LConnectionPooling, 0, Nil);
-    If FError.Success(FRetCode) And (LConnectionPooling <> AConnectionPooling) Then
-    Begin
-      FRetCode:= SQLSetEnvAttr(Pointer(SQL_NULL_HANDLE), SQL_ATTR_CONNECTION_POOLING, Pointer(AConnectionPooling), 0);
-      If Not FError.Success(FRetCode) Then
-        FError.RaiseError(Self, FRetCode);
-    End;
-  End;
-
-  { Create Handle }
-  FRetCode:= SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), @FHenv);
-  If Not FError.Success(FRetCode) Then
-    FError.RaiseError(Self, FRetCode);
-
-  { Set ODBC Version }
-  FRetCode:= SQLSetEnvAttr(FHenv, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0);
-  If Not FError.Success(FRetCode) Then
-    FError.RaiseError(Self, FRetCode);
-
-  { Set Active Field }
-  FActive:= True;
-
-  Result:= FActive;
-
-  Inherited Init;
-End;
-
-Initialization
-  MainHenv:= Nil;
-Finalization
-  If MainHenv <> Nil Then
-  Begin
-    MainHenv.FResolve:= True;
-    MainHenv.Free;
-  End;
-  MainHenv:= Nil;
-  ClearHenv;
 End.
 

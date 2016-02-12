@@ -14,6 +14,7 @@ uses
 type
   TOdbcConnection = class (TKDBConnection)
   private
+    FEnv : THenv;
     FHdbc : THdbc;
     FStmt : THstmt;
     FASAMode : Integer;
@@ -66,8 +67,8 @@ type
     Function TableSizeV(sName : String):int64; Override;
     function SupportsSizingV : Boolean; Override;
   Public
-    constructor Create(AOwner : TKDBManager; AHdbc : THdbc; AStmt : THstmt);
-    destructor Destroy; override;
+    constructor create(AOwner : TKDBManager; Env : THenv; AHdbc : THdbc; AStmt : THstmt);
+    destructor destroy; override;
   end;
 
   TOdbcExpressConnManBase = {Abstract} class (TKDBManager)
@@ -79,13 +80,16 @@ type
     FDatabase : String;
     FUsername : String;
     FPassword : String;
+    FTimeout : Integer;
     FAttributes : TStringList;
+    FEnv : THenv;
   Protected
     function ConnectionFactory: TKDBConnection; Override;
     function GetDBPlatform: TKDBPlatform; Override;
     function GetDBDetails: String; Override;
+    procedure init; override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     class function IsSupportAvailable(APlatform : TKDBPlatform; Var VMsg : String):Boolean; override;
     property Dsn : String read FDsn;
     property Driver : String read FDriver;
@@ -99,7 +103,7 @@ type
   protected
     function GetDBProvider: TKDBProvider; Override;
   public
-    constructor create(AName : String; AMaxConnCount: Integer; ADSN, AUsername, APassword: String); overload;
+    constructor create(AName : String; AMaxConnCount, ATimeout: Integer; ADSN, AUsername, APassword: String); overload;
     constructor create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
     procedure SaveSettings(ASettings : TSettingsAdapter); override;
   end;
@@ -108,7 +112,7 @@ type
   protected
     function GetDBProvider: TKDBProvider; Override;
   public
-    constructor create(AName : String; AMaxConnCount: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
+    constructor create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
     constructor create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
     procedure SaveSettings(ASettings : TSettingsAdapter); override;
   end;
@@ -125,23 +129,22 @@ function StandardODBCDriverName(APlatform: TKDBPlatform): String;
 
 implementation
 
-const
-  ASSERT_UNIT = 'KDBOdbcExpress';
 
-constructor TOdbcConnection.create(AOwner : TKDBManager; AHdbc : THdbc; AStmt : THstmt);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.create';
+constructor TOdbcConnection.create(AOwner : TKDBManager; Env : THenv; AHdbc : THdbc; AStmt : THstmt);
 begin
   inherited create(AOwner);
+  FEnv := Env;
   FHdbc := AHdbc;
   FStmt := AStmt;
   FASAMode := -1; // transaction isolation level unknown
 end;
 
 destructor TOdbcConnection.destroy;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.destroy;';
 begin
   FStmt.free;
+  FStmt := Nil;
   FHdbc.free;
+  FHdbc := Nil;
   inherited;
 end;
 
@@ -158,7 +161,6 @@ begin
 end;
 
 function TOdbcConnection.GetColBlobV(ACol: Word): TBytes;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColBlob';
 var
   mem : TMemoryStream;
 begin
@@ -174,49 +176,41 @@ begin
 end;
 
 function TOdbcConnection.GetColCountV: Integer;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColCount';
 begin
   Result := FStmt.ColCount;
 end;
 
 function TOdbcConnection.GetColStringV(ACol: Word): String;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColString';
 begin
   Result := FStmt.ColString[ACol];
 end;
 
 function TOdbcConnection.GetColIntegerV(ACol: Word): Integer;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColInteger';
 begin
   Result := FStmt.ColInteger[ACol];
 end;
 
 function TOdbcConnection.GetColInt64V(ACol: Word): Int64;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColInt64';
 begin
   Result := FStmt.ColInt64[ACol];
 end;
 
 function TOdbcConnection.GetColDoubleV(ACol: Word): Double;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColDouble';
 begin
   Result := FStmt.ColDouble[ACol];
 end;
 
 function TOdbcConnection.GetColMemoryV(ACol: Word): TMemoryStream;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColMemory';
 begin
   Result := FStmt.ColMemory[ACol];
 end;
 
 function TOdbcConnection.GetColNullV(ACol: Word): Boolean;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColNull';
 begin
   Result := FStmt.ColNull[ACol];
 end;
 
 function TOdbcConnection.GetColTimestampV(ACol: Word): KDate.TTimestamp;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColTimestamp';
 begin
   Result := FStmt.ColTimestamp[ACol];
 end;
@@ -293,25 +287,21 @@ begin
 end;
 
 function TOdbcConnection.GetColTypeV(ACol: Word): TKDBColumnType;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColType';
 begin
   Result := ConvertColType(FStmt.ColType[ACol])
 end;
 
 function TOdbcConnection.GetColKeyV(ACol: Word): Integer;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetColKey';
 begin
   Result := GetColInteger(ACol);
 end;
 
 function TOdbcConnection.GetRowsAffectedV: Integer;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.GetRowsAffected';
 begin
   Result := FStmt.RowsAffected;
 end;
 
 procedure TOdbcConnection.RenameTableV(AOldTableName, ANewTableName: String);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.RenameTable';
 begin
   if Owner.Platform = kdbASA then
     FStmt.SQL := 'ALTER TABLE ' + AOldTableName + ' RENAME ' + ANewTableName
@@ -325,7 +315,6 @@ begin
 end;
 
 procedure TOdbcConnection.DropTableV(ATableName : String);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.RenameColumn';
 begin
   SQL := 'Drop Table ' + ATableName;
   Prepare;
@@ -334,7 +323,6 @@ begin
 end;
 
 procedure TOdbcConnection.DropColumnV(ATableName, aColumnName : String);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.RenameColumn';
 begin
   SQL := 'ALTER TABLE ' + ATableName+' DROP COLUMN  ' + aColumnName;
   Prepare;
@@ -343,7 +331,6 @@ begin
 end;
 
 procedure TOdbcConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName: String; AColumnDetails: String = '');
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.RenameColumn';
 begin
   if Owner.Platform = kdbASA then
     FStmt.SQL := 'ALTER TABLE ' + ATableName + ' RENAME ' + AOldColumnName+' TO '+ANewColumnName
@@ -358,7 +345,7 @@ procedure TOdbcConnection.ListTablesV(AList : TStrings);
 var
   LCat: TOECatalog;
 begin
-  LCat := TOECatalog.Create(NIL);
+  LCat := TOECatalog.Create(FENv, FHdbc);
   try
     LCat.hDbc := FHdbc;
     LCat.TableType := [ttTable];
@@ -369,7 +356,6 @@ begin
 end;
 
 procedure TOdbcConnection.ClearDatabaseV;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.ClearDatabase;';
 var
   LTables: TStringList;
   i: Integer;
@@ -406,7 +392,6 @@ begin
 end;
 
 procedure TOdbcConnection.PrepareV;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Prepare;';
 begin
   if Owner.Platform = kdbASA then
     begin
@@ -420,51 +405,43 @@ begin
 end;
 
 procedure TOdbcConnection.ExecuteV;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Execute;';
 begin
   FStmt.Execute;
 end;
 
 procedure TOdbcConnection.TerminateV;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Terminate;';
 begin
   FStmt.Terminate;
 end;
 
 procedure TOdbcConnection.StartTransactV;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.StartTransact;';
 begin
   FHdbc.StartTransact;
 end;
 
 procedure TOdbcConnection.CommitV;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Commit;';
 begin
   FHdbc.Commit;
   FHdbc.EndTransact;
 end;
 
 procedure TOdbcConnection.RollbackV;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.Rollback;';
 begin
   FHdbc.rollback;
   FHdbc.EndTransact;
 end;
 
 function TOdbcConnection.FetchNextV: Boolean;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.FetchNext';
 begin
   Result := FStmt.FetchNext;
 end;
 
 function TOdbcConnection.ColByNameV(AColName: String): Integer;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.ColByName';
 begin
   Result := FStmt.ColByName(AColName);
 end;
 
 function TOdbcConnection.ColNameV(ACol: Integer): String;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.ColByName';
 begin
   Result := FStmt.ColNames[ACol-1];
 end;
@@ -498,7 +475,6 @@ type
   end;
 
 procedure TOdbcConnection.BindInt64V(AParamName: String; AParamValue: Int64);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindInt64';
 var
   LBind: TOdbcBoundInt64;
 begin
@@ -509,7 +485,6 @@ begin
 end;
 
 procedure TOdbcConnection.BindIntegerV(AParamName: String; AParamValue: Integer);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindInteger';
 var
   LBind: TOdbcBoundInt;
 begin
@@ -520,13 +495,11 @@ begin
 end;
 
 procedure TOdbcConnection.BindKeyV(AParamName: String; AParamValue: Integer);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindKey';
 begin
   BindInteger(AParamName, AParamValue);
 end;
 
 procedure TOdbcConnection.BindDoubleV(AParamName: String; AParamValue: Double);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindDouble';
 var
   LBind: TOdbcBoundDouble;
 begin
@@ -537,7 +510,6 @@ begin
 end;
 
 procedure TOdbcConnection.BindStringV(AParamName: String; AParamValue: String);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindString';
 var
   LBind: TOdbcBoundString;
 begin
@@ -548,7 +520,6 @@ begin
 end;
 
 procedure TOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: KDate.TTimeStamp);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindTimeStamp';
 var
   LBind: TOdbcBoundDate;
 begin
@@ -563,7 +534,6 @@ begin
 end;
 
 procedure TOdbcConnection.BindBlobV(AParamName: String; AParamValue: TMemoryStream);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindBinary';
 var
   LBind: TMemoryStream;
 begin
@@ -575,7 +545,6 @@ begin
 end;
 
 procedure TOdbcConnection.BindNullV(AParamName: String);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.BindNull';
 begin
   FStmt.BindNullByName(AParamName);
 end;
@@ -605,6 +574,7 @@ End;
 
 function TOdbcConnection.DatabaseSizeMSSQL : int64;
 Begin
+  try
   SQL := 'sp_spaceused';
   Prepare;
   try
@@ -614,10 +584,22 @@ Begin
   Finally
     Terminate;
   End;
+  Except
+    SQL := 'select sum(reserved_page_count) * 8.0 * 1024 from sys.dm_db_partition_stats';
+    Prepare;
+    try
+      Execute;
+      FetchNext;
+      result := ColInt64[1];
+    Finally
+      Terminate;
+    End;
+  end;
 End;
 
 function TOdbcConnection.TableSizeMSSQL(sName : String) : int64;
 Begin
+  try
   result := 0;
   SQL := 'sp_spaceused '+sName;
   Prepare;
@@ -628,6 +610,18 @@ Begin
     result := ReadBytes(ColStringByName['reserved']);
   Finally
     Terminate;
+  End;
+  Except
+    SQL := 'select sum(reserved_page_count) * 8.0 * 1024 from sys.dm_db_partition_stats, sys.objects where '+
+        'sys.dm_db_partition_stats.object_id = sys.objects.object_id and sys.objects.name = '''+sName+''' group by sys.objects.name';
+    Prepare;
+    try
+      Execute;
+      FetchNext;
+      result := ColInt64[1];
+    Finally
+      Terminate;
+    End;
   End;
 End;
 
@@ -729,7 +723,6 @@ begin
 end;
 
 function TOdbcConnection.FetchTableMetaData(ACat: TOECatalog; ASrc : TCatalogTable) : TKDBTable;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcConnection.FetchTableMetaData';
 var
   i : integer;
 begin
@@ -766,7 +759,7 @@ var
   i : integer;
   LRes : TKDBMetaData;
 begin
-  LCat := TOECatalog.Create(NIL);
+  LCat := TOECatalog.Create(FEnv, FHdbc);
   try
     LCat.hDbc := FHdbc;
     LRes := TKDBMetaData.create;
@@ -796,10 +789,10 @@ end;
 
 { TKDBOdbcDSN }
 
-constructor TKDBOdbcDSN.create(AName : String; AMaxConnCount: Integer; ADSN, AUsername, APassword: String);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcDSN.create';
+constructor TKDBOdbcDSN.create(AName : String; AMaxConnCount, ATimeout: Integer; ADSN, AUsername, APassword: String);
 begin
   inherited create(AName, AMaxConnCount);
+  FTimeout := ATimeout;
   FAttributes := TStringList.create;
   FDsn := ADSN;
   FUsername := AUsername;
@@ -809,7 +802,7 @@ end;
 
 constructor TKDBOdbcDSN.create(AName : String; ASettings : TSettingsAdapter; AIdent : String = '');
 begin
-  create(AName, ASettings.ReadInteger('MaxConnections', 20), ASettings.ReadString('DSN', ''),
+  create(AName, ASettings.ReadInteger('MaxConnections', 20), ASettings.ReadInteger('Timeout', 0), ASettings.ReadString('DSN', ''),
          ASettings.ReadString('Username', ''), ASettings.ReadEncryptedString('Password', ''));
 end;
 
@@ -824,7 +817,6 @@ begin
 end;
 
 function TKDBOdbcDSN.GetDBProvider: TKDBProvider;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcDSN.GetDBPlrovider';
 begin
   result := kdbpDSN;
 end;
@@ -833,7 +825,7 @@ end;
 
 constructor TKDBOdbcDirect.create(AName : String; ASettings : TSettingsAdapter; AIdent : String = '');
 begin
-  create(AName, ASettings.ReadInteger('MaxConnections', 20), ASettings.ReadString('ODBCDriver', ''),
+  create(AName, ASettings.ReadInteger('MaxConnections', 20), ASettings.ReadInteger('Timeout', 0), ASettings.ReadString('ODBCDriver', ''),
                 ASettings.ReadString('Server', ''),  ASettings.ReadString('Database', ''),
                 ASettings.ReadString('Username', ''), ASettings.ReadEncryptedString('Password', ''));
 end;
@@ -850,8 +842,7 @@ begin
   ASettings.WriteEncryptedString('Password', FPassword);
 end;
 
-constructor TKDBOdbcDirect.create(AName : String; AMaxConnCount: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcDirect.create';
+constructor TKDBOdbcDirect.create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
   inherited create(Aname, AMaxConnCount);
   FAttributes := TStringList.create;
@@ -861,6 +852,7 @@ begin
   FUsername := AUsername;
   FPassword := APassword;
   FPlatform := RecogniseDriver(ADriver);
+  FTimeout := ATimeout;
 
   if (FPlatform = kdbAccess) or ((FPlatform = kdbUnknown) and (pos('excel', lowercase(ADriver))> 0)) then
     begin
@@ -889,7 +881,6 @@ begin
 end;
 
 function TKDBOdbcDirect.GetDBProvider: TKDBProvider;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcDirect.GetDBPlrovider';
 begin
   result := kdbpODBC;
 end;
@@ -897,21 +888,25 @@ end;
 { TOdbcExpressConnManBase }
 
 destructor TOdbcExpressConnManBase.Destroy;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcExpressConnManBase.Destroy';
 begin
   FAttributes.free;
+  FEnv.Free;
   inherited;
 end;
 
+procedure TOdbcExpressConnManBase.init;
+begin
+  FEnv := THenv.create;
+end;
+
 function TOdbcExpressConnManBase.ConnectionFactory: TKDBConnection;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcExpressConnManBase.ConnectionFactory:';
 var
   LHdbc : THdbc;
   LStmt : THStmt;
   i : integer;
 begin
   LStmt := nil;
-  LHdbc := THdbc.Create(NIL);
+  LHdbc := THdbc.Create(FEnv);
   try
     LHdbc.DataSource := FDsn;
     LHdbc.Driver := FDriver;
@@ -926,17 +921,21 @@ begin
       LHdbc.Attributes.Add('Integrated Security=SSPI');
       LHdbc.Attributes.Add('Trusted_Connection=Yes');
     End;
+    if FTimeout <> 0 then
+      LHdbc.LoginTimeOut := FTimeout;
+    LHdbc.Connect;
     LHdbc.InfoPrompt := SQL_DRIVER_NOPROMPT;
     LHdbc.IsolationLevel := SQL_TXN_READ_COMMITTED;
     LHdbc.CursorLib := SQL_CUR_USE_DRIVER;
-    LHdbc.Connect;
-    LStmt := THstmt.Create(NIL);
+    LStmt := THstmt.Create(FEnv, LHDBC);
     LStmt.hDbc := LHdbc;
     LStmt.ConcurrencyType := SQL_CONCUR_READ_ONLY;
     LStmt.CursorType := SQL_CURSOR_FORWARD_ONLY;
     LStmt.RowSetSize := 1;
     LStmt.BindBookMarks := False;
-    result := TOdbcConnection.create(self, LHdbc, LStmt);
+    if FTimeout <> 0 then
+      LStmt.QueryTimeOut := FTimeout;
+    result := TOdbcConnection.create(self, FEnv, LHdbc, LStmt);
   except
     on e:exception do
       begin
@@ -950,13 +949,11 @@ begin
 end;
 
 function TOdbcExpressConnManBase.GetDBPlatform: TKDBPlatform;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcExpressConnManBase.GetDBPlatform:';
 begin
   result := FPlatform;
 end;
 
 function TOdbcExpressConnManBase.GetDBDetails: String;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TOdbcExpressConnManBase.GetDBDetails:';
 begin
   if FDsn = '' then
     Result := '\\' + FDriver + '\' + FServer + '\' + FDatabase + ' [' + FUsername + ']'
@@ -1013,7 +1010,6 @@ begin
 end;
 
 constructor TKDBOdbcExpress.create(AName : String; AMaxConnCount: Integer; ADSN, ADriver, AServer, ADatabase, AUsername, APassword: String);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBOdbcExpress.create';
 begin
   inherited create(Aname, AMaxConnCount);
   FAttributes := TIdStringList.create;
