@@ -2393,6 +2393,24 @@ begin
       result.free;
     end;
   end
+  else if id = 'http://snomed.info/sct?fhir_vs' then
+  begin
+    result := TFhirValueSet.Create;
+    try
+      result.url := id;
+      result.status := ConformanceResourceStatusActive;
+      result.version := VersionDate;
+      result.name := 'SNOMED CT Reference Set (All of SNOMED CT)';
+      result.description := 'SNOMED CT Reference Set (All of SNOMED CT)';
+      result.date := NowUTC;
+      result.compose := TFhirValueSetCompose.Create;
+      inc := result.compose.includeList.Append;
+      inc.system := 'http://snomed.info/sct';
+      result.link;
+    finally
+      result.free;
+    end;
+  end
   else if id.StartsWith('http://snomed.info/sct?fhir_vs=refset/') And ReferenceSetExists(id.Substring(38)) then
   begin
     result := TFhirValueSet.Create;

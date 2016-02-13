@@ -296,7 +296,7 @@ begin
         raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID', lang), [name]));
     end
   end
-  else if isResourceName(modifier) then
+  else if isResourceName(modifier, true) then
   begin
     if IsId(value) then
       result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(modifier) + ''') and Value = ''' + sqlwrapString(value) + ''')'
@@ -314,7 +314,9 @@ begin
     end
     else
       raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
-  end;
+  end
+  else
+    raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
 end;
 
 procedure TSearchProcessor.ProcessTokenParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);

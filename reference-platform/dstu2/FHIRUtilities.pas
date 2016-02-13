@@ -58,7 +58,7 @@ function HumanNamesAsText(names : TFhirHumanNameList):String;
 function HumanNameAsText(name : TFhirHumanName):String;
 function GetEmailAddress(contacts : TFhirContactPointList):String;
 function ResourceTypeByName(name : String) : TFhirResourceType;
-function isResourceName(name : String) : boolean;
+function isResourceName(name : String; canbeLower : boolean = false) : boolean;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
@@ -549,11 +549,13 @@ begin
   result := TFhirResourceType(index);
 end;
 
-function isResourceName(name : String) : boolean;
+function isResourceName(name : String; canbeLower : boolean = false) : boolean;
 var
   index : Integer;
 begin
   index := StringArrayIndexOfSensitive(CODES_TFhirResourceType, name);
+  if (index <= 0) and canbeLower then
+    index := StringArrayIndexOfSensitive(LOWERCASE_CODES_TFhirResourceType, name);
   result := index > 0;
 end;
 

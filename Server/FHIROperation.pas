@@ -4356,7 +4356,7 @@ begin
       FConnection.BindString('ver', version);
     FConnection.Execute;
     if not FConnection.FetchNext then
-      raise Exception.create('Unknown '+CODES_TFHIRResourceType[aType]+' '+url);
+      raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' '+url, 404, IssueTypeUnknown);
     needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
     parser := MakeParser(lang, ffJson, s, xppDrop);
@@ -4364,7 +4364,7 @@ begin
       result := parser.resource.Link as TFHIRResource;
       try
         if FConnection.FetchNext then
-          raise Exception.create('Found multiple matches for '+CODES_TFHIRResourceType[aType]+' '+url+'. Pick one by the resource id');
+          raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Found multiple matches for '+CODES_TFHIRResourceType[aType]+' '+url+'. Pick one by the resource id', 404, IssueTypeNotFound);
         result.link;
       finally
         result.free;
@@ -4446,14 +4446,13 @@ begin
         end;
       end
       else
-        raise Exception.Create('Unable to find '+Codes_TFHIRResourceType[aType]+'/'+id);
+        raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unable to find '+Codes_TFHIRResourceType[aType]+'/'+id, 404, IssueTypeNotFound);
     finally
       FConnection.Terminate;
     end;
   end
   else
-    raise Exception.create('Unknown resource '+Codes_TFHIRResourceType[aType]+'/'+id);
-
+    raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unknown resource '+Codes_TFHIRResourceType[aType]+'/'+id, 404, IssueTypeNotFound);
 end;
 
 function TFhirOperationManager.GetResourceByKey(key: integer; var needSecure : boolean): TFHIRResource;
@@ -4477,7 +4476,7 @@ begin
       end;
     end
     else
-      raise Exception.Create('Unable to find resource '+inttostr(key));
+      raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unable to find resource '+inttostr(key), 404, IssueTypeNotFound);
   finally
     FConnection.Terminate;
   end;
@@ -4497,19 +4496,19 @@ begin
       url := url.Substring(FRepository.Bases[i].Length);
 
   if (url.StartsWith('http://') or url.StartsWith('https://')) then
-    raise Exception.Create('Cannot resolve external reference: '+url);
+    raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Cannot resolve external reference: '+url, 404, IssueTypeNotFound);
 
   parts := url.Split(['/']);
   if length(parts) = 2 then
   begin
     i := StringArrayIndexOfSensitive(CODES_TFhirResourceType, parts[0]);
     if (i = -1) then
-      raise Exception.Create('URL not understood: '+url);
+      raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
     rType := TFhirResourceType(i);
     id := parts[1];
   end
   else
-    raise Exception.Create('URL not understood: '+url);
+    raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
 
   if FindResource(rtype, id, false, key, nil, nil, compartments) then
   begin
@@ -4529,7 +4528,7 @@ begin
         end;
       end
       else
-        raise Exception.Create('Unable to find resource '+inttostr(key));
+        raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unable to find resource '+inttostr(key), 404, IssueTypeNotFound);
     finally
       FConnection.Terminate;
     end;

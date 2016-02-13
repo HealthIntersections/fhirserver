@@ -62,7 +62,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = test
+        as.returnvalue = "Database Stability fixes, various bugs fixes"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -126,7 +126,7 @@ begin
         id = {E9FDCF56-5FC3-4C92-BFE6-FF1E5C436F78}
         modifier = smNone
         newvalue = %FhirVersion%
-        variablename = FhirVersion21
+        variablename = FhirVersion3
       end
       action.variables.logvalues
       begin
@@ -135,7 +135,7 @@ begin
         logallvariables = false
         variablestoragestring = "BuildCount" +
                                 "FhirVersion2" +
-                                "FhirVersion21" +
+                                "FhirVersion3" +
                                 "purpose" +
                                 ""
       end
@@ -185,13 +185,11 @@ begin
       action.group
       begin
         description = "Build DSTU 2"
-        enabled = false
         id = {673A1E74-E928-4C1F-A6EF-29EA4FF617A0}
         action.files.delete
         begin
           deletehidden = false
           deletereadonly = false
-          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\FHIRServer2.exe
           id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
@@ -268,7 +266,7 @@ begin
                                "-w-UNSAFE_CODE=0" +
                                "-w-UNSAFE_CAST=0" +
                                ""
-            conditionals = DSTU2
+            conditionals = FHIR_DSTU2
             consoleapp = false
             debuginfo = false
             definitionsonly = true
@@ -475,14 +473,15 @@ begin
       end
       action.group
       begin
-        description = "Build DSTU 2.1"
+        description = "Build DSTU 3"
+        enabled = false
         id = {1DBFCDC7-7364-4371-BB71-4CBBDADD9E81}
         action.files.delete
         begin
           deletehidden = false
           deletereadonly = false
           failifnofile = false
-          filespec = C:\\work\\fhirserver\\Exec\\FHIRServer21.exe
+          filespec = C:\\work\\fhirserver\\Exec\\FHIRServer3.exe
           id = {91E95BB6-0B1C-46FB-B761-F29762E59894}
         end
         action.delphi.build
@@ -500,7 +499,7 @@ begin
           configname = Release
           debugversionnumbers = false
           delphiversion = Delphi10Seattle
-          description = "Compile the Server (DSTU21)"
+          description = "Compile the Server (DSTU3)"
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -520,7 +519,7 @@ begin
           majorversion = 0
           minorversion = 0
           platform = Win64
-          projectfile = C:\\work\\fhirserver\\Server\\FHIRServer21.dpr
+          projectfile = C:\\work\\fhirserver\\Server\\FHIRServer3.dpr
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
@@ -557,7 +556,7 @@ begin
                                "-w-UNSAFE_CODE=0" +
                                "-w-UNSAFE_CAST=0" +
                                ""
-            conditionals = DSTU21
+            conditionals = FHIR_DSTU3
             consoleapp = false
             debuginfo = false
             definitionsonly = true
@@ -606,7 +605,7 @@ begin
         action.process.execute
         begin
           captureoutput = true
-          description = "Add Map (21)"
+          description = "Add Map (3)"
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -617,7 +616,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "-j -e C:\\work\\fhirserver\\Exec\\FhirServer21.map"
+          params = "-j -e C:\\work\\fhirserver\\Exec\\FhirServer3.map"
           programname = C:\\tools\\MakeJclDbg.exe
           redirectstderr = true
           returncodecomparator = rcEqualTo
@@ -641,7 +640,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer21.exe\""
+          params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer3.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo
@@ -658,8 +657,8 @@ begin
           deleteifblank = false
           description = "Set AppVerName in Inno Script"
           id = {E3A38EAF-30F3-4B06-9770-C111B7E0A1E7}
-          inifile = C:\\work\\fhirserver\\install\\install21.iss
-          newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion21%)"
+          inifile = C:\\work\\fhirserver\\install\\install3.iss
+          newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion3%)"
           section = Setup
           valuename = AppVerName
           valuetype = vtString
@@ -670,8 +669,8 @@ begin
           deleteifblank = false
           description = "Set OutputFilename in Inno Script"
           id = {4CCDCB7F-C397-47A0-A936-0D320AF5B9D9}
-          inifile = C:\\work\\fhirserver\\install\\install21.iss
-          newvalue = fhirserver21-1.0.%BuildCount%
+          inifile = C:\\work\\fhirserver\\install\\install3.iss
+          newvalue = fhirserver3-1.0.%BuildCount%
           section = Setup
           valuename = OutputBaseFilename
           valuetype = vtString
@@ -681,7 +680,7 @@ begin
           description = "Build the server install"
           id = {8413CA91-F62B-48D7-952E-8CEF6C236C73}
           innoversion = Inno5
-          scriptfile = C:\\work\\fhirserver\\install\\install21.iss
+          scriptfile = C:\\work\\fhirserver\\install\\install3.iss
           showprogress = true
           unicode = false
           usecommandline = true
@@ -701,7 +700,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver21-1.0.%BuildCount%.exe\""
+          params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver3-1.0.%BuildCount%.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo
@@ -721,13 +720,13 @@ begin
           connectionname = HealthIntersections
           detailedlogging = false
           enabletimeout = false
-          filespec = fhirserver21-1.0.%BuildCount%.exe
+          filespec = fhirserver3-1.0.%BuildCount%.exe
           forcenextclockskewupdate = true
           gaplength = 5
           id = {616E5E3D-0227-428E-ABAE-E5FE924B32D3}
           localdir = C:\\work\\fhirserver\\install\\build
           recursive = false
-          remotefile = public_html/FhirServer/fhirserver21-1.0.%BuildCount%.exe
+          remotefile = public_html/FhirServer/fhirserver3-1.0.%BuildCount%.exe
           retryifuploadfails = true
           serverclockskew = 0
           throttlespeed = 128
@@ -749,9 +748,9 @@ begin
           insertatxpath = /rss/channel/link
           nodename = item
           nodetext = "" +
-                     "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU21)</title>" +
-                     "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver21-1.0.%BuildCount%.exe</link>" +
-                     "      <description>DSTU2.1. %BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
+                     "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU3)</title>" +
+                     "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.%BuildCount%.exe</link>" +
+                     "      <description>DSTU3. %BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
                      ""
           parentxpath = /rss/channel
           parserver = HighestMSXML
@@ -872,7 +871,7 @@ begin
   end
   variable
   begin
-    name = FhirVersion21
+    name = FhirVersion3
     variablescope = vtProject
   end
   variable

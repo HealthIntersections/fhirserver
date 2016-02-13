@@ -7,11 +7,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server (DEV)
-AppVerName=1.0.30 (FHIR Version 1.3.0.7546)
+AppVerName=1.0.33 (FHIR Version 1.3.0.7667)
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver21-1.0.30
+OutputBaseFilename=fhirserver3-1.0.33
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -74,7 +74,7 @@ Source: "C:\work\fhirserver\install\readme.txt";                      DestDir: "
 Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "{app}";            Flags: ignoreversion;
 
 ; Executable files
-Source: "C:\work\fhirserver\Exec\FHIRServer21.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Exec\auth.example.ini";                   DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "auth.ini" 

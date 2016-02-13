@@ -13,7 +13,11 @@ One the installation is complete you must do the following things:
   - Define an admin user in the ini file [adminuser] section
   - generally review other settings
 (2) possibly edit auth.ini to configure oauth relationships etc
-(3) initialise the database: run fhirserver.exe -mount -password yourpassword 
+(3) initialise the database: 
+      run fhirserver.exe -mount -password yourpassword 
+
+  or, if this is an upgrade from an older version of fhirserver: 
+      run fhirserver.exe -remount -password yourpassword
 
 Note: you do not need to run SSL, but if you want to, you need to use openSSL 
 to create or get valid certificates (public / privsate key in DER format, 
