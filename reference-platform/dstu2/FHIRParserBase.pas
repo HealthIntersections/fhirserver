@@ -2963,7 +2963,7 @@ begin
 
     subject.predicate('a', 'owl:Ontology');
     subject.predicate('a', 'owl:NamedIndividual');
-    subject.predicate('a', 'fhir:EntryPoint');
+    subject.predicate('fhir:resourceType', CODES_TFHIRResourceType[oResource.ResourceType]);
     subject.predicate('owl:imports', 'http://hl7.org/fhir');
 
     composeResource(subject, oResource);

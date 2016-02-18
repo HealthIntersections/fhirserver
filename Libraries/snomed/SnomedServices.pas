@@ -58,8 +58,9 @@ Uses
   TerminologyServices;
 
 Const
-  SNOMED_CACHE_VERSION = '10';
+  SNOMED_CACHE_VERSION = '11';
   IS_A_MAGIC : UInt64 = 116680003;
+  PREFERRED_MAGIC : UInt64 = 900000000000548007;
   ALL_DISPLAY_NAMES = $FF;
 
 type
@@ -161,10 +162,13 @@ Type
 
   // 3. a list of descriptions with flag. we do not store description id
 const
-  DESC_SIZE = 31;
-  MASK_DESC_STATUS = $0F;
-  MASK_DESC_STYLE = $70;
-  MASK_DESC_CAPS = $80; // this leaves one bit unused (8)
+  DESC_SIZE = 35;
+  MASK_DESC_STATUS = $0F; // bits 1-4
+  MASK_DESC_STYLE = $30;  // bits 5-6
+  MASK_DESC_CAPS_MASK = $C0;   // bits 7-8
+  MASK_DESC_CAPS_NONE = $00;
+  MASK_DESC_CAPS_FIRST = $40;
+  MASK_DESC_CAPS_ALL = $80;
 
   VAL_DESC_Unspecified = 0;
   VAL_DESC_Preferred = 1;
@@ -191,7 +195,7 @@ Type
       FBuilder : TAdvBytesBuilder;
     Public
       function Count : Cardinal;
-      Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, refsets : Cardinal; var iFlags : Byte);
+      Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, refsets, valueses : Cardinal; var iFlags : Byte);
       function ConceptByIndex(iIndex : Cardinal) : cardinal;
 
 
@@ -199,7 +203,7 @@ Type
       Function AddDescription(iDesc : Cardinal; id : UInt64; date : TSnomedDate; concept, module, kind : Cardinal; iflags : Byte) : Cardinal;
       Procedure UpdateDetails(iIndex : Cardinal; id : UInt64; concept : Cardinal);
       Procedure DoneBuild;
-      Procedure SetRefsets(iIndex : Cardinal; refsets : Cardinal);
+      Procedure SetRefsets(iIndex : Cardinal; refsets, valueses : Cardinal);
   End;
 
   TSnomedDescriptionIndex = class (TAdvObject)
@@ -302,10 +306,10 @@ Type
       FBuilder : TAdvBytesBuilder;
     Public
       // for Persistence
-      Procedure GetRelationship(iIndex: Cardinal; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags : Byte; var Group : Integer);
+      Procedure GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags : Byte; var Group : Integer);
 
       Procedure StartBuild;
-      Function AddRelationship(Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags : Byte; Group : integer) : Cardinal;
+      Function AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags : Byte; Group : integer) : Cardinal;
       Procedure DoneBuild;
   End;
 
@@ -313,9 +317,15 @@ Type
   TSnomedReferenceSetMember = record
     kind : byte; // 0 = concept, 1 = desc, 2 = relationship
     Ref : Cardinal; // desc or term depending on ref set type
+    values : Cardinal;
   End;
   TSnomedReferenceSetMemberArray = array of TSnomedReferenceSetMember;
-
+  TRefSetMemberEntry = record
+    refset : cardinal;
+    types : cardinal;
+    values : cardinal;
+  end;
+  TRefSetMemberEntryArray = array of TRefSetMemberEntry;
 
   // 2. a list of list of references
   TSnomedReferenceSetMembers = class (TAdvObject)
@@ -339,12 +349,12 @@ Type
     FLength : Cardinal;
     FBuilder : TAdvBytesBuilder;
   Public
-    Procedure GetReferenceSet(iIndex: Cardinal; var iDefinition, iMembersByRef, iMembersByName: Cardinal);
+    Procedure GetReferenceSet(iIndex: Cardinal; var iDefinition, iMembersByRef, iMembersByName, iFieldTypes: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
     Function Count : Integer;
 
     Procedure StartBuild;
-    Procedure AddReferenceSet(iDefinition, iMembersByRef, iMembersByName: Cardinal);
+    Procedure AddReferenceSet(iDefinition, iMembersByRef, iMembersByName, iFieldTypes: Cardinal);
     Procedure DoneBuild;
   End;
 
@@ -391,7 +401,7 @@ operations
   Private
     FActiveRoots : UInt64Array;
     FInactiveRoots : UInt64Array;
-    FIs_a_Index : Cardinal;
+    FIs_a_Index, FPreferredTerm : Cardinal;
     FStrings : TSnomedStrings;
     FRefs : TSnomedReferences;
     FDesc : TSnomedDescriptions;
@@ -445,9 +455,9 @@ operations
     Procedure ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
     Function GetConceptId(Const iConcept : Cardinal) : String; Overload;
     Procedure GetMatchInfo(iConcept : Cardinal; var sTerm, sFSN, sPreferred : String);
-    Function GetConceptRefSet(iConcept : Cardinal; bByName : Boolean; var iMembers : cardinal) : Cardinal;
-    Function GetDescRefsets(iDesc : Cardinal) : TCardinalArray;
-    Function GetConceptRefsets(iDesc : Cardinal) : TCardinalArray;
+    Function GetConceptRefSet(iConcept : Cardinal; bByName : Boolean; var iMembers, iTypes : cardinal) : Cardinal;
+    Function GetDescRefsets(iDesc : Cardinal) : TRefSetMemberEntryArray;
+    Function GetConceptRefsets(iDesc : Cardinal) : TRefSetMemberEntryArray;
     Function CheckLangSet(sTerm : String) : Cardinal;
     function GetConceptDescendents(index : Cardinal) : TCardinalArray;
     Function GetPN(iDescriptions : TCardinalArray) : String;
@@ -468,7 +478,6 @@ operations
     Property Loaded : Boolean read FLoaded write FLoaded;
     Property VersionUri : String read FVersionUri write FVersionUri;
     Property VersionDate : String read FVersionDate write FVersionDate;
-
 
     // generic terminology server interface
     function TotalCount : integer; override;
@@ -535,7 +544,8 @@ members
 function FindMember(aMembers : TSnomedReferenceSetMemberArray; iRef : Cardinal; var iIndex: integer): boolean;
 function FindCardinalInArray(a : TCardinalArray; iValue : Cardinal; var iIndex : Integer):Boolean;
 Function GetDescType(Flags : Byte) : String;
-Function GetDescStatus(Flags : Byte) : String;
+Function GetDescStatus1(Flags : Byte) : String;
+Function GetDescStatus2(Flags : Byte) : String;
 Function GetRelChar(Flags : Byte) : String;
 Function GetRelRefinability(Flags : Byte) : String;
 
@@ -645,12 +655,13 @@ end;
 
 { TSnomedDescriptions }
 
-procedure TSnomedDescriptions.SetRefsets(iIndex, refsets: Cardinal);
+procedure TSnomedDescriptions.SetRefsets(iIndex, refsets, valueses: Cardinal);
 begin
   if (iIndex >= FLength) then
     Raise ESnomedServices.Create('Wrong length index getting snomed Desc Details');
-  assert(iIndex mod 31 = 0);
+  assert(iIndex mod DESC_SIZE = 0);
   Move(refsets, FMaster[iIndex+27], 4);
+  Move(valueses, FMaster[iIndex+31], 4);
 end;
 
 procedure TSnomedDescriptions.StartBuild;
@@ -669,6 +680,7 @@ begin
   FBuilder.AddCardinal(kind);    // 25
   FBuilder.AddWord(date);        // 27
   FBuilder.AddCardinal(0); // refsets
+  FBuilder.AddCardinal(0); // refsets values
 end;
 
 function TSnomedDescriptions.ConceptByIndex(iIndex: Cardinal): cardinal;
@@ -690,7 +702,7 @@ begin
   FBuilder.Free;
 end;
 
-procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, refsets : Cardinal; var iflags : Byte);
+procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, refsets, valueses : Cardinal; var iflags : Byte);
 Begin
   if (iIndex >= FLength) then
     Raise ESnomedServices.Create('Wrong length index getting snomed Desc Details');
@@ -702,6 +714,7 @@ Begin
   Move(FMaster[iIndex+21], kind, 4);
   Move(FMaster[iIndex+25], date, 2);
   Move(FMaster[iIndex+27], refsets, 4);
+  Move(FMaster[iIndex+31], valueses, 4);
 End;
 
 
@@ -1118,16 +1131,18 @@ begin
   Finally
     oFile.Free;
   End;
+  if not Concept.FindConcept(PREFERRED_MAGIC, FPreferredTerm) then
+    FPreferredTerm := 0;
   Loaded := true;
 end;
 
 function TSnomedServices.ReferenceSetExists(sid: String): Boolean;
 var
-  index, members : Cardinal;
+  index, members, types : Cardinal;
 begin
   result := FConcept.FindConcept(StringToId(sid), index);
   if result then
-    result := GetConceptRefSet(index, true, members) > 0;
+    result := GetConceptRefSet(index, true, members, types) > 0;
 end;
 
 procedure TSnomedServices.Save(const sFilename: String);
@@ -1358,7 +1373,7 @@ var
     Descriptions : Cardinal;
     Inbounds : Cardinal;
     outbounds : Cardinal;
-    refsets : Cardinal;
+    refsets, valueses : Cardinal;
     Desc : TCardinalArray;
     iWork, iDummy, module, kind : Cardinal;
     date : TSnomedDate;
@@ -1387,7 +1402,7 @@ var
       Desc := Refs.GetReferences(Descriptions);
       for j := Low(Desc) to High(Desc) Do
       Begin
-        FDesc.GetDescription(Desc[j], iWork, iID2, date, iDummy, module, kind, refsets, flags);
+        FDesc.GetDescription(Desc[j], iWork, iID2, date, iDummy, module, kind, refsets, valueses, flags);
         t := t + FlagFactor(flags);
         r2 := r2 + Match(words, Strings.GetEntry(iWork), iDepth) * FlagFactor(flags);
       End;
@@ -1400,7 +1415,7 @@ var
           ok := false;
           for j := Low(Desc) to High(Desc) Do
           Begin
-            FDesc.GetDescription(Desc[j], iWork, iID2, date, iDummy, module, kind, refsets, flags);
+            FDesc.GetDescription(Desc[j], iWork, iID2, date, iDummy, module, kind, refsets, valueses, flags);
             s := lowercase(Strings.GetEntry(iWork));
             ok := true;
             For i := 0 to length(words) - 1 do
@@ -1552,11 +1567,11 @@ var
   Descs : TCardinalArray;
   Inbounds : Cardinal;
   outbounds : Cardinal;
-  iDesc, iDummy, module, kind, refsets : Cardinal;
+  iDesc, iDummy, module, kind, refsets, valueses : Cardinal;
   iInt : integer;
   date : TSnomedDate;
   aMembers : TSnomedReferenceSetMemberArray;
-  iList : TCardinalArray;
+  iList : TRefSetMemberEntryArray;
   v : String;
 begin
   SetLength(aMembers, 0);
@@ -1567,7 +1582,7 @@ begin
   Descs := Refs.GetReferences(Descriptions);
   For iLoop := 0 to High(descs) Do
   Begin
-    Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
+    Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, valueses, Flags);
     if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iint))) Then
       result := Strings.GetEntry(iDesc);
   End;
@@ -1575,35 +1590,12 @@ begin
   if (result = '') and (iLang <> 0) then
     For iLoop := 0 to High(descs) Do
     Begin
-      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
+      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, valueses, Flags);
       if (Flags and MASK_DESC_STATUS = FLAG_Active) And (FindMember(aMembers, descs[iLoop], iInt)) Then
         result := Strings.GetEntry(iDesc);
     End;
   // if we still haven't found, then any preferred term
-  if (result = '') then
-    For iLoop := 0 to High(descs) Do
-    Begin
-      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy,  module, kind, refsets, Flags);
-      if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
-        result := Strings.GetEntry(iDesc);
-    End;
-  // still not found? well, we'll pick the shortest description that's in any value set
-  if result = '' then // ok,
-    For iLoop := Low(descs) To High(descs) Do
-    Begin
-      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy,  module, kind, refsets, Flags);
-      iList := Refs.GetReferences(refsets);
-      v := Strings.GetEntry(iDesc);
-      if ((result = '') or (length(result) > length(v))) and (Flags and MASK_DESC_STATUS = FLAG_Active) And (Length(iList) > 0) Then
-        result := v;
-    End;
-  if result = '' Then // ok, give up. and use the FSN
-    For iLoop := Low(descs) To High(descs) Do
-    Begin
-      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy,  module, kind, refsets, Flags);
-      if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_FullySpecifiedName]) Then
-        result := Strings.GetEntry(iDesc);
-    End;
+  result := GetPN(Descs);
 end;
 
 function TSnomedServices.GetDisplayName(const sTerm, sLangSet: String): String;
@@ -1620,14 +1612,14 @@ function TSnomedServices.GetFSN(iDescriptions: TCardinalArray): String;
 var
   iLoop : Integer;
   iid : UInt64;
-  iString, iDummy, module, refsets, kind : Cardinal;
+  iString, iDummy, module, valueses, refsets, kind : Cardinal;
   iFlag : Byte;
   date : TSnomedDate;
 begin
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
   Begin
-    Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
+    Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, valueses, iFlag);
     if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE = VAL_DESC_FullySpecifiedName shl 4) Then
       result := Strings.GetEntry(iString);
   End;
@@ -1640,7 +1632,7 @@ var
   iLoop : integer;
   Identity, iID2 : UInt64;
   Flags : Byte;
-  Parents, Descriptions, Inbounds, outbounds, refsets : Cardinal;
+  Parents, Descriptions, Inbounds, outbounds, valueses, refsets : Cardinal;
   Descs : TCardinalArray;
   iDesc, iDummy, module, kind : Cardinal;
   iInt : Integer;
@@ -1652,7 +1644,7 @@ begin
   Descs := Refs.GetReferences(Descriptions);
   For iLoop := 0 to High(descs) Do
   Begin
-    Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
+    Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, valueses, Flags);
     if ((Flags and flagMask > 0) or (flagMask = $FF))  And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
       list.add(Strings.GetEntry(iDesc));
   End;
@@ -1678,7 +1670,7 @@ var
   Descs : TCardinalArray;
   Inbounds : Cardinal;
   outbounds : Cardinal;
-  iDesc, iDummy, module, kind, refsets : Cardinal;
+  iDesc, iDummy, module, kind, valueses, refsets : Cardinal;
   date : TSnomedDate;
 begin
   sTerm := '';
@@ -1689,7 +1681,7 @@ begin
   Descs := Refs.GetReferences(Descriptions);
   For iLoop := 0 to High(descs) Do
   Begin
-    Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, Flags);
+    Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, refsets, valueses, Flags);
       if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE = VAL_DESC_FullySpecifiedName shl 4) Then
        sFSN := Strings.GetEntry(iDesc)
       else if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
@@ -1702,16 +1694,16 @@ function TSnomedServices.GetPN(iDescriptions: TCardinalArray): String;
 var
   iLoop : Integer;
   iid : UInt64;
-  iString, iDummy, module, refsets, kind : Cardinal;
+  iString, iDummy, module, valueses, refsets, kind : Cardinal;
   iFlag : Byte;
   date : TSnomedDate;
-  iList : TCardinalArray;
+  iList, values : TCardinalArray;
   v : String;
 begin
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
   Begin
-    Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
+    Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, valueses, iFlag);
     if (iFlag and MASK_DESC_STATUS = FLAG_Active) And (iFlag and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
       result := Strings.GetEntry(iString);
   End;
@@ -1719,10 +1711,18 @@ begin
   begin
     For iLoop := Low(iDescriptions) To High(iDescriptions) Do
     Begin
-      Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, iFlag);
+      Desc.GetDescription(iDescriptions[iLoop], iString, iId, date, iDummy,  module, kind, refsets, valueses, iFlag);
+      // check the language reference set
       iList := Refs.GetReferences(refsets);
       v := Strings.GetEntry(iString);
-      if ((result = '') or (length(result) > length(v))) and (iFlag and MASK_DESC_STATUS = FLAG_Active) And (Length(iList) > 0) Then
+      if valueses <> 0 then
+      begin
+        values := Refs.GetReferences(valueses); // get the list of all value lists
+        values := Refs.GetReferences(values[0]); // get the first value set
+        if (iFlag and MASK_DESC_STATUS = FLAG_Active) and (values[0] = FPreferredTerm) then
+          exit(v);
+      end
+      else if ((result = '') or (length(result) > length(v))) and (iFlag and MASK_DESC_STATUS = FLAG_Active) And (Length(iList) > 0) Then
         result := v;
     End;
   end;
@@ -1794,15 +1794,16 @@ var
   ParentIndex, iWork, iWork2, iWork3, module, modifier, kind, iDummy : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex, InboundIndex2 : Cardinal;
-  outboundIndex, refsets : Cardinal;
+  outboundIndex, valueses, refsets : Cardinal;
   Inbounds : TCardinalArray;
   date : TSnomedDate;
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
-  iId : Int64;
+  iId : UInt64;
   iIndex : cardinal;
   first : boolean;
+  did : UInt64;
 begin
   b := TStringBuilder.Create;
   try
@@ -1826,7 +1827,7 @@ begin
       b.Append('Descriptions: '+#13#10#13#10);
       for i := Low(Descriptions) To High(Descriptions) Do
       Begin
-        Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, Flags);
+        Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, valueses, Flags);
         if flags and MASK_DESC_STATUS = Flag_Active Then
           if ((flags and MASK_DESC_STYLE) shr 4 = VAL_DESC_Unspecified) and (kind <> 0) then
             b.Append('* '+Strings.GetEntry(iWork)+' ('+GetPNForConcept(kind)+')'+#13#10)
@@ -1853,7 +1854,7 @@ begin
       first := true;
       For i := 0 to High(Inbounds) Do
       Begin
-        Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+        Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
         if iWork3 = FIs_a_Index then
         begin
           if first then
@@ -1880,7 +1881,7 @@ begin
   result := TSnomedServices(inherited link);
 end;
 
-function TSnomedServices.GetConceptRefSet(iConcept: Cardinal; bByName : Boolean; var iMembers : cardinal): Cardinal;
+function TSnomedServices.GetConceptRefSet(iConcept: Cardinal; bByName : Boolean; var iMembers, iTypes : cardinal): Cardinal;
 var
   i : integer;
   c : Cardinal;
@@ -1890,9 +1891,9 @@ begin
   For i := 0 to FRefSetIndex.Count - 1 do
   Begin
     if bByName Then
-      FRefSetIndex.GetReferenceSet(i, c, iDummy, iMembers)
+      FRefSetIndex.GetReferenceSet(i, c, iDummy, iMembers, iTypes)
     else
-      FRefSetIndex.GetReferenceSet(i, c, iMembers, iDummy);
+      FRefSetIndex.GetReferenceSet(i, c, iMembers, iDummy, iTypes);
     if c = iConcept Then
     Begin
       result := c;
@@ -1901,44 +1902,50 @@ begin
   End;
 end;
 
-function TSnomedServices.GetDescRefsets(iDesc: Cardinal): TCardinalArray;
+function TSnomedServices.GetDescRefsets(iDesc: Cardinal): TRefSetMemberEntryArray;
 var
   i : integer;
   iDefinition, iMembersByRef, iMembersByName: Cardinal;
   aMembers : TSnomedReferenceSetMemberArray;
-  iDummy : Integer;
+  iIndex : Integer;
+  iTypes : Cardinal;
 begin
   SetLength(result, 0);
   SetLength(aMembers, 0);
   for i := 0 to FRefSetIndex.Count - 1 Do
   Begin
-    FRefSetIndex.GetReferenceSet(i, iDefinition, iMembersByRef, iMembersByName);
+    FRefSetIndex.GetReferenceSet(i, iDefinition, iMembersByRef, iMembersByName, iTypes);
     aMembers := FRefSetMembers.GetMembers(iMembersByRef);
-    if FindMember(aMembers, iDesc, iDummy) Then
+    if FindMember(aMembers, iDesc, iIndex) Then
     begin
       SetLength(result, length(result)+1);
-      result[length(result)-1] := iDefinition;
+      result[length(result)-1].refset := iDefinition;
+      result[length(result)-1].types := iTypes;
+      result[length(result)-1].values := aMembers[iIndex].values;
     End;
   End;
 end;
 
-function TSnomedServices.GetConceptRefsets(iDesc: Cardinal): TCardinalArray;
+function TSnomedServices.GetConceptRefsets(iDesc: Cardinal): TRefSetMemberEntryArray;
 var
   i : integer;
   iDefinition, iMembersByRef, iMembersByName: Cardinal;
   aMembers : TSnomedReferenceSetMemberArray;
-  iDummy : Integer;
+  iIndex : Integer;
+  iTypes : Cardinal;
 begin
   SetLength(result, 0);
   SetLength(aMembers, 0);
   for i := 0 to FRefSetIndex.Count - 1 Do
   Begin
-    FRefSetIndex.GetReferenceSet(i, iDefinition, iMembersByRef, iMembersByName);
+    FRefSetIndex.GetReferenceSet(i, iDefinition, iMembersByRef, iMembersByName, iTypes);
     aMembers := FRefSetMembers.GetMembers(iMembersByRef);
-    if FindMember(aMembers, iDesc, iDummy) Then
+    if FindMember(aMembers, iDesc, iIndex) Then
     begin
       SetLength(result, length(result)+1);
-      result[length(result)-1] := iDefinition;
+      result[length(result)-1].refset := iDefinition;
+      result[length(result)-1].types := iTypes;
+      result[length(result)-1].values := aMembers[iIndex].values;
     End;
   End;
 end;
@@ -2003,7 +2010,7 @@ end;
 
 function TSnomedServices.IsValidDescription(const sTerm: String; var concept: UInt64; var description: String): Boolean;
 var
-  iTerm, desc, cId, module, kind, refsets : Cardinal;
+  iTerm, desc, cId, module, kind, valueses, refsets : Cardinal;
   flags : Byte;
   id : UInt64;
   date : TSnomedDate;
@@ -2011,7 +2018,7 @@ begin
   result := DescRef.FindDescription(StringToId(sTerm), iTerm);
   if result then
   begin
-    FDesc.GetDescription(iTerm, desc, id, date, cId, module, kind, refsets, flags);
+    FDesc.GetDescription(iTerm, desc, id, date, cId, module, kind, refsets, valueses, flags);
     concept := FConcept.getConceptId(cId);
     description := FStrings.GetEntry(desc);
   end;
@@ -2024,7 +2031,7 @@ begin
   FBuilder := TAdvBytesBuilder.Create;
 end;
 
-Function TSnomedRelationshipList.AddRelationship(Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags : Byte; Group : integer) : Cardinal;
+Function TSnomedRelationshipList.AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags : Byte; Group : integer) : Cardinal;
 begin
   Result := FBuilder.Length;
   FBuilder.AddCardinal(Source);
@@ -2036,6 +2043,7 @@ begin
   FBuilder.AddWord(date);
   FBuilder.Append(Flags);
   FBuilder.AddInteger(Group);
+  FBuilder.AddUInt64(identity);
 End;
 
 procedure TSnomedRelationshipList.DoneBuild;
@@ -2045,7 +2053,7 @@ begin
   FBuilder.Free;
 end;
 
-procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags : Byte; var Group : integer);
+procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Flags : Byte; var Group : integer);
 // (iIndex: Cardinal; var Source, Target, RelType: Cardinal; var Flags, Group : Byte);
 begin
   if (iIndex >= FLength) then
@@ -2059,6 +2067,7 @@ begin
   Move(FMaster[iIndex+24], date, 2);
   Move(FMaster[iIndex+26], Flags, 1);
   Move(FMaster[iIndex+27], Group, 4);
+  Move(FMaster[iIndex+31], identity, 8);
 end;
 
 { TSnomedWords }
@@ -2197,16 +2206,17 @@ end;
 
 { TSnomedReferenceSetIndex }
 
-Procedure TSnomedReferenceSetIndex.AddReferenceSet(iDefinition, iMembersByRef, iMembersByName: Cardinal);
+Procedure TSnomedReferenceSetIndex.AddReferenceSet(iDefinition, iMembersByRef, iMembersByName, iFieldTypes: Cardinal);
 begin
   FBuilder.AddCardinal(iDefinition);
   FBuilder.AddCardinal(iMembersByRef);
   FBuilder.AddCardinal(iMembersByName);
+  FBuilder.AddCardinal(iFieldTypes);
 end;
 
 function TSnomedReferenceSetIndex.Count: Integer;
 begin
-  result := FLength div 12;
+  result := FLength div 16;
 end;
 
 procedure TSnomedReferenceSetIndex.DoneBuild;
@@ -2223,26 +2233,27 @@ begin
   result := 0;
   For i := 0 to Count - 1 Do
   begin
-    Move(FMaster[i * 12], v, 4);
+    Move(FMaster[i * 16], v, 4);
     if v = iIndex Then
     Begin
       if bByName Then
-        Move(FMaster[i * 12 + 8], result, 4)
+        Move(FMaster[i * 16 + 8], result, 4)
       Else
-        Move(FMaster[i * 12 + 4], result, 4);
+        Move(FMaster[i * 16 + 4], result, 4);
       exit;
     End;
   End;
 end;
 
-procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; var iDefinition, iMembersByRef, iMembersByName: Cardinal);
+procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; var iDefinition, iMembersByRef, iMembersByName, iFieldTypes: Cardinal);
 begin
-  iIndex := iIndex * 12;
+  iIndex := iIndex * 16;
   if (iIndex >= FLength) then
     Raise ESnomedServices.Create('Wrong length index getting snomed relationship Details');
   Move(FMaster[iIndex+0], iDefinition, 4);
   Move(FMaster[iIndex+4], iMembersByRef, 4);
   Move(FMaster[iIndex+8], iMembersByName, 4);
+  Move(FMaster[iIndex+12], iFieldTypes, 4);
 end;
 
 procedure TSnomedReferenceSetIndex.StartBuild;
@@ -2309,6 +2320,7 @@ Begin
   begin
     FBuilder.Append(a[iLoop].kind);
     FBuilder.AddCardinal(a[iLoop].Ref);
+    FBuilder.AddCardinal(a[iLoop].Values);
   end;
 end;
 
@@ -2351,6 +2363,8 @@ begin
       inc(iIndex, 1);
       move(FMaster[iIndex], result[i].Ref, 4);
       inc(iIndex, 4);
+      move(FMaster[iIndex], result[i].values, 4);
+      inc(iIndex, 4);
     End;
   End;
 end;
@@ -2385,7 +2399,7 @@ begin
       for i := 0 to RefSetIndex.Count - 1 Do
       begin
         cc := inc.conceptList.Append;
-        RefSetIndex.GetReferenceSet(i, code, iDummy, iDummy);
+        RefSetIndex.GetReferenceSet(i, code, iDummy, iDummy, iDummy);
         cc.code := GetConceptId(code);
       end;
       result.link;
@@ -2473,6 +2487,7 @@ var
   iWork, iWork2, iWork3, iWork4, iWork5, iWork6, refsets : Cardinal;
   date : TSnomedDate;
   Inbounds : TCardinalArray;
+  did : UInt64;
 begin
   SetLength(inbounds, 0);
   if (context = nil) then
@@ -2484,7 +2499,7 @@ begin
     result := 0;
     For i := 0 to High(Inbounds) Do
     Begin
-      Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Flags, Group);
+      Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Flags, Group);
       if iWork3 = Is_a_Index Then
         inc(result);
     End;
@@ -2525,6 +2540,7 @@ var
   iWork, iWork2, iWork3, iWork4, iWork5, iWork6, refsets : Cardinal;
   Inbounds : TCardinalArray;
   date : TSnomedDate;
+  did : UInt64;
 begin
   result := nil;
   SetLength(inbounds, 0);
@@ -2537,7 +2553,7 @@ begin
     c := -1;
     For i := 0 to High(Inbounds) Do
     Begin
-      Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Flags, Group);
+      Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Flags, Group);
       if iWork3 = Is_a_Index Then
       begin
         inc(c);
@@ -2615,13 +2631,14 @@ var
   ParentIndex, iWork, iWork2, iWork3, module, modifier, kind, iDummy : Cardinal;
   DescriptionIndex : Cardinal;
   InboundIndex, InboundIndex2 : Cardinal;
-  outboundIndex, refsets : Cardinal;
+  outboundIndex, valueses, refsets : Cardinal;
   Inbounds : TCardinalArray;
   date : TSnomedDate;
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
   param, p2 : TFhirParametersParameter;
+  did : UInt64;
 begin
   SetLength(inbounds, 0);
   Concept.GetConcept(Cardinal(ctxt), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
@@ -2631,7 +2648,7 @@ begin
   Descriptions := Refs.GetReferences(DescriptionIndex);
   for i := Low(Descriptions) To High(Descriptions) Do
   Begin
-    Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, Flags);
+    Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, valueses, Flags);
     if flags and MASK_DESC_STATUS = Flag_Active Then
     Begin
       param := params.parameterList.Append;
@@ -2674,7 +2691,7 @@ begin
   // children: (inbound relationships with type is-a)
   For i := 0 to High(Inbounds) Do
   Begin
-    Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+    Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
     if iWork3 = FIs_a_Index then
     begin
       Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
@@ -2778,13 +2795,13 @@ end;
 function TSnomedServices.filterIn(id : UInt64): TCodeSystemProviderFilterContext;
 var
   res : TSnomedFilterContext;
-  index, members : cardinal;
+  index, members, types : cardinal;
 begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
       raise ESnomedServices.Create('The Snomed Concept '+inttostr(id)+' was not known');
-    if GetConceptRefSet(index, false, members) = 0 then
+    if GetConceptRefSet(index, false, members, types) = 0 then
       raise ESnomedServices.Create('The Snomed Concept '+inttostr(id)+' is not a reference set');
     res.members := RefSetMembers.GetMembers(members);
     result := TSnomedFilterContext(res.link);
@@ -2885,7 +2902,7 @@ Begin
   End;
 End;
 
-Function GetDescStatus(Flags : Byte) : String;
+Function GetDescStatus1(Flags : Byte) : String;
 Begin
   case (flags and MASK_DESC_STATUS) of
     FLAG_Active : Result := 'Active';
@@ -2900,6 +2917,15 @@ Begin
     FLAG_MovedElswhere : Result := 'Moved Elswhere';
     FLAG_PendingMove : Result := 'Pending Move';
   End;
+End;
+
+Function GetDescStatus2(Flags : Byte) : String;
+begin
+  case flags and MASK_DESC_CAPS_MASK of
+    MASK_DESC_CAPS_NONE: result := 'No';
+    MASK_DESC_CAPS_FIRST: result := 'First Char';
+    MASK_DESC_CAPS_ALL: result := 'Yes';
+  end;
 End;
 
 Function GetRelChar(Flags : Byte) : String;

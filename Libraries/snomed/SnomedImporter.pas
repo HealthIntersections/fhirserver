@@ -3,6 +3,7 @@ unit SnomedImporter;
 Interface
 
 uses
+  Generics.Collections,
   LoincServices,
   Classes,
   FileSupport,
@@ -48,8 +49,9 @@ Type
     iMemberLength : Integer;
     membersByRef : Cardinal;
     membersByName : Cardinal;
+    fieldTypes : Cardinal;
 
-    function contains(term : cardinal) : boolean;
+    function contains(term : cardinal; var values : cardinal) : boolean;
   end;
 
   TRefSetList = class (TAdvNameList)
@@ -109,6 +111,7 @@ Type
     FRefsetMembers : TSnomedReferenceSetMembers;
     FDescRef : TSnomedDescriptionIndex;
     FRefsets : TRefSetList;
+    FRels : TDictionary<UInt64, Cardinal>;
 
     FVersionUri : String;
     FVersionDate : String;
@@ -342,10 +345,12 @@ begin
   FConceptFiles := TStringList.create;
   FRelationshipFiles := TStringList.create;
   FDescriptionFiles := TStringList.create;
+  FRels := TDictionary<UInt64,cardinal>.create;
 end;
 
 destructor TSnomedImporter.Destroy;
 begin
+  FRels.Free;
   FConceptFiles.Free;
   FRelationshipFiles.Free;
   FDescriptionFiles.Free;
@@ -427,7 +432,6 @@ begin
 
     ReadConceptsFile;
     ReadDescriptionsFile;
-    FStrings.DoneBuild;
     FDesc.DoneBuild;
     ReadRelationshipsFile;
     FRel.DoneBuild;
@@ -461,11 +465,9 @@ begin
   End;
 End;
 
-Function DescFlag(iStatus : Byte; bCaps : Boolean; iStyle : Byte) : Byte;
+Function DescFlag(iStatus : Byte; bCaps : byte; iStyle : Byte) : Byte;
 Begin
-  result := iStatus + iStyle shl 4;
-  if bCaps then
-    result := result + MASK_DESC_CAPS;
+  result := iStatus + (iStyle shl 4) + bCaps;
 End;
 
 function LoadFile(filename : String):TBytes;
@@ -570,7 +572,7 @@ Begin
       begin
         SetLength(oConcept.FDescriptions, 1);
         oConcept.FSN := ascopy(s, iStatus+1, (iDesc - iStatus) - 1);
-        oConcept.FDescriptions[0] := FDesc.AddDescription(AddString(oConcept.FSN), 0, 0, 0, 0, 0, DescFlag(FLAG_Active, true, VAL_DESC_FullySpecifiedName));
+        oConcept.FDescriptions[0] := FDesc.AddDescription(AddString(oConcept.FSN), 0, 0, 0, 0, 0, DescFlag(FLAG_Active, MASK_DESC_CAPS_ALL, VAL_DESC_FullySpecifiedName));
         oConcept.Flag := strtoint(ascopy(s, iConcept+1, iStatus - iConcept -1));
         if ascopy(s, iId, iCursor - iId - 1) = '1' Then
           oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
@@ -741,10 +743,10 @@ var
   s : TBytes;
   iCount, iCursor : Integer;
   iStart, iId, iStatus, iConcept, iTerm, iCaps, iType, iLang, iDate, iModuleId, iConceptStart, iTermStart : Integer;
-  iFlag : Byte;
+  iFlag, bCaps : Byte;
   oConcept : TConcept;
   iDescId : UInt64;
-  sDesc : String;
+  sDesc, sCaps : String;
   i, j, iStem : integer;
   oList : TAdvIntegerList;
   aCardinals : TCardinalArray;
@@ -831,21 +833,34 @@ begin
         else
           iSt := FLAG_RetiredWithoutStatedReason;
 
-        if iKind = RF2_MAGIC_FSN then
-          iFlag := DescFlag(iSt, false {todo}, VAL_DESC_FullySpecifiedName)
+        sCaps := ascopy(s, iTerm+1, (iCaps - iTerm) - 1);
+        if sCaps = '900000000000017005' then
+          bCaps := MASK_DESC_CAPS_ALL
+        else if sCaps = '900000000000020002' then
+          bCaps := MASK_DESC_CAPS_FIRST
+        else if sCaps = '900000000000448009' then
+          bCaps := MASK_DESC_CAPS_NONE
         else
-          iFlag := DescFlag(iSt, false {todo}, VAL_DESC_Unspecified);
+          raise Exception.Create('Unknown caps code '+sCaps);
+
+        if iKind = RF2_MAGIC_FSN then
+          iFlag := DescFlag(iSt, bCaps, VAL_DESC_FullySpecifiedName)
+        else
+          iFlag := DescFlag(iSt, bCaps, VAL_DESC_Unspecified);
       end
       else
       begin
         date := 0;
-        iFlag := DescFlag(strtoint(ascopy(s, iId+1, (iStatus - iId) -1)), ascopy(s, iTerm+1, (iCaps - iTerm) - 1) = '1', StrToInt(ascopy(s, iCaps+1, (iType - iCaps) - 1)));
+        if ascopy(s, iTerm+1, (iCaps - iTerm) - 1) = '1' then
+          iFlag := DescFlag(strtoint(ascopy(s, iId+1, (iStatus - iId) -1)), MASK_DESC_CAPS_ALL, StrToInt(ascopy(s, iCaps+1, (iType - iCaps) - 1)))
+        else
+          iFlag := DescFlag(strtoint(ascopy(s, iId+1, (iStatus - iId) -1)), MASK_DESC_CAPS_NONE, StrToInt(ascopy(s, iCaps+1, (iType - iCaps) - 1)));
       end;
 
       sDesc := ascopy(s, iTermStart+1, (iTerm - iTermStart) - 1);
       SeeDesc(sDesc, iConceptIndex, iFlag);
 
-      if RF2 or (iFlag and MASK_DESC_STYLE <> VAL_DESC_FullySpecifiedName shl 4) Or (oConcept.FSN <> sDesc) Then
+      if RF2 or ((iFlag and MASK_DESC_STYLE) <> (VAL_DESC_FullySpecifiedName shl 4)) Or (oConcept.FSN <> sDesc) Then
       Begin
         SetLength(oConcept.FDescriptions, length(oConcept.FDescriptions)+1);
         iRef := FDesc.AddDescription(AddString(sDesc), iDescId, date, oConcept.Index, module, kind, iFlag);
@@ -965,6 +980,7 @@ var
   iIndex : cardinal;
   sGroup : String;
   active : boolean;
+  iRel : UInt64;
   Function Next(ch : byte) : integer;
   begin
     inc(iCursor);
@@ -989,14 +1005,14 @@ Begin
   for fi := 0 to RelationshipFiles.Count - 1 do
   begin
     s := LoadFile(RelationshipFiles[fi]);
-     iCursor := -1;
+    iCursor := -1;
     iCount := 0;
     iCursor := Next(13) + 2;
     While iCursor < Length(s) Do
     Begin
+      iStart := iCursor;
       if RF2 then
       begin
-        iStart := iCursor;
         iRelId := Next(9);
         iDate := Next(9);
         iStatus := Next(9);
@@ -1053,9 +1069,9 @@ Begin
         kind := 0;
         modifier := 0;
       end;
-
-
-      iIndex := FRel.AddRelationship(oSource.Index, oTarget.Index, oRelType.Index, module, kind, modifier, date, iFlag, grp);
+      iRel := StrToUInt64(ascopy(s, iStart, iRelid - iStart));
+      iIndex := FRel.AddRelationship(iRel, oSource.Index, oTarget.Index, oRelType.Index, module, kind, modifier, date, iFlag, grp);
+      FRels.Add(iRel, iIndex);
       if (oRelType.Index = Findex_is_a) and (active) Then
       Begin
         SetLength(oSource.FParents, Length(oSource.FParents)+1);
@@ -1286,13 +1302,14 @@ var
   date : TSnomedDate;
   flg : Byte;
   grp : Integer;
+  did : UInt64;
 Begin
   SetLength(result, 1000);
   l := 0;
   o := FRefs.GetReferences(FConcept.getInBounds(iConcept));
   For i := 0 to Length(o) - 1 Do
   Begin
-    FRel.GetRelationship(o[i], src, tgt, rel, w1,w2,w3, date, flg, grp);
+    FRel.GetRelationship(o[i], did, src, tgt, rel, w1,w2,w3, date, flg, grp);
     if (rel = Findex_is_a) and (flg = 0) Then
     Begin
       if l >= length(result) Then
@@ -1576,17 +1593,19 @@ var
   i, j, c : integer;
   refset : TRefSet;
   conc : TConcept;
-  refs : TCardinalArray;
+  refs, vals : TCardinalArray;
   ndx : Cardinal;
   iDesc : Cardinal;
   id : UInt64;
   date : Word;
-  concept, module, kind, irefsets : Cardinal;
+  concept, module, kind, valueses, irefsets, values : Cardinal;
+  iDummy : Cardinal;
   flags : byte;
 begin
     Progress('#13 Importing Reference Sets');
     if FDirectoryReferenceSets <> '' Then
       LoadReferenceSets(FDirectoryReferenceSets);
+    FStrings.DoneBuild;
     CloseReferenceSets;
     Progress('#14 Sorting Reference Sets');
     FRefsets.SortedBy(CompareRefSetByConcept);
@@ -1594,7 +1613,7 @@ begin
     for i := 0 to FRefSets.Count - 1 Do
     begin
       refset := FRefsets[i] as TRefSet;
-      FRefsetindex.AddReferenceSet(refset.index, refset.membersByRef, refset.membersByName);
+      FRefsetindex.AddReferenceSet(refset.index, refset.membersByRef, refset.membersByName, refset.fieldTypes);
     end;
 
     Progress('#15 Indexing Reference Sets');
@@ -1605,21 +1624,24 @@ begin
 
       conc := FConcepts[i] as TConcept;
       setLength(refs, FRefsets.Count);
+      setLength(vals, FRefsets.Count);
       c := 0;
       for j := 0 to FRefsets.Count - 1 do
       begin
         refset := Frefsets[j] as TRefSet;
-        if refset.contains(conc.index) then
+        if refset.contains(conc.index, values) then
         begin
           refs[c] := refset.index;
+          vals[c] := values;
           inc(c);
         end;
       end;
       Setlength(refs, c);
+      Setlength(vals, c);
       if c > 0 then
       begin
         ndx := FRefs.AddReferences(refs);
-        FConcept.SetRefsets(conc.Index, ndx);
+        FConcept.SetRefsets(conc.Index, ndx{, FRefs.AddReferences(vals)});
       end;
     end;
 
@@ -1628,23 +1650,26 @@ begin
       if (i mod 5000 = 0) then
         Progress('');
 
-      FDesc.GetDescription(i * DESC_SIZE+1, iDesc, id, date, concept, module, kind, irefsets, flags);
       setLength(refs, Frefsets.Count);
+      setLength(vals, Frefsets.Count);
       c := 0;
       for j := 0 to Frefsets.Count - 1 do
       begin
         refset := Frefsets[j] as TRefSet;
-        if refset.contains(iDesc) then
+
+        if refset.contains(i * DESC_SIZE, values) then
         begin
           refs[c] := refset.index;
+          vals[c] := values;
           inc(c);
         end;
       end;
       Setlength(refs, c);
+      Setlength(vals, c);
       if c > 0 then
       begin
         ndx := FRefs.AddReferences(refs);
-        FDesc.SetRefsets(i * DESC_SIZE, ndx);
+        FDesc.SetRefsets(i * DESC_SIZE, ndx, FRefs.AddReferences(vals));
       end;
     end;
 end;
@@ -1714,24 +1739,32 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
     Descriptions : Cardinal;
 //    Inbounds : Cardinal;
 //    outbounds : Cardinal;
-    dummy, module, refsets, kind : Cardinal;
+    dummy, module, refsets, valueses, kind : Cardinal;
     Descs : TCardinalArray;
     date : TSnomedDate;
   Begin
     SetLength(Descs, 0);
     result := '';
     if r.kind = 1 then
-      FDesc.GetDescription(r.Ref, id, identity, date, dummy, module, kind, refsets, Flags)
+      FDesc.GetDescription(r.Ref, id, identity, date, dummy, module, kind, refsets, valueses, Flags)
     Else
-    Begin
-      descriptions := FConcept.GetDescriptions(r.ref);
+    begin
+      if r.kind = 2 then
+      begin
+        FRel.GetRelationship(r.Ref, identity, dummy, dummy, kind, dummy, dummy, dummy, date, flags, i);
+        if not FRels.TryGetValue(identity, dummy) or (dummy <> r.Ref) then
+         writeln('broken');
+      end
+      else
+        kind := r.ref;
+      descriptions := FConcept.GetDescriptions(kind);
       if descriptions = 0 then
         exit;
       Descs := FRefs.GetReferences(descriptions);
       id := 0;
       For i := 0 to Length(Descs)- 1 Do
       Begin
-       FDesc.GetDescription(Descs[i], id2, identity, date, dummy, module, kind, refsets, Flags);
+       FDesc.GetDescription(Descs[i], id2, identity, date, dummy, module, kind, refsets, valueses, Flags);
        if (Flags and MASK_DESC_STATUS = FLAG_Active) And (Flags and MASK_DESC_STYLE shr 4 in [VAL_DESC_Preferred]) Then
          id := id2;
       End;
@@ -1739,7 +1772,7 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
       Begin
         For i := 0 to Length(Descs)- 1 Do
         Begin
-         FDesc.GetDescription(Descs[i], id2, identity, date, dummy, module, kind, refsets, Flags);
+         FDesc.GetDescription(Descs[i], id2, identity, date, dummy, module, kind, refsets, valueses, Flags);
          if (Flags and MASK_DESC_STATUS = FLAG_Active) Then
            id := id2;
         End;
@@ -1748,7 +1781,11 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
     if id = 0 then
       result := ''
     Else
+    try
       result := FStrings.GetEntry(id);
+    except
+      writeln('problem: '+inttostr(r.kind));
+    end;
   End;
 
   Procedure QuickSort(L, R: Integer);
@@ -1806,16 +1843,21 @@ End;
 procedure TSnomedImporter.LoadReferenceSet(sFile: String);
 var
   s : TBytes;
-  iId, iTime, iActive, iModule, iRefSetId, iRefComp : Integer;
+  i, iId, iTime, iActive, iModule, iRefSetId, iRefComp : Integer;
   sActive, sRefSetId, sRefComp : String;
+  iRef : UInt64;
 
-  iTermRef, iRefsetRef : Cardinal;
-  iCursor : int64;
+  iTermRef, iRefsetRef, iVal, iType : Cardinal;
+  iCursor : UInt64;
 
   bDesc : byte;
 
   refset : TRefSet;
   ok : boolean;
+  name : String;
+  types, offsets, values : TCardinalArray;
+  svals : Array of String;
+  ti : cardinal;
 
   Function Next(ch : Byte) : integer;
   begin
@@ -1825,6 +1867,22 @@ var
     result := iCursor;
   End;
 begin
+  name := sFile.Split(['_'])[1];
+  ti := 0;
+  Setlength(types, 0);
+  if name.endsWith('Refset') and (name <> 'Refset') then
+  begin
+    name := name.Substring(0, name.Length-6);
+    Setlength(types, name.Length);
+    for i := 0 to name.Length - 1 do
+    begin
+      if not CharInSet(name[i+1], ['c', 'i', 's']) then
+        raise Exception.Create('Unknown refset type '+name[i+1]);
+      types[i] := ord(name[i+1]);
+    end;
+    ti := FRefs.AddReferences(types);
+  end;
+
   s := LoadFile(sFile);
   iCursor := 0;
   // figure out what kind of reference set this is
@@ -1832,6 +1890,9 @@ begin
   sActive := ascopy(s, 1, iCursor);
   if sActive.contains('map') then
     exit;
+  SetLength(offsets, length(types));
+  SetLength(values, length(types)*2);
+  SetLength(sVals, length(types));
 
   While iCursor < Length(s) Do
   Begin
@@ -1841,15 +1902,66 @@ begin
     iModule := Next(9);
     iRefSetId := Next(9);
     iRefComp := Next(9);
-    iCursor := Next(13); // for now, we ignore additional fields
+    if length(types) > 0 then
+    begin
+      for i := 0 to length(types) - 1 do
+        offsets[i] := Next(9);
+      iCursor := offsets[length(types) - 1];
+    end
+    else
+      iCursor := Next(13);
 
     sActive := ascopy(s, iTime+1, iActive - (iTime + 1));
     sRefSetId := ascopy(s, iModule+1, iRefSetId - (iModule + 1));
     sRefComp := ascopy(s, iRefSetId+1, iRefComp - (iRefSetId + 1));
 
+    for I := 0 to length(types) - 1 do
+    begin
+      if (i = 0) then
+        sVals[i] := ascopy(s, iRefComp+1, offsets[i] - (iRefComp + 1))
+      else
+        sVals[i] := ascopy(s, offsets[i-1]+1, offsets[i] - (offsets[i-1] + 1));
+      iVal := 0;
+      iType := 0;
+      case types[i] of
+        99 {c} :
+          begin
+          iRef := StrToUInt64(sVals[i]);
+          if FConcept.FindConcept(iRef, iTermRef) then
+            iType := 1
+          else if FDescRef.FindDescription(iRef, iTermRef) then
+            iType := 2
+          Else if FRels.TryGetValue(iRef, iTermRef) then
+            iType := 3
+          else
+            raise Exception.Create('Unable to find concept '+sVals[i]);
+          iVal := iTermRef;
+          end;
+        105 {i} :
+          begin
+          iVal := StrToInt(sVals[i]);
+          iType := 4;
+          end;
+        115 {s} :
+          begin
+          iVal := FStrings.AddString(sVals[i]);
+          iType := 5;
+          end;
+      else
+        raise Exception.Create('Internal error');
+      end;
+      values[i*2] := iVal;
+      values[i*2+1] := iType;
+    end;
+    iRef := StrToUInt64(sRefComp);
+
     if sActive = '1' Then
     Begin
       refSet := Frefsets.GetRefset(sRefSetId);
+      if (refset.fieldTypes <> 0) and (refset.fieldTypes <> ti) then
+        raise Exception.Create('field types mismatch');
+
+      refset.fieldTypes := ti;
       if refset.index = MAGIC_NO_CHILDREN then
         if not FConcept.FindConcept(StrToUInt64(sRefSetId), iRefsetRef) then
            raise exception.create('unable to find term '+sRefSetId+' for reference set '+sFile)
@@ -1857,15 +1969,16 @@ begin
           refset.index := iRefsetRef;
 
       ok := true;
-      if FConcept.FindConcept(StrToUInt64(sRefComp), iTermRef) then
+      if FConcept.FindConcept(iRef, iTermRef) then
         bDesc := 0
-      else if FDescRef.FindDescription(StrToUInt64(sRefComp), iTermRef) then
+      else if FDescRef.FindDescription(iRef, iTermRef) then
         bDesc := 1
-      Else
+      Else if FRels.TryGetValue(iRef, iTermRef) then
+        bDesc := 2
+      else
       begin
         Writeln('Unknown component '+sRefComp+' in '+sFile);
-        ok := false;
-        bDesc := 2;
+        bDesc := 3;
       end;
 
       if ok then
@@ -1874,6 +1987,8 @@ begin
           SetLength(refset.aMembers, length(refset.aMembers)+10000);
         refset.aMembers[refset.iMemberLength].kind := bDesc;
         refset.aMembers[refset.iMemberLength].Ref := iTermRef;
+        if (ti <> 0) then
+          refset.aMembers[refset.iMemberLength].Values := FRefs.AddReferences(values);
         inc(refset.iMemberLength);
       end;
     End;
@@ -1962,7 +2077,7 @@ end;
 
 { TRefSet }
 
-function TRefSet.contains(term: cardinal): boolean;
+function TRefSet.contains(term: cardinal; var values : cardinal): boolean;
 var
   L, H, I : Integer;
   ndx : Cardinal;
@@ -1982,6 +2097,7 @@ begin
       if ndx = term then
       begin
         Result := True;
+        values := aMembers[i].values;
         L := I;
       end;
     end;

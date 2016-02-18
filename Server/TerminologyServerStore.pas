@@ -710,14 +710,13 @@ end;
 function exempt(vs : TFHIRValueSet) : boolean;
 begin
   {$IFDEF FHIR_DSTU2}
-
   if vs.URL.startsWith('http://hl7.org/fhir/ValueSet/v2-')
     and StringArrayExists(['0003', '0207', '0277', '0278', '0279', '0281', '0294', '0396'],
         vs.URL.Substring(vs.url.Length-4)) then
       result := true
   else
   {$ENDIF}
-  result := false;
+    result := false;
 end;
 
 procedure TTerminologyServerStore.checkValueSet(vs: TFHIRValueSet);

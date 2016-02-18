@@ -37,7 +37,7 @@ Type
     procedure AddTitle(text : String);
     procedure AddText(text : String; bold, italics : boolean);
 
-    procedure URL(text, url : String);
+    procedure URL(text, url : String; hint : string = '');
     procedure ParaURL(text, url : String);
 
     procedure StartTable(borders : boolean; clss : String = '');
@@ -47,7 +47,7 @@ Type
     procedure EndTableCell;
     procedure EndTableRow;
     procedure EndTable;
-    procedure AddTableCellURL(text, url : String);
+    procedure AddTableCellURL(text, url : String; hint : String = '');
     procedure AddTableCell(text : String; bold : boolean = false);
 
     procedure StartList(ordered : boolean = false);
@@ -92,10 +92,10 @@ begin
   EndTableCell;
 end;
 
-procedure THtmlPublisher.AddTableCellURL(text, url: String);
+procedure THtmlPublisher.AddTableCellURL(text, url: String; hint : String = '');
 begin
   StartTableCell;
-  self.URL(text, url);
+  self.URL(text, url, hint);
   EndTableCell;
 end;
 
@@ -317,9 +317,12 @@ begin
   FBuilder.Append('<input type="text" name="'+name+'" size="'+inttostr(length)+'"/>');
 end;
 
-procedure THtmlPublisher.URL(text, url: String);
+procedure THtmlPublisher.URL(text, url, hint: String);
 begin
-  FBuilder.Append('<a href="'+url+'">');
+  if (hint <> '') then
+    FBuilder.Append('<a href="'+url+'" title="'+EncodeXML(hint, xmlAttribute)+'">')
+  else
+    FBuilder.Append('<a href="'+url+'">');
   AddTextPlain(text);
   FBuilder.Append('</a>');
 end;

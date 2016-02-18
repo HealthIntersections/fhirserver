@@ -60,6 +60,7 @@ implementation
 procedure TSnomedAnalysis.assess(b: TAdvStringBuilder; id: String; bnd : TFhirBundle = nil);
 var
   list : TRelationshipList;
+  did : UInt64;
   iId : int64;
 //  ok : boolean;
   iIndex : cardinal;
@@ -104,7 +105,7 @@ begin
     Inbounds := FSnomed.Refs.GetReferences(FSnomed.Concept.GetInbounds(iIndex));
     For i := 0 to length(Inbounds)-1 Do
     begin
-      FSnomed.Rel.GetRelationship(Inbounds[i], iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+      FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
       if FSnomed.GetConceptId(iWork3) = '116680003' then
         raise Exception.Create('Concept '+id+' has no descendents but it does ');
     end;
@@ -503,6 +504,7 @@ end;
 procedure TSnomedAnalysis.listRelationships(iIndex: cardinal; list : TRelationshipList; bnd : TFhirBundle);
 var
 //  iId : UInt64;
+  did : UInt64;
   Identity : UInt64;
   Flags : Byte;
   Group : integer;
@@ -556,7 +558,7 @@ begin
 
   for i := Low(Outbounds) To High(Outbounds) Do
   begin
-    FSnomed.Rel.GetRelationship(Outbounds[i], iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+    FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
     if (flags and MASK_REL_CHARACTERISTIC <> VAL_REL_Historical) then
     begin
       rootConcepts := getRootConcepts(iWork2);

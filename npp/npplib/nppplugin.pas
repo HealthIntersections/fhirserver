@@ -863,6 +863,9 @@ var
   s: ansistring;
 begin
   l := SendMessage(self.NppData.ScintillaMainHandle, SCI_GETTEXTLENGTH, 0, 0)+1;
+  if l > 102400 then
+    exit('');
+
   SetLength(s, l);
   SendMessage(self.NppData.ScintillaMainHandle, SCI_GETTEXT, l, LPARAM(PChar(s)));
   Result := s;
