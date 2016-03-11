@@ -62,7 +62,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Database Stability fixes, various bugs fixes"
+        as.returnvalue = "Major change - move CodeSystem out of ValueSet"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -163,28 +163,10 @@ begin
         valuename = BuildDate
         valuetype = vtString
       end
-      action.ftp.connect
-      begin
-        connecttimeoutinsec = 0
-        cookie = q3B4xMWDXfAo74OHdw==
-        detailedlogging = false
-        enablekeepalives = false
-        ftpconnectionname = HealthIntersections
-        ftphost = 27.123.25.1
-        ftpport = 21
-        id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
-        passive = true
-        proxyport = 0
-        proxytype = fpcmNone
-        transfertype = ftBinary
-        useglobalopt = false
-        usehost = true
-        useproxy = false
-        userid = healthi3
-      end
       action.group
       begin
         description = "Build DSTU 2"
+        enabled = false
         id = {673A1E74-E928-4C1F-A6EF-29EA4FF617A0}
         action.files.delete
         begin
@@ -445,6 +427,12 @@ begin
           updateonly = false
           usefilespec = true
         end
+        action.build.stop
+        begin
+          buildresult = false
+          enabled = false
+          id = {29832D1A-DB92-478F-A528-46C94A0F30E1}
+        end
         action.xml.node.create
         begin
           addnewline = true
@@ -474,7 +462,6 @@ begin
       action.group
       begin
         description = "Build DSTU 3"
-        enabled = false
         id = {1DBFCDC7-7364-4371-BB71-4CBBDADD9E81}
         action.files.delete
         begin
@@ -500,6 +487,7 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Seattle
           description = "Compile the Server (DSTU3)"
+          enabled = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -606,6 +594,7 @@ begin
         begin
           captureoutput = true
           description = "Add Map (3)"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -630,6 +619,7 @@ begin
         begin
           captureoutput = true
           description = "Sign the Server (64)"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -678,6 +668,7 @@ begin
         action.innosetup.execute
         begin
           description = "Build the server install"
+          enabled = false
           id = {8413CA91-F62B-48D7-952E-8CEF6C236C73}
           innoversion = Inno5
           scriptfile = C:\\work\\fhirserver\\install\\install3.iss
@@ -690,6 +681,7 @@ begin
         begin
           captureoutput = true
           description = "Sign the server install"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -710,6 +702,25 @@ begin
           timeoutlength = 1
           useerrordialogmonitor = false
           waitforcompletion = true
+        end
+        action.ftp.connect
+        begin
+          connecttimeoutinsec = 0
+          cookie = q3B4xMWDXfAo74OHdw==
+          detailedlogging = false
+          enablekeepalives = false
+          ftpconnectionname = HealthIntersections
+          ftphost = 27.123.25.1
+          ftpport = 21
+          id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+          passive = true
+          proxyport = 0
+          proxytype = fpcmNone
+          transfertype = ftBinary
+          useglobalopt = false
+          usehost = true
+          useproxy = false
+          userid = healthi3
         end
         action.ftp.upload.file
         begin

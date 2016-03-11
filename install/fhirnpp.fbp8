@@ -61,7 +61,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "testing rss"
+        as.returnvalue = "Add debugging functionality for failed install"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -191,7 +191,7 @@ begin
                              "-w-UNSAFE_CODE=0" +
                              "-w-UNSAFE_CAST=0" +
                              ""
-          conditionals = NPPUNICODE;RELEASE
+          conditionals = NPPUNICODE;RELEASE;FHIR_DSTU2
           consoleapp = false
           debuginfo = false
           definitionsonly = false

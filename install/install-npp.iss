@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.18
+OutputBaseFilename=npp-install-1.0.19
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.18 (FHIR Version 1.0.2.7468)
+AppVerName=1.0.19 (FHIR Version 1.0.2.7475)
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

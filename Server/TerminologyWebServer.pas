@@ -48,6 +48,11 @@ Type
     function sortVsByCtxt(pA, pB : Pointer) : Integer;
     function sortVsByPub(pA, pB : Pointer) : Integer;
     function sortVsBySrc(pA, pB : Pointer) : Integer;
+    function sortCsByUrl(pA, pB : Pointer) : Integer;
+    function sortCsByVer(pA, pB : Pointer) : Integer;
+    function sortCsByName(pA, pB : Pointer) : Integer;
+    function sortCsByCtxt(pA, pB : Pointer) : Integer;
+    function sortCsByPub(pA, pB : Pointer) : Integer;
 //    function sortVsByDefUrl(pA, pB : Pointer) : Integer;
 //    function sortVsByDefVer(pA, pB : Pointer) : Integer;
     function sortCmByUrl(pA, pB : Pointer) : Integer;
@@ -59,9 +64,10 @@ Type
     function sortCmByTgt(pA, pB : Pointer) : Integer;
     procedure ProcessValueSetList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessConceptMapList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessVsDefinesList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessCodeSystemsList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+    procedure ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+    procedure ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessValueSet(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+    procedure ProcessCodeSystem(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
   public
@@ -211,7 +217,30 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessCodeSystemsList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+procedure TTerminologyWebServer.ProcessCodeSystem(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+var
+  cs: TFhirCodeSystem;
+  vars : TDictionary<String, String>;
+begin
+  vars := TDictionary<String, String>.create;
+  try
+    cs := FServer.getCodeSystemById(request.Document.Substring(16));
+    try
+      vars.Add('url', cs.url);
+      vars.Add('name', cs.name);
+      vars.Add('html', ashtml(cs));
+      vars.Add('json', asJson(cs));
+      vars.Add('xml', asXml(cs));
+    finally
+      cs.Free;
+    end;
+    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-cs-id.html', false, vars);
+  finally
+    vars.Free;
+  end;
+end;
+
+procedure TTerminologyWebServer.ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
   html: THtmlPublisher;
   cs: TCodeSystemProvider;
@@ -246,7 +275,7 @@ begin
       end;
       html.EndTable;
       vars.Add('table', html.output);
-      vars.add('kind', 'Other Code System');
+      vars.add('kind', 'Implicit Code System');
     finally
       html.Free;
     end;
@@ -256,48 +285,58 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessVsDefinesList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+procedure TTerminologyWebServer.ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
-  list: TFhirValueSetList;
-  vs: TFhirValueSet;
+  list: TFhirCodeSystemList;
+  vs: TFhirCodeSystem;
   vars : TDictionary<String, String>;
   html : THtmlPublisher;
 begin
   vars := TDictionary<String, String>.create;
   try
-  list := FServer.GetCodeSystemList;
-  try
-    html := THtmlPublisher.Create;
+    list := FServer.GetCodeSystemList;
     try
-      html.Version := SERVER_VERSION;
-      html.StartTable(true);
-      html.StartTableRow;
-      html.AddTableCellURL('URL', '/tx/vsdefines?sort=url');
-      html.AddTableCellURL('Version', '/tx/vsdefines?sort=ver');
-      html.AddTableCellURL('Name', '/tx/vsdefines?sort=name');
-      html.AddTableCellURL('Context', '/tx/vsdefines?sort=ctxt');
-      html.AddTableCellURL('Publisher', '/tx/vsdefines?sort=pub');
-      html.EndTableRow;
-      for vs in list do
-      begin
+      if (request.UnparsedParams.EndsWith('=ver')) then
+        list.SortedBy(sortCsByVer)
+      else if (request.UnparsedParams.EndsWith('=name')) then
+        list.SortedBy(sortCsByName)
+      else if (request.UnparsedParams.EndsWith('=ctxt')) then
+        list.SortedBy(sortCsByCtxt)
+      else if (request.UnparsedParams.EndsWith('=pub')) then
+        list.SortedBy(sortCsByPub)
+      else
+        list.SortedBy(sortCsByUrl);
+      html := THtmlPublisher.Create;
+      try
+        html.Version := SERVER_VERSION;
+        html.StartTable(true);
         html.StartTableRow;
-        html.AddTableCellURL(vs.codeSystem.system, '/tx/valuesets/' + vs.id);
-        html.AddTableCell(vs.codeSystem.version);
-        html.AddTableCell(vs.name);
-        html.AddTableCell(vs.context);
-        html.AddTableCell(vs.publisher);
+        html.AddTableCellURL('URL', '/tx/codesystems?sort=url');
+        html.AddTableCellURL('Version', '/tx/codesystems?sort=ver');
+        html.AddTableCellURL('Name', '/tx/codesystems?sort=name');
+        html.AddTableCellURL('Context', '/tx/codesystems?sort=ctxt');
+        html.AddTableCellURL('Publisher', '/tx/codesystems?sort=pub');
         html.EndTableRow;
+        for vs in list do
+        begin
+          html.StartTableRow;
+          html.AddTableCellURL(vs.codeSystem.system, '/tx/codesystems/' + vs.id);
+          html.AddTableCell(vs.codeSystem.version);
+          html.AddTableCell(vs.name);
+          html.AddTableCell(vs.context);
+          html.AddTableCell(vs.publisher);
+          html.EndTableRow;
+        end;
+        html.EndTable;
+        vars.Add('table', html.output);
+        vars.add('kind', 'Code System');
+      finally
+        html.Free;
       end;
-      html.EndTable;
-      vars.Add('table', html.output);
-      vars.add('kind', 'Code System');
     finally
-      html.Free;
+      list.free;
     end;
-  finally
-    list.free;
-  end;
-  FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -548,12 +587,14 @@ begin
     ProcessValueSetList(AContext, request, response, session)
   else if request.Document = '/tx/maps' then
     ProcessConceptMapList(AContext, request, response, session)
-  else if request.Document = '/tx/vsdefines' then
-    ProcessVsDefinesList(AContext, request, response, session)
   else if request.Document = '/tx/codesystems' then
-    ProcessCodeSystemsList(AContext, request, response, session)
+    ProcessCodeSystemList(AContext, request, response, session)
+  else if request.Document = '/tx/codesystemproviders' then
+    ProcessCodeSystemProviderList(AContext, request, response, session)
   else if request.Document.StartsWith('/tx/valuesets/') then
     ProcessValueSet(AContext, request, response, session)
+  else if request.Document.StartsWith('/tx/codesystems/') then
+    ProcessCodeSystem(AContext, request, response, session)
   else if request.Document.StartsWith('/tx/maps/') then
     ProcessConceptMap(AContext, request, response, session)
   else
@@ -1158,6 +1199,51 @@ begin
   vA := TLoadedConceptMap(pA);
   vB := TLoadedConceptMap(pB);
   result := CompareStr(vA.Resource.version, vb.Resource.version);
+end;
+
+function TTerminologyWebServer.sortCsByCtxt(pA, pB: Pointer): Integer;
+var
+  vA, vB : TFhirCodeSystem;
+begin
+  vA := TFhirCodeSystem(pA);
+  vB := TFhirCodeSystem(pB);
+  result := CompareStr(vA.context, vb.context);
+end;
+
+function TTerminologyWebServer.sortCsByName(pA, pB: Pointer): Integer;
+var
+  vA, vB : TFhirCodeSystem;
+begin
+  vA := TFhirCodeSystem(pA);
+  vB := TFhirCodeSystem(pB);
+  result := CompareStr(vA.name, vb.name);
+end;
+
+function TTerminologyWebServer.sortCsByPub(pA, pB: Pointer): Integer;
+var
+  vA, vB : TFhirCodeSystem;
+begin
+  vA := TFhirCodeSystem(pA);
+  vB := TFhirCodeSystem(pB);
+  result := CompareStr(vA.publisher, vb.publisher);
+end;
+
+function TTerminologyWebServer.sortCsByUrl(pA, pB: Pointer): Integer;
+var
+  vA, vB : TFhirCodeSystem;
+begin
+  vA := TFhirCodeSystem(pA);
+  vB := TFhirCodeSystem(pB);
+  result := CompareStr(vA.url, vb.url);
+end;
+
+function TTerminologyWebServer.sortCsByVer(pA, pB: Pointer): Integer;
+var
+  vA, vB : TFhirCodeSystem;
+begin
+  vA := TFhirCodeSystem(pA);
+  vB := TFhirCodeSystem(pB);
+  result := CompareStr(vA.version, vb.version);
 end;
 
 end.

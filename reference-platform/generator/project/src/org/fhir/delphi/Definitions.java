@@ -41,7 +41,7 @@ import org.hl7.fhir.dstu2.model.DateTimeType;
 import org.hl7.fhir.dstu2.model.NamingSystem;
 import org.hl7.fhir.dstu2.model.StructureDefinition.ExtensionContext;
 import org.hl7.fhir.dstu2.model.ValueSet;
-import org.hl7.fhir.dstu21.model.OperationDefinition;
+import org.hl7.fhir.dstu3.model.OperationDefinition;
 
 /**
  * This class is the root to all the definitions in FHIR. There are the

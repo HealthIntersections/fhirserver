@@ -385,14 +385,6 @@ type
     function getChildren(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
   end;
 
-{$IFDEF DSTU21}
-  TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
-  public
-    function hash : String;
-  end;
-
-{$ELSE}
-
   TFhirExpansionProfile = class (TAdvObject)
   private
     FincludeDefinition: boolean;
@@ -404,7 +396,17 @@ type
     property includeDefinition : boolean read FincludeDefinition write FincludeDefinition;
     property limitedExpansion : boolean read FlimitedExpansion write FlimitedExpansion;
   end;
-{$ENDIF}
+
+  TFHIRCodeSystem = TFhirValueSet;
+  TFhirCodeSystem2 = TFHIRValueSetCodeSystem;
+  TFHIRCodeSystemList = TFHIRValueSetList;
+  TFhirCodeSystemConcept = TFhirValueSetCodeSystemConcept;
+  TFhirCodeSystemConceptList = TFhirValueSetCodeSystemConceptList;
+  TFhirCodeSystemConceptDesignation = TFhirValueSetCodeSystemConceptDesignation;
+
+const
+  frtCodeSystem = frtValueSet;
+
 function Path(const parts : array of String) : String;
 
 
@@ -1436,10 +1438,10 @@ end;
       li.addText('Import all the codes that are part of '+imp.Value);
     end;
     for (ConceptSetComponent inc : vs.Compose.Include) begin
-      genInclude(ul, inc, 'Include', codeSystems);      
+      genInclude(ul, inc, 'Include', codeSystems);
     end;
     for (ConceptSetComponent exc : vs.Compose.Exclude) begin
-      genInclude(ul, exc, 'Exclude', codeSystems);      
+      genInclude(ul, exc, 'Exclude', codeSystems);
     end;
   end;
 
@@ -1447,21 +1449,21 @@ end;
     TFhirXHtmlNode li;
     li := ul.addTag('li');
     AtomEntry e := codeSystems.(inc.System.toString);
-    
-    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then 
+
+    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then
       li.addText(type+' all codes defined in ');
       addCsRef(inc, li, e);
-    end; else begin 
+    end; else begin
       if (inc.Code.size > 0) begin then
         li.addText(type+' these codes as defined in ');
         addCsRef(inc, li, e);
-      
+
         TFhirXHtmlNode t := li.addTag('table');
         addTableHeaderRowStandard(t);
         for (Code c : inc.Code) begin
           TFhirXHtmlNode tr := t.addTag('tr');
           TFhirXHtmlNode td := tr.addTag('td');
-          td.addText(c.Value);         
+          td.addText(c.Value);
           ValueSetDefineConceptComponent cc := getConceptForCode(e, c.Value);
           if (cc <> nil) begin then
             td := tr.addTag('td');
@@ -1493,7 +1495,7 @@ end;
     case isA: return ' is-a ';
     case isNotA: return ' is-not-a ';
     case regex: return ' matches (by regex) ';
-    
+
     end;
     return nil;
   end;
@@ -1505,15 +1507,15 @@ end;
     if (vs.CodeSystem :=:= nil) then
       return nil;
     for (ValueSetDefineConceptComponent c : vs.CodeSystem.Concept) begin
-      ValueSetDefineConceptComponent v := getConceptForCode(c, code);   
+      ValueSetDefineConceptComponent v := getConceptForCode(c, code);
       if (v <> nil) then
         return v;
     end;
     return nil;
   end;
-  
-  
-  
+
+
+
   private ValueSetDefineConceptComponent getConceptForCode(ValueSetDefineConceptComponent c, String code) begin
     if (code.equals(c.Code)) then
       return c;
@@ -1530,7 +1532,7 @@ end;
       TFhirXHtmlNode a := li.addTag('a');
       a.setAttribute('href', cs.Links.('self').replace('\\', '/'));
       a.addText(inc.System.toString);
-    end; else 
+    end; else
       li.addText(inc.System.toString);
   end;
 
@@ -3590,4 +3592,3 @@ begin
 end;
 
 end.
-

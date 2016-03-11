@@ -72,7 +72,7 @@ Type
   end;
 
 const
-  CODES_TMPICertainty : array [TMPICertainty] of String = ('', 'Certain', 'Probable', 'Possible');
+  CODES_TMPICertainty : array [TMPICertainty] of String = ('', 'certain', 'probable', 'possible');
 
 implementation
 

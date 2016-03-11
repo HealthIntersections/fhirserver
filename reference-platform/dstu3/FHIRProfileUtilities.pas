@@ -702,29 +702,19 @@ begin
   begin
     vs := context.fetchResource(frtValueSet, (ed.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
     try
-      if vs.codeSystem <> nil then
-      begin
-        result := TFhirCoding.Create;
-        result.system := vs.codeSystem.system;
-        result.code := vs.codeSystem.conceptList[0].code;
-        result.display := vs.codeSystem.conceptList[0].display;
-      end
-      else
-      begin
-        vs1 := context.expand(vs);
-        try
-          if (vs1 = nil) then
-            result := nil
-          else
-          begin
-            result := TFhirCoding.Create;
-            result.system := vs1.expansion.containsList[0].system;
-            result.code := vs1.expansion.containsList[0].code;
-            result.display := vs1.expansion.containsList[0].display;
-          end;
-        finally
-          vs1.Free;
+      vs1 := context.expand(vs);
+      try
+        if (vs1 = nil) then
+          result := nil
+        else
+        begin
+          result := TFhirCoding.Create;
+          result.system := vs1.expansion.containsList[0].system;
+          result.code := vs1.expansion.containsList[0].code;
+          result.display := vs1.expansion.containsList[0].display;
         end;
+      finally
+        vs1.Free;
       end;
     finally
       vs.Free;

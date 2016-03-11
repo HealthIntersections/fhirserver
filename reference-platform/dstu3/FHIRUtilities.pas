@@ -113,6 +113,7 @@ function GetExtension(element : TFhirElement; url : string) : TFhirExtension;
 
 procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String); overload;
 procedure BuildNarrative(vs : TFhirValueSet); overload;
+procedure BuildNarrative(cs : TFhirCodeSystem); overload;
 procedure ComposeXHtml(s : TAdvStringBuilder; node: TFhirXHtmlNode); overload;
 function ComposeXHtml(node: TFhirXHtmlNode) : String; overload;
 function ComposeJson(r : TFhirResource) : String; overload;
@@ -158,9 +159,9 @@ type
 
   TFHIRTFhirContractHelper = class helper for TFhirContract
   private
-    function getActorList: TFhirContractPartyList;
+    function getActorList: TFhirContractAgentList;
   public
-    property actorList : TFhirContractPartyList read getActorList;
+    property actorList : TFhirContractAgentList read getActorList;
   end;
 
 
@@ -402,36 +403,31 @@ type
     function errorCount : integer;
   end;
 
-  TFhirValueSetCodeSystemHelper = class helper for TFhirValueSetCodeSystem
+  TFhirCodeSystem2 = TFhirCodeSystem;
+
+  TFhirCodeSystemHelper = class helper for TFhirCodeSystem
   private
-    function locate(parent: TFhirValueSetCodeSystemConcept; list: TFhirValueSetCodeSystemConceptList; code : String; var foundParent, foundConcept: TFhirValueSetCodeSystemConcept): boolean;
-    procedure scanForSubsumes(parentList, conceptList : TFhirValueSetCodeSystemConceptList; code : String);
+    function locate(parent: TFhirCodeSystemConcept; list: TFhirCodeSystemConceptList; code : String; var foundParent, foundConcept: TFhirCodeSystemConcept): boolean;
+    procedure scanForSubsumes(parentList, conceptList : TFhirCodeSystemConceptList; code : String);
+    function GetCodeSystem: TFhirCodeSystem;
+    function GetSystem: String;
 
   public
-    function getParents(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
-    function getChildren(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
+    function getParents(concept : TFhirCodeSystemConcept) : TFhirCodeSystemConceptList;
+    function getChildren(concept : TFhirCodeSystemConcept) : TFhirCodeSystemConceptList;
+    property codeSystem : TFhirCodeSystem read GetCodeSystem;
+    property system : String read GetSystem;
+    function context : string;
   end;
 
-{$IFDEF FHIR_DSTU3}
   TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
   public
     function hash : String;
   end;
 
-{$ELSE}
+  TFhirValueSetCodeSystem = TFhirCodeSystem;
 
-  TFhirExpansionProfile = class (TAdvObject)
-  private
-    FincludeDefinition: boolean;
-    FlimitedExpansion: boolean;
-  public
-    function Link : TFhirExpansionProfile; overload;
-    function hash : string;
 
-    property includeDefinition : boolean read FincludeDefinition write FincludeDefinition;
-    property limitedExpansion : boolean read FlimitedExpansion write FlimitedExpansion;
-  end;
-{$ENDIF}
 function Path(const parts : array of String) : String;
 
 
@@ -1198,7 +1194,7 @@ begin
 end;
 
 
-procedure addDefineRowToTable(t : TFhirXHtmlNode; c : TFhirValueSetCodeSystemConcept; indent : integer);
+procedure addDefineRowToTable(t : TFhirXHtmlNode; c : TFhirCodeSystemConcept; indent : integer);
 var
   tr, td : TFhirXHtmlNode;
   s : string;
@@ -1235,19 +1231,6 @@ begin
   td.addText(c.Display);
   for i := 0 to c.containsList.count - 1 do
     addContainsRowToTable(t, c.containsList[i], indent+1);
-end;
-
-procedure generateDefinition(x : TFhirXHtmlNode; vs : TFHIRValueSet);
-var
-  p, t : TFhirXHtmlNode;
-  i : integer;
-begin
-  p := x.addTag('p');
-  p.addText('This value set defines it''s own terms in the system '+vs.CodeSystem.System);
-  t := x.addTag('table');
-  addTableHeaderRowStandard(t);
-  for i := 0 to vs.CodeSystem.ConceptList.Count - 1 do
-    addDefineRowToTable(t, vs.CodeSystem.ConceptList[i], 0);
 end;
 
 
@@ -1290,8 +1273,6 @@ begin
       h.addText(vs.Name);
       p := x.addTag('p');
       p.addText(vs.Description);
-      if (vs.CodeSystem <> nil) then
-        generateDefinition(x, vs);
       if (vs.Compose <> nil) then
         generateComposition(x, vs);
     end;
@@ -1304,6 +1285,36 @@ begin
     x.free;
   end;
 end;
+
+procedure BuildNarrative(cs : TFHIRCodeSystem);
+var
+  t, x, h, p : TFhirXHtmlNode;
+  i : integer;
+begin
+  x := TFhirXHtmlNode.create;
+  try
+    x.NodeType := fhntElement;
+    x.Name := 'div';
+      h := x.addTag('h2');
+      h.addText(cs.Name);
+      p := x.addTag('p');
+      p.addText(cs.Description);
+
+      p := x.addTag('p');
+      p.addText('The code system '+cs.url+' defines the following codes: ');
+      t := x.addTag('table');
+      addTableHeaderRowStandard(t);
+      for i := 0 to cs.ConceptList.Count - 1 do
+        addDefineRowToTable(t, cs.ConceptList[i], 0);
+      if (cs.Text = nil) then
+        cs.Text := TFhirNarrative.create;
+      cs.Text.div_ := x.link;
+      cs.Text.status := NarrativeStatusGenerated;
+  finally
+    x.free;
+  end;
+end;
+
 
 function GetEmailAddress(contacts : TFhirContactPointList):String;
 var
@@ -2787,6 +2798,7 @@ begin
   else
     result := 'Other';
 end;
+
 function TFhirValueSetHelper.source: string;
 var
   b : TAdvStringBuilder;
@@ -2794,8 +2806,6 @@ var
 begin
   b := TAdvStringBuilder.Create;
   try
-    if codeSystem <> nil then
-      b.Append(csName(codeSystem.system));
     if (compose <> nil) then
       for comp in compose.includeList do
         b.Append(csName(comp.system));
@@ -3453,12 +3463,12 @@ begin
 end;
 
 
-{ TFhirValueSetCodeSystemHelper }
+{ TFhirCodeSystemHelper }
 
-function TFhirValueSetCodeSystemHelper.locate(parent : TFhirValueSetCodeSystemConcept; list : TFhirValueSetCodeSystemConceptList; code : String; var foundParent, foundConcept : TFhirValueSetCodeSystemConcept) : boolean;
+function TFhirCodeSystemHelper.locate(parent : TFhirCodeSystemConcept; list : TFhirCodeSystemConceptList; code : String; var foundParent, foundConcept : TFhirCodeSystemConcept) : boolean;
 var
   i : integer;
-  c : TFhirValueSetCodeSystemConcept;
+  c : TFhirCodeSystemConcept;
 begin
   result := false;
   for c in list do
@@ -3476,10 +3486,10 @@ begin
 end;
 
 
-procedure TFhirValueSetCodeSystemHelper.scanForSubsumes(parentList, conceptList: TFhirValueSetCodeSystemConceptList; code: String);
+procedure TFhirCodeSystemHelper.scanForSubsumes(parentList, conceptList: TFhirCodeSystemConceptList; code: String);
 var
   ext : TFHIRExtension;
-  c : TFhirValueSetCodeSystemConcept;
+  c : TFhirCodeSystemConcept;
 begin
   for c in conceptList do
   begin
@@ -3491,12 +3501,21 @@ begin
   end;
 end;
 
-function TFhirValueSetCodeSystemHelper.getChildren(concept: TFhirValueSetCodeSystemConcept): TFhirValueSetCodeSystemConceptList;
+function TFhirCodeSystemHelper.context: string;
+var
+  i: Integer;
+begin
+  result := '';
+  for i := 0 to useContextList.Count - 1 do
+    result := result + gen(useContextList[i]);
+end;
+
+function TFhirCodeSystemHelper.getChildren(concept: TFhirCodeSystemConcept): TFhirCodeSystemConceptList;
 var
   ext : TFHIRExtension;
-  p, c : TFhirValueSetCodeSystemConcept;
+  p, c : TFhirCodeSystemConcept;
 begin
-  result := TFhirValueSetCodeSystemConceptList.Create;
+  result := TFhirCodeSystemConceptList.Create;
   try
     result.AddAll(concept.conceptList);
     for ext in concept.modifierExtensionList do
@@ -3509,11 +3528,16 @@ begin
   end;
 end;
 
-function TFhirValueSetCodeSystemHelper.getParents(concept: TFhirValueSetCodeSystemConcept): TFhirValueSetCodeSystemConceptList;
-var
-  p, c : TFhirValueSetCodeSystemConcept;
+function TFhirCodeSystemHelper.GetCodeSystem: TFhirCodeSystem;
 begin
-  result := TFhirValueSetCodeSystemConceptList.Create;
+  result := self;
+end;
+
+function TFhirCodeSystemHelper.getParents(concept: TFhirCodeSystemConcept): TFhirCodeSystemConceptList;
+var
+  p, c : TFhirCodeSystemConcept;
+begin
+  result := TFhirCodeSystemConceptList.Create;
   try
     if locate(nil, conceptList, concept.code, p, c) then
       if (p <> nil) then
@@ -3524,6 +3548,11 @@ begin
     result.Free;
   end;
 
+end;
+
+function TFhirCodeSystemHelper.GetSystem: String;
+begin
+  result := url;
 end;
 
 {$IFDEF FHIR_DSTU3}
@@ -3585,9 +3614,9 @@ end;
 
 { TFHIRTFhirContractHelper }
 
-function TFHIRTFhirContractHelper.getActorList: TFhirContractPartyList;
+function TFHIRTFhirContractHelper.getActorList: TFhirContractAgentList;
 begin
-  result := partyList;
+  result := agentList;
 end;
 
 

@@ -16,7 +16,7 @@ Type
     fvs : TFHIRValueSet;
     FId: String;
     function check(system, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
-    function findCode(code: String; list : TFhirValueSetCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
+    function findCode(code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
 //    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverityEnum; test : boolean; code : TFhirIssueTypeEnum; msg : string):boolean;
     function getName: String;
@@ -69,11 +69,13 @@ begin
   else
   begin
     FVs := vs.link;
+    {$IFDEF FHIR_DSTU2}
     if fvs.codeSystem <> nil then
     begin
       fvs.codeSystem.checkNoModifiers('ValueSetChecker.prepare', 'CodeSystem');
-      FOthers.Add(fvs.codeSystem.system, TValueSetProvider.create(FVs.Link));
+      FOthers.Add(fvs.codeSystem.system, TFhirCodeSystemProvider.create(FVs.Link));
     end;
+    {$ENDIF}
     if (fvs.compose <> nil) then
     begin
       fvs.compose.checkNoModifiers('ValueSetChecker.prepare', 'compose');
@@ -141,7 +143,7 @@ end;
 //end;
 //
 
-function TValueSetChecker.findCode(code: String; list : TFhirValueSetCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
+function TValueSetChecker.findCode(code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
 var
   i : integer;
 begin
@@ -151,7 +153,11 @@ begin
     if (code = list[i].code) then
     begin
       result := true;
+      {$IFDEF FHIR_DSTU3}
+      isabstract := false; // todo ggvscs
+      {$ELSE}
       isabstract := list[i].abstract;
+      {$ENDIF}
       displays.Add(list[i].display);
       exit;
     end;
@@ -218,6 +224,7 @@ begin
   end
   else
   begin
+    {$IFDEF FHIR_DSTU2}
     if (fvs.codeSystem <> nil) and ((system = fvs.codeSystem.system) or (system = SYSTEM_NOT_APPLICABLE)) then
     begin
       result := FindCode(code, fvs.codeSystem.conceptList, displays, isabstract);
@@ -227,6 +234,7 @@ begin
         exit;
       end;
     end;
+    {$ENDIF}
     if (fvs.compose <> nil) then
     begin
       for i := 0 to fvs.compose.importList.Count - 1 do

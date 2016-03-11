@@ -81,13 +81,13 @@ public class SearchParameterDefn {
       getWorkingTargets().add(c.getValue());
   }
     
-  public SearchParameterDefn(String code, String description, SearchParamType type, List<org.hl7.fhir.dstu21.model.CodeType> targets, SearchParameter.XPathUsageType xPathUsage) {
+  public SearchParameterDefn(String code, String description, SearchParamType type, List<org.hl7.fhir.dstu3.model.CodeType> targets, SearchParameter.XPathUsageType xPathUsage) {
     super();
     this.code = code;
     this.description = description;
     this.type = type;
     this.xPathUsage = xPathUsage; 
-    for (org.hl7.fhir.dstu21.model.CodeType c : targets)
+    for (org.hl7.fhir.dstu3.model.CodeType c : targets)
       getWorkingTargets().add(c.getValue());
   }
     

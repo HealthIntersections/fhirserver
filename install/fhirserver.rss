@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.36 2016-03-11 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.36.exe</link>
+			<description>DSTU3. 2016-03-11 (v1.0.36): Major change - move CodeSystem out of ValueSet</description>
+		</item>
+<item><title>FHIRServer release 1.0.35 2016-02-19 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.35.exe</link>
+			<description>DSTU2. 2016-02-19 (v1.0.35): Enhance SNOMED CT implementation to support Reference Sets additional values + process preferred concept in language reference set</description>
+		</item>
 		<item><title>FHIRServer release 1.0.34 2016-02-13 (DSTU2)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.34.exe</link>
 			<description>DSTU2. 2016-02-13 (v1.0.34): Fix SNOMED CT expansion error</description>
 		</item>
-<item><title>FHIRServer release 1.0.33 2016-02-13 (DSTU3)</title>
+		<item><title>FHIRServer release 1.0.33 2016-02-13 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.33.exe</link>
 			<description>DSTU3. 2016-02-13 (v1.0.33): Database Stability fixes, various bugs fixes</description>
 		</item>

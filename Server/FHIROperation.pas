@@ -1927,7 +1927,7 @@ var
   t_, t1 : TFhirResourceType;
   type_ : TFhirResourceType;
 begin
-  if (_includes = '') and (_reverseIncludes = '') then
+  if ((_includes = '') and (_reverseIncludes = '')) or (keys.count = 0) then
     exit;
 
   sel := TStringList.Create;
@@ -1951,7 +1951,7 @@ begin
           sel.Add('Ids.ResourceKey in (select Target from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(t_)+') and Ids.ResourceKey = IndexEntries.Target and Ids.ResoureTypeKey = '+inttostr(Repository.ResConfig[t1].key)+')');
         end
         else
-          sel.Add('Ids.ResourceKey in (select Target from IndexEntries where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(t_)+')');
+          sel.Add('Ids.ResourceKey in (select Target from IndexEntries where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(t_)+'))');
       end
       else
         raise Exception.Create('Unable to process include '+s);
@@ -1973,24 +1973,26 @@ begin
       else
         raise Exception.Create('Unable to process include '+s);
     end;
-    sql := '('+sel[0]+')';
-    for i := 1 to sel.Count - 1 do
-      sql := sql +' or ('+sel[i]+')';
+    if (sel.count > 0) then
+    begin
+      sql := '('+sel[0]+')';
+      for i := 1 to sel.Count - 1 do
+        sql := sql +' or ('+sel[i]+')';
 
-    sql := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, Types '+
-          'where Ids.Deleted = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and Versions.SessionKey = Sessions.SessionKey and Versions.ResourceVersionKey = Ids.MostRecent and ('+sql+'))';
+      sql := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, Types '+
+            'where Ids.Deleted = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and Versions.SessionKey = Sessions.SessionKey and Versions.ResourceVersionKey = Ids.MostRecent and ('+sql+')';
+      FConnection.SQL := sql;
+      FConnection.Prepare;
+      try
+        FConnection.Execute;
+        while FConnection.FetchNext do
+          AddResourceTobundle(bundle, secure, '', field, comp, SearchEntryModeInclude, false, type_);
+      finally
+        FConnection.Terminate;
+      end;
+    end;
   finally
     sel.Free;
-  end;
-
-  FConnection.SQL := sql;
-  FConnection.Prepare;
-  try
-    FConnection.Execute;
-    while FConnection.FetchNext do
-      AddResourceTobundle(bundle, secure, '', field, comp, SearchEntryModeInclude, false, type_);
-  finally
-    FConnection.Terminate;
   end;
 end;
 
@@ -2111,7 +2113,7 @@ begin
               FConnection.Terminate;
             end;
 
-            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revincludey'), bundle, keys, field, comp);
+            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
           end;
 
           bundle.id := FhirGUIDToString(CreateGUID);

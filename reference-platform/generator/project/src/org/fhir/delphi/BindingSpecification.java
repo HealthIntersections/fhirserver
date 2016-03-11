@@ -351,9 +351,9 @@ public class BindingSpecification {
     return shared;
   }
 
-  public void loadFromExpansion(org.hl7.fhir.dstu21.model.ValueSet vs) {
+  public void loadFromExpansion(org.hl7.fhir.dstu3.model.ValueSet vs) {
     allCodes = new ArrayList<DefinedCode>();
-    for (org.hl7.fhir.dstu21.model.ValueSet.ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {
+    for (org.hl7.fhir.dstu3.model.ValueSet.ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {
       DefinedCode cd = new DefinedCode();
       cd.setCode(c.getCode());
       cd.setSystem(c.getSystem());

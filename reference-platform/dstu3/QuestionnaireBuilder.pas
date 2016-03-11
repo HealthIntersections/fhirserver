@@ -1257,7 +1257,9 @@ begin
             vse.xmlId := nextId('vs');
             vsCache.Add(vse.url, vse.xmlId);
             vse.text := nil;
+            {$IFDEF FHIR_DSTU2}
             vse.codeSystemElement := nil;
+            {$ENDIF}
             vse.composeElement := nil;
             vse.contactList.Clear;
             vse.publisherElement := nil;

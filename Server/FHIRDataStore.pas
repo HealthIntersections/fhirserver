@@ -1079,8 +1079,13 @@ begin
     with ct.actorList.append do
     begin
       roleList.append.text := 'Server Host';
+      {$IFDEF FHIR_DSTU2}
       entity := TFhirReference.Create;
       entity.reference := 'Device/this-server';
+      {$ELSE}
+      actor := TFhirReference.Create;
+      actor.reference := 'Device/this-server';
+      {$ENDIF}
     end;
     for s in session.scopes.Split([' ']) do
       with ct.actionList.append.codingList.append do
@@ -1494,7 +1499,7 @@ begin
 
   FLock.Lock('SeeResource');
   try
-    if resource.ResourceType in [frtValueSet, frtConceptMap] then
+    if resource.ResourceType in [frtValueSet, frtConceptMap {$IFDEF FHIR_DSTU3}, frtCodeSystem {$ENDIF}] then
       TerminologyServer.SeeTerminologyResource(resource)
     else if resource.ResourceType = frtStructureDefinition then
       FValidatorContext.seeResource(resource as TFhirStructureDefinition)

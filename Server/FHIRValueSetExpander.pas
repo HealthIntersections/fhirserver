@@ -54,13 +54,13 @@ Type
     FStore : TTerminologyServer;
     procedure processCodeAndDescendents(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; params : TFhirValueSetExpansionParameterList);
 
-    procedure handleDefine(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCodeSystem; defines : TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText; params : TFhirValueSetExpansionParameterList);
+    procedure handleDefine(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirCodeSystem2; defines : TFhirCodeSystemConceptList; filter : TSearchFilterText; params : TFhirValueSetExpansionParameterList);
     procedure importValueSet(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; uri : String; filter : TSearchFilterText; dependencies : TStringList; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
     procedure processCodes(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude; filter : TSearchFilterText; dependencies : TStringList; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
     procedure handleCompose(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
 
     procedure processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, version, code, display, definition: string; params : TFhirValueSetExpansionParameterList);
-    procedure addDefinedCode(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; system : string; c : TFhirValueSetCodeSystemConcept);
+    procedure addDefinedCode(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; system : string; c : TFhirCodeSystemConcept);
     function key(system, code : String): string; overload;
     function key(c : TFhirValueSetExpansionContains) : string;  overload;
   public
@@ -109,7 +109,9 @@ begin
   result := source.Clone;
   if not profile.includeDefinition then
   begin
+    {$IFDEF FHIR_DSTU2}
     result.codeSystem := nil;
+    {$ENDIF}
     result.compose := nil;
     result.description := '';
     result.contactList.Clear;
@@ -163,11 +165,13 @@ begin
     end;
 
     try
+      {$IFDEF FHIR_DSTU2}
       if (source.codeSystem <> nil) then
       begin
         source.codeSystem.checkNoModifiers('ValueSetExpander.Expand', 'code system');
         handleDefine(list, map, source.codeSystem, source.codeSystem.conceptList, filter, result.expansion.parameterList);
       end;
+      {$ENDIF}
       notClosed := false;
       if (source.compose <> nil) then
       begin
@@ -256,10 +260,10 @@ begin
     processCodes(true, list, map, source.excludeList[i], filter, dependencies, params, notClosed);
 end;
 
-procedure TFHIRValueSetExpander.handleDefine(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source : TFhirValueSetCodeSystem; defines : TFhirValueSetCodeSystemConceptList; filter : TSearchFilterText; params : TFhirValueSetExpansionParameterList);
+procedure TFHIRValueSetExpander.handleDefine(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source : TFhirCodeSystem2; defines : TFhirCodeSystemConceptList; filter : TSearchFilterText; params : TFhirValueSetExpansionParameterList);
 var
   i : integer;
-  cm : TFhirValueSetCodeSystemConcept;
+  cm : TFhirCodeSystemConcept;
   param : TFhirValueSetExpansionParameter;
 begin
   if (defines.Count > 0) and (params <> nil) and (source.version <> '') then
@@ -278,11 +282,15 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.addDefinedCode(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system: string; c: TFhirValueSetCodeSystemConcept);
+procedure TFHIRValueSetExpander.addDefinedCode(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system: string; c: TFhirCodeSystemConcept);
 var
   i : integer;
 begin
+  {$IFDEF FHIR_DSTU3}
+  // todo ggvscs
+  {$ELSE}
   if (c.abstractElement = nil) or not c.Abstract then
+  {$ENDIF}
     processCode(false, list, map, system, '', c.Code, c.Display, c.definition, nil);
   for i := 0 to c.conceptList.count - 1 do
     addDefinedCode(list, map, system, c.conceptList[i]);

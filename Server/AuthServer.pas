@@ -225,114 +225,116 @@ const
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
     tcOther,
-    tcFinancial , // frtAccount, - frtAccount
-    tcClinical , // frtAllergyIntolerance, - frtAllergyIntolerance
-    tcSchedule , // frtAppointment, - frtAppointment
-    tcSchedule , // frtAppointmentResponse, - frtAppointmentResponse
-    tcAudit , // frtAuditEvent, - frtAuditEvent
-    tcOther , // frtBasic, - frtBasic
-    tcDocuments , // frtBinary, -
-    tcOther , // frtBodySite, - frtBodySite
-    tcOther , // frtBundle, -
-    tcClinical , // frtCarePlan, -
-    tcFinancial , // frtClaim, - frtClaim
-    tcFinancial , // frtClaimResponse, -
-    tcClinical , // frtClinicalImpression, - frtClinicalImpression
-    tcOther , // frtCodeSystem, - frtCodeSystem
-    tcOther , // frtCommunication, - frtCommunication
-    tcOther , // frtCommunicationRequest, - frtCommunicationRequest
-    tcDocuments , // frtComposition, - frtComposition
-    tcOther , // frtConceptMap, - frtConceptMap
-    tcClinical , // frtCondition, - frtCondition
-    tcOther , // frtConformance, - frtConformance
-    tcFinancial , // frtContract, - frtContract
-    tcFinancial , // frtCoverage, - frtCoverage
-    tcOther , // frtDataElement, -
-    tcOther , // frtDecisionSupportRule, - frtDecisionSupportRule
-    tcOther , // frtDecisionSupportServiceModule, - frtDecisionSupportServiceModule
-    tcClinical,  // frtDetectedIssue, - frtDetectedIssue
-    tcOther , // frtDevice, -
-    tcOther , // frtDeviceComponent, - frtDeviceComponent
-    tcOther , // frtDeviceMetric, - frtDeviceMetric
-    tcOther , // frtDeviceUseRequest, - frtDeviceUseRequest
-    tcClinical, // frtDeviceUseStatement, - frtDeviceUseStatement
-    tcOther , // frtDiagnosticOrder, - frtDiagnosticOrder
+    tcFinancial , // frtAccount
+    tcClinical , // frtAllergyIntolerance
+    tcSchedule , // frtAppointment
+    tcSchedule , // frtAppointmentResponse
+    tcAudit , // frtAuditEvent
+    tcOther , // frtBasic
+    tcDocuments , // frtBinary
+    tcOther , // frtBodySite
+    tcOther , // frtBundle
+    tcClinical , // frtCarePlan
+    tcFinancial , // frtClaim
+    tcFinancial , // frtClaimResponse
+    tcClinical , // frtClinicalImpression
+    tcOther , // frtCodeSystem
+    tcOther , // frtCommunication
+    tcOther , // frtCommunicationRequest
+    tcOther , // frtCompartmentDefinition
+    tcDocuments , // frtComposition - frtComposition
+    tcOther , // frtConceptMap - frtConceptMap
+    tcClinical , // frtCondition - frtCondition
+    tcOther , // frtConformance - frtConformance
+    tcFinancial , // frtContract - frtContract
+    tcFinancial , // frtCoverage - frtCoverage
+    tcOther , // frtDataElement - frtDataElement
+    tcOther , // frtDecisionSupportRule - frtDecisionSupportRule
+    tcOther , // frtDecisionSupportServiceModule - frtDecisionSupportServiceModule
+    tcClinical,  // frtDetectedIssue - frtDetectedIssue
+    tcOther , // frtDevice - frtDevice
+    tcOther , // frtDeviceComponent - frtDeviceComponent
+    tcOther , // frtDeviceMetric - frtDeviceMetric
+    tcOther , // frtDeviceUseRequest - frtDeviceUseRequest
+    tcClinical, // frtDeviceUseStatement - frtDeviceUseStatement
+    tcOther , // frtDiagnosticOrder - frtDiagnosticOrder
     tcClinical, // frtDiagnosticReport - frtDiagnosticReport
-    tcDocuments , // frtDocumentManifest, - frtDocumentManifest
+    tcDocuments , // frtDocumentManifest - frtDocumentManifest
     tcDocuments, // frtDocumentReference - frtDocumentReference
-    tcFinancial , // frtEligibilityRequest, - frtEligibilityRequest
+    tcFinancial , // frtEligibilityRequest - frtEligibilityRequest
     tcFinancial, // frtEligibilityResponse - frtEligibilityResponse
-    tcSchedule , // frtEncounter, - frtEncounter
+    tcSchedule , // frtEncounter - frtEncounter
     tcFinancial, // frtEnrollmentRequest - frtEnrollmentRequest
-    tcFinancial , // frtEnrollmentResponse, -
+    tcFinancial , // frtEnrollmentResponse - frtEnrollmentResponse
     tcSchedule, // frtEpisodeOfCare - frtEpisodeOfCare
-    tcOther, // frtExpansionProfile, - frtExpansionProfile
-    tcFinancial , // frtExplanationOfBenefit, - frtExplanationOfBenefit
+    tcOther, // frtExpansionProfile - frtExpansionProfile
+    tcFinancial , // frtExplanationOfBenefit - frtExplanationOfBenefit
     tcClinical, // frtFamilyMemberHistory - frtFamilyMemberHistory
-    tcClinical , // frtFlag, - frtFlag
-    tcClinical , // frtGoal, - frtGoal
-    tcOther , // frtGroup, - frtGroup
-    tcClinical , // frtGuidanceResponse, -
-    tcSchedule , // frtHealthcareService, - frtHealthcareService
-    tcData, // frtImagingObjectSelection -
-    tcData , // frtImagingStudy, - frtImagingStudy
-    tcMeds , // frtImmunization, - frtImmunization
-    tcMeds , // frtImmunizationRecommendation, - frtImmunizationRecommendation
-    tcOther , // frtImplemnetationGuide, - frtImplementationGuide
+    tcClinical , // frtFlag - frtFlag
+    tcClinical , // frtGoal - frtGoal
+    tcOther , // frtGroup - frtGroup
+    tcClinical , // frtGuidanceResponse - frtGuidanceResponse
+    tcSchedule , // frtHealthcareService - frtHealthcareService
+    tcData, // frtImagingObjectSelection - frtImagingObjectSelection
+    tcData , // frtImagingStudy - frtImagingStudy
+    tcMeds , // frtImmunization - frtImmunization
+    tcMeds , // frtImmunizationRecommendation - frtImmunizationRecommendation
+    tcOther , // frtImplemnetationGuide - frtImplementationGuide
     tcOther, // frtLibrary - frtLibrary
-    tcClinical , // frtLinkage, - frtLinkage
-    tcOther , // frtList, - frtList
-    tcOther , // frtLocation, - frtLocation
+    tcClinical , // frtLinkage - frtLinkage
+    tcOther , // frtList - frtList
+    tcOther , // frtLocation - frtLocation
     tcOther, // frtMeasure - frtMeasure
-    tcOther , // frtMedia, - frtMedia
-    tcMeds , // frtMedication, - frtMedication
-    tcMeds , // frtMedicationAdministration, - frtMedicationAdministration
-    tcMeds , // frtMedicationDispense, - frtMedicationDispense
-    tcMeds , // frtMedicationPrescription, - frtMedicationOrder
-    tcMeds , // frtMedicationStatement, - frtMedicationStatement
-    tcOther , // frtMessageHeader, - frtMessageHeader
+    tcOther , // frtMedia - fr
+    tcOther , // frtMedia - frtMedia
+    tcMeds , // frtMedication - frtMedication
+    tcMeds , // frtMedicationAdministration - frtMedicationAdministration
+    tcMeds , // frtMedicationDispense - frtMedicationDispense
+    tcMeds , // frtMedicationPrescription - frtMedicationOrder
+    tcMeds , // frtMedicationStatement - frtMedicationStatement
+    tcOther , // frtMessageHeader - frtMessageHeader
     tcData, // frtModuleDefinition - frtModuleDefinition
-    tcOther , // frtNamingSystem, - frtNamingSystem
-    tcMeds , // frtNutritionOrder, - frtNutritionOrder
-    tcData , // frtObservation, -
-    tcOther , // frtOperationDefinition, - frtOperationDefinition
-    tcOther , // frtOperationOutcome, - frtOperationOutcome
-    tcOther , // frtOrder, - frtOrder
-    tcOther , // frtOrderResponse, - frtOrderResponse
+    tcOther , // frtNamingSystem - frtNamingSystem
+    tcMeds , // frtNutritionOrder - frtNutritionOrder
+    tcData , // frtObservation - frtObservation
+    tcOther , // frtOperationDefinition - frtOperationDefinition
+    tcOther , // frtOperationOutcome - frtOperationOutcome
+    tcOther , // frtOrder - frtOrder
+    tcOther , // frtOrderResponse - frtOrderResponse
     tcData, // frtOrderSet - frtOrderSet
-    tcOther , // frtOrganization, - frtOrganization
-    tcOther , // frtParameters, - frtParameters
-    tcSchedule , // frtPatient, - frtPatient
-    tcFinancial , // frtPaymentNotice, - frtPaymentNotice
-    tcFinancial , // frtPaymentReconciliation, - frtPaymentReconciliation
-    tcOther , // frtPerson, - frtPerson
-    tcOther , // frtPractitioner, -
-    tcClinical , // frtProcedure, - frtProcedure
-    tcOther , // frtProcedureRequest, - frtProcedureRequest
-    tcOther , // frtProcessRequest, - frtProcessRequest
-    tcOther , // frtProcessResponse, - frtProcessResponse
-    tcOther , // frtProtocol,
-    tcAudit , // frtProvenance, -
-    tcOther , // frtQuestionnaire, - frtProvenance
-    tcOther, // frtQuestionnaireResponse - frtQuestionnaire
-    tcClinical , // frtReferralRequest,
-    tcOther , // frtRelatedPerson,
-    tcOther , // frtRiskAssessment,
-    tcSchedule , // frtSchedule,
-    tcOther , // frtSearchParameter,
-    tcData, // frtSequence
-    tcSchedule , // frtSlot,
-    tcData , // frtSpecimen,
-    tcOther , // frtStructureDefinition,
-    tcOther , // frtSubscription,
-    tcOther , // frtSubstance,
-    tcOther , // frtSupplyDelivery,
-    tcOther , // frtSupplyRequest,
-    tcOther , // frtTestScript,
-    tcOther , // frtValueSet,
-    tcClinical); // frtVisionPrescription);
+    tcOther , // frtOrganization - frtOrganization
+    tcOther , // frtParameters - frtParameters
+    tcSchedule , // frtPatient - frtPatient
+    tcFinancial , // frtPaymentNotice - frtPaymentNotice
+    tcFinancial , // frtPaymentReconciliation - frtPaymentReconciliation
+    tcOther , // frtPerson - frtPerson
+    tcOther , // frtPractitioner - frtPractitioner
+    tcClinical , // frtProcedure - frtProcedure
+    tcOther , // frtProcedureRequest - frtProcedureRequest
+    tcOther , // frtProcessRequest - frtProcessRequest
+    tcOther , // frtProcessResponse - frtProcessResponse
+    tcOther , // frtProtocol, - frtProtocol
+    tcAudit , // frtProvenance - frtProvenance
+    tcOther , // frtQuestionnaire - frtQuestionnaire
+    tcOther, // frtQuestionnaireResponse - frtQuestionnaireResponse
+    tcClinical , // frtReferralRequest, - frtReferralRequest
+    tcOther , // frtRelatedPerson, - frtRelatedPerson
+    tcOther , // frtRiskAssessment, - frtRiskAssessment
+    tcSchedule , // frtSchedule, - frtSchedule
+    tcOther , // frtSearchParameter, - frtSearchParameter
+    tcData, // frtSequence - frtSequence
+    tcSchedule , // frtSlot, - frtSlot
+    tcData , // frtSpecimen, - frtSpecimen
+    tcOther , // frtStructureDefinition, - frtStructureDefinition
+    tcOther , // frtSubscription, - frtStructureMap
+    tcOther , // frtSubstance, - frtSubscription
+    tcOther , // frtSupplyDelivery, - frtSubstance
+    tcOther , // frtSupplyRequest, - frtSupplyDelivery
+    tcOther , // frtTestScript, - frtSupplyRequest
+    tcOther , // frtValueSet, - frtTestScript
+    tcOther , // frtValueSet, - frtTestScript
+    tcClinical); // frtVisionPrescription); - frtValueSet
   {$ENDIF}
-
 
 { TAuth2Server }
 

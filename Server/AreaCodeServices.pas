@@ -217,12 +217,12 @@ end;
 
 procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderContext);
 begin
-  ctxt.free;
+//  ctxt.free;
 end;
 
 procedure TAreaCodeServices.Close(ctxt : TCodeSystemProviderFilterContext);
 begin
-  ctxt.free;
+//  ctxt.free;
 end;
 
 procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);

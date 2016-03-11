@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hl7.fhir.dstu2.model.DateTimeType;
-import org.hl7.fhir.dstu21.model.OperationDefinition;
-import org.hl7.fhir.dstu21.model.OperationDefinition.OperationDefinitionParameterComponent;
-import org.hl7.fhir.dstu21.model.OperationDefinition.OperationParameterUse;
+import org.hl7.fhir.dstu3.model.OperationDefinition;
+import org.hl7.fhir.dstu3.model.OperationDefinition.OperationDefinitionParameterComponent;
+import org.hl7.fhir.dstu3.model.OperationDefinition.OperationParameterUse;
 import org.hl7.fhir.utilities.Utilities;
 
 /**
@@ -1247,6 +1247,9 @@ public class DelphiGenerator {
     String tn = typeNames.get(e);
     BindingSpecification cd = e.getBinding();
     List<DefinedCode> ac = cd.getAllCodes();
+    
+    if (ac.size() == 0)
+      throw new Error("Element "+e.getName()+" codes have no codes on binding "+e.getBinding().getName());
     
     // this is a work around for an erroneous definition. It should be an error not patched here
     Set<String> codes = new HashSet<String>();
@@ -2811,9 +2814,11 @@ public class DelphiGenerator {
   }
 
   private String getElementName(String name) {
+    name = name.replace("[x]", "").replace("[type]", "value");
     if (GeneratorUtils.isDelphiReservedWord(name))
       return name+"_";
-    return name.replace("[x]", "").replace("[type]", "value");
+    else
+      return name;
   }
 
   private String getPropertyName(String name) {

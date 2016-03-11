@@ -183,6 +183,7 @@ procedure _FuncTransaction; cdecl;
 procedure _FuncServerValidate; cdecl;
 procedure _FuncNarrative; cdecl;
 procedure _FuncDisconnect; cdecl;
+procedure _FuncDebug; cdecl;
 
 var
   FNpp: TFHIRPlugin;
@@ -245,6 +246,7 @@ begin
   self.AddFuncItem('Confi&gure Tools', _FuncSettings);
   self.AddFuncItem('Vie&w Toolbox', _FuncToolbox);
   self.AddFuncItem('View Visuali&zer', _FuncVisualiser);
+  self.AddFuncItem('Debug Install', _FuncDebug);
 
   configureSSL;
 end;
@@ -356,6 +358,24 @@ begin
 end;
 
 
+procedure _FuncDebug; cdecl;
+var
+  s : String;
+begin
+  try
+    s := 'plugin: '+inttohex(cardinal(FNpp), 8)+#13#10;
+    s := s + 'config: '+IncludeTrailingBackslash(FNpp.GetPluginsConfigDir)+'fhirplugin.json';
+    s := s + 'init: '+BoolToStr(FNpp.init)+#13#10;
+    s := s + 'validator: '+ inttohex(cardinal(FNpp.FValidator), 8)+ #13#10;
+    s := s + 'client: '+ inttohex(cardinal(FNpp.FClient), 8)+ #13#10;
+    s := s + 'conformance: '+ inttohex(cardinal(FNpp.FConformance), 8)+ #13#10;
+    s := s + 'server: '+ inttohex(cardinal(FNpp.FCurrentServer), 8)+ #13#10;
+  except
+    on e : exception do
+      s := s + 'exception: '+e.Message;
+  end;
+  ShowMessage(s);
+end;
 
 function TFHIRPlugin.connected: boolean;
 begin

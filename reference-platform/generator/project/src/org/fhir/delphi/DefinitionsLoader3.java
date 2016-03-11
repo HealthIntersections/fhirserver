@@ -4,18 +4,19 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hl7.fhir.dstu21.formats.XmlParser;
-import org.hl7.fhir.dstu21.model.Bundle;
-import org.hl7.fhir.dstu21.model.Bundle.BundleEntryComponent;
-import org.hl7.fhir.dstu21.model.Conformance;
-import org.hl7.fhir.dstu21.model.OperationDefinition;
-import org.hl7.fhir.dstu21.model.SearchParameter;
-import org.hl7.fhir.dstu21.model.StructureDefinition;
-import org.hl7.fhir.dstu21.model.ValueSet;
-import org.hl7.fhir.dstu21.utils.ToolingExtensions;
+import org.hl7.fhir.dstu3.formats.XmlParser;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.dstu3.model.CompartmentDefinition;
+import org.hl7.fhir.dstu3.model.Conformance;
+import org.hl7.fhir.dstu3.model.OperationDefinition;
+import org.hl7.fhir.dstu3.model.SearchParameter;
+import org.hl7.fhir.dstu3.model.StructureDefinition;
+import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.dstu3.utils.ToolingExtensions;
 import org.hl7.fhir.utilities.Utilities;
 
-public class DefinitionsLoader21 {
+public class DefinitionsLoader3 {
 
   public Definitions loadDefinitions(String src) throws Exception {
     Bundle types = (Bundle) new XmlParser().parse(new FileInputStream(Utilities.path(src, "profiles-types.xml")));
@@ -41,6 +42,8 @@ public class DefinitionsLoader21 {
         processConformance(def, (Conformance) entry.getResource());
       else if (entry.getResource() instanceof OperationDefinition)
         def.getOperations().add((OperationDefinition) entry.getResource());
+      else if (entry.getResource() instanceof CompartmentDefinition)
+        processCompartmentDefinition(def, (CompartmentDefinition) entry.getResource());
       else
         System.out.println("unhandled entry in resources: "+entry.getResource().fhirType());
     }
@@ -53,6 +56,10 @@ public class DefinitionsLoader21 {
     return def;
   }
 
+  private void processCompartmentDefinition(Definitions def, CompartmentDefinition resource) {
+  
+  }
+   
   private void processConformance(Definitions def, Conformance resource) {
     def.setVersion(resource.getFhirVersion());
     def.setGenDate(VersionConverter.convertDateTime(resource.getDateElement()));

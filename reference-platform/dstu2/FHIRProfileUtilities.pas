@@ -249,9 +249,9 @@ begin
   else
     s := d.Path;
   if (d.type_List.Count > 0) and (d.type_List[0].profileList.Count > 0) then
-    result := '.' + s
+    result := '.' + s + '['+d.type_List[0].profileList[0].value+']'
   else
-    result := '.' + s + '['+d.type_List[0].profileList[0].value+']';
+    result := '.' + s;
 end;
 
 function TProfileUtilities.overWriteWithCurrent(profile, usage : TFHIRElementDefinition) : TFHIRElementDefinition;
@@ -1350,16 +1350,22 @@ begin
           vsBase := nil;
           vsDerived := nil;
           try
-            vsBase := context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
-            vsDerived := context.fetchResource(frtValueSet, (derived.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
-            expBase := context.expand(vsBase);
-            expDerived := context.expand(vsDerived);
-            if (expBase = nil) then
-              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+base.path, 'Binding '+(base.binding.valueSet as TFhirReference).reference+' could not be expanded'))
-            else if (expDerived = nil) then
-              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' could not be expanded'))
-            else if not isSubset(expBase, expDerived) then
-              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' is not a subset of binding '+(base.binding.valueSet as TFhirReference).reference));
+            if (base.binding.valueSet is TFHIrReference) and (derived.binding.valueSet is TFHIrReference) then
+            begin
+              vsBase := context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+              vsDerived := context.fetchResource(frtValueSet, (derived.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+              if (vsBase <> nil) and (vsDerived <> nil) then
+              begin
+                expBase := context.expand(vsBase);
+                expDerived := context.expand(vsDerived);
+                if (expBase = nil) then
+                  messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+base.path, 'Binding '+(base.binding.valueSet as TFhirReference).reference+' could not be expanded'))
+                else if (expDerived = nil) then
+                  messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' could not be expanded'))
+                else if not isSubset(expBase, expDerived) then
+                  messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' is not a subset of binding '+(base.binding.valueSet as TFhirReference).reference));
+              end;
+            end;
           finally
             expBase.Free;
             expDerived.Free;

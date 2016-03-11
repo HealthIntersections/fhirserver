@@ -22,8 +22,8 @@ Type
     FWebBase : String;
 
     procedure AddDependency(name, value : String);
-    function getCodeDefinition(c : TFhirValueSetCodeSystemConcept; code : string) : TFhirValueSetCodeSystemConcept; overload;
-    function getCodeDefinition(vs : TFHIRValueSet; code : string) : TFhirValueSetCodeSystemConcept; overload;
+    function getCodeDefinition(c : TFhirCodeSystemConcept; code : string) : TFhirCodeSystemConcept; overload;
+    function getCodeDefinition(vs : TFhirCodeSystem; code : string) : TFhirCodeSystemConcept; overload;
     function makeAnyValueSet: TFhirValueSet;
 
     // database maintenance
@@ -499,7 +499,8 @@ end;
 function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
 var
   vs : TFhirValueSet;
-  def : TFhirValueSetCodeSystemConcept;
+  cs : TFhirCodeSystem;
+  def : TFhirCodeSystemConcept;
   d : String;
 begin
   result := false;
@@ -527,11 +528,11 @@ begin
   end
   else
   begin
-    vs := getCodeSystem(system);
+    cs := getCodeSystem(system);
     try
-      if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, vs <> nil, 'Unknown Code System '+system) then
+      if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, cs <> nil, 'Unknown Code System '+system) then
       begin
-        def := getCodeDefinition(vs, code);
+        def := getCodeDefinition(cs, code);
         if (op.error('InstanceValidator', IssueTypeCodeInvalid, path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
           result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
       end;
@@ -543,11 +544,11 @@ end;
 
 
 
-function TTerminologyServer.getCodeDefinition(c : TFhirValueSetCodeSystemConcept; code : string) : TFhirValueSetCodeSystemConcept;
+function TTerminologyServer.getCodeDefinition(c : TFhirCodeSystemConcept; code : string) : TFhirCodeSystemConcept;
 var
   i : integer;
-  g : TFhirValueSetCodeSystemConcept;
-  r : TFhirValueSetCodeSystemConcept;
+  g : TFhirCodeSystemConcept;
+  r : TFhirCodeSystemConcept;
 begin
   result := nil;
   if (code = c.Code) then
@@ -564,11 +565,11 @@ begin
   end;
 end;
 
-function TTerminologyServer.getCodeDefinition(vs : TFHIRValueSet; code : string) : TFhirValueSetCodeSystemConcept;
+function TTerminologyServer.getCodeDefinition(vs : TFhirCodeSystem; code : string) : TFhirCodeSystemConcept;
 var
   i : integer;
-  c : TFhirValueSetCodeSystemConcept;
-  r : TFhirValueSetCodeSystemConcept;
+  c : TFhirCodeSystemConcept;
+  r : TFhirCodeSystemConcept;
 begin
   result := nil;
   for i := 0 to vs.codeSystem.conceptList.Count - 1 do
